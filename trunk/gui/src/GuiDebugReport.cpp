@@ -20,7 +20,7 @@ void GuiDebugReport::generate(ReportType type)
     {
         ctx = wxDebugReport::Context_Exception;
     }
-    wxDebugReport report;
+    wxDebugReportCompress report;
 
     report.AddAll(ctx);
     
