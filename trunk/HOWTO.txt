@@ -1,0 +1,72 @@
+=================== CMAKE ===================
+Install cmake into c:\Program Files
+
+=================== DOXYGEN ===================
+Install doxygen into c:\Program Files
+
+=================== GRAPHVIZ ===================
+Install graphviz into c:\Program Files
+
+=================== VIDIOT ===================
+* Checkout Vidiot into D:\Vidiot\vidiot
+  (Repo: https://vidiot.svn.sourceforge.net/svnroot/vidiot)
+
+=================== BOOST ===================
+* Download Boost into D:\Vidiot\boost_1_43_0
+* Build boost into D:\Vidiot\boost_1_43_0\stage\lib (default):
+  - d:   
+  - cd D:\VideoApp\InstalledLibraries
+  - cd boost_trunk
+  - bootstrap
+  - .\bjam --toolset=msvc --build-type=complete stage
+* Add D:\Vidiot\boost_1_43_0\stage\lib to system/user path variable
+
+=================== WXWIDGETS ===================
+* Checkout wxWidgets into D:\Vidiot\wxwidgets_trunk
+* Copy include/wx/msw/setup0.h to setup.h
+  (I had to change platform.h include of this file to wx/msw/setup.h)
+  - #define wxUSE_ON_FATAL_EXCEPTION 1
+  - #define wxUSE_STACKWALKER 1
+  - #define wxUSE_DEBUGREPORT 1
+  - #define wxUSE_CRASHREPORT 1
+* compile wxwidgets (via solution/workspace) Release & Debug
+* Set env variable wxWidgets_ROOT_DIR=D:\Vidiot\wxwidgets_trunk
+* Note: install visual studio 2008 with c++ tools (not the 
+  various specific tools under c++ tools) to avoid rc.exe problem
+  when compiling.
+
+=================== FFMPEG ===================
+* Create folder D:\VideoApp\InstalledLibraries\ffmpeg_trunk
+* checkout svn://svn.ffmpeg.org/ffmpeg/trunk into that dir
+* Go to http://ffmpeg.arrozcru.org/wiki/index.php?title=Introduction and follow the instructions
+* I used gcc 4.4.something
+* Add 
+  call "call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat"
+  to 
+  C:\MSys\1.0\msys.bat
+* Open msys shell
+* cd to ffmpeg_trunk dir
+* mkdir build
+* cd build 
+* run lib.exe (MS tool) to check if everything is ok (if ok --> help message is shown)
+* ../configure --enable-shared --enable-memalign-hack --libdir=../bin --shlibdir=../bin
+* make ; make install
+* Add D:\Vidiot\ffmpeg_trunk\bin to system/user path variable
+
+=================== PORTAUDIO ===================
+* Create folder D:\VideoApp\InstalledLibraries\portaudio_trunk
+* checkout https://www.portaudio.com/repos/portaudio/trunk
+* Install MS SDK
+* Open portaudio_trunk\build\msvc\portaudio.sln (convert if needed)
+* Compile Portaudio
+  - Define NO_ASIO (Project->Properties->Preprocessor defined - /D )
+  - Define NO_WASAPI
+  - Remove ASIO files from project
+  - Remove ..asio.. lines from portaudio.def
+  - add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include to the include paths
+  - add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86 to the linker "additional library directories"
+  - Compile
+* Add D:\Vidiot\portaudio_trunk\build\msvc\Win32\Debug to system/user path variable
+
+=================== UML ===================
+Use Argo UML for doc/*.zargo
