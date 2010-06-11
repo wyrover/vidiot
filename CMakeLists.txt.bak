@@ -1,0 +1,120 @@
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+
+PROJECT(Vidiot)
+SET(InstalledLibraries D:\\VideoApp\\InstalledLibraries)
+
+SET(GENERATOR_MINGW (${CMAKE_GENERATOR} STREQUAL "MinGW Makefiles"))
+
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/. )
+
+#### FFMPEG ####
+SET( ENV{FFMPEGDIR} ${InstalledLibraries}\\ffmpeg-bin )
+INCLUDE(FindFFMPEG.cmake)
+FIND_PACKAGE(FFMPEG)
+IF(NOT FFMPEG_FOUND)
+  MESSAGE("FFMPEG not found!")
+  RETURN()
+ENDIF(NOT FFMPEG_FOUND)
+IF(NOT FFMPEG_SWSCALE_FOUND)
+  MESSAGE("FFMPEG SWSCALE not found!")
+  RETURN()
+ENDIF(NOT FFMPEG_SWSCALE_FOUND)
+SET( ENV{PATH} ENV{PATH};${FFMPEG_BINARY_DIR} )
+message(${FFMPEG_BINARY_DIR})
+message( $ENV{PATH} )
+
+#### WXWIDGETS ####
+SET(wxWidgets_USE_LIBS base core aui adv)
+FIND_PACKAGE(wxWidgets)
+IF(NOT wxWidgets_FOUND)
+  MESSAGE("wxWidgets not found!")
+  RETURN()
+ENDIF(NOT wxWidgets_FOUND)
+
+#### BOOST #### 
+IF (${GENERATOR_MINGW})
+  SET( ENV{BOOST_ROOT} C:\\Boost )
+  SET( ENV{BOOST_INCLUDEDIR} C:\\Boost\\include )
+  SET( ENV{BOOST_LIBRARYDIR} C:\\Boost\\lib )
+  SET ( Boost_COMPILER -mgw34 )
+  SET(Boost_ADDITIONAL_VERSIONS "1.40")
+ELSE (${GENERATOR_MINGW})
+  SET( ENV{BOOST_ROOT} ${InstalledLibraries}\\boost_1_39 )
+ENDIF (${GENERATOR_MINGW})
+#SET(Boost_DEBUG TRUE)
+SET(Boost_USE_STATIC_LIBS ON)
+SET(Boost_USE_MULTITHREADED ON)
+Find_Package ( Boost 1.39 COMPONENTS date_time thread )
+if ( NOT Boost_FOUND )
+   message ( FATAL_ERROR "BOOST not found!" )
+   RETURN()
+ENDIF ( NOT Boost_FOUND )
+
+#### DOXYGEN ####
+FIND_PACKAGE(Doxygen)
+IF(NOT DOXYGEN_FOUND)
+  MESSAGE("DOXYGEN not found!")
+  RETURN()
+ENDIF(NOT DOXYGEN_FOUND)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/doxyfile.txt ${CMAKE_CURRENT_BINARY_DIR}/doxy.config @ONLY )
+SET(DOXY_CONFIG "${CMAKE_CURRENT_BINARY_DIR}/doxy.config")
+ADD_CUSTOM_TARGET(doc ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG})
+
+#### PORTAUDIO ####
+SET(PORTAUDIO_INCLUDE_DIR ${InstalledLibraries}/portaudio/include)
+SET(PORTAUDIO_LIBRARY_DIR ${InstalledLibraries}/portaudio/build/msvc/Win32/Debug)
+SET(PORTAUDIO_LIBRARIES   portaudio_x86.dll)
+
+
+
+
+
+#### FIND ALL LOCAL FILES ####
+FILE(GLOB Headers ${PROJECT_SOURCE_DIR}/include/*.h*)
+FILE(GLOB Sources ${PROJECT_SOURCE_DIR}/src/*.cpp)
+FILE(GLOB Icons   ${PROJECT_SOURCE_DIR}/icons/*.xpm)
+FILE(GLOB Pugixml ${PROJECT_SOURCE_DIR}/pugixml/*.*)
+SET(VIDIOT_SOURCES ${Sources} ${Headers} ${Icons} ${Pugixml} )
+
+#### FILE GROUPING IN IDE ####
+IF (CMAKE_BUILD_TOOL MATCHES "(msdev|devenv)")
+    FILE(GLOB CmakeModulesFiles ${PROJECT_SOURCE_DIR}/*.cmake)
+    FILE(GLOB TextFiles ${PROJECT_SOURCE_DIR}/*.txt)
+    SOURCE_GROUP("Config files" FILES ${CmakeModulesFiles} ${TextFiles})
+    set_source_files_properties(${CmakeFiles} ${ConfigurationFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+ENDIF (CMAKE_BUILD_TOOL MATCHES "(msdev|devenv)")
+SOURCE_GROUP("Gui Headers"      REGULAR_EXPRESSION Gui.*h|wxInclude.h)
+SOURCE_GROUP("Gui Sources"      REGULAR_EXPRESSION Gui.*cpp)
+SOURCE_GROUP("Project Headers"  REGULAR_EXPRESSION .*Asset.*.h|Project.h|ProjectWorker.h)
+SOURCE_GROUP("Project Sources"  REGULAR_EXPRESSION .*Asset.*.cpp|Project.cpp|ProjectWorker.cpp)
+SOURCE_GROUP("Renderer Headers" REGULAR_EXPRESSION Render.*.h)
+SOURCE_GROUP("Renderer Sources" REGULAR_EXPRESSION Render.*.cpp)
+SOURCE_GROUP("Command Headers"  REGULAR_EXPRESSION ProjectCommand.*h)
+SOURCE_GROUP("Command Sources"  REGULAR_EXPRESSION ProjectCommand.*cpp)
+SOURCE_GROUP("Event Headers"    REGULAR_EXPRESSION ProjectEvent.*h)
+SOURCE_GROUP("Event Sources"    REGULAR_EXPRESSION ProjectEvent.*cpp)
+SOURCE_GROUP("Util Headers"     REGULAR_EXPRESSION Util.*h|Fifo.*h)
+SOURCE_GROUP("Util Sources"     REGULAR_EXPRESSION Util.*cpp|Fifo.*cpp)
+SOURCE_GROUP("Pugixml"          FILES ${Pugixml})
+SOURCE_GROUP("Icons"            REGULAR_EXPRESSION .*xpm)
+
+
+IF (WIN32)
+        ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
+ENDIF (WIN32)
+
+
+ADD_EXECUTABLE(Vidiot WIN32 ${VIDIOT_SOURCES} ${CmakeModulesFiles} ${TextFiles} )
+
+#### INCLUDE AND LINKER DIRECTORIES ####
+INCLUDE_DIRECTORIES(include icons ${FFMPEG_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} pugixml ${PORTAUDIO_INCLUDE_DIR})
+LINK_DIRECTORIES(${FFMPEG_LIBRARY_DIR} ${Boost_LIBRARY_DIRS} ${PORTAUDIO_LIBRARY_DIR})
+INCLUDE(${wxWidgets_USE_FILE})
+MESSAGE(${FFMPEG_LIBRARIES})
+
+
+
+
+TARGET_LINK_LIBRARIES(Vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES})
+
+

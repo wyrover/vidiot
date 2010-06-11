@@ -1,0 +1,4 @@
+* Hangup:
+  Autoload project -> Close project -> Exit
+  
+  
