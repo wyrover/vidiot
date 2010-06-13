@@ -11,6 +11,9 @@
 #include <wx/spinctrl.h>
 #include <wx/config.h>
 #include <wx/fileconf.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
+#include <wx/utils.h>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include "GuiMain.h"
@@ -48,8 +51,6 @@ std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_list_of
     ( wxT("25"),    model::framerate::s25p )
     ( wxT("29.97"), model::framerate::s30p );
 
-static const wxString sDefaultLogFile           ("D:\\Vidiot.log"); /** todo default in dir of app. Take into account with installer for UAC for windows 7*/
-
 //////////////////////////////////////////////////////////////////////////
 // APPLICATION INITIALIZATION & CONFIGURATION
 //////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ static const wxString sDefaultLogFile           ("D:\\Vidiot.log"); /** todo def
 void distributeOptions()
 {
     Log::SetReportingLevel(GETPERSISTEDENUM(LogLevel,logINFO));
-    Log::SetLogFile(std::string(GETPERSISTEDSTRING(LogFile,sDefaultLogFile).mb_str()));
+    Log::SetLogFile(std::string(GuiOptions::getLogFileName()));
     Avcodec::configureLog();
 }
 
@@ -83,7 +84,10 @@ void GuiOptions::init()
 // static 
 wxString GuiOptions::getLogFileName()
 {
-    return GETPERSISTEDSTRING(LogFile,sDefaultLogFile);
+    wxString defaultFileName(wxGetApp().GetAppName());
+    defaultFileName << "_" << wxGetProcessId() << ".log";
+    wxFileName defaultLogFile(wxStandardPaths::Get().GetTempDir(),defaultFileName);
+    return GETPERSISTEDSTRING(LogFile,defaultLogFile.GetFullPath());
 }
 
 // static 
