@@ -25,22 +25,4 @@ private:
 
 wxDECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent);
 
-//////////////////////////////////////////////////////////////////////////
-
-class ClipSelectionEvent 
-    :   public wxEvent
-{
-public:
-    ClipSelectionEvent(GuiTimeLineClipPtr clip, bool selected);
-    ClipSelectionEvent(const ClipSelectionEvent& other);
-    virtual wxEvent* Clone() const;
-    GuiTimeLineClipPtr clip();
-    bool isSelected() const;
-private:
-    GuiTimeLineClipPtr mClip;
-    bool mSelected;
-};
-
-wxDECLARE_EVENT(CLIP_SELECTION_EVENT, ClipSelectionEvent);
-
 #endif // GUI_CLIP_UPDATE_EVENT_H

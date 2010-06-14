@@ -93,7 +93,6 @@ private:
     PlayerPtr mPlayer;
     wxBitmap mBitmap;
     long mCursorPosition;
-    wxRect mInvalidatedRect;
     double mPlaybackTime;
     long mWidth;
     long mHeight;

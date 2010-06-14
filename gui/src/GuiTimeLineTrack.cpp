@@ -63,7 +63,6 @@ void GuiTimeLineTrack::init(GuiTimeLine* timeline)
     BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
     {
         clip->Bind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
-        clip->Bind(CLIP_SELECTION_EVENT, &GuiTimeLineTrack::OnClipSelected,      this);
     }
 }
 
@@ -72,7 +71,6 @@ GuiTimeLineTrack::~GuiTimeLineTrack()
     BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
     {
         clip->Unbind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
-        clip->Unbind(CLIP_SELECTION_EVENT, &GuiTimeLineTrack::OnClipSelected,      this);
     }
 }
 
@@ -129,25 +127,6 @@ void GuiTimeLineTrack::OnClipUpdated( ClipUpdateEvent& event )
 {
     /** todo only redraw clip */
     updateBitmap();
-}
-
-void GuiTimeLineTrack::OnClipSelected( ClipSelectionEvent& event )
-{
-    if (event.isSelected())
-    {
-        mSelectedClips.push_back(event.clip());
-    }
-    else
-    {
-        for (GuiTimeLineClips::iterator it = mSelectedClips.begin(); it != mSelectedClips.end(); ++it)
-        {
-            if (*it == event.clip())
-            {
-                mSelectedClips.erase(it);
-                break;
-            }
-        }
-    }
 }
 
 void GuiTimeLineTrack::updateBitmap()

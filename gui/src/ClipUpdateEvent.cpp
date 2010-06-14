@@ -32,36 +32,3 @@ bool ClipUpdateEvent::selectionChanged() const
 {
     return mSelectionChanged;
 }
-
-//////////////////////////////////////////////////////////////////////////
-
-wxDEFINE_EVENT(CLIP_SELECTION_EVENT, ClipSelectionEvent);
-
-ClipSelectionEvent::ClipSelectionEvent(GuiTimeLineClipPtr clip, bool selected)
-:   wxEvent(wxID_ANY,CLIP_SELECTION_EVENT)
-,   mClip(clip)
-,   mSelected(selected)
-{
-}
-
-ClipSelectionEvent::ClipSelectionEvent(const ClipSelectionEvent& other)
-:   wxEvent(other)
-,   mClip(other.mClip)
-,   mSelected(other.mSelected)
-{
-}
-
-wxEvent* ClipSelectionEvent::Clone() const
-{
-    return new ClipSelectionEvent(*this);
-}
-
-GuiTimeLineClipPtr ClipSelectionEvent::clip()
-{
-    return mClip;
-}
-
-bool ClipSelectionEvent::isSelected() const
-{
-    return mSelected;
-}
