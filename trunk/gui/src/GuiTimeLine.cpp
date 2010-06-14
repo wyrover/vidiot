@@ -47,7 +47,6 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mPlaybackTime(0)
 ,   mOrigin(0,100)
 ,   mBitmap()
-,   mInvalidatedRect()
 ,   mMouseState(*this)
 ,   mWidth(0)
 ,   mHeight(0)
@@ -230,52 +229,36 @@ void GuiTimeLine::OnMouseEvent(wxMouseEvent& event)
     DoPrepareDC(dc);
     wxPoint virtualposition = event.GetLogicalPosition(dc);
 
-    if (event.LeftDown())
-    {
-        mMouseState.process_event(mousestate::EvMouse1Down(virtualposition, clip));
-
-    }
-    else if (event.Dragging())
-    {
-        if (event.LeftIsDown())
-        {
-            mMouseState.process_event(mousestate::EvMouse1Drag(virtualposition, clip));
-        }
-    }
-    else if (event.LeftUp())
-    {
-        mMouseState.process_event(mousestate::EvMouse1Up(virtualposition, clip));
-    }
+    mMouseState.processMouseEvent(virtualposition, clip, event);
 }
 
 void GuiTimeLine::beginDrag(wxPoint position)
 {
+    VAR_INFO(position);
     m_dragImage = new GuiTimeLineDragImage(this, position);
 
-    if (!m_dragImage->BeginDrag(m_dragImage->getHotspot(), this, false))
-    {
-        NIY;
-        //delete m_dragImage;
-        //m_dragImage = (wxDragImage*) NULL;
-        //m_dragMode = TEST_DRAG_NONE;
+    bool ok = m_dragImage->BeginDrag(m_dragImage->getHotspot(), this, false);
+    ASSERT(ok);
 
-    } 
-    else
-    {
-        m_dragImage->Move(position);
-        m_dragImage->Show();
-    }
+    moveDrag(position);
 }
 
 void GuiTimeLine::moveDrag(wxPoint position)
 {
+    VAR_INFO(position);
+    m_dragImage->Hide();
+    Refresh(false);
+    Update();
     m_dragImage->Move(position);
+    m_dragImage->Show();
 }
 
 void GuiTimeLine::endDrag(wxPoint position)
 {
+    VAR_INFO(position);
     m_dragImage->Hide();
     m_dragImage->EndDrag();
+    Refresh();
     delete m_dragImage;
     m_dragImage = 0;
 }
@@ -295,7 +278,7 @@ void GuiTimeLine::OnSize(wxSizeEvent& event)
 
 void GuiTimeLine::OnEraseBackground(wxEraseEvent& event)
 {
-    event.Skip(); // The official way of doing it
+    //event.Skip(); // The official way of doing it
 }
 
 void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
@@ -303,9 +286,24 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
-    if (mBitmap.IsOk())
+    // Find Out where the window is scrolled to
+    int scrollX, scrollY, ppuX, ppuY;
+    GetViewStart(&scrollX,&scrollY);
+    GetScrollPixelsPerUnit(&ppuX,&ppuY);
+    int virtualbaseX = scrollX * ppuX;
+    int virtualbaseY = scrollY * ppuY;
+
+    wxMemoryDC dcBmp(mBitmap);
+
+    wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
+    while (upd)
     {
-        dc.DrawBitmap(mBitmap,wxPoint(0,0));
+        int x = virtualbaseX + upd.GetX();
+        int y = virtualbaseY + upd.GetY();
+        int w = upd.GetW();
+        int h = upd.GetH();
+        dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY,false,0,0);
+        upd++;
     }
 
     // Draw cursor
@@ -319,10 +317,10 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
 void GuiTimeLine::OnTrackUpdated( TrackUpdateEvent& event )
 {
+    LOG_INFO;
     /** todo only redraw track */
     updateBitmap();
-
-    Refresh(false);
+    Update();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -347,14 +345,10 @@ void GuiTimeLine::setCursorPosition(long position)
 {
     VAR_DEBUG(mCursorPosition)(position);
 
-    mInvalidatedRect.Union(wxRect(mCursorPosition,0,1,mHeight));
     long oldPos = mCursorPosition;
     mCursorPosition = position;
 
-    int xScrolled;
-    int yScrolled;
-    CalcScrolledPosition(std::min(mCursorPosition,oldPos),0,&xScrolled,&yScrolled);
-    RefreshRect(wxRect(xScrolled,yScrolled,std::abs(mCursorPosition-oldPos)+1,mHeight),false);
+    RefreshRect(wxRect(std::min(mCursorPosition,oldPos),0,std::abs(mCursorPosition-oldPos)+1,mHeight),false);
 }
 
 void GuiTimeLine::moveCursorOnPlayback(long pts)
@@ -441,14 +435,11 @@ void GuiTimeLine::updateSize()
     mBitmap.Create(mWidth,mHeight);
 
     updateBitmap();
-
-    mInvalidatedRect.Union(wxRect(0,0,mWidth,mHeight));
-
-    Refresh(false);
 }
 
  void GuiTimeLine::updateBitmap()
  {
+     LOG_INFO;
      // todo move to update background
      wxMemoryDC dc(mBitmap);
 
@@ -526,6 +517,7 @@ void GuiTimeLine::updateSize()
          dc.DrawBitmap(audioTrack->getBitmap(),wxPoint(0,y));
          y += audioTrack->getBitmap().GetHeight();
      }
+     Refresh(false);
  }
 
 
@@ -573,10 +565,10 @@ void GuiTimeLine::updateSize()
          position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
      }
 
-     int origin_x = std::max(dc.MinX(),0); // todo constants
-     int origin_y = std::max(dc.MinY(),0);
-     int size_x = dc.MaxX() - origin_x;
-     int size_y = dc.MaxY() - origin_y;
+     int origin_x = std::max(dcMask.MinX(),0); // todo constants
+     int origin_y = std::max(dcMask.MinY(),0);
+     int size_x = dcMask.MaxX() - origin_x;
+     int size_y = dcMask.MaxY() - origin_y;
 
      dc.SelectObject(wxNullBitmap);
      dcMask.SelectObject(wxNullBitmap);

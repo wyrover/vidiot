@@ -53,7 +53,6 @@ void GuiTimeLineClip::updateSize()
     mWidth = mZoom->ptsToPixels(mClip->getNumberOfFrames());
     mBitmap.Create(mWidth,mTrack->getBitmap().GetHeight());
     updateThumbnail();
-    updateBitmap();
 }
 
 void GuiTimeLineClip::updateThumbnail()
@@ -65,6 +64,7 @@ void GuiTimeLineClip::updateThumbnail()
         mThumbnail.reset(new wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
         mClip->moveTo(0);
     }
+    updateBitmap();
 }
 
 void GuiTimeLineClip::updateBitmap()
@@ -75,7 +75,7 @@ void GuiTimeLineClip::updateBitmap()
     if (mSelected)
     {
         borderColour = const_cast<wxColour*>(wxBLACK);
-        backgroundBrush = const_cast<wxBrush*>(wxBLACK_BRUSH);
+        backgroundBrush = new wxBrush(wxColour(80,80,80),wxBRUSHSTYLE_SOLID);//const_cast<wxBrush*>(wxBLACK_BRUSH);
     }
     dc.SetBrush(*backgroundBrush);
     dc.SetPen(wxPen(*borderColour, sClipBorderSize));
@@ -95,13 +95,14 @@ bool GuiTimeLineClip::isSelected() const
 void GuiTimeLineClip::setSelected(bool selected)
 {
     mSelected = selected;
-    QueueEvent(new ClipSelectionEvent(shared_from_this(), mSelected));
     updateBitmap();
 }
 
 void GuiTimeLineClip::setBeingDragged(bool beingdragged)
 {
     mBeingDragged = beingdragged;
+    updateBitmap();
+    QueueEvent(new ClipUpdateEvent(shared_from_this()));
 }
 
 bool GuiTimeLineClip::isBeingDragged()

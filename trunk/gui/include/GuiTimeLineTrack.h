@@ -53,7 +53,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void OnClipUpdated( ClipUpdateEvent& event );
-    void OnClipSelected( ClipSelectionEvent& event );
 
 private:
     GuiTimeLineZoomPtr mZoom;
@@ -63,7 +62,6 @@ private:
 
     int mHeight;
     GuiTimeLineClips mClips;
-    GuiTimeLineClips mSelectedClips;
     model::TrackPtr mTrack;
     wxBitmap mBitmap;
 

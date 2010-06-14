@@ -3,6 +3,7 @@
 #include <set>
 #include <boost/foreach.hpp>
 #include <boost/statechart/state_machine.hpp>
+#include <boost/statechart/state.hpp>
 #include <boost/statechart/simple_state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include "GuiTimeLine.h"
@@ -10,6 +11,37 @@
 #include "UtilLog.h"
 
 namespace mousestate {
+
+//////////////////////////////////////////////////////////////////////////
+// MOUSE EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+template< class MostDerived >
+struct EvMouse : bs::event< MostDerived >
+{
+    EvMouse(wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& event)
+        :   mPosition(position)
+        ,   mClip(clip)
+        ,   mWxEvent(event)
+    {
+
+    }
+    const wxPoint mPosition;
+    const GuiTimeLineClipPtr mClip;
+    const wxMouseEvent& mWxEvent;
+};
+
+
+struct EvMouse1Down : EvMouse<EvMouse1Down> { EvMouse1Down  (wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& originalevent) : EvMouse(position, clip, originalevent) {} };
+struct EvMouse1Up   : EvMouse<EvMouse1Up>   { EvMouse1Up    (wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& originalevent) : EvMouse(position, clip, originalevent) {} };
+struct EvMouse1Drag : EvMouse<EvMouse1Drag> { EvMouse1Drag  (wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& originalevent) : EvMouse(position, clip, originalevent) {} };
+
+template< class MostDerived >
+std::ostream& operator<< (std::ostream& os, const mousestate::EvMouse< MostDerived >& obj)
+{
+    os << typeid(obj).name() << ',' << obj.mPosition << ',' << obj.mClip;
+    return os;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // MEMBERS ACESSIBLE BY ALL STATES
@@ -33,11 +65,11 @@ struct TestDragStart;
 struct Dragging;
 
 //////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
+// MACHINE
 //////////////////////////////////////////////////////////////////////////
 
 Machine::Machine(GuiTimeLine& tl)
-:   timeline(tl)
+    :   timeline(tl)
 {
     globals = new GlobalState();
     initiate();
@@ -46,6 +78,26 @@ Machine::Machine(GuiTimeLine& tl)
 Machine::~Machine()
 {
     delete globals;
+}
+
+void Machine::processMouseEvent(wxPoint virtualposition, GuiTimeLineClipPtr clip, wxMouseEvent& event)
+{
+    if (event.LeftDown())
+    {
+        process_event(EvMouse1Down(virtualposition, clip, event));
+
+    }
+    else if (event.Dragging())
+    {
+        if (event.LeftIsDown())
+        {
+            process_event(mousestate::EvMouse1Drag(virtualposition, clip, event));
+        }
+    }
+    else if (event.LeftUp())
+    {
+        process_event(mousestate::EvMouse1Up(virtualposition, clip, event));
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,23 +123,21 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
         VAR_DEBUG(evt);
         if (evt.mClip)
         {
-            if (!evt.mClip->isSelected())
+            BOOST_FOREACH( GuiTimeLineClipPtr clip,outermost_context().globals->SelectedClips )
             {
-                evt.mClip->setSelected(true);
-                context<Machine>().globals->SelectedClips.insert(evt.mClip);
+                clip->setSelected(false);
             }
-            else
-            {
-                evt.mClip->setSelected(false);
-                context<Machine>().globals->SelectedClips.erase(evt.mClip);
-            }
+            outermost_context().globals->SelectedClips.clear();
 
-            context<Machine>().globals->DragStartPosition = evt.mPosition;
+            evt.mClip->setSelected(true);
+            outermost_context().globals->SelectedClips.insert(evt.mClip);
+
+            outermost_context().globals->DragStartPosition = evt.mPosition;
             return transit<TestDragStart>();
         }
         else
         {
-            context<Machine>().timeline.moveCursorOnUser(evt.mPosition.x);
+            outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
         }
         return discard_event();
     }
@@ -99,7 +149,7 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
     bs::result react( const EvMouse1Drag& evt )
     {
         VAR_DEBUG(evt);
-        context<Machine>().timeline.moveCursorOnUser(evt.mPosition.x);
+        outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
         return discard_event();
     }
 };
@@ -135,17 +185,15 @@ struct TestDragStart : bs::simple_state< TestDragStart, Machine >
     bs::result react( const EvMouse1Drag& evt )
     {
         VAR_DEBUG(evt);
-        wxPoint diff = context<Machine>().globals->DragStartPosition - evt.mPosition;
+        wxPoint diff = outermost_context().globals->DragStartPosition - evt.mPosition;
         static int tolerance = 2;
         if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
         {
-            BOOST_FOREACH( GuiTimeLineClipPtr clip, context<Machine>().globals->SelectedClips )
+            BOOST_FOREACH( GuiTimeLineClipPtr clip,outermost_context().globals->SelectedClips )
             {
                 clip->setBeingDragged(true);
             }
-            context<Machine>().timeline.updateBitmap();
-            context<Machine>().timeline.Refresh();
-            context<Machine>().timeline.beginDrag(evt.mPosition);
+            outermost_context().timeline.beginDrag(evt.mPosition);
             return transit<Dragging>();
         }
         return discard_event();
@@ -178,13 +226,17 @@ struct Dragging : bs::simple_state< Dragging, Machine >
     bs::result react( const EvMouse1Up& evt )
     {
         VAR_DEBUG(evt);
-        context<Machine>().timeline.endDrag(evt.mPosition);
+        BOOST_FOREACH( GuiTimeLineClipPtr clip,outermost_context().globals->SelectedClips )
+        {
+            clip->setBeingDragged(false);
+        }
+        outermost_context().timeline.endDrag(evt.mPosition);
         return transit<AwaitingAction>();
     }
     bs::result react( const EvMouse1Drag& evt )
     {
         VAR_DEBUG(evt);
-        context<Machine>().timeline.moveDrag(evt.mPosition);
+        outermost_context().timeline.moveDrag(evt.mPosition);
         return discard_event();
     }
 };
