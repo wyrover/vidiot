@@ -354,8 +354,6 @@ void GuiTimeLine::updateSize()
 
  void GuiTimeLine::updateBitmap()
  {
-     LOG_INFO;
-     // todo move to update background
      wxMemoryDC dc(mBitmap);
 
      // Get size of canvas

@@ -36,7 +36,9 @@ struct EvMouse : bs::event< MostDerived >
 template< class MostDerived >
 std::ostream& operator<< (std::ostream& os, const mousestate::EvMouse< MostDerived >& obj)
 {
-    os << typeid(obj).name() << ',' << obj.mPosition;
+    os  << typeid(obj).name() << ',' 
+        << obj.mPosition << ','
+        << obj.mWxEvent;
     return os;
 }
 
@@ -57,22 +59,26 @@ struct EvWheel          : EvMouse<EvWheel>          { EvWheel       (wxMouseEven
 template< class MostDerived >
 struct EvKey : bs::event< MostDerived >
 {
-    EvKey(wxKeyEvent& wxevt)
-        :   mWxEvent(wxevt)
+    EvKey(wxKeyEvent& wxevt, wxPoint pos)
+        :   mPosition(pos)
+        ,   mWxEvent(wxevt)
     {
     };
+    const wxPoint mPosition;
     const wxKeyEvent& mWxEvent;
 };
 
 template< class MostDerived >
 std::ostream& operator<< (std::ostream& os, const mousestate::EvKey< MostDerived >& obj)
 {
-    os << typeid(obj).name() << ',' << obj.mWxEvent.GetKeyCode();
+    os  << typeid(obj).name() << ',' 
+        << obj.mPosition << ','
+        << obj.mWxEvent;
     return os;
 }
 
-struct EvKeyDown : EvKey<EvKeyDown> { EvKeyDown (wxKeyEvent& wxevt) : EvKey(wxevt) {} };
-struct EvKeyUp   : EvKey<EvKeyUp>   { EvKeyUp   (wxKeyEvent& wxevt) : EvKey(wxevt) {} };
+struct EvKeyDown : EvKey<EvKeyDown> { EvKeyDown (wxKeyEvent& wxevt, wxPoint pos) : EvKey(wxevt, pos) {} };
+struct EvKeyUp   : EvKey<EvKeyUp>   { EvKeyUp   (wxKeyEvent& wxevt, wxPoint pos) : EvKey(wxevt, pos) {} };
 
 //////////////////////////////////////////////////////////////////////////
 // MEMBERS ACESSIBLE BY ALL STATES
@@ -143,8 +149,8 @@ void Machine::OnRightDouble  (wxMouseEvent& event)  { process_event(EvRightDoubl
 void Machine::OnEnter        (wxMouseEvent& event)  { process_event(EvEnter         (event, unscrolledPosition(event.GetPosition())));   }
 void Machine::OnLeave        (wxMouseEvent& event)  { process_event(EvLeave         (event, unscrolledPosition(event.GetPosition())));   }
 void Machine::OnWheel        (wxMouseEvent& event)  { process_event(EvWheel         (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnKeyDown      (wxKeyEvent&   event)  { process_event(EvKeyDown       (event)); }
-void Machine::OnKeyUp        (wxKeyEvent&   event)  { process_event(EvKeyUp         (event)); }
+void Machine::OnKeyDown      (wxKeyEvent&   event)  { process_event(EvKeyDown       (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnKeyUp        (wxKeyEvent&   event)  { process_event(EvKeyUp         (event, unscrolledPosition(event.GetPosition())));   }
 
 wxPoint Machine::unscrolledPosition(wxPoint position) const
 {
