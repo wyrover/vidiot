@@ -29,13 +29,36 @@ struct AwaitingAction;
 // MACHINE
 //////////////////////////////////////////////////////////////////////////
 
-struct Machine : bs::state_machine< Machine, AwaitingAction >
+struct Machine 
+    :   bs::state_machine< Machine, AwaitingAction >
 {
     Machine(GuiTimeLine& tl);
     ~Machine();
     GuiTimeLine& timeline;
     GlobalState* globals;
-    void processMouseEvent(wxPoint virtualposition, GuiTimeLineClipPtr clip, wxMouseEvent& event);
+    
+    void OnMotion       (wxMouseEvent& event);
+    void OnLeftDown     (wxMouseEvent& event);
+    void OnLeftUp       (wxMouseEvent& event);
+    void OnLeftDouble   (wxMouseEvent& event);
+    void OnMiddleDown   (wxMouseEvent& event);
+    void OnMiddleUp     (wxMouseEvent& event);
+    void OnMiddleDouble (wxMouseEvent& event);
+    void OnRightDown    (wxMouseEvent& event);
+    void OnRightUp      (wxMouseEvent& event);
+    void OnRightDouble  (wxMouseEvent& event);
+    void OnEnter        (wxMouseEvent& event);
+    void OnLeave        (wxMouseEvent& event);
+    void OnWheel        (wxMouseEvent& event);
+    void OnKeyDown      (wxKeyEvent&   event);
+    void OnKeyUp        (wxKeyEvent&   event);
+
+    /**
+     * Converts a wxevent position to a virtual position on the 
+     * timeline's bitmap buffer (which may be scrolled).
+     */
+    wxPoint unscrolledPosition(wxPoint position) const;
+
 };
 
 } // namespace

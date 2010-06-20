@@ -8,7 +8,6 @@
 #include <boost/serialization/version.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include "GuiTimeLineDragImage.h"
 #include "GuiDataObject.h"
 #include "ModelPtr.h"
 #include "GuiPlayer.h"
@@ -53,9 +52,6 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnKeyDown(wxKeyEvent& event);
-    void OnKeyUp(wxKeyEvent& event);
-    void OnMouseEvent(wxMouseEvent& event);
     void OnSize(wxSizeEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint( wxPaintEvent &event );
@@ -65,10 +61,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void OnTrackUpdated( TrackUpdateEvent& event );
-    void beginDrag(wxPoint position);
-    void moveDrag(wxPoint position);
-    void endDrag(wxPoint position);
-
 
     wxBitmap getDragBitmap(wxPoint& hostspot);// const;
     void updateBitmap();
@@ -88,6 +80,16 @@ public:
     void setCursorPosition(long position);
     void moveCursorOnPlayback(long pts);
 
+    //////////////////////////////////////////////////////////////////////////
+    // FROM COORDINATES TO OBJECTS
+    //////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @param p Position in logical (scrolled) coordinates
+     */
+    GuiTimeLineClipPtr GuiTimeLine::findClip(wxPoint p) const;
+    GuiTimeLineTrackPtr findTrack(int yposition) const;
+
 private:
     GuiTimeLineZoomPtr mZoom;
     PlayerPtr mPlayer;
@@ -100,9 +102,6 @@ private:
     /** Y-position of audio-video divider */
     int mDividerPosition;
     
-    wxPoint         mDragStartPosition;
-    GuiTimeLineDragImage*    m_dragImage;
-
     mousestate::Machine mMouseState;
 
     model::SequencePtr mSequence;
@@ -111,13 +110,6 @@ private:
     GuiTimeLineTracks mAudioTracks;
 
     wxPoint mOrigin;
-
-    //////////////////////////////////////////////////////////////////////////
-    // FROM COORDINATES TO OBJECTS
-    //////////////////////////////////////////////////////////////////////////
-
-    GuiTimeLineClipPtr GuiTimeLine::findClip(wxPoint p) const;
-    GuiTimeLineTrackPtr findTrack(int yposition) const;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

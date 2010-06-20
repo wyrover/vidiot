@@ -53,7 +53,6 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mPlayer()
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
-,   m_dragImage(0)
 {
 	LOG_INFO;
 
@@ -101,21 +100,6 @@ void GuiTimeLine::init(wxWindow *parent)
     Bind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
     Bind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
-    Bind(wxEVT_MOTION,              &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_LEFT_DOWN,           &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_LEFT_UP,             &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_LEFT_DCLICK,         &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_MIDDLE_DOWN,         &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_MIDDLE_UP,           &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_MIDDLE_DCLICK,       &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_RIGHT_DOWN,          &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_RIGHT_UP,            &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_RIGHT_DCLICK,        &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_ENTER_WINDOW,        &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_LEAVE_WINDOW,        &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_MOUSEWHEEL,          &GuiTimeLine::OnMouseEvent,         this);
-    Bind(wxEVT_KEY_DOWN,            &GuiTimeLine::OnKeyDown,            this);
-    Bind(wxEVT_KEY_UP,              &GuiTimeLine::OnKeyUp,              this);
 
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
     {
@@ -134,9 +118,6 @@ void GuiTimeLine::init(wxWindow *parent)
 
 GuiTimeLine::~GuiTimeLine()
 {
-    if (m_dragImage)
-        delete m_dragImage;
-
     wxGetApp().Unbind(PROJECT_EVENT_ADD_ASSET,      &GuiTimeLine::OnProjectAssetAdded,      this);
     wxGetApp().Unbind(PROJECT_EVENT_DELETE_ASSET,   &GuiTimeLine::OnProjectAssetDeleted,    this);
     wxGetApp().Unbind(PROJECT_EVENT_RENAME_ASSET,   &GuiTimeLine::OnProjectAssetRenamed,    this);
@@ -146,21 +127,6 @@ GuiTimeLine::~GuiTimeLine()
     Unbind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
-    Unbind(wxEVT_MOTION,              &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_LEFT_DOWN,           &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_LEFT_UP,             &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_LEFT_DCLICK,         &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_MIDDLE_DOWN,         &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_MIDDLE_UP,           &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_MIDDLE_DCLICK,       &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_RIGHT_DOWN,          &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_RIGHT_UP,            &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_RIGHT_DCLICK,        &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_ENTER_WINDOW,        &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_LEAVE_WINDOW,        &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_MOUSEWHEEL,          &GuiTimeLine::OnMouseEvent,         this);
-    Unbind(wxEVT_KEY_DOWN,            &GuiTimeLine::OnKeyDown,            this);
-    Unbind(wxEVT_KEY_UP,              &GuiTimeLine::OnKeyUp,              this);
 
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
     {
@@ -211,57 +177,6 @@ void GuiTimeLine::OnProjectAssetRenamed( ProjectEventRenameAsset &event )
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
-
-void GuiTimeLine::OnKeyDown(wxKeyEvent& event)
-{
-
-}
-void GuiTimeLine::OnKeyUp(wxKeyEvent& event)
-{
-
-}
-
-void GuiTimeLine::OnMouseEvent(wxMouseEvent& event)
-{
-    GuiTimeLineClipPtr clip = findClip(event.GetPosition());
-
-    wxMemoryDC dc(mBitmap);
-    DoPrepareDC(dc);
-    wxPoint virtualposition = event.GetLogicalPosition(dc);
-
-    mMouseState.processMouseEvent(virtualposition, clip, event);
-}
-
-void GuiTimeLine::beginDrag(wxPoint position)
-{
-    VAR_INFO(position);
-    m_dragImage = new GuiTimeLineDragImage(this, position);
-
-    bool ok = m_dragImage->BeginDrag(m_dragImage->getHotspot(), this, false);
-    ASSERT(ok);
-
-    moveDrag(position);
-}
-
-void GuiTimeLine::moveDrag(wxPoint position)
-{
-    VAR_INFO(position);
-    m_dragImage->Hide();
-    Refresh(false);
-    Update();
-    m_dragImage->Move(position);
-    m_dragImage->Show();
-}
-
-void GuiTimeLine::endDrag(wxPoint position)
-{
-    VAR_INFO(position);
-    m_dragImage->Hide();
-    m_dragImage->EndDrag();
-    Refresh();
-    delete m_dragImage;
-    m_dragImage = 0;
-}
 
 void GuiTimeLine::OnSize(wxSizeEvent& event) 
 {
@@ -520,7 +435,6 @@ void GuiTimeLine::updateSize()
      Refresh(false);
  }
 
-
  wxBitmap GuiTimeLine::getDragBitmap(wxPoint& hotspot) //const
  {
      int w = mBitmap.GetWidth();
@@ -565,7 +479,7 @@ void GuiTimeLine::updateSize()
          position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
      }
 
-     int origin_x = std::max(dcMask.MinX(),0); // todo constants
+     int origin_x = std::max(dcMask.MinX(),0);
      int origin_y = std::max(dcMask.MinY(),0);
      int size_x = dcMask.MaxX() - origin_x;
      int size_y = dcMask.MaxY() - origin_y;
