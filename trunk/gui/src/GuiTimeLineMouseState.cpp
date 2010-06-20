@@ -1,13 +1,18 @@
 #include "GuiTimeLineMouseState.h"
 
 #include <set>
+#include <wx/event.h>
 #include <boost/foreach.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/bind/placeholders.hpp>
+#include <boost/function.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/simple_state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include "GuiTimeLine.h"
 #include "GuiTimeLineClip.h"
+#include "GuiTimeLineDragImage.h"
 #include "UtilLog.h"
 
 namespace mousestate {
@@ -19,29 +24,55 @@ namespace mousestate {
 template< class MostDerived >
 struct EvMouse : bs::event< MostDerived >
 {
-    EvMouse(wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& event)
-        :   mPosition(position)
-        ,   mClip(clip)
-        ,   mWxEvent(event)
+    EvMouse(wxMouseEvent& wxevt, wxPoint pos)
+        :   mPosition(pos)
+        ,   mWxEvent(wxevt)
     {
-
-    }
+    };
     const wxPoint mPosition;
-    const GuiTimeLineClipPtr mClip;
     const wxMouseEvent& mWxEvent;
 };
-
-
-struct EvMouse1Down : EvMouse<EvMouse1Down> { EvMouse1Down  (wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& originalevent) : EvMouse(position, clip, originalevent) {} };
-struct EvMouse1Up   : EvMouse<EvMouse1Up>   { EvMouse1Up    (wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& originalevent) : EvMouse(position, clip, originalevent) {} };
-struct EvMouse1Drag : EvMouse<EvMouse1Drag> { EvMouse1Drag  (wxPoint position, GuiTimeLineClipPtr clip, wxMouseEvent& originalevent) : EvMouse(position, clip, originalevent) {} };
 
 template< class MostDerived >
 std::ostream& operator<< (std::ostream& os, const mousestate::EvMouse< MostDerived >& obj)
 {
-    os << typeid(obj).name() << ',' << obj.mPosition << ',' << obj.mClip;
+    os << typeid(obj).name() << ',' << obj.mPosition;
     return os;
 }
+
+struct EvMotion         : EvMouse<EvMotion>         { EvMotion      (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeftDown       : EvMouse<EvLeftDown>       { EvLeftDown    (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeftUp         : EvMouse<EvLeftUp>         { EvLeftUp      (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeftDouble     : EvMouse<EvLeftDouble>     { EvLeftDouble  (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvMiddleDown     : EvMouse<EvMiddleDown>     { EvMiddleDown  (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvMiddleUp       : EvMouse<EvMiddleUp>       { EvMiddleUp    (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvMiddleDouble   : EvMouse<EvMiddleDouble>   { EvMiddleDouble(wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvRightDown      : EvMouse<EvRightDown>      { EvRightDown   (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvRightUp        : EvMouse<EvRightUp>        { EvRightUp     (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvRightDouble    : EvMouse<EvRightDouble>    { EvRightDouble (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvEnter          : EvMouse<EvEnter>          { EvEnter       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeave          : EvMouse<EvLeave>          { EvLeave       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvWheel          : EvMouse<EvWheel>          { EvWheel       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+
+template< class MostDerived >
+struct EvKey : bs::event< MostDerived >
+{
+    EvKey(wxKeyEvent& wxevt)
+        :   mWxEvent(wxevt)
+    {
+    };
+    const wxKeyEvent& mWxEvent;
+};
+
+template< class MostDerived >
+std::ostream& operator<< (std::ostream& os, const mousestate::EvKey< MostDerived >& obj)
+{
+    os << typeid(obj).name() << ',' << obj.mWxEvent.GetKeyCode();
+    return os;
+}
+
+struct EvKeyDown : EvKey<EvKeyDown> { EvKeyDown (wxKeyEvent& wxevt) : EvKey(wxevt) {} };
+struct EvKeyUp   : EvKey<EvKeyUp>   { EvKeyUp   (wxKeyEvent& wxevt) : EvKey(wxevt) {} };
 
 //////////////////////////////////////////////////////////////////////////
 // MEMBERS ACESSIBLE BY ALL STATES
@@ -51,9 +82,11 @@ struct GlobalState
 {
     GlobalState()
         :   DragStartPosition(-1,-1)
+        ,   DragImage(0)
     {
     }
     wxPoint DragStartPosition;
+    GuiTimeLineDragImage* DragImage;
     std::set<GuiTimeLineClipPtr> SelectedClips;
 };
 
@@ -62,6 +95,7 @@ struct GlobalState
 //////////////////////////////////////////////////////////////////////////
 
 struct TestDragStart;
+struct MovingCursor;
 struct Dragging;
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,10 +103,26 @@ struct Dragging;
 //////////////////////////////////////////////////////////////////////////
 
 Machine::Machine(GuiTimeLine& tl)
-    :   timeline(tl)
+:   timeline(tl)
 {
     globals = new GlobalState();
     initiate();
+
+    timeline.Bind(wxEVT_MOTION,         &Machine::OnMotion,         this);
+    timeline.Bind(wxEVT_LEFT_DOWN,      &Machine::OnLeftDown,       this);
+    timeline.Bind(wxEVT_LEFT_UP,        &Machine::OnLeftUp,         this);
+    timeline.Bind(wxEVT_LEFT_DCLICK,    &Machine::OnLeftDouble,     this);
+    timeline.Bind(wxEVT_MIDDLE_DOWN,    &Machine::OnMiddleDown,     this);
+    timeline.Bind(wxEVT_MIDDLE_UP,      &Machine::OnMiddleUp,       this);
+    timeline.Bind(wxEVT_MIDDLE_DCLICK,  &Machine::OnMiddleDouble,   this);
+    timeline.Bind(wxEVT_RIGHT_DOWN,     &Machine::OnRightDown,      this);
+    timeline.Bind(wxEVT_RIGHT_UP,       &Machine::OnRightUp,        this);
+    timeline.Bind(wxEVT_RIGHT_DCLICK,   &Machine::OnRightDouble,    this);
+    timeline.Bind(wxEVT_ENTER_WINDOW,   &Machine::OnEnter,          this);
+    timeline.Bind(wxEVT_LEAVE_WINDOW,   &Machine::OnLeave,          this);
+    timeline.Bind(wxEVT_MOUSEWHEEL,     &Machine::OnWheel,          this);
+    timeline.Bind(wxEVT_KEY_DOWN,       &Machine::OnKeyDown,        this);
+    timeline.Bind(wxEVT_KEY_UP,         &Machine::OnKeyUp,          this);
 }
 
 Machine::~Machine()
@@ -80,24 +130,27 @@ Machine::~Machine()
     delete globals;
 }
 
-void Machine::processMouseEvent(wxPoint virtualposition, GuiTimeLineClipPtr clip, wxMouseEvent& event)
-{
-    if (event.LeftDown())
-    {
-        process_event(EvMouse1Down(virtualposition, clip, event));
+void Machine::OnMotion       (wxMouseEvent& event)  { process_event(EvMotion        (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnLeftDown     (wxMouseEvent& event)  { process_event(EvLeftDown      (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnLeftUp       (wxMouseEvent& event)  { process_event(EvLeftUp        (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnLeftDouble   (wxMouseEvent& event)  { process_event(EvLeftDouble    (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnMiddleDown   (wxMouseEvent& event)  { process_event(EvMiddleDown    (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnMiddleUp     (wxMouseEvent& event)  { process_event(EvMiddleUp      (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnMiddleDouble (wxMouseEvent& event)  { process_event(EvMiddleDouble  (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnRightDown    (wxMouseEvent& event)  { process_event(EvRightDown     (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnRightUp      (wxMouseEvent& event)  { process_event(EvRightUp       (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnRightDouble  (wxMouseEvent& event)  { process_event(EvRightDouble   (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnEnter        (wxMouseEvent& event)  { process_event(EvEnter         (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnLeave        (wxMouseEvent& event)  { process_event(EvLeave         (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnWheel        (wxMouseEvent& event)  { process_event(EvWheel         (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnKeyDown      (wxKeyEvent&   event)  { process_event(EvKeyDown       (event)); }
+void Machine::OnKeyUp        (wxKeyEvent&   event)  { process_event(EvKeyUp         (event)); }
 
-    }
-    else if (event.Dragging())
-    {
-        if (event.LeftIsDown())
-        {
-            process_event(mousestate::EvMouse1Drag(virtualposition, clip, event));
-        }
-    }
-    else if (event.LeftUp())
-    {
-        process_event(mousestate::EvMouse1Up(virtualposition, clip, event));
-    }
+wxPoint Machine::unscrolledPosition(wxPoint position) const
+{
+    wxPoint p;
+    timeline.CalcUnscrolledPosition(position.x,position.y,&p.x,&p.y);
+    return p;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,9 +158,7 @@ void Machine::processMouseEvent(wxPoint virtualposition, GuiTimeLineClipPtr clip
 struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
 {
     typedef boost::mpl::list<
-        bs::custom_reaction< EvMouse1Down >,
-        bs::custom_reaction< EvMouse1Up >,
-        bs::custom_reaction< EvMouse1Drag >
+        bs::custom_reaction< EvLeftDown >
     > reactions;
 
     AwaitingAction() // entry
@@ -118,19 +169,20 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
     { 
         LOG_DEBUG; 
     }
-    bs::result react( const EvMouse1Down& evt )
+    bs::result react( const EvLeftDown& evt )
     {
         VAR_DEBUG(evt);
-        if (evt.mClip)
+        GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition);
+        if (clip)
         {
-            BOOST_FOREACH( GuiTimeLineClipPtr clip,outermost_context().globals->SelectedClips )
+            BOOST_FOREACH( GuiTimeLineClipPtr selectedclip,outermost_context().globals->SelectedClips )
             {
-                clip->setSelected(false);
+                selectedclip->setSelected(false);
             }
             outermost_context().globals->SelectedClips.clear();
 
-            evt.mClip->setSelected(true);
-            outermost_context().globals->SelectedClips.insert(evt.mClip);
+            clip->setSelected(true);
+            outermost_context().globals->SelectedClips.insert(clip);
 
             outermost_context().globals->DragStartPosition = evt.mPosition;
             return transit<TestDragStart>();
@@ -138,15 +190,35 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
         else
         {
             outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
+            return transit<MovingCursor>();
         }
         return discard_event();
     }
-    bs::result react( const EvMouse1Up& evt )
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+struct MovingCursor : bs::simple_state< MovingCursor, Machine >
+{
+    typedef boost::mpl::list<
+        bs::custom_reaction< EvLeftUp >,
+        bs::custom_reaction< EvMotion >
+    > reactions;
+
+    MovingCursor() // entry
+    {
+        LOG_DEBUG; 
+    }
+    ~MovingCursor() // exit
+    { 
+        LOG_DEBUG; 
+    }
+    bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
-        return discard_event();
+        return transit<AwaitingAction>();
     }
-    bs::result react( const EvMouse1Drag& evt )
+    bs::result react( const EvMotion& evt )
     {
         VAR_DEBUG(evt);
         outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
@@ -159,9 +231,8 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
 struct TestDragStart : bs::simple_state< TestDragStart, Machine >
 {
     typedef boost::mpl::list<
-        bs::custom_reaction< EvMouse1Down >,
-        bs::custom_reaction< EvMouse1Up >,
-        bs::custom_reaction< EvMouse1Drag >
+        bs::custom_reaction< EvLeftUp >,
+        bs::custom_reaction< EvMotion >
     > reactions;
 
     TestDragStart() // entry
@@ -172,17 +243,12 @@ struct TestDragStart : bs::simple_state< TestDragStart, Machine >
     { 
         LOG_DEBUG; 
     }
-    bs::result react( const EvMouse1Down& evt )
-    {
-        VAR_DEBUG(evt);
-        return discard_event();
-    }
-    bs::result react( const EvMouse1Up& evt )
+    bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
         return transit<AwaitingAction>();
     }
-    bs::result react( const EvMouse1Drag& evt )
+    bs::result react( const EvMotion& evt )
     {
         VAR_DEBUG(evt);
         wxPoint diff = outermost_context().globals->DragStartPosition - evt.mPosition;
@@ -193,7 +259,19 @@ struct TestDragStart : bs::simple_state< TestDragStart, Machine >
             {
                 clip->setBeingDragged(true);
             }
-            outermost_context().timeline.beginDrag(evt.mPosition);
+
+            // Begin the drag operation
+            GuiTimeLine& timeline = outermost_context().timeline;
+            outermost_context().globals->DragImage = new GuiTimeLineDragImage(&timeline, evt.mPosition);
+            GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
+            bool ok = dragimage->BeginDrag(dragimage->getHotspot(), &timeline, false);
+            ASSERT(ok);
+            timeline.Refresh(false);
+            timeline.Update();
+            dragimage->Move(evt.mPosition);
+            dragimage->Show();
+
+            //outermost_context().timeline.beginDrag(evt.mPosition);
             return transit<Dragging>();
         }
         return discard_event();
@@ -205,9 +283,8 @@ struct TestDragStart : bs::simple_state< TestDragStart, Machine >
 struct Dragging : bs::simple_state< Dragging, Machine >
 {
     typedef boost::mpl::list<
-        bs::custom_reaction< EvMouse1Down >,
-        bs::custom_reaction< EvMouse1Up >,
-        bs::custom_reaction< EvMouse1Drag >
+        bs::custom_reaction< EvLeftUp >,
+        bs::custom_reaction< EvMotion >
     > reactions;
 
     Dragging() // entry
@@ -218,25 +295,40 @@ struct Dragging : bs::simple_state< Dragging, Machine >
     { 
         LOG_DEBUG; 
     }
-    bs::result react( const EvMouse1Down& evt )
-    {
-        VAR_DEBUG(evt);
-        return discard_event();
-    }
-    bs::result react( const EvMouse1Up& evt )
+    bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
         BOOST_FOREACH( GuiTimeLineClipPtr clip,outermost_context().globals->SelectedClips )
         {
             clip->setBeingDragged(false);
         }
-        outermost_context().timeline.endDrag(evt.mPosition);
+
+        // End the drag operation
+        GuiTimeLine& timeline = outermost_context().timeline;
+        GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
+        dragimage->Hide();
+        dragimage->EndDrag();
+        timeline.Refresh();
+        delete outermost_context().globals->DragImage;
+        outermost_context().globals->DragImage = 0;
+        //        outermost_context().timeline.endDrag(evt.mPosition);
+
         return transit<AwaitingAction>();
     }
-    bs::result react( const EvMouse1Drag& evt )
+    bs::result react( const EvMotion& evt )
     {
         VAR_DEBUG(evt);
-        outermost_context().timeline.moveDrag(evt.mPosition);
+
+        // Move the drag image
+        GuiTimeLine& timeline = outermost_context().timeline;
+        GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
+        dragimage->Hide();
+        timeline.Refresh(false);
+        timeline.Update();
+        dragimage->Move(evt.mPosition);
+        dragimage->Show();
+        //        outermost_context().timeline.moveDrag(evt.mPosition);
+
         return discard_event();
     }
 };
