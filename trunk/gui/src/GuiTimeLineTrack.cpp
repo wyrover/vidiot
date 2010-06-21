@@ -42,7 +42,7 @@ GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLineZoomPtr zoom, model::TrackPtr trac
     }
 }
 
-void GuiTimeLineTrack::init(GuiTimeLine* timeline)
+void GuiTimeLineTrack::init(GuiTimeLine* timeline, GuiTimeLineClips& allclips)
 {
     ASSERT(mZoom); // Must be initialized
     ASSERT(mTrack); // Must be initialized
@@ -53,9 +53,7 @@ void GuiTimeLineTrack::init(GuiTimeLine* timeline)
 
     BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
     {
-        clip->init(this);
-
-        // todo set position
+        clip->init(this, allclips);
     }
 
     updateBitmap(); // Before binding to clip events to avoid a lot of events
@@ -82,6 +80,11 @@ int GuiTimeLineTrack::getClipHeight() const
 const wxBitmap& GuiTimeLineTrack::getBitmap()
 {
     return mBitmap;
+}
+
+GuiTimeLineClips GuiTimeLineTrack::getClips() const
+{
+    return mClips;
 }
 
 GuiTimeLineClipPtr GuiTimeLineTrack::findClip(int position)

@@ -90,6 +90,11 @@ public:
     GuiTimeLineClipPtr GuiTimeLine::findClip(wxPoint p) const;
     GuiTimeLineTrackPtr findTrack(int yposition) const;
 
+    /**
+     * Returns a list containing ALL the clips currently in this timeline.
+     */
+    GuiTimeLineClips getClips() const;
+
 private:
     GuiTimeLineZoomPtr mZoom;
     PlayerPtr mPlayer;

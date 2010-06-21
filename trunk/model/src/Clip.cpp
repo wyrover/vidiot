@@ -16,6 +16,7 @@ Clip::Clip()
     ,   mRender()
     ,   mOffset(0)
     ,   mLength(0)
+    ,   mLink()
 { 
     VAR_DEBUG(this);
 }
@@ -25,6 +26,7 @@ Clip::Clip(IControlPtr clip)
     ,   mRender(clip)
     ,   mOffset(0)
     ,   mLength(0)
+    ,   mLink()
 { 
     VAR_DEBUG(this);
 }
@@ -49,6 +51,20 @@ void Clip::moveTo(boost::int64_t position)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// LINK
+//////////////////////////////////////////////////////////////////////////
+
+void Clip::setLink(ClipPtr link)
+{
+    mLink = link;
+}
+
+ClipPtr Clip::getLink() const
+{
+    return mLink;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +75,7 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mRender;
     ar & mOffset;
     ar & mLength;
+    ar & mLink;
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Clip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

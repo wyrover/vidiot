@@ -30,8 +30,10 @@ public:
      * Two step construction. First the constructor (in combination with serialize)
      * sets all relevant  members. Second, this method initializes all GUI stuff 
      * including the bitmap. 
+     * @param track track to which this clip belongs
+     * @param allclips list of all clips in the timeline of this clip (used for linking clips)
      */
-    void init(GuiTimeLineTrack* track);
+    void init(GuiTimeLineTrack* track, GuiTimeLineClips& allclips);
 	virtual ~GuiTimeLineClip();
 
     const wxBitmap& getBitmap();
@@ -40,6 +42,8 @@ public:
     void setSelected(bool selected);
     void setBeingDragged(bool beingdragged);
     bool isBeingDragged();
+
+    model::ClipPtr getClip() const;
 
 private:
     GuiTimeLineZoomPtr mZoom;
@@ -52,7 +56,7 @@ private:
     bool mSelected;
     bool mBeingDragged;
     int mWidth;
-    GuiTimeLineClip* mLink;
+    GuiTimeLineClipPtr mLink; /** /todo destruction: these bidi links will keep both ends alive... */
     model::ClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
     wxBitmap mBitmap;

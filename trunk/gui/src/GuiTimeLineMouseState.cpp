@@ -89,11 +89,12 @@ struct GlobalState
     GlobalState()
         :   DragStartPosition(-1,-1)
         ,   DragImage(0)
+        ,   mLastSelected()
     {
     }
     wxPoint DragStartPosition;
     GuiTimeLineDragImage* DragImage;
-    std::set<GuiTimeLineClipPtr> SelectedClips;
+    GuiTimeLineClipPtr mLastSelected;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -181,14 +182,63 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
         GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition);
         if (clip)
         {
-            BOOST_FOREACH( GuiTimeLineClipPtr selectedclip,outermost_context().globals->SelectedClips )
-            {
-                selectedclip->setSelected(false);
-            }
-            outermost_context().globals->SelectedClips.clear();
+            // Must be determined before deselecting all clips.
+            bool lastSelected = outermost_context().globals->mLastSelected ? outermost_context().globals->mLastSelected->isSelected() : true;
+            bool clipSelected = clip->isSelected();
 
-            clip->setSelected(true);
-            outermost_context().globals->SelectedClips.insert(clip);
+            // Deselect all clips first, but only if control is not pressed.
+            if (!evt.mWxEvent.ControlDown())
+            {
+                BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
+                {
+                    c->setSelected(false);
+                }
+            }
+
+            // Range selection. Select from last selected clip until the current clip.
+            // Selection value equals the state of the last selected clip. If that was
+            // just selected, then the whole range is selected. If the last selected 
+            // clip was deselected, then the whole range is deselected.
+            if (evt.mWxEvent.ShiftDown())
+            {
+                GuiTimeLineClipPtr otherend = 
+                    (!outermost_context().globals->mLastSelected) ? \
+                    *(outermost_context().timeline.getClips().begin()) : \
+                    outermost_context().globals->mLastSelected;
+
+                GuiTimeLineClipPtr firstclip;
+                BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
+                {
+                    /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
+                    if (!firstclip)
+                    {
+                        if ((c == clip) || (c == otherend))
+                        {
+                            firstclip = c;
+                        }
+                    }
+                    if (firstclip)
+                    {
+                        c->setSelected(lastSelected);
+                        if ((c != firstclip) && 
+                            ((c == clip) || (c == otherend)))
+                        {
+                            break; // Stop (de)selecting clips
+                        }
+                    }
+                }
+            }
+            else if (evt.mWxEvent.ControlDown())
+            {
+                // Control down implies 'toggle' select.
+                clip->setSelected(!clipSelected);
+                outermost_context().globals->mLastSelected = clip;
+            }
+            else
+            {
+                clip->setSelected(true);
+                outermost_context().globals->mLastSelected = clip;
+            }
 
             outermost_context().globals->DragStartPosition = evt.mPosition;
             return transit<TestDragStart>();
@@ -200,6 +250,7 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
         }
         return discard_event();
     }
+
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -261,9 +312,12 @@ struct TestDragStart : bs::simple_state< TestDragStart, Machine >
         static int tolerance = 2;
         if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
         {
-            BOOST_FOREACH( GuiTimeLineClipPtr clip,outermost_context().globals->SelectedClips )
+            BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
             {
-                clip->setBeingDragged(true);
+                if (c->isSelected())
+                {
+                    c->setBeingDragged(true);
+                }
             }
 
             // Begin the drag operation
@@ -304,9 +358,9 @@ struct Dragging : bs::simple_state< Dragging, Machine >
     bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
-        BOOST_FOREACH( GuiTimeLineClipPtr clip,outermost_context().globals->SelectedClips )
+        BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
         {
-            clip->setBeingDragged(false);
+            c->setBeingDragged(false);
         }
 
         // End the drag operation

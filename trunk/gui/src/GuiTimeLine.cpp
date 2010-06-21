@@ -83,14 +83,17 @@ void GuiTimeLine::init(wxWindow *parent)
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     DetermineWidth();
 
-    // Initialize tracks (this also creates the bitmaps)
+    // Initialize tracks (this also creates the bitmaps).
+    // Furthermore, the list of all clips is passed in order to 
+    // make links between clips.
+    GuiTimeLineClips allclips = getClips();
     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
     {
-        track->init(this);
+        track->init(this, allclips);
     }
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
-        track->init(this);
+        track->init(this, allclips);
     }
 
     wxGetApp().Bind(PROJECT_EVENT_ADD_ASSET,        &GuiTimeLine::OnProjectAssetAdded,     this);
@@ -309,6 +312,20 @@ GuiTimeLineTrackPtr GuiTimeLine::findTrack(int yposition) const
         if (yposition <= bottom && yposition >= top) return track;
     }
     return GuiTimeLineTrackPtr();
+}
+
+GuiTimeLineClips GuiTimeLine::getClips() const
+{
+    GuiTimeLineClips clips;
+    BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+    {
+        clips.splice(clips.begin(), track->getClips());
+    }
+    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
+    {
+        clips.splice(clips.begin(), track->getClips());
+    }
+    return clips;
 }
 
 //////////////////////////////////////////////////////////////////////////

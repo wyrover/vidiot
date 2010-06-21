@@ -3,6 +3,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/pen.h>
+#include <boost/foreach.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -23,19 +24,29 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineZoomPtr zoom,
                                  model::ClipPtr clip)
 :   wxEvtHandler()
 ,   mZoom(zoom)
-,   mClip(clip) /** /todo how to determine linked clip */
+,   mClip(clip)
 ,   mThumbnail()
 ,   mWidth(0)
 ,   mBitmap()
+,   mLink()
 ,   mTrack(0)
 ,   mSelected(false)
 ,   mBeingDragged(false)
 {
 }
 
-void GuiTimeLineClip::init(GuiTimeLineTrack* track)
+void GuiTimeLineClip::init(GuiTimeLineTrack* track, GuiTimeLineClips& allclips)
 {
     mTrack = track;
+    BOOST_FOREACH( GuiTimeLineClipPtr guiClip, allclips )
+    {
+        /** /todo time consuming (n*n) */
+        if (mClip->getLink() == guiClip->getClip())
+        {
+            mLink = guiClip;
+            break;
+        }
+    }
     updateSize(); // Also creates bitmap
 }
 
@@ -94,20 +105,34 @@ bool GuiTimeLineClip::isSelected() const
 
 void GuiTimeLineClip::setSelected(bool selected)
 {
-    mSelected = selected;
-    updateBitmap();
+    if (selected != mSelected)
+    {
+        // This if statement is needed to avoid endless 
+        // loops when also selecting the linked clip.
+        mSelected = selected;
+        updateBitmap();
+        if (mLink)
+        {
+            mLink->setSelected(selected);
+        }
+    }
 }
 
 void GuiTimeLineClip::setBeingDragged(bool beingdragged)
 {
     mBeingDragged = beingdragged;
-    updateBitmap();
+    // Event is needed to trigger track redraw (without this clip)
     QueueEvent(new ClipUpdateEvent(shared_from_this()));
 }
 
 bool GuiTimeLineClip::isBeingDragged()
 {
     return mBeingDragged;
+}
+
+model::ClipPtr GuiTimeLineClip::getClip() const
+{
+    return mClip;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -119,6 +144,7 @@ void GuiTimeLineClip::serialize(Archive & ar, const unsigned int version)
 {
     ar & mZoom;
     ar & mClip;
+    //NOT: ar & mLink; These are restored in 'init()'
 }
 template void GuiTimeLineClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLineClip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

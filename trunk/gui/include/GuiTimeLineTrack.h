@@ -32,9 +32,11 @@ public:
     /**
      * Two step construction. First the constructor (in combination with serialize)
      * sets all relevant  members. Second, this method initializes all GUI stuff 
-     * including the bitmap. 
+     * including the bitmap.
+     * @param timeline timeline to which this track belongs
+     * @param allclips list of all clips in this timeline (used for linking clips together)
      */
-    void init(GuiTimeLine* timeline);
+    void init(GuiTimeLine* timeline, GuiTimeLineClips& allclips);
 	virtual ~GuiTimeLineTrack();
 
     int getClipHeight() const;
@@ -42,6 +44,8 @@ public:
     // todo hide this as the getheight should not be used on the bitmap but on the track
     // for initialization purposes.
     const wxBitmap& getBitmap();
+
+    GuiTimeLineClips getClips() const;
 
     void drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask = boost::none) const;
 

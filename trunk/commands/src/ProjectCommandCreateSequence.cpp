@@ -64,10 +64,10 @@ bool ProjectCommandCreateSequence::Do()
                     model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
                     model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
                     model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
+                    videoClip->setLink(audioClip);
+                    audioClip->setLink(videoClip);
                     videoTrack->addVideoClip(videoClip);
                     audioTrack->addAudioClip(audioClip);
-
-                    /** @todo videoClip->link(audioClip); */
                 }
             }
         }
