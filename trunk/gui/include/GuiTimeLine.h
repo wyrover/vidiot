@@ -7,6 +7,7 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "GuiDataObject.h"
 #include "ModelPtr.h"
@@ -72,6 +73,10 @@ public:
     model::SequencePtr getSequence() const;
     int getWidth() const;
 
+    bool isOnBeginOfClip(wxPoint virtualposition);
+    bool isOnEndOfClip(wxPoint virtualposition);
+    bool isBetweenClips(wxPoint virtualposition);
+
     //////////////////////////////////////////////////////////////////////////
     // CURSOR
     //////////////////////////////////////////////////////////////////////////
@@ -86,8 +91,10 @@ public:
 
     /**
      * @param p Position in logical (scrolled) coordinates
+     * @return found clip and its leftmost position within the track
+     * @return null pointer and 0 if not found
      */
-    GuiTimeLineClipPtr GuiTimeLine::findClip(wxPoint p) const;
+    boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLine::findClip(wxPoint p) const;
     GuiTimeLineTrackPtr findTrack(int yposition) const;
 
     /**
@@ -115,6 +122,11 @@ private:
     GuiTimeLineTracks mAudioTracks;
 
     wxPoint mOrigin;
+
+    wxCursor mCursorMoveCut;
+    wxCursor mCursorTrimBegin;
+    wxCursor mCursorTrimEnd;
+
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

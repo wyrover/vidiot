@@ -165,7 +165,8 @@ wxPoint Machine::unscrolledPosition(wxPoint position) const
 struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
 {
     typedef boost::mpl::list<
-        bs::custom_reaction< EvLeftDown >
+        bs::custom_reaction< EvLeftDown >,
+        bs::custom_reaction< EvMotion >
     > reactions;
 
     AwaitingAction() // entry
@@ -179,7 +180,7 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
     bs::result react( const EvLeftDown& evt )
     {
         VAR_DEBUG(evt);
-        GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition);
+        GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition).get<0>();
         if (clip)
         {
             // Must be determined before deselecting all clips.
@@ -250,7 +251,25 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
         }
         return discard_event();
     }
+    bs::result react( const EvMotion& evt )
+    {
+        VAR_DEBUG(evt);
+        if (outermost_context().timeline.isOnBeginOfClip(evt.mPosition))
+        {
 
+        }
+        else if (outermost_context().timeline.isOnEndOfClip(evt.mPosition))
+        {
+
+        }
+        else if ((outermost_context().timeline.isBetweenClips(evt.mPosition)))
+        {
+
+        }
+
+
+        return discard_event();
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////
