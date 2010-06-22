@@ -8,6 +8,8 @@
 #include "wxInclude.h"
 #include <wx/dcclient.h>
 #include <wx/pen.h>
+#include <wx/image.h>
+#include <wx/bitmap.h>
 #include <math.h>
 #include <algorithm>
 #include "UtilLog.h"
@@ -26,6 +28,9 @@
 #include "ProjectEventAddAsset.h"
 #include "ProjectEventDeleteAsset.h"
 #include "ProjectEventRenameAsset.h"
+#include "cursor_move_cut.xpm"
+#include "cursor_trim_begin.xpm"
+#include "cursor_trim_end.xpm"
 
 static int sTimeScaleMinutesHeight = 10;
 static int sTimeScaleSecondHeight = 5;
@@ -40,6 +45,8 @@ static int sAudioVideoDividerHeight = 5;
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
+
+
 GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 :   wxScrolledWindow()
 ,   mZoom(boost::make_shared<GuiTimeLineZoom>()) // May be reset upon recovery
@@ -53,6 +60,9 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mPlayer()
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
+,   mCursorMoveCut()
+,   mCursorTrimBegin()
+,   mCursorTrimEnd()
 {
 	LOG_INFO;
 
@@ -69,6 +79,24 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
             mAudioTracks.push_back(boost::make_shared<GuiTimeLineTrack>(mZoom, boost::static_pointer_cast<model::Track>(track)));
         }
     }
+
+    wxImage image;
+    image = wxBitmap(cursor_move_cut_xpm).ConvertToImage();
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    mCursorMoveCut = wxCursor(image);
+
+    image = wxBitmap(cursor_trim_begin_xpm).ConvertToImage();
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    mCursorTrimBegin = wxCursor(image);
+
+    image = wxBitmap(cursor_trim_end_xpm).ConvertToImage();
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    mCursorTrimEnd = wxCursor(image);
+
+//    SetCursor(mCursorMoveCut);
 }
 
 void GuiTimeLine::init(wxWindow *parent)
@@ -255,6 +283,55 @@ int GuiTimeLine::getWidth() const
     return mWidth;
 }
 
+bool GuiTimeLine::isOnBeginOfClip(wxPoint virtualposition)
+{
+    boost::tuple<GuiTimeLineClipPtr,int> clip = findClip(virtualposition);
+    if (!clip.get<0>())
+    {
+        return false;
+    }
+    int dist_begin = virtualposition.x - clip.get<1>();
+    if ((dist_begin > 1) && (dist_begin < 4))
+    {
+        SetCursor(mCursorTrimBegin);
+    }
+    return (dist_begin > 1) && (dist_begin < 4);
+
+}
+
+bool GuiTimeLine::isOnEndOfClip(wxPoint virtualposition)
+{
+    boost::tuple<GuiTimeLineClipPtr,int> clip = findClip(virtualposition);
+    if (!clip.get<0>())
+    {
+        return false;
+    }
+    int dist_end = clip.get<1>() + clip.get<0>()->getBitmap().GetWidth() - virtualposition.x;
+    if ((dist_end > 1) && (dist_end < 4))
+    {
+        SetCursor(mCursorTrimEnd);
+    }
+    return (dist_end > 1) && (dist_end < 4);
+}
+
+bool GuiTimeLine::isBetweenClips(wxPoint virtualposition)
+{
+    boost::tuple<GuiTimeLineClipPtr,int> clip = findClip(virtualposition);
+    if (!clip.get<0>())
+    {
+        return false;
+    }
+    int dist_begin = virtualposition.x - clip.get<1>();
+    int dist_end = clip.get<1>() + clip.get<0>()->getBitmap().GetWidth() - virtualposition.x;
+    if ((dist_begin <= 1) || (dist_end <= 1))
+    {
+        SetCursor(mCursorMoveCut);
+    }
+    return (dist_begin <= 1) || (dist_end <= 1);
+}
+
+
+
 //////////////////////////////////////////////////////////////////////////
 // CURSOR
 //////////////////////////////////////////////////////////////////////////
@@ -285,7 +362,7 @@ void GuiTimeLine::moveCursorOnUser(int position)
 //////////////////////////////////////////////////////////////////////////
 
 
-GuiTimeLineClipPtr GuiTimeLine::findClip(wxPoint p) const
+boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLine::findClip(wxPoint p) const
 {
     GuiTimeLineTrackPtr track = findTrack(p.y);
     if (track)

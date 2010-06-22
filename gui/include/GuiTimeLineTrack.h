@@ -49,7 +49,11 @@ public:
 
     void drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask = boost::none) const;
 
-    GuiTimeLineClipPtr findClip(int position);
+    /**
+     * @return found clip and its leftmost position within the track
+     * @return null pointer and 0 if not found
+     */
+    boost::tuple<GuiTimeLineClipPtr,int> findClip(int position);
     boost::tuple<int,int> findClipBounds(GuiTimeLineClipPtr findclip);
 
     //////////////////////////////////////////////////////////////////////////

@@ -87,7 +87,7 @@ GuiTimeLineClips GuiTimeLineTrack::getClips() const
     return mClips;
 }
 
-GuiTimeLineClipPtr GuiTimeLineTrack::findClip(int position)
+boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLineTrack::findClip(int position)
 {
     int left = sTrackBorderSize;
     int right = left;
@@ -97,11 +97,11 @@ GuiTimeLineClipPtr GuiTimeLineTrack::findClip(int position)
         right += width;
         if (position >= left && position <= right)
         {
-            return clip;
+            return boost::make_tuple(clip,left);
         }
         left += width;
     }
-    return GuiTimeLineClipPtr();
+    return boost::make_tuple(GuiTimeLineClipPtr(),0);
 }
 
 boost::tuple<int,int> GuiTimeLineTrack::findClipBounds(GuiTimeLineClipPtr findclip)
