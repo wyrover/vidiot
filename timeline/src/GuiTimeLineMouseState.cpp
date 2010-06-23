@@ -91,13 +91,13 @@ struct GlobalState
         :   DragStartPosition(-1,-1)
         ,   DragImage(0)
         ,   mLastSelected()
-        ,   Pointers(timeline)
+        ,   mousepointer(timeline)
     {
     }
     wxPoint DragStartPosition;
     GuiTimeLineDragImage* DragImage;
     GuiTimeLineClipPtr mLastSelected;
-    Pointers Pointers;
+    MousePointer mousepointer;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -257,20 +257,7 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
     bs::result react( const EvMotion& evt )
     {
         VAR_DEBUG(evt);
-        if (outermost_context().globals->Pointers.isOnBeginOfClip(evt.mPosition))
-        {
-
-        }
-        else if (outermost_context().globals->Pointers.isOnEndOfClip(evt.mPosition))
-        {
-
-        }
-        else if ((outermost_context().globals->Pointers.isBetweenClips(evt.mPosition)))
-        {
-
-        }
-
-
+        outermost_context().globals->mousepointer.updateOnHover(evt.mPosition);
         return discard_event();
     }
 };

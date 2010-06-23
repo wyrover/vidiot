@@ -6,7 +6,7 @@
 
 class GuiTimeLine;
 
-class Pointers
+class MousePointer
 {
 public:
 
@@ -14,21 +14,20 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    Pointers(GuiTimeLine& timeline);
+    MousePointer(GuiTimeLine& timeline);
 
-    virtual ~Pointers();
+    virtual ~MousePointer();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    bool isOnBeginOfClip(wxPoint virtualposition);
-    bool isOnEndOfClip(wxPoint virtualposition);
-    bool isBetweenClips(wxPoint virtualposition);
+    void updateOnHover(wxPoint virtualposition);
 
 private:
     GuiTimeLine& mTimeline;
 
+    wxCursor mCursorNormal;
     wxCursor mCursorMoveCut;
     wxCursor mCursorTrimBegin;
     wxCursor mCursorTrimEnd;
