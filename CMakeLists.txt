@@ -94,6 +94,7 @@ ENDMACRO(FINDFILES)
 FINDFILES(model)
 FINDFILES(model_event)
 FINDFILES(gui)
+FINDFILES(timeline)
 FINDFILES(commands)
 FINDFILES(util)
 FILE(GLOB Icons             ${PROJECT_SOURCE_DIR}/icons/*?.???)
@@ -121,13 +122,10 @@ ENDMACRO(GROUPFILES)
 GROUPFILES(model)
 GROUPFILES(model_event)
 GROUPFILES(gui)
+GROUPFILES(timeline)
 GROUPFILES(commands)
 GROUPFILES(util)
 SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
 SOURCE_GROUP("cursors"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/cursors/*.*)
 SOURCE_GROUP("cfg" FILES ${CmakeModulesFiles} ${TextFiles})
 set_source_files_properties(${CmakeFiles} ${ConfigurationFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
-
-
-
- 
