@@ -73,10 +73,6 @@ public:
     model::SequencePtr getSequence() const;
     int getWidth() const;
 
-    bool isOnBeginOfClip(wxPoint virtualposition);
-    bool isOnEndOfClip(wxPoint virtualposition);
-    bool isBetweenClips(wxPoint virtualposition);
-
     //////////////////////////////////////////////////////////////////////////
     // CURSOR
     //////////////////////////////////////////////////////////////////////////
@@ -122,11 +118,6 @@ private:
     GuiTimeLineTracks mAudioTracks;
 
     wxPoint mOrigin;
-
-    wxCursor mCursorMoveCut;
-    wxCursor mCursorTrimBegin;
-    wxCursor mCursorTrimEnd;
-
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

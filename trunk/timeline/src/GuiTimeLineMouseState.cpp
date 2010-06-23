@@ -13,6 +13,7 @@
 #include "GuiTimeLine.h"
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLineDragImage.h"
+#include "Pointers.h"
 #include "UtilLog.h"
 
 namespace mousestate {
@@ -86,15 +87,17 @@ struct EvKeyUp   : EvKey<EvKeyUp>   { EvKeyUp   (wxKeyEvent& wxevt, wxPoint pos)
 
 struct GlobalState
 {
-    GlobalState()
+    GlobalState(GuiTimeLine& timeline)
         :   DragStartPosition(-1,-1)
         ,   DragImage(0)
         ,   mLastSelected()
+        ,   Pointers(timeline)
     {
     }
     wxPoint DragStartPosition;
     GuiTimeLineDragImage* DragImage;
     GuiTimeLineClipPtr mLastSelected;
+    Pointers Pointers;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -112,7 +115,7 @@ struct Dragging;
 Machine::Machine(GuiTimeLine& tl)
 :   timeline(tl)
 {
-    globals = new GlobalState();
+    globals = new GlobalState(tl);
     initiate();
 
     timeline.Bind(wxEVT_MOTION,         &Machine::OnMotion,         this);
@@ -254,15 +257,15 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
     bs::result react( const EvMotion& evt )
     {
         VAR_DEBUG(evt);
-        if (outermost_context().timeline.isOnBeginOfClip(evt.mPosition))
+        if (outermost_context().globals->Pointers.isOnBeginOfClip(evt.mPosition))
         {
 
         }
-        else if (outermost_context().timeline.isOnEndOfClip(evt.mPosition))
+        else if (outermost_context().globals->Pointers.isOnEndOfClip(evt.mPosition))
         {
 
         }
-        else if ((outermost_context().timeline.isBetweenClips(evt.mPosition)))
+        else if ((outermost_context().globals->Pointers.isBetweenClips(evt.mPosition)))
         {
 
         }
