@@ -37,21 +37,23 @@ struct Machine
     GuiTimeLine& timeline;
     GlobalState* globals;
     
-    void OnMotion       (wxMouseEvent& event);
-    void OnLeftDown     (wxMouseEvent& event);
-    void OnLeftUp       (wxMouseEvent& event);
-    void OnLeftDouble   (wxMouseEvent& event);
-    void OnMiddleDown   (wxMouseEvent& event);
-    void OnMiddleUp     (wxMouseEvent& event);
-    void OnMiddleDouble (wxMouseEvent& event);
-    void OnRightDown    (wxMouseEvent& event);
-    void OnRightUp      (wxMouseEvent& event);
-    void OnRightDouble  (wxMouseEvent& event);
-    void OnEnter        (wxMouseEvent& event);
-    void OnLeave        (wxMouseEvent& event);
-    void OnWheel        (wxMouseEvent& event);
-    void OnKeyDown      (wxKeyEvent&   event);
-    void OnKeyUp        (wxKeyEvent&   event);
+    void OnMotion           (wxMouseEvent& event);
+    void OnLeftDown         (wxMouseEvent& event);
+    void OnLeftUp           (wxMouseEvent& event);
+    void OnLeftDouble       (wxMouseEvent& event);
+    void OnMiddleDown       (wxMouseEvent& event);
+    void OnMiddleUp         (wxMouseEvent& event);
+    void OnMiddleDouble     (wxMouseEvent& event);
+    void OnRightDown        (wxMouseEvent& event);
+    void OnRightUp          (wxMouseEvent& event);
+    void OnRightDouble      (wxMouseEvent& event);
+    void OnEnter            (wxMouseEvent& event);
+    void OnLeave            (wxMouseEvent& event);
+    void OnWheel            (wxMouseEvent& event);
+    void OnKeyDown          (wxKeyEvent&   event);
+    void OnKeyUp            (wxKeyEvent&   event);
+    void OnCaptureLost      (wxMouseCaptureLostEvent& event);
+    void OnCaptureChanged   (wxMouseCaptureChangedEvent& event);
 
     /**
      * Converts a wxevent position to a virtual position on the 
