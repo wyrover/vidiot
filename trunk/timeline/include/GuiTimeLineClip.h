@@ -33,7 +33,7 @@ public:
      * @param track track to which this clip belongs
      * @param allclips list of all clips in the timeline of this clip (used for linking clips)
      */
-    void init(GuiTimeLineTrack* track, GuiTimeLineClips& allclips);
+    void init(boost::weak_ptr<GuiTimeLineTrack> track, GuiTimeLineClips& allclips);
 	virtual ~GuiTimeLineClip();
 
     const wxBitmap& getBitmap();
@@ -43,11 +43,13 @@ public:
     void setBeingDragged(bool beingdragged);
     bool isBeingDragged();
 
+    GuiTimeLineTrackPtr getTrack() const;
+    
     model::ClipPtr getClip() const;
 
 private:
     GuiTimeLineZoomPtr mZoom;
-    GuiTimeLineTrack* mTrack;
+    boost::weak_ptr<GuiTimeLineTrack> mTrack;
 
     void updateSize();
     void updateThumbnail();

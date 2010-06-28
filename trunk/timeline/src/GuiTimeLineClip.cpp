@@ -29,13 +29,13 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineZoomPtr zoom,
 ,   mWidth(0)
 ,   mBitmap()
 ,   mLink()
-,   mTrack(0)
+,   mTrack()
 ,   mSelected(false)
 ,   mBeingDragged(false)
 {
 }
 
-void GuiTimeLineClip::init(GuiTimeLineTrack* track, GuiTimeLineClips& allclips)
+void GuiTimeLineClip::init(boost::weak_ptr<GuiTimeLineTrack> track, GuiTimeLineClips& allclips)
 {
     mTrack = track;
     BOOST_FOREACH( GuiTimeLineClipPtr guiClip, allclips )
@@ -62,7 +62,7 @@ const wxBitmap& GuiTimeLineClip::getBitmap()
 void GuiTimeLineClip::updateSize()
 {
     mWidth = mZoom->ptsToPixels(mClip->getNumberOfFrames());
-    mBitmap.Create(mWidth,mTrack->getBitmap().GetHeight());
+    mBitmap.Create(mWidth,getTrack()->getBitmap().GetHeight());
     updateThumbnail();
 }
 
@@ -133,6 +133,11 @@ bool GuiTimeLineClip::isBeingDragged()
 model::ClipPtr GuiTimeLineClip::getClip() const
 {
     return mClip;
+}
+
+GuiTimeLineTrackPtr GuiTimeLineClip::getTrack() const
+{
+    return mTrack.lock();
 }
 
 //////////////////////////////////////////////////////////////////////////
