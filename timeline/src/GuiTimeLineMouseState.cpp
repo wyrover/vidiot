@@ -3,8 +3,6 @@
 #include <set>
 #include <wx/event.h>
 #include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/bind/placeholders.hpp>
 #include <boost/function.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include <boost/statechart/state.hpp>
@@ -12,8 +10,10 @@
 #include <boost/statechart/custom_reaction.hpp>
 #include "GuiTimeLine.h"
 #include "GuiTimeLineClip.h"
+#include "GuiTimeLineTrack.h"
 #include "GuiTimeLineDragImage.h"
-#include "Pointers.h"
+#include "MousePointer.h"
+#include "Selection.h"
 #include "UtilLog.h"
 
 namespace mousestate {
@@ -90,14 +90,15 @@ struct GlobalState
     GlobalState(GuiTimeLine& timeline)
         :   DragStartPosition(-1,-1)
         ,   DragImage(0)
-        ,   mLastSelected()
         ,   mousepointer(timeline)
+        ,   selection(timeline)
     {
     }
     wxPoint DragStartPosition;
     GuiTimeLineDragImage* DragImage;
-    GuiTimeLineClipPtr mLastSelected;
     MousePointer mousepointer;
+    Selection selection;
+
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -165,18 +166,22 @@ wxPoint Machine::unscrolledPosition(wxPoint position) const
 
 //////////////////////////////////////////////////////////////////////////
 
-struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
+
+
+//////////////////////////////////////////////////////////////////////////
+
+struct Idle : bs::simple_state< Idle, Machine >
 {
     typedef boost::mpl::list<
         bs::custom_reaction< EvLeftDown >,
         bs::custom_reaction< EvMotion >
     > reactions;
 
-    AwaitingAction() // entry
+    Idle() // entry
     {
         LOG_DEBUG; 
     }
-    ~AwaitingAction() // exit
+    ~Idle() // exit
     { 
         LOG_DEBUG; 
     }
@@ -184,66 +189,9 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
     {
         VAR_DEBUG(evt);
         GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition).get<0>();
+        outermost_context().globals->selection.update(clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
         if (clip)
         {
-            // Must be determined before deselecting all clips.
-            bool lastSelected = outermost_context().globals->mLastSelected ? outermost_context().globals->mLastSelected->isSelected() : true;
-            bool clipSelected = clip->isSelected();
-
-            // Deselect all clips first, but only if control is not pressed.
-            if (!evt.mWxEvent.ControlDown())
-            {
-                BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
-                {
-                    c->setSelected(false);
-                }
-            }
-
-            // Range selection. Select from last selected clip until the current clip.
-            // Selection value equals the state of the last selected clip. If that was
-            // just selected, then the whole range is selected. If the last selected 
-            // clip was deselected, then the whole range is deselected.
-            if (evt.mWxEvent.ShiftDown())
-            {
-                GuiTimeLineClipPtr otherend = 
-                    (!outermost_context().globals->mLastSelected) ? \
-                    *(outermost_context().timeline.getClips().begin()) : \
-                    outermost_context().globals->mLastSelected;
-
-                GuiTimeLineClipPtr firstclip;
-                BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
-                {
-                    /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
-                    if (!firstclip)
-                    {
-                        if ((c == clip) || (c == otherend))
-                        {
-                            firstclip = c;
-                        }
-                    }
-                    if (firstclip)
-                    {
-                        c->setSelected(lastSelected);
-                        if ((c != firstclip) && 
-                            ((c == clip) || (c == otherend)))
-                        {
-                            break; // Stop (de)selecting clips
-                        }
-                    }
-                }
-            }
-            else if (evt.mWxEvent.ControlDown())
-            {
-                // Control down implies 'toggle' select.
-                clip->setSelected(!clipSelected);
-                outermost_context().globals->mLastSelected = clip;
-            }
-            else
-            {
-                clip->setSelected(true);
-                outermost_context().globals->mLastSelected = clip;
-            }
-
             outermost_context().globals->DragStartPosition = evt.mPosition;
             return transit<TestDragStart>();
         }
@@ -257,7 +205,15 @@ struct AwaitingAction : bs::simple_state< AwaitingAction, Machine >
     bs::result react( const EvMotion& evt )
     {
         VAR_DEBUG(evt);
-        outermost_context().globals->mousepointer.updateOnHover(evt.mPosition);
+        MousePosition pos = outermost_context().globals->mousepointer.getLogicalPosition(evt.mPosition);
+        MousePointerImage image = PointerNormal;
+        switch (pos)
+        {
+        case MouseOnClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
+        case MouseBetweenClips:     image = PointerMoveCut;     break;
+        case MouseOnClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+        }
+        outermost_context().globals->mousepointer.set(image);
         return discard_event();
     }
 };
@@ -282,7 +238,7 @@ struct MovingCursor : bs::simple_state< MovingCursor, Machine >
     bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
-        return transit<AwaitingAction>();
+        return transit<Idle>();
     }
     bs::result react( const EvMotion& evt )
     {
@@ -312,7 +268,7 @@ struct TestDragStart : bs::simple_state< TestDragStart, Machine >
     bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
-        return transit<AwaitingAction>();
+        return transit<Idle>();
     }
     bs::result react( const EvMotion& evt )
     {
@@ -356,6 +312,7 @@ struct Dragging : bs::simple_state< Dragging, Machine >
         bs::custom_reaction< EvMotion >
     > reactions;
 
+    /** /todo handle mouse focus lost */
     Dragging() // entry
     {
         LOG_DEBUG; 
@@ -382,7 +339,7 @@ struct Dragging : bs::simple_state< Dragging, Machine >
         outermost_context().globals->DragImage = 0;
         //        outermost_context().timeline.endDrag(evt.mPosition);
 
-        return transit<AwaitingAction>();
+        return transit<Idle>();
     }
     bs::result react( const EvMotion& evt )
     {
@@ -391,12 +348,49 @@ struct Dragging : bs::simple_state< Dragging, Machine >
         // Move the drag image
         GuiTimeLine& timeline = outermost_context().timeline;
         GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
-        dragimage->Hide();
+        //dragimage->Hide();
         timeline.Refresh(false);
         timeline.Update();
+        //dragimage->Show();
         dragimage->Move(evt.mPosition);
-        dragimage->Show();
-        //        outermost_context().timeline.moveDrag(evt.mPosition);
+
+        // Determine nearest drop point
+        boost::tuple<GuiTimeLineTrackPtr,int> tt = timeline.findTrack(evt.mPosition.y);
+        boost::tuple<GuiTimeLineClipPtr,int> cw = timeline.findClip(evt.mPosition);
+        GuiTimeLineTrackPtr track = tt.get<0>();
+        GuiTimeLineClipPtr clip = cw.get<0>();
+
+        int trackIndex = track->getIndex();
+
+        if (track)
+        {
+            int xDrop = -1;
+            if (clip)
+            {
+                boost::tuple<int,int> clipbounds = clip->getTrack()->findClipBounds(clip);
+
+                int diffleft  = evt.mPosition.x - clipbounds.get<0>();
+                int diffright = clipbounds.get<1>() - evt.mPosition.x;
+
+                if (diffleft < diffright)
+                {
+                    xDrop = clipbounds.get<0>() - 2;
+                }
+                else
+                {
+                    xDrop = clipbounds.get<1>() - 2;
+                }
+                timeline.showDropArea(wxRect(xDrop,tt.get<1>(),4,track->getBitmap().GetHeight())); 
+            }
+            else
+            {
+                timeline.showDropArea(wxRect(evt.mPosition.x,tt.get<1>(),4,track->getBitmap().GetHeight())); 
+            }
+        }
+        else
+        {
+            timeline.showDropArea(wxRect(0,0,0,0));
+        }
 
         return discard_event();
     }

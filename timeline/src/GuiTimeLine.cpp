@@ -55,6 +55,7 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mPlayer()
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
+,   mDropArea(0,0,0,0)
 {
 	LOG_INFO;
 
@@ -229,6 +230,14 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     // Draw cursor
     dc.SetPen(wxPen(*wxRED, 1));
     dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,mHeight));
+
+    // Draw drop area
+    if (!mDropArea.IsEmpty())
+    {
+        dc.SetPen(wxPen(*wxYELLOW, 1));
+        dc.SetBrush(*wxYELLOW_BRUSH);
+        dc.DrawRectangle(mDropArea);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -255,6 +264,39 @@ model::SequencePtr GuiTimeLine::getSequence() const
 int GuiTimeLine::getWidth() const
 {
     return mWidth;
+}
+
+int GuiTimeLine::getIndex(GuiTimeLineTrackPtr track) const
+{
+    int index = 0;
+    BOOST_FOREACH( GuiTimeLineTrackPtr t, mVideoTracks )
+    {
+        index++;
+        if (t == track)
+        {
+            return index;
+        }
+    }
+    index = 0;
+    BOOST_FOREACH( GuiTimeLineTrackPtr t, mAudioTracks )
+    {
+        index--;
+        if (t == track)
+        {
+            return index;
+        }
+    }
+}
+
+void GuiTimeLine::showDropArea(wxRect area)
+{
+    if (mDropArea != area)
+    {
+        mDropArea = area;
+        Refresh(false);
+        Update();
+
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -289,31 +331,31 @@ void GuiTimeLine::moveCursorOnUser(int position)
 
 boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLine::findClip(wxPoint p) const
 {
-    GuiTimeLineTrackPtr track = findTrack(p.y);
+    GuiTimeLineTrackPtr track = findTrack(p.y).get<0>();
     if (track)
     {
         return track->findClip(p.x);
     }
-    return GuiTimeLineClipPtr();
+    return boost::make_tuple(GuiTimeLineClipPtr(),0);
 }
 
-GuiTimeLineTrackPtr GuiTimeLine::findTrack(int yposition) const
+boost::tuple<GuiTimeLineTrackPtr,int> GuiTimeLine::findTrack(int yposition) const
 {
     int top = mDividerPosition;
     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
     {
         int bottom = top;
         top -= track->getBitmap().GetHeight();
-        if (yposition <= bottom && yposition >= top) return track;
+        if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
     }
     int bottom = mDividerPosition + sAudioVideoDividerHeight;
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
         int top = bottom;
         bottom += track->getBitmap().GetHeight();
-        if (yposition <= bottom && yposition >= top) return track;
+        if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
     }
-    return GuiTimeLineTrackPtr();
+    return boost::make_tuple(GuiTimeLineTrackPtr(),0);
 }
 
 GuiTimeLineClips GuiTimeLine::getClips() const
@@ -370,6 +412,7 @@ void GuiTimeLine::updateSize()
 
     updateBitmap();
 }
+
 
  void GuiTimeLine::updateBitmap()
  {

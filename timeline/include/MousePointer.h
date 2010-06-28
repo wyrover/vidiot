@@ -3,8 +3,24 @@
 
 #include <wx/gdicmn.h>
 #include <wx/cursor.h>
+#include "UtilEnum.h"
 
 class GuiTimeLine;
+
+DECLAREENUM(MousePosition, \
+            MouseBetweenClips, \
+            MouseOnClipBegin, \
+            MouseOnClipInterior, \
+            MouseOnClipEnd, \
+            MouseNotOnClip);
+
+DECLAREENUM(MousePointerImage, \
+            PointerNormal, \
+            PointerMoveCut, \
+            PointerTrimBegin, \
+            PointerTrimShiftBegin, \
+            PointerTrimEnd, \
+            PointerTrimShiftEnd);
 
 class MousePointer
 {
@@ -22,7 +38,9 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void updateOnHover(wxPoint virtualposition);
+    void set(MousePointerImage image);
+
+    MousePosition getLogicalPosition(wxPoint virtualposition) const;
 
 private:
     GuiTimeLine& mTimeline;
@@ -30,7 +48,9 @@ private:
     wxCursor mCursorNormal;
     wxCursor mCursorMoveCut;
     wxCursor mCursorTrimBegin;
+    wxCursor mCursorTrimShiftBegin;
     wxCursor mCursorTrimEnd;
+    wxCursor mCursorTrimShiftEnd;
 };
 
 #endif // POINTERS_H

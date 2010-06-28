@@ -7,6 +7,7 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "GuiDataObject.h"
@@ -66,12 +67,18 @@ public:
     wxBitmap getDragBitmap(wxPoint& hostspot);// const;
     void updateBitmap();
 
+    void showDropArea(wxRect area); 
+
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     model::SequencePtr getSequence() const;
     int getWidth() const;
+    /**
+     * @return index of given track. Audio tracks have a negative number.
+     */
+    int getIndex(GuiTimeLineTrackPtr track) const;
 
     //////////////////////////////////////////////////////////////////////////
     // CURSOR
@@ -86,12 +93,18 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /**
-     * @param p Position in logical (scrolled) coordinates
+     * @param p position in virtual coordinates (thus, on the bitmap, not on the client area)
      * @return found clip and its leftmost position within the track
      * @return null pointer and 0 if not found
      */
-    boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLine::findClip(wxPoint p) const;
-    GuiTimeLineTrackPtr findTrack(int yposition) const;
+    boost::tuple<GuiTimeLineClipPtr, int> findClip(wxPoint p) const;
+
+    /**
+     * @param yposition y position in virtual coordinates (thus, on the bitmap, not on the client area)
+     * @return found track and its top position within the timeline
+     * @return null pointer and 0 if not found
+     */
+    boost::tuple<GuiTimeLineTrackPtr,int> findTrack(int yposition) const;
 
     /**
      * Returns a list containing ALL the clips currently in this timeline.
@@ -106,6 +119,7 @@ private:
     double mPlaybackTime;
     long mWidth;
     long mHeight;
+    wxRect mDropArea;
 
     /** Y-position of audio-video divider */
     int mDividerPosition;

@@ -53,7 +53,7 @@ void GuiTimeLineTrack::init(GuiTimeLine* timeline, GuiTimeLineClips& allclips)
 
     BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
     {
-        clip->init(this, allclips);
+        clip->init(shared_from_this(), allclips);
     }
 
     updateBitmap(); // Before binding to clip events to avoid a lot of events
@@ -75,6 +75,11 @@ GuiTimeLineTrack::~GuiTimeLineTrack()
 int GuiTimeLineTrack::getClipHeight() const 
 {
     return mHeight - 2 * sTrackBorderSize;
+}
+
+int GuiTimeLineTrack::getIndex()
+{
+    return mTimeLine->getIndex(shared_from_this());
 }
 
 const wxBitmap& GuiTimeLineTrack::getBitmap()

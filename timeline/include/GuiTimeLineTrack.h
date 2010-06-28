@@ -37,9 +37,13 @@ public:
      * @param allclips list of all clips in this timeline (used for linking clips together)
      */
     void init(GuiTimeLine* timeline, GuiTimeLineClips& allclips);
+
 	virtual ~GuiTimeLineTrack();
 
     int getClipHeight() const;
+
+    int getIndex();
+
 
     // todo hide this as the getheight should not be used on the bitmap but on the track
     // for initialization purposes.
