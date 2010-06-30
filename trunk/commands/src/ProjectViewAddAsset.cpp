@@ -1,23 +1,25 @@
-#include "ProjectCommandAddAsset.h"
+#include "ProjectViewAddAsset.h"
 #include "UtilLog.h"
 #include "UtilLogGeneric.h"
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-ProjectCommandAddAsset::ProjectCommandAddAsset(model::ProjectViewPtr parent, model::ProjectViewPtrs nodes)
-:   ProjectCommand()
+namespace command {
+
+ProjectViewAddAsset::ProjectViewAddAsset(model::ProjectViewPtr parent, model::ProjectViewPtrs nodes)
+:   ProjectViewCommand()
 ,   mParent(parent)
-,   mChildren(ProjectCommand::prune(nodes))
+,   mChildren(ProjectViewCommand::prune(nodes))
 {
     VAR_INFO(this)(mParent)(mChildren);
     mCommandName = _("Insert assets" );
 }
 
-ProjectCommandAddAsset::~ProjectCommandAddAsset()
+ProjectViewAddAsset::~ProjectViewAddAsset()
 {
 }
 
-bool ProjectCommandAddAsset::Do()
+bool ProjectViewAddAsset::Do()
 {
     VAR_INFO(this);
     BOOST_FOREACH(model::ProjectViewPtr child, mChildren)
@@ -27,7 +29,7 @@ bool ProjectCommandAddAsset::Do()
     return true;
 }
 
-bool ProjectCommandAddAsset::Undo()
+bool ProjectViewAddAsset::Undo()
 {
     VAR_INFO(this);
     BOOST_FOREACH(model::ProjectViewPtr child, mChildren)
@@ -36,3 +38,5 @@ bool ProjectCommandAddAsset::Undo()
     }
     return true;
 }
+
+} // namespace

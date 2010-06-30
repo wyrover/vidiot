@@ -1,16 +1,16 @@
-#ifndef PROJECT_COMMAND_MOVE_ASSET_H
-#define PROJECT_COMMAND_MOVE_ASSET_H
+#ifndef PROJECT_VIEW_MOVE_ASSET_H
+#define PROJECT_VIEW_MOVE_ASSET_H
 
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include "AProjectViewNode.h"
 
 namespace command {
 
-class ProjectCommandMoveAsset : public ProjectCommand
+class ProjectViewMoveAsset : public ProjectViewCommand
 {
 public:
-    ProjectCommandMoveAsset(model::ProjectViewPtrs nodes, model::ProjectViewPtr parent);
-    ~ProjectCommandMoveAsset();
+    ProjectViewMoveAsset(model::ProjectViewPtrs nodes, model::ProjectViewPtr parent);
+    ~ProjectViewMoveAsset();
     bool Do();
     bool Undo();
 private:
@@ -20,4 +20,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_MOVE_ASSET_H
+#endif // PROJECT_VIEW_MOVE_ASSET_H

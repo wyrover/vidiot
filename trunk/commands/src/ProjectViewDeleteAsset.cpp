@@ -1,12 +1,14 @@
-#include "ProjectCommandDeleteAsset.h"
+#include "ProjectViewDeleteAsset.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
 #include "UtilLogGeneric.h"
 #include <boost/foreach.hpp>
 
-ProjectCommandDeleteAsset::ProjectCommandDeleteAsset(model::ProjectViewPtrs nodes)
-:   ProjectCommand()
-,   mPairs(ProjectCommand::makeParentAndChildPairs(nodes))
+namespace command {
+
+ProjectViewDeleteAsset::ProjectViewDeleteAsset(model::ProjectViewPtrs nodes)
+:   ProjectViewCommand()
+,   mPairs(ProjectViewCommand::makeParentAndChildPairs(nodes))
 {
     VAR_INFO(this)(mPairs);
     if (nodes.size() == 1)
@@ -19,13 +21,13 @@ ProjectCommandDeleteAsset::ProjectCommandDeleteAsset(model::ProjectViewPtrs node
     }
 }
 
-ProjectCommandDeleteAsset::~ProjectCommandDeleteAsset()
+ProjectViewDeleteAsset::~ProjectViewDeleteAsset()
 {
     mPairs.clear();
 }
 
 /** /todo handle all cross references to this node */
-bool ProjectCommandDeleteAsset::Do()
+bool ProjectViewDeleteAsset::Do()
 {
     VAR_INFO(this);
     BOOST_FOREACH( ParentAndChildPair p, mPairs )
@@ -35,7 +37,7 @@ bool ProjectCommandDeleteAsset::Do()
     return true;
 }
 
-bool ProjectCommandDeleteAsset::Undo()
+bool ProjectViewDeleteAsset::Undo()
 {
     VAR_INFO(this);
     BOOST_FOREACH( ParentAndChildPair p, mPairs )
@@ -44,3 +46,5 @@ bool ProjectCommandDeleteAsset::Undo()
     }
     return true;
 }
+
+} // namespace

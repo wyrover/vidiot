@@ -1,9 +1,11 @@
-#include "ProjectCommandCreateVideoTrack.h"
+#include "TimelineCreateVideoTrack.h"
 #include "UtilLog.h"
 #include <boost/make_shared.hpp>
 
-ProjectCommandCreateVideoTrack::ProjectCommandCreateVideoTrack(model::SequencePtr sequence)
-:   ProjectCommand()
+namespace command {
+
+TimelineCreateVideoTrack::TimelineCreateVideoTrack(model::SequencePtr sequence)
+:   TimelineCommand()
 ,   mSequence(sequence)
 ,   mNewTrack()
 {
@@ -11,11 +13,11 @@ ProjectCommandCreateVideoTrack::ProjectCommandCreateVideoTrack(model::SequencePt
     mCommandName = _("Add track"); 
 }
 
-ProjectCommandCreateVideoTrack::~ProjectCommandCreateVideoTrack()
+TimelineCreateVideoTrack::~TimelineCreateVideoTrack()
 {
 }
 
-bool ProjectCommandCreateVideoTrack::Do()
+bool TimelineCreateVideoTrack::Do()
 {
     VAR_INFO(this);
     if (!mNewTrack)
@@ -26,9 +28,11 @@ bool ProjectCommandCreateVideoTrack::Do()
     return true;
 }
 
-bool ProjectCommandCreateVideoTrack::Undo()
+bool TimelineCreateVideoTrack::Undo()
 {
     VAR_INFO(this);
     mSequence->removeVideoTrack(mNewTrack);
     return true;
 }
+
+} // namespace

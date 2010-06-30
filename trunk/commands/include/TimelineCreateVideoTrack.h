@@ -1,18 +1,17 @@
-#ifndef PROJECT_COMMAND_CREATE_VIDEO_TRACK_H
-#define PROJECT_COMMAND_CREATE_VIDEO_TRACK_H
+#ifndef TIMELINE_CREATE_VIDEO_TRACK_H
+#define TIMELINE_CREATE_VIDEO_TRACK_H
 
-#include "ProjectCommand.h"
-#include "AProjectViewNode.h"
+#include "TimelineCommand.h"
 #include "Sequence.h"
 #include "VideoTrack.h"
 
 namespace command {
 
-class ProjectCommandCreateVideoTrack : public ProjectCommand
+class TimelineCreateVideoTrack : public TimelineCommand
 {
 public:
-    ProjectCommandCreateVideoTrack(model::SequencePtr sequence);
-    ~ProjectCommandCreateVideoTrack();
+    TimelineCreateVideoTrack(model::SequencePtr sequence);
+    ~TimelineCreateVideoTrack();
     bool Do();
     bool Undo();
 private:
@@ -22,4 +21,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_CREATE_VIDEO_TRACK_H
+#endif // TIMELINE_CREATE_VIDEO_TRACK_H

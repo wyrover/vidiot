@@ -14,9 +14,9 @@
 #include "GuiTimelinesView.h"
 #include "Project.h"
 #include "AProjectViewNode.h"
-#include "ProjectCommandAddAsset.h"
-#include "ProjectCommandCreateVideoTrack.h"
-#include "ProjectCommandCreateAudioTrack.h"
+#include "ProjectViewAddAsset.h"
+#include "TimelineCreateVideoTrack.h"
+#include "TimelineCreateAudioTrack.h"
 #include "ProjectEventOpenProject.h"
 #include "ProjectEventCloseProject.h"
 #include "UtilLog.h"
@@ -228,13 +228,13 @@ void GuiWindow::OnPlaySequence(wxCommandEvent& WXUNUSED(event))
 void GuiWindow::OnAddVideoTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_DEBUG;
-    mProject->Submit(new ProjectCommandCreateVideoTrack(*mOpenSequences.begin()));
+    mProject->Submit(new command::TimelineCreateVideoTrack(*mOpenSequences.begin()));
 }
 
 void GuiWindow::OnAddAudioTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_DEBUG;
-    mProject->Submit(new ProjectCommandCreateAudioTrack(*mOpenSequences.begin()));
+    mProject->Submit(new command::TimelineCreateAudioTrack(*mOpenSequences.begin()));
 }
 
 void GuiWindow::OnCloseSequence(wxCommandEvent& WXUNUSED(event))

@@ -1,17 +1,17 @@
-#ifndef PROJECT_COMMAND_CREATE_AUTOFOLDER_H
-#define PROJECT_COMMAND_CREATE_AUTOFOLDER_H
+#ifndef PROJECT_VIEW_CREATE_AUTOFOLDER_H
+#define PROJECT_VIEW_CREATE_AUTOFOLDER_H
 
 #include <boost/filesystem/path.hpp>
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include "AutoFolder.h"
 
 namespace command {
 
-class ProjectCommandCreateAutoFolder : public ProjectCommand
+class ProjectViewCreateAutoFolder : public ProjectViewCommand
 {
 public:
-    ProjectCommandCreateAutoFolder(model::FolderPtr parent, boost::filesystem::path path);
-    ~ProjectCommandCreateAutoFolder();
+    ProjectViewCreateAutoFolder(model::FolderPtr parent, boost::filesystem::path path);
+    ~ProjectViewCreateAutoFolder();
     bool Do();
     bool Undo();
 private:
@@ -22,4 +22,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_CREATE_AUTOFOLDER_H
+#endif // PROJECT_VIEW_CREATE_AUTOFOLDER_H

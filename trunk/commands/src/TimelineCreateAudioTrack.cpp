@@ -1,10 +1,12 @@
-#include "ProjectCommandCreateAudioTrack.h"
+#include "TimelineCreateAudioTrack.h"
 #include "UtilLog.h"
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-ProjectCommandCreateAudioTrack::ProjectCommandCreateAudioTrack(model::SequencePtr sequence)
-:   ProjectCommand()
+namespace command {
+
+TimelineCreateAudioTrack::TimelineCreateAudioTrack(model::SequencePtr sequence)
+:   TimelineCommand()
 ,   mSequence(sequence)
 ,   mNewTrack()
 {
@@ -12,11 +14,11 @@ ProjectCommandCreateAudioTrack::ProjectCommandCreateAudioTrack(model::SequencePt
     mCommandName = _("Add track"); 
 }
 
-ProjectCommandCreateAudioTrack::~ProjectCommandCreateAudioTrack()
+TimelineCreateAudioTrack::~TimelineCreateAudioTrack()
 {
 }
 
-bool ProjectCommandCreateAudioTrack::Do()
+bool TimelineCreateAudioTrack::Do()
 {
     if (!mNewTrack)
     {
@@ -26,8 +28,10 @@ bool ProjectCommandCreateAudioTrack::Do()
     return true;
 }
 
-bool ProjectCommandCreateAudioTrack::Undo()
+bool TimelineCreateAudioTrack::Undo()
 {
     mSequence->removeAudioTrack(mNewTrack);
     return true;
 }
+
+} // namespace

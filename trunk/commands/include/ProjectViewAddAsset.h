@@ -1,20 +1,20 @@
-#ifndef PROJECT_COMMAND_ADD_ASSET_H
-#define PROJECT_COMMAND_ADD_ASSET_H
+#ifndef PROJECT_VIEW_ADD_ASSET_H
+#define PROJECT_VIEW_ADD_ASSET_H
 
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include "AProjectViewNode.h"
 
 namespace command {
 
-class ProjectCommandAddAsset : public ProjectView
+class ProjectViewAddAsset : public ProjectViewCommand
 {
 public:
     /**
     * Add an existing asset which was removed/copied 
     */
-    ProjectCommandAddAsset(model::ProjectViewPtr parent, model::ProjectViewPtrs nodes);
+    ProjectViewAddAsset(model::ProjectViewPtr parent, model::ProjectViewPtrs nodes);
 
-    ~ProjectCommandAddAsset();
+    ~ProjectViewAddAsset();
     bool Do();
     bool Undo();
 private:
@@ -25,4 +25,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_ADD_ASSET_H
+#endif // PROJECT_VIEW_ADD_ASSET_H

@@ -1,17 +1,17 @@
-#ifndef PROJECT_COMMAND_CREATE_FOLDER_H
-#define PROJECT_COMMAND_CREATE_FOLDER_H
+#ifndef PROJECT_VIEW_CREATE_FOLDER_H
+#define PROJECT_VIEW_CREATE_FOLDER_H
 
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include "Folder.h"
 
 namespace command {
 
-class ProjectCommandCreateFolder : public ProjectCommand
+class ProjectViewCreateFolder : public ProjectViewCommand
 {
 public:
     /** Create a new folder in another folder. */
-    ProjectCommandCreateFolder(model::FolderPtr parent, wxString name);
-    ~ProjectCommandCreateFolder();
+    ProjectViewCreateFolder(model::FolderPtr parent, wxString name);
+    ~ProjectViewCreateFolder();
     bool Do();
     bool Undo();
 private:
@@ -22,4 +22,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_CREATE_FOLDER_H
+#endif // PROJECT_VIEW_CREATE_FOLDER_H
