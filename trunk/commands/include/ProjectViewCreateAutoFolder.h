@@ -5,6 +5,8 @@
 #include "ProjectCommand.h"
 #include "AutoFolder.h"
 
+namespace command {
+
 class ProjectCommandCreateAutoFolder : public ProjectCommand
 {
 public:
@@ -17,5 +19,7 @@ private:
     model::AutoFolderPtr mNewAutoFolder;
     boost::filesystem::path  mPath;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_CREATE_AUTOFOLDER_H

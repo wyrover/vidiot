@@ -4,6 +4,8 @@
 #include "ProjectCommand.h"
 #include "AProjectViewNode.h"
 
+namespace command {
+
 class ProjectCommandRenameAsset : public ProjectCommand
 {
 public:
@@ -16,5 +18,7 @@ private:
     wxString mNewName;
     wxString mOldName;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_RENAME_ASSET_H

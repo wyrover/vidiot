@@ -4,6 +4,8 @@
 #include "ProjectCommand.h"
 #include "AProjectViewNode.h"
 
+namespace command {
+
 class ProjectCommandMoveAsset : public ProjectCommand
 {
 public:
@@ -15,5 +17,7 @@ private:
     ParentAndChildPairs mPairs;
     model::ProjectViewPtr mNewParent;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_MOVE_ASSET_H

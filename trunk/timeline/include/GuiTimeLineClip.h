@@ -46,6 +46,7 @@ public:
     GuiTimeLineTrackPtr getTrack() const;
     
     model::ClipPtr getClip() const;
+    GuiTimeLineClipPtr GuiTimeLineClip::getLink() const;
 
 private:
     GuiTimeLineZoomPtr mZoom;
@@ -58,7 +59,7 @@ private:
     bool mSelected;
     bool mBeingDragged;
     int mWidth;
-    GuiTimeLineClipPtr mLink; /** /todo destruction: these bidi links will keep both ends alive... */
+    boost::weak_ptr<GuiTimeLineClip> mLink; /** /todo destruction: these bidi links will keep both ends alive... */
     model::ClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
     wxBitmap mBitmap;

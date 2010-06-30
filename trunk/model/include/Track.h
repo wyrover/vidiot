@@ -31,12 +31,12 @@ public:
 
     void addClip(ClipPtr clip);
     void removeClip(ClipPtr clip);
-    const std::list<ClipPtr>& getClips();
+    const Clips& getClips();
 
 protected:
 
-    std::list<ClipPtr> mClips;
-    std::list<ClipPtr>::const_iterator mItClips;
+    Clips mClips;
+    Clips::const_iterator mItClips;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION 

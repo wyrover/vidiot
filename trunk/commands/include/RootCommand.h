@@ -9,6 +9,8 @@
 typedef std::pair<model::ProjectViewPtr ,model::ProjectViewPtr>  ParentAndChildPair;
 typedef std::vector<ParentAndChildPair>  ParentAndChildPairs;
 
+namespace command {
+
 class ProjectCommand : public wxCommand
 {
 public:
@@ -38,5 +40,7 @@ protected:
 
     wxString mCommandName;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_H

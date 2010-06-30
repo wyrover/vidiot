@@ -6,6 +6,8 @@
 #include "Folder.h"
 #include "Sequence.h"
 
+namespace command {
+
 class ProjectCommandCreateSequence : public ProjectCommand
 {
 public:
@@ -31,5 +33,7 @@ private:
     model::FolderPtr mInputFolder;
     model::SequencePtr mSequence;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_CREATE_SEQUENCE_H

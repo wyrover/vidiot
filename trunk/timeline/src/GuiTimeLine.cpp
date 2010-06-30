@@ -57,7 +57,7 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
 {
-	LOG_INFO;
+    LOG_INFO;
 
     if (mSequence)
     {
@@ -207,20 +207,15 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
-    // Find Out where the window is scrolled to
-    int scrollX, scrollY, ppuX, ppuY;
-    GetViewStart(&scrollX,&scrollY);
-    GetScrollPixelsPerUnit(&ppuX,&ppuY);
-    int virtualbaseX = scrollX * ppuX;
-    int virtualbaseY = scrollY * ppuY;
+    wxPoint scroll = getScrollOffset();
 
     wxMemoryDC dcBmp(mBitmap);
 
     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
     while (upd)
     {
-        int x = virtualbaseX + upd.GetX();
-        int y = virtualbaseY + upd.GetY();
+        int x = scroll.x + upd.GetX();
+        int y = scroll.y + upd.GetY();
         int w = upd.GetW();
         int h = upd.GetH();
         dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY,false,0,0);
@@ -286,6 +281,7 @@ int GuiTimeLine::getIndex(GuiTimeLineTrackPtr track) const
             return index;
         }
     }
+    return index;
 }
 
 void GuiTimeLine::showDropArea(wxRect area)
@@ -310,7 +306,11 @@ void GuiTimeLine::setCursorPosition(long position)
     long oldPos = mCursorPosition;
     mCursorPosition = position;
 
-    RefreshRect(wxRect(std::min(mCursorPosition,oldPos),0,std::abs(mCursorPosition-oldPos)+1,mHeight),false);
+    wxPoint scroll = getScrollOffset();
+
+    long cursorOnClientArea = mCursorPosition - scroll.x;
+    long oldposOnClientArea = oldPos - scroll.x;
+    RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,mHeight),false);
 }
 
 void GuiTimeLine::moveCursorOnPlayback(long pts)
@@ -414,161 +414,169 @@ void GuiTimeLine::updateSize()
 }
 
 
- void GuiTimeLine::updateBitmap()
- {
-     wxMemoryDC dc(mBitmap);
+void GuiTimeLine::updateBitmap()
+{
+    wxMemoryDC dc(mBitmap);
 
-     // Get size of canvas
-     int w = mBitmap.GetWidth();
-     int h = mBitmap.GetHeight();
+    // Get size of canvas
+    int w = mBitmap.GetWidth();
+    int h = mBitmap.GetHeight();
 
-     // Set BG
-     dc.SetPen(*wxLIGHT_GREY_PEN);
-     dc.SetBrush(*wxLIGHT_GREY_BRUSH);
-     dc.DrawRectangle(0,0,w,h);
+    // Set BG
+    dc.SetPen(*wxLIGHT_GREY_PEN);
+    dc.SetBrush(*wxLIGHT_GREY_BRUSH);
+    dc.DrawRectangle(0,0,w,h);
 
-     // Draw timescale
-     dc.SetBrush(wxNullBrush);
-     wxPen blackLinePen(*wxBLACK, 1);
-     dc.SetPen(blackLinePen);
-     dc.DrawRectangle(0,0,w,sTimeScaleHeight);
+    // Draw timescale
+    dc.SetBrush(wxNullBrush);
+    wxPen blackLinePen(*wxBLACK, 1);
+    dc.SetPen(blackLinePen);
+    dc.DrawRectangle(0,0,w,sTimeScaleHeight);
 
-     wxFont* f = const_cast<wxFont*>(wxSMALL_FONT);
-     dc.SetFont(*f);
+    wxFont* f = const_cast<wxFont*>(wxSMALL_FONT);
+    dc.SetFont(*f);
 
-     // Draw seconds and minutes lines
-     for (int ms = 0; mZoom->timeToPixels(ms) <= w; ms += Constants::sSecond)
-     {
-         int position = mZoom->timeToPixels(ms);
-         bool isMinute = (ms % Constants::sMinute == 0);
-         int height = sTimeScaleSecondHeight;
+    // Draw seconds and minutes lines
+    for (int ms = 0; mZoom->timeToPixels(ms) <= w; ms += Constants::sSecond)
+    {
+        int position = mZoom->timeToPixels(ms);
+        bool isMinute = (ms % Constants::sMinute == 0);
+        int height = sTimeScaleSecondHeight;
 
-         if (isMinute)
-         {
-             height = sTimeScaleMinutesHeight;
-         }
+        if (isMinute)
+        {
+            height = sTimeScaleMinutesHeight;
+        }
 
-         dc.DrawLine(position,0,position,height);
+        dc.DrawLine(position,0,position,height);
 
-         if (ms == 0)
-         {
-             dc.DrawText( "0", 5, sTimeScaleMinutesHeight );
-         }
-         else
-         {
-             if (isMinute)
-             {
-                 wxDateTime t(ms / Constants::sHour, (ms % Constants::sHour) / Constants::sMinute, (ms % Constants::sMinute) / Constants::sSecond, ms % Constants::sSecond);
-                 wxString s = t.Format("%H:%M:%S.%l");
-                 wxSize ts = dc.GetTextExtent(s);
-                 dc.DrawText( s, position - ts.GetX() / 2, sTimeScaleMinutesHeight );
-             }
-         }
-     }
+        if (ms == 0)
+        {
+            dc.DrawText( "0", 5, sTimeScaleMinutesHeight );
+        }
+        else
+        {
+            if (isMinute)
+            {
+                wxDateTime t(ms / Constants::sHour, (ms % Constants::sHour) / Constants::sMinute, (ms % Constants::sMinute) / Constants::sSecond, ms % Constants::sSecond);
+                wxString s = t.Format("%H:%M:%S.%l");
+                wxSize ts = dc.GetTextExtent(s);
+                dc.DrawText( s, position - ts.GetX() / 2, sTimeScaleMinutesHeight );
+            }
+        }
+    }
 
-     // Draw video tracks
-     // First determine starting point
-     int y = mDividerPosition;
-     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
-     {
-         y -= track->getBitmap().GetHeight();
-     }
-     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr videoTrack, mVideoTracks)
-     {
-         dc.DrawBitmap(videoTrack->getBitmap(),wxPoint(0,y));
-         y += videoTrack->getBitmap().GetHeight();
-     }
+    // Draw video tracks
+    // First determine starting point
+    int y = mDividerPosition;
+    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+    {
+        y -= track->getBitmap().GetHeight();
+    }
+    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr videoTrack, mVideoTracks)
+    {
+        dc.DrawBitmap(videoTrack->getBitmap(),wxPoint(0,y));
+        y += videoTrack->getBitmap().GetHeight();
+    }
 
-     // Draw divider between video and audio tracks
-     wxPen bluePen(*wxBLUE, 1);
-     wxBrush audioVideoDividerBrush(wxColour(10,20,30),wxBRUSHSTYLE_CROSSDIAG_HATCH);
-     dc.SetBrush(audioVideoDividerBrush);
-     dc.SetPen(bluePen);
-     dc.DrawRectangle(0,y,w,sAudioVideoDividerHeight);
+    // Draw divider between video and audio tracks
+    wxPen bluePen(*wxBLUE, 1);
+    wxBrush audioVideoDividerBrush(wxColour(10,20,30),wxBRUSHSTYLE_CROSSDIAG_HATCH);
+    dc.SetBrush(audioVideoDividerBrush);
+    dc.SetPen(bluePen);
+    dc.DrawRectangle(0,y,w,sAudioVideoDividerHeight);
 
-     y += sAudioVideoDividerHeight;
-     BOOST_FOREACH( GuiTimeLineTrackPtr audioTrack, mAudioTracks)
-     {
-         dc.DrawBitmap(audioTrack->getBitmap(),wxPoint(0,y));
-         y += audioTrack->getBitmap().GetHeight();
-     }
-     Refresh(false);
- }
+    y += sAudioVideoDividerHeight;
+    BOOST_FOREACH( GuiTimeLineTrackPtr audioTrack, mAudioTracks)
+    {
+        dc.DrawBitmap(audioTrack->getBitmap(),wxPoint(0,y));
+        y += audioTrack->getBitmap().GetHeight();
+    }
+    Refresh(false);
+}
 
- wxBitmap GuiTimeLine::getDragBitmap(wxPoint& hotspot) //const
- {
-     int w = mBitmap.GetWidth();
-     int h = mBitmap.GetHeight();
+wxBitmap GuiTimeLine::getDragBitmap(wxPoint& hotspot) //const
+{
+    int w = mBitmap.GetWidth();
+    int h = mBitmap.GetHeight();
 
-     wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
-     wxBitmap mask(w,h,1);
+    wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
+    wxBitmap mask(w,h,1);
 
-     wxMemoryDC dc(temp); // Must go out of scope to be able to use temp.data below
-     wxMemoryDC dcMask(mask);
+    wxMemoryDC dc(temp); // Must go out of scope to be able to use temp.data below
+    wxMemoryDC dcMask(mask);
 
-     dc.SetBackground(*wxTRANSPARENT_BRUSH);
-     dc.Clear();
-     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-     dc.SetPen(*wxTRANSPARENT_PEN);
-     dc.DrawRectangle(0,0,w,h);
+    dc.SetBackground(*wxTRANSPARENT_BRUSH);
+    dc.Clear();
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.DrawRectangle(0,0,w,h);
 
-     dcMask.SetBackground(*wxBLACK_BRUSH);
-     dcMask.Clear();
-     dcMask.SetPen(*wxWHITE_PEN);
-     dcMask.SetBrush(*wxWHITE_BRUSH);
+    dcMask.SetBackground(*wxBLACK_BRUSH);
+    dcMask.Clear();
+    dcMask.SetPen(*wxWHITE_PEN);
+    dcMask.SetBrush(*wxWHITE_BRUSH);
 
-     // First determine starting point
-     wxPoint position(0,mDividerPosition);
-     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
-     {
-         position.y -= track->getBitmap().GetHeight();
-     }
+    // First determine starting point
+    wxPoint position(0,mDividerPosition);
+    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+    {
+        position.y -= track->getBitmap().GetHeight();
+    }
 
-     // Draw video tracks
-     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks)
-     {
-         track->drawClips(position,dc,dcMask);
-         position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
-     }
+    // Draw video tracks
+    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks)
+    {
+        track->drawClips(position,dc,dcMask);
+        position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
+    }
 
-     // Draw audio tracks
-     position.y += sAudioVideoDividerHeight;
-     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
-     {
-         track->drawClips(position,dc,dcMask);
-         position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
-     }
+    // Draw audio tracks
+    position.y += sAudioVideoDividerHeight;
+    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
+    {
+        track->drawClips(position,dc,dcMask);
+        position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
+    }
 
-     int origin_x = std::max(dcMask.MinX(),0);
-     int origin_y = std::max(dcMask.MinY(),0);
-     int size_x = dcMask.MaxX() - origin_x;
-     int size_y = dcMask.MaxY() - origin_y;
+    int origin_x = std::max(dcMask.MinX(),0);
+    int origin_y = std::max(dcMask.MinY(),0);
+    int size_x = dcMask.MaxX() - origin_x;
+    int size_y = dcMask.MaxY() - origin_y;
 
-     dc.SelectObject(wxNullBitmap);
-     dcMask.SelectObject(wxNullBitmap);
+    dc.SelectObject(wxNullBitmap);
+    dcMask.SelectObject(wxNullBitmap);
 
-     temp.SetMask(new wxMask(mask));
+    temp.SetMask(new wxMask(mask));
 
-     hotspot.x -= origin_x;
-     hotspot.y -= origin_y;
+    hotspot.x -= origin_x;
+    hotspot.y -= origin_y;
 
-     return temp.GetSubBitmap(wxRect(origin_x,origin_y,size_x,size_y));
- }
+    return temp.GetSubBitmap(wxRect(origin_x,origin_y,size_x,size_y));
+}
 
- //////////////////////////////////////////////////////////////////////////
- // SERIALIZATION 
- //////////////////////////////////////////////////////////////////////////
+wxPoint GuiTimeLine::getScrollOffset() const
+{
+    int scrollX, scrollY, ppuX, ppuY;
+    GetViewStart(&scrollX,&scrollY);
+    GetScrollPixelsPerUnit(&ppuX,&ppuY);
+    return wxPoint(scrollX * ppuX, scrollY * ppuY);
+}
 
- template<class Archive>
- void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
- {
-     ar & mSequence;
-     ar & mVideoTracks;
-     ar & mAudioTracks;
-     ar & mZoom;
-     ar & mDividerPosition;
- }
- template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
- template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION 
+//////////////////////////////////////////////////////////////////////////
+
+template<class Archive>
+void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
+{
+    ar & mSequence;
+    ar & mVideoTracks;
+    ar & mAudioTracks;
+    ar & mZoom;
+    ar & mDividerPosition;
+}
+template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 

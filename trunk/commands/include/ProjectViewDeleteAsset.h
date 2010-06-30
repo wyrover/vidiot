@@ -4,6 +4,8 @@
 #include "ProjectCommand.h"
 #include "AProjectViewNode.h"
 
+namespace command {
+
 class ProjectCommandDeleteAsset : public ProjectCommand
 {
 public:
@@ -14,5 +16,7 @@ public:
 private:
     ParentAndChildPairs mPairs;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_DELETE_ASSET_H
