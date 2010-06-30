@@ -3,7 +3,7 @@
 
 #include <wx/docview.h>
 #include <boost/serialization/version.hpp>
-#include "ProjectCommand.h"
+#include "RootCommand.h"
 #include "ProjectWorker.h"
 #include "ModelPtr.h"
 
@@ -66,7 +66,7 @@ public:
     // CHANGE COMMANDS
     //////////////////////////////////////////////////////////////////////////
 
-    void Submit(ProjectCommand* c);
+    void Submit(command::RootCommand* c);
 
     //////////////////////////////////////////////////////////////////////////
     // PARALLEL EXECUTION OF LENGTHY TASKS

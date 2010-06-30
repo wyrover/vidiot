@@ -1,24 +1,25 @@
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include <boost/foreach.hpp>
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
 
-ProjectCommand::ProjectCommand()
-:   wxCommand(true)
-,   mCommandName(_("Unnamed command"))
+namespace command {
+
+ProjectViewCommand::ProjectViewCommand()
+:   RootCommand()
 {
 }
 
-ProjectCommand::~ProjectCommand()
+ProjectViewCommand::~ProjectViewCommand()
 {
 }
 
 // static
-ParentAndChildPairs ProjectCommand::makeParentAndChildPairs(model::ProjectViewPtrs children)
+ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::ProjectViewPtrs children)
 {
     ASSERT(children.size() > 0);
 
-    model::ProjectViewPtrs prunedlist = ProjectCommand::prune(children);
+    model::ProjectViewPtrs prunedlist = ProjectViewCommand::prune(children);
     ParentAndChildPairs pairs;
     BOOST_FOREACH( model::ProjectViewPtr child, prunedlist )
     {
@@ -46,7 +47,7 @@ bool isDescendantOf(model::ProjectViewPtr descendant, model::ProjectViewPtr asce
 }
 
 // static
-model::ProjectViewPtrs ProjectCommand::prune(model::ProjectViewPtrs children)
+model::ProjectViewPtrs ProjectViewCommand::prune(model::ProjectViewPtrs children)
 {
     ASSERT(children.size() > 0);
 
@@ -75,7 +76,4 @@ model::ProjectViewPtrs ProjectCommand::prune(model::ProjectViewPtrs children)
     return newlist;
 }
 
-wxString ProjectCommand::GetName() const
-{
-    return mCommandName;
-}
+} // namespace

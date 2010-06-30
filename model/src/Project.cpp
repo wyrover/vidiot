@@ -167,7 +167,7 @@ std::istream& Project::LoadObject(std::istream& istream)
 // CHANGE COMMANDS
 //////////////////////////////////////////////////////////////////////////
 
-void Project::Submit(ProjectCommand* c)
+void Project::Submit(command::RootCommand* c)
 {
     Modify(true);
     GetCommandProcessor()->Submit(c);

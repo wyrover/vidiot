@@ -1,24 +1,24 @@
-#ifndef PROJECT_COMMAND_CREATE_SEQUENCE_H
-#define PROJECT_COMMAND_CREATE_SEQUENCE_H
+#ifndef PROJECT_VIEW_CREATE_SEQUENCE_H
+#define PROJECT_VIEW_CREATE_SEQUENCE_H
 
 #include <boost/filesystem/path.hpp>
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include "Folder.h"
 #include "Sequence.h"
 
 namespace command {
 
-class ProjectCommandCreateSequence : public ProjectCommand
+class ProjectViewCreateSequence : public ProjectViewCommand
 {
 public:
     
     /** Create from autofolder */
-    ProjectCommandCreateSequence(model::FolderPtr folder);
+    ProjectViewCreateSequence(model::FolderPtr folder);
 
     /** Create new sequence in folder */
-    ProjectCommandCreateSequence(model::FolderPtr folder, wxString name);
+    ProjectViewCreateSequence(model::FolderPtr folder, wxString name);
 
-    ~ProjectCommandCreateSequence();
+    ~ProjectViewCreateSequence();
     
     bool Do();
     
@@ -36,4 +36,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_CREATE_SEQUENCE_H
+#endif // PROJECT_VIEW_CREATE_SEQUENCE_H

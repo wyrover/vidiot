@@ -1,4 +1,4 @@
-#include "ProjectCommandCreateFile.h"
+#include "ProjectViewCreateFile.h"
 #include "UtilLog.h"
 #include "UtilLogGeneric.h"
 #include "UtilLogBoost.h"
@@ -6,8 +6,10 @@
 #include <boost/make_shared.hpp>
 #include "File.h"
 
-ProjectCommandCreateFile::ProjectCommandCreateFile(model::FolderPtr parent, std::vector<boost::filesystem::path> paths)
-:   ProjectCommand()
+namespace command {
+
+ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vector<boost::filesystem::path> paths)
+:   ProjectViewCommand()
 ,   mParent(parent)
 ,   mPaths(paths)
 ,   mChildren()
@@ -24,11 +26,11 @@ ProjectCommandCreateFile::ProjectCommandCreateFile(model::FolderPtr parent, std:
     }
 }
 
-ProjectCommandCreateFile::~ProjectCommandCreateFile()
+ProjectViewCreateFile::~ProjectViewCreateFile()
 {
 }
 
-bool ProjectCommandCreateFile::Do()
+bool ProjectViewCreateFile::Do()
 {
     VAR_INFO(this);
     if (mChildren.size() == 0)
@@ -46,7 +48,7 @@ bool ProjectCommandCreateFile::Do()
     return true;
 }
 
-bool ProjectCommandCreateFile::Undo()
+bool ProjectViewCreateFile::Undo()
 {
     VAR_INFO(this);
     BOOST_FOREACH(model::ProjectViewPtr child, mChildren)
@@ -55,3 +57,5 @@ bool ProjectCommandCreateFile::Undo()
     }
     return true;
 }
+
+} // namespace

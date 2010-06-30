@@ -1,9 +1,11 @@
-#include "ProjectCommandCreateFolder.h"
+#include "ProjectViewCreateFolder.h"
 #include "UtilLog.h"
 #include <boost/make_shared.hpp>
 
-ProjectCommandCreateFolder::ProjectCommandCreateFolder(model::FolderPtr parent, wxString name)
-:   ProjectCommand()
+namespace command {
+
+ProjectViewCreateFolder::ProjectViewCreateFolder(model::FolderPtr parent, wxString name)
+:   ProjectViewCommand()
 ,   mParent(parent)
 ,   mNewFolder()
 ,   mName(name)
@@ -12,11 +14,11 @@ ProjectCommandCreateFolder::ProjectCommandCreateFolder(model::FolderPtr parent, 
     mCommandName = _("Add folder \"") + mName + _("\""); 
 }
 
-ProjectCommandCreateFolder::~ProjectCommandCreateFolder()
+ProjectViewCreateFolder::~ProjectViewCreateFolder()
 {
 }
 
-bool ProjectCommandCreateFolder::Do()
+bool ProjectViewCreateFolder::Do()
 {
     VAR_INFO(this);
     if (!mNewFolder)
@@ -28,9 +30,11 @@ bool ProjectCommandCreateFolder::Do()
     return true;
 }
 
-bool ProjectCommandCreateFolder::Undo()
+bool ProjectViewCreateFolder::Undo()
 {
     VAR_INFO(this);
     mParent->removeChild(mNewFolder);
     return true;
 }
+
+} // namespace

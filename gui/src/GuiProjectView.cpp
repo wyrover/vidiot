@@ -18,14 +18,14 @@
 #include "GuiTimeLinesView.h"
 #include "Project.h"
 #include "AProjectViewNode.h"
-#include "ProjectCommandAddAsset.h"
-#include "ProjectCommandDeleteAsset.h"
-#include "ProjectCommandMoveAsset.h"
-#include "ProjectCommandRenameAsset.h"
-#include "ProjectCommandCreateSequence.h"
-#include "ProjectCommandCreateFolder.h"
-#include "ProjectCommandCreateAutoFolder.h"
-#include "ProjectCommandCreateFile.h"
+#include "ProjectViewAddAsset.h"
+#include "ProjectViewDeleteAsset.h"
+#include "ProjectViewMoveAsset.h"
+#include "ProjectViewRenameAsset.h"
+#include "ProjectViewCreateSequence.h"
+#include "ProjectViewCreateFolder.h"
+#include "ProjectViewCreateAutoFolder.h"
+#include "ProjectViewCreateFile.h"
 #include "ProjectEventOpenProject.h"
 #include "ProjectEventCloseProject.h"
 #include "ProjectEventAddAsset.h"
@@ -265,7 +265,7 @@ void GuiProjectView::OnCut(wxCommandEvent& WXUNUSED(event))
     {
         wxTheClipboard->SetData(new GuiDataObject(getSelection()));
         wxTheClipboard->Close();
-        mProject->Submit(new ProjectCommandDeleteAsset(getSelection()));
+        mProject->Submit(new command::ProjectViewDeleteAsset(getSelection()));
     }
 }
 
@@ -296,7 +296,7 @@ void GuiProjectView::OnPaste(wxCommandEvent& WXUNUSED(event))
                         return;
                     }
                 }
-                mProject->Submit(new ProjectCommandAddAsset(getSelectedContainer(),data.getAssets()));
+                mProject->Submit(new command::ProjectViewAddAsset(getSelectedContainer(),data.getAssets()));
             }
         }
         wxTheClipboard->Close();
@@ -305,7 +305,7 @@ void GuiProjectView::OnPaste(wxCommandEvent& WXUNUSED(event))
 
 void GuiProjectView::OnDelete(wxCommandEvent& WXUNUSED(event))
 {
-    mProject->Submit(new ProjectCommandDeleteAsset(getSelection()));
+    mProject->Submit(new command::ProjectViewDeleteAsset(getSelection()));
 }
 
 void GuiProjectView::OnNewFolder(wxCommandEvent& WXUNUSED(event))
@@ -314,7 +314,7 @@ void GuiProjectView::OnNewFolder(wxCommandEvent& WXUNUSED(event))
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new ProjectCommandCreateFolder(getSelectedContainer(), s));
+        mProject->Submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
     }
 }
 
@@ -324,7 +324,7 @@ void GuiProjectView::OnNewAutoFolder(wxCommandEvent& WXUNUSED(event))
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new ProjectCommandCreateAutoFolder(getSelectedContainer(), boost::filesystem::path(s)));
+        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), boost::filesystem::path(s)));
     }
 }
 
@@ -334,7 +334,7 @@ void GuiProjectView::OnNewSequence(wxCommandEvent& WXUNUSED(event))
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new ProjectCommandCreateSequence(getSelectedContainer(), s));
+        mProject->Submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
     }
 }
 
@@ -365,13 +365,13 @@ void GuiProjectView::OnNewFile(wxCommandEvent& WXUNUSED(event))
             }
             list.push_back(p);
         }
-        mProject->Submit(new ProjectCommandCreateFile(getSelectedContainer(), list));
+        mProject->Submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
     }
 }
 
 void GuiProjectView::OnCreateSequence(wxCommandEvent& WXUNUSED(event))
 {
-    ProjectCommandCreateSequence* cmd = new ProjectCommandCreateSequence(getSelectedContainer());
+    command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
     mProject->Submit(cmd);
     getTimeLines().Open(cmd->getSequence());
 }
@@ -452,7 +452,7 @@ void GuiProjectView::OnDrop( wxDataViewEvent &event )
     }
     if (o.getAssets().size() > 0)
     {
-        mProject->Submit(new ProjectCommandMoveAsset(o.getAssets(),p));
+        mProject->Submit(new command::ProjectViewMoveAsset(o.getAssets(),p));
     }
 }
 

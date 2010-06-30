@@ -1,16 +1,16 @@
-#ifndef PROJECT_COMMAND_DELETE_ASSET_H
-#define PROJECT_COMMAND_DELETE_ASSET_H
+#ifndef PROJECT_VIEW_DELETE_ASSET_H
+#define PROJECT_VIEW_DELETE_ASSET_H
 
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include "AProjectViewNode.h"
 
 namespace command {
 
-class ProjectCommandDeleteAsset : public ProjectCommand
+class ProjectViewDeleteAsset : public ProjectViewCommand
 {
 public:
-    ProjectCommandDeleteAsset(model::ProjectViewPtrs nodes);
-    ~ProjectCommandDeleteAsset();
+    ProjectViewDeleteAsset(model::ProjectViewPtrs nodes);
+    ~ProjectViewDeleteAsset();
     bool Do();
     bool Undo();
 private:
@@ -19,4 +19,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_DELETE_ASSET_H
+#endif // PROJECT_VIEW_DELETE_ASSET_H

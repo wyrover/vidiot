@@ -1,13 +1,15 @@
-#include "ProjectCommandMoveAsset.h"
+#include "ProjectViewMoveAsset.h"
 #include <boost/foreach.hpp>
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
 #include "UtilLogGeneric.h"
 
-ProjectCommandMoveAsset::ProjectCommandMoveAsset(model::ProjectViewPtrs nodes, model::ProjectViewPtr parent)
-:   ProjectCommand()
+namespace command {
+
+ProjectViewMoveAsset::ProjectViewMoveAsset(model::ProjectViewPtrs nodes, model::ProjectViewPtr parent)
+:   ProjectViewCommand()
 ,   mNewParent(parent)
-,   mPairs(ProjectCommand::makeParentAndChildPairs(nodes))
+,   mPairs(ProjectViewCommand::makeParentAndChildPairs(nodes))
 {
     VAR_INFO(this)(mNewParent)(mPairs);
     if (nodes.size() == 1)
@@ -20,13 +22,13 @@ ProjectCommandMoveAsset::ProjectCommandMoveAsset(model::ProjectViewPtrs nodes, m
     }
 }
 
-ProjectCommandMoveAsset::~ProjectCommandMoveAsset()
+ProjectViewMoveAsset::~ProjectViewMoveAsset()
 {
     mNewParent.reset();
     mPairs.clear();
 }
 
-bool ProjectCommandMoveAsset::Do()
+bool ProjectViewMoveAsset::Do()
 {
     VAR_INFO(this);
     BOOST_FOREACH( ParentAndChildPair p, mPairs )
@@ -42,7 +44,7 @@ bool ProjectCommandMoveAsset::Do()
     return true;
 }
 
-bool ProjectCommandMoveAsset::Undo()
+bool ProjectViewMoveAsset::Undo()
 {
     VAR_INFO(this);
     BOOST_FOREACH( ParentAndChildPair p, mPairs )
@@ -52,3 +54,5 @@ bool ProjectCommandMoveAsset::Undo()
     }
     return true;
 }
+
+} // namespace

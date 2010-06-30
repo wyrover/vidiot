@@ -1,10 +1,12 @@
-#include "ProjectCommandCreateAutoFolder.h"
+#include "ProjectViewCreateAutoFolder.h"
 #include "UtilLog.h"
 #include "UtilLogBoost.h"
 #include <boost/make_shared.hpp>
 
-ProjectCommandCreateAutoFolder::ProjectCommandCreateAutoFolder(model::FolderPtr parent, boost::filesystem::path path)
-:   ProjectCommand()
+namespace command {
+
+ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(model::FolderPtr parent, boost::filesystem::path path)
+:   ProjectViewCommand()
 ,   mParent(parent)
 ,   mNewAutoFolder()
 ,   mPath(path)
@@ -13,11 +15,11 @@ ProjectCommandCreateAutoFolder::ProjectCommandCreateAutoFolder(model::FolderPtr 
     mCommandName = _("Add autofolder")  + _(" \"")   + mPath.leaf()  + _("\"");
 }
 
-ProjectCommandCreateAutoFolder::~ProjectCommandCreateAutoFolder()
+ProjectViewCreateAutoFolder::~ProjectViewCreateAutoFolder()
 {
 }
 
-bool ProjectCommandCreateAutoFolder::Do()
+bool ProjectViewCreateAutoFolder::Do()
 {
     if (!mNewAutoFolder)
     {
@@ -28,8 +30,10 @@ bool ProjectCommandCreateAutoFolder::Do()
     return true;
 }
 
-bool ProjectCommandCreateAutoFolder::Undo()
+bool ProjectViewCreateAutoFolder::Undo()
 {
     mParent->removeChild(mNewAutoFolder);
     return true;
 }
+
+} // namespace

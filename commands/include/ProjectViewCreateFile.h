@@ -1,20 +1,20 @@
-#ifndef PROJECT_COMMAND_CREATE_FILE_H
-#define PROJECT_COMMAND_CREATE_FILE_H
+#ifndef PROJECT_VIEW_CREATE_FILE_H
+#define PROJECT_VIEW_CREATE_FILE_H
 
 #include <boost/filesystem/path.hpp>
-#include "ProjectCommand.h"
+#include "ProjectViewCommand.h"
 #include "Folder.h"
 #include "File.h"
 
 namespace command {
 
-class ProjectCommandCreateFile : public ProjectCommand
+class ProjectViewCreateFile : public ProjectViewCommand
 {
 public:
     /** Add a new 'file' asset for each supplied file on disk */
-    ProjectCommandCreateFile(model::FolderPtr parent, std::vector<boost::filesystem::path> paths);
+    ProjectViewCreateFile(model::FolderPtr parent, std::vector<boost::filesystem::path> paths);
 
-    ~ProjectCommandCreateFile();
+    ~ProjectViewCreateFile();
     bool Do();
     bool Undo();
 private:
@@ -25,4 +25,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_CREATE_FILE_H
+#endif // PROJECT_VIEW_CREATE_FILE_H

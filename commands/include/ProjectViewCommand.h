@@ -1,9 +1,8 @@
-#ifndef PROJECT_COMMAND_H
-#define PROJECT_COMMAND_H
+#ifndef PROJECT_VIEW_COMMAND_H
+#define PROJECT_VIEW_COMMAND_H
 
 #include <vector>
-#include <wx/cmdproc.h>
-#include <wx/intl.h>
+#include "RootCommand.h"
 #include "AProjectViewNode.h"
 
 typedef std::pair<model::ProjectViewPtr ,model::ProjectViewPtr>  ParentAndChildPair;
@@ -11,19 +10,18 @@ typedef std::vector<ParentAndChildPair>  ParentAndChildPairs;
 
 namespace command {
 
-class ProjectView : public wxCommand
+class ProjectViewCommand : public RootCommand
 {
 public:
 
-    ProjectCommand();
-    ~ProjectCommand();
-    wxString GetName() const;
+    ProjectViewCommand();
+    ~ProjectViewCommand();
 
 protected:
 
     /**
     * This methods serves two purposes:
-    * - Prune the list of selected nodes (See ProjectCommand::prune)
+    * - Prune the list of selected nodes (See ProjectViewCommand::prune)
     * - Convert the resulting list of pruning to a list of parent and children
     *   pairs (the currently associated parent with each node is stored).
     */
@@ -36,11 +34,9 @@ protected:
     * only move the actual parent, and keep the parent child relation
     * intact.
     */
-    static model::ProjectViewPtrs ProjectCommand::prune(model::ProjectViewPtrs children);
-
-    wxString mCommandName;
+    static model::ProjectViewPtrs prune(model::ProjectViewPtrs children);
 };
 
 } // namespace
 
-#endif // PROJECT_COMMAND_H
+#endif // PROJECT_VIEW_COMMAND_H

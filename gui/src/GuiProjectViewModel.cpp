@@ -7,10 +7,10 @@
 #include "UtilLog.h"
 #include "Project.h"
 #include "AProjectViewNode.h"
-#include "ProjectCommandAddAsset.h"
-#include "ProjectCommandDeleteAsset.h"
-#include "ProjectCommandMoveAsset.h"
-#include "ProjectCommandRenameAsset.h"
+#include "ProjectViewAddAsset.h"
+#include "ProjectViewDeleteAsset.h"
+#include "ProjectViewMoveAsset.h"
+#include "ProjectViewRenameAsset.h"
 #include "ProjectEventOpenProject.h"
 #include "ProjectEventCloseProject.h"
 #include "ProjectEventAddAsset.h"
@@ -201,7 +201,7 @@ bool GuiProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewIt
     {
         wxDataViewIconText icontext;
         icontext << variant;
-        mProject->Submit(new ProjectCommandRenameAsset(node, icontext.GetText()));
+        mProject->Submit(new command::ProjectViewRenameAsset(node, icontext.GetText()));
         return true;
     }
     return false;

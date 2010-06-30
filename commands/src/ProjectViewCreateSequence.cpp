@@ -1,4 +1,4 @@
-#include "ProjectCommandCreateSequence.h"
+#include "ProjectViewCreateSequence.h"
 #include "UtilLog.h"
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
@@ -10,8 +10,10 @@
 #include "VideoTrack.h"
 #include "AudioTrack.h"
 
-ProjectCommandCreateSequence::ProjectCommandCreateSequence(model::FolderPtr folder)
-:   ProjectCommand()
+namespace command {
+
+ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder)
+:   ProjectViewCommand()
 ,   mName(folder->getName())
 ,   mParent(boost::dynamic_pointer_cast<model::Folder>(folder->getParent()))
 ,   mInputFolder(folder)
@@ -21,8 +23,8 @@ ProjectCommandCreateSequence::ProjectCommandCreateSequence(model::FolderPtr fold
     mCommandName = _("Create sequence from folder ") + mName; 
 }
 
-ProjectCommandCreateSequence::ProjectCommandCreateSequence(model::FolderPtr folder, wxString name)
-:   ProjectCommand()
+ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder, wxString name)
+:   ProjectViewCommand()
 ,   mName(name)
 ,   mParent(folder)
 ,   mInputFolder()
@@ -33,11 +35,11 @@ ProjectCommandCreateSequence::ProjectCommandCreateSequence(model::FolderPtr fold
     mCommandName = _("Create sequence ") + mName; 
 }
 
-ProjectCommandCreateSequence::~ProjectCommandCreateSequence()
+ProjectViewCreateSequence::~ProjectViewCreateSequence()
 {
 }
 
-bool ProjectCommandCreateSequence::Do()
+bool ProjectViewCreateSequence::Do()
 {
     VAR_INFO(this);
     if (!mSequence)
@@ -78,7 +80,7 @@ bool ProjectCommandCreateSequence::Do()
     return true;
 }
 
-bool ProjectCommandCreateSequence::Undo()
+bool ProjectViewCreateSequence::Undo()
 {
     VAR_INFO(this);
     mParent->removeChild(mSequence);
@@ -86,7 +88,9 @@ bool ProjectCommandCreateSequence::Undo()
 
 }
 
-model::SequencePtr ProjectCommandCreateSequence::getSequence()
+model::SequencePtr ProjectViewCreateSequence::getSequence()
 {
     return mSequence;
 }
+
+} // namespace

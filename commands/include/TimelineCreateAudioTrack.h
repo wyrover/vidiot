@@ -1,18 +1,17 @@
-#ifndef PROJECT_COMMAND_CREATE_AUDIO_TRACK_H
-#define PROJECT_COMMAND_CREATE_AUDIO_TRACK_H
+#ifndef TIMELINE_CREATE_AUDIO_TRACK_H
+#define TIMELINE_CREATE_AUDIO_TRACK_H
 
-#include "ProjectCommand.h"
-#include "AProjectViewNode.h"
+#include "TimelineCommand.h"
 #include "Sequence.h"
 #include "AudioTrack.h"
 
 namespace command {
 
-class ProjectCommandCreateAudioTrack : public ProjectCommand
+class TimelineCreateAudioTrack : public TimelineCommand
 {
 public:
-    ProjectCommandCreateAudioTrack(model::SequencePtr sequence);
-    ~ProjectCommandCreateAudioTrack();
+    TimelineCreateAudioTrack(model::SequencePtr sequence);
+    ~TimelineCreateAudioTrack();
     bool Do();
     bool Undo();
 private:
@@ -22,4 +21,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_COMMAND_CREATE_AUDIO_TRACK_H
+#endif // TIMELINE_CREATE_AUDIO_TRACK_H

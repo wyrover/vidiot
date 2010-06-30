@@ -1,9 +1,11 @@
-#include "ProjectCommandRenameAsset.h"
+#include "ProjectViewRenameAsset.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
 
-ProjectCommandRenameAsset::ProjectCommandRenameAsset(model::ProjectViewPtr node, wxString assetName)
-:   ProjectCommand()
+namespace command {
+
+ProjectViewRenameAsset::ProjectViewRenameAsset(model::ProjectViewPtr node, wxString assetName)
+:   ProjectViewCommand()
 ,   mNode(node)
 ,   mNewName(assetName)
 ,   mOldName(node->getName())
@@ -12,21 +14,23 @@ ProjectCommandRenameAsset::ProjectCommandRenameAsset(model::ProjectViewPtr node,
     mCommandName = _("Rename ") + _("\"") + mOldName + _("\" to \"") + mNewName + _("\"");
 }
 
-ProjectCommandRenameAsset::~ProjectCommandRenameAsset()
+ProjectViewRenameAsset::~ProjectViewRenameAsset()
 {
     mNode.reset();
 }
 
-bool ProjectCommandRenameAsset::Do()
+bool ProjectViewRenameAsset::Do()
 {
     VAR_INFO(this);
     mNode->setName(mNewName);
     return true;
 }
 
-bool ProjectCommandRenameAsset::Undo()
+bool ProjectViewRenameAsset::Undo()
 {
     VAR_INFO(this);
     mNode->setName(mOldName);
     return true;
 }
+
+} // namespace
