@@ -111,9 +111,10 @@ void GuiTimeLineClip::setSelected(bool selected)
         // loops when also selecting the linked clip.
         mSelected = selected;
         updateBitmap();
-        if (mLink)
+        GuiTimeLineClipPtr link = getLink();
+        if (link)
         {
-            mLink->setSelected(selected);
+            link->setSelected(selected);
         }
     }
 }
@@ -138,6 +139,11 @@ model::ClipPtr GuiTimeLineClip::getClip() const
 GuiTimeLineTrackPtr GuiTimeLineClip::getTrack() const
 {
     return mTrack.lock();
+}
+
+GuiTimeLineClipPtr GuiTimeLineClip::getLink() const
+{
+    return mLink.lock();
 }
 
 //////////////////////////////////////////////////////////////////////////

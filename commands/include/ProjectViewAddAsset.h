@@ -4,7 +4,9 @@
 #include "ProjectCommand.h"
 #include "AProjectViewNode.h"
 
-class ProjectCommandAddAsset : public ProjectCommand
+namespace command {
+
+class ProjectCommandAddAsset : public ProjectView
 {
 public:
     /**
@@ -20,5 +22,7 @@ private:
     model::ProjectViewPtrs mChildren;
 
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_ADD_ASSET_H

@@ -6,6 +6,8 @@
 #include "Sequence.h"
 #include "VideoTrack.h"
 
+namespace command {
+
 class ProjectCommandCreateVideoTrack : public ProjectCommand
 {
 public:
@@ -17,5 +19,7 @@ private:
     model::SequencePtr mSequence;
     model::VideoTrackPtr mNewTrack;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_CREATE_VIDEO_TRACK_H

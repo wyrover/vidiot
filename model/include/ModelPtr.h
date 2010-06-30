@@ -40,6 +40,7 @@ typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
 
 class Clip;
 typedef boost::shared_ptr<Clip> ClipPtr;
+typedef std::list<ClipPtr> Clips;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -80,6 +81,7 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
+typedef std::list<ClipPtr> Tracks;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -95,6 +97,11 @@ typedef boost::shared_ptr<VideoFile> VideoFilePtr;
 
 class VideoTrack;
 typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
+
+//////////////////////////////////////////////////////////////////////////
+
+class EmptyClip;
+typedef boost::shared_ptr<EmptyClip> EmptyClipPtr;
 
 //////////////////////////////////////////////////////////////////////////
 

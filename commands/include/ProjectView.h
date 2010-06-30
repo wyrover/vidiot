@@ -11,7 +11,7 @@ typedef std::vector<ParentAndChildPair>  ParentAndChildPairs;
 
 namespace command {
 
-class ProjectCommand : public wxCommand
+class ProjectView : public wxCommand
 {
 public:
 

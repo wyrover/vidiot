@@ -6,6 +6,8 @@
 #include "Folder.h"
 #include "File.h"
 
+namespace command {
+
 class ProjectCommandCreateFile : public ProjectCommand
 {
 public:
@@ -20,5 +22,7 @@ private:
     model::FolderPtr mParent;
     std::vector<model::FilePtr> mChildren;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_CREATE_FILE_H

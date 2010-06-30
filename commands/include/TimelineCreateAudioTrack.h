@@ -6,6 +6,8 @@
 #include "Sequence.h"
 #include "AudioTrack.h"
 
+namespace command {
+
 class ProjectCommandCreateAudioTrack : public ProjectCommand
 {
 public:
@@ -17,5 +19,7 @@ private:
     model::SequencePtr mSequence;
     model::AudioTrackPtr mNewTrack;
 };
+
+} // namespace
 
 #endif // PROJECT_COMMAND_CREATE_AUDIO_TRACK_H

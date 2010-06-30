@@ -318,6 +318,7 @@ struct Dragging : bs::simple_state< Dragging, Machine >
 
     /** /todo handle mouse focus lost */
     Dragging() // entry
+        :   mClip()
     {
         LOG_DEBUG; 
     }
@@ -328,6 +329,7 @@ struct Dragging : bs::simple_state< Dragging, Machine >
     bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
+
         BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
         {
             c->setBeingDragged(false);
@@ -341,41 +343,31 @@ struct Dragging : bs::simple_state< Dragging, Machine >
         timeline.Refresh();
         delete outermost_context().globals->DragImage;
         outermost_context().globals->DragImage = 0;
-        //        outermost_context().timeline.endDrag(evt.mPosition);
+
+
+
 
         return transit<Idle>();
     }
-    bs::result react( const EvMotion& evt )
+    void showDropArea(wxPoint p)
     {
-        VAR_DEBUG(evt);
-
-        // Move the drag image
         GuiTimeLine& timeline = outermost_context().timeline;
-        GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
-        //dragimage->Hide();
-        timeline.Refresh(false);
-        timeline.Update();
-        //dragimage->Show();
-        dragimage->Move(evt.mPosition);
-
-        // Determine nearest drop point
-        boost::tuple<GuiTimeLineTrackPtr,int> tt = timeline.findTrack(evt.mPosition.y);
-        boost::tuple<GuiTimeLineClipPtr,int> cw = timeline.findClip(evt.mPosition);
+        boost::tuple<GuiTimeLineTrackPtr,int> tt = timeline.findTrack(p.y);
+        boost::tuple<GuiTimeLineClipPtr,int> cw = timeline.findClip(p);
         GuiTimeLineTrackPtr track = tt.get<0>();
         GuiTimeLineClipPtr clip = cw.get<0>();
-
-        int trackIndex = track ? track->getIndex() : 0;
+        mClip = clip;
 
         if (track)
         {
-            int xDrop = -1;
             if (clip)
             {
-                boost::tuple<int,int> clipbounds = clip->getTrack()->findClipBounds(clip);
+                boost::tuple<int,int> clipbounds = track->findClipBounds(clip);
 
-                int diffleft  = evt.mPosition.x - clipbounds.get<0>();
-                int diffright = clipbounds.get<1>() - evt.mPosition.x;
+                int diffleft  = p.x - clipbounds.get<0>();
+                int diffright = clipbounds.get<1>() - p.x;
 
+                int xDrop = -1;
                 if (diffleft < diffright)
                 {
                     xDrop = clipbounds.get<0>() - 2;
@@ -388,16 +380,34 @@ struct Dragging : bs::simple_state< Dragging, Machine >
             }
             else
             {
-                timeline.showDropArea(wxRect(evt.mPosition.x,tt.get<1>(),4,track->getBitmap().GetHeight())); 
+                timeline.showDropArea(wxRect(p.x,tt.get<1>(),4,track->getBitmap().GetHeight())); 
             }
         }
         else
         {
             timeline.showDropArea(wxRect(0,0,0,0));
         }
+    }
+    bs::result react( const EvMotion& evt )
+    {
+        VAR_DEBUG(evt);
+
+        // Move the drag image
+        GuiTimeLine& timeline = outermost_context().timeline;
+        GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
+        //dragimage->Hide();
+        timeline.Refresh(false);
+        timeline.Update();
+        //dragimage->Show();
+        dragimage->Move(evt.mPosition - timeline.getScrollOffset());
+
+        showDropArea(evt.mPosition); 
 
         return discard_event();
     }
+
+
+    GuiTimeLineClipPtr mClip;
 };
 
 } // namespace
