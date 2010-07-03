@@ -222,9 +222,23 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
         upd++;
     }
 
-    // Draw cursor
-    dc.SetPen(wxPen(*wxRED, 1));
-    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,mHeight));
+    // Draw marked areas
+    dc.SetPen(wxPen(*wxGREEN, 1));
+    dc.SetBrush(*wxGREEN_BRUSH);
+    std::list<int>::iterator it = mMarkerPositions.begin();
+    while (it != mMarkerPositions.end())
+    {
+        int beginpoint = *it;
+        int endpoint = mCursorPosition;
+        ++it;
+        if (it != mMarkerPositions.end())
+        {
+            endpoint = *it;
+            ++it;
+        }
+        ASSERT(endpoint >= beginpoint)(beginpoint)(endpoint);
+        dc.DrawRectangle(wxRect(beginpoint, sTimeScaleHeight, endpoint-beginpoint,sMinimalGreyAboveVideoTracksHeight));
+    }
 
     // Draw drop area
     if (!mDropArea.IsEmpty())
@@ -233,6 +247,11 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
         dc.SetBrush(*wxYELLOW_BRUSH);
         dc.DrawRectangle(mDropArea);
     }
+
+    // Draw cursor
+    dc.SetPen(wxPen(*wxRED, 1));
+    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,mHeight));
+
 }
 
 //////////////////////////////////////////////////////////////////////////

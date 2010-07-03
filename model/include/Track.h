@@ -1,13 +1,17 @@
 #ifndef MODEL_TRACK_H
 #define MODEL_TRACK_H
 
+#include <wx/event.h>
 #include <boost/serialization/split_member.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include "IControl.h"
 
 namespace model {
 
 class Track 
     :   public IControl
+    ,   public wxEvtHandler
+    ,   public boost::enable_shared_from_this<Track>
 {
 public:
 
@@ -29,8 +33,10 @@ public:
     // HANDLING CLIPS
     //////////////////////////////////////////////////////////////////////////
 
-    void addClip(ClipPtr clip);
-    void removeClip(ClipPtr clip);
+    void removeClips(Clips clips);
+    /** Add clips AFTER 'position' */
+    void addClips(Clips clips, ClipPtr position);
+
     const Clips& getClips();
 
 protected:

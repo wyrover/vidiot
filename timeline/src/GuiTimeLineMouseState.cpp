@@ -92,6 +92,7 @@ struct GlobalState
         ,   DragImage(0)
         ,   mousepointer(timeline)
         ,   selection(timeline)
+        ,   DragStartClip()
     {
     }
     wxPoint DragStartPosition;
@@ -99,15 +100,9 @@ struct GlobalState
     MousePointer mousepointer;
     Selection selection;
 
+    /** Clip on which the drag was started. */
+    GuiTimeLineClipPtr DragStartClip;
 };
-
-//////////////////////////////////////////////////////////////////////////
-// STATES
-//////////////////////////////////////////////////////////////////////////
-
-struct TestDragStart;
-struct MovingCursor;
-struct Dragging;
 
 //////////////////////////////////////////////////////////////////////////
 // MACHINE
@@ -143,21 +138,21 @@ Machine::~Machine()
     delete globals;
 }
 
-void Machine::OnMotion          (wxMouseEvent& event)  { process_event(EvMotion        (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnLeftDown        (wxMouseEvent& event)  { process_event(EvLeftDown      (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnLeftUp          (wxMouseEvent& event)  { process_event(EvLeftUp        (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnLeftDouble      (wxMouseEvent& event)  { process_event(EvLeftDouble    (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnMiddleDown      (wxMouseEvent& event)  { process_event(EvMiddleDown    (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnMiddleUp        (wxMouseEvent& event)  { process_event(EvMiddleUp      (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnMiddleDouble    (wxMouseEvent& event)  { process_event(EvMiddleDouble  (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnRightDown       (wxMouseEvent& event)  { process_event(EvRightDown     (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnRightUp         (wxMouseEvent& event)  { process_event(EvRightUp       (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnRightDouble     (wxMouseEvent& event)  { process_event(EvRightDouble   (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnEnter           (wxMouseEvent& event)  { process_event(EvEnter         (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnLeave           (wxMouseEvent& event)  { process_event(EvLeave         (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnWheel           (wxMouseEvent& event)  { process_event(EvWheel         (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnKeyDown         (wxKeyEvent&   event)  { process_event(EvKeyDown       (event, unscrolledPosition(event.GetPosition())));   }
-void Machine::OnKeyUp           (wxKeyEvent&   event)  { process_event(EvKeyUp         (event, unscrolledPosition(event.GetPosition())));   }
+void Machine::OnMotion          (wxMouseEvent& event)  { process_event(EvMotion        (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeftDown        (wxMouseEvent& event)  { process_event(EvLeftDown      (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeftUp          (wxMouseEvent& event)  { process_event(EvLeftUp        (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeftDouble      (wxMouseEvent& event)  { process_event(EvLeftDouble    (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnMiddleDown      (wxMouseEvent& event)  { process_event(EvMiddleDown    (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnMiddleUp        (wxMouseEvent& event)  { process_event(EvMiddleUp      (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnMiddleDouble    (wxMouseEvent& event)  { process_event(EvMiddleDouble  (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnRightDown       (wxMouseEvent& event)  { process_event(EvRightDown     (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnRightUp         (wxMouseEvent& event)  { process_event(EvRightUp       (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnRightDouble     (wxMouseEvent& event)  { process_event(EvRightDouble   (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnEnter           (wxMouseEvent& event)  { process_event(EvEnter         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeave           (wxMouseEvent& event)  { process_event(EvLeave         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnWheel           (wxMouseEvent& event)  { process_event(EvWheel         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnKeyDown         (wxKeyEvent&   event)  { process_event(EvKeyDown       (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }  
+void Machine::OnKeyUp           (wxKeyEvent&   event)  { process_event(EvKeyUp         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
 void Machine::OnCaptureLost     (wxMouseCaptureLostEvent& event) {};
 void Machine::OnCaptureChanged  (wxMouseCaptureChangedEvent& event) {};
 
@@ -174,11 +169,12 @@ wxPoint Machine::unscrolledPosition(wxPoint position) const
 
 //////////////////////////////////////////////////////////////////////////
 
-struct Idle : bs::simple_state< Idle, Machine >
+struct Idle : bs::simple_state< Idle, Machine, Stopped >
 {
     typedef boost::mpl::list<
         bs::custom_reaction< EvLeftDown >,
-        bs::custom_reaction< EvMotion >
+        bs::custom_reaction< EvMotion >,
+        bs::custom_reaction< EvKeyDown >
     > reactions;
 
     Idle() // entry
@@ -197,6 +193,7 @@ struct Idle : bs::simple_state< Idle, Machine >
         if (clip)
         {
             outermost_context().globals->DragStartPosition = evt.mPosition;
+            outermost_context().globals->DragStartClip = clip;
             return transit<TestDragStart>();
         }
         else
@@ -218,6 +215,104 @@ struct Idle : bs::simple_state< Idle, Machine >
         case MouseOnClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
         }
         outermost_context().globals->mousepointer.set(image);
+        return discard_event();
+    }
+    bs::result react( const EvKeyDown& evt)
+    {
+        return discard_event();
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+struct Stopped : bs::simple_state< Stopped, Idle >
+{
+    typedef boost::mpl::list<
+        bs::custom_reaction< EvKeyDown >
+    > reactions;
+
+    Stopped() // entry
+    {
+        LOG_DEBUG; 
+    }
+    ~Stopped() // exit
+    { 
+        LOG_DEBUG; 
+    }
+    bs::result start()
+    {
+        outermost_context().timeline.mPlayer->play();
+        return transit<Playing>();
+    }
+    bs::result react( const EvKeyDown& evt)
+    {
+        if (evt.mWxEvent.GetKeyCode() == WXK_SPACE)
+        {
+            return start();
+        }
+        return discard_event();
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+struct Playing : bs::simple_state< Playing, Idle >
+{
+    typedef boost::mpl::list<
+        bs::custom_reaction< EvLeftDown >,
+        bs::custom_reaction< EvKeyDown >,
+        bs::custom_reaction< EvKeyUp >
+    > reactions;
+
+    bool mMakingNewSelection;
+
+    Playing() // entry
+        :   mMakingNewSelection(false)
+    {
+        LOG_DEBUG; 
+    }
+    ~Playing() // exit
+    { 
+        LOG_DEBUG; 
+    }
+    bs::result stop()
+    {
+        outermost_context().timeline.mPlayer->stop();
+        return transit<Stopped>();
+    }
+    bs::result react( const EvLeftDown& evt )
+    {
+        VAR_DEBUG(evt);
+        return stop();
+    }
+    bs::result react( const EvKeyDown& evt)
+    {
+        switch (evt.mWxEvent.GetKeyCode())
+        {
+        case WXK_SPACE:
+            return stop();
+        case WXK_SHIFT:
+            if (!mMakingNewSelection)
+            {
+                outermost_context().timeline.mMarkerPositions.push_back(outermost_context().timeline.mCursorPosition);
+                mMakingNewSelection = true;
+            }
+            break;
+        }
+        return discard_event();
+    }
+    bs::result react( const EvKeyUp& evt)
+    {
+        switch (evt.mWxEvent.GetKeyCode())
+        {
+        case WXK_SHIFT:
+            if (mMakingNewSelection)
+            {
+                outermost_context().timeline.mMarkerPositions.push_back(outermost_context().timeline.mCursorPosition);
+                mMakingNewSelection = false;
+            }
+            break;
+        }
         return discard_event();
     }
 };
@@ -352,6 +447,7 @@ struct Dragging : bs::simple_state< Dragging, Machine >
     void showDropArea(wxPoint p)
     {
         GuiTimeLine& timeline = outermost_context().timeline;
+        GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
         boost::tuple<GuiTimeLineTrackPtr,int> tt = timeline.findTrack(p.y);
         boost::tuple<GuiTimeLineClipPtr,int> cw = timeline.findClip(p);
         GuiTimeLineTrackPtr track = tt.get<0>();

@@ -1,7 +1,7 @@
 #ifndef PROJECT_EVENT_H
 #define PROJECT_EVENT_H
 
-#include "wx/event.h"
+#include <wx/event.h>
 #include "AProjectViewNode.h"
 
 class ProjectEvent : public wxEvent
