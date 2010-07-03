@@ -115,6 +115,11 @@ public:
     GuiTimeLineClips getClips() const;
 
 private:
+
+    friend struct mousestate::Idle;
+    friend struct mousestate::Stopped;
+    friend struct mousestate::Playing;
+
     GuiTimeLineZoomPtr mZoom;
     PlayerPtr mPlayer;
     wxBitmap mBitmap;
@@ -123,6 +128,9 @@ private:
     long mWidth;
     long mHeight;
     wxRect mDropArea;
+
+    /** List of couples indicating begin and end of marked area */
+    std::list<int> mMarkerPositions;
 
     /** Y-position of audio-video divider */
     int mDividerPosition;

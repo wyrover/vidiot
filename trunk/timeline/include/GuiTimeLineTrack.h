@@ -13,6 +13,8 @@
 #include "ModelPtr.h"
 #include "GuiPtr.h"
 #include "ClipUpdateEvent.h"
+#include "TrackEventAddClips.h"
+#include "TrackEventRemoveClips.h"
 
 class GuiTimeLineTrack 
     :   public boost::enable_shared_from_this<GuiTimeLineTrack>
@@ -59,6 +61,13 @@ public:
      */
     boost::tuple<GuiTimeLineClipPtr,int> findClip(int position);
     boost::tuple<int,int> findClipBounds(GuiTimeLineClipPtr findclip);
+
+    //////////////////////////////////////////////////////////////////////////
+    // MODEL EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void OnClipsAdded( TrackEventAddClips& event );
+    void OnClipsRemoved( TrackEventRemoveClips& event );
 
     //////////////////////////////////////////////////////////////////////////
     // DRAWING EVENTS

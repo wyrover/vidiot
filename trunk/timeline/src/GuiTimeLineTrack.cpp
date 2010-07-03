@@ -3,6 +3,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <boost/foreach.hpp>
+#include <algorithm>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -20,6 +21,21 @@
 
 static int sDefaultTrackHeight = 50;
 static int sTrackBorderSize = 1;
+
+class ClipCopyFinder
+{
+public:
+    ClipCopyFinder(model::ClipPtr clip)
+        :   mClip(clip) 
+    {
+    }
+    bool operator() (GuiTimeLineClipPtr clip) const
+    { 
+        return clip->getClip() == mClip; 
+    }
+private:
+    model::ClipPtr mClip;
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -62,6 +78,8 @@ void GuiTimeLineTrack::init(GuiTimeLine* timeline, GuiTimeLineClips& allclips)
     {
         clip->Bind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
     }
+    mTrack->Bind(TRACK_EVENT_ADD_CLIPS,     &GuiTimeLineTrack::OnClipsAdded,    this);
+    mTrack->Bind(TRACK_EVENT_REMOVE_CLIPS,  &GuiTimeLineTrack::OnClipsRemoved,  this);
 }
 
 GuiTimeLineTrack::~GuiTimeLineTrack()
@@ -125,6 +143,39 @@ boost::tuple<int,int> GuiTimeLineTrack::findClipBounds(GuiTimeLineClipPtr findcl
     }
     FATAL("Clip not found.");
     return boost::make_tuple(0,0);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void GuiTimeLineTrack::OnClipsAdded( TrackEventAddClips& event )
+{
+    GuiTimeLineClips newClips;
+    BOOST_FOREACH( model::ClipPtr clip, event.getClips() )
+    {
+        newClips.push_back(boost::make_shared<GuiTimeLineClip>(mZoom,clip));
+
+    }
+
+    GuiTimeLineClips::iterator itPosition = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getPosition()) );
+    // NOT: ASSERT(itPosition != mClips.end()); Clips may be added at the end
+
+    mClips.splice(itPosition, newClips);
+
+    updateBitmap();
+}
+
+void GuiTimeLineTrack::OnClipsRemoved( TrackEventRemoveClips& event )
+{
+    GuiTimeLineClips::iterator itBegin = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getClips().front()));
+    ASSERT(itBegin != mClips.end());
+
+    GuiTimeLineClips::iterator itEnd = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getClips().back()));
+    ASSERT(itEnd != mClips.end());
+
+    ++itEnd; // See http://www.cplusplus.com/reference/stl/list/erase (one but last is removed)
+    mClips.erase(itBegin,itEnd);
 }
 
 //////////////////////////////////////////////////////////////////////////
