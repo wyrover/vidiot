@@ -56,6 +56,7 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
+,   mMarkerPositions()
 {
     LOG_INFO;
 
@@ -225,16 +226,22 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     // Draw marked areas
     dc.SetPen(wxPen(*wxGREEN, 1));
     dc.SetBrush(*wxGREEN_BRUSH);
-    std::list<int>::iterator it = mMarkerPositions.begin();
+    MarkerPositions::iterator it = mMarkerPositions.begin();
     while (it != mMarkerPositions.end())
     {
-        int beginpoint = *it;
-        int endpoint = mCursorPosition;
+        long beginpoint = *it;
+        long endpoint = 0;
         ++it;
         if (it != mMarkerPositions.end())
         {
             endpoint = *it;
             ++it;
+        }
+        else
+        {
+            // The 'max' handling is needed since expansion/contraction
+            // can cause the beginpoint to be beyond the cursor position.
+            endpoint = std::max(beginpoint,mCursorPosition);
         }
         ASSERT(endpoint >= beginpoint)(beginpoint)(endpoint);
         dc.DrawRectangle(wxRect(beginpoint, sTimeScaleHeight, endpoint-beginpoint,sMinimalGreyAboveVideoTracksHeight));
@@ -327,9 +334,17 @@ void GuiTimeLine::setCursorPosition(long position)
 
     wxPoint scroll = getScrollOffset();
 
+    // Refresh the old and new cursor position areas
     long cursorOnClientArea = mCursorPosition - scroll.x;
     long oldposOnClientArea = oldPos - scroll.x;
     RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,mHeight),false);
+
+    // Refresh the last selected marker
+    if (mMarkerPositions.size() % 2 != 0)
+    {
+        long lastBeginMarkerOnClientArea = mMarkerPositions.back() - scroll.x;
+        RefreshRect(wxRect(std::min(cursorOnClientArea,lastBeginMarkerOnClientArea),sTimeScaleHeight,std::abs(cursorOnClientArea-lastBeginMarkerOnClientArea)+1,sMinimalGreyAboveVideoTracksHeight),false);
+    }
 }
 
 void GuiTimeLine::moveCursorOnPlayback(long pts)
@@ -389,6 +404,34 @@ GuiTimeLineClips GuiTimeLine::getClips() const
         clips.splice(clips.begin(), track->getClips());
     }
     return clips;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Marker handling
+//////////////////////////////////////////////////////////////////////////
+
+void GuiTimeLine::addBeginMarker()
+{
+    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
+
+    mMarkerPositions.push_back(marker);
+
+    // Refresh the area for the new marker. This is needed due to the 'addition' 
+    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
+    long beginMarkerOnClientArea = marker - getScrollOffset().x;
+    RefreshRect(wxRect(std::min(cursorOnClientArea,beginMarkerOnClientArea),sTimeScaleHeight,std::abs(cursorOnClientArea-beginMarkerOnClientArea)+1,sMinimalGreyAboveVideoTracksHeight),false);
+}
+
+void GuiTimeLine::addEndMarker()
+{
+    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
+
+    mMarkerPositions.push_back(marker);
+
+    // Refresh the area for the new marker. This is needed due to the 'addition' 
+    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
+    long endMarkerOnClientArea = marker - getScrollOffset().x;
+    RefreshRect(wxRect(std::min(cursorOnClientArea,endMarkerOnClientArea),sTimeScaleHeight,std::abs(cursorOnClientArea-endMarkerOnClientArea)+1,sMinimalGreyAboveVideoTracksHeight),false);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -594,6 +637,16 @@ void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
     ar & mAudioTracks;
     ar & mZoom;
     ar & mDividerPosition;
+    ar & mMarkerPositions;
+    if (Archive::is_loading::value)
+    {
+        if (mMarkerPositions.size() % 2 != 0)
+        {
+            // This selection was incomplete. Remove it.
+            // Todo: better handling. Ensure that always complete marker couples are written to file.
+            mMarkerPositions.pop_back();
+        }
+    }
 }
 template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

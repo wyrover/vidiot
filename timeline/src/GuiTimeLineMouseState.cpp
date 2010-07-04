@@ -8,7 +8,9 @@
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/simple_state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
+#include "GuiOptions.h"
 #include "GuiTimeLine.h"
+#include "GuiTimeLineZoom.h"
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLineTrack.h"
 #include "GuiTimeLineDragImage.h"
@@ -294,7 +296,7 @@ struct Playing : bs::simple_state< Playing, Idle >
         case WXK_SHIFT:
             if (!mMakingNewSelection)
             {
-                outermost_context().timeline.mMarkerPositions.push_back(outermost_context().timeline.mCursorPosition);
+                outermost_context().timeline.addBeginMarker();
                 mMakingNewSelection = true;
             }
             break;
@@ -308,7 +310,7 @@ struct Playing : bs::simple_state< Playing, Idle >
         case WXK_SHIFT:
             if (mMakingNewSelection)
             {
-                outermost_context().timeline.mMarkerPositions.push_back(outermost_context().timeline.mCursorPosition);
+                outermost_context().timeline.addEndMarker();
                 mMakingNewSelection = false;
             }
             break;
