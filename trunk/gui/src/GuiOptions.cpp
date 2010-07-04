@@ -27,8 +27,9 @@ wxString GuiOptions::sConfigFile("");
 //////////////////////////////////////////////////////////////////////////
 
 #define GETPERSISTEDENUM(name,default)      name ## _fromString(std::string(wxConfigBase::Get()->Read(sPath ## name, name ## _toString( default )).mb_str()))
-#define GETPERSISTEDSTRING(name,default)    wxConfigBase::Get()->Read(sPath ## name, default )
+#define GETPERSISTEDSTRING(name,default)    wxConfigBase::Get()->Read(sPath ## name, default)
 #define GETPERSISTEDBOOL(name,default)      wxConfigBase::Get()->ReadBool(sPath ## name, default)
+#define GETPERSISTEDDOUBLE(name,default)    wxConfigBase::Get()->ReadDouble(sPath ## name, default)
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER PATH VARIABLES
@@ -40,6 +41,8 @@ static const wxString sPathLastOpened           ("/Project/LastOpened");
 static const wxString sPathLogLevel             ("/Debug/LogLevel");
 static const wxString sPathLogFile              ("/Debug/LogFile");
 static const wxString sPathFrameRate            ("/Video/FrameRate");
+static const wxString sPathMarkerBeginAddition  ("/Timeline/MarkerBeginAddition");
+static const wxString sPathMarkerEndAddition    ("/Timeline/MarkerEndAddition");
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER VARIABLES
@@ -135,6 +138,18 @@ model::FrameRate GuiOptions::getDefaultFrameRate()
     return fr;
 }
 
+// static
+double GuiOptions::getMarkerBeginAddition()
+{
+    return GETPERSISTEDDOUBLE(MarkerBeginAddition,0);
+}
+
+// static
+double GuiOptions::getMarkerEndAddition()
+{
+    return GETPERSISTEDDOUBLE(MarkerEndAddition,0);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CONFIGURATION DIALOG
 //////////////////////////////////////////////////////////////////////////
@@ -197,6 +212,47 @@ GuiOptions::GuiOptions(wxWindow* win)
     }
 
     //////////////////////////////////////////////////////////////////////////
+    // TIMELINE
+    //////////////////////////////////////////////////////////////////////////
+
+    {
+        // Tab: Timeline
+        wxPanel* panel = new wxPanel(GetBookCtrl(), wxID_ANY);
+        GetBookCtrl()->AddPage(panel, _("Timeline"), false);
+        wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
+        panel->SetSizerAndFit(topSizer);
+
+        // Box: Start 
+        wxStaticBox*    staticbox       = new wxStaticBox(panel, wxID_ANY, _("Marking selection"));
+        wxBoxSizer*     staticbox_sizer = new wxStaticBoxSizer( staticbox, wxVERTICAL );
+        topSizer->Add(staticbox_sizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
+
+        // Box: Marking selection while playing
+
+        // Entry: Begin addition
+        {
+            wxBoxSizer*     hSizer          = new wxBoxSizer( wxHORIZONTAL );
+            staticbox_sizer->Add(hSizer, 0, wxGROW|wxALL, 5);
+            double initial = getMarkerBeginAddition();
+            mMarkerBeginAddition = new wxSpinCtrlDouble(panel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
+            hSizer->Add(new wxStaticText(panel, wxID_ANY, _("Begin marker expansion/contraction (s).")), 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+            hSizer->Add(5, 5, 1, wxALL, 0);
+            hSizer->Add(mMarkerBeginAddition, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+        }
+
+        // Entry: End addition
+        {
+            wxBoxSizer*     hSizer          = new wxBoxSizer( wxHORIZONTAL );
+            staticbox_sizer->Add(hSizer, 0, wxGROW|wxALL, 5);
+            double initial = getMarkerEndAddition();
+            mMarkerEndAddition = new wxSpinCtrlDouble(panel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
+            hSizer->Add(new wxStaticText(panel, wxID_ANY, _("End marker expansion/contraction (s).")), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+            hSizer->Add(5, 5, 1, wxALL, 0);
+            hSizer->Add(mMarkerEndAddition, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////
     // DEBUG
     //////////////////////////////////////////////////////////////////////////
 
@@ -252,13 +308,24 @@ GuiOptions::~GuiOptions()
 
         bool newLoadLast = mLoadLast->IsChecked();
         result = wxConfigBase::Get()->Write(sPathAutoLoadEnabled,newLoadLast);
+        ASSERT(result);
 
         LogLevel newLogLevel = static_cast<LogLevel>(reinterpret_cast<int>(mLogLevel->GetClientData(mLogLevel->GetSelection())));
         result = wxConfigBase::Get()->Write(sPathLogLevel,LogLevel_toString(newLogLevel).c_str());
+        ASSERT(result);
 
         wxString newFrameRate = boost::get<0>(sPossibleFrameRates[mFrameRate->GetSelection()]);
         result = wxConfigBase::Get()->Write(sPathFrameRate,newFrameRate);
-        
+        ASSERT(result);
+
+        double beginAddition = mMarkerBeginAddition->GetValue();
+        result = wxConfigBase::Get()->Write(sPathMarkerBeginAddition,beginAddition);
+        ASSERT(result);
+
+        double endAddition = mMarkerEndAddition->GetValue();
+        result = wxConfigBase::Get()->Write(sPathMarkerEndAddition,endAddition);
+        ASSERT(result);
+
         wxConfigBase::Get()->Flush();
 
         distributeOptions();

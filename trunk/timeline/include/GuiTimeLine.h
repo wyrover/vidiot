@@ -129,8 +129,20 @@ private:
     long mHeight;
     wxRect mDropArea;
 
+    //////////////////////////////////////////////////////////////////////////
+    // Marker handling
+    //////////////////////////////////////////////////////////////////////////
+
+    typedef std::list<long> MarkerPositions;
     /** List of couples indicating begin and end of marked area */
-    std::list<int> mMarkerPositions;
+    MarkerPositions mMarkerPositions;
+
+    void addBeginMarker();
+    void addEndMarker();
+
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////
 
     /** Y-position of audio-video divider */
     int mDividerPosition;
