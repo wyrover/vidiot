@@ -10,17 +10,6 @@
 
 typedef boost::rational<int> rational;
 
-class Constants
-{
-public:
-    
-    static const int sMicrosecondsPerSecond;
-    static const int sMilliSecond;
-    static const int sSecond;
-    static const int sMinute;
-    static const int sHour;
-};
-
 class GuiTimeLineZoom
     :   public boost::noncopyable
 {
@@ -69,9 +58,6 @@ public:
     * Is static since it is independent of the chosen zoom factor.
     */
     static int microsecondsToPts(int us);
-
-
-
 
 private:
 

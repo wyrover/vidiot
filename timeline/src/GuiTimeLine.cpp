@@ -12,6 +12,7 @@
 #include <wx/bitmap.h>
 #include <math.h>
 #include <algorithm>
+#include "Constants.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
 #include "GuiOptions.h"
@@ -28,15 +29,6 @@
 #include "ProjectEventAddAsset.h"
 #include "ProjectEventDeleteAsset.h"
 #include "ProjectEventRenameAsset.h"
-
-static int sTimeScaleMinutesHeight = 10;
-static int sTimeScaleSecondHeight = 5;
-static int sTimeScaleHeight = 20;
-static int sMinimalGreyAboveVideoTracksHeight = 10;
-static int sMinimalGreyBelowAudioTracksHeight = 10;
-
-static int sDefaultAudioVideoDividerPosition = 100;
-static int sAudioVideoDividerHeight = 5;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -56,7 +48,7 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
-,   mMarkerPositions()
+,   mSelectedIntervals()
 {
     LOG_INFO;
 
@@ -83,6 +75,9 @@ void GuiTimeLine::init(wxWindow *parent)
     EnableScrolling(true,true);
     SetBackgroundColour(* wxLIGHT_GREY);
     SetDropTarget(new GuiTimeLineDropTarget(mZoom,this));
+
+    // Initialize all helper objects
+    mSelectedIntervals.init(this);
 
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     DetermineWidth();
@@ -190,9 +185,9 @@ void GuiTimeLine::OnSize(wxSizeEvent& event)
     DetermineHeight();
 
     mDividerPosition = 
-        sTimeScaleHeight + 
-        sMinimalGreyAboveVideoTracksHeight + 
-        (mHeight - sTimeScaleHeight - sMinimalGreyAboveVideoTracksHeight - sAudioVideoDividerHeight) / 2;
+        Constants::sTimeScaleHeight + 
+        Constants::sMinimalGreyAboveVideoTracksHeight + 
+        (mHeight - Constants::sTimeScaleHeight - Constants::sMinimalGreyAboveVideoTracksHeight - Constants::sAudioVideoDividerHeight) / 2;
 
     updateSize(); // Triggers the initial drawing
 }
@@ -224,28 +219,38 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     }
 
     // Draw marked areas
-    dc.SetPen(wxPen(*wxGREEN, 1));
-    dc.SetBrush(*wxGREEN_BRUSH);
-    MarkerPositions::iterator it = mMarkerPositions.begin();
-    while (it != mMarkerPositions.end())
-    {
-        long beginpoint = *it;
-        long endpoint = 0;
-        ++it;
-        if (it != mMarkerPositions.end())
-        {
-            endpoint = *it;
-            ++it;
-        }
-        else
-        {
-            // The 'max' handling is needed since expansion/contraction
-            // can cause the beginpoint to be beyond the cursor position.
-            endpoint = std::max(beginpoint,mCursorPosition);
-        }
-        ASSERT(endpoint >= beginpoint)(beginpoint)(endpoint);
-        dc.DrawRectangle(wxRect(beginpoint, sTimeScaleHeight, endpoint-beginpoint,sMinimalGreyAboveVideoTracksHeight));
-    }
+    mSelectedIntervals.draw(dc);
+    //dc.SetPen(wxPen(*wxGREEN, 1));
+    //dc.SetBrush(*wxGREEN_BRUSH);
+    //MarkerPositions::iterator it = mMarkerPositions.begin();
+    //while (it != mMarkerPositions.end())
+    //{
+    //    long beginpoint = *it;
+    //    long endpoint = 0;
+    //    ++it;
+    //    if (it != mMarkerPositions.end())
+    //    {
+    //        endpoint = *it;
+    //        ++it;
+    //    }
+    //    else
+    //    {
+    //        // This branch handles a 'running endpoint' when holding down the
+    //        // marker key for a while.
+    //        // The 'max' handling is needed since expansion/contraction
+    //        // can cause the beginpoint to be beyond the cursor position.
+    //        long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
+    //        endpoint = std::max(beginpoint,marker);
+
+    //        // Refresh the area for the new marker.
+    //        long beginOnClientArea = beginpoint - getScrollOffset().x;
+    //        long endOnClientArea = endpoint - getScrollOffset().x;
+    //        RefreshRect(wxRect(std::min(beginOnClientArea,endOnClientArea),Constants::sTimeScaleHeight,std::abs(beginOnClientArea-endOnClientArea)+1Constants::,sMinimalGreyAboveVideoTracksHeight),false);
+
+    //    }
+    //    ASSERT(endpoint >= beginpoint)(beginpoint)(endpoint);
+    //    dc.DrawRectangle(wxRect(beginpoint, Constants::sTimeScaleHeight, endpoint-beginpoint,Constants::sMinimalGreyAboveVideoTracksHeight));
+    //}
 
     // Draw drop area
     if (!mDropArea.IsEmpty())
@@ -339,12 +344,12 @@ void GuiTimeLine::setCursorPosition(long position)
     long oldposOnClientArea = oldPos - scroll.x;
     RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,mHeight),false);
 
-    // Refresh the last selected marker
-    if (mMarkerPositions.size() % 2 != 0)
-    {
-        long lastBeginMarkerOnClientArea = mMarkerPositions.back() - scroll.x;
-        RefreshRect(wxRect(std::min(cursorOnClientArea,lastBeginMarkerOnClientArea),sTimeScaleHeight,std::abs(cursorOnClientArea-lastBeginMarkerOnClientArea)+1,sMinimalGreyAboveVideoTracksHeight),false);
-    }
+    //// Refresh the last selected marker
+    //if (mMarkerPositions.size() % 2 != 0)
+    //{
+    //    long lastBeginMarkerOnClientArea = mMarkerPositions.back() - scroll.x;
+    //    RefreshRect(wxRect(std::min(cursorOnClientArea,lastBeginMarkerOnClientArea),Constants::sTimeScaleHeight,std::abs(cursorOnClientArea-lastBeginMarkerOnClientArea)+1,Constants::sMinimalGreyAboveVideoTracksHeight),false);
+    //}
 }
 
 void GuiTimeLine::moveCursorOnPlayback(long pts)
@@ -382,7 +387,7 @@ boost::tuple<GuiTimeLineTrackPtr,int> GuiTimeLine::findTrack(int yposition) cons
         top -= track->getBitmap().GetHeight();
         if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
     }
-    int bottom = mDividerPosition + sAudioVideoDividerHeight;
+    int bottom = mDividerPosition + Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
         int top = bottom;
@@ -406,33 +411,33 @@ GuiTimeLineClips GuiTimeLine::getClips() const
     return clips;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Marker handling
-//////////////////////////////////////////////////////////////////////////
-
-void GuiTimeLine::addBeginMarker()
-{
-    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
-
-    mMarkerPositions.push_back(marker);
-
-    // Refresh the area for the new marker. This is needed due to the 'addition' 
-    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
-    long beginMarkerOnClientArea = marker - getScrollOffset().x;
-    RefreshRect(wxRect(std::min(cursorOnClientArea,beginMarkerOnClientArea),sTimeScaleHeight,std::abs(cursorOnClientArea-beginMarkerOnClientArea)+1,sMinimalGreyAboveVideoTracksHeight),false);
-}
-
-void GuiTimeLine::addEndMarker()
-{
-    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
-
-    mMarkerPositions.push_back(marker);
-
-    // Refresh the area for the new marker. This is needed due to the 'addition' 
-    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
-    long endMarkerOnClientArea = marker - getScrollOffset().x;
-    RefreshRect(wxRect(std::min(cursorOnClientArea,endMarkerOnClientArea),sTimeScaleHeight,std::abs(cursorOnClientArea-endMarkerOnClientArea)+1,sMinimalGreyAboveVideoTracksHeight),false);
-}
+////////////////////////////////////////////////////////////////////////////
+//// Marker handling
+////////////////////////////////////////////////////////////////////////////
+//
+//void GuiTimeLine::addBeginMarker()
+//{
+//    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
+//
+//    mMarkerPositions.push_back(marker);
+//
+//    // Refresh the area for the new marker. This is needed due to the 'addition' 
+//    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
+//    long beginMarkerOnClientArea = marker - getScrollOffset().x;
+//    RefreshRect(wxRect(std::min(cursorOnClientArea,beginMarkerOnClientArea),Constants::sTimeScaleHeight,std::abs(cursorOnClientArea-beginMarkerOnClientArea)+1,Constants::sMinimalGreyAboveVideoTracksHeight),false);
+//}
+//
+//void GuiTimeLine::addEndMarker()
+//{
+//    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
+//
+//    mMarkerPositions.push_back(marker);
+//
+//    // Refresh the area for the new marker. This is needed due to the 'addition' 
+//    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
+//    long endMarkerOnClientArea = marker - getScrollOffset().x;
+//    RefreshRect(wxRect(std::min(cursorOnClientArea,endMarkerOnClientArea),Constants::sTimeScaleHeight,std::abs(cursorOnClientArea-endMarkerOnClientArea)+1,Constants::sMinimalGreyAboveVideoTracksHeight),false);
+//}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
@@ -448,18 +453,18 @@ void GuiTimeLine::DetermineWidth()
 
 void GuiTimeLine::DetermineHeight()
 {
-    int requiredHeight = sTimeScaleHeight;
-    requiredHeight += sMinimalGreyAboveVideoTracksHeight;
+    int requiredHeight = Constants::sTimeScaleHeight;
+    requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
     {
         requiredHeight += track->getBitmap().GetHeight();
     }
-    requiredHeight += sAudioVideoDividerHeight;
+    requiredHeight += Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
         requiredHeight += track->getBitmap().GetHeight();
     }
-    requiredHeight += sMinimalGreyBelowAudioTracksHeight;
+    requiredHeight += Constants::sMinimalGreyBelowAudioTracksHeight;
 
     mHeight = std::max(requiredHeight, GetClientSize().GetHeight());
 }
@@ -493,7 +498,7 @@ void GuiTimeLine::updateBitmap()
     dc.SetBrush(wxNullBrush);
     wxPen blackLinePen(*wxBLACK, 1);
     dc.SetPen(blackLinePen);
-    dc.DrawRectangle(0,0,w,sTimeScaleHeight);
+    dc.DrawRectangle(0,0,w,Constants::sTimeScaleHeight);
 
     wxFont* f = const_cast<wxFont*>(wxSMALL_FONT);
     dc.SetFont(*f);
@@ -503,18 +508,18 @@ void GuiTimeLine::updateBitmap()
     {
         int position = mZoom->timeToPixels(ms);
         bool isMinute = (ms % Constants::sMinute == 0);
-        int height = sTimeScaleSecondHeight;
+        int height = Constants::sTimeScaleSecondHeight;
 
         if (isMinute)
         {
-            height = sTimeScaleMinutesHeight;
+            height = Constants::sTimeScaleMinutesHeight;
         }
 
         dc.DrawLine(position,0,position,height);
 
         if (ms == 0)
         {
-            dc.DrawText( "0", 5, sTimeScaleMinutesHeight );
+            dc.DrawText( "0", 5, Constants::sTimeScaleMinutesHeight );
         }
         else
         {
@@ -523,7 +528,7 @@ void GuiTimeLine::updateBitmap()
                 wxDateTime t(ms / Constants::sHour, (ms % Constants::sHour) / Constants::sMinute, (ms % Constants::sMinute) / Constants::sSecond, ms % Constants::sSecond);
                 wxString s = t.Format("%H:%M:%S.%l");
                 wxSize ts = dc.GetTextExtent(s);
-                dc.DrawText( s, position - ts.GetX() / 2, sTimeScaleMinutesHeight );
+                dc.DrawText( s, position - ts.GetX() / 2, Constants::sTimeScaleMinutesHeight );
             }
         }
     }
@@ -546,9 +551,9 @@ void GuiTimeLine::updateBitmap()
     wxBrush audioVideoDividerBrush(wxColour(10,20,30),wxBRUSHSTYLE_CROSSDIAG_HATCH);
     dc.SetBrush(audioVideoDividerBrush);
     dc.SetPen(bluePen);
-    dc.DrawRectangle(0,y,w,sAudioVideoDividerHeight);
+    dc.DrawRectangle(0,y,w,Constants::sAudioVideoDividerHeight);
 
-    y += sAudioVideoDividerHeight;
+    y += Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( GuiTimeLineTrackPtr audioTrack, mAudioTracks)
     {
         dc.DrawBitmap(audioTrack->getBitmap(),wxPoint(0,y));
@@ -594,7 +599,7 @@ wxBitmap GuiTimeLine::getDragBitmap(wxPoint& hotspot) //const
     }
 
     // Draw audio tracks
-    position.y += sAudioVideoDividerHeight;
+    position.y += Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
         track->drawClips(position,dc,dcMask);
@@ -637,16 +642,7 @@ void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
     ar & mAudioTracks;
     ar & mZoom;
     ar & mDividerPosition;
-    ar & mMarkerPositions;
-    if (Archive::is_loading::value)
-    {
-        if (mMarkerPositions.size() % 2 != 0)
-        {
-            // This selection was incomplete. Remove it.
-            // Todo: better handling. Ensure that always complete marker couples are written to file.
-            mMarkerPositions.pop_back();
-        }
-    }
+    ar & mSelectedIntervals;
 }
 template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

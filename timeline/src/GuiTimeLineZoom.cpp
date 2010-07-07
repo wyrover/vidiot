@@ -4,17 +4,11 @@
 #include "Project.h"
 #include "UtilLog.h"
 #include <math.h>
+#include "Constants.h"
 #include "Properties.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "UtilSerializeBoost.h"
-
-const int Constants::sMicrosecondsPerSecond = 1000;
-
-const int Constants::sMilliSecond = 1;
-const int Constants::sSecond      = 1000  * sMilliSecond;
-const int Constants::sMinute      = 60    * sSecond;
-const int Constants::sHour        = 60    * sMinute;
 
 static rational sDefaultZoom(1,5);
 

@@ -1,12 +1,12 @@
-#ifndef SELECTION_H
-#define SELECTION_H
+#ifndef SELECT_CLIPS_H
+#define SELECT_CLIPS_H
 
 #include "GuiPtr.h"
 
-class Selection
+class SelectClips
 {
 public:
-    Selection(GuiTimeLine& timeline);
+    SelectClips(GuiTimeLine& timeline);
     void update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
 private:
     GuiTimeLine& mTimeline;
@@ -18,4 +18,4 @@ private:
 
 };
 
-#endif // SELECTION_H
+#endif // SELECT_CLIPS_H

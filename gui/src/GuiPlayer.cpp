@@ -7,13 +7,13 @@
 #include "GuiTimeLine.h"
 #include "GuiTimeLineZoom.h"
 #include "GuiVideoDisplay.h"
-#include "GuiEventPlaybackPosition.h"
 #include "preview-home.xpm" 
 #include "preview-end.xpm" 
 #include "preview-next.xpm" 
 #include "preview-play.xpm" 
 #include "preview-pause.xpm" 
 #include "preview-previous.xpm" 
+#include "Constants.h"
 
 wxBitmap bmpHome    (preview_home_xpm);
 wxBitmap bmpEnd     (preview_end_xpm);
@@ -132,7 +132,7 @@ void GuiPlayer::moveTo(int64_t position)
 
 void GuiPlayer::OnPlaybackPosition(GuiEventPlaybackPosition& event)
 {
-    mPosition = event.getPts();
+    mPosition = event.getValue();//getPts();
     int time = GuiTimeLineZoom::ptsToTime(mPosition);
     wxDateTime t(time / Constants::sHour, (time % Constants::sHour) / Constants::sMinute, (time % Constants::sMinute) / Constants::sSecond, time % Constants::sSecond);
     wxString s = t.Format("%H:%M:%S.%l") + wxString::Format(" [%10d]", mPosition);

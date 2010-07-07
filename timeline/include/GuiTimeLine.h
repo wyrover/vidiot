@@ -14,12 +14,13 @@
 #include "ModelPtr.h"
 #include "GuiPlayer.h"
 #include "GuiPtr.h"
-#include "TrackUpdateEvent.h"
 #include "GuiTimeLineMouseState.h"
+#include "SelectIntervals.h"
 
 class ProjectEventAddAsset;
 class ProjectEventDeleteAsset;
 class ProjectEventRenameAsset;
+class TrackUpdateEvent;  
 
 class GuiTimeLine
 :   public wxScrolledWindow
@@ -119,6 +120,7 @@ private:
     friend struct mousestate::Idle;
     friend struct mousestate::Stopped;
     friend struct mousestate::Playing;
+    friend class SelectIntervals;
 
     GuiTimeLineZoomPtr mZoom;
     PlayerPtr mPlayer;
@@ -130,15 +132,10 @@ private:
     wxRect mDropArea;
 
     //////////////////////////////////////////////////////////////////////////
-    // Marker handling
+    // Interval selection
     //////////////////////////////////////////////////////////////////////////
 
-    typedef std::list<long> MarkerPositions;
-    /** List of couples indicating begin and end of marked area */
-    MarkerPositions mMarkerPositions;
-
-    void addBeginMarker();
-    void addEndMarker();
+    SelectIntervals mSelectedIntervals;
 
     //////////////////////////////////////////////////////////////////////////
     //

@@ -15,7 +15,7 @@
 #include "GuiTimeLineTrack.h"
 #include "GuiTimeLineDragImage.h"
 #include "MousePointer.h"
-#include "Selection.h"
+#include "SelectClips.h"
 #include "UtilLog.h"
 
 namespace mousestate {
@@ -100,7 +100,7 @@ struct GlobalState
     wxPoint DragStartPosition;
     GuiTimeLineDragImage* DragImage;
     MousePointer mousepointer;
-    Selection selection;
+    SelectClips selection;
 
     /** Clip on which the drag was started. */
     GuiTimeLineClipPtr DragStartClip;
@@ -296,7 +296,7 @@ struct Playing : bs::simple_state< Playing, Idle >
         case WXK_SHIFT:
             if (!mMakingNewSelection)
             {
-                outermost_context().timeline.addBeginMarker();
+                outermost_context().timeline.mSelectedIntervals.addBeginMarker();
                 mMakingNewSelection = true;
             }
             break;
@@ -310,7 +310,7 @@ struct Playing : bs::simple_state< Playing, Idle >
         case WXK_SHIFT:
             if (mMakingNewSelection)
             {
-                outermost_context().timeline.addEndMarker();
+                outermost_context().timeline.mSelectedIntervals.addEndMarker();
                 mMakingNewSelection = false;
             }
             break;
