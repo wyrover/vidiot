@@ -12,12 +12,13 @@
 #include <wx/pen.h>
 #include "GuiTimeLineZoom.h"
 #include "GuiTimeLineClip.h"
-#include "TrackUpdateEvent.h"
 #include "UtilLog.h"
 #include "GuiTimeLine.h"
 #include "AProjectViewNode.h"
 #include "Clip.h"
 #include "Track.h"
+
+DEFINE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
 
 static int sDefaultTrackHeight = 50;
 static int sTrackBorderSize = 1;

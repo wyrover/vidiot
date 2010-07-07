@@ -11,6 +11,9 @@
 #include "AProjectViewNode.h"
 #include "Clip.h"
 #include "GuiPtr.h"
+#include "UtilEvent.h"
+
+DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
 
 class GuiTimeLineClip
     :   public boost::enable_shared_from_this<GuiTimeLineClip>

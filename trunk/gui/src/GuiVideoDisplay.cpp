@@ -6,13 +6,14 @@
 #include "wxInclude.h"
 #include "UtilLog.h"
 #include "IControl.h"
-#include "GuiEventPlaybackPosition.h"
 #include "GuiMain.h"
 #include "GuiTimeLineZoom.h"
 #include "Sequence.h"
 #include <ostream>
 #include "portaudio.h"
 #include "FrameRate.h"
+
+DEFINE_EVENT(GUI_EVENT_PLAYBACK_POSITION, GuiEventPlaybackPosition, long);
 
 const int GuiVideoDisplay::sStereo = 2;
 const int GuiVideoDisplay::sFrameRate = 44100;

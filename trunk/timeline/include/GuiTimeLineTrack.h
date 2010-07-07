@@ -12,9 +12,13 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "ClipUpdateEvent.h"
 #include "TrackEventAddClips.h"
 #include "TrackEventRemoveClips.h"
+#include "UtilEvent.h"
+
+class ClipUpdateEvent;
+
+DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
 
 class GuiTimeLineTrack 
     :   public boost::enable_shared_from_this<GuiTimeLineTrack>

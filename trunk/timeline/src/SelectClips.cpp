@@ -1,16 +1,16 @@
-#include "Selection.h"
+#include "SelectClips.h"
 
 #include <boost/foreach.hpp>
 #include "GuiTimeLine.h"
 #include "GuiTimeLineClip.h"
 #include "UtilLog.h"
 
-Selection::Selection(GuiTimeLine& timeline)
+SelectClips::SelectClips(GuiTimeLine& timeline)
 :   mTimeline(timeline)
 {
 
 }
-void Selection::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void SelectClips::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
     // Must be determined before deselecting all clips.
     bool previousClickedClipWasSelected = mPreviouslyClicked ? mPreviouslyClicked->isSelected() : true;
@@ -29,7 +29,7 @@ void Selection::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPres
     {
         if (altPressed)
         {
-            // Selection till end. 
+            // SelectClips till end. 
 
             GuiTimeLineClipPtr firstclip;
             GuiTimeLineClipPtr lastclip;
@@ -50,7 +50,7 @@ void Selection::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPres
         else if (shiftPressed)
         {
             // Range selection. Select from last selected clip until the current clip.
-            // Selection value equals the state of the last selected clip. If that was
+            // SelectClips value equals the state of the last selected clip. If that was
             // just selected, then the whole range is selected. If the last selected 
             // clip was deselected, then the whole range is deselected.
 
