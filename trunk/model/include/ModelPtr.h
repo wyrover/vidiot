@@ -1,12 +1,16 @@
 #ifndef MODEL_PTR_H
 #define MODEL_PTR_H
 
-// This file contains all forward declarations of model shared pointers.
+// This file contains all forward declarations of model pointers/classes.
 
 #include <list>
 #include <boost/shared_ptr.hpp>
 
 namespace model {
+
+//////////////////////////////////////////////////////////////////////////
+
+class Project;
 
 //////////////////////////////////////////////////////////////////////////
 

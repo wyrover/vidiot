@@ -10,6 +10,7 @@
 #include "GuiOptions.h"
 #include "GuiWindow.h"
 #include "GuiDebugReport.h"
+#include "Project.h"
 #include "wx/msgdlg.h"
 IMPLEMENT_APP(GuiMain)
 
@@ -18,19 +19,46 @@ IMPLEMENT_APP(GuiMain)
 //////////////////////////////////////////////////////////////////////////
 
 GuiMain::GuiMain()
-:   mDone(false)
+:   mProject(0)
+,   mDone(false)
 {
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();
 #endif // CATCH_ALL_ERRORS
 
-    Bind(wxEVT_IDLE,    &GuiMain::OnIdle,   this);
+    Bind(wxEVT_IDLE,                    &GuiMain::OnIdle,           this);
+    Bind(PROJECT_EVENT_OPEN_PROJECT,    &GuiMain::OnOpenProject,    this);
+    Bind(PROJECT_EVENT_CLOSE_PROJECT,   &GuiMain::OnCloseProject,   this);
 }
 
 GuiMain::~GuiMain()
 {
-    Unbind(wxEVT_IDLE,  &GuiMain::OnIdle,   this);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// PROJECT EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void GuiMain::OnOpenProject( ProjectEventOpenProject &event )
+{
+    mProject = event.getProject();
+    event.Skip();
+}
+
+void GuiMain::OnCloseProject( ProjectEventCloseProject &event )
+{
+    mProject = 0;
+    event.Skip();
+}
+
+model::Project* GuiMain::getProject() const
+{
+    return mProject;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GUI EVENTS
+//////////////////////////////////////////////////////////////////////////
 
 bool GuiMain::OnInit()
 {

@@ -1,49 +1,76 @@
 #ifndef SELECT_INTERVALS_H
 #define SELECT_INTERVALS_H
 
-#include "GuiPtr.h"
 #include <wx/dc.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
+#include "GuiPtr.h"
 
-class Interval
-{
-public:
-    explicit Interval(long _begin)
-        :   begin(_begin)
-        ,   end(-1)
-    {
-    }
-    /** -1 indicates not initialized yet. */
-    long begin;
-    /** -1 indicates not initialized yet. */
-    long end;
-};
+class EventTimelineCursorMoved;
 
 class SelectIntervals
+    :   public boost::enable_shared_from_this<SelectIntervals>
 {
 public:
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION METHODS
+    //////////////////////////////////////////////////////////////////////////
 
     SelectIntervals();
     void init(GuiTimeLinePtr timeline);
     virtual ~SelectIntervals();
 
+    //////////////////////////////////////////////////////////////////////////
+    // MARKING / TOGGLING INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
+    void addBeginMarker();
+    void addEndMarker();
+
+    void startToggle();
+    void endToggle();
+
+    /** To be called for the undo/redo mechanism. */
+    void change(long begin, long end, bool add);
+
+    //////////////////////////////////////////////////////////////////////////
+    // DRAWING
+    //////////////////////////////////////////////////////////////////////////
+
     void draw(wxDC& dc);
 
 private:
+
     GuiTimeLinePtr mTimeline;
 
-    typedef std::list<Interval> mIntervals;
+    wxRegion mMarkedIntervals;
+    
+    bool mNewIntervalActive;
+    long mNewIntervalBegin;
+    long mNewIntervalEnd;
 
+    bool mToggleActive;
+    long mToggleBegin;
+    long mToggleEnd;
 
-public:
-    typedef std::list<long> MarkerPositions;
-    /** List of couples indicating begin and end of marked area */
-    MarkerPositions mMarkerPositions;
-    void addBeginMarker();
-    void addEndMarker();
-   
+    //////////////////////////////////////////////////////////////////////////
+    // EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onCursorMoved(EventTimelineCursorMoved& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    wxRect makeRect(long x1, long x2);
+    wxRect ptsToPixels(wxRect rect);
+    void refresh(long begin, long end);
+
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION 
     //////////////////////////////////////////////////////////////////////////
@@ -52,6 +79,8 @@ public:
     template<class Archive> 
     void serialize(Archive & ar, const unsigned int version);
 };
+
+typedef boost::shared_ptr<SelectIntervals> IntervalsPtr;
 
 BOOST_CLASS_VERSION(SelectIntervals, 1)
 BOOST_CLASS_EXPORT(SelectIntervals)

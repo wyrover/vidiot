@@ -77,6 +77,7 @@ public:
     * it should be done after GetChildren() has returned the node. Hence, the decoupling
     * via the event queue instead of a direct call in the GetChildren() method.
     */
+    // todo use utilevent macro
     class FolderEvent : public wxEvent
     {
     public:

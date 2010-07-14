@@ -114,6 +114,10 @@ GuiWindow::GuiWindow()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    &mDocManager, wxID_REVERT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      &mDocManager, wxID_SAVE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    &mDocManager, wxID_SAVEAS);
+
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          &mDocManager, wxID_UNDO);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          &mDocManager, wxID_REDO);
+
     
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnExit,             this, wxID_EXIT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnPlaySequence,     this, meID_PLAYSEQUENCE);
@@ -179,6 +183,7 @@ void GuiWindow::OnOpenProject( ProjectEventOpenProject &event )
 {
     mProject = event.getProject();
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
+    GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
     mDocManager.FileHistorySave(*wxConfigBase::Get());
     GuiOptions::SetAutoLoadFilename(mProject->GetFilename());
     wxConfigBase::Get()->Flush();
