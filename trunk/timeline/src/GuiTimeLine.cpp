@@ -26,9 +26,6 @@
 #include "Sequence.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
-#include "ProjectEventAddAsset.h"
-#include "ProjectEventDeleteAsset.h"
-#include "ProjectEventRenameAsset.h"
 
 DEFINE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
@@ -98,10 +95,6 @@ void GuiTimeLine::init(wxWindow *parent)
         track->init(this, allclips);
     }
 
-    wxGetApp().Bind(PROJECT_EVENT_ADD_ASSET,        &GuiTimeLine::OnProjectAssetAdded,     this);
-    wxGetApp().Bind(PROJECT_EVENT_DELETE_ASSET,     &GuiTimeLine::OnProjectAssetDeleted,   this);
-    wxGetApp().Bind(PROJECT_EVENT_RENAME_ASSET,     &GuiTimeLine::OnProjectAssetRenamed,   this);
-
     Bind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
     Bind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
@@ -123,10 +116,6 @@ void GuiTimeLine::init(wxWindow *parent)
 
 GuiTimeLine::~GuiTimeLine()
 {
-    wxGetApp().Unbind(PROJECT_EVENT_ADD_ASSET,      &GuiTimeLine::OnProjectAssetAdded,      this);
-    wxGetApp().Unbind(PROJECT_EVENT_DELETE_ASSET,   &GuiTimeLine::OnProjectAssetDeleted,    this);
-    wxGetApp().Unbind(PROJECT_EVENT_RENAME_ASSET,   &GuiTimeLine::OnProjectAssetRenamed,    this);
-
     dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().closeTimeline(this);
 
     Unbind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
@@ -146,38 +135,6 @@ GuiTimeLine::~GuiTimeLine()
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
-
-void GuiTimeLine::OnProjectAssetAdded( ProjectEventAddAsset &event )
-{
-    VAR_DEBUG(event.getParent())(event.getNode());
-    if (event.getParent() == mSequence)
-    {
-        NIY;            // todo make adding the track with the right position
-        Refresh();
-    }
-    event.Skip();
-}
-
-void GuiTimeLine::OnProjectAssetDeleted( ProjectEventDeleteAsset &event )
-{
-    VAR_DEBUG(event.getParent())(event.getNode());
-    if (event.getParent() == mSequence)
-    {
-        NIY; // todo reposition tracks if needed
-        Refresh();
-    }
-    event.Skip();
-}
-
-void GuiTimeLine::OnProjectAssetRenamed( ProjectEventRenameAsset &event )
-{
-    VAR_DEBUG(event.getNode());
-    if (event.getNode() == mSequence)
-    {
-        Refresh();
-    }
-    event.Skip();
-}
 
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS

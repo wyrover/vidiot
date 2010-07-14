@@ -36,7 +36,6 @@ public:
     
     void OnOpenProject( ProjectEventOpenProject &event );
     void OnCloseProject( ProjectEventCloseProject &event );
-    void OnProjectAssetAdded( ProjectEventAddAsset &event );
     void OnAutoOpenFolder( GuiProjectViewModel::FolderEvent& event );
 
     /**

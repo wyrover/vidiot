@@ -18,9 +18,6 @@
 #include "SelectIntervals.h"
 #include "UtilEvent.h"
 
-class ProjectEventAddAsset;
-class ProjectEventDeleteAsset;
-class ProjectEventRenameAsset;
 class TrackUpdateEvent;  
 
 DECLARE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
@@ -49,10 +46,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
-
-    void OnProjectAssetAdded( ProjectEventAddAsset &event );
-    void OnProjectAssetDeleted( ProjectEventDeleteAsset &event );
-    void OnProjectAssetRenamed( ProjectEventRenameAsset &event );
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
