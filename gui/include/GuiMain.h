@@ -5,6 +5,9 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
+#include "ModelPtr.h"
+#include "ProjectEventOpenProject.h"
+#include "ProjectEventCloseProject.h"
 
 //#define CATCH_ALL_ERRORS
 
@@ -20,6 +23,19 @@ public:
 
     GuiMain();
     ~GuiMain();
+
+    //////////////////////////////////////////////////////////////////////////
+    // PROJECTS 
+    //////////////////////////////////////////////////////////////////////////
+
+    void OnOpenProject( ProjectEventOpenProject &event );
+    void OnCloseProject( ProjectEventCloseProject &event );
+
+    model::Project* getProject() const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
 
     bool OnInit();
     int OnRun();
@@ -39,6 +55,8 @@ public:
     void OnIdle(wxIdleEvent& event);
 
 private:
+
+    model::Project* mProject;
     bool mDone;
 
     //////////////////////////////////////////////////////////////////////////

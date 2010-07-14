@@ -2,27 +2,22 @@
 #define UTIL_SERIALIZE_WXWIDGETS_H
 
 #include <wx/string.h>
+#include <wx/region.h>
 #include <boost/serialization/split_free.hpp>
 
 BOOST_SERIALIZATION_SPLIT_FREE(wxString)
+BOOST_SERIALIZATION_SPLIT_FREE(wxRegion)
 
 namespace boost { namespace serialization {
 
-template<class Archive>
-void save(Archive & ar, const wxString & string, const unsigned int version)
-{
-    std::string s = string.mb_str();
-    ar & s;
-}
+template<class Archive> void save(Archive & ar, const wxString & string, const unsigned int version);
+template<class Archive> void load(Archive & ar,       wxString & string, const unsigned int version);
 
-template<class Archive>
-void load(Archive & ar, wxString & string, const unsigned int version)
-{
-    std::string s;
-    ar & s;
-    wxString input(wxSafeConvertMB2WX(s.c_str()));
-    string = input;
-}
+template<class Archive> void serialize(Archive & ar, wxRect & r, const unsigned int version);
+template<class Archive> void serialize(Archive & ar, wxRect & r, const unsigned int version);
+
+template<class Archive> void save(Archive & ar, const wxRegion & region, const unsigned int version);
+template<class Archive> void load(Archive & ar,       wxRegion & region, const unsigned int version);
 
 }} // namespace boost::serialization
 

@@ -16,11 +16,14 @@
 #include "GuiPtr.h"
 #include "GuiTimeLineMouseState.h"
 #include "SelectIntervals.h"
+#include "UtilEvent.h"
 
 class ProjectEventAddAsset;
 class ProjectEventDeleteAsset;
 class ProjectEventRenameAsset;
 class TrackUpdateEvent;  
+
+DECLARE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
 class GuiTimeLine
 :   public wxScrolledWindow
@@ -121,6 +124,7 @@ private:
     friend struct mousestate::Stopped;
     friend struct mousestate::Playing;
     friend class SelectIntervals;
+    friend struct mousestate::MovingCursor;
 
     GuiTimeLineZoomPtr mZoom;
     PlayerPtr mPlayer;
@@ -135,7 +139,7 @@ private:
     // Interval selection
     //////////////////////////////////////////////////////////////////////////
 
-    SelectIntervals mSelectedIntervals;
+    IntervalsPtr mSelectedIntervals;
 
     //////////////////////////////////////////////////////////////////////////
     //

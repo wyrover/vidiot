@@ -167,11 +167,7 @@ wxPoint Machine::unscrolledPosition(wxPoint position) const
 
 //////////////////////////////////////////////////////////////////////////
 
-
-
-//////////////////////////////////////////////////////////////////////////
-
-struct Idle : bs::simple_state< Idle, Machine, Stopped >
+struct Idle : bs::state< Idle, Machine >
 {
     typedef boost::mpl::list<
         bs::custom_reaction< EvLeftDown >,
@@ -179,7 +175,7 @@ struct Idle : bs::simple_state< Idle, Machine, Stopped >
         bs::custom_reaction< EvKeyDown >
     > reactions;
 
-    Idle() // entry
+    Idle( my_context ctx ) : my_base( ctx ) // entry
     {
         LOG_DEBUG; 
     }
@@ -200,7 +196,7 @@ struct Idle : bs::simple_state< Idle, Machine, Stopped >
         }
         else
         {
-            outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
+            post_event(evt); // Handle this in the MovingCursor state.
             return transit<MovingCursor>();
         }
         return discard_event();
@@ -219,28 +215,6 @@ struct Idle : bs::simple_state< Idle, Machine, Stopped >
         outermost_context().globals->mousepointer.set(image);
         return discard_event();
     }
-    bs::result react( const EvKeyDown& evt)
-    {
-        return discard_event();
-    }
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-struct Stopped : bs::simple_state< Stopped, Idle >
-{
-    typedef boost::mpl::list<
-        bs::custom_reaction< EvKeyDown >
-    > reactions;
-
-    Stopped() // entry
-    {
-        LOG_DEBUG; 
-    }
-    ~Stopped() // exit
-    { 
-        LOG_DEBUG; 
-    }
     bs::result start()
     {
         outermost_context().timeline.mPlayer->play();
@@ -258,7 +232,7 @@ struct Stopped : bs::simple_state< Stopped, Idle >
 
 //////////////////////////////////////////////////////////////////////////
 
-struct Playing : bs::simple_state< Playing, Idle >
+struct Playing : bs::simple_state< Playing, Machine >
 {
     typedef boost::mpl::list<
         bs::custom_reaction< EvLeftDown >,
@@ -268,6 +242,28 @@ struct Playing : bs::simple_state< Playing, Idle >
 
     bool mMakingNewSelection;
 
+    bs::result stop()
+    {
+        triggerEnd();
+        outermost_context().timeline.mPlayer->stop();
+        return transit<Idle>();
+    }
+    void triggerBegin()
+    {
+        if (!mMakingNewSelection)
+        {
+            outermost_context().timeline.mSelectedIntervals->addBeginMarker();
+            mMakingNewSelection = true;
+        }
+    }
+    void triggerEnd()
+    {
+        if (mMakingNewSelection)
+        {
+            outermost_context().timeline.mSelectedIntervals->addEndMarker();
+            mMakingNewSelection = false;
+        }
+    }
     Playing() // entry
         :   mMakingNewSelection(false)
     {
@@ -277,14 +273,10 @@ struct Playing : bs::simple_state< Playing, Idle >
     { 
         LOG_DEBUG; 
     }
-    bs::result stop()
-    {
-        outermost_context().timeline.mPlayer->stop();
-        return transit<Stopped>();
-    }
     bs::result react( const EvLeftDown& evt )
     {
         VAR_DEBUG(evt);
+        post_event(evt); // Handle this event again in the Idle state
         return stop();
     }
     bs::result react( const EvKeyDown& evt)
@@ -294,11 +286,7 @@ struct Playing : bs::simple_state< Playing, Idle >
         case WXK_SPACE:
             return stop();
         case WXK_SHIFT:
-            if (!mMakingNewSelection)
-            {
-                outermost_context().timeline.mSelectedIntervals.addBeginMarker();
-                mMakingNewSelection = true;
-            }
+            triggerBegin();
             break;
         }
         return discard_event();
@@ -308,11 +296,7 @@ struct Playing : bs::simple_state< Playing, Idle >
         switch (evt.mWxEvent.GetKeyCode())
         {
         case WXK_SHIFT:
-            if (mMakingNewSelection)
-            {
-                outermost_context().timeline.mSelectedIntervals.addEndMarker();
-                mMakingNewSelection = false;
-            }
+            triggerEnd();
             break;
         }
         return discard_event();
@@ -324,11 +308,16 @@ struct Playing : bs::simple_state< Playing, Idle >
 struct MovingCursor : bs::simple_state< MovingCursor, Machine >
 {
     typedef boost::mpl::list<
+        bs::custom_reaction< EvLeftDown >,
         bs::custom_reaction< EvLeftUp >,
-        bs::custom_reaction< EvMotion >
+        bs::custom_reaction< EvMotion >,
+        bs::custom_reaction< EvKeyDown >,
+        bs::custom_reaction< EvKeyUp >
     > reactions;
+    bool mToggling;
 
     MovingCursor() // entry
+        :   mToggling(false)
     {
         LOG_DEBUG; 
     }
@@ -336,15 +325,65 @@ struct MovingCursor : bs::simple_state< MovingCursor, Machine >
     { 
         LOG_DEBUG; 
     }
+    void triggerToggleStart()
+    {
+        if (!mToggling)
+        {
+            outermost_context().timeline.mSelectedIntervals->startToggle();
+            mToggling = true;
+        }
+    }
+    void triggerToggleEnd()
+    {
+        if (mToggling)
+        {
+            outermost_context().timeline.mSelectedIntervals->endToggle();
+            mToggling = false;
+        }
+    }
+    bs::result react( const EvLeftDown& evt )
+    {
+        VAR_DEBUG(evt);
+        outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
+        if (evt.mWxEvent.ShiftDown())
+        {
+            triggerToggleStart();
+        }
+        return discard_event();
+    }
     bs::result react( const EvLeftUp& evt )
     {
         VAR_DEBUG(evt);
+        if (evt.mWxEvent.ShiftDown())
+        {
+            triggerToggleEnd();
+        }
         return transit<Idle>();
     }
     bs::result react( const EvMotion& evt )
     {
         VAR_DEBUG(evt);
-        outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
+        outermost_context().timeline.moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection' 
+        return discard_event();
+    }
+    bs::result react( const EvKeyDown& evt)
+    {
+        switch (evt.mWxEvent.GetKeyCode())
+        {
+        case WXK_SHIFT:
+            triggerToggleStart();
+            break;
+        }
+        return discard_event();
+    }
+    bs::result react( const EvKeyUp& evt)
+    {
+        switch (evt.mWxEvent.GetKeyCode())
+        {
+        case WXK_SHIFT:
+            triggerToggleEnd();
+            break;
+        }
         return discard_event();
     }
 };

@@ -30,6 +30,8 @@
 #include "ProjectEventDeleteAsset.h"
 #include "ProjectEventRenameAsset.h"
 
+DEFINE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -64,6 +66,7 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
         {
             mAudioTracks.push_back(boost::make_shared<GuiTimeLineTrack>(mZoom, boost::static_pointer_cast<model::Track>(track)));
         }
+	    mSelectedIntervals = boost::make_shared<SelectIntervals>();
     }
 }
 
@@ -77,7 +80,7 @@ void GuiTimeLine::init(wxWindow *parent)
     SetDropTarget(new GuiTimeLineDropTarget(mZoom,this));
 
     // Initialize all helper objects
-    mSelectedIntervals.init(this);
+    mSelectedIntervals->init(this);
 
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     DetermineWidth();
@@ -219,38 +222,7 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     }
 
     // Draw marked areas
-    mSelectedIntervals.draw(dc);
-    //dc.SetPen(wxPen(*wxGREEN, 1));
-    //dc.SetBrush(*wxGREEN_BRUSH);
-    //MarkerPositions::iterator it = mMarkerPositions.begin();
-    //while (it != mMarkerPositions.end())
-    //{
-    //    long beginpoint = *it;
-    //    long endpoint = 0;
-    //    ++it;
-    //    if (it != mMarkerPositions.end())
-    //    {
-    //        endpoint = *it;
-    //        ++it;
-    //    }
-    //    else
-    //    {
-    //        // This branch handles a 'running endpoint' when holding down the
-    //        // marker key for a while.
-    //        // The 'max' handling is needed since expansion/contraction
-    //        // can cause the beginpoint to be beyond the cursor position.
-    //        long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
-    //        endpoint = std::max(beginpoint,marker);
-
-    //        // Refresh the area for the new marker.
-    //        long beginOnClientArea = beginpoint - getScrollOffset().x;
-    //        long endOnClientArea = endpoint - getScrollOffset().x;
-    //        RefreshRect(wxRect(std::min(beginOnClientArea,endOnClientArea),Constants::sTimeScaleHeight,std::abs(beginOnClientArea-endOnClientArea)+1Constants::,sMinimalGreyAboveVideoTracksHeight),false);
-
-    //    }
-    //    ASSERT(endpoint >= beginpoint)(beginpoint)(endpoint);
-    //    dc.DrawRectangle(wxRect(beginpoint, Constants::sTimeScaleHeight, endpoint-beginpoint,Constants::sMinimalGreyAboveVideoTracksHeight));
-    //}
+    mSelectedIntervals->draw(dc);
 
     // Draw drop area
     if (!mDropArea.IsEmpty())
@@ -344,12 +316,7 @@ void GuiTimeLine::setCursorPosition(long position)
     long oldposOnClientArea = oldPos - scroll.x;
     RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,mHeight),false);
 
-    //// Refresh the last selected marker
-    //if (mMarkerPositions.size() % 2 != 0)
-    //{
-    //    long lastBeginMarkerOnClientArea = mMarkerPositions.back() - scroll.x;
-    //    RefreshRect(wxRect(std::min(cursorOnClientArea,lastBeginMarkerOnClientArea),Constants::sTimeScaleHeight,std::abs(cursorOnClientArea-lastBeginMarkerOnClientArea)+1,Constants::sMinimalGreyAboveVideoTracksHeight),false);
-    //}
+    QueueEvent(new EventTimelineCursorMoved(mCursorPosition));
 }
 
 void GuiTimeLine::moveCursorOnPlayback(long pts)
@@ -410,34 +377,6 @@ GuiTimeLineClips GuiTimeLine::getClips() const
     }
     return clips;
 }
-
-////////////////////////////////////////////////////////////////////////////
-//// Marker handling
-////////////////////////////////////////////////////////////////////////////
-//
-//void GuiTimeLine::addBeginMarker()
-//{
-//    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
-//
-//    mMarkerPositions.push_back(marker);
-//
-//    // Refresh the area for the new marker. This is needed due to the 'addition' 
-//    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
-//    long beginMarkerOnClientArea = marker - getScrollOffset().x;
-//    RefreshRect(wxRect(std::min(cursorOnClientArea,beginMarkerOnClientArea),Constants::sTimeScaleHeight,std::abs(cursorOnClientArea-beginMarkerOnClientArea)+1,Constants::sMinimalGreyAboveVideoTracksHeight),false);
-//}
-//
-//void GuiTimeLine::addEndMarker()
-//{
-//    long marker = mCursorPosition + mZoom->timeToPixels(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
-//
-//    mMarkerPositions.push_back(marker);
-//
-//    // Refresh the area for the new marker. This is needed due to the 'addition' 
-//    long cursorOnClientArea = mCursorPosition - getScrollOffset().x;
-//    long endMarkerOnClientArea = marker - getScrollOffset().x;
-//    RefreshRect(wxRect(std::min(cursorOnClientArea,endMarkerOnClientArea),Constants::sTimeScaleHeight,std::abs(cursorOnClientArea-endMarkerOnClientArea)+1,Constants::sMinimalGreyAboveVideoTracksHeight),false);
-//}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
