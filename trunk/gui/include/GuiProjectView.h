@@ -10,6 +10,7 @@
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
 #include "GuiProjectViewModel.h"
+#include "Project.h"
 
 namespace model { 
     class Project;
@@ -34,9 +35,9 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
     
-    void OnOpenProject( ProjectEventOpenProject &event );
-    void OnCloseProject( ProjectEventCloseProject &event );
-    void OnAutoOpenFolder( GuiProjectViewModel::FolderEvent& event );
+    void OnOpenProject( model::EventOpenProject &event );
+    void OnCloseProject( model::EventCloseProject &event );
+    void OnAutoOpenFolder( EventAutoFolderOpen& event );
 
     /**
     * Called to open any folders that were 'marked' as open

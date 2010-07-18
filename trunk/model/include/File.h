@@ -6,7 +6,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/path.hpp>
 #include "IControl.h"
-#include "FifoPacket.h"
+#include "FilePacket.h"
 #include "AProjectViewNode.h"
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg 

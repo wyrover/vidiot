@@ -1,4 +1,4 @@
-#include "FifoAudio.h"
+#include "AudioChunk.h"
 
 const int AudioChunk::sBytesPerSample = 2;
 

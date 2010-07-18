@@ -1,4 +1,4 @@
-#include "FifoVideo.h"
+#include "VideoFrame.h"
 #include "UtilLogAvcodec.h"
 
 VideoFrame::VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase, int repeat)

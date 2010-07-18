@@ -30,8 +30,8 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnProjectAssetDeleted( ProjectEventDeleteAsset &event );
-    void OnProjectAssetRenamed( ProjectEventRenameAsset &event );
+    void OnProjectAssetRemoved( model::EventRemoveAsset &event );
+    void OnProjectAssetRenamed( model::EventRenameAsset &event );
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS

@@ -75,6 +75,7 @@ bool ProjectViewCreateSequence::Do()
         }
     }
 
+    /** @todo do not add this sequence to an autofolder. Then, I cannot move it or rename it anymore */
     mParent->addChild(mSequence);
     // May never return false, since then the command is deleted by the command processor. See the use of this object in projectview.
     return true;

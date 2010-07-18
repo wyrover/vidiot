@@ -107,6 +107,11 @@ public:
     boost::tuple<GuiTimeLineTrackPtr,int> findTrack(int yposition) const;
 
     /**
+     * Return list of all the tracks
+     */
+    GuiTimeLineTracks getTracks() const;
+
+    /**
      * Returns a list containing ALL the clips currently in this timeline.
      */
     GuiTimeLineClips getClips() const;

@@ -11,11 +11,6 @@
 #include "ProjectViewDeleteAsset.h"
 #include "ProjectViewMoveAsset.h"
 #include "ProjectViewRenameAsset.h"
-#include "ProjectEventOpenProject.h"
-#include "ProjectEventCloseProject.h"
-#include "ProjectEventAddAsset.h"
-#include "ProjectEventDeleteAsset.h"
-#include "ProjectEventRenameAsset.h"
 #include "folder-horizontal.xpm"
 #include "folder-horizontal-open.xpm"
 #include "folder-horizontal-plus.xpm"
@@ -36,14 +31,14 @@ GuiProjectViewModel::GuiProjectViewModel(wxDataViewCtrl& view)
 ,   mIconFolderOpen(folder_horizontal_open_xpm)
 ,	mIconVideo(film_xpm)
 {
-    wxGetApp().Bind(PROJECT_EVENT_OPEN_PROJECT,     &GuiProjectViewModel::OnOpenProject,           this);
-    wxGetApp().Bind(PROJECT_EVENT_CLOSE_PROJECT,    &GuiProjectViewModel::OnCloseProject,          this);
+    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiProjectViewModel::OnOpenProject,           this);
+    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiProjectViewModel::OnCloseProject,          this);
 }
 
 GuiProjectViewModel::~GuiProjectViewModel()
 {
-    wxGetApp().Unbind(PROJECT_EVENT_OPEN_PROJECT,   &GuiProjectViewModel::OnOpenProject,            this);
-    wxGetApp().Unbind(PROJECT_EVENT_CLOSE_PROJECT,  &GuiProjectViewModel::OnCloseProject,           this);
+    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,   &GuiProjectViewModel::OnOpenProject,            this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,  &GuiProjectViewModel::OnCloseProject,           this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,7 +87,7 @@ unsigned int GuiProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxD
         if (mProject != 0)
         {
             wxItemArray.Add(wxDataViewItem(mProject->getRoot()->id()));
-            wxGetApp().QueueEvent(new FolderEvent(mProject->getRoot()));
+            wxGetApp().QueueEvent(new EventAutoFolderOpen(mProject->getRoot()));
             return 1;
         }
         else
@@ -111,7 +106,7 @@ unsigned int GuiProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxD
         model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(child);
         if (folder)
         {
-            wxGetApp().QueueEvent(new FolderEvent(folder));
+            wxGetApp().QueueEvent(new EventAutoFolderOpen(folder));
         }
     }
 
@@ -370,28 +365,28 @@ bool GuiProjectViewModel::canBeRenamed(model::ProjectViewPtr node) const
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiProjectViewModel::OnOpenProject( ProjectEventOpenProject &event )
+void GuiProjectViewModel::OnOpenProject( model::EventOpenProject &event )
 {
-    mProject = event.getProject();
+    mProject = event.getValue();
 
     Cleared();
 
-    wxGetApp().Bind(PROJECT_EVENT_ADD_ASSET,        &GuiProjectViewModel::OnProjectAssetAdded,      this);
-    wxGetApp().Bind(PROJECT_EVENT_DELETE_ASSET,     &GuiProjectViewModel::OnProjectAssetDeleted,    this);
-    wxGetApp().Bind(PROJECT_EVENT_RENAME_ASSET,     &GuiProjectViewModel::OnProjectAssetRenamed,    this);
+    wxGetApp().Bind(model::EVENT_ADD_ASSET, &GuiProjectViewModel::OnProjectAssetAdded,      this);
+    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,  &GuiProjectViewModel::OnProjectAssetRemoved,    this);
+    wxGetApp().Bind(model::EVENT_RENAME_ASSET,  &GuiProjectViewModel::OnProjectAssetRenamed,    this);
 
     event.Skip();
 }
 
-void GuiProjectViewModel::OnCloseProject( ProjectEventCloseProject &event )
+void GuiProjectViewModel::OnCloseProject( model::EventCloseProject &event )
 {
     mProject = 0;
 
     Cleared();
 
-    wxGetApp().Unbind(PROJECT_EVENT_ADD_ASSET,      &GuiProjectViewModel::OnProjectAssetAdded,      this);
-    wxGetApp().Unbind(PROJECT_EVENT_DELETE_ASSET,   &GuiProjectViewModel::OnProjectAssetDeleted,    this);
-    wxGetApp().Unbind(PROJECT_EVENT_RENAME_ASSET,   &GuiProjectViewModel::OnProjectAssetRenamed,    this);
+    wxGetApp().Unbind(model::EVENT_ADD_ASSET,       &GuiProjectViewModel::OnProjectAssetAdded,      this);
+    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,    &GuiProjectViewModel::OnProjectAssetRemoved,    this);
+    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,    &GuiProjectViewModel::OnProjectAssetRenamed,    this);
 
     event.Skip();
 }
@@ -406,10 +401,12 @@ void GuiProjectViewModel::AddRecursive( model::ProjectViewPtr node)
     }
 }
 
-void GuiProjectViewModel::OnProjectAssetAdded( ProjectEventAddAsset &event )
+void GuiProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
 {
-    VAR_DEBUG(event.getParent())(event.getNode());
-    ItemAdded(wxDataViewItem(event.getParent()->id()),wxDataViewItem(event.getNode()->id()));
+    model::ProjectViewPtr parent = event.getValue().parent;
+    model::ProjectViewPtr child = event.getValue().child;
+    VAR_DEBUG(parent)(child);
+    ItemAdded(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
 
     // This is needed to avoid errors with Undo-ing:
     // - Add a folder A
@@ -424,48 +421,28 @@ void GuiProjectViewModel::OnProjectAssetAdded( ProjectEventAddAsset &event )
     // - Note that opening folder A before doing the undo of 'add X' would also cause X to be known
     //   to the control (via 'GetChildren') and thus avoid the crash.
     // As a resolution, all child nodes are made known to the control here.
-    AddRecursive(event.getNode());
+    AddRecursive(child);
 
-    mView.Expand(wxDataViewItem(event.getParent()->id()));
+    mView.Expand(wxDataViewItem(parent->id()));
 
     event.Skip();
 }
 
-void GuiProjectViewModel::OnProjectAssetDeleted( ProjectEventDeleteAsset &event )
+void GuiProjectViewModel::OnProjectAssetRemoved( model::EventRemoveAsset &event )
 {
-    VAR_DEBUG(event.getParent())(event.getNode());
-    ItemDeleted(wxDataViewItem(event.getParent()->id()),wxDataViewItem(event.getNode()->id()));
+    model::ProjectViewPtr parent = event.getValue().parent;
+    model::ProjectViewPtr child = event.getValue().child;
+    VAR_DEBUG(parent)(child);
+    ItemDeleted(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
     event.Skip();
 }
 
-void GuiProjectViewModel::OnProjectAssetRenamed( ProjectEventRenameAsset &event )
+void GuiProjectViewModel::OnProjectAssetRenamed( model::EventRenameAsset &event )
 {
-    VAR_DEBUG(event.getNode());
-    ItemChanged(event.getNode()->id());
+    VAR_DEBUG(event.getValue().node);
+    ItemChanged(event.getValue().node->id());
     event.Skip();
 }
 
-GuiProjectViewModel::FolderEvent::FolderEvent(model::FolderPtr folder)
-:   wxEvent(wxID_ANY, GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER)
-,   mFolder(folder)
-{
-}
-
-GuiProjectViewModel::FolderEvent::FolderEvent(const GuiProjectViewModel::FolderEvent& other)
-:   wxEvent(other)
-,   mFolder(other.mFolder)
-{
-}
-
-wxEvent* GuiProjectViewModel::FolderEvent::Clone() const 
-{ 
-    return new FolderEvent(*this); 
-}
-
-model::FolderPtr GuiProjectViewModel::FolderEvent::getFolder() const
-{
-    return mFolder;
-}
-
-wxDEFINE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, GuiProjectViewModel::FolderEvent);
+DEFINE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
 

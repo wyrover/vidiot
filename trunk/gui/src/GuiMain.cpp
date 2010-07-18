@@ -27,8 +27,8 @@ GuiMain::GuiMain()
 #endif // CATCH_ALL_ERRORS
 
     Bind(wxEVT_IDLE,                    &GuiMain::OnIdle,           this);
-    Bind(PROJECT_EVENT_OPEN_PROJECT,    &GuiMain::OnOpenProject,    this);
-    Bind(PROJECT_EVENT_CLOSE_PROJECT,   &GuiMain::OnCloseProject,   this);
+    Bind(model::EVENT_OPEN_PROJECT,    &GuiMain::OnOpenProject,    this);
+    Bind(model::EVENT_CLOSE_PROJECT,   &GuiMain::OnCloseProject,   this);
 }
 
 GuiMain::~GuiMain()
@@ -39,13 +39,13 @@ GuiMain::~GuiMain()
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiMain::OnOpenProject( ProjectEventOpenProject &event )
+void GuiMain::OnOpenProject( model::EventOpenProject &event )
 {
-    mProject = event.getProject();
+    mProject = event.getValue();
     event.Skip();
 }
 
-void GuiMain::OnCloseProject( ProjectEventCloseProject &event )
+void GuiMain::OnCloseProject( model::EventCloseProject &event )
 {
     mProject = 0;
     event.Skip();

@@ -11,10 +11,11 @@
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
 #include "Clip.h"
-#include "TrackEventRemoveClips.h"
-#include "TrackEventAddClips.h"
 
 namespace model {
+
+DEFINE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
+DEFINE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);
 
 Track::Track()
 :	IControl()
@@ -86,9 +87,20 @@ void Track::addClips(Clips clips, ClipPtr position)
     Clips::iterator itPosition = find(mClips.begin(), mClips.end(), position);
     // NOT: ASSERT(itPosition != mClips.end()) Giving a null pointer results in mClips.end() which results in adding clips at the end
     
+    // See http://www.cplusplus.com/reference/stl/list/splice:
+    // clips will be removed from this list. Hence, a copy is made,
+    // before doing the splice call.
+    MoveParameter move;
+    move.addTrack = shared_from_this();
+    move.addClips = clips; // Copy of clip list.
+    move.addPosition = position;
+
     mClips.splice(itPosition,clips); // See http://www.cplusplus.com/reference/stl/list/splice: clips added BEFORE position
 
-    QueueEvent(new TrackEventAddClips(shared_from_this(), clips, position));
+    QueueEvent(new model::EventAddClips(move));
+
+    /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
+    /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
 
 void Track::removeClips(Clips clips)
@@ -102,7 +114,13 @@ void Track::removeClips(Clips clips)
     ++itLast; // See http://www.cplusplus.com/reference/stl/list/erase: one but last is removed
     mClips.erase(itBegin,itLast);
 
-    QueueEvent(new TrackEventRemoveClips(shared_from_this(), clips));
+    MoveParameter move;
+    move.removeTrack = shared_from_this();
+    move.removeClips = clips;
+    QueueEvent(new model::EventRemoveClips(move));
+
+    /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
+    /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
 
 const std::list<ClipPtr>& Track::getClips()

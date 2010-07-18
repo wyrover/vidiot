@@ -5,8 +5,8 @@
 #include <wx/control.h>
 #include <iostream>
 #include <boost/scoped_ptr.hpp>
-#include "FifoVideo.h"
-#include "FifoAudio.h"
+#include "VideoFrame.h"
+#include "AudioChunk.h"
 #include "ModelPtr.h"
 #include "GuiPtr.h"
 #include "UtilEvent.h"

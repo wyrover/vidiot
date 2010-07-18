@@ -5,7 +5,6 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
-#include "AProjectViewNode.h"
 #include "AudioClip.h"
 
 namespace model {
@@ -23,15 +22,18 @@ AudioTrack::~AudioTrack()
     VAR_DEBUG(this);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// HANDLING CLIPS
+//////////////////////////////////////////////////////////////////////////
+
 void AudioTrack::addAudioClip(AudioClipPtr clip)
 {
     mClips.push_back(clip);
 }
 
-void AudioTrack::removeAudioClip(AudioClipPtr clip)
-{
-    NIY
-}
+//////////////////////////////////////////////////////////////////////////
+// PLAYBACK
+//////////////////////////////////////////////////////////////////////////
 
 AudioChunkPtr AudioTrack::getNextAudio(int audioRate, int nAudioChannels)
 {
@@ -39,7 +41,7 @@ AudioChunkPtr AudioTrack::getNextAudio(int audioRate, int nAudioChannels)
 
     while (!audioChunk && mItClips != mClips.end())
     {
-        audioChunk = boost::static_pointer_cast<AudioClip>(*mItClips)->getNextAudio(audioRate, nAudioChannels);
+        audioChunk = boost::dynamic_pointer_cast<IAudio>(*mItClips)->getNextAudio(audioRate, nAudioChannels);
         if (!audioChunk)
         {
             mItClips++;
