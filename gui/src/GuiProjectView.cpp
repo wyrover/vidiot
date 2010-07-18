@@ -26,9 +26,6 @@
 #include "ProjectViewCreateFolder.h"
 #include "ProjectViewCreateAutoFolder.h"
 #include "ProjectViewCreateFile.h"
-#include "ProjectEventOpenProject.h"
-#include "ProjectEventCloseProject.h"
-#include "ProjectEventAddAsset.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
 
@@ -68,8 +65,8 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
     sizer->Layout();
     SetSizerAndFit(sizer);
 
-    wxGetApp().Bind(PROJECT_EVENT_OPEN_PROJECT,     &GuiProjectView::OnOpenProject,             this);
-    wxGetApp().Bind(PROJECT_EVENT_CLOSE_PROJECT,    &GuiProjectView::OnCloseProject,            this);
+    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiProjectView::OnOpenProject,             this);
+    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiProjectView::OnCloseProject,            this);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,             this, wxID_CUT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,            this, wxID_COPY);
@@ -93,8 +90,8 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
 
 GuiProjectView::~GuiProjectView()
 {
-    wxGetApp().Unbind(PROJECT_EVENT_OPEN_PROJECT,       &GuiProjectView::OnOpenProject,             this);
-    wxGetApp().Unbind(PROJECT_EVENT_CLOSE_PROJECT,      &GuiProjectView::OnCloseProject,            this);
+    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,       &GuiProjectView::OnOpenProject,             this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,      &GuiProjectView::OnCloseProject,            this);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,             this, wxID_CUT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,            this, wxID_COPY);
@@ -120,16 +117,16 @@ GuiProjectView::~GuiProjectView()
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiProjectView::OnOpenProject( ProjectEventOpenProject &event )
+void GuiProjectView::OnOpenProject( model::EventOpenProject &event )
 {
-    mProject = event.getProject();
+    mProject = event.getValue();
     GetSizer()->Show(&mCtrl);
     GetSizer()->Layout();
     wxGetApp().Bind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &GuiProjectView::OnAutoOpenFolder, this);
     event.Skip();
 }
 
-void GuiProjectView::OnCloseProject( ProjectEventCloseProject &event )
+void GuiProjectView::OnCloseProject( model::EventCloseProject &event )
 {
     GetSizer()->Hide(&mCtrl);
     GetSizer()->Layout();
@@ -139,11 +136,11 @@ void GuiProjectView::OnCloseProject( ProjectEventCloseProject &event )
     event.Skip();
 }
 
-void GuiProjectView::OnAutoOpenFolder( GuiProjectViewModel::FolderEvent& event )
+void GuiProjectView::OnAutoOpenFolder( EventAutoFolderOpen& event )
 {
-    if (mOpenFolders.count(event.getFolder()) == 1)
+    if (mOpenFolders.count(event.getValue()) == 1)
     {
-        mCtrl.Expand(wxDataViewItem(event.getFolder()->id()));
+        mCtrl.Expand(wxDataViewItem(event.getValue()->id()));
     }
 }
 

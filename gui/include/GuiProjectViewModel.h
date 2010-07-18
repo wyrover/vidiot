@@ -5,18 +5,15 @@
 #include "wx/event.h"
 #include "wx/dataview.h"
 #include "AProjectViewNode.h"
+#include "Project.h"
 
 namespace model { 
     class Project;
     class Folder;
     typedef boost::shared_ptr<Folder> FolderPtr;
 }
-class ProjectEventAddAsset;
 class ProjectEventOpenProject;
 class ProjectEventCloseProject;
-class ProjectEventAddAsset;
-class ProjectEventDeleteAsset;
-class ProjectEventRenameAsset;
 
 /**
 * This model links the GUI objects to the actual project items and back.
@@ -62,32 +59,12 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnOpenProject( ProjectEventOpenProject &event );
-    void OnCloseProject( ProjectEventCloseProject &event );
+    void OnOpenProject( model::EventOpenProject &event );
+    void OnCloseProject( model::EventCloseProject &event );
     void AddRecursive( model::ProjectViewPtr node );
-    void OnProjectAssetAdded( ProjectEventAddAsset &event );
-    void OnProjectAssetDeleted( ProjectEventDeleteAsset &event );
-    void OnProjectAssetRenamed( ProjectEventRenameAsset &event );
-
-
-    /**
-    * This event is used to signal opening of certain folders after loading
-    * a saved project. Is done via an event, due to the trigger moment: it should
-    * be done after a certain 'to be opened' folder is known to the control. Thus,
-    * it should be done after GetChildren() has returned the node. Hence, the decoupling
-    * via the event queue instead of a direct call in the GetChildren() method.
-    */
-    // todo use utilevent macro
-    class FolderEvent : public wxEvent
-    {
-    public:
-        FolderEvent(model::FolderPtr folder);
-        FolderEvent(const FolderEvent& other);
-        virtual wxEvent* Clone() const;
-        model::FolderPtr getFolder() const;
-    private:
-        model::FolderPtr mFolder;
-    };
+    void OnProjectAssetAdded( model::EventAddAsset &event );
+    void OnProjectAssetRemoved( model::EventRemoveAsset &event );
+    void OnProjectAssetRenamed( model::EventRenameAsset &event );
 
 private:
 
@@ -102,6 +79,13 @@ private:
 	wxIcon mIconVideo;
 };
 
-wxDECLARE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, GuiProjectViewModel::FolderEvent);
+/**
+* This event is used to signal opening of certain folders after loading
+* a saved project. Is done via an event, due to the trigger moment: it should
+* be done after a certain 'to be opened' folder is known to the control. Thus,
+* it should be done after GetChildren() has returned the node. Hence, the decoupling
+* via the event queue instead of a direct call in the GetChildren() method.
+*/
+DECLARE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
 
 #endif // GUI_PROJECT_VIEW_MODEL_H

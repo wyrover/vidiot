@@ -6,7 +6,7 @@
 
 namespace command {
 
-TimelineMoveClips::TimelineMoveClips(MoveParameters params)
+TimelineMoveClips::TimelineMoveClips(model::MoveParameters params)
 :   TimelineCommand()
 ,   mParams(params)
 {
@@ -24,19 +24,19 @@ bool TimelineMoveClips::Do()
 
     bool redo = (mParamsUndo.size() != 0);
 
-    BOOST_FOREACH( MoveParameterPtr move, mParams )
+    BOOST_FOREACH( model::MoveParameterPtr move, mParams )
     {
         if (!redo)
         {
             // Save undo information
-            MoveParameterPtr undo = boost::make_shared<MoveParameter>();
+            model::MoveParameterPtr undo = boost::make_shared<model::MoveParameter>();
             undo->addTrack          = move->removeTrack;
             undo->addPosition       = move->removePosition;
             undo->addClips          = move->removeClips;
             undo->removeTrack       = move->addTrack;
             undo->removePosition    = move->addPosition;
             undo->removeClips       = move->addClips;
-            mParamsUndo.insert(undo);
+            mParamsUndo.push_back(undo);
         }
         doMove(move);
     }
@@ -46,14 +46,14 @@ bool TimelineMoveClips::Do()
 bool TimelineMoveClips::Undo()
 {
     VAR_INFO(this);
-    BOOST_FOREACH( MoveParameterPtr move, mParamsUndo )
+    BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
         doMove(move);
     }
     return true;
 }
 
-void TimelineMoveClips::doMove(TimelineMoveClips::MoveParameterPtr move)
+void TimelineMoveClips::doMove(model::MoveParameterPtr move)
 {
     // First, remove clips
     if (move->removeClips.size() > 0)

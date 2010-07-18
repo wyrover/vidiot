@@ -16,6 +16,7 @@ public:
 
     /**
      * Statics. These are merely used as 'signaling' tokens.
+     * EmptyAudioChunk indicates silence with a duration of one video frame.
      */
     static AudioChunkPtr EmptyAudioChunk;
     static VideoFramePtr EmptyVideoFrame;

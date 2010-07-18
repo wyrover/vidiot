@@ -17,8 +17,6 @@
 #include "ProjectViewAddAsset.h"
 #include "TimelineCreateVideoTrack.h"
 #include "TimelineCreateAudioTrack.h"
-#include "ProjectEventOpenProject.h"
-#include "ProjectEventCloseProject.h"
 #include "UtilLog.h"
 
 enum {
@@ -104,8 +102,8 @@ GuiWindow::GuiWindow()
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
     mUiManager.Update();
 
-    wxGetApp().Bind(PROJECT_EVENT_OPEN_PROJECT,     &GuiWindow::OnOpenProject,              this);
-    wxGetApp().Bind(PROJECT_EVENT_CLOSE_PROJECT,    &GuiWindow::OnCloseProject,             this);
+    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiWindow::OnOpenProject,              this);
+    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiWindow::OnCloseProject,             this);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     &mDocManager, wxID_CLOSE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	&mDocManager, wxID_CLOSE_ALL);
@@ -145,8 +143,8 @@ void GuiWindow::init()
 
 GuiWindow::~GuiWindow()
 {
-    wxGetApp().Unbind(PROJECT_EVENT_OPEN_PROJECT,       &GuiWindow::OnOpenProject,              this);
-    wxGetApp().Unbind(PROJECT_EVENT_CLOSE_PROJECT,      &GuiWindow::OnCloseProject,             this);
+    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,       &GuiWindow::OnOpenProject,              this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,      &GuiWindow::OnCloseProject,             this);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     &mDocManager, wxID_CLOSE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  &mDocManager, wxID_CLOSE_ALL);
@@ -179,9 +177,9 @@ GuiWindow::~GuiWindow()
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::OnOpenProject( ProjectEventOpenProject &event )
+void GuiWindow::OnOpenProject( model::EventOpenProject &event )
 {
-    mProject = event.getProject();
+    mProject = event.getValue();
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
     mDocManager.FileHistorySave(*wxConfigBase::Get());
@@ -190,7 +188,7 @@ void GuiWindow::OnOpenProject( ProjectEventOpenProject &event )
     event.Skip();
 }
 
-void GuiWindow::OnCloseProject( ProjectEventCloseProject &event )
+void GuiWindow::OnCloseProject( model::EventCloseProject &event )
 {
     mProject = 0;
     GuiOptions::SetAutoLoadFilename("");

@@ -11,10 +11,11 @@
 #include <boost/foreach.hpp>
 #include "GuiMain.h"
 #include "AProjectViewNode.h"
-#include "ProjectEventOpenProject.h"
-#include "ProjectEventCloseProject.h"
 
 namespace model {
+
+DEFINE_EVENT(EVENT_OPEN_PROJECT,    EventOpenProject,   model::Project*);
+DEFINE_EVENT(EVENT_CLOSE_PROJECT,   EventCloseProject,  model::Project*);
 
 IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
@@ -60,7 +61,7 @@ bool Project::OnCloseDocument()
     // because wxWidgets will destruct this Project object directly after
     // calling OnCloseDocument(). If QueueEvent is used, the event is handled
     // AFTER the destruction of this object which leads to crashes.
-    wxGetApp().ProcessEvent(ProjectEventCloseProject(PROJECT_EVENT_CLOSE_PROJECT,this));
+    wxGetApp().ProcessEvent(EventCloseProject(this));
     return wxDocument::OnCloseDocument();
 }
 
@@ -69,7 +70,7 @@ bool Project::OnNewDocument()
     bool opened = wxDocument::OnNewDocument();
     if (opened)
     {
-        wxGetApp().QueueEvent(new ProjectEventOpenProject(PROJECT_EVENT_OPEN_PROJECT,this));
+        wxGetApp().QueueEvent(new EventOpenProject(this));
     }
     return opened;
 }
@@ -79,8 +80,6 @@ bool Project::OnOpenDocument(const wxString& file)
     bool opened = wxDocument::OnOpenDocument(file);
     if (opened)
     {
-        //dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getProjectView().OpenRecursive(mRoot);
-
         // This event is sent as late as possible. This ensures that no 'addChild' events
         // will be received by the widgets during loading from xml. Rationale: these
         // events are sent in a bottom-up - thus innermost child first - fashion, which
@@ -149,7 +148,7 @@ std::istream& Project::LoadObject(std::istream& istream)
         boost::archive::text_iarchive ar(istream);
         ar & *this;
         ar & wxGetApp();
-        wxGetApp().QueueEvent(new ProjectEventOpenProject(PROJECT_EVENT_OPEN_PROJECT,this));
+        wxGetApp().QueueEvent(new EventOpenProject(this));
     }
     //catch (std::exception* e)
     //{

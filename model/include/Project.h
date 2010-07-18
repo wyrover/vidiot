@@ -6,8 +6,12 @@
 #include "RootCommand.h"
 #include "ProjectWorker.h"
 #include "ModelPtr.h"
+#include "UtilEvent.h"
 
 namespace model {
+
+DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,   model::Project*);
+DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,  model::Project*);
 
 /** 
 * \class Project

@@ -1,7 +1,7 @@
 #ifndef MODEL_I_VIDEO_H
 #define MODEL_I_VIDEO_H
 
-#include "FifoVideo.h"
+#include "VideoFrame.h"
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>

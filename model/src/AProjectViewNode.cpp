@@ -5,12 +5,22 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "ProjectEventAddAsset.h"
-#include "ProjectEventDeleteAsset.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
 
 namespace model {
+
+//////////////////////////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+DEFINE_EVENT(EVENT_ADD_ASSET,       EventAddAsset,      ParentAndChild);
+DEFINE_EVENT(EVENT_REMOVE_ASSET,    EventRemoveAsset,   ParentAndChild);
+DEFINE_EVENT(EVENT_RENAME_ASSET,    EventRenameAsset,   NodeWithNewName);
+
+//////////////////////////////////////////////////////////////////////////
+// CLASS
+//////////////////////////////////////////////////////////////////////////
 
 AProjectViewNode::AProjectViewNode()
 :   mParent()
@@ -82,7 +92,7 @@ ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
 {
     mChildren.push_back(newChild);
     newChild->setParent(shared_from_this());
-    wxGetApp().QueueEvent(new ProjectEventAddAsset(PROJECT_EVENT_ADD_ASSET,shared_from_this(),newChild));
+    wxGetApp().QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
     return newChild;
 }
 
@@ -96,7 +106,7 @@ ProjectViewPtr AProjectViewNode::removeChild(ProjectViewPtr child)
     }
     ASSERT(it != mChildren.end());
     ProjectViewPtr p = *it;
-    wxGetApp().QueueEvent(new ProjectEventDeleteAsset(PROJECT_EVENT_DELETE_ASSET,shared_from_this(),child));
+    wxGetApp().QueueEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
     mChildren.erase(it);
     child->setParent(ProjectViewPtr());
     return p;
@@ -110,7 +120,6 @@ ProjectViewPtrs AProjectViewNode::getChildren() const
 void AProjectViewNode::setName(wxString name)
 {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 

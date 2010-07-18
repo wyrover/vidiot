@@ -7,10 +7,13 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
-#include "AProjectViewNode.h"
 #include "VideoClip.h"
 
 namespace model {
+
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
 
 VideoTrack::VideoTrack()
 :	Track()
@@ -26,11 +29,9 @@ VideoTrack::~VideoTrack()
     VAR_DEBUG(this);
 }
 
-void VideoTrack::moveTo(boost::int64_t position)
-{
-    Track::moveTo(position);
-    mPts = position;
-}
+//////////////////////////////////////////////////////////////////////////
+// HANDLING CLIPS
+//////////////////////////////////////////////////////////////////////////
 
 
 void VideoTrack::addVideoClip(VideoClipPtr clip)
@@ -38,9 +39,14 @@ void VideoTrack::addVideoClip(VideoClipPtr clip)
     mClips.push_back(clip);
 }
 
-void VideoTrack::removeVideoClip(VideoClipPtr clip)
+//////////////////////////////////////////////////////////////////////////
+// PLAYBACK
+//////////////////////////////////////////////////////////////////////////
+
+void VideoTrack::moveTo(boost::int64_t position)
 {
-    NIY
+    Track::moveTo(position);
+    mPts = position;
 }
 
 VideoFramePtr VideoTrack::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
@@ -49,7 +55,7 @@ VideoFramePtr VideoTrack::getNextVideo(int requestedWidth, int requestedHeight, 
 
     while (!videoFrame && mItClips != mClips.end())
     {
-        videoFrame = boost::static_pointer_cast<model::VideoClip>(*mItClips)->getNextVideo(requestedWidth, requestedHeight, alpha);
+        videoFrame = boost::dynamic_pointer_cast<IVideo>(*mItClips)->getNextVideo(requestedWidth, requestedHeight, alpha);
         if (!videoFrame)
         {
             mItClips++;

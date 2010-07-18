@@ -9,8 +9,36 @@
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
+#include "UtilEvent.h"
 
 namespace model {
+
+//////////////////////////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+struct ParentAndChild
+{
+    ParentAndChild(model::ProjectViewPtr _parent, model::ProjectViewPtr _child) : parent(_parent), child(_child) {}
+    model::ProjectViewPtr parent;
+    model::ProjectViewPtr child;
+};
+
+DECLARE_EVENT(EVENT_ADD_ASSET,      EventAddAsset,      ParentAndChild);
+DECLARE_EVENT(EVENT_REMOVE_ASSET,   EventRemoveAsset,   ParentAndChild);
+
+struct NodeWithNewName
+{
+    NodeWithNewName(model::ProjectViewPtr _node, wxString _newname) : node(_node), newname(_newname) {}
+    model::ProjectViewPtr node;
+    wxString newname;
+};
+
+DECLARE_EVENT(EVENT_RENAME_ASSET,   EventRenameAsset,   NodeWithNewName);
+
+//////////////////////////////////////////////////////////////////////////
+// CLASS
+//////////////////////////////////////////////////////////////////////////
 
 class AProjectViewNode
     :   public boost::enable_shared_from_this<AProjectViewNode>

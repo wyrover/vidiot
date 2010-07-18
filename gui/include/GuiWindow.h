@@ -7,6 +7,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
+#include "Project.h"
 #include "Sequence.h"
 
 class GuiTimelinesView;
@@ -28,8 +29,8 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnOpenProject( ProjectEventOpenProject &event );
-    void OnCloseProject( ProjectEventCloseProject &event );
+    void OnOpenProject( model::EventOpenProject &event );
+    void OnCloseProject( model::EventCloseProject &event );
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS

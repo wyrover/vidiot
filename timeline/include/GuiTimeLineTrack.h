@@ -12,8 +12,7 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "TrackEventAddClips.h"
-#include "TrackEventRemoveClips.h"
+#include "Track.h"
 #include "UtilEvent.h"
 
 class ClipUpdateEvent;
@@ -50,6 +49,8 @@ public:
 
     int getIndex();
 
+    model::TrackPtr getTrack() const;
+
 
     // todo hide this as the getheight should not be used on the bitmap but on the track
     // for initialization purposes.
@@ -70,8 +71,8 @@ public:
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnClipsAdded( TrackEventAddClips& event );
-    void OnClipsRemoved( TrackEventRemoveClips& event );
+    void OnClipsAdded( model::EventAddClips& event );
+    void OnClipsRemoved( model::EventRemoveClips& event );
 
     //////////////////////////////////////////////////////////////////////////
     // DRAWING EVENTS

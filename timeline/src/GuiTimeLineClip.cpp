@@ -12,6 +12,7 @@
 #include "AProjectViewNode.h"
 #include "VideoFile.h"
 #include "VideoClip.h"
+#include "EmptyClip.h"
 #include "GuiTimeLineTrack.h"
 
 static int sClipBorderSize = 2;
@@ -85,18 +86,29 @@ void GuiTimeLineClip::updateBitmap()
     wxMemoryDC dc(mBitmap);
     wxColour* borderColour = const_cast<wxColour*>(wxRED);
     wxBrush* backgroundBrush = const_cast<wxBrush*>(wxCYAN_BRUSH);
-    if (mSelected)
+
+    model::EmptyClipPtr emptyclip =  boost::dynamic_pointer_cast<model::EmptyClip>(mClip);
+
+    if (emptyclip)
     {
-        borderColour = const_cast<wxColour*>(wxBLACK);
-        backgroundBrush = new wxBrush(wxColour(80,80,80),wxBRUSHSTYLE_SOLID);//const_cast<wxBrush*>(wxBLACK_BRUSH);
+        
     }
-    dc.SetBrush(*backgroundBrush);
-    dc.SetPen(wxPen(*borderColour, sClipBorderSize));
-    dc.DrawRectangle(0,0,mWidth,mBitmap.GetHeight());
-    if (mThumbnail)
+    else
     {
-        dc.DrawBitmap(*mThumbnail,wxPoint(sClipBorderSize,sClipBorderSize));
+        if (mSelected)
+        {
+            borderColour = const_cast<wxColour*>(wxBLACK);
+            backgroundBrush = new wxBrush(wxColour(80,80,80),wxBRUSHSTYLE_SOLID);//const_cast<wxBrush*>(wxBLACK_BRUSH);
+        }
+        dc.SetBrush(*backgroundBrush);
+        dc.SetPen(wxPen(*borderColour, sClipBorderSize));
+        dc.DrawRectangle(0,0,mWidth,mBitmap.GetHeight());
+        if (mThumbnail)
+        {
+            dc.DrawBitmap(*mThumbnail,wxPoint(sClipBorderSize,sClipBorderSize));
+        }
     }
+
     QueueEvent(new ClipUpdateEvent(shared_from_this()));
 }
 

@@ -3,17 +3,21 @@
 #include <set>
 #include <wx/event.h>
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/function.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/simple_state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
+#include "GuiMain.h" /** @todo replace with some other class? instead of using guimain for getProject() ? */
 #include "GuiOptions.h"
 #include "GuiTimeLine.h"
 #include "GuiTimeLineZoom.h"
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLineTrack.h"
+#include "EmptyClip.h"
 #include "GuiTimeLineDragImage.h"
+#include "TimelineMoveClips.h"
 #include "MousePointer.h"
 #include "SelectClips.h"
 #include "UtilLog.h"
@@ -220,11 +224,62 @@ struct Idle : bs::state< Idle, Machine >
         outermost_context().timeline.mPlayer->play();
         return transit<Playing>();
     }
+    void deleteSelectedClips(model::MoveParameters& moves, GuiTimeLineTracks tracks)
+    {
+        BOOST_FOREACH( GuiTimeLineTrackPtr t, tracks)
+        {
+            model::MoveParameterPtr move;
+            long nRemovedFrames = 0;
+            BOOST_FOREACH( GuiTimeLineClipPtr c, t->getClips() )
+            {
+                model::ClipPtr modelClip = c->getClip();
+                if (c->isSelected())
+                {
+                    if (!move)
+                    {
+                        move = boost::make_shared<model::MoveParameter>();
+                        move->addTrack = t->getTrack();
+                        move->removeTrack = t->getTrack();
+                        nRemovedFrames = 0;
+                    }
+                    move->removeClips.push_back(c->getClip());
+                    nRemovedFrames += c->getClip()->getNumberOfFrames();
+                }
+                else
+                {
+                    if (move) 
+                    { 
+                        move->removePosition = c->getClip();
+                        move->addPosition = c->getClip();
+                        move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
+                        moves.push_back(move); 
+                    }
+                    // Reset for possible new region of clips
+                    move.reset();
+                }
+            }
+            if (move) 
+            { 
+                move->removePosition.reset(); // Null ptr indicates 'at end'
+                move->addPosition.reset(); // Null ptr indicates 'at end'
+                move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
+                moves.push_back(move); 
+            }
+        }
+    }
     bs::result react( const EvKeyDown& evt)
     {
-        if (evt.mWxEvent.GetKeyCode() == WXK_SPACE)
+        switch (evt.mWxEvent.GetKeyCode())
         {
+        case WXK_SPACE:
             return start();
+        case WXK_DELETE:
+            model::MoveParameters moves;
+            deleteSelectedClips( moves, outermost_context().timeline.mVideoTracks);
+            deleteSelectedClips( moves, outermost_context().timeline.mAudioTracks);
+            wxGetApp().getProject()->Submit(new command::TimelineMoveClips(moves));
+            outermost_context().timeline.setCursorPosition(outermost_context().timeline.mCursorPosition);
+            break;
         }
         return discard_event();
     }

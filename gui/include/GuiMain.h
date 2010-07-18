@@ -6,8 +6,7 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
-#include "ProjectEventOpenProject.h"
-#include "ProjectEventCloseProject.h"
+#include "Project.h"
 
 //#define CATCH_ALL_ERRORS
 
@@ -28,8 +27,8 @@ public:
     // PROJECTS 
     //////////////////////////////////////////////////////////////////////////
 
-    void OnOpenProject( ProjectEventOpenProject &event );
-    void OnCloseProject( ProjectEventCloseProject &event );
+    void OnOpenProject( model::EventOpenProject &event );
+    void OnCloseProject( model::EventCloseProject &event );
 
     model::Project* getProject() const;
 

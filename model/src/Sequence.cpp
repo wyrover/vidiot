@@ -10,10 +10,10 @@
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
 #include "GuiMain.h"
-#include "ProjectEventRenameAsset.h"
 #include "UtilSerializeWxwidgets.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
+#include "EmptyFile.h"
 
 namespace model {
 
@@ -92,7 +92,7 @@ wxString Sequence::getName() const
 void Sequence::setName(wxString name)
 { 
     mName = name;
-    wxGetApp().QueueEvent(new ProjectEventRenameAsset(PROJECT_EVENT_RENAME_ASSET,shared_from_this(),mName));
+    wxGetApp().QueueEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -132,6 +132,11 @@ void Sequence::moveTo(int64_t position)
 VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
     VideoFramePtr videoFrame = (*mVideoTracks.begin())->getNextVideo(requestedWidth, requestedHeight, alpha);
+    if (videoFrame == EmptyFile::EmptyVideoFrame)
+    {
+        VAR_VIDEO(videoFrame);
+
+    }
     VAR_VIDEO(videoFrame);
     return videoFrame;
 }

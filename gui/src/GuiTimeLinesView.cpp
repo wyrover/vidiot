@@ -11,8 +11,6 @@
 #include "GuiWindow.h"
 #include "Project.h"
 #include "AProjectViewNode.h"
-#include "ProjectEventDeleteAsset.h"
-#include "ProjectEventRenameAsset.h"
 #include "UtilLog.h"
 #include "Sequence.h"
 
@@ -28,15 +26,15 @@ GuiTimelinesView::GuiTimelinesView(GuiWindow *parent)
     sizer->Add( &mNotebook, 1, wxGROW );
     SetSizerAndFit(sizer);
 
-    wxGetApp().Bind(PROJECT_EVENT_DELETE_ASSET,     &GuiTimelinesView::OnProjectAssetDeleted,       this);
-    wxGetApp().Bind(PROJECT_EVENT_RENAME_ASSET,     &GuiTimelinesView::OnProjectAssetRenamed,       this);
+    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,      &GuiTimelinesView::OnProjectAssetRemoved,       this);
+    wxGetApp().Bind(model::EVENT_RENAME_ASSET,      &GuiTimelinesView::OnProjectAssetRenamed,       this);
     Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,       &GuiTimelinesView::OnPageChanged,               this);
 }
 
 GuiTimelinesView::~GuiTimelinesView()
 {
-    wxGetApp().Unbind(PROJECT_EVENT_DELETE_ASSET,       &GuiTimelinesView::OnProjectAssetDeleted,       this);
-    wxGetApp().Unbind(PROJECT_EVENT_RENAME_ASSET,       &GuiTimelinesView::OnProjectAssetRenamed,       this);
+    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,      &GuiTimelinesView::OnProjectAssetRemoved,       this);
+    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,      &GuiTimelinesView::OnProjectAssetRenamed,       this);
     Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,         &GuiTimelinesView::OnPageChanged,               this);
 }
 
@@ -44,9 +42,9 @@ GuiTimelinesView::~GuiTimelinesView()
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimelinesView::OnProjectAssetDeleted( ProjectEventDeleteAsset &event )
+void GuiTimelinesView::OnProjectAssetRemoved( model::EventRemoveAsset &event )
 {
-    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getNode());
+    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().child);
     if (sequence)
     {
         Close(sequence);
@@ -54,16 +52,16 @@ void GuiTimelinesView::OnProjectAssetDeleted( ProjectEventDeleteAsset &event )
     event.Skip();
 }
 
-void GuiTimelinesView::OnProjectAssetRenamed( ProjectEventRenameAsset &event )
+void GuiTimelinesView::OnProjectAssetRenamed( model::EventRenameAsset &event )
 {
-    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getNode());
+    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().node);
 
     if (sequence)
     {
         std::pair<size_t,GuiTimeLinePtr> f = findPage(sequence);
         if (f.second != 0)
         {
-            mNotebook.SetPageText(f.first, event.getNewName());
+            mNotebook.SetPageText(f.first, event.getValue().newname);
         }
     }
     event.Skip();

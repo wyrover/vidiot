@@ -321,6 +321,20 @@ boost::tuple<GuiTimeLineTrackPtr,int> GuiTimeLine::findTrack(int yposition) cons
     return boost::make_tuple(GuiTimeLineTrackPtr(),0);
 }
 
+GuiTimeLineTracks GuiTimeLine::getTracks() const
+{
+    GuiTimeLineTracks tracks;
+    BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+    {
+        tracks.push_back(track);
+    }
+    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
+    {
+        tracks.push_back(track);
+    }
+    return tracks;
+}
+
 GuiTimeLineClips GuiTimeLine::getClips() const
 {
     GuiTimeLineClips clips;
