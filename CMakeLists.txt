@@ -31,7 +31,7 @@ message(${FFMPEG_INCLUDE_DIR})
 message( $ENV{PATH} )
 
 #### WXWIDGETS ####
-SET(wxWidgets_USE_LIBS base core aui adv qa xml)
+SET(wxWidgets_USE_LIBS base core aui adv qa xml html)
 FIND_PACKAGE(wxWidgets)
 IF(NOT wxWidgets_FOUND)
   MESSAGE("wxWidgets not found!")
@@ -100,6 +100,7 @@ FILE(GLOB Icons             ${PROJECT_SOURCE_DIR}/icons/*?.???)
 FILE(GLOB Cursors           ${PROJECT_SOURCE_DIR}/cursors/*?.???)
 FILE(GLOB CmakeModulesFiles ${PROJECT_SOURCE_DIR}/*.cmake)
 FILE(GLOB TextFiles         ${PROJECT_SOURCE_DIR}/*.txt)
+FILE(GLOB HelpFiles         ${PROJECT_SOURCE_DIR}/help/*.*)
 
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
 IF (WIN32)
@@ -109,7 +110,7 @@ ENDIF (WIN32)
 INCLUDE_DIRECTORIES(include icons cursors ${FFMPEG_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${PORTAUDIO_INCLUDE_DIR} ${INCLUDE_LIST})
 LINK_DIRECTORIES(${FFMPEG_LIBRARY_DIR} ${Boost_LIBRARY_DIRS} ${PORTAUDIO_LIBRARY_DIR})
 INCLUDE(${wxWidgets_USE_FILE})
-ADD_EXECUTABLE(Vidiot WIN32 ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${CmakeModulesFiles} ${TextFiles} )
+ADD_EXECUTABLE(Vidiot WIN32 ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${CmakeModulesFiles} ${TextFiles} ${HelpFiles} HelpFiles)
 TARGET_LINK_LIBRARIES(Vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES})
 
 #### MAKE GROUPING FOR VISUAL STUDIO ####
@@ -126,4 +127,9 @@ GROUPFILES(util)
 SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
 SOURCE_GROUP("cursors"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/cursors/*.*)
 SOURCE_GROUP("cfg" FILES ${CmakeModulesFiles} ${TextFiles})
+SOURCE_GROUP("help"FILES ${HelpFiles})
 set_source_files_properties(${CmakeFiles} ${ConfigurationFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
+
+#### HELP FILES ####
+add_custom_command(OUTPUT HelpFiles
+COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)

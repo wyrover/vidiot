@@ -74,7 +74,11 @@ GuiWindow::GuiWindow()
     menutools->Append(meID_OPTIONS, _("&Options"));
 
     wxMenu* menuhelp = new wxMenu();
+    menuhelp->Append(wxID_HELP, _("Help"));
+
+    menusequence->AppendSeparator();
     menuhelp->Append(wxID_INFO, _("Dump"));
+    menusequence->AppendSeparator();
     menuhelp->Append(wxID_ABOUT, _("&About..."));
 
     menubar = new wxMenuBar();
@@ -120,6 +124,7 @@ GuiWindow::GuiWindow()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnExit,             this, wxID_EXIT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnPlaySequence,     this, meID_PLAYSEQUENCE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnCloseSequence,    this, meID_CLOSESEQUENCE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnHelp,             this, wxID_HELP);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAbout,            this, wxID_ABOUT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAddVideoTrack,    this, meID_ADDVIDEOTRACK);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAddAudioTrack,    this, meID_ADDAUDIOTRACK);
@@ -130,6 +135,7 @@ GuiWindow::GuiWindow()
     mDocManager.SetMaxDocsOpen(1);
     mDocManager.FileHistoryUseMenu(menufile);
     mDocManager.FileHistoryLoad(*wxConfigBase::Get());
+
     Show();
 }
 
@@ -143,27 +149,6 @@ void GuiWindow::init()
 
 GuiWindow::~GuiWindow()
 {
-    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,       &GuiWindow::OnOpenProject,              this);
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,      &GuiWindow::OnCloseProject,             this);
-
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     &mDocManager, wxID_CLOSE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  &mDocManager, wxID_CLOSE_ALL);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       &mDocManager, wxID_NEW);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      &mDocManager, wxID_OPEN);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    &mDocManager, wxID_REVERT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      &mDocManager, wxID_SAVE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    &mDocManager, wxID_SAVEAS);
-
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &GuiWindow::OnCloseSequence,    this, meID_CLOSESEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &GuiWindow::OnPlaySequence,     this, meID_PLAYSEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &GuiWindow::OnExit,             this, wxID_EXIT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &GuiWindow::OnAbout,            this, wxID_ABOUT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &GuiWindow::OnAddVideoTrack,    this, meID_ADDVIDEOTRACK);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &GuiWindow::OnAddAudioTrack,    this, meID_ADDAUDIOTRACK);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED, &GuiWindow::OnOptions,          this, meID_OPTIONS);
-
-    Unbind(wxEVT_CLOSE_WINDOW,          &GuiWindow::OnCloseWindow,      this);
-
     mUiManager.UnInit();
 
     delete mDocTemplate;
@@ -258,6 +243,11 @@ void GuiWindow::OnOptions(wxCommandEvent& WXUNUSED(event))
 //////////////////////////////////////////////////////////////////////////
 // HELP MENU
 //////////////////////////////////////////////////////////////////////////
+
+void GuiWindow::OnHelp(wxCommandEvent& WXUNUSED(event))
+{
+    NIY
+}
 
 void GuiWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
