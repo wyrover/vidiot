@@ -10,6 +10,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/make_shared.hpp>
 #include <wx/pen.h>
+#include "Constants.h"
 #include "GuiTimeLineZoom.h"
 #include "GuiTimeLineClip.h"
 #include "UtilLog.h"
@@ -202,9 +203,8 @@ void GuiTimeLineTrack::OnClipUpdated( ClipUpdateEvent& event )
 void GuiTimeLineTrack::updateBitmap()
 {
     wxMemoryDC dc(mBitmap);
-    dc.SetBrush(*wxLIGHT_GREY_BRUSH);
-    wxPen blackLinePen(*wxBLACK, sTrackBorderSize);
-    dc.SetPen(blackLinePen);
+    dc.SetBrush(Constants::sBackgroundBrush);
+    dc.SetPen(Constants::sBackgroundPen);
     dc.DrawRectangle(0,0,mBitmap.GetWidth(),mBitmap.GetHeight());
 
     wxPoint pos(sTrackBorderSize,sTrackBorderSize);

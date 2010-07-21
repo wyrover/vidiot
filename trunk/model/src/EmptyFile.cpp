@@ -1,14 +1,16 @@
 #include "EmptyFile.h"
 
+#include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
+#include "Project.h"
+#include "Properties.h"
+#include "EmptyChunk.h"
+#include "EmptyFrame.h"
 
 namespace model {
-
-AudioChunkPtr EmptyFile::EmptyAudioChunk;
-VideoFramePtr EmptyFile::EmptyVideoFrame;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -57,12 +59,18 @@ void EmptyFile::moveTo(boost::int64_t position)
 AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
 {
     mAudioPosition++;
-    if (mAudioPosition > mLength)
+    if (mAudioPosition >= mLength)
     {
         return AudioChunkPtr();
     }
-    return EmptyAudioChunk;
-}
+    /** todo correct pts (third parameter) */
+    /** todo more precise n samples */
+
+    // Number of samples for 1 video frame
+    int nSamples = nAudioChannels * static_cast<int>(floor(boost::rational_cast<double>(audioRate * Project::current()->getProperties()->getFrameRate())));
+
+    return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, nSamples, mAudioPosition));
+} 
 
 //////////////////////////////////////////////////////////////////////////
 // IVIDEO
@@ -71,11 +79,22 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
 VideoFramePtr EmptyFile::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
     mVideoPosition++;
-    if (mVideoPosition > mLength)
+    if (mVideoPosition >= mLength)
     {
         return VideoFramePtr();
     }
-    return EmptyVideoFrame;
+
+    PixelFormat format = PIX_FMT_RGBA;
+    if (!alpha)
+    {
+        format = PIX_FMT_RGB24;
+    }
+
+    /** todo timebase */
+    AVRational timebase;
+    timebase.num = 0;
+    timebase.den = 0;
+    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(format, requestedWidth, requestedHeight, mVideoPosition, timebase));
 }
 
 //////////////////////////////////////////////////////////////////////////

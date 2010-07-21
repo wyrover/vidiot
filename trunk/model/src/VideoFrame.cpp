@@ -1,38 +1,57 @@
 #include "VideoFrame.h"
 #include "UtilLogAvcodec.h"
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 VideoFrame::VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase, int repeat)
 :   mFrame(0)
+,   mBuffer(0)
+,   mFormat(format)
 ,	mWidth(width)
 ,   mHeight(height)
 ,   mPts(pts)
 ,   mTimeBase(timebase)
 ,   mRepeat(repeat)
 {
-    mBufferSize = avpicture_get_size(format, width, height);
+    mBufferSize = avpicture_get_size(mFormat, mWidth, mHeight);
     mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
 
     mFrame = avcodec_alloc_frame();
 
     // Assign appropriate parts of buffer to image planes in mFrame
-    avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, width, height);
+    avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, mFormat, mWidth, mHeight);
+}
+
+VideoFrame::VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase)
+:   mFrame(0)
+,   mBuffer(0)
+,   mFormat(format)
+,	mWidth(width)
+,   mHeight(height)
+,   mPts(pts)
+,   mTimeBase(timebase)
+,   mRepeat(1)
+{
 }
 
 VideoFrame::~VideoFrame()
 {
-    av_free(mBuffer);
-    av_free(mFrame);
+
+    if (mBuffer)
+    {
+        av_free(mBuffer);
+    }
+    if (mFrame)
+    {
+        av_free(mFrame);
+    }
 }
 
-DataPointer VideoFrame::getData() const
-{
-    return mFrame->data;
-}
-
-LineSizePointer VideoFrame::getLineSizes() const
-{
-    return mFrame->linesize;
-}
+//////////////////////////////////////////////////////////////////////////
+// META DATA
+//////////////////////////////////////////////////////////////////////////
 
 int VideoFrame::getRepeat() const
 {
@@ -97,3 +116,17 @@ std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj)
     }
     return os;
 }
+//////////////////////////////////////////////////////////////////////////
+// DATA ACCESS
+//////////////////////////////////////////////////////////////////////////
+
+DataPointer VideoFrame::getData()
+{
+    return mFrame->data;
+}
+
+LineSizePointer VideoFrame::getLineSizes() const
+{
+    return mFrame->linesize;
+}
+

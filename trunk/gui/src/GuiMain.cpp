@@ -9,6 +9,7 @@
 #include "UtilLogAvcodec.h"
 #include "GuiOptions.h"
 #include "GuiWindow.h"
+#include "Constants.h"
 #include "GuiDebugReport.h"
 #include "Project.h"
 #include "wx/msgdlg.h"
@@ -82,6 +83,10 @@ bool GuiMain::OnInit()
     // since it distributes the initial options
     // which are used below.
     GuiOptions::init();
+
+    // The fonts cannot be initialized similar to pens and brushes
+    // (leads to uninitialized wxStockGDI)
+    Constants::initializeFonts();
 
     Log::Init();
 

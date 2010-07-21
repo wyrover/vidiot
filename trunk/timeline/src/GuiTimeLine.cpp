@@ -184,13 +184,13 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     // Draw drop area
     if (!mDropArea.IsEmpty())
     {
-        dc.SetPen(wxPen(*wxYELLOW, 1));
-        dc.SetBrush(*wxYELLOW_BRUSH);
+        dc.SetPen(Constants::sDropAreaPen);
+        dc.SetBrush(Constants::sDropAreaBrush);
         dc.DrawRectangle(mDropArea);
     }
 
     // Draw cursor
-    dc.SetPen(wxPen(*wxRED, 1));
+    dc.SetPen(Constants::sCursorPen);
     dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,mHeight));
 
 }
@@ -202,6 +202,7 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
 void GuiTimeLine::OnTrackUpdated( TrackUpdateEvent& event )
 {
     LOG_INFO;
+    moveCursorOnUser(mCursorPosition); // This is needed to reset iterators in model in case of clip addition/removal
     /** todo only redraw track */
     updateBitmap();
     Update();
@@ -400,18 +401,16 @@ void GuiTimeLine::updateBitmap()
     int h = mBitmap.GetHeight();
 
     // Set BG
-    dc.SetPen(*wxLIGHT_GREY_PEN);
-    dc.SetBrush(*wxLIGHT_GREY_BRUSH);
+    dc.SetPen(Constants::sBackgroundPen);
+    dc.SetBrush(Constants::sBackgroundBrush);
     dc.DrawRectangle(0,0,w,h);
 
     // Draw timescale
     dc.SetBrush(wxNullBrush);
-    wxPen blackLinePen(*wxBLACK, 1);
-    dc.SetPen(blackLinePen);
+    dc.SetPen(Constants::sTimeScaleDividerPen);
     dc.DrawRectangle(0,0,w,Constants::sTimeScaleHeight);
 
-    wxFont* f = const_cast<wxFont*>(wxSMALL_FONT);
-    dc.SetFont(*f);
+    dc.SetFont(*Constants::sTimeScaleFont);
 
     // Draw seconds and minutes lines
     for (int ms = 0; mZoom->timeToPixels(ms) <= w; ms += Constants::sSecond)
@@ -457,10 +456,8 @@ void GuiTimeLine::updateBitmap()
     }
 
     // Draw divider between video and audio tracks
-    wxPen bluePen(*wxBLUE, 1);
-    wxBrush audioVideoDividerBrush(wxColour(10,20,30),wxBRUSHSTYLE_CROSSDIAG_HATCH);
-    dc.SetBrush(audioVideoDividerBrush);
-    dc.SetPen(bluePen);
+    dc.SetBrush(Constants::sAudioVideoDividerBrush);
+    dc.SetPen(Constants::sAudioVideoDividerPen);
     dc.DrawRectangle(0,y,w,Constants::sAudioVideoDividerHeight);
 
     y += Constants::sAudioVideoDividerHeight;

@@ -1,5 +1,5 @@
-#ifndef FIFO_VIDEO_H
-#define FIFO_VIDEO_H
+#ifndef VIDEO_FRAME_H
+#define VIDEO_FRAME_H
 
 #include "UtilFifo.h"
 #include <boost/cstdint.hpp>
@@ -18,14 +18,28 @@ typedef int* LineSizePointer;
 class VideoFrame : boost::noncopyable
 {
 public:
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    /**
+    * Initialization and allocation.
+    */
     VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase, int repeat);
+
+    /**
+    * Initialization without allocation. Used for empty frames. Then, allocation only
+    * needed when the data is needed for playback. During 'track combining' empty 
+    * frames can be ignored. This avoids needless allocation.
+    */
+    VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase);
+
     virtual ~VideoFrame();
 
-    /** uint8_t* data[4] */
-    DataPointer getData() const;
-
-    /** int linesize[4] */
-    LineSizePointer getLineSizes() const;
+    //////////////////////////////////////////////////////////////////////////
+    // META DATA
+    //////////////////////////////////////////////////////////////////////////
 
     int getRepeat() const;
     boost::int64_t getPts() const; 
@@ -35,8 +49,29 @@ public:
     int getWidth() const;
     int getHeight() const;
     int getSizeInBytes() const;
-private:
+
+    template <typename Derived>
+    bool isA()
+    {
+        return (typeid(Derived) == typeid(*this));
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // DATA ACCESS
+    //////////////////////////////////////////////////////////////////////////
+
+    /**
+    * uint8_t* data[4] 
+    * Virtual and not const due to override in EmptyFrame
+    */
+    virtual DataPointer getData();
+
+    /** int linesize[4] */
+    LineSizePointer getLineSizes() const;
+
+protected:
     AVFrame* mFrame;
+    PixelFormat mFormat;
     int mRepeat;
     double mTimeStamp;
     int mWidth;
@@ -53,4 +88,4 @@ typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFrame& obj);
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
-#endif // FIFO_VIDEO_H
+#endif // VIDEO_FRAME_H

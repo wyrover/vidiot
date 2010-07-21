@@ -278,7 +278,6 @@ struct Idle : bs::state< Idle, Machine >
             deleteSelectedClips( moves, outermost_context().timeline.mVideoTracks);
             deleteSelectedClips( moves, outermost_context().timeline.mAudioTracks);
             wxGetApp().getProject()->Submit(new command::TimelineMoveClips(moves));
-            outermost_context().timeline.setCursorPosition(outermost_context().timeline.mCursorPosition);
             break;
         }
         return discard_event();

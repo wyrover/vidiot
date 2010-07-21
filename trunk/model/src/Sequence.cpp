@@ -13,7 +13,7 @@
 #include "UtilSerializeWxwidgets.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
-#include "EmptyFile.h"
+#include "EmptyFrame.h"
 
 namespace model {
 
@@ -132,7 +132,7 @@ void Sequence::moveTo(int64_t position)
 VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
     VideoFramePtr videoFrame = (*mVideoTracks.begin())->getNextVideo(requestedWidth, requestedHeight, alpha);
-    if (videoFrame == EmptyFile::EmptyVideoFrame)
+    if (videoFrame->isA<EmptyFrame>())
     {
         VAR_VIDEO(videoFrame);
 
