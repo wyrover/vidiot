@@ -1,5 +1,5 @@
-#ifndef FIFO_AUDIO_H
-#define FIFO_AUDIO_H
+#ifndef AUDIO_CHUNK_H
+#define AUDIO_CHUNK_H
 
 #include <boost/cstdint.hpp>
 #include "UtilFifo.h"
@@ -7,7 +7,26 @@
 class AudioChunk : boost::noncopyable
 {
 public:
+
+    static const int sBytesPerSample;
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Initialize and allocate,
+     */
     AudioChunk(boost::int16_t* buffer, int nChannels, unsigned int nSamples, double pts);
+
+    /**
+    * Initialize but do not allocate yet. Used for empty chunks. Then,
+    * allocation only is needed when the data is needed for playback.
+    * During 'track combining' empty chunks can be ignored.
+    * This avoids needless allocation.
+     */
+    AudioChunk(int nChannels, unsigned int nSamples, double pts);
+
     virtual ~AudioChunk();
 
     //////////////////////////////////////////////////////////////////////////
@@ -17,8 +36,14 @@ public:
     double getTimeStamp() const;
     unsigned int getNumberOfChannels() const;
 
+    template <typename Derived>
+    bool isA()
+    {
+        return (typeid(Derived) == typeid(*this));
+    }
+
     //////////////////////////////////////////////////////////////////////////
-    // UNREAD SAMPLES
+    // DATA ACCESS
     //////////////////////////////////////////////////////////////////////////
 
     /** 
@@ -30,14 +55,15 @@ public:
 
     /**
     * Returns the part of 'getBuffer()' that has not been consumed.
+    * Virtual and not const due to reuse in EmptyChunk.
     * @return pointer to first unread sample.
     */
-    boost::int16_t* getUnreadSamples() const;
+    virtual boost::int16_t* getUnreadSamples();
 
     unsigned long getUnreadSampleCount() const;
 
-    static const int sBytesPerSample;
-private:
+protected:
+
     boost::int16_t *mBuffer;
     int mNrChannels;
     unsigned int mNrReadSamples;
@@ -51,4 +77,4 @@ typedef Fifo<AudioChunkPtr> FifoAudio;
 std::ostream& operator<< (std::ostream& os, const AudioChunk& obj);
 std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
 
-#endif // FIFO_AUDIO_H
+#endif // AUDIO_CHUNK_H
