@@ -132,7 +132,7 @@ void Sequence::moveTo(int64_t position)
 VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
     VideoFramePtr videoFrame = (*mVideoTracks.begin())->getNextVideo(requestedWidth, requestedHeight, alpha);
-    if (videoFrame->isA<EmptyFrame>())
+    if (videoFrame && videoFrame->isA<EmptyFrame>())
     {
         VAR_VIDEO(videoFrame);
 
