@@ -87,6 +87,7 @@ void GuiTimeLineClip::updateBitmap()
     if (mClip->isA<model::EmptyClip>())
     {
         dc.SetBrush(Constants::sBackgroundBrush);
+        dc.SetPen(Constants::sBackgroundPen);
         dc.DrawRectangle(0,0,mWidth,mBitmap.GetHeight());
     }
     else
@@ -111,6 +112,11 @@ void GuiTimeLineClip::updateBitmap()
     QueueEvent(new ClipUpdateEvent(shared_from_this()));
 }
 
+bool GuiTimeLineClip::isEmpty() const
+{
+    return mClip->isA<model::EmptyClip>();
+}
+
 bool GuiTimeLineClip::isSelected() const
 {
     return mSelected;
@@ -118,16 +124,23 @@ bool GuiTimeLineClip::isSelected() const
 
 void GuiTimeLineClip::setSelected(bool selected)
 {
-    if (selected != mSelected)
+    if (mClip->isA<model::EmptyClip>())
     {
-        // This if statement is needed to avoid endless 
-        // loops when also selecting the linked clip.
-        mSelected = selected;
-        updateBitmap();
-        GuiTimeLineClipPtr link = getLink();
-        if (link)
+
+    }
+    else
+    {
+        if (selected != mSelected)
         {
-            link->setSelected(selected);
+            // This if statement is needed to avoid endless 
+            // loops when also selecting the linked clip.
+            mSelected = selected;
+            updateBitmap();
+            GuiTimeLineClipPtr link = getLink();
+            if (link)
+            {
+                link->setSelected(selected);
+            }
         }
     }
 }

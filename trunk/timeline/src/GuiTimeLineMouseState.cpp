@@ -192,7 +192,7 @@ struct Idle : bs::state< Idle, Machine >
         VAR_DEBUG(evt);
         GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition).get<0>();
         outermost_context().globals->selection.update(clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
-        if (clip)
+        if (clip && !clip->isEmpty())
         {
             outermost_context().globals->DragStartPosition = evt.mPosition;
             outermost_context().globals->DragStartClip = clip;

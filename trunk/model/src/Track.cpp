@@ -99,6 +99,8 @@ void Track::addClips(Clips clips, ClipPtr position)
 
     QueueEvent(new model::EventAddClips(move));
 
+    /** @todo combine consecutive empty clips */
+
     /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
     /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
@@ -119,6 +121,7 @@ void Track::removeClips(Clips clips)
     move.removeClips = clips;
     QueueEvent(new model::EventRemoveClips(move));
 
+    /** @todo combine consecutive empty clips */
     /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
     /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }

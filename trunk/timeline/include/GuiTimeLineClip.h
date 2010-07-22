@@ -41,6 +41,7 @@ public:
 
     const wxBitmap& getBitmap();
 
+    bool isEmpty() const;
     bool isSelected() const;
     void setSelected(bool selected);
     void setBeingDragged(bool beingdragged);
