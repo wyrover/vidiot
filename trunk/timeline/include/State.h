@@ -1,47 +1,70 @@
-#ifndef GUI_TIME_LINE_MOUSE_STATE_H
-#define GUI_TIME_LINE_MOUSE_STATE_H
+#ifndef TIMELINE_STATE_H
+#define TIMELINE_STATE_H
 
 #include <wx/gdicmn.h>
-#include <wx/event.h>
+//#include <wx/event.h>
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/state_machine.hpp>
-#include "UtilLog.h"
+//#include "UtilLog.h"
+//#include "UtilLogWxwidgets.h"
+//#include "GuiPtr.h"
+#include "GuiTimeLineDragImage.h"
+#include "MousePointer.h"
+#include "SelectClips.h"
 #include "UtilLogWxwidgets.h"
-#include "GuiPtr.h"
 
-namespace bs = boost::statechart;
+class GuiTimeLine;
 
-namespace mousestate {
+namespace gui { namespace timeline { namespace state {
 
 //////////////////////////////////////////////////////////////////////////
 // MEMBERS ACESSIBLE BY ALL STATES
 //////////////////////////////////////////////////////////////////////////
 
-struct GlobalState;
+struct GlobalState
+{
+    GlobalState(GuiTimeLine& timeline)
+        :   DragStartPosition(-1,-1)
+        ,   DragImage(0)
+        ,   mousepointer(timeline)
+        ,   selection(timeline)
+        ,   DragStartClip()
+    {
+    }
+    wxPoint DragStartPosition;
+    GuiTimeLineDragImage* DragImage;
+    MousePointer mousepointer;
+    SelectClips selection;
+
+    /** Clip on which the drag was started. */
+    GuiTimeLineClipPtr DragStartClip;
+};
 
 //////////////////////////////////////////////////////////////////////////
-// STATES
+// FORWARD DECLARATION OF ALL STATES FOR TIMELINE
 //////////////////////////////////////////////////////////////////////////
 
-struct Idle;
-struct Stopped;
-struct Playing;
-struct TestDragStart;
-struct MovingCursor;
-struct Dragging;
+class Idle;
+class Dragging;
+class MovingCursor;
+class Playing;
+class TestDragStart;
 
 //////////////////////////////////////////////////////////////////////////
 // MACHINE
 //////////////////////////////////////////////////////////////////////////
 
-struct Machine 
-    :   bs::state_machine< Machine, Idle >
+class Machine 
+    :   public boost::statechart::state_machine< Machine, Idle >
 {
+public:
     Machine(GuiTimeLine& tl);
     ~Machine();
     GuiTimeLine& timeline;
     GlobalState* globals;
-    
+
+private:
+
     void OnMotion           (wxMouseEvent& event);
     void OnLeftDown         (wxMouseEvent& event);
     void OnLeftUp           (wxMouseEvent& event);
@@ -61,13 +84,76 @@ struct Machine
     void OnCaptureChanged   (wxMouseCaptureChangedEvent& event);
 
     /**
-     * Converts a wxevent position to a virtual position on the 
-     * timeline's bitmap buffer (which may be scrolled).
-     */
+    * Converts a wxevent position to a virtual position on the 
+    * timeline's bitmap buffer (which may be scrolled).
+    */
     wxPoint unscrolledPosition(wxPoint position) const;
 
 };
 
-} // namespace
+//////////////////////////////////////////////////////////////////////////
+// MOUSE EVENTS
+//////////////////////////////////////////////////////////////////////////
 
-#endif // GUI_TIME_LINE_MOUSE_STATE_H
+template< class MostDerived >
+struct EvMouse : boost::statechart::event< MostDerived >
+{
+    EvMouse(wxMouseEvent& wxevt, wxPoint pos)
+        :   mPosition(pos)
+        ,   mWxEvent(wxevt)
+    {
+    };
+    const wxPoint mPosition;
+    const wxMouseEvent& mWxEvent;
+};
+
+template< class MostDerived >
+std::ostream& operator<< (std::ostream& os, const EvMouse< MostDerived >& obj)
+{
+    os  << typeid(obj).name() << ',' 
+        << obj.mPosition << ','
+        << obj.mWxEvent;
+    return os;
+}
+
+struct EvMotion         : EvMouse<EvMotion>         { EvMotion      (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeftDown       : EvMouse<EvLeftDown>       { EvLeftDown    (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeftUp         : EvMouse<EvLeftUp>         { EvLeftUp      (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeftDouble     : EvMouse<EvLeftDouble>     { EvLeftDouble  (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvMiddleDown     : EvMouse<EvMiddleDown>     { EvMiddleDown  (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvMiddleUp       : EvMouse<EvMiddleUp>       { EvMiddleUp    (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvMiddleDouble   : EvMouse<EvMiddleDouble>   { EvMiddleDouble(wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvRightDown      : EvMouse<EvRightDown>      { EvRightDown   (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvRightUp        : EvMouse<EvRightUp>        { EvRightUp     (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvRightDouble    : EvMouse<EvRightDouble>    { EvRightDouble (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvEnter          : EvMouse<EvEnter>          { EvEnter       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvLeave          : EvMouse<EvLeave>          { EvLeave       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+struct EvWheel          : EvMouse<EvWheel>          { EvWheel       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse(wxevt, pos) {} };
+
+template< class MostDerived >
+struct EvKey : boost::statechart::event< MostDerived >
+{
+    EvKey(wxKeyEvent& wxevt, wxPoint pos)
+        :   mPosition(pos)
+        ,   mWxEvent(wxevt)
+    {
+    };
+    const wxPoint mPosition;
+    const wxKeyEvent& mWxEvent;
+};
+
+template< class MostDerived >
+std::ostream& operator<< (std::ostream& os, const EvKey< MostDerived >& obj)
+{
+    os  << typeid(obj).name() << ',' 
+        << obj.mPosition << ','
+        << obj.mWxEvent;
+    return os;
+}
+
+struct EvKeyDown : EvKey<EvKeyDown> { EvKeyDown (wxKeyEvent& wxevt, wxPoint pos) : EvKey(wxevt, pos) {} };
+struct EvKeyUp   : EvKey<EvKeyUp>   { EvKeyUp   (wxKeyEvent& wxevt, wxPoint pos) : EvKey(wxevt, pos) {} };
+
+}}} // namespace
+
+#endif // TIMELINE_STATE_H

@@ -3,6 +3,8 @@
 
 #include "GuiPtr.h"
 
+namespace gui { namespace timeline {
+
 class SelectClips
 {
 public:
@@ -17,5 +19,7 @@ private:
     GuiTimeLineClipPtr mPreviouslyClicked;
 
 };
+
+}} // namespace
 
 #endif // SELECT_CLIPS_H

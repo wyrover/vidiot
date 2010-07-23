@@ -17,6 +17,9 @@ namespace model {
     class Folder;
     typedef boost::shared_ptr<Folder> FolderPtr;
 }
+
+namespace gui {
+
 class GuiTimelinesView;
 
 class GuiProjectView
@@ -97,6 +100,8 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GuiProjectView, 1)
+} // namespace
+
+BOOST_CLASS_VERSION(gui::GuiProjectView, 1)
 
 #endif // GUI_PROJECT_VIEW_H

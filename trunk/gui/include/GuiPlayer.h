@@ -8,6 +8,8 @@
 #include <boost/shared_ptr.hpp>
 #include "GuiPtr.h"
 
+namespace gui {
+
 class GuiVideoDisplay;
 class GuiEventPlaybackPosition;
 
@@ -20,7 +22,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiPlayer(wxWindow *parent, GuiTimeLinePtr timeline);
+    GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline);
 	virtual ~GuiPlayer();
 
     //////////////////////////////////////////////////////////////////////////
@@ -49,7 +51,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLinePtr mTimeLine;
+    timeline::GuiTimeLinePtr mTimeLine;
 
     GuiVideoDisplay* mDisplay;
     wxTextCtrl* mStatus;
@@ -57,5 +59,7 @@ private:
 };
 
 typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
+
+} // namespace
 
 #endif // GUI_PLAYER_H

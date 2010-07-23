@@ -13,6 +13,8 @@
 #include "portaudio.h"
 #include "FrameRate.h"
 
+namespace gui {
+
 DEFINE_EVENT(GUI_EVENT_PLAYBACK_POSITION, GuiEventPlaybackPosition, long);
 
 const int GuiVideoDisplay::sStereo = 2;
@@ -279,7 +281,7 @@ void GuiVideoDisplay::videoDisplayThread()
         //////////////////////////////////////////////////////////////////////////
 
         mCurrentTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream)) - mStartTime;
-        int nextFrameTime = GuiTimeLineZoom::ptsToTime(videoFrame->getPts() - mStartPts);
+        int nextFrameTime = gui::timeline::GuiTimeLineZoom::ptsToTime(videoFrame->getPts() - mStartPts);
         int sleepTime = nextFrameTime - mCurrentTime;
         
         //////////////////////////////////////////////////////////////////////////
@@ -375,4 +377,4 @@ void GuiVideoDisplay::showNewVideoFrame()
     }
 }
 
-
+} // namespace

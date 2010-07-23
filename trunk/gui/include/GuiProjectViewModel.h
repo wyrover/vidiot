@@ -12,8 +12,8 @@ namespace model {
     class Folder;
     typedef boost::shared_ptr<Folder> FolderPtr;
 }
-class ProjectEventOpenProject;
-class ProjectEventCloseProject;
+
+namespace gui {
 
 /**
 * This model links the GUI objects to the actual project items and back.
@@ -87,5 +87,7 @@ private:
 * via the event queue instead of a direct call in the GetChildren() method.
 */
 DECLARE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
+
+} // namespace
 
 #endif // GUI_PROJECT_VIEW_MODEL_H

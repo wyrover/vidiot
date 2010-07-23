@@ -1,6 +1,8 @@
 #include "Constants.h"
 #include <wx/colour.h>
 
+namespace gui { namespace timeline {
+
 //////////////////////////////////////////////////////////////////////////
 // TIME
 //////////////////////////////////////////////////////////////////////////
@@ -58,3 +60,4 @@ void Constants::initializeFonts()
     sTimeScaleFont = const_cast<wxFont*>(wxSMALL_FONT);
 }
 
+}} // namespace

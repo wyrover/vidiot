@@ -5,6 +5,8 @@
 #include <wx/cursor.h>
 #include "UtilEnum.h"
 
+namespace gui { namespace timeline {
+
 class GuiTimeLine;
 
 DECLAREENUM(MousePosition, \
@@ -52,5 +54,7 @@ private:
     wxCursor mCursorTrimEnd;
     wxCursor mCursorTrimShiftEnd;
 };
+
+}} // namespace
 
 #endif // POINTERS_H

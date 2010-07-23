@@ -8,14 +8,12 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include "Project.h"
-#include "Sequence.h"
+
+namespace gui {
 
 class GuiTimelinesView;
 class GuiPreview;
 class GuiProjectView;
-class ProjectEventOpenProject;
-class ProjectEventCloseProject;
-namespace model { class Project; }
 
 class GuiWindow : public wxDocParentFrame
 {
@@ -96,9 +94,6 @@ private:
 
     wxAuiManager mUiManager;
 
-    model::Project* mProject;
-    std::list<model::SequencePtr> mOpenSequences;
-
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION 
     //////////////////////////////////////////////////////////////////////////
@@ -108,6 +103,8 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GuiWindow, 1)
+} // namespace
+
+BOOST_CLASS_VERSION(gui::GuiWindow, 1)
 
 #endif // GUI_WINDOW_H

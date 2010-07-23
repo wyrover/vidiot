@@ -7,7 +7,7 @@
 namespace model {
 
 Properties::Properties()
-:   mFrameRate(GuiOptions::getDefaultFrameRate())
+:   mFrameRate(gui::GuiOptions::getDefaultFrameRate())
 {
 }
 

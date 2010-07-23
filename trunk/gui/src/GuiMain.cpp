@@ -13,6 +13,9 @@
 #include "GuiDebugReport.h"
 #include "Project.h"
 #include "wx/msgdlg.h"
+
+namespace gui {
+
 IMPLEMENT_APP(GuiMain)
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,7 +89,7 @@ bool GuiMain::OnInit()
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)
-    Constants::initializeFonts();
+    gui::timeline::Constants::initializeFonts();
 
     Log::Init();
 
@@ -192,3 +195,5 @@ void GuiMain::serialize(Archive & ar, const unsigned int version)
 }
 template void GuiMain::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiMain::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+
+} // namespace

@@ -10,6 +10,8 @@
 
 //#define CATCH_ALL_ERRORS
 
+namespace gui {
+
 class GuiWindow;
 
 class GuiMain : public wxApp
@@ -68,5 +70,7 @@ private:
 };
 
 DECLARE_APP(GuiMain)
+
+} // namespace
 
 #endif // GUI_MAIN_H

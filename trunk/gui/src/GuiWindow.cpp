@@ -12,12 +12,10 @@
 #include "GuiProjectView.h"
 #include "GuiPreview.h"
 #include "GuiTimelinesView.h"
-#include "Project.h"
 #include "AProjectViewNode.h"
-#include "ProjectViewAddAsset.h"
-#include "TimelineCreateVideoTrack.h"
-#include "TimelineCreateAudioTrack.h"
 #include "UtilLog.h"
+
+namespace gui {
 
 enum {
     meID_ADDVIDEOTRACK = wxID_HIGHEST+1,
@@ -31,7 +29,6 @@ GuiWindow::GuiWindow()
 :   wxDocParentFrame()
 ,	mDocManager()
 ,	mDocTemplate(0)
-,   mProject(0)
 {
     // Must be done in two step construction way, since it reuses mDocManger which would
     // be initialized last if the initialization of the base class was also done in the
@@ -164,18 +161,16 @@ GuiWindow::~GuiWindow()
 
 void GuiWindow::OnOpenProject( model::EventOpenProject &event )
 {
-    mProject = event.getValue();
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
     mDocManager.FileHistorySave(*wxConfigBase::Get());
-    GuiOptions::SetAutoLoadFilename(mProject->GetFilename());
+    GuiOptions::SetAutoLoadFilename(model::Project::current()->GetFilename());
     wxConfigBase::Get()->Flush();
     event.Skip();
 }
 
 void GuiWindow::OnCloseProject( model::EventCloseProject &event )
 {
-    mProject = 0;
     GuiOptions::SetAutoLoadFilename("");
     event.Skip();
 }
@@ -216,13 +211,15 @@ void GuiWindow::OnPlaySequence(wxCommandEvent& WXUNUSED(event))
 void GuiWindow::OnAddVideoTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_DEBUG;
-    mProject->Submit(new command::TimelineCreateVideoTrack(*mOpenSequences.begin()));
+    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
+    //mProject->Submit(new command::TimelineCreateVideoTrack(*mOpenSequences.begin()));
 }
 
 void GuiWindow::OnAddAudioTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_DEBUG;
-    mProject->Submit(new command::TimelineCreateAudioTrack(*mOpenSequences.begin()));
+    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
+//    mProject->Submit(new command::TimelineCreateAudioTrack(*mOpenSequences.begin()));
 }
 
 void GuiWindow::OnCloseSequence(wxCommandEvent& WXUNUSED(event))
@@ -294,3 +291,5 @@ void GuiWindow::serialize(Archive & ar, const unsigned int version)
 }
 template void GuiWindow::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiWindow::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+
+} // namespace

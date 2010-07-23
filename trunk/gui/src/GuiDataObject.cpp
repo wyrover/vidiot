@@ -4,6 +4,8 @@
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
 
+namespace gui {
+
 const wxString GuiDataObject::sFormat = wxString("application/vidiot");
 
 GuiDataObject::GuiDataObject()
@@ -68,3 +70,5 @@ model::ProjectViewPtrs GuiDataObject::getAssets() const
 {
     return mAssets;
 }
+
+} // namespace

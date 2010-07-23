@@ -92,7 +92,7 @@ ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
 {
     mChildren.push_back(newChild);
     newChild->setParent(shared_from_this());
-    wxGetApp().QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
+    gui::wxGetApp().QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
     return newChild;
 }
 
@@ -106,7 +106,7 @@ ProjectViewPtr AProjectViewNode::removeChild(ProjectViewPtr child)
     }
     ASSERT(it != mChildren.end());
     ProjectViewPtr p = *it;
-    wxGetApp().QueueEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
+    gui::wxGetApp().QueueEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
     mChildren.erase(it);
     child->setParent(ProjectViewPtr());
     return p;

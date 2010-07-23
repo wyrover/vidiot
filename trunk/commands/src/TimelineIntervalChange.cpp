@@ -3,7 +3,7 @@
 
 namespace command {
 
-TimelineIntervalChange::TimelineIntervalChange(IntervalsPtr intervals, long begin, long end, bool add)
+    TimelineIntervalChange::TimelineIntervalChange(gui::timeline::IntervalsPtr intervals, long begin, long end, bool add)
     :   TimelineCommand()
     ,   mIntervals(intervals)
     ,   mBegin(begin)

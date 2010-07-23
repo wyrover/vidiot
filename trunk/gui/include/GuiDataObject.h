@@ -4,6 +4,8 @@
 #include <wx/dataobj.h>
 #include "AProjectViewNode.h"
 
+namespace gui {
+
 class GuiDataObject : public wxDataObjectSimple
 {
 public:
@@ -37,5 +39,7 @@ private:
     wxDataFormat mFormat;
     model::ProjectViewPtrs mAssets;
 };
+
+} // namespace
 
 #endif // GUI_DATA_OBJECT_H

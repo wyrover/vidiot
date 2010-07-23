@@ -10,6 +10,8 @@
 #include <wx/generic/dragimgg.h>
 #define wxDragImage wxGenericDragImage
 
+namespace gui { namespace timeline {
+
 class GuiTimeLineDragImage : public wxDragImage
 {
 public:
@@ -22,5 +24,7 @@ private:
     wxPoint mHotspot;
     wxBitmap mBitmap;
 };
+
+}} // namespace
 
 #endif // GUI_TIME_LINE_DRAG_IMAGE_H

@@ -4,7 +4,9 @@
 #include "FifoWork.h"
 #include <boost/scoped_ptr.hpp>
 
+namespace gui {
 class GuiWindow;
+}
 
 namespace model {
 
@@ -40,7 +42,7 @@ private:
 
     void thread();
 
-    GuiWindow* mWindow;
+    gui::GuiWindow* mWindow;
 };
 
 } // namespace

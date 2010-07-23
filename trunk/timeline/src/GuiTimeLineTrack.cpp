@@ -18,6 +18,8 @@
 #include "AProjectViewNode.h"
 #include "Clip.h"
 
+namespace gui { namespace timeline {
+
 DEFINE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
 
 static int sDefaultTrackHeight = 50;
@@ -258,4 +260,5 @@ void GuiTimeLineTrack::serialize(Archive & ar, const unsigned int version)
 template void GuiTimeLineTrack::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLineTrack::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
+}} // namespace
 

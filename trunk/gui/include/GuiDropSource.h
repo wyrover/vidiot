@@ -5,6 +5,8 @@
 #include "GuiDataObject.h"
 #include "AProjectViewNode.h"
 
+namespace gui {
+
 class GuiDropSource : public wxDropSource
 {
 public:
@@ -31,5 +33,6 @@ private:
     wxFrame* mHint;
 };
 
+} // namespace
 
 #endif // GUI_DROP_SOURCE_H

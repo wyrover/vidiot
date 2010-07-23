@@ -6,6 +6,9 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 
+namespace gui {
+namespace timeline {
+
 //////////////////////////////////////////////////////////////////////////
 
 class GuiTimeLine;
@@ -31,5 +34,7 @@ class GuiTimeLineZoom;
 typedef boost::shared_ptr<GuiTimeLineZoom> GuiTimeLineZoomPtr;
 
 //////////////////////////////////////////////////////////////////////////
+
+}} // namespace
 
 #endif // GUI_PTR_H

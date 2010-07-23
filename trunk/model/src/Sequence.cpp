@@ -92,7 +92,7 @@ wxString Sequence::getName() const
 void Sequence::setName(wxString name)
 { 
     mName = name;
-    wxGetApp().QueueEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
+    gui::wxGetApp().QueueEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -14,6 +14,8 @@
 #include "UtilLog.h"
 #include "Sequence.h"
 
+namespace gui {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -58,7 +60,7 @@ void GuiTimelinesView::OnProjectAssetRenamed( model::EventRenameAsset &event )
 
     if (sequence)
     {
-        std::pair<size_t,GuiTimeLinePtr> f = findPage(sequence);
+        std::pair<size_t,timeline::GuiTimeLinePtr> f = findPage(sequence);
         if (f.second != 0)
         {
             mNotebook.SetPageText(f.first, event.getValue().newname);
@@ -84,10 +86,10 @@ void GuiTimelinesView::Open( model::SequencePtr sequence )
 {
     ASSERT(sequence);
 
-    std::pair<size_t,GuiTimeLinePtr> f = findPage(sequence);
+    std::pair<size_t,timeline::GuiTimeLinePtr> f = findPage(sequence);
     if (f.second == 0)
     {
-        GuiTimeLinePtr timeline = new GuiTimeLine(sequence);
+        timeline::GuiTimeLinePtr timeline = new timeline::GuiTimeLine(sequence);
         timeline->init(&mNotebook);
         mNotebook.AddPage(timeline,sequence->getName(),false);
     }
@@ -99,7 +101,7 @@ void GuiTimelinesView::Close( model::SequencePtr sequence )
 {
     if (sequence)
     {
-        std::pair<size_t,GuiTimeLinePtr> f = findPage(sequence);
+        std::pair<size_t,timeline::GuiTimeLinePtr> f = findPage(sequence);
         if (f.second != 0)
         {
             mNotebook.DeletePage(f.first);
@@ -117,27 +119,27 @@ void GuiTimelinesView::Close( model::SequencePtr sequence )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-std::pair<size_t,GuiTimeLinePtr> GuiTimelinesView::findPage(model::SequencePtr sequence) const
+std::pair<size_t,timeline::GuiTimeLinePtr> GuiTimelinesView::findPage(model::SequencePtr sequence) const
 {
     size_t page = 0;
     while (page < mNotebook.GetPageCount())
     {
-        GuiTimeLinePtr timeline = static_cast<GuiTimeLinePtr>(mNotebook.GetPage(page));
+        timeline::GuiTimeLinePtr timeline = static_cast<timeline::GuiTimeLinePtr>(mNotebook.GetPage(page));
         if (timeline->getSequence() == sequence)
         {
-            return std::make_pair<size_t,GuiTimeLinePtr>(page,timeline);
+            return std::make_pair<size_t,timeline::GuiTimeLinePtr>(page,timeline);
         }
         ++page;
     }
 
-    return std::make_pair<size_t,GuiTimeLinePtr>(0,0);
+    return std::make_pair<size_t,timeline::GuiTimeLinePtr>(0,0);
 }
 
 void GuiTimelinesView::update() const
 {
     GuiWindow& window = *(dynamic_cast<GuiWindow*>(GetParent()));
     window.EnableSequenceMenu(mNotebook.GetPageCount() > 0);
-    GuiTimeLinePtr timeline = static_cast<GuiTimeLinePtr>(mNotebook.GetCurrentPage());
+    timeline::GuiTimeLinePtr timeline = static_cast<timeline::GuiTimeLinePtr>(mNotebook.GetCurrentPage());
     window.getPreview().selectTimeline(timeline);
 }
 
@@ -154,7 +156,7 @@ void GuiTimelinesView::save(Archive & ar, const unsigned int version) const
     ar & selectedPage;
     for (unsigned int page = 0; page < n; ++page)
     {
-        ar & *(static_cast<GuiTimeLinePtr>(mNotebook.GetPage(page)));
+        ar & *(static_cast<timeline::GuiTimeLinePtr>(mNotebook.GetPage(page)));
     }
 }
 template<class Archive>
@@ -166,7 +168,7 @@ void GuiTimelinesView::load(Archive & ar, const unsigned int version)
     ar & selectedPage;
     for (unsigned int page = 0; page < n; ++page)
     {
-        GuiTimeLinePtr timeline = new GuiTimeLine();
+        timeline::GuiTimeLinePtr timeline = new timeline::GuiTimeLine();
         ar & *timeline;
         timeline->init(&mNotebook);
         mNotebook.AddPage(timeline,timeline->getSequence()->getName(),false);
@@ -181,4 +183,4 @@ void GuiTimelinesView::load(Archive & ar, const unsigned int version)
 template void GuiTimelinesView::save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion) const;
 template void GuiTimelinesView::load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
-
+} // namespace

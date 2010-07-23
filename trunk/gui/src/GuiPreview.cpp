@@ -6,6 +6,8 @@
 #include <boost/archive/text_iarchive.hpp>
 #include "UtilLog.h"
 
+namespace gui {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -31,7 +33,7 @@ GuiPreview::~GuiPreview()
 // TO/FROM OTHER WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr GuiPreview::openTimeline(GuiTimeLinePtr timeline)
+PlayerPtr GuiPreview::openTimeline(timeline::GuiTimeLinePtr timeline)
 {
     ASSERT(mPlayers.find(timeline) == mPlayers.end());
     PlayerPtr newplayer = boost::make_shared<GuiPlayer>(this,timeline);
@@ -41,7 +43,7 @@ PlayerPtr GuiPreview::openTimeline(GuiTimeLinePtr timeline)
     return newplayer;
 }
 
-void GuiPreview::closeTimeline(GuiTimeLinePtr timeline)
+void GuiPreview::closeTimeline(timeline::GuiTimeLinePtr timeline)
 {
     ASSERT(mPlayer);
     ASSERT(mPlayers.find(timeline) != mPlayers.end());
@@ -50,7 +52,7 @@ void GuiPreview::closeTimeline(GuiTimeLinePtr timeline)
     GetSizer()->Detach(player.get());
 }
 
-void GuiPreview::selectTimeline(GuiTimeLinePtr timeline)
+void GuiPreview::selectTimeline(timeline::GuiTimeLinePtr timeline)
 {
     if (mPlayer)
     {
@@ -91,3 +93,4 @@ void GuiPreview::serialize(Archive & ar, const unsigned int version)
 template void GuiPreview::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiPreview::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
+} // namespace
