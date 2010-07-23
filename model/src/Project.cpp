@@ -1,16 +1,15 @@
-#include <boost/make_shared.hpp>
+#include "Project.h"
 
-#include "wxInclude.h"  // include wxWidgets before anything else
+#include <wx/msgdlg.h>
+#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "Project.h"
-#include "Properties.h"
 #include "Folder.h"
-#include "UtilLog.h"
-#include <boost/foreach.hpp>
 #include "GuiMain.h"
-#include "AProjectViewNode.h"
+#include "Properties.h"
+#include "UtilLog.h"
 
 namespace model {
 
@@ -61,7 +60,7 @@ bool Project::OnCloseDocument()
     // because wxWidgets will destruct this Project object directly after
     // calling OnCloseDocument(). If QueueEvent is used, the event is handled
     // AFTER the destruction of this object which leads to crashes.
-    wxGetApp().ProcessEvent(EventCloseProject(this));
+    gui::wxGetApp().ProcessEvent(EventCloseProject(this));
     return wxDocument::OnCloseDocument();
 }
 
@@ -70,7 +69,7 @@ bool Project::OnNewDocument()
     bool opened = wxDocument::OnNewDocument();
     if (opened)
     {
-        wxGetApp().QueueEvent(new EventOpenProject(this));
+        gui::wxGetApp().QueueEvent(new EventOpenProject(this));
     }
     return opened;
 }
@@ -123,7 +122,7 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
     {
         boost::archive::text_oarchive ar(ostream);
         ar & *this;
-        ar & wxGetApp();
+        ar & gui::wxGetApp();
     }
     catch (boost::archive::archive_exception* e)
     {
@@ -147,8 +146,8 @@ std::istream& Project::LoadObject(std::istream& istream)
     {
         boost::archive::text_iarchive ar(istream);
         ar & *this;
-        ar & wxGetApp();
-        wxGetApp().QueueEvent(new EventOpenProject(this));
+        ar & gui::wxGetApp();
+        gui::wxGetApp().QueueEvent(new EventOpenProject(this)); /** @todo do not submit via app, but via individual nodes */
     }
     //catch (std::exception* e)
     //{

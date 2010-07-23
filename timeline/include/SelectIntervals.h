@@ -9,6 +9,8 @@
 #include <boost/serialization/version.hpp>
 #include "GuiPtr.h"
 
+namespace gui { namespace timeline {
+
 class EventTimelineCursorMoved;
 
 class SelectIntervals
@@ -82,7 +84,9 @@ private:
 
 typedef boost::shared_ptr<SelectIntervals> IntervalsPtr;
 
-BOOST_CLASS_VERSION(SelectIntervals, 1)
-BOOST_CLASS_EXPORT(SelectIntervals)
+}} // namespace
+
+BOOST_CLASS_VERSION(gui::timeline::SelectIntervals, 1)
+BOOST_CLASS_EXPORT(gui::timeline::SelectIntervals)
 
 #endif // SELECT_INTERVALS_H

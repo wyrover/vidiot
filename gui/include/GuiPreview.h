@@ -9,6 +9,8 @@
 #include "GuiPlayer.h"
 #include "GuiPtr.h"
 
+namespace gui {
+
 class GuiPreview
 :   public wxPanel
 {
@@ -25,9 +27,9 @@ public:
     // TO/FROM OTHER WIDGETS
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr openTimeline(GuiTimeLinePtr timeline);
-    void closeTimeline(GuiTimeLinePtr timeline);
-    void selectTimeline(GuiTimeLinePtr timeline);
+    PlayerPtr openTimeline(timeline::GuiTimeLinePtr timeline);
+    void closeTimeline(timeline::GuiTimeLinePtr timeline);
+    void selectTimeline(timeline::GuiTimeLinePtr timeline);
 
     //////////////////////////////////////////////////////////////////////////
     //
@@ -38,7 +40,7 @@ public:
 private:
 
     PlayerPtr mPlayer;
-    std::map<GuiTimeLinePtr, PlayerPtr> mPlayers;
+    std::map<timeline::GuiTimeLinePtr, PlayerPtr> mPlayers;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION 
@@ -49,6 +51,8 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GuiPreview, 1)
+} // namespace
+
+BOOST_CLASS_VERSION(gui::GuiPreview, 1)
 
 #endif // GUI_PREVIEW_H

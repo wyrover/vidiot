@@ -8,6 +8,8 @@
 #include <boost/serialization/version.hpp>
 #include <boost/shared_ptr.hpp>
 
+namespace gui { namespace timeline {
+
 typedef boost::rational<int> rational;
 
 class GuiTimeLineZoom
@@ -73,9 +75,11 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GuiTimeLineZoom, 1)
-BOOST_CLASS_EXPORT(GuiTimeLineZoom)
-
 typedef boost::shared_ptr<GuiTimeLineZoom> GuiTimeLineZoomPtr;
+
+}} // namespace
+
+BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineZoom, 1)
+BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineZoom)
 
 #endif // GUI_TIME_LINE_ZOOM_H

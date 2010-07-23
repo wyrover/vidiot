@@ -3,6 +3,8 @@
 
 #include "wx/docview.h"
 
+namespace gui {
+
 class GuiView
 :   public wxView
 {
@@ -26,5 +28,7 @@ public:
 
     DECLARE_DYNAMIC_CLASS(GuiView)
 };
+
+} // namespace
 
 #endif // GUI_VIEW_H

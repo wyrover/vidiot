@@ -10,6 +10,8 @@
 #include <boost/tuple/tuple.hpp>
 #include "FrameRate.h"
 
+namespace gui {
+
 class GuiOptions : public wxPropertySheetDialog
 {
 public:
@@ -72,5 +74,7 @@ private:
 
     static wxString sConfigFile;
 };
+
+} // namespace
 
 #endif // GUI_OPTIONS_WINDOW_H

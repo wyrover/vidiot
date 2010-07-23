@@ -5,6 +5,8 @@
 #include "GuiTimeLineClip.h"
 #include "UtilLog.h"
 
+namespace gui { namespace timeline {
+
 SelectClips::SelectClips(GuiTimeLine& timeline)
 :   mTimeline(timeline)
 {
@@ -95,3 +97,5 @@ void SelectClips::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPr
         mPreviouslyClicked.reset();
     }
 }
+
+}} // namespace

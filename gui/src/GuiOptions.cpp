@@ -20,6 +20,8 @@
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 
+namespace gui {
+
 wxString GuiOptions::sConfigFile("");
 
 //////////////////////////////////////////////////////////////////////////
@@ -331,3 +333,5 @@ GuiOptions::~GuiOptions()
         distributeOptions();
     }
 }
+
+} // namespace

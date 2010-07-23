@@ -14,9 +14,11 @@
 #include "ModelPtr.h"
 #include "GuiPlayer.h"
 #include "GuiPtr.h"
-#include "GuiTimeLineMouseState.h"
+#include "State.h"
 #include "SelectIntervals.h"
 #include "UtilEvent.h"
+
+namespace gui { namespace timeline {
 
 class TrackUpdateEvent;  
 
@@ -118,11 +120,10 @@ public:
 
 private:
 
-    friend struct mousestate::Idle;
-    friend struct mousestate::Stopped;
-    friend struct mousestate::Playing;
+    friend class state::Idle;
+    friend class state::Playing;
     friend class SelectIntervals;
-    friend struct mousestate::MovingCursor;
+    friend class state::MovingCursor;
 
     GuiTimeLineZoomPtr mZoom;
     PlayerPtr mPlayer;
@@ -146,7 +147,7 @@ private:
     /** Y-position of audio-video divider */
     int mDividerPosition;
     
-    mousestate::Machine mMouseState;
+    state::Machine mMouseState;
 
     model::SequencePtr mSequence;
 
@@ -172,7 +173,9 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GuiTimeLine, 1)
-BOOST_CLASS_EXPORT(GuiTimeLine)
+}} // namespace
+
+BOOST_CLASS_VERSION(gui::timeline::GuiTimeLine, 1)
+BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLine)
 
 #endif // GUI_TIME_LINE_H

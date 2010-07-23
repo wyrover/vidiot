@@ -6,13 +6,17 @@
 #include <boost/serialization/split_member.hpp>
 #include <wx/notebook.h>
 #include "AProjectViewNode.h"
-#include "Sequence.h"
+#include "ModelPtr.h"
 
-class GuiTimeLine;
-class GuiWindow;  
 namespace model { class Project; }
-class ProjectEventDeleteAsset;
-class ProjectEventRenameAsset;
+
+namespace gui { namespace timeline { 
+class GuiTimeLine;
+}}
+
+namespace gui {
+
+class GuiWindow;  
 
 class GuiTimelinesView
 :   public wxPanel
@@ -64,7 +68,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     /** Find the page associated with a sequence. 0 pointer is returned if not found. */
-    std::pair<size_t,GuiTimeLine*> findPage(model::SequencePtr sequence) const;
+    std::pair<size_t,timeline::GuiTimeLine*> findPage(model::SequencePtr sequence) const;
 
     /** To be called whenever the notebook selection (current open page) changes. */
     void update() const;
@@ -81,6 +85,8 @@ private:
     BOOST_SERIALIZATION_SPLIT_MEMBER();
 };
 
-BOOST_CLASS_VERSION(GuiTimelinesView, 1)
+} // namespace
+
+BOOST_CLASS_VERSION(gui::GuiTimelinesView, 1)
 
 #endif // GUI_SEQUENCE_VIEW_H

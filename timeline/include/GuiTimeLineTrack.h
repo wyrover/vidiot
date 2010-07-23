@@ -15,6 +15,8 @@
 #include "Track.h"
 #include "UtilEvent.h"
 
+namespace gui { namespace timeline {
+
 class ClipUpdateEvent;
 
 DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
@@ -100,7 +102,9 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GuiTimeLineTrack, 1)
-BOOST_CLASS_EXPORT(GuiTimeLineTrack)
+}} // namespace
+
+BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineTrack, 1)
+BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineTrack)
 
 #endif // GUI_TIME_LINE_TRACK_H

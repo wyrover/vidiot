@@ -16,6 +16,8 @@
 #include "EmptyClip.h"
 #include "GuiTimeLineTrack.h"
 
+namespace gui { namespace timeline {
+
 DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
 
 //////////////////////////////////////////////////////////////////////////
@@ -186,4 +188,4 @@ void GuiTimeLineClip::serialize(Archive & ar, const unsigned int version)
 template void GuiTimeLineClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLineClip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
-
+}} // namespace

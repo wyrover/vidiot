@@ -29,6 +29,8 @@
 #include "UtilLog.h"
 #include "GuiMain.h"
 
+namespace gui {
+
 enum {
     meID_NEW_FOLDER= wxID_HIGHEST+1,
     meID_NEW_AUTOFOLDER,
@@ -573,3 +575,4 @@ void GuiProjectView::serialize(Archive & ar, const unsigned int version)
 template void GuiProjectView::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiProjectView::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
+} // namespace

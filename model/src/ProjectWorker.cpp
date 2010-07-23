@@ -13,7 +13,7 @@ static const unsigned int sMaximumBufferedWork = 1000;
 ProjectWorker::ProjectWorker()
 :   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
-,   mWindow(static_cast<GuiWindow*>(wxGetApp().GetTopWindow()))
+,   mWindow(static_cast<gui::GuiWindow*>(gui::wxGetApp().GetTopWindow()))
 {
     //mThread.reset(new boost::thread(boost::bind(&ProjectWorker::thread,this)));
 }

@@ -99,7 +99,7 @@ void File::openFile()
             break;
         }
     }
-    mNumberOfFrames = GuiTimeLineZoom::microsecondsToPts(mFileContext->duration);
+    mNumberOfFrames = gui::timeline::GuiTimeLineZoom::microsecondsToPts(mFileContext->duration);
 
     VAR_DEBUG(mNumberOfFrames)(mFileContext->nb_streams)(mStreamIndex);
 
@@ -187,7 +187,7 @@ void File::moveTo(boost::int64_t position)
 
     stopReadingPackets();
 
-    int result = av_seek_frame(mFileContext, -1, GuiTimeLineZoom::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
+    int result = av_seek_frame(mFileContext, -1, gui::timeline::GuiTimeLineZoom::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
     ASSERT(result >= 0)(result);
 
     ASSERT(mPackets.getSize() == 0)(mPackets.getSize());

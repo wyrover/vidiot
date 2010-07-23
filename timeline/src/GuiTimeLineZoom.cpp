@@ -10,6 +10,8 @@
 #include <boost/archive/text_iarchive.hpp>
 #include "UtilSerializeBoost.h"
 
+namespace gui { namespace timeline {
+
 static rational sDefaultZoom(1,5);
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,4 +88,4 @@ void GuiTimeLineZoom::serialize(Archive & ar, const unsigned int version)
 template void GuiTimeLineZoom::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLineZoom::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
-
+}} // namespace

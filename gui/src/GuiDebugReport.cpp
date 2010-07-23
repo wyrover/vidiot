@@ -5,6 +5,8 @@
 #include "UtilLog.h"
 #include "GuiOptions.h"
 
+namespace gui {
+
 IMPLEMENTENUM(ReportType)
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,3 +37,5 @@ void GuiDebugReport::generate(ReportType type)
         }
     }
 }
+
+} // namespace

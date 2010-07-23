@@ -9,6 +9,8 @@
 #include "cursor_trim_end.xpm"
 #include "cursor_normal.xpm"
 
+namespace gui { namespace timeline {
+
 IMPLEMENTENUM(MousePosition);
 IMPLEMENTENUM(MousePointerImage);
 
@@ -100,3 +102,5 @@ void MousePointer::set(MousePointerImage image)
     default:                    FATAL("Unknown image");
     }
 }
+
+}} // namespace

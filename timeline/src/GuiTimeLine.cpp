@@ -27,6 +27,8 @@
 #include "VideoTrack.h"
 #include "AudioTrack.h"
 
+namespace gui { namespace timeline {
+
 DEFINE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
 //////////////////////////////////////////////////////////////////////////
@@ -554,4 +556,4 @@ void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
 template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
-
+}} // namespace

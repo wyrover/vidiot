@@ -6,6 +6,8 @@
 #include "AProjectViewNode.h"
 #include "GuiPtr.h"
 
+namespace gui { namespace timeline {
+
 class GuiTimeLineDropTarget : public wxDropTarget
 {
 public:
@@ -39,5 +41,7 @@ private:
     GuiTimeLineZoomPtr mZoom;
     GuiTimeLinePtr mTimeLine;
 };
+
+}} // namespace
 
 #endif // GUI_TIME_LINE_DROP_TARGET_H

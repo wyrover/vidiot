@@ -15,6 +15,8 @@
 #include "preview-previous.xpm" 
 #include "Constants.h"
 
+namespace gui {
+
 wxBitmap bmpHome    (preview_home_xpm);
 wxBitmap bmpEnd     (preview_end_xpm);
 wxBitmap bmpNext    (preview_next_xpm);
@@ -26,7 +28,7 @@ wxBitmap bmpPause   (preview_pause_xpm);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiPlayer::GuiPlayer(wxWindow *parent, GuiTimeLinePtr timeline)
+GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
 :   wxPanel(parent, wxID_ANY)
 ,   mTimeLine(timeline)
 ,   mPosition(0)
@@ -133,8 +135,8 @@ void GuiPlayer::moveTo(int64_t position)
 void GuiPlayer::OnPlaybackPosition(GuiEventPlaybackPosition& event)
 {
     mPosition = event.getValue();//getPts();
-    int time = GuiTimeLineZoom::ptsToTime(mPosition);
-    wxDateTime t(time / Constants::sHour, (time % Constants::sHour) / Constants::sMinute, (time % Constants::sMinute) / Constants::sSecond, time % Constants::sSecond);
+    int time = timeline::GuiTimeLineZoom::ptsToTime(mPosition);
+    wxDateTime t(time / timeline::Constants::sHour, (time % timeline::Constants::sHour) / timeline::Constants::sMinute, (time % timeline::Constants::sMinute) / timeline::Constants::sSecond, time % timeline::Constants::sSecond);
     wxString s = t.Format("%H:%M:%S.%l") + wxString::Format(" [%10d]", mPosition);
     mStatus->ChangeValue(s);
     // NOT: event.Skip(); - Only the player handles this event. Forwards it if necessary. This event is only needed to detach from the video display thread.
@@ -173,3 +175,5 @@ void GuiPlayer::OnEnd(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
 }
+
+} // namespace

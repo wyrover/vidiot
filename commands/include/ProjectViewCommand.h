@@ -5,10 +5,10 @@
 #include "RootCommand.h"
 #include "AProjectViewNode.h"
 
+namespace command {
+
 typedef std::pair<model::ProjectViewPtr ,model::ProjectViewPtr>  ParentAndChildPair;
 typedef std::vector<ParentAndChildPair>  ParentAndChildPairs;
-
-namespace command {
 
 class ProjectViewCommand : public RootCommand
 {

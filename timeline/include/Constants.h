@@ -5,6 +5,8 @@
 #include <wx/pen.h>
 #include <wx/brush.h>
 
+namespace gui { namespace timeline {
+
 class Constants
 {
 public:
@@ -67,5 +69,6 @@ public:
 
 };
 
+}} // namespace
 
 #endif // CONSTANTS_H

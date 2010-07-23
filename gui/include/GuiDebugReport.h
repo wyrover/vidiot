@@ -3,6 +3,8 @@
 
 #include "UtilEnum.h"
 
+namespace gui {
+
 DECLAREENUM(ReportType, \
             ReportUnhandledException, \
             ReportFatalException, \
@@ -22,5 +24,7 @@ public:
 
     static void generate(ReportType type = ReportOther);
 };
+
+} // namespace
 
 #endif // GUI_DEBUG_REPORT_H

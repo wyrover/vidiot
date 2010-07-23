@@ -21,6 +21,8 @@
 #include "File.h"
 #include "Sequence.h"
 
+namespace gui {
+
 GuiProjectViewModel::GuiProjectViewModel(wxDataViewCtrl& view)
 :   wxDataViewModel()
 ,   mView(view)
@@ -445,4 +447,6 @@ void GuiProjectViewModel::OnProjectAssetRenamed( model::EventRenameAsset &event 
 }
 
 DEFINE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
+
+} // namespace
 

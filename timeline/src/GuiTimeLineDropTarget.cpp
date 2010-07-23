@@ -5,6 +5,8 @@
 #include "GuiTimeLine.h"
 #include "GuiTimeLineZoom.h"
 
+namespace gui { namespace timeline {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -84,3 +86,4 @@ void GuiTimeLineDropTarget::OnLeave ()
     mTimeLine->Update();
 }
 
+}} // namespace

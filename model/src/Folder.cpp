@@ -42,7 +42,7 @@ void Folder::setName(wxString name)
     if (name != mName)
     {
         mName = name;
-        wxGetApp().QueueEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
+        gui::wxGetApp().QueueEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
     }
 }
 

@@ -5,6 +5,8 @@
 #include "GuiMain.h"
 #include "GuiWindow.h"
 
+namespace gui {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -43,3 +45,5 @@ bool GuiView::OnClose(bool deleteWindow)
     Activate(false);
     return true;
 }
+
+} // namespace

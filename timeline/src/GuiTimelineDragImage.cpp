@@ -4,6 +4,8 @@
 #include <wx/pen.h>
 #include "GuiTimeLine.h"
 
+namespace gui { namespace timeline {
+
 GuiTimeLineDragImage::GuiTimeLineDragImage(GuiTimeLine* timeline, wxPoint position)
 :	wxDragImage(wxCursor(wxCURSOR_HAND))
 ,   mTimeLine(timeline)
@@ -22,3 +24,5 @@ wxRect GuiTimeLineDragImage::GetImageRect(const wxPoint& pos) const
 {
 	return wxRect(pos.x,pos.y,mBitmap.GetWidth(),mBitmap.GetHeight());
 }
+
+}} // namespace

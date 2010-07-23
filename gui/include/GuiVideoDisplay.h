@@ -11,6 +11,8 @@
 #include "GuiPtr.h"
 #include "UtilEvent.h"
 
+namespace gui {
+
 DECLARE_EVENT(GUI_EVENT_PLAYBACK_POSITION, GuiEventPlaybackPosition, long);
 
 class GuiVideoDisplay
@@ -145,5 +147,7 @@ private:
     void OnPaint(wxPaintEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
 };
+
+} // namespace
 
 #endif // GUI_VIDEO_DISPLAY_H

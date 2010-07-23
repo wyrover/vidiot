@@ -13,6 +13,8 @@
 #include "GuiPtr.h"
 #include "UtilEvent.h"
 
+namespace gui { namespace timeline {
+
 DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
 
 class GuiTimeLineClip
@@ -77,7 +79,9 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-BOOST_CLASS_VERSION(GuiTimeLineClip, 1)
-BOOST_CLASS_EXPORT(GuiTimeLineClip)
+}} // namespace
+
+BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineClip, 1)
+BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineClip)
 
 #endif // GUI_TIME_LINE_CLIP_H
