@@ -1,9 +1,10 @@
 #include "Folder.h"
+
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "UtilSerializeWxwidgets.h"
 #include "GuiMain.h"
 #include "UtilLog.h"
+#include "UtilSerializeWxwidgets.h"
 
 namespace model {
 

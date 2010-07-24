@@ -82,8 +82,6 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-typedef boost::shared_ptr<SelectIntervals> IntervalsPtr;
-
 }} // namespace
 
 BOOST_CLASS_VERSION(gui::timeline::SelectIntervals, 1)

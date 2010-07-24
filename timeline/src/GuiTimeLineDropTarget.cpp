@@ -1,7 +1,6 @@
 #include "GuiTimeLineDropTarget.h"
 
 #include <boost/foreach.hpp>
-#include "wxInclude.h"
 #include "GuiTimeLine.h"
 #include "GuiTimeLineZoom.h"
 

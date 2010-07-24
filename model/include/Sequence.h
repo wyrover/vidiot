@@ -7,7 +7,6 @@
 #include "IAudio.h"
 #include "IControl.h"
 #include "IVideo.h"
-#include "UtilSerializeWxwidgets.h"
 
 namespace model {
 

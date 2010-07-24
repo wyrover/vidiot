@@ -1,4 +1,6 @@
 #include "TimelineIntervalChange.h"
+
+#include "SelectIntervals.h"
 #include "UtilLog.h"
 
 namespace command {

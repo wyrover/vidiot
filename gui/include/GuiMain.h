@@ -6,9 +6,13 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
-#include "Project.h"
 
 //#define CATCH_ALL_ERRORS
+
+namespace model {
+    class EventOpenProject;
+    class EventCloseProject;
+}
 
 namespace gui {
 

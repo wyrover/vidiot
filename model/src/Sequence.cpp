@@ -7,13 +7,12 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
-#include "UtilLog.h"
-#include "AProjectViewNode.h"
 #include "GuiMain.h"
-#include "UtilSerializeWxwidgets.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
+#include "UtilLog.h"
+#include "UtilSerializeWxwidgets.h"
 
 namespace model {
 

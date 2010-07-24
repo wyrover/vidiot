@@ -5,7 +5,6 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "wxInclude.h"
 #include <wx/dcclient.h>
 #include <wx/pen.h>
 #include <wx/image.h>

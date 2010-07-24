@@ -1,8 +1,8 @@
 #include "GuiWindow.h"
 
-#include "wxInclude.h"
 #include <wx/docview.h>
 #include <wx/confbase.h>
+#include <wx/msgdlg.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>

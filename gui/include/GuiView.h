@@ -1,7 +1,7 @@
 #ifndef GUI_VIEW_H
 #define GUI_VIEW_H
 
-#include "wx/docview.h"
+#include <wx/docview.h>
 
 namespace gui {
 

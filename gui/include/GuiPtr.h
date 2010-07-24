@@ -7,6 +7,10 @@
 #include <boost/shared_ptr.hpp>
 
 namespace gui {
+
+class GuiPlayer;
+typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
+
 namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
@@ -32,6 +36,11 @@ typedef std::list<GuiTimeLineClipPtr> GuiTimeLineClips;
 
 class GuiTimeLineZoom;
 typedef boost::shared_ptr<GuiTimeLineZoom> GuiTimeLineZoomPtr;
+
+//////////////////////////////////////////////////////////////////////////
+
+class SelectIntervals;
+typedef boost::shared_ptr<SelectIntervals> IntervalsPtr;
 
 //////////////////////////////////////////////////////////////////////////
 

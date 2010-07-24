@@ -58,8 +58,6 @@ private:
     int mPosition;
 };
 
-typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
-
 } // namespace
 
 #endif // GUI_PLAYER_H

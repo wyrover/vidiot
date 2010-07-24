@@ -1,7 +1,8 @@
 #include "ProjectViewCreateAutoFolder.h"
+
+#include <boost/make_shared.hpp>
 #include "UtilLog.h"
 #include "UtilLogBoost.h"
-#include <boost/make_shared.hpp>
 
 namespace command {
 

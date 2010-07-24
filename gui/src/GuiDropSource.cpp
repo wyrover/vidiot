@@ -1,9 +1,9 @@
 #include "GuiDropSource.h"
 
-#include <boost/foreach.hpp>
-#include "wxInclude.h"
+#include <wx/frame.h>
 #include <wx/dcclient.h>
 #include <wx/pen.h>
+#include <boost/foreach.hpp>
 
 namespace gui {
 

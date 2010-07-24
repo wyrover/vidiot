@@ -1,18 +1,19 @@
 #ifndef GUI_OPTIONS_WINDOW_H
 #define GUI_OPTIONS_WINDOW_H
 
-#include <boost/optional.hpp>
 #include <vector>
 #include <wx/propdlg.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
 #include <wx/spinctrl.h>
+#include <boost/optional.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "FrameRate.h"
 
 namespace gui {
 
-class GuiOptions : public wxPropertySheetDialog
+class GuiOptions
+    :   public wxPropertySheetDialog
 {
 public:
 

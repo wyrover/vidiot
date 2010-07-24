@@ -6,7 +6,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
-#include "GuiPlayer.h"
 #include "GuiPtr.h"
 
 namespace gui {

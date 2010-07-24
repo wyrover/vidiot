@@ -1,8 +1,6 @@
 #ifndef STATE_TEST_DRAG_START_H
 #define STATE_TEST_DRAG_START_H
 
-#include "State.h"
-
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include "Track.h"

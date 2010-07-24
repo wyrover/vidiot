@@ -1,6 +1,5 @@
 #include "GuiProjectView.h"
 
-#include "wxInclude.h"
 #include <wx/datetime.h>
 #include <boost/foreach.hpp>
 #include "GuiMain.h"

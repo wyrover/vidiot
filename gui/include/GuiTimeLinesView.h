@@ -1,18 +1,19 @@
 #ifndef GUI_SEQUENCE_VIEW_H
 #define GUI_SEQUENCE_VIEW_H
 
+#include <wx/notebook.h>
+#include <wx/panel.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
-#include <wx/notebook.h>
-#include "AProjectViewNode.h"
+#include "GuiPtr.h"
 #include "ModelPtr.h"
 
-namespace model { class Project; }
-
-namespace gui { namespace timeline { 
-class GuiTimeLine;
-}}
+namespace model { 
+    class Project; 
+    class EventRemoveAsset;
+    class EventRenameAsset;
+}
 
 namespace gui {
 
@@ -68,7 +69,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     /** Find the page associated with a sequence. 0 pointer is returned if not found. */
-    std::pair<size_t,timeline::GuiTimeLine*> findPage(model::SequencePtr sequence) const;
+    std::pair<size_t,timeline::GuiTimeLinePtr> findPage(model::SequencePtr sequence) const;
 
     /** To be called whenever the notebook selection (current open page) changes. */
     void update() const;
