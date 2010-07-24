@@ -1,14 +1,15 @@
 #ifndef TIMELINE_MOVE_CLIPS_H
 #define TIMELINE_MOVE_CLIPS_H
 
-#include "TimelineCommand.h"
 #include <set>
+#include "TimelineCommand.h"
 #include "ModelPtr.h"
 #include "Track.h"
 
 namespace command {
 
-class TimelineMoveClips : public TimelineCommand
+class TimelineMoveClips 
+    :   public TimelineCommand
 {
 public:
 

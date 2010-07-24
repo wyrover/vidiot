@@ -1,4 +1,5 @@
-#include <wxInclude.h>
+#include "GuiTimelinesView.h"
+
 #include <wx/sizer.h>
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -6,10 +7,8 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "GuiMain.h"
 #include "GuiPreview.h"
-#include "GuiTimelinesView.h"
 #include "GuiTimeLine.h"
 #include "GuiWindow.h"
-#include "Project.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
 #include "Sequence.h"

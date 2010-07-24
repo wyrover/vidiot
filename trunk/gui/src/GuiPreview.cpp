@@ -4,6 +4,7 @@
 #include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "GuiPlayer.h"
 #include "UtilLog.h"
 
 namespace gui {

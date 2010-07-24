@@ -1,5 +1,6 @@
 #include "SelectIntervals.h"
 
+#include <math.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "GuiTimeLine.h"
@@ -8,8 +9,8 @@
 #include "Constants.h"
 #include "GuiOptions.h"
 #include "GuiMain.h"
+#include "Project.h"
 #include "TimelineIntervalChange.h"
-#include <math.h>
 #include "UtilSerializeWxwidgets.h"
 
 namespace gui { namespace timeline {

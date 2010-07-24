@@ -4,7 +4,6 @@
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/access.hpp>
 #include "FrameRate.h"
-#include "ModelPtr.h"
 
 namespace model {
 

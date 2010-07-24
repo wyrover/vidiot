@@ -5,9 +5,9 @@
 
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
-#include "Track.h"
 #include "GuiPtr.h"
 #include "State.h"
+#include "Track.h"
 
 namespace gui { namespace timeline { namespace state {
 

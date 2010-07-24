@@ -7,7 +7,8 @@
 
 namespace command {
 
-class ProjectViewCreateAutoFolder : public ProjectViewCommand
+class ProjectViewCreateAutoFolder 
+    :   public ProjectViewCommand
 {
 public:
     ProjectViewCreateAutoFolder(model::FolderPtr parent, boost::filesystem::path path);

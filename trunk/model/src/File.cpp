@@ -1,4 +1,5 @@
 #include "File.h"
+
 #include <math.h>
 #include <algorithm>
 #include <boost/make_shared.hpp>
@@ -9,12 +10,10 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/optional.hpp>
 #include "GuiTimeLineZoom.h"
-#include "Project.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
-#include "AProjectViewNode.h"
 
 namespace model {
 

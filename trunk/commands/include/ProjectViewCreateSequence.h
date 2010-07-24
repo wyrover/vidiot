@@ -8,7 +8,8 @@
 
 namespace command {
 
-class ProjectViewCreateSequence : public ProjectViewCommand
+class ProjectViewCreateSequence 
+    :   public ProjectViewCommand
 {
 public:
     

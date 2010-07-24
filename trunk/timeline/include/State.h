@@ -2,12 +2,8 @@
 #define TIMELINE_STATE_H
 
 #include <wx/gdicmn.h>
-//#include <wx/event.h>
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/state_machine.hpp>
-//#include "UtilLog.h"
-//#include "UtilLogWxwidgets.h"
-//#include "GuiPtr.h"
 #include "GuiTimeLineDragImage.h"
 #include "MousePointer.h"
 #include "SelectClips.h"

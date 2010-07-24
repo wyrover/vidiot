@@ -1,10 +1,7 @@
 #include "GuiOptions.h"
 
-#include "wxInclude.h"
 #include <wx/wfstream.h>
 #include <wx/app.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
 #include <wx/sizer.h>
 #include <wx/bookctrl.h>
 #include <wx/radiobox.h>
@@ -13,7 +10,10 @@
 #include <wx/fileconf.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include <wx/stattext.h>
 #include <wx/utils.h>
+#include <boost/assign/list_of.hpp>
+#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include "GuiMain.h"

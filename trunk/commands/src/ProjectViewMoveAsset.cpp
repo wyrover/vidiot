@@ -1,6 +1,6 @@
 #include "ProjectViewMoveAsset.h"
+
 #include <boost/foreach.hpp>
-#include "AProjectViewNode.h"
 #include "UtilLog.h"
 #include "UtilLogGeneric.h"
 

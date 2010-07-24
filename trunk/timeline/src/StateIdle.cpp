@@ -3,8 +3,6 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "GuiTimeLineClip.h"
-//#include "MousePointer.h"
-//#include "Track.h"
 #include "GuiTimeLine.h"
 #include "StateTestDragStart.h"
 #include "StateMovingCursor.h"

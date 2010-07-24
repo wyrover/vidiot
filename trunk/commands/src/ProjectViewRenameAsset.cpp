@@ -1,5 +1,5 @@
 #include "ProjectViewRenameAsset.h"
-#include "AProjectViewNode.h"
+
 #include "UtilLog.h"
 
 namespace command {

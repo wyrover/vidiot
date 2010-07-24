@@ -1,17 +1,10 @@
 #include "StateTestDragStart.h"
 
 #include <boost/foreach.hpp>
-//#include <boost/make_shared.hpp>
 #include "GuiTimeLineClip.h"
-//#include "MousePointer.h"
-//#include "Track.h"
 #include "GuiTimeLine.h"
 #include "StateDragging.h"
 #include "StateIdle.h"
-//#include "GuiTimeLineTrack.h"
-//#include "EmptyClip.h"
-//#include "Project.h"
-//#include "TimelineMoveClips.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {

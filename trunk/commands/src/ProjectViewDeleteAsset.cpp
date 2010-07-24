@@ -1,8 +1,8 @@
 #include "ProjectViewDeleteAsset.h"
-#include "AProjectViewNode.h"
+
+#include <boost/foreach.hpp>
 #include "UtilLog.h"
 #include "UtilLogGeneric.h"
-#include <boost/foreach.hpp>
 
 namespace command {
 

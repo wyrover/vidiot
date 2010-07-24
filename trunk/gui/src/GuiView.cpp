@@ -1,5 +1,4 @@
 #include "GuiView.h"
-#include "wxInclude.h"
 #include "UtilLog.h"
 #include "Project.h"
 #include "GuiMain.h"

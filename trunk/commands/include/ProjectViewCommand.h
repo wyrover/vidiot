@@ -3,14 +3,15 @@
 
 #include <vector>
 #include "RootCommand.h"
-#include "AProjectViewNode.h"
+#include "ModelPtr.h"
 
 namespace command {
 
 typedef std::pair<model::ProjectViewPtr ,model::ProjectViewPtr>  ParentAndChildPair;
 typedef std::vector<ParentAndChildPair>  ParentAndChildPairs;
 
-class ProjectViewCommand : public RootCommand
+class ProjectViewCommand
+    :   public RootCommand
 {
 public:
 

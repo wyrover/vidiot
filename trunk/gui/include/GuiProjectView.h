@@ -1,22 +1,14 @@
 #ifndef GUI_PROJECT_VIEW_H
 #define GUI_PROJECT_VIEW_H
 
-#include <list>
 #include <set>
 #include <wx/dataview.h>
-#include <wx/sizer.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
 #include "GuiProjectViewModel.h"
-#include "Project.h"
-
-namespace model { 
-    class Project;
-    class Folder;
-    typedef boost::shared_ptr<Folder> FolderPtr;
-}
+#include "ModelPtr.h"
 
 namespace gui {
 

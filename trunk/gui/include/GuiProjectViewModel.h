@@ -1,24 +1,19 @@
 #ifndef GUI_PROJECT_VIEW_MODEL_H
 #define GUI_PROJECT_VIEW_MODEL_H
 
-#include <map>
-#include "wx/event.h"
-#include "wx/dataview.h"
+#include <wx/event.h>
+#include <wx/dataview.h>
 #include "AProjectViewNode.h"
 #include "Project.h"
-
-namespace model { 
-    class Project;
-    class Folder;
-    typedef boost::shared_ptr<Folder> FolderPtr;
-}
+#include "ModelPtr.h"
 
 namespace gui {
 
 /**
 * This model links the GUI objects to the actual project items and back.
 */
-class GuiProjectViewModel : public wxDataViewModel
+class GuiProjectViewModel
+    :   public wxDataViewModel
 {
 public:
 

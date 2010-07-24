@@ -1,4 +1,3 @@
-#include "wxInclude.h"
 #include "FifoWork.h"
 
 Work::Work(Callable work, wxString description)

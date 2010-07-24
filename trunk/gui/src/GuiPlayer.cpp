@@ -1,4 +1,5 @@
 #include "GuiPlayer.h"
+
 #include <wx/bitmap.h>
 #include <wx/sizer.h>
 #include <wx/button.h>

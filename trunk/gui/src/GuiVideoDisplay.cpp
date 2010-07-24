@@ -2,16 +2,12 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <wx/dcclient.h>
 #include <boost/make_shared.hpp>
-#include "wxInclude.h"
+#include "portaudio.h"
 #include "UtilLog.h"
-#include "IControl.h"
-#include "GuiMain.h"
 #include "GuiTimeLineZoom.h"
 #include "Sequence.h"
-#include <ostream>
-#include "portaudio.h"
-#include "FrameRate.h"
 
 namespace gui {
 

@@ -1,6 +1,5 @@
 #include "UtilLog.h"
 
-#include "wxInclude.h"
 #include <wx/datetime.h>
 #include <wx/thread.h>
 #include <boost/format.hpp>

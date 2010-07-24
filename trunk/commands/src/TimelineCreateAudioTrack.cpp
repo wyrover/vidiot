@@ -1,7 +1,8 @@
 #include "TimelineCreateAudioTrack.h"
-#include "UtilLog.h"
+
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
+#include "UtilLog.h"
 
 namespace command {
 

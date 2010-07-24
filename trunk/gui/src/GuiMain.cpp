@@ -1,5 +1,6 @@
 #include "GuiMain.h"
 
+#include <wx/msgdlg.h>
 #include <boost/exception/diagnostic_information.hpp> 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -12,7 +13,6 @@
 #include "Constants.h"
 #include "GuiDebugReport.h"
 #include "Project.h"
-#include "wx/msgdlg.h"
 
 namespace gui {
 

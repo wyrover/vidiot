@@ -6,7 +6,6 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
-#include "AProjectViewNode.h"
 #include "VideoFile.h"
 
 namespace model {
