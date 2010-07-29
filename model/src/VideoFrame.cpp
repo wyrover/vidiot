@@ -1,6 +1,8 @@
 #include "VideoFrame.h"
 #include "UtilLogAvcodec.h"
 
+namespace model {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -129,4 +131,6 @@ LineSizePointer VideoFrame::getLineSizes() const
 {
     return mFrame->linesize;
 }
+
+} // namespace
 

@@ -12,7 +12,6 @@
 #include <boost/enable_shared_from_this.hpp>
 #include "GuiDataObject.h"
 #include "ModelPtr.h"
-#include "GuiPlayer.h"
 #include "GuiPtr.h"
 #include "State.h"
 #include "SelectIntervals.h"

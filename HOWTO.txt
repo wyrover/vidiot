@@ -55,7 +55,7 @@ Install graphviz into c:\Program Files
 
 =================== PORTAUDIO ===================
 * Create folder D:\VideoApp\InstalledLibraries\portaudio_trunk
-* checkout https://www.portaudio.com/repos/portaudio/trunk
+* checkout https://www.portaudio.com/repos/portaudio/trunk into that dir
 * Install MS SDK
 * Open portaudio_trunk\build\msvc\portaudio.sln (convert if needed)
 * Compile Portaudio
@@ -70,3 +70,13 @@ Install graphviz into c:\Program Files
 
 =================== UML ===================
 Use Argo UML for doc/*.zargo
+
+=================== SOUNDTOUCH ===================
+* Create folder  D:\VideoApp\InstalledLibraries\soundtouch_trunk
+* Checkout https://soundtouch.svn.sourceforge.net/svnroot/soundtouch/trunk into that dir
+* edit include/STTypes.h -> #define INTEGER_SAMPLES     1    //< 16bit integer samples
+* Open SoundTouchDll solution in MSDEV (convert).
+* For all configurations change /MT[d] to /MD[d]
+* Remove resource.rc from project
+* Build in Visual Studio
+* 

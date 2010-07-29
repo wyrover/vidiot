@@ -2,8 +2,9 @@
 
 #include <wx/bitmap.h>
 #include <wx/sizer.h>
-#include <wx/button.h>
+#include <wx/slider.h>
 #include <wx/textctrl.h>
+#include <wx/stattext.h>
 #include "UtilLog.h"
 #include "GuiTimeLine.h"
 #include "GuiTimeLineZoom.h"
@@ -17,6 +18,10 @@
 #include "Constants.h"
 
 namespace gui {
+
+static const int sMinimumSpeed = 50;
+static const int sMaximumSpeed = 200;
+static const int sDefaultSpeed = 100;
 
 wxBitmap bmpHome    (preview_home_xpm);
 wxBitmap bmpEnd     (preview_end_xpm);
@@ -33,6 +38,10 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
 :   wxPanel(parent, wxID_ANY)
 ,   mTimeLine(timeline)
 ,   mPosition(0)
+,   mSpeedButton(0)
+,   mSpeedSliderFrame(0)
+,   mSpeedSlider(0)
+,   mSpeed(sDefaultSpeed)
 {
 	LOG_INFO;
 
@@ -65,6 +74,9 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
     wxButton* next      = new wxButton(mButtonsPanel, wxID_ANY);
     wxButton* end       = new wxButton(mButtonsPanel, wxID_ANY);
 
+    mSpeedButton        = new wxToggleButton(mButtonsPanel, wxID_ANY, "");
+    setSpeed(mSpeed);
+
     home    ->SetBitmap(bmpHome,        wxTOP);
     previous->SetBitmap(bmpPrevious,    wxTOP);
     pause   ->SetBitmap(bmpPause,       wxTOP);
@@ -72,19 +84,21 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
     next    ->SetBitmap(bmpNext,        wxTOP);
     end     ->SetBitmap(bmpEnd,         wxTOP);
 
-    home    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GuiPlayer::OnHome,        this);
-    previous->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GuiPlayer::OnPrevious,    this);
-    pause   ->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GuiPlayer::OnPause,       this);
-    play    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GuiPlayer::OnPlay,        this);
-    next    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GuiPlayer::OnNext,        this);
-    end     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &GuiPlayer::OnEnd,         this);
+    home        ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnHome,     this);
+    previous    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPrevious, this);
+    pause       ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPause,    this);
+    play        ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPlay,     this);
+    next        ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnNext,     this);
+    end         ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnEnd,      this);
+    mSpeedButton->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &GuiPlayer::OnSpeed,    this);
 
-    mButtonsPanelSizer->Add(home,       wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(previous,   wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(pause,      wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(play,       wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(next,       wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(end,        wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(home,           wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(previous,       wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(pause,          wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(play,           wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(next,           wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(end,            wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mSpeedButton,   wxSizerFlags(1).Expand().Bottom().Center());
 
     mButtonsPanel->SetSizer(mButtonsPanelSizer);
 
@@ -177,4 +191,86 @@ void GuiPlayer::OnEnd(wxCommandEvent& WXUNUSED(event))
     LOG_INFO;
 }
 
+void GuiPlayer::OnSpeed(wxCommandEvent& WXUNUSED(event))
+{
+    LOG_INFO;
+    /** @todo If button clicked very fast twice, the button is not depressed. */
+
+    mSpeedSliderFrame = new wxMiniFrame(this, wxID_ANY, "title", wxDefaultPosition, wxDefaultSize, 0);
+
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, sDefaultSpeed, sMinimumSpeed, sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL);
+    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", sMinimumSpeed)), wxSizerFlags(0).Center());
+    sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand().Bottom().Center());
+    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", sMaximumSpeed)), wxSizerFlags(0).Center());
+
+    mSpeedSliderFrame->SetSizerAndFit(sizer);
+
+    wxPoint pos = mSpeedButton->GetScreenPosition();
+    wxSize buttonSize = mSpeedButton->GetSize();
+    wxSize frameSize = mSpeedSliderFrame->GetSize();
+
+    pos.x += (buttonSize.GetWidth() - frameSize.GetWidth())/2;
+    pos.y -= frameSize.GetHeight();
+
+    mSpeedSliderFrame->SetBackgroundColour(mSpeedButton->GetBackgroundColour());//wxColour(128,128,0));
+    mSpeedSlider->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
+
+    mSpeedSlider->SetThumbLength(5);
+
+    mSpeedSliderFrame->Move(pos);
+    mSpeedSliderFrame->Show();
+
+    mSpeedSlider->SetFocus();
+    mSpeedSlider->Bind(wxEVT_KILL_FOCUS,                &GuiPlayer::OnSpeedSliderFocusKill,     this);
+    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED,    &GuiPlayer::OnSpeedSliderUpdate,        this);
+    mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &GuiPlayer::OnLeftDown,                 this);
+}
+
+void GuiPlayer::OnSpeedSliderUpdate( wxCommandEvent& WXUNUSED(event) )
+{
+    setSpeed(mSpeedSlider->GetValue());
+}
+
+void GuiPlayer::OnSpeedSliderFocusKill(wxFocusEvent& event)
+{
+    mSpeedSliderFrame->Hide();
+    mSpeedSlider->Unbind(wxEVT_KILL_FOCUS, &GuiPlayer::OnSpeedSliderFocusKill, this);
+    delete mSpeedSliderFrame;
+    mSpeedSliderFrame = 0;
+    Bind(wxEVT_IDLE, &GuiPlayer::OnIdleAfterCloseSpeedSliderFrame, this);
+}
+
+void GuiPlayer::OnLeftDown(wxMouseEvent& event)
+{
+    // NOT: event.Skip();
+    // By not calling Skip, the event handling for the toggle button is blocked
+    // here. The speed frame can now be closed/ended by two methods:
+    // 1. Click outside speed frame
+    // 2. Press toggle button again.
+    // All attempts to handle this via 'outoffocus' for case 1, and the regular
+    // toggle button event ('OnSpeed' again) didn't work. This was caused by
+    // first handling the 'outoffocus' event when the button is pressed
+    // (then first the speed frame goes out of focus) and subsequently, another
+    // press event was generated, which would be done on the now depressed 
+    // button that had been closed in handling 'outoffocus'.
+    //
+    // Now, all exit handling is done via the 'outoffocus' method, and the
+    // extra button press is suppressed here. Since the button must be 
+    // enabled again, the Idle event handling was introduced.
+}
+
+void GuiPlayer::OnIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
+{
+    mSpeedButton->SetValue(false);
+    mSpeedButton->Unbind(wxEVT_LEFT_DOWN, &GuiPlayer::OnLeftDown, this);
+    Unbind(wxEVT_IDLE, &GuiPlayer::OnIdleAfterCloseSpeedSliderFrame, this);
+    event.Skip();
+}
+
+void GuiPlayer::setSpeed(int speed)
+{
+    mSpeed = speed;
+    mSpeedButton->SetLabel(wxString::Format("%d%%", mSpeed));
+}
 } // namespace

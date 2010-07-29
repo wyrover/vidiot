@@ -3,6 +3,7 @@
 #include "GuiTimeLine.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
+#include "GuiPlayer.h"
 
 namespace gui { namespace timeline { namespace state {
 

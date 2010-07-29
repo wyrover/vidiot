@@ -5,6 +5,7 @@
 #include <wx/panel.h>
 #include <wx/control.h>
 #include <boost/scoped_ptr.hpp>
+#include <SoundTouch.h>
 #include "VideoFrame.h"
 #include "AudioChunk.h"
 #include "ModelPtr.h"
@@ -107,8 +108,8 @@ private:
     // AUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    FifoAudio mAudioChunks;
-    AudioChunkPtr mCurrentAudioChunk;
+    model::FifoAudio mAudioChunks;
+    model::AudioChunkPtr mCurrentAudioChunk;
 
     boost::scoped_ptr<boost::thread> mAudioBufferThreadPtr;
 	void audioBufferThread();
@@ -116,12 +117,14 @@ private:
     /** Required for portaudio */
     void* mAudioOutputStream;
 
+    soundtouch::SoundTouch mSoundTouch;
+
     //////////////////////////////////////////////////////////////////////////
     // VIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    FifoVideo mVideoFrames;
-    VideoFramePtr mCurrentVideoFrame;
+    model::FifoVideo mVideoFrames;
+    model::VideoFramePtr mCurrentVideoFrame;
     boost::shared_ptr<wxBitmap> mCurrentBitmap;
 
     int mWidth;

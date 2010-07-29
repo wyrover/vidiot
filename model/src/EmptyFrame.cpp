@@ -1,6 +1,8 @@
 #include "EmptyFrame.h"
 #include "UtilLogAvcodec.h"
 
+namespace model {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -35,3 +37,6 @@ DataPointer EmptyFrame::getData()
     }
     return VideoFrame::getData();
 }
+
+} // namespace
+

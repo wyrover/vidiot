@@ -12,6 +12,8 @@ extern "C" {
 #include <avformat.h>
 };
 
+namespace model {
+
 typedef boost::uint8_t** DataPointer;
 typedef int* LineSizePointer;
 
@@ -87,5 +89,7 @@ typedef Fifo<VideoFramePtr> FifoVideo;
 
 std::ostream& operator<< (std::ostream& os, const VideoFrame& obj);
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
+
+} // namespace
 
 #endif // VIDEO_FRAME_H

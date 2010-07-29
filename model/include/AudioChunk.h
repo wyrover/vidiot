@@ -4,6 +4,8 @@
 #include <boost/cstdint.hpp>
 #include "UtilFifo.h"
 
+namespace model {
+
 class AudioChunk : boost::noncopyable
 {
 public:
@@ -76,5 +78,7 @@ typedef Fifo<AudioChunkPtr> FifoAudio;
 
 std::ostream& operator<< (std::ostream& os, const AudioChunk& obj);
 std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
+
+} // namespace
 
 #endif // AUDIO_CHUNK_H

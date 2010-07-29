@@ -7,6 +7,7 @@
 #include "StateTestDragStart.h"
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
+#include "GuiPlayer.h"
 #include "GuiTimeLineTrack.h"
 #include "EmptyClip.h"
 #include "Project.h"
