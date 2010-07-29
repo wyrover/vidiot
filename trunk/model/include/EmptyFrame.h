@@ -3,6 +3,8 @@
 
 #include "VideoFrame.h"
 
+namespace model {
+
 class EmptyFrame : public VideoFrame
 {
 public:
@@ -31,5 +33,7 @@ private:
 };
 
 typedef boost::shared_ptr<EmptyFrame> EmptyFramePtr;
+
+} // namespace
 
 #endif // EMPTY_FRAME_H

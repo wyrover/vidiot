@@ -15,6 +15,7 @@
 #include "UtilLog.h"
 #include "GuiMain.h"
 #include "GuiOptions.h"
+#include "GuiPlayer.h"
 #include "GuiPreview.h"
 #include "GuiWindow.h"
 #include "GuiTimeLineDropTarget.h"

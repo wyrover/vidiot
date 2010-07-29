@@ -3,6 +3,8 @@
 
 #include "AudioChunk.h"
 
+namespace model {
+
 class EmptyChunk : public AudioChunk
 {
 public:
@@ -31,5 +33,7 @@ private:
 };
 
 typedef boost::shared_ptr<EmptyChunk> EmptyChunkPtr;
+
+} // namespace
 
 #endif // EMPTY_CHUNK_H

@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <wx/dcclient.h>
 #include <boost/make_shared.hpp>
-#include "portaudio.h"
+#include <portaudio.h>
 #include "UtilLog.h"
 #include "GuiTimeLineZoom.h"
 #include "Sequence.h"
@@ -48,8 +48,8 @@ GuiVideoDisplay::GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer)
 ,	mHeight(100)
 ,   mPlaying(false)
 ,	mProducer(producer)
-,   mVideoFrames(FifoVideo(20))
-,   mAudioChunks(FifoAudio(1000))
+,   mVideoFrames(model::FifoVideo(20))
+,   mAudioChunks(model::FifoAudio(1000))
 ,   mAbortThreads(false)
 ,   mAudioBufferThreadPtr(0)
 ,   mVideoBufferThreadPtr(0)
@@ -96,6 +96,21 @@ void GuiVideoDisplay::play()
     // Ensure that the to-be-started threads do not immediately stop
     mAbortThreads = false;
 
+    // SoundTouch must be initialized before starting the audio buffer thread
+    mSoundTouch.setSampleRate(sFrameRate);
+    mSoundTouch.setChannels(sStereo);
+    mSoundTouch.setTempo(1.0);
+    mSoundTouch.setTempoChange(30.0);//30.0
+    mSoundTouch.setRate(1.0);
+    mSoundTouch.setRateChange(0);
+    mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 0);//1
+    //if (speech)
+    {
+        mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);
+        mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);
+        mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);
+    }
+
     // Start buffering ASAP
     mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&GuiVideoDisplay::audioBufferThread,this)));
     mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&GuiVideoDisplay::videoBufferThread,this)));
@@ -140,8 +155,10 @@ void GuiVideoDisplay::moveTo(int64_t position)
         mVideoBufferThreadPtr->join(); // One extra frame may have been inserted by 'push()'
         mAudioBufferThreadPtr->join(); // One extra chunk may have been inserted by 'push()'
 
-        mAudioChunks.push(AudioChunkPtr()); // Unblock 'pop()', if needed
-        mVideoFrames.push(VideoFramePtr()); // Unblock 'pop()', if needed
+        mSoundTouch.clear(); // Must be done after joining the audio buffer thread.
+
+        mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
+        mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
         mVideoDisplayThreadPtr->join();
 
         // Clear the buffers for a next run
@@ -178,8 +195,30 @@ void GuiVideoDisplay::audioBufferThread()
 {
     while (!mAbortThreads) 
 	{
-        AudioChunkPtr chunk = mProducer->getNextAudio(sFrameRate,sStereo);
-        mAudioChunks.push(chunk);
+        model::AudioChunkPtr chunk = mProducer->getNextAudio(sFrameRate,sStereo);
+
+        if (chunk)
+        {
+            VAR_DEBUG(chunk);
+            mSoundTouch.putSamples(chunk->getUnreadSamples(), chunk->getUnreadSampleCount() / sStereo) ; /** @todo what is a sample? In SoundTouch context it's the data for both speakers. In my context it's the data for one speaker... */
+
+            static const int BUFF_SIZE = 1000;
+            int16_t sampleBuffer[BUFF_SIZE];
+
+            while (!mSoundTouch.isEmpty())
+            {
+                int nFrames = mSoundTouch.receiveSamples(sampleBuffer, BUFF_SIZE / sStereo);
+                boost::int16_t* p = sampleBuffer;
+                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFrames * sStereo, 0); /** @todo pts (0)?? */
+                VAR_AUDIO(audioChunk);
+                mAudioChunks.push(audioChunk);
+            }
+            LOG_DEBUG << "Done";
+        }
+        else
+        {
+            mAudioChunks.push(chunk);
+        }
 	}
 }
 
@@ -196,7 +235,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
     }
 
     static const unsigned int sSamplesPerStereoFrame = 2;
-    unsigned long remainingSamples = frames * sSamplesPerStereoFrame;
+    unsigned long remainingSamples = frames * sSamplesPerStereoFrame; /** todo and here a sample is for one speaker. */
     int16_t* out = static_cast<int16_t*>(buffer);
 
     while (remainingSamples > 0)
@@ -207,7 +246,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
 
             if (mAbortThreads)
             {
-                memset(out,0,remainingSamples * AudioChunk::sBytesPerSample); // * 2: bytes vs int16
+                memset(out,0,remainingSamples * model::AudioChunk::sBytesPerSample); // * 2: bytes vs int16
                 LOG_DEBUG << "Abort";
                 return false;
             }
@@ -215,7 +254,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
             if (mAudioChunks.getSize() == 0)
             {
                 // When there is no new chunk, do not block, but return silence.
-                memset(out,0,remainingSamples * AudioChunk::sBytesPerSample); // * 2: bytes vs int16
+                memset(out,0,remainingSamples * model::AudioChunk::sBytesPerSample); // * 2: bytes vs int16
                 LOG_WARNING << "Underflow";
                 return true;
             }
@@ -230,7 +269,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
 
         unsigned long nSamples = std::min(remainingSamples, mCurrentAudioChunk->getUnreadSampleCount());
 
-        memcpy(out,mCurrentAudioChunk->getUnreadSamples(),nSamples * AudioChunk::sBytesPerSample);
+        memcpy(out,mCurrentAudioChunk->getUnreadSamples(),nSamples * model::AudioChunk::sBytesPerSample);
         mCurrentAudioChunk->read(nSamples);
 
         ASSERT(remainingSamples >= nSamples)(remainingSamples)(nSamples);
@@ -249,7 +288,7 @@ void GuiVideoDisplay::videoBufferThread()
 	LOG_INFO;
     while (!mAbortThreads) 
 	{
-        VideoFramePtr videoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
+        model::VideoFramePtr videoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
         mVideoFrames.push(videoFrame);
 	}
 }
@@ -265,7 +304,7 @@ void GuiVideoDisplay::videoDisplayThread()
 
     while (!mAbortThreads) 
     {
-        VideoFramePtr videoFrame = mVideoFrames.pop();
+        model::VideoFramePtr videoFrame = mVideoFrames.pop();
         if (!videoFrame)
         {
             // End of video reached

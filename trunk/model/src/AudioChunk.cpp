@@ -1,6 +1,8 @@
 #include "AudioChunk.h"
 #include "UtilLog.h"
 
+namespace model {
+
 const int AudioChunk::sBytesPerSample = 2;
 
 //////////////////////////////////////////////////////////////////////////
@@ -89,3 +91,5 @@ std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj)
     }
     return os;
 }
+
+} // namespace
