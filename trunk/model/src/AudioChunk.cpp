@@ -18,7 +18,10 @@ AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, unsigned int nSamp
 {
     /** @todo now we only used fixed stereo... */
     mBuffer = static_cast<boost::int16_t*>(malloc(mNrSamples * sBytesPerSample));
-    memcpy(mBuffer, buffer, mNrSamples * sBytesPerSample);
+    if (buffer)
+    {
+        memcpy(mBuffer, buffer, mNrSamples * sBytesPerSample);
+    }
 }
 
 AudioChunk::AudioChunk(int nChannels, unsigned int nSamples, double pts)
@@ -56,6 +59,12 @@ unsigned int AudioChunk::getNumberOfChannels() const
 void AudioChunk::read(unsigned int samples)
 {
     mNrReadSamples += samples;
+}
+
+boost::int16_t* AudioChunk::getBuffer()
+{
+    ASSERT(mBuffer);
+    return mBuffer;
 }
 
 boost::int16_t* AudioChunk::getUnreadSamples()

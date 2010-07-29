@@ -17,7 +17,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /**
-     * Initialize and allocate,
+     * Initialize, allocate, and fill the data.
+     * @param buffer if non-null data from this buffer is copied into the newly allocated space.
      */
     AudioChunk(boost::int16_t* buffer, int nChannels, unsigned int nSamples, double pts);
 
@@ -54,6 +55,11 @@ public:
      * @param samples number of samples that has been read
      */
     void read(unsigned int samples);
+
+    /**
+     * Return the data.
+     */
+    virtual boost::int16_t* getBuffer();
 
     /**
     * Returns the part of 'getBuffer()' that has not been consumed.
