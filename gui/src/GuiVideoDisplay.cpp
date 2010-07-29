@@ -199,25 +199,20 @@ void GuiVideoDisplay::audioBufferThread()
 
         if (chunk)
         {
-            VAR_DEBUG(chunk);
             mSoundTouch.putSamples(chunk->getUnreadSamples(), chunk->getUnreadSampleCount() / sStereo) ; /** @todo what is a sample? In SoundTouch context it's the data for both speakers. In my context it's the data for one speaker... */
-
-            static const int BUFF_SIZE = 1000;
-            int16_t sampleBuffer[BUFF_SIZE];
-
             while (!mSoundTouch.isEmpty())
             {
-                int nFrames = mSoundTouch.receiveSamples(sampleBuffer, BUFF_SIZE / sStereo);
-                boost::int16_t* p = sampleBuffer;
-                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFrames * sStereo, 0); /** @todo pts (0)?? */
-                VAR_AUDIO(audioChunk);
+                int nFramesAvailable = mSoundTouch.numSamples();
+                boost::int16_t* p = 0;
+                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFramesAvailable * sStereo, 0); /** @todo pts (0)?? */
+                int nFrames = mSoundTouch.receiveSamples(audioChunk->getBuffer(), nFramesAvailable);
+                ASSERT(nFrames == nFramesAvailable)(nFrames)(nFramesAvailable);
                 mAudioChunks.push(audioChunk);
             }
-            LOG_DEBUG << "Done";
         }
         else
         {
-            mAudioChunks.push(chunk);
+            mAudioChunks.push(chunk); // Signal end
         }
 	}
 }
