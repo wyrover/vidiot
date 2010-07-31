@@ -40,6 +40,8 @@ public:
 
     void play();
     void moveTo(int64_t position);
+    void setSpeed(int speed);
+    int getSpeed() const;
 
     //////////////////////////////////////////////////////////////////////////
     // AUDIO
@@ -66,6 +68,9 @@ private:
 
     /** The Renderer responsible for producing video and audio data. */
 	model::SequencePtr mProducer;
+
+    /** Current playing speed */
+    int mSpeed;
 
     /** If set, indicates that video and audio buffers must end. */
     bool mAbortThreads;

@@ -41,7 +41,6 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
 ,   mSpeedButton(0)
 ,   mSpeedSliderFrame(0)
 ,   mSpeedSlider(0)
-,   mSpeed(sDefaultSpeed)
 {
 	LOG_INFO;
 
@@ -49,6 +48,7 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
 
     mDisplay = new GuiVideoDisplay(this, timeline->getSequence());
     mDisplay->Bind(GUI_EVENT_PLAYBACK_POSITION, &GuiPlayer::OnPlaybackPosition, this);
+    mDisplay->setSpeed(sDefaultSpeed);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -75,7 +75,7 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
     wxButton* end       = new wxButton(mButtonsPanel, wxID_ANY);
 
     mSpeedButton        = new wxToggleButton(mButtonsPanel, wxID_ANY, "");
-    setSpeed(mSpeed);
+    updateSpeedButton();
 
     home    ->SetBitmap(bmpHome,        wxTOP);
     previous->SetBitmap(bmpPrevious,    wxTOP);
@@ -199,10 +199,11 @@ void GuiPlayer::OnSpeed(wxCommandEvent& WXUNUSED(event))
     mSpeedSliderFrame = new wxMiniFrame(this, wxID_ANY, "title", wxDefaultPosition, wxDefaultSize, 0);
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, sDefaultSpeed, sMinimumSpeed, sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL);
-    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", sMinimumSpeed)), wxSizerFlags(0).Center());
-    sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand().Bottom().Center());
+
+    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, sDefaultSpeed, sMinimumSpeed, sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
     sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", sMaximumSpeed)), wxSizerFlags(0).Center());
+    sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand().Bottom().Center());
+    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", sMinimumSpeed)), wxSizerFlags(0).Center());
 
     mSpeedSliderFrame->SetSizerAndFit(sizer);
 
@@ -229,7 +230,8 @@ void GuiPlayer::OnSpeed(wxCommandEvent& WXUNUSED(event))
 
 void GuiPlayer::OnSpeedSliderUpdate( wxCommandEvent& WXUNUSED(event) )
 {
-    setSpeed(mSpeedSlider->GetValue());
+    mDisplay->setSpeed(mSpeedSlider->GetValue());
+    updateSpeedButton();
 }
 
 void GuiPlayer::OnSpeedSliderFocusKill(wxFocusEvent& event)
@@ -268,9 +270,8 @@ void GuiPlayer::OnIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
     event.Skip();
 }
 
-void GuiPlayer::setSpeed(int speed)
+void GuiPlayer::updateSpeedButton()
 {
-    mSpeed = speed;
-    mSpeedButton->SetLabel(wxString::Format("%d%%", mSpeed));
+    mSpeedButton->SetLabel(wxString::Format("%d%%", mDisplay->getSpeed()));
 }
 } // namespace
