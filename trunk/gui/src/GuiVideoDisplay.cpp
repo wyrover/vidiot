@@ -104,7 +104,7 @@ void GuiVideoDisplay::play()
     mSoundTouch.setRate(1.0);
     mSoundTouch.setRateChange(0);
     mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 0);//1
-    //if (speech)
+    //if (speech) // @todo speech selector
     {
         mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);
         mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);
@@ -185,6 +185,16 @@ void GuiVideoDisplay::moveTo(int64_t position)
         mCurrentBitmap.reset();
     }
     showNewVideoFrame();
+}
+
+void GuiVideoDisplay::setSpeed(int speed)
+{
+    mSpeed = speed;
+}
+
+int GuiVideoDisplay::getSpeed() const
+{
+    return mSpeed;
 }
 
 //////////////////////////////////////////////////////////////////////////

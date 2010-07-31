@@ -75,8 +75,7 @@ private:
     void OnIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event);
     void OnLeftDown(wxMouseEvent& event);
 
-    int mSpeed;
-    void setSpeed(int speed);
+    void updateSpeedButton();
 
 };
 
