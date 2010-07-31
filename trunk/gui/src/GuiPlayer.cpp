@@ -230,6 +230,7 @@ void GuiPlayer::OnSpeed(wxCommandEvent& WXUNUSED(event))
 
 void GuiPlayer::OnSpeedSliderUpdate( wxCommandEvent& WXUNUSED(event) )
 {
+    VAR_INFO(mSpeedSlider->GetValue());
     mDisplay->setSpeed(mSpeedSlider->GetValue());
     updateSpeedButton();
 }
