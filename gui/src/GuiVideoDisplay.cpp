@@ -91,6 +91,7 @@ GuiVideoDisplay::~GuiVideoDisplay()
 
 void GuiVideoDisplay::play()
 {
+    VAR_DEBUG(this)(mPlaying);
     if (mPlaying) return;
 
     // Ensure that the to-be-started threads do not immediately stop
@@ -129,7 +130,7 @@ void GuiVideoDisplay::play()
 
     mPlaying = true;
 
-    LOG_DEBUG << "Playback started";
+    LOG_DEBUG;
 }
 
 void GuiVideoDisplay::moveTo(int64_t position)
@@ -159,6 +160,13 @@ void GuiVideoDisplay::moveTo(int64_t position)
 
         mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
         mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
+        
+        // Playback can be stopped (moveTo) before the first audioRequested is done by portaudio.
+        // That shouldn't block the videoDisplayThread (which blocks until audioRequested signals
+        // it to proceed).
+        mStartTime = -1; // When the videoDisplayThread is unblocked it shouldn't start waiting again (while loop)
+        conditionPlaybackStarted.notify_one(); // Unblock the waiting thread
+
         mVideoDisplayThreadPtr->join();
 
         // Clear the buffers for a next run
@@ -189,7 +197,13 @@ void GuiVideoDisplay::moveTo(int64_t position)
 
 void GuiVideoDisplay::setSpeed(int speed)
 {
+    bool wasPlaying = mPlaying;
     mSpeed = speed;
+    moveTo(mCurrentVideoFrame?mCurrentVideoFrame->getPts():0);
+    if (wasPlaying)
+    {
+        play();
+    }
 }
 
 int GuiVideoDisplay::getSpeed() const
@@ -344,6 +358,8 @@ void GuiVideoDisplay::videoDisplayThread()
         }
 
     }
+
+    LOG_INFO << "Stopped";
 }
 
 //////////////////////////////////////////////////////////////////////////
