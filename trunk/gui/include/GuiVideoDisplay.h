@@ -21,6 +21,10 @@ class GuiVideoDisplay
 {
 public:
 
+    static const int sMinimumSpeed;
+    static const int sMaximumSpeed;
+    static const int sDefaultSpeed;
+
     static const int sStereo;
     static const int sFrameRate;
     static const int sChannels;

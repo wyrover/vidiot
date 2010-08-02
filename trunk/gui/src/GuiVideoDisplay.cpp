@@ -13,6 +13,9 @@ namespace gui {
 
 DEFINE_EVENT(GUI_EVENT_PLAYBACK_POSITION, GuiEventPlaybackPosition, long);
 
+const int GuiVideoDisplay::sMinimumSpeed = 50;
+const int GuiVideoDisplay::sMaximumSpeed = 200;
+const int GuiVideoDisplay::sDefaultSpeed = 100;
 const int GuiVideoDisplay::sStereo = 2;
 const int GuiVideoDisplay::sFrameRate = 44100;
 const int GuiVideoDisplay::sChannels = GuiVideoDisplay::sStereo;
@@ -101,7 +104,7 @@ void GuiVideoDisplay::play()
     mSoundTouch.setSampleRate(sFrameRate);
     mSoundTouch.setChannels(sStereo);
     mSoundTouch.setTempo(1.0);
-    mSoundTouch.setTempoChange(30.0);//30.0
+    mSoundTouch.setTempoChange(mSpeed - sDefaultSpeed);
     mSoundTouch.setRate(1.0);
     mSoundTouch.setRateChange(0);
     mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 0);//1
@@ -336,7 +339,8 @@ void GuiVideoDisplay::videoDisplayThread()
 
         mCurrentTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream)) - mStartTime;
         int nextFrameTime = gui::timeline::GuiTimeLineZoom::ptsToTime(videoFrame->getPts() - mStartPts);
-        int sleepTime = nextFrameTime - mCurrentTime;
+        int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime); 
+        int sleepTime = nextFrameTimeAdaptedForPlaybackSpeed - mCurrentTime;
         
         //////////////////////////////////////////////////////////////////////////
         // DISPLAY NEW FRAME
