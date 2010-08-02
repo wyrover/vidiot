@@ -19,10 +19,6 @@
 
 namespace gui {
 
-static const int sMinimumSpeed = 50;
-static const int sMaximumSpeed = 200;
-static const int sDefaultSpeed = 100;
-
 wxBitmap bmpHome    (preview_home_xpm);
 wxBitmap bmpEnd     (preview_end_xpm);
 wxBitmap bmpNext    (preview_next_xpm);
@@ -48,7 +44,7 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
 
     mDisplay = new GuiVideoDisplay(this, timeline->getSequence());
     mDisplay->Bind(GUI_EVENT_PLAYBACK_POSITION, &GuiPlayer::OnPlaybackPosition, this);
-    mDisplay->setSpeed(sDefaultSpeed);
+    mDisplay->setSpeed(GuiVideoDisplay::sDefaultSpeed);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -200,10 +196,10 @@ void GuiPlayer::OnSpeed(wxCommandEvent& WXUNUSED(event))
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, sDefaultSpeed, sMinimumSpeed, sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
-    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", sMaximumSpeed)), wxSizerFlags(0).Center());
+    mSpeedSlider = new wxSlider(mSpeedSliderFrame, wxID_ANY, GuiVideoDisplay::sDefaultSpeed, GuiVideoDisplay::sMinimumSpeed, GuiVideoDisplay::sMaximumSpeed, wxDefaultPosition, wxDefaultSize, wxSL_VERTICAL | wxSL_INVERSE);
+    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", GuiVideoDisplay::sMaximumSpeed)), wxSizerFlags(0).Center());
     sizer->Add(mSpeedSlider, wxSizerFlags(1).Expand().Bottom().Center());
-    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", sMinimumSpeed)), wxSizerFlags(0).Center());
+    sizer->Add(new wxStaticText(mSpeedSliderFrame,wxID_ANY, wxString::Format("%d", GuiVideoDisplay::sMinimumSpeed)), wxSizerFlags(0).Center());
 
     mSpeedSliderFrame->SetSizerAndFit(sizer);
 
