@@ -2,8 +2,21 @@
 #define UTIL_LOG_GENERIC_H
 
 #include <list>
+#include <map>
 #include <ostream>
 #include <boost/foreach.hpp>
+
+class ILoggable
+{
+public:
+    virtual std::string toString() const = 0;
+};
+
+std::ostream& operator<< (std::ostream& os, const ILoggable& obj)
+{
+    os << obj.toString();
+    return os;
+}
 
 template <class T>
 std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)
