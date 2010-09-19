@@ -20,7 +20,15 @@ public:
 
     AudioClip(AudioFilePtr clip);
 
-	virtual ~AudioClip();
+    AudioClip(const AudioClip& other);
+
+    virtual AudioClip* clone();
+
+    virtual ~AudioClip();
+
+    //////////////////////////////////////////////////////////////////////////
+    // IAUDIO
+    //////////////////////////////////////////////////////////////////////////
 
     virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
 

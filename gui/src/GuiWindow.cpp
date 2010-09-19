@@ -14,21 +14,17 @@
 #include "GuiTimelinesView.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
+#include "ids.h"
 
 namespace gui {
-
-enum {
-    meID_ADDVIDEOTRACK = wxID_HIGHEST+1,
-    meID_ADDAUDIOTRACK,
-    meID_CLOSESEQUENCE,
-    meID_PLAYSEQUENCE,
-    meID_OPTIONS
-};
 
 GuiWindow::GuiWindow()
 :   wxDocParentFrame()
 ,	mDocManager()
 ,	mDocTemplate(0)
+,   menubar(0)
+,   menuedit(0)
+,   menusequence(0)
 {
     // Must be done in two step construction way, since it reuses mDocManger which would
     // be initialized last if the initialization of the base class was also done in the
@@ -59,23 +55,16 @@ GuiWindow::GuiWindow()
     menuedit->Append(wxID_COPY);
     menuedit->Append(wxID_PASTE);
 
-    wxMenu* menusequence = new wxMenu();
-    menusequence->Append(meID_PLAYSEQUENCE, _("Play"));
-    menusequence->AppendSeparator();
-    menusequence->Append(meID_ADDVIDEOTRACK, _("Add video track"));
-    menusequence->Append(meID_ADDAUDIOTRACK, _("Add audio track"));
-    menusequence->AppendSeparator();
-    menusequence->Append(meID_CLOSESEQUENCE, _("Close"));
+    menusequence = new wxMenu();
 
     wxMenu* menutools = new wxMenu();
-    menutools->Append(meID_OPTIONS, _("&Options"));
+    menutools->Append(ID_OPTIONS, _("&Options"));
 
     wxMenu* menuhelp = new wxMenu();
     menuhelp->Append(wxID_HELP, _("Help"));
-
-    menusequence->AppendSeparator();
+    menuhelp->AppendSeparator();
     menuhelp->Append(wxID_INFO, _("Dump"));
-    menusequence->AppendSeparator();
+    menuhelp->AppendSeparator();
     menuhelp->Append(wxID_ABOUT, _("&About..."));
 
     menubar = new wxMenuBar();
@@ -119,13 +108,9 @@ GuiWindow::GuiWindow()
 
     
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnExit,             this, wxID_EXIT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnPlaySequence,     this, meID_PLAYSEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnCloseSequence,    this, meID_CLOSESEQUENCE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnHelp,             this, wxID_HELP);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAbout,            this, wxID_ABOUT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAddVideoTrack,    this, meID_ADDVIDEOTRACK);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAddAudioTrack,    this, meID_ADDAUDIOTRACK);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnOptions,          this, meID_OPTIONS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnOptions,          this, ID_OPTIONS);
 
     Bind(wxEVT_CLOSE_WINDOW,            &GuiWindow::OnCloseWindow,      this);
 
@@ -199,35 +184,6 @@ void GuiWindow::OnExit(wxCommandEvent &)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SEQUENCE MENU
-//////////////////////////////////////////////////////////////////////////
-
-void GuiWindow::OnPlaySequence(wxCommandEvent& WXUNUSED(event))
-{
-    LOG_INFO;
-    mPreview->play();
-}
-
-void GuiWindow::OnAddVideoTrack(wxCommandEvent& WXUNUSED(event))
-{
-    LOG_DEBUG;
-    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
-    //mProject->Submit(new command::TimelineCreateVideoTrack(*mOpenSequences.begin()));
-}
-
-void GuiWindow::OnAddAudioTrack(wxCommandEvent& WXUNUSED(event))
-{
-    LOG_DEBUG;
-    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
-//    mProject->Submit(new command::TimelineCreateAudioTrack(*mOpenSequences.begin()));
-}
-
-void GuiWindow::OnCloseSequence(wxCommandEvent& WXUNUSED(event))
-{
-    mTimelinesView->Close();
-}
-
-//////////////////////////////////////////////////////////////////////////
 // TOOLS MENU
 //////////////////////////////////////////////////////////////////////////
 
@@ -274,9 +230,21 @@ GuiProjectView&	GuiWindow::getProjectView()
 // ENABLING/DISABLING MENUS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::EnableSequenceMenu(bool enable)
+void GuiWindow::setSequenceMenu(wxMenu* menu)
 {
-    menubar->EnableTop(2,enable);
+    wxMenu* previous = 0;
+    bool enable = true;
+    if (menu == 0)
+    {
+        menu = menusequence;
+        enable = false;
+    }
+    if (menubar->GetMenu(2) != menu)
+    {
+        // Only in case of changes. Otherwise wxWidgets asserts.
+        previous = menubar->Replace(2, menu, _("&Sequence"));
+        menubar->EnableTop(2,enable);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

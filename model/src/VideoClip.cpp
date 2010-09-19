@@ -23,10 +23,25 @@ VideoClip::VideoClip(VideoFilePtr file)
     VAR_DEBUG(this);
 }
 
+VideoClip::VideoClip(const VideoClip& other)
+:   Clip(other)
+{
+    VAR_DEBUG(this);
+}
+
+VideoClip* VideoClip::clone()
+{ 
+    return new VideoClip(static_cast<const VideoClip&>(*this)); 
+}
+
 VideoClip::~VideoClip()
 {
     VAR_DEBUG(this);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// IVIDEO
+//////////////////////////////////////////////////////////////////////////
 
 VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {

@@ -24,6 +24,18 @@ VideoTrack::VideoTrack()
     mItClips = mClips.begin();
 }
 
+VideoTrack::VideoTrack(const VideoTrack& other)
+:   Track(other)
+,   mPts(0)
+{
+    VAR_DEBUG(this);
+}
+
+VideoTrack* VideoTrack::clone()
+{ 
+    return new VideoTrack(static_cast<const VideoTrack&>(*this)); 
+}
+
 VideoTrack::~VideoTrack()
 {
     VAR_DEBUG(this);

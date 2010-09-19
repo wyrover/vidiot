@@ -54,6 +54,9 @@ public:
     model::ClipPtr getClip() const;
     GuiTimeLineClipPtr GuiTimeLineClip::getLink() const;
 
+    // tmp for showing intersect with selected regions
+    void show(wxRect rect);
+
 private:
     GuiTimeLineZoomPtr mZoom;
     boost::weak_ptr<GuiTimeLineTrack> mTrack;
@@ -69,6 +72,9 @@ private:
     model::ClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
     wxBitmap mBitmap;
+
+    // tmp for showing intersect with selected regions
+    wxRect mRect;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION 

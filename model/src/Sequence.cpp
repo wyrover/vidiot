@@ -38,6 +38,20 @@ Sequence::Sequence(wxString name)
     VAR_DEBUG(this);
 }
 
+Sequence::Sequence(const Sequence& other)
+:	IControl()
+,   mName(other.mName)
+,   mVideoTracks()
+,   mAudioTracks()
+{
+    VAR_DEBUG(this);
+}
+
+Sequence* Sequence::clone()
+{ 
+    return new Sequence(static_cast<const Sequence&>(*this)); 
+}
+
 Sequence::~Sequence()
 {
     VAR_DEBUG(this);

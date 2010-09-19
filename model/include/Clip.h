@@ -2,11 +2,13 @@
 #define MODEL_CLIP_H
 
 #include "IControl.h"
+#include "UtilLogGeneric.h"
 
 namespace model {
 
 class Clip 
     :   public IControl
+    //,   public ILoggable // todo move to base classes
 {
 public:
 
@@ -15,8 +17,14 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Clip();
-	Clip(IControlPtr clip);
-	virtual ~Clip();
+
+    Clip(IControlPtr clip);
+
+    Clip(const Clip& other);
+
+    virtual Clip* clone();
+
+    virtual ~Clip();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
@@ -42,6 +50,15 @@ public:
         return (typeid(Derived) == typeid(*this));
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    boost::int64_t getOffset();
+    void setOffset(boost::int64_t offset);
+
+    void setLength(boost::int64_t length);
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -49,9 +66,18 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     IControlPtr mRender;
+    ClipPtr mLink;
+
+private:
+
     boost::int64_t mOffset;
     boost::int64_t mLength;
-    ClipPtr mLink;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const Clip& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION 

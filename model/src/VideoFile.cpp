@@ -28,9 +28,8 @@ VideoFile::VideoFile()
 ,   mDecodingVideo(false)
 ,   mVideoAspectRatio(0)
 { 
-    mCodecType = CODEC_TYPE_VIDEO;
-
     VAR_DEBUG(this);
+    mCodecType = CODEC_TYPE_VIDEO;
 }
 
 VideoFile::VideoFile(boost::filesystem::path path)
@@ -38,9 +37,22 @@ VideoFile::VideoFile(boost::filesystem::path path)
 ,   mDecodingVideo(false)
 ,   mVideoAspectRatio(0)
 { 
-    mCodecType = CODEC_TYPE_VIDEO;
-
     VAR_DEBUG(this);
+    mCodecType = CODEC_TYPE_VIDEO;
+}
+
+VideoFile::VideoFile(const VideoFile& other)
+:   File(other)
+,   mDecodingVideo(false)
+,   mVideoAspectRatio(0)
+{
+    VAR_DEBUG(this);
+    mCodecType = CODEC_TYPE_VIDEO;
+}
+
+VideoFile* VideoFile::clone()
+{ 
+    return new VideoFile(static_cast<const VideoFile&>(*this)); 
 }
 
 VideoFile::~VideoFile()
@@ -49,41 +61,9 @@ VideoFile::~VideoFile()
     stopDecodingVideo();
 }
 
-void VideoFile::startDecodingVideo()
-{
-    if (mDecodingVideo) return;
-    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
-    mDecodingVideo = true;
-
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
-
-    mCodecContext = mStream->codec;
-    //mVideoCodecContext->lowres = 2; For decoding only a 1/4 image
-
-    mVideoAspectRatio = 0;
-    if (mStream->codec->sample_aspect_ratio.num != 0) 
-    {
-        mVideoAspectRatio = av_q2d(mStream->codec->sample_aspect_ratio) * mCodecContext->width / mCodecContext->height;
-    }
-
-    AVCodec *videoCodec = avcodec_find_decoder(mStream->codec->codec_id);
-    ASSERT(videoCodec != 0)(videoCodec);
-
-    int result = avcodec_open(mCodecContext, videoCodec);
-    ASSERT(result >= 0)(result);
-
-    VAR_INFO(mCodecContext)(mVideoAspectRatio);
-}
-
-void VideoFile::stopDecodingVideo()
-{
-    if (mDecodingVideo)
-    {
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
-        avcodec_close(mCodecContext);
-    }
-    mDecodingVideo = false;
-}
+//////////////////////////////////////////////////////////////////////////
+// IVIDEO
+//////////////////////////////////////////////////////////////////////////
 
 VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
@@ -178,6 +158,46 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
 
     VAR_VIDEO(videoFrame);
     return videoFrame;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS 
+//////////////////////////////////////////////////////////////////////////
+
+void VideoFile::startDecodingVideo()
+{
+    if (mDecodingVideo) return;
+    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
+    mDecodingVideo = true;
+
+    boost::mutex::scoped_lock lock(sMutexAvcodec);
+
+    mCodecContext = mStream->codec;
+    //mVideoCodecContext->lowres = 2; For decoding only a 1/4 image
+
+    mVideoAspectRatio = 0;
+    if (mStream->codec->sample_aspect_ratio.num != 0) 
+    {
+        mVideoAspectRatio = av_q2d(mStream->codec->sample_aspect_ratio) * mCodecContext->width / mCodecContext->height;
+    }
+
+    AVCodec *videoCodec = avcodec_find_decoder(mStream->codec->codec_id);
+    ASSERT(videoCodec != 0)(videoCodec);
+
+    int result = avcodec_open(mCodecContext, videoCodec);
+    ASSERT(result >= 0)(result);
+
+    VAR_INFO(mCodecContext)(mVideoAspectRatio);
+}
+
+void VideoFile::stopDecodingVideo()
+{
+    if (mDecodingVideo)
+    {
+        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        avcodec_close(mCodecContext);
+    }
+    mDecodingVideo = false;
 }
 
 //////////////////////////////////////////////////////////////////////////

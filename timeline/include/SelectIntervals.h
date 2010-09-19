@@ -1,12 +1,15 @@
 #ifndef SELECT_INTERVALS_H
 #define SELECT_INTERVALS_H
 
+#include <map>
 #include <wx/dc.h>
+#include <wx/event.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
+#include "ModelPtr.h"
 #include "GuiPtr.h"
 
 namespace gui { namespace timeline {
@@ -14,7 +17,8 @@ namespace gui { namespace timeline {
 class EventTimelineCursorMoved;
 
 class SelectIntervals
-    :   public boost::enable_shared_from_this<SelectIntervals>
+    :   public wxEvtHandler
+    ,   public boost::enable_shared_from_this<SelectIntervals>
 {
 public:
 
@@ -29,6 +33,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // MARKING / TOGGLING INTERFACE
     //////////////////////////////////////////////////////////////////////////
+
+    wxRegion get();
+    void set(wxRegion region);
 
     void addBeginMarker();
     void addEndMarker();
@@ -65,6 +72,10 @@ private:
 
     void onCursorMoved(EventTimelineCursorMoved& event);
 
+    void OnDeleteMarked(wxCommandEvent& WXUNUSED(event));
+    void OnDeleteUnmarked(wxCommandEvent& WXUNUSED(event));
+    void OnRemoveMarkers(wxCommandEvent& WXUNUSED(event));
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
@@ -72,6 +83,10 @@ private:
     wxRect makeRect(long x1, long x2);
     wxRect ptsToPixels(wxRect rect);
     void refresh(long begin, long end);
+    void updateMenu();
+
+    typedef std::map< model::ClipPtr, model::ClipPtr > ReplacementMap;
+    ReplacementMap findReplacements(GuiTimeLineTrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION 

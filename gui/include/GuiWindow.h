@@ -44,13 +44,8 @@ public:
     void OnExit(wxCommandEvent& WXUNUSED(event));
 
     //////////////////////////////////////////////////////////////////////////
-    // SEQUENCE MENU
+    // SEQUENCE MENU - SEE THE TIMELINE IMPLEMENTATION
     //////////////////////////////////////////////////////////////////////////
-
-    void OnPlaySequence(wxCommandEvent& WXUNUSED(event));
-    void OnAddVideoTrack(wxCommandEvent& WXUNUSED(event));
-    void OnAddAudioTrack(wxCommandEvent& WXUNUSED(event));
-    void OnCloseSequence(wxCommandEvent& WXUNUSED(event));
 
     //////////////////////////////////////////////////////////////////////////
     // TOOLS MENU
@@ -77,7 +72,12 @@ public:
     // ENABLING/DISABLING MENUS
     //////////////////////////////////////////////////////////////////////////
 
-    void EnableSequenceMenu(bool enable);
+    /**
+     * Change the sequence menu. This is used by a timeline to set the menu to
+     * the timeline's menu.
+     * @param menu 0 to indicate that the default disabled menu should be shown
+     */
+    void setSequenceMenu(wxMenu* menu);
 
 private:
 
@@ -89,8 +89,9 @@ private:
     GuiProjectView*	    mProjectView;
 	wxPanel*			mEditor;
 
-    wxMenuBar*          menubar;    // For enabling/disabling menus
-    wxMenu*             menuedit;   // For associating with do/undo
+    wxMenuBar*          menubar;        // For enabling/disabling menus
+    wxMenu*             menuedit;       // For associating with do/undo
+    wxMenu*             menusequence;   // For determining cleanup of the sequence menu's
 
     wxAuiManager mUiManager;
 

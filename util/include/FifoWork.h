@@ -20,12 +20,17 @@ public:
 private:
     Callable mCallable;
     wxString mDescription;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<< (std::ostream& os, const Work& obj);
+
 };
 
 typedef boost::shared_ptr<Work> WorkPtr;
 typedef Fifo<WorkPtr> FifoWork;
-
 std::ostream& operator<< (std::ostream& os, const WorkPtr& obj);
-std::ostream& operator<< (std::ostream& os, const Work& obj);
 
 #endif // FIFO_WORK_H

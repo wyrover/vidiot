@@ -11,6 +11,10 @@
 
 namespace model {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 AudioClip::AudioClip()
     :	Clip()
 {
@@ -18,14 +22,30 @@ AudioClip::AudioClip()
 }
 
 AudioClip::AudioClip(AudioFilePtr file)
-:	Clip(file)
+    :	Clip(file)
 {
     VAR_DEBUG(this);
 }
 
+AudioClip::AudioClip(const AudioClip& other)
+    :   Clip(other)
+{
+    VAR_DEBUG(this);
+}
+
+AudioClip* AudioClip::clone()
+{ 
+    return new AudioClip(static_cast<const AudioClip&>(*this)); 
+}
+
 AudioClip::~AudioClip()
 {
+    VAR_DEBUG(this);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// IAUDIO
+//////////////////////////////////////////////////////////////////////////
 
 AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
 {

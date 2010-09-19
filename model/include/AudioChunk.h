@@ -77,12 +77,18 @@ protected:
     unsigned int mNrReadSamples;
     unsigned int mNrSamples;
     double mTimeStamp;
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<< (std::ostream& os, const AudioChunk& obj);
 };
 
 typedef boost::shared_ptr<AudioChunk> AudioChunkPtr;
 typedef Fifo<AudioChunkPtr> FifoAudio;
-
-std::ostream& operator<< (std::ostream& os, const AudioChunk& obj);
 std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
 
 } // namespace

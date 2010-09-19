@@ -82,12 +82,18 @@ protected:
     AVRational mTimeBase;
     boost::uint8_t *mBuffer;
     int mBufferSize;
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<< (std::ostream& os, const VideoFrame& obj);
 };
 
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 typedef Fifo<VideoFramePtr> FifoVideo;
-
-std::ostream& operator<< (std::ostream& os, const VideoFrame& obj);
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
 } // namespace

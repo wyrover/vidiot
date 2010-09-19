@@ -1,6 +1,6 @@
 #include "ProjectViewCreateFile.h"
 #include "UtilLog.h"
-#include "UtilLogGeneric.h"
+#include "UtilLogStl.h"
 #include "UtilLogBoost.h"
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>

@@ -3,6 +3,7 @@
 
 #include <wx/scrolwin.h>
 #include <wx/dnd.h>
+#include <wx/menu.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
@@ -43,6 +44,16 @@ public:
     void init(wxWindow *parent);
 
     virtual ~GuiTimeLine();
+
+    //////////////////////////////////////////////////////////////////////////
+    // SEQUENCE MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void OnAddVideoTrack(wxCommandEvent& WXUNUSED(event));
+    void OnAddAudioTrack(wxCommandEvent& WXUNUSED(event));
+    //void OnCloseSequence(wxCommandEvent& WXUNUSED(event));
+
+    wxMenu* getMenu();
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -132,6 +143,7 @@ private:
     long mWidth;
     long mHeight;
     wxRect mDropArea;
+    wxMenu mMenu;
 
     //////////////////////////////////////////////////////////////////////////
     // Interval selection

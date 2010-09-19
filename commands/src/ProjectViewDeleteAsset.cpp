@@ -2,7 +2,7 @@
 
 #include <boost/foreach.hpp>
 #include "UtilLog.h"
-#include "UtilLogGeneric.h"
+#include "UtilLogStl.h"
 
 namespace command {
 

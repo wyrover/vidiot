@@ -26,6 +26,10 @@ public:
 
     Sequence(wxString name);
 
+    Sequence(const Sequence& other);
+
+    virtual Sequence* clone();
+
 	virtual ~Sequence();
 
     //////////////////////////////////////////////////////////////////////////
@@ -69,6 +73,7 @@ public:
     virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
 
 private:
+
     wxString mName;
     std::list<VideoTrackPtr> mVideoTracks;
     std::list<AudioTrackPtr> mAudioTracks;

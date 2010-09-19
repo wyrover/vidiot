@@ -83,6 +83,8 @@ public:
     void OnClipUpdated( ClipUpdateEvent& event );
 
 private:
+    friend class SelectIntervals;
+
     GuiTimeLineZoomPtr mZoom;
     GuiTimeLine* mTimeLine;
 

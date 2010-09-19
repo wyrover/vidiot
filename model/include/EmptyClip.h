@@ -22,7 +22,11 @@ public:
 
     EmptyClip(int length);
 
-	virtual ~EmptyClip();
+    EmptyClip(const EmptyClip& other);
+
+    virtual EmptyClip* clone();
+
+    virtual ~EmptyClip();
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
