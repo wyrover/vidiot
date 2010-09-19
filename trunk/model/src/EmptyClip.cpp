@@ -10,6 +10,10 @@
 
 namespace model {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 EmptyClip::EmptyClip()
     :	Clip()
 {
@@ -22,9 +26,25 @@ EmptyClip::EmptyClip(int length)
     VAR_DEBUG(this);
 }
 
+EmptyClip::EmptyClip(const EmptyClip& other)
+:   Clip(other)
+{
+    VAR_DEBUG(this);
+}
+
+EmptyClip* EmptyClip::clone()
+{ 
+    return new EmptyClip(static_cast<const EmptyClip&>(*this)); 
+}
+
 EmptyClip::~EmptyClip()
 {
+    VAR_DEBUG(this);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// IAUDIO
+//////////////////////////////////////////////////////////////////////////
 
 AudioChunkPtr EmptyClip::getNextAudio(int audioRate, int nAudioChannels)
 {
@@ -32,6 +52,10 @@ AudioChunkPtr EmptyClip::getNextAudio(int audioRate, int nAudioChannels)
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// IVIDEO
+//////////////////////////////////////////////////////////////////////////
 
 VideoFramePtr EmptyClip::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {

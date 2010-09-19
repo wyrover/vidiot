@@ -137,8 +137,15 @@ std::pair<size_t,timeline::GuiTimeLinePtr> GuiTimelinesView::findPage(model::Seq
 void GuiTimelinesView::update() const
 {
     GuiWindow& window = *(dynamic_cast<GuiWindow*>(GetParent()));
-    window.EnableSequenceMenu(mNotebook.GetPageCount() > 0);
     timeline::GuiTimeLinePtr timeline = static_cast<timeline::GuiTimeLinePtr>(mNotebook.GetCurrentPage());
+    if (timeline)
+    {
+        window.setSequenceMenu(timeline->getMenu());
+    }
+    else
+    {
+        window.setSequenceMenu(0);
+    }
     window.getPreview().selectTimeline(timeline);
 }
 

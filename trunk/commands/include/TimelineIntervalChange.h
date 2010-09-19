@@ -18,6 +18,7 @@ public:
      * @todo Clean up these commands when the associated timeline is destroyed. Hmmm, or make closing the timeline undo-able.
      */
     TimelineIntervalChange(gui::timeline::IntervalsPtr intervals, long begin, long end, bool add);
+
     ~TimelineIntervalChange();
     bool Do();
     bool Undo();

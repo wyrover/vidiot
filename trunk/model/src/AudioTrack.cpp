@@ -9,12 +9,26 @@
 
 namespace model {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 AudioTrack::AudioTrack()
 :	Track()
 { 
-    VAR_DEBUG(this);
-
     mItClips = mClips.begin();
+    VAR_DEBUG(this);
+}
+
+AudioTrack::AudioTrack(const AudioTrack& other)
+:	Track(other)
+{
+    VAR_DEBUG(this);
+}
+
+AudioTrack* AudioTrack::clone()
+{ 
+    return new AudioTrack(static_cast<const AudioTrack&>(*this)); 
 }
 
 AudioTrack::~AudioTrack()

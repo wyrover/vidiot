@@ -15,7 +15,7 @@ Clip::Clip()
     :	IControl()
     ,   mRender()
     ,   mOffset(0)
-    ,   mLength(0)
+    ,   mLength(-1)
     ,   mLink()
 { 
     VAR_DEBUG(this);
@@ -25,14 +25,29 @@ Clip::Clip(IControlPtr clip)
     :	IControl()
     ,   mRender(clip)
     ,   mOffset(0)
-    ,   mLength(0)
+    ,   mLength(-1)
     ,   mLink()
 { 
     VAR_DEBUG(this);
 }
 
+Clip::Clip(const Clip& other)
+:   IControl()
+,   mRender(make_cloned<model::IControl>(other.mRender))
+,   mOffset(other.mOffset)
+,   mLength(other.mLength)
+,   mLink(other.mLink)
+{
+}
+
+Clip* Clip::clone()
+{ 
+    return new Clip(static_cast<const Clip&>(*this)); 
+}
+
 Clip::~Clip()
 {
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +56,11 @@ Clip::~Clip()
 
 boost::int64_t Clip::getNumberOfFrames()
 {
-    return mRender->getNumberOfFrames() - mOffset; 
+    if (mLength == -1)
+    {
+        mLength = mRender->getNumberOfFrames() - mOffset;
+    }
+    return mLength; 
 }
 
 void Clip::moveTo(boost::int64_t position)
@@ -62,6 +81,35 @@ void Clip::setLink(ClipPtr link)
 ClipPtr Clip::getLink() const
 {
     return mLink;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+boost::int64_t Clip::getOffset()
+{
+    return mOffset;
+}
+
+void Clip::setOffset(boost::int64_t offset)
+{
+    mOffset = offset;
+}
+
+void Clip::setLength(boost::int64_t length)
+{
+    mLength = length;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const Clip& obj )
+{
+    os << '[' << obj.mOffset << ',' << obj.mLength << ']';
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

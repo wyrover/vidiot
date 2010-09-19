@@ -36,6 +36,7 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineZoomPtr zoom,
 ,   mTrack()
 ,   mSelected(false)
 ,   mBeingDragged(false)
+,   mRect(0,0,0,0)
 {
 }
 
@@ -111,6 +112,13 @@ void GuiTimeLineClip::updateBitmap()
         }
     }
 
+    if (mRect.GetHeight() != 0)
+    {
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.SetPen(*wxGREEN_PEN);
+        dc.DrawRectangle(mRect);
+    }
+
     QueueEvent(new ClipUpdateEvent(shared_from_this()));
 }
 
@@ -158,6 +166,16 @@ bool GuiTimeLineClip::isBeingDragged()
 {
     return mBeingDragged;
 }
+
+void GuiTimeLineClip::show(wxRect rect)
+{
+    mRect.width = rect.width;
+    mRect.x = rect.x;
+    mRect.y = 4;
+    mRect.height = mBitmap.GetHeight() - 8; 
+    updateBitmap();
+}
+
 
 model::ClipPtr GuiTimeLineClip::getClip() const
 {

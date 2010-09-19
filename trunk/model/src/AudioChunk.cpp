@@ -79,11 +79,16 @@ unsigned long AudioChunk::getUnreadSampleCount() const
     return mNrSamples - mNrReadSamples;
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
 std::ostream& operator<< (std::ostream& os, const AudioChunk& obj)
 {
     os  << &obj                         << "|" 
-        << obj.getTimeStamp()           << "|" 
-        << obj.getNumberOfChannels()    << "|" 
+        << obj.mTimeStamp               << "|" 
+        << obj.mNrChannels              << "|" 
         << obj.getUnreadSampleCount();
     return os;
 }

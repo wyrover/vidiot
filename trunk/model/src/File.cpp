@@ -67,6 +67,30 @@ File::File(boost::filesystem::path path, int buffersize)
     VAR_DEBUG(this);
 }
 
+File::File(const File& other)
+:	IControl()
+,   mPath(other.mPath)
+,	mFileContext(0)
+,   mReadingPackets(false)
+,   mPackets(FifoPacket(1))
+,   mMaxBufferSize(other.mMaxBufferSize)
+,   mStreamIndex(-1)
+,   mCodecContext(0)
+,   mBufferPacketsThreadPtr(0)
+,   mFileOpen(false)
+,   mNumberOfFrames(0) /** todo for a copy we read the number of packets again from the file in getNumberOfFrames() */
+,   mTwoInARow(0)
+,   mCodecType(other.mCodecType)
+,   mLastModified(other.mLastModified)
+{
+    VAR_DEBUG(this);
+}
+
+File* File::clone()
+{ 
+    return new File(static_cast<const File&>(*this)); 
+}
+
 File::~File()
 {
     VAR_DEBUG(this);

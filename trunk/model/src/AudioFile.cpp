@@ -26,10 +26,8 @@ AudioFile::AudioFile()
 ,   mDecodingAudio(false)
 { 
     mCodecType = CODEC_TYPE_AUDIO;
-    
     VAR_DEBUG(this);
 }
-
 
 AudioFile::AudioFile(boost::filesystem::path path)
 :	File(path,sMaxBufferSize)
@@ -37,9 +35,22 @@ AudioFile::AudioFile(boost::filesystem::path path)
 ,   mDecodingAudio(false)
 { 
     mCodecType = CODEC_TYPE_AUDIO;
-
     VAR_DEBUG(this);
     /** /todo asserts on sample sizes. Only 16 bits data supported (resampling/decoding?)  */
+}
+
+AudioFile::AudioFile(const AudioFile& other)
+:   File(other)
+,   mResampleContext(0)
+,   mDecodingAudio(false)
+{
+    mCodecType = CODEC_TYPE_AUDIO;
+    VAR_DEBUG(this);
+}
+
+AudioFile* AudioFile::clone()
+{ 
+    return new AudioFile(static_cast<const AudioFile&>(*this)); 
 }
 
 AudioFile::~AudioFile()

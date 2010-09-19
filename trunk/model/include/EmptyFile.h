@@ -22,6 +22,10 @@ public:
 
 	EmptyFile(boost::int64_t length);
 
+    EmptyFile(const EmptyFile& other);
+
+    virtual EmptyFile* clone();
+
 	virtual ~EmptyFile();
 
     //////////////////////////////////////////////////////////////////////////

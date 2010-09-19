@@ -26,6 +26,7 @@
 #include "Sequence.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
+#include "ids.h"
 
 namespace gui { namespace timeline {
 
@@ -50,8 +51,21 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
 ,   mSelectedIntervals()
+,   mMenu()
 {
     LOG_INFO;
+
+    mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"));
+    mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"));
+    mMenu.AppendSeparator();
+    mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions from sequence"));
+    mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
+    mMenu.Append(ID_REMOVEMARKERS,  _("Remove all markers"));
+    // todo menusequence->Append(ID_CLOSESEQUENCE, _("Close"));
+
+    //Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnCloseSequence,    this, ID_CLOSESEQUENCE);
+    mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddVideoTrack,    this, ID_ADDVIDEOTRACK);
+    mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddAudioTrack,    this, ID_ADDAUDIOTRACK);
 
     if (mSequence)
     {
@@ -133,6 +147,29 @@ GuiTimeLine::~GuiTimeLine()
         track->Unbind(TRACK_UPDATE_EVENT,    &GuiTimeLine::OnTrackUpdated,       this);
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+// SEQUENCE MENU
+//////////////////////////////////////////////////////////////////////////
+
+void GuiTimeLine::OnAddVideoTrack(wxCommandEvent& WXUNUSED(event))
+{
+    LOG_DEBUG;
+    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
+    //mProject->Submit(new command::TimelineCreateVideoTrack(*mOpenSequences.begin()));
+}
+
+void GuiTimeLine::OnAddAudioTrack(wxCommandEvent& WXUNUSED(event))
+{
+    LOG_DEBUG;
+    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
+    //    mProject->Submit(new command::TimelineCreateAudioTrack(*mOpenSequences.begin()));
+}
+
+//void GuiTimeLine::OnCloseSequence(wxCommandEvent& WXUNUSED(event))
+//{
+//    mTimelinesView->Close();
+//}
 
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
@@ -256,6 +293,11 @@ void GuiTimeLine::showDropArea(wxRect area)
         Update();
 
     }
+}
+
+wxMenu* GuiTimeLine::getMenu()
+{
+    return &mMenu;
 }
 
 //////////////////////////////////////////////////////////////////////////

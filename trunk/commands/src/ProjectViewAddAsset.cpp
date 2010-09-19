@@ -1,6 +1,6 @@
 #include "ProjectViewAddAsset.h"
 #include "UtilLog.h"
-#include "UtilLogGeneric.h"
+#include "UtilLogStl.h"
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 

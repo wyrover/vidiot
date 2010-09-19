@@ -25,6 +25,19 @@ Track::Track()
     VAR_DEBUG(this);
 }
 
+Track::Track(const Track& other)
+:	IControl()
+,   wxEvtHandler()
+,   mClips(other.mClips)
+{
+    VAR_DEBUG(this);
+}
+
+Track* Track::clone()
+{ 
+    return new Track(static_cast<const Track&>(*this)); 
+}
+
 Track::~Track()
 {
     VAR_DEBUG(this);

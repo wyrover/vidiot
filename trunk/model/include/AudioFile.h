@@ -22,7 +22,15 @@ public:
 
 	AudioFile(boost::filesystem::path path);
 
+    AudioFile(const AudioFile& other);
+
+    virtual AudioFile* clone();
+
 	virtual ~AudioFile();
+
+    //////////////////////////////////////////////////////////////////////////
+    // IAUDIO
+    //////////////////////////////////////////////////////////////////////////
 
     virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
 

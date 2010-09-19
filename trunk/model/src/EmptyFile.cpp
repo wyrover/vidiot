@@ -32,6 +32,19 @@ EmptyFile::EmptyFile(boost::int64_t length)
     VAR_DEBUG(this)(mLength);
 }
 
+EmptyFile::EmptyFile(const EmptyFile& other)
+:   mLength(other.mLength)
+,   mAudioPosition(0)
+,   mVideoPosition(0)
+{ 
+    VAR_DEBUG(this)(mLength);
+}
+
+EmptyFile* EmptyFile::clone()
+{ 
+    return new EmptyFile(static_cast<const EmptyFile&>(*this)); 
+}
+
 EmptyFile::~EmptyFile()
 {
     VAR_DEBUG(this);

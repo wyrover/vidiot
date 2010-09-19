@@ -20,7 +20,15 @@ public:
 
     VideoClip(VideoFilePtr clip);
 
+    VideoClip(const VideoClip& other);
+
+    virtual VideoClip* clone();
+
     virtual ~VideoClip();
+
+    //////////////////////////////////////////////////////////////////////////
+    // IVIDEO
+    //////////////////////////////////////////////////////////////////////////
 
     virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
 
