@@ -15,7 +15,7 @@ template<class ELEMENT>
 class Fifo : boost::noncopyable
 {
 public:
-    Fifo(unsigned int maxSize)
+    explicit Fifo(unsigned int maxSize)
         :   mMaxSize(maxSize)
         ,	mSize(0)
     {

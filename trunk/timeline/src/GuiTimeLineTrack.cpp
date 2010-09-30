@@ -29,12 +29,12 @@ class ClipCopyFinder
 {
 public:
     ClipCopyFinder(model::ClipPtr clip)
-        :   mClip(clip) 
+        :   mClip(clip)
     {
     }
     bool operator() (GuiTimeLineClipPtr clip) const
-    { 
-        return clip->getClip() == mClip; 
+    {
+        return clip->getClip() == mClip;
     }
 private:
     model::ClipPtr mClip;
@@ -93,7 +93,7 @@ GuiTimeLineTrack::~GuiTimeLineTrack()
     }
 }
 
-int GuiTimeLineTrack::getClipHeight() const 
+int GuiTimeLineTrack::getClipHeight() const
 {
     return mHeight - 2 * sTrackBorderSize;
 }
@@ -172,7 +172,8 @@ void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
 
     BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips ) // @todo only new clips not for all clips. Not done yet due to not being able to lookup splice (does splice remove from original list, and what alternative is available?)
     {
-        clip->init(shared_from_this(), mTimeLine->getClips());
+        GuiTimeLineClips allClips = mTimeLine->getClips(); // Assign to local var needed for GCC
+        clip->init(shared_from_this(), allClips);
     }
 
     updateBitmap();
@@ -246,7 +247,7 @@ void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::option
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

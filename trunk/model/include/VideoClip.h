@@ -6,7 +6,7 @@
 
 namespace model {
 
-class VideoClip 
+class VideoClip
     :   public Clip
     ,   public IVideo
 {
@@ -35,7 +35,7 @@ public:
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -45,6 +45,10 @@ private:
 
 } // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::VideoClip, 1)
 BOOST_CLASS_EXPORT(model::VideoClip)
 

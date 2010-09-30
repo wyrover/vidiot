@@ -46,13 +46,13 @@ public:
 
     /**
     * Is static since it is independent of the chosen zoom factor.
-    * /return time duration in milliseconds. 
+    * /return time duration in milliseconds.
     */
     static int ptsToTime(int pts);
 
     /**
     * Is static since it is independent of the chosen zoom factor.
-    * /return time duration in microseconds. 
+    * /return time duration in microseconds.
     */
     static int ptsToMicroseconds(int pts);
 
@@ -67,11 +67,11 @@ private:
     rational mZoom;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
-    template<class Archive> 
+    template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
 
@@ -79,6 +79,10 @@ typedef boost::shared_ptr<GuiTimeLineZoom> GuiTimeLineZoomPtr;
 
 }} // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineZoom, 1)
 BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineZoom)
 

@@ -10,7 +10,7 @@
 
 namespace model {
 
-class Sequence 
+class Sequence
     :   public IControl
     ,   public IVideo
     ,   public IAudio
@@ -50,7 +50,7 @@ public:
 
     void            Delete();
 
-    wxString        getName() const; 
+    wxString        getName() const;
     void            setName(wxString name);
 
     //////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ private:
     std::list<AudioTrackPtr> mAudioTracks;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -89,6 +89,10 @@ private:
 
 } // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Sequence, 1)
 BOOST_CLASS_EXPORT(model::Sequence)
 BOOST_CLASS_TRACKING(model::Sequence, boost::serialization::track_always)

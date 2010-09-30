@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
-// 
+//
 // Logging is done with the following macros:
 //
 // LOG_VIDEO   << <whatever> << <etc>; --> For detailed logging of video packets/frames/pts/etc. May cause performance drop.
@@ -50,7 +50,7 @@
 // Credits:
 //
 // Petru Marginean
-//      Logging In C++: A typesafe, threadsafe, portable logging mechanism 
+//      Logging In C++: A typesafe, threadsafe, portable logging mechanism
 //      Dr. Dobbs journal, September 05, 2007
 //      http://www.ddj.com/cpp/201804215
 //
@@ -80,8 +80,8 @@ DECLAREENUM(LogLevel, \
 // LOGGING MACROS
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LOG_X(level) if (level <= Log::sReportingLevel) Log().Get(level,  __FILE__, __LINE__, __FUNCTION__) 
-#define VAR_X(level) if (level <= Log::sReportingLevel) LogVar(level,  __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define LOG_X(level) if (level <= Log::sReportingLevel) Log().Get(level,  __FILE__, __LINE__, __FUNCTION__)
+#define VAR_X(level) if (level <= Log::sReportingLevel) LogVar(level,  __FILE__, __LINE__, __FUNCTION__).LOGVAR_A
 
 #define LOG_DETAIL  LOG_X(logDETAIL)
 #define LOG_AUDIO   LOG_X(logAUDIO)
@@ -111,7 +111,7 @@ DECLAREENUM(LogLevel, \
 /**
 * This class is responsible for appending a line to the logging. Each line
 * is prefixed with fixed information (time, log level, thread id, file name
-* and line, and method name). A separate class LogWriter (declared in * .cpp file) 
+* and line, and method name). A separate class LogWriter (declared in * .cpp file)
 * is used for guaranteeing thread-safety of logging these messages.
 * Actual logging is done when this object's destructor is called.
 */
@@ -129,7 +129,7 @@ public:
     static void SetLogFile(std::string path);
 
     /** Log info in a separate line, preceded with meta data. */
-    std::ostringstream& Get(LogLevel level, char* p_szFileName, size_t p_lLine, char* p_szFunction);
+    std::ostringstream& Get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);
 
 private:
     std::ostringstream os;
@@ -155,13 +155,13 @@ struct LogVar : boost::noncopyable
     LogVar& LOGVAR_B;
 
     /**
-     * Constructor for VAR_* macros. 
+     * Constructor for VAR_* macros.
      * Defined in .h because LOGVARS_ macro trick below redefines
-     * LOGVAR_A and LOGVAR_B which are used in the initializer list. 
+     * LOGVAR_A and LOGVAR_B which are used in the initializer list.
      */
-    LogVar(LogLevel level, char* p_szFileName, size_t p_lLine, char* p_szFunction)
+    LogVar(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
         :   LOGVAR_A(*this)
-        ,   LOGVAR_B(*this) 
+        ,   LOGVAR_B(*this)
         ,   mLevel(level)
         ,   mFileName(p_szFileName)
         ,   mLine(p_lLine)
@@ -171,13 +171,13 @@ struct LogVar : boost::noncopyable
     }
 
     /**
-     * Constructor for ASSERT and FATAL macros macros. 
+     * Constructor for ASSERT and FATAL macros macros.
      * Defined in .h because LOGVARS_ macro trick below redefines
-     * LOGVAR_A and LOGVAR_B which are used in the initializer list. 
+     * LOGVAR_A and LOGVAR_B which are used in the initializer list.
      */
-    LogVar(const char * expr, char* p_szFileName, size_t p_lLine, char* p_szFunction)
+    LogVar(const char * expr, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
         :   LOGVAR_A(*this)
-        ,   LOGVAR_B(*this) 
+        ,   LOGVAR_B(*this)
         ,   mLevel(logASSERT)
         ,   mFileName(p_szFileName)
         ,   mLine(p_lLine)
@@ -191,7 +191,7 @@ struct LogVar : boost::noncopyable
 
     /** Append one variable to the list of logged variables. */
     template<class type>
-    LogVar& logVar(const type& varValue, const char* varName) 
+    LogVar& logVar(const type& varValue, const char* varName)
     {
         osVars << "[" << varName << "=" << varValue << "]";
         return *this;
@@ -200,9 +200,9 @@ struct LogVar : boost::noncopyable
 private:
     std::ostringstream osVars;
     LogLevel mLevel;
-    char* mFileName;
+    const char* mFileName;
     size_t mLine;
-    char* mFunction;
+    const char* mFunction;
     boost::optional<std::string> mAssert;
 };
 

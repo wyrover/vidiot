@@ -27,7 +27,7 @@ VideoFile::VideoFile()
 :	File()
 ,   mDecodingVideo(false)
 ,   mVideoAspectRatio(0)
-{ 
+{
     VAR_DEBUG(this);
     mCodecType = CODEC_TYPE_VIDEO;
 }
@@ -36,7 +36,7 @@ VideoFile::VideoFile(boost::filesystem::path path)
 :	File(path,sMaxBufferSize)
 ,   mDecodingVideo(false)
 ,   mVideoAspectRatio(0)
-{ 
+{
     VAR_DEBUG(this);
     mCodecType = CODEC_TYPE_VIDEO;
 }
@@ -51,8 +51,8 @@ VideoFile::VideoFile(const VideoFile& other)
 }
 
 VideoFile* VideoFile::clone()
-{ 
-    return new VideoFile(static_cast<const VideoFile&>(*this)); 
+{
+    return new VideoFile(static_cast<const VideoFile&>(*this));
 }
 
 VideoFile::~VideoFile()
@@ -77,7 +77,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
 
     boost::optional<int64_t> ptsOfFirstPacket = boost::none;
 
-    while (!frameFinished) 
+    while (!frameFinished)
     {
         PacketPtr packet = getNextPacket();
         if (!packet)
@@ -88,31 +88,31 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
         }
 
         // From http://dranger.com/ffmpeg/tutorial05.html:
-        // When we get a packet from av_read_frame(), it will contain the PTS and DTS values for the information inside that packet. 
-        // But what we really want is the PTS of our newly decoded raw frame, so we know when to display it. However, the frame we 
+        // When we get a packet from av_read_frame(), it will contain the PTS and DTS values for the information inside that packet.
+        // But what we really want is the PTS of our newly decoded raw frame, so we know when to display it. However, the frame we
         // get from avcodec_decode_video() gives us an AVFrame, which doesn't contain a useful PTS value.
-        // (Warning: AVFrame does contain a pts variable, but this will not always contain what we want when we get a frame.) 
-        // However, ffmpeg reorders the packets so that the DTS of the packet being processed by avcodec_decode_video() will always 
+        // (Warning: AVFrame does contain a pts variable, but this will not always contain what we want when we get a frame.)
+        // However, ffmpeg reorders the packets so that the DTS of the packet being processed by avcodec_decode_video() will always
         // be the same as the PTS of the frame it returns. But, another warning: we won't always get this information, either.
         //
-        // Not to worry, because there's another way to find out the PTS of a frame, and we can have our program reorder the packets 
-        // by itself. We save the PTS of the first packet of a frame: this will be the PTS of the finished frame. So when the stream 
-        // doesn't give us a DTS, we just use this saved PTS. 
-        // Of course, even then, we might not get a proper pts. We'll deal with that later. 
+        // Not to worry, because there's another way to find out the PTS of a frame, and we can have our program reorder the packets
+        // by itself. We save the PTS of the first packet of a frame: this will be the PTS of the finished frame. So when the stream
+        // doesn't give us a DTS, we just use this saved PTS.
+        // Of course, even then, we might not get a proper pts. We'll deal with that later.
         if (!ptsOfFirstPacket)
         {
-            ptsOfFirstPacket = static_cast<boost::optional<int64_t>>(packet->getPacket()->pts);
+            ptsOfFirstPacket = static_cast<boost::optional<int64_t> >(packet->getPacket()->pts);
         }
 
         /** /todo handle decoders that hold multiple frames in one packet */
         int len1 = avcodec_decode_video(mCodecContext, pFrame, &frameFinished, packet->getPacket()->data, packet->getPacket()->size);
 
-        if (packet->getPacket()->dts != AV_NOPTS_VALUE) 
+        if (packet->getPacket()->dts != AV_NOPTS_VALUE)
         {
             // First, try to use dts of last decoded input packet (see  text above)
             pts = static_cast<double>(packet->getPacket()->dts);
-        } 
-        else if (*ptsOfFirstPacket != AV_NOPTS_VALUE) 
+        }
+        else if (*ptsOfFirstPacket != AV_NOPTS_VALUE)
         {
             // Fallback, use pts of the first decoded packet for this frame
             pts = static_cast<double>(*ptsOfFirstPacket);
@@ -142,11 +142,11 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
     VideoFramePtr videoFrame = boost::make_shared<VideoFrame>(format, scaledWidth, scaledHeight, pts, mCodecContext->time_base, repeat);
 
     SwsContext* ctx2 = sws_getContext(
-        mCodecContext->width, 
-        mCodecContext->height, 
-        mCodecContext->pix_fmt, 
-        scaledWidth, 
-        scaledHeight, 
+        mCodecContext->width,
+        mCodecContext->height,
+        mCodecContext->pix_fmt,
+        scaledWidth,
+        scaledHeight,
         format, SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
 
     sws_scale(ctx2,pFrame->data,pFrame->linesize,0,mCodecContext->height,videoFrame->getData(),videoFrame->getLineSizes());
@@ -161,7 +161,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
 }
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS 
+// HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
 void VideoFile::startDecodingVideo()
@@ -176,7 +176,7 @@ void VideoFile::startDecodingVideo()
     //mVideoCodecContext->lowres = 2; For decoding only a 1/4 image
 
     mVideoAspectRatio = 0;
-    if (mStream->codec->sample_aspect_ratio.num != 0) 
+    if (mStream->codec->sample_aspect_ratio.num != 0)
     {
         mVideoAspectRatio = av_q2d(mStream->codec->sample_aspect_ratio) * mCodecContext->width / mCodecContext->height;
     }
@@ -201,7 +201,7 @@ void VideoFile::stopDecodingVideo()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

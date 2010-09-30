@@ -1,18 +1,20 @@
 #include "GuiMain.h"
 
 #include <wx/msgdlg.h>
-#include <boost/exception/diagnostic_information.hpp> 
+#include <boost/exception/diagnostic_information.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
-#include "UtilLog.h"
+#include "UtilLog.h" 
 #include "UtilLogAvcodec.h"
 #include "GuiOptions.h"
 #include "GuiWindow.h"
 #include "Constants.h"
 #include "GuiDebugReport.h"
 #include "Project.h"
+
+// TODO Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
 namespace gui {
 
@@ -26,6 +28,17 @@ GuiMain::GuiMain()
 :   mProject(0)
 ,   mDone(false)
 {
+    FILE * pFile;
+  pFile = fopen ("myfile.txt","w");
+  if (pFile!=NULL)
+  {
+    fputs ("fopen example",pFile);
+    fclose (pFile);
+  }
+
+    printf("sdfdsa\n");
+//
+//    cout << "test" << std::endl;
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();
 #endif // CATCH_ALL_ERRORS
@@ -78,7 +91,7 @@ bool GuiMain::OnInit()
 
     // Done before options initialization
     // since after initializing the options,
-    // the avcodec logging is initialized, which 
+    // the avcodec logging is initialized, which
     // in requires that avcodec is initialized.
     Avcodec::init();
 
@@ -99,7 +112,7 @@ bool GuiMain::OnInit()
     dynamic_cast<GuiWindow*>(GetTopWindow())->init();
 
     return true;
-} 
+}
 
 int GuiMain::OnRun()
 {
@@ -109,10 +122,10 @@ int GuiMain::OnRun()
 
     wxApp::OnRun(); // Make exception in this call for testing OnExceptionInMainLoop() - Typically, normal code of app.
     return 0;
-} 
+}
 
 
-int GuiMain::OnExit() 
+int GuiMain::OnExit()
 {
     LOG_INFO;
     //Not: Log::Terminate() - OnUnhandledException() is called after leaving this method, and uses the log methods.
@@ -136,7 +149,7 @@ bool GuiMain::OnExceptionInMainLoop()
 {
     // Rethrown in order to be handled in 'OnUnhandledException()'
     throw;
-    return true; 
+    return true;
 }
 
 void GuiMain::OnUnhandledException()
@@ -185,7 +198,7 @@ void GuiMain::OnIdle(wxIdleEvent& event)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

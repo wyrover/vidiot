@@ -5,6 +5,7 @@
 #include <wx/propdlg.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
+#include <wx/radiobox.h>
 #include <wx/spinctrl.h>
 #include <boost/optional.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -31,7 +32,7 @@ public:
     static wxString getOptionsFileName();
     static wxString getLogFileName();
 
-    static boost::optional<wxString> GuiOptions::GetAutoLoad();
+    static boost::optional<wxString> GetAutoLoad();
     static void SetAutoLoadFilename(wxString filename);
 
     static model::FrameRate getDefaultFrameRate();
@@ -52,12 +53,12 @@ private:
     // GENERAL
     //////////////////////////////////////////////////////////////////////////
 
-    wxCheckBox* mLoadLast; 
+    wxCheckBox* mLoadLast;
 
     //////////////////////////////////////////////////////////////////////////
     // VIDEO
     //////////////////////////////////////////////////////////////////////////
-    
+
     wxRadioBox* mFrameRate;
 
     //////////////////////////////////////////////////////////////////////////

@@ -9,15 +9,15 @@
 #include "GuiPtr.h"
 #include "ModelPtr.h"
 
-namespace model { 
-    class Project; 
+namespace model {
+    class Project;
     class EventRemoveAsset;
     class EventRenameAsset;
 }
 
 namespace gui {
 
-class GuiWindow;  
+class GuiWindow;
 
 class GuiTimelinesView
 :   public wxPanel
@@ -48,15 +48,15 @@ public:
     // OPEN/CLOSE SEQUENCE
     //////////////////////////////////////////////////////////////////////////
 
-    /** 
-    * Open a timeline for the given sequence. If there already is a timeline 
-    * for this sequence, it is selected. 
+    /**
+    * Open a timeline for the given sequence. If there already is a timeline
+    * for this sequence, it is selected.
     */
     void Open( model::SequencePtr sequence );
 
     /**
-    * Close the timeline for the given sequence. 
-    * Close current open sequence by default. 
+    * Close the timeline for the given sequence.
+    * Close current open sequence by default.
     */
     void Close( model::SequencePtr sequence = model::SequencePtr() );
 
@@ -75,19 +75,23 @@ private:
     void update() const;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
-    template<class Archive> 
+    template<class Archive>
     void save(Archive & ar, const unsigned int version) const;
-    template<class Archive> 
+    template<class Archive>
     void load(Archive & ar, const unsigned int version);
     BOOST_SERIALIZATION_SPLIT_MEMBER();
 };
 
 } // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::GuiTimelinesView, 1)
 
 #endif // GUI_SEQUENCE_VIEW_H

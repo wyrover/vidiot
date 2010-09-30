@@ -5,6 +5,7 @@
 #include <wx/button.h>
 #include <wx/control.h>
 #include <wx/panel.h>
+#include <wx/slider.h>
 #include <wx/textctrl.h>
 #include <wx/minifram.h>
 #include <boost/cstdint.hpp>
@@ -67,7 +68,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxToggleButton* mSpeedButton;
-    wxMiniFrame* mSpeedSliderFrame; 
+    wxMiniFrame* mSpeedSliderFrame;
     wxSlider* mSpeedSlider;
 
     void OnSpeedSliderFocusKill(wxFocusEvent& WXUNUSED(event) );

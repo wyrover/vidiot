@@ -2,8 +2,9 @@
 #define UTIL_LOG_AVCODEC_H
 
 #include <ostream>
+#include <stdarg.h> // va_list
+#include "pixfmt.h"
 
-enum PixelFormat;
 struct AVRational;
 struct AVCodecContext;
 

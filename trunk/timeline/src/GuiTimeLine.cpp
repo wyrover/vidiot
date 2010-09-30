@@ -99,7 +99,7 @@ void GuiTimeLine::init(wxWindow *parent)
     DetermineWidth();
 
     // Initialize tracks (this also creates the bitmaps).
-    // Furthermore, the list of all clips is passed in order to 
+    // Furthermore, the list of all clips is passed in order to
     // make links between clips.
     GuiTimeLineClips allclips = getClips();
     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
@@ -179,13 +179,13 @@ void GuiTimeLine::OnAddAudioTrack(wxCommandEvent& WXUNUSED(event))
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimeLine::OnSize(wxSizeEvent& event) 
+void GuiTimeLine::OnSize(wxSizeEvent& event)
 {
     DetermineHeight();
 
-    mDividerPosition = 
-        Constants::sTimeScaleHeight + 
-        Constants::sMinimalGreyAboveVideoTracksHeight + 
+    mDividerPosition =
+        Constants::sTimeScaleHeight +
+        Constants::sMinimalGreyAboveVideoTracksHeight +
         (mHeight - Constants::sTimeScaleHeight - Constants::sMinimalGreyAboveVideoTracksHeight - Constants::sAudioVideoDividerHeight) / 2;
 
     updateSize(); // Triggers the initial drawing
@@ -252,7 +252,7 @@ void GuiTimeLine::OnTrackUpdated( TrackUpdateEvent& event )
 //////////////////////////////////////////////////////////////////////////
 
 model::SequencePtr GuiTimeLine::getSequence() const
-{ 
+{
     return mSequence;
 }
 
@@ -385,11 +385,13 @@ GuiTimeLineClips GuiTimeLine::getClips() const
     GuiTimeLineClips clips;
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
     {
-        clips.splice(clips.begin(), track->getClips());
+        GuiTimeLineClips newClips =  track->getClips(); // Assign to local var needed for GCC
+        clips.splice(clips.begin(), newClips);
     }
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
-        clips.splice(clips.begin(), track->getClips());
+        GuiTimeLineClips newClips =  track->getClips(); // Assign to local var needed for GCC
+        clips.splice(clips.begin(), newClips);
     }
     return clips;
 }
@@ -582,7 +584,7 @@ wxPoint GuiTimeLine::getScrollOffset() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

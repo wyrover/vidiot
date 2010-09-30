@@ -20,7 +20,7 @@
 
 namespace gui { namespace timeline {
 
-class TrackUpdateEvent;  
+class TrackUpdateEvent;
 
 DECLARE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
@@ -38,8 +38,8 @@ public:
 
     /**
      * Two step construction. First the constructor (in combination with serialize)
-     * sets all relevant  members. Second, this method initializes all GUI stuff 
-     * including the bitmap. 
+     * sets all relevant  members. Second, this method initializes all GUI stuff
+     * including the bitmap.
      */
     void init(wxWindow *parent);
 
@@ -76,7 +76,7 @@ public:
     wxBitmap getDragBitmap(wxPoint& hostspot);// const;
     void updateBitmap();
 
-    void showDropArea(wxRect area); 
+    void showDropArea(wxRect area);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -157,7 +157,7 @@ private:
 
     /** Y-position of audio-video divider */
     int mDividerPosition;
-    
+
     state::Machine mMouseState;
 
     model::SequencePtr mSequence;
@@ -173,19 +173,23 @@ private:
 
     void updateSize();
     void DetermineWidth();
-    void DetermineHeight(); 
+    void DetermineHeight();
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
-    template<class Archive> 
+    template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::GuiTimeLine, 1)
 BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLine)
 

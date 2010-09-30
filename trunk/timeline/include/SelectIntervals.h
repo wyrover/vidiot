@@ -57,7 +57,7 @@ private:
     GuiTimeLinePtr mTimeline;
 
     wxRegion mMarkedIntervals;
-    
+
     bool mNewIntervalActive;
     long mNewIntervalBegin;
     long mNewIntervalEnd;
@@ -89,16 +89,20 @@ private:
     ReplacementMap findReplacements(GuiTimeLineTrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
-    template<class Archive> 
+    template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::SelectIntervals, 1)
 BOOST_CLASS_EXPORT(gui::timeline::SelectIntervals)
 

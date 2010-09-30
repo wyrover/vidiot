@@ -22,7 +22,7 @@ public:
     virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) = 0;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -35,6 +35,10 @@ public:
 } // namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(model::IAudio)
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::IAudio, 1)
 BOOST_CLASS_EXPORT(model::IAudio)
 BOOST_CLASS_TRACKING(model::IAudio, boost::serialization::track_always)

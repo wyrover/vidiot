@@ -1,5 +1,5 @@
 /* XPM */
-static char * folder_horizontal_open_xpm[] = {
+static /*const*/ char * folder_horizontal_open_xpm[] = {
 "16 16 84 1",
 " 	c None",
 ".	c #CC8800",

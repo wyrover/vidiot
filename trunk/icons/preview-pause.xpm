@@ -1,5 +1,5 @@
 /* XPM */
-static char * preview_pause_xpm[] = {
+static /*const*/ char * preview_pause_xpm[] = {
 "16 16 43 1",
 " 	c None",
 ".	c #3F9EE9",

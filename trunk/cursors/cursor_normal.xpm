@@ -1,5 +1,5 @@
 /* XPM */
-static char * cursor_normal_xpm[] = {
+static /*const*/ char * cursor_normal_xpm[] = {
 /* width height num_colors chars_per_pixel */
 "32 32 25 1",
 /* colors */
