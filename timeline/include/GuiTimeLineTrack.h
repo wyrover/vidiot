@@ -21,7 +21,7 @@ class ClipUpdateEvent;
 
 DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
 
-class GuiTimeLineTrack 
+class GuiTimeLineTrack
     :   public boost::enable_shared_from_this<GuiTimeLineTrack>
     ,   public wxEvtHandler
 {
@@ -33,12 +33,12 @@ public:
 
     /** Recovery constructor equals two '0' pointers. */
     GuiTimeLineTrack(
-        GuiTimeLineZoomPtr zoom = GuiTimeLineZoomPtr(), 
+        GuiTimeLineZoomPtr zoom = GuiTimeLineZoomPtr(),
         model::TrackPtr track = model::TrackPtr());
 
     /**
      * Two step construction. First the constructor (in combination with serialize)
-     * sets all relevant  members. Second, this method initializes all GUI stuff 
+     * sets all relevant  members. Second, this method initializes all GUI stuff
      * including the bitmap.
      * @param timeline timeline to which this track belongs
      * @param allclips list of all clips in this timeline (used for linking clips together)
@@ -96,16 +96,20 @@ private:
     wxBitmap mBitmap;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
-    template<class Archive> 
+    template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineTrack, 1)
 BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineTrack)
 

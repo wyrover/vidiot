@@ -29,9 +29,9 @@ public:
 
     virtual boost::int64_t getNumberOfFrames() = 0;
     virtual void moveTo(boost::int64_t position) = 0;
-    
+
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -44,6 +44,10 @@ public:
 } // namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(model::IControl)
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::IControl, 1)
 BOOST_CLASS_EXPORT(model::IControl)
 BOOST_CLASS_TRACKING(model::IControl, boost::serialization::track_always)

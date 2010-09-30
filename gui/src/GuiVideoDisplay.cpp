@@ -51,8 +51,8 @@ GuiVideoDisplay::GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer)
 ,	mHeight(100)
 ,   mPlaying(false)
 ,	mProducer(producer)
-,   mVideoFrames(model::FifoVideo(20))
-,   mAudioChunks(model::FifoAudio(1000))
+,   mVideoFrames(20)
+,   mAudioChunks(1000)
 ,   mAbortThreads(false)
 ,   mAudioBufferThreadPtr(0)
 ,   mVideoBufferThreadPtr(0)
@@ -163,7 +163,7 @@ void GuiVideoDisplay::moveTo(int64_t position)
 
         mAudioChunks.push(model::AudioChunkPtr()); // Unblock 'pop()', if needed
         mVideoFrames.push(model::VideoFramePtr()); // Unblock 'pop()', if needed
-        
+
         // Playback can be stopped (moveTo) before the first audioRequested is done by portaudio.
         // That shouldn't block the videoDisplayThread (which blocks until audioRequested signals
         // it to proceed).
@@ -184,7 +184,7 @@ void GuiVideoDisplay::moveTo(int64_t position)
     // This must be done AFTER stopping all player threads, since - for instance -
     // otherwise the Track::moveTo() can interfere with Track::getNext...() when
     // changing the iterator.
-    mProducer->moveTo(position); 
+    mProducer->moveTo(position);
     boost::mutex::scoped_lock lock(mMutexDraw);
     mCurrentVideoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
     if (mCurrentVideoFrame)
@@ -220,19 +220,19 @@ int GuiVideoDisplay::getSpeed() const
 
 void GuiVideoDisplay::audioBufferThread()
 {
-    while (!mAbortThreads) 
+    while (!mAbortThreads)
 	{
         model::AudioChunkPtr chunk = mProducer->getNextAudio(sFrameRate,sStereo);
 
         if (chunk)
         {
-            mSoundTouch.putSamples(chunk->getUnreadSamples(), chunk->getUnreadSampleCount() / sStereo) ; /** @todo what is a sample? In SoundTouch context it's the data for both speakers. In my context it's the data for one speaker... */
+            mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / sStereo) ; /** @todo what is a sample? In SoundTouch context it's the data for both speakers. In my context it's the data for one speaker... */
             while (!mSoundTouch.isEmpty())
             {
                 int nFramesAvailable = mSoundTouch.numSamples();
                 boost::int16_t* p = 0;
                 model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFramesAvailable * sStereo, 0); /** @todo pts (0)?? */
-                int nFrames = mSoundTouch.receiveSamples(audioChunk->getBuffer(), nFramesAvailable);
+                int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
                 ASSERT(nFrames == nFramesAvailable)(nFrames)(nFramesAvailable);
                 mAudioChunks.push(audioChunk);
             }
@@ -308,7 +308,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
 void GuiVideoDisplay::videoBufferThread()
 {
 	LOG_INFO;
-    while (!mAbortThreads) 
+    while (!mAbortThreads)
 	{
         model::VideoFramePtr videoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
         mVideoFrames.push(videoFrame);
@@ -324,7 +324,7 @@ void GuiVideoDisplay::videoDisplayThread()
     }
     LOG_INFO;
 
-    while (!mAbortThreads) 
+    while (!mAbortThreads)
     {
         model::VideoFramePtr videoFrame = mVideoFrames.pop();
         if (!videoFrame)
@@ -339,14 +339,14 @@ void GuiVideoDisplay::videoDisplayThread()
 
         mCurrentTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream)) - mStartTime;
         int nextFrameTime = gui::timeline::GuiTimeLineZoom::ptsToTime(videoFrame->getPts() - mStartPts);
-        int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime); 
+        int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime);
         int sleepTime = nextFrameTimeAdaptedForPlaybackSpeed - mCurrentTime;
-        
+
         //////////////////////////////////////////////////////////////////////////
         // DISPLAY NEW FRAME
         //////////////////////////////////////////////////////////////////////////
 
-        if (sleepTime < 20 || sleepTime > 1000) 
+        if (sleepTime < 20 || sleepTime > 1000)
         {
             // Skip the picture
             VAR_WARNING(sleepTime)(videoFrame->getPts());
@@ -371,11 +371,11 @@ void GuiVideoDisplay::videoDisplayThread()
 //////////////////////////////////////////////////////////////////////////
 
 inline void GuiVideoDisplay::OnEraseBackground(wxEraseEvent& event)
-{ 
-    /* do nothing */ 
+{
+    /* do nothing */
 }
 
-void GuiVideoDisplay::OnSize(wxSizeEvent& event) 
+void GuiVideoDisplay::OnSize(wxSizeEvent& event)
 {
     int w = mWidth;
     int h = mHeight;
@@ -395,7 +395,7 @@ void GuiVideoDisplay::OnSize(wxSizeEvent& event)
 
 }
 
-void GuiVideoDisplay::OnPaint(wxPaintEvent& event) 
+void GuiVideoDisplay::OnPaint(wxPaintEvent& event)
 {
     boost::shared_ptr<wxBitmap> bitmap;
     {
@@ -431,7 +431,7 @@ void GuiVideoDisplay::showNewVideoFrame()
     if (mCurrentVideoFrame)
     {
         // If there is no displayed video frame, do not change the timeline's cursor
-        // position. An example of this is the case where the cursor is positioned 
+        // position. An example of this is the case where the cursor is positioned
         // beyond the end of the sequence.
         GetEventHandler()->QueueEvent(new GuiEventPlaybackPosition(mCurrentVideoFrame->getPts()));
     }

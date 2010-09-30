@@ -56,11 +56,13 @@ bool Project::DeleteContents()
 
 bool Project::OnCloseDocument()
 {
-    // Uses ProcessEvent explicitly. The events must be handled immediately, 
+    // Uses ProcessEvent explicitly. The events must be handled immediately,
     // because wxWidgets will destruct this Project object directly after
     // calling OnCloseDocument(). If QueueEvent is used, the event is handled
     // AFTER the destruction of this object which leads to crashes.
-    gui::wxGetApp().ProcessEvent(EventCloseProject(this));
+
+    EventCloseProject closeEvent(this); // Do not 'inline' in the next line like gui::wxGetApp().ProcessEvent(EventCloseProject(this)); Doesn't compile in g++
+    gui::wxGetApp().ProcessEvent(closeEvent);
     return wxDocument::OnCloseDocument();
 }
 
@@ -195,7 +197,7 @@ void Project::scheduleWork(WorkPtr work)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

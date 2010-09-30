@@ -1,5 +1,5 @@
 /* XPM */
-static char * preview_end_xpm[] = {
+static /*const*/ char * preview_end_xpm[] = {
 "16 16 52 1",
 " 	c None",
 ".	c #3F9EE9",

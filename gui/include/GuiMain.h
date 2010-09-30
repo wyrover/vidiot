@@ -7,7 +7,9 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 
+#ifdef _MSC_VER
 //#define CATCH_ALL_ERRORS
+#endif // _MSC_VER
 
 namespace model {
     class EventOpenProject;
@@ -30,7 +32,7 @@ public:
     ~GuiMain();
 
     //////////////////////////////////////////////////////////////////////////
-    // PROJECTS 
+    // PROJECTS
     //////////////////////////////////////////////////////////////////////////
 
     void OnOpenProject( model::EventOpenProject &event );
@@ -65,7 +67,7 @@ private:
     bool mDone;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;

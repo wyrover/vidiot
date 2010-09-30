@@ -81,7 +81,7 @@ public:
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////
 
-    virtual wxString getName() const = 0; 
+    virtual wxString getName() const = 0;
     virtual void setName(wxString name);
 
 protected:
@@ -92,7 +92,7 @@ protected:
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -103,10 +103,14 @@ private:
 } // namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(model::AProjectViewNode)
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::AProjectViewNode, 1)
 BOOST_CLASS_EXPORT(model::AProjectViewNode)
 BOOST_CLASS_TRACKING(model::AProjectViewNode, boost::serialization::track_always)
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(boost::enable_shared_from_this<AProjectViewNode>)
 
-#endif A_PROJECT_VIEW_NODE
+#endif // A_PROJECT_VIEW_NODE

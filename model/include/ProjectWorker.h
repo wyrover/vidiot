@@ -47,4 +47,4 @@ private:
 
 } // namespace
 
-#endif PROJECT_WORKER_H
+#endif // PROJECT_WORKER_H

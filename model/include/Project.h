@@ -13,11 +13,11 @@ namespace model {
 DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,   model::Project*);
 DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,  model::Project*);
 
-/** 
+/**
 * \class Project
 * This class is not managed via shared_ptr's since it's construction/destruction
 * is managed by the wxWidgets document/view framework. Therefore, pointer ownership
-* cannot be transferred to a shared_ptr. This was also the rational to not let 
+* cannot be transferred to a shared_ptr. This was also the rational to not let
 * Project inherit from ProjectAsset, and let the document be the root node. Instead,
 * the document has a separate root node 'mRoot'.
 * \image html Project.png
@@ -80,7 +80,7 @@ public:
     * Trigger work to be executed on the worker thread.
     */
     void scheduleWork(WorkPtr work);
-    
+
     //////////////////////////////////////////////////////////////////////////
     // ACCESSORS
     //////////////////////////////////////////////////////////////////////////
@@ -96,13 +96,13 @@ private:
     ProjectWorker mWorker;
 
     //////////////////////////////////////////////////////////////////////////
-    // 
+    //
     //////////////////////////////////////////////////////////////////////////
 
     DECLARE_DYNAMIC_CLASS(Project)
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -112,6 +112,10 @@ private:
 
 } // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Project, 1)
 
-#endif PROJECT_H
+#endif // PROJECT_H

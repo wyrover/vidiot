@@ -42,7 +42,7 @@ private:
     std::map<timeline::GuiTimeLinePtr, PlayerPtr> mPlayers;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -52,6 +52,10 @@ private:
 
 } // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::GuiPreview, 1)
 
 #endif // GUI_PREVIEW_H

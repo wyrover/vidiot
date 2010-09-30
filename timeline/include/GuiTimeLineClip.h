@@ -29,16 +29,17 @@ public:
 
     /** The default '0' pointers are used for construction in case of recovery. */
     GuiTimeLineClip(
-        GuiTimeLineZoomPtr zoom = GuiTimeLineZoomPtr(), 
+        GuiTimeLineZoomPtr zoom = GuiTimeLineZoomPtr(),
         model::ClipPtr clip = model::ClipPtr());
     /**
      * Two step construction. First the constructor (in combination with serialize)
-     * sets all relevant  members. Second, this method initializes all GUI stuff 
-     * including the bitmap. 
+     * sets all relevant  members. Second, this method initializes all GUI stuff
+     * including the bitmap.
      * @param track track to which this clip belongs
      * @param allclips list of all clips in the timeline of this clip (used for linking clips)
      */
     void init(boost::weak_ptr<GuiTimeLineTrack> track, GuiTimeLineClips& allclips);
+
 	virtual ~GuiTimeLineClip();
 
     const wxBitmap& getBitmap();
@@ -50,9 +51,9 @@ public:
     bool isBeingDragged();
 
     GuiTimeLineTrackPtr getTrack() const;
-    
+
     model::ClipPtr getClip() const;
-    GuiTimeLineClipPtr GuiTimeLineClip::getLink() const;
+    GuiTimeLineClipPtr getLink() const;
 
     // tmp for showing intersect with selected regions
     void show(wxRect rect);
@@ -77,16 +78,20 @@ private:
     wxRect mRect;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
-    template<class Archive> 
+    template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineClip, 1)
 BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineClip)
 

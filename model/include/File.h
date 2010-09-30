@@ -9,7 +9,7 @@
 #include "FilePacket.h"
 #include "AProjectViewNode.h"
 
-#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg 
+#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
 
 extern "C" {
 #include <avformat.h>
@@ -17,7 +17,7 @@ extern "C" {
 
 namespace model {
 
-class File 
+class File
     :   public IControl
     ,   public AProjectViewNode
 {
@@ -48,7 +48,7 @@ public:
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////
 
-    wxString getName() const; 
+    wxString getName() const;
     boost::filesystem::path getPath() const;
     wxString getLastModified() const;
     bool isSupported();
@@ -63,7 +63,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /**
-    * This mutex is needed to ensure that never multiple avcodec open/close 
+    * This mutex is needed to ensure that never multiple avcodec open/close
     * are executed in parallel.
     */
     static boost::mutex sMutexAvcodec;
@@ -126,10 +126,10 @@ private:
     void bufferPacketsThread();
 
     boost::filesystem::path mPath;
-    mutable boost::optional<wxString> mLastModified; 
+    mutable boost::optional<wxString> mLastModified;
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -139,6 +139,10 @@ private:
 
 } // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::File, 1)
 BOOST_CLASS_EXPORT(model::File)
 

@@ -8,7 +8,7 @@ namespace boost { namespace serialization {
 template<class Archive>
 void save(Archive & ar, const wxString & string, const unsigned int version)
 {
-    std::string s = string.mb_str();
+    std::string s = string.mb_str();//string.ToStdString();
     ar & s;
 }
 
@@ -50,7 +50,8 @@ void save(Archive & ar, const wxRegion & region, const unsigned int version)
     it.Reset();
     while (it)
     {
-        ar & it.GetRect();
+        wxRect rect = it.GetRect(); // Needed for GCC
+        ar & rect;
         it++;
     }
 }

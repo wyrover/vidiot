@@ -2,7 +2,7 @@
 #include <sstream>
 #include "UtilLog.h"
 
-#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg 
+#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
 
 extern "C" {
 #include <avformat.h>
@@ -62,7 +62,7 @@ std::ostream& operator<< (std::ostream& os, const PixelFormat& obj)
     case PIX_FMT_VDPAU_H264: os << "PIX_FMT_VDPAU_H264"; break;
     case PIX_FMT_NB: os << "PIX_FMT_NB"; break;
     default: os << "Unknown PixelFormat";
-    } 
+    }
     return os;
 
 };
@@ -95,19 +95,24 @@ std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
 
 void Avcodec::log(void *ptr, int val, const char * msg, va_list ap)
 {
-    int len = _vscprintf( msg, ap );
-    char* buffer = new char[len+1]; // _vscprintf doesn't count terminating '\0'
-    vsprintf(buffer,msg,ap);
-    if ( buffer[len-1] == '\n' )
+    static const int nChars = 500;
+    static char* fixedbuffer = new char[nChars];
+
+    int len = vsnprintf(fixedbuffer, nChars, msg, ap);
+//    int len = _vscprintf( msg, ap );
+//    char* buffer = new char[len+1]; // _vscprintf doesn't count terminating '\0'
+//    vsprintf(buffer,msg,ap);
+    //va_end(ap); //TODO is this needed? See http://www.tin.org/bin/man.cgi?section=3&topic=vsnprintf
+    if ( len > 0 && fixedbuffer[len-1] == '\n' )
     {
         // Strip new line in logged line
-        buffer[len-1] = '.';
+        fixedbuffer[len-1] = '.';
     }
 
     std::ostringstream o;
     if (ptr)
     {
-        o   << "[" 
+        o   << "["
             << (*(AVClass**)ptr)->item_name(ptr)
             << ";"
             << (*(AVClass**)ptr)->class_name
@@ -117,13 +122,13 @@ void Avcodec::log(void *ptr, int val, const char * msg, va_list ap)
     {
         o << "";
     }
-    LOG_X(Log::sReportingLevel) << o.str() << " [" << buffer << "]";
+    LOG_X(Log::sReportingLevel) << o.str() << " [" << fixedbuffer << "]";
 }
 
 void Avcodec::init()
 {
     av_register_all();
-    url_set_interrupt_cb(0);  
+    url_set_interrupt_cb(0);
     av_log_set_callback( Avcodec::log );
 }
 

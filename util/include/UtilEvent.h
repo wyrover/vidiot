@@ -58,7 +58,7 @@
 //    }
 //    virtual wxEvent* Clone() const
 //    {
-//        return new SingleValueEvent(*this); 
+//        return new SingleValueEvent(*this);
 //
 //    }
 //    ValueType getValue() const
@@ -69,5 +69,5 @@
 //    ValueType mValue;
 //};
 
-#endif UTIL_EVENT_GENERIC_H
+#endif // UTIL_EVENT_GENERIC_H
 

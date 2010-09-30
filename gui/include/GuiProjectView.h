@@ -29,7 +29,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
-    
+
     void OnOpenProject( model::EventOpenProject &event );
     void OnCloseProject( model::EventCloseProject &event );
     void OnAutoOpenFolder( EventAutoFolderOpen& event );
@@ -84,7 +84,7 @@ private:
     GuiTimelinesView& getTimeLines();
 
     //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION 
+    // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
@@ -94,6 +94,10 @@ private:
 
 } // namespace
 
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::GuiProjectView, 1)
 
 #endif // GUI_PROJECT_VIEW_H

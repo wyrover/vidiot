@@ -5,6 +5,7 @@
 #include <boost/format.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <string>
+#include <share.h> // _SH_DENYWR
 #include "UtilFifo.h"
 
 /** todo use wxDebugReport */
@@ -28,11 +29,11 @@ static LogWriter* sWriter = 0;
 class LogWriter : boost::noncopyable
 {
 public:
-    LogWriter() 
+    LogWriter()
         :   mEnabled(true)
         ,   mFifo(sMaximumBufferedLoglines)
         ,   mFile(0)
-    { 
+    {
         /** /todo what if file not possible (no such disk)  use boost to determine first */
         mFile = _fsopen(sFilename.c_str(),"w",_SH_DENYWR);
         mThread.reset(new boost::thread(boost::bind(&LogWriter::thread,this)));
@@ -132,7 +133,7 @@ void Log::Terminate()
     sWriter = 0;
 }
 
-std::ostringstream& Log::Get(LogLevel level, char* p_szFileName, size_t p_lLine, char* p_szFunction)
+std::ostringstream& Log::Get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
 {
 	static const char* levelstring[] = {"NONE", "ERROR", "WARNING", "INFO", "DEBUG", "VIDEO", "AUDIO", "DETAIL", "ASSERT"};
     os << boost::format("%s % 7s: t@%04x %s(%d): %s: ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % levelstring[level] % wxThread::GetCurrentId() % p_szFileName % p_lLine % p_szFunction;

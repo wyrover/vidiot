@@ -7,6 +7,11 @@ SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${ROOT} )
 SET(CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH}  ${ROOT} )
 SET(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH}  ${CMAKE_SOURCE_DIR}/. )
 
+
+# Needed for Makefiles/Code::Blocks
+#SET( CMAKE_BUILD_TYPE DEBUG )
+
+ 
 #### FFMPEG ####
 SET( ENV{FFMPEGDIR} ${ROOT}\\ffmpeg_trunk )
 INCLUDE(FindFFMPEG.cmake)
@@ -15,18 +20,23 @@ SET( ENV{PATH} ENV{PATH};${FFMPEG_BINARY_DIR} )
 # Add include dir for generated avconfig.h
 SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} $ENV{FFMPEGDIR}/build )
 # Add include for ctypes (C99 vs. MSVC)
-SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} ${ROOT}/ffmpeg-ctypes )
- 
+IF (MSVC)
+    SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} ${ROOT}/ffmpeg-ctypes )
+ENDIF (MSVC)
+
 #### WXWIDGETS ####
+#GCC find_package(wxWidgets REQUIRED core base aui adv xml html qa)
 SET(wxWidgets_USE_LIBS base core aui adv qa xml html)
 FIND_PACKAGE(wxWidgets REQUIRED)
 
 #### BOOST ####
-SET(Boost_ADDITIONAL_VERSIONS "1.43" "1.43.0") 
+SET(Boost_ADDITIONAL_VERSIONS "1.43" "1.43.0")
+  SET( ENV{BOOST_ROOT} ${ROOT}\\boost_1_43_0 )
 SET(Boost_DEBUG TRUE)
 #SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED ON)
 Find_Package ( Boost 1.43 REQUIRED COMPONENTS date_time thread filesystem)
+#GCC serialization system)
 
 #### DOXYGEN ####
 FIND_PACKAGE(Doxygen REQUIRED)
@@ -42,8 +52,16 @@ SET(PORTAUDIO_LIBRARIES   portaudio_x86.dll)
 #### SOUNDTOUCH ####
 SET( SOUNDTOUCH_ROOT        ${ROOT}/soundtouch_trunk )
 SET( SOUNDTOUCH_INCLUDE_DIR ${SOUNDTOUCH_ROOT}/include )
-SET( SOUNDTOUCH_LIBRARY_DIR ${SOUNDTOUCH_ROOT}/source/SoundTouchDLL/Release ${SOUNDTOUCH_ROOT}/source/SoundTouch/Release)
-SET( SOUNDTOUCH_LIBRARIES   SoundTouchDll.lib SoundTouch.lib )
+SET( SOUNDTOUCH_LIBRARY_DIR ${SOUNDTOUCH_ROOT}/lib )
+IF (MSVC)
+  SET( SOUNDTOUCH_LIBRARIES   SoundTouchDllD.dll SoundTouchD.lib )
+ENDIF (MSVC)
+#IF (CMAKE_COMPILER_IS_GNUCC)
+#  SET( SOUNDTOUCH_LIBRARIES  libSoundTouch.a )
+#ENDIF (CMAKE_COMPILER_IS_GNUCC )
+  #gcc_s )
+
+#SoundTouchDllD.lib SoundTouchD.lib SoundTouchDll.lib SoundTouch.lib
 # ${SOUNDTOUCH_ROOT}/source/SoundTouch/Release/SoundTouch.lib )
 #D:\Vidiot\soundtouch_trunk\source\SoundTouchDLL\Release
 
@@ -73,10 +91,10 @@ FILE(GLOB TextFiles         ${PROJECT_SOURCE_DIR}/*.txt)
 FILE(GLOB HelpFiles         ${PROJECT_SOURCE_DIR}/help/*.*)
 
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
-IF (WIN32)
+IF (MSVC)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
         ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
-ENDIF (WIN32)
+ENDIF (MSVC)
 
 #foreach(flag_var
 #        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
@@ -87,19 +105,19 @@ ENDIF (WIN32)
 #endforeach(flag_var)
 
 
-INCLUDE_DIRECTORIES(include 
-    icons 
-    cursors 
-    ${FFMPEG_INCLUDE_DIR} 
-    ${Boost_INCLUDE_DIRS} 
-    ${PORTAUDIO_INCLUDE_DIR} 
+INCLUDE_DIRECTORIES(include
+    icons
+    cursors
+    ${FFMPEG_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+    ${PORTAUDIO_INCLUDE_DIR}
     ${INCLUDE_LIST}
     ${SOUNDTOUCH_INCLUDE_DIR}
 )
 LINK_DIRECTORIES(
-    ${FFMPEG_LIBRARY_DIR} 
-    ${Boost_LIBRARY_DIRS} 
-    ${PORTAUDIO_LIBRARY_DIR} 
+    ${FFMPEG_LIBRARY_DIR}
+    ${Boost_LIBRARY_DIRS}
+    ${PORTAUDIO_LIBRARY_DIR}
     ${SOUNDTOUCH_LIBRARY_DIR}
 )
 INCLUDE(${wxWidgets_USE_FILE})
@@ -120,9 +138,9 @@ GROUPFILES(util)
 SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
 SOURCE_GROUP("cursors"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/cursors/*.*)
 SOURCE_GROUP("cfg" FILES ${CmakeModulesFiles} ${TextFiles})
-SOURCE_GROUP("help"FILES ${HelpFiles})
+SOURCE_GROUP("help" FILES ${HelpFiles})
 set_source_files_properties(${CmakeFiles} ${ConfigurationFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 
 #### HELP FILES ####
-add_custom_command(OUTPUT HelpFiles
-COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)
+#add_custom_command(OUTPUT HelpFiles
+#COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)

@@ -9,6 +9,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/optional.hpp>
+#include "FilePacket.h"
 #include "GuiTimeLineZoom.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
@@ -19,8 +20,8 @@ namespace model {
 
 boost::mutex File::sMutexAvcodec;
 
-static double sMilliSecondsPerSecond = 1000.0; 
-static double sMicroSecondsPerSecond = 1000.0 * sMilliSecondsPerSecond; 
+static double sMilliSecondsPerSecond = 1000.0;
+static double sMicroSecondsPerSecond = 1000.0 * sMilliSecondsPerSecond;
 
 static const int sBytesPerSample = 2;
 static const double sVideoFrameRate = 25.0;
@@ -34,7 +35,7 @@ File::File()
 ,   mPath()
 ,	mFileContext(0)
 ,   mReadingPackets(false)
-,   mPackets(FifoPacket(1))
+,   mPackets(1)
 ,   mMaxBufferSize(0)
 ,   mStreamIndex(-1)
 ,   mCodecContext(0)
@@ -44,7 +45,7 @@ File::File()
 ,   mTwoInARow(0)
 ,   mCodecType(CODEC_TYPE_UNKNOWN)
 ,   mLastModified(boost::none)
-{ 
+{
     VAR_DEBUG(this);
 }
 
@@ -53,7 +54,7 @@ File::File(boost::filesystem::path path, int buffersize)
 ,   mPath(path)
 ,	mFileContext(0)
 ,   mReadingPackets(false)
-,   mPackets(FifoPacket(1))
+,   mPackets(1)
 ,   mMaxBufferSize(buffersize)
 ,   mStreamIndex(-1)
 ,   mCodecContext(0)
@@ -63,7 +64,7 @@ File::File(boost::filesystem::path path, int buffersize)
 ,   mTwoInARow(0)
 ,   mCodecType(CODEC_TYPE_UNKNOWN)
 ,   mLastModified(boost::none)
-{ 
+{
     VAR_DEBUG(this);
 }
 
@@ -72,7 +73,7 @@ File::File(const File& other)
 ,   mPath(other.mPath)
 ,	mFileContext(0)
 ,   mReadingPackets(false)
-,   mPackets(FifoPacket(1))
+,   mPackets(1)
 ,   mMaxBufferSize(other.mMaxBufferSize)
 ,   mStreamIndex(-1)
 ,   mCodecContext(0)
@@ -87,8 +88,8 @@ File::File(const File& other)
 }
 
 File* File::clone()
-{ 
-    return new File(static_cast<const File&>(*this)); 
+{
+    return new File(static_cast<const File&>(*this));
 }
 
 File::~File()
@@ -152,7 +153,7 @@ void File::startReadingPackets()
     mReadingPackets = true;
     mBufferPacketsThreadPtr.reset(new boost::thread(boost::bind(&File::bufferPacketsThread,this)));
 
-    VAR_DEBUG(this); 
+    VAR_DEBUG(this);
 }
 
 void File::stopReadingPackets()
@@ -173,12 +174,12 @@ void File::stopReadingPackets()
         mBufferPacketsThreadPtr->join();
     }
 
-    // When this lock is taken, it is certain that no 'pop' is 
+    // When this lock is taken, it is certain that no 'pop' is
     // blocking the return of getNextPacket().
     boost::mutex::scoped_lock stoplock(sMutexStop);
 
-    // Clear buffers again, since one new (empty) packet may have 
-    // been added when ending bufferPacketsThread. This is done 
+    // Clear buffers again, since one new (empty) packet may have
+    // been added when ending bufferPacketsThread. This is done
     // AFTER taking the lock sMutexStop to avoid clearing the
     // '0' packet before getNextPacket() had a chance to return.
     mPackets.flush();
@@ -190,7 +191,7 @@ void File::stopReadingPackets()
         avcodec_flush_buffers(mCodecContext);
     }
 
-    VAR_DEBUG(this); 
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -200,7 +201,7 @@ void File::stopReadingPackets()
 boost::int64_t File::getNumberOfFrames()
 {
     openFile();
-    return mNumberOfFrames; 
+    return mNumberOfFrames;
 }
 
 void File::moveTo(boost::int64_t position)
@@ -239,14 +240,14 @@ wxString File::getLastModified() const
     return *mLastModified;
 }
 
-wxString File::getName() const 
-{ 
-    return mPath.leaf(); 
+wxString File::getName() const
+{
+    return mPath.leaf();
 };
 
-bool File::isSupported() 
+bool File::isSupported()
 {
-    if (mPath.extension().compare(".avi") == 0) 
+    if (mPath.extension().compare(".avi") == 0)
     {
         return true;
     }
@@ -276,14 +277,14 @@ PacketPtr File::getNextPacket()
 
 void File::bufferPacketsThread()
 {
-    VAR_DEBUG(this); 
+    VAR_DEBUG(this);
 
     AVPacket pkt1;
     AVPacket* packet = &pkt1;
 
-    while (mReadingPackets) 
+    while (mReadingPackets)
     {
-        if (av_read_frame(mFileContext, packet) < 0) 
+        if (av_read_frame(mFileContext, packet) < 0)
         {
             LOG_DEBUG << "End of file.";
             mPackets.push(PacketPtr());
@@ -294,12 +295,12 @@ void File::bufferPacketsThread()
         int retval = av_dup_packet(packet);
         ASSERT(retval >= 0)(retval);
 
-        if(packet->stream_index == mStreamIndex) 
+        if(packet->stream_index == mStreamIndex)
         {
             PacketPtr p = boost::make_shared<Packet>(packet);
             mPackets.push(p);
             VAR_DETAIL(this)(p);
-        } 
+        }
         else
         {
             av_free_packet(packet);
@@ -309,7 +310,7 @@ void File::bufferPacketsThread()
     {
         // Reading packets was explicitly stopped (as opposed to reading until end of file).
         // Now we clear the packets fifo completely, then insert one empty packet.
-        
+
         // One new packet may be added when a pending push was unblocked by the flush
         // in 'stopReadingPackets()'.
         mPackets.flush();
@@ -320,11 +321,11 @@ void File::bufferPacketsThread()
     }
     mReadingPackets = false; // Needed for any breaks above (implicit stop at end of file)
 
-    VAR_DEBUG(this); 
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
