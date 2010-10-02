@@ -17,7 +17,7 @@
 	    message( $ENV{FFMPEGDIR} )
 	   SET( FFMPEG_LIBRARIES avformat.lib avcodec.lib avutil.lib avdevice.lib )
 	   SET( FFMPEG_SWS_LIBRARIES swscale.lib )
-	   SET( FFMPEG_LIBRARY_DIR $ENV{FFMPEGDIR}\\bin )
+	   SET( FFMPEG_LIBRARY_DIR $ENV{FFMPEGDIR}\\lib )
 	   SET( FFMPEG_BINARY_DIR $ENV{FFMPEGDIR}\\bin )
 	   SET( FFMPEG_INCLUDE_PATHS $ENV{FFMPEGDIR} $ENV{FFMPEGDIR}\\include )
 	
