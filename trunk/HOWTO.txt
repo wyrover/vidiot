@@ -1,3 +1,5 @@
+NOTE: <VidiotDir> is the dir in which all 'vidiot' work is done.
+
 NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
       a working executable (crashes upon startup). Anyway, this allows for
       checing compatibility with GCC.
@@ -11,24 +13,19 @@ Install doxygen into c:\Program Files
 =================== GRAPHVIZ ===================
 Install graphviz into c:\Program Files
 
-=================== VIDIOT ===================
-* Checkout Vidiot into D:\Vidiot\vidiot
-  (Repo: https://vidiot.svn.sourceforge.net/svnroot/vidiot)
-
-================ Code::Blocks ================
+========== MSYS + MINGW + CODEBLOCKS ==========
 * Install Code::Blocks, including MingW
-* (GCC) Add C:\Program Files (x86)\CodeBlocks\MinGW\bin to USER PATH
+* Add C:\Program Files (x86)\CodeBlocks\MinGW\bin to PATH
   (for wxwidgets: http://wiki.codeblocks.org/index.php?title=WxWindowsQuickRef)
-* Copy bin/mingw32-make.exe into bin/make.exe 
-  (otherwise code::blocks won't find make)
-
-========== MSYS & MINGW (CODEBLOCKS) ==========
-* http://sourceforge.net/projects/mingw/files/MSYS/
-* Install msys (1.0.11) into c:/msys
-* Map /mingw to C:\Program Files (x86)\CodeBlocks\MinGW 
-  (C:/Progra~2/CodeBlocks/MinGW)
-* Copy make.exe of mingw back (copy mingw32-make.exe to make.exe, which was broken by msys)
-* Add
+* In code blocks set make executable to 
+  C:\Program Files (x86)\CodeBlocks\MinGW\bin\mingw32-make.exe
+  Otherwise code::blocks won't find make, and simply renaming the file to make.exe
+  will cause the build of other MSys-MingW stuff to break.
+* Install msys (1.0.11) into c:/Msys
+  http://sourceforge.net/projects/mingw/files/MSYS/
+* C:\Msys\1.0\etc\fstab: map /mingw to C:/Progra~2/CodeBlocks/MinGW
+  (==C:\Program Files (x86)\CodeBlocks\MinGW)
+* Msys: Add
   - autoconf
   - automake
   - perl
@@ -36,98 +33,96 @@ Install graphviz into c:\Program Files
 * For soundtouch add
   - m4 (newer version which has the --gnu option)
   - libtool
-* FOr ffmpeg add
-  - coreutils (contains pr) -> coreutils-5.97-MSYS-1.0.11-snapshot.tar
+* For ffmpeg add
+  - coreutils-5.97-MSYS-1.0.11: extract pr.exe 
+  (Note: ffmpeg binaries not working)
+
+=================== VIDIOT ===================
+* Checkout Vidiot into <VidiotDir>
+  Example (VidiotDir=D:\Vidiot): D:\Vidiot\vidiot_trunk
+  (Repo: https://vidiot.svn.sourceforge.net/svnroot/vidiot)
 
 =================== BOOST ===================
-* Download Boost into D:\Vidiot\boost_1_43_0
-* Build boost into D:\Vidiot\boost_1_43_0\stage\lib (default):
+* Download Boost into <VidiotDir>\boost_1_43_0
+* CMD:
   - d:
-  - cd D:\VideoApp\InstalledLibraries
-  - cd boost_trunk
+  - cd <VidiotDir>\boost_1_43_0
   - bootstrap
   - (MSVC) .\bjam --toolset=msvc --build-type=complete stage
   - (GCC) .\bjam --toolset=gcc --build-type=complete stage
-* Add D:\Vidiot\boost_1_43_0\stage\lib to system/user path variable
+* Add  <VidiotDir>\boost_1_43_0\stage\lib to system/user path variable
 
 =================== WXWIDGETS ===================
-* Checkout wxWidgets into D:\Vidiot\wxwidgets_trunk
+* Checkout wxWidgets into <VidiotDir>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
   (I had to change platform.h include of this file to wx/msw/setup.h)
   - #define wxUSE_ON_FATAL_EXCEPTION 1
   - #define wxUSE_STACKWALKER 1
   - #define wxUSE_DEBUGREPORT 1
   - #define wxUSE_CRASHREPORT 1
-* (MSVC) compile wxwidgets (via solution/workspace) Release & Debug
+* (MSVC) build solution Release & Debug
 * (GCC)
-  cd <wxWidgets>\build\msw
-  mingw32-make -f makefile.gcc BUILD=release SHARED=1 MONOLITHIC=0 UNICODE=1 USE_QA=1
-  mingw32-make -f makefile.gcc BUILD=debug SHARED=1 MONOLITHIC=0 UNICODE=1 USE_QA=1
+  - cd <wxWidgets>\build\msw
+  - mingw32-make -f makefile.gcc BUILD=release SHARED=1 MONOLITHIC=0 UNICODE=1 USE_QA=1
+  - mingw32-make -f makefile.gcc BUILD=debug SHARED=1 MONOLITHIC=0 UNICODE=1 USE_QA=1
   (cmake requires both debug and release)
-* Set env variable wxWidgets_ROOT_DIR=D:\Vidiot\wxwidgets_trunk
+* Set env variable wxWidgets_ROOT_DIR=<VidiotDir>\wxwidgets_trunk
 * Note: install visual studio 2008 with c++ tools (not the
   various "sub"-tools under c++ tools) to avoid rc.exe problem when compiling.
 
 =================== FFMPEG ===================
-* Create folder D:\VideoApp\InstalledLibraries\ffmpeg_trunk
-* checkout svn://svn.ffmpeg.org/ffmpeg/trunk into that dir
-* Go to http://ffmpeg.arrozcru.org/wiki/index.php?title=Introduction and follow the instructions
-* http://ffmpeg.arrozcru.org/wiki/index.php?title=Get_build_instructions_from_the_apt_repository
-* I used gcc 4.4.something
-* Add
-  call "call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat"
-  to
-  C:\MSys\1.0\msys.bat
-* Open msys shell
-* cd to ffmpeg_trunk dir
-* mkdir bin
-* mkdir build
-* cd build
-* run lib.exe (MS tool) to check if everything is ok (if ok --> help message is shown)
-* ../configure --enable-shared --enable-memalign-hack --libdir=../bin --shlibdir=../bin
-* make ; make install
-* Add D:\Vidiot\ffmpeg_trunk\bin to system/user path variable
+* Download from http://ffmpeg.arrozcru.org/autobuilds/:
+  - ffmpeg-r<x>-swscale-r<y>-mingw32-shared
+  - ffmpeg-r<x>-swscale-r<y>-mingw32-shared-dev
+* Extract both into
+  <VidiotDir>\ffmpeg-precomiled 
+   
+* The steps below are how I tried compiling. However, it 'suddenly' stopped
+  working; resulting in an avutil.dll that - when loaded - caused a 0x00000005
+  error (both when using gcc and msdev). See
+  - http://ffmpeg.arrozcru.org/wiki/index.php?title=Introduction and follow the instructions
+  - http://ffmpeg.arrozcru.org/wiki/index.php?title=Get_build_instructions_from_the_apt_repository
+  - Create folder <VidiotDir>\ffmpeg_trunk
+  - checkout svn://svn.ffmpeg.org/ffmpeg/trunk into that dir
+  - Add: call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat" to C:\MSys\1.0\msys.bat
+  - In Msys: Run lib.exe (MS tool) to check if everything is ok (if ok --> help message is shown)
+  - cd <VidiotDir>/ffmpeg_trunk ; rm -rf bin ; rm -rf build ; make distclean ; mkdir bin ; mkdir build ; cd build
+  -  ../configure --enable-shared --enable-memalign-hack --libdir=../bin --shlibdir=../bin ; make ; make install
+  - Add <VidiotDir>\ffmpeg_trunk\bin to system/user path variable
 
 =================== PORTAUDIO ===================
-* Create folder D:\VideoApp\InstalledLibraries\portaudio_trunk
+* Create folder <VidiotDir>\portaudio_trunk
 * checkout https://www.portaudio.com/repos/portaudio/trunk into that dir
-* Install MS SDK
-* Open portaudio_trunk\build\msvc\portaudio.sln (convert if needed)
-* Compile Portaudio
-  - Define NO_ASIO (Project->Properties->Preprocessor defined - /D )
-  - Define NO_WASAPI
-  - Remove ASIO files from project
-  - Remove ..asio.. lines from portaudio.def
-  - add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include to the include paths
-  - add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86 to the linker "additional library directories"
-  - Compile
-* Add D:\Vidiot\portaudio_trunk\build\msvc\Win32\Debug to system/user path variable
+* Install MS DirectX SDK
+* (MSVC)
+  - Open portaudio_trunk\build\msvc\portaudio.sln (convert if needed)
+  - Adjust solution:
+    + Define NO_ASIO (Project->Properties->Preprocessor defined - /D )
+    + Define NO_WASAPI
+    + Remove ASIO files from project
+    + Remove ..asio.. lines from portaudio.def
+    + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include to the include paths
+    + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86 to the linker "additional library directories"
+  - Build
+  - Add <VidiotDir>\portaudio_trunk\build\msvc\Win32\Debug to system/user path variable
 * (GCC)
-  Rename CodeBlocks/MingW/bin/make.exe into "__make.exe" (needs msys make.exe)
-  Open msys shell (the one used for FFMPEG), then
-  ./configure --prefix=/d/Vidiot/portaudio_trunk/build/msys ; make ; make install
-  Rename __make.exe back
+  - MSys: cd <VidiotDir>/portaudio_trunk ; ./configure --prefix=/d/Vidiot/portaudio_trunk/build/msys ; make ; make install
 
 =================== SOUNDTOUCH ===================
 * Create folder  D:\VideoApp\InstalledLibraries\soundtouch_trunk
 * Checkout https://soundtouch.svn.sourceforge.net/svnroot/soundtouch/trunk into that dir
 * edit include/STTypes.h -> #define INTEGER_SAMPLES     1    //< 16bit integer samples
-* Open SoundTouchDll solution in MSDEV (convert).
-* For all configurations change /MT[d] to /MD[d]
-* Remove resource.rc from project
-* Build in Visual Studio
-* (GCC) Added M4 1.4.14 to MSYS (was needed to avoid unrecognized option: --gnu)
-* (GCC) Added libtool to MSYS
-* (GCC)copied C:\MingW\lib\gcc\mingw32\4.4.0\libstdc++.a to libstdc++.dll.a
-* (GCC) cd soundtouch_trunk
-* (GCC) ./bootstrap
-* (GCC) ./configure
-* (GCC) make
-* (GCC) make install
+* (MSVC)
+  - Open SoundTouchDll solution (convert if needed).
+  - For all configurations change /MT[d] to /MD[d]
+  - Remove resource.rc from project
+  - Build
+* (GCC)
+  - copied C:\MingW\lib\gcc\mingw32\4.4.0\libstdc++.a to libstdc++.dll.a
+  - MSys: cd soundtouch_trunk ; ./bootstrap ; ./configure ; make ; make install
 * (GCC) Copy soundtouch libs from C:\MSys\1.0\local\lib to D:\Vidiot\soundtouch_trunk\lib:
   libSoundTouch.a
   libSoundTouch.la
 * removed in soundtouch the if statement for #ifdef _GCC that includes some config.h file
-* do the soundtouch make steps (bootstrap,configure,make,make install)
 
 
