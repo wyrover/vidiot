@@ -20,7 +20,7 @@ ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder)
 ,   mSequence()
 {
     VAR_INFO(this)(mParent)(mInputFolder);
-    mCommandName = _("Create sequence from folder ") + mName; 
+    mCommandName = _("Create sequence from folder ") + mName;
 }
 
 ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder, wxString name)
@@ -32,7 +32,7 @@ ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder, wx
 {
     VAR_INFO(mParent)(name);
     ASSERT(mParent); // Parent folder must exist
-    mCommandName = _("Create sequence ") + mName; 
+    mCommandName = _("Create sequence ") + mName;
 }
 
 ProjectViewCreateSequence::~ProjectViewCreateSequence()
@@ -49,7 +49,7 @@ bool ProjectViewCreateSequence::Do()
         model::AudioTrackPtr audioTrack = boost::make_shared<model::AudioTrack>();
         mSequence->addVideoTrack(videoTrack);
         mSequence->addAudioTrack(audioTrack);
-        
+
         if (mInputFolder)
         {
             model::AutoFolderPtr autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(mInputFolder);
@@ -62,8 +62,11 @@ bool ProjectViewCreateSequence::Do()
                 model::FilePtr file = boost::dynamic_pointer_cast<model::File>(child);
                 if (file)
                 {
+                    VAR_DEBUG(file);
                     model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
+                    VAR_DEBUG(videoFile);
                     model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
+                    VAR_DEBUG(audioFile);
                     model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
                     model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
                     videoClip->setLink(audioClip);

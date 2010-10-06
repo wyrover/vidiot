@@ -16,7 +16,6 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-
     VideoFile();
 
     VideoFile(boost::filesystem::path path);

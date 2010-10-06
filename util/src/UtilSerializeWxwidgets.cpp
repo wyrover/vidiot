@@ -8,7 +8,7 @@ namespace boost { namespace serialization {
 template<class Archive>
 void save(Archive & ar, const wxString & string, const unsigned int version)
 {
-    std::string s = string.mb_str();//string.ToStdString();
+    std::string s = string.ToStdString();
     ar & s;
 }
 

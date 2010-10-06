@@ -1,23 +1,33 @@
+set VIDIOT_DIR=D:\Vidiot
+set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
+
 d:
-cd D:\Vidiot
-set SOURCE=D:\Vidiot\vidiot_trunk
-REM set PATH=%wxWidgets_ROOT_DIR%\lib\gcc_dll;%PATH%
+cd %VIDIOT_DIR%
+set SOURCE=%VIDIOT_DIR%\vidiot_trunk
 
 REM del /s/q Build 
-REM del /s/q BuildGcc
 
+cd %VIDIOT_DIR%
 if NOT EXIST Build mkdir Build
+set BUILD_DIR=%VIDIOT_DIR%\Build
 cd Build
-REM add --trace for more logging 
+if NOT EXIST MSVC mkdir MSVC
+if NOT EXIST GCCD mkdir GCCD
+if NOT EXIST GCCR mkdir GCCR
+
+REM add --trace to a cmake line for more logging 
+
+cd %BUILD_DIR%\MSVC
 cmake -G "Visual Studio 9 2008" -Wdev --debug-output %SOURCE%
 
 pause
 
-if NOT EXIST BuildGcc mkdir BuildGcc
-cd BuildGcc
-REM add --trace for more logging 
-cmake -G "CodeBlocks - MinGW Makefiles" -Wdev --debug-output %SOURCE%
+cd %BUILD_DIR%\GCCD
+cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
-cd %SOURCE%
+pause
+
+cd %BUILD_DIR%\GCCR
+cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
 
 pause
