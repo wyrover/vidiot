@@ -1,4 +1,4 @@
-NOTE: <VidiotDir> is the dir in which all 'vidiot' work is done.
+NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
 
 NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
       a working executable (crashes upon startup). Anyway, this allows for
@@ -17,7 +17,7 @@ Install graphviz into c:\Program Files
 * Install Code::Blocks, including MingW
 * Add C:\Program Files (x86)\CodeBlocks\MinGW\bin to PATH
   (for wxwidgets: http://wiki.codeblocks.org/index.php?title=WxWindowsQuickRef)
-* In code blocks set make executable to 
+* In code blocks set make executable to
   C:\Program Files (x86)\CodeBlocks\MinGW\bin\mingw32-make.exe
   Otherwise code::blocks won't find make, and simply renaming the file to make.exe
   will cause the build of other MSys-MingW stuff to break.
@@ -25,35 +25,35 @@ Install graphviz into c:\Program Files
   http://sourceforge.net/projects/mingw/files/MSYS/
 * C:\Msys\1.0\etc\fstab: map /mingw to C:/Progra~2/CodeBlocks/MinGW
   (==C:\Program Files (x86)\CodeBlocks\MinGW)
-* Msys: Add
-  - autoconf
+* Msys:
+  For soundtouch add
   - automake
+  - autoconf
   - perl
   - libcrypt
-* For soundtouch add
   - m4 (newer version which has the --gnu option)
   - libtool
 * For ffmpeg add
-  - coreutils-5.97-MSYS-1.0.11: extract pr.exe 
+  - coreutils-5.97-MSYS-1.0.11: extract pr.exe
   (Note: ffmpeg binaries not working)
 
 =================== VIDIOT ===================
-* Checkout Vidiot into <VidiotDir>
-  Example (VidiotDir=D:\Vidiot): D:\Vidiot\vidiot_trunk
+* Checkout Vidiot into <VIDIOT_DIR>
+  Example (VIDIOT_DIR=D:\Vidiot): D:\Vidiot\vidiot_trunk
   (Repo: https://vidiot.svn.sourceforge.net/svnroot/vidiot)
 
 =================== BOOST ===================
-* Download Boost into <VidiotDir>\boost_1_43_0
+* Download Boost into <VIDIOT_DIR>\boost_1_43_0
 * CMD:
   - d:
-  - cd <VidiotDir>\boost_1_43_0
+  - cd <VIDIOT_DIR>\boost_1_43_0
   - bootstrap
   - (MSVC) .\bjam --toolset=msvc --build-type=complete stage
   - (GCC) .\bjam --toolset=gcc --build-type=complete stage
-* Add  <VidiotDir>\boost_1_43_0\stage\lib to system/user path variable
+* Add  <VIDIOT_DIR>\boost_1_43_0\stage\lib to system/user path variable
 
 =================== WXWIDGETS ===================
-* Checkout wxWidgets into <VidiotDir>\wxwidgets_trunk
+* Checkout wxWidgets into <VIDIOT_DIR>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
   (I had to change platform.h include of this file to wx/msw/setup.h)
   - #define wxUSE_ON_FATAL_EXCEPTION 1
@@ -66,32 +66,38 @@ Install graphviz into c:\Program Files
   - mingw32-make -f makefile.gcc BUILD=release SHARED=1 MONOLITHIC=0 UNICODE=1 USE_QA=1
   - mingw32-make -f makefile.gcc BUILD=debug SHARED=1 MONOLITHIC=0 UNICODE=1 USE_QA=1
   (cmake requires both debug and release)
-* Set env variable wxWidgets_ROOT_DIR=<VidiotDir>\wxwidgets_trunk
+* Set env variable wxWidgets_ROOT_DIR=<VIDIOT_DIR>\wxwidgets_trunk
 * Note: install visual studio 2008 with c++ tools (not the
   various "sub"-tools under c++ tools) to avoid rc.exe problem when compiling.
+* (GCC) Add <VIDIOT_DIR>\wxwidgets_trunk\lib\gcc_dll to the path
 
 =================== FFMPEG ===================
 * Download from http://ffmpeg.arrozcru.org/autobuilds/:
   - ffmpeg-r<x>-swscale-r<y>-mingw32-shared
   - ffmpeg-r<x>-swscale-r<y>-mingw32-shared-dev
 * Extract both into
-  <VidiotDir>\ffmpeg-precomiled 
-   
+  <VIDIOT_DIR>\ffmpeg-precomiled
+* MOVE
+  <VIDIOT_DIR>/ffmpeg-precomiled/stdint.h
+  <VIDIOT_DIR>/ffmpeg-precomiled/inttypes.h
+  to
+  <VIDIOT_DIR>/ffmpeg-ctypes
+* Add <VIDIOT_DIR>\ffmpeg-precomiled\bin to system/user path variable
+
 * The steps below are how I tried compiling. However, it 'suddenly' stopped
   working; resulting in an avutil.dll that - when loaded - caused a 0x00000005
   error (both when using gcc and msdev). See
   - http://ffmpeg.arrozcru.org/wiki/index.php?title=Introduction and follow the instructions
   - http://ffmpeg.arrozcru.org/wiki/index.php?title=Get_build_instructions_from_the_apt_repository
-  - Create folder <VidiotDir>\ffmpeg_trunk
+  - Create folder <VIDIOT_DIR>\ffmpeg_trunk
   - checkout svn://svn.ffmpeg.org/ffmpeg/trunk into that dir
   - Add: call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat" to C:\MSys\1.0\msys.bat
   - In Msys: Run lib.exe (MS tool) to check if everything is ok (if ok --> help message is shown)
-  - cd <VidiotDir>/ffmpeg_trunk ; rm -rf bin ; rm -rf build ; make distclean ; mkdir bin ; mkdir build ; cd build
+  - cd <VIDIOT_DIR>/ffmpeg_trunk ; rm -rf bin ; rm -rf build ; make distclean ; mkdir bin ; mkdir build ; cd build
   -  ../configure --enable-shared --enable-memalign-hack --libdir=../bin --shlibdir=../bin ; make ; make install
-  - Add <VidiotDir>\ffmpeg_trunk\bin to system/user path variable
 
 =================== PORTAUDIO ===================
-* Create folder <VidiotDir>\portaudio_trunk
+* Create folder <VIDIOT_DIR>\portaudio_trunk
 * checkout https://www.portaudio.com/repos/portaudio/trunk into that dir
 * Install MS DirectX SDK
 * (MSVC)
@@ -104,9 +110,9 @@ Install graphviz into c:\Program Files
     + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include to the include paths
     + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86 to the linker "additional library directories"
   - Build
-  - Add <VidiotDir>\portaudio_trunk\build\msvc\Win32\Debug to system/user path variable
+  - Add <VIDIOT_DIR>\portaudio_trunk\build\msvc\Win32\Debug to system/user path variable
 * (GCC)
-  - MSys: cd <VidiotDir>/portaudio_trunk ; ./configure --prefix=/d/Vidiot/portaudio_trunk/build/msys ; make ; make install
+  - MSys: cd <VIDIOT_DIR>/portaudio_trunk ; ./configure --prefix=/d/Vidiot/portaudio_trunk/build/msys ; make ; make install
 
 =================== SOUNDTOUCH ===================
 * Create folder  D:\VideoApp\InstalledLibraries\soundtouch_trunk
@@ -118,8 +124,7 @@ Install graphviz into c:\Program Files
   - Remove resource.rc from project
   - Build
 * (GCC)
-  - copied C:\MingW\lib\gcc\mingw32\4.4.0\libstdc++.a to libstdc++.dll.a
-  - MSys: cd soundtouch_trunk ; ./bootstrap ; ./configure ; make ; make install
+  MSys: cd soundtouch_trunk ; ./bootstrap ; ./configure ; make ; make install
 * (GCC) Copy soundtouch libs from C:\MSys\1.0\local\lib to D:\Vidiot\soundtouch_trunk\lib:
   libSoundTouch.a
   libSoundTouch.la

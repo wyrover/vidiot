@@ -1,9 +1,9 @@
 #include "FilePacket.h"
 
 extern "C" {
-//#ifdef _MSC_VER
+#ifdef _MSC_VER
 #include "stdint.h"
-//#endif // _MSC_VER
+#endif // _MSC_VER
 #include <avcodec.h>
 };
 

@@ -6,7 +6,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
-#include "UtilLog.h" 
+#include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "GuiOptions.h"
 #include "GuiWindow.h"
@@ -28,17 +28,6 @@ GuiMain::GuiMain()
 :   mProject(0)
 ,   mDone(false)
 {
-    FILE * pFile;
-  pFile = fopen ("myfile.txt","w");
-  if (pFile!=NULL)
-  {
-    fputs ("fopen example",pFile);
-    fclose (pFile);
-  }
-
-    printf("sdfdsa\n");
-//
-//    cout << "test" << std::endl;
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();
 #endif // CATCH_ALL_ERRORS

@@ -1,10 +1,8 @@
 #ifndef MODEL_AUDIO_FILE_H
 #define MODEL_AUDIO_FILE_H
 
-#include <boost/filesystem/path.hpp>
 #include "File.h"
 #include "IAudio.h"
-#include "ModelPtr.h"
 
 namespace model {
 
@@ -47,8 +45,12 @@ private:
 
     ReSampleContext*    mResampleContext;
 
-    int16_t audioDecodeBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    int16_t audioResampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+    // Do not use the method below for allocating the buffer. That will cause
+    // SEGV when compiled with GCC (MingW).
+    //int16_t audioDecodeBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+    //int16_t audioResampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+    int16_t* audioDecodeBuffer;
+    int16_t* audioResampleBuffer;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
