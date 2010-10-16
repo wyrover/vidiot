@@ -122,7 +122,7 @@ void Avcodec::log(void *ptr, int val, const char * msg, va_list ap)
     {
         o << "";
     }
-    LOG_X(Log::sReportingLevel) << o.str() << " [" << fixedbuffer << "]";
+    LOG_DETAIL << o.str();// << " [" << fixedbuffer << "]";
 }
 
 void Avcodec::init()
