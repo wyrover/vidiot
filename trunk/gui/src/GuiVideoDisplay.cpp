@@ -226,7 +226,9 @@ void GuiVideoDisplay::audioBufferThread()
 
         if (chunk)
         {
-            mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / sStereo) ; /** @todo what is a sample? In SoundTouch context it's the data for both speakers. In my context it's the data for one speaker... */
+            // In SoundTouch context a sample is the data for both speakers.
+            // In AudioChunk it's the data for one speaker.
+            mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / sStereo) ;
             while (!mSoundTouch.isEmpty())
             {
                 int nFramesAvailable = mSoundTouch.numSamples();

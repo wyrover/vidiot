@@ -124,7 +124,7 @@ Install graphviz into c:\Program Files
   - Remove resource.rc from project
   - Build
 * (GCC)
-  MSys: cd soundtouch_trunk ; ./bootstrap ; ./configure ; make ; make install
+  MSys: cd soundtouch_trunk ; ./bootstrap ; ./configure --enable-integer-samples; make ; make install
 * (GCC) Copy soundtouch libs from C:\MSys\1.0\local\lib to D:\Vidiot\soundtouch_trunk\lib:
   libSoundTouch.a
   libSoundTouch.la

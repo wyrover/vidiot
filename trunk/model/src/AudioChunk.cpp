@@ -89,7 +89,8 @@ std::ostream& operator<< (std::ostream& os, const AudioChunk& obj)
     os  << &obj                         << "|" 
         << obj.mTimeStamp               << "|" 
         << obj.mNrChannels              << "|" 
-        << obj.getUnreadSampleCount();
+        << obj.mNrSamples               << "|"
+        << obj.mNrReadSamples;
     return os;
 }
 
