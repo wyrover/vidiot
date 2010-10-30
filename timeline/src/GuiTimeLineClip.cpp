@@ -24,25 +24,24 @@ DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineZoomPtr zoom, 
+GuiTimeLineClip::GuiTimeLineClip(const GuiTimeLineZoom& zoom, 
+                                 ViewMap& viewMap, 
                                  model::ClipPtr clip)
 :   wxEvtHandler()
 ,   mZoom(zoom)
+,   mViewMap(viewMap) 
 ,   mClip(clip)
 ,   mThumbnail()
 ,   mWidth(0)
 ,   mBitmap()
-,   mLink()
-,   mTrack()
 ,   mSelected(false)
 ,   mBeingDragged(false)
 ,   mRect(0,0,0,0)
 {
 }
 
-void GuiTimeLineClip::init(boost::weak_ptr<GuiTimeLineTrack> track)
+void GuiTimeLineClip::init()
 {
-    mTrack = track;
     updateSize(); // Also creates bitmap
 }
 
@@ -57,8 +56,9 @@ const wxBitmap& GuiTimeLineClip::getBitmap()
 
 void GuiTimeLineClip::updateSize()
 {
-    mWidth = mZoom->ptsToPixels(mClip->getNumberOfFrames());
-    mBitmap.Create(mWidth,getTrack()->getBitmap().GetHeight());
+    mWidth = mZoom.ptsToPixels(mClip->getNumberOfFrames());
+    mBitmap.Create(mWidth,mViewMap.ModelToView(mClip->getTrack())->getBitmap().GetHeight());
+    //mBitmap.Create(mWidth,getTrack()->getBitmap().GetHeight());
     updateThumbnail();
 }
 
@@ -138,7 +138,7 @@ void GuiTimeLineClip::setSelected(bool selected)
             // loops when also selecting the linked clip.
             mSelected = selected;
             updateBitmap();
-            GuiTimeLineClipPtr link = getLink();
+            GuiTimeLineClipPtr link = mViewMap.ModelToView(mViewMap.ViewToModel(shared_from_this())->getLink());
             if (link)
             {
                 link->setSelected(selected);
@@ -173,34 +173,5 @@ model::ClipPtr GuiTimeLineClip::getClip() const
 {
     return mClip;
 }
-
-GuiTimeLineTrackPtr GuiTimeLineClip::getTrack() const
-{
-    return mTrack.lock();
-}
-
-GuiTimeLineClipPtr GuiTimeLineClip::getLink() const
-{
-    return mLink.lock();
-}
-
-void GuiTimeLineClip::setLink(GuiTimeLineClipPtr link)
-{
-    mLink = link;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
-//////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void GuiTimeLineClip::serialize(Archive & ar, const unsigned int version)
-{
-    ar & mZoom;
-    ar & mClip;
-    //NOT: ar & mLink; These are restored in 'GuiTimeLine::init()'
-}
-template void GuiTimeLineClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void GuiTimeLineClip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 }} // namespace

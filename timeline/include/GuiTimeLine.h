@@ -17,6 +17,8 @@
 #include "State.h"
 #include "SelectIntervals.h"
 #include "UtilEvent.h"
+#include "GuiTimeLineZoom.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
@@ -42,12 +44,6 @@ public:
      * including the bitmap.
      */
     void init(wxWindow *parent);
-
-    /**
-    * Update all links in the GuiClips to correspond to the links in the model.
-    * Needed upon initialization and upon changes.
-    **/
-    void updateLinks();
 
     virtual ~GuiTimeLine();
 
@@ -107,16 +103,6 @@ public:
     void moveCursorOnPlayback(long pts);
 
     //////////////////////////////////////////////////////////////////////////
-    // FROM MODEL OBJECTS TO THEIR CORRESPONDING VIEW OBJECTS
-    //////////////////////////////////////////////////////////////////////////
-
-    typedef std::map< model::TrackPtr, GuiTimeLineTrackPtr > TrackMap;
-    typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > ClipMap;
-
-    TrackMap mTracks;
-    ClipMap mClips;
-
-    //////////////////////////////////////////////////////////////////////////
     // FROM COORDINATES TO OBJECTS
     //////////////////////////////////////////////////////////////////////////
 
@@ -151,7 +137,13 @@ private:
     friend class SelectIntervals;
     friend class state::MovingCursor;
 
-    GuiTimeLineZoomPtr mZoom;
+    GuiTimeLineZoom mZoom;
+    
+    ViewMap mViewMap;
+
+    TrackMap mTrackMap;
+    ClipMap mClipMap;
+
     PlayerPtr mPlayer;
     wxBitmap mBitmap;
     long mCursorPosition;
