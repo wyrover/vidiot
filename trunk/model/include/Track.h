@@ -52,6 +52,32 @@ struct MoveParameter
     * list).
     */
     Clips removeClips;
+
+    /**
+    * Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
+    **/
+    MoveParameter()
+        :   addTrack()
+        ,   addPosition()
+        ,   addClips()
+        ,   removeTrack()
+        ,   removePosition()
+        ,   removeClips()
+    {
+    }
+
+    /**
+    * Helper constructor to initialize all members in one statement.
+    **/
+    MoveParameter(TrackPtr _addTrack, ClipPtr _addPosition, Clips _addClips, TrackPtr _removeTrack, ClipPtr _removePosition, Clips _removeClips)
+        :   addTrack(_addTrack)
+        ,   addPosition(_addPosition)
+        ,   addClips(_addClips)
+        ,   removeTrack(_removeTrack)
+        ,   removePosition(_removePosition)
+        ,   removeClips(_removeClips)
+    {
+    }
 };
 typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
 typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
@@ -83,6 +109,13 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual boost::int64_t getNumberOfFrames();
+
+    /** 
+    * @return the pts of the starting point (left) of the clip. 
+    * @pre clip is part of this track.
+    */
+    virtual boost::int64_t getStartFrameNumber(ClipPtr clip) const;
+
     virtual void moveTo(boost::int64_t position);
 
     //////////////////////////////////////////////////////////////////////////
@@ -93,6 +126,20 @@ public:
     virtual void addClips(Clips clips, ClipPtr position);
 
     const Clips& getClips();
+
+    /**
+    * Find the clip which provides the frame at the given pts.
+    * If pts is 'on a cut' then the clip AFTER the cut is returned. 
+    * If there is no clip at this pts then an empty Ptr is returned.
+    **/
+    ClipPtr getClip(boost::int64_t pts);
+
+    /**
+    * Find the clip following 'clip'. 
+    * Returns a '0' pointer if clip is not found.
+    * @pre clip is a part of this track
+    **/
+    ClipPtr getNextClip(ClipPtr clip);
 
 protected:
 

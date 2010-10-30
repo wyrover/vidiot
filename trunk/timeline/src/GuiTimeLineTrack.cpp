@@ -16,6 +16,7 @@
 #include "UtilLog.h"
 #include "GuiTimeLine.h"
 #include "AProjectViewNode.h"
+#include "UtilLogStl.h"
 #include "Clip.h"
 
 namespace gui { namespace timeline {
@@ -61,7 +62,7 @@ GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLineZoomPtr zoom, model::TrackPtr trac
     }
 }
 
-void GuiTimeLineTrack::init(GuiTimeLine* timeline, GuiTimeLineClips& allclips)
+void GuiTimeLineTrack::init(GuiTimeLine* timeline)
 {
     ASSERT(mZoom); // Must be initialized
     ASSERT(mTrack); // Must be initialized
@@ -72,7 +73,7 @@ void GuiTimeLineTrack::init(GuiTimeLine* timeline, GuiTimeLineClips& allclips)
 
     BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
     {
-        clip->init(shared_from_this(), allclips);
+        clip->init(shared_from_this());
     }
 
     updateBitmap(); // Before binding to clip events to avoid a lot of events
@@ -83,6 +84,8 @@ void GuiTimeLineTrack::init(GuiTimeLine* timeline, GuiTimeLineClips& allclips)
     }
     mTrack->Bind(model::EVENT_ADD_CLIPS,     &GuiTimeLineTrack::OnClipsAdded,    this);
     mTrack->Bind(model::EVENT_REMOVE_CLIPS,  &GuiTimeLineTrack::OnClipsRemoved,  this);
+
+    VAR_DEBUG(mClips);
 }
 
 GuiTimeLineTrack::~GuiTimeLineTrack()
@@ -113,7 +116,7 @@ GuiTimeLineClips GuiTimeLineTrack::getClips() const
     return mClips;
 }
 
-boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLineTrack::findClip(int position)
+GuiTimeLineClipWithOffset GuiTimeLineTrack::findClip(int position)
 {
     int left = sTrackBorderSize;
     int right = left;
@@ -162,7 +165,10 @@ void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
     GuiTimeLineClips newClips;
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
-        newClips.push_back(boost::make_shared<GuiTimeLineClip>(mZoom,clip));
+        GuiTimeLineClipPtr gclip = boost::make_shared<GuiTimeLineClip>(mZoom,clip);
+        gclip->init(shared_from_this());
+        gclip->Bind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
+        newClips.push_back(gclip);
     }
 
     GuiTimeLineClips::iterator itPosition = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getValue().addPosition) );
@@ -170,11 +176,9 @@ void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
 
     mClips.splice(itPosition, newClips);
 
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips ) // @todo only new clips not for all clips. Not done yet due to not being able to lookup splice (does splice remove from original list, and what alternative is available?)
-    {
-        GuiTimeLineClips allClips = mTimeLine->getClips(); // Assign to local var needed for GCC
-        clip->init(shared_from_this(), allClips);
-    }
+    VAR_DEBUG(mClips);
+
+    mTimeLine->updateLinks();
 
     updateBitmap();
 }
@@ -189,6 +193,10 @@ void GuiTimeLineTrack::OnClipsRemoved( model::EventRemoveClips& event )
 
     ++itEnd; // See http://www.cplusplus.com/reference/stl/list/erase (one but last is removed)
     mClips.erase(itBegin,itEnd);
+
+    VAR_DEBUG(mClips);
+
+    mTimeLine->updateLinks();
 
     updateBitmap();
 }

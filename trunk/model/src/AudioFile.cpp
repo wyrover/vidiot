@@ -151,7 +151,6 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     {
         int decodeSize = sAudioBufferSizeInBytes - targetSize; // Needed for avcodec_decode_audio2(): Initially this must be set to the maximum to be decoded bytes
         /** /todo replace with decode_audio3 */
-        VAR_DEBUG(decodeSize)(targetSize);
         int usedSourceBytes = avcodec_decode_audio2(mCodecContext, targetData, &decodeSize, sourceData, sourceSize);
         ASSERT(usedSourceBytes >= 0)(usedSourceBytes);
 
