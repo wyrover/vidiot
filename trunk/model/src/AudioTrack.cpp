@@ -1,6 +1,7 @@
 #include "AudioTrack.h"
 
 #include <boost/make_shared.hpp>
+#include <boost/assign/list_of.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
@@ -16,7 +17,6 @@ namespace model {
 AudioTrack::AudioTrack()
 :	Track()
 { 
-    mItClips = mClips.begin();
     VAR_DEBUG(this);
 }
 
@@ -42,7 +42,7 @@ AudioTrack::~AudioTrack()
 
 void AudioTrack::addAudioClip(AudioClipPtr clip)
 {
-    mClips.push_back(clip);
+    addClips(boost::assign::list_of(clip),ClipPtr()); // Add clip at end
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,15 +53,15 @@ AudioChunkPtr AudioTrack::getNextAudio(int audioRate, int nAudioChannels)
 {
     AudioChunkPtr audioChunk = AudioChunkPtr();
 
-    while (!audioChunk && mItClips != mClips.end())
+    while (!audioChunk && iterate_hasClip())
     {
-        audioChunk = boost::dynamic_pointer_cast<IAudio>(*mItClips)->getNextAudio(audioRate, nAudioChannels);
+        audioChunk = boost::dynamic_pointer_cast<IAudio>(iterate_getClip())->getNextAudio(audioRate, nAudioChannels);
         if (!audioChunk)
         {
-            mItClips++;
-            if (mItClips != mClips.end())
+            iterate_nextClip();
+            if (iterate_hasClip())
             {
-                (*mItClips)->moveTo(0);
+                iterate_getClip()->moveTo(0);
             }
         }
     }

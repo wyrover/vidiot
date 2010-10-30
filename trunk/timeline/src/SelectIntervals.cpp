@@ -73,9 +73,9 @@ void SelectIntervals::set(wxRegion region)
 
 void SelectIntervals::addBeginMarker()
 {
-    long c = mTimeline->mZoom->pixelsToPts(mTimeline->mCursorPosition);
-    long b = c + mTimeline->mZoom->timeToPts(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
-    long e = c + mTimeline->mZoom->timeToPts(GuiOptions::getMarkerEndAddition()   * Constants::sSecond);
+    long c = mTimeline->mZoom.pixelsToPts(mTimeline->mCursorPosition);
+    long b = c + mTimeline->mZoom.timeToPts(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
+    long e = c + mTimeline->mZoom.timeToPts(GuiOptions::getMarkerEndAddition()   * Constants::sSecond);
 
     mNewIntervalActive = true;
     mNewIntervalBegin = b;
@@ -93,7 +93,7 @@ void SelectIntervals::addEndMarker()
 
 void SelectIntervals::startToggle()
 {
-    mToggleBegin = mTimeline->mZoom->pixelsToPts(mTimeline->mCursorPosition);
+    mToggleBegin = mTimeline->mZoom.pixelsToPts(mTimeline->mCursorPosition);
     mToggleEnd = mToggleBegin;
     mToggleActive = true;
 }
@@ -167,12 +167,12 @@ void SelectIntervals::onCursorMoved(EventTimelineCursorMoved& event)
 {
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = mTimeline->mZoom->pixelsToPts(event.getValue()) +  mTimeline->mZoom->timeToPts(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
+        mNewIntervalEnd = mTimeline->mZoom.pixelsToPts(event.getValue()) +  mTimeline->mZoom.timeToPts(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
         refresh(mNewIntervalBegin,mNewIntervalEnd);
     }
     if (mToggleActive)
     {
-        mToggleEnd = mTimeline->mZoom->pixelsToPts(event.getValue());
+        mToggleEnd = mTimeline->mZoom.pixelsToPts(event.getValue());
         refresh(mToggleBegin,mToggleEnd);
     }
 }
@@ -266,8 +266,8 @@ wxRect SelectIntervals::makeRect(long x1, long x2)
 
 wxRect SelectIntervals::ptsToPixels(wxRect rect)
 {
-    rect.x = mTimeline->mZoom->ptsToPixels(rect.x);
-    rect.width = mTimeline->mZoom->ptsToPixels(rect.width);
+    rect.x = mTimeline->mZoom.ptsToPixels(rect.x);
+    rect.width = mTimeline->mZoom.ptsToPixels(rect.width);
     return rect;
 }
 

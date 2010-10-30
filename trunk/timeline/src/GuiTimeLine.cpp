@@ -39,7 +39,7 @@ DEFINE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
 GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 :   wxScrolledWindow()
-,   mZoom(boost::make_shared<GuiTimeLineZoom>()) // May be reset upon recovery
+,   mZoom()
 ,   mCursorPosition(0)
 ,   mPlaybackTime(0)
 ,   mOrigin(0,100)
@@ -67,21 +67,6 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
     //Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnCloseSequence,    this, ID_CLOSESEQUENCE);
     mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddVideoTrack,    this, ID_ADDVIDEOTRACK);
     mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddAudioTrack,    this, ID_ADDAUDIOTRACK);
-
-    if (mSequence)
-    {
-        // mSequence is initialized when creating a new timeline.
-        // When recovering, the tracks are recreated from the file.
-        BOOST_FOREACH( model::VideoTrackPtr track, mSequence->getVideoTracks())
-        {
-            mVideoTracks.push_back(boost::make_shared<GuiTimeLineTrack>(mZoom, boost::static_pointer_cast<model::Track>(track)));
-        }
-        BOOST_FOREACH( model::AudioTrackPtr track, mSequence->getAudioTracks())
-        {
-            mAudioTracks.push_back(boost::make_shared<GuiTimeLineTrack>(mZoom, boost::static_pointer_cast<model::Track>(track)));
-        }
-	    mSelectedIntervals = boost::make_shared<SelectIntervals>();
-    }
 }
 
 void GuiTimeLine::init(wxWindow *parent)
@@ -94,10 +79,22 @@ void GuiTimeLine::init(wxWindow *parent)
     SetDropTarget(new GuiTimeLineDropTarget(mZoom,this));
 
     // Initialize all helper objects
+    mSelectedIntervals = boost::make_shared<SelectIntervals>();
     mSelectedIntervals->init(this);
 
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     DetermineWidth();
+
+    BOOST_FOREACH( model::VideoTrackPtr track, mSequence->getVideoTracks())
+    {
+        GuiTimeLineTrackPtr gTrack(new GuiTimeLineTrack(mZoom, mViewMap, boost::static_pointer_cast<model::Track>(track)));
+        mVideoTracks.push_back(gTrack);
+    }
+    BOOST_FOREACH( model::AudioTrackPtr track, mSequence->getAudioTracks())
+    {
+        GuiTimeLineTrackPtr gTrack(new GuiTimeLineTrack(mZoom, mViewMap, boost::static_pointer_cast<model::Track>(track)));
+        mAudioTracks.push_back(gTrack);
+    }
 
     // Initialize tracks (this also creates the bitmaps).
     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
@@ -108,9 +105,6 @@ void GuiTimeLine::init(wxWindow *parent)
     {
         track->init(this);
     }
-
-    // Ensure that the links in the model are also present in their Gui counterparts
-    updateLinks();
 
     Bind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
@@ -146,33 +140,6 @@ GuiTimeLine::~GuiTimeLine()
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
         track->Unbind(TRACK_UPDATE_EVENT,    &GuiTimeLine::OnTrackUpdated,       this);
-    }
-}
-
-void GuiTimeLine::updateLinks()
-{
-    typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > LookupMap;
-    LookupMap lookup;
-    VAR_DEBUG( getClips() );
-    BOOST_FOREACH( GuiTimeLineClipPtr guiClip, getClips() )
-    {
-        lookup[ guiClip->getClip() ] = guiClip;
-    }
-    BOOST_FOREACH( LookupMap::value_type item, lookup )
-    {
-        model::ClipPtr modelClip = item.first;
-        GuiTimeLineClipPtr guiClip = item.second;
-        model::ClipPtr modelLink = modelClip->getLink();
-
-        if (modelLink && (lookup.find(modelLink) != lookup.end()))
-        {
-            // (lookup.find(modelLink) != lookup.end()) added above to avoid crash 
-            // when deleting the first of two linked clips. The second of these two
-            // is still in the list and will cause a lookup for the just deleted
-            // clip (thus triggering the assert below).
-            ASSERT(lookup.find(modelLink) != lookup.end())(modelClip)(modelLink);
-            guiClip->setLink(lookup[modelLink]);
-        }
     }
 }
 
@@ -351,13 +318,13 @@ void GuiTimeLine::setCursorPosition(long position)
 
 void GuiTimeLine::moveCursorOnPlayback(long pts)
 {
-    setCursorPosition(mZoom->ptsToPixels(pts));
+    setCursorPosition(mZoom.ptsToPixels(pts));
 }
 
 void GuiTimeLine::moveCursorOnUser(int position)
 {
     setCursorPosition(position);
-    mPlayer->moveTo(mZoom->pixelsToPts(position));
+    mPlayer->moveTo(mZoom.pixelsToPts(position));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -430,8 +397,8 @@ GuiTimeLineClips GuiTimeLine::getClips() const
 void GuiTimeLine::DetermineWidth()
 {
     mWidth = std::max(std::max(
-        mZoom->timeToPixels(5 * Constants::sMinute),            // Minimum width of 5 minutes
-        mZoom->ptsToPixels(mSequence->getNumberOfFrames())),    // At least enough to hold all clips
+        mZoom.timeToPixels(5 * Constants::sMinute),            // Minimum width of 5 minutes
+        mZoom.ptsToPixels(mSequence->getNumberOfFrames())),    // At least enough to hold all clips
         GetClientSize().GetWidth());                            // At least the widget size
 }
 
@@ -486,9 +453,9 @@ void GuiTimeLine::updateBitmap()
     dc.SetFont(*Constants::sTimeScaleFont);
 
     // Draw seconds and minutes lines
-    for (int ms = 0; mZoom->timeToPixels(ms) <= w; ms += Constants::sSecond)
+    for (int ms = 0; mZoom.timeToPixels(ms) <= w; ms += Constants::sSecond)
     {
-        int position = mZoom->timeToPixels(ms);
+        int position = mZoom.timeToPixels(ms);
         bool isMinute = (ms % Constants::sMinute == 0);
         int height = Constants::sTimeScaleSecondHeight;
 
@@ -618,8 +585,6 @@ template<class Archive>
 void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
 {
     ar & mSequence;
-    ar & mVideoTracks;
-    ar & mAudioTracks;
     ar & mZoom;
     ar & mDividerPosition;
     ar & mSelectedIntervals;

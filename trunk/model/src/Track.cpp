@@ -32,6 +32,11 @@ Track::Track(const Track& other)
 ,   mClips(other.mClips)
 {
     VAR_DEBUG(this);
+    ASSERT(false);// If this is ever used, test the clips in combination with the shared_from_this() in a constructor below.
+    BOOST_FOREACH(ClipPtr clip, mClips)
+    {
+        clip->setTrack(shared_from_this());
+    }
 }
 
 Track* Track::clone()
@@ -199,6 +204,27 @@ ClipPtr Track::getNextClip(ClipPtr clip)
         return ClipPtr();
     }
     return *it;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// ITERATION
+//////////////////////////////////////////////////////////////////////////
+
+bool Track::iterate_hasClip() 
+{
+    return (mItClips != mClips.end());
+}
+
+ClipPtr Track::iterate_getClip()
+{
+    ASSERT(iterate_hasClip());
+    return *mItClips;
+}
+
+void Track::iterate_nextClip()
+{
+    ASSERT(iterate_hasClip());
+    mItClips++;
 }
 
 //////////////////////////////////////////////////////////////////////////

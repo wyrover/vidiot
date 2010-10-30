@@ -97,7 +97,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
                 typedef std::map<model::ClipPtr, model::Clips > ReplacementMap;
                 ReplacementMap mConversion;
 
-                long pts = outermost_context().timeline.mZoom->pixelsToPts(evt.mPosition.x);
+                long pts = outermost_context().timeline.mZoom.pixelsToPts(evt.mPosition.x);
                 BOOST_FOREACH( GuiTimeLineTrackPtr t, outermost_context().timeline.getTracks())
                 {
                     model::TrackPtr track = t->getTrack();

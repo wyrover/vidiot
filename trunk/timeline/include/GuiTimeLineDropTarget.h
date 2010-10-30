@@ -5,6 +5,7 @@
 #include "GuiDataObject.h"
 #include "AProjectViewNode.h"
 #include "GuiPtr.h"
+#include "GuiTimeLineZoom.h"
 
 namespace gui { namespace timeline {
 
@@ -16,7 +17,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineDropTarget(GuiTimeLineZoomPtr zoom, GuiTimeLinePtr timeline);
+    GuiTimeLineDropTarget(const GuiTimeLineZoom& zoom, GuiTimeLinePtr timeline);
     ~GuiTimeLineDropTarget();
 
     //////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@ public:
 
 private:
 
-    GuiTimeLineZoomPtr mZoom;
+    const GuiTimeLineZoom& mZoom;
     GuiTimeLinePtr mTimeLine;
 };
 

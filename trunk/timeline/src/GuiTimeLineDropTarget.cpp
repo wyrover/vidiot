@@ -10,7 +10,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineDropTarget::GuiTimeLineDropTarget(GuiTimeLineZoomPtr zoom, GuiTimeLinePtr timeline)
+GuiTimeLineDropTarget::GuiTimeLineDropTarget(const GuiTimeLineZoom& zoom, GuiTimeLinePtr timeline)
 :   wxDropTarget(new GuiDataObject())
 ,   mZoom(zoom)
 ,   mTimeLine(timeline)
@@ -69,7 +69,7 @@ wxDragResult GuiTimeLineDropTarget::OnEnter (wxCoord x, wxCoord y, wxDragResult 
     unsigned int h = 10;
     BOOST_FOREACH( model::ProjectViewPtr newChild, dynamic_cast<GuiDataObject*>(m_dataObject)->getAssets())
     {
-        w += mZoom->timeToPixels(10000);//newChild->getLength());
+        w += mZoom.timeToPixels(10000);//newChild->getLength());
     }
   /*  mDragShape = new GuiTimeLineShape(w,h);
     mDragShape->SetShow(true);*/

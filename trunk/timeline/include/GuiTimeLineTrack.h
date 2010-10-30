@@ -14,6 +14,8 @@
 #include "GuiPtr.h"
 #include "Track.h"
 #include "UtilEvent.h"
+#include "GuiTimeLineZoom.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
@@ -33,8 +35,9 @@ public:
 
     /** Recovery constructor equals two '0' pointers. */
     GuiTimeLineTrack(
-        GuiTimeLineZoomPtr zoom = GuiTimeLineZoomPtr(),
-        model::TrackPtr track = model::TrackPtr());
+        const GuiTimeLineZoom& zoom, 
+        ViewMap& viewMap, 
+        model::TrackPtr track);
 
     /**
      * Two step construction. First the constructor (in combination with serialize)
@@ -84,7 +87,9 @@ public:
 private:
     friend class SelectIntervals;
 
-    GuiTimeLineZoomPtr mZoom;
+    const GuiTimeLineZoom& mZoom;
+    ViewMap& mViewMap;
+
     GuiTimeLine* mTimeLine;
 
     void updateBitmap();
@@ -93,23 +98,8 @@ private:
     GuiTimeLineClips mClips;
     model::TrackPtr mTrack;
     wxBitmap mBitmap;
-
-    //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace
-
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-#include  <boost/preprocessor/slot/counter.hpp>
-#include BOOST_PP_UPDATE_COUNTER()
-#line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineTrack, 1)
-BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineTrack)
 
 #endif // GUI_TIME_LINE_TRACK_H

@@ -5,13 +5,12 @@
 #include <wx/event.h>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/version.hpp>
 #include "AProjectViewNode.h"
 #include "Clip.h"
 #include "GuiPtr.h"
 #include "UtilEvent.h"
+#include "GuiTimeLineZoom.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
@@ -29,15 +28,16 @@ public:
 
     /** The default '0' pointers are used for construction in case of recovery. */
     GuiTimeLineClip(
-        GuiTimeLineZoomPtr zoom = GuiTimeLineZoomPtr(),
-        model::ClipPtr clip = model::ClipPtr());
+        const GuiTimeLineZoom& zoom, 
+        ViewMap& viewMap, 
+        model::ClipPtr clip);
+
     /**
      * Two step construction. First the constructor (in combination with serialize)
      * sets all relevant  members. Second, this method initializes all GUI stuff
      * including the bitmap.
-     * @param track track to which this clip belongs
      */
-    void init(boost::weak_ptr<GuiTimeLineTrack> track);
+    void init();
 
 	virtual ~GuiTimeLineClip();
 
@@ -49,18 +49,14 @@ public:
     void setBeingDragged(bool beingdragged);
     bool isBeingDragged();
 
-    GuiTimeLineTrackPtr getTrack() const;
-
     model::ClipPtr getClip() const;
-    GuiTimeLineClipPtr getLink() const;
-    void setLink(GuiTimeLineClipPtr link);
 
     // tmp for showing intersect with selected regions
     void show(wxRect rect);
 
 private:
-    GuiTimeLineZoomPtr mZoom;
-    boost::weak_ptr<GuiTimeLineTrack> mTrack;
+    const GuiTimeLineZoom& mZoom;
+    ViewMap& mViewMap;
 
     void updateSize();
     void updateThumbnail();
@@ -69,30 +65,14 @@ private:
     bool mSelected;
     bool mBeingDragged;
     int mWidth;
-    boost::weak_ptr<GuiTimeLineClip> mLink; /** /todo destruction: these bidi links will keep both ends alive... */
     model::ClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
     wxBitmap mBitmap;
 
     // tmp for showing intersect with selected regions
     wxRect mRect;
-
-    //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace
-
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineClip, 1)
-BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineClip)
 
 #endif // GUI_TIME_LINE_CLIP_H

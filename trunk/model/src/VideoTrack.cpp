@@ -1,6 +1,7 @@
 #include "VideoTrack.h"
 
 #include <boost/make_shared.hpp>
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -20,8 +21,6 @@ VideoTrack::VideoTrack()
 ,   mPts(0)
 { 
     VAR_DEBUG(this);
-
-    mItClips = mClips.begin();
 }
 
 VideoTrack::VideoTrack(const VideoTrack& other)
@@ -48,7 +47,7 @@ VideoTrack::~VideoTrack()
 
 void VideoTrack::addVideoClip(VideoClipPtr clip)
 {
-    mClips.push_back(clip);
+    addClips(boost::assign::list_of(clip),ClipPtr()); // Add clip at end
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,15 +64,15 @@ VideoFramePtr VideoTrack::getNextVideo(int requestedWidth, int requestedHeight, 
 {
     VideoFramePtr videoFrame = VideoFramePtr();
 
-    while (!videoFrame && mItClips != mClips.end())
+    while (!videoFrame && iterate_hasClip())
     {
-        videoFrame = boost::dynamic_pointer_cast<IVideo>(*mItClips)->getNextVideo(requestedWidth, requestedHeight, alpha);
+        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_getClip())->getNextVideo(requestedWidth, requestedHeight, alpha);
         if (!videoFrame)
         {
-            mItClips++;
-            if (mItClips != mClips.end())
+            iterate_nextClip();
+            if (iterate_hasClip())
             {
-                (*mItClips)->moveTo(0);
+                iterate_getClip()->moveTo(0);
             }
         }
     }

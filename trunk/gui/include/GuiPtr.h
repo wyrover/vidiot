@@ -39,18 +39,10 @@ typedef boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLineClipWithOffset;
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiTimeLineZoom;
-typedef boost::shared_ptr<GuiTimeLineZoom> GuiTimeLineZoomPtr;
-
-//////////////////////////////////////////////////////////////////////////
-
 class SelectIntervals;
 typedef boost::shared_ptr<SelectIntervals> IntervalsPtr;
 
 //////////////////////////////////////////////////////////////////////////
-
-typedef std::map< model::TrackPtr, GuiTimeLineTrackPtr > TrackMap;
-typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > ClipMap;
 
 }} // namespace
 

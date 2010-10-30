@@ -45,35 +45,35 @@ private:
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLineZoomPtr zoom, model::TrackPtr track)
+GuiTimeLineTrack::GuiTimeLineTrack(const GuiTimeLineZoom& zoom, 
+                                   ViewMap& viewMap, 
+                                   model::TrackPtr track)
 :   wxEvtHandler()
 ,   mTrack(track)
 ,   mZoom(zoom)
+,   mViewMap(viewMap)
 ,   mBitmap()
 ,   mTimeLine(0)
 ,   mHeight(sDefaultTrackHeight)
 {
-    if (mTrack) // It is set upon creation of a new track, and is '0' in case of recovery
-    {
-        BOOST_FOREACH( model::ClipPtr clip, mTrack->getClips() )
-        {
-            mClips.push_back(boost::make_shared<GuiTimeLineClip>(mZoom,clip));
-        }
-    }
+    ASSERT(mTrack); // Must be initialized
+
 }
 
 void GuiTimeLineTrack::init(GuiTimeLine* timeline)
 {
-    ASSERT(mZoom); // Must be initialized
-    ASSERT(mTrack); // Must be initialized
+    mViewMap.add(mTrack,shared_from_this());
 
     mTimeLine = timeline;
 
     mBitmap.Create(mTimeLine->getWidth(),mHeight);
 
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
+    BOOST_FOREACH( model::ClipPtr clip, mTrack->getClips() )
     {
-        clip->init(shared_from_this());
+        GuiTimeLineClipPtr gClip( new GuiTimeLineClip(mZoom, mViewMap, clip));
+        mClips.push_back(gClip);
+        mViewMap.add(clip,gClip);
+        gClip->init();
     }
 
     updateBitmap(); // Before binding to clip events to avoid a lot of events
@@ -94,6 +94,7 @@ GuiTimeLineTrack::~GuiTimeLineTrack()
     {
         clip->Unbind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
     }
+    mViewMap.remove(shared_from_this());
 }
 
 int GuiTimeLineTrack::getClipHeight() const
@@ -165,8 +166,9 @@ void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
     GuiTimeLineClips newClips;
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
-        GuiTimeLineClipPtr gclip = boost::make_shared<GuiTimeLineClip>(mZoom,clip);
-        gclip->init(shared_from_this());
+        GuiTimeLineClipPtr gclip(new GuiTimeLineClip(mZoom,mViewMap,clip));
+        mViewMap.add(clip,gclip);
+        gclip->init();
         gclip->Bind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
         newClips.push_back(gclip);
     }
@@ -178,13 +180,16 @@ void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
 
     VAR_DEBUG(mClips);
 
-    mTimeLine->updateLinks();
-
     updateBitmap();
 }
 
 void GuiTimeLineTrack::OnClipsRemoved( model::EventRemoveClips& event )
 {
+    BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
+    {
+        mViewMap.remove(clip);
+    }
+
     GuiTimeLineClips::iterator itBegin = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getValue().removeClips.front()));
     ASSERT(itBegin != mClips.end());
 
@@ -195,8 +200,6 @@ void GuiTimeLineTrack::OnClipsRemoved( model::EventRemoveClips& event )
     mClips.erase(itBegin,itEnd);
 
     VAR_DEBUG(mClips);
-
-    mTimeLine->updateLinks();
 
     updateBitmap();
 }
@@ -253,21 +256,6 @@ void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::option
         pos.x += bitmap.GetWidth();
     }
 }
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void GuiTimeLineTrack::serialize(Archive & ar, const unsigned int version)
-{
-    ar & mTrack;
-    ar & mClips;
-    ar & mZoom;
-    ar & mHeight;
-}
-template void GuiTimeLineTrack::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void GuiTimeLineTrack::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 }} // namespace
 

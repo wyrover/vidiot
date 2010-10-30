@@ -7,6 +7,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include "IControl.h"
 #include "UtilEvent.h"
+#include "UtilLog.h"
 
 namespace model {
 
@@ -144,13 +145,17 @@ public:
 protected:
 
     //////////////////////////////////////////////////////////////////////////
-    //
+    // ITERATION
     //////////////////////////////////////////////////////////////////////////
 
-    Clips mClips;
-    Clips::const_iterator mItClips;
+    bool iterate_hasClip();
+    ClipPtr iterate_getClip();
+    void iterate_nextClip();
 
 private:
+
+    Clips::const_iterator mItClips;
+    Clips mClips;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
