@@ -36,9 +36,8 @@ public:
      * sets all relevant  members. Second, this method initializes all GUI stuff
      * including the bitmap.
      * @param track track to which this clip belongs
-     * @param allclips list of all clips in the timeline of this clip (used for linking clips)
      */
-    void init(boost::weak_ptr<GuiTimeLineTrack> track, GuiTimeLineClips& allclips);
+    void init(boost::weak_ptr<GuiTimeLineTrack> track);
 
 	virtual ~GuiTimeLineClip();
 
@@ -54,6 +53,7 @@ public:
 
     model::ClipPtr getClip() const;
     GuiTimeLineClipPtr getLink() const;
+    void setLink(GuiTimeLineClipPtr link);
 
     // tmp for showing intersect with selected regions
     void show(wxRect rect);

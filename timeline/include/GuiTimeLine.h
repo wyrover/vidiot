@@ -43,6 +43,12 @@ public:
      */
     void init(wxWindow *parent);
 
+    /**
+    * Update all links in the GuiClips to correspond to the links in the model.
+    * Needed upon initialization and upon changes.
+    **/
+    void updateLinks();
+
     virtual ~GuiTimeLine();
 
     //////////////////////////////////////////////////////////////////////////
@@ -99,6 +105,16 @@ public:
     void moveCursorOnUser(int position);
     void setCursorPosition(long position);
     void moveCursorOnPlayback(long pts);
+
+    //////////////////////////////////////////////////////////////////////////
+    // FROM MODEL OBJECTS TO THEIR CORRESPONDING VIEW OBJECTS
+    //////////////////////////////////////////////////////////////////////////
+
+    typedef std::map< model::TrackPtr, GuiTimeLineTrackPtr > TrackMap;
+    typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > ClipMap;
+
+    TrackMap mTracks;
+    ClipMap mClips;
 
     //////////////////////////////////////////////////////////////////////////
     // FROM COORDINATES TO OBJECTS

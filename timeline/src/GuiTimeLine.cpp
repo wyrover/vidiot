@@ -22,6 +22,7 @@
 #include "GuiTimeLineZoom.h"
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLineTrack.h"
+#include "UtilLogStl.h"
 #include "AProjectViewNode.h"
 #include "Sequence.h"
 #include "VideoTrack.h"
@@ -99,17 +100,17 @@ void GuiTimeLine::init(wxWindow *parent)
     DetermineWidth();
 
     // Initialize tracks (this also creates the bitmaps).
-    // Furthermore, the list of all clips is passed in order to
-    // make links between clips.
-    GuiTimeLineClips allclips = getClips();
     BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
     {
-        track->init(this, allclips);
+        track->init(this);
     }
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
-        track->init(this, allclips);
+        track->init(this);
     }
+
+    // Ensure that the links in the model are also present in their Gui counterparts
+    updateLinks();
 
     Bind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
@@ -145,6 +146,33 @@ GuiTimeLine::~GuiTimeLine()
     BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
     {
         track->Unbind(TRACK_UPDATE_EVENT,    &GuiTimeLine::OnTrackUpdated,       this);
+    }
+}
+
+void GuiTimeLine::updateLinks()
+{
+    typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > LookupMap;
+    LookupMap lookup;
+    VAR_DEBUG( getClips() );
+    BOOST_FOREACH( GuiTimeLineClipPtr guiClip, getClips() )
+    {
+        lookup[ guiClip->getClip() ] = guiClip;
+    }
+    BOOST_FOREACH( LookupMap::value_type item, lookup )
+    {
+        model::ClipPtr modelClip = item.first;
+        GuiTimeLineClipPtr guiClip = item.second;
+        model::ClipPtr modelLink = modelClip->getLink();
+
+        if (modelLink && (lookup.find(modelLink) != lookup.end()))
+        {
+            // (lookup.find(modelLink) != lookup.end()) added above to avoid crash 
+            // when deleting the first of two linked clips. The second of these two
+            // is still in the list and will cause a lookup for the just deleted
+            // clip (thus triggering the assert below).
+            ASSERT(lookup.find(modelLink) != lookup.end())(modelClip)(modelLink);
+            guiClip->setLink(lookup[modelLink]);
+        }
     }
 }
 
@@ -336,8 +364,7 @@ void GuiTimeLine::moveCursorOnUser(int position)
 // FROM COORDINATES TO OBJECTS
 //////////////////////////////////////////////////////////////////////////
 
-
-boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLine::findClip(wxPoint p) const
+GuiTimeLineClipWithOffset GuiTimeLine::findClip(wxPoint p) const
 {
     GuiTimeLineTrackPtr track = findTrack(p.y).get<0>();
     if (track)

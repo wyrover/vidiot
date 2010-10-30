@@ -79,7 +79,7 @@ void Dragging::showDropArea(wxPoint p)
     GuiTimeLine& timeline = outermost_context().timeline;
     GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
     boost::tuple<GuiTimeLineTrackPtr,int> tt = timeline.findTrack(p.y);
-    boost::tuple<GuiTimeLineClipPtr,int> cw = timeline.findClip(p);
+    GuiTimeLineClipWithOffset cw = timeline.findClip(p);
     GuiTimeLineTrackPtr track = tt.get<0>();
     GuiTimeLineClipPtr clip = cw.get<0>();
     mClip = clip;

@@ -40,18 +40,9 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineZoomPtr zoom,
 {
 }
 
-void GuiTimeLineClip::init(boost::weak_ptr<GuiTimeLineTrack> track, GuiTimeLineClips& allclips)
+void GuiTimeLineClip::init(boost::weak_ptr<GuiTimeLineTrack> track)
 {
     mTrack = track;
-    BOOST_FOREACH( GuiTimeLineClipPtr guiClip, allclips )
-    {
-        /** /todo time consuming (n*n) */
-        if (mClip->getLink() == guiClip->getClip())
-        {
-            mLink = guiClip;
-            break;
-        }
-    }
     updateSize(); // Also creates bitmap
 }
 
@@ -76,6 +67,7 @@ void GuiTimeLineClip::updateThumbnail()
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(mClip);
     if (videoclip)
     {
+        mClip->moveTo(0);
         model::VideoFramePtr videoFrame = videoclip->getNextVideo(mWidth - 2 * Constants::sClipBorderSize, mBitmap.GetHeight() - 2 * Constants::sClipBorderSize, false);
         mThumbnail.reset(new wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
         mClip->moveTo(0);
@@ -192,6 +184,11 @@ GuiTimeLineClipPtr GuiTimeLineClip::getLink() const
     return mLink.lock();
 }
 
+void GuiTimeLineClip::setLink(GuiTimeLineClipPtr link)
+{
+    mLink = link;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////
@@ -201,7 +198,7 @@ void GuiTimeLineClip::serialize(Archive & ar, const unsigned int version)
 {
     ar & mZoom;
     ar & mClip;
-    //NOT: ar & mLink; These are restored in 'init()'
+    //NOT: ar & mLink; These are restored in 'GuiTimeLine::init()'
 }
 template void GuiTimeLineClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLineClip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

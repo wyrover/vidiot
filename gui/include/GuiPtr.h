@@ -4,7 +4,10 @@
 // This file contains all forward declarations of gui shared pointers.
 
 #include <list>
+#include <map>
 #include <boost/shared_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+#include "ModelPtr.h"
 
 namespace gui {
 
@@ -32,6 +35,8 @@ typedef boost::shared_ptr<GuiTimeLineClip> GuiTimeLineClipPtr;
 
 typedef std::list<GuiTimeLineClipPtr> GuiTimeLineClips;
 
+typedef boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLineClipWithOffset;
+
 //////////////////////////////////////////////////////////////////////////
 
 class GuiTimeLineZoom;
@@ -43,6 +48,9 @@ class SelectIntervals;
 typedef boost::shared_ptr<SelectIntervals> IntervalsPtr;
 
 //////////////////////////////////////////////////////////////////////////
+
+typedef std::map< model::TrackPtr, GuiTimeLineTrackPtr > TrackMap;
+typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > ClipMap;
 
 }} // namespace
 

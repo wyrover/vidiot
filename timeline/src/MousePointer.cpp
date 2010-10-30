@@ -62,7 +62,7 @@ MousePointer::~MousePointer()
 
 MousePosition MousePointer::getLogicalPosition(wxPoint virtualposition) const
 {
-    boost::tuple<GuiTimeLineClipPtr,int> clip = mTimeline.findClip(virtualposition);
+    GuiTimeLineClipWithOffset clip = mTimeline.findClip(virtualposition);
     if (clip.get<0>())
     {
         int dist_begin = virtualposition.x - clip.get<1>();

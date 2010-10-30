@@ -34,6 +34,13 @@ public:
     virtual void moveTo(boost::int64_t position);
 
     //////////////////////////////////////////////////////////////////////////
+    // TRACK
+    //////////////////////////////////////////////////////////////////////////
+
+    void setTrack(TrackPtr track);
+    TrackPtr getTrack();
+
+    //////////////////////////////////////////////////////////////////////////
     // LINK
     //////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +66,20 @@ public:
 
     void setLength(boost::int64_t length);
 
+    /**
+    * If adjustment is positive then move the begin point of the clip backwards
+    * in time (increase the start pts). If adjustment is negative then move the
+    * begin point of the clip forward in time (decrease the start pts).
+    **/
+    void adjustBeginPoint(boost::int64_t adjustment);
+
+    /**
+    * If adjustment is positive then move the end point of the clip backwards
+    * in time (increase the end pts). If adjustment is negative then move the
+    * end point of the clip forward in time (decrease the end pts).
+    **/
+    void adjustEndPoint(boost::int64_t adjustment);
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -66,6 +87,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     IControlPtr mRender;
+    TrackPtr mTrack;
     ClipPtr mLink;
 
 private:

@@ -42,7 +42,7 @@ void AProjectViewNode::Delete()
     while (mChildren.size() > 0)
     {
         ProjectViewPtr child = *mChildren.begin();
-        child ->Delete();
+        child->Delete();
         removeChild(child);
     }
     mParent.reset();

@@ -10,6 +10,7 @@
 #include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
+#include "UtilLogStl.h"
 #include "Clip.h"
 
 namespace model {
@@ -57,6 +58,22 @@ boost::int64_t Track::getNumberOfFrames()
     return nFrames;
 }
 
+
+boost::int64_t Track::getStartFrameNumber(ClipPtr clip) const
+{
+    boost::int16_t n = 0;
+    BOOST_FOREACH( ClipPtr usedclip, mClips )
+    {
+        if (usedclip == clip)
+        {
+            return n;
+        }
+        n += usedclip->getNumberOfFrames();
+    }
+    FATAL("Clip is not a part of this track.");
+    return 0;
+}
+
 void Track::moveTo(boost::int64_t position)
 {
     VAR_DEBUG(this)(position);
@@ -97,18 +114,21 @@ void Track::moveTo(boost::int64_t position)
 
 void Track::addClips(Clips clips, ClipPtr position)
 {
+    BOOST_FOREACH( ClipPtr clip, clips )
+    {
+        clip->setTrack(shared_from_this());
+    }
+
     Clips::iterator itPosition = find(mClips.begin(), mClips.end(), position);
     // NOT: ASSERT(itPosition != mClips.end()) Giving a null pointer results in mClips.end() which results in adding clips at the end
-    
+
     // See http://www.cplusplus.com/reference/stl/list/splice:
     // clips will be removed from this list. Hence, a copy is made,
     // before doing the splice call.
-    MoveParameter move;
-    move.addTrack = shared_from_this();
-    move.addClips = clips; // Copy of clip list.
-    move.addPosition = position;
+    MoveParameter move(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips());
 
     mClips.splice(itPosition,clips); // See http://www.cplusplus.com/reference/stl/list/splice: clips added BEFORE position
+    VAR_DEBUG(mClips);
 
     QueueEvent(new model::EventAddClips(move));
 
@@ -120,6 +140,11 @@ void Track::addClips(Clips clips, ClipPtr position)
 
 void Track::removeClips(Clips clips)
 {
+    BOOST_FOREACH( ClipPtr clip, clips )
+    {
+        clip->setTrack(TrackPtr());
+    }
+
     Clips::iterator itBegin = find(mClips.begin(), mClips.end(), clips.front());
     ASSERT(itBegin != mClips.end())(clips.front()); // Ensure that the begin clip was found
 
@@ -128,10 +153,9 @@ void Track::removeClips(Clips clips)
     
     ++itLast; // See http://www.cplusplus.com/reference/stl/list/erase: one but last is removed
     mClips.erase(itBegin,itLast);
+    VAR_DEBUG(mClips);
 
-    MoveParameter move;
-    move.removeTrack = shared_from_this();
-    move.removeClips = clips;
+    MoveParameter move(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), model::ClipPtr(), clips);
     QueueEvent(new model::EventRemoveClips(move));
 
     /** @todo combine consecutive empty clips */
@@ -142,6 +166,39 @@ void Track::removeClips(Clips clips)
 const std::list<ClipPtr>& Track::getClips()
 {
     return mClips;
+}
+
+ClipPtr Track::getClip(boost::int64_t pts)
+{
+    boost::int64_t left = 0;
+    boost::int64_t right = left;
+    BOOST_FOREACH( ClipPtr clip, mClips )
+    {
+        boost::int64_t length = clip->getNumberOfFrames();
+        right += length;
+        if (pts >= left && pts <= right)
+        {
+            return clip;
+        }
+        left += length;
+    }
+    return ClipPtr();
+}
+
+ClipPtr Track::getNextClip(ClipPtr clip)
+{
+    Clips::iterator it = mClips.begin();
+    while  (it != mClips.end() && *it != clip)
+    {
+        ++it;
+    }
+    ASSERT(it != mClips.end());
+    ++it;
+    if (it == mClips.end())
+    {
+        return ClipPtr();
+    }
+    return *it;
 }
 
 //////////////////////////////////////////////////////////////////////////

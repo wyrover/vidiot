@@ -55,6 +55,7 @@ public:
     * and vice versa. The references between them have to be explicitly destroyed
     * which is done here.
     * @todo move to the project class which can access the entire tree.
+    * @todo reimplement in sequence, track, clip etc. For instance Track and Clip keep each other alive.
     */
     virtual void Delete();
 

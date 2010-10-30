@@ -41,9 +41,8 @@ public:
      * sets all relevant  members. Second, this method initializes all GUI stuff
      * including the bitmap.
      * @param timeline timeline to which this track belongs
-     * @param allclips list of all clips in this timeline (used for linking clips together)
      */
-    void init(GuiTimeLine* timeline, GuiTimeLineClips& allclips);
+    void init(GuiTimeLine* timeline);
 
 	virtual ~GuiTimeLineTrack();
 
@@ -66,7 +65,7 @@ public:
      * @return found clip and its leftmost position within the track
      * @return null pointer and 0 if not found
      */
-    boost::tuple<GuiTimeLineClipPtr,int> findClip(int position);
+    GuiTimeLineClipWithOffset findClip(int position);
     boost::tuple<int,int> findClipBounds(GuiTimeLineClipPtr findclip);
 
     //////////////////////////////////////////////////////////////////////////
