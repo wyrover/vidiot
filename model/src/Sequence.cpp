@@ -78,14 +78,28 @@ void Sequence::removeAudioTrack(AudioTrackPtr track)
     NIY
 }
 
-std::list<VideoTrackPtr> Sequence::getVideoTracks()
+Tracks Sequence::getVideoTracks()
 {
     return mVideoTracks;
 }
 
-std::list<AudioTrackPtr> Sequence::getAudioTracks()
+Tracks Sequence::getAudioTracks()
 {
     return mAudioTracks;
+}
+
+Tracks Sequence::getTracks()
+{
+    Tracks tracks;
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    {
+        tracks.push_back(track);
+    }
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    {
+        tracks.push_back(track);
+    }
+    return tracks;
 }
 
 void Sequence::Delete()
@@ -115,11 +129,11 @@ void Sequence::setName(wxString name)
 int64_t Sequence::getNumberOfFrames()
 {
     int16_t nFrames = 0;
-    BOOST_FOREACH( VideoTrackPtr track, mVideoTracks )
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
         nFrames = std::max<int64_t>(nFrames, track->getNumberOfFrames());
     }
-    BOOST_FOREACH( AudioTrackPtr track, mAudioTracks )
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
         nFrames = std::max<int64_t>(nFrames, track->getNumberOfFrames());
     }
@@ -128,11 +142,11 @@ int64_t Sequence::getNumberOfFrames()
 
 void Sequence::moveTo(int64_t position)
 {
-    BOOST_FOREACH( VideoTrackPtr track, mVideoTracks )
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
         track->moveTo(position);
     }
-    BOOST_FOREACH( AudioTrackPtr track, mAudioTracks )
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
         track->moveTo(position);
     }
@@ -144,7 +158,7 @@ void Sequence::moveTo(int64_t position)
 
 VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr videoFrame = (*mVideoTracks.begin())->getNextVideo(requestedWidth, requestedHeight, alpha);
+    VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(*mVideoTracks.begin())->getNextVideo(requestedWidth, requestedHeight, alpha);
     if (videoFrame && videoFrame->isA<EmptyFrame>())
     {
         VAR_VIDEO(videoFrame);
@@ -160,7 +174,7 @@ VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bo
 
 AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
 {
-    AudioChunkPtr audioChunk = (*mAudioTracks.begin())->getNextAudio(audioRate, nAudioChannels);
+    AudioChunkPtr audioChunk = boost::dynamic_pointer_cast<IAudio>(*mAudioTracks.begin())->getNextAudio(audioRate, nAudioChannels);
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }

@@ -62,12 +62,13 @@ MousePointer::~MousePointer()
 
 MousePosition MousePointer::getLogicalPosition(wxPoint virtualposition) const
 {
-    GuiTimeLineClipWithOffset clip = mTimeline.findClip(virtualposition);
-    if (clip.get<0>())
+    GuiTimeLineClip* clip = mTimeline.findClip(virtualposition);
+    if (clip)
     {
-        int dist_begin = virtualposition.x - clip.get<1>();
-        int dist_end = clip.get<1>() + clip.get<0>()->getBitmap().GetWidth() - virtualposition.x;
+        int dist_begin = virtualposition.x - clip->getLeftPosition();
+        int dist_end = clip->getRightPosition() - virtualposition.x;
 
+        VAR_DEBUG(dist_begin)(dist_end)(clip->getLeftPosition())(clip->getRightPosition());
         if ((dist_begin <= 1) || (dist_end <= 1))
         {
             return MouseBetweenClips;

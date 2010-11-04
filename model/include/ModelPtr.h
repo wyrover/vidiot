@@ -34,6 +34,7 @@ typedef boost::shared_ptr<AudioFile> AudioFilePtr;
 
 class AudioTrack;
 typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
+typedef std::list<AudioTrackPtr> AudioTracks;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -85,7 +86,7 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
-typedef std::list<ClipPtr> Tracks;
+typedef std::list<TrackPtr> Tracks;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -101,6 +102,7 @@ typedef boost::shared_ptr<VideoFile> VideoFilePtr;
 
 class VideoTrack;
 typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
+typedef std::list<VideoTrackPtr> VideoTracks;
 
 //////////////////////////////////////////////////////////////////////////
 

@@ -41,8 +41,9 @@ public:
     void removeVideoTrack(VideoTrackPtr track);
     void removeAudioTrack(AudioTrackPtr track);
 
-    std::list<VideoTrackPtr> getVideoTracks();
-    std::list<AudioTrackPtr> getAudioTracks();
+    Tracks getVideoTracks();
+    Tracks getAudioTracks();
+    Tracks getTracks();
 
     //////////////////////////////////////////////////////////////////////////
     // IPROJECTVIEW
@@ -75,8 +76,8 @@ public:
 private:
 
     wxString mName;
-    std::list<VideoTrackPtr> mVideoTracks;
-    std::list<AudioTrackPtr> mAudioTracks;
+    Tracks mVideoTracks;
+    Tracks mAudioTracks;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

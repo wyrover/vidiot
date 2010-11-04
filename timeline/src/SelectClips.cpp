@@ -3,50 +3,54 @@
 #include <boost/foreach.hpp>
 #include "GuiTimeLine.h"
 #include "GuiTimeLineClip.h"
+#include "GuiTimeLineTrack.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {
 
-SelectClips::SelectClips(GuiTimeLine& timeline)
-:   mTimeline(timeline)
+SelectClips::SelectClips(ViewMap& viewMap)
+:   mViewMap(viewMap)
+,   mSelected()
 {
-
 }
+
 void SelectClips::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
+    model::TrackPtr track = clip ? clip->getTrack()->getTrack() : model::TrackPtr();
+
     // Must be determined before deselecting all clips.
-    bool previousClickedClipWasSelected = mPreviouslyClicked ? mPreviouslyClicked->isSelected() : true;
+    bool previousClickedClipWasSelected = mPreviouslyClicked ? mViewMap.ModelToView(mPreviouslyClicked)->isSelected() : true;
     bool currentClickedClipIsSelected = clip ? clip->isSelected() : false;
 
     // Deselect all clips first, but only if control is not pressed.
     if (!ctrlPressed)
     {
-        BOOST_FOREACH( GuiTimeLineClipPtr c, mTimeline.getClips() )
+        BOOST_FOREACH( model::ClipPtr c, mSelected )
         {
-            c->setSelected(false);
+            mViewMap.ModelToView(c)->setSelected(false);
         }
+        mSelected.clear();
     }
 
     if (clip)
     {
         if (altPressed)
         {
-            // SelectClips till end. 
+            model::ClipPtr firstclip;
+            model::ClipPtr lastclip;
 
-            GuiTimeLineClipPtr firstclip;
-            GuiTimeLineClipPtr lastclip;
-            BOOST_FOREACH( GuiTimeLineClipPtr c, mTimeline.getClips() )
+            /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
+            BOOST_FOREACH( model::ClipPtr c, track->getClips() )
             {
-                /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
                 if (c == mPreviouslyClicked)
                 {
                     firstclip = c;
                 }
                 if (firstclip)
                 {
-                    c->setSelected(!currentClickedClipIsSelected);
+                    selectClip(c ,!currentClickedClipIsSelected);
                 }
-                mPreviouslyClicked = clip;
+                mPreviouslyClicked = clip->getClip();
             }
         }
         else if (shiftPressed)
@@ -56,24 +60,24 @@ void SelectClips::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPr
             // just selected, then the whole range is selected. If the last selected 
             // clip was deselected, then the whole range is deselected.
 
-            GuiTimeLineClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(mTimeline.getClips().begin());
+            model::ClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(track->getClips().begin());
 
-            GuiTimeLineClipPtr firstclip;
-            BOOST_FOREACH( GuiTimeLineClipPtr c, mTimeline.getClips() )
+            model::ClipPtr firstclip;
+            BOOST_FOREACH( model::ClipPtr c, track->getClips() )
             {
                 /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
                 if (!firstclip)
                 {
-                    if ((c == clip) || (c == otherend))
+                    if ((c == clip->getClip()) || (c == otherend))
                     {
                         firstclip = c;
                     }
                 }
                 if (firstclip)
                 {
-                    c->setSelected(previousClickedClipWasSelected);
+                    selectClip(c, previousClickedClipWasSelected);
                     if ((c != firstclip) && 
-                        ((c == clip) || (c == otherend)))
+                        ((c == clip->getClip()) || (c == otherend)))
                     {
                         break; // Stop (de)selecting clips
                     }
@@ -83,19 +87,46 @@ void SelectClips::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPr
         else if (ctrlPressed)
         {
             // Control down implies 'toggle' select.
-            clip->setSelected(!currentClickedClipIsSelected);
-            mPreviouslyClicked = clip;
+            selectClip(clip->getClip(), !currentClickedClipIsSelected);
+            mPreviouslyClicked = clip->getClip();
         }
         else
         {
-            clip->setSelected(true);
-            mPreviouslyClicked = clip;
+            selectClip(clip->getClip(), true);
+            mPreviouslyClicked = clip->getClip();
         }
     }
     else
     {
         mPreviouslyClicked.reset();
     }
+}
+
+void SelectClips::setDrag(bool drag)
+{
+    BOOST_FOREACH(model::ClipPtr clip, mSelected)
+    {
+        mViewMap.ModelToView(clip)->setBeingDragged(drag);
+    }
+}
+
+void SelectClips::selectClip(model::ClipPtr clip, bool selected)
+{
+    model::ClipPtr link = clip->getLink();
+    mViewMap.ModelToView(clip)->setSelected(selected);
+    mViewMap.ModelToView(link)->setSelected(selected);
+
+    if (selected)
+    {
+        mSelected.insert(clip);
+        mSelected.insert(link);
+    }
+    else
+    {
+        mSelected.erase(clip);
+        mSelected.erase(link);
+    }
+
 }
 
 }} // namespace

@@ -12,6 +12,8 @@
 #include "GuiTimeLineZoom.h"
 #include "GuiTimeLineTrack.h"
 #include "EmptyClip.h"
+#include "Track.h"
+#include "Sequence.h"
 #include "Project.h"
 #include "TimelineMoveClips.h"
 
@@ -39,7 +41,7 @@ Idle::~Idle() // exit
 boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition).get<0>();
+    GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition);
     outermost_context().globals->selection.update(clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
     if (clip && !clip->isEmpty())
     {
@@ -98,9 +100,11 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
                 ReplacementMap mConversion;
 
                 long pts = outermost_context().timeline.mZoom.pixelsToPts(evt.mPosition.x);
-                BOOST_FOREACH( GuiTimeLineTrackPtr t, outermost_context().timeline.getTracks())
+                model::Tracks tracks = outermost_context().timeline.getSequence()->getTracks();
+                BOOST_FOREACH( model::TrackPtr track,  outermost_context().timeline.getSequence()->getTracks() )
+//                BOOST_FOREACH( GuiTimeLineTrackPtr t, outermost_context().timeline.getTracks())
                 {
-                    model::TrackPtr track = t->getTrack();
+                    //model::TrackPtr track = t->getTrack();
                     model::ClipPtr splitclip = track->getClip(pts);
 
                     if (splitclip && !splitclip->isA<model::EmptyClip>())
@@ -217,8 +221,9 @@ void Idle::deleteSelectedClips(model::MoveParameters& moves, GuiTimeLineTracks t
     {
         model::MoveParameterPtr move;
         long nRemovedFrames = 0;
-        BOOST_FOREACH( GuiTimeLineClipPtr c, t->getClips() )
+        BOOST_FOREACH( model::ClipPtr clip, t->getTrack()->getClips() )
         {
+            GuiTimeLineClipPtr c = outermost_context().globals->mViewMap.ModelToView(clip);
             model::ClipPtr modelClip = c->getClip();
             if (c->isSelected())
             {

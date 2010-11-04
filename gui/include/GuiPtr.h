@@ -24,18 +24,14 @@ typedef GuiTimeLine* GuiTimeLinePtr; // Lifetime managed by wxwidgets
 //////////////////////////////////////////////////////////////////////////
 
 class GuiTimeLineTrack;
-typedef boost::shared_ptr<GuiTimeLineTrack> GuiTimeLineTrackPtr;
+typedef GuiTimeLineTrack* GuiTimeLineTrackPtr;
 
 typedef std::list<GuiTimeLineTrackPtr> GuiTimeLineTracks;
 
 //////////////////////////////////////////////////////////////////////////
 
 class GuiTimeLineClip;
-typedef boost::shared_ptr<GuiTimeLineClip> GuiTimeLineClipPtr;
-
-typedef std::list<GuiTimeLineClipPtr> GuiTimeLineClips;
-
-typedef boost::tuple<GuiTimeLineClipPtr,int> GuiTimeLineClipWithOffset;
+typedef GuiTimeLineClip* GuiTimeLineClipPtr;
 
 //////////////////////////////////////////////////////////////////////////
 

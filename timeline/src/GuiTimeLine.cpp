@@ -44,7 +44,7 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mPlaybackTime(0)
 ,   mOrigin(0,100)
 ,   mBitmap()
-,   mMouseState(*this)
+,   mMouseState(*this,mViewMap)
 ,   mWidth(0)
 ,   mHeight(0)
 ,   mPlayer()
@@ -85,39 +85,22 @@ void GuiTimeLine::init(wxWindow *parent)
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     DetermineWidth();
 
-    BOOST_FOREACH( model::VideoTrackPtr track, mSequence->getVideoTracks())
+    BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
-        GuiTimeLineTrackPtr gTrack(new GuiTimeLineTrack(mZoom, mViewMap, boost::static_pointer_cast<model::Track>(track)));
-        mVideoTracks.push_back(gTrack);
+        GuiTimeLineTrack* p = new GuiTimeLineTrack(this, mZoom, mViewMap, track);
+        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
+        // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
     }
-    BOOST_FOREACH( model::AudioTrackPtr track, mSequence->getAudioTracks())
+    BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks())
     {
-        GuiTimeLineTrackPtr gTrack(new GuiTimeLineTrack(mZoom, mViewMap, boost::static_pointer_cast<model::Track>(track)));
-        mAudioTracks.push_back(gTrack);
-    }
-
-    // Initialize tracks (this also creates the bitmaps).
-    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
-    {
-        track->init(this);
-    }
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
-    {
-        track->init(this);
+        GuiTimeLineTrack* p = new GuiTimeLineTrack(this, mZoom, mViewMap, track);
+        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
+        // todo2 handle this via a OnAudioTrackAdded similar to the track handling of clip events from the model
     }
 
     Bind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
     Bind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
-
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
-    {
-        track->Bind(TRACK_UPDATE_EVENT,    &GuiTimeLine::OnTrackUpdated,       this);
-    }
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
-    {
-        track->Bind(TRACK_UPDATE_EVENT,    &GuiTimeLine::OnTrackUpdated,       this);
-    }
 
     ASSERT(mSequence);
     mPlayer = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this);
@@ -132,15 +115,6 @@ GuiTimeLine::~GuiTimeLine()
     Unbind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
-
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
-    {
-        track->Unbind(TRACK_UPDATE_EVENT,    &GuiTimeLine::OnTrackUpdated,       this);
-    }
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
-    {
-        track->Unbind(TRACK_UPDATE_EVENT,    &GuiTimeLine::OnTrackUpdated,       this);
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -251,32 +225,14 @@ model::SequencePtr GuiTimeLine::getSequence() const
     return mSequence;
 }
 
+ViewMap& GuiTimeLine::getViewMap()
+{
+    return mViewMap;
+}
+
 int GuiTimeLine::getWidth() const
 {
     return mWidth;
-}
-
-int GuiTimeLine::getIndex(GuiTimeLineTrackPtr track) const
-{
-    int index = 0;
-    BOOST_FOREACH( GuiTimeLineTrackPtr t, mVideoTracks )
-    {
-        index++;
-        if (t == track)
-        {
-            return index;
-        }
-    }
-    index = 0;
-    BOOST_FOREACH( GuiTimeLineTrackPtr t, mAudioTracks )
-    {
-        index--;
-        if (t == track)
-        {
-            return index;
-        }
-    }
-    return index;
 }
 
 void GuiTimeLine::showDropArea(wxRect area)
@@ -331,63 +287,40 @@ void GuiTimeLine::moveCursorOnUser(int position)
 // FROM COORDINATES TO OBJECTS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClipWithOffset GuiTimeLine::findClip(wxPoint p) const
+//todo maak een method die bepaalt wat er onder de cursor zit
+//(Track + Clip .adjustBeginPoint.. en ook waar bij de Track/clip)
+GuiTimeLineClip* GuiTimeLine::findClip(wxPoint p) const
 {
-    GuiTimeLineTrackPtr track = findTrack(p.y).get<0>();
+    model::TrackPtr track = findTrack(p.y).get<0>();
     if (track)
     {
-        return track->findClip(p.x);
+        model::ClipPtr clip = track->getClip(mZoom.pixelsToPts(p.x));
+        if (clip)
+        {
+            return mViewMap.ModelToView(clip);
+        }
     }
-    return boost::make_tuple(GuiTimeLineClipPtr(),0);
+    return 0;
 }
 
-boost::tuple<GuiTimeLineTrackPtr,int> GuiTimeLine::findTrack(int yposition) const
+boost::tuple<model::TrackPtr,int> GuiTimeLine::findTrack(int yposition) const
 {
     int top = mDividerPosition;
-    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
     {
         int bottom = top;
-        top -= track->getBitmap().GetHeight();
+        top -= track->getHeight();
         if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
     }
     int bottom = mDividerPosition + Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
+    BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
     {
         int top = bottom;
-        bottom += track->getBitmap().GetHeight();
+        bottom += track->getHeight();
         if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
     }
-    return boost::make_tuple(GuiTimeLineTrackPtr(),0);
-}
-
-GuiTimeLineTracks GuiTimeLine::getTracks() const
-{
-    GuiTimeLineTracks tracks;
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
-    {
-        tracks.push_back(track);
-    }
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
-    {
-        tracks.push_back(track);
-    }
-    return tracks;
-}
-
-GuiTimeLineClips GuiTimeLine::getClips() const
-{
-    GuiTimeLineClips clips;
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
-    {
-        GuiTimeLineClips newClips =  track->getClips(); // Assign to local var needed for GCC
-        clips.splice(clips.begin(), newClips);
-    }
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
-    {
-        GuiTimeLineClips newClips =  track->getClips(); // Assign to local var needed for GCC
-        clips.splice(clips.begin(), newClips);
-    }
-    return clips;
+    return boost::make_tuple(model::TrackPtr(),0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -406,14 +339,14 @@ void GuiTimeLine::DetermineHeight()
 {
     int requiredHeight = Constants::sTimeScaleHeight;
     requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
-    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
-        requiredHeight += track->getBitmap().GetHeight();
+        requiredHeight += track->getHeight();
     }
     requiredHeight += Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
+    BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
     {
-        requiredHeight += track->getBitmap().GetHeight();
+        requiredHeight += track->getHeight();
     }
     requiredHeight += Constants::sMinimalGreyBelowAudioTracksHeight;
 
@@ -430,7 +363,6 @@ void GuiTimeLine::updateSize()
 
     updateBitmap();
 }
-
 
 void GuiTimeLine::updateBitmap()
 {
@@ -485,14 +417,15 @@ void GuiTimeLine::updateBitmap()
     // Draw video tracks
     // First determine starting point
     int y = mDividerPosition;
-    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
     {
-        y -= track->getBitmap().GetHeight();
+        y -= track->getHeight();
     }
-    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr videoTrack, mVideoTracks)
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
-        dc.DrawBitmap(videoTrack->getBitmap(),wxPoint(0,y));
-        y += videoTrack->getBitmap().GetHeight();
+        wxBitmap b = mViewMap.ModelToView(track)->getBitmap();
+        dc.DrawBitmap(b,wxPoint(0,y));
+        y += track->getHeight();
     }
 
     // Draw divider between video and audio tracks
@@ -501,10 +434,11 @@ void GuiTimeLine::updateBitmap()
     dc.DrawRectangle(0,y,w,Constants::sAudioVideoDividerHeight);
 
     y += Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( GuiTimeLineTrackPtr audioTrack, mAudioTracks)
+    BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
     {
-        dc.DrawBitmap(audioTrack->getBitmap(),wxPoint(0,y));
-        y += audioTrack->getBitmap().GetHeight();
+        wxBitmap b = mViewMap.ModelToView(track)->getBitmap();
+        dc.DrawBitmap(b,wxPoint(0,y));
+        y += track->getHeight();
     }
     Refresh(false);
 }
@@ -533,24 +467,24 @@ wxBitmap GuiTimeLine::getDragBitmap(wxPoint& hotspot) //const
 
     // First determine starting point
     wxPoint position(0,mDividerPosition);
-    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks )
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
     {
-        position.y -= track->getBitmap().GetHeight();
+        position.y -= track->getHeight();
     }
 
     // Draw video tracks
-    BOOST_REVERSE_FOREACH( GuiTimeLineTrackPtr track, mVideoTracks)
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
     {
-        track->drawClips(position,dc,dcMask);
-        position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
+        mViewMap.ModelToView(track)->drawClips(position,dc,dcMask);
+        position.y += track->getHeight();
     }
 
     // Draw audio tracks
     position.y += Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mAudioTracks )
+    BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
     {
-        track->drawClips(position,dc,dcMask);
-        position.y += track->getBitmap().GetHeight();//trackDragBitmap.GetHeight();
+        mViewMap.ModelToView(track)->drawClips(position,dc,dcMask);
+        position.y += track->getHeight();
     }
 
     int origin_x = std::max(dcMask.MinX(),0);

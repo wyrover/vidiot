@@ -3,7 +3,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
-#include <boost/enable_shared_from_this.hpp>
+#include <wx/window.h>
 #include <boost/scoped_ptr.hpp>
 #include "AProjectViewNode.h"
 #include "Clip.h"
@@ -17,8 +17,7 @@ namespace gui { namespace timeline {
 DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
 
 class GuiTimeLineClip
-    :   public boost::enable_shared_from_this<GuiTimeLineClip>
-    ,   public wxEvtHandler
+    :   public wxWindow
 {
 public:
 
@@ -26,20 +25,24 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** The default '0' pointers are used for construction in case of recovery. */
     GuiTimeLineClip(
+        GuiTimeLineTrack* track,
         const GuiTimeLineZoom& zoom, 
         ViewMap& viewMap, 
         model::ClipPtr clip);
 
-    /**
-     * Two step construction. First the constructor (in combination with serialize)
-     * sets all relevant  members. Second, this method initializes all GUI stuff
-     * including the bitmap.
-     */
-    void init();
-
 	virtual ~GuiTimeLineClip();
+
+    //////////////////////////////////////////////////////////////////////////
+    // CONVERSION BETWEEN MODEL AND VIEW
+    //////////////////////////////////////////////////////////////////////////
+
+    model::ClipPtr getClip();
+    GuiTimeLineTrackPtr getTrack();
+
+    //////////////////////////////////////////////////////////////////////////
+    //  GET & SET
+    //////////////////////////////////////////////////////////////////////////
 
     const wxBitmap& getBitmap();
 
@@ -49,12 +52,17 @@ public:
     void setBeingDragged(bool beingdragged);
     bool isBeingDragged();
 
-    model::ClipPtr getClip() const;
+    /** @return left position in pixels */
+    boost::int64_t getLeftPosition() const;
+    /** @return right position in pixels */
+    boost::int64_t getRightPosition() const;
+
 
     // tmp for showing intersect with selected regions
     void show(wxRect rect);
 
 private:
+
     const GuiTimeLineZoom& mZoom;
     ViewMap& mViewMap;
 

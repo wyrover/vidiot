@@ -18,6 +18,7 @@ Clip::Clip()
     ,   mOffset(0)
     ,   mLength(-1)
     ,   mTrack()
+    ,   mTrackPosition(0)
     ,   mLink()
 { 
     VAR_DEBUG(this);
@@ -29,9 +30,11 @@ Clip::Clip(IControlPtr clip)
     ,   mOffset(0)
     ,   mLength(-1)
     ,   mTrack()
+    ,   mTrackPosition(0)
     ,   mLink()
 { 
-    VAR_DEBUG(this);
+    mLength = mRender->getNumberOfFrames() - mOffset;
+    VAR_DEBUG(this)(*this);
 }
 
 Clip::Clip(const Clip& other)
@@ -40,6 +43,7 @@ Clip::Clip(const Clip& other)
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
     ,   mTrack(other.mTrack)
+    ,   mTrackPosition(other.mTrackPosition)
     ,   mLink(other.mLink)
 {
     VAR_DEBUG(this)(other);
@@ -61,11 +65,6 @@ Clip::~Clip()
 
 boost::int64_t Clip::getNumberOfFrames()
 {
-    if (mLength == -1)
-    {
-        mLength = mRender->getNumberOfFrames() - mOffset;
-    }
-    ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset);
     return mLength; 
 }
 
@@ -79,14 +78,25 @@ void Clip::moveTo(boost::int64_t position)
 // TRACK
 //////////////////////////////////////////////////////////////////////////
 
-void Clip::setTrack(TrackPtr track)
+void Clip::setTrack(TrackPtr track, boost::int64_t trackPosition)
 {
     mTrack = track;
+    mTrackPosition = trackPosition;
 }
 
 TrackPtr Clip::getTrack()
 {
     return mTrack;
+}
+
+boost::int64_t Clip::getLeftPts() const
+{
+    return mTrackPosition;
+}
+
+boost::int64_t Clip::getRightPts() const
+{
+    return mTrackPosition + mLength;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -150,7 +160,7 @@ void Clip::adjustEndPoint(boost::int64_t adjustment)
 
 std::ostream& operator<<( std::ostream& os, const Clip& obj )
 {
-    os << '[' << &obj << ',' << obj.mOffset << ',' << obj.mLength << ']';
+    os << '[' << &obj << ',' << obj.mOffset << ',' << obj.mLength << ',' << obj.mTrackPosition << ']';
     return os;
 }
 
@@ -166,6 +176,7 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mOffset;
     ar & mLength;
     ar & mTrack;
+    ar & mTrackPosition;
     ar & mLink;
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

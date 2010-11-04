@@ -35,10 +35,7 @@ boost::statechart::result Dragging::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
 
-    BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
-    {
-        c->setBeingDragged(false);
-    }
+    outermost_context().globals->selection.setDrag(false);
 
     // End the drag operation
     GuiTimeLine& timeline = outermost_context().timeline;
@@ -78,29 +75,26 @@ void Dragging::showDropArea(wxPoint p)
 {
     GuiTimeLine& timeline = outermost_context().timeline;
     GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
-    boost::tuple<GuiTimeLineTrackPtr,int> tt = timeline.findTrack(p.y);
-    GuiTimeLineClipWithOffset cw = timeline.findClip(p);
-    GuiTimeLineTrackPtr track = tt.get<0>();
-    GuiTimeLineClipPtr clip = cw.get<0>();
+    boost::tuple<model::TrackPtr,int> tt =  (timeline.findTrack(p.y));
+    GuiTimeLineTrackPtr track = outermost_context().globals->mViewMap.ModelToView(tt.get<0>());
+    GuiTimeLineClipPtr clip = timeline.findClip(p);
     mClip = clip;
 
     if (track)
     {
         if (clip)
         {
-            boost::tuple<int,int> clipbounds = track->findClipBounds(clip);
-
-            int diffleft  = p.x - clipbounds.get<0>();
-            int diffright = clipbounds.get<1>() - p.x;
+            int diffleft  = p.x - clip->getLeftPosition();
+            int diffright = clip->getRightPosition() - p.x;
 
             int xDrop = -1;
             if (diffleft < diffright)
             {
-                xDrop = clipbounds.get<0>() - 2;
+                xDrop = clip->getLeftPosition() - 2;
             }
             else
             {
-                xDrop = clipbounds.get<1>() - 2;
+                xDrop = clip->getRightPosition() - 2;
             }
             timeline.showDropArea(wxRect(xDrop,tt.get<1>(),4,track->getBitmap().GetHeight())); 
         }

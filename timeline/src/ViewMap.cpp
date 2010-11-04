@@ -18,68 +18,44 @@ ViewMap::~ViewMap()
 }
 
 //////////////////////////////////////////////////////////////////////////
-//
+// REGISTRATION
 //////////////////////////////////////////////////////////////////////////
 
 void ViewMap::add(model::ClipPtr modelClip, GuiTimeLineClipPtr clipView)
 {
-    mClips.insert(ClipMap::value_type(modelClip, clipView));
+    mClips.insert(std::make_pair(modelClip, clipView));
 }
 
 void ViewMap::add(model::TrackPtr modelTrack, GuiTimeLineTrackPtr trackView)
 {
-    mTracks.insert(TrackMap::value_type(modelTrack, trackView));
+    mTracks.insert(std::make_pair(modelTrack, trackView));
 }
 
 void ViewMap::remove(model::ClipPtr modelClip)
 {
-    mClips.left.erase(modelClip);
+    mClips.erase(modelClip);
 }
 
 void ViewMap::remove(model::TrackPtr modelTrack)
 {
-    mTracks.left.erase(modelTrack);
-}
-
-void ViewMap::remove(GuiTimeLineClipPtr clipView)
-{
-    mClips.right.erase(clipView);
-}
-
-void ViewMap::remove(GuiTimeLineTrackPtr trackView)
-{
-    mTracks.right.erase(trackView);
+    mTracks.erase(modelTrack);
 }
 
 //////////////////////////////////////////////////////////////////////////
-//
+// CONVERSION
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClipPtr ViewMap::ModelToView(model::ClipPtr modelClip)
+GuiTimeLineClipPtr ViewMap::ModelToView(model::ClipPtr modelClip) const
 {
-    ClipMap::left_const_iterator it = mClips.left.find(modelClip);
-    ASSERT(it != mClips.left.end());
+    ClipMap::const_iterator it = mClips.find(modelClip);
+    ASSERT(it != mClips.end());
     return it->second;
 }
 
-GuiTimeLineTrackPtr ViewMap::ModelToView(model::TrackPtr modelTrack)
+GuiTimeLineTrackPtr ViewMap::ModelToView(model::TrackPtr modelTrack) const
 {
-    TrackMap::left_const_iterator it = mTracks.left.find(modelTrack);
-    ASSERT(it != mTracks.left.end());
-    return it->second;
-}
-
-model::ClipPtr ViewMap::ViewToModel(GuiTimeLineClipPtr viewClip)
-{
-    ClipMap::right_const_iterator it = mClips.right.find(viewClip);
-    ASSERT(it != mClips.right.end());
-    return it->second;
-}
-
-model::TrackPtr ViewMap::ViewToModel(GuiTimeLineTrackPtr viewTrack)
-{
-    TrackMap::right_const_iterator it = mTracks.right.find(viewTrack);
-    ASSERT(it != mTracks.right.end());
+    TrackMap::const_iterator it = mTracks.find(modelTrack);
+    ASSERT(it != mTracks.end());
     return it->second;
 }
 

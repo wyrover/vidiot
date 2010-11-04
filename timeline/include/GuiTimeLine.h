@@ -84,12 +84,9 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    ViewMap& getViewMap();
     model::SequencePtr getSequence() const;
     int getWidth() const;
-    /**
-     * @return index of given track. Audio tracks have a negative number.
-     */
-    int getIndex(GuiTimeLineTrackPtr track) const;
 
     wxPoint getScrollOffset() const;
 
@@ -108,27 +105,17 @@ public:
 
     /**
      * @param p position in virtual coordinates (thus, on the bitmap, not on the client area)
-     * @return found clip and its leftmost position within the track
-     * @return null pointer and 0 if not found
+     * @return found clip
+     * @return null pointer if not found
      */
-    boost::tuple<GuiTimeLineClipPtr, int> findClip(wxPoint p) const;
+    GuiTimeLineClip* findClip(wxPoint p) const;
 
     /**
      * @param yposition y position in virtual coordinates (thus, on the bitmap, not on the client area)
      * @return found track and its top position within the timeline
      * @return null pointer and 0 if not found
      */
-    boost::tuple<GuiTimeLineTrackPtr,int> findTrack(int yposition) const;
-
-    /**
-     * Return list of all the tracks
-     */
-    GuiTimeLineTracks getTracks() const;
-
-    /**
-     * Returns a list containing ALL the clips currently in this timeline.
-     */
-    GuiTimeLineClips getClips() const;
+    boost::tuple<model::TrackPtr,int> findTrack(int yposition) const;
 
 private:
 
@@ -166,6 +153,7 @@ private:
     /** Y-position of audio-video divider */
     int mDividerPosition;
 
+    /** Must be AFTER mViewMap due to constructor list. */
     state::Machine mMouseState;
 
     model::SequencePtr mSequence;

@@ -11,6 +11,7 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 

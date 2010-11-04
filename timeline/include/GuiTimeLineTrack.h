@@ -4,9 +4,9 @@
 #include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/dcmemory.h>
+#include <wx/window.h>
 #include <boost/tuple/tuple.hpp>
 #include <boost/optional.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
@@ -24,8 +24,7 @@ class ClipUpdateEvent;
 DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
 
 class GuiTimeLineTrack
-    :   public boost::enable_shared_from_this<GuiTimeLineTrack>
-    ,   public wxEvtHandler
+    :   public wxWindow
 {
 public:
 
@@ -35,6 +34,7 @@ public:
 
     /** Recovery constructor equals two '0' pointers. */
     GuiTimeLineTrack(
+        GuiTimeLine* timeline,
         const GuiTimeLineZoom& zoom, 
         ViewMap& viewMap, 
         model::TrackPtr track);
@@ -42,16 +42,15 @@ public:
     /**
      * Two step construction. First the constructor (in combination with serialize)
      * sets all relevant  members. Second, this method initializes all GUI stuff
-     * including the bitmap.
-     * @param timeline timeline to which this track belongs
+     * including the bitmap. This is also used to facilitate using shared_from_this()
+     * during construction (as using this in a constructor can lead to problems).
+     * @param timeline timeline to which this track belongs.
      */
     void init(GuiTimeLine* timeline);
 
 	virtual ~GuiTimeLineTrack();
 
     int getClipHeight() const;
-
-    int getIndex();
 
     model::TrackPtr getTrack() const;
 
@@ -60,16 +59,13 @@ public:
     // for initialization purposes.
     const wxBitmap& getBitmap();
 
-    GuiTimeLineClips getClips() const;
-
     void drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask = boost::none) const;
 
-    /**
-     * @return found clip and its leftmost position within the track
-     * @return null pointer and 0 if not found
-     */
-    GuiTimeLineClipWithOffset findClip(int position);
-    boost::tuple<int,int> findClipBounds(GuiTimeLineClipPtr findclip);
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void OnIdle(wxIdleEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -94,10 +90,10 @@ private:
 
     void updateBitmap();
 
-    int mHeight;
-    GuiTimeLineClips mClips;
     model::TrackPtr mTrack;
     wxBitmap mBitmap;
+
+    bool mRedrawOnIdle;
 };
 
 }} // namespace

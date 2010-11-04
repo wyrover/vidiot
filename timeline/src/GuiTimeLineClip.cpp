@@ -24,10 +24,11 @@ DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClip::GuiTimeLineClip(const GuiTimeLineZoom& zoom, 
+GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
+                                 const GuiTimeLineZoom& zoom, 
                                  ViewMap& viewMap, 
                                  model::ClipPtr clip)
-:   wxEvtHandler()
+:   wxWindow(static_cast<wxWindow*>(track),wxID_ANY)
 ,   mZoom(zoom)
 ,   mViewMap(viewMap) 
 ,   mClip(clip)
@@ -38,27 +39,106 @@ GuiTimeLineClip::GuiTimeLineClip(const GuiTimeLineZoom& zoom,
 ,   mBeingDragged(false)
 ,   mRect(0,0,0,0)
 {
-}
-
-void GuiTimeLineClip::init()
-{
+    ASSERT(mClip);
+    mViewMap.add(mClip,this);
     updateSize(); // Also creates bitmap
 }
 
 GuiTimeLineClip::~GuiTimeLineClip()
 {
+    mViewMap.remove(mClip);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// CONVERSION BETWEEN MODEL AND VIEW
+//////////////////////////////////////////////////////////////////////////
+
+model::ClipPtr GuiTimeLineClip::getClip()
+{
+    return mClip;
+}
+
+GuiTimeLineTrackPtr GuiTimeLineClip::getTrack()
+{
+    return mViewMap.ModelToView(getClip()->getTrack());
+}
+
+//////////////////////////////////////////////////////////////////////////
+//  GET & SET
+//////////////////////////////////////////////////////////////////////////
 
 const wxBitmap& GuiTimeLineClip::getBitmap()
 {
     return mBitmap;
 }
 
+bool GuiTimeLineClip::isEmpty() const
+{
+    return mClip->isA<model::EmptyClip>();
+}
+
+bool GuiTimeLineClip::isSelected() const
+{
+    return mSelected;
+}
+
+void GuiTimeLineClip::setSelected(bool selected)
+{
+    if (mClip->isA<model::EmptyClip>())
+    {
+
+    }
+    else
+    {
+        if (selected != mSelected)
+        {
+            // This if statement is needed to avoid endless 
+            // loops when also selecting the linked clip.
+            mSelected = selected;
+            updateBitmap();
+            model::ClipPtr link = mClip->getLink();
+            if (link)
+            {
+                mViewMap.ModelToView(link)->setSelected(selected);
+            }
+        }
+    }
+}
+
+void GuiTimeLineClip::setBeingDragged(bool beingdragged)
+{
+    mBeingDragged = beingdragged;
+    // Event is needed to trigger track redraw (without this clip)
+    QueueEvent(new ClipUpdateEvent(this));
+}
+
+bool GuiTimeLineClip::isBeingDragged()
+{
+    return mBeingDragged;
+}
+
+boost::int64_t GuiTimeLineClip::getLeftPosition() const
+{
+    return mZoom.ptsToPixels(mClip->getLeftPts());
+}
+boost::int64_t GuiTimeLineClip::getRightPosition() const
+{
+    return mZoom.ptsToPixels(mClip->getRightPts());
+}
+
+void GuiTimeLineClip::show(wxRect rect)
+{
+    mRect.width = rect.width;
+    mRect.x = rect.x;
+    mRect.y = 4;
+    mRect.height = mBitmap.GetHeight() - 8; 
+    updateBitmap();
+}
+
 void GuiTimeLineClip::updateSize()
 {
-    mWidth = mZoom.ptsToPixels(mClip->getNumberOfFrames());
+    mWidth = getRightPosition() - getLeftPosition();
     mBitmap.Create(mWidth,mViewMap.ModelToView(mClip->getTrack())->getBitmap().GetHeight());
-    //mBitmap.Create(mWidth,getTrack()->getBitmap().GetHeight());
     updateThumbnail();
 }
 
@@ -111,67 +191,8 @@ void GuiTimeLineClip::updateBitmap()
         dc.DrawRectangle(mRect);
     }
 
-    QueueEvent(new ClipUpdateEvent(shared_from_this()));
+    QueueEvent(new ClipUpdateEvent(this));
 }
 
-bool GuiTimeLineClip::isEmpty() const
-{
-    return mClip->isA<model::EmptyClip>();
-}
-
-bool GuiTimeLineClip::isSelected() const
-{
-    return mSelected;
-}
-
-void GuiTimeLineClip::setSelected(bool selected)
-{
-    if (mClip->isA<model::EmptyClip>())
-    {
-
-    }
-    else
-    {
-        if (selected != mSelected)
-        {
-            // This if statement is needed to avoid endless 
-            // loops when also selecting the linked clip.
-            mSelected = selected;
-            updateBitmap();
-            GuiTimeLineClipPtr link = mViewMap.ModelToView(mViewMap.ViewToModel(shared_from_this())->getLink());
-            if (link)
-            {
-                link->setSelected(selected);
-            }
-        }
-    }
-}
-
-void GuiTimeLineClip::setBeingDragged(bool beingdragged)
-{
-    mBeingDragged = beingdragged;
-    // Event is needed to trigger track redraw (without this clip)
-    QueueEvent(new ClipUpdateEvent(shared_from_this()));
-}
-
-bool GuiTimeLineClip::isBeingDragged()
-{
-    return mBeingDragged;
-}
-
-void GuiTimeLineClip::show(wxRect rect)
-{
-    mRect.width = rect.width;
-    mRect.x = rect.x;
-    mRect.y = 4;
-    mRect.height = mBitmap.GetHeight() - 8; 
-    updateBitmap();
-}
-
-
-model::ClipPtr GuiTimeLineClip::getClip() const
-{
-    return mClip;
-}
 
 }} // namespace

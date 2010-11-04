@@ -19,11 +19,12 @@ namespace gui { namespace timeline { namespace state {
 
 struct GlobalState
 {
-    GlobalState(GuiTimeLine& timeline)
+    GlobalState(GuiTimeLine& timeline, ViewMap& viewMap)
         :   DragStartPosition(-1,-1)
         ,   DragImage(0)
         ,   mousepointer(timeline)
-        ,   selection(timeline)
+        ,   selection(viewMap)
+        ,   mViewMap(viewMap)
         ,   DragStartClip()
     {
     }
@@ -31,6 +32,7 @@ struct GlobalState
     GuiTimeLineDragImage* DragImage;
     MousePointer mousepointer;
     SelectClips selection;
+    ViewMap& mViewMap;
 
     /** Clip on which the drag was started. */
     GuiTimeLineClipPtr DragStartClip;
@@ -54,7 +56,7 @@ class Machine
     :   public boost::statechart::state_machine< Machine, Idle >
 {
 public:
-    Machine(GuiTimeLine& tl);
+    Machine(GuiTimeLine& tl, ViewMap& viewMap);
     ~Machine();
     GuiTimeLine& timeline;
     GlobalState* globals;
