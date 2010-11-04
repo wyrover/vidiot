@@ -8,7 +8,6 @@
 #include <boost/serialization/list.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include <boost/make_shared.hpp>
 #include <wx/pen.h>
 #include "Constants.h"
 #include "GuiTimeLineZoom.h"
@@ -18,138 +17,64 @@
 #include "AProjectViewNode.h"
 #include "UtilLogStl.h"
 #include "Clip.h"
+#include "GuiMain.h"
 
 namespace gui { namespace timeline {
 
 DEFINE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
 
-static int sDefaultTrackHeight = 50;
 static int sTrackBorderSize = 1;
-
-class ClipCopyFinder
-{
-public:
-    ClipCopyFinder(model::ClipPtr clip)
-        :   mClip(clip)
-    {
-    }
-    bool operator() (GuiTimeLineClipPtr clip) const
-    {
-        return clip->getClip() == mClip;
-    }
-private:
-    model::ClipPtr mClip;
-};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineTrack::GuiTimeLineTrack(const GuiTimeLineZoom& zoom, 
+GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLine* timeline,
+                                   const GuiTimeLineZoom& zoom, 
                                    ViewMap& viewMap, 
                                    model::TrackPtr track)
-:   wxEvtHandler()
+:   wxWindow(timeline, wxID_ANY) 
 ,   mTrack(track)
 ,   mZoom(zoom)
 ,   mViewMap(viewMap)
 ,   mBitmap()
 ,   mTimeLine(0)
-,   mHeight(sDefaultTrackHeight)
+,   mRedrawOnIdle(false)
 {
     ASSERT(mTrack); // Must be initialized
 
-}
-
-void GuiTimeLineTrack::init(GuiTimeLine* timeline)
-{
-    mViewMap.add(mTrack,shared_from_this());
+    mViewMap.add(mTrack,this);
 
     mTimeLine = timeline;
 
-    mBitmap.Create(mTimeLine->getWidth(),mHeight);
+    mBitmap.Create(mTimeLine->getWidth(),mTrack->getHeight());
 
-    BOOST_FOREACH( model::ClipPtr clip, mTrack->getClips() )
-    {
-        GuiTimeLineClipPtr gClip( new GuiTimeLineClip(mZoom, mViewMap, clip));
-        mClips.push_back(gClip);
-        mViewMap.add(clip,gClip);
-        gClip->init();
-    }
+    model::MoveParameter m;
+    m.addClips = mTrack->getClips();
+    OnClipsAdded(model::EventAddClips(m));
 
+    /** @todo redraw on idle? */
     updateBitmap(); // Before binding to clip events to avoid a lot of events
 
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
-    {
-        clip->Bind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
-    }
+    Bind(wxEVT_IDLE, &GuiTimeLineTrack::OnIdle, this);
+
     mTrack->Bind(model::EVENT_ADD_CLIPS,     &GuiTimeLineTrack::OnClipsAdded,    this);
     mTrack->Bind(model::EVENT_REMOVE_CLIPS,  &GuiTimeLineTrack::OnClipsRemoved,  this);
-
-    VAR_DEBUG(mClips);
 }
 
 GuiTimeLineTrack::~GuiTimeLineTrack()
 {
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
-    {
-        clip->Unbind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
-    }
-    mViewMap.remove(shared_from_this());
+    mViewMap.remove(mTrack);
 }
 
 int GuiTimeLineTrack::getClipHeight() const
 {
-    return mHeight - 2 * sTrackBorderSize;
-}
-
-int GuiTimeLineTrack::getIndex()
-{
-    return mTimeLine->getIndex(shared_from_this());
+    return mTrack->getHeight() - 2 * sTrackBorderSize;
 }
 
 const wxBitmap& GuiTimeLineTrack::getBitmap()
 {
     return mBitmap;
-}
-
-GuiTimeLineClips GuiTimeLineTrack::getClips() const
-{
-    return mClips;
-}
-
-GuiTimeLineClipWithOffset GuiTimeLineTrack::findClip(int position)
-{
-    int left = sTrackBorderSize;
-    int right = left;
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
-    {
-        int width = clip->getBitmap().GetWidth();
-        right += width;
-        if (position >= left && position <= right)
-        {
-            return boost::make_tuple(clip,left);
-        }
-        left += width;
-    }
-    return boost::make_tuple(GuiTimeLineClipPtr(),0);
-}
-
-boost::tuple<int,int> GuiTimeLineTrack::findClipBounds(GuiTimeLineClipPtr findclip)
-{
-    int left = sTrackBorderSize;
-    int right = left;
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
-    {
-        int width = clip->getBitmap().GetWidth();
-        right += width;
-        if (clip == findclip)
-        {
-            return boost::make_tuple(left,right);
-        }
-        left += width;
-    }
-    FATAL("Clip not found.");
-    return boost::make_tuple(0,0);
 }
 
 model::TrackPtr GuiTimeLineTrack::getTrack() const
@@ -158,50 +83,46 @@ model::TrackPtr GuiTimeLineTrack::getTrack() const
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GUI EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void GuiTimeLineTrack::OnIdle(wxIdleEvent& event)
+{
+    if (mRedrawOnIdle)
+    {
+        // This is done to avoid using intermediary states for iterating though
+        // the model. For instance, when replacing clips with other clips, first
+        // a remove event and then a add event is received. However, while 
+        // receiving the remove event, the actual adding may already have been
+        // done. Then the view for the added clips has not yet been initialized.
+        updateBitmap();
+        mRedrawOnIdle = false;
+    }
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
 {
-    GuiTimeLineClips newClips;
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
-        GuiTimeLineClipPtr gclip(new GuiTimeLineClip(mZoom,mViewMap,clip));
-        mViewMap.add(clip,gclip);
-        gclip->init();
-        gclip->Bind(CLIP_UPDATE_EVENT,    &GuiTimeLineTrack::OnClipUpdated,       this);
-        newClips.push_back(gclip);
+        GuiTimeLineClip* p = new GuiTimeLineClip(this,mZoom,mViewMap,clip);
+        p->Bind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this); // After init to avoid initial events (since updateBitmap below redraws the entire bitmap)
     }
-
-    GuiTimeLineClips::iterator itPosition = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getValue().addPosition) );
-    // NOT: ASSERT(itPosition != mClips.end()); Clips may be added at the end
-
-    mClips.splice(itPosition, newClips);
-
-    VAR_DEBUG(mClips);
-
-    updateBitmap();
+    mRedrawOnIdle = true;
 }
 
 void GuiTimeLineTrack::OnClipsRemoved( model::EventRemoveClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
     {
-        mViewMap.remove(clip);
+        mViewMap.ModelToView(clip)->Unbind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this);
+        mViewMap.ModelToView(clip)->Destroy();
     }
-
-    GuiTimeLineClips::iterator itBegin = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getValue().removeClips.front()));
-    ASSERT(itBegin != mClips.end());
-
-    GuiTimeLineClips::iterator itEnd = find_if(mClips.begin(), mClips.end(), ClipCopyFinder(event.getValue().removeClips.back()));
-    ASSERT(itEnd != mClips.end());
-
-    ++itEnd; // See http://www.cplusplus.com/reference/stl/list/erase (one but last is removed)
-    mClips.erase(itBegin,itEnd);
-
-    VAR_DEBUG(mClips);
-
-    updateBitmap();
+    mRedrawOnIdle = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -211,7 +132,7 @@ void GuiTimeLineTrack::OnClipsRemoved( model::EventRemoveClips& event )
 void GuiTimeLineTrack::OnClipUpdated( ClipUpdateEvent& event )
 {
     /** todo only redraw clip */
-    updateBitmap();
+    mRedrawOnIdle = true;
 }
 
 void GuiTimeLineTrack::updateBitmap()
@@ -223,7 +144,7 @@ void GuiTimeLineTrack::updateBitmap()
 
     wxPoint pos(sTrackBorderSize,sTrackBorderSize);
     drawClips(pos, dc);
-    QueueEvent(new TrackUpdateEvent(shared_from_this()));
+    QueueEvent(new TrackUpdateEvent(this));
 }
 
 void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask) const
@@ -232,8 +153,9 @@ void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::option
     bool draggedClipsOnly = dcSelectedClipsMask;
 
     wxPoint pos(position);
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, mClips )
+    BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
     {
+        GuiTimeLineClipPtr clip = mViewMap.ModelToView(modelclip);
         wxBitmap bitmap = clip->getBitmap();
 
         if (draggedClipsOnly)

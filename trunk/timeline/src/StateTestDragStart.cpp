@@ -40,13 +40,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     static int tolerance = 2;
     if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
     {
-        BOOST_FOREACH( GuiTimeLineClipPtr c, outermost_context().timeline.getClips() )
-        {
-            if (c->isSelected())
-            {
-                c->setBeingDragged(true);
-            }
-        }
+        outermost_context().globals->selection.setDrag(true);
 
         // Begin the drag operation
         GuiTimeLine& timeline = outermost_context().timeline;

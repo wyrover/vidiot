@@ -9,10 +9,10 @@ namespace gui { namespace timeline { namespace state {
 // MACHINE
 //////////////////////////////////////////////////////////////////////////
 
-Machine::Machine(GuiTimeLine& tl)
+Machine::Machine(GuiTimeLine& tl, ViewMap& viewMap)
 :   timeline(tl)
 {
-    globals = new GlobalState(tl);
+    globals = new GlobalState(tl, viewMap);
     initiate();
 
     timeline.Bind(wxEVT_MOTION,                 &Machine::OnMotion,         this);

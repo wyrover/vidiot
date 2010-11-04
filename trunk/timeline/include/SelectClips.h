@@ -2,22 +2,30 @@
 #define SELECT_CLIPS_H
 
 #include "GuiPtr.h"
+#include "ViewMap.h"
+#include "ModelPtr.h"
+#include <set>
 
 namespace gui { namespace timeline {
 
 class SelectClips
 {
 public:
-    SelectClips(GuiTimeLine& timeline);
+    SelectClips(ViewMap& viewMap);
     void update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    void setDrag(bool drag);
 private:
-    GuiTimeLine& mTimeline;
+
+    void selectClip(model::ClipPtr clip, bool selected);
+
+    ViewMap& mViewMap;
 
     /**
     * Holds the clip which was previously (de)selected.
     */
-    GuiTimeLineClipPtr mPreviouslyClicked;
+    model::ClipPtr mPreviouslyClicked;
 
+    std::set<model::ClipPtr> mSelected;
 };
 
 }} // namespace

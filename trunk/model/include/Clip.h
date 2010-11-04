@@ -37,8 +37,11 @@ public:
     // TRACK
     //////////////////////////////////////////////////////////////////////////
 
-    void setTrack(TrackPtr track);
+    void setTrack(TrackPtr track, boost::int64_t trackPosition);
     TrackPtr getTrack();
+
+    boost::int64_t getLeftPts() const;
+    boost::int64_t getRightPts() const;
 
     //////////////////////////////////////////////////////////////////////////
     // LINK
@@ -92,8 +95,9 @@ protected:
 
 private:
 
-    boost::int64_t mOffset;
-    boost::int64_t mLength;
+    boost::int64_t mOffset;         // Offset inside the original media file (start point)
+    boost::int64_t mLength;         // Length of the clip
+    boost::int64_t mTrackPosition;  // Position inside the track. 0 if not in a track.
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

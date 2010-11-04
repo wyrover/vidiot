@@ -15,6 +15,8 @@
 
 namespace model {
 
+static int sDefaultTrackHeight = 50;
+
 DEFINE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
 DEFINE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);
 
@@ -22,6 +24,7 @@ Track::Track()
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
+,   mHeight(sDefaultTrackHeight)
 { 
     VAR_DEBUG(this);
 }
@@ -29,14 +32,18 @@ Track::Track()
 Track::Track(const Track& other)
 :	IControl()
 ,   wxEvtHandler()
-,   mClips(other.mClips)
+,   mClips()
+,   mHeight(other.mHeight)
 {
     VAR_DEBUG(this);
-    ASSERT(false);// If this is ever used, test the clips in combination with the shared_from_this() in a constructor below.
-    BOOST_FOREACH(ClipPtr clip, mClips)
+    ASSERT(false);// If this is ever used, test the clips in combination with the shared_from_this() in addClips below.
+
+    Clips clonedClips;
+    BOOST_FOREACH(ClipPtr clip, other.mClips)
     {
-        clip->setTrack(shared_from_this());
+        clonedClips.push_back(make_cloned<Clip>(clip));
     }
+    addClips(clonedClips,ClipPtr());
 }
 
 Track* Track::clone()
@@ -55,6 +62,7 @@ Track::~Track()
 
 boost::int64_t Track::getNumberOfFrames()
 {
+    /** @todo return rightPts of last clip? */
     boost::int16_t nFrames = 0;
     BOOST_FOREACH( ClipPtr clip, mClips )
     {
@@ -64,6 +72,7 @@ boost::int64_t Track::getNumberOfFrames()
 }
 
 
+/** @todo replace with clip->getrightpts? */
 boost::int64_t Track::getStartFrameNumber(ClipPtr clip) const
 {
     boost::int16_t n = 0;
@@ -119,9 +128,25 @@ void Track::moveTo(boost::int64_t position)
 
 void Track::addClips(Clips clips, ClipPtr position)
 {
+    boost::int64_t pts = 0;  // Default initialization for the case position is not initialized (add at end)
+
+    if (position)
+    {
+        pts = position->getRightPts();
+    }
+    else
+    {
+        if (!mClips.empty())
+        {
+            // Position at end
+            pts = (*mClips.rbegin())->getRightPts();
+        }
+    }
+
     BOOST_FOREACH( ClipPtr clip, clips )
     {
-        clip->setTrack(shared_from_this());
+        clip->setTrack(shared_from_this(), pts);
+        pts += clip->getNumberOfFrames();
     }
 
     Clips::iterator itPosition = find(mClips.begin(), mClips.end(), position);
@@ -147,7 +172,7 @@ void Track::removeClips(Clips clips)
 {
     BOOST_FOREACH( ClipPtr clip, clips )
     {
-        clip->setTrack(TrackPtr());
+        clip->setTrack(TrackPtr(), 0);
     }
 
     Clips::iterator itBegin = find(mClips.begin(), mClips.end(), clips.front());
@@ -204,6 +229,15 @@ ClipPtr Track::getNextClip(ClipPtr clip)
         return ClipPtr();
     }
     return *it;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET & SET
+//////////////////////////////////////////////////////////////////////////
+
+int Track::getHeight()
+{
+    return mHeight;
 }
 
 //////////////////////////////////////////////////////////////////////////

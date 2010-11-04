@@ -184,8 +184,9 @@ SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTra
     int pts_left = 0;
     int pts_right = 0;
 
-    BOOST_FOREACH( GuiTimeLineClipPtr clip, track->mClips )
+    BOOST_FOREACH( model::ClipPtr modelclip, track->getTrack()->getClips() )
     {
+        GuiTimeLineClipPtr clip = mTimeline->getViewMap().ModelToView(modelclip);
         pts_right += clip->getClip()->getNumberOfFrames();
         wxRect cliprect = makeRect(pts_left, pts_right);
         //wxRegionContain {

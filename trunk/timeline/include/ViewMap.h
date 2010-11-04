@@ -1,14 +1,14 @@
 #ifndef VIEW_MAP_H
 #define VIEW_MAP_H
 
-#include <boost/bimap.hpp>
+#include <map>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
 
 namespace gui { namespace timeline {
 
-typedef boost::bimap< model::TrackPtr, GuiTimeLineTrackPtr > TrackMap;
-typedef boost::bimap< model::ClipPtr, GuiTimeLineClipPtr > ClipMap;
+typedef std::map< model::TrackPtr, GuiTimeLineTrackPtr > TrackMap;
+typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > ClipMap;
 
 class ViewMap
 {
@@ -23,24 +23,20 @@ public:
     ~ViewMap();
 
     //////////////////////////////////////////////////////////////////////////
-    //
+    // REGISTRATION
     //////////////////////////////////////////////////////////////////////////
 
     void add(model::ClipPtr modelClip, GuiTimeLineClipPtr clipView);
     void add(model::TrackPtr modelTrack, GuiTimeLineTrackPtr trackView);
     void remove(model::ClipPtr modelClip);
     void remove(model::TrackPtr modelTrack);
-    void remove(GuiTimeLineClipPtr clipView);
-    void remove(GuiTimeLineTrackPtr trackView);
 
     //////////////////////////////////////////////////////////////////////////
-    //
+    // CONVERSION
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineClipPtr ModelToView(model::ClipPtr modelClip);
-    GuiTimeLineTrackPtr ModelToView(model::TrackPtr modelTrack);
-    model::ClipPtr ViewToModel(GuiTimeLineClipPtr viewClip);
-    model::TrackPtr ViewToModel(GuiTimeLineTrackPtr viewTrack);
+    GuiTimeLineClipPtr ModelToView(model::ClipPtr modelClip) const;
+    GuiTimeLineTrackPtr ModelToView(model::TrackPtr modelTrack) const;
 
 private:
 
