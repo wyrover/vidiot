@@ -42,6 +42,8 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
     ASSERT(mClip);
     mViewMap.add(mClip,this);
     updateSize(); // Also creates bitmap
+
+    Hide();
 }
 
 GuiTimeLineClip::~GuiTimeLineClip()

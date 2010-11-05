@@ -53,13 +53,15 @@ GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLine* timeline,
     m.addClips = mTrack->getClips();
     OnClipsAdded(model::EventAddClips(m));
 
-    /** @todo redraw on idle? */
+    /** @todo redraw on idle```````o? */
     updateBitmap(); // Before binding to clip events to avoid a lot of events
 
     Bind(wxEVT_IDLE, &GuiTimeLineTrack::OnIdle, this);
 
     mTrack->Bind(model::EVENT_ADD_CLIPS,     &GuiTimeLineTrack::OnClipsAdded,    this);
     mTrack->Bind(model::EVENT_REMOVE_CLIPS,  &GuiTimeLineTrack::OnClipsRemoved,  this);
+
+    Hide(); // Otherwise a default widget is painted in the topleft corner of the timeline
 }
 
 GuiTimeLineTrack::~GuiTimeLineTrack()

@@ -54,7 +54,6 @@ public:
 
     model::TrackPtr getTrack() const;
 
-
     // todo hide this as the getheight should not be used on the bitmap but on the track
     // for initialization purposes.
     const wxBitmap& getBitmap();
