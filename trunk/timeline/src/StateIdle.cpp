@@ -41,6 +41,7 @@ Idle::~Idle() // exit
 boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
+    outermost_context().timeline.SetFocus(); /** @todo make more generic, for all states */
     GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition);
     outermost_context().globals->selection.update(clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
     if (clip && !clip->isEmpty())
@@ -74,7 +75,7 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 
 boost::statechart::result Idle::react( const EvKeyDown& evt)
 {
-    switch (evt.mWxEvent.GetKeyCode())
+     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_SPACE:
         return start();

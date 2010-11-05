@@ -90,6 +90,7 @@ void GuiTimelinesView::Open( model::SequencePtr sequence )
     {
         timeline::GuiTimeLinePtr timeline = new timeline::GuiTimeLine(sequence);
         timeline->init(&mNotebook);
+        timeline->SetFocus();
         mNotebook.AddPage(timeline,sequence->getName(),false);
     }
     mNotebook.SetSelection(findPage(sequence).first); // Don't reuse f, since the current active timeline might just have been added above.
