@@ -142,6 +142,13 @@ public:
     **/
     ClipPtr getNextClip(ClipPtr clip);
 
+    /**
+    * Find the clip preceding 'clip'. 
+    * Returns a '0' pointer if clip is not found.
+    * @pre clip is a part of this track
+    **/
+    ClipPtr getPreviousClip(ClipPtr clip);
+
     //////////////////////////////////////////////////////////////////////////
     // GET & SET
     //////////////////////////////////////////////////////////////////////////

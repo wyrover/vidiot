@@ -47,7 +47,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineClipPtr mClip;
+//    GuiTimeLineClipPtr mClip;
 
 };
 

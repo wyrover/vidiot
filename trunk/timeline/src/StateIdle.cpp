@@ -61,13 +61,16 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
 boost::statechart::result Idle::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    MousePosition pos = outermost_context().globals->mousepointer.getLogicalPosition(evt.mPosition);
+    PointerPositionInfo info =  outermost_context().timeline.getPointerInfo(evt.mPosition);
     MousePointerImage image = PointerNormal;
-    switch (pos)
+    if (info.clip)
     {
-    case MouseOnClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
-    case MouseBetweenClips:     image = PointerMoveCut;     break;
-    case MouseOnClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+        switch (info.logicalclipposition)
+        {
+        case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
+        case ClipBetween:    image = PointerMoveCut;     break;
+        case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+        }
     }
     outermost_context().globals->mousepointer.set(image);
     return discard_event();
