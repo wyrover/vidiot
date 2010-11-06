@@ -11,7 +11,6 @@
 
 namespace gui { namespace timeline {
 
-IMPLEMENTENUM(MousePosition);
 IMPLEMENTENUM(MousePointerImage);
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,36 +57,6 @@ MousePointer::MousePointer(GuiTimeLine& timeline)
 
 MousePointer::~MousePointer()
 {
-}
-
-MousePosition MousePointer::getLogicalPosition(wxPoint virtualposition) const
-{
-    GuiTimeLineClip* clip = mTimeline.findClip(virtualposition);
-    if (clip)
-    {
-        int dist_begin = virtualposition.x - clip->getLeftPosition();
-        int dist_end = clip->getRightPosition() - virtualposition.x;
-
-        VAR_DEBUG(dist_begin)(dist_end)(clip->getLeftPosition())(clip->getRightPosition());
-        if ((dist_begin <= 1) || (dist_end <= 1))
-        {
-            return MouseBetweenClips;
-        }
-        else if ((dist_begin > 1) && (dist_begin < 4))
-        {
-            return MouseOnClipBegin;
-        }
-        else if ((dist_end > 1) && (dist_end < 4))
-        {
-            return MouseOnClipEnd;
-        }
-        else
-        {
-            return MouseOnClipInterior;
-        }
-    }
-    return MouseNotOnClip;
-
 }
 
 void MousePointer::set(MousePointerImage image)

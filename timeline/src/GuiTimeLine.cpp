@@ -33,6 +33,8 @@ namespace gui { namespace timeline {
 
 DEFINE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
+IMPLEMENTENUM(MouseOnClipPosition);
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -321,6 +323,89 @@ boost::tuple<model::TrackPtr,int> GuiTimeLine::findTrack(int yposition) const
         if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
     }
     return boost::make_tuple(model::TrackPtr(),0);
+}
+
+PointerPositionInfo GuiTimeLine::getPointerInfo(wxPoint pointerposition) const
+{
+    PointerPositionInfo info;
+    info.track = model::TrackPtr();
+    info.clip = model::ClipPtr();
+    info.trackPosition = 0;
+
+    // Find possible videotrack under pointer
+    int top = mDividerPosition;
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
+    {
+        int bottom = top;
+        top -= track->getHeight();
+        if (pointerposition.y <= bottom && pointerposition.y >= top)
+        {
+            info.track = track;
+            info.trackPosition = top;
+            break;
+        }
+    }
+    if (!info.track)
+    {
+        // Find possible audiotrack under pointer
+        int bottom = mDividerPosition + Constants::sAudioVideoDividerHeight;
+        BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
+        {
+            int top = bottom;
+            bottom += track->getHeight();
+            if (pointerposition.y <= bottom && pointerposition.y >= top)
+            {
+                info.track = track;
+                info.trackPosition = top;
+                break;
+            }
+        }
+    }
+
+    // Find clip under pointer
+    if (info.track)
+    {
+        info.clip = info.track->getClip(mZoom.pixelsToPts(pointerposition.x));
+    }
+
+    // Find logical position of pointer wrt clips
+    if (info.clip)
+    {
+        // This is handled on a per-pixel and not per-pts basis. That ensures
+        // that this still works for clips which are very small when zoomed out.
+        // (then the cursor won't flip too much).
+        GuiTimeLineClip* clip = mViewMap.ModelToView(info.clip);
+        int dist_begin = pointerposition.x - clip->getLeftPosition();
+        int dist_end = clip->getRightPosition() - pointerposition.x;
+
+        if (dist_begin <= 1)
+        {
+            // Possibly between clips. However, this is only relevant if there
+            // is another nonempty clip adjacent to this clip.
+            model::ClipPtr previous = info.track->getPreviousClip(info.clip);
+            info.logicalclipposition = (!previous || previous->isA<model::EmptyClip>()) ? ClipBegin : ClipBetween;
+        }
+        else if (dist_end <= 1)
+        {
+            // Possibly between clips. However, this is only relevant if there
+            // is another nonempty clip adjacent to this clip.
+            model::ClipPtr next = info.track->getNextClip(info.clip);
+            info.logicalclipposition = (!next || next->isA<model::EmptyClip>()) ? ClipEnd : ClipBetween;
+        }
+        else if ((dist_begin > 1) && (dist_begin < 4))
+        {
+            info.logicalclipposition = ClipBegin;
+        }
+        else if ((dist_end > 1) && (dist_end < 4))
+        {
+            info.logicalclipposition = ClipEnd;
+        }
+        else
+        {
+            info.logicalclipposition = ClipInterior;
+        }
+    }
+    return info;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -217,11 +217,7 @@ ClipPtr Track::getClip(boost::int64_t pts)
 
 ClipPtr Track::getNextClip(ClipPtr clip)
 {
-    Clips::iterator it = mClips.begin();
-    while  (it != mClips.end() && *it != clip)
-    {
-        ++it;
-    }
+    Clips::iterator it = find(mClips.begin(),mClips.end(),clip);
     ASSERT(it != mClips.end());
     ++it;
     if (it == mClips.end())
@@ -229,6 +225,18 @@ ClipPtr Track::getNextClip(ClipPtr clip)
         return ClipPtr();
     }
     return *it;
+}
+
+ClipPtr Track::getPreviousClip(ClipPtr clip)
+{
+    Clips::iterator it = find(mClips.begin(),mClips.end(),clip);
+    ASSERT(it != mClips.end());
+    if (it == mClips.begin())
+    {
+        return ClipPtr();
+    }
+    --it;
+    return *it; 
 }
 
 //////////////////////////////////////////////////////////////////////////

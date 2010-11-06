@@ -15,6 +15,7 @@
 #include "ModelPtr.h"
 #include "GuiPtr.h"
 #include "State.h"
+#include "UtilEnum.h"
 #include "SelectIntervals.h"
 #include "UtilEvent.h"
 #include "GuiTimeLineZoom.h"
@@ -25,6 +26,35 @@ namespace gui { namespace timeline {
 class TrackUpdateEvent;
 
 DECLARE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
+
+DECLAREENUM(MouseOnClipPosition, \
+            ClipBetween, \
+            ClipBegin, \
+            ClipInterior, \
+            ClipEnd);
+
+struct PointerPositionInfo
+{
+    //////////////////////////////////////////////////////////////////////////
+    // TRACK
+    //////////////////////////////////////////////////////////////////////////
+
+    /** Current track under the mouse pointer. 0 if none. */
+    model::TrackPtr track;
+
+    /** Y position of current track. 0 if no current track. */
+    int trackPosition;
+
+    //////////////////////////////////////////////////////////////////////////
+    // CLIP
+    //////////////////////////////////////////////////////////////////////////
+
+    /** Current clip under the mouse pointer. 0 if none. */
+    model::ClipPtr clip;
+
+    MouseOnClipPosition logicalclipposition;
+
+};
 
 class GuiTimeLine
 :   public wxScrolledWindow
@@ -116,6 +146,8 @@ public:
      * @return null pointer and 0 if not found
      */
     boost::tuple<model::TrackPtr,int> findTrack(int yposition) const;
+
+    PointerPositionInfo getPointerInfo(wxPoint pointerposition) const;
 
 private:
 

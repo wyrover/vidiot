@@ -9,13 +9,6 @@ namespace gui { namespace timeline {
 
 class GuiTimeLine;
 
-DECLAREENUM(MousePosition, \
-            MouseBetweenClips, \
-            MouseOnClipBegin, \
-            MouseOnClipInterior, \
-            MouseOnClipEnd, \
-            MouseNotOnClip);
-
 DECLAREENUM(MousePointerImage, \
             PointerNormal, \
             PointerMoveCut, \
@@ -41,8 +34,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void set(MousePointerImage image);
-
-    MousePosition getLogicalPosition(wxPoint virtualposition) const;
 
 private:
     GuiTimeLine& mTimeline;

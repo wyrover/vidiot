@@ -17,7 +17,7 @@ namespace gui { namespace timeline { namespace state {
 
 Dragging::Dragging( my_context ctx ) // entry
 :   my_base( ctx )
-,   mClip()
+//,   mClip()
 {
     LOG_DEBUG; 
 }
@@ -75,15 +75,14 @@ void Dragging::showDropArea(wxPoint p)
 {
     GuiTimeLine& timeline = outermost_context().timeline;
     GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
-    boost::tuple<model::TrackPtr,int> tt =  (timeline.findTrack(p.y));
-    GuiTimeLineTrackPtr track = outermost_context().globals->mViewMap.ModelToView(tt.get<0>());
-    GuiTimeLineClipPtr clip = timeline.findClip(p);
-    mClip = clip;
+    PointerPositionInfo info = outermost_context().timeline.getPointerInfo(p);
 
-    if (track)
+    if (info.track)
     {
-        if (clip)
+        GuiTimeLineTrackPtr track = outermost_context().globals->mViewMap.ModelToView(info.track);
+        if (info.clip)
         {
+            GuiTimeLineClipPtr clip = outermost_context().globals->mViewMap.ModelToView(info.clip);
             int diffleft  = p.x - clip->getLeftPosition();
             int diffright = clip->getRightPosition() - p.x;
 
@@ -96,11 +95,11 @@ void Dragging::showDropArea(wxPoint p)
             {
                 xDrop = clip->getRightPosition() - 2;
             }
-            timeline.showDropArea(wxRect(xDrop,tt.get<1>(),4,track->getBitmap().GetHeight())); 
+            timeline.showDropArea(wxRect(xDrop,info.trackPosition,4,track->getBitmap().GetHeight())); 
         }
         else
         {
-            timeline.showDropArea(wxRect(p.x,tt.get<1>(),4,track->getBitmap().GetHeight())); 
+            timeline.showDropArea(wxRect(p.x,info.trackPosition,4,track->getBitmap().GetHeight())); 
         }
     }
     else
