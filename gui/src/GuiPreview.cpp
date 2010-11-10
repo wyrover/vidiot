@@ -34,7 +34,7 @@ GuiPreview::~GuiPreview()
 // TO/FROM OTHER WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr GuiPreview::openTimeline(timeline::GuiTimeLinePtr timeline)
+PlayerPtr GuiPreview::openTimeline(timeline::GuiTimeLine* timeline)
 {
     ASSERT(mPlayers.find(timeline) == mPlayers.end());
     PlayerPtr newplayer = boost::make_shared<GuiPlayer>(this,timeline);
@@ -44,7 +44,7 @@ PlayerPtr GuiPreview::openTimeline(timeline::GuiTimeLinePtr timeline)
     return newplayer;
 }
 
-void GuiPreview::closeTimeline(timeline::GuiTimeLinePtr timeline)
+void GuiPreview::closeTimeline(timeline::GuiTimeLine* timeline)
 {
     ASSERT(mPlayer);
     ASSERT(mPlayers.find(timeline) != mPlayers.end());
@@ -53,7 +53,7 @@ void GuiPreview::closeTimeline(timeline::GuiTimeLinePtr timeline)
     GetSizer()->Detach(player.get());
 }
 
-void GuiPreview::selectTimeline(timeline::GuiTimeLinePtr timeline)
+void GuiPreview::selectTimeline(timeline::GuiTimeLine* timeline)
 {
     if (mPlayer)
     {

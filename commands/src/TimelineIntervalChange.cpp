@@ -1,13 +1,13 @@
 #include "TimelineIntervalChange.h"
 
 #include "SelectIntervals.h"
+#include "GuiTimeLine.h"
 #include "UtilLog.h"
 
 namespace command {
 
-TimelineIntervalChange::TimelineIntervalChange(gui::timeline::IntervalsPtr intervals, long begin, long end, bool add)
-:   TimelineCommand()
-,   mIntervals(intervals)
+TimelineIntervalChange::TimelineIntervalChange(gui::timeline::GuiTimeLine& timeline, long begin, long end, bool add)
+:   TimelineCommand(timeline)
 ,   mBegin(begin)
 ,   mEnd(end)
 ,   mAdd(add)
@@ -30,14 +30,14 @@ TimelineIntervalChange::~TimelineIntervalChange()
 bool TimelineIntervalChange::Do()
 {
     VAR_INFO(this);
-    mIntervals->change(mBegin,mEnd,mAdd);
+    getTimeline().getSelectIntervals().change(mBegin,mEnd,mAdd);
     return true;
 }
 
 bool TimelineIntervalChange::Undo()
 {
     VAR_INFO(this);
-    mIntervals->change(mBegin,mEnd,!mAdd);
+    getTimeline().getSelectIntervals().change(mBegin,mEnd,!mAdd);
     return true;
 }
 

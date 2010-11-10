@@ -17,8 +17,7 @@ IMPLEMENTENUM(MousePointerImage);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-MousePointer::MousePointer(GuiTimeLine& timeline)
-:   mTimeline(timeline)
+MousePointer::MousePointer()
 {
     wxImage image;
 
@@ -52,9 +51,13 @@ MousePointer::MousePointer(GuiTimeLine& timeline)
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
     mCursorTrimShiftEnd = wxCursor(image);
 
-    mTimeline.SetCursor(mCursorNormal);
 }
 
+void MousePointer::init()
+{
+    getTimeline().SetCursor(mCursorNormal);
+}
+    
 MousePointer::~MousePointer()
 {
 }
@@ -63,12 +66,12 @@ void MousePointer::set(MousePointerImage image)
 {
     switch (image)
     {
-    case PointerNormal:         mTimeline.SetCursor(mCursorNormal);         return;
-    case PointerMoveCut:        mTimeline.SetCursor(mCursorMoveCut);        return;
-    case PointerTrimBegin:      mTimeline.SetCursor(mCursorTrimBegin);      return;
-    case PointerTrimShiftBegin: mTimeline.SetCursor(mCursorTrimShiftBegin); return;
-    case PointerTrimEnd:        mTimeline.SetCursor(mCursorTrimEnd);        return;
-    case PointerTrimShiftEnd:   mTimeline.SetCursor(mCursorTrimShiftEnd);   return;
+    case PointerNormal:         getTimeline().SetCursor(mCursorNormal);         return;
+    case PointerMoveCut:        getTimeline().SetCursor(mCursorMoveCut);        return;
+    case PointerTrimBegin:      getTimeline().SetCursor(mCursorTrimBegin);      return;
+    case PointerTrimShiftBegin: getTimeline().SetCursor(mCursorTrimShiftBegin); return;
+    case PointerTrimEnd:        getTimeline().SetCursor(mCursorTrimEnd);        return;
+    case PointerTrimShiftEnd:   getTimeline().SetCursor(mCursorTrimShiftEnd);   return;
     default:                    FATAL("Unknown image");
     }
 }

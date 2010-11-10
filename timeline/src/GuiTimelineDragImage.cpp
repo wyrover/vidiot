@@ -6,11 +6,11 @@
 
 namespace gui { namespace timeline {
 
-GuiTimeLineDragImage::GuiTimeLineDragImage(GuiTimeLine* timeline, wxPoint position)
+GuiTimeLineDragImage::GuiTimeLineDragImage(GuiTimeLine& timeline, wxPoint position)
 :	wxDragImage(wxCursor(wxCURSOR_HAND))
 ,   mTimeLine(timeline)
 ,   mHotspot(position)
-,   mBitmap(timeline->getDragBitmap(mHotspot))
+,   mBitmap(timeline.getDragBitmap(mHotspot))
 {
 }
 

@@ -12,7 +12,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class MovingCursor
-    :   public boost::statechart::state< MovingCursor, Machine >
+    :   public TimeLineState< MovingCursor, Machine >
 {
 public:
 
@@ -43,6 +43,12 @@ public:
     boost::statechart::result react( const EvKeyUp& evt);
 
 private:
+
+    ////////////////////////////////////////////////////////////////////////////
+    //// MAKE IT A PART
+    ////////////////////////////////////////////////////////////////////////////
+
+    //GuiTimeLine& getTimeline();
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

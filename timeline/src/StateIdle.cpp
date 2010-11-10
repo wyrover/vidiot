@@ -16,6 +16,7 @@
 #include "Sequence.h"
 #include "Project.h"
 #include "TimelineMoveClips.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -24,7 +25,7 @@ namespace gui { namespace timeline { namespace state {
 //////////////////////////////////////////////////////////////////////////
 
 Idle::Idle( my_context ctx ) // entry
-:   my_base( ctx )
+:   TimeLineState( ctx )
 {
     LOG_DEBUG; 
 }
@@ -41,13 +42,12 @@ Idle::~Idle() // exit
 boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    outermost_context().timeline.SetFocus(); /** @todo make more generic, for all states */
-    GuiTimeLineClipPtr clip = outermost_context().timeline.findClip(evt.mPosition);
-    outermost_context().globals->selection.update(clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
+    getTimeline().SetFocus(); /** @todo make more generic, for all states */
+    GuiTimeLineClip* clip = getTimeline().findClip(evt.mPosition);
+    getSelectClips().update(clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
     if (clip && !clip->isEmpty())
     {
         outermost_context().globals->DragStartPosition = evt.mPosition;
-        outermost_context().globals->DragStartClip = clip;
         return transit<TestDragStart>();
     }
     else
@@ -61,7 +61,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
 boost::statechart::result Idle::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info =  outermost_context().timeline.getPointerInfo(evt.mPosition);
+    PointerPositionInfo info =  getTimeline().getPointerInfo(evt.mPosition);
     MousePointerImage image = PointerNormal;
     if (info.clip)
     {
@@ -72,7 +72,7 @@ boost::statechart::result Idle::react( const EvMotion& evt )
         case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
         }
     }
-    outermost_context().globals->mousepointer.set(image);
+    getMousePointer().set(image);
     return discard_event();
 }
 
@@ -86,9 +86,9 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     case WXK_DELETE:
         {
             model::MoveParameters moves;
-            deleteSelectedClips( moves, outermost_context().timeline.mVideoTracks);
-            deleteSelectedClips( moves, outermost_context().timeline.mAudioTracks);
-            model::Project::current()->Submit(new command::TimelineMoveClips(moves));
+            deleteSelectedClips( moves, getSequence()->getVideoTracks());
+            deleteSelectedClips( moves, getSequence()->getAudioTracks());
+            model::Project::current()->Submit(new command::TimelineMoveClips(getTimeline(),moves));
             break;
         }
     case 'K':
@@ -103,10 +103,10 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
                 typedef std::map<model::ClipPtr, model::Clips > ReplacementMap;
                 ReplacementMap mConversion;
 
-                long pts = outermost_context().timeline.mZoom.pixelsToPts(evt.mPosition.x);
-                model::Tracks tracks = outermost_context().timeline.getSequence()->getTracks();
-                BOOST_FOREACH( model::TrackPtr track,  outermost_context().timeline.getSequence()->getTracks() )
-//                BOOST_FOREACH( GuiTimeLineTrackPtr t, outermost_context().timeline.getTracks())
+                long pts = getZoom().pixelsToPts(evt.mPosition.x);
+                model::Tracks tracks = getSequence()->getTracks();
+                BOOST_FOREACH( model::TrackPtr track,  getSequence()->getTracks() )
+//                BOOST_FOREACH( GuiTimeLineTrack* t, outermost_context().timeline.getTracks())
                 {
                     //model::TrackPtr track = t->getTrack();
                     model::ClipPtr splitclip = track->getClip(pts);
@@ -201,7 +201,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
                     }
                 }
 
-                model::Project::current()->Submit(new command::TimelineMoveClips(moves));
+                model::Project::current()->Submit(new command::TimelineMoveClips(getTimeline(),moves));
             }
         }
         break;
@@ -215,38 +215,37 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
 
 boost::statechart::result Idle::start()
 {
-    outermost_context().timeline.mPlayer->play();
+    getPlayer()->play();
     return transit<Playing>();
 }
 
-void Idle::deleteSelectedClips(model::MoveParameters& moves, GuiTimeLineTracks tracks)
+void Idle::deleteSelectedClips(model::MoveParameters& moves, model::Tracks tracks)
 {
-    BOOST_FOREACH( GuiTimeLineTrackPtr t, tracks)
+    BOOST_FOREACH( model::TrackPtr track, tracks)
     {
         model::MoveParameterPtr move;
         long nRemovedFrames = 0;
-        BOOST_FOREACH( model::ClipPtr clip, t->getTrack()->getClips() )
+        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {
-            GuiTimeLineClipPtr c = outermost_context().globals->mViewMap.ModelToView(clip);
-            model::ClipPtr modelClip = c->getClip();
+            GuiTimeLineClip* c = getViewMap().getView(clip);
             if (c->isSelected())
             {
                 if (!move)
                 {
                     move = boost::make_shared<model::MoveParameter>();
-                    move->addTrack = t->getTrack();
-                    move->removeTrack = t->getTrack();
+                    move->addTrack = track;
+                    move->removeTrack = track;
                     nRemovedFrames = 0;
                 }
-                move->removeClips.push_back(c->getClip());
-                nRemovedFrames += c->getClip()->getNumberOfFrames();
+                move->removeClips.push_back(clip);
+                nRemovedFrames += clip->getNumberOfFrames();
             }
             else
             {
                 if (move) 
                 { 
-                    move->removePosition = c->getClip();
-                    move->addPosition = c->getClip();
+                    move->removePosition = clip;
+                    move->addPosition = clip;
                     move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
                     moves.push_back(move); 
                 }

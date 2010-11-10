@@ -13,13 +13,12 @@ class TimelineIntervalRemoveAll
 public:
 
     /** This command removes all intervals. */
-    TimelineIntervalRemoveAll(gui::timeline::IntervalsPtr intervals);
+    TimelineIntervalRemoveAll(gui::timeline::GuiTimeLine& timeline);
 
     ~TimelineIntervalRemoveAll();
     bool Do();
     bool Undo();
 private:
-    gui::timeline::IntervalsPtr mIntervals;
     wxRegion mOldRegion;
 };
 

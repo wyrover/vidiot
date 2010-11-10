@@ -15,13 +15,12 @@
 #include "Track.h"
 #include "UtilEvent.h"
 #include "GuiTimeLineZoom.h"
-#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
 class ClipUpdateEvent;
 
-DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
+DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrack*);
 
 class GuiTimeLineTrack
     :   public wxWindow
@@ -34,9 +33,8 @@ public:
 
     /** Recovery constructor equals two '0' pointers. */
     GuiTimeLineTrack(
-        GuiTimeLine* timeline,
+        GuiTimeLine& timeline,
         const GuiTimeLineZoom& zoom, 
-        ViewMap& viewMap, 
         model::TrackPtr track);
 
     /**
@@ -83,9 +81,8 @@ private:
     friend class SelectIntervals;
 
     const GuiTimeLineZoom& mZoom;
-    ViewMap& mViewMap;
 
-    GuiTimeLine* mTimeLine;
+    GuiTimeLine& mTimeLine;
 
     void updateBitmap();
 

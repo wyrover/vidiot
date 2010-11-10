@@ -21,40 +21,40 @@ ViewMap::~ViewMap()
 // REGISTRATION
 //////////////////////////////////////////////////////////////////////////
 
-void ViewMap::add(model::ClipPtr modelClip, GuiTimeLineClipPtr clipView)
+void ViewMap::registerView(model::ClipPtr clip, GuiTimeLineClip* view)
 {
-    mClips.insert(std::make_pair(modelClip, clipView));
+    mClips.insert(std::make_pair(clip, view));
 }
 
-void ViewMap::add(model::TrackPtr modelTrack, GuiTimeLineTrackPtr trackView)
+void ViewMap::registerView(model::TrackPtr track, GuiTimeLineTrack* view)
 {
-    mTracks.insert(std::make_pair(modelTrack, trackView));
+    mTracks.insert(std::make_pair(track, view));
 }
 
-void ViewMap::remove(model::ClipPtr modelClip)
+void ViewMap::unregisterView(model::ClipPtr clip)
 {
-    mClips.erase(modelClip);
+    mClips.erase(clip);
 }
 
-void ViewMap::remove(model::TrackPtr modelTrack)
+void ViewMap::unregisterView(model::TrackPtr track)
 {
-    mTracks.erase(modelTrack);
+    mTracks.erase(track);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // CONVERSION
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClipPtr ViewMap::ModelToView(model::ClipPtr modelClip) const
+GuiTimeLineClip* ViewMap::getView(model::ClipPtr clip) const
 {
-    ClipMap::const_iterator it = mClips.find(modelClip);
+    ClipMap::const_iterator it = mClips.find(clip);
     ASSERT(it != mClips.end());
     return it->second;
 }
 
-GuiTimeLineTrackPtr ViewMap::ModelToView(model::TrackPtr modelTrack) const
+GuiTimeLineTrack* ViewMap::getView(model::TrackPtr track) const
 {
-    TrackMap::const_iterator it = mTracks.find(modelTrack);
+    TrackMap::const_iterator it = mTracks.find(track);
     ASSERT(it != mTracks.end());
     return it->second;
 }

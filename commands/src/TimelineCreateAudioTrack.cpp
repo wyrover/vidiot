@@ -6,8 +6,8 @@
 
 namespace command {
 
-TimelineCreateAudioTrack::TimelineCreateAudioTrack(model::SequencePtr sequence)
-:   TimelineCommand()
+TimelineCreateAudioTrack::TimelineCreateAudioTrack(gui::timeline::GuiTimeLine& timeline, model::SequencePtr sequence)
+:   TimelineCommand(timeline)
 ,   mSequence(sequence)
 ,   mNewTrack()
 {

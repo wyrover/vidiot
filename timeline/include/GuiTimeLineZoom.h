@@ -1,19 +1,19 @@
 #ifndef GUI_TIME_LINE_ZOOM_H
 #define GUI_TIME_LINE_ZOOM_H
 
-#include <boost/noncopyable.hpp>
 #include <boost/rational.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/shared_ptr.hpp>
+#include "TimeLinePart.h"
 
 namespace gui { namespace timeline {
 
 typedef boost::rational<int> rational;
 
 class GuiTimeLineZoom
-    :   public boost::noncopyable
+    :   public TimeLinePart
 {
 public:
 

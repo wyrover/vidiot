@@ -8,7 +8,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class Playing
-    :   public boost::statechart::state< Playing, Machine >
+    :   public TimeLineState< Playing, Machine >
 {
 public:
 

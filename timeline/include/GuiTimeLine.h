@@ -17,6 +17,8 @@
 #include "State.h"
 #include "UtilEnum.h"
 #include "SelectIntervals.h"
+#include "SelectClips.h"
+#include "MousePointer.h"
 #include "UtilEvent.h"
 #include "GuiTimeLineZoom.h"
 #include "ViewMap.h"
@@ -24,6 +26,7 @@
 namespace gui { namespace timeline {
 
 class TrackUpdateEvent;
+class GuiTimeLineDragImage;
 
 DECLARE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
@@ -78,6 +81,28 @@ public:
     virtual ~GuiTimeLine();
 
     //////////////////////////////////////////////////////////////////////////
+    // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
+    //////////////////////////////////////////////////////////////////////////
+
+    GuiTimeLineZoom& getZoom() { return mZoom; }
+    ViewMap& getViewMap() { return mViewMap; }
+    SelectIntervals& getSelectIntervals() { return mSelectIntervals; }
+    MousePointer& getMousepointer() { return mMousePointer; }
+    SelectClips& getSelectClips() { return mSelectClips; }
+
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////
+
+    PlayerPtr getPlayer() const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // ZOOM
+    //////////////////////////////////////////////////////////////////////////
+
+    long getCursorPosition() const { return mCursorPosition; };
+
+    //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU
     //////////////////////////////////////////////////////////////////////////
 
@@ -85,7 +110,7 @@ public:
     void OnAddAudioTrack(wxCommandEvent& WXUNUSED(event));
     //void OnCloseSequence(wxCommandEvent& WXUNUSED(event));
 
-    wxMenu* getMenu();
+    wxMenu& getMenu();
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -114,12 +139,17 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    ViewMap& getViewMap();
     model::SequencePtr getSequence() const;
     int getWidth() const;
 
     wxPoint getScrollOffset() const;
 
+    //////////////////////////////////////////////////////////////////////////
+    // DRAGIMAGE
+    //////////////////////////////////////////////////////////////////////////
+
+    void setDragImage(GuiTimeLineDragImage* dragimage);
+    GuiTimeLineDragImage* getDragImage() const;
 
     //////////////////////////////////////////////////////////////////////////
     // CURSOR
@@ -138,30 +168,28 @@ public:
      * @return found clip
      * @return null pointer if not found
      */
-    GuiTimeLineClip* findClip(wxPoint p) const;
+    GuiTimeLineClip* findClip(wxPoint p);
 
     /**
      * @param yposition y position in virtual coordinates (thus, on the bitmap, not on the client area)
      * @return found track and its top position within the timeline
      * @return null pointer and 0 if not found
      */
-    boost::tuple<model::TrackPtr,int> findTrack(int yposition) const;
+    boost::tuple<model::TrackPtr,int> findTrack(int yposition);
 
-    PointerPositionInfo getPointerInfo(wxPoint pointerposition) const;
+    PointerPositionInfo getPointerInfo(wxPoint pointerposition);
 
 private:
 
-    friend class state::Idle;
-    friend class state::Playing;
-    friend class SelectIntervals;
-    friend class state::MovingCursor;
+    //////////////////////////////////////////////////////////////////////////
+    // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
+    //////////////////////////////////////////////////////////////////////////
 
     GuiTimeLineZoom mZoom;
-    
     ViewMap mViewMap;
-
-    TrackMap mTrackMap;
-    ClipMap mClipMap;
+    SelectIntervals mSelectIntervals;
+    MousePointer mMousePointer;
+    SelectClips mSelectClips;
 
     PlayerPtr mPlayer;
     wxBitmap mBitmap;
@@ -171,12 +199,7 @@ private:
     long mHeight;
     wxRect mDropArea;
     wxMenu mMenu;
-
-    //////////////////////////////////////////////////////////////////////////
-    // Interval selection
-    //////////////////////////////////////////////////////////////////////////
-
-    IntervalsPtr mSelectedIntervals;
+    GuiTimeLineDragImage* mDragImage;
 
     //////////////////////////////////////////////////////////////////////////
     //
@@ -189,9 +212,6 @@ private:
     state::Machine mMouseState;
 
     model::SequencePtr mSequence;
-
-    GuiTimeLineTracks mVideoTracks;
-    GuiTimeLineTracks mAudioTracks;
 
     wxPoint mOrigin;
 

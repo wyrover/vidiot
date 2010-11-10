@@ -7,8 +7,8 @@
 
 namespace command {
 
-TimelineMoveClips::TimelineMoveClips(model::MoveParameters params)
-:   TimelineCommand()
+TimelineMoveClips::TimelineMoveClips(gui::timeline::GuiTimeLine& timeline, model::MoveParameters params)
+:   TimelineCommand(timeline)
 ,   mParams(params)
 {
     VAR_INFO(this);

@@ -26,7 +26,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline);
+    GuiPlayer(wxWindow *parent, timeline::GuiTimeLine* timeline);
 	virtual ~GuiPlayer();
 
     //////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    timeline::GuiTimeLinePtr mTimeLine;
+    timeline::GuiTimeLine* mTimeLine;
 
     GuiVideoDisplay* mDisplay;
     wxTextCtrl* mStatus;

@@ -11,7 +11,7 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "ViewMap.h"
+#include "TimeLinePart.h"
 
 namespace gui { namespace timeline {
 
@@ -19,7 +19,7 @@ class EventTimelineCursorMoved;
 
 class SelectIntervals
     :   public wxEvtHandler
-    ,   public boost::enable_shared_from_this<SelectIntervals>
+    ,   public TimeLinePart
 {
 public:
 
@@ -28,7 +28,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     SelectIntervals();
-    void init(GuiTimeLinePtr timeline);
+    virtual void init();
     virtual ~SelectIntervals();
 
     //////////////////////////////////////////////////////////////////////////
@@ -54,8 +54,6 @@ public:
     void draw(wxDC& dc);
 
 private:
-
-    GuiTimeLinePtr mTimeline;
 
     wxRegion mMarkedIntervals;
 
@@ -87,7 +85,7 @@ private:
     void updateMenu();
 
     typedef std::map< model::ClipPtr, model::ClipPtr > ReplacementMap;
-    ReplacementMap findReplacements(GuiTimeLineTrackPtr track);
+    ReplacementMap findReplacements(GuiTimeLineTrack* track);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -3,11 +3,10 @@
 
 #include <wx/gdicmn.h>
 #include <boost/statechart/event.hpp>
+#include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
-#include "GuiTimeLineDragImage.h"
-#include "MousePointer.h"
-#include "SelectClips.h"
 #include "UtilLogWxwidgets.h"
+#include "TimeLinePart.h"
 
 class GuiTimeLine;
 
@@ -17,25 +16,34 @@ namespace gui { namespace timeline { namespace state {
 // MEMBERS ACESSIBLE BY ALL STATES
 //////////////////////////////////////////////////////////////////////////
 
+    /** 
+    * Using this class as base for all state classes ensures that these 
+    * states can access the various timeline parts in the same way 
+    * as these parts. 
+    */
+template < class STATE, class STATEMACHINE >
+class TimeLineState
+    :   public boost::statechart::state<STATE, STATEMACHINE >
+    ,   protected TimeLinePart
+{
+public:
+    TimeLineState( my_context ctx ) : my_base( ctx ) {};
+    ~TimeLineState() {};
+protected:
+    GuiTimeLine& getTimeline() 
+    { 
+        return outermost_context().mTimeline; 
+    };
+};
+
 struct GlobalState
 {
-    GlobalState(GuiTimeLine& timeline, ViewMap& viewMap)
+    GlobalState()
         :   DragStartPosition(-1,-1)
-        ,   DragImage(0)
-        ,   mousepointer(timeline)
-        ,   selection(viewMap)
-        ,   mViewMap(viewMap)
-        ,   DragStartClip()
     {
     }
-    wxPoint DragStartPosition;
-    GuiTimeLineDragImage* DragImage;
-    MousePointer mousepointer;
-    SelectClips selection;
-    ViewMap& mViewMap;
 
-    /** Clip on which the drag was started. */
-    GuiTimeLineClipPtr DragStartClip;
+    wxPoint DragStartPosition;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,9 +64,9 @@ class Machine
     :   public boost::statechart::state_machine< Machine, Idle >
 {
 public:
-    Machine(GuiTimeLine& tl, ViewMap& viewMap);
+    Machine(GuiTimeLine& tl);
     ~Machine();
-    GuiTimeLine& timeline;
+    GuiTimeLine& mTimeline;
     GlobalState* globals;
 
 private:

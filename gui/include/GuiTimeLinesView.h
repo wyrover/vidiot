@@ -69,7 +69,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     /** Find the page associated with a sequence. 0 pointer is returned if not found. */
-    std::pair<size_t,timeline::GuiTimeLinePtr> findPage(model::SequencePtr sequence) const;
+    std::pair<size_t,timeline::GuiTimeLine*> findPage(model::SequencePtr sequence) const;
 
     /** To be called whenever the notebook selection (current open page) changes. */
     void update() const;

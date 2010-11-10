@@ -4,13 +4,15 @@
 #include <map>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
+#include "TimeLinePart.h"
 
 namespace gui { namespace timeline {
 
-typedef std::map< model::TrackPtr, GuiTimeLineTrackPtr > TrackMap;
-typedef std::map< model::ClipPtr, GuiTimeLineClipPtr > ClipMap;
+typedef std::map< model::TrackPtr, GuiTimeLineTrack* > TrackMap;
+typedef std::map< model::ClipPtr, GuiTimeLineClip* > ClipMap;
 
 class ViewMap
+    :   public TimeLinePart
 {
 public:
 
@@ -19,24 +21,23 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     ViewMap();
-
     ~ViewMap();
 
     //////////////////////////////////////////////////////////////////////////
     // REGISTRATION
     //////////////////////////////////////////////////////////////////////////
 
-    void add(model::ClipPtr modelClip, GuiTimeLineClipPtr clipView);
-    void add(model::TrackPtr modelTrack, GuiTimeLineTrackPtr trackView);
-    void remove(model::ClipPtr modelClip);
-    void remove(model::TrackPtr modelTrack);
+    void registerView(model::ClipPtr clip, GuiTimeLineClip* view);
+    void registerView(model::TrackPtr track, GuiTimeLineTrack* view);
+    void unregisterView(model::ClipPtr clip);
+    void unregisterView(model::TrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////
     // CONVERSION
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineClipPtr ModelToView(model::ClipPtr modelClip) const;
-    GuiTimeLineTrackPtr ModelToView(model::TrackPtr modelTrack) const;
+    virtual GuiTimeLineClip* getView(model::ClipPtr clip) const;
+    virtual GuiTimeLineTrack* getView(model::TrackPtr track) const;
 
 private:
 

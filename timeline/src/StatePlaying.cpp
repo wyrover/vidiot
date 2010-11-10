@@ -12,7 +12,7 @@ namespace gui { namespace timeline { namespace state {
 //////////////////////////////////////////////////////////////////////////
 
 Playing::Playing( my_context ctx ) // entry
-:   my_base( ctx )
+:   TimeLineState( ctx )
 ,   mMakingNewSelection(false)
 {
     LOG_DEBUG; 
@@ -65,7 +65,7 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
 boost::statechart::result Playing::stop()
 {
     triggerEnd();
-    outermost_context().timeline.mPlayer->stop();
+    getPlayer()->stop();
     return transit<Idle>();
 }
 
@@ -73,7 +73,7 @@ void Playing::triggerBegin()
 {
     if (!mMakingNewSelection)
     {
-        outermost_context().timeline.mSelectedIntervals->addBeginMarker();
+        getSelectIntervals().addBeginMarker();
         mMakingNewSelection = true;
     }
 }
@@ -82,7 +82,7 @@ void Playing::triggerEnd()
 {
     if (mMakingNewSelection)
     {
-        outermost_context().timeline.mSelectedIntervals->addEndMarker();
+        getSelectIntervals().addEndMarker();
         mMakingNewSelection = false;
     }
 }

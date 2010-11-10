@@ -5,8 +5,8 @@
 
 namespace command {
 
-TimelineCreateVideoTrack::TimelineCreateVideoTrack(model::SequencePtr sequence)
-:   TimelineCommand()
+TimelineCreateVideoTrack::TimelineCreateVideoTrack(gui::timeline::GuiTimeLine& timeline, model::SequencePtr sequence)
+:   TimelineCommand(timeline)
 ,   mSequence(sequence)
 ,   mNewTrack()
 {
