@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLine.h"
+#include "GuiTimeLineDragImage.h"
 #include "StateDragging.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
@@ -14,7 +15,7 @@ namespace gui { namespace timeline { namespace state {
 //////////////////////////////////////////////////////////////////////////
 
 TestDragStart::TestDragStart( my_context ctx ) // entry
-:   my_base( ctx )
+:   TimeLineState( ctx )
 {
     LOG_DEBUG; 
 }
@@ -40,16 +41,15 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     static int tolerance = 2;
     if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
     {
-        outermost_context().globals->selection.setDrag(true);
+        getSelectClips().setDrag(true);
 
         // Begin the drag operation
-        GuiTimeLine& timeline = outermost_context().timeline;
-        outermost_context().globals->DragImage = new GuiTimeLineDragImage(&timeline, evt.mPosition);
-        GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
-        bool ok = dragimage->BeginDrag(dragimage->getHotspot(), &timeline, false);
+        GuiTimeLineDragImage* dragimage = new GuiTimeLineDragImage(getTimeline(), evt.mPosition);
+        getTimeline().setDragImage(dragimage);
+        bool ok = dragimage->BeginDrag(dragimage->getHotspot(), &getTimeline(), false);
         ASSERT(ok);
-        timeline.Refresh(false);
-        timeline.Update();
+        getTimeline().Refresh(false);
+        getTimeline().Update();
         dragimage->Move(evt.mPosition);
         dragimage->Show();
 

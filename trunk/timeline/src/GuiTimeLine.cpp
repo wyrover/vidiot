@@ -27,6 +27,7 @@
 #include "Sequence.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
+#include "ViewMap.h"
 #include "ids.h"
 
 namespace gui { namespace timeline {
@@ -46,15 +47,15 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mPlaybackTime(0)
 ,   mOrigin(0,100)
 ,   mBitmap()
-,   mMouseState(*this,mViewMap)
+,   mMouseState(*this)
 ,   mWidth(0)
 ,   mHeight(0)
 ,   mPlayer()
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
-,   mSelectedIntervals()
 ,   mMenu()
+,   mDragImage(0)
 {
     LOG_INFO;
 
@@ -69,6 +70,12 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
     //Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnCloseSequence,    this, ID_CLOSESEQUENCE);
     mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddVideoTrack,    this, ID_ADDVIDEOTRACK);
     mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddAudioTrack,    this, ID_ADDAUDIOTRACK);
+
+    mZoom.initTimeline(this);
+    mViewMap.initTimeline(this);
+    mSelectIntervals.initTimeline(this);
+    mMousePointer.initTimeline(this);
+    mSelectClips.initTimeline(this);
 }
 
 void GuiTimeLine::init(wxWindow *parent)
@@ -80,22 +87,18 @@ void GuiTimeLine::init(wxWindow *parent)
     SetBackgroundColour(* wxLIGHT_GREY);
     SetDropTarget(new GuiTimeLineDropTarget(mZoom,this));
 
-    // Initialize all helper objects
-    mSelectedIntervals = boost::make_shared<SelectIntervals>();
-    mSelectedIntervals->init(this);
-
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     DetermineWidth();
 
     BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
-        GuiTimeLineTrack* p = new GuiTimeLineTrack(this, mZoom, mViewMap, track);
+        GuiTimeLineTrack* p = new GuiTimeLineTrack(*this, mZoom, track);
         p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
         // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
     }
     BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks())
     {
-        GuiTimeLineTrack* p = new GuiTimeLineTrack(this, mZoom, mViewMap, track);
+        GuiTimeLineTrack* p = new GuiTimeLineTrack(*this, mZoom, track);
         p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
         // todo2 handle this via a OnAudioTrackAdded similar to the track handling of clip events from the model
     }
@@ -189,7 +192,7 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     }
 
     // Draw marked areas
-    mSelectedIntervals->draw(dc);
+    getSelectIntervals().draw(dc);
 
     // Draw drop area
     if (!mDropArea.IsEmpty())
@@ -227,11 +230,6 @@ model::SequencePtr GuiTimeLine::getSequence() const
     return mSequence;
 }
 
-ViewMap& GuiTimeLine::getViewMap()
-{
-    return mViewMap;
-}
-
 int GuiTimeLine::getWidth() const
 {
     return mWidth;
@@ -248,9 +246,32 @@ void GuiTimeLine::showDropArea(wxRect area)
     }
 }
 
-wxMenu* GuiTimeLine::getMenu()
+wxMenu& GuiTimeLine::getMenu()
 {
-    return &mMenu;
+    return mMenu;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////
+
+PlayerPtr GuiTimeLine::getPlayer() const
+{
+    return mPlayer;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// DRAGIMAGE
+//////////////////////////////////////////////////////////////////////////
+
+void GuiTimeLine::setDragImage(GuiTimeLineDragImage* dragimage)
+{
+    mDragImage = dragimage;
+}
+
+GuiTimeLineDragImage* GuiTimeLine::getDragImage() const
+{
+    return mDragImage;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -291,7 +312,7 @@ void GuiTimeLine::moveCursorOnUser(int position)
 
 //todo maak een method die bepaalt wat er onder de cursor zit
 //(Track + Clip .adjustBeginPoint.. en ook waar bij de Track/clip)
-GuiTimeLineClip* GuiTimeLine::findClip(wxPoint p) const
+GuiTimeLineClip* GuiTimeLine::findClip(wxPoint p)
 {
     model::TrackPtr track = findTrack(p.y).get<0>();
     if (track)
@@ -299,13 +320,13 @@ GuiTimeLineClip* GuiTimeLine::findClip(wxPoint p) const
         model::ClipPtr clip = track->getClip(mZoom.pixelsToPts(p.x));
         if (clip)
         {
-            return mViewMap.ModelToView(clip);
+            return getViewMap().getView(clip);
         }
     }
     return 0;
 }
 
-boost::tuple<model::TrackPtr,int> GuiTimeLine::findTrack(int yposition) const
+boost::tuple<model::TrackPtr,int> GuiTimeLine::findTrack(int yposition)
 {
     int top = mDividerPosition;
 
@@ -325,7 +346,7 @@ boost::tuple<model::TrackPtr,int> GuiTimeLine::findTrack(int yposition) const
     return boost::make_tuple(model::TrackPtr(),0);
 }
 
-PointerPositionInfo GuiTimeLine::getPointerInfo(wxPoint pointerposition) const
+PointerPositionInfo GuiTimeLine::getPointerInfo(wxPoint pointerposition)
 {
     PointerPositionInfo info;
     info.track = model::TrackPtr();
@@ -374,7 +395,7 @@ PointerPositionInfo GuiTimeLine::getPointerInfo(wxPoint pointerposition) const
         // This is handled on a per-pixel and not per-pts basis. That ensures
         // that this still works for clips which are very small when zoomed out.
         // (then the cursor won't flip too much).
-        GuiTimeLineClip* clip = mViewMap.ModelToView(info.clip);
+        GuiTimeLineClip* clip = getViewMap().getView(info.clip);
         int dist_begin = pointerposition.x - clip->getLeftPosition();
         int dist_end = clip->getRightPosition() - pointerposition.x;
 
@@ -508,7 +529,7 @@ void GuiTimeLine::updateBitmap()
     }
     BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
-        wxBitmap b = mViewMap.ModelToView(track)->getBitmap();
+        wxBitmap b = getViewMap().getView(track)->getBitmap();
         dc.DrawBitmap(b,wxPoint(0,y));
         y += track->getHeight();
     }
@@ -521,7 +542,7 @@ void GuiTimeLine::updateBitmap()
     y += Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
     {
-        wxBitmap b = mViewMap.ModelToView(track)->getBitmap();
+        wxBitmap b = getViewMap().getView(track)->getBitmap();
         dc.DrawBitmap(b,wxPoint(0,y));
         y += track->getHeight();
     }
@@ -560,7 +581,7 @@ wxBitmap GuiTimeLine::getDragBitmap(wxPoint& hotspot) //const
     // Draw video tracks
     BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
     {
-        mViewMap.ModelToView(track)->drawClips(position,dc,dcMask);
+        getViewMap().getView(track)->drawClips(position,dc,dcMask);
         position.y += track->getHeight();
     }
 
@@ -568,7 +589,7 @@ wxBitmap GuiTimeLine::getDragBitmap(wxPoint& hotspot) //const
     position.y += Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
     {
-        mViewMap.ModelToView(track)->drawClips(position,dc,dcMask);
+        getViewMap().getView(track)->drawClips(position,dc,dcMask);
         position.y += track->getHeight();
     }
 
@@ -606,7 +627,7 @@ void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
     ar & mSequence;
     ar & mZoom;
     ar & mDividerPosition;
-    ar & mSelectedIntervals;
+    ar & mSelectIntervals;
 }
 template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

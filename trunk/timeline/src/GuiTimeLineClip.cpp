@@ -15,22 +15,23 @@
 #include "VideoClip.h"
 #include "EmptyClip.h"
 #include "GuiTimeLineTrack.h"
+#include "GuiTimeLine.h"
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
+DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClip*);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
+GuiTimeLineClip::GuiTimeLineClip(GuiTimeLine& timeline,
+                                 GuiTimeLineTrack* track,
                                  const GuiTimeLineZoom& zoom, 
-                                 ViewMap& viewMap, 
                                  model::ClipPtr clip)
 :   wxWindow(static_cast<wxWindow*>(track),wxID_ANY)
 ,   mZoom(zoom)
-,   mViewMap(viewMap) 
+,   mTimeline(timeline)
 ,   mClip(clip)
 ,   mThumbnail()
 ,   mWidth(0)
@@ -40,7 +41,7 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
 ,   mRect(0,0,0,0)
 {
     ASSERT(mClip);
-    mViewMap.add(mClip,this);
+    mTimeline.getViewMap().registerView(mClip,this);
     updateSize(); // Also creates bitmap
 
     Hide();
@@ -48,7 +49,7 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
 
 GuiTimeLineClip::~GuiTimeLineClip()
 {
-    mViewMap.remove(mClip);
+    mTimeline.getViewMap().unregisterView(mClip);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -60,9 +61,9 @@ model::ClipPtr GuiTimeLineClip::getClip()
     return mClip;
 }
 
-GuiTimeLineTrackPtr GuiTimeLineClip::getTrack()
+GuiTimeLineTrack* GuiTimeLineClip::getTrack()
 {
-    return mViewMap.ModelToView(getClip()->getTrack());
+    return mTimeline.getViewMap().getView(getClip()->getTrack());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -101,7 +102,7 @@ void GuiTimeLineClip::setSelected(bool selected)
             model::ClipPtr link = mClip->getLink();
             if (link)
             {
-                mViewMap.ModelToView(link)->setSelected(selected);
+                mTimeline.getViewMap().getView(link)->setSelected(selected);
             }
         }
     }
@@ -140,8 +141,8 @@ void GuiTimeLineClip::show(wxRect rect)
 void GuiTimeLineClip::updateSize()
 {
     mWidth = getRightPosition() - getLeftPosition();
-    mBitmap.Create(mWidth,mViewMap.ModelToView(mClip->getTrack())->getBitmap().GetHeight());
-    updateThumbnail();
+    mBitmap.Create(mWidth,mTimeline.getViewMap().getView(mClip->getTrack())->getBitmap().GetHeight());
+    updateThumbnail();  
 }
 
 void GuiTimeLineClip::updateThumbnail()

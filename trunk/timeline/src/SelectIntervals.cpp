@@ -13,6 +13,7 @@
 #include "GuiMain.h"
 #include "GuiTimeLineTrack.h"
 #include "GuiTimeLineClip.h"
+#include "GuiTimeLine.h"
 #include "Project.h"
 #include "TimelineIntervalChange.h"
 #include "TimelineIntervalRemoveAll.h"
@@ -27,7 +28,6 @@ namespace gui { namespace timeline {
 
 SelectIntervals::SelectIntervals()
 :   wxEvtHandler()
-,	mTimeline(0)
 ,   mMarkedIntervals()
 ,   mNewIntervalActive(false)
 ,   mNewIntervalBegin(0)
@@ -38,20 +38,19 @@ SelectIntervals::SelectIntervals()
 {
 }
 
-SelectIntervals::~SelectIntervals()
+void SelectIntervals::init()
 {
-}
-
-void SelectIntervals::init(GuiTimeLinePtr timeline)
-{
-    mTimeline = timeline;
-    mTimeline->Bind(TIMELINE_CURSOR_MOVED, &SelectIntervals::onCursorMoved, this);
+    getTimeline().Bind(TIMELINE_CURSOR_MOVED, &SelectIntervals::onCursorMoved, this);
 
     wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,  &SelectIntervals::OnDeleteMarked,   this, ID_DELETEMARKED);
     wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,  &SelectIntervals::OnDeleteUnmarked, this, ID_DELETEUNMARKED);
     wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,  &SelectIntervals::OnRemoveMarkers,  this, ID_REMOVEMARKERS);
 
     updateMenu();
+}
+
+SelectIntervals::~SelectIntervals()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,9 +72,9 @@ void SelectIntervals::set(wxRegion region)
 
 void SelectIntervals::addBeginMarker()
 {
-    long c = mTimeline->mZoom.pixelsToPts(mTimeline->mCursorPosition);
-    long b = c + mTimeline->mZoom.timeToPts(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
-    long e = c + mTimeline->mZoom.timeToPts(GuiOptions::getMarkerEndAddition()   * Constants::sSecond);
+    long c = getZoom().pixelsToPts(getTimeline().getCursorPosition());
+    long b = c + getZoom().timeToPts(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
+    long e = c + getZoom().timeToPts(GuiOptions::getMarkerEndAddition()   * Constants::sSecond);
 
     mNewIntervalActive = true;
     mNewIntervalBegin = b;
@@ -86,14 +85,14 @@ void SelectIntervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-        wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(shared_from_this(), mNewIntervalBegin, mNewIntervalEnd, true));
+        wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
     }
     mNewIntervalActive = false;
 }
 
 void SelectIntervals::startToggle()
 {
-    mToggleBegin = mTimeline->mZoom.pixelsToPts(mTimeline->mCursorPosition);
+    mToggleBegin = getZoom().pixelsToPts(getTimeline().getCursorPosition());
     mToggleEnd = mToggleBegin;
     mToggleActive = true;
 }
@@ -103,7 +102,7 @@ void SelectIntervals::endToggle()
     if (mToggleActive)
     {
         wxRect r(makeRect(mToggleBegin,mToggleEnd));
-        wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(shared_from_this(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
+        wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
     }
     mToggleActive = false;
 }
@@ -167,17 +166,17 @@ void SelectIntervals::onCursorMoved(EventTimelineCursorMoved& event)
 {
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = mTimeline->mZoom.pixelsToPts(event.getValue()) +  mTimeline->mZoom.timeToPts(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
+        mNewIntervalEnd = getZoom().pixelsToPts(event.getValue()) +  getZoom().timeToPts(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
         refresh(mNewIntervalBegin,mNewIntervalEnd);
     }
     if (mToggleActive)
     {
-        mToggleEnd = mTimeline->mZoom.pixelsToPts(event.getValue());
+        mToggleEnd = getZoom().pixelsToPts(event.getValue());
         refresh(mToggleBegin,mToggleEnd);
     }
 }
 
-SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTrackPtr track)
+SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTrack* track)
 {
     std::map< model::ClipPtr, model::ClipPtr > replacements;
 
@@ -186,7 +185,7 @@ SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTra
 
     BOOST_FOREACH( model::ClipPtr modelclip, track->getTrack()->getClips() )
     {
-        GuiTimeLineClipPtr clip = mTimeline->getViewMap().ModelToView(modelclip);
+        GuiTimeLineClip* clip = getViewMap().getView(modelclip);
         pts_right += clip->getClip()->getNumberOfFrames();
         wxRect cliprect = makeRect(pts_left, pts_right);
         //wxRegionContain {
@@ -225,25 +224,26 @@ SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTra
 
 void SelectIntervals::OnDeleteMarked(wxCommandEvent& WXUNUSED(event))
 {
+    NIY
     // First, make one entire list containing a mapping of each clip to
     // the clips it is replaced with.
 
     ReplacementMap replacements;
 
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mTimeline->mVideoTracks )
-    {
-        ReplacementMap newreplacments = findReplacements(track);
-        replacements.insert(newreplacments.begin(),newreplacments.end());
-    }
-    BOOST_FOREACH( GuiTimeLineTrackPtr track, mTimeline->mAudioTracks )
-    {
-        ReplacementMap newreplacments = findReplacements(track);
-        replacements.insert(newreplacments.begin(),newreplacments.end());
-    }
-    BOOST_FOREACH(ReplacementMap::value_type entry, replacements)
-    {
-        VAR_DEBUG(*entry.first)(*entry.second);
-    }
+    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mVideoTracks )
+    //{
+    //    ReplacementMap newreplacments = findReplacements(track);
+    //    replacements.insert(newreplacments.begin(),newreplacments.end());
+    //}
+    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mAudioTracks )
+    //{
+    //    ReplacementMap newreplacments = findReplacements(track);
+    //    replacements.insert(newreplacments.begin(),newreplacments.end());
+    //}
+    //BOOST_FOREACH(ReplacementMap::value_type entry, replacements)
+    //{
+    //    VAR_DEBUG(*entry.first)(*entry.second);
+    //}
 }
 
 void SelectIntervals::OnDeleteUnmarked(wxCommandEvent& WXUNUSED(event))
@@ -253,7 +253,7 @@ void SelectIntervals::OnDeleteUnmarked(wxCommandEvent& WXUNUSED(event))
 
 void SelectIntervals::OnRemoveMarkers(wxCommandEvent& WXUNUSED(event))
 {
-    wxGetApp().getProject()->Submit(new command::TimelineIntervalRemoveAll(shared_from_this()));
+    wxGetApp().getProject()->Submit(new command::TimelineIntervalRemoveAll(getTimeline()));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -267,8 +267,8 @@ wxRect SelectIntervals::makeRect(long x1, long x2)
 
 wxRect SelectIntervals::ptsToPixels(wxRect rect)
 {
-    rect.x = mTimeline->mZoom.ptsToPixels(rect.x);
-    rect.width = mTimeline->mZoom.ptsToPixels(rect.width);
+    rect.x = getZoom().ptsToPixels(rect.x);
+    rect.width = getZoom().ptsToPixels(rect.width);
     return rect;
 }
 
@@ -277,20 +277,20 @@ void SelectIntervals::refresh(long begin, long end)
     wxRect r(ptsToPixels(makeRect(begin,end)));
     
     // Adjust for scrolling
-    r.x -= mTimeline->getScrollOffset().x;
-    r.y -= mTimeline->getScrollOffset().y;
+    r.x -= getTimeline().getScrollOffset().x;
+    r.y -= getTimeline().getScrollOffset().y;
 
     // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
     r.x -= 1;
     r.width += 2;
-    mTimeline->RefreshRect(r);
+    getTimeline().RefreshRect(r);
 }
 
 void SelectIntervals::updateMenu()
 {
-    mTimeline->mMenu.Enable( ID_DELETEMARKED,   !mMarkedIntervals.IsEmpty() );
-    mTimeline->mMenu.Enable( ID_DELETEUNMARKED, !mMarkedIntervals.IsEmpty() );
-    mTimeline->mMenu.Enable( ID_REMOVEMARKERS,  !mMarkedIntervals.IsEmpty() );
+    getTimeline().getMenu().Enable( ID_DELETEMARKED,   !mMarkedIntervals.IsEmpty() );
+    getTimeline().getMenu().Enable( ID_DELETEUNMARKED, !mMarkedIntervals.IsEmpty() );
+    getTimeline().getMenu().Enable( ID_REMOVEMARKERS,  !mMarkedIntervals.IsEmpty() );
 }
 
 //////////////////////////////////////////////////////////////////////////

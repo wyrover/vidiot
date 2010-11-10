@@ -10,11 +10,12 @@
 #include "GuiPtr.h"
 #include "UtilEvent.h"
 #include "GuiTimeLineZoom.h"
-#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
-DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClipPtr);
+DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClip*);
+
+class GuiTimeLine;
 
 class GuiTimeLineClip
     :   public wxWindow
@@ -26,9 +27,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     GuiTimeLineClip(
+        GuiTimeLine& timeline,
         GuiTimeLineTrack* track,
         const GuiTimeLineZoom& zoom, 
-        ViewMap& viewMap, 
         model::ClipPtr clip);
 
 	virtual ~GuiTimeLineClip();
@@ -38,7 +39,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     model::ClipPtr getClip();
-    GuiTimeLineTrackPtr getTrack();
+    GuiTimeLineTrack* getTrack();
 
     //////////////////////////////////////////////////////////////////////////
     //  GET & SET
@@ -64,7 +65,7 @@ public:
 private:
 
     const GuiTimeLineZoom& mZoom;
-    ViewMap& mViewMap;
+    GuiTimeLine& mTimeline;
 
     void updateSize();
     void updateThumbnail();

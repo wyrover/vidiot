@@ -10,7 +10,7 @@ namespace command {
 class TimelineCreateAudioTrack : public TimelineCommand
 {
 public:
-    TimelineCreateAudioTrack(model::SequencePtr sequence);
+    TimelineCreateAudioTrack(gui::timeline::GuiTimeLine& timeline, model::SequencePtr sequence);
     ~TimelineCreateAudioTrack();
     bool Do();
     bool Undo();

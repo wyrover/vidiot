@@ -21,7 +21,7 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrackPtr);
+DEFINE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrack*);
 
 static int sTrackBorderSize = 1;
 
@@ -29,32 +29,27 @@ static int sTrackBorderSize = 1;
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLine* timeline,
+GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLine& timeline,
                                    const GuiTimeLineZoom& zoom, 
-                                   ViewMap& viewMap, 
                                    model::TrackPtr track)
-:   wxWindow(timeline, wxID_ANY) 
+:   wxWindow(&timeline, wxID_ANY) 
+,   mTimeLine(timeline)
 ,   mTrack(track)
 ,   mZoom(zoom)
-,   mViewMap(viewMap)
 ,   mBitmap()
-,   mTimeLine(0)
 ,   mRedrawOnIdle(false)
 {
     ASSERT(mTrack); // Must be initialized
 
-    mViewMap.add(mTrack,this);
-
-    mTimeLine = timeline;
-
-    mBitmap.Create(mTimeLine->getWidth(),mTrack->getHeight());
+    mTimeLine.getViewMap().registerView(mTrack,this);
+    mBitmap.Create(mTimeLine.getWidth(),mTrack->getHeight());
 
     model::MoveParameter m;
     m.addClips = mTrack->getClips();
     OnClipsAdded(model::EventAddClips(m));
 
-    /** @todo redraw on idle```````o? */
-    updateBitmap(); // Before binding to clip events to avoid a lot of events
+    mRedrawOnIdle = true;
+//    updateBitmap(); // Before binding to clip events to avoid a lot of events
 
     Bind(wxEVT_IDLE, &GuiTimeLineTrack::OnIdle, this);
 
@@ -66,7 +61,7 @@ GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLine* timeline,
 
 GuiTimeLineTrack::~GuiTimeLineTrack()
 {
-    mViewMap.remove(mTrack);
+    mTimeLine.getViewMap().unregisterView(mTrack);
 }
 
 int GuiTimeLineTrack::getClipHeight() const
@@ -94,8 +89,8 @@ void GuiTimeLineTrack::OnIdle(wxIdleEvent& event)
     {
         // This is done to avoid using intermediary states for iterating though
         // the model. For instance, when replacing clips with other clips, first
-        // a remove event and then a add event is received. However, while 
-        // receiving the remove event, the actual adding may already have been
+        // a unregisterView event and then a registerView event is received. However, while 
+        // receiving the unregisterView event, the actual adding may already have been
         // done. Then the view for the added clips has not yet been initialized.
         updateBitmap();
         mRedrawOnIdle = false;
@@ -111,7 +106,7 @@ void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
-        GuiTimeLineClip* p = new GuiTimeLineClip(this,mZoom,mViewMap,clip);
+        GuiTimeLineClip* p = new GuiTimeLineClip(mTimeLine,this,mZoom,clip);
         p->Bind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this); // After init to avoid initial events (since updateBitmap below redraws the entire bitmap)
     }
     mRedrawOnIdle = true;
@@ -121,8 +116,8 @@ void GuiTimeLineTrack::OnClipsRemoved( model::EventRemoveClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
     {
-        mViewMap.ModelToView(clip)->Unbind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this);
-        mViewMap.ModelToView(clip)->Destroy();
+        mTimeLine.getViewMap().getView(clip)->Unbind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this);
+        mTimeLine.getViewMap().getView(clip)->Destroy();
     }
     mRedrawOnIdle = true;
 }
@@ -157,7 +152,7 @@ void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::option
     wxPoint pos(position);
     BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
     {
-        GuiTimeLineClipPtr clip = mViewMap.ModelToView(modelclip);
+        GuiTimeLineClip* clip = mTimeLine.getViewMap().getView(modelclip);
         wxBitmap bitmap = clip->getBitmap();
 
         if (draggedClipsOnly)

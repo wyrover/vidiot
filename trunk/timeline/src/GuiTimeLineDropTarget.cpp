@@ -10,7 +10,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineDropTarget::GuiTimeLineDropTarget(const GuiTimeLineZoom& zoom, GuiTimeLinePtr timeline)
+GuiTimeLineDropTarget::GuiTimeLineDropTarget(const GuiTimeLineZoom& zoom, GuiTimeLine* timeline)
 :   wxDropTarget(new GuiDataObject())
 ,   mZoom(zoom)
 ,   mTimeLine(timeline)

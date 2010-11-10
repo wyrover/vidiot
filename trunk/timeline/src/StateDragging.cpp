@@ -2,10 +2,12 @@
 
 #include <boost/foreach.hpp>
 #include "GuiTimeLineClip.h"
+#include "GuiTimeLineDragImage.h"
 #include "GuiTimeLine.h"
 #include "GuiTimeLineTrack.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -16,7 +18,7 @@ namespace gui { namespace timeline { namespace state {
 /** /todo handle mouse focus lost */
 
 Dragging::Dragging( my_context ctx ) // entry
-:   my_base( ctx )
+:   TimeLineState( ctx )
 //,   mClip()
 {
     LOG_DEBUG; 
@@ -35,16 +37,15 @@ boost::statechart::result Dragging::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
 
-    outermost_context().globals->selection.setDrag(false);
+    getSelectClips().setDrag(false);
 
     // End the drag operation
-    GuiTimeLine& timeline = outermost_context().timeline;
-    GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
+    GuiTimeLineDragImage* dragimage = getTimeline().getDragImage();
     dragimage->Hide();
     dragimage->EndDrag();
-    timeline.Refresh();
-    delete outermost_context().globals->DragImage;
-    outermost_context().globals->DragImage = 0;
+    getTimeline().Refresh();
+    getTimeline().setDragImage(0);
+    delete dragimage;
 
     return transit<Idle>();
 }
@@ -54,13 +55,12 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
     VAR_DEBUG(evt);
 
     // Move the drag image
-    GuiTimeLine& timeline = outermost_context().timeline;
-    GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
+    GuiTimeLineDragImage* dragimage = getTimeline().getDragImage();
     //dragimage->Hide();
-    timeline.Refresh(false);
-    timeline.Update();
+    getTimeline().Refresh(false);
+    getTimeline().Update();
     //dragimage->Show();
-    dragimage->Move(evt.mPosition - timeline.getScrollOffset());
+    dragimage->Move(evt.mPosition - getTimeline().getScrollOffset());
 
     showDropArea(evt.mPosition); 
 
@@ -73,16 +73,15 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 
 void Dragging::showDropArea(wxPoint p)
 {
-    GuiTimeLine& timeline = outermost_context().timeline;
-    GuiTimeLineDragImage* dragimage = outermost_context().globals->DragImage;
-    PointerPositionInfo info = outermost_context().timeline.getPointerInfo(p);
+    GuiTimeLineDragImage* dragimage = getTimeline().getDragImage();
+    PointerPositionInfo info = getTimeline().getPointerInfo(p);
 
     if (info.track)
     {
-        GuiTimeLineTrackPtr track = outermost_context().globals->mViewMap.ModelToView(info.track);
+        GuiTimeLineTrack* track = getViewMap().getView(info.track);
         if (info.clip)
         {
-            GuiTimeLineClipPtr clip = outermost_context().globals->mViewMap.ModelToView(info.clip);
+            GuiTimeLineClip* clip = getViewMap().getView(info.clip);
             int diffleft  = p.x - clip->getLeftPosition();
             int diffright = clip->getRightPosition() - p.x;
 
@@ -95,16 +94,16 @@ void Dragging::showDropArea(wxPoint p)
             {
                 xDrop = clip->getRightPosition() - 2;
             }
-            timeline.showDropArea(wxRect(xDrop,info.trackPosition,4,track->getBitmap().GetHeight())); 
+            getTimeline().showDropArea(wxRect(xDrop,info.trackPosition,4,track->getBitmap().GetHeight())); 
         }
         else
         {
-            timeline.showDropArea(wxRect(p.x,info.trackPosition,4,track->getBitmap().GetHeight())); 
+            getTimeline().showDropArea(wxRect(p.x,info.trackPosition,4,track->getBitmap().GetHeight())); 
         }
     }
     else
     {
-        timeline.showDropArea(wxRect(0,0,0,0));
+        getTimeline().showDropArea(wxRect(0,0,0,0));
     }
 }
 

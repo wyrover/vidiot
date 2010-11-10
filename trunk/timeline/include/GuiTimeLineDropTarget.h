@@ -17,7 +17,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineDropTarget(const GuiTimeLineZoom& zoom, GuiTimeLinePtr timeline);
+    GuiTimeLineDropTarget(const GuiTimeLineZoom& zoom, GuiTimeLine* timeline);
     ~GuiTimeLineDropTarget();
 
     //////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
 private:
 
     const GuiTimeLineZoom& mZoom;
-    GuiTimeLinePtr mTimeLine;
+    GuiTimeLine* mTimeLine;
 };
 
 }} // namespace

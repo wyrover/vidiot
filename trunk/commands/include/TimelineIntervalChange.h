@@ -17,13 +17,12 @@ public:
      * @param add true if interval must be added, false if interval must be removed
      * @todo Clean up these commands when the associated timeline is destroyed. Hmmm, or make closing the timeline undo-able.
      */
-    TimelineIntervalChange(gui::timeline::IntervalsPtr intervals, long begin, long end, bool add);
+    TimelineIntervalChange(gui::timeline::GuiTimeLine& timeline, long begin, long end, bool add);
 
     ~TimelineIntervalChange();
     bool Do();
     bool Undo();
 private:
-    gui::timeline::IntervalsPtr mIntervals;
     long mBegin;
     long mEnd;
     bool mAdd;

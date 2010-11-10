@@ -4,10 +4,9 @@
 #include <wx/gdicmn.h>
 #include <wx/cursor.h>
 #include "UtilEnum.h"
+#include "TimeLinePart.h"
 
 namespace gui { namespace timeline {
-
-class GuiTimeLine;
 
 DECLAREENUM(MousePointerImage, \
             PointerNormal, \
@@ -18,6 +17,7 @@ DECLAREENUM(MousePointerImage, \
             PointerTrimShiftEnd);
 
 class MousePointer
+    :   public TimeLinePart
 {
 public:
 
@@ -25,8 +25,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    MousePointer(GuiTimeLine& timeline);
-
+    MousePointer();
+    void init();
     virtual ~MousePointer();
 
     //////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,6 @@ public:
     void set(MousePointerImage image);
 
 private:
-    GuiTimeLine& mTimeline;
 
     wxCursor mCursorNormal;
     wxCursor mCursorMoveCut;

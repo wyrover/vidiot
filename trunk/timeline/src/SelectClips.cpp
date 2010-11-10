@@ -5,21 +5,21 @@
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLineTrack.h"
 #include "UtilLog.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
-SelectClips::SelectClips(ViewMap& viewMap)
-:   mViewMap(viewMap)
-,   mSelected()
+SelectClips::SelectClips()
+:   mSelected()
 {
 }
 
-void SelectClips::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void SelectClips::update(GuiTimeLineClip* clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
     model::TrackPtr track = clip ? clip->getTrack()->getTrack() : model::TrackPtr();
 
     // Must be determined before deselecting all clips.
-    bool previousClickedClipWasSelected = mPreviouslyClicked ? mViewMap.ModelToView(mPreviouslyClicked)->isSelected() : true;
+    bool previousClickedClipWasSelected = mPreviouslyClicked ? getViewMap().getView(mPreviouslyClicked)->isSelected() : true;
     bool currentClickedClipIsSelected = clip ? clip->isSelected() : false;
 
     // Deselect all clips first, but only if control is not pressed.
@@ -27,7 +27,7 @@ void SelectClips::update(GuiTimeLineClipPtr clip, bool ctrlPressed, bool shiftPr
     {
         BOOST_FOREACH( model::ClipPtr c, mSelected )
         {
-            mViewMap.ModelToView(c)->setSelected(false);
+            getViewMap().getView(c)->setSelected(false);
         }
         mSelected.clear();
     }
@@ -106,15 +106,15 @@ void SelectClips::setDrag(bool drag)
 {
     BOOST_FOREACH(model::ClipPtr clip, mSelected)
     {
-        mViewMap.ModelToView(clip)->setBeingDragged(drag);
+        getViewMap().getView(clip)->setBeingDragged(drag);
     }
 }
 
 void SelectClips::selectClip(model::ClipPtr clip, bool selected)
 {
     model::ClipPtr link = clip->getLink();
-    mViewMap.ModelToView(clip)->setSelected(selected);
-    mViewMap.ModelToView(link)->setSelected(selected);
+    getViewMap().getView(clip)->setSelected(selected);
+    getViewMap().getView(link)->setSelected(selected);
 
     if (selected)
     {

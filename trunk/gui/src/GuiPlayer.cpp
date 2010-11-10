@@ -30,7 +30,7 @@ wxBitmap bmpPause   (preview_pause_xpm);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLinePtr timeline)
+GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLine* timeline)
 :   wxPanel(parent, wxID_ANY)
 ,   mTimeLine(timeline)
 ,   mPosition(0)
@@ -271,4 +271,5 @@ void GuiPlayer::updateSpeedButton()
 {
     mSpeedButton->SetLabel(wxString::Format("%d%%", mDisplay->getSpeed()));
 }
+
 } // namespace

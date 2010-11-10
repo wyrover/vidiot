@@ -12,7 +12,7 @@ namespace gui { namespace timeline { namespace state {
 //////////////////////////////////////////////////////////////////////////
 
 MovingCursor::MovingCursor( my_context ctx ) // entry
-:   my_base( ctx )
+:   TimeLineState( ctx )
 ,   mToggling(false)
 {
     LOG_DEBUG; 
@@ -30,7 +30,7 @@ MovingCursor::~MovingCursor() // exit
 boost::statechart::result MovingCursor::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    outermost_context().timeline.moveCursorOnUser(evt.mPosition.x);
+    getTimeline().moveCursorOnUser(evt.mPosition.x);
     if (evt.mWxEvent.ShiftDown())
     {
         triggerToggleStart();
@@ -51,7 +51,7 @@ boost::statechart::result MovingCursor::react( const EvLeftUp& evt )
 boost::statechart::result MovingCursor::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    outermost_context().timeline.moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection' 
+    getTimeline().moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection' 
     return discard_event();
 }
 
@@ -77,6 +77,15 @@ boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
     return discard_event();
 }
 
+////////////////////////////////////////////////////////////////////////////
+//// MAKE IT A PART
+////////////////////////////////////////////////////////////////////////////
+//
+//GuiTimeLine& MovingCursor::getTimeline()
+//{
+//    return outermost_context().mTimeline;
+//}
+//
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -85,7 +94,7 @@ void MovingCursor::triggerToggleStart()
 {
     if (!mToggling)
     {
-        outermost_context().timeline.mSelectedIntervals->startToggle();
+        getSelectIntervals().startToggle();
         mToggling = true;
     }
 }
@@ -94,7 +103,7 @@ void MovingCursor::triggerToggleEnd()
 {
     if (mToggling)
     {
-        outermost_context().timeline.mSelectedIntervals->endToggle();
+        getSelectIntervals().endToggle();
         mToggling = false;
     }
 }

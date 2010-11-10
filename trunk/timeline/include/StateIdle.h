@@ -12,7 +12,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class Idle
-    :   public boost::statechart::state< Idle, Machine >
+    :   public TimeLineState< Idle, Machine >
 {
 public:
 
@@ -46,7 +46,7 @@ private:
 
     boost::statechart::result start();
 
-    void deleteSelectedClips(model::MoveParameters& moves, GuiTimeLineTracks tracks);
+    void deleteSelectedClips(model::MoveParameters& moves, model::Tracks tracks);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

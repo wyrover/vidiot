@@ -8,7 +8,7 @@
 #include "ModelPtr.h"
 
 #ifdef _MSC_VER
-//#define CATCH_ALL_ERRORS
+#define CATCH_ALL_ERRORS
 #endif // _MSC_VER
 
 namespace model {

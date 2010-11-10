@@ -9,7 +9,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class TestDragStart
-    :   public boost::statechart::state< TestDragStart, Machine >
+    :   public TimeLineState< TestDragStart, Machine >
 {
 public:
 
@@ -41,7 +41,7 @@ private:
 
     boost::statechart::result start();
 
-    void deleteSelectedClips(model::MoveParameters& moves, GuiTimeLineTracks tracks);
+    void deleteSelectedClips(model::MoveParameters& moves, model::Tracks tracks);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

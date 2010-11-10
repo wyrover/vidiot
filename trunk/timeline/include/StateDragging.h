@@ -11,7 +11,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class Dragging 
-    :   public boost::statechart::state< Dragging, Machine >
+    :   public TimeLineState< Dragging, Machine >
 {
 public:
 
@@ -47,7 +47,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-//    GuiTimeLineClipPtr mClip;
+//    GuiTimeLineClip* mClip;
 
 };
 
