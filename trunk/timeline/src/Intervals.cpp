@@ -1,4 +1,4 @@
-#include "SelectIntervals.h"
+#include "Intervals.h"
 
 #include <math.h>
 #include <boost/foreach.hpp>
@@ -6,7 +6,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "GuiTimeLine.h"
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 #include "UtilLog.h"
 #include "Constants.h"
 #include "GuiOptions.h"
@@ -26,7 +26,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-SelectIntervals::SelectIntervals()
+Intervals::Intervals()
 :   wxEvtHandler()
 ,   mMarkedIntervals()
 ,   mNewIntervalActive(false)
@@ -38,12 +38,12 @@ SelectIntervals::SelectIntervals()
 {
 }
 
-void SelectIntervals::init()
+void Intervals::init()
 {
-    getTimeline().Bind(TIMELINE_CURSOR_MOVED, &SelectIntervals::onCursorMoved, this);
+    getTimeline().Bind(TIMELINE_CURSOR_MOVED, &Intervals::onCursorMoved, this);
 }
 
-SelectIntervals::~SelectIntervals()
+Intervals::~Intervals()
 {
 }
 
@@ -51,17 +51,17 @@ SelectIntervals::~SelectIntervals()
 // MARKING / TOGGLING INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
-bool SelectIntervals::isEmpty()
+bool Intervals::isEmpty()
 {
     return mMarkedIntervals.IsEmpty();
 }
 
-wxRegion SelectIntervals::get()
+wxRegion Intervals::get()
 {
     return mMarkedIntervals;
 }
 
-void SelectIntervals::set(wxRegion region)
+void Intervals::set(wxRegion region)
 {
     wxRect r = mMarkedIntervals.GetBox().Union(region.GetBox());
     mMarkedIntervals = region;
@@ -69,7 +69,7 @@ void SelectIntervals::set(wxRegion region)
     refresh(r.x,r.x + r.width);
 }
 
-void SelectIntervals::addBeginMarker()
+void Intervals::addBeginMarker()
 {
     long c = getZoom().pixelsToPts(getTimeline().getCursorPosition());
     long b = c + getZoom().timeToPts(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
@@ -80,7 +80,7 @@ void SelectIntervals::addBeginMarker()
     mNewIntervalEnd = e;
 }
 
-void SelectIntervals::addEndMarker()
+void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
@@ -89,14 +89,14 @@ void SelectIntervals::addEndMarker()
     mNewIntervalActive = false;
 }
 
-void SelectIntervals::startToggle()
+void Intervals::startToggle()
 {
     mToggleBegin = getZoom().pixelsToPts(getTimeline().getCursorPosition());
     mToggleEnd = mToggleBegin;
     mToggleActive = true;
 }
 
-void SelectIntervals::endToggle()
+void Intervals::endToggle()
 {
     if (mToggleActive)
     {
@@ -106,7 +106,7 @@ void SelectIntervals::endToggle()
     mToggleActive = false;
 }
 
-void SelectIntervals::change(long begin, long end, bool add)
+void Intervals::change(long begin, long end, bool add)
 {
     wxRect r(makeRect(begin,end));
     if (add)
@@ -121,7 +121,7 @@ void SelectIntervals::change(long begin, long end, bool add)
     refresh(begin,end);
 }
 
-void SelectIntervals::clear()
+void Intervals::clear()
 {
     wxGetApp().getProject()->Submit(new command::TimelineIntervalRemoveAll(getTimeline()));
 }
@@ -130,7 +130,7 @@ void SelectIntervals::clear()
 // ACTIONS ON THE MARKED AREAS
 //////////////////////////////////////////////////////////////////////////
 
-void SelectIntervals::deleteMarked()
+void Intervals::deleteMarked()
 {
     NIY
         // First, make one entire list containing a mapping of each clip to
@@ -154,7 +154,7 @@ void SelectIntervals::deleteMarked()
     //}
 }
 
-void SelectIntervals::deleteUnmarked()
+void Intervals::deleteUnmarked()
 {
     NIY
 }
@@ -163,7 +163,7 @@ void SelectIntervals::deleteUnmarked()
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-void SelectIntervals::draw(wxDC& dc)
+void Intervals::draw(wxDC& dc)
 {
     wxRegion drawRegion(mMarkedIntervals);
 
@@ -199,7 +199,7 @@ void SelectIntervals::draw(wxDC& dc)
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void SelectIntervals::onCursorMoved(EventTimelineCursorMoved& event)
+void Intervals::onCursorMoved(EventTimelineCursorMoved& event)
 {
     if (mNewIntervalActive)
     {
@@ -217,19 +217,19 @@ void SelectIntervals::onCursorMoved(EventTimelineCursorMoved& event)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-wxRect SelectIntervals::makeRect(long x1, long x2)
+wxRect Intervals::makeRect(long x1, long x2)
 {
     return wxRect(std::min(x1,x2),Constants::sTimeScaleHeight,std::abs(x2 - x1) + 1,Constants::sMinimalGreyAboveVideoTracksHeight);
 }
 
-wxRect SelectIntervals::ptsToPixels(wxRect rect)
+wxRect Intervals::ptsToPixels(wxRect rect)
 {
     rect.x = getZoom().ptsToPixels(rect.x);
     rect.width = getZoom().ptsToPixels(rect.width);
     return rect;
 }
 
-void SelectIntervals::refresh(long begin, long end)
+void Intervals::refresh(long begin, long end)
 {
     wxRect r(ptsToPixels(makeRect(begin,end)));
     
@@ -243,7 +243,7 @@ void SelectIntervals::refresh(long begin, long end)
     getTimeline().RefreshRect(r);
 }
 
-SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTrack* track)
+Intervals::ReplacementMap Intervals::findReplacements(GuiTimeLineTrack* track)
 {
     std::map< model::ClipPtr, model::ClipPtr > replacements;
 
@@ -295,12 +295,12 @@ SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTra
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void SelectIntervals::serialize(Archive & ar, const unsigned int version)
+void Intervals::serialize(Archive & ar, const unsigned int version)
 {
     ar & mMarkedIntervals;
 }
-template void SelectIntervals::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void SelectIntervals::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Intervals::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Intervals::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 }} // namespace
 

@@ -20,14 +20,14 @@ REM add --trace to a cmake line for more logging
 cd %BUILD_DIR%\MSVC
 cmake -G "Visual Studio 9 2008" -Wdev --debug-output %SOURCE%
 
-pause
+REM pause
 
 cd %BUILD_DIR%\GCCD
 cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
-pause
+REM pause
 
 cd %BUILD_DIR%\GCCR
 cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
 
-pause
+REM pause

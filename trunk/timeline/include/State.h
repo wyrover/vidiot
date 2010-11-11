@@ -6,7 +6,7 @@
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include "UtilLogWxwidgets.h"
-#include "TimeLinePart.h"
+#include "Part.h"
 
 class GuiTimeLine;
 
@@ -24,7 +24,7 @@ namespace gui { namespace timeline { namespace state {
 template < class STATE, class STATEMACHINE >
 class TimeLineState
     :   public boost::statechart::state<STATE, STATEMACHINE >
-    ,   protected TimeLinePart
+    ,   protected Part
 {
 public:
     TimeLineState( my_context ctx ) : my_base( ctx ) {};

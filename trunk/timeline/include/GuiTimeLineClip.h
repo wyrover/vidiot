@@ -9,7 +9,7 @@
 #include "Clip.h"
 #include "GuiPtr.h"
 #include "UtilEvent.h"
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -19,7 +19,7 @@ class GuiTimeLine;
 
 class GuiTimeLineClip
     :   public wxWindow
-    ,   public TimeLinePart
+    ,   public Part
 {
 public:
 

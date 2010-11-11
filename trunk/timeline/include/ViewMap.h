@@ -4,7 +4,7 @@
 #include <map>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "TimeLinePart.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
@@ -12,7 +12,7 @@ typedef std::map< model::TrackPtr, GuiTimeLineTrack* > TrackMap;
 typedef std::map< model::ClipPtr, GuiTimeLineClip* > ClipMap;
 
 class ViewMap
-    :   public TimeLinePart
+    :   public Part
 {
 public:
 

@@ -73,7 +73,7 @@ void Playing::triggerBegin()
 {
     if (!mMakingNewSelection)
     {
-        getSelectIntervals().addBeginMarker();
+        getIntervals().addBeginMarker();
         mMakingNewSelection = true;
     }
 }
@@ -82,7 +82,7 @@ void Playing::triggerEnd()
 {
     if (mMakingNewSelection)
     {
-        getSelectIntervals().addEndMarker();
+        getIntervals().addEndMarker();
         mMakingNewSelection = false;
     }
 }

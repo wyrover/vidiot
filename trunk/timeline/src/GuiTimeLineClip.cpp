@@ -7,7 +7,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 #include "Constants.h"
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
@@ -131,7 +131,7 @@ void GuiTimeLineClip::updateBitmap()
     }
     else
     {
-        if (getSelectClips().isSelected(mClip))
+        if (getSelection().isSelected(mClip))
         {
             dc.SetBrush(Constants::sSelectedClipBrush);
             dc.SetPen(Constants::sSelectedClipPen);

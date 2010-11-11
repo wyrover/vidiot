@@ -4,7 +4,7 @@
 #include <wx/event.h>
 #include <wx/menu.h>
 
-#include "TimeLinePart.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
@@ -15,7 +15,7 @@ namespace gui { namespace timeline {
 **/
 class MenuHandler
     :   public wxEvtHandler
-    ,   public TimeLinePart
+    ,   public Part
 {
 public:
 

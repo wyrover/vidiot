@@ -11,15 +11,15 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "TimeLinePart.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
 class EventTimelineCursorMoved;
 
-class SelectIntervals
+class Intervals
     :   public wxEvtHandler
-    ,   public TimeLinePart
+    ,   public Part
 {
 public:
 
@@ -27,9 +27,9 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    SelectIntervals();
+    Intervals();
     virtual void init();
-    virtual ~SelectIntervals();
+    virtual ~Intervals();
 
     //////////////////////////////////////////////////////////////////////////
     // MARKING / TOGGLING INTERFACE
@@ -110,7 +110,7 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::timeline::SelectIntervals, 1)
-BOOST_CLASS_EXPORT(gui::timeline::SelectIntervals)
+BOOST_CLASS_VERSION(gui::timeline::Intervals, 1)
+BOOST_CLASS_EXPORT(gui::timeline::Intervals)
 
 #endif // SELECT_INTERVALS_H

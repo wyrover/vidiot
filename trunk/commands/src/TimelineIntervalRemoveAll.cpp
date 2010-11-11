@@ -1,6 +1,6 @@
 #include "TimelineIntervalRemoveAll.h"
 
-#include "SelectIntervals.h"
+#include "Intervals.h"
 #include "GuiTimeLine.h"
 #include "UtilLog.h"
 
@@ -20,15 +20,15 @@ TimelineIntervalRemoveAll::~TimelineIntervalRemoveAll()
 bool TimelineIntervalRemoveAll::Do()
 {
     VAR_INFO(this);
-    mOldRegion = getTimeline().getSelectIntervals().get();
-    getTimeline().getSelectIntervals().set(wxRegion());
+    mOldRegion = getTimeline().getIntervals().get();
+    getTimeline().getIntervals().set(wxRegion());
     return true;
 }
 
 bool TimelineIntervalRemoveAll::Undo()
 {
     VAR_INFO(this);
-    getTimeline().getSelectIntervals().set(mOldRegion);
+    getTimeline().getIntervals().set(mOldRegion);
     return true;
 }
 
