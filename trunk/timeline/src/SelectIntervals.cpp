@@ -41,12 +41,6 @@ SelectIntervals::SelectIntervals()
 void SelectIntervals::init()
 {
     getTimeline().Bind(TIMELINE_CURSOR_MOVED, &SelectIntervals::onCursorMoved, this);
-
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,  &SelectIntervals::OnDeleteMarked,   this, ID_DELETEMARKED);
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,  &SelectIntervals::OnDeleteUnmarked, this, ID_DELETEUNMARKED);
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,  &SelectIntervals::OnRemoveMarkers,  this, ID_REMOVEMARKERS);
-
-    updateMenu();
 }
 
 SelectIntervals::~SelectIntervals()
@@ -57,6 +51,11 @@ SelectIntervals::~SelectIntervals()
 // MARKING / TOGGLING INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
+bool SelectIntervals::isEmpty()
+{
+    return mMarkedIntervals.IsEmpty();
+}
+
 wxRegion SelectIntervals::get()
 {
     return mMarkedIntervals;
@@ -66,7 +65,7 @@ void SelectIntervals::set(wxRegion region)
 {
     wxRect r = mMarkedIntervals.GetBox().Union(region.GetBox());
     mMarkedIntervals = region;
-    updateMenu();
+    getMenuHandler().update();
     refresh(r.x,r.x + r.width);
 }
 
@@ -118,8 +117,46 @@ void SelectIntervals::change(long begin, long end, bool add)
     {
         mMarkedIntervals.Subtract(r);
     }
-    updateMenu();
+    getMenuHandler().update();
     refresh(begin,end);
+}
+
+void SelectIntervals::clear()
+{
+    wxGetApp().getProject()->Submit(new command::TimelineIntervalRemoveAll(getTimeline()));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// ACTIONS ON THE MARKED AREAS
+//////////////////////////////////////////////////////////////////////////
+
+void SelectIntervals::deleteMarked()
+{
+    NIY
+        // First, make one entire list containing a mapping of each clip to
+        // the clips it is replaced with.
+
+        ReplacementMap replacements;
+
+    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mVideoTracks )
+    //{
+    //    ReplacementMap newreplacments = findReplacements(track);
+    //    replacements.insert(newreplacments.begin(),newreplacments.end());
+    //}
+    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mAudioTracks )
+    //{
+    //    ReplacementMap newreplacments = findReplacements(track);
+    //    replacements.insert(newreplacments.begin(),newreplacments.end());
+    //}
+    //BOOST_FOREACH(ReplacementMap::value_type entry, replacements)
+    //{
+    //    VAR_DEBUG(*entry.first)(*entry.second);
+    //}
+}
+
+void SelectIntervals::deleteUnmarked()
+{
+    NIY
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,6 +213,36 @@ void SelectIntervals::onCursorMoved(EventTimelineCursorMoved& event)
     }
 }
 
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+wxRect SelectIntervals::makeRect(long x1, long x2)
+{
+    return wxRect(std::min(x1,x2),Constants::sTimeScaleHeight,std::abs(x2 - x1) + 1,Constants::sMinimalGreyAboveVideoTracksHeight);
+}
+
+wxRect SelectIntervals::ptsToPixels(wxRect rect)
+{
+    rect.x = getZoom().ptsToPixels(rect.x);
+    rect.width = getZoom().ptsToPixels(rect.width);
+    return rect;
+}
+
+void SelectIntervals::refresh(long begin, long end)
+{
+    wxRect r(ptsToPixels(makeRect(begin,end)));
+    
+    // Adjust for scrolling
+    r.x -= getTimeline().getScrollOffset().x;
+    r.y -= getTimeline().getScrollOffset().y;
+
+    // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
+    r.x -= 1;
+    r.width += 2;
+    getTimeline().RefreshRect(r);
+}
+
 SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTrack* track)
 {
     std::map< model::ClipPtr, model::ClipPtr > replacements;
@@ -222,76 +289,6 @@ SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTra
     return replacements;
 }
 
-void SelectIntervals::OnDeleteMarked(wxCommandEvent& WXUNUSED(event))
-{
-    NIY
-    // First, make one entire list containing a mapping of each clip to
-    // the clips it is replaced with.
-
-    ReplacementMap replacements;
-
-    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mVideoTracks )
-    //{
-    //    ReplacementMap newreplacments = findReplacements(track);
-    //    replacements.insert(newreplacments.begin(),newreplacments.end());
-    //}
-    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mAudioTracks )
-    //{
-    //    ReplacementMap newreplacments = findReplacements(track);
-    //    replacements.insert(newreplacments.begin(),newreplacments.end());
-    //}
-    //BOOST_FOREACH(ReplacementMap::value_type entry, replacements)
-    //{
-    //    VAR_DEBUG(*entry.first)(*entry.second);
-    //}
-}
-
-void SelectIntervals::OnDeleteUnmarked(wxCommandEvent& WXUNUSED(event))
-{
-    NIY
-}
-
-void SelectIntervals::OnRemoveMarkers(wxCommandEvent& WXUNUSED(event))
-{
-    wxGetApp().getProject()->Submit(new command::TimelineIntervalRemoveAll(getTimeline()));
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-wxRect SelectIntervals::makeRect(long x1, long x2)
-{
-    return wxRect(std::min(x1,x2),Constants::sTimeScaleHeight,std::abs(x2 - x1) + 1,Constants::sMinimalGreyAboveVideoTracksHeight);
-}
-
-wxRect SelectIntervals::ptsToPixels(wxRect rect)
-{
-    rect.x = getZoom().ptsToPixels(rect.x);
-    rect.width = getZoom().ptsToPixels(rect.width);
-    return rect;
-}
-
-void SelectIntervals::refresh(long begin, long end)
-{
-    wxRect r(ptsToPixels(makeRect(begin,end)));
-    
-    // Adjust for scrolling
-    r.x -= getTimeline().getScrollOffset().x;
-    r.y -= getTimeline().getScrollOffset().y;
-
-    // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
-    r.x -= 1;
-    r.width += 2;
-    getTimeline().RefreshRect(r);
-}
-
-void SelectIntervals::updateMenu()
-{
-    getTimeline().getMenu().Enable( ID_DELETEMARKED,   !mMarkedIntervals.IsEmpty() );
-    getTimeline().getMenu().Enable( ID_DELETEUNMARKED, !mMarkedIntervals.IsEmpty() );
-    getTimeline().getMenu().Enable( ID_REMOVEMARKERS,  !mMarkedIntervals.IsEmpty() );
-}
 
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 
