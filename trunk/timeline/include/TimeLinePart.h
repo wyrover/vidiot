@@ -44,7 +44,9 @@ public:
 
     /** Virtual to be overridden in the statechart states. */
     virtual GuiTimeLine& getTimeline();
+    const GuiTimeLine& getTimeline() const;
     GuiTimeLineZoom& getZoom();
+    const GuiTimeLineZoom& getZoom() const;
     SelectIntervals& getSelectIntervals();
     SelectClips& getSelectClips();
     MousePointer& getMousePointer();

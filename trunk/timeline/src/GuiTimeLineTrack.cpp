@@ -29,27 +29,27 @@ static int sTrackBorderSize = 1;
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLine& timeline,
-                                   const GuiTimeLineZoom& zoom, 
-                                   model::TrackPtr track)
-:   wxWindow(&timeline, wxID_ANY) 
-,   mTimeLine(timeline)
+GuiTimeLineTrack::GuiTimeLineTrack(model::TrackPtr track)
+:   wxWindow()
 ,   mTrack(track)
-,   mZoom(zoom)
 ,   mBitmap()
 ,   mRedrawOnIdle(false)
 {
     ASSERT(mTrack); // Must be initialized
+}
 
-    mTimeLine.getViewMap().registerView(mTrack,this);
-    mBitmap.Create(mTimeLine.getWidth(),mTrack->getHeight());
+void GuiTimeLineTrack::init()
+{
+    Create(&getTimeline(), wxID_ANY);
+
+    getViewMap().registerView(mTrack,this);
+    mBitmap.Create(getTimeline().getWidth(),mTrack->getHeight());
 
     model::MoveParameter m;
     m.addClips = mTrack->getClips();
     OnClipsAdded(model::EventAddClips(m));
 
     mRedrawOnIdle = true;
-//    updateBitmap(); // Before binding to clip events to avoid a lot of events
 
     Bind(wxEVT_IDLE, &GuiTimeLineTrack::OnIdle, this);
 
@@ -61,7 +61,7 @@ GuiTimeLineTrack::GuiTimeLineTrack(GuiTimeLine& timeline,
 
 GuiTimeLineTrack::~GuiTimeLineTrack()
 {
-    mTimeLine.getViewMap().unregisterView(mTrack);
+    getViewMap().unregisterView(mTrack);
 }
 
 int GuiTimeLineTrack::getClipHeight() const
@@ -106,7 +106,8 @@ void GuiTimeLineTrack::OnClipsAdded( model::EventAddClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
-        GuiTimeLineClip* p = new GuiTimeLineClip(mTimeLine,this,mZoom,clip);
+        GuiTimeLineClip* p = new GuiTimeLineClip(this,clip);
+        p->initTimeline(&getTimeline());
         p->Bind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this); // After init to avoid initial events (since updateBitmap below redraws the entire bitmap)
     }
     mRedrawOnIdle = true;
@@ -116,8 +117,8 @@ void GuiTimeLineTrack::OnClipsRemoved( model::EventRemoveClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
     {
-        mTimeLine.getViewMap().getView(clip)->Unbind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this);
-        mTimeLine.getViewMap().getView(clip)->Destroy();
+        getViewMap().getView(clip)->Unbind(CLIP_UPDATE_EVENT, &GuiTimeLineTrack::OnClipUpdated, this);
+        getViewMap().getView(clip)->Destroy();
     }
     mRedrawOnIdle = true;
 }
@@ -144,7 +145,7 @@ void GuiTimeLineTrack::updateBitmap()
     QueueEvent(new TrackUpdateEvent(this));
 }
 
-void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask) const
+void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask)
 {
     // if dcSelectedClipsMask holds, then we're drawing a 'drag image'. Otherwise, we're drawing the regular track bitmap.
     bool draggedClipsOnly = dcSelectedClipsMask;
@@ -152,7 +153,7 @@ void GuiTimeLineTrack::drawClips(wxPoint position, wxMemoryDC& dc, boost::option
     wxPoint pos(position);
     BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
     {
-        GuiTimeLineClip* clip = mTimeLine.getViewMap().getView(modelclip);
+        GuiTimeLineClip* clip = getViewMap().getView(modelclip);
         wxBitmap bitmap = clip->getBitmap();
 
         if (draggedClipsOnly)

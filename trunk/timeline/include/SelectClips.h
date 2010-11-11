@@ -13,7 +13,8 @@ class SelectClips
 {
 public:
     SelectClips();
-    void update(GuiTimeLineClip* clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    void update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    bool isSelected(model::ClipPtr clip) const;
     void setDrag(bool drag);
 private:
 
