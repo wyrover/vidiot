@@ -10,7 +10,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <wx/pen.h>
 #include "Constants.h"
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 #include "GuiTimeLineClip.h"
 #include "UtilLog.h"
 #include "GuiTimeLine.h"

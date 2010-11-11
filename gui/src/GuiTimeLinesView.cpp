@@ -8,6 +8,7 @@
 #include "GuiMain.h"
 #include "GuiPreview.h"
 #include "GuiTimeLine.h"
+#include "Menu.h"
 #include "GuiWindow.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
@@ -141,7 +142,7 @@ void GuiTimelinesView::update() const
     timeline::GuiTimeLine* timeline = static_cast<timeline::GuiTimeLine*>(mNotebook.GetCurrentPage());
     if (timeline)
     {
-        window.setSequenceMenu(&(timeline->getMenu()));
+        window.setSequenceMenu(timeline->getMenuHandler().getMenu());
     }
     else
     {

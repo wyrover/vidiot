@@ -1,6 +1,6 @@
 #include "TimelineIntervalChange.h"
 
-#include "SelectIntervals.h"
+#include "Intervals.h"
 #include "GuiTimeLine.h"
 #include "UtilLog.h"
 
@@ -30,14 +30,14 @@ TimelineIntervalChange::~TimelineIntervalChange()
 bool TimelineIntervalChange::Do()
 {
     VAR_INFO(this);
-    getTimeline().getSelectIntervals().change(mBegin,mEnd,mAdd);
+    getTimeline().getIntervals().change(mBegin,mEnd,mAdd);
     return true;
 }
 
 bool TimelineIntervalChange::Undo()
 {
     VAR_INFO(this);
-    getTimeline().getSelectIntervals().change(mBegin,mEnd,!mAdd);
+    getTimeline().getIntervals().change(mBegin,mEnd,!mAdd);
     return true;
 }
 

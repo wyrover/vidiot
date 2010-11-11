@@ -94,7 +94,7 @@ void MovingCursor::triggerToggleStart()
 {
     if (!mToggling)
     {
-        getSelectIntervals().startToggle();
+        getIntervals().startToggle();
         mToggling = true;
     }
 }
@@ -103,7 +103,7 @@ void MovingCursor::triggerToggleEnd()
 {
     if (mToggling)
     {
-        getSelectIntervals().endToggle();
+        getIntervals().endToggle();
         mToggling = false;
     }
 }

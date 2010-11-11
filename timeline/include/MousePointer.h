@@ -4,7 +4,7 @@
 #include <wx/gdicmn.h>
 #include <wx/cursor.h>
 #include "UtilEnum.h"
-#include "TimeLinePart.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
@@ -17,7 +17,7 @@ DECLAREENUM(MousePointerImage, \
             PointerTrimShiftEnd);
 
 class MousePointer
-    :   public TimeLinePart
+    :   public Part
 {
 public:
 

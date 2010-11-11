@@ -1,4 +1,4 @@
-#include "SelectClips.h"
+#include "Selection.h"
 
 #include <boost/foreach.hpp>
 #include "GuiTimeLine.h"
@@ -9,12 +9,12 @@
 
 namespace gui { namespace timeline {
 
-SelectClips::SelectClips()
+Selection::Selection()
 :   mSelected()
 {
 }
 
-void SelectClips::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
@@ -57,7 +57,7 @@ void SelectClips::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPresse
         else if (shiftPressed)
         {
             // Range selection. Select from last selected clip until the current clip.
-            // SelectClips value equals the state of the last selected clip. If that was
+            // Selection value equals the state of the last selected clip. If that was
             // just selected, then the whole range is selected. If the last selected 
             // clip was deselected, then the whole range is deselected.
 
@@ -103,12 +103,12 @@ void SelectClips::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPresse
     }
 }
 
-bool SelectClips::isSelected(model::ClipPtr clip) const
+bool Selection::isSelected(model::ClipPtr clip) const
 {
     return (mSelected.find(clip) != mSelected.end());
 }
 
-void SelectClips::setDrag(bool drag)
+void Selection::setDrag(bool drag)
 {
     BOOST_FOREACH(model::ClipPtr clip, mSelected)
     {
@@ -116,7 +116,7 @@ void SelectClips::setDrag(bool drag)
     }
 }
 
-void SelectClips::selectClip(model::ClipPtr clip, bool selected)
+void Selection::selectClip(model::ClipPtr clip, bool selected)
 {
     model::ClipPtr link = clip->getLink();
     if (selected)

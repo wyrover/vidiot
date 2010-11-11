@@ -9,7 +9,7 @@
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
 #include "GuiPlayer.h"
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 #include "GuiTimeLineTrack.h"
 #include "EmptyClip.h"
 #include "Track.h"
@@ -44,7 +44,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
     VAR_DEBUG(evt);
     getTimeline().SetFocus(); /** @todo make more generic, for all states */
     PointerPositionInfo info = getTimeline().getPointerInfo(evt.mPosition);
-    getSelectClips().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
+    getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
     if (info.clip && !info.clip->isA<model::EmptyClip>())
     {
         outermost_context().globals->DragStartPosition = evt.mPosition;
@@ -228,7 +228,7 @@ void Idle::deleteSelectedClips(model::MoveParameters& moves, model::Tracks track
         BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {
             GuiTimeLineClip* c = getViewMap().getView(clip);
-            if (getSelectClips().isSelected(clip))
+            if (getSelection().isSelected(clip))
             {
                 if (!move)
                 {

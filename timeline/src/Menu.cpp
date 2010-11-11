@@ -1,10 +1,10 @@
-#include "MenuHandler.h"
+#include "Menu.h"
 
 #include "UtilLog.h"
 #include "GuiMain.h"
 #include "GuiWindow.h"
 #include "GuiTimeLinesView.h"
-#include "SelectIntervals.h"
+#include "Intervals.h"
 #include "ids.h"
 
 namespace gui { namespace timeline {
@@ -57,9 +57,9 @@ wxMenu* MenuHandler::getMenu()
 
 void MenuHandler::update()
 {
-    mMenu.Enable( ID_DELETEMARKED,   !getSelectIntervals().isEmpty() );
-    mMenu.Enable( ID_DELETEUNMARKED, !getSelectIntervals().isEmpty() );
-    mMenu.Enable( ID_REMOVEMARKERS,  !getSelectIntervals().isEmpty() );
+    mMenu.Enable( ID_DELETEMARKED,   !getIntervals().isEmpty() );
+    mMenu.Enable( ID_DELETEUNMARKED, !getIntervals().isEmpty() );
+    mMenu.Enable( ID_REMOVEMARKERS,  !getIntervals().isEmpty() );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,19 +82,19 @@ void MenuHandler::onAddAudioTrack(wxCommandEvent& WXUNUSED(event))
 void MenuHandler::onDeleteMarked(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    getSelectIntervals().deleteMarked();
+    getIntervals().deleteMarked();
 }
 
 void MenuHandler::onDeleteUnmarked(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    getSelectIntervals().deleteUnmarked();
+    getIntervals().deleteUnmarked();
 }
 
 void MenuHandler::onRemoveMarkers(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    getSelectIntervals().clear();
+    getIntervals().clear();
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& WXUNUSED(event))

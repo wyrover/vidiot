@@ -1,26 +1,26 @@
-#include "TimeLinePart.h"
+#include "Part.h"
 
 #include "GuiTimeLine.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {
 
-TimeLinePart::TimeLinePart()
+Part::Part()
 :   mTimeline(0)
 {
 }
 
-void TimeLinePart::initTimeline(GuiTimeLine* timeline)
+void Part::initTimeline(GuiTimeLine* timeline)
 {
     mTimeline = timeline;
     init();
 }
 
-void TimeLinePart::init()
+void Part::init()
 {
 }
 
-TimeLinePart::~TimeLinePart()
+Part::~Part()
 {
 }
 
@@ -28,13 +28,13 @@ TimeLinePart::~TimeLinePart()
 // PARTS 
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLine& TimeLinePart::getTimeline()
+GuiTimeLine& Part::getTimeline()
 {
     ASSERT(mTimeline);
     return *mTimeline;
 }
 
-const GuiTimeLine& TimeLinePart::getTimeline() const
+const GuiTimeLine& Part::getTimeline() const
 {
     return *mTimeline;
 }
@@ -43,37 +43,37 @@ const GuiTimeLine& TimeLinePart::getTimeline() const
 // state classes (these override getTimeline).
 #define mTimeline DO_NOT_USE_MEMBER_USE_METHOD
 
-GuiTimeLineZoom& TimeLinePart::getZoom() 
+Zoom& Part::getZoom() 
 { 
     return getTimeline().getZoom(); 
 }
 
-const GuiTimeLineZoom& TimeLinePart::getZoom() const
+const Zoom& Part::getZoom() const
 { 
     return getTimeline().getZoom(); 
 }
 
-SelectIntervals& TimeLinePart::getSelectIntervals() 
+Intervals& Part::getIntervals() 
 { 
-    return getTimeline().getSelectIntervals();
+    return getTimeline().getIntervals();
 }
 
-SelectClips& TimeLinePart::getSelectClips()
+Selection& Part::getSelection()
 {
-    return getTimeline().getSelectClips();
+    return getTimeline().getSelection();
 }
 
-MousePointer& TimeLinePart::getMousePointer()
+MousePointer& Part::getMousePointer()
 {
     return getTimeline().getMousepointer();
 }
 
-ViewMap& TimeLinePart::getViewMap()
+ViewMap& Part::getViewMap()
 {
     return getTimeline().getViewMap();
 }
 
-MenuHandler& TimeLinePart::getMenuHandler()
+MenuHandler& Part::getMenuHandler()
 {
     return getTimeline().getMenuHandler();
 }
@@ -82,12 +82,12 @@ MenuHandler& TimeLinePart::getMenuHandler()
 // OTHER HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr TimeLinePart::getPlayer()
+PlayerPtr Part::getPlayer()
 {
     return getTimeline().getPlayer();
 }
 
-model::SequencePtr TimeLinePart::getSequence()
+model::SequencePtr Part::getSequence()
 {
     return getTimeline().getSequence();
 }

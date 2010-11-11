@@ -2,7 +2,7 @@
 
 #include <boost/foreach.hpp>
 #include "GuiTimeLine.h"
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -10,7 +10,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineDropTarget::GuiTimeLineDropTarget(const GuiTimeLineZoom& zoom, GuiTimeLine* timeline)
+GuiTimeLineDropTarget::GuiTimeLineDropTarget(const Zoom& zoom, GuiTimeLine* timeline)
 :   wxDropTarget(new GuiDataObject())
 ,   mZoom(zoom)
 ,   mTimeLine(timeline)

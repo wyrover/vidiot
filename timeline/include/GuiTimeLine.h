@@ -15,12 +15,12 @@
 #include "GuiPtr.h"
 #include "State.h"
 #include "UtilEnum.h"
-#include "SelectIntervals.h"
-#include "SelectClips.h"
+#include "Intervals.h"
+#include "Selection.h"
 #include "MousePointer.h"
 #include "UtilEvent.h"
-#include "MenuHandler.h"
-#include "GuiTimeLineZoom.h"
+#include "Menu.h"
+#include "Zoom.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
@@ -84,12 +84,12 @@ public:
     // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineZoom& getZoom() { return mZoom; }
-    const GuiTimeLineZoom& getZoom() const { return mZoom; }
+    Zoom& getZoom() { return mZoom; }
+    const Zoom& getZoom() const { return mZoom; }
     ViewMap& getViewMap() { return mViewMap; }
-    SelectIntervals& getSelectIntervals() { return mSelectIntervals; }
+    Intervals& getIntervals() { return mIntervals; }
     MousePointer& getMousepointer() { return mMousePointer; }
-    SelectClips& getSelectClips() { return mSelectClips; }
+    Selection& getSelection() { return mSelection; }
     MenuHandler& getMenuHandler() { return mMenuHandler; }
 
     //////////////////////////////////////////////////////////////////////////
@@ -177,11 +177,11 @@ private:
     // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineZoom mZoom;
+    Zoom mZoom;
     ViewMap mViewMap;
-    SelectIntervals mSelectIntervals;
+    Intervals mIntervals;
     MousePointer mMousePointer;
-    SelectClips mSelectClips;
+    Selection mSelection;
     MenuHandler mMenuHandler;
 
     PlayerPtr mPlayer;

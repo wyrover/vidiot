@@ -41,7 +41,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     static int tolerance = 2;
     if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
     {
-        getSelectClips().setDrag(true);
+        getSelection().setDrag(true);
 
         // Begin the drag operation
         GuiTimeLineDragImage* dragimage = new GuiTimeLineDragImage(getTimeline(), evt.mPosition);

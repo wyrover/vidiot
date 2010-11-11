@@ -19,7 +19,7 @@
 #include "GuiPreview.h"
 #include "GuiWindow.h"
 #include "GuiTimeLineDropTarget.h"
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLineTrack.h"
 #include "UtilLogStl.h"
@@ -60,9 +60,9 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 
     mZoom.initTimeline(this);
     mViewMap.initTimeline(this);
-    mSelectIntervals.initTimeline(this);
+    mIntervals.initTimeline(this);
     mMousePointer.initTimeline(this);
-    mSelectClips.initTimeline(this);
+    mSelection.initTimeline(this);
     mMenuHandler.initTimeline(this); // Init as last since it depends on other parts
 }
 
@@ -159,7 +159,7 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
     }
 
     // Draw marked areas
-    getSelectIntervals().draw(dc);
+    getIntervals().draw(dc);
 
     // Draw drop area
     if (!mDropArea.IsEmpty())
@@ -589,7 +589,7 @@ void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
     ar & mSequence;
     ar & mZoom;
     ar & mDividerPosition;
-    ar & mSelectIntervals;
+    ar & mIntervals;
 }
 template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

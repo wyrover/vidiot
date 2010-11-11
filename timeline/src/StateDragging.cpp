@@ -37,7 +37,7 @@ boost::statechart::result Dragging::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
 
-    getSelectClips().setDrag(false);
+    getSelection().setDrag(false);
 
     // End the drag operation
     GuiTimeLineDragImage* dragimage = getTimeline().getDragImage();

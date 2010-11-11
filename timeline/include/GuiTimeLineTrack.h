@@ -14,7 +14,7 @@
 #include "GuiPtr.h"
 #include "Track.h"
 #include "UtilEvent.h"
-#include "GuiTimeLineZoom.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -24,7 +24,7 @@ DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrack*);
 
 class GuiTimeLineTrack
     :   public wxWindow
-    ,   public TimeLinePart
+    ,   public Part
 {
 public:
 

@@ -5,15 +5,14 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/shared_ptr.hpp>
-#include "TimeLinePart.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
 typedef boost::rational<int> rational;
 
-class GuiTimeLineZoom
-    :   public TimeLinePart
+class Zoom
+    :   public Part
 {
 public:
 
@@ -21,8 +20,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineZoom();
-	virtual ~GuiTimeLineZoom();
+    Zoom();
+	virtual ~Zoom();
 
     //////////////////////////////////////////////////////////////////////////
     // ZOOM RESULT
@@ -75,15 +74,13 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-typedef boost::shared_ptr<GuiTimeLineZoom> GuiTimeLineZoomPtr;
-
 }} // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::timeline::GuiTimeLineZoom, 1)
-BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLineZoom)
+BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
+BOOST_CLASS_EXPORT(gui::timeline::Zoom)
 
 #endif // GUI_TIME_LINE_ZOOM_H

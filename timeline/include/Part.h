@@ -8,15 +8,15 @@
 namespace gui { namespace timeline {
 
 class GuiTimeLine;
-class GuiTimeLineZoom;
-class SelectIntervals;
-class SelectClips;
+class Zoom;
+class Intervals;
+class Selection;
 class GuiPlayer;
 class MousePointer;
 class ViewMap;
 class MenuHandler;
 
-class TimeLinePart
+class Part
     :   public boost::noncopyable
 {
 public:
@@ -25,7 +25,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    TimeLinePart();
+    Part();
 
     /** Initialized by the creator of the part (typically, the timeline) */
     void initTimeline(GuiTimeLine* timeline);
@@ -37,7 +37,7 @@ public:
     * constructor. */
     virtual void init();
 
-    virtual ~TimeLinePart();
+    virtual ~Part();
 
     //////////////////////////////////////////////////////////////////////////
     // PARTS
@@ -46,10 +46,10 @@ public:
     /** Virtual to be overridden in the statechart states. */
     virtual GuiTimeLine& getTimeline();
     const GuiTimeLine& getTimeline() const;
-    GuiTimeLineZoom& getZoom();
-    const GuiTimeLineZoom& getZoom() const;
-    SelectIntervals& getSelectIntervals();
-    SelectClips& getSelectClips();
+    Zoom& getZoom();
+    const Zoom& getZoom() const;
+    Intervals& getIntervals();
+    Selection& getSelection();
     MousePointer& getMousePointer();
     ViewMap& getViewMap();
     MenuHandler& getMenuHandler();

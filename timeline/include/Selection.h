@@ -3,16 +3,16 @@
 
 #include "GuiPtr.h"
 #include "ModelPtr.h"
-#include "TimeLinePart.h"
+#include "Part.h"
 #include <set>
 
 namespace gui { namespace timeline {
 
-class SelectClips
-    :   public TimeLinePart
+class Selection
+    :   public Part
 {
 public:
-    SelectClips();
+    Selection();
     void update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
     bool isSelected(model::ClipPtr clip) const;
     void setDrag(bool drag);
