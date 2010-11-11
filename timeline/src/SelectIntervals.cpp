@@ -85,7 +85,7 @@ void SelectIntervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-        wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
+         wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
     }
     mNewIntervalActive = false;
 }
@@ -194,7 +194,7 @@ SelectIntervals::ReplacementMap SelectIntervals::findReplacements(GuiTimeLineTra
         //        wxInRegion = 2 
         if (wxOutRegion != mMarkedIntervals.Contains(cliprect))
         {
-            clip->setSelected(true);
+            //clip->setSelected(true);
             wxRegion intersect(mMarkedIntervals);
             intersect.Intersect(cliprect);
             wxRegionIterator it(intersect);

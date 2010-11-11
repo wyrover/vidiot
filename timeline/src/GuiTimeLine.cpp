@@ -85,20 +85,22 @@ void GuiTimeLine::init(wxWindow *parent)
     SetScrollRate( 10, 10 );
     EnableScrolling(true,true);
     SetBackgroundColour(* wxLIGHT_GREY);
-    SetDropTarget(new GuiTimeLineDropTarget(mZoom,this));
+    SetDropTarget(new GuiTimeLineDropTarget(mZoom,this)); /** @todo must also be a part */
 
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     DetermineWidth();
 
     BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
-        GuiTimeLineTrack* p = new GuiTimeLineTrack(*this, mZoom, track);
+        GuiTimeLineTrack* p = new GuiTimeLineTrack(track);
+        p->initTimeline(this);
         p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
         // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
     }
     BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks())
     {
-        GuiTimeLineTrack* p = new GuiTimeLineTrack(*this, mZoom, track);
+        GuiTimeLineTrack* p = new GuiTimeLineTrack(track);
+        p->initTimeline(this);
         p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
         // todo2 handle this via a OnAudioTrackAdded similar to the track handling of clip events from the model
     }

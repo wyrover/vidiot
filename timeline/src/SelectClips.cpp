@@ -14,22 +14,23 @@ SelectClips::SelectClips()
 {
 }
 
-void SelectClips::update(GuiTimeLineClip* clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void SelectClips::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
-    model::TrackPtr track = clip ? clip->getTrack()->getTrack() : model::TrackPtr();
+    model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
     // Must be determined before deselecting all clips.
-    bool previousClickedClipWasSelected = mPreviouslyClicked ? getViewMap().getView(mPreviouslyClicked)->isSelected() : true;
-    bool currentClickedClipIsSelected = clip ? clip->isSelected() : false;
+    bool previousClickedClipWasSelected = mPreviouslyClicked ? isSelected(mPreviouslyClicked) : true;
+    bool currentClickedClipIsSelected = clip ? isSelected(clip) : false;
 
     // Deselect all clips first, but only if control is not pressed.
     if (!ctrlPressed)
     {
-        BOOST_FOREACH( model::ClipPtr c, mSelected )
-        {
-            getViewMap().getView(c)->setSelected(false);
-        }
+		std::set<model::ClipPtr> old = mSelected;
         mSelected.clear();
+        BOOST_FOREACH( model::ClipPtr c, old )
+        {
+            getViewMap().getView(c)->updateBitmap();
+        }
     }
 
     if (clip)
@@ -50,7 +51,7 @@ void SelectClips::update(GuiTimeLineClip* clip, bool ctrlPressed, bool shiftPres
                 {
                     selectClip(c ,!currentClickedClipIsSelected);
                 }
-                mPreviouslyClicked = clip->getClip();
+                mPreviouslyClicked = clip;
             }
         }
         else if (shiftPressed)
@@ -68,7 +69,7 @@ void SelectClips::update(GuiTimeLineClip* clip, bool ctrlPressed, bool shiftPres
                 /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
                 if (!firstclip)
                 {
-                    if ((c == clip->getClip()) || (c == otherend))
+                    if ((c == clip) || (c == otherend))
                     {
                         firstclip = c;
                     }
@@ -77,7 +78,7 @@ void SelectClips::update(GuiTimeLineClip* clip, bool ctrlPressed, bool shiftPres
                 {
                     selectClip(c, previousClickedClipWasSelected);
                     if ((c != firstclip) && 
-                        ((c == clip->getClip()) || (c == otherend)))
+                        ((c == clip) || (c == otherend)))
                     {
                         break; // Stop (de)selecting clips
                     }
@@ -87,19 +88,24 @@ void SelectClips::update(GuiTimeLineClip* clip, bool ctrlPressed, bool shiftPres
         else if (ctrlPressed)
         {
             // Control down implies 'toggle' select.
-            selectClip(clip->getClip(), !currentClickedClipIsSelected);
-            mPreviouslyClicked = clip->getClip();
+            selectClip(clip, !currentClickedClipIsSelected);
+            mPreviouslyClicked = clip;
         }
         else
         {
-            selectClip(clip->getClip(), true);
-            mPreviouslyClicked = clip->getClip();
+            selectClip(clip, true);
+            mPreviouslyClicked = clip;
         }
     }
     else
     {
         mPreviouslyClicked.reset();
     }
+}
+
+bool SelectClips::isSelected(model::ClipPtr clip) const
+{
+    return (mSelected.find(clip) != mSelected.end());
 }
 
 void SelectClips::setDrag(bool drag)
@@ -113,9 +119,6 @@ void SelectClips::setDrag(bool drag)
 void SelectClips::selectClip(model::ClipPtr clip, bool selected)
 {
     model::ClipPtr link = clip->getLink();
-    getViewMap().getView(clip)->setSelected(selected);
-    getViewMap().getView(link)->setSelected(selected);
-
     if (selected)
     {
         mSelected.insert(clip);
@@ -126,6 +129,8 @@ void SelectClips::selectClip(model::ClipPtr clip, bool selected)
         mSelected.erase(clip);
         mSelected.erase(link);
     }
+    getViewMap().getView(clip)->updateBitmap();
+    getViewMap().getView(link)->updateBitmap();
 
 }
 

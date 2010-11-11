@@ -43,9 +43,9 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
     getTimeline().SetFocus(); /** @todo make more generic, for all states */
-    GuiTimeLineClip* clip = getTimeline().findClip(evt.mPosition);
-    getSelectClips().update(clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
-    if (clip && !clip->isEmpty())
+    PointerPositionInfo info = getTimeline().getPointerInfo(evt.mPosition);
+    getSelectClips().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
+    if (info.clip && !info.clip->isA<model::EmptyClip>())
     {
         outermost_context().globals->DragStartPosition = evt.mPosition;
         return transit<TestDragStart>();
@@ -228,7 +228,7 @@ void Idle::deleteSelectedClips(model::MoveParameters& moves, model::Tracks track
         BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {
             GuiTimeLineClip* c = getViewMap().getView(clip);
-            if (c->isSelected())
+            if (getSelectClips().isSelected(clip))
             {
                 if (!move)
                 {

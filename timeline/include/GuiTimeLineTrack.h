@@ -24,6 +24,7 @@ DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrack*);
 
 class GuiTimeLineTrack
     :   public wxWindow
+    ,   public TimeLinePart
 {
 public:
 
@@ -31,20 +32,9 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** Recovery constructor equals two '0' pointers. */
-    GuiTimeLineTrack(
-        GuiTimeLine& timeline,
-        const GuiTimeLineZoom& zoom, 
-        model::TrackPtr track);
+    GuiTimeLineTrack(model::TrackPtr track);
 
-    /**
-     * Two step construction. First the constructor (in combination with serialize)
-     * sets all relevant  members. Second, this method initializes all GUI stuff
-     * including the bitmap. This is also used to facilitate using shared_from_this()
-     * during construction (as using this in a constructor can lead to problems).
-     * @param timeline timeline to which this track belongs.
-     */
-    void init(GuiTimeLine* timeline);
+    void init();
 
 	virtual ~GuiTimeLineTrack();
 
@@ -56,7 +46,7 @@ public:
     // for initialization purposes.
     const wxBitmap& getBitmap();
 
-    void drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask = boost::none) const;
+    void drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask = boost::none);
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -78,11 +68,6 @@ public:
     void OnClipUpdated( ClipUpdateEvent& event );
 
 private:
-    friend class SelectIntervals;
-
-    const GuiTimeLineZoom& mZoom;
-
-    GuiTimeLine& mTimeLine;
 
     void updateBitmap();
 

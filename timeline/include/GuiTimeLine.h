@@ -85,6 +85,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     GuiTimeLineZoom& getZoom() { return mZoom; }
+    const GuiTimeLineZoom& getZoom() const { return mZoom; }
     ViewMap& getViewMap() { return mViewMap; }
     SelectIntervals& getSelectIntervals() { return mSelectIntervals; }
     MousePointer& getMousepointer() { return mMousePointer; }

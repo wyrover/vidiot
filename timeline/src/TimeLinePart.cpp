@@ -33,12 +33,22 @@ GuiTimeLine& TimeLinePart::getTimeline()
     ASSERT(mTimeline);
     return *mTimeline;
 }
+
+const GuiTimeLine& TimeLinePart::getTimeline() const
+{
+    return *mTimeline;
+}
 // Using the member from this point onwards will lead to compiler errors.
 // Using mTimeline instead of getTimeline() will lead to problems in the
 // state classes (these override getTimeline).
 #define mTimeline DO_NOT_USE_MEMBER_USE_METHOD
 
 GuiTimeLineZoom& TimeLinePart::getZoom() 
+{ 
+    return getTimeline().getZoom(); 
+}
+
+const GuiTimeLineZoom& TimeLinePart::getZoom() const
 { 
     return getTimeline().getZoom(); 
 }

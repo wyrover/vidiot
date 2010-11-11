@@ -19,6 +19,7 @@ class GuiTimeLine;
 
 class GuiTimeLineClip
     :   public wxWindow
+    ,   public TimeLinePart
 {
 public:
 
@@ -27,10 +28,10 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     GuiTimeLineClip(
-        GuiTimeLine& timeline,
         GuiTimeLineTrack* track,
-        const GuiTimeLineZoom& zoom, 
         model::ClipPtr clip);
+
+    void init();
 
 	virtual ~GuiTimeLineClip();
 
@@ -47,8 +48,6 @@ public:
 
     const wxBitmap& getBitmap();
 
-    bool isEmpty() const;
-    bool isSelected() const;
     void setSelected(bool selected);
     void setBeingDragged(bool beingdragged);
     bool isBeingDragged();
@@ -62,16 +61,13 @@ public:
     // tmp for showing intersect with selected regions
     void show(wxRect rect);
 
-private:
+    void updateBitmap();
 
-    const GuiTimeLineZoom& mZoom;
-    GuiTimeLine& mTimeline;
+private:
 
     void updateSize();
     void updateThumbnail();
-    void updateBitmap();
 
-    bool mSelected;
     bool mBeingDragged;
     int mWidth;
     model::ClipPtr mClip;

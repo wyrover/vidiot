@@ -25,23 +25,22 @@ DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClip*);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClip::GuiTimeLineClip(GuiTimeLine& timeline,
-                                 GuiTimeLineTrack* track,
-                                 const GuiTimeLineZoom& zoom, 
+GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
                                  model::ClipPtr clip)
 :   wxWindow(static_cast<wxWindow*>(track),wxID_ANY)
-,   mZoom(zoom)
-,   mTimeline(timeline)
 ,   mClip(clip)
 ,   mThumbnail()
 ,   mWidth(0)
 ,   mBitmap()
-,   mSelected(false)
 ,   mBeingDragged(false)
 ,   mRect(0,0,0,0)
 {
     ASSERT(mClip);
-    mTimeline.getViewMap().registerView(mClip,this);
+}
+
+void GuiTimeLineClip::init()
+{
+    getViewMap().registerView(mClip,this);
     updateSize(); // Also creates bitmap
 
     Hide();
@@ -49,7 +48,7 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLine& timeline,
 
 GuiTimeLineClip::~GuiTimeLineClip()
 {
-    mTimeline.getViewMap().unregisterView(mClip);
+    getViewMap().unregisterView(mClip);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,7 +62,7 @@ model::ClipPtr GuiTimeLineClip::getClip()
 
 GuiTimeLineTrack* GuiTimeLineClip::getTrack()
 {
-    return mTimeline.getViewMap().getView(getClip()->getTrack());
+    return getViewMap().getView(getClip()->getTrack());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,37 +74,27 @@ const wxBitmap& GuiTimeLineClip::getBitmap()
     return mBitmap;
 }
 
-bool GuiTimeLineClip::isEmpty() const
-{
-    return mClip->isA<model::EmptyClip>();
-}
-
-bool GuiTimeLineClip::isSelected() const
-{
-    return mSelected;
-}
-
 void GuiTimeLineClip::setSelected(bool selected)
 {
-    if (mClip->isA<model::EmptyClip>())
-    {
+    //if (mClip->isA<model::EmptyClip>())
+    //{
 
-    }
-    else
-    {
-        if (selected != mSelected)
-        {
-            // This if statement is needed to avoid endless 
-            // loops when also selecting the linked clip.
-            mSelected = selected;
-            updateBitmap();
-            model::ClipPtr link = mClip->getLink();
-            if (link)
-            {
-                mTimeline.getViewMap().getView(link)->setSelected(selected);
-            }
-        }
-    }
+    //}
+    //else
+    //{
+    //    if (selected != mSelected)
+    //    {
+    //        // This if statement is needed to avoid endless 
+    //        // loops when also selecting the linked clip.
+    //        mSelected = selected;
+    //        updateBitmap();
+    //        model::ClipPtr link = mClip->getLink();
+    //        if (link)
+    //        {
+    //            mTimeline.getViewMap().getView(link)->setSelected(selected);
+    //        }
+    //    }
+    //}
 }
 
 void GuiTimeLineClip::setBeingDragged(bool beingdragged)
@@ -122,11 +111,11 @@ bool GuiTimeLineClip::isBeingDragged()
 
 boost::int64_t GuiTimeLineClip::getLeftPosition() const
 {
-    return mZoom.ptsToPixels(mClip->getLeftPts());
+    return getZoom().ptsToPixels(mClip->getLeftPts());
 }
 boost::int64_t GuiTimeLineClip::getRightPosition() const
 {
-    return mZoom.ptsToPixels(mClip->getRightPts());
+    return getZoom().ptsToPixels(mClip->getRightPts());
 }
 
 void GuiTimeLineClip::show(wxRect rect)
@@ -141,7 +130,7 @@ void GuiTimeLineClip::show(wxRect rect)
 void GuiTimeLineClip::updateSize()
 {
     mWidth = getRightPosition() - getLeftPosition();
-    mBitmap.Create(mWidth,mTimeline.getViewMap().getView(mClip->getTrack())->getBitmap().GetHeight());
+    mBitmap.Create(mWidth,getViewMap().getView(mClip->getTrack())->getBitmap().GetHeight());
     updateThumbnail();  
 }
 
@@ -170,7 +159,7 @@ void GuiTimeLineClip::updateBitmap()
     }
     else
     {
-        if (mSelected)
+        if (getSelectClips().isSelected(mClip))
         {
             dc.SetBrush(Constants::sSelectedClipBrush);
             dc.SetPen(Constants::sSelectedClipPen);
