@@ -14,6 +14,7 @@ class SelectClips;
 class GuiPlayer;
 class MousePointer;
 class ViewMap;
+class MenuHandler;
 
 class TimeLinePart
     :   public boost::noncopyable
@@ -51,6 +52,7 @@ public:
     SelectClips& getSelectClips();
     MousePointer& getMousePointer();
     ViewMap& getViewMap();
+    MenuHandler& getMenuHandler();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS

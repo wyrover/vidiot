@@ -3,7 +3,6 @@
 
 #include <wx/scrolwin.h>
 #include <wx/dnd.h>
-#include <wx/menu.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
@@ -20,6 +19,7 @@
 #include "SelectClips.h"
 #include "MousePointer.h"
 #include "UtilEvent.h"
+#include "MenuHandler.h"
 #include "GuiTimeLineZoom.h"
 #include "ViewMap.h"
 
@@ -90,6 +90,7 @@ public:
     SelectIntervals& getSelectIntervals() { return mSelectIntervals; }
     MousePointer& getMousepointer() { return mMousePointer; }
     SelectClips& getSelectClips() { return mSelectClips; }
+    MenuHandler& getMenuHandler() { return mMenuHandler; }
 
     //////////////////////////////////////////////////////////////////////////
     //
@@ -102,16 +103,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     long getCursorPosition() const { return mCursorPosition; };
-
-    //////////////////////////////////////////////////////////////////////////
-    // SEQUENCE MENU
-    //////////////////////////////////////////////////////////////////////////
-
-    void OnAddVideoTrack(wxCommandEvent& WXUNUSED(event));
-    void OnAddAudioTrack(wxCommandEvent& WXUNUSED(event));
-    //void OnCloseSequence(wxCommandEvent& WXUNUSED(event));
-
-    wxMenu& getMenu();
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -191,6 +182,7 @@ private:
     SelectIntervals mSelectIntervals;
     MousePointer mMousePointer;
     SelectClips mSelectClips;
+    MenuHandler mMenuHandler;
 
     PlayerPtr mPlayer;
     wxBitmap mBitmap;
@@ -199,7 +191,6 @@ private:
     long mWidth;
     long mHeight;
     wxRect mDropArea;
-    wxMenu mMenu;
     GuiTimeLineDragImage* mDragImage;
 
     //////////////////////////////////////////////////////////////////////////

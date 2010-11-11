@@ -35,6 +35,9 @@ public:
     // MARKING / TOGGLING INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
+    /** @return true if there is at least one marked interval */
+    bool isEmpty();
+
     wxRegion get();
     void set(wxRegion region);
 
@@ -46,6 +49,16 @@ public:
 
     /** To be called for the undo/redo mechanism. */
     void change(long begin, long end, bool add);
+
+    /** Clear all marked intervals. */
+    void clear();
+
+    //////////////////////////////////////////////////////////////////////////
+    // ACTIONS ON THE MARKED AREAS
+    //////////////////////////////////////////////////////////////////////////
+
+    void deleteMarked();
+    void deleteUnmarked();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAWING
@@ -71,10 +84,6 @@ private:
 
     void onCursorMoved(EventTimelineCursorMoved& event);
 
-    void OnDeleteMarked(wxCommandEvent& WXUNUSED(event));
-    void OnDeleteUnmarked(wxCommandEvent& WXUNUSED(event));
-    void OnRemoveMarkers(wxCommandEvent& WXUNUSED(event));
-
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
@@ -82,7 +91,6 @@ private:
     wxRect makeRect(long x1, long x2);
     wxRect ptsToPixels(wxRect rect);
     void refresh(long begin, long end);
-    void updateMenu();
 
     typedef std::map< model::ClipPtr, model::ClipPtr > ReplacementMap;
     ReplacementMap findReplacements(GuiTimeLineTrack* track);

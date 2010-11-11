@@ -54,28 +54,16 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
-,   mMenu()
 ,   mDragImage(0)
 {
     LOG_INFO;
-
-    mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"));
-    mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"));
-    mMenu.AppendSeparator();
-    mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions from sequence"));
-    mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
-    mMenu.Append(ID_REMOVEMARKERS,  _("Remove all markers"));
-    // todo menusequence->Append(ID_CLOSESEQUENCE, _("Close"));
-
-    //Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnCloseSequence,    this, ID_CLOSESEQUENCE);
-    mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddVideoTrack,    this, ID_ADDVIDEOTRACK);
-    mMenu.Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiTimeLine::OnAddAudioTrack,    this, ID_ADDAUDIOTRACK);
 
     mZoom.initTimeline(this);
     mViewMap.initTimeline(this);
     mSelectIntervals.initTimeline(this);
     mMousePointer.initTimeline(this);
     mSelectClips.initTimeline(this);
+    mMenuHandler.initTimeline(this); // Init as last since it depends on other parts
 }
 
 void GuiTimeLine::init(wxWindow *parent)
@@ -123,29 +111,6 @@ GuiTimeLine::~GuiTimeLine()
     Unbind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
 }
-
-//////////////////////////////////////////////////////////////////////////
-// SEQUENCE MENU
-//////////////////////////////////////////////////////////////////////////
-
-void GuiTimeLine::OnAddVideoTrack(wxCommandEvent& WXUNUSED(event))
-{
-    LOG_DEBUG;
-    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
-    //mProject->Submit(new command::TimelineCreateVideoTrack(*mOpenSequences.begin()));
-}
-
-void GuiTimeLine::OnAddAudioTrack(wxCommandEvent& WXUNUSED(event))
-{
-    LOG_DEBUG;
-    // todo handle this via timelinesview. that class is resp for maintaining the lst of sequences.
-    //    mProject->Submit(new command::TimelineCreateAudioTrack(*mOpenSequences.begin()));
-}
-
-//void GuiTimeLine::OnCloseSequence(wxCommandEvent& WXUNUSED(event))
-//{
-//    mTimelinesView->Close();
-//}
 
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
@@ -246,11 +211,6 @@ void GuiTimeLine::showDropArea(wxRect area)
         Update();
 
     }
-}
-
-wxMenu& GuiTimeLine::getMenu()
-{
-    return mMenu;
 }
 
 //////////////////////////////////////////////////////////////////////////
