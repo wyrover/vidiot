@@ -40,7 +40,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     model::ClipPtr getClip();
-    GuiTimeLineTrack* getTrack();
 
     //////////////////////////////////////////////////////////////////////////
     //  GET & SET
@@ -48,7 +47,6 @@ public:
 
     const wxBitmap& getBitmap();
 
-    void setSelected(bool selected);
     void setBeingDragged(bool beingdragged);
     bool isBeingDragged();
 

@@ -60,11 +60,6 @@ model::ClipPtr GuiTimeLineClip::getClip()
     return mClip;
 }
 
-GuiTimeLineTrack* GuiTimeLineClip::getTrack()
-{
-    return getViewMap().getView(getClip()->getTrack());
-}
-
 //////////////////////////////////////////////////////////////////////////
 //  GET & SET
 //////////////////////////////////////////////////////////////////////////
@@ -72,29 +67,6 @@ GuiTimeLineTrack* GuiTimeLineClip::getTrack()
 const wxBitmap& GuiTimeLineClip::getBitmap()
 {
     return mBitmap;
-}
-
-void GuiTimeLineClip::setSelected(bool selected)
-{
-    //if (mClip->isA<model::EmptyClip>())
-    //{
-
-    //}
-    //else
-    //{
-    //    if (selected != mSelected)
-    //    {
-    //        // This if statement is needed to avoid endless 
-    //        // loops when also selecting the linked clip.
-    //        mSelected = selected;
-    //        updateBitmap();
-    //        model::ClipPtr link = mClip->getLink();
-    //        if (link)
-    //        {
-    //            mTimeline.getViewMap().getView(link)->setSelected(selected);
-    //        }
-    //    }
-    //}
 }
 
 void GuiTimeLineClip::setBeingDragged(bool beingdragged)
