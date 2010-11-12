@@ -4,6 +4,7 @@
 #include <wx/image.h>
 
 #include <wx/dcmemory.h>
+#include <wx/bitmap.h>
 #include "GuiPtr.h"
 
 #define wxUSE_GENERIC_DRAGIMAGE 1
@@ -19,6 +20,8 @@ public:
 	virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
 	virtual wxRect GetImageRect(const wxPoint& pos) const;
     wxPoint getHotspot() const { return mHotspot; };
+    wxBitmap getDragBitmap();// const;
+
 private:
     GuiTimeLine& mTimeLine;
     wxPoint mHotspot;
