@@ -83,7 +83,7 @@ Cursor& Part::getCursor()
     return getTimeline().getCursor();
 }
 
-GuiTimeLineDragImage& Part::getDrag()
+Drag& Part::getDrag()
 {
     return getTimeline().getDrag();
 }
