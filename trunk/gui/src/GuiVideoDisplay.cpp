@@ -8,10 +8,9 @@
 #include "UtilLog.h"
 #include "Zoom.h"
 #include "Sequence.h"
+#include "VideoDisplayEvent.h"
 
 namespace gui {
-
-DEFINE_EVENT(GUI_EVENT_PLAYBACK_POSITION, GuiEventPlaybackPosition, long);
 
 const int GuiVideoDisplay::sMinimumSpeed = 50;
 const int GuiVideoDisplay::sMaximumSpeed = 200;
@@ -435,7 +434,7 @@ void GuiVideoDisplay::showNewVideoFrame()
         // If there is no displayed video frame, do not change the timeline's cursor
         // position. An example of this is the case where the cursor is positioned
         // beyond the end of the sequence.
-        GetEventHandler()->QueueEvent(new GuiEventPlaybackPosition(mCurrentVideoFrame->getPts()));
+        GetEventHandler()->QueueEvent(new PlaybackPositionEvent(mCurrentVideoFrame->getPts()));
     }
 }
 

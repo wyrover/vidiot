@@ -30,7 +30,7 @@ MovingCursor::~MovingCursor() // exit
 boost::statechart::result MovingCursor::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    getTimeline().moveCursorOnUser(evt.mPosition.x);
+    getCursor().moveCursorOnUser(evt.mPosition.x);
     if (evt.mWxEvent.ShiftDown())
     {
         triggerToggleStart();
@@ -51,7 +51,7 @@ boost::statechart::result MovingCursor::react( const EvLeftUp& evt )
 boost::statechart::result MovingCursor::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getTimeline().moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection' 
+    getCursor().moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection' 
     return discard_event();
 }
 
@@ -77,15 +77,6 @@ boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
     return discard_event();
 }
 
-////////////////////////////////////////////////////////////////////////////
-//// MAKE IT A PART
-////////////////////////////////////////////////////////////////////////////
-//
-//GuiTimeLine& MovingCursor::getTimeline()
-//{
-//    return outermost_context().mTimeline;
-//}
-//
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

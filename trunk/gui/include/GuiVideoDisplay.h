@@ -10,11 +10,8 @@
 #include "AudioChunk.h"
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "UtilEvent.h"
 
 namespace gui {
-
-DECLARE_EVENT(GUI_EVENT_PLAYBACK_POSITION, GuiEventPlaybackPosition, long);
 
 class GuiVideoDisplay
 :   public wxControl

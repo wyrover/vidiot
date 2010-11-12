@@ -15,6 +15,7 @@ class GuiPlayer;
 class MousePointer;
 class ViewMap;
 class MenuHandler;
+class Cursor;
 
 class Part
     :   public boost::noncopyable
@@ -53,6 +54,7 @@ public:
     MousePointer& getMousePointer();
     ViewMap& getViewMap();
     MenuHandler& getMenuHandler();
+    Cursor& getCursor();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS

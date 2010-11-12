@@ -32,8 +32,6 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
-
 IMPLEMENTENUM(MouseOnClipPosition);
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,7 +41,6 @@ IMPLEMENTENUM(MouseOnClipPosition);
 GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 :   wxScrolledWindow()
 ,   mZoom()
-,   mCursorPosition(0)
 ,   mPlaybackTime(0)
 ,   mOrigin(0,100)
 ,   mBitmap()
@@ -57,17 +54,21 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mDragImage(0)
 {
     LOG_INFO;
+}
+
+void GuiTimeLine::init(wxWindow *parent)
+{
+    ASSERT(mSequence);
+    mPlayer = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this);
 
     mZoom.initTimeline(this);
     mViewMap.initTimeline(this);
     mIntervals.initTimeline(this);
     mMousePointer.initTimeline(this);
     mSelection.initTimeline(this);
+    mCursor.initTimeline(this);
     mMenuHandler.initTimeline(this); // Init as last since it depends on other parts
-}
 
-void GuiTimeLine::init(wxWindow *parent)
-{
     Create(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER);
 
     SetScrollRate( 10, 10 );
@@ -96,9 +97,6 @@ void GuiTimeLine::init(wxWindow *parent)
     Bind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
     Bind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
-
-    ASSERT(mSequence);
-    mPlayer = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this);
 
     // From here on, processing continues with size events after laying out this widget.
 }
@@ -169,9 +167,7 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
         dc.DrawRectangle(mDropArea);
     }
 
-    // Draw cursor
-    dc.SetPen(Constants::sCursorPen);
-    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,mHeight));
+    getCursor().draw(dc);
 
 }
 
@@ -182,7 +178,7 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
 void GuiTimeLine::OnTrackUpdated( TrackUpdateEvent& event )
 {
     LOG_INFO;
-    moveCursorOnUser(mCursorPosition); // This is needed to reset iterators in model in case of clip addition/removal
+    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     /** todo only redraw track */
     updateBitmap();
     Update();
@@ -200,6 +196,11 @@ model::SequencePtr GuiTimeLine::getSequence() const
 int GuiTimeLine::getWidth() const
 {
     return mWidth;
+}
+
+int GuiTimeLine::getHeight() const
+{
+    return mHeight;
 }
 
 void GuiTimeLine::showDropArea(wxRect area)
@@ -234,38 +235,6 @@ void GuiTimeLine::setDragImage(GuiTimeLineDragImage* dragimage)
 GuiTimeLineDragImage* GuiTimeLine::getDragImage() const
 {
     return mDragImage;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// CURSOR
-//////////////////////////////////////////////////////////////////////////
-
-void GuiTimeLine::setCursorPosition(long position)
-{
-    VAR_DEBUG(mCursorPosition)(position);
-
-    long oldPos = mCursorPosition;
-    mCursorPosition = position;
-
-    wxPoint scroll = getScrollOffset();
-
-    // Refresh the old and new cursor position areas
-    long cursorOnClientArea = mCursorPosition - scroll.x;
-    long oldposOnClientArea = oldPos - scroll.x;
-    RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,mHeight),false);
-
-    QueueEvent(new EventTimelineCursorMoved(mCursorPosition));
-}
-
-void GuiTimeLine::moveCursorOnPlayback(long pts)
-{
-    setCursorPosition(mZoom.ptsToPixels(pts));
-}
-
-void GuiTimeLine::moveCursorOnUser(int position)
-{
-    setCursorPosition(position);
-    mPlayer->moveTo(mZoom.pixelsToPts(position));
 }
 
 //////////////////////////////////////////////////////////////////////////

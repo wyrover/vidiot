@@ -6,7 +6,6 @@
 #include <wx/textctrl.h>
 #include <wx/stattext.h>
 #include "UtilLog.h"
-#include "GuiTimeLine.h"
 #include "Zoom.h"
 #include "GuiVideoDisplay.h"
 #include "preview-home.xpm" 
@@ -16,6 +15,7 @@
 #include "preview-pause.xpm" 
 #include "preview-previous.xpm" 
 #include "Constants.h"
+#include "Cursor.h"
 
 namespace gui {
 
@@ -30,9 +30,8 @@ wxBitmap bmpPause   (preview_pause_xpm);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLine* timeline)
+GuiPlayer::GuiPlayer(wxWindow *parent, model::SequencePtr sequence)
 :   wxPanel(parent, wxID_ANY)
-,   mTimeLine(timeline)
 ,   mPosition(0)
 ,   mSpeedButton(0)
 ,   mSpeedSliderFrame(0)
@@ -42,8 +41,8 @@ GuiPlayer::GuiPlayer(wxWindow *parent, timeline::GuiTimeLine* timeline)
 
     //////////////////////////////////////////////////////////////////////////
 
-    mDisplay = new GuiVideoDisplay(this, timeline->getSequence());
-    mDisplay->Bind(GUI_EVENT_PLAYBACK_POSITION, &GuiPlayer::OnPlaybackPosition, this);
+    mDisplay = new GuiVideoDisplay(this, sequence);
+    mDisplay->Bind(EVENT_PLAYBACK_POSITION, &GuiPlayer::onPlaybackPosition, this);
     mDisplay->setSpeed(GuiVideoDisplay::sDefaultSpeed);
 
     //////////////////////////////////////////////////////////////////////////
@@ -143,15 +142,16 @@ void GuiPlayer::moveTo(int64_t position)
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiPlayer::OnPlaybackPosition(GuiEventPlaybackPosition& event)
+void GuiPlayer::onPlaybackPosition(PlaybackPositionEvent& event)
 {
     mPosition = event.getValue();//getPts();
     int time = timeline::Zoom::ptsToTime(mPosition);
     wxDateTime t(time / timeline::Constants::sHour, (time % timeline::Constants::sHour) / timeline::Constants::sMinute, (time % timeline::Constants::sMinute) / timeline::Constants::sSecond, time % timeline::Constants::sSecond);
     wxString s = t.Format("%H:%M:%S.%l") + wxString::Format(" [%10d]", mPosition);
     mStatus->ChangeValue(s);
+
     // NOT: event.Skip(); - Only the player handles this event. Forwards it if necessary. This event is only needed to detach from the video display thread.
-    mTimeLine->moveCursorOnPlayback(mPosition);
+    GetEventHandler()->QueueEvent(new PlaybackPositionEvent(event)); // Event must be sent by the player. Other components don't see the videodisplay.
 }
 
 void GuiPlayer::OnHome(wxCommandEvent& WXUNUSED(event))
