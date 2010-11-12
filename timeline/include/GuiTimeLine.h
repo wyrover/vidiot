@@ -116,7 +116,6 @@ public:
 
     void OnTrackUpdated( TrackUpdateEvent& event );
 
-    wxBitmap getDragBitmap(wxPoint& hostspot);// const;
     void updateBitmap();
 
     void showDropArea(wxRect area);
@@ -128,6 +127,9 @@ public:
     model::SequencePtr getSequence() const;
     int getWidth() const;
     int getHeight() const;
+    int getDividerPosition() const;
+
+
 
     wxPoint getScrollOffset() const;
 
