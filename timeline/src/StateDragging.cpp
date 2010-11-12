@@ -61,7 +61,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 
 void Dragging::showDropArea(wxPoint p)
 {
-    PointerPositionInfo info = getTimeline().getPointerInfo(p);
+    PointerPositionInfo info = getMousePointer().getInfo(p);
 
     if (info.track)
     {

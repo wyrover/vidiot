@@ -30,35 +30,6 @@ namespace gui { namespace timeline {
 class TrackUpdateEvent;
 class Drag;
 
-DECLAREENUM(MouseOnClipPosition, \
-            ClipBetween, \
-            ClipBegin, \
-            ClipInterior, \
-            ClipEnd);
-
-struct PointerPositionInfo
-{
-    //////////////////////////////////////////////////////////////////////////
-    // TRACK
-    //////////////////////////////////////////////////////////////////////////
-
-    /** Current track under the mouse pointer. 0 if none. */
-    model::TrackPtr track;
-
-    /** Y position of current track. 0 if no current track. */
-    int trackPosition;
-
-    //////////////////////////////////////////////////////////////////////////
-    // CLIP
-    //////////////////////////////////////////////////////////////////////////
-
-    /** Current clip under the mouse pointer. 0 if none. */
-    model::ClipPtr clip;
-
-    MouseOnClipPosition logicalclipposition;
-
-};
-
 class GuiTimeLine
 :   public wxScrolledWindow
 {
@@ -119,12 +90,6 @@ public:
     int getHeight() const;
     int getDividerPosition() const;
     wxPoint getScrollOffset() const;
-
-    //////////////////////////////////////////////////////////////////////////
-    // FROM COORDINATES TO OBJECTS
-    //////////////////////////////////////////////////////////////////////////
-
-    PointerPositionInfo getPointerInfo(wxPoint pointerposition);
 
 private:
 
