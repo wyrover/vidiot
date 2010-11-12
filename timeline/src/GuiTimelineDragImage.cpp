@@ -11,12 +11,16 @@
 
 namespace gui { namespace timeline {
 
-GuiTimeLineDragImage::GuiTimeLineDragImage(GuiTimeLine& timeline, wxPoint position)
+GuiTimeLineDragImage::GuiTimeLineDragImage()
 :	wxDragImage(wxCursor(wxCURSOR_HAND))
-,   mTimeLine(timeline)
-,   mHotspot(position)
-,   mBitmap(getDragBitmap())
+,   mHotspot(wxPoint(0,0))
+,   mBitmap()
 {
+}
+
+void GuiTimeLineDragImage::setHotspot(wxPoint position)
+{
+    mHotspot = position;
 }
 
 bool GuiTimeLineDragImage::DoDrawImage(wxDC& dc, const wxPoint& pos) const
@@ -32,8 +36,8 @@ wxRect GuiTimeLineDragImage::GetImageRect(const wxPoint& pos) const
 
 wxBitmap GuiTimeLineDragImage::getDragBitmap() //const
 {
-    int w = mTimeLine.getWidth();
-    int h = mTimeLine.getHeight();
+    int w = getTimeline().getWidth();
+    int h = getTimeline().getHeight();
 
     wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
     wxBitmap mask(w,h,1);
@@ -53,24 +57,24 @@ wxBitmap GuiTimeLineDragImage::getDragBitmap() //const
     dcMask.SetBrush(*wxWHITE_BRUSH);
 
     // First determine starting point
-    wxPoint position(0,mTimeLine.getDividerPosition());
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, mTimeLine.getSequence()->getVideoTracks() )
+    wxPoint position(0,getTimeline().getDividerPosition());
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         position.y -= track->getHeight();
     }
 
     // Draw video tracks
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, mTimeLine.getSequence()->getVideoTracks() )
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        mTimeLine.getViewMap().getView(track)->drawClips(position,dc,dcMask);
+        getViewMap().getView(track)->drawClips(position,dc,dcMask);
         position.y += track->getHeight();
     }
 
     // Draw audio tracks
     position.y += Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( model::TrackPtr track, mTimeLine.getSequence()->getAudioTracks() )
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        mTimeLine.getViewMap().getView(track)->drawClips(position,dc,dcMask);
+        getViewMap().getView(track)->drawClips(position,dc,dcMask);
         position.y += track->getHeight();
     }
 
@@ -89,4 +93,33 @@ wxBitmap GuiTimeLineDragImage::getDragBitmap() //const
 
     return temp.GetSubBitmap(wxRect(origin_x,origin_y,size_x,size_y));
 }
+
+void GuiTimeLineDragImage::Start(wxPoint hotspot)
+{
+    mHotspot = hotspot;
+    mBitmap = getDragBitmap();
+    bool ok = BeginDrag(mHotspot, &getTimeline(), false);
+    ASSERT(ok);
+    getTimeline().Refresh(false);
+    getTimeline().Update();
+    Move(hotspot);
+    Show();
+}
+
+void GuiTimeLineDragImage::Stop()
+{
+    Hide();
+    EndDrag();
+    getTimeline().Refresh();
+}
+
+void GuiTimeLineDragImage::MoveTo(wxPoint hotspot)
+{
+    //dragimage->Hide();
+    getTimeline().Refresh(false);
+    getTimeline().Update();
+    //dragimage->Show();
+    Move(hotspot - getTimeline().getScrollOffset());
+}
+
 }} // namespace

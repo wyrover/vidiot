@@ -43,15 +43,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     {
         getSelection().setDrag(true);
 
-        // Begin the drag operation
-        GuiTimeLineDragImage* dragimage = new GuiTimeLineDragImage(getTimeline(), evt.mPosition);
-        getTimeline().setDragImage(dragimage);
-        bool ok = dragimage->BeginDrag(dragimage->getHotspot(), &getTimeline(), false);
-        ASSERT(ok);
-        getTimeline().Refresh(false);
-        getTimeline().Update();
-        dragimage->Move(evt.mPosition);
-        dragimage->Show();
+        getDrag().Start(evt.mPosition);
 
         //outermost_context().timeline.beginDrag(evt.mPosition);
         return transit<Dragging>();

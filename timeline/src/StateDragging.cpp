@@ -39,13 +39,7 @@ boost::statechart::result Dragging::react( const EvLeftUp& evt )
 
     getSelection().setDrag(false);
 
-    // End the drag operation
-    GuiTimeLineDragImage* dragimage = getTimeline().getDragImage();
-    dragimage->Hide();
-    dragimage->EndDrag();
-    getTimeline().Refresh();
-    getTimeline().setDragImage(0);
-    delete dragimage;
+    getDrag().Stop();
 
     return transit<Idle>();
 }
@@ -54,13 +48,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
 
-    // Move the drag image
-    GuiTimeLineDragImage* dragimage = getTimeline().getDragImage();
-    //dragimage->Hide();
-    getTimeline().Refresh(false);
-    getTimeline().Update();
-    //dragimage->Show();
-    dragimage->Move(evt.mPosition - getTimeline().getScrollOffset());
+    getDrag().MoveTo(evt.mPosition);
 
     showDropArea(evt.mPosition); 
 
@@ -73,7 +61,6 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 
 void Dragging::showDropArea(wxPoint p)
 {
-    GuiTimeLineDragImage* dragimage = getTimeline().getDragImage();
     PointerPositionInfo info = getTimeline().getPointerInfo(p);
 
     if (info.track)
