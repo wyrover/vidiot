@@ -43,7 +43,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
     getTimeline().SetFocus(); /** @todo make more generic, for all states */
-    PointerPositionInfo info = getTimeline().getPointerInfo(evt.mPosition);
+    PointerPositionInfo info = getMousePointer().getInfo(evt.mPosition);
     getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
     if (info.clip && !info.clip->isA<model::EmptyClip>())
     {
@@ -61,7 +61,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
 boost::statechart::result Idle::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info =  getTimeline().getPointerInfo(evt.mPosition);
+    PointerPositionInfo info =  getMousePointer().getInfo(evt.mPosition);
     MousePointerImage image = PointerNormal;
     if (info.clip)
     {
