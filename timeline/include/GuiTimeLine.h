@@ -84,39 +84,26 @@ public:
     // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
     //////////////////////////////////////////////////////////////////////////
 
-    Zoom& getZoom() { return mZoom; }
-    const Zoom& getZoom() const { return mZoom; }
-    ViewMap& getViewMap() { return mViewMap; }
-    Intervals& getIntervals() { return mIntervals; }
-    MousePointer& getMousepointer() { return mMousePointer; }
-    Selection& getSelection() { return mSelection; }
-    MenuHandler& getMenuHandler() { return mMenuHandler; }
-    Cursor& getCursor() { return mCursor; }
-    Drag& getDrag() { return mDrag; }
+    Zoom& getZoom();
+    const Zoom& getZoom() const;
+    ViewMap& getViewMap();
+    Intervals& getIntervals();
+    MousePointer& getMousepointer();
+    Selection& getSelection();
+    MenuHandler& getMenuHandler();
+    Cursor& getCursor();
+    Drag& getDrag();
 
     //////////////////////////////////////////////////////////////////////////
-    //
+    // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr getPlayer() const;
+    void onSize(wxSizeEvent& event);
+    void onEraseBackground(wxEraseEvent& event);
+    void onPaint( wxPaintEvent &event );
+    void onTrackUpdated( TrackUpdateEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
-    // MODEL EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////////////
-    // GUI EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void OnSize(wxSizeEvent& event);
-    void OnEraseBackground(wxEraseEvent& event);
-    void OnPaint( wxPaintEvent &event );
-
-    //////////////////////////////////////////////////////////////////////////
-    // DRAWING EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void OnTrackUpdated( TrackUpdateEvent& event );
 
     void updateBitmap();
 
@@ -126,32 +113,16 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    PlayerPtr getPlayer() const;
     model::SequencePtr getSequence() const;
     int getWidth() const;
     int getHeight() const;
     int getDividerPosition() const;
-
-
-
     wxPoint getScrollOffset() const;
 
     //////////////////////////////////////////////////////////////////////////
     // FROM COORDINATES TO OBJECTS
     //////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param p position in virtual coordinates (thus, on the bitmap, not on the client area)
-     * @return found clip
-     * @return null pointer if not found
-     */
-    GuiTimeLineClip* findClip(wxPoint p);
-
-    /**
-     * @param yposition y position in virtual coordinates (thus, on the bitmap, not on the client area)
-     * @return found track and its top position within the timeline
-     * @return null pointer and 0 if not found
-     */
-    boost::tuple<model::TrackPtr,int> findTrack(int yposition);
 
     PointerPositionInfo getPointerInfo(wxPoint pointerposition);
 
@@ -169,35 +140,28 @@ private:
     MenuHandler mMenuHandler;
     Cursor mCursor;
     Drag mDrag;
+    state::Machine mMouseState; /** Must be AFTER mViewMap due to constructor list. */
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
     PlayerPtr mPlayer;
+    model::SequencePtr mSequence;
     wxBitmap mBitmap;
-    double mPlaybackTime;
     long mWidth;
     long mHeight;
     wxRect mDropArea;
-
-    //////////////////////////////////////////////////////////////////////////
-    //
-    //////////////////////////////////////////////////////////////////////////
-
     /** Y-position of audio-video divider */
     int mDividerPosition;
-
-    /** Must be AFTER mViewMap due to constructor list. */
-    state::Machine mMouseState;
-
-    model::SequencePtr mSequence;
-
-    wxPoint mOrigin;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     void updateSize();
-    void DetermineWidth();
-    void DetermineHeight();
+    void determineWidth();
+    void determineHeight();
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

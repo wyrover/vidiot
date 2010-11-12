@@ -41,8 +41,6 @@ IMPLEMENTENUM(MouseOnClipPosition);
 GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 :   wxScrolledWindow()
 ,   mZoom()
-,   mPlaybackTime(0)
-,   mOrigin(0,100)
 ,   mBitmap()
 ,   mMouseState(*this)
 ,   mWidth(0)
@@ -77,26 +75,26 @@ void GuiTimeLine::init(wxWindow *parent)
     SetDropTarget(new GuiTimeLineDropTarget(mZoom,this)); /** @todo must also be a part */
 
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
-    DetermineWidth();
+    determineWidth();
 
     BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
         GuiTimeLineTrack* p = new GuiTimeLineTrack(track);
         p->initTimeline(this);
-        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
+        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::onTrackUpdated, this);
         // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
     }
     BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks())
     {
         GuiTimeLineTrack* p = new GuiTimeLineTrack(track);
         p->initTimeline(this);
-        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::OnTrackUpdated, this);
+        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::onTrackUpdated, this);
         // todo2 handle this via a OnAudioTrackAdded similar to the track handling of clip events from the model
     }
 
-    Bind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
-    Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
-    Bind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
+    Bind(wxEVT_PAINT,               &GuiTimeLine::onPaint,              this);
+    Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::onEraseBackground,    this);
+    Bind(wxEVT_SIZE,                &GuiTimeLine::onSize,               this);
 
     // From here on, processing continues with size events after laying out this widget.
 }
@@ -104,23 +102,64 @@ void GuiTimeLine::init(wxWindow *parent)
 GuiTimeLine::~GuiTimeLine()
 {
     dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().closeTimeline(this);
-
-    Unbind(wxEVT_PAINT,               &GuiTimeLine::OnPaint,              this);
-    Unbind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::OnEraseBackground,    this);
-    Unbind(wxEVT_SIZE,                &GuiTimeLine::OnSize,               this);
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
+// PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
 //////////////////////////////////////////////////////////////////////////
 
+Zoom& GuiTimeLine::getZoom()
+{ 
+    return mZoom; 
+}
+
+const Zoom& GuiTimeLine::getZoom() const
+{ 
+    return mZoom; 
+}
+
+ViewMap& GuiTimeLine::getViewMap()
+{ 
+    return mViewMap; 
+}
+
+Intervals& GuiTimeLine::getIntervals()
+{ 
+    return mIntervals; 
+}
+
+MousePointer& GuiTimeLine::getMousepointer()
+{ 
+    return mMousePointer; 
+}
+
+Selection& GuiTimeLine::getSelection()
+{ 
+    return mSelection;
+}
+
+MenuHandler& GuiTimeLine::getMenuHandler()
+{ 
+    return mMenuHandler; 
+}
+
+Cursor& GuiTimeLine::getCursor()
+{ 
+    return mCursor; 
+}
+
+Drag& GuiTimeLine::getDrag()
+{ 
+    return mDrag; 
+}
+
 //////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
+// EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimeLine::OnSize(wxSizeEvent& event)
+void GuiTimeLine::onSize(wxSizeEvent& event)
 {
-    DetermineHeight();
+    determineHeight();
 
     mDividerPosition =
         Constants::sTimeScaleHeight +
@@ -131,12 +170,12 @@ void GuiTimeLine::OnSize(wxSizeEvent& event)
 }
 
 
-void GuiTimeLine::OnEraseBackground(wxEraseEvent& event)
+void GuiTimeLine::onEraseBackground(wxEraseEvent& event)
 {
     //event.Skip(); // The official way of doing it
 }
 
-void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
+void GuiTimeLine::onPaint( wxPaintEvent &WXUNUSED(event) )
 {
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
@@ -171,11 +210,7 @@ void GuiTimeLine::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
 }
 
-//////////////////////////////////////////////////////////////////////////
-// DRAWING EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void GuiTimeLine::OnTrackUpdated( TrackUpdateEvent& event )
+void GuiTimeLine::onTrackUpdated( TrackUpdateEvent& event )
 {
     LOG_INFO;
     getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
@@ -187,6 +222,11 @@ void GuiTimeLine::OnTrackUpdated( TrackUpdateEvent& event )
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+PlayerPtr GuiTimeLine::getPlayer() const
+{
+    return mPlayer;
+}
 
 model::SequencePtr GuiTimeLine::getSequence() const
 {
@@ -208,6 +248,14 @@ int GuiTimeLine::getDividerPosition() const
     return mDividerPosition;
 }
 
+wxPoint GuiTimeLine::getScrollOffset() const
+{
+    int scrollX, scrollY, ppuX, ppuY;
+    GetViewStart(&scrollX,&scrollY);
+    GetScrollPixelsPerUnit(&ppuX,&ppuY);
+    return wxPoint(scrollX * ppuX, scrollY * ppuY);
+}
+
 void GuiTimeLine::showDropArea(wxRect area)
 {
     if (mDropArea != area)
@@ -220,53 +268,8 @@ void GuiTimeLine::showDropArea(wxRect area)
 }
 
 //////////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////////
-
-PlayerPtr GuiTimeLine::getPlayer() const
-{
-    return mPlayer;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // FROM COORDINATES TO OBJECTS
 //////////////////////////////////////////////////////////////////////////
-
-//todo maak een method die bepaalt wat er onder de cursor zit
-//(Track + Clip .adjustBeginPoint.. en ook waar bij de Track/clip)
-GuiTimeLineClip* GuiTimeLine::findClip(wxPoint p)
-{
-    model::TrackPtr track = findTrack(p.y).get<0>();
-    if (track)
-    {
-        model::ClipPtr clip = track->getClip(mZoom.pixelsToPts(p.x));
-        if (clip)
-        {
-            return getViewMap().getView(clip);
-        }
-    }
-    return 0;
-}
-
-boost::tuple<model::TrackPtr,int> GuiTimeLine::findTrack(int yposition)
-{
-    int top = mDividerPosition;
-
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
-    {
-        int bottom = top;
-        top -= track->getHeight();
-        if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
-    }
-    int bottom = mDividerPosition + Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
-    {
-        int top = bottom;
-        bottom += track->getHeight();
-        if (yposition <= bottom && yposition >= top) return boost::make_tuple(track,top);
-    }
-    return boost::make_tuple(model::TrackPtr(),0);
-}
 
 PointerPositionInfo GuiTimeLine::getPointerInfo(wxPoint pointerposition)
 {
@@ -355,7 +358,7 @@ PointerPositionInfo GuiTimeLine::getPointerInfo(wxPoint pointerposition)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimeLine::DetermineWidth()
+void GuiTimeLine::determineWidth()
 {
     mWidth = std::max(std::max(
         mZoom.timeToPixels(5 * Constants::sMinute),            // Minimum width of 5 minutes
@@ -363,7 +366,7 @@ void GuiTimeLine::DetermineWidth()
         GetClientSize().GetWidth());                            // At least the widget size
 }
 
-void GuiTimeLine::DetermineHeight()
+void GuiTimeLine::determineHeight()
 {
     int requiredHeight = Constants::sTimeScaleHeight;
     requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
@@ -383,8 +386,8 @@ void GuiTimeLine::DetermineHeight()
 
 void GuiTimeLine::updateSize()
 {
-    DetermineWidth();
-    DetermineHeight();
+    determineWidth();
+    determineHeight();
 
     SetVirtualSize(mWidth,mHeight);
     mBitmap.Create(mWidth,mHeight);
@@ -469,16 +472,6 @@ void GuiTimeLine::updateBitmap()
         y += track->getHeight();
     }
     Refresh(false);
-}
-
-
-
-wxPoint GuiTimeLine::getScrollOffset() const
-{
-    int scrollX, scrollY, ppuX, ppuY;
-    GetViewStart(&scrollX,&scrollY);
-    GetScrollPixelsPerUnit(&ppuX,&ppuY);
-    return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 
 //////////////////////////////////////////////////////////////////////////
