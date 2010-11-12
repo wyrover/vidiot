@@ -40,7 +40,6 @@ Intervals::Intervals()
 
 void Intervals::init()
 {
-    getTimeline().Bind(TIMELINE_CURSOR_MOVED, &Intervals::onCursorMoved, this);
 }
 
 Intervals::~Intervals()
@@ -71,7 +70,7 @@ void Intervals::set(wxRegion region)
 
 void Intervals::addBeginMarker()
 {
-    long c = getZoom().pixelsToPts(getTimeline().getCursorPosition());
+    long c = getZoom().pixelsToPts(getCursor().getPosition());
     long b = c + getZoom().timeToPts(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
     long e = c + getZoom().timeToPts(GuiOptions::getMarkerEndAddition()   * Constants::sSecond);
 
@@ -91,7 +90,7 @@ void Intervals::addEndMarker()
 
 void Intervals::startToggle()
 {
-    mToggleBegin = getZoom().pixelsToPts(getTimeline().getCursorPosition());
+    mToggleBegin = getZoom().pixelsToPts(getCursor().getPosition());
     mToggleEnd = mToggleBegin;
     mToggleActive = true;
 }
@@ -104,6 +103,20 @@ void Intervals::endToggle()
         wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
     }
     mToggleActive = false;
+}
+
+void Intervals::update(long newCursorPosition)
+{
+    if (mNewIntervalActive)
+    {
+        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  getZoom().timeToPts(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
+        refresh(mNewIntervalBegin,mNewIntervalEnd);
+    }
+    if (mToggleActive)
+    {
+        mToggleEnd = getZoom().pixelsToPts(newCursorPosition);
+        refresh(mToggleBegin,mToggleEnd);
+    }
 }
 
 void Intervals::change(long begin, long end, bool add)
@@ -194,24 +207,6 @@ void Intervals::draw(wxDC& dc)
         it++;
     }
 } 
-
-//////////////////////////////////////////////////////////////////////////
-// EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Intervals::onCursorMoved(EventTimelineCursorMoved& event)
-{
-    if (mNewIntervalActive)
-    {
-        mNewIntervalEnd = getZoom().pixelsToPts(event.getValue()) +  getZoom().timeToPts(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
-        refresh(mNewIntervalBegin,mNewIntervalEnd);
-    }
-    if (mToggleActive)
-    {
-        mToggleEnd = getZoom().pixelsToPts(event.getValue());
-        refresh(mToggleBegin,mToggleEnd);
-    }
-}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS

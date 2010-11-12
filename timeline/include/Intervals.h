@@ -47,6 +47,9 @@ public:
     void startToggle();
     void endToggle();
 
+    /** To be called when the cursor is moved. */
+    void update(long newCursorPosition);
+
     /** To be called for the undo/redo mechanism. */
     void change(long begin, long end, bool add);
 
@@ -81,8 +84,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // EVENTS
     //////////////////////////////////////////////////////////////////////////
-
-    void onCursorMoved(EventTimelineCursorMoved& event);
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -19,6 +19,7 @@
 #include "Selection.h"
 #include "MousePointer.h"
 #include "UtilEvent.h"
+#include "Cursor.h"
 #include "Menu.h"
 #include "Zoom.h"
 #include "ViewMap.h"
@@ -27,8 +28,6 @@ namespace gui { namespace timeline {
 
 class TrackUpdateEvent;
 class GuiTimeLineDragImage;
-
-DECLARE_EVENT(TIMELINE_CURSOR_MOVED, EventTimelineCursorMoved, long);
 
 DECLAREENUM(MouseOnClipPosition, \
             ClipBetween, \
@@ -91,18 +90,13 @@ public:
     MousePointer& getMousepointer() { return mMousePointer; }
     Selection& getSelection() { return mSelection; }
     MenuHandler& getMenuHandler() { return mMenuHandler; }
+    Cursor& getCursor() { return mCursor; }
 
     //////////////////////////////////////////////////////////////////////////
     //
     //////////////////////////////////////////////////////////////////////////
 
     PlayerPtr getPlayer() const;
-
-    //////////////////////////////////////////////////////////////////////////
-    // ZOOM
-    //////////////////////////////////////////////////////////////////////////
-
-    long getCursorPosition() const { return mCursorPosition; };
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -133,6 +127,7 @@ public:
 
     model::SequencePtr getSequence() const;
     int getWidth() const;
+    int getHeight() const;
 
     wxPoint getScrollOffset() const;
 
@@ -142,14 +137,6 @@ public:
 
     void setDragImage(GuiTimeLineDragImage* dragimage);
     GuiTimeLineDragImage* getDragImage() const;
-
-    //////////////////////////////////////////////////////////////////////////
-    // CURSOR
-    //////////////////////////////////////////////////////////////////////////
-
-    void moveCursorOnUser(int position);
-    void setCursorPosition(long position);
-    void moveCursorOnPlayback(long pts);
 
     //////////////////////////////////////////////////////////////////////////
     // FROM COORDINATES TO OBJECTS
@@ -183,10 +170,10 @@ private:
     MousePointer mMousePointer;
     Selection mSelection;
     MenuHandler mMenuHandler;
+    Cursor mCursor;
 
     PlayerPtr mPlayer;
     wxBitmap mBitmap;
-    long mCursorPosition;
     double mPlaybackTime;
     long mWidth;
     long mHeight;

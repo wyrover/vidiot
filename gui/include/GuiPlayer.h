@@ -10,12 +10,12 @@
 #include <wx/minifram.h>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
-#include "GuiPtr.h"
+#include "ModelPtr.h"
+#include "VideoDisplayEvent.h"
 
 namespace gui {
 
 class GuiVideoDisplay;
-class GuiEventPlaybackPosition;
 
 class GuiPlayer
 :   public wxPanel
@@ -26,7 +26,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiPlayer(wxWindow *parent, timeline::GuiTimeLine* timeline);
+    GuiPlayer(wxWindow *parent, model::SequencePtr sequence);
 	virtual ~GuiPlayer();
 
     //////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnPlaybackPosition(GuiEventPlaybackPosition& event);
+    void onPlaybackPosition(PlaybackPositionEvent& event);
     void OnHome(wxCommandEvent& WXUNUSED(event));
     void OnPrevious(wxCommandEvent& WXUNUSED(event));
     void OnPause(wxCommandEvent& WXUNUSED(event));
@@ -56,8 +56,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
-
-    timeline::GuiTimeLine* mTimeLine;
 
     GuiVideoDisplay* mDisplay;
     wxTextCtrl* mStatus;

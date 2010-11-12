@@ -6,6 +6,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include "GuiPlayer.h"
 #include "UtilLog.h"
+#include "GuiTimeLine.h"
 
 namespace gui {
 
@@ -37,7 +38,7 @@ GuiPreview::~GuiPreview()
 PlayerPtr GuiPreview::openTimeline(timeline::GuiTimeLine* timeline)
 {
     ASSERT(mPlayers.find(timeline) == mPlayers.end());
-    PlayerPtr newplayer = boost::make_shared<GuiPlayer>(this,timeline);
+    PlayerPtr newplayer = boost::make_shared<GuiPlayer>(this,timeline->getSequence());
     mPlayers[timeline] = newplayer;
     GetSizer()->Add(newplayer.get(),wxSizerFlags(1).Expand());
     selectTimeline(timeline);
