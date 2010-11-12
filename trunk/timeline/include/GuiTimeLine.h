@@ -20,6 +20,7 @@
 #include "MousePointer.h"
 #include "UtilEvent.h"
 #include "Cursor.h"
+#include "GuiTimeLineDragImage.h"
 #include "Menu.h"
 #include "Zoom.h"
 #include "ViewMap.h"
@@ -91,6 +92,7 @@ public:
     Selection& getSelection() { return mSelection; }
     MenuHandler& getMenuHandler() { return mMenuHandler; }
     Cursor& getCursor() { return mCursor; }
+    GuiTimeLineDragImage& getDrag() { return mDrag; }
 
     //////////////////////////////////////////////////////////////////////////
     //
@@ -134,13 +136,6 @@ public:
     wxPoint getScrollOffset() const;
 
     //////////////////////////////////////////////////////////////////////////
-    // DRAGIMAGE
-    //////////////////////////////////////////////////////////////////////////
-
-    void setDragImage(GuiTimeLineDragImage* dragimage);
-    GuiTimeLineDragImage* getDragImage() const;
-
-    //////////////////////////////////////////////////////////////////////////
     // FROM COORDINATES TO OBJECTS
     //////////////////////////////////////////////////////////////////////////
 
@@ -173,6 +168,7 @@ private:
     Selection mSelection;
     MenuHandler mMenuHandler;
     Cursor mCursor;
+    GuiTimeLineDragImage mDrag;
 
     PlayerPtr mPlayer;
     wxBitmap mBitmap;
@@ -180,7 +176,6 @@ private:
     long mWidth;
     long mHeight;
     wxRect mDropArea;
-    GuiTimeLineDragImage* mDragImage;
 
     //////////////////////////////////////////////////////////////////////////
     //

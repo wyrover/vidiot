@@ -51,7 +51,6 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
-,   mDragImage(0)
 {
     LOG_INFO;
 }
@@ -67,6 +66,7 @@ void GuiTimeLine::init(wxWindow *parent)
     mMousePointer.initTimeline(this);
     mSelection.initTimeline(this);
     mCursor.initTimeline(this);
+    mDrag.initTimeline(this);
     mMenuHandler.initTimeline(this); // Init as last since it depends on other parts
 
     Create(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER);
@@ -226,20 +226,6 @@ void GuiTimeLine::showDropArea(wxRect area)
 PlayerPtr GuiTimeLine::getPlayer() const
 {
     return mPlayer;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// DRAGIMAGE
-//////////////////////////////////////////////////////////////////////////
-
-void GuiTimeLine::setDragImage(GuiTimeLineDragImage* dragimage)
-{
-    mDragImage = dragimage;
-}
-
-GuiTimeLineDragImage* GuiTimeLine::getDragImage() const
-{
-    return mDragImage;
 }
 
 //////////////////////////////////////////////////////////////////////////
