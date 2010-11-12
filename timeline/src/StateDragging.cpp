@@ -2,7 +2,7 @@
 
 #include <boost/foreach.hpp>
 #include "GuiTimeLineClip.h"
-#include "GuiTimeLineDragImage.h"
+#include "Drag.h"
 #include "GuiTimeLine.h"
 #include "GuiTimeLineTrack.h"
 #include "StateIdle.h"

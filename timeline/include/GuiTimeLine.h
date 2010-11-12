@@ -20,7 +20,7 @@
 #include "MousePointer.h"
 #include "UtilEvent.h"
 #include "Cursor.h"
-#include "GuiTimeLineDragImage.h"
+#include "Drag.h"
 #include "Menu.h"
 #include "Zoom.h"
 #include "ViewMap.h"
@@ -28,7 +28,7 @@
 namespace gui { namespace timeline {
 
 class TrackUpdateEvent;
-class GuiTimeLineDragImage;
+class Drag;
 
 DECLAREENUM(MouseOnClipPosition, \
             ClipBetween, \
@@ -92,7 +92,7 @@ public:
     Selection& getSelection() { return mSelection; }
     MenuHandler& getMenuHandler() { return mMenuHandler; }
     Cursor& getCursor() { return mCursor; }
-    GuiTimeLineDragImage& getDrag() { return mDrag; }
+    Drag& getDrag() { return mDrag; }
 
     //////////////////////////////////////////////////////////////////////////
     //
@@ -168,7 +168,7 @@ private:
     Selection mSelection;
     MenuHandler mMenuHandler;
     Cursor mCursor;
-    GuiTimeLineDragImage mDrag;
+    Drag mDrag;
 
     PlayerPtr mPlayer;
     wxBitmap mBitmap;

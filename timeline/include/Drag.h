@@ -14,12 +14,12 @@
 
 namespace gui { namespace timeline {
 
-class GuiTimeLineDragImage
+class Drag
     :   public Part
     ,   public wxDragImage
 {
 public:
-	GuiTimeLineDragImage();
+	Drag();
 	virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
 	virtual wxRect GetImageRect(const wxPoint& pos) const;
     void setHotspot(wxPoint position);

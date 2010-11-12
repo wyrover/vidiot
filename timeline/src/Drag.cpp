@@ -1,4 +1,4 @@
-#include "GuiTimeLineDragImage.h"
+#include "Drag.h"
 
 #include <wx/dcclient.h>
 #include <wx/pen.h>
@@ -11,30 +11,30 @@
 
 namespace gui { namespace timeline {
 
-GuiTimeLineDragImage::GuiTimeLineDragImage()
+Drag::Drag()
 :	wxDragImage(wxCursor(wxCURSOR_HAND))
 ,   mHotspot(wxPoint(0,0))
 ,   mBitmap()
 {
 }
 
-void GuiTimeLineDragImage::setHotspot(wxPoint position)
+void Drag::setHotspot(wxPoint position)
 {
     mHotspot = position;
 }
 
-bool GuiTimeLineDragImage::DoDrawImage(wxDC& dc, const wxPoint& pos) const
+bool Drag::DoDrawImage(wxDC& dc, const wxPoint& pos) const
 {
     dc.DrawBitmap(mBitmap, pos, true);
 	return true;
 }
 
-wxRect GuiTimeLineDragImage::GetImageRect(const wxPoint& pos) const
+wxRect Drag::GetImageRect(const wxPoint& pos) const
 {
 	return wxRect(pos.x,pos.y,mBitmap.GetWidth(),mBitmap.GetHeight());
 }
 
-wxBitmap GuiTimeLineDragImage::getDragBitmap() //const
+wxBitmap Drag::getDragBitmap() //const
 {
     int w = getTimeline().getWidth();
     int h = getTimeline().getHeight();
@@ -94,7 +94,7 @@ wxBitmap GuiTimeLineDragImage::getDragBitmap() //const
     return temp.GetSubBitmap(wxRect(origin_x,origin_y,size_x,size_y));
 }
 
-void GuiTimeLineDragImage::Start(wxPoint hotspot)
+void Drag::Start(wxPoint hotspot)
 {
     mHotspot = hotspot;
     mBitmap = getDragBitmap();
@@ -106,14 +106,14 @@ void GuiTimeLineDragImage::Start(wxPoint hotspot)
     Show();
 }
 
-void GuiTimeLineDragImage::Stop()
+void Drag::Stop()
 {
     Hide();
     EndDrag();
     getTimeline().Refresh();
 }
 
-void GuiTimeLineDragImage::MoveTo(wxPoint hotspot)
+void Drag::MoveTo(wxPoint hotspot)
 {
     //dragimage->Hide();
     getTimeline().Refresh(false);
