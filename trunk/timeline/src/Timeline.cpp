@@ -73,13 +73,16 @@ void Timeline::init(wxWindow *parent)
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     determineWidth();
 
-    BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
-    {
-        TrackView* p = new TrackView(track);
-        p->initTimeline(this);
-        p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
-        // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
-    }
+    model::TrackChange videoTracks(mSequence->getVideoTracks());
+    onVideoTracksAdded(model::EventAddVideoTracks(videoTracks));
+    
+    //BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
+    //{
+    //    TrackView* p = new TrackView(track);
+    //    p->initTimeline(this);
+    //    p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
+    //    // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
+    //}
     BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks())
     {
         TrackView* p = new TrackView(track);
@@ -91,6 +94,11 @@ void Timeline::init(wxWindow *parent)
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
+
+    mSequence->Bind(model::EVENT_ADD_VIDEO_TRACK,       &Timeline::onVideoTracksAdded,    this);
+    mSequence->Bind(model::EVENT_REMOVE_VIDEO_TRACK,    &Timeline::onVideoTracksRemoved,  this);
+    mSequence->Bind(model::EVENT_ADD_AUDIO_TRACK,       &Timeline::onAudioTracksAdded,   this);
+    mSequence->Bind(model::EVENT_REMOVE_AUDIO_TRACK,    &Timeline::onAudioTracksRemoved,  this);
 
     // From here on, processing continues with size events after laying out this widget.
 }
@@ -155,7 +163,7 @@ Drop& Timeline::getDrop()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// EVENTS
+// GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void Timeline::onSize(wxSizeEvent& event)
@@ -169,7 +177,6 @@ void Timeline::onSize(wxSizeEvent& event)
 
     updateSize(); // Triggers the initial drawing
 }
-
 
 void Timeline::onEraseBackground(wxEraseEvent& event)
 {
@@ -209,6 +216,36 @@ void Timeline::onTrackUpdated( TrackUpdateEvent& event )
     /** todo only redraw track */
     updateBitmap();
     Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Timeline::onVideoTracksAdded( model::EventAddVideoTracks& event )
+{
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
+    {
+        TrackView* p = new TrackView(track);
+        p->initTimeline(this);
+        p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
+        // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
+    }
+}
+
+void Timeline::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
+{
+
+}
+
+void Timeline::onAudioTracksAdded( model::EventAddAudioTracks& event )
+{
+
+}
+
+void Timeline::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
+{
+
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -12,9 +12,16 @@
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
 #include "UtilLog.h"
+#include "UtilLogStl.h"
 #include "UtilSerializeWxwidgets.h"
+#include "UtilList.h"
 
 namespace model {
+
+DEFINE_EVENT(EVENT_ADD_VIDEO_TRACK,      EventAddVideoTracks,      TrackChange);
+DEFINE_EVENT(EVENT_REMOVE_VIDEO_TRACK,   EventRemoveVideoTracks,   TrackChange);
+DEFINE_EVENT(EVENT_ADD_AUDIO_TRACK,      EventAddAudioTracks,      TrackChange);
+DEFINE_EVENT(EVENT_REMOVE_AUDIO_TRACK,   EventRemoveAudioTracks,   TrackChange);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -22,6 +29,7 @@ namespace model {
 
 Sequence::Sequence()
     :	IControl()
+    ,   wxEvtHandler()
     ,   mName()
     ,   mVideoTracks()
     ,   mAudioTracks()
@@ -61,21 +69,26 @@ Sequence::~Sequence()
 // SEQUENCE SPECIFIC
 //////////////////////////////////////////////////////////////////////////
 
-void Sequence::addVideoTrack(VideoTrackPtr track)
+void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 {
-    mVideoTracks.push_back(track);
+    UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
+    QueueEvent(new model::EventAddVideoTracks(TrackChange(tracks, position)));
 }
-void Sequence::addAudioTrack(AudioTrackPtr track)
+
+void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 {
-    mAudioTracks.push_back(track);
+    UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
+    QueueEvent(new model::EventAddAudioTracks(TrackChange(tracks, position)));
 }
-void Sequence::removeVideoTrack(VideoTrackPtr track)
+void Sequence::removeVideoTracks(Tracks tracks)
 {
-    NIY 
+    TrackPtr position = UtilList<TrackPtr>(mVideoTracks).removeElements(tracks);
+    QueueEvent(new model::EventRemoveVideoTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
 }
-void Sequence::removeAudioTrack(AudioTrackPtr track)
+void Sequence::removeAudioTracks(Tracks tracks)
 {
-    NIY
+    TrackPtr position = UtilList<TrackPtr>(mAudioTracks).removeElements(tracks);
+    QueueEvent(new model::EventRemoveAudioTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
 }
 
 Tracks Sequence::getVideoTracks()

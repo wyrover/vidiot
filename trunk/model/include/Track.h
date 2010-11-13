@@ -70,7 +70,7 @@ struct MoveParameter
     /**
     * Helper constructor to initialize all members in one statement.
     **/
-    MoveParameter(TrackPtr _addTrack, ClipPtr _addPosition, Clips _addClips, TrackPtr _removeTrack, ClipPtr _removePosition, Clips _removeClips)
+    MoveParameter(TrackPtr _addTrack, ClipPtr _addPosition, Clips _addClips, TrackPtr _removeTrack = TrackPtr(), ClipPtr _removePosition = ClipPtr(), Clips _removeClips = Clips())
         :   addTrack(_addTrack)
         ,   addPosition(_addPosition)
         ,   addClips(_addClips)
@@ -122,7 +122,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual void removeClips(Clips clips);
-    virtual void addClips(Clips clips, ClipPtr position);
+    virtual void addClips(Clips clips, ClipPtr position = ClipPtr());
 
     const Clips& getClips();
 

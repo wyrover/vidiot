@@ -68,13 +68,22 @@ public:
     Drop& getDrop();
 
     //////////////////////////////////////////////////////////////////////////
-    // EVENTS
+    // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
     void onSize(wxSizeEvent& event);
     void onEraseBackground(wxEraseEvent& event);
     void onPaint( wxPaintEvent &event );
     void onTrackUpdated( TrackUpdateEvent& event );
+
+    //////////////////////////////////////////////////////////////////////////
+    // MODEL EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onVideoTracksAdded( model::EventAddVideoTracks& event );
+    void onVideoTracksRemoved( model::EventRemoveVideoTracks& event );
+    void onAudioTracksAdded( model::EventAddAudioTracks& event );
+    void onAudioTracksRemoved( model::EventRemoveAudioTracks& event );
 
     //////////////////////////////////////////////////////////////////////////
 

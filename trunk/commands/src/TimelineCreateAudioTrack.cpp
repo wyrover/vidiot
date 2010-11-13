@@ -1,5 +1,6 @@
 #include "TimelineCreateAudioTrack.h"
 
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "UtilLog.h"
@@ -25,13 +26,13 @@ bool TimelineCreateAudioTrack::Do()
     {
         mNewTrack = boost::make_shared<model::AudioTrack>();
     }
-    mSequence->addAudioTrack(mNewTrack);
+    mSequence->addAudioTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 
 bool TimelineCreateAudioTrack::Undo()
 {
-    mSequence->removeAudioTrack(mNewTrack);
+    mSequence->removeAudioTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 

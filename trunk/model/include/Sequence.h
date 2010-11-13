@@ -1,20 +1,73 @@
 #ifndef MODEL_SEQUENCE_H
 #define MODEL_SEQUENCE_H
 
+#include <wx/event.h>
 #include <boost/optional.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "AProjectViewNode.h"
 #include "IAudio.h"
 #include "IControl.h"
 #include "IVideo.h"
+#include "UtilEvent.h"
 
 namespace model {
+
+struct TrackChange
+{
+    Tracks addedTracks;
+
+    /**
+    * The moved tracks must be inserted before this clip.
+    * If this is an uninitialized pointer, then the tracks need
+    * to be inserted at the end.
+    */
+    TrackPtr addPosition;
+
+    Tracks removedTracks;
+
+    /**
+    * In case of undo, the removed tracks must be reinserted
+    * before this track.If this is an uninitialized pointer,
+    * then the tracks need to be inserted at the end.
+    */
+    TrackPtr removePosition;
+
+    /**
+    * Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
+    **/
+    TrackChange()
+        :   addedTracks()
+        ,   addPosition()
+        ,   removedTracks()
+        ,   removePosition()
+    {
+    }
+
+    /**
+    * Helper constructor to initialize all members in one statement.
+    * Per default, when only supplying a list of tracks to be added, these
+    * are added to the end.
+    **/
+    TrackChange(Tracks _addedTracks, TrackPtr _addPosition = TrackPtr(), Tracks _removedTracks = Tracks(), TrackPtr _removePosition = TrackPtr())
+        :   addedTracks(_addedTracks)
+        ,   addPosition(_addPosition)
+        ,   removedTracks(_removedTracks)
+        ,   removePosition(_removePosition)
+    {
+    }
+};
+
+DECLARE_EVENT(EVENT_ADD_VIDEO_TRACK,      EventAddVideoTracks,      TrackChange);
+DECLARE_EVENT(EVENT_REMOVE_VIDEO_TRACK,   EventRemoveVideoTracks,   TrackChange);
+DECLARE_EVENT(EVENT_ADD_AUDIO_TRACK,      EventAddAudioTracks,      TrackChange);
+DECLARE_EVENT(EVENT_REMOVE_AUDIO_TRACK,   EventRemoveAudioTracks,   TrackChange);
 
 class Sequence
     :   public IControl
     ,   public IVideo
     ,   public IAudio
     ,   public AProjectViewNode
+    ,   public wxEvtHandler
 {
 public:
 
@@ -36,10 +89,10 @@ public:
     // SEQUENCE SPECIFIC
     //////////////////////////////////////////////////////////////////////////
 
-    void addVideoTrack(VideoTrackPtr track);
-    void addAudioTrack(AudioTrackPtr track);
-    void removeVideoTrack(VideoTrackPtr track);
-    void removeAudioTrack(AudioTrackPtr track);
+    void addVideoTracks(Tracks tracks, TrackPtr position = TrackPtr());
+    void addAudioTracks(Tracks tracks, TrackPtr position = TrackPtr());
+    void removeVideoTracks(Tracks tracks);
+    void removeAudioTracks(Tracks tracks);
 
     Tracks getVideoTracks();
     Tracks getAudioTracks();
