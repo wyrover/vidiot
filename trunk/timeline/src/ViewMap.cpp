@@ -1,5 +1,6 @@
 #include "ViewMap.h"
 #include "UtilLog.h"
+#include "UtilLogStl.h"
 
 namespace gui { namespace timeline {
 
@@ -48,14 +49,14 @@ void ViewMap::unregisterView(model::TrackPtr track)
 ClipView* ViewMap::getView(model::ClipPtr clip) const
 {
     ClipMap::const_iterator it = mClips.find(clip);
-    ASSERT(it != mClips.end());
+    ASSERT(it != mClips.end())(mClips);
     return it->second;
 }
 
 TrackView* ViewMap::getView(model::TrackPtr track) const
 {
     TrackMap::const_iterator it = mTracks.find(track);
-    ASSERT(it != mTracks.end());
+    ASSERT(it != mTracks.end())(mTracks);
     return it->second;
 }
 

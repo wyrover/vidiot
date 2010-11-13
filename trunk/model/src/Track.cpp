@@ -154,12 +154,14 @@ void Track::addClips(Clips clips, ClipPtr position)
 
     // See http://www.cplusplus.com/reference/stl/list/splice:
     // clips will be removed from this list. Hence, a copy is made,
-    // before doing the splice call.
+    // before doing the splice call. Furthermore, we can use the
+    // original clips list for doing the logging (to keep it symmetric 
+    // with remove).
+    Clips toberemoved(clips);
+    mClips.splice(itPosition,toberemoved); // See http://www.cplusplus.com/reference/stl/list/splice: clips added BEFORE position
+    VAR_DEBUG(clips)(mClips);
+
     MoveParameter move(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips());
-
-    mClips.splice(itPosition,clips); // See http://www.cplusplus.com/reference/stl/list/splice: clips added BEFORE position
-    VAR_DEBUG(mClips);
-
     QueueEvent(new model::EventAddClips(move));
 
     /** @todo combine consecutive empty clips */
@@ -183,7 +185,7 @@ void Track::removeClips(Clips clips)
     
     ++itLast; // See http://www.cplusplus.com/reference/stl/list/erase: one but last is removed
     mClips.erase(itBegin,itLast);
-    VAR_DEBUG(mClips);
+    VAR_DEBUG(clips)(mClips);
 
     MoveParameter move(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), model::ClipPtr(), clips);
     QueueEvent(new model::EventRemoveClips(move));

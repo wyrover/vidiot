@@ -85,10 +85,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         break;
     case WXK_DELETE:
         {
-            model::MoveParameters moves;
-            deleteSelectedClips( moves, getSequence()->getVideoTracks());
-            deleteSelectedClips( moves, getSequence()->getAudioTracks());
-            model::Project::current()->Submit(new command::TimelineMoveClips(getTimeline(),moves));
+            getSelection().deleteClips();
             break;
         }
     case 'K':
@@ -217,50 +214,6 @@ boost::statechart::result Idle::start()
 {
     getPlayer()->play();
     return transit<Playing>();
-}
-
-void Idle::deleteSelectedClips(model::MoveParameters& moves, model::Tracks tracks)
-{
-    BOOST_FOREACH( model::TrackPtr track, tracks)
-    {
-        model::MoveParameterPtr move;
-        long nRemovedFrames = 0;
-        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
-        {
-            ClipView* c = getViewMap().getView(clip);
-            if (getSelection().isSelected(clip))
-            {
-                if (!move)
-                {
-                    move = boost::make_shared<model::MoveParameter>();
-                    move->addTrack = track;
-                    move->removeTrack = track;
-                    nRemovedFrames = 0;
-                }
-                move->removeClips.push_back(clip);
-                nRemovedFrames += clip->getNumberOfFrames();
-            }
-            else
-            {
-                if (move) 
-                { 
-                    move->removePosition = clip;
-                    move->addPosition = clip;
-                    move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
-                    moves.push_back(move); 
-                }
-                // Reset for possible new region of clips
-                move.reset();
-            }
-        }
-        if (move) 
-        { 
-            move->removePosition.reset(); // Null ptr indicates 'at end'
-            move->addPosition.reset(); // Null ptr indicates 'at end'
-            move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
-            moves.push_back(move); 
-        }
-    }
 }
 
 }}} // namespace

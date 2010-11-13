@@ -14,6 +14,7 @@
 #include "TrackView.h"
 #include "ClipView.h"
 #include "Timeline.h"
+#include "Track.h"
 #include "Project.h"
 #include "TimelineIntervalChange.h"
 #include "TimelineIntervalRemoveAll.h"

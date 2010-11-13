@@ -1,18 +1,48 @@
 #include "Selection.h"
 
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include "Timeline.h"
 #include "ClipView.h"
+#include "Track.h"
 #include "TrackView.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
+#include "Sequence.h"
+#include "Project.h"
+#include "EmptyClip.h"
+#include "TimelineMoveClips.h"
 
 namespace gui { namespace timeline {
 
 Selection::Selection()
-:   mSelected()
+:   wxEvtHandler()
+,   mSelected()
+,   mPreviouslyClicked()
 {
 }
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Selection::onClipsRemoved( model::EventRemoveClips& event )
+{
+    model::Clips clips = event.getValue().removeClips;
+    if (find(clips.begin(),clips.end(),mPreviouslyClicked) != clips.end())
+    {
+        mPreviouslyClicked.reset();
+    }
+
+    BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
+    {
+        mSelected.erase(clip);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
 
 void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
@@ -49,7 +79,7 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
                 }
                 if (firstclip)
                 {
-                    selectClip(c ,!currentClickedClipIsSelected);
+                    selectClipAndLink(c ,!currentClickedClipIsSelected);
                 }
                 mPreviouslyClicked = clip;
             }
@@ -76,7 +106,7 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
                 }
                 if (firstclip)
                 {
-                    selectClip(c, previousClickedClipWasSelected);
+                    selectClipAndLink(c, previousClickedClipWasSelected);
                     if ((c != firstclip) && 
                         ((c == clip) || (c == otherend)))
                     {
@@ -88,12 +118,12 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
         else if (ctrlPressed)
         {
             // Control down implies 'toggle' select.
-            selectClip(clip, !currentClickedClipIsSelected);
+            selectClipAndLink(clip, !currentClickedClipIsSelected);
             mPreviouslyClicked = clip;
         }
         else
         {
-            selectClip(clip, true);
+            selectClipAndLink(clip, true);
             mPreviouslyClicked = clip;
         }
     }
@@ -116,22 +146,83 @@ void Selection::setDrag(bool drag)
     }
 }
 
+void Selection::deleteClips()
+{
+    model::MoveParameters moves;
+    deleteFromTrack( moves, getSequence()->getVideoTracks());
+    deleteFromTrack( moves, getSequence()->getAudioTracks());
+
+     mPreviouslyClicked.reset();
+    mSelected.clear(); // Since these clips are going to be removed, they may not be referenced anymore.
+    model::Project::current()->Submit(new command::TimelineMoveClips(getTimeline(),moves));
+}
+
+void Selection::selectClipAndLink(model::ClipPtr clip, bool selected)
+{
+    selectClip(clip,selected);
+    model::ClipPtr link = clip->getLink();
+    if (link)
+    {
+        selectClip(link,selected);
+    }
+}
+
 void Selection::selectClip(model::ClipPtr clip, bool selected)
 {
-    model::ClipPtr link = clip->getLink();
     if (selected)
     {
         mSelected.insert(clip);
-        mSelected.insert(link);
+        clip->getTrack()->Bind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this); /** todo just register for all tracks... */
     }
     else
     {
         mSelected.erase(clip);
-        mSelected.erase(link);
     }
     getViewMap().getView(clip)->updateBitmap();
-    getViewMap().getView(link)->updateBitmap();
+}
 
+void Selection::deleteFromTrack(model::MoveParameters& moves, model::Tracks tracks)
+{
+    BOOST_FOREACH( model::TrackPtr track, tracks)
+    {
+        model::MoveParameterPtr move;
+        long nRemovedFrames = 0;
+        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        {
+            ClipView* c = getViewMap().getView(clip);
+            if (getSelection().isSelected(clip))
+            {
+                if (!move)
+                {
+                    move = boost::make_shared<model::MoveParameter>();
+                    move->addTrack = track;
+                    move->removeTrack = track;
+                    nRemovedFrames = 0;
+                }
+                move->removeClips.push_back(clip);
+                nRemovedFrames += clip->getNumberOfFrames();
+            }
+            else
+            {
+                if (move) 
+                { 
+                    move->removePosition = clip;
+                    move->addPosition = clip;
+                    move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
+                    moves.push_back(move); 
+                }
+                // Reset for possible new region of clips
+                move.reset();
+            }
+        }
+        if (move) 
+        { 
+            move->removePosition.reset(); // Null ptr indicates 'at end'
+            move->addPosition.reset(); // Null ptr indicates 'at end'
+            move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
+            moves.push_back(move); 
+        }
+    }
 }
 
 }} // namespace
