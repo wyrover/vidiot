@@ -36,6 +36,14 @@ public:
     bool OnDrop (wxCoord x, wxCoord y);
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def);
     void OnLeave ();
+    void draw(wxDC& dc);
+
+
+    void updateDropArea(wxPoint p);
+
+private:
+    wxRect mDropArea;
+
 };
 
 }} // namespace
