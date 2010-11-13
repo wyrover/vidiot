@@ -13,7 +13,7 @@ class TimelineMoveClips
 {
 public:
 
-    TimelineMoveClips(gui::timeline::GuiTimeLine& timeline, model::MoveParameters params);
+    TimelineMoveClips(gui::timeline::Timeline& timeline, model::MoveParameters params);
     ~TimelineMoveClips();
     bool Do();
     bool Undo();

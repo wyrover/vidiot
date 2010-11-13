@@ -1,12 +1,12 @@
 #include "TimelineIntervalChange.h"
 
 #include "Intervals.h"
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "UtilLog.h"
 
 namespace command {
 
-TimelineIntervalChange::TimelineIntervalChange(gui::timeline::GuiTimeLine& timeline, long begin, long end, bool add)
+TimelineIntervalChange::TimelineIntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add)
 :   TimelineCommand(timeline)
 ,   mBegin(begin)
 ,   mEnd(end)

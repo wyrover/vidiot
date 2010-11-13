@@ -8,7 +8,7 @@
 #include "UtilLogWxwidgets.h"
 #include "Part.h"
 
-class GuiTimeLine;
+class Timeline;
 
 namespace gui { namespace timeline { namespace state {
 
@@ -30,7 +30,7 @@ public:
     TimeLineState( my_context ctx ) : my_base( ctx ) {};
     ~TimeLineState() {};
 protected:
-    GuiTimeLine& getTimeline() 
+    Timeline& getTimeline() 
     { 
         return outermost_context().mTimeline; 
     };
@@ -64,9 +64,9 @@ class Machine
     :   public boost::statechart::state_machine< Machine, Idle >
 {
 public:
-    Machine(GuiTimeLine& tl);
+    Machine(Timeline& tl);
     ~Machine();
-    GuiTimeLine& mTimeline;
+    Timeline& mTimeline;
     GlobalState* globals;
 
 private:

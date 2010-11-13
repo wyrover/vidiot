@@ -8,7 +8,7 @@
 #include <boost/serialization/split_member.hpp>
 #include "GuiPtr.h"
 
-namespace timeline { class GuiTimeLine; }
+namespace timeline { class Timeline; }
 
 namespace gui {
 
@@ -28,9 +28,9 @@ public:
     // TO/FROM OTHER WIDGETS
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr openTimeline(timeline::GuiTimeLine* timeline);
-    void closeTimeline(timeline::GuiTimeLine* timeline);
-    void selectTimeline(timeline::GuiTimeLine* timeline);
+    PlayerPtr openTimeline(timeline::Timeline* timeline);
+    void closeTimeline(timeline::Timeline* timeline);
+    void selectTimeline(timeline::Timeline* timeline);
 
     //////////////////////////////////////////////////////////////////////////
     //
@@ -41,7 +41,7 @@ public:
 private:
 
     PlayerPtr mPlayer;
-    std::map<timeline::GuiTimeLine*, PlayerPtr> mPlayers;
+    std::map<timeline::Timeline*, PlayerPtr> mPlayers;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

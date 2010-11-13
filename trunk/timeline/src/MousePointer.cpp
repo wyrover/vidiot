@@ -4,8 +4,8 @@
 #include <wx/bitmap.h>
 #include <boost/foreach.hpp>
 #include "Constants.h"
-#include "GuiTimeLine.h"
-#include "GuiTimeLineClip.h"
+#include "Timeline.h"
+#include "ClipView.h"
 #include "UtilLog.h"
 #include "cursor_move_cut.xpm"
 #include "cursor_trim_begin.xpm"
@@ -130,7 +130,7 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
         // This is handled on a per-pixel and not per-pts basis. That ensures
         // that this still works for clips which are very small when zoomed out.
         // (then the cursor won't flip too much).
-        GuiTimeLineClip* clip = getViewMap().getView(info.clip);
+        ClipView* clip = getViewMap().getView(info.clip);
         int dist_begin = pointerposition.x - clip->getLeftPosition();
         int dist_end = clip->getRightPosition() - pointerposition.x;
 

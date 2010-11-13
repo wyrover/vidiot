@@ -2,7 +2,7 @@
 
 namespace command {
 
-TimelineCommand::TimelineCommand(gui::timeline::GuiTimeLine& timeline)
+TimelineCommand::TimelineCommand(gui::timeline::Timeline& timeline)
 :   RootCommand()
 ,   mTimeline(timeline)
 {
@@ -12,7 +12,7 @@ TimelineCommand::~TimelineCommand()
 {
 }
 
-gui::timeline::GuiTimeLine& TimelineCommand::getTimeline()
+gui::timeline::Timeline& TimelineCommand::getTimeline()
 {
     return mTimeline;
 }

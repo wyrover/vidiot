@@ -21,12 +21,12 @@ ViewMap::~ViewMap()
 // REGISTRATION
 //////////////////////////////////////////////////////////////////////////
 
-void ViewMap::registerView(model::ClipPtr clip, GuiTimeLineClip* view)
+void ViewMap::registerView(model::ClipPtr clip, ClipView* view)
 {
     mClips.insert(std::make_pair(clip, view));
 }
 
-void ViewMap::registerView(model::TrackPtr track, GuiTimeLineTrack* view)
+void ViewMap::registerView(model::TrackPtr track, TrackView* view)
 {
     mTracks.insert(std::make_pair(track, view));
 }
@@ -45,14 +45,14 @@ void ViewMap::unregisterView(model::TrackPtr track)
 // CONVERSION
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClip* ViewMap::getView(model::ClipPtr clip) const
+ClipView* ViewMap::getView(model::ClipPtr clip) const
 {
     ClipMap::const_iterator it = mClips.find(clip);
     ASSERT(it != mClips.end());
     return it->second;
 }
 
-GuiTimeLineTrack* ViewMap::getView(model::TrackPtr track) const
+TrackView* ViewMap::getView(model::TrackPtr track) const
 {
     TrackMap::const_iterator it = mTracks.find(track);
     ASSERT(it != mTracks.end());

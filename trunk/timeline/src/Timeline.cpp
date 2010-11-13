@@ -1,4 +1,4 @@
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
 #include <boost/serialization/list.hpp>
@@ -20,8 +20,8 @@
 #include "GuiWindow.h"
 #include "Drop.h"
 #include "Zoom.h"
-#include "GuiTimeLineClip.h"
-#include "GuiTimeLineTrack.h"
+#include "ClipView.h"
+#include "TrackView.h"
 #include "UtilLogStl.h"
 #include "AProjectViewNode.h"
 #include "Sequence.h"
@@ -38,7 +38,7 @@ IMPLEMENTENUM(MouseOnClipPosition);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
+Timeline::Timeline(model::SequencePtr sequence)
 :   wxScrolledWindow()
 ,   mMouseState(*this)
 ,   mWidth(0)
@@ -49,7 +49,7 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
     LOG_INFO;
 }
 
-void GuiTimeLine::init(wxWindow *parent)
+void Timeline::init(wxWindow *parent)
 {
     ASSERT(mSequence);
     mPlayer = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this);
@@ -75,27 +75,27 @@ void GuiTimeLine::init(wxWindow *parent)
 
     BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
     {
-        GuiTimeLineTrack* p = new GuiTimeLineTrack(track);
+        TrackView* p = new TrackView(track);
         p->initTimeline(this);
-        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::onTrackUpdated, this);
+        p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
         // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
     }
     BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks())
     {
-        GuiTimeLineTrack* p = new GuiTimeLineTrack(track);
+        TrackView* p = new TrackView(track);
         p->initTimeline(this);
-        p->Bind(TRACK_UPDATE_EVENT, &GuiTimeLine::onTrackUpdated, this);
+        p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
         // todo2 handle this via a OnAudioTrackAdded similar to the track handling of clip events from the model
     }
 
-    Bind(wxEVT_PAINT,               &GuiTimeLine::onPaint,              this);
-    Bind(wxEVT_ERASE_BACKGROUND,    &GuiTimeLine::onEraseBackground,    this);
-    Bind(wxEVT_SIZE,                &GuiTimeLine::onSize,               this);
+    Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
+    Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
+    Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
     // From here on, processing continues with size events after laying out this widget.
 }
 
-GuiTimeLine::~GuiTimeLine()
+Timeline::~Timeline()
 {
     dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().closeTimeline(this);
 }
@@ -104,52 +104,52 @@ GuiTimeLine::~GuiTimeLine()
 // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
 //////////////////////////////////////////////////////////////////////////
 
-Zoom& GuiTimeLine::getZoom()
+Zoom& Timeline::getZoom()
 { 
     return mZoom; 
 }
 
-const Zoom& GuiTimeLine::getZoom() const
+const Zoom& Timeline::getZoom() const
 { 
     return mZoom; 
 }
 
-ViewMap& GuiTimeLine::getViewMap()
+ViewMap& Timeline::getViewMap()
 { 
     return mViewMap; 
 }
 
-Intervals& GuiTimeLine::getIntervals()
+Intervals& Timeline::getIntervals()
 { 
     return mIntervals; 
 }
 
-MousePointer& GuiTimeLine::getMousepointer()
+MousePointer& Timeline::getMousepointer()
 { 
     return mMousePointer; 
 }
 
-Selection& GuiTimeLine::getSelection()
+Selection& Timeline::getSelection()
 { 
     return mSelection;
 }
 
-MenuHandler& GuiTimeLine::getMenuHandler()
+MenuHandler& Timeline::getMenuHandler()
 { 
     return mMenuHandler; 
 }
 
-Cursor& GuiTimeLine::getCursor()
+Cursor& Timeline::getCursor()
 { 
     return mCursor; 
 }
 
-Drag& GuiTimeLine::getDrag()
+Drag& Timeline::getDrag()
 { 
     return mDrag; 
 }
 
-Drop& GuiTimeLine::getDrop()
+Drop& Timeline::getDrop()
 {
     return mDrop;
 }
@@ -158,7 +158,7 @@ Drop& GuiTimeLine::getDrop()
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimeLine::onSize(wxSizeEvent& event)
+void Timeline::onSize(wxSizeEvent& event)
 {
     determineHeight();
 
@@ -171,12 +171,12 @@ void GuiTimeLine::onSize(wxSizeEvent& event)
 }
 
 
-void GuiTimeLine::onEraseBackground(wxEraseEvent& event)
+void Timeline::onEraseBackground(wxEraseEvent& event)
 {
     //event.Skip(); // The official way of doing it
 }
 
-void GuiTimeLine::onPaint( wxPaintEvent &WXUNUSED(event) )
+void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 {
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
@@ -202,7 +202,7 @@ void GuiTimeLine::onPaint( wxPaintEvent &WXUNUSED(event) )
 
 }
 
-void GuiTimeLine::onTrackUpdated( TrackUpdateEvent& event )
+void Timeline::onTrackUpdated( TrackUpdateEvent& event )
 {
     LOG_INFO;
     getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
@@ -215,32 +215,32 @@ void GuiTimeLine::onTrackUpdated( TrackUpdateEvent& event )
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr GuiTimeLine::getPlayer() const
+PlayerPtr Timeline::getPlayer() const
 {
     return mPlayer;
 }
 
-model::SequencePtr GuiTimeLine::getSequence() const
+model::SequencePtr Timeline::getSequence() const
 {
     return mSequence;
 }
 
-int GuiTimeLine::getWidth() const
+int Timeline::getWidth() const
 {
     return mWidth;
 }
 
-int GuiTimeLine::getHeight() const
+int Timeline::getHeight() const
 {
     return mHeight;
 }
 
-int GuiTimeLine::getDividerPosition() const
+int Timeline::getDividerPosition() const
 {
     return mDividerPosition;
 }
 
-wxPoint GuiTimeLine::getScrollOffset() const
+wxPoint Timeline::getScrollOffset() const
 {
     int scrollX, scrollY, ppuX, ppuY;
     GetViewStart(&scrollX,&scrollY);
@@ -252,7 +252,7 @@ wxPoint GuiTimeLine::getScrollOffset() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimeLine::determineWidth()
+void Timeline::determineWidth()
 {
     mWidth = std::max(std::max(
         mZoom.timeToPixels(5 * Constants::sMinute),            // Minimum width of 5 minutes
@@ -260,7 +260,7 @@ void GuiTimeLine::determineWidth()
         GetClientSize().GetWidth());                            // At least the widget size
 }
 
-void GuiTimeLine::determineHeight()
+void Timeline::determineHeight()
 {
     int requiredHeight = Constants::sTimeScaleHeight;
     requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
@@ -278,7 +278,7 @@ void GuiTimeLine::determineHeight()
     mHeight = std::max(requiredHeight, GetClientSize().GetHeight());
 }
 
-void GuiTimeLine::updateSize()
+void Timeline::updateSize()
 {
     determineWidth();
     determineHeight();
@@ -289,7 +289,7 @@ void GuiTimeLine::updateSize()
     updateBitmap();
 }
 
-void GuiTimeLine::updateBitmap()
+void Timeline::updateBitmap()
 {
     wxMemoryDC dc(mBitmap);
 
@@ -373,14 +373,14 @@ void GuiTimeLine::updateBitmap()
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void GuiTimeLine::serialize(Archive & ar, const unsigned int version)
+void Timeline::serialize(Archive & ar, const unsigned int version)
 {
     ar & mSequence;
     ar & mZoom;
     ar & mDividerPosition;
     ar & mIntervals;
 }
-template void GuiTimeLine::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void GuiTimeLine::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Timeline::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Timeline::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 }} // namespace

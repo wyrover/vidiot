@@ -1,6 +1,6 @@
 #include "Part.h"
 
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {
@@ -10,7 +10,7 @@ Part::Part()
 {
 }
 
-void Part::initTimeline(GuiTimeLine* timeline)
+void Part::initTimeline(Timeline* timeline)
 {
     mTimeline = timeline;
     init();
@@ -28,13 +28,13 @@ Part::~Part()
 // PARTS 
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLine& Part::getTimeline()
+Timeline& Part::getTimeline()
 {
     ASSERT(mTimeline);
     return *mTimeline;
 }
 
-const GuiTimeLine& Part::getTimeline() const
+const Timeline& Part::getTimeline() const
 {
     return *mTimeline;
 }

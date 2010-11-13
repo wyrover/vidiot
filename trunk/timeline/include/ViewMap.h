@@ -8,8 +8,8 @@
 
 namespace gui { namespace timeline {
 
-typedef std::map< model::TrackPtr, GuiTimeLineTrack* > TrackMap;
-typedef std::map< model::ClipPtr, GuiTimeLineClip* > ClipMap;
+typedef std::map< model::TrackPtr, TrackView* > TrackMap;
+typedef std::map< model::ClipPtr, ClipView* > ClipMap;
 
 class ViewMap
     :   public Part
@@ -27,8 +27,8 @@ public:
     // REGISTRATION
     //////////////////////////////////////////////////////////////////////////
 
-    void registerView(model::ClipPtr clip, GuiTimeLineClip* view);
-    void registerView(model::TrackPtr track, GuiTimeLineTrack* view);
+    void registerView(model::ClipPtr clip, ClipView* view);
+    void registerView(model::TrackPtr track, TrackView* view);
     void unregisterView(model::ClipPtr clip);
     void unregisterView(model::TrackPtr track);
 
@@ -36,8 +36,8 @@ public:
     // CONVERSION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual GuiTimeLineClip* getView(model::ClipPtr clip) const;
-    virtual GuiTimeLineTrack* getView(model::TrackPtr track) const;
+    virtual ClipView* getView(model::ClipPtr clip) const;
+    virtual TrackView* getView(model::TrackPtr track) const;
 
 private:
 

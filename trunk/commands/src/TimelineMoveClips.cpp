@@ -7,7 +7,7 @@
 
 namespace command {
 
-TimelineMoveClips::TimelineMoveClips(gui::timeline::GuiTimeLine& timeline, model::MoveParameters params)
+TimelineMoveClips::TimelineMoveClips(gui::timeline::Timeline& timeline, model::MoveParameters params)
 :   TimelineCommand(timeline)
 ,   mParams(params)
 {

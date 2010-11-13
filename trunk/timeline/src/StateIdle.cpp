@@ -3,14 +3,14 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-#include "GuiTimeLineClip.h"
-#include "GuiTimeLine.h"
+#include "ClipView.h"
+#include "Timeline.h"
 #include "StateTestDragStart.h"
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
 #include "GuiPlayer.h"
 #include "Zoom.h"
-#include "GuiTimeLineTrack.h"
+#include "TrackView.h"
 #include "EmptyClip.h"
 #include "Track.h"
 #include "Sequence.h"
@@ -106,7 +106,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
                 long pts = getZoom().pixelsToPts(evt.mPosition.x);
                 model::Tracks tracks = getSequence()->getTracks();
                 BOOST_FOREACH( model::TrackPtr track,  getSequence()->getTracks() )
-//                BOOST_FOREACH( GuiTimeLineTrack* t, outermost_context().timeline.getTracks())
+//                BOOST_FOREACH( TrackView* t, outermost_context().timeline.getTracks())
                 {
                     //model::TrackPtr track = t->getTrack();
                     model::ClipPtr splitclip = track->getClip(pts);
@@ -227,7 +227,7 @@ void Idle::deleteSelectedClips(model::MoveParameters& moves, model::Tracks track
         long nRemovedFrames = 0;
         BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {
-            GuiTimeLineClip* c = getViewMap().getView(clip);
+            ClipView* c = getViewMap().getView(clip);
             if (getSelection().isSelected(clip))
             {
                 if (!move)

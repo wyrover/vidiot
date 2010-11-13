@@ -1,4 +1,4 @@
-#include "GuiTimeLineClip.h"
+#include "ClipView.h"
 
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
@@ -14,18 +14,18 @@
 #include "VideoFile.h"
 #include "VideoClip.h"
 #include "EmptyClip.h"
-#include "GuiTimeLineTrack.h"
-#include "GuiTimeLine.h"
+#include "TrackView.h"
+#include "Timeline.h"
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClip*);
+DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, ClipView*);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
+ClipView::ClipView(TrackView* track,
                                  model::ClipPtr clip)
 :   wxWindow(static_cast<wxWindow*>(track),wxID_ANY)
 ,   mClip(clip)
@@ -38,7 +38,7 @@ GuiTimeLineClip::GuiTimeLineClip(GuiTimeLineTrack* track,
     ASSERT(mClip);
 }
 
-void GuiTimeLineClip::init()
+void ClipView::init()
 {
     getViewMap().registerView(mClip,this);
     updateSize(); // Also creates bitmap
@@ -46,7 +46,7 @@ void GuiTimeLineClip::init()
     Hide();
 }
 
-GuiTimeLineClip::~GuiTimeLineClip()
+ClipView::~ClipView()
 {
     getViewMap().unregisterView(mClip);
 }
@@ -55,7 +55,7 @@ GuiTimeLineClip::~GuiTimeLineClip()
 // CONVERSION BETWEEN MODEL AND VIEW
 //////////////////////////////////////////////////////////////////////////
 
-model::ClipPtr GuiTimeLineClip::getClip()
+model::ClipPtr ClipView::getClip()
 {
     return mClip;
 }
@@ -64,33 +64,33 @@ model::ClipPtr GuiTimeLineClip::getClip()
 //  GET & SET
 //////////////////////////////////////////////////////////////////////////
 
-const wxBitmap& GuiTimeLineClip::getBitmap()
+const wxBitmap& ClipView::getBitmap()
 {
     return mBitmap;
 }
 
-void GuiTimeLineClip::setBeingDragged(bool beingdragged)
+void ClipView::setBeingDragged(bool beingdragged)
 {
     mBeingDragged = beingdragged;
     // Event is needed to trigger track redraw (without this clip)
     QueueEvent(new ClipUpdateEvent(this));
 }
 
-bool GuiTimeLineClip::isBeingDragged()
+bool ClipView::isBeingDragged()
 {
     return mBeingDragged;
 }
 
-boost::int64_t GuiTimeLineClip::getLeftPosition() const
+boost::int64_t ClipView::getLeftPosition() const
 {
     return getZoom().ptsToPixels(mClip->getLeftPts());
 }
-boost::int64_t GuiTimeLineClip::getRightPosition() const
+boost::int64_t ClipView::getRightPosition() const
 {
     return getZoom().ptsToPixels(mClip->getRightPts());
 }
 
-void GuiTimeLineClip::show(wxRect rect)
+void ClipView::show(wxRect rect)
 {
     mRect.width = rect.width;
     mRect.x = rect.x;
@@ -99,14 +99,14 @@ void GuiTimeLineClip::show(wxRect rect)
     updateBitmap();
 }
 
-void GuiTimeLineClip::updateSize()
+void ClipView::updateSize()
 {
     mWidth = getRightPosition() - getLeftPosition();
     mBitmap.Create(mWidth,getViewMap().getView(mClip->getTrack())->getBitmap().GetHeight());
     updateThumbnail();  
 }
 
-void GuiTimeLineClip::updateThumbnail()
+void ClipView::updateThumbnail()
 {
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(mClip);
     if (videoclip)
@@ -119,7 +119,7 @@ void GuiTimeLineClip::updateThumbnail()
     updateBitmap();
 }
 
-void GuiTimeLineClip::updateBitmap()
+void ClipView::updateBitmap()
 {
     wxMemoryDC dc(mBitmap);
 

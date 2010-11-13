@@ -1,8 +1,8 @@
 #include "StateTestDragStart.h"
 
 #include <boost/foreach.hpp>
-#include "GuiTimeLineClip.h"
-#include "GuiTimeLine.h"
+#include "ClipView.h"
+#include "Timeline.h"
 #include "Drag.h"
 #include "StateDragging.h"
 #include "StateIdle.h"

@@ -20,9 +20,9 @@ namespace gui { namespace timeline {
 
 class ClipUpdateEvent;
 
-DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, GuiTimeLineTrack*);
+DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, TrackView*);
 
-class GuiTimeLineTrack
+class TrackView
     :   public wxWindow
     ,   public Part
 {
@@ -32,11 +32,11 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineTrack(model::TrackPtr track);
+    TrackView(model::TrackPtr track);
 
     void init();
 
-	virtual ~GuiTimeLineTrack();
+	virtual ~TrackView();
 
     int getClipHeight() const;
 
