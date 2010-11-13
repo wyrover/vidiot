@@ -1,5 +1,5 @@
-#ifndef GUI_TIME_LINE_H
-#define GUI_TIME_LINE_H
+#ifndef TIMELINE_H
+#define TIMELINE_H
 
 #include <wx/scrolwin.h>
 #include <wx/dnd.h>
@@ -146,4 +146,4 @@ private:
 BOOST_CLASS_VERSION(gui::timeline::Timeline, 1)
 BOOST_CLASS_EXPORT(gui::timeline::Timeline)
 
-#endif // GUI_TIME_LINE_H
+#endif // TIMELINE_H

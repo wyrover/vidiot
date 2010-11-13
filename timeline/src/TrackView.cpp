@@ -18,6 +18,7 @@
 #include "UtilLogStl.h"
 #include "Clip.h"
 #include "GuiMain.h"
+#include "Track.h"
 
 namespace gui { namespace timeline {
 

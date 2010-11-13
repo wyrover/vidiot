@@ -1,5 +1,5 @@
-#ifndef GUI_TIME_LINE_CLIP_H
-#define GUI_TIME_LINE_CLIP_H
+#ifndef CLIP_VIEW_H
+#define CLIP_VIEW_H
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
@@ -78,4 +78,4 @@ private:
 
 }} // namespace
 
-#endif // GUI_TIME_LINE_CLIP_H
+#endif // CLIP_VIEW_H

@@ -80,8 +80,6 @@ struct MoveParameter
     {
     }
 };
-typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
-typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
 
 DECLARE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
 DECLARE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);

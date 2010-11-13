@@ -1,5 +1,5 @@
-#ifndef GUI_TIME_LINE_TRACK_H
-#define GUI_TIME_LINE_TRACK_H
+#ifndef TRACK_VIEW_H
+#define TRACK_VIEW_H
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
@@ -12,9 +12,8 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "Track.h"
 #include "UtilEvent.h"
-#include "Zoom.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
@@ -79,4 +78,4 @@ private:
 
 }} // namespace
 
-#endif // GUI_TIME_LINE_TRACK_H
+#endif // TRACK_VIEW_H
