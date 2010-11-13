@@ -10,7 +10,6 @@
 
 namespace model {
 
-
 VideoClip::VideoClip()
     :	Clip()
 {

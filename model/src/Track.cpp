@@ -12,6 +12,7 @@
 #include "AProjectViewNode.h"
 #include "UtilLogStl.h"
 #include "Clip.h"
+#include "UtilList.h"
 
 namespace model {
 
@@ -149,17 +150,7 @@ void Track::addClips(Clips clips, ClipPtr position)
         pts += clip->getNumberOfFrames();
     }
 
-    Clips::iterator itPosition = find(mClips.begin(), mClips.end(), position);
-    // NOT: ASSERT(itPosition != mClips.end()) Giving a null pointer results in mClips.end() which results in adding clips at the end
-
-    // See http://www.cplusplus.com/reference/stl/list/splice:
-    // clips will be removed from this list. Hence, a copy is made,
-    // before doing the splice call. Furthermore, we can use the
-    // original clips list for doing the logging (to keep it symmetric 
-    // with remove).
-    Clips toberemoved(clips);
-    mClips.splice(itPosition,toberemoved); // See http://www.cplusplus.com/reference/stl/list/splice: clips added BEFORE position
-    VAR_DEBUG(clips)(mClips);
+    UtilList<ClipPtr>(mClips).addElements(clips,position);
 
     MoveParameter move(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips());
     QueueEvent(new model::EventAddClips(move));
@@ -177,17 +168,9 @@ void Track::removeClips(Clips clips)
         clip->setTrack(TrackPtr(), 0);
     }
 
-    Clips::iterator itBegin = find(mClips.begin(), mClips.end(), clips.front());
-    ASSERT(itBegin != mClips.end())(clips.front()); // Ensure that the begin clip was found
+    ClipPtr position = UtilList<ClipPtr>(mClips).removeElements(clips);
 
-    Clips::iterator itLast = find(itBegin, mClips.end(), clips.back());
-    ASSERT(itLast != mClips.end())(clips.back()); // Ensure that the end clip was found
-    
-    ++itLast; // See http://www.cplusplus.com/reference/stl/list/erase: one but last is removed
-    mClips.erase(itBegin,itLast);
-    VAR_DEBUG(clips)(mClips);
-
-    MoveParameter move(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), model::ClipPtr(), clips);
+    MoveParameter move(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips);
     QueueEvent(new model::EventRemoveClips(move));
 
     /** @todo combine consecutive empty clips */

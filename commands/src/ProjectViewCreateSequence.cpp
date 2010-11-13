@@ -1,5 +1,6 @@
 #include "ProjectViewCreateSequence.h"
 #include "UtilLog.h"
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "AutoFolder.h"
@@ -47,8 +48,8 @@ bool ProjectViewCreateSequence::Do()
         mSequence = boost::make_shared<model::Sequence>(mName);
         model::VideoTrackPtr videoTrack = boost::make_shared<model::VideoTrack>();
         model::AudioTrackPtr audioTrack = boost::make_shared<model::AudioTrack>();
-        mSequence->addVideoTrack(videoTrack);
-        mSequence->addAudioTrack(audioTrack);
+        mSequence->addVideoTracks(boost::assign::list_of(videoTrack));
+        mSequence->addAudioTracks(boost::assign::list_of(audioTrack));
 
         if (mInputFolder)
         {
@@ -71,8 +72,8 @@ bool ProjectViewCreateSequence::Do()
                     model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
                     videoClip->setLink(audioClip);
                     audioClip->setLink(videoClip);
-                    videoTrack->addVideoClip(videoClip);
-                    audioTrack->addAudioClip(audioClip);
+                    videoTrack->addClips(boost::assign::list_of(videoClip));
+                    audioTrack->addClips(boost::assign::list_of(audioClip));
                 }
             }
         }

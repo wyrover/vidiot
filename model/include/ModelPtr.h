@@ -82,6 +82,11 @@ typedef boost::shared_ptr<Properties> PropertiesPtr;
 class Sequence;
 typedef boost::shared_ptr<Sequence> SequencePtr;
 
+class EventAddVideoTracks;
+class EventRemoveVideoTracks;
+class EventAddAudioTracks;
+class EventRemoveAudioTracks;
+
 //////////////////////////////////////////////////////////////////////////
 
 class Track;

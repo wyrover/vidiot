@@ -1,6 +1,7 @@
 #include "TimelineCreateVideoTrack.h"
 
 #include <boost/make_shared.hpp>
+#include <boost/assign/list_of.hpp>
 #include "UtilLog.h"
 
 namespace command {
@@ -25,14 +26,14 @@ bool TimelineCreateVideoTrack::Do()
     {
         mNewTrack = boost::make_shared<model::VideoTrack>();
     }
-    mSequence->addVideoTrack(mNewTrack);
+    mSequence->addVideoTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 
 bool TimelineCreateVideoTrack::Undo()
 {
     VAR_INFO(this);
-    mSequence->removeVideoTrack(mNewTrack);
+    mSequence->removeVideoTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 
