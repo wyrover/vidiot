@@ -88,7 +88,7 @@ Drag& Part::getDrag()
     return getTimeline().getDrag();
 }
 
-GuiTimeLineDropTarget& Part::getDrop()
+Drop& Part::getDrop()
 {
     return getTimeline().getDrop();
 }
