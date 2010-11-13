@@ -18,7 +18,7 @@
 #include "GuiPlayer.h"
 #include "GuiPreview.h"
 #include "GuiWindow.h"
-#include "GuiTimeLineDropTarget.h"
+#include "Drop.h"
 #include "Zoom.h"
 #include "GuiTimeLineClip.h"
 #include "GuiTimeLineTrack.h"
@@ -149,7 +149,7 @@ Drag& GuiTimeLine::getDrag()
     return mDrag; 
 }
 
-GuiTimeLineDropTarget& GuiTimeLine::getDrop()
+Drop& GuiTimeLine::getDrop()
 {
     return mDrop;
 }

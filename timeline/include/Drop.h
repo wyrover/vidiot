@@ -6,7 +6,7 @@
 
 namespace gui { namespace timeline {
 
-class GuiTimeLineDropTarget
+class Drop
     :   public Part
     ,   public wxDropTarget
 {
@@ -16,9 +16,9 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineDropTarget();
+    Drop();
     void init();
-    ~GuiTimeLineDropTarget();
+    ~Drop();
 
     //////////////////////////////////////////////////////////////////////////
     // ACCESSORS

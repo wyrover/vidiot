@@ -1,4 +1,4 @@
-#include "GuiTimeLineDropTarget.h"
+#include "Drop.h"
 
 #include <boost/foreach.hpp>
 #include "GuiTimeLine.h"
@@ -10,17 +10,17 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineDropTarget::GuiTimeLineDropTarget()
+Drop::Drop()
 :   wxDropTarget(new GuiDataObject())
 {
 }
 
-void GuiTimeLineDropTarget::init()
+void Drop::init()
 {
     getTimeline().SetDropTarget(this);
 }
 
-GuiTimeLineDropTarget::~GuiTimeLineDropTarget() 
+Drop::~Drop() 
 {
 }
 
@@ -28,7 +28,7 @@ GuiTimeLineDropTarget::~GuiTimeLineDropTarget()
 // ACCESSORS
 //////////////////////////////////////////////////////////////////////////
 
-bool GuiTimeLineDropTarget::isDragging() const
+bool Drop::isDragging() const
 {
     return true;
 }
@@ -38,19 +38,19 @@ bool GuiTimeLineDropTarget::isDragging() const
 //////////////////////////////////////////////////////////////////////////
 
 //This method may only be called from within OnData().
-bool GuiTimeLineDropTarget::GetData()
+bool Drop::GetData()
 {
     return true;
 }
 
 //Called after OnDrop() returns true.
-wxDragResult GuiTimeLineDropTarget::OnData (wxCoord x, wxCoord y, wxDragResult def)
+wxDragResult Drop::OnData (wxCoord x, wxCoord y, wxDragResult def)
 {
     return def;
 }
 
 //Called when the mouse is being dragged over the drop target.
-wxDragResult GuiTimeLineDropTarget::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
+wxDragResult Drop::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
 {
 //    mDragShape->SetPosition(wxPoint(x,y));
     getTimeline().Refresh(); /** /todo use rectangle */
@@ -61,13 +61,13 @@ wxDragResult GuiTimeLineDropTarget::OnDragOver (wxCoord x, wxCoord y, wxDragResu
 }
 
 //Called when the user drops a data object on the target.
-bool GuiTimeLineDropTarget::OnDrop (wxCoord x, wxCoord y)
+bool Drop::OnDrop (wxCoord x, wxCoord y)
 {
     return true;
 }
 
 //Called when the mouse enters the drop target.
-wxDragResult GuiTimeLineDropTarget::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
+wxDragResult Drop::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
 {
     unsigned int w = 200;
     unsigned int h = 10;
@@ -81,7 +81,7 @@ wxDragResult GuiTimeLineDropTarget::OnEnter (wxCoord x, wxCoord y, wxDragResult 
     return def;
 }
 //Called when the mouse leaves the drop target.
-void GuiTimeLineDropTarget::OnLeave ()
+void Drop::OnLeave ()
 {
     //delete mDragShape;
     //mDragShape = 0;
