@@ -24,6 +24,7 @@
 #include "Menu.h"
 #include "Zoom.h"
 #include "ViewMap.h"
+#include "GuiTimeLineDropTarget.h"
 
 namespace gui { namespace timeline {
 
@@ -64,6 +65,7 @@ public:
     MenuHandler& getMenuHandler();
     Cursor& getCursor();
     Drag& getDrag();
+    GuiTimeLineDropTarget& getDrop();
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS
@@ -105,6 +107,7 @@ private:
     MenuHandler mMenuHandler;
     Cursor mCursor;
     Drag mDrag;
+    GuiTimeLineDropTarget mDrop;
     state::Machine mMouseState; /** Must be AFTER mViewMap due to constructor list. */
 
     //////////////////////////////////////////////////////////////////////////

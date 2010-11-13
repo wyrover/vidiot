@@ -40,12 +40,9 @@ IMPLEMENTENUM(MouseOnClipPosition);
 
 GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 :   wxScrolledWindow()
-,   mZoom()
-,   mBitmap()
 ,   mMouseState(*this)
 ,   mWidth(0)
 ,   mHeight(0)
-,   mPlayer()
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
 ,   mDropArea(0,0,0,0)
@@ -72,7 +69,6 @@ void GuiTimeLine::init(wxWindow *parent)
     SetScrollRate( 10, 10 );
     EnableScrolling(true,true);
     SetBackgroundColour(* wxLIGHT_GREY);
-    SetDropTarget(new GuiTimeLineDropTarget(mZoom,this)); /** @todo must also be a part */
 
     // Must be done before initializing tracks, since tracks derive their width from the entire timeline
     determineWidth();
@@ -151,6 +147,11 @@ Cursor& GuiTimeLine::getCursor()
 Drag& GuiTimeLine::getDrag()
 { 
     return mDrag; 
+}
+
+GuiTimeLineDropTarget& GuiTimeLine::getDrop()
+{
+    return mDrop;
 }
 
 //////////////////////////////////////////////////////////////////////////

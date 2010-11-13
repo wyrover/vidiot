@@ -1,15 +1,14 @@
-#ifndef GUI_TIME_LINE_DROP_TARGET_H
-#define GUI_TIME_LINE_DROP_TARGET_H
+#ifndef DROP_H
+#define DROP_H
 
 #include <wx/dnd.h>
-#include "GuiDataObject.h"
-#include "AProjectViewNode.h"
-#include "GuiPtr.h"
-#include "Zoom.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
-class GuiTimeLineDropTarget : public wxDropTarget
+class GuiTimeLineDropTarget
+    :   public Part
+    ,   public wxDropTarget
 {
 public:
 
@@ -17,7 +16,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineDropTarget(const Zoom& zoom, GuiTimeLine* timeline);
+    GuiTimeLineDropTarget();
+    void init();
     ~GuiTimeLineDropTarget();
 
     //////////////////////////////////////////////////////////////////////////
@@ -36,13 +36,8 @@ public:
     bool OnDrop (wxCoord x, wxCoord y);
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def);
     void OnLeave ();
-
-private:
-
-    const Zoom& mZoom;
-    GuiTimeLine* mTimeLine;
 };
 
 }} // namespace
 
-#endif // GUI_TIME_LINE_DROP_TARGET_H
+#endif // DROP_H
