@@ -10,12 +10,16 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiTimeLineDropTarget::GuiTimeLineDropTarget(const Zoom& zoom, GuiTimeLine* timeline)
+GuiTimeLineDropTarget::GuiTimeLineDropTarget()
 :   wxDropTarget(new GuiDataObject())
-,   mZoom(zoom)
-,   mTimeLine(timeline)
 {
 }
+
+void GuiTimeLineDropTarget::init()
+{
+    getTimeline().SetDropTarget(this);
+}
+
 GuiTimeLineDropTarget::~GuiTimeLineDropTarget() 
 {
 }
@@ -49,8 +53,8 @@ wxDragResult GuiTimeLineDropTarget::OnData (wxCoord x, wxCoord y, wxDragResult d
 wxDragResult GuiTimeLineDropTarget::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
 {
 //    mDragShape->SetPosition(wxPoint(x,y));
-    mTimeLine->Refresh(); /** /todo use rectangle */
-    mTimeLine->Update();
+    getTimeline().Refresh(); /** /todo use rectangle */
+    getTimeline().Update();
 //    mTimeLine->Update();
     return def;
 
@@ -69,7 +73,7 @@ wxDragResult GuiTimeLineDropTarget::OnEnter (wxCoord x, wxCoord y, wxDragResult 
     unsigned int h = 10;
     BOOST_FOREACH( model::ProjectViewPtr newChild, dynamic_cast<GuiDataObject*>(m_dataObject)->getAssets())
     {
-        w += mZoom.timeToPixels(10000);//newChild->getLength());
+        w += getZoom().timeToPixels(10000);//newChild->getLength());
     }
   /*  mDragShape = new GuiTimeLineShape(w,h);
     mDragShape->SetShow(true);*/
@@ -81,8 +85,8 @@ void GuiTimeLineDropTarget::OnLeave ()
 {
     //delete mDragShape;
     //mDragShape = 0;
-    mTimeLine->Refresh(); /** /todo use rectangle */
-    mTimeLine->Update();
+    getTimeline().Refresh(); /** /todo use rectangle */
+    getTimeline().Update();
 }
 
 }} // namespace

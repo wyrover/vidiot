@@ -17,6 +17,7 @@ class ViewMap;
 class MenuHandler;
 class Cursor;
 class Drag;
+class GuiTimeLineDropTarget;
 
 class Part
     :   public boost::noncopyable
@@ -57,6 +58,7 @@ public:
     MenuHandler& getMenuHandler();
     Cursor& getCursor();
     Drag& getDrag();
+    GuiTimeLineDropTarget& getDrop();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS
