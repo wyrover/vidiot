@@ -80,8 +80,6 @@ public:
 
     void updateBitmap();
 
-    void showDropArea(wxRect area);
-
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
@@ -119,7 +117,6 @@ private:
     wxBitmap mBitmap;
     long mWidth;
     long mHeight;
-    wxRect mDropArea;
     /** Y-position of audio-video divider */
     int mDividerPosition;
 

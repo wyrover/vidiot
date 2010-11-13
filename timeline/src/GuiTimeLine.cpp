@@ -45,7 +45,6 @@ GuiTimeLine::GuiTimeLine(model::SequencePtr sequence)
 ,   mHeight(0)
 ,   mDividerPosition(0)
 ,   mSequence(sequence)
-,   mDropArea(0,0,0,0)
 {
     LOG_INFO;
 }
@@ -62,6 +61,7 @@ void GuiTimeLine::init(wxWindow *parent)
     mSelection.initTimeline(this);
     mCursor.initTimeline(this);
     mDrag.initTimeline(this);
+    mDrop.initTimeline(this);
     mMenuHandler.initTimeline(this); // Init as last since it depends on other parts
 
     Create(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER);
@@ -196,17 +196,8 @@ void GuiTimeLine::onPaint( wxPaintEvent &WXUNUSED(event) )
         upd++;
     }
 
-    // Draw marked areas
     getIntervals().draw(dc);
-
-    // Draw drop area
-    if (!mDropArea.IsEmpty())
-    {
-        dc.SetPen(Constants::sDropAreaPen);
-        dc.SetBrush(Constants::sDropAreaBrush);
-        dc.DrawRectangle(mDropArea);
-    }
-
+    getDrop().draw(dc);
     getCursor().draw(dc);
 
 }
@@ -255,17 +246,6 @@ wxPoint GuiTimeLine::getScrollOffset() const
     GetViewStart(&scrollX,&scrollY);
     GetScrollPixelsPerUnit(&ppuX,&ppuY);
     return wxPoint(scrollX * ppuX, scrollY * ppuY);
-}
-
-void GuiTimeLine::showDropArea(wxRect area)
-{
-    if (mDropArea != area)
-    {
-        mDropArea = area;
-        Refresh(false);
-        Update();
-
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////

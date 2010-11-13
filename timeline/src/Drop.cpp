@@ -3,6 +3,9 @@
 #include <boost/foreach.hpp>
 #include "GuiTimeLine.h"
 #include "Zoom.h"
+#include "Constants.h"
+#include "GuiTimeLineClip.h"
+#include "GuiTimeLineTrack.h"
 
 namespace gui { namespace timeline {
 
@@ -87,6 +90,63 @@ void Drop::OnLeave ()
     //mDragShape = 0;
     getTimeline().Refresh(); /** /todo use rectangle */
     getTimeline().Update();
+}
+
+void Drop::updateDropArea(wxPoint p)
+{
+    wxRect newDropArea = mDropArea;
+    PointerPositionInfo info = getMousePointer().getInfo(p);
+
+    if (info.track)
+    {
+        GuiTimeLineTrack* track = getViewMap().getView(info.track);
+        if (info.clip)
+        {
+            GuiTimeLineClip* clip = getViewMap().getView(info.clip);
+            int diffleft  = p.x - clip->getLeftPosition();
+            int diffright = clip->getRightPosition() - p.x;
+
+            int xDrop = -1;
+            if (diffleft < diffright)
+            {
+                xDrop = clip->getLeftPosition() - 2;
+            }
+            else
+            {
+                xDrop = clip->getRightPosition() - 2;
+            }
+            newDropArea = wxRect(xDrop,info.trackPosition,4,track->getBitmap().GetHeight()); 
+        }
+        else
+        {
+            newDropArea = wxRect(p.x,info.trackPosition,4,track->getBitmap().GetHeight()); 
+        }
+    }
+    else
+    {
+        newDropArea = wxRect(0,0,0,0);
+    }
+
+    if (newDropArea != mDropArea)
+    {
+        mDropArea = newDropArea;
+        getTimeline().Refresh(false);
+        getTimeline().Update();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// DRAWING
+//////////////////////////////////////////////////////////////////////////
+
+void Drop::draw(wxDC& dc)
+{
+    if (!mDropArea.IsEmpty())
+    {
+        dc.SetPen(Constants::sDropAreaPen);
+        dc.SetBrush(Constants::sDropAreaBrush);
+        dc.DrawRectangle(mDropArea);
+    }
 }
 
 }} // namespace
