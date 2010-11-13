@@ -10,7 +10,7 @@ namespace command {
 class TimelineCreateVideoTrack : public TimelineCommand
 {
 public:
-    TimelineCreateVideoTrack(gui::timeline::GuiTimeLine& timeline, model::SequencePtr sequence);
+    TimelineCreateVideoTrack(gui::timeline::Timeline& timeline, model::SequencePtr sequence);
     ~TimelineCreateVideoTrack();
     bool Do();
     bool Undo();

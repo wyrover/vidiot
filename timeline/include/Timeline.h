@@ -31,7 +31,7 @@ namespace gui { namespace timeline {
 class TrackUpdateEvent;
 class Drag;
 
-class GuiTimeLine
+class Timeline
 :   public wxScrolledWindow
 {
 public:
@@ -41,7 +41,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /** The '0' pointer is used for recovery. */
-    GuiTimeLine(model::SequencePtr sequence = model::SequencePtr());
+    Timeline(model::SequencePtr sequence = model::SequencePtr());
 
     /**
      * Two step construction. First the constructor (in combination with serialize)
@@ -50,7 +50,7 @@ public:
      */
     void init(wxWindow *parent);
 
-    virtual ~GuiTimeLine();
+    virtual ~Timeline();
 
     //////////////////////////////////////////////////////////////////////////
     // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
@@ -143,7 +143,7 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::timeline::GuiTimeLine, 1)
-BOOST_CLASS_EXPORT(gui::timeline::GuiTimeLine)
+BOOST_CLASS_VERSION(gui::timeline::Timeline, 1)
+BOOST_CLASS_EXPORT(gui::timeline::Timeline)
 
 #endif // GUI_TIME_LINE_H

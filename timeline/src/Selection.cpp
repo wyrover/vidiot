@@ -1,9 +1,9 @@
 #include "Selection.h"
 
 #include <boost/foreach.hpp>
-#include "GuiTimeLine.h"
-#include "GuiTimeLineClip.h"
-#include "GuiTimeLineTrack.h"
+#include "Timeline.h"
+#include "ClipView.h"
+#include "TrackView.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
 

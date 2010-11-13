@@ -13,7 +13,7 @@ class TimelineIntervalRemoveAll
 public:
 
     /** This command removes all intervals. */
-    TimelineIntervalRemoveAll(gui::timeline::GuiTimeLine& timeline);
+    TimelineIntervalRemoveAll(gui::timeline::Timeline& timeline);
 
     ~TimelineIntervalRemoveAll();
     bool Do();

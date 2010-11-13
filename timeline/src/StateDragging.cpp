@@ -1,10 +1,10 @@
 #include "StateDragging.h"
 
 #include <boost/foreach.hpp>
-#include "GuiTimeLineClip.h"
+#include "ClipView.h"
 #include "Drag.h"
-#include "GuiTimeLine.h"
-#include "GuiTimeLineTrack.h"
+#include "Timeline.h"
+#include "TrackView.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
 #include "ViewMap.h"

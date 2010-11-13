@@ -4,7 +4,7 @@
 #include "RootCommand.h"
 
 namespace gui { namespace timeline { 
-    class GuiTimeLine; 
+    class Timeline; 
 } }
 
 namespace command {
@@ -12,11 +12,11 @@ namespace command {
 class TimelineCommand : public RootCommand
 {
 public:
-    TimelineCommand(gui::timeline::GuiTimeLine& timeline);
+    TimelineCommand(gui::timeline::Timeline& timeline);
     ~TimelineCommand();
-    gui::timeline::GuiTimeLine& getTimeline();
+    gui::timeline::Timeline& getTimeline();
 private:
-    gui::timeline::GuiTimeLine& mTimeline;
+    gui::timeline::Timeline& mTimeline;
 };
 
 /** @todo upon closing the timeline, remove all related commands from the history. */

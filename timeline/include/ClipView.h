@@ -13,11 +13,11 @@
 
 namespace gui { namespace timeline {
 
-DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, GuiTimeLineClip*);
+DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, ClipView*);
 
-class GuiTimeLine;
+class Timeline;
 
-class GuiTimeLineClip
+class ClipView
     :   public wxWindow
     ,   public Part
 {
@@ -27,13 +27,13 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimeLineClip(
-        GuiTimeLineTrack* track,
+    ClipView(
+        TrackView* track,
         model::ClipPtr clip);
 
     void init();
 
-	virtual ~GuiTimeLineClip();
+	virtual ~ClipView();
 
     //////////////////////////////////////////////////////////////////////////
     // CONVERSION BETWEEN MODEL AND VIEW

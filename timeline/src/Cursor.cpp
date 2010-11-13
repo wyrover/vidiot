@@ -4,7 +4,7 @@
 #include "Intervals.h"
 #include "Zoom.h"
 #include "UtilLog.h"
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "GuiPlayer.h"
 #include "VideoDisplayEvent.h"
 

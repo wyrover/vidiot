@@ -7,7 +7,7 @@
 
 namespace gui { namespace timeline {
 
-class GuiTimeLine;
+class Timeline;
 class Zoom;
 class Intervals;
 class Selection;
@@ -31,7 +31,7 @@ public:
     Part();
 
     /** Initialized by the creator of the part (typically, the timeline) */
-    void initTimeline(GuiTimeLine* timeline);
+    void initTimeline(Timeline* timeline);
 
     /**
     * Called after the timeline pointer is initialized. Parts do their 
@@ -47,8 +47,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /** Virtual to be overridden in the statechart states. */
-    virtual GuiTimeLine& getTimeline();
-    const GuiTimeLine& getTimeline() const;
+    virtual Timeline& getTimeline();
+    const Timeline& getTimeline() const;
     Zoom& getZoom();
     const Zoom& getZoom() const;
     Intervals& getIntervals();
@@ -69,7 +69,7 @@ public:
 
 private:
 
-    GuiTimeLine* mTimeline;
+    Timeline* mTimeline;
 };
 
 }} // namespace

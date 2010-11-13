@@ -5,15 +5,15 @@
 #include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "Zoom.h"
 #include "UtilLog.h"
 #include "Constants.h"
 #include "GuiOptions.h"
 #include "GuiMain.h"
-#include "GuiTimeLineTrack.h"
-#include "GuiTimeLineClip.h"
-#include "GuiTimeLine.h"
+#include "TrackView.h"
+#include "ClipView.h"
+#include "Timeline.h"
 #include "Project.h"
 #include "TimelineIntervalChange.h"
 #include "TimelineIntervalRemoveAll.h"
@@ -151,12 +151,12 @@ void Intervals::deleteMarked()
 
         ReplacementMap replacements;
 
-    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mVideoTracks )
+    //BOOST_FOREACH( TrackView* track, getTimeline().mVideoTracks )
     //{
     //    ReplacementMap newreplacments = findReplacements(track);
     //    replacements.insert(newreplacments.begin(),newreplacments.end());
     //}
-    //BOOST_FOREACH( GuiTimeLineTrack* track, getTimeline().mAudioTracks )
+    //BOOST_FOREACH( TrackView* track, getTimeline().mAudioTracks )
     //{
     //    ReplacementMap newreplacments = findReplacements(track);
     //    replacements.insert(newreplacments.begin(),newreplacments.end());
@@ -238,7 +238,7 @@ void Intervals::refresh(long begin, long end)
     getTimeline().RefreshRect(r);
 }
 
-Intervals::ReplacementMap Intervals::findReplacements(GuiTimeLineTrack* track)
+Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
 {
     std::map< model::ClipPtr, model::ClipPtr > replacements;
 
@@ -247,7 +247,7 @@ Intervals::ReplacementMap Intervals::findReplacements(GuiTimeLineTrack* track)
 
     BOOST_FOREACH( model::ClipPtr modelclip, track->getTrack()->getClips() )
     {
-        GuiTimeLineClip* clip = getViewMap().getView(modelclip);
+        ClipView* clip = getViewMap().getView(modelclip);
         pts_right += clip->getClip()->getNumberOfFrames();
         wxRect cliprect = makeRect(pts_left, pts_right);
         //wxRegionContain {

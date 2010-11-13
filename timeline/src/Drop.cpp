@@ -1,11 +1,11 @@
 #include "Drop.h"
 
 #include <boost/foreach.hpp>
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "Zoom.h"
 #include "Constants.h"
-#include "GuiTimeLineClip.h"
-#include "GuiTimeLineTrack.h"
+#include "ClipView.h"
+#include "TrackView.h"
 
 namespace gui { namespace timeline {
 
@@ -99,10 +99,10 @@ void Drop::updateDropArea(wxPoint p)
 
     if (info.track)
     {
-        GuiTimeLineTrack* track = getViewMap().getView(info.track);
+        TrackView* track = getViewMap().getView(info.track);
         if (info.clip)
         {
-            GuiTimeLineClip* clip = getViewMap().getView(info.clip);
+            ClipView* clip = getViewMap().getView(info.clip);
             int diffleft  = p.x - clip->getLeftPosition();
             int diffright = clip->getRightPosition() - p.x;
 

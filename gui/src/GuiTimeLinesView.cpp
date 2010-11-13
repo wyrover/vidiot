@@ -7,7 +7,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "GuiMain.h"
 #include "GuiPreview.h"
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "Menu.h"
 #include "GuiWindow.h"
 #include "AProjectViewNode.h"
@@ -60,7 +60,7 @@ void GuiTimelinesView::OnProjectAssetRenamed( model::EventRenameAsset &event )
 
     if (sequence)
     {
-        std::pair<size_t,timeline::GuiTimeLine*> f = findPage(sequence);
+        std::pair<size_t,timeline::Timeline*> f = findPage(sequence);
         if (f.second != 0)
         {
             mNotebook.SetPageText(f.first, event.getValue().newname);
@@ -86,10 +86,10 @@ void GuiTimelinesView::Open( model::SequencePtr sequence )
 {
     ASSERT(sequence);
 
-    std::pair<size_t,timeline::GuiTimeLine*> f = findPage(sequence);
+    std::pair<size_t,timeline::Timeline*> f = findPage(sequence);
     if (f.second == 0)
     {
-        timeline::GuiTimeLine* timeline = new timeline::GuiTimeLine(sequence);
+        timeline::Timeline* timeline = new timeline::Timeline(sequence);
         timeline->init(&mNotebook);
         timeline->SetFocus();
         mNotebook.AddPage(timeline,sequence->getName(),false);
@@ -102,7 +102,7 @@ void GuiTimelinesView::Close( model::SequencePtr sequence )
 {
     if (sequence)
     {
-        std::pair<size_t,timeline::GuiTimeLine*> f = findPage(sequence);
+        std::pair<size_t,timeline::Timeline*> f = findPage(sequence);
         if (f.second != 0)
         {
             mNotebook.DeletePage(f.first);
@@ -120,26 +120,26 @@ void GuiTimelinesView::Close( model::SequencePtr sequence )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-std::pair<size_t,timeline::GuiTimeLine*> GuiTimelinesView::findPage(model::SequencePtr sequence) const
+std::pair<size_t,timeline::Timeline*> GuiTimelinesView::findPage(model::SequencePtr sequence) const
 {
     size_t page = 0;
     while (page < mNotebook.GetPageCount())
     {
-        timeline::GuiTimeLine* timeline = static_cast<timeline::GuiTimeLine*>(mNotebook.GetPage(page));
+        timeline::Timeline* timeline = static_cast<timeline::Timeline*>(mNotebook.GetPage(page));
         if (timeline->getSequence() == sequence)
         {
-            return std::make_pair<size_t,timeline::GuiTimeLine*>(page,timeline);
+            return std::make_pair<size_t,timeline::Timeline*>(page,timeline);
         }
         ++page;
     }
 
-    return std::make_pair<size_t,timeline::GuiTimeLine*>(0,0);
+    return std::make_pair<size_t,timeline::Timeline*>(0,0);
 }
 
 void GuiTimelinesView::update() const
 {
     GuiWindow& window = *(dynamic_cast<GuiWindow*>(GetParent()));
-    timeline::GuiTimeLine* timeline = static_cast<timeline::GuiTimeLine*>(mNotebook.GetCurrentPage());
+    timeline::Timeline* timeline = static_cast<timeline::Timeline*>(mNotebook.GetCurrentPage());
     if (timeline)
     {
         window.setSequenceMenu(timeline->getMenuHandler().getMenu());
@@ -164,7 +164,7 @@ void GuiTimelinesView::save(Archive & ar, const unsigned int version) const
     ar & selectedPage;
     for (unsigned int page = 0; page < n; ++page)
     {
-        ar & *(static_cast<timeline::GuiTimeLine*>(mNotebook.GetPage(page)));
+        ar & *(static_cast<timeline::Timeline*>(mNotebook.GetPage(page)));
     }
 }
 template<class Archive>
@@ -176,7 +176,7 @@ void GuiTimelinesView::load(Archive & ar, const unsigned int version)
     ar & selectedPage;
     for (unsigned int page = 0; page < n; ++page)
     {
-        timeline::GuiTimeLine* timeline = new timeline::GuiTimeLine();
+        timeline::Timeline* timeline = new timeline::Timeline();
         ar & *timeline;
         timeline->init(&mNotebook);
         mNotebook.AddPage(timeline,timeline->getSequence()->getName(),false);

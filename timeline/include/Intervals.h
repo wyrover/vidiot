@@ -94,7 +94,7 @@ private:
     void refresh(long begin, long end);
 
     typedef std::map< model::ClipPtr, model::ClipPtr > ReplacementMap;
-    ReplacementMap findReplacements(GuiTimeLineTrack* track);
+    ReplacementMap findReplacements(TrackView* track);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

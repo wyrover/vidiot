@@ -3,9 +3,9 @@
 #include <wx/dcclient.h>
 #include <wx/pen.h>
 #include <boost/foreach.hpp>
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "Constants.h"
-#include "GuiTimeLineTrack.h"
+#include "TrackView.h"
 #include "Track.h"
 #include "Sequence.h"
 

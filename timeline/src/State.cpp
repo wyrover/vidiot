@@ -1,6 +1,6 @@
 #include "State.h"
 
-#include "GuiTimeLine.h"
+#include "Timeline.h"
 #include "StateIdle.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -9,7 +9,7 @@ namespace gui { namespace timeline { namespace state {
 // MACHINE
 //////////////////////////////////////////////////////////////////////////
 
-Machine::Machine(GuiTimeLine& tl)
+Machine::Machine(Timeline& tl)
 :   mTimeline(tl)
 {
     globals = new GlobalState();
