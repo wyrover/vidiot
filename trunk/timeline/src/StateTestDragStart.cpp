@@ -7,6 +7,7 @@
 #include "StateDragging.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
+#include "Selection.h"
 
 namespace gui { namespace timeline { namespace state {
 

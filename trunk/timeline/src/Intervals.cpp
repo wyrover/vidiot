@@ -20,6 +20,9 @@
 #include "TimelineIntervalRemoveAll.h"
 #include "UtilSerializeWxwidgets.h"
 #include "ids.h"
+#include "Menu.h"
+#include "Cursor.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 

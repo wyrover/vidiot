@@ -10,26 +10,15 @@
 #include <boost/optional.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include "GuiDataObject.h"
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "State.h"
 #include "UtilEnum.h"
-#include "Intervals.h"
-#include "Selection.h"
-#include "MousePointer.h"
 #include "UtilEvent.h"
-#include "Cursor.h"
-#include "Drag.h"
-#include "Menu.h"
-#include "Zoom.h"
-#include "ViewMap.h"
-#include "Drop.h"
 
 namespace gui { namespace timeline {
 
-class TrackUpdateEvent;
-class Drag;
+class VideoUpdateEvent;
+class AudioUpdateEvent;
 
 class Timeline
 :   public wxScrolledWindow
@@ -66,6 +55,7 @@ public:
     Cursor& getCursor();
     Drag& getDrag();
     Drop& getDrop();
+    SequenceView& getSequenceView();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -74,7 +64,9 @@ public:
     void onSize(wxSizeEvent& event);
     void onEraseBackground(wxEraseEvent& event);
     void onPaint( wxPaintEvent &event );
-    void onTrackUpdated( TrackUpdateEvent& event );
+
+    void onVideoUpdated( VideoUpdateEvent& event );
+    void onAudioUpdated( AudioUpdateEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -106,16 +98,17 @@ private:
     // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
     //////////////////////////////////////////////////////////////////////////
 
-    Zoom mZoom;
-    ViewMap mViewMap;
-    Intervals mIntervals;
-    MousePointer mMousePointer;
-    Selection mSelection;
-    MenuHandler mMenuHandler;
-    Cursor mCursor;
-    Drag mDrag;
-    Drop mDrop;
-    state::Machine mMouseState; /** Must be AFTER mViewMap due to constructor list. */
+    Zoom* mZoom;
+    ViewMap* mViewMap;
+    Intervals* mIntervals;
+    MousePointer* mMousePointer;
+    Selection* mSelection;
+    MenuHandler* mMenuHandler;
+    Cursor* mCursor;
+    Drag* mDrag;
+    Drop* mDrop;
+    SequenceView* mSequenceView;
+    state::Machine* mMouseState; /** Must be AFTER mViewMap due to constructor list. */
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

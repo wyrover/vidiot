@@ -17,6 +17,8 @@
 #include "Project.h"
 #include "TimelineMoveClips.h"
 #include "ViewMap.h"
+#include "MousePointer.h"
+#include "Selection.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -63,13 +65,20 @@ boost::statechart::result Idle::react( const EvMotion& evt )
     VAR_DEBUG(evt);
     PointerPositionInfo info =  getMousePointer().getInfo(evt.mPosition);
     MousePointerImage image = PointerNormal;
-    if (info.clip)
+    if (info.onTrackDivider)
     {
-        switch (info.logicalclipposition)
+        image = PointerTrackResize;
+    }
+    else
+    {
+        if (info.clip)
         {
-        case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
-        case ClipBetween:    image = PointerMoveCut;     break;
-        case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+            switch (info.logicalclipposition)
+            {
+            case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
+            case ClipBetween:    image = PointerMoveCut;     break;
+            case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+            }
         }
     }
     getMousePointer().set(image);

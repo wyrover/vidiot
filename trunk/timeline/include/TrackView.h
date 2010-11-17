@@ -69,6 +69,7 @@ public:
 private:
 
     void updateBitmap();
+    void updateSize();
 
     model::TrackPtr mTrack;
     wxBitmap mBitmap;

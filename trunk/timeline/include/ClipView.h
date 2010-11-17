@@ -9,13 +9,11 @@
 #include "Clip.h"
 #include "GuiPtr.h"
 #include "UtilEvent.h"
-#include "Zoom.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
 
 DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, ClipView*);
-
-class Timeline;
 
 class ClipView
     :   public wxWindow

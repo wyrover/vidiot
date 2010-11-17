@@ -30,6 +30,7 @@ public:
     static const int sTimeScaleHeight;
     static const int sMinimalGreyAboveVideoTracksHeight;
     static const int sMinimalGreyBelowAudioTracksHeight;
+    static const int sTrackDividerHeight;
     static const int sDefaultAudioVideoDividerPosition;
     static const int sAudioVideoDividerHeight;
 
@@ -49,6 +50,9 @@ public:
 
     static const wxPen      sDropAreaPen;
     static const wxBrush    sDropAreaBrush;
+
+    static const wxPen      sTrackDividerPen;
+    static const wxBrush    sTrackDividerBrush;
 
     static const wxPen      sAudioVideoDividerPen;
     static const wxBrush    sAudioVideoDividerBrush;

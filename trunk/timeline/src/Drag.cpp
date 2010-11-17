@@ -8,6 +8,7 @@
 #include "TrackView.h"
 #include "Track.h"
 #include "Sequence.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
@@ -60,14 +61,14 @@ wxBitmap Drag::getDragBitmap() //const
     wxPoint position(0,getTimeline().getDividerPosition());
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        position.y -= track->getHeight();
+        position.y -= track->getHeight() + Constants::sTrackDividerHeight;
     }
 
     // Draw video tracks
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         getViewMap().getView(track)->drawClips(position,dc,dcMask);
-        position.y += track->getHeight();
+        position.y += track->getHeight() + Constants::sTrackDividerHeight;
     }
 
     // Draw audio tracks
