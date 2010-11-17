@@ -4,6 +4,7 @@
 #include "StateIdle.h"
 #include "UtilLog.h"
 #include "GuiPlayer.h"
+#include "Intervals.h"
 
 namespace gui { namespace timeline { namespace state {
 

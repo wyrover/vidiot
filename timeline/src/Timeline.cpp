@@ -1,6 +1,4 @@
 #include "Timeline.h"
-#include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -18,21 +16,25 @@
 #include "GuiPlayer.h"
 #include "GuiPreview.h"
 #include "GuiWindow.h"
-#include "Drop.h"
-#include "Zoom.h"
-#include "ClipView.h"
-#include "TrackView.h"
 #include "UtilLogStl.h"
-#include "AProjectViewNode.h"
 #include "Sequence.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
+#include "Intervals.h"
+#include "Selection.h"
+#include "MousePointer.h"
+#include "Cursor.h"
+#include "Drag.h"
+#include "Menu.h"
+#include "Zoom.h"
+#include "State.h"
+#include "ViewMap.h"
+#include "Drop.h"
+#include "SequenceView.h"
 #include "ViewMap.h"
 #include "ids.h"
 
 namespace gui { namespace timeline {
-
-IMPLEMENTENUM(MouseOnClipPosition);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -40,7 +42,17 @@ IMPLEMENTENUM(MouseOnClipPosition);
 
 Timeline::Timeline(model::SequencePtr sequence)
 :   wxScrolledWindow()
-,   mMouseState(*this)
+,   mZoom(0)
+,   mViewMap(0)
+,   mIntervals(0)
+,   mMousePointer(0)
+,   mSelection(0)
+,   mMenuHandler(0)
+,   mCursor(0)
+,   mDrag(0)
+,   mDrop(0)
+,   mSequenceView(0)
+,   mMouseState(0)
 ,   mWidth(0)
 ,   mHeight(0)
 ,   mDividerPosition(0)
@@ -51,55 +63,45 @@ Timeline::Timeline(model::SequencePtr sequence)
 
 void Timeline::init(wxWindow *parent)
 {
+    Create(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER);
+    SetScrollRate( 10, 10 );
+    EnableScrolling(true,true);
+    SetBackgroundColour(*wxLIGHT_GREY);
+
     ASSERT(mSequence);
     mPlayer = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this);
 
-    mZoom.initTimeline(this);
-    mViewMap.initTimeline(this);
-    mIntervals.initTimeline(this);
-    mMousePointer.initTimeline(this);
-    mSelection.initTimeline(this);
-    mCursor.initTimeline(this);
-    mDrag.initTimeline(this);
-    mDrop.initTimeline(this);
-    mMenuHandler.initTimeline(this); // Init as last since it depends on other parts
+    mZoom = new Zoom();
+    mViewMap = new ViewMap();
+    mIntervals = new Intervals();
+    mMousePointer = new MousePointer();
+    mSelection = new Selection();
+    mMenuHandler = new MenuHandler();
+    mCursor = new Cursor();
+    mDrag = new Drag();
+    mDrop = new Drop();
+    mSequenceView = new SequenceView();
+    mMouseState = new state::Machine(*this); /** Must be AFTER mViewMap */
 
-    Create(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER);
-
-    SetScrollRate( 10, 10 );
-    EnableScrolling(true,true);
-    SetBackgroundColour(* wxLIGHT_GREY);
-
-    // Must be done before initializing tracks, since tracks derive their width from the entire timeline
-    determineWidth();
-
-    model::TrackChange videoTracks(mSequence->getVideoTracks());
-    onVideoTracksAdded(model::EventAddVideoTracks(videoTracks));
-    
-    //BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
-    //{
-    //    TrackView* p = new TrackView(track);
-    //    p->initTimeline(this);
-    //    p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
-    //    // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
-    //}
-    BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks())
-    {
-        TrackView* p = new TrackView(track);
-        p->initTimeline(this);
-        p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
-        // todo2 handle this via a OnAudioTrackAdded similar to the track handling of clip events from the model
-    }
+    mZoom->initTimeline(this);
+    mViewMap->initTimeline(this);
+    mIntervals->initTimeline(this);
+    mMousePointer->initTimeline(this);
+    mSelection->initTimeline(this);
+    mCursor->initTimeline(this);
+    mDrag->initTimeline(this);
+    mDrop->initTimeline(this);
+    mSequenceView->initTimeline(this);
+    mMenuHandler->initTimeline(this); // Init as last since it depends on other parts
 
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    mSequence->Bind(model::EVENT_ADD_VIDEO_TRACK,       &Timeline::onVideoTracksAdded,    this);
-    mSequence->Bind(model::EVENT_REMOVE_VIDEO_TRACK,    &Timeline::onVideoTracksRemoved,  this);
-    mSequence->Bind(model::EVENT_ADD_AUDIO_TRACK,       &Timeline::onAudioTracksAdded,   this);
-    mSequence->Bind(model::EVENT_REMOVE_AUDIO_TRACK,    &Timeline::onAudioTracksRemoved,  this);
+    getSequenceView().Bind(VIDEO_UPDATE_EVENT, &Timeline::onVideoUpdated, this);
+    getSequenceView().Bind(AUDIO_UPDATE_EVENT, &Timeline::onAudioUpdated, this);
 
+    updateSize();
     // From here on, processing continues with size events after laying out this widget.
 }
 
@@ -114,52 +116,57 @@ Timeline::~Timeline()
 
 Zoom& Timeline::getZoom()
 { 
-    return mZoom; 
+    return *mZoom; 
 }
 
 const Zoom& Timeline::getZoom() const
 { 
-    return mZoom; 
+    return *mZoom; 
 }
 
 ViewMap& Timeline::getViewMap()
 { 
-    return mViewMap; 
+    return *mViewMap; 
 }
 
 Intervals& Timeline::getIntervals()
 { 
-    return mIntervals; 
+    return *mIntervals; 
 }
 
 MousePointer& Timeline::getMousepointer()
 { 
-    return mMousePointer; 
+    return *mMousePointer; 
 }
 
 Selection& Timeline::getSelection()
 { 
-    return mSelection;
+    return *mSelection;
 }
 
 MenuHandler& Timeline::getMenuHandler()
 { 
-    return mMenuHandler; 
+    return *mMenuHandler; 
 }
 
 Cursor& Timeline::getCursor()
 { 
-    return mCursor; 
+    return *mCursor; 
 }
 
 Drag& Timeline::getDrag()
 { 
-    return mDrag; 
+    return *mDrag; 
 }
 
 Drop& Timeline::getDrop()
 {
-    return mDrop;
+    return *mDrop;
+}
+
+SequenceView& Timeline::getSequenceView()
+{
+    return *mSequenceView;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -209,43 +216,14 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 
 }
 
-void Timeline::onTrackUpdated( TrackUpdateEvent& event )
+void Timeline::onVideoUpdated( VideoUpdateEvent& event )
 {
-    LOG_INFO;
-    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
-    /** todo only redraw track */
     updateBitmap();
-    Update();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::onVideoTracksAdded( model::EventAddVideoTracks& event )
+void Timeline::onAudioUpdated( AudioUpdateEvent& event )
 {
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
-    {
-        TrackView* p = new TrackView(track);
-        p->initTimeline(this);
-        p->Bind(TRACK_UPDATE_EVENT, &Timeline::onTrackUpdated, this);
-        // todo2 handle this via a OnVideoTrackAdded similar to the track handling of clip events from the model
-    }
-}
-
-void Timeline::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
-{
-
-}
-
-void Timeline::onAudioTracksAdded( model::EventAddAudioTracks& event )
-{
-
-}
-
-void Timeline::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
-{
-
+    updateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -291,27 +269,17 @@ wxPoint Timeline::getScrollOffset() const
 
 void Timeline::determineWidth()
 {
-    mWidth = std::max(std::max(
-        mZoom.timeToPixels(5 * Constants::sMinute),            // Minimum width of 5 minutes
-        mZoom.ptsToPixels(mSequence->getNumberOfFrames())),    // At least enough to hold all clips
-        GetClientSize().GetWidth());                            // At least the widget size
+    mWidth = getSequenceView().requiredWidth();
 }
 
 void Timeline::determineHeight()
 {
     int requiredHeight = Constants::sTimeScaleHeight;
     requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
-    {
-        requiredHeight += track->getHeight();
-    }
+    requiredHeight += getSequenceView().requiredVideoHeight();
     requiredHeight += Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
-    {
-        requiredHeight += track->getHeight();
-    }
+    requiredHeight += getSequenceView().requiredAudioHeight();
     requiredHeight += Constants::sMinimalGreyBelowAudioTracksHeight;
-
     mHeight = std::max(requiredHeight, GetClientSize().GetHeight());
 }
 
@@ -347,9 +315,9 @@ void Timeline::updateBitmap()
     dc.SetFont(*Constants::sTimeScaleFont);
 
     // Draw seconds and minutes lines
-    for (int ms = 0; mZoom.timeToPixels(ms) <= w; ms += Constants::sSecond)
+    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += Constants::sSecond)
     {
-        int position = mZoom.timeToPixels(ms);
+        int position = getZoom().timeToPixels(ms);
         bool isMinute = (ms % Constants::sMinute == 0);
         int height = Constants::sTimeScaleSecondHeight;
 
@@ -376,32 +344,21 @@ void Timeline::updateBitmap()
         }
     }
 
-    // Draw video tracks
-    // First determine starting point
-    int y = mDividerPosition;
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks() )
-    {
-        y -= track->getHeight();
-    }
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, mSequence->getVideoTracks())
-    {
-        wxBitmap b = getViewMap().getView(track)->getBitmap();
-        dc.DrawBitmap(b,wxPoint(0,y));
-        y += track->getHeight();
-    }
+    const wxBitmap& videotracks = getSequenceView().getVideo();
+    dc.DrawBitmap(videotracks,wxPoint(0,mDividerPosition - videotracks.GetHeight()));
+
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.SetPen(*wxWHITE_PEN);
+    dc.DrawRectangle(0,mDividerPosition - videotracks.GetHeight(),w,videotracks.GetHeight());
 
     // Draw divider between video and audio tracks
     dc.SetBrush(Constants::sAudioVideoDividerBrush);
     dc.SetPen(Constants::sAudioVideoDividerPen);
-    dc.DrawRectangle(0,y,w,Constants::sAudioVideoDividerHeight);
+    dc.DrawRectangle(0,mDividerPosition,w,Constants::sAudioVideoDividerHeight);
 
-    y += Constants::sAudioVideoDividerHeight;
-    BOOST_FOREACH( model::TrackPtr track, mSequence->getAudioTracks() )
-    {
-        wxBitmap b = getViewMap().getView(track)->getBitmap();
-        dc.DrawBitmap(b,wxPoint(0,y));
-        y += track->getHeight();
-    }
+    const wxBitmap& audiotracks = getSequenceView().getAudio();
+    dc.DrawBitmap(audiotracks,wxPoint(0,mDividerPosition + Constants::sAudioVideoDividerHeight));
+
     Refresh(false);
 }
 

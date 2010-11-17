@@ -7,18 +7,6 @@
 
 namespace gui { namespace timeline {
 
-class Timeline;
-class Zoom;
-class Intervals;
-class Selection;
-class GuiPlayer;
-class MousePointer;
-class ViewMap;
-class MenuHandler;
-class Cursor;
-class Drag;
-class Drop;
-
 class Part
     :   public boost::noncopyable
 {
@@ -59,6 +47,7 @@ public:
     Cursor& getCursor();
     Drag& getDrag();
     Drop& getDrop();
+    SequenceView& getSequenceView();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS

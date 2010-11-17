@@ -16,6 +16,8 @@
 #include "EmptyClip.h"
 #include "TrackView.h"
 #include "Timeline.h"
+#include "Selection.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 

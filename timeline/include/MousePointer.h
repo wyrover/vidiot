@@ -14,7 +14,8 @@ DECLAREENUM(MousePointerImage, \
             PointerTrimBegin, \
             PointerTrimShiftBegin, \
             PointerTrimEnd, \
-            PointerTrimShiftEnd);
+            PointerTrimShiftEnd, \
+            PointerTrackResize);
 
 DECLAREENUM(MouseOnClipPosition, \
             ClipBetween, \
@@ -22,6 +23,7 @@ DECLAREENUM(MouseOnClipPosition, \
             ClipInterior, \
             ClipEnd);
 
+/** @todo split into track info and 'withintrack' info */
 struct PointerPositionInfo
 {
     //////////////////////////////////////////////////////////////////////////
@@ -33,6 +35,9 @@ struct PointerPositionInfo
 
     /** Y position of current track. 0 if no current track. */
     int trackPosition;
+
+    /** True if pointer is ON the track divider for this track. */
+    bool onTrackDivider;
 
     //////////////////////////////////////////////////////////////////////////
     // CLIP
@@ -77,6 +82,7 @@ private:
     wxCursor mCursorTrimShiftBegin;
     wxCursor mCursorTrimEnd;
     wxCursor mCursorTrimShiftEnd;
+    wxCursor mCursorTrackResize;
 };
 
 }} // namespace

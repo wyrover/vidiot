@@ -23,3 +23,4 @@ preview-play.xpm      - was control.png
 preview-previous.xpm  - was control-stop.png
 preview-home.xpm      - was control-skip-180.png
 preview-end.xpm       - was control-skip.png
+track_resize_xpm      - was arrow-resize-090.png

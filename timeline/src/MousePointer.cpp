@@ -11,12 +11,17 @@
 #include "cursor_trim_begin.xpm"
 #include "cursor_trim_end.xpm"
 #include "cursor_normal.xpm"
+#include "cursor_track_resize.xpm"
 #include "Track.h"
 #include "Sequence.h"
+#include "SequenceView.h"
+#include "Zoom.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
 IMPLEMENTENUM(MousePointerImage);
+IMPLEMENTENUM(MouseOnClipPosition);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -56,6 +61,10 @@ MousePointer::MousePointer()
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
     mCursorTrimShiftEnd = wxCursor(image);
 
+    image = wxBitmap(cursor_track_resize_xpm).ConvertToImage();
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 8);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 8);
+    mCursorTrackResize = wxCursor(image);
 }
 
 void MousePointer::init()
@@ -77,6 +86,7 @@ void MousePointer::set(MousePointerImage image)
     case PointerTrimShiftBegin: getTimeline().SetCursor(mCursorTrimShiftBegin); return;
     case PointerTrimEnd:        getTimeline().SetCursor(mCursorTrimEnd);        return;
     case PointerTrimShiftEnd:   getTimeline().SetCursor(mCursorTrimShiftEnd);   return;
+    case PointerTrackResize:    getTimeline().SetCursor(mCursorTrackResize);    return;
     default:                    FATAL("Unknown image");
     }
 }
@@ -87,36 +97,9 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
     info.track = model::TrackPtr();
     info.clip = model::ClipPtr();
     info.trackPosition = 0;
+    info.onTrackDivider = false;
 
-    // Find possible videotrack under pointer
-    int top = getTimeline().getDividerPosition();
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
-    {
-        int bottom = top;
-        top -= track->getHeight();
-        if (pointerposition.y <= bottom && pointerposition.y >= top)
-        {
-            info.track = track;
-            info.trackPosition = top;
-            break;
-        }
-    }
-    if (!info.track)
-    {
-        // Find possible audiotrack under pointer
-        int bottom = getTimeline().getDividerPosition() + Constants::sAudioVideoDividerHeight;
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
-        {
-            int top = bottom;
-            bottom += track->getHeight();
-            if (pointerposition.y <= bottom && pointerposition.y >= top)
-            {
-                info.track = track;
-                info.trackPosition = top;
-                break;
-            }
-        }
-    }
+    getSequenceView().getPositionInfo(pointerposition, info);
 
     // Find clip under pointer
     if (info.track)

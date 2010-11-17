@@ -6,6 +6,9 @@
 #include "Constants.h"
 #include "ClipView.h"
 #include "TrackView.h"
+#include "MousePointer.h"
+#include "ViewMap.h"
+#include "GuiDataObject.h"
 
 namespace gui { namespace timeline {
 

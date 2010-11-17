@@ -19,12 +19,12 @@
 #include "Clip.h"
 #include "GuiMain.h"
 #include "Track.h"
+#include "ViewMap.h"
+#include "SequenceView.h"
 
 namespace gui { namespace timeline {
 
 DEFINE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, TrackView*);
-
-static int sTrackBorderSize = 1;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -67,7 +67,7 @@ TrackView::~TrackView()
 
 int TrackView::getClipHeight() const
 {
-    return mTrack->getHeight() - 2 * sTrackBorderSize;
+    return mTrack->getHeight();
 }
 
 const wxBitmap& TrackView::getBitmap()
@@ -111,7 +111,7 @@ void TrackView::OnClipsAdded( model::EventAddClips& event )
         p->initTimeline(&getTimeline());
         p->Bind(CLIP_UPDATE_EVENT, &TrackView::OnClipUpdated, this); // After init to avoid initial events (since updateBitmap below redraws the entire bitmap)
     }
-    mRedrawOnIdle = true;
+    updateSize();
 }
 
 void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
@@ -121,7 +121,7 @@ void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
         getViewMap().getView(clip)->Unbind(CLIP_UPDATE_EVENT, &TrackView::OnClipUpdated, this);
         getViewMap().getView(clip)->Destroy();
     }
-    mRedrawOnIdle = true;
+    updateSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,9 +141,15 @@ void TrackView::updateBitmap()
     dc.SetPen(Constants::sBackgroundPen);
     dc.DrawRectangle(0,0,mBitmap.GetWidth(),mBitmap.GetHeight());
 
-    wxPoint pos(sTrackBorderSize,sTrackBorderSize);
+    wxPoint pos(0,0);
     drawClips(pos, dc);
     QueueEvent(new TrackUpdateEvent(this));
+}
+
+void TrackView::updateSize()
+{
+    mBitmap.Create(getSequenceView().requiredWidth(), mTrack->getHeight());
+    mRedrawOnIdle = true;
 }
 
 void TrackView::drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask)

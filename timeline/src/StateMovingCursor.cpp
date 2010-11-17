@@ -4,6 +4,8 @@
 #include "StateIdle.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "Cursor.h"
+#include "Intervals.h"
 
 namespace gui { namespace timeline { namespace state {
 

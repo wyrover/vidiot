@@ -8,6 +8,8 @@
 #include "StateIdle.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
+#include "Drop.h"
+#include "Selection.h"
 
 namespace gui { namespace timeline { namespace state {
 

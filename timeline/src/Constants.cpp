@@ -22,6 +22,7 @@ const int Constants::sTimeScaleSecondHeight                 = 5;
 const int Constants::sTimeScaleHeight                       = 20;
 const int Constants::sMinimalGreyAboveVideoTracksHeight     = 10;
 const int Constants::sMinimalGreyBelowAudioTracksHeight     = 10;
+const int Constants::sTrackDividerHeight                    = 6;
 const int Constants::sDefaultAudioVideoDividerPosition      = 100;
 const int Constants::sAudioVideoDividerHeight               = 5;
 const int Constants::sClipBorderSize                        = 2;
@@ -39,6 +40,9 @@ const wxPen     Constants::sCursorPen               (*wxRED, 1);
 
 const wxPen     Constants::sDropAreaPen             (*wxYELLOW, 1);
 const wxBrush   Constants::sDropAreaBrush           (*wxYELLOW_BRUSH);
+
+const wxPen     Constants::sTrackDividerPen         (*wxGREEN, 1);
+const wxBrush   Constants::sTrackDividerBrush       (*wxGREEN,wxBRUSHSTYLE_SOLID);
 
 const wxPen     Constants::sAudioVideoDividerPen    (*wxBLUE, 1);
 const wxBrush   Constants::sAudioVideoDividerBrush  (wxColour(10,20,30),wxBRUSHSTYLE_CROSSDIAG_HATCH);
