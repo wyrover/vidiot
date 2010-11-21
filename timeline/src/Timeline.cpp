@@ -30,7 +30,8 @@
 #include "State.h"
 #include "ViewMap.h"
 #include "Drop.h"
-#include "SequenceView.h"
+#include "VideoView.h"
+#include "AudioView.h"
 #include "ViewMap.h"
 #include "ids.h"
 
@@ -51,7 +52,8 @@ Timeline::Timeline(model::SequencePtr sequence)
 ,   mCursor(0)
 ,   mDrag(0)
 ,   mDrop(0)
-,   mSequenceView(0)
+,   mVideoView(0)
+,   mAudioView(0)
 ,   mMouseState(0)
 ,   mWidth(0)
 ,   mHeight(0)
@@ -80,7 +82,8 @@ void Timeline::init(wxWindow *parent)
     mCursor = new Cursor();
     mDrag = new Drag();
     mDrop = new Drop();
-    mSequenceView = new SequenceView();
+    mVideoView = new VideoView();
+    mAudioView = new AudioView();
     mMouseState = new state::Machine(*this); /** Must be AFTER mViewMap */
 
     mZoom->initTimeline(this);
@@ -91,15 +94,16 @@ void Timeline::init(wxWindow *parent)
     mCursor->initTimeline(this);
     mDrag->initTimeline(this);
     mDrop->initTimeline(this);
-    mSequenceView->initTimeline(this);
+    mVideoView->initTimeline(this);
+    mAudioView->initTimeline(this);
     mMenuHandler->initTimeline(this); // Init as last since it depends on other parts
 
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    getSequenceView().Bind(VIDEO_UPDATE_EVENT, &Timeline::onVideoUpdated, this);
-    getSequenceView().Bind(AUDIO_UPDATE_EVENT, &Timeline::onAudioUpdated, this);
+    getVideoView().Bind(VIDEO_UPDATE_EVENT, &Timeline::onVideoUpdated, this);
+    getAudioView().Bind(AUDIO_UPDATE_EVENT, &Timeline::onAudioUpdated, this);
 
     updateSize();
     // From here on, processing continues with size events after laying out this widget.
@@ -164,9 +168,14 @@ Drop& Timeline::getDrop()
     return *mDrop;
 }
 
-SequenceView& Timeline::getSequenceView()
+VideoView& Timeline::getVideoView()
 {
-    return *mSequenceView;
+    return *mVideoView;
+}
+
+AudioView& Timeline::getAudioView()
+{
+    return *mAudioView;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -272,16 +281,16 @@ wxPoint Timeline::getScrollOffset() const
 
 void Timeline::determineWidth()
 {
-    mWidth = getSequenceView().requiredWidth();
+    mWidth = getVideoView().requiredWidth(); /** @todo determine from seuqence */
 }
 
 void Timeline::determineHeight()
 {
     int requiredHeight = Constants::sTimeScaleHeight;
     requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
-    requiredHeight += getSequenceView().requiredVideoHeight();
+    requiredHeight += getVideoView().requiredVideoHeight();
     requiredHeight += Constants::sAudioVideoDividerHeight;
-    requiredHeight += getSequenceView().requiredAudioHeight();
+    requiredHeight += getAudioView().requiredAudioHeight();
     requiredHeight += Constants::sMinimalGreyBelowAudioTracksHeight;
     mHeight = std::max(requiredHeight, GetClientSize().GetHeight());
 }
@@ -348,7 +357,7 @@ void Timeline::updateBitmap()
         }
     }
 
-    const wxBitmap& videotracks = getSequenceView().getVideo();
+    const wxBitmap& videotracks = getVideoView().getVideo();
     dc.DrawBitmap(videotracks,wxPoint(0,mDividerPosition - videotracks.GetHeight()));
 
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -360,7 +369,7 @@ void Timeline::updateBitmap()
     dc.SetPen(Constants::sAudioVideoDividerPen);
     dc.DrawRectangle(0,mDividerPosition,w,Constants::sAudioVideoDividerHeight);
 
-    const wxBitmap& audiotracks = getSequenceView().getAudio();
+    const wxBitmap& audiotracks = getAudioView().getAudio();
     dc.DrawBitmap(audiotracks,wxPoint(0,mDividerPosition + Constants::sAudioVideoDividerHeight));
 
     Refresh(false);

@@ -55,7 +55,8 @@ public:
     Cursor& getCursor();
     Drag& getDrag();
     Drop& getDrop();
-    SequenceView& getSequenceView();
+    VideoView& getVideoView();
+    AudioView& getAudioView();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -107,7 +108,8 @@ private:
     Cursor* mCursor;
     Drag* mDrag;
     Drop* mDrop;
-    SequenceView* mSequenceView;
+    VideoView* mVideoView;
+    AudioView* mAudioView;
     state::Machine* mMouseState; /** Must be AFTER mViewMap due to constructor list. */
 
     //////////////////////////////////////////////////////////////////////////

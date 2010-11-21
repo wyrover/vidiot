@@ -14,7 +14,8 @@
 #include "cursor_track_resize.xpm"
 #include "Track.h"
 #include "Sequence.h"
-#include "SequenceView.h"
+#include "VideoView.h"
+#include "AudioView.h"
 #include "Zoom.h"
 #include "ViewMap.h"
 
@@ -99,7 +100,12 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
     info.trackPosition = 0;
     info.onTrackDivider = false;
 
-    getSequenceView().getPositionInfo(pointerposition, info);
+    /** @todo move to timeline class (it contains the if below) */
+    getVideoView().getPositionInfo(pointerposition, info);
+    if (!info.track)
+    {
+        getAudioView().getPositionInfo(pointerposition, info);
+    }
 
     // Find clip under pointer
     if (info.track)

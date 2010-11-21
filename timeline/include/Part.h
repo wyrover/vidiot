@@ -47,7 +47,8 @@ public:
     Cursor& getCursor();
     Drag& getDrag();
     Drop& getDrop();
-    SequenceView& getSequenceView();
+    VideoView& getVideoView();
+    AudioView& getAudioView();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS

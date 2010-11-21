@@ -22,7 +22,7 @@
 #include "Selection.h"
 #include "Track.h"
 #include "ViewMap.h"
-#include "SequenceView.h"
+#include "Sequence.h"
 
 namespace gui { namespace timeline {
 
@@ -149,7 +149,7 @@ void TrackView::updateBitmap()
 
 void TrackView::updateSize()
 {
-    mBitmap.Create(getSequenceView().requiredWidth(), mTrack->getHeight());
+    mBitmap.Create(getZoom().ptsToPixels(getSequence()->getNumberOfFrames()), mTrack->getHeight());
     mRedrawOnIdle = true;
 }
 
