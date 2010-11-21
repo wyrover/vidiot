@@ -36,11 +36,11 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     int requiredWidth();
-    int requiredAudioHeight();
+    int requiredHeight();
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
 
-    const wxBitmap& getAudio() const;
+    const wxBitmap& getBitmap() const;
 
 private:
 
@@ -67,8 +67,8 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void updateAudioSize();
-    void updateAudioBitmap();
+    void updateSize();
+    void updateBitmap();
 };
 
 }} // namespace

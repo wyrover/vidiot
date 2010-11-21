@@ -288,9 +288,9 @@ void Timeline::determineHeight()
 {
     int requiredHeight = Constants::sTimeScaleHeight;
     requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
-    requiredHeight += getVideoView().requiredVideoHeight();
+    requiredHeight += getVideoView().requiredHeight();
     requiredHeight += Constants::sAudioVideoDividerHeight;
-    requiredHeight += getAudioView().requiredAudioHeight();
+    requiredHeight += getAudioView().requiredHeight();
     requiredHeight += Constants::sMinimalGreyBelowAudioTracksHeight;
     mHeight = std::max(requiredHeight, GetClientSize().GetHeight());
 }
@@ -357,7 +357,7 @@ void Timeline::updateBitmap()
         }
     }
 
-    const wxBitmap& videotracks = getVideoView().getVideo();
+    const wxBitmap& videotracks = getVideoView().getBitmap();
     dc.DrawBitmap(videotracks,wxPoint(0,mDividerPosition - videotracks.GetHeight()));
 
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -369,7 +369,7 @@ void Timeline::updateBitmap()
     dc.SetPen(Constants::sAudioVideoDividerPen);
     dc.DrawRectangle(0,mDividerPosition,w,Constants::sAudioVideoDividerHeight);
 
-    const wxBitmap& audiotracks = getAudioView().getAudio();
+    const wxBitmap& audiotracks = getAudioView().getBitmap();
     dc.DrawBitmap(audiotracks,wxPoint(0,mDividerPosition + Constants::sAudioVideoDividerHeight));
 
     Refresh(false);

@@ -48,7 +48,7 @@ void VideoView::onVideoTrackUpdated( TrackUpdateEvent& event )
     LOG_INFO;
     getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     /** todo only redraw track */
-    updateVideoBitmap();
+    updateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,19 +65,19 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
         t->initTimeline(&getTimeline());
         t->Bind(TRACK_UPDATE_EVENT, &VideoView::onVideoTrackUpdated, this);
     }
-    updateVideoSize();
+    updateSize();
 }
 
 void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 {
-    updateVideoSize();
+    updateSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-const wxBitmap& VideoView::getVideo() const
+const wxBitmap& VideoView::getBitmap() const
 {
     return mVideo;
 }
@@ -95,7 +95,7 @@ int VideoView::requiredWidth()
         getTimeline().GetClientSize().GetWidth());                           // At least the widget size
 }
 
-int VideoView::requiredVideoHeight()
+int VideoView::requiredHeight()
 {
     int requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
@@ -107,7 +107,7 @@ int VideoView::requiredVideoHeight()
 
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
 {
-    int top = getTimeline().getDividerPosition() - getVideo().GetHeight();
+    int top = getTimeline().getDividerPosition() - getBitmap().GetHeight();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;
@@ -122,13 +122,13 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
     }
 }
 
-void VideoView::updateVideoSize()
+void VideoView::updateSize()
 {
-    mVideo.Create(requiredWidth(),requiredVideoHeight());
-    updateVideoBitmap();
+    mVideo.Create(requiredWidth(),requiredHeight());
+    updateBitmap();
 }
 
-void VideoView::updateVideoBitmap()
+void VideoView::updateBitmap()
 {
     wxMemoryDC dc(mVideo);
     int y = 0;
