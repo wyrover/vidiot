@@ -44,10 +44,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     const wxBitmap& getBitmap();
-
-    void setBeingDragged(bool beingdragged);
-    bool isBeingDragged();
-
     /** @return left position in pixels */
     boost::int64_t getLeftPosition() const;
     /** @return right position in pixels */

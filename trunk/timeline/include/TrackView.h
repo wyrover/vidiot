@@ -45,7 +45,7 @@ public:
     // for initialization purposes.
     const wxBitmap& getBitmap();
 
-    void drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask = boost::none);
+     void drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask = boost::none, bool drawDraggedOnly = false);
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -65,6 +65,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void OnClipUpdated( ClipUpdateEvent& event );
+
+
 
 private:
 

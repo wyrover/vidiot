@@ -16,8 +16,10 @@
 #include "Timeline.h"
 #include "AProjectViewNode.h"
 #include "UtilLogStl.h"
+#include "Drag.h"
 #include "Clip.h"
 #include "GuiMain.h"
+#include "Selection.h"
 #include "Track.h"
 #include "ViewMap.h"
 #include "SequenceView.h"
@@ -140,9 +142,8 @@ void TrackView::updateBitmap()
     dc.SetBrush(Constants::sBackgroundBrush);
     dc.SetPen(Constants::sBackgroundPen);
     dc.DrawRectangle(0,0,mBitmap.GetWidth(),mBitmap.GetHeight());
-
-    wxPoint pos(0,0);
-    drawClips(pos, dc);
+    wxPoint position(0,0);    
+    drawClips(position, dc);
     QueueEvent(new TrackUpdateEvent(this));
 }
 
@@ -152,30 +153,30 @@ void TrackView::updateSize()
     mRedrawOnIdle = true;
 }
 
-void TrackView::drawClips(wxPoint position, wxMemoryDC& dc, boost::optional<wxMemoryDC&> dcSelectedClipsMask)
+void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask, bool drawDraggedOnly)
 {
-    // if dcSelectedClipsMask holds, then we're drawing a 'drag image'. Otherwise, we're drawing the regular track bitmap.
-    bool draggedClipsOnly = dcSelectedClipsMask;
+    // if dcMask holds, then we're drawing a 'drag image'. Otherwise, we're drawing the regular track bitmap.
+    bool draggedClipsOnly = dcMask;
 
     wxPoint pos(position);
     BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
     {
-        ClipView* clip = getViewMap().getView(modelclip);
-        wxBitmap bitmap = clip->getBitmap();
+        wxBitmap bitmap = getViewMap().getView(modelclip)->getBitmap();
+        bool isBeingDragged = getDrag().isActive() && getSelection().isSelected(modelclip);
 
         if (draggedClipsOnly)
         {
             // Drawing the dragged clips
-            if (clip->isBeingDragged())
+            if (isBeingDragged)
             {
                 dc.DrawBitmap(bitmap,pos);
-                dcSelectedClipsMask->DrawRectangle(pos,bitmap.GetSize());
+                dcMask->DrawRectangle(pos,bitmap.GetSize());
             }
         }
         else
         {
             // Regular track drawing
-            if (!clip->isBeingDragged())
+            if (!isBeingDragged)
             {
                 dc.DrawBitmap(bitmap,pos);
             }
