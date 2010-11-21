@@ -36,11 +36,11 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     int requiredWidth();
-    int requiredVideoHeight();
+    int requiredHeight();
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
 
-    const wxBitmap& getVideo() const;
+    const wxBitmap& getBitmap() const;
 
 private:
 
@@ -67,8 +67,8 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void updateVideoSize();
-    void updateVideoBitmap();
+    void updateSize();
+    void updateBitmap();
 };
 
 }} // namespace

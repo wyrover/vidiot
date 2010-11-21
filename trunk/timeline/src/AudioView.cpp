@@ -48,7 +48,7 @@ void AudioView::onAudioTrackUpdated( TrackUpdateEvent& event )
     LOG_INFO;
     getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     /** todo only redraw track */
-    updateAudioBitmap();
+    updateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,19 +65,19 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
         t->initTimeline(&getTimeline());
         t->Bind(TRACK_UPDATE_EVENT, &AudioView::onAudioTrackUpdated, this);
     }
-    updateAudioSize();
+    updateSize();
 }
 
 void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 {
-    updateAudioSize();
+    updateSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-const wxBitmap& AudioView::getAudio() const
+const wxBitmap& AudioView::getBitmap() const
 {
     return mAudio;
 }
@@ -95,7 +95,7 @@ int AudioView::requiredWidth()
         getTimeline().GetClientSize().GetWidth());                           // At least the widget size
 }
 
-int AudioView::requiredAudioHeight()
+int AudioView::requiredHeight()
 {
     int requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
@@ -122,13 +122,13 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
     }
 }
 
-void AudioView::updateAudioSize()
+void AudioView::updateSize()
 {
-    mAudio.Create(requiredWidth(),requiredAudioHeight());
-    updateAudioBitmap();
+    mAudio.Create(requiredWidth(),requiredHeight());
+    updateBitmap();
 }
 
-void AudioView::updateAudioBitmap()
+void AudioView::updateBitmap()
 {
     wxMemoryDC dc(mAudio);
     int y = 0;
