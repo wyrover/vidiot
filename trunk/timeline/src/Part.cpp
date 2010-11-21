@@ -93,9 +93,14 @@ Drop& Part::getDrop()
     return getTimeline().getDrop();
 }
 
-SequenceView& Part::getSequenceView()
+VideoView& Part::getVideoView()
 {
-    return getTimeline().getSequenceView();
+    return getTimeline().getVideoView();
+}
+
+AudioView& Part::getAudioView()
+{
+    return getTimeline().getAudioView();
 }
 
 //////////////////////////////////////////////////////////////////////////

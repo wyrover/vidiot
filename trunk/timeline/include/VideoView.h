@@ -1,5 +1,5 @@
-#ifndef SEQUENCE_VIEW_H
-#define SEQUENCE_VIEW_H
+#ifndef VIDEO_VIEW_H
+#define VIDEO_VIEW_H
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
@@ -10,13 +10,12 @@
 
 namespace gui { namespace timeline {
 
-DECLARE_EVENT(VIDEO_UPDATE_EVENT, VideoUpdateEvent, SequenceView*);
-DECLARE_EVENT(AUDIO_UPDATE_EVENT, AudioUpdateEvent, SequenceView*);
+DECLARE_EVENT(VIDEO_UPDATE_EVENT, VideoUpdateEvent, VideoView*);
 
 class TrackUpdateEvent;
 struct PointerPositionInfo;
 
-class SequenceView
+class VideoView
     :   public wxEvtHandler
     ,   public Part
 {
@@ -26,9 +25,9 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    SequenceView();
+    VideoView();
     void init();
-    virtual ~SequenceView();
+    virtual ~VideoView();
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -38,12 +37,10 @@ public:
 
     int requiredWidth();
     int requiredVideoHeight();
-    int requiredAudioHeight();
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
 
     const wxBitmap& getVideo() const;
-    const wxBitmap& getAudio() const;
 
 private:
 
@@ -52,7 +49,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     void onVideoTrackUpdated( TrackUpdateEvent& event );
-    void onAudioTrackUpdated( TrackUpdateEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -60,26 +56,21 @@ private:
 
     void onVideoTracksAdded( model::EventAddVideoTracks& event );
     void onVideoTracksRemoved( model::EventRemoveVideoTracks& event );
-    void onAudioTracksAdded( model::EventAddAudioTracks& event );
-    void onAudioTracksRemoved( model::EventRemoveAudioTracks& event );
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
     wxBitmap mVideo;
-    wxBitmap mAudio;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     void updateVideoSize();
-    void updateAudioSize();
     void updateVideoBitmap();
-    void updateAudioBitmap();
 };
 
 }} // namespace
 
-#endif // SEQUENCE_VIEW_H
+#endif // VIDEO_VIEW_H
