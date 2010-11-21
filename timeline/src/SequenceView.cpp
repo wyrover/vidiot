@@ -197,14 +197,13 @@ void SequenceView::updateVideoBitmap()
 {
     wxMemoryDC dc(mVideo);
     int y = 0;
+    dc.SetBrush(Constants::sTrackDividerBrush);
+    dc.SetPen(Constants::sTrackDividerPen);
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks())
     {
-        dc.SetBrush(Constants::sTrackDividerBrush);
-        dc.SetPen(Constants::sTrackDividerPen);
-        dc.DrawRectangle(0,y,mVideo.GetWidth(),y + Constants::sTrackDividerHeight);
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), y + Constants::sTrackDividerHeight);
         y += Constants::sTrackDividerHeight;
-        wxBitmap b = getViewMap().getView(track)->getBitmap();
-        dc.DrawBitmap(b,wxPoint(0,y));
+        dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();
     }
     QueueEvent(new VideoUpdateEvent(this));
@@ -214,15 +213,13 @@ void SequenceView::updateAudioBitmap()
 {
     wxMemoryDC dc(mAudio);
     int y = 0;
-
+    dc.SetBrush(Constants::sTrackDividerBrush);
+    dc.SetPen(Constants::sTrackDividerPen);
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        wxBitmap b = getViewMap().getView(track)->getBitmap();
-        dc.DrawBitmap(b,wxPoint(0,y));
+        dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), 0, y, true);
         y += track->getHeight();
-        dc.SetBrush(Constants::sTrackDividerBrush);
-        dc.SetPen(Constants::sTrackDividerPen);
-        dc.DrawRectangle(0,y,mVideo.GetWidth(),y+Constants::sTrackDividerHeight);
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), y + Constants::sTrackDividerHeight);
         y += Constants::sTrackDividerHeight;
     }
     QueueEvent(new AudioUpdateEvent(this));

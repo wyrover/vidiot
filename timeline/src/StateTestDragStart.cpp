@@ -42,11 +42,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     static int tolerance = 2;
     if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
     {
-        getSelection().setDrag(true);
-
         getDrag().Start(evt.mPosition);
-
-        //outermost_context().timeline.beginDrag(evt.mPosition);
         return transit<Dragging>();
     }
     return discard_event();

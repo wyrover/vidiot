@@ -138,13 +138,13 @@ bool Selection::isSelected(model::ClipPtr clip) const
     return (mSelected.find(clip) != mSelected.end());
 }
 
-void Selection::setDrag(bool drag)
-{
-    BOOST_FOREACH(model::ClipPtr clip, mSelected)
-    {
-        getViewMap().getView(clip)->setBeingDragged(drag);
-    }
-}
+//void Selection::setDrag(bool drag)
+//{
+//    BOOST_FOREACH(model::ClipPtr clip, mSelected)
+//    {
+//        getViewMap().getView(clip)->setBeingDragged(drag);
+//    }
+//}
 
 void Selection::deleteClips()
 {

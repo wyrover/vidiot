@@ -39,7 +39,7 @@ boost::statechart::result Dragging::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
 
-    getSelection().setDrag(false);
+    //getSelection().setDrag(false);
 
     getDrag().Stop();
 

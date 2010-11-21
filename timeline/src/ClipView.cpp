@@ -70,19 +70,6 @@ const wxBitmap& ClipView::getBitmap()
 {
     return mBitmap;
 }
-
-void ClipView::setBeingDragged(bool beingdragged)
-{
-    mBeingDragged = beingdragged;
-    // Event is needed to trigger track redraw (without this clip)
-    QueueEvent(new ClipUpdateEvent(this));
-}
-
-bool ClipView::isBeingDragged()
-{
-    return mBeingDragged;
-}
-
 boost::int64_t ClipView::getLeftPosition() const
 {
     return getZoom().ptsToPixels(mClip->getLeftPts());
@@ -159,6 +146,5 @@ void ClipView::updateBitmap()
 
     QueueEvent(new ClipUpdateEvent(this));
 }
-
 
 }} // namespace

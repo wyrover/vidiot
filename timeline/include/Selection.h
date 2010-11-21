@@ -28,7 +28,7 @@ public:
 
     void update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
     bool isSelected(model::ClipPtr clip) const;
-    void setDrag(bool drag);
+    //void setDrag(bool drag);
 
     /**
     * Deletes all selected clips.

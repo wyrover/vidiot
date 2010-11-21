@@ -22,16 +22,19 @@ public:
 	Drag();
 	virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
 	virtual wxRect GetImageRect(const wxPoint& pos) const;
-    void setHotspot(wxPoint position);
-    wxPoint getHotspot() const { return mHotspot; };
     wxBitmap getDragBitmap();// const;
     void Start(wxPoint hotspot);
-    void MoveTo(wxPoint hotspot);
+    void MoveTo(wxPoint position);
     void Stop();
+    /** @return true if a drag operation with the currently selected clips is in effect. */
+    bool isActive() const;
+    virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
+    void draw(wxDC& dc);
 
 private:
     wxPoint mHotspot;
     wxBitmap mBitmap;
+    bool mActive;
 };
 
 }} // namespace

@@ -59,8 +59,8 @@ wxDragResult Drop::OnData (wxCoord x, wxCoord y, wxDragResult def)
 wxDragResult Drop::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
 {
 //    mDragShape->SetPosition(wxPoint(x,y));
-    getTimeline().Refresh(); /** /todo use rectangle */
-    getTimeline().Update();
+  /*  getTimeline().Refresh(); /** /todo use rectangle */
+   /* getTimeline().Update();*/
 //    mTimeLine->Update();
     return def;
 
@@ -132,9 +132,9 @@ void Drop::updateDropArea(wxPoint p)
 
     if (newDropArea != mDropArea)
     {
+        getTimeline().RefreshRect(mDropArea);
+        getTimeline().RefreshRect(newDropArea);
         mDropArea = newDropArea;
-        getTimeline().Refresh(false);
-        getTimeline().Update();
     }
 }
 
