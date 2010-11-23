@@ -5,7 +5,7 @@
 #include <wx/event.h>
 #include "ModelPtr.h"
 #include "GuiPtr.h"
-#include "Part.h"
+#include "View.h"
 #include "UtilEvent.h"
 
 namespace gui { namespace timeline {
@@ -16,8 +16,8 @@ class TrackUpdateEvent;
 struct PointerPositionInfo;
 
 class AudioView
-    :   public wxEvtHandler
-    ,   public Part
+    :   public Part
+    ,   public wxEvtHandler
 {
 public:
 
@@ -35,7 +35,15 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    void updateSize();
+    /**
+    * Overridden from View()
+    **/
     int requiredWidth();
+
+    /**
+    * Overridden from View()
+    **/
     int requiredHeight();
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
@@ -61,14 +69,16 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxBitmap mAudio;
+    wxBitmap mBitmap;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void updateSize();
-    void updateBitmap();
+    /**
+    * Overridden from View()
+    **/
+    void makeBitmap();
 };
 
 }} // namespace

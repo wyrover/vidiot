@@ -58,6 +58,7 @@ Timeline::Timeline(model::SequencePtr sequence)
 ,   mWidth(0)
 ,   mHeight(0)
 ,   mDividerPosition(0)
+,   mRedrawOnIdle(false)
 ,   mSequence(sequence)
 {
     LOG_INFO;
@@ -98,6 +99,9 @@ void Timeline::init(wxWindow *parent)
     mAudioView->initTimeline(this);
     mMenuHandler->initTimeline(this); // Init as last since it depends on other parts
 
+    mRedrawOnIdle = true;
+
+    Bind(wxEVT_IDLE,                &Timeline::onIdle,               this);
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
@@ -106,6 +110,7 @@ void Timeline::init(wxWindow *parent)
     getAudioView().Bind(AUDIO_UPDATE_EVENT, &Timeline::onAudioUpdated, this);
 
     updateSize();
+
     // From here on, processing continues with size events after laying out this widget.
 }
 
@@ -182,6 +187,21 @@ AudioView& Timeline::getAudioView()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+void Timeline::onIdle(wxIdleEvent& event)
+{
+    if (mRedrawOnIdle)
+    {
+        // This is done to avoid using intermediary states for iterating though
+        // the model. For instance, when replacing clips with other clips, first
+        // a unregisterView event and then a registerView event is received. However, while 
+        // receiving the unregisterView event, the actual adding may already have been
+        // done. Then the view for the added clips has not yet been initialized.
+        updateBitmap();
+        mRedrawOnIdle = false;
+    }
+    event.Skip();
+}
+
 void Timeline::onSize(wxSizeEvent& event)
 {
     determineHeight();
@@ -225,17 +245,25 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
     getDrag().draw(dc);
     getDrop().draw(dc);
     getCursor().draw(dc);
+}
 
+//////////////////////////////////////////////////////////////////////////
+// PROPAGATE UPDATES UPWARD
+//////////////////////////////////////////////////////////////////////////
+
+void Timeline::onViewUpdated( ViewUpdateEvent& event )
+{
+    mRedrawOnIdle = true;
 }
 
 void Timeline::onVideoUpdated( VideoUpdateEvent& event )
 {
-    updateBitmap();
+    mRedrawOnIdle = true;
 }
 
 void Timeline::onAudioUpdated( AudioUpdateEvent& event )
 {
-    updateBitmap();
+    mRedrawOnIdle = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -303,7 +331,7 @@ void Timeline::updateSize()
     SetVirtualSize(mWidth,mHeight);
     mBitmap.Create(mWidth,mHeight);
 
-    updateBitmap();
+    mRedrawOnIdle = true;
 }
 
 void Timeline::updateBitmap()
