@@ -19,6 +19,7 @@ namespace gui { namespace timeline {
 
 class VideoUpdateEvent;
 class AudioUpdateEvent;
+class ViewUpdateEvent;
 
 class Timeline
 :   public wxScrolledWindow
@@ -62,9 +63,21 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onIdle(wxIdleEvent& event);
     void onSize(wxSizeEvent& event);
     void onEraseBackground(wxEraseEvent& event);
     void onPaint( wxPaintEvent &event );
+
+    //////////////////////////////////////////////////////////////////////////
+    // PROPAGATE UPDATES UPWARD
+    //////////////////////////////////////////////////////////////////////////
+
+    /**
+    * Should be bound (using ::Bind) to all subviews that this view uses
+    * to draw its bitmap. This is done in the View constructor (where
+    * the child register events for the parent).
+    **/
+    void onViewUpdated( ViewUpdateEvent& event );
 
     void onVideoUpdated( VideoUpdateEvent& event );
     void onAudioUpdated( AudioUpdateEvent& event );
@@ -123,6 +136,7 @@ private:
     long mHeight;
     /** Y-position of audio-video divider */
     int mDividerPosition;
+    bool mRedrawOnIdle;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

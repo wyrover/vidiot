@@ -88,16 +88,16 @@ model::TrackPtr TrackView::getTrack() const
 
 void TrackView::OnIdle(wxIdleEvent& event)
 {
-    if (mRedrawOnIdle)
-    {
-        // This is done to avoid using intermediary states for iterating though
-        // the model. For instance, when replacing clips with other clips, first
-        // a unregisterView event and then a registerView event is received. However, while 
-        // receiving the unregisterView event, the actual adding may already have been
-        // done. Then the view for the added clips has not yet been initialized.
-        updateBitmap();
-        mRedrawOnIdle = false;
-    }
+    //if (mRedrawOnIdle)
+    //{
+    //    // This is done to avoid using intermediary states for iterating though
+    //    // the model. For instance, when replacing clips with other clips, first
+    //    // a unregisterView event and then a registerView event is received. However, while 
+    //    // receiving the unregisterView event, the actual adding may already have been
+    //    // done. Then the view for the added clips has not yet been initialized.
+    //    updateBitmap();
+    //    mRedrawOnIdle = false;
+    //}
     event.Skip();
 }
 

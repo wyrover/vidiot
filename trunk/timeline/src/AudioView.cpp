@@ -48,7 +48,7 @@ void AudioView::onAudioTrackUpdated( TrackUpdateEvent& event )
     LOG_INFO;
     getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     /** todo only redraw track */
-    updateBitmap();
+    makeBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,13 +79,19 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 
 const wxBitmap& AudioView::getBitmap() const
 {
-    return mAudio;
+    return mBitmap;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+void AudioView::updateSize()
+{
+    mBitmap.Create(requiredWidth(),requiredHeight());
+    // todo regions
+    makeBitmap();
+}
 int AudioView::requiredWidth()
 {
     return
@@ -122,15 +128,9 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
     }
 }
 
-void AudioView::updateSize()
+void AudioView::makeBitmap()
 {
-    mAudio.Create(requiredWidth(),requiredHeight());
-    updateBitmap();
-}
-
-void AudioView::updateBitmap()
-{
-    wxMemoryDC dc(mAudio);
+    wxMemoryDC dc(mBitmap);
     int y = 0;
     dc.SetBrush(Constants::sTrackDividerBrush);
     dc.SetPen(Constants::sTrackDividerPen);
