@@ -18,7 +18,7 @@ namespace gui { namespace timeline {
 class EventTimelineCursorMoved;
 
 class Intervals
-    :   public wxEvtHandler
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public Part
 {
 public:

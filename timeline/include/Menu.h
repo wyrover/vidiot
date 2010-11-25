@@ -14,7 +14,7 @@ namespace gui { namespace timeline {
 * handling events from the menu.
 **/
 class MenuHandler
-    :   public wxEvtHandler
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public Part
 {
 public:

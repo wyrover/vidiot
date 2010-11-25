@@ -83,8 +83,8 @@ void Timeline::init(wxWindow *parent)
     mCursor = new Cursor();
     mDrag = new Drag();
     mDrop = new Drop();
-    mVideoView = new VideoView();
-    mAudioView = new AudioView();
+    mVideoView = new VideoView(this);
+    mAudioView = new AudioView(this);
     mMouseState = new state::Machine(*this); /** Must be AFTER mViewMap */
 
     mZoom->initTimeline(this);
@@ -105,9 +105,6 @@ void Timeline::init(wxWindow *parent)
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
-
-    getVideoView().Bind(VIDEO_UPDATE_EVENT, &Timeline::onVideoUpdated, this);
-    getAudioView().Bind(AUDIO_UPDATE_EVENT, &Timeline::onAudioUpdated, this);
 
     updateSize();
 
@@ -252,16 +249,6 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 //////////////////////////////////////////////////////////////////////////
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
-{
-    mRedrawOnIdle = true;
-}
-
-void Timeline::onVideoUpdated( VideoUpdateEvent& event )
-{
-    mRedrawOnIdle = true;
-}
-
-void Timeline::onAudioUpdated( AudioUpdateEvent& event )
 {
     mRedrawOnIdle = true;
 }

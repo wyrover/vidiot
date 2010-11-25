@@ -7,17 +7,15 @@
 #include "GuiPtr.h"
 #include "Part.h"
 #include "UtilEvent.h"
+#include "View.h"
 
 namespace gui { namespace timeline {
-
-DECLARE_EVENT(VIDEO_UPDATE_EVENT, VideoUpdateEvent, VideoView*);
 
 class TrackUpdateEvent;
 struct PointerPositionInfo;
 
 class VideoView
-    :   public wxEvtHandler
-    ,   public Part
+    :   public View
 {
 public:
 
@@ -25,7 +23,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    VideoView();
+    VideoView(Timeline* timeline);
     void init();
     virtual ~VideoView();
 
@@ -39,8 +37,6 @@ public:
     int requiredHeight();
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
-
-    const wxBitmap& getBitmap() const;
 
 private:
 
@@ -61,14 +57,14 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxBitmap mVideo;
-
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void updateSize();
-    void updateBitmap();
+    /**
+    * Overridden from View()
+    **/
+    void draw(wxBitmap& bitmap);
 };
 
 }} // namespace

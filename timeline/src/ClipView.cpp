@@ -18,23 +18,18 @@
 #include "Timeline.h"
 #include "Selection.h"
 #include "ViewMap.h"
+#include "Track.h"
 
 namespace gui { namespace timeline {
-
-DEFINE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, ClipView*);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-ClipView::ClipView(TrackView* track,
-                                 model::ClipPtr clip)
-:   wxWindow(static_cast<wxWindow*>(track),wxID_ANY)
+ClipView::ClipView(model::ClipPtr clip, View* parent)
+:   View(parent)
 ,   mClip(clip)
 ,   mThumbnail()
-,   mWidth(0)
-,   mBitmap()
-,   mBeingDragged(false)
 ,   mRect(0,0,0,0)
 {
     ASSERT(mClip);
@@ -43,9 +38,7 @@ ClipView::ClipView(TrackView* track,
 void ClipView::init()
 {
     getViewMap().registerView(mClip,this);
-    updateSize(); // Also creates bitmap
-
-    Hide();
+    updateThumbnail();
 }
 
 ClipView::~ClipView()
@@ -66,10 +59,6 @@ model::ClipPtr ClipView::getClip()
 //  GET & SET
 //////////////////////////////////////////////////////////////////////////
 
-const wxBitmap& ClipView::getBitmap()
-{
-    return mBitmap;
-}
 boost::int64_t ClipView::getLeftPosition() const
 {
     return getZoom().ptsToPixels(mClip->getLeftPts());
@@ -84,15 +73,18 @@ void ClipView::show(wxRect rect)
     mRect.width = rect.width;
     mRect.x = rect.x;
     mRect.y = 4;
-    mRect.height = mBitmap.GetHeight() - 8; 
-    updateBitmap();
+    mRect.height = requiredHeight() - 8; 
+    invalidateBitmap();;
 }
 
-void ClipView::updateSize()
+int ClipView::requiredWidth()
 {
-    mWidth = getRightPosition() - getLeftPosition();
-    mBitmap.Create(mWidth,getViewMap().getView(mClip->getTrack())->getBitmap().GetHeight());
-    updateThumbnail();  
+    return getRightPosition() - getLeftPosition();
+}
+
+int ClipView::requiredHeight()
+{
+    return mClip->getTrack()->getHeight();
 }
 
 void ClipView::updateThumbnail()
@@ -101,22 +93,23 @@ void ClipView::updateThumbnail()
     if (videoclip)
     {
         mClip->moveTo(0);
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(mWidth - 2 * Constants::sClipBorderSize, mBitmap.GetHeight() - 2 * Constants::sClipBorderSize, false);
+        model::VideoFramePtr videoFrame = videoclip->getNextVideo(requiredWidth() - 2 * Constants::sClipBorderSize, requiredHeight() - 2 * Constants::sClipBorderSize, false);
         mThumbnail.reset(new wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
         mClip->moveTo(0);
     }
-    updateBitmap();
+    invalidateBitmap();
 }
 
-void ClipView::updateBitmap()
+
+void ClipView::draw(wxBitmap& bitmap)
 {
-    wxMemoryDC dc(mBitmap);
+    wxMemoryDC dc(bitmap);
 
     if (mClip->isA<model::EmptyClip>())
     {
         dc.SetBrush(Constants::sBackgroundBrush);
         dc.SetPen(Constants::sBackgroundPen);
-        dc.DrawRectangle(0,0,mWidth,mBitmap.GetHeight());
+        dc.DrawRectangle(0,0,requiredWidth(),requiredHeight());
     }
     else
     {
@@ -130,7 +123,7 @@ void ClipView::updateBitmap()
             dc.SetBrush(Constants::sClipBrush);
             dc.SetPen(Constants::sClipPen);
         }
-        dc.DrawRectangle(0,0,mWidth,mBitmap.GetHeight());
+        dc.DrawRectangle(0,0,requiredWidth(),requiredHeight());
         if (mThumbnail)
         {
             dc.DrawBitmap(*mThumbnail,wxPoint(Constants::sClipBorderSize,Constants::sClipBorderSize));
@@ -143,8 +136,6 @@ void ClipView::updateBitmap()
         dc.SetPen(*wxGREEN_PEN);
         dc.DrawRectangle(mRect);
     }
-
-    QueueEvent(new ClipUpdateEvent(this));
 }
 
 }} // namespace

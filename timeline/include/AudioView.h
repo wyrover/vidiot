@@ -16,8 +16,7 @@ class TrackUpdateEvent;
 struct PointerPositionInfo;
 
 class AudioView
-    :   public Part
-    ,   public wxEvtHandler
+    :   public View
 {
 public:
 
@@ -25,7 +24,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    AudioView();
+    AudioView(Timeline* timeline);
     void init();
     virtual ~AudioView();
 
@@ -35,7 +34,6 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void updateSize();
     /**
     * Overridden from View()
     **/
@@ -48,9 +46,7 @@ public:
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
 
-    const wxBitmap& getBitmap() const;
-
-private:
+ private:
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -69,16 +65,15 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxBitmap mBitmap;
-
-    //////////////////////////////////////////////////////////////////////////
+     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     /**
     * Overridden from View()
     **/
-    void makeBitmap();
+    void draw(wxBitmap& bitmap);
+
 };
 
 }} // namespace

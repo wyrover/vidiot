@@ -166,7 +166,7 @@ void GuiMain::OnUnhandledException()
 
 void GuiMain::OnFatalException()
 {
-    LOG_ERROR;
+    LOG_ERROR << std::endl;
     GuiDebugReport::generate(ReportFatalException);
 }
 

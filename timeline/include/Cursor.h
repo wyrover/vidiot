@@ -9,8 +9,8 @@ namespace gui { class PlaybackPositionEvent; }
 namespace gui { namespace timeline {
 
 class Cursor
-:   public Part
-,   public wxEvtHandler
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    ,   public Part
 {
 public:
 

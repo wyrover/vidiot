@@ -15,18 +15,18 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(AUDIO_UPDATE_EVENT, AudioUpdateEvent, AudioView*);
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-AudioView::AudioView()
+AudioView::AudioView(Timeline* timeline)
+:   View(timeline)
 {
 }
 
 void AudioView::init()
 {
+    View::init();
 
     model::TrackChange audioTracks(getSequence()->getAudioTracks());
     onAudioTracksAdded(model::EventAddAudioTracks(audioTracks));
@@ -48,7 +48,7 @@ void AudioView::onAudioTrackUpdated( TrackUpdateEvent& event )
     LOG_INFO;
     getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     /** todo only redraw track */
-    makeBitmap();
+    invalidateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -61,37 +61,25 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
 {
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
     {
-        TrackView* t = new TrackView(track);
+        TrackView* t = new TrackView(track,this);
         t->initTimeline(&getTimeline());
-        t->Bind(TRACK_UPDATE_EVENT, &AudioView::onAudioTrackUpdated, this);
     }
-    updateSize();
+    invalidateBitmap();
 }
 
 void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 {
-    updateSize();
+    invalidateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-const wxBitmap& AudioView::getBitmap() const
-{
-    return mBitmap;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void AudioView::updateSize()
-{
-    mBitmap.Create(requiredWidth(),requiredHeight());
-    // todo regions
-    makeBitmap();
-}
 int AudioView::requiredWidth()
 {
     return
@@ -128,9 +116,9 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
     }
 }
 
-void AudioView::makeBitmap()
+void AudioView::draw(wxBitmap& bitmap)
 {
-    wxMemoryDC dc(mBitmap);
+    wxMemoryDC dc(bitmap);
     int y = 0;
     dc.SetBrush(Constants::sTrackDividerBrush);
     dc.SetPen(Constants::sTrackDividerPen);
@@ -141,7 +129,6 @@ void AudioView::makeBitmap()
         dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), y + Constants::sTrackDividerHeight);
         y += Constants::sTrackDividerHeight;
     }
-    QueueEvent(new AudioUpdateEvent(this));
 }
 
 }} // namespace

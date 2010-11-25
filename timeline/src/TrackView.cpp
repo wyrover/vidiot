@@ -26,55 +26,32 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, TrackView*);
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-TrackView::TrackView(model::TrackPtr track)
-:   wxWindow()
+TrackView::TrackView(model::TrackPtr track, View* parent)
+:   View(parent)
 ,   mTrack(track)
-,   mBitmap()
-,   mRedrawOnIdle(false)
 {
     ASSERT(mTrack); // Must be initialized
 }
 
 void TrackView::init()
 {
-    Create(&getTimeline(), wxID_ANY);
-
     getViewMap().registerView(mTrack,this);
-    mBitmap.Create(getTimeline().getWidth(),mTrack->getHeight());
 
     model::MoveParameter m;
     m.addClips = mTrack->getClips();
     OnClipsAdded(model::EventAddClips(m));
 
-    mRedrawOnIdle = true;
-
-    Bind(wxEVT_IDLE, &TrackView::OnIdle, this);
-
     mTrack->Bind(model::EVENT_ADD_CLIPS,     &TrackView::OnClipsAdded,    this);
     mTrack->Bind(model::EVENT_REMOVE_CLIPS,  &TrackView::OnClipsRemoved,  this);
-
-    Hide(); // Otherwise a default widget is painted in the topleft corner of the timeline
 }
 
 TrackView::~TrackView()
 {
     getViewMap().unregisterView(mTrack);
-}
-
-int TrackView::getClipHeight() const
-{
-    return mTrack->getHeight();
-}
-
-const wxBitmap& TrackView::getBitmap()
-{
-    return mBitmap;
 }
 
 model::TrackPtr TrackView::getTrack() const
@@ -86,21 +63,6 @@ model::TrackPtr TrackView::getTrack() const
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::OnIdle(wxIdleEvent& event)
-{
-    //if (mRedrawOnIdle)
-    //{
-    //    // This is done to avoid using intermediary states for iterating though
-    //    // the model. For instance, when replacing clips with other clips, first
-    //    // a unregisterView event and then a registerView event is received. However, while 
-    //    // receiving the unregisterView event, the actual adding may already have been
-    //    // done. Then the view for the added clips has not yet been initialized.
-    //    updateBitmap();
-    //    mRedrawOnIdle = false;
-    //}
-    event.Skip();
-}
-
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -109,48 +71,46 @@ void TrackView::OnClipsAdded( model::EventAddClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
-        ClipView* p = new ClipView(this,clip);
+        ClipView* p = new ClipView(clip,this);
         p->initTimeline(&getTimeline());
-        p->Bind(CLIP_UPDATE_EVENT, &TrackView::OnClipUpdated, this); // After init to avoid initial events (since updateBitmap below redraws the entire bitmap)
     }
-    updateSize();
+    invalidateBitmap();
 }
 
 void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
     {
-        getViewMap().getView(clip)->Unbind(CLIP_UPDATE_EVENT, &TrackView::OnClipUpdated, this);
-        getViewMap().getView(clip)->Destroy();
+// @todo cleanup:        getViewMap().getView(clip)->Destroy();
     }
-    updateSize();
+    invalidateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // DRAWING EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::OnClipUpdated( ClipUpdateEvent& event )
+int TrackView::requiredWidth()
 {
-    /** todo only redraw clip */
-    mRedrawOnIdle = true;
+    return getZoom().ptsToPixels(getSequence()->getNumberOfFrames());
 }
 
-void TrackView::updateBitmap()
+int TrackView::requiredHeight()
 {
-    wxMemoryDC dc(mBitmap);
+    return mTrack->getHeight();
+}
+
+void TrackView::draw(wxBitmap& bitmap)
+{
+    wxMemoryDC dc(bitmap);
     dc.SetBrush(Constants::sBackgroundBrush);
     dc.SetPen(Constants::sBackgroundPen);
-    dc.DrawRectangle(0,0,mBitmap.GetWidth(),mBitmap.GetHeight());
+    dc.DrawRectangle(0,0,requiredWidth(),requiredHeight());
     wxPoint position(0,0);    
     drawClips(position, dc);
-    QueueEvent(new TrackUpdateEvent(this));
-}
-
-void TrackView::updateSize()
-{
-    mBitmap.Create(getZoom().ptsToPixels(getSequence()->getNumberOfFrames()), mTrack->getHeight());
-    mRedrawOnIdle = true;
+    dc.SetBrush(*wxWHITE_BRUSH);
+    dc.SetPen(*wxWHITE_PEN);
+    dc.DrawRectangle(wxPoint(10,10),wxSize(10,10));
 }
 
 void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask, bool drawDraggedOnly)

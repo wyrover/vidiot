@@ -59,7 +59,7 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
         mSelected.clear();
         BOOST_FOREACH( model::ClipPtr c, old )
         {
-            getViewMap().getView(c)->updateBitmap();
+            getViewMap().getView(c)->invalidateBitmap();
         }
     }
 
@@ -138,14 +138,6 @@ bool Selection::isSelected(model::ClipPtr clip) const
     return (mSelected.find(clip) != mSelected.end());
 }
 
-//void Selection::setDrag(bool drag)
-//{
-//    BOOST_FOREACH(model::ClipPtr clip, mSelected)
-//    {
-//        getViewMap().getView(clip)->setBeingDragged(drag);
-//    }
-//}
-
 void Selection::deleteClips()
 {
     model::MoveParameters moves;
@@ -178,7 +170,7 @@ void Selection::selectClip(model::ClipPtr clip, bool selected)
     {
         mSelected.erase(clip);
     }
-    getViewMap().getView(clip)->updateBitmap();
+    getViewMap().getView(clip)->invalidateBitmap();
 }
 
 void Selection::deleteFromTrack(model::MoveParameters& moves, model::Tracks tracks)
