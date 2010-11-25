@@ -85,8 +85,8 @@ DECLARE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
 DECLARE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);
 
 class Track
-    :   public IControl
-    ,   public wxEvtHandler
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    ,   public IControl
     ,   public boost::enable_shared_from_this<Track>
 {
 public:

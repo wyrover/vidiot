@@ -21,23 +21,11 @@ DEFINE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-View::View()
-:   mParent(0)
+View::View(IView* parent)
+:   mBitmapValid(false)
 {
-}
-
-View::View(View* parent)
-:   mParent(parent)
-{
-    Bind(VIEW_UPDATE_EVENT, &View::onViewUpdated, parent);
-}
-
-void View::init()
-{
-    if (!mParent)
-    {
-        Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, &getTimeline());
-    }
+    ASSERT(parent);
+    Bind(VIEW_UPDATE_EVENT, &IView::onViewUpdated, parent);
 }
 
 View::~View()
@@ -64,7 +52,9 @@ const wxBitmap& View::getBitmap()
     {
         mBitmap.Create(requiredWidth(),requiredHeight());
         draw(mBitmap);
+        mBitmapValid = true;
     }
+    ASSERT(mBitmapValid && mBitmap.IsOk());
     return mBitmap;
 }
 

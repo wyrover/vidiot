@@ -63,11 +63,11 @@ DECLARE_EVENT(EVENT_ADD_AUDIO_TRACK,      EventAddAudioTracks,      TrackChange)
 DECLARE_EVENT(EVENT_REMOVE_AUDIO_TRACK,   EventRemoveAudioTracks,   TrackChange);
 
 class Sequence
-    :   public IControl
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    ,   public IControl
     ,   public IVideo
     ,   public IAudio
     ,   public AProjectViewNode
-    ,   public wxEvtHandler
 {
 public:
 

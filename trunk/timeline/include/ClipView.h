@@ -8,16 +8,12 @@
 #include "AProjectViewNode.h"
 #include "Clip.h"
 #include "GuiPtr.h"
-#include "UtilEvent.h"
-#include "Part.h"
+#include "View.h"
 
 namespace gui { namespace timeline {
 
-DECLARE_EVENT(CLIP_UPDATE_EVENT, ClipUpdateEvent, ClipView*);
-
 class ClipView
-    :   public wxWindow
-    ,   public Part
+    :   public View
 {
 public:
 
@@ -25,9 +21,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    ClipView(
-        TrackView* track,
-        model::ClipPtr clip);
+    ClipView(model::ClipPtr clip, View* parent);
 
     void init();
 
@@ -43,31 +37,36 @@ public:
     //  GET & SET
     //////////////////////////////////////////////////////////////////////////
 
-    const wxBitmap& getBitmap();
     /** @return left position in pixels */
     boost::int64_t getLeftPosition() const;
     /** @return right position in pixels */
     boost::int64_t getRightPosition() const;
 
+    int requiredWidth();
+    int requiredHeight();
 
     // tmp for showing intersect with selected regions
     void show(wxRect rect);
 
-    void updateBitmap();
-
 private:
 
-    void updateSize();
     void updateThumbnail();
 
-    bool mBeingDragged;
-    int mWidth;
     model::ClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
-    wxBitmap mBitmap;
 
     // tmp for showing intersect with selected regions
     wxRect mRect;
+    
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+        /**
+    * Overridden from View()
+    **/
+    void draw(wxBitmap& bitmap);
+
 };
 
 }} // namespace

@@ -14,15 +14,13 @@
 #include "GuiPtr.h"
 #include "UtilEnum.h"
 #include "UtilEvent.h"
+#include "View.h"
 
 namespace gui { namespace timeline {
 
-class VideoUpdateEvent;
-class AudioUpdateEvent;
-class ViewUpdateEvent;
-
 class Timeline
 :   public wxScrolledWindow
+,   public IView
 {
 public:
 
@@ -75,12 +73,9 @@ public:
     /**
     * Should be bound (using ::Bind) to all subviews that this view uses
     * to draw its bitmap. This is done in the View constructor (where
-    * the child register events for the parent).
+    * the child registers events for the parent).
     **/
     void onViewUpdated( ViewUpdateEvent& event );
-
-    void onVideoUpdated( VideoUpdateEvent& event );
-    void onAudioUpdated( AudioUpdateEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS

@@ -13,17 +13,12 @@
 #include "ModelPtr.h"
 #include "GuiPtr.h"
 #include "UtilEvent.h"
-#include "Part.h"
+#include "View.h"
 
 namespace gui { namespace timeline {
 
-class ClipUpdateEvent;
-
-DECLARE_EVENT(TRACK_UPDATE_EVENT, TrackUpdateEvent, TrackView*);
-
 class TrackView
-    :   public wxWindow
-    ,   public Part
+    :   public View
 {
 public:
 
@@ -31,27 +26,26 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    TrackView(model::TrackPtr track);
+    TrackView(model::TrackPtr track, View* parent);
 
     void init();
 
 	virtual ~TrackView();
 
-    int getClipHeight() const;
-
     model::TrackPtr getTrack() const;
 
-    // todo hide this as the getheight should not be used on the bitmap but on the track
-    // for initialization purposes.
-    const wxBitmap& getBitmap();
-
      void drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask = boost::none, bool drawDraggedOnly = false);
+
+     //////////////////////////////////////////////////////////////////////////
+     // GET/SET
+     //////////////////////////////////////////////////////////////////////////
+
+     int requiredWidth();
+     int requiredHeight();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
-
-    void OnIdle(wxIdleEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -60,23 +54,18 @@ public:
     void OnClipsAdded( model::EventAddClips& event );
     void OnClipsRemoved( model::EventRemoveClips& event );
 
-    //////////////////////////////////////////////////////////////////////////
-    // DRAWING EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void OnClipUpdated( ClipUpdateEvent& event );
-
-
-
 private:
 
-    void updateBitmap();
-    void updateSize();
-
     model::TrackPtr mTrack;
-    wxBitmap mBitmap;
 
-    bool mRedrawOnIdle;
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+        /**
+    * Overridden from View()
+    **/
+    void draw(wxBitmap& bitmap);
 };
 
 }} // namespace

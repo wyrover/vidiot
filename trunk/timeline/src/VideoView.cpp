@@ -15,18 +15,18 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(VIDEO_UPDATE_EVENT, VideoUpdateEvent, VideoView*);
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-VideoView::VideoView()
+VideoView::VideoView(Timeline* timeline)
+:   View(timeline)
 {
 }
 
 void VideoView::init()
 {
+    View::init();
 
     model::TrackChange videoTracks(getSequence()->getVideoTracks());
     onVideoTracksAdded(model::EventAddVideoTracks(videoTracks));
@@ -48,7 +48,7 @@ void VideoView::onVideoTrackUpdated( TrackUpdateEvent& event )
     LOG_INFO;
     getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     /** todo only redraw track */
-    updateBitmap();
+    invalidateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -61,26 +61,20 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
 {
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
     {
-        TrackView* t = new TrackView(track);
+        TrackView* t = new TrackView(track,this);
         t->initTimeline(&getTimeline());
-        t->Bind(TRACK_UPDATE_EVENT, &VideoView::onVideoTrackUpdated, this);
     }
-    updateSize();
+    invalidateBitmap();
 }
 
 void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 {
-    updateSize();
+    invalidateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
-
-const wxBitmap& VideoView::getBitmap() const
-{
-    return mVideo;
-}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
@@ -122,15 +116,9 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
     }
 }
 
-void VideoView::updateSize()
+void VideoView::draw(wxBitmap& bitmap)
 {
-    mVideo.Create(requiredWidth(),requiredHeight());
-    updateBitmap();
-}
-
-void VideoView::updateBitmap()
-{
-    wxMemoryDC dc(mVideo);
+    wxMemoryDC dc(bitmap);
     int y = 0;
     dc.SetBrush(Constants::sTrackDividerBrush);
     dc.SetPen(Constants::sTrackDividerPen);
@@ -141,7 +129,6 @@ void VideoView::updateBitmap()
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();
     }
-    QueueEvent(new VideoUpdateEvent(this));
 }
 
 }} // namespace
