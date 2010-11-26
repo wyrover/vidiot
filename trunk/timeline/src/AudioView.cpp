@@ -22,12 +22,6 @@ namespace gui { namespace timeline {
 AudioView::AudioView(Timeline* timeline)
 :   View(timeline)
 {
-}
-
-void AudioView::init()
-{
-    View::init();
-
     model::TrackChange audioTracks(getSequence()->getAudioTracks());
     onAudioTracksAdded(model::EventAddAudioTracks(audioTracks));
 
@@ -43,13 +37,14 @@ AudioView::~AudioView()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void AudioView::onAudioTrackUpdated( TrackUpdateEvent& event )
-{
-    LOG_INFO;
-    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
-    /** todo only redraw track */
-    invalidateBitmap();
-}
+/** @todo reintroduce this cursor reset */
+//void AudioView::onAudioTrackUpdated( TrackUpdateEvent& event )
+//{
+//    LOG_INFO;
+//    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
+//    /** todo only redraw track */
+//    invalidateBitmap();
+//}
 
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
@@ -62,7 +57,6 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
     {
         TrackView* t = new TrackView(track,this);
-        t->initTimeline(&getTimeline());
     }
     invalidateBitmap();
 }

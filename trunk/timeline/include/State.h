@@ -6,7 +6,6 @@
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include "UtilLogWxwidgets.h"
-#include "GuiPtr.h"
 #include "Part.h"
 
 namespace gui { namespace timeline { namespace state {

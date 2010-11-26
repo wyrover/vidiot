@@ -21,11 +21,13 @@ DEFINE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-View::View(IView* parent)
-:   mBitmapValid(false)
+View::View(Part* parent)
+:   wxEvtHandler()
+,   Part(&(parent->getTimeline()))
+,   mBitmapValid(false)
 {
     ASSERT(parent);
-    Bind(VIEW_UPDATE_EVENT, &IView::onViewUpdated, parent);
+    Bind(VIEW_UPDATE_EVENT, &Part::onViewUpdated, parent);
 }
 
 View::~View()

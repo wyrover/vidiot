@@ -10,9 +10,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
-#include "ModelPtr.h"
-#include "GuiPtr.h"
-#include "UtilEvent.h"
 #include "View.h"
 
 namespace gui { namespace timeline {
@@ -27,9 +24,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     TrackView(model::TrackPtr track, View* parent);
-
-    void init();
-
 	virtual ~TrackView();
 
     model::TrackPtr getTrack() const;

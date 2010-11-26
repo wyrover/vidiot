@@ -18,8 +18,9 @@ static rational sDefaultZoom(1,5);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Zoom::Zoom()
-:   mZoom(sDefaultZoom)
+Zoom::Zoom(Timeline* timeline)
+:   Part(timeline)
+,   mZoom(sDefaultZoom)
 {
 }
 

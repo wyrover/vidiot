@@ -9,8 +9,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
-#include "ModelPtr.h"
-#include "GuiPtr.h"
 #include "Part.h"
 
 namespace gui { namespace timeline {
@@ -27,8 +25,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    Intervals();
-    virtual void init();
+    Intervals(Timeline* timeline);
     virtual ~Intervals();
 
     //////////////////////////////////////////////////////////////////////////
@@ -112,6 +109,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::Intervals, 1)
-BOOST_CLASS_EXPORT(gui::timeline::Intervals)
+//BOOST_CLASS_EXPORT(gui::timeline::Intervals)
 
 #endif // SELECT_INTERVALS_H

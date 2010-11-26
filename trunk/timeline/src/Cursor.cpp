@@ -14,13 +14,10 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Cursor::Cursor()
+Cursor::Cursor(Timeline* timeline)
 :   wxEvtHandler()
+,   Part(timeline)
 ,   mCursorPosition(0)
-{
-}
-
-void Cursor::init()
 {
     getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }

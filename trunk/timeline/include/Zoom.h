@@ -20,7 +20,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    Zoom();
+    Zoom(Timeline* timeline);
 	virtual ~Zoom();
 
     //////////////////////////////////////////////////////////////////////////
@@ -76,11 +76,11 @@ private:
 
 }} // namespace
 
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
-BOOST_CLASS_EXPORT(gui::timeline::Zoom)
+//// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+////#include  <boost/preprocessor/slot/counter.hpp>
+////#include BOOST____PP_UPDATE_COUNTER()
+////#line BOOST_____PP_COUNTER
+//BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
+//BOOST_CLASS_EXPORT(gui::timeline::Zoom)
 
 #endif // GUI_TIME_LINE_ZOOM_H

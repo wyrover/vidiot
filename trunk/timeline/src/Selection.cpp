@@ -15,8 +15,9 @@
 
 namespace gui { namespace timeline {
 
-Selection::Selection()
+Selection::Selection(Timeline* timeline)
 :   wxEvtHandler()
+,   Part(timeline)
 ,   mSelected()
 ,   mPreviouslyClicked()
 {

@@ -16,12 +16,9 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Drop::Drop()
+Drop::Drop(Timeline* timeline)
 :   wxDropTarget(new GuiDataObject())
-{
-}
-
-void Drop::init()
+,   Part(timeline)
 {
     getTimeline().SetDropTarget(this);
 }

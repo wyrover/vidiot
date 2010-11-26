@@ -10,13 +10,8 @@ Part::Part()
 {
 }
 
-void Part::initTimeline(Timeline* timeline)
-{
-    mTimeline = timeline;
-    init();
-}
-
-void Part::init()
+Part::Part(Timeline* timeline)
+:   mTimeline(timeline)
 {
 }
 
@@ -30,7 +25,7 @@ Part::~Part()
 
 Timeline& Part::getTimeline()
 {
-    ASSERT(mTimeline);
+    ASSERT(mTimeline)   ;
     return *mTimeline;
 }
 
@@ -115,6 +110,15 @@ PlayerPtr Part::getPlayer()
 model::SequencePtr Part::getSequence()
 {
     return getTimeline().getSequence();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// USED FOR VIEWS
+//////////////////////////////////////////////////////////////////////////
+
+void Part::onViewUpdated( ViewUpdateEvent& event )
+{
+    FATAL("DEFAULT IMPLEMENTATION SHOULD NOT BE USED.");
 }
 
 }} // namespace

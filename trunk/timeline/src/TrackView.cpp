@@ -35,10 +35,6 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 ,   mTrack(track)
 {
     ASSERT(mTrack); // Must be initialized
-}
-
-void TrackView::init()
-{
     getViewMap().registerView(mTrack,this);
 
     model::MoveParameter m;
@@ -72,7 +68,6 @@ void TrackView::OnClipsAdded( model::EventAddClips& event )
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
         ClipView* p = new ClipView(clip,this);
-        p->initTimeline(&getTimeline());
     }
     invalidateBitmap();
 }

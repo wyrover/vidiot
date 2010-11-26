@@ -2,8 +2,6 @@
 #define VIEW_MAP_H
 
 #include <map>
-#include "ModelPtr.h"
-#include "GuiPtr.h"
 #include "Part.h"
 
 namespace gui { namespace timeline {
@@ -20,7 +18,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    ViewMap();
+    ViewMap(Timeline* timeline);
     ~ViewMap();
 
     //////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,8 @@
 
 namespace gui { namespace timeline {
 
+class ViewUpdateEvent;
+
 class Part
     :   public boost::noncopyable
 {
@@ -16,17 +18,10 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    /** For states */
     Part();
 
-    /** Initialized by the creator of the part (typically, the timeline) */
-    void initTimeline(Timeline* timeline);
-
-    /**
-    * Called after the timeline pointer is initialized. Parts do their 
-    * initializing here, specifically at this point the get*() methods 
-    * of this superclass are available which is not the case in the
-    * constructor. */
-    virtual void init();
+    Part(Timeline* timeline);
 
     virtual ~Part();
 
@@ -34,21 +29,21 @@ public:
     // PARTS
     //////////////////////////////////////////////////////////////////////////
 
-    /** Virtual to be overridden in the statechart states. */
+    /** Virtual to be overridden in the statechart states and in Timeline. */
     virtual Timeline& getTimeline();
-    const Timeline& getTimeline() const;
-    Zoom& getZoom();
-    const Zoom& getZoom() const;
-    Intervals& getIntervals();
-    Selection& getSelection();
-    MousePointer& getMousePointer();
-    ViewMap& getViewMap();
-    MenuHandler& getMenuHandler();
-    Cursor& getCursor();
-    Drag& getDrag();
-    Drop& getDrop();
-    VideoView& getVideoView();
-    AudioView& getAudioView();
+    virtual const Timeline& getTimeline() const;
+    virtual Zoom& getZoom();
+    virtual const Zoom& getZoom() const;
+    virtual Intervals& getIntervals();
+    virtual Selection& getSelection();
+    virtual MousePointer& getMousePointer();
+    virtual ViewMap& getViewMap();
+    virtual MenuHandler& getMenuHandler();
+    virtual Cursor& getCursor();
+    virtual Drag& getDrag();
+    virtual Drop& getDrop();
+    virtual VideoView& getVideoView();
+    virtual AudioView& getAudioView();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS
@@ -56,6 +51,16 @@ public:
 
     PlayerPtr getPlayer();
     model::SequencePtr getSequence();
+
+    //////////////////////////////////////////////////////////////////////////
+    // USED FOR VIEWS
+    //////////////////////////////////////////////////////////////////////////
+
+    /**
+    * Default implementation here ensures that not all derived classes have to
+    * do so.
+    **/
+    virtual void onViewUpdated( ViewUpdateEvent& event );
 
 private:
 

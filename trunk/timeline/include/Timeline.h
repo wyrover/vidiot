@@ -10,17 +10,16 @@
 #include <boost/optional.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include "ModelPtr.h"
-#include "GuiPtr.h"
 #include "UtilEnum.h"
-#include "UtilEvent.h"
 #include "View.h"
+#include "Zoom.h"
+#include "Intervals.h"
 
 namespace gui { namespace timeline {
 
 class Timeline
 :   public wxScrolledWindow
-,   public IView
+,   public Part
 {
 public:
 
@@ -28,8 +27,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** The '0' pointer is used for recovery. */
-    Timeline(model::SequencePtr sequence = model::SequencePtr());
+    Timeline(model::SequencePtr sequence);
 
     /**
      * Two step construction. First the constructor (in combination with serialize)
@@ -41,9 +39,10 @@ public:
     virtual ~Timeline();
 
     //////////////////////////////////////////////////////////////////////////
-    // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
+    // PART
     //////////////////////////////////////////////////////////////////////////
 
+    Timeline& getTimeline();
     Zoom& getZoom();
     const Zoom& getZoom() const;
     ViewMap& getViewMap();
@@ -104,23 +103,6 @@ public:
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
-    //////////////////////////////////////////////////////////////////////////
-
-    Zoom* mZoom;
-    ViewMap* mViewMap;
-    Intervals* mIntervals;
-    MousePointer* mMousePointer;
-    Selection* mSelection;
-    MenuHandler* mMenuHandler;
-    Cursor* mCursor;
-    Drag* mDrag;
-    Drop* mDrop;
-    VideoView* mVideoView;
-    AudioView* mAudioView;
-    state::Machine* mMouseState; /** Must be AFTER mViewMap due to constructor list. */
-
-    //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +114,23 @@ private:
     /** Y-position of audio-video divider */
     int mDividerPosition;
     bool mRedrawOnIdle;
+
+    //////////////////////////////////////////////////////////////////////////
+    // PART
+    //////////////////////////////////////////////////////////////////////////
+
+    Zoom mZoom;
+    ViewMap* mViewMap;
+    Intervals mIntervals;
+    MousePointer* mMousePointer;
+    Selection* mSelection;
+    Cursor* mCursor;  // Must be AFTER mPlayer
+    Drag* mDrag;
+    Drop* mDrop;
+    VideoView* mVideoView;
+    AudioView* mAudioView;
+    state::Machine* mMouseState; // Must be AFTER mViewMap due to constructor list.
+    MenuHandler* mMenuHandler; // Init as last since it depends on other parts
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -157,6 +156,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::Timeline, 1)
-BOOST_CLASS_EXPORT(gui::timeline::Timeline)
+//BOOST_CLASS_EXPORT(gui::timeline::Timeline)
 
 #endif // TIMELINE_H

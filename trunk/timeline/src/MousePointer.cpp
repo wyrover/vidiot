@@ -5,6 +5,7 @@
 #include <boost/foreach.hpp>
 #include "Constants.h"
 #include "Timeline.h"
+#include "Clip.h"
 #include "ClipView.h"
 #include "UtilLog.h"
 #include "cursor_move_cut.xpm"
@@ -28,7 +29,8 @@ IMPLEMENTENUM(MouseOnClipPosition);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-MousePointer::MousePointer()
+MousePointer::MousePointer(Timeline* timeline)
+:   Part(timeline)
 {
     wxImage image;
 
@@ -66,10 +68,7 @@ MousePointer::MousePointer()
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 8);
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 8);
     mCursorTrackResize = wxCursor(image);
-}
 
-void MousePointer::init()
-{
     getTimeline().SetCursor(mCursorNormal);
 }
     

@@ -22,12 +22,6 @@ namespace gui { namespace timeline {
 VideoView::VideoView(Timeline* timeline)
 :   View(timeline)
 {
-}
-
-void VideoView::init()
-{
-    View::init();
-
     model::TrackChange videoTracks(getSequence()->getVideoTracks());
     onVideoTracksAdded(model::EventAddVideoTracks(videoTracks));
 
@@ -43,13 +37,14 @@ VideoView::~VideoView()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void VideoView::onVideoTrackUpdated( TrackUpdateEvent& event )
-{
-    LOG_INFO;
-    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
-    /** todo only redraw track */
-    invalidateBitmap();
-}
+/** @todo handle generic */
+//void VideoView::onVideoTrackUpdated( TrackUpdateEvent& event )
+//{
+//    LOG_INFO;
+//    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
+//    /** todo only redraw track */
+//    invalidateBitmap();
+//}
 
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
@@ -62,7 +57,6 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
     {
         TrackView* t = new TrackView(track,this);
-        t->initTimeline(&getTimeline());
     }
     invalidateBitmap();
 }
