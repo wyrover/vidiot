@@ -12,8 +12,9 @@
 
 namespace gui { namespace timeline {
 
-Drag::Drag()
+Drag::Drag(Timeline* timeline)
 :	wxDragImage(wxCursor(wxCURSOR_HAND))
+,   Part(timeline)
 ,   mHotspot(wxPoint(0,0))
 ,   mBitmap()
 ,   mActive(false)

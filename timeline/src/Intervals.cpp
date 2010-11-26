@@ -11,6 +11,7 @@
 #include "Constants.h"
 #include "GuiOptions.h"
 #include "GuiMain.h"
+#include "Clip.h"
 #include "TrackView.h"
 #include "ClipView.h"
 #include "Timeline.h"
@@ -30,8 +31,9 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Intervals::Intervals()
+Intervals::Intervals(Timeline* timeline)
 :   wxEvtHandler()
+,   Part(timeline)
 ,   mMarkedIntervals()
 ,   mNewIntervalActive(false)
 ,   mNewIntervalBegin(0)
@@ -39,10 +41,6 @@ Intervals::Intervals()
 ,   mToggleActive(false)
 ,   mToggleBegin(0)
 ,   mToggleEnd(0)
-{
-}
-
-void Intervals::init()
 {
 }
 

@@ -19,6 +19,7 @@
 #include "Selection.h"
 #include "ViewMap.h"
 #include "Track.h"
+#include "Clip.h"
 
 namespace gui { namespace timeline {
 
@@ -33,10 +34,6 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 ,   mRect(0,0,0,0)
 {
     ASSERT(mClip);
-}
-
-void ClipView::init()
-{
     getViewMap().registerView(mClip,this);
     updateThumbnail();
 }

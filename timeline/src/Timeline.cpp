@@ -34,6 +34,7 @@
 #include "AudioView.h"
 #include "ViewMap.h"
 #include "ids.h"
+#include "UtilSerializeWxwidgets.h"
 
 namespace gui { namespace timeline {
 
@@ -43,9 +44,9 @@ namespace gui { namespace timeline {
 
 Timeline::Timeline(model::SequencePtr sequence)
 :   wxScrolledWindow()
-,   mZoom(0)
+,   mZoom(this)
 ,   mViewMap(0)
-,   mIntervals(0)
+,   mIntervals(this)
 ,   mMousePointer(0)
 ,   mSelection(0)
 ,   mMenuHandler(0)
@@ -62,6 +63,9 @@ Timeline::Timeline(model::SequencePtr sequence)
 ,   mSequence(sequence)
 {
     LOG_INFO;
+
+    //mZoom = new Zoom(this);
+
 }
 
 void Timeline::init(wxWindow *parent)
@@ -72,32 +76,20 @@ void Timeline::init(wxWindow *parent)
     SetBackgroundColour(*wxLIGHT_GREY);
 
     ASSERT(mSequence);
+
     mPlayer = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this);
 
-    mZoom = new Zoom();
-    mViewMap = new ViewMap();
-    mIntervals = new Intervals();
-    mMousePointer = new MousePointer();
-    mSelection = new Selection();
-    mMenuHandler = new MenuHandler();
-    mCursor = new Cursor();
-    mDrag = new Drag();
-    mDrop = new Drop();
+    mViewMap = new ViewMap(this);
+    //mIntervals = new Intervals(this);
+    mMousePointer = new MousePointer(this);
+    mSelection = new Selection(this);
+    mCursor = new Cursor(this); // Must be AFTER mPlayer
+    mDrag = new Drag(this);
+    mDrop = new Drop(this);
     mVideoView = new VideoView(this);
     mAudioView = new AudioView(this);
-    mMouseState = new state::Machine(*this); /** Must be AFTER mViewMap */
-
-    mZoom->initTimeline(this);
-    mViewMap->initTimeline(this);
-    mIntervals->initTimeline(this);
-    mMousePointer->initTimeline(this);
-    mSelection->initTimeline(this);
-    mCursor->initTimeline(this);
-    mDrag->initTimeline(this);
-    mDrop->initTimeline(this);
-    mVideoView->initTimeline(this);
-    mAudioView->initTimeline(this);
-    mMenuHandler->initTimeline(this); // Init as last since it depends on other parts
+    mMouseState = new state::Machine(*this); // Must be AFTER mViewMap
+    mMenuHandler = new MenuHandler(this); // Init as last since it depends on other parts
 
     mRedrawOnIdle = true;
 
@@ -117,17 +109,22 @@ Timeline::~Timeline()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// PARTS OVER WHICH THE IMPLEMENTATION IS SPLIT
+// PART
 //////////////////////////////////////////////////////////////////////////
+
+Timeline& Timeline::getTimeline()
+{
+    return *this;
+}
 
 Zoom& Timeline::getZoom()
 { 
-    return *mZoom; 
+    return mZoom; 
 }
 
 const Zoom& Timeline::getZoom() const
 { 
-    return *mZoom; 
+    return mZoom; 
 }
 
 ViewMap& Timeline::getViewMap()
@@ -137,7 +134,7 @@ ViewMap& Timeline::getViewMap()
 
 Intervals& Timeline::getIntervals()
 { 
-    return *mIntervals; 
+    return mIntervals; 
 }
 
 MousePointer& Timeline::getMousepointer()
@@ -401,6 +398,16 @@ void Timeline::serialize(Archive & ar, const unsigned int version)
     ar & mZoom;
     ar & mDividerPosition;
     ar & mIntervals;
+    //if (Archive::is_loading::value)
+    //{
+    //    wxRegion intervals;
+    //    ar & intervals;
+    //    mIntervals->set(intervals);
+    //}
+    //else
+    //{
+    //    ar & mIntervals->get();
+    //}
 }
 template void Timeline::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Timeline::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

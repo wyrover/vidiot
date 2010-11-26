@@ -3,7 +3,6 @@
 
 #include <wx/event.h>
 #include <wx/menu.h>
-
 #include "Part.h"
 
 namespace gui { namespace timeline {
@@ -23,8 +22,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    MenuHandler();
-    virtual void init();
+    MenuHandler(Timeline* timeline);
     virtual ~MenuHandler();
 
     //////////////////////////////////////////////////////////////////////////

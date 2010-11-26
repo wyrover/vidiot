@@ -3,10 +3,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
-#include <wx/window.h>
 #include <wx/region.h>
-#include "ModelPtr.h"
-#include "GuiPtr.h"
 #include "Part.h"
 #include "UtilEvent.h"
 
@@ -46,26 +43,9 @@ private:
 
 DECLARE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 
-class IView
-{
-public:
-
-    //////////////////////////////////////////////////////////////////////////
-    // PROPAGATE UPDATES UPWARD
-    //////////////////////////////////////////////////////////////////////////
-
-    /**
-    * Should be bound (using ::Bind) to all subviews that this view uses
-    * to draw its bitmap. This is done in the View constructor (where
-    * the child register events for the parent).
-    **/
-    virtual void onViewUpdated( ViewUpdateEvent& event ) = 0;
-};
-
 class View
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public Part
-    ,   public IView
 {
 public:
 
@@ -73,7 +53,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    View(IView* parent);
+    View(Part* parent);
     virtual ~View();
 
     //////////////////////////////////////////////////////////////////////////

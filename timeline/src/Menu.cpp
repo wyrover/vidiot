@@ -13,13 +13,10 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-MenuHandler::MenuHandler()
+MenuHandler::MenuHandler(Timeline* timeline)
 :   wxEvtHandler()
+,   Part(timeline)
 ,   mMenu()
-{
-}
-
-void MenuHandler::init()
 {
     mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"));
     mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"));

@@ -164,7 +164,9 @@ void GuiTimelinesView::save(Archive & ar, const unsigned int version) const
     ar & selectedPage;
     for (unsigned int page = 0; page < n; ++page)
     {
-        ar & *(static_cast<timeline::Timeline*>(mNotebook.GetPage(page)));
+        timeline::Timeline* timeline = static_cast<timeline::Timeline*>(mNotebook.GetPage(page));
+        ar & timeline->getSequence();
+        ar & *timeline;
     }
 }
 template<class Archive>
@@ -176,7 +178,9 @@ void GuiTimelinesView::load(Archive & ar, const unsigned int version)
     ar & selectedPage;
     for (unsigned int page = 0; page < n; ++page)
     {
-        timeline::Timeline* timeline = new timeline::Timeline();
+        model::SequencePtr sequence;
+        ar & sequence;
+        timeline::Timeline* timeline = new timeline::Timeline(sequence);
         ar & *timeline;
         timeline->init(&mNotebook);
         mNotebook.AddPage(timeline,timeline->getSequence()->getName(),false);

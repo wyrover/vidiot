@@ -3,7 +3,6 @@
 
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
-#include "Track.h"
 #include "State.h"
 
 namespace gui { namespace timeline { namespace state {

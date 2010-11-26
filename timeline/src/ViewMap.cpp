@@ -8,8 +8,9 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-ViewMap::ViewMap()
-:   mTracks()
+ViewMap::ViewMap(Timeline* timeline)
+:   Part(timeline)
+,   mTracks()
 ,   mClips()
 {
 }

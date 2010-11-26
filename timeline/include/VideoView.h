@@ -1,17 +1,10 @@
 #ifndef VIDEO_VIEW_H
 #define VIDEO_VIEW_H
 
-#include <wx/bitmap.h>
-#include <wx/event.h>
-#include "ModelPtr.h"
-#include "GuiPtr.h"
-#include "Part.h"
-#include "UtilEvent.h"
 #include "View.h"
 
 namespace gui { namespace timeline {
 
-class TrackUpdateEvent;
 struct PointerPositionInfo;
 
 class VideoView
@@ -24,7 +17,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     VideoView(Timeline* timeline);
-    void init();
     virtual ~VideoView();
 
     //////////////////////////////////////////////////////////////////////////
@@ -39,12 +31,6 @@ public:
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
 
 private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // GUI EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onVideoTrackUpdated( TrackUpdateEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS

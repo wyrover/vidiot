@@ -3,8 +3,6 @@
 
 #include <set>
 #include <wx/event.h>
-#include "GuiPtr.h"
-#include "ModelPtr.h"
 #include "Part.h"
 
 namespace gui { namespace timeline {
@@ -14,7 +12,7 @@ class Selection
     ,   public Part
 {
 public:
-    Selection();
+    Selection(Timeline* timeline);
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS

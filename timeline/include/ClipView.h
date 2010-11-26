@@ -1,13 +1,8 @@
 #ifndef CLIP_VIEW_H
 #define CLIP_VIEW_H
 
-#include <wx/bitmap.h>
-#include <wx/event.h>
-#include <wx/window.h>
 #include <boost/scoped_ptr.hpp>
-#include "AProjectViewNode.h"
-#include "Clip.h"
-#include "GuiPtr.h"
+#include <boost/cstdint.hpp>
 #include "View.h"
 
 namespace gui { namespace timeline {
@@ -22,9 +17,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     ClipView(model::ClipPtr clip, View* parent);
-
-    void init();
-
 	virtual ~ClipView();
 
     //////////////////////////////////////////////////////////////////////////
