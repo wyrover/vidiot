@@ -2,18 +2,10 @@
 #define TIMELINE_H
 
 #include <wx/scrolwin.h>
-#include <wx/dnd.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/optional.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include "UtilEnum.h"
 #include "View.h"
-#include "Zoom.h"
-#include "Intervals.h"
 
 namespace gui { namespace timeline {
 
@@ -27,15 +19,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    Timeline(model::SequencePtr sequence);
-
-    /**
-     * Two step construction. First the constructor (in combination with serialize)
-     * sets all relevant  members. Second, this method initializes all GUI stuff
-     * including the bitmap.
-     */
-    void init(wxWindow *parent);
-
+    Timeline(wxWindow *parent, model::SequencePtr sequence);
     virtual ~Timeline();
 
     //////////////////////////////////////////////////////////////////////////
@@ -106,9 +90,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr mPlayer;
     model::SequencePtr mSequence;
     wxBitmap mBitmap;
+    PlayerPtr mPlayer;
     long mWidth;
     long mHeight;
     /** Y-position of audio-video divider */
@@ -119,9 +103,9 @@ private:
     // PART
     //////////////////////////////////////////////////////////////////////////
 
-    Zoom mZoom;
+    Zoom* mZoom;
     ViewMap* mViewMap;
-    Intervals mIntervals;
+    Intervals* mIntervals;
     MousePointer* mMousePointer;
     Selection* mSelection;
     Cursor* mCursor;  // Must be AFTER mPlayer

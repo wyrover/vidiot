@@ -25,7 +25,7 @@ Part::~Part()
 
 Timeline& Part::getTimeline()
 {
-    ASSERT(mTimeline)   ;
+    ASSERT(mTimeline);
     return *mTimeline;
 }
 

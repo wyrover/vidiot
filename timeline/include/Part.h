@@ -64,7 +64,7 @@ public:
 
 private:
 
-    Timeline* mTimeline;
+    Timeline * const mTimeline;
 };
 
 }} // namespace

@@ -89,8 +89,7 @@ void GuiTimelinesView::Open( model::SequencePtr sequence )
     std::pair<size_t,timeline::Timeline*> f = findPage(sequence);
     if (f.second == 0)
     {
-        timeline::Timeline* timeline = new timeline::Timeline(sequence);
-        timeline->init(&mNotebook);
+        timeline::Timeline* timeline = new timeline::Timeline(&mNotebook, sequence);
         timeline->SetFocus();
         mNotebook.AddPage(timeline,sequence->getName(),false);
     }
@@ -180,10 +179,9 @@ void GuiTimelinesView::load(Archive & ar, const unsigned int version)
     {
         model::SequencePtr sequence;
         ar & sequence;
-        timeline::Timeline* timeline = new timeline::Timeline(sequence);
+        timeline::Timeline* timeline = new timeline::Timeline(&mNotebook, sequence);
         ar & *timeline;
-        timeline->init(&mNotebook);
-        mNotebook.AddPage(timeline,timeline->getSequence()->getName(),false);
+        mNotebook.AddPage(timeline,sequence->getName(),false);
     }
     if (selectedPage != wxNOT_FOUND)
     {
