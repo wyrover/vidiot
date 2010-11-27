@@ -1,14 +1,8 @@
 #include "Timeline.h"
-#include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <wx/dcclient.h>
-#include <wx/pen.h>
-#include <wx/image.h>
-#include <wx/bitmap.h>
-#include <math.h>
-#include <algorithm>
 #include "Constants.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
@@ -16,10 +10,7 @@
 #include "GuiPlayer.h"
 #include "GuiPreview.h"
 #include "GuiWindow.h"
-#include "UtilLogStl.h"
 #include "Sequence.h"
-#include "VideoTrack.h"
-#include "AudioTrack.h"
 #include "Intervals.h"
 #include "Selection.h"
 #include "MousePointer.h"
@@ -33,8 +24,6 @@
 #include "VideoView.h"
 #include "AudioView.h"
 #include "ViewMap.h"
-#include "ids.h"
-#include "UtilSerializeWxwidgets.h"
 
 namespace gui { namespace timeline {
 
@@ -42,65 +31,42 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Timeline::Timeline(model::SequencePtr sequence)
-:   wxScrolledWindow()
-,   mZoom(this)
-,   mViewMap(0)
-,   mIntervals(this)
-,   mMousePointer(0)
-,   mSelection(0)
-,   mMenuHandler(0)
-,   mCursor(0)
-,   mDrag(0)
-,   mDrop(0)
-,   mVideoView(0)
-,   mAudioView(0)
-,   mMouseState(0)
+Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
+:   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER)
+,   mSequence(sequence)
+,   mBitmap()
+,   mPlayer(dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this))
 ,   mWidth(0)
 ,   mHeight(0)
 ,   mDividerPosition(0)
-,   mRedrawOnIdle(false)
-,   mSequence(sequence)
+,   mRedrawOnIdle(true)
+//////////////////////////////////////////////////////////////////////////
+,   mZoom(new Zoom(this))
+,   mViewMap(new ViewMap(this))
+,   mIntervals(new Intervals(this))
+,   mMousePointer(new MousePointer(this))
+,   mSelection(new Selection(this))
+,   mCursor(new Cursor(this))
+,   mDrag(new Drag(this))
+,   mDrop(new Drop(this))
+,   mVideoView(new VideoView(this))
+,   mAudioView(new AudioView(this))
+,   mMouseState(new state::Machine(*this))
+,   mMenuHandler(new MenuHandler(this))
 {
     LOG_INFO;
-
-    //mZoom = new Zoom(this);
-
-}
-
-void Timeline::init(wxWindow *parent)
-{
-    Create(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER);
-    SetScrollRate( 10, 10 );
-    EnableScrolling(true,true);
-    SetBackgroundColour(*wxLIGHT_GREY);
-
     ASSERT(mSequence);
 
-    mPlayer = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this);
-
-    mViewMap = new ViewMap(this);
-    //mIntervals = new Intervals(this);
-    mMousePointer = new MousePointer(this);
-    mSelection = new Selection(this);
-    mCursor = new Cursor(this); // Must be AFTER mPlayer
-    mDrag = new Drag(this);
-    mDrop = new Drop(this);
-    mVideoView = new VideoView(this);
-    mAudioView = new AudioView(this);
-    mMouseState = new state::Machine(*this); // Must be AFTER mViewMap
-    mMenuHandler = new MenuHandler(this); // Init as last since it depends on other parts
-
-    mRedrawOnIdle = true;
+    SetScrollRate( 10, 10 );
+    EnableScrolling(true,true);
 
     Bind(wxEVT_IDLE,                &Timeline::onIdle,               this);
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    updateSize();
-
     // From here on, processing continues with size events after laying out this widget.
+    updateSize();
 }
 
 Timeline::~Timeline()
@@ -119,12 +85,12 @@ Timeline& Timeline::getTimeline()
 
 Zoom& Timeline::getZoom()
 { 
-    return mZoom; 
+    return *mZoom; 
 }
 
 const Zoom& Timeline::getZoom() const
 { 
-    return mZoom; 
+    return *mZoom; 
 }
 
 ViewMap& Timeline::getViewMap()
@@ -134,7 +100,7 @@ ViewMap& Timeline::getViewMap()
 
 Intervals& Timeline::getIntervals()
 { 
-    return mIntervals; 
+    return *mIntervals; 
 }
 
 MousePointer& Timeline::getMousepointer()
@@ -395,19 +361,9 @@ template<class Archive>
 void Timeline::serialize(Archive & ar, const unsigned int version)
 {
     ar & mSequence;
-    ar & mZoom;
+    ar & *mZoom;
     ar & mDividerPosition;
-    ar & mIntervals;
-    //if (Archive::is_loading::value)
-    //{
-    //    wxRegion intervals;
-    //    ar & intervals;
-    //    mIntervals->set(intervals);
-    //}
-    //else
-    //{
-    //    ar & mIntervals->get();
-    //}
+    ar & *mIntervals;
 }
 template void Timeline::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Timeline::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
