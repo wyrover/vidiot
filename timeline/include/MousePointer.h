@@ -6,6 +6,13 @@
 #include "UtilEnum.h"
 #include "Part.h"
 
+namespace model {
+    class Track;
+    typedef boost::shared_ptr<Track> TrackPtr;
+    class Clip;
+    typedef boost::shared_ptr<Clip> ClipPtr;
+}
+
 namespace gui { namespace timeline {
 
 DECLAREENUM(MousePointerImage, \

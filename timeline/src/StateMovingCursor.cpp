@@ -1,9 +1,7 @@
 #include "StateMovingCursor.h"
 
-#include "Timeline.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
 #include "Cursor.h"
 #include "Intervals.h"
 

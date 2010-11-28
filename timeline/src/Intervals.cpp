@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "Timeline.h"
@@ -14,7 +13,6 @@
 #include "Clip.h"
 #include "TrackView.h"
 #include "ClipView.h"
-#include "Timeline.h"
 #include "Track.h"
 #include "Project.h"
 #include "TimelineIntervalChange.h"

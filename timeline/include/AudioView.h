@@ -3,8 +3,12 @@
 
 #include "View.h"
 
-namespace gui { namespace timeline {
+namespace model {
+    class EventAddAudioTracks;
+    class EventRemoveAudioTracks;
+}
 
+namespace gui { namespace timeline {
 struct PointerPositionInfo;
 
 class AudioView
@@ -23,15 +27,12 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::requiredWidth() **/
-    int requiredWidth();
-
-    /** @see View::requiredHeight() **/
-    int requiredHeight();
+    int requiredWidth();  ///< @see View::requiredWidth()
+    int requiredHeight(); ///< @see View::requiredHeight()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
 
- private:
+private:
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -41,15 +42,10 @@ public:
     void onAudioTracksRemoved( model::EventRemoveAudioTracks& event );
 
     //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::draw() */
-    void draw(wxBitmap& bitmap);
+    void draw(wxBitmap& bitmap); ///< @see View::draw()
 
 };
 

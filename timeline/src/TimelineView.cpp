@@ -1,4 +1,5 @@
 #include "TimelineView.h"
+
 #include <algorithm>
 #include <wx/dcmemory.h>
 #include <boost/archive/text_oarchive.hpp>
@@ -9,7 +10,6 @@
 #include "Zoom.h"
 #include "VideoView.h"
 #include "AudioView.h"
-#include "Timeline.h"
 
 namespace gui { namespace timeline {
 
@@ -57,16 +57,16 @@ int TimelineView::requiredWidth()
 {
     return
         std::max(std::max(
-        getTimeline().GetClientSize().GetWidth(),                       // At least the widget size
-        getZoom().timeToPixels(5 * Constants::sMinute)),                 // Minimum width of 5 minutes
-        getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));    // At least enough to hold all clips
+        getWindow().GetClientSize().GetWidth(),                         // At least the widget size
+        getZoom().timeToPixels(5 * Constants::sMinute)),                // Minimum width of 5 minutes
+        getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));     // At least enough to hold all clips
 }
 
 int TimelineView::requiredHeight()
 {
     return
         std::max(
-        getTimeline().GetClientSize().GetHeight(),                      // At least the widget size
+        getWindow().GetClientSize().GetHeight(),                      // At least the widget size
         Constants::sTimeScaleHeight +
         Constants::sMinimalGreyAboveVideoTracksHeight +
         getVideo().requiredHeight() +

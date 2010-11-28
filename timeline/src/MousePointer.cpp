@@ -2,9 +2,6 @@
 
 #include <wx/image.h>
 #include <wx/bitmap.h>
-#include <boost/foreach.hpp>
-#include "Constants.h"
-#include "Timeline.h"
 #include "Clip.h"
 #include "ClipView.h"
 #include "UtilLog.h"
@@ -70,7 +67,7 @@ MousePointer::MousePointer(Timeline* timeline)
     image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 8);
     mCursorTrackResize = wxCursor(image);
 
-    getTimeline().SetCursor(mCursorNormal);
+    set(PointerNormal);
 }
     
 MousePointer::~MousePointer()
@@ -81,13 +78,13 @@ void MousePointer::set(MousePointerImage image)
 {
     switch (image)
     {
-    case PointerNormal:         getTimeline().SetCursor(mCursorNormal);         return;
-    case PointerMoveCut:        getTimeline().SetCursor(mCursorMoveCut);        return;
-    case PointerTrimBegin:      getTimeline().SetCursor(mCursorTrimBegin);      return;
-    case PointerTrimShiftBegin: getTimeline().SetCursor(mCursorTrimShiftBegin); return;
-    case PointerTrimEnd:        getTimeline().SetCursor(mCursorTrimEnd);        return;
-    case PointerTrimShiftEnd:   getTimeline().SetCursor(mCursorTrimShiftEnd);   return;
-    case PointerTrackResize:    getTimeline().SetCursor(mCursorTrackResize);    return;
+    case PointerNormal:         getWindow().SetCursor(mCursorNormal);         return;
+    case PointerMoveCut:        getWindow().SetCursor(mCursorMoveCut);        return;
+    case PointerTrimBegin:      getWindow().SetCursor(mCursorTrimBegin);      return;
+    case PointerTrimShiftBegin: getWindow().SetCursor(mCursorTrimShiftBegin); return;
+    case PointerTrimEnd:        getWindow().SetCursor(mCursorTrimEnd);        return;
+    case PointerTrimShiftEnd:   getWindow().SetCursor(mCursorTrimShiftEnd);   return;
+    case PointerTrackResize:    getWindow().SetCursor(mCursorTrackResize);    return;
     default:                    FATAL("Unknown image");
     }
 }

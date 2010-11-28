@@ -1,10 +1,8 @@
-#ifndef GUI_TIME_LINE_DRAG_IMAGE_H
-#define GUI_TIME_LINE_DRAG_IMAGE_H
+#ifndef DRAG_H
+#define DRAG_H
 
-#include <wx/image.h>
-
-#include <wx/dcmemory.h>
 #include <wx/bitmap.h>
+#include <wx/dcmemory.h>
 #include "Part.h"
 
 #define wxUSE_GENERIC_DRAGIMAGE 1
@@ -18,17 +16,36 @@ class Drag
     ,   public wxDragImage
 {
 public:
-	Drag(Timeline* timeline);
-	virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
-	virtual wxRect GetImageRect(const wxPoint& pos) const;
-    wxBitmap getDragBitmap();// const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    Drag(Timeline* timeline);
+	
+    //////////////////////////////////////////////////////////////////////////
+    // START/STOP
+    //////////////////////////////////////////////////////////////////////////
+
     void Start(wxPoint hotspot);
     void MoveTo(wxPoint position);
     void Stop();
-    /** @return true if a drag operation with the currently selected clips is in effect. */
-    bool isActive() const;
-    virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+    
+	virtual wxRect GetImageRect(const wxPoint& pos) const;
+    wxBitmap getDragBitmap();
+    bool isActive() const; ///< @return true if a drag operation with the currently selected clips is in effect.
+
+    //////////////////////////////////////////////////////////////////////////
+    // DRAW
+    //////////////////////////////////////////////////////////////////////////
+
+    virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
     void draw(wxDC& dc);
+    virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
 
 private:
     wxPoint mHotspot;
@@ -38,4 +55,4 @@ private:
 
 }} // namespace
 
-#endif // GUI_TIME_LINE_DRAG_IMAGE_H
+#endif // DRAG_H

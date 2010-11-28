@@ -6,7 +6,6 @@
 #include "UtilLog.h"
 #include "Timeline.h"
 #include "GuiPlayer.h"
-#include "VideoDisplayEvent.h"
 #include "TimelineView.h"
 
 namespace gui { namespace timeline {
@@ -22,7 +21,6 @@ Cursor::Cursor(Timeline* timeline)
 {
     getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }
-
 
 Cursor::~Cursor()
 {

@@ -1,16 +1,15 @@
 #ifndef TRACK_VIEW_H
 #define TRACK_VIEW_H
 
-#include <wx/bitmap.h>
-#include <wx/event.h>
-#include <wx/dcmemory.h>
-#include <wx/window.h>
-#include <boost/tuple/tuple.hpp>
-#include <boost/optional.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/version.hpp>
 #include "View.h"
+#include <boost/optional.hpp>
+
+namespace model {
+    class Track;
+    typedef boost::shared_ptr<Track> TrackPtr;
+    class EventAddClips;
+    class EventRemoveClips;
+}
 
 namespace gui { namespace timeline {
 
@@ -34,11 +33,8 @@ public:
      // GET/SET
      //////////////////////////////////////////////////////////////////////////
 
-     /** @see View::requiredWidth() **/
-     int requiredWidth();
-
-     /** @see View::requiredHeight() **/
-     int requiredHeight();
+     int requiredWidth();  ///< @see View::requiredWidth()
+     int requiredHeight(); ///< @see View::requiredHeight()
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -59,8 +55,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::draw() */
-    void draw(wxBitmap& bitmap);
+    void draw(wxBitmap& bitmap); ///< @see View::draw()
 };
 
 }} // namespace

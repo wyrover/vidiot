@@ -6,7 +6,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
-#include "GuiPtr.h"
 #include "ModelPtr.h"
 
 namespace model {
@@ -18,6 +17,10 @@ namespace model {
 namespace gui {
 
 class GuiWindow;
+
+namespace timeline {
+    class Timeline;
+}
 
 class GuiTimelinesView
 :   public wxPanel

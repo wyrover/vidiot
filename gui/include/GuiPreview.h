@@ -6,11 +6,15 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
-#include "GuiPtr.h"
-
-namespace timeline { class Timeline; }
+#include "ModelPtr.h"
 
 namespace gui {
+    class GuiPlayer;
+    typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
+
+namespace timeline { 
+    class Timeline; 
+}
 
 class GuiPreview
 :   public wxPanel
@@ -28,7 +32,7 @@ public:
     // TO/FROM OTHER WIDGETS
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr openTimeline(timeline::Timeline* timeline);
+    PlayerPtr openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline);
     void closeTimeline(timeline::Timeline* timeline);
     void selectTimeline(timeline::Timeline* timeline);
 

@@ -35,10 +35,10 @@ GuiPreview::~GuiPreview()
 // TO/FROM OTHER WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr GuiPreview::openTimeline(timeline::Timeline* timeline)
+PlayerPtr GuiPreview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
 {
     ASSERT(mPlayers.find(timeline) == mPlayers.end());
-    PlayerPtr newplayer = boost::make_shared<GuiPlayer>(this,timeline->getSequence());
+    PlayerPtr newplayer = boost::make_shared<GuiPlayer>(this,sequence);
     mPlayers[timeline] = newplayer;
     GetSizer()->Add(newplayer.get(),wxSizerFlags(1).Expand());
     selectTimeline(timeline);

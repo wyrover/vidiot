@@ -1,13 +1,14 @@
 #include "Zoom.h"
+
+#include <math.h>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 #include "GuiOptions.h"
 #include "FrameRate.h"
 #include "Project.h"
 #include "UtilLog.h"
-#include <math.h>
 #include "Constants.h"
 #include "Properties.h"
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include "UtilSerializeBoost.h"
 
 namespace gui { namespace timeline {

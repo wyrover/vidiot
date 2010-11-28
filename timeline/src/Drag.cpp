@@ -1,6 +1,5 @@
 #include "Drag.h"
 
-#include <wx/dcclient.h>
 #include <wx/pen.h>
 #include <boost/foreach.hpp>
 #include "Timeline.h"
@@ -13,33 +12,60 @@
 
 namespace gui { namespace timeline {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION METHODS
+//////////////////////////////////////////////////////////////////////////
+
 Drag::Drag(Timeline* timeline)
-:	wxDragImage(wxCursor(wxCURSOR_HAND))
-,   Part(timeline)
-,   mHotspot(wxPoint(0,0))
-,   mBitmap()
-,   mActive(false)
+    :	wxDragImage(wxCursor(wxCURSOR_HAND))
+    ,   Part(timeline)
+    ,   mHotspot(wxPoint(0,0))
+    ,   mBitmap()
+    ,   mActive(false)
 {
 }
 
-bool Drag::DoDrawImage(wxDC& dc, const wxPoint& pos) const
+//////////////////////////////////////////////////////////////////////////
+// START/STOP
+//////////////////////////////////////////////////////////////////////////
+
+void Drag::Start(wxPoint hotspot)
 {
-    //dc.DrawBitmap(mBitmap, pos, true);
-
-    wxBitmap b = mBitmap;
-    wxMemoryDC dcBmp(b);
-    int x = pos.x;
-    int y = pos.y;
-    int w = mBitmap.GetWidth();
-    int h = mBitmap.GetHeight();
-    dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY,false,0,0);
-
-	return true;
+    mHotspot = hotspot;
+    mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
+    mBitmap = getDragBitmap();
+    bool ok = BeginDrag(mHotspot, &getTimeline(), false);
+    ASSERT(ok);
+    getTimeline().Refresh(false);
+    getTimeline().Update();
+    Show();
+    MoveTo(hotspot);
 }
+
+void Drag::MoveTo(wxPoint position)
+{
+    //    Hide();
+    //getTimeline().Refresh(false);
+    //getTimeline().Update();
+    Move(position - getTimeline().getScrollOffset());
+    //    Show();
+}
+
+void Drag::Stop()
+{
+    mActive = false;
+    Hide();
+    EndDrag();
+    getTimeline().Refresh();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
 
 wxRect Drag::GetImageRect(const wxPoint& pos) const
 {
-	return wxRect(pos.x,pos.y,mBitmap.GetWidth(),mBitmap.GetHeight());
+    return wxRect(pos.x,pos.y,mBitmap.GetWidth(),mBitmap.GetHeight());
 }
 
 wxBitmap Drag::getDragBitmap() //const
@@ -104,54 +130,29 @@ wxBitmap Drag::getDragBitmap() //const
     return temp.GetSubBitmap(wxRect(origin_x,origin_y,size_x,size_y));
 }
 
-void Drag::Start(wxPoint hotspot)
-{
-    mHotspot = hotspot;
-    mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
-    mBitmap = getDragBitmap();
-    bool ok = BeginDrag(mHotspot, &getTimeline(), false);
-    ASSERT(ok);
-    getTimeline().Refresh(false);
-    getTimeline().Update();
-    Show();
-    MoveTo(hotspot);
-}
-
 bool Drag::isActive() const
 {
     return mActive;
 }
 
-void Drag::Stop()
-{
-    mActive = false;
-    Hide();
-    EndDrag();
-    getTimeline().Refresh();
-}
+//////////////////////////////////////////////////////////////////////////
+// DRAW
+//////////////////////////////////////////////////////////////////////////
 
-void Drag::MoveTo(wxPoint position)
+bool Drag::DoDrawImage(wxDC& dc, const wxPoint& pos) const
 {
-//    Hide();
-    //getTimeline().Refresh(false);
-    //getTimeline().Update();
-    Move(position - getTimeline().getScrollOffset());
-//    Show();
-}
+    //dc.DrawBitmap(mBitmap, pos, true);
 
-bool Drag::UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const
-{
-    int x = sourceRect.GetX();
-    int y = sourceRect.GetY();
-    int w = sourceRect.GetWidth();
-    int h = sourceRect.GetHeight();
-    destDC.Blit(x,y,w,h,&windowDC,x,y,wxCOPY,false,0,0);
+    wxBitmap b = mBitmap;
+    wxMemoryDC dcBmp(b);
+    int x = pos.x;
+    int y = pos.y;
+    int w = mBitmap.GetWidth();
+    int h = mBitmap.GetHeight();
+    dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY,false,0,0);
+
     return true;
 }
-
-//////////////////////////////////////////////////////////////////////////
-// DRAWING
-//////////////////////////////////////////////////////////////////////////
 
 void Drag::draw(wxDC& dc)
 {
@@ -168,6 +169,16 @@ void Drag::draw(wxDC& dc)
     //    dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY,false,0,0);
     //    upd++;
     //}
+}
+
+bool Drag::UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const
+{
+    int x = sourceRect.GetX();
+    int y = sourceRect.GetY();
+    int w = sourceRect.GetWidth();
+    int h = sourceRect.GetHeight();
+    destDC.Blit(x,y,w,h,&windowDC,x,y,wxCOPY,false,0,0);
+    return true;
 }
 
 }} // namespace

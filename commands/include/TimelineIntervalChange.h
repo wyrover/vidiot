@@ -2,7 +2,6 @@
 #define TIMELINE_INTERVAL_CHANGE_H
 
 #include "TimelineCommand.h"
-#include "GuiPtr.h"
 
 namespace command {
 

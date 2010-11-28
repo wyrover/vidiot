@@ -13,23 +13,34 @@ DEFINE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 View::View(Timeline* timeline)
 :   wxEvtHandler()
 ,   Part(timeline)
+,   mParent(0)
 ,   mBitmapValid(false)
 {
     ASSERT(timeline);
     Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, timeline);
 }
 
-View::View(Part* parent)
+View::View(View* parent)
 :   wxEvtHandler()
+,   mParent(parent)
 ,   Part(&(parent->getTimeline()))
 ,   mBitmapValid(false)
 {
     ASSERT(parent);
-    Bind(VIEW_UPDATE_EVENT, &Part::onViewUpdated, parent);
+    Bind(VIEW_UPDATE_EVENT, &View::onViewUpdated, parent);
 }
 
 View::~View()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+View& View::getParent() const
+{
+    return *mParent;
 }
 
 //////////////////////////////////////////////////////////////////////////

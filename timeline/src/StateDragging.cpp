@@ -1,15 +1,9 @@
 #include "StateDragging.h"
 
-#include <boost/foreach.hpp>
-#include "ClipView.h"
 #include "Drag.h"
-#include "Timeline.h"
-#include "TrackView.h"
-#include "StateIdle.h"
-#include "UtilLog.h"
-#include "ViewMap.h"
 #include "Drop.h"
-#include "Selection.h"
+#include "UtilLog.h"
+#include "StateIdle.h"
 
 namespace gui { namespace timeline { namespace state {
 
