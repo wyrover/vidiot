@@ -35,15 +35,15 @@ const Timeline& Part::getTimeline() const
     return *mTimeline;
 }
 
-wxScrolledWindow& Part::getWindow()
-{
-    return *mTimeline;
-}
-
 // Using the member from this point onwards will lead to compiler errors.
 // Using mTimeline instead of getTimeline() will lead to problems in the
 // state classes (these override getTimeline).
 #define mTimeline DO_NOT_USE_MEMBER_USE_METHOD
+
+wxScrolledWindow& Part::getWindow()
+{
+    return getTimeline();
+}
 
 Zoom& Part::getZoom() 
 { 
