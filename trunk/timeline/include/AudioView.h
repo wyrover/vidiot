@@ -16,21 +16,17 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    AudioView(Timeline* timeline);
+    AudioView(View* parent);
     virtual ~AudioView();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-    * Overridden from View()
-    **/
+    /** @see View::requiredWidth() **/
     int requiredWidth();
 
-    /**
-    * Overridden from View()
-    **/
+    /** @see View::requiredHeight() **/
     int requiredHeight();
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
@@ -52,9 +48,7 @@ public:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-    * Overridden from View()
-    **/
+    /** @see View::draw() */
     void draw(wxBitmap& bitmap);
 
 };

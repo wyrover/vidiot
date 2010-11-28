@@ -42,8 +42,7 @@ public:
     virtual Cursor& getCursor();
     virtual Drag& getDrag();
     virtual Drop& getDrop();
-    virtual VideoView& getVideoView();
-    virtual AudioView& getAudioView();
+    virtual TimelineView& getView();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS

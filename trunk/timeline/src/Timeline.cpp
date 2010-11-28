@@ -1,5 +1,4 @@
 #include "Timeline.h"
-#include <boost/serialization/shared_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <wx/dcclient.h>
@@ -21,6 +20,7 @@
 #include "State.h"
 #include "ViewMap.h"
 #include "Drop.h"
+#include "TimelineView.h"
 #include "VideoView.h"
 #include "AudioView.h"
 #include "ViewMap.h"
@@ -34,11 +34,7 @@ namespace gui { namespace timeline {
 Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 :   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER)
 ,   mSequence(sequence)
-,   mBitmap()
-,   mPlayer(dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(this))
-,   mWidth(0)
-,   mHeight(0)
-,   mDividerPosition(0)
+,   mPlayer(dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(sequence,this))
 ,   mRedrawOnIdle(true)
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
@@ -49,13 +45,11 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
 ,   mDrop(new Drop(this))
-,   mVideoView(new VideoView(this))
-,   mAudioView(new AudioView(this))
+,   mTimelineView(new TimelineView(this))
 ,   mMouseState(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 {
     LOG_INFO;
-    ASSERT(mSequence);
 
     SetScrollRate( 10, 10 );
     EnableScrolling(true,true);
@@ -65,8 +59,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    // From here on, processing continues with size events after laying out this widget.
-    updateSize();
+    // From here on, processing continues after the next idle event.
 }
 
 Timeline::~Timeline()
@@ -133,14 +126,14 @@ Drop& Timeline::getDrop()
     return *mDrop;
 }
 
-VideoView& Timeline::getVideoView()
+TimelineView& Timeline::getView()
 {
-    return *mVideoView;
+    return *mTimelineView;
 }
 
-AudioView& Timeline::getAudioView()
+model::SequencePtr Timeline::getSequence()
 {
-    return *mAudioView;
+    return mSequence;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -156,7 +149,7 @@ void Timeline::onIdle(wxIdleEvent& event)
         // a unregisterView event and then a registerView event is received. However, while 
         // receiving the unregisterView event, the actual adding may already have been
         // done. Then the view for the added clips has not yet been initialized.
-        updateBitmap();
+        Refresh(false);
         mRedrawOnIdle = false;
     }
     event.Skip();
@@ -164,14 +157,8 @@ void Timeline::onIdle(wxIdleEvent& event)
 
 void Timeline::onSize(wxSizeEvent& event)
 {
-    determineHeight();
-
-    mDividerPosition =
-        Constants::sTimeScaleHeight +
-        Constants::sMinimalGreyAboveVideoTracksHeight +
-        (mHeight - Constants::sTimeScaleHeight - Constants::sMinimalGreyAboveVideoTracksHeight - Constants::sAudioVideoDividerHeight) / 2;
-
-    updateSize(); // Triggers the initial drawing
+    SetVirtualSize(getView().requiredWidth(),getView().requiredHeight());
+    mRedrawOnIdle = true;
 }
 
 void Timeline::onEraseBackground(wxEraseEvent& event)
@@ -187,7 +174,8 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 
     wxPoint scroll = getScrollOffset();
 
-    wxMemoryDC dcBmp(mBitmap);
+    wxBitmap bitmap = getView().getBitmap();
+    wxMemoryDC dcBmp(bitmap);
 
     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
     while (upd)
@@ -225,26 +213,6 @@ PlayerPtr Timeline::getPlayer() const
     return mPlayer;
 }
 
-model::SequencePtr Timeline::getSequence() const
-{
-    return mSequence;
-}
-
-int Timeline::getWidth() const
-{
-    return mWidth;
-}
-
-int Timeline::getHeight() const
-{
-    return mHeight;
-}
-
-int Timeline::getDividerPosition() const
-{
-    return mDividerPosition;
-}
-
 wxPoint Timeline::getScrollOffset() const
 {
     int scrollX, scrollY, ppuX, ppuY;
@@ -254,117 +222,17 @@ wxPoint Timeline::getScrollOffset() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::determineWidth()
-{
-    mWidth = getVideoView().requiredWidth(); /** @todo determine from seuqence */
-}
-
-void Timeline::determineHeight()
-{
-    int requiredHeight = Constants::sTimeScaleHeight;
-    requiredHeight += Constants::sMinimalGreyAboveVideoTracksHeight;
-    requiredHeight += getVideoView().requiredHeight();
-    requiredHeight += Constants::sAudioVideoDividerHeight;
-    requiredHeight += getAudioView().requiredHeight();
-    requiredHeight += Constants::sMinimalGreyBelowAudioTracksHeight;
-    mHeight = std::max(requiredHeight, GetClientSize().GetHeight());
-}
-
-void Timeline::updateSize()
-{
-    determineWidth();
-    determineHeight();
-
-    SetVirtualSize(mWidth,mHeight);
-    mBitmap.Create(mWidth,mHeight);
-
-    mRedrawOnIdle = true;
-}
-
-void Timeline::updateBitmap()
-{
-    LOG_DEBUG;
-    wxMemoryDC dc(mBitmap);
-
-    // Get size of canvas
-    int w = mBitmap.GetWidth();
-    int h = mBitmap.GetHeight();
-
-    // Set BG
-    dc.SetPen(Constants::sBackgroundPen);
-    dc.SetBrush(Constants::sBackgroundBrush);
-    dc.DrawRectangle(0,0,w,h);
-
-    // Draw timescale
-    dc.SetBrush(wxNullBrush);
-    dc.SetPen(Constants::sTimeScaleDividerPen);
-    dc.DrawRectangle(0,0,w,Constants::sTimeScaleHeight);
-
-    dc.SetFont(*Constants::sTimeScaleFont);
-
-    // Draw seconds and minutes lines
-    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += Constants::sSecond)
-    {
-        int position = getZoom().timeToPixels(ms);
-        bool isMinute = (ms % Constants::sMinute == 0);
-        int height = Constants::sTimeScaleSecondHeight;
-
-        if (isMinute)
-        {
-            height = Constants::sTimeScaleMinutesHeight;
-        }
-
-        dc.DrawLine(position,0,position,height);
-
-        if (ms == 0)
-        {
-            dc.DrawText( "0", 5, Constants::sTimeScaleMinutesHeight );
-        }
-        else
-        {
-            if (isMinute)
-            {
-                wxDateTime t(ms / Constants::sHour, (ms % Constants::sHour) / Constants::sMinute, (ms % Constants::sMinute) / Constants::sSecond, ms % Constants::sSecond);
-                wxString s = t.Format("%H:%M:%S.%l");
-                wxSize ts = dc.GetTextExtent(s);
-                dc.DrawText( s, position - ts.GetX() / 2, Constants::sTimeScaleMinutesHeight );
-            }
-        }
-    }
-
-    const wxBitmap& videotracks = getVideoView().getBitmap();
-    dc.DrawBitmap(videotracks,wxPoint(0,mDividerPosition - videotracks.GetHeight()));
-
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.SetPen(*wxWHITE_PEN);
-    dc.DrawRectangle(0,mDividerPosition - videotracks.GetHeight(),w,videotracks.GetHeight());
-
-    // Draw divider between video and audio tracks
-    dc.SetBrush(Constants::sAudioVideoDividerBrush);
-    dc.SetPen(Constants::sAudioVideoDividerPen);
-    dc.DrawRectangle(0,mDividerPosition,w,Constants::sAudioVideoDividerHeight);
-
-    const wxBitmap& audiotracks = getAudioView().getBitmap();
-    dc.DrawBitmap(audiotracks,wxPoint(0,mDividerPosition + Constants::sAudioVideoDividerHeight));
-
-    Refresh(false);
-}
-
-//////////////////////////////////////////////////////////////////////////
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
 void Timeline::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mSequence;
     ar & *mZoom;
-    ar & mDividerPosition;
+    ar & *mTimelineView;
     ar & *mIntervals;
 }
+
 template void Timeline::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Timeline::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 

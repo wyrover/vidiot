@@ -23,6 +23,7 @@
 #include "Track.h"
 #include "ViewMap.h"
 #include "Sequence.h"
+#include "TimelineView.h"
 
 namespace gui { namespace timeline {
 
@@ -87,7 +88,7 @@ void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
 
 int TrackView::requiredWidth()
 {
-    return getZoom().ptsToPixels(getSequence()->getNumberOfFrames());
+    return getView().requiredWidth();
 }
 
 int TrackView::requiredHeight()

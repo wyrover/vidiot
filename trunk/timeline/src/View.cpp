@@ -1,17 +1,6 @@
 #include "View.h"
-
-#include <wx/dc.h>
-#include <boost/foreach.hpp>
-#include "Constants.h"
 #include "UtilLog.h"
-#include "Cursor.h"
-#include "Track.h"
-#include "TrackView.h"
-#include "Zoom.h"
-#include "Sequence.h"
 #include "Timeline.h"
-#include "MousePointer.h"
-#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
@@ -20,6 +9,15 @@ DEFINE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
+
+View::View(Timeline* timeline)
+:   wxEvtHandler()
+,   Part(timeline)
+,   mBitmapValid(false)
+{
+    ASSERT(timeline);
+    Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, timeline);
+}
 
 View::View(Part* parent)
 :   wxEvtHandler()

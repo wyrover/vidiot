@@ -10,7 +10,6 @@
 namespace gui { namespace timeline {
 
 class View;
-class Timeline;
 
 class ViewUpdate
 {
@@ -53,7 +52,12 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    /** For initializing the topmost (sequence) view */
+    View(Timeline* timeline);
+
+    /** For initializing child views. */
     View(Part* parent);
+
     virtual ~View();
 
     //////////////////////////////////////////////////////////////////////////
@@ -68,6 +72,7 @@ public:
     // PROPAGATE UPDATES UPWARD
     //////////////////////////////////////////////////////////////////////////
 
+    /** @see View::onViewUpdated() */
     void onViewUpdated( ViewUpdateEvent& event );
 
     //////////////////////////////////////////////////////////////////////////

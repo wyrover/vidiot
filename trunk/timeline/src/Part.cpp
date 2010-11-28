@@ -1,6 +1,7 @@
 #include "Part.h"
 
 #include "Timeline.h"
+#include "TimelineView.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {
@@ -88,14 +89,9 @@ Drop& Part::getDrop()
     return getTimeline().getDrop();
 }
 
-VideoView& Part::getVideoView()
+TimelineView& Part::getView()
 {
-    return getTimeline().getVideoView();
-}
-
-AudioView& Part::getAudioView()
-{
-    return getTimeline().getAudioView();
+    return getTimeline().getView();
 }
 
 //////////////////////////////////////////////////////////////////////////
