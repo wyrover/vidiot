@@ -1,5 +1,5 @@
-#ifndef GUI_TIME_LINE_ZOOM_H
-#define GUI_TIME_LINE_ZOOM_H
+#ifndef ZOOM_H
+#define ZOOM_H
 
 #include <boost/rational.hpp>
 #include <boost/serialization/access.hpp>
@@ -27,43 +27,20 @@ public:
     // ZOOM RESULT
     //////////////////////////////////////////////////////////////////////////
 
-    /** /param time time duration in milliseconds. */
-    int timeToPixels(int time) const;
-
-    /** /return time duration in milliseconds. */
-    int pixelsToTime(int pixels) const;
-
+    int timeToPixels(int time) const;       ///< @param time time duration in milliseconds
+    int pixelsToTime(int pixels) const;     ///< @return time duration in milliseconds
     int pixelsToPts(int pixels) const;
-
     int ptsToPixels(int pts) const;
 
-    /**
-    * Is static since it is independent of the chosen zoom factor.
-    * /param time time duration in milliseconds.
-    */
-    static int timeToPts(int time);
-
-    /**
-    * Is static since it is independent of the chosen zoom factor.
-    * /return time duration in milliseconds.
-    */
-    static int ptsToTime(int pts);
-
-    /**
-    * Is static since it is independent of the chosen zoom factor.
-    * /return time duration in microseconds.
-    */
-    static int ptsToMicroseconds(int pts);
-
-    /**
-    * Is static since it is independent of the chosen zoom factor.
-    */
-    static int microsecondsToPts(int us);
+    // Statics: independent of the chosen zoom factor.
+    static int timeToPts(int time);         ///< @param time time duration in milliseconds 
+    static int ptsToTime(int pts);          ///< @return time duration in milliseconds
+    static int ptsToMicroseconds(int pts);  ///< @return time duration in microseconds.
+    static int microsecondsToPts(int us);   ///< @param us time durinage in microseconds 
 
 private:
-
-    /** Indicates the number of pixels per frame. */
-    rational mZoom;
+    
+    rational mZoom; ///< Number of pixels per frame
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -76,11 +53,10 @@ private:
 
 }} // namespace
 
-//// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-////#include  <boost/preprocessor/slot/counter.hpp>
-////#include BOOST____PP_UPDATE_COUNTER()
-////#line BOOST_____PP_COUNTER
-//BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
-//BOOST_CLASS_EXPORT(gui::timeline::Zoom)
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
+BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
 
-#endif // GUI_TIME_LINE_ZOOM_H
+#endif // ZOOM_H

@@ -3,7 +3,6 @@
 
 #include <wx/region.h>
 #include "TimelineCommand.h"
-#include "GuiPtr.h"
 
 namespace command {
 

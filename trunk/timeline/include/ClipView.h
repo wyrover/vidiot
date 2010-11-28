@@ -5,6 +5,11 @@
 #include <boost/cstdint.hpp>
 #include "View.h"
 
+namespace model{
+class Clip;
+typedef boost::shared_ptr<Clip> ClipPtr;
+}
+
 namespace gui { namespace timeline {
 
 class ClipView
@@ -17,48 +22,36 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     ClipView(model::ClipPtr clip, View* parent);
-	virtual ~ClipView();
-
-    //////////////////////////////////////////////////////////////////////////
-    // CONVERSION BETWEEN MODEL AND VIEW
-    //////////////////////////////////////////////////////////////////////////
-
-    model::ClipPtr getClip();
+    virtual ~ClipView();
 
     //////////////////////////////////////////////////////////////////////////
     //  GET & SET
     //////////////////////////////////////////////////////////////////////////
 
-    /** @return left position in pixels */
-    boost::int64_t getLeftPosition() const;
-    /** @return right position in pixels */
-    boost::int64_t getRightPosition() const;
+    model::ClipPtr getClip();
 
-    /** @see View::requiredWidth() **/
-    int requiredWidth();
+    boost::int64_t getLeftPosition() const;  ///< @return left position in pixels
+    boost::int64_t getRightPosition() const; ///< @return right position in pixels
 
-    /** @see View::requiredHeight() **/
-    int requiredHeight();
+    int requiredWidth();  ///< @see View::requiredWidth()
+    int requiredHeight(); ///< @see View::requiredHeight()
 
-    // tmp for showing intersect with selected regions
-    void show(wxRect rect);
+    void show(wxRect rect); ///< tmp for showing intersect with selected regions
 
 private:
-
-    void updateThumbnail();
 
     model::ClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
 
-    // tmp for showing intersect with selected regions
-    wxRect mRect;
-    
+    wxRect mRect; ///< @see show()
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::draw() */
-    void draw(wxBitmap& bitmap);
+    void updateThumbnail();
+
+    void draw(wxBitmap& bitmap); ///< @see View::draw()
 
 };
 

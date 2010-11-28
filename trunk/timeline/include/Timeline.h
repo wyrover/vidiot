@@ -1,15 +1,12 @@
 #ifndef TIMELINE_H
 #define TIMELINE_H
 
-#include <wx/scrolwin.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include "ModelPtr.h"
-#include "GuiPtr.h"
+#include "Part.h"
 
 namespace gui { namespace timeline {
-
-class ViewUpdateEvent;
+    class ViewUpdateEvent;
 
 class Timeline
 :   public wxScrolledWindow
@@ -54,8 +51,7 @@ public:
     // PROPAGATE UPDATES UPWARD
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::onViewUpdated() */
-    void onViewUpdated( ViewUpdateEvent& event );
+    void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onViewUpdated()
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

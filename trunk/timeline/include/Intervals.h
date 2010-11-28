@@ -4,12 +4,14 @@
 #include <map>
 #include <wx/dc.h>
 #include <wx/event.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include "Part.h"
+
+namespace model {
+class Clip;
+typedef boost::shared_ptr<Clip> ClipPtr;
+}
 
 namespace gui { namespace timeline {
 
@@ -31,9 +33,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // MARKING / TOGGLING INTERFACE
     //////////////////////////////////////////////////////////////////////////
-
-    /** @return true if there is at least one marked interval */
-    bool isEmpty();
+    
+    bool isEmpty(); ///< @return true if there is at least one marked interval
 
     wxRegion get();
     void set(wxRegion region);
@@ -44,14 +45,9 @@ public:
     void startToggle();
     void endToggle();
 
-    /** To be called when the cursor is moved. */
-    void update(long newCursorPosition);
-
-    /** To be called for the undo/redo mechanism. */
-    void change(long begin, long end, bool add);
-
-    /** Clear all marked intervals. */
-    void clear();
+    void update(long newCursorPosition); ///< To be called when the cursor is moved.
+    void change(long begin, long end, bool add); ///< To be called for the undo/redo mechanism.
+    void clear(); ///< Clear all marked intervals.
 
     //////////////////////////////////////////////////////////////////////////
     // ACTIONS ON THE MARKED AREAS
@@ -109,6 +105,5 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::Intervals, 1)
-//BOOST_CLASS_EXPORT(gui::timeline::Intervals)
 
 #endif // SELECT_INTERVALS_H

@@ -2,6 +2,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <wx/dcclient.h>
+#include <wx/dcmemory.h>
 #include "Constants.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
@@ -9,7 +10,6 @@
 #include "GuiPlayer.h"
 #include "GuiPreview.h"
 #include "GuiWindow.h"
-#include "Sequence.h"
 #include "Intervals.h"
 #include "Selection.h"
 #include "MousePointer.h"
@@ -21,8 +21,6 @@
 #include "ViewMap.h"
 #include "Drop.h"
 #include "TimelineView.h"
-#include "VideoView.h"
-#include "AudioView.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
@@ -201,6 +199,7 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
+    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     mRedrawOnIdle = true;
 }
 

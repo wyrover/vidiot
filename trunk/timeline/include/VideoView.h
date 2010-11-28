@@ -3,6 +3,11 @@
 
 #include "View.h"
 
+namespace model {
+    class EventAddVideoTracks;
+    class EventRemoveVideoTracks;
+}
+
 namespace gui { namespace timeline {
 
 struct PointerPositionInfo;
@@ -23,11 +28,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::requiredWidth() **/
-    int requiredWidth();
-
-    /** @see View::requiredHeight() **/
-    int requiredHeight();
+    int requiredWidth();  ///< @see View::requiredWidth()
+    int requiredHeight(); ///< @see View::requiredHeight()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
 
@@ -48,8 +50,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::draw() */
-    void draw(wxBitmap& bitmap);
+    void draw(wxBitmap& bitmap); ///< @see View::draw()
 };
 
 }} // namespace

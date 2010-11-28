@@ -1,21 +1,13 @@
 #include "ClipView.h"
 
-#include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/pen.h>
-#include <boost/foreach.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include "Zoom.h"
 #include "Constants.h"
 #include "UtilLog.h"
-#include "AProjectViewNode.h"
-#include "VideoFile.h"
+#include "VideoFrame.h"
 #include "VideoClip.h"
 #include "EmptyClip.h"
-#include "TrackView.h"
-#include "Timeline.h"
 #include "Selection.h"
 #include "ViewMap.h"
 #include "Track.h"
@@ -44,7 +36,7 @@ ClipView::~ClipView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// CONVERSION BETWEEN MODEL AND VIEW
+//  GET & SET
 //////////////////////////////////////////////////////////////////////////
 
 model::ClipPtr ClipView::getClip()
@@ -52,14 +44,11 @@ model::ClipPtr ClipView::getClip()
     return mClip;
 }
 
-//////////////////////////////////////////////////////////////////////////
-//  GET & SET
-//////////////////////////////////////////////////////////////////////////
-
 boost::int64_t ClipView::getLeftPosition() const
 {
     return getZoom().ptsToPixels(mClip->getLeftPts());
 }
+
 boost::int64_t ClipView::getRightPosition() const
 {
     return getZoom().ptsToPixels(mClip->getRightPts());
@@ -84,6 +73,10 @@ int ClipView::requiredHeight()
     return mClip->getTrack()->getHeight();
 }
 
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
 void ClipView::updateThumbnail()
 {
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(mClip);
@@ -96,7 +89,6 @@ void ClipView::updateThumbnail()
     }
     invalidateBitmap();
 }
-
 
 void ClipView::draw(wxBitmap& bitmap)
 {

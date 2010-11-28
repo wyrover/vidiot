@@ -23,8 +23,7 @@ public:
     // PROPAGATE UPDATES UPWARD
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::onViewUpdated() */
-    void onViewUpdated( ViewUpdateEvent& event );
+    void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onViewUpdated()
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -33,11 +32,8 @@ public:
     VideoView& getVideo();
     AudioView& getAudio();
 
-    /** @see View::requiredWidth() **/
-    int requiredWidth();
-
-    /** @see View::requiredHeight() **/
-    int requiredHeight();
+    int requiredWidth();  ///< @see View::requiredWidth()
+    int requiredHeight(); ///< @see View::requiredHeight()
 
     int getDividerPosition() const;
 
@@ -50,11 +46,9 @@ private:
     VideoView* mVideoView;
     AudioView* mAudioView;
 
-    /** Y-position of audio-video divider */
-    int mDividerPosition;
+    int mDividerPosition; ///< Y-position of audio-video divider
 
-    /** @see View::draw() */
-    void draw(wxBitmap& bitmap);
+    void draw(wxBitmap& bitmap); ///< @see View::draw()
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

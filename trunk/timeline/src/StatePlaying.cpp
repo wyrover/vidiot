@@ -1,6 +1,5 @@
 #include "StatePlaying.h"
 
-#include "Timeline.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
 #include "GuiPlayer.h"

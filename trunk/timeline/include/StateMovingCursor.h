@@ -1,9 +1,6 @@
 #ifndef STATE_MOVING_CURSOR_H
 #define STATE_MOVING_CURSOR_H
 
-#include "State.h"
-
-#include <boost/statechart/state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 

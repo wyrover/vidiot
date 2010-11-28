@@ -1,7 +1,6 @@
 #ifndef STATE_PLAYING_H
 #define STATE_PLAYING_H
 
-#include <boost/statechart/state.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 

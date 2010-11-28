@@ -34,6 +34,12 @@ const Timeline& Part::getTimeline() const
 {
     return *mTimeline;
 }
+
+wxScrolledWindow& Part::getWindow()
+{
+    return *mTimeline;
+}
+
 // Using the member from this point onwards will lead to compiler errors.
 // Using mTimeline instead of getTimeline() will lead to problems in the
 // state classes (these override getTimeline).
@@ -106,15 +112,6 @@ PlayerPtr Part::getPlayer()
 model::SequencePtr Part::getSequence()
 {
     return getTimeline().getSequence();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// USED FOR VIEWS
-//////////////////////////////////////////////////////////////////////////
-
-void Part::onViewUpdated( ViewUpdateEvent& event )
-{
-    FATAL("DEFAULT IMPLEMENTATION SHOULD NOT BE USED.");
 }
 
 }} // namespace

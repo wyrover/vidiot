@@ -3,22 +3,20 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-#include "ClipView.h"
 #include "Timeline.h"
 #include "StateTestDragStart.h"
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
 #include "GuiPlayer.h"
 #include "Zoom.h"
-#include "TrackView.h"
-#include "EmptyClip.h"
+#include "Clip.h"
 #include "Track.h"
 #include "Sequence.h"
 #include "Project.h"
 #include "TimelineMoveClips.h"
-#include "ViewMap.h"
 #include "MousePointer.h"
 #include "Selection.h"
+#include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -44,7 +42,7 @@ Idle::~Idle() // exit
 boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    getTimeline().SetFocus(); /** @todo make more generic, for all states */
+    getWindow().SetFocus(); /** @todo make more generic, for all states */
     PointerPositionInfo info = getMousePointer().getInfo(evt.mPosition);
     getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
     if (info.clip && !info.clip->isA<model::EmptyClip>())

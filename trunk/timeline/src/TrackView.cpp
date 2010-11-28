@@ -13,17 +13,13 @@
 #include "Zoom.h"
 #include "ClipView.h"
 #include "UtilLog.h"
-#include "Timeline.h"
 #include "AProjectViewNode.h"
 #include "UtilLogStl.h"
 #include "Drag.h"
 #include "Clip.h"
-#include "GuiMain.h"
 #include "Selection.h"
 #include "Track.h"
 #include "ViewMap.h"
-#include "Sequence.h"
-#include "TimelineView.h"
 
 namespace gui { namespace timeline {
 
@@ -88,7 +84,7 @@ void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
 
 int TrackView::requiredWidth()
 {
-    return getView().requiredWidth();
+    return getParent().requiredWidth();
 }
 
 int TrackView::requiredHeight()

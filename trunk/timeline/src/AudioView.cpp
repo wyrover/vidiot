@@ -1,17 +1,14 @@
 #include "AudioView.h"
 
-#include <wx/dc.h>
+#include <wx/dcmemory.h>
 #include <boost/foreach.hpp>
 #include "Constants.h"
-#include "UtilLog.h"
-#include "Cursor.h"
 #include "Track.h"
 #include "TrackView.h"
-#include "Zoom.h"
 #include "Sequence.h"
-#include "Timeline.h"
 #include "MousePointer.h"
 #include "ViewMap.h"
+#include "MousePointer.h"
 #include "TimelineView.h"
 
 namespace gui { namespace timeline {
@@ -33,19 +30,6 @@ AudioView::AudioView(View* parent)
 AudioView::~AudioView()
 {
 }
-
-//////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-/** @todo reintroduce this cursor reset */
-//void AudioView::onAudioTrackUpdated( TrackUpdateEvent& event )
-//{
-//    LOG_INFO;
-//    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
-//    /** todo only redraw track */
-//    invalidateBitmap();
-//}
 
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
@@ -77,7 +61,7 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 
 int AudioView::requiredWidth()
 {
-    return getView().requiredWidth();
+    return getParent().requiredWidth();
 }
 
 int AudioView::requiredHeight()

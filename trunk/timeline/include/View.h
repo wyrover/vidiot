@@ -52,19 +52,16 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** For initializing the topmost (sequence) view */
-    View(Timeline* timeline);
-
-    /** For initializing child views. */
-    View(Part* parent);
-
+    View(Timeline* timeline); ///< For initializing the topmost (sequence) view
+    View(View* parent); ///< For initializing child views.
     virtual ~View();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    // @todo protected?
+    View& getParent() const;
+
     virtual int requiredWidth() = 0;
     virtual int requiredHeight() = 0;
 
@@ -72,8 +69,7 @@ public:
     // PROPAGATE UPDATES UPWARD
     //////////////////////////////////////////////////////////////////////////
 
-    /** @see View::onViewUpdated() */
-    void onViewUpdated( ViewUpdateEvent& event );
+    void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onViewUpdated()
 
     //////////////////////////////////////////////////////////////////////////
     // BITMAP
@@ -102,6 +98,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    View* mParent;
     wxBitmap mBitmap;
     bool mBitmapValid;
 };

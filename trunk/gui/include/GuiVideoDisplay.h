@@ -9,7 +9,6 @@
 #include "VideoFrame.h"
 #include "AudioChunk.h"
 #include "ModelPtr.h"
-#include "GuiPtr.h"
 
 namespace gui {
 

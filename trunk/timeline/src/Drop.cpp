@@ -1,6 +1,7 @@
 #include "Drop.h"
 
 #include <boost/foreach.hpp>
+#include <wx/dc.h>
 #include "Timeline.h"
 #include "Zoom.h"
 #include "Constants.h"
