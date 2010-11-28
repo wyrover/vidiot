@@ -34,7 +34,10 @@ public:
      // GET/SET
      //////////////////////////////////////////////////////////////////////////
 
+     /** @see View::requiredWidth() **/
      int requiredWidth();
+
+     /** @see View::requiredHeight() **/
      int requiredHeight();
 
     //////////////////////////////////////////////////////////////////////////
@@ -56,9 +59,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-        /**
-    * Overridden from View()
-    **/
+    /** @see View::draw() */
     void draw(wxBitmap& bitmap);
 };
 

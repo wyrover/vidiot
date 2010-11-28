@@ -12,6 +12,7 @@
 #include "Timeline.h"
 #include "MousePointer.h"
 #include "ViewMap.h"
+#include "TimelineView.h"
 
 namespace gui { namespace timeline {
 
@@ -19,8 +20,8 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-AudioView::AudioView(Timeline* timeline)
-:   View(timeline)
+AudioView::AudioView(View* parent)
+:   View(parent)
 {
     model::TrackChange audioTracks(getSequence()->getAudioTracks());
     onAudioTracksAdded(model::EventAddAudioTracks(audioTracks));
@@ -76,11 +77,7 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 
 int AudioView::requiredWidth()
 {
-    return
-        std::max(std::max(
-        getZoom().timeToPixels(5 * Constants::sMinute),            // Minimum width of 5 minutes
-        getZoom().ptsToPixels(getSequence()->getNumberOfFrames())),    // At least enough to hold all clips
-        getTimeline().GetClientSize().GetWidth());                           // At least the widget size
+    return getView().requiredWidth();
 }
 
 int AudioView::requiredHeight()
@@ -95,7 +92,7 @@ int AudioView::requiredHeight()
 
 void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
 {
-    int top = getTimeline().getDividerPosition() + Constants::sAudioVideoDividerHeight;
+    int top = getView().getDividerPosition() + Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;

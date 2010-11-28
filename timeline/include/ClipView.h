@@ -34,7 +34,10 @@ public:
     /** @return right position in pixels */
     boost::int64_t getRightPosition() const;
 
+    /** @see View::requiredWidth() **/
     int requiredWidth();
+
+    /** @see View::requiredHeight() **/
     int requiredHeight();
 
     // tmp for showing intersect with selected regions
@@ -54,9 +57,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-        /**
-    * Overridden from View()
-    **/
+    /** @see View::draw() */
     void draw(wxBitmap& bitmap);
 
 };

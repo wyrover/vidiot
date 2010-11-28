@@ -9,9 +9,9 @@
 #include "TrackView.h"
 #include "Zoom.h"
 #include "Sequence.h"
-#include "Timeline.h"
 #include "MousePointer.h"
 #include "ViewMap.h"
+#include "TimelineView.h"
 
 namespace gui { namespace timeline {
 
@@ -19,8 +19,8 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-VideoView::VideoView(Timeline* timeline)
-:   View(timeline)
+VideoView::VideoView(View* parent)
+:   View(parent)
 {
     model::TrackChange videoTracks(getSequence()->getVideoTracks());
     onVideoTracksAdded(model::EventAddVideoTracks(videoTracks));
@@ -76,11 +76,7 @@ void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 
 int VideoView::requiredWidth()
 {
-    return
-        std::max(std::max(
-        getZoom().timeToPixels(5 * Constants::sMinute),            // Minimum width of 5 minutes
-        getZoom().ptsToPixels(getSequence()->getNumberOfFrames())),    // At least enough to hold all clips
-        getTimeline().GetClientSize().GetWidth());                           // At least the widget size
+    return getView().requiredWidth();
 }
 
 int VideoView::requiredHeight()
@@ -95,7 +91,7 @@ int VideoView::requiredHeight()
 
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
 {
-    int top = getTimeline().getDividerPosition() - getBitmap().GetHeight();
+    int top = getView().getDividerPosition() - getBitmap().GetHeight();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;

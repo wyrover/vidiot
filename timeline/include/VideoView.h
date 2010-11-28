@@ -16,16 +16,17 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    VideoView(Timeline* timeline);
+    VideoView(View* parent);
     virtual ~VideoView();
-
-    //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    /** @see View::requiredWidth() **/
     int requiredWidth();
+
+    /** @see View::requiredHeight() **/
     int requiredHeight();
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info);
@@ -47,9 +48,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-    * Overridden from View()
-    **/
+    /** @see View::draw() */
     void draw(wxBitmap& bitmap);
 };
 

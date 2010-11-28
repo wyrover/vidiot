@@ -8,6 +8,7 @@
 #include "TrackView.h"
 #include "Track.h"
 #include "Sequence.h"
+#include "TimelineView.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
@@ -43,8 +44,8 @@ wxRect Drag::GetImageRect(const wxPoint& pos) const
 
 wxBitmap Drag::getDragBitmap() //const
 {
-    int w = getTimeline().getWidth();
-    int h = getTimeline().getHeight();
+    int w = getView().requiredWidth();
+    int h = getView().requiredHeight();
 
     wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
     wxBitmap mask(w,h,1);
@@ -64,7 +65,7 @@ wxBitmap Drag::getDragBitmap() //const
     dcMask.SetBrush(*wxWHITE_BRUSH);
 
     // First determine starting point
-    wxPoint position(0,getTimeline().getDividerPosition());
+    wxPoint position(0,getView().getDividerPosition());
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         position.y -= track->getHeight() + Constants::sTrackDividerHeight;
