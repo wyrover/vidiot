@@ -43,8 +43,7 @@ private:
 DECLARE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 
 class View
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public Part
+    :   public Part
 {
 public:
 
@@ -69,7 +68,7 @@ public:
     // PROPAGATE UPDATES UPWARD
     //////////////////////////////////////////////////////////////////////////
 
-    void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onViewUpdated()
+    void onChildViewUpdated( ViewUpdateEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // BITMAP
@@ -98,6 +97,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxEvtHandler mEvtHandler;
     View* mParent;
     wxBitmap mBitmap;
     bool mBitmapValid;

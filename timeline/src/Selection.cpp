@@ -150,6 +150,19 @@ void Selection::deleteClips()
     model::Project::current()->Submit(new command::TimelineMoveClips(getTimeline(),moves));
 }
 
+void Selection::invalidateTracksWithSelectedClips()
+{
+    std::set<model::TrackPtr> tracks;
+    BOOST_FOREACH( model::ClipPtr clip, mSelected )
+    {
+        tracks.insert(clip->getTrack());
+    }
+    BOOST_FOREACH( model::TrackPtr track, tracks )
+    {
+        getViewMap().getView(track)->invalidateBitmap();
+    }
+}
+
 void Selection::selectClipAndLink(model::ClipPtr clip, bool selected)
 {
     selectClip(clip,selected);

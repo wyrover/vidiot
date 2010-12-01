@@ -53,6 +53,9 @@ const wxBrush   Constants::sClipBrush               (wxColour(123,123,123),wxBRU
 const wxPen     Constants::sSelectedClipPen         (*wxBLACK,sClipBorderSize);
 const wxBrush   Constants::sSelectedClipBrush       (wxColour(80,80,80),wxBRUSHSTYLE_SOLID);
 
+const wxPen     Constants::sDebugPen                (*wxCYAN, 1);
+const wxBrush   Constants::sDebugBrush              (*wxCYAN,wxBRUSHSTYLE_STIPPLE);
+
 //////////////////////////////////////////////////////////////////////////
 // FONTS
 //////////////////////////////////////////////////////////////////////////

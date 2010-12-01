@@ -1,5 +1,5 @@
-#ifndef TIMELINE_PART_H
-#define TIMELINE_PART_H
+#ifndef PART_H
+#define PART_H
 
 #include <wx/scrolwin.h>
 #include <boost/noncopyable.hpp>
@@ -24,7 +24,6 @@ namespace gui {
         class MenuHandler;
         class MousePointer;
         class Selection;
-        class TimelineView;
         class VideoView;
         class AudioView;
         class Timeline;
@@ -66,7 +65,6 @@ public:
     Cursor& getCursor();
     Drag& getDrag();
     Drop& getDrop();
-    TimelineView& getView();
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS
@@ -75,16 +73,6 @@ public:
     PlayerPtr getPlayer();
     model::SequencePtr getSequence();
 
-    ////////////////////////////////////////////////////////////////////////////
-    //// USED FOR VIEWS
-    ////////////////////////////////////////////////////////////////////////////
-
-    ///**
-    //* Default implementation here ensures that not all derived classes have to
-    //* do so.
-    //**/
-    //virtual void onViewUpdated( ViewUpdateEvent& event );
-
 private:
 
     Timeline * const mTimeline;
@@ -92,4 +80,4 @@ private:
 
 }} // namespace
 
-#endif // TIMELINE_PART_H
+#endif // PART_H

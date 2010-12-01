@@ -9,7 +9,7 @@
 #include "MousePointer.h"
 #include "ViewMap.h"
 #include "MousePointer.h"
-#include "TimelineView.h"
+#include "Timeline.h"
 
 namespace gui { namespace timeline {
 
@@ -76,7 +76,7 @@ int AudioView::requiredHeight()
 
 void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
 {
-    int top = getView().getDividerPosition() + Constants::sAudioVideoDividerHeight;
+    int top = getTimeline().getDividerPosition() + Constants::sAudioVideoDividerHeight;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;

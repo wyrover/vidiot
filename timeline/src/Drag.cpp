@@ -7,7 +7,7 @@
 #include "TrackView.h"
 #include "Track.h"
 #include "Sequence.h"
-#include "TimelineView.h"
+#include "Selection.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
@@ -19,7 +19,8 @@ namespace gui { namespace timeline {
 Drag::Drag(Timeline* timeline)
     :	wxDragImage(wxCursor(wxCURSOR_HAND))
     ,   Part(timeline)
-    ,   mHotspot(wxPoint(0,0))
+    ,   mHotspot(0,0)
+    ,   mPosition(0,0)
     ,   mBitmap()
     ,   mActive(false)
 {
@@ -32,30 +33,41 @@ Drag::Drag(Timeline* timeline)
 void Drag::Start(wxPoint hotspot)
 {
     mHotspot = hotspot;
+    mPosition = hotspot;
     mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
+    getSelection().invalidateTracksWithSelectedClips();
+    //getTimeline().Refresh();
     mBitmap = getDragBitmap();
-    bool ok = BeginDrag(mHotspot, &getTimeline(), false);
-    ASSERT(ok);
-    getTimeline().Refresh(false);
-    getTimeline().Update();
-    Show();
+    //bool ok = BeginDrag(mHotspot, &getTimeline(), false);
+    //ASSERT(ok);
+    //Show();
     MoveTo(hotspot);
 }
 
 void Drag::MoveTo(wxPoint position)
 {
-    //    Hide();
-    //getTimeline().Refresh(false);
-    //getTimeline().Update();
-    Move(position - getTimeline().getScrollOffset());
-    //    Show();
+    //Move(position - getTimeline().getScrollOffset());
+
+    getTimeline().invalidateBitmap();
+    wxRegion redrawRegion(wxRect(mPosition - mHotspot, mBitmap.GetSize()));
+    mPosition = position;
+    redrawRegion.Union(wxRect(mPosition - mHotspot, mBitmap.GetSize()));
+    wxRegionIterator it(redrawRegion);
+    while (it)
+    {
+        getTimeline().RefreshRect(it.GetRect());
+        it++;
+    }
+
+//    getTimeline().RefreshRect(wxRect(mPosition - mHotspot, mBitmap.GetSize()));
 }
 
 void Drag::Stop()
 {
     mActive = false;
-    Hide();
-    EndDrag();
+    getSelection().invalidateTracksWithSelectedClips();
+    //Hide();
+    //EndDrag();
     getTimeline().Refresh();
 }
 
@@ -70,8 +82,8 @@ wxRect Drag::GetImageRect(const wxPoint& pos) const
 
 wxBitmap Drag::getDragBitmap() //const
 {
-    int w = getView().requiredWidth();
-    int h = getView().requiredHeight();
+    int w = getTimeline().requiredWidth();
+    int h = getTimeline().requiredHeight();
 
     wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
     wxBitmap mask(w,h,1);
@@ -91,7 +103,7 @@ wxBitmap Drag::getDragBitmap() //const
     dcMask.SetBrush(*wxWHITE_BRUSH);
 
     // First determine starting point
-    wxPoint position(0,getView().getDividerPosition());
+    wxPoint position(0,getTimeline().getDividerPosition());
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         position.y -= track->getHeight() + Constants::sTrackDividerHeight;
@@ -149,13 +161,24 @@ bool Drag::DoDrawImage(wxDC& dc, const wxPoint& pos) const
     int y = pos.y;
     int w = mBitmap.GetWidth();
     int h = mBitmap.GetHeight();
-    dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY,false,0,0);
+    dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
 
     return true;
 }
 
 void Drag::draw(wxDC& dc)
 {
+    if (!mActive)
+    {
+        return;
+    }
+    dc.DrawBitmap(mBitmap,mPosition - mHotspot);
+
+        //dc.SetPen(Constants::sDebugPen);
+        //dc.SetBrush(Constants::sDebugBrush);
+        //dc.DrawRectangle(offset,b.GetSize());
+
+
     // UNUSED YET.
     //wxPoint scroll = getTimeline().getScrollOffset();
     //wxRegionIterator upd(getTimeline().GetUpdateRegion()); // get the update rect list
@@ -171,14 +194,14 @@ void Drag::draw(wxDC& dc)
     //}
 }
 
-bool Drag::UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const
-{
-    int x = sourceRect.GetX();
-    int y = sourceRect.GetY();
-    int w = sourceRect.GetWidth();
-    int h = sourceRect.GetHeight();
-    destDC.Blit(x,y,w,h,&windowDC,x,y,wxCOPY,false,0,0);
-    return true;
-}
+//bool Drag::UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const
+//{
+//    int x = sourceRect.GetX();
+//    int y = sourceRect.GetY();
+//    int w = sourceRect.GetWidth();
+//    int h = sourceRect.GetHeight();
+//    destDC.Blit(x,y,w,h,&windowDC,x,y,wxCOPY,false,0,0);
+//    return true;
+//}
 
 }} // namespace

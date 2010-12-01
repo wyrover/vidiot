@@ -45,10 +45,11 @@ public:
 
     virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
     void draw(wxDC& dc);
-    virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
+    //virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
 
 private:
     wxPoint mHotspot;
+    wxPoint mPosition;
     wxBitmap mBitmap;
     bool mActive;
 };
