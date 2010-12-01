@@ -1,7 +1,6 @@
 #include "Part.h"
 
 #include "Timeline.h"
-#include "TimelineView.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {
@@ -93,11 +92,6 @@ Drag& Part::getDrag()
 Drop& Part::getDrop()
 {
     return getTimeline().getDrop();
-}
-
-TimelineView& Part::getView()
-{
-    return getTimeline().getView();
 }
 
 //////////////////////////////////////////////////////////////////////////

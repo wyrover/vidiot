@@ -6,7 +6,6 @@
 #include "UtilLog.h"
 #include "Timeline.h"
 #include "GuiPlayer.h"
-#include "TimelineView.h"
 
 namespace gui { namespace timeline {
 
@@ -47,7 +46,7 @@ void Cursor::setPosition(long position)
     // Refresh the old and new cursor position areas
     long cursorOnClientArea = mCursorPosition - scroll.x;
     long oldposOnClientArea = oldPos - scroll.x;
-    getTimeline().RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,getView().requiredHeight()),false);
+    getTimeline().RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,getTimeline().requiredHeight()),false);
 
     getIntervals().update(mCursorPosition);
 }
@@ -70,7 +69,7 @@ void Cursor::moveCursorOnUser(long position)
 void Cursor::draw(wxDC& dc)
 {
     dc.SetPen(Constants::sCursorPen);
-    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getView().requiredHeight()));
+    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getTimeline().requiredHeight()));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -46,6 +46,8 @@ public:
     **/
     void deleteClips();
 
+    void invalidateTracksWithSelectedClips(); ///< Ensures that all tracks with selected clips are redrawn
+
 private:
 
     void selectClipAndLink(model::ClipPtr clip, bool selected);

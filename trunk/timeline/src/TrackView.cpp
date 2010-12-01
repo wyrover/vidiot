@@ -132,6 +132,12 @@ void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcM
             {
                 dc.DrawBitmap(bitmap,pos);
             }
+            else
+            {
+                dc.SetBrush(Constants::sBackgroundBrush);
+                dc.SetPen(Constants::sBackgroundPen);
+                dc.DrawRectangle(pos,bitmap.GetSize());
+            }
         }
         pos.x += bitmap.GetWidth();
     }

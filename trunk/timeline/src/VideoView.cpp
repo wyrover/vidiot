@@ -9,7 +9,7 @@
 #include "Sequence.h"
 #include "ViewMap.h"
 #include "MousePointer.h"
-#include "TimelineView.h"
+#include "Timeline.h"
 
 namespace gui { namespace timeline {
 
@@ -72,7 +72,7 @@ int VideoView::requiredHeight()
 
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
 {
-    int top = getView().getDividerPosition() - getBitmap().GetHeight();
+    int top = getTimeline().getDividerPosition() - getBitmap().GetHeight();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;

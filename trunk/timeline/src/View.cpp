@@ -11,27 +11,28 @@ DEFINE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 //////////////////////////////////////////////////////////////////////////
 
 View::View(Timeline* timeline)
-:   wxEvtHandler()
-,   Part(timeline)
+:   Part(timeline)
+,   mEvtHandler()
 ,   mParent(0)
 ,   mBitmapValid(false)
 {
     ASSERT(timeline);
-    Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, timeline);
+    //mEvtHandler.Bind(VIEW_UPDATE_EVENT, &View::onViewUpdated, timeline);
 }
 
 View::View(View* parent)
-:   wxEvtHandler()
+:   Part(&(parent->getTimeline()))
+,   mEvtHandler()
 ,   mParent(parent)
-,   Part(&(parent->getTimeline()))
 ,   mBitmapValid(false)
 {
     ASSERT(parent);
-    Bind(VIEW_UPDATE_EVENT, &View::onViewUpdated, parent);
+    mEvtHandler.Bind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, parent);
 }
 
 View::~View()
 {
+    mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, mParent);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,7 +48,7 @@ View& View::getParent() const
 // PROPAGATE UPDATES UPWARD
 //////////////////////////////////////////////////////////////////////////
 
-void View::onViewUpdated( ViewUpdateEvent& event )
+void View::onChildViewUpdated( ViewUpdateEvent& event )
 {
     LOG_INFO;
     invalidateBitmap();
@@ -61,7 +62,12 @@ const wxBitmap& View::getBitmap()
 {
     if (!mBitmapValid)
     {
-        mBitmap.Create(requiredWidth(),requiredHeight());
+        int w = requiredWidth();
+        int h = requiredHeight();
+        if ((mBitmap.GetWidth() != w) || (mBitmap.GetHeight() != h))
+        {
+            mBitmap.Create(requiredWidth(),requiredHeight());
+        }
         draw(mBitmap);
         mBitmapValid = true;
     }
@@ -72,7 +78,7 @@ const wxBitmap& View::getBitmap()
 void View::invalidateBitmap()
 {
     mBitmapValid = false;
-    QueueEvent(new ViewUpdateEvent(ViewUpdate(*this,wxRegion())));
+    mEvtHandler.QueueEvent(new ViewUpdateEvent(ViewUpdate(*this,wxRegion())));
 }
 
 }} // namespace

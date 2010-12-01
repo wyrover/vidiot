@@ -169,5 +169,18 @@ std::ostream& operator<< (std::ostream& os, const wxKeyboardState& obj)
         << (obj.ShiftDown()     ? 'S' : '_' ) 
         << (obj.MetaDown()      ? 'M' : '_' )
         << (obj.CmdDown()       ? 'C' : '_' );
-        return os;
+    return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const wxRegion& obj)
+{
+    wxRegionIterator it(obj);
+    os << '{';
+    while (it)
+    {
+        os << '(' << it.GetX() << ',' << it.GetY() << ',' << it.GetW() << ',' << it.GetH() << ')';
+        it++;
+    }
+    os << '}';
+    return os;
 }
