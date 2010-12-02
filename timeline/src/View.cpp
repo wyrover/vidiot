@@ -17,7 +17,7 @@ View::View(Timeline* timeline)
 ,   mBitmapValid(false)
 {
     ASSERT(timeline);
-    //mEvtHandler.Bind(VIEW_UPDATE_EVENT, &View::onViewUpdated, timeline);
+    mEvtHandler.Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, timeline);
 }
 
 View::View(View* parent)

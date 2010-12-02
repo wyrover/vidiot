@@ -23,6 +23,8 @@ Drag::Drag(Timeline* timeline)
     ,   mPosition(0,0)
     ,   mBitmap()
     ,   mActive(false)
+    ,   mDraggedVideo()
+    ,   mDraggedAudio()
 {
 }
 
@@ -172,7 +174,7 @@ void Drag::draw(wxDC& dc)
     {
         return;
     }
-    dc.DrawBitmap(mBitmap,mPosition - mHotspot);
+    dc.DrawBitmap(mBitmap,mPosition - mHotspot,true);
 
         //dc.SetPen(Constants::sDebugPen);
         //dc.SetBrush(Constants::sDebugBrush);
@@ -203,5 +205,15 @@ void Drag::draw(wxDC& dc)
 //    destDC.Blit(x,y,w,h,&windowDC,x,y,wxCOPY,false,0,0);
 //    return true;
 //}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void Drag::initializeTracks()
+{
+
+}
+
 
 }} // namespace

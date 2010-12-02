@@ -9,7 +9,6 @@
 #include "UtilLog.h"
 #include "ViewMap.h"
 #include "Sequence.h"
-#include "Project.h"
 #include "EmptyClip.h"
 #include "TimelineMoveClips.h"
 
@@ -145,9 +144,9 @@ void Selection::deleteClips()
     deleteFromTrack( moves, getSequence()->getVideoTracks());
     deleteFromTrack( moves, getSequence()->getAudioTracks());
 
-     mPreviouslyClicked.reset();
+    mPreviouslyClicked.reset();
     mSelected.clear(); // Since these clips are going to be removed, they may not be referenced anymore.
-    model::Project::current()->Submit(new command::TimelineMoveClips(getTimeline(),moves));
+    getTimeline().Submit(new command::TimelineMoveClips(getTimeline(),moves));
 }
 
 void Selection::invalidateTracksWithSelectedClips()

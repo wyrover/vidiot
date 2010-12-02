@@ -35,8 +35,6 @@ VideoView::~VideoView()
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-/** @todo sequence::size event when adding clips, somewhere */
-
 void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
 {
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
@@ -91,11 +89,11 @@ void VideoView::draw(wxBitmap& bitmap)
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
-    dc.SetBrush(Constants::sTrackDividerBrush);
-    dc.SetPen(Constants::sTrackDividerPen);
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks())
     {
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), y + Constants::sTrackDividerHeight);
+        dc.SetBrush(Constants::sTrackDividerBrush);
+        dc.SetPen(Constants::sTrackDividerPen);
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Constants::sTrackDividerHeight);
         y += Constants::sTrackDividerHeight;
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();

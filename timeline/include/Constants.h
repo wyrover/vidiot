@@ -33,8 +33,8 @@ public:
     static const int sTrackDividerHeight;
     static const int sDefaultAudioVideoDividerPosition;
     static const int sAudioVideoDividerHeight;
-
     static const int sClipBorderSize;
+    static const int sVideoPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // BRUSHES AND PENS

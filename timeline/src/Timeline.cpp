@@ -17,6 +17,7 @@
 #include "Cursor.h"
 #include "Drag.h"
 #include "Menu.h"
+#include "Project.h"
 #include "Zoom.h"
 #include "Sequence.h"
 #include "State.h"
@@ -160,8 +161,11 @@ void Timeline::onIdle(wxIdleEvent& event)
 
 void Timeline::onSize(wxSizeEvent& event)
 {
-    SetVirtualSize(requiredWidth(),requiredHeight());
-    mRedrawOnIdle = true;
+    // See onViewUpdated.
+    // This invalidation causes that event, resulting in a resize.
+    invalidateBitmap();
+    //SetVirtualSize(requiredWidth(),requiredHeight());
+    //mRedrawOnIdle = true;
 }
 
 void Timeline::onEraseBackground(wxEraseEvent& event)
@@ -198,10 +202,10 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 // PROPAGATE UPDATES UPWARD
 //////////////////////////////////////////////////////////////////////////
 
-void Timeline::onChildViewUpdated( ViewUpdateEvent& event )
+void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
-    invalidateBitmap(); 
-    getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
+    SetVirtualSize(requiredWidth(),requiredHeight());
+ //   getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     mRedrawOnIdle = true;
 }
 
@@ -268,15 +272,6 @@ void Timeline::draw(wxBitmap& bitmap)
     LOG_DEBUG;
     wxMemoryDC dc(bitmap);
 
-    if (mDividerPosition == 0)
-    {
-        // Initial, default position
-        mDividerPosition =
-            Constants::sTimeScaleHeight +
-            Constants::sMinimalGreyAboveVideoTracksHeight +
-            (requiredHeight() - Constants::sTimeScaleHeight - Constants::sMinimalGreyAboveVideoTracksHeight - Constants::sAudioVideoDividerHeight) / 2;
-    }
-
     // Get size of canvas
     int w = bitmap.GetWidth();
     int h = bitmap.GetHeight();
@@ -323,21 +318,38 @@ void Timeline::draw(wxBitmap& bitmap)
         }
     }
 
+    // Get video and audio bitmaps, possibly required for determining divider position
     const wxBitmap& videotracks = getVideo().getBitmap();
-    dc.DrawBitmap(videotracks,wxPoint(0,mDividerPosition - videotracks.GetHeight()));
+    const wxBitmap& audiotracks = getAudio().getBitmap();
+
+    int minimumDividerPosition = Constants::sVideoPosition + videotracks.GetHeight();
+    if (mDividerPosition < minimumDividerPosition)
+    {
+        mDividerPosition = minimumDividerPosition;
+    }
+
+    dc.DrawBitmap(videotracks,wxPoint(0,Constants::sVideoPosition));
 
     // Draw divider between video and audio tracks
     dc.SetBrush(Constants::sAudioVideoDividerBrush);
     dc.SetPen(Constants::sAudioVideoDividerPen);
     dc.DrawRectangle(0,mDividerPosition,w,Constants::sAudioVideoDividerHeight);
 
-    const wxBitmap& audiotracks = getAudio().getBitmap();
     dc.DrawBitmap(audiotracks,wxPoint(0,mDividerPosition + Constants::sAudioVideoDividerHeight));
 
     getIntervals().draw(dc);
     getDrag().draw(dc);
     getDrop().draw(dc);
     getCursor().draw(dc);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// CHANGE COMMANDS
+//////////////////////////////////////////////////////////////////////////
+
+void Timeline::Submit(command::RootCommand* c)
+{
+    model::Project::current()->Submit(c);
 }
 
 //////////////////////////////////////////////////////////////////////////
