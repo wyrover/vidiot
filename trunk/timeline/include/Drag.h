@@ -1,6 +1,7 @@
 #ifndef DRAG_H
 #define DRAG_H
 
+#include <list>
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
 #include "Part.h"
@@ -8,6 +9,12 @@
 #define wxUSE_GENERIC_DRAGIMAGE 1
 #include <wx/generic/dragimgg.h>
 #define wxDragImage wxGenericDragImage
+
+namespace model {
+    class Track;
+    typedef boost::shared_ptr<Track> TrackPtr;
+    typedef std::list<TrackPtr> Tracks;
+}
 
 namespace gui { namespace timeline {
 
@@ -48,10 +55,25 @@ public:
     //virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     wxPoint mHotspot;
     wxPoint mPosition;
     wxBitmap mBitmap;
     bool mActive;
+    bool mSnap; ///< true if the drag image snaps to the nearest track(s)
+
+    model::Tracks mDraggedVideo;
+    model::Tracks mDraggedAudio;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void initializeTracks(); ///< Initializes the locally stored tracks used for dragging
 };
 
 }} // namespace

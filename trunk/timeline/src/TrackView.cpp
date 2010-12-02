@@ -95,14 +95,13 @@ int TrackView::requiredHeight()
 void TrackView::draw(wxBitmap& bitmap)
 {
     wxMemoryDC dc(bitmap);
+    wxBrush b(*wxWHITE);
     dc.SetBrush(Constants::sBackgroundBrush);
+    dc.SetBrush(b);
     dc.SetPen(Constants::sBackgroundPen);
-    dc.DrawRectangle(0,0,requiredWidth(),requiredHeight());
+    dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     wxPoint position(0,0);    
     drawClips(position, dc);
-    dc.SetBrush(*wxWHITE_BRUSH);
-    dc.SetPen(*wxWHITE_PEN);
-    dc.DrawRectangle(wxPoint(10,10),wxSize(10,10));
 }
 
 void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask, bool drawDraggedOnly)

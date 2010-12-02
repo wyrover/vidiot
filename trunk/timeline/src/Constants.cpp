@@ -22,10 +22,11 @@ const int Constants::sTimeScaleSecondHeight                 = 5;
 const int Constants::sTimeScaleHeight                       = 20;
 const int Constants::sMinimalGreyAboveVideoTracksHeight     = 10;
 const int Constants::sMinimalGreyBelowAudioTracksHeight     = 10;
-const int Constants::sTrackDividerHeight                    = 6;
+const int Constants::sTrackDividerHeight                    = 4;
 const int Constants::sDefaultAudioVideoDividerPosition      = 100;
 const int Constants::sAudioVideoDividerHeight               = 5;
 const int Constants::sClipBorderSize                        = 2;
+const int Constants::sVideoPosition                         = Constants::sTimeScaleHeight + Constants::sMinimalGreyAboveVideoTracksHeight;
 
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS

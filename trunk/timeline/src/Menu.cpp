@@ -4,7 +4,10 @@
 #include "GuiMain.h"
 #include "GuiWindow.h"
 #include "GuiTimeLinesView.h"
+#include "TimelineCreateVideoTrack.h"
+#include "TimelineCreateAudioTrack.h"
 #include "Intervals.h"
+#include "Timeline.h"
 #include "ids.h"
 
 namespace gui { namespace timeline {
@@ -66,13 +69,13 @@ void MenuHandler::update()
 void MenuHandler::onAddVideoTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    //mProject->Submit(new command::TimelineCreateVideoTrack(*mOpenSequences.begin()));
+    getTimeline().Submit(new command::TimelineCreateVideoTrack(getTimeline(),getSequence()));
 }
 
 void MenuHandler::onAddAudioTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    //    mProject->Submit(new command::TimelineCreateAudioTrack(*mOpenSequences.begin()));
+    getTimeline().Submit(new command::TimelineCreateAudioTrack(getTimeline(),getSequence()));
 }
 
 

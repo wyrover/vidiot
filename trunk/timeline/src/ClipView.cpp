@@ -98,7 +98,7 @@ void ClipView::draw(wxBitmap& bitmap)
     {
         dc.SetBrush(Constants::sBackgroundBrush);
         dc.SetPen(Constants::sBackgroundPen);
-        dc.DrawRectangle(0,0,requiredWidth(),requiredHeight());
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     }
     else
     {
@@ -112,7 +112,7 @@ void ClipView::draw(wxBitmap& bitmap)
             dc.SetBrush(Constants::sClipBrush);
             dc.SetPen(Constants::sClipPen);
         }
-        dc.DrawRectangle(0,0,requiredWidth(),requiredHeight());
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
         if (mThumbnail)
         {
             dc.DrawBitmap(*mThumbnail,wxPoint(Constants::sClipBorderSize,Constants::sClipBorderSize));

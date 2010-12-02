@@ -5,6 +5,10 @@
 #include <boost/serialization/version.hpp>
 #include "View.h"
 
+namespace command {
+    class RootCommand;
+}
+
 namespace gui { namespace timeline {
     class ViewUpdateEvent;
 
@@ -51,7 +55,7 @@ public:
     // PROPAGATE UPDATES UPWARD
     //////////////////////////////////////////////////////////////////////////
 
-    void onChildViewUpdated( ViewUpdateEvent& event ); ///< @see View::onChildViewUpdated()
+    void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onChildViewUpdated()
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -65,6 +69,12 @@ public:
 
     int requiredWidth();  ///< @see View::requiredWidth()
     int requiredHeight(); ///< @see View::requiredHeight()
+
+    //////////////////////////////////////////////////////////////////////////
+    // CHANGE COMMANDS
+    //////////////////////////////////////////////////////////////////////////
+
+    void Submit(command::RootCommand* c);
 
 private:
 
