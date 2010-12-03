@@ -16,6 +16,7 @@
 #include "TimelineMoveClips.h"
 #include "MousePointer.h"
 #include "Selection.h"
+#include "StateMoveDivider.h"
 #include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -44,17 +45,26 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
     VAR_DEBUG(evt);
     getWindow().SetFocus(); /** @todo make more generic, for all states */
     PointerPositionInfo info = getMousePointer().getInfo(evt.mPosition);
-    getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
-    if (info.clip && !info.clip->isA<model::EmptyClip>())
+
+    if (info.onAudioVideoDivider)
     {
-        outermost_context().globals->DragStartPosition = evt.mPosition;
-        return transit<TestDragStart>();
+        return transit<MoveDivider>();
     }
     else
     {
-        post_event(evt); // Handle this in the MovingCursor state.
-        return transit<MovingCursor>();
+        getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
+        if (info.clip && !info.clip->isA<model::EmptyClip>())
+        {
+            outermost_context().globals->DragStartPosition = evt.mPosition;
+            return transit<TestDragStart>();
+        }
+        else
+        {
+            post_event(evt); // Handle this in the MovingCursor state.
+            return transit<MovingCursor>();
+        }
     }
+
     return discard_event();
 }
 
@@ -63,21 +73,29 @@ boost::statechart::result Idle::react( const EvMotion& evt )
     VAR_DEBUG(evt);
     PointerPositionInfo info =  getMousePointer().getInfo(evt.mPosition);
     MousePointerImage image = PointerNormal;
-    if (info.onTrackDivider)
+    if (info.onAudioVideoDivider)
     {
         image = PointerTrackResize;
     }
     else
     {
-        if (info.clip)
+        if (info.onTrackDivider)
         {
-            switch (info.logicalclipposition)
+            image = PointerTrackResize;
+        }
+        else
+        {
+            if (info.clip)
             {
-            case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
-            case ClipBetween:    image = PointerMoveCut;     break;
-            case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+                switch (info.logicalclipposition)
+                {
+                case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
+                case ClipBetween:    image = PointerMoveCut;     break;
+                case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+                }
             }
         }
+
     }
     getMousePointer().set(image);
     return discard_event();

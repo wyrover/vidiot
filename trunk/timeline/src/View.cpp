@@ -58,7 +58,7 @@ void View::onChildViewUpdated( ViewUpdateEvent& event )
 // BITMAP
 //////////////////////////////////////////////////////////////////////////
 
-const wxBitmap& View::getBitmap()
+const wxBitmap& View::getBitmap() const
 {
     if (!mBitmapValid)
     {

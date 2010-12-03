@@ -28,10 +28,10 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    int requiredWidth();  ///< @see View::requiredWidth()
-    int requiredHeight(); ///< @see View::requiredHeight()
+    int requiredWidth() const;  ///< @see View::requiredWidth()
+    int requiredHeight() const; ///< @see View::requiredHeight()
 
-    void getPositionInfo(wxPoint position, PointerPositionInfo& info);
+    void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
 private:
 
@@ -50,7 +50,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap); ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 };
 
 }} // namespace

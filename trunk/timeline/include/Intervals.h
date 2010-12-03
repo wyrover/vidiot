@@ -60,7 +60,7 @@ public:
     // DRAWING
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxDC& dc);
+    void draw(wxDC& dc) const;
 
 private:
 
@@ -82,8 +82,8 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    wxRect makeRect(long x1, long x2);
-    wxRect ptsToPixels(wxRect rect);
+    wxRect makeRect(long x1, long x2) const;
+    wxRect ptsToPixels(wxRect rect) const;
     void refresh(long begin, long end);
 
     typedef std::map< model::ClipPtr, model::ClipPtr > ReplacementMap;

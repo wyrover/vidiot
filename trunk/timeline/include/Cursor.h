@@ -34,7 +34,7 @@ public:
     // DRAW
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxDC& dc);
+    void draw(wxDC& dc) const;
 
 private:
 

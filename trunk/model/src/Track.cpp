@@ -228,7 +228,7 @@ ClipPtr Track::getPreviousClip(ClipPtr clip)
 // GET & SET
 //////////////////////////////////////////////////////////////////////////
 
-int Track::getHeight()
+int Track::getHeight() const
 {
     return mHeight;
 }

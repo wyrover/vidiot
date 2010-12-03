@@ -35,7 +35,7 @@ public:
     bool OnDrop (wxCoord x, wxCoord y);
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def);
     void OnLeave ();
-    void draw(wxDC& dc);
+    void draw(wxDC& dc) const;
 
 
     void updateDropArea(wxPoint p);

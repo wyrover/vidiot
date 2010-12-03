@@ -63,12 +63,12 @@ void ClipView::show(wxRect rect)
     invalidateBitmap();;
 }
 
-int ClipView::requiredWidth()
+int ClipView::requiredWidth() const
 {
     return getRightPosition() - getLeftPosition();
 }
 
-int ClipView::requiredHeight()
+int ClipView::requiredHeight() const
 {
     return mClip->getTrack()->getHeight();
 }
@@ -90,7 +90,7 @@ void ClipView::updateThumbnail()
     invalidateBitmap();
 }
 
-void ClipView::draw(wxBitmap& bitmap)
+void ClipView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
 

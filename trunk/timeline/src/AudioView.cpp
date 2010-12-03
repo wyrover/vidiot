@@ -6,10 +6,9 @@
 #include "Track.h"
 #include "TrackView.h"
 #include "Sequence.h"
-#include "MousePointer.h"
+#include "PositionInfo.h"
 #include "ViewMap.h"
-#include "MousePointer.h"
-#include "Timeline.h"
+#include "Divider.h"
 
 namespace gui { namespace timeline {
 
@@ -59,12 +58,12 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-int AudioView::requiredWidth()
+int AudioView::requiredWidth() const
 {
     return getParent().requiredWidth();
 }
 
-int AudioView::requiredHeight()
+int AudioView::requiredHeight() const
 {
     int requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
@@ -74,9 +73,9 @@ int AudioView::requiredHeight()
     return requiredHeight;
 }
 
-void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
+void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
-    int top = getTimeline().getDividerPosition() + Constants::sAudioVideoDividerHeight;
+    int top = getDivider().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;
@@ -91,7 +90,7 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
     }
 }
 
-void AudioView::draw(wxBitmap& bitmap)
+void AudioView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;

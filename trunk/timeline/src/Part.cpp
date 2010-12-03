@@ -44,6 +44,11 @@ wxScrolledWindow& Part::getWindow()
     return getTimeline();
 }
 
+const wxScrolledWindow& Part::getWindow() const
+{
+    return getTimeline();
+}
+
 Zoom& Part::getZoom() 
 { 
     return getTimeline().getZoom(); 
@@ -59,7 +64,17 @@ Intervals& Part::getIntervals()
     return getTimeline().getIntervals();
 }
 
+const Intervals& Part::getIntervals() const
+{ 
+    return getTimeline().getIntervals();
+}
+
 Selection& Part::getSelection()
+{
+    return getTimeline().getSelection();
+}
+
+const Selection& Part::getSelection() const
 {
     return getTimeline().getSelection();
 }
@@ -69,7 +84,17 @@ MousePointer& Part::getMousePointer()
     return getTimeline().getMousepointer();
 }
 
+const MousePointer& Part::getMousePointer() const
+{
+    return getTimeline().getMousepointer();
+}
+
 ViewMap& Part::getViewMap()
+{
+    return getTimeline().getViewMap();
+}
+
+const ViewMap& Part::getViewMap() const
 {
     return getTimeline().getViewMap();
 }
@@ -79,7 +104,17 @@ MenuHandler& Part::getMenuHandler()
     return getTimeline().getMenuHandler();
 }
 
+const MenuHandler& Part::getMenuHandler() const
+{
+    return getTimeline().getMenuHandler();
+}
+
 Cursor& Part::getCursor()
+{
+    return getTimeline().getCursor();
+}
+
+const Cursor& Part::getCursor() const
 {
     return getTimeline().getCursor();
 }
@@ -89,9 +124,29 @@ Drag& Part::getDrag()
     return getTimeline().getDrag();
 }
 
+const Drag& Part::getDrag() const
+{
+    return getTimeline().getDrag();
+}
+
 Drop& Part::getDrop()
 {
     return getTimeline().getDrop();
+}
+
+const Drop& Part::getDrop() const
+{
+    return getTimeline().getDrop();
+}
+
+Divider& Part::getDivider()
+{
+    return getTimeline().getDivider();
+}
+
+const Divider& Part::getDivider() const
+{
+    return getTimeline().getDivider();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,6 +159,11 @@ PlayerPtr Part::getPlayer()
 }
 
 model::SequencePtr Part::getSequence()
+{
+    return getTimeline().getSequence();
+}
+
+const model::SequencePtr Part::getSequence() const
 {
     return getTimeline().getSequence();
 }

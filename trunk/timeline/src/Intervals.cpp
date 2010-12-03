@@ -176,7 +176,7 @@ void Intervals::deleteUnmarked()
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-void Intervals::draw(wxDC& dc)
+void Intervals::draw(wxDC& dc) const
 {
     wxRegion drawRegion(mMarkedIntervals);
 
@@ -212,12 +212,12 @@ void Intervals::draw(wxDC& dc)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-wxRect Intervals::makeRect(long x1, long x2)
+wxRect Intervals::makeRect(long x1, long x2) const
 {
     return wxRect(std::min(x1,x2),Constants::sTimeScaleHeight,std::abs(x2 - x1) + 1,Constants::sMinimalGreyAboveVideoTracksHeight);
 }
 
-wxRect Intervals::ptsToPixels(wxRect rect)
+wxRect Intervals::ptsToPixels(wxRect rect) const
 {
     rect.x = getZoom().ptsToPixels(rect.x);
     rect.width = getZoom().ptsToPixels(rect.width);

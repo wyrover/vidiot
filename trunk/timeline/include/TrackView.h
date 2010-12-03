@@ -27,14 +27,14 @@ public:
 
     model::TrackPtr getTrack() const;
 
-     void drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask = boost::none, bool drawDraggedOnly = false);
+     void drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask = boost::none, bool drawDraggedOnly = false) const;
 
      //////////////////////////////////////////////////////////////////////////
      // GET/SET
      //////////////////////////////////////////////////////////////////////////
 
-     int requiredWidth();  ///< @see View::requiredWidth()
-     int requiredHeight(); ///< @see View::requiredHeight()
+     int requiredWidth() const;  ///< @see View::requiredWidth()
+     int requiredHeight() const; ///< @see View::requiredHeight()
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -55,7 +55,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap); ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 };
 
 }} // namespace

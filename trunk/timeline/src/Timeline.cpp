@@ -16,6 +16,7 @@
 #include "MousePointer.h"
 #include "Cursor.h"
 #include "Drag.h"
+#include "Divider.h"
 #include "Menu.h"
 #include "Project.h"
 #include "Zoom.h"
@@ -41,7 +42,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mSequence(sequence)
 ,   mPlayer(dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(sequence,this))
 ,   mRedrawOnIdle(true)
-,   mDividerPosition(0)
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
 ,   mViewMap(new ViewMap(this))
@@ -51,6 +51,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
 ,   mDrop(new Drop(this))
+,   mDivider(new Divider(this))
 ,   mMouseState(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 //////////////////////////////////////////////////////////////////////////
@@ -62,6 +63,11 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 
     SetScrollRate( 10, 10 );
     EnableScrolling(true,true);
+
+    // To ensure that for newly opened timelines the initial position is ok
+    // (should take 'minimum position' into account). This can only be done
+    // after both mDivider AND mVideoView are initialized.
+    getDivider().setPosition(getDivider().getPosition());
 
     Bind(wxEVT_IDLE,                &Timeline::onIdle,               this);
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
@@ -85,6 +91,11 @@ Timeline& Timeline::getTimeline()
     return *this;
 }
 
+const Timeline& Timeline::getTimeline() const
+{
+    return *this;
+}
+
 Zoom& Timeline::getZoom()
 { 
     return *mZoom; 
@@ -100,7 +111,17 @@ ViewMap& Timeline::getViewMap()
     return *mViewMap; 
 }
 
+const ViewMap& Timeline::getViewMap() const
+{ 
+    return *mViewMap; 
+}
+
 Intervals& Timeline::getIntervals()
+{ 
+    return *mIntervals; 
+}
+
+const Intervals& Timeline::getIntervals() const
 { 
     return *mIntervals; 
 }
@@ -110,7 +131,17 @@ MousePointer& Timeline::getMousepointer()
     return *mMousePointer; 
 }
 
+const MousePointer& Timeline::getMousepointer() const
+{ 
+    return *mMousePointer; 
+}
+
 Selection& Timeline::getSelection()
+{ 
+    return *mSelection;
+}
+
+const Selection& Timeline::getSelection() const
 { 
     return *mSelection;
 }
@@ -120,7 +151,17 @@ MenuHandler& Timeline::getMenuHandler()
     return *mMenuHandler; 
 }
 
+const MenuHandler& Timeline::getMenuHandler() const
+{ 
+    return *mMenuHandler; 
+}
+
 Cursor& Timeline::getCursor()
+{ 
+    return *mCursor; 
+}
+
+const Cursor& Timeline::getCursor() const
 { 
     return *mCursor; 
 }
@@ -130,12 +171,37 @@ Drag& Timeline::getDrag()
     return *mDrag; 
 }
 
+const Drag& Timeline::getDrag() const
+{ 
+    return *mDrag; 
+}
+
 Drop& Timeline::getDrop()
 {
     return *mDrop;
 }
 
+const Drop& Timeline::getDrop() const
+{
+    return *mDrop;
+}
+
+Divider& Timeline::getDivider()
+{
+    return *mDivider;
+}
+
+const Divider& Timeline::getDivider() const
+{
+    return *mDivider;
+}
+
 model::SequencePtr Timeline::getSequence()
+{
+    return mSequence;
+}
+
+const model::SequencePtr Timeline::getSequence() const
 {
     return mSequence;
 }
@@ -223,7 +289,17 @@ VideoView& Timeline::getVideo()
     return *mVideoView;
 }
 
+const VideoView& Timeline::getVideo() const
+{
+    return *mVideoView;
+}
+
 AudioView& Timeline::getAudio()
+{
+    return *mAudioView;
+}
+
+const AudioView& Timeline::getAudio() const
 {
     return *mAudioView;
 }
@@ -236,7 +312,7 @@ wxPoint Timeline::getScrollOffset() const
     return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 
-int Timeline::requiredWidth()
+int Timeline::requiredWidth() const
 {
     return
         std::max(std::max(
@@ -245,7 +321,7 @@ int Timeline::requiredWidth()
         getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));     // At least enough to hold all clips
 }
 
-int Timeline::requiredHeight()
+int Timeline::requiredHeight() const
 {
     return
         std::max(
@@ -258,16 +334,11 @@ int Timeline::requiredHeight()
         Constants::sMinimalGreyBelowAudioTracksHeight);                 // Height of all combined components
 }
 
-int Timeline::getDividerPosition() const
-{
-    return mDividerPosition;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // DRAW
 //////////////////////////////////////////////////////////////////////////
 
-void Timeline::draw(wxBitmap& bitmap)
+void Timeline::draw(wxBitmap& bitmap) const
 {
     LOG_DEBUG;
     wxMemoryDC dc(bitmap);
@@ -322,21 +393,10 @@ void Timeline::draw(wxBitmap& bitmap)
     const wxBitmap& videotracks = getVideo().getBitmap();
     const wxBitmap& audiotracks = getAudio().getBitmap();
 
-    int minimumDividerPosition = Constants::sVideoPosition + videotracks.GetHeight();
-    if (mDividerPosition < minimumDividerPosition)
-    {
-        mDividerPosition = minimumDividerPosition;
-    }
+    dc.DrawBitmap(videotracks,wxPoint(0,getDivider().getVideoPosition()));
+    dc.DrawBitmap(audiotracks,wxPoint(0,getDivider().getAudioPosition()));
 
-    dc.DrawBitmap(videotracks,wxPoint(0,Constants::sVideoPosition));
-
-    // Draw divider between video and audio tracks
-    dc.SetBrush(Constants::sAudioVideoDividerBrush);
-    dc.SetPen(Constants::sAudioVideoDividerPen);
-    dc.DrawRectangle(0,mDividerPosition,w,Constants::sAudioVideoDividerHeight);
-
-    dc.DrawBitmap(audiotracks,wxPoint(0,mDividerPosition + Constants::sAudioVideoDividerHeight));
-
+    getDivider().draw(dc);
     getIntervals().draw(dc);
     getDrag().draw(dc);
     getDrop().draw(dc);
@@ -361,7 +421,7 @@ void Timeline::serialize(Archive & ar, const unsigned int version)
 {
     ar & *mZoom;
     ar & *mIntervals;
-    ar & mDividerPosition;
+    ar & *mDivider;
 }
 
 template void Timeline::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
