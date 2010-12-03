@@ -20,6 +20,7 @@
 #include "Selection.h"
 #include "Track.h"
 #include "ViewMap.h"
+#include "PositionInfo.h"
 
 namespace gui { namespace timeline {
 
@@ -90,6 +91,15 @@ int TrackView::requiredWidth() const
 int TrackView::requiredHeight() const
 {
     return mTrack->getHeight();
+}
+
+void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
+{
+    info.clip = mTrack->getClip(getZoom().pixelsToPts(position.x));
+    if (info.clip)
+    {
+        getViewMap().getView(info.clip)->getPositionInfo(position, info);
+    }
 }
 
 void TrackView::draw(wxBitmap& bitmap) const

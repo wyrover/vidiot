@@ -12,6 +12,7 @@ namespace model {
 }
 
 namespace gui { namespace timeline {
+    struct PointerPositionInfo;
 
 class TrackView
     :   public View
@@ -35,6 +36,8 @@ public:
 
      int requiredWidth() const;  ///< @see View::requiredWidth()
      int requiredHeight() const; ///< @see View::requiredHeight()
+
+     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
