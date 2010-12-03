@@ -10,6 +10,7 @@
 #include "MousePointer.h"
 #include "ViewMap.h"
 #include "GuiDataObject.h"
+#include "PositionInfo.h"
 
 namespace gui { namespace timeline {
 

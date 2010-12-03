@@ -11,6 +11,7 @@ typedef boost::shared_ptr<Clip> ClipPtr;
 }
 
 namespace gui { namespace timeline {
+    struct PointerPositionInfo;
 
 class ClipView
     :   public View
@@ -35,6 +36,8 @@ public:
 
     int requiredWidth() const;  ///< @see View::requiredWidth()
     int requiredHeight() const; ///< @see View::requiredHeight()
+
+    void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
     void show(wxRect rect); ///< tmp for showing intersect with selected regions
 

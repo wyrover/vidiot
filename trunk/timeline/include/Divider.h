@@ -4,10 +4,10 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "Part.h"
-#include "PositionInfo.h"
 
 namespace gui { namespace timeline {
     class ViewUpdateEvent;
+    struct PointerPositionInfo;
 
 class Divider
     :   public Part

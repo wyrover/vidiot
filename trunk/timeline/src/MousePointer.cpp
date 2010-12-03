@@ -19,6 +19,8 @@
 #include "Timeline.h"
 #include "Zoom.h"
 #include "ViewMap.h"
+#include "TrackView.h"
+#include "PositionInfo.h"
 
 namespace gui { namespace timeline {
 
@@ -94,14 +96,8 @@ void MousePointer::set(MousePointerImage image)
 PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
 {
     PointerPositionInfo info;
-    info.onAudioVideoDivider = false;
-    info.track = model::TrackPtr();
-    info.clip = model::ClipPtr();
-    info.trackPosition = 0;
-    info.onTrackDivider = false;
 
     getDivider().getPositionInfo(pointerposition, info);
-
     if (!info.onAudioVideoDivider)
     {
         /** @todo move to timeline class (it contains the if below) */
@@ -114,45 +110,7 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
         // Find clip under pointer
         if (info.track)
         {
-            info.clip = info.track->getClip(getZoom().pixelsToPts(pointerposition.x));
-        }
-
-        // Find logical position of pointer wrt clips
-        if (info.clip)
-        {
-            // This is handled on a per-pixel and not per-pts basis. That ensures
-            // that this still works for clips which are very small when zoomed out.
-            // (then the cursor won't flip too much).
-            ClipView* clip = getViewMap().getView(info.clip);
-            int dist_begin = pointerposition.x - clip->getLeftPosition();
-            int dist_end = clip->getRightPosition() - pointerposition.x;
-
-            if (dist_begin <= 1)
-            {
-                // Possibly between clips. However, this is only relevant if there
-                // is another nonempty clip adjacent to this clip.
-                model::ClipPtr previous = info.track->getPreviousClip(info.clip);
-                info.logicalclipposition = (!previous || previous->isA<model::EmptyClip>()) ? ClipBegin : ClipBetween;
-            }
-            else if (dist_end <= 1)
-            {
-                // Possibly between clips. However, this is only relevant if there
-                // is another nonempty clip adjacent to this clip.
-                model::ClipPtr next = info.track->getNextClip(info.clip);
-                info.logicalclipposition = (!next || next->isA<model::EmptyClip>()) ? ClipEnd : ClipBetween;
-            }
-            else if ((dist_begin > 1) && (dist_begin < 4))
-            {
-                info.logicalclipposition = ClipBegin;
-            }
-            else if ((dist_end > 1) && (dist_end < 4))
-            {
-                info.logicalclipposition = ClipEnd;
-            }
-            else
-            {
-                info.logicalclipposition = ClipInterior;
-            }
+            getViewMap().getView(info.track)->getPositionInfo(pointerposition, info);
         }
     }
 

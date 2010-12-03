@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "VideoView.h"
 #include "Timeline.h"
+#include "PositionInfo.h"
 
 namespace gui { namespace timeline {
 

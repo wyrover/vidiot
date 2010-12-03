@@ -12,6 +12,7 @@
 #include "ViewMap.h"
 #include "Track.h"
 #include "Clip.h"
+#include "PositionInfo.h"
 
 namespace gui { namespace timeline {
 
@@ -71,6 +72,44 @@ int ClipView::requiredWidth() const
 int ClipView::requiredHeight() const
 {
     return mClip->getTrack()->getHeight();
+}
+
+void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
+{
+    ASSERT(info.track); // If the track is not filled in, then how can this clipview be reached?
+
+    // This is handled on a per-pixel and not per-pts basis. That ensures
+    // that this still works for clips which are very small when zoomed out.
+    // (then the cursor won't flip too much).
+    int dist_begin = position.x - getLeftPosition();
+    int dist_end = getRightPosition() - position.x;
+
+    if (dist_begin <= 1)
+    {
+        // Possibly between clips. However, this is only relevant if there
+        // is another nonempty clip adjacent to this clip.
+        model::ClipPtr previous = info.track->getPreviousClip(info.clip);
+        info.logicalclipposition = (!previous || previous->isA<model::EmptyClip>()) ? ClipBegin : ClipBetween;
+    }
+    else if (dist_end <= 1)
+    {
+        // Possibly between clips. However, this is only relevant if there
+        // is another nonempty clip adjacent to this clip.
+        model::ClipPtr next = info.track->getNextClip(info.clip);
+        info.logicalclipposition = (!next || next->isA<model::EmptyClip>()) ? ClipEnd : ClipBetween;
+    }
+    else if ((dist_begin > 1) && (dist_begin < 4))
+    {
+        info.logicalclipposition = ClipBegin;
+    }
+    else if ((dist_end > 1) && (dist_end < 4))
+    {
+        info.logicalclipposition = ClipEnd;
+    }
+    else
+    {
+        info.logicalclipposition = ClipInterior;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

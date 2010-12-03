@@ -18,6 +18,7 @@
 #include "Selection.h"
 #include "StateMoveDivider.h"
 #include "UtilLog.h"
+#include "PositionInfo.h"
 
 namespace gui { namespace timeline { namespace state {
 
