@@ -140,7 +140,7 @@ void Drop::updateDropArea(wxPoint p)
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-void Drop::draw(wxDC& dc)
+void Drop::draw(wxDC& dc) const
 {
     if (!mDropArea.IsEmpty())
     {

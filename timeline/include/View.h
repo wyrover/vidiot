@@ -61,8 +61,8 @@ public:
 
     View& getParent() const;
 
-    virtual int requiredWidth() = 0;
-    virtual int requiredHeight() = 0;
+    virtual int requiredWidth() const = 0;
+    virtual int requiredHeight() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // PROPAGATE UPDATES UPWARD
@@ -74,7 +74,7 @@ public:
     // BITMAP
     //////////////////////////////////////////////////////////////////////////
 
-    const wxBitmap& getBitmap();
+    const wxBitmap& getBitmap() const;
 
 protected:
 
@@ -82,7 +82,7 @@ protected:
     * Is called whenever the bitmap is 'invalidated' and a new bitmap
     * is required.
     **/
-    virtual void draw(wxBitmap& bitmap) = 0;
+    virtual void draw(wxBitmap& bitmap) const = 0;
 
 public: /** @todo should be protected, but couldn't yet due to use in 'Selection()' */
     /**
@@ -99,8 +99,8 @@ private:
 
     wxEvtHandler mEvtHandler;
     View* mParent;
-    wxBitmap mBitmap;
-    bool mBitmapValid;
+    mutable wxBitmap mBitmap; ///< Mutable to avoid having to non-const all methods using getBitmap()
+    mutable bool mBitmapValid; ///< Mutable to avoid having to non-const all methods using getBitmap()
 };
 
 }} // namespace

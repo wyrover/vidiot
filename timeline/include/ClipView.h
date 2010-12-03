@@ -33,8 +33,8 @@ public:
     boost::int64_t getLeftPosition() const;  ///< @return left position in pixels
     boost::int64_t getRightPosition() const; ///< @return right position in pixels
 
-    int requiredWidth();  ///< @see View::requiredWidth()
-    int requiredHeight(); ///< @see View::requiredHeight()
+    int requiredWidth() const;  ///< @see View::requiredWidth()
+    int requiredHeight() const; ///< @see View::requiredHeight()
 
     void show(wxRect rect); ///< tmp for showing intersect with selected regions
 
@@ -51,7 +51,7 @@ private:
 
     void updateThumbnail();
 
-    void draw(wxBitmap& bitmap); ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 
 };
 

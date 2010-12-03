@@ -67,7 +67,7 @@ void Cursor::moveCursorOnUser(long position)
 // DRAW
 //////////////////////////////////////////////////////////////////////////
 
-void Cursor::draw(wxDC& dc)
+void Cursor::draw(wxDC& dc) const
 {
     dc.SetPen(Constants::sCursorPen);
     dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getTimeline().requiredHeight()));

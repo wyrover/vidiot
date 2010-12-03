@@ -9,6 +9,7 @@
 #include "Sequence.h"
 #include "Selection.h"
 #include "ViewMap.h"
+#include "Divider.h"
 
 namespace gui { namespace timeline {
 
@@ -104,14 +105,8 @@ wxBitmap Drag::getDragBitmap() //const
     dcMask.SetPen(*wxWHITE_PEN);
     dcMask.SetBrush(*wxWHITE_BRUSH);
 
-    // First determine starting point
-    wxPoint position(0,getTimeline().getDividerPosition());
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
-    {
-        position.y -= track->getHeight() + Constants::sTrackDividerHeight;
-    }
-
     // Draw video tracks
+    wxPoint position(0,getDivider().getVideoPosition());
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         getViewMap().getView(track)->drawClips(position,dc,dcMask);
@@ -119,7 +114,7 @@ wxBitmap Drag::getDragBitmap() //const
     }
 
     // Draw audio tracks
-    position.y += Constants::sAudioVideoDividerHeight;
+    position.y = getDivider().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         getViewMap().getView(track)->drawClips(position,dc,dcMask);
@@ -168,7 +163,7 @@ bool Drag::DoDrawImage(wxDC& dc, const wxPoint& pos) const
     return true;
 }
 
-void Drag::draw(wxDC& dc)
+void Drag::draw(wxDC& dc) const
 {
     if (!mActive)
     {

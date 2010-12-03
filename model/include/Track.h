@@ -151,7 +151,7 @@ public:
     // GET & SET
     //////////////////////////////////////////////////////////////////////////
 
-    int getHeight();
+    int getHeight() const;
 
 protected:
 

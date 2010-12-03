@@ -82,17 +82,17 @@ void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
 // DRAWING EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-int TrackView::requiredWidth()
+int TrackView::requiredWidth() const
 {
     return getParent().requiredWidth();
 }
 
-int TrackView::requiredHeight()
+int TrackView::requiredHeight() const
 {
     return mTrack->getHeight();
 }
 
-void TrackView::draw(wxBitmap& bitmap)
+void TrackView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     wxBrush b(*wxWHITE);
@@ -104,7 +104,7 @@ void TrackView::draw(wxBitmap& bitmap)
     drawClips(position, dc);
 }
 
-void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask, bool drawDraggedOnly)
+void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask, bool drawDraggedOnly) const
 {
     // if dcMask holds, then we're drawing a 'drag image'. Otherwise, we're drawing the regular track bitmap.
     bool draggedClipsOnly = dcMask;

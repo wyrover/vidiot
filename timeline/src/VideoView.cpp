@@ -8,8 +8,9 @@
 #include "TrackView.h"
 #include "Sequence.h"
 #include "ViewMap.h"
-#include "MousePointer.h"
+#include "PositionInfo.h"
 #include "Timeline.h"
+#include "Divider.h"
 
 namespace gui { namespace timeline {
 
@@ -53,12 +54,12 @@ void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-int VideoView::requiredWidth()
+int VideoView::requiredWidth() const
 {
     return getParent().requiredWidth();
 }
 
-int VideoView::requiredHeight()
+int VideoView::requiredHeight() const
 {
     int requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
@@ -68,9 +69,9 @@ int VideoView::requiredHeight()
     return requiredHeight;
 }
 
-void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
+void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
-    int top = getTimeline().getDividerPosition() - getBitmap().GetHeight();
+    int top = getDivider().getVideoPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;
@@ -85,7 +86,7 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
     }
 }
 
-void VideoView::draw(wxBitmap& bitmap)
+void VideoView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;

@@ -51,7 +51,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
-    void draw(wxDC& dc);
+    void draw(wxDC& dc) const;
     //virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
 
 private:

@@ -4,14 +4,8 @@
 #include <wx/gdicmn.h>
 #include <wx/cursor.h>
 #include "UtilEnum.h"
+#include "PositionInfo.h"
 #include "Part.h"
-
-namespace model {
-    class Track;
-    typedef boost::shared_ptr<Track> TrackPtr;
-    class Clip;
-    typedef boost::shared_ptr<Clip> ClipPtr;
-}
 
 namespace gui { namespace timeline {
 
@@ -23,39 +17,6 @@ DECLAREENUM(MousePointerImage, \
             PointerTrimEnd, \
             PointerTrimShiftEnd, \
             PointerTrackResize);
-
-DECLAREENUM(MouseOnClipPosition, \
-            ClipBetween, \
-            ClipBegin, \
-            ClipInterior, \
-            ClipEnd);
-
-/** @todo split into track info and 'withintrack' info */
-struct PointerPositionInfo
-{
-    //////////////////////////////////////////////////////////////////////////
-    // TRACK
-    //////////////////////////////////////////////////////////////////////////
-
-    /** Current track under the mouse pointer. 0 if none. */
-    model::TrackPtr track;
-
-    /** Y position of current track. 0 if no current track. */
-    int trackPosition;
-
-    /** True if pointer is ON the track divider for this track. */
-    bool onTrackDivider;
-
-    //////////////////////////////////////////////////////////////////////////
-    // CLIP
-    //////////////////////////////////////////////////////////////////////////
-
-    /** Current clip under the mouse pointer. 0 if none. */
-    model::ClipPtr clip;
-
-    MouseOnClipPosition logicalclipposition;
-
-};
 
 class MousePointer
     :   public Part
