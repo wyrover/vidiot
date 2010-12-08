@@ -59,7 +59,7 @@ void AudioClip::moveTo(pts position)
 
 AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
 {
-    AudioChunkPtr audioChunk = boost::static_pointer_cast<AudioFile>(mRender)->getNextAudio(audioRate, nAudioChannels);
+    AudioChunkPtr audioChunk = getDataGenerator<AudioFile>()->getNextAudio(audioRate, nAudioChannels);
 //todo: afbreken als voorbij mlengts
     VAR_AUDIO(audioChunk);
     return audioChunk;
