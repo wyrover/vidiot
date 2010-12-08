@@ -8,10 +8,10 @@
 #include <wx/slider.h>
 #include <wx/textctrl.h>
 #include <wx/minifram.h>
-#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 #include "ModelPtr.h"
 #include "VideoDisplayEvent.h"
+#include "UtilInt.h"
 
 namespace gui {
 
@@ -35,7 +35,7 @@ public:
 
     void play();
     void stop();
-    void moveTo(boost::int64_t position);
+    void moveTo(pts position);
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS

@@ -44,12 +44,23 @@ AudioClip::~AudioClip()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// ICONTROL
+//////////////////////////////////////////////////////////////////////////
+
+void AudioClip::moveTo(pts position)
+{
+	mCurrentPts = position;
+	Clip::moveTo(position); // Default behaviour
+}
+
+//////////////////////////////////////////////////////////////////////////
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
 AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
 {
     AudioChunkPtr audioChunk = boost::static_pointer_cast<AudioFile>(mRender)->getNextAudio(audioRate, nAudioChannels);
+//todo: afbreken als voorbij mlengts
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }

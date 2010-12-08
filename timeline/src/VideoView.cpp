@@ -54,14 +54,14 @@ void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-int VideoView::requiredWidth() const
+pixel VideoView::requiredWidth() const
 {
     return getParent().requiredWidth();
 }
 
-int VideoView::requiredHeight() const
+pixel VideoView::requiredHeight() const
 {
-    int requiredHeight = 0;
+    pixel requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         requiredHeight += track->getHeight() + Constants::sTrackDividerHeight;

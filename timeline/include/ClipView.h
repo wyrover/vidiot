@@ -2,7 +2,6 @@
 #define CLIP_VIEW_H
 
 #include <boost/scoped_ptr.hpp>
-#include <boost/cstdint.hpp>
 #include "View.h"
 
 namespace model{
@@ -31,11 +30,11 @@ public:
 
     model::ClipPtr getClip();
 
-    boost::int64_t getLeftPosition() const;  ///< @return left position in pixels
-    boost::int64_t getRightPosition() const; ///< @return right position in pixels
+    pixel getLeftPosition() const;  ///< @return left position in pixels
+    pixel getRightPosition() const; ///< @return right position in pixels
 
-    int requiredWidth() const;  ///< @see View::requiredWidth()
-    int requiredHeight() const; ///< @see View::requiredHeight()
+    pixel requiredWidth() const;  ///< @see View::requiredWidth()
+    pixel requiredHeight() const; ///< @see View::requiredHeight()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 

@@ -269,8 +269,8 @@ Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
 
                 model::ClipPtr original = clip->getClip();
                 model::ClipPtr replacement = make_cloned<model::Clip>(original);
-                replacement->setOffset(original->getOffset() + it.GetRect().GetX() - pts_left);
-                replacement->setLength(it.GetRect().GetWidth());
+                //replacement->setOffset(original->getOffset() + it.GetRect().GetX() - pts_left);
+                //replacement->setLength(it.GetRect().GetWidth());
 
                 replacements[clip->getClip()] = replacement;
 

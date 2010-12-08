@@ -80,8 +80,8 @@ public:
     PlayerPtr getPlayer() const;
     wxPoint getScrollOffset() const;
 
-    int requiredWidth() const;  ///< @see View::requiredWidth()
-    int requiredHeight() const; ///< @see View::requiredHeight()
+    pixel requiredWidth() const;  ///< @see View::requiredWidth()
+    pixel requiredHeight() const; ///< @see View::requiredHeight()
 
     //////////////////////////////////////////////////////////////////////////
     // CHANGE COMMANDS

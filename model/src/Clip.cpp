@@ -18,7 +18,7 @@ Clip::Clip()
     ,   mOffset(0)
     ,   mLength(-1)
     ,   mTrack()
-    ,   mTrackPosition(0)
+    ,   mLeftPtsInTrack(0)
     ,   mLink()
 { 
     VAR_DEBUG(this);
@@ -30,7 +30,7 @@ Clip::Clip(IControlPtr clip)
     ,   mOffset(0)
     ,   mLength(-1)
     ,   mTrack()
-    ,   mTrackPosition(0)
+    ,   mLeftPtsInTrack(0)
     ,   mLink()
 { 
     mLength = mRender->getNumberOfFrames() - mOffset;
@@ -43,7 +43,7 @@ Clip::Clip(const Clip& other)
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
     ,   mTrack(other.mTrack)
-    ,   mTrackPosition(other.mTrackPosition)
+    ,   mLeftPtsInTrack(other.mLeftPtsInTrack)
     ,   mLink(other.mLink)
 {
     VAR_DEBUG(this)(other);
@@ -63,12 +63,12 @@ Clip::~Clip()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-boost::int64_t Clip::getNumberOfFrames()
+pts Clip::getNumberOfFrames()
 {
     return mLength; 
 }
 
-void Clip::moveTo(boost::int64_t position)
+void Clip::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
     mRender->moveTo(mOffset + position);
@@ -78,10 +78,10 @@ void Clip::moveTo(boost::int64_t position)
 // TRACK
 //////////////////////////////////////////////////////////////////////////
 
-void Clip::setTrack(TrackPtr track, boost::int64_t trackPosition)
+void Clip::setTrack(TrackPtr track, pts trackPosition)
 {
     mTrack = track;
-    mTrackPosition = trackPosition;
+    mLeftPtsInTrack = trackPosition;
 }
 
 TrackPtr Clip::getTrack()
@@ -89,14 +89,14 @@ TrackPtr Clip::getTrack()
     return mTrack;
 }
 
-boost::int64_t Clip::getLeftPts() const
+pts Clip::getLeftPts() const
 {
-    return mTrackPosition;
+    return mLeftPtsInTrack;
 }
 
-boost::int64_t Clip::getRightPts() const
+pts Clip::getRightPts() const
 {
-    return mTrackPosition + mLength;
+    return mLeftPtsInTrack + mLength;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -117,27 +117,7 @@ ClipPtr Clip::getLink() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-boost::int64_t Clip::getOffset()
-{
-    return mOffset;
-}
-
-void Clip::setOffset(boost::int64_t offset)
-{
-    VAR_INFO(this)(offset);
-    mOffset = offset;
-    VAR_DEBUG(this)(*this);
-}
-
-void Clip::setLength(boost::int64_t length)
-{
-    VAR_INFO(this)(length);
-    mLength = length;
-    ASSERT(mLength>0)(mLength);
-    VAR_DEBUG(this)(*this);
-}
-
-void Clip::adjustBeginPoint(boost::int64_t adjustment)
+void Clip::adjustBeginPoint(pts adjustment)
 {
     VAR_INFO(this)(adjustment);
     mOffset += adjustment;
@@ -146,7 +126,7 @@ void Clip::adjustBeginPoint(boost::int64_t adjustment)
     VAR_DEBUG(this)(*this);
 }
 
-void Clip::adjustEndPoint(boost::int64_t adjustment)
+void Clip::adjustEndPoint(pts adjustment)
 {
     VAR_INFO(this)(adjustment);
     mLength += adjustment;
@@ -160,7 +140,7 @@ void Clip::adjustEndPoint(boost::int64_t adjustment)
 
 std::ostream& operator<<( std::ostream& os, const Clip& obj )
 {
-    os << '[' << &obj << ',' << obj.mOffset << ',' << obj.mLength << ',' << obj.mTrackPosition << ']';
+    os << '[' << &obj << ',' << obj.mOffset << ',' << obj.mLength << ',' << obj.mLeftPtsInTrack << ']';
     return os;
 }
 
@@ -176,7 +156,7 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mOffset;
     ar & mLength;
     ar & mTrack;
-    ar & mTrackPosition;
+    ar & mLeftPtsInTrack;
     ar & mLink;
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

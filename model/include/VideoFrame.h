@@ -2,7 +2,7 @@
 #define VIDEO_FRAME_H
 
 #include "UtilFifo.h"
-#include <boost/cstdint.hpp>
+#include "UtilInt.h"
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg 
 
@@ -28,14 +28,14 @@ public:
     /**
     * Initialization and allocation.
     */
-    VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase, int repeat);
+    VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase, int repeat);
 
     /**
     * Initialization without allocation. Used for empty frames. Then, allocation only
     * needed when the data is needed for playback. During 'track combining' empty 
     * frames can be ignored. This avoids needless allocation.
     */
-    VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase);
+    VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase);
 
     virtual ~VideoFrame();
 
@@ -44,8 +44,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     int getRepeat() const;
-    boost::int64_t getPts() const; 
-    void setPts(boost::int64_t pts);
+    pts getPts() const; 
+    void setPts(pts position);
     AVRational getTimeBase() const;
     double getTime() const;
     int getWidth() const;
@@ -78,7 +78,7 @@ protected:
     double mTimeStamp;
     int mWidth;
     int mHeight;
-    boost::int64_t mPts;
+    pts mPts;
     AVRational mTimeBase;
     boost::uint8_t *mBuffer;
     int mBufferSize;

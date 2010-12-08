@@ -20,7 +20,7 @@ public:
 
     EmptyFile();
 
-	EmptyFile(boost::int64_t length);
+	EmptyFile(pts length);
 
     EmptyFile(const EmptyFile& other);
 
@@ -32,8 +32,8 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual boost::int64_t getNumberOfFrames();
-    virtual void moveTo(boost::int64_t position);
+    virtual pts getNumberOfFrames();
+    virtual void moveTo(pts position);
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
@@ -49,9 +49,9 @@ public:
 
 private:
 
-    boost::int64_t mLength;
-    boost::int64_t mAudioPosition;
-    boost::int64_t mVideoPosition;
+    pts mLength;
+    pts mAudioPosition;
+    pts mVideoPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

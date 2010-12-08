@@ -8,7 +8,6 @@ namespace model {
 
 class Clip
     :   public IControl
-    //,   public ILoggable // todo move to base classes
 {
 public:
 
@@ -30,18 +29,21 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual boost::int64_t getNumberOfFrames();
-    virtual void moveTo(boost::int64_t position);
+    virtual pts getNumberOfFrames();
+    virtual void moveTo(pts position);
 
     //////////////////////////////////////////////////////////////////////////
     // TRACK
     //////////////////////////////////////////////////////////////////////////
 
-    void setTrack(TrackPtr track, boost::int64_t trackPosition);
+	/// Set the track which contains this clip. Also sets the leftmost pts
+	/// of the clip inside the track. When called without parameters
+	/// (thus using the defaults), this information is 'reset'.
+    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0);
     TrackPtr getTrack();
 
-    boost::int64_t getLeftPts() const;
-    boost::int64_t getRightPts() const;
+    pts getLeftPts() const; ///< @return pts (in containing track) of begin point of clip
+    pts getRightPts() const; ///< @return pts (in containing track) of end point of clip
 
     //////////////////////////////////////////////////////////////////////////
     // LINK
@@ -64,24 +66,17 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    boost::int64_t getOffset();
-    void setOffset(boost::int64_t offset);
+	pts getLength(); ///< @return length of clip
 
-    void setLength(boost::int64_t length);
+	/// If adjustment is positive then move the begin point of the clip backwards
+    /// in time (increase the start pts). If adjustment is negative then move the
+    /// begin point of the clip forward in time (decrease the start pts).
+    void adjustBeginPoint(pts adjustment);
 
-    /**
-    * If adjustment is positive then move the begin point of the clip backwards
-    * in time (increase the start pts). If adjustment is negative then move the
-    * begin point of the clip forward in time (decrease the start pts).
-    **/
-    void adjustBeginPoint(boost::int64_t adjustment);
-
-    /**
-    * If adjustment is positive then move the end point of the clip backwards
-    * in time (increase the end pts). If adjustment is negative then move the
-    * end point of the clip forward in time (decrease the end pts).
-    **/
-    void adjustEndPoint(boost::int64_t adjustment);
+    /// If adjustment is positive then move the end point of the clip backwards
+    /// in time (increase the end pts). If adjustment is negative then move the
+    /// end point of the clip forward in time (decrease the end pts).
+    void adjustEndPoint(pts adjustment);
 
 protected:
 
@@ -95,9 +90,9 @@ protected:
 
 private:
 
-    boost::int64_t mOffset;         // Offset inside the original media file (start point)
-    boost::int64_t mLength;         // Length of the clip
-    boost::int64_t mTrackPosition;  // Position inside the track. 0 if not in a track.
+    pts mOffset;         ///< Offset inside the original media file (start point)
+    pts mLength;         ///< Length of the clip
+    pts mLeftPtsInTrack;	///< Position inside the track. 0 if not in a track.
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

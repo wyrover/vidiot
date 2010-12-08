@@ -45,12 +45,12 @@ model::ClipPtr ClipView::getClip()
     return mClip;
 }
 
-boost::int64_t ClipView::getLeftPosition() const
+pixel ClipView::getLeftPosition() const
 {
     return getZoom().ptsToPixels(mClip->getLeftPts());
 }
 
-boost::int64_t ClipView::getRightPosition() const
+pixel ClipView::getRightPosition() const
 {
     return getZoom().ptsToPixels(mClip->getRightPts());
 }
@@ -64,12 +64,12 @@ void ClipView::show(wxRect rect)
     invalidateBitmap();;
 }
 
-int ClipView::requiredWidth() const
+pixel ClipView::requiredWidth() const
 {
     return getRightPosition() - getLeftPosition();
 }
 
-int ClipView::requiredHeight() const
+pixel ClipView::requiredHeight() const
 {
     return mClip->getTrack()->getHeight();
 }

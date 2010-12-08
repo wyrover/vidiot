@@ -1,5 +1,4 @@
 #include "Constants.h"
-#include <wx/colour.h>
 
 namespace gui { namespace timeline {
 
@@ -32,8 +31,9 @@ const int Constants::sVideoPosition                         = Constants::sTimeSc
 // BRUSHES AND PENS
 //////////////////////////////////////////////////////////////////////////
 
-const wxPen     Constants::sBackgroundPen           (*wxLIGHT_GREY_PEN);
-const wxBrush   Constants::sBackgroundBrush         (wxColour(212,208,200),wxBRUSHSTYLE_SOLID);
+const wxColour	Constants::sBackgroundColour		(212,208,200);
+const wxPen     Constants::sBackgroundPen           (Constants::sBackgroundColour);
+const wxBrush   Constants::sBackgroundBrush         (Constants::sBackgroundColour,wxBRUSHSTYLE_SOLID);
 
 const wxPen     Constants::sTimeScaleDividerPen     (*wxBLACK, 1);
 
@@ -54,8 +54,8 @@ const wxBrush   Constants::sClipBrush               (wxColour(123,123,123),wxBRU
 const wxPen     Constants::sSelectedClipPen         (*wxBLACK,sClipBorderSize);
 const wxBrush   Constants::sSelectedClipBrush       (wxColour(80,80,80),wxBRUSHSTYLE_SOLID);
 
-const wxPen     Constants::sDebugPen                (*wxCYAN, 1);
-const wxBrush   Constants::sDebugBrush              (*wxCYAN,wxBRUSHSTYLE_STIPPLE);
+const wxPen     Constants::sDebugPen                (*wxGREEN, 1);
+const wxBrush   Constants::sDebugBrush              (*wxGREEN,wxBRUSHSTYLE_STIPPLE);
 
 //////////////////////////////////////////////////////////////////////////
 // FONTS

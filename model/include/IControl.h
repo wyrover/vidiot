@@ -1,7 +1,6 @@
 #ifndef MODEL_I_CONTROL_H
 #define MODEL_I_CONTROL_H
 
-#include <boost/cstdint.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
@@ -9,6 +8,7 @@
 #include <boost/serialization/version.hpp>
 #include "ModelPtr.h"
 #include "UtilCloneable.h"
+#include "UtilInt.h"
 
 namespace model {
 
@@ -27,8 +27,8 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual boost::int64_t getNumberOfFrames() = 0;
-    virtual void moveTo(boost::int64_t position) = 0;
+    virtual pts getNumberOfFrames() = 0;
+    virtual void moveTo(pts position) = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -198,13 +198,13 @@ void File::stopReadingPackets()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-boost::int64_t File::getNumberOfFrames()
+pts File::getNumberOfFrames()
 {
     openFile();
     return mNumberOfFrames;
 }
 
-void File::moveTo(boost::int64_t position)
+void File::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
     openFile(); // Needed for avcodec calls below
