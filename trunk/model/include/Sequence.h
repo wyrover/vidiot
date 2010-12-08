@@ -111,8 +111,8 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual boost::int64_t getNumberOfFrames();
-    virtual void moveTo(boost::int64_t position);
+    virtual pts getNumberOfFrames();
+    virtual void moveTo(pts position);
 
 	//////////////////////////////////////////////////////////////////////////
 	// IVIDEO

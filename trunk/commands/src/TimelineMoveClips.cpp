@@ -29,14 +29,6 @@ bool TimelineMoveClips::Do()
     {
         if (!redo)
         {
-            // Save undo information
-            //model::MoveParameterPtr undo = boost::make_shared<model::MoveParameter>();
-            //undo->addTrack          = move->removeTrack;
-            //undo->addPosition       = move->removePosition;
-            //undo->addClips          = move->removeClips;
-            //undo->removeTrack       = move->addTrack;
-            //undo->removePosition    = move->addPosition;
-            //undo->removeClips       = move->addClips;
             mParamsUndo.push_back(boost::make_shared<model::MoveParameter>(
                 move->removeTrack, 
                 move->removePosition, 

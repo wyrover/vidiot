@@ -83,12 +83,12 @@ void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
 // DRAWING EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-int TrackView::requiredWidth() const
+pixel TrackView::requiredWidth() const
 {
     return getParent().requiredWidth();
 }
 
-int TrackView::requiredHeight() const
+pixel TrackView::requiredHeight() const
 {
     return mTrack->getHeight();
 }

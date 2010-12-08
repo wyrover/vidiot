@@ -28,8 +28,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    int requiredWidth() const;  ///< @see View::requiredWidth()
-    int requiredHeight() const; ///< @see View::requiredHeight()
+    pixel requiredWidth() const;  ///< @see View::requiredWidth()
+    pixel requiredHeight() const; ///< @see View::requiredHeight()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 

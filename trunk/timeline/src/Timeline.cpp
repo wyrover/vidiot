@@ -312,7 +312,7 @@ wxPoint Timeline::getScrollOffset() const
     return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 
-int Timeline::requiredWidth() const
+pixel Timeline::requiredWidth() const
 {
     return
         std::max(std::max(
@@ -321,7 +321,7 @@ int Timeline::requiredWidth() const
         getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));     // At least enough to hold all clips
 }
 
-int Timeline::requiredHeight() const
+pixel Timeline::requiredHeight() const
 {
     return
         std::max(

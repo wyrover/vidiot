@@ -7,13 +7,13 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase, int repeat)
+VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase, int repeat)
 :   mFrame(0)
 ,   mBuffer(0)
 ,   mFormat(format)
 ,	mWidth(width)
 ,   mHeight(height)
-,   mPts(pts)
+,   mPts(position)
 ,   mTimeBase(timebase)
 ,   mRepeat(repeat)
 {
@@ -26,13 +26,13 @@ VideoFrame::VideoFrame(PixelFormat format, int width, int height, boost::int64_t
     avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, mFormat, mWidth, mHeight);
 }
 
-VideoFrame::VideoFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase)
+VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase)
 :   mFrame(0)
 ,   mBuffer(0)
 ,   mFormat(format)
 ,	mWidth(width)
 ,   mHeight(height)
-,   mPts(pts)
+,   mPts(position)
 ,   mTimeBase(timebase)
 ,   mRepeat(1)
 {
@@ -71,14 +71,14 @@ int VideoFrame::getHeight() const
     return mHeight;
 }
 
-boost::int64_t VideoFrame::getPts() const
+pts VideoFrame::getPts() const
 {
     return mPts;
 }
 
-void VideoFrame::setPts(boost::int64_t pts)
+void VideoFrame::setPts(pts position)
 {
-    mPts = pts;
+    mPts = position;
 }
 
 AVRational VideoFrame::getTimeBase() const

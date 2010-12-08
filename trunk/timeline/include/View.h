@@ -6,6 +6,7 @@
 #include <wx/region.h>
 #include "Part.h"
 #include "UtilEvent.h"
+#include "UtilInt.h"
 
 namespace gui { namespace timeline {
 
@@ -61,8 +62,8 @@ public:
 
     View& getParent() const;
 
-    virtual int requiredWidth() const = 0;
-    virtual int requiredHeight() const = 0;
+    virtual pixel requiredWidth() const = 0;
+    virtual pixel requiredHeight() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // PROPAGATE UPDATES UPWARD

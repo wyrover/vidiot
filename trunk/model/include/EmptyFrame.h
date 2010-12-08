@@ -13,7 +13,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyFrame(PixelFormat format, int width, int height, boost::int64_t pts, AVRational timebase);
+    EmptyFrame(PixelFormat format, int width, int height, pts position, AVRational timebase);
     
     virtual ~EmptyFrame();
 

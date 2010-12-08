@@ -4,6 +4,7 @@
 #include <wx/font.h>
 #include <wx/pen.h>
 #include <wx/brush.h>
+#include <wx/colour.h>
 
 namespace gui { namespace timeline {
 
@@ -39,6 +40,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // BRUSHES AND PENS
     //////////////////////////////////////////////////////////////////////////
+
+	static const wxColour	sBackgroundColour;
 
     static const wxPen      sBackgroundPen;
     static const wxBrush    sBackgroundBrush;

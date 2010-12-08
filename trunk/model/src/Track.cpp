@@ -61,7 +61,7 @@ Track::~Track()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-boost::int64_t Track::getNumberOfFrames()
+pts Track::getNumberOfFrames()
 {
     /** @todo return rightPts of last clip? */
     boost::int16_t nFrames = 0;
@@ -73,23 +73,7 @@ boost::int64_t Track::getNumberOfFrames()
 }
 
 
-/** @todo replace with clip->getrightpts? */
-boost::int64_t Track::getStartFrameNumber(ClipPtr clip) const
-{
-    boost::int16_t n = 0;
-    BOOST_FOREACH( ClipPtr usedclip, mClips )
-    {
-        if (usedclip == clip)
-        {
-            return n;
-        }
-        n += usedclip->getNumberOfFrames();
-    }
-    FATAL("Clip is not a part of this track.");
-    return 0;
-}
-
-void Track::moveTo(boost::int64_t position)
+void Track::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
 
@@ -102,8 +86,8 @@ void Track::moveTo(boost::int64_t position)
         return;
     }
 
-    boost::int64_t lastFrame = (*mItClips)->getNumberOfFrames(); // There is at least one clip due to the check above
-    boost::int64_t firstFrame = 0;
+    pts lastFrame = (*mItClips)->getNumberOfFrames(); // There is at least one clip due to the check above
+    pts firstFrame = 0;
 
     while (lastFrame < position)
     {
@@ -127,30 +111,15 @@ void Track::moveTo(boost::int64_t position)
 // HANDLING CLIPS
 //////////////////////////////////////////////////////////////////////////
 
+/// @TODO: Make Track::execute(MoveParameter param), then the command just passes the info on.
+/// 		  Furthermore, make MoveParameter a separate file (MoveClip.*)
+/// 		  Finally give that class a 'clone_invert' method that returns a cloned and inverted instance.
+
 void Track::addClips(Clips clips, ClipPtr position)
 {
-    boost::int64_t pts = 0;  // Default initialization for the case position is not initialized (add at end)
-
-    if (position)
-    {
-        pts = position->getRightPts();
-    }
-    else
-    {
-        if (!mClips.empty())
-        {
-            // Position at end
-            pts = (*mClips.rbegin())->getRightPts();
-        }
-    }
-
-    BOOST_FOREACH( ClipPtr clip, clips )
-    {
-        clip->setTrack(shared_from_this(), pts);
-        pts += clip->getNumberOfFrames();
-    }
-
     UtilList<ClipPtr>(mClips).addElements(clips,position);
+
+	updateClips();
 
     MoveParameter move(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips());
     QueueEvent(new model::EventAddClips(move));
@@ -163,15 +132,17 @@ void Track::addClips(Clips clips, ClipPtr position)
 
 void Track::removeClips(Clips clips)
 {
-    BOOST_FOREACH( ClipPtr clip, clips )
-    {
-        clip->setTrack(TrackPtr(), 0);
-    }
+	BOOST_FOREACH( ClipPtr clip, clips )
+	{
+		clip->setTrack(TrackPtr(), 0);
+	}
 
-    ClipPtr position = UtilList<ClipPtr>(mClips).removeElements(clips);
+	ClipPtr position = UtilList<ClipPtr>(mClips).removeElements(clips);
 
-    MoveParameter move(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips);
-    QueueEvent(new model::EventRemoveClips(move));
+	updateClips();
+
+	MoveParameter move(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips);
+	QueueEvent(new model::EventRemoveClips(move));
 
     /** @todo combine consecutive empty clips */
     /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
@@ -183,15 +154,15 @@ const std::list<ClipPtr>& Track::getClips()
     return mClips;
 }
 
-ClipPtr Track::getClip(boost::int64_t pts)
+ClipPtr Track::getClip(pts position)
 {
-    boost::int64_t left = 0;
-    boost::int64_t right = left;
+	pts left = 0;
+    pts right = left;
     BOOST_FOREACH( ClipPtr clip, mClips )
     {
-        boost::int64_t length = clip->getNumberOfFrames();
+        pts length = clip->getNumberOfFrames();
         right += length;
-        if (pts >= left && pts <= right)
+        if (position >= left && position <= right)
         {
             return clip;
         }
@@ -252,6 +223,20 @@ void Track::iterate_nextClip()
 {
     ASSERT(iterate_hasClip());
     mItClips++;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void Track::updateClips()
+{
+	pts position = 0;
+	BOOST_FOREACH( ClipPtr clip, mClips )
+	{
+		clip->setTrack(shared_from_this(), position);
+		position += clip->getNumberOfFrames();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

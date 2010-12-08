@@ -24,7 +24,7 @@ EmptyFile::EmptyFile()
     VAR_DEBUG(this);
 }
 
-EmptyFile::EmptyFile(boost::int64_t length)
+EmptyFile::EmptyFile(pts length)
 :   mLength(length)
 ,   mAudioPosition(0)
 ,   mVideoPosition(0)
@@ -54,12 +54,12 @@ EmptyFile::~EmptyFile()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-boost::int64_t EmptyFile::getNumberOfFrames()
+pts EmptyFile::getNumberOfFrames()
 {
     return mLength;
 }
 
-void EmptyFile::moveTo(boost::int64_t position)
+void EmptyFile::moveTo(pts position)
 {
     mAudioPosition = position;
     mVideoPosition = position;

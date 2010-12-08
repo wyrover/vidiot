@@ -107,15 +107,9 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual boost::int64_t getNumberOfFrames();
+    virtual pts getNumberOfFrames();
 
-    /** 
-    * @return the pts of the starting point (left) of the clip. 
-    * @pre clip is part of this track.
-    */
-    virtual boost::int64_t getStartFrameNumber(ClipPtr clip) const;
-
-    virtual void moveTo(boost::int64_t position);
+    virtual void moveTo(pts position);
 
     //////////////////////////////////////////////////////////////////////////
     // CLIPS
@@ -131,7 +125,7 @@ public:
     * If pts is 'on a cut' then the clip AFTER the cut is returned. 
     * If there is no clip at this pts then an empty Ptr is returned.
     **/
-    ClipPtr getClip(boost::int64_t pts);
+    ClipPtr getClip(pts position);
 
     /**
     * Find the clip following 'clip'. 
@@ -169,6 +163,15 @@ private:
     Clips mClips;
 
     int mHeight;
+
+	//////////////////////////////////////////////////////////////////////////
+	// HELPER METHODS
+	//////////////////////////////////////////////////////////////////////////
+
+	/// Updates the clips after insertion/removal etc.
+	/// - Updates the pts'es for all clips in this track
+	/// - Updates the clip's track pointer to this track
+	void updateClips();
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

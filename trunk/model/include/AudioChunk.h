@@ -1,8 +1,8 @@
 #ifndef AUDIO_CHUNK_H
 #define AUDIO_CHUNK_H
 
-#include <boost/cstdint.hpp>
 #include "UtilFifo.h"
+#include "UtilInt.h"
 
 namespace model {
 

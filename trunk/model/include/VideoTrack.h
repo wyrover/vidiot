@@ -28,7 +28,7 @@ public:
     // PLAYBACK
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void moveTo(boost::int64_t position);
+    virtual void moveTo(pts position);
 
     virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
 

@@ -58,14 +58,14 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-int AudioView::requiredWidth() const
+pixel AudioView::requiredWidth() const
 {
     return getParent().requiredWidth();
 }
 
-int AudioView::requiredHeight() const
+pixel AudioView::requiredHeight() const
 {
-    int requiredHeight = 0;
+    pixel requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         requiredHeight += track->getHeight() + Constants::sTrackDividerHeight;

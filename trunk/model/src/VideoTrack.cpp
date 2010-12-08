@@ -44,7 +44,7 @@ VideoTrack::~VideoTrack()
 // PLAYBACK
 //////////////////////////////////////////////////////////////////////////
 
-void VideoTrack::moveTo(boost::int64_t position)
+void VideoTrack::moveTo(pts position)
 {
     Track::moveTo(position);
     mPts = position;
@@ -52,7 +52,7 @@ void VideoTrack::moveTo(boost::int64_t position)
 
 VideoFramePtr VideoTrack::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr videoFrame = VideoFramePtr();
+    VideoFramePtr videoFrame;
 
     while (!videoFrame && iterate_hasClip())
     {
