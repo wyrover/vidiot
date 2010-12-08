@@ -44,7 +44,7 @@ VideoClip::~VideoClip()
 
 VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr videoFrame = boost::static_pointer_cast<VideoFile>(mRender)->getNextVideo(requestedWidth, requestedHeight, alpha);
+    VideoFramePtr videoFrame = getDataGenerator<VideoFile>()->getNextVideo(requestedWidth, requestedHeight, alpha);
     VAR_VIDEO(videoFrame);
     return videoFrame;
 }

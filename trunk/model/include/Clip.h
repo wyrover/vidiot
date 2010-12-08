@@ -80,17 +80,25 @@ public:
 
 protected:
 
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    IControlPtr mRender;
-    TrackPtr mTrack;
-    ClipPtr mLink;
+	/// Method needed to convert the IControl instance mRender to an IVideo
+	/// or an IAudio instance.
+	template <class GENERATOR>
+	boost::shared_ptr<GENERATOR> getDataGenerator()
+	{
+		return boost::static_pointer_cast<GENERATOR>(mRender);
+	}
 
 private:
 
-    pts mOffset;         ///< Offset inside the original media file (start point)
+	//////////////////////////////////////////////////////////////////////////
+	// MEMBERS
+	//////////////////////////////////////////////////////////////////////////
+
+	IControlPtr mRender;
+	TrackPtr mTrack;
+	ClipPtr mLink;
+
+	pts mOffset;         ///< Offset inside the original media file (start point)
     pts mLength;         ///< Length of the clip
     pts mLeftPtsInTrack;	///< Position inside the track. 0 if not in a track.
 

@@ -48,7 +48,7 @@ EmptyClip::~EmptyClip()
 
 AudioChunkPtr EmptyClip::getNextAudio(int audioRate, int nAudioChannels)
 {
-    AudioChunkPtr audioChunk = boost::static_pointer_cast<EmptyFile>(mRender)->getNextAudio(audioRate, nAudioChannels);
+    AudioChunkPtr audioChunk = getDataGenerator<EmptyFile>()->getNextAudio(audioRate, nAudioChannels);
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }
@@ -59,7 +59,7 @@ AudioChunkPtr EmptyClip::getNextAudio(int audioRate, int nAudioChannels)
 
 VideoFramePtr EmptyClip::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr videoFrame = boost::static_pointer_cast<EmptyFile>(mRender)->getNextVideo(requestedWidth, requestedHeight, alpha);
+    VideoFramePtr videoFrame = getDataGenerator<EmptyFile>()->getNextVideo(requestedWidth, requestedHeight, alpha);
     VAR_VIDEO(videoFrame);
     return videoFrame;
 }
