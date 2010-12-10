@@ -1,6 +1,6 @@
 #include "Cursor.h"
 
-#include "Constants.h"
+#include "Layout.h"
 #include "Intervals.h"
 #include "Zoom.h"
 #include "UtilLog.h"
@@ -69,7 +69,7 @@ void Cursor::moveCursorOnUser(long position)
 
 void Cursor::draw(wxDC& dc) const
 {
-    dc.SetPen(Constants::sCursorPen);
+    dc.SetPen(Layout::sCursorPen);
     dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getTimeline().requiredHeight()));
 }
 

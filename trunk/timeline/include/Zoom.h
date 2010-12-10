@@ -32,12 +32,6 @@ public:
     int pixelsToPts(int pixels) const;
     int ptsToPixels(int pts) const;
 
-    // Statics: independent of the chosen zoom factor.
-    static int timeToPts(int time);         ///< @param time time duration in milliseconds 
-    static int ptsToTime(int pts);          ///< @return time duration in milliseconds
-    static int ptsToMicroseconds(int pts);  ///< @return time duration in microseconds.
-    static int microsecondsToPts(int us);   ///< @param us time durinage in microseconds 
-
 private:
     
     rational mZoom; ///< Number of pixels per frame

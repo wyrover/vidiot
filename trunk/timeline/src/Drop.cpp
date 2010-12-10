@@ -4,7 +4,7 @@
 #include <wx/dc.h>
 #include "Timeline.h"
 #include "Zoom.h"
-#include "Constants.h"
+#include "Layout.h"
 #include "ClipView.h"
 #include "TrackView.h"
 #include "MousePointer.h"
@@ -145,8 +145,8 @@ void Drop::draw(wxDC& dc) const
 {
     if (!mDropArea.IsEmpty())
     {
-        dc.SetPen(Constants::sDropAreaPen);
-        dc.SetBrush(Constants::sDropAreaBrush);
+        dc.SetPen(Layout::sDropAreaPen);
+        dc.SetBrush(Layout::sDropAreaBrush);
         dc.DrawRectangle(mDropArea);
     }
 }

@@ -3,7 +3,7 @@
 #include <wx/dcmemory.h>
 #include <wx/pen.h>
 #include "Zoom.h"
-#include "Constants.h"
+#include "Layout.h"
 #include "UtilLog.h"
 #include "VideoFrame.h"
 #include "VideoClip.h"
@@ -122,7 +122,7 @@ void ClipView::updateThumbnail()
     if (videoclip)
     {
         mClip->moveTo(0);
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(requiredWidth() - 2 * Constants::sClipBorderSize, requiredHeight() - 2 * Constants::sClipBorderSize, false);
+        model::VideoFramePtr videoFrame = videoclip->getNextVideo(requiredWidth() - 2 * Layout::sClipBorderSize, requiredHeight() - 2 * Layout::sClipBorderSize, false);
         mThumbnail.reset(new wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
         mClip->moveTo(0);
     }
@@ -135,26 +135,26 @@ void ClipView::draw(wxBitmap& bitmap) const
 
     if (mClip->isA<model::EmptyClip>())
     {
-        dc.SetBrush(Constants::sBackgroundBrush);
-        dc.SetPen(Constants::sBackgroundPen);
+        dc.SetBrush(Layout::sBackgroundBrush);
+        dc.SetPen(Layout::sBackgroundPen);
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     }
     else
     {
         if (getSelection().isSelected(mClip))
         {
-            dc.SetBrush(Constants::sSelectedClipBrush);
-            dc.SetPen(Constants::sSelectedClipPen);
+            dc.SetBrush(Layout::sSelectedClipBrush);
+            dc.SetPen(Layout::sSelectedClipPen);
         }
         else
         {
-            dc.SetBrush(Constants::sClipBrush);
-            dc.SetPen(Constants::sClipPen);
+            dc.SetBrush(Layout::sClipBrush);
+            dc.SetPen(Layout::sClipPen);
         }
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
         if (mThumbnail)
         {
-            dc.DrawBitmap(*mThumbnail,wxPoint(Constants::sClipBorderSize,Constants::sClipBorderSize));
+            dc.DrawBitmap(*mThumbnail,wxPoint(Layout::sClipBorderSize,Layout::sClipBorderSize));
         }
     }
 

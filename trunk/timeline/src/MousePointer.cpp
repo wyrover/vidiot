@@ -3,7 +3,6 @@
 #include <wx/image.h>
 #include <wx/bitmap.h>
 #include "Clip.h"
-#include "Constants.h"
 #include "ClipView.h"
 #include "UtilLog.h"
 #include "cursor_move_cut.xpm"

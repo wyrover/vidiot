@@ -14,6 +14,7 @@ AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, unsigned int nSamp
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
 ,   mNrReadSamples(0)
+,   mNrSkippedSamples(0)
 ,   mTimeStamp(pts)
 {
     /** @todo now we only used fixed stereo... */
@@ -29,6 +30,7 @@ AudioChunk::AudioChunk(int nChannels, unsigned int nSamples, double pts)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
 ,   mNrReadSamples(0)
+,   mNrSkippedSamples(0)
 ,   mTimeStamp(pts)
 {
 }
@@ -53,7 +55,7 @@ unsigned int AudioChunk::getNumberOfChannels() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// DATA ACCESS
+// GET/SET
 //////////////////////////////////////////////////////////////////////////
 
 void AudioChunk::read(unsigned int samples)
@@ -76,9 +78,14 @@ boost::int16_t* AudioChunk::getUnreadSamples()
 
 unsigned long AudioChunk::getUnreadSampleCount() const
 {
-    return mNrSamples - mNrReadSamples;
+    return mNrSamples - mNrSkippedSamples - mNrReadSamples;
 }
 
+void AudioChunk::setAdjustedLength(unsigned int adjustedLength)
+{
+    ASSERT(adjustedLength < mNrSamples)(adjustedLength)(mNrSamples);
+    mNrSkippedSamples = mNrSamples - adjustedLength;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -86,10 +93,11 @@ unsigned long AudioChunk::getUnreadSampleCount() const
 
 std::ostream& operator<< (std::ostream& os, const AudioChunk& obj)
 {
-    os  << &obj                         << "|" 
-        << obj.mTimeStamp               << "|" 
-        << obj.mNrChannels              << "|" 
-        << obj.mNrSamples               << "|"
+    os  << &obj                     << "|" 
+        << obj.mTimeStamp           << "|" 
+        << obj.mNrChannels          << "|" 
+        << obj.mNrSamples           << "|"
+        << obj.mNrSkippedSamples    << "|"
         << obj.mNrReadSamples;
     return os;
 }

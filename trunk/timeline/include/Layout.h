@@ -1,5 +1,5 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef LAYOUT_H
+#define LAYOUT_H
 
 #include <wx/font.h>
 #include <wx/pen.h>
@@ -8,19 +8,9 @@
 
 namespace gui { namespace timeline {
 
-class Constants
+class Layout
 {
 public:
-
-    //////////////////////////////////////////////////////////////////////////
-    // TIME
-    //////////////////////////////////////////////////////////////////////////
-
-    static const int sMicrosecondsPerSecond;
-    static const int sMilliSecond;
-    static const int sSecond;
-    static const int sMinute;
-    static const int sHour;
 
     //////////////////////////////////////////////////////////////////////////
     // DRAWING
@@ -80,4 +70,4 @@ public:
 
 }} // namespace
 
-#endif // CONSTANTS_H
+#endif // LAYOUT_H

@@ -3,12 +3,9 @@
 #include <math.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "GuiOptions.h"
-#include "FrameRate.h"
-#include "Project.h"
 #include "UtilLog.h"
-#include "Constants.h"
-#include "Properties.h"
+#include "Convert.h"
+#include "Layout.h"
 #include "UtilSerializeBoost.h"
 
 namespace gui { namespace timeline {
@@ -36,12 +33,12 @@ int toInt(rational r)
 
 int Zoom::timeToPixels(int time) const
 {
-    return toInt(ptsToPixels(timeToPts(time)));
+    return toInt(ptsToPixels(model::Convert::timeToPts(time)));
 }
 
 int Zoom::pixelsToTime(int pixels) const
 {
-    return toInt(ptsToTime(pixelsToPts(pixels)));
+    return toInt(model::Convert::ptsToTime(pixelsToPts(pixels)));
 }
 
 int Zoom::pixelsToPts(int pixels) const
@@ -52,30 +49,6 @@ int Zoom::pixelsToPts(int pixels) const
 int Zoom::ptsToPixels(int pts) const
 {
     return toInt(rational(pts) * rational(mZoom));
-}
-
-// static
-int Zoom::timeToPts(int time)
-{
-    return toInt(rational(time) / rational(Constants::sSecond) / model::Project::current()->getProperties()->getFrameRate());
-}
-
-// static
-int Zoom::ptsToTime(int pts)
-{
-    return toInt(rational(pts) * rational(Constants::sSecond) * model::Project::current()->getProperties()->getFrameRate());
-}
-
-// static
-int Zoom::ptsToMicroseconds(int pts)
-{
-    return toInt(rational(ptsToTime(pts)) * rational(Constants::sMicrosecondsPerSecond));
-}
-
-// static
-int Zoom::microsecondsToPts(int us)
-{
-    return timeToPts(toInt(rational(us) / rational(Constants::sMicrosecondsPerSecond)));
 }
 
 //////////////////////////////////////////////////////////////////////////

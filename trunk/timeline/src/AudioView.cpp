@@ -2,7 +2,7 @@
 
 #include <wx/dcmemory.h>
 #include <boost/foreach.hpp>
-#include "Constants.h"
+#include "Layout.h"
 #include "Track.h"
 #include "TrackView.h"
 #include "Sequence.h"
@@ -68,7 +68,7 @@ pixel AudioView::requiredHeight() const
     pixel requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        requiredHeight += track->getHeight() + Constants::sTrackDividerHeight;
+        requiredHeight += track->getHeight() + Layout::sTrackDividerHeight;
     }
     return requiredHeight;
 }
@@ -78,12 +78,12 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
     int top = getDivider().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;
+        int bottom = top + track->getHeight() + Layout::sTrackDividerHeight;
         if (position.y >= top && position.y < bottom)
         {
             info.track = track;
             info.trackPosition = top;
-            info.onTrackDivider = (bottom - position.y <= Constants::sTrackDividerHeight);
+            info.onTrackDivider = (bottom - position.y <= Layout::sTrackDividerHeight);
             return;
         }
         top = bottom;
@@ -94,14 +94,14 @@ void AudioView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
-    dc.SetBrush(Constants::sTrackDividerBrush);
-    dc.SetPen(Constants::sTrackDividerPen);
+    dc.SetBrush(Layout::sTrackDividerBrush);
+    dc.SetPen(Layout::sTrackDividerPen);
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), 0, y, true);
         y += track->getHeight();
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), y + Constants::sTrackDividerHeight);
-        y += Constants::sTrackDividerHeight;
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), y + Layout::sTrackDividerHeight);
+        y += Layout::sTrackDividerHeight;
     }
 }
 

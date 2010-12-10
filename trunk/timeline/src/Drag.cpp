@@ -3,7 +3,7 @@
 #include <wx/pen.h>
 #include <boost/foreach.hpp>
 #include "Timeline.h"
-#include "Constants.h"
+#include "Layout.h"
 #include "TrackView.h"
 #include "Track.h"
 #include "Sequence.h"
@@ -110,7 +110,7 @@ wxBitmap Drag::getDragBitmap() //const
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         getViewMap().getView(track)->drawClips(position,dc,dcMask);
-        position.y += track->getHeight() + Constants::sTrackDividerHeight;
+        position.y += track->getHeight() + Layout::sTrackDividerHeight;
     }
 
     // Draw audio tracks

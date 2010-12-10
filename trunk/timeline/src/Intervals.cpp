@@ -4,10 +4,12 @@
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "Constants.h"
 #include "Timeline.h"
 #include "Zoom.h"
+#include "Convert.h"
 #include "UtilLog.h"
-#include "Constants.h"
+#include "Layout.h"
 #include "GuiOptions.h"
 #include "GuiMain.h"
 #include "Clip.h"
@@ -71,8 +73,8 @@ void Intervals::set(wxRegion region)
 void Intervals::addBeginMarker()
 {
     long c = getZoom().pixelsToPts(getCursor().getPosition());
-    long b = c + getZoom().timeToPts(GuiOptions::getMarkerBeginAddition() * Constants::sSecond);
-    long e = c + getZoom().timeToPts(GuiOptions::getMarkerEndAddition()   * Constants::sSecond);
+    long b = c + model::Convert::timeToPts(GuiOptions::getMarkerBeginAddition() * model::Constants::sSecond);
+    long e = c + model::Convert::timeToPts(GuiOptions::getMarkerEndAddition()   * model::Constants::sSecond);
 
     mNewIntervalActive = true;
     mNewIntervalBegin = b;
@@ -109,7 +111,7 @@ void Intervals::update(long newCursorPosition)
 {
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  getZoom().timeToPts(GuiOptions::getMarkerEndAddition() * Constants::sSecond);
+        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  model::Convert::timeToPts(GuiOptions::getMarkerEndAddition() * model::Constants::sSecond);
         refresh(mNewIntervalBegin,mNewIntervalEnd);
     }
     if (mToggleActive)
@@ -214,7 +216,7 @@ void Intervals::draw(wxDC& dc) const
 
 wxRect Intervals::makeRect(long x1, long x2) const
 {
-    return wxRect(std::min(x1,x2),Constants::sTimeScaleHeight,std::abs(x2 - x1) + 1,Constants::sMinimalGreyAboveVideoTracksHeight);
+    return wxRect(std::min(x1,x2),Layout::sTimeScaleHeight,std::abs(x2 - x1) + 1,Layout::sMinimalGreyAboveVideoTracksHeight);
 }
 
 wxRect Intervals::ptsToPixels(wxRect rect) const

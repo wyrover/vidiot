@@ -6,7 +6,7 @@
 #include <wx/textctrl.h>
 #include <wx/stattext.h>
 #include "UtilLog.h"
-#include "Zoom.h"
+#include "Convert.h"
 #include "GuiVideoDisplay.h"
 #include "preview-home.xpm" 
 #include "preview-end.xpm" 
@@ -145,8 +145,8 @@ void GuiPlayer::moveTo(int64_t position)
 void GuiPlayer::onPlaybackPosition(PlaybackPositionEvent& event)
 {
     mPosition = event.getValue();//getPts();
-    int time = timeline::Zoom::ptsToTime(mPosition);
-    wxDateTime t(time / timeline::Constants::sHour, (time % timeline::Constants::sHour) / timeline::Constants::sMinute, (time % timeline::Constants::sMinute) / timeline::Constants::sSecond, time % timeline::Constants::sSecond);
+    int time = model::Convert::ptsToTime(mPosition);
+    wxDateTime t(time / model::Constants::sHour, (time % model::Constants::sHour) / model::Constants::sMinute, (time % model::Constants::sMinute) / model::Constants::sSecond, time % model::Constants::sSecond);
     wxString s = t.Format("%H:%M:%S.%l") + wxString::Format(" [%10d]", mPosition);
     mStatus->ChangeValue(s);
 
