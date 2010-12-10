@@ -8,6 +8,7 @@
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
 #include "AudioFile.h"
+#include "Convert.h"
 
 namespace model {
 
@@ -17,18 +18,24 @@ namespace model {
 
 AudioClip::AudioClip()
     :	Clip()
+    ,   mProgress(boost::none)
+    ,   mLastSetPosition(0)
 {
     VAR_DEBUG(this);
 }
 
 AudioClip::AudioClip(AudioFilePtr file)
     :	Clip(file)
+    ,   mProgress(boost::none)
+    ,   mLastSetPosition(0)
 {
     VAR_DEBUG(this);
 }
 
 AudioClip::AudioClip(const AudioClip& other)
     :   Clip(other)
+    ,   mProgress(boost::none)
+    ,   mLastSetPosition(0)
 {
     VAR_DEBUG(this);
 }
@@ -49,8 +56,9 @@ AudioClip::~AudioClip()
 
 void AudioClip::moveTo(pts position)
 {
-	mCurrentPts = position;
-	Clip::moveTo(position); // Default behaviour
+    mProgress.reset();
+    mLastSetPosition = position;
+    Clip::moveTo(position);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,8 +67,50 @@ void AudioClip::moveTo(pts position)
 
 AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
 {
-    AudioChunkPtr audioChunk = getDataGenerator<AudioFile>()->getNextAudio(audioRate, nAudioChannels);
-//todo: afbreken als voorbij mlengts
+    unsigned int progress = 0;
+    if (!mProgress)
+    {
+        // Initialize mProgress to the last value set in ::moveTo
+        progress = 
+            audioRate *
+            nAudioChannels * 
+            model::Convert::ptsToTime(mLastSetPosition) /
+            1000; // ms/s
+    }
+    else
+    {
+        progress = *mProgress;
+    }
+
+    unsigned int length = 
+        audioRate *
+        nAudioChannels * 
+        model::Convert::ptsToTime(getNumberOfFrames()) / // ms
+        1000; // ms/s
+
+    AudioChunkPtr audioChunk;
+
+    if (progress < length)
+    {
+        audioChunk = getDataGenerator<AudioFile>()->getNextAudio(audioRate, nAudioChannels);
+        if (audioChunk)
+        {
+            if (progress + audioChunk->getUnreadSampleCount() > length) // todo make Convert::samplesToBytes
+            {
+                audioChunk->setAdjustedLength(length - progress);
+                mProgress.reset(length);
+            }
+            else
+            {
+                mProgress.reset(audioChunk->getUnreadSampleCount());
+            }
+        }
+        else
+        {
+            // Todo: Clip is longer than original data
+        }
+    }
+
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }

@@ -3,7 +3,7 @@
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <boost/foreach.hpp>
-#include "Constants.h"
+#include "Layout.h"
 #include "Track.h"
 #include "TrackView.h"
 #include "Sequence.h"
@@ -64,7 +64,7 @@ pixel VideoView::requiredHeight() const
     pixel requiredHeight = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        requiredHeight += track->getHeight() + Constants::sTrackDividerHeight;
+        requiredHeight += track->getHeight() + Layout::sTrackDividerHeight;
     }
     return requiredHeight;
 }
@@ -74,12 +74,12 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
     int top = getDivider().getVideoPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        int bottom = top + track->getHeight() + Constants::sTrackDividerHeight;
+        int bottom = top + track->getHeight() + Layout::sTrackDividerHeight;
         if (position.y >= top && position.y < bottom)
         {
             info.track = track;
             info.trackPosition = top;
-            info.onTrackDivider = (position.y - top <= Constants::sTrackDividerHeight);
+            info.onTrackDivider = (position.y - top <= Layout::sTrackDividerHeight);
             return;
         }
         top = bottom;
@@ -92,10 +92,10 @@ void VideoView::draw(wxBitmap& bitmap) const
     int y = 0;
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks())
     {
-        dc.SetBrush(Constants::sTrackDividerBrush);
-        dc.SetPen(Constants::sTrackDividerPen);
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Constants::sTrackDividerHeight);
-        y += Constants::sTrackDividerHeight;
+        dc.SetBrush(Layout::sTrackDividerBrush);
+        dc.SetPen(Layout::sTrackDividerPen);
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::sTrackDividerHeight);
+        y += Layout::sTrackDividerHeight;
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();
     }

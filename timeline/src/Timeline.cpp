@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <wx/dcmemory.h>
 #include "Constants.h"
+#include "Layout.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
 #include "GuiOptions.h"
@@ -317,7 +318,7 @@ pixel Timeline::requiredWidth() const
     return
         std::max(std::max(
         getWindow().GetClientSize().GetWidth(),                         // At least the widget size
-        getZoom().timeToPixels(5 * Constants::sMinute)),                // Minimum width of 5 minutes
+        getZoom().timeToPixels(5 * model::Constants::sMinute)),                // Minimum width of 5 minutes
         getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));     // At least enough to hold all clips
 }
 
@@ -326,12 +327,12 @@ pixel Timeline::requiredHeight() const
     return
         std::max(
         getWindow().GetClientSize().GetHeight(),                        // At least the widget size
-        Constants::sTimeScaleHeight +
-        Constants::sMinimalGreyAboveVideoTracksHeight +
+        Layout::sTimeScaleHeight +
+        Layout::sMinimalGreyAboveVideoTracksHeight +
         getVideo().requiredHeight() +
-        Constants::sAudioVideoDividerHeight +
+        Layout::sAudioVideoDividerHeight +
         getAudio().requiredHeight() +
-        Constants::sMinimalGreyBelowAudioTracksHeight);                 // Height of all combined components
+        Layout::sMinimalGreyBelowAudioTracksHeight);                 // Height of all combined components
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -348,43 +349,43 @@ void Timeline::draw(wxBitmap& bitmap) const
     int h = bitmap.GetHeight();
 
     // Set BG
-    dc.SetPen(Constants::sBackgroundPen);
-    dc.SetBrush(Constants::sBackgroundBrush);
+    dc.SetPen(Layout::sBackgroundPen);
+    dc.SetBrush(Layout::sBackgroundBrush);
     dc.DrawRectangle(0,0,w,h);
 
     // Draw timescale
     dc.SetBrush(wxNullBrush);
-    dc.SetPen(Constants::sTimeScaleDividerPen);
-    dc.DrawRectangle(0,0,w,Constants::sTimeScaleHeight);
+    dc.SetPen(Layout::sTimeScaleDividerPen);
+    dc.DrawRectangle(0,0,w,Layout::sTimeScaleHeight);
 
-    dc.SetFont(*Constants::sTimeScaleFont);
+    dc.SetFont(*Layout::sTimeScaleFont);
 
     // Draw seconds and minutes lines
-    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += Constants::sSecond)
+    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += model::Constants::sSecond)
     {
         int position = getZoom().timeToPixels(ms);
-        bool isMinute = (ms % Constants::sMinute == 0);
-        int height = Constants::sTimeScaleSecondHeight;
+        bool isMinute = (ms % model::Constants::sMinute == 0);
+        int height = Layout::sTimeScaleSecondHeight;
 
         if (isMinute)
         {
-            height = Constants::sTimeScaleMinutesHeight;
+            height = Layout::sTimeScaleMinutesHeight;
         }
 
         dc.DrawLine(position,0,position,height);
 
         if (ms == 0)
         {
-            dc.DrawText( "0", 5, Constants::sTimeScaleMinutesHeight );
+            dc.DrawText( "0", 5, Layout::sTimeScaleMinutesHeight );
         }
         else
         {
             if (isMinute)
             {
-                wxDateTime t(ms / Constants::sHour, (ms % Constants::sHour) / Constants::sMinute, (ms % Constants::sMinute) / Constants::sSecond, ms % Constants::sSecond);
+                wxDateTime t(ms / model::Constants::sHour, (ms % model::Constants::sHour) / model::Constants::sMinute, (ms % model::Constants::sMinute) / model::Constants::sSecond, ms % model::Constants::sSecond);
                 wxString s = t.Format("%H:%M:%S.%l");
                 wxSize ts = dc.GetTextExtent(s);
-                dc.DrawText( s, position - ts.GetX() / 2, Constants::sTimeScaleMinutesHeight );
+                dc.DrawText( s, position - ts.GetX() / 2, Layout::sTimeScaleMinutesHeight );
             }
         }
     }

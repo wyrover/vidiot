@@ -10,7 +10,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/optional.hpp>
 #include "FilePacket.h"
-#include "Zoom.h"
+#include "Convert.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "UtilSerializeBoost.h"
@@ -123,7 +123,7 @@ void File::openFile()
             break;
         }
     }
-    mNumberOfFrames = gui::timeline::Zoom::microsecondsToPts(mFileContext->duration);
+    mNumberOfFrames = model::Convert::microsecondsToPts(mFileContext->duration);
 
     VAR_DEBUG(mNumberOfFrames)(mFileContext->nb_streams)(mStreamIndex);
 
@@ -211,7 +211,7 @@ void File::moveTo(pts position)
 
     stopReadingPackets();
 
-    int result = av_seek_frame(mFileContext, -1, gui::timeline::Zoom::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
+    int result = av_seek_frame(mFileContext, -1, model::Convert::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
     ASSERT(result >= 0)(result);
 
     ASSERT(mPackets.getSize() == 0)(mPackets.getSize());

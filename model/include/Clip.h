@@ -36,9 +36,9 @@ public:
     // TRACK
     //////////////////////////////////////////////////////////////////////////
 
-	/// Set the track which contains this clip. Also sets the leftmost pts
-	/// of the clip inside the track. When called without parameters
-	/// (thus using the defaults), this information is 'reset'.
+    /// Set the track which contains this clip. Also sets the leftmost pts
+    /// of the clip inside the track. When called without parameters
+    /// (thus using the defaults), this information is 'reset'.
     void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0);
     TrackPtr getTrack();
 
@@ -66,9 +66,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-	pts getLength(); ///< @return length of clip
-
-	/// If adjustment is positive then move the begin point of the clip backwards
+    /// If adjustment is positive then move the begin point of the clip backwards
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
     void adjustBeginPoint(pts adjustment);
@@ -80,27 +78,27 @@ public:
 
 protected:
 
-	/// Method needed to convert the IControl instance mRender to an IVideo
-	/// or an IAudio instance.
-	template <class GENERATOR>
-	boost::shared_ptr<GENERATOR> getDataGenerator()
-	{
-		return boost::static_pointer_cast<GENERATOR>(mRender);
-	}
+    /// Method needed to convert the IControl instance mRender to an IVideo
+    /// or an IAudio instance.
+    template <class GENERATOR>
+    boost::shared_ptr<GENERATOR> getDataGenerator()
+    {
+        return boost::static_pointer_cast<GENERATOR>(mRender);
+    }
 
 private:
 
-	//////////////////////////////////////////////////////////////////////////
-	// MEMBERS
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
-	IControlPtr mRender;
-	TrackPtr mTrack;
-	ClipPtr mLink;
+    IControlPtr mRender;    ///< The producer of audiovisual data for this clip
+    TrackPtr mTrack;        ///< Track which holds this clip
+    ClipPtr mLink;          ///< Clip that this clip is linked with
 
-	pts mOffset;         ///< Offset inside the original media file (start point)
-    pts mLength;         ///< Length of the clip
-    pts mLeftPtsInTrack;	///< Position inside the track. 0 if not in a track.
+    pts mOffset;            ///< Offset inside the original media file (start point)
+    pts mLength;            ///< Length of the clip
+    pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -6,7 +6,7 @@
 #include <boost/make_shared.hpp>
 #include <portaudio.h>
 #include "UtilLog.h"
-#include "Zoom.h"
+#include "Convert.h"
 #include "Sequence.h"
 #include "VideoDisplayEvent.h"
 
@@ -339,7 +339,7 @@ void GuiVideoDisplay::videoDisplayThread()
         //////////////////////////////////////////////////////////////////////////
 
         mCurrentTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream)) - mStartTime;
-        int nextFrameTime = gui::timeline::Zoom::ptsToTime(videoFrame->getPts() - mStartPts);
+        int nextFrameTime = model::Convert::ptsToTime(videoFrame->getPts() - mStartPts);
         int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime);
         int sleepTime = nextFrameTimeAdaptedForPlaybackSpeed - mCurrentTime;
 

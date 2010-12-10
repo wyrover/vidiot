@@ -3,7 +3,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "UtilLog.h"
-#include "Constants.h"
+#include "Layout.h"
 #include "VideoView.h"
 #include "Timeline.h"
 #include "PositionInfo.h"
@@ -36,7 +36,7 @@ int Divider::getPosition() const
 
 void Divider::setPosition(int position)
 {
-    int minimum = Constants::sVideoPosition + getTimeline().getVideo().getBitmap().GetHeight();
+    int minimum = Layout::sVideoPosition + getTimeline().getVideo().getBitmap().GetHeight();
     if (position < minimum)
     {
         position = minimum;
@@ -55,7 +55,7 @@ void Divider::getPositionInfo(wxPoint position, PointerPositionInfo& info ) cons
 
 int Divider::getAudioPosition() const
 {
-    return getPosition() + Constants::sAudioVideoDividerHeight;
+    return getPosition() + Layout::sAudioVideoDividerHeight;
 }
 
 int Divider::getVideoPosition() const
@@ -71,9 +71,9 @@ int Divider::getVideoPosition() const
 
 void Divider::draw(wxDC& dc) const
 {
-    dc.SetBrush(Constants::sAudioVideoDividerBrush);
-    dc.SetPen(Constants::sAudioVideoDividerPen);
-    dc.DrawRectangle(0,mPosition,dc.GetSize().GetWidth(),Constants::sAudioVideoDividerHeight);
+    dc.SetBrush(Layout::sAudioVideoDividerBrush);
+    dc.SetPen(Layout::sAudioVideoDividerPen);
+    dc.DrawRectangle(0,mPosition,dc.GetSize().GetWidth(),Layout::sAudioVideoDividerHeight);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,7 @@
 #include "UtilLogAvcodec.h"
 #include "GuiOptions.h"
 #include "GuiWindow.h"
-#include "Constants.h"
+#include "Layout.h"
 #include "GuiDebugReport.h"
 #include "Project.h"
 
@@ -91,7 +91,7 @@ bool GuiMain::OnInit()
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)
-    gui::timeline::Constants::initializeFonts();
+    gui::timeline::Layout::initializeFonts();
 
     Log::Init();
 

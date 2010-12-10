@@ -9,7 +9,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <wx/pen.h>
-#include "Constants.h"
+#include "Layout.h"
 #include "Zoom.h"
 #include "ClipView.h"
 #include "UtilLog.h"
@@ -106,9 +106,9 @@ void TrackView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     wxBrush b(*wxWHITE);
-    dc.SetBrush(Constants::sBackgroundBrush);
+    dc.SetBrush(Layout::sBackgroundBrush);
     dc.SetBrush(b);
-    dc.SetPen(Constants::sBackgroundPen);
+    dc.SetPen(Layout::sBackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     wxPoint position(0,0);    
     drawClips(position, dc);
@@ -143,8 +143,8 @@ void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcM
             }
             else
             {
-                dc.SetBrush(Constants::sBackgroundBrush);
-                dc.SetPen(Constants::sBackgroundPen);
+                dc.SetBrush(Layout::sBackgroundBrush);
+                dc.SetPen(Layout::sBackgroundPen);
                 dc.DrawRectangle(pos,bitmap.GetSize());
             }
         }
