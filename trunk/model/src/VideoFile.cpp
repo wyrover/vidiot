@@ -122,6 +122,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             NIY
         }
     }
+    ASSERT(pFrame->repeat_pict >= 0)(pFrame->repeat_pict);
     repeat = pFrame->repeat_pict + 1; // Default: 1 pts length (avcodec starts with 0)
 
     static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
