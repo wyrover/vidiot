@@ -20,6 +20,7 @@ Clip::Clip()
     ,   mTrack()
     ,   mLeftPtsInTrack(0)
     ,   mLink()
+    ,   mLastSetPosition(boost::none)
 { 
     VAR_DEBUG(this);
 }
@@ -32,6 +33,7 @@ Clip::Clip(IControlPtr clip)
     ,   mTrack()
     ,   mLeftPtsInTrack(0)
     ,   mLink()
+    ,   mLastSetPosition(boost::none)
 { 
     mLength = mRender->getNumberOfFrames() - mOffset;
     VAR_DEBUG(this)(*this);
@@ -45,6 +47,7 @@ Clip::Clip(const Clip& other)
     ,   mTrack(other.mTrack)
     ,   mLeftPtsInTrack(other.mLeftPtsInTrack)
     ,   mLink(other.mLink)
+    ,   mLastSetPosition(boost::none)
 {
     VAR_DEBUG(this)(other);
 }
@@ -71,6 +74,7 @@ pts Clip::getNumberOfFrames()
 void Clip::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
+    mLastSetPosition.reset(position);
     mRender->moveTo(mOffset + position);
 }
 
@@ -132,6 +136,20 @@ void Clip::adjustEndPoint(pts adjustment)
     mLength += adjustment;
     ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset);
     VAR_DEBUG(this)(*this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// CURRENT POSITION HANDLING
+//////////////////////////////////////////////////////////////////////////
+
+void Clip::invalidateLastSetPosition()
+{
+    mLastSetPosition = boost::none;
+}
+
+boost::optional<pts> Clip::getLastSetPosition() const
+{
+    return mLastSetPosition;
 }
 
 //////////////////////////////////////////////////////////////////////////

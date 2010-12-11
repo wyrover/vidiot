@@ -42,7 +42,7 @@ AudioTrack::~AudioTrack()
 
 AudioChunkPtr AudioTrack::getNextAudio(int audioRate, int nAudioChannels)
 {
-    AudioChunkPtr audioChunk = AudioChunkPtr();
+    AudioChunkPtr audioChunk;
 
     while (!audioChunk && iterate_hasClip())
     {

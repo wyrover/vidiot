@@ -61,6 +61,11 @@ int VideoFrame::getRepeat() const
 
 }
 
+void VideoFrame::setRepeat(int repeat)
+{
+    mRepeat = repeat;
+}
+
 int VideoFrame::getWidth() const
 {
     return mWidth;
