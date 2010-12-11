@@ -12,18 +12,21 @@ namespace model {
 
 VideoClip::VideoClip()
     :	Clip()
+    ,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
 
 VideoClip::VideoClip(VideoFilePtr file)
     :	Clip(file)
+    ,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
 
 VideoClip::VideoClip(const VideoClip& other)
 :   Clip(other)
+,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
@@ -44,7 +47,39 @@ VideoClip::~VideoClip()
 
 VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr videoFrame = getDataGenerator<VideoFile>()->getNextVideo(requestedWidth, requestedHeight, alpha);
+    if (getLastSetPosition())
+    {
+        mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        invalidateLastSetPosition();
+    }
+
+    unsigned int length = getNumberOfFrames();
+
+    VideoFramePtr videoFrame;
+
+    if (mProgress < length)
+    {
+        videoFrame = getDataGenerator<VideoFile>()->getNextVideo(requestedWidth, requestedHeight, alpha);
+        ASSERT(videoFrame->getRepeat() > 0);
+        if (videoFrame)
+        {
+            if (mProgress + videoFrame->getRepeat() > length)
+            {
+                videoFrame->setRepeat(length - mProgress);
+                mProgress = length;
+            }
+            else
+            {
+                mProgress += videoFrame->getRepeat();
+            }
+        }
+        else
+        {
+            //NIY
+                // Todo: Clip is longer than original data
+        }
+    }
+
     VAR_VIDEO(videoFrame);
     return videoFrame;
 }

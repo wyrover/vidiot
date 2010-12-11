@@ -31,13 +31,23 @@ int Convert::ptsToTime(int pts)
 // static
 int Convert::ptsToMicroseconds(int pts)
 {
-    return toInt(rational(ptsToTime(pts)) * rational(Constants::sMicrosecondsPerSecond));
+    return toInt(rational(ptsToTime(pts)) * rational(Constants::sMicroseconds));
 }
 
 // static
 int Convert::microsecondsToPts(int us)
 {
-    return timeToPts(toInt(rational(us) / rational(Constants::sMicrosecondsPerSecond)));
+    return timeToPts(toInt(rational(us) / rational(Constants::sMicroseconds)));
+}
+
+// static
+int Convert::ptsToFrames(int audioRate, int nAudioChannels, pts position)
+{
+    return
+        audioRate *
+        nAudioChannels * 
+        model::Convert::ptsToTime(position) /
+        Constants::sSecond;
 }
 
 } // namespace

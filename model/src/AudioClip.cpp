@@ -8,6 +8,7 @@
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
 #include "AudioFile.h"
+#include "Constants.h"
 #include "Convert.h"
 
 namespace model {
@@ -18,24 +19,21 @@ namespace model {
 
 AudioClip::AudioClip()
     :	Clip()
-    ,   mProgress(boost::none)
-    ,   mLastSetPosition(0)
+    ,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
 
 AudioClip::AudioClip(AudioFilePtr file)
     :	Clip(file)
-    ,   mProgress(boost::none)
-    ,   mLastSetPosition(0)
+    ,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
 
 AudioClip::AudioClip(const AudioClip& other)
     :   Clip(other)
-    ,   mProgress(boost::none)
-    ,   mLastSetPosition(0)
+    ,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
@@ -51,62 +49,39 @@ AudioClip::~AudioClip()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// ICONTROL
-//////////////////////////////////////////////////////////////////////////
-
-void AudioClip::moveTo(pts position)
-{
-    mProgress.reset();
-    mLastSetPosition = position;
-    Clip::moveTo(position);
-}
-
-//////////////////////////////////////////////////////////////////////////
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
 AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
 {
-    unsigned int progress = 0;
-    if (!mProgress)
+    if (getLastSetPosition())
     {
-        // Initialize mProgress to the last value set in ::moveTo
-        progress = 
-            audioRate *
-            nAudioChannels * 
-            model::Convert::ptsToTime(mLastSetPosition) /
-            1000; // ms/s
-    }
-    else
-    {
-        progress = *mProgress;
+        mProgress = Convert::ptsToFrames(audioRate, nAudioChannels, *getLastSetPosition()); // Reinitialize mProgress to the last value set in ::moveTo
+        invalidateLastSetPosition();
     }
 
-    unsigned int length = 
-        audioRate *
-        nAudioChannels * 
-        model::Convert::ptsToTime(getNumberOfFrames()) / // ms
-        1000; // ms/s
+    unsigned int lengthInFrames = Convert::ptsToFrames(audioRate, nAudioChannels, getNumberOfFrames());
 
     AudioChunkPtr audioChunk;
 
-    if (progress < length)
+    if (mProgress < lengthInFrames)
     {
         audioChunk = getDataGenerator<AudioFile>()->getNextAudio(audioRate, nAudioChannels);
         if (audioChunk)
         {
-            if (progress + audioChunk->getUnreadSampleCount() > length) // todo make Convert::samplesToBytes
+            if (mProgress + audioChunk->getUnreadSampleCount() > lengthInFrames)
             {
-                audioChunk->setAdjustedLength(length - progress);
-                mProgress.reset(length);
+                audioChunk->setAdjustedLength(lengthInFrames - mProgress);
+                mProgress = lengthInFrames;
             }
             else
             {
-                mProgress.reset(audioChunk->getUnreadSampleCount());
+                mProgress += audioChunk->getUnreadSampleCount();
             }
         }
         else
         {
+          //  NIY
             // Todo: Clip is longer than original data
         }
     }

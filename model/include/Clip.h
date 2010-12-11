@@ -1,6 +1,7 @@
 #ifndef MODEL_CLIP_H
 #define MODEL_CLIP_H
 
+#include <boost/optional.hpp>
 #include "IControl.h"
 #include "UtilLogGeneric.h"
 
@@ -86,6 +87,19 @@ protected:
         return boost::static_pointer_cast<GENERATOR>(mRender);
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    // CURRENT POSITION HANDLING
+    //////////////////////////////////////////////////////////////////////////
+
+    /// This method resets mLastSetPosition. This must be called whenever there
+    /// is new playback progress.
+    void invalidateLastSetPosition();
+
+    /// Return the most recent position as specified in moveTo(). This is
+    /// uninitialized when there was playback progress after the moveTo.
+    /// @see invalidateLastSetPosition
+    boost::optional<pts> getLastSetPosition() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -99,6 +113,8 @@ private:
     pts mOffset;            ///< Offset inside the original media file (start point)
     pts mLength;            ///< Length of the clip
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
+
+    boost::optional<pts> mLastSetPosition; ///< The most recent position as specified in 'moveTo()'.
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

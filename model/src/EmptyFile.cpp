@@ -5,7 +5,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
-#include "Project.h"
+#include "Convert.h"
 #include "Properties.h"
 #include "EmptyChunk.h"
 #include "EmptyFrame.h"
@@ -79,8 +79,8 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
     /** todo correct pts (third parameter) */
     /** todo more precise n samples */
 
-    // Number of samples for 1 video frame
-    int nSamples = nAudioChannels * static_cast<int>(floor(boost::rational_cast<double>(audioRate * Project::current()->getProperties()->getFrameRate())));
+    // Number of samples for 1 pts
+    int nSamples = Convert::ptsToFrames(audioRate,nAudioChannels,1); // @todo frames vs samples
 
     return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, nSamples, mAudioPosition));
 } 

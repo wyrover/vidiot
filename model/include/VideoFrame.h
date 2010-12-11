@@ -40,10 +40,12 @@ public:
     virtual ~VideoFrame();
 
     //////////////////////////////////////////////////////////////////////////
-    // META DATA
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    int getRepeat() const;
+    int getRepeat() const;      ///< @return the number of times this frame should be displayed
+    void setRepeat(int repeat); ///< @param new number of times to show this frame (used at end of clips)
+
     pts getPts() const; 
     void setPts(pts position);
     AVRational getTimeBase() const;
