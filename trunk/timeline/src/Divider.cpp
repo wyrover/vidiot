@@ -5,6 +5,7 @@
 #include "UtilLog.h"
 #include "Layout.h"
 #include "VideoView.h"
+#include "Sequence.h"
 #include "Timeline.h"
 #include "PositionInfo.h"
 
@@ -19,10 +20,25 @@ Divider::Divider(Timeline* timeline)
 ,   mPosition(0)
 {
     LOG_INFO;
+    getSequence()->Bind(model::EVENT_ADD_VIDEO_TRACK, &Divider::onVideoTracksAdded, this);
+
 }
 
 Divider::~Divider()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Divider::onVideoTracksAdded( model::EventAddVideoTracks& event )
+{
+    // Redetermine video height and thus minimal position. Needed in case a
+    // track is added and the space between timescale and top vidio track is
+    // minimal.
+    setPosition(getPosition());
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -43,11 +43,13 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
         TrackView* t = new TrackView(track,this);
     }
     invalidateBitmap();
+    event.Skip();
 }
 
 void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 {
     invalidateBitmap();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -43,11 +43,13 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
         TrackView* t = new TrackView(track,this);
     }
     invalidateBitmap();
+    event.Skip();
 }
 
 void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 {
     invalidateBitmap();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
