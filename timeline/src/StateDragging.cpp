@@ -15,7 +15,6 @@ namespace gui { namespace timeline { namespace state {
 
 Dragging::Dragging( my_context ctx ) // entry
 :   TimeLineState( ctx )
-//,   mClip()
 {
     LOG_DEBUG; 
 }
@@ -32,8 +31,6 @@ Dragging::~Dragging() // exit
 boost::statechart::result Dragging::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
-
-    //getSelection().setDrag(false);
 
     getDrag().Stop();
 

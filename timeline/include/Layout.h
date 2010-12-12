@@ -24,6 +24,8 @@ public:
     static const int sTrackDividerHeight;
     static const int sDefaultAudioVideoDividerPosition;
     static const int sAudioVideoDividerHeight;
+    static const int sMinTrackHeight;
+    static const int sMaxTrackHeight;
     static const int sClipBorderSize;
     static const int sVideoPosition;
 
@@ -57,6 +59,12 @@ public:
 
     static const wxPen      sDebugPen;
     static const wxBrush    sDebugBrush;
+
+    //////////////////////////////////////////////////////////////////////////
+    // SNAP
+    //////////////////////////////////////////////////////////////////////////
+
+    static const int       sSnapDistance;
 
     //////////////////////////////////////////////////////////////////////////
     // FONTS

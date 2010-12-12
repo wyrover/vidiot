@@ -16,13 +16,11 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Clip();
+    Clip();                     ///< Constructor for recovery from disk
 
-    Clip(IControlPtr clip);
+    Clip(IControlPtr clip);     ///< Constructor for creating new clip
 
-    Clip(const Clip& other);
-
-    virtual Clip* clone();
+    virtual Clip* clone();      ///< Used for making deep copies (clones) 
 
     virtual ~Clip();
 
@@ -70,14 +68,31 @@ public:
     /// If adjustment is positive then move the begin point of the clip backwards
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
+    /// @param adjustment pts count to add/subtract from the begin point
     void adjustBeginPoint(pts adjustment);
 
     /// If adjustment is positive then move the end point of the clip backwards
     /// in time (increase the end pts). If adjustment is negative then move the
     /// end point of the clip forward in time (decrease the end pts).
+    /// @param adjustment pts count to add/subtract from the end point
     void adjustEndPoint(pts adjustment);
 
+    bool getSelected() const;           ///< @return true if this clip is selected
+    void setSelected(bool selected);    ///< Select or deselect clip
+
 protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    Clip(const Clip& other);
+
+    //////////////////////////////////////////////////////////////////////////
+    // ACCESS RENDERING OBJECT
+    //////////////////////////////////////////////////////////////////////////
 
     /// Method needed to convert the IControl instance mRender to an IVideo
     /// or an IAudio instance.
@@ -115,6 +130,8 @@ private:
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
 
     boost::optional<pts> mLastSetPosition; ///< The most recent position as specified in 'moveTo()'.
+
+    bool mSelected;         ///< True if this clip is currently selected
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

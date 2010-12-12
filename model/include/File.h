@@ -31,8 +31,6 @@ public:
 
     File(boost::filesystem::path path, int buffersize = 1);
 
-    File(const File& other);
-
     virtual File* clone();
 
     virtual ~File();
@@ -57,6 +55,14 @@ public:
     bool hasAudio();
 
 protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    File(const File& other);
 
     //////////////////////////////////////////////////////////////////////////
     // AVCODEC

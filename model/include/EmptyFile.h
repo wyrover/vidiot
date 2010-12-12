@@ -22,8 +22,6 @@ public:
 
 	EmptyFile(pts length);
 
-    EmptyFile(const EmptyFile& other);
-
     virtual EmptyFile* clone();
 
 	virtual ~EmptyFile();
@@ -46,6 +44,16 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    EmptyFile(const EmptyFile& other);
 
 private:
 

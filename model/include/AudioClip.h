@@ -20,8 +20,6 @@ public:
 
     AudioClip(AudioFilePtr clip);
 
-    AudioClip(const AudioClip& other);
-
     virtual AudioClip* clone();
 
     virtual ~AudioClip();
@@ -31,6 +29,16 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    AudioClip(const AudioClip& other);
 
 private:
 

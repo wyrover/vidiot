@@ -13,50 +13,40 @@ namespace model {
 
 struct MoveParameter
 {
-    /** Into this track the moved clips need to be inserted. */
+    /// Into this track the moved clips need to be inserted.
     TrackPtr addTrack;
 
-    /**
-    * The moved clips must be inserted before this clip.
-    * If this is an uninitialized pointer, then the clips need
-    * to be inserted at the end of the track.
-    */
+    /// The moved clips must be inserted before this clip.
+    /// If this is an uninitialized pointer, then the clips need
+    /// to be inserted at the end of the track.
     ClipPtr addPosition;
 
-    /**
-    * Consecutive list of clips to be added to this track
-    * (they'll be joined together exactly in the same order).
-    * These clips may also be a part of removeClips.
-    * If multiple consecutive (but not directly connected) lists
-    * need to be added, add multiple MoveParameter objects.
-    */
+    /// Consecutive list of clips to be added to this track
+    /// (they'll be joined together exactly in the same order).
+    /// These clips may also be a part of removeClips.
+    /// If multiple consecutive (but not directly connected) lists
+    /// need to be added, add multiple MoveParameter objects.
     Clips addClips;
 
-    /** From this track the moved clips need to be removed. */
+    /// From this track the moved clips need to be removed.
     TrackPtr removeTrack;
 
-    /**
-    * In case of undo, the removed clips must be reinserted
-    * before this clip.If this is an uninitialized pointer,
-    * then the clips need to be inserted at the end of
-    * the track.
-    */
+    /// In case of undo, the removed clips must be reinserted
+    /// before this clip.If this is an uninitialized pointer,
+    /// then the clips need to be inserted at the end of
+    /// the track.
     ClipPtr removePosition;
 
-    /**
-    * Any clips to be removed from this track
-    * These clips may also be a part of addClips.
-    * This needs to be a consecutive list of clips,
-    * thus without 'emptyness' in between. If multiple,
-    * not directly connected clip lists need to be removed,
-    * instantiate two MoveParameter objects (one for each
-    * list).
-    */
+    /// Any clips to be removed from this track
+    /// These clips may also be a part of addClips.
+    /// This needs to be a consecutive list of clips,
+    /// thus without 'emptyness' in between. If multiple,
+    /// not directly connected clip lists need to be removed,
+    /// instantiate two MoveParameter objects (one for each
+    /// list).
     Clips removeClips;
 
-    /**
-    * Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
-    **/
+    /// Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
     MoveParameter()
         :   addTrack()
         ,   addPosition()
@@ -67,9 +57,7 @@ struct MoveParameter
     {
     }
 
-    /**
-    * Helper constructor to initialize all members in one statement.
-    **/
+    /// Helper constructor to initialize all members in one statement.
     MoveParameter(TrackPtr _addTrack, ClipPtr _addPosition, Clips _addClips, TrackPtr _removeTrack = TrackPtr(), ClipPtr _removePosition = ClipPtr(), Clips _removeClips = Clips())
         :   addTrack(_addTrack)
         ,   addPosition(_addPosition)
@@ -83,6 +71,7 @@ struct MoveParameter
 
 DECLARE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
 DECLARE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);
+DECLARE_EVENT(EVENT_HEIGHT_CHANGED, EventHeightChanged, int);
 
 class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
@@ -96,8 +85,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
 	Track();
-
-    Track(const Track& other);
 
     virtual Track* clone();
 
@@ -120,34 +107,47 @@ public:
 
     const Clips& getClips();
 
-    /**
-    * Find the clip which provides the frame at the given pts.
-    * If pts is 'on a cut' then the clip AFTER the cut is returned. 
-    * If there is no clip at this pts then an empty Ptr is returned.
-    **/
+    /// Find the clip which provides the frame at the given pts.
+    /// If pts is 'on a cut' then the clip AFTER the cut is returned. 
+    /// If there is no clip at this pts then an empty Ptr is returned.
     ClipPtr getClip(pts position);
 
-    /**
-    * Find the clip following 'clip'. 
-    * Returns a '0' pointer if clip is not found.
-    * @pre clip is a part of this track
-    **/
+    /// Find the clip following 'clip'. 
+    /// Returns a '0' pointer if clip is not found.
+    /// @pre clip is a part of this track
     ClipPtr getNextClip(ClipPtr clip);
 
-    /**
-    * Find the clip preceding 'clip'. 
-    * Returns a '0' pointer if clip is not found.
-    * @pre clip is a part of this track
-    **/
+    /// Find the clip preceding 'clip'. 
+    /// Returns a '0' pointer if clip is not found.
+    /// @pre clip is a part of this track
     ClipPtr getPreviousClip(ClipPtr clip);
+
+    //////////////////////////////////////////////////////////////////////////
+    // FOR DETERMINING THE TYPE OF TRACK
+    //////////////////////////////////////////////////////////////////////////
+
+    template <typename Derived>
+    bool isA()
+    {
+        return (typeid(Derived) == typeid(*this));
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // GET & SET
     //////////////////////////////////////////////////////////////////////////
 
-    int getHeight() const;
+    int getHeight() const;      ///< @return height of this track in the timeline view
+    void setHeight(int height); ///< @param new height of this track in the timeline view
 
 protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    Track(const Track& other);
 
     //////////////////////////////////////////////////////////////////////////
     // ITERATION
@@ -162,7 +162,7 @@ private:
     Clips::const_iterator mItClips;
     Clips mClips;
 
-    int mHeight;
+    int mHeight;    ///< Height of this track when viewed in a timeline
 
 	//////////////////////////////////////////////////////////////////////////
 	// HELPER METHODS

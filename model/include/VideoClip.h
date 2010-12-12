@@ -20,8 +20,6 @@ public:
 
     VideoClip(VideoFilePtr clip);
 
-    VideoClip(const VideoClip& other);
-
     virtual VideoClip* clone();
 
     virtual ~VideoClip();
@@ -31,6 +29,16 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    VideoClip(const VideoClip& other);
 
 private:
 

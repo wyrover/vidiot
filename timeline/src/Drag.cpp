@@ -24,8 +24,7 @@ Drag::Drag(Timeline* timeline)
     ,   mPosition(0,0)
     ,   mBitmap()
     ,   mActive(false)
-    ,   mDraggedVideo()
-    ,   mDraggedAudio()
+    ,   mSequence()
 {
 }
 
@@ -205,9 +204,26 @@ void Drag::draw(wxDC& dc) const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Drag::initializeTracks()
+void prune(model::TrackPtr track)
 {
+    //model::Clips clips = track->getClips();
+    BOOST_FOREACH(model::ClipPtr clip, track->getClips())
+    {
+        
+    }
+}
 
+void Drag::prepareDrag()
+{
+    mSequence = make_cloned<model::Sequence>(getSequence());
+    BOOST_FOREACH(model::TrackPtr track, mSequence->getVideoTracks())
+    {
+        prune(track);
+    }
+    BOOST_FOREACH(model::TrackPtr track, mSequence->getAudioTracks())
+    {
+        prune(track);
+    }
 }
 
 

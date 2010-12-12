@@ -109,13 +109,17 @@ void Drop::updateDropArea(wxPoint p)
             int diffright = clip->getRightPosition() - p.x;
 
             int xDrop = -1;
-            if (diffleft < diffright)
+            if (diffleft < diffright && diffleft < Layout::sSnapDistance)
             {
                 xDrop = clip->getLeftPosition() - 2;
             }
-            else
+            else if (diffright < Layout::sSnapDistance)
             {
                 xDrop = clip->getRightPosition() - 2;
+            }
+            else
+            {
+                xDrop = p.x;
             }
             newDropArea = wxRect(xDrop,info.trackPosition,4,track->getBitmap().GetHeight()); 
         }

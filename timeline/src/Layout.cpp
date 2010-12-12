@@ -6,16 +6,18 @@ namespace gui { namespace timeline {
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-const int Layout::sTimeScaleMinutesHeight                = 10;
-const int Layout::sTimeScaleSecondHeight                 = 5;
-const int Layout::sTimeScaleHeight                       = 20;
-const int Layout::sMinimalGreyAboveVideoTracksHeight     = 10;
-const int Layout::sMinimalGreyBelowAudioTracksHeight     = 10;
-const int Layout::sTrackDividerHeight                    = 4;
-const int Layout::sDefaultAudioVideoDividerPosition      = 100;
-const int Layout::sAudioVideoDividerHeight               = 5;
-const int Layout::sClipBorderSize                        = 2;
-const int Layout::sVideoPosition                         = Layout::sTimeScaleHeight + Layout::sMinimalGreyAboveVideoTracksHeight;
+const int Layout::sTimeScaleMinutesHeight               = 10;
+const int Layout::sTimeScaleSecondHeight                = 5;
+const int Layout::sTimeScaleHeight                      = 20;
+const int Layout::sMinimalGreyAboveVideoTracksHeight    = 10;
+const int Layout::sMinimalGreyBelowAudioTracksHeight    = 10;
+const int Layout::sTrackDividerHeight                   = 4;
+const int Layout::sDefaultAudioVideoDividerPosition     = 100;
+const int Layout::sAudioVideoDividerHeight              = 5;
+const int Layout::sMinTrackHeight                       = 10;
+const int Layout::sMaxTrackHeight                       = 100;
+const int Layout::sClipBorderSize                       = 2;
+const int Layout::sVideoPosition                        = Layout::sTimeScaleHeight + Layout::sMinimalGreyAboveVideoTracksHeight;
 
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS
@@ -46,6 +48,12 @@ const wxBrush   Layout::sSelectedClipBrush       (wxColour(80,80,80),wxBRUSHSTYL
 
 const wxPen     Layout::sDebugPen                (*wxGREEN, 1);
 const wxBrush   Layout::sDebugBrush              (*wxGREEN,wxBRUSHSTYLE_STIPPLE);
+
+//////////////////////////////////////////////////////////////////////////
+// SNAP
+//////////////////////////////////////////////////////////////////////////
+
+const int       Layout::sSnapDistance           = 25;
 
 //////////////////////////////////////////////////////////////////////////
 // FONTS

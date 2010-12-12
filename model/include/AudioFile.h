@@ -20,8 +20,6 @@ public:
 
 	AudioFile(boost::filesystem::path path);
 
-    AudioFile(const AudioFile& other);
-
     virtual AudioFile* clone();
 
 	virtual ~AudioFile();
@@ -31,6 +29,16 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    AudioFile(const AudioFile& other);
 
 private:
 

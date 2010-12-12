@@ -49,8 +49,8 @@ Sequence::Sequence(wxString name)
 Sequence::Sequence(const Sequence& other)
 :	IControl()
 ,   mName(other.mName)
-,   mVideoTracks()
-,   mAudioTracks()
+,   mVideoTracks(other.mVideoTracks)
+,   mAudioTracks(other.mAudioTracks)
 {
     VAR_DEBUG(this);
 }
@@ -63,6 +63,11 @@ Sequence* Sequence::clone()
 Sequence::~Sequence()
 {
     VAR_DEBUG(this);
+    /// @todo remove all tracks recursively (note: the tracks do not keep
+    /// references to the sequence, hence the sequence can simply go
+    /// out-of-scope (smartptr) and then this destructor is called. The
+    /// tracks however are kept alive via their child clips, thus they
+    /// need explicit cleanup.
 }
 
 //////////////////////////////////////////////////////////////////////////
