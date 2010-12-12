@@ -17,6 +17,7 @@
 #include "MousePointer.h"
 #include "Selection.h"
 #include "StateMoveDivider.h"
+#include "StateMoveTrackDivider.h"
 #include "UtilLog.h"
 #include "PositionInfo.h"
 
@@ -51,12 +52,15 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
     {
         return transit<MoveDivider>();
     }
+    else if (info.onTrackDivider)
+    {
+        return transit<MoveTrackDivider>();
+    }
     else
     {
         getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
         if (info.clip && !info.clip->isA<model::EmptyClip>())
         {
-            outermost_context().globals->DragStartPosition = evt.mPosition;
             return transit<TestDragStart>();
         }
         else

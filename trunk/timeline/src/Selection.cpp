@@ -174,6 +174,7 @@ void Selection::selectClipAndLink(model::ClipPtr clip, bool selected)
 
 void Selection::selectClip(model::ClipPtr clip, bool selected)
 {
+    clip->setSelected(selected);
     if (selected)
     {
         mSelected.insert(clip);
@@ -210,7 +211,7 @@ void Selection::deleteFromTrack(model::MoveParameters& moves, model::Tracks trac
             else
             {
                 if (move) 
-                { 
+                {
                     move->removePosition = clip;
                     move->addPosition = clip;
                     move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));

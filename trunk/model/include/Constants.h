@@ -16,6 +16,14 @@ public:
     static const int sSecond;       ///< Number of milliseconds in one second
     static const int sMinute;       ///< Number of milliseconds in one minute
     static const int sHour;         ///< Number of milliseconds in one hour
+
+    //////////////////////////////////////////////////////////////////////////
+    // LAYOUT CONSTANTS THAT ARE PERSISTED
+    //////////////////////////////////////////////////////////////////////////
+
+    static const int sDefaultTrackHeight;
+
+
 };
 
 } // namespace

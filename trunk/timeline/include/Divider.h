@@ -38,6 +38,12 @@ public:
     int getPosition() const;
     void setPosition(int position);
 
+    /// This method must be called whenever the number/height of the video
+    /// and/or audio tracks changes. The new divider position will be calculated
+    /// taking required defaults (like minimal areas around the audio/video 
+    /// areas) into account.
+    void resetPosition();
+
     void getPositionInfo(wxPoint position, PointerPositionInfo& info ) const;
 
     int getVideoPosition() const;

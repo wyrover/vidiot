@@ -11,21 +11,21 @@
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
 #include "UtilLogStl.h"
+#include "Constants.h"
 #include "Clip.h"
 #include "UtilList.h"
 
 namespace model {
 
-static int sDefaultTrackHeight = 50;
-
 DEFINE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
 DEFINE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);
+DEFINE_EVENT(EVENT_HEIGHT_CHANGED, EventHeightChanged, int);
 
 Track::Track()
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
-,   mHeight(sDefaultTrackHeight)
+,   mHeight(Constants::sDefaultTrackHeight)
 { 
     VAR_DEBUG(this);
 }
@@ -202,6 +202,12 @@ ClipPtr Track::getPreviousClip(ClipPtr clip)
 int Track::getHeight() const
 {
     return mHeight;
+}
+
+void Track::setHeight(int height)
+{
+    mHeight = height;
+    QueueEvent(new model::EventHeightChanged(height));
 }
 
 //////////////////////////////////////////////////////////////////////////

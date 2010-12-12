@@ -34,16 +34,6 @@ protected:
     };
 };
 
-struct GlobalState
-{
-    GlobalState()
-        :   DragStartPosition(-1,-1)
-    {
-    }
-
-    wxPoint DragStartPosition;
-};
-
 //////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATION OF ALL STATES FOR TIMELINE
 //////////////////////////////////////////////////////////////////////////
@@ -65,7 +55,6 @@ public:
     Machine(Timeline& tl);
     ~Machine();
     Timeline& mTimeline;
-    GlobalState* globals;
 
 private:
 
@@ -87,12 +76,9 @@ private:
     void OnCaptureLost      (wxMouseCaptureLostEvent& event);
     void OnCaptureChanged   (wxMouseCaptureChangedEvent& event);
 
-    /**
-    * Converts a wxevent position to a virtual position on the
-    * timeline's bitmap buffer (which may be scrolled).
-    */
+    /// Converts a wxevent position to a virtual position on the
+    /// timeline's bitmap buffer (which may be scrolled).
     wxPoint unscrolledPosition(wxPoint position) const;
-
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,6 +119,10 @@ struct EvRightDouble    : EvMouse<EvRightDouble>    { EvRightDouble (wxMouseEven
 struct EvEnter          : EvMouse<EvEnter>          { EvEnter       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse< EvEnter >         (wxevt, pos) {} };
 struct EvLeave          : EvMouse<EvLeave>          { EvLeave       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse< EvLeave >         (wxevt, pos) {} };
 struct EvWheel          : EvMouse<EvWheel>          { EvWheel       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse< EvWheel >         (wxevt, pos) {} };
+
+//////////////////////////////////////////////////////////////////////////
+// KEY EVENTS
+//////////////////////////////////////////////////////////////////////////
 
 template< class MostDerived >
 struct EvKey : boost::statechart::event< MostDerived >

@@ -12,4 +12,10 @@ const int Constants::sSecond        = 1000  * sMilliSecond;
 const int Constants::sMinute        = 60    * sSecond;
 const int Constants::sHour          = 60    * sMinute;
 
+//////////////////////////////////////////////////////////////////////////
+// LAYOUT CONSTANTS THAT ARE PERSISTED
+//////////////////////////////////////////////////////////////////////////
+
+const int Constants::sDefaultTrackHeight = 50;
+
 } // namespace

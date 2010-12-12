@@ -21,6 +21,7 @@ Clip::Clip()
     ,   mLeftPtsInTrack(0)
     ,   mLink()
     ,   mLastSetPosition(boost::none)
+    ,   mSelected(false)
 { 
     VAR_DEBUG(this);
 }
@@ -34,6 +35,7 @@ Clip::Clip(IControlPtr clip)
     ,   mLeftPtsInTrack(0)
     ,   mLink()
     ,   mLastSetPosition(boost::none)
+    ,   mSelected(false)
 { 
     mLength = mRender->getNumberOfFrames() - mOffset;
     VAR_DEBUG(this)(*this);
@@ -48,6 +50,7 @@ Clip::Clip(const Clip& other)
     ,   mLeftPtsInTrack(other.mLeftPtsInTrack)
     ,   mLink(other.mLink)
     ,   mLastSetPosition(boost::none)
+    ,   mSelected(other.mSelected)
 {
     VAR_DEBUG(this)(other);
 }
@@ -138,6 +141,16 @@ void Clip::adjustEndPoint(pts adjustment)
     VAR_DEBUG(this)(*this);
 }
 
+bool Clip::getSelected() const
+{
+    return mSelected;
+}
+
+void Clip::setSelected(bool selected)
+{
+    mSelected = selected;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CURRENT POSITION HANDLING
 //////////////////////////////////////////////////////////////////////////
@@ -158,7 +171,7 @@ boost::optional<pts> Clip::getLastSetPosition() const
 
 std::ostream& operator<<( std::ostream& os, const Clip& obj )
 {
-    os << '[' << &obj << ',' << obj.mOffset << ',' << obj.mLength << ',' << obj.mLeftPtsInTrack << ']';
+    os << '[' << &obj << ',' << obj.mOffset << ',' << obj.mLength << ',' << obj.mLeftPtsInTrack << ',' << obj.mSelected << ']';
     return os;
 }
 
@@ -176,6 +189,7 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mTrack;
     ar & mLeftPtsInTrack;
     ar & mLink;
+    // NOT: mSelected. After loading, nothing is selected.
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Clip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

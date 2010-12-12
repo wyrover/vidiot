@@ -20,8 +20,6 @@ public:
 
     VideoFile(boost::filesystem::path path);
 
-    VideoFile(const VideoFile& other);
-
     virtual VideoFile* clone();
 
 	virtual ~VideoFile();
@@ -31,6 +29,16 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    VideoFile(const VideoFile& other);
 
 private:
 

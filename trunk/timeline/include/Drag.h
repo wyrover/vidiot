@@ -66,14 +66,15 @@ private:
     bool mActive;
     bool mSnap; ///< true if the drag image snaps to the nearest track(s)
 
-    model::Tracks mDraggedVideo;
-    model::Tracks mDraggedAudio;
+    model::SequencePtr mSequence; ///< Contains a clone of the sequence, made at the moment the drag started. Only selected clips are present.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void initializeTracks(); ///< Initializes the locally stored tracks used for dragging
+    /// To be called when the drag starts. This initializes mSequence to contain
+    /// a copy of the sequence, with all unselected clips replaced with empty ones.
+    void prepareDrag();
 };
 
 }} // namespace

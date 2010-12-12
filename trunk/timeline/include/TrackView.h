@@ -9,6 +9,7 @@ namespace model {
     typedef boost::shared_ptr<Track> TrackPtr;
     class EventAddClips;
     class EventRemoveClips;
+    class EventHeightChanged;
 }
 
 namespace gui { namespace timeline {
@@ -47,8 +48,9 @@ public:
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnClipsAdded( model::EventAddClips& event );
-    void OnClipsRemoved( model::EventRemoveClips& event );
+    void onClipsAdded( model::EventAddClips& event );
+    void onClipsRemoved( model::EventRemoveClips& event );
+    void onHeightChanged( model::EventHeightChanged& event );
 
 private:
 

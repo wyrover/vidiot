@@ -37,10 +37,11 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 
     model::MoveParameter m;
     m.addClips = mTrack->getClips();
-    OnClipsAdded(model::EventAddClips(m));
+    onClipsAdded(model::EventAddClips(m));
 
-    mTrack->Bind(model::EVENT_ADD_CLIPS,     &TrackView::OnClipsAdded,    this);
-    mTrack->Bind(model::EVENT_REMOVE_CLIPS,  &TrackView::OnClipsRemoved,  this);
+    mTrack->Bind(model::EVENT_ADD_CLIPS,        &TrackView::onClipsAdded,       this);
+    mTrack->Bind(model::EVENT_REMOVE_CLIPS,     &TrackView::onClipsRemoved,     this);
+    mTrack->Bind(model::EVENT_HEIGHT_CHANGED,   &TrackView::onHeightChanged,    this);
 }
 
 TrackView::~TrackView()
@@ -61,7 +62,7 @@ model::TrackPtr TrackView::getTrack() const
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::OnClipsAdded( model::EventAddClips& event )
+void TrackView::onClipsAdded( model::EventAddClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
@@ -70,12 +71,17 @@ void TrackView::OnClipsAdded( model::EventAddClips& event )
     invalidateBitmap();
 }
 
-void TrackView::OnClipsRemoved( model::EventRemoveClips& event )
+void TrackView::onClipsRemoved( model::EventRemoveClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
     {
 // @todo cleanup:        getViewMap().getView(clip)->Destroy();
     }
+    invalidateBitmap();
+}
+
+void TrackView::onHeightChanged( model::EventHeightChanged& event )
+{
     invalidateBitmap();
 }
 

@@ -40,6 +40,10 @@ public:
 
     void show(wxRect rect); ///< tmp for showing intersect with selected regions
 
+    /// This will reread the thumbnail from disk. It will also invalidate the 
+    /// bitmap and force a redraw.
+    void updateThumbnail();
+
 private:
 
     model::ClipPtr mClip;
@@ -50,8 +54,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
-
-    void updateThumbnail();
 
     void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 

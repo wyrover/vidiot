@@ -18,8 +18,6 @@ public:
 
 	VideoTrack();
 
-    VideoTrack(const VideoTrack& other);
-
     virtual VideoTrack* clone();
 
 	virtual ~VideoTrack();
@@ -31,6 +29,16 @@ public:
     virtual void moveTo(pts position);
 
     virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @see make_cloned
+    VideoTrack(const VideoTrack& other);
 
 private:
 

@@ -34,10 +34,7 @@ Divider::~Divider()
 
 void Divider::onVideoTracksAdded( model::EventAddVideoTracks& event )
 {
-    // Redetermine video height and thus minimal position. Needed in case a
-    // track is added and the space between timescale and top vidio track is
-    // minimal.
-    setPosition(getPosition());
+    resetPosition();
     event.Skip();
 }
 
@@ -59,6 +56,11 @@ void Divider::setPosition(int position)
     }
     mPosition = position;
     getTimeline().invalidateBitmap();
+}
+
+void Divider::resetPosition()
+{
+    setPosition(mPosition);
 }
 
 void Divider::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const

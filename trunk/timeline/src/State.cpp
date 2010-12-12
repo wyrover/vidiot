@@ -12,7 +12,6 @@ namespace gui { namespace timeline { namespace state {
 Machine::Machine(Timeline& tl)
 :   mTimeline(tl)
 {
-    globals = new GlobalState();
     initiate();
 
     mTimeline.Bind(wxEVT_MOTION,                 &Machine::OnMotion,         this);
@@ -36,7 +35,6 @@ Machine::Machine(Timeline& tl)
 
 Machine::~Machine()
 {
-    delete globals;
 }
 
 void Machine::OnMotion          (wxMouseEvent& event)  { process_event(EvMotion        (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
