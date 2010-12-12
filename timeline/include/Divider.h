@@ -5,6 +5,10 @@
 #include <boost/serialization/version.hpp>
 #include "Part.h"
 
+namespace model { 
+    class EventAddVideoTracks; 
+}
+
 namespace gui { namespace timeline {
     class ViewUpdateEvent;
     struct PointerPositionInfo;
@@ -20,6 +24,12 @@ public:
 
     Divider(Timeline *timeline);
     virtual ~Divider();
+
+    //////////////////////////////////////////////////////////////////////////
+    // MODEL EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onVideoTracksAdded( model::EventAddVideoTracks& event );
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
