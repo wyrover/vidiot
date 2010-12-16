@@ -4,6 +4,7 @@
 #include <wx/pen.h>
 #include "Zoom.h"
 #include "Layout.h"
+#include "Drag.h"
 #include "UtilLog.h"
 #include "VideoFrame.h"
 #include "VideoClip.h"
@@ -28,6 +29,7 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 {
     ASSERT(mClip);
     getViewMap().registerView(mClip,this);
+    mClip->Bind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected, this);
     updateThumbnail();
 }
 
@@ -131,17 +133,34 @@ void ClipView::updateThumbnail()
 
 void ClipView::draw(wxBitmap& bitmap) const
 {
+    draw(bitmap, !getDrag().isActive(), true);
+}
+
+void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselectedClips) const
+{
+    // NOTE: DO NOT use requiredWidth/requiredHeight here, since
+    //       This method is also used for drawing clips that are
+    //       dragged around, and thus can have a different size.
+    //       (caused by hovering such a clip over another track
+    //       typically causes it to be drawn with a different
+    //       height).
+
     wxMemoryDC dc(bitmap);
 
-    if (mClip->isA<model::EmptyClip>())
+    if (mClip->isA<model::EmptyClip>() || 
+        (!drawSelectedClips && mClip->getSelected()) ||
+        (!drawUnselectedClips && !mClip->getSelected()))
     {
+        // For empty clips, the bitmap is empty.
+        // Selected clips that are being dragged should no longer be drawn
+        // in the regular tracks as they have become part of 'getDrag()'s bitmap.
         dc.SetBrush(Layout::sBackgroundBrush);
         dc.SetPen(Layout::sBackgroundPen);
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     }
     else
     {
-        if (getSelection().isSelected(mClip))
+        if (mClip->getSelected())
         {
             dc.SetBrush(Layout::sSelectedClipBrush);
             dc.SetPen(Layout::sSelectedClipPen);
@@ -164,6 +183,26 @@ void ClipView::draw(wxBitmap& bitmap) const
         dc.SetPen(*wxGREEN_PEN);
         dc.DrawRectangle(mRect);
     }
+}
+
+void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
+{
+    if (mClip->getSelected())
+    {
+        wxBitmap b(requiredWidth(), height);
+        draw(b, true, false);
+        dc.DrawBitmap(b,position);
+        dcMask.DrawRectangle(position,b.GetSize());
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void ClipView::onClipSelected( model::EventSelectClip& event )
+{
+    invalidateBitmap();
 }
 
 }} // namespace

@@ -49,18 +49,17 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
     // Must be determined before deselecting all clips.
-    bool previousClickedClipWasSelected = mPreviouslyClicked ? isSelected(mPreviouslyClicked) : true;
-    bool currentClickedClipIsSelected = clip ? isSelected(clip) : false;
+    bool previousClickedClipWasSelected = mPreviouslyClicked ? mPreviouslyClicked->getSelected() : true;
+    bool currentClickedClipIsSelected = clip ? clip->getSelected() : false;
 
     // Deselect all clips first, but only if control is not pressed.
     if (!ctrlPressed)
     {
-		std::set<model::ClipPtr> old = mSelected;
-        mSelected.clear();
-        BOOST_FOREACH( model::ClipPtr c, old )
+        BOOST_FOREACH( model::ClipPtr c, mSelected )
         {
-            getViewMap().getView(c)->invalidateBitmap();
+            c->setSelected(false);
         }
+        mSelected.clear();
     }
 
     if (clip)
@@ -133,11 +132,6 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
     }
 }
 
-bool Selection::isSelected(model::ClipPtr clip) const
-{
-    return (mSelected.find(clip) != mSelected.end());
-}
-
 void Selection::deleteClips()
 {
     model::MoveParameters moves;
@@ -149,17 +143,9 @@ void Selection::deleteClips()
     getTimeline().Submit(new command::TimelineMoveClips(getTimeline(),moves));
 }
 
-void Selection::invalidateTracksWithSelectedClips()
+const std::set<model::ClipPtr>& Selection::getClips() const
 {
-    std::set<model::TrackPtr> tracks;
-    BOOST_FOREACH( model::ClipPtr clip, mSelected )
-    {
-        tracks.insert(clip->getTrack());
-    }
-    BOOST_FOREACH( model::TrackPtr track, tracks )
-    {
-        getViewMap().getView(track)->invalidateBitmap();
-    }
+    return mSelected;
 }
 
 void Selection::selectClipAndLink(model::ClipPtr clip, bool selected)
@@ -196,7 +182,7 @@ void Selection::deleteFromTrack(model::MoveParameters& moves, model::Tracks trac
         BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {
             ClipView* c = getViewMap().getView(clip);
-            if (getSelection().isSelected(clip))
+            if (clip->getSelected())
             {
                 if (!move)
                 {

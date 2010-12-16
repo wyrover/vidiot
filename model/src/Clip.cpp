@@ -8,12 +8,15 @@
 
 namespace model {
 
+DEFINE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 Clip::Clip()
-    :	IControl()
+    :   wxEvtHandler()
+    ,	IControl()
     ,   mRender()
     ,   mOffset(0)
     ,   mLength(-1)
@@ -27,7 +30,8 @@ Clip::Clip()
 }
 
 Clip::Clip(IControlPtr clip)
-    :	IControl()
+    :   wxEvtHandler()
+    ,	IControl()
     ,   mRender(clip)
     ,   mOffset(0)
     ,   mLength(-1)
@@ -42,7 +46,8 @@ Clip::Clip(IControlPtr clip)
 }
 
 Clip::Clip(const Clip& other)
-    :   IControl()
+    :   wxEvtHandler()
+    ,	IControl()
     ,   mRender(make_cloned<model::IControl>(other.mRender))
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
@@ -149,6 +154,7 @@ bool Clip::getSelected() const
 void Clip::setSelected(bool selected)
 {
     mSelected = selected;
+    QueueEvent(new EventSelectClip(selected));
 }
 
 //////////////////////////////////////////////////////////////////////////

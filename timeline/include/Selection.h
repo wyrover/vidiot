@@ -38,15 +38,13 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
-    bool isSelected(model::ClipPtr clip) const;
-    //void setDrag(bool drag);
 
     /**
     * Deletes all selected clips.
     **/
     void deleteClips();
 
-    void invalidateTracksWithSelectedClips(); ///< Ensures that all tracks with selected clips are redrawn
+    const std::set<model::ClipPtr>& getClips() const;
 
 private:
 

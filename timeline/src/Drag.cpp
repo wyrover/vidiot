@@ -3,13 +3,17 @@
 #include <wx/pen.h>
 #include <boost/foreach.hpp>
 #include "Timeline.h"
+#include "MousePointer.h"
+#include "PositionInfo.h"
 #include "Layout.h"
 #include "TrackView.h"
+#include "UtilLogWxwidgets.h"
 #include "Track.h"
 #include "Sequence.h"
 #include "Selection.h"
 #include "ViewMap.h"
 #include "Divider.h"
+#include "ClipView.h"
 
 namespace gui { namespace timeline {
 
@@ -18,13 +22,15 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 Drag::Drag(Timeline* timeline)
-    :	wxDragImage(wxCursor(wxCURSOR_HAND))
-    ,   Part(timeline)
+    :   Part(timeline)
     ,   mHotspot(0,0)
     ,   mPosition(0,0)
     ,   mBitmap()
     ,   mActive(false)
-    ,   mSequence()
+    ,   mDraggedTrack()
+    ,   mDropTrack()
+    ,   mVideoTrackOffset(0)
+    ,   mAudioTrackOffset(0)
 {
 }
 
@@ -36,24 +42,69 @@ void Drag::Start(wxPoint hotspot)
 {
     mHotspot = hotspot;
     mPosition = hotspot;
+    mInitialHotspot = hotspot;
+    mVideoTrackOffset = 0;
+    mBitmapOffset_x = 0;
+    mBitmapOffset_y = 0;
+
+    mAudioTrackOffset = 0;
+    PointerPositionInfo info = getMousePointer().getInfo(hotspot);
+    mDraggedTrack = info.track;
+    mDropTrack = info.track;
+    VAR_DEBUG(*this);
+    ASSERT(mDraggedTrack);
+
     mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
-    getSelection().invalidateTracksWithSelectedClips();
-    //getTimeline().Refresh();
+    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
+    {
+        getViewMap().getView(clip)->invalidateBitmap();
+    }
     mBitmap = getDragBitmap();
-    //bool ok = BeginDrag(mHotspot, &getTimeline(), false);
-    //ASSERT(ok);
-    //Show();
     MoveTo(hotspot);
 }
 
 void Drag::MoveTo(wxPoint position)
 {
-    //Move(position - getTimeline().getScrollOffset());
+    VAR_DEBUG(*this);
+    wxRegion redrawRegion;
+
+    redrawRegion.Union(wxRect(mPosition - mHotspot, mBitmap.GetSize())); // Redraw the old area (moved 'out' of this area)
+
+    PointerPositionInfo info = getMousePointer().getInfo(position);
+    if (!info.track || info.track == mDropTrack)
+    {
+        mHotspot.y -= mPosition.y - position.y; // Move the cursor without moving the dragged object (note: vertical only!)
+    }
+    else
+    {
+        if (info.track->isA<model::VideoTrack>())
+        {
+            mVideoTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
+            mHotspot.y = position.y;
+            // getDragBitmap requires the hotspot to be set in timeline coordinates. Not in 'clipped drag area' coordinates (see getDragBitmap).
+            mHotspot.x = mInitialHotspot.x; 
+            mBitmap = getDragBitmap();
+            ASSERT(mDraggedTrack->isA<model::VideoTrack>()); // Hopping over tracks not implemented 
+        }
+        else
+        {
+            mAudioTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
+            mHotspot.y = position.y;
+            // getDragBitmap requires the hotspot to be set in timeline coordinates. Not in 'clipped drag area' coordinates (see getDragBitmap).
+            mHotspot.x = mInitialHotspot.x; 
+            mBitmap = getDragBitmap();
+            ASSERT(mDraggedTrack->isA<model::AudioTrack>()); // Hopping over tracks not implemented 
+        }
+        mDropTrack = info.track;
+
+        // todo: how to change 'mDraggedTrack' (via alt or via hopping over from video to audio, or by moving the pointer 'outside all tracks'
+    }
+
+    mPosition = position;
+    redrawRegion.Union(wxRect(mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
 
     getTimeline().invalidateBitmap();
-    wxRegion redrawRegion(wxRect(mPosition - mHotspot, mBitmap.GetSize()));
-    mPosition = position;
-    redrawRegion.Union(wxRect(mPosition - mHotspot, mBitmap.GetSize()));
+
     wxRegionIterator it(redrawRegion);
     while (it)
     {
@@ -61,16 +112,19 @@ void Drag::MoveTo(wxPoint position)
         it++;
     }
 
-//    getTimeline().RefreshRect(wxRect(mPosition - mHotspot, mBitmap.GetSize()));
+    VAR_DEBUG(*this);
 }
 
 void Drag::Stop()
 {
+    VAR_DEBUG(*this);
     mActive = false;
-    getSelection().invalidateTracksWithSelectedClips();
-    //Hide();
-    //EndDrag();
+    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
+    {
+        getViewMap().getView(clip)->invalidateBitmap();
+    }
     getTimeline().Refresh();
+    VAR_DEBUG(*this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +138,7 @@ wxRect Drag::GetImageRect(const wxPoint& pos) const
 
 wxBitmap Drag::getDragBitmap() //const
 {
+    VAR_DEBUG(*this);
     int w = getTimeline().requiredWidth();
     int h = getTimeline().requiredHeight();
 
@@ -108,34 +163,59 @@ wxBitmap Drag::getDragBitmap() //const
     wxPoint position(0,getDivider().getVideoPosition());
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        getViewMap().getView(track)->drawClips(position,dc,dcMask);
-        position.y += track->getHeight() + Layout::sTrackDividerHeight;
+        position.y += Layout::sTrackDividerHeight;
+        // Determine which track is currently dragged above this track
+        int draggedTrackIndex = track->getIndex() - mVideoTrackOffset;
+        if ((draggedTrackIndex >= 0) && (draggedTrackIndex < getSequence()->getVideoTracks().size()))
+        {
+            VAR_DEBUG(draggedTrackIndex)(track->getIndex())(mVideoTrackOffset);
+            // Draw the track that is currently dragged on top of this track
+            model::TrackPtr draggedTrack = getSequence()->getVideoTrack(draggedTrackIndex);
+            getViewMap().getView(draggedTrack)->drawForDragging(position,track->getHeight(),dc,dcMask);
+        }
+        // else: 
+        // If this track is mapped to a dragged track beyond the range of tracks
+        // then apparently, nothing needs to be drawn on top of this track.
+        // Hence no 'else' handling here.
+        position.y += track->getHeight();
     }
 
     // Draw audio tracks
     position.y = getDivider().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        getViewMap().getView(track)->drawClips(position,dc,dcMask);
-        position.y += track->getHeight();
+        // Determine which track is currently dragged above this track
+        int draggedTrackIndex = track->getIndex() - mAudioTrackOffset;
+        if ((draggedTrackIndex >= 0) && (draggedTrackIndex < getSequence()->getAudioTracks().size()))
+        {
+            VAR_DEBUG(draggedTrackIndex)(track->getIndex())(mAudioTrackOffset);
+            // Draw the track that is currently dragged on top of this track
+            model::TrackPtr draggedTrack = getSequence()->getAudioTrack(draggedTrackIndex);
+            getViewMap().getView(draggedTrack)->drawForDragging(position,track->getHeight(),dc,dcMask);
+        }
+        // else: 
+        // If this track is mapped to a dragged track beyond the range of tracks
+        // then apparently, nothing needs to be drawn on top of this track.
+        // Hence no 'else' handling here.
+        position.y += track->getHeight() + Layout::sTrackDividerHeight;
     }
 
-    int origin_x = std::max(dcMask.MinX(),0);
-    int origin_y = std::max(dcMask.MinY(),0);
-    int size_x = dcMask.MaxX() - origin_x;
-    int size_y = dcMask.MaxY() - origin_y;
+    mBitmapOffset_x = std::max(dcMask.MinX(),0);
+    mBitmapOffset_y = std::max(dcMask.MinY(),0);
+    int size_x = dcMask.MaxX() - mBitmapOffset_x;
+    int size_y = dcMask.MaxY() - mBitmapOffset_y;
 
     dc.SelectObject(wxNullBitmap);
     dcMask.SelectObject(wxNullBitmap);
 
     temp.SetMask(new wxMask(mask));
 
-    mHotspot.x -= origin_x;
-    mHotspot.y -= origin_y;
+    mHotspot.x -= mBitmapOffset_x;
+    mHotspot.y -= mBitmapOffset_y;
 
-    VAR_DEBUG(origin_x)(origin_y)(size_x)(size_y);
+    VAR_DEBUG(mBitmapOffset_x)(mBitmapOffset_y)(size_x)(size_y);
     ASSERT(size_x > 0 && size_y > 0)(size_x)(size_y);
-    return temp.GetSubBitmap(wxRect(origin_x,origin_y,size_x,size_y));
+    return temp.GetSubBitmap(wxRect(mBitmapOffset_x,mBitmapOffset_y,size_x,size_y));
 }
 
 bool Drag::isActive() const
@@ -147,21 +227,6 @@ bool Drag::isActive() const
 // DRAW
 //////////////////////////////////////////////////////////////////////////
 
-bool Drag::DoDrawImage(wxDC& dc, const wxPoint& pos) const
-{
-    //dc.DrawBitmap(mBitmap, pos, true);
-
-    wxBitmap b = mBitmap;
-    wxMemoryDC dcBmp(b);
-    int x = pos.x;
-    int y = pos.y;
-    int w = mBitmap.GetWidth();
-    int h = mBitmap.GetHeight();
-    dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
-
-    return true;
-}
-
 void Drag::draw(wxDC& dc) const
 {
     if (!mActive)
@@ -169,62 +234,25 @@ void Drag::draw(wxDC& dc) const
         return;
     }
     dc.DrawBitmap(mBitmap,mPosition - mHotspot,true);
-
-        //dc.SetPen(Constants::sDebugPen);
-        //dc.SetBrush(Constants::sDebugBrush);
-        //dc.DrawRectangle(offset,b.GetSize());
-
-
-    // UNUSED YET.
-    //wxPoint scroll = getTimeline().getScrollOffset();
-    //wxRegionIterator upd(getTimeline().GetUpdateRegion()); // get the update rect list
-    //while (upd)
-    //{
-    //    int x = scroll.x + upd.GetX();
-    //    int y = scroll.y + upd.GetY();
-    //    int w = upd.GetW();
-    //    int h = upd.GetH();
-    //    VAR_DEBUG(x)(y)(w)(h);
-    //    dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY,false,0,0);
-    //    upd++;
-    //}
 }
-
-//bool Drag::UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const
-//{
-//    int x = sourceRect.GetX();
-//    int y = sourceRect.GetY();
-//    int w = sourceRect.GetWidth();
-//    int h = sourceRect.GetHeight();
-//    destDC.Blit(x,y,w,h,&windowDC,x,y,wxCOPY,false,0,0);
-//    return true;
-//}
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
+// LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-void prune(model::TrackPtr track)
+std::ostream& operator<< (std::ostream& os, const Drag& obj)
 {
-    //model::Clips clips = track->getClips();
-    BOOST_FOREACH(model::ClipPtr clip, track->getClips())
-    {
-        
-    }
+    os  << &obj                     << "|" 
+        << obj.mSnap                << "|"
+        << obj.mActive              << "|"
+        << obj.mHotspot             << "|" 
+        << obj.mPosition            << "|" 
+        << obj.mVideoTrackOffset    << "|"
+        << obj.mAudioTrackOffset    << "|"
+        << obj.mDraggedTrack        << "|"
+        << obj.mDropTrack;
+    return os;
 }
-
-void Drag::prepareDrag()
-{
-    mSequence = make_cloned<model::Sequence>(getSequence());
-    BOOST_FOREACH(model::TrackPtr track, mSequence->getVideoTracks())
-    {
-        prune(track);
-    }
-    BOOST_FOREACH(model::TrackPtr track, mSequence->getAudioTracks())
-    {
-        prune(track);
-    }
-}
-
 
 }} // namespace
+

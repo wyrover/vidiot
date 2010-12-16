@@ -33,6 +33,8 @@ Sequence::Sequence()
     ,   mName()
     ,   mVideoTracks()
     ,   mAudioTracks()
+    ,   mVideoTrackMap()
+    ,   mAudioTrackMap()
 {
     VAR_DEBUG(this);
 }
@@ -42,6 +44,8 @@ Sequence::Sequence(wxString name)
     ,   mName(name)
     ,   mVideoTracks()
     ,   mAudioTracks()
+    ,   mVideoTrackMap()
+    ,   mAudioTrackMap()
 {
     VAR_DEBUG(this);
 }
@@ -51,6 +55,8 @@ Sequence::Sequence(const Sequence& other)
 ,   mName(other.mName)
 ,   mVideoTracks(other.mVideoTracks)
 ,   mAudioTracks(other.mAudioTracks)
+,   mVideoTrackMap(other.mVideoTrackMap)
+,   mAudioTrackMap(other.mVideoTrackMap)
 {
     VAR_DEBUG(this);
 }
@@ -77,22 +83,26 @@ Sequence::~Sequence()
 void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 {
     UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
+    updateTracks();
     QueueEvent(new model::EventAddVideoTracks(TrackChange(tracks, position)));
 }
 
 void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 {
     UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
+    updateTracks();
     QueueEvent(new model::EventAddAudioTracks(TrackChange(tracks, position)));
 }
 void Sequence::removeVideoTracks(Tracks tracks)
 {
     TrackPtr position = UtilList<TrackPtr>(mVideoTracks).removeElements(tracks);
+    updateTracks();
     QueueEvent(new model::EventRemoveVideoTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
 }
 void Sequence::removeAudioTracks(Tracks tracks)
 {
     TrackPtr position = UtilList<TrackPtr>(mAudioTracks).removeElements(tracks);
+    updateTracks();
     QueueEvent(new model::EventRemoveAudioTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
 }
 
@@ -119,6 +129,20 @@ Tracks Sequence::getTracks()
     }
     return tracks;
 }
+
+TrackPtr Sequence::getVideoTrack(int index)
+{
+    return mVideoTrackMap[index];
+}
+
+TrackPtr Sequence::getAudioTrack(int index)
+{
+    return mAudioTrackMap[index];
+}
+
+//////////////////////////////////////////////////////////////////////////
+// IPROJECTVIEW
+//////////////////////////////////////////////////////////////////////////
 
 void Sequence::Delete()
 {
@@ -198,6 +222,30 @@ AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void Sequence::updateTracks()
+{
+    int index = 0;
+    mVideoTrackMap.clear();
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    {
+        track->setIndex(index);
+        mVideoTrackMap[index] = track;
+        ++index;
+    }
+    index = 0;
+    mAudioTrackMap.clear();
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    {
+        track->setIndex(index);
+        mAudioTrackMap[index] = track;
+        ++index;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////
 
@@ -211,6 +259,10 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
     ar & mName;
     ar & mVideoTracks;
     ar & mAudioTracks;
+    if (Archive::is_loading::value)
+    {
+        updateTracks();
+    }
 }
 template void Sequence::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Sequence::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

@@ -29,7 +29,11 @@ public:
 
     model::TrackPtr getTrack() const;
 
-     void drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask = boost::none, bool drawDraggedOnly = false) const;
+     /// Draw the selected clips of this track only.
+     /// This is required for drawing these clips when dragging.
+     /// The height parameter is required for the case where this
+     /// track is dragged over another track which has another height.
+     void drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const;
 
      //////////////////////////////////////////////////////////////////////////
      // GET/SET

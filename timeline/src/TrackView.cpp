@@ -117,44 +117,22 @@ void TrackView::draw(wxBitmap& bitmap) const
     dc.SetPen(Layout::sBackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     wxPoint position(0,0);    
-    drawClips(position, dc);
-}
-
-void TrackView::drawClips(wxPoint position, wxDC& dc, boost::optional<wxDC&> dcMask, bool drawDraggedOnly) const
-{
-    // if dcMask holds, then we're drawing a 'drag image'. Otherwise, we're drawing the regular track bitmap.
-    bool draggedClipsOnly = dcMask;
-
-    wxPoint pos(position);
     BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
     {
         wxBitmap bitmap = getViewMap().getView(modelclip)->getBitmap();
-        bool isBeingDragged = getDrag().isActive() && getSelection().isSelected(modelclip);
+        dc.DrawBitmap(bitmap,position);
+        position.x += bitmap.GetWidth();
+    }
+}
 
-        if (draggedClipsOnly)
-        {
-            // Drawing the dragged clips
-            if (isBeingDragged)
-            {
-                dc.DrawBitmap(bitmap,pos);
-                dcMask->DrawRectangle(pos,bitmap.GetSize());
-            }
-        }
-        else
-        {
-            // Regular track drawing
-            if (!isBeingDragged)
-            {
-                dc.DrawBitmap(bitmap,pos);
-            }
-            else
-            {
-                dc.SetBrush(Layout::sBackgroundBrush);
-                dc.SetPen(Layout::sBackgroundPen);
-                dc.DrawRectangle(pos,bitmap.GetSize());
-            }
-        }
-        pos.x += bitmap.GetWidth();
+void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
+{
+    wxPoint pos(position);
+    BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
+    {
+        ClipView* view = getViewMap().getView(modelclip);
+        view->drawForDragging(pos, height, dc, dcMask);
+        pos.x += view->requiredWidth();
     }
 }
 

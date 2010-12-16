@@ -4,11 +4,15 @@
 #include <boost/optional.hpp>
 #include "IControl.h"
 #include "UtilLogGeneric.h"
+#include "UtilEvent.h"
 
 namespace model {
 
+DECLARE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
+
 class Clip
-    :   public IControl
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    ,   public IControl
 {
 public:
 

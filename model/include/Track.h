@@ -139,6 +139,9 @@ public:
     int getHeight() const;      ///< @return height of this track in the timeline view
     void setHeight(int height); ///< @param new height of this track in the timeline view
 
+    int getIndex() const;       ///< @return index of this track in the list of video/audio tracks
+    void setIndex(int index);   ///< @param index new index of this track
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -163,6 +166,7 @@ private:
     Clips mClips;
 
     int mHeight;    ///< Height of this track when viewed in a timeline
+    int mIndex;     ///< Index in the list of video/audio tracks
 
 	//////////////////////////////////////////////////////////////////////////
 	// HELPER METHODS
