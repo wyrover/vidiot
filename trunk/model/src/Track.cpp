@@ -26,6 +26,7 @@ Track::Track()
 ,   wxEvtHandler()
 ,   mClips()
 ,   mHeight(Constants::sDefaultTrackHeight)
+,   mIndex(0)
 { 
     VAR_DEBUG(this);
 }
@@ -35,6 +36,7 @@ Track::Track(const Track& other)
 ,   wxEvtHandler()
 ,   mClips()
 ,   mHeight(other.mHeight)
+,   mIndex(0)
 {
     VAR_DEBUG(this);
     ASSERT(false);// If this is ever used, test the clips in combination with the shared_from_this() in addClips below.
@@ -210,6 +212,16 @@ void Track::setHeight(int height)
     QueueEvent(new model::EventHeightChanged(height));
 }
 
+int Track::getIndex() const
+{
+    return mIndex;
+}
+
+void Track::setIndex(int index)
+{
+    mIndex = index;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ITERATION
 //////////////////////////////////////////////////////////////////////////
@@ -253,16 +265,19 @@ template<class Archive>
 void Track::save(Archive & ar, const unsigned int version) const
 {
     ar & boost::serialization::base_object<IControl>(*this);
+    ar & mIndex;
     ar & mClips;
 }
 template<class Archive>
 void Track::load(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<IControl>(*this);
+    ar & mIndex;
     ar & mClips;
     if (Archive::is_loading::value)
     {
         mItClips = mClips.begin();
+        updateClips();
     }
 }
 template void Track::save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion) const;

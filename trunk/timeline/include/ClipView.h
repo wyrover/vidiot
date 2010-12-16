@@ -7,6 +7,7 @@
 namespace model{
 class Clip;
 typedef boost::shared_ptr<Clip> ClipPtr;
+class EventSelectClip;
 }
 
 namespace gui { namespace timeline {
@@ -44,6 +45,18 @@ public:
     /// bitmap and force a redraw.
     void updateThumbnail();
 
+    //////////////////////////////////////////////////////////////////////////
+    // DRAW
+    //////////////////////////////////////////////////////////////////////////
+
+    void drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // MODEL EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onClipSelected( model::EventSelectClip& event );
+
 private:
 
     model::ClipPtr mClip;
@@ -55,7 +68,12 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap) const; ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const;                      ///< @see View::draw()
+
+    /// Actual drawing implementation. Reused for drawing clips when dragging.
+    /// @param drawSelectedClips indicates if selected clips must be drawn or left empty
+    /// @param drawUnselectedClips indicates if not-selected clips must be drawn or left empty
+    void draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselectedClips) const;
 
 };
 

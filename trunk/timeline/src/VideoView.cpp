@@ -74,7 +74,7 @@ pixel VideoView::requiredHeight() const
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
     int top = getDivider().getVideoPosition();
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         int bottom = top + track->getHeight() + Layout::sTrackDividerHeight;
         if (position.y >= top && position.y < bottom)

@@ -6,10 +6,6 @@
 #include <wx/dcmemory.h>
 #include "Part.h"
 
-#define wxUSE_GENERIC_DRAGIMAGE 1
-#include <wx/generic/dragimgg.h>
-#define wxDragImage wxGenericDragImage
-
 namespace model {
     class Track;
     typedef boost::shared_ptr<Track> TrackPtr;
@@ -20,7 +16,6 @@ namespace gui { namespace timeline {
 
 class Drag
     :   public Part
-    ,   public wxDragImage
 {
 public:
 
@@ -50,9 +45,7 @@ public:
     // DRAW
     //////////////////////////////////////////////////////////////////////////
 
-    virtual bool DoDrawImage(wxDC& dc, const wxPoint& pos) const;
     void draw(wxDC& dc) const;
-    //virtual bool UpdateBackingFromWindow(wxDC& windowDC, wxMemoryDC &destDC, const wxRect& sourceRect, const wxRect &destRect) const;
 
 private:
 
@@ -61,21 +54,37 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxPoint mHotspot;
+    wxPoint mInitialHotspot;            
     wxPoint mPosition;
+    int mBitmapOffset_x;
+    int mBitmapOffset_y;
     wxBitmap mBitmap;
     bool mActive;
-    bool mSnap; ///< true if the drag image snaps to the nearest track(s)
+    bool mSnap;                         ///< true if the drag image snaps to the nearest track(s)
 
-    model::SequencePtr mSequence; ///< Contains a clone of the sequence, made at the moment the drag started. Only selected clips are present.
+    int mVideoTrackOffset;              ///< Offset by which to draw dragged video tracks
+    int mAudioTrackOffset;              ///< Offset by which to draw dragged audio tracks
+
+    model::TrackPtr mFirstVideoTrack;   ///< Holds, when dragging, the first (bottom) dragged video track
+    model::TrackPtr mLastVideoTrack;    ///< Holds, when dragging, the last  (top)    dragged video track
+    model::TrackPtr mFirstAudioTrack;   ///< Holds, when dragging, the first (top)    dragged video track
+    model::TrackPtr mLastAudioTrack;    ///< Holds, when dragging, the last  (bottom) dragged video track
+
+    model::TrackPtr mDraggedTrack;      ///< Holds, when dragging, the track directly under the mouse pointer when starting the drag (the track which is dragged)
+    model::TrackPtr mDropTrack;         ///< Holds, when dragging, the track directly under the mouse pointer when dragging (the track onto which is dropped)
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /// To be called when the drag starts. This initializes mSequence to contain
-    /// a copy of the sequence, with all unselected clips replaced with empty ones.
-    void prepareDrag();
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<< (std::ostream& os, const Drag& obj);
 };
+
+std::ostream& operator<< (std::ostream& os, const Drag& obj);
 
 }} // namespace
 
