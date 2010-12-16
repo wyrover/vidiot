@@ -53,13 +53,11 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxPoint mHotspot;
-    wxPoint mInitialHotspot;            
-    wxPoint mPosition;
-    int mBitmapOffset_x;
-    int mBitmapOffset_y;
-    wxBitmap mBitmap;
-    bool mActive;
+    wxPoint mHotspot;                   ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
+    wxPoint mPosition;                  ///< Current pointer drag position. In timeline coordinates.
+    wxBitmap mBitmap;                   ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 
+    wxPoint mBitmapOffset;              ///< This offset ensures that correct areas can be used when positioning on the timeline.
+    bool mActive;                       ///< True if dragging is currently active.
     bool mSnap;                         ///< true if the drag image snaps to the nearest track(s)
 
     int mVideoTrackOffset;              ///< Offset by which to draw dragged video tracks

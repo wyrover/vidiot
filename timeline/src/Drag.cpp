@@ -42,10 +42,8 @@ void Drag::Start(wxPoint hotspot)
 {
     mHotspot = hotspot;
     mPosition = hotspot;
-    mInitialHotspot = hotspot;
     mVideoTrackOffset = 0;
-    mBitmapOffset_x = 0;
-    mBitmapOffset_y = 0;
+    mBitmapOffset = wxPoint(0,0);
 
     mAudioTrackOffset = 0;
     PointerPositionInfo info = getMousePointer().getInfo(hotspot);
@@ -68,7 +66,7 @@ void Drag::MoveTo(wxPoint position)
     VAR_DEBUG(*this);
     wxRegion redrawRegion;
 
-    redrawRegion.Union(wxRect(mPosition - mHotspot, mBitmap.GetSize())); // Redraw the old area (moved 'out' of this area)
+    redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the old area (moved 'out' of this area)
 
     PointerPositionInfo info = getMousePointer().getInfo(position);
     if (!info.track || info.track == mDropTrack)
@@ -81,8 +79,6 @@ void Drag::MoveTo(wxPoint position)
         {
             mVideoTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
             mHotspot.y = position.y;
-            // getDragBitmap requires the hotspot to be set in timeline coordinates. Not in 'clipped drag area' coordinates (see getDragBitmap).
-            mHotspot.x = mInitialHotspot.x; 
             mBitmap = getDragBitmap();
             ASSERT(mDraggedTrack->isA<model::VideoTrack>()); // Hopping over tracks not implemented 
         }
@@ -90,8 +86,6 @@ void Drag::MoveTo(wxPoint position)
         {
             mAudioTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
             mHotspot.y = position.y;
-            // getDragBitmap requires the hotspot to be set in timeline coordinates. Not in 'clipped drag area' coordinates (see getDragBitmap).
-            mHotspot.x = mInitialHotspot.x; 
             mBitmap = getDragBitmap();
             ASSERT(mDraggedTrack->isA<model::AudioTrack>()); // Hopping over tracks not implemented 
         }
@@ -101,7 +95,7 @@ void Drag::MoveTo(wxPoint position)
     }
 
     mPosition = position;
-    redrawRegion.Union(wxRect(mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
+    redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
 
     getTimeline().invalidateBitmap();
 
@@ -200,22 +194,20 @@ wxBitmap Drag::getDragBitmap() //const
         position.y += track->getHeight() + Layout::sTrackDividerHeight;
     }
 
-    mBitmapOffset_x = std::max(dcMask.MinX(),0);
-    mBitmapOffset_y = std::max(dcMask.MinY(),0);
-    int size_x = dcMask.MaxX() - mBitmapOffset_x;
-    int size_y = dcMask.MaxY() - mBitmapOffset_y;
+    mBitmapOffset.x = std::max(dcMask.MinX(),0);
+    mBitmapOffset.y = std::max(dcMask.MinY(),0);
+
+    int size_x = dcMask.MaxX() - mBitmapOffset.x;
+    int size_y = dcMask.MaxY() - mBitmapOffset.y;
 
     dc.SelectObject(wxNullBitmap);
     dcMask.SelectObject(wxNullBitmap);
 
     temp.SetMask(new wxMask(mask));
 
-    mHotspot.x -= mBitmapOffset_x;
-    mHotspot.y -= mBitmapOffset_y;
-
-    VAR_DEBUG(mBitmapOffset_x)(mBitmapOffset_y)(size_x)(size_y);
+    VAR_DEBUG(mBitmapOffset)(size_x)(size_y);
     ASSERT(size_x > 0 && size_y > 0)(size_x)(size_y);
-    return temp.GetSubBitmap(wxRect(mBitmapOffset_x,mBitmapOffset_y,size_x,size_y));
+    return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
 }
 
 bool Drag::isActive() const
@@ -233,7 +225,7 @@ void Drag::draw(wxDC& dc) const
     {
         return;
     }
-    dc.DrawBitmap(mBitmap,mPosition - mHotspot,true);
+    dc.DrawBitmap(mBitmap,mBitmapOffset + mPosition - mHotspot,true);
 }
 
 //////////////////////////////////////////////////////////////////////////
