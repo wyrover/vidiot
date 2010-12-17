@@ -18,6 +18,7 @@
 #include "Cursor.h"
 #include "Drag.h"
 #include "Divider.h"
+#include "Tooltip.h"
 #include "Menu.h"
 #include "Project.h"
 #include "Zoom.h"
@@ -51,6 +52,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mSelection(new Selection(this))
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
+,   mTooltip(new Tooltip(this))
 ,   mDrop(new Drop(this))
 ,   mDivider(new Divider(this))
 ,   mMouseState(new state::Machine(*this))
@@ -175,6 +177,16 @@ Drag& Timeline::getDrag()
 const Drag& Timeline::getDrag() const
 { 
     return *mDrag; 
+}
+
+Tooltip& Timeline::getTooltip()
+{ 
+    return *mTooltip; 
+}
+
+const Tooltip& Timeline::getTooltip() const
+{ 
+    return *mTooltip; 
 }
 
 Drop& Timeline::getDrop()

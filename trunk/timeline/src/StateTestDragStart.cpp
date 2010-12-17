@@ -4,16 +4,20 @@
 #include "StateDragging.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
+#include "Tooltip.h"
 
 namespace gui { namespace timeline { namespace state {
+
+const wxString sTooltip = _(
+    "Move the cursor to place the currently selected clips somewhere else.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 TestDragStart::TestDragStart( my_context ctx ) // entry
-:   TimeLineState( ctx )
-,   mStartPosition(0,0)
+    :   TimeLineState( ctx )
+    ,   mStartPosition(0,0)
 {
     LOG_DEBUG; 
 
@@ -49,6 +53,18 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     }
     return discard_event();
 }
+
+boost::statechart::result TestDragStart::react( const EvKeyDown& evt)
+{
+    switch (evt.mWxEvent.GetKeyCode())
+    {
+    case WXK_F1:
+        getTooltip().show(sTooltip);
+        break;
+    }
+    return discard_event();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS

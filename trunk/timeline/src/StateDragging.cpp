@@ -4,8 +4,16 @@
 #include "Drop.h"
 #include "UtilLog.h"
 #include "StateIdle.h"
+#include "Tooltip.h"
 
 namespace gui { namespace timeline { namespace state {
+
+    const wxString sTooltip = _(
+        "Move the clips by dragging them around.\n" \
+        "Release Left Mouse Button to 'drop'.\n\n" \
+        "CTRL: Disable snapping\n" \
+        "ALT: Change 'grab point'\n" \
+        "SHIFT: Remove blank areas where the clips originally were placed.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -14,7 +22,7 @@ namespace gui { namespace timeline { namespace state {
 /** /todo handle mouse focus lost */
 
 Dragging::Dragging( my_context ctx ) // entry
-:   TimeLineState( ctx )
+    :   TimeLineState( ctx )
 {
     LOG_DEBUG; 
 }
@@ -44,6 +52,17 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
     getDrag().MoveTo(evt.mPosition);
     getDrop().updateDropArea(evt.mPosition);
 
+    return discard_event();
+}
+
+boost::statechart::result Dragging::react( const EvKeyDown& evt)
+{
+    switch (evt.mWxEvent.GetKeyCode())
+    {
+    case WXK_F1:
+        getTooltip().show(sTooltip);
+        break;
+    }
     return discard_event();
 }
 

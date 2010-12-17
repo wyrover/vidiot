@@ -129,6 +129,16 @@ const Drag& Part::getDrag() const
     return getTimeline().getDrag();
 }
 
+Tooltip& Part::getTooltip()
+{
+    return getTimeline().getTooltip();
+}
+
+const Tooltip& Part::getTooltip() const
+{
+    return getTimeline().getTooltip();
+}
+
 Drop& Part::getDrop()
 {
     return getTimeline().getDrop();

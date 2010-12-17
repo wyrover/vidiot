@@ -21,7 +21,8 @@ public:
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftUp >,
-        boost::statechart::custom_reaction< EvMotion >
+        boost::statechart::custom_reaction< EvMotion >,
+        boost::statechart::custom_reaction< EvKeyDown >
     > reactions;
 
     //////////////////////////////////////////////////////////////////////////
@@ -30,6 +31,7 @@ public:
 
     boost::statechart::result react( const EvLeftUp& evt );
     boost::statechart::result react( const EvMotion& evt );
+    boost::statechart::result react( const EvKeyDown& evt );
 
 private:
 

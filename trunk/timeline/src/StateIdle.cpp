@@ -20,8 +20,11 @@
 #include "StateMoveTrackDivider.h"
 #include "UtilLog.h"
 #include "PositionInfo.h"
+#include "Tooltip.h"
 
 namespace gui { namespace timeline { namespace state {
+
+    const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -118,6 +121,9 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
             getSelection().deleteClips();
             break;
         }
+    case WXK_F1:
+        getTooltip().show(sTooltip);
+        break;
     case 'K':
         {
             if (evt.mWxEvent.ControlDown())

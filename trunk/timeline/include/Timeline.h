@@ -47,6 +47,8 @@ public:
     const Cursor& getCursor() const;
     Drag& getDrag();
     const Drag& getDrag() const;
+    Tooltip& getTooltip();
+    const Tooltip& getTooltip() const;
     Drop& getDrop();
     const Drop& getDrop() const;
     Divider& getDivider();
@@ -110,6 +112,7 @@ private:
     Selection* mSelection;
     Cursor* mCursor;  // Must be AFTER mPlayer
     Drag* mDrag;
+    Tooltip* mTooltip;
     Drop* mDrop;
     Divider* mDivider;
     state::Machine* mMouseState; // Must be AFTER mViewMap due to constructor list.

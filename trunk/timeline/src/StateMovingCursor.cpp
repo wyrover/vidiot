@@ -4,8 +4,11 @@
 #include "UtilLog.h"
 #include "Cursor.h"
 #include "Intervals.h"
+#include "Tooltip.h"
 
 namespace gui { namespace timeline { namespace state {
+
+const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -61,6 +64,9 @@ boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
     {
     case WXK_SHIFT:
         triggerToggleStart();
+        break;
+    case WXK_F1:
+        getTooltip().show(sTooltip);
         break;
     }
     return discard_event();
