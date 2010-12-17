@@ -29,6 +29,7 @@ namespace gui {
         class AudioView;
         class Timeline;
         class TrackView;
+        class Tooltip;
         class ViewMap;
         class Zoom;
 
@@ -82,6 +83,9 @@ public:
 
     Drag& getDrag();
     const Drag& getDrag() const;
+
+    Tooltip& getTooltip();
+    const Tooltip& getTooltip() const;
 
     Drop& getDrop();
     const Drop& getDrop() const;

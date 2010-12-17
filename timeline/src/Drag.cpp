@@ -1,6 +1,7 @@
 #include "Drag.h"
 
 #include <wx/pen.h>
+#include <wx/tooltip.h>
 #include <boost/foreach.hpp>
 #include "Timeline.h"
 #include "MousePointer.h"

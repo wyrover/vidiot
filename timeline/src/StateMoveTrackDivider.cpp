@@ -11,8 +11,11 @@
 #include "Divider.h"
 #include "ClipView.h"
 #include "AudioTrack.h"
+#include "Tooltip.h"
 
 namespace gui { namespace timeline { namespace state {
+
+    const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -87,7 +90,11 @@ boost::statechart::result MoveTrackDivider::react( const EvKeyDown& evt)
 {
     switch (evt.mWxEvent.GetKeyCode())
     {
-    case WXK_ESCAPE: return abort();
+    case WXK_ESCAPE: 
+        return abort();
+    case WXK_F1:
+        getTooltip().show(sTooltip);
+        break;
     }
     return discard_event();
 }
