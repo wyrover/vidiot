@@ -75,7 +75,14 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    //////////////////////////////////////////////////////////////////////////
+    /// @return the track that is currently dragged on top of 'track'
+    /// @return 0 if no track is found on top of this track
+    /// @param track a track in the timeline
+    /// Note that the returned track may be completely unselected, meaning
+    /// that actually no clips from that track are visually dragged.
+    model::TrackPtr trackOnTopOf(model::TrackPtr track);
+
+        //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
