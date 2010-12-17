@@ -69,29 +69,44 @@ void Drag::MoveTo(wxPoint position)
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the old area (moved 'out' of this area)
 
     PointerPositionInfo info = getMousePointer().getInfo(position);
+
     if (!info.track || info.track == mDropTrack)
     {
-        mHotspot.y -= mPosition.y - position.y; // Move the cursor without moving the dragged object (note: vertical only!)
+        // Mouse is moved within the current track.
+        // No changes in mDraggedTrack or mDroppedTrack required
+        //
+        // Move the cursor without moving the dragged object (note: vertical only!)
+        mHotspot.y -= mPosition.y - position.y;
     }
     else
     {
-        if (info.track->isA<model::VideoTrack>())
+        // The pointer is moved to another track.
+        mDropTrack = info.track;
+
+        bool toVideo = info.track->isA<model::VideoTrack>();
+        bool fromVideo = mDraggedTrack->isA<model::VideoTrack>();
+
+        if (toVideo == fromVideo)
         {
-            mVideoTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
-            mHotspot.y = position.y;
-            mBitmap = getDragBitmap();
-            ASSERT(mDraggedTrack->isA<model::VideoTrack>()); // Hopping over tracks not implemented 
+            // The pointer moved between video tracks or between audio tracks.
+            if (toVideo)
+            {
+                mVideoTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
+            }
+            else
+            {
+                mAudioTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
+            }
         }
         else
         {
-            mAudioTrackOffset = info.track->getIndex() -  mDraggedTrack->getIndex();
-            mHotspot.y = position.y;
-            mBitmap = getDragBitmap();
-            ASSERT(mDraggedTrack->isA<model::AudioTrack>()); // Hopping over tracks not implemented 
+            // Pointer moved from video to audio. The 'dragged track' must be updated.
+            // The offsets are not changed. These are only changed when moving a track
+            // of type x to another track of type x.
+            mDraggedTrack = info.track;
         }
-        mDropTrack = info.track;
-
-        // todo: how to change 'mDraggedTrack' (via alt or via hopping over from video to audio, or by moving the pointer 'outside all tracks'
+        mHotspot.y = position.y;
+        mBitmap = getDragBitmap();
     }
 
     mPosition = position;
@@ -158,19 +173,11 @@ wxBitmap Drag::getDragBitmap() //const
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         position.y += Layout::sTrackDividerHeight;
-        // Determine which track is currently dragged above this track
-        int draggedTrackIndex = track->getIndex() - mVideoTrackOffset;
-        if ((draggedTrackIndex >= 0) && (draggedTrackIndex < getSequence()->getVideoTracks().size()))
+        model::TrackPtr draggedTrack = trackOnTopOf(track);
+        if (draggedTrack)
         {
-            VAR_DEBUG(draggedTrackIndex)(track->getIndex())(mVideoTrackOffset);
-            // Draw the track that is currently dragged on top of this track
-            model::TrackPtr draggedTrack = getSequence()->getVideoTrack(draggedTrackIndex);
             getViewMap().getView(draggedTrack)->drawForDragging(position,track->getHeight(),dc,dcMask);
         }
-        // else: 
-        // If this track is mapped to a dragged track beyond the range of tracks
-        // then apparently, nothing needs to be drawn on top of this track.
-        // Hence no 'else' handling here.
         position.y += track->getHeight();
     }
 
@@ -178,19 +185,11 @@ wxBitmap Drag::getDragBitmap() //const
     position.y = getDivider().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        // Determine which track is currently dragged above this track
-        int draggedTrackIndex = track->getIndex() - mAudioTrackOffset;
-        if ((draggedTrackIndex >= 0) && (draggedTrackIndex < getSequence()->getAudioTracks().size()))
+        model::TrackPtr draggedTrack = trackOnTopOf(track);
+        if (draggedTrack)
         {
-            VAR_DEBUG(draggedTrackIndex)(track->getIndex())(mAudioTrackOffset);
-            // Draw the track that is currently dragged on top of this track
-            model::TrackPtr draggedTrack = getSequence()->getAudioTrack(draggedTrackIndex);
             getViewMap().getView(draggedTrack)->drawForDragging(position,track->getHeight(),dc,dcMask);
         }
-        // else: 
-        // If this track is mapped to a dragged track beyond the range of tracks
-        // then apparently, nothing needs to be drawn on top of this track.
-        // Hence no 'else' handling here.
         position.y += track->getHeight() + Layout::sTrackDividerHeight;
     }
 
@@ -226,6 +225,36 @@ void Drag::draw(wxDC& dc) const
         return;
     }
     dc.DrawBitmap(mBitmap,mBitmapOffset + mPosition - mHotspot,true);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+model::TrackPtr Drag::trackOnTopOf(model::TrackPtr track)
+{
+    model::TrackPtr draggedTrack;
+    VAR_DEBUG(track);
+
+    if (track->isA<model::VideoTrack>())
+    {
+        int draggedTrackIndex = track->getIndex() - mVideoTrackOffset;
+        int nTracks = getSequence()->getVideoTracks().size();
+        if ((draggedTrackIndex >= 0) && (draggedTrackIndex < nTracks))
+        {
+            return getSequence()->getVideoTrack(draggedTrackIndex);
+        }
+    }
+    else
+    {
+        int draggedTrackIndex = track->getIndex() - mAudioTrackOffset;
+        int nTracks = getSequence()->getAudioTracks().size();
+        if ((draggedTrackIndex >= 0) && (draggedTrackIndex < nTracks))
+        {
+            return getSequence()->getAudioTrack(draggedTrackIndex);
+        }
+    }
+    return model::TrackPtr();
 }
 
 //////////////////////////////////////////////////////////////////////////
