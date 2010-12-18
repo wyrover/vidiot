@@ -30,7 +30,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void Start(wxPoint hotspot);
-    void MoveTo(wxPoint position);
+    void MoveTo(wxPoint position, bool altPressed);
     void Stop();
 
     //////////////////////////////////////////////////////////////////////////
@@ -60,13 +60,16 @@ private:
     bool mActive;                       ///< True if dragging is currently active.
     bool mSnap;                         ///< true if the drag image snaps to the nearest track(s)
 
-    int mVideoTrackOffset;              ///< Offset by which to draw dragged video tracks
-    int mAudioTrackOffset;              ///< Offset by which to draw dragged audio tracks
+    struct DragInfo
+    {
+        int mOffset;    ///< Offset by which to draw dragged tracks
+        int mMinOffset; ///< Min allowed value for offset (to avoid that tracks are moved into the void)
+        int mMaxOffset; ///< Mix allowed value for offset (to avoid that tracks are moved into the void)
+        int nTracks;    ///< Total number of tracks of this type
+    };
 
-    model::TrackPtr mFirstVideoTrack;   ///< Holds, when dragging, the first (bottom) dragged video track
-    model::TrackPtr mLastVideoTrack;    ///< Holds, when dragging, the last  (top)    dragged video track
-    model::TrackPtr mFirstAudioTrack;   ///< Holds, when dragging, the first (top)    dragged video track
-    model::TrackPtr mLastAudioTrack;    ///< Holds, when dragging, the last  (bottom) dragged video track
+    DragInfo mVideo;
+    DragInfo mAudio;
 
     model::TrackPtr mDraggedTrack;      ///< Holds, when dragging, the track directly under the mouse pointer when starting the drag (the track which is dragged)
     model::TrackPtr mDropTrack;         ///< Holds, when dragging, the track directly under the mouse pointer when dragging (the track onto which is dropped)
