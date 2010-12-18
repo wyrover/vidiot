@@ -18,6 +18,8 @@
 
 namespace gui {
 
+const int sStatusProcessing = 8;
+
 GuiWindow::GuiWindow()
 :   wxDocParentFrame()
 ,	mDocManager()
@@ -78,10 +80,14 @@ GuiWindow::GuiWindow()
 
     menubar->EnableTop(2,false); // Disable sequence menu
 
-    CreateStatusBar(4);
-    SetStatusText( _T("Welcome to wxWindows!"), 0 );
-    SetStatusText( _T("Status1"), 1 );
-    SetStatusText( _T("Status2"), 2 );
+    CreateStatusBar(9);
+    SetStatusText( _T("LMB:"), 1 );
+    SetStatusText( _T("MMB:"), 2 );
+    SetStatusText( _T("RMB:"), 3 );
+    SetStatusText( _T("WHEEL:"), 4 );
+    SetStatusText( _T("CTRL:"), 5 );
+    SetStatusText( _T("SHIFT:"), 6 );
+    SetStatusText( _T("ALT:"), 7 );
     SetProcessingText(_(""));
 
     mUiManager.SetManagedWindow(this);
@@ -171,7 +177,7 @@ void GuiWindow::OnCloseWindow(wxCloseEvent& event)
 
 void GuiWindow::SetProcessingText(wxString text)
 {
-    SetStatusText( text, 3 );
+    SetStatusText( text, 8 );
 }
 
 //////////////////////////////////////////////////////////////////////////
