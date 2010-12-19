@@ -126,6 +126,14 @@ private:
     /// @param track track (in the timeline) on top of which the mouse pointer currently is.
     void updateDraggedTrack(model::TrackPtr track);
 
+    /// Invalidate all clips in the timeline that are selected. Needed to hide
+    /// them when the drag begins, and to show them again when it ends.
+    void invalidateSelectedClips();
+
+    /// Return the current position of the drag. That is, the difference between
+    /// the original hotspot position and the current hotspot position.
+    wxPoint getMovedDistance() const;
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////

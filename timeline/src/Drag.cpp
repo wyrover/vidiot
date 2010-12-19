@@ -59,11 +59,7 @@ void Drag::Start(wxPoint hotspot)
 
     mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
 
-    // Redraw (hide) all selected clips in the timeline (to avoid them being shown on the timeline AND in the drag bitmap).
-    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
-    {
-        getViewMap().getView(clip)->invalidateBitmap();
-    }
+    invalidateSelectedClips();
     mBitmap = getDragBitmap();
     MoveTo(hotspot, false);
 }
@@ -94,8 +90,6 @@ void Drag::MoveTo(wxPoint position, bool altPressed)
     else
     {
         // The pointer is moved to another track.
-        mDropTrack = info.track;
-
         if (info.track->isA<model::VideoTrack>() == mDraggedTrack->isA<model::VideoTrack>())
         {
             // The pointer moved between video tracks or between audio tracks.
@@ -112,6 +106,7 @@ void Drag::MoveTo(wxPoint position, bool altPressed)
         mBitmap = getDragBitmap();
     }
 
+    mDropTrack = info.track;
     mPosition = position;
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
 
@@ -131,10 +126,7 @@ void Drag::Stop()
 {
     VAR_DEBUG(*this);
     mActive = false;
-    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
-    {
-        getViewMap().getView(clip)->invalidateBitmap();
-    }
+    invalidateSelectedClips();
     getTimeline().Refresh();
     VAR_DEBUG(*this);
 }
@@ -222,7 +214,7 @@ void Drag::draw(wxDC& dc) const
     {
         return;
     }
-    dc.DrawBitmap(mBitmap,mBitmapOffset + mPosition - mHotspot,true);
+    dc.DrawBitmap(mBitmap,mBitmapOffset + getMovedDistance(),true);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -304,6 +296,19 @@ void Drag::updateDraggedTrack(model::TrackPtr track)
             mDraggedTrack = newDraggedTrack;
         }
     }
+}
+
+void Drag::invalidateSelectedClips()
+{
+    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
+    {
+        getViewMap().getView(clip)->invalidateBitmap();
+    }
+}
+
+wxPoint Drag::getMovedDistance() const
+{
+    return mPosition - mHotspot;
 }
 
 //////////////////////////////////////////////////////////////////////////
