@@ -5,6 +5,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
 #include "Part.h"
+#include "UtilInt.h"
 
 namespace model {
     class Track;
@@ -58,6 +59,10 @@ private:
     wxPoint mBitmapOffset;              ///< This offset ensures that correct areas can be used when positioning on the timeline.
     bool mActive;                       ///< True if dragging is currently active.
     bool mSnap;                         ///< true if the drag image snaps to the nearest track(s)
+    std::list<pts> mPossibleSnapPoints; ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
+    pts mSnapOffset;                    ///< Resulting offset caused by 'snapping to' a clip
+    int mSnapPosition;                  ///< Indicates the current point the drag is snapped to
+    std::list<pts> mSnaps;              ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
 
     //////////////////////////////////////////////////////////////////////////
     // DRAGINFO
@@ -132,7 +137,19 @@ private:
 
     /// Return the current position of the drag. That is, the difference between
     /// the original hotspot position and the current hotspot position.
-    wxPoint getMovedDistance() const;
+    /// @return bitmap offset in pixels
+    wxPoint getDragBitmapOffset() const;
+
+    /// Determine if there is a close match between a timeline cut and a cut
+    /// in the dragged clips. Will update mPosition so that the dragged object
+    /// is 'snapped to' that cut.
+    void determineSnapOffset();
+
+    // Fill mPossibleSnapPoints with a list of possible 'snap to' points
+    // (a list of all the cuts in all the tracks). This is done at the start of a drag
+    // only, for performance reasons.
+    void determinePossibleSnapPoints();
+
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

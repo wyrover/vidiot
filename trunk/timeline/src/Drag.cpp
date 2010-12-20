@@ -4,6 +4,7 @@
 #include <wx/tooltip.h>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
+#include <boost/assign/list_of.hpp>
 #include "Timeline.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
@@ -14,6 +15,7 @@
 #include "Sequence.h"
 #include "Selection.h"
 #include "ViewMap.h"
+#include "Zoom.h"
 #include "Divider.h"
 #include "Clip.h"
 #include "ClipView.h"
@@ -59,6 +61,7 @@ void Drag::Start(wxPoint hotspot)
 
     mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
 
+    determinePossibleSnapPoints();
     invalidateSelectedClips();
     mBitmap = getDragBitmap();
     MoveTo(hotspot, false);
@@ -110,6 +113,7 @@ void Drag::MoveTo(wxPoint position, bool altPressed)
     mPosition = position;
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
 
+    determineSnapOffset();
     getTimeline().invalidateBitmap();
 
     wxRegionIterator it(redrawRegion);
@@ -214,7 +218,12 @@ void Drag::draw(wxDC& dc) const
     {
         return;
     }
-    dc.DrawBitmap(mBitmap,mBitmapOffset + getMovedDistance(),true);
+    dc.DrawBitmap(mBitmap,mBitmapOffset + getDragBitmapOffset() + wxPoint(getZoom().ptsToPixels(mSnapOffset),0),true);
+    if (mSnapPosition != -1)
+    {
+        dc.SetPen(Layout::sDebugPen);
+        dc.DrawRectangle(wxPoint(mSnapPosition-1,0),wxSize(3,dc.GetSize().GetHeight()));
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -306,10 +315,107 @@ void Drag::invalidateSelectedClips()
     }
 }
 
-wxPoint Drag::getMovedDistance() const
+wxPoint Drag::getDragBitmapOffset() const
 {
     return mPosition - mHotspot;
 }
+
+void Drag::determineSnapOffset()
+{
+    mSnapPosition = -1;
+    mSnapOffset = 0;
+    pts ptsoffset = getZoom().pixelsToPts(getDragBitmapOffset().x);
+    pts ptsmouse = getZoom().pixelsToPts(mPosition.x);
+
+    pts minDiff = Layout::sSnapDistance + 1; // To ensure that the first found point will change this value
+    pts snapPoint = -1;
+
+    // Find the cut closest to any of the cuts in the dragged clips
+    // If there are multiple matches with equal distance, 
+    // take the match closest to the pointer
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        model::TrackPtr draggedTrack = trackOnTopOf(track);
+        if (draggedTrack)
+        {
+            std::list<pts>::const_iterator itPoints = mPossibleSnapPoints.begin();
+            model::Clips::const_iterator itClips = draggedTrack->getClips().begin();
+
+            while ( itClips != draggedTrack->getClips().end() && itPoints != mPossibleSnapPoints.end() )
+            {
+                model::ClipPtr clip = *itClips;
+
+                if (!clip->getSelected()) { ++itClips; continue; } // Only view selected (dragged) clips
+
+                std::list<pts> clipbounds = boost::assign::list_of(clip->getLeftPts())(clip->getRightPts());
+                BOOST_FOREACH( pts clipbound, clipbounds )
+                {
+                    pts position = ptsoffset + clipbound;
+                    if (position < 0)
+                    {
+                        // Can't move beyond leftmost border
+                        position = 0;
+                    }
+                    VAR_DEBUG(position);
+                    pts diff = abs(position - *itPoints);
+                    if (diff <= Layout::sSnapDistance)
+                    {
+                        // This snap point is closer than the currently stored snap point, or it is equally
+                        // close, but is closer to the mouse pointer.
+                        if ((diff < minDiff) || 
+                            ((diff == minDiff) && (abs(position - ptsmouse) < abs(snapPoint - ptsmouse))))
+                        {
+                            minDiff = diff;
+                            snapPoint = *itPoints;
+                            mSnapOffset = *itPoints - position;
+                        }
+                    }
+                }
+
+                if (clip->getRightPts() < *itPoints)
+                {
+                    ++itClips;
+                }
+                else
+                {
+                    ++itPoints;
+                }
+            }
+        }
+    }
+    mSnapPosition = getZoom().ptsToPixels(snapPoint);
+}
+
+void Drag::determinePossibleSnapPoints()
+{
+    mPossibleSnapPoints.clear();
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        {
+            if (!clip->getSelected())
+            {
+                mPossibleSnapPoints.push_back(clip->getLeftPts());
+                mPossibleSnapPoints.push_back(clip->getRightPts());
+            }
+        }
+    }
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    {
+        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        {
+            if (!clip->getSelected())
+            {
+                mPossibleSnapPoints.push_back(clip->getLeftPts());
+                mPossibleSnapPoints.push_back(clip->getRightPts());
+            }
+        }
+    }
+    mPossibleSnapPoints.sort();
+    mPossibleSnapPoints.unique();
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
