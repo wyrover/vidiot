@@ -57,6 +57,9 @@ public:
     static const wxPen      sSelectedClipPen;
     static const wxBrush    sSelectedClipBrush;
 
+    static const wxPen      sSnapPen;
+    static const wxBrush    sSnapBrush;
+
     static const wxPen      sDebugPen;
     static const wxBrush    sDebugBrush;
 

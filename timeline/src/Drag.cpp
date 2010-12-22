@@ -74,6 +74,11 @@ void Drag::MoveTo(wxPoint position, bool altPressed)
 
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the old area (moved 'out' of this area)
 
+    if (position.x - mHotspot.x + mBitmapOffset.x < 0)
+    {
+        position.x = mHotspot.x - mBitmapOffset.x; // Can't move 'beyond 0'
+    }
+
     PointerPositionInfo info = getMousePointer().getInfo(position);
 
     if (altPressed)
@@ -218,11 +223,13 @@ void Drag::draw(wxDC& dc) const
     {
         return;
     }
-    dc.DrawBitmap(mBitmap,mBitmapOffset + getDragBitmapOffset() + wxPoint(getZoom().ptsToPixels(mSnapOffset),0),true);
-    if (mSnapPosition != -1)
+    dc.DrawBitmap(mBitmap,mBitmapOffset + getDraggedDistance() + wxPoint(getZoom().ptsToPixels(mSnapOffset),0),true);
+    dc.SetPen(Layout::sSnapPen);
+    dc.SetBrush(Layout::sSnapBrush);
+    BOOST_FOREACH( pts snap, mSnaps )
     {
-        dc.SetPen(Layout::sDebugPen);
-        dc.DrawRectangle(wxPoint(mSnapPosition-1,0),wxSize(3,dc.GetSize().GetHeight()));
+        dc.DrawLine(getZoom().ptsToPixels(snap),0,getZoom().ptsToPixels(snap),dc.GetSize().GetHeight());
+ //       dc.DrawRectangle(wxPoint(getZoom().ptsToPixels(snap),0),wxSize(1,dc.GetSize().GetHeight()));
     }
 }
 
@@ -315,88 +322,92 @@ void Drag::invalidateSelectedClips()
     }
 }
 
-wxPoint Drag::getDragBitmapOffset() const
+wxPoint Drag::getDraggedDistance() const
 {
     return mPosition - mHotspot;
 }
 
 void Drag::determineSnapOffset()
 {
-    mSnapPosition = -1;
-    mSnapOffset = 0;
-    pts ptsoffset = getZoom().pixelsToPts(getDragBitmapOffset().x);
+    pts ptsoffset = getZoom().pixelsToPts(getDraggedDistance().x);
     pts ptsmouse = getZoom().pixelsToPts(mPosition.x);
 
+    // Find nearest snap match
     pts minDiff = Layout::sSnapDistance + 1; // To ensure that the first found point will change this value
     pts snapPoint = -1;
-
-    // Find the cut closest to any of the cuts in the dragged clips
-    // If there are multiple matches with equal distance, 
-    // take the match closest to the pointer
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    pts snapOffset = 0;
+    std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
+    std::list<pts>::const_iterator itDrag = mDragPoints.begin();
+    while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
     {
-        model::TrackPtr draggedTrack = trackOnTopOf(track);
-        if (draggedTrack)
+        pts pts_timeline = *itTimeline;
+        pts pts_drag = *itDrag + ptsoffset;
+
+        pts diff = abs(pts_drag - pts_timeline);
+        if (diff <= Layout::sSnapDistance)
         {
-            std::list<pts>::const_iterator itPoints = mPossibleSnapPoints.begin();
-            model::Clips::const_iterator itClips = draggedTrack->getClips().begin();
-
-            while ( itClips != draggedTrack->getClips().end() && itPoints != mPossibleSnapPoints.end() )
+            // This snap point is closer than the currently stored snap point, or it is equally
+            // close, but is closer to the mouse pointer.
+            if ((diff < minDiff) || 
+                ((diff == minDiff) && (abs(pts_drag - ptsmouse) < abs(snapPoint - ptsmouse))))
             {
-                model::ClipPtr clip = *itClips;
-
-                if (!clip->getSelected()) { ++itClips; continue; } // Only view selected (dragged) clips
-
-                std::list<pts> clipbounds = boost::assign::list_of(clip->getLeftPts())(clip->getRightPts());
-                BOOST_FOREACH( pts clipbound, clipbounds )
-                {
-                    pts position = ptsoffset + clipbound;
-                    if (position < 0)
-                    {
-                        // Can't move beyond leftmost border
-                        position = 0;
-                    }
-                    VAR_DEBUG(position);
-                    pts diff = abs(position - *itPoints);
-                    if (diff <= Layout::sSnapDistance)
-                    {
-                        // This snap point is closer than the currently stored snap point, or it is equally
-                        // close, but is closer to the mouse pointer.
-                        if ((diff < minDiff) || 
-                            ((diff == minDiff) && (abs(position - ptsmouse) < abs(snapPoint - ptsmouse))))
-                        {
-                            minDiff = diff;
-                            snapPoint = *itPoints;
-                            mSnapOffset = *itPoints - position;
-                        }
-                    }
-                }
-
-                if (clip->getRightPts() < *itPoints)
-                {
-                    ++itClips;
-                }
-                else
-                {
-                    ++itPoints;
-                }
+                minDiff = diff;
+                snapPoint = pts_timeline;
+                snapOffset = pts_timeline - pts_drag;
             }
         }
+        if (pts_timeline <= pts_drag)
+        {
+            ++itTimeline;
+        }
+        if (pts_timeline >= pts_drag)
+        {
+            ++itDrag;
+        }
     }
-    mSnapPosition = getZoom().ptsToPixels(snapPoint);
+
+    mSnapOffset = snapOffset;
+
+    // Now determine all 'snaps' (positions where dragged cuts and timeline cuts are aligned)
+    mSnaps.clear();
+    itTimeline = mSnapPoints.begin();
+    itDrag = mDragPoints.begin();
+    while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
+    {
+        pts pts_timeline = *itTimeline;
+        pts pts_drag = *itDrag + ptsoffset + mSnapOffset;
+        if (pts_timeline == pts_drag)
+        {
+            mSnaps.push_back(pts_timeline);
+        }
+        if (pts_timeline <= pts_drag)
+        {
+            ++itTimeline;
+        }
+        if (pts_timeline >= pts_drag)
+        {
+            ++itDrag;
+        }
+    }
 }
 
 void Drag::determinePossibleSnapPoints()
 {
-    mPossibleSnapPoints.clear();
+    mSnapPoints.clear();
+    mDragPoints.clear();
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {
             if (!clip->getSelected())
             {
-                mPossibleSnapPoints.push_back(clip->getLeftPts());
-                mPossibleSnapPoints.push_back(clip->getRightPts());
+                mSnapPoints.push_back(clip->getLeftPts());
+                mSnapPoints.push_back(clip->getRightPts());
+            }
+            else
+            {
+                mDragPoints.push_back(clip->getLeftPts());
+                mDragPoints.push_back(clip->getRightPts());
             }
         }
     }
@@ -406,13 +417,20 @@ void Drag::determinePossibleSnapPoints()
         {
             if (!clip->getSelected())
             {
-                mPossibleSnapPoints.push_back(clip->getLeftPts());
-                mPossibleSnapPoints.push_back(clip->getRightPts());
+                mSnapPoints.push_back(clip->getLeftPts());
+                mSnapPoints.push_back(clip->getRightPts());
+            }
+            else
+            {
+                mDragPoints.push_back(clip->getLeftPts());
+                mDragPoints.push_back(clip->getRightPts());
             }
         }
     }
-    mPossibleSnapPoints.sort();
-    mPossibleSnapPoints.unique();
+    mSnapPoints.sort();
+    mSnapPoints.unique();
+    mDragPoints.sort();
+    mDragPoints.unique();
 }
 
 
