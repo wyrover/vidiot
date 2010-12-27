@@ -1,13 +1,13 @@
-#include "TimelineIntervalChange.h"
+#include "IntervalChange.h"
 
 #include "Intervals.h"
 #include "Timeline.h"
 #include "UtilLog.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-TimelineIntervalChange::TimelineIntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add)
-:   TimelineCommand(timeline)
+IntervalChange::IntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add)
+:   ATimelineCommand(timeline)
 ,   mBegin(begin)
 ,   mEnd(end)
 ,   mAdd(add)
@@ -23,22 +23,22 @@ TimelineIntervalChange::TimelineIntervalChange(gui::timeline::Timeline& timeline
     }
 }
 
-TimelineIntervalChange::~TimelineIntervalChange()
+IntervalChange::~IntervalChange()
 {
 }
 
-bool TimelineIntervalChange::Do()
+bool IntervalChange::Do()
 {
     VAR_INFO(this);
     getTimeline().getIntervals().change(mBegin,mEnd,mAdd);
     return true;
 }
 
-bool TimelineIntervalChange::Undo()
+bool IntervalChange::Undo()
 {
     VAR_INFO(this);
     getTimeline().getIntervals().change(mBegin,mEnd,!mAdd);
     return true;
 }
 
-} // namespace
+}}} // namespace

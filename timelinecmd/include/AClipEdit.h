@@ -1,29 +1,55 @@
 #ifndef CLIP_EDIT_H
 #define CLIP_EDIT_H
 
-#include "TimelineCommand.h"
+#include <map>
+#include "ATimelineCommand.h"
 #include "ModelPtr.h"
+#include "UtilInt.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
+/// Base class for all edits of clip lengths/position/etc.
+/// It provides a reusable undo/redo mechanism for such edits.
+/// Furthermore, it contains several helper methods for making
+/// the edits.
 class AClipEdit 
-    :   public TimelineCommand
+    :   public ATimelineCommand
 {
 public:
 
-    typedef std::map<model::ClipPtr, model::Clips> ReplacementMap;
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
 
     AClipEdit(gui::timeline::Timeline& timeline);
-
-    ~AClipEdit();
-
-private:
-
-    model::MoveParameters mParams;
-    model::MoveParameters mParamsUndo;
+    virtual ~AClipEdit();
 
     //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
+    // WXWIDGETS DO/UNDO INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
+    bool Do();
+    bool Undo();
+
+    //////////////////////////////////////////////////////////////////////////
+    // ACLIPEDIT INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
+    /// To be implemented by abstract base class specialization
+    /// It's this method that is called to create move objects, the first time
+    /// the command is executed.
+    virtual void initialize() = 0;
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MAPPING FOR MAINTAINING LINKED CLIPS
+    //////////////////////////////////////////////////////////////////////////
+
+    typedef std::map<model::ClipPtr, model::Clips> ReplacementMap;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS FOR SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
 
     /// Split the clip at the given (track) position. If there already is a cut at the given
@@ -59,10 +85,24 @@ private:
     /// The new Move is executed immediately.
     void newMove(model::TrackPtr addTrack, model::ClipPtr addPosition, model::Clips addClips, model::TrackPtr removeTrack, model::ClipPtr removePosition, model::Clips removeClips);
 
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    bool mInitialized;                  ///< True if Do has been executed at least once.
+    model::MoveParameters mParams;      ///< Holds the actions to make the 'forward' (Do) change
+    model::MoveParameters mParamsUndo;  ///< Holds the actions to make the 'reverse' (Undo) change
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
     /// Execute a move.
     void doMove(model::MoveParameterPtr move);
 };
 
-} // namespace
+}}} // namespace
 
 #endif // CLIP_EDIT_H

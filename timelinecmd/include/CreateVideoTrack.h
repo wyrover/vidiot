@@ -1,24 +1,39 @@
-#ifndef TIMELINE_CREATE_VIDEO_TRACK_H
-#define TIMELINE_CREATE_VIDEO_TRACK_H
+#ifndef CREATE_VIDEO_TRACK_H
+#define CREATE_VIDEO_TRACK_H
 
-#include "TimelineCommand.h"
-#include "Sequence.h"
-#include "VideoTrack.h"
+#include "ATimelineCommand.h"
+#include "ModelPtr.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-class TimelineCreateVideoTrack : public TimelineCommand
+class CreateVideoTrack
+    :   public ATimelineCommand
 {
 public:
-    TimelineCreateVideoTrack(gui::timeline::Timeline& timeline, model::SequencePtr sequence);
-    ~TimelineCreateVideoTrack();
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    CreateVideoTrack(gui::timeline::Timeline& timeline);
+    ~CreateVideoTrack();
+
+    //////////////////////////////////////////////////////////////////////////
+    // WXWIDGETS DO/UNDO INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
     bool Do();
     bool Undo();
+
 private:
-    model::SequencePtr mSequence;
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     model::VideoTrackPtr mNewTrack;
 };
 
-} // namespace
+}}} // namespace
 
 #endif // TIMELINE_CREATE_VIDEO_TRACK_H

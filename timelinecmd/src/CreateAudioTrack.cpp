@@ -1,39 +1,49 @@
-#include "TimelineCreateAudioTrack.h"
+#include "CreateAudioTrack.h"
 
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "UtilLog.h"
+#include "AudioTrack.h"
+#include "Timeline.h"
+#include "Sequence.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-TimelineCreateAudioTrack::TimelineCreateAudioTrack(gui::timeline::Timeline& timeline, model::SequencePtr sequence)
-:   TimelineCommand(timeline)
-,   mSequence(sequence)
-,   mNewTrack()
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+CreateAudioTrack::CreateAudioTrack(gui::timeline::Timeline& timeline)
+    :   ATimelineCommand(timeline)
+    ,   mNewTrack()
 {
-    VAR_INFO(this)(mSequence);
+    VAR_INFO(this);
     mCommandName = _("Add track"); 
 }
 
-TimelineCreateAudioTrack::~TimelineCreateAudioTrack()
+CreateAudioTrack::~CreateAudioTrack()
 {
 }
 
-bool TimelineCreateAudioTrack::Do()
+//////////////////////////////////////////////////////////////////////////
+// WXWIDGETS DO/UNDO INTERFACE
+//////////////////////////////////////////////////////////////////////////
+
+bool CreateAudioTrack::Do()
 {
     if (!mNewTrack)
     {
         mNewTrack = boost::make_shared<model::AudioTrack>();
     }
-    mSequence->addAudioTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->addAudioTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 
-bool TimelineCreateAudioTrack::Undo()
+bool CreateAudioTrack::Undo()
 {
-    mSequence->removeAudioTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->removeAudioTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 
-} // namespace
+}}} // namespace

@@ -134,7 +134,7 @@ void Drag::move(wxPoint position, bool altPressed)
 void Drag::drop()
 {
     model::Clips draggedclips;
-    command::TimelineMoveClips::Drops drops;
+    command::ExecuteDrop::Drops drops;
 
     BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
     {
@@ -148,7 +148,7 @@ void Drag::drop()
     {
         drops.splice(drops.end(), getDrops(track));
     }
-    getTimeline().Submit(new command::TimelineMoveClips(getTimeline(),draggedclips,drops));
+    getTimeline().Submit(new command::ExecuteDrop(getTimeline(),draggedclips,drops));
 }
 
 void Drag::stop()
@@ -456,14 +456,14 @@ void Drag::determinePossibleSnapPoints()
     mDragPoints.unique();
 }
 
-command::TimelineMoveClips::Drops Drag::getDrops(model::TrackPtr track)
+command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
 {
-    command::TimelineMoveClips::Drops drops;
+    command::ExecuteDrop::Drops drops;
     model::TrackPtr draggedTrack = trackOnTopOf(track);
     if (draggedTrack)
     {
         pts position = 0;
-        command::TimelineMoveClips::PasteInfo pi;
+        command::ExecuteDrop::Drop pi;
         pi.position = -1;
         pi.track = track;
         bool inregion = false;

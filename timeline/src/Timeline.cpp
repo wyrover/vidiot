@@ -420,7 +420,7 @@ void Timeline::draw(wxBitmap& bitmap) const
 // CHANGE COMMANDS
 //////////////////////////////////////////////////////////////////////////
 
-void Timeline::Submit(command::RootCommand* c)
+void Timeline::Submit(::command::RootCommand* c)
 {
     model::Project::current()->Submit(c);
 }

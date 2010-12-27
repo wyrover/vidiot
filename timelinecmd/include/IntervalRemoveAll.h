@@ -1,26 +1,42 @@
-#ifndef TIMELINE_INTERVAL_REMOVE_ALL_H
-#define TIMELINE_INTERVAL_REMOVE_ALL_H
+#ifndef INTERVAL_REMOVE_ALL_H
+#define INTERVAL_REMOVE_ALL_H
 
 #include <wx/region.h>
-#include "TimelineCommand.h"
+#include "ATimelineCommand.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-class TimelineIntervalRemoveAll 
-    :   public TimelineCommand
+/// This command removes all marked intervals from the timeline.
+/// This does not change the sequence, only the marked range is changed.
+class IntervalRemoveAll 
+    :   public ATimelineCommand
 {
 public:
 
-    /** This command removes all intervals. */
-    TimelineIntervalRemoveAll(gui::timeline::Timeline& timeline);
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
 
-    ~TimelineIntervalRemoveAll();
+    IntervalRemoveAll(gui::timeline::Timeline& timeline);
+
+    ~IntervalRemoveAll();
+
+    //////////////////////////////////////////////////////////////////////////
+    // WXWIDGETS DO/UNDO INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
     bool Do();
     bool Undo();
+
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     wxRegion mOldRegion;
 };
 
-} // namespace
+}}} // namespace
 
-#endif // TIMELINE_INTERVAL_REMOVE_ALL_H
+#endif // INTERVAL_REMOVE_ALL_H

@@ -9,12 +9,17 @@
 #include "Clip.h"
 #include "EmptyClip.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
+
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
 
 AClipEdit::AClipEdit(gui::timeline::Timeline& timeline)
-:   TimelineCommand(timeline)
-,   mParams()
-,   mParamsUndo()
+    :   ATimelineCommand(timeline)
+    ,   mParams()
+    ,   mParamsUndo()
+    ,   mInitialized(false)
 {
     VAR_INFO(this);
 }
@@ -23,128 +28,37 @@ AClipEdit::~AClipEdit()
 {
 }
 
+//////////////////////////////////////////////////////////////////////////
+// WXWIDGETS DO/UNDO INTERFACE
+//////////////////////////////////////////////////////////////////////////
+
 bool AClipEdit::Do()
 {
     VAR_INFO(this);
-todo redo
-    bool redo = (mParamsUndo.size() != 0);
 
-    if (mParams.size() == 0)
+    if (!mInitialized)
     {
-        // This can only happen in case of the 'new' drag/drop constructor
-        //
-        // 1. Make move objects for replacing all 'dragged' clips with EmptyClips.
-        //    The original dragged clips remain linked to their original links
-        //    (since these are dragged also, by design).
-        // 2. Execute these moves (since the following moves depend on these newly
-        //    created EmptyClips).
-        // 3. Make move objects for pasting all Drops. 
-        //    Ensure that the 'replacement map' contains a mapping of original->replacement
-        //    for clips in the timeline that are 'split' in two because of the drop. Note that
-        //    this is not requrired for the dropped clips themselves -> they remain linked
-        //    to the same linked clips.
-        // 4. Execute those drops.
-        // 5. Make moves for merging all consecutive EmptyClips.
-        // 6. Ensure that links are maintained. 
-
-        ReplacementMap mConversion;
-
-        LOG_DEBUG << "STEP 1 & 2: Replace all drags with EmptyClips";
-        BOOST_FOREACH( model::ClipPtr clip, mDrags )
-        {
-            replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getNumberOfFrames())));
-        }
-
-        LOG_DEBUG << "STEP 3 & 4: Execute the drops AND fill replacement map";
-        BOOST_FOREACH( PasteInfo drop, mDrops )
-        {
-            ASSERT(drop.position >= 0)(drop.position);
-            ASSERT(drop.track);
-            ASSERT(drop.clips.size() != 0);
-            VAR_DEBUG(drop.position)(drop.track)(drop.clips);
-
-            // Determine end pts of dropped clips
-            pts dropEndPosition = drop.position;
-            BOOST_FOREACH( model::ClipPtr clip, drop.clips )
-            {
-                dropEndPosition += clip->getNumberOfFrames();
-            }
-
-            // Ensure that the track has cuts at the begin and the end of the dropped clips
-            split(drop.track, drop.position,   &mConversion);
-            split(drop.track, dropEndPosition, &mConversion);
-
-            // Determine the clips to be replaced.
-            // Done AFTER the splitting above, since that requires clip addition/removal.
-            model::ClipPtr removePosition = model::ClipPtr();
-            model::Clips removedClips;
-            model::ClipPtr to = model::ClipPtr();
-            model::ClipPtr from = drop.track->getClip(drop.position);
-            if (from)
-            {
-                // Clips are added 'inside' the track
-                ASSERT(from->getLeftPts() == drop.position)(from)(drop.position);
-
-                model::ClipPtr firstNotReplacedClip = drop.track->getClip(dropEndPosition);
-
-                if (firstNotReplacedClip)
-                {
-                    // Remove until the clip BEFORE firstNotReplacedClip
-                    ASSERT(firstNotReplacedClip->getLeftPts() == dropEndPosition)(firstNotReplacedClip)(dropEndPosition);
-
-                    to = drop.track->getPreviousClip(firstNotReplacedClip);
-                    ASSERT(to->getRightPts() == dropEndPosition)(to)(dropEndPosition);
-                }
-                // else: Remove until end of track
-            }
-            // else: Clips are added 'beyond' the current track length
-
-            model::Clips::const_iterator it = drop.track->getClips().begin();
-            while (it != drop.track->getClips().end() && *it != from)
-            { 
-                ++it; 
-            }
-            while (it != drop.track->getClips().end() && *it != to) 
-            {
-                removedClips.push_back(*it);
-                ++it;
-            }
-            if (it != drop.track->getClips().end())
-            {
-                removePosition = *it;
-            }
-
-            //      ================== ADD ===============  ================ REMOVE ================
-            newMove(drop.track, removePosition, drop.clips, drop.track, removePosition, removedClips);
-        }
-
-        LOG_DEBUG << "STEP 5: Merge all consecutive white space";
-
-        LOG_DEBUG << "STEP 6. Ensure that links are maintained.";
-        replaceLinks(mConversion);
+        // "Do" for the first time
+        initialize();
+        mInitialized = true;
     }
+
     else
     {
-        // The original behaviour (only used for deleting selected clips which should really be a separate command)
-        // @todo thus
+        // "Redo"
+        ASSERT(mParams.size() != 0);
         BOOST_FOREACH( model::MoveParameterPtr move, mParams )
         {
-            if (!redo)
-            {
-                mParamsUndo.push_back(move->make_inverted());
-            }
             doMove(move);
         }
     }
-
-    // @todo reverse mParamsUndo the first time
-
     return true;
 }
 
 bool AClipEdit::Undo()
 {
     VAR_INFO(this);
+    ASSERT(mParamsUndo.size() != 0);
     BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
         doMove(move);
@@ -153,7 +67,7 @@ bool AClipEdit::Undo()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
+// HELPER METHODS FOR SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
 
 void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conversionmap)
@@ -271,14 +185,4 @@ void AClipEdit::doMove(model::MoveParameterPtr move)
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// LOGGING
-//////////////////////////////////////////////////////////////////////////
-
-std::ostream& operator<<( std::ostream& os, const AClipEdit::PasteInfo& obj )
-{
-    os << &obj << '|' << obj.track << '|' << obj.position << '|' << obj.clips;
-    return os;
-}
-
-} // namespace
+}}} // namespace

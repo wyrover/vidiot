@@ -1,24 +1,39 @@
-#ifndef TIMELINE_CREATE_AUDIO_TRACK_H
-#define TIMELINE_CREATE_AUDIO_TRACK_H
+#ifndef CREATE_AUDIO_TRACK_H
+#define CREATE_AUDIO_TRACK_H
 
-#include "TimelineCommand.h"
-#include "Sequence.h"
-#include "AudioTrack.h"
+#include "ATimelineCommand.h"
+#include "ModelPtr.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-class TimelineCreateAudioTrack : public TimelineCommand
+class CreateAudioTrack 
+    :   public ATimelineCommand
 {
 public:
-    TimelineCreateAudioTrack(gui::timeline::Timeline& timeline, model::SequencePtr sequence);
-    ~TimelineCreateAudioTrack();
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    CreateAudioTrack (gui::timeline::Timeline& timeline);
+    ~CreateAudioTrack ();
+    
+    //////////////////////////////////////////////////////////////////////////
+    // WXWIDGETS DO/UNDO INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
     bool Do();
     bool Undo();
+
 private:
-    model::SequencePtr mSequence;
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     model::AudioTrackPtr mNewTrack;
 };
 
-} // namespace
+}}} // namespace
 
-#endif // TIMELINE_CREATE_AUDIO_TRACK_H
+#endif // CREATE_AUDIO_TRACK_H

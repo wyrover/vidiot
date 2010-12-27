@@ -4,8 +4,8 @@
 #include "GuiMain.h"
 #include "GuiWindow.h"
 #include "GuiTimeLinesView.h"
-#include "TimelineCreateVideoTrack.h"
-#include "TimelineCreateAudioTrack.h"
+#include "CreateVideoTrack.h"
+#include "CreateAudioTrack.h"
 #include "Intervals.h"
 #include "Timeline.h"
 #include "ids.h"
@@ -69,13 +69,13 @@ void MenuHandler::update()
 void MenuHandler::onAddVideoTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    getTimeline().Submit(new command::TimelineCreateVideoTrack(getTimeline(),getSequence()));
+    getTimeline().Submit(new command::CreateVideoTrack(getTimeline()));
 }
 
 void MenuHandler::onAddAudioTrack(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    getTimeline().Submit(new command::TimelineCreateAudioTrack(getTimeline(),getSequence()));
+    getTimeline().Submit(new command::CreateAudioTrack(getTimeline()));
 }
 
 

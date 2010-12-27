@@ -39,9 +39,7 @@ public:
 
     void update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
 
-    /**
-    * Deletes all selected clips.
-    **/
+    /// Deletes all selected clips.
     void deleteClips();
 
     const std::set<model::ClipPtr>& getClips() const;
@@ -57,12 +55,6 @@ private:
     model::ClipPtr mPreviouslyClicked;
 
     std::set<model::ClipPtr> mSelected;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void deleteFromTrack(model::MoveParameters& moves, model::Tracks tracks);
 };
 
 }} // namespace

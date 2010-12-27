@@ -1,20 +1,28 @@
-#include "TimelineCommand.h"
+#include "ATimelineCommand.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-TimelineCommand::TimelineCommand(gui::timeline::Timeline& timeline)
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+ATimelineCommand::ATimelineCommand(gui::timeline::Timeline& timeline)
 :   RootCommand()
 ,   mTimeline(timeline)
 {
 }
 
-TimelineCommand::~TimelineCommand()
+ATimelineCommand::~ATimelineCommand()
 {
 }
 
-gui::timeline::Timeline& TimelineCommand::getTimeline()
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+gui::timeline::Timeline& ATimelineCommand::getTimeline()
 {
     return mTimeline;
 }
 
-} // namespace
+}}} // namespace
