@@ -5,6 +5,7 @@
 #include <set>
 #include <boost/serialization/split_member.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/make_shared.hpp>
 #include "IControl.h"
 #include "UtilEvent.h"
 #include "UtilLog.h"
@@ -66,6 +67,13 @@ struct MoveParameter
         ,   removePosition(_removePosition)
         ,   removeClips(_removeClips)
     {
+    }
+
+    /// @return new move object that is the inverse of this object.
+    /// This means that all additions and removals are interchanged.
+    MoveParameterPtr make_inverted()
+    {
+        return boost::make_shared<model::MoveParameter>(removeTrack,removePosition,removeClips,addTrack,addPosition,addClips);
     }
 };
 
@@ -176,6 +184,12 @@ private:
 	/// - Updates the pts'es for all clips in this track
 	/// - Updates the clip's track pointer to this track
 	void updateClips();
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const Track& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

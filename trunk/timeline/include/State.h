@@ -100,7 +100,7 @@ struct EvMouse : boost::statechart::event< MostDerived >
 template< class MostDerived >
 std::ostream& operator<< (std::ostream& os, const EvMouse< MostDerived >& obj)
 {
-    os  << typeid(obj).name() << ','
+    os  << typeid(obj).name() << ',' // This typeid is required to distinguish the various 'react' methods
         << obj.mPosition << ','
         << obj.mWxEvent;
     return os;
@@ -139,7 +139,7 @@ struct EvKey : boost::statechart::event< MostDerived >
 template< class MostDerived >
 std::ostream& operator<< (std::ostream& os, const EvKey< MostDerived >& obj)
 {
-    os  << typeid(obj).name() << ','
+    os  << typeid(obj).name() << ',' // This typeid is required to distinguish the various 'react' methods
         << obj.mPosition << ','
         << obj.mWxEvent;
     return os;

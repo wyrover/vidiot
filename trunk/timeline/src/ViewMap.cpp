@@ -50,14 +50,14 @@ void ViewMap::unregisterView(model::TrackPtr track)
 ClipView* ViewMap::getView(model::ClipPtr clip) const
 {
     ClipMap::const_iterator it = mClips.find(clip);
-    ASSERT(it != mClips.end())(mClips);
+    ASSERT(it != mClips.end())(clip)(mClips);
     return it->second;
 }
 
 TrackView* ViewMap::getView(model::TrackPtr track) const
 {
     TrackMap::const_iterator it = mTracks.find(track);
-    ASSERT(it != mTracks.end())(mTracks);
+    ASSERT(it != mTracks.end())(track)(mTracks);
     return it->second;
 }
 

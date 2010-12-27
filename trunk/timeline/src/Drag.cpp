@@ -44,7 +44,7 @@ Drag::Drag(Timeline* timeline)
 // START/STOP
 //////////////////////////////////////////////////////////////////////////
 
-void Drag::Start(wxPoint hotspot)
+void Drag::start(wxPoint hotspot)
 {
     PointerPositionInfo info = getMousePointer().getInfo(hotspot);
 
@@ -64,10 +64,10 @@ void Drag::Start(wxPoint hotspot)
     determinePossibleSnapPoints();
     invalidateSelectedClips();
     mBitmap = getDragBitmap();
-    MoveTo(hotspot, false);
+    move(hotspot, false);
 }
 
-void Drag::MoveTo(wxPoint position, bool altPressed)
+void Drag::move(wxPoint position, bool altPressed)
 {
     VAR_DEBUG(*this);
     wxRegion redrawRegion;
@@ -131,13 +131,32 @@ void Drag::MoveTo(wxPoint position, bool altPressed)
     VAR_DEBUG(*this);
 }
 
-void Drag::Stop()
+void Drag::drop()
+{
+    model::Clips draggedclips;
+    command::TimelineMoveClips::Drops drops;
+
+    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
+    {
+        draggedclips.push_back(clip);
+    }
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        drops.splice(drops.end(), getDrops(track));
+    }
+    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    {
+        drops.splice(drops.end(), getDrops(track));
+    }
+    getTimeline().Submit(new command::TimelineMoveClips(getTimeline(),draggedclips,drops));
+}
+
+void Drag::stop()
 {
     VAR_DEBUG(*this);
     mActive = false;
     invalidateSelectedClips();
     getTimeline().Refresh();
-    VAR_DEBUG(*this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -229,7 +248,6 @@ void Drag::draw(wxDC& dc) const
     BOOST_FOREACH( pts snap, mSnaps )
     {
         dc.DrawLine(getZoom().ptsToPixels(snap),0,getZoom().ptsToPixels(snap),dc.GetSize().GetHeight());
- //       dc.DrawRectangle(wxPoint(getZoom().ptsToPixels(snap),0),wxSize(1,dc.GetSize().GetHeight()));
     }
 }
 
@@ -327,9 +345,14 @@ wxPoint Drag::getDraggedDistance() const
     return mPosition - mHotspot;
 }
 
+pts Drag::getDraggedPts() const
+{
+    return getZoom().pixelsToPts(getDraggedDistance().x);
+}
+
 void Drag::determineSnapOffset()
 {
-    pts ptsoffset = getZoom().pixelsToPts(getDraggedDistance().x);
+    pts ptsoffset = getDraggedPts();
     pts ptsmouse = getZoom().pixelsToPts(mPosition.x);
 
     // Find nearest snap match
@@ -433,7 +456,45 @@ void Drag::determinePossibleSnapPoints()
     mDragPoints.unique();
 }
 
+command::TimelineMoveClips::Drops Drag::getDrops(model::TrackPtr track)
+{
+    command::TimelineMoveClips::Drops drops;
+    model::TrackPtr draggedTrack = trackOnTopOf(track);
+    if (draggedTrack)
+    {
+        pts position = 0;
+        command::TimelineMoveClips::PasteInfo pi;
+        pi.position = -1;
+        pi.track = track;
+        bool inregion = false;
 
+        BOOST_FOREACH( model::ClipPtr clip, draggedTrack->getClips() )
+        {
+            if (!inregion && clip->getSelected())
+            {
+                inregion = true;
+                pi.position = position + getDraggedPts();
+            }
+            if (inregion && !clip->getSelected())
+            {
+                inregion = false;
+                drops.push_back(pi);
+                pi.position = -1; // Prepare for new region
+                pi.clips.clear(); // Prepare for new region
+            }
+            if (inregion)
+            {
+                pi.clips.push_back(clip);
+            }
+            position += clip->getNumberOfFrames();
+        }
+        if (inregion)
+        {
+            drops.push_back(pi); // Insertion at end
+        }
+    }
+    return drops;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING

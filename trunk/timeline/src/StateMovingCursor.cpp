@@ -60,6 +60,7 @@ boost::statechart::result MovingCursor::react( const EvMotion& evt )
 
 boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
 {
+    VAR_DEBUG(evt);
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_SHIFT:
@@ -74,6 +75,7 @@ boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
 
 boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
 {
+    VAR_DEBUG(evt);
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_SHIFT:

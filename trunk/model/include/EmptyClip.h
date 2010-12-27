@@ -20,7 +20,7 @@ public:
 
     EmptyClip();
 
-    EmptyClip(int length);
+    EmptyClip(pts length);
 
     virtual EmptyClip* clone();
 

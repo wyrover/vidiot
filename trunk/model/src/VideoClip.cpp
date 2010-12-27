@@ -28,7 +28,7 @@ VideoClip::VideoClip(const VideoClip& other)
 :   Clip(other)
 ,   mProgress(0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 VideoClip* VideoClip::clone()
