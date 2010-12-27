@@ -1,4 +1,4 @@
-#include "DeleteClips.h"
+#include "DeleteSelectedClips.h"
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>

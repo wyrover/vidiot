@@ -10,7 +10,7 @@
 #include "ViewMap.h"
 #include "Sequence.h"
 #include "EmptyClip.h"
-#include "DeleteClips.h"
+#include "DeleteSelectedClips.h"
 
 namespace gui { namespace timeline {
 
