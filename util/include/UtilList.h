@@ -22,8 +22,9 @@ public:
         // See http://www.cplusplus.com/reference/stl/list/splice:
         // elements will be removed from this list. Hence, a copy is made (call by value
         // in the arguments list) before doing the splice call. Furthermore, we can use
-        // the original lists for doing the logging (in the caller methods).
-        mList.splice(itPosition,added); // See http://www.cplusplus.com/reference/stl/list/splice: elements added BEFORE position
+        // the original lists for doing the logging.
+        ELEMENTS tobeadded = added; // Needed for logging statement below. Without this copy, nothing is logged as 'added' (which is emptied by 'splice').
+        mList.splice(itPosition,tobeadded); // See http://www.cplusplus.com/reference/stl/list/splice: elements added BEFORE position
         VAR_DEBUG(added)(position)(mList);
     }
     /** @return the position at which the element are removed. */

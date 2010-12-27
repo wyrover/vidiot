@@ -45,8 +45,15 @@ public:
     void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0);
     TrackPtr getTrack();
 
-    pts getLeftPts() const; ///< @return pts (in containing track) of begin point of clip
-    pts getRightPts() const; ///< @return pts (in containing track) of end point of clip
+    /// @return pts (in containing track) of begin point of clip.
+    /// The frame at this position is the first frame of this clip.
+    /// The frames of a clip are [ getLeftPts,getRightPts )
+    pts getLeftPts() const;
+
+    /// @return pts (in containing track) AFTER end point of clip.
+    /// The frame at this position is AFTER the last frame of this clip
+    /// The frames of a clip are [ getLeftPts,getRightPts )
+    pts getRightPts() const; 
 
     //////////////////////////////////////////////////////////////////////////
     // LINK
@@ -73,13 +80,11 @@ public:
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
     /// @param adjustment pts count to add/subtract from the begin point
-    void adjustBeginPoint(pts adjustment);
+    void adjustBegin(pts adjustment);
 
-    /// If adjustment is positive then move the end point of the clip backwards
-    /// in time (increase the end pts). If adjustment is negative then move the
-    /// end point of the clip forward in time (decrease the end pts).
-    /// @param adjustment pts count to add/subtract from the end point
-    void adjustEndPoint(pts adjustment);
+    /// Set the new length of the clip.
+    /// @param length new length of clip
+    void adjustEnd(pts length);
 
     bool getSelected() const;           ///< @return true if this clip is selected
     void setSelected(bool selected);    ///< Select or deselect clip
@@ -91,6 +96,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// @note the clone is not automatically part of the track!!!
     /// @see make_cloned
     Clip(const Clip& other);
 

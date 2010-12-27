@@ -50,7 +50,6 @@ View& View::getParent() const
 
 void View::onChildViewUpdated( ViewUpdateEvent& event )
 {
-    LOG_INFO;
     invalidateBitmap();
 }
 

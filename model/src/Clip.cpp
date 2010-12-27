@@ -26,7 +26,7 @@ Clip::Clip()
     ,   mLastSetPosition(boost::none)
     ,   mSelected(false)
 { 
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 Clip::Clip(IControlPtr clip)
@@ -42,7 +42,7 @@ Clip::Clip(IControlPtr clip)
     ,   mSelected(false)
 { 
     mLength = mRender->getNumberOfFrames() - mOffset;
-    VAR_DEBUG(this)(*this);
+    VAR_DEBUG(*this);
 }
 
 Clip::Clip(const Clip& other)
@@ -51,13 +51,13 @@ Clip::Clip(const Clip& other)
     ,   mRender(make_cloned<model::IControl>(other.mRender))
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
-    ,   mTrack(other.mTrack)
-    ,   mLeftPtsInTrack(other.mLeftPtsInTrack)
+    ,   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
+    ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
     ,   mLink(other.mLink)
     ,   mLastSetPosition(boost::none)
     ,   mSelected(other.mSelected)
 {
-    VAR_DEBUG(this)(other);
+    VAR_DEBUG(*this)(other);
 }
 
 Clip* Clip::clone()
@@ -67,7 +67,7 @@ Clip* Clip::clone()
 
 Clip::~Clip()
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -129,21 +129,20 @@ ClipPtr Clip::getLink() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Clip::adjustBeginPoint(pts adjustment)
+void Clip::adjustBegin(pts adjustment)
 {
-    VAR_INFO(this)(adjustment);
     mOffset += adjustment;
     mLength -= adjustment;
     ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
-    VAR_DEBUG(this)(*this);
+    VAR_DEBUG(*this)(adjustment);
 }
 
-void Clip::adjustEndPoint(pts adjustment)
+void Clip::adjustEnd(pts length)
 {
-    VAR_INFO(this)(adjustment);
-    mLength += adjustment;
-    ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset);
-    VAR_DEBUG(this)(*this);
+    VAR_INFO(this)(length);
+    mLength = length;
+    ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
+    VAR_DEBUG(*this)(length);
 }
 
 bool Clip::getSelected() const
@@ -154,7 +153,7 @@ bool Clip::getSelected() const
 void Clip::setSelected(bool selected)
 {
     mSelected = selected;
-    QueueEvent(new EventSelectClip(selected));
+    ProcessEvent(EventSelectClip(selected));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -177,7 +176,7 @@ boost::optional<pts> Clip::getLastSetPosition() const
 
 std::ostream& operator<<( std::ostream& os, const Clip& obj )
 {
-    os << '[' << &obj << ',' << obj.mOffset << ',' << obj.mLength << ',' << obj.mLeftPtsInTrack << ',' << obj.mSelected << ']';
+    os << &obj << '|' << obj.mOffset << '|' << obj.mLength << '|' << obj.mLeftPtsInTrack << '|' << obj.mSelected;
     return os;
 }
 

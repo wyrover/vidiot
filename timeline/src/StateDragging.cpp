@@ -41,7 +41,8 @@ boost::statechart::result Dragging::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
 
-    getDrag().Stop();
+    getDrag().drop();
+    getDrag().stop();
 
     return transit<Idle>();
 }
@@ -50,7 +51,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
 
-    getDrag().MoveTo(evt.mPosition, evt.mWxEvent.ShiftDown());
+    getDrag().move(evt.mPosition, evt.mWxEvent.ShiftDown());
     getDrop().updateDropArea(evt.mPosition);
 
     return discard_event();
@@ -58,32 +59,31 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 
 boost::statechart::result Dragging::react( const EvKeyDown& evt )
 {
+    VAR_DEBUG(evt);
+
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_F1:
         getTooltip().show(sTooltip);
         break;
+    case WXK_ESCAPE:
+        getDrag().stop();
+        return transit<Idle>();
     }
     return discard_event();
 }
 
 boost::statechart::result Dragging::react( const EvKeyUp& evt )
 {
+    VAR_DEBUG(evt);
+
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_SHIFT:
-        getDrag().MoveTo(evt.mPosition, false);
+        getDrag().move(evt.mPosition, false);
         break;
     }
     return discard_event();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void Dragging::showDropArea(wxPoint p)
-{
 }
 
 }}} // namespace

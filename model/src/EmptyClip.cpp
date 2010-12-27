@@ -20,7 +20,7 @@ EmptyClip::EmptyClip()
     VAR_DEBUG(this);
 }
 
-EmptyClip::EmptyClip(int length)
+EmptyClip::EmptyClip(pts length)
     :	Clip(boost::make_shared<EmptyFile>(length))
 {
     VAR_DEBUG(this);

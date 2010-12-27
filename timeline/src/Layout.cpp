@@ -46,8 +46,8 @@ const wxBrush   Layout::sClipBrush               (wxColour(123,123,123),wxBRUSHS
 const wxPen     Layout::sSelectedClipPen         (*wxBLACK,sClipBorderSize);
 const wxBrush   Layout::sSelectedClipBrush       (wxColour(80,80,80),wxBRUSHSTYLE_SOLID);
 
-const wxPen     Layout::sSnapPen                 (*wxBLACK,3);
-const wxBrush   Layout::sSnapBrush               (*wxBLACK,wxBRUSHSTYLE_SOLID);
+const wxPen     Layout::sSnapPen                 (*wxMEDIUM_GREY_PEN);
+const wxBrush   Layout::sSnapBrush               (*wxMEDIUM_GREY_BRUSH);
 
 const wxPen     Layout::sDebugPen                (*wxGREEN, 1);
 const wxBrush   Layout::sDebugBrush              (*wxGREEN,wxBRUSHSTYLE_STIPPLE);
@@ -56,7 +56,7 @@ const wxBrush   Layout::sDebugBrush              (*wxGREEN,wxBRUSHSTYLE_STIPPLE)
 // SNAP
 //////////////////////////////////////////////////////////////////////////
 
-const int       Layout::sSnapDistance           = 25;
+const int       Layout::sSnapDistance           = 50;
 
 //////////////////////////////////////////////////////////////////////////
 // FONTS

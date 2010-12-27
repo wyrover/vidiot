@@ -48,7 +48,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     static int tolerance = 2;
     if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
     {
-        getDrag().Start(evt.mPosition);
+        getDrag().start(evt.mPosition);
         return transit<Dragging>();
     }
     return discard_event();
@@ -56,6 +56,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
 
 boost::statechart::result TestDragStart::react( const EvKeyDown& evt)
 {
+    VAR_DEBUG(evt);
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_F1:
@@ -64,10 +65,5 @@ boost::statechart::result TestDragStart::react( const EvKeyDown& evt)
     }
     return discard_event();
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
 
 }}} // namespace

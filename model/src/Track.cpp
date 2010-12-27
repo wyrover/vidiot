@@ -119,21 +119,27 @@ void Track::moveTo(pts position)
 
 void Track::addClips(Clips clips, ClipPtr position)
 {
+    VAR_DEBUG(*this)(position)(clips);
     UtilList<ClipPtr>(mClips).addElements(clips,position);
 
 	updateClips();
 
-    MoveParameter move(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips());
-    QueueEvent(new model::EventAddClips(move));
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline).
+    // Example:
+    // 1. Add clip
+    // 2. Remove clip again
+    // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
+    ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips())));
 
     /** @todo combine consecutive empty clips */
-
     /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
     /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
 
 void Track::removeClips(Clips clips)
 {
+    VAR_DEBUG(*this)(clips);
 	BOOST_FOREACH( ClipPtr clip, clips )
 	{
 		clip->setTrack(TrackPtr(), 0);
@@ -143,8 +149,13 @@ void Track::removeClips(Clips clips)
 
 	updateClips();
 
-	MoveParameter move(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips);
-	QueueEvent(new model::EventRemoveClips(move));
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline).
+    // Example:
+    // 1. Add clip
+    // 2. Remove clip again
+    // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
+	ProcessEvent(EventRemoveClips(MoveParameter(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips)));  // Must be handled immediately
 
     /** @todo combine consecutive empty clips */
     /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
@@ -164,7 +175,7 @@ ClipPtr Track::getClip(pts position)
     {
         pts length = clip->getNumberOfFrames();
         right += length;
-        if (position >= left && position <= right)
+        if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
         {
             return clip;
         }
@@ -209,7 +220,7 @@ int Track::getHeight() const
 void Track::setHeight(int height)
 {
     mHeight = height;
-    QueueEvent(new model::EventHeightChanged(height));
+    ProcessEvent(model::EventHeightChanged(height));
 }
 
 int Track::getIndex() const
@@ -255,6 +266,16 @@ void Track::updateClips()
 		clip->setTrack(shared_from_this(), position);
 		position += clip->getNumberOfFrames();
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const Track& obj )
+{
+    os << &obj << '|' << obj.mIndex << '|' << obj.mHeight << '|' << obj.mClips;
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

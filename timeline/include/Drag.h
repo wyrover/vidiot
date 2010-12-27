@@ -6,6 +6,7 @@
 #include <wx/dcmemory.h>
 #include "Part.h"
 #include "UtilInt.h"
+#include "TimelineMoveClips.h"
 
 namespace model {
     class Track;
@@ -30,9 +31,10 @@ public:
     // START/STOP
     //////////////////////////////////////////////////////////////////////////
 
-    void Start(wxPoint hotspot);
-    void MoveTo(wxPoint position, bool altPressed);
-    void Stop();
+    void start(wxPoint hotspot);
+    void move(wxPoint position, bool altPressed);
+    void drop();
+    void stop();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -140,18 +142,25 @@ private:
     /// @return bitmap offset in pixels
     wxPoint getDraggedDistance() const;
 
+    /// Return the dragged distance in pts value
+    pts getDraggedPts() const;
+
     /// Determine if there is a close match between a timeline cut and a cut
     /// in the dragged clips. Will update mPosition so that the dragged object
     /// is 'snapped to' that cut.
     void determineSnapOffset();
 
-    // Fill mPossibleSnapPoints with a list of possible 'snap to' points.
-    // Fill mPossibleDragPoints with a list of possible 'snap to' points in the dragged clips.
-    // Basically, these are lists of all the cuts in all the tracks in either the timeline 
-    // (excluding the selected==dragged clips) or the dragged area (thus, the selected clips).
-    // This is done at the start of a drag only, for performance reasons.
+    /// Fill mPossibleSnapPoints with a list of possible 'snap to' points.
+    /// Fill mPossibleDragPoints with a list of possible 'snap to' points in the dragged clips.
+    /// Basically, these are lists of all the cuts in all the tracks in either the timeline 
+    /// (excluding the selected==dragged clips) or the dragged area (thus, the selected clips).
+    /// This is done at the start of a drag only, for performance reasons.
     void determinePossibleSnapPoints();
 
+    /// Return the list of 'drops' on the given track
+    /// @param track onto which clips are dropped
+    /// @return list of drops onto that track
+    command::TimelineMoveClips::Drops getDrops(model::TrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

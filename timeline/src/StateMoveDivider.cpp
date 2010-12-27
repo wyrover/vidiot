@@ -51,6 +51,7 @@ boost::statechart::result MoveDivider::react( const EvMotion& evt )
 
 boost::statechart::result MoveDivider::react( const EvKeyDown& evt)
 {
+    VAR_DEBUG(evt);
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_ESCAPE: 
@@ -64,11 +65,13 @@ boost::statechart::result MoveDivider::react( const EvKeyDown& evt)
 
 boost::statechart::result MoveDivider::react( const EvKeyUp& evt)
 {
+    VAR_DEBUG(evt);
     return discard_event();
 }
 
 boost::statechart::result MoveDivider::react( const EvLeave& evt)
 {
+    VAR_DEBUG(evt);
     return abort();
 }
 

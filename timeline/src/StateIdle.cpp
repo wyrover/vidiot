@@ -111,6 +111,7 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 
 boost::statechart::result Idle::react( const EvKeyDown& evt)
 {
+    VAR_DEBUG(evt);
      switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_SPACE:
@@ -175,9 +176,9 @@ void Idle::splitClipAt(int position)
 				// one at the 'pts' specified position.
 
 				model::ClipPtr first = make_cloned<model::Clip>(splitclip);
-				first->adjustEndPoint(-ptsLengthRight);
+				first->adjustEnd(ptsLengthRight);
 				model::ClipPtr second = make_cloned<model::Clip>(splitclip);
-				second->adjustBeginPoint(ptsLengthLeft);
+				second->adjustBegin(ptsLengthLeft);
 
 				ASSERT(mConversion.find(splitclip) == mConversion.end());
 				mConversion[ splitclip ] = boost::assign::list_of(first)(second);
