@@ -6,7 +6,7 @@
 #include <wx/dcmemory.h>
 #include "Part.h"
 #include "UtilInt.h"
-#include "TimelineMoveClips.h"
+#include "ExecuteDrop.h"
 
 namespace model {
     class Track;
@@ -160,7 +160,7 @@ private:
     /// Return the list of 'drops' on the given track
     /// @param track onto which clips are dropped
     /// @return list of drops onto that track
-    command::TimelineMoveClips::Drops getDrops(model::TrackPtr track);
+    command::ExecuteDrop::Drops getDrops(model::TrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -1,32 +1,46 @@
-#ifndef TIMELINE_INTERVAL_CHANGE_H
-#define TIMELINE_INTERVAL_CHANGE_H
+#ifndef INTERVAL_CHANGE_H
+#define INTERVAL_CHANGE_H
 
-#include "TimelineCommand.h"
+#include "ATimelineCommand.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-class TimelineIntervalChange : public TimelineCommand
+class IntervalChange 
+    :   public ATimelineCommand
 {
 public:
 
-    /**
-     * @param Intervals the object to which the change must be made. Is a shared ptr to avoid exceptions in undo handling when closing the timeline.
-     * @param begin begin pts of interval.
-     * @param end end pts of interval
-     * @param add true if interval must be added, false if interval must be removed
-     * @todo Clean up these commands when the associated timeline is destroyed. Hmmm, or make closing the timeline undo-able.
-     */
-    TimelineIntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add);
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
 
-    ~TimelineIntervalChange();
+    /// @param Intervals the object to which the change must be made. Is a shared ptr to avoid exceptions in undo handling when closing the timeline.
+    /// @param begin begin pts of interval.
+    /// @param end end pts of interval
+    /// @param add true if interval must be added, false if interval must be removed
+    /// @todo Clean up these commands when the associated timeline is destroyed. Hmmm, or make closing the timeline undo-able.
+    IntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add);
+
+    ~IntervalChange();
+
+    //////////////////////////////////////////////////////////////////////////
+    // WXWIDGETS DO/UNDO INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
     bool Do();
     bool Undo();
+
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     long mBegin;
     long mEnd;
     bool mAdd;
 };
 
-} // namespace
+}}} // namespace
 
-#endif // TIMELINE_INTERVAL_CHANGE_H
+#endif // INTERVAL_CHANGE_H

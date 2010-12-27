@@ -10,7 +10,7 @@
 #include "ViewMap.h"
 #include "Sequence.h"
 #include "EmptyClip.h"
-#include "TimelineMoveClips.h"
+#include "DeleteClips.h"
 
 namespace gui { namespace timeline {
 
@@ -134,13 +134,9 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
 
 void Selection::deleteClips()
 {
-    model::MoveParameters moves;
-    deleteFromTrack( moves, getSequence()->getVideoTracks());
-    deleteFromTrack( moves, getSequence()->getAudioTracks());
-
     mPreviouslyClicked.reset();
     mSelected.clear(); // Since these clips are going to be removed, they may not be referenced anymore.
-    getTimeline().Submit(new command::TimelineMoveClips(getTimeline(),moves));
+    getTimeline().Submit(new command::DeleteSelectedClips(getTimeline()));
 }
 
 const std::set<model::ClipPtr>& Selection::getClips() const
@@ -171,50 +167,6 @@ void Selection::selectClip(model::ClipPtr clip, bool selected)
         mSelected.erase(clip);
     }
     getViewMap().getView(clip)->invalidateBitmap();
-}
-
-void Selection::deleteFromTrack(model::MoveParameters& moves, model::Tracks tracks)
-{
-    BOOST_FOREACH( model::TrackPtr track, tracks)
-    {
-        model::MoveParameterPtr move;
-        long nRemovedFrames = 0;
-        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
-        {
-            ClipView* c = getViewMap().getView(clip);
-            if (clip->getSelected())
-            {
-                if (!move)
-                {
-                    move = boost::make_shared<model::MoveParameter>();
-                    move->addTrack = track;
-                    move->removeTrack = track;
-                    nRemovedFrames = 0;
-                }
-                move->removeClips.push_back(clip);
-                nRemovedFrames += clip->getNumberOfFrames();
-            }
-            else
-            {
-                if (move) 
-                {
-                    move->removePosition = clip;
-                    move->addPosition = clip;
-                    move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
-                    moves.push_back(move); 
-                }
-                // Reset for possible new region of clips
-                move.reset();
-            }
-        }
-        if (move) 
-        { 
-            move->removePosition.reset(); // Null ptr indicates 'at end'
-            move->addPosition.reset(); // Null ptr indicates 'at end'
-            move->addClips.push_back(boost::make_shared<model::EmptyClip>(nRemovedFrames));
-            moves.push_back(move); 
-        }
-    }
 }
 
 }} // namespace

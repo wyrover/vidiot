@@ -89,7 +89,7 @@ public:
     // CHANGE COMMANDS
     //////////////////////////////////////////////////////////////////////////
 
-    void Submit(command::RootCommand* c);
+    void Submit(::command::RootCommand* c);
 
 private:
 

@@ -1,40 +1,46 @@
-#include "TimelineCreateVideoTrack.h"
+#include "CreateVideoTrack.h"
 
 #include <boost/make_shared.hpp>
 #include <boost/assign/list_of.hpp>
 #include "UtilLog.h"
+#include "Timeline.h"
+#include "Sequence.h"
+#include "VideoTrack.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-TimelineCreateVideoTrack::TimelineCreateVideoTrack(gui::timeline::Timeline& timeline, model::SequencePtr sequence)
-:   TimelineCommand(timeline)
-,   mSequence(sequence)
+CreateVideoTrack::CreateVideoTrack(gui::timeline::Timeline& timeline)
+:   ATimelineCommand(timeline)
 ,   mNewTrack()
 {
-    VAR_INFO(this)(mSequence);
+    VAR_INFO(this);
     mCommandName = _("Add track"); 
 }
 
-TimelineCreateVideoTrack::~TimelineCreateVideoTrack()
+CreateVideoTrack::~CreateVideoTrack()
 {
 }
+//////////////////////////////////////////////////////////////////////////
+// WXWIDGETS DO/UNDO INTERFACE
+//////////////////////////////////////////////////////////////////////////
 
-bool TimelineCreateVideoTrack::Do()
+
+bool CreateVideoTrack::Do()
 {
     VAR_INFO(this);
     if (!mNewTrack)
     {
         mNewTrack = boost::make_shared<model::VideoTrack>();
     }
-    mSequence->addVideoTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->addVideoTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 
-bool TimelineCreateVideoTrack::Undo()
+bool CreateVideoTrack::Undo()
 {
     VAR_INFO(this);
-    mSequence->removeVideoTracks(boost::assign::list_of(mNewTrack));
+    getTimeline().getSequence()->removeVideoTracks(boost::assign::list_of(mNewTrack));
     return true;
 }
 
-} // namespace
+}}} // namespace

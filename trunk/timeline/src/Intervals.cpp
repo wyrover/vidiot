@@ -17,8 +17,8 @@
 #include "ClipView.h"
 #include "Track.h"
 #include "Project.h"
-#include "TimelineIntervalChange.h"
-#include "TimelineIntervalRemoveAll.h"
+#include "IntervalChange.h"
+#include "IntervalRemoveAll.h"
 #include "UtilSerializeWxwidgets.h"
 #include "ids.h"
 #include "Menu.h"
@@ -85,7 +85,7 @@ void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-         wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
+         wxGetApp().getProject()->Submit(new command::IntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
     }
     mNewIntervalActive = false;
 }
@@ -102,7 +102,7 @@ void Intervals::endToggle()
     if (mToggleActive)
     {
         wxRect r(makeRect(mToggleBegin,mToggleEnd));
-        wxGetApp().getProject()->Submit(new command::TimelineIntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
+        wxGetApp().getProject()->Submit(new command::IntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
     }
     mToggleActive = false;
 }
@@ -138,7 +138,7 @@ void Intervals::change(long begin, long end, bool add)
 
 void Intervals::clear()
 {
-    wxGetApp().getProject()->Submit(new command::TimelineIntervalRemoveAll(getTimeline()));
+    wxGetApp().getProject()->Submit(new command::IntervalRemoveAll(getTimeline()));
 }
 
 //////////////////////////////////////////////////////////////////////////

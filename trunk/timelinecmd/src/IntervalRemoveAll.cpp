@@ -1,23 +1,23 @@
-#include "TimelineIntervalRemoveAll.h"
+#include "IntervalRemoveAll.h"
 
 #include "Intervals.h"
 #include "Timeline.h"
 #include "UtilLog.h"
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-TimelineIntervalRemoveAll::TimelineIntervalRemoveAll(gui::timeline::Timeline& timeline)
-:   TimelineCommand(timeline)
+IntervalRemoveAll::IntervalRemoveAll(gui::timeline::Timeline& timeline)
+:   ATimelineCommand(timeline)
 {
     VAR_INFO(this);
     mCommandName = _("Remove all markers");
 }
 
-TimelineIntervalRemoveAll::~TimelineIntervalRemoveAll()
+IntervalRemoveAll::~IntervalRemoveAll()
 {
 }
 
-bool TimelineIntervalRemoveAll::Do()
+bool IntervalRemoveAll::Do()
 {
     VAR_INFO(this);
     mOldRegion = getTimeline().getIntervals().get();
@@ -25,11 +25,11 @@ bool TimelineIntervalRemoveAll::Do()
     return true;
 }
 
-bool TimelineIntervalRemoveAll::Undo()
+bool IntervalRemoveAll::Undo()
 {
     VAR_INFO(this);
     getTimeline().getIntervals().set(mOldRegion);
     return true;
 }
 
-} // namespace
+}}} // namespace

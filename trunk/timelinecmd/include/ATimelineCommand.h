@@ -5,22 +5,39 @@
 
 namespace gui { namespace timeline { 
     class Timeline; 
-} }
+}}
 
-namespace command {
+namespace gui { namespace timeline { namespace command {
 
-class TimelineCommand : public RootCommand
+/// Abstract base for all modifications on the timeline/sequence.
+/// @todo upon closing the timeline, remove all related commands from the history.
+class ATimelineCommand 
+    :   public ::command::RootCommand
 {
 public:
-    TimelineCommand(gui::timeline::Timeline& timeline);
-    ~TimelineCommand();
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    ATimelineCommand(gui::timeline::Timeline& timeline);
+    virtual ~ATimelineCommand() = 0;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
     gui::timeline::Timeline& getTimeline();
+
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     gui::timeline::Timeline& mTimeline;
 };
 
-/** @todo upon closing the timeline, remove all related commands from the history. */
-
-} // namespace
+}}} // namespace
 
 #endif // TIMELINE_COMMAND_H
