@@ -44,8 +44,9 @@ void ExecuteDrop::initialize()
         ASSERT(drop.clips.size() != 0);
         VAR_DEBUG(drop.position)(drop.track)(drop.clips);
 
-        // Determine end pts of dropped clips
-        pts dropEndPosition = drop.position + model::Clip::getCombinedLength(drop.clips);
+        // Determine size and end pts of dropped clips
+        pts droppedSize = model::Clip::getCombinedLength(drop.clips);
+        pts dropEndPosition = drop.position + droppedSize;
 
         // Ensure that the track has cuts at the begin and the end of the dropped clips
         split(drop.track, drop.position,   &linkmapper);
@@ -54,6 +55,13 @@ void ExecuteDrop::initialize()
         // Determine the clips to be replaced.
         // Done AFTER the splitting above, since that requires clip addition/removal.
         AClipEdit::ClipsWithPosition remove = findClips(drop.track, drop.position, dropEndPosition);
+
+        if (drop.position > drop.track->getNumberOfFrames())
+        {
+            // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
+            ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
+            newMove(drop.track, remove.second, boost::assign::list_of(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getNumberOfFrames())) );
+        }
 
         //      ================ ADD ===============  =============== REMOVE ================
         newMove(drop.track, remove.second, drop.clips, drop.track, remove.second, remove.first);
