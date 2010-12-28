@@ -154,11 +154,10 @@ void AClipEdit::replaceLinks(ReplacementMap& conversionmap)
     {
         model::ClipPtr original = link.first;
         model::ClipPtr originallink = original->getLink();
-        if (conversionmap.find(originallink) == conversionmap.end())
+        if (originallink && conversionmap.find(originallink) == conversionmap.end())
         {
-            // If the original link wasn't already cut, then ensure that
-            // a clone of that link is added to the list of possibly 
-            // to be linked clips.
+            // If a link existed, but the original link wasn't already cut, then ensure that
+            // a clone of that link is added to the list of possibly to be linked clips.
             model::ClipPtr clone = make_cloned<model::Clip>(originallink);
             clone->setLink(model::ClipPtr()); // The clone is linked to nothing, since linking is done below.
             replaceClip(originallink, boost::assign::list_of(clone), &conversionmap);
