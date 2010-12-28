@@ -40,6 +40,9 @@ bool AClipEdit::Do()
     {
         // "Do" for the first time
         initialize();
+
+        // @todo make moves for merging consecutive emptyclips here
+
         mInitialized = true;
     }
 
@@ -111,6 +114,37 @@ void AClipEdit::replaceClip(model::ClipPtr original, model::Clips replacements, 
     newMove(track, position, replacements, track, position, originallist);
 }
 
+AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts left, pts right)
+{
+    VAR_DEBUG(track)(left)(right);
+    model::ClipPtr removePosition = model::ClipPtr();
+    model::ClipPtr to = model::ClipPtr();       // Default: at end
+    model::ClipPtr from = track->getClip(left);
+    if (from)
+    {
+        ASSERT(from->getLeftPts() == left)(from)(left);
+
+        // Remove until the clip BEFORE to
+        to = track->getClip(right);
+
+        ASSERT(to->getLeftPts() == right)(to)(right);
+    }
+    // else: Clips are added 'beyond' the current track length
+
+    model::Clips::const_iterator it = track->getClips().begin();
+    model::Clips removedClips;
+    while (it != track->getClips().end() && *it != from)
+    { 
+        ++it; 
+    }
+    while (it != track->getClips().end() && *it != to) 
+    {
+        removedClips.push_back(*it);
+        ++it;
+    }
+    return make_pair(removedClips,to);
+}
+
 void AClipEdit::replaceLinks(ReplacementMap& conversionmap)
 {
     // For all replaced clips, ensure that the linked clip is also replaced,
@@ -167,6 +201,7 @@ void AClipEdit::replaceLinks(ReplacementMap& conversionmap)
 
 void AClipEdit::newMove(model::TrackPtr addTrack, model::ClipPtr addPosition, model::Clips addClips, model::TrackPtr removeTrack, model::ClipPtr removePosition, model::Clips removeClips)
 {
+    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
     model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
     mParams.push_back(move);
     mParamsUndo.push_front(move->make_inverted()); // Must be executed in reverse order
