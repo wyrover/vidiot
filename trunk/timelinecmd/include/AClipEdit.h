@@ -45,7 +45,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
     // MAPPING FOR MAINTAINING LINKED CLIPS
     //////////////////////////////////////////////////////////////////////////
-
+    
     typedef std::map<model::ClipPtr, model::Clips> ReplacementMap;
 
     //////////////////////////////////////////////////////////////////////////
@@ -66,6 +66,16 @@ protected:
     /// @param replacements clips to be inserted in place of 'clip'
     /// @param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceClip(model::ClipPtr original, model::Clips replacements, ReplacementMap* conversionmap = 0);
+
+    /// Find the list of clips, indicated with the pts'es [left, right). Thus, the left pts is part
+    /// of these clips, the right pts is not.
+    /// @param track of which the clips are to be removed
+    /// @param left leftmost pts (the clip at this pts position is removed)
+    /// @param right rightmost pts (the clip at this pts position is NOT removed)
+    /// @pre a cut exists at both pts positions 'left' and 'right' (use split() to ensure this).
+    /// @return list of clips to be removed and their position (that is, the first non-removed clip after these clips, or a null ptr)
+    typedef std::pair<model::Clips, model::ClipPtr> ClipsWithPosition;
+    ClipsWithPosition findClips(model::TrackPtr track, pts left, pts right);
 
     /// Repair 'linking of clips' information after replacing several clips.
     /// For each

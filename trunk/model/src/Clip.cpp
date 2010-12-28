@@ -3,6 +3,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/foreach.hpp>
 #include "UtilLog.h"
 #include "Track.h"
 
@@ -154,6 +155,21 @@ void Clip::setSelected(bool selected)
 {
     mSelected = selected;
     ProcessEvent(EventSelectClip(selected));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// STATIC HELPER METHOD
+//////////////////////////////////////////////////////////////////////////
+
+//static 
+pts Clip::getCombinedLength(model::Clips clips)
+{
+    int length = 0;
+    BOOST_FOREACH( model::ClipPtr clip, clips )
+    {
+        length += clip->getNumberOfFrames();
+    }
+    return length;
 }
 
 //////////////////////////////////////////////////////////////////////////
