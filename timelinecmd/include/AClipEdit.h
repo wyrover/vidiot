@@ -91,6 +91,14 @@ protected:
     /// @param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceLinks(ReplacementMap& conversionmap);
 
+    /// Merge all consecutive empty clips in any track of the sequence into one clip
+    /// @see mergeConsecutiveEmptyClips(model::Tracks tracks)
+    void mergeConsecutiveEmptyClips();
+
+    /// Merge any consecutive empty clips into one clip for the contiguous region.
+    /// @param tracks list of track (audio/video) to be updated
+    void mergeConsecutiveEmptyClips(model::Tracks tracks);
+
     /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
     /// The new Move is executed immediately.
     void newMove(
