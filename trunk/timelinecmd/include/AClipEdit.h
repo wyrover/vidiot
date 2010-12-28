@@ -93,7 +93,13 @@ protected:
 
     /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
     /// The new Move is executed immediately.
-    void newMove(model::TrackPtr addTrack, model::ClipPtr addPosition, model::Clips addClips, model::TrackPtr removeTrack, model::ClipPtr removePosition, model::Clips removeClips);
+    void newMove(
+        model::TrackPtr addTrack, 
+        model::ClipPtr addPosition, 
+        model::Clips addClips, 
+        model::TrackPtr removeTrack = model::TrackPtr(), 
+        model::ClipPtr removePosition = model::ClipPtr(), 
+        model::Clips removeClips = model::Clips());
 
 private:
 
