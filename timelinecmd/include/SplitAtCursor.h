@@ -30,7 +30,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void splittrack(model::Tracks tracks, pts position);
+    void splittrack(model::Tracks tracks, pts position, ReplacementMap& linkmapper);
 };
 
 }}} // namespace
