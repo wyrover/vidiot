@@ -25,21 +25,25 @@ ViewMap::~ViewMap()
 
 void ViewMap::registerView(model::ClipPtr clip, ClipView* view)
 {
+    ASSERT(mClips.find(clip) == mClips.end());
     mClips.insert(std::make_pair(clip, view));
 }
 
 void ViewMap::registerView(model::TrackPtr track, TrackView* view)
 {
+    ASSERT(mTracks.find(track) == mTracks.end());
     mTracks.insert(std::make_pair(track, view));
 }
 
 void ViewMap::unregisterView(model::ClipPtr clip)
 {
+    ASSERT(mClips.find(clip) != mClips.end());
     mClips.erase(clip);
 }
 
 void ViewMap::unregisterView(model::TrackPtr track)
 {
+    ASSERT(mTracks.find(track) != mTracks.end());
     mTracks.erase(track);
 }
 

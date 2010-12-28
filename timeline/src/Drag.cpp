@@ -136,15 +136,20 @@ void Drag::drop()
     model::Clips draggedclips;
     command::ExecuteDrop::Drops drops;
 
+    // Ensure that moved clips are not blanked out anymore (since they are selected).
+    // See ClipView::draw()
+    mActive = false;
+    invalidateSelectedClips();
+
     BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
     {
         draggedclips.push_back(clip);
     }
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         drops.splice(drops.end(), getDrops(track));
     }
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         drops.splice(drops.end(), getDrops(track));
     }

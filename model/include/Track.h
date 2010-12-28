@@ -203,6 +203,8 @@ private:
     BOOST_SERIALIZATION_SPLIT_MEMBER();
 };
 
+std::ostream& operator<<( std::ostream& os, const MoveParameter& obj );
+
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc

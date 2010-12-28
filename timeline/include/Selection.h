@@ -31,6 +31,7 @@ public:
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    /// Required for resetting mPreviouslyClicked in case that clip is deleted.
     void onClipsRemoved( model::EventRemoveClips& event );
 
     //////////////////////////////////////////////////////////////////////////
@@ -42,19 +43,23 @@ public:
     /// Deletes all selected clips.
     void deleteClips();
 
-    const std::set<model::ClipPtr>& getClips() const;
+    std::set<model::ClipPtr> getClips() const;
 
 private:
 
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+    
+    model::ClipPtr mPreviouslyClicked;      ///< Clip which was previously (de)selected.
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
     void selectClipAndLink(model::ClipPtr clip, bool selected);
     void selectClip(model::ClipPtr clip, bool selected);
-
-    /**
-    * Clip which was previously (de)selected.
-    */
-    model::ClipPtr mPreviouslyClicked;
-
-    std::set<model::ClipPtr> mSelected;
+    void setPreviouslyClicked(model::ClipPtr clip);
 };
 
 }} // namespace

@@ -29,12 +29,13 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 {
     ASSERT(mClip);
     getViewMap().registerView(mClip,this);
-    mClip->Bind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected, this);
+    mClip->Bind(model::EVENT_SELECT_CLIP,   &ClipView::onClipSelected,  this);
     updateThumbnail();
 }
 
 ClipView::~ClipView()
 {
+    mClip->Unbind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected,  this);
     getViewMap().unregisterView(mClip);
 }
 
@@ -203,6 +204,7 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 void ClipView::onClipSelected( model::EventSelectClip& event )
 {
     invalidateBitmap();
+    event.Skip();
 }
 
 }} // namespace
