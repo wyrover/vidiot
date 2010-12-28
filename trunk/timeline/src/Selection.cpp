@@ -17,7 +17,6 @@ namespace gui { namespace timeline {
 Selection::Selection(Timeline* timeline)
 :   wxEvtHandler()
 ,   Part(timeline)
-,   mSelected()
 ,   mPreviouslyClicked()
 {
 }
@@ -29,15 +28,11 @@ Selection::Selection(Timeline* timeline)
 void Selection::onClipsRemoved( model::EventRemoveClips& event )
 {
     model::Clips clips = event.getValue().removeClips;
-    if (find(clips.begin(),clips.end(),mPreviouslyClicked) != clips.end())
+    if (find(clips.begin(), clips.end(), mPreviouslyClicked) != clips.end())
     {
-        mPreviouslyClicked.reset();
+        setPreviouslyClicked(model::ClipPtr()); // Reset
     }
-
-    BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
-    {
-        mSelected.erase(clip);
-    }
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,11 +50,10 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
     // Deselect all clips first, but only if control is not pressed.
     if (!ctrlPressed)
     {
-        BOOST_FOREACH( model::ClipPtr c, mSelected )
+        BOOST_FOREACH( model::ClipPtr c, getClips() )
         {
             c->setSelected(false);
         }
-        mSelected.clear();
     }
 
     if (clip)
@@ -80,7 +74,7 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
                 {
                     selectClipAndLink(c ,!currentClickedClipIsSelected);
                 }
-                mPreviouslyClicked = clip;
+                setPreviouslyClicked(clip);
             }
         }
         else if (shiftPressed)
@@ -118,31 +112,55 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
         {
             // Control down implies 'toggle' select.
             selectClipAndLink(clip, !currentClickedClipIsSelected);
-            mPreviouslyClicked = clip;
+            setPreviouslyClicked(clip);
         }
         else
         {
             selectClipAndLink(clip, true);
-            mPreviouslyClicked = clip;
+            setPreviouslyClicked(clip);
         }
     }
     else
     {
-        mPreviouslyClicked.reset();
+        setPreviouslyClicked(model::ClipPtr()); // reset
     }
 }
 
 void Selection::deleteClips()
 {
-    mPreviouslyClicked.reset();
-    mSelected.clear(); // Since these clips are going to be removed, they may not be referenced anymore.
+    setPreviouslyClicked(model::ClipPtr()); // reset
     getTimeline().Submit(new command::DeleteSelectedClips(getTimeline()));
 }
 
-const std::set<model::ClipPtr>& Selection::getClips() const
+std::set<model::ClipPtr> Selection::getClips() const
 {
-    return mSelected;
+    std::set<model::ClipPtr> selectedclips;
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        {
+            if (clip->getSelected())
+            {
+                selectedclips.insert(clip);
+            }
+        }
+    }
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    {
+        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        {
+            if (clip->getSelected())
+            {
+                selectedclips.insert(clip);
+            }
+        }
+    }
+    return selectedclips;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
 
 void Selection::selectClipAndLink(model::ClipPtr clip, bool selected)
 {
@@ -157,16 +175,22 @@ void Selection::selectClipAndLink(model::ClipPtr clip, bool selected)
 void Selection::selectClip(model::ClipPtr clip, bool selected)
 {
     clip->setSelected(selected);
-    if (selected)
-    {
-        mSelected.insert(clip);
-        clip->getTrack()->Bind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this); /** todo just register for all tracks... */
-    }
-    else
-    {
-        mSelected.erase(clip);
-    }
     getViewMap().getView(clip)->invalidateBitmap();
+}
+
+void Selection::setPreviouslyClicked(model::ClipPtr clip)
+{
+    if (mPreviouslyClicked && mPreviouslyClicked->getTrack())
+    {
+        // This clip has been removed from the track.
+        mPreviouslyClicked->getTrack()->Unbind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this);
+    }
+    if (clip)
+    {
+        ASSERT(clip->getTrack())(clip);
+        clip->getTrack()->Bind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this);
+    }
+    mPreviouslyClicked = clip;
 }
 
 }} // namespace

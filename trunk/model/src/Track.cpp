@@ -274,6 +274,12 @@ std::ostream& operator<<( std::ostream& os, const Track& obj )
     return os;
 }
 
+std::ostream& operator<<( std::ostream& os, const MoveParameter& obj )
+{
+    os << obj.removeTrack << '|' << obj.removePosition << '|' << obj.removeClips << '|' << obj.addTrack << '|' << obj.addPosition << '|' << obj.addClips; 
+    return os;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////

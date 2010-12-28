@@ -46,6 +46,9 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 
 TrackView::~TrackView()
 {
+    mTrack->Unbind(model::EVENT_ADD_CLIPS,      &TrackView::onClipsAdded,       this);
+    mTrack->Unbind(model::EVENT_REMOVE_CLIPS,   &TrackView::onClipsRemoved,     this);
+    mTrack->Unbind(model::EVENT_HEIGHT_CHANGED, &TrackView::onHeightChanged,    this);
     getViewMap().unregisterView(mTrack);
 }
 
@@ -66,23 +69,26 @@ void TrackView::onClipsAdded( model::EventAddClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
     {
-        ClipView* p = new ClipView(clip,this);
+        new ClipView(clip,this);
     }
     invalidateBitmap();
+    event.Skip();
 }
 
 void TrackView::onClipsRemoved( model::EventRemoveClips& event )
 {
     BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
     {
-// @todo cleanup:        getViewMap().getView(clip)->Destroy();
+        delete getViewMap().getView(clip);
     }
     invalidateBitmap();
+    event.Skip();
 }
 
 void TrackView::onHeightChanged( model::EventHeightChanged& event )
 {
     invalidateBitmap();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
