@@ -6,6 +6,8 @@
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "Track.h"
+#include "Timeline.h"
+#include "Sequence.h"
 #include "Clip.h"
 #include "EmptyClip.h"
 
@@ -41,7 +43,7 @@ bool AClipEdit::Do()
         // "Do" for the first time
         initialize();
 
-        // @todo make moves for merging consecutive emptyclips here
+        mergeConsecutiveEmptyClips();
 
         mInitialized = true;
     }
@@ -91,10 +93,6 @@ void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conve
             model::Clips replacements = boost::assign::list_of(left)(right);
             replaceClip(clip, replacements, conversionmap);
         }
-    }
-    else
-    {
-        // @todo insert emptyclips to ensure that the clip is pasted at the correct position
     }
 }
 
@@ -194,6 +192,48 @@ void AClipEdit::replaceLinks(ReplacementMap& conversionmap)
         {
             (*it2)->setLink(model::ClipPtr());
             ++it2;
+        }
+    }
+}
+
+void AClipEdit::mergeConsecutiveEmptyClips()
+{
+    mergeConsecutiveEmptyClips(getTimeline().getSequence()->getVideoTracks());
+    mergeConsecutiveEmptyClips(getTimeline().getSequence()->getAudioTracks());
+}
+
+void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
+{
+    BOOST_FOREACH( model::TrackPtr track, tracks )
+    {
+        pts length = 0;
+        bool inregion = false;
+        model::Clips removed;
+
+        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        {
+            if (clip->isA<model::EmptyClip>())
+            {
+                inregion = true;
+                length += clip->getNumberOfFrames();
+                removed.push_back(clip);
+            }
+            else // !clip->isA<model::EmptyClip>()
+            {
+                if (inregion)
+                {
+                    //      ======================================= ADD =====================================  ====== REMOVE ======
+                    newMove(track, clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(length)), track, clip, removed);
+                    length = 0;
+                    removed.clear();
+                }
+                inregion = false;
+            }
+        }
+        if (inregion)
+        {
+            //      ======================================= ADD =====================================
+            newMove(track, model::ClipPtr(), boost::assign::list_of(boost::make_shared<model::EmptyClip>(length)), track, model::ClipPtr(), removed);
         }
     }
 }
