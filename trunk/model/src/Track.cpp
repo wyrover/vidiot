@@ -130,10 +130,9 @@ void Track::addClips(Clips clips, ClipPtr position)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips())));
+    ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips()))); // Must be handled immediately
 
     /** @todo combine consecutive empty clips */
-    /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
     /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
 
@@ -155,10 +154,9 @@ void Track::removeClips(Clips clips)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-	ProcessEvent(EventRemoveClips(MoveParameter(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips)));  // Must be handled immediately
+	ProcessEvent(EventRemoveClips(MoveParameter(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips))); // Must be handled immediately
 
     /** @todo combine consecutive empty clips */
-    /** @todo ensure that all tracks keep on having same length by adding/removing empty at end */
     /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
 
