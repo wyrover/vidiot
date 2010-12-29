@@ -81,7 +81,8 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
         }
         else
         {
-            NIY
+            VAR_WARNING(mProgress)(lengthInFrames);
+            NIY;
             // Todo: Clip is longer than original data
         }
     }

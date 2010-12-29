@@ -22,6 +22,7 @@ Clip::Clip()
     ,   mOffset(0)
     ,   mLength(-1)
     ,   mTrack()
+    ,   mIndex(0)
     ,   mLeftPtsInTrack(0)
     ,   mLink()
     ,   mLastSetPosition(boost::none)
@@ -37,6 +38,7 @@ Clip::Clip(IControlPtr clip)
     ,   mOffset(0)
     ,   mLength(-1)
     ,   mTrack()
+    ,   mIndex(0)
     ,   mLeftPtsInTrack(0)
     ,   mLink()
     ,   mLastSetPosition(boost::none)
@@ -53,6 +55,7 @@ Clip::Clip(const Clip& other)
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
     ,   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
+    ,   mIndex(0)                   // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
     ,   mLink(other.mLink)
     ,   mLastSetPosition(boost::none)
@@ -82,7 +85,7 @@ pts Clip::getNumberOfFrames()
 
 void Clip::moveTo(pts position)
 {
-    VAR_DEBUG(this)(position);
+    VAR_DEBUG(*this)(position);
     mLastSetPosition.reset(position);
     mRender->moveTo(mOffset + position);
 }
@@ -91,8 +94,9 @@ void Clip::moveTo(pts position)
 // TRACK
 //////////////////////////////////////////////////////////////////////////
 
-void Clip::setTrack(TrackPtr track, pts trackPosition)
+void Clip::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
 {
+    mIndex = index;
     mTrack = track;
     mLeftPtsInTrack = trackPosition;
 }
@@ -192,7 +196,7 @@ boost::optional<pts> Clip::getLastSetPosition() const
 
 std::ostream& operator<<( std::ostream& os, const Clip& obj )
 {
-    os << &obj << '|' << obj.mOffset << '|' << obj.mLength << '|' << obj.mLeftPtsInTrack << '|' << obj.mSelected;
+    os << &obj << '|' << obj.mIndex << '|' << obj.mOffset << '|' << obj.mLength << '|' << obj.mLeftPtsInTrack << '|' << obj.mSelected;
     return os;
 }
 

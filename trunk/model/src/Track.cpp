@@ -124,6 +124,8 @@ void Track::addClips(Clips clips, ClipPtr position)
 
 	updateClips();
 
+    moveTo(0); // Required since the list iterator has become invalid.
+
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
     // Example:
@@ -131,8 +133,6 @@ void Track::addClips(Clips clips, ClipPtr position)
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
     ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips()))); // Must be handled immediately
-
-    /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
 
 void Track::removeClips(Clips clips)
@@ -147,6 +147,8 @@ void Track::removeClips(Clips clips)
 
 	updateClips();
 
+    moveTo(0); // Required since the list iterator has become invalid.
+
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
     // Example:
@@ -155,7 +157,6 @@ void Track::removeClips(Clips clips)
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
 	ProcessEvent(EventRemoveClips(MoveParameter(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips))); // Must be handled immediately
 
-    /** @todo use moveTo to reposition to the 'same position' as before the change. */
 }
 
 const std::list<ClipPtr>& Track::getClips()
@@ -257,10 +258,12 @@ void Track::iterate_nextClip()
 void Track::updateClips()
 {
 	pts position = 0;
+    int index = 0;
 	BOOST_FOREACH( ClipPtr clip, mClips )
 	{
-		clip->setTrack(shared_from_this(), position);
+		clip->setTrack(shared_from_this(), position, index);
 		position += clip->getNumberOfFrames();
+        index++;
 	}
 }
 
