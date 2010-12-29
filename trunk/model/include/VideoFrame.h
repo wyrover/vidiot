@@ -95,6 +95,7 @@ private:
 };
 
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
+typedef std::list<VideoFramePtr> VideoFrames;
 typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 

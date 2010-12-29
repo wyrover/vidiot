@@ -86,6 +86,7 @@ private:
 
 typedef boost::shared_ptr<AudioChunk> AudioChunkPtr;
 typedef Fifo<AudioChunkPtr> FifoAudio;
+typedef std::list<AudioChunkPtr> AudioChunks;
 std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
 
 } // namespace

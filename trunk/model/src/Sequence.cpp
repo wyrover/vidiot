@@ -200,11 +200,20 @@ void Sequence::moveTo(int64_t position)
 
 VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(*mVideoTracks.begin())->getNextVideo(requestedWidth, requestedHeight, alpha);
-    if (videoFrame && videoFrame->isA<EmptyFrame>())
+    VideoFrames frames;
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
-        VAR_VIDEO(videoFrame);
-
+        VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(requestedWidth, requestedHeight, alpha);
+        frames.push_back(videoFrame);
+    }
+    VideoFramePtr videoFrame; // Default: Null ptr (at end)
+    BOOST_REVERSE_FOREACH( VideoFramePtr frame, frames )
+    {
+        if (frame && !frame->isA<EmptyFrame>())
+        {
+            videoFrame = frame;
+            break;
+        }
     }
     VAR_VIDEO(videoFrame);
     return videoFrame;
