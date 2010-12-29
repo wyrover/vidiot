@@ -209,10 +209,20 @@ VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bo
     VideoFramePtr videoFrame; // Default: Null ptr (at end)
     BOOST_REVERSE_FOREACH( VideoFramePtr frame, frames )
     {
-        if (frame && !frame->isA<EmptyFrame>())
+        if (frame)
         {
-            videoFrame = frame;
-            break;
+            if (frame->isA<EmptyFrame>())
+            {
+                // At least send the EmptyFrame (instead of a null ptr which indiates 'end').
+                // Do not exit the loop: one of the lower tracks may have a bitmap.
+                videoFrame = frame;
+            }
+            else
+            {
+                // From the top track, the first found frame is returned. 
+                videoFrame = frame;
+                break;
+            }
         }
     }
     VAR_VIDEO(videoFrame);
