@@ -42,7 +42,9 @@ public:
     /// Set the track which contains this clip. Also sets the leftmost pts
     /// of the clip inside the track. When called without parameters
     /// (thus using the defaults), this information is 'reset'.
-    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0);
+    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0);
+
+    /// @return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
     TrackPtr getTrack();
 
     /// @return pts (in containing track) of begin point of clip.
@@ -139,6 +141,7 @@ private:
 
     IControlPtr mRender;    ///< The producer of audiovisual data for this clip
     TrackPtr mTrack;        ///< Track which holds this clip
+    unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     ClipPtr mLink;          ///< Clip that this clip is linked with
 
     pts mOffset;            ///< Offset inside the original media file (start point)

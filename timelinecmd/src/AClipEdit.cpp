@@ -9,6 +9,7 @@
 #include "Timeline.h"
 #include "Sequence.h"
 #include "Clip.h"
+#include "Cursor.h"
 #include "EmptyClip.h"
 
 namespace gui { namespace timeline { namespace command {
@@ -57,6 +58,12 @@ bool AClipEdit::Do()
             doMove(move);
         }
     }
+
+    // This is required to
+    // - reset model::Track iterators
+    // - start at the last played position (and not start at the "buffered" position)
+    getTimeline().getCursor().moveCursorOnUser(getTimeline().getCursor().getPosition());
+
     return true;
 }
 
@@ -68,6 +75,12 @@ bool AClipEdit::Undo()
     {
         doMove(move);
     }
+
+    // This is required to
+    // - reset model::Track iterators
+    // - start at the last played position (and not start at the "buffered" position)
+    getTimeline().getCursor().moveCursorOnUser(getTimeline().getCursor().getPosition());
+
     return true;
 }
 
