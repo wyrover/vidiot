@@ -125,7 +125,7 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts lef
         // Remove until the clip BEFORE to
         to = track->getClip(right);
 
-        ASSERT(to->getLeftPts() == right)(to)(right);
+        ASSERT(!to || to->getLeftPts() == right)(to)(right); // Null ptr indicates at end
     }
     // else: Clips are added 'beyond' the current track length
 
