@@ -478,7 +478,7 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
             if (!inregion && clip->getSelected())
             {
                 inregion = true;
-                pi.position = position + getDraggedPts();
+                pi.position = position + mSnapOffset + getDraggedPts();
             }
             if (inregion && !clip->getSelected())
             {
