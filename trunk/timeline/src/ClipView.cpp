@@ -12,6 +12,7 @@
 #include "Selection.h"
 #include "ViewMap.h"
 #include "Track.h"
+#include "GuiOptions.h"
 #include "Clip.h"
 #include "PositionInfo.h"
 
@@ -183,6 +184,16 @@ void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselecte
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.SetPen(*wxGREEN_PEN);
         dc.DrawRectangle(mRect);
+    }
+
+    if (GuiOptions::getShowDebugInfoOnWidgets())
+    {
+        dc.SetTextForeground(Layout::sDebugColour);
+        dc.SetFont(*Layout::sDebugFont);
+        dc.DrawText(wxString::Format(wxT("%d"), mClip->getNumberOfFrames()), wxPoint(5,5));
+        wxString sPts; 
+        sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
+        dc.DrawText(sPts, wxPoint(5,15));
     }
 }
 

@@ -22,29 +22,37 @@
 
 namespace gui {
 
-wxString GuiOptions::sConfigFile("");
+wxString    GuiOptions::sConfigFile("");
+bool        GuiOptions::sShowDebugInfoOnWidgets = false;
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER MACROS
 //////////////////////////////////////////////////////////////////////////
 
-#define GETPERSISTEDENUM(name,default)      name ## _fromString(std::string(wxConfigBase::Get()->Read(sPath ## name, name ## _toString( default )).mb_str()))
-#define GETPERSISTEDSTRING(name,default)    wxConfigBase::Get()->Read(sPath ## name, default)
-#define GETPERSISTEDBOOL(name,default)      wxConfigBase::Get()->ReadBool(sPath ## name, default)
-#define GETPERSISTEDDOUBLE(name,default)    wxConfigBase::Get()->ReadDouble(sPath ## name, default)
+#define GETENUM(name,enumtype,default)  enumtype ## _fromString(std::string(wxConfigBase::Get()->Read(name, enumtype ## _toString( default )).mb_str()))
+#define GETSTRING(name,default)         wxConfigBase::Get()->Read(name, default)
+#define GETBOOL(name,default)           wxConfigBase::Get()->ReadBool(name, default)
+#define GETDOUBLE(name,default)         wxConfigBase::Get()->ReadDouble(name, default)
+
+#define SETENUM(name,enumtype,value)    result = wxConfigBase::Get()->Write(name, enumtype ## _toString( value ).c_str()); ASSERT(result)
+#define SETSTRING(name,value)           result = wxConfigBase::Get()->Write(name, value); ASSERT(result)
+#define SETBOOL(name,value)             result = wxConfigBase::Get()->Write(name, value); ASSERT(result)
+#define SETDOUBLE(name,value)           result = wxConfigBase::Get()->Write(name, value); ASSERT(result)
+
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER PATH VARIABLES
 //////////////////////////////////////////////////////////////////////////
 
-static const wxString sPathAutoLoadEnabled      ("/Project/AutoLoad/Enabled");
-static const wxString sPathAutoLoadFilename     ("/Project/AutoLoad/Filename");
-static const wxString sPathLastOpened           ("/Project/LastOpened");
-static const wxString sPathLogLevel             ("/Debug/LogLevel");
-static const wxString sPathLogFile              ("/Debug/LogFile");
-static const wxString sPathFrameRate            ("/Video/FrameRate");
-static const wxString sPathMarkerBeginAddition  ("/Timeline/MarkerBeginAddition");
-static const wxString sPathMarkerEndAddition    ("/Timeline/MarkerEndAddition");
+static const wxString sPathAutoLoadEnabled          ("/Project/AutoLoad/Enabled");
+static const wxString sPathAutoLoadFilename         ("/Project/AutoLoad/Filename");
+static const wxString sPathLastOpened               ("/Project/LastOpened");
+static const wxString sPathLogLevel                 ("/Debug/LogLevel");
+static const wxString sPathLogFile                  ("/Debug/LogFile");
+static const wxString sPathShowDebugInfoOnWidgets   ("/Debug/Show");
+static const wxString sPathFrameRate                ("/Video/FrameRate");
+static const wxString sPathMarkerBeginAddition      ("/Timeline/MarkerBeginAddition");
+static const wxString sPathMarkerEndAddition        ("/Timeline/MarkerEndAddition");
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER VARIABLES
@@ -60,15 +68,11 @@ std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_list_of
 // APPLICATION INITIALIZATION & CONFIGURATION
 //////////////////////////////////////////////////////////////////////////
 
-/**
- * This distributes the current set of options to the various other components.
- * Done initially, and after Tools->Options->Ok.
- * May not log as it is also called in the beginning of GuiMain::OnInit(), 
- * before the logging is initialized.
- */
-void distributeOptions()
+// static
+void GuiOptions::distributeOptions()
 {
-    Log::SetReportingLevel(GETPERSISTEDENUM(LogLevel,logINFO));
+    sShowDebugInfoOnWidgets = GETBOOL(sPathShowDebugInfoOnWidgets, false);
+    Log::SetReportingLevel(GETENUM(sPathLogLevel,LogLevel,logINFO));
     Log::SetLogFile(std::string(GuiOptions::getLogFileName()));
     Avcodec::configureLog();
 }
@@ -92,7 +96,7 @@ wxString GuiOptions::getLogFileName()
     wxString defaultFileName(wxGetApp().GetAppName());
     defaultFileName << "_" << wxGetProcessId() << ".log";
     wxFileName defaultLogFile(wxStandardPaths::Get().GetTempDir(),defaultFileName);
-    return GETPERSISTEDSTRING(LogFile,defaultLogFile.GetFullPath());
+    return GETSTRING(sPathLogFile,defaultLogFile.GetFullPath());
 }
 
 // static 
@@ -102,13 +106,19 @@ wxString GuiOptions::getOptionsFileName()
 }
 
 // static
+bool GuiOptions::getShowDebugInfoOnWidgets()
+{
+    return sShowDebugInfoOnWidgets;
+}
+
+// static
 boost::optional<wxString> GuiOptions::GetAutoLoad()
 {
     boost::optional<wxString> result;
 
-    if (GETPERSISTEDBOOL(AutoLoadEnabled,false))
+    if (GETBOOL(sPathAutoLoadEnabled,false))
     {
-        wxString filename = GETPERSISTEDSTRING(AutoLoadFilename,"");
+        wxString filename = GETSTRING(sPathAutoLoadFilename,"");
         if (boost::filesystem::exists(boost::filesystem::path(filename)))
         {
             result.reset(filename);
@@ -127,7 +137,7 @@ void GuiOptions::SetAutoLoadFilename(wxString filename)
 model::FrameRate GuiOptions::getDefaultFrameRate()
 {
     model::FrameRate fr = model::framerate::s25p;
-    wxString frs = GETPERSISTEDSTRING(FrameRate,"");
+    wxString frs = GETSTRING(sPathFrameRate,"");
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
         if (frs.IsSameAs(boost::get<0>(sPossibleFrameRates[i])))
@@ -143,13 +153,13 @@ model::FrameRate GuiOptions::getDefaultFrameRate()
 // static
 double GuiOptions::getMarkerBeginAddition()
 {
-    return GETPERSISTEDDOUBLE(MarkerBeginAddition,0);
+    return GETDOUBLE(sPathMarkerBeginAddition,0);
 }
 
 // static
 double GuiOptions::getMarkerEndAddition()
 {
-    return GETPERSISTEDDOUBLE(MarkerEndAddition,0);
+    return GETDOUBLE(sPathMarkerEndAddition,0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -181,7 +191,7 @@ GuiOptions::GuiOptions(wxWindow* win)
         wxBoxSizer*     hSizer          = new wxBoxSizer( wxHORIZONTAL );
         staticbox_sizer->Add(hSizer, 0, wxGROW|wxALL, 5);
         mLoadLast = new wxCheckBox(panel, wxID_ANY, _("&Load last project on startup"), wxDefaultPosition, wxDefaultSize);
-        mLoadLast->SetValue(GETPERSISTEDBOOL(AutoLoadEnabled,false));
+        mLoadLast->SetValue(GETBOOL(sPathAutoLoadEnabled,false));
         hSizer->Add(mLoadLast, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     }
 
@@ -281,7 +291,7 @@ GuiOptions::GuiOptions(wxWindow* win)
         mLogLevel->Append(_("Video"),      reinterpret_cast<void*>(logVIDEO));
         mLogLevel->Append(_("Audio"),      reinterpret_cast<void*>(logAUDIO));
         mLogLevel->Append(_("Detailed"),   reinterpret_cast<void*>(logDETAIL));
-        switch (GETPERSISTEDENUM(LogLevel,logINFO))
+        switch (GETENUM(sPathLogLevel,LogLevel,logINFO))
         {
         case logERROR:      mLogLevel->SetSelection(0); break;
         case logWARNING:    mLogLevel->SetSelection(1); break;
@@ -294,6 +304,13 @@ GuiOptions::GuiOptions(wxWindow* win)
         hSizer->Add(new wxStaticText(panel, wxID_ANY, _("&Log level:")), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
         hSizer->Add(5, 5, 1, wxALL, 0);
         hSizer->Add(mLogLevel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+
+        // Entry: Show debug info on widgets
+        wxBoxSizer*     hSizerShow          = new wxBoxSizer( wxHORIZONTAL );
+        staticbox_sizer->Add(hSizerShow, 0, wxGROW|wxALL, 5);
+        mShowDebugInfoOnWidgets = new wxCheckBox(panel, wxID_ANY, _("&Show debug info on widgets"), wxDefaultPosition, wxDefaultSize);
+        mShowDebugInfoOnWidgets->SetValue(GETBOOL(sPathShowDebugInfoOnWidgets,false));
+        hSizerShow->Add(mShowDebugInfoOnWidgets, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     }
 
     SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
@@ -308,25 +325,12 @@ GuiOptions::~GuiOptions()
     {
         bool result;
 
-        bool newLoadLast = mLoadLast->IsChecked();
-        result = wxConfigBase::Get()->Write(sPathAutoLoadEnabled,newLoadLast);
-        ASSERT(result);
-
-        LogLevel newLogLevel = static_cast<LogLevel>(reinterpret_cast<int>(mLogLevel->GetClientData(mLogLevel->GetSelection())));
-        result = wxConfigBase::Get()->Write(sPathLogLevel,LogLevel_toString(newLogLevel).c_str());
-        ASSERT(result);
-
-        wxString newFrameRate = boost::get<0>(sPossibleFrameRates[mFrameRate->GetSelection()]);
-        result = wxConfigBase::Get()->Write(sPathFrameRate,newFrameRate);
-        ASSERT(result);
-
-        double beginAddition = mMarkerBeginAddition->GetValue();
-        result = wxConfigBase::Get()->Write(sPathMarkerBeginAddition,beginAddition);
-        ASSERT(result);
-
-        double endAddition = mMarkerEndAddition->GetValue();
-        result = wxConfigBase::Get()->Write(sPathMarkerEndAddition,endAddition);
-        ASSERT(result);
+        SETBOOL(    sPathAutoLoadEnabled,           mLoadLast->IsChecked());
+        SETENUM(    sPathLogLevel, LogLevel,        static_cast<LogLevel>(reinterpret_cast<int>(mLogLevel->GetClientData(mLogLevel->GetSelection()))));
+        SETBOOL(    sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
+        SETSTRING(  sPathFrameRate,                 boost::get<0>(sPossibleFrameRates[mFrameRate->GetSelection()]));
+        SETDOUBLE(  sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
+        SETDOUBLE(  sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
 
         wxConfigBase::Get()->Flush();
 

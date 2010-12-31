@@ -22,8 +22,15 @@ public:
     // APPLICATION INITIALIZATION & CONFIGURATION
     //////////////////////////////////////////////////////////////////////////
 
-    /** To be called upon startup. Distributes options to the various components. */
+    /// To be called upon startup. Distributes options to the various components.
+    /// @see distributeOptions()
     static void init();
+
+    /// This distributes the current set of options to the various other components.
+    /// Done initially, and after Tools->Options->Ok.
+    /// May not log as it is also called in the beginning of GuiMain::OnInit(), 
+    /// before the logging is initialized.
+    static void distributeOptions();
 
     //////////////////////////////////////////////////////////////////////////
     // SETTERS & GETTERS
@@ -31,6 +38,7 @@ public:
 
     static wxString getOptionsFileName();
     static wxString getLogFileName();
+    static bool     getShowDebugInfoOnWidgets();
 
     static boost::optional<wxString> GetAutoLoad();
     static void SetAutoLoadFilename(wxString filename);
@@ -73,6 +81,13 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxChoice*   mLogLevel;
+    wxCheckBox* mShowDebugInfoOnWidgets;
+
+    static bool sShowDebugInfoOnWidgets; ///< Cached for performance
+
+    //////////////////////////////////////////////////////////////////////////
+    // CONFIG FILE PATH
+    //////////////////////////////////////////////////////////////////////////
 
     static wxString sConfigFile;
 };
