@@ -116,11 +116,14 @@ void File::openFile()
     /** /todo get all streams info, use that to make hasVideo and hasAudio for showing in project view. This class is about meta data of video/audio files.*/
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
+        AVStream* stream = mFileContext->streams[i];
+        int64_t d =  mFileContext->streams[i]->duration;
+        VAR_DEBUG(d);
         if (mFileContext->streams[i]->codec->codec_type == mCodecType)
         {
             mStream = mFileContext->streams[i];
             mStreamIndex = i;
-            break;
+            //break;
         }
     }
     mNumberOfFrames = model::Convert::microsecondsToPts(mFileContext->duration);

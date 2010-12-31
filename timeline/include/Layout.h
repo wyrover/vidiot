@@ -60,6 +60,7 @@ public:
     static const wxPen      sSnapPen;
     static const wxBrush    sSnapBrush;
 
+    static const wxColour   sDebugColour;
     static const wxPen      sDebugPen;
     static const wxBrush    sDebugBrush;
 
@@ -75,6 +76,7 @@ public:
 
     static void initializeFonts();
 
+    static wxFont* sDebugFont;
     static wxFont* sTimeScaleFont;
 
 };

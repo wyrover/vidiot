@@ -60,7 +60,7 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
         invalidateLastSetPosition();
     }
 
-    unsigned int lengthInFrames = Convert::ptsToFrames(audioRate, nAudioChannels, getNumberOfFrames());
+    int lengthInFrames = Convert::ptsToFrames(audioRate, nAudioChannels, getNumberOfFrames());
 
     AudioChunkPtr audioChunk;
 

@@ -49,8 +49,9 @@ const wxBrush   Layout::sSelectedClipBrush       (wxColour(80,80,80),wxBRUSHSTYL
 const wxPen     Layout::sSnapPen                 (*wxMEDIUM_GREY_PEN);
 const wxBrush   Layout::sSnapBrush               (*wxMEDIUM_GREY_BRUSH);
 
-const wxPen     Layout::sDebugPen                (*wxGREEN, 1);
-const wxBrush   Layout::sDebugBrush              (*wxGREEN,wxBRUSHSTYLE_STIPPLE);
+const wxColour  Layout::sDebugColour             (*wxGREEN);
+const wxPen     Layout::sDebugPen                (Layout::sDebugColour, 1);
+const wxBrush   Layout::sDebugBrush              (Layout::sDebugColour,wxBRUSHSTYLE_STIPPLE);
 
 //////////////////////////////////////////////////////////////////////////
 // SNAP
@@ -62,11 +63,13 @@ const int       Layout::sSnapDistance           = 50;
 // FONTS
 //////////////////////////////////////////////////////////////////////////
 
-wxFont*   Layout::sTimeScaleFont = 0;
+wxFont*   Layout::sDebugFont        = 0;
+wxFont*   Layout::sTimeScaleFont    = 0;
 
 void Layout::initializeFonts()
 {
-    sTimeScaleFont = const_cast<wxFont*>(wxSMALL_FONT);
+    sDebugFont      = const_cast<wxFont*>(wxSMALL_FONT);
+    sTimeScaleFont  = const_cast<wxFont*>(wxSMALL_FONT);
 }
 
 }} // namespace
