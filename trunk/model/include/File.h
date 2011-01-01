@@ -9,11 +9,11 @@
 #include "FilePacket.h"
 #include "AProjectViewNode.h"
 
-#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
-
-extern "C" {
-#include <avformat.h>
-};
+// Forward declarations of ffmpeg types
+struct AVFormatContext;
+struct AVStream;
+struct AVCodecContext;
+enum AVMediaType;
 
 namespace model {
 
@@ -78,7 +78,7 @@ protected:
     int mStreamIndex;
     AVStream* mStream;
     AVCodecContext* mCodecContext;
-    CodecType mCodecType;
+    AVMediaType mCodecType; ///< @todo replace with non ffmpeg type
 
     //////////////////////////////////////////////////////////////////////////
     // PACKETS INTERFACE TO SUBCLASSES
@@ -121,7 +121,7 @@ private:
     /** Holds retrieved packets until extracted with getNextPacket() */
     FifoPacket mPackets;
 
-    int64_t mNumberOfFrames;
+    pts mNumberOfFrames;
     int mTwoInARow;
 
     //////////////////////////////////////////////////////////////////////////

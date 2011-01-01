@@ -82,7 +82,9 @@ Install graphviz into c:\Program Files
   <VIDIOT_DIR>/ffmpeg-precomiled/inttypes.h
   to
   <VIDIOT_DIR>/ffmpeg-ctypes
-* Add <VIDIOT_DIR>\ffmpeg-precomiled\bin to system/user path variable
+* Add <VIDIOT_DIR>\ffmpeg-precompiled\bin to system/user path variable
+* Delete
+  <VIDIOT_DIR>/ffmpeg-precompiled/include/libavutil/file.h
 
 * The steps below are how I tried compiling. However, it 'suddenly' stopped
   working; resulting in an avutil.dll that - when loaded - caused a 0x00000005

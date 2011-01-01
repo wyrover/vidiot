@@ -9,7 +9,7 @@ const int AudioChunk::sBytesPerSample = 2;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, unsigned int nSamples, double pts)
+AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples, double pts)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
@@ -25,7 +25,7 @@ AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, unsigned int nSamp
     }
 }
 
-AudioChunk::AudioChunk(int nChannels, unsigned int nSamples, double pts)
+AudioChunk::AudioChunk(int nChannels, samples_t nSamples, double pts)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
@@ -58,7 +58,7 @@ unsigned int AudioChunk::getNumberOfChannels() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void AudioChunk::read(unsigned int samples)
+void AudioChunk::read(samples_t samples)
 {
     mNrReadSamples += samples;
 }
@@ -76,12 +76,12 @@ boost::int16_t* AudioChunk::getUnreadSamples()
 
 }
 
-unsigned long AudioChunk::getUnreadSampleCount() const
+samples_t AudioChunk::getUnreadSampleCount() const
 {
     return mNrSamples - mNrSkippedSamples - mNrReadSamples;
 }
 
-void AudioChunk::setAdjustedLength(unsigned int adjustedLength)
+void AudioChunk::setAdjustedLength(samples_t adjustedLength)
 {
     ASSERT(adjustedLength < mNrSamples)(adjustedLength)(mNrSamples);
     mNrSkippedSamples = mNrSamples - adjustedLength;

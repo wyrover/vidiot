@@ -257,8 +257,8 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
         conditionPlaybackStarted.notify_one();
     }
 
-    static const unsigned int sSamplesPerStereoFrame = 2;
-    unsigned long remainingSamples = frames * sSamplesPerStereoFrame; /** todo and here a sample is for one speaker. */
+    static const samples_t sSamplesPerStereoFrame = 2;
+    samples_t remainingSamples = frames * sSamplesPerStereoFrame; /** todo and here a sample is for one speaker. */
     int16_t* out = static_cast<int16_t*>(buffer);
 
     while (remainingSamples > 0)
@@ -290,7 +290,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
             }
         }
 
-        unsigned long nSamples = std::min(remainingSamples, mCurrentAudioChunk->getUnreadSampleCount());
+        samples_t nSamples = min(remainingSamples, mCurrentAudioChunk->getUnreadSampleCount());
 
         memcpy(out,mCurrentAudioChunk->getUnreadSamples(),nSamples * model::AudioChunk::sBytesPerSample);
         mCurrentAudioChunk->read(nSamples);

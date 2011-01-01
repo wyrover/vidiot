@@ -11,7 +11,8 @@ SET(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/build )
 #SET( CMAKE_BUILD_TYPE DEBUG )
 
 #### FFMPEG ####
-SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-precompiled )
+#SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-precompiled )
+SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-r26182 )
 INCLUDE(build/FindFFMPEG.cmake)
 FIND_PACKAGE(FFMPEG REQUIRED COMPONENTS SWSCALE)
 # Add include dir for generated avconfig.h
