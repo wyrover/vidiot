@@ -1,5 +1,13 @@
 #include "AudioFile.h"
 
+// Include at top, to exclude the intmax macros and use the boost versions
+#undef INTMAX_C
+#undef UINTMAX_C
+extern "C" {
+#include <avformat.h>
+#include <avcodec.h>
+};
+
 #include <math.h>
 #include <algorithm>
 #include <boost/make_shared.hpp>
@@ -31,7 +39,7 @@ AudioFile::AudioFile()
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
 {
-    mCodecType = CODEC_TYPE_AUDIO;
+    mCodecType = AVMEDIA_TYPE_AUDIO;
     VAR_DEBUG(this);
 }
 
@@ -42,7 +50,7 @@ AudioFile::AudioFile(boost::filesystem::path path)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
 {
-    mCodecType = CODEC_TYPE_AUDIO;
+    mCodecType = AVMEDIA_TYPE_AUDIO;
     VAR_DEBUG(this);
     /** /todo asserts on sample sizes. Only 16 bits data supported (resampling/decoding?)  */
 }
@@ -54,7 +62,7 @@ AudioFile::AudioFile(const AudioFile& other)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
 {
-    mCodecType = CODEC_TYPE_AUDIO;
+    mCodecType = AVMEDIA_TYPE_AUDIO;
     VAR_DEBUG(this);
 }
 
@@ -83,8 +91,8 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     // on GCC in combination with make_shared.
     if (!audioDecodeBuffer)
     {
-        audioDecodeBuffer = new int16_t[sAudioBufferSize];
-        audioResampleBuffer = new int16_t[sAudioBufferSize];
+        audioDecodeBuffer = new boost::int16_t[sAudioBufferSize];
+        audioResampleBuffer = new boost::int16_t[sAudioBufferSize];
     }
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.

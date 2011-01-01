@@ -4,6 +4,9 @@
 #include "File.h"
 #include "IAudio.h"
 
+// Forward declaration of ffmpeg types
+struct ReSampleContext;
+
 namespace model {
 
 class AudioFile
@@ -57,8 +60,8 @@ private:
     // SEGV when compiled with GCC (MingW).
     //int16_t audioDecodeBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
     //int16_t audioResampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    int16_t* audioDecodeBuffer;
-    int16_t* audioResampleBuffer;
+    boost::int16_t* audioDecodeBuffer;
+    boost::int16_t* audioResampleBuffer;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

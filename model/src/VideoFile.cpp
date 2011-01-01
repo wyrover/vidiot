@@ -29,7 +29,7 @@ VideoFile::VideoFile()
 ,   mVideoAspectRatio(0)
 {
     VAR_DEBUG(this);
-    mCodecType = CODEC_TYPE_VIDEO;
+    mCodecType = AVMEDIA_TYPE_VIDEO;
 }
 
 VideoFile::VideoFile(boost::filesystem::path path)
@@ -38,7 +38,7 @@ VideoFile::VideoFile(boost::filesystem::path path)
 ,   mVideoAspectRatio(0)
 {
     VAR_DEBUG(this);
-    mCodecType = CODEC_TYPE_VIDEO;
+    mCodecType = AVMEDIA_TYPE_VIDEO;
 }
 
 VideoFile::VideoFile(const VideoFile& other)
@@ -47,7 +47,7 @@ VideoFile::VideoFile(const VideoFile& other)
 ,   mVideoAspectRatio(0)
 {
     VAR_DEBUG(this);
-    mCodecType = CODEC_TYPE_VIDEO;
+    mCodecType = AVMEDIA_TYPE_VIDEO;
 }
 
 VideoFile* VideoFile::clone()

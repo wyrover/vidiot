@@ -1,5 +1,12 @@
 #include "File.h"
 
+// Include at top, to exclude the intmax macros and use the boost versions
+#undef INTMAX_C
+#undef UINTMAX_C
+extern "C" {
+#include <avformat.h>
+};
+
 #include <math.h>
 #include <algorithm>
 #include <boost/make_shared.hpp>
@@ -43,7 +50,7 @@ File::File()
 ,   mFileOpen(false)
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
-,   mCodecType(CODEC_TYPE_UNKNOWN)
+,   mCodecType(AVMEDIA_TYPE_UNKNOWN)
 ,   mLastModified(boost::none)
 {
     VAR_DEBUG(this);
@@ -62,7 +69,7 @@ File::File(boost::filesystem::path path, int buffersize)
 ,   mFileOpen(false)
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
-,   mCodecType(CODEC_TYPE_UNKNOWN)
+,   mCodecType(AVMEDIA_TYPE_UNKNOWN)
 ,   mLastModified(boost::none)
 {
     VAR_DEBUG(this);
