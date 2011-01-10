@@ -65,6 +65,11 @@ void EmptyFile::moveTo(pts position)
     mVideoPosition = position;
 }
 
+wxString EmptyFile::getDescription() const
+{
+    return wxString();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
@@ -76,11 +81,9 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
     {
         return AudioChunkPtr();
     }
-    /** todo correct pts (third parameter) */
-    /** todo more precise n samples */
 
     // Number of samples for 1 pts
-    int nSamples = Convert::ptsToFrames(audioRate,nAudioChannels,1); // @todo frames vs samples
+    int nSamples = Convert::ptsToFrames(audioRate,nAudioChannels,1); // @todo frames vs samples (naming only)
 
     return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, nSamples, mAudioPosition));
 } 

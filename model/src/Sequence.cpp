@@ -84,26 +84,39 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 {
     UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
     updateTracks();
-    QueueEvent(new model::EventAddVideoTracks(TrackChange(tracks, position)));
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline).
+    // Example: Create sequence from autofolder.
+    // 1. Sequence is created
+    // 2. Tracks are added (and if queue events were used these are queued here)
+    // 3. Sequence is opened and initial tracks are 'added' as views
+    // 4. At some later point, the queued events result in 'double' views for the added tracks.
+    ProcessEvent(model::EventAddVideoTracks(TrackChange(tracks, position)));
 }
 
 void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 {
     UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
     updateTracks();
-    QueueEvent(new model::EventAddAudioTracks(TrackChange(tracks, position)));
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
+    ProcessEvent(model::EventAddAudioTracks(TrackChange(tracks, position)));
 }
 void Sequence::removeVideoTracks(Tracks tracks)
 {
     TrackPtr position = UtilList<TrackPtr>(mVideoTracks).removeElements(tracks);
     updateTracks();
-    QueueEvent(new model::EventRemoveVideoTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
+    ProcessEvent(model::EventRemoveVideoTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
 }
 void Sequence::removeAudioTracks(Tracks tracks)
 {
     TrackPtr position = UtilList<TrackPtr>(mAudioTracks).removeElements(tracks);
     updateTracks();
-    QueueEvent(new model::EventRemoveAudioTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
+    ProcessEvent(model::EventRemoveAudioTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
 }
 
 Tracks Sequence::getVideoTracks()
@@ -192,6 +205,11 @@ void Sequence::moveTo(int64_t position)
     {
         track->moveTo(position);
     }
+}
+
+wxString Sequence::getDescription() const
+{
+    return getName();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -114,6 +114,7 @@ public:
 
     virtual pts getNumberOfFrames();
     virtual void moveTo(pts position);
+    virtual wxString getDescription() const;
 
 	//////////////////////////////////////////////////////////////////////////
 	// IVIDEO

@@ -10,6 +10,7 @@
 namespace model {
 
 DEFINE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
+DEFINE_EVENT(DEBUG_EVENT_RENDER_PROGRESS, DebugEventRenderProgress, pts);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -27,6 +28,7 @@ Clip::Clip()
     ,   mLink()
     ,   mLastSetPosition(boost::none)
     ,   mSelected(false)
+    ,   mGeneratedPts(0)
 { 
     VAR_DEBUG(*this);
 }
@@ -43,6 +45,7 @@ Clip::Clip(IControlPtr clip)
     ,   mLink()
     ,   mLastSetPosition(boost::none)
     ,   mSelected(false)
+    ,   mGeneratedPts(0)
 { 
     mLength = mRender->getNumberOfFrames() - mOffset;
     VAR_DEBUG(*this);
@@ -60,6 +63,7 @@ Clip::Clip(const Clip& other)
     ,   mLink(other.mLink)
     ,   mLastSetPosition(boost::none)
     ,   mSelected(other.mSelected)
+    ,   mGeneratedPts(0)
 {
     VAR_DEBUG(*this)(other);
 }
@@ -87,7 +91,13 @@ void Clip::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
     mLastSetPosition.reset(position);
+    setGenerationProgress(0);
     mRender->moveTo(mOffset + position);
+}
+
+wxString Clip::getDescription() const
+{
+    return mRender->getDescription();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -159,6 +169,20 @@ void Clip::setSelected(bool selected)
 {
     mSelected = selected;
     ProcessEvent(EventSelectClip(selected));
+}
+
+pts Clip::getGenerationProgress() const
+{
+    return mGeneratedPts;
+}
+
+void Clip::setGenerationProgress(pts progress)
+{
+    if (mGeneratedPts != progress)
+    {
+        mGeneratedPts = progress;
+        ProcessEvent(DebugEventRenderProgress(mGeneratedPts));
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

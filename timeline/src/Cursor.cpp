@@ -36,20 +36,23 @@ long Cursor::getPosition() const
 
 void Cursor::setPosition(long position)
 {
-    VAR_DEBUG(mCursorPosition)(position);
+    if (position != mCursorPosition)
+    {
+        VAR_DEBUG(mCursorPosition)(position);
 
-    long oldPos = mCursorPosition;
-    mCursorPosition = position;
+        long oldPos = mCursorPosition;
+        mCursorPosition = position;
 
-    wxPoint scroll = getTimeline().getScrollOffset();
+        wxPoint scroll = getTimeline().getScrollOffset();
 
-    // Refresh the old and new cursor position areas
-    getTimeline().invalidateBitmap();
-    long cursorOnClientArea = mCursorPosition - scroll.x;
-    long oldposOnClientArea = oldPos - scroll.x;
-    getTimeline().RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,getTimeline().requiredHeight()),false);
+        // Refresh the old and new cursor position areas
+        getTimeline().invalidateBitmap();
+        long cursorOnClientArea = mCursorPosition - scroll.x;
+        long oldposOnClientArea = oldPos - scroll.x;
+        getTimeline().RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,getTimeline().requiredHeight()),false);
 
-    getIntervals().update(mCursorPosition);
+        getIntervals().update(mCursorPosition);
+    }
 }
 
 void Cursor::moveCursorOnPlayback(long pts)

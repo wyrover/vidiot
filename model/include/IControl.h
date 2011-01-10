@@ -1,6 +1,7 @@
 #ifndef MODEL_I_CONTROL_H
 #define MODEL_I_CONTROL_H
 
+#include <wx/string.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
@@ -29,6 +30,7 @@ public:
 
     virtual pts getNumberOfFrames() = 0;
     virtual void moveTo(pts position) = 0;
+    virtual wxString getDescription() const = 0; ///< Not called getName() to avoid conflict with AProjectViewNode::getName() for the Sequence class.
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

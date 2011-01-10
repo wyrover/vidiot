@@ -28,6 +28,7 @@ public:
     static const int sMaxTrackHeight;
     static const int sClipBorderSize;
     static const int sVideoPosition;
+    static int sClipDescriptionBarHeight;
 
     //////////////////////////////////////////////////////////////////////////
     // BRUSHES AND PENS
@@ -54,6 +55,11 @@ public:
     static const wxPen      sClipPen;
     static const wxBrush    sClipBrush;
 
+    static const wxColour   sClipDescriptionFGColour;
+    static const wxColour   sClipDescriptionBGColour;
+    static const wxPen      sClipDescriptionPen;
+    static const wxBrush    sClipDescriptionBrush;
+
     static const wxPen      sSelectedClipPen;
     static const wxBrush    sSelectedClipBrush;
 
@@ -78,7 +84,7 @@ public:
 
     static wxFont* sDebugFont;
     static wxFont* sTimeScaleFont;
-
+    static wxFont* sClipDescriptionFont;
 };
 
 }} // namespace

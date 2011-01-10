@@ -50,6 +50,10 @@ AudioChunkPtr EmptyClip::getNextAudio(int audioRate, int nAudioChannels)
 {
     AudioChunkPtr audioChunk = getDataGenerator<EmptyFile>()->getNextAudio(audioRate, nAudioChannels);
     VAR_AUDIO(audioChunk);
+    if (audioChunk)
+    {
+        setGenerationProgress(audioChunk->getPts());
+    }
     return audioChunk;
 }
 
@@ -61,6 +65,10 @@ VideoFramePtr EmptyClip::getNextVideo(int requestedWidth, int requestedHeight, b
 {
     VideoFramePtr videoFrame = getDataGenerator<EmptyFile>()->getNextVideo(requestedWidth, requestedHeight, alpha);
     VAR_VIDEO(videoFrame);
+    if (videoFrame)
+    {
+        setGenerationProgress(videoFrame->getPts());
+    }
     return videoFrame;
 }
 

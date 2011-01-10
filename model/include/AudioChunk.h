@@ -18,13 +18,15 @@ public:
 
     /// Initialize, allocate, and fill the data.
     /// @param buffer if non-null data from this buffer is copied into the newly allocated space.
-    AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples, double pts);
+    /// @param position approximate pts value of this chunk (note: use for debugging only)
+    AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples, pts position);
 
     /// Initialize but do not allocate yet. Used for empty chunks. Then,
     /// allocation only is needed when the data is needed for playback.
     /// During 'track combining' empty chunks can be ignored.
     /// This avoids needless allocation.
-    AudioChunk(int nChannels, samples_t nSamples, double pts);
+    /// @param position approximate pts value of this chunk (note: use for debugging only)
+    AudioChunk(int nChannels, samples_t nSamples, pts position);
 
     virtual ~AudioChunk();
 
@@ -32,7 +34,7 @@ public:
     // META DATA
     //////////////////////////////////////////////////////////////////////////
 
-    double getTimeStamp() const;
+    pts getPts() const;
     unsigned int getNumberOfChannels() const;
 
     template <typename Derived>
@@ -73,7 +75,7 @@ protected:
     samples_t mNrReadSamples;       ///< Number of samples that has been marked as read using read()
     samples_t mNrSamples;           ///< Total number of samples allocated in memory
     samples_t mNrSkippedSamples;    ///< Set if the length of the chunk is truncated after decoding (for stopping at right pts)
-    double mTimeStamp;
+    pts mPts;                       ///< Approximate pts value of this chunk (for debugging)
 
 private:
 
