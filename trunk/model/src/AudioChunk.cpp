@@ -9,13 +9,13 @@ const int AudioChunk::sBytesPerSample = 2;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples, double pts)
+AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples, pts position)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
 ,   mNrReadSamples(0)
 ,   mNrSkippedSamples(0)
-,   mTimeStamp(pts)
+,   mPts(position)
 {
     /** @todo now we only used fixed stereo... */
     mBuffer = static_cast<boost::int16_t*>(malloc(mNrSamples * sBytesPerSample));
@@ -25,13 +25,13 @@ AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples
     }
 }
 
-AudioChunk::AudioChunk(int nChannels, samples_t nSamples, double pts)
+AudioChunk::AudioChunk(int nChannels, samples_t nSamples, pts position)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
 ,   mNrReadSamples(0)
 ,   mNrSkippedSamples(0)
-,   mTimeStamp(pts)
+,   mPts(position)
 {
 }
 
@@ -44,9 +44,9 @@ AudioChunk::~AudioChunk()
 // META DATA
 //////////////////////////////////////////////////////////////////////////
 
-double AudioChunk::getTimeStamp() const
+pts AudioChunk::getPts() const
 {
-    return mTimeStamp;
+    return mPts;
 }
 
 unsigned int AudioChunk::getNumberOfChannels() const
@@ -94,7 +94,7 @@ void AudioChunk::setAdjustedLength(samples_t adjustedLength)
 std::ostream& operator<< (std::ostream& os, const AudioChunk& obj)
 {
     os  << &obj                     << "|" 
-        << obj.mTimeStamp           << "|" 
+        << obj.mPts                 << "|" 
         << obj.mNrChannels          << "|" 
         << obj.mNrSamples           << "|"
         << obj.mNrSkippedSamples    << "|"

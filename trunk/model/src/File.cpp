@@ -40,6 +40,7 @@ static const double sVideoFrameRate = 25.0;
 File::File()
 :	IControl()
 ,   mPath()
+,   mName()
 ,	mFileContext(0)
 ,   mReadingPackets(false)
 ,   mPackets(1)
@@ -59,6 +60,7 @@ File::File()
 File::File(boost::filesystem::path path, int buffersize)
 :	IControl()
 ,   mPath(path)
+,   mName()
 ,	mFileContext(0)
 ,   mReadingPackets(false)
 ,   mPackets(1)
@@ -78,6 +80,7 @@ File::File(boost::filesystem::path path, int buffersize)
 File::File(const File& other)
 :	IControl()
 ,   mPath(other.mPath)
+,   mName(other.mName)
 ,	mFileContext(0)
 ,   mReadingPackets(false)
 ,   mPackets(1)
@@ -229,6 +232,11 @@ void File::moveTo(pts position)
     mTwoInARow = 0;
     startReadingPackets();
     VAR_DEBUG(this);
+}
+
+wxString File::getDescription() const
+{
+    return getName();
 }
 
 //////////////////////////////////////////////////////////////////////////

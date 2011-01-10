@@ -30,13 +30,15 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 {
     ASSERT(mClip);
     getViewMap().registerView(mClip,this);
-    mClip->Bind(model::EVENT_SELECT_CLIP,   &ClipView::onClipSelected,  this);
+    mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
+    mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
     updateThumbnail();
 }
 
 ClipView::~ClipView()
 {
-    mClip->Unbind(model::EVENT_SELECT_CLIP, &ClipView::onClipSelected,  this);
+    mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
+    mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
     getViewMap().unregisterView(mClip);
 }
 
@@ -126,7 +128,7 @@ void ClipView::updateThumbnail()
     if (videoclip)
     {
         mClip->moveTo(0);
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(requiredWidth() - 2 * Layout::sClipBorderSize, requiredHeight() - 2 * Layout::sClipBorderSize, false);
+        model::VideoFramePtr videoFrame = videoclip->getNextVideo(requiredWidth() - 2 * Layout::sClipBorderSize, requiredHeight() - 2 * Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight, false);
         mThumbnail.reset(new wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
         mClip->moveTo(0);
     }
@@ -173,10 +175,22 @@ void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselecte
             dc.SetPen(Layout::sClipPen);
         }
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
+
+        // Thumbnail
         if (mThumbnail)
         {
-            dc.DrawBitmap(*mThumbnail,wxPoint(Layout::sClipBorderSize,Layout::sClipBorderSize));
+            dc.DrawBitmap(*mThumbnail,wxPoint(Layout::sClipBorderSize, Layout::sClipDescriptionBarHeight));
         }
+
+        // Text at top of clip
+        dc.SetFont(*Layout::sClipDescriptionFont);
+        dc.SetTextForeground(Layout::sClipDescriptionFGColour);
+        dc.SetTextBackground(Layout::sClipDescriptionBGColour);
+        dc.SetBrush(Layout::sClipDescriptionBrush);
+        dc.SetPen(Layout::sClipDescriptionPen);
+        //dc.SetLogicalFunction(wxEQUIV);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(), Layout::sClipDescriptionBarHeight);
+        dc.DrawText(mClip->getDescription(), wxPoint(1,1));
     }
 
     if (mRect.GetHeight() != 0)
@@ -190,10 +204,15 @@ void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselecte
     {
         dc.SetTextForeground(Layout::sDebugColour);
         dc.SetFont(*Layout::sDebugFont);
-        dc.DrawText(wxString::Format(wxT("%d"), mClip->getNumberOfFrames()), wxPoint(5,5));
+        dc.DrawText(wxString::Format(wxT("%d"), mClip->getNumberOfFrames()), wxPoint(5,15));
         wxString sPts; 
         sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
-        dc.DrawText(sPts, wxPoint(5,15));
+        dc.DrawText(sPts, wxPoint(5,25));
+
+        pts progress = mClip->getGenerationProgress();
+        pixel pos = getZoom().ptsToPixels(progress);
+        dc.SetPen(Layout::sDebugPen);
+        dc.DrawLine(wxPoint(pos,0), wxPoint(pos,bitmap.GetHeight()));
     }
 }
 
@@ -213,6 +232,12 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 //////////////////////////////////////////////////////////////////////////
 
 void ClipView::onClipSelected( model::EventSelectClip& event )
+{
+    invalidateBitmap();
+    event.Skip();
+}
+
+void ClipView::onGenerationProgress( model::DebugEventRenderProgress& event )
 {
     invalidateBitmap();
     event.Skip();

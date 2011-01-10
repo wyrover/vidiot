@@ -1,5 +1,6 @@
 #include "Track.h"
 
+#include <wx/intl.h> 
 #include <algorithm>
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
@@ -107,6 +108,12 @@ void Track::moveTo(pts position)
 
     ASSERT(position <= lastFrame)(position)(lastFrame);
     (*mItClips)->moveTo(position - firstFrame);// - 1); // -1: Counting starts at 0
+}
+
+wxString Track::getDescription() const
+{
+    static wxString track = _("Track");
+    return wxString::Format(wxT("%s %02d"), track, mIndex);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -28,11 +28,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     File();
-
     File(boost::filesystem::path path, int buffersize = 1);
-
     virtual File* clone();
-
     virtual ~File();
 
 	//////////////////////////////////////////////////////////////////////////
@@ -41,6 +38,7 @@ public:
 
     virtual pts getNumberOfFrames();
     virtual void moveTo(pts position);
+    virtual wxString getDescription() const;
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES

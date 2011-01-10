@@ -8,6 +8,7 @@ namespace model{
 class Clip;
 typedef boost::shared_ptr<Clip> ClipPtr;
 class EventSelectClip;
+class DebugEventRenderProgress;
 }
 
 namespace gui { namespace timeline {
@@ -56,6 +57,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onClipSelected( model::EventSelectClip& event );
+    void onGenerationProgress( model::DebugEventRenderProgress& event );
 
 private:
 

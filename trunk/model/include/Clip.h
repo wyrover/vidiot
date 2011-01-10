@@ -9,6 +9,7 @@
 namespace model {
 
 DECLARE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
+DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS, DebugEventRenderProgress, pts);
 
 class Clip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
@@ -34,6 +35,7 @@ public:
 
     virtual pts getNumberOfFrames();
     virtual void moveTo(pts position);
+    virtual wxString getDescription() const;
 
     //////////////////////////////////////////////////////////////////////////
     // TRACK
@@ -90,6 +92,13 @@ public:
 
     bool getSelected() const;           ///< @return true if this clip is selected
     void setSelected(bool selected);    ///< Select or deselect clip
+
+    /// @return pts value of most recently returned audio/video in getNext*.
+    pts getGenerationProgress() const;          
+
+    /// @param delivered value of most recently returned audio/video in getNext*.
+    /// Triggers DebugEventRenderProgress.
+    void setGenerationProgress(pts progress);
 
     //////////////////////////////////////////////////////////////////////////
     // STATIC HELPER METHOD
@@ -148,9 +157,10 @@ private:
     pts mLength;            ///< Length of the clip
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
 
-    boost::optional<pts> mLastSetPosition; ///< The most recent position as specified in 'moveTo()'.
+    boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.
+    pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
 
-    bool mSelected;         ///< True if this clip is currently selected
+    bool mSelected;                         ///< True if this clip is currently selected
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -81,6 +81,7 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
     }
 
     VAR_VIDEO(videoFrame);
+    setGenerationProgress(mProgress);
     return videoFrame;
 }
 

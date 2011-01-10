@@ -81,13 +81,16 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
         }
         else
         {
-            VAR_WARNING(mProgress)(lengthInFrames);
+            wxString desc = getDescription();
+            VAR_WARNING(desc)(mProgress)(lengthInFrames);
             NIY;
             // Todo: Clip is longer than original data
         }
     }
+    VAR_DEBUG(*this)(mProgress)(lengthInFrames);
 
     VAR_AUDIO(audioChunk);
+    setGenerationProgress(Convert::framesToPts(audioRate,nAudioChannels,mProgress));
     return audioChunk;
 }
 

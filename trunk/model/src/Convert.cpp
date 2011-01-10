@@ -17,25 +17,25 @@ int toInt(rational r)
 }
 
 // static
-int Convert::timeToPts(int time)
+pts Convert::timeToPts(int time)
 {
     return toInt(rational(time) / rational(Constants::sSecond) / Project::current()->getProperties()->getFrameRate());
 }
 
 // static
-int Convert::ptsToTime(int pts)
+int Convert::ptsToTime(pts position)
 {
-    return toInt(rational(pts) * rational(Constants::sSecond) * Project::current()->getProperties()->getFrameRate());
+    return toInt(rational(position) * rational(Constants::sSecond) * Project::current()->getProperties()->getFrameRate());
 }
 
 // static
-int Convert::ptsToMicroseconds(int pts)
+int Convert::ptsToMicroseconds(pts position)
 {
-    return toInt(rational(ptsToTime(pts)) * rational(Constants::sMicroseconds));
+    return toInt(rational(ptsToTime(position)) * rational(Constants::sMicroseconds));
 }
 
 // static
-int Convert::microsecondsToPts(int us)
+pts Convert::microsecondsToPts(int us)
 {
     return timeToPts(toInt(rational(us) / rational(Constants::sMicroseconds)));
 }
@@ -43,11 +43,23 @@ int Convert::microsecondsToPts(int us)
 // static
 int Convert::ptsToFrames(int audioRate, int nAudioChannels, pts position)
 {
-    return
-        audioRate *
-        nAudioChannels * 
-        model::Convert::ptsToTime(position) /
-        Constants::sSecond;
+    boost::int64_t nFrames =
+        static_cast<boost::int64_t>(audioRate * nAudioChannels) * 
+        static_cast<boost::int64_t>(model::Convert::ptsToTime(position)) /
+        static_cast<boost::int64_t>(Constants::sSecond);
+    ASSERT(nFrames >= 0);
+    return nFrames;
+}
+
+// static
+pts Convert::framesToPts(int audioRate, int nAudioChannels, int nFrames)
+{
+    boost::int64_t time = 
+        static_cast<boost::int64_t>(nFrames) * 
+        static_cast<boost::int64_t>(Constants::sSecond) /
+        static_cast<boost::int64_t>(audioRate * nAudioChannels);
+    ASSERT(time >= 0);
+    return model::Convert::timeToPts(time); 
 }
 
 } // namespace

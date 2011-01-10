@@ -1,5 +1,8 @@
 #include "Layout.h"
 
+#include <wx/bitmap.h>
+#include <wx/dcmemory.h>
+
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
@@ -18,6 +21,7 @@ const int Layout::sMinTrackHeight                       = 10;
 const int Layout::sMaxTrackHeight                       = 100;
 const int Layout::sClipBorderSize                       = 2;
 const int Layout::sVideoPosition                        = Layout::sTimeScaleHeight + Layout::sMinimalGreyAboveVideoTracksHeight;
+int Layout::sClipDescriptionBarHeight                           = 5; // Default value.
 
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS
@@ -43,6 +47,11 @@ const wxBrush   Layout::sAudioVideoDividerBrush  (wxColour(10,20,30),wxBRUSHSTYL
 const wxPen     Layout::sClipPen                 (*wxBLACK, sClipBorderSize);
 const wxBrush   Layout::sClipBrush               (wxColour(123,123,123),wxBRUSHSTYLE_SOLID);
 
+const wxColour  Layout::sClipDescriptionFGColour (*wxWHITE);
+const wxColour  Layout::sClipDescriptionBGColour (wxColour(0,0,0));
+const wxPen     Layout::sClipDescriptionPen      (Layout::sClipDescriptionBGColour,1);
+const wxBrush   Layout::sClipDescriptionBrush    (Layout::sClipDescriptionBGColour,wxBRUSHSTYLE_SOLID);
+
 const wxPen     Layout::sSelectedClipPen         (*wxBLACK,sClipBorderSize);
 const wxBrush   Layout::sSelectedClipBrush       (wxColour(80,80,80),wxBRUSHSTYLE_SOLID);
 
@@ -63,13 +72,21 @@ const int       Layout::sSnapDistance           = 50;
 // FONTS
 //////////////////////////////////////////////////////////////////////////
 
-wxFont*   Layout::sDebugFont        = 0;
-wxFont*   Layout::sTimeScaleFont    = 0;
+wxFont*   Layout::sDebugFont            = 0;
+wxFont*   Layout::sTimeScaleFont        = 0;
+wxFont*   Layout::sClipDescriptionFont  = 0;
 
 void Layout::initializeFonts()
 {
-    sDebugFont      = const_cast<wxFont*>(wxSMALL_FONT);
-    sTimeScaleFont  = const_cast<wxFont*>(wxSMALL_FONT);
+    sDebugFont              = const_cast<wxFont*>(wxSMALL_FONT);
+    sTimeScaleFont          = const_cast<wxFont*>(wxSMALL_FONT);
+    sClipDescriptionFont    = const_cast<wxFont*>(wxSMALL_FONT);
+
+    wxBitmap tmp(100,100 ); // tmp, so size not that important.
+    wxMemoryDC dc(tmp);
+    dc.SetFont(*sClipDescriptionFont);
+    sClipDescriptionBarHeight = dc.GetCharHeight() + 2;
+
 }
 
 }} // namespace

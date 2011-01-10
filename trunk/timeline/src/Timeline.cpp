@@ -254,7 +254,6 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
 
 void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 {
-    LOG_INFO;
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
@@ -263,7 +262,6 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
     wxBitmap bitmap = getBitmap();
     wxMemoryDC dcBmp(bitmap);
 
-    VAR_DEBUG(GetUpdateRegion());
     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
     while (upd)
     {
@@ -271,7 +269,6 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
         int y = scroll.y + upd.GetY();
         int w = upd.GetW();
         int h = upd.GetH();
-        VAR_DEBUG(x)(y)(w)(h);
         dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
         upd++;
     }
@@ -353,7 +350,6 @@ pixel Timeline::requiredHeight() const
 
 void Timeline::draw(wxBitmap& bitmap) const
 {
-    LOG_DEBUG;
     wxMemoryDC dc(bitmap);
 
     // Get size of canvas
