@@ -123,22 +123,21 @@ void File::openFile()
     result = av_find_stream_info(mFileContext);
     ASSERT(result >= 0)(result);
 
+    mNumberOfFrames = model::Convert::microsecondsToPts(mFileContext->duration);
+    VAR_DEBUG(mNumberOfFrames)(mFileContext);
+
     /** /todo get all streams info, use that to make hasVideo and hasAudio for showing in project view. This class is about meta data of video/audio files.*/
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
         AVStream* stream = mFileContext->streams[i];
-        int64_t d =  mFileContext->streams[i]->duration;
-        VAR_DEBUG(d);
+        VAR_DEBUG(stream);
         if (mFileContext->streams[i]->codec->codec_type == mCodecType)
         {
             mStream = mFileContext->streams[i];
             mStreamIndex = i;
-            //break;
+            VAR_DEBUG(mStreamIndex);
         }
     }
-    mNumberOfFrames = model::Convert::microsecondsToPts(mFileContext->duration);
-
-    VAR_DEBUG(mNumberOfFrames)(mFileContext->nb_streams)(mStreamIndex);
 
     mFileOpen = true;
 }

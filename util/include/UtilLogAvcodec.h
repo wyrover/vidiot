@@ -7,10 +7,14 @@
 
 struct AVRational;
 struct AVCodecContext;
+struct AVFormatContext;
+struct AVStream;
 
 std::ostream& operator<< (std::ostream& os, const PixelFormat& obj);
 std::ostream& operator<< (std::ostream& os, const AVRational& obj);
 std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj);
+std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj);
+std::ostream& operator<< (std::ostream& os, const AVStream* obj);
 
 class Avcodec
 {
