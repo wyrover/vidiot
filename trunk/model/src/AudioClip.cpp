@@ -10,6 +10,7 @@
 #include "AudioFile.h"
 #include "Constants.h"
 #include "Convert.h"
+#include "EmptyChunk.h"
 
 namespace model {
 
@@ -64,7 +65,9 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
 
     AudioChunkPtr audioChunk;
 
-    if (mProgress < lengthInFrames)
+    int remainingFrames = lengthInFrames - mProgress;
+
+    if (remainingFrames > 0)
     {
         audioChunk = getDataGenerator<AudioFile>()->getNextAudio(audioRate, nAudioChannels);
         if (audioChunk)
@@ -81,10 +84,15 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
         }
         else
         {
-            wxString desc = getDescription();
-            VAR_WARNING(desc)(mProgress)(lengthInFrames);
-            NIY;
-            // Todo: Clip is longer than original data
+            // The clip has not provided enough audio data yet (for the pts length of the clip) 
+            // but there is no more audio data. This can typically happen by using a avi file
+            // for which the video data is longer than the audio data. Instead of clipping the
+            // extra video part, silence is added here (the user can make the clip shorter if
+            // required - thus removing the extra video, but that's a user decision to be made).
+            VAR_DEBUG(remainingFrames); 
+
+            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, remainingFrames, getNumberOfFrames()));
+            mProgress = lengthInFrames;
         }
     }
     VAR_DEBUG(*this)(mProgress)(lengthInFrames);

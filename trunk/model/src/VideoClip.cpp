@@ -75,8 +75,13 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
         }
         else
         {
-            //NIY
-                // Todo: Clip is longer than original data
+            // See AudioClip::getNextAudio
+            // The clip has not provided enough video data yet (for the pts length of the clip) 
+            // but there is no more video data. This can typically happen by using a avi file
+            // for which the audio data is longer than the video data. Instead of clipping the
+            // extra audio part, empty video is added here (the user can make the clip shorter if
+            // required - thus removing the extra audio, but that's a user decision to be made).
+            NIY; // NIY since I did not have a file for testing yet.
         }
     }
 

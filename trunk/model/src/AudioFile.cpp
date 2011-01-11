@@ -136,6 +136,11 @@ void AudioFile::stopDecodingAudio()
 
 AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 {
+    // @todo if the end of file is reached, a subsequent getNextAudio will trigger a new 
+    // (useless) sequence of startReadingPackets, bufferPacketsThread, "bufferPacketsThread: End of file."
+    // (and this, over and over again....). Also for video?
+    // Basically, in the Audio/Video-File class, buffering should not be restarted when the whole of the
+    // file has already been buffered (not until a 'moveto', at least).
     startDecodingAudio(audioRate,nAudioChannels);
 
     PacketPtr audioPacket = getNextPacket();
