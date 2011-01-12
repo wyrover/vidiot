@@ -7,6 +7,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
 #include "VideoFile.h"
+#include "EmptyFrame.h"
 
 namespace model {
 
@@ -81,13 +82,39 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
             // for which the audio data is longer than the video data. Instead of clipping the
             // extra audio part, empty video is added here (the user can make the clip shorter if
             // required - thus removing the extra audio, but that's a user decision to be made).
-            NIY; // NIY since I did not have a file for testing yet.
+            LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
+
+            PixelFormat format = PIX_FMT_RGBA;
+            if (!alpha)
+            {
+                format = PIX_FMT_RGB24;
+            }
+
+            /** todo timebase. See also EmptyFile.cpp::getnextvideo */
+            AVRational timebase;
+            timebase.num = 0;
+            timebase.den = 0;
+            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(format, requestedWidth, requestedHeight, mProgress, timebase));
+
+            // @todo use repeat in case multiple extra video images are needed?
+            mProgress += 1;
+
         }
     }
 
     VAR_VIDEO(videoFrame);
     setGenerationProgress(mProgress);
     return videoFrame;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
+{
+    os << static_cast<const Clip&>(obj) << '|' << obj.mProgress;
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////
