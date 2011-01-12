@@ -89,8 +89,7 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
             // for which the video data is longer than the audio data. Instead of clipping the
             // extra video part, silence is added here (the user can make the clip shorter if
             // required - thus removing the extra video, but that's a user decision to be made).
-            VAR_DEBUG(remainingFrames); 
-
+            LOG_WARNING << *this << ": (" << getDescription() << " Adding " << remainingFrames << " frames to make audio length equal to video length";
             audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, remainingFrames, getNumberOfFrames()));
             mProgress = lengthInFrames;
         }
@@ -100,6 +99,16 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
     VAR_AUDIO(audioChunk);
     setGenerationProgress(Convert::framesToPts(audioRate,nAudioChannels,mProgress));
     return audioChunk;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
+{
+    os << static_cast<const Clip&>(obj) << '|' << obj.mProgress;
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////
