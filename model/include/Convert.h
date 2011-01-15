@@ -2,6 +2,7 @@
 #define CONVERT_H
 
 #include "UtilInt.h"
+#include "FrameRate.h"
 
 namespace model {
 
@@ -29,6 +30,21 @@ public:
     /// @param position pts value to be converted
     /// @return number of frames required for this number of pts
     static pts framesToPts(int audioRate, int nAudioChannels, int nFrames);
+
+    /// Determine which timestamp in the project's timebase relates to
+    /// a rendered frame timestamp (given an input frame rate)
+    /// @param inputposition number of the rendered frame
+    /// @param inputrate frame rate of rendering (thus, the rate that is embedded in a file)
+    /// @return the related pts value when using the project's time base
+    static pts toProjectFrameRate(pts inputposition, FrameRate inputrate);
+
+    /// Determine which timestamp in the project's timebase relates to
+    /// a rendered frame timestamp (given an input frame rate)
+    /// @param outputposition number of the displayed frame (in project's frame rate timebase)
+    /// @param inputrate frame rate of rendering (thus, the rate that is embedded in a file)
+    /// @return the related to be decoded frame number
+    static pts fromProjectFrameRate(pts outputposition, FrameRate inputrate);
+
 };
 
 } // namespace

@@ -8,6 +8,7 @@
 #include "IControl.h"
 #include "FilePacket.h"
 #include "AProjectViewNode.h"
+#include "FrameRate.h"
 
 // Forward declarations of ffmpeg types
 struct AVFormatContext;
@@ -113,6 +114,7 @@ private:
     bool mFileOpen;
 
     bool mReadingPackets;
+    bool mEOF;
 
     int mMaxBufferSize;
 
@@ -131,6 +133,12 @@ private:
 
     boost::filesystem::path mPath;
     mutable boost::optional<wxString> mLastModified;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const File& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

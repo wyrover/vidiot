@@ -27,12 +27,6 @@ namespace model {
 
 boost::mutex File::sMutexAvcodec;
 
-static double sMilliSecondsPerSecond = 1000.0;
-static double sMicroSecondsPerSecond = 1000.0 * sMilliSecondsPerSecond;
-
-static const int sBytesPerSample = 2;
-static const double sVideoFrameRate = 25.0;
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -43,6 +37,7 @@ File::File()
 ,   mName()
 ,	mFileContext(0)
 ,   mReadingPackets(false)
+,   mEOF(false)
 ,   mPackets(1)
 ,   mMaxBufferSize(0)
 ,   mStreamIndex(-1)
@@ -63,6 +58,7 @@ File::File(boost::filesystem::path path, int buffersize)
 ,   mName()
 ,	mFileContext(0)
 ,   mReadingPackets(false)
+,   mEOF(false)
 ,   mPackets(1)
 ,   mMaxBufferSize(buffersize)
 ,   mStreamIndex(-1)
@@ -83,6 +79,7 @@ File::File(const File& other)
 ,   mName(other.mName)
 ,	mFileContext(0)
 ,   mReadingPackets(false)
+,   mEOF(false)
 ,   mPackets(1)
 ,   mMaxBufferSize(other.mMaxBufferSize)
 ,   mStreamIndex(-1)
@@ -123,10 +120,8 @@ void File::openFile()
     result = av_find_stream_info(mFileContext);
     ASSERT(result >= 0)(result);
 
-    mNumberOfFrames = model::Convert::microsecondsToPts(mFileContext->duration);
-    VAR_DEBUG(mNumberOfFrames)(mFileContext);
-
     /** /todo get all streams info, use that to make hasVideo and hasAudio for showing in project view. This class is about meta data of video/audio files.*/
+    mNumberOfFrames = -1;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
         AVStream* stream = mFileContext->streams[i];
@@ -137,7 +132,20 @@ void File::openFile()
             mStreamIndex = i;
             VAR_DEBUG(mStreamIndex);
         }
+        if (mFileContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        {
+            // If there is video in the file, then the number of video frames is used for the duration.
+            FrameRate videoFrameRate = FrameRate(stream->codec->time_base.num, stream->codec->time_base.den);
+            mNumberOfFrames = Convert::toProjectFrameRate(stream->duration, videoFrameRate);
+        }
     }
+    if (mNumberOfFrames == -1)
+    {
+        // For files without video, determine the number of 'virtual video frames'.
+        mNumberOfFrames = Convert::microsecondsToPts(mStream->duration);
+    }
+
+    VAR_DEBUG(mNumberOfFrames)(mFileContext);
 
     mFileOpen = true;
 }
@@ -198,6 +206,12 @@ void File::stopReadingPackets()
 
     // Finally, flush avcodec. The remaining avcodec buffers are no
     // longer necessary.
+    //
+    // @todo replace with mStream->codec and move mCodecContext to derived classes. 
+    // However, in some cases the file is opened without starting decoding
+    // (for instance, for determining file length only).
+    // mStream->codec will always be != 0 here.
+    // mCodecContext will only be != 0 when initialized in a derived class.
     if (mCodecContext)
     {
         avcodec_flush_buffers(mCodecContext);
@@ -229,7 +243,10 @@ void File::moveTo(pts position)
     ASSERT(mPackets.getSize() == 0)(mPackets.getSize());
     mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
     mTwoInARow = 0;
-    startReadingPackets();
+
+    mEOF = false;
+
+    //startReadingPackets();
     VAR_DEBUG(this);
 }
 
@@ -277,7 +294,27 @@ bool File::isSupported()
 
 PacketPtr File::getNextPacket()
 {
-    startReadingPackets(); // This is the normal trigger for starting to read
+    if (mEOF) 
+    {
+        // After EOF is reached, first a 'moveTo' must be done.
+        // Since in bufferPacketsThread() mReadingPackets is set to
+        // false also, we need to do this, to avoid restarting the
+        // bufferPacketsThread() in method startReadingPackets()
+
+        VAR_DEBUG(mEOF);
+        
+        if (mPackets.getSize() == 0)
+        {
+            // EOF was reached AND the list of remaining packets
+            // is empty. Signal this.
+            LOG_DEBUG << "EOF";
+            return PacketPtr();
+        }
+    }
+    else
+    {
+        startReadingPackets(); // This is the normal trigger for starting to read
+    }
 
     // This lock is used to signal that an external thread is blocked on
     // getting a new packet.
@@ -304,6 +341,7 @@ void File::bufferPacketsThread()
         if (av_read_frame(mFileContext, packet) < 0)
         {
             LOG_DEBUG << "End of file.";
+            mEOF = true;
             mPackets.push(PacketPtr());
             break;
         }
@@ -339,6 +377,16 @@ void File::bufferPacketsThread()
     mReadingPackets = false; // Needed for any breaks above (implicit stop at end of file)
 
     VAR_DEBUG(this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const File& obj )
+{
+    os << &obj << '|' << obj.mPath << '|' << obj.mFileOpen << '|' << obj.mReadingPackets << '|' << obj.mEOF << '|' << obj.mMaxBufferSize << '|' << obj.mNumberOfFrames << '|' << obj.mTwoInARow << '|' << obj.mLastModified;
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////
