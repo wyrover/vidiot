@@ -40,7 +40,7 @@ AudioFile::AudioFile()
     ,   audioResampleBuffer(0)
 {
     mCodecType = AVMEDIA_TYPE_AUDIO;
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 AudioFile::AudioFile(boost::filesystem::path path)
@@ -51,7 +51,7 @@ AudioFile::AudioFile(boost::filesystem::path path)
     ,   audioResampleBuffer(0)
 {
     mCodecType = AVMEDIA_TYPE_AUDIO;
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
     /** /todo asserts on sample sizes. Only 16 bits data supported (resampling/decoding?)  */
 }
 
@@ -63,7 +63,7 @@ AudioFile::AudioFile(const AudioFile& other)
     ,   audioResampleBuffer(0)
 {
     mCodecType = AVMEDIA_TYPE_AUDIO;
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 AudioFile* AudioFile::clone()
@@ -121,11 +121,12 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
         ASSERT(mResampleContext != 0);/** /todo replace with gui message and abort */
     }
 
-    VAR_INFO(mCodecContext);
+    VAR_DEBUG(this)(mCodecContext);
 }
 
 void AudioFile::stopDecodingAudio()
 {
+    VAR_DEBUG(this);
     if (mDecodingAudio)
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
@@ -222,8 +223,18 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     pts += static_cast<double>(nSamples) / static_cast<double>(/*nAudioChannels * already done before resampling */audioRate);
 
     AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, pts);//boost::make_shared<AudioChunk>(audioDecodeBuffer, outputSize / 2, pts);
-    VAR_AUDIO(audioChunk);
+    VAR_AUDIO(this)(audioChunk);
     return audioChunk;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const AudioFile& obj )
+{
+    os << static_cast<const File&>(obj) << '|' << obj.mDecodingAudio;
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

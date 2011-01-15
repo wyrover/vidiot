@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include <boost/rational.hpp>
-#include "FrameRate.h"
 #include "Project.h"
 #include "Constants.h"
 #include "Properties.h"
@@ -60,6 +59,23 @@ pts Convert::framesToPts(int audioRate, int nAudioChannels, int nFrames)
         static_cast<boost::int64_t>(audioRate * nAudioChannels);
     ASSERT(time >= 0);
     return model::Convert::timeToPts(time); 
+}
+
+pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrate)
+{
+    return toInt(rational(inputposition) * inputrate / outputrate );
+}
+
+//static 
+pts Convert::toProjectFrameRate(pts inputposition, FrameRate inputrate)
+{
+    return convertFrameRate(inputposition, inputrate, Project::current()->getProperties()->getFrameRate());
+}
+
+//static 
+pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
+{
+    return convertFrameRate(outputposition, Project::current()->getProperties()->getFrameRate(), inputrate);
 }
 
 } // namespace
