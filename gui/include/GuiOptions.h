@@ -47,6 +47,7 @@ public:
 
     static double getMarkerBeginAddition();
     static double getMarkerEndAddition();
+    static wxString getTimelineStrip();
 
     //////////////////////////////////////////////////////////////////////////
     // CONFIGURATION DIALOG
@@ -75,6 +76,9 @@ private:
 
     wxSpinCtrlDouble*   mMarkerBeginAddition;
     wxSpinCtrlDouble*   mMarkerEndAddition;
+    wxTextCtrl*         mStrip;
+
+    static wxString     sStrip; ///< Cached for performance
 
     //////////////////////////////////////////////////////////////////////////
     // DEBUG
