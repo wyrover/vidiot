@@ -11,6 +11,7 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <wx/utils.h>
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
@@ -24,6 +25,7 @@ namespace gui {
 
 wxString    GuiOptions::sConfigFile("");
 bool        GuiOptions::sShowDebugInfoOnWidgets = false;
+wxString    GuiOptions::sStrip("");
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER MACROS
@@ -39,7 +41,6 @@ bool        GuiOptions::sShowDebugInfoOnWidgets = false;
 #define SETBOOL(name,value)             result = wxConfigBase::Get()->Write(name, value); ASSERT(result)
 #define SETDOUBLE(name,value)           result = wxConfigBase::Get()->Write(name, value); ASSERT(result)
 
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER PATH VARIABLES
 //////////////////////////////////////////////////////////////////////////
@@ -53,6 +54,7 @@ static const wxString sPathShowDebugInfoOnWidgets   ("/Debug/Show");
 static const wxString sPathFrameRate                ("/Video/FrameRate");
 static const wxString sPathMarkerBeginAddition      ("/Timeline/MarkerBeginAddition");
 static const wxString sPathMarkerEndAddition        ("/Timeline/MarkerEndAddition");
+static const wxString sPathStrip                    ("/Timeline/Strip");
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER VARIABLES
@@ -162,156 +164,151 @@ double GuiOptions::getMarkerEndAddition()
     return GETDOUBLE(sPathMarkerEndAddition,0);
 }
 
+// static
+wxString GuiOptions::getTimelineStrip()
+{
+    return sStrip;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CONFIGURATION DIALOG
 //////////////////////////////////////////////////////////////////////////
 
+class OptionHelper
+{
+public:
+    OptionHelper(GuiOptions* window)
+        :   mWindow(window)
+        ,   panel(0)
+        ,   topSizer(0)
+        ,   staticbox_sizer(0)
+    {
+    };
+    void tab(const wxString& name)
+    {
+        panel = new wxPanel(mWindow->GetBookCtrl(), wxID_ANY);
+        mWindow->GetBookCtrl()->AddPage(panel, name, true);
+        topSizer = new wxBoxSizer( wxVERTICAL );
+        panel->SetSizerAndFit(topSizer);
+        staticbox_sizer = 0;
+    }
+    void box(const wxString& name)
+    {
+        ASSERT(panel);
+        ASSERT(topSizer);
+        wxStaticBox* staticbox = new wxStaticBox(panel, wxID_ANY, name);
+        staticbox_sizer = new wxStaticBoxSizer( staticbox, wxVERTICAL );
+        topSizer->Add(staticbox_sizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
+    }
+    void option(const wxString& name, wxWindow* widget)
+    {
+        ASSERT(staticbox_sizer);
+        wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
+        staticbox_sizer->Add(hSizer, 0, wxGROW|wxLEFT|wxALL, 5);
+        hSizer->Add(new wxStaticText(panel, wxID_ANY, name), 0, wxALL|wxALIGN_TOP, 5);
+        hSizer->Add(5, 5, 1, wxALL, 0);
+        hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP, 5);
+    }
+    wxWindow* getParent()
+    {
+        ASSERT(panel);
+        return panel;
+    }
+private:
+    GuiOptions* mWindow;
+    wxPanel* panel;                 ///< tab:The topmost widget
+    wxBoxSizer* topSizer;           ///< tab:Sizer for panel
+    wxBoxSizer* staticbox_sizer;    ///< box:Sizer for current box
+};
+
 GuiOptions::GuiOptions(wxWindow* win)
 :   wxPropertySheetDialog(win, wxID_ANY, _("Preferences"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-    // Extra scoping below is for easier copy/pasting for new tabs
+    sStrip = GETSTRING(sPathStrip,_T(""));
+    sShowDebugInfoOnWidgets = GETBOOL(sPathShowDebugInfoOnWidgets,false);
+        
+    OptionHelper add(this);
 
     //////////////////////////////////////////////////////////////////////////
-    // GENERAL
+ 
+    add.tab(_("General"));
+
+    add.box(_("Startup"));
+
+    mLoadLast = new wxCheckBox(add.getParent(), wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
+    mLoadLast->SetValue(GETBOOL(sPathAutoLoadEnabled,false));
+    add.option(_("Load last project on startup"), mLoadLast);
+
     //////////////////////////////////////////////////////////////////////////
-    
+
+    add.tab(_("Video"));
+
+    add.box(_("New projects"));
+
+    wxArrayString choices;
+    unsigned int selection = 0;
+    model::FrameRate currentFrameRate = getDefaultFrameRate();
+    for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
-        // Tab: General
-        wxPanel* panel = new wxPanel(GetBookCtrl(), wxID_ANY);
-        GetBookCtrl()->AddPage(panel, _("General"), true);
-        wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
-        panel->SetSizerAndFit(topSizer);
-
-        // Box: Start 
-        wxStaticBox*    staticbox       = new wxStaticBox(panel, wxID_ANY, _("Startup"));
-        wxBoxSizer*     staticbox_sizer = new wxStaticBoxSizer( staticbox, wxVERTICAL );
-        topSizer->Add(staticbox_sizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
-
-        // Entry: Load last project on startup
-        wxBoxSizer*     hSizer          = new wxBoxSizer( wxHORIZONTAL );
-        staticbox_sizer->Add(hSizer, 0, wxGROW|wxALL, 5);
-        mLoadLast = new wxCheckBox(panel, wxID_ANY, _("&Load last project on startup"), wxDefaultPosition, wxDefaultSize);
-        mLoadLast->SetValue(GETBOOL(sPathAutoLoadEnabled,false));
-        hSizer->Add(mLoadLast, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // VIDEO
-    //////////////////////////////////////////////////////////////////////////
-
-    {
-        // Tab: Video
-        wxPanel* panel = new wxPanel(GetBookCtrl(), wxID_ANY);
-        GetBookCtrl()->AddPage(panel, _("Video"), false);
-        wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
-        panel->SetSizerAndFit(topSizer);
-
-        // Box: Framerate
-        wxArrayString choices;
-        unsigned int selection = 0;
-        model::FrameRate currentFrameRate = getDefaultFrameRate();
-        for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
+        choices.Add(boost::get<0>(sPossibleFrameRates[i]));
+        if (currentFrameRate == boost::get<1>(sPossibleFrameRates[i]))
         {
-            choices.Add(boost::get<0>(sPossibleFrameRates[i]));
-            if (currentFrameRate == boost::get<1>(sPossibleFrameRates[i]))
-            {
-                selection = i;
-            }
-        };
-        mFrameRate = new wxRadioBox(panel, wxID_ANY, wxT("Framerate for new projects"),wxPoint(10,10), wxDefaultSize, choices, 1, wxRA_SPECIFY_COLS );
-        mFrameRate->SetSelection(selection);
-        topSizer->Add(mFrameRate, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // TIMELINE
-    //////////////////////////////////////////////////////////////////////////
-
-    {
-        // Tab: Timeline
-        wxPanel* panel = new wxPanel(GetBookCtrl(), wxID_ANY);
-        GetBookCtrl()->AddPage(panel, _("Timeline"), false);
-        wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
-        panel->SetSizerAndFit(topSizer);
-
-        // Box: Start 
-        wxStaticBox*    staticbox       = new wxStaticBox(panel, wxID_ANY, _("Marking selection"));
-        wxBoxSizer*     staticbox_sizer = new wxStaticBoxSizer( staticbox, wxVERTICAL );
-        topSizer->Add(staticbox_sizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
-
-        // Box: Marking selection while playing
-
-        // Entry: Begin addition
-        {
-            wxBoxSizer*     hSizer          = new wxBoxSizer( wxHORIZONTAL );
-            staticbox_sizer->Add(hSizer, 0, wxGROW|wxALL, 5);
-            double initial = getMarkerBeginAddition();
-            mMarkerBeginAddition = new wxSpinCtrlDouble(panel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
-            hSizer->Add(new wxStaticText(panel, wxID_ANY, _("Begin marker expansion/contraction (s).")), 0, wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
-            hSizer->Add(5, 5, 1, wxALL, 0);
-            hSizer->Add(mMarkerBeginAddition, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+            selection = i;
         }
-
-        // Entry: End addition
-        {
-            wxBoxSizer*     hSizer          = new wxBoxSizer( wxHORIZONTAL );
-            staticbox_sizer->Add(hSizer, 0, wxGROW|wxALL, 5);
-            double initial = getMarkerEndAddition();
-            mMarkerEndAddition = new wxSpinCtrlDouble(panel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
-            hSizer->Add(new wxStaticText(panel, wxID_ANY, _("End marker expansion/contraction (s).")), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-            hSizer->Add(5, 5, 1, wxALL, 0);
-            hSizer->Add(mMarkerEndAddition, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-        }
-    }
+    };
+    mFrameRate = new wxRadioBox(add.getParent(), wxID_ANY, wxT(""),wxPoint(10,10), wxDefaultSize, choices, 1, wxRA_SPECIFY_COLS );
+    mFrameRate->SetSelection(selection);
+    add.option(_("Framerate for new projects"), mFrameRate);
 
     //////////////////////////////////////////////////////////////////////////
-    // DEBUG
+
+    add.tab(_("Timeline"));
+
+    add.box(_("Marking selection"));
+
+    double initial = getMarkerBeginAddition();
+    mMarkerBeginAddition = new wxSpinCtrlDouble(add.getParent(), wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
+    add.option(_("Begin marker expansion/contraction (s)."), mMarkerBeginAddition);
+
+    initial = getMarkerEndAddition();
+    mMarkerEndAddition = new wxSpinCtrlDouble(add.getParent(), wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
+    add.option(_("End marker expansion/contraction (s)."), mMarkerEndAddition);
+
+    add.box(_("Clips"));
+    mStrip = new wxTextCtrl(add.getParent(), wxID_ANY, sStrip);
+    add.option(_("Text to remove once from clip names (requires restart)"), mStrip);
+
     //////////////////////////////////////////////////////////////////////////
 
+    add.tab(_("Debug"));
+
+    add.box(_("Logging"));
+
+    mLogLevel = new wxChoice(add.getParent(), wxID_ANY);
+    mLogLevel->Append(_("Error"),      reinterpret_cast<void*>(logERROR));
+    mLogLevel->Append(_("Warning"),    reinterpret_cast<void*>(logWARNING));
+    mLogLevel->Append(_("Info"),       reinterpret_cast<void*>(logINFO));
+    mLogLevel->Append(_("Debug"),      reinterpret_cast<void*>(logDEBUG));
+    mLogLevel->Append(_("Video"),      reinterpret_cast<void*>(logVIDEO));
+    mLogLevel->Append(_("Audio"),      reinterpret_cast<void*>(logAUDIO));
+    mLogLevel->Append(_("Detailed"),   reinterpret_cast<void*>(logDETAIL));
+    switch (GETENUM(sPathLogLevel,LogLevel,logINFO))
     {
-        // Tab: Debug
-        wxPanel* panel = new wxPanel(GetBookCtrl(), wxID_ANY);
-        GetBookCtrl()->AddPage(panel, _("Debug"), false);
-        wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
-        panel->SetSizerAndFit(topSizer);
-
-        // Box: Debug
-        wxStaticBox*    staticbox       = new wxStaticBox(panel, wxID_ANY, _("Start"));
-        wxBoxSizer*     staticbox_sizer = new wxStaticBoxSizer( staticbox, wxVERTICAL );
-        topSizer->Add(staticbox_sizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
-
-        // Entry: Log level
-        wxBoxSizer*     hSizer          = new wxBoxSizer( wxHORIZONTAL );
-        staticbox_sizer->Add(hSizer, 0, wxGROW|wxALL, 5);
-        mLogLevel = new wxChoice(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-        mLogLevel->Append(_("Error"),      reinterpret_cast<void*>(logERROR));
-        mLogLevel->Append(_("Warning"),    reinterpret_cast<void*>(logWARNING));
-        mLogLevel->Append(_("Info"),       reinterpret_cast<void*>(logINFO));
-        mLogLevel->Append(_("Debug"),      reinterpret_cast<void*>(logDEBUG));
-        mLogLevel->Append(_("Video"),      reinterpret_cast<void*>(logVIDEO));
-        mLogLevel->Append(_("Audio"),      reinterpret_cast<void*>(logAUDIO));
-        mLogLevel->Append(_("Detailed"),   reinterpret_cast<void*>(logDETAIL));
-        switch (GETENUM(sPathLogLevel,LogLevel,logINFO))
-        {
-        case logERROR:      mLogLevel->SetSelection(0); break;
-        case logWARNING:    mLogLevel->SetSelection(1); break;
-        case logINFO:       mLogLevel->SetSelection(2); break;
-        case logDEBUG:      mLogLevel->SetSelection(3); break;
-        case logVIDEO:      mLogLevel->SetSelection(4); break;
-        case logAUDIO:      mLogLevel->SetSelection(5); break;
-        case logDETAIL:     mLogLevel->SetSelection(6); break;
-        }
-        hSizer->Add(new wxStaticText(panel, wxID_ANY, _("&Log level:")), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-        hSizer->Add(5, 5, 1, wxALL, 0);
-        hSizer->Add(mLogLevel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-
-        // Entry: Show debug info on widgets
-        wxBoxSizer*     hSizerShow          = new wxBoxSizer( wxHORIZONTAL );
-        staticbox_sizer->Add(hSizerShow, 0, wxGROW|wxALL, 5);
-        mShowDebugInfoOnWidgets = new wxCheckBox(panel, wxID_ANY, _("&Show debug info on widgets"), wxDefaultPosition, wxDefaultSize);
-        mShowDebugInfoOnWidgets->SetValue(GETBOOL(sPathShowDebugInfoOnWidgets,false));
-        hSizerShow->Add(mShowDebugInfoOnWidgets, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    case logERROR:      mLogLevel->SetSelection(0); break;
+    case logWARNING:    mLogLevel->SetSelection(1); break;
+    case logINFO:       mLogLevel->SetSelection(2); break;
+    case logDEBUG:      mLogLevel->SetSelection(3); break;
+    case logVIDEO:      mLogLevel->SetSelection(4); break;
+    case logAUDIO:      mLogLevel->SetSelection(5); break;
+    case logDETAIL:     mLogLevel->SetSelection(6); break;
     }
+    add.option(_("Log level"), mLogLevel);
+
+    mShowDebugInfoOnWidgets = new wxCheckBox(add.getParent(), wxID_ANY, _T(""));
+    mShowDebugInfoOnWidgets->SetValue(sShowDebugInfoOnWidgets);
+    add.option(_("Show debug info on widgets (requires restart)"), mShowDebugInfoOnWidgets);
+
+    //////////////////////////////////////////////////////////////////////////
 
     SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
     CreateButtons(wxOK | wxCANCEL);
@@ -331,6 +328,7 @@ GuiOptions::~GuiOptions()
         SETSTRING(  sPathFrameRate,                 boost::get<0>(sPossibleFrameRates[mFrameRate->GetSelection()]));
         SETDOUBLE(  sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
         SETDOUBLE(  sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
+        SETSTRING(  sPathStrip,                     mStrip->GetValue());
 
         wxConfigBase::Get()->Flush();
 
