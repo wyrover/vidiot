@@ -6,13 +6,17 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include "Part.h"
+#include "UtilEvent.h"
 
 namespace gui { namespace timeline {
 
 typedef boost::rational<int> rational;
 
+DECLARE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
+
 class Zoom
-    :   public Part
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    ,   public Part
 {
 public:
 
@@ -22,6 +26,10 @@ public:
 
     Zoom(Timeline* timeline);
 	virtual ~Zoom();
+
+    /// Change the current zoom level
+    /// @param steps number of steps to change (>0 zoom in, <0 zoom out)
+    void change(int steps);
 
     //////////////////////////////////////////////////////////////////////////
     // ZOOM RESULT

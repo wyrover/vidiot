@@ -14,14 +14,12 @@ namespace gui { namespace timeline { namespace state {
 // MEMBERS ACESSIBLE BY ALL STATES
 //////////////////////////////////////////////////////////////////////////
 
-    /** 
-    * Using this class as base for all state classes ensures that these 
-    * states can access the various timeline parts in the same way 
-    * as these parts. 
-    */
-template < class STATE, class STATEMACHINE >
+/// Using this class as base for all state classes ensures that these 
+/// states can access the various timeline parts in the same way 
+/// as these parts. 
+template < class STATE, class CONTEXT >
 class TimeLineState
-    :   public boost::statechart::state<STATE, STATEMACHINE >
+    :   public boost::statechart::state<STATE, CONTEXT >
     ,   protected Part
 {
 public:
@@ -34,10 +32,30 @@ protected:
     };
 };
 
+/// Using this class as base for all state classes ensures that these 
+/// states can access the various timeline parts in the same way 
+/// as these parts. 
+/// This version has an intial inner state.
+template < class STATE, class CONTEXT, class INITIALINNERSTATE >
+class TimeLineStateInner
+    :   public boost::statechart::state<STATE, CONTEXT, INITIALINNERSTATE >
+    ,   protected Part
+{
+public:
+    TimeLineStateInner( my_context ctx ) : my_base( ctx ) {};
+    ~TimeLineStateInner() {};
+protected:
+    Timeline& getTimeline() 
+    { 
+        return outermost_context().mTimeline; 
+    };
+};
+
 //////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATION OF ALL STATES FOR TIMELINE
 //////////////////////////////////////////////////////////////////////////
 
+class Always;
 class Idle;
 class Dragging;
 class MovingCursor;
@@ -49,7 +67,7 @@ class TestDragStart;
 //////////////////////////////////////////////////////////////////////////
 
 class Machine
-    :   public boost::statechart::state_machine< Machine, Idle >
+    :   public boost::statechart::state_machine< Machine, Always >
 {
 public:
     Machine(Timeline& tl);

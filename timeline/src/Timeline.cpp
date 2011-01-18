@@ -64,6 +64,8 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 {
     LOG_INFO;
 
+    init();
+
     SetScrollRate( 10, 10 );
     EnableScrolling(true,true);
 
@@ -283,6 +285,15 @@ void Timeline::onViewUpdated( ViewUpdateEvent& event )
     SetVirtualSize(requiredWidth(),requiredHeight());
  //   getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
     mRedrawOnIdle = true;
+    event.Skip();
+}
+
+void Timeline::onZoomChanged( ZoomChangeEvent& event )
+{
+    SetVirtualSize(requiredWidth(),requiredHeight());
+    invalidateBitmap();
+    mRedrawOnIdle = true;
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

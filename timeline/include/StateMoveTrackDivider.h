@@ -2,7 +2,7 @@
 #define STATE_MOVE_TRACK_DIVIDER_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "State.h"
+#include "StateAlways.h"
 
 namespace model { 
     class Track;
@@ -12,7 +12,7 @@ namespace model {
 namespace gui { namespace timeline { namespace state {
 
 class MoveTrackDivider
-    :   public TimeLineState< MoveTrackDivider, Machine >
+    :   public TimeLineState< MoveTrackDivider, Always >
 {
 public:
 

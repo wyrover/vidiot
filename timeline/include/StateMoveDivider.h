@@ -2,12 +2,12 @@
 #define STATE_MOVE_DIVIDER_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "State.h"
+#include "StateAlways.h"
 
 namespace gui { namespace timeline { namespace state {
 
 class MoveDivider
-    :   public TimeLineState< MoveDivider, Machine >
+    :   public TimeLineState< MoveDivider, Always >
 {
 public:
 
