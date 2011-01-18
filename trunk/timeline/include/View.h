@@ -11,6 +11,7 @@
 namespace gui { namespace timeline {
 
 class View;
+class ZoomChangeEvent;
 
 class ViewUpdate
 {
@@ -53,6 +54,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     View(Timeline* timeline); ///< For initializing the topmost (sequence) view
+    void init();              ///< For initializing the topmost (sequence) view (separated into constructor + this method, since it requires the parts of the timeline to be created also)
     View(View* parent); ///< For initializing child views.
     virtual ~View();
 
@@ -66,10 +68,11 @@ public:
     virtual pixel requiredHeight() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
-    // PROPAGATE UPDATES UPWARD
+    // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
     void onChildViewUpdated( ViewUpdateEvent& event );
+    void onZoomChanged( ZoomChangeEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // BITMAP

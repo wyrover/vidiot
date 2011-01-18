@@ -1,6 +1,7 @@
 #include "View.h"
 #include "UtilLog.h"
 #include "Timeline.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -17,7 +18,13 @@ View::View(Timeline* timeline)
 ,   mBitmapValid(false)
 {
     ASSERT(timeline);
-    mEvtHandler.Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, timeline);
+}
+
+void View::init()
+{
+    ASSERT(this == &getTimeline());
+    mEvtHandler.Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, &getTimeline());
+    getZoom().Bind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, &getTimeline());
 }
 
 View::View(View* parent)
@@ -28,11 +35,22 @@ View::View(View* parent)
 {
     ASSERT(parent);
     mEvtHandler.Bind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, parent);
+    getZoom().Bind(ZOOM_CHANGE_EVENT, &View::onZoomChanged, this);
 }
 
 View::~View()
 {
-    mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, mParent);
+    if (mParent)
+    {
+        mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, mParent);
+        getZoom().Unbind(ZOOM_CHANGE_EVENT, &View::onZoomChanged, this);
+
+    }
+    else
+    {
+        mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &Timeline::onChildViewUpdated, &getTimeline());
+        getZoom().Unbind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, &getTimeline());
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,12 +63,19 @@ View& View::getParent() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// PROPAGATE UPDATES UPWARD
+// EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void View::onChildViewUpdated( ViewUpdateEvent& event )
 {
     invalidateBitmap();
+    event.Skip();
+}
+
+void View::onZoomChanged( ZoomChangeEvent& event )
+{
+    invalidateBitmap();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

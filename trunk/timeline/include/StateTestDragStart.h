@@ -2,7 +2,7 @@
 #define STATE_TEST_DRAG_START_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "State.h"
+#include "StateAlways.h"
 
 namespace model {
 class Track;
@@ -16,7 +16,7 @@ typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves m
 namespace gui { namespace timeline { namespace state {
 
 class TestDragStart
-    :   public TimeLineState< TestDragStart, Machine >
+    :   public TimeLineState< TestDragStart, Always >
 {
 public:
 
