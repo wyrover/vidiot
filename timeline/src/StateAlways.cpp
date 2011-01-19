@@ -28,17 +28,13 @@ Always::~Always() // exit
 boost::statechart::result Always::react( const EvWheel& evt )
 {
     VAR_DEBUG(evt);
+    int nSteps = evt.mWxEvent.GetWheelRotation() / evt.mWxEvent.GetWheelDelta();
     if (evt.mWxEvent.ControlDown())
     {
-        int nSteps = evt.mWxEvent.GetWheelRotation() / evt.mWxEvent.GetWheelDelta();
-        VAR_INFO(nSteps);
         getZoom().change(nSteps);
     }
     else if (evt.mWxEvent.ShiftDown())
     {
-
-        int nSteps = evt.mWxEvent.GetWheelRotation() / evt.mWxEvent.GetWheelDelta();
-        VAR_INFO(nSteps);
         int x;
         int y;
         getTimeline().GetViewStart(&x,&y);

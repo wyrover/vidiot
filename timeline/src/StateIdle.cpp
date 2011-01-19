@@ -24,14 +24,14 @@
 
 namespace gui { namespace timeline { namespace state {
 
-    const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
+const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 Idle::Idle( my_context ctx ) // entry
-:   TimeLineState( ctx )
+    :   TimeLineState( ctx )
 {
     LOG_DEBUG; 
 }
@@ -111,28 +111,24 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 
 boost::statechart::result Idle::react( const EvKeyDown& evt)
 {
+#define WXK_NONE 0
     VAR_DEBUG(evt);
-     switch (evt.mWxEvent.GetKeyCode())
+    if ( evt.mWxEvent.GetUnicodeKey() != WXK_NONE )
     {
-    case WXK_SPACE:
-        return start();
-        break;
-    case WXK_DELETE:
+        wxChar c = evt.mWxEvent.GetUnicodeKey();
+        switch (evt.mWxEvent.GetUnicodeKey())
         {
-            getSelection().deleteClips();
-            break;
+        case 'S':   model::Project::current()->Submit(new command::SplitAtCursor(getTimeline())); break;
         }
-    case WXK_F1:
-        getTooltip().show(sTooltip);
-        break;
-    case 'K':
+    }
+    else
+    {
+        switch (evt.mWxEvent.GetKeyCode())
         {
-            if (evt.mWxEvent.ControlDown())
-            {
-				model::Project::current()->Submit(new command::SplitAtCursor(getTimeline()));
-            }
+        case WXK_SPACE:     return start();                                 break;
+        case WXK_DELETE:    getSelection().deleteClips();                   break;
+        case WXK_F1:        getTooltip().show(sTooltip);                    break;
         }
-        break;
     }
     return discard_event();
 }
@@ -143,8 +139,8 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
 
 boost::statechart::result Idle::start()
 {
-    getPlayer()->play();
-    return transit<Playing>();
+getPlayer()->play();
+return transit<Playing>();
 }
 
 }}} // namespace
