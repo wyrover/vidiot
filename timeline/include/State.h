@@ -112,7 +112,7 @@ struct EvMouse : boost::statechart::event< MostDerived >
     {
     };
     const wxPoint mPosition;
-    const wxMouseEvent& mWxEvent;
+    wxMouseEvent& mWxEvent;
 };
 
 template< class MostDerived >
