@@ -49,7 +49,7 @@ void Machine::OnRightUp         (wxMouseEvent& event)  { process_event(EvRightUp
 void Machine::OnRightDouble     (wxMouseEvent& event)  { process_event(EvRightDouble   (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
 void Machine::OnEnter           (wxMouseEvent& event)  { process_event(EvEnter         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
 void Machine::OnLeave           (wxMouseEvent& event)  { process_event(EvLeave         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnWheel           (wxMouseEvent& event)  { process_event(EvWheel         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnWheel           (wxMouseEvent& event)  { process_event(EvWheel         (event, unscrolledPosition(event.GetPosition()))); } // NOT: event.Skip(); See handling of this event in Always state
 void Machine::OnKeyDown         (wxKeyEvent&   event)  { process_event(EvKeyDown       (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }  
 void Machine::OnKeyUp           (wxKeyEvent&   event)  { process_event(EvKeyUp         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
 void Machine::OnCaptureLost     (wxMouseCaptureLostEvent& event) {};
