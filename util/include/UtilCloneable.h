@@ -3,15 +3,12 @@
 
 #include <boost/shared_ptr.hpp>
 
-/**
- * Needed for cloning in class hierarchies starting with abstract base classes.
- */
+/// Needed for cloning in class hierarchies starting with abstract base classes.
+/// Use the method make_cloned to make copies of objects
 class ICloneable
 {
 public:
-    virtual ~ICloneable() = 0 {};
-
-
+    virtual ~ICloneable() {};
     virtual ICloneable* clone() = 0;
 };
 
