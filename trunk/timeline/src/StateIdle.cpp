@@ -18,6 +18,7 @@
 #include "Selection.h"
 #include "StateMoveDivider.h"
 #include "StateMoveTrackDivider.h"
+#include "StateTrimBegin.h"
 #include "UtilLog.h"
 #include "PositionInfo.h"
 #include "Tooltip.h"
@@ -64,7 +65,21 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
         getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
         if (info.clip && !info.clip->isA<model::EmptyClip>())
         {
-            return transit<TestDragStart>();
+            switch (info.logicalclipposition)
+            {
+            case ClipBetween :
+                break;
+            case ClipBegin:
+                return transit<TrimBegin>();
+                break;
+            case ClipInterior:
+                return transit<TestDragStart>();
+                break;
+            case ClipEnd:
+                break;
+            default:
+                FATAL("Unexpected logical clip position.");
+            }
         }
         else
         {

@@ -31,8 +31,15 @@ AProjectViewNode::AProjectViewNode()
 
 AProjectViewNode::~AProjectViewNode()
 {
-    VAR_DEBUG(this);
-    ASSERT(mChildren.size() == 0)(shared_from_this())(mChildren.size());
+    VAR_DEBUG(*this);
+    ASSERT(mChildren.size() == 0)(this)(mChildren.size());
+}
+
+AProjectViewNode::AProjectViewNode(const AProjectViewNode& other)
+:   mParent()
+,   mChildren()
+{
+
 }
 
 void AProjectViewNode::Delete()
@@ -119,6 +126,16 @@ ProjectViewPtrs AProjectViewNode::getChildren() const
 
 void AProjectViewNode::setName(wxString name)
 {
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj )
+{
+    os << &obj << '|' << obj.mParent << '|' << obj.mChildren.size();
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

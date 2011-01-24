@@ -8,6 +8,7 @@
 #include "UtilLog.h"
 #include "Convert.h"
 #include "GuiVideoDisplay.h"
+#include "EditDisplay.h"
 #include "preview-home.xpm" 
 #include "preview-end.xpm" 
 #include "preview-next.xpm" 
@@ -44,6 +45,10 @@ GuiPlayer::GuiPlayer(wxWindow *parent, model::SequencePtr sequence)
     mDisplay = new GuiVideoDisplay(this, sequence);
     mDisplay->Bind(EVENT_PLAYBACK_POSITION, &GuiPlayer::onPlaybackPosition, this);
     mDisplay->setSpeed(GuiVideoDisplay::sDefaultSpeed);
+
+    //////////////////////////////////////////////////////////////////////////
+
+    mEdit = new EditDisplay(this);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -101,6 +106,7 @@ GuiPlayer::GuiPlayer(wxWindow *parent, model::SequencePtr sequence)
 
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add(mDisplay,        wxSizerFlags(1).Expand().Top().Center());
+    sizer->Add(mEdit,           wxSizerFlags(1).Expand().Top().Center());
     sizer->Add(mStatusPanel,    wxSizerFlags(0).Expand().Bottom().Center());
     sizer->Add(mButtonsPanel,   wxSizerFlags(0).Expand().Bottom().Center());
     SetSizerAndFit(sizer);
@@ -119,6 +125,22 @@ GuiPlayer::~GuiPlayer()
 //////////////////////////////////////////////////////////////////////////
 // CONTROL METHODS
 //////////////////////////////////////////////////////////////////////////
+
+EditDisplay* GuiPlayer::startEdit()
+{
+    GetSizer()->Hide(mDisplay);
+    GetSizer()->Show(mEdit);
+    GetSizer()->Layout();
+    return mEdit;
+}
+
+void GuiPlayer::endEdit()
+{
+    GetSizer()->Hide(mEdit);
+    GetSizer()->Show(mDisplay);
+    GetSizer()->Layout();
+    mEdit->show(boost::shared_ptr<wxBitmap>());
+}
 
 void GuiPlayer::play()
 {

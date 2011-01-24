@@ -39,7 +39,6 @@ AudioFile::AudioFile()
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
 {
-    mCodecType = AVMEDIA_TYPE_AUDIO;
     VAR_DEBUG(*this);
 }
 
@@ -50,7 +49,6 @@ AudioFile::AudioFile(boost::filesystem::path path)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
 {
-    mCodecType = AVMEDIA_TYPE_AUDIO;
     VAR_DEBUG(*this);
     /** /todo asserts on sample sizes. Only 16 bits data supported (resampling/decoding?)  */
 }
@@ -62,7 +60,6 @@ AudioFile::AudioFile(const AudioFile& other)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
 {
-    mCodecType = AVMEDIA_TYPE_AUDIO;
     VAR_DEBUG(*this);
 }
 
@@ -100,28 +97,26 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
-    mCodecContext = mStream->codec;
-
-    AVCodec* audioCodec = avcodec_find_decoder(mCodecContext->codec_id);
+    AVCodec* audioCodec = avcodec_find_decoder(getCodec()->codec_id);
     ASSERT(audioCodec != 0)(audioCodec);
 
-    int result = avcodec_open(mCodecContext, audioCodec);
+    int result = avcodec_open(getCodec(), audioCodec);
     ASSERT(result >= 0)(result);
 
-    if ((nAudioChannels != mCodecContext->channels) || (audioRate != mCodecContext->sample_rate))
+    if ((nAudioChannels != getCodec()->channels) || (audioRate != getCodec()->sample_rate))
     {
         LOG_INFO << "Resampling initialized";
         static const int taps = 16;
         mResampleContext =
             av_audio_resample_init(
-                nAudioChannels, mCodecContext->channels,
-                audioRate, mCodecContext->sample_rate,
+                nAudioChannels, getCodec()->channels,
+                audioRate, getCodec()->sample_rate,
                 SAMPLE_FMT_S16, SAMPLE_FMT_S16,
                 taps, 10, 0, 0.8);
         ASSERT(mResampleContext != 0);/** /todo replace with gui message and abort */
     }
 
-    VAR_DEBUG(this)(mCodecContext);
+    VAR_DEBUG(this)(getCodec());
 }
 
 void AudioFile::stopDecodingAudio()
@@ -130,7 +125,7 @@ void AudioFile::stopDecodingAudio()
     if (mDecodingAudio)
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
-        avcodec_close(mCodecContext);
+        avcodec_close(getCodec());
     }
     mDecodingAudio = false;
 }
@@ -165,7 +160,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     {
         int decodeSize = sAudioBufferSizeInBytes - targetSize; // Needed for avcodec_decode_audio2(): Initially this must be set to the maximum to be decoded bytes
         /** /todo replace with decode_audio3 */
-        int usedSourceBytes = avcodec_decode_audio2(mCodecContext, targetData, &decodeSize, sourceData, sourceSize);
+        int usedSourceBytes = avcodec_decode_audio2(getCodec(), targetData, &decodeSize, sourceData, sourceSize);
         ASSERT(usedSourceBytes >= 0)(usedSourceBytes);
 
         if (decodeSize <= 0)
@@ -193,7 +188,8 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 
     if (mResampleContext != 0)
     {
-        nFrames = audio_resample(mResampleContext, audioResampleBuffer, audioDecodeBuffer, nSamples / mCodecContext->channels);
+
+        nFrames = audio_resample(mResampleContext, audioResampleBuffer, audioDecodeBuffer, nSamples / getCodec()->channels);
         nSamples = nFrames * sSamplesPerStereoFrame;
 
         // Use the resampled data
@@ -212,7 +208,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     double pts = 0;
     if (audioPacket->getPacket()->pts != AV_NOPTS_VALUE)
     {
-        pts = av_q2d(mCodecContext->time_base) * audioPacket->getPacket()->pts;
+        pts = av_q2d(getCodec()->time_base) * audioPacket->getPacket()->pts;
     }
     else
     {
@@ -225,6 +221,18 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, pts);//boost::make_shared<AudioChunk>(audioDecodeBuffer, outputSize / 2, pts);
     VAR_AUDIO(this)(audioChunk);
     return audioChunk;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// FROM FILE
+//////////////////////////////////////////////////////////////////////////
+
+void AudioFile::flush()
+{
+    if (mDecodingAudio)
+    {
+        avcodec_flush_buffers(getCodec());
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

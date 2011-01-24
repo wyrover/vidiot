@@ -92,6 +92,20 @@ protected:
 
 private:
 
+    /// Made private since behavior not correct: No member cloning is done.
+    /// Reason: This class is also the baseclass for File objects, which are not
+    /// necessarily part of the project tree. Hence, the project tree members
+    /// (mParent/mChildren) should not be cloned always. Specifically, when using
+    /// a File that IS part of the project view tree, and cloning that "INTO" a
+    /// sequence, the mParent/mChildren members should not be cloned.
+    AProjectViewNode(const AProjectViewNode& other);
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj );
+
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////

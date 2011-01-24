@@ -22,6 +22,8 @@ extern "C" {
 #include "UtilLogAvcodec.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
+#include "VideoFile.h"
+#include "AudioFile.h"
 
 namespace model {
 
@@ -33,6 +35,7 @@ boost::mutex File::sMutexAvcodec;
 
 File::File()
 :	IControl()
+,   AProjectViewNode()
 ,   mPath()
 ,   mName()
 ,	mFileContext(0)
@@ -41,12 +44,10 @@ File::File()
 ,   mPackets(1)
 ,   mMaxBufferSize(0)
 ,   mStreamIndex(-1)
-,   mCodecContext(0)
 ,   mBufferPacketsThreadPtr(0)
 ,   mFileOpen(false)
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
-,   mCodecType(AVMEDIA_TYPE_UNKNOWN)
 ,   mLastModified(boost::none)
 {
     VAR_DEBUG(this);
@@ -54,6 +55,7 @@ File::File()
 
 File::File(boost::filesystem::path path, int buffersize)
 :	IControl()
+,   AProjectViewNode()
 ,   mPath(path)
 ,   mName()
 ,	mFileContext(0)
@@ -62,12 +64,10 @@ File::File(boost::filesystem::path path, int buffersize)
 ,   mPackets(1)
 ,   mMaxBufferSize(buffersize)
 ,   mStreamIndex(-1)
-,   mCodecContext(0)
 ,   mBufferPacketsThreadPtr(0)
 ,   mFileOpen(false)
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
-,   mCodecType(AVMEDIA_TYPE_UNKNOWN)
 ,   mLastModified(boost::none)
 {
     VAR_DEBUG(this);
@@ -75,6 +75,7 @@ File::File(boost::filesystem::path path, int buffersize)
 
 File::File(const File& other)
 :	IControl()
+,   AProjectViewNode()
 ,   mPath(other.mPath)
 ,   mName(other.mName)
 ,	mFileContext(0)
@@ -83,12 +84,10 @@ File::File(const File& other)
 ,   mPackets(1)
 ,   mMaxBufferSize(other.mMaxBufferSize)
 ,   mStreamIndex(-1)
-,   mCodecContext(0)
 ,   mBufferPacketsThreadPtr(0)
 ,   mFileOpen(false)
-,   mNumberOfFrames(0) /** todo for a copy we read the number of packets again from the file in getNumberOfFrames() */
+,   mNumberOfFrames(0) // For a copy we read the number of packets again from the file in getNumberOfFrames()
 ,   mTwoInARow(0)
-,   mCodecType(other.mCodecType)
 ,   mLastModified(other.mLastModified)
 {
     VAR_DEBUG(this);
@@ -100,6 +99,13 @@ File* File::clone()
 }
 
 File::~File()
+{
+    VAR_DEBUG(this);
+    stopReadingPackets();
+    closeFile();
+}
+
+void File::abort()
 {
     VAR_DEBUG(this);
     stopReadingPackets();
@@ -120,44 +126,47 @@ void File::openFile()
     result = av_find_stream_info(mFileContext);
     ASSERT(result >= 0)(result);
 
-    /** /todo get all streams info, use that to make hasVideo and hasAudio for showing in project view. This class is about meta data of video/audio files.*/
     mNumberOfFrames = -1;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
         AVStream* stream = mFileContext->streams[i];
         VAR_DEBUG(stream);
-        if (mFileContext->streams[i]->codec->codec_type == mCodecType)
-        {
-            mStream = mFileContext->streams[i];
-            mStreamIndex = i;
-            VAR_DEBUG(mStreamIndex);
-        }
-        if (mFileContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+
+        if (stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
         {
             // If there is video in the file, then the number of video frames is used for the duration.
             FrameRate videoFrameRate = FrameRate(stream->codec->time_base.num, stream->codec->time_base.den);
             mNumberOfFrames = Convert::toProjectFrameRate(stream->duration, videoFrameRate);
+            VAR_DEBUG(mNumberOfFrames);
+
+            if (isA<VideoFile>())
+            {
+                mStreamIndex = i;
+            }
+        }
+        else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+        {
+            if (isA<AudioFile>())
+            {
+                mStreamIndex = i;
+            }
         }
     }
     if (mNumberOfFrames == -1)
     {
         // For files without video, determine the number of 'virtual video frames'.
-        mNumberOfFrames = Convert::microsecondsToPts(mStream->duration);
+        mNumberOfFrames = Convert::microsecondsToPts(mFileContext->streams[mStreamIndex]->duration);
     }
-
-    VAR_DEBUG(mNumberOfFrames)(mFileContext);
-
+    VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
     mFileOpen = true;
 }
 
 void File::closeFile()
 {
-    if (mFileOpen)
-    {
-        VAR_DEBUG(this);
+    VAR_DEBUG(this);
+    if (!mFileOpen) return;
 
-        av_close_input_file(mFileContext);
-    }
+    av_close_input_file(mFileContext);
     mFileOpen = false;
 }
 
@@ -179,6 +188,7 @@ void File::startReadingPackets()
 void File::stopReadingPackets()
 {
     VAR_DEBUG(this);
+    if (!mReadingPackets) return;
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
@@ -192,6 +202,7 @@ void File::stopReadingPackets()
     if (mBufferPacketsThreadPtr)
     {
         mBufferPacketsThreadPtr->join();
+        mBufferPacketsThreadPtr.reset();
     }
 
     // When this lock is taken, it is certain that no 'pop' is
@@ -204,20 +215,22 @@ void File::stopReadingPackets()
     // '0' packet before getNextPacket() had a chance to return.
     mPackets.flush();
 
-    // Finally, flush avcodec. The remaining avcodec buffers are no
-    // longer necessary.
-    //
-    // @todo replace with mStream->codec and move mCodecContext to derived classes. 
-    // However, in some cases the file is opened without starting decoding
-    // (for instance, for determining file length only).
-    // mStream->codec will always be != 0 here.
-    // mCodecContext will only be != 0 when initialized in a derived class.
-    if (mCodecContext)
-    {
-        avcodec_flush_buffers(mCodecContext);
-    }
+    // Flush any buffered data
+    // Typically, flush avcodec decoding buffers in AudioFile and VideoFile.
+    // The remaining avcodec buffers are no longer necessary.
+    flush();
 
     VAR_DEBUG(this);
+}
+
+void File::flush()
+{
+}
+
+AVCodecContext* File::getCodec()
+{
+    ASSERT(mFileContext->streams[mStreamIndex]);
+    return mFileContext->streams[mStreamIndex]->codec;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -256,7 +269,7 @@ wxString File::getDescription() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// ATTRIBUTES
+// GET/SET
 //////////////////////////////////////////////////////////////////////////
 
 boost::filesystem::path File::getPath() const
@@ -325,7 +338,7 @@ PacketPtr File::getNextPacket()
         mPackets.resize(mMaxBufferSize);
     }
     PacketPtr packet = mPackets.pop();
-    VAR_DETAIL(mCodecType)(packet)(mPackets.getSize());
+    VAR_DETAIL(packet)(mPackets.getSize());
     return packet;
 }
 
@@ -396,12 +409,11 @@ std::ostream& operator<<( std::ostream& os, const File& obj )
 template<class Archive>
 void File::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IControl>(*this);
     ar & boost::serialization::base_object<AProjectViewNode>(*this);
+    ar & boost::serialization::base_object<IControl>(*this);
     ar & mPath;
     ar & mLastModified;
     ar & mMaxBufferSize;
-    ar & mCodecType;
 }
 template void File::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void File::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

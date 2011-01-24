@@ -21,6 +21,8 @@ namespace model {
 class File
     :   public IControl
     ,   public AProjectViewNode
+    //:   public AProjectViewNode
+    //,   public IControl
 {
 public:
 
@@ -33,6 +35,8 @@ public:
     virtual File* clone();
     virtual ~File();
 
+    void abort();
+
 	//////////////////////////////////////////////////////////////////////////
 	// ICONTROL
 	//////////////////////////////////////////////////////////////////////////
@@ -42,7 +46,17 @@ public:
     virtual wxString getDescription() const;
 
     //////////////////////////////////////////////////////////////////////////
-    // ATTRIBUTES
+    // FOR DETERMINING THE TYPE OF FILE
+    //////////////////////////////////////////////////////////////////////////
+
+    template <typename Derived>
+    bool isA()
+    {
+        return (typeid(Derived) == typeid(*this));
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     wxString getName() const;
@@ -67,17 +81,9 @@ protected:
     // AVCODEC
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-    * This mutex is needed to ensure that never multiple avcodec open/close
-    * are executed in parallel.
-    */
+    /// This mutex is needed to ensure that never multiple avcodec open/close
+    /// calls are executed in parallel.
     static boost::mutex sMutexAvcodec;
-
-    AVFormatContext* mFileContext;
-    int mStreamIndex;
-    AVStream* mStream;
-    AVCodecContext* mCodecContext;
-    AVMediaType mCodecType; ///< @todo replace with non ffmpeg type
 
     //////////////////////////////////////////////////////////////////////////
     // PACKETS INTERFACE TO SUBCLASSES
@@ -86,23 +92,35 @@ protected:
     void startReadingPackets();
     void stopReadingPackets();
 
-    /**
-    * Retrieve next buffered packet. Blocks if there's no
-    * such packet. Returns '0' packet in case there are no more
-    * packets in the file or if buffering of packets is stopped.
-    */
+    /// This method is called when the reading/decoding process must be restarted.
+    /// Default behavior is to do nothing. Derived classes can reimplement this 
+    /// to flush any pending (avcodec) buffers when the decoding is stopped/restarted
+    /// for some reason (for instance, in case of moveTo()).
+    virtual void flush();
+
+    /// Return codec used for the current stream
+    AVCodecContext* getCodec();
+
+    /// Retrieve next buffered packet. Blocks if there's no
+    /// such packet. Returns '0' packet in case there are no more
+    /// packets in the file or if buffering of packets is stopped.
     PacketPtr getNextPacket();
 
 
 private:
 
-    /**
-    * This mutex is needed to ensure that any pending getNextPacket() - which is
-    * executed in an external thread - is finished when stopping.
-    */
+    /// This mutex is needed to ensure that any pending getNextPacket() - which is
+    /// executed in an external thread - is finished when stopping.
     boost::mutex sMutexStop;
 
     wxString mName;
+
+    //////////////////////////////////////////////////////////////////////////
+    // AVCODEC
+    //////////////////////////////////////////////////////////////////////////
+
+    AVFormatContext* mFileContext;
+    int mStreamIndex;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
@@ -118,8 +136,8 @@ private:
 
     int mMaxBufferSize;
 
-    /** Holds retrieved packets until extracted with getNextPacket() */
-    FifoPacket mPackets;
+    
+    FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
 
     pts mNumberOfFrames;
     int mTwoInARow;
