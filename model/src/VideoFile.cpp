@@ -33,7 +33,6 @@ VideoFile::VideoFile()
 ,   mPosition(0)
 {
     VAR_DEBUG(*this);
-    mCodecType = AVMEDIA_TYPE_VIDEO;
 }
 
 VideoFile::VideoFile(boost::filesystem::path path)
@@ -43,7 +42,6 @@ VideoFile::VideoFile(boost::filesystem::path path)
 ,   mPosition(0)
 {
     VAR_DEBUG(*this);
-    mCodecType = AVMEDIA_TYPE_VIDEO;
 }
 
 VideoFile::VideoFile(const VideoFile& other)
@@ -53,7 +51,6 @@ VideoFile::VideoFile(const VideoFile& other)
 ,   mPosition(0)
 {
     VAR_DEBUG(*this);
-    mCodecType = AVMEDIA_TYPE_VIDEO;
 }
 
 VideoFile* VideoFile::clone()
@@ -92,7 +89,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
     // if the previously returned frame should be returned again
     // @todo instead of duplicating frames, nicely take the two input frames 'around' the 
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
-    FrameRate videoFrameRate = FrameRate(mStream->codec->time_base.num, mStream->codec->time_base.den);
+    FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
 
     ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(mDeliveredFrameInputPts)(requiredInputPts);
@@ -139,7 +136,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             }
 
             /** /todo handle decoders that hold multiple frames in one packet */
-            int len1 = avcodec_decode_video(mCodecContext, pFrame, &frameFinished, packet->getPacket()->data, packet->getPacket()->size);
+            int len1 = avcodec_decode_video(getCodec(), pFrame, &frameFinished, packet->getPacket()->data, packet->getPacket()->size);
 
             if (packet->getPacket()->dts != AV_NOPTS_VALUE)
             {
@@ -164,6 +161,13 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
                 // A whole frame was decoded, but it does not have the correct pts value. Get another.
                 frameFinished = 0;
             }
+
+            // If there is no previous frame stored as a member,
+            // use the current frame's position as starting point.
+            if (!mDeliveredFrame)
+            {
+                mPosition = Convert::toProjectFrameRate(mDeliveredFrameInputPts, videoFrameRate);
+            }
         }
         ASSERT(pFrame->repeat_pict >= 0)(pFrame->repeat_pict);
         if (pFrame->repeat_pict > 0)
@@ -174,11 +178,11 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
         static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
         double w = std::max(sMinimumSize, requestedWidth);
         double h = std::max(sMinimumSize, requestedHeight);
-        double scalingW = w / static_cast<double>(mCodecContext->width);
-        double scalingH = h / static_cast<double>(mCodecContext->height);
+        double scalingW = w / static_cast<double>(getCodec()->width);
+        double scalingH = h / static_cast<double>(getCodec()->height);
         double scaling  = std::min(scalingW, scalingH);
-        int scaledWidth  = static_cast<int>(floor(scaling * mCodecContext->width));
-        int scaledHeight = static_cast<int>(floor(scaling * mCodecContext->height));
+        int scaledWidth  = static_cast<int>(floor(scaling * getCodec()->width));
+        int scaledHeight = static_cast<int>(floor(scaling * getCodec()->height));
 
         PixelFormat format = PIX_FMT_RGBA;
         if (!alpha)
@@ -186,17 +190,17 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             format = PIX_FMT_RGB24;
         }
 
-        mDeliveredFrame = boost::make_shared<VideoFrame>(format, scaledWidth, scaledHeight, mPosition, mCodecContext->time_base, pFrame->repeat_pict + 1);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(format, scaledWidth, scaledHeight, mPosition, getCodec()->time_base, pFrame->repeat_pict + 1);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(
-            mCodecContext->width,
-            mCodecContext->height,
-            mCodecContext->pix_fmt,
+            getCodec()->width,
+            getCodec()->height,
+            getCodec()->pix_fmt,
             scaledWidth,
             scaledHeight,
             format, SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
-        sws_scale(ctx,pFrame->data,pFrame->linesize,0,mCodecContext->height,mDeliveredFrame->getData(),mDeliveredFrame->getLineSizes());
+        sws_scale(ctx,pFrame->data,pFrame->linesize,0,getCodec()->height,mDeliveredFrame->getData(),mDeliveredFrame->getLineSizes());
         sws_freeContext(ctx);
 
         av_free(pFrame);
@@ -225,16 +229,15 @@ void VideoFile::startDecodingVideo()
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
-    mCodecContext = mStream->codec;
-    //mVideoCodecContext->lowres = 2; For decoding only a 1/4 image
+    //mStream->codec->lowres = 2; For decoding only a 1/4 image
 
-    AVCodec *videoCodec = avcodec_find_decoder(mStream->codec->codec_id);
+    AVCodec *videoCodec = avcodec_find_decoder(getCodec()->codec_id);
     ASSERT(videoCodec != 0)(videoCodec);
 
-    int result = avcodec_open(mCodecContext, videoCodec);
+    int result = avcodec_open(getCodec(), videoCodec);
     ASSERT(result >= 0)(result);
 
-    FrameRate videoFrameRate = FrameRate(mStream->codec->time_base.num, mStream->codec->time_base.den);
+    FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
 
 
@@ -243,7 +246,7 @@ void VideoFile::startDecodingVideo()
         LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Project::current()->getProperties()->getFrameRate();
     }
 
-    VAR_DEBUG(this)(mCodecContext);
+    VAR_DEBUG(this)(getCodec());
 }
 
 void VideoFile::stopDecodingVideo()
@@ -252,9 +255,21 @@ void VideoFile::stopDecodingVideo()
     if (mDecodingVideo)
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
-        avcodec_close(mCodecContext);
+        avcodec_close(getCodec());
     }
     mDecodingVideo = false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// FROM FILE
+//////////////////////////////////////////////////////////////////////////
+
+void VideoFile::flush()
+{
+    if (mDecodingVideo)
+    {
+        avcodec_flush_buffers(getCodec());
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

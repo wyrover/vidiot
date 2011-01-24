@@ -7,6 +7,7 @@
 #include "UtilLog.h"
 #include "Track.h"
 #include "GuiOptions.h"
+#include "File.h"
 
 namespace model {
 
@@ -34,10 +35,10 @@ Clip::Clip()
     VAR_DEBUG(*this);
 }
 
-Clip::Clip(IControlPtr clip)
+Clip::Clip(IControlPtr render)
     :   wxEvtHandler()
     ,	IControl()
-    ,   mRender(clip)
+    ,   mRender(render)
     ,   mOffset(0)
     ,   mLength(-1)
     ,   mTrack()
@@ -77,6 +78,19 @@ Clip* Clip::clone()
 Clip::~Clip()
 {
     VAR_DEBUG(*this);
+    VAR_DEBUG(mRender.use_count());
+    {
+        // @todo this abort handling is a workaround
+        // fix inheritance structure so that the destructor of file ~file
+        // is called when all shared_ptr's go out of scope..
+        FilePtr f = boost::dynamic_pointer_cast<File>(mRender);
+        if (f)
+        {
+            f->abort();
+        }
+    }
+    mRender.reset();
+    VAR_DEBUG(mRender.use_count());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,6 +178,11 @@ void Clip::adjustEnd(pts length)
     mLength = length;
     ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
     VAR_DEBUG(*this)(length);
+}
+
+pts Clip::getOffset() const
+{
+    return mOffset;
 }
 
 bool Clip::getSelected() const

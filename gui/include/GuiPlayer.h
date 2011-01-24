@@ -16,6 +16,7 @@
 namespace gui {
 
 class GuiVideoDisplay;
+class EditDisplay;
 
 class GuiPlayer
 :   public wxPanel
@@ -32,6 +33,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // CONTROL METHODS
     //////////////////////////////////////////////////////////////////////////
+
+    EditDisplay* startEdit();
+    void endEdit();
 
     void play();
     void stop();
@@ -50,7 +54,6 @@ public:
     void OnEnd(wxCommandEvent& WXUNUSED(event));
     void OnSpeed(wxCommandEvent& WXUNUSED(event));
 
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -58,6 +61,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     GuiVideoDisplay* mDisplay;
+    EditDisplay* mEdit;
     wxTextCtrl* mStatus;
     int mPosition;
 

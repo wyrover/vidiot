@@ -41,28 +41,28 @@ MousePointer::MousePointer(Timeline* timeline)
     mCursorNormal = wxCursor(image);
 
     image = wxBitmap(cursor_move_cut_xpm).ConvertToImage();
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorMoveCut = wxCursor(image);
 
     image = wxBitmap(cursor_trim_begin_xpm).ConvertToImage();
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimBegin = wxCursor(image);
 
     image = wxBitmap(cursor_trim_begin_xpm).ConvertToImage();
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimShiftBegin = wxCursor(image);
 
     image = wxBitmap(cursor_trim_end_xpm).ConvertToImage();
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimEnd = wxCursor(image);
 
     image = wxBitmap(cursor_trim_end_xpm).ConvertToImage();
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 0);
-    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 0);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 16);
+    image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 16);
     mCursorTrimShiftEnd = wxCursor(image);
 
     image = wxBitmap(cursor_track_resize_xpm).ConvertToImage();

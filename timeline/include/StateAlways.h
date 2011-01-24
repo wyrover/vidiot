@@ -20,7 +20,8 @@ public:
     ~Always();
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction< EvWheel >
+        boost::statechart::custom_reaction< EvWheel >,
+        boost::statechart::custom_reaction< EvLeave >
     > reactions;
 
     //////////////////////////////////////////////////////////////////////////
@@ -28,6 +29,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     boost::statechart::result react( const EvWheel& evt );
+    boost::statechart::result react( const EvLeave& evt);
 };
 
 }}} // namespace

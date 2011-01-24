@@ -50,5 +50,11 @@ boost::statechart::result Always::react( const EvWheel& evt )
     return discard_event();
 }
 
+boost::statechart::result Always::react( const EvLeave& evt)
+{
+    VAR_DEBUG(evt);
+    return discard_event();
+}
+
 }}} // namespace
 

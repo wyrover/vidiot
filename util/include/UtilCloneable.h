@@ -9,6 +9,9 @@
 class ICloneable
 {
 public:
+    virtual ~ICloneable() = 0 {};
+
+
     virtual ICloneable* clone() = 0;
 };
 

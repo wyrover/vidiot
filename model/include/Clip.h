@@ -23,7 +23,7 @@ public:
 
     Clip();                     ///< Constructor for recovery from disk
 
-    Clip(IControlPtr clip);     ///< Constructor for creating new clip
+    Clip(IControlPtr render);   ///< Constructor for creating new clip from other asset
 
     virtual Clip* clone();      ///< Used for making deep copies (clones) 
 
@@ -89,6 +89,10 @@ public:
     /// Set the new length of the clip.
     /// @param length new length of clip
     void adjustEnd(pts length);
+
+    /// @return Offset in the viewed video/audio data (that is, the diff between the 
+    ///         starting point of the original and the starting point of the clip)
+    pts getOffset() const;
 
     bool getSelected() const;           ///< @return true if this clip is selected
     void setSelected(bool selected);    ///< Select or deselect clip
