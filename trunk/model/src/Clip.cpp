@@ -78,19 +78,6 @@ Clip* Clip::clone()
 Clip::~Clip()
 {
     VAR_DEBUG(*this);
-    VAR_DEBUG(mRender.use_count());
-    {
-        // @todo this abort handling is a workaround
-        // fix inheritance structure so that the destructor of file ~file
-        // is called when all shared_ptr's go out of scope..
-        FilePtr f = boost::dynamic_pointer_cast<File>(mRender);
-        if (f)
-        {
-            f->abort();
-        }
-    }
-    mRender.reset();
-    VAR_DEBUG(mRender.use_count());
 }
 
 //////////////////////////////////////////////////////////////////////////

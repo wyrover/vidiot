@@ -18,7 +18,7 @@ class IControl
 {
 public:
 
-    virtual ~IControl() = 0 {};
+    virtual ~IControl() {};
 
     //////////////////////////////////////////////////////////////////////////
     // ICLONEABLE
