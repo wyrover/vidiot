@@ -27,6 +27,7 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 ,   mClip(clip)
 ,   mThumbnail()
 ,   mRect(0,0,0,0)
+,   mBeginAddition(0)
 {
     ASSERT(mClip);
     getViewMap().registerView(mClip,this);
@@ -116,6 +117,12 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     {
         info.logicalclipposition = ClipInterior;
     }
+}
+
+void ClipView::setBeginAddition(pts addition)
+{
+    mBeginAddition = addition;
+    invalidateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////

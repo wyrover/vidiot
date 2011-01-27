@@ -3,6 +3,7 @@
 
 #include <boost/statechart/custom_reaction.hpp>
 #include "StateAlways.h"
+#include "UtilInt.h"
 
 namespace model {
 class Clip;
@@ -54,6 +55,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    bool mMustUndo;
+
      wxPoint mStartPosition;
      wxPoint mCurrentPosition;
 
@@ -65,6 +68,7 @@ private:
      // HELPER METHODS
      //////////////////////////////////////////////////////////////////////////
 
+     pts getDiff();
      model::ClipPtr getUpdatedClip();
      void show();
 };

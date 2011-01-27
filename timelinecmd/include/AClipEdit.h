@@ -109,6 +109,12 @@ protected:
         model::ClipPtr removePosition = model::ClipPtr(), 
         model::Clips removeClips = model::Clips());
 
+    /// Move all clips in all tracks a certain amount. 
+    /// @param start only clips clips that are on or after this position must be moved
+    /// @param amount distance that must be shifted
+    /// @param exclude list of tracks that are not to be changed
+    void shiftAllTracks(pts start, pts amount, model::Tracks exlude);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

@@ -30,4 +30,4 @@ REM pause
 cd %BUILD_DIR%\GCCR
 cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
 
-REM pause
+pause

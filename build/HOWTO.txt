@@ -112,7 +112,7 @@ Install graphviz into c:\Program Files
     + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include to the include paths
     + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86 to the linker "additional library directories"
   - Build
-  - Add <VIDIOT_DIR>\portaudio_trunk\build\msvc\Win32\Debug to system/user path variable
+  - Add <VIDIOT_DIR>\portaudio_trunk\build\msvc\Win32\Release to system/user path variable
 * (GCC)
   - MSys: cd <VIDIOT_DIR>/portaudio_trunk ; ./configure --prefix=/d/Vidiot/portaudio_trunk/build/msys ; make ; make install
 
