@@ -14,7 +14,7 @@ ATimelineCommand::ATimelineCommand(gui::timeline::Timeline& timeline)
 
 ATimelineCommand::~ATimelineCommand()
 {
-}
+} 
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET

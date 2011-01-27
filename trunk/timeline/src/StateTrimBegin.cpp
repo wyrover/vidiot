@@ -2,6 +2,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/image.h>
+#include <wx/cmdproc.h>
 #include <boost/make_shared.hpp>
 #include "StateIdle.h"
 #include "UtilLog.h"
@@ -13,7 +14,9 @@
 #include "GuiPlayer.h"
 #include "EditDisplay.h"
 #include "VideoClip.h"
+#include "Project.h"
 #include "Zoom.h"
+#include "TrimBegin.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -29,6 +32,7 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     ,   mStartPosition(0,0)
     ,   mEdit(0)
     ,   mOriginalClip()
+    ,   mMustUndo(false)
 {
     LOG_DEBUG; 
 
@@ -83,11 +87,10 @@ boost::statechart::result TrimBegin::react( const EvKeyDown& evt)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-model::ClipPtr TrimBegin::getUpdatedClip()
+pts TrimBegin::getDiff()
 {
     int diff = mCurrentPosition.x - mStartPosition.x;
     pts diff_pts = getZoom().pixelsToPts(diff);
-
     if (diff_pts > 0)
     {   
         // Move to the right: the clip is shortened
@@ -103,14 +106,23 @@ model::ClipPtr TrimBegin::getUpdatedClip()
         {
             diff_pts = -1 * (mOriginalClip->getOffset() - 1); // -1: Ensure that resulting clip has always minimally one frame left
         }
+
+
+
+        //@todo if moving to left, in newly used area there may only be empty space in case of 'not shift'
     }
     else
     {
         // At original position;
     }
     // @todo make clip longer
+    return diff_pts;
+}
+
+model::ClipPtr TrimBegin::getUpdatedClip()
+{
     model::ClipPtr clip = make_cloned<model::Clip>(mOriginalClip);
-    clip->adjustBegin(diff_pts);
+    clip->adjustBegin(getDiff());
     return clip;
 }
 
@@ -118,7 +130,7 @@ void TrimBegin::show()
 {
     model::ClipPtr updatedClip = getUpdatedClip();
     if (updatedClip->isA<model::VideoClip>())
-    {
+    { 
         model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
         VAR_DEBUG(*mOriginalClip)(*updatedClip);
         videoclip->moveTo(0);
@@ -128,16 +140,19 @@ void TrimBegin::show()
         boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
         mEdit->show(bmp);
     }
-    if (updatedClip->isA<model::VideoClip>())
+    bool toLeft = updatedClip->getOffset() < mOriginalClip->getOffset();
+    bool toRight = updatedClip->getOffset() > mOriginalClip->getOffset();
+
+
+    if (mMustUndo)
     {
-        model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
-        VAR_DEBUG(*mOriginalClip)(*updatedClip);
-        videoclip->moveTo(0);
-        VAR_DEBUG(*mOriginalClip)(*updatedClip);
-        wxSize s = mEdit->getSize();
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
-        boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
-        mEdit->show(bmp);
+        model::Project::current()->GetCommandProcessor()->Undo();
+    }
+    if (toLeft || toRight)
+    {
+        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff()));
+        mMustUndo = true;
+
     }
 }
 

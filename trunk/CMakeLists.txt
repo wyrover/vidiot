@@ -23,6 +23,8 @@ IF (MSVC)
 ENDIF (MSVC)
 
 #### WXWIDGETS ####
+SET( WX_USE_REL_AND_DBG TRUE )
+#SET( wxWidgets_CONFIGURATION mswu ) # or mswud or mswd
 FIND_PACKAGE(wxWidgets REQUIRED core base aui adv xml html qa)
 
 #### BOOST ####
@@ -41,7 +43,7 @@ ADD_CUSTOM_TARGET(doc ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG})
 
 #### PORTAUDIO ####
 SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include)
-SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_trunk/build/msvc/Win32/Debug)
+SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_trunk/build/msvc/Win32/Release)
 SET(PORTAUDIO_LIBRARIES   portaudio_x86.dll)
 
 #### SOUNDTOUCH ####
@@ -49,7 +51,8 @@ SET( SOUNDTOUCH_ROOT        ${VIDIOT_DIR}/soundtouch_trunk )
 SET( SOUNDTOUCH_INCLUDE_DIR ${SOUNDTOUCH_ROOT}/include )
 SET( SOUNDTOUCH_LIBRARY_DIR ${SOUNDTOUCH_ROOT}/lib )
 IF (MSVC)
-  SET( SOUNDTOUCH_LIBRARIES   SoundTouchDllD.dll SoundTouchD.lib )
+  SET( SOUNDTOUCH_LIBRARIES_DEBUG   SoundTouchDllD.dll SoundTouchD.lib )
+  SET( SOUNDTOUCH_LIBRARIES debug SoundTouchDllD.dll SoundTouchD.lib optimized SoundTouchDll.dll SoundTouch.lib )
 ENDIF (MSVC)
 IF (CMAKE_COMPILER_IS_GNUCC)
   SET( SOUNDTOUCH_LIBRARIES  libSoundTouch.a )
@@ -115,6 +118,7 @@ LINK_DIRECTORIES(
 INCLUDE(${wxWidgets_USE_FILE})
 ADD_EXECUTABLE(Vidiot WIN32 ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${BuildFiles} ${HelpFiles}) # Add HelpFiles Here to make Vidiot dependent on copying the helpfiles
 TARGET_LINK_LIBRARIES(Vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
+
 
 #### MAKE GROUPING FOR VISUAL STUDIO ####
 MACRO(GROUPFILES dir)

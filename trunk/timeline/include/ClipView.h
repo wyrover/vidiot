@@ -46,6 +46,8 @@ public:
     /// bitmap and force a redraw.
     void updateThumbnail();
 
+    void setBeginAddition(pts addition);
+
     //////////////////////////////////////////////////////////////////////////
     // DRAW
     //////////////////////////////////////////////////////////////////////////
@@ -64,7 +66,8 @@ private:
     model::ClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
 
-    wxRect mRect; ///< @see show()
+    wxRect mRect;       ///< @see show()
+    pts mBeginAddition; ///< if >0 then this area is (temporarily, during editing) added. if <0 then it is removed from the clip.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -260,6 +260,11 @@ void AClipEdit::newMove(model::TrackPtr addTrack, model::ClipPtr addPosition, mo
     doMove(move);
 }
 
+void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exlude)
+{
+    NIY
+}
+
 void AClipEdit::doMove(model::MoveParameterPtr move)
 {
     if (move->removeClips.size() > 0)
