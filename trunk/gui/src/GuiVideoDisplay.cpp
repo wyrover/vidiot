@@ -184,6 +184,7 @@ void GuiVideoDisplay::moveTo(int64_t position)
     // otherwise the Track::moveTo() can interfere with Track::getNext...() when
     // changing the iterator.
     mProducer->moveTo(position);
+
     boost::mutex::scoped_lock lock(mMutexDraw);
     mCurrentVideoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
     if (mCurrentVideoFrame)
@@ -194,6 +195,7 @@ void GuiVideoDisplay::moveTo(int64_t position)
     {
         mCurrentBitmap.reset();
     }
+
     showNewVideoFrame();
 }
 

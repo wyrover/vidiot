@@ -14,8 +14,10 @@
 #include "GuiPlayer.h"
 #include "EditDisplay.h"
 #include "VideoClip.h"
+#include "ClipView.h"
 #include "Project.h"
 #include "Zoom.h"
+#include "Timeline.h"
 #include "TrimBegin.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -44,12 +46,15 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     PointerPositionInfo info = getMousePointer().getInfo(mCurrentPosition);
     mOriginalClip = info.clip;
 
+    ClipView::holdThumbnails();
+
     mEdit = getPlayer()->startEdit();
     show();
 }
 
 TrimBegin::~TrimBegin() // exit
 {
+    ClipView::releaseThumbnails();
     getPlayer()->endEdit();
     LOG_DEBUG; 
 }
@@ -134,7 +139,7 @@ void TrimBegin::show()
         model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
         VAR_DEBUG(*mOriginalClip)(*updatedClip);
         videoclip->moveTo(0);
-        VAR_DEBUG(*mOriginalClip)(*updatedClip);
+        //VAR_DEBUG(*mOriginalClip)(*updatedClip);
         wxSize s = mEdit->getSize();
         model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
         boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
@@ -152,7 +157,8 @@ void TrimBegin::show()
     {
         model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff()));
         mMustUndo = true;
-
+        getTimeline().Refresh(false);
+getTimeline().Update();
     }
 }
 

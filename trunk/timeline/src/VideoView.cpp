@@ -38,7 +38,7 @@ VideoView::~VideoView()
 
 void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
 {
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks )
     {
         TrackView* t = new TrackView(track,this);
     }
@@ -48,6 +48,10 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
 
 void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 {
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().removedTracks )
+    {
+        delete getViewMap().getView(track);
+    }
     invalidateBitmap();
     event.Skip();
 }

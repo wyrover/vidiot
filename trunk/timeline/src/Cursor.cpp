@@ -50,6 +50,7 @@ void Cursor::setPosition(long position)
         long cursorOnClientArea = mCursorPosition - scroll.x;
         long oldposOnClientArea = oldPos - scroll.x;
         getTimeline().RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,getTimeline().requiredHeight()),false);
+        getTimeline().Update(); // Use this for better feedback when dragging cursor..
 
         getIntervals().update(mCursorPosition);
     }

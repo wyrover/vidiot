@@ -48,6 +48,9 @@ public:
 
     void setBeginAddition(pts addition);
 
+    static void holdThumbnails() { mHoldThumbnails = true; };
+    static void releaseThumbnails() { mHoldThumbnails = true; };
+
     //////////////////////////////////////////////////////////////////////////
     // DRAW
     //////////////////////////////////////////////////////////////////////////
@@ -68,6 +71,7 @@ private:
 
     wxRect mRect;       ///< @see show()
     pts mBeginAddition; ///< if >0 then this area is (temporarily, during editing) added. if <0 then it is removed from the clip.
+    static bool mHoldThumbnails;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

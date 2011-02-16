@@ -163,7 +163,6 @@ void Track::removeClips(Clips clips)
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
 	ProcessEvent(EventRemoveClips(MoveParameter(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips))); // Must be handled immediately
-
 }
 
 const std::list<ClipPtr>& Track::getClips()
