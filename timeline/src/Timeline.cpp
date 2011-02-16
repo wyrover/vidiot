@@ -43,7 +43,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
 ,   mPlayer(dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(sequence,this))
-,   mRedrawOnIdle(true)
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
 ,   mViewMap(new ViewMap(this))
@@ -74,17 +73,18 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     // after both mDivider AND mVideoView are initialized.
     getDivider().setPosition(getDivider().getPosition());
 
-    Bind(wxEVT_IDLE,                &Timeline::onIdle,               this);
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
-
-    // From here on, processing continues after the next idle event.
 }
 
 Timeline::~Timeline()
 {
     dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().closeTimeline(this);
+
+    Unbind(wxEVT_PAINT,               &Timeline::onPaint,              this);
+    Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
+    Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -225,28 +225,12 @@ const model::SequencePtr Timeline::getSequence() const
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Timeline::onIdle(wxIdleEvent& event)
-{
-    if (mRedrawOnIdle)
-    {
-        // This is done to avoid using intermediary states for iterating though
-        // the model. For instance, when replacing clips with other clips, first
-        // a unregisterView event and then a registerView event is received. However, while 
-        // receiving the unregisterView event, the actual adding may already have been
-        // done. Then the view for the added clips has not yet been initialized.
-        Refresh(false);
-        mRedrawOnIdle = false;
-    }
-    event.Skip();
-}
-
 void Timeline::onSize(wxSizeEvent& event)
 {
     // See onViewUpdated.
     // This invalidation causes that event, resulting in a resize.
     invalidateBitmap();
-    //SetVirtualSize(requiredWidth(),requiredHeight());
-    //mRedrawOnIdle = true;
+    Refresh(false);
 }
 
 void Timeline::onEraseBackground(wxEraseEvent& event)
@@ -283,8 +267,7 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
     SetVirtualSize(requiredWidth(),requiredHeight());
- //   getCursor().moveCursorOnUser(getCursor().getPosition()); // This is needed to reset iterators in model in case of clip addition/removal
-    mRedrawOnIdle = true;
+    Refresh(false);
     event.Skip();
 }
 
@@ -292,7 +275,7 @@ void Timeline::onZoomChanged( ZoomChangeEvent& event )
 {
     SetVirtualSize(requiredWidth(),requiredHeight());
     invalidateBitmap();
-    mRedrawOnIdle = true;
+    Refresh(false);
     event.Skip();
 }
 
@@ -356,7 +339,7 @@ pixel Timeline::requiredHeight() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// DRAW
+// HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
 void Timeline::draw(wxBitmap& bitmap) const

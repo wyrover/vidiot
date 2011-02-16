@@ -48,6 +48,10 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
 
 void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 {
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().removedTracks )
+    {
+        delete getViewMap().getView(track);
+    }
     invalidateBitmap();
     event.Skip();
 }

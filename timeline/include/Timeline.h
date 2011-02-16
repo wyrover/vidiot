@@ -60,7 +60,6 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onIdle(wxIdleEvent& event);
     void onSize(wxSizeEvent& event);
     void onEraseBackground(wxEraseEvent& event);
     void onPaint( wxPaintEvent &event );
@@ -100,7 +99,6 @@ private:
 
     model::SequencePtr mSequence;
     PlayerPtr mPlayer;
-    bool mRedrawOnIdle;
 
     //////////////////////////////////////////////////////////////////////////
     // PART -> Must be AFTER MEMBERS
@@ -125,6 +123,10 @@ private:
 
     VideoView* mVideoView;
     AudioView* mAudioView;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
 
     void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 
