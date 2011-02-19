@@ -62,11 +62,21 @@ private:
 
      model::ClipPtr mOriginalClip;
 
+     pts mMinDiffClipContent; ///< Minimum allowed adjustment,  when viewing the contents of the original clip
+     pts mMaxDiffClipContent; ///< Maximum allowed adjustment, when viewing the contents of the original clip
+     pts mMinDiffClipSpace; ///< Minimum allowed adjustment,  when viewing the available free area in front of the original clip
+     pts mMinDiffLinkContent; ///< Minimum allowed adjustment,  when viewing the contents of the linked clip
+     pts mMaxDiffLinkContent; ///< Maximum allowed adjustment, when viewing the contents of the linked clip
+     pts mMinDiffLinkSpace; ///< Minimum allowed adjustment,  when viewing the available free area in front of the linked clip
+
+
      EditDisplay* mEdit;
 
      //////////////////////////////////////////////////////////////////////////
      // HELPER METHODS
      //////////////////////////////////////////////////////////////////////////
+
+     pts getLeftEmptyArea(model::ClipPtr clip); ///< /return size of area to the left of clip that is empty
 
      pts getDiff();
      model::ClipPtr getUpdatedClip();

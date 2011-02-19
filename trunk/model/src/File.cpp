@@ -188,7 +188,7 @@ void File::startReadingPackets()
 void File::stopReadingPackets()
 {
     VAR_DEBUG(this);
-    if (!mReadingPackets) return;
+    if (!mReadingPackets && !mEOF) return; // !mEOF is needed since we still want the buffers to be cleared, in the case that bufferPacketsThread has already delivered the last packet
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
