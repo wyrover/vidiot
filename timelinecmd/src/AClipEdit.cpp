@@ -265,6 +265,11 @@ void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exlude)
     NIY
 }
 
+model::ClipPtr AClipEdit::makeEmptyClip(pts length)
+{
+    return boost::static_pointer_cast<model::Clip>(boost::make_shared<model::EmptyClip>(length));
+}
+
 void AClipEdit::doMove(model::MoveParameterPtr move)
 {
     if (move->removeClips.size() > 0)

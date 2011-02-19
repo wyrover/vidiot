@@ -115,6 +115,10 @@ protected:
     /// @param exclude list of tracks that are not to be changed
     void shiftAllTracks(pts start, pts amount, model::Tracks exlude);
 
+    /// Make a new EmptyClip with the given length and return it as a Clip
+    /// @param length length of new clip
+    model::ClipPtr makeEmptyClip(pts length);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

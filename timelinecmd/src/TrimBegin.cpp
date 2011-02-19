@@ -22,7 +22,8 @@ TrimBegin::TrimBegin(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts
     ,   mClip(clip)
     ,   mDiff(diff)
 {
-    VAR_INFO(this);
+    VAR_INFO(this)(mClip)(mDiff);
+    ASSERT(mDiff != 0); // Useless to add an action to the undo list, when there is no change
     mCommandName = _("Adjust clip begin point");
 }
 
@@ -37,15 +38,22 @@ TrimBegin::~TrimBegin()
 void TrimBegin::initialize()
 {
     VAR_INFO(this);
-    model::ClipPtr fillClip;
-    model::ClipPtr fillLink;
-    // NIY: What if the link is 'shifted' wrt original clip?
-    ASSERT(mClip->getLeftPts() == mClip->getLink()->getLeftPts());
+    model::ClipPtr newclip;
+    model::ClipPtr newlink;
 
-    model::ClipPtr newclip = make_cloned<model::Clip>(mClip);
+    model::ClipPtr linked = mClip->getLink();
+
+    newclip = make_cloned<model::Clip>(mClip);
     newclip->adjustBegin(mDiff);
-    model::ClipPtr newlink = make_cloned<model::Clip>(mClip->getLink());
-    newlink->adjustBegin(mDiff);
+
+    if (linked)
+    {
+        // NIY: What if the link is 'shifted' wrt original clip?
+        ASSERT(mClip->getLeftPts() == linked->getLeftPts());
+
+        newlink = make_cloned<model::Clip>(linked);
+        newlink->adjustBegin(mDiff);
+    }
 
     ReplacementMap linkmapper;
     model::Clips replace = boost::assign::list_of(newclip);
@@ -53,26 +61,30 @@ void TrimBegin::initialize()
 
     if (mDiff > 0)
     {
-        // Add empty clip in front of new clip: new clip is shorter than original clip
-        // and the frames should maintain at the same position.
-        replace.push_front(boost::static_pointer_cast<model::Clip>(boost::make_shared<model::EmptyClip>(mDiff)));
-        replacelink.push_front(boost::static_pointer_cast<model::Clip>(boost::make_shared<model::EmptyClip>(mDiff)));
+        // Add empty clip in front of new clip: new clip is shorter than original clip and the frames should maintain their position.
+        replace.push_front(makeEmptyClip(mDiff));
+        replacelink.push_front(makeEmptyClip(mDiff));
+    }
+    else // mDiff < 0
+    {
+        // Remove whitespace in front of original clip: new clip is longer than original clip and the frames should maintain their position
+        model::ClipPtr emptyclip = mClip->getTrack()->getPreviousClip(mClip);
+        ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getNumberOfFrames() >= -mDiff); // The enlarged clip must fit
+        replaceClip(emptyclip, boost::assign::list_of(makeEmptyClip(emptyclip->getNumberOfFrames() + mDiff)), &linkmapper); // Replace the original empty clip
+        
+        if (linked)
+        {
+            model::ClipPtr emptylink = linked->getTrack()->getPreviousClip(linked);
+            ASSERT(emptylink && emptylink->isA<model::EmptyClip>() && emptylink->getNumberOfFrames() >= -mDiff); // The enlarged linked clip must fit
+            replaceClip(emptylink, boost::assign::list_of(makeEmptyClip(emptylink->getNumberOfFrames() + mDiff)), &linkmapper); // Replace the original empty clip
+        }
     }
     replaceClip(mClip, replace, &linkmapper);
-    replaceClip(mClip->getLink(), replacelink, &linkmapper);
-    replaceLinks(linkmapper);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void TrimBegin::splittrack(model::Tracks tracks, pts position, ReplacementMap& linkmapper)
-{
-    BOOST_FOREACH( model::TrackPtr track, tracks )
+    if (linked)
     {
-        split(track, position, &linkmapper);
+        replaceClip(mClip->getLink(), replacelink, &linkmapper);
     }
+    replaceLinks(linkmapper);
 }
 
 }}} // namespace

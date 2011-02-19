@@ -18,8 +18,6 @@
 
 namespace gui { namespace timeline {
 
-bool ClipView::mHoldThumbnails = false;
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -133,7 +131,6 @@ void ClipView::setBeginAddition(pts addition)
 
 void ClipView::updateThumbnail()
 {
-    if (mHoldThumbnails) return;
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(mClip);
     if (videoclip)
     {

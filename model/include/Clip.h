@@ -84,11 +84,11 @@ public:
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
     /// @param adjustment pts count to add/subtract from the begin point
-    void adjustBegin(pts adjustment);
+    virtual void adjustBegin(pts adjustment);
 
     /// Set the new length of the clip.
     /// @param length new length of clip
-    void adjustEnd(pts length);
+    virtual void adjustEnd(pts length);
 
     /// @return Offset in the viewed video/audio data (that is, the diff between the 
     ///         starting point of the original and the starting point of the clip)

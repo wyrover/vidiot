@@ -3,6 +3,7 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/cmdproc.h>
+#include <boost/limits.hpp>
 #include <boost/make_shared.hpp>
 #include "StateIdle.h"
 #include "UtilLog.h"
@@ -13,6 +14,7 @@
 #include "PositionInfo.h"
 #include "GuiPlayer.h"
 #include "EditDisplay.h"
+#include "Track.h"
 #include "VideoClip.h"
 #include "ClipView.h"
 #include "Project.h"
@@ -34,6 +36,12 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     ,   mStartPosition(0,0)
     ,   mEdit(0)
     ,   mOriginalClip()
+    ,   mMinDiffClipContent(0)
+    ,   mMaxDiffClipContent(0)
+    ,   mMinDiffClipSpace(0)
+    ,   mMinDiffLinkContent((std::numeric_limits<pts>::min)())
+    ,   mMaxDiffLinkContent((std::numeric_limits<pts>::max)())
+    ,   mMinDiffLinkSpace((std::numeric_limits<pts>::min)())
     ,   mMustUndo(false)
 {
     LOG_DEBUG; 
@@ -46,7 +54,20 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     PointerPositionInfo info = getMousePointer().getInfo(mCurrentPosition);
     mOriginalClip = info.clip;
 
-    ClipView::holdThumbnails();
+    // Determine boundaries for original clip
+    mMaxDiffClipContent = mOriginalClip->getNumberOfFrames() - 1; // -1: Ensure that resulting clip has always minimally one frame left
+    mMinDiffClipContent = -mOriginalClip->getOffset() + 1; // +1: Ensure that resulting clip has always minimally one frame left 
+    mMinDiffClipSpace = getLeftEmptyArea(mOriginalClip);
+
+    // Determine boundaries for linked clip
+    model::ClipPtr linked = mOriginalClip->getLink();
+    if (linked)
+    {
+        mMaxDiffLinkContent = linked->getNumberOfFrames() - 1; // -1: Ensure that resulting clip has always minimally one frame left
+        mMinDiffLinkContent = -linked->getOffset() + 1; // +1: Ensure that resulting clip has always minimally one frame left 
+        mMinDiffLinkSpace = getLeftEmptyArea(linked);
+    }
+
 
     mEdit = getPlayer()->startEdit();
     show();
@@ -54,7 +75,6 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
 
 TrimBegin::~TrimBegin() // exit
 {
-    ClipView::releaseThumbnails();
     getPlayer()->endEdit();
     LOG_DEBUG; 
 }
@@ -92,36 +112,26 @@ boost::statechart::result TrimBegin::react( const EvKeyDown& evt)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+pts TrimBegin::getLeftEmptyArea(model::ClipPtr clip)
+{
+    model::TrackPtr track = clip->getTrack();
+    pts leftmost = clip->getLeftPts();
+    model::ClipPtr previous = track->getPreviousClip(clip);
+    while (previous && previous->isA<model::EmptyClip>())
+    {
+        leftmost = previous->getLeftPts();
+        previous = track->getPreviousClip(previous);
+    }
+    return leftmost - clip->getLeftPts();
+}
+
 pts TrimBegin::getDiff()
 {
-    int diff = mCurrentPosition.x - mStartPosition.x;
-    pts diff_pts = getZoom().pixelsToPts(diff);
-    if (diff_pts > 0)
-    {   
-        // Move to the right: the clip is shortened
-        if (diff_pts >= mOriginalClip->getNumberOfFrames() )
-        {
-            diff_pts = mOriginalClip->getNumberOfFrames() - 1; // -1: Ensure that resulting clip has always minimally one frame left
-        }
-    }
-    else if (diff_pts < 0)
-    {
-        // Move to the left: the clip is enlarged
-        if (mOriginalClip->getOffset() + diff_pts <= 1)
-        {
-            diff_pts = -1 * (mOriginalClip->getOffset() - 1); // -1: Ensure that resulting clip has always minimally one frame left
-        }
-
-
-
-        //@todo if moving to left, in newly used area there may only be empty space in case of 'not shift'
-    }
-    else
-    {
-        // At original position;
-    }
-    // @todo make clip longer
-    return diff_pts;
+    return
+        std::min<pts>(mMaxDiffClipContent,
+        std::max<pts>(mMinDiffClipSpace,
+        std::max<pts>(mMinDiffClipContent,
+        getZoom().pixelsToPts(mCurrentPosition.x - mStartPosition.x))));
 }
 
 model::ClipPtr TrimBegin::getUpdatedClip()
@@ -130,7 +140,7 @@ model::ClipPtr TrimBegin::getUpdatedClip()
     clip->adjustBegin(getDiff());
     return clip;
 }
-
+ 
 void TrimBegin::show()
 {
     model::ClipPtr updatedClip = getUpdatedClip();

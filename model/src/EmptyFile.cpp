@@ -76,6 +76,7 @@ wxString EmptyFile::getDescription() const
 
 AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
 {
+    ASSERT(mAudioPosition <= mLength)(mAudioPosition)(mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mAudioPosition++;
     if (mAudioPosition >= mLength)
     {
@@ -94,6 +95,7 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
 
 VideoFramePtr EmptyFile::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
+    ASSERT(mVideoPosition <= mLength)(mVideoPosition)(mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mVideoPosition++;
     if (mVideoPosition >= mLength)
     {
