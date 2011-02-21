@@ -19,6 +19,8 @@ namespace gui { namespace timeline {
 AudioView::AudioView(View* parent)
 :   View(parent)
 {
+    VAR_DEBUG(this);
+
     model::TrackChange audioTracks(getSequence()->getAudioTracks());
     onAudioTracksAdded(model::EventAddAudioTracks(audioTracks));
 
@@ -28,6 +30,15 @@ AudioView::AudioView(View* parent)
 
 AudioView::~AudioView()
 {
+    VAR_DEBUG(this);
+
+    getSequence()->Unbind(model::EVENT_ADD_AUDIO_TRACK,       &AudioView::onAudioTracksAdded,   this);
+    getSequence()->Unbind(model::EVENT_REMOVE_AUDIO_TRACK,    &AudioView::onAudioTracksRemoved,  this);
+
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    {
+        delete getViewMap().getView(track);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

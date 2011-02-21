@@ -10,6 +10,7 @@ class Tooltip
 {
 public:
     Tooltip(Timeline* timeline);
+    virtual ~Tooltip();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW

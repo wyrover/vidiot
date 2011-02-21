@@ -32,7 +32,9 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 :   View(parent)
 ,   mTrack(track)
 {
+    VAR_DEBUG(this);
     ASSERT(mTrack); // Must be initialized
+
     getViewMap().registerView(mTrack,this);
 
     model::MoveParameter m;
@@ -46,10 +48,18 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 
 TrackView::~TrackView()
 {
+    VAR_DEBUG(this);
+
     mTrack->Unbind(model::EVENT_ADD_CLIPS,      &TrackView::onClipsAdded,       this);
     mTrack->Unbind(model::EVENT_REMOVE_CLIPS,   &TrackView::onClipsRemoved,     this);
     mTrack->Unbind(model::EVENT_HEIGHT_CHANGED, &TrackView::onHeightChanged,    this);
+
     getViewMap().unregisterView(mTrack);
+
+    BOOST_FOREACH( model::ClipPtr clip, mTrack->getClips() )
+    {
+        delete getViewMap().getView(clip);
+    }
 }
 
 model::TrackPtr TrackView::getTrack() const

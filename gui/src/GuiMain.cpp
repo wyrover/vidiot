@@ -32,13 +32,16 @@ GuiMain::GuiMain()
     wxHandleFatalExceptions();
 #endif // CATCH_ALL_ERRORS
 
-    Bind(wxEVT_IDLE,                    &GuiMain::OnIdle,           this);
+    Bind(wxEVT_IDLE,                   &GuiMain::OnIdle,           this);
     Bind(model::EVENT_OPEN_PROJECT,    &GuiMain::OnOpenProject,    this);
     Bind(model::EVENT_CLOSE_PROJECT,   &GuiMain::OnCloseProject,   this);
 }
 
 GuiMain::~GuiMain()
 {
+    Unbind(wxEVT_IDLE,                   &GuiMain::OnIdle,           this);
+    Unbind(model::EVENT_OPEN_PROJECT,    &GuiMain::OnOpenProject,    this);
+    Unbind(model::EVENT_CLOSE_PROJECT,   &GuiMain::OnCloseProject,   this);
 }
 
 //////////////////////////////////////////////////////////////////////////

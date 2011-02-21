@@ -69,6 +69,12 @@ private:
     // SPEED SLIDER
     //////////////////////////////////////////////////////////////////////////
 
+    wxButton* mHomeButton;
+    wxButton* mPreviousButton;
+    wxButton* mPauseButton;
+    wxButton* mPlayButton;
+    wxButton* mNextButton;
+    wxButton* mEndButton;
     wxToggleButton* mSpeedButton;
     wxMiniFrame* mSpeedSliderFrame;
     wxSlider* mSpeedSlider;

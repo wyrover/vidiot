@@ -10,6 +10,7 @@
 #include "MousePointer.h"
 #include "ViewMap.h"
 #include "GuiDataObject.h"
+#include "UtilLog.h"
 #include "PositionInfo.h"
 
 namespace gui { namespace timeline {
@@ -22,11 +23,13 @@ Drop::Drop(Timeline* timeline)
 :   wxDropTarget(new GuiDataObject())
 ,   Part(timeline)
 {
-    getTimeline().SetDropTarget(this);
+    //getTimeline().SetDropTarget(this); Uncommented, since the destruction will then be done by wxwidgets
+    VAR_DEBUG(this);
 }
 
 Drop::~Drop() 
 {
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

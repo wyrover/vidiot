@@ -29,7 +29,9 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 ,   mRect(0,0,0,0)
 ,   mBeginAddition(0)
 {
+    VAR_DEBUG(this);
     ASSERT(mClip);
+
     getViewMap().registerView(mClip,this);
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
     mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
@@ -38,6 +40,8 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 
 ClipView::~ClipView()
 {
+    VAR_DEBUG(this);
+
     mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
     mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
     getViewMap().unregisterView(mClip);

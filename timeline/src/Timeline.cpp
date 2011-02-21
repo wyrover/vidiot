@@ -7,7 +7,6 @@
 #include "Constants.h"
 #include "Layout.h"
 #include "UtilLog.h"
-#include "GuiMain.h"
 #include "GuiOptions.h"
 #include "GuiPlayer.h"
 #include "GuiPreview.h"
@@ -42,7 +41,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   View(this) // Has itself as parent...
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
-,   mPlayer(dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().openTimeline(sequence,this))
+,   mPlayer(GuiWindow::get()->getPreview().openTimeline(sequence,this))
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
 ,   mViewMap(new ViewMap(this))
@@ -61,7 +60,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mAudioView(new AudioView(this))
 //////////////////////////////////////////////////////////////////////////
 {
-    LOG_INFO;
+    VAR_DEBUG(this);
 
     init();
 
@@ -76,15 +75,38 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
+
 }
 
 Timeline::~Timeline()
 {
-    dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getPreview().closeTimeline(this);
+    VAR_DEBUG(this);
+
+    deinit();
 
     Unbind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
+
+    GuiWindow::get()->getPreview().closeTimeline(this);
+
+    delete mAudioView;      mAudioView = 0;
+    delete mVideoView;      mVideoView = 0;
+    delete mMenuHandler;    mMenuHandler = 0;
+    delete mMouseState;     mMouseState = 0;
+    delete mDivider;        mDivider = 0;
+    delete mDrop;           mDrop = 0;
+    delete mTooltip;        mTooltip = 0;
+    delete mDrag;           mDrag = 0;
+    delete mCursor;         mCursor = 0;
+    delete mSelection;      mSelection = 0;
+    delete mMousePointer;   mMousePointer = 0;
+    delete mIntervals;      mIntervals = 0;
+    delete mViewMap;        mViewMap = 0;
+    delete mZoom;           mZoom = 0;
+
+    mPlayer.reset();
+    mSequence.reset();
 }
 
 //////////////////////////////////////////////////////////////////////////

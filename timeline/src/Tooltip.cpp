@@ -9,7 +9,13 @@ namespace gui { namespace timeline {
 Tooltip::Tooltip(Timeline* timeline)
 :   Part(timeline)
 {
+    VAR_DEBUG(this);
     wxToolTip::SetDelay(0);
+}
+
+Tooltip::~Tooltip()
+{
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

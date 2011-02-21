@@ -7,6 +7,8 @@
 #include "VideoFile.h"
 #include "AudioFile.h"
 #include "VideoClip.h"
+#include "GuiWindow.h"
+#include "GuiTimeLinesView.h"
 #include "AudioClip.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
@@ -65,9 +67,7 @@ bool ProjectViewCreateSequence::Do()
                 {
                     VAR_DEBUG(file);
                     model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-                    VAR_DEBUG(videoFile);
                     model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-                    VAR_DEBUG(audioFile);
                     model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
                     model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
                     videoClip->setLink(audioClip);
@@ -81,6 +81,8 @@ bool ProjectViewCreateSequence::Do()
 
     /** @todo do not add this sequence to an autofolder. Then, I cannot move it or rename it anymore */
     mParent->addChild(mSequence);
+    gui::GuiWindow::get()->getTimeLines().Open(mSequence);
+
     // May never return false, since then the command is deleted by the command processor. See the use of this object in projectview.
     return true;
 }
@@ -90,7 +92,6 @@ bool ProjectViewCreateSequence::Undo()
     VAR_INFO(this);
     mParent->removeChild(mSequence);
     return true;
-
 }
 
 model::SequencePtr ProjectViewCreateSequence::getSequence()

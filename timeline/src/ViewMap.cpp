@@ -13,10 +13,14 @@ ViewMap::ViewMap(Timeline* timeline)
 ,   mTracks()
 ,   mClips()
 {
+    VAR_DEBUG(this);
 }
 
 ViewMap::~ViewMap()
 {
+    VAR_DEBUG(this);
+    ASSERT(mTracks.size() == 0)(mTracks);
+    ASSERT(mClips.size() == 0)(mClips);
 }
 
 //////////////////////////////////////////////////////////////////////////

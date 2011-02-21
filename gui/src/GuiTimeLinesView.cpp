@@ -5,9 +5,9 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "GuiMain.h"
 #include "GuiPreview.h"
 #include "Timeline.h"
+#include "GuiMain.h"
 #include "Menu.h"
 #include "GuiWindow.h"
 #include "AProjectViewNode.h"
@@ -30,14 +30,14 @@ GuiTimelinesView::GuiTimelinesView(GuiWindow *parent)
 
     wxGetApp().Bind(model::EVENT_REMOVE_ASSET,      &GuiTimelinesView::OnProjectAssetRemoved,       this);
     wxGetApp().Bind(model::EVENT_RENAME_ASSET,      &GuiTimelinesView::OnProjectAssetRenamed,       this);
-    Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,       &GuiTimelinesView::OnPageChanged,               this);
+    mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,       &GuiTimelinesView::OnPageChanged,               this);
 }
 
 GuiTimelinesView::~GuiTimelinesView()
 {
     wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,      &GuiTimelinesView::OnProjectAssetRemoved,       this);
     wxGetApp().Unbind(model::EVENT_RENAME_ASSET,      &GuiTimelinesView::OnProjectAssetRenamed,       this);
-    Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,         &GuiTimelinesView::OnPageChanged,               this);
+    mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,         &GuiTimelinesView::OnPageChanged,               this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,8 @@ void GuiTimelinesView::OnProjectAssetRenamed( model::EventRenameAsset &event )
 
 void GuiTimelinesView::OnPageChanged(wxNotebookEvent& event)
 {
-	update();
+    GuiWindow::get()->getPreview().selectTimeline(static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection())));
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,7 +95,6 @@ void GuiTimelinesView::Open( model::SequencePtr sequence )
         mNotebook.AddPage(timeline,sequence->getName(),false);
     }
     mNotebook.SetSelection(findPage(sequence).first); // Don't reuse f, since the current active timeline might just have been added above.
-    update();
 }
 
 void GuiTimelinesView::Close( model::SequencePtr sequence )
@@ -112,7 +112,6 @@ void GuiTimelinesView::Close( model::SequencePtr sequence )
         // Close open sequence
         mNotebook.DeletePage(mNotebook.GetSelection());
     }
-    update();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,21 +132,6 @@ std::pair<size_t,timeline::Timeline*> GuiTimelinesView::findPage(model::Sequence
     }
 
     return std::make_pair<size_t,timeline::Timeline*>(0,0);
-}
-
-void GuiTimelinesView::update() const
-{
-    GuiWindow& window = *(dynamic_cast<GuiWindow*>(GetParent()));
-    timeline::Timeline* timeline = static_cast<timeline::Timeline*>(mNotebook.GetCurrentPage());
-    if (timeline)
-    {
-        window.setSequenceMenu(timeline->getMenuHandler().getMenu());
-    }
-    else
-    {
-        window.setSequenceMenu(0);
-    }
-    window.getPreview().selectTimeline(timeline);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -188,7 +172,6 @@ void GuiTimelinesView::load(Archive & ar, const unsigned int version)
         ASSERT(selectedPage < mNotebook.GetPageCount());
         mNotebook.SetSelection(selectedPage);
     }
-    update();
 }
 template void GuiTimelinesView::save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion) const;
 template void GuiTimelinesView::load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

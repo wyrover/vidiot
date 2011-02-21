@@ -51,16 +51,12 @@ public:
     // OPEN/CLOSE SEQUENCE
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-    * Open a timeline for the given sequence. If there already is a timeline
-    * for this sequence, it is selected.
-    */
+    /// Open a timeline for the given sequence. If there already is a timeline
+    /// for this sequence, it is selected.
     void Open( model::SequencePtr sequence );
 
-    /**
-    * Close the timeline for the given sequence.
-    * Close current open sequence by default.
-    */
+    /// Close the timeline for the given sequence.
+    /// Close current open sequence by default.
     void Close( model::SequencePtr sequence = model::SequencePtr() );
 
 private:
@@ -71,11 +67,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /** Find the page associated with a sequence. 0 pointer is returned if not found. */
-    std::pair<size_t,timeline::Timeline*> findPage(model::SequencePtr sequence) const;
-
-    /** To be called whenever the notebook selection (current open page) changes. */
-    void update() const;
+    std::pair<size_t,timeline::Timeline*> findPage(model::SequencePtr sequence) const; ///< Find the page associated with a sequence. 0 pointer is returned if not found.
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

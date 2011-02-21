@@ -8,15 +8,18 @@ namespace gui { namespace timeline {
 Part::Part()
 :   mTimeline(0)
 {
+    VAR_DEBUG(this);
 }
 
 Part::Part(Timeline* timeline)
 :   mTimeline(timeline)
 {
+    VAR_DEBUG(this);
 }
 
 Part::~Part()
 {
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

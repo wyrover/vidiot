@@ -6,6 +6,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include "GuiPlayer.h"
 #include "UtilLog.h"
+#include "GuiWindow.h"
 #include "Timeline.h"
 
 namespace gui {
@@ -49,19 +50,24 @@ void GuiPreview::closeTimeline(timeline::Timeline* timeline)
 {
     ASSERT(mPlayer);
     ASSERT(mPlayers.find(timeline) != mPlayers.end());
+    selectTimeline(0);
     PlayerPtr player = mPlayers[timeline];
+    hide(player);
     mPlayers.erase(timeline);
     GetSizer()->Detach(player.get());
+    if (mPlayers.size() > 0)
+    {
+        selectTimeline(mPlayers.begin()->first);
+    }
+    else
+    {
+        mPlayer.reset();
+    }
 }
 
 void GuiPreview::selectTimeline(timeline::Timeline* timeline)
 {
-    if (mPlayer)
-    {
-        mPlayer->stop();
-        GetSizer()->Hide(mPlayer.get());
-    }
-
+    hide(mPlayer);
     if (timeline != 0)
     {
         ASSERT(mPlayers.find(timeline) != mPlayers.end());
@@ -83,6 +89,20 @@ void GuiPreview::play()
         mPlayer->play();
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void GuiPreview::hide(PlayerPtr player)
+{
+    if (player)
+    {
+        player->stop();
+        GetSizer()->Hide(player.get());
+    }
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 

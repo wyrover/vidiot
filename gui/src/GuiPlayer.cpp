@@ -34,11 +34,17 @@ wxBitmap bmpPause   (preview_pause_xpm);
 GuiPlayer::GuiPlayer(wxWindow *parent, model::SequencePtr sequence)
 :   wxPanel(parent, wxID_ANY)
 ,   mPosition(0)
+,   mHomeButton(0)
+,   mPreviousButton(0)
+,   mPauseButton(0)
+,   mPlayButton(0)
+,   mNextButton(0)
+,   mEndButton(0)
 ,   mSpeedButton(0)
 ,   mSpeedSliderFrame(0)
 ,   mSpeedSlider(0)
 {
-	LOG_INFO;
+	VAR_DEBUG(this);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -67,38 +73,37 @@ GuiPlayer::GuiPlayer(wxWindow *parent, model::SequencePtr sequence)
     wxPanel* mButtonsPanel = new wxPanel(this);
     wxBoxSizer* mButtonsPanelSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxButton* home      = new wxButton(mButtonsPanel, wxID_ANY);
-    wxButton* previous  = new wxButton(mButtonsPanel, wxID_ANY);
-    wxButton* pause     = new wxButton(mButtonsPanel, wxID_ANY);
-    wxButton* play      = new wxButton(mButtonsPanel, wxID_ANY);
-    wxButton* next      = new wxButton(mButtonsPanel, wxID_ANY);
-    wxButton* end       = new wxButton(mButtonsPanel, wxID_ANY);
-
-    mSpeedButton        = new wxToggleButton(mButtonsPanel, wxID_ANY, "");
+    mHomeButton     = new wxButton(mButtonsPanel, wxID_ANY);
+    mPreviousButton = new wxButton(mButtonsPanel, wxID_ANY);
+    mPauseButton    = new wxButton(mButtonsPanel, wxID_ANY);
+    mPlayButton     = new wxButton(mButtonsPanel, wxID_ANY);
+    mNextButton     = new wxButton(mButtonsPanel, wxID_ANY);
+    mEndButton      = new wxButton(mButtonsPanel, wxID_ANY);
+    mSpeedButton    = new wxToggleButton(mButtonsPanel, wxID_ANY, "");
     updateSpeedButton();
 
-    home    ->SetBitmap(bmpHome,        wxTOP);
-    previous->SetBitmap(bmpPrevious,    wxTOP);
-    pause   ->SetBitmap(bmpPause,       wxTOP);
-    play    ->SetBitmap(bmpPlay,        wxTOP);
-    next    ->SetBitmap(bmpNext,        wxTOP);
-    end     ->SetBitmap(bmpEnd,         wxTOP);
+    mHomeButton    ->SetBitmap(bmpHome,        wxTOP);
+    mPreviousButton->SetBitmap(bmpPrevious,    wxTOP);
+    mPauseButton   ->SetBitmap(bmpPause,       wxTOP);
+    mPlayButton    ->SetBitmap(bmpPlay,        wxTOP);
+    mNextButton    ->SetBitmap(bmpNext,        wxTOP);
+    mEndButton     ->SetBitmap(bmpEnd,         wxTOP);
 
-    home        ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnHome,     this);
-    previous    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPrevious, this);
-    pause       ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPause,    this);
-    play        ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPlay,     this);
-    next        ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnNext,     this);
-    end         ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnEnd,      this);
-    mSpeedButton->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &GuiPlayer::OnSpeed,    this);
+    mHomeButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnHome,     this);
+    mPreviousButton ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPrevious, this);
+    mPauseButton    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPause,    this);
+    mPlayButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPlay,     this);
+    mNextButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnNext,     this);
+    mEndButton      ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnEnd,      this);
+    mSpeedButton    ->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &GuiPlayer::OnSpeed,    this);
 
-    mButtonsPanelSizer->Add(home,           wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(previous,       wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(pause,          wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(play,           wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(next,           wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(end,            wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(mSpeedButton,   wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mHomeButton,        wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mPreviousButton,    wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mPauseButton,       wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mPlayButton,        wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mNextButton,        wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mEndButton,         wxSizerFlags(1).Expand().Bottom().Center());
+    mButtonsPanelSizer->Add(mSpeedButton,       wxSizerFlags(1).Expand().Bottom().Center());
 
     mButtonsPanel->SetSizer(mButtonsPanelSizer);
 
@@ -114,9 +119,20 @@ GuiPlayer::GuiPlayer(wxWindow *parent, model::SequencePtr sequence)
 
 GuiPlayer::~GuiPlayer()
 {
+    VAR_DEBUG(this);
+
+    mHomeButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnHome,     this);
+    mPreviousButton ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPrevious, this);
+    mPauseButton    ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPause,    this);
+    mPlayButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnPlay,     this);
+    mNextButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnNext,     this);
+    mEndButton      ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &GuiPlayer::OnEnd,      this);
+    mSpeedButton    ->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &GuiPlayer::OnSpeed,    this);
+
     if (mDisplay != 0)
     {
-        mDisplay->moveTo(0);
+        mDisplay->Unbind(EVENT_PLAYBACK_POSITION, &GuiPlayer::onPlaybackPosition, this);
+ //       mDisplay->moveTo(0);
         delete mDisplay;
         mDisplay = 0;
     }
@@ -256,7 +272,9 @@ void GuiPlayer::OnSpeedSliderUpdate( wxCommandEvent& WXUNUSED(event) )
 void GuiPlayer::OnSpeedSliderFocusKill(wxFocusEvent& event)
 {
     mSpeedSliderFrame->Hide();
-    mSpeedSlider->Unbind(wxEVT_KILL_FOCUS, &GuiPlayer::OnSpeedSliderFocusKill, this);
+    mSpeedSlider->Unbind(wxEVT_KILL_FOCUS,                &GuiPlayer::OnSpeedSliderFocusKill,     this);
+    mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED,    &GuiPlayer::OnSpeedSliderUpdate,        this);
+    mSpeedButton->Unbind(wxEVT_LEFT_DOWN,                 &GuiPlayer::OnLeftDown,                 this);
     delete mSpeedSliderFrame;
     mSpeedSliderFrame = 0;
     Bind(wxEVT_IDLE, &GuiPlayer::OnIdleAfterCloseSpeedSliderFrame, this);
@@ -284,7 +302,6 @@ void GuiPlayer::OnLeftDown(wxMouseEvent& event)
 void GuiPlayer::OnIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
 {
     mSpeedButton->SetValue(false);
-    mSpeedButton->Unbind(wxEVT_LEFT_DOWN, &GuiPlayer::OnLeftDown, this);
     Unbind(wxEVT_IDLE, &GuiPlayer::OnIdleAfterCloseSpeedSliderFrame, this);
     event.Skip();
 }

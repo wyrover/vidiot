@@ -19,13 +19,16 @@ Divider::Divider(Timeline* timeline)
 :   Part(timeline)
 ,   mPosition(0)
 {
-    LOG_INFO;
-    getSequence()->Bind(model::EVENT_ADD_VIDEO_TRACK, &Divider::onVideoTracksAdded, this);
+    VAR_DEBUG(this);
 
+    getSequence()->Bind(model::EVENT_ADD_VIDEO_TRACK, &Divider::onVideoTracksAdded, this);
 }
 
 Divider::~Divider()
 {
+    VAR_DEBUG(this);
+
+    getSequence()->Unbind(model::EVENT_ADD_VIDEO_TRACK, &Divider::onVideoTracksAdded, this);
 }
 
 //////////////////////////////////////////////////////////////////////////

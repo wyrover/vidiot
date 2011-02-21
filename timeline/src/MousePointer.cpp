@@ -33,6 +33,8 @@ IMPLEMENTENUM(MouseOnClipPosition);
 MousePointer::MousePointer(Timeline* timeline)
 :   Part(timeline)
 {
+    VAR_DEBUG(this);
+
     wxImage image;
 
     image = wxBitmap(cursor_normal_xpm).ConvertToImage();
@@ -75,6 +77,7 @@ MousePointer::MousePointer(Timeline* timeline)
     
 MousePointer::~MousePointer()
 {
+    VAR_DEBUG(this);
 }
 
 void MousePointer::set(MousePointerImage image)

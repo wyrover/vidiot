@@ -2,6 +2,7 @@
 
 #include "Timeline.h"
 #include "StateIdle.h"
+#include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -31,10 +32,31 @@ Machine::Machine(Timeline& tl)
     mTimeline.Bind(wxEVT_KEY_UP,                 &Machine::OnKeyUp,          this);
     mTimeline.Bind(wxEVT_MOUSE_CAPTURE_LOST,     &Machine::OnCaptureLost,    this);
     mTimeline.Bind(wxEVT_MOUSE_CAPTURE_CHANGED,  &Machine::OnCaptureChanged, this);
+
+    VAR_DEBUG(this);
 }
 
 Machine::~Machine()
 {
+    VAR_DEBUG(this);
+
+    mTimeline.Unbind(wxEVT_MOTION,                 &Machine::OnMotion,         this);
+    mTimeline.Unbind(wxEVT_LEFT_DOWN,              &Machine::OnLeftDown,       this);
+    mTimeline.Unbind(wxEVT_LEFT_UP,                &Machine::OnLeftUp,         this);
+    mTimeline.Unbind(wxEVT_LEFT_DCLICK,            &Machine::OnLeftDouble,     this);
+    mTimeline.Unbind(wxEVT_MIDDLE_DOWN,            &Machine::OnMiddleDown,     this);
+    mTimeline.Unbind(wxEVT_MIDDLE_UP,              &Machine::OnMiddleUp,       this);
+    mTimeline.Unbind(wxEVT_MIDDLE_DCLICK,          &Machine::OnMiddleDouble,   this);
+    mTimeline.Unbind(wxEVT_RIGHT_DOWN,             &Machine::OnRightDown,      this);
+    mTimeline.Unbind(wxEVT_RIGHT_UP,               &Machine::OnRightUp,        this);
+    mTimeline.Unbind(wxEVT_RIGHT_DCLICK,           &Machine::OnRightDouble,    this);
+    mTimeline.Unbind(wxEVT_ENTER_WINDOW,           &Machine::OnEnter,          this);
+    mTimeline.Unbind(wxEVT_LEAVE_WINDOW,           &Machine::OnLeave,          this);
+    mTimeline.Unbind(wxEVT_MOUSEWHEEL,             &Machine::OnWheel,          this);
+    mTimeline.Unbind(wxEVT_KEY_DOWN,               &Machine::OnKeyDown,        this);
+    mTimeline.Unbind(wxEVT_KEY_UP,                 &Machine::OnKeyUp,          this);
+    mTimeline.Unbind(wxEVT_MOUSE_CAPTURE_LOST,     &Machine::OnCaptureLost,    this);
+    mTimeline.Unbind(wxEVT_MOUSE_CAPTURE_CHANGED,  &Machine::OnCaptureChanged, this);
 }
 
 void Machine::OnMotion          (wxMouseEvent& event)  { process_event(EvMotion        (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }

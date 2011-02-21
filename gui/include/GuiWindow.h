@@ -64,9 +64,9 @@ public:
     // GET WIDGETS
     //////////////////////////////////////////////////////////////////////////
 
+    static GuiWindow*   get();
     GuiTimelinesView&   getTimeLines();
     GuiPreview&         getPreview();
-    GuiProjectView&	    getProjectView();
 
     //////////////////////////////////////////////////////////////////////////
     // ENABLING/DISABLING MENUS
