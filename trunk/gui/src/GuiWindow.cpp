@@ -137,6 +137,28 @@ void GuiWindow::init()
 
 GuiWindow::~GuiWindow()
 {
+    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,     &GuiWindow::OnOpenProject,              this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,    &GuiWindow::OnCloseProject,             this);
+
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     &mDocManager, wxID_CLOSE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	&mDocManager, wxID_CLOSE_ALL);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       &mDocManager, wxID_NEW);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      &mDocManager, wxID_OPEN);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    &mDocManager, wxID_REVERT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      &mDocManager, wxID_SAVE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    &mDocManager, wxID_SAVEAS);
+
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          &mDocManager, wxID_UNDO);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          &mDocManager, wxID_REDO);
+
+
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnExit,             this, wxID_EXIT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnHelp,             this, wxID_HELP);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAbout,            this, wxID_ABOUT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnOptions,          this, ID_OPTIONS);
+
+    Unbind(wxEVT_CLOSE_WINDOW,            &GuiWindow::OnCloseWindow,      this);
+
     mUiManager.UnInit();
 
     delete mDocTemplate;
@@ -217,6 +239,12 @@ void GuiWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
 // GET WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
+// static
+GuiWindow* GuiWindow::get()
+{
+    return dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow());
+}
+
 GuiTimelinesView& GuiWindow::getTimeLines()
 {
     return *mTimelinesView;
@@ -225,11 +253,6 @@ GuiTimelinesView& GuiWindow::getTimeLines()
 GuiPreview& GuiWindow::getPreview()
 {
     return *mPreview;
-}
-
-GuiProjectView&	GuiWindow::getProjectView()
-{
-    return *mProjectView;
 }
 
 //////////////////////////////////////////////////////////////////////////

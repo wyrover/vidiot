@@ -32,8 +32,7 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 Intervals::Intervals(Timeline* timeline)
-:   wxEvtHandler()
-,   Part(timeline)
+:   Part(timeline)
 ,   mMarkedIntervals()
 ,   mNewIntervalActive(false)
 ,   mNewIntervalBegin(0)
@@ -42,10 +41,12 @@ Intervals::Intervals(Timeline* timeline)
 ,   mToggleBegin(0)
 ,   mToggleEnd(0)
 {
+    VAR_DEBUG(this);
 }
 
 Intervals::~Intervals()
 {
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

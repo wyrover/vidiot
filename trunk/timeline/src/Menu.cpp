@@ -1,7 +1,6 @@
 #include "Menu.h"
 
 #include "UtilLog.h"
-#include "GuiMain.h"
 #include "GuiWindow.h"
 #include "GuiTimeLinesView.h"
 #include "CreateVideoTrack.h"
@@ -21,6 +20,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
 ,   Part(timeline)
 ,   mMenu()
 {
+    VAR_DEBUG(this);
+
     mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"));
     mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"));
     mMenu.AppendSeparator();
@@ -30,20 +31,39 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.AppendSeparator();
     mMenu.Append(ID_CLOSESEQUENCE,  _("Close"));
 
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,  this, ID_ADDAUDIOTRACK);
+    GuiWindow::get()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
+    GuiWindow::get()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,  this, ID_ADDAUDIOTRACK);
 
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+    GuiWindow::get()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
+    GuiWindow::get()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
+    GuiWindow::get()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
 
-    wxGetApp().GetTopWindow()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
+    GuiWindow::get()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
+
+    wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
+    notebook->Bind(wxEVT_COMMAND_BOOKCTRL_PAGE_CHANGED, &MenuHandler::onPageChanged, this);
 
     update();
 }
 
 MenuHandler::~MenuHandler()
 {
+    VAR_DEBUG(this);
+
+    wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
+    notebook->Unbind(wxEVT_COMMAND_BOOKCTRL_PAGE_CHANGED, &MenuHandler::onPageChanged, this);
+
+    GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
+    GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,  this, ID_ADDAUDIOTRACK);
+
+    GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
+    GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
+    GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+
+    GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
+
+    GuiWindow::get()->setSequenceMenu(0); // If this is NOT the last timeline to be closed, then a onPageChanged event will reset the menu to that other timeline
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -101,8 +121,24 @@ void MenuHandler::onCloseSequence(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
     NIY;
-    GuiTimelinesView& tv = dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getTimeLines();
+    GuiTimelinesView& tv = GuiWindow::get()->getTimeLines();
     tv.Close();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void MenuHandler::onPageChanged(wxBookCtrlEvent& event)
+{
+    wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
+//    timeline::Timeline* timeline = static_cast<timeline::Timeline*>(notebook->GetCurrentPage());
+    timeline::Timeline* timeline = static_cast<timeline::Timeline*>(notebook->GetPage(event.GetSelection()));
+    if (timeline == &getTimeline())
+    {
+        GuiWindow::get()->setSequenceMenu(timeline->getMenuHandler().getMenu());
+    }
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

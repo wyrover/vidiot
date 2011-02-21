@@ -55,6 +55,7 @@ public:
 
     View(Timeline* timeline); ///< For initializing the topmost (sequence) view
     void init();              ///< For initializing the topmost (sequence) view (separated into constructor + this method, since it requires the parts of the timeline to be created also)
+    void deinit();            ///< For destroying   the topmost (sequence) view (separated into destructor  + this method, since it requires the parts of the timeline to be destroyed afterwards)
     View(View* parent); ///< For initializing child views.
     virtual ~View();
 

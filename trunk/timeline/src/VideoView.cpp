@@ -21,6 +21,8 @@ namespace gui { namespace timeline {
 VideoView::VideoView(View* parent)
 :   View(parent)
 {
+    VAR_DEBUG(this);
+
     model::TrackChange videoTracks(getSequence()->getVideoTracks());
     onVideoTracksAdded(model::EventAddVideoTracks(videoTracks));
 
@@ -30,6 +32,15 @@ VideoView::VideoView(View* parent)
 
 VideoView::~VideoView()
 {
+    VAR_DEBUG(this);
+
+    getSequence()->Unbind(model::EVENT_ADD_VIDEO_TRACK,       &VideoView::onVideoTracksAdded,    this);
+    getSequence()->Unbind(model::EVENT_REMOVE_VIDEO_TRACK,    &VideoView::onVideoTracksRemoved,  this);
+
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        delete getViewMap().getView(track);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

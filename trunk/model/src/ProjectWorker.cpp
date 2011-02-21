@@ -1,5 +1,4 @@
 #include "ProjectWorker.h"
-#include "GuiMain.h"
 #include "GuiWindow.h"
 
 namespace model {
@@ -13,7 +12,7 @@ static const unsigned int sMaximumBufferedWork = 1000;
 ProjectWorker::ProjectWorker()
 :   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
-,   mWindow(static_cast<gui::GuiWindow*>(gui::wxGetApp().GetTopWindow()))
+,   mWindow(gui::GuiWindow::get())
 {
     //mThread.reset(new boost::thread(boost::bind(&ProjectWorker::thread,this)));
 }

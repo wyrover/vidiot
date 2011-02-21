@@ -19,6 +19,12 @@ Selection::Selection(Timeline* timeline)
 ,   Part(timeline)
 ,   mPreviouslyClicked()
 {
+    VAR_DEBUG(this);
+}
+
+Selection::~Selection()
+{
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -188,7 +194,7 @@ void Selection::setPreviouslyClicked(model::ClipPtr clip)
     if (clip)
     {
         ASSERT(clip->getTrack())(clip);
-        clip->getTrack()->Bind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this);
+        clip->getTrack()->Bind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this); // todo what about unbind!!!
     }
     mPreviouslyClicked = clip;
 }

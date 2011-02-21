@@ -38,6 +38,12 @@ Drag::Drag(Timeline* timeline)
     ,   mVideo(timeline, true)
     ,   mAudio(timeline, false)
 {
+    VAR_DEBUG(this);
+}
+
+Drag::~Drag()
+{
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

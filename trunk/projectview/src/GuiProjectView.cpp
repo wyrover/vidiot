@@ -11,7 +11,6 @@
 #include <wx/tokenzr.h>
 #include <wx/clipbrd.h>
 #include "Folder.h"
-#include "GuiMain.h"
 #include "GuiDataObject.h"
 #include "GuiWindow.h"
 #include "GuiDropSource.h"
@@ -372,7 +371,6 @@ void GuiProjectView::OnCreateSequence(wxCommandEvent& WXUNUSED(event))
 {
     command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
     mProject->Submit(cmd);
-    getTimeLines().Open(cmd->getSequence());
 }
 
 void GuiProjectView::OnBeginDrag( wxDataViewEvent &event )
@@ -464,7 +462,7 @@ void GuiProjectView::OnActivated( wxDataViewEvent &event )
 		event.Veto();
 		return;
 	}
-    getTimeLines().Open(sequence);
+    GuiWindow::get()->getTimeLines().Open(sequence);
 }
 
 void GuiProjectView::OnExpanded( wxDataViewEvent &event )
@@ -539,12 +537,6 @@ bool GuiProjectView::FindConflictingName(model::FolderPtr parent, wxString name 
         }
     }
     return false;
-}
-
-
-GuiTimelinesView& GuiProjectView::getTimeLines()
-{
-    return dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow())->getTimeLines();
 }
 
 //////////////////////////////////////////////////////////////////////////

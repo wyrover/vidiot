@@ -62,6 +62,8 @@ GuiVideoDisplay::GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer)
 ,   mStartPts(0)
 ,   mCurrentTime(0)
 {
+    VAR_DEBUG(this);
+
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(mWidth)(mHeight);
 
@@ -77,11 +79,13 @@ GuiVideoDisplay::GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer)
 
 GuiVideoDisplay::~GuiVideoDisplay()
 {
+    VAR_DEBUG(this);
+
     Unbind(wxEVT_PAINT,               &GuiVideoDisplay::OnPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &GuiVideoDisplay::OnEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &GuiVideoDisplay::OnSize,               this);
 
-    moveTo(0); // stops playback
+    stop(); // stops playback
 
     PaError err = Pa_Terminate();
     ASSERT(err == paNoError)(Pa_GetErrorText(err));
@@ -135,9 +139,9 @@ void GuiVideoDisplay::play()
     LOG_DEBUG;
 }
 
-void GuiVideoDisplay::moveTo(int64_t position)
+void GuiVideoDisplay::stop()
 {
-    VAR_DEBUG(this)(position);
+    VAR_DEBUG(this);
 
     mAbortThreads = true; // Stop getting new video/audio data
 
@@ -179,6 +183,13 @@ void GuiVideoDisplay::moveTo(int64_t position)
 
         LOG_DEBUG << "Playback stopped";
     }
+}
+
+void GuiVideoDisplay::moveTo(int64_t position)
+{
+    VAR_DEBUG(this)(position);
+
+    stop(); // Stop playback
 
     // This must be done AFTER stopping all player threads, since - for instance -
     // otherwise the Track::moveTo() can interfere with Track::getNext...() when

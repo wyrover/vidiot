@@ -18,11 +18,16 @@ Cursor::Cursor(Timeline* timeline)
 ,   Part(timeline)
 ,   mCursorPosition(0)
 {
+    VAR_DEBUG(this);
+
     getPlayer()->Bind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }
 
 Cursor::~Cursor()
 {
+    VAR_DEBUG(this);
+
+    getPlayer()->Unbind(EVENT_PLAYBACK_POSITION, &Cursor::onPlaybackPosition, this);
 }
 
 //////////////////////////////////////////////////////////////////////////

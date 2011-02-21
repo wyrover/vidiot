@@ -36,10 +36,12 @@ Zoom::Zoom(Timeline* timeline)
 ,   Part(timeline)
 ,   mZoom(sDefaultZoom)
 {
+    VAR_DEBUG(this);
 }
 
 Zoom::~Zoom()
 {
+    VAR_DEBUG(this);
 }
 
 void Zoom::change(int steps)

@@ -39,6 +39,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void play();
+    void stop();
     void moveTo(int64_t position);
     void setSpeed(int speed);
     int getSpeed() const;

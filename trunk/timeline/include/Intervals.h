@@ -3,7 +3,6 @@
 
 #include <map>
 #include <wx/dc.h>
-#include <wx/event.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "Part.h"
@@ -18,8 +17,7 @@ namespace gui { namespace timeline {
 class EventTimelineCursorMoved;
 
 class Intervals
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public Part
+    :   public Part
 {
 public:
 

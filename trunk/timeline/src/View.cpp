@@ -17,14 +17,24 @@ View::View(Timeline* timeline)
 ,   mParent(0)
 ,   mBitmapValid(false)
 {
+    VAR_DEBUG(this);
     ASSERT(timeline);
 }
 
 void View::init()
 {
+    VAR_DEBUG(this);
     ASSERT(this == &getTimeline());
     mEvtHandler.Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, &getTimeline());
     getZoom().Bind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, &getTimeline());
+}
+
+void View::deinit()
+{
+    VAR_DEBUG(this);
+    ASSERT(this == &getTimeline());
+    mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, &getTimeline());
+    getZoom().Unbind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, &getTimeline());
 }
 
 View::View(View* parent)
@@ -33,8 +43,9 @@ View::View(View* parent)
 ,   mParent(parent)
 ,   mBitmapValid(false)
 {
-    ASSERT(parent);
-    mEvtHandler.Bind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, parent);
+    VAR_DEBUG(this);
+    ASSERT(mParent);
+    mEvtHandler.Bind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, mParent);
     getZoom().Bind(ZOOM_CHANGE_EVENT, &View::onZoomChanged, this);
 }
 
@@ -45,11 +56,6 @@ View::~View()
         mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, mParent);
         getZoom().Unbind(ZOOM_CHANGE_EVENT, &View::onZoomChanged, this);
 
-    }
-    else
-    {
-        mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &Timeline::onChildViewUpdated, &getTimeline());
-        getZoom().Unbind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, &getTimeline());
     }
 }
 
@@ -101,6 +107,7 @@ const wxBitmap& View::getBitmap() const
 
 void View::invalidateBitmap()
 {
+    VAR_DEBUG(this);
     mBitmapValid = false;
     mEvtHandler.QueueEvent(new ViewUpdateEvent(ViewUpdate(*this,wxRegion())));
 }
