@@ -10,7 +10,7 @@ namespace gui { namespace timeline {
 namespace gui { namespace timeline { namespace command {
 
 /// Abstract base for all modifications on the timeline/sequence.
-/// @todo upon closing the timeline, remove all related commands from the history.
+/// \todo upon closing the timeline, remove all related commands from the history.
 class ATimelineCommand 
     :   public ::command::RootCommand
 {

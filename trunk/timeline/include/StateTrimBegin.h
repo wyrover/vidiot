@@ -48,6 +48,7 @@ public:
     boost::statechart::result react( const EvLeftUp& evt );
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvKeyDown& evt );
+    boost::statechart::result react( const EvKeyUp& evt );
 
 private:
 
@@ -57,30 +58,31 @@ private:
 
     bool mMustUndo;
 
-     wxPoint mStartPosition;
-     wxPoint mCurrentPosition;
+    wxPoint mStartPosition;
+    wxPoint mCurrentPosition;
 
-     model::ClipPtr mOriginalClip;
+    model::ClipPtr mOriginalClip;
 
-     pts mMinDiffClipContent; ///< Minimum allowed adjustment,  when viewing the contents of the original clip
-     pts mMaxDiffClipContent; ///< Maximum allowed adjustment, when viewing the contents of the original clip
-     pts mMinDiffClipSpace; ///< Minimum allowed adjustment,  when viewing the available free area in front of the original clip
-     pts mMinDiffLinkContent; ///< Minimum allowed adjustment,  when viewing the contents of the linked clip
-     pts mMaxDiffLinkContent; ///< Maximum allowed adjustment, when viewing the contents of the linked clip
-     pts mMinDiffLinkSpace; ///< Minimum allowed adjustment,  when viewing the available free area in front of the linked clip
+    pts mMinDiffClipContent;        ///< Minimum allowed adjustment,  when viewing the contents of the original clip
+    pts mMaxDiffClipContent;        ///< Maximum allowed adjustment, when viewing the contents of the original clip
+    pts mMinDiffClipSpace;          ///< Minimum allowed adjustment,  when viewing the available free area in front of the original clip
+    pts mMinDiffLinkContent;        ///< Minimum allowed adjustment,  when viewing the contents of the linked clip
+    pts mMaxDiffLinkContent;        ///< Maximum allowed adjustment, when viewing the contents of the linked clip
+    pts mMinDiffLinkSpace;          ///< Minimum allowed adjustment,  when viewing the available free area in front of the linked clip
+    pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
+    bool mShiftDown;
 
+    EditDisplay* mEdit;
 
-     EditDisplay* mEdit;
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
 
-     //////////////////////////////////////////////////////////////////////////
-     // HELPER METHODS
-     //////////////////////////////////////////////////////////////////////////
+    pts getLeftEmptyArea(model::ClipPtr clip); ///< /return size of area to the left of clip that is empty
 
-     pts getLeftEmptyArea(model::ClipPtr clip); ///< /return size of area to the left of clip that is empty
-
-     pts getDiff();
-     model::ClipPtr getUpdatedClip();
-     void show();
+    pts getDiff();
+    model::ClipPtr getUpdatedClip();
+    void show();
 };
 
 }}} // namespace

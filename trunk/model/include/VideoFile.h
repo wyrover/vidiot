@@ -43,7 +43,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// @see make_cloned
+    /// \see make_cloned
     VideoFile(const VideoFile& other);
 
 private:

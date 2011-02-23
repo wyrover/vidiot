@@ -69,7 +69,7 @@ Sequence* Sequence::clone()
 Sequence::~Sequence()
 {
     VAR_DEBUG(this);
-    /// @todo remove all tracks recursively (note: the tracks do not keep
+    /// \todo remove all tracks recursively (note: the tracks do not keep
     /// references to the sequence, hence the sequence can simply go
     /// out-of-scope (smartptr) and then this destructor is called. The
     /// tracks however are kept alive via their child clips, thus they

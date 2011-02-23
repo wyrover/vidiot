@@ -23,7 +23,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// To be called upon startup. Distributes options to the various components.
-    /// @see distributeOptions()
+    /// \see distributeOptions()
     static void init();
 
     /// This distributes the current set of options to the various other components.

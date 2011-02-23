@@ -55,25 +55,25 @@ protected:
     /// Split the clip at the given (track) position. If there already is a cut at the given
     /// position, then nothing is changed. When the clip is replaced by (two) other clips, then
     /// In the ReplacementMap (if != 0) the mapping clip->(first,second) is added.
-    /// @param track track in which a cut must be made at the given position
-    /// @param position position in the track where the split should occur
-    /// @param conversionmap mapping for 'maintaining links' that will be updated when splitting
+    /// \param track track in which a cut must be made at the given position
+    /// \param position position in the track where the split should occur
+    /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void split(model::TrackPtr track, pts position, ReplacementMap* conversionmap = 0);
 
     /// Replace the given clip (original) with a list of other clips.
     /// In the ReplacementMap (if != 0) the mapping clip->replacements is added.
-    /// @param clip original clip to be replaced
-    /// @param replacements clips to be inserted in place of 'clip'
-    /// @param conversionmap mapping for 'maintaining links' that will be updated when splitting
+    /// \param clip original clip to be replaced
+    /// \param replacements clips to be inserted in place of 'clip'
+    /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceClip(model::ClipPtr original, model::Clips replacements, ReplacementMap* conversionmap = 0);
 
     /// Find the list of clips, indicated with the pts'es [left, right). Thus, the left pts is part
     /// of these clips, the right pts is not.
-    /// @param track of which the clips are to be removed
-    /// @param left leftmost pts (the clip at this pts position is removed)
-    /// @param right rightmost pts (the clip at this pts position is NOT removed)
-    /// @pre a cut exists at both pts positions 'left' and 'right' (use split() to ensure this).
-    /// @return list of clips to be removed and their position (that is, the first non-removed clip after these clips, or a null ptr)
+    /// \param track of which the clips are to be removed
+    /// \param left leftmost pts (the clip at this pts position is removed)
+    /// \param right rightmost pts (the clip at this pts position is NOT removed)
+    /// \pre a cut exists at both pts positions 'left' and 'right' (use split() to ensure this).
+    /// \return list of clips to be removed and their position (that is, the first non-removed clip after these clips, or a null ptr)
     typedef std::pair<model::Clips, model::ClipPtr> ClipsWithPosition;
     ClipsWithPosition findClips(model::TrackPtr track, pts left, pts right);
 
@@ -88,15 +88,15 @@ protected:
     /// If l1 was not replaced yet, it is being replaced with a new clip r1 which is a 100% clone of l1.
     /// If one of the two replacements list is shorter than the other, the extra clips in the other list
     /// are linked to nothing.
-    /// @param conversionmap mapping for 'maintaining links' that will be updated when splitting
+    /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceLinks(ReplacementMap& conversionmap);
 
     /// Merge all consecutive empty clips in any track of the sequence into one clip
-    /// @see mergeConsecutiveEmptyClips(model::Tracks tracks)
+    /// \see mergeConsecutiveEmptyClips(model::Tracks tracks)
     void mergeConsecutiveEmptyClips();
 
     /// Merge any consecutive empty clips into one clip for the contiguous region.
-    /// @param tracks list of track (audio/video) to be updated
+    /// \param tracks list of track (audio/video) to be updated
     void mergeConsecutiveEmptyClips(model::Tracks tracks);
 
     /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
@@ -110,14 +110,25 @@ protected:
         model::Clips removeClips = model::Clips());
 
     /// Move all clips in all tracks a certain amount. 
-    /// @param start only clips clips that are on or after this position must be moved
-    /// @param amount distance that must be shifted
-    /// @param exclude list of tracks that are not to be changed
-    void shiftAllTracks(pts start, pts amount, model::Tracks exlude);
+    /// \param start only clips clips that are on or after this position must be moved
+    /// \param amount distance that must be shifted
+    /// \param exclude list of tracks that are not to be changed
+    void shiftAllTracks(pts start, pts amount, model::Tracks exclude);
+
+    /// Move all clips in the given tracks a certain amount. 
+    /// \param tracks list of tracks which must be shifted
+    /// \param start only clips clips that are on or after this position must be moved
+    /// \param amount distance that must be shifted
+    /// \param exclude list of tracks that are not to be changed
+    void shiftTracks(model::Tracks tracks, pts start, pts amount);
 
     /// Make a new EmptyClip with the given length and return it as a Clip
-    /// @param length length of new clip
+    /// \param length length of new clip
     model::ClipPtr makeEmptyClip(pts length);
+
+    /// Make a new list of one EmptyClip with the given length
+    /// \see makeEmptyClip
+    model::Clips makeEmptyClips(pts length);
 
 private:
 

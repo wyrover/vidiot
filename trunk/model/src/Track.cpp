@@ -120,7 +120,7 @@ wxString Track::getDescription() const
 // HANDLING CLIPS
 //////////////////////////////////////////////////////////////////////////
 
-/// @TODO: Make Track::execute(MoveParameter param), then the command just passes the info on.
+/// \TODO: Make Track::execute(MoveParameter param), then the command just passes the info on.
 /// 		  Furthermore, make MoveParameter a separate file (MoveClip.*)
 /// 		  Finally give that class a 'clone_invert' method that returns a cloned and inverted instance.
 

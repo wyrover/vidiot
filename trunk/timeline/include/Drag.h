@@ -90,11 +90,11 @@ private:
 
         /// Update the offset of tracks of this type, given a track in the timeline and a dragged track
         /// that is currently dragged above that track in the timeline.
-        /// @param indexOfTrackInTimeline index of a track in the timeline
-        /// @param indexOfDraggedTrack index of the track that is currently 'above' the track in the timeline
+        /// \param indexOfTrackInTimeline index of a track in the timeline
+        /// \param indexOfDraggedTrack index of the track that is currently 'above' the track in the timeline
         void updateOffset(int indexOfTrackInTimeline, int indexOfDraggedTrack);
 
-        /// @return audio or video track with given index.
+        /// \return audio or video track with given index.
         /// Whether it's an audio or a video track returned depends on the scope of this DragInfo object.
         model::TrackPtr getTrack(int index);
 
@@ -115,15 +115,15 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /// @return the track that is currently dragged on top of 'track'
-    /// @return 0 if no track is found on top of this track
-    /// @param track a track in the timeline
+    /// \return the track that is currently dragged on top of 'track'
+    /// \return 0 if no track is found on top of this track
+    /// \param track a track in the timeline
     /// Note that the returned track may be completely unselected, meaning
     /// that actually no clips from that track are visually dragged.
     model::TrackPtr trackOnTopOf(model::TrackPtr track);
 
-    /// @return the DragInfo object that corresponds to the given track.
-    /// @param track track that indicates audio or video
+    /// \return the DragInfo object that corresponds to the given track.
+    /// \param track track that indicates audio or video
     /// Given the track, either mVideo or mAudio is returned.
     DragInfo& getAssociatedInfo(model::TrackPtr track);
 
@@ -131,7 +131,7 @@ private:
     /// by holding SHIFT (move grab point) or by moving from audio to video
     /// or vice versa.
     /// May be called with a 0-pointer. In that case, nothing is changed.
-    /// @param track track (in the timeline) on top of which the mouse pointer currently is.
+    /// \param track track (in the timeline) on top of which the mouse pointer currently is.
     void updateDraggedTrack(model::TrackPtr track);
 
     /// Invalidate all clips in the timeline that are selected. Needed to hide
@@ -140,7 +140,7 @@ private:
 
     /// Return the current position of the drag. That is, the difference between
     /// the original hotspot position and the current hotspot position.
-    /// @return bitmap offset in pixels
+    /// \return bitmap offset in pixels
     wxPoint getDraggedDistance() const;
 
     /// Return the dragged distance in pts value
@@ -159,8 +159,8 @@ private:
     void determinePossibleSnapPoints();
 
     /// Return the list of 'drops' on the given track
-    /// @param track onto which clips are dropped
-    /// @return list of drops onto that track
+    /// \param track onto which clips are dropped
+    /// \return list of drops onto that track
     command::ExecuteDrop::Drops getDrops(model::TrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////

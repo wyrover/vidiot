@@ -46,15 +46,15 @@ public:
     /// (thus using the defaults), this information is 'reset'.
     void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0);
 
-    /// @return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
+    /// \return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
     TrackPtr getTrack();
 
-    /// @return pts (in containing track) of begin point of clip.
+    /// \return pts (in containing track) of begin point of clip.
     /// The frame at this position is the first frame of this clip.
     /// The frames of a clip are [ getLeftPts,getRightPts )
     pts getLeftPts() const;
 
-    /// @return pts (in containing track) AFTER end point of clip.
+    /// \return pts (in containing track) AFTER end point of clip.
     /// The frame at this position is AFTER the last frame of this clip
     /// The frames of a clip are [ getLeftPts,getRightPts )
     pts getRightPts() const; 
@@ -83,24 +83,24 @@ public:
     /// If adjustment is positive then move the begin point of the clip backwards
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
-    /// @param adjustment pts count to add/subtract from the begin point
+    /// \param adjustment pts count to add/subtract from the begin point
     virtual void adjustBegin(pts adjustment);
 
     /// Set the new length of the clip.
-    /// @param length new length of clip
+    /// \param length new length of clip
     virtual void adjustEnd(pts length);
 
-    /// @return Offset in the viewed video/audio data (that is, the diff between the 
+    /// \return Offset in the viewed video/audio data (that is, the diff between the 
     ///         starting point of the original and the starting point of the clip)
     pts getOffset() const;
 
     bool getSelected() const;           ///< @return true if this clip is selected
     void setSelected(bool selected);    ///< Select or deselect clip
 
-    /// @return pts value of most recently returned audio/video in getNext*.
+    /// \return pts value of most recently returned audio/video in getNext*.
     pts getGenerationProgress() const;          
 
-    /// @param delivered value of most recently returned audio/video in getNext*.
+    /// \param delivered value of most recently returned audio/video in getNext*.
     /// Triggers DebugEventRenderProgress.
     void setGenerationProgress(pts progress);
 
@@ -117,8 +117,8 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// @note the clone is not automatically part of the track!!!
-    /// @see make_cloned
+    /// \note the clone is not automatically part of the track!!!
+    /// \see make_cloned
     Clip(const Clip& other);
 
     //////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ protected:
 
     /// Return the most recent position as specified in moveTo(). This is
     /// uninitialized when there was playback progress after the moveTo.
-    /// @see invalidateLastSetPosition
+    /// \see invalidateLastSetPosition
     boost::optional<pts> getLastSetPosition() const;
 
 private:

@@ -76,8 +76,8 @@ private:
     void draw(wxBitmap& bitmap) const;                      ///< @see View::draw()
 
     /// Actual drawing implementation. Reused for drawing clips when dragging.
-    /// @param drawSelectedClips indicates if selected clips must be drawn or left empty
-    /// @param drawUnselectedClips indicates if not-selected clips must be drawn or left empty
+    /// \param drawSelectedClips indicates if selected clips must be drawn or left empty
+    /// \param drawUnselectedClips indicates if not-selected clips must be drawn or left empty
     void draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselectedClips) const;
 
 };
