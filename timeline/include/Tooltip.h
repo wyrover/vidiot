@@ -20,7 +20,7 @@ public:
     /// If the given text equals the current tooltip -> hide
     /// If the given text equals "" -> hide
     /// In all other cases -> show new tooltip containing text
-    /// @param tooltip to be shown or hidden
+    /// \param tooltip to be shown or hidden
     void show( const wxString& text );
 };
 

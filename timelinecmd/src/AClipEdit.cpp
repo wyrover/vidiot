@@ -260,14 +260,51 @@ void AClipEdit::newMove(model::TrackPtr addTrack, model::ClipPtr addPosition, mo
     doMove(move);
 }
 
-void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exlude)
+void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
 {
-    NIY
+    if (amount == 0) return;
+    model::Tracks videoTracks = getTimeline().getSequence()->getVideoTracks();
+    model::Tracks audioTracks = getTimeline().getSequence()->getAudioTracks();
+    BOOST_FOREACH( model::TrackPtr track, exclude )
+    {
+        model::Tracks::iterator itVideo = find(videoTracks.begin(), videoTracks.end(), track);
+        if (itVideo != videoTracks.end()) videoTracks.erase(itVideo);
+        model::Tracks::iterator itAudio = find(audioTracks.begin(), audioTracks.end(), track);
+        if (itAudio != audioTracks.end()) audioTracks.erase(itAudio);
+    }
+    shiftTracks(videoTracks, start, amount);
+    shiftTracks(audioTracks, start, amount);
+}
+
+void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
+{
+    ASSERT(amount != 0)(tracks)(start)(amount);
+    BOOST_FOREACH( model::TrackPtr track, tracks )
+    {
+        if (amount > 0)
+        {
+            model::ClipPtr clip = track->getClip(start);
+            replaceClip(clip, makeEmptyClips(amount));
+        }
+        else // (amount < 0)
+        {
+            model::ClipPtr clip = track->getClip(start);
+            ASSERT((clip->isA<model::EmptyClip>()) && 
+                (clip->getLeftPts() <= start) && 
+                (start <= clip->getRightPts()))(tracks)(start)(amount)(track)(clip); // Enough room must be available for the shift
+            replaceClip(clip, makeEmptyClips(clip->getNumberOfFrames() + amount));  // NOTE: amount < 0
+        }
+    }
 }
 
 model::ClipPtr AClipEdit::makeEmptyClip(pts length)
 {
     return boost::static_pointer_cast<model::Clip>(boost::make_shared<model::EmptyClip>(length));
+}
+
+model::Clips AClipEdit::makeEmptyClips(pts length)
+{
+    return boost::assign::list_of(makeEmptyClip(length));
 }
 
 void AClipEdit::doMove(model::MoveParameterPtr move)

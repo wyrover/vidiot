@@ -42,7 +42,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void adjustBegin(pts adjustment); /// @see Clip::adjustBegin
+    virtual void adjustBegin(pts adjustment); /// \see Clip::adjustBegin
 
 protected:
 
@@ -51,7 +51,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// @see make_cloned
+    /// \see make_cloned
     EmptyClip(const EmptyClip& other);
 
 private:

@@ -17,15 +17,15 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Initialize, allocate, and fill the data.
-    /// @param buffer if non-null data from this buffer is copied into the newly allocated space.
-    /// @param position approximate pts value of this chunk (note: use for debugging only)
+    /// \param buffer if non-null data from this buffer is copied into the newly allocated space.
+    /// \param position approximate pts value of this chunk (note: use for debugging only)
     AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples, pts position);
 
     /// Initialize but do not allocate yet. Used for empty chunks. Then,
     /// allocation only is needed when the data is needed for playback.
     /// During 'track combining' empty chunks can be ignored.
     /// This avoids needless allocation.
-    /// @param position approximate pts value of this chunk (note: use for debugging only)
+    /// \param position approximate pts value of this chunk (note: use for debugging only)
     AudioChunk(int nChannels, samples_t nSamples, pts position);
 
     virtual ~AudioChunk();
@@ -49,7 +49,7 @@ public:
 
     /// Indicates that a number of samples has been consumed by the process
     /// that reads chunks.
-    /// @param samples number of samples that has been read
+    /// \param samples number of samples that has been read
     void read(samples_t samples);
 
     /// Return the data.
@@ -59,7 +59,7 @@ public:
     /// Returns the part of 'getBuffer()' that has not been consumed.
     /// Virtual and not const due to reuse in EmptyChunk.
     /// This method takes 'adjusted length' into account.
-    /// @return pointer to first unread sample.
+    /// \return pointer to first unread sample.
     virtual boost::int16_t* getUnreadSamples();
 
     samples_t getUnreadSampleCount() const;

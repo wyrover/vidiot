@@ -69,7 +69,7 @@ struct MoveParameter
     {
     }
 
-    /// @return new move object that is the inverse of this object.
+    /// \return new move object that is the inverse of this object.
     /// This means that all additions and removals are interchanged.
     MoveParameterPtr make_inverted()
     {
@@ -122,12 +122,12 @@ public:
 
     /// Find the clip following 'clip'. 
     /// Returns a '0' pointer if clip is not found.
-    /// @pre clip is a part of this track
+    /// \pre clip is a part of this track
     ClipPtr getNextClip(ClipPtr clip);
 
     /// Find the clip preceding 'clip'. 
     /// Returns a '0' pointer if clip is not found.
-    /// @pre clip is a part of this track
+    /// \pre clip is a part of this track
     ClipPtr getPreviousClip(ClipPtr clip);
 
     //////////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// @see make_cloned
+    /// \see make_cloned
     Track(const Track& other);
 
     //////////////////////////////////////////////////////////////////////////

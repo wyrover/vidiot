@@ -3,6 +3,7 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/cmdproc.h>
+#include <boost/foreach.hpp>
 #include <boost/limits.hpp>
 #include <boost/make_shared.hpp>
 #include "StateIdle.h"
@@ -14,6 +15,7 @@
 #include "PositionInfo.h"
 #include "GuiPlayer.h"
 #include "EditDisplay.h"
+#include "Sequence.h"
 #include "Track.h"
 #include "VideoClip.h"
 #include "ClipView.h"
@@ -42,13 +44,17 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     ,   mMinDiffLinkContent((std::numeric_limits<pts>::min)())
     ,   mMaxDiffLinkContent((std::numeric_limits<pts>::max)())
     ,   mMinDiffLinkSpace((std::numeric_limits<pts>::min)())
+    ,   mMinShiftOtherTrackContent((std::numeric_limits<pts>::min)())
     ,   mMustUndo(false)
+    ,   mShiftDown(false)
 {
     LOG_DEBUG; 
 
     const EvLeftDown* event = dynamic_cast<const EvLeftDown*>(triggering_event());
+    mShiftDown = event->mWxEvent.ShiftDown();
     ASSERT(event); // Only way to get here is to press left button in the Idle state
 
+    // \todo use the leftmost of the clip and/or its link
     mStartPosition = event->mPosition;
     mCurrentPosition = mStartPosition;
     PointerPositionInfo info = getMousePointer().getInfo(mCurrentPosition);
@@ -68,6 +74,24 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
         mMinDiffLinkSpace = getLeftEmptyArea(linked);
     }
 
+    // Determine boundaries for shifting other tracks
+    pts shiftFrom = mOriginalClip->getLeftPts();
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        if (mOriginalClip->getTrack() == track) continue;
+        if (linked && linked->getTrack() == track) continue;
+        model::ClipPtr clipAt = track->getClip(shiftFrom);
+        mMinShiftOtherTrackContent = 
+            (clipAt->isA<model::EmptyClip>()) ? std::max<pts>(mMinShiftOtherTrackContent, clipAt->getLeftPts() - shiftFrom) : 0;
+    }
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    {
+        if (mOriginalClip->getTrack() == track) continue;
+        if (linked && linked->getTrack() == track) continue;
+        model::ClipPtr clipAt = track->getClip(shiftFrom);
+        mMinShiftOtherTrackContent = 
+            (clipAt->isA<model::EmptyClip>()) ? std::max<pts>(mMinShiftOtherTrackContent, clipAt->getLeftPts() - shiftFrom) : 0;
+    }
 
     mEdit = getPlayer()->startEdit();
     show();
@@ -91,19 +115,38 @@ boost::statechart::result TrimBegin::react( const EvLeftUp& evt )
 boost::statechart::result TrimBegin::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    mCurrentPosition = evt.mPosition;
-    show();
+    if (mCurrentPosition != evt.mPosition)
+    {
+        mCurrentPosition = evt.mPosition;
+        show();
+    }
     return discard_event();
 }
 
 boost::statechart::result TrimBegin::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
+    if (mShiftDown != evt.mWxEvent.ShiftDown())
+    {
+        mShiftDown = evt.mWxEvent.ShiftDown();
+        show();
+    }
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_F1:
         getTooltip().show(sTooltip);
         break;
+    }
+    return discard_event();
+}
+
+boost::statechart::result TrimBegin::react( const EvKeyUp& evt)
+{
+    VAR_DEBUG(evt);
+    if (mShiftDown != evt.mWxEvent.ShiftDown())
+    {
+        mShiftDown = evt.mWxEvent.ShiftDown();
+        show();
     }
     return discard_event();
 }
@@ -129,9 +172,10 @@ pts TrimBegin::getDiff()
 {
     return
         std::min<pts>(mMaxDiffClipContent,
-        std::max<pts>(mMinDiffClipSpace,
+        std::max<pts>(mShiftDown ? mMinDiffClipContent : mMinDiffClipSpace,
         std::max<pts>(mMinDiffClipContent,
-        getZoom().pixelsToPts(mCurrentPosition.x - mStartPosition.x))));
+        std::max<pts>(mShiftDown ? mMinShiftOtherTrackContent : (std::numeric_limits<pts>::min)(),
+        getZoom().pixelsToPts(mCurrentPosition.x - mStartPosition.x)))));
 }
 
 model::ClipPtr TrimBegin::getUpdatedClip()
@@ -162,13 +206,14 @@ void TrimBegin::show()
     if (mMustUndo)
     {
         model::Project::current()->GetCommandProcessor()->Undo();
+        mMustUndo = false;
     }
     if (toLeft || toRight)
     {
-        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff()));
+        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff(), mShiftDown));
         mMustUndo = true;
         getTimeline().Refresh(false);
-getTimeline().Update();
+        getTimeline().Update();
     }
 }
 

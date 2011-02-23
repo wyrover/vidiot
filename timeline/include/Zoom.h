@@ -28,7 +28,7 @@ public:
 	virtual ~Zoom();
 
     /// Change the current zoom level
-    /// @param steps number of steps to change (>0 zoom in, <0 zoom out)
+    /// \param steps number of steps to change (>0 zoom in, <0 zoom out)
     void change(int steps);
 
     //////////////////////////////////////////////////////////////////////////
