@@ -17,7 +17,6 @@
 #include "MousePointer.h"
 #include "Selection.h"
 #include "StateMoveDivider.h"
-#include "StateTestScrollStart.h"
 #include "StateMoveTrackDivider.h"
 #include "StateTrimBegin.h"
 #include "UtilLog.h"
