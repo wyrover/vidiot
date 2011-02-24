@@ -17,9 +17,11 @@
 #include "MousePointer.h"
 #include "Selection.h"
 #include "StateMoveDivider.h"
+#include "StateTestScrollStart.h"
 #include "StateMoveTrackDivider.h"
 #include "StateTrimBegin.h"
 #include "UtilLog.h"
+#include "StateScrolling.h"
 #include "PositionInfo.h"
 #include "Tooltip.h"
 
@@ -89,6 +91,13 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
     }
 
     return forward_event();
+}
+
+boost::statechart::result Idle::react( const EvRightDown& evt )
+{
+    VAR_DEBUG(evt);
+    getWindow().SetFocus(); /** @todo make more generic, for all states */
+    return transit<StateScrolling>();
 }
 
 boost::statechart::result Idle::react( const EvMotion& evt )
