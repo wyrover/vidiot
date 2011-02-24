@@ -51,7 +51,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
         getDrag().start(evt.mPosition);
         return transit<Dragging>();
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result TestDragStart::react( const EvKeyDown& evt)
@@ -63,7 +63,7 @@ boost::statechart::result TestDragStart::react( const EvKeyDown& evt)
         getTooltip().show(sTooltip);
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 }}} // namespace

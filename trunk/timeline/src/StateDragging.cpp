@@ -54,7 +54,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
     getDrag().move(evt.mPosition, evt.mWxEvent.ShiftDown());
     getDrop().updateDropArea(evt.mPosition);
 
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result Dragging::react( const EvKeyDown& evt )
@@ -70,7 +70,7 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
         getDrag().stop();
         return transit<Idle>();
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result Dragging::react( const EvKeyUp& evt )
@@ -83,7 +83,7 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
         getDrag().move(evt.mPosition, false);
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 }}} // namespace

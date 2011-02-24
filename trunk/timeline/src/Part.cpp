@@ -92,6 +92,16 @@ const MousePointer& Part::getMousePointer() const
     return getTimeline().getMousepointer();
 }
 
+Scrolling& Part::getScrolling()
+{
+    return getTimeline().getScrolling();
+}
+
+const Scrolling& Part::getScrolling() const
+{
+    return getTimeline().getScrolling();
+}
+
 ViewMap& Part::getViewMap()
 {
     return getTimeline().getViewMap();

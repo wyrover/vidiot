@@ -16,6 +16,7 @@
 #include "Divider.h"
 #include "AudioView.h"
 #include "Timeline.h"
+#include "UtilLogWxwidgets.h"
 #include "Zoom.h"
 #include "ViewMap.h"
 #include "TrackView.h"

@@ -5,6 +5,7 @@
 #include <wx/cursor.h>
 #include "UtilEnum.h"
 #include "Part.h"
+#include "UtilInt.h"
 
 namespace gui { namespace timeline {
     struct PointerPositionInfo;

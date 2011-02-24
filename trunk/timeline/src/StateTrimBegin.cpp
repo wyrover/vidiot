@@ -16,6 +16,7 @@
 #include "GuiPlayer.h"
 #include "EditDisplay.h"
 #include "Sequence.h"
+#include "Scrolling.h"
 #include "Track.h"
 #include "VideoClip.h"
 #include "ClipView.h"
@@ -120,7 +121,7 @@ boost::statechart::result TrimBegin::react( const EvMotion& evt )
         mCurrentPosition = evt.mPosition;
         show();
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result TrimBegin::react( const EvKeyDown& evt)
@@ -137,7 +138,7 @@ boost::statechart::result TrimBegin::react( const EvKeyDown& evt)
         getTooltip().show(sTooltip);
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result TrimBegin::react( const EvKeyUp& evt)
@@ -148,7 +149,7 @@ boost::statechart::result TrimBegin::react( const EvKeyUp& evt)
         mShiftDown = evt.mWxEvent.ShiftDown();
         show();
     }
-    return discard_event();
+    return forward_event();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -180,6 +181,8 @@ pts TrimBegin::getDiff()
 
 model::ClipPtr TrimBegin::getUpdatedClip()
 {
+    pts diff = getDiff();
+    if (diff == 0) return model::ClipPtr();
     model::ClipPtr clip = make_cloned<model::Clip>(mOriginalClip);
     clip->adjustBegin(getDiff());
     return clip;
@@ -187,34 +190,41 @@ model::ClipPtr TrimBegin::getUpdatedClip()
  
 void TrimBegin::show()
 {
-    model::ClipPtr updatedClip = getUpdatedClip();
-    if (updatedClip->isA<model::VideoClip>())
-    { 
-        model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
-        VAR_DEBUG(*mOriginalClip)(*updatedClip);
-        videoclip->moveTo(0);
-        //VAR_DEBUG(*mOriginalClip)(*updatedClip);
-        wxSize s = mEdit->getSize();
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
-        boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
-        mEdit->show(bmp);
-    }
-    bool toLeft = updatedClip->getOffset() < mOriginalClip->getOffset();
-    bool toRight = updatedClip->getOffset() > mOriginalClip->getOffset();
+    //if (mMustUndo)
+    //{
+    //    model::Project::current()->GetCommandProcessor()->Undo();
+    //    mMustUndo = false;
+    //}
 
+    //model::ClipPtr updatedClip = getUpdatedClip();
+    //if (updatedClip)
+    //{
+    //    if (updatedClip->isA<model::VideoClip>())
+    //    { 
+    //        model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
+    //        VAR_DEBUG(*mOriginalClip)(*updatedClip);
+    //        videoclip->moveTo(0);
+    //        //VAR_DEBUG(*mOriginalClip)(*updatedClip);
+    //        wxSize s = mEdit->getSize();
+    //        model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
+    //        boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
+    //        mEdit->show(bmp);
+    //    }
+    //    pts beginPos = mOriginalClip->getLeftPts() + getDiff(); // Must be initialized before executing the command (since that'll remove mOriginalClip from the track)
 
-    if (mMustUndo)
-    {
-        model::Project::current()->GetCommandProcessor()->Undo();
-        mMustUndo = false;
-    }
-    if (toLeft || toRight)
-    {
-        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff(), mShiftDown));
-        mMustUndo = true;
-        getTimeline().Refresh(false);
-        getTimeline().Update();
-    }
+    //    command::TrimBegin* trim = new command::TrimBegin(getTimeline(), mOriginalClip, getDiff(), mShiftDown);
+    //    model::Project::current()->Submit(trim);
+    //    mMustUndo = true;
+    //    if (mShiftDown)
+    //    {
+    //        getMousePointer().align(getZoom().pixelsToPts(mCurrentPosition.x), trim->adjustedPosition());
+    //    }
+    //    getTimeline().Refresh(false);
+    //    getTimeline().Update();
+    //}
+    getScrolling().align(getZoom().pixelsToPts(mStartPosition.x), getZoom().pixelsToPts(mCurrentPosition.x));
+    getTimeline().Refresh(false);
+    getTimeline().Update();
 }
 
 }}} // namespace
