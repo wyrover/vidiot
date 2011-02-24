@@ -24,6 +24,7 @@ namespace gui {
         class Intervals;
         class MenuHandler;
         class MousePointer;
+        class Scrolling;
         class Selection;
         class VideoView;
         class AudioView;
@@ -71,6 +72,9 @@ public:
 
     MousePointer& getMousePointer();
     const MousePointer& getMousePointer() const;
+
+    Scrolling& getScrolling();
+    const Scrolling& getScrolling() const;
 
     ViewMap& getViewMap();
     const ViewMap& getViewMap() const;

@@ -51,7 +51,7 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
         getTooltip().show(sTooltip);
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result Playing::react( const EvKeyUp& evt)
@@ -63,7 +63,7 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
         triggerEnd();
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 //////////////////////////////////////////////////////////////////////////

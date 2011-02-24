@@ -14,6 +14,7 @@
 #include "Intervals.h"
 #include "Selection.h"
 #include "MousePointer.h"
+#include "Scrolling.h"
 #include "Cursor.h"
 #include "Drag.h"
 #include "Divider.h"
@@ -47,6 +48,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mViewMap(new ViewMap(this))
 ,   mIntervals(new Intervals(this))
 ,   mMousePointer(new MousePointer(this))
+,   mScroll(new Scrolling(this))
 ,   mSelection(new Selection(this))
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
@@ -64,9 +66,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 
     init();
 
-    SetScrollRate( 10, 10 );
-    EnableScrolling(true,true);
-
     // To ensure that for newly opened timelines the initial position is ok
     // (should take 'minimum position' into account). This can only be done
     // after both mDivider AND mVideoView are initialized.
@@ -75,7 +74,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
-
 }
 
 Timeline::~Timeline()
@@ -161,6 +159,16 @@ MousePointer& Timeline::getMousepointer()
 const MousePointer& Timeline::getMousepointer() const
 { 
     return *mMousePointer; 
+}
+
+Scrolling& Timeline::getScrolling()
+{ 
+    return *mScroll; 
+}
+
+const Scrolling& Timeline::getScrolling() const
+{ 
+    return *mScroll; 
 }
 
 Selection& Timeline::getSelection()

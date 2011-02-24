@@ -38,7 +38,7 @@ boost::statechart::result MovingCursor::react( const EvLeftDown& evt )
     {
         triggerToggleStart();
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result MovingCursor::react( const EvLeftUp& evt )
@@ -55,7 +55,7 @@ boost::statechart::result MovingCursor::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
     getCursor().moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection' 
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
@@ -70,7 +70,7 @@ boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
         getTooltip().show(sTooltip);
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
@@ -82,7 +82,7 @@ boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
         triggerToggleEnd();
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -48,7 +48,6 @@ bool AClipEdit::Do()
 
         mInitialized = true;
     }
-
     else
     {
         // "Redo"

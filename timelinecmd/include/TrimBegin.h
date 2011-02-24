@@ -35,6 +35,13 @@ public:
 
     void initialize();
 
+    //////////////////////////////////////////////////////////////////////////
+    // REPORT BACK TO INITIATING CLASS
+    //////////////////////////////////////////////////////////////////////////
+
+    ///< \return the new position of the (updated) clip in the track
+    pts adjustedPosition() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -44,6 +51,7 @@ private:
     model::ClipPtr mClip;
     pts mDiff;
     bool mShift;
+    pts mAdjustedPosition;
 };
 
 }}} // namespace

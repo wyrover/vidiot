@@ -88,7 +88,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
         }
     }
 
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result Idle::react( const EvMotion& evt )
@@ -121,7 +121,7 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 
     }
     getMousePointer().set(image);
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result Idle::react( const EvKeyDown& evt)
@@ -145,7 +145,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case WXK_F1:        getTooltip().show(sTooltip);                    break;
         }
     }
-    return discard_event();
+    return forward_event();
 }
 
 //////////////////////////////////////////////////////////////////////////

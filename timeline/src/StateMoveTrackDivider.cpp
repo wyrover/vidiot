@@ -54,7 +54,7 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
     FATAL("Unexpected event.");
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
@@ -83,7 +83,7 @@ boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
         mTrack->setHeight(height);
         getDivider().resetPosition(); // Ensure that 'minimal grey above videotracks' is maintained.
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result MoveTrackDivider::react( const EvKeyDown& evt)
@@ -97,13 +97,13 @@ boost::statechart::result MoveTrackDivider::react( const EvKeyDown& evt)
         getTooltip().show(sTooltip);
         break;
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result MoveTrackDivider::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result MoveTrackDivider::react( const EvLeave& evt)

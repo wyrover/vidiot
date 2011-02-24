@@ -25,6 +25,12 @@ Always::~Always() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+boost::statechart::result Always::react( const EvMotion& evt )
+{
+    VAR_DEBUG(evt);
+    return forward_event();
+}
+
 boost::statechart::result Always::react( const EvWheel& evt )
 {
     VAR_DEBUG(evt);
@@ -47,13 +53,13 @@ boost::statechart::result Always::react( const EvWheel& evt )
         // behaviour should be done.
         evt.mWxEvent.Skip();
     }
-    return discard_event();
+    return forward_event();
 }
 
 boost::statechart::result Always::react( const EvLeave& evt)
 {
     VAR_DEBUG(evt);
-    return discard_event();
+    return forward_event();
 }
 
 }}} // namespace

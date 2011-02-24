@@ -39,6 +39,8 @@ public:
     const Intervals& getIntervals() const;
     MousePointer& getMousepointer();
     const MousePointer& getMousepointer() const;
+    Scrolling& getScrolling();
+    const Scrolling& getScrolling() const;
     Selection& getSelection();
     const Selection& getSelection() const;
     MenuHandler& getMenuHandler();
@@ -108,6 +110,7 @@ private:
     ViewMap* mViewMap;
     Intervals* mIntervals;
     MousePointer* mMousePointer;
+    Scrolling* mScroll;
     Selection* mSelection;
     Cursor* mCursor;  // Must be AFTER mPlayer
     Drag* mDrag;
