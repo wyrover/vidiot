@@ -1,13 +1,14 @@
-#ifndef STATE_IDLE_H
-#define STATE_IDLE_H
+#ifndef STATE_SCROLLING_H
+#define STATE_SCROLLING_H
 
 #include <boost/statechart/custom_reaction.hpp>
 #include "StateAlways.h"
+#include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace state {
 
-class Idle
-    :   public TimeLineState< Idle, Always >
+class StateScrolling 
+    :   public TimeLineState< StateScrolling, Machine >
 {
 public:
 
@@ -15,13 +16,12 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Idle( my_context ctx );
+    StateScrolling( my_context ctx );
 
-    ~Idle();
+    ~StateScrolling();
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction< EvLeftDown >,
-        boost::statechart::custom_reaction< EvRightDown >,
+        boost::statechart::custom_reaction< EvRightUp >,
         boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvKeyDown >
     > reactions;
@@ -30,21 +30,19 @@ public:
     // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    boost::statechart::result react( const EvLeftDown& evt );
-    boost::statechart::result react( const EvRightDown& evt );
+    boost::statechart::result react( const EvRightUp& evt );
     boost::statechart::result react( const EvMotion& evt );
-    boost::statechart::result react( const EvKeyDown& evt);
+    boost::statechart::result react( const EvKeyDown& evt );
 
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
+    // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    boost::statechart::result start();
-
+    pts mPosition;
 };
 
 }}} // namespace
 
-#endif // STATE_IDLE_H
+#endif // STATE_SCROLLING_H
