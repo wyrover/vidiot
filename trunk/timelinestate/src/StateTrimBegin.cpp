@@ -53,6 +53,7 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
 
     const EvLeftDown* event = dynamic_cast<const EvLeftDown*>(triggering_event());
     mShiftDown = event->mWxEvent.ShiftDown();
+    mOriginalPointerPosition = getZoom().pixelsToPts(event->mPosition.x);
     ASSERT(event); // Only way to get here is to press left button in the Idle state
 
     // \todo use the leftmost of the clip and/or its link
@@ -190,41 +191,35 @@ model::ClipPtr TrimBegin::getUpdatedClip()
  
 void TrimBegin::show()
 {
-    //if (mMustUndo)
-    //{
-    //    model::Project::current()->GetCommandProcessor()->Undo();
-    //    mMustUndo = false;
-    //}
+    if (mMustUndo)
+    {
+        model::Project::current()->GetCommandProcessor()->Undo();
+        mMustUndo = false;
+    }
 
-    //model::ClipPtr updatedClip = getUpdatedClip();
-    //if (updatedClip)
-    //{
-    //    if (updatedClip->isA<model::VideoClip>())
-    //    { 
-    //        model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
-    //        VAR_DEBUG(*mOriginalClip)(*updatedClip);
-    //        videoclip->moveTo(0);
-    //        //VAR_DEBUG(*mOriginalClip)(*updatedClip);
-    //        wxSize s = mEdit->getSize();
-    //        model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
-    //        boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
-    //        mEdit->show(bmp);
-    //    }
-    //    pts beginPos = mOriginalClip->getLeftPts() + getDiff(); // Must be initialized before executing the command (since that'll remove mOriginalClip from the track)
+    model::ClipPtr updatedClip = getUpdatedClip();
+    if (updatedClip)
+    {
+        if (updatedClip->isA<model::VideoClip>())
+        { 
+            model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
+            VAR_DEBUG(*mOriginalClip)(*updatedClip);
+            videoclip->moveTo(0);
+            //VAR_DEBUG(*mOriginalClip)(*updatedClip);
+            wxSize s = mEdit->getSize();
+            model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
+            boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
+            mEdit->show(bmp);
+        }
+        pts beginPos = mOriginalClip->getLeftPts() + getDiff(); // Must be initialized before executing the command (since that'll remove mOriginalClip from the track)
 
-    //    command::TrimBegin* trim = new command::TrimBegin(getTimeline(), mOriginalClip, getDiff(), mShiftDown);
-    //    model::Project::current()->Submit(trim);
-    //    mMustUndo = true;
-    //    if (mShiftDown)
-    //    {
-    //        getMousePointer().align(getZoom().pixelsToPts(mCurrentPosition.x), trim->adjustedPosition());
-    //    }
-    //    getTimeline().Refresh(false);
-    //    getTimeline().Update();
-    //}
-    getScrolling().align(getZoom().pixelsToPts(mStartPosition.x), getZoom().pixelsToPts(mCurrentPosition.x));
-    getTimeline().Refresh(false);
-    getTimeline().Update();
+        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff(), mShiftDown));
+        mMustUndo = true;
+        if (mShiftDown)
+        {
+            getScrolling().align(mOriginalPointerPosition, getZoom().pixelsToPts(mCurrentPosition.x));
+        }
+    }
 }
 
 }}} // namespace

@@ -22,7 +22,6 @@ TrimBegin::TrimBegin(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts
     ,   mClip(clip)
     ,   mDiff(diff)
     ,   mShift(shift)
-    ,   mAdjustedPosition(0)
 {
     VAR_INFO(this)(mClip)(mDiff)(mShift);
     ASSERT(mDiff != 0); // Useless to add an action to the undo list, when there is no change
@@ -112,13 +111,6 @@ void TrimBegin::initialize()
         replaceClip(mClip->getLink(), replacelink, &linkmapper);
     }
     replaceLinks(linkmapper);
-
-    mAdjustedPosition = newclip->getLeftPts();
-}
-
-pts TrimBegin::adjustedPosition() const
-{
-    return mAdjustedPosition;
 }
 
 }}} // namespace
