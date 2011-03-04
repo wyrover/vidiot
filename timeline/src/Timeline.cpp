@@ -273,7 +273,7 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
-    wxPoint scroll = getScrollOffset();
+    wxPoint scroll = getScrolling().getOffset();
 
     wxBitmap bitmap = getBitmap();
     wxMemoryDC dcBmp(bitmap);
@@ -298,6 +298,9 @@ void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
     SetVirtualSize(requiredWidth(),requiredHeight());
     Refresh(false);
+    // NOT: Update(); RATIONALE: This will cause too much updates when 
+    //                           adding/removing/changing/replacing clips
+    //                           which causes flickering.
     event.Skip();
 }
 
@@ -336,14 +339,6 @@ AudioView& Timeline::getAudio()
 const AudioView& Timeline::getAudio() const
 {
     return *mAudioView;
-}
-
-wxPoint Timeline::getScrollOffset() const
-{
-    int scrollX, scrollY, ppuX, ppuY;
-    GetViewStart(&scrollX,&scrollY);
-    GetScrollPixelsPerUnit(&ppuX,&ppuY);
-    return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 
 pixel Timeline::requiredWidth() const

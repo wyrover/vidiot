@@ -2,8 +2,6 @@
 
 #include <wx/dcclient.h>
 #include "UtilLog.h"
-#include "Convert.h"
-#include "GuiPlayer.h"
 
 namespace gui {
 
@@ -11,14 +9,14 @@ namespace gui {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-EditDisplay::EditDisplay(GuiPlayer *parent)
+EditDisplay::EditDisplay(wxWindow *parent)
 :   wxControl(parent, wxID_ANY)
-,	mWidth(200)
-,	mHeight(100)
+,	mWidth(0)
+,	mHeight(0)
 ,   mCurrentBitmap()
 {
     GetClientSize(&mWidth,&mHeight);
-    VAR_DEBUG(mWidth)(mHeight);
+    VAR_DEBUG(this)(mWidth)(mHeight);
 
     Bind(wxEVT_PAINT,               &EditDisplay::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &EditDisplay::OnEraseBackground,    this);
@@ -29,6 +27,7 @@ EditDisplay::EditDisplay(GuiPlayer *parent)
 
 EditDisplay::~EditDisplay()
 {
+    VAR_DEBUG(this);
     Unbind(wxEVT_PAINT,               &EditDisplay::OnPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &EditDisplay::OnEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &EditDisplay::OnSize,               this);
@@ -41,7 +40,8 @@ EditDisplay::~EditDisplay()
 void EditDisplay::show(boost::shared_ptr<wxBitmap> bitmap)
 {
     mCurrentBitmap = bitmap;
-    Refresh();
+    Refresh(false);
+    Update(); // Immediate feedback, do not wait until next onPaint
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ wxSize EditDisplay::getSize() const
 
 inline void EditDisplay::OnEraseBackground(wxEraseEvent& event)
 {
-    /* do nothing */
+    // do nothing
 }
 
 void EditDisplay::OnSize(wxSizeEvent& event)

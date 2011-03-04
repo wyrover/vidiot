@@ -21,8 +21,14 @@ AudioView::AudioView(View* parent)
 {
     VAR_DEBUG(this);
 
-    model::TrackChange audioTracks(getSequence()->getAudioTracks());
-    onAudioTracksAdded(model::EventAddAudioTracks(audioTracks));
+    // Not via onAudioTracksAdded: do not trigger a whole sequence of 
+    // invalidateBitmaps calls: Bad performance and crashes
+    // (view of second item added is not initialized when processing
+    // the invalidateBitmap events for the first added item)
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    {
+        new TrackView(track,this);
+    }
 
     getSequence()->Bind(model::EVENT_ADD_AUDIO_TRACK,       &AudioView::onAudioTracksAdded,   this);
     getSequence()->Bind(model::EVENT_REMOVE_AUDIO_TRACK,    &AudioView::onAudioTracksRemoved,  this);
@@ -51,7 +57,7 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
 {
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
     {
-        TrackView* t = new TrackView(track,this);
+        new TrackView(track,this);
     }
     invalidateBitmap();
     event.Skip();

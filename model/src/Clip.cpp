@@ -155,6 +155,13 @@ void Clip::adjustBegin(pts adjustment)
 {
     mOffset += adjustment;
     mLength -= adjustment;
+    if (mTrack)
+    {
+        mTrack->updateClips(); // \todo this is needed to adjust mLeftPtsIntrack for all clips AFTER this clip. 
+        // This is very inefficient....
+        // we need an event signaling the changed length. THen, the track can update it's administration.
+        // since mLeftPtsInTrack is TRACK administration, not clip administration.
+    }
     ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
     VAR_DEBUG(*this)(adjustment);
 }
@@ -163,6 +170,10 @@ void Clip::adjustEnd(pts length)
 {
     VAR_INFO(this)(length);
     mLength = length;
+    if (mTrack)
+    {
+        mTrack->updateClips(); // \see todo in adjustbegin
+    }
     ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
     VAR_DEBUG(*this)(length);
 }

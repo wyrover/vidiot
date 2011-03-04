@@ -23,8 +23,14 @@ VideoView::VideoView(View* parent)
 {
     VAR_DEBUG(this);
 
-    model::TrackChange videoTracks(getSequence()->getVideoTracks());
-    onVideoTracksAdded(model::EventAddVideoTracks(videoTracks));
+    // Not via onVideoTracksAdded: do not trigger a whole sequence of 
+    // invalidateBitmaps calls: Bad performance and crashes
+    // (view of second item added is not initialized when processing
+    // the invalidateBitmap events for the first added item)
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        new TrackView(track,this);
+    }
 
     getSequence()->Bind(model::EVENT_ADD_VIDEO_TRACK,       &VideoView::onVideoTracksAdded,    this);
     getSequence()->Bind(model::EVENT_REMOVE_VIDEO_TRACK,    &VideoView::onVideoTracksRemoved,  this);
@@ -51,7 +57,7 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
 {
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks )
     {
-        TrackView* t = new TrackView(track,this);
+        new TrackView(track,this);
     }
     invalidateBitmap();
     event.Skip();

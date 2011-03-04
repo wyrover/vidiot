@@ -3,6 +3,7 @@
 #include "Layout.h"
 #include "Intervals.h"
 #include "Zoom.h"
+#include "Scrolling.h"
 #include "UtilLog.h"
 #include "Timeline.h"
 #include "GuiPlayer.h"
@@ -48,7 +49,7 @@ void Cursor::setPosition(long position)
         long oldPos = mCursorPosition;
         mCursorPosition = position;
 
-        wxPoint scroll = getTimeline().getScrollOffset();
+        wxPoint scroll = getScrolling().getOffset();
 
         // Refresh the old and new cursor position areas
         getTimeline().invalidateBitmap();

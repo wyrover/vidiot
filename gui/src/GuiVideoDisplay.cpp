@@ -196,18 +196,21 @@ void GuiVideoDisplay::moveTo(int64_t position)
     // changing the iterator.
     mProducer->moveTo(position);
 
-    boost::mutex::scoped_lock lock(mMutexDraw);
-    mCurrentVideoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
-    if (mCurrentVideoFrame)
-    {
-        mCurrentBitmap = boost::make_shared<wxBitmap>(wxImage(mCurrentVideoFrame->getWidth(), mCurrentVideoFrame->getHeight(), mCurrentVideoFrame->getData()[0], true));
-    }
-    else
-    {
-        mCurrentBitmap.reset();
-    }
+    { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
+        boost::mutex::scoped_lock lock(mMutexDraw);
+        mCurrentVideoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
+        if (mCurrentVideoFrame)
+        {
+            mCurrentBitmap = boost::make_shared<wxBitmap>(wxImage(mCurrentVideoFrame->getWidth(), mCurrentVideoFrame->getHeight(), mCurrentVideoFrame->getData()[0], true));
+        }
+        else
+        {
+            mCurrentBitmap.reset();
+        }
 
-    showNewVideoFrame();
+        showNewVideoFrame();
+    }
+    Update(); // For immediate feedback when moving the cursor quickly over the timeline
 }
 
 void GuiVideoDisplay::setSpeed(int speed)

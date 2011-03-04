@@ -109,7 +109,7 @@ void View::invalidateBitmap()
 {
     VAR_DEBUG(this);
     mBitmapValid = false;
-    mEvtHandler.QueueEvent(new ViewUpdateEvent(ViewUpdate(*this,wxRegion())));
+    mEvtHandler.ProcessEvent(ViewUpdateEvent(ViewUpdate(*this,wxRegion())));
 }
 
 }} // namespace

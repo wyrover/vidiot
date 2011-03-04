@@ -3,6 +3,7 @@
 #include "Timeline.h"
 #include "StateIdle.h"
 #include "UtilLog.h"
+#include "Scrolling.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -59,29 +60,22 @@ Machine::~Machine()
     mTimeline.Unbind(wxEVT_MOUSE_CAPTURE_CHANGED,  &Machine::OnCaptureChanged, this);
 }
 
-void Machine::OnMotion          (wxMouseEvent& event)  { process_event(EvMotion        (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnLeftDown        (wxMouseEvent& event)  { process_event(EvLeftDown      (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnLeftUp          (wxMouseEvent& event)  { process_event(EvLeftUp        (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnLeftDouble      (wxMouseEvent& event)  { process_event(EvLeftDouble    (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnMiddleDown      (wxMouseEvent& event)  { process_event(EvMiddleDown    (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnMiddleUp        (wxMouseEvent& event)  { process_event(EvMiddleUp      (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnMiddleDouble    (wxMouseEvent& event)  { process_event(EvMiddleDouble  (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnRightDown       (wxMouseEvent& event)  { process_event(EvRightDown     (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnRightUp         (wxMouseEvent& event)  { process_event(EvRightUp       (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnRightDouble     (wxMouseEvent& event)  { process_event(EvRightDouble   (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnEnter           (wxMouseEvent& event)  { process_event(EvEnter         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnLeave           (wxMouseEvent& event)  { process_event(EvLeave         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
-void Machine::OnWheel           (wxMouseEvent& event)  { process_event(EvWheel         (event, unscrolledPosition(event.GetPosition()))); } // NOT: event.Skip(); See handling of this event in Always state
-void Machine::OnKeyDown         (wxKeyEvent&   event)  { process_event(EvKeyDown       (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }  
-void Machine::OnKeyUp           (wxKeyEvent&   event)  { process_event(EvKeyUp         (event, unscrolledPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnMotion          (wxMouseEvent& event)  { process_event(EvMotion        (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeftDown        (wxMouseEvent& event)  { process_event(EvLeftDown      (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeftUp          (wxMouseEvent& event)  { process_event(EvLeftUp        (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeftDouble      (wxMouseEvent& event)  { process_event(EvLeftDouble    (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnMiddleDown      (wxMouseEvent& event)  { process_event(EvMiddleDown    (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnMiddleUp        (wxMouseEvent& event)  { process_event(EvMiddleUp      (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnMiddleDouble    (wxMouseEvent& event)  { process_event(EvMiddleDouble  (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnRightDown       (wxMouseEvent& event)  { process_event(EvRightDown     (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnRightUp         (wxMouseEvent& event)  { process_event(EvRightUp       (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnRightDouble     (wxMouseEvent& event)  { process_event(EvRightDouble   (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnEnter           (wxMouseEvent& event)  { process_event(EvEnter         (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnLeave           (wxMouseEvent& event)  { process_event(EvLeave         (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
+void Machine::OnWheel           (wxMouseEvent& event)  { process_event(EvWheel         (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); } // NOT: event.Skip(); See handling of this event in Always state
+void Machine::OnKeyDown         (wxKeyEvent&   event)  { process_event(EvKeyDown       (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }  
+void Machine::OnKeyUp           (wxKeyEvent&   event)  { process_event(EvKeyUp         (event, mTimeline.getScrolling().getPhysicalPosition(event.GetPosition()))); event.Skip(); }
 void Machine::OnCaptureLost     (wxMouseCaptureLostEvent& event) {};
 void Machine::OnCaptureChanged  (wxMouseCaptureChangedEvent& event) {};
-
-wxPoint Machine::unscrolledPosition(wxPoint position) const
-{
-    wxPoint p;
-    mTimeline.CalcUnscrolledPosition(position.x,position.y,&p.x,&p.y);
-    return p;
-}
 
 }}} // namespace
