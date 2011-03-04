@@ -3,6 +3,7 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/cmdproc.h>
+#include <wx/wupdlock.h>
 #include <boost/foreach.hpp>
 #include <boost/limits.hpp>
 #include <boost/make_shared.hpp>
@@ -48,19 +49,21 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     ,   mMinShiftOtherTrackContent((std::numeric_limits<pts>::min)())
     ,   mMustUndo(false)
     ,   mShiftDown(false)
+    ,   mOriginalRightPixel(0)
 {
     LOG_DEBUG; 
 
     const EvLeftDown* event = dynamic_cast<const EvLeftDown*>(triggering_event());
     mShiftDown = event->mWxEvent.ShiftDown();
-    mOriginalPointerPosition = getZoom().pixelsToPts(event->mPosition.x);
     ASSERT(event); // Only way to get here is to press left button in the Idle state
 
     // \todo use the leftmost of the clip and/or its link
-    mStartPosition = event->mPosition;
+    mStartPosition = event->mWxEvent.GetPosition();
     mCurrentPosition = mStartPosition;
-    PointerPositionInfo info = getMousePointer().getInfo(mCurrentPosition);
+    PointerPositionInfo info = getMousePointer().getInfo(event->mPosition);
     mOriginalClip = info.clip;
+    mOriginalRightPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
+    mOriginalRightPixel = getScrolling().ptsToPixel(mOriginalRightPts); // See remark above.
 
     // Determine boundaries for original clip
     mMaxDiffClipContent = mOriginalClip->getNumberOfFrames() - 1; // -1: Ensure that resulting clip has always minimally one frame left
@@ -77,6 +80,7 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     }
 
     // Determine boundaries for shifting other tracks
+    // TODO more testing
     pts shiftFrom = mOriginalClip->getLeftPts();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
@@ -117,9 +121,9 @@ boost::statechart::result TrimBegin::react( const EvLeftUp& evt )
 boost::statechart::result TrimBegin::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    if (mCurrentPosition != evt.mPosition)
+    if (mCurrentPosition != evt.mWxEvent.GetPosition())
     {
-        mCurrentPosition = evt.mPosition;
+        mCurrentPosition = evt.mWxEvent.GetPosition();
         show();
     }
     return forward_event();
@@ -191,34 +195,45 @@ model::ClipPtr TrimBegin::getUpdatedClip()
  
 void TrimBegin::show()
 {
+    bool update = false;
+
+    // Do not use mOriginalClip: it is changed by applying the command
     if (mMustUndo)
     {
         model::Project::current()->GetCommandProcessor()->Undo();
         mMustUndo = false;
+        update = true;
     }
+    // From here we can safely use mOriginalClip again
 
     model::ClipPtr updatedClip = getUpdatedClip();
     if (updatedClip)
     {
+        update = true;
+
         if (updatedClip->isA<model::VideoClip>())
         { 
             model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
             VAR_DEBUG(*mOriginalClip)(*updatedClip);
             videoclip->moveTo(0);
-            //VAR_DEBUG(*mOriginalClip)(*updatedClip);
             wxSize s = mEdit->getSize();
             model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
             boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
             mEdit->show(bmp);
         }
-        pts beginPos = mOriginalClip->getLeftPts() + getDiff(); // Must be initialized before executing the command (since that'll remove mOriginalClip from the track)
-
         model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff(), mShiftDown));
+        // From here we can no longer use mOriginalClip: it is changed by applying the command::TrimBegin
+
         mMustUndo = true;
         if (mShiftDown)
         {
-            getScrolling().align(mOriginalPointerPosition, getZoom().pixelsToPts(mCurrentPosition.x));
+            // Ensure that the rightmost pts is kept at the same position when shift dragging
+            getScrolling().align(mOriginalRightPts - getDiff(), mOriginalRightPixel);
         }
+    }
+    if (update)
+    {
+        getTimeline().Update();
     }
 }
 

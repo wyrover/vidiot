@@ -29,7 +29,7 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
 ,   mRect(0,0,0,0)
 ,   mBeginAddition(0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(this)(mClip);
     ASSERT(mClip);
 
     getViewMap().registerView(mClip,this);
@@ -109,11 +109,11 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
         model::ClipPtr next = info.track->getNextClip(info.clip);
         info.logicalclipposition = (!next || next->isA<model::EmptyClip>()) ? ClipEnd : ClipBetween;
     }
-    else if ((dist_begin > 1) && (dist_begin < 4))
+    else if ((dist_begin > 1) && (dist_begin < 10))
     {
         info.logicalclipposition = ClipBegin;
     }
-    else if ((dist_end > 1) && (dist_end < 4))
+    else if ((dist_end > 1) && (dist_end < 10))
     {
         info.logicalclipposition = ClipEnd;
     }
@@ -133,7 +133,7 @@ void ClipView::setBeginAddition(pts addition)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void ClipView::updateThumbnail()
+void ClipView::updateThumbnail(bool invalidate) // todo: make a ThumbnailView class instead of this
 {
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(mClip);
     if (videoclip)
@@ -144,7 +144,7 @@ void ClipView::updateThumbnail()
         mThumbnail.reset(new wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
         mClip->moveTo(0);
     }
-    invalidateBitmap();
+    if (invalidate) invalidateBitmap();
 }
 
 void ClipView::draw(wxBitmap& bitmap) const
@@ -216,7 +216,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselecte
     {
         dc.SetTextForeground(Layout::sDebugColour);
         dc.SetFont(*Layout::sDebugFont);
-        dc.DrawText(wxString::Format(wxT("%d"), mClip->getNumberOfFrames()), wxPoint(5,15));
+        dc.DrawText(wxString::Format(wxT("%lld"), mClip->getNumberOfFrames()), wxPoint(5,15));
         wxString sPts; 
         sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
         dc.DrawText(sPts, wxPoint(5,25));

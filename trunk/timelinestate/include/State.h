@@ -93,10 +93,6 @@ private:
     void OnKeyUp            (wxKeyEvent&   event);
     void OnCaptureLost      (wxMouseCaptureLostEvent& event);
     void OnCaptureChanged   (wxMouseCaptureChangedEvent& event);
-
-    /// Converts a wxevent position to a virtual position on the
-    /// timeline's bitmap buffer (which may be scrolled).
-    wxPoint unscrolledPosition(wxPoint position) const;
 };
 
 //////////////////////////////////////////////////////////////////////////

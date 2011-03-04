@@ -37,9 +37,14 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 
     getViewMap().registerView(mTrack,this);
 
-    model::MoveParameter m;
-    m.addClips = mTrack->getClips();
-    onClipsAdded(model::EventAddClips(m));
+    // Not via onClipsAdded: do not trigger a whole sequence of 
+    // invalidateBitmaps calls: Bad performance and crashes
+    // (view of second item added is not initialized when processing
+    // the invalidateBitmap events for the first added item)
+    BOOST_FOREACH( model::ClipPtr clip, mTrack->getClips() )
+    {
+        new ClipView(clip,this);
+    }
 
     mTrack->Bind(model::EVENT_ADD_CLIPS,        &TrackView::onClipsAdded,       this);
     mTrack->Bind(model::EVENT_REMOVE_CLIPS,     &TrackView::onClipsRemoved,     this);

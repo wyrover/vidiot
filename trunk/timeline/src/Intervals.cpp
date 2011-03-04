@@ -8,6 +8,7 @@
 #include "Timeline.h"
 #include "Zoom.h"
 #include "Convert.h"
+#include "Scrolling.h"
 #include "UtilLog.h"
 #include "Layout.h"
 #include "GuiOptions.h"
@@ -232,8 +233,8 @@ void Intervals::refresh(long begin, long end)
     wxRect r(ptsToPixels(makeRect(begin,end)));
     
     // Adjust for scrolling
-    r.x -= getTimeline().getScrollOffset().x;
-    r.y -= getTimeline().getScrollOffset().y;
+    r.x -= getScrolling().getOffset().x;
+    r.y -= getScrolling().getOffset().y;
 
     // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
     r.x -= 1;

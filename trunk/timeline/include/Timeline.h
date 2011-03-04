@@ -82,7 +82,6 @@ public:
     AudioView& getAudio();
     const AudioView& getAudio() const;
     PlayerPtr getPlayer() const;
-    wxPoint getScrollOffset() const;
 
     pixel requiredWidth() const;  ///< @see View::requiredWidth()
     pixel requiredHeight() const; ///< @see View::requiredHeight()

@@ -28,20 +28,38 @@ Scrolling::~Scrolling()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Scrolling::align(pts sequence, pts pointer)
+wxPoint Scrolling::getOffset() const
 {
-    VAR_DEBUG(sequence)(pointer);
+    int scrollX, scrollY, ppuX, ppuY;
+    getTimeline().GetViewStart(&scrollX,&scrollY);
+    getTimeline().GetScrollPixelsPerUnit(&ppuX,&ppuY);
+    ASSERT(ppuX == 1 && ppuY == 1)(ppuX)(ppuY); // Other values not allowed: see Scrolling::align()
+    return wxPoint(scrollX * ppuX, scrollY * ppuY);
+}
 
-    pts diff =  sequence - pointer;
+
+void Scrolling::align(pts position, pixel unscrolledPixel)
+{
+    pixel diff = ptsToPixel(position) - unscrolledPixel;
     if (diff != 0)
     {
         int x;
         int y;
         getTimeline().GetViewStart(&x,&y);
-        getTimeline().Scroll(x + getZoom().ptsToPixels(diff), y);
-        getTimeline().Refresh();
-        getTimeline().Update();
+        getTimeline().Scroll(x + diff, -1);
     }
+}
+
+pixel Scrolling::ptsToPixel(pts position) const
+{
+    return getTimeline().CalcScrolledPosition(wxPoint(getZoom().ptsToPixels(position),0)).x;
+}
+
+wxPoint Scrolling::getPhysicalPosition(wxPoint position) const
+{
+    wxPoint p;
+    getTimeline().CalcUnscrolledPosition(position.x,position.y,&p.x,&p.y);
+    return p;
 }
 
 

@@ -44,7 +44,7 @@ public:
 
     /// This will reread the thumbnail from disk. It will also invalidate the 
     /// bitmap and force a redraw.
-    void updateThumbnail();
+    void updateThumbnail(bool invalidate = false);
 
     void setBeginAddition(pts addition);
 

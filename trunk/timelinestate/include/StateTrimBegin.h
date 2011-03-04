@@ -56,10 +56,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mMustUndo;
+    bool mMustUndo;                 ///< True if, for a new update, first a previous trim must be undone
 
-    wxPoint mStartPosition;
-    wxPoint mCurrentPosition;
+    wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
+    wxPoint mCurrentPosition;       ///< Current mouse position (in unscrolled coordinates)
 
     model::ClipPtr mOriginalClip;
 
@@ -70,11 +70,12 @@ private:
     pts mMaxDiffLinkContent;        ///< Maximum allowed adjustment, when viewing the contents of the linked clip
     pts mMinDiffLinkSpace;          ///< Minimum allowed adjustment,  when viewing the available free area in front of the linked clip
     pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
-    bool mShiftDown;
+    bool mShiftDown;                ///< True if shift is down, false if not
 
     EditDisplay* mEdit;
 
-    pts mOriginalPointerPosition;   ///< Holds the pts position that the mouse pointer is over
+    pts mOriginalRightPts;          ///< Pts value (in the track) of the right edge of the clip that is being trimmed. Used for keeping the right position fixed as much as possible when shift trimming.
+    pixel mOriginalRightPixel;      ///< Pixel value (on screen, without scrolling) of the right edge of the clip that is being trimmed. Used for keeping the right position fixed as much as possible when shift trimming.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -3,7 +3,6 @@
 
 #include <wx/control.h>
 #include "VideoFrame.h"
-#include "ModelPtr.h"
 
 namespace gui {
 
@@ -18,7 +17,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    EditDisplay(GuiPlayer *parent);
+    EditDisplay(wxWindow *parent);
 	virtual ~EditDisplay();
 
     //////////////////////////////////////////////////////////////////////////
@@ -39,7 +38,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::VideoFramePtr mCurrentVideoFrame;
     boost::shared_ptr<wxBitmap> mCurrentBitmap;
 
     int mWidth;
