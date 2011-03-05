@@ -23,6 +23,7 @@
 #include "Project.h"
 #include "Zoom.h"
 #include "Sequence.h"
+#include "SequenceView.h"
 #include "State.h"
 #include "ViewMap.h"
 #include "Drop.h"
@@ -58,18 +59,18 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mMouseState(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 //////////////////////////////////////////////////////////////////////////
-,   mVideoView(new VideoView(this))
-,   mAudioView(new AudioView(this))
+,   mSequenceView(new SequenceView(this))
 //////////////////////////////////////////////////////////////////////////
 {
     VAR_DEBUG(this);
 
-    init();
 
     // To ensure that for newly opened timelines the initial position is ok
     // (should take 'minimum position' into account). This can only be done
     // after both mDivider AND mVideoView are initialized.
-    getDivider().setPosition(getDivider().getPosition());
+    getDivider().setPosition(getDivider().getPosition()); 
+
+    init();
 
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
@@ -88,8 +89,8 @@ Timeline::~Timeline()
 
     GuiWindow::get()->getPreview().closeTimeline(this);
 
-    delete mAudioView;      mAudioView = 0;
-    delete mVideoView;      mVideoView = 0;
+    delete mSequenceView;   mSequenceView = 0;
+
     delete mMenuHandler;    mMenuHandler = 0;
     delete mMouseState;     mMouseState = 0;
     delete mDivider;        mDivider = 0;
@@ -119,6 +120,16 @@ Timeline& Timeline::getTimeline()
 const Timeline& Timeline::getTimeline() const
 {
     return *this;
+}
+
+SequenceView& Timeline::getSequenceView()
+{
+    return *mSequenceView;
+}
+
+const SequenceView& Timeline::getSequenceView() const
+{
+    return *mSequenceView;
 }
 
 Zoom& Timeline::getZoom()
@@ -257,10 +268,8 @@ const model::SequencePtr Timeline::getSequence() const
 
 void Timeline::onSize(wxSizeEvent& event)
 {
-    // See onViewUpdated.
-    // This invalidation causes that event, resulting in a resize.
-    invalidateBitmap();
-    Refresh(false);
+    getSequenceView().invalidateBitmap(); // Redraw the sequence
+    resize();
 }
 
 void Timeline::onEraseBackground(wxEraseEvent& event)
@@ -275,7 +284,7 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 
     wxPoint scroll = getScrolling().getOffset();
 
-    wxBitmap bitmap = getBitmap();
+    wxBitmap bitmap = getSequenceView().getBitmap();
     wxMemoryDC dcBmp(bitmap);
 
     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
@@ -296,19 +305,13 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
-    SetVirtualSize(requiredWidth(),requiredHeight());
-    Refresh(false);
-    // NOT: Update(); RATIONALE: This will cause too much updates when 
-    //                           adding/removing/changing/replacing clips
-    //                           which causes flickering.
+    resize();
     event.Skip();
 }
 
 void Timeline::onZoomChanged( ZoomChangeEvent& event )
 {
-    SetVirtualSize(requiredWidth(),requiredHeight());
-    invalidateBitmap();
-    Refresh(false);
+    resize();
     event.Skip();
 }
 
@@ -321,33 +324,12 @@ PlayerPtr Timeline::getPlayer() const
     return mPlayer;
 }
 
-VideoView& Timeline::getVideo()
-{
-    return *mVideoView;
-}
-
-const VideoView& Timeline::getVideo() const
-{
-    return *mVideoView;
-}
-
-AudioView& Timeline::getAudio()
-{
-    return *mAudioView;
-}
-
-const AudioView& Timeline::getAudio() const
-{
-    return *mAudioView;
-}
-
 pixel Timeline::requiredWidth() const
 {
     return
-        std::max(std::max(
+        std::max(
         getWindow().GetClientSize().GetWidth(),                         // At least the widget size
-        getZoom().timeToPixels(5 * model::Constants::sMinute)),                // Minimum width of 5 minutes
-        getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));     // At least enough to hold all clips
+        getSequenceView().requiredWidth());                             // At least enough to hold all clips
 }
 
 pixel Timeline::requiredHeight() const
@@ -355,80 +337,25 @@ pixel Timeline::requiredHeight() const
     return
         std::max(
         getWindow().GetClientSize().GetHeight(),                        // At least the widget size
-        Layout::sTimeScaleHeight +
-        Layout::sMinimalGreyAboveVideoTracksHeight +
-        getVideo().requiredHeight() +
-        Layout::sAudioVideoDividerHeight +
-        getAudio().requiredHeight() +
-        Layout::sMinimalGreyBelowAudioTracksHeight);                 // Height of all combined components
+        getSequenceView().requiredHeight());                            // At least enough to hold all tracks
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+void Timeline::resize()
+{
+    SetVirtualSize(requiredWidth(),requiredHeight());
+    Refresh(false);
+    // NOT: Update(); RATIONALE: This will cause too much updates when 
+    //                           adding/removing/changing/replacing clips
+    //                           which causes flickering.
+}
+
 void Timeline::draw(wxBitmap& bitmap) const
 {
-    wxMemoryDC dc(bitmap);
-
-    // Get size of canvas
-    int w = bitmap.GetWidth();
-    int h = bitmap.GetHeight();
-
-    // Set BG
-    dc.SetPen(Layout::sBackgroundPen);
-    dc.SetBrush(Layout::sBackgroundBrush);
-    dc.DrawRectangle(0,0,w,h);
-
-    // Draw timescale
-    dc.SetBrush(wxNullBrush);
-    dc.SetPen(Layout::sTimeScaleDividerPen);
-    dc.DrawRectangle(0,0,w,Layout::sTimeScaleHeight);
-
-    dc.SetFont(*Layout::sTimeScaleFont);
-
-    // Draw seconds and minutes lines
-    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += model::Constants::sSecond)
-    {
-        int position = getZoom().timeToPixels(ms);
-        bool isMinute = (ms % model::Constants::sMinute == 0);
-        int height = Layout::sTimeScaleSecondHeight;
-
-        if (isMinute)
-        {
-            height = Layout::sTimeScaleMinutesHeight;
-        }
-
-        dc.DrawLine(position,0,position,height);
-
-        if (ms == 0)
-        {
-            dc.DrawText( "0", 5, Layout::sTimeScaleMinutesHeight );
-        }
-        else
-        {
-            if (isMinute)
-            {
-                wxDateTime t(ms / model::Constants::sHour, (ms % model::Constants::sHour) / model::Constants::sMinute, (ms % model::Constants::sMinute) / model::Constants::sSecond, ms % model::Constants::sSecond);
-                wxString s = t.Format("%H:%M:%S.%l");
-                wxSize ts = dc.GetTextExtent(s);
-                dc.DrawText( s, position - ts.GetX() / 2, Layout::sTimeScaleMinutesHeight );
-            }
-        }
-    }
-
-    // Get video and audio bitmaps, possibly required for determining divider position
-    const wxBitmap& videotracks = getVideo().getBitmap();
-    const wxBitmap& audiotracks = getAudio().getBitmap();
-
-    dc.DrawBitmap(videotracks,wxPoint(0,getDivider().getVideoPosition()));
-    dc.DrawBitmap(audiotracks,wxPoint(0,getDivider().getAudioPosition()));
-
-    getDivider().draw(dc);
-    getIntervals().draw(dc);
-    getDrag().draw(dc);
-    getDrop().draw(dc);
-    getCursor().draw(dc);
+    FATAL("THIS BITMAP IS UNUSED");
 }
 
 //////////////////////////////////////////////////////////////////////////

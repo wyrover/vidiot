@@ -29,6 +29,7 @@ namespace gui {
         class VideoView;
         class AudioView;
         class Timeline;
+        class SequenceView;
         class TrackView;
         class Tooltip;
         class ViewMap;
@@ -60,6 +61,9 @@ public:
 
     virtual wxScrolledWindow& getWindow(); ///< Virtual to be overridden in the statechart states
     virtual const wxScrolledWindow& getWindow() const; ///< Virtual to be overridden in the statechart states
+
+    SequenceView& getSequenceView();
+    const SequenceView& getSequenceView() const;
 
     Zoom& getZoom();
     const Zoom& getZoom() const;
