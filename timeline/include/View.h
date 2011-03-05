@@ -58,7 +58,7 @@ public:
 
     /// For initializing the topmost (sequence) view (separated into 
     /// constructor + this method, since it requires the parts of the 
-    /// timeline to be created also)
+    /// timeline to be created also)... at least for getZoom()
     void init();
 
     /// For destroying the topmost (sequence) view (separated into 
