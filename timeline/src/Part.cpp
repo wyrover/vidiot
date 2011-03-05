@@ -52,6 +52,16 @@ const wxScrolledWindow& Part::getWindow() const
     return getTimeline();
 }
 
+SequenceView& Part::getSequenceView()
+{
+    return getTimeline().getSequenceView();
+}
+
+const SequenceView& Part::getSequenceView() const
+{
+    return getTimeline().getSequenceView();
+}
+
 Zoom& Part::getZoom() 
 { 
     return getTimeline().getZoom(); 

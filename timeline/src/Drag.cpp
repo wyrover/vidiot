@@ -14,6 +14,7 @@
 #include "Track.h"
 #include "Sequence.h"
 #include "Selection.h"
+#include "SequenceView.h"
 #include "ViewMap.h"
 #include "Zoom.h"
 #include "Divider.h"
@@ -125,7 +126,7 @@ void Drag::move(wxPoint position, bool altPressed)
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
 
     determineSnapOffset();
-    getTimeline().invalidateBitmap();
+    getSequenceView().invalidateBitmap();
 
     wxRegionIterator it(redrawRegion);
     while (it)

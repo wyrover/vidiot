@@ -16,6 +16,7 @@
 #include "Divider.h"
 #include "AudioView.h"
 #include "Timeline.h"
+#include "SequenceView.h"
 #include "UtilLogWxwidgets.h"
 #include "Zoom.h"
 #include "ViewMap.h"
@@ -104,10 +105,10 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
     if (!info.onAudioVideoDivider)
     {
         /** @todo move to timeline class (it contains the if below) */
-        getTimeline().getVideo().getPositionInfo(pointerposition, info);
+        getSequenceView().getVideo().getPositionInfo(pointerposition, info);
         if (!info.track)
         {
-            getTimeline().getAudio().getPositionInfo(pointerposition, info);
+            getSequenceView().getAudio().getPositionInfo(pointerposition, info);
         }
 
         // Find clip under pointer

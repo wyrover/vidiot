@@ -5,6 +5,7 @@
 #include "Zoom.h"
 #include "Scrolling.h"
 #include "UtilLog.h"
+#include "SequenceView.h"
 #include "Timeline.h"
 #include "GuiPlayer.h"
 
@@ -52,7 +53,7 @@ void Cursor::setPosition(long position)
         wxPoint scroll = getScrolling().getOffset();
 
         // Refresh the old and new cursor position areas
-        getTimeline().invalidateBitmap();
+        getSequenceView().invalidateBitmap();
         long cursorOnClientArea = mCursorPosition - scroll.x;
         long oldposOnClientArea = oldPos - scroll.x;
         getTimeline().RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,getTimeline().requiredHeight()),false);

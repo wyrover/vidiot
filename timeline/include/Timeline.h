@@ -10,7 +10,6 @@ namespace command {
 }
 
 namespace gui { namespace timeline {
-    class ViewUpdateEvent;
 
 class Timeline
 :   public wxScrolledWindow
@@ -31,6 +30,8 @@ public:
 
     Timeline& getTimeline();
     const Timeline& getTimeline() const;
+    SequenceView& getSequenceView();
+    const SequenceView& getSequenceView() const;
     Zoom& getZoom();
     const Zoom& getZoom() const;
     ViewMap& getViewMap();
@@ -77,10 +78,6 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    VideoView& getVideo();
-    const VideoView& getVideo() const;
-    AudioView& getAudio();
-    const AudioView& getAudio() const;
     PlayerPtr getPlayer() const;
 
     pixel requiredWidth() const;  ///< @see View::requiredWidth()
@@ -123,13 +120,13 @@ private:
     // CHILDREN -> Must be AFTER PARTS
     //////////////////////////////////////////////////////////////////////////
 
-    VideoView* mVideoView;
-    AudioView* mAudioView;
+    SequenceView* mSequenceView;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    void resize();
     void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 
     //////////////////////////////////////////////////////////////////////////

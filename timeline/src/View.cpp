@@ -55,7 +55,6 @@ View::~View()
     {
         mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &View::onChildViewUpdated, mParent);
         getZoom().Unbind(ZOOM_CHANGE_EVENT, &View::onZoomChanged, this);
-
     }
 }
 

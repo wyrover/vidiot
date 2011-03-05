@@ -6,6 +6,7 @@
 #include "Layout.h"
 #include "VideoView.h"
 #include "Sequence.h"
+#include "SequenceView.h"
 #include "Timeline.h"
 #include "PositionInfo.h"
 
@@ -52,13 +53,13 @@ int Divider::getPosition() const
 
 void Divider::setPosition(int position)
 {
-    int minimum = Layout::sVideoPosition + getTimeline().getVideo().getBitmap().GetHeight();
+    int minimum = Layout::sVideoPosition + getSequenceView().getVideo().getBitmap().GetHeight();
     if (position < minimum)
     {
         position = minimum;
     }
     mPosition = position;
-    getTimeline().invalidateBitmap();
+    getSequenceView().invalidateBitmap();
 }
 
 void Divider::resetPosition()
@@ -81,7 +82,7 @@ int Divider::getAudioPosition() const
 
 int Divider::getVideoPosition() const
 {
-    return getPosition() - getTimeline().getVideo().getBitmap().GetHeight();
+    return getPosition() - getSequenceView().getVideo().getBitmap().GetHeight();
 }
 
 

@@ -1,35 +1,20 @@
-#include "Timeline.h"
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+#include "SequenceView.h"
+
 #include <wx/dcclient.h>
 #include <algorithm>
 #include <wx/dcmemory.h>
-#include "Constants.h"
-#include "Layout.h"
-#include "UtilLog.h"
-#include "GuiOptions.h"
-#include "GuiPlayer.h"
-#include "GuiPreview.h"
-#include "GuiWindow.h"
-#include "Intervals.h"
-#include "Selection.h"
-#include "MousePointer.h"
-#include "Scrolling.h"
-#include "Cursor.h"
-#include "Drag.h"
-#include "Divider.h"
-#include "Tooltip.h"
-#include "Menu.h"
-#include "Project.h"
-#include "Zoom.h"
-#include "Sequence.h"
-#include "State.h"
-#include "ViewMap.h"
-#include "Drop.h"
-#include "UtilLogWxwidgets.h"
-#include "ViewMap.h"
-#include "VideoView.h"
 #include "AudioView.h"
+#include "Drag.h"
+#include "Drop.h"
+#include "Cursor.h"
+#include "Intervals.h"
+#include "Layout.h"
+#include "VideoView.h"
+#include "UtilLog.h"
+#include "Divider.h"
+#include "Zoom.h"
+#include "Constants.h"
+#include "Sequence.h"
 
 namespace gui { namespace timeline {
 
@@ -37,337 +22,70 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
-:   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER)
-,   View(this) // Has itself as parent...
-//////////////////////////////////////////////////////////////////////////
-,   mSequence(sequence)
-,   mPlayer(GuiWindow::get()->getPreview().openTimeline(sequence,this))
-//////////////////////////////////////////////////////////////////////////
-,   mZoom(new Zoom(this))
-,   mViewMap(new ViewMap(this))
-,   mIntervals(new Intervals(this))
-,   mMousePointer(new MousePointer(this))
-,   mScroll(new Scrolling(this))
-,   mSelection(new Selection(this))
-,   mCursor(new Cursor(this))
-,   mDrag(new Drag(this))
-,   mTooltip(new Tooltip(this))
-,   mDrop(new Drop(this))
-,   mDivider(new Divider(this))
-,   mMouseState(new state::Machine(*this))
-,   mMenuHandler(new MenuHandler(this))
-//////////////////////////////////////////////////////////////////////////
+SequenceView::SequenceView(View* parent)
+:   View(parent)
 ,   mVideoView(new VideoView(this))
 ,   mAudioView(new AudioView(this))
-//////////////////////////////////////////////////////////////////////////
 {
     VAR_DEBUG(this);
-
-    init();
-
-    // To ensure that for newly opened timelines the initial position is ok
-    // (should take 'minimum position' into account). This can only be done
-    // after both mDivider AND mVideoView are initialized.
-    getDivider().setPosition(getDivider().getPosition());
-
-    Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
-    Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
-    Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 }
 
-Timeline::~Timeline()
+SequenceView::~SequenceView()
 {
     VAR_DEBUG(this);
-
-    deinit();
-
-    Unbind(wxEVT_PAINT,               &Timeline::onPaint,              this);
-    Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
-    Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
-
-    GuiWindow::get()->getPreview().closeTimeline(this);
 
     delete mAudioView;      mAudioView = 0;
     delete mVideoView;      mVideoView = 0;
-    delete mMenuHandler;    mMenuHandler = 0;
-    delete mMouseState;     mMouseState = 0;
-    delete mDivider;        mDivider = 0;
-    delete mDrop;           mDrop = 0;
-    delete mTooltip;        mTooltip = 0;
-    delete mDrag;           mDrag = 0;
-    delete mCursor;         mCursor = 0;
-    delete mSelection;      mSelection = 0;
-    delete mMousePointer;   mMousePointer = 0;
-    delete mIntervals;      mIntervals = 0;
-    delete mViewMap;        mViewMap = 0;
-    delete mZoom;           mZoom = 0;
-
-    mPlayer.reset();
-    mSequence.reset();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// PART
-//////////////////////////////////////////////////////////////////////////
-
-Timeline& Timeline::getTimeline()
-{
-    return *this;
-}
-
-const Timeline& Timeline::getTimeline() const
-{
-    return *this;
-}
-
-Zoom& Timeline::getZoom()
-{ 
-    return *mZoom; 
-}
-
-const Zoom& Timeline::getZoom() const
-{ 
-    return *mZoom; 
-}
-
-ViewMap& Timeline::getViewMap()
-{ 
-    return *mViewMap; 
-}
-
-const ViewMap& Timeline::getViewMap() const
-{ 
-    return *mViewMap; 
-}
-
-Intervals& Timeline::getIntervals()
-{ 
-    return *mIntervals; 
-}
-
-const Intervals& Timeline::getIntervals() const
-{ 
-    return *mIntervals; 
-}
-
-MousePointer& Timeline::getMousepointer()
-{ 
-    return *mMousePointer; 
-}
-
-const MousePointer& Timeline::getMousepointer() const
-{ 
-    return *mMousePointer; 
-}
-
-Scrolling& Timeline::getScrolling()
-{ 
-    return *mScroll; 
-}
-
-const Scrolling& Timeline::getScrolling() const
-{ 
-    return *mScroll; 
-}
-
-Selection& Timeline::getSelection()
-{ 
-    return *mSelection;
-}
-
-const Selection& Timeline::getSelection() const
-{ 
-    return *mSelection;
-}
-
-MenuHandler& Timeline::getMenuHandler()
-{ 
-    return *mMenuHandler; 
-}
-
-const MenuHandler& Timeline::getMenuHandler() const
-{ 
-    return *mMenuHandler; 
-}
-
-Cursor& Timeline::getCursor()
-{ 
-    return *mCursor; 
-}
-
-const Cursor& Timeline::getCursor() const
-{ 
-    return *mCursor; 
-}
-
-Drag& Timeline::getDrag()
-{ 
-    return *mDrag; 
-}
-
-const Drag& Timeline::getDrag() const
-{ 
-    return *mDrag; 
-}
-
-Tooltip& Timeline::getTooltip()
-{ 
-    return *mTooltip; 
-}
-
-const Tooltip& Timeline::getTooltip() const
-{ 
-    return *mTooltip; 
-}
-
-Drop& Timeline::getDrop()
-{
-    return *mDrop;
-}
-
-const Drop& Timeline::getDrop() const
-{
-    return *mDrop;
-}
-
-Divider& Timeline::getDivider()
-{
-    return *mDivider;
-}
-
-const Divider& Timeline::getDivider() const
-{
-    return *mDivider;
-}
-
-model::SequencePtr Timeline::getSequence()
-{
-    return mSequence;
-}
-
-const model::SequencePtr Timeline::getSequence() const
-{
-    return mSequence;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::onSize(wxSizeEvent& event)
-{
-    // See onViewUpdated.
-    // This invalidation causes that event, resulting in a resize.
-    invalidateBitmap();
-    Refresh(false);
-}
-
-void Timeline::onEraseBackground(wxEraseEvent& event)
-{
-    //event.Skip(); // The official way of doing it
-}
-
-void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
-{
-    wxPaintDC dc( this );
-    DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
-
-    wxPoint scroll = getScrolling().getOffset();
-
-    wxBitmap bitmap = getBitmap();
-    wxMemoryDC dcBmp(bitmap);
-
-    wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
-    while (upd)
-    {
-        int x = scroll.x + upd.GetX();
-        int y = scroll.y + upd.GetY();
-        int w = upd.GetW();
-        int h = upd.GetH();
-        dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
-        upd++;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-// PROPAGATE UPDATES UPWARD
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::onViewUpdated( ViewUpdateEvent& event )
-{
-    SetVirtualSize(requiredWidth(),requiredHeight());
-    Refresh(false);
-    // NOT: Update(); RATIONALE: This will cause too much updates when 
-    //                           adding/removing/changing/replacing clips
-    //                           which causes flickering.
-    event.Skip();
-}
-
-void Timeline::onZoomChanged( ZoomChangeEvent& event )
-{
-    SetVirtualSize(requiredWidth(),requiredHeight());
-    invalidateBitmap();
-    Refresh(false);
-    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr Timeline::getPlayer() const
-{
-    return mPlayer;
-}
-
-VideoView& Timeline::getVideo()
+VideoView& SequenceView::getVideo()
 {
     return *mVideoView;
 }
 
-const VideoView& Timeline::getVideo() const
+const VideoView& SequenceView::getVideo() const
 {
     return *mVideoView;
 }
 
-AudioView& Timeline::getAudio()
+AudioView& SequenceView::getAudio()
 {
     return *mAudioView;
 }
 
-const AudioView& Timeline::getAudio() const
+const AudioView& SequenceView::getAudio() const
 {
     return *mAudioView;
 }
 
-pixel Timeline::requiredWidth() const
-{
-    return
-        std::max(std::max(
-        getWindow().GetClientSize().GetWidth(),                         // At least the widget size
-        getZoom().timeToPixels(5 * model::Constants::sMinute)),                // Minimum width of 5 minutes
-        getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));     // At least enough to hold all clips
-}
-
-pixel Timeline::requiredHeight() const
+pixel SequenceView::requiredWidth() const
 {
     return
         std::max(
-        getWindow().GetClientSize().GetHeight(),                        // At least the widget size
+        getZoom().timeToPixels(5 * model::Constants::sMinute),         // Minimum width of 5 minutes
+        getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));    // At least enough to hold all clips
+}
+
+pixel SequenceView::requiredHeight() const
+{
+    return
         Layout::sTimeScaleHeight +
         Layout::sMinimalGreyAboveVideoTracksHeight +
         getVideo().requiredHeight() +
         Layout::sAudioVideoDividerHeight +
         getAudio().requiredHeight() +
-        Layout::sMinimalGreyBelowAudioTracksHeight);                 // Height of all combined components
+        Layout::sMinimalGreyBelowAudioTracksHeight;                     // Height of all combined components
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Timeline::draw(wxBitmap& bitmap) const
+void SequenceView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
 
@@ -430,29 +148,5 @@ void Timeline::draw(wxBitmap& bitmap) const
     getDrop().draw(dc);
     getCursor().draw(dc);
 }
-
-//////////////////////////////////////////////////////////////////////////
-// CHANGE COMMANDS
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::Submit(::command::RootCommand* c)
-{
-    model::Project::current()->Submit(c);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void Timeline::serialize(Archive & ar, const unsigned int version)
-{
-    ar & *mZoom;
-    ar & *mIntervals;
-    ar & *mDivider;
-}
-
-template void Timeline::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Timeline::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 }} // namespace
