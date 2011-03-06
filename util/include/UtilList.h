@@ -51,6 +51,10 @@ public:
 
         return position;
     }
+    bool hasElement(ELEMENT element)
+    {
+        return (find(mList.begin(), mList.end(), element) != mList.end());
+    }
 private:
     std::list<ELEMENT>& mList;
 };

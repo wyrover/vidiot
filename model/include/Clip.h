@@ -104,7 +104,7 @@ public:
     ///         starting point of the original and the starting point of the clip)
     pts getOffset() const;
 
-    bool getSelected() const;           ///< @return true if this clip is selected
+    bool getSelected() const;           ///< /return true if this clip is selected
     void setSelected(bool selected);    ///< Select or deselect clip
 
     /// \return pts value of most recently returned audio/video in getNext*.
@@ -113,6 +113,9 @@ public:
     /// \param delivered value of most recently returned audio/video in getNext*.
     /// Triggers DebugEventRenderProgress.
     void setGenerationProgress(pts progress);
+
+    pts getLeftEmptyArea();     ///< /return size of area to the left of clip that is empty
+    pts getRightEmptyArea();    ///< /return size of area to the right of clip that is empty
 
     //////////////////////////////////////////////////////////////////////////
     // STATIC HELPER METHOD

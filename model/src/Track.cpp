@@ -211,6 +211,32 @@ ClipPtr Track::getPreviousClip(ClipPtr clip)
     return *it; 
 }
 
+pts Track::getLeftEmptyArea(model::ClipPtr clip)
+{
+    ASSERT(UtilList<ClipPtr>(mClips).hasElement(clip));
+    pts leftmost = clip->getLeftPts();
+    model::ClipPtr previous = getPreviousClip(clip);
+    while (previous && previous->isA<model::EmptyClip>())
+    {
+        leftmost = previous->getLeftPts();
+        previous = getPreviousClip(previous);
+    }
+    return leftmost - clip->getLeftPts();
+}
+
+pts Track::getRightEmptyArea(model::ClipPtr clip)
+{
+    ASSERT(UtilList<ClipPtr>(mClips).hasElement(clip));
+    pts rightmost = clip->getRightPts();
+    model::ClipPtr next = getNextClip(clip);
+    while (next && next->isA<model::EmptyClip>())
+    {
+        rightmost = next->getRightPts();
+        next = getNextClip(next);
+    }
+    return rightmost - clip->getRightPts();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GET & SET
 //////////////////////////////////////////////////////////////////////////
