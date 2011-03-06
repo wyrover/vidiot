@@ -149,32 +149,6 @@ boost::statechart::result TrimBegin::react( const EvKeyUp& evt)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-pts TrimBegin::getLeftEmptyArea(model::ClipPtr clip)
-{
-    model::TrackPtr track = clip->getTrack();
-    pts leftmost = clip->getLeftPts();
-    model::ClipPtr previous = track->getPreviousClip(clip);
-    while (previous && previous->isA<model::EmptyClip>())
-    {
-        leftmost = previous->getLeftPts();
-        previous = track->getPreviousClip(previous);
-    }
-    return leftmost - clip->getLeftPts();
-}
-
-pts TrimBegin::getRightEmptyArea(model::ClipPtr clip)
-{
-    model::TrackPtr track = clip->getTrack();
-    pts rightmost = clip->getRightPts();
-    model::ClipPtr next = track->getNextClip(clip);
-    while (next && next->isA<model::EmptyClip>())
-    {
-        rightmost = next->getRightPts();
-        next = track->getNextClip(next);
-    }
-    return rightmost - clip->getRightPts();
-}
-
 void lowerlimit(pts& p, pts limit)
 {
     if (p < limit) { p = limit; }
@@ -197,7 +171,6 @@ pts TrimBegin::getDiff()
         lowerlimit(diff, mMinShiftOtherTrackContent);       // When shift trimming: the contents in other tracks must be able to be shifted accordingly
         upperlimit(diff, mMaxShiftOtherTrackContent);       // When shift trimming: the contents in other tracks must be able to be shifted accordingly
     }
-
     if (mTrimBegin)
     {
         upperlimit(diff, mOriginalClip->getMaxAdjustBegin());   // Clip cannot be trimmed further than the original number of frames
@@ -206,8 +179,8 @@ pts TrimBegin::getDiff()
         lowerlimit(diff, linked->getMinAdjustBegin());          // Link cannot be extended further than the '0'th frame of the underlying video provider.
         if (!mShiftDown)
         {
-            lowerlimit(diff, getLeftEmptyArea(mOriginalClip));  // When not shift trimming: extended clip must fit into the available empty area in front of the clip
-            lowerlimit(diff, getLeftEmptyArea(linked));         // When not shift trimming: extended link must fit into the available empty area in front of the link
+            lowerlimit(diff, mOriginalClip->getTrack()->getLeftEmptyArea(mOriginalClip));   // When not shift trimming: extended clip must fit into the available empty area in front of the clip
+            lowerlimit(diff, linked->getTrack()->getLeftEmptyArea(linked));                 // When not shift trimming: extended link must fit into the available empty area in front of the link
         }
     }
     else
@@ -218,10 +191,9 @@ pts TrimBegin::getDiff()
         upperlimit(diff, linked->getMaxAdjustEnd());            // Link cannot be extended further than the '0'th frame of the underlying video provider.
         if (!mShiftDown)
         {
-            upperlimit(diff, getRightEmptyArea(mOriginalClip)); // When not shift trimming: extended clip must fit into the available empty area in front of the clip
-            upperlimit(diff, getRightEmptyArea(linked));        // When not shift trimming: extended link must fit into the available empty area in front of the link
+            upperlimit(diff, mOriginalClip->getTrack()->getRightEmptyArea(mOriginalClip));  // When not shift trimming: extended clip must fit into the available empty area in front of the clip
+            upperlimit(diff, linked->getTrack()->getRightEmptyArea(linked));                // When not shift trimming: extended link must fit into the available empty area in front of the link
         }
-
     }
     return diff;
 }

@@ -78,9 +78,6 @@ protected:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    pts getLeftEmptyArea(model::ClipPtr clip); ///< /return size of area to the left of clip that is empty
-    pts getRightEmptyArea(model::ClipPtr clip); ///< /return size of area to the right of clip that is empty
-
     pts getDiff();
     void preview();
     void show();
