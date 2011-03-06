@@ -1,4 +1,4 @@
-#include "TrimBegin.h"
+#include "Trim.h"
 
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
@@ -17,7 +17,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimBegin::TrimBegin(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts diff, bool left, bool shift)
+Trim::Trim(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts diff, bool left, bool shift)
     :   AClipEdit(timeline)
     ,   mClip(clip)
     ,   mDiff(diff)
@@ -36,7 +36,7 @@ TrimBegin::TrimBegin(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts
     }
 }
 
-TrimBegin::~TrimBegin()
+Trim::~Trim()
 {
 }
 
@@ -44,7 +44,7 @@ TrimBegin::~TrimBegin()
 // ACLIPEDIT INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
-void TrimBegin::initialize()
+void Trim::initialize()
 {
     VAR_INFO(this);
     model::ClipPtr newclip;
@@ -166,7 +166,7 @@ void TrimBegin::initialize()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TrimBegin::removehitespace(model::ClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
+void Trim::removehitespace(model::ClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
 {
     ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getLength() >= toberemoved); // The area to be removed must be available
     replaceClip(emptyclip, makeEmptyClips(emptyclip->getLength() - toberemoved), conversionmap);

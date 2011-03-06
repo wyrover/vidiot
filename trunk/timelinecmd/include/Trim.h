@@ -5,7 +5,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-class TrimBegin 
+class Trim 
     :   public AClipEdit
 {
 public:
@@ -26,9 +26,9 @@ public:
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
     /// \param left if true, shift leftmost point of clip. if false, shift rightmost point of clip.
     /// \param shift indicates if the clip may be enlarged, even when there is no empty space in front of it.
-    TrimBegin(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts diff, bool left, bool shift);
+    Trim(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts diff, bool left, bool shift);
 
-    ~TrimBegin();
+    ~Trim();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE

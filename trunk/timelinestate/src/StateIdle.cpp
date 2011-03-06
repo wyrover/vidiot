@@ -18,7 +18,7 @@
 #include "Selection.h"
 #include "StateMoveDivider.h"
 #include "StateMoveTrackDivider.h"
-#include "StateTrimBegin.h"
+#include "StateTrim.h"
 #include "UtilLog.h"
 #include "StateScrolling.h"
 #include "PositionInfo.h"
@@ -71,13 +71,13 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
             case ClipBetween :
                 break;
             case ClipBegin:
-                return transit<TrimBegin>();
+                return transit<Trim>();
                 break;
             case ClipInterior:
                 return transit<TestDragStart>();
                 break;
             case ClipEnd:
-                return transit<TrimBegin>();
+                return transit<Trim>();
                 break;
             default:
                 FATAL("Unexpected logical clip position.");

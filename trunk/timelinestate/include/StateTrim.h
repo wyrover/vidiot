@@ -1,5 +1,5 @@
-#ifndef STATE_TRIM_BEGIN_H
-#define STATE_TRIM_BEGIN_H
+#ifndef STATE_TRIM_H
+#define STATE_TRIM_H
 
 #include <boost/statechart/custom_reaction.hpp>
 #include "StateAlways.h"
@@ -22,8 +22,8 @@ namespace gui {
 
 namespace gui { namespace timeline { namespace state {
 
-class TrimBegin
-    :   public TimeLineState< TrimBegin, Always >
+class Trim
+    :   public TimeLineState< Trim, Always >
 {
 public:
 
@@ -31,9 +31,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    TrimBegin( my_context ctx );
+    Trim( my_context ctx );
 
-    virtual ~TrimBegin();
+    virtual ~Trim();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftUp >,
@@ -85,4 +85,4 @@ protected:
 
 }}} // namespace
 
-#endif // STATE_TRIM_BEGIN_H
+#endif // STATE_TRIM_H

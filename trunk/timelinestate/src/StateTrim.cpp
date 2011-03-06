@@ -1,4 +1,4 @@
-#include "StateTrimBegin.h"
+#include "StateTrim.h"
 
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -24,7 +24,7 @@
 #include "Project.h"
 #include "Zoom.h"
 #include "Timeline.h"
-#include "TrimBegin.h"
+#include "Trim.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -35,7 +35,7 @@ const wxString sTooltip = _(
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimBegin::TrimBegin( my_context ctx ) // entry
+Trim::Trim( my_context ctx ) // entry
     :   TimeLineState( ctx )
     ,   mStartPosition(0,0)
     ,   mEdit(0)
@@ -91,7 +91,7 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     show();
 }
 
-TrimBegin::~TrimBegin() // exit
+Trim::~Trim() // exit
 {
     getPlayer()->endEdit();
     LOG_DEBUG; 
@@ -100,13 +100,13 @@ TrimBegin::~TrimBegin() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-boost::statechart::result TrimBegin::react( const EvLeftUp& evt )
+boost::statechart::result Trim::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
     return transit<Idle>();
 }
 
-boost::statechart::result TrimBegin::react( const EvMotion& evt )
+boost::statechart::result Trim::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
     if (mCurrentPosition != evt.mWxEvent.GetPosition())
@@ -117,7 +117,7 @@ boost::statechart::result TrimBegin::react( const EvMotion& evt )
     return forward_event();
 }
 
-boost::statechart::result TrimBegin::react( const EvKeyDown& evt)
+boost::statechart::result Trim::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
     if (mShiftDown != evt.mWxEvent.ShiftDown())
@@ -134,7 +134,7 @@ boost::statechart::result TrimBegin::react( const EvKeyDown& evt)
     return forward_event();
 }
 
-boost::statechart::result TrimBegin::react( const EvKeyUp& evt)
+boost::statechart::result Trim::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
     if (mShiftDown != evt.mWxEvent.ShiftDown())
@@ -159,7 +159,7 @@ void upperlimit(pts& p, pts limit)
     if (p > limit) { p = limit; }
 }
 
-pts TrimBegin::getDiff()
+pts Trim::getDiff()
 {
     ASSERT(!mMustUndo); // If a command has been submitted, mOriginalClip can not be used.
 
@@ -198,7 +198,7 @@ pts TrimBegin::getDiff()
     return diff;
 }
 
-void TrimBegin::preview()
+void Trim::preview()
 {
     model::ClipPtr updatedClip = make_cloned<model::Clip>(mOriginalClip);
     // todo also show preview of adjacent clip
@@ -233,7 +233,7 @@ void TrimBegin::preview()
     }
 }
 
-void TrimBegin::show()
+void Trim::show()
 {
     bool update = false;
 
@@ -253,8 +253,8 @@ void TrimBegin::show()
 
         preview();
 
-        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, diff, mTrimBegin, mShiftDown));
-        // From here we can no longer use mOriginalClip: it is changed by applying the command::TrimBegin
+        model::Project::current()->Submit(new command::Trim(getTimeline(), mOriginalClip, diff, mTrimBegin, mShiftDown));
+        // From here we can no longer use mOriginalClip: it is changed by applying the command::Trim
 
         mMustUndo = true;
         if (mShiftDown && mTrimBegin)
