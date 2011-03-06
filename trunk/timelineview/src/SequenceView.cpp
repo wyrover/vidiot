@@ -67,7 +67,7 @@ pixel SequenceView::requiredWidth() const
     return
         std::max(
         getZoom().timeToPixels(5 * model::Constants::sMinute),         // Minimum width of 5 minutes
-        getZoom().ptsToPixels(getSequence()->getNumberOfFrames()));    // At least enough to hold all clips
+        getZoom().ptsToPixels(getSequence()->getLength()));    // At least enough to hold all clips
 }
 
 pixel SequenceView::requiredHeight() const

@@ -49,7 +49,7 @@ void DeleteSelectedClips::deleteSelectedClips(model::Tracks tracks)
             if (clip->getSelected())
             {
                 removed.push_back(clip);
-                nRemovedFrames += clip->getNumberOfFrames();
+                nRemovedFrames += clip->getLength();
             }
             else
             {

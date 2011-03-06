@@ -84,11 +84,11 @@ void TrimBegin::initialize()
     model::Clips replacelink = boost::assign::list_of(newlink);
 
     // If the clip or its link is resized to 0 frames, then replace the original clip with nothing
-    if (newclip->getNumberOfFrames() == 0)
+    if (newclip->getLength() == 0)
     {
         replace.clear();
     }
-    if (newlink->getNumberOfFrames() == 0)
+    if (newlink->getLength() == 0)
     {
         replace.clear();
     }
@@ -168,8 +168,8 @@ void TrimBegin::initialize()
 
 void TrimBegin::removehitespace(model::ClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
 {
-    ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getNumberOfFrames() >= toberemoved); // The area to be removed must be available
-    replaceClip(emptyclip, makeEmptyClips(emptyclip->getNumberOfFrames() - toberemoved), conversionmap);
+    ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getLength() >= toberemoved); // The area to be removed must be available
+    replaceClip(emptyclip, makeEmptyClips(emptyclip->getLength() - toberemoved), conversionmap);
 }
 
 }}} // namespace

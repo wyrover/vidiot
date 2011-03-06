@@ -64,13 +64,13 @@ Track::~Track()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts Track::getNumberOfFrames()
+pts Track::getLength()
 {
     /** @todo return rightPts of last clip? */
     boost::int16_t nFrames = 0;
     BOOST_FOREACH( ClipPtr clip, mClips )
     {
-        nFrames += clip->getNumberOfFrames();
+        nFrames += clip->getLength();
     }
     return nFrames;
 }
@@ -89,12 +89,12 @@ void Track::moveTo(pts position)
         return;
     }
 
-    pts lastFrame = (*mItClips)->getNumberOfFrames(); // There is at least one clip due to the check above
+    pts lastFrame = (*mItClips)->getLength(); // There is at least one clip due to the check above
     pts firstFrame = 0;
 
     while (lastFrame < position)
     {
-        firstFrame += (*mItClips)->getNumberOfFrames();
+        firstFrame += (*mItClips)->getLength();
         ++mItClips;
 
         if (mItClips == mClips.end())
@@ -103,7 +103,7 @@ void Track::moveTo(pts position)
             return;
         }
 
-        lastFrame += (*mItClips)->getNumberOfFrames();
+        lastFrame += (*mItClips)->getLength();
     }
 
     ASSERT(position <= lastFrame)(position)(lastFrame);
@@ -176,7 +176,7 @@ ClipPtr Track::getClip(pts position)
     pts right = left;
     BOOST_FOREACH( ClipPtr clip, mClips )
     {
-        pts length = clip->getNumberOfFrames();
+        pts length = clip->getLength();
         right += length;
         if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
         {
@@ -268,7 +268,7 @@ void Track::updateClips()
 	BOOST_FOREACH( ClipPtr clip, mClips )
 	{
 		clip->setTrack(shared_from_this(), position, index);
-		position += clip->getNumberOfFrames();
+		position += clip->getLength();
         index++;
 	}
 }

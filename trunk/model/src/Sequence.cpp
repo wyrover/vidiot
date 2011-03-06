@@ -181,16 +181,16 @@ void Sequence::setName(wxString name)
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-int64_t Sequence::getNumberOfFrames()
+int64_t Sequence::getLength()
 {
     int16_t nFrames = 0;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
-        nFrames = std::max<int64_t>(nFrames, track->getNumberOfFrames());
+        nFrames = std::max<int64_t>(nFrames, track->getLength());
     }
     BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
-        nFrames = std::max<int64_t>(nFrames, track->getNumberOfFrames());
+        nFrames = std::max<int64_t>(nFrames, track->getLength());
     }
     return nFrames;
 }

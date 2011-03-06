@@ -97,10 +97,10 @@ void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conve
         if (position != 0)
         {
             // If there is already a cut at the given position, nothing is changed.
-            ASSERT(position < clip->getNumberOfFrames())(position)(clip->getNumberOfFrames());
+            ASSERT(position < clip->getLength())(position)(clip->getLength());
             model::ClipPtr left = make_cloned<model::Clip>(clip);
             model::ClipPtr right = make_cloned<model::Clip>(clip);
-            left->adjustEnd(position - clip->getNumberOfFrames());
+            left->adjustEnd(position - clip->getLength());
             right->adjustBegin(position);
             model::Clips replacements = boost::assign::list_of(left)(right);
             replaceClip(clip, replacements, conversionmap);
@@ -227,7 +227,7 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
             if (clip->isA<model::EmptyClip>())
             {
                 inregion = true;
-                length += clip->getNumberOfFrames();
+                length += clip->getLength();
                 removed.push_back(clip);
             }
             else // !clip->isA<model::EmptyClip>()
@@ -291,7 +291,7 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
             ASSERT((clip->isA<model::EmptyClip>()) && 
                 (clip->getLeftPts() <= start) && 
                 (start <= clip->getRightPts()))(tracks)(start)(amount)(track)(clip); // Enough room must be available for the shift
-            replaceClip(clip, makeEmptyClips(clip->getNumberOfFrames() + amount));  // NOTE: amount < 0
+            replaceClip(clip, makeEmptyClips(clip->getLength() + amount));  // NOTE: amount < 0
         }
     }
 }

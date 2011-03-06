@@ -49,7 +49,7 @@ Clip::Clip(IControlPtr render)
     ,   mSelected(false)
     ,   mGeneratedPts(0)
 { 
-    mLength = mRender->getNumberOfFrames() - mOffset;
+    mLength = mRender->getLength() - mOffset;
     VAR_DEBUG(*this);
 }
 
@@ -84,7 +84,7 @@ Clip::~Clip()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts Clip::getNumberOfFrames()
+pts Clip::getLength()
 {
     return mLength; 
 }
@@ -173,7 +173,7 @@ void Clip::adjustBegin(pts adjustment)
         // we need an event signaling the changed length. THen, the track can update it's administration.
         // since mLeftPtsInTrack is TRACK administration, not clip administration.
     }
-    ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
+    ASSERT(mLength <=  mRender->getLength() - mOffset)(mLength);
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -184,7 +184,7 @@ pts Clip::getMinAdjustEnd() const
 
 pts Clip::getMaxAdjustEnd() const
 {
-    return mRender->getNumberOfFrames() - mLength - mOffset;
+    return mRender->getLength() - mLength - mOffset;
 }
 
 void Clip::adjustEnd(pts adjustment)
@@ -195,7 +195,7 @@ void Clip::adjustEnd(pts adjustment)
     {
         mTrack->updateClips(); // \see todo in adjustbegin
     }
-    ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
+    ASSERT(mLength <=  mRender->getLength() - mOffset)(mLength);
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -243,7 +243,7 @@ pts Clip::getCombinedLength(model::Clips clips)
     int length = 0;
     BOOST_FOREACH( model::ClipPtr clip, clips )
     {
-        length += clip->getNumberOfFrames();
+        length += clip->getLength();
     }
     return length;
 }

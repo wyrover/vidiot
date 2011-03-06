@@ -54,7 +54,7 @@ EmptyFile::~EmptyFile()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts EmptyFile::getNumberOfFrames()
+pts EmptyFile::getLength()
 {
     return mLength;
 }

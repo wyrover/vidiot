@@ -498,7 +498,7 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
             {
                 pi.clips.push_back(clip);
             }
-            position += clip->getNumberOfFrames();
+            position += clip->getLength();
         }
         if (inregion)
         {

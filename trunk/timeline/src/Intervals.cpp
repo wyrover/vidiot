@@ -252,7 +252,7 @@ Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
     BOOST_FOREACH( model::ClipPtr modelclip, track->getTrack()->getClips() )
     {
         ClipView* clip = getViewMap().getView(modelclip);
-        pts_right += clip->getClip()->getNumberOfFrames();
+        pts_right += clip->getClip()->getLength();
         wxRect cliprect = makeRect(pts_left, pts_right);
         //wxRegionContain {
         //    wxOutRegion = 0,
@@ -282,7 +282,7 @@ Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
             }
 
         }
-        pts_left += clip->getClip()->getNumberOfFrames();
+        pts_left += clip->getClip()->getLength();
     }
 
     return replacements;

@@ -61,7 +61,7 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
         invalidateLastSetPosition();
     }
 
-    int lengthInFrames = Convert::ptsToFrames(audioRate, nAudioChannels, getNumberOfFrames());
+    int lengthInFrames = Convert::ptsToFrames(audioRate, nAudioChannels, getLength());
 
     AudioChunkPtr audioChunk;
 
@@ -90,7 +90,7 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
             // extra video part, silence is added here (the user can make the clip shorter if
             // required - thus removing the extra video, but that's a user decision to be made).
             LOG_WARNING << *this << ": (" << getDescription() << " Adding " << remainingFrames << " frames to make audio length equal to video length";
-            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, remainingFrames, getNumberOfFrames()));
+            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, remainingFrames, getLength()));
             mProgress = lengthInFrames;
         }
     }

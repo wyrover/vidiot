@@ -216,7 +216,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselecte
     {
         dc.SetTextForeground(Layout::sDebugColour);
         dc.SetFont(*Layout::sDebugFont);
-        dc.DrawText(wxString::Format(wxT("%lld"), mClip->getNumberOfFrames()), wxPoint(5,15));
+        dc.DrawText(wxString::Format(wxT("%lld"), mClip->getLength()), wxPoint(5,15));
         wxString sPts; 
         sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
         dc.DrawText(sPts, wxPoint(5,25));
