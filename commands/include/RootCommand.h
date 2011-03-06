@@ -10,7 +10,7 @@ class RootCommand : public wxCommand
 {
 public:
     RootCommand();
-    ~RootCommand();
+    virtual ~RootCommand();
     wxString GetName() const;
 
 protected:

@@ -31,6 +31,10 @@ const wxColour	Layout::sBackgroundColour		(212,208,200);
 const wxPen     Layout::sBackgroundPen           (Layout::sBackgroundColour);
 const wxBrush   Layout::sBackgroundBrush         (Layout::sBackgroundColour,wxBRUSHSTYLE_SOLID);
 
+const wxColour	Layout::sPreviewBackgroundColour (*wxBLACK);
+const wxPen     Layout::sPreviewBackgroundPen    (Layout::sPreviewBackgroundColour);
+const wxBrush   Layout::sPreviewBackgroundBrush  (Layout::sPreviewBackgroundColour,wxBRUSHSTYLE_SOLID);
+
 const wxPen     Layout::sTimeScaleDividerPen     (*wxBLACK, 1);
 
 const wxPen     Layout::sCursorPen               (*wxRED, 1);

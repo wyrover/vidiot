@@ -5,6 +5,7 @@
 
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 namespace model {
 
@@ -45,6 +46,7 @@ typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
 
 class Clip;
 typedef boost::shared_ptr<Clip> ClipPtr;
+typedef boost::weak_ptr<Clip> WeakClipPtr;
 typedef std::list<ClipPtr> Clips;
 
 //////////////////////////////////////////////////////////////////////////
