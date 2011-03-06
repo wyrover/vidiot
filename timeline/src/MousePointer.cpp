@@ -26,7 +26,6 @@
 namespace gui { namespace timeline {
 
 IMPLEMENTENUM(MousePointerImage);
-IMPLEMENTENUM(MouseOnClipPosition);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS

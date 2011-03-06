@@ -100,7 +100,7 @@ void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conve
             ASSERT(position < clip->getNumberOfFrames())(position)(clip->getNumberOfFrames());
             model::ClipPtr left = make_cloned<model::Clip>(clip);
             model::ClipPtr right = make_cloned<model::Clip>(clip);
-            left->adjustEnd(position);
+            left->adjustEnd(position - clip->getNumberOfFrames());
             right->adjustBegin(position);
             model::Clips replacements = boost::assign::list_of(left)(right);
             replaceClip(clip, replacements, conversionmap);

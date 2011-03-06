@@ -1,7 +1,6 @@
 #ifndef POSITION_INFO_H
 #define POSITION_INFO_H
 
-#include <wx/gdicmn.h>
 #include <boost/shared_ptr.hpp>
 #include "UtilEnum.h"
 
@@ -27,15 +26,8 @@ struct PointerPositionInfo
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    PointerPositionInfo()
-        :   onAudioVideoDivider(false)
-        ,   track(model::TrackPtr())
-        ,   trackPosition(0)
-        ,   onTrackDivider(false)
-        ,   clip(model::ClipPtr())
-        ,   logicalclipposition(ClipBetween)
-    {
-    }
+    PointerPositionInfo();
+    ~PointerPositionInfo();
 
     //////////////////////////////////////////////////////////////////////////
     // NON-SEQUENCE OBJECTS
@@ -65,6 +57,12 @@ struct PointerPositionInfo
 
     MouseOnClipPosition logicalclipposition;
 };
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const PointerPositionInfo& obj );
 
 }} // namespace
 

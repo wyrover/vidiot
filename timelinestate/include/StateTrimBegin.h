@@ -33,7 +33,7 @@ public:
 
     TrimBegin( my_context ctx );
 
-    ~TrimBegin();
+    virtual ~TrimBegin();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftUp >,
@@ -51,10 +51,12 @@ public:
     boost::statechart::result react( const EvKeyUp& evt );
 
 private:
-
+protected:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
+
+    bool mTrimBegin;                ///< True if begin of clip is changed, false if end of clip is changed.
 
     bool mMustUndo;                 ///< True if, for a new update, first a previous trim must be undone
 
@@ -63,28 +65,24 @@ private:
 
     model::ClipPtr mOriginalClip;
 
-    pts mMinDiffClipContent;        ///< Minimum allowed adjustment,  when viewing the contents of the original clip
-    pts mMaxDiffClipContent;        ///< Maximum allowed adjustment, when viewing the contents of the original clip
-    pts mMinDiffClipSpace;          ///< Minimum allowed adjustment,  when viewing the available free area in front of the original clip
-    pts mMinDiffLinkContent;        ///< Minimum allowed adjustment,  when viewing the contents of the linked clip
-    pts mMaxDiffLinkContent;        ///< Maximum allowed adjustment, when viewing the contents of the linked clip
-    pts mMinDiffLinkSpace;          ///< Minimum allowed adjustment,  when viewing the available free area in front of the linked clip
     pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
+    pts mMaxShiftOtherTrackContent; ///< Maximum allowed shift (to the right) of 'other' tracks
     bool mShiftDown;                ///< True if shift is down, false if not
 
     EditDisplay* mEdit;
 
-    pts mOriginalRightPts;          ///< Pts value (in the track) of the right edge of the clip that is being trimmed. Used for keeping the right position fixed as much as possible when shift trimming.
-    pixel mOriginalRightPixel;      ///< Pixel value (on screen, without scrolling) of the right edge of the clip that is being trimmed. Used for keeping the right position fixed as much as possible when shift trimming.
+    pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
+    pixel mFixedPixel;              ///< Pixel value (physical) that mFixedPts must be aligned with. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     pts getLeftEmptyArea(model::ClipPtr clip); ///< /return size of area to the left of clip that is empty
+    pts getRightEmptyArea(model::ClipPtr clip); ///< /return size of area to the right of clip that is empty
 
     pts getDiff();
-    model::ClipPtr getUpdatedClip();
+    void preview();
     void show();
 };
 

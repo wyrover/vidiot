@@ -40,63 +40,51 @@ TrimBegin::TrimBegin( my_context ctx ) // entry
     ,   mStartPosition(0,0)
     ,   mEdit(0)
     ,   mOriginalClip()
-    ,   mMinDiffClipContent(0)
-    ,   mMaxDiffClipContent(0)
-    ,   mMinDiffClipSpace(0)
-    ,   mMinDiffLinkContent((std::numeric_limits<pts>::min)())
-    ,   mMaxDiffLinkContent((std::numeric_limits<pts>::max)())
-    ,   mMinDiffLinkSpace((std::numeric_limits<pts>::min)())
     ,   mMinShiftOtherTrackContent((std::numeric_limits<pts>::min)())
+    ,   mMaxShiftOtherTrackContent((std::numeric_limits<pts>::max)())
     ,   mMustUndo(false)
     ,   mShiftDown(false)
-    ,   mOriginalRightPixel(0)
+    ,   mFixedPixel(0)
 {
     LOG_DEBUG; 
 
     const EvLeftDown* event = dynamic_cast<const EvLeftDown*>(triggering_event());
-    mShiftDown = event->mWxEvent.ShiftDown();
     ASSERT(event); // Only way to get here is to press left button in the Idle state
+
+    // Determine if pointer was at begin or at end of clip
+    PointerPositionInfo info = getMousePointer().getInfo(event->mPosition);
+    ASSERT(info.clip && !info.clip->isA<model::EmptyClip>())(info);
+    mTrimBegin = (info.logicalclipposition == ClipBegin);
+
+    mShiftDown = event->mWxEvent.ShiftDown();
 
     // \todo use the leftmost of the clip and/or its link
     mStartPosition = event->mWxEvent.GetPosition();
     mCurrentPosition = mStartPosition;
-    PointerPositionInfo info = getMousePointer().getInfo(event->mPosition);
     mOriginalClip = info.clip;
-    mOriginalRightPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
-    mOriginalRightPixel = getScrolling().ptsToPixel(mOriginalRightPts); // See remark above.
-
-    // Determine boundaries for original clip
-    mMaxDiffClipContent = mOriginalClip->getNumberOfFrames() - 1; // -1: Ensure that resulting clip has always minimally one frame left
-    mMinDiffClipContent = -mOriginalClip->getOffset() + 1; // +1: Ensure that resulting clip has always minimally one frame left 
-    mMinDiffClipSpace = getLeftEmptyArea(mOriginalClip);
-
-    // Determine boundaries for linked clip
-    model::ClipPtr linked = mOriginalClip->getLink();
-    if (linked)
+    if (mTrimBegin)
     {
-        mMaxDiffLinkContent = linked->getNumberOfFrames() - 1; // -1: Ensure that resulting clip has always minimally one frame left
-        mMinDiffLinkContent = -linked->getOffset() + 1; // +1: Ensure that resulting clip has always minimally one frame left 
-        mMinDiffLinkSpace = getLeftEmptyArea(linked);
+        mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
     }
+    else
+    {
+        mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
+    }
+    mFixedPixel = getScrolling().ptsToPixel(mFixedPts); // See remark above.
 
     // Determine boundaries for shifting other tracks
     // TODO more testing
+    model::ClipPtr linked = mOriginalClip->getLink();
     pts shiftFrom = mOriginalClip->getLeftPts();
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         if (mOriginalClip->getTrack() == track) continue;
         if (linked && linked->getTrack() == track) continue;
         model::ClipPtr clipAt = track->getClip(shiftFrom);
         mMinShiftOtherTrackContent = 
             (clipAt->isA<model::EmptyClip>()) ? std::max<pts>(mMinShiftOtherTrackContent, clipAt->getLeftPts() - shiftFrom) : 0;
-    }
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
-    {
-        if (mOriginalClip->getTrack() == track) continue;
-        if (linked && linked->getTrack() == track) continue;
-        model::ClipPtr clipAt = track->getClip(shiftFrom);
-        mMinShiftOtherTrackContent = 
-            (clipAt->isA<model::EmptyClip>()) ? std::max<pts>(mMinShiftOtherTrackContent, clipAt->getLeftPts() - shiftFrom) : 0;
+        mMaxShiftOtherTrackContent = 
+            (clipAt->isA<model::EmptyClip>()) ? std::min<pts>(mMaxShiftOtherTrackContent, clipAt->getRightPts() - shiftFrom) : 0;
     }
 
     mEdit = getPlayer()->startEdit();
@@ -174,30 +162,110 @@ pts TrimBegin::getLeftEmptyArea(model::ClipPtr clip)
     return leftmost - clip->getLeftPts();
 }
 
-pts TrimBegin::getDiff()
+pts TrimBegin::getRightEmptyArea(model::ClipPtr clip)
 {
-    return
-        std::min<pts>(mMaxDiffClipContent,
-        std::max<pts>(mShiftDown ? mMinDiffClipContent : mMinDiffClipSpace,
-        std::max<pts>(mMinDiffClipContent,
-        std::max<pts>(mShiftDown ? mMinShiftOtherTrackContent : (std::numeric_limits<pts>::min)(),
-        getZoom().pixelsToPts(mCurrentPosition.x - mStartPosition.x)))));
+    model::TrackPtr track = clip->getTrack();
+    pts rightmost = clip->getRightPts();
+    model::ClipPtr next = track->getNextClip(clip);
+    while (next && next->isA<model::EmptyClip>())
+    {
+        rightmost = next->getRightPts();
+        next = track->getNextClip(next);
+    }
+    return rightmost - clip->getRightPts();
 }
 
-model::ClipPtr TrimBegin::getUpdatedClip()
+void lowerlimit(pts& p, pts limit)
 {
-    pts diff = getDiff();
-    if (diff == 0) return model::ClipPtr();
-    model::ClipPtr clip = make_cloned<model::Clip>(mOriginalClip);
-    clip->adjustBegin(getDiff());
-    return clip;
+    if (p < limit) { p = limit; }
 }
- 
+
+void upperlimit(pts& p, pts limit)
+{
+    if (p > limit) { p = limit; }
+}
+
+pts TrimBegin::getDiff()
+{
+    ASSERT(!mMustUndo); // If a command has been submitted, mOriginalClip can not be used.
+
+    pts diff = getZoom().pixelsToPts(mCurrentPosition.x - mStartPosition.x);
+    model::ClipPtr linked = mOriginalClip->getLink();
+
+    if (mShiftDown)
+    {
+        lowerlimit(diff, mMinShiftOtherTrackContent);       // When shift trimming: the contents in other tracks must be able to be shifted accordingly
+        upperlimit(diff, mMaxShiftOtherTrackContent);       // When shift trimming: the contents in other tracks must be able to be shifted accordingly
+    }
+
+    if (mTrimBegin)
+    {
+        upperlimit(diff, mOriginalClip->getMaxAdjustBegin());   // Clip cannot be trimmed further than the original number of frames
+        upperlimit(diff, linked->getMaxAdjustBegin());          // Clip cannot be trimmed further than the original number of frames in the linked clip
+        lowerlimit(diff, mOriginalClip->getMinAdjustBegin());   // Clip cannot be extended further than the '0'th frame of the underlying video provider.
+        lowerlimit(diff, linked->getMinAdjustBegin());          // Link cannot be extended further than the '0'th frame of the underlying video provider.
+        if (!mShiftDown)
+        {
+            lowerlimit(diff, getLeftEmptyArea(mOriginalClip));  // When not shift trimming: extended clip must fit into the available empty area in front of the clip
+            lowerlimit(diff, getLeftEmptyArea(linked));         // When not shift trimming: extended link must fit into the available empty area in front of the link
+        }
+    }
+    else
+    {
+        lowerlimit(diff, mOriginalClip->getMinAdjustEnd());     // Clip cannot be trimmed further than the original number of frames
+        lowerlimit(diff, linked->getMinAdjustEnd());            // Clip cannot be trimmed further than the original number of frames in the linked clip
+        upperlimit(diff, mOriginalClip->getMaxAdjustEnd());     // Clip cannot be extended further than the last frame of the underlying video provider.
+        upperlimit(diff, linked->getMaxAdjustEnd());            // Link cannot be extended further than the '0'th frame of the underlying video provider.
+        if (!mShiftDown)
+        {
+            upperlimit(diff, getRightEmptyArea(mOriginalClip)); // When not shift trimming: extended clip must fit into the available empty area in front of the clip
+            upperlimit(diff, getRightEmptyArea(linked));        // When not shift trimming: extended link must fit into the available empty area in front of the link
+        }
+
+    }
+    return diff;
+}
+
+void TrimBegin::preview()
+{
+    model::ClipPtr updatedClip = make_cloned<model::Clip>(mOriginalClip);
+    // todo also show preview of adjacent clip
+    if (updatedClip->isA<model::VideoClip>())
+    {
+        if (mTrimBegin)
+        {
+            updatedClip->adjustBegin(getDiff());
+        }
+        else
+        {
+            updatedClip->adjustEnd(getDiff());
+        }
+
+        if (updatedClip->getNumberOfFrames() > 0)
+        { 
+            model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
+            VAR_DEBUG(*mOriginalClip)(*updatedClip);
+            if (mTrimBegin)
+            {
+                videoclip->moveTo(0);
+            }
+            else
+            {
+                videoclip->moveTo(videoclip->getNumberOfFrames() - 1);
+            }
+            wxSize s = mEdit->getSize();
+            model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
+            boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
+            mEdit->show(bmp);
+        }
+    }
+}
+
 void TrimBegin::show()
 {
     bool update = false;
 
-    // Do not use mOriginalClip: it is changed by applying the command
+    // Do not use mOriginalClip: it may have been removed from the track by applying command::Trim previously
     if (mMustUndo)
     {
         model::Project::current()->GetCommandProcessor()->Undo();
@@ -206,29 +274,21 @@ void TrimBegin::show()
     }
     // From here we can safely use mOriginalClip again
 
-    model::ClipPtr updatedClip = getUpdatedClip();
-    if (updatedClip)
+    pts diff = getDiff();
+    if (diff != 0)
     {
         update = true;
 
-        if (updatedClip->isA<model::VideoClip>())
-        { 
-            model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
-            VAR_DEBUG(*mOriginalClip)(*updatedClip);
-            videoclip->moveTo(0);
-            wxSize s = mEdit->getSize();
-            model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
-            boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
-            mEdit->show(bmp);
-        }
-        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, getDiff(), mShiftDown));
+        preview();
+
+        model::Project::current()->Submit(new command::TrimBegin(getTimeline(), mOriginalClip, diff, mTrimBegin, mShiftDown));
         // From here we can no longer use mOriginalClip: it is changed by applying the command::TrimBegin
 
         mMustUndo = true;
-        if (mShiftDown)
+        if (mShiftDown && mTrimBegin)
         {
             // Ensure that the rightmost pts is kept at the same position when shift dragging
-            getScrolling().align(mOriginalRightPts - getDiff(), mOriginalRightPixel);
+            getScrolling().align(mFixedPts - diff, mFixedPixel);
         }
     }
     if (update)

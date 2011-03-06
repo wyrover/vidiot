@@ -17,15 +17,23 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimBegin::TrimBegin(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts diff, bool shift)
+TrimBegin::TrimBegin(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts diff, bool left, bool shift)
     :   AClipEdit(timeline)
     ,   mClip(clip)
     ,   mDiff(diff)
+    ,   mLeft(left)
     ,   mShift(shift)
 {
-    VAR_INFO(this)(mClip)(mDiff)(mShift);
+    VAR_INFO(this)(mClip)(mDiff)(mLeft)(mShift);
     ASSERT(mDiff != 0); // Useless to add an action to the undo list, when there is no change
-    mCommandName = _("Adjust clip begin point");
+    if (mLeft)
+    {
+        mCommandName = _("Adjust clip begin point");
+    }
+    else
+    {
+        mCommandName = _("Adjust clip end point");
+    }
 }
 
 TrimBegin::~TrimBegin()
@@ -45,20 +53,45 @@ void TrimBegin::initialize()
     model::ClipPtr linked = mClip->getLink();
 
     newclip = make_cloned<model::Clip>(mClip);
-    newclip->adjustBegin(mDiff);
+    if (mLeft)
+    {
+        newclip->adjustBegin(mDiff);
+    }
+    else
+    {
+        newclip->adjustEnd(mDiff);
+    }
 
     if (linked)
     {
         // NIY: What if the link is 'shifted' wrt original clip?
         ASSERT(mClip->getLeftPts() == linked->getLeftPts());
+        ASSERT(mClip->getRightPts() == linked->getRightPts());
 
         newlink = make_cloned<model::Clip>(linked);
-        newlink->adjustBegin(mDiff);
+        if (mLeft)
+        {
+            newlink->adjustBegin(mDiff);
+        }
+        else
+        {
+            newlink->adjustEnd(mDiff);
+        }
     }
 
     ReplacementMap linkmapper;
     model::Clips replace = boost::assign::list_of(newclip);
     model::Clips replacelink = boost::assign::list_of(newlink);
+
+    // If the clip or its link is resized to 0 frames, then replace the original clip with nothing
+    if (newclip->getNumberOfFrames() == 0)
+    {
+        replace.clear();
+    }
+    if (newlink->getNumberOfFrames() == 0)
+    {
+        replace.clear();
+    }
 
     if (mShift)
     {
@@ -77,31 +110,47 @@ void TrimBegin::initialize()
         // \todo what if the linked clip is more to the left. Then that position should 
         // be used for shifting other tracks?
         ASSERT(mClip->getLeftPts() == linked->getLeftPts());
+        ASSERT(mClip->getRightPts() == linked->getRightPts());
         // end todo
 
         shiftAllTracks(mClip->getLeftPts(), -mDiff,  exclude);
     }
     else
     {
-        if (mDiff > 0) // Reduce: Move clip begin point to the right
+        if (mLeft)
         {
-            // Add empty clip in front of new clip: new clip is shorter than original clip and the frames should maintain their position.
-            replace.push_front(makeEmptyClip(mDiff));
-            replacelink.push_front(makeEmptyClip(mDiff));
-        }
-        else // (mDiff < 0) // Enlarge: Move clip begin point to the left
-        {
-            // Remove whitespace in front of original clip: new clip is longer than original clip and the frames should maintain their position
-            model::ClipPtr emptyclip = mClip->getTrack()->getPreviousClip(mClip);
-            ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getNumberOfFrames() >= -mDiff); // The enlarged clip must fit
-            replaceClip(emptyclip, makeEmptyClips(emptyclip->getNumberOfFrames() + mDiff), &linkmapper); // Replace the original empty clip
-
-            if (linked)
+            if (mDiff > 0) // Reduce: Move clip begin point to the right
             {
-                model::ClipPtr emptylink = linked->getTrack()->getPreviousClip(linked);
-                ASSERT(emptylink && emptylink->isA<model::EmptyClip>() && emptylink->getNumberOfFrames() >= -mDiff); // The enlarged linked clip must fit
-                replaceClip(emptylink, makeEmptyClips(emptylink->getNumberOfFrames() + mDiff), &linkmapper); // Replace the original empty clip
+                // Add empty clip in front of new clip: new clip is shorter than original clip and the frames should maintain their position.
+                replace.push_front(makeEmptyClip(mDiff));
+                replacelink.push_front(makeEmptyClip(mDiff));
             }
+            else // (mDiff < 0) // Enlarge: Move clip begin point to the left
+            {
+                removehitespace(mClip->getTrack()->getPreviousClip(mClip), -mDiff, &linkmapper);
+                if (linked)
+                {
+                    removehitespace(linked->getTrack()->getPreviousClip(linked), -mDiff, &linkmapper);
+                }
+            }
+        }
+        else // !mLeft
+        {
+            if (mDiff < 0) // Reduce: Move clip end point to the left
+            {
+                // Add empty clip after new clip: new clip is shorter than original clip and the frames should maintain their position.
+                replace.push_back(makeEmptyClip(-mDiff));
+                replacelink.push_back(makeEmptyClip(-mDiff));
+            }
+            else // (mDiff > 0) // Enlarge: Move clip end point to the right
+            {
+                removehitespace(mClip->getTrack()->getNextClip(mClip), mDiff, &linkmapper);
+                if (linked)
+                {
+                    removehitespace(linked->getTrack()->getNextClip(linked), mDiff, &linkmapper);
+                }
+            }
+
         }
     }
 
@@ -111,6 +160,16 @@ void TrimBegin::initialize()
         replaceClip(mClip->getLink(), replacelink, &linkmapper);
     }
     replaceLinks(linkmapper);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void TrimBegin::removehitespace(model::ClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
+{
+    ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getNumberOfFrames() >= toberemoved); // The area to be removed must be available
+    replaceClip(emptyclip, makeEmptyClips(emptyclip->getNumberOfFrames() - toberemoved), conversionmap);
 }
 
 }}} // namespace
