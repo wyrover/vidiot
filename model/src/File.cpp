@@ -86,7 +86,7 @@ File::File(const File& other)
 ,   mStreamIndex(-1)
 ,   mBufferPacketsThreadPtr(0)
 ,   mFileOpen(false)
-,   mNumberOfFrames(0) // For a copy we read the number of packets again from the file in getNumberOfFrames()
+,   mNumberOfFrames(0) // For a copy we read the number of packets again from the file in getLength()
 ,   mTwoInARow(0)
 ,   mLastModified(other.mLastModified)
 {
@@ -237,7 +237,7 @@ AVCodecContext* File::getCodec()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts File::getNumberOfFrames()
+pts File::getLength()
 {
     openFile();
     return mNumberOfFrames;

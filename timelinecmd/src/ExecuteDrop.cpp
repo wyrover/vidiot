@@ -33,7 +33,7 @@ void ExecuteDrop::initialize()
     LOG_DEBUG << "STEP 1: Replace all drags with EmptyClips";
     BOOST_FOREACH( model::ClipPtr clip, mDrags )
     {
-        replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getNumberOfFrames())));
+        replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
     }
 
     LOG_DEBUG << "STEP 2: Execute the drops AND fill replacement map";
@@ -56,11 +56,11 @@ void ExecuteDrop::initialize()
         // Done AFTER the splitting above, since that requires clip addition/removal.
         AClipEdit::ClipsWithPosition remove = findClips(drop.track, drop.position, dropEndPosition);
 
-        if (drop.position > drop.track->getNumberOfFrames())
+        if (drop.position > drop.track->getLength())
         {
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
-            newMove(drop.track, remove.second, boost::assign::list_of(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getNumberOfFrames())) );
+            newMove(drop.track, remove.second, boost::assign::list_of(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength())) );
         }
 
         //      ================ ADD ===============  =============== REMOVE ================

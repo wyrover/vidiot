@@ -54,7 +54,7 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
         invalidateLastSetPosition();
     }
 
-    unsigned int length = getNumberOfFrames();
+    unsigned int length = getLength();
 
     VideoFramePtr videoFrame;
 

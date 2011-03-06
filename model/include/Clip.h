@@ -33,7 +33,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getNumberOfFrames();
+    virtual pts getLength();
     virtual void moveTo(pts position);
     virtual wxString getDescription() const;
 

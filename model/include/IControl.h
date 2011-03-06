@@ -34,7 +34,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getNumberOfFrames() = 0;
+    virtual pts getLength() = 0;
     virtual void moveTo(pts position) = 0;
     virtual wxString getDescription() const = 0; ///< Not called getName() to avoid conflict with AProjectViewNode::getName() for the Sequence class.
 

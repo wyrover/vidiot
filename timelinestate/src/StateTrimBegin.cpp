@@ -241,7 +241,7 @@ void TrimBegin::preview()
             updatedClip->adjustEnd(getDiff());
         }
 
-        if (updatedClip->getNumberOfFrames() > 0)
+        if (updatedClip->getLength() > 0)
         { 
             model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
             VAR_DEBUG(*mOriginalClip)(*updatedClip);
@@ -251,7 +251,7 @@ void TrimBegin::preview()
             }
             else
             {
-                videoclip->moveTo(videoclip->getNumberOfFrames() - 1);
+                videoclip->moveTo(videoclip->getLength() - 1);
             }
             wxSize s = mEdit->getSize();
             model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
