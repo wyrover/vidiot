@@ -139,12 +139,12 @@ pts Clip::getRightPts() const
 
 void Clip::setLink(ClipPtr link)
 {
-    mLink = link;
+    mLink = WeakClipPtr(link);
 }
 
 ClipPtr Clip::getLink() const
 {
-    return mLink;
+    return mLink.lock();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -285,7 +285,19 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mLength;
     ar & mTrack;
     ar & mLeftPtsInTrack;
-    ar & mLink;
+    // Links are stored as weak_ptr to avoid cyclic dependencies (leading to 
+    // excessive memory leaks). Storing/reading is done via shared_ptr. Hence,
+    // these conversions are required.
+    if (Archive::is_loading::value)
+    {
+        ClipPtr link;
+        ar & link;
+        setLink(link);
+    }
+    else
+    {
+        ar & mLink.lock();
+    }
     // NOT: mSelected. After loading, nothing is selected.
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

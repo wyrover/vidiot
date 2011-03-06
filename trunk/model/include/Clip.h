@@ -168,7 +168,7 @@ private:
     IControlPtr mRender;    ///< The producer of audiovisual data for this clip
     TrackPtr mTrack;        ///< Track which holds this clip
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
-    ClipPtr mLink;          ///< Clip that this clip is linked with
+    WeakClipPtr mLink;      ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 
     pts mOffset;            ///< Offset inside the original media file (start point)
     pts mLength;            ///< Length of the clip

@@ -35,9 +35,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
 	static const wxColour	sBackgroundColour;
-
     static const wxPen      sBackgroundPen;
     static const wxBrush    sBackgroundBrush;
+
+    static const wxColour	sPreviewBackgroundColour;
+    static const wxPen      sPreviewBackgroundPen;
+    static const wxBrush    sPreviewBackgroundBrush;
 
     static const wxPen      sTimeScaleDividerPen;
 

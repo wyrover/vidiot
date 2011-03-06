@@ -3,6 +3,7 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/cmdproc.h>
+#include <wx/dcmemory.h>
 #include <wx/wupdlock.h>
 #include <boost/foreach.hpp>
 #include <boost/limits.hpp>
@@ -21,6 +22,7 @@
 #include "Track.h"
 #include "VideoClip.h"
 #include "ClipView.h"
+#include "Layout.h"
 #include "Project.h"
 #include "Zoom.h"
 #include "Timeline.h"
@@ -38,7 +40,7 @@ const wxString sTooltip = _(
 Trim::Trim( my_context ctx ) // entry
     :   TimeLineState( ctx )
     ,   mStartPosition(0,0)
-    ,   mEdit(0)
+    ,   mEdit(getPlayer()->startEdit())
     ,   mOriginalClip()
     ,   mMinShiftOtherTrackContent((std::numeric_limits<pts>::min)())
     ,   mMaxShiftOtherTrackContent((std::numeric_limits<pts>::max)())
@@ -62,15 +64,32 @@ Trim::Trim( my_context ctx ) // entry
     mStartPosition = event->mWxEvent.GetPosition();
     mCurrentPosition = mStartPosition;
     mOriginalClip = info.clip;
+    model::ClipPtr adjacentClip;
     if (mTrimBegin)
     {
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
+        adjacentClip = mOriginalClip->getTrack()->getPreviousClip(mOriginalClip);
+        if (adjacentClip)
+        {
+            adjacentClip->moveTo(adjacentClip->getLength() - 1);
+        }
     }
     else
     {
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
+        adjacentClip = mOriginalClip->getTrack()->getNextClip(mOriginalClip);
+        if (adjacentClip)
+        {
+            adjacentClip->moveTo(0);
+        }
     }
     mFixedPixel = getScrolling().ptsToPixel(mFixedPts); // See remark above.
+    if (adjacentClip && adjacentClip->isA<model::VideoClip>())
+    {
+        model::VideoClipPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(adjacentClip);
+        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(mEdit->getSize().GetWidth() / 2,  mEdit->getSize().GetHeight(), false);
+        mAdjacentBitmap = boost::make_shared<wxBitmap>(wxImage(adjacentFrame->getWidth(), adjacentFrame->getHeight(), adjacentFrame->getData()[0], true));
+    }
 
     // Determine boundaries for shifting other tracks
     // TODO more testing
@@ -87,8 +106,7 @@ Trim::Trim( my_context ctx ) // entry
             (clipAt->isA<model::EmptyClip>()) ? std::min<pts>(mMaxShiftOtherTrackContent, clipAt->getRightPts() - shiftFrom) : 0;
     }
 
-    mEdit = getPlayer()->startEdit();
-    show();
+    preview();
 }
 
 Trim::~Trim() // exit
@@ -201,7 +219,6 @@ pts Trim::getDiff()
 void Trim::preview()
 {
     model::ClipPtr updatedClip = make_cloned<model::Clip>(mOriginalClip);
-    // todo also show preview of adjacent clip
     if (updatedClip->isA<model::VideoClip>())
     {
         if (mTrimBegin)
@@ -216,18 +233,41 @@ void Trim::preview()
         if (updatedClip->getLength() > 0)
         { 
             model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
-            VAR_DEBUG(*mOriginalClip)(*updatedClip);
+            wxSize s = mEdit->getSize();
+            bool drawadjacentclip = mShiftDown && mAdjacentBitmap;
+            int previewwidth = (drawadjacentclip ? s.GetWidth() / 2 : s.GetWidth());
+            int previewxpos = 0;
+            boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
+            wxMemoryDC dc(*bmp);
+
             if (mTrimBegin)
             {
                 videoclip->moveTo(0);
+                previewxpos = s.GetWidth() - previewwidth; // This works for both with and without an adjacent clip
             }
             else
             {
                 videoclip->moveTo(videoclip->getLength() - 1);
+                previewxpos = 0;
             }
-            wxSize s = mEdit->getSize();
-            model::VideoFramePtr videoFrame = videoclip->getNextVideo(s.GetWidth(), s.GetHeight(), false);
-            boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
+
+            // Fill with black
+            dc.SetBrush(Layout::sPreviewBackgroundBrush);
+            dc.SetPen(Layout::sPreviewBackgroundPen);
+            dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
+
+            // Draw preview of trim operation
+            model::VideoFramePtr videoFrame = videoclip->getNextVideo(previewwidth, s.GetHeight(), false);
+            wxBitmap trimmedBmp = wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true));
+            dc.DrawBitmap(trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp.GetHeight()) / 2);
+
+            // Draw adjacent clip if present. Is only relevant when holding shift
+            if (drawadjacentclip)
+            {
+                int xAdjacent = (mTrimBegin ? 0 : s.GetWidth() / 2);
+                dc.DrawBitmap(*mAdjacentBitmap, xAdjacent, (s.GetHeight() - mAdjacentBitmap->GetHeight()) / 2);
+            }
+            dc.SelectObject(wxNullBitmap);
             mEdit->show(bmp);
         }
     }

@@ -64,6 +64,7 @@ protected:
     wxPoint mCurrentPosition;       ///< Current mouse position (in unscrolled coordinates)
 
     model::ClipPtr mOriginalClip;
+    boost::shared_ptr<wxBitmap> mAdjacentBitmap;
 
     pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
     pts mMaxShiftOtherTrackContent; ///< Maximum allowed shift (to the right) of 'other' tracks
