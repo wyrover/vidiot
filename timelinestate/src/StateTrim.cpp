@@ -135,6 +135,16 @@ boost::statechart::result Trim::react( const EvMotion& evt )
     return forward_event();
 }
 
+boost::statechart::result Trim::react( const EvLeave& evt )
+{
+    VAR_DEBUG(evt);
+    if (undo())
+    {
+        getTimeline().Update();
+    }
+    return transit<Idle>();
+}
+
 boost::statechart::result Trim::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
@@ -148,6 +158,12 @@ boost::statechart::result Trim::react( const EvKeyDown& evt)
     case WXK_F1:
         getTooltip().show(sTooltip);
         break;
+    case WXK_ESCAPE:
+        if (undo())
+        {
+            getTimeline().Update();
+        }
+        return transit<Idle>();
     }
     return forward_event();
 }
@@ -275,15 +291,8 @@ void Trim::preview()
 
 void Trim::show()
 {
-    bool update = false;
-
     // Do not use mOriginalClip: it may have been removed from the track by applying command::Trim previously
-    if (mMustUndo)
-    {
-        model::Project::current()->GetCommandProcessor()->Undo();
-        mMustUndo = false;
-        update = true;
-    }
+    bool update = undo();
     // From here we can safely use mOriginalClip again
 
     pts diff = getDiff();
@@ -307,6 +316,17 @@ void Trim::show()
     {
         getTimeline().Update();
     }
+}
+
+bool Trim::undo()
+{
+    if (mMustUndo)
+    {
+        model::Project::current()->GetCommandProcessor()->Undo();
+        mMustUndo = false;
+        return true;
+    }
+    return false;
 }
 
 }}} // namespace

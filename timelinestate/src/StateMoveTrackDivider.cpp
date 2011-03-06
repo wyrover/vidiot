@@ -86,6 +86,12 @@ boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
     return forward_event();
 }
 
+boost::statechart::result MoveTrackDivider::react( const EvLeave& evt)
+{
+    VAR_DEBUG(evt);
+    return abort();
+}
+
 boost::statechart::result MoveTrackDivider::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
@@ -104,12 +110,6 @@ boost::statechart::result MoveTrackDivider::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
     return forward_event();
-}
-
-boost::statechart::result MoveTrackDivider::react( const EvLeave& evt)
-{
-    VAR_DEBUG(evt);
-    return abort();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -59,6 +59,12 @@ boost::statechart::result StateScrolling::react( const EvMotion& evt )
     return forward_event();
 }
 
+boost::statechart::result StateScrolling::react( const EvLeave& evt )
+{
+    VAR_DEBUG(evt);
+    return transit<Idle>();
+}
+
 boost::statechart::result StateScrolling::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);

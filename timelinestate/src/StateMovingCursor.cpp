@@ -58,6 +58,16 @@ boost::statechart::result MovingCursor::react( const EvMotion& evt )
     return forward_event();
 }
 
+boost::statechart::result MovingCursor::react( const EvLeave& evt)
+{
+    VAR_DEBUG(evt);
+    if (evt.mWxEvent.ShiftDown())
+    {
+        triggerToggleEnd();
+    }
+    return transit<Idle>();
+}
+
 boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
