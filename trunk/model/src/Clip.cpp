@@ -148,11 +148,22 @@ ClipPtr Clip::getLink() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// GET/SET
+// ADJUSTING OFFSET AND LENGTH
 //////////////////////////////////////////////////////////////////////////
+
+pts Clip::getMinAdjustBegin() const
+{
+    return -mOffset;
+}
+
+pts Clip::getMaxAdjustBegin() const
+{
+    return mLength;
+}
 
 void Clip::adjustBegin(pts adjustment)
 {
+    ASSERT(adjustment >= getMinAdjustBegin() && adjustment <= getMaxAdjustBegin())(adjustment)(getMinAdjustBegin())(getMaxAdjustBegin());
     mOffset += adjustment;
     mLength -= adjustment;
     if (mTrack)
@@ -166,17 +177,31 @@ void Clip::adjustBegin(pts adjustment)
     VAR_DEBUG(*this)(adjustment);
 }
 
-void Clip::adjustEnd(pts length)
+pts Clip::getMinAdjustEnd() const
 {
-    VAR_INFO(this)(length);
-    mLength = length;
+    return -mLength;
+}
+
+pts Clip::getMaxAdjustEnd() const
+{
+    return mRender->getNumberOfFrames() - mLength - mOffset;
+}
+
+void Clip::adjustEnd(pts adjustment)
+{
+    ASSERT(adjustment >= getMinAdjustEnd() && adjustment <= getMaxAdjustEnd())(adjustment)(getMinAdjustEnd())(getMaxAdjustEnd());
+    mLength += adjustment;
     if (mTrack)
     {
         mTrack->updateClips(); // \see todo in adjustbegin
     }
     ASSERT(mLength <=  mRender->getNumberOfFrames() - mOffset)(mLength);
-    VAR_DEBUG(*this)(length);
+    VAR_DEBUG(*this)(adjustment);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
 
 pts Clip::getOffset() const
 {

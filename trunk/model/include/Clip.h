@@ -77,18 +77,28 @@ public:
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // GET/SET
+    // ADJUSTING OFFSET AND LENGTH
     //////////////////////////////////////////////////////////////////////////
-
+    
+    pts getMinAdjustBegin() const;  ///< \return Minimum allowed value for adjustBegin given the available data for mRender.
+    pts getMaxAdjustBegin() const;  ///< \return Maximum allowed value for adjustBegin given the available data for mRender.
+    
     /// If adjustment is positive then move the begin point of the clip backwards
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
     /// \param adjustment pts count to add/subtract from the begin point
     virtual void adjustBegin(pts adjustment);
 
+    pts getMinAdjustEnd() const;    ///< \return Minimum allowed value for adjustEnd given the available data for mRender.
+    pts getMaxAdjustEnd() const;    ///< \return Maximum allowed value for adjustEnd given the available data for mRender.
+
     /// Set the new length of the clip.
-    /// \param length new length of clip
-    virtual void adjustEnd(pts length);
+    /// \param adjustment pts count to add/subtract from the length
+    void adjustEnd(pts adjustment);
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
 
     /// \return Offset in the viewed video/audio data (that is, the diff between the 
     ///         starting point of the original and the starting point of the clip)

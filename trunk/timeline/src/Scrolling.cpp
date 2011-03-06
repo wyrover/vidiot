@@ -37,7 +37,6 @@ wxPoint Scrolling::getOffset() const
     return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 
-
 void Scrolling::align(pts position, pixel unscrolledPixel)
 {
     pixel diff = ptsToPixel(position) - unscrolledPixel;

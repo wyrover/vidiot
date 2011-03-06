@@ -77,6 +77,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
                 return transit<TestDragStart>();
                 break;
             case ClipEnd:
+                return transit<TrimBegin>();
                 break;
             default:
                 FATAL("Unexpected logical clip position.");
