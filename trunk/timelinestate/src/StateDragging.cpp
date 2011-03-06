@@ -57,6 +57,13 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
     return forward_event();
 }
 
+boost::statechart::result Dragging::react( const EvLeave& evt )
+{
+    VAR_DEBUG(evt);
+    getDrag().stop();
+    return transit<Idle>();
+}
+
 boost::statechart::result Dragging::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);
