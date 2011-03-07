@@ -257,6 +257,7 @@ TrackPtr Sequence::getAudioTrack(int index)
 
 void Sequence::Delete()
 {
+    clean();
     // First 'bottom up' reference removal,
     // Second 'top down' reference removal.
     mVideoTracks.clear();
