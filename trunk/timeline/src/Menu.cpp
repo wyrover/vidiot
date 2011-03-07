@@ -41,9 +41,11 @@ MenuHandler::MenuHandler(Timeline* timeline)
     GuiWindow::get()->Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
     wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
-    notebook->Bind(wxEVT_COMMAND_BOOKCTRL_PAGE_CHANGED, &MenuHandler::onPageChanged, this);
+    notebook->Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &MenuHandler::onPageChanged, this);
 
-    update();
+    updateItems();
+
+    GuiWindow::get()->setSequenceMenu(getMenu());
 }
 
 MenuHandler::~MenuHandler()
@@ -51,7 +53,7 @@ MenuHandler::~MenuHandler()
     VAR_DEBUG(this);
 
     wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
-    notebook->Unbind(wxEVT_COMMAND_BOOKCTRL_PAGE_CHANGED, &MenuHandler::onPageChanged, this);
+    notebook->Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,    &MenuHandler::onPageChanged, this);
 
     GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
     GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,  this, ID_ADDAUDIOTRACK);
@@ -75,7 +77,7 @@ wxMenu* MenuHandler::getMenu()
     return &mMenu;
 }
 
-void MenuHandler::update()
+void MenuHandler::updateItems()
 {
     mMenu.Enable( ID_DELETEMARKED,   !getIntervals().isEmpty() );
     mMenu.Enable( ID_DELETEUNMARKED, !getIntervals().isEmpty() );
@@ -120,7 +122,6 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& WXUNUSED(event))
 void MenuHandler::onCloseSequence(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    NIY;
     GuiTimelinesView& tv = GuiWindow::get()->getTimeLines();
     tv.Close();
 }
@@ -132,7 +133,6 @@ void MenuHandler::onCloseSequence(wxCommandEvent& WXUNUSED(event))
 void MenuHandler::onPageChanged(wxBookCtrlEvent& event)
 {
     wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
-//    timeline::Timeline* timeline = static_cast<timeline::Timeline*>(notebook->GetCurrentPage());
     timeline::Timeline* timeline = static_cast<timeline::Timeline*>(notebook->GetPage(event.GetSelection()));
     if (timeline == &getTimeline())
     {

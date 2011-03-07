@@ -1,7 +1,7 @@
 #ifndef MODEL_FILE_H
 #define MODEL_FILE_H
 
-#include <ctime>
+//#include <ctime>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/path.hpp>
@@ -21,8 +21,6 @@ namespace model {
 class File
     :   public IControl
     ,   public AProjectViewNode
-    //:   public AProjectViewNode
-    //,   public IControl
 {
 public:
 
@@ -44,6 +42,7 @@ public:
     virtual pts getLength();
     virtual void moveTo(pts position);
     virtual wxString getDescription() const;
+    virtual void clean();
 
     //////////////////////////////////////////////////////////////////////////
     // FOR DETERMINING THE TYPE OF FILE
@@ -106,51 +105,39 @@ protected:
     /// packets in the file or if buffering of packets is stopped.
     PacketPtr getNextPacket();
 
-
 private:
 
-    /// This mutex is needed to ensure that any pending getNextPacket() - which is
-    /// executed in an external thread - is finished when stopping.
-    boost::mutex sMutexStop;
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
+    boost::mutex sMutexStop; ///< This mutex is needed to ensure that any pending getNextPacket() - which is executed in an external thread - is finished when stopping.
     wxString mName;
-
-    //////////////////////////////////////////////////////////////////////////
-    // AVCODEC
-    //////////////////////////////////////////////////////////////////////////
-
     AVFormatContext* mFileContext;
     int mStreamIndex;
+    bool mFileOpen;
+    bool mReadingPackets;
+    bool mEOF;
+    int mMaxBufferSize;
+    FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
+    pts mNumberOfFrames;
+    int mTwoInARow;
+    boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
+    boost::filesystem::path mPath;
+    mutable boost::optional<wxString> mLastModified;
 
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION
+    // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     void openFile();
     void closeFile();
 
-    bool mFileOpen;
-
-    bool mReadingPackets;
-    bool mEOF;
-
-    int mMaxBufferSize;
-
-    
-    FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
-
-    pts mNumberOfFrames;
-    int mTwoInARow;
-
     //////////////////////////////////////////////////////////////////////////
-    // DISK IO
+    // THREADS
     //////////////////////////////////////////////////////////////////////////
 
-    boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
     void bufferPacketsThread();
-
-    boost::filesystem::path mPath;
-    mutable boost::optional<wxString> mLastModified;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

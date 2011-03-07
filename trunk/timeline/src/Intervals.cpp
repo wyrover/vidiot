@@ -68,7 +68,7 @@ void Intervals::set(wxRegion region)
 {
     wxRect r = mMarkedIntervals.GetBox().Union(region.GetBox());
     mMarkedIntervals = region;
-    getMenuHandler().update();
+    getMenuHandler().updateItems();
     refresh(r.x,r.x + r.width);
 }
 
@@ -134,7 +134,7 @@ void Intervals::change(long begin, long end, bool add)
     {
         mMarkedIntervals.Subtract(r);
     }
-    getMenuHandler().update();
+    getMenuHandler().updateItems();
     refresh(begin,end);
 }
 

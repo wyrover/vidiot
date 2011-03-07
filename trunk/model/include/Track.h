@@ -105,6 +105,7 @@ public:
     virtual pts getLength();
     virtual void moveTo(pts position);
     virtual wxString getDescription() const;
+    virtual void clean();
 
     //////////////////////////////////////////////////////////////////////////
     // CLIPS
@@ -176,8 +177,12 @@ protected:
 
 private:
 
-    Clips::const_iterator mItClips;
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     Clips mClips;
+    Clips::const_iterator mItClips;
 
     int mHeight;    ///< Height of this track when viewed in a timeline
     int mIndex;     ///< Index in the list of video/audio tracks

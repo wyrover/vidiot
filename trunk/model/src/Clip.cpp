@@ -107,6 +107,14 @@ wxString Clip::getDescription() const
     return s;
 }
 
+void Clip::clean()
+{
+    VAR_DEBUG(this);
+    mLastSetPosition = boost::none;
+    mGeneratedPts = 0;
+    mRender->clean();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // TRACK
 //////////////////////////////////////////////////////////////////////////

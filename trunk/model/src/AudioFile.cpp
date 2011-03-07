@@ -80,55 +80,27 @@ AudioFile::~AudioFile()
     audioResampleBuffer = 0;
 }
 
-void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
-{
-    if (mDecodingAudio) return;
+//////////////////////////////////////////////////////////////////////////
+// ICONTROL
+//////////////////////////////////////////////////////////////////////////
 
-    // Allocated upon first use. See also the remark in the header file
-    // on GCC in combination with make_shared.
-    if (!audioDecodeBuffer)
-    {
-        audioDecodeBuffer = new boost::int16_t[sAudioBufferSize];
-        audioResampleBuffer = new boost::int16_t[sAudioBufferSize];
-    }
-
-    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
-    mDecodingAudio = true;
-
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
-
-    AVCodec* audioCodec = avcodec_find_decoder(getCodec()->codec_id);
-    ASSERT(audioCodec != 0)(audioCodec);
-
-    int result = avcodec_open(getCodec(), audioCodec);
-    ASSERT(result >= 0)(result);
-
-    if ((nAudioChannels != getCodec()->channels) || (audioRate != getCodec()->sample_rate))
-    {
-        LOG_INFO << "Resampling initialized";
-        static const int taps = 16;
-        mResampleContext =
-            av_audio_resample_init(
-                nAudioChannels, getCodec()->channels,
-                audioRate, getCodec()->sample_rate,
-                SAMPLE_FMT_S16, SAMPLE_FMT_S16,
-                taps, 10, 0, 0.8);
-        ASSERT(mResampleContext != 0);/** /todo replace with gui message and abort */
-    }
-
-    VAR_DEBUG(this)(getCodec());
-}
-
-void AudioFile::stopDecodingAudio()
+void AudioFile::clean()
 {
     VAR_DEBUG(this);
-    if (mDecodingAudio)
-    {
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
-        avcodec_close(getCodec());
-    }
-    mDecodingAudio = false;
+
+    stopDecodingAudio();
+
+    delete[] audioDecodeBuffer;
+    delete[] audioResampleBuffer;
+    audioDecodeBuffer = 0;
+    audioResampleBuffer = 0;
+
+    File::clean();
 }
+
+//////////////////////////////////////////////////////////////////////////
+// IAUDIO
+//////////////////////////////////////////////////////////////////////////
 
 AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 {
@@ -221,6 +193,68 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, pts);//boost::make_shared<AudioChunk>(audioDecodeBuffer, outputSize / 2, pts);
     VAR_AUDIO(this)(audioChunk);
     return audioChunk;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
+{
+    if (mDecodingAudio) return;
+
+    // Allocated upon first use. See also the remark in the header file
+    // on GCC in combination with make_shared.
+    if (!audioDecodeBuffer)
+    {
+        audioDecodeBuffer = new boost::int16_t[sAudioBufferSize];
+        audioResampleBuffer = new boost::int16_t[sAudioBufferSize];
+    }
+
+    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
+    mDecodingAudio = true;
+
+    boost::mutex::scoped_lock lock(sMutexAvcodec);
+
+    AVCodec* audioCodec = avcodec_find_decoder(getCodec()->codec_id);
+    ASSERT(audioCodec != 0)(audioCodec);
+
+    int result = avcodec_open(getCodec(), audioCodec);
+    ASSERT(result >= 0)(result);
+
+    if ((nAudioChannels != getCodec()->channels) || (audioRate != getCodec()->sample_rate))
+    {
+        LOG_INFO << "Resampling initialized";
+        static const int taps = 16;
+        mResampleContext =
+            av_audio_resample_init(
+                nAudioChannels, getCodec()->channels,
+                audioRate, getCodec()->sample_rate,
+                SAMPLE_FMT_S16, SAMPLE_FMT_S16,
+                taps, 10, 0, 0.8);
+        ASSERT(mResampleContext != 0);/** /todo replace with gui message and abort */
+    }
+
+    VAR_DEBUG(this)(getCodec());
+}
+
+void AudioFile::stopDecodingAudio()
+{
+    VAR_DEBUG(this);
+    if (mDecodingAudio)
+    {
+        boost::mutex::scoped_lock lock(sMutexAvcodec);
+
+        if (mResampleContext != 0)
+        {
+            LOG_INFO << "Resampling ended";
+            audio_resample_close(mResampleContext);
+            mResampleContext = 0;
+        }
+
+        avcodec_close(getCodec());
+    }
+    mDecodingAudio = false;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -29,8 +29,9 @@ static int const sMaxBufferSize = 10;
 VideoFile::VideoFile()
 :	File()
 ,   mDecodingVideo(false)
-,   mDeliveredFrameInputPts(0)
 ,   mPosition(0)
+,   mDeliveredFrame()
+,   mDeliveredFrameInputPts(0)
 {
     VAR_DEBUG(*this);
 }
@@ -38,8 +39,9 @@ VideoFile::VideoFile()
 VideoFile::VideoFile(boost::filesystem::path path)
 :	File(path,sMaxBufferSize)
 ,   mDecodingVideo(false)
-,   mDeliveredFrameInputPts(0)
 ,   mPosition(0)
+,   mDeliveredFrame()
+,   mDeliveredFrameInputPts(0)
 {
     VAR_DEBUG(*this);
 }
@@ -47,8 +49,9 @@ VideoFile::VideoFile(boost::filesystem::path path)
 VideoFile::VideoFile(const VideoFile& other)
 :   File(other)
 ,   mDecodingVideo(false)
-,   mDeliveredFrameInputPts(0)
 ,   mPosition(0)
+,   mDeliveredFrame()
+,   mDeliveredFrameInputPts(0)
 {
     VAR_DEBUG(*this);
 }
@@ -74,6 +77,19 @@ void VideoFile::moveTo(pts position)
     mDeliveredFrame.reset();
     mPosition = position;
     File::moveTo(position); // NOTE: This uses the pts in 'project' timebase units
+}
+
+void VideoFile::clean()
+{
+    VAR_DEBUG(this);
+
+    stopDecodingVideo();
+
+    mDeliveredFrameInputPts = 0;
+    mDeliveredFrame.reset();
+    mPosition = 0;
+
+    File::clean();
 }
 
 //////////////////////////////////////////////////////////////////////////

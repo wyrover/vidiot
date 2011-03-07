@@ -77,6 +77,96 @@ Sequence::~Sequence()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// ICONTROL
+//////////////////////////////////////////////////////////////////////////
+
+int64_t Sequence::getLength()
+{
+    int16_t nFrames = 0;
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    {
+        nFrames = std::max<int64_t>(nFrames, track->getLength());
+    }
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    {
+        nFrames = std::max<int64_t>(nFrames, track->getLength());
+    }
+    return nFrames;
+}
+
+void Sequence::moveTo(int64_t position)
+{
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    {
+        track->moveTo(position);
+    }
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    {
+        track->moveTo(position);
+    }
+}
+
+wxString Sequence::getDescription() const
+{
+    return getName();
+}
+
+void Sequence::clean()
+{
+    VAR_DEBUG(this);
+    BOOST_FOREACH( TrackPtr track, getTracks() )
+    {
+        track->clean();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// IVIDEO
+//////////////////////////////////////////////////////////////////////////
+
+VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
+{
+    VideoFrames frames;
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    {
+        VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(requestedWidth, requestedHeight, alpha);
+        frames.push_back(videoFrame);
+    }
+    VideoFramePtr videoFrame; // Default: Null ptr (at end)
+    BOOST_REVERSE_FOREACH( VideoFramePtr frame, frames )
+    {
+        if (frame)
+        {
+            if (frame->isA<EmptyFrame>())
+            {
+                // At least send the EmptyFrame (instead of a null ptr which indiates 'end').
+                // Do not exit the loop: one of the lower tracks may have a bitmap.
+                videoFrame = frame;
+            }
+            else
+            {
+                // From the top track, the first found frame is returned. 
+                videoFrame = frame;
+                break;
+            }
+        }
+    }
+    VAR_VIDEO(videoFrame);
+    return videoFrame;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// IAUDIO
+//////////////////////////////////////////////////////////////////////////
+
+AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
+{
+    AudioChunkPtr audioChunk = boost::dynamic_pointer_cast<IAudio>(*mAudioTracks.begin())->getNextAudio(audioRate, nAudioChannels);
+    VAR_AUDIO(audioChunk);
+    return audioChunk;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // SEQUENCE SPECIFIC
 //////////////////////////////////////////////////////////////////////////
 
@@ -175,87 +265,6 @@ void Sequence::setName(wxString name)
 { 
     mName = name;
     gui::wxGetApp().QueueEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
-}
-
-//////////////////////////////////////////////////////////////////////////
-// ICONTROL
-//////////////////////////////////////////////////////////////////////////
-
-int64_t Sequence::getLength()
-{
-    int16_t nFrames = 0;
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
-    {
-        nFrames = std::max<int64_t>(nFrames, track->getLength());
-    }
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
-    {
-        nFrames = std::max<int64_t>(nFrames, track->getLength());
-    }
-    return nFrames;
-}
-
-void Sequence::moveTo(int64_t position)
-{
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
-    {
-        track->moveTo(position);
-    }
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
-    {
-        track->moveTo(position);
-    }
-}
-
-wxString Sequence::getDescription() const
-{
-    return getName();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// IVIDEO
-//////////////////////////////////////////////////////////////////////////
-
-VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
-{
-    VideoFrames frames;
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
-    {
-        VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(requestedWidth, requestedHeight, alpha);
-        frames.push_back(videoFrame);
-    }
-    VideoFramePtr videoFrame; // Default: Null ptr (at end)
-    BOOST_REVERSE_FOREACH( VideoFramePtr frame, frames )
-    {
-        if (frame)
-        {
-            if (frame->isA<EmptyFrame>())
-            {
-                // At least send the EmptyFrame (instead of a null ptr which indiates 'end').
-                // Do not exit the loop: one of the lower tracks may have a bitmap.
-                videoFrame = frame;
-            }
-            else
-            {
-                // From the top track, the first found frame is returned. 
-                videoFrame = frame;
-                break;
-            }
-        }
-    }
-    VAR_VIDEO(videoFrame);
-    return videoFrame;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// IAUDIO
-//////////////////////////////////////////////////////////////////////////
-
-AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
-{
-    AudioChunkPtr audioChunk = boost::dynamic_pointer_cast<IAudio>(*mAudioTracks.begin())->getNextAudio(audioRate, nAudioChannels);
-    VAR_AUDIO(audioChunk);
-    return audioChunk;
 }
 
 //////////////////////////////////////////////////////////////////////////

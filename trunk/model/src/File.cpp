@@ -112,63 +112,85 @@ void File::abort()
     closeFile();
 }
 
-void File::openFile()
+//////////////////////////////////////////////////////////////////////////
+// ICONTROL
+//////////////////////////////////////////////////////////////////////////
+
+pts File::getLength()
 {
-    if (mFileOpen) return;
+    openFile();
+    return mNumberOfFrames;
+}
 
-    VAR_DEBUG(this);
+void File::moveTo(pts position)
+{
+    VAR_DEBUG(this)(position);
+    openFile(); // Needed for avcodec calls below
 
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
+    stopReadingPackets();
 
-    int result = av_open_input_file(&mFileContext, mPath.string().c_str(), NULL, 0, NULL);
-    ASSERT(result == 0)(result);
-
-    result = av_find_stream_info(mFileContext);
+    int result = av_seek_frame(mFileContext, -1, model::Convert::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
     ASSERT(result >= 0)(result);
 
-    mNumberOfFrames = -1;
-    for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
-    {
-        AVStream* stream = mFileContext->streams[i];
-        VAR_DEBUG(stream);
+    ASSERT(mPackets.getSize() == 0)(mPackets.getSize());
+    mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
+    mTwoInARow = 0;
 
-        if (stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
-        {
-            // If there is video in the file, then the number of video frames is used for the duration.
-            FrameRate videoFrameRate = FrameRate(stream->codec->time_base.num, stream->codec->time_base.den);
-            mNumberOfFrames = Convert::toProjectFrameRate(stream->duration, videoFrameRate);
-            VAR_DEBUG(mNumberOfFrames);
+    mEOF = false;
 
-            if (isA<VideoFile>())
-            {
-                mStreamIndex = i;
-            }
-        }
-        else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
-        {
-            if (isA<AudioFile>())
-            {
-                mStreamIndex = i;
-            }
-        }
-    }
-    if (mNumberOfFrames == -1)
-    {
-        // For files without video, determine the number of 'virtual video frames'.
-        mNumberOfFrames = Convert::microsecondsToPts(mFileContext->streams[mStreamIndex]->duration);
-    }
-    VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
-    mFileOpen = true;
+    //startReadingPackets();
+    VAR_DEBUG(this);
 }
 
-void File::closeFile()
+wxString File::getDescription() const
+{
+    return getName();
+}
+
+
+void File::clean()
 {
     VAR_DEBUG(this);
-    if (!mFileOpen) return;
-
-    av_close_input_file(mFileContext);
-    mFileOpen = false;
+    stopReadingPackets();
+    closeFile();
 }
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+boost::filesystem::path File::getPath() const
+{
+    return mPath;
+}
+
+wxString File::getLastModified() const
+{
+    if (!mLastModified)
+    {
+        boost::posix_time::ptime lwt = boost::posix_time::from_time_t(boost::filesystem::last_write_time(mPath));
+        mLastModified = boost::optional<wxString>(boost::posix_time::to_simple_string(lwt));
+    }
+    return *mLastModified;
+}
+
+wxString File::getName() const
+{
+    return mPath.leaf();
+};
+
+bool File::isSupported()
+{
+    if (mPath.extension().compare(".avi") == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// PACKETS INTERFACE TO SUBCLASSES
+//////////////////////////////////////////////////////////////////////////
 
 void File::startReadingPackets()
 {
@@ -233,78 +255,6 @@ AVCodecContext* File::getCodec()
     return mFileContext->streams[mStreamIndex]->codec;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// ICONTROL
-//////////////////////////////////////////////////////////////////////////
-
-pts File::getLength()
-{
-    openFile();
-    return mNumberOfFrames;
-}
-
-void File::moveTo(pts position)
-{
-    VAR_DEBUG(this)(position);
-    openFile(); // Needed for avcodec calls below
-
-    stopReadingPackets();
-
-    int result = av_seek_frame(mFileContext, -1, model::Convert::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
-    ASSERT(result >= 0)(result);
-
-    ASSERT(mPackets.getSize() == 0)(mPackets.getSize());
-    mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
-    mTwoInARow = 0;
-
-    mEOF = false;
-
-    //startReadingPackets();
-    VAR_DEBUG(this);
-}
-
-wxString File::getDescription() const
-{
-    return getName();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-boost::filesystem::path File::getPath() const
-{
-    return mPath;
-}
-
-wxString File::getLastModified() const
-{
-    if (!mLastModified)
-    {
-        boost::posix_time::ptime lwt = boost::posix_time::from_time_t(boost::filesystem::last_write_time(mPath));
-        mLastModified = boost::optional<wxString>(boost::posix_time::to_simple_string(lwt));
-    }
-    return *mLastModified;
-}
-
-wxString File::getName() const
-{
-    return mPath.leaf();
-};
-
-bool File::isSupported()
-{
-    if (mPath.extension().compare(".avi") == 0)
-    {
-        return true;
-    }
-    return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// PACKETS INTERFACE TO SUBCLASSES
-//////////////////////////////////////////////////////////////////////////
-
 PacketPtr File::getNextPacket()
 {
     if (mEOF) 
@@ -315,7 +265,7 @@ PacketPtr File::getNextPacket()
         // bufferPacketsThread() in method startReadingPackets()
 
         VAR_DEBUG(mEOF);
-        
+
         if (mPackets.getSize() == 0)
         {
             // EOF was reached AND the list of remaining packets
@@ -341,6 +291,72 @@ PacketPtr File::getNextPacket()
     VAR_DETAIL(packet)(mPackets.getSize());
     return packet;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void File::openFile()
+{
+    if (mFileOpen) return;
+
+    VAR_DEBUG(this);
+
+    boost::mutex::scoped_lock lock(sMutexAvcodec);
+
+    int result = av_open_input_file(&mFileContext, mPath.string().c_str(), NULL, 0, NULL);
+    ASSERT(result == 0)(result);
+
+    result = av_find_stream_info(mFileContext);
+    ASSERT(result >= 0)(result);
+
+    mNumberOfFrames = -1;
+    for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
+    {
+        AVStream* stream = mFileContext->streams[i];
+        VAR_DEBUG(stream);
+
+        if (stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        {
+            // If there is video in the file, then the number of video frames is used for the duration.
+            FrameRate videoFrameRate = FrameRate(stream->codec->time_base.num, stream->codec->time_base.den);
+            mNumberOfFrames = Convert::toProjectFrameRate(stream->duration, videoFrameRate);
+            VAR_DEBUG(mNumberOfFrames);
+
+            if (isA<VideoFile>())
+            {
+                mStreamIndex = i;
+            }
+        }
+        else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+        {
+            if (isA<AudioFile>())
+            {
+                mStreamIndex = i;
+            }
+        }
+    }
+    if (mNumberOfFrames == -1)
+    {
+        // For files without video, determine the number of 'virtual video frames'.
+        mNumberOfFrames = Convert::microsecondsToPts(mFileContext->streams[mStreamIndex]->duration);
+    }
+    VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
+    mFileOpen = true;
+}
+
+void File::closeFile()
+{
+    VAR_DEBUG(this);
+    if (!mFileOpen) return;
+
+    av_close_input_file(mFileContext);
+    mFileOpen = false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// THREADS
+//////////////////////////////////////////////////////////////////////////
 
 void File::bufferPacketsThread()
 {

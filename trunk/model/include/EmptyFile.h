@@ -30,6 +30,8 @@ public:
     virtual pts getLength();
     virtual void moveTo(pts position);
     virtual wxString getDescription() const;
+    virtual void clean();
+
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
