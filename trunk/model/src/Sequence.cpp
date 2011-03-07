@@ -194,6 +194,10 @@ void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 }
 void Sequence::removeVideoTracks(Tracks tracks)
 {
+    BOOST_FOREACH( TrackPtr track, tracks )
+    {
+        track->clean();
+    }
     TrackPtr position = UtilList<TrackPtr>(mVideoTracks).removeElements(tracks);
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
@@ -202,6 +206,10 @@ void Sequence::removeVideoTracks(Tracks tracks)
 }
 void Sequence::removeAudioTracks(Tracks tracks)
 {
+    BOOST_FOREACH( TrackPtr track, tracks )
+    {
+        track->clean();
+    }
     TrackPtr position = UtilList<TrackPtr>(mAudioTracks).removeElements(tracks);
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
