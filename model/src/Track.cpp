@@ -26,6 +26,7 @@ Track::Track()
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
+,   mItClips(mClips.end())
 ,   mHeight(Constants::sDefaultTrackHeight)
 ,   mIndex(0)
 { 
@@ -36,6 +37,7 @@ Track::Track(const Track& other)
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
+,   mItClips(mClips.end())
 ,   mHeight(other.mHeight)
 ,   mIndex(0)
 {
@@ -116,6 +118,16 @@ wxString Track::getDescription() const
     return wxString::Format(wxT("%s %02d"), track, mIndex);
 }
 
+void Track::clean()
+{
+    VAR_DEBUG(this);
+    BOOST_FOREACH(ClipPtr clip, mClips)
+    {
+        clip->clean();
+    }
+    mItClips = mClips.end();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HANDLING CLIPS
 //////////////////////////////////////////////////////////////////////////
@@ -147,6 +159,7 @@ void Track::removeClips(Clips clips)
     VAR_DEBUG(*this)(clips);
 	BOOST_FOREACH( ClipPtr clip, clips )
 	{
+        clip->clean();
 		clip->setTrack(TrackPtr(), 0);
 	}
 

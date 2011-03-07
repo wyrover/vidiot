@@ -35,7 +35,7 @@ public:
     **/
     wxMenu* getMenu();
 
-    void update();
+    void updateItems();
 
     //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU

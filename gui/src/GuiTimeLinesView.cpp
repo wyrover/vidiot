@@ -28,16 +28,16 @@ GuiTimelinesView::GuiTimelinesView(GuiWindow *parent)
     sizer->Add( &mNotebook, 1, wxGROW );
     SetSizerAndFit(sizer);
 
-    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,      &GuiTimelinesView::OnProjectAssetRemoved,       this);
-    wxGetApp().Bind(model::EVENT_RENAME_ASSET,      &GuiTimelinesView::OnProjectAssetRenamed,       this);
-    mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,       &GuiTimelinesView::OnPageChanged,               this);
+    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,              &GuiTimelinesView::OnProjectAssetRemoved,       this);
+    wxGetApp().Bind(model::EVENT_RENAME_ASSET,              &GuiTimelinesView::OnProjectAssetRenamed,       this);
+    mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &GuiTimelinesView::OnPageChanged,               this);
 }
 
 GuiTimelinesView::~GuiTimelinesView()
 {
-    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,      &GuiTimelinesView::OnProjectAssetRemoved,       this);
-    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,      &GuiTimelinesView::OnProjectAssetRenamed,       this);
-    mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,         &GuiTimelinesView::OnPageChanged,               this);
+    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,            &GuiTimelinesView::OnProjectAssetRemoved,       this);
+    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,            &GuiTimelinesView::OnProjectAssetRenamed,       this);
+    mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &GuiTimelinesView::OnPageChanged,               this);
 }
 
 //////////////////////////////////////////////////////////////////////////

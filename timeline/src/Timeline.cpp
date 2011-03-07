@@ -64,7 +64,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 {
     VAR_DEBUG(this);
 
-
     // To ensure that for newly opened timelines the initial position is ok
     // (should take 'minimum position' into account). This can only be done
     // after both mDivider AND mVideoView are initialized.
@@ -105,6 +104,7 @@ Timeline::~Timeline()
     delete mZoom;           mZoom = 0;
 
     mPlayer.reset();
+    mSequence->clean();
     mSequence.reset();
 }
 

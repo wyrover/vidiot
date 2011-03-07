@@ -29,6 +29,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void moveTo(pts position);
+    virtual void clean();
 
     //////////////////////////////////////////////////////////////////////////
     // IVIDEO
@@ -49,17 +50,20 @@ protected:
 private:
 
     //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    bool mDecodingVideo;
+    pts mPosition;                  ///< Current position of this clip (set via 'moveTo' or changed via 'getNext') 
+    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext
+    pts mDeliveredFrameInputPts;    ///< Input pts (thus, before framerate change) of mDeliveredFrame
+
+    //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     void startDecodingVideo();
     void stopDecodingVideo();
-
-    bool mDecodingVideo;
-
-    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext
-    pts mPosition;                  ///< Current position of this clip (set via 'moveTo' or changed via 'getNext') 
-    pts mDeliveredFrameInputPts;    ///< Input pts (thus, before framerate change) of mDeliveredFrame
 
     //////////////////////////////////////////////////////////////////////////
     // FROM FILE
