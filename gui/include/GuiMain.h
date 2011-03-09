@@ -5,16 +5,10 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
-#include "ModelPtr.h"
 
 #ifdef _MSC_VER
 //#define CATCH_ALL_ERRORS
 #endif // _MSC_VER
-
-namespace model {
-    class EventOpenProject;
-    class EventCloseProject;
-}
 
 namespace gui {
 
@@ -32,15 +26,6 @@ public:
     ~GuiMain();
 
     //////////////////////////////////////////////////////////////////////////
-    // PROJECTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void OnOpenProject( model::EventOpenProject &event );
-    void OnCloseProject( model::EventCloseProject &event );
-
-    model::Project* getProject() const;
-
-    //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
@@ -55,16 +40,7 @@ public:
     virtual void OnFatalException();
 #endif //CATCH_ALL_ERRORS
 
-    //////////////////////////////////////////////////////////////////////////
-    // GUI EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void OnIdle(wxIdleEvent& event);
-
 private:
-
-    model::Project* mProject;
-    bool mDone;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
