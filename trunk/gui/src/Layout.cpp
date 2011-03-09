@@ -3,7 +3,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
 
-namespace gui { namespace timeline {
+namespace gui {
 
 //////////////////////////////////////////////////////////////////////////
 // DRAWING
@@ -93,4 +93,4 @@ void Layout::initializeFonts()
 
 }
 
-}} // namespace
+} // namespace

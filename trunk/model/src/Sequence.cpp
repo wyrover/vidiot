@@ -69,11 +69,7 @@ Sequence* Sequence::clone()
 Sequence::~Sequence()
 {
     VAR_DEBUG(this);
-    /// \todo remove all tracks recursively (note: the tracks do not keep
-    /// references to the sequence, hence the sequence can simply go
-    /// out-of-scope (smartptr) and then this destructor is called. The
-    /// tracks however are kept alive via their child clips, thus they
-    /// need explicit cleanup.
+    // See Sequence::Delete() for removal of tracks.
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -257,11 +253,13 @@ TrackPtr Sequence::getAudioTrack(int index)
 
 void Sequence::Delete()
 {
-    clean();
-    // First 'bottom up' reference removal,
-    // Second 'top down' reference removal.
-    mVideoTracks.clear();
-    mAudioTracks.clear();
+    // This (remove*Tracks) is needed to let all observer classes know that 
+    // the tracks are removed from the sequence. This in turn ensures that 
+    // all owners of shared_ptr to these tracks can remove the shared_ptr 
+    // use, resulting in the actual destruction of the tracks.
+    // Scenario: Open existing file with timeline openened, then exit application.
+    removeAudioTracks(mAudioTracks);
+    removeVideoTracks(mVideoTracks);
     mParent.reset();
 };
 

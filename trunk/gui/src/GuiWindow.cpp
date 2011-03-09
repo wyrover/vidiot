@@ -22,17 +22,16 @@ const int sStatusProcessing = 8;
 
 GuiWindow::GuiWindow()
 :   wxDocParentFrame()
-,	mDocManager()
-,	mDocTemplate(0)
+,	mDocManager(new wxDocManager())
+,	mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(GuiView)))
 ,   menubar(0)
 ,   menuedit(0)
 ,   menusequence(0)
 {
-    // Must be done in two step construction way, since it reuses mDocManger which would
+    // Must be done in two step construction way, since it reuses mDocManager which would
     // be initialized last if the initialization of the base class was also done in the
     // constructor list.
-    wxDocParentFrame::Create(&mDocManager, 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1200,800));
-    mDocTemplate = new wxDocTemplate(&mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(GuiView));
+    wxDocParentFrame::Create(mDocManager, 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1200,800));
 
     mTimelinesView  = new GuiTimelinesView(this);
     mPreview        = new GuiPreview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
@@ -101,28 +100,25 @@ GuiWindow::GuiWindow()
     wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiWindow::OnOpenProject,              this);
     wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiWindow::OnCloseProject,             this);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     &mDocManager, wxID_CLOSE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	&mDocManager, wxID_CLOSE_ALL);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       &mDocManager, wxID_NEW);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      &mDocManager, wxID_OPEN);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    &mDocManager, wxID_REVERT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      &mDocManager, wxID_SAVE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    &mDocManager, wxID_SAVEAS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	mDocManager, wxID_CLOSE_ALL);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       mDocManager, wxID_NEW);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      mDocManager, wxID_OPEN);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    mDocManager, wxID_REVERT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      mDocManager, wxID_SAVE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    mDocManager, wxID_SAVEAS);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          &mDocManager, wxID_UNDO);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          &mDocManager, wxID_REDO);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          mDocManager, wxID_UNDO);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          mDocManager, wxID_REDO);
 
-    
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnExit,             this, wxID_EXIT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnHelp,             this, wxID_HELP);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAbout,            this, wxID_ABOUT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnOptions,          this, ID_OPTIONS);
 
-    Bind(wxEVT_CLOSE_WINDOW,            &GuiWindow::OnCloseWindow,      this);
-
-    mDocManager.SetMaxDocsOpen(1);
-    mDocManager.FileHistoryUseMenu(menufile);
-    mDocManager.FileHistoryLoad(*wxConfigBase::Get());
+    mDocManager->SetMaxDocsOpen(1);
+    mDocManager->FileHistoryUseMenu(menufile);
+    mDocManager->FileHistoryLoad(*wxConfigBase::Get());
 
     Show();
 }
@@ -131,7 +127,7 @@ void GuiWindow::init()
 {
     if (GuiOptions::GetAutoLoad())
     {
-        mDocManager.CreateDocument(*GuiOptions::GetAutoLoad(), wxDOC_SILENT);
+        mDocManager->CreateDocument(*GuiOptions::GetAutoLoad(), wxDOC_SILENT);
     }
 }
 
@@ -140,32 +136,30 @@ GuiWindow::~GuiWindow()
     wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,     &GuiWindow::OnOpenProject,              this);
     wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,    &GuiWindow::OnCloseProject,             this);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     &mDocManager, wxID_CLOSE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	&mDocManager, wxID_CLOSE_ALL);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       &mDocManager, wxID_NEW);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      &mDocManager, wxID_OPEN);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    &mDocManager, wxID_REVERT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      &mDocManager, wxID_SAVE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    &mDocManager, wxID_SAVEAS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  mDocManager, wxID_CLOSE_ALL);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       mDocManager, wxID_NEW);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      mDocManager, wxID_OPEN);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    mDocManager, wxID_REVERT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      mDocManager, wxID_SAVE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    mDocManager, wxID_SAVEAS);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          &mDocManager, wxID_UNDO);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          &mDocManager, wxID_REDO);
-
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          mDocManager, wxID_UNDO);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          mDocManager, wxID_REDO);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnExit,             this, wxID_EXIT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnHelp,             this, wxID_HELP);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnAbout,            this, wxID_ABOUT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::OnOptions,          this, ID_OPTIONS);
 
-    Unbind(wxEVT_CLOSE_WINDOW,            &GuiWindow::OnCloseWindow,      this);
-
     mUiManager.UnInit();
 
-    delete mDocTemplate;
-    delete mTimelinesView;
-    delete mPreview;
-    delete mProjectView;
     delete mEditor;
+    delete mProjectView;
+    delete mPreview;
+    delete mTimelinesView;
+    //NOT: delete mDocTemplate;
+    delete mDocManager;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,7 +170,7 @@ void GuiWindow::OnOpenProject( model::EventOpenProject &event )
 {
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
-    mDocManager.FileHistorySave(*wxConfigBase::Get());
+    mDocManager->FileHistorySave(*wxConfigBase::Get());
     GuiOptions::SetAutoLoadFilename(model::Project::current()->GetFilename());
     wxConfigBase::Get()->Flush();
     event.Skip();
@@ -191,11 +185,6 @@ void GuiWindow::OnCloseProject( model::EventCloseProject &event )
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
-
-void GuiWindow::OnCloseWindow(wxCloseEvent& event)
-{
-    wxFrame::OnCloseWindow(event);
-}
 
 void GuiWindow::SetProcessingText(wxString text)
 {
