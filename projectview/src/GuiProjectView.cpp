@@ -470,7 +470,6 @@ void GuiProjectView::OnExpanded( wxDataViewEvent &event )
     model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
-    mProject->Modify(true);
     mOpenFolders.insert(folder);
 }
 
@@ -479,7 +478,6 @@ void GuiProjectView::OnCollapsed( wxDataViewEvent &event )
     model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
-    mProject->Modify(true);
     mOpenFolders.erase(folder);
 }
 

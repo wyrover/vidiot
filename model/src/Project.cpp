@@ -28,6 +28,7 @@ Project::Project()
 {
     VAR_DEBUG(this);
     sCurrent = this;
+    ASSERT(!IsModified());
 }
 
 Project::~Project()
@@ -111,6 +112,11 @@ void Project::OnChangeFilename(bool notifyViews)
 {
     mRoot->setName(GetUserReadableName());
     wxDocument::OnChangeFilename(notifyViews);
+}
+
+void Project::Modify(bool modify)
+{
+    wxDocument::Modify(modify);
 }
 
 //////////////////////////////////////////////////////////////////////////
