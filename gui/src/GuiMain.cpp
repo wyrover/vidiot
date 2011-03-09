@@ -94,7 +94,7 @@ bool GuiMain::OnInit()
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)
-    gui::timeline::Layout::initializeFonts();
+    Layout::initializeFonts();
 
     Log::Init();
 

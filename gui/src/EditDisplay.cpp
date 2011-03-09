@@ -2,6 +2,7 @@
 
 #include <wx/dcclient.h>
 #include "UtilLog.h"
+#include "Layout.h"
 
 namespace gui {
 
@@ -82,8 +83,8 @@ void EditDisplay::OnPaint(wxPaintEvent& event)
 {
     wxPaintDC dc(this); // Omit this, and suffer the performance consequences ;-)
 
-    dc.SetPen(*wxBLACK);
-    dc.SetBrush(*wxBLACK_BRUSH);
+    dc.SetPen(Layout::sPreviewBackgroundPen);
+    dc.SetBrush(Layout::sPreviewBackgroundBrush);
     if (mCurrentBitmap)
     {
         if (mCurrentBitmap->GetWidth() < mWidth)

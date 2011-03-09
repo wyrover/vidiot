@@ -104,7 +104,6 @@ Timeline::~Timeline()
     delete mZoom;           mZoom = 0;
 
     mPlayer.reset();
-    mSequence->clean();
     mSequence.reset();
 }
 
@@ -274,6 +273,10 @@ void Timeline::onSize(wxSizeEvent& event)
 
 void Timeline::onEraseBackground(wxEraseEvent& event)
 {
+    wxDC* dc = event.GetDC();
+    dc->SetPen(Layout::sBackgroundPen);
+    dc->SetBrush(Layout::sBackgroundBrush);
+    dc->DrawRectangle(wxPoint(0,0),dc->GetSize());
     //event.Skip(); // The official way of doing it
 }
 

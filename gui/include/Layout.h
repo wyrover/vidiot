@@ -6,7 +6,7 @@
 #include <wx/brush.h>
 #include <wx/colour.h>
 
-namespace gui { namespace timeline {
+namespace gui {
 
 class Layout
 {
@@ -90,6 +90,6 @@ public:
     static wxFont* sClipDescriptionFont;
 };
 
-}} // namespace
+} // namespace
 
 #endif // LAYOUT_H

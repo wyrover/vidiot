@@ -34,7 +34,6 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnCloseWindow(wxCloseEvent& event);
     void SetProcessingText(wxString text);
 
     //////////////////////////////////////////////////////////////////////////
@@ -81,7 +80,7 @@ public:
 
 private:
 
-    wxDocManager        mDocManager;
+    wxDocManager*       mDocManager;
     wxDocTemplate*      mDocTemplate;
 
     GuiTimelinesView*   mTimelinesView;
