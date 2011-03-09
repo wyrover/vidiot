@@ -12,7 +12,6 @@
 #include "GuiWindow.h"
 #include "Layout.h"
 #include "GuiDebugReport.h"
-#include "Project.h"
 
 // TODO Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
@@ -25,44 +24,14 @@ IMPLEMENT_APP(GuiMain)
 //////////////////////////////////////////////////////////////////////////
 
 GuiMain::GuiMain()
-:   mProject(0)
-,   mDone(false)
 {
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();
 #endif // CATCH_ALL_ERRORS
-
-    Bind(wxEVT_IDLE,                   &GuiMain::OnIdle,           this);
-    Bind(model::EVENT_OPEN_PROJECT,    &GuiMain::OnOpenProject,    this);
-    Bind(model::EVENT_CLOSE_PROJECT,   &GuiMain::OnCloseProject,   this);
 }
 
 GuiMain::~GuiMain()
 {
-    Unbind(wxEVT_IDLE,                   &GuiMain::OnIdle,           this);
-    Unbind(model::EVENT_OPEN_PROJECT,    &GuiMain::OnOpenProject,    this);
-    Unbind(model::EVENT_CLOSE_PROJECT,   &GuiMain::OnCloseProject,   this);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// PROJECT EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void GuiMain::OnOpenProject( model::EventOpenProject &event )
-{
-    mProject = event.getValue();
-    event.Skip();
-}
-
-void GuiMain::OnCloseProject( model::EventCloseProject &event )
-{
-    mProject = 0;
-    event.Skip();
-}
-
-model::Project* GuiMain::getProject() const
-{
-    return mProject;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -174,20 +143,6 @@ void GuiMain::OnFatalException()
 }
 
 #endif // CATCH_ALL_ERRORS
-
-//////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void GuiMain::OnIdle(wxIdleEvent& event)
-{
-    // Do idle processing, ask for more idle
-    // processing if we haven't finished the task
-    if (!mDone)
-        event.RequestMore();
-    mDone = true;
-    event.Skip();
-}
 
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION

@@ -15,6 +15,7 @@
 #include "GuiMain.h"
 #include "Clip.h"
 #include "TrackView.h"
+#include "Project.h"
 #include "ClipView.h"
 #include "Track.h"
 #include "Project.h"
@@ -87,7 +88,7 @@ void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-         wxGetApp().getProject()->Submit(new command::IntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
+        model::Project::current()->Submit(new command::IntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
     }
     mNewIntervalActive = false;
 }
@@ -104,7 +105,7 @@ void Intervals::endToggle()
     if (mToggleActive)
     {
         wxRect r(makeRect(mToggleBegin,mToggleEnd));
-        wxGetApp().getProject()->Submit(new command::IntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
+        model::Project::current()->Submit(new command::IntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
     }
     mToggleActive = false;
 }
@@ -140,7 +141,7 @@ void Intervals::change(long begin, long end, bool add)
 
 void Intervals::clear()
 {
-    wxGetApp().getProject()->Submit(new command::IntervalRemoveAll(getTimeline()));
+    model::Project::current()->Submit(new command::IntervalRemoveAll(getTimeline()));
 }
 
 //////////////////////////////////////////////////////////////////////////
