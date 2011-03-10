@@ -1,6 +1,7 @@
 #include "AutoFolder.h"
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/assign/list_of.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -8,8 +9,11 @@
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "File.h"
+#include "UtilList.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
+#include "UtilLogWxwidgets.h"
+#include "UtilLogStl.h"
 
 namespace model {
 
@@ -42,23 +46,23 @@ AutoFolder::~AutoFolder()
 
 void AutoFolder::update()
 {
+    std::list<wxString> allnames;
+    BOOST_FOREACH( ProjectViewPtr child, getChildren() )
+    {
+        allnames.push_back(child->getName());
+    }
+
     for (boost::filesystem::directory_iterator itr(mPath); itr != boost::filesystem::directory_iterator(); ++itr)
     {
         std::string leaf = itr->path().leaf();
+        wxString name(leaf);
 
-        bool exists = false;
-        BOOST_FOREACH( ProjectViewPtr existingchild, getChildren() )
+        if (UtilList<wxString>(allnames).hasElement(name))
         {
-            if (existingchild->getName().IsSameAs(leaf))
-            {
-                exists = true;
-                break;
-            }
-        }
-        if (exists)
-        {
+            UtilList<wxString>(allnames).removeElements(boost::assign::list_of(name));
             continue;
         }
+        // /todo what if file removed and replaced with other typed file of same name?
 
         if (is_directory(*itr))
         {
@@ -71,6 +75,18 @@ void AutoFolder::update()
             if (file->isSupported())
             {
                 addChild(file);
+            }
+        }
+    }
+    // Remove all other nodes
+    BOOST_FOREACH( wxString name, allnames )
+    {
+        BOOST_FOREACH( ProjectViewPtr child, getChildren() )
+        {
+            if (child->getName().CompareTo(name) == 0)
+            {
+                removeChild(child);
+                break;
             }
         }
     }

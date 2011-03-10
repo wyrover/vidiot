@@ -56,6 +56,7 @@ private:
     void OnNewSequence(wxCommandEvent& WXUNUSED(event));
     void OnNewFile(wxCommandEvent& WXUNUSED(event));
     void OnCreateSequence(wxCommandEvent& WXUNUSED(event));
+    void OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event));
     void OnStartEditing( wxDataViewEvent &event );
     void OnBeginDrag( wxDataViewEvent &event );
     void OnDropPossible( wxDataViewEvent &event );
