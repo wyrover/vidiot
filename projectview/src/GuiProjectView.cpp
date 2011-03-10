@@ -36,6 +36,7 @@ enum {
     meID_NEW_SEQUENCE,
     meID_NEW_FILE,
     meID_CREATE_SEQUENCE,
+    meID_UPDATE_AUTOFOLDER,
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,15 +70,16 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
     wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiProjectView::OnOpenProject,             this);
     wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiProjectView::OnCloseProject,            this);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,             this, wxID_CUT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,            this, wxID_COPY);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnPaste,           this, wxID_PASTE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnDelete,          this, wxID_DELETE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFolder,       this, meID_NEW_FOLDER);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewAutoFolder,   this, meID_NEW_AUTOFOLDER);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewSequence,     this, meID_NEW_SEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFile,         this, meID_NEW_FILE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCreateSequence,  this, meID_CREATE_SEQUENCE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,                 this, wxID_CUT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,                this, wxID_COPY);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnPaste,               this, wxID_PASTE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnDelete,              this, wxID_DELETE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFolder,           this, meID_NEW_FOLDER);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewAutoFolder,       this, meID_NEW_AUTOFOLDER);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewSequence,         this, meID_NEW_SEQUENCE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFile,             this, meID_NEW_FILE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCreateSequence,      this, meID_CREATE_SEQUENCE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnUpdateAutoFolder,    this, meID_UPDATE_AUTOFOLDER);
 
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &GuiProjectView::OnStartEditing,    this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &GuiProjectView::OnContextMenu,     this);
@@ -94,15 +96,16 @@ GuiProjectView::~GuiProjectView()
     wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,       &GuiProjectView::OnOpenProject,             this);
     wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,      &GuiProjectView::OnCloseProject,            this);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,             this, wxID_CUT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,            this, wxID_COPY);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnPaste,           this, wxID_PASTE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnDelete,          this, wxID_DELETE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFolder,       this, meID_NEW_FOLDER);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewAutoFolder,   this, meID_NEW_AUTOFOLDER);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewSequence,     this, meID_NEW_SEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFile,         this, meID_NEW_FILE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCreateSequence,  this, meID_CREATE_SEQUENCE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,               this, wxID_CUT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,              this, wxID_COPY);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnPaste,             this, wxID_PASTE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnDelete,            this, wxID_DELETE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFolder,         this, meID_NEW_FOLDER);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewAutoFolder,     this, meID_NEW_AUTOFOLDER);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewSequence,       this, meID_NEW_SEQUENCE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFile,           this, meID_NEW_FILE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCreateSequence,    this, meID_CREATE_SEQUENCE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnUpdateAutoFolder,  this, meID_CREATE_SEQUENCE);
 
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,   &GuiProjectView::OnStartEditing,    this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,    &GuiProjectView::OnContextMenu,     this);
@@ -162,6 +165,9 @@ void GuiProjectView::OnContextMenu( wxDataViewEvent &event )
     bool showNew = true;
     bool showCreateSequence = false;
 
+    bool showUpdateAutoFolder = false;
+    bool enableUpdateAutoFolder = true;
+
     bool enableNew = (nSelected == 1);
     bool enableDelete = true;
     bool enablePaste = (nSelected == 1);
@@ -187,6 +193,7 @@ void GuiProjectView::OnContextMenu( wxDataViewEvent &event )
             enablePaste = false;
             enableNew = false;
             showCreateSequence = true;
+            showUpdateAutoFolder = true;
         }
         else if (isFolder)
         {
@@ -226,10 +233,17 @@ void GuiProjectView::OnContextMenu( wxDataViewEvent &event )
     menu.Append( wxID_DELETE,_("&Delete\tDEL") );
     menu.Enable( wxID_DELETE, enableDelete );
 
+    if (showUpdateAutoFolder)
+    {
+        menu.AppendSeparator();
+        menu.Append(meID_UPDATE_AUTOFOLDER, _("&Update autofolder"));
+        menu.Enable(meID_UPDATE_AUTOFOLDER, enableUpdateAutoFolder);
+    }
+
     if (showCreateSequence)
     {
         menu.AppendSeparator();
-        menu.Append( meID_CREATE_SEQUENCE, _("&Make sequence"));
+        menu.Append(meID_CREATE_SEQUENCE, _("&Make sequence"));
         menu.Enable(meID_CREATE_SEQUENCE, enableCreateSequence);
     }
 
@@ -373,23 +387,24 @@ void GuiProjectView::OnCreateSequence(wxCommandEvent& WXUNUSED(event))
     mProject->Submit(cmd);
 }
 
+void GuiProjectView::OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event))
+{
+    BOOST_FOREACH(model::ProjectViewPtr node, getSelection())
+    {
+        if (node->isA<model::AutoFolder>())
+        {
+            model::AutoFolderPtr autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(node);
+            autofolder->update();
+        }
+    }
+}
+
 void GuiProjectView::OnBeginDrag( wxDataViewEvent &event )
 {
     model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
 
     wxDataViewItemArray selection;
     mCtrl.GetSelections(selection);
-
-    // Avoid dragging nodes within an autofolder subtree
-    BOOST_FOREACH(wxDataViewItem wxItem, selection)
-    {
-        if (mModel->isAutomaticallyGenerated(model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()))))
-        {
-            event.Veto();
-            return;
-        }
-    }
-    /** /todo change the image of the dragged shape in case of multiple selection. */
 
     model::ProjectViewPtrs ptrs;
     BOOST_FOREACH(wxDataViewItem wxItem, selection)
@@ -402,18 +417,21 @@ void GuiProjectView::OnBeginDrag( wxDataViewEvent &event )
 
 void GuiProjectView::OnDropPossible( wxDataViewEvent &event )
 {
+    // Can only drop relevant type of info
     if (event.GetDataFormat().GetId() != GuiDataObject::sFormat)
     {
         event.Veto();
         return;
     }
 
+    // Cannot drop into an autofolder tree
     model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))
     {
         event.Veto();
         return;
     }
+
 }
 
 void GuiProjectView::OnDrop( wxDataViewEvent &event )

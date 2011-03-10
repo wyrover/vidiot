@@ -89,6 +89,16 @@ public:
     virtual wxString getName() const = 0;
     virtual void setName(wxString name);
 
+    //////////////////////////////////////////////////////////////////////////
+    // FOR DETERMINING THE TYPE OF NODE
+    //////////////////////////////////////////////////////////////////////////
+
+    template <typename Derived>
+    bool isA()
+    {
+        return (typeid(Derived) == typeid(*this));
+    }
+
 protected:
 
     ProjectViewPtr mParent;
