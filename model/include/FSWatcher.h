@@ -32,11 +32,11 @@ public:
 	// ADD/REMOVE
 	//////////////////////////////////////////////////////////////////////////
 
-    void watchFolder(AutoFolderPtr folder);
-    void watchFile(FilePtr file);
+    void watchFolder(AutoFolder* folder);
+    void watchFile(File* file);
 
-    void unwatchFolder(AutoFolderPtr folder);
-    void unwatchFile(FilePtr file);
+    void unwatchFolder(AutoFolder* folder);
+    void unwatchFile(File* file);
 
 protected:
 
@@ -44,7 +44,7 @@ protected:
     // EVENT HANDLING
     //////////////////////////////////////////////////////////////////////////
 
-    void OnChange(int changeType, const wxFileName& path, const wxFileName& newPath);
+    void onChange(wxFileSystemWatcherEvent& event);
 
 private:
 
@@ -52,8 +52,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    typedef std::list<AutoFolderPtr> FolderList;
-    typedef std::list<FilePtr> FileList;
+    typedef std::list<AutoFolder*> FolderList;
+    typedef std::list<File*> FileList;
     typedef std::map<wxFileName, FolderList> FolderMap;
     typedef std::map<wxFileName, FileList> FileMap;
 

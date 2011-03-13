@@ -14,6 +14,7 @@
 #include "UtilSerializeWxwidgets.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilLogStl.h"
+#include "FSWatcher.h"
 
 namespace model {
 
@@ -33,11 +34,13 @@ AutoFolder::AutoFolder(boost::filesystem::path path)
 ,   mPath(path)
 {
     VAR_DEBUG(this);
+    FSWatcher::current()->watchFolder(this);
 }
 
 AutoFolder::~AutoFolder()
 {
     VAR_DEBUG(this);
+    FSWatcher::current()->unwatchFolder(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -126,6 +129,10 @@ void AutoFolder::serialize(Archive & ar, const unsigned int version)
     ar & boost::serialization::base_object<Folder>(*this);
     ar & mPath;
     ar & mLastModified;
+    if (Archive::is_loading::value)
+    {
+        FSWatcher::current()->watchFolder(this);
+    }
 }
 template void AutoFolder::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void AutoFolder::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

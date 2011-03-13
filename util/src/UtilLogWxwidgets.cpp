@@ -3,7 +3,7 @@
 
 std::ostream& operator<< (std::ostream& os, const wxFileName& obj)
 {
-    os << obj.GetFullPath();
+    os << obj.GetPath() << '|' << obj.GetName() << '|' << obj.GetExt();
     return os;
 }
 
