@@ -1,9 +1,10 @@
 #ifndef FIFO_WORK_H
 #define FIFO_WORK_H
 
+#include <wx/string.h>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-#include <wx/string.h>
+#include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 
 typedef boost::function< void() > Callable;

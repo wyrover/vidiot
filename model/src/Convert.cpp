@@ -4,6 +4,7 @@
 #include <boost/rational.hpp>
 #include "Project.h"
 #include "Constants.h"
+#include "UtilLog.h"
 #include "Properties.h"
 
 namespace model {

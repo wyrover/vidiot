@@ -159,6 +159,11 @@ void File::clean()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+wxFileName File::getFileName() const
+{
+    return wxFileName(mPath.parent_path().string(),mPath.leaf());
+}
+
 boost::filesystem::path File::getPath() const
 {
     return mPath;

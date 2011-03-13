@@ -3,15 +3,23 @@
 
 #include <wx/docview.h>
 #include <boost/serialization/version.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/shared_ptr.hpp>
 #include "RootCommand.h"
-#include "ProjectWorker.h"
 #include "ModelPtr.h"
 #include "UtilEvent.h"
+
+class Work;
+typedef boost::shared_ptr<Work> WorkPtr;
 
 namespace model {
 
 DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,   model::Project*);
 DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,  model::Project*);
+
+class FSWatcher;    
+class ProjectWorker;
+
 
 /// \class Project
 /// This class is not managed via shared_ptr's since it's construction/destruction
@@ -86,7 +94,8 @@ private:
     FolderPtr mRoot;
     PropertiesPtr mProperties;
 
-    ProjectWorker mWorker;
+    ProjectWorker* mWorker;
+    FSWatcher* mWatcher;
 
     //////////////////////////////////////////////////////////////////////////
     //

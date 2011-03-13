@@ -96,6 +96,11 @@ void AutoFolder::update()
 // ATTRIBUTES
 //////////////////////////////////////////////////////////////////////////
 
+wxFileName AutoFolder::getFileName() const
+{
+    return wxFileName(mPath.string(),"");
+}
+
 boost::filesystem::path AutoFolder::getPath() const
 {
     return mPath;

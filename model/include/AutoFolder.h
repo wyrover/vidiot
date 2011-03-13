@@ -1,6 +1,7 @@
 #ifndef AUTO_FOLDER_H
 #define AUTO_FOLDER_H
 
+#include <wx/filename.h>
 #include <boost/optional.hpp>
 #include <boost/filesystem/path.hpp>
 #include "Folder.h"
@@ -36,6 +37,7 @@ public:
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////
 
+    wxFileName getFileName() const;
     boost::filesystem::path getPath() const;
     wxString getName() const;
     boost::optional<wxString> getLastModified() const;
