@@ -1,8 +1,8 @@
 #ifndef PROJECT_WORKER_H
 #define PROJECT_WORKER_H
 
-#include "FifoWork.h"
 #include <boost/scoped_ptr.hpp>
+#include "FifoWork.h"
 
 namespace gui {
 class GuiWindow;

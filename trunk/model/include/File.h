@@ -1,7 +1,7 @@
 #ifndef MODEL_FILE_H
 #define MODEL_FILE_H
 
-//#include <ctime>
+#include <wx/filename.h>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/path.hpp>
@@ -58,6 +58,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    wxFileName getFileName() const;
     wxString getName() const;
     boost::filesystem::path getPath() const;
     wxString getLastModified() const;
