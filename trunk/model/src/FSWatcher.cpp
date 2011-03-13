@@ -23,6 +23,7 @@ FSWatcher::FSWatcher()
 {
     VAR_DEBUG(this);
     sCurrent = this;
+    Bind(wxEVT_FSWATCHER, &FSWatcher::onChange, this);
 }
 
 FSWatcher::~FSWatcher()
@@ -30,6 +31,7 @@ FSWatcher::~FSWatcher()
     VAR_DEBUG(this);
     ASSERT(mFolders.empty());
     ASSERT(mFiles.empty());
+    Unbind(wxEVT_FSWATCHER, &FSWatcher::onChange, this);
     sCurrent = 0;
 }
 
@@ -42,8 +44,9 @@ FSWatcher* FSWatcher::current()
 // ADD
 //////////////////////////////////////////////////////////////////////////
 
-void FSWatcher::watchFolder(AutoFolderPtr folder)
+void FSWatcher::watchFolder(AutoFolder* folder)
 {
+    VAR_DEBUG(folder->getFileName());
     FolderMap::iterator it = mFolders.find(folder->getFileName());
     if (it == mFolders.end())
     {
@@ -53,13 +56,14 @@ void FSWatcher::watchFolder(AutoFolderPtr folder)
     }
     else
     {
-        ASSERT(!UtilList<AutoFolderPtr>(it->second).hasElement(folder))(*it);
+        ASSERT(!UtilList<AutoFolder*>(it->second).hasElement(folder))(*it);
         it->second.push_back(folder);
     }
 }
 
-void FSWatcher::watchFile(FilePtr file)
+void FSWatcher::watchFile(File* file)
 {
+    VAR_DEBUG(file->getFileName());
     FileMap::iterator it = mFiles.find(file->getFileName());
     if (it == mFiles.end())
     {
@@ -69,15 +73,16 @@ void FSWatcher::watchFile(FilePtr file)
     }
     else
     {
-        ASSERT(!UtilList<FilePtr>(it->second).hasElement(file))(*it);
+        ASSERT(!UtilList<File*>(it->second).hasElement(file))(*it);
         it->second.push_back(file);
     }
 }
 
-void FSWatcher::unwatchFolder(AutoFolderPtr folder)
+void FSWatcher::unwatchFolder(AutoFolder* folder)
 {
+    VAR_DEBUG(folder->getFileName());
     ASSERT(mFolders.find(folder->getFileName()) != mFolders.end());
-    UtilList<AutoFolderPtr>(mFolders[folder->getFileName()]).removeElements(boost::assign::list_of(folder));
+    UtilList<AutoFolder*>(mFolders[folder->getFileName()]).removeElements(boost::assign::list_of(folder));
     if (mFolders[folder->getFileName()].empty())
     {
         // Last entry removed. Remove entire list and stop watching
@@ -86,10 +91,11 @@ void FSWatcher::unwatchFolder(AutoFolderPtr folder)
     }
 }
 
-void FSWatcher::unwatchFile(FilePtr file)
+void FSWatcher::unwatchFile(File* file)
 {
+    VAR_DEBUG(file->getFileName());
     ASSERT(mFiles.find(file->getFileName()) != mFiles.end());
-    UtilList<FilePtr>(mFiles[file->getFileName()]).removeElements(boost::assign::list_of(file));
+    UtilList<File*>(mFiles[file->getFileName()]).removeElements(boost::assign::list_of(file));
     if (mFiles[file->getFileName()].empty())
     {
         // Last entry removed. Remove entire list and stop watching
@@ -102,23 +108,51 @@ void FSWatcher::unwatchFile(FilePtr file)
 // EVENT HANDLING
 //////////////////////////////////////////////////////////////////////////
 
-void FSWatcher::OnChange(int changeType, const wxFileName& path, const wxFileName& newPath)
+void FSWatcher::onChange(wxFileSystemWatcherEvent& event)
 {
-    VAR_INFO(changeType)(path)(newPath);
-    if (path.IsDir())
+    VAR_INFO(event.GetChangeType())(event.GetPath())(event.GetNewPath());
+
+    wxFileName changedfolder(event.GetPath().GetPath(),"");
+
+    switch (event.GetChangeType())
     {
-        ASSERT(mFolders.find(path) != mFolders.end());
-        BOOST_FOREACH( AutoFolderPtr folder, mFolders.find(path)->second )
+    case wxFSW_EVENT_CREATE:
+        LOG_DEBUG << "CREATE"; 
+        break;
+    case wxFSW_EVENT_DELETE:
+        LOG_DEBUG << "DELETE"; 
+        break;
+    case wxFSW_EVENT_RENAME: 
+        LOG_DEBUG << "RENAME"; 
+        FATAL("Do not rename files");
+        break;
+    case wxFSW_EVENT_MODIFY: 
+        LOG_DEBUG << "MODIFY"; 
+        break;
+    case wxFSW_EVENT_ACCESS: 
+        LOG_DEBUG << "ACCESS"; 
+        return;
+    default: FATAL("Unsupprted event type.");
+    }
+
+    if (changedfolder.IsDir())
+    {
+        ASSERT(mFolders.find(changedfolder) != mFolders.end());
+        BOOST_FOREACH( AutoFolder* folder, mFolders.find(changedfolder)->second )
         {
             folder->update();
         }
     }
     else
     {
-        ASSERT(mFiles.find(path) != mFiles.end());
-        BOOST_FOREACH( FilePtr file, mFiles.find(path)->second )
+        //NOT: ASSERT(mFiles.find(event.GetPath()) != mFiles.end()); Since Folder wathcing also causes file events
+        if (mFiles.find(event.GetPath()) != mFiles.end())
         {
-            //file->update();
+            BOOST_FOREACH( File* file, mFiles.find(event.GetPath())->second )
+            {
+                //file->update();
+            }
+
         }
     }
 }
@@ -132,5 +166,25 @@ std::ostream& operator<<( std::ostream& os, const FSWatcher& obj )
     os << &obj << '|' << obj.mFolders << '|' << obj.mFiles;
     return os;
 }
+
+static wxString GetFSWEventChangeTypeName(int changeType)
+{
+    switch (changeType)
+    {
+    case wxFSW_EVENT_CREATE:
+        return "CREATE";
+    case wxFSW_EVENT_DELETE:
+        return "DELETE";
+    case wxFSW_EVENT_RENAME:
+        return "RENAME";
+    case wxFSW_EVENT_MODIFY:
+        return "MODIFY";
+    case wxFSW_EVENT_ACCESS:
+        return "ACCESS";
+    }
+
+    return "INVALID_TYPE";
+}
+
 
 } //namespace
