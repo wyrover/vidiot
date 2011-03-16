@@ -141,7 +141,7 @@ void Drag::move(wxPoint position, bool altPressed)
     wxRegionIterator it(redrawRegion);
     while (it)
     {
-        getTimeline().RefreshRect(it.GetRect());
+        getTimeline().RefreshRect(it.GetRect(), false);
         it++;
     }
 
