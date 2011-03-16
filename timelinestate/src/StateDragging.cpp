@@ -26,6 +26,7 @@ Dragging::Dragging( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
     LOG_DEBUG; 
+
 }
 
 Dragging::~Dragging() // exit
@@ -52,8 +53,6 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
     VAR_DEBUG(evt);
 
     getDrag().move(evt.mPosition, evt.mWxEvent.ShiftDown());
-    getDrop().updateDropArea(evt.mPosition);
-
     return forward_event();
 }
 

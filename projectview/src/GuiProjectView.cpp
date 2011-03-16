@@ -39,6 +39,8 @@ enum {
     meID_UPDATE_AUTOFOLDER,
 };
 
+static GuiProjectView* sCurrent = 0;
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -51,6 +53,8 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
 ,   mOpenFolders()
 {
     LOG_INFO;
+
+    sCurrent = this;
 
     mCtrl.EnableDragSource( GuiDataObject::sFormat );
     mCtrl.EnableDropTarget( GuiDataObject::sFormat );
@@ -115,6 +119,13 @@ GuiProjectView::~GuiProjectView()
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,       &GuiProjectView::OnActivated,       this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,        &GuiProjectView::OnExpanded,        this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,       &GuiProjectView::OnCollapsed,       this);
+
+    sCurrent = 0;
+}
+
+GuiProjectView* GuiProjectView::current()
+{
+    return sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -407,12 +418,24 @@ void GuiProjectView::OnBeginDrag( wxDataViewEvent &event )
     mCtrl.GetSelections(selection);
 
     model::ProjectViewPtrs ptrs;
+    std::list<model::IControlPtr> draggedAssets;
     BOOST_FOREACH(wxDataViewItem wxItem, selection)
     {
         ptrs.push_back(model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID())));
+        model::IControlPtr asset = boost::dynamic_pointer_cast<model::IControl>(model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID())));
+        if (asset)
+        {
+            draggedAssets.push_back(asset);
+        }
     }
-    GuiDataObject* pp = new GuiDataObject(ptrs);
+    mDraggedAssets = draggedAssets;
+    GuiDataObject* pp = new GuiDataObject(ptrs, boost::bind(&GuiProjectView::onDragEnd,this));
     event.SetDataObject( pp );
+}
+
+void GuiProjectView::onDragEnd()
+{
+    mDraggedAssets.clear();
 }
 
 void GuiProjectView::OnDropPossible( wxDataViewEvent &event )

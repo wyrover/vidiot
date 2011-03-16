@@ -12,20 +12,27 @@ GuiDataObject::GuiDataObject()
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets()
+,   mCallback(0)
 {
     SetFormat(mFormat);
 }
 
-GuiDataObject::GuiDataObject(model::ProjectViewPtrs assets)
+
+GuiDataObject::GuiDataObject(model::ProjectViewPtrs assets, CallbackOnDestruction callback)
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets(assets)
+,   mCallback(callback)
 {
     SetFormat(mFormat);
 }
 
 GuiDataObject::~GuiDataObject()
 {
+    if (mCallback)
+    {
+        mCallback();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

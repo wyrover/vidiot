@@ -101,6 +101,9 @@ public:
     Divider& getDivider();
     const Divider& getDivider() const;
 
+    state::Machine& getStateMachine();
+    const state::Machine& getStateMachine() const;
+
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS
     //////////////////////////////////////////////////////////////////////////

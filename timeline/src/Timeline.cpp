@@ -56,7 +56,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mTooltip(new Tooltip(this))
 ,   mDrop(new Drop(this))
 ,   mDivider(new Divider(this))
-,   mMouseState(new state::Machine(*this))
+,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 //////////////////////////////////////////////////////////////////////////
 ,   mSequenceView(new SequenceView(this))
@@ -91,7 +91,7 @@ Timeline::~Timeline()
     delete mSequenceView;   mSequenceView = 0;
 
     delete mMenuHandler;    mMenuHandler = 0;
-    delete mMouseState;     mMouseState = 0;
+    delete mStateMachine;     mStateMachine = 0;
     delete mDivider;        mDivider = 0;
     delete mDrop;           mDrop = 0;
     delete mTooltip;        mTooltip = 0;
@@ -249,6 +249,16 @@ Divider& Timeline::getDivider()
 const Divider& Timeline::getDivider() const
 {
     return *mDivider;
+}
+
+state::Machine& Timeline::getStateMachine()
+{
+    return *mStateMachine;
+}
+
+const state::Machine& Timeline::getStateMachine() const
+{
+    return *mStateMachine;
 }
 
 model::SequencePtr Timeline::getSequence()

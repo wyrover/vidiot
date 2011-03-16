@@ -145,7 +145,6 @@ void SequenceView::draw(wxBitmap& bitmap) const
     getDivider().draw(dc);
     getIntervals().draw(dc);
     getDrag().draw(dc);
-    getDrop().draw(dc);
     getCursor().draw(dc);
 }
 

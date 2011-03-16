@@ -182,6 +182,16 @@ const Divider& Part::getDivider() const
     return getTimeline().getDivider();
 }
 
+state::Machine& Part::getStateMachine()
+{
+    return getTimeline().getStateMachine();
+}
+
+const state::Machine& Part::getStateMachine() const
+{
+    return getTimeline().getStateMachine();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // OTHER HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

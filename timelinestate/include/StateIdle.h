@@ -23,7 +23,8 @@ public:
         boost::statechart::custom_reaction< EvLeftDown >,
         boost::statechart::custom_reaction< EvRightDown >,
         boost::statechart::custom_reaction< EvMotion >,
-        boost::statechart::custom_reaction< EvKeyDown >
+        boost::statechart::custom_reaction< EvKeyDown >,
+        boost::statechart::custom_reaction< EvDragEnter >
     > reactions;
 
     //////////////////////////////////////////////////////////////////////////
@@ -34,6 +35,7 @@ public:
     boost::statechart::result react( const EvRightDown& evt );
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvKeyDown& evt);
+    boost::statechart::result react( const EvDragEnter& evt);
 
 private:
 
