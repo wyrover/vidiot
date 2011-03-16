@@ -1,17 +1,25 @@
 #include "Drop.h"
 
-#include <boost/foreach.hpp>
 #include <wx/dc.h>
-#include "Timeline.h"
-#include "Zoom.h"
-#include "Layout.h"
+#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
+#include "AudioClip.h"
+#include "AudioFile.h"
 #include "ClipView.h"
-#include "TrackView.h"
-#include "MousePointer.h"
-#include "ViewMap.h"
+#include "File.h"
 #include "GuiDataObject.h"
-#include "UtilLog.h"
+#include "SequenceView.h"
+#include "Layout.h"
+#include "MousePointer.h"
 #include "PositionInfo.h"
+#include "Timeline.h"
+#include "TrackView.h"
+#include "UtilLog.h"
+#include "GuiProjectView.h"
+#include "VideoClip.h"
+#include "VideoFile.h"
+#include "ViewMap.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -23,7 +31,7 @@ Drop::Drop(Timeline* timeline)
 :   wxDropTarget(new GuiDataObject())
 ,   Part(timeline)
 {
-    //getTimeline().SetDropTarget(this); Uncommented, since the destruction will then be done by wxwidgets
+    //getTimeline().SetDropTarget(this);// Uncommented, since the destruction will then be done by wxwidgets
     VAR_DEBUG(this);
 }
 
@@ -64,6 +72,10 @@ wxDragResult Drop::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
   /*  getTimeline().Refresh(); /** /todo use rectangle */
    /* getTimeline().Update();*/
 //    mTimeLine->Update();
+    mDropArea.SetLeft(x);
+    mDropArea.SetTop(y);
+    getSequenceView().invalidateBitmap();
+
     return def;
 
 }
@@ -77,15 +89,26 @@ bool Drop::OnDrop (wxCoord x, wxCoord y)
 //Called when the mouse enters the drop target.
 wxDragResult Drop::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
 {
-    unsigned int w = 200;
+    std::list<model::IControlPtr> draggedAssets = GuiProjectView::current()->getDraggedAssets();
+    unsigned int w = 0;
     unsigned int h = 10;
-    BOOST_FOREACH( model::ProjectViewPtr newChild, dynamic_cast<GuiDataObject*>(m_dataObject)->getAssets())
+    BOOST_FOREACH( model::IControlPtr asset, draggedAssets )
     {
-        w += getZoom().timeToPixels(10000);//newChild->getLength());
+        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
+        if (file)
+        {
+            VAR_DEBUG(file);
+            model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
+            model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
+            model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
+            model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
+            videoClip->setLink(audioClip);
+            audioClip->setLink(videoClip);
+            w += getZoom().ptsToPixels(file->getLength());
+        }
     }
-  /*  mDragShape = new GuiTimeLineShape(w,h);
-    mDragShape->SetShow(true);*/
-
+    mDropArea = wxRect(x,y,w,h);
+    getSequenceView().invalidateBitmap();
     return def;
 }
 //Called when the mouse leaves the drop target.
@@ -95,53 +118,6 @@ void Drop::OnLeave ()
     //mDragShape = 0;
     getTimeline().Refresh(); /** /todo use rectangle */
     getTimeline().Update();
-}
-
-void Drop::updateDropArea(wxPoint p)
-{
-    wxRect newDropArea = mDropArea;
-    PointerPositionInfo info = getMousePointer().getInfo(p);
-
-    if (info.track)
-    {
-        TrackView* track = getViewMap().getView(info.track);
-        if (info.clip)
-        {
-            ClipView* clip = getViewMap().getView(info.clip);
-            int diffleft  = p.x - clip->getLeftPosition();
-            int diffright = clip->getRightPosition() - p.x;
-
-            int xDrop = -1;
-            if (diffleft < diffright && diffleft < Layout::sSnapDistance)
-            {
-                xDrop = clip->getLeftPosition() - 2;
-            }
-            else if (diffright < Layout::sSnapDistance)
-            {
-                xDrop = clip->getRightPosition() - 2;
-            }
-            else
-            {
-                xDrop = p.x;
-            }
-            newDropArea = wxRect(xDrop,info.trackPosition,4,track->getBitmap().GetHeight()); 
-        }
-        else
-        {
-            newDropArea = wxRect(p.x,info.trackPosition,4,track->getBitmap().GetHeight()); 
-        }
-    }
-    else
-    {
-        newDropArea = wxRect(0,0,0,0);
-    }
-
-    if (newDropArea != mDropArea)
-    {
-        getTimeline().RefreshRect(mDropArea);
-        getTimeline().RefreshRect(newDropArea);
-        mDropArea = newDropArea;
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////

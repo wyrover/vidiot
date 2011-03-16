@@ -56,6 +56,8 @@ public:
     const Drop& getDrop() const;
     Divider& getDivider();
     const Divider& getDivider() const;
+    state::Machine& getStateMachine();
+    const state::Machine& getStateMachine() const;
     model::SequencePtr getSequence();
     const model::SequencePtr getSequence() const;
 
@@ -113,7 +115,7 @@ private:
     Tooltip* mTooltip;
     Drop* mDrop;
     Divider* mDivider;
-    state::Machine* mMouseState; // Must be AFTER mViewMap due to constructor list.
+    state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts
 
     //////////////////////////////////////////////////////////////////////////

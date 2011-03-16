@@ -134,6 +134,15 @@ struct EvEnter          : EvMouse<EvEnter>          { EvEnter       (wxMouseEven
 struct EvLeave          : EvMouse<EvLeave>          { EvLeave       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse< EvLeave >         (wxevt, pos) {} };
 struct EvWheel          : EvMouse<EvWheel>          { EvWheel       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse< EvWheel >         (wxevt, pos) {} };
 
+struct EvDragEnter : boost::statechart::event< EvDragEnter >
+{
+    EvDragEnter(int x, int y)
+        :   mPosition(x,y)
+    {
+    };
+    const wxPoint mPosition;
+};
+
 //////////////////////////////////////////////////////////////////////////
 // KEY EVENTS
 //////////////////////////////////////////////////////////////////////////

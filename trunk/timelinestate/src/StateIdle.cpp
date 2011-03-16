@@ -7,6 +7,8 @@
 #include "StateTestDragStart.h"
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
+#include "Drag.h"
+#include "StateDragging.h"
 #include "GuiPlayer.h"
 #include "Zoom.h"
 #include "Clip.h"
@@ -155,6 +157,12 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         }
     }
     return forward_event();
+}
+
+boost::statechart::result Idle::react( const EvDragEnter& evt)
+{
+    getDrag().start(evt.mPosition, true);
+    return transit<Dragging>();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@ public:
 
     GuiProjectView(wxWindow* parent);
     virtual ~GuiProjectView();
+    static GuiProjectView* current();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -39,6 +40,13 @@ public:
     * when saving the document.
     */
     void OpenRecursive(model::FolderPtr folder);
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    std::list<model::IControlPtr> getDraggedAssets() { return mDraggedAssets; }
+
 
 private:
 
@@ -59,6 +67,7 @@ private:
     void OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event));
     void OnStartEditing( wxDataViewEvent &event );
     void OnBeginDrag( wxDataViewEvent &event );
+    void onDragEnd();
     void OnDropPossible( wxDataViewEvent &event );
     void OnDrop( wxDataViewEvent &event );
     void OnActivated( wxDataViewEvent &event );
@@ -73,6 +82,7 @@ private:
     wxDataViewCtrl mCtrl;
     GuiProjectViewModel* mModel;
     std::set<model::FolderPtr> mOpenFolders;
+    std::list<model::IControlPtr> mDraggedAssets;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

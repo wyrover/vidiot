@@ -48,7 +48,7 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     static int tolerance = 2;
     if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
     {
-        getDrag().start(evt.mPosition);
+        getDrag().start(evt.mPosition, false);
         return transit<Dragging>();
     }
     return forward_event();

@@ -38,8 +38,6 @@ public:
     void draw(wxDC& dc) const;
 
 
-    void updateDropArea(wxPoint p);
-
 private:
     wxRect mDropArea;
 

@@ -10,10 +10,10 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
-
+// todo obsolete?
 GuiDropSource::GuiDropSource(wxWindow* win, model::ProjectViewPtrs assets)
 :   wxDropSource(win,wxDROP_ICON(dnd_copy),wxDROP_ICON(dnd_move),wxDROP_ICON(dnd_none))
-,   mDataObject(assets)
+//,   mDataObject(assets)
 ,   mAssets(assets)
 ,   mWin(win)
 ,   mHint(0)

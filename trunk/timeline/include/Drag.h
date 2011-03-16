@@ -3,6 +3,7 @@
 
 #include <list>
 #include <wx/bitmap.h>
+#include <wx/dnd.h>
 #include <wx/dcmemory.h>
 #include "Part.h"
 #include "UtilInt.h"
@@ -18,6 +19,7 @@ namespace gui { namespace timeline {
 
 class Drag
     :   public Part
+    ,   public wxDropTarget
 {
 public:
 
@@ -32,7 +34,8 @@ public:
     // START/STOP
     //////////////////////////////////////////////////////////////////////////
 
-    void start(wxPoint hotspot);
+    /// \param isInsideDrag true if this is a drag within the timeline, false if there are new clips being dragged into the timeline (from the project view)
+    void start(wxPoint hotspot, bool isInsideDrag);
     void move(wxPoint position, bool altPressed);
     void drop();
     void stop();
@@ -49,6 +52,16 @@ public:
 
     wxBitmap getDragBitmap();
     void draw(wxDC& dc) const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // FROM WXDROPTARGET
+    //////////////////////////////////////////////////////////////////////////
+
+    virtual bool GetData() { return false; };
+    wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def) { return def; };
+    bool OnDrop (wxCoord x, wxCoord y) { return false; }
+    wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def);
+    void OnLeave ();
 
 private:
 
@@ -126,6 +139,9 @@ private:
     /// \param track track that indicates audio or video
     /// Given the track, either mVideo or mAudio is returned.
     DragInfo& getAssociatedInfo(model::TrackPtr track);
+
+    /// Update the offset of tracks of the given track's type.
+    void updateOffset(model::TrackPtr trackUnderPointer);
 
     /// Update the currently dragged track. The dragged track can be updated
     /// by holding SHIFT (move grab point) or by moving from audio to video
