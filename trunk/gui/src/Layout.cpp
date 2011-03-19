@@ -76,12 +76,14 @@ const int       Layout::sSnapDistance           = 50;
 // FONTS
 //////////////////////////////////////////////////////////////////////////
 
+wxFont*   Layout::sNormalFont           = 0;
 wxFont*   Layout::sDebugFont            = 0;
 wxFont*   Layout::sTimeScaleFont        = 0;
 wxFont*   Layout::sClipDescriptionFont  = 0;
 
 void Layout::initializeFonts()
 {
+    sNormalFont             = const_cast<wxFont*>(wxNORMAL_FONT);
     sDebugFont              = const_cast<wxFont*>(wxSMALL_FONT);
     sTimeScaleFont          = const_cast<wxFont*>(wxSMALL_FONT);
     sClipDescriptionFont    = const_cast<wxFont*>(wxSMALL_FONT);
