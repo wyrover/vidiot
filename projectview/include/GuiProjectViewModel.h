@@ -49,6 +49,7 @@ public:
     bool isSequence(model::ProjectViewPtr node) const;
     bool isDescendantOf(model::ProjectViewPtr node, model::ProjectViewPtr ascendant) const;
     bool canBeRenamed(model::ProjectViewPtr node) const;
+    const wxIcon& getIcon(model::ProjectViewPtr node) const;
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS

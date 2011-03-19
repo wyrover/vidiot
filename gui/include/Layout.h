@@ -85,6 +85,7 @@ public:
 
     static void initializeFonts();
 
+    static wxFont* sNormalFont;
     static wxFont* sDebugFont;
     static wxFont* sTimeScaleFont;
     static wxFont* sClipDescriptionFont;

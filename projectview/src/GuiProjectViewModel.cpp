@@ -362,6 +362,11 @@ bool GuiProjectViewModel::canBeRenamed(model::ProjectViewPtr node) const
     return !isRoot(node) && !isAutomaticallyGenerated(node) && !isAutoFolder(node);
 }
 
+const wxIcon& GuiProjectViewModel::getIcon(model::ProjectViewPtr node) const
+{
+    return mIconVideo;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,7 @@
 #include <boost/serialization/set.hpp>
 #include <wxInclude.h>
 #include <wx/stdpaths.h>
+#include <wx/dnd.h>
 #include <wx/dirdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/clipbrd.h>
@@ -17,6 +18,7 @@
 #include "GuiTimeLinesView.h"
 #include "Project.h"
 #include "AProjectViewNode.h"
+#include "Layout.h"
 #include "ProjectViewAddAsset.h"
 #include "ProjectViewDeleteAsset.h"
 #include "ProjectViewMoveAsset.h"
@@ -57,7 +59,7 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
 
     sCurrent = this;
 
-    mCtrl.EnableDragSource( GuiDataObject::sFormat );
+//    mCtrl.EnableDragSource( GuiDataObject::sFormat );
     mCtrl.EnableDropTarget( GuiDataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
     wxDataViewColumn* pathColumn = mCtrl.AppendTextColumn("Path",       1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
@@ -95,8 +97,7 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,          &GuiProjectView::OnExpanded,        this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &GuiProjectView::OnCollapsed,       this);
 
-
-    //mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,                 &GuiProjectView::OnMotion,         this);
+    mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,           &GuiProjectView::OnMotion,          this);
 }
 
 GuiProjectView::~GuiProjectView()
@@ -124,129 +125,14 @@ GuiProjectView::~GuiProjectView()
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,        &GuiProjectView::OnExpanded,        this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,       &GuiProjectView::OnCollapsed,       this);
 
+    mCtrl.GetMainWindow()->Unbind(wxEVT_MOTION,         &GuiProjectView::OnMotion,          this);
+
     sCurrent = 0;
 }
 
 GuiProjectView* GuiProjectView::current()
 {
     return sCurrent;
-}
-
-class wxBitmapCanvas: public wxWindow
-{
-public:
-    wxBitmapCanvas( wxWindow *parent, const wxBitmap &bitmap, const wxSize &size ) :
-      wxWindow( parent, wxID_ANY, wxPoint(0,0), size )
-      {
-          m_bitmap = bitmap;
-          Connect( wxEVT_PAINT, wxPaintEventHandler(wxBitmapCanvas::OnPaint) );
-      }
-
-      void OnPaint( wxPaintEvent &WXUNUSED(event) )
-      {
-          wxPaintDC dc(this);
-          dc.DrawBitmap( m_bitmap, 0, 0);
-      }
-
-      wxBitmap m_bitmap;
-};
-
-
-class DropSource 
-    :   public wxDropSource
-{
-public:
-    DropSource(GuiDataObject& data, wxWindow* win)
-        :   wxDropSource(data,win)
-        ,   mParent(win)
-        ,   m_hint(0)
-    {
-    }
-    ~DropSource()
-    {
-        delete m_hint;
-        m_hint = 0;
-    }
-    virtual bool GiveFeedback(wxDragResult effect)
-    {
-        wxPoint pos = wxGetMousePosition();
-
-        if (!m_hint)
-        {
-            wxBitmap ib(40,20);
-            wxMemoryDC dc(ib);
-            dc.SetPen(*wxBLACK_PEN);
-            dc.SetBrush(*wxBLUE_BRUSH);
-            dc.DrawRectangle(2,2,36,16);
-            dc.SelectObject(wxNullBitmap);
-
-            m_hint = new wxFrame( mParent, wxID_ANY, wxEmptyString,
-                pos,
-                ib.GetSize(),
-                wxFRAME_TOOL_WINDOW |
-                wxFRAME_FLOAT_ON_PARENT |
-                wxFRAME_NO_TASKBAR |
-                wxNO_BORDER );
-            new wxBitmapCanvas( m_hint, ib, ib.GetSize() );
-            m_hint->Show();
-        }
-        else
-        {
-            m_hint->Move( pos.x, pos.y );
-            m_hint->SetTransparent( 128 );
-        }
-        return true;
-    }
-    wxFrame                *m_hint;
-    wxWindow * mParent;
-};
-
-
-
-
-bool mDrag = false;
-int m_dragCount = 0;
-wxPoint m_dragStart;
-
-void GuiProjectView::OnMotion(wxMouseEvent& event)
-{
-    event.Skip();
-    return;
-
-    if (event.Dragging())
-    {
-        if (m_dragCount == 0)
-        {
-            // we have to report the raw, physical coords as we want to be
-            // able to call HitTest(event.m_pointDrag) from the user code to
-            // get the item being dragged
-            m_dragStart = event.GetPosition();
-        }
-
-        m_dragCount++;
-
-        if (m_dragCount != 3)
-            return;
-
-        if (event.LeftIsDown())
-        {
-            wxDataViewItem item;
-            wxDataViewColumn* col;
-            mCtrl.HitTest(m_dragStart, item, col );
-            if (item.GetID())
-            {
-                VAR_DEBUG(1);
-                GuiDataObject data(getSelection());
-                DropSource drop(data, this);
-                drop.DoDragDrop();
-            }
-        }
-    }
-    else
-    {
-        m_dragCount = 0;
-    }
-    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -531,6 +417,157 @@ void GuiProjectView::OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event))
     }
 }
 
+bool mDrag = false;
+int m_dragCount = 0;
+wxPoint m_dragStart;
+wxRect mRect(0,0,0,0);
+
+class wxBitmapCanvas: public wxWindow
+{
+public:
+    wxBitmapCanvas( wxWindow *parent, const wxBitmap &bitmap, const wxSize &size ) :
+      wxWindow( parent, wxID_ANY, wxPoint(0,0), size )
+      {
+          m_bitmap = bitmap;
+          Connect( wxEVT_PAINT, wxPaintEventHandler(wxBitmapCanvas::OnPaint) );
+      }
+
+      void OnPaint( wxPaintEvent &WXUNUSED(event) )
+      {
+          wxPaintDC dc(this);
+          dc.DrawBitmap( m_bitmap, 0, 0);
+      }
+
+      wxBitmap m_bitmap;
+};
+
+
+class DropSource 
+    :   public wxDropSource
+{
+public:
+    DropSource(GuiProjectViewModel& model, GuiDataObject& data, wxWindow* win)
+        :   wxDropSource(data,win)
+        ,   mParent(win)
+        ,   m_hint(0)
+        ,   mModel(model)
+        ,   mData(data)
+    {
+    }
+    ~DropSource()
+    {
+        delete m_hint;
+        m_hint = 0;
+    }
+
+    void drawAsset(wxDC* dc, wxRect rect, model::ProjectViewPtr asset)
+    {
+        int xoffset = 0;
+        const wxIcon& icon = mModel.getIcon(asset);
+        dc->SetFont(*Layout::sNormalFont);
+        dc->SetTextForeground(*wxWHITE);
+        //dc->SetTextBackground(*wxBLUE);
+
+        // todo indent based on indent in tree....
+        if (icon.IsOk())
+        {
+            dc->DrawIcon(icon, rect.x, rect.y + (rect.height - icon.GetHeight())/2);
+            xoffset = icon.GetWidth()+4;
+        }
+        
+        wxRect rectText = rect;
+        rectText.x += xoffset;
+        rectText.width -= xoffset;
+
+        wxString ellipsizedText = wxControl::Ellipsize( asset->getName(), *dc, wxELLIPSIZE_MIDDLE, rectText.width, wxELLIPSIZE_FLAGS_NONE );
+        dc->DrawLabel(ellipsizedText, rectText, wxALIGN_LEFT);
+    }
+
+    virtual bool GiveFeedback(wxDragResult effect)
+    {
+        wxPoint pos = wxGetMousePosition();
+
+        if (!m_hint)
+        {
+             model::ProjectViewPtrs assets = mData.getAssets();
+
+
+             int height = mRect.GetHeight();
+            wxBitmap ib(mRect.GetWidth(),height * assets.size());
+            wxMemoryDC dc(ib);
+            dc.SetPen(*wxBLACK_PEN);
+            dc.SetBrush(*wxTRANSPARENT_BRUSH);
+
+            wxRect rect(0,0,dc.GetSize().GetWidth(),height);
+            BOOST_FOREACH( model::ProjectViewPtr asset, assets )
+            {
+                drawAsset(&dc, rect, asset);
+                rect.y += height;
+                
+            }
+            dc.SelectObject(wxNullBitmap);
+
+            m_hint = new wxFrame( mParent->GetParent(), wxID_ANY, wxEmptyString,
+                pos,
+                ib.GetSize(),
+                wxFRAME_TOOL_WINDOW |
+                wxFRAME_FLOAT_ON_PARENT |
+                wxFRAME_NO_TASKBAR |
+                wxNO_BORDER );
+            new wxBitmapCanvas( m_hint, ib, ib.GetSize() );
+            m_hint->Show();
+        }
+        else
+        {
+            m_hint->Move( pos.x + 5, pos.y + 5 ); // NOTE: Be sure to have a minimum offset of (1,1) wrt pointer position. Otherwise, the DND handling does not work.
+            m_hint->SetTransparent( 128 );
+        }
+        return true;
+    }
+    wxFrame                *m_hint;
+    wxWindow * mParent;
+    GuiProjectViewModel& mModel;
+    GuiDataObject& mData;
+};
+
+
+
+
+void GuiProjectView::OnMotion(wxMouseEvent& event)
+{
+    if (event.Dragging())
+    {
+        if (m_dragCount == 0)
+        {
+            m_dragStart = event.GetPosition();
+        }
+
+        m_dragCount++;
+
+        if (m_dragCount != 3)
+            return;
+
+        if (event.LeftIsDown())
+        {
+            wxDataViewItem item;
+            wxDataViewColumn* col;
+            mCtrl.HitTest(m_dragStart, item, col );
+            if (item.GetID())
+            {
+                mRect = mCtrl.GetItemRect(item,mCtrl.GetColumn(0));
+                GuiDataObject data(getSelection());
+                DropSource drop(*mModel, data, mCtrl.GetMainWindow());
+                drop.DoDragDrop();
+            }
+        }
+    }
+    else
+    {
+        m_dragCount = 0;
+    }
+    event.Skip();
+}
+
 void GuiProjectView::OnBeginDrag( wxDataViewEvent &event )
 {
     model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
@@ -575,12 +612,12 @@ void GuiProjectView::OnDropPossible( wxDataViewEvent &event )
         event.Veto();
         return;
     }
-    event.Skip();
 }
 
 void GuiProjectView::OnDrop( wxDataViewEvent &event )
 {
     LOG_INFO;
+    // todo hangup drop a folder onto itselves...
 
      if (event.GetDataFormat().GetId() != GuiDataObject::sFormat)
     {
@@ -613,7 +650,6 @@ void GuiProjectView::OnDrop( wxDataViewEvent &event )
     {
         mProject->Submit(new command::ProjectViewMoveAsset(o.getAssets(),p));
     }
-    event.Skip();
 }
 
 void GuiProjectView::OnActivated( wxDataViewEvent &event )
