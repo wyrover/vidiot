@@ -25,6 +25,7 @@
 #include "ProjectViewCreateFolder.h"
 #include "ProjectViewCreateAutoFolder.h"
 #include "ProjectViewCreateFile.h"
+#include "UtilLogWxwidgets.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
 
@@ -93,6 +94,9 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,         &GuiProjectView::OnActivated,       this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,          &GuiProjectView::OnExpanded,        this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &GuiProjectView::OnCollapsed,       this);
+
+
+    //mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,                 &GuiProjectView::OnMotion,         this);
 }
 
 GuiProjectView::~GuiProjectView()
@@ -126,6 +130,123 @@ GuiProjectView::~GuiProjectView()
 GuiProjectView* GuiProjectView::current()
 {
     return sCurrent;
+}
+
+class wxBitmapCanvas: public wxWindow
+{
+public:
+    wxBitmapCanvas( wxWindow *parent, const wxBitmap &bitmap, const wxSize &size ) :
+      wxWindow( parent, wxID_ANY, wxPoint(0,0), size )
+      {
+          m_bitmap = bitmap;
+          Connect( wxEVT_PAINT, wxPaintEventHandler(wxBitmapCanvas::OnPaint) );
+      }
+
+      void OnPaint( wxPaintEvent &WXUNUSED(event) )
+      {
+          wxPaintDC dc(this);
+          dc.DrawBitmap( m_bitmap, 0, 0);
+      }
+
+      wxBitmap m_bitmap;
+};
+
+
+class DropSource 
+    :   public wxDropSource
+{
+public:
+    DropSource(GuiDataObject& data, wxWindow* win)
+        :   wxDropSource(data,win)
+        ,   mParent(win)
+        ,   m_hint(0)
+    {
+    }
+    ~DropSource()
+    {
+        delete m_hint;
+        m_hint = 0;
+    }
+    virtual bool GiveFeedback(wxDragResult effect)
+    {
+        wxPoint pos = wxGetMousePosition();
+
+        if (!m_hint)
+        {
+            wxBitmap ib(40,20);
+            wxMemoryDC dc(ib);
+            dc.SetPen(*wxBLACK_PEN);
+            dc.SetBrush(*wxBLUE_BRUSH);
+            dc.DrawRectangle(2,2,36,16);
+            dc.SelectObject(wxNullBitmap);
+
+            m_hint = new wxFrame( mParent, wxID_ANY, wxEmptyString,
+                pos,
+                ib.GetSize(),
+                wxFRAME_TOOL_WINDOW |
+                wxFRAME_FLOAT_ON_PARENT |
+                wxFRAME_NO_TASKBAR |
+                wxNO_BORDER );
+            new wxBitmapCanvas( m_hint, ib, ib.GetSize() );
+            m_hint->Show();
+        }
+        else
+        {
+            m_hint->Move( pos.x, pos.y );
+            m_hint->SetTransparent( 128 );
+        }
+        return true;
+    }
+    wxFrame                *m_hint;
+    wxWindow * mParent;
+};
+
+
+
+
+bool mDrag = false;
+int m_dragCount = 0;
+wxPoint m_dragStart;
+
+void GuiProjectView::OnMotion(wxMouseEvent& event)
+{
+    event.Skip();
+    return;
+
+    if (event.Dragging())
+    {
+        if (m_dragCount == 0)
+        {
+            // we have to report the raw, physical coords as we want to be
+            // able to call HitTest(event.m_pointDrag) from the user code to
+            // get the item being dragged
+            m_dragStart = event.GetPosition();
+        }
+
+        m_dragCount++;
+
+        if (m_dragCount != 3)
+            return;
+
+        if (event.LeftIsDown())
+        {
+            wxDataViewItem item;
+            wxDataViewColumn* col;
+            mCtrl.HitTest(m_dragStart, item, col );
+            if (item.GetID())
+            {
+                VAR_DEBUG(1);
+                GuiDataObject data(getSelection());
+                DropSource drop(data, this);
+                drop.DoDragDrop();
+            }
+        }
+    }
+    else
+    {
+        m_dragCount = 0;
+    }
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -454,7 +575,7 @@ void GuiProjectView::OnDropPossible( wxDataViewEvent &event )
         event.Veto();
         return;
     }
-
+    event.Skip();
 }
 
 void GuiProjectView::OnDrop( wxDataViewEvent &event )
@@ -492,6 +613,7 @@ void GuiProjectView::OnDrop( wxDataViewEvent &event )
     {
         mProject->Submit(new command::ProjectViewMoveAsset(o.getAssets(),p));
     }
+    event.Skip();
 }
 
 void GuiProjectView::OnActivated( wxDataViewEvent &event )

@@ -17,6 +17,8 @@ namespace model {
 
 namespace gui { namespace timeline {
 
+class DummyView;
+
 class Drag
     :   public Part
     ,   public wxDropTarget
@@ -59,8 +61,9 @@ public:
 
     virtual bool GetData() { return false; };
     wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def) { return def; };
-    bool OnDrop (wxCoord x, wxCoord y) { return false; }
+    bool OnDrop (wxCoord x, wxCoord y);
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def);
+    wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def);
     void OnLeave ();
 
 private:
@@ -69,6 +72,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    bool mIsInsideDrag;                 ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
     wxPoint mHotspot;                   ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
     wxPoint mPosition;                  ///< Current pointer drag position. In timeline coordinates.
     wxBitmap mBitmap;                   ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 
@@ -91,12 +95,14 @@ private:
         :   public Part
     {
     public:
-        int mOffset;    ///< Offset by which to draw dragged tracks
-        int mMinOffset; ///< Min allowed value for offset (to avoid that tracks are moved into the void)
-        int mMaxOffset; ///< Mix allowed value for offset (to avoid that tracks are moved into the void)
+        int mOffset;                ///< Offset by which to draw dragged tracks. Note that for 'outside' drags, it contains the id over which the new assets are being dragged.
+        int mMinOffset;             ///< Min allowed value for offset (to avoid that tracks are moved into the void)
+        int mMaxOffset;             ///< Mix allowed value for offset (to avoid that tracks are moved into the void)
 
         /// Default constructor
         DragInfo(Timeline* timeline, bool isVideo);
+
+        ~DragInfo();
 
         /// Reset all offsets when a new drag operation is started
         void reset();
@@ -111,11 +117,24 @@ private:
         /// Whether it's an audio or a video track returned depends on the scope of this DragInfo object.
         model::TrackPtr getTrack(int index);
 
+        /// \param track temporary track used for 'outside' drags
+        void setTempTrack(model::TrackPtr track);
+
+        /// \return temporary track used for 'outside' drags
+        model::TrackPtr getTempTrack();
+
+        model::TrackPtr trackOnTopOf(model::TrackPtr track);
+
         int nTracks(); ///< @return number of tracks of this type currently in the timeline
 
     private:
 
-        bool mIsVideo;                  ///< true if this object applies to about video tracks, false if this object applies to audio tracks
+        friend std::ostream& operator<< (std::ostream& os, const DragInfo& obj);
+
+        model::TrackPtr mTempTrack; ///< For 'outside' drags, holds the temporary track that contains the new assets
+        bool mIsVideo;              ///< true if this object applies to about video tracks, false if this object applies to audio tracks
+        DummyView* mView;           ///< This view can be used as a container for temporary tracks used for drawing a 'outside' drag operation
+
     };
 
     DragInfo mVideo;
@@ -127,6 +146,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
+
+    void makeTracksFromProjectView();
 
     /// \return the track that is currently dragged on top of 'track'
     /// \return 0 if no track is found on top of this track

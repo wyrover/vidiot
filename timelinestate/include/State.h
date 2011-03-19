@@ -114,8 +114,8 @@ struct EvMouse : boost::statechart::event< MostDerived >
 template< class MostDerived >
 std::ostream& operator<< (std::ostream& os, const EvMouse< MostDerived >& obj)
 {
-    os  << typeid(obj).name() << ',' // This typeid is required to distinguish the various 'react' methods
-        << obj.mPosition << ','
+    os  << typeid(obj).name()   << '|' // This typeid is required to distinguish the various 'react' methods
+        << obj.mPosition        << '|'
         << obj.mWxEvent;
     return os;
 }
@@ -134,14 +134,28 @@ struct EvEnter          : EvMouse<EvEnter>          { EvEnter       (wxMouseEven
 struct EvLeave          : EvMouse<EvLeave>          { EvLeave       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse< EvLeave >         (wxevt, pos) {} };
 struct EvWheel          : EvMouse<EvWheel>          { EvWheel       (wxMouseEvent& wxevt, wxPoint pos) : EvMouse< EvWheel >         (wxevt, pos) {} };
 
-struct EvDragEnter : boost::statechart::event< EvDragEnter >
+template< class MostDerived >
+struct EvDrag : boost::statechart::event< MostDerived >
 {
-    EvDragEnter(int x, int y)
+    EvDrag(int x, int y)
         :   mPosition(x,y)
     {
     };
     const wxPoint mPosition;
 };
+
+template< class MostDerived >
+std::ostream& operator<< (std::ostream& os, const EvDrag< MostDerived >& obj)
+{
+    os  << typeid(obj).name() << '|' // This typeid is required to distinguish the various 'react' methods
+        << obj.mPosition;
+    return os;
+}
+
+struct EvDragEnter  : EvDrag< EvDragEnter > { EvDragEnter(int x, int y) : EvDrag<EvDragEnter>(x,y) {} };
+struct EvDragMove   : EvDrag< EvDragMove >  { EvDragMove(int x, int y)  : EvDrag<EvDragMove> (x,y) {} };
+struct EvDragDrop   : EvDrag< EvDragDrop >  { EvDragDrop(int x, int y)  : EvDrag<EvDragDrop> (x,y) {} };
+struct EvDragEnd    : EvDrag< EvDragEnd >   { EvDragEnd(int x, int y)   : EvDrag<EvDragEnd>  (x,y) {} };
 
 //////////////////////////////////////////////////////////////////////////
 // KEY EVENTS
@@ -162,8 +176,8 @@ struct EvKey : boost::statechart::event< MostDerived >
 template< class MostDerived >
 std::ostream& operator<< (std::ostream& os, const EvKey< MostDerived >& obj)
 {
-    os  << typeid(obj).name() << ',' // This typeid is required to distinguish the various 'react' methods
-        << obj.mPosition << ','
+    os  << typeid(obj).name()   << '|' // This typeid is required to distinguish the various 'react' methods
+        << obj.mPosition        << '|'
         << obj.mWxEvent;
     return os;
 }

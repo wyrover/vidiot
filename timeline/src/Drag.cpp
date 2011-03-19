@@ -13,6 +13,8 @@
 #include "Layout.h"
 #include "VideoClip.h"
 #include "AudioClip.h"
+#include "VideoTrack.h"
+#include "AudioTrack.h"
 #include "File.h"
 #include "State.h"
 #include "TrackView.h"
@@ -38,6 +40,7 @@ namespace gui { namespace timeline {
 Drag::Drag(Timeline* timeline)
     :   Part(timeline)
     ,   wxDropTarget(new GuiDataObject())
+    ,   mIsInsideDrag(true)
     ,   mHotspot(0,0)
     ,   mPosition(0,0)
     ,   mBitmapOffset(0,0)
@@ -65,13 +68,20 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 {
     PointerPositionInfo info = getMousePointer().getInfo(hotspot);
 
+    mVideo.reset();
+    mAudio.reset();
+    mIsInsideDrag = isInsideDrag;
     mHotspot = hotspot;
     mPosition = hotspot;
     mBitmapOffset = wxPoint(0,0);
-    mDraggedTrack = info.track;//todo
+    mDraggedTrack = info.track;
     mDropTrack = info.track;
-    mVideo.reset();
-    mAudio.reset();
+    invalidateSelectedClips(); // This is also necessary when dropping new assets into the timeline, since these new assets become the selected clips (that's required for them to be drawn when dragged).
+    if (!mIsInsideDrag)
+    {
+        makeTracksFromProjectView();
+        mDraggedTrack = mVideo.getTempTrack();
+    }
     VAR_DEBUG(*this);
 
     ASSERT(mDraggedTrack);
@@ -79,7 +89,6 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
 
     determinePossibleSnapPoints();
-    invalidateSelectedClips(); // todo is this also necessary for derived class Drop (thus, when dropping new assets into the timeline)?
     mBitmap = getDragBitmap();
     move(hotspot, false);
 }
@@ -279,42 +288,66 @@ void Drag::draw(wxDC& dc) const
 
 wxDragResult Drag::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
 {
-        std::list<model::IControlPtr> draggedAssets = GuiProjectView::current()->getDraggedAssets();
-    unsigned int w = 0;
-    unsigned int h = 10;
-    BOOST_FOREACH( model::IControlPtr asset, draggedAssets )
-    {
-        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
-        if (file)
-        {
-            VAR_DEBUG(file);
-            model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-            model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-            model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
-            model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
-            videoClip->setLink(audioClip);
-            audioClip->setLink(videoClip);
-            w += getZoom().ptsToPixels(file->getLength());
-        }
-    }
-    getSequenceView().invalidateBitmap();
     getStateMachine().process_event(state::EvDragEnter(x,y));
     return def;
 }
 
-//Called when the mouse leaves the drop target.
+wxDragResult Drag::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
+{
+    getStateMachine().process_event(state::EvDragMove(x,y));
+    return def;
+}
+
+bool Drag::OnDrop (wxCoord x, wxCoord y)
+{
+    getStateMachine().process_event(state::EvDragDrop(x,y));
+    return true;
+}
+
 void Drag::OnLeave()
 {
-    //todo Drag::stop()
-    //    //delete mDragShape;
-    //    //mDragShape = 0;
-    //    getTimeline().Refresh(); /** /todo use rectangle */
-    //getTimeline().Update();
+    getStateMachine().process_event(state::EvDragEnd(0,0));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // DRAGINFO
 //////////////////////////////////////////////////////////////////////////
+
+/// Dummy class to be able to create views for tracks and clips in case of adding them from the project view.
+/// This is a 'top' view class that ignores all events.
+class DummyView : public View
+{
+public:
+    DummyView(Timeline* timeline);
+    virtual ~DummyView();
+    virtual pixel requiredWidth() const;
+    virtual pixel requiredHeight() const;
+    virtual void draw(wxBitmap& bitmap) const;
+};
+
+DummyView::DummyView(Timeline* timeline) 
+:   View(timeline) 
+{
+}
+
+DummyView::~DummyView()
+{
+}
+
+pixel DummyView::requiredWidth() const 
+{ 
+    return getTimeline().requiredWidth(); 
+}
+
+pixel DummyView::requiredHeight() const 
+{ 
+    return getTimeline().requiredHeight(); 
+}
+
+void DummyView::draw(wxBitmap& bitmap) const 
+{ 
+    FATAL(""); 
+}
 
 Drag::DragInfo::DragInfo(Timeline* timeline, bool isVideo)
 :   Part(timeline)
@@ -322,7 +355,14 @@ Drag::DragInfo::DragInfo(Timeline* timeline, bool isVideo)
 ,   mOffset(0)
 ,   mMinOffset(0)
 ,   mMaxOffset(0)
+,   mTempTrack()
+,   mView(new DummyView(timeline))
 {
+}
+
+Drag::DragInfo::~DragInfo()
+{
+    delete mView;
 }
 
 void Drag::DragInfo::reset()
@@ -330,6 +370,13 @@ void Drag::DragInfo::reset()
     mOffset = 0;
     mMinOffset = 0;
     mMaxOffset = 0;
+
+    if (mTempTrack)
+    {
+        // Remove previous track
+        delete getViewMap().getView(mTempTrack);
+    }
+    mTempTrack.reset();
 
     // Determine boundaries
     std::set<model::TrackPtr> selectedTracks;
@@ -346,16 +393,62 @@ void Drag::DragInfo::reset()
 
 void Drag::DragInfo::updateOffset(int indexOfTrackInTimeline, int indexOfDraggedTrack)
 {
-    mOffset = 
-        std::min(mMaxOffset,
-        std::max(mMinOffset, 
-        indexOfTrackInTimeline - indexOfDraggedTrack));
+    if (!mTempTrack)
+    {
+        // 'inside' drag
+        mOffset = 
+            std::min(mMaxOffset,
+            std::max(mMinOffset, 
+            indexOfTrackInTimeline - indexOfDraggedTrack));
+    }
+    else
+    {
+        // 'outside' drag
+        mOffset = indexOfTrackInTimeline;
+    }
 }
 
 
 model::TrackPtr Drag::DragInfo::getTrack(int index)
 {
     return  mIsVideo ? getSequence()->getVideoTrack(index) : getSequence()->getAudioTrack(index);
+}
+
+model::TrackPtr Drag::DragInfo::getTempTrack()
+{
+    return mTempTrack;
+}
+
+void Drag::DragInfo::setTempTrack(model::TrackPtr track)
+{
+    if (mTempTrack)
+    {
+        // Remove previous track
+        delete getViewMap().getView(mTempTrack);
+    }
+    mTempTrack = track;
+    new TrackView(mTempTrack, mView);
+}
+
+model::TrackPtr Drag::DragInfo::trackOnTopOf(model::TrackPtr track)
+{
+    VAR_DEBUG(track);
+    model::TrackPtr draggedTrack;
+    if (!mTempTrack)
+    {
+        // 'inside' drag
+        draggedTrack = getTrack(track->getIndex() - mOffset);
+    }
+    else
+    {
+        // 'outside' drag
+        if (mOffset == track->getIndex())
+        {
+            draggedTrack = mTempTrack;
+        }
+    }
+    VAR_DEBUG(draggedTrack);
+    return draggedTrack;
 }
 
 int Drag::DragInfo::nTracks()
@@ -367,14 +460,39 @@ int Drag::DragInfo::nTracks()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+void Drag::makeTracksFromProjectView()
+{
+    std::list<model::IControlPtr> draggedAssets = GuiProjectView::current()->getDraggedAssets();
+    // todo refactor into method to be reused in createsequencecommand...
+
+    model::VideoTrackPtr videoTrack = boost::make_shared<model::VideoTrack>();
+    model::AudioTrackPtr audioTrack = boost::make_shared<model::AudioTrack>();
+
+    BOOST_FOREACH( model::IControlPtr asset, draggedAssets )
+    {
+        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
+        if (file)
+        {
+            VAR_DEBUG(file);
+            model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
+            model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
+            model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
+            model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
+            videoClip->setLink(audioClip);
+            audioClip->setLink(videoClip);
+            videoClip->setSelected(true);
+            audioClip->setSelected(true);
+            videoTrack->addClips(boost::assign::list_of(videoClip));
+            audioTrack->addClips(boost::assign::list_of(audioClip));
+        }
+    }
+    mVideo.setTempTrack(videoTrack);
+    mAudio.setTempTrack(audioTrack);
+}
+
 model::TrackPtr Drag::trackOnTopOf(model::TrackPtr track)
 {
-    // NOTE: is overriden in Drop
-    model::TrackPtr draggedTrack;
-    VAR_DEBUG(track);
-    DragInfo& info = getAssociatedInfo(track);
-    int draggedTrackIndex = track->getIndex() - info.mOffset;
-    return info.getTrack(draggedTrackIndex);
+    return getAssociatedInfo(track).trackOnTopOf(track);
 }
 
 Drag::DragInfo& Drag::getAssociatedInfo(model::TrackPtr track)
@@ -384,9 +502,7 @@ Drag::DragInfo& Drag::getAssociatedInfo(model::TrackPtr track)
 
 void Drag::updateOffset(model::TrackPtr trackUnderPointer)
 {
-    // NOTE: is overriden in Drop
     getAssociatedInfo(trackUnderPointer).updateOffset(trackUnderPointer->getIndex(), mDraggedTrack->getIndex());
-
 }
 
 void Drag::updateDraggedTrack(model::TrackPtr track)
@@ -411,7 +527,6 @@ void Drag::invalidateSelectedClips()
 
 wxPoint Drag::getDraggedDistance() const
 {
-    // NOTE: is overriden in Drop
     return mPosition - mHotspot;
 }
 
@@ -486,7 +601,7 @@ void Drag::determineSnapOffset()
 
 void Drag::determinePossibleSnapPoints()
 {
-    // NOTE: is overriden in Drop
+    // NOTE: is overriden in Drop TODOTODO
     mSnapPoints.clear();
     mDragPoints.clear();
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
@@ -573,23 +688,25 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
 
 std::ostream& operator<< (std::ostream& os, const Drag& obj)
 {
-    os  << &obj                 << "|" 
-        << obj.mSnap            << "|"
-        << obj.mActive          << "|"
-        << obj.mHotspot         << "|" 
-        << obj.mPosition        << "|" 
-        << obj.mVideo          << "|"
-        << obj.mAudio          << "|"
-        << obj.mDraggedTrack    << "|"
+    os  << &obj                 << '|'
+        << obj.mSnap            << '|'
+        << obj.mActive          << '|'
+        << obj.mHotspot         << '|'
+        << obj.mPosition        << '|' 
+        << obj.mVideo           << '|'
+        << obj.mAudio           << '|'
+        << obj.mDraggedTrack    << '|'
         << obj.mDropTrack;
     return os;
 }
 
 std::ostream& operator<< (std::ostream& os, const Drag::DragInfo& obj)
 {
-    os  << obj.mOffset    << "|"
-        << obj.mMinOffset << "|"
-        << obj.mMaxOffset;
+    os  << obj.mIsVideo     << '|'
+        << obj.mOffset      << '|'
+        << obj.mMinOffset   << '|'
+        << obj.mMaxOffset   << '|'
+        << obj.mTempTrack;
     return os;
 }
 

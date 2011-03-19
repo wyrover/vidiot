@@ -53,7 +53,10 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-     /// For initializing the topmost (sequence) view
+    /// For initializing the topmost (sequence) view
+    /// Also, for initializing top views that ignore all events. In the latter 
+    /// case, do not call init() and deinit(). Then, that ignoring top view
+    /// can be used for creating temporary View trees.
     View(Timeline* timeline);
 
     /// For initializing the topmost (sequence) view (separated into 

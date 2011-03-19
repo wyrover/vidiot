@@ -2,6 +2,7 @@
 #define GUI_PROJECT_VIEW_H
 
 #include <set>
+#include <wx/dnd.h>
 #include <wx/dataview.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
@@ -26,6 +27,7 @@ public:
     GuiProjectView(wxWindow* parent);
     virtual ~GuiProjectView();
     static GuiProjectView* current();
+    void OnMotion(wxMouseEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS

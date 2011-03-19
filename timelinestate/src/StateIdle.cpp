@@ -161,7 +161,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
 
 boost::statechart::result Idle::react( const EvDragEnter& evt)
 {
-    getDrag().start(evt.mPosition, true);
+    getDrag().start(evt.mPosition, false);
     return transit<Dragging>();
 }
 
