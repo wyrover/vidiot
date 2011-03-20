@@ -1,4 +1,4 @@
-#include "GuiProjectView.h"
+#include "ProjectView.h"
 
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -42,17 +42,17 @@ enum {
     meID_UPDATE_AUTOFOLDER,
 };
 
-static GuiProjectView* sCurrent = 0;
+static ProjectView* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-GuiProjectView::GuiProjectView(wxWindow* parent)
+ProjectView::ProjectView(wxWindow* parent)
 :   wxPanel(parent)
 ,   mProject(0)
 ,   mCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_HORIZ_RULES | wxDV_VERT_RULES)
-,   mModel(new GuiProjectViewModel(mCtrl))
+,   mModel(new ProjectViewModel(mCtrl))
 ,   mDropSource(mCtrl, *mModel)
 ,   mOpenFolders()
 ,   mDragCount(0)
@@ -76,61 +76,61 @@ GuiProjectView::GuiProjectView(wxWindow* parent)
     sizer->Layout();
     SetSizerAndFit(sizer);
 
-    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiProjectView::OnOpenProject,             this);
-    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiProjectView::OnCloseProject,            this);
+    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::OnOpenProject,             this);
+    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectView::OnCloseProject,            this);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,                 this, wxID_CUT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,                this, wxID_COPY);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnPaste,               this, wxID_PASTE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnDelete,              this, wxID_DELETE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFolder,           this, meID_NEW_FOLDER);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewAutoFolder,       this, meID_NEW_AUTOFOLDER);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewSequence,         this, meID_NEW_SEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFile,             this, meID_NEW_FILE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCreateSequence,      this, meID_CREATE_SEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnUpdateAutoFolder,    this, meID_UPDATE_AUTOFOLDER);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnCut,                 this, wxID_CUT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnCopy,                this, wxID_COPY);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnPaste,               this, wxID_PASTE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnDelete,              this, wxID_DELETE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewFolder,           this, meID_NEW_FOLDER);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewAutoFolder,       this, meID_NEW_AUTOFOLDER);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewSequence,         this, meID_NEW_SEQUENCE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewFile,             this, meID_NEW_FILE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnCreateSequence,      this, meID_CREATE_SEQUENCE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnUpdateAutoFolder,    this, meID_UPDATE_AUTOFOLDER);
 
-    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &GuiProjectView::OnStartEditing,    this);
-    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &GuiProjectView::OnContextMenu,     this);
-    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,     &GuiProjectView::OnDropPossible,    this);
-    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP,              &GuiProjectView::OnDrop,            this);
-    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,         &GuiProjectView::OnActivated,       this);
-    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,          &GuiProjectView::OnExpanded,        this);
-    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &GuiProjectView::OnCollapsed,       this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &ProjectView::OnStartEditing,    this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &ProjectView::OnContextMenu,     this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,     &ProjectView::OnDropPossible,    this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP,              &ProjectView::OnDrop,            this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,         &ProjectView::OnActivated,       this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,          &ProjectView::OnExpanded,        this);
+    Bind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &ProjectView::OnCollapsed,       this);
 
-    mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,           &GuiProjectView::OnMotion,          this);
+    mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,           &ProjectView::OnMotion,          this);
 }
 
-GuiProjectView::~GuiProjectView()
+ProjectView::~ProjectView()
 {
-    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,       &GuiProjectView::OnOpenProject,             this);
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,      &GuiProjectView::OnCloseProject,            this);
+    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,       &ProjectView::OnOpenProject,             this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,      &ProjectView::OnCloseProject,            this);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCut,               this, wxID_CUT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCopy,              this, wxID_COPY);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnPaste,             this, wxID_PASTE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnDelete,            this, wxID_DELETE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFolder,         this, meID_NEW_FOLDER);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewAutoFolder,     this, meID_NEW_AUTOFOLDER);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewSequence,       this, meID_NEW_SEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnNewFile,           this, meID_NEW_FILE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnCreateSequence,    this, meID_CREATE_SEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiProjectView::OnUpdateAutoFolder,  this, meID_CREATE_SEQUENCE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnCut,               this, wxID_CUT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnCopy,              this, wxID_COPY);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnPaste,             this, wxID_PASTE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnDelete,            this, wxID_DELETE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewFolder,         this, meID_NEW_FOLDER);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewAutoFolder,     this, meID_NEW_AUTOFOLDER);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewSequence,       this, meID_NEW_SEQUENCE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnNewFile,           this, meID_NEW_FILE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnCreateSequence,    this, meID_CREATE_SEQUENCE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::OnUpdateAutoFolder,  this, meID_CREATE_SEQUENCE);
 
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,   &GuiProjectView::OnStartEditing,    this);
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,    &GuiProjectView::OnContextMenu,     this);
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,   &GuiProjectView::OnDropPossible,    this);
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP,            &GuiProjectView::OnDrop,            this);
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,       &GuiProjectView::OnActivated,       this);
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,        &GuiProjectView::OnExpanded,        this);
-    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,       &GuiProjectView::OnCollapsed,       this);
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,   &ProjectView::OnStartEditing,    this);
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,    &ProjectView::OnContextMenu,     this);
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,   &ProjectView::OnDropPossible,    this);
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP,            &ProjectView::OnDrop,            this);
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,       &ProjectView::OnActivated,       this);
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,        &ProjectView::OnExpanded,        this);
+    Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,       &ProjectView::OnCollapsed,       this);
 
-    mCtrl.GetMainWindow()->Unbind(wxEVT_MOTION,         &GuiProjectView::OnMotion,          this);
+    mCtrl.GetMainWindow()->Unbind(wxEVT_MOTION,         &ProjectView::OnMotion,          this);
 
     sCurrent = 0;
 }
 
-GuiProjectView* GuiProjectView::current()
+ProjectView* ProjectView::current()
 {
     return sCurrent;
 }
@@ -139,26 +139,26 @@ GuiProjectView* GuiProjectView::current()
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiProjectView::OnOpenProject( model::EventOpenProject &event )
+void ProjectView::OnOpenProject( model::EventOpenProject &event )
 {
     mProject = event.getValue();
     GetSizer()->Show(&mCtrl);
     GetSizer()->Layout();
-    wxGetApp().Bind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &GuiProjectView::OnAutoOpenFolder, this);
+    wxGetApp().Bind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::OnAutoOpenFolder, this);
     event.Skip();
 }
 
-void GuiProjectView::OnCloseProject( model::EventCloseProject &event )
+void ProjectView::OnCloseProject( model::EventCloseProject &event )
 {
     GetSizer()->Hide(&mCtrl);
     GetSizer()->Layout();
-    wxGetApp().Unbind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &GuiProjectView::OnAutoOpenFolder, this);
+    wxGetApp().Unbind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::OnAutoOpenFolder, this);
     mCtrl.UnselectAll(); // To avoid crashes when directly loading a new project.
     mProject = 0;
     event.Skip();
 }
 
-void GuiProjectView::OnAutoOpenFolder( EventAutoFolderOpen& event )
+void ProjectView::OnAutoOpenFolder( EventAutoFolderOpen& event )
 {
     if (mOpenFolders.count(event.getValue()) == 1)
     {
@@ -170,7 +170,7 @@ void GuiProjectView::OnAutoOpenFolder( EventAutoFolderOpen& event )
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiProjectView::OnContextMenu( wxDataViewEvent &event )
+void ProjectView::OnContextMenu( wxDataViewEvent &event )
 {
     wxDataViewItemArray sel;
     int nSelected = mCtrl.GetSelections(sel);
@@ -288,7 +288,7 @@ void GuiProjectView::OnContextMenu( wxDataViewEvent &event )
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiProjectView::OnCut(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnCut(wxCommandEvent& WXUNUSED(event))
 {
     ASSERT(getSelection().size() > 0);
     if (wxTheClipboard->Open())
@@ -299,7 +299,7 @@ void GuiProjectView::OnCut(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnCopy(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnCopy(wxCommandEvent& WXUNUSED(event))
 {
     ASSERT(getSelection().size() > 0);
     if (wxTheClipboard->Open())
@@ -309,7 +309,7 @@ void GuiProjectView::OnCopy(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnPaste(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnPaste(wxCommandEvent& WXUNUSED(event))
 {
     if (wxTheClipboard->Open())
     {
@@ -333,12 +333,12 @@ void GuiProjectView::OnPaste(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnDelete(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnDelete(wxCommandEvent& WXUNUSED(event))
 {
     mProject->Submit(new command::ProjectViewDeleteAsset(getSelection()));
 }
 
-void GuiProjectView::OnNewFolder(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnNewFolder(wxCommandEvent& WXUNUSED(event))
 {
     wxString s = wxGetTextFromUser (_("Enter folder name"),_("Input text"), "New Folder default value", 0, wxDefaultCoord, wxDefaultCoord, true);
     if ((s.CompareTo(_T("")) != 0) &&
@@ -348,7 +348,7 @@ void GuiProjectView::OnNewFolder(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnNewAutoFolder(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnNewAutoFolder(wxCommandEvent& WXUNUSED(event))
 {
     wxString s = wxDirSelector(_("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir(), wxDD_DEFAULT_STYLE);
     if ((s.CompareTo(_T("")) != 0) &&
@@ -358,7 +358,7 @@ void GuiProjectView::OnNewAutoFolder(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnNewSequence(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnNewSequence(wxCommandEvent& WXUNUSED(event))
 {
     wxString s = wxGetTextFromUser(_("Enter sequence name"),_("Input text"), "New sequence default value", 0, wxDefaultCoord, wxDefaultCoord, true);
     if ((s.CompareTo(_T("")) != 0) &&
@@ -368,7 +368,7 @@ void GuiProjectView::OnNewSequence(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnNewFile(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnNewFile(wxCommandEvent& WXUNUSED(event))
 {
     wxString wildcards =
         wxString::Format
@@ -399,13 +399,13 @@ void GuiProjectView::OnNewFile(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnCreateSequence(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnCreateSequence(wxCommandEvent& WXUNUSED(event))
 {
     command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
     mProject->Submit(cmd);
 }
 
-void GuiProjectView::OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event))
+void ProjectView::OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event))
 {
     BOOST_FOREACH(model::ProjectViewPtr node, getSelection())
     {
@@ -417,7 +417,7 @@ void GuiProjectView::OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void GuiProjectView::OnMotion(wxMouseEvent& event)
+void ProjectView::OnMotion(wxMouseEvent& event)
 {
     if (event.Dragging())
     {
@@ -435,7 +435,7 @@ void GuiProjectView::OnMotion(wxMouseEvent& event)
                 mCtrl.HitTest(mDragStart, item, col );
                 if (item.GetID())
                 {
-                    GuiDataObject data(getSelection(), boost::bind(&GuiProjectView::onDragEnd,this));
+                    GuiDataObject data(getSelection(), boost::bind(&ProjectView::onDragEnd,this));
                     mDropSource.startDrag(data);
                     mDragCount = 0;
                 }
@@ -453,11 +453,11 @@ void GuiProjectView::OnMotion(wxMouseEvent& event)
     event.Skip();
 }
 
-void GuiProjectView::onDragEnd()
+void ProjectView::onDragEnd()
 {
 }
 
-void GuiProjectView::OnDropPossible( wxDataViewEvent &event )
+void ProjectView::OnDropPossible( wxDataViewEvent &event )
 {
     // Can only drop relevant type of info
     if (event.GetDataFormat().GetId() != GuiDataObject::sFormat)
@@ -475,7 +475,7 @@ void GuiProjectView::OnDropPossible( wxDataViewEvent &event )
     }
 }
 
-void GuiProjectView::OnDrop( wxDataViewEvent &event )
+void ProjectView::OnDrop( wxDataViewEvent &event )
 {
     LOG_INFO;
     // todo hangup drop a folder onto itselves...
@@ -513,7 +513,7 @@ void GuiProjectView::OnDrop( wxDataViewEvent &event )
     }
 }
 
-void GuiProjectView::OnActivated( wxDataViewEvent &event )
+void ProjectView::OnActivated( wxDataViewEvent &event )
 {
 	model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(p);
@@ -525,7 +525,7 @@ void GuiProjectView::OnActivated( wxDataViewEvent &event )
     GuiWindow::get()->getTimeLines().Open(sequence);
 }
 
-void GuiProjectView::OnExpanded( wxDataViewEvent &event )
+void ProjectView::OnExpanded( wxDataViewEvent &event )
 {
     model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
@@ -533,7 +533,7 @@ void GuiProjectView::OnExpanded( wxDataViewEvent &event )
     mOpenFolders.insert(folder);
 }
 
-void GuiProjectView::OnCollapsed( wxDataViewEvent &event )
+void ProjectView::OnCollapsed( wxDataViewEvent &event )
 {
     model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
@@ -541,7 +541,7 @@ void GuiProjectView::OnCollapsed( wxDataViewEvent &event )
     mOpenFolders.erase(folder);
 }
 
-void GuiProjectView::OnStartEditing( wxDataViewEvent &event )
+void ProjectView::OnStartEditing( wxDataViewEvent &event )
 {
     model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     if (!mModel->canBeRenamed(node))
@@ -556,7 +556,7 @@ void GuiProjectView::OnStartEditing( wxDataViewEvent &event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-model::FolderPtr GuiProjectView::getSelectedContainer() const
+model::FolderPtr ProjectView::getSelectedContainer() const
 {
     wxDataViewItemArray selection;
     mCtrl.GetSelections(selection);
@@ -567,7 +567,7 @@ model::FolderPtr GuiProjectView::getSelectedContainer() const
     return folder;
 }
 
-model::ProjectViewPtrs GuiProjectView::getSelection() const
+model::ProjectViewPtrs ProjectView::getSelection() const
 {
     model::ProjectViewPtrs l;
     wxDataViewItemArray selection;
@@ -582,7 +582,7 @@ model::ProjectViewPtrs GuiProjectView::getSelection() const
     return l;
 }
 
-bool GuiProjectView::FindConflictingName(model::FolderPtr parent, wxString name )
+bool ProjectView::FindConflictingName(model::FolderPtr parent, wxString name )
 {
     BOOST_FOREACH( model::ProjectViewPtr child, parent->getChildren() )
     {
@@ -601,7 +601,7 @@ bool GuiProjectView::FindConflictingName(model::FolderPtr parent, wxString name 
 // SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////
 
-void GuiProjectView::OpenRecursive(model::FolderPtr folder)
+void ProjectView::OpenRecursive(model::FolderPtr folder)
 {
     if (mOpenFolders.count(folder) == 1)
     {
@@ -618,11 +618,11 @@ void GuiProjectView::OpenRecursive(model::FolderPtr folder)
 }
 
 template<class Archive>
-void GuiProjectView::serialize(Archive & ar, const unsigned int version)
+void ProjectView::serialize(Archive & ar, const unsigned int version)
 {
     ar & mOpenFolders;
 }
-template void GuiProjectView::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void GuiProjectView::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void ProjectView::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void ProjectView::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace

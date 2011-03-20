@@ -8,7 +8,7 @@
 
 namespace gui {
 
-class GuiProjectViewModel;
+class ProjectViewModel;
 class GuiDataObject;
 
 class ProjectViewDropSource 
@@ -20,7 +20,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ProjectViewDropSource(wxDataViewCtrl& ctrl, GuiProjectViewModel& model);
+    ProjectViewDropSource(wxDataViewCtrl& ctrl, ProjectViewModel& model);
     ~ProjectViewDropSource();
 
     //////////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxDataViewCtrl& mCtrl;
-    GuiProjectViewModel& mModel;
+    ProjectViewModel& mModel;
     wxFrame *mHint;
 
     //////////////////////////////////////////////////////////////////////////

@@ -13,7 +13,7 @@ namespace gui {
 
 class GuiTimelinesView;
 class GuiPreview;
-class GuiProjectView;
+class ProjectView;
 
 class GuiWindow : public wxDocParentFrame
 {
@@ -85,7 +85,7 @@ private:
 
     GuiTimelinesView*   mTimelinesView;
     GuiPreview*		    mPreview;
-    GuiProjectView*	    mProjectView;
+    ProjectView*	    mProjectView;
 	wxPanel*			mEditor;
 
     wxMenuBar*          menubar;        // For enabling/disabling menus

@@ -9,7 +9,7 @@
 #include "GuiMain.h"
 #include "GuiOptions.h"
 #include "GuiView.h"
-#include "GuiProjectView.h"
+#include "ProjectView.h"
 #include "GuiPreview.h"
 #include "GuiTimelinesView.h"
 #include "AProjectViewNode.h"
@@ -35,7 +35,7 @@ GuiWindow::GuiWindow()
 
     mTimelinesView  = new GuiTimelinesView(this);
     mPreview        = new GuiPreview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
-    mProjectView    = new GuiProjectView(this);
+    mProjectView    = new ProjectView(this);
     mEditor         = new wxPanel(this);
 
     wxMenu* menufile = new wxMenu();

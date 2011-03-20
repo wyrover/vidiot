@@ -1,4 +1,4 @@
-#include "GuiProjectView.h"
+#include "ProjectView.h"
 
 #include <wx/datetime.h>
 #include <boost/foreach.hpp>
@@ -22,7 +22,7 @@
 
 namespace gui {
 
-GuiProjectViewModel::GuiProjectViewModel(wxDataViewCtrl& view)
+ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 :   wxDataViewModel()
 ,   mView(view)
 ,   mProject(0)
@@ -32,21 +32,21 @@ GuiProjectViewModel::GuiProjectViewModel(wxDataViewCtrl& view)
 ,   mIconFolderOpen(folder_horizontal_open_xpm)
 ,	mIconVideo(film_xpm)
 {
-    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiProjectViewModel::OnOpenProject,           this);
-    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiProjectViewModel::OnCloseProject,          this);
+    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::OnOpenProject,           this);
+    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::OnCloseProject,          this);
 }
 
-GuiProjectViewModel::~GuiProjectViewModel()
+ProjectViewModel::~ProjectViewModel()
 {
-    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,   &GuiProjectViewModel::OnOpenProject,            this);
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,  &GuiProjectViewModel::OnCloseProject,           this);
+    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,   &ProjectViewModel::OnOpenProject,            this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,  &ProjectViewModel::OnCloseProject,           this);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // OVERRIDES FROM WXDATAVIEWMODEL
 //////////////////////////////////////////////////////////////////////////
 
-bool GuiProjectViewModel::IsContainer (const wxDataViewItem &wxItem) const
+bool ProjectViewModel::IsContainer (const wxDataViewItem &wxItem) const
 {
     if (!wxItem.IsOk())
     {
@@ -59,7 +59,7 @@ bool GuiProjectViewModel::IsContainer (const wxDataViewItem &wxItem) const
     }
 }
 
-wxDataViewItem GuiProjectViewModel::GetParent( const wxDataViewItem &wxItem ) const
+wxDataViewItem ProjectViewModel::GetParent( const wxDataViewItem &wxItem ) const
 {
     if (!wxItem.IsOk())
     {
@@ -81,7 +81,7 @@ wxDataViewItem GuiProjectViewModel::GetParent( const wxDataViewItem &wxItem ) co
     }
 }
 
-unsigned int GuiProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxDataViewItemArray &wxItemArray ) const
+unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxDataViewItemArray &wxItemArray ) const
 {
     if (!wxItem.IsOk()) 
     {
@@ -121,12 +121,12 @@ unsigned int GuiProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxD
     return wxItemArray.GetCount();
 }
 
-unsigned int GuiProjectViewModel::GetColumnCount() const
+unsigned int ProjectViewModel::GetColumnCount() const
 {
     return 3;
 }
 
-wxString GuiProjectViewModel::GetColumnType(unsigned int col) const
+wxString ProjectViewModel::GetColumnType(unsigned int col) const
 {
     ASSERT(col <= GetColumnCount());
     switch (col)
@@ -138,7 +138,7 @@ wxString GuiProjectViewModel::GetColumnType(unsigned int col) const
     return wxT("string");
 }
 
-void GuiProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) const
+void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) const
 {
     ASSERT(wxItem.IsOk());
     ASSERT(col <= GetColumnCount());
@@ -186,7 +186,7 @@ void GuiProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wx
     };
 }
 
-bool GuiProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col )
+bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col )
 {
     ASSERT(wxItem.IsOk());
     ASSERT(col <= GetColumnCount());
@@ -203,12 +203,12 @@ bool GuiProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewIt
     return false;
 }
 
-bool GuiProjectViewModel::HasDefaultCompare() const
+bool ProjectViewModel::HasDefaultCompare() const
 {
     return true;
 }
 
-int GuiProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const
+int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const
 {
     int result = 0;
     if (column == UINT_MAX)
@@ -302,7 +302,7 @@ int GuiProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewIt
 // 
 //////////////////////////////////////////////////////////////////////////
 
-bool GuiProjectViewModel::isAutomaticallyGenerated(model::ProjectViewPtr node) const
+bool ProjectViewModel::isAutomaticallyGenerated(model::ProjectViewPtr node) const
 {
     if (!node->hasParent())
     {
@@ -322,27 +322,27 @@ bool GuiProjectViewModel::isAutomaticallyGenerated(model::ProjectViewPtr node) c
     }
 }
 
-bool GuiProjectViewModel::isRoot(model::ProjectViewPtr node) const
+bool ProjectViewModel::isRoot(model::ProjectViewPtr node) const
 {
     return !node->hasParent();
 }
 
-bool GuiProjectViewModel::isFolder(model::ProjectViewPtr node) const
+bool ProjectViewModel::isFolder(model::ProjectViewPtr node) const
 {
     return boost::dynamic_pointer_cast<model::Folder>(node) != 0;
 }
 
-bool GuiProjectViewModel::isAutoFolder(model::ProjectViewPtr node) const
+bool ProjectViewModel::isAutoFolder(model::ProjectViewPtr node) const
 {
     return boost::dynamic_pointer_cast<model::AutoFolder>(node) != 0;
 }
 
-bool GuiProjectViewModel::isSequence(model::ProjectViewPtr node) const
+bool ProjectViewModel::isSequence(model::ProjectViewPtr node) const
 {
     return boost::dynamic_pointer_cast<model::Sequence>(node) != 0;
 }
 
-bool GuiProjectViewModel::isDescendantOf(model::ProjectViewPtr node, model::ProjectViewPtr ascendant) const
+bool ProjectViewModel::isDescendantOf(model::ProjectViewPtr node, model::ProjectViewPtr ascendant) const
 {
     if (!node->hasParent())
     {
@@ -357,12 +357,12 @@ bool GuiProjectViewModel::isDescendantOf(model::ProjectViewPtr node, model::Proj
     return isDescendantOf(parent, ascendant);
 }
 
-bool GuiProjectViewModel::canBeRenamed(model::ProjectViewPtr node) const
+bool ProjectViewModel::canBeRenamed(model::ProjectViewPtr node) const
 {
     return !isRoot(node) && !isAutomaticallyGenerated(node) && !isAutoFolder(node);
 }
 
-const wxIcon& GuiProjectViewModel::getIcon(model::ProjectViewPtr node) const
+const wxIcon& ProjectViewModel::getIcon(model::ProjectViewPtr node) const
 {
     return mIconVideo;
 }
@@ -371,33 +371,33 @@ const wxIcon& GuiProjectViewModel::getIcon(model::ProjectViewPtr node) const
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiProjectViewModel::OnOpenProject( model::EventOpenProject &event )
+void ProjectViewModel::OnOpenProject( model::EventOpenProject &event )
 {
     mProject = event.getValue();
 
     Cleared();
 
-    wxGetApp().Bind(model::EVENT_ADD_ASSET, &GuiProjectViewModel::OnProjectAssetAdded,      this);
-    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,  &GuiProjectViewModel::OnProjectAssetRemoved,    this);
-    wxGetApp().Bind(model::EVENT_RENAME_ASSET,  &GuiProjectViewModel::OnProjectAssetRenamed,    this);
+    wxGetApp().Bind(model::EVENT_ADD_ASSET, &ProjectViewModel::OnProjectAssetAdded,      this);
+    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,  &ProjectViewModel::OnProjectAssetRemoved,    this);
+    wxGetApp().Bind(model::EVENT_RENAME_ASSET,  &ProjectViewModel::OnProjectAssetRenamed,    this);
 
     event.Skip();
 }
 
-void GuiProjectViewModel::OnCloseProject( model::EventCloseProject &event )
+void ProjectViewModel::OnCloseProject( model::EventCloseProject &event )
 {
     mProject = 0;
 
     Cleared();
 
-    wxGetApp().Unbind(model::EVENT_ADD_ASSET,       &GuiProjectViewModel::OnProjectAssetAdded,      this);
-    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,    &GuiProjectViewModel::OnProjectAssetRemoved,    this);
-    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,    &GuiProjectViewModel::OnProjectAssetRenamed,    this);
+    wxGetApp().Unbind(model::EVENT_ADD_ASSET,       &ProjectViewModel::OnProjectAssetAdded,      this);
+    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,    &ProjectViewModel::OnProjectAssetRemoved,    this);
+    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,    &ProjectViewModel::OnProjectAssetRenamed,    this);
 
     event.Skip();
 }
 
-void GuiProjectViewModel::AddRecursive( model::ProjectViewPtr node)
+void ProjectViewModel::AddRecursive( model::ProjectViewPtr node)
 {
     BOOST_FOREACH( model::ProjectViewPtr child, node->getChildren() )
     {
@@ -407,7 +407,7 @@ void GuiProjectViewModel::AddRecursive( model::ProjectViewPtr node)
     }
 }
 
-void GuiProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
+void ProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
 {
     model::ProjectViewPtr parent = event.getValue().parent;
     model::ProjectViewPtr child = event.getValue().child;
@@ -434,7 +434,7 @@ void GuiProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
     event.Skip();
 }
 
-void GuiProjectViewModel::OnProjectAssetRemoved( model::EventRemoveAsset &event )
+void ProjectViewModel::OnProjectAssetRemoved( model::EventRemoveAsset &event )
 {
     model::ProjectViewPtr parent = event.getValue().parent;
     model::ProjectViewPtr child = event.getValue().child;
@@ -443,7 +443,7 @@ void GuiProjectViewModel::OnProjectAssetRemoved( model::EventRemoveAsset &event 
     event.Skip();
 }
 
-void GuiProjectViewModel::OnProjectAssetRenamed( model::EventRenameAsset &event )
+void ProjectViewModel::OnProjectAssetRenamed( model::EventRenameAsset &event )
 {
     VAR_DEBUG(event.getValue().node);
     ItemChanged(event.getValue().node->id());

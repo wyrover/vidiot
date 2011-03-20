@@ -7,7 +7,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
-#include "GuiProjectViewModel.h"
+#include "ProjectViewModel.h"
 #include "ModelPtr.h"
 #include "ProjectViewDropSource.h"
 
@@ -15,7 +15,7 @@ namespace gui {
 
 class GuiTimelinesView;
 
-class GuiProjectView
+class ProjectView
 :   public wxPanel
 {
 public:
@@ -24,9 +24,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    GuiProjectView(wxWindow* parent);
-    virtual ~GuiProjectView();
-    static GuiProjectView* current();
+    ProjectView(wxWindow* parent);
+    virtual ~ProjectView();
+    static ProjectView* current();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -81,7 +81,7 @@ private:
 
     model::Project* mProject;
     wxDataViewCtrl mCtrl;
-    GuiProjectViewModel* mModel;
+    ProjectViewModel* mModel;
     ProjectViewDropSource mDropSource;
     std::set<model::FolderPtr> mOpenFolders;
     std::list<model::IControlPtr> mDraggedAssets;
@@ -111,6 +111,6 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::GuiProjectView, 1)
+BOOST_CLASS_VERSION(gui::ProjectView, 1)
 
 #endif // GUI_PROJECT_VIEW_H

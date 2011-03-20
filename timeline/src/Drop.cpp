@@ -15,7 +15,7 @@
 #include "Timeline.h"
 #include "TrackView.h"
 #include "UtilLog.h"
-#include "GuiProjectView.h"
+#include "ProjectView.h"
 #include "VideoClip.h"
 #include "VideoFile.h"
 #include "ViewMap.h"
@@ -89,7 +89,7 @@ bool Drop::OnDrop (wxCoord x, wxCoord y)
 //Called when the mouse enters the drop target.
 wxDragResult Drop::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
 {
-    std::list<model::IControlPtr> draggedAssets = GuiProjectView::current()->getDraggedAssets();
+    std::list<model::IControlPtr> draggedAssets = ProjectView::current()->getDraggedAssets();
     unsigned int w = 0;
     unsigned int h = 10;
     BOOST_FOREACH( model::IControlPtr asset, draggedAssets )
