@@ -9,6 +9,7 @@
 #include <boost/serialization/split_member.hpp>
 #include "GuiProjectViewModel.h"
 #include "ModelPtr.h"
+#include "ProjectViewDropSource.h"
 
 namespace gui {
 
@@ -67,7 +68,6 @@ private:
     void OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event));
     void OnStartEditing( wxDataViewEvent &event );
     void OnMotion(wxMouseEvent& event);
-    void OnBeginDrag( wxDataViewEvent &event );
     void onDragEnd();
     void OnDropPossible( wxDataViewEvent &event );
     void OnDrop( wxDataViewEvent &event );
@@ -82,8 +82,11 @@ private:
     model::Project* mProject;
     wxDataViewCtrl mCtrl;
     GuiProjectViewModel* mModel;
+    ProjectViewDropSource mDropSource;
     std::set<model::FolderPtr> mOpenFolders;
     std::list<model::IControlPtr> mDraggedAssets;
+    int mDragCount;                                 ///< Used for determining start of dragging
+    wxPoint mDragStart;                             ///< Holds start of dragging point
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
