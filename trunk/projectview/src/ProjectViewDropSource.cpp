@@ -2,7 +2,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <boost/foreach.hpp>
-#include "GuiProjectViewModel.h"
+#include "ProjectViewModel.h"
 #include "Layout.h"
 #include "GuiDataObject.h"
 #include "AProjectViewNode.h"
@@ -34,7 +34,7 @@ struct wxBitmapCanvas
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ProjectViewDropSource::ProjectViewDropSource(wxDataViewCtrl& ctrl, GuiProjectViewModel& model)
+ProjectViewDropSource::ProjectViewDropSource(wxDataViewCtrl& ctrl, ProjectViewModel& model)
     :   wxDropSource(&ctrl)
     ,   mCtrl(ctrl)
     ,   mModel(model)

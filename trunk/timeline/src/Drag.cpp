@@ -18,7 +18,7 @@
 #include "File.h"
 #include "State.h"
 #include "TrackView.h"
-#include "GuiProjectView.h"
+#include "ProjectView.h"
 #include "UtilLogWxwidgets.h"
 #include "Track.h"
 #include "Sequence.h"
@@ -462,7 +462,7 @@ int Drag::DragInfo::nTracks()
 
 void Drag::makeTracksFromProjectView()
 {
-    std::list<model::IControlPtr> draggedAssets = GuiProjectView::current()->getDraggedAssets();
+    std::list<model::IControlPtr> draggedAssets = ProjectView::current()->getDraggedAssets();
     // todo refactor into method to be reused in createsequencecommand...
 
     model::VideoTrackPtr videoTrack = boost::make_shared<model::VideoTrack>();

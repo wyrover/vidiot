@@ -12,7 +12,7 @@ namespace gui {
 /**
 * This model links the GUI objects to the actual project items and back.
 */
-class GuiProjectViewModel
+class ProjectViewModel
     :   public wxDataViewModel
 {
 public:
@@ -21,8 +21,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiProjectViewModel(wxDataViewCtrl& view);
-    ~GuiProjectViewModel();
+    ProjectViewModel(wxDataViewCtrl& view);
+    ~ProjectViewModel();
 
     //////////////////////////////////////////////////////////////////////////
     // OVERRIDES FROM WXDATAVIEWMODEL
