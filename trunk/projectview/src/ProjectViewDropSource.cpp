@@ -4,10 +4,13 @@
 #include <boost/foreach.hpp>
 #include "ProjectViewModel.h"
 #include "Layout.h"
+#include "GuiWindow.h"
 #include "GuiDataObject.h"
 #include "AProjectViewNode.h"
 
 namespace gui {
+
+ProjectViewDropSource* sCurrent = 0;
 
 struct wxBitmapCanvas
     :   public wxWindow
@@ -39,7 +42,9 @@ ProjectViewDropSource::ProjectViewDropSource(wxDataViewCtrl& ctrl, ProjectViewMo
     ,   mCtrl(ctrl)
     ,   mModel(model)
     ,   mHint(0)
+    ,   mFeedback(true)
 {
+    sCurrent = this;
 }
 
 ProjectViewDropSource::~ProjectViewDropSource()
@@ -49,6 +54,13 @@ ProjectViewDropSource::~ProjectViewDropSource()
         delete mHint;
         mHint = 0;
     }
+    sCurrent = 0;
+}
+
+// static 
+ProjectViewDropSource& ProjectViewDropSource::current()
+{
+    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,6 +69,8 @@ ProjectViewDropSource::~ProjectViewDropSource()
 
 bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 {
+    if (!mFeedback) return true;
+
     wxPoint pos = wxGetMousePosition();
 
     if (!mHint)
@@ -105,6 +119,26 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
     return true;
 }
 
+// TODO
+//enum  	wxDragResult {
+//    wxDragError,
+//    wxDragNone,
+//    wxDragCopy,
+//    wxDragMove,
+//    wxDragLink,
+//    wxDragCancel
+//}
+//
+//void wxDropSource::SetCursor 	( 	wxDragResult  	res,
+//                                 const wxCursor &  	cursor	 
+//                                 ) 			
+//
+//                                 Set the icon to use for a certain drag result.
+//
+//Parameters:
+//res 	The drag result to set the icon for.
+//cursor 	The ion to show when this drag result occurs. 
+
 //////////////////////////////////////////////////////////////////////////
 // DRAGGING
 //////////////////////////////////////////////////////////////////////////
@@ -112,7 +146,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 void ProjectViewDropSource::startDrag(GuiDataObject& data)
 {
     SetData(data);
-    DoDragDrop();
+    DoDragDrop(wxDrag_DefaultMove);
     if (mHint)
     {
         delete mHint;
@@ -120,9 +154,30 @@ void ProjectViewDropSource::startDrag(GuiDataObject& data)
     }
 }
 
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
 GuiDataObject& ProjectViewDropSource::getData()
 {
     return *(dynamic_cast<GuiDataObject*>(GetDataObject()));
+}
+
+void ProjectViewDropSource::setFeedback(bool enabled)
+{
+    mFeedback = enabled;
+    if (mHint)
+    {
+        if (mFeedback)
+        {
+            mHint->Show();
+        }
+        else
+        {
+            mHint->Hide();
+        }
+    }
+
 }
 
 //////////////////////////////////////////////////////////////////////////

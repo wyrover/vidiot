@@ -23,10 +23,12 @@ public:
     ProjectViewDropSource(wxDataViewCtrl& ctrl, ProjectViewModel& model);
     ~ProjectViewDropSource();
 
+    static ProjectViewDropSource& current();
+
     //////////////////////////////////////////////////////////////////////////
     // FROM WXDROPSOURCE
     //////////////////////////////////////////////////////////////////////////
-
+    
     virtual bool GiveFeedback(wxDragResult effect);
 
     //////////////////////////////////////////////////////////////////////////
@@ -34,7 +36,13 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void startDrag(GuiDataObject& data);
-    GuiDataObject& getData();
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    GuiDataObject& getData();       ///< \return the current associated data object
+    void setFeedback(bool enabled); ///< Enable/disable showing feedback. Used to avoid flicker
 
 private:
 
@@ -45,6 +53,7 @@ private:
     wxDataViewCtrl& mCtrl;
     ProjectViewModel& mModel;
     wxFrame *mHint;
+    bool mFeedback;             ///< true if feedback must be shown while drawing
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
