@@ -81,6 +81,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     {
         makeTracksFromProjectView();
         mDraggedTrack = mVideo.getTempTrack();
+        mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
     }
     VAR_DEBUG(*this);
 
@@ -288,14 +289,15 @@ void Drag::draw(wxDC& dc) const
 
 wxDragResult Drag::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
 {
+    ProjectViewDropSource::current().setFeedback(false);
     getStateMachine().process_event(state::EvDragEnter(x,y));
-    return def;
+    return wxDragMove;
 }
 
 wxDragResult Drag::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
 {
     getStateMachine().process_event(state::EvDragMove(x,y));
-    return def;
+    return wxDragMove;
 }
 
 bool Drag::OnDrop (wxCoord x, wxCoord y)
@@ -306,6 +308,7 @@ bool Drag::OnDrop (wxCoord x, wxCoord y)
 
 void Drag::OnLeave()
 {
+    ProjectViewDropSource::current().setFeedback(true);
     getStateMachine().process_event(state::EvDragEnd(0,0));
 }
 
@@ -462,13 +465,13 @@ int Drag::DragInfo::nTracks()
 
 void Drag::makeTracksFromProjectView()
 {
-    std::list<model::IControlPtr> draggedAssets = ProjectView::current()->getDraggedAssets();
+    std::list<model::ProjectViewPtr> draggedAssets = ProjectViewDropSource::current().getData().getAssets();
     // todo refactor into method to be reused in createsequencecommand...
 
     model::VideoTrackPtr videoTrack = boost::make_shared<model::VideoTrack>();
     model::AudioTrackPtr audioTrack = boost::make_shared<model::AudioTrack>();
 
-    BOOST_FOREACH( model::IControlPtr asset, draggedAssets )
+    BOOST_FOREACH( model::ProjectViewPtr asset, draggedAssets )
     {
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
         if (file)

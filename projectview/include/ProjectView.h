@@ -42,13 +42,6 @@ public:
     */
     void OpenRecursive(model::FolderPtr folder);
 
-    //////////////////////////////////////////////////////////////////////////
-    // GET/SET
-    //////////////////////////////////////////////////////////////////////////
-
-    std::list<model::IControlPtr> getDraggedAssets() { return mDraggedAssets; }
-
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -84,7 +77,6 @@ private:
     ProjectViewModel* mModel;
     ProjectViewDropSource mDropSource;
     std::set<model::FolderPtr> mOpenFolders;
-    std::list<model::IControlPtr> mDraggedAssets;
     int mDragCount;                                 ///< Used for determining start of dragging
     wxPoint mDragStart;                             ///< Holds start of dragging point
 

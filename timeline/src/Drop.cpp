@@ -89,10 +89,10 @@ bool Drop::OnDrop (wxCoord x, wxCoord y)
 //Called when the mouse enters the drop target.
 wxDragResult Drop::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
 {
-    std::list<model::IControlPtr> draggedAssets = ProjectView::current()->getDraggedAssets();
+    std::list<model::ProjectViewPtr> draggedAssets = ProjectViewDropSource::current().getData().getAssets();
     unsigned int w = 0;
     unsigned int h = 10;
-    BOOST_FOREACH( model::IControlPtr asset, draggedAssets )
+    BOOST_FOREACH( model::ProjectViewPtr asset, draggedAssets )
     {
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
         if (file)
