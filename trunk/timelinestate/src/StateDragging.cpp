@@ -1,7 +1,6 @@
 #include "StateDragging.h"
 
 #include "Drag.h"
-#include "Drop.h"
 #include "UtilLog.h"
 #include "StateIdle.h"
 #include "Tooltip.h"

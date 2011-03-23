@@ -5,7 +5,6 @@
 #include <wx/dcmemory.h>
 #include "AudioView.h"
 #include "Drag.h"
-#include "Drop.h"
 #include "Cursor.h"
 #include "Intervals.h"
 #include "Layout.h"

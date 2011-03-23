@@ -19,7 +19,6 @@ namespace gui {
         class Cursor;
         class Divider;
         class Drag;
-        class Drop;
         class GuiPlayer;
         class Intervals;
         class MenuHandler;
@@ -94,9 +93,6 @@ public:
 
     Tooltip& getTooltip();
     const Tooltip& getTooltip() const;
-
-    Drop& getDrop();
-    const Drop& getDrop() const;
 
     Divider& getDivider();
     const Divider& getDivider() const;

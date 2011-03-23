@@ -52,8 +52,6 @@ public:
     const Drag& getDrag() const;
     Tooltip& getTooltip();
     const Tooltip& getTooltip() const;
-    Drop& getDrop();
-    const Drop& getDrop() const;
     Divider& getDivider();
     const Divider& getDivider() const;
     state::Machine& getStateMachine();
@@ -113,7 +111,6 @@ private:
     Cursor* mCursor;  // Must be AFTER mPlayer
     Drag* mDrag;
     Tooltip* mTooltip;
-    Drop* mDrop;
     Divider* mDivider;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts

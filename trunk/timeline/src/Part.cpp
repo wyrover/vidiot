@@ -162,16 +162,6 @@ const Tooltip& Part::getTooltip() const
     return getTimeline().getTooltip();
 }
 
-Drop& Part::getDrop()
-{
-    return getTimeline().getDrop();
-}
-
-const Drop& Part::getDrop() const
-{
-    return getTimeline().getDrop();
-}
-
 Divider& Part::getDivider()
 {
     return getTimeline().getDivider();

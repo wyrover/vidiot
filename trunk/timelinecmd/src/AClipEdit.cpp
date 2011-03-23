@@ -255,7 +255,7 @@ void AClipEdit::newMove(model::TrackPtr addTrack, model::ClipPtr addPosition, mo
     VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
     model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
     mParams.push_back(move);
-    mParamsUndo.push_front(move->make_inverted()); // Must be executed in reverse order
+    mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
     doMove(move);
 }
 
