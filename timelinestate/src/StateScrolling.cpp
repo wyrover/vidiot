@@ -1,7 +1,6 @@
 #include "StateScrolling.h"
 
 #include "Drag.h"
-#include "Drop.h"
 #include "UtilLog.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
@@ -12,10 +11,7 @@
 namespace gui { namespace timeline { namespace state {
 
     const wxString sTooltip = _(
-        "Move the clips by dragging them around.\n" \
-        "Release Left Mouse Button to 'drop'.\n\n" \
-        "CTRL: Disable snapping\n" \
-        "SHIFT: Change 'grab point'\n" \
+        "\n" \
         );
 
 //////////////////////////////////////////////////////////////////////////

@@ -48,6 +48,10 @@ public:
     
     bool isActive() const; ///< @return true if a drag operation with the currently selected clips is in effect.
 
+    /// \return true if the given clip is currently being dragged
+    /// \param clip clip to be checked
+    bool contains(model::ClipPtr clip) const;
+
     //////////////////////////////////////////////////////////////////////////
     // DRAW
     //////////////////////////////////////////////////////////////////////////
@@ -73,6 +77,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mIsInsideDrag;                 ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
+    model::Clips mDraggedClips;         ///< List of all clips currently being dragged
     wxPoint mHotspot;                   ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
     wxPoint mPosition;                  ///< Current pointer drag position. In timeline coordinates.
     wxBitmap mBitmap;                   ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 
@@ -147,6 +152,9 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    /// Reset all members used for the dragging process.
+    void reset();
+
     void makeTracksFromProjectView();
 
     /// \return the track that is currently dragged on top of 'track'
@@ -173,7 +181,7 @@ private:
 
     /// Invalidate all clips in the timeline that are selected. Needed to hide
     /// them when the drag begins, and to show them again when it ends.
-    void invalidateSelectedClips();
+    void invalidateDraggedClips();
 
     /// Return the current position of the drag. That is, the difference between
     /// the original hotspot position and the current hotspot position.

@@ -152,7 +152,7 @@ void ClipView::draw(wxBitmap& bitmap) const
     draw(bitmap, !getDrag().isActive(), true);
 }
 
-void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselectedClips) const
+void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDraggedClips) const
 {
     // NOTE: DO NOT use requiredWidth/requiredHeight here, since
     //       This method is also used for drawing clips that are
@@ -164,8 +164,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselecte
     wxMemoryDC dc(bitmap);
 
     if (mClip->isA<model::EmptyClip>() || 
-        (!drawSelectedClips && mClip->getSelected()) ||
-        (!drawUnselectedClips && !mClip->getSelected()))
+        (!drawDraggedClips && getDrag().contains(mClip)) ||
+        (!drawNotDraggedClips && !getDrag().contains(mClip)))
     {
         // For empty clips, the bitmap is empty.
         // Selected clips that are being dragged should no longer be drawn
@@ -230,7 +230,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawSelectedClips, bool drawUnselecte
 
 void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
 {
-    if (mClip->getSelected())
+    if (getDrag().contains(mClip))
     {
         wxBitmap b(requiredWidth(), height);
         draw(b, true, false);

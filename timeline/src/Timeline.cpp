@@ -26,7 +26,6 @@
 #include "SequenceView.h"
 #include "State.h"
 #include "ViewMap.h"
-#include "Drop.h"
 #include "UtilLogWxwidgets.h"
 #include "ViewMap.h"
 #include "VideoView.h"
@@ -54,7 +53,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
 ,   mTooltip(new Tooltip(this))
-,   mDrop(new Drop(this))
 ,   mDivider(new Divider(this))
 ,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
@@ -93,7 +91,6 @@ Timeline::~Timeline()
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;     mStateMachine = 0;
     delete mDivider;        mDivider = 0;
-    delete mDrop;           mDrop = 0;
     delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
@@ -229,16 +226,6 @@ Tooltip& Timeline::getTooltip()
 const Tooltip& Timeline::getTooltip() const
 { 
     return *mTooltip; 
-}
-
-Drop& Timeline::getDrop()
-{
-    return *mDrop;
-}
-
-const Drop& Timeline::getDrop() const
-{
-    return *mDrop;
 }
 
 Divider& Timeline::getDivider()

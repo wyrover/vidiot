@@ -20,6 +20,7 @@
 #include "TrackView.h"
 #include "ProjectView.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilList.h"
 #include "Track.h"
 #include "Sequence.h"
 #include "Selection.h"
@@ -27,6 +28,7 @@
 #include "ViewMap.h"
 #include "Zoom.h"
 #include "GuiDataObject.h"
+#include "UtilLogStl.h"
 #include "Divider.h"
 #include "Clip.h"
 #include "ClipView.h"
@@ -68,28 +70,36 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 {
     PointerPositionInfo info = getMousePointer().getInfo(hotspot);
 
-    mVideo.reset();
-    mAudio.reset();
+    reset();
+    mActive = true;
     mIsInsideDrag = isInsideDrag;
     mHotspot = hotspot;
     mPosition = hotspot;
     mBitmapOffset = wxPoint(0,0);
-    mDraggedTrack = info.track;
     mDropTrack = info.track;
-    invalidateSelectedClips(); // This is also necessary when dropping new assets into the timeline, since these new assets become the selected clips (that's required for them to be drawn when dragged).
+
     if (!mIsInsideDrag)
     {
         makeTracksFromProjectView();
         mDraggedTrack = mVideo.getTempTrack();
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
+
+        // When dragging new clips into the timeline, the clips also need to be removed first.
+        // This ensures that any used View classes are destroyed. Otherwise, there remain multiple
+        // Views for a clip.
+        UtilList<model::ClipPtr>(mDraggedClips).addElements(mVideo.getTempTrack()->getClips(),model::ClipPtr());
+        UtilList<model::ClipPtr>(mDraggedClips).addElements(mAudio.getTempTrack()->getClips(),model::ClipPtr());
+    }
+    else
+    {
+        mDraggedTrack = info.track;
+        UtilList<model::ClipPtr>(mDraggedClips).addElements(getSelection().getClips());
+        invalidateDraggedClips(); // Hide dragged clips: Not necessary when dropping new assets into the timeline, since these do not have to be 'hidden' from the timeline
     }
     VAR_DEBUG(*this);
-
     ASSERT(mDraggedTrack);
 
-    mActive = true; // Must be done BEFORE getDragBitmap(), since it is used for creating that bitmap.
-
-    determinePossibleSnapPoints();
+    determinePossibleSnapPoints(); // Required initialized mDraggedClips
     mBitmap = getDragBitmap();
     move(hotspot, false);
 }
@@ -160,34 +170,20 @@ void Drag::move(wxPoint position, bool altPressed)
 
 void Drag::drop()
 {
-    model::Clips draggedclips;
     command::ExecuteDrop::Drops drops;
-
-    // Ensure that moved clips are not blanked out anymore (since they are selected).
-    // See ClipView::draw()
-    mActive = false;
-    invalidateSelectedClips();
-
-    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
-    {
-        draggedclips.push_back(clip);
-    }
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         drops.splice(drops.end(), getDrops(track));
     }
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
-    {
-        drops.splice(drops.end(), getDrops(track));
-    }
-    getTimeline().Submit(new command::ExecuteDrop(getTimeline(),draggedclips,drops));
+    getTimeline().Submit(new command::ExecuteDrop(getTimeline(),mDraggedClips,drops));
 }
 
 void Drag::stop()
 {
     VAR_DEBUG(*this);
-    mActive = false;
-    invalidateSelectedClips();
+    mActive = false;            // Ensure that moved clips are not blanked out anymore. See ClipView::draw().
+    invalidateDraggedClips();   // Ensure that moved clips are not blanked out anymore. See ClipView::draw().
+    reset();
     getTimeline().Refresh();
 }
 
@@ -198,6 +194,11 @@ void Drag::stop()
 bool Drag::isActive() const
 {
     return mActive;
+}
+
+bool Drag::contains(model::ClipPtr clip) const
+{
+    return UtilList<model::ClipPtr>(static_cast<const model::Clips>(mDraggedClips)).hasElement(clip);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -381,7 +382,7 @@ void Drag::DragInfo::reset()
     }
     mTempTrack.reset();
 
-    // Determine boundaries
+    // Determine boundaries for 'inside' drags
     std::set<model::TrackPtr> selectedTracks;
     BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
     {
@@ -463,6 +464,22 @@ int Drag::DragInfo::nTracks()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+void Drag::reset()
+{
+    mDraggedClips.clear();
+    mHotspot = wxPoint(0,0);
+    mPosition = wxPoint(0,0);
+    mBitmapOffset = wxPoint(0,0);
+    mSnapPoints.clear();
+    mDragPoints.clear();
+    mSnapOffset = 0;
+    mSnaps.clear();
+    mVideo.reset();
+    mAudio.reset();
+    mDraggedTrack.reset();
+    mDropTrack.reset();
+}
+
 void Drag::makeTracksFromProjectView()
 {
     std::list<model::ProjectViewPtr> draggedAssets = ProjectViewDropSource::current().getData().getAssets();
@@ -479,12 +496,11 @@ void Drag::makeTracksFromProjectView()
             VAR_DEBUG(file);
             model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
             model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
+            // todo hasvideo and has audio. If not, use emptyclip in other track
             model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
             model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
             videoClip->setLink(audioClip);
             audioClip->setLink(videoClip);
-            videoClip->setSelected(true);
-            audioClip->setSelected(true);
             videoTrack->addClips(boost::assign::list_of(videoClip));
             audioTrack->addClips(boost::assign::list_of(audioClip));
         }
@@ -520,9 +536,9 @@ void Drag::updateDraggedTrack(model::TrackPtr track)
     }
 }
 
-void Drag::invalidateSelectedClips()
+void Drag::invalidateDraggedClips()
 {
-    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
+    BOOST_FOREACH( model::ClipPtr clip, mDraggedClips )
     {
         getViewMap().getView(clip)->invalidateBitmap();
     }
@@ -604,41 +620,30 @@ void Drag::determineSnapOffset()
 
 void Drag::determinePossibleSnapPoints()
 {
-    // NOTE: is overriden in Drop TODOTODO
     mSnapPoints.clear();
     mDragPoints.clear();
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {
-            if (!clip->getSelected())
+            if (!contains(clip))
             {
                 mSnapPoints.push_back(clip->getLeftPts());
                 mSnapPoints.push_back(clip->getRightPts());
             }
-            else
-            {
-                mDragPoints.push_back(clip->getLeftPts());
-                mDragPoints.push_back(clip->getRightPts());
-            }
         }
     }
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+
+    BOOST_FOREACH( model::ClipPtr clip, mDraggedClips )
     {
-        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        if (contains(clip))
         {
-            if (!clip->getSelected())
-            {
-                mSnapPoints.push_back(clip->getLeftPts());
-                mSnapPoints.push_back(clip->getRightPts());
-            }
-            else
-            {
-                mDragPoints.push_back(clip->getLeftPts());
-                mDragPoints.push_back(clip->getRightPts());
-            }
+            mDragPoints.push_back(clip->getLeftPts());
+            mDragPoints.push_back(clip->getRightPts());
         }
     }
+
     mSnapPoints.sort();
     mSnapPoints.unique();
     mDragPoints.sort();
@@ -659,12 +664,12 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
 
         BOOST_FOREACH( model::ClipPtr clip, draggedTrack->getClips() )
         {
-            if (!inregion && clip->getSelected())
+            if (!inregion && contains(clip))
             {
                 inregion = true;
                 pi.position = position + mSnapOffset + getDraggedPts();
             }
-            if (inregion && !clip->getSelected())
+            if (inregion && !contains(clip))
             {
                 inregion = false;
                 drops.push_back(pi);

@@ -69,7 +69,7 @@ ProjectViewDropSource& ProjectViewDropSource::current()
 
 bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 {
-    if (!mFeedback) return true;
+    if (!mFeedback) return wxDropSource::GiveFeedback(effect);
 
     wxPoint pos = wxGetMousePosition();
 
@@ -116,28 +116,8 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
         mHint->Move( pos.x + 5, pos.y + 5 ); // NOTE: Be sure to have a minimum offset of (1,1) wrt pointer position. Otherwise, the DND handling does not work.
         mHint->SetTransparent( 128 );
     }
-    return true;
+    return wxDropSource::GiveFeedback(effect);
 }
-
-// TODO
-//enum  	wxDragResult {
-//    wxDragError,
-//    wxDragNone,
-//    wxDragCopy,
-//    wxDragMove,
-//    wxDragLink,
-//    wxDragCancel
-//}
-//
-//void wxDropSource::SetCursor 	( 	wxDragResult  	res,
-//                                 const wxCursor &  	cursor	 
-//                                 ) 			
-//
-//                                 Set the icon to use for a certain drag result.
-//
-//Parameters:
-//res 	The drag result to set the icon for.
-//cursor 	The ion to show when this drag result occurs. 
 
 //////////////////////////////////////////////////////////////////////////
 // DRAGGING

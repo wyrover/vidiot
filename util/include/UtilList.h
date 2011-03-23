@@ -2,6 +2,7 @@
 #define UTIL_LIST_H
 
 #include <list>
+#include <set>
 #include "UtilLog.h"
 
 template<class ELEMENT>
@@ -10,10 +11,16 @@ class UtilList
 public:
     typedef std::list<ELEMENT> ELEMENTS;
 
+    /// Create a new UtilList helper object
+    /// \param list list which is operated upon
     UtilList(ELEMENTS& list)
         :   mList(list)
     {
     }
+
+    /// Add elements to the list
+    /// \param added elements to be added
+    /// \param position elements are added AFTER the given element. If this equals a null ptr, then the elements are added at the end.
     void addElements(ELEMENTS added, ELEMENT position)
     {
         ELEMENTS::iterator itPosition = find(mList.begin(), mList.end(), position);
@@ -27,7 +34,9 @@ public:
         mList.splice(itPosition,tobeadded); // See http://www.cplusplus.com/reference/stl/list/splice: elements added BEFORE position
         VAR_DEBUG(added)(position)(mList);
     }
-    /** @return the position at which the element are removed. */
+
+    /// \return the position at which the element are removed.
+    /// \param removed list of elements to be removed. These elements should be in the same order in the list, without other objects in between.
     ELEMENT removeElements(ELEMENTS removed)
     {
         ELEMENTS::iterator itBegin = find(mList.begin(), mList.end(), removed.front());
@@ -51,10 +60,24 @@ public:
 
         return position;
     }
+
+    /// \return true if the list contains the given element
+    /// \param element element which is searched for in the list
     bool hasElement(ELEMENT element)
     {
         return (find(mList.begin(), mList.end(), element) != mList.end());
     }
+
+    /// Add elements from the set at the end of the list
+    /// \param set the set of elements to be added
+    void addElements(std::set<ELEMENT> set)
+    {
+        BOOST_FOREACH( ELEMENT element, set )
+        {
+            mList.push_back(element);
+        }
+    }
+
 private:
     std::list<ELEMENT>& mList;
 };
