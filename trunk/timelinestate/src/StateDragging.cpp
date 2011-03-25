@@ -1,5 +1,6 @@
 #include "StateDragging.h"
 
+#include <wx/utils.h>
 #include "Drag.h"
 #include "UtilLog.h"
 #include "StateIdle.h"
@@ -11,7 +12,7 @@ namespace gui { namespace timeline { namespace state {
     const wxString sTooltip = _(
         "Move the clips by dragging them around.\n" \
         "Release Left Mouse Button to 'drop'.\n\n" \
-        "CTRL: Disable snapping\n" \
+        "CTRL: Disable snapping and shifting of clips\n" \
         "SHIFT: Change 'grab point'\n" \
         );
 
@@ -60,7 +61,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 {
     // See also EvDragMove
     VAR_DEBUG(evt);
-    getDrag().move(evt.mPosition, evt.mWxEvent.ShiftDown());
+    getDrag().move(evt.mPosition, evt.mWxEvent.ControlDown(), evt.mWxEvent.ShiftDown());
     return forward_event();
 }
 
@@ -68,7 +69,7 @@ boost::statechart::result Dragging::react( const EvDragMove& evt )
 {
     // See also EvMotion
     VAR_DEBUG(evt);
-    getDrag().move(evt.mPosition,false); // todo shiftdown handling
+    getDrag().move(evt.mPosition,wxGetMouseState().ControlDown(),wxGetMouseState().ShiftDown());
     return forward_event();
 }
 
@@ -94,6 +95,10 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
 
     switch (evt.mWxEvent.GetKeyCode())
     {
+    case WXK_ALT:
+    case WXK_SHIFT:
+        getDrag().move(evt.mPosition, evt.mWxEvent.ControlDown(), evt.mWxEvent.ShiftDown());
+        break;
     case WXK_F1:
         getTooltip().show(sTooltip);
         break;
@@ -110,8 +115,9 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
 
     switch (evt.mWxEvent.GetKeyCode())
     {
+    case WXK_ALT:
     case WXK_SHIFT:
-        getDrag().move(evt.mPosition, false);
+        getDrag().move(evt.mPosition, evt.mWxEvent.ControlDown(), evt.mWxEvent.ShiftDown());
         break;
     }
     return forward_event();
