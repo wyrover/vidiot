@@ -13,6 +13,7 @@
 #include "Layout.h"
 #include "VideoClip.h"
 #include "AudioClip.h"
+#include "Cursor.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
 #include "File.h"
@@ -101,10 +102,10 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 
     determinePossibleSnapPoints(); // Required initialized mDraggedClips
     mBitmap = getDragBitmap();
-    move(hotspot, false);
+    move(hotspot, false, false);
 }
 
-void Drag::move(wxPoint position, bool altPressed)
+void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
 {
     VAR_DEBUG(*this);
     wxRegion redrawRegion;
@@ -118,9 +119,9 @@ void Drag::move(wxPoint position, bool altPressed)
 
     PointerPositionInfo info = getMousePointer().getInfo(position);
 
-    if (altPressed)
+    if (shiftPressed)
     {
-        // As long as ALT is down, the dragged image stays the same, but the hotspot is moved
+        // As long as SHIFT is down, the dragged image stays the same, but the hotspot is moved
         mHotspot -=  mPosition - position;
         updateDraggedTrack(info.track);
     }
@@ -155,7 +156,43 @@ void Drag::move(wxPoint position, bool altPressed)
     mPosition = position;
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
 
-    determineSnapOffset();
+    if (!ctrlPressed)
+    {
+        determineSnapOffset();
+    }
+    // TODO HANDLING OF DIRECTLY MOVING OTHER CLIPS AROUND:
+    //pts shiftPosition = 0;
+    //pts shiftAmount = 0;
+    //if (!ctrlPressed)
+    //{
+    //    determineSnapOffset();
+    //    
+    //    shiftPosition = getDragPtsPosition();
+    //    shiftAmount = 0;
+
+    //    // If there is not enough room at the given position, clips will be shifted.
+    //    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    //    {
+    //        pts emptyarea = 0;
+    //        model::ClipPtr clip = track->getClip(getDragPtsPosition());
+    //        while (clip && clip->getRightPts() <= getDragPtsPosition() + getDragPtsSize())
+    //        {
+    //            if (!clip->isA<model::EmptyClip>() && !contains(clip))
+    //            {
+    //                break;
+    //            }
+    //            emptyarea += clip->getLength();
+    //            clip = track->getNextClip(clip); // Todo Inefficient
+    //        }
+    //        shiftPosition = std::min<pts>(shiftPosition, getDragPtsPosition() + emptyarea);
+    //        shiftAmount = std::max<pts>(shiftAmount, getDragPtsSize() - emptyarea);
+    //    }
+    //}
+    //BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    //{
+    //    getViewMap().getView(track)->setShift(shiftPosition,shiftAmount);
+    //}
+
     getSequenceView().invalidateBitmap();
 
     wxRegionIterator it(redrawRegion);
@@ -549,14 +586,24 @@ wxPoint Drag::getDraggedDistance() const
     return mPosition - mHotspot;
 }
 
-pts Drag::getDraggedPts() const
+pts Drag::getDraggedPtsDistance() const
 {
     return getZoom().pixelsToPts(getDraggedDistance().x);
 }
 
+pts Drag::getDragPtsPosition() const
+{
+    return mDragPoints.front() + getDraggedPtsDistance() + mSnapOffset;
+}
+
+pts Drag::getDragPtsSize() const 
+{
+    return mDragPoints.back() - mDragPoints.front();
+}
+
 void Drag::determineSnapOffset()
 {
-    pts ptsoffset = getDraggedPts();
+    pts ptsoffset = getDraggedPtsDistance();
     pts ptsmouse = getZoom().pixelsToPts(mPosition.x);
 
     // Find nearest snap match
@@ -634,6 +681,7 @@ void Drag::determinePossibleSnapPoints()
             }
         }
     }
+    mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
 
     BOOST_FOREACH( model::ClipPtr clip, mDraggedClips )
     {
@@ -667,7 +715,7 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
             if (!inregion && contains(clip))
             {
                 inregion = true;
-                pi.position = position + mSnapOffset + getDraggedPts();
+                pi.position = position + mSnapOffset + getDraggedPtsDistance();
             }
             if (inregion && !contains(clip))
             {

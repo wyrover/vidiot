@@ -38,7 +38,7 @@ public:
 
     /// \param isInsideDrag true if this is a drag within the timeline, false if there are new clips being dragged into the timeline (from the project view)
     void start(wxPoint hotspot, bool isInsideDrag);
-    void move(wxPoint position, bool altPressed);
+    void move(wxPoint position, bool ctrlPressed, bool shiftPressed);
     void drop();
     void stop();
 
@@ -189,7 +189,13 @@ private:
     wxPoint getDraggedDistance() const;
 
     /// Return the dragged distance in pts value
-    pts getDraggedPts() const;
+    pts getDraggedPtsDistance() const;
+
+    /// Return the current leftmost pts value of the dragged clips
+    pts getDragPtsPosition() const;
+
+    /// Return the size of the dragged clips
+    pts getDragPtsSize() const;
 
     /// Determine if there is a close match between a timeline cut and a cut
     /// in the dragged clips. Will update mPosition so that the dragged object

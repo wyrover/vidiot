@@ -42,6 +42,8 @@ public:
      pixel requiredWidth() const;  ///< @see View::requiredWidth()
      pixel requiredHeight() const; ///< @see View::requiredHeight()
 
+     void setShift(pts position, pts length);
+
      void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
     //////////////////////////////////////////////////////////////////////////
@@ -59,6 +61,8 @@ public:
 private:
 
     model::TrackPtr mTrack;
+    pts mShiftPosition;
+    pts mShiftLength;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -31,6 +31,8 @@ namespace gui { namespace timeline {
 TrackView::TrackView(model::TrackPtr track, View* parent)
 :   View(parent)
 ,   mTrack(track)
+,   mShiftPosition(0)
+,   mShiftLength(0)
 {
     VAR_DEBUG(this);
     ASSERT(mTrack); // Must be initialized
@@ -120,12 +122,37 @@ pixel TrackView::requiredHeight() const
     return mTrack->getHeight();
 }
 
+void TrackView::setShift(pts position, pts length)
+{
+    if (length > 0)
+    {
+        VAR_DEBUG(length);
+    }
+    mShiftPosition = position;
+    mShiftLength = length;
+    invalidateBitmap();
+}
+
+
+
 void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
 {
-    info.clip = mTrack->getClip(getZoom().pixelsToPts(position.x));
+    wxPoint adjustedPosition(position); // todo adjust: make into one method
+    if (position.x >= getZoom().ptsToPixels(mShiftPosition))
+    {
+        if (position.x >= getZoom().ptsToPixels(mShiftPosition + mShiftLength))
+        {
+            adjustedPosition.x -= getZoom().ptsToPixels(mShiftLength);
+        }
+        else
+        {
+            return; // inside shifted stuk
+        }
+    }
+    info.clip = mTrack->getClip(getZoom().pixelsToPts(adjustedPosition.x));
     if (info.clip)
     {
-        getViewMap().getView(info.clip)->getPositionInfo(position, info);
+        getViewMap().getView(info.clip)->getPositionInfo(adjustedPosition, info);
     }
 }
 
@@ -138,11 +165,18 @@ void TrackView::draw(wxBitmap& bitmap) const
     dc.SetPen(Layout::sBackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     wxPoint position(0,0);    
+    bool shiftApplied = mShiftLength > 0 ? false : true;
     BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
     {
+        if (!shiftApplied && modelclip->getLeftPts() >= mShiftPosition)
+        {
+            position.x += getZoom().ptsToPixels(mShiftLength);
+            shiftApplied = true;
+        }
         wxBitmap bitmap = getViewMap().getView(modelclip)->getBitmap();
         dc.DrawBitmap(bitmap,position);
         position.x += bitmap.GetWidth();
+
     }
 }
 
