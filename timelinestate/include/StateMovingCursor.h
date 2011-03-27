@@ -7,7 +7,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class MovingCursor
-    :   public TimeLineState< MovingCursor, Always >
+    :   public TimeLineState< MovingCursor, StateTop::orthogonal<0> >
 {
 public:
 

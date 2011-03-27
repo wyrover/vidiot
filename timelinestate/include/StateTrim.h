@@ -23,7 +23,7 @@ namespace gui {
 namespace gui { namespace timeline { namespace state {
 
 class Trim
-    :   public TimeLineState< Trim, Always >
+    :   public TimeLineState< Trim, StateTop::orthogonal<0> >
 {
 public:
 

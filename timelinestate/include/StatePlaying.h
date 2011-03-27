@@ -7,7 +7,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class Playing
-    :   public TimeLineState< Playing, Always >
+    :   public TimeLineState< Playing, StateTop::orthogonal<0> >
 {
 public:
 

@@ -44,7 +44,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    void updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    void updateOnRightClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
 
     /// Deletes all selected clips.
     void deleteClips();

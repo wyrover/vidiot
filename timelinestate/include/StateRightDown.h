@@ -1,22 +1,14 @@
-#ifndef STATE_TEST_DRAG_START_H
-#define STATE_TEST_DRAG_START_H
+#ifndef STATE_RIGHTDOWN_H
+#define STATE_RIGHTDOWN_H
 
 #include <boost/statechart/custom_reaction.hpp>
 #include "StateAlways.h"
-
-namespace model {
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef std::list<TrackPtr> Tracks;
-struct MoveParameter;
-typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
-typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
-}
+#include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace state {
 
-class StateLeftDown
-    :   public TimeLineState< StateLeftDown, StateTop::orthogonal<0> >
+class StateRightDown 
+    :   public TimeLineState< StateRightDown, StateTop::orthogonal<0> >
 {
 public:
 
@@ -24,12 +16,12 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    StateLeftDown( my_context ctx );
+    StateRightDown( my_context ctx );
 
-    ~StateLeftDown();
+    ~StateRightDown();
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction< EvLeftUp >,
+        boost::statechart::custom_reaction< EvRightUp >,
         boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvLeave >,
         boost::statechart::custom_reaction< EvKeyDown >
@@ -39,7 +31,7 @@ public:
     // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    boost::statechart::result react( const EvLeftUp& evt );
+    boost::statechart::result react( const EvRightUp& evt );
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvLeave& evt );
     boost::statechart::result react( const EvKeyDown& evt );
@@ -50,9 +42,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-     wxPoint mStartPosition;
+    bool mPopup;    ///< true if a popup menu is currently being shown.
 };
 
 }}} // namespace
 
-#endif // STATE_TEST_DRAG_START_H
+#endif // STATE_RIGHTDOWN_H

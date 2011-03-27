@@ -2,12 +2,12 @@
 #define STATE_IDLE_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
+#include "StateTop.h"
 
 namespace gui { namespace timeline { namespace state {
 
 class Idle
-    :   public TimeLineState< Idle, Always >
+    :   public TimeLineState< Idle, StateTop::orthogonal<0> >
 {
 public:
 

@@ -15,7 +15,7 @@ const wxString sTooltip = _(
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TestDragStart::TestDragStart( my_context ctx ) // entry
+StateLeftDown::StateLeftDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
     ,   mStartPosition(0,0)
 {
@@ -27,7 +27,7 @@ TestDragStart::TestDragStart( my_context ctx ) // entry
     mStartPosition = event->mPosition;
 }
 
-TestDragStart::~TestDragStart() // exit
+StateLeftDown::~StateLeftDown() // exit
 { 
     LOG_DEBUG; 
 }
@@ -35,13 +35,13 @@ TestDragStart::~TestDragStart() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-boost::statechart::result TestDragStart::react( const EvLeftUp& evt )
+boost::statechart::result StateLeftDown::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
     return transit<Idle>();
 }
 
-boost::statechart::result TestDragStart::react( const EvMotion& evt )
+boost::statechart::result StateLeftDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
     wxPoint diff = mStartPosition - evt.mPosition;
@@ -54,13 +54,13 @@ boost::statechart::result TestDragStart::react( const EvMotion& evt )
     return forward_event();
 }
 
-boost::statechart::result TestDragStart::react( const EvLeave& evt )
+boost::statechart::result StateLeftDown::react( const EvLeave& evt )
 {
     VAR_DEBUG(evt);
     return transit<Idle>();
 }
 
-boost::statechart::result TestDragStart::react( const EvKeyDown& evt)
+boost::statechart::result StateLeftDown::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
     switch (evt.mWxEvent.GetKeyCode())
@@ -68,6 +68,8 @@ boost::statechart::result TestDragStart::react( const EvKeyDown& evt)
     case WXK_F1:
         getTooltip().show(sTooltip);
         break;
+    case WXK_ESCAPE:
+        return transit<Idle>();
     }
     return forward_event();
 }

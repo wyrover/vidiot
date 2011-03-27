@@ -1,34 +1,30 @@
-#include "StateScrolling.h"
+#include "StateRightDown.h"
 
-#include "Drag.h"
 #include "UtilLog.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
 #include "Menu.h"
 #include "Timeline.h"
-#include "MousePointer.h"
-#include "Scrolling.h"
+#include "StateScrolling.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {
 
     const wxString sTooltip = _(
-        "Drag mouse left/right to move the view\n" \
+        "\n" \
         );
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-/** /todo handle mouse focus lost */
-
-StateScrolling::StateScrolling( my_context ctx ) // entry
+StateRightDown::StateRightDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
     LOG_DEBUG; 
 }
 
-StateScrolling::~StateScrolling() // exit
+StateRightDown::~StateRightDown() // exit
 { 
     LOG_DEBUG; 
 }
@@ -37,26 +33,29 @@ StateScrolling::~StateScrolling() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-boost::statechart::result StateScrolling::react( const EvRightUp& evt )
+boost::statechart::result StateRightDown::react( const EvRightUp& evt )
 {
     VAR_DEBUG(evt);
+    mPopup = true;
+    getMenuHandler().Popup();
+    mPopup = false;
     return transit<Idle>();
 }
 
-boost::statechart::result StateScrolling::react( const EvMotion& evt )
+boost::statechart::result StateRightDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getScrolling().align(getZoom().pixelsToPts(getMousePointer().getRightDownPosition().x), evt.mWxEvent.GetPosition().x);
-    return forward_event();
+    return transit<StateScrolling>();
 }
 
-boost::statechart::result StateScrolling::react( const EvLeave& evt )
+boost::statechart::result StateRightDown::react( const EvLeave& evt )
 {
     VAR_DEBUG(evt);
+    if (mPopup) return discard_event();
     return transit<Idle>();
 }
 
-boost::statechart::result StateScrolling::react( const EvKeyDown& evt )
+boost::statechart::result StateRightDown::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);
 

@@ -32,7 +32,7 @@ public:
     /// is directly under the physical position.
     /// \param position position in the sequence
     /// \param unscrolledPixel physical position to align to
-    void align(pts position, pixel unscrolledPixel);
+    void align(pts position, pixel physicalPosition);
 
     /// \param position position in the sequence
     /// \return physical position on the scroll window canvas
@@ -40,7 +40,7 @@ public:
 
     /// \return physical position
     /// \param position virtual position
-    wxPoint getPhysicalPosition(wxPoint position) const;
+    wxPoint getVirtualPosition(wxPoint position) const;
 
 };
 

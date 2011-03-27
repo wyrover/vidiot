@@ -7,7 +7,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class Dragging 
-    :   public TimeLineState< Dragging, Machine >
+    :   public TimeLineState< Dragging, StateTop::orthogonal<0> >
 {
 public:
 

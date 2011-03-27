@@ -12,7 +12,7 @@ namespace model {
 namespace gui { namespace timeline { namespace state {
 
 class MoveTrackDivider
-    :   public TimeLineState< MoveTrackDivider, Always >
+    :   public TimeLineState< MoveTrackDivider, StateTop::orthogonal<0> >
 {
 public:
 
@@ -29,8 +29,7 @@ public:
         boost::statechart::custom_reaction< EvLeftUp >,
         boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvLeave >,
-        boost::statechart::custom_reaction< EvKeyDown >,
-        boost::statechart::custom_reaction< EvKeyUp >
+        boost::statechart::custom_reaction< EvKeyDown >
     > reactions;
 
     //////////////////////////////////////////////////////////////////////////
@@ -42,7 +41,6 @@ public:
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvLeave& evt);
     boost::statechart::result react( const EvKeyDown& evt);
-    boost::statechart::result react( const EvKeyUp& evt);
 
 private:
 

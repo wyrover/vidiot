@@ -3,6 +3,7 @@
 #include "Timeline.h"
 #include "Zoom.h"
 #include "UtilLog.h"
+#include "MousePointer.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -11,7 +12,7 @@ namespace gui { namespace timeline { namespace state {
 //////////////////////////////////////////////////////////////////////////
 
 Always::Always( my_context ctx ) // entry
-:   TimeLineStateInner( ctx )
+:   TimeLineState( ctx )
 {
     LOG_DEBUG; 
 }
@@ -25,9 +26,19 @@ Always::~Always() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-boost::statechart::result Always::react( const EvMotion& evt )
+boost::statechart::result Always::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
+    getWindow().SetFocus();
+    getMousePointer().setLeftDownPosition(evt.mPosition);
+    return forward_event();
+}
+
+boost::statechart::result Always::react( const EvRightDown& evt )
+{
+    VAR_DEBUG(evt);
+    getWindow().SetFocus();
+    getMousePointer().setRightDownPosition(evt.mPosition);
     return forward_event();
 }
 
@@ -53,12 +64,6 @@ boost::statechart::result Always::react( const EvWheel& evt )
         // behaviour should be done.
         evt.mWxEvent.Skip();
     }
-    return forward_event();
-}
-
-boost::statechart::result Always::react( const EvLeave& evt)
-{
-    VAR_DEBUG(evt);
     return forward_event();
 }
 

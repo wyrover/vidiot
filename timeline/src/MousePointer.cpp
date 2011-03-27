@@ -33,6 +33,8 @@ IMPLEMENTENUM(MousePointerImage);
 
 MousePointer::MousePointer(Timeline* timeline)
 :   Part(timeline)
+,   mLeft(-1,-1)
+,   mRight(-1,-1)
 {
     VAR_DEBUG(this);
 
@@ -81,6 +83,10 @@ MousePointer::~MousePointer()
     VAR_DEBUG(this);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
 void MousePointer::set(MousePointerImage image)
 {
     switch (image)
@@ -118,6 +124,28 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
     }
 
     return info;
+}
+
+void MousePointer::setLeftDownPosition(wxPoint position)
+{
+    VAR_DEBUG(mLeft)(position);
+    mLeft = position;
+}
+
+wxPoint MousePointer::getLeftDownPosition() const
+{
+    return mLeft;
+}
+
+void MousePointer::setRightDownPosition(wxPoint position)
+{
+    VAR_DEBUG(mRight)(position);
+    mRight = position;
+}
+
+wxPoint MousePointer::getRightDownPosition() const
+{
+    return mRight;
 }
 
 }} // namespace

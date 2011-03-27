@@ -29,13 +29,6 @@ MoveDivider::~MoveDivider() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-boost::statechart::result MoveDivider::react( const EvLeftDown& evt )
-{
-    VAR_DEBUG(evt);
-    FATAL("Unexpected event.");
-    return forward_event();
-}
-
 boost::statechart::result MoveDivider::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
@@ -66,12 +59,6 @@ boost::statechart::result MoveDivider::react( const EvKeyDown& evt)
         getTooltip().show(sTooltip);
         break;
     }
-    return forward_event();
-}
-
-boost::statechart::result MoveDivider::react( const EvKeyUp& evt)
-{
-    VAR_DEBUG(evt);
     return forward_event();
 }
 
