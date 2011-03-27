@@ -52,22 +52,13 @@ protected:
 };
 
 //////////////////////////////////////////////////////////////////////////
-// FORWARD DECLARATION OF ALL STATES FOR TIMELINE
-//////////////////////////////////////////////////////////////////////////
-
-class Always;
-class Idle;
-class Dragging;
-class MovingCursor;
-class Playing;
-class TestDragStart;
-
-//////////////////////////////////////////////////////////////////////////
 // MACHINE
 //////////////////////////////////////////////////////////////////////////
 
+class StateTop;
+
 class Machine
-    :   public boost::statechart::state_machine< Machine, Always >
+    :   public boost::statechart::state_machine< Machine, StateTop >
 {
 public:
     Machine(Timeline& tl);
@@ -76,23 +67,23 @@ public:
 
 private:
 
-    void OnMotion           (wxMouseEvent& event);
-    void OnLeftDown         (wxMouseEvent& event);
-    void OnLeftUp           (wxMouseEvent& event);
-    void OnLeftDouble       (wxMouseEvent& event);
-    void OnMiddleDown       (wxMouseEvent& event);
-    void OnMiddleUp         (wxMouseEvent& event);
-    void OnMiddleDouble     (wxMouseEvent& event);
-    void OnRightDown        (wxMouseEvent& event);
-    void OnRightUp          (wxMouseEvent& event);
-    void OnRightDouble      (wxMouseEvent& event);
-    void OnEnter            (wxMouseEvent& event);
-    void OnLeave            (wxMouseEvent& event);
-    void OnWheel            (wxMouseEvent& event);
-    void OnKeyDown          (wxKeyEvent&   event);
-    void OnKeyUp            (wxKeyEvent&   event);
-    void OnCaptureLost      (wxMouseCaptureLostEvent& event);
-    void OnCaptureChanged   (wxMouseCaptureChangedEvent& event);
+    void onMotion           (wxMouseEvent& event);
+    void onLeftDown         (wxMouseEvent& event);
+    void onLeftUp           (wxMouseEvent& event);
+    void onLeftDouble       (wxMouseEvent& event);
+    void onMiddleDown       (wxMouseEvent& event);
+    void onMiddleUp         (wxMouseEvent& event);
+    void onMiddleDouble     (wxMouseEvent& event);
+    void onRightDown        (wxMouseEvent& event);
+    void onRightUp          (wxMouseEvent& event);
+    void onRightDouble      (wxMouseEvent& event);
+    void onEnter            (wxMouseEvent& event);
+    void onLeave            (wxMouseEvent& event);
+    void onWheel            (wxMouseEvent& event);
+    void onKeyDown          (wxKeyEvent&   event);
+    void onKeyUp            (wxKeyEvent&   event);
+    void onCaptureLost      (wxMouseCaptureLostEvent& event);
+    void onCaptureChanged   (wxMouseCaptureChangedEvent& event);
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -156,6 +147,9 @@ struct EvDragEnter  : EvDrag< EvDragEnter > { EvDragEnter(int x, int y) : EvDrag
 struct EvDragMove   : EvDrag< EvDragMove >  { EvDragMove(int x, int y)  : EvDrag<EvDragMove> (x,y) {} };
 struct EvDragDrop   : EvDrag< EvDragDrop >  { EvDragDrop(int x, int y)  : EvDrag<EvDragDrop> (x,y) {} };
 struct EvDragEnd    : EvDrag< EvDragEnd >   { EvDragEnd(int x, int y)   : EvDrag<EvDragEnd>  (x,y) {} };
+
+// todo evt zoom changed vooral ook vror dragstate
+// todo evt scroll changed
 
 //////////////////////////////////////////////////////////////////////////
 // KEY EVENTS

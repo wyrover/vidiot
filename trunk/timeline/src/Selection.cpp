@@ -45,7 +45,7 @@ void Selection::onClipsRemoved( model::EventRemoveClips& event )
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void Selection::updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
@@ -125,6 +125,33 @@ void Selection::update(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed,
             selectClipAndLink(clip, true);
             setPreviouslyClicked(clip);
         }
+    }
+    else
+    {
+        setPreviouslyClicked(model::ClipPtr()); // reset
+    }
+}
+
+void Selection::updateOnRightClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+{
+    model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
+
+    // Must be determined before deselecting all clips.
+    bool currentClickedClipIsSelected = clip ? clip->getSelected() : false;
+
+    // Deselect clips first, in certain cases
+    if (!ctrlPressed && (!clip || !clip->getSelected()))
+    {
+        BOOST_FOREACH( model::ClipPtr c, getClips() )
+        {
+            c->setSelected(false);
+        }
+    }
+
+    if (clip)
+    {
+        selectClipAndLink(clip, true);
+        setPreviouslyClicked(clip);
     }
     else
     {

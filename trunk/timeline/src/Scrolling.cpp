@@ -37,9 +37,9 @@ wxPoint Scrolling::getOffset() const
     return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 
-void Scrolling::align(pts position, pixel unscrolledPixel)
+void Scrolling::align(pts position, pixel physicalPosition)
 {
-    pixel diff = ptsToPixel(position) - unscrolledPixel;
+    pixel diff = ptsToPixel(position) - physicalPosition;
     if (diff != 0)
     {
         int x;
@@ -54,7 +54,7 @@ pixel Scrolling::ptsToPixel(pts position) const
     return getTimeline().CalcScrolledPosition(wxPoint(getZoom().ptsToPixels(position),0)).x;
 }
 
-wxPoint Scrolling::getPhysicalPosition(wxPoint position) const
+wxPoint Scrolling::getVirtualPosition(wxPoint position) const
 {
     wxPoint p;
     getTimeline().CalcUnscrolledPosition(position.x,position.y,&p.x,&p.y);

@@ -1,15 +1,24 @@
 #include "Menu.h"
 
+#include <wx/window.h>
 #include "UtilLog.h"
 #include "GuiWindow.h"
 #include "GuiTimeLinesView.h"
 #include "CreateVideoTrack.h"
 #include "CreateAudioTrack.h"
+#include "PositionInfo.h"
+#include "Clip.h"
+#include "MousePointer.h"
 #include "Intervals.h"
 #include "Timeline.h"
 #include "ids.h"
 
 namespace gui { namespace timeline {
+
+enum {
+    meID_ADD_TRANSITION = wxID_HIGHEST+1,
+    meID_REMOVE_EMPTY,
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -82,6 +91,36 @@ void MenuHandler::updateItems()
     mMenu.Enable( ID_DELETEMARKED,   !getIntervals().isEmpty() );
     mMenu.Enable( ID_DELETEUNMARKED, !getIntervals().isEmpty() );
     mMenu.Enable( ID_REMOVEMARKERS,  !getIntervals().isEmpty() );
+}
+
+void MenuHandler::Popup()
+{
+    PointerPositionInfo info = getMousePointer().getInfo(wxGetMouseState().GetPosition());
+
+    // Mechanism:
+    // Default menu options are hidden and enabled.
+    // If an item is selected for which a menu option makes sense, then the option is shown.
+    // If an item is selected for which a menu option does not make sense, then the option is disabled.
+
+    bool showAddTransition = true;
+    bool showRemoveEmpty = info.clip && info.clip->isA<model::EmptyClip>();
+
+    bool enableAddTransition = info.clip && !info.clip->isA<model::EmptyClip>();
+    bool enableRemoveEmpty = info.clip && info.clip->isA<model::EmptyClip>();
+
+    wxMenu menu;
+    menu.Append( meID_ADD_TRANSITION, _("&Add Transition") );
+    menu.Enable( meID_ADD_TRANSITION, enableAddTransition );
+    menu.Append( meID_REMOVE_EMPTY,   _("&Remove empty space") );
+    menu.Enable( meID_REMOVE_EMPTY, enableRemoveEmpty );
+    menu.AppendSeparator();
+
+    //menu.AppendSeparator();
+    //pAddMenu = menu.AppendSubMenu(&addMenu,_("&Add"));
+    //menu.AppendSeparator();
+    //pCreateMenu = menu.AppendSubMenu(&createMenu,_("&New"));
+
+    getTimeline().PopupMenu(&menu);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -15,8 +15,8 @@ typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves m
 
 namespace gui { namespace timeline { namespace state {
 
-class TestDragStart
-    :   public TimeLineState< TestDragStart, Always >
+class StateLeftDown
+    :   public TimeLineState< StateLeftDown, StateTop::orthogonal<0> >
 {
 public:
 
@@ -24,9 +24,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    TestDragStart( my_context ctx );
+    StateLeftDown( my_context ctx );
 
-    ~TestDragStart();
+    ~StateLeftDown();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftUp >,

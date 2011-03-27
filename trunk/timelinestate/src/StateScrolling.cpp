@@ -4,14 +4,16 @@
 #include "UtilLog.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
+#include "Menu.h"
 #include "Timeline.h"
+#include "MousePointer.h"
 #include "Scrolling.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {
 
     const wxString sTooltip = _(
-        "\n" \
+        "Drag mouse left/right to move the view\n" \
         );
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,13 +26,6 @@ StateScrolling::StateScrolling( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
     LOG_DEBUG; 
-
-    const EvRightDown* event = dynamic_cast<const EvRightDown*>(triggering_event());
-    ASSERT(event); // Only way to get here is to press left button in the Idle state
-
-    mPosition = getZoom().pixelsToPts(event->mPosition.x);
-    // We need the position when the mouse button is clicked, not the position of the first motion.
-    // Hence, there is no 'test start scrolling' state.
 }
 
 StateScrolling::~StateScrolling() // exit
@@ -51,7 +46,7 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
 boost::statechart::result StateScrolling::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getScrolling().align(mPosition, getZoom().pixelsToPts(evt.mPosition.x));
+    getScrolling().align(getZoom().pixelsToPts(getMousePointer().getRightDownPosition().x), evt.mWxEvent.GetPosition().x);
     return forward_event();
 }
 

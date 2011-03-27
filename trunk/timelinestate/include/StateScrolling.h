@@ -8,7 +8,7 @@
 namespace gui { namespace timeline { namespace state {
 
 class StateScrolling 
-    :   public TimeLineState< StateScrolling, Machine >
+    :   public TimeLineState< StateScrolling, StateTop::orthogonal<0> >
 {
 public:
 
@@ -35,14 +35,6 @@ public:
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvLeave& evt );
     boost::statechart::result react( const EvKeyDown& evt );
-
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    pts mPosition;
 };
 
 }}} // namespace

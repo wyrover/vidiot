@@ -6,6 +6,7 @@
 #include "Timeline.h"
 #include "StateTestDragStart.h"
 #include "StateMovingCursor.h"
+#include "StateRightDown.h"
 #include "StatePlaying.h"
 #include "Drag.h"
 #include "StateDragging.h"
@@ -52,7 +53,6 @@ Idle::~Idle() // exit
 boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    getWindow().SetFocus(); /** @todo make more generic, for all states */
     PointerPositionInfo info = getMousePointer().getInfo(evt.mPosition);
 
     if (info.onAudioVideoDivider)
@@ -65,7 +65,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
     }
     else
     {
-        getSelection().update(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
+        getSelection().updateOnLeftClick(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
         if (info.clip && !info.clip->isA<model::EmptyClip>())
         {
             switch (info.logicalclipposition)
@@ -76,7 +76,7 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
                 return transit<Trim>();
                 break;
             case ClipInterior:
-                return transit<TestDragStart>();
+                return transit<StateLeftDown>();
                 break;
             case ClipEnd:
                 return transit<Trim>();
@@ -98,8 +98,21 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
 boost::statechart::result Idle::react( const EvRightDown& evt )
 {
     VAR_DEBUG(evt);
-    getWindow().SetFocus(); /** @todo make more generic, for all states */
-    return transit<StateScrolling>();
+    PointerPositionInfo info = getMousePointer().getInfo(evt.mPosition);
+
+    if (info.onAudioVideoDivider)
+    {
+        // Keep selection intact
+    }
+    else if (info.onTrackDivider)
+    {
+        // Keep selection intact
+    }
+    else
+    {
+        getSelection().updateOnRightClick(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
+    }
+    return transit<StateRightDown>();
 }
 
 boost::statechart::result Idle::react( const EvMotion& evt )
