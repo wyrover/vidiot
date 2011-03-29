@@ -37,7 +37,7 @@ public:
 
     void updateItems();
 
-    void Popup();
+    void Popup(wxPoint position);
 
     //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU
@@ -49,6 +49,12 @@ public:
     void onDeleteUnmarked(wxCommandEvent& WXUNUSED(event));
     void onRemoveMarkers(wxCommandEvent& WXUNUSED(event));
     void onCloseSequence(wxCommandEvent& WXUNUSED(event));
+
+    //////////////////////////////////////////////////////////////////////////
+    // POPUP MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void onAddTransition(wxCommandEvent& WXUNUSED(event));
 
 private:
 

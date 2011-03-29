@@ -12,6 +12,9 @@ enum
     ID_CLOSESEQUENCE,
     // Options menu
     ID_OPTIONS,
+    // Timelne popup menu
+    meID_ADD_TRANSITION,
+    meID_REMOVE_EMPTY,
 };
 
 #endif // IDS_H

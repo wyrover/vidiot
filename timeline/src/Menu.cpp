@@ -1,24 +1,26 @@
 #include "Menu.h"
 
 #include <wx/window.h>
+#include <set>
+#include <boost/foreach.hpp>
+#include <boost/assign/list_of.hpp>
 #include "UtilLog.h"
+#include "Selection.h"
 #include "GuiWindow.h"
 #include "GuiTimeLinesView.h"
+#include "Track.h"
 #include "CreateVideoTrack.h"
+#include "CreateTransition.h"
 #include "CreateAudioTrack.h"
 #include "PositionInfo.h"
 #include "Clip.h"
+#include "Zoom.h"
 #include "MousePointer.h"
 #include "Intervals.h"
 #include "Timeline.h"
 #include "ids.h"
 
 namespace gui { namespace timeline {
-
-enum {
-    meID_ADD_TRANSITION = wxID_HIGHEST+1,
-    meID_REMOVE_EMPTY,
-};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -52,6 +54,10 @@ MenuHandler::MenuHandler(Timeline* timeline)
     wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
     notebook->Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &MenuHandler::onPageChanged, this);
 
+    // Popup menu items
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,             this, meID_ADD_TRANSITION);
+
+
     updateItems();
 
     GuiWindow::get()->setSequenceMenu(getMenu());
@@ -73,6 +79,8 @@ MenuHandler::~MenuHandler()
 
     GuiWindow::get()->Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,             this, meID_ADD_TRANSITION);
+
     GuiWindow::get()->setSequenceMenu(0); // If this is NOT the last timeline to be closed, then a onPageChanged event will reset the menu to that other timeline
 
 }
@@ -93,32 +101,81 @@ void MenuHandler::updateItems()
     mMenu.Enable( ID_REMOVEMARKERS,  !getIntervals().isEmpty() );
 }
 
-void MenuHandler::Popup()
+void MenuHandler::Popup(wxPoint position)
 {
-    PointerPositionInfo info = getMousePointer().getInfo(wxGetMouseState().GetPosition());
+    PointerPositionInfo info = getMousePointer().getInfo(position);
 
     // Mechanism:
     // Default menu options are hidden and enabled.
     // If an item is selected for which a menu option makes sense, then the option is shown.
     // If an item is selected for which a menu option does not make sense, then the option is disabled.
 
-    bool showAddTransition = true;
-    bool showRemoveEmpty = info.clip && info.clip->isA<model::EmptyClip>();
+    std::set<model::ClipPtr> selectedClips = getSelection().getClips();
+
+    bool showAddTransition = false;
+    bool showRemoveEmpty = false;
 
     bool enableAddTransition = info.clip && !info.clip->isA<model::EmptyClip>();
-    bool enableRemoveEmpty = info.clip && info.clip->isA<model::EmptyClip>();
+    bool enableRemoveEmpty = true;
+
+    BOOST_FOREACH( model::ClipPtr clip, selectedClips )
+    {
+        if (clip->isA<model::EmptyClip>())
+        {
+            showRemoveEmpty = true;
+        }
+        else
+        {
+            enableRemoveEmpty = false;
+        }
+    }
+
+
+    if (info.onAudioVideoDivider)
+    {
+    }
+    else if (info.onTrackDivider)
+    {
+    }
+    else
+    {
+        if (info.clip)
+        {
+            switch (info.logicalclipposition)
+            {
+            case ClipBegin:
+                showAddTransition = true;
+                break;
+            case ClipInterior:
+                break;
+            case ClipEnd:
+                showAddTransition = true;
+                break;
+            default:
+                FATAL("Unexpected logical clip position.");
+            }
+        }
+    }
+
 
     wxMenu menu;
-    menu.Append( meID_ADD_TRANSITION, _("&Add Transition") );
-    menu.Enable( meID_ADD_TRANSITION, enableAddTransition );
-    menu.Append( meID_REMOVE_EMPTY,   _("&Remove empty space") );
-    menu.Enable( meID_REMOVE_EMPTY, enableRemoveEmpty );
+    if (showAddTransition)
+    {
+        menu.Append( meID_ADD_TRANSITION, _("&Add Transition") );
+        menu.Enable( meID_ADD_TRANSITION, enableAddTransition );
+    }
+    if (showRemoveEmpty)
+    {
+        menu.Append( meID_REMOVE_EMPTY,   _("&Remove empty space") );
+        menu.Enable( meID_REMOVE_EMPTY, enableRemoveEmpty );
+    }
     menu.AppendSeparator();
 
     //menu.AppendSeparator();
     //pAddMenu = menu.AppendSubMenu(&addMenu,_("&Add"));
     //menu.AppendSeparator();
     //pCreateMenu = menu.AppendSubMenu(&createMenu,_("&New"));
+    //menu.UpdateUI(&getWindow());
 
     getTimeline().PopupMenu(&menu);
 }
@@ -163,6 +220,39 @@ void MenuHandler::onCloseSequence(wxCommandEvent& WXUNUSED(event))
     LOG_INFO;
     GuiTimelinesView& tv = GuiWindow::get()->getTimeLines();
     tv.Close();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// POPUP MENU
+//////////////////////////////////////////////////////////////////////////
+
+void MenuHandler::onAddTransition(wxCommandEvent& WXUNUSED(event))
+{
+    LOG_INFO;
+    PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getRightDownPosition());
+    // todo: direct right down after open timeline not received in statealways....
+    ASSERT(info.clip)(info);
+
+    model::ClipPtr firstClip;
+    model::ClipPtr secondClip;
+
+    model::Clips clips;
+    switch (info.logicalclipposition)
+    {
+    case ClipBegin:
+        clips = boost::assign::list_of(info.track->getPreviousClip(info.clip))(info.clip);
+        break;
+    case ClipInterior:
+        break;
+    case ClipEnd:
+        clips = boost::assign::list_of(info.clip)(info.track->getNextClip(info.clip));
+        break;
+    default:
+        FATAL("Unexpected logical clip position.");
+    }
+
+    getTimeline().Submit(new command::CreateTransition(getTimeline(), clips));
 }
 
 //////////////////////////////////////////////////////////////////////////

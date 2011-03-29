@@ -1,14 +1,15 @@
-#ifndef MODEL_VIDEO_CLIP_H
-#define MODEL_VIDEO_CLIP_H
+#ifndef MODEL_VIDEO_TRANSITION_H
+#define MODEL_VIDEO_TRANSITION_H
 
-#include "Clip.h"
-#include "IVideo.h"
+#include "IControl.h"
 
 namespace model {
 
-class VideoClip
-    :   public Clip
-    ,   public IVideo
+class VideoFrame;
+typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
+
+class VideoTransition
+    :   public IControl
 {
 public:
 
@@ -16,18 +17,21 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoClip();
+    VideoTransition();
 
-    VideoClip(IControlPtr clip);
+    VideoTransition(Clips clips, pts length);
 
-    virtual VideoClip* clone();
+    virtual VideoTransition* clone();
 
-    virtual ~VideoClip();
+	virtual ~VideoTransition();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
+    virtual pts getLength();
+    virtual void moveTo(pts position);
+    virtual wxString getDescription() const;
     virtual void clean();
 
     //////////////////////////////////////////////////////////////////////////
@@ -44,7 +48,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoClip(const VideoClip& other);
+    VideoTransition(const VideoTransition& other);
 
 private:
 
@@ -52,13 +56,14 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress; ///< Current render position in pts units (delivered video frames count)
+    Clips mClips;
+    pts mLength;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoClip& obj );
+    friend std::ostream& operator<<( std::ostream& os, const VideoTransition& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -72,10 +77,11 @@ private:
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-#include  <boost/preprocessor/slot/counter.hpp>
-#include BOOST_PP_UPDATE_COUNTER()
-#line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::VideoClip, 1)
-BOOST_CLASS_EXPORT(model::VideoClip)
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
+BOOST_CLASS_VERSION(model::VideoTransition, 1)
+BOOST_CLASS_EXPORT(model::VideoTransition)
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(boost::enable_shared_from_this<VideoTransition>)
 
-#endif // MODEL_VIDEO_CLIP_H
+#endif // MODEL_VIDEO_TRANSITION_H

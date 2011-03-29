@@ -14,7 +14,6 @@ namespace model {
 namespace gui { namespace timeline {
 
 DECLAREENUM(MouseOnClipPosition, \
-            ClipBetween, \
             ClipBegin, \
             ClipInterior, \
             ClipEnd);
