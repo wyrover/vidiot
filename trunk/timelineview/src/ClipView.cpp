@@ -95,25 +95,13 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     int dist_begin = position.x - getLeftPosition();
     int dist_end = getRightPosition() - position.x;
 
-    if (dist_begin <= 1)
-    {
-        // Possibly between clips. However, this is only relevant if there
-        // is another nonempty clip adjacent to this clip.
-        model::ClipPtr previous = info.track->getPreviousClip(info.clip);
-        info.logicalclipposition = (!previous || previous->isA<model::EmptyClip>()) ? ClipBegin : ClipBetween;
-    }
-    else if (dist_end <= 1)
-    {
-        // Possibly between clips. However, this is only relevant if there
-        // is another nonempty clip adjacent to this clip.
-        model::ClipPtr next = info.track->getNextClip(info.clip);
-        info.logicalclipposition = (!next || next->isA<model::EmptyClip>()) ? ClipEnd : ClipBetween;
-    }
-    else if ((dist_begin > 1) && (dist_begin < 10))
+    ASSERT(dist_begin >= 0 && dist_end >= 0)(dist_begin)(dist_end);
+
+    if (dist_begin < 10)
     {
         info.logicalclipposition = ClipBegin;
     }
-    else if ((dist_end > 1) && (dist_end < 10))
+    else if (dist_end < 10)
     {
         info.logicalclipposition = ClipEnd;
     }

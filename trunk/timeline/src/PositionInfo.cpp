@@ -14,7 +14,7 @@ PointerPositionInfo::PointerPositionInfo()
 ,   trackPosition(0)
 ,   onTrackDivider(false)
 ,   clip(model::ClipPtr())
-,   logicalclipposition(ClipBetween)
+,   logicalclipposition(ClipInterior)
 {
 }
 

@@ -133,8 +133,6 @@ void TrackView::setShift(pts position, pts length)
     invalidateBitmap();
 }
 
-
-
 void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
 {
     wxPoint adjustedPosition(position); // todo adjust: make into one method

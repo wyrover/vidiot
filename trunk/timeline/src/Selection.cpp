@@ -168,17 +168,7 @@ void Selection::deleteClips()
 std::set<model::ClipPtr> Selection::getClips() const
 {
     std::set<model::ClipPtr> selectedclips;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
-    {
-        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
-        {
-            if (clip->getSelected())
-            {
-                selectedclips.insert(clip);
-            }
-        }
-    }
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
         {

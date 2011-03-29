@@ -18,7 +18,7 @@ public:
 
     VideoClip();
 
-    VideoClip(VideoFilePtr clip);
+    VideoClip(IControlPtr clip);
 
     virtual VideoClip* clone();
 

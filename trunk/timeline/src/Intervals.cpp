@@ -22,7 +22,6 @@
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
 #include "UtilSerializeWxwidgets.h"
-#include "ids.h"
 #include "Menu.h"
 #include "Cursor.h"
 #include "ViewMap.h"

@@ -18,7 +18,7 @@ VideoClip::VideoClip()
     VAR_DEBUG(this);
 }
 
-VideoClip::VideoClip(VideoFilePtr file)
+VideoClip::VideoClip(IControlPtr file)
     :	Clip(file)
     ,   mProgress(0)
 {

@@ -4,7 +4,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "Timeline.h"
-#include "StateTestDragStart.h"
+#include "StateLeftDown.h"
 #include "StateMovingCursor.h"
 #include "StateRightDown.h"
 #include "StatePlaying.h"
@@ -70,8 +70,6 @@ boost::statechart::result Idle::react( const EvLeftDown& evt )
         {
             switch (info.logicalclipposition)
             {
-            case ClipBetween :
-                break;
             case ClipBegin:
                 return transit<Trim>();
                 break;
@@ -137,7 +135,6 @@ boost::statechart::result Idle::react( const EvMotion& evt )
                 switch (info.logicalclipposition)
                 {
                 case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
-                case ClipBetween:    image = PointerMoveCut;     break;
                 case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
                 }
             }

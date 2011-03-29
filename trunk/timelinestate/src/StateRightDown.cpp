@@ -33,11 +33,17 @@ StateRightDown::~StateRightDown() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+boost::statechart::result StateRightDown::react( const EvRightDown& evt )
+{
+    VAR_DEBUG(evt);
+    return transit<Idle>();
+}
+
 boost::statechart::result StateRightDown::react( const EvRightUp& evt )
 {
     VAR_DEBUG(evt);
     mPopup = true;
-    getMenuHandler().Popup();
+    getMenuHandler().Popup(evt.mWxEvent.GetPosition());
     mPopup = false;
     return transit<Idle>();
 }
