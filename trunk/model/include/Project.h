@@ -6,7 +6,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/shared_ptr.hpp>
 #include "RootCommand.h"
-#include "ModelPtr.h"
 #include "UtilEvent.h"
 
 class Work;
@@ -14,12 +13,17 @@ typedef boost::shared_ptr<Work> WorkPtr;
 
 namespace model {
 
+    // FORWARD DECLARATIONS
+    class Folder;
+    typedef boost::shared_ptr<Folder> FolderPtr;
+    class Properties;
+    typedef boost::shared_ptr<Properties> PropertiesPtr;
+    class FSWatcher;    
+    class ProjectWorker;
+    class Project;
+
 DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,   model::Project*);
 DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,  model::Project*);
-
-class FSWatcher;    
-class ProjectWorker;
-
 
 /// \class Project
 /// This class is not managed via shared_ptr's since it's construction/destruction

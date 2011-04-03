@@ -13,6 +13,7 @@
 #include "CreateTransition.h"
 #include "CreateAudioTrack.h"
 #include "PositionInfo.h"
+#include "EmptyClip.h"
 #include "Clip.h"
 #include "Zoom.h"
 #include "MousePointer.h"

@@ -3,6 +3,7 @@
 
 #include <wx/event.h>
 #include <set>
+#include <list>
 #include <boost/serialization/split_member.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/make_shared.hpp>
@@ -11,6 +12,18 @@
 #include "UtilLog.h"
 
 namespace model {
+
+// FORWARD DECLARATIONS
+class Track;
+typedef boost::shared_ptr<Track> TrackPtr;
+typedef std::list<TrackPtr> Tracks;
+class Clip;
+typedef boost::shared_ptr<Clip> ClipPtr;
+typedef boost::weak_ptr<Clip> WeakClipPtr;
+typedef std::list<ClipPtr> Clips;
+struct MoveParameter;
+typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
+typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
 
 struct MoveParameter
 {
@@ -92,7 +105,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-	Track();
+    Track();
 
     virtual Track* clone();
 
@@ -187,14 +200,14 @@ private:
     int mHeight;    ///< Height of this track when viewed in a timeline
     int mIndex;     ///< Index in the list of video/audio tracks
 
-	//////////////////////////////////////////////////////////////////////////
-	// HELPER METHODS
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
 public://TODO
-	/// Updates the clips after insertion/removal etc.
-	/// - Updates the pts'es for all clips in this track
-	/// - Updates the clip's track pointer to this track
-	void updateClips();
+    /// Updates the clips after insertion/removal etc.
+    /// - Updates the pts'es for all clips in this track
+    /// - Updates the clip's track pointer to this track
+    void updateClips();
 private://TODO
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

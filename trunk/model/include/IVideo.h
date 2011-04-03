@@ -1,16 +1,17 @@
 #ifndef MODEL_I_VIDEO_H
 #define MODEL_I_VIDEO_H
 
-#include "VideoFrame.h"
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
-#include "FrameRate.h"
-#include "ModelPtr.h"
+#include "UtilFrameRate.h"
 
 namespace model {
+
+class VideoFrame;
+typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 
 class IVideo
 {

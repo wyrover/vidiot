@@ -9,7 +9,7 @@
 #include <wx/spinctrl.h>
 #include <boost/optional.hpp>
 #include <boost/tuple/tuple.hpp>
-#include "FrameRate.h"
+#include "UtilFrameRate.h"
 
 namespace gui {
 

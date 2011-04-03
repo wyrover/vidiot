@@ -16,6 +16,7 @@ extern "C" {
 #include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
+#include "AudioChunk.h"
 #include "AProjectViewNode.h"
 
 namespace model

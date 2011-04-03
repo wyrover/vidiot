@@ -6,6 +6,10 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class VideoClip;
+typedef boost::shared_ptr<VideoClip> VideoClipPtr;
+
 class VideoClip
     :   public Clip
     ,   public IVideo
@@ -68,6 +72,8 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+
+typedef boost::shared_ptr<VideoClip> VideoClipPtr;
 
 } // namespace
 

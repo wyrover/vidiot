@@ -6,6 +6,10 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class VideoTrack;
+typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
+
 class VideoTrack
     :   public Track
     ,   public IVideo
@@ -48,7 +52,7 @@ protected:
 
 private:
 
-    int64_t mPts;
+    pts mPts;
 
 
     //////////////////////////////////////////////////////////////////////////

@@ -8,6 +8,10 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class AutoFolder;
+typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
+
 class AutoFolder
     :   public Folder
 {

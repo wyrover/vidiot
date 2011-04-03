@@ -2,8 +2,17 @@
 #define PROJECT_VIEW_COMMAND_H
 
 #include <vector>
+#include <list>
+#include <boost/shared_ptr.hpp>
 #include "RootCommand.h"
-#include "ModelPtr.h"
+
+namespace model {
+    // FORWARD DECLARATIONS
+    class AProjectViewNode;
+    typedef AProjectViewNode* ProjectViewId;
+    typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+    typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+}
 
 namespace command {
 

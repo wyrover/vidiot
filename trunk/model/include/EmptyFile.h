@@ -7,6 +7,10 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class EmptyFile;
+typedef boost::shared_ptr<EmptyFile> EmptyFilePtr;
+
 class EmptyFile
     :   public IControl
     ,   public IAudio
@@ -19,9 +23,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     EmptyFile();
-	EmptyFile(pts length);
+    EmptyFile(pts length);
     virtual EmptyFile* clone();
-	virtual ~EmptyFile();
+    virtual ~EmptyFile();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL

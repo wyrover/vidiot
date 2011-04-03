@@ -7,6 +7,8 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
 #include "EmptyFile.h"
+#include "AudioChunk.h"
+#include "VideoFrame.h"
 
 namespace model {
 

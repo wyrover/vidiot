@@ -3,11 +3,16 @@
 
 #include <map>
 #include <wx/panel.h>
+#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
-#include "ModelPtr.h"
 
+// FORWARD DECLARATIONS
+namespace model {
+    class Sequence;
+    typedef boost::shared_ptr<Sequence> SequencePtr;
+}
 namespace gui {
     class GuiPlayer;
     typedef boost::shared_ptr<GuiPlayer> PlayerPtr;

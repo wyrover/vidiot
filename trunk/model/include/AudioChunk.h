@@ -6,6 +6,13 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class AudioChunk;
+typedef boost::shared_ptr<AudioChunk> AudioChunkPtr;
+typedef Fifo<AudioChunkPtr> FifoAudio;
+typedef std::list<AudioChunkPtr> AudioChunks;
+std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
+
 class AudioChunk : boost::noncopyable
 {
 public:
@@ -85,11 +92,6 @@ private:
 
     friend std::ostream& operator<< (std::ostream& os, const AudioChunk& obj);
 };
-
-typedef boost::shared_ptr<AudioChunk> AudioChunkPtr;
-typedef Fifo<AudioChunkPtr> FifoAudio;
-typedef std::list<AudioChunkPtr> AudioChunks;
-std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
 
 } // namespace
 

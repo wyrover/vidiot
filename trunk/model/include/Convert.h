@@ -2,7 +2,7 @@
 #define CONVERT_H
 
 #include "UtilInt.h"
-#include "FrameRate.h"
+#include "UtilFrameRate.h"
 
 namespace model {
 

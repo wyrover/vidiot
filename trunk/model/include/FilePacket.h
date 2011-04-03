@@ -5,7 +5,8 @@
 
 struct AVPacket;
 
-class Packet : boost::noncopyable
+class Packet
+    :   boost::noncopyable
 {
 public:
 	Packet(AVPacket* packet);

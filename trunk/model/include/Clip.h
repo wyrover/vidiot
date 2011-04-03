@@ -1,7 +1,9 @@
 #ifndef MODEL_CLIP_H
 #define MODEL_CLIP_H
 
+#include <list>
 #include <boost/optional.hpp>
+#include <boost/weak_ptr.hpp>
 #include "IControl.h"
 #include "UtilLogGeneric.h"
 #include "UtilEvent.h"
@@ -10,6 +12,15 @@ namespace model {
 
 DECLARE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
 DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS, DebugEventRenderProgress, pts);
+
+class Track;
+typedef boost::shared_ptr<Track> TrackPtr;
+typedef std::list<TrackPtr> Tracks;
+
+class Clip;
+typedef boost::shared_ptr<Clip> ClipPtr;
+typedef boost::weak_ptr<Clip> WeakClipPtr;
+typedef std::list<ClipPtr> Clips;
 
 class Clip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

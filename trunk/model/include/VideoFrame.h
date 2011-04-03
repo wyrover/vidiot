@@ -1,6 +1,7 @@
 #ifndef VIDEO_FRAME_H
 #define VIDEO_FRAME_H
 
+#include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
 
@@ -14,10 +15,17 @@ extern "C" {
 
 namespace model {
 
+// FORWARD DECLARATIONS
 typedef boost::uint8_t** DataPointer;
 typedef int* LineSizePointer;
+class VideoFrame;
+typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
+typedef std::list<VideoFramePtr> VideoFrames;
+typedef Fifo<VideoFramePtr> FifoVideo;
+std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
-class VideoFrame : boost::noncopyable
+class VideoFrame
+    :   boost::noncopyable
 {
 public:
 
@@ -93,11 +101,6 @@ private:
 
     friend std::ostream& operator<< (std::ostream& os, const VideoFrame& obj);
 };
-
-typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
-typedef std::list<VideoFramePtr> VideoFrames;
-typedef Fifo<VideoFramePtr> FifoVideo;
-std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
 } // namespace
 

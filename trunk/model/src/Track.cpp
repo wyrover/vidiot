@@ -15,6 +15,7 @@
 #include "Constants.h"
 #include "Clip.h"
 #include "UtilList.h"
+#include "EmptyClip.h"
 
 namespace model {
 

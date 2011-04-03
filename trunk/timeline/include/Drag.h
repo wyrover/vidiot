@@ -6,7 +6,6 @@
 #include <wx/dnd.h>
 #include <wx/dcmemory.h>
 #include "Part.h"
-#include "UtilInt.h"
 #include "ExecuteDrop.h"
 
 namespace model {
