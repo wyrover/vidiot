@@ -1,6 +1,7 @@
 #ifndef A_PROJECT_VIEW_NODE
 #define A_PROJECT_VIEW_NODE
 
+#include <list>
 #include <wx/string.h>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
@@ -8,10 +9,15 @@
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
-#include "ModelPtr.h"
 #include "UtilEvent.h"
 
 namespace model {
+
+// FORWARD DECLARATIONS
+class AProjectViewNode;
+typedef AProjectViewNode* ProjectViewId;
+typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+typedef std::list<ProjectViewPtr> ProjectViewPtrs;
 
 //////////////////////////////////////////////////////////////////////////
 // EVENTS

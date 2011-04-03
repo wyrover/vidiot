@@ -6,6 +6,10 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class Folder;
+typedef boost::shared_ptr<Folder> FolderPtr;
+
 class Folder
     :   public AProjectViewNode
 {

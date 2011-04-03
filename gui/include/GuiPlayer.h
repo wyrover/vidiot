@@ -9,9 +9,14 @@
 #include <wx/textctrl.h>
 #include <wx/minifram.h>
 #include <boost/shared_ptr.hpp>
-#include "ModelPtr.h"
 #include "VideoDisplayEvent.h"
 #include "UtilInt.h"
+
+// FORWARD DECLARATIONS
+namespace model {
+    class Sequence;
+    typedef boost::shared_ptr<Sequence> SequencePtr;
+}
 
 namespace gui {
 

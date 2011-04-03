@@ -6,6 +6,12 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class AudioFile;
+typedef boost::shared_ptr<AudioFile> AudioFilePtr;
+class AudioClip;
+typedef boost::shared_ptr<AudioClip> AudioClipPtr;
+
 class AudioClip
     :   public Clip
     ,   public IAudio

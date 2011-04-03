@@ -3,15 +3,17 @@
 
 #include <wx/notebook.h>
 #include <wx/panel.h>
+#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
-#include "ModelPtr.h"
 
 namespace model {
     class Project;
     class EventRemoveAsset;
     class EventRenameAsset;
+    class Sequence;
+    typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 
 namespace gui {

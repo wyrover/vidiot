@@ -1,11 +1,16 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
+#include <boost/shared_ptr.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/access.hpp>
-#include "FrameRate.h"
+#include "UtilFrameRate.h"
 
 namespace model {
+
+// FORWARD DECLARATIONS
+class Properties;
+typedef boost::shared_ptr<Properties> PropertiesPtr;
 
 class Properties
 {

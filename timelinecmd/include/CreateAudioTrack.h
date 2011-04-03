@@ -1,8 +1,15 @@
 #ifndef CREATE_AUDIO_TRACK_H
 #define CREATE_AUDIO_TRACK_H
 
+#include <boost/shared_ptr.hpp>
 #include "ATimelineCommand.h"
-#include "ModelPtr.h"
+
+namespace model {
+
+    // FORWARD DECLARATIONS
+    class AudioTrack;
+    typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
+}
 
 namespace gui { namespace timeline { namespace command {
 

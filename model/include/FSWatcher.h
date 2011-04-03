@@ -6,11 +6,12 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem/path.hpp>
-#include "ModelPtr.h"
 
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() > r.GetFullPath(); }
 
 namespace model {
+    class AutoFolder;
+    class File;
 
 class FSWatcher
     :   public wxFileSystemWatcher

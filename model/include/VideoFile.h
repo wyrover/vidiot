@@ -6,6 +6,10 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class VideoFile;
+typedef boost::shared_ptr<VideoFile> VideoFilePtr;
+
 class VideoFile
     :   public File
     ,   public IVideo

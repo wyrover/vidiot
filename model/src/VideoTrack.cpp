@@ -9,6 +9,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
 #include "VideoClip.h"
+#include "VideoFrame.h"
 
 namespace model {
 

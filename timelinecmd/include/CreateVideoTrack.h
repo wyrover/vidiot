@@ -1,8 +1,14 @@
 #ifndef CREATE_VIDEO_TRACK_H
 #define CREATE_VIDEO_TRACK_H
 
+#include <boost/shared_ptr.hpp>
 #include "ATimelineCommand.h"
-#include "ModelPtr.h"
+
+namespace model {
+    // FORWARD DECLARATIONS
+    class VideoTrack;
+    typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
+}
 
 namespace gui { namespace timeline { namespace command {
 

@@ -8,15 +8,18 @@
 #include "IControl.h"
 #include "FilePacket.h"
 #include "AProjectViewNode.h"
-#include "FrameRate.h"
+#include "UtilFrameRate.h"
 
-// Forward declarations of ffmpeg types
+// FORWARD DECLARATIONS
 struct AVFormatContext;
 struct AVStream;
 struct AVCodecContext;
 enum AVMediaType;
 
 namespace model {
+
+class File;
+typedef boost::shared_ptr<File> FilePtr;
 
 class File
     :   public IControl
@@ -35,9 +38,9 @@ public:
 
     void abort();
 
-	//////////////////////////////////////////////////////////////////////////
-	// ICONTROL
-	//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    // ICONTROL
+    //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength();
     virtual void moveTo(pts position);

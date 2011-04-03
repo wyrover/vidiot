@@ -11,6 +11,7 @@
 #include "Drag.h"
 #include "StateDragging.h"
 #include "GuiPlayer.h"
+#include "EmptyClip.h"
 #include "Zoom.h"
 #include "Clip.h"
 #include "Track.h"

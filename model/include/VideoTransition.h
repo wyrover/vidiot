@@ -1,15 +1,14 @@
 #ifndef MODEL_VIDEO_TRANSITION_H
 #define MODEL_VIDEO_TRANSITION_H
 
-#include "IControl.h"
+#include "Transition.h"
+#include "IVideo.h"
 
 namespace model {
 
-class VideoFrame;
-typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
-
 class VideoTransition
-    :   public IControl
+    :   public Transition
+    ,   public IVideo
 {
 public:
 
@@ -19,20 +18,11 @@ public:
 
     VideoTransition();
 
-    VideoTransition(Clips clips, pts length);
+    VideoTransition(pts nFramesLeft, pts nFramesRight);
 
     virtual VideoTransition* clone();
 
-	virtual ~VideoTransition();
-
-    //////////////////////////////////////////////////////////////////////////
-    // ICONTROL
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual pts getLength();
-    virtual void moveTo(pts position);
-    virtual wxString getDescription() const;
-    virtual void clean();
+    virtual ~VideoTransition();
 
     //////////////////////////////////////////////////////////////////////////
     // IVIDEO
@@ -56,8 +46,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    Clips mClips;
-    pts mLength;
+    pts mPosition;      ///< Last rendered position
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -74,14 +63,15 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
+typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
+
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
+#include  <boost/preprocessor/slot/counter.hpp>
+#include BOOST_PP_UPDATE_COUNTER()
+#line BOOST_PP_COUNTER
 BOOST_CLASS_VERSION(model::VideoTransition, 1)
 BOOST_CLASS_EXPORT(model::VideoTransition)
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(boost::enable_shared_from_this<VideoTransition>)
 
 #endif // MODEL_VIDEO_TRANSITION_H

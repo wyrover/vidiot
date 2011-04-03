@@ -5,6 +5,10 @@
 
 namespace model {
 
+// FORWARD DECLARATIONS
+class EmptyChunk;
+typedef boost::shared_ptr<EmptyChunk> EmptyChunkPtr;
+
 class EmptyChunk : public AudioChunk
 {
 public:
@@ -31,8 +35,6 @@ private:
 
     bool mInitialized;
 };
-
-typedef boost::shared_ptr<EmptyChunk> EmptyChunkPtr;
 
 } // namespace
 

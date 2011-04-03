@@ -1,49 +1,41 @@
 #include "VideoTransition.h"
 
+#include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "Clip.h"
-#include "AProjectViewNode.h"
-#include "Convert.h"
-#include "Project.h"
-#include "Properties.h"
 
 namespace model {
 
-//////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
 VideoTransition::VideoTransition()
-:	IControl()
-,   mClips()
-,   mLength(0)
+    :	Transition()
+    ,   IVideo()
+    ,   mPosition(-1)
 {
-    VAR_DEBUG(*this);
+    VAR_DEBUG(this);
 }
 
-VideoTransition::VideoTransition(Clips clips, pts length)
-:	IControl()
-,   mClips(clips)
-,   mLength(length)
+VideoTransition::VideoTransition(pts nFramesLeft, pts nFramesRight)
+:   Transition(nFramesLeft,nFramesRight)
+,   IVideo()
+,   mPosition(-1)
 {
-    VAR_DEBUG(*this);
+    VAR_DEBUG(this);
 }
 
 VideoTransition::VideoTransition(const VideoTransition& other)
-:   IControl()
-,   mClips(other.mClips)
-,   mLength(other.mLength)
+:   Transition(other)
+,   IVideo()
+,   mPosition(-1)
 {
     VAR_DEBUG(*this);
 }
 
 VideoTransition* VideoTransition::clone()
-{
-    return new VideoTransition(static_cast<const VideoTransition&>(*this));
+{ 
+    return new VideoTransition(static_cast<const VideoTransition&>(*this)); 
 }
 
 VideoTransition::~VideoTransition()
@@ -52,37 +44,26 @@ VideoTransition::~VideoTransition()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// ICONTROL
-//////////////////////////////////////////////////////////////////////////
-
-pts VideoTransition::getLength()
-{
-    return mLength;
-}
-
-void VideoTransition::moveTo(pts position)
-{
-    NIY
-}
-
-wxString VideoTransition::getDescription() const
-{
-    return _("Transition");
-}
-
-void VideoTransition::clean()
-{
-    NIY
-}
-
-//////////////////////////////////////////////////////////////////////////
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
 VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr frame;
-    return frame;
+    if (getLastSetPosition())
+    {
+        mPosition = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        invalidateLastSetPosition();
+
+        // todo initialize previous and next clips here
+        //mLeft->moveTo(mLeft->getLength() - mFramesLeft + position);
+        //mRight->moveTo(position);
+
+
+    }
+
+
+    VideoFramePtr videoFrame;
+    return videoFrame;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,18 +72,19 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
 
 std::ostream& operator<<( std::ostream& os, const VideoTransition& obj )
 {
-    os << obj.mClips << '|' << obj.mLength;
+    os << static_cast<const Transition&>(obj) << '|' << obj.mPosition;
     return os;
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
+// SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
 void VideoTransition::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IControl>(*this);
+    ar & boost::serialization::base_object<Transition>(*this);
+    ar & boost::serialization::base_object<IVideo>(*this);
 }
 template void VideoTransition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void VideoTransition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

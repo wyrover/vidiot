@@ -8,7 +8,6 @@
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
 #include "ProjectViewModel.h"
-#include "ModelPtr.h"
 #include "ProjectViewDropSource.h"
 
 namespace gui {

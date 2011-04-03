@@ -1,15 +1,16 @@
 #ifndef MODEL_I_AUDIO_H
 #define MODEL_I_AUDIO_H
 
-#include "AudioChunk.h"
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
-#include "ModelPtr.h"
 
 namespace model {
+
+class AudioChunk;
+typedef boost::shared_ptr<AudioChunk> AudioChunkPtr;
 
 class IAudio
 {

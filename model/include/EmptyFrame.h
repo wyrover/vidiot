@@ -5,7 +5,12 @@
 
 namespace model {
 
-class EmptyFrame : public VideoFrame
+// FORWARD DECLARATIONS
+class EmptyFrame;
+typedef boost::shared_ptr<EmptyFrame> EmptyFramePtr;
+
+class EmptyFrame 
+    :   public VideoFrame
 {
 public:
 
@@ -31,8 +36,6 @@ private:
     
     bool mInitialized;
 };
-
-typedef boost::shared_ptr<EmptyFrame> EmptyFramePtr;
 
 } // namespace
 

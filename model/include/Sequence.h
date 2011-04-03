@@ -1,6 +1,8 @@
 #ifndef MODEL_SEQUENCE_H
 #define MODEL_SEQUENCE_H
 
+#include <map>
+#include <list>
 #include <wx/event.h>
 #include <boost/optional.hpp>
 #include <boost/serialization/shared_ptr.hpp>
@@ -11,6 +13,13 @@
 #include "UtilEvent.h"
 
 namespace model {
+
+// FORWARD DECLARATIONS
+class Track;
+typedef boost::shared_ptr<Track> TrackPtr;
+typedef std::list<TrackPtr> Tracks;
+class Sequence;
+typedef boost::shared_ptr<Sequence> SequencePtr;
 
 struct TrackChange
 {

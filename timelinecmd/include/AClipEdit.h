@@ -2,9 +2,25 @@
 #define CLIP_EDIT_H
 
 #include <map>
+#include <list>
+#include <boost/shared_ptr.hpp>
 #include "ATimelineCommand.h"
-#include "ModelPtr.h"
 #include "UtilInt.h"
+
+namespace model {
+class Track;
+typedef boost::shared_ptr<Track> TrackPtr;
+typedef std::list<TrackPtr> Tracks;
+
+class Clip;
+typedef boost::shared_ptr<Clip> ClipPtr;
+typedef boost::weak_ptr<Clip> WeakClipPtr;
+typedef std::list<ClipPtr> Clips;
+
+struct MoveParameter;
+typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
+typedef std::list<MoveParameterPtr> MoveParameters;
+}
 
 namespace gui { namespace timeline { namespace command {
 
@@ -45,7 +61,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
     // MAPPING FOR MAINTAINING LINKED CLIPS
     //////////////////////////////////////////////////////////////////////////
-    
+
     typedef std::map<model::ClipPtr, model::Clips> ReplacementMap;
 
     //////////////////////////////////////////////////////////////////////////

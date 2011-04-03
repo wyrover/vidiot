@@ -4,7 +4,16 @@
 #include <wx/dnd.h>
 #include <wx/dataview.h>
 #include <wx/frame.h>
-#include "ModelPtr.h"
+#include <list>
+#include <boost/shared_ptr.hpp>
+
+namespace model {
+    // FORWARD DECLARATIONS
+    class AProjectViewNode;
+    typedef AProjectViewNode* ProjectViewId;
+    typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+    typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+}
 
 namespace gui {
 

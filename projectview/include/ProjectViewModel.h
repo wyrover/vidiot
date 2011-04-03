@@ -5,7 +5,6 @@
 #include <wx/dataview.h>
 #include "AProjectViewNode.h"
 #include "Project.h"
-#include "ModelPtr.h"
 
 namespace gui {
 

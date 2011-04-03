@@ -19,6 +19,7 @@
 #include "EditDisplay.h"
 #include "Sequence.h"
 #include "Scrolling.h"
+#include "EmptyClip.h"
 #include "Track.h"
 #include "VideoClip.h"
 #include "ClipView.h"

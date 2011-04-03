@@ -2,12 +2,12 @@
 #define MODEL_I_CONTROL_H
 
 #include <wx/string.h>
+#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
-#include "ModelPtr.h"
 #include "UtilCloneable.h"
 #include "UtilInt.h"
 
@@ -49,6 +49,8 @@ public:
     {
     }
 };
+
+typedef boost::shared_ptr<IControl> IControlPtr;
 
 } // namespace
 
