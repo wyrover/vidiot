@@ -24,6 +24,12 @@ typedef std::list<ClipPtr> Clips;
 struct MoveParameter;
 typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
 typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
+class Transition;
+typedef boost::shared_ptr<Transition> TransitionPtr;
+typedef std::list<TransitionPtr> Transitions;
+struct TransitionMoveParameter;
+typedef boost::shared_ptr<TransitionMoveParameter> TransitionMoveParameterPtr;
+typedef std::list<TransitionMoveParameterPtr> TransitionMoveParameters; // std::list because moves must be done in a particular order.
 
 struct MoveParameter
 {
@@ -46,9 +52,8 @@ struct MoveParameter
     TrackPtr removeTrack;
 
     /// In case of undo, the removed clips must be reinserted
-    /// before this clip.If this is an uninitialized pointer,
-    /// then the clips need to be inserted at the end of
-    /// the track.
+    /// before this clip. If this is an uninitialized pointer,
+    /// then the insertion is at the end of the track.
     ClipPtr removePosition;
 
     /// Any clips to be removed from this track
@@ -86,13 +91,76 @@ struct MoveParameter
     /// This means that all additions and removals are interchanged.
     MoveParameterPtr make_inverted()
     {
-        return boost::make_shared<model::MoveParameter>(removeTrack,removePosition,removeClips,addTrack,addPosition,addClips);
+        return boost::make_shared<MoveParameter>(removeTrack,removePosition,removeClips,addTrack,addPosition,addClips);
     }
 };
 
-DECLARE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
-DECLARE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);
-DECLARE_EVENT(EVENT_HEIGHT_CHANGED, EventHeightChanged, int);
+struct TransitionMoveParameter
+{
+    /// Into this track the moved clips need to be inserted.
+    TrackPtr addTrack;
+
+    /// The moved transition must be inserted before this transition.
+    /// If this is an uninitialized pointer, then the transitions need
+    /// to be inserted at the end of the track.
+    TransitionPtr addPosition;
+
+    /// Consecutive list of transitions to be added to this track
+    /// (they'll be joined together exactly in the same order).
+    /// These transitions may also be a part of removeTransitions.
+    /// If multiple consecutive (but not directly connected) lists
+    /// need to be added, add multiple TransitionMoveParameter objects.
+    Transitions addTransitions;
+
+    /// From this track the moved transitions need to be removed.
+    TrackPtr removeTrack;
+
+    /// In case of undo, the removed transitions must be reinserted
+    /// before this transition. If this is an uninitialized pointer,
+    /// then insertion is done at the end of the track.
+    TransitionPtr removePosition;
+
+    /// Any transitions to be removed from this track
+    /// These transitions may also be a part of addTransitions.
+    /// This needs to be a consecutive list of transitions in
+    /// the current list.
+    Transitions removeTransitions;
+
+    /// Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
+    TransitionMoveParameter()
+        :   addTrack()
+        ,   addPosition()
+        ,   addTransitions()
+        ,   removeTrack()
+        ,   removePosition()
+        ,   removeTransitions()
+    {
+    }
+
+    /// Helper constructor to initialize all members in one statement.
+    TransitionMoveParameter(TrackPtr _addTrack, TransitionPtr _addPosition, Transitions _addTransitions, TrackPtr _removeTrack = TrackPtr(), TransitionPtr _removePosition = TransitionPtr(), Transitions _removeTransitions = Transitions())
+        :   addTrack(_addTrack)
+        ,   addPosition(_addPosition)
+        ,   addTransitions(_addTransitions)
+        ,   removeTrack(_removeTrack)
+        ,   removePosition(_removePosition)
+        ,   removeTransitions(_removeTransitions)
+    {
+    }
+
+    /// \return new move object that is the inverse of this object.
+    /// This means that all additions and removals are interchanged.
+    TransitionMoveParameterPtr make_inverted()
+    {
+        return boost::make_shared<TransitionMoveParameter>(removeTrack,removePosition,removeTransitions,addTrack,addPosition,addTransitions);
+    }
+};
+
+DECLARE_EVENT(EVENT_ADD_CLIPS,          EventAddClips,              MoveParameter);
+DECLARE_EVENT(EVENT_REMOVE_CLIPS,       EventRemoveClips,           MoveParameter);
+DECLARE_EVENT(EVENT_HEIGHT_CHANGED,     EventHeightChanged,         int);
+DECLARE_EVENT(EVENT_ADD_TRANSITIONS,    EventAddTransitions,        TransitionMoveParameter);
+DECLARE_EVENT(EVENT_REMOVE_TRANSITIONS, EventRemoveTransitions,     TransitionMoveParameter);
 
 class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
@@ -151,6 +219,19 @@ public:
     pts getRightEmptyArea(model::ClipPtr clip); 
 
     //////////////////////////////////////////////////////////////////////////
+    // TRANSITIONS
+    //////////////////////////////////////////////////////////////////////////
+
+    virtual void removeTransitions(Transitions transition);
+    virtual void addTransitions(Transitions transition, TransitionPtr position = TransitionPtr());
+
+    const Transitions& getTransitions();
+
+    /// Find the transition which provides the frame at the given pts.
+    /// If there is no transition at this pts then an empty Ptr is returned.
+    TransitionPtr getTransition(pts position);
+
+    //////////////////////////////////////////////////////////////////////////
     // FOR DETERMINING THE TYPE OF TRACK
     //////////////////////////////////////////////////////////////////////////
 
@@ -184,9 +265,9 @@ protected:
     // ITERATION
     //////////////////////////////////////////////////////////////////////////
 
-    bool iterate_hasClip();
-    ClipPtr iterate_getClip();
-    void iterate_nextClip();
+    bool iterate_atEnd();
+    IControlPtr iterate_get();
+    void iterate_next();
 
 private:
 
@@ -195,7 +276,11 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     Clips mClips;
+    Transitions mTransitions;
+
+    IControlPtr mItCurrent;
     Clips::const_iterator mItClips;
+    Transitions::const_iterator mItTransitions;
 
     int mHeight;    ///< Height of this track when viewed in a timeline
     int mIndex;     ///< Index in the list of video/audio tracks
@@ -208,6 +293,7 @@ public://TODO
     /// - Updates the pts'es for all clips in this track
     /// - Updates the clip's track pointer to this track
     void updateClips();
+    void updateTransitions();
 private://TODO
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -54,15 +54,15 @@ AudioChunkPtr AudioTrack::getNextAudio(int audioRate, int nAudioChannels)
 {
     AudioChunkPtr audioChunk;
 
-    while (!audioChunk && iterate_hasClip())
+    while (!audioChunk && !iterate_atEnd())
     {
-        audioChunk = boost::dynamic_pointer_cast<IAudio>(iterate_getClip())->getNextAudio(audioRate, nAudioChannels);
+        audioChunk = boost::dynamic_pointer_cast<IAudio>(iterate_get())->getNextAudio(audioRate, nAudioChannels);
         if (!audioChunk)
         {
-            iterate_nextClip();
-            if (iterate_hasClip())
+            iterate_next();
+            if (!iterate_atEnd())
             {
-                iterate_getClip()->moveTo(0);
+                iterate_get()->moveTo(0);
             }
         }
     }
