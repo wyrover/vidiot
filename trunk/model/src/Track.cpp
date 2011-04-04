@@ -14,20 +14,25 @@
 #include "UtilLogStl.h"
 #include "Constants.h"
 #include "Clip.h"
+#include "Transition.h"
 #include "UtilList.h"
 #include "EmptyClip.h"
 
 namespace model {
 
-DEFINE_EVENT(EVENT_ADD_CLIPS,      EventAddClips,      MoveParameter);
-DEFINE_EVENT(EVENT_REMOVE_CLIPS,   EventRemoveClips,   MoveParameter);
-DEFINE_EVENT(EVENT_HEIGHT_CHANGED, EventHeightChanged, int);
+DEFINE_EVENT(EVENT_ADD_CLIPS,           EventAddClips,          MoveParameter);
+DEFINE_EVENT(EVENT_REMOVE_CLIPS,        EventRemoveClips,       MoveParameter);
+DEFINE_EVENT(EVENT_HEIGHT_CHANGED,      EventHeightChanged,     int);
+DEFINE_EVENT(EVENT_ADD_TRANSITIONS,     EventAddTransitions,    TransitionMoveParameter);
+DEFINE_EVENT(EVENT_REMOVE_TRANSITIONS,  EventRemoveTransitions, TransitionMoveParameter);
 
 Track::Track()
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
+,   mItCurrent()
 ,   mItClips(mClips.end())
+,   mItTransitions(mTransitions.end())
 ,   mHeight(Constants::sDefaultTrackHeight)
 ,   mIndex(0)
 { 
@@ -38,7 +43,9 @@ Track::Track(const Track& other)
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
+,   mItCurrent()
 ,   mItClips(mClips.end())
+,   mItTransitions(mTransitions.end())
 ,   mHeight(other.mHeight)
 ,   mIndex(0)
 {
@@ -115,7 +122,8 @@ void Track::moveTo(pts position)
     }
 
     ASSERT(position <= lastFrame)(position)(lastFrame);
-    (*mItClips)->moveTo(position - firstFrame);// - 1); // -1: Counting starts at 0
+    mItCurrent = *mItClips;
+    mItCurrent->moveTo(position - firstFrame);// - 1); // -1: Counting starts at 0
 }
 
 wxString Track::getDescription() const
@@ -131,7 +139,9 @@ void Track::clean()
     {
         clip->clean();
     }
+    mItCurrent.reset();
     mItClips = mClips.end();
+    mItTransitions = mTransitions.end();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -149,7 +159,7 @@ void Track::addClips(Clips clips, ClipPtr position)
 
 	updateClips();
 
-    moveTo(0); // Required since the list iterator has become invalid.
+    moveTo(0); // Required since the iteration has become invalid.
 
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
@@ -173,7 +183,7 @@ void Track::removeClips(Clips clips)
 
 	updateClips();
 
-    moveTo(0); // Required since the list iterator has become invalid.
+    moveTo(0); // Required since the iteration has become invalid.
 
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
@@ -184,7 +194,7 @@ void Track::removeClips(Clips clips)
 	ProcessEvent(EventRemoveClips(MoveParameter(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips))); // Must be handled immediately
 }
 
-const std::list<ClipPtr>& Track::getClips()
+const Clips& Track::getClips()
 {
     return mClips;
 }
@@ -257,6 +267,66 @@ pts Track::getRightEmptyArea(model::ClipPtr clip)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// TRANSITIONS
+//////////////////////////////////////////////////////////////////////////
+
+void Track::removeTransitions(Transitions transitions)
+{
+    VAR_DEBUG(*this)(transitions);
+    BOOST_FOREACH( TransitionPtr transition, transitions )
+    {
+        transition->clean();
+        //transition->setTrack(TrackPtr(), 0);
+    }
+
+    TransitionPtr position = UtilList<TransitionPtr>(mTransitions).removeElements(transitions);
+
+    updateTransitions();
+
+    moveTo(0); // Required since the iteration has become invalid.
+
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline).
+    ProcessEvent(EventRemoveTransitions(TransitionMoveParameter(model::TrackPtr(), model::TransitionPtr(), model::Transitions(), shared_from_this(), position, transitions))); // Must be handled immediately
+}
+
+void Track::addTransitions(Transitions transitions, TransitionPtr position)
+{
+    VAR_DEBUG(*this)(position)(transitions);
+    UtilList<TransitionPtr>(mTransitions).addElements(transitions,position);
+
+    updateTransitions();
+
+    moveTo(0); // Required since the iteration has become invalid.
+
+    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
+    // the receivers of these events (typically, the view classes in the timeline).
+    ProcessEvent(EventAddTransitions(TransitionMoveParameter(shared_from_this(), position, transitions, model::TrackPtr(), model::TransitionPtr(), model::Transitions()))); // Must be handled immediately
+}
+
+const Transitions& Track::getTransitions()
+{
+    return mTransitions;
+}
+
+TransitionPtr Track::getTransition(pts position)
+{
+    //pts left = 0;
+    //pts right = left;
+    //BOOST_FOREACH( TransitionPtr transition, mTransitions )
+    //{
+    //    pts left = transition->getLeftPtsPosition();
+    //    right += length;
+    //    if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
+    //    {
+    //        return clip;
+    //    }
+    //    left += length;
+    //}
+    return TransitionPtr();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // GET & SET
 //////////////////////////////////////////////////////////////////////////
 
@@ -285,21 +355,29 @@ void Track::setIndex(int index)
 // ITERATION
 //////////////////////////////////////////////////////////////////////////
 
-bool Track::iterate_hasClip() 
+bool Track::iterate_atEnd() 
 {
-    return (mItClips != mClips.end());
+    return (mItClips == mClips.end());
 }
 
-ClipPtr Track::iterate_getClip()
+IControlPtr Track::iterate_get()
 {
-    ASSERT(iterate_hasClip());
-    return *mItClips;
+    ASSERT(mItCurrent);
+    return mItCurrent;
 }
 
-void Track::iterate_nextClip()
+void Track::iterate_next()
 {
-    ASSERT(iterate_hasClip());
+    ASSERT(!iterate_atEnd());
     mItClips++;
+    if (!iterate_atEnd())
+    {
+        mItCurrent = boost::static_pointer_cast<IControl>(*mItClips);
+    }
+    else
+    {
+        mItCurrent.reset();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -316,6 +394,10 @@ void Track::updateClips()
 		position += clip->getLength();
         index++;
 	}
+}
+
+void Track::updateTransitions()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -353,7 +435,9 @@ void Track::load(Archive & ar, const unsigned int version)
     ar & mClips;
     if (Archive::is_loading::value)
     {
+        mItCurrent.reset();
         mItClips = mClips.begin();
+        mItTransitions = mTransitions.begin();
         updateClips();
     }
 }

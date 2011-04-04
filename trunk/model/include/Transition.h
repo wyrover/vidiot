@@ -1,6 +1,7 @@
 #ifndef MODEL_TRANSITION_H
 #define MODEL_TRANSITION_H
 
+#include <list>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
@@ -11,6 +12,11 @@
 #include "IControl.h"
 
 namespace model {
+
+// FORWARD DECLARATIONS
+class Transition;
+typedef boost::shared_ptr<Transition> TransitionPtr;
+typedef std::list<TransitionPtr> Transitions;
 
 class Transition
     :   public IControl
@@ -94,8 +100,6 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
-
-typedef boost::shared_ptr<Transition> TransitionPtr;
 
 } // namespace
 

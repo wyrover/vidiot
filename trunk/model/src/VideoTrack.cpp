@@ -66,15 +66,15 @@ VideoFramePtr VideoTrack::getNextVideo(int requestedWidth, int requestedHeight, 
 {
     VideoFramePtr videoFrame;
 
-    while (!videoFrame && iterate_hasClip())
+    while (!videoFrame && !iterate_atEnd())
     {
-        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_getClip())->getNextVideo(requestedWidth, requestedHeight, alpha);
+        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_get())->getNextVideo(requestedWidth, requestedHeight, alpha);
         if (!videoFrame)
         {
-            iterate_nextClip();
-            if (iterate_hasClip())
+            iterate_next();
+            if (!iterate_atEnd())
             {
-                iterate_getClip()->moveTo(0);
+                iterate_get()->moveTo(0);
             }
         }
     }
