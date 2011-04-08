@@ -15,6 +15,7 @@ DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS, DebugEventRenderProgress, pts);
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
+typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<TrackPtr> Tracks;
 
 class Clip;
@@ -106,7 +107,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     IControlPtr mRender;    ///< The producer of audiovisual data for this clip
-    TrackPtr mTrack;        ///< Track which holds this clip
+    WeakTrackPtr mTrack;    ///< Track which holds this clip
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 

@@ -134,7 +134,6 @@ GuiPlayer::~GuiPlayer()
     if (mDisplay != 0)
     {
         mDisplay->Unbind(EVENT_PLAYBACK_POSITION, &GuiPlayer::onPlaybackPosition, this);
- //       mDisplay->moveTo(0);
         delete mDisplay;
         mDisplay = 0;
     }
@@ -230,7 +229,6 @@ void GuiPlayer::OnEnd(wxCommandEvent& WXUNUSED(event))
 void GuiPlayer::OnSpeed(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
-    /** @todo If button clicked very fast twice, the button is not depressed. */
 
     mSpeedSliderFrame = new wxMiniFrame(this, wxID_ANY, "title", wxDefaultPosition, wxDefaultSize, 0);
 

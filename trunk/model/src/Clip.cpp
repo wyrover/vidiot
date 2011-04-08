@@ -129,7 +129,7 @@ void Clip::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
 
 TrackPtr Clip::getTrack()
 {
-    return mTrack;
+    return mTrack.lock();
 }
 
 pts Clip::getLeftPts() const
@@ -167,9 +167,9 @@ void Clip::adjustBegin(pts adjustment)
     ASSERT(adjustment >= getMinAdjustBegin() && adjustment <= getMaxAdjustBegin())(adjustment)(getMinAdjustBegin())(getMaxAdjustBegin());
     mOffset += adjustment;
     mLength -= adjustment;
-    if (mTrack)
+    if (getTrack())
     {
-        mTrack->updateClips(); // \todo this is needed to adjust mLeftPtsIntrack for all clips AFTER this clip. 
+        getTrack()->updateClips(); // \todo this is needed to adjust mLeftPtsIntrack for all clips AFTER this clip. 
         // This is very inefficient....
         // we need an event signaling the changed length. THen, the track can update it's administration.
         // since mLeftPtsInTrack is TRACK administration, not clip administration.
@@ -192,9 +192,9 @@ void Clip::adjustEnd(pts adjustment)
 {
     ASSERT(adjustment >= getMinAdjustEnd() && adjustment <= getMaxAdjustEnd())(adjustment)(getMinAdjustEnd())(getMaxAdjustEnd());
     mLength += adjustment;
-    if (mTrack)
+    if (getTrack())
     {
-        mTrack->updateClips(); // \see todo in adjustbegin
+        getTrack()->updateClips(); // \see todo in adjustbegin
     }
     ASSERT(mLength <=  mRender->getLength() - mOffset)(mLength);
     VAR_DEBUG(*this)(adjustment);
@@ -256,20 +256,27 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mRender;
     ar & mOffset;
     ar & mLength;
-    ar & mTrack;
+    ar & mTrack.lock();
     ar & mLeftPtsInTrack;
-    // Links are stored as weak_ptr to avoid cyclic dependencies (leading to 
+    ar & mIndex;
+
+    // Links and tracks are stored as weak_ptr to avoid cyclic dependencies (leading to 
     // excessive memory leaks). Storing/reading is done via shared_ptr. Hence,
     // these conversions are required.
     if (Archive::is_loading::value)
     {
-        ClipPtr link;
+        IClipPtr link;
         ar & link;
         setLink(link);
+
+        TrackPtr track;
+        ar & track;
+        setTrack(track, mLeftPtsInTrack, mIndex);
     }
     else
     {
         ar & mLink.lock();
+        ar & mTrack.lock();
     }
     // NOT: mSelected. After loading, nothing is selected.
 }
