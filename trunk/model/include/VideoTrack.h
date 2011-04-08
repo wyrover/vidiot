@@ -6,7 +6,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class VideoTrack;
 typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
 
@@ -20,11 +19,11 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-	VideoTrack();
+    VideoTrack();
 
     virtual VideoTrack* clone();
 
-	virtual ~VideoTrack();
+    virtual ~VideoTrack();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL

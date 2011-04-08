@@ -30,6 +30,7 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilLog.h"
 #include "GuiMain.h"
+#include "Sequence.h"
 
 namespace gui {
 

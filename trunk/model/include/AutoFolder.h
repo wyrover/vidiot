@@ -8,7 +8,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class AutoFolder;
 typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
 
@@ -21,12 +20,10 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /** Recovery constructor. */
-    AutoFolder();
+    /// Recovery constructor.
+    AutoFolder();                       
 
-    /**
-    * @param path full path to the folder.
-    */
+    /// \param path full path to the folder.
     AutoFolder(boost::filesystem::path path);
 
     ~AutoFolder();
@@ -47,6 +44,10 @@ public:
     boost::optional<wxString> getLastModified() const;
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
     boost::filesystem::path mPath;
     boost::optional<wxString> mLastModified;

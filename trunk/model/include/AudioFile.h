@@ -4,12 +4,10 @@
 #include "File.h"
 #include "IAudio.h"
 
-// Forward declaration of ffmpeg types
 struct ReSampleContext;
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class AudioFile;
 typedef boost::shared_ptr<AudioFile> AudioFilePtr;
 

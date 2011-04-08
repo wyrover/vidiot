@@ -7,7 +7,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class EmptyClip;
 typedef boost::shared_ptr<EmptyClip> EmptyClipPtr;
 

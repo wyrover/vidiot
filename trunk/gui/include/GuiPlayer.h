@@ -9,22 +9,21 @@
 #include <wx/textctrl.h>
 #include <wx/minifram.h>
 #include <boost/shared_ptr.hpp>
-#include "VideoDisplayEvent.h"
 #include "UtilInt.h"
 
-// FORWARD DECLARATIONS
 namespace model {
-    class Sequence;
-    typedef boost::shared_ptr<Sequence> SequencePtr;
+class Sequence;
+typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 
 namespace gui {
 
 class GuiVideoDisplay;
 class EditDisplay;
+class PlaybackPositionEvent;
 
 class GuiPlayer
-:   public wxPanel
+    :   public wxPanel
 {
 public:
 
@@ -33,7 +32,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     GuiPlayer(wxWindow *parent, model::SequencePtr sequence);
-	virtual ~GuiPlayer();
+    virtual ~GuiPlayer();
 
     //////////////////////////////////////////////////////////////////////////
     // CONTROL METHODS

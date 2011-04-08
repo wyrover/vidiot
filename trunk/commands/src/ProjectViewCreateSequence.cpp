@@ -12,6 +12,8 @@
 #include "AudioClip.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
+#include "Folder.h"
+#include "Sequence.h"
 
 namespace command {
 

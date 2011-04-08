@@ -8,11 +8,10 @@
 #include <boost/shared_ptr.hpp>
 
 namespace model {
-    // FORWARD DECLARATIONS
-    class AProjectViewNode;
-    typedef AProjectViewNode* ProjectViewId;
-    typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-    typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+class AProjectViewNode;
+typedef AProjectViewNode* ProjectViewId;
+typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+typedef std::list<ProjectViewPtr> ProjectViewPtrs;
 }
 
 namespace gui {
@@ -37,7 +36,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // FROM WXDROPSOURCE
     //////////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GiveFeedback(wxDragResult effect);
 
     //////////////////////////////////////////////////////////////////////////

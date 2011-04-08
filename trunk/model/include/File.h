@@ -4,13 +4,13 @@
 #include <wx/filename.h>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/filesystem/path.hpp>
 #include "IControl.h"
-#include "FilePacket.h"
 #include "AProjectViewNode.h"
 #include "UtilFrameRate.h"
+#include "FilePacket.h"
 
-// FORWARD DECLARATIONS
 struct AVFormatContext;
 struct AVStream;
 struct AVCodecContext;

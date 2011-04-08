@@ -3,8 +3,13 @@
 
 #include <boost/filesystem/path.hpp>
 #include "ProjectViewCommand.h"
-#include "Folder.h"
-#include "Sequence.h"
+
+namespace model {
+class Folder;
+typedef boost::shared_ptr<Folder> FolderPtr;
+class Sequence;
+typedef boost::shared_ptr<Sequence> SequencePtr;
+}
 
 namespace command {
 
@@ -12,7 +17,7 @@ class ProjectViewCreateSequence
     :   public ProjectViewCommand
 {
 public:
-    
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -32,7 +37,7 @@ public:
     ProjectViewCreateSequence(model::FolderPtr folder, wxString name);
 
     ~ProjectViewCreateSequence();
-    
+
     //////////////////////////////////////////////////////////////////////////
     // WXCOMMAND
     //////////////////////////////////////////////////////////////////////////
@@ -48,6 +53,11 @@ public:
     model::SequencePtr getSequence() const;
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     wxString mName;
     model::FolderPtr mParent;
     model::FolderPtr mInputFolder;

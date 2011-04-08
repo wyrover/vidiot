@@ -16,7 +16,6 @@ extern "C" {
 
 namespace model {
 
-// FORWARD DECLARATIONS
 typedef boost::uint8_t** DataPointer;
 typedef int* LineSizePointer;
 class VideoFrame;
@@ -35,16 +34,12 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-    * Initialization and allocation.
-    */
+    /// Initialization AND allocation.
     VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase, int repeat);
 
-    /**
-    * Initialization without allocation. Used for empty frames. Then, allocation only
-    * needed when the data is needed for playback. During 'track combining' empty 
-    * frames can be ignored. This avoids needless allocation.
-    */
+    /// Initialization without allocation. Used for empty frames. Then, allocation only
+    /// needed when the data is needed for playback. During 'track combining' empty 
+    /// frames can be ignored. This avoids needless allocation.
     VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase);
 
     virtual ~VideoFrame();
@@ -68,16 +63,17 @@ public:
     // DATA ACCESS
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-    * uint8_t* data[4] 
-    * Virtual and not const due to override in EmptyFrame
-    */
+    /// Virtual and not const due to override in EmptyFrame
     virtual DataPointer getData();
 
-    /** int linesize[4] */
     LineSizePointer getLineSizes() const;
 
 protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     AVFrame* mFrame;
     PixelFormat mFormat;
     int mRepeat;

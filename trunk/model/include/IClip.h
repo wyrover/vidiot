@@ -14,7 +14,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;

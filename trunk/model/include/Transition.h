@@ -14,7 +14,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;
@@ -111,7 +110,7 @@ private:
     TrackPtr mTrack;        ///< Track which holds this transition
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
-    bool mSelected;                         ///< True if this clip is currently selected
+    bool mSelected;         ///< True if this clip is currently selected
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

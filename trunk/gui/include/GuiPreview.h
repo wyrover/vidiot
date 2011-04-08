@@ -8,21 +8,20 @@
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
 
-// FORWARD DECLARATIONS
 namespace model {
-    class Sequence;
-    typedef boost::shared_ptr<Sequence> SequencePtr;
+class Sequence;
+typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 namespace gui {
-    class GuiPlayer;
-    typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
+class GuiPlayer;
+typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
 
 namespace timeline { 
     class Timeline; 
 }
 
 class GuiPreview
-:   public wxPanel
+    :   public wxPanel
 {
 public:
 
