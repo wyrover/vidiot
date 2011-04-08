@@ -115,6 +115,7 @@ GuiPlayer::GuiPlayer(wxWindow *parent, model::SequencePtr sequence)
     sizer->Add(mEdit,           wxSizerFlags(1).Expand().Top().Center());
     sizer->Add(mStatusPanel,    wxSizerFlags(0).Expand().Bottom().Center());
     sizer->Add(mButtonsPanel,   wxSizerFlags(0).Expand().Bottom().Center());
+    sizer->Hide(mEdit);
     SetSizerAndFit(sizer);
 }
 

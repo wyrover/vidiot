@@ -13,7 +13,7 @@
 #include "Layout.h"
 #include "GuiDebugReport.h"
 
-// TODO Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
+/// \todo Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
 namespace gui {
 

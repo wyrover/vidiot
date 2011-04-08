@@ -26,7 +26,6 @@ ProjectViewDeleteAsset::~ProjectViewDeleteAsset()
     mPairs.clear();
 }
 
-/** /todo handle all cross references to this node */
 bool ProjectViewDeleteAsset::Do()
 {
     VAR_INFO(this);
