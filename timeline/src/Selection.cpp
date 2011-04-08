@@ -33,10 +33,10 @@ Selection::~Selection()
 
 void Selection::onClipsRemoved( model::EventRemoveClips& event )
 {
-    model::Clips clips = event.getValue().removeClips;
+    model::IClips clips = event.getValue().removeClips;
     if (find(clips.begin(), clips.end(), mPreviouslyClicked) != clips.end())
     {
-        setPreviouslyClicked(model::ClipPtr()); // Reset
+        setPreviouslyClicked(model::IClipPtr()); // Reset
     }
     event.Skip();
 }
@@ -45,7 +45,7 @@ void Selection::onClipsRemoved( model::EventRemoveClips& event )
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Selection::updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void Selection::updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
@@ -56,7 +56,7 @@ void Selection::updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool sh
     // Deselect all clips first, but only if control is not pressed.
     if (!ctrlPressed)
     {
-        BOOST_FOREACH( model::ClipPtr c, getClips() )
+        BOOST_FOREACH( model::IClipPtr c, getClips() )
         {
             c->setSelected(false);
         }
@@ -66,11 +66,11 @@ void Selection::updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool sh
     {
         if (altPressed)
         {
-            model::ClipPtr firstclip;
-            model::ClipPtr lastclip;
+            model::IClipPtr firstclip;
+            model::IClipPtr lastclip;
 
             /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
-            BOOST_FOREACH( model::ClipPtr c, track->getClips() )
+            BOOST_FOREACH( model::IClipPtr c, track->getClips() )
             {
                 if (c == mPreviouslyClicked)
                 {
@@ -90,10 +90,10 @@ void Selection::updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool sh
             // just selected, then the whole range is selected. If the last selected 
             // clip was deselected, then the whole range is deselected.
 
-            model::ClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(track->getClips().begin());
+            model::IClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(track->getClips().begin());
 
-            model::ClipPtr firstclip;
-            BOOST_FOREACH( model::ClipPtr c, track->getClips() )
+            model::IClipPtr firstclip;
+            BOOST_FOREACH( model::IClipPtr c, track->getClips() )
             {
                 /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
                 if (!firstclip)
@@ -128,11 +128,11 @@ void Selection::updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool sh
     }
     else
     {
-        setPreviouslyClicked(model::ClipPtr()); // reset
+        setPreviouslyClicked(model::IClipPtr()); // reset
     }
 }
 
-void Selection::updateOnRightClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void Selection::updateOnRightClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
 {
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
@@ -142,7 +142,7 @@ void Selection::updateOnRightClick(model::ClipPtr clip, bool ctrlPressed, bool s
     // Deselect clips first, in certain cases
     if (!ctrlPressed && (!clip || !clip->getSelected()))
     {
-        BOOST_FOREACH( model::ClipPtr c, getClips() )
+        BOOST_FOREACH( model::IClipPtr c, getClips() )
         {
             c->setSelected(false);
         }
@@ -155,22 +155,22 @@ void Selection::updateOnRightClick(model::ClipPtr clip, bool ctrlPressed, bool s
     }
     else
     {
-        setPreviouslyClicked(model::ClipPtr()); // reset
+        setPreviouslyClicked(model::IClipPtr()); // reset
     }
 }
 
 void Selection::deleteClips()
 {
-    setPreviouslyClicked(model::ClipPtr()); // reset
+    setPreviouslyClicked(model::IClipPtr()); // reset
     getTimeline().Submit(new command::DeleteSelectedClips(getTimeline()));
 }
 
-std::set<model::ClipPtr> Selection::getClips() const
+std::set<model::IClipPtr> Selection::getClips() const
 {
-    std::set<model::ClipPtr> selectedclips;
+    std::set<model::IClipPtr> selectedclips;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
-        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
         {
             if (clip->getSelected())
             {
@@ -185,23 +185,23 @@ std::set<model::ClipPtr> Selection::getClips() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Selection::selectClipAndLink(model::ClipPtr clip, bool selected)
+void Selection::selectClipAndLink(model::IClipPtr clip, bool selected)
 {
     selectClip(clip,selected);
-    model::ClipPtr link = clip->getLink();
+    model::IClipPtr link = clip->getLink();
     if (link)
     {
         selectClip(link,selected);
     }
 }
 
-void Selection::selectClip(model::ClipPtr clip, bool selected)
+void Selection::selectClip(model::IClipPtr clip, bool selected)
 {
     clip->setSelected(selected);
     getViewMap().getView(clip)->invalidateBitmap();
 }
 
-void Selection::setPreviouslyClicked(model::ClipPtr clip)
+void Selection::setPreviouslyClicked(model::IClipPtr clip)
 {
     if (mPreviouslyClicked && mPreviouslyClicked->getTrack())
     {

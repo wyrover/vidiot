@@ -14,7 +14,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CreateTransition(gui::timeline::Timeline& timeline, model::Clips clips);
+    CreateTransition(gui::timeline::Timeline& timeline, model::IClips clips);
 
     ~CreateTransition();
 
@@ -30,7 +30,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::Clips mClips;
+    model::IClips mClips;
 };
 
 }}} // namespace

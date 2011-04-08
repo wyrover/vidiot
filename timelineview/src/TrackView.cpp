@@ -15,6 +15,7 @@
 #include "UtilLog.h"
 #include "AProjectViewNode.h"
 #include "UtilLogStl.h"
+#include "Transition.h"
 #include "Drag.h"
 #include "Clip.h"
 #include "Selection.h"
@@ -43,7 +44,7 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
     // invalidateBitmaps calls: Bad performance and crashes
     // (view of second item added is not initialized when processing
     // the invalidateBitmap events for the first added item)
-    BOOST_FOREACH( model::ClipPtr clip, mTrack->getClips() )
+    BOOST_FOREACH( model::IClipPtr clip, mTrack->getClips() )
     {
         new ClipView(clip,this);
     }
@@ -63,7 +64,7 @@ TrackView::~TrackView()
 
     getViewMap().unregisterView(mTrack);
 
-    BOOST_FOREACH( model::ClipPtr clip, mTrack->getClips() )
+    BOOST_FOREACH( model::IClipPtr clip, mTrack->getClips() )
     {
         delete getViewMap().getView(clip);
     }
@@ -84,7 +85,7 @@ model::TrackPtr TrackView::getTrack() const
 
 void TrackView::onClipsAdded( model::EventAddClips& event )
 {
-    BOOST_FOREACH( model::ClipPtr clip, event.getValue().addClips )
+    BOOST_FOREACH( model::IClipPtr clip, event.getValue().addClips )
     {
         new ClipView(clip,this);
     }
@@ -94,7 +95,7 @@ void TrackView::onClipsAdded( model::EventAddClips& event )
 
 void TrackView::onClipsRemoved( model::EventRemoveClips& event )
 {
-    BOOST_FOREACH( model::ClipPtr clip, event.getValue().removeClips )
+    BOOST_FOREACH( model::IClipPtr clip, event.getValue().removeClips )
     {
         delete getViewMap().getView(clip);
     }
@@ -164,7 +165,7 @@ void TrackView::draw(wxBitmap& bitmap) const
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     wxPoint position(0,0);    
     bool shiftApplied = mShiftLength > 0 ? false : true;
-    BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
+    BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
     {
         if (!shiftApplied && modelclip->getLeftPts() >= mShiftPosition)
         {
@@ -172,18 +173,28 @@ void TrackView::draw(wxBitmap& bitmap) const
             shiftApplied = true;
         }
         wxBitmap bitmap = getViewMap().getView(modelclip)->getBitmap();
-        dc.DrawBitmap(bitmap,position);
-        position.x += bitmap.GetWidth();
-
+        if (modelclip->isA<model::Transition>())
+        {
+            model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(modelclip);
+            dc.DrawBitmap(bitmap,wxPoint(position.x - transition->getLeft(), position.y));
+            position.x += bitmap.GetWidth();
+            // todo first do the clip to the right of the transition
+        }
+        else
+        {
+            dc.DrawBitmap(bitmap,position);
+            position.x += bitmap.GetWidth();
+        }
     }
 }
 
 void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
 {
     wxPoint pos(position);
-    BOOST_FOREACH( model::ClipPtr modelclip, mTrack->getClips() )
+    BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
     {
         ClipView* view = getViewMap().getView(modelclip);
+        // todo first do the clip to the right of the transition
         view->drawForDragging(pos, height, dc, dcMask);
         pos.x += view->requiredWidth();
     }

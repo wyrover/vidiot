@@ -9,7 +9,7 @@
 #include "Sequence.h"
 #include "Zoom.h"
 #include "EmptyClip.h"
-#include "Clip.h"
+#include "IClip.h"
 
 namespace gui { namespace timeline { namespace command {
 
@@ -17,7 +17,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Trim::Trim(gui::timeline::Timeline& timeline, model::ClipPtr clip, pts diff, bool left, bool shift)
+Trim::Trim(gui::timeline::Timeline& timeline, model::IClipPtr clip, pts diff, bool left, bool shift)
     :   AClipEdit(timeline)
     ,   mClip(clip)
     ,   mDiff(diff)
@@ -47,12 +47,12 @@ Trim::~Trim()
 void Trim::initialize()
 {
     VAR_INFO(this);
-    model::ClipPtr newclip;
-    model::ClipPtr newlink;
+    model::IClipPtr newclip;
+    model::IClipPtr newlink;
 
-    model::ClipPtr linked = mClip->getLink();
+    model::IClipPtr linked = mClip->getLink();
 
-    newclip = make_cloned<model::Clip>(mClip);
+    newclip = make_cloned<model::IClip>(mClip);
     if (mLeft)
     {
         newclip->adjustBegin(mDiff);
@@ -68,7 +68,7 @@ void Trim::initialize()
         ASSERT(mClip->getLeftPts() == linked->getLeftPts());
         ASSERT(mClip->getRightPts() == linked->getRightPts());
 
-        newlink = make_cloned<model::Clip>(linked);
+        newlink = make_cloned<model::IClip>(linked);
         if (mLeft)
         {
             newlink->adjustBegin(mDiff);
@@ -80,8 +80,8 @@ void Trim::initialize()
     }
 
     ReplacementMap linkmapper;
-    model::Clips replace = boost::assign::list_of(newclip);
-    model::Clips replacelink = boost::assign::list_of(newlink);
+    model::IClips replace = boost::assign::list_of(newclip);
+    model::IClips replacelink = boost::assign::list_of(newlink);
 
     // If the clip or its link is resized to 0 frames, then replace the original clip with nothing
     if (newclip->getLength() == 0)
@@ -166,7 +166,7 @@ void Trim::initialize()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Trim::removehitespace(model::ClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
+void Trim::removehitespace(model::IClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
 {
     ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getLength() >= toberemoved); // The area to be removed must be available
     replaceClip(emptyclip, makeEmptyClips(emptyclip->getLength() - toberemoved), conversionmap);

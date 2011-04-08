@@ -7,8 +7,8 @@
 #include "Part.h"
 
 namespace model {
-    class Clip;
-    typedef boost::shared_ptr<Clip> ClipPtr;
+    class IClip;
+    typedef boost::shared_ptr<IClip> IClipPtr;
     class EventRemoveClips;
     class Track;
     typedef boost::shared_ptr<Track> TrackPtr;
@@ -44,13 +44,13 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void updateOnLeftClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
-    void updateOnRightClick(model::ClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    void updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    void updateOnRightClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
 
     /// Deletes all selected clips.
     void deleteClips();
 
-    std::set<model::ClipPtr> getClips() const;
+    std::set<model::IClipPtr> getClips() const;
 
 private:
 
@@ -58,15 +58,15 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
     
-    model::ClipPtr mPreviouslyClicked;      ///< Clip which was previously (de)selected.
+    model::IClipPtr mPreviouslyClicked;      ///< Clip which was previously (de)selected.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void selectClipAndLink(model::ClipPtr clip, bool selected);
-    void selectClip(model::ClipPtr clip, bool selected);
-    void setPreviouslyClicked(model::ClipPtr clip);
+    void selectClipAndLink(model::IClipPtr clip, bool selected);
+    void selectClip(model::IClipPtr clip, bool selected);
+    void setPreviouslyClicked(model::IClipPtr clip);
 };
 
 }} // namespace

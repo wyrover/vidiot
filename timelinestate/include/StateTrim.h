@@ -6,8 +6,8 @@
 #include "UtilInt.h"
 
 namespace model {
-class Clip;
-typedef boost::shared_ptr<Clip> ClipPtr;
+class IClip;
+typedef boost::shared_ptr<IClip> IClipPtr;
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;
@@ -65,7 +65,7 @@ protected:
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
     wxPoint mCurrentPosition;       ///< Current mouse position (in unscrolled coordinates)
 
-    model::ClipPtr mOriginalClip;
+    model::IClipPtr mOriginalClip;
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
 
     pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks

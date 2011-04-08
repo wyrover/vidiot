@@ -5,8 +5,8 @@
 #include "View.h"
 
 namespace model{
-class Clip;
-typedef boost::shared_ptr<Clip> ClipPtr;
+class IClip;
+typedef boost::shared_ptr<IClip> IClipPtr;
 class EventSelectClip;
 class DebugEventRenderProgress;
 }
@@ -23,14 +23,14 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    ClipView(model::ClipPtr clip, View* parent);
+    ClipView(model::IClipPtr clip, View* parent);
     virtual ~ClipView();
 
     //////////////////////////////////////////////////////////////////////////
     //  GET & SET
     //////////////////////////////////////////////////////////////////////////
 
-    model::ClipPtr getClip();
+    model::IClipPtr getClip();
 
     pixel getLeftPosition() const;  ///< @return left position in pixels
     pixel getRightPosition() const; ///< @return right position in pixels
@@ -45,8 +45,6 @@ public:
     /// This will reread the thumbnail from disk. It will also invalidate the 
     /// bitmap and force a redraw.
     void updateThumbnail(bool invalidate = false);
-
-    void setBeginAddition(pts addition);
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW
@@ -63,7 +61,7 @@ public:
 
 private:
 
-    model::ClipPtr mClip;
+    model::IClipPtr mClip;
     boost::scoped_ptr<wxBitmap> mThumbnail;
 
     wxRect mRect;       ///< @see show()

@@ -111,7 +111,7 @@ void MenuHandler::Popup(wxPoint position)
     // If an item is selected for which a menu option makes sense, then the option is shown.
     // If an item is selected for which a menu option does not make sense, then the option is disabled.
 
-    std::set<model::ClipPtr> selectedClips = getSelection().getClips();
+    std::set<model::IClipPtr> selectedClips = getSelection().getClips();
 
     bool showAddTransition = false;
     bool showRemoveEmpty = false;
@@ -119,7 +119,7 @@ void MenuHandler::Popup(wxPoint position)
     bool enableAddTransition = info.clip && !info.clip->isA<model::EmptyClip>();
     bool enableRemoveEmpty = true;
 
-    BOOST_FOREACH( model::ClipPtr clip, selectedClips )
+    BOOST_FOREACH( model::IClipPtr clip, selectedClips )
     {
         if (clip->isA<model::EmptyClip>())
         {
@@ -235,10 +235,10 @@ void MenuHandler::onAddTransition(wxCommandEvent& WXUNUSED(event))
     // todo: direct right down after open timeline not received in statealways....
     ASSERT(info.clip)(info);
 
-    model::ClipPtr firstClip;
-    model::ClipPtr secondClip;
+    model::IClipPtr firstClip;
+    model::IClipPtr secondClip;
 
-    model::Clips clips;
+    model::IClips clips;
     switch (info.logicalclipposition)
     {
     case ClipBegin:

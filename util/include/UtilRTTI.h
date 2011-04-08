@@ -1,0 +1,28 @@
+#ifndef UTIL_RTTI_H
+#define UTIL_RTTI_H
+
+/// Needed for checking object types in class hierarchies
+class IRTTI
+{
+public:
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    IRTTI() {};
+    virtual ~IRTTI() {}; /// One virtual method required for RTTI
+
+    //////////////////////////////////////////////////////////////////////////
+    // IRTTI
+    //////////////////////////////////////////////////////////////////////////
+    
+    template <typename Derived>
+    bool isA()
+    {
+        Derived* derived = dynamic_cast<Derived*>(this);
+        return (derived != 0);
+    }
+};
+
+#endif // UTIL_RTTI_H

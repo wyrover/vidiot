@@ -88,13 +88,13 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
         // When dragging new clips into the timeline, the clips also need to be removed first.
         // This ensures that any used View classes are destroyed. Otherwise, there remain multiple
         // Views for a clip.
-        UtilList<model::ClipPtr>(mDraggedClips).addElements(mVideo.getTempTrack()->getClips(),model::ClipPtr());
-        UtilList<model::ClipPtr>(mDraggedClips).addElements(mAudio.getTempTrack()->getClips(),model::ClipPtr());
+        UtilList<model::IClipPtr>(mDraggedClips).addElements(mVideo.getTempTrack()->getClips(),model::IClipPtr());
+        UtilList<model::IClipPtr>(mDraggedClips).addElements(mAudio.getTempTrack()->getClips(),model::IClipPtr());
     }
     else
     {
         mDraggedTrack = info.track;
-        UtilList<model::ClipPtr>(mDraggedClips).addElements(getSelection().getClips());
+        UtilList<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
         invalidateDraggedClips(); // Hide dragged clips: Not necessary when dropping new assets into the timeline, since these do not have to be 'hidden' from the timeline
     }
     VAR_DEBUG(*this);
@@ -174,7 +174,7 @@ void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
     //    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     //    {
     //        pts emptyarea = 0;
-    //        model::ClipPtr clip = track->getClip(getDragPtsPosition());
+    //        model::IClipPtr clip = track->getClip(getDragPtsPosition());
     //        while (clip && clip->getRightPts() <= getDragPtsPosition() + getDragPtsSize())
     //        {
     //            if (!clip->isA<model::EmptyClip>() && !contains(clip))
@@ -233,9 +233,9 @@ bool Drag::isActive() const
     return mActive;
 }
 
-bool Drag::contains(model::ClipPtr clip) const
+bool Drag::contains(model::IClipPtr clip) const
 {
-    return UtilList<model::ClipPtr>(static_cast<const model::Clips>(mDraggedClips)).hasElement(clip);
+    return UtilList<model::IClipPtr>(static_cast<const model::IClips>(mDraggedClips)).hasElement(clip);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -421,7 +421,7 @@ void Drag::DragInfo::reset()
 
     // Determine boundaries for 'inside' drags
     std::set<model::TrackPtr> selectedTracks;
-    BOOST_FOREACH( model::ClipPtr clip, getSelection().getClips() )
+    BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() )
     {
         model::TrackPtr track = clip->getTrack();
         if (track->isA<model::VideoTrack>() == mIsVideo)
@@ -575,7 +575,7 @@ void Drag::updateDraggedTrack(model::TrackPtr track)
 
 void Drag::invalidateDraggedClips()
 {
-    BOOST_FOREACH( model::ClipPtr clip, mDraggedClips )
+    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
     {
         getViewMap().getView(clip)->invalidateBitmap();
     }
@@ -672,7 +672,7 @@ void Drag::determinePossibleSnapPoints()
 
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
-        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
         {
             if (!contains(clip))
             {
@@ -683,7 +683,7 @@ void Drag::determinePossibleSnapPoints()
     }
     mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
 
-    BOOST_FOREACH( model::ClipPtr clip, mDraggedClips )
+    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
     {
         if (contains(clip))
         {
@@ -710,7 +710,7 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
         pi.track = track;
         bool inregion = false;
 
-        BOOST_FOREACH( model::ClipPtr clip, draggedTrack->getClips() )
+        BOOST_FOREACH( model::IClipPtr clip, draggedTrack->getClips() )
         {
             if (!inregion && contains(clip))
             {
@@ -730,6 +730,7 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
             }
             position += clip->getLength();
         }
+        // TODO insert all transitions for which a clip is moved, but the transition is not. These transitions must be removed. Idea: make part of AClipEdit methods... 9maybe: newMove)
         if (inregion)
         {
             drops.push_back(pi); // Insertion at end

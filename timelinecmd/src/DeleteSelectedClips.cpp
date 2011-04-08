@@ -8,6 +8,7 @@
 #include "Track.h"
 #include "Clip.h"
 #include "Sequence.h"
+#include "Transition.h"
 #include "Timeline.h"
 #include "EmptyClip.h"
 
@@ -43,13 +44,17 @@ void DeleteSelectedClips::deleteSelectedClips(model::Tracks tracks)
     BOOST_FOREACH( model::TrackPtr track, tracks )
     {
         long nRemovedFrames = 0;
-        model::Clips removed;
-        BOOST_FOREACH( model::ClipPtr clip, track->getClips() )
+        model::IClips removed;
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
         {
             if (clip->getSelected())
             {
                 removed.push_back(clip);
-                nRemovedFrames += clip->getLength();
+                // todo remove any related transitions also
+                if (!clip->isA<model::Transition>()) // Transitions do not count for length. TODO use Track::getCombinedLength
+                {
+                    nRemovedFrames += clip->getLength();
+                }
             }
             else
             {
@@ -65,7 +70,7 @@ void DeleteSelectedClips::deleteSelectedClips(model::Tracks tracks)
         if (!removed.empty())
         {
             // The last clips of the track are removed.
-            newMove(track, model::ClipPtr(), boost::assign::list_of(boost::make_shared<model::EmptyClip>(nRemovedFrames)), track, model::ClipPtr(), removed );
+            newMove(track, model::IClipPtr(), boost::assign::list_of(boost::make_shared<model::EmptyClip>(nRemovedFrames)), track, model::IClipPtr(), removed );
         }
     }
 }

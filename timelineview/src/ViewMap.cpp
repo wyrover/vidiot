@@ -27,7 +27,7 @@ ViewMap::~ViewMap()
 // REGISTRATION
 //////////////////////////////////////////////////////////////////////////
 
-void ViewMap::registerView(model::ClipPtr clip, ClipView* view)
+void ViewMap::registerView(model::IClipPtr clip, ClipView* view)
 {
     ASSERT(mClips.find(clip) == mClips.end());
     mClips.insert(std::make_pair(clip, view));
@@ -39,7 +39,7 @@ void ViewMap::registerView(model::TrackPtr track, TrackView* view)
     mTracks.insert(std::make_pair(track, view));
 }
 
-void ViewMap::unregisterView(model::ClipPtr clip)
+void ViewMap::unregisterView(model::IClipPtr clip)
 {
     ASSERT(mClips.find(clip) != mClips.end());
     mClips.erase(clip);
@@ -55,7 +55,7 @@ void ViewMap::unregisterView(model::TrackPtr track)
 // CONVERSION
 //////////////////////////////////////////////////////////////////////////
 
-ClipView* ViewMap::getView(model::ClipPtr clip) const
+ClipView* ViewMap::getView(model::IClipPtr clip) const
 {
     ClipMap::const_iterator it = mClips.find(clip);
     ASSERT(it != mClips.end())(clip)(mClips);

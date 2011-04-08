@@ -2,10 +2,12 @@
 #define UTIL_CLONEABLE_H
 
 #include <boost/shared_ptr.hpp>
+#include "UtilRTTI.h"
 
 /// Needed for cloning in class hierarchies starting with abstract base classes.
 /// Use the method make_cloned to make copies of objects
 class ICloneable
+    :   public IRTTI
 {
 public:
     virtual ~ICloneable() {};

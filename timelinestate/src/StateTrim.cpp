@@ -65,7 +65,7 @@ Trim::Trim( my_context ctx ) // entry
     mStartPosition = event->mWxEvent.GetPosition();
     mCurrentPosition = mStartPosition;
     mOriginalClip = info.clip;
-    model::ClipPtr adjacentClip;
+    model::IClipPtr adjacentClip;
     if (mTrimBegin)
     {
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
@@ -94,13 +94,13 @@ Trim::Trim( my_context ctx ) // entry
 
     // Determine boundaries for shifting other tracks
     // TODO more testing
-    model::ClipPtr linked = mOriginalClip->getLink();
+    model::IClipPtr linked = mOriginalClip->getLink();
     pts shiftFrom = mOriginalClip->getLeftPts();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         if (mOriginalClip->getTrack() == track) continue;
         if (linked && linked->getTrack() == track) continue;
-        model::ClipPtr clipAt = track->getClip(shiftFrom);
+        model::IClipPtr clipAt = track->getClip(shiftFrom);
         mMinShiftOtherTrackContent = 
             (clipAt->isA<model::EmptyClip>()) ? std::max<pts>(mMinShiftOtherTrackContent, clipAt->getLeftPts() - shiftFrom) : 0;
         mMaxShiftOtherTrackContent = 
@@ -199,7 +199,7 @@ pts Trim::getDiff()
     ASSERT(!mMustUndo); // If a command has been submitted, mOriginalClip can not be used.
 
     pts diff = getZoom().pixelsToPts(mCurrentPosition.x - mStartPosition.x);
-    model::ClipPtr linked = mOriginalClip->getLink();
+    model::IClipPtr linked = mOriginalClip->getLink();
 
     if (mShiftDown)
     {
@@ -235,7 +235,7 @@ pts Trim::getDiff()
 
 void Trim::preview()
 {
-    model::ClipPtr updatedClip = make_cloned<model::Clip>(mOriginalClip);
+    model::IClipPtr updatedClip = make_cloned<model::IClip>(mOriginalClip);
     if (updatedClip->isA<model::VideoClip>())
     {
         if (mTrimBegin)

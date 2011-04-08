@@ -23,8 +23,6 @@ namespace model {
 DEFINE_EVENT(EVENT_ADD_CLIPS,           EventAddClips,          MoveParameter);
 DEFINE_EVENT(EVENT_REMOVE_CLIPS,        EventRemoveClips,       MoveParameter);
 DEFINE_EVENT(EVENT_HEIGHT_CHANGED,      EventHeightChanged,     int);
-DEFINE_EVENT(EVENT_ADD_TRANSITIONS,     EventAddTransitions,    TransitionMoveParameter);
-DEFINE_EVENT(EVENT_REMOVE_TRANSITIONS,  EventRemoveTransitions, TransitionMoveParameter);
 
 Track::Track()
 :	IControl()
@@ -32,7 +30,6 @@ Track::Track()
 ,   mClips()
 ,   mItCurrent()
 ,   mItClips(mClips.end())
-,   mItTransitions(mTransitions.end())
 ,   mHeight(Constants::sDefaultTrackHeight)
 ,   mIndex(0)
 { 
@@ -45,19 +42,18 @@ Track::Track(const Track& other)
 ,   mClips()
 ,   mItCurrent()
 ,   mItClips(mClips.end())
-,   mItTransitions(mTransitions.end())
 ,   mHeight(other.mHeight)
 ,   mIndex(0)
 {
     VAR_DEBUG(this);
     ASSERT(false);// If this is ever used, test the clips in combination with the shared_from_this() in addClips below.
 
-    Clips clonedClips;
-    BOOST_FOREACH(ClipPtr clip, other.mClips)
+    IClips clonedClips;
+    BOOST_FOREACH(IClipPtr clip, other.mClips)
     {
-        clonedClips.push_back(make_cloned<Clip>(clip));
+        clonedClips.push_back(make_cloned<IClip>(clip));
     }
-    addClips(clonedClips,ClipPtr());
+    addClips(clonedClips,IClipPtr());
 }
 
 Track* Track::clone()
@@ -81,9 +77,10 @@ Track::~Track()
 
 pts Track::getLength()
 {
+// todo    return getCombinedLength(mClips);
     /** @todo return rightPts of last clip? */
     boost::int16_t nFrames = 0;
-    BOOST_FOREACH( ClipPtr clip, mClips )
+    BOOST_FOREACH( IClipPtr clip, mClips )
     {
         nFrames += clip->getLength();
     }
@@ -135,13 +132,12 @@ wxString Track::getDescription() const
 void Track::clean()
 {
     VAR_DEBUG(this);
-    BOOST_FOREACH(ClipPtr clip, mClips)
+    BOOST_FOREACH(IClipPtr clip, mClips)
     {
         clip->clean();
     }
     mItCurrent.reset();
     mItClips = mClips.end();
-    mItTransitions = mTransitions.end();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,10 +148,10 @@ void Track::clean()
 /// 		  Furthermore, make MoveParameter a separate file (MoveClip.*)
 /// 		  Finally give that class a 'clone_invert' method that returns a cloned and inverted instance.
 
-void Track::addClips(Clips clips, ClipPtr position)
+void Track::addClips(IClips clips, IClipPtr position)
 {
     VAR_DEBUG(*this)(position)(clips);
-    UtilList<ClipPtr>(mClips).addElements(clips,position);
+    UtilList<IClipPtr>(mClips).addElements(clips,position);
 
 	updateClips();
 
@@ -167,19 +163,19 @@ void Track::addClips(Clips clips, ClipPtr position)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, model::TrackPtr(), model::ClipPtr(), model::Clips()))); // Must be handled immediately
+    ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, TrackPtr(), IClipPtr(), IClips()))); // Must be handled immediately
 }
 
-void Track::removeClips(Clips clips)
+void Track::removeClips(IClips clips)
 {
     VAR_DEBUG(*this)(clips);
-	BOOST_FOREACH( ClipPtr clip, clips )
+	BOOST_FOREACH( IClipPtr clip, clips )
 	{
         clip->clean();
 		clip->setTrack(TrackPtr(), 0);
 	}
 
-	ClipPtr position = UtilList<ClipPtr>(mClips).removeElements(clips);
+	IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);
 
 	updateClips();
 
@@ -191,46 +187,63 @@ void Track::removeClips(Clips clips)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-	ProcessEvent(EventRemoveClips(MoveParameter(model::TrackPtr(), model::ClipPtr(), model::Clips(), shared_from_this(), position, clips))); // Must be handled immediately
+	ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), shared_from_this(), position, clips))); // Must be handled immediately
 }
 
-const Clips& Track::getClips()
+const IClips& Track::getClips()
 {
     return mClips;
 }
 
-ClipPtr Track::getClip(pts position)
+IClipPtr Track::getClip(pts position)
 {
 	pts left = 0;
     pts right = left;
-    BOOST_FOREACH( ClipPtr clip, mClips )
+    IClipPtr found;
+    BOOST_FOREACH( IClipPtr clip, mClips )
     {
         pts length = clip->getLength();
         right += length;
         if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
         {
-            return clip;
+            found = clip;
+            break;
         }
         left += length;
     }
-    return ClipPtr();
+    if (found)
+    {
+        // todo more efficient
+        IClipPtr next = getNextClip(found);
+        if (next && next->isA<Transition>() && next->getLeftPts() <= position && next->getRightPts() > position)
+        {
+            return next;
+        }
+        IClipPtr previous = getPreviousClip(found);
+        if (previous && previous->isA<Transition>() && previous->getLeftPts() <= position && previous->getRightPts() > position)
+        {
+            return previous;
+        }
+        return found;
+    }
+    return IClipPtr();
 }
 
-ClipPtr Track::getNextClip(ClipPtr clip)
+IClipPtr Track::getNextClip(IClipPtr clip)
 {
-    Clips::iterator it = find(mClips.begin(),mClips.end(),clip);
+    IClips::iterator it = find(mClips.begin(),mClips.end(),clip);
     ASSERT(it != mClips.end());
     ++it;
     if (it == mClips.end())
     {
-        return ClipPtr();
+        return IClipPtr();
     }
     return *it;
 }
 
-ClipPtr Track::getPreviousClip(ClipPtr clip)
+IClipPtr Track::getPreviousClip(IClipPtr clip)
 {
-    Clips::iterator it = find(mClips.begin(),mClips.end(),clip);
+    IClips::iterator it = find(mClips.begin(),mClips.end(),clip);
     ASSERT(it != mClips.end());
     if (it == mClips.begin())
     {
@@ -240,12 +253,12 @@ ClipPtr Track::getPreviousClip(ClipPtr clip)
     return *it; 
 }
 
-pts Track::getLeftEmptyArea(model::ClipPtr clip)
+pts Track::getLeftEmptyArea(IClipPtr clip)
 {
-    ASSERT(UtilList<ClipPtr>(mClips).hasElement(clip));
+    ASSERT(UtilList<IClipPtr>(mClips).hasElement(clip));
     pts leftmost = clip->getLeftPts();
-    model::ClipPtr previous = getPreviousClip(clip);
-    while (previous && previous->isA<model::EmptyClip>())
+    IClipPtr previous = getPreviousClip(clip);
+    while (previous && previous->isA<EmptyClip>())
     {
         leftmost = previous->getLeftPts();
         previous = getPreviousClip(previous);
@@ -253,12 +266,12 @@ pts Track::getLeftEmptyArea(model::ClipPtr clip)
     return leftmost - clip->getLeftPts();
 }
 
-pts Track::getRightEmptyArea(model::ClipPtr clip)
+pts Track::getRightEmptyArea(IClipPtr clip)
 {
-    ASSERT(UtilList<ClipPtr>(mClips).hasElement(clip));
+    ASSERT(UtilList<IClipPtr>(mClips).hasElement(clip));
     pts rightmost = clip->getRightPts();
-    model::ClipPtr next = getNextClip(clip);
-    while (next && next->isA<model::EmptyClip>())
+    IClipPtr next = getNextClip(clip);
+    while (next && next->isA<EmptyClip>())
     {
         rightmost = next->getRightPts();
         next = getNextClip(next);
@@ -267,63 +280,21 @@ pts Track::getRightEmptyArea(model::ClipPtr clip)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// TRANSITIONS
+// STATIC HELPER METHOD
 //////////////////////////////////////////////////////////////////////////
 
-void Track::removeTransitions(Transitions transitions)
+//static 
+pts Track::getCombinedLength(IClips clips)
 {
-    VAR_DEBUG(*this)(transitions);
-    BOOST_FOREACH( TransitionPtr transition, transitions )
+    int length = 0;
+    BOOST_FOREACH( IClipPtr clip, clips )
     {
-        transition->clean();
-        //transition->setTrack(TrackPtr(), 0);
+        if (!clip->isA<Transition>())
+        {
+            length += clip->getLength();
+        }
     }
-
-    TransitionPtr position = UtilList<TransitionPtr>(mTransitions).removeElements(transitions);
-
-    updateTransitions();
-
-    moveTo(0); // Required since the iteration has become invalid.
-
-    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
-    // the receivers of these events (typically, the view classes in the timeline).
-    ProcessEvent(EventRemoveTransitions(TransitionMoveParameter(model::TrackPtr(), model::TransitionPtr(), model::Transitions(), shared_from_this(), position, transitions))); // Must be handled immediately
-}
-
-void Track::addTransitions(Transitions transitions, TransitionPtr position)
-{
-    VAR_DEBUG(*this)(position)(transitions);
-    UtilList<TransitionPtr>(mTransitions).addElements(transitions,position);
-
-    updateTransitions();
-
-    moveTo(0); // Required since the iteration has become invalid.
-
-    // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
-    // the receivers of these events (typically, the view classes in the timeline).
-    ProcessEvent(EventAddTransitions(TransitionMoveParameter(shared_from_this(), position, transitions, model::TrackPtr(), model::TransitionPtr(), model::Transitions()))); // Must be handled immediately
-}
-
-const Transitions& Track::getTransitions()
-{
-    return mTransitions;
-}
-
-TransitionPtr Track::getTransition(pts position)
-{
-    //pts left = 0;
-    //pts right = left;
-    //BOOST_FOREACH( TransitionPtr transition, mTransitions )
-    //{
-    //    pts left = transition->getLeftPtsPosition();
-    //    right += length;
-    //    if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
-    //    {
-    //        return clip;
-    //    }
-    //    left += length;
-    //}
-    return TransitionPtr();
+    return length;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -360,7 +331,7 @@ bool Track::iterate_atEnd()
     return (mItClips == mClips.end());
 }
 
-IControlPtr Track::iterate_get()
+IClipPtr Track::iterate_get()
 {
     ASSERT(mItCurrent);
     return mItCurrent;
@@ -372,7 +343,8 @@ void Track::iterate_next()
     mItClips++;
     if (!iterate_atEnd())
     {
-        mItCurrent = boost::static_pointer_cast<IControl>(*mItClips);
+        IClipPtr clip = make_cloned<IClip>(*mItClips);
+        mItCurrent = clip;
     }
     else
     {
@@ -388,16 +360,12 @@ void Track::updateClips()
 {
 	pts position = 0;
     int index = 0;
-	BOOST_FOREACH( ClipPtr clip, mClips )
+	BOOST_FOREACH( IClipPtr clip, mClips )
 	{
 		clip->setTrack(shared_from_this(), position, index);
 		position += clip->getLength();
         index++;
 	}
-}
-
-void Track::updateTransitions()
-{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -437,7 +405,6 @@ void Track::load(Archive & ar, const unsigned int version)
     {
         mItCurrent.reset();
         mItClips = mClips.begin();
-        mItTransitions = mTransitions.begin();
         updateClips();
     }
 }

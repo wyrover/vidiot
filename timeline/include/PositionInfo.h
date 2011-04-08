@@ -7,8 +7,8 @@
 namespace model {
     class Track;
     typedef boost::shared_ptr<Track> TrackPtr;
-    class Clip;
-    typedef boost::shared_ptr<Clip> ClipPtr;
+    class IClip;
+    typedef boost::shared_ptr<IClip> IClipPtr;
 }
 
 namespace gui { namespace timeline {
@@ -52,7 +52,7 @@ struct PointerPositionInfo
     //////////////////////////////////////////////////////////////////////////
 
     /** Current clip under the mouse pointer. 0 if none. */
-    model::ClipPtr clip;
+    model::IClipPtr clip;
 
     MouseOnClipPosition logicalclipposition;
 };

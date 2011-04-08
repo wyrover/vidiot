@@ -17,10 +17,10 @@ namespace model {
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;
-class Clip;
-typedef boost::shared_ptr<Clip> ClipPtr;
-typedef boost::weak_ptr<Clip> WeakClipPtr;
-typedef std::list<ClipPtr> Clips;
+class IClip;
+typedef boost::shared_ptr<IClip> IClipPtr;
+typedef boost::weak_ptr<IClip> WeakIClipPtr;
+typedef std::list<IClipPtr> IClips;
 struct MoveParameter;
 typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
 typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
@@ -39,14 +39,14 @@ struct MoveParameter
     /// The moved clips must be inserted before this clip.
     /// If this is an uninitialized pointer, then the clips need
     /// to be inserted at the end of the track.
-    ClipPtr addPosition;
+    IClipPtr addPosition;
 
     /// Consecutive list of clips to be added to this track
     /// (they'll be joined together exactly in the same order).
     /// These clips may also be a part of removeClips.
     /// If multiple consecutive (but not directly connected) lists
     /// need to be added, add multiple MoveParameter objects.
-    Clips addClips;
+    IClips addClips;
 
     /// From this track the moved clips need to be removed.
     TrackPtr removeTrack;
@@ -54,7 +54,7 @@ struct MoveParameter
     /// In case of undo, the removed clips must be reinserted
     /// before this clip. If this is an uninitialized pointer,
     /// then the insertion is at the end of the track.
-    ClipPtr removePosition;
+    IClipPtr removePosition;
 
     /// Any clips to be removed from this track
     /// These clips may also be a part of addClips.
@@ -63,7 +63,7 @@ struct MoveParameter
     /// not directly connected clip lists need to be removed,
     /// instantiate two MoveParameter objects (one for each
     /// list).
-    Clips removeClips;
+    IClips removeClips;
 
     /// Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
     MoveParameter()
@@ -77,7 +77,7 @@ struct MoveParameter
     }
 
     /// Helper constructor to initialize all members in one statement.
-    MoveParameter(TrackPtr _addTrack, ClipPtr _addPosition, Clips _addClips, TrackPtr _removeTrack = TrackPtr(), ClipPtr _removePosition = ClipPtr(), Clips _removeClips = Clips())
+    MoveParameter(TrackPtr _addTrack, IClipPtr _addPosition, IClips _addClips, TrackPtr _removeTrack = TrackPtr(), IClipPtr _removePosition = IClipPtr(), IClips _removeClips = IClips())
         :   addTrack(_addTrack)
         ,   addPosition(_addPosition)
         ,   addClips(_addClips)
@@ -95,72 +95,9 @@ struct MoveParameter
     }
 };
 
-struct TransitionMoveParameter
-{
-    /// Into this track the moved clips need to be inserted.
-    TrackPtr addTrack;
-
-    /// The moved transition must be inserted before this transition.
-    /// If this is an uninitialized pointer, then the transitions need
-    /// to be inserted at the end of the track.
-    TransitionPtr addPosition;
-
-    /// Consecutive list of transitions to be added to this track
-    /// (they'll be joined together exactly in the same order).
-    /// These transitions may also be a part of removeTransitions.
-    /// If multiple consecutive (but not directly connected) lists
-    /// need to be added, add multiple TransitionMoveParameter objects.
-    Transitions addTransitions;
-
-    /// From this track the moved transitions need to be removed.
-    TrackPtr removeTrack;
-
-    /// In case of undo, the removed transitions must be reinserted
-    /// before this transition. If this is an uninitialized pointer,
-    /// then insertion is done at the end of the track.
-    TransitionPtr removePosition;
-
-    /// Any transitions to be removed from this track
-    /// These transitions may also be a part of addTransitions.
-    /// This needs to be a consecutive list of transitions in
-    /// the current list.
-    Transitions removeTransitions;
-
-    /// Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
-    TransitionMoveParameter()
-        :   addTrack()
-        ,   addPosition()
-        ,   addTransitions()
-        ,   removeTrack()
-        ,   removePosition()
-        ,   removeTransitions()
-    {
-    }
-
-    /// Helper constructor to initialize all members in one statement.
-    TransitionMoveParameter(TrackPtr _addTrack, TransitionPtr _addPosition, Transitions _addTransitions, TrackPtr _removeTrack = TrackPtr(), TransitionPtr _removePosition = TransitionPtr(), Transitions _removeTransitions = Transitions())
-        :   addTrack(_addTrack)
-        ,   addPosition(_addPosition)
-        ,   addTransitions(_addTransitions)
-        ,   removeTrack(_removeTrack)
-        ,   removePosition(_removePosition)
-        ,   removeTransitions(_removeTransitions)
-    {
-    }
-
-    /// \return new move object that is the inverse of this object.
-    /// This means that all additions and removals are interchanged.
-    TransitionMoveParameterPtr make_inverted()
-    {
-        return boost::make_shared<TransitionMoveParameter>(removeTrack,removePosition,removeTransitions,addTrack,addPosition,addTransitions);
-    }
-};
-
 DECLARE_EVENT(EVENT_ADD_CLIPS,          EventAddClips,              MoveParameter);
 DECLARE_EVENT(EVENT_REMOVE_CLIPS,       EventRemoveClips,           MoveParameter);
 DECLARE_EVENT(EVENT_HEIGHT_CHANGED,     EventHeightChanged,         int);
-DECLARE_EVENT(EVENT_ADD_TRANSITIONS,    EventAddTransitions,        TransitionMoveParameter);
-DECLARE_EVENT(EVENT_REMOVE_TRANSITIONS, EventRemoveTransitions,     TransitionMoveParameter);
 
 class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
@@ -192,54 +129,37 @@ public:
     // CLIPS
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void removeClips(Clips clips);
-    virtual void addClips(Clips clips, ClipPtr position = ClipPtr());
+    virtual void removeClips(IClips clips);
+    virtual void addClips(IClips clips, IClipPtr position = IClipPtr());
 
-    const Clips& getClips();
+    const IClips& getClips();
 
     /// Find the clip which provides the frame at the given pts.
     /// If pts is 'on a cut' then the clip AFTER the cut is returned. 
     /// If there is no clip at this pts then an empty Ptr is returned.
-    ClipPtr getClip(pts position);
+    IClipPtr getClip(pts position);
 
     /// Find the clip following 'clip'. 
     /// Returns a '0' pointer if clip is not found.
     /// \pre clip is a part of this track
-    ClipPtr getNextClip(ClipPtr clip);
+    IClipPtr getNextClip(IClipPtr clip);
 
     /// Find the clip preceding 'clip'. 
     /// Returns a '0' pointer if clip is not found.
     /// \pre clip is a part of this track
-    ClipPtr getPreviousClip(ClipPtr clip);
+    IClipPtr getPreviousClip(IClipPtr clip);
 
     /// /return size of area to the left of clip that is empty
-    pts getLeftEmptyArea(model::ClipPtr clip);
+    pts getLeftEmptyArea(IClipPtr clip);
 
     /// /return size of area to the right of clip that is empty
-    pts getRightEmptyArea(model::ClipPtr clip); 
+    pts getRightEmptyArea(IClipPtr clip); 
 
     //////////////////////////////////////////////////////////////////////////
-    // TRANSITIONS
+    // STATIC HELPER METHOD
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void removeTransitions(Transitions transition);
-    virtual void addTransitions(Transitions transition, TransitionPtr position = TransitionPtr());
-
-    const Transitions& getTransitions();
-
-    /// Find the transition which provides the frame at the given pts.
-    /// If there is no transition at this pts then an empty Ptr is returned.
-    TransitionPtr getTransition(pts position);
-
-    //////////////////////////////////////////////////////////////////////////
-    // FOR DETERMINING THE TYPE OF TRACK
-    //////////////////////////////////////////////////////////////////////////
-
-    template <typename Derived>
-    bool isA()
-    {
-        return (typeid(Derived) == typeid(*this));
-    }
+    static pts getCombinedLength(IClips clips);
 
     //////////////////////////////////////////////////////////////////////////
     // GET & SET
@@ -266,7 +186,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     bool iterate_atEnd();
-    IControlPtr iterate_get();
+    IClipPtr iterate_get();
     void iterate_next();
 
 private:
@@ -275,12 +195,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    Clips mClips;
-    Transitions mTransitions;
+    IClips mClips;
 
-    IControlPtr mItCurrent;
-    Clips::const_iterator mItClips;
-    Transitions::const_iterator mItTransitions;
+    IClipPtr mItCurrent;
+    IClips::const_iterator mItClips;
 
     int mHeight;    ///< Height of this track when viewed in a timeline
     int mIndex;     ///< Index in the list of video/audio tracks
@@ -293,7 +211,6 @@ public://TODO
     /// - Updates the pts'es for all clips in this track
     /// - Updates the clip's track pointer to this track
     void updateClips();
-    void updateTransitions();
 private://TODO
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

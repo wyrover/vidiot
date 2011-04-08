@@ -8,7 +8,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-CreateTransition::CreateTransition(gui::timeline::Timeline& timeline, model::Clips clips)
+CreateTransition::CreateTransition(gui::timeline::Timeline& timeline, model::IClips clips)
 :   AClipEdit(timeline)
 ,   mClips(clips)
 {

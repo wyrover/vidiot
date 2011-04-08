@@ -4,6 +4,7 @@
 #include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
+#include "UtilRTTI.h"
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg 
 
@@ -25,7 +26,8 @@ typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
 class VideoFrame
-    :   boost::noncopyable
+    :   public boost::noncopyable
+    ,   public IRTTI
 {
 public:
 
@@ -61,12 +63,6 @@ public:
     int getWidth() const;
     int getHeight() const;
     int getSizeInBytes() const;
-
-    template <typename Derived>
-    bool isA()
-    {
-        return (typeid(Derived) == typeid(*this));
-    }
 
     //////////////////////////////////////////////////////////////////////////
     // DATA ACCESS
