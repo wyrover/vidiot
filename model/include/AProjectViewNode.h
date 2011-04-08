@@ -14,7 +14,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class AProjectViewNode;
 typedef AProjectViewNode* ProjectViewId;
 typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;

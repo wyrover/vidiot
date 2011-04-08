@@ -7,7 +7,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class EmptyFile;
 typedef boost::shared_ptr<EmptyFile> EmptyFilePtr;
 
@@ -60,6 +59,10 @@ protected:
     EmptyFile(const EmptyFile& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
     pts mLength;
     pts mAudioPosition;

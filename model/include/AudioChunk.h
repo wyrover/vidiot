@@ -7,7 +7,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class AudioChunk;
 typedef boost::shared_ptr<AudioChunk> AudioChunkPtr;
 typedef Fifo<AudioChunkPtr> FifoAudio;

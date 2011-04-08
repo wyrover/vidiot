@@ -5,7 +5,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class EmptyFrame;
 typedef boost::shared_ptr<EmptyFrame> EmptyFramePtr;
 
@@ -19,21 +18,19 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     EmptyFrame(PixelFormat format, int width, int height, pts position, AVRational timebase);
-    
+
     virtual ~EmptyFrame();
 
     //////////////////////////////////////////////////////////////////////////
     // DATA ACCESS
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Override from VideoFrame. When this method is called for the first time,
-     * the zeroed buffer is generated.
-     */
+    /// Override from VideoFrame. When this method is called for the first time,
+    /// the zeroed buffer is generated.
     DataPointer getData();
 
 private:
-    
+
     bool mInitialized;
 };
 

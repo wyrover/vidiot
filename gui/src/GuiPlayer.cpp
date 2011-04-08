@@ -17,6 +17,7 @@
 #include "preview-previous.xpm" 
 #include "Constants.h"
 #include "Cursor.h"
+#include "VideoDisplayEvent.h"
 
 namespace gui {
 

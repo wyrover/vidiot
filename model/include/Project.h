@@ -13,14 +13,13 @@ typedef boost::shared_ptr<Work> WorkPtr;
 
 namespace model {
 
-    // FORWARD DECLARATIONS
-    class Folder;
-    typedef boost::shared_ptr<Folder> FolderPtr;
-    class Properties;
-    typedef boost::shared_ptr<Properties> PropertiesPtr;
-    class FSWatcher;    
-    class ProjectWorker;
-    class Project;
+class Folder;
+typedef boost::shared_ptr<Folder> FolderPtr;
+class Properties;
+typedef boost::shared_ptr<Properties> PropertiesPtr;
+class FSWatcher;    
+class ProjectWorker;
+class Project;
 
 DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,   model::Project*);
 DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,  model::Project*);
@@ -33,7 +32,7 @@ DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,  model::Project*);
 /// the document has a separate root node 'mRoot'.
 /// \image html Project.png
 class Project
-:   public wxDocument
+    :   public wxDocument
 {
 public:
 
@@ -44,8 +43,8 @@ public:
     Project();
     ~Project();
 
-     /// Get the current project. Used to avoid having to pass this object
-     /// (or the Properties of it) throughout the entire code.
+    /// Get the current project. Used to avoid having to pass this object
+    /// (or the Properties of it) throughout the entire code.
     static Project* current();
 
     //////////////////////////////////////////////////////////////////////////

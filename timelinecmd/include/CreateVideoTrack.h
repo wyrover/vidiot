@@ -5,9 +5,8 @@
 #include "ATimelineCommand.h"
 
 namespace model {
-    // FORWARD DECLARATIONS
-    class VideoTrack;
-    typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
+class VideoTrack;
+typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
 }
 
 namespace gui { namespace timeline { namespace command {

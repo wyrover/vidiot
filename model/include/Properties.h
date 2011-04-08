@@ -8,7 +8,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class Properties;
 typedef boost::shared_ptr<Properties> PropertiesPtr;
 

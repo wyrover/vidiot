@@ -5,10 +5,8 @@
 #include "ATimelineCommand.h"
 
 namespace model {
-
-    // FORWARD DECLARATIONS
-    class AudioTrack;
-    typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
+class AudioTrack;
+typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
 }
 
 namespace gui { namespace timeline { namespace command {
@@ -24,7 +22,7 @@ public:
 
     CreateAudioTrack (gui::timeline::Timeline& timeline);
     ~CreateAudioTrack ();
-    
+
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE
     //////////////////////////////////////////////////////////////////////////

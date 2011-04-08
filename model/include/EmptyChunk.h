@@ -5,7 +5,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class EmptyChunk;
 typedef boost::shared_ptr<EmptyChunk> EmptyChunkPtr;
 
@@ -25,13 +24,15 @@ public:
     // DATA ACCESS
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Override from AudioChunk. When this method is called for the first time,
-     * then the zeroed buffer is generated.
-     */
+    /// Override from AudioChunk. When this method is called for the first time,
+    /// then the zeroed buffer is generated.
     boost::int16_t* getUnreadSamples();
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
     bool mInitialized;
 };

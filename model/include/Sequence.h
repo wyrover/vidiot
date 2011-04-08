@@ -14,7 +14,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;
@@ -25,25 +24,19 @@ struct TrackChange
 {
     Tracks addedTracks;
 
-    /**
-    * The moved tracks must be inserted before this clip.
-    * If this is an uninitialized pointer, then the tracks need
-    * to be inserted at the end.
-    */
+    /// The moved tracks must be inserted before this clip.
+    /// If this is an uninitialized pointer, then the tracks need
+    /// to be inserted at the end.
     TrackPtr addPosition;
 
     Tracks removedTracks;
 
-    /**
-    * In case of undo, the removed tracks must be reinserted
-    * before this track.If this is an uninitialized pointer,
-    * then the tracks need to be inserted at the end.
-    */
+    /// In case of undo, the removed tracks must be reinserted
+    /// before this track.If this is an uninitialized pointer,
+    /// then the tracks need to be inserted at the end.
     TrackPtr removePosition;
 
-    /**
-    * Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
-    **/
+    /// Empty constructor (used to avoid 'no appropriate default ctor' error messages after I added the other constructor).
     TrackChange()
         :   addedTracks()
         ,   addPosition()
@@ -52,11 +45,9 @@ struct TrackChange
     {
     }
 
-    /**
-    * Helper constructor to initialize all members in one statement.
-    * Per default, when only supplying a list of tracks to be added, these
-    * are added to the end.
-    **/
+    /// Helper constructor to initialize all members in one statement.
+    /// Per default, when only supplying a list of tracks to be added, these
+    /// are added to the end.
     TrackChange(Tracks _addedTracks, TrackPtr _addPosition = TrackPtr(), Tracks _removedTracks = Tracks(), TrackPtr _removePosition = TrackPtr())
         :   addedTracks(_addedTracks)
         ,   addPosition(_addPosition)

@@ -6,7 +6,6 @@
 
 namespace model {
 
-// FORWARD DECLARATIONS
 class VideoClip;
 typedef boost::shared_ptr<VideoClip> VideoClipPtr;
 

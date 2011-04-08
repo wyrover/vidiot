@@ -8,6 +8,7 @@
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "GuiPlayer.h"
+#include "VideoDisplayEvent.h"
 
 namespace gui { namespace timeline {
 
