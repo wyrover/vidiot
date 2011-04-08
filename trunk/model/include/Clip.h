@@ -4,7 +4,7 @@
 #include <list>
 #include <boost/optional.hpp>
 #include <boost/weak_ptr.hpp>
-#include "IControl.h"
+#include "IClip.h"
 #include "UtilLogGeneric.h"
 #include "UtilEvent.h"
 
@@ -18,13 +18,11 @@ typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;
 
 class Clip;
-typedef boost::shared_ptr<Clip> ClipPtr;
-typedef boost::weak_ptr<Clip> WeakClipPtr;
-typedef std::list<ClipPtr> Clips;
+typedef boost::shared_ptr<Clip> ClipPtr; // todo other name, IClip should be clips
 
 class Clip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public IControl
+    ,   public IClip
 {
 public:
 
@@ -50,90 +48,33 @@ public:
     virtual void clean();
     
     //////////////////////////////////////////////////////////////////////////
-    // TRACK
+    // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    /// Set the track which contains this clip. Also sets the leftmost pts
-    /// of the clip inside the track. When called without parameters
-    /// (thus using the defaults), this information is 'reset'.
-    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0);
+    virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0);
+    virtual TrackPtr getTrack();
+    virtual pts getLeftPts() const;
+    virtual pts getRightPts() const; 
 
-    /// \return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
-    TrackPtr getTrack();
+    virtual void setLink(IClipPtr link);
+    virtual IClipPtr getLink() const;
 
-    /// \return pts (in containing track) of begin point of clip.
-    /// The frame at this position is the first frame of this clip.
-    /// The frames of a clip are [ getLeftPts,getRightPts )
-    pts getLeftPts() const;
-
-    /// \return pts (in containing track) AFTER end point of clip.
-    /// The frame at this position is AFTER the last frame of this clip
-    /// The frames of a clip are [ getLeftPts,getRightPts )
-    pts getRightPts() const; 
-
-    //////////////////////////////////////////////////////////////////////////
-    // LINK
-    //////////////////////////////////////////////////////////////////////////
-
-    void setLink(ClipPtr link);
-    ClipPtr getLink() const;
-
-    //////////////////////////////////////////////////////////////////////////
-    // FOR DETERMINING THE TYPE OF CLIP
-    //////////////////////////////////////////////////////////////////////////
-
-    template <typename Derived>
-    bool isA()
-    {
-        return (typeid(Derived) == typeid(*this));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // ADJUSTING OFFSET AND LENGTH
-    //////////////////////////////////////////////////////////////////////////
-    
-    pts getMinAdjustBegin() const;  ///< \return Minimum allowed value for adjustBegin given the available data for mRender.
-    pts getMaxAdjustBegin() const;  ///< \return Maximum allowed value for adjustBegin given the available data for mRender.
-    
-    /// If adjustment is positive then move the begin point of the clip backwards
-    /// in time (increase the start pts). If adjustment is negative then move the
-    /// begin point of the clip forward in time (decrease the start pts).
-    /// \param adjustment pts count to add/subtract from the begin point
+    virtual pts getMinAdjustBegin() const;
+    virtual pts getMaxAdjustBegin() const;
     virtual void adjustBegin(pts adjustment);
 
-    pts getMinAdjustEnd() const;    ///< \return Minimum allowed value for adjustEnd given the available data for mRender.
-    pts getMaxAdjustEnd() const;    ///< \return Maximum allowed value for adjustEnd given the available data for mRender.
+    virtual pts getMinAdjustEnd() const;
+    virtual pts getMaxAdjustEnd() const;
+    virtual void adjustEnd(pts adjustment);
 
-    /// Set the new length of the clip.
-    /// \param adjustment pts count to add/subtract from the length
-    void adjustEnd(pts adjustment);
+    virtual bool getSelected() const;
+    virtual void setSelected(bool selected);
 
-    //////////////////////////////////////////////////////////////////////////
-    // GET/SET
-    //////////////////////////////////////////////////////////////////////////
+    virtual pts getGenerationProgress() const;          
+    virtual void setGenerationProgress(pts progress);
 
-    /// \return Offset in the viewed video/audio data (that is, the diff between the 
-    ///         starting point of the original and the starting point of the clip)
-    pts getOffset() const;
-
-    bool getSelected() const;           ///< /return true if this clip is selected
-    void setSelected(bool selected);    ///< Select or deselect clip
-
-    /// \return pts value of most recently returned audio/video in getNext*.
-    pts getGenerationProgress() const;          
-
-    /// \param delivered value of most recently returned audio/video in getNext*.
-    /// Triggers DebugEventRenderProgress.
-    void setGenerationProgress(pts progress);
-
-    pts getLeftEmptyArea();     ///< /return size of area to the left of clip that is empty
-    pts getRightEmptyArea();    ///< /return size of area to the right of clip that is empty
-
-    //////////////////////////////////////////////////////////////////////////
-    // STATIC HELPER METHOD
-    //////////////////////////////////////////////////////////////////////////
-
-    static pts getCombinedLength(model::Clips clips);
+    void invalidateLastSetPosition();
+    boost::optional<pts> getLastSetPosition() const;
 
 protected:
 
@@ -158,19 +99,6 @@ protected:
         return boost::static_pointer_cast<GENERATOR>(mRender);
     }
 
-    //////////////////////////////////////////////////////////////////////////
-    // CURRENT POSITION HANDLING
-    //////////////////////////////////////////////////////////////////////////
-
-    /// This method resets mLastSetPosition. This must be called whenever there
-    /// is new playback progress.
-    void invalidateLastSetPosition();
-
-    /// Return the most recent position as specified in moveTo(). This is
-    /// uninitialized when there was playback progress after the moveTo.
-    /// \see invalidateLastSetPosition
-    boost::optional<pts> getLastSetPosition() const;
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -180,7 +108,7 @@ private:
     IControlPtr mRender;    ///< The producer of audiovisual data for this clip
     TrackPtr mTrack;        ///< Track which holds this clip
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
-    WeakClipPtr mLink;      ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
+    WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 
     pts mOffset;            ///< Offset inside the original media file (start point)
     pts mLength;            ///< Length of the clip

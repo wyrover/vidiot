@@ -7,14 +7,14 @@
 namespace model {
     class Track;
     typedef boost::shared_ptr<Track> TrackPtr;
-    class Clip;
-    typedef boost::shared_ptr<Clip> ClipPtr;
+    class IClip;
+    typedef boost::shared_ptr<IClip> IClipPtr;
 }
 
 namespace gui { namespace timeline {
 
 typedef std::map< model::TrackPtr, TrackView* > TrackMap;
-typedef std::map< model::ClipPtr, ClipView* > ClipMap;
+typedef std::map< model::IClipPtr, ClipView* > ClipMap;
 
 class ViewMap
     :   public Part
@@ -32,16 +32,16 @@ public:
     // REGISTRATION
     //////////////////////////////////////////////////////////////////////////
 
-    void registerView(model::ClipPtr clip, ClipView* view);
+    void registerView(model::IClipPtr clip, ClipView* view);
     void registerView(model::TrackPtr track, TrackView* view);
-    void unregisterView(model::ClipPtr clip);
+    void unregisterView(model::IClipPtr clip);
     void unregisterView(model::TrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////
     // CONVERSION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual ClipView* getView(model::ClipPtr clip) const;
+    virtual ClipView* getView(model::IClipPtr clip) const;
     virtual TrackView* getView(model::TrackPtr track) const;
 
 private:

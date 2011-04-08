@@ -8,10 +8,11 @@
 #include "Track.h"
 #include "Clip.h"
 #include "EmptyClip.h"
+#include "Transition.h"
 
 namespace gui { namespace timeline { namespace command {
 
-ExecuteDrop::ExecuteDrop(gui::timeline::Timeline& timeline, model::Clips drags, Drops drops)
+ExecuteDrop::ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops)
 :   AClipEdit(timeline)
 ,   mDrags(drags)
 ,   mDrops(drops)
@@ -31,9 +32,18 @@ void ExecuteDrop::initialize()
     ReplacementMap linkmapper;
 
     LOG_DEBUG << "STEP 1: Replace all drags with EmptyClips";
-    BOOST_FOREACH( model::ClipPtr clip, mDrags )
+    BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
-        replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
+        if (clip->isA<model::Transition>())
+        {
+            // Transitions are simply removed
+            // todo make a removeclip method, can be used more than only here
+            replaceClip(clip, model::IClips());
+        }
+        else
+        {
+            replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
+        }
     }
 
     LOG_DEBUG << "STEP 2: Execute the drops AND fill replacement map";
@@ -45,7 +55,7 @@ void ExecuteDrop::initialize()
         VAR_DEBUG(drop.position)(drop.track)(drop.clips);
 
         // Determine size and end pts of dropped clips
-        pts droppedSize = model::Clip::getCombinedLength(drop.clips);
+        pts droppedSize = model::Track::getCombinedLength(drop.clips);
         pts dropEndPosition = drop.position + droppedSize;
 
         // Ensure that the track has cuts at the begin and the end of the dropped clips
@@ -54,6 +64,8 @@ void ExecuteDrop::initialize()
 
         // Determine the clips to be replaced.
         // Done AFTER the splitting above, since that requires clip addition/removal.
+        // Furthermore, note that the split calls above ensure that any transitions at
+        // the begin and end of the insertion are removed.
         AClipEdit::ClipsWithPosition remove = findClips(drop.track, drop.position, dropEndPosition);
 
         if (drop.position > drop.track->getLength())

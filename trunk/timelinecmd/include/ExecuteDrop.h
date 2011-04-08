@@ -18,13 +18,13 @@ public:
     {
         model::TrackPtr track;
         pts position;
-        model::Clips clips;     ///< Must be contiguous
+        model::IClips clips;     ///< Must be contiguous
 
         friend std::ostream& operator<<( std::ostream& os, const Drop& obj );
     };
     typedef std::list<Drop> Drops;
 
-    ExecuteDrop(gui::timeline::Timeline& timeline, model::Clips drags, Drops drops);
+    ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops);
 
     ~ExecuteDrop();
 
@@ -40,7 +40,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::Clips mDrags;
+    model::IClips mDrags;
     Drops mDrops;
 };
 

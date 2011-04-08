@@ -10,6 +10,7 @@
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
 #include "UtilEvent.h"
+#include "UtilRTTI.h"
 
 namespace model {
 
@@ -48,6 +49,7 @@ DECLARE_EVENT(EVENT_RENAME_ASSET,   EventRenameAsset,   NodeWithNewName);
 
 class AProjectViewNode
     :   public boost::enable_shared_from_this<AProjectViewNode>
+    ,   public IRTTI
 {
 public:
 
@@ -94,16 +96,6 @@ public:
 
     virtual wxString getName() const = 0;
     virtual void setName(wxString name);
-
-    //////////////////////////////////////////////////////////////////////////
-    // FOR DETERMINING THE TYPE OF NODE
-    //////////////////////////////////////////////////////////////////////////
-
-    template <typename Derived>
-    bool isA()
-    {
-        return (typeid(Derived) == typeid(*this));
-    }
 
 protected:
 

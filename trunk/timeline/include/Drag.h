@@ -49,7 +49,7 @@ public:
 
     /// \return true if the given clip is currently being dragged
     /// \param clip clip to be checked
-    bool contains(model::ClipPtr clip) const;
+    bool contains(model::IClipPtr clip) const;
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW
@@ -76,7 +76,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mIsInsideDrag;                 ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
-    model::Clips mDraggedClips;         ///< List of all clips currently being dragged
+    model::IClips mDraggedClips;         ///< List of all clips currently being dragged
     wxPoint mHotspot;                   ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
     wxPoint mPosition;                  ///< Current pointer drag position. In timeline coordinates.
     wxBitmap mBitmap;                   ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 

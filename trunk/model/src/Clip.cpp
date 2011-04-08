@@ -11,8 +11,9 @@
 
 namespace model {
 
-DEFINE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
-DEFINE_EVENT(DEBUG_EVENT_RENDER_PROGRESS, DebugEventRenderProgress, pts);
+    // todo implementation should be done somewhere else maybe in Event.h/Event.cpp?
+DEFINE_EVENT(EVENT_SELECT_CLIP,             EventSelectClip,            bool);
+DEFINE_EVENT(DEBUG_EVENT_RENDER_PROGRESS,   DebugEventRenderProgress,   pts);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -20,7 +21,7 @@ DEFINE_EVENT(DEBUG_EVENT_RENDER_PROGRESS, DebugEventRenderProgress, pts);
 
 Clip::Clip()
     :   wxEvtHandler()
-    ,	IControl()
+    ,	IClip()
     ,   mRender()
     ,   mOffset(0)
     ,   mLength(-1)
@@ -37,7 +38,7 @@ Clip::Clip()
 
 Clip::Clip(IControlPtr render)
     :   wxEvtHandler()
-    ,	IControl()
+    ,	IClip()
     ,   mRender(render)
     ,   mOffset(0)
     ,   mLength(-1)
@@ -55,7 +56,7 @@ Clip::Clip(IControlPtr render)
 
 Clip::Clip(const Clip& other)
     :   wxEvtHandler()
-    ,	IControl()
+    ,	IClip()
     ,   mRender(make_cloned<model::IControl>(other.mRender))
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
@@ -116,7 +117,7 @@ void Clip::clean()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// TRACK
+// ICLIP
 //////////////////////////////////////////////////////////////////////////
 
 void Clip::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
@@ -141,23 +142,15 @@ pts Clip::getRightPts() const
     return mLeftPtsInTrack + mLength;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// LINK
-//////////////////////////////////////////////////////////////////////////
-
-void Clip::setLink(ClipPtr link)
+void Clip::setLink(IClipPtr link)
 {
-    mLink = WeakClipPtr(link);
+    mLink = WeakIClipPtr(link);
 }
 
-ClipPtr Clip::getLink() const
+IClipPtr Clip::getLink() const
 {
     return mLink.lock();
 }
-
-//////////////////////////////////////////////////////////////////////////
-// ADJUSTING OFFSET AND LENGTH
-//////////////////////////////////////////////////////////////////////////
 
 pts Clip::getMinAdjustBegin() const
 {
@@ -207,15 +200,6 @@ void Clip::adjustEnd(pts adjustment)
     VAR_DEBUG(*this)(adjustment);
 }
 
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-pts Clip::getOffset() const
-{
-    return mOffset;
-}
-
 bool Clip::getSelected() const
 {
     return mSelected;
@@ -240,25 +224,6 @@ void Clip::setGenerationProgress(pts progress)
         ProcessEvent(DebugEventRenderProgress(mGeneratedPts));
     }
 }
-
-//////////////////////////////////////////////////////////////////////////
-// STATIC HELPER METHOD
-//////////////////////////////////////////////////////////////////////////
-
-//static 
-pts Clip::getCombinedLength(model::Clips clips)
-{
-    int length = 0;
-    BOOST_FOREACH( model::ClipPtr clip, clips )
-    {
-        length += clip->getLength();
-    }
-    return length;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// CURRENT POSITION HANDLING
-//////////////////////////////////////////////////////////////////////////
 
 void Clip::invalidateLastSetPosition()
 {
@@ -287,7 +252,7 @@ std::ostream& operator<<( std::ostream& os, const Clip& obj )
 template<class Archive>
 void Clip::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IControl>(*this);
+    ar & boost::serialization::base_object<IClip>(*this);
     ar & mRender;
     ar & mOffset;
     ar & mLength;

@@ -8,8 +8,8 @@
 #include "Part.h"
 
 namespace model {
-class Clip;
-typedef boost::shared_ptr<Clip> ClipPtr;
+class IClip;
+typedef boost::shared_ptr<IClip> IClipPtr;
 }
 
 namespace gui { namespace timeline {
@@ -84,7 +84,7 @@ private:
     wxRect ptsToPixels(wxRect rect) const;
     void refresh(long begin, long end);
 
-    typedef std::map< model::ClipPtr, model::ClipPtr > ReplacementMap;
+    typedef std::map< model::IClipPtr, model::IClipPtr > ReplacementMap;
     ReplacementMap findReplacements(TrackView* track);
 
     //////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,8 @@
 #include "AudioChunk.h"
 #include "VideoFrame.h"
 
+// todo make emptyclip directly inherit from IClip, just like transition does....
+
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////

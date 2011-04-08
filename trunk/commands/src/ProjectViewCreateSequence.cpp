@@ -15,32 +15,42 @@
 
 namespace command {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder)
-:   ProjectViewCommand()
-,   mName(folder->getName())
-,   mParent(boost::dynamic_pointer_cast<model::Folder>(folder->getParent()))
-,   mInputFolder(folder)
-,   mSequence()
+    :   ProjectViewCommand()
+    ,   mName(folder->getName())
+    ,   mParent(findFirstNonAutoFolderParent(folder))
+    ,   mInputFolder(folder)
+    ,   mSequence()
 {
     VAR_INFO(this)(mParent)(mInputFolder);
+    ASSERT(mParent); // Parent folder must exist
     mCommandName = _("Create sequence from folder ") + mName;
 }
 
 ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder, wxString name)
-:   ProjectViewCommand()
-,   mName(name)
-,   mParent(folder)
-,   mInputFolder()
-,   mSequence()
+    :   ProjectViewCommand()
+    ,   mName(name)
+    ,   mParent(folder)
+    ,   mInputFolder()
+    ,   mSequence()
 {
     VAR_INFO(mParent)(name);
     ASSERT(mParent); // Parent folder must exist
+    ASSERT(!folder->isA<model::AutoFolder>());
     mCommandName = _("Create sequence ") + mName;
 }
 
 ProjectViewCreateSequence::~ProjectViewCreateSequence()
 {
 }
+
+//////////////////////////////////////////////////////////////////////////
+// WXCOMMAND
+//////////////////////////////////////////////////////////////////////////
 
 bool ProjectViewCreateSequence::Do()
 {
@@ -79,7 +89,6 @@ bool ProjectViewCreateSequence::Do()
         }
     }
 
-    /** @todo do not add this sequence to an autofolder. Then, I cannot move it or rename it anymore */
     mParent->addChild(mSequence);
     gui::GuiWindow::get()->getTimeLines().Open(mSequence);
 
@@ -94,9 +103,32 @@ bool ProjectViewCreateSequence::Undo()
     return true;
 }
 
-model::SequencePtr ProjectViewCreateSequence::getSequence()
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+model::SequencePtr ProjectViewCreateSequence::getSequence() const
 {
     return mSequence;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+model::FolderPtr ProjectViewCreateSequence::findFirstNonAutoFolderParent(model::ProjectViewPtr node) const
+{
+    model::ProjectViewPtr parent = node->getParent();
+    ASSERT(parent)(node);
+
+    while (parent->isA<model::AutoFolder>())
+    {
+        parent = parent->getParent(); 
+
+    }
+    model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(parent);
+    ASSERT(folder)(parent);
+    return folder;
 }
 
 } // namespace

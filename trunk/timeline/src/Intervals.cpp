@@ -244,12 +244,12 @@ void Intervals::refresh(long begin, long end)
 
 Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
 {
-    std::map< model::ClipPtr, model::ClipPtr > replacements;
+    std::map< model::IClipPtr, model::IClipPtr > replacements;
 
     int pts_left = 0;
     int pts_right = 0;
 
-    BOOST_FOREACH( model::ClipPtr modelclip, track->getTrack()->getClips() )
+    BOOST_FOREACH( model::IClipPtr modelclip, track->getTrack()->getClips() )
     {
         ClipView* clip = getViewMap().getView(modelclip);
         pts_right += clip->getClip()->getLength();
@@ -271,8 +271,8 @@ Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
                 // todo only shows last segment
                 clip->show(ptsToPixels(marked));
 
-                model::ClipPtr original = clip->getClip();
-                model::ClipPtr replacement = make_cloned<model::Clip>(original);
+                model::IClipPtr original = clip->getClip();
+                model::IClipPtr replacement = make_cloned<model::IClip>(original);
                 //replacement->setOffset(original->getOffset() + it.GetRect().GetX() - pts_left);
                 //replacement->setLength(it.GetRect().GetWidth());
 

@@ -3,6 +3,7 @@
 
 #include "UtilFifo.h"
 #include "UtilInt.h"
+#include "UtilRTTI.h"
 
 namespace model {
 
@@ -13,7 +14,9 @@ typedef Fifo<AudioChunkPtr> FifoAudio;
 typedef std::list<AudioChunkPtr> AudioChunks;
 std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
 
-class AudioChunk : boost::noncopyable
+class AudioChunk
+    :   public boost::noncopyable
+    ,   public IRTTI
 {
 public:
 
@@ -43,12 +46,6 @@ public:
 
     pts getPts() const;
     unsigned int getNumberOfChannels() const;
-
-    template <typename Derived>
-    bool isA()
-    {
-        return (typeid(Derived) == typeid(*this));
-    }
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

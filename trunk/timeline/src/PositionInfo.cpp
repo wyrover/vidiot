@@ -13,7 +13,7 @@ PointerPositionInfo::PointerPositionInfo()
 ,   track(model::TrackPtr())
 ,   trackPosition(0)
 ,   onTrackDivider(false)
-,   clip(model::ClipPtr())
+,   clip(model::IClipPtr())
 ,   logicalclipposition(ClipInterior)
 {
 }

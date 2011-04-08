@@ -13,6 +13,7 @@
 #include "ViewMap.h"
 #include "Track.h"
 #include "GuiOptions.h"
+#include "Transition.h"
 #include "Clip.h"
 #include "PositionInfo.h"
 
@@ -22,7 +23,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-ClipView::ClipView(model::ClipPtr clip, View* parent)
+ClipView::ClipView(model::IClipPtr clip, View* parent)
 :   View(parent)
 ,   mClip(clip)
 ,   mThumbnail()
@@ -33,8 +34,16 @@ ClipView::ClipView(model::ClipPtr clip, View* parent)
     ASSERT(mClip);
 
     getViewMap().registerView(mClip,this);
-    mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
-    mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
+    if (mClip->isA<model::Transition>())
+    {
+        // todo
+    }
+    else
+    {
+        model::ClipPtr clip = boost::static_pointer_cast<model::Clip>(mClip);
+        clip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
+        clip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
+    }
     updateThumbnail();
 }
 
@@ -42,8 +51,16 @@ ClipView::~ClipView()
 {
     VAR_DEBUG(this);
 
-    mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
-    mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
+    if (mClip->isA<model::Transition>())
+    {
+        // todo
+    }
+    else
+    {
+        model::ClipPtr clip = boost::static_pointer_cast<model::Clip>(mClip);
+        clip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
+        clip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
+    }
     getViewMap().unregisterView(mClip);
 }
 
@@ -51,7 +68,7 @@ ClipView::~ClipView()
 //  GET & SET
 //////////////////////////////////////////////////////////////////////////
 
-model::ClipPtr ClipView::getClip()
+model::IClipPtr ClipView::getClip()
 {
     return mClip;
 }
@@ -82,6 +99,10 @@ pixel ClipView::requiredWidth() const
 
 pixel ClipView::requiredHeight() const
 {
+    if (mClip->isA<model::Transition>())
+    {
+        return 8; // TODO
+    }
     return mClip->getTrack()->getHeight();
 }
 
@@ -94,6 +115,9 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     // (then the cursor won't flip too much).
     int dist_begin = position.x - getLeftPosition();
     int dist_end = getRightPosition() - position.x;
+
+    // todo add if is transition and add three enums for begin, end, middle of transition
+
 
     ASSERT(dist_begin >= 0 && dist_end >= 0)(dist_begin)(dist_end);
 
@@ -109,12 +133,6 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     {
         info.logicalclipposition = ClipInterior;
     }
-}
-
-void ClipView::setBeginAddition(pts addition)
-{
-    mBeginAddition = addition;
-    invalidateBitmap();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -160,6 +178,20 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         // in the regular tracks as they have become part of 'getDrag()'s bitmap.
         dc.SetBrush(Layout::sBackgroundBrush);
         dc.SetPen(Layout::sBackgroundPen);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
+    }
+    else if (mClip->isA<model::Transition>())
+    {
+        if (mClip->getSelected())
+        {
+            dc.SetBrush(Layout::sSelectedClipBrush);
+            dc.SetPen(Layout::sSelectedClipPen);
+        }
+        else
+        {
+            dc.SetBrush(Layout::sClipBrush);
+            dc.SetPen(Layout::sClipPen);
+        }
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     }
     else
