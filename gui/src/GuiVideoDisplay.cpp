@@ -111,12 +111,9 @@ void GuiVideoDisplay::play()
     mSoundTouch.setRate(1.0);
     mSoundTouch.setRateChange(0);
     mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 0);//1
-    //if (speech) // @todo speech selector
-    {
-        mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);
-        mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);
-        mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);
-    }
+    mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);    // Optimize for speech
+    mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);  // Optimize for speech
+    mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);      // Optimize for speech
 
     // Start buffering ASAP
     mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&GuiVideoDisplay::audioBufferThread,this)));
@@ -248,7 +245,7 @@ void GuiVideoDisplay::audioBufferThread()
             {
                 int nFramesAvailable = mSoundTouch.numSamples();
                 boost::int16_t* p = 0;
-                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFramesAvailable * sStereo, 0); /** @todo pts (0)?? */
+                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFramesAvailable * sStereo, 0);
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
                 ASSERT(nFrames == nFramesAvailable)(nFrames)(nFramesAvailable);
                 mAudioChunks.push(audioChunk);
@@ -274,7 +271,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
     }
 
     static const samples_t sSamplesPerStereoFrame = 2;
-    samples_t remainingSamples = frames * sSamplesPerStereoFrame; /** todo and here a sample is for one speaker. */
+    samples_t remainingSamples = frames * sSamplesPerStereoFrame;
     int16_t* out = static_cast<int16_t*>(buffer);
 
     while (remainingSamples > 0)

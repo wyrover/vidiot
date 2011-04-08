@@ -7,6 +7,7 @@
 #include <boost/serialization/split_member.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/weak_ptr.hpp>
 #include "IControl.h"
 #include "UtilEvent.h"
 #include "UtilLog.h"
@@ -15,6 +16,7 @@ namespace model {
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
+typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<TrackPtr> Tracks;
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
