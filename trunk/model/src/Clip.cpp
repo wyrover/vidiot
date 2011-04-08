@@ -256,7 +256,6 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mRender;
     ar & mOffset;
     ar & mLength;
-    ar & mTrack.lock();
     ar & mLeftPtsInTrack;
     ar & mIndex;
 
