@@ -389,7 +389,7 @@ void GuiVideoDisplay::videoDisplayThread()
 
 inline void GuiVideoDisplay::OnEraseBackground(wxEraseEvent& event)
 {
-    /* do nothing */
+    // do nothing
 }
 
 void GuiVideoDisplay::OnSize(wxSizeEvent& event)
