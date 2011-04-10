@@ -32,26 +32,12 @@ AProjectViewNode::AProjectViewNode()
 AProjectViewNode::~AProjectViewNode()
 {
     VAR_DEBUG(*this);
-    ASSERT(mChildren.size() == 0)(this)(mChildren.size());
 }
 
 AProjectViewNode::AProjectViewNode(const AProjectViewNode& other)
 :   mParent()
 ,   mChildren()
 {
-}
-
-void AProjectViewNode::destroy()
-{
-    // First 'bottom up' reference removal,
-    // Second 'top down' reference removal.
-    while (mChildren.size() > 0)
-    {
-        ProjectViewPtr child = *mChildren.begin();
-        child->destroy();
-        removeChild(child);
-    }
-    mParent.reset();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -74,7 +60,7 @@ ProjectViewPtr AProjectViewNode::Ptr( ProjectViewId id )
 
 bool AProjectViewNode::hasParent() const
 {
-    if (mParent)
+    if (getParent())
     {
         return true;
     }
@@ -86,7 +72,7 @@ bool AProjectViewNode::hasParent() const
 
 ProjectViewPtr AProjectViewNode::getParent() const
 { 
-    return mParent; 
+    return mParent.lock(); 
 }
 
 void AProjectViewNode::setParent(ProjectViewPtr parent)
@@ -98,9 +84,9 @@ ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
 {
     mChildren.push_back(newChild);
     newChild->setParent(shared_from_this());
-    // The event must be handled immediately due to the use of shared_ptr
-    // (more important in case of deletion than in case of addition)
-    gui::wxGetApp().ProcessEvent(model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
+    // Do not use ProcessEvent: this will cause problems with auto-updating autofolders upon
+    // first expansion.
+    gui::wxGetApp().QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
     return newChild;
 }
 
@@ -114,8 +100,8 @@ ProjectViewPtr AProjectViewNode::removeChild(ProjectViewPtr child)
     }
     ASSERT(it != mChildren.end());
     ProjectViewPtr p = *it;
-    // The event must be handled immediately due to the use of shared_ptr
-    gui::wxGetApp().ProcessEvent(model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
+    // Do not use ProcessEvent: see addChild
+    gui::wxGetApp().QueueEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
     mChildren.erase(it);
     child->setParent(ProjectViewPtr());
     return p;
@@ -136,7 +122,7 @@ void AProjectViewNode::setName(wxString name)
 
 std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj )
 {
-    os << &obj << '|' << obj.mParent << '|' << obj.mChildren.size();
+    os << &obj << '|' << obj.mParent.lock() << '|' << obj.mChildren.size();
     return os;
 }
 
@@ -147,7 +133,16 @@ std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj )
 template<class Archive>
 void AProjectViewNode::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mParent;
+    if (Archive::is_loading::value)
+    {
+        ProjectViewPtr parent;
+        ar & parent;
+        setParent(parent);
+    }
+    else
+    {
+        ar & mParent.lock();
+    }
     ar & mChildren;
 }
 template void AProjectViewNode::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

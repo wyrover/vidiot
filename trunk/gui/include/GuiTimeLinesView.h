@@ -9,7 +9,7 @@
 #include <boost/serialization/split_member.hpp>
 
 namespace model {
-    class Project;
+    class EventCloseProject;
     class EventRemoveAsset;
     class EventRenameAsset;
     class Sequence;
@@ -40,14 +40,15 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnProjectAssetRemoved( model::EventRemoveAsset &event );
-    void OnProjectAssetRenamed( model::EventRenameAsset &event );
+    void onCloseProject( model::EventCloseProject &event );
+    void onProjectAssetRemoved( model::EventRemoveAsset &event );
+    void onProjectAssetRenamed( model::EventRenameAsset &event );
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnPageChanged(wxNotebookEvent& event);
+    void onPageChanged(wxNotebookEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // OPEN/CLOSE SEQUENCE

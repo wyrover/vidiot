@@ -5,12 +5,14 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/filesystem/operations.hpp>
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "GuiOptions.h"
 #include "GuiWindow.h"
 #include "Layout.h"
+#include "FSWatcher.h"
 #include "GuiDebugReport.h"
 
 /// \todo Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
@@ -24,6 +26,7 @@ IMPLEMENT_APP(GuiMain)
 //////////////////////////////////////////////////////////////////////////
 
 GuiMain::GuiMain()
+:   wxApp()
 {
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();

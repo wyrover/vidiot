@@ -7,10 +7,12 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
+#include <boost/scoped_ptr.hpp>
 #include "Project.h"
 
 namespace gui {
 
+class FSWatcher;
 class GuiTimelinesView;
 class GuiPreview;
 class ProjectView;
@@ -18,6 +20,10 @@ class ProjectView;
 class GuiWindow : public wxDocParentFrame
 {
 public:
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
 
     GuiWindow();
     void init();
@@ -27,8 +33,8 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnOpenProject( model::EventOpenProject &event );
-    void OnCloseProject( model::EventCloseProject &event );
+    void onOpenProject( model::EventOpenProject &event );
+    void onCloseProject( model::EventCloseProject &event );
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -40,7 +46,7 @@ public:
     // FILE MENU
     //////////////////////////////////////////////////////////////////////////
 
-    void OnExit(wxCommandEvent& WXUNUSED(event));
+    void onExit(wxCommandEvent& WXUNUSED(event));
 
     //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU - SEE THE TIMELINE IMPLEMENTATION
@@ -50,14 +56,14 @@ public:
     // TOOLS MENU
     //////////////////////////////////////////////////////////////////////////
 
-    void OnOptions(wxCommandEvent& WXUNUSED(event));
+    void onOptions(wxCommandEvent& WXUNUSED(event));
 
     //////////////////////////////////////////////////////////////////////////
     // HELP MENU
     //////////////////////////////////////////////////////////////////////////
 
-    void OnHelp(wxCommandEvent& WXUNUSED(event));
-    void OnAbout(wxCommandEvent& WXUNUSED(event));
+    void onHelp(wxCommandEvent& WXUNUSED(event));
+    void onAbout(wxCommandEvent& WXUNUSED(event));
 
     //////////////////////////////////////////////////////////////////////////
     // GET WIDGETS
@@ -71,17 +77,21 @@ public:
     // ENABLING/DISABLING MENUS
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Change the sequence menu. This is used by a timeline to set the menu to
-     * the timeline's menu.
-     * @param menu 0 to indicate that the default disabled menu should be shown
-     */
+    /// Change the sequence menu. This is used by a timeline to set the menu to
+    /// the timeline's menu.
+    /// \param menu 0 to indicate that the default disabled menu should be shown
     void setSequenceMenu(wxMenu* menu);
 
 private:
 
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     wxDocManager*       mDocManager;
     wxDocTemplate*      mDocTemplate;
+
+    boost::scoped_ptr<FSWatcher> mWatcher;
 
     GuiTimelinesView*   mTimelinesView;
     GuiPreview*		    mPreview;

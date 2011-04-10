@@ -61,13 +61,6 @@ public:
     AProjectViewNode();
     virtual ~AProjectViewNode();
 
-    /// Remove the substructure below this node. This type of explicit tree
-    /// deletion is needed due to the extensive use of shared_ptr's. The whole
-    /// tree is made of shared_ptr's. That means that parents keep children alive,
-    /// and vice versa. The references between them have to be explicitly destroyed
-    /// which is done here.
-    virtual void destroy();
-
     //////////////////////////////////////////////////////////////////////////
     // IDS
     //////////////////////////////////////////////////////////////////////////
@@ -96,8 +89,8 @@ public:
 
 protected:
 
-    ProjectViewPtr mParent;
-    std::list<ProjectViewPtr> mChildren;
+    WeakProjectViewPtr mParent;             // Children do not keep parents alive
+    std::list<ProjectViewPtr> mChildren;    // Parents keep children alive
 
 private:
 

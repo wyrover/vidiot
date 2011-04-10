@@ -24,8 +24,6 @@ ProjectViewMoveAsset::ProjectViewMoveAsset(model::ProjectViewPtrs nodes, model::
 
 ProjectViewMoveAsset::~ProjectViewMoveAsset()
 {
-    mNewParent.reset();
-    mPairs.clear();
 }
 
 bool ProjectViewMoveAsset::Do()

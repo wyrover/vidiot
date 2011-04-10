@@ -10,7 +10,7 @@ class GuiWindow;
 
 namespace model {
 
-/**
+/** todo move similar to watcher class. This one however should be started by window? or by main?
 * This class is responsible for running lengthy Project tasks
 * like indexing an autofolder, or rendering preview files in the
 * background.

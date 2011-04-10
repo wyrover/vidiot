@@ -34,13 +34,13 @@ AutoFolder::AutoFolder(boost::filesystem::path path)
 ,   mPath(path)
 {
     VAR_DEBUG(this);
-    FSWatcher::current()->watchFolder(this);
+    gui::FSWatcher::current()->watchFolder(this);
 }
 
 AutoFolder::~AutoFolder()
 {
     VAR_DEBUG(this);
-    FSWatcher::current()->unwatchFolder(this);
+    gui::FSWatcher::current()->unwatchFolder(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ void AutoFolder::serialize(Archive & ar, const unsigned int version)
     ar & mLastModified;
     if (Archive::is_loading::value)
     {
-        FSWatcher::current()->watchFolder(this);
+        gui::FSWatcher::current()->watchFolder(this);
     }
 }
 template void AutoFolder::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

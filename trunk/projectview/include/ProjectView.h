@@ -31,14 +31,12 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnOpenProject( model::EventOpenProject &event );
-    void OnCloseProject( model::EventCloseProject &event );
-    void OnAutoOpenFolder( EventAutoFolderOpen& event );
+    void onOpenProject( model::EventOpenProject &event );
+    void onCloseProject( model::EventCloseProject &event );
+    void onAutoOpenFolder( EventAutoFolderOpen& event );
 
-    /**
-    * Called to open any folders that were 'marked' as open
-    * when saving the document.
-    */
+    /// Called to open any folders that were 'marked' as open
+    /// when saving the document.
     void OpenRecursive(model::FolderPtr folder);
 
 private:
@@ -47,25 +45,25 @@ private:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnContextMenu( wxDataViewEvent &event );
-    void OnCut(wxCommandEvent& WXUNUSED(event));
-    void OnCopy(wxCommandEvent& WXUNUSED(event));
-    void OnPaste(wxCommandEvent& WXUNUSED(event));
-    void OnDelete(wxCommandEvent& WXUNUSED(event));
-    void OnNewFolder(wxCommandEvent& WXUNUSED(event));
-    void OnNewAutoFolder(wxCommandEvent& WXUNUSED(event));
-    void OnNewSequence(wxCommandEvent& WXUNUSED(event));
-    void OnNewFile(wxCommandEvent& WXUNUSED(event));
-    void OnCreateSequence(wxCommandEvent& WXUNUSED(event));
-    void OnUpdateAutoFolder(wxCommandEvent& WXUNUSED(event));
-    void OnStartEditing( wxDataViewEvent &event );
-    void OnMotion(wxMouseEvent& event);
+    void onContextMenu( wxDataViewEvent &event );
+    void onCut(wxCommandEvent& WXUNUSED(event));
+    void onCopy(wxCommandEvent& WXUNUSED(event));
+    void onPaste(wxCommandEvent& WXUNUSED(event));
+    void onDelete(wxCommandEvent& WXUNUSED(event));
+    void onNewFolder(wxCommandEvent& WXUNUSED(event));
+    void onNewAutoFolder(wxCommandEvent& WXUNUSED(event));
+    void onNewSequence(wxCommandEvent& WXUNUSED(event));
+    void onNewFile(wxCommandEvent& WXUNUSED(event));
+    void onCreateSequence(wxCommandEvent& WXUNUSED(event));
+    void onUpdateAutoFolder(wxCommandEvent& WXUNUSED(event));
+    void onStartEditing( wxDataViewEvent &event );
+    void onMotion(wxMouseEvent& event);
     void onDragEnd();
-    void OnDropPossible( wxDataViewEvent &event );
-    void OnDrop( wxDataViewEvent &event );
-    void OnActivated( wxDataViewEvent &event );
-    void OnExpanded( wxDataViewEvent &event );
-    void OnCollapsed( wxDataViewEvent &event );
+    void onDropPossible( wxDataViewEvent &event );
+    void onDrop( wxDataViewEvent &event );
+    void onActivated( wxDataViewEvent &event );
+    void onExpanded( wxDataViewEvent &event );
+    void onCollapsed( wxDataViewEvent &event );
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
