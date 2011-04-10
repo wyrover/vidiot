@@ -54,7 +54,7 @@ Project* Project::current()
 bool Project::DeleteContents()
 {
     VAR_DEBUG(this);
-    mRoot->Delete();
+    mRoot->destroy();
     mRoot.reset();
     GetCommandProcessor()->ClearCommands();
     return wxDocument::DeleteContents();

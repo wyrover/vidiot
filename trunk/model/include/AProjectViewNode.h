@@ -4,6 +4,7 @@
 #include <list>
 #include <wx/string.h>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/weak_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
@@ -17,6 +18,7 @@ namespace model {
 class AProjectViewNode;
 typedef AProjectViewNode* ProjectViewId;
 typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+typedef boost::weak_ptr<AProjectViewNode> WeakProjectViewPtr;
 typedef std::list<ProjectViewPtr> ProjectViewPtrs;
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,16 +61,12 @@ public:
     AProjectViewNode();
     virtual ~AProjectViewNode();
 
-    /**
-    * Remove the substructure below this node. This type of explicit tree
-    * deletion is needed due to the extensive use of shared_ptr's. The whole
-    * tree is made of shared_ptr's. That means that parents keep children alive,
-    * and vice versa. The references between them have to be explicitly destroyed
-    * which is done here.
-    * @todo move to the project class which can access the entire tree.
-    * @todo reimplement in sequence, track, clip etc. For instance Track and Clip keep each other alive.
-    */
-    virtual void Delete();
+    /// Remove the substructure below this node. This type of explicit tree
+    /// deletion is needed due to the extensive use of shared_ptr's. The whole
+    /// tree is made of shared_ptr's. That means that parents keep children alive,
+    /// and vice versa. The references between them have to be explicitly destroyed
+    /// which is done here.
+    virtual void destroy();
 
     //////////////////////////////////////////////////////////////////////////
     // IDS

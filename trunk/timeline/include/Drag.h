@@ -3,7 +3,6 @@
 
 #include <list>
 #include <wx/bitmap.h>
-#include <wx/dnd.h>
 #include <wx/dcmemory.h>
 #include "Part.h"
 #include "ExecuteDrop.h"
@@ -20,7 +19,6 @@ class DummyView;
 
 class Drag
     :   public Part
-    ,   public wxDropTarget
 {
 public:
 
@@ -57,17 +55,6 @@ public:
 
     wxBitmap getDragBitmap();
     void draw(wxDC& dc) const;
-
-    //////////////////////////////////////////////////////////////////////////
-    // FROM WXDROPTARGET
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual bool GetData() { return false; };
-    wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def) { return def; };
-    bool OnDrop (wxCoord x, wxCoord y);
-    wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def);
-    wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def);
-    void OnLeave ();
 
 private:
 
