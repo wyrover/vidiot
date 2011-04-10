@@ -28,8 +28,6 @@ GuiPreview::GuiPreview(wxWindow* parent)
 
 GuiPreview::~GuiPreview()
 {
-    mPlayer.reset();
-    mPlayers.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,6 @@ ProjectViewRenameAsset::ProjectViewRenameAsset(model::ProjectViewPtr node, wxStr
 
 ProjectViewRenameAsset::~ProjectViewRenameAsset()
 {
-    mNode.reset();
 }
 
 bool ProjectViewRenameAsset::Do()

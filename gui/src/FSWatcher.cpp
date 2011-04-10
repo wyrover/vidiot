@@ -8,7 +8,7 @@
 #include "File.h"
 #include "UtilList.h"
 
-namespace model {
+namespace gui {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -29,9 +29,9 @@ FSWatcher::FSWatcher()
 FSWatcher::~FSWatcher()
 {
     VAR_DEBUG(this);
-    ASSERT(mFolders.empty());
-    ASSERT(mFiles.empty());
     Unbind(wxEVT_FSWATCHER, &FSWatcher::onChange, this);
+    mFolders.clear();
+    mFiles.clear();
     sCurrent = 0;
 }
 
@@ -44,7 +44,7 @@ FSWatcher* FSWatcher::current()
 // ADD
 //////////////////////////////////////////////////////////////////////////
 
-void FSWatcher::watchFolder(AutoFolder* folder)
+void FSWatcher::watchFolder(model::AutoFolder* folder)
 {
     VAR_DEBUG(folder->getFileName());
     FolderMap::iterator it = mFolders.find(folder->getFileName());
@@ -56,12 +56,12 @@ void FSWatcher::watchFolder(AutoFolder* folder)
     }
     else
     {
-        ASSERT(!UtilList<AutoFolder*>(it->second).hasElement(folder))(*it);
+        ASSERT(!UtilList<model::AutoFolder*>(it->second).hasElement(folder))(*it);
         it->second.push_back(folder);
     }
 }
 
-void FSWatcher::watchFile(File* file)
+void FSWatcher::watchFile(model::File* file)
 {
     VAR_DEBUG(file->getFileName());
     FileMap::iterator it = mFiles.find(file->getFileName());
@@ -73,16 +73,16 @@ void FSWatcher::watchFile(File* file)
     }
     else
     {
-        ASSERT(!UtilList<File*>(it->second).hasElement(file))(*it);
+        ASSERT(!UtilList<model::File*>(it->second).hasElement(file))(*it);
         it->second.push_back(file);
     }
 }
 
-void FSWatcher::unwatchFolder(AutoFolder* folder)
+void FSWatcher::unwatchFolder(model::AutoFolder* folder)
 {
     VAR_DEBUG(folder->getFileName());
     ASSERT(mFolders.find(folder->getFileName()) != mFolders.end());
-    UtilList<AutoFolder*>(mFolders[folder->getFileName()]).removeElements(boost::assign::list_of(folder));
+    UtilList<model::AutoFolder*>(mFolders[folder->getFileName()]).removeElements(boost::assign::list_of(folder));
     if (mFolders[folder->getFileName()].empty())
     {
         // Last entry removed. Remove entire list and stop watching
@@ -91,11 +91,11 @@ void FSWatcher::unwatchFolder(AutoFolder* folder)
     }
 }
 
-void FSWatcher::unwatchFile(File* file)
+void FSWatcher::unwatchFile(model::File* file)
 {
     VAR_DEBUG(file->getFileName());
     ASSERT(mFiles.find(file->getFileName()) != mFiles.end());
-    UtilList<File*>(mFiles[file->getFileName()]).removeElements(boost::assign::list_of(file));
+    UtilList<model::File*>(mFiles[file->getFileName()]).removeElements(boost::assign::list_of(file));
     if (mFiles[file->getFileName()].empty())
     {
         // Last entry removed. Remove entire list and stop watching
@@ -138,7 +138,7 @@ void FSWatcher::onChange(wxFileSystemWatcherEvent& event)
     if (changedfolder.IsDir())
     {
         ASSERT(mFolders.find(changedfolder) != mFolders.end());
-        BOOST_FOREACH( AutoFolder* folder, mFolders.find(changedfolder)->second )
+        BOOST_FOREACH( model::AutoFolder* folder, mFolders.find(changedfolder)->second )
         {
             folder->update();
         }
@@ -148,7 +148,7 @@ void FSWatcher::onChange(wxFileSystemWatcherEvent& event)
         //NOT: ASSERT(mFiles.find(event.GetPath()) != mFiles.end()); Since Folder wathcing also causes file events
         if (mFiles.find(event.GetPath()) != mFiles.end())
         {
-            BOOST_FOREACH( File* file, mFiles.find(event.GetPath())->second )
+            BOOST_FOREACH( model::File* file, mFiles.find(event.GetPath())->second )
             {
                 //file->update();
             }

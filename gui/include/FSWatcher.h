@@ -1,5 +1,5 @@
-#ifndef MODEL_FSWATCHER_H
-#define MODEL_FSWATCHER_H
+#ifndef FSWATCHER_H
+#define FSWATCHER_H
 
 #include <wx/fswatcher.h>
 #include <map>
@@ -12,6 +12,9 @@ inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath(
 namespace model {
     class AutoFolder;
     class File;
+}
+
+namespace  gui {
 
 class FSWatcher
     :   public wxFileSystemWatcher
@@ -33,11 +36,11 @@ public:
 	// ADD/REMOVE
 	//////////////////////////////////////////////////////////////////////////
 
-    void watchFolder(AutoFolder* folder);
-    void watchFile(File* file);
+    void watchFolder(model::AutoFolder* folder);
+    void watchFile(model::File* file);
 
-    void unwatchFolder(AutoFolder* folder);
-    void unwatchFile(File* file);
+    void unwatchFolder(model::AutoFolder* folder);
+    void unwatchFile(model::File* file);
 
 protected:
 
@@ -53,8 +56,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    typedef std::list<AutoFolder*> FolderList;
-    typedef std::list<File*> FileList;
+    typedef std::list<model::AutoFolder*> FolderList;
+    typedef std::list<model::File*> FileList;
     typedef std::map<wxFileName, FolderList> FolderMap;
     typedef std::map<wxFileName, FileList> FileMap;
 
@@ -71,4 +74,4 @@ private:
 
 } // namespace
 
-#endif // MODEL_FSWATCHER_H
+#endif // FSWATCHER_H

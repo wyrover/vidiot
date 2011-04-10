@@ -69,24 +69,7 @@ Sequence* Sequence::clone()
 Sequence::~Sequence()
 {
     VAR_DEBUG(this);
-    // See Sequence::destroy() for removal of tracks.
 }
-
-void Sequence::destroy()
-{
-    // This (remove*Tracks) is needed to let all observer classes know that 
-    // the tracks are removed from the sequence. This in turn ensures that 
-    // all owners of shared_ptr to these tracks can remove the shared_ptr 
-    // use, resulting in the actual destruction of the tracks.
-    // Scenario: Open existing file with timeline opened, then exit application.
-    BOOST_FOREACH( TrackPtr track, getTracks() )
-    {
-        track->destroy();
-    }
-    removeAudioTracks(mAudioTracks);
-    removeVideoTracks(mVideoTracks);
-    mParent.reset();
-};
 
 //////////////////////////////////////////////////////////////////////////
 // ICONTROL

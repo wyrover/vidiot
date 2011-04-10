@@ -99,9 +99,6 @@ Timeline::~Timeline()
     delete mIntervals;      mIntervals = 0;
     delete mViewMap;        mViewMap = 0;
     delete mZoom;           mZoom = 0;
-
-    mPlayer.reset();
-    mSequence.reset();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -17,7 +17,6 @@ class Folder;
 typedef boost::shared_ptr<Folder> FolderPtr;
 class Properties;
 typedef boost::shared_ptr<Properties> PropertiesPtr;
-class FSWatcher;    
 class ProjectWorker;
 class Project;
 
@@ -98,7 +97,6 @@ private:
     PropertiesPtr mProperties;
 
     ProjectWorker* mWorker;
-    FSWatcher* mWatcher;
 
     //////////////////////////////////////////////////////////////////////////
     //

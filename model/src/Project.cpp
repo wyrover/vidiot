@@ -10,7 +10,6 @@
 #include "GuiMain.h"
 #include "Properties.h"
 #include "UtilLog.h"
-#include "FSWatcher.h"
 #include "ProjectWorker.h"
 
 namespace model {
@@ -27,7 +26,6 @@ Project::Project()
 ,   mRoot(boost::make_shared<Folder>("Root"))
 ,   mProperties(boost::make_shared<Properties>())
 ,   mWorker(new ProjectWorker())
-,   mWatcher(new FSWatcher())
 {
     VAR_DEBUG(this);
     sCurrent = this;
@@ -38,7 +36,6 @@ Project::~Project()
 {
     VAR_DEBUG(this);
     sCurrent = 0;
-    delete mWatcher;
     delete mWorker;
 }
 
@@ -54,8 +51,6 @@ Project* Project::current()
 bool Project::DeleteContents()
 {
     VAR_DEBUG(this);
-    mRoot->destroy();
-    mRoot.reset();
     GetCommandProcessor()->ClearCommands();
     return wxDocument::DeleteContents();
 }

@@ -23,7 +23,6 @@ ProjectViewDeleteAsset::ProjectViewDeleteAsset(model::ProjectViewPtrs nodes)
 
 ProjectViewDeleteAsset::~ProjectViewDeleteAsset()
 {
-    mPairs.clear();
 }
 
 bool ProjectViewDeleteAsset::Do()

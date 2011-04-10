@@ -66,15 +66,6 @@ Track::~Track()
     VAR_DEBUG(this);
 }
 
-void Track::destroy()
-{
-    // This (removeClips) is needed to let all observer classes know that 
-    // the clips are removed from the tracks. This in turn ensures that 
-    // all owners of shared_ptr to these clips can remove the shared_ptr 
-    // use, resulting in the actual destruction of the clips.
-    removeClips(mClips);
-}
-
 //////////////////////////////////////////////////////////////////////////
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,7 @@
 #include "Timeline.h"
 #include "GuiMain.h"
 #include "Menu.h"
+#include "Project.h"
 #include "GuiWindow.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
@@ -28,23 +29,35 @@ GuiTimelinesView::GuiTimelinesView(GuiWindow *parent)
     sizer->Add( &mNotebook, 1, wxGROW );
     SetSizerAndFit(sizer);
 
-    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,              &GuiTimelinesView::OnProjectAssetRemoved,       this);
-    wxGetApp().Bind(model::EVENT_RENAME_ASSET,              &GuiTimelinesView::OnProjectAssetRenamed,       this);
-    mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &GuiTimelinesView::OnPageChanged,               this);
+    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,             &GuiTimelinesView::onCloseProject,            this);
+    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,              &GuiTimelinesView::onProjectAssetRemoved,       this);
+    wxGetApp().Bind(model::EVENT_RENAME_ASSET,              &GuiTimelinesView::onProjectAssetRenamed,       this);
+    mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &GuiTimelinesView::onPageChanged,               this);
 }
 
 GuiTimelinesView::~GuiTimelinesView()
 {
-    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,            &GuiTimelinesView::OnProjectAssetRemoved,       this);
-    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,            &GuiTimelinesView::OnProjectAssetRenamed,       this);
-    mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &GuiTimelinesView::OnPageChanged,               this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,           &GuiTimelinesView::onCloseProject,              this);
+    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,            &GuiTimelinesView::onProjectAssetRemoved,       this);
+    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,            &GuiTimelinesView::onProjectAssetRenamed,       this);
+    mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &GuiTimelinesView::onPageChanged,               this);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimelinesView::OnProjectAssetRemoved( model::EventRemoveAsset &event )
+void GuiTimelinesView::onCloseProject( model::EventCloseProject &event )
+{
+    mNotebook.DeleteAllPages();
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void GuiTimelinesView::onProjectAssetRemoved( model::EventRemoveAsset &event )
 {
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().child);
     if (sequence)
@@ -54,7 +67,7 @@ void GuiTimelinesView::OnProjectAssetRemoved( model::EventRemoveAsset &event )
     event.Skip();
 }
 
-void GuiTimelinesView::OnProjectAssetRenamed( model::EventRenameAsset &event )
+void GuiTimelinesView::onProjectAssetRenamed( model::EventRenameAsset &event )
 {
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().node);
 
@@ -73,7 +86,7 @@ void GuiTimelinesView::OnProjectAssetRenamed( model::EventRenameAsset &event )
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiTimelinesView::OnPageChanged(wxNotebookEvent& event)
+void GuiTimelinesView::onPageChanged(wxNotebookEvent& event)
 {
     GuiWindow::get()->getPreview().selectTimeline(static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection())));
     event.Skip();
