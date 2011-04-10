@@ -117,6 +117,11 @@ public:
 
     virtual ~Track();
 
+    /// Called when the object will be destroyed. Must be in two steps, since
+    /// 'removeClips' results in new events using a shared_from_this() which 
+    /// is not allowed in a destructor (which makes sense).
+    virtual void destroy();
+
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////

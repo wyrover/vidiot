@@ -69,8 +69,24 @@ Sequence* Sequence::clone()
 Sequence::~Sequence()
 {
     VAR_DEBUG(this);
-    // See Sequence::Delete() for removal of tracks.
+    // See Sequence::destroy() for removal of tracks.
 }
+
+void Sequence::destroy()
+{
+    // This (remove*Tracks) is needed to let all observer classes know that 
+    // the tracks are removed from the sequence. This in turn ensures that 
+    // all owners of shared_ptr to these tracks can remove the shared_ptr 
+    // use, resulting in the actual destruction of the tracks.
+    // Scenario: Open existing file with timeline opened, then exit application.
+    BOOST_FOREACH( TrackPtr track, getTracks() )
+    {
+        track->destroy();
+    }
+    removeAudioTracks(mAudioTracks);
+    removeVideoTracks(mVideoTracks);
+    mParent.reset();
+};
 
 //////////////////////////////////////////////////////////////////////////
 // ICONTROL
@@ -251,18 +267,6 @@ TrackPtr Sequence::getAudioTrack(int index)
 // IPROJECTVIEW
 //////////////////////////////////////////////////////////////////////////
 
-void Sequence::Delete()
-{
-    // This (remove*Tracks) is needed to let all observer classes know that 
-    // the tracks are removed from the sequence. This in turn ensures that 
-    // all owners of shared_ptr to these tracks can remove the shared_ptr 
-    // use, resulting in the actual destruction of the tracks.
-    // Scenario: Open existing file with timeline openened, then exit application.
-    removeAudioTracks(mAudioTracks);
-    removeVideoTracks(mVideoTracks);
-    mParent.reset();
-};
-
 wxString Sequence::getName() const
 { 
     return mName; 
@@ -271,7 +275,7 @@ wxString Sequence::getName() const
 void Sequence::setName(wxString name)
 { 
     mName = name;
-    gui::wxGetApp().QueueEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
+    gui::wxGetApp().ProcessEvent(model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
 }
 
 //////////////////////////////////////////////////////////////////////////

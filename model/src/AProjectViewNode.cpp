@@ -39,17 +39,16 @@ AProjectViewNode::AProjectViewNode(const AProjectViewNode& other)
 :   mParent()
 ,   mChildren()
 {
-
 }
 
-void AProjectViewNode::Delete()
+void AProjectViewNode::destroy()
 {
     // First 'bottom up' reference removal,
     // Second 'top down' reference removal.
     while (mChildren.size() > 0)
     {
         ProjectViewPtr child = *mChildren.begin();
-        child->Delete();
+        child->destroy();
         removeChild(child);
     }
     mParent.reset();
@@ -99,7 +98,9 @@ ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
 {
     mChildren.push_back(newChild);
     newChild->setParent(shared_from_this());
-    gui::wxGetApp().QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
+    // The event must be handled immediately due to the use of shared_ptr
+    // (more important in case of deletion than in case of addition)
+    gui::wxGetApp().ProcessEvent(model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
     return newChild;
 }
 
@@ -113,7 +114,8 @@ ProjectViewPtr AProjectViewNode::removeChild(ProjectViewPtr child)
     }
     ASSERT(it != mChildren.end());
     ProjectViewPtr p = *it;
-    gui::wxGetApp().QueueEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
+    // The event must be handled immediately due to the use of shared_ptr
+    gui::wxGetApp().ProcessEvent(model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
     mChildren.erase(it);
     child->setParent(ProjectViewPtr());
     return p;

@@ -1,5 +1,6 @@
 #include "Drag.h"
 
+#include <wx/dnd.h>
 #include <wx/pen.h>
 #include <wx/tooltip.h>
 #include <boost/foreach.hpp>
@@ -37,12 +38,69 @@
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
+// HELPER CLASSES
+//////////////////////////////////////////////////////////////////////////
+
+/// Helper class required to receive DND event from wxWidgets, in case new assets are
+/// being dragged into the timeline (for instance, originating from the Project View).
+class DropTarget
+    :   public Part
+    ,   public wxDropTarget
+{
+public:
+    DropTarget(Timeline* timeline)
+        :   Part(timeline)
+        ,   wxDropTarget(new GuiDataObject())
+    {
+    }
+    ~DropTarget() 
+    {
+    }
+    wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def)
+    {
+        return def; 
+    };
+    wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def)
+    {
+        ProjectViewDropSource::current().setFeedback(false);
+        getStateMachine().process_event(state::EvDragEnter(x,y));
+        return wxDragMove;
+    }
+    wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
+    {
+        getStateMachine().process_event(state::EvDragMove(x,y));
+        return wxDragMove;
+    }
+    bool OnDrop (wxCoord x, wxCoord y)
+    {
+        getStateMachine().process_event(state::EvDragDrop(x,y));
+        return true;
+    }
+    void OnLeave()
+    {
+        ProjectViewDropSource::current().setFeedback(true);
+        getStateMachine().process_event(state::EvDragEnd(0,0));
+    }
+};
+
+/// Dummy class to be able to create views for tracks and clips in case of adding them from the project view.
+/// This is a 'top' view class that ignores all events.
+class DummyView : public View
+{
+public:
+    DummyView(Timeline* timeline) : View(timeline) {}
+    ~DummyView() {}
+    pixel requiredWidth() const { return getTimeline().requiredWidth(); }
+    pixel requiredHeight() const {  return getTimeline().requiredHeight(); }
+    void draw(wxBitmap& bitmap) const { FATAL(""); }
+};
+
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
 Drag::Drag(Timeline* timeline)
     :   Part(timeline)
-    ,   wxDropTarget(new GuiDataObject())
     ,   mIsInsideDrag(true)
     ,   mHotspot(0,0)
     ,   mPosition(0,0)
@@ -55,7 +113,7 @@ Drag::Drag(Timeline* timeline)
     ,   mAudio(timeline, false)
 {
     VAR_DEBUG(this);
-    getTimeline().SetDropTarget(this);// Uncommented, since the destruction will then be done by wxwidgets
+    getTimeline().SetDropTarget(new DropTarget(timeline)); // Drop target is deleted by wxWidgets
 }
 
 Drag::~Drag()
@@ -322,73 +380,8 @@ void Drag::draw(wxDC& dc) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// FROM WXDROPTARGET
-//////////////////////////////////////////////////////////////////////////
-
-wxDragResult Drag::OnEnter (wxCoord x, wxCoord y, wxDragResult def)
-{
-    ProjectViewDropSource::current().setFeedback(false);
-    getStateMachine().process_event(state::EvDragEnter(x,y));
-    return wxDragMove;
-}
-
-wxDragResult Drag::OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
-{
-    getStateMachine().process_event(state::EvDragMove(x,y));
-    return wxDragMove;
-}
-
-bool Drag::OnDrop (wxCoord x, wxCoord y)
-{
-    getStateMachine().process_event(state::EvDragDrop(x,y));
-    return true;
-}
-
-void Drag::OnLeave()
-{
-    ProjectViewDropSource::current().setFeedback(true);
-    getStateMachine().process_event(state::EvDragEnd(0,0));
-}
-
-//////////////////////////////////////////////////////////////////////////
 // DRAGINFO
 //////////////////////////////////////////////////////////////////////////
-
-/// Dummy class to be able to create views for tracks and clips in case of adding them from the project view.
-/// This is a 'top' view class that ignores all events.
-class DummyView : public View
-{
-public:
-    DummyView(Timeline* timeline);
-    virtual ~DummyView();
-    virtual pixel requiredWidth() const;
-    virtual pixel requiredHeight() const;
-    virtual void draw(wxBitmap& bitmap) const;
-};
-
-DummyView::DummyView(Timeline* timeline) 
-:   View(timeline) 
-{
-}
-
-DummyView::~DummyView()
-{
-}
-
-pixel DummyView::requiredWidth() const 
-{ 
-    return getTimeline().requiredWidth(); 
-}
-
-pixel DummyView::requiredHeight() const 
-{ 
-    return getTimeline().requiredHeight(); 
-}
-
-void DummyView::draw(wxBitmap& bitmap) const 
-{ 
-    FATAL(""); 
-}
 
 Drag::DragInfo::DragInfo(Timeline* timeline, bool isVideo)
 :   Part(timeline)
