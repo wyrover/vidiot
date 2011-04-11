@@ -17,7 +17,7 @@ typedef std::list<ProjectViewPtr> ProjectViewPtrs;
 namespace gui {
 
 class ProjectViewModel;
-class GuiDataObject;
+class DataObject;
 
 class ProjectViewDropSource 
     :   public wxDropSource
@@ -43,13 +43,13 @@ public:
     // DRAGGING
     //////////////////////////////////////////////////////////////////////////
 
-    void startDrag(GuiDataObject& data);
+    void startDrag(DataObject& data);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    GuiDataObject& getData();       ///< \return the current associated data object
+    DataObject& getData();       ///< \return the current associated data object
     void setFeedback(bool enabled); ///< Enable/disable showing feedback. Used to avoid flicker
 
 private:

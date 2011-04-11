@@ -11,8 +11,8 @@
 #include "Scrolling.h"
 #include "UtilLog.h"
 #include "Layout.h"
-#include "GuiOptions.h"
-#include "GuiMain.h"
+#include "Options.h"
+#include "Main.h"
 #include "Clip.h"
 #include "TrackView.h"
 #include "Project.h"
@@ -75,8 +75,8 @@ void Intervals::set(wxRegion region)
 void Intervals::addBeginMarker()
 {
     long c = getZoom().pixelsToPts(getCursor().getPosition());
-    long b = c + model::Convert::timeToPts(GuiOptions::getMarkerBeginAddition() * model::Constants::sSecond);
-    long e = c + model::Convert::timeToPts(GuiOptions::getMarkerEndAddition()   * model::Constants::sSecond);
+    long b = c + model::Convert::timeToPts(Options::getMarkerBeginAddition() * model::Constants::sSecond);
+    long e = c + model::Convert::timeToPts(Options::getMarkerEndAddition()   * model::Constants::sSecond);
 
     mNewIntervalActive = true;
     mNewIntervalBegin = b;
@@ -87,7 +87,7 @@ void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-        model::Project::current()->Submit(new command::IntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
+        model::Project::get().Submit(new command::IntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
     }
     mNewIntervalActive = false;
 }
@@ -104,7 +104,7 @@ void Intervals::endToggle()
     if (mToggleActive)
     {
         wxRect r(makeRect(mToggleBegin,mToggleEnd));
-        model::Project::current()->Submit(new command::IntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
+        model::Project::get().Submit(new command::IntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
     }
     mToggleActive = false;
 }
@@ -113,7 +113,7 @@ void Intervals::update(long newCursorPosition)
 {
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  model::Convert::timeToPts(GuiOptions::getMarkerEndAddition() * model::Constants::sSecond);
+        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  model::Convert::timeToPts(Options::getMarkerEndAddition() * model::Constants::sSecond);
         refresh(mNewIntervalBegin,mNewIntervalEnd);
     }
     if (mToggleActive)
@@ -140,7 +140,7 @@ void Intervals::change(long begin, long end, bool add)
 
 void Intervals::clear()
 {
-    model::Project::current()->Submit(new command::IntervalRemoveAll(getTimeline()));
+    model::Project::get().Submit(new command::IntervalRemoveAll(getTimeline()));
 }
 
 //////////////////////////////////////////////////////////////////////////

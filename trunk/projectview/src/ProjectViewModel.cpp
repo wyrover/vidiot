@@ -2,7 +2,7 @@
 
 #include <wx/datetime.h>
 #include <boost/foreach.hpp>
-#include "GuiMain.h"
+#include "Main.h"
 #include "UtilLog.h"
 #include "Project.h"
 #include "AProjectViewNode.h"

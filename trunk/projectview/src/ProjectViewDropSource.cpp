@@ -4,8 +4,8 @@
 #include <boost/foreach.hpp>
 #include "ProjectViewModel.h"
 #include "Layout.h"
-#include "GuiWindow.h"
-#include "GuiDataObject.h"
+#include "Window.h"
+#include "DataObject.h"
 #include "AProjectViewNode.h"
 
 namespace gui {
@@ -123,7 +123,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 // DRAGGING
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewDropSource::startDrag(GuiDataObject& data)
+void ProjectViewDropSource::startDrag(DataObject& data)
 {
     SetData(data);
     DoDragDrop(wxDrag_DefaultMove);
@@ -138,9 +138,9 @@ void ProjectViewDropSource::startDrag(GuiDataObject& data)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-GuiDataObject& ProjectViewDropSource::getData()
+DataObject& ProjectViewDropSource::getData()
 {
-    return *(dynamic_cast<GuiDataObject*>(GetDataObject()));
+    return *(dynamic_cast<DataObject*>(GetDataObject()));
 }
 
 void ProjectViewDropSource::setFeedback(bool enabled)

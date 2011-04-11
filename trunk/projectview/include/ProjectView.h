@@ -12,7 +12,7 @@
 
 namespace gui {
 
-class GuiTimelinesView;
+class TimelinesView;
 
 class ProjectView
 :   public wxPanel

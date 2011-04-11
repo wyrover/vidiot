@@ -1,5 +1,5 @@
-#ifndef GUI_MAIN_H
-#define GUI_MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <wx/app.h>
 #include <boost/shared_ptr.hpp>
@@ -13,8 +13,9 @@
 
 namespace gui {
 
-class GuiWindow;
-class GuiMain : public wxApp
+class Window;
+class Main
+    :   public wxApp
 {
 public:
 
@@ -22,8 +23,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    GuiMain();
-    ~GuiMain();
+    Main();
+    ~Main();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -51,8 +52,8 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-DECLARE_APP(GuiMain)
+DECLARE_APP(Main)
 
 } // namespace
 
-#endif // GUI_MAIN_H
+#endif // MAIN_H

@@ -1,4 +1,4 @@
-#include "GuiDataObject.h"
+#include "DataObject.h"
 
 #include <boost/foreach.hpp>
 #include "AProjectViewNode.h"
@@ -6,9 +6,9 @@
 
 namespace gui {
 
-const wxString GuiDataObject::sFormat = wxString("application/vidiot");
+const wxString DataObject::sFormat = wxString("application/vidiot");
 
-GuiDataObject::GuiDataObject()
+DataObject::DataObject()
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets()
@@ -18,7 +18,7 @@ GuiDataObject::GuiDataObject()
 }
 
 
-GuiDataObject::GuiDataObject(model::ProjectViewPtrs assets, CallbackOnDestruction callback)
+DataObject::DataObject(model::ProjectViewPtrs assets, CallbackOnDestruction callback)
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets(assets)
@@ -27,7 +27,7 @@ GuiDataObject::GuiDataObject(model::ProjectViewPtrs assets, CallbackOnDestructio
     SetFormat(mFormat);
 }
 
-GuiDataObject::~GuiDataObject()
+DataObject::~DataObject()
 {
     if (mCallback)
     {
@@ -39,7 +39,7 @@ GuiDataObject::~GuiDataObject()
 // FROM wxDataObjectSimple
 //////////////////////////////////////////////////////////////////////////
 
-bool GuiDataObject::GetDataHere(void *buf) const
+bool DataObject::GetDataHere(void *buf) const
 {
     unsigned int i = 0;
     BOOST_FOREACH(model::ProjectViewPtr asset, mAssets)
@@ -50,12 +50,12 @@ bool GuiDataObject::GetDataHere(void *buf) const
     return true;
 }
 
-size_t GuiDataObject::GetDataSize () const
+size_t DataObject::GetDataSize () const
 {
     return sizeof(model::ProjectViewId) * mAssets.size();
 }
 
-bool GuiDataObject::SetData(size_t len, const void *buf)
+bool DataObject::SetData(size_t len, const void *buf)
 {
     ASSERT(len % sizeof(model::ProjectViewId) == 0)(len);
 
@@ -73,7 +73,7 @@ bool GuiDataObject::SetData(size_t len, const void *buf)
 // GET ALL ASSETS
 //////////////////////////////////////////////////////////////////////////
 
-model::ProjectViewPtrs GuiDataObject::getAssets() const
+model::ProjectViewPtrs DataObject::getAssets() const
 {
     return mAssets;
 }

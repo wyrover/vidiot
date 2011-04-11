@@ -12,7 +12,7 @@
 #include "Selection.h"
 #include "ViewMap.h"
 #include "Track.h"
-#include "GuiOptions.h"
+#include "Options.h"
 #include "Transition.h"
 #include "Clip.h"
 #include "PositionInfo.h"
@@ -232,7 +232,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         dc.DrawRectangle(mRect);
     }
 
-    if (GuiOptions::getShowDebugInfoOnWidgets())
+    if (Options::getShowDebugInfoOnWidgets())
     {
         dc.SetTextForeground(Layout::sDebugColour);
         dc.SetFont(*Layout::sDebugFont);

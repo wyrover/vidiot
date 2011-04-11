@@ -19,13 +19,13 @@ int toInt(rational r)
 // static
 pts Convert::timeToPts(int time)
 {
-    return toInt(rational(time) / rational(Constants::sSecond) / Project::current()->getProperties()->getFrameRate());
+    return toInt(rational(time) / rational(Constants::sSecond) / Project::get().getProperties()->getFrameRate());
 }
 
 // static
 int Convert::ptsToTime(pts position)
 {
-    return toInt(rational(position) * rational(Constants::sSecond) * Project::current()->getProperties()->getFrameRate());
+    return toInt(rational(position) * rational(Constants::sSecond) * Project::get().getProperties()->getFrameRate());
 }
 
 // static
@@ -70,13 +70,13 @@ pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrat
 //static 
 pts Convert::toProjectFrameRate(pts inputposition, FrameRate inputrate)
 {
-    return convertFrameRate(inputposition, inputrate, Project::current()->getProperties()->getFrameRate());
+    return convertFrameRate(inputposition, inputrate, Project::get().getProperties()->getFrameRate());
 }
 
 //static 
 pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
 {
-    return convertFrameRate(outputposition, Project::current()->getProperties()->getFrameRate(), inputrate);
+    return convertFrameRate(outputposition, Project::get().getProperties()->getFrameRate(), inputrate);
 }
 
 } // namespace

@@ -1,4 +1,4 @@
-#include "GuiOptions.h"
+#include "Options.h"
 
 #include <wx/wfstream.h>
 #include <wx/app.h>
@@ -17,15 +17,15 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
-#include "GuiMain.h"
+#include "Main.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 
 namespace gui {
 
-wxString    GuiOptions::sConfigFile("");
-bool        GuiOptions::sShowDebugInfoOnWidgets = false;
-wxString    GuiOptions::sStrip("");
+wxString    Options::sConfigFile("");
+bool        Options::sShowDebugInfoOnWidgets = false;
+wxString    Options::sStrip("");
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER MACROS
@@ -71,16 +71,16 @@ std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_list_of
 //////////////////////////////////////////////////////////////////////////
 
 // static
-void GuiOptions::distributeOptions()
+void Options::distributeOptions()
 {
     sShowDebugInfoOnWidgets = GETBOOL(sPathShowDebugInfoOnWidgets, false);
     Log::SetReportingLevel(GETENUM(sPathLogLevel,LogLevel,logINFO));
-    Log::SetLogFile(std::string(GuiOptions::getLogFileName()));
+    Log::SetLogFile(std::string(Options::getLogFileName()));
     Avcodec::configureLog();
 }
 
 // static
-void GuiOptions::init()
+void Options::init()
 {
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
     sConfigFile = wxFileName(wxFileName::GetCwd(),wxGetApp().GetAppName()+".ini").GetFullPath();
@@ -93,7 +93,7 @@ void GuiOptions::init()
 //////////////////////////////////////////////////////////////////////////
 
 // static 
-wxString GuiOptions::getLogFileName()
+wxString Options::getLogFileName()
 {
     wxString defaultFileName(wxGetApp().GetAppName());
     defaultFileName << "_" << wxGetProcessId() << ".log";
@@ -102,19 +102,19 @@ wxString GuiOptions::getLogFileName()
 }
 
 // static 
-wxString GuiOptions::getOptionsFileName()
+wxString Options::getOptionsFileName()
 {
     return sConfigFile;
 }
 
 // static
-bool GuiOptions::getShowDebugInfoOnWidgets()
+bool Options::getShowDebugInfoOnWidgets()
 {
     return sShowDebugInfoOnWidgets;
 }
 
 // static
-boost::optional<wxString> GuiOptions::GetAutoLoad()
+boost::optional<wxString> Options::GetAutoLoad()
 {
     boost::optional<wxString> result;
 
@@ -130,13 +130,13 @@ boost::optional<wxString> GuiOptions::GetAutoLoad()
 }
 
 // static
-void GuiOptions::SetAutoLoadFilename(wxString filename)
+void Options::SetAutoLoadFilename(wxString filename)
 {
     wxConfigBase::Get()->Write(sPathAutoLoadFilename,filename);
     wxConfigBase::Get()->Flush();
 }
 
-model::FrameRate GuiOptions::getDefaultFrameRate()
+model::FrameRate Options::getDefaultFrameRate()
 {
     model::FrameRate fr = model::framerate::s25p;
     wxString frs = GETSTRING(sPathFrameRate,"");
@@ -153,19 +153,19 @@ model::FrameRate GuiOptions::getDefaultFrameRate()
 }
 
 // static
-double GuiOptions::getMarkerBeginAddition()
+double Options::getMarkerBeginAddition()
 {
     return GETDOUBLE(sPathMarkerBeginAddition,0);
 }
 
 // static
-double GuiOptions::getMarkerEndAddition()
+double Options::getMarkerEndAddition()
 {
     return GETDOUBLE(sPathMarkerEndAddition,0);
 }
 
 // static
-wxString GuiOptions::getTimelineStrip()
+wxString Options::getTimelineStrip()
 {
     return sStrip;
 }
@@ -177,7 +177,7 @@ wxString GuiOptions::getTimelineStrip()
 class OptionHelper
 {
 public:
-    OptionHelper(GuiOptions* window)
+    OptionHelper(Options* window)
         :   mWindow(window)
         ,   panel(0)
         ,   topSizer(0)
@@ -215,13 +215,13 @@ public:
         return panel;
     }
 private:
-    GuiOptions* mWindow;
+    Options* mWindow;
     wxPanel* panel;                 ///< tab:The topmost widget
     wxBoxSizer* topSizer;           ///< tab:Sizer for panel
     wxBoxSizer* staticbox_sizer;    ///< box:Sizer for current box
 };
 
-GuiOptions::GuiOptions(wxWindow* win)
+Options::Options(wxWindow* win)
 :   wxPropertySheetDialog(win, wxID_ANY, _("Preferences"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
     sStrip = GETSTRING(sPathStrip,_T(""));
@@ -316,7 +316,7 @@ GuiOptions::GuiOptions(wxWindow* win)
     LayoutDialog();
 }
 
-GuiOptions::~GuiOptions()
+Options::~Options()
 {
     if (GetReturnCode() == GetAffirmativeId())
     {

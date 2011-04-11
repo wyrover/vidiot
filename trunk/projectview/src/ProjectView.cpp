@@ -5,16 +5,18 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/set.hpp>
-#include <wxInclude.h>
 #include <wx/stdpaths.h>
 #include <wx/dnd.h>
 #include <wx/dirdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/clipbrd.h>
+#include <wx/textdlg.h>
+#include <wx/filedlg.h>
+#include <wx/msgdlg.h>
 #include "Folder.h"
-#include "GuiDataObject.h"
-#include "GuiWindow.h"
-#include "GuiTimeLinesView.h"
+#include "DataObject.h"
+#include "Window.h"
+#include "TimeLinesView.h"
 #include "Project.h"
 #include "AProjectViewNode.h"
 #include "Layout.h"
@@ -29,7 +31,7 @@
 #include "ProjectViewCreateFile.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilLog.h"
-#include "GuiMain.h"
+#include "Main.h"
 #include "Sequence.h"
 
 namespace gui {
@@ -63,7 +65,7 @@ ProjectView::ProjectView(wxWindow* parent)
 
     sCurrent = this;
 
-    mCtrl.EnableDropTarget( GuiDataObject::sFormat );
+    mCtrl.EnableDropTarget( DataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
     wxDataViewColumn* pathColumn = mCtrl.AppendTextColumn("Path",       1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
     wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   2, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
@@ -295,7 +297,7 @@ void ProjectView::onCut(wxCommandEvent& WXUNUSED(event))
     ASSERT(getSelection().size() > 0);
     if (wxTheClipboard->Open())
     {
-        wxTheClipboard->SetData(new GuiDataObject(getSelection()));
+        wxTheClipboard->SetData(new DataObject(getSelection()));
         wxTheClipboard->Close();
         mProject->Submit(new command::ProjectViewDeleteAsset(getSelection()));
     }
@@ -306,7 +308,7 @@ void ProjectView::onCopy(wxCommandEvent& WXUNUSED(event))
     ASSERT(getSelection().size() > 0);
     if (wxTheClipboard->Open())
     {
-        wxTheClipboard->SetData(new GuiDataObject(getSelection()));
+        wxTheClipboard->SetData(new DataObject(getSelection()));
         wxTheClipboard->Close();
     }
 }
@@ -315,9 +317,9 @@ void ProjectView::onPaste(wxCommandEvent& WXUNUSED(event))
 {
     if (wxTheClipboard->Open())
     {
-        if (wxTheClipboard->IsSupported( GuiDataObject::sFormat ))
+        if (wxTheClipboard->IsSupported( DataObject::sFormat ))
         {
-            GuiDataObject data;
+            DataObject data;
             wxTheClipboard->GetData( data );
             if (data.getAssets().size() > 0)
             {
@@ -437,7 +439,7 @@ void ProjectView::onMotion(wxMouseEvent& event)
                 mCtrl.HitTest(mDragStart, item, col );
                 if (item.GetID())
                 {
-                    GuiDataObject data(getSelection(), boost::bind(&ProjectView::onDragEnd,this));
+                    DataObject data(getSelection(), boost::bind(&ProjectView::onDragEnd,this));
                     mDropSource.startDrag(data);
                     mDragCount = 0;
                 }
@@ -462,7 +464,7 @@ void ProjectView::onDragEnd()
 void ProjectView::onDropPossible( wxDataViewEvent &event )
 {
     // Can only drop relevant type of info
-    if (event.GetDataFormat().GetId() != GuiDataObject::sFormat)
+    if (event.GetDataFormat().GetId() != DataObject::sFormat)
     {
         event.Veto();
         return;
@@ -482,7 +484,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
     LOG_INFO;
     // todo hangup drop a folder onto itselves...
 
-     if (event.GetDataFormat().GetId() != GuiDataObject::sFormat)
+     if (event.GetDataFormat().GetId() != DataObject::sFormat)
     {
         event.Veto();
         return;
@@ -494,7 +496,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
         return;
     }
 
-    GuiDataObject o;
+    DataObject o;
     o.SetData( event.GetDataSize(), event.GetDataBuffer() );
 
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
@@ -524,7 +526,7 @@ void ProjectView::onActivated( wxDataViewEvent &event )
 		event.Veto();
 		return;
 	}
-    GuiWindow::get()->getTimeLines().Open(sequence);
+    Window::get().getTimeLines().Open(sequence);
 }
 
 void ProjectView::onExpanded( wxDataViewEvent &event )

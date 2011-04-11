@@ -1,5 +1,5 @@
-#ifndef GUI_WINDOW_H
-#define GUI_WINDOW_H
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include <wx/aui/aui.h>
 #include <wx/menu.h>
@@ -13,11 +13,13 @@
 namespace gui {
 
 class FSWatcher;
-class GuiTimelinesView;
-class GuiPreview;
+class Worker;
+class TimelinesView;
+class Preview;
 class ProjectView;
 
-class GuiWindow : public wxDocParentFrame
+class Window
+    :   public wxDocParentFrame
 {
 public:
 
@@ -25,9 +27,11 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    GuiWindow();
+    Window();
     void init();
-    ~GuiWindow();
+    ~Window();
+
+    static Window& get();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -69,9 +73,8 @@ public:
     // GET WIDGETS
     //////////////////////////////////////////////////////////////////////////
 
-    static GuiWindow*   get();
-    GuiTimelinesView&   getTimeLines();
-    GuiPreview&         getPreview();
+    TimelinesView&   getTimeLines();
+    Preview&         getPreview();
 
     //////////////////////////////////////////////////////////////////////////
     // ENABLING/DISABLING MENUS
@@ -88,13 +91,14 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxDocManager*       mDocManager;
-    wxDocTemplate*      mDocTemplate;
+    wxDocManager*   mDocManager;
+    wxDocTemplate*  mDocTemplate;
 
-    boost::scoped_ptr<FSWatcher> mWatcher;
+    boost::scoped_ptr<FSWatcher>    mWatcher;
+    boost::scoped_ptr<Worker>       mWorker;
 
-    GuiTimelinesView*   mTimelinesView;
-    GuiPreview*		    mPreview;
+    TimelinesView*      mTimelinesView;
+    Preview*		    mPreview;
     ProjectView*	    mProjectView;
 	wxPanel*			mEditor;
 
@@ -119,6 +123,6 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::GuiWindow, 1)
+BOOST_CLASS_VERSION(gui::Window, 1)
 
-#endif // GUI_WINDOW_H
+#endif // WINDOW_H

@@ -3,12 +3,12 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "UtilSerializeBoost.h"
-#include "GuiOptions.h"
+#include "Options.h"
 
 namespace model {
 
 Properties::Properties()
-:   mFrameRate(gui::GuiOptions::getDefaultFrameRate())
+:   mFrameRate(gui::Options::getDefaultFrameRate())
 {
 }
 

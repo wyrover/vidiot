@@ -10,7 +10,7 @@
 #include "StatePlaying.h"
 #include "Drag.h"
 #include "StateDragging.h"
-#include "GuiPlayer.h"
+#include "Player.h"
 #include "EmptyClip.h"
 #include "Zoom.h"
 #include "Clip.h"
@@ -155,7 +155,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         wxChar c = evt.mWxEvent.GetUnicodeKey();
         switch (evt.mWxEvent.GetUnicodeKey())
         {
-        case 'S':   model::Project::current()->Submit(new command::SplitAtCursor(getTimeline())); break;
+        case 'S':   model::Project::get().Submit(new command::SplitAtCursor(getTimeline())); break;
         }
     }
     else
