@@ -1,9 +1,9 @@
-#include "GuiDebugReport.h"
+#include "DebugReport.h"
 
 #include <wx/debugrpt.h>
 #include <wx/confbase.h>
 #include "UtilLog.h"
-#include "GuiOptions.h"
+#include "Options.h"
 
 namespace gui {
 
@@ -14,7 +14,7 @@ IMPLEMENTENUM(ReportType)
 //////////////////////////////////////////////////////////////////////////
 
 // static
-void GuiDebugReport::generate(ReportType type)
+void DebugReport::generate(ReportType type)
 {
     VAR_ERROR(type);
     wxDebugReport::Context ctx = wxDebugReport::Context_Current;
@@ -26,8 +26,8 @@ void GuiDebugReport::generate(ReportType type)
 
     report.AddAll(ctx);
     
-    report.AddFile(GuiOptions::getOptionsFileName(), wxT("options file"));
-    report.AddFile(GuiOptions::getLogFileName(), wxT("text log file"));
+    report.AddFile(Options::getOptionsFileName(), wxT("options file"));
+    report.AddFile(Options::getLogFileName(), wxT("text log file"));
 
     if ( wxDebugReportPreviewStd().Show(report) )
     {

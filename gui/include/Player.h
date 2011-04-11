@@ -1,5 +1,5 @@
-#ifndef GUI_PLAYER_H
-#define GUI_PLAYER_H
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #include <wx/tglbtn.h>
 #include <wx/button.h>
@@ -18,11 +18,11 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 
 namespace gui {
 
-class GuiVideoDisplay;
+class VideoDisplay;
 class EditDisplay;
 class PlaybackPositionEvent;
 
-class GuiPlayer
+class Player
     :   public wxPanel
 {
 public:
@@ -31,8 +31,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiPlayer(wxWindow *parent, model::SequencePtr sequence);
-    virtual ~GuiPlayer();
+    Player(wxWindow *parent, model::SequencePtr sequence);
+    virtual ~Player();
 
     //////////////////////////////////////////////////////////////////////////
     // CONTROL METHODS
@@ -64,7 +64,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiVideoDisplay* mDisplay;
+    VideoDisplay* mDisplay;
     EditDisplay* mEdit;
     wxTextCtrl* mStatus;
     int mPosition;
@@ -94,4 +94,4 @@ private:
 
 } // namespace
 
-#endif // GUI_PLAYER_H
+#endif // PLAYER_H

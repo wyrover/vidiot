@@ -1,12 +1,12 @@
-#include "GuiPreview.h"
+#include "Preview.h"
 
 #include <wx/sizer.h>
 #include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "GuiPlayer.h"
+#include "Player.h"
 #include "UtilLog.h"
-#include "GuiWindow.h"
+#include "Window.h"
 #include "Timeline.h"
 
 namespace gui {
@@ -15,7 +15,7 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-GuiPreview::GuiPreview(wxWindow* parent)
+Preview::Preview(wxWindow* parent)
 :   wxPanel(parent)
 ,   mPlayer()
 ,   mPlayers()
@@ -26,7 +26,7 @@ GuiPreview::GuiPreview(wxWindow* parent)
     SetSizer(sizer);
 }
 
-GuiPreview::~GuiPreview()
+Preview::~Preview()
 {
 }
 
@@ -34,17 +34,17 @@ GuiPreview::~GuiPreview()
 // TO/FROM OTHER WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr GuiPreview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
+PlayerPtr Preview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
 {
     ASSERT(mPlayers.find(timeline) == mPlayers.end());
-    PlayerPtr newplayer = boost::make_shared<GuiPlayer>(this,sequence);
+    PlayerPtr newplayer = boost::make_shared<Player>(this,sequence);
     mPlayers[timeline] = newplayer;
     GetSizer()->Add(newplayer.get(),wxSizerFlags(1).Expand());
     selectTimeline(timeline);
     return newplayer;
 }
 
-void GuiPreview::closeTimeline(timeline::Timeline* timeline)
+void Preview::closeTimeline(timeline::Timeline* timeline)
 {
     ASSERT(mPlayer);
     ASSERT(mPlayers.find(timeline) != mPlayers.end());
@@ -63,7 +63,7 @@ void GuiPreview::closeTimeline(timeline::Timeline* timeline)
     }
 }
 
-void GuiPreview::selectTimeline(timeline::Timeline* timeline)
+void Preview::selectTimeline(timeline::Timeline* timeline)
 {
     hide(mPlayer);
     if (timeline != 0)
@@ -80,7 +80,7 @@ void GuiPreview::selectTimeline(timeline::Timeline* timeline)
 //
 //////////////////////////////////////////////////////////////////////////
 
-void GuiPreview::play()
+void Preview::play()
 {
     if (mPlayer)
     {
@@ -92,7 +92,7 @@ void GuiPreview::play()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiPreview::hide(PlayerPtr player)
+void Preview::hide(PlayerPtr player)
 {
     if (player)
     {
@@ -107,10 +107,10 @@ void GuiPreview::hide(PlayerPtr player)
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void GuiPreview::serialize(Archive & ar, const unsigned int version)
+void Preview::serialize(Archive & ar, const unsigned int version)
 {
 }
-template void GuiPreview::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void GuiPreview::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Preview::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Preview::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace

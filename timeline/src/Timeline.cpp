@@ -7,10 +7,10 @@
 #include "Constants.h"
 #include "Layout.h"
 #include "UtilLog.h"
-#include "GuiOptions.h"
-#include "GuiPlayer.h"
-#include "GuiPreview.h"
-#include "GuiWindow.h"
+#include "Options.h"
+#include "Player.h"
+#include "Preview.h"
+#include "Window.h"
 #include "Intervals.h"
 #include "Selection.h"
 #include "MousePointer.h"
@@ -42,7 +42,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   View(this) // Has itself as parent...
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
-,   mPlayer(GuiWindow::get()->getPreview().openTimeline(sequence,this))
+,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
 ,   mViewMap(new ViewMap(this))
@@ -84,7 +84,7 @@ Timeline::~Timeline()
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    GuiWindow::get()->getPreview().closeTimeline(this);
+    Window::get().getPreview().closeTimeline(this);
 
     delete mSequenceView;   mSequenceView = 0;
 
@@ -361,7 +361,7 @@ void Timeline::draw(wxBitmap& bitmap) const
 
 void Timeline::Submit(::command::RootCommand* c)
 {
-    model::Project::current()->Submit(c);
+    model::Project::get().Submit(c);
 }
 
 //////////////////////////////////////////////////////////////////////////

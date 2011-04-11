@@ -1,5 +1,5 @@
-#ifndef GUI_OPTIONS_WINDOW_H
-#define GUI_OPTIONS_WINDOW_H
+#ifndef OPTIONS_H
+#define OPTIONS_H
 
 #include <vector>
 #include <wx/propdlg.h>
@@ -13,7 +13,7 @@
 
 namespace gui {
 
-class GuiOptions
+class Options
     :   public wxPropertySheetDialog
 {
 public:
@@ -53,8 +53,8 @@ public:
     // CONFIGURATION DIALOG
     //////////////////////////////////////////////////////////////////////////
 
-    GuiOptions(wxWindow* parent);
-    ~GuiOptions();
+    Options(wxWindow* parent);
+    ~Options();
 
 private:
 
@@ -98,4 +98,4 @@ private:
 
 } // namespace
 
-#endif // GUI_OPTIONS_WINDOW_H
+#endif // OPTIONS_H

@@ -15,7 +15,7 @@
 #include "UtilCloneable.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
-#include "GuiPlayer.h"
+#include "Player.h"
 #include "EditDisplay.h"
 #include "Sequence.h"
 #include "Scrolling.h"
@@ -303,7 +303,7 @@ void Trim::show()
 
         preview();
 
-        model::Project::current()->Submit(new command::Trim(getTimeline(), mOriginalClip, diff, mTrimBegin, mShiftDown));
+        model::Project::get().Submit(new command::Trim(getTimeline(), mOriginalClip, diff, mTrimBegin, mShiftDown));
         // From here we can no longer use mOriginalClip: it is changed by applying the command::Trim
 
         mMustUndo = true;
@@ -323,7 +323,7 @@ bool Trim::undo()
 {
     if (mMustUndo)
     {
-        model::Project::current()->GetCommandProcessor()->Undo();
+        model::Project::get().GetCommandProcessor()->Undo();
         mMustUndo = false;
         return true;
     }

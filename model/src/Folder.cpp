@@ -2,7 +2,7 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "GuiMain.h"
+#include "Main.h"
 #include "UtilLog.h"
 #include "UtilSerializeWxwidgets.h"
 

@@ -1,5 +1,5 @@
-#ifndef GUI_DEBUG_REPORT_H
-#define GUI_DEBUG_REPORT_H
+#ifndef DEBUG_REPORT_H
+#define DEBUG_REPORT_H
 
 #include "UtilEnum.h"
 
@@ -14,7 +14,7 @@ DECLAREENUM(ReportType, \
             ReportWxwidgetsAssertionFailure, \
             ReportOther);
 
-class GuiDebugReport
+class DebugReport
 {
 public:
 
@@ -27,4 +27,4 @@ public:
 
 } // namespace
 
-#endif // GUI_DEBUG_REPORT_H
+#endif // DEBUG_REPORT_H

@@ -6,8 +6,6 @@
 
 namespace gui {
 
-class GuiPlayer;
-
 class EditDisplay
 :   public wxControl
 {

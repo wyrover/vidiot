@@ -17,7 +17,7 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 
 namespace gui {
 
-class GuiVideoDisplay
+class VideoDisplay
     :   public wxControl
 {
 public:
@@ -36,8 +36,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer);
-    virtual ~GuiVideoDisplay();
+    VideoDisplay(wxWindow *parent, model::SequencePtr producer);
+    virtual ~VideoDisplay();
 
     //////////////////////////////////////////////////////////////////////////
     // CONTROL METHODS

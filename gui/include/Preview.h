@@ -1,5 +1,5 @@
-#ifndef GUI_PREVIEW_H
-#define GUI_PREVIEW_H
+#ifndef PREVIEW_H
+#define PREVIEW_H
 
 #include <map>
 #include <wx/panel.h>
@@ -13,14 +13,14 @@ class Sequence;
 typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 namespace gui {
-class GuiPlayer;
-typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
+class Player;
+typedef boost::shared_ptr<Player> PlayerPtr;
 
 namespace timeline { 
     class Timeline; 
 }
 
-class GuiPreview
+class Preview
     :   public wxPanel
 {
 public:
@@ -29,8 +29,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    GuiPreview(wxWindow* parent);
-    virtual ~GuiPreview();
+    Preview(wxWindow* parent);
+    virtual ~Preview();
 
     //////////////////////////////////////////////////////////////////////////
     // TO/FROM OTHER WIDGETS
@@ -72,6 +72,6 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::GuiPreview, 1)
+BOOST_CLASS_VERSION(gui::Preview, 1)
 
-#endif // GUI_PREVIEW_H
+#endif // PREVIEW_H

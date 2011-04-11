@@ -11,15 +11,15 @@ namespace model {
 }
 
 namespace gui { 
-    class GuiPlayer;
-    typedef boost::shared_ptr<GuiPlayer> PlayerPtr;
+    class Player;
+    typedef boost::shared_ptr<Player> PlayerPtr;
 
     namespace timeline {
         class ClipView;
         class Cursor;
         class Divider;
         class Drag;
-        class GuiPlayer;
+        class Player;
         class Intervals;
         class MenuHandler;
         class MousePointer;

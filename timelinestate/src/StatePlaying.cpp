@@ -2,7 +2,7 @@
 
 #include "StateIdle.h"
 #include "UtilLog.h"
-#include "GuiPlayer.h"
+#include "Player.h"
 #include "Intervals.h"
 #include "Tooltip.h"
 

@@ -1,4 +1,4 @@
-#include "GuiVideoDisplay.h"
+#include "VideoDisplay.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -12,14 +12,14 @@
 
 namespace gui {
 
-const int GuiVideoDisplay::sMinimumSpeed = 50;
-const int GuiVideoDisplay::sMaximumSpeed = 200;
-const int GuiVideoDisplay::sDefaultSpeed = 100;
-const int GuiVideoDisplay::sStereo = 2;
-const int GuiVideoDisplay::sFrameRate = 44100;
-const int GuiVideoDisplay::sChannels = GuiVideoDisplay::sStereo;
-const int GuiVideoDisplay::sBytesPerSample = 2;
-const int GuiVideoDisplay::sVideoFrameRate = 25;
+const int VideoDisplay::sMinimumSpeed = 50;
+const int VideoDisplay::sMaximumSpeed = 200;
+const int VideoDisplay::sDefaultSpeed = 100;
+const int VideoDisplay::sStereo = 2;
+const int VideoDisplay::sFrameRate = 44100;
+const int VideoDisplay::sChannels = VideoDisplay::sStereo;
+const int VideoDisplay::sBytesPerSample = 2;
+const int VideoDisplay::sVideoFrameRate = 25;
 
 int convertPortAudioTime(double patime)
 {
@@ -36,7 +36,7 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
     {
         VAR_WARNING(statusFlags);
     }
-    bool cont = static_cast<GuiVideoDisplay*>(userData)->audioRequested(outputBuffer, framesPerBuffer, timeInfo->outputBufferDacTime);
+    bool cont = static_cast<VideoDisplay*>(userData)->audioRequested(outputBuffer, framesPerBuffer, timeInfo->outputBufferDacTime);
     return cont ? 0 : paComplete;
 }
 
@@ -44,7 +44,7 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-GuiVideoDisplay::GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer)
+VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
 :   wxControl(parent, wxID_ANY)
 ,	mWidth(200)
 ,	mHeight(100)
@@ -67,9 +67,9 @@ GuiVideoDisplay::GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer)
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(mWidth)(mHeight);
 
-    Bind(wxEVT_PAINT,               &GuiVideoDisplay::OnPaint,              this);
-    Bind(wxEVT_ERASE_BACKGROUND,    &GuiVideoDisplay::OnEraseBackground,    this);
-    Bind(wxEVT_SIZE,                &GuiVideoDisplay::OnSize,               this);
+    Bind(wxEVT_PAINT,               &VideoDisplay::OnPaint,              this);
+    Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::OnEraseBackground,    this);
+    Bind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
 
     PaError err = Pa_Initialize();
     ASSERT(err == paNoError)(Pa_GetErrorText(err));
@@ -77,13 +77,13 @@ GuiVideoDisplay::GuiVideoDisplay(wxWindow *parent, model::SequencePtr producer)
 	LOG_INFO;
 }
 
-GuiVideoDisplay::~GuiVideoDisplay()
+VideoDisplay::~VideoDisplay()
 {
     VAR_DEBUG(this);
 
-    Unbind(wxEVT_PAINT,               &GuiVideoDisplay::OnPaint,              this);
-    Unbind(wxEVT_ERASE_BACKGROUND,    &GuiVideoDisplay::OnEraseBackground,    this);
-    Unbind(wxEVT_SIZE,                &GuiVideoDisplay::OnSize,               this);
+    Unbind(wxEVT_PAINT,               &VideoDisplay::OnPaint,              this);
+    Unbind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::OnEraseBackground,    this);
+    Unbind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
 
     stop(); // stops playback
 
@@ -95,7 +95,7 @@ GuiVideoDisplay::~GuiVideoDisplay()
 // CONTROL METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiVideoDisplay::play()
+void VideoDisplay::play()
 {
     VAR_DEBUG(this)(mPlaying);
     if (mPlaying) return;
@@ -116,12 +116,12 @@ void GuiVideoDisplay::play()
     mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);      // Optimize for speech
 
     // Start buffering ASAP
-    mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&GuiVideoDisplay::audioBufferThread,this)));
-    mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&GuiVideoDisplay::videoBufferThread,this)));
+    mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::audioBufferThread,this)));
+    mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoBufferThread,this)));
 
     mStartTime = 0;     // This blocks displaying of video until signaled by the audio thread
     mCurrentTime = 0;   // Updates the displayed time
-    mVideoDisplayThreadPtr.reset(new boost::thread(boost::bind(&GuiVideoDisplay::videoDisplayThread,this)));
+    mVideoDisplayThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoDisplayThread,this)));
 
     mCurrentAudioChunk.reset();
 
@@ -136,7 +136,7 @@ void GuiVideoDisplay::play()
     LOG_DEBUG;
 }
 
-void GuiVideoDisplay::stop()
+void VideoDisplay::stop()
 {
     VAR_DEBUG(this);
 
@@ -182,7 +182,7 @@ void GuiVideoDisplay::stop()
     }
 }
 
-void GuiVideoDisplay::moveTo(int64_t position)
+void VideoDisplay::moveTo(int64_t position)
 {
     VAR_DEBUG(this)(position);
 
@@ -210,7 +210,7 @@ void GuiVideoDisplay::moveTo(int64_t position)
     Update(); // For immediate feedback when moving the cursor quickly over the timeline
 }
 
-void GuiVideoDisplay::setSpeed(int speed)
+void VideoDisplay::setSpeed(int speed)
 {
     bool wasPlaying = mPlaying;
     mSpeed = speed;
@@ -221,7 +221,7 @@ void GuiVideoDisplay::setSpeed(int speed)
     }
 }
 
-int GuiVideoDisplay::getSpeed() const
+int VideoDisplay::getSpeed() const
 {
     return mSpeed;
 }
@@ -230,7 +230,7 @@ int GuiVideoDisplay::getSpeed() const
 // AUDIO METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiVideoDisplay::audioBufferThread()
+void VideoDisplay::audioBufferThread()
 {
     while (!mAbortThreads)
 	{
@@ -258,7 +258,7 @@ void GuiVideoDisplay::audioBufferThread()
 	}
 }
 
-bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double playtime)
+bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double playtime)
 {
     if (mStartTime == 0)
     {
@@ -319,7 +319,7 @@ bool GuiVideoDisplay::audioRequested(void *buffer, unsigned long frames, double 
 // VIDEO METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiVideoDisplay::videoBufferThread()
+void VideoDisplay::videoBufferThread()
 {
 	LOG_INFO;
     while (!mAbortThreads)
@@ -329,7 +329,7 @@ void GuiVideoDisplay::videoBufferThread()
 	}
 }
 
-void GuiVideoDisplay::videoDisplayThread()
+void VideoDisplay::videoDisplayThread()
 {
     boost::unique_lock<boost::mutex> lock(mMutexPlaybackStarted);
     while (mStartTime == 0)
@@ -384,12 +384,12 @@ void GuiVideoDisplay::videoDisplayThread()
 // GUI METHODS
 //////////////////////////////////////////////////////////////////////////
 
-inline void GuiVideoDisplay::OnEraseBackground(wxEraseEvent& event)
+inline void VideoDisplay::OnEraseBackground(wxEraseEvent& event)
 {
     // do nothing
 }
 
-void GuiVideoDisplay::OnSize(wxSizeEvent& event)
+void VideoDisplay::OnSize(wxSizeEvent& event)
 {
     int w = mWidth;
     int h = mHeight;
@@ -409,7 +409,7 @@ void GuiVideoDisplay::OnSize(wxSizeEvent& event)
 
 }
 
-void GuiVideoDisplay::OnPaint(wxPaintEvent& event)
+void VideoDisplay::OnPaint(wxPaintEvent& event)
 {
     boost::shared_ptr<wxBitmap> bitmap;
     {
@@ -439,7 +439,7 @@ void GuiVideoDisplay::OnPaint(wxPaintEvent& event)
     }
 }
 
-void GuiVideoDisplay::showNewVideoFrame()
+void VideoDisplay::showNewVideoFrame()
 {
     Refresh(false);
     if (mCurrentVideoFrame)

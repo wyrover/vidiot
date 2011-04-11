@@ -242,7 +242,7 @@ IClipPtr Track::getPreviousClip(IClipPtr clip)
     ASSERT(it != mClips.end());
     if (it == mClips.begin())
     {
-        return ClipPtr();
+        return IClipPtr();
     }
     --it;
     return *it; 

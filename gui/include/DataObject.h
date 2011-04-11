@@ -1,5 +1,5 @@
-#ifndef GUI_DATA_OBJECT_H
-#define GUI_DATA_OBJECT_H
+#ifndef DATA_OBJECT_H
+#define DATA_OBJECT_H
 
 #include <wx/dataobj.h>
 #include <boost/noncopyable.hpp>
@@ -8,7 +8,7 @@
 
 namespace gui {
 
-class GuiDataObject
+class DataObject
     :   public wxDataObjectSimple
     ,   public boost::noncopyable
 {
@@ -22,9 +22,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    GuiDataObject();
-    GuiDataObject(model::ProjectViewPtrs assets, CallbackOnDestruction callback = 0);
-    ~GuiDataObject();
+    DataObject();
+    DataObject(model::ProjectViewPtrs assets, CallbackOnDestruction callback = 0);
+    ~DataObject();
 
     static const wxString sFormat;
 
@@ -51,4 +51,4 @@ private:
 
 } // namespace
 
-#endif // GUI_DATA_OBJECT_H
+#endif // DATA_OBJECT_H

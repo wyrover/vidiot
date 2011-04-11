@@ -6,7 +6,7 @@
 #include <boost/foreach.hpp>
 #include "UtilLog.h"
 #include "Track.h"
-#include "GuiOptions.h"
+#include "Options.h"
 #include "File.h"
 
 namespace model {
@@ -101,9 +101,9 @@ void Clip::moveTo(pts position)
 wxString Clip::getDescription() const
 {
     wxString s = mRender->getDescription();
-    if (!gui::GuiOptions::getTimelineStrip().IsSameAs(_T("")))
+    if (!gui::Options::getTimelineStrip().IsSameAs(_T("")))
     {
-        s.Replace(gui::GuiOptions::getTimelineStrip(),_T(""),false);
+        s.Replace(gui::Options::getTimelineStrip(),_T(""),false);
     }
     return s;
 }

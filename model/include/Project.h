@@ -17,7 +17,6 @@ class Folder;
 typedef boost::shared_ptr<Folder> FolderPtr;
 class Properties;
 typedef boost::shared_ptr<Properties> PropertiesPtr;
-class ProjectWorker;
 class Project;
 
 DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,   model::Project*);
@@ -42,9 +41,9 @@ public:
     Project();
     ~Project();
 
-    /// Get the current project. Used to avoid having to pass this object
+    /// Get the get project. Used to avoid having to pass this object
     /// (or the Properties of it) throughout the entire code.
-    static Project* current();
+    static Project& get();
 
     //////////////////////////////////////////////////////////////////////////
     // OVERRIDES - wxDocument
@@ -78,13 +77,6 @@ public:
     void Submit(command::RootCommand* c);
 
     //////////////////////////////////////////////////////////////////////////
-    // PARALLEL EXECUTION OF LENGTHY TASKS
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Trigger work to be executed on the worker thread.
-    void scheduleWork(WorkPtr work);
-
-    //////////////////////////////////////////////////////////////////////////
     // ACCESSORS
     //////////////////////////////////////////////////////////////////////////
 
@@ -95,8 +87,6 @@ private:
 
     FolderPtr mRoot;
     PropertiesPtr mProperties;
-
-    ProjectWorker* mWorker;
 
     //////////////////////////////////////////////////////////////////////////
     //

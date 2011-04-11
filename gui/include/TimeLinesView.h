@@ -18,13 +18,13 @@ namespace model {
 
 namespace gui {
 
-class GuiWindow;
+class Window;
 
 namespace timeline {
     class Timeline;
 }
 
-class GuiTimelinesView
+class TimelinesView
 :   public wxPanel
 {
 public:
@@ -33,8 +33,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    GuiTimelinesView(GuiWindow *parent);
-	virtual ~GuiTimelinesView();
+    TimelinesView(Window *parent);
+	virtual ~TimelinesView();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -90,6 +90,6 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(gui::GuiTimelinesView, 1)
+BOOST_CLASS_VERSION(gui::TimelinesView, 1)
 
 #endif // GUI_SEQUENCE_VIEW_H

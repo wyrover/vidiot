@@ -6,7 +6,7 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
-#include "GuiMain.h"
+#include "Main.h"
 
 namespace model {
 

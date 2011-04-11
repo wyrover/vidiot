@@ -7,10 +7,9 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "Folder.h"
-#include "GuiMain.h"
+#include "Main.h"
 #include "Properties.h"
 #include "UtilLog.h"
-#include "ProjectWorker.h"
 
 namespace model {
 
@@ -25,7 +24,6 @@ Project::Project()
 :   wxDocument()
 ,   mRoot(boost::make_shared<Folder>("Root"))
 ,   mProperties(boost::make_shared<Properties>())
-,   mWorker(new ProjectWorker())
 {
     VAR_DEBUG(this);
     sCurrent = this;
@@ -36,12 +34,11 @@ Project::~Project()
 {
     VAR_DEBUG(this);
     sCurrent = 0;
-    delete mWorker;
 }
 
-Project* Project::current()
+Project& Project::get()
 {
-    return sCurrent;
+    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -191,15 +188,6 @@ FolderPtr Project::getRoot() const
 PropertiesPtr Project::getProperties() const
 {
     return mProperties;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// PARALLEL EXECUTION OF LENGTHY TASKS
-//////////////////////////////////////////////////////////////////////////
-
-void Project::scheduleWork(WorkPtr work)
-{
-    mWorker->schedule(work);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -29,7 +29,7 @@
 #include "SequenceView.h"
 #include "ViewMap.h"
 #include "Zoom.h"
-#include "GuiDataObject.h"
+#include "DataObject.h"
 #include "UtilLogStl.h"
 #include "Divider.h"
 #include "Clip.h"
@@ -50,7 +50,7 @@ class DropTarget
 public:
     DropTarget(Timeline* timeline)
         :   Part(timeline)
-        ,   wxDropTarget(new GuiDataObject())
+        ,   wxDropTarget(new DataObject())
     {
     }
     ~DropTarget() 

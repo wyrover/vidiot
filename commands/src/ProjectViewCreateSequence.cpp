@@ -7,8 +7,8 @@
 #include "VideoFile.h"
 #include "AudioFile.h"
 #include "VideoClip.h"
-#include "GuiWindow.h"
-#include "GuiTimeLinesView.h"
+#include "Window.h"
+#include "TimeLinesView.h"
 #include "AudioClip.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
@@ -92,7 +92,7 @@ bool ProjectViewCreateSequence::Do()
     }
 
     mParent->addChild(mSequence);
-    gui::GuiWindow::get()->getTimeLines().Open(mSequence);
+    gui::Window::get().getTimeLines().Open(mSequence);
 
     // May never return false, since then the command is deleted by the command processor. See the use of this object in projectview.
     return true;

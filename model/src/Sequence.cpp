@@ -7,7 +7,7 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
-#include "GuiMain.h"
+#include "Main.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
 #include "EmptyFrame.h"

@@ -1,21 +1,15 @@
-#ifndef PROJECT_WORKER_H
-#define PROJECT_WORKER_H
+#ifndef WORKER_H
+#define WORKER_H
 
 #include <boost/scoped_ptr.hpp>
 #include "FifoWork.h"
 
 namespace gui {
-class GuiWindow;
-}
 
-namespace model {
-
-/** todo move similar to watcher class. This one however should be started by window? or by main?
-* This class is responsible for running lengthy Project tasks
-* like indexing an autofolder, or rendering preview files in the
-* background.
-*/
-class ProjectWorker
+/// This class is responsible for running lengthy Project tasks
+/// like indexing an autofolder, or rendering preview files in the
+/// background.
+class Worker
     :   public boost::noncopyable
 {
 public:
@@ -24,9 +18,11 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ProjectWorker();
+    Worker();
 
-    ~ProjectWorker();
+    ~Worker();
+
+    static Worker& get();
 
     //////////////////////////////////////////////////////////////////////////
     // NEW WORK
@@ -41,10 +37,8 @@ private:
     FifoWork mFifo;
 
     void thread();
-
-    gui::GuiWindow* mWindow;
 };
 
 } // namespace
 
-#endif // PROJECT_WORKER_H
+#endif // WORKER_H

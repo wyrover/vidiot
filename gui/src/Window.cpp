@@ -1,4 +1,4 @@
-#include "GuiWindow.h"
+#include "Window.h"
 
 #include <wx/docview.h>
 #include <wx/confbase.h>
@@ -6,11 +6,12 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "GuiMain.h"
-#include "GuiOptions.h"
+#include "Main.h"
+#include "Options.h"
 #include "ProjectView.h"
-#include "GuiPreview.h"
-#include "GuiTimelinesView.h"
+#include "Preview.h"
+#include "TimelinesView.h"
+#include "Worker.h"
 #include "FSWatcher.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
@@ -32,7 +33,7 @@ public:
     void OnUpdate(wxView *sender, wxObject *hint = NULL) {}
     bool OnCreate(wxDocument *doc, long flags) 
     {
-        Activate(true); // Make sure the document manager knows that this is the current view.
+        Activate(true); // Make sure the document manager knows that this is the get view.
         return true;
     }
     bool OnClose(bool deleteWindow = true)
@@ -50,11 +51,12 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 
 const int sStatusProcessing = 8;
 
-GuiWindow::GuiWindow()
+Window::Window()
     :   wxDocParentFrame()
     ,	mDocManager(new wxDocManager())
     ,	mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     ,   mWatcher(new FSWatcher())
+    ,   mWorker(new Worker())
     ,   menubar(0)
     ,   menuedit(0)
     ,   menusequence(0)
@@ -64,8 +66,8 @@ GuiWindow::GuiWindow()
     // constructor list.
     wxDocParentFrame::Create(mDocManager, 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1200,800));
 
-    mTimelinesView  = new GuiTimelinesView(this);
-    mPreview        = new GuiPreview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
+    mTimelinesView  = new TimelinesView(this);
+    mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
     mProjectView    = new ProjectView(this);
     mEditor         = new wxPanel(this);
 
@@ -128,8 +130,8 @@ GuiWindow::GuiWindow()
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
     mUiManager.Update();
 
-    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &GuiWindow::onOpenProject,              this);
-    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &GuiWindow::onCloseProject,             this);
+    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
+    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	mDocManager, wxID_CLOSE_ALL);
@@ -142,10 +144,10 @@ GuiWindow::GuiWindow()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          mDocManager, wxID_UNDO);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          mDocManager, wxID_REDO);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onExit,             this, wxID_EXIT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onHelp,             this, wxID_HELP);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onAbout,            this, wxID_ABOUT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onOptions,          this, ID_OPTIONS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
 
     mDocManager->SetMaxDocsOpen(1);
     mDocManager->FileHistoryUseMenu(menufile);
@@ -154,18 +156,18 @@ GuiWindow::GuiWindow()
     Show();
 }
 
-void GuiWindow::init()
+void Window::init()
 {
-    if (GuiOptions::GetAutoLoad())
+    if (Options::GetAutoLoad())
     {
-        mDocManager->CreateDocument(*GuiOptions::GetAutoLoad(), wxDOC_SILENT);
+        mDocManager->CreateDocument(*Options::GetAutoLoad(), wxDOC_SILENT);
     }
 }
 
-GuiWindow::~GuiWindow()
+Window::~Window()
 {
-    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,     &GuiWindow::onOpenProject,              this);
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,    &GuiWindow::onCloseProject,             this);
+    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
+    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  mDocManager, wxID_CLOSE_ALL);
@@ -178,10 +180,10 @@ GuiWindow::~GuiWindow()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          mDocManager, wxID_UNDO);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          mDocManager, wxID_REDO);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onExit,             this, wxID_EXIT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onHelp,             this, wxID_HELP);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onAbout,            this, wxID_ABOUT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &GuiWindow::onOptions,          this, ID_OPTIONS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
 
     mUiManager.UnInit();
 
@@ -193,23 +195,29 @@ GuiWindow::~GuiWindow()
     delete mDocManager;
 }
 
+// static
+Window& Window::get()
+{
+    return *(dynamic_cast<Window*>(wxGetApp().GetTopWindow()));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::onOpenProject( model::EventOpenProject &event )
+void Window::onOpenProject( model::EventOpenProject &event )
 {
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
     mDocManager->FileHistorySave(*wxConfigBase::Get());
-    GuiOptions::SetAutoLoadFilename(model::Project::current()->GetFilename());
+    Options::SetAutoLoadFilename(model::Project::get().GetFilename());
     wxConfigBase::Get()->Flush();
     event.Skip();
 }
 
-void GuiWindow::onCloseProject( model::EventCloseProject &event )
+void Window::onCloseProject( model::EventCloseProject &event )
 {
-    GuiOptions::SetAutoLoadFilename("");
+    Options::SetAutoLoadFilename("");
     event.Skip();
 }
 
@@ -217,7 +225,7 @@ void GuiWindow::onCloseProject( model::EventCloseProject &event )
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::SetProcessingText(wxString text)
+void Window::SetProcessingText(wxString text)
 {
     SetStatusText( text, 8 );
 }
@@ -226,7 +234,7 @@ void GuiWindow::SetProcessingText(wxString text)
 // FILE MENU
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::onExit(wxCommandEvent &)
+void Window::onExit(wxCommandEvent &)
 { 
     Close(); 
 }
@@ -235,9 +243,9 @@ void GuiWindow::onExit(wxCommandEvent &)
 // TOOLS MENU
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::onOptions(wxCommandEvent& WXUNUSED(event))
+void Window::onOptions(wxCommandEvent& WXUNUSED(event))
 {
-    GuiOptions w(this);
+    Options w(this);
     w.ShowModal();
 }
 
@@ -245,12 +253,12 @@ void GuiWindow::onOptions(wxCommandEvent& WXUNUSED(event))
 // HELP MENU
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::onHelp(wxCommandEvent& WXUNUSED(event))
+void Window::onHelp(wxCommandEvent& WXUNUSED(event))
 {
     NIY
 }
 
-void GuiWindow::onAbout(wxCommandEvent& WXUNUSED(event))
+void Window::onAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox(_("Vidiot 0.1"), _T("About"), wxOK | wxICON_INFORMATION, this);
 }
@@ -259,18 +267,12 @@ void GuiWindow::onAbout(wxCommandEvent& WXUNUSED(event))
 // GET WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
-// static
-GuiWindow* GuiWindow::get()
-{
-    return dynamic_cast<GuiWindow*>(wxGetApp().GetTopWindow());
-}
-
-GuiTimelinesView& GuiWindow::getTimeLines()
+TimelinesView& Window::getTimeLines()
 {
     return *mTimelinesView;
 }
 
-GuiPreview& GuiWindow::getPreview()
+Preview& Window::getPreview()
 {
     return *mPreview;
 }
@@ -279,7 +281,7 @@ GuiPreview& GuiWindow::getPreview()
 // ENABLING/DISABLING MENUS
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWindow::setSequenceMenu(wxMenu* menu)
+void Window::setSequenceMenu(wxMenu* menu)
 {
     wxMenu* previous = 0;
     bool enable = true;
@@ -301,12 +303,12 @@ void GuiWindow::setSequenceMenu(wxMenu* menu)
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void GuiWindow::serialize(Archive & ar, const unsigned int version)
+void Window::serialize(Archive & ar, const unsigned int version)
 {
     ar & *mProjectView;
     ar & *mTimelinesView;
 }
-template void GuiWindow::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void GuiWindow::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Window::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Window::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace

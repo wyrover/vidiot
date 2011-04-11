@@ -183,7 +183,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             }
 
             // If there is no previous frame stored as a member,
-            // use the current frame's position as starting point.
+            // use the get frame's position as starting point.
             if (!mDeliveredFrame)
             {
                 mPosition = Convert::toProjectFrameRate(mDeliveredFrameInputPts, videoFrameRate);
@@ -261,9 +261,9 @@ void VideoFile::startDecodingVideo()
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
 
 
-    if (videoFrameRate != Project::current()->getProperties()->getFrameRate())
+    if (videoFrameRate != Project::get().getProperties()->getFrameRate())
     {
-        LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Project::current()->getProperties()->getFrameRate();
+        LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Project::get().getProperties()->getFrameRate();
     }
 
     VAR_DEBUG(this)(getCodec());

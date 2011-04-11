@@ -1,23 +1,25 @@
-#include "ProjectWorker.h"
-#include "GuiWindow.h"
+#include "Worker.h"
 
-namespace model {
+#include "Window.h"
+
+namespace gui {
 
 static const unsigned int sMaximumBufferedWork = 1000;
+static Worker* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ProjectWorker::ProjectWorker()
+Worker::Worker()
 :   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
-,   mWindow(gui::GuiWindow::get())
 {
-    //mThread.reset(new boost::thread(boost::bind(&ProjectWorker::thread,this)));
+    sCurrent = this;
+    //mThread.reset(new boost::thread(boost::bind(&Worker::thread,this)));
 }
 
-ProjectWorker::~ProjectWorker()
+Worker::~Worker()
 {
 	mEnabled = false;
     mFifo.flush();
@@ -28,12 +30,18 @@ ProjectWorker::~ProjectWorker()
     }
 }
 
+// static
+Worker& Worker::get()
+{
+    return *sCurrent;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // NEW WORK
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectWorker::schedule(WorkPtr work)
+void Worker::schedule(WorkPtr work)
 {
     mFifo.push(work);
 }
@@ -42,7 +50,7 @@ void ProjectWorker::schedule(WorkPtr work)
 // THE THREAD
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectWorker::thread()
+void Worker::thread()
 {
     WorkPtr w;
     while (mEnabled)
@@ -52,9 +60,9 @@ void ProjectWorker::thread()
 
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
-            mWindow->SetProcessingText(w->getDescription());
+            Window::get().SetProcessingText(w->getDescription());
             w->execute();
-            mWindow->SetProcessingText(_(""));
+            Window::get().SetProcessingText(_(""));
         }
     }
 }
