@@ -207,12 +207,12 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
-public://TODO
+
     /// Updates the clips after insertion/removal etc.
     /// - Updates the pts'es for all clips in this track
     /// - Updates the clip's track pointer to this track
     void updateClips();
-private://TODO
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
@@ -240,6 +240,5 @@ std::ostream& operator<<( std::ostream& os, const MoveParameter& obj );
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Track, 1)
-BOOST_CLASS_EXPORT(model::Track)
 
 #endif // MODEL_TRACK_H
