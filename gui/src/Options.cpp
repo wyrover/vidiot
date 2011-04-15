@@ -121,7 +121,7 @@ boost::optional<wxString> Options::GetAutoLoad()
     if (GETBOOL(sPathAutoLoadEnabled,false))
     {
         wxString filename = GETSTRING(sPathAutoLoadFilename,"");
-        if (boost::filesystem::exists(boost::filesystem::path(filename)))
+        if (boost::filesystem::exists(boost::filesystem::path(filename.ToStdString())))
         {
             result.reset(filename);
         }

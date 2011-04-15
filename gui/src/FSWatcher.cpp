@@ -132,7 +132,7 @@ void FSWatcher::onChange(wxFileSystemWatcherEvent& event)
     case wxFSW_EVENT_ACCESS: 
         LOG_DEBUG << "ACCESS"; 
         return;
-    default: FATAL("Unsupprted event type.");
+    default: FATAL("Unsupported event type.");
     }
 
     if (changedfolder.IsDir())

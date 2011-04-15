@@ -6,8 +6,7 @@
 
 namespace gui {
 
-/// This class is responsible for running lengthy Project tasks
-/// like indexing an autofolder, or rendering preview files in the
+/// This class is responsible for running lengthy tasks in the
 /// background.
 class Worker
     :   public boost::noncopyable
