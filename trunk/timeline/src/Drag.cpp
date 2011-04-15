@@ -92,7 +92,7 @@ public:
     ~DummyView() {}
     pixel requiredWidth() const { return getTimeline().requiredWidth(); }
     pixel requiredHeight() const {  return getTimeline().requiredHeight(); }
-    void draw(wxBitmap& bitmap) const { FATAL(""); }
+    void draw(wxBitmap& bitmap) const { FATAL; }
 };
 
 //////////////////////////////////////////////////////////////////////////

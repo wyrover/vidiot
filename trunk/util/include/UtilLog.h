@@ -40,7 +40,7 @@
 // VAR_ERROR  (<expr1>)...(<exprn>);
 //
 // ASSERT(<expression>)(<expr1>)...(<exprn>); <- exprs 1 through n are shown in the log if the assert fails. This is logged only once ;-)
-// FATAL ("Message")   (<expr1>)...(<exprn>); <- exprs 1 through n are shown in the log
+// FATAL               (<expr1>)...(<exprn>); <- exprs 1 through n are shown in the log
 //
 // NOTE: Assert is not a log level: these are logged always.
 //       Highest loglevel that can be set is detailed.
@@ -99,8 +99,8 @@ DECLAREENUM(LogLevel, \
 #define VAR_WARNING VAR_X(logWARNING)
 #define VAR_ERROR   VAR_X(logERROR)
 
-#define ASSERT(expr)    if ((expr)) ;                     else  LogVar(#expr,__FILE__, __LINE__,__FUNCTION__).LOGVAR_A
-#define FATAL(expr)                                             LogVar(#expr,__FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define ASSERT(expr)    if ((expr)) ; else  LogVar(#expr,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define FATAL                               LogVar("FATAL", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 
 #define NIY wxMessageOutputMessageBox().Printf("%s(%d): %s: Not implemented yet", __FILE__, __LINE__,__FUNCTION__);
 
@@ -182,7 +182,7 @@ struct LogVar : boost::noncopyable
         ,   mFileName(p_szFileName)
         ,   mLine(p_lLine)
         ,   mFunction(p_szFunction)
-        ,   mAssert(boost::optional<std::string>(std::string("[ASSERTION FAILURE: ") + expr + "]"))
+        ,   mAssert(boost::optional<std::string>(std::string("[ASSERT:") + expr + ']'))
     {
     }
 
