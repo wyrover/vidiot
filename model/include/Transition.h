@@ -22,8 +22,7 @@ typedef boost::shared_ptr<Transition> TransitionPtr;
 typedef std::list<TransitionPtr> Transitions;
 
 class Transition
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public IClip
+    :   public IClip
 {
 public:
 
@@ -134,7 +133,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Transition, 1)
-BOOST_CLASS_EXPORT(model::Transition)
 BOOST_CLASS_TRACKING(model::Transition, boost::serialization::track_always)
 
 #endif // MODEL_TRANSITION_H
