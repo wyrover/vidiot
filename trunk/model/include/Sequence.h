@@ -5,7 +5,6 @@
 #include <list>
 #include <wx/event.h>
 #include <boost/optional.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "AProjectViewNode.h"
 #include "IAudio.h"
 #include "IControl.h"
@@ -168,7 +167,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Sequence, 1)
-BOOST_CLASS_EXPORT(model::Sequence)
 BOOST_CLASS_TRACKING(model::Sequence, boost::serialization::track_always)
 
 #endif // MODEL_SEQUENCE_H
