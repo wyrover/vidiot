@@ -43,14 +43,14 @@ Install graphviz into c:\Program Files
   (Repo: https://vidiot.svn.sourceforge.net/svnroot/vidiot)
 
 =================== BOOST ===================
-* Download Boost into <VIDIOT_DIR>\boost_1_43_0
+* Download Boost into <VIDIOT_DIR>\boost_1_xx_y
 * CMD:
   - d:
-  - cd <VIDIOT_DIR>\boost_1_43_0
+  - cd <VIDIOT_DIR>\boost_1_xx_y
   - bootstrap
   - (MSVC) .\bjam --toolset=msvc --build-type=complete stage
   - (GCC) .\bjam --toolset=gcc --build-type=complete stage
-* Add  <VIDIOT_DIR>\boost_1_43_0\stage\lib to system/user path variable
+* Add  <VIDIOT_DIR>\boost_1_xx_y\stage\lib to system/user path variable
 
 =================== WXWIDGETS ===================
 * Checkout wxWidgets into <VIDIOT_DIR>\wxwidgets_trunk

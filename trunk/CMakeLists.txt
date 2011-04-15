@@ -28,12 +28,12 @@ SET( WX_USE_REL_AND_DBG TRUE )
 FIND_PACKAGE(wxWidgets REQUIRED core base aui adv xml html qa)
 
 #### BOOST ####
-SET(Boost_ADDITIONAL_VERSIONS "1.43" "1.43.0")
-SET( ENV{BOOST_ROOT} ${VIDIOT_DIR}/boost_1_43_0 )
+SET(Boost_ADDITIONAL_VERSIONS "1.46" "1.46.1")
+SET( ENV{BOOST_ROOT} ${VIDIOT_DIR}/boost_1_46_1 )
 SET(Boost_DEBUG TRUE)
 #SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost 1.43 REQUIRED COMPONENTS date_time thread filesystem serialization system)
+FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS date_time thread filesystem serialization system)
 
 #### DOXYGEN ####
 FIND_PACKAGE(Doxygen REQUIRED)
