@@ -34,16 +34,9 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
     ASSERT(mClip);
 
     getViewMap().registerView(mClip,this);
-    if (mClip->isA<model::Transition>())
-    {
-        // todo
-    }
-    else
-    {
-        model::ClipPtr clip = boost::static_pointer_cast<model::Clip>(mClip);
-        clip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
-        clip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
-    }
+    mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
+    mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
+    // todo also handle these events for transitions
     updateThumbnail();
 }
 
@@ -51,16 +44,9 @@ ClipView::~ClipView()
 {
     VAR_DEBUG(this);
 
-    if (mClip->isA<model::Transition>())
-    {
-        // todo
-    }
-    else
-    {
-        model::ClipPtr clip = boost::static_pointer_cast<model::Clip>(mClip);
-        clip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
-        clip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
-    }
+    mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
+    mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
+    
     getViewMap().unregisterView(mClip);
 }
 
