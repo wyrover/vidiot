@@ -18,7 +18,7 @@ ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vecto
     ASSERT(paths.size() > 0);
     if (paths.size() == 1)
     {
-        mCommandName = _("Add file")        + _(" \"")   + paths[0].leaf()  + _("\"");
+        mCommandName = _("Add file")        + _(" \"")   + paths[0].filename().c_str()  + _("\"");
     }
     else
     {

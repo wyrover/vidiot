@@ -13,7 +13,7 @@ ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(model::FolderPtr parent
 ,   mPath(path)
 {
     VAR_INFO(this)(mParent)(mPath);
-    mCommandName = _("Add autofolder")  + _(" \"")   + mPath.leaf()  + _("\"");
+    mCommandName = _("Add autofolder")  + _(" \"")   + mPath.filename().c_str()  + _("\"");
 }
 
 ProjectViewCreateAutoFolder::~ProjectViewCreateAutoFolder()
