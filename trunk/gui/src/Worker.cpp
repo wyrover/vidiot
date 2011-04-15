@@ -26,7 +26,7 @@ Worker::~Worker()
     mFifo.push(WorkPtr());
     if (mThread)
     {
-        mThread->join(); /** /todo detach() ? to avoid having to wait for a long autofolder indexing action?? */
+        mThread->join();
     }
 }
 
@@ -56,7 +56,6 @@ void Worker::thread()
     while (mEnabled)
     {
         w = mFifo.pop();
-        /** \todo make the if (w) checking for all fifo's or find better way. */
 
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
