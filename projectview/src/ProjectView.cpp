@@ -358,7 +358,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& WXUNUSED(event))
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), boost::filesystem::path(s)));
+        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), boost::filesystem::path(s.ToStdString())));
     }
 }
 
@@ -392,8 +392,8 @@ void ProjectView::onNewFile(wxCommandEvent& WXUNUSED(event))
         std::vector<boost::filesystem::path> list;
         BOOST_FOREACH( wxString path, paths)
         {
-            boost::filesystem::path p(path);
-            if (FindConflictingName(getSelectedContainer(),p.leaf()))
+            boost::filesystem::path p(path.ToStdString());
+            if (FindConflictingName(getSelectedContainer(),p.filename().string()))
             {
                 return;
             }
