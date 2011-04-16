@@ -84,6 +84,5 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::EmptyFile, 1)
-BOOST_CLASS_EXPORT(model::EmptyFile)
 
 #endif // MODEL_EMPTY_FILE_H

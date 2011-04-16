@@ -2,12 +2,12 @@
 #define MODEL_I_CLIP_H
 
 #include <wx/string.h>
+#include <wx/event.h>
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/assume_abstract.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/tracking.hpp>
 #include <boost/serialization/version.hpp>
 #include "IControl.h"
 #include "UtilInt.h"
@@ -23,7 +23,9 @@ typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef std::list<IClipPtr> IClips;
 
 class IClip
-    :   public IControl
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    ,   public IControl
+    ,   public boost::enable_shared_from_this<IClip>
 {
 public:
 
@@ -79,6 +81,7 @@ public:
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
     /// \param adjustment pts count to add/subtract from the begin point
+    /// \pre clip is not part of a track
     virtual void adjustBegin(pts adjustment) = 0;
 
     virtual pts getMinAdjustEnd() const = 0;    ///< \return Minimum allowed value for adjustEnd given the available data.
@@ -86,6 +89,7 @@ public:
 
     /// Set the new length of the clip.
     /// \param adjustment pts count to add/subtract from the length
+    /// \pre clip is not part of a track
     virtual void adjustEnd(pts adjustment) = 0;
 
     //////////////////////////////////////////////////////////////////////////
@@ -133,13 +137,10 @@ private:
 
 } // namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(model::IClip)
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::IClip, 1)
-BOOST_CLASS_EXPORT(model::IClip)
-BOOST_CLASS_TRACKING(model::IClip, boost::serialization::track_always)
 
 #endif // MODEL_I_CLIP_H

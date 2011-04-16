@@ -167,6 +167,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Sequence, 1)
-BOOST_CLASS_TRACKING(model::Sequence, boost::serialization::track_always)
+//BOOST_CLASS_TRACKING(model::Sequence, boost::serialization::track_always)
 
 #endif // MODEL_SEQUENCE_H

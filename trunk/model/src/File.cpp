@@ -15,6 +15,8 @@ extern "C" {
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
 #include "FilePacket.h"
 #include "Convert.h"
@@ -161,7 +163,7 @@ void File::clean()
 
 wxFileName File::getFileName() const
 {
-    return wxFileName(mPath.parent_path().string(),mPath.leaf());
+    return wxFileName(mPath.parent_path().string(),mPath.filename().string());
 }
 
 boost::filesystem::path File::getPath() const
@@ -181,12 +183,12 @@ wxString File::getLastModified() const
 
 wxString File::getName() const
 {
-    return mPath.leaf();
+    return mPath.filename().string();
 };
 
 bool File::isSupported()
 {
-    if (mPath.extension().compare(".avi") == 0)
+    if (mPath.extension().string().compare(".avi") == 0)
     {
         return true;
     }
@@ -430,13 +432,15 @@ std::ostream& operator<<( std::ostream& os, const File& obj )
 template<class Archive>
 void File::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<AProjectViewNode>(*this);
     ar & boost::serialization::base_object<IControl>(*this);
+    ar & boost::serialization::base_object<AProjectViewNode>(*this);
     ar & mPath;
     ar & mLastModified;
     ar & mMaxBufferSize;
 }
+
 template void File::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void File::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

@@ -72,6 +72,5 @@ typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
 BOOST_CLASS_VERSION(model::VideoTransition, 1)
-BOOST_CLASS_EXPORT(model::VideoTransition)
 
 #endif // MODEL_VIDEO_TRANSITION_H

@@ -316,3 +316,4 @@ template void VideoFile::serialize<boost::archive::text_oarchive>(boost::archive
 template void VideoFile::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

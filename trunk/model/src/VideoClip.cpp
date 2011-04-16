@@ -11,6 +11,10 @@
 
 namespace model {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 VideoClip::VideoClip()
     :	Clip()
     ,   mProgress(0)
@@ -26,8 +30,8 @@ VideoClip::VideoClip(IControlPtr file)
 }
 
 VideoClip::VideoClip(const VideoClip& other)
-:   Clip(other)
-,   mProgress(0)
+    :   Clip(other)
+    ,   mProgress(0)
 {
     VAR_DEBUG(*this);
 }

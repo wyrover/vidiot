@@ -30,7 +30,7 @@ AutoFolder::AutoFolder()
 }
 
 AutoFolder::AutoFolder(boost::filesystem::path path)
-:   Folder(path.leaf())
+:   Folder(path.filename().string())
 ,   mPath(path)
 {
     VAR_DEBUG(this);
@@ -57,7 +57,7 @@ void AutoFolder::update()
 
     for (boost::filesystem::directory_iterator itr(mPath); itr != boost::filesystem::directory_iterator(); ++itr)
     {
-        std::string leaf = itr->path().leaf();
+        std::string leaf = itr->path().filename().string();
         wxString name(leaf);
 
         if (UtilList<wxString>(allnames).hasElement(name))
@@ -111,7 +111,7 @@ boost::filesystem::path AutoFolder::getPath() const
 
 wxString AutoFolder::getName() const
 {
-    return mPath.leaf();
+    return mPath.filename().string();
 }
 
 boost::optional<wxString> AutoFolder::getLastModified() const
@@ -138,3 +138,4 @@ template void AutoFolder::serialize<boost::archive::text_oarchive>(boost::archiv
 template void AutoFolder::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

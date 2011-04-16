@@ -13,6 +13,9 @@ Install doxygen into c:\Program Files
 =================== GRAPHVIZ ===================
 Install graphviz into c:\Program Files
 
+=================== CxxTest ===================
+Install CxxTest into C:\Program Files (x86)\CxxTest
+
 ========== MSYS + MINGW + CODEBLOCKS ==========
 * Install Code::Blocks, including MingW
 * Add C:\Program Files (x86)\CodeBlocks\MinGW\bin to PATH
