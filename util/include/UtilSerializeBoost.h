@@ -6,26 +6,24 @@
 #pragma once
 #endif
 
-#include <boost/config.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/serialization/level.hpp>
 #include <boost/rational.hpp>
+#include <boost/filesystem/path.hpp>
 
 namespace boost { namespace serialization {
 
-template<class Archive, class String, class Traits>
-void serialize(Archive& ar, boost::filesystem::basic_path<String,Traits>& p, const unsigned int version)
+template<class Archive>
+void serialize(Archive &ar, boost::filesystem::path &p, const unsigned int version)
 {
-     String s;
-     if (Archive::is_saving::value)
-     {
-         s = p.string();
-     }
-     ar & boost::serialization::make_nvp("string", s);
-     if (Archive::is_loading::value)
-     {
-         p = s;
-     }
+    std::string s;
+    if (Archive::is_saving::value)
+    {
+        s = p.string();
+    }
+    ar & s;
+    if (Archive::is_loading::value)
+    {
+        p = s;
+    }
 }
 
 template<class Archive>
