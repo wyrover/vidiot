@@ -100,3 +100,4 @@ template void VideoTrack::serialize<boost::archive::text_oarchive>(boost::archiv
 template void VideoTrack::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

@@ -9,6 +9,10 @@
 
 namespace model {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 VideoTransition::VideoTransition()
     :	Transition()
     ,   IVideo()
@@ -18,17 +22,17 @@ VideoTransition::VideoTransition()
 }
 
 VideoTransition::VideoTransition(pts nFramesLeft, pts nFramesRight)
-:   Transition(nFramesLeft,nFramesRight)
-,   IVideo()
-,   mPosition(-1)
+    :   Transition(nFramesLeft,nFramesRight)
+    ,   IVideo()
+    ,   mPosition(-1)
 {
     VAR_DEBUG(this);
 }
 
 VideoTransition::VideoTransition(const VideoTransition& other)
-:   Transition(other)
-,   IVideo()
-,   mPosition(-1)
+    :   Transition(other)
+    ,   IVideo()
+    ,   mPosition(-1)
 {
     VAR_DEBUG(*this);
 }
@@ -90,3 +94,4 @@ template void VideoTransition::serialize<boost::archive::text_oarchive>(boost::a
 template void VideoTransition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

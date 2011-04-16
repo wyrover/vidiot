@@ -96,7 +96,5 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::VideoFile, 1)
-BOOST_CLASS_EXPORT(model::VideoFile)
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(boost::enable_shared_from_this<VideoFile>)
 
 #endif // MODEL_VIDEO_FILE_H

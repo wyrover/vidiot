@@ -11,9 +11,12 @@
 
 namespace model {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 Transition::Transition()
-    :   wxEvtHandler()
-    ,   IClip()
+    :   IClip()
     ,   mFramesLeft(0)
     ,   mFramesRight(0)
     ,   mLastSetPosition(boost::none)
@@ -27,8 +30,7 @@ Transition::Transition()
 }
 
 Transition::Transition(pts nFramesLeft, pts nFramesRight)
-    :   wxEvtHandler()
-    ,   IClip()
+    :   IClip()
     ,   mFramesLeft(nFramesLeft)
     ,   mFramesRight(nFramesRight)
     ,   mLastSetPosition(boost::none)
@@ -42,8 +44,7 @@ Transition::Transition(pts nFramesLeft, pts nFramesRight)
 }
 
 Transition::Transition(const Transition& other)
-    :   wxEvtHandler()
-    ,   IClip()
+    :   IClip()
     ,   mFramesLeft(other.mFramesLeft)
     ,   mFramesRight(other.mFramesRight)
     ,   mLastSetPosition(boost::none)
@@ -242,3 +243,4 @@ template void Transition::serialize<boost::archive::text_oarchive>(boost::archiv
 template void Transition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

@@ -10,6 +10,8 @@
 #include "Main.h"
 #include "Properties.h"
 #include "UtilLog.h"
+#include "File.h"
+#include "Serialization.h"
 
 namespace model {
 
@@ -126,21 +128,21 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
     try
     {
         boost::archive::text_oarchive ar(ostream);
+        registerClasses(ar);
         ar & *this;
         ar & gui::wxGetApp();
     }
-    catch (boost::archive::archive_exception* e)
+    catch (boost::archive::archive_exception& e)
     {
-        wxMessageBox(e->what()); /** /todo bettter handling */
+        FATAL(e.what());
     }
-    catch (std::exception* e)
+    catch (std::exception& e)
     {
-        wxMessageBox(e->what()); /** /todo bettter handling */
+        FATAL(e.what());
     }
     catch (...)
     {
-        wxMessageBox("aiai"); /** /todo bettter handling */
-
+        FATAL;
     }
     return ostream;
 }
@@ -150,19 +152,24 @@ std::istream& Project::LoadObject(std::istream& istream)
     try
     {
         boost::archive::text_iarchive ar(istream);
+        registerClasses(ar);
         ar & *this;
         ar & gui::wxGetApp();
         gui::wxGetApp().QueueEvent(new EventOpenProject(this)); /** @todo do not submit via app, but via individual nodes */
     }
-    //catch (std::exception* e)
-    //{
-    //    wxMessageBox(e->what()); /** /todo bettter handling */
-    //}
-    catch (boost::archive::archive_exception* e)
+    catch (boost::archive::archive_exception& e)
     {
-        wxMessageBox(e->what()); /** /todo bettter handling */
+        FATAL(e.what());
     }
-    /** /todo postporc */
+    catch (std::exception& e)
+    {
+        FATAL(e.what());
+    }
+    catch (...)
+    {
+        FATAL;
+    }
+
     return istream;
 }
 

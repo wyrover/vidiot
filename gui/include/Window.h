@@ -5,7 +5,6 @@
 #include <wx/menu.h>
 #include <wx/docview.h>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/scoped_ptr.hpp>
 #include "Project.h"

@@ -138,3 +138,4 @@ template void EmptyFile::serialize<boost::archive::text_oarchive>(boost::archive
 template void EmptyFile::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

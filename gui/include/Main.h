@@ -4,7 +4,6 @@
 #include <wx/app.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/export.hpp>
 #include <boost/serialization/version.hpp>
 
 #ifdef _MSC_VER

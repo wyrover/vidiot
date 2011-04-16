@@ -81,6 +81,5 @@ private:
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
 BOOST_CLASS_VERSION(model::AudioClip, 1)
-BOOST_CLASS_EXPORT(model::AudioClip)
 
 #endif // MODEL_AUDIO_CLIP_H

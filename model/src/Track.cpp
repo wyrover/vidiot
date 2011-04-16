@@ -146,6 +146,7 @@ void Track::clean()
 void Track::addClips(IClips clips, IClipPtr position)
 {
     VAR_DEBUG(*this)(position)(clips);
+
     UtilList<IClipPtr>(mClips).addElements(clips,position);
 
 	updateClips();
@@ -164,15 +165,16 @@ void Track::addClips(IClips clips, IClipPtr position)
 void Track::removeClips(IClips clips)
 {
     VAR_DEBUG(*this)(clips);
-	BOOST_FOREACH( IClipPtr clip, clips )
-	{
+
+    BOOST_FOREACH( IClipPtr clip, clips )
+    {
         clip->clean();
-		clip->setTrack(TrackPtr(), 0);
-	}
+        clip->setTrack(TrackPtr(), 0);
+    }
 
 	IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);
 
-	updateClips();
+    updateClips();
 
     moveTo(0); // Required since the iteration has become invalid.
 
@@ -355,6 +357,9 @@ void Track::updateClips()
 {
 	pts position = 0;
     int index = 0;
+    // NOTE: any information updated here must also be serialized in the clip,
+    //       since this method is not called during (de)serialization, since
+    //       the shared_from_this() handling causes problems then.
 	BOOST_FOREACH( IClipPtr clip, mClips )
 	{
 		clip->setTrack(shared_from_this(), position, index);
@@ -384,26 +389,14 @@ std::ostream& operator<<( std::ostream& os, const MoveParameter& obj )
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void Track::save(Archive & ar, const unsigned int version) const
+void Track::serialize(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<IControl>(*this);
     ar & mIndex;
     ar & mClips;
 }
-template<class Archive>
-void Track::load(Archive & ar, const unsigned int version)
-{
-    ar & boost::serialization::base_object<IControl>(*this);
-    ar & mIndex;
-    ar & mClips;
-    if (Archive::is_loading::value)
-    {
-        mItCurrent.reset();
-        mItClips = mClips.begin();
-        updateClips();
-    }
-}
-template void Track::save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion) const;
-template void Track::load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Track::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Track::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

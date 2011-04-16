@@ -28,8 +28,11 @@ DEFINE_EVENT(EVENT_REMOVE_AUDIO_TRACK,   EventRemoveAudioTracks,   TrackChange);
 //////////////////////////////////////////////////////////////////////////
 
 Sequence::Sequence()
-    :	IControl()
-    ,   wxEvtHandler()
+    :   wxEvtHandler()
+    ,	IControl()
+    ,   IVideo()
+    ,   IAudio()
+    ,   AProjectViewNode()
     ,   mName()
     ,   mVideoTracks()
     ,   mAudioTracks()
@@ -40,7 +43,11 @@ Sequence::Sequence()
 }
 
 Sequence::Sequence(wxString name)
-    :	IControl()
+:   wxEvtHandler()
+,	IControl()
+,   IVideo()
+,   IAudio()
+,   AProjectViewNode()
     ,   mName(name)
     ,   mVideoTracks()
     ,   mAudioTracks()
@@ -51,7 +58,11 @@ Sequence::Sequence(wxString name)
 }
 
 Sequence::Sequence(const Sequence& other)
-:	IControl()
+:   wxEvtHandler()
+,	IControl()
+,   IVideo()
+,   IAudio()
+,   AProjectViewNode()
 ,   mName(other.mName)
 ,   mVideoTracks(other.mVideoTracks)
 ,   mAudioTracks(other.mAudioTracks)
@@ -308,3 +319,4 @@ template void Sequence::serialize<boost::archive::text_oarchive>(boost::archive:
 template void Sequence::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

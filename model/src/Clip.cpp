@@ -20,8 +20,7 @@ DEFINE_EVENT(DEBUG_EVENT_RENDER_PROGRESS,   DebugEventRenderProgress,   pts);
 //////////////////////////////////////////////////////////////////////////
 
 Clip::Clip()
-    :   wxEvtHandler()
-    ,	IClip()
+    :	IClip()
     ,   mRender()
     ,   mOffset(0)
     ,   mLength(-1)
@@ -37,8 +36,7 @@ Clip::Clip()
 }
 
 Clip::Clip(IControlPtr render)
-    :   wxEvtHandler()
-    ,	IClip()
+    :	IClip()
     ,   mRender(render)
     ,   mOffset(0)
     ,   mLength(-1)
@@ -55,8 +53,7 @@ Clip::Clip(IControlPtr render)
 }
 
 Clip::Clip(const Clip& other)
-    :   wxEvtHandler()
-    ,	IClip()
+    :	IClip()
     ,   mRender(make_cloned<model::IControl>(other.mRender))
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
@@ -165,15 +162,9 @@ pts Clip::getMaxAdjustBegin() const
 void Clip::adjustBegin(pts adjustment)
 {
     ASSERT(adjustment >= getMinAdjustBegin() && adjustment <= getMaxAdjustBegin())(adjustment)(getMinAdjustBegin())(getMaxAdjustBegin());
+    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mOffset += adjustment;
     mLength -= adjustment;
-    if (getTrack())
-    {
-        getTrack()->updateClips(); // \todo this is needed to adjust mLeftPtsIntrack for all clips AFTER this clip. 
-        // This is very inefficient....
-        // we need an event signaling the changed length. THen, the track can update it's administration.
-        // since mLeftPtsInTrack is TRACK administration, not clip administration.
-    }
     ASSERT(mLength <=  mRender->getLength() - mOffset)(mLength);
     VAR_DEBUG(*this)(adjustment);
 }
@@ -191,11 +182,8 @@ pts Clip::getMaxAdjustEnd() const
 void Clip::adjustEnd(pts adjustment)
 {
     ASSERT(adjustment >= getMinAdjustEnd() && adjustment <= getMaxAdjustEnd())(adjustment)(getMinAdjustEnd())(getMaxAdjustEnd());
+    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
-    if (getTrack())
-    {
-        getTrack()->updateClips(); // \see todo in adjustbegin
-    }
     ASSERT(mLength <=  mRender->getLength() - mOffset)(mLength);
     VAR_DEBUG(*this)(adjustment);
 }
@@ -283,3 +271,4 @@ template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::tex
 template void Clip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+

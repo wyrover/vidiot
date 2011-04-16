@@ -22,8 +22,7 @@ class Clip;
 typedef boost::shared_ptr<Clip> ClipPtr; // todo other name, IClip should be clips
 
 class Clip
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public IClip
+    :   public IClip
 {
 public:
 
@@ -142,6 +141,5 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Clip, 1)
-BOOST_CLASS_EXPORT(model::Clip)
 
 #endif // MODEL_CLIP_H
