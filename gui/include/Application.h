@@ -1,10 +1,7 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
 #include <wx/app.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 
 #ifdef _MSC_VER
 //#define CATCH_ALL_ERRORS
@@ -12,7 +9,6 @@
 
 namespace gui {
 
-class Window;
 class Main
     :   public wxApp
 {
@@ -39,20 +35,8 @@ public:
     virtual void OnUnhandledException();
     virtual void OnFatalException();
 #endif //CATCH_ALL_ERRORS
-
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
 };
-
-DECLARE_APP(Main)
 
 } // namespace
 
-#endif // MAIN_H
+#endif // APPLICATION_H
