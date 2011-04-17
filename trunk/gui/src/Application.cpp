@@ -1,11 +1,6 @@
-#include "Main.h"
+#include "Application.h"
 
 #include <wx/msgdlg.h>
-#include <boost/exception/diagnostic_information.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/filesystem/operations.hpp>
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
@@ -15,16 +10,12 @@
 #include "FSWatcher.h"
 #include "DebugReport.h"
 
-/// todo unit tests: bool wxEntryStart 	( 	int &  	argc, wxChar **  	argv	  )
-/// and void wxEntryCleanup 	( 		 )  	
-
-
 /// \todo Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
 namespace gui {
 
-IMPLEMENT_APP(Main)
-
+wxIMPLEMENT_APP_NO_MAIN(Main);
+                                   
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -150,17 +141,5 @@ void Main::OnFatalException()
 }
 
 #endif // CATCH_ALL_ERRORS
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void Main::serialize(Archive & ar, const unsigned int version)
-{
-    ar & *(dynamic_cast<Window*>(GetTopWindow()));
-}
-template void Main::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Main::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace
