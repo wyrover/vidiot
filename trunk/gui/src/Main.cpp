@@ -15,6 +15,10 @@
 #include "FSWatcher.h"
 #include "DebugReport.h"
 
+/// todo unit tests: bool wxEntryStart 	( 	int &  	argc, wxChar **  	argv	  )
+/// and void wxEntryCleanup 	( 		 )  	
+
+
 /// \todo Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
 namespace gui {
@@ -62,7 +66,7 @@ bool Main::OnInit()
     // Must be called before anything else,
     // since it distributes the initial options
     // which are used below.
-    Options::init();
+    Options::init(GetAppName(),GetVendorName());
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)

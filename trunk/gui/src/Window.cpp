@@ -6,7 +6,6 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "Main.h"
 #include "Options.h"
 #include "ProjectView.h"
 #include "Preview.h"
@@ -50,6 +49,7 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 //////////////////////////////////////////////////////////////////////////
 
 const int sStatusProcessing = 8;
+static Window* sCurrent = 0;
 
 Window::Window()
     :   wxDocParentFrame()
@@ -65,6 +65,8 @@ Window::Window()
     // be initialized last if the initialization of the base class was also done in the
     // constructor list.
     wxDocParentFrame::Create(mDocManager, 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1200,800));
+
+    sCurrent = this;
 
     mTimelinesView  = new TimelinesView(this);
     mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
@@ -130,8 +132,8 @@ Window::Window()
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
     mUiManager.Update();
 
-    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
-    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
+    Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
+    Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	mDocManager, wxID_CLOSE_ALL);
@@ -166,8 +168,8 @@ void Window::init()
 
 Window::~Window()
 {
-    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
+    Unbind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
+    Unbind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  mDocManager, wxID_CLOSE_ALL);
@@ -193,17 +195,30 @@ Window::~Window()
     delete mTimelinesView;
     //NOT: delete mDocTemplate;
     delete mDocManager;
+
+    sCurrent = 0;
 }
 
 // static
 Window& Window::get()
 {
-    return *(dynamic_cast<Window*>(wxGetApp().GetTopWindow()));
+    ASSERT(sCurrent);
+    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void Window::ProcessModelEvent( wxEvent& event )
+{
+    GetEventHandler()->ProcessEvent(event);
+}
+
+void Window::QueueModelEvent( wxEvent* event )
+{
+    GetEventHandler()->QueueEvent(event);
+}
 
 void Window::onOpenProject( model::EventOpenProject &event )
 {

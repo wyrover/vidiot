@@ -12,7 +12,6 @@
 #include "UtilLog.h"
 #include "Layout.h"
 #include "Options.h"
-#include "Main.h"
 #include "Clip.h"
 #include "TrackView.h"
 #include "Project.h"

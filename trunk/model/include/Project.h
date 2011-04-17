@@ -57,8 +57,6 @@ public:
     bool DeleteContents();
     bool OnCloseDocument();
     bool OnNewDocument();
-    bool OnOpenDocument(const wxString& file);
-    bool OnSaveDocument(const wxString& file);
     bool OnCreate(const wxString& path, long flags);
     void OnChangeFilename(bool notifyViews);
     virtual void Modify(bool modify);
