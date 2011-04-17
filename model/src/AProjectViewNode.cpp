@@ -6,7 +6,7 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
-#include "Main.h"
+#include "Window.h"
 
 namespace model {
 
@@ -86,7 +86,7 @@ ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
     newChild->setParent(shared_from_this());
     // Do not use ProcessEvent: this will cause problems with auto-updating autofolders upon
     // first expansion.
-    gui::wxGetApp().QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
+    gui::Window::get().QueueModelEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
     return newChild;
 }
 
@@ -101,7 +101,7 @@ ProjectViewPtr AProjectViewNode::removeChild(ProjectViewPtr child)
     ASSERT(it != mChildren.end());
     ProjectViewPtr p = *it;
     // Do not use ProcessEvent: see addChild
-    gui::wxGetApp().QueueEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
+    gui::Window::get().QueueModelEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
     mChildren.erase(it);
     child->setParent(ProjectViewPtr());
     return p;

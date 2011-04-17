@@ -7,7 +7,7 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
-#include "Main.h"
+#include "Window.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
@@ -269,7 +269,7 @@ wxString Sequence::getName() const
 void Sequence::setName(wxString name)
 { 
     mName = name;
-    gui::wxGetApp().ProcessEvent(model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
+    gui::Window::get().ProcessModelEvent(model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -7,11 +7,11 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "Folder.h"
-#include "Main.h"
 #include "Properties.h"
 #include "UtilLog.h"
 #include "File.h"
 #include "Serialization.h"
+#include "Window.h"
 
 namespace model {
 
@@ -61,8 +61,8 @@ bool Project::OnCloseDocument()
     // calling OnCloseDocument(). If QueueEvent is used, the event is handled
     // AFTER the destruction of this object which leads to crashes.
 
-    EventCloseProject closeEvent(this); // Do not 'inline' in the next line like gui::wxGetApp().ProcessEvent(EventCloseProject(this)); Doesn't compile in g++
-    gui::wxGetApp().ProcessEvent(closeEvent);
+    EventCloseProject closeEvent(this); // Do not 'inline' in the next line like gui::Window::get().ProcessEvent(EventCloseProject(this)); Doesn't compile in g++
+    gui::Window::get().ProcessModelEvent(closeEvent);
     return wxDocument::OnCloseDocument();
 }
 
@@ -71,31 +71,10 @@ bool Project::OnNewDocument()
     bool opened = wxDocument::OnNewDocument();
     if (opened)
     {
-        gui::wxGetApp().QueueEvent(new EventOpenProject(this));
+        gui::Window::get().ProcessModelEvent(EventOpenProject(this));
     }
     return opened;
 }
-
-bool Project::OnOpenDocument(const wxString& file)
-{
-    bool opened = wxDocument::OnOpenDocument(file);
-    if (opened)
-    {
-        // This event is sent as late as possible. This ensures that no 'addChild' events
-        // will be received by the widgets during loading from xml. Rationale: these
-        // events are sent in a bottom-up - thus innermost child first - fashion, which
-        // confuses the project view, since children are added before their parents.
-        //wxGetApp().QueueEvent(new ProjectEventOpenProject(PROJECT_EVENT_OPEN_PROJECT,this));
-    }
-    return opened;
-}
-
-bool Project::OnSaveDocument(const wxString& file)
-{
-    // /todo         clear commands
-    return wxDocument::OnSaveDocument(file);
-}
-
 
 bool Project::OnCreate(const wxString& path, long flags)
 {
@@ -130,7 +109,7 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
         boost::archive::text_oarchive ar(ostream);
         registerClasses(ar);
         ar & *this;
-        ar & gui::wxGetApp();
+        ar & gui::Window::get();
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -154,8 +133,8 @@ std::istream& Project::LoadObject(std::istream& istream)
         boost::archive::text_iarchive ar(istream);
         registerClasses(ar);
         ar & *this;
-        ar & gui::wxGetApp();
-        gui::wxGetApp().QueueEvent(new EventOpenProject(this)); /** @todo do not submit via app, but via individual nodes */
+        ar & gui::Window::get();
+        gui::Window::get().ProcessModelEvent(EventOpenProject(this)); /** @todo do not submit via app, but via individual nodes */
     }
     catch (boost::archive::archive_exception& e)
     {

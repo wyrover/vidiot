@@ -7,7 +7,6 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "Preview.h"
 #include "Timeline.h"
-#include "Main.h"
 #include "Menu.h"
 #include "Project.h"
 #include "Window.h"
@@ -29,17 +28,17 @@ TimelinesView::TimelinesView(Window *parent)
     sizer->Add( &mNotebook, 1, wxGROW );
     SetSizerAndFit(sizer);
 
-    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,             &TimelinesView::onCloseProject,            this);
-    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,              &TimelinesView::onProjectAssetRemoved,       this);
-    wxGetApp().Bind(model::EVENT_RENAME_ASSET,              &TimelinesView::onProjectAssetRenamed,       this);
+    gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,             &TimelinesView::onCloseProject,            this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,              &TimelinesView::onProjectAssetRemoved,       this);
+    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,              &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &TimelinesView::onPageChanged,               this);
 }
 
 TimelinesView::~TimelinesView()
 {
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,           &TimelinesView::onCloseProject,              this);
-    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,            &TimelinesView::onProjectAssetRemoved,       this);
-    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,            &TimelinesView::onProjectAssetRenamed,       this);
+    gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,           &TimelinesView::onCloseProject,              this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,            &TimelinesView::onProjectAssetRemoved,       this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,            &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &TimelinesView::onPageChanged,               this);
 }
 

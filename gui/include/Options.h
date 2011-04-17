@@ -24,7 +24,7 @@ public:
 
     /// To be called upon startup. Distributes options to the various components.
     /// \see distributeOptions()
-    static void init();
+    static void init(wxString applicationName, wxString vendorName);
 
     /// This distributes the current set of options to the various other components.
     /// Done initially, and after Tools->Options->Ok.
@@ -94,6 +94,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     static wxString sConfigFile;
+    static wxString sApplicationName;
 };
 
 } // namespace

@@ -36,6 +36,14 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    /// Used for submitting project level events. These cannot be submitted by
+    /// the project itselves since it involves creation/destruction of that project
+    void ProcessModelEvent( wxEvent& event );
+
+    /// Used for submitting project level events. These cannot be submitted by
+    /// the project itselves since it involves creation/destruction of that project
+    void QueueModelEvent( wxEvent* event );
+
     void onOpenProject( model::EventOpenProject &event );
     void onCloseProject( model::EventCloseProject &event );
 

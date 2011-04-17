@@ -17,13 +17,13 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
-#include "Main.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 
 namespace gui {
 
 wxString    Options::sConfigFile("");
+wxString    Options::sApplicationName("");
 bool        Options::sShowDebugInfoOnWidgets = false;
 wxString    Options::sStrip("");
 
@@ -80,11 +80,12 @@ void Options::distributeOptions()
 }
 
 // static
-void Options::init()
+void Options::init(wxString applicationName, wxString vendorName)
 {
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
-    sConfigFile = wxFileName(wxFileName::GetCwd(),wxGetApp().GetAppName()+".ini").GetFullPath();
-    wxConfigBase::Set(new wxFileConfig(wxGetApp().GetAppName(),wxGetApp().GetVendorName(),sConfigFile));
+    sApplicationName = applicationName;
+    sConfigFile = wxFileName(wxFileName::GetCwd(),applicationName+".ini").GetFullPath();
+    wxConfigBase::Set(new wxFileConfig(applicationName,vendorName,sConfigFile));
     distributeOptions();
 }
 
@@ -95,7 +96,7 @@ void Options::init()
 // static 
 wxString Options::getLogFileName()
 {
-    wxString defaultFileName(wxGetApp().GetAppName());
+    wxString defaultFileName(sApplicationName);
     defaultFileName << "_" << wxGetProcessId() << ".log";
     wxFileName defaultLogFile(wxStandardPaths::Get().GetTempDir(),defaultFileName);
     return GETSTRING(sPathLogFile,defaultLogFile.GetFullPath());

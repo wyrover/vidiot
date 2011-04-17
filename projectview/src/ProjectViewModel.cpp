@@ -2,7 +2,6 @@
 
 #include <wx/datetime.h>
 #include <boost/foreach.hpp>
-#include "Main.h"
 #include "UtilLog.h"
 #include "Project.h"
 #include "AProjectViewNode.h"
@@ -19,6 +18,7 @@
 #include "AutoFolder.h"
 #include "File.h"
 #include "Sequence.h"
+#include "Window.h"
 
 namespace gui {
 
@@ -32,14 +32,14 @@ ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 ,   mIconFolderOpen(folder_horizontal_open_xpm)
 ,	mIconVideo(film_xpm)
 {
-    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::OnOpenProject,           this);
-    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::OnCloseProject,          this);
+    gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::OnOpenProject,           this);
+    gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::OnCloseProject,          this);
 }
 
 ProjectViewModel::~ProjectViewModel()
 {
-    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,   &ProjectViewModel::OnOpenProject,            this);
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,  &ProjectViewModel::OnCloseProject,           this);
+    gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,   &ProjectViewModel::OnOpenProject,            this);
+    gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,  &ProjectViewModel::OnCloseProject,           this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
         if (mProject != 0)
         {
             wxItemArray.Add(wxDataViewItem(mProject->getRoot()->id()));
-            wxGetApp().QueueEvent(new EventAutoFolderOpen(mProject->getRoot()));
+            gui::Window::get().QueueModelEvent(new EventAutoFolderOpen(mProject->getRoot()));
             return 1;
         }
         else
@@ -107,7 +107,7 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
         model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(child);
         if (folder)
         {
-            wxGetApp().QueueEvent(new EventAutoFolderOpen(folder));
+            gui::Window::get().QueueModelEvent(new EventAutoFolderOpen(folder));
         }
     }
 
@@ -377,9 +377,9 @@ void ProjectViewModel::OnOpenProject( model::EventOpenProject &event )
 
     Cleared();
 
-    wxGetApp().Bind(model::EVENT_ADD_ASSET, &ProjectViewModel::OnProjectAssetAdded,      this);
-    wxGetApp().Bind(model::EVENT_REMOVE_ASSET,  &ProjectViewModel::OnProjectAssetRemoved,    this);
-    wxGetApp().Bind(model::EVENT_RENAME_ASSET,  &ProjectViewModel::OnProjectAssetRenamed,    this);
+    gui::Window::get().Bind(model::EVENT_ADD_ASSET, &ProjectViewModel::OnProjectAssetAdded,         this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,  &ProjectViewModel::OnProjectAssetRemoved,   this);
+    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,  &ProjectViewModel::OnProjectAssetRenamed,   this);
 
     event.Skip();
 }
@@ -390,9 +390,9 @@ void ProjectViewModel::OnCloseProject( model::EventCloseProject &event )
 
     Cleared();
 
-    wxGetApp().Unbind(model::EVENT_ADD_ASSET,       &ProjectViewModel::OnProjectAssetAdded,      this);
-    wxGetApp().Unbind(model::EVENT_REMOVE_ASSET,    &ProjectViewModel::OnProjectAssetRemoved,    this);
-    wxGetApp().Unbind(model::EVENT_RENAME_ASSET,    &ProjectViewModel::OnProjectAssetRenamed,    this);
+    gui::Window::get().Unbind(model::EVENT_ADD_ASSET,       &ProjectViewModel::OnProjectAssetAdded,      this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,    &ProjectViewModel::OnProjectAssetRemoved,    this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,    &ProjectViewModel::OnProjectAssetRenamed,    this);
 
     event.Skip();
 }

@@ -31,7 +31,6 @@
 #include "ProjectViewCreateFile.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilLog.h"
-#include "Main.h"
 #include "Sequence.h"
 
 namespace gui {
@@ -79,8 +78,8 @@ ProjectView::ProjectView(wxWindow* parent)
     sizer->Layout();
     SetSizerAndFit(sizer);
 
-    wxGetApp().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::onOpenProject,             this);
-    wxGetApp().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectView::onCloseProject,            this);
+    gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::onOpenProject,             this);
+    gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectView::onCloseProject,            this);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCut,                 this, wxID_CUT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCopy,                this, wxID_COPY);
@@ -106,8 +105,8 @@ ProjectView::ProjectView(wxWindow* parent)
 
 ProjectView::~ProjectView()
 {
-    wxGetApp().Unbind(model::EVENT_OPEN_PROJECT,       &ProjectView::onOpenProject,             this);
-    wxGetApp().Unbind(model::EVENT_CLOSE_PROJECT,      &ProjectView::onCloseProject,            this);
+    gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,       &ProjectView::onOpenProject,             this);
+    gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,      &ProjectView::onCloseProject,            this);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCut,               this, wxID_CUT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCopy,              this, wxID_COPY);
@@ -147,7 +146,7 @@ void ProjectView::onOpenProject( model::EventOpenProject &event )
     mProject = event.getValue();
     GetSizer()->Show(&mCtrl);
     GetSizer()->Layout();
-    wxGetApp().Bind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::onAutoOpenFolder, this);
+    gui::Window::get().Bind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::onAutoOpenFolder, this);
     event.Skip();
 }
 
@@ -155,7 +154,7 @@ void ProjectView::onCloseProject( model::EventCloseProject &event )
 {
     GetSizer()->Hide(&mCtrl);
     GetSizer()->Layout();
-    wxGetApp().Unbind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::onAutoOpenFolder, this);
+    gui::Window::get().Unbind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::onAutoOpenFolder, this);
     mCtrl.UnselectAll(); // To avoid crashes when directly loading a new project.
     mProject = 0;
     mOpenFolders.clear(); // Release shared_ptrs
