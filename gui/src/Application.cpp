@@ -14,13 +14,13 @@
 
 namespace gui {
 
-wxIMPLEMENT_APP_NO_MAIN(Main);
+wxIMPLEMENT_APP_NO_MAIN(Application);
                                    
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Main::Main()
+Application::Application()
 :   wxApp()
 {
 #ifdef CATCH_ALL_ERRORS
@@ -28,7 +28,7 @@ Main::Main()
 #endif // CATCH_ALL_ERRORS
 }
 
-Main::~Main()
+Application::~Application()
 {
 }
 
@@ -36,7 +36,7 @@ Main::~Main()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-bool Main::OnInit()
+bool Application::OnInit()
 {
     // Must be called asap to avoid cd'ing before this statement
     // first initializes the boost initial path variable.
@@ -73,7 +73,7 @@ bool Main::OnInit()
     return true;
 }
 
-int Main::OnRun()
+int Application::OnRun()
 {
     //int j = 8; j = 0; int i = 6/j; // Uncomment for testing OnFatalException()
     //wxArrayString arr;arr[0];      // Uncomment for testing OnAssertFailure()
@@ -84,7 +84,7 @@ int Main::OnRun()
 }
 
 
-int Main::OnExit()
+int Application::OnExit()
 {
     LOG_INFO;
     //Not: Log::Terminate() - OnUnhandledException() is called after leaving this method, and uses the log methods.
@@ -93,7 +93,7 @@ int Main::OnExit()
 
 #ifdef CATCH_ALL_ERRORS
 
-void Main::OnAssertFailure(const wxChar *file, int Line, const wxChar *func, const wxChar *cond, const wxChar *msg)
+void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *func, const wxChar *cond, const wxChar *msg)
 {
     wxString File(file);
     wxString Function(func);
@@ -104,14 +104,14 @@ void Main::OnAssertFailure(const wxChar *file, int Line, const wxChar *func, con
     wxApp::OnAssertFailure(file, Line, func, cond, msg);
 }
 
-bool Main::OnExceptionInMainLoop()
+bool Application::OnExceptionInMainLoop()
 {
     // Rethrown in order to be handled in 'OnUnhandledException()'
     throw;
     return true;
 }
 
-void Main::OnUnhandledException()
+void Application::OnUnhandledException()
 {
     try
     {
@@ -134,7 +134,7 @@ void Main::OnUnhandledException()
     }
 }
 
-void Main::OnFatalException()
+void Application::OnFatalException()
 {
     LOG_ERROR << std::endl;
     DebugReport::generate(ReportFatalException);

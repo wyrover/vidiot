@@ -18,7 +18,7 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
 {                           
     wxDISABLE_DEBUG_SUPPORT();    
     
-    gui::Main* main = new gui::Main();
+    gui::Application* main = new gui::Application();
     wxApp::SetInstance(main);
     wxEntryStart(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
     wxTheApp->OnInit();
