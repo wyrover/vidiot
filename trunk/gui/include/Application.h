@@ -9,7 +9,7 @@
 
 namespace gui {
 
-class Main
+class Application
     :   public wxApp
 {
 public:
@@ -18,8 +18,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Main();
-    ~Main();
+    Application();
+    ~Application();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
