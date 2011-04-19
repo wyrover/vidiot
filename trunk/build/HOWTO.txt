@@ -14,7 +14,8 @@ Install doxygen into c:\Program Files
 Install graphviz into c:\Program Files
 
 =================== CxxTest ===================
-Install CxxTest into C:\Program Files (x86)\CxxTest
+Install CxxTest into C:\Program Files (x86)\CxxTest (cxxtest, docs and sample are subdirs of CxxTest)
+Install ActivePerl into C:\Perl64
 
 ========== MSYS + MINGW + CODEBLOCKS ==========
 * Install Code::Blocks, including MingW

@@ -47,7 +47,7 @@ public:
 
         ++itLast; // See http://www.cplusplus.com/reference/stl/list/erase: one but last is removed
 
-        ELEMENT position;
+        ELEMENT position = ELEMENT();
         if (itLast != mList.end())
         {
             // Only if the last element is not removed then position must be set to that last element.
