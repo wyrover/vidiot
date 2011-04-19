@@ -35,12 +35,6 @@ SET(Boost_DEBUG TRUE)
 SET(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS date_time thread filesystem serialization system)
 
-#### DOXYGEN ####
-FIND_PACKAGE(Doxygen REQUIRED)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/build/doxyfile.txt ${CMAKE_CURRENT_BINARY_DIR}/doxy.config @ONLY )
-SET(DOXY_CONFIG "${CMAKE_CURRENT_BINARY_DIR}/doxy.config")
-ADD_CUSTOM_TARGET(doc ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG})
-
 #### PORTAUDIO ####
 SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include)
 SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_trunk/build/msvc/Win32/Release)
@@ -107,9 +101,8 @@ INCLUDE_DIRECTORIES(AFTER
     ${PORTAUDIO_INCLUDE_DIR}
     ${INCLUDE_LIST}
     ${SOUNDTOUCH_INCLUDE_DIR}
+    ${CXXTEST_INCLUDE_DIR}
 )
-#get_property(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-#message("inc_dirs = ${inc_dirs}")
 
 LINK_DIRECTORIES(
     ${FFMPEG_LIBRARY_DIR}
@@ -117,10 +110,8 @@ LINK_DIRECTORIES(
     ${PORTAUDIO_LIBRARY_DIR}
     ${SOUNDTOUCH_LIBRARY_DIR}
 )
-INCLUDE(${wxWidgets_USE_FILE})
-ADD_EXECUTABLE(Vidiot WIN32 ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${BuildFiles} ${HelpFiles}) # Add HelpFiles Here to make Vidiot dependent on copying the helpfiles
-TARGET_LINK_LIBRARIES(Vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
 
+INCLUDE(${wxWidgets_USE_FILE})
 
 #### MAKE GROUPING FOR VISUAL STUDIO ####
 MACRO(GROUPFILES dir)
@@ -144,3 +135,45 @@ SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${ConfigurationFiles} ${BuildFiles} PR
 
 #### HELP FILES ####
 #add_custom_command(OUTPUT HelpFiles COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)
+
+#### CXXTEST ####
+#SET(CMAKE_SYSTEM_INCLUDE_PATH ${CMAKE_SYSTEM_INCLUDE_PATH} "C:/Program Files (x86)/CxxTest" )
+#FIND_PACKAGE(CxxTest REQUIRED)
+##ENABLE_TESTING()
+#SET( TEST_DIR ${PROJECT_SOURCE_DIR}/test )
+#FILE(GLOB testfiles RELATIVE ${TEST_DIR} ${TEST_DIR}/*.h)
+#FOREACH (test ${testfiles})
+#    STRING(REPLACE ".h" "" prefix ${test})
+#    CXXTEST_ADD_TEST(Test ${prefix}.cpp ${TEST_DIR}/${test})
+#    MESSAGE("Adding test: ${prefix}")
+#    #add_dependencies(Test ${TEST_DIR}/${test})
+#ENDFOREACH(test)
+#
+#macro(AddCxxTest TestProjectName)
+#    message( --- ${TestProjectName} --- ${CMAKE_CURRENT_BINARY_DIR} --- ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} --- ${CxxTestDirectory} )
+#    set(TestRunnerDirectory ${CMAKE_CURRENT_BINARY_DIR}/${TestProjectName}Source)
+#    set(TestRunner ${TestRunnerDirectory}/${TestProjectName}.cpp)
+#    set(TestRunnerCommand ${EXECUTABLE_OUTPUT_PATH}/${TestProjectName})
+#    message ( ${CxxTestGen} --- ${CxxTestGenFlags} )
+#        set( CxxTestGen "C:/Program Files (x86)/CxxTest/cxxtestgen.pl" )
+#    add_custom_command(OUTPUT ${TestRunner}
+#        COMMAND ${CMAKE_COMMAND} -E make_directory ${TestRunnerDirectory}
+#        COMMAND ${PERL_EXECUTABLE} ${CxxTestGen} ${CxxTestGenFlags} --error-printer -o ${TestRunner} ${ARGN}
+#        DEPENDS ${ARGN}
+#        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test)
+#    add_executable(${TestProjectName} ${TestRunner} ${ARGN})
+#    add_test(${TestProjectName} ${TestRunnerCommand})
+#        
+#    add_dependencies(Test ${TestProjectName})
+#endmacro(AddCxxTest)
+
+##file(GLOB Tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} test/*.h)
+#file(GLOB Tests ${CMAKE_CURRENT_SOURCE_DIR}/test/*.h)
+#AddCxxTest(SomeUnitTest ${Tests})
+#    add_dependencies(Test Vidiot)
+# TARGET_LINK_LIBRARIES(SomeUnitTest VidiotLib)
+
+ADD_LIBRARY(vidiot ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${BuildFiles} ${HelpFiles}) # Add HelpFiles Here to make Vidiot dependent on copying the helpfiles
+
+ADD_SUBDIRECTORY(main)
+ADD_SUBDIRECTORY(test)
