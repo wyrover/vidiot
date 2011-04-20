@@ -210,7 +210,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             format = PIX_FMT_RGB24;
         }
 
-        mDeliveredFrame = boost::make_shared<VideoFrame>(format, scaledWidth, scaledHeight, mPosition, getCodec()->time_base, pFrame->repeat_pict + 1);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(format, scaledWidth, scaledHeight, mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(

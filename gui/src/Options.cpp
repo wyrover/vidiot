@@ -60,11 +60,11 @@ static const wxString sPathStrip                    ("/Timeline/Strip");
 // HELPER VARIABLES
 //////////////////////////////////////////////////////////////////////////
 
-typedef boost::tuple<wxString, model::FrameRate> FrameRateEntry; 
+typedef boost::tuple<wxString, FrameRate> FrameRateEntry; 
 std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_list_of
-    ( wxT("24.97"), model::framerate::s24p )
-    ( wxT("25"),    model::framerate::s25p )
-    ( wxT("29.97"), model::framerate::s30p );
+    ( wxT("24.97"), framerate::s24p )
+    ( wxT("25"),    framerate::s25p )
+    ( wxT("29.97"), framerate::s30p );
 
 //////////////////////////////////////////////////////////////////////////
 // APPLICATION INITIALIZATION & CONFIGURATION
@@ -137,9 +137,9 @@ void Options::SetAutoLoadFilename(wxString filename)
     wxConfigBase::Get()->Flush();
 }
 
-model::FrameRate Options::getDefaultFrameRate()
+FrameRate Options::getDefaultFrameRate()
 {
-    model::FrameRate fr = model::framerate::s25p;
+    FrameRate fr = framerate::s25p;
     wxString frs = GETSTRING(sPathFrameRate,"");
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
@@ -248,7 +248,7 @@ Options::Options(wxWindow* win)
 
     wxArrayString choices;
     unsigned int selection = 0;
-    model::FrameRate currentFrameRate = getDefaultFrameRate();
+    FrameRate currentFrameRate = getDefaultFrameRate();
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
         choices.Add(boost::get<0>(sPossibleFrameRates[i]));

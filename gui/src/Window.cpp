@@ -52,20 +52,14 @@ const int sStatusProcessing = 8;
 static Window* sCurrent = 0;
 
 Window::Window()
-    :   wxDocParentFrame()
-    ,	mDocManager(new wxDocManager())
-    ,	mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
+    :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1200,800))
+    ,	mDocTemplate(new wxDocTemplate(GetDocumentManager(), _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     ,   mWatcher(new FSWatcher())
     ,   mWorker(new Worker())
     ,   menubar(0)
     ,   menuedit(0)
     ,   menusequence(0)
 {
-    // Must be done in two step construction way, since it reuses mDocManager which would
-    // be initialized last if the initialization of the base class was also done in the
-    // constructor list.
-    wxDocParentFrame::Create(mDocManager, 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1200,800));
-
     sCurrent = this;
 
     mTimelinesView  = new TimelinesView(this);
@@ -132,28 +126,29 @@ Window::Window()
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
     mUiManager.Update();
 
-    Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
-    Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
+    Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,     this);
+    Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,    this);
+    Bind(model::EVENT_RENAME_PROJECT,   &Window::onRenameProject,   this);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	mDocManager, wxID_CLOSE_ALL);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       mDocManager, wxID_NEW);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      mDocManager, wxID_OPEN);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    mDocManager, wxID_REVERT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      mDocManager, wxID_SAVE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    mDocManager, wxID_SAVEAS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     GetDocumentManager(), wxID_CLOSE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	GetDocumentManager(), wxID_CLOSE_ALL);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       GetDocumentManager(), wxID_NEW);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      GetDocumentManager(), wxID_OPEN);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    GetDocumentManager(), wxID_REVERT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      GetDocumentManager(), wxID_SAVE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    GetDocumentManager(), wxID_SAVEAS);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          mDocManager, wxID_UNDO);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          mDocManager, wxID_REDO);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
 
-    mDocManager->SetMaxDocsOpen(1);
-    mDocManager->FileHistoryUseMenu(menufile);
-    mDocManager->FileHistoryLoad(*wxConfigBase::Get());
+    GetDocumentManager()->SetMaxDocsOpen(1);
+    GetDocumentManager()->FileHistoryUseMenu(menufile);
+    GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
 
     Show();
 }
@@ -162,25 +157,26 @@ void Window::init()
 {
     if (Options::GetAutoLoad())
     {
-        mDocManager->CreateDocument(*Options::GetAutoLoad(), wxDOC_SILENT);
+        GetDocumentManager()->CreateDocument(*Options::GetAutoLoad(), wxDOC_SILENT);
     }
 }
 
 Window::~Window()
 {
-    Unbind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,              this);
-    Unbind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,             this);
+    Unbind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,   this);
+    Unbind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,  this);
+    Unbind(model::EVENT_RENAME_PROJECT,   &Window::onRenameProject, this);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     mDocManager, wxID_CLOSE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  mDocManager, wxID_CLOSE_ALL);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       mDocManager, wxID_NEW);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      mDocManager, wxID_OPEN);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    mDocManager, wxID_REVERT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      mDocManager, wxID_SAVE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    mDocManager, wxID_SAVEAS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     GetDocumentManager(), wxID_CLOSE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  GetDocumentManager(), wxID_CLOSE_ALL);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       GetDocumentManager(), wxID_NEW);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      GetDocumentManager(), wxID_OPEN);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    GetDocumentManager(), wxID_REVERT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      GetDocumentManager(), wxID_SAVE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    GetDocumentManager(), wxID_SAVEAS);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          mDocManager, wxID_UNDO);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          mDocManager, wxID_REDO);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
@@ -194,7 +190,6 @@ Window::~Window()
     delete mPreview;
     delete mTimelinesView;
     //NOT: delete mDocTemplate;
-    delete mDocManager;
 
     sCurrent = 0;
 }
@@ -224,8 +219,9 @@ void Window::onOpenProject( model::EventOpenProject &event )
 {
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
-    mDocManager->FileHistorySave(*wxConfigBase::Get());
     Options::SetAutoLoadFilename(model::Project::get().GetFilename());
+    GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
+    GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
     event.Skip();
 }
@@ -233,6 +229,15 @@ void Window::onOpenProject( model::EventOpenProject &event )
 void Window::onCloseProject( model::EventCloseProject &event )
 {
     Options::SetAutoLoadFilename("");
+    event.Skip();
+}
+
+void Window::onRenameProject( model::EventRenameProject &event )
+{
+    Options::SetAutoLoadFilename(model::Project::get().GetFilename());
+    GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
+    GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
+    wxConfigBase::Get()->Flush();
     event.Skip();
 }
 

@@ -10,7 +10,7 @@
 #include "FSWatcher.h"
 #include "DebugReport.h"
 
-/// \todo Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
+/// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
 namespace gui {
 

@@ -43,7 +43,7 @@ public:
     static boost::optional<wxString> GetAutoLoad();
     static void SetAutoLoadFilename(wxString filename);
 
-    static model::FrameRate getDefaultFrameRate();
+    static FrameRate getDefaultFrameRate();
 
     static double getMarkerBeginAddition();
     static double getMarkerEndAddition();

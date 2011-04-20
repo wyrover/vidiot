@@ -7,14 +7,13 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase, int repeat)
+VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position, int repeat)
 :   mFrame(0)
 ,   mBuffer(0)
 ,   mFormat(format)
 ,	mWidth(width)
 ,   mHeight(height)
 ,   mPts(position)
-,   mTimeBase(timebase)
 ,   mRepeat(repeat)
 {
     mBufferSize = avpicture_get_size(mFormat, mWidth, mHeight);
@@ -26,21 +25,19 @@ VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position, 
     avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, mFormat, mWidth, mHeight);
 }
 
-VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase)
+VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position)
 :   mFrame(0)
 ,   mBuffer(0)
 ,   mFormat(format)
 ,	mWidth(width)
 ,   mHeight(height)
 ,   mPts(position)
-,   mTimeBase(timebase)
 ,   mRepeat(1)
 {
 }
 
 VideoFrame::~VideoFrame()
 {
-
     if (mBuffer)
     {
         av_free(mBuffer);
@@ -84,16 +81,6 @@ pts VideoFrame::getPts() const
 void VideoFrame::setPts(pts position)
 {
     mPts = position;
-}
-
-AVRational VideoFrame::getTimeBase() const
-{
-    return mTimeBase;
-}
-
-double VideoFrame::getTime() const
-{
-    return mPts * av_q2d(mTimeBase);
 }
 
 int VideoFrame::getSizeInBytes() const

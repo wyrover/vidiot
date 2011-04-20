@@ -17,6 +17,7 @@ namespace model {
 
 DEFINE_EVENT(EVENT_OPEN_PROJECT,    EventOpenProject,   model::Project*);
 DEFINE_EVENT(EVENT_CLOSE_PROJECT,   EventCloseProject,  model::Project*);
+DEFINE_EVENT(EVENT_RENAME_PROJECT,  EventRenameProject, model::Project*);
 
 IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
@@ -71,7 +72,7 @@ bool Project::OnNewDocument()
     bool opened = wxDocument::OnNewDocument();
     if (opened)
     {
-        gui::Window::get().ProcessModelEvent(EventOpenProject(this));
+        gui::Window::get().ProcessModelEvent(EventOpenProject(this)); // todo via abstract interface derived from wxEvtHandler
     }
     return opened;
 }
@@ -89,6 +90,7 @@ bool Project::OnCreate(const wxString& path, long flags)
 void Project::OnChangeFilename(bool notifyViews)
 {
     mRoot->setName(GetUserReadableName());
+    gui::Window::get().ProcessModelEvent(EventRenameProject(this));
     wxDocument::OnChangeFilename(notifyViews);
 }
 

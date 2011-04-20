@@ -7,8 +7,8 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyFrame::EmptyFrame(PixelFormat format, int width, int height, pts position, AVRational timebase)
-:   VideoFrame(format, width, height, position, timebase)
+EmptyFrame::EmptyFrame(PixelFormat format, int width, int height, pts position)
+:   VideoFrame(format, width, height, position)
 ,   mInitialized(false)
 {
 }

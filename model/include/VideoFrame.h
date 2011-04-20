@@ -4,6 +4,7 @@
 #include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
+#include "UtilFrameRate.h"
 #include "UtilRTTI.h"
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg 
@@ -35,12 +36,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Initialization AND allocation.
-    VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase, int repeat);
+    VideoFrame(PixelFormat format, int width, int height, pts position, int repeat);
 
     /// Initialization without allocation. Used for empty frames. Then, allocation only
     /// needed when the data is needed for playback. During 'track combining' empty 
     /// frames can be ignored. This avoids needless allocation.
-    VideoFrame(PixelFormat format, int width, int height, pts position, AVRational timebase);
+    VideoFrame(PixelFormat format, int width, int height, pts position);
 
     virtual ~VideoFrame();
 
@@ -53,8 +54,6 @@ public:
 
     pts getPts() const; 
     void setPts(pts position);
-    AVRational getTimeBase() const;
-    double getTime() const;
     int getWidth() const;
     int getHeight() const;
     int getSizeInBytes() const;
@@ -81,7 +80,6 @@ protected:
     int mWidth;
     int mHeight;
     pts mPts;
-    AVRational mTimeBase;
     boost::uint8_t *mBuffer;
     int mBufferSize;
 
