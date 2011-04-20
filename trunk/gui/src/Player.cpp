@@ -171,7 +171,7 @@ void Player::stop()
     mDisplay->moveTo(mPosition);
 }
 
-void Player::moveTo(int64_t position)
+void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
     mDisplay->moveTo(position);

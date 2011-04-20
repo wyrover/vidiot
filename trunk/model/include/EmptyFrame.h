@@ -17,7 +17,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyFrame(PixelFormat format, int width, int height, pts position);
+    EmptyFrame(VideoFrameType type, int width, int height, pts position);
 
     virtual ~EmptyFrame();
 

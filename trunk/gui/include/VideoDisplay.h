@@ -45,7 +45,7 @@ public:
 
     void play();
     void stop();
-    void moveTo(int64_t position);
+    void moveTo(pts position);
     void setSpeed(int speed);
     int getSpeed() const;
 
