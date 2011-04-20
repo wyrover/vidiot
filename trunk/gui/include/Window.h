@@ -46,6 +46,7 @@ public:
 
     void onOpenProject( model::EventOpenProject &event );
     void onCloseProject( model::EventCloseProject &event );
+    void onRenameProject( model::EventRenameProject &event );
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -98,7 +99,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxDocManager*   mDocManager;
     wxDocTemplate*  mDocTemplate;
 
     boost::scoped_ptr<FSWatcher>    mWatcher;

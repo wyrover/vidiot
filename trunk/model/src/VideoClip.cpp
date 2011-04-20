@@ -105,15 +105,9 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
                 format = PIX_FMT_RGB24;
             }
 
-            /** todo timebase. See also EmptyFile.cpp::getnextvideo */
-            AVRational timebase;
-            timebase.num = 0;
-            timebase.den = 0;
-            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(format, requestedWidth, requestedHeight, mProgress, timebase));
+            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(format, requestedWidth, requestedHeight, mProgress));
 
-            // @todo use repeat in case multiple extra video images are needed?
             mProgress += 1;
-
         }
     }
 

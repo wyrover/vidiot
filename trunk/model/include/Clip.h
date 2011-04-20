@@ -18,9 +18,6 @@ typedef boost::shared_ptr<Track> TrackPtr;
 typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<TrackPtr> Tracks;
 
-class Clip;
-typedef boost::shared_ptr<Clip> ClipPtr; // todo other name, IClip should be clips
-
 class Clip
     :   public IClip
 {
