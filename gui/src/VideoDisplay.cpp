@@ -182,7 +182,7 @@ void VideoDisplay::stop()
     }
 }
 
-void VideoDisplay::moveTo(int64_t position)
+void VideoDisplay::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
 

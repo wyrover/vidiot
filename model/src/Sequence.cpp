@@ -86,21 +86,21 @@ Sequence::~Sequence()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-int64_t Sequence::getLength()
+pts Sequence::getLength()
 {
-    int16_t nFrames = 0;
+    pts nFrames = 0;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
-        nFrames = std::max<int64_t>(nFrames, track->getLength());
+        nFrames = std::max<pts>(nFrames, track->getLength());
     }
     BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
-        nFrames = std::max<int64_t>(nFrames, track->getLength());
+        nFrames = std::max<pts>(nFrames, track->getLength());
     }
     return nFrames;
 }
 
-void Sequence::moveTo(int64_t position)
+void Sequence::moveTo(pts position)
 {
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {

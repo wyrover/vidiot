@@ -99,13 +99,7 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
             // required - thus removing the extra audio, but that's a user decision to be made).
             LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
 
-            PixelFormat format = PIX_FMT_RGBA;
-            if (!alpha)
-            {
-                format = PIX_FMT_RGB24;
-            }
-
-            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(format, requestedWidth, requestedHeight, mProgress));
+            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, mProgress));
 
             mProgress += 1;
         }

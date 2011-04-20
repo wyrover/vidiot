@@ -6,6 +6,7 @@
 #define CONFIG_SWSCALE_ALPHA
 extern "C" {
 #include <swscale.h>
+#include <avformat.h>
 }
 
 #include <math.h>
@@ -123,7 +124,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
         AVFrame* pFrame = avcodec_alloc_frame();
         ASSERT(pFrame != 0);
 
-        boost::optional<int64_t> ptsOfFirstPacket = boost::none;
+        boost::optional<pts> ptsOfFirstPacket = boost::none;
 
         while (!frameFinished )
         {
@@ -152,7 +153,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             // Of course, even then, we might not get a proper pts. We'll deal with that later.
             if (!ptsOfFirstPacket)
             {
-                ptsOfFirstPacket = static_cast<boost::optional<int64_t> >(packet->getPacket()->pts);
+                ptsOfFirstPacket = static_cast<boost::optional<pts> >(packet->getPacket()->pts);
             }
 
             /** /todo handle decoders that hold multiple frames in one packet */
@@ -204,13 +205,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
         int scaledWidth  = static_cast<int>(floor(scaling * getCodec()->width));
         int scaledHeight = static_cast<int>(floor(scaling * getCodec()->height));
 
-        PixelFormat format = PIX_FMT_RGBA;
-        if (!alpha)
-        {
-            format = PIX_FMT_RGB24;
-        }
-
-        mDeliveredFrame = boost::make_shared<VideoFrame>(format, scaledWidth, scaledHeight, mPosition, pFrame->repeat_pict + 1);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledWidth, scaledHeight, mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(
@@ -219,7 +214,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             getCodec()->pix_fmt,
             scaledWidth,
             scaledHeight,
-            format, SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
+            alpha ? PIX_FMT_RGBA : PIX_FMT_RGB24, SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
         sws_scale(ctx,pFrame->data,pFrame->linesize,0,getCodec()->height,mDeliveredFrame->getData(),mDeliveredFrame->getLineSizes());
         sws_freeContext(ctx);
 

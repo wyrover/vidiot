@@ -1,34 +1,40 @@
 #include "VideoFrame.h"
+extern "C" {
+#include <avformat.h>
+};
 #include "UtilLogAvcodec.h"
 
 namespace model {
+
+IMPLEMENTENUM(VideoFrameType);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position, int repeat)
+VideoFrame::VideoFrame(VideoFrameType type, int width, int height, pts position, int repeat)
 :   mFrame(0)
 ,   mBuffer(0)
-,   mFormat(format)
+,   mType(type)
 ,	mWidth(width)
 ,   mHeight(height)
 ,   mPts(position)
 ,   mRepeat(repeat)
 {
-    mBufferSize = avpicture_get_size(mFormat, mWidth, mHeight);
+    PixelFormat format = type == videoRGB ? PIX_FMT_RGB24 : PIX_FMT_RGBA;
+    mBufferSize = avpicture_get_size(format, mWidth, mHeight);
     mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
 
     mFrame = avcodec_alloc_frame();
 
     // Assign appropriate parts of buffer to image planes in mFrame
-    avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, mFormat, mWidth, mHeight);
+    avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, mWidth, mHeight);
 }
 
-VideoFrame::VideoFrame(PixelFormat format, int width, int height, pts position)
+VideoFrame::VideoFrame(VideoFrameType type, int width, int height, pts position)
 :   mFrame(0)
 ,   mBuffer(0)
-,   mFormat(format)
+,   mType(type)
 ,	mWidth(width)
 ,   mHeight(height)
 ,   mPts(position)

@@ -4,18 +4,17 @@
 #include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
+#include "UtilEnum.h"
 #include "UtilFrameRate.h"
 #include "UtilRTTI.h"
 
-#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg 
-
-/** /todo replace all ffmpeg types with regular types */
-
-extern "C" {
-#include <avformat.h>
-};
+struct AVFrame;
 
 namespace model {
+
+DECLAREENUM(VideoFrameType, \
+    videoRGB, \
+    videoRGBA);
 
 typedef boost::uint8_t** DataPointer;
 typedef int* LineSizePointer;
@@ -36,12 +35,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Initialization AND allocation.
-    VideoFrame(PixelFormat format, int width, int height, pts position, int repeat);
+    VideoFrame(VideoFrameType type, int width, int height, pts position, int repeat);
 
     /// Initialization without allocation. Used for empty frames. Then, allocation only
     /// needed when the data is needed for playback. During 'track combining' empty 
     /// frames can be ignored. This avoids needless allocation.
-    VideoFrame(PixelFormat format, int width, int height, pts position);
+    VideoFrame(VideoFrameType type, int width, int height, pts position);
 
     virtual ~VideoFrame();
 
@@ -74,7 +73,7 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     AVFrame* mFrame;
-    PixelFormat mFormat;
+    VideoFrameType mType;
     int mRepeat;
     double mTimeStamp;
     int mWidth;

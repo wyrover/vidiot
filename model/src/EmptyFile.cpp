@@ -109,13 +109,7 @@ VideoFramePtr EmptyFile::getNextVideo(int requestedWidth, int requestedHeight, b
         return VideoFramePtr();
     }
 
-    PixelFormat format = PIX_FMT_RGBA;
-    if (!alpha)
-    {
-        format = PIX_FMT_RGB24;
-    }
-
-    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(format, requestedWidth, requestedHeight, mVideoPosition));
+    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, mVideoPosition));
 }
 
 //////////////////////////////////////////////////////////////////////////
