@@ -64,8 +64,8 @@ private:
     // SEGV when compiled with GCC (MingW).
     //int16_t audioDecodeBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
     //int16_t audioResampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    boost::int16_t* audioDecodeBuffer;
-    boost::int16_t* audioResampleBuffer;
+    sample* audioDecodeBuffer;
+    sample* audioResampleBuffer;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

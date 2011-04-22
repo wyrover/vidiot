@@ -51,7 +51,6 @@ AudioFile::AudioFile(boost::filesystem::path path)
     ,   audioResampleBuffer(0)
 {
     VAR_DEBUG(*this);
-    /** /todo asserts on sample sizes. Only 16 bits data supported (resampling/decoding?)  */
 }
 
 AudioFile::AudioFile(const AudioFile& other)
@@ -105,11 +104,6 @@ void AudioFile::clean()
 
 AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 {
-    // @todo if the end of file is reached, a subsequent getNextAudio will trigger a new 
-    // (useless) sequence of startReadingPackets, bufferPacketsThread, "bufferPacketsThread: End of file."
-    // (and this, over and over again....). Also for video?
-    // Basically, in the Audio/Video-File class, buffering should not be restarted when the whole of the
-    // file has already been buffered (not until a 'moveto', at least).
     startDecodingAudio(audioRate,nAudioChannels);
 
     PacketPtr audioPacket = getNextPacket();
@@ -202,14 +196,22 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 
 void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
 {
+    // If the end of file is reached, a subsequent getNextAudio should not
+    // trigger a new (useless) sequence of startReadingPackets, 
+    // bufferPacketsThread, "bufferPacketsThread: End of file."
+    // (and this, over and over again....).
+    //
+    // First a moveTo() is required to reset EOF.
+    if (getEOF()) return;
+
     if (mDecodingAudio) return;
 
     // Allocated upon first use. See also the remark in the header file
     // on GCC in combination with make_shared.
     if (!audioDecodeBuffer)
     {
-        audioDecodeBuffer = new boost::int16_t[sAudioBufferSize];
-        audioResampleBuffer = new boost::int16_t[sAudioBufferSize];
+        audioDecodeBuffer = new sample[sAudioBufferSize];
+        audioResampleBuffer = new sample[sAudioBufferSize];
     }
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
@@ -222,6 +224,13 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
 
     int result = avcodec_open(getCodec(), audioCodec);
     ASSERT(result >= 0)(result);
+
+    ASSERT(getCodec()->sample_fmt == AV_SAMPLE_FMT_S16)(getCodec()->sample_fmt);
+    //AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
+    //AV_SAMPLE_FMT_S16,         ///< signed 16 bits
+    //AV_SAMPLE_FMT_S32,         ///< signed 32 bits
+    //AV_SAMPLE_FMT_FLT,         ///< float
+    //AV_SAMPLE_FMT_DBL,         ///< double
 
     if ((nAudioChannels != getCodec()->channels) || (audioRate != getCodec()->sample_rate))
     {

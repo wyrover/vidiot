@@ -238,7 +238,16 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
 
 void VideoFile::startDecodingVideo()
 {
+    // If the end of file is reached, a subsequent getNextVideo should not
+    // trigger a new (useless) sequence of startReadingPackets, 
+    // bufferPacketsThread, "bufferPacketsThread: End of file."
+    // (and this, over and over again....).
+    //
+    // First a moveTo() is required to reset EOF.
+    if (getEOF()) return;
+
     if (mDecodingVideo) return;
+
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
     mDecodingVideo = true;
 

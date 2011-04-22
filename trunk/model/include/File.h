@@ -99,6 +99,10 @@ protected:
     /// packets in the file or if buffering of packets is stopped.
     PacketPtr getNextPacket();
 
+    /// If all packets have been retrieved return true. In that case,
+    /// first a moveTo() is required to reset the EOF flag.
+    bool getEOF() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
