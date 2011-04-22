@@ -140,7 +140,6 @@ void File::moveTo(pts position)
 
     mEOF = false;
 
-    //startReadingPackets();
     VAR_DEBUG(this);
 }
 
@@ -297,6 +296,11 @@ PacketPtr File::getNextPacket()
     PacketPtr packet = mPackets.pop();
     VAR_DETAIL(packet)(mPackets.getSize());
     return packet;
+}
+
+bool File::getEOF() const
+{
+    return mEOF;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -74,7 +74,7 @@ pts Track::getLength()
 {
 // todo    return getCombinedLength(mClips);
     /** @todo return rightPts of last clip? */
-    boost::int16_t nFrames = 0;
+    pts nFrames = 0;
     BOOST_FOREACH( IClipPtr clip, mClips )
     {
         nFrames += clip->getLength();

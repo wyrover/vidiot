@@ -21,11 +21,11 @@ EmptyChunk::~EmptyChunk()
 // DATA ACCESS
 //////////////////////////////////////////////////////////////////////////
 
-boost::int16_t* EmptyChunk::getUnreadSamples()
+sample* EmptyChunk::getUnreadSamples()
 {
     if (!mInitialized)
     {
-        mBuffer = static_cast<boost::int16_t*>(malloc(mNrSamples * AudioChunk::sBytesPerSample));
+        mBuffer = static_cast<sample*>(malloc(mNrSamples * AudioChunk::sBytesPerSample));
         memset(mBuffer, 0, mNrSamples * sBytesPerSample);
         mInitialized = true;
     }

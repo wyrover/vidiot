@@ -65,13 +65,13 @@ void AudioChunk::read(samplecount samples)
     mNrReadSamples += samples;
 }
 
-boost::int16_t* AudioChunk::getBuffer()
+sample* AudioChunk::getBuffer()
 {
     ASSERT(mBuffer);
     return mBuffer;
 }
 
-boost::int16_t* AudioChunk::getUnreadSamples()
+sample* AudioChunk::getUnreadSamples()
 {
     ASSERT(mBuffer);
     return mBuffer + mNrReadSamples;

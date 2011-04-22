@@ -26,7 +26,7 @@ public:
 
     /// Override from AudioChunk. When this method is called for the first time,
     /// then the zeroed buffer is generated.
-    boost::int16_t* getUnreadSamples();
+    sample* getUnreadSamples();
 
 private:
 
