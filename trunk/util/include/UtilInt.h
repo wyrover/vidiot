@@ -5,11 +5,12 @@
 
 typedef int pixel;
 typedef boost::int64_t pts;
-typedef int samples_t;
+typedef int samplecount;
+typedef boost::int16_t sample;
 
 pts abs(pts p);
 
-samples_t min(samples_t first, samples_t second);
+samplecount min(samplecount first, samplecount second);
 
 #endif //UTIL_INT_H
 

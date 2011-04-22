@@ -9,7 +9,7 @@ const int AudioChunk::sBytesPerSample = 2;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples, pts position)
+AudioChunk::AudioChunk(sample* buffer, int nChannels, samplecount nSamples, pts position)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
@@ -17,15 +17,14 @@ AudioChunk::AudioChunk(boost::int16_t* buffer, int nChannels, samples_t nSamples
 ,   mNrSkippedSamples(0)
 ,   mPts(position)
 {
-    /** @todo now we only used fixed stereo... */
-    mBuffer = static_cast<boost::int16_t*>(malloc(mNrSamples * sBytesPerSample));
+    mBuffer = static_cast<sample*>(malloc(mNrSamples * sBytesPerSample));
     if (buffer)
     {
         memcpy(mBuffer, buffer, mNrSamples * sBytesPerSample);
     }
 }
 
-AudioChunk::AudioChunk(int nChannels, samples_t nSamples, pts position)
+AudioChunk::AudioChunk(int nChannels, samplecount nSamples, pts position)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
@@ -37,7 +36,10 @@ AudioChunk::AudioChunk(int nChannels, samples_t nSamples, pts position)
 
 AudioChunk::~AudioChunk()
 {
- //   free(mBuffer); /** /todo free the buffer?  */
+    if (mBuffer)
+    {
+        free(mBuffer);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,7 +60,7 @@ unsigned int AudioChunk::getNumberOfChannels() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void AudioChunk::read(samples_t samples)
+void AudioChunk::read(samplecount samples)
 {
     mNrReadSamples += samples;
 }
@@ -76,12 +78,12 @@ boost::int16_t* AudioChunk::getUnreadSamples()
 
 }
 
-samples_t AudioChunk::getUnreadSampleCount() const
+samplecount AudioChunk::getUnreadSampleCount() const
 {
     return mNrSamples - mNrSkippedSamples - mNrReadSamples;
 }
 
-void AudioChunk::setAdjustedLength(samples_t adjustedLength)
+void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 {
     ASSERT(adjustedLength < mNrSamples)(adjustedLength)(mNrSamples);
     mNrSkippedSamples = mNrSamples - adjustedLength;
