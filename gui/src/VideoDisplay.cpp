@@ -270,8 +270,8 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
         conditionPlaybackStarted.notify_one();
     }
 
-    static const samples_t sSamplesPerStereoFrame = 2;
-    samples_t remainingSamples = frames * sSamplesPerStereoFrame;
+    static const samplecount sSamplesPerStereoFrame = 2;
+    samplecount remainingSamples = frames * sSamplesPerStereoFrame;
     int16_t* out = static_cast<int16_t*>(buffer);
 
     while (remainingSamples > 0)
@@ -303,7 +303,7 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
             }
         }
 
-        samples_t nSamples = min(remainingSamples, mCurrentAudioChunk->getUnreadSampleCount());
+        samplecount nSamples = min(remainingSamples, mCurrentAudioChunk->getUnreadSampleCount());
 
         memcpy(out,mCurrentAudioChunk->getUnreadSamples(),nSamples * model::AudioChunk::sBytesPerSample);
         mCurrentAudioChunk->read(nSamples);
