@@ -11,6 +11,7 @@
 #include <boost/serialization/version.hpp>
 #include "IControl.h"
 #include "UtilInt.h"
+#include "UtilEvent.h"
 
 namespace model {
 
@@ -21,6 +22,9 @@ class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
 typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef std::list<IClipPtr> IClips;
+
+DECLARE_EVENT(EVENT_SELECT_CLIP,            EventSelectClip,            bool);
+DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS,  DebugEventRenderProgress,   pts);
 
 class IClip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

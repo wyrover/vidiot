@@ -11,10 +11,6 @@
 
 namespace model {
 
-    // todo implementation should be done somewhere else maybe in Event.h/Event.cpp?
-DEFINE_EVENT(EVENT_SELECT_CLIP,             EventSelectClip,            bool);
-DEFINE_EVENT(DEBUG_EVENT_RENDER_PROGRESS,   DebugEventRenderProgress,   pts);
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
