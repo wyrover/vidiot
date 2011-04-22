@@ -59,20 +59,20 @@ void AutoFolder::update()
     {
         std::string leaf = itr->path().filename().string();
         wxString name(leaf);
+        bool isDir(is_directory(*itr));
+        bool isFile(is_regular_file(*itr));
 
         if (UtilList<wxString>(allnames).hasElement(name))
         {
             UtilList<wxString>(allnames).removeElements(boost::assign::list_of(name));
             continue;
         }
-        // /todo what if file removed and replaced with other typed file of same name?
-
-        if (is_directory(*itr))
+        if (isDir)
         {
             AutoFolderPtr folder = boost::make_shared<AutoFolder>(mPath / leaf);
             addChild(folder);
         }
-        else if (is_regular_file(*itr))
+        else if (isFile)
         {
             model::FilePtr file = boost::make_shared<model::File>(mPath  / leaf);
             if (file->isSupported())

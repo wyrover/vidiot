@@ -27,6 +27,7 @@ INCLUDE_DIRECTORIES(AFTER
     ${CxxTestDir}
 )
 
-file(GLOB Tests ${TESTDIR}/*/*.*)
-AddCxxTest(test ${Tests})
+file(GLOB TestHeaders ${TESTDIR}/*/*.h)
+file(GLOB TestSources ${TESTDIR}/*/*.cpp)
+AddCxxTest(test ${TestHeaders} ${TestSources})
 TARGET_LINK_LIBRARIES(test vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})

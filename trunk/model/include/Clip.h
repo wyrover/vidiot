@@ -6,12 +6,8 @@
 #include <boost/weak_ptr.hpp>
 #include "IClip.h"
 #include "UtilLogGeneric.h"
-#include "UtilEvent.h"
 
 namespace model {
-
-DECLARE_EVENT(EVENT_SELECT_CLIP, EventSelectClip, bool);
-DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS, DebugEventRenderProgress, pts);
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;

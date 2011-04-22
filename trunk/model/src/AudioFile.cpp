@@ -244,7 +244,7 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
                 audioRate, getCodec()->sample_rate,
                 SAMPLE_FMT_S16, SAMPLE_FMT_S16,
                 taps, 10, 0, 0.8);
-        ASSERT(mResampleContext != 0);/** /todo replace with gui message and abort */
+        ASSERT(mResampleContext != 0);
     }
 
     VAR_DEBUG(this)(getCodec());
