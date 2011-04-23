@@ -11,7 +11,7 @@
 #include "UtilLog.h"
 #include "File.h"
 #include "Serialization.h"
-#include "Window.h"
+#include "IView.h"
 
 namespace model {
 
@@ -62,8 +62,8 @@ bool Project::OnCloseDocument()
     // calling OnCloseDocument(). If QueueEvent is used, the event is handled
     // AFTER the destruction of this object which leads to crashes.
 
-    EventCloseProject closeEvent(this); // Do not 'inline' in the next line like gui::Window::get().ProcessEvent(EventCloseProject(this)); Doesn't compile in g++
-    gui::Window::get().ProcessModelEvent(closeEvent);
+    EventCloseProject closeEvent(this); // Do not 'inline' in the next line like IView::get().ProcessModelEvent(EventCloseProject(this)); Doesn't compile in g++
+    IView::get().ProcessModelEvent(closeEvent);
     return wxDocument::OnCloseDocument();
 }
 
@@ -72,7 +72,7 @@ bool Project::OnNewDocument()
     bool opened = wxDocument::OnNewDocument();
     if (opened)
     {
-        gui::Window::get().ProcessModelEvent(EventOpenProject(this)); // todo via abstract interface derived from wxEvtHandler
+        IView::get().ProcessModelEvent(EventOpenProject(this));
     }
     return opened;
 }
@@ -90,7 +90,7 @@ bool Project::OnCreate(const wxString& path, long flags)
 void Project::OnChangeFilename(bool notifyViews)
 {
     mRoot->setName(GetUserReadableName());
-    gui::Window::get().ProcessModelEvent(EventRenameProject(this));
+    IView::get().ProcessModelEvent(EventRenameProject(this));
     wxDocument::OnChangeFilename(notifyViews);
 }
 
@@ -111,7 +111,7 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
         boost::archive::text_oarchive ar(ostream);
         registerClasses(ar);
         ar & *this;
-        ar & gui::Window::get();
+        ar & IView::get();
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -135,8 +135,8 @@ std::istream& Project::LoadObject(std::istream& istream)
         boost::archive::text_iarchive ar(istream);
         registerClasses(ar);
         ar & *this;
-        ar & gui::Window::get();
-        gui::Window::get().ProcessModelEvent(EventOpenProject(this)); /** @todo do not submit via app, but via individual nodes */
+        ar & IView::get();
+        IView::get().ProcessModelEvent(EventOpenProject(this)); /** @todo do not submit via app, but via individual nodes */
     }
     catch (boost::archive::archive_exception& e)
     {

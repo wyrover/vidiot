@@ -16,6 +16,7 @@
 #include "UtilLog.h"
 #include "ids.h"
 
+
 namespace gui {
 
 //////////////////////////////////////////////////////////////////////////
@@ -201,6 +202,7 @@ Window& Window::get()
     return *sCurrent;
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -332,3 +334,20 @@ template void Window::serialize<boost::archive::text_oarchive>(boost::archive::t
 template void Window::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace
+
+namespace model {
+    // static
+    IView& IView::get()
+    {
+        return *gui::sCurrent;
+    }
+
+    template<class Archive>
+    void IView::serialize(Archive & ar, const unsigned int version)
+    {
+        ar & static_cast<gui::Window&>(*this);
+    }
+    template void IView::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+    template void IView::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+}
+
