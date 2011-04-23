@@ -108,7 +108,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again
-    // @todo instead of duplicating frames, nicely take the two input frames 'around' the 
+    // \todo instead of duplicating frames, nicely take the two input frames 'around' the 
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
     FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
@@ -156,7 +156,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
                 ptsOfFirstPacket = static_cast<boost::optional<pts> >(packet->getPacket()->pts);
             }
 
-            /** /todo handle decoders that hold multiple frames in one packet */
+            // \todo decoders that hold multiple frames in one packet
             int len1 = avcodec_decode_video(getCodec(), pFrame, &frameFinished, packet->getPacket()->data, packet->getPacket()->size);
 
             if (packet->getPacket()->dts != AV_NOPTS_VALUE)
