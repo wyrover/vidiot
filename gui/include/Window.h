@@ -7,7 +7,13 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/scoped_ptr.hpp>
-#include "Project.h"
+#include "IView.h"
+
+namespace model {
+class EventOpenProject;
+class EventCloseProject;
+class EventRenameProject;
+}
 
 namespace gui {
 
@@ -19,6 +25,7 @@ class ProjectView;
 
 class Window
     :   public wxDocParentFrame
+    ,   public model::IView
 {
 public:
 

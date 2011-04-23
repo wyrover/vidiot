@@ -91,7 +91,7 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
     }
 
     // Number of samples for 1 pts
-    int nSamples = Convert::ptsToFrames(audioRate,nAudioChannels,1); // @todo frames vs samples (naming only)
+    int nSamples = Convert::ptsToFrames(audioRate,nAudioChannels,1);
 
     return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, nSamples, mAudioPosition));
 } 
