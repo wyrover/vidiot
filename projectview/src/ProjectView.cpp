@@ -476,14 +476,23 @@ void ProjectView::onDropPossible( wxDataViewEvent &event )
         event.Veto();
         return;
     }
+
+    // Cannot drop a node into itselves, or one of its children
+    BOOST_FOREACH( model::ProjectViewPtr node, mDropSource.getData().getAssets())
+    {
+        if (p == node || mModel->isDescendantOf(p, node))
+        {
+            event.Veto();
+            return;
+        }
+    }
 }
 
 void ProjectView::onDrop( wxDataViewEvent &event )
 {
     LOG_INFO;
-    // todo hangup drop a folder onto itselves...
 
-     if (event.GetDataFormat().GetId() != DataObject::sFormat)
+    if (event.GetDataFormat().GetId() != DataObject::sFormat)
     {
         event.Veto();
         return;
