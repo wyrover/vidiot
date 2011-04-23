@@ -132,10 +132,6 @@ void Track::clean()
 // HANDLING CLIPS
 //////////////////////////////////////////////////////////////////////////
 
-/// \TODO: Make Track::execute(MoveParameter param), then the command just passes the info on.
-/// 		  Furthermore, make MoveParameter a separate file (MoveClip.*)
-/// 		  Finally give that class a 'clone_invert' method that returns a cloned and inverted instance.
-
 void Track::addClips(IClips clips, IClipPtr position)
 {
     VAR_DEBUG(*this)(position)(clips);
@@ -203,7 +199,6 @@ IClipPtr Track::getClip(pts position)
     }
     if (found)
     {
-        // todo more efficient
         IClipPtr next = getNextClip(found);
         if (next && next->isA<Transition>() && next->getLeftPts() <= position && next->getRightPts() > position)
         {

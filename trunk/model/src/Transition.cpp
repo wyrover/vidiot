@@ -7,7 +7,6 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
 #include "Track.h"
-#include "Clip.h" // Needed for events. todo move events into separate class.
 
 namespace model {
 
