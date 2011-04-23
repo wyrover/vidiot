@@ -105,7 +105,6 @@ void Project::Modify(bool modify)
 
 std::ostream& Project::SaveObject(std::ostream& ostream)
 {
-    /** \todo wait until worker is done, and ensure that no new work is generated */
     try
     {
         boost::archive::text_oarchive ar(ostream);
@@ -136,7 +135,7 @@ std::istream& Project::LoadObject(std::istream& istream)
         registerClasses(ar);
         ar & *this;
         ar & IView::get();
-        IView::get().ProcessModelEvent(EventOpenProject(this)); /** @todo do not submit via app, but via individual nodes */
+        IView::get().ProcessModelEvent(EventOpenProject(this));
     }
     catch (boost::archive::archive_exception& e)
     {
