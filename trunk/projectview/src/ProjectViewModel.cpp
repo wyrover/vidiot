@@ -123,7 +123,7 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
 
 unsigned int ProjectViewModel::GetColumnCount() const
 {
-    return 3;
+    return 2;
 }
 
 wxString ProjectViewModel::GetColumnType(unsigned int col) const
@@ -133,7 +133,6 @@ wxString ProjectViewModel::GetColumnType(unsigned int col) const
     {
     case 0: return wxT("icontext");
     case 1: return wxT("string");
-    case 2: return wxT("string");
     }
     return wxT("string");
 }
@@ -149,29 +148,11 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
     case 0: 
         {
             wxDataViewIconText icontext(node->getName());
-            if (isFolder(node))
-            {
-                bool open = (mView.IsExpanded(wxItem));
-                if (isAutoFolder(node))
-                {
-                    icontext.SetIcon(open?mIconAutoFolderOpen:mIconAutoFolder);
-                }
-                else
-                {
-                    icontext.SetIcon(open?mIconFolderOpen:mIconFolder);
-                }
-            }
-            else
-            {
-                icontext.SetIcon(mIconVideo);
-            }
-            variant << icontext;//= wxString(node->getName()); 
+            icontext.SetIcon(getIcon(node));
+            variant << icontext;
             return;
         }
     case 1: 
-        //variant = wxString(node->getPath().GetFullPath()); todo
-        return;
-    case 2: 
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
         if (file)
         {
@@ -261,13 +242,6 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
                 break;
             }
         case 1:
-            {
-                wxString str1 = value1.GetString();
-                wxString str2 = value2.GetString();
-                result = str1.CmpNoCase(str2);
-                break;
-            }
-        case 2:
             {
                 wxDateTime dt1 = value1.GetDateTime();
                 wxDateTime dt2 = value2.GetDateTime();
@@ -362,9 +336,27 @@ bool ProjectViewModel::canBeRenamed(model::ProjectViewPtr node) const
     return !isRoot(node) && !isAutomaticallyGenerated(node) && !isAutoFolder(node);
 }
 
-const wxIcon& ProjectViewModel::getIcon(model::ProjectViewPtr node) const
+wxIcon ProjectViewModel::getIcon(model::ProjectViewPtr node) const
 {
-    return mIconVideo;
+    wxIcon icon = mIconVideo;
+    wxDataViewItem wxItem = wxDataViewItem(node->id());
+    if (isFolder(node))
+    {
+        bool open = (mView.IsExpanded(wxItem));
+        if (isAutoFolder(node))
+        {
+            icon = open ? mIconAutoFolderOpen : mIconAutoFolder;
+        }
+        else
+        {
+            icon = open ? mIconFolderOpen : mIconFolder;
+        }
+    }
+    else
+    {
+        icon = mIconVideo;
+    }
+    return icon;
 }
 
 //////////////////////////////////////////////////////////////////////////
