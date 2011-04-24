@@ -18,7 +18,6 @@ DECLAREENUM(MouseOnClipPosition, \
             ClipInterior, \
             ClipEnd);
 
-/** @todo split into track info and 'withintrack' info */
 struct PointerPositionInfo
 {
     //////////////////////////////////////////////////////////////////////////
@@ -37,23 +36,16 @@ struct PointerPositionInfo
     //////////////////////////////////////////////////////////////////////////
     // TRACK
     //////////////////////////////////////////////////////////////////////////
-
-    /** Current track under the mouse pointer. 0 if none. */
-    model::TrackPtr track;
-
-    /** Y position of current track. 0 if no current track. */
-    int trackPosition;
-
-    /** True if pointer is ON the track divider for this track. */
-    bool onTrackDivider;
+   
+    model::TrackPtr track;  ///< Current track under the mouse pointer. 0 if none.
+    int trackPosition;      ///< Y position of current track. 0 if no current track.
+    bool onTrackDivider;    ///< True if pointer is ON the track divider for this track.
 
     //////////////////////////////////////////////////////////////////////////
     // CLIP
     //////////////////////////////////////////////////////////////////////////
-
-    /** Current clip under the mouse pointer. 0 if none. */
-    model::IClipPtr clip;
-
+    
+    model::IClipPtr clip;   ///< Current clip under the mouse pointer. 0 if none.
     MouseOnClipPosition logicalclipposition;
 };
 

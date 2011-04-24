@@ -1,7 +1,7 @@
 #ifndef CLIP_VIEW_H
 #define CLIP_VIEW_H
 
-#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include "View.h"
 
 namespace model{
@@ -62,7 +62,7 @@ public:
 private:
 
     model::IClipPtr mClip;
-    boost::scoped_ptr<wxBitmap> mThumbnail;
+    boost::shared_ptr<wxBitmap> mThumbnail;
 
     wxRect mRect;       ///< @see show()
     pts mBeginAddition; ///< if >0 then this area is (temporarily, during editing) added. if <0 then it is removed from the clip.

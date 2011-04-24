@@ -370,7 +370,7 @@ void VideoDisplay::videoDisplayThread()
         {
             boost::mutex::scoped_lock lock(mMutexDraw);
             mCurrentVideoFrame = videoFrame;
-            mCurrentBitmap = boost::make_shared<wxBitmap>(wxImage(mCurrentVideoFrame->getWidth(), mCurrentVideoFrame->getHeight(), mCurrentVideoFrame->getData()[0], true));
+            mCurrentBitmap = videoFrame->getBitmap();
             showNewVideoFrame();
             boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
         }

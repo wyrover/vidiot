@@ -1,6 +1,7 @@
 #ifndef VIDEO_FRAME_H
 #define VIDEO_FRAME_H
 
+#include <wx/bitmap.h>
 #include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
@@ -48,14 +49,15 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    int getRepeat() const;      ///< @return the number of times this frame should be displayed
-    void setRepeat(int repeat); ///< @param new number of times to show this frame (used at end of clips)
+    int getRepeat() const;      ///< \return the number of times this frame should be displayed
+    void setRepeat(int repeat); ///< \param new number of times to show this frame (used at end of clips)
 
     pts getPts() const; 
     void setPts(pts position);
     int getWidth() const;
     int getHeight() const;
     int getSizeInBytes() const;
+    boost::shared_ptr<wxBitmap> getBitmap();    ///< \return this frame as a wxBitmap
 
     //////////////////////////////////////////////////////////////////////////
     // DATA ACCESS

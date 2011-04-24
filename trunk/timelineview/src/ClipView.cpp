@@ -132,8 +132,7 @@ void ClipView::updateThumbnail(bool invalidate) // todo: make a ThumbnailView cl
     {
         mClip->moveTo(0);
         model::VideoFramePtr videoFrame = videoclip->getNextVideo(requiredWidth() - 2 * Layout::sClipBorderSize, requiredHeight() - 2 * Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight, false);
-        // @todo make a method of videoFrmae to convert to wxBitmap...
-        mThumbnail.reset(new wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true)));
+        mThumbnail = videoFrame->getBitmap();
         mClip->moveTo(0);
     }
     if (invalidate) invalidateBitmap();
