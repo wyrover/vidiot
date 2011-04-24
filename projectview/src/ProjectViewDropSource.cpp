@@ -166,19 +166,22 @@ void ProjectViewDropSource::setFeedback(bool enabled)
 
 void ProjectViewDropSource::drawAsset(wxDC* dc, wxRect rect, model::ProjectViewPtr asset)
 {
-    int xoffset = 0;
+    int indent = 0;
+    model::ProjectViewPtr parent = asset->getParent();
+    while (parent)
+    {
+        indent++;
+        parent = parent->getParent();
+    }
+    rect.x += (indent - 1) * 10;
 
     const wxIcon& icon = mModel.getIcon(asset);
-
-    // todo indent based on indent in tree....
     if (icon.IsOk())
     {
         dc->DrawIcon(icon, rect.x, rect.y + (rect.height - icon.GetHeight())/2);
-        xoffset = icon.GetWidth() + 4;
+        rect.x += icon.GetWidth() + 4;
+        rect.width -= icon.GetWidth() + 4;
     }
-
-    rect.x += xoffset;
-    rect.width -= xoffset;
 
     wxString ellipsizedText = wxControl::Ellipsize(asset->getName(), *dc, wxELLIPSIZE_MIDDLE, rect.width, wxELLIPSIZE_FLAGS_NONE);
     dc->DrawLabel(ellipsizedText, rect, wxALIGN_LEFT);
