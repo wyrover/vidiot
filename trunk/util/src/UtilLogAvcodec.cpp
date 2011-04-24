@@ -8,7 +8,6 @@ extern "C" {
 #include <avformat.h>
 };
 
-
 std::ostream& operator<< (std::ostream& os, const AVRational& obj)
 {
     os << obj.num << "/" << obj.den;
@@ -85,10 +84,10 @@ std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
             << "has_b_frames="              << obj->has_b_frames            << ','
             << "sample_aspect_ratio="       << obj->sample_aspect_ratio     << ','
             << "debug="                     << obj->debug                   << ','
-            << "lowres="                    << obj->lowres                  << ',' /** /todo use for preview rendering */
-            << "coded_width="               << obj->coded_width             << ',' /** /todo Set by user before init if known. Codec should override / dynamically change if needed */
-            << "coded_height="              << obj->coded_height            << ',' /** /todo Set by user before init if known. Codec should override / dynamically change if needed */
-            << "request_channel_layout="    << obj->request_channel_layout  << ',' /** /todo always stereo? */
+            << "lowres="                    << obj->lowres                  << ','
+            << "coded_width="               << obj->coded_width             << ','
+            << "coded_height="              << obj->coded_height            << ','
+            << "request_channel_layout="    << obj->request_channel_layout  << ','
             << "hwaccel="                   << obj->hwaccel                 << ','
             << "ticks_per_frame="           << obj->ticks_per_frame
             << '}';
@@ -201,43 +200,29 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
     return os;
 }
 
-void Avcodec::log(void *ptr, int val, const char * msg, va_list ap)
-{
-    static const int nChars = 500;
-    static char* fixedbuffer = new char[nChars];
+//////////////////////////////////////////////////////////////////////////
+// MEMBERS
+//////////////////////////////////////////////////////////////////////////
 
-    int len = vsnprintf(fixedbuffer, nChars, msg, ap);
-//    int len = _vscprintf( msg, ap );
-//    char* buffer = new char[len+1]; // _vscprintf doesn't count terminating '\0'
-//    vsprintf(buffer,msg,ap);
-    //va_end(ap); //TODO is this needed? See http://www.tin.org/bin/man.cgi?section=3&topic=vsnprintf
-    if ( len > 0 && fixedbuffer[len-1] == '\n' )
-    {
-        // Strip new line in logged line
-        fixedbuffer[len-1] = '.';
-    }
+const int Avcodec::sMaxLogSize = 500;
+char* Avcodec::sFixedBuffer = 0;
 
-    std::ostringstream o;
-    if (ptr)
-    {
-        o   << "["
-            << (*(AVClass**)ptr)->item_name(ptr)
-            << ";"
-            << (*(AVClass**)ptr)->class_name
-            << "]";
-    }
-    else
-    {
-        o << "";
-    }
-    LOG_DETAIL << o.str();// << " [" << fixedbuffer << "]";
-}
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
 
 void Avcodec::init()
 {
+    sFixedBuffer = new char[sMaxLogSize];
     av_register_all();
     url_set_interrupt_cb(0);
     av_log_set_callback( Avcodec::log );
+}
+
+void Avcodec::exit()
+{
+    delete[] sFixedBuffer;
+    sFixedBuffer = 0;
 }
 
 void Avcodec::configureLog()
@@ -259,3 +244,33 @@ void Avcodec::configureLog()
         av_log_set_level(AV_LOG_WARNING);
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void Avcodec::log(void *ptr, int val, const char * msg, va_list ap)
+{
+    int len = vsnprintf(sFixedBuffer, sMaxLogSize, msg, ap);
+    if ( len > 0 && sFixedBuffer[len-1] == '\n' )
+    {
+        // Strip new line in logged line
+        sFixedBuffer[len-1] = '.';
+    }
+
+    std::ostringstream o;
+    if (ptr)
+    {
+        o   << "["
+            << (*(AVClass**)ptr)->item_name(ptr)
+            << ";"
+            << (*(AVClass**)ptr)->class_name
+            << "]";
+    }
+    else
+    {
+        o << "";
+    }
+    LOG_DETAIL << o.str() << " [" << sFixedBuffer << "]";
+}
+
