@@ -88,6 +88,9 @@ int Application::OnExit()
 {
     LOG_INFO;
     //Not: Log::Terminate() - OnUnhandledException() is called after leaving this method, and uses the log methods.
+
+    Avcodec::exit();
+
     return wxApp::OnExit();
 }
 
