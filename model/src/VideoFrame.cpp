@@ -2,6 +2,8 @@
 extern "C" {
 #include <avformat.h>
 };
+
+#include <boost/make_shared.hpp>
 #include "UtilLogAvcodec.h"
 
 namespace model {
@@ -92,6 +94,11 @@ void VideoFrame::setPts(pts position)
 int VideoFrame::getSizeInBytes() const
 {
     return mBufferSize;
+}
+
+boost::shared_ptr<wxBitmap> VideoFrame::getBitmap()
+{
+    return boost::make_shared<wxBitmap>(wxImage(getWidth(), getHeight(), getData()[0], true));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -51,8 +51,6 @@ AudioView::~AudioView()
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-/** @todo sequence::size event when adding clips, somewhere */
-
 void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
 {
     BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)

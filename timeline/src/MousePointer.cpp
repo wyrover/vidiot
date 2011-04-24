@@ -109,7 +109,6 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
     getDivider().getPositionInfo(pointerposition, info);
     if (!info.onAudioVideoDivider)
     {
-        /** @todo move to timeline class (it contains the if below) */
         getSequenceView().getVideo().getPositionInfo(pointerposition, info);
         if (!info.track)
         {
