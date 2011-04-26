@@ -1,8 +1,6 @@
 #ifndef LOG_H__
 #define LOG_H__
 
-#include <wx/msgout.h> // For NIY
-
 #if _MSC_VER > 1000
 // *this used in base-member initialization; it's ok
 #pragma warning ( disable : 4355)
@@ -101,23 +99,24 @@ DECLAREENUM(LogLevel, \
 
 #define ASSERT(expr)    if ((expr)) ; else  LogVar(#expr,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 #define FATAL                               LogVar("FATAL", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define NIY                                 LogVar("NIY",   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 
-#define NIY wxMessageOutputMessageBox().Printf("%s(%d): %s: Not implemented yet", __FILE__, __LINE__,__FUNCTION__);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // LOG CLASS
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
-* This class is responsible for appending a line to the logging. Each line
-* is prefixed with fixed information (time, log level, thread id, file name
-* and line, and method name). A separate class LogWriter (declared in * .cpp file)
-* is used for guaranteeing thread-safety of logging these messages.
-* Actual logging is done when this object's destructor is called.
-*/
-class Log : boost::noncopyable
+/// This class is responsible for appending a line to the logging. Each line
+/// is prefixed with fixed information (time, log level, thread id, file name
+/// and line, and method name). A separate class LogWriter (declared in * .cpp file)
+/// is used for guaranteeing thread-safety of logging these messages.
+/// Actual logging is done when this object's destructor is called.
+class Log
+    :   boost::noncopyable
 {
 public:
+
     Log();
     virtual ~Log();
 
@@ -128,7 +127,7 @@ public:
     static void SetReportingLevel(LogLevel level);
     static void SetLogFile(std::string path);
 
-    /** Log info in a separate line, preceded with meta data. */
+    /// Log info in a separate line, preceded with meta data.
     std::ostringstream& Get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);
 
 private:
@@ -139,26 +138,22 @@ private:
 // LOGVARS CLASS
 ////////////////////////////////////////////////////////////////////////////////
 
-/**
-* This class is responsible for
-* - logging a list of variables
-* - logging asserts (log expression, list of variables, and break into debugger)
-* - logging fatals (log message, list of variables, and break into debugger)
-* It uses the Log() class for appending a line to the logging.
-* Actual logging is done when this object's destructor is called.
-*/
-struct LogVar : boost::noncopyable
+/// This class is responsible for
+/// - logging a list of variables
+/// - logging asserts (log expression, list of variables, and break into debugger)
+/// - logging fatals (log message, list of variables, and break into debugger)
+/// It uses the Log() class for appending a line to the logging.
+/// Actual logging is done when this object's destructor is called.
+struct LogVar
+    :   boost::noncopyable
 {
-    /** Helper, in order to be able to compile the code (LOGVAR_* macros) */
-    LogVar& LOGVAR_A;
-    /** Helper, in order to be able to compile the code (LOGVAR_* macros) */
-    LogVar& LOGVAR_B;
+    
+    LogVar& LOGVAR_A;   ///< Helper, in order to be able to compile the code (LOGVAR_* macros)
+    LogVar& LOGVAR_B;   ///< Helper, in order to be able to compile the code (LOGVAR_* macros)
 
-    /**
-     * Constructor for VAR_* macros.
-     * Defined in .h because LOGVARS_ macro trick below redefines
-     * LOGVAR_A and LOGVAR_B which are used in the initializer list.
-     */
+    /// Constructor for VAR_* macros.
+    /// Defined in .h because LOGVARS_ macro trick below redefines
+    /// LOGVAR_A and LOGVAR_B which are used in the initializer list.
     LogVar(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
         :   LOGVAR_A(*this)
         ,   LOGVAR_B(*this)
@@ -170,11 +165,9 @@ struct LogVar : boost::noncopyable
     {
     }
 
-    /**
-     * Constructor for ASSERT and FATAL macros macros.
-     * Defined in .h because LOGVARS_ macro trick below redefines
-     * LOGVAR_A and LOGVAR_B which are used in the initializer list.
-     */
+    /// Constructor for ASSERT and FATAL macros macros.
+    /// Defined in .h because LOGVARS_ macro trick below redefines
+    /// LOGVAR_A and LOGVAR_B which are used in the initializer list.
     LogVar(const char * expr, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
         :   LOGVAR_A(*this)
         ,   LOGVAR_B(*this)
@@ -185,11 +178,10 @@ struct LogVar : boost::noncopyable
         ,   mAssert(boost::optional<std::string>(std::string("[ASSERT:") + expr + ']'))
     {
     }
+    
+    ~LogVar();  ///< Upon destruction of this object, the actual logging is executed.
 
-    /** Upon destruction of this object, the actual logging is executed. */
-    ~LogVar();
-
-    /** Append one variable to the list of logged variables. */
+    /// Append one variable to the list of logged variables.
     template<class type>
     LogVar& logVar(const type& varValue, const char* varName)
     {
@@ -209,10 +201,6 @@ private:
 #define LOGVAR_A(x) LOGVAR_OP(x, B)
 #define LOGVAR_B(x) LOGVAR_OP(x, A)
 #define LOGVAR_OP(x, next) LOGVAR_A.logVar(x, #x).LOGVAR_ ## next
-
-//////////////////////////////////////////////////////////////////////////
-//  STREAM OPERATOR TEMPLATES
-//////////////////////////////////////////////////////////////////////////
 
 #endif //LOG_H__
 

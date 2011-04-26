@@ -148,7 +148,7 @@ void Intervals::clear()
 
 void Intervals::deleteMarked()
 {
-    NIY
+    NIY;
         // First, make one entire list containing a mapping of each clip to
         // the clips it is replaced with.
 
@@ -172,7 +172,7 @@ void Intervals::deleteMarked()
 
 void Intervals::deleteUnmarked()
 {
-    NIY
+    NIY;
 }
 
 //////////////////////////////////////////////////////////////////////////

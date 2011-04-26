@@ -93,7 +93,6 @@ Trim::Trim( my_context ctx ) // entry
     }
 
     // Determine boundaries for shifting other tracks
-    // TODO more testing
     model::IClipPtr linked = mOriginalClip->getLink();
     pts shiftFrom = mOriginalClip->getLeftPts();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )

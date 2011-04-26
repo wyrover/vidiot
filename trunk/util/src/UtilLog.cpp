@@ -7,10 +7,7 @@
 #include <string>
 #include <share.h> // _SH_DENYWR
 #include "UtilFifo.h"
-
-/** todo use wxDebugReport */
-/** todo use onfatalexception */
-/** todo wxCrashReport::Generate() */
+#include "UtilAssert.h"
 
 IMPLEMENTENUM(LogLevel);
 
@@ -95,7 +92,7 @@ private:
 // LOG CLASS
 ////////////////////////////////////////////////////////////////////////////////
 
-Log::Log()
+ Log::Log()
 {
 }
 
@@ -144,26 +141,13 @@ std::ostringstream& Log::Get(LogLevel level, const char* p_szFileName, size_t p_
 // CLASS LOGVARS
 ////////////////////////////////////////////////////////////////////////////////
 
-void breakIntoDebugger()
-{
-    //    wxMessageOutputMessageBox().Printf("%s",*mAssert);
-    Log::Terminate();
-#if (defined _MSC_VER) || (defined __BORLANDC__)
-    __asm { int 3 };
-#elif defined(__GNUC__)
-    __asm ("int $0x3");
-#else
-#  error Please supply instruction to break into code
-#endif
-}
-
 LogVar::~LogVar()
 {
     if (mAssert)
     {
         /** /todo how to guarantee that this log line is always written to file, given the fact that the next step is termination of the logging... */
         Log().Get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str() ;
-        breakIntoDebugger();
+        IAssert::breakIntoDebugger(*mAssert);
     }
     else
     {

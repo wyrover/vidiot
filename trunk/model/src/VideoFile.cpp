@@ -171,7 +171,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             }
             else
             {
-                NIY
+                NIY;
             }
 
             // If there is no previous frame stored as a member, then this is the scenario of the

@@ -8,7 +8,8 @@ namespace model {
 class EmptyChunk;
 typedef boost::shared_ptr<EmptyChunk> EmptyChunkPtr;
 
-class EmptyChunk : public AudioChunk
+class EmptyChunk
+    :   public AudioChunk
 {
 public:
     
@@ -16,7 +17,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyChunk(int nChannels, unsigned int nSamples, double pts);
+    EmptyChunk(int nChannels, unsigned int nSamples, pts position);
     
     virtual ~EmptyChunk();
 

@@ -131,38 +131,38 @@ IClipPtr Transition::getLink() const
 pts Transition::getMinAdjustBegin() const
 {
     //todo
-    NIY
-        return 0;
+    NIY;
+    return 0;
 }
 
 pts Transition::getMaxAdjustBegin() const
 {
-    NIY
-        return 0;
+    NIY;
+    return 0;
 }
 
 void Transition::adjustBegin(pts adjustment)
 {
-    NIY
-        VAR_DEBUG(*this)(adjustment);
+    NIY;
+    VAR_DEBUG(*this)(adjustment);
 }
 
 pts Transition::getMinAdjustEnd() const
 {
-    NIY
-        return 0;
+    NIY;
+    return 0;
 }
 
 pts Transition::getMaxAdjustEnd() const
 {
-    NIY
-        return 0;
+    NIY;
+    return 0;
 }
 
 void Transition::adjustEnd(pts adjustment)
 {
-    NIY
-        VAR_DEBUG(*this)(adjustment);
+    NIY;
+    VAR_DEBUG(*this)(adjustment);
 }
 
 bool Transition::getSelected() const
