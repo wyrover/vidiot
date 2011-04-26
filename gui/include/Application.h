@@ -2,15 +2,17 @@
 #define APPLICATION_H
 
 #include <wx/app.h>
+#include "UtilAssert.h"
 
 #ifdef _MSC_VER
-//#define CATCH_ALL_ERRORS
+#define CATCH_ALL_ERRORS
 #endif // _MSC_VER
 
 namespace gui {
 
 class Application
     :   public wxApp
+    ,   public IAssert
 {
 public:
 
@@ -35,6 +37,12 @@ public:
     virtual void OnUnhandledException();
     virtual void OnFatalException();
 #endif //CATCH_ALL_ERRORS
+
+    //////////////////////////////////////////////////////////////////////////
+    // IASSERT
+    //////////////////////////////////////////////////////////////////////////
+
+    void onAssert();
 };
 
 } // namespace

@@ -2,12 +2,12 @@
 
 #include <wx/msgdlg.h>
 #include <boost/filesystem/operations.hpp>
+#include <boost/exception/all.hpp>
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "Options.h"
 #include "Window.h"
 #include "Layout.h"
-#include "FSWatcher.h"
 #include "DebugReport.h"
 
 /// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
@@ -22,6 +22,7 @@ wxIMPLEMENT_APP_NO_MAIN(Application);
 
 Application::Application()
 :   wxApp()
+,   IAssert()
 {
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();
@@ -77,7 +78,7 @@ int Application::OnRun()
 {
     //int j = 8; j = 0; int i = 6/j; // Uncomment for testing OnFatalException()
     //wxArrayString arr;arr[0];      // Uncomment for testing OnAssertFailure()
-    //throw 4;                         // Uncomment for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
+    //throw 4;                       // Uncomment for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
 
     wxApp::OnRun(); // Make exception in this call for testing OnExceptionInMainLoop() - Typically, normal code of app.
     return 0;
@@ -144,5 +145,12 @@ void Application::OnFatalException()
 }
 
 #endif // CATCH_ALL_ERRORS
+
+void Application::onAssert()
+{
+    DebugReport::generate(ReportAssertionFailure);
+    exit(-1);
+
+}
 
 } // namespace

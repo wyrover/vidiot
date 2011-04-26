@@ -3,7 +3,7 @@
 #include "UtilLog.h"
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
-
+#pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.
 extern "C" {
 #include <avformat.h>
 };

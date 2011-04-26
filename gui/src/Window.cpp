@@ -277,7 +277,7 @@ void Window::onOptions(wxCommandEvent& WXUNUSED(event))
 
 void Window::onHelp(wxCommandEvent& WXUNUSED(event))
 {
-    NIY
+    NIY;
 }
 
 void Window::onAbout(wxCommandEvent& WXUNUSED(event))

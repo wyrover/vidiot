@@ -6,8 +6,8 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyChunk::EmptyChunk(int nChannels, unsigned int nSamples, double pts)
-:   AudioChunk(nChannels,nSamples,pts)
+EmptyChunk::EmptyChunk(int nChannels, unsigned int nSamples, pts position)
+:   AudioChunk(nChannels,nSamples,position)
 ,   mInitialized(false)
 {
 }
