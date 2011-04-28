@@ -17,7 +17,7 @@ class ViewUpdate
 {
 public:
     ViewUpdate(View& view, wxRegion area)
-        :   mView(view)
+        :   mView(&view)
         ,   mArea(area)
     {
     }
@@ -31,14 +31,14 @@ public:
     }
     View& getView()
     {
-        return mView;
+        return *mView;
     }
     wxRegion getArea()
     {
         return mArea;
     }
 private:
-    View& mView;
+    View* mView;    // Stored as pointer, not reference for more info during debugging in IDE
     wxRegion mArea;
 };
 
@@ -98,17 +98,9 @@ public:
 
 protected:
 
-    /**
-    * Is called whenever the bitmap is 'invalidated' and a new bitmap
-    * is required.
-    **/
-    virtual void draw(wxBitmap& bitmap) const = 0;
+    virtual void draw(wxBitmap& bitmap) const = 0;  ///< Is called whenever the bitmap is 'invalidated' and a new bitmap is required.
 
-public: /** @todo should be protected, but couldn't yet due to use in 'Selection()' */
-    /**
-    * Should be called whenever the bitmap must be recreated.
-    **/
-    void invalidateBitmap();
+    void invalidateBitmap();                        ///< Should be called whenever the bitmap must be recreated.
 
 private:
 
@@ -119,8 +111,8 @@ private:
 
     wxEvtHandler mEvtHandler;
     View* mParent;
-    mutable wxBitmap mBitmap; ///< Mutable to avoid having to non-const all methods using getBitmap()
-    mutable bool mBitmapValid; ///< Mutable to avoid having to non-const all methods using getBitmap()
+    mutable wxBitmap mBitmap;   ///< Mutable to avoid having to non-const all methods using getBitmap()
+    mutable bool mBitmapValid;  ///< Mutable to avoid having to non-const all methods using getBitmap()
 };
 
 }} // namespace
