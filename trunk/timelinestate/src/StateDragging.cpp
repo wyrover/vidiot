@@ -50,7 +50,7 @@ boost::statechart::result Dragging::react( const EvLeftUp& evt )
 boost::statechart::result Dragging::react( const EvDragDrop& evt )
 {
     // See also EvLeftUp
-    // TODO why so difficult? This is because there are no events generated during drag&drop. Isn't it easier to make (using regular mouse events?)
+    // No mouse events are generated during drag&drop, only these Drag&Drop events.
     VAR_DEBUG(evt);
     getDrag().drop();
     getDrag().stop();
@@ -68,6 +68,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 boost::statechart::result Dragging::react( const EvDragMove& evt )
 {
     // See also EvMotion
+    // No mouse events are generated during drag&drop, only these Drag&Drop events.
     VAR_DEBUG(evt);
     getDrag().move(evt.mPosition,wxGetMouseState().ControlDown(),wxGetMouseState().ShiftDown());
     return forward_event();
@@ -84,6 +85,7 @@ boost::statechart::result Dragging::react( const EvLeave& evt )
 boost::statechart::result Dragging::react( const EvDragEnd& evt )
 {
     // See also EvLeave
+    // No mouse events are generated during drag&drop, only these Drag&Drop events.
     VAR_DEBUG(evt);
     getDrag().stop();
     return transit<Idle>();
