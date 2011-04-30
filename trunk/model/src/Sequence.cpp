@@ -34,6 +34,7 @@ Sequence::Sequence()
     ,   IAudio()
     ,   AProjectViewNode()
     ,   mName()
+    ,   mDividerPosition(0)
     ,   mVideoTracks()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
@@ -49,6 +50,7 @@ Sequence::Sequence(wxString name)
 ,   IAudio()
 ,   AProjectViewNode()
     ,   mName(name)
+    ,   mDividerPosition(0)
     ,   mVideoTracks()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
@@ -64,6 +66,7 @@ Sequence::Sequence(const Sequence& other)
 ,   IAudio()
 ,   AProjectViewNode()
 ,   mName(other.mName)
+,   mDividerPosition(other.mDividerPosition)
 ,   mVideoTracks(other.mVideoTracks)
 ,   mAudioTracks(other.mAudioTracks)
 ,   mVideoTrackMap(other.mVideoTrackMap)
@@ -257,6 +260,16 @@ TrackPtr Sequence::getAudioTrack(int index)
     return mAudioTrackMap[index];
 }
 
+pixel Sequence::getDividerPosition() const
+{
+    return mDividerPosition;
+}
+
+void Sequence::setDividerPosition(pixel position)
+{
+    mDividerPosition = position;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IPROJECTVIEW
 //////////////////////////////////////////////////////////////////////////
@@ -308,6 +321,7 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
     ar & boost::serialization::base_object<IAudio>(*this);
     ar & boost::serialization::base_object<AProjectViewNode>(*this);
     ar & mName;
+    ar & mDividerPosition;
     ar & mVideoTracks;
     ar & mAudioTracks;
     if (Archive::is_loading::value)

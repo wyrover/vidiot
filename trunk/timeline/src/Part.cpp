@@ -162,16 +162,6 @@ const Tooltip& Part::getTooltip() const
     return getTimeline().getTooltip();
 }
 
-Divider& Part::getDivider()
-{
-    return getTimeline().getDivider();
-}
-
-const Divider& Part::getDivider() const
-{
-    return getTimeline().getDivider();
-}
-
 state::Machine& Part::getStateMachine()
 {
     return getTimeline().getStateMachine();

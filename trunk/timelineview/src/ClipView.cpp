@@ -34,6 +34,7 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
     ASSERT(mClip);
 
     getViewMap().registerView(mClip,this);
+    mClip->Bind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,           this);
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
     mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
     // todo also handle these events for transitions
@@ -44,6 +45,7 @@ ClipView::~ClipView()
 {
     VAR_DEBUG(this);
 
+    mClip->Unbind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,         this);
     mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
     mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
     
@@ -247,6 +249,12 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void ClipView::onClipDragged( model::EventDragClip& event )
+{
+    invalidateBitmap();
+    event.Skip();
+}
 
 void ClipView::onClipSelected( model::EventSelectClip& event )
 {

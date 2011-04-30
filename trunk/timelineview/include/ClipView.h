@@ -7,6 +7,7 @@
 namespace model{
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
+class EventDragClip;
 class EventSelectClip;
 class DebugEventRenderProgress;
 }
@@ -56,6 +57,7 @@ public:
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onClipDragged( model::EventDragClip& event );
     void onClipSelected( model::EventSelectClip& event );
     void onGenerationProgress( model::DebugEventRenderProgress& event );
 

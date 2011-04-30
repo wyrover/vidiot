@@ -52,8 +52,6 @@ public:
     const Drag& getDrag() const;
     Tooltip& getTooltip();
     const Tooltip& getTooltip() const;
-    Divider& getDivider();
-    const Divider& getDivider() const;
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;
     model::SequencePtr getSequence();
@@ -83,6 +81,15 @@ public:
     pixel requiredWidth() const;  ///< @see View::requiredWidth()
     pixel requiredHeight() const; ///< @see View::requiredHeight()
 
+    /// Refresh the rectangle for which 
+    /// [x,y,w,h] == [position,0,1,requiredHeight],
+    /// using logical coordinates and
+    /// taking into account scrolling and zooming
+    void refreshPts(pts position);
+
+    /// Refresh several lines in the timeline
+    void refreshLines(pixel from, pixel length);
+
     //////////////////////////////////////////////////////////////////////////
     // CHANGE COMMANDS
     //////////////////////////////////////////////////////////////////////////
@@ -111,7 +118,6 @@ private:
     Cursor* mCursor;  // Must be AFTER mPlayer
     Drag* mDrag;
     Tooltip* mTooltip;
-    Divider* mDivider;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts
 

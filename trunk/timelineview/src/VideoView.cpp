@@ -10,7 +10,7 @@
 #include "ViewMap.h"
 #include "PositionInfo.h"
 #include "Timeline.h"
-#include "Divider.h"
+#include "SequenceView.h"
 
 namespace gui { namespace timeline {
 
@@ -94,7 +94,7 @@ pixel VideoView::requiredHeight() const
 
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
-    int top = getDivider().getVideoPosition();
+    int top = getSequenceView().getVideoPosition();
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         int bottom = top + track->getHeight() + Layout::sTrackDividerHeight;
@@ -103,6 +103,7 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
             info.track = track;
             info.trackPosition = top;
             info.onTrackDivider = (position.y - top <= Layout::sTrackDividerHeight);
+            getViewMap().getView(track)->getPositionInfo(position, info);
             return;
         }
         top = bottom;

@@ -54,10 +54,10 @@ void Cursor::setPosition(long position)
         wxPoint scroll = getScrolling().getOffset();
 
         // Refresh the old and new cursor position areas
-        getSequenceView().invalidateBitmap();
         long cursorOnClientArea = mCursorPosition - scroll.x;
         long oldposOnClientArea = oldPos - scroll.x;
-        getTimeline().RefreshRect(wxRect(std::min(cursorOnClientArea,oldposOnClientArea),0,std::abs(cursorOnClientArea-oldposOnClientArea)+1,getTimeline().requiredHeight()),false);
+        getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().requiredHeight()),false);
+        getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().requiredHeight()),true);
         getTimeline().Update(); // Use this for better feedback when dragging cursor..
 
         getIntervals().update(mCursorPosition);
@@ -82,7 +82,7 @@ void Cursor::moveCursorOnUser(long position)
 void Cursor::draw(wxDC& dc) const
 {
     dc.SetPen(Layout::sCursorPen);
-    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getTimeline().requiredHeight()));
+    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getSequenceView().requiredHeight()));
 }
 
 //////////////////////////////////////////////////////////////////////////

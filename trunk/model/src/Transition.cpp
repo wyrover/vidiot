@@ -24,6 +24,7 @@ Transition::Transition()
     ,   mIndex(0)
     ,   mLeftPtsInTrack(0)
     ,   mSelected(false)
+    ,   mDragged(false)
 {
     VAR_DEBUG(this);
 }
@@ -38,6 +39,7 @@ Transition::Transition(pts nFramesLeft, pts nFramesRight)
     ,   mIndex(0)
     ,   mLeftPtsInTrack(0)
     ,   mSelected(false)
+    ,   mDragged(false)
 {
     VAR_DEBUG(this);
 }
@@ -52,6 +54,7 @@ Transition::Transition(const Transition& other)
     ,   mIndex(0)           // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)  // Clone is not automatically part of same track!!!
     ,   mSelected(false)
+    ,   mDragged(false)
 {
     VAR_DEBUG(*this);
 }
@@ -174,6 +177,17 @@ void Transition::setSelected(bool selected)
 {
     mSelected = selected;
     ProcessEvent(EventSelectClip(selected));
+}
+
+bool Transition::getDragged() const
+{
+    return mDragged;
+}
+
+void Transition::setDragged(bool dragged)
+{
+    mDragged = dragged;
+    ProcessEvent(EventDragClip(dragged));
 }
 
 pts Transition::getGenerationProgress() const

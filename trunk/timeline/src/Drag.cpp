@@ -21,6 +21,7 @@
 #include "State.h"
 #include "TrackView.h"
 #include "ProjectView.h"
+#include "Scrolling.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilList.h"
 #include "Track.h"
@@ -31,7 +32,6 @@
 #include "Zoom.h"
 #include "DataObject.h"
 #include "UtilLogStl.h"
-#include "Divider.h"
 #include "Clip.h"
 #include "ClipView.h"
 
@@ -90,8 +90,8 @@ class DummyView : public View
 public:
     DummyView(Timeline* timeline) : View(timeline) {}
     ~DummyView() {}
-    pixel requiredWidth() const { return getTimeline().requiredWidth(); }
-    pixel requiredHeight() const {  return getTimeline().requiredHeight(); }
+    pixel requiredWidth() const { FATAL; return 0; }
+    pixel requiredHeight() const {  FATAL; return 0; }
     void draw(wxBitmap& bitmap) const { FATAL; }
 };
 
@@ -153,8 +153,13 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     {
         mDraggedTrack = info.track;
         UtilList<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
-        invalidateDraggedClips(); // Hide dragged clips: Not necessary when dropping new assets into the timeline, since these do not have to be 'hidden' from the timeline
     }
+
+    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
+    {
+        clip->setDragged(true);
+    }
+
     VAR_DEBUG(*this);
     ASSERT(mDraggedTrack);
 
@@ -166,9 +171,10 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
 {
     VAR_DEBUG(*this);
-    wxRegion redrawRegion;
 
-    redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the old area (moved 'out' of this area)
+    wxPoint scroll = getScrolling().getOffset();
+
+    wxRegion redrawRegion(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the old area (moved 'out' of this area)
 
     if (position.x - mHotspot.x + mBitmapOffset.x < 0)
     {
@@ -212,12 +218,29 @@ void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
 
     mDropTrack = info.track;
     mPosition = position;
-    redrawRegion.Union(wxRect(mBitmapOffset + mPosition - mHotspot, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
-
+    redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
+    
     if (!ctrlPressed)
     {
+        std::list<pts> prevsnaps = mSnaps;
         determineSnapOffset();
+        BOOST_FOREACH( pts snap, prevsnaps )
+        {
+            if (!UtilList<pts>(mSnaps).hasElement(snap))
+            {
+                getTimeline().refreshPts(snap);
+            }
+        }
+        BOOST_FOREACH( pts snap, mSnaps )
+        {
+            if (!UtilList<pts>(prevsnaps).hasElement(snap))
+            {
+                getTimeline().refreshPts(snap);
+            }
+        }
     }
+
+
     // TODO HANDLING OF DIRECTLY MOVING OTHER CLIPS AROUND:
     //pts shiftPosition = 0;
     //pts shiftAmount = 0;
@@ -251,7 +274,7 @@ void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
     //    getViewMap().getView(track)->setShift(shiftPosition,shiftAmount);
     //}
 
-    getSequenceView().invalidateBitmap();
+// todo feedback    getSequenceView().invalidateBitmap();
 
     wxRegionIterator it(redrawRegion);
     while (it)
@@ -277,9 +300,12 @@ void Drag::stop()
 {
     VAR_DEBUG(*this);
     mActive = false;            // Ensure that moved clips are not blanked out anymore. See ClipView::draw().
-    invalidateDraggedClips();   // Ensure that moved clips are not blanked out anymore. See ClipView::draw().
+    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
+    {
+        clip->setDragged(false);
+    }
     reset();
-    getTimeline().Refresh();
+    getTimeline().Refresh(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -303,8 +329,8 @@ bool Drag::contains(model::IClipPtr clip) const
 wxBitmap Drag::getDragBitmap() //const
 {
     VAR_DEBUG(*this);
-    int w = getTimeline().requiredWidth();
-    int h = getTimeline().requiredHeight();
+    int w = getSequenceView().requiredWidth();
+    int h = getSequenceView().requiredHeight();
 
     wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
     wxBitmap mask(w,h,1);
@@ -324,7 +350,7 @@ wxBitmap Drag::getDragBitmap() //const
     dcMask.SetBrush(*wxWHITE_BRUSH);
 
     // Draw video tracks
-    wxPoint position(0,getDivider().getVideoPosition());
+    wxPoint position(0,getSequenceView().getVideoPosition());
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
         position.y += Layout::sTrackDividerHeight;
@@ -337,7 +363,7 @@ wxBitmap Drag::getDragBitmap() //const
     }
 
     // Draw audio tracks
-    position.y = getDivider().getAudioPosition();
+    position.y = getSequenceView().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         model::TrackPtr draggedTrack = trackOnTopOf(track);
@@ -370,7 +396,7 @@ void Drag::draw(wxDC& dc) const
     {
         return;
     }
-    dc.DrawBitmap(mBitmap,mBitmapOffset + getDraggedDistance() + wxPoint(getZoom().ptsToPixels(mSnapOffset),0),true);
+    dc.DrawBitmap(mBitmap,mBitmapOffset + getDraggedDistance() + getSnapPixels(),true);
     dc.SetPen(Layout::sSnapPen);
     dc.SetBrush(Layout::sSnapBrush);
     BOOST_FOREACH( pts snap, mSnaps )
@@ -566,14 +592,6 @@ void Drag::updateDraggedTrack(model::TrackPtr track)
     }
 }
 
-void Drag::invalidateDraggedClips()
-{
-    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
-    {
-        getViewMap().getView(clip)->invalidateBitmap();
-    }
-}
-
 wxPoint Drag::getDraggedDistance() const
 {
     return mPosition - mHotspot;
@@ -592,6 +610,11 @@ pts Drag::getDragPtsPosition() const
 pts Drag::getDragPtsSize() const 
 {
     return mDragPoints.back() - mDragPoints.front();
+}
+
+wxPoint Drag::getSnapPixels() const
+{
+    return wxPoint(getZoom().ptsToPixels(mSnapOffset),0);
 }
 
 void Drag::determineSnapOffset()

@@ -22,7 +22,7 @@ IAssert::~IAssert()
 // static
 void IAssert::breakIntoDebugger(const std::string& message)
 {
-#ifdef DEBUG
+#ifdef _DEBUG
     #if (defined _MSC_VER) || (defined __BORLANDC__)
         __asm { int 3 };
     #elif defined(__GNUC__)

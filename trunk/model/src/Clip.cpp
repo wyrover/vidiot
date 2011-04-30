@@ -26,6 +26,7 @@ Clip::Clip()
     ,   mLink()
     ,   mLastSetPosition(boost::none)
     ,   mSelected(false)
+    ,   mDragged(false)
     ,   mGeneratedPts(0)
 { 
     VAR_DEBUG(*this);
@@ -42,6 +43,7 @@ Clip::Clip(IControlPtr render)
     ,   mLink()
     ,   mLastSetPosition(boost::none)
     ,   mSelected(false)
+    ,   mDragged(false)
     ,   mGeneratedPts(0)
 { 
     mLength = mRender->getLength() - mOffset;
@@ -59,6 +61,7 @@ Clip::Clip(const Clip& other)
     ,   mLink(other.mLink)
     ,   mLastSetPosition(boost::none)
     ,   mSelected(other.mSelected)
+    ,   mDragged(false)             // Clone is not automatically also dragged!!!
     ,   mGeneratedPts(0)
 {
     VAR_DEBUG(*this)(other);
@@ -193,6 +196,17 @@ void Clip::setSelected(bool selected)
 {
     mSelected = selected;
     ProcessEvent(EventSelectClip(selected));
+}
+
+bool Clip::getDragged() const
+{
+    return mDragged;
+}
+
+void Clip::setDragged(bool dragged)
+{
+    mDragged = dragged;
+    ProcessEvent(EventDragClip(dragged));
 }
 
 pts Clip::getGenerationProgress() const
