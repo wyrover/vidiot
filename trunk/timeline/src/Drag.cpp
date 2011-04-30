@@ -329,8 +329,8 @@ bool Drag::contains(model::IClipPtr clip) const
 wxBitmap Drag::getDragBitmap() //const
 {
     VAR_DEBUG(*this);
-    int w = getSequenceView().requiredWidth();
-    int h = getSequenceView().requiredHeight();
+    int w = getSequenceView().getWidth();
+    int h = getSequenceView().getHeight();
 
     wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
     wxBitmap mask(w,h,1);

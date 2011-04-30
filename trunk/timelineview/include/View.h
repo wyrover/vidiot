@@ -80,6 +80,8 @@ public:
 
     View& getParent() const;
 
+    /// These are only required for use in this base class to construct the
+    /// bitmap. Use getWidth() and getHeight() to retrieve the size.
     virtual pixel requiredWidth() const = 0;
     virtual pixel requiredHeight() const = 0;
 
@@ -95,6 +97,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     const wxBitmap& getBitmap() const;
+
+    pixel getWidth() const;
+    pixel getHeight() const;
 
 protected:
 

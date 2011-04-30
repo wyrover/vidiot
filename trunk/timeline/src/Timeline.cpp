@@ -316,12 +316,12 @@ pixel Timeline::requiredHeight() const
 void Timeline::refreshPts(pts position)
 {
     pixel pixpos = getZoom().ptsToPixels(position) - getScrolling().getOffset().x;
-    getTimeline().RefreshRect(wxRect(pixpos,0,1,getSequenceView().requiredHeight()), false);
+    getTimeline().RefreshRect(wxRect(pixpos,0,1,getSequenceView().getHeight()), false);
 }
 
 void Timeline::refreshLines(pixel from, pixel length)
 {
-    getTimeline().RefreshRect(wxRect(0,from,getSequenceView().requiredWidth(),length), false);
+    getTimeline().RefreshRect(wxRect(0,from,getSequenceView().getWidth(),length), false);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -330,7 +330,7 @@ void Timeline::refreshLines(pixel from, pixel length)
 
 void Timeline::resize()
 {
-    SetVirtualSize(getSequenceView().requiredWidth(),getSequenceView().requiredHeight());
+    SetVirtualSize(getSequenceView().getWidth(),getSequenceView().getHeight());
     Refresh();
     // NOT: Update(); RATIONALE: This will cause too much updates when 
     //                           adding/removing/changing/replacing clips

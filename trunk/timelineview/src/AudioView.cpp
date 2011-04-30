@@ -81,7 +81,7 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 
 pixel AudioView::requiredWidth() const
 {
-    return getParent().requiredWidth();
+    return getParent().getWidth();
 }
 
 pixel AudioView::requiredHeight() const
