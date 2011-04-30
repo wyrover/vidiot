@@ -13,7 +13,6 @@
 #include "Track.h"
 #include "Sequence.h"
 #include "VideoView.h"
-#include "Divider.h"
 #include "AudioView.h"
 #include "Timeline.h"
 #include "SequenceView.h"
@@ -105,23 +104,7 @@ void MousePointer::set(MousePointerImage image)
 PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
 {
     PointerPositionInfo info;
-
-    getDivider().getPositionInfo(pointerposition, info);
-    if (!info.onAudioVideoDivider)
-    {
-        getSequenceView().getVideo().getPositionInfo(pointerposition, info);
-        if (!info.track)
-        {
-            getSequenceView().getAudio().getPositionInfo(pointerposition, info);
-        }
-
-        // Find clip under pointer
-        if (info.track)
-        {
-            getViewMap().getView(info.track)->getPositionInfo(pointerposition, info);
-        }
-    }
-
+    getSequenceView().getPositionInfo(pointerposition, info);
     return info;
 }
 

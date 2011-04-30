@@ -8,7 +8,7 @@
 #include "Sequence.h"
 #include "PositionInfo.h"
 #include "ViewMap.h"
-#include "Divider.h"
+#include "SequenceView.h"
 
 namespace gui { namespace timeline {
 
@@ -96,7 +96,7 @@ pixel AudioView::requiredHeight() const
 
 void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
-    int top = getDivider().getAudioPosition();
+    int top = getSequenceView().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         int bottom = top + track->getHeight() + Layout::sTrackDividerHeight;
@@ -105,6 +105,7 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
             info.track = track;
             info.trackPosition = top;
             info.onTrackDivider = (bottom - position.y <= Layout::sTrackDividerHeight);
+            getViewMap().getView(track)->getPositionInfo(position, info);
             return;
         }
         top = bottom;

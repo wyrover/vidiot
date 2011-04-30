@@ -2,8 +2,9 @@
 
 #include "StateIdle.h"
 #include "UtilLog.h"
-#include "Divider.h"
+#include "SequenceView.h"
 #include "Tooltip.h"
+#include "Sequence.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -15,7 +16,7 @@ namespace gui { namespace timeline { namespace state {
 
 MoveDivider::MoveDivider( my_context ctx ) // entry
 :   TimeLineState( ctx )
-,   mOriginalPosition(getDivider().getPosition())
+,   mOriginalPosition(getSequence()->getDividerPosition())
 {
     LOG_DEBUG;
 }
@@ -38,7 +39,7 @@ boost::statechart::result MoveDivider::react( const EvLeftUp& evt )
 boost::statechart::result MoveDivider::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getDivider().setPosition(evt.mPosition.y);
+    getSequenceView().setDividerPosition(evt.mPosition.y);
     return forward_event();
 }
 
@@ -68,7 +69,7 @@ boost::statechart::result MoveDivider::react( const EvKeyDown& evt)
 
 boost::statechart::result MoveDivider::abort()
 {
-    getDivider().setPosition(mOriginalPosition);
+    getSequenceView().setDividerPosition(mOriginalPosition);
     return transit<Idle>();
 }
 }}} // namespace

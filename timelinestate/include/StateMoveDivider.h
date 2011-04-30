@@ -2,7 +2,8 @@
 #define STATE_MOVE_DIVIDER_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
+#include "StateTop.h"
+#include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -41,7 +42,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    int mOriginalPosition;
+    pixel mOriginalPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

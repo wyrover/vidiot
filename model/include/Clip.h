@@ -63,6 +63,9 @@ public:
     virtual bool getSelected() const;
     virtual void setSelected(bool selected);
 
+    virtual bool getDragged() const;
+    virtual void setDragged(bool dragged);
+
     virtual pts getGenerationProgress() const;          
     virtual void setGenerationProgress(pts progress);
 
@@ -111,6 +114,7 @@ private:
     pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
 
     bool mSelected;                         ///< True if this clip is currently selected
+    bool mDragged;                          ///< True if this clip is currently dragged
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

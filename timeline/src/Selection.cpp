@@ -198,7 +198,6 @@ void Selection::selectClipAndLink(model::IClipPtr clip, bool selected)
 void Selection::selectClip(model::IClipPtr clip, bool selected)
 {
     clip->setSelected(selected);
-    getViewMap().getView(clip)->invalidateBitmap();
 }
 
 void Selection::setPreviouslyClicked(model::IClipPtr clip)

@@ -9,7 +9,7 @@
 #include "Track.h"
 #include "Layout.h"
 #include "Transition.h"
-#include "Divider.h"
+#include "SequenceView.h"
 #include "ClipView.h"
 #include "AudioTrack.h"
 #include "Tooltip.h"
@@ -85,7 +85,7 @@ boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
     {
         VAR_DEBUG(height);
         mTrack->setHeight(height);
-        getDivider().resetPosition(); // Ensure that 'minimal grey above videotracks' is maintained.
+        getSequenceView().resetDividerPosition(); // Ensure that 'minimal grey above videotracks' is maintained.
     }
     return forward_event();
 }

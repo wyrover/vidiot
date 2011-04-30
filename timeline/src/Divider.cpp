@@ -1,7 +1,5 @@
 #include "Divider.h"
-#include <wx/dc.h>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+#include <wx/dcmemory.h>
 #include "UtilLog.h"
 #include "Layout.h"
 #include "VideoView.h"
@@ -16,13 +14,10 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Divider::Divider(Timeline* timeline)
-:   Part(timeline)
-,   mPosition(0)
+Divider::Divider(View* parent)
+:   View(parent)
 {
     VAR_DEBUG(this);
-
-    getSequence()->Bind(model::EVENT_ADD_VIDEO_TRACK, &Divider::onVideoTracksAdded, this);
 }
 
 Divider::~Divider()
@@ -38,7 +33,7 @@ Divider::~Divider()
 
 void Divider::onVideoTracksAdded( model::EventAddVideoTracks& event )
 {
-    resetPosition();
+    resetDividerPosition();
     event.Skip();
 }
 
@@ -46,69 +41,61 @@ void Divider::onVideoTracksAdded( model::EventAddVideoTracks& event )
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-int Divider::getPosition() const
+pixel Divider::requiredWidth() const
 {
-    return mPosition;
+    return getSequenceView().requiredWidth();
+}
+
+pixel Divider::requiredHeight() const
+{
+    return Layout::sAudioVideoDividerHeight;
 }
 
 void Divider::setPosition(int position)
 {
-    int minimum = Layout::sVideoPosition + getSequenceView().getVideo().getBitmap().GetHeight();
+    int minimum = Layout::sVideoPosition + getSequenceView().getVideo().requiredHeight();
     if (position < minimum)
     {
         position = minimum;
     }
-    mPosition = position;
-    getSequenceView().invalidateBitmap();
+    getSequence()->setDividerPosition(position);
+    invalidateBitmap();
+    getTimeline().Update();
+    // todo ensure updates getSequenceView().invalidateBitmap();
 }
 
-void Divider::resetPosition()
+void Divider::resetDividerPosition()
 {
-    setPosition(mPosition);
+    setPosition(getSequence()->getDividerPosition());
 }
 
 void Divider::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
      info.onAudioVideoDivider =
-         position.y >= getPosition() && 
+         position.y >= getSequence()->getDividerPosition() && 
          position.y <= getAudioPosition();
 }
 
-
 int Divider::getAudioPosition() const
 {
-    return getPosition() + Layout::sAudioVideoDividerHeight;
+    return getSequence()->getDividerPosition() + Layout::sAudioVideoDividerHeight;
 }
 
 int Divider::getVideoPosition() const
 {
-    return getPosition() - getSequenceView().getVideo().getBitmap().GetHeight();
+    return getSequence()->getDividerPosition() - getSequenceView().getVideo().getBitmap().GetHeight();
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
-// DRAWING
+// HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Divider::draw(wxDC& dc) const
+void Divider::draw(wxBitmap& bitmap) const
 {
+    wxMemoryDC dc(bitmap);
     dc.SetBrush(Layout::sAudioVideoDividerBrush);
     dc.SetPen(Layout::sAudioVideoDividerPen);
-    dc.DrawRectangle(0,mPosition,dc.GetSize().GetWidth(),Layout::sAudioVideoDividerHeight);
+    dc.DrawRectangle(wxPoint(0,0),bitmap.GetSize());
 }
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void Divider::serialize(Archive & ar, const unsigned int version)
-{
-    ar & mPosition;
-}
-
-template void Divider::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Divider::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 }} // namespace

@@ -17,7 +17,6 @@
 #include "Scrolling.h"
 #include "Cursor.h"
 #include "Drag.h"
-#include "Divider.h"
 #include "Tooltip.h"
 #include "Menu.h"
 #include "Project.h"
@@ -53,7 +52,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
 ,   mTooltip(new Tooltip(this))
-,   mDivider(new Divider(this))
 ,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 //////////////////////////////////////////////////////////////////////////
@@ -61,11 +59,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 //////////////////////////////////////////////////////////////////////////
 {
     VAR_DEBUG(this);
-
-    // To ensure that for newly opened timelines the initial position is ok
-    // (should take 'minimum position' into account). This can only be done
-    // after both mDivider AND mVideoView are initialized.
-    getDivider().setPosition(getDivider().getPosition()); 
 
     init();
 
@@ -90,7 +83,6 @@ Timeline::~Timeline()
 
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;     mStateMachine = 0;
-    delete mDivider;        mDivider = 0;
     delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
@@ -225,16 +217,6 @@ const Tooltip& Timeline::getTooltip() const
     return *mTooltip; 
 }
 
-Divider& Timeline::getDivider()
-{
-    return *mDivider;
-}
-
-const Divider& Timeline::getDivider() const
-{
-    return *mDivider;
-}
-
 state::Machine& Timeline::getStateMachine()
 {
     return *mStateMachine;
@@ -261,17 +243,12 @@ const model::SequencePtr Timeline::getSequence() const
 
 void Timeline::onSize(wxSizeEvent& event)
 {
-    getSequenceView().invalidateBitmap(); // Redraw the sequence
     resize();
 }
 
 void Timeline::onEraseBackground(wxEraseEvent& event)
 {
-    wxDC* dc = event.GetDC();
-    dc->SetPen(Layout::sBackgroundPen);
-    dc->SetBrush(Layout::sBackgroundBrush);
-    dc->DrawRectangle(wxPoint(0,0),dc->GetSize());
-    //event.Skip(); // The official way of doing it
+    // NOT: event.Skip(); // The official way of doing it
 }
 
 void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
@@ -294,6 +271,9 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
         dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
         upd++;
     }
+
+    getDrag().draw(dc);
+    getCursor().draw(dc);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -302,7 +282,7 @@ void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
-    resize();
+    Refresh(false);
     event.Skip();
 }
 
@@ -323,18 +303,25 @@ PlayerPtr Timeline::getPlayer() const
 
 pixel Timeline::requiredWidth() const
 {
-    return
-        std::max(
-        getWindow().GetClientSize().GetWidth(),                         // At least the widget size
-        getSequenceView().requiredWidth());                             // At least enough to hold all clips
+    FATAL;
+    return 0;
 }
 
 pixel Timeline::requiredHeight() const
 {
-    return
-        std::max(
-        getWindow().GetClientSize().GetHeight(),                        // At least the widget size
-        getSequenceView().requiredHeight());                            // At least enough to hold all tracks
+    FATAL;
+    return 0;
+}
+
+void Timeline::refreshPts(pts position)
+{
+    pixel pixpos = getZoom().ptsToPixels(position) - getScrolling().getOffset().x;
+    getTimeline().RefreshRect(wxRect(pixpos,0,1,getSequenceView().requiredHeight()), false);
+}
+
+void Timeline::refreshLines(pixel from, pixel length)
+{
+    getTimeline().RefreshRect(wxRect(0,from,getSequenceView().requiredWidth(),length), false);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -343,8 +330,8 @@ pixel Timeline::requiredHeight() const
 
 void Timeline::resize()
 {
-    SetVirtualSize(requiredWidth(),requiredHeight());
-    Refresh(false);
+    SetVirtualSize(getSequenceView().requiredWidth(),getSequenceView().requiredHeight());
+    Refresh();
     // NOT: Update(); RATIONALE: This will cause too much updates when 
     //                           adding/removing/changing/replacing clips
     //                           which causes flickering.
@@ -352,7 +339,7 @@ void Timeline::resize()
 
 void Timeline::draw(wxBitmap& bitmap) const
 {
-    FATAL("THIS BITMAP IS UNUSED");
+    FATAL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -373,7 +360,6 @@ void Timeline::serialize(Archive & ar, const unsigned int version)
 {
     ar & *mZoom;
     ar & *mIntervals;
-    ar & *mDivider;
 }
 
 template void Timeline::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

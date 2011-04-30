@@ -94,9 +94,6 @@ public:
     Tooltip& getTooltip();
     const Tooltip& getTooltip() const;
 
-    Divider& getDivider();
-    const Divider& getDivider() const;
-
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;
 

@@ -119,6 +119,9 @@ public:
     TrackPtr getVideoTrack(int index);
     TrackPtr getAudioTrack(int index);
 
+    pixel getDividerPosition() const;
+    void setDividerPosition(pixel position);
+
     //////////////////////////////////////////////////////////////////////////
     // IPROJECTVIEW
     //////////////////////////////////////////////////////////////////////////
@@ -139,6 +142,7 @@ protected:
 private:
 
     wxString mName;
+    pixel mDividerPosition;
     Tracks mVideoTracks;
     Tracks mAudioTracks;
     std::map<int, TrackPtr> mVideoTrackMap;

@@ -23,6 +23,7 @@ typedef boost::shared_ptr<IClip> IClipPtr;
 typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef std::list<IClipPtr> IClips;
 
+DECLARE_EVENT(EVENT_DRAG_CLIP,              EventDragClip,             bool);
 DECLARE_EVENT(EVENT_SELECT_CLIP,            EventSelectClip,            bool);
 DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS,  DebugEventRenderProgress,   pts);
 
@@ -102,6 +103,9 @@ public:
 
     virtual bool getSelected() const = 0;           ///< /return true if this clip is selected
     virtual void setSelected(bool selected) = 0;    ///< Select or deselect clip
+
+    virtual bool getDragged() const = 0;           ///< /return true if this clip is being dragged
+    virtual void setDragged(bool dragged) = 0;     ///< Set dragged value for clip
 
     /// \return pts value of most recently returned audio/video in getNext*.
     virtual pts getGenerationProgress() const = 0;          
