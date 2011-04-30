@@ -115,7 +115,7 @@ void TrackView::onHeightChanged( model::EventHeightChanged& event )
 
 pixel TrackView::requiredWidth() const
 {
-    return getParent().requiredWidth();
+    return getParent().getWidth();
 }
 
 pixel TrackView::requiredHeight() const
@@ -196,7 +196,7 @@ void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dc
         ClipView* view = getViewMap().getView(modelclip);
         // todo first do the clip to the right of the transition
         view->drawForDragging(pos, height, dc, dcMask);
-        pos.x += view->requiredWidth();
+        pos.x += view->getWidth();
     }
 }
 

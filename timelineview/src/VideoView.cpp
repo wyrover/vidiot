@@ -79,7 +79,7 @@ void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 
 pixel VideoView::requiredWidth() const
 {
-    return getParent().requiredWidth();
+    return getParent().getWidth();
 }
 
 pixel VideoView::requiredHeight() const

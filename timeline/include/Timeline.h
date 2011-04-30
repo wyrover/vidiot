@@ -82,7 +82,7 @@ public:
     pixel requiredHeight() const; ///< @see View::requiredHeight()
 
     /// Refresh the rectangle for which 
-    /// [x,y,w,h] == [position,0,1,requiredHeight],
+    /// [x,y,w,h] == [position,0,1,height],
     /// using logical coordinates and
     /// taking into account scrolling and zooming
     void refreshPts(pts position);

@@ -56,8 +56,8 @@ void Cursor::setPosition(long position)
         // Refresh the old and new cursor position areas
         long cursorOnClientArea = mCursorPosition - scroll.x;
         long oldposOnClientArea = oldPos - scroll.x;
-        getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().requiredHeight()),false);
-        getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().requiredHeight()),true);
+        getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().getHeight()),false);
+        getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().getHeight()),true);
         getTimeline().Update(); // Use this for better feedback when dragging cursor..
 
         getIntervals().update(mCursorPosition);
@@ -82,7 +82,7 @@ void Cursor::moveCursorOnUser(long position)
 void Cursor::draw(wxDC& dc) const
 {
     dc.SetPen(Layout::sCursorPen);
-    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getSequenceView().requiredHeight()));
+    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getSequenceView().getHeight()));
 }
 
 //////////////////////////////////////////////////////////////////////////

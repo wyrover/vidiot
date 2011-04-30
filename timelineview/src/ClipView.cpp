@@ -76,7 +76,7 @@ void ClipView::show(wxRect rect)
     mRect.width = rect.width;
     mRect.x = rect.x;
     mRect.y = 4;
-    mRect.height = requiredHeight() - 8; 
+    mRect.height = getHeight() - 8; 
     invalidateBitmap();;
 }
 
@@ -133,7 +133,7 @@ void ClipView::updateThumbnail(bool invalidate) // todo: make a ThumbnailView cl
     if (videoclip)
     {
         mClip->moveTo(0);
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(requiredWidth() - 2 * Layout::sClipBorderSize, requiredHeight() - 2 * Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight, false);
+        model::VideoFramePtr videoFrame = videoclip->getNextVideo(getWidth() - 2 * Layout::sClipBorderSize, getHeight() - 2 * Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight, false);
         mThumbnail = videoFrame->getBitmap();
         mClip->moveTo(0);
     }
@@ -147,7 +147,7 @@ void ClipView::draw(wxBitmap& bitmap) const
 
 void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDraggedClips) const
 {
-    // NOTE: DO NOT use requiredWidth/requiredHeight here, since
+    // NOTE: DO NOT use getHeight here, since
     //       This method is also used for drawing clips that are
     //       dragged around, and thus can have a different size.
     //       (caused by hovering such a clip over another track
@@ -239,7 +239,7 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 {
     if (getDrag().contains(mClip))
     {
-        wxBitmap b(requiredWidth(), height);
+        wxBitmap b(getWidth(), height);
         draw(b, true, false);
         dc.DrawBitmap(b,position);
         dcMask.DrawRectangle(position,b.GetSize());

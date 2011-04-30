@@ -104,16 +104,23 @@ const wxBitmap& View::getBitmap() const
     return mBitmap;
 }
 
-// todo getwidth and getheigt that do
-// and use this method everywhere instead of required* for better performance
-//wxSize View::getSize() const
-//{
-//    if (mBitmapValid)
-//    {
-//        return mBitmap.GetSize();
-//    }
-//    return wxSize(requiredWidth(),requiredHeight());
-//}
+pixel View::getWidth() const
+{
+    if (!mBitmapValid)
+    {
+        return requiredWidth();
+    }
+    return mBitmap.GetWidth();
+}
+
+pixel View::getHeight() const
+{
+    if (!mBitmapValid)
+    {
+        return requiredHeight();
+    }
+    return mBitmap.GetHeight();
+}
 
 void View::invalidateBitmap()
 {
