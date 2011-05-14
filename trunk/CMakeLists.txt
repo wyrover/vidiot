@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 PROJECT(Vidiot)
-SET(VIDIOT_DIR ${PROJECT_SOURCE_DIR}\\..)
+SET(VIDIOT_DIR ${PROJECT_SOURCE_DIR}/..)
 SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${VIDIOT_DIR} )
 SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${VIDIOT_DIR} )
 SET(CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH}  ${VIDIOT_DIR} )
@@ -20,6 +20,7 @@ SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} $ENV{FFMPEGDIR}/build )
 # Add include for ctypes (C99 vs. MSVC)
 IF (MSVC)
     SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} ${VIDIOT_DIR}/ffmpeg-ctypes )
+  file(GLOB FFMPEG_INSTALL $ENV{FFMPEGDIR}/bin/*.dll)
 ENDIF (MSVC)
 
 #### WXWIDGETS ####
@@ -34,11 +35,21 @@ SET(Boost_DEBUG TRUE)
 #SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS date_time thread filesystem serialization system)
+# Find all dlls matching 'release' and 'threading-multi'
+foreach(BOOSTLIB date_time thread filesystem serialization system)
+    FILE( GLOB_RECURSE BOOST_INSTALL_NEW $ENV{BOOST_ROOT}/bin.v2/libs/${BOOSTLIB}/*.dll )
+    foreach( DLLNAME ${BOOST_INSTALL_NEW} )
+        if((${DLLNAME} MATCHES "release") AND (${DLLNAME} MATCHES "threading-multi"))
+            SET( BOOST_INSTALL ${BOOST_INSTALL} ${DLLNAME} )
+        endif((${DLLNAME} MATCHES "release") AND (${DLLNAME} MATCHES "threading-multi"))
+    endforeach(DLLNAME)
+endforeach(BOOSTLIB)
 
 #### PORTAUDIO ####
 SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include)
 SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_trunk/build/msvc/Win32/Release)
 SET(PORTAUDIO_LIBRARIES   portaudio_x86.dll)
+SET(PORTAUDIO_INSTALL ${PORTAUDIO_LIBRARY_DIR}/portaudio_x86.dll)
 
 #### SOUNDTOUCH ####
 SET( SOUNDTOUCH_ROOT        ${VIDIOT_DIR}/soundtouch_trunk )
@@ -47,6 +58,7 @@ SET( SOUNDTOUCH_LIBRARY_DIR ${SOUNDTOUCH_ROOT}/lib )
 IF (MSVC)
   SET( SOUNDTOUCH_LIBRARIES_DEBUG   SoundTouchDllD.dll SoundTouchD.lib )
   SET( SOUNDTOUCH_LIBRARIES debug SoundTouchDllD.dll SoundTouchD.lib optimized SoundTouchDll.dll SoundTouch.lib )
+  FILE( GLOB SOUNDTOUCH_INSTALL ${SOUNDTOUCH_LIBRARY_DIR}/*.dll )
 ENDIF (MSVC)
 IF (CMAKE_COMPILER_IS_GNUCC)
   SET( SOUNDTOUCH_LIBRARIES  libSoundTouch.a )
@@ -177,3 +189,4 @@ ADD_LIBRARY(vidiot ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${BuildFi
 
 ADD_SUBDIRECTORY(main)
 ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(install)
