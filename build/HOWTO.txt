@@ -136,4 +136,5 @@ Install ActivePerl into C:\Perl64
   libSoundTouch.la
 * removed in soundtouch the if statement for #ifdef _GCC that includes some config.h file
 
-
+=================== INSTALLER ===================
+* Install NSIS
