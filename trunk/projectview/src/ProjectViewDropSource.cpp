@@ -5,6 +5,7 @@
 #include "ProjectViewModel.h"
 #include "Layout.h"
 #include "Window.h"
+#include "UtilLog.h"
 #include "DataObject.h"
 #include "AProjectViewNode.h"
 
@@ -69,6 +70,7 @@ ProjectViewDropSource& ProjectViewDropSource::current()
 
 bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 {
+    VAR_DEBUG(this)(wxGetMouseState().ControlDown())(wxGetMouseState().ShiftDown());
     if (!mFeedback) return wxDropSource::GiveFeedback(effect);
 
     wxPoint pos = wxGetMousePosition();

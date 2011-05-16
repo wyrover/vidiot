@@ -12,15 +12,13 @@ namespace gui { namespace timeline { namespace state {
     const wxString sTooltip = _(
         "Move the clips by dragging them around.\n" \
         "Release Left Mouse Button to 'drop'.\n\n" \
-        "CTRL: Disable snapping and shifting of clips\n" \
-        "SHIFT: Change 'grab point'\n" \
+        "CTRL:  Hold and move to Change 'grab point'\n" \
+        "SHIFT: Shift original clips to make room for moved clips" \
         );
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
-
-/** /todo handle mouse focus lost */
 
 Dragging::Dragging( my_context ctx ) // entry
     :   TimeLineState( ctx )
@@ -61,7 +59,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 {
     // See also EvDragMove
     VAR_DEBUG(evt);
-    getDrag().move(evt.mPosition, evt.mWxEvent.ControlDown(), evt.mWxEvent.ShiftDown());
+    getDrag().move(evt.mPosition);
     return forward_event();
 }
 
@@ -70,7 +68,7 @@ boost::statechart::result Dragging::react( const EvDragMove& evt )
     // See also EvMotion
     // No mouse events are generated during drag&drop, only these Drag&Drop events.
     VAR_DEBUG(evt);
-    getDrag().move(evt.mPosition,wxGetMouseState().ControlDown(),wxGetMouseState().ShiftDown());
+    getDrag().move(evt.mPosition);
     return forward_event();
 }
 
@@ -95,18 +93,24 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);
 
-    switch (evt.mWxEvent.GetKeyCode())
+    if ( evt.mWxEvent.GetUnicodeKey() != WXK_NONE )
     {
-    case WXK_ALT:
-    case WXK_SHIFT:
-        getDrag().move(evt.mPosition, evt.mWxEvent.ControlDown(), evt.mWxEvent.ShiftDown());
-        break;
-    case WXK_F1:
-        getTooltip().show(sTooltip);
-        break;
-    case WXK_ESCAPE:
-        getDrag().stop();
-        return transit<Idle>();
+    }
+    else
+    {
+        switch (evt.mWxEvent.GetKeyCode())
+        {
+        case WXK_CONTROL:
+        case WXK_SHIFT:
+            getDrag().move(evt.mPosition);
+            break;
+        case WXK_F1:
+            getTooltip().show(sTooltip);
+            break;
+        case WXK_ESCAPE:
+            getDrag().stop();
+            return transit<Idle>();
+        }
     }
     return forward_event();
 }
@@ -115,12 +119,23 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
 {
     VAR_DEBUG(evt);
 
-    switch (evt.mWxEvent.GetKeyCode())
+    if ( evt.mWxEvent.GetUnicodeKey() != WXK_NONE )
     {
-    case WXK_ALT:
-    case WXK_SHIFT:
-        getDrag().move(evt.mPosition, evt.mWxEvent.ControlDown(), evt.mWxEvent.ShiftDown());
-        break;
+        switch (evt.mWxEvent.GetUnicodeKey())
+        {
+        case 'm':
+            break;
+        }
+    }
+    else
+    {
+        switch (evt.mWxEvent.GetKeyCode())
+        {
+        case WXK_CONTROL:
+        case WXK_SHIFT:
+            getDrag().move(evt.mPosition);
+            break;
+        }
     }
     return forward_event();
 }

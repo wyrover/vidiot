@@ -5,6 +5,7 @@
 #include <wx/pen.h>
 #include <wx/brush.h>
 #include <wx/colour.h>
+#include "UtilInt.h"
 
 namespace gui {
 
@@ -16,19 +17,20 @@ public:
     // DRAWING
     //////////////////////////////////////////////////////////////////////////
 
-    static const int sTimeScaleMinutesHeight;
-    static const int sTimeScaleSecondHeight;
-    static const int sTimeScaleHeight;
-    static const int sMinimalGreyAboveVideoTracksHeight;
-    static const int sMinimalGreyBelowAudioTracksHeight;
-    static const int sTrackDividerHeight;
-    static const int sDefaultAudioVideoDividerPosition;
-    static const int sAudioVideoDividerHeight;
-    static const int sMinTrackHeight;
-    static const int sMaxTrackHeight;
-    static const int sClipBorderSize;
-    static const int sVideoPosition;
-    static int sClipDescriptionBarHeight;
+    static const pixel sTimeScaleMinutesHeight;
+    static const pixel sTimeScaleSecondHeight;
+    static const pixel sTimeScaleHeight;
+    static const pixel sMinimalGreyAboveVideoTracksHeight;
+    static const pixel sMinimalGreyBelowAudioTracksHeight;
+    static const pixel sTrackDividerHeight;
+    static const pixel sDefaultAudioVideoDividerPosition;
+    static const pixel sAudioVideoDividerHeight;
+    static const pixel sMinTrackHeight;
+    static const pixel sMaxTrackHeight;
+    static const pixel sClipBorderSize;
+    static const pixel sTransitionHeight;
+    static const pixel sVideoPosition;
+    static pixel sClipDescriptionBarHeight;
 
     //////////////////////////////////////////////////////////////////////////
     // BRUSHES AND PENS
@@ -77,7 +79,7 @@ public:
     // SNAP
     //////////////////////////////////////////////////////////////////////////
 
-    static const int       sSnapDistance;
+    static const pixel      sSnapDistance;
 
     //////////////////////////////////////////////////////////////////////////
     // FONTS

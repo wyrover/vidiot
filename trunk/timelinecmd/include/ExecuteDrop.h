@@ -24,7 +24,7 @@ public:
     };
     typedef std::list<Drop> Drops;
 
-    ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops);
+    ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops, pts shiftPosition = -1, pts shiftSize = -1);
 
     ~ExecuteDrop();
 
@@ -42,6 +42,8 @@ private:
 
     model::IClips mDrags;
     Drops mDrops;
+    pts mShiftPosition;
+    pts mShiftSize;
 };
 
 }}} // namespace

@@ -9,15 +9,19 @@
 #include "Clip.h"
 #include "EmptyClip.h"
 #include "Transition.h"
+#include "Timeline.h"
+#include "Sequence.h"
 
 namespace gui { namespace timeline { namespace command {
 
-ExecuteDrop::ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops)
+ExecuteDrop::ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops, pts shiftPosition, pts shiftSize)
 :   AClipEdit(timeline)
 ,   mDrags(drags)
 ,   mDrops(drops)
+,   mShiftPosition(shiftPosition)
+,   mShiftSize(shiftSize)
 {
-    VAR_INFO(this)(drags)(drops);
+    VAR_INFO(this)(drags)(drops)(shiftPosition)(shiftSize);
     mCommandName = _("Move clips");
 }
 
@@ -44,6 +48,20 @@ void ExecuteDrop::initialize()
         {
             replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
         }
+    }
+
+    LOG_DEBUG << "STEP 1A TODO: Shift all clips that have frames to the right of the leftmost point of the dropped clips to the right";
+    if (mShiftPosition >= 0)
+    {
+        BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+        {
+            model::IClipPtr clip = track->getClip(mShiftPosition);
+            newMove(track, clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(mShiftSize)));
+        }
+    }
+    else
+    {
+        LOG_DEBUG << "STEP 1A TODO: NO SHIFT";
     }
 
     LOG_DEBUG << "STEP 2: Execute the drops AND fill replacement map";

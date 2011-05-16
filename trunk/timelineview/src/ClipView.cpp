@@ -89,7 +89,7 @@ pixel ClipView::requiredHeight() const
 {
     if (mClip->isA<model::Transition>())
     {
-        return 8; // TODO
+        return Layout::sTransitionHeight;
     }
     return mClip->getTrack()->getHeight();
 }
@@ -127,7 +127,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void ClipView::updateThumbnail(bool invalidate) // todo: make a ThumbnailView class instead of this
+void ClipView::updateThumbnail(bool invalidate)
 {
     model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(mClip);
     if (videoclip)
