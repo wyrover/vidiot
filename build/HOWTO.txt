@@ -4,6 +4,9 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
       a working executable (crashes upon startup). Anyway, this allows for
       checing compatibility with GCC.
 
+================ VISUAL STUDIO ================
+* Ensure to install with the runtimes (for packaging)
+
 =================== CMAKE ===================
 Install cmake into c:\Program Files
 
