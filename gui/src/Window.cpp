@@ -11,6 +11,7 @@
 #include "Preview.h"
 #include "TimelinesView.h"
 #include "Worker.h"
+#include "Config.h"
 #include "FSWatcher.h"
 #include "AProjectViewNode.h"
 #include "UtilLog.h"
@@ -50,6 +51,7 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 //////////////////////////////////////////////////////////////////////////
 
 const int sStatusProcessing = 8;
+static int sSequenceMenuIndex = 0;
 static Window* sCurrent = 0;
 
 Window::Window()
@@ -66,7 +68,6 @@ Window::Window()
     mTimelinesView  = new TimelinesView(this);
     mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
     mProjectView    = new ProjectView(this);
-    mEditor         = new wxPanel(this);
 
     wxMenu* menufile = new wxMenu();
     menufile->Append(wxID_NEW);
@@ -86,6 +87,12 @@ Window::Window()
     menuedit->Append(wxID_COPY);
     menuedit->Append(wxID_PASTE);
 
+    wxMenu* menuview = new wxMenu();
+    menuview->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"));
+    menuview->Check(ID_SNAP_CLIPS, wxConfigBase::Get()->ReadBool(Config::sPathSnapClips, true));
+    menuview->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
+    menuview->Check(ID_SNAP_CURSOR, wxConfigBase::Get()->ReadBool(Config::sPathSnapCursor, true));
+
     menusequence = new wxMenu();
 
     wxMenu* menutools = new wxMenu();
@@ -101,13 +108,15 @@ Window::Window()
     menubar = new wxMenuBar();
     menubar->Append(menufile,     _("&File"));
     menubar->Append(menuedit,     _("&Edit"));
+    menubar->Append(menuview,     _("&View"));
     menubar->Append(menusequence, _("&Sequence"));
+    sSequenceMenuIndex = 3;
     menubar->Append(menutools,    _("&Tools"));
     menubar->Append(menuhelp,     _("&Help"));
 
     SetMenuBar( menubar );
 
-    menubar->EnableTop(2,false); // Disable sequence menu
+    menubar->EnableTop(sSequenceMenuIndex,false); // Disable sequence menu
 
     CreateStatusBar(9);
     SetStatusText( _T("LMB:"), 1 );
@@ -121,8 +130,7 @@ Window::Window()
 
     mUiManager.SetManagedWindow(this);
     mUiManager.InsertPane(mProjectView,     wxAuiPaneInfo().BestSize(wxSize(200,500)).MinSize(wxSize(200,500)).Top().Position(0).CaptionVisible(false));
-    mUiManager.InsertPane(mEditor,          wxAuiPaneInfo().BestSize(wxSize(200,100)).MinSize(wxSize(200,100)).Top().Position(1).CaptionVisible(false));
-    mUiManager.InsertPane(mPreview,         wxAuiPaneInfo().BestSize(wxSize(200,100)).MinSize(wxSize(400,100)).Top().Position(2).CaptionVisible(false));
+    mUiManager.InsertPane(mPreview,         wxAuiPaneInfo().BestSize(wxSize(200,100)).MinSize(wxSize(400,100)).Top().Position(1).CaptionVisible(false));
     mUiManager.InsertPane(mTimelinesView,   wxAuiPaneInfo().BestSize(wxSize(200,100)).MinSize(wxSize(200,100)).Center().CaptionVisible(false));
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
     mUiManager.Update();
@@ -143,6 +151,8 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
@@ -180,13 +190,14 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
 
     mUiManager.UnInit();
 
-    delete mEditor;
     delete mProjectView;
     delete mPreview;
     delete mTimelinesView;
@@ -262,6 +273,22 @@ void Window::onExit(wxCommandEvent &)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// VIEW MENU
+//////////////////////////////////////////////////////////////////////////
+
+void Window::onSnapClips(wxCommandEvent& event)
+{
+    wxConfigBase::Get()->Write(Config::sPathSnapClips, event.IsChecked());
+    wxConfigBase::Get()->Flush();
+}
+
+void Window::onSnapCursor(wxCommandEvent& event)
+{
+    wxConfigBase::Get()->Write(Config::sPathSnapCursor, event.IsChecked());
+    wxConfigBase::Get()->Flush();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // TOOLS MENU
 //////////////////////////////////////////////////////////////////////////
 
@@ -312,11 +339,11 @@ void Window::setSequenceMenu(wxMenu* menu)
         menu = menusequence;
         enable = false;
     }
-    if (menubar->GetMenu(2) != menu)
+    if (menubar->GetMenu(sSequenceMenuIndex) != menu)
     {
         // Only in case of changes. Otherwise wxWidgets asserts.
-        previous = menubar->Replace(2, menu, _("&Sequence"));
-        menubar->EnableTop(2,enable);
+        previous = menubar->Replace(sSequenceMenuIndex, menu, _("&Sequence"));
+        menubar->EnableTop(sSequenceMenuIndex,enable);
     }
 }
 

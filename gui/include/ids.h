@@ -3,8 +3,12 @@
 
 enum 
 {
+    ID_FIRST = wxID_HIGHEST + 1,
+    // View menu
+    ID_SNAP_CLIPS,
+    ID_SNAP_CURSOR,
     // Sequence menu
-    ID_ADDVIDEOTRACK = wxID_HIGHEST+1,
+    ID_ADDVIDEOTRACK,
     ID_ADDAUDIOTRACK,
     ID_DELETEMARKED,
     ID_DELETEUNMARKED,

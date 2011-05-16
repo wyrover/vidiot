@@ -35,7 +35,10 @@ public:
 
     /// \param isInsideDrag true if this is a drag within the timeline, false if there are new clips being dragged into the timeline (from the project view)
     void start(wxPoint hotspot, bool isInsideDrag);
-    void move(wxPoint position, bool ctrlPressed, bool shiftPressed);
+
+    /// \param position move the mouse pointer to this position
+    void move(wxPoint position);
+
     void drop();
     void stop();
 
@@ -74,6 +77,9 @@ private:
     std::list<pts> mDragPoints;         ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
     pts mSnapOffset;                    ///< Resulting offset caused by 'snapping to' a clip
     std::list<pts> mSnaps;              ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
+    bool mMustUndo;                     ///< True if a command has been submitted for giving feedback. 
+    pts mShiftPosition;                 ///< Position at which clips must be shifted to make room for the clips being dragged. -1: No shift
+    pts mShiftLength;                   ///< Length of the shift required to make room for the clips being dragged. 0: No shift
 
     //////////////////////////////////////////////////////////////////////////
     // DRAGINFO
@@ -115,6 +121,7 @@ private:
         model::TrackPtr getTempTrack();
 
         model::TrackPtr trackOnTopOf(model::TrackPtr track);
+        model::TrackPtr trackUnder(model::TrackPtr draggedtrack);
 
         int nTracks(); ///< @return number of tracks of this type currently in the timeline
 
@@ -150,6 +157,9 @@ private:
     /// that actually no clips from that track are visually dragged.
     model::TrackPtr trackOnTopOf(model::TrackPtr track);
 
+    /// \return the track that is currently 'under' draggedtrack
+    model::TrackPtr trackUnder(model::TrackPtr draggedtrack);
+
     /// \return the DragInfo object that corresponds to the given track.
     /// \param track track that indicates audio or video
     /// Given the track, either mVideo or mAudio is returned.
@@ -176,6 +186,9 @@ private:
     /// Return the current leftmost pts value of the dragged clips
     pts getDragPtsPosition() const;
 
+    /// Return the current position of a dragged point
+    pts getDraggedPosition(pts dragpoint) const;
+
     /// Return the size of the dragged clips
     pts getDragPtsSize() const;
 
@@ -188,16 +201,23 @@ private:
     void determineSnapOffset();
 
     /// Fill mPossibleSnapPoints with a list of possible 'snap to' points.
-    /// Fill mPossibleDragPoints with a list of possible 'snap to' points in the dragged clips.
-    /// Basically, these are lists of all the cuts in all the tracks in either the timeline 
-    /// (excluding the selected==dragged clips) or the dragged area (thus, the selected clips).
+    /// Basically, these are lists of all the cuts in all the tracks in the timeline 
+    /// (excluding the selected==dragged clips).
     /// This is done at the start of a drag only, for performance reasons.
+    /// This is also done when a shift is applied to make room for dragged clips.
     void determinePossibleSnapPoints();
+
+    /// Fill mPossibleDragPoints with a list of possible 'snap to' points in the dragged clips.
+    /// Basically, these are lists of all the cuts in the dragged area (thus, the selected clips).
+    /// This is done at the start of a drag only, for performance reasons.
+    void determinePossibleDragPoints();
 
     /// Return the list of 'drops' on the given track
     /// \param track onto which clips are dropped
     /// \return list of drops onto that track
     command::ExecuteDrop::Drops getDrops(model::TrackPtr track);
+
+    bool undo();
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

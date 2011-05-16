@@ -9,19 +9,20 @@ namespace gui {
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-const int Layout::sTimeScaleMinutesHeight               = 10;
-const int Layout::sTimeScaleSecondHeight                = 5;
-const int Layout::sTimeScaleHeight                      = 20;
-const int Layout::sMinimalGreyAboveVideoTracksHeight    = 10;
-const int Layout::sMinimalGreyBelowAudioTracksHeight    = 10;
-const int Layout::sTrackDividerHeight                   = 4;
-const int Layout::sDefaultAudioVideoDividerPosition     = 100;
-const int Layout::sAudioVideoDividerHeight              = 5;
-const int Layout::sMinTrackHeight                       = 10;
-const int Layout::sMaxTrackHeight                       = 100;
-const int Layout::sClipBorderSize                       = 2;
-const int Layout::sVideoPosition                        = Layout::sTimeScaleHeight + Layout::sMinimalGreyAboveVideoTracksHeight;
-int Layout::sClipDescriptionBarHeight                           = 5; // Default value.
+const pixel Layout::sTimeScaleMinutesHeight               = 10;
+const pixel Layout::sTimeScaleSecondHeight                = 5;
+const pixel Layout::sTimeScaleHeight                      = 20;
+const pixel Layout::sMinimalGreyAboveVideoTracksHeight    = 10;
+const pixel Layout::sMinimalGreyBelowAudioTracksHeight    = 10;
+const pixel Layout::sTrackDividerHeight                   = 4;
+const pixel Layout::sDefaultAudioVideoDividerPosition     = 100;
+const pixel Layout::sAudioVideoDividerHeight              = 5;
+const pixel Layout::sMinTrackHeight                       = 10;
+const pixel Layout::sMaxTrackHeight                       = 100;
+const pixel Layout::sClipBorderSize                       = 2;
+const pixel Layout::sTransitionHeight                     = 8;
+const pixel Layout::sVideoPosition                        = Layout::sTimeScaleHeight + Layout::sMinimalGreyAboveVideoTracksHeight;
+      pixel Layout::sClipDescriptionBarHeight             = 5; // Default value.
 
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS

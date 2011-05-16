@@ -3,6 +3,7 @@
 #include <wx/dnd.h>
 #include <wx/pen.h>
 #include <wx/tooltip.h>
+#include <wx/config.h>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <boost/assign/list_of.hpp>
@@ -13,7 +14,9 @@
 #include "PositionInfo.h"
 #include "Layout.h"
 #include "VideoClip.h"
+#include "Config.h"
 #include "AudioClip.h"
+#include "EmptyClip.h"
 #include "Cursor.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
@@ -64,7 +67,7 @@ public:
     {
         ProjectViewDropSource::current().setFeedback(false);
         getStateMachine().process_event(state::EvDragEnter(x,y));
-        return wxDragMove;
+        return wxDragNone;
     }
     wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
     {
@@ -111,6 +114,9 @@ Drag::Drag(Timeline* timeline)
     ,   mDropTrack()
     ,   mVideo(timeline, true)
     ,   mAudio(timeline, false)
+    ,   mMustUndo(false)
+    ,   mShiftPosition(-1)
+    ,   mShiftLength(0)
 {
     VAR_DEBUG(this);
     getTimeline().SetDropTarget(new DropTarget(timeline)); // Drop target is deleted by wxWidgets
@@ -163,12 +169,13 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     VAR_DEBUG(*this);
     ASSERT(mDraggedTrack);
 
-    determinePossibleSnapPoints(); // Required initialized mDraggedClips
+    determinePossibleSnapPoints();
+    determinePossibleDragPoints(); // Required initialized mDraggedClips
     mBitmap = getDragBitmap();
-    move(hotspot, false, false);
+    move(hotspot);
 }
 
-void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
+void Drag::move(wxPoint position)
 {
     VAR_DEBUG(*this);
 
@@ -183,9 +190,9 @@ void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
 
     PointerPositionInfo info = getMousePointer().getInfo(position);
 
-    if (shiftPressed)
+    if (wxGetMouseState().ControlDown())
     {
-        // As long as SHIFT is down, the dragged image stays the same, but the hotspot is moved
+        // As long as CTRL is down, the dragged image stays the same, but the hotspot is moved
         mHotspot -=  mPosition - position;
         updateDraggedTrack(info.track);
     }
@@ -220,7 +227,8 @@ void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
     mPosition = position;
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
     
-    if (!ctrlPressed)
+    // Snapping determination
+    if (!wxGetMouseState().ShiftDown())
     {
         std::list<pts> prevsnaps = mSnaps;
         determineSnapOffset();
@@ -240,41 +248,35 @@ void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
         }
     }
 
-
-    // TODO HANDLING OF DIRECTLY MOVING OTHER CLIPS AROUND:
-    //pts shiftPosition = 0;
-    //pts shiftAmount = 0;
-    //if (!ctrlPressed)
-    //{
-    //    determineSnapOffset();
-    //    
-    //    shiftPosition = getDragPtsPosition();
-    //    shiftAmount = 0;
-
-    //    // If there is not enough room at the given position, clips will be shifted.
-    //    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-    //    {
-    //        pts emptyarea = 0;
-    //        model::IClipPtr clip = track->getClip(getDragPtsPosition());
-    //        while (clip && clip->getRightPts() <= getDragPtsPosition() + getDragPtsSize())
-    //        {
-    //            if (!clip->isA<model::EmptyClip>() && !contains(clip))
-    //            {
-    //                break;
-    //            }
-    //            emptyarea += clip->getLength();
-    //            clip = track->getNextClip(clip); // Todo Inefficient
-    //        }
-    //        shiftPosition = std::min<pts>(shiftPosition, getDragPtsPosition() + emptyarea);
-    //        shiftAmount = std::max<pts>(shiftAmount, getDragPtsSize() - emptyarea);
-    //    }
-    //}
-    //BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-    //{
-    //    getViewMap().getView(track)->setShift(shiftPosition,shiftAmount);
-    //}
-
-// todo feedback    getSequenceView().invalidateBitmap();
+    // Shift if required
+    pts pos = -1;
+    pts len = 0;
+    if (wxGetMouseState().ShiftDown())
+    {
+        pos = getDragPtsPosition();
+        len = getDragPtsSize();
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        {
+            model::IClipPtr clip = track->getClip(pos);
+            if (clip && !clip->isA<model::EmptyClip>())
+            {
+                pts diff = pos - clip->getLeftPts();
+                pos = clip->getLeftPts();
+                len += diff;
+            }
+        }
+    }
+    if (mShiftPosition != pos || mShiftLength != len)
+    {
+        mShiftPosition = pos;
+        mShiftLength = len;
+        VAR_DEBUG(mShiftPosition)(mShiftLength);
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        {
+            getViewMap().getView(track)->setShift(pos, len);
+        }
+        //determinePossibleSnapPoints();
+    }
 
     wxRegionIterator it(redrawRegion);
     while (it)
@@ -288,12 +290,13 @@ void Drag::move(wxPoint position, bool ctrlPressed, bool shiftPressed)
 
 void Drag::drop()
 {
+    undo();
     command::ExecuteDrop::Drops drops;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         drops.splice(drops.end(), getDrops(track));
     }
-    getTimeline().Submit(new command::ExecuteDrop(getTimeline(),mDraggedClips,drops));
+    getTimeline().Submit(new command::ExecuteDrop(getTimeline(),mDraggedClips,drops, mShiftPosition, mShiftLength));
 }
 
 void Drag::stop()
@@ -401,6 +404,10 @@ void Drag::draw(wxDC& dc) const
     dc.SetBrush(Layout::sSnapBrush);
     BOOST_FOREACH( pts snap, mSnaps )
     {
+        //if ((mShiftPosition != -1) && (snap >= mShiftPosition))
+        //{
+        //    snap += mShiftLength;
+        //}
         dc.DrawLine(getZoom().ptsToPixels(snap),0,getZoom().ptsToPixels(snap),dc.GetSize().GetHeight());
     }
 }
@@ -511,6 +518,22 @@ model::TrackPtr Drag::DragInfo::trackOnTopOf(model::TrackPtr track)
     return draggedTrack;
 }
 
+model::TrackPtr Drag::DragInfo::trackUnder(model::TrackPtr draggedtrack)
+{
+    VAR_DEBUG(draggedtrack);
+    model::TrackPtr track;
+    if (!mTempTrack)
+    {
+        track = getTrack(mOffset + draggedtrack->getIndex());
+    }
+    else
+    {
+        track = getTrack(mOffset);
+    }
+    VAR_DEBUG(track);
+    return track;
+}
+
 int Drag::DragInfo::nTracks()
 {
     return mIsVideo ? getSequence()->getVideoTracks().size() : getSequence()->getAudioTracks().size();
@@ -534,6 +557,9 @@ void Drag::reset()
     mAudio.reset();
     mDraggedTrack.reset();
     mDropTrack.reset();
+    mMustUndo = false;
+    mShiftPosition = -1;
+    mShiftLength = 0;
 }
 
 void Drag::makeTracksFromProjectView()
@@ -570,6 +596,11 @@ model::TrackPtr Drag::trackOnTopOf(model::TrackPtr track)
     return getAssociatedInfo(track).trackOnTopOf(track);
 }
 
+model::TrackPtr Drag::trackUnder(model::TrackPtr draggedtrack)
+{
+    return getAssociatedInfo(draggedtrack).trackUnder(draggedtrack);
+}
+
 Drag::DragInfo& Drag::getAssociatedInfo(model::TrackPtr track)
 {
     return track->isA<model::VideoTrack>() ? mVideo : mAudio;
@@ -604,7 +635,12 @@ pts Drag::getDraggedPtsDistance() const
 
 pts Drag::getDragPtsPosition() const
 {
-    return mDragPoints.front() + getDraggedPtsDistance() + mSnapOffset;
+    return getDraggedPosition(mDragPoints.front());
+}
+
+pts Drag::getDraggedPosition(pts dragpoint) const
+{
+    return dragpoint + getDraggedPtsDistance() + mSnapOffset;
 }
 
 pts Drag::getDragPtsSize() const 
@@ -684,32 +720,40 @@ void Drag::determineSnapOffset()
 void Drag::determinePossibleSnapPoints()
 {
     mSnapPoints.clear();
-    mDragPoints.clear();
 
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    if (wxConfigBase::Get()->ReadBool(Config::sPathSnapClips, true))
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
         {
-            if (!contains(clip))
+            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
             {
-                mSnapPoints.push_back(clip->getLeftPts());
-                mSnapPoints.push_back(clip->getRightPts());
+                if (!contains(clip))
+                {
+                    mSnapPoints.push_back(clip->getLeftPts());
+                    mSnapPoints.push_back(clip->getRightPts());
+                }
             }
         }
     }
-    mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
-
-    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
+    if (wxConfigBase::Get()->ReadBool(Config::sPathSnapCursor, true))
     {
-        if (contains(clip))
-        {
-            mDragPoints.push_back(clip->getLeftPts());
-            mDragPoints.push_back(clip->getRightPts());
-        }
+        mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
     }
 
     mSnapPoints.sort();
     mSnapPoints.unique();
+}
+
+void Drag::determinePossibleDragPoints()
+{
+    mDragPoints.clear();
+
+    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
+    {
+        mDragPoints.push_back(clip->getLeftPts());
+        mDragPoints.push_back(clip->getRightPts());
+    }
+
     mDragPoints.sort();
     mDragPoints.unique();
 }
@@ -753,6 +797,17 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
         }
     }
     return drops;
+}
+
+bool Drag::undo()
+{
+    if (mMustUndo)
+    {
+        model::Project::get().GetCommandProcessor()->Undo();
+        mMustUndo = false;
+        return true;
+    }
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

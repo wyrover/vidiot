@@ -68,6 +68,13 @@ public:
     void onExit(wxCommandEvent& WXUNUSED(event));
 
     //////////////////////////////////////////////////////////////////////////
+    // VIEW MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void onSnapClips(wxCommandEvent& WXUNUSED(event));
+    void onSnapCursor(wxCommandEvent& WXUNUSED(event));
+
+    //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU - SEE THE TIMELINE IMPLEMENTATION
     //////////////////////////////////////////////////////////////////////////
 
@@ -114,7 +121,6 @@ private:
     TimelinesView*      mTimelinesView;
     Preview*		    mPreview;
     ProjectView*	    mProjectView;
-	wxPanel*			mEditor;
 
     wxMenuBar*          menubar;        // For enabling/disabling menus
     wxMenu*             menuedit;       // For associating with do/undo

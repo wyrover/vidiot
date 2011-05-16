@@ -148,7 +148,6 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 
 boost::statechart::result Idle::react( const EvKeyDown& evt)
 {
-#define WXK_NONE 0
     VAR_DEBUG(evt);
     if ( evt.mWxEvent.GetUnicodeKey() != WXK_NONE )
     {

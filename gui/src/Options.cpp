@@ -22,6 +22,8 @@
 
 namespace gui {
 
+// TODO SPLIT INTO TWO FILES: One for persistency, one for the options dialog . Rationale: persistency also used for Menu->View->Snap settings
+
 wxString    Options::sConfigFile("");
 wxString    Options::sApplicationName("");
 bool        Options::sShowDebugInfoOnWidgets = false;
