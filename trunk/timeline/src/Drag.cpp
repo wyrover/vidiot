@@ -228,29 +228,26 @@ void Drag::move(wxPoint position)
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
     
     // Snapping determination
-    if (!wxGetMouseState().ShiftDown())
+    std::list<pts> prevsnaps = mSnaps;
+    determineSnapOffset();
+    BOOST_FOREACH( pts snap, prevsnaps )
     {
-        std::list<pts> prevsnaps = mSnaps;
-        determineSnapOffset();
-        BOOST_FOREACH( pts snap, prevsnaps )
+        if (!UtilList<pts>(mSnaps).hasElement(snap))
         {
-            if (!UtilList<pts>(mSnaps).hasElement(snap))
-            {
-                getTimeline().refreshPts(snap);
-            }
+            getTimeline().refreshPts(snap);
         }
-        BOOST_FOREACH( pts snap, mSnaps )
+    }
+    BOOST_FOREACH( pts snap, mSnaps )
+    {
+        if (!UtilList<pts>(prevsnaps).hasElement(snap))
         {
-            if (!UtilList<pts>(prevsnaps).hasElement(snap))
-            {
-                getTimeline().refreshPts(snap);
-            }
+            getTimeline().refreshPts(snap);
         }
     }
 
     // Shift if required
-    pts pos = -1;
-    pts len = 0;
+    pts pos = command::ExecuteDrop::sNoShift;
+    pts len = command::ExecuteDrop::sNoShift;
     if (wxGetMouseState().ShiftDown())
     {
         pos = getDragPtsPosition();
@@ -275,7 +272,6 @@ void Drag::move(wxPoint position)
         {
             getViewMap().getView(track)->setShift(pos, len);
         }
-        //determinePossibleSnapPoints();
     }
 
     wxRegionIterator it(redrawRegion);
@@ -306,6 +302,10 @@ void Drag::stop()
     BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
     {
         clip->setDragged(false);
+    }
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    {
+        getViewMap().getView(track)->setShift(command::ExecuteDrop::sNoShift, command::ExecuteDrop::sNoShift);
     }
     reset();
     getTimeline().Refresh(false);
