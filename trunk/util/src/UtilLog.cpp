@@ -11,7 +11,7 @@
 
 IMPLEMENTENUM(LogLevel);
 
-static std::string sFilename("D:\\newlog.txt");
+static std::string sFilename("");
 static const unsigned int sMaximumBufferedLoglines = 1000;
 
 LogLevel Log::sReportingLevel = logINFO;
@@ -114,9 +114,14 @@ void Log::SetReportingLevel(LogLevel level)
 	}
 }
 
-void Log::SetLogFile(std::string path)
+void Log::setFileName(std::string path)
 {
     sFilename = path;
+}
+
+std::string Log::getFileName()
+{
+    return sFilename;
 }
 
 void Log::Init()

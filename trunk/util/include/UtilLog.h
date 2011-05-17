@@ -125,7 +125,8 @@ public:
 
     static LogLevel sReportingLevel;
     static void SetReportingLevel(LogLevel level);
-    static void SetLogFile(std::string path);
+    static void setFileName(std::string path);
+    static std::string getFileName();
 
     /// Log info in a separate line, preceded with meta data.
     std::ostringstream& Get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);

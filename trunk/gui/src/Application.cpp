@@ -5,7 +5,7 @@
 #include <boost/exception/all.hpp>
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
-#include "Options.h"
+#include "Config.h"
 #include "Window.h"
 #include "Layout.h"
 #include "DebugReport.h"
@@ -58,12 +58,13 @@ bool Application::OnInit()
     // Must be called before anything else,
     // since it distributes the initial options
     // which are used below.
-    Options::init(GetAppName(),GetVendorName());
+    Config::init(GetAppName(),GetVendorName());
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)
     Layout::initializeFonts();
 
+    Avcodec::configureLog();
     Log::Init();
 
 	LOG_INFO << "Start";
