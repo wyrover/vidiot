@@ -2,6 +2,7 @@
 
 #include <wx/dcmemory.h>
 #include <wx/pen.h>
+#include "Config.h"
 #include "Zoom.h"
 #include "Layout.h"
 #include "Drag.h"
@@ -219,7 +220,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         dc.DrawRectangle(mRect);
     }
 
-    if (Options::getShowDebugInfoOnWidgets())
+    if (wxConfigBase::Get()->ReadBool(Config::sPathShowDebugInfoOnWidgets,false))
     {
         dc.SetTextForeground(Layout::sDebugColour);
         dc.SetFont(*Layout::sDebugFont);

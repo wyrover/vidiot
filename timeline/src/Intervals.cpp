@@ -1,6 +1,7 @@
 #include "Intervals.h"
 
 #include <math.h>
+#include <wx/confbase.h>
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -8,10 +9,10 @@
 #include "Timeline.h"
 #include "Zoom.h"
 #include "Convert.h"
+#include "Config.h"
 #include "Scrolling.h"
 #include "UtilLog.h"
 #include "Layout.h"
-#include "Options.h"
 #include "Clip.h"
 #include "TrackView.h"
 #include "Project.h"
@@ -74,8 +75,8 @@ void Intervals::set(wxRegion region)
 void Intervals::addBeginMarker()
 {
     long c = getZoom().pixelsToPts(getCursor().getPosition());
-    long b = c + model::Convert::timeToPts(Options::getMarkerBeginAddition() * model::Constants::sSecond);
-    long e = c + model::Convert::timeToPts(Options::getMarkerEndAddition()   * model::Constants::sSecond);
+    long b = c + model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerBeginAddition, 0) * model::Constants::sSecond);
+    long e = c + model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0)   * model::Constants::sSecond);
 
     mNewIntervalActive = true;
     mNewIntervalBegin = b;
@@ -112,7 +113,7 @@ void Intervals::update(long newCursorPosition)
 {
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  model::Convert::timeToPts(Options::getMarkerEndAddition() * model::Constants::sSecond);
+        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0) * model::Constants::sSecond);
         refresh(mNewIntervalBegin,mNewIntervalEnd);
     }
     if (mToggleActive)

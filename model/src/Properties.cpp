@@ -3,12 +3,12 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "UtilSerializeBoost.h"
-#include "Options.h"
+#include "Config.h"
 
 namespace model {
 
 Properties::Properties()
-:   mFrameRate(gui::Options::getDefaultFrameRate())
+:   mFrameRate(framerate::fromString(wxConfigBase::Get()->Read(gui::Config::sPathFrameRate,wxT(""))))
 {
 }
 

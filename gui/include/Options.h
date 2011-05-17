@@ -1,15 +1,11 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include <vector>
 #include <wx/propdlg.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
 #include <wx/radiobox.h>
 #include <wx/spinctrl.h>
-#include <boost/optional.hpp>
-#include <boost/tuple/tuple.hpp>
-#include "UtilFrameRate.h"
 
 namespace gui {
 
@@ -19,38 +15,7 @@ class Options
 public:
 
     //////////////////////////////////////////////////////////////////////////
-    // APPLICATION INITIALIZATION & CONFIGURATION
-    //////////////////////////////////////////////////////////////////////////
-
-    /// To be called upon startup. Distributes options to the various components.
-    /// \see distributeOptions()
-    static void init(wxString applicationName, wxString vendorName);
-
-    /// This distributes the current set of options to the various other components.
-    /// Done initially, and after Tools->Options->Ok.
-    /// May not log as it is also called in the beginning of GuiMain::OnInit(), 
-    /// before the logging is initialized.
-    static void distributeOptions();
-
-    //////////////////////////////////////////////////////////////////////////
-    // SETTERS & GETTERS
-    //////////////////////////////////////////////////////////////////////////
-
-    static wxString getOptionsFileName();
-    static wxString getLogFileName();
-    static bool     getShowDebugInfoOnWidgets();
-
-    static boost::optional<wxString> GetAutoLoad();
-    static void SetAutoLoadFilename(wxString filename);
-
-    static FrameRate getDefaultFrameRate();
-
-    static double getMarkerBeginAddition();
-    static double getMarkerEndAddition();
-    static wxString getTimelineStrip();
-
-    //////////////////////////////////////////////////////////////////////////
-    // CONFIGURATION DIALOG
+    // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     Options(wxWindow* parent);
@@ -59,42 +24,31 @@ public:
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // GENERAL
+    // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
     wxCheckBox* mLoadLast;
 
-    //////////////////////////////////////////////////////////////////////////
-    // VIDEO
-    //////////////////////////////////////////////////////////////////////////
-
     wxRadioBox* mFrameRate;
-
-    //////////////////////////////////////////////////////////////////////////
-    // TIMELINE
-    //////////////////////////////////////////////////////////////////////////
 
     wxSpinCtrlDouble*   mMarkerBeginAddition;
     wxSpinCtrlDouble*   mMarkerEndAddition;
     wxTextCtrl*         mStrip;
 
-    static wxString     sStrip; ///< Cached for performance
-
-    //////////////////////////////////////////////////////////////////////////
-    // DEBUG
-    //////////////////////////////////////////////////////////////////////////
-
     wxChoice*   mLogLevel;
     wxCheckBox* mShowDebugInfoOnWidgets;
 
-    static bool sShowDebugInfoOnWidgets; ///< Cached for performance
+    wxPanel* mPanel;       ///< tab:The topmost widget
+    wxBoxSizer* mTopSizer;  ///< tab:Sizer for panel
+    wxBoxSizer* mBoxSizer;  ///< box:Sizer for current box
 
     //////////////////////////////////////////////////////////////////////////
-    // CONFIG FILE PATH
+    // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    static wxString sConfigFile;
-    static wxString sApplicationName;
+    void addtab(const wxString& name);
+    void addbox(const wxString& name);
+    void addoption(const wxString& name, wxWindow* widget);
 };
 
 } // namespace

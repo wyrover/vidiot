@@ -6,6 +6,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
 #include "Options.h"
 #include "ProjectView.h"
 #include "Preview.h"
@@ -166,9 +167,14 @@ Window::Window()
 
 void Window::init()
 {
-    if (Options::GetAutoLoad())
+    if (wxConfigBase::Get()->ReadBool(Config::sPathAutoLoadEnabled,false))
     {
-        GetDocumentManager()->CreateDocument(*Options::GetAutoLoad(), wxDOC_SILENT);
+        wxString filename = wxConfigBase::Get()->Read(Config::sPathAutoLoadFilename,"");
+        if (boost::filesystem::exists(boost::filesystem::path(filename.ToStdString())))
+        {
+            GetDocumentManager()->CreateDocument(filename, wxDOC_SILENT);
+        }
+
     }
 }
 
@@ -232,7 +238,7 @@ void Window::onOpenProject( model::EventOpenProject &event )
 {
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
-    Options::SetAutoLoadFilename(model::Project::get().GetFilename());
+    wxConfigBase::Get()->Write(Config::sPathAutoLoadFilename, model::Project::get().GetFilename());
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
@@ -241,13 +247,14 @@ void Window::onOpenProject( model::EventOpenProject &event )
 
 void Window::onCloseProject( model::EventCloseProject &event )
 {
-    Options::SetAutoLoadFilename("");
+    wxConfigBase::Get()->Write(Config::sPathAutoLoadFilename,"");
+    wxConfigBase::Get()->Flush();
     event.Skip();
 }
 
 void Window::onRenameProject( model::EventRenameProject &event )
 {
-    Options::SetAutoLoadFilename(model::Project::get().GetFilename());
+    wxConfigBase::Get()->Write(Config::sPathAutoLoadFilename,model::Project::get().GetFilename());
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();

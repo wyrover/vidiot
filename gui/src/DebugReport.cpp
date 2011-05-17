@@ -3,6 +3,7 @@
 #include <wx/debugrpt.h>
 #include <wx/confbase.h>
 #include "UtilLog.h"
+#include "Config.h"
 #include "Options.h"
 
 namespace gui {
@@ -26,8 +27,8 @@ void DebugReport::generate(ReportType type)
 
     report.AddAll(ctx);
     
-    report.AddFile(Options::getOptionsFileName(), wxT("options file"));
-    report.AddFile(Options::getLogFileName(), wxT("text log file"));
+    report.AddFile(Config::getFileName(), wxT("options file"));
+    report.AddFile(Log::getFileName(), wxT("text log file"));
 
     if ( wxDebugReportPreviewStd().Show(report) )
     {
