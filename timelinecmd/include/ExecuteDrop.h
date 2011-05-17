@@ -10,6 +10,8 @@ class ExecuteDrop
 {
 public:
 
+    static const pts sNoShift;
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -24,7 +26,7 @@ public:
     };
     typedef std::list<Drop> Drops;
 
-    ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops, pts shiftPosition = -1, pts shiftSize = -1);
+    ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops, pts shiftPosition = sNoShift, pts shiftSize = sNoShift);
 
     ~ExecuteDrop();
 

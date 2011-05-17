@@ -14,6 +14,9 @@
 
 namespace gui { namespace timeline { namespace command {
 
+// static
+const pts ExecuteDrop::sNoShift = -1;
+
 ExecuteDrop::ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops, pts shiftPosition, pts shiftSize)
 :   AClipEdit(timeline)
 ,   mDrags(drags)

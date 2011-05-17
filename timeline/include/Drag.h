@@ -78,8 +78,8 @@ private:
     pts mSnapOffset;                    ///< Resulting offset caused by 'snapping to' a clip
     std::list<pts> mSnaps;              ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
     bool mMustUndo;                     ///< True if a command has been submitted for giving feedback. 
-    pts mShiftPosition;                 ///< Position at which clips must be shifted to make room for the clips being dragged. -1: No shift
-    pts mShiftLength;                   ///< Length of the shift required to make room for the clips being dragged. 0: No shift
+    pts mShiftPosition;                 ///< Position at which clips must be shifted to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
+    pts mShiftLength;                   ///< Length of the shift required to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
 
     //////////////////////////////////////////////////////////////////////////
     // DRAGINFO
