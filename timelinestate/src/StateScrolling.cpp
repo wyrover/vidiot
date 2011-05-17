@@ -20,8 +20,6 @@ namespace gui { namespace timeline { namespace state {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-/** /todo handle mouse focus lost */
-
 StateScrolling::StateScrolling( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {

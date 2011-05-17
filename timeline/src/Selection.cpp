@@ -28,20 +28,6 @@ Selection::~Selection()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Selection::onClipsRemoved( model::EventRemoveClips& event )
-{
-    model::IClips clips = event.getValue().removeClips;
-    if (find(clips.begin(), clips.end(), mPreviouslyClicked) != clips.end())
-    {
-        setPreviouslyClicked(model::IClipPtr()); // Reset
-    }
-    event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +36,20 @@ void Selection::updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool s
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
     // Must be determined before deselecting all clips.
-    bool previousClickedClipWasSelected = mPreviouslyClicked ? mPreviouslyClicked->getSelected() : true;
+    bool previousClickedClipWasSelected = true;
+    if (mPreviouslyClicked)
+    {
+        if (!mPreviouslyClicked->getTrack())
+        {
+            // Apparently, this clip was removed from the track (undo/redo/delete).
+            // It may no longer be used.
+            mPreviouslyClicked = model::IClipPtr(); // reset
+        }
+        else
+        {
+            previousClickedClipWasSelected = mPreviouslyClicked->getSelected();
+        }
+    }
     bool currentClickedClipIsSelected = clip ? clip->getSelected() : false;
 
     // Deselect all clips first, but only if control is not pressed.
@@ -202,16 +201,6 @@ void Selection::selectClip(model::IClipPtr clip, bool selected)
 
 void Selection::setPreviouslyClicked(model::IClipPtr clip)
 {
-    if (mPreviouslyClicked && mPreviouslyClicked->getTrack())
-    {
-        // This clip has been removed from the track.
-        mPreviouslyClicked->getTrack()->Unbind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this);
-    }
-    if (clip)
-    {
-        ASSERT(clip->getTrack())(clip);
-        clip->getTrack()->Bind(model::EVENT_REMOVE_CLIPS, &Selection::onClipsRemoved, this); // todo what about unbind!!!
-    }
     mPreviouslyClicked = clip;
 }
 
