@@ -96,7 +96,7 @@ void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conve
         if (clip->isA<model::Transition>())
         {
             // There is a transition at the given position. Remove it.
-            replaceClip(clip, model::IClips(), conversionmap);
+            removeClip(clip);
         }
         model::IClipPtr clip = track->getClip(position);
         if (clip) // If there is a clip at the given position, it might need to be split
@@ -132,6 +132,11 @@ void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements
 
     //      ============= ADD ===========  ========== REMOVE ===========
     newMove(track, position, replacements, track, position, originallist);
+}
+
+void AClipEdit::removeClip(model::IClipPtr original)
+{
+    replaceClip(original, model::IClips());
 }
 
 AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts left, pts right)

@@ -111,7 +111,6 @@ void Trim::initialize()
         // be used for shifting other tracks?
         ASSERT(mClip->getLeftPts() == linked->getLeftPts());
         ASSERT(mClip->getRightPts() == linked->getRightPts());
-        // end todo
 
         shiftAllTracks(mClip->getLeftPts(), -mDiff,  exclude);
     }

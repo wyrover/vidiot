@@ -44,8 +44,7 @@ void ExecuteDrop::initialize()
         if (clip->isA<model::Transition>())
         {
             // Transitions are simply removed
-            // todo make a removeclip method, can be used more than only here
-            replaceClip(clip, model::IClips());
+            removeClip(clip);
         }
         else
         {
@@ -53,9 +52,9 @@ void ExecuteDrop::initialize()
         }
     }
 
-    LOG_DEBUG << "STEP 1A TODO: Shift all clips that have frames to the right of the leftmost point of the dropped clips to the right";
     if (mShiftPosition >= 0)
     {
+        LOG_DEBUG << "STEP 2: Apply shift";
         BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(mShiftPosition);
@@ -64,10 +63,10 @@ void ExecuteDrop::initialize()
     }
     else
     {
-        LOG_DEBUG << "STEP 1A TODO: NO SHIFT";
+        LOG_DEBUG << "STEP 2: Apply shift (none)";
     }
 
-    LOG_DEBUG << "STEP 2: Execute the drops AND fill replacement map";
+    LOG_DEBUG << "STEP 3: Execute the drops AND fill replacement map";
     BOOST_FOREACH( Drop drop, mDrops )
     {
         ASSERT(drop.position >= 0)(drop.position);
@@ -100,7 +99,7 @@ void ExecuteDrop::initialize()
         newMove(drop.track, remove.second, drop.clips, drop.track, remove.second, remove.first);
     }
 
-    LOG_DEBUG << "STEP 3: Ensure that links are maintained.";
+    LOG_DEBUG << "STEP 4: Ensure that links are maintained.";
     replaceLinks(linkmapper);
 }
 

@@ -83,6 +83,10 @@ protected:
     /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceClip(model::IClipPtr original, model::IClips replacements, ReplacementMap* conversionmap = 0);
 
+    /// Remove the given clip
+    /// \param clip original clip to be removed
+    void removeClip(model::IClipPtr original);
+
     /// Find the list of clips, indicated with the pts'es [left, right). Thus, the left pts is part
     /// of these clips, the right pts is not.
     /// \param track of which the clips are to be removed
