@@ -232,7 +232,6 @@ void MenuHandler::onAddTransition(wxCommandEvent& WXUNUSED(event))
 {
     LOG_INFO;
     PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getRightDownPosition());
-    // todo: direct right down after open timeline not received in statealways....
     ASSERT(info.clip)(info);
 
     model::IClipPtr firstClip;

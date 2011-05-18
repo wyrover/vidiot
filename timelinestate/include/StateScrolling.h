@@ -2,13 +2,13 @@
 #define STATE_SCROLLING_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
 #include "UtilInt.h"
+#include "State.h"
 
 namespace gui { namespace timeline { namespace state {
 
 class StateScrolling 
-    :   public TimeLineState< StateScrolling, StateTop::orthogonal<0> >
+    :   public TimeLineState< StateScrolling, Machine >
 {
 public:
 

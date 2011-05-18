@@ -2,12 +2,12 @@
 #define STATE_MOVING_CURSOR_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
+#include "State.h"
 
 namespace gui { namespace timeline { namespace state {
 
 class MovingCursor
-    :   public TimeLineState< MovingCursor, StateTop::orthogonal<0> >
+    :   public TimeLineState< MovingCursor, Machine >
 {
 public:
 

@@ -2,13 +2,13 @@
 #define STATE_RIGHTDOWN_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
+#include "State.h"
 #include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace state {
 
 class StateRightDown 
-    :   public TimeLineState< StateRightDown, StateTop::orthogonal<0> >
+    :   public TimeLineState< StateRightDown, Machine >
 {
 public:
 

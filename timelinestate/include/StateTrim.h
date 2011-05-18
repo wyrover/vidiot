@@ -2,8 +2,8 @@
 #define STATE_TRIM_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
 #include "UtilInt.h"
+#include "State.h"
 
 namespace model {
 class IClip;
@@ -23,7 +23,7 @@ namespace gui {
 namespace gui { namespace timeline { namespace state {
 
 class Trim
-    :   public TimeLineState< Trim, StateTop::orthogonal<0> >
+    :   public TimeLineState< Trim, Machine >
 {
 public:
 
