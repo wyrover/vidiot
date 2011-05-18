@@ -2,12 +2,12 @@
 #define STATE_PLAYING_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
+#include "State.h"
 
 namespace gui { namespace timeline { namespace state {
 
 class Playing
-    :   public TimeLineState< Playing, StateTop::orthogonal<0> >
+    :   public TimeLineState< Playing, Machine >
 {
 public:
 

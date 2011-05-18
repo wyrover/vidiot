@@ -2,12 +2,12 @@
 #define STATE_DRAGGING_H
 
 #include <boost/statechart/custom_reaction.hpp>
-#include "StateAlways.h"
+#include "State.h"
 
 namespace gui { namespace timeline { namespace state {
 
 class Dragging 
-    :   public TimeLineState< Dragging, StateTop::orthogonal<0> >
+    :   public TimeLineState< Dragging, Machine >
 {
 public:
 
