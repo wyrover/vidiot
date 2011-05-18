@@ -7,6 +7,11 @@
 
 namespace gui { namespace timeline { namespace state {
 
+struct EvLeftUp;
+struct EvMotion;
+struct EvLeave;
+struct EvKeyDown;
+
 class MoveDivider
     :   public TimeLineState< MoveDivider, Machine >
 {

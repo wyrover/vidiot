@@ -3,8 +3,19 @@
 
 #include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
+#include "EventPart.h"
 
 namespace gui { namespace timeline { namespace state {
+
+struct EvLeftUp;
+struct EvDragDrop;
+struct EvMotion;
+struct EvDragMove;
+struct EvLeave;
+struct EvDragEnd;
+struct EvKeyDown;
+struct EvKeyUp;
+struct EvZoomChanged;
 
 class Dragging 
     :   public TimeLineState< Dragging, Machine >
@@ -27,7 +38,8 @@ public:
         boost::statechart::custom_reaction< EvLeave >,
         boost::statechart::custom_reaction< EvDragEnd >,
         boost::statechart::custom_reaction< EvKeyDown >,
-        boost::statechart::custom_reaction< EvKeyUp >
+        boost::statechart::custom_reaction< EvKeyUp >,
+        boost::statechart::custom_reaction< EvZoomChanged >
     > reactions;
 
     //////////////////////////////////////////////////////////////////////////
@@ -42,6 +54,7 @@ public:
     boost::statechart::result react( const EvDragEnd& evt );
     boost::statechart::result react( const EvKeyDown& evt );
     boost::statechart::result react( const EvKeyUp& evt );
+    boost::statechart::result react( const EvZoomChanged& evt );
 };
 
 }}} // namespace

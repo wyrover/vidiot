@@ -56,7 +56,7 @@ static int sSequenceMenuIndex = 0;
 static Window* sCurrent = 0;
 
 Window::Window()
-    :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1200,800))
+    :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1000,600))
     ,	mDocTemplate(new wxDocTemplate(GetDocumentManager(), _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     ,   mWatcher(new FSWatcher())
     ,   mWorker(new Worker())
@@ -130,9 +130,9 @@ Window::Window()
     SetProcessingText(_(""));
 
     mUiManager.SetManagedWindow(this);
-    mUiManager.InsertPane(mProjectView,     wxAuiPaneInfo().BestSize(wxSize(200,500)).MinSize(wxSize(200,500)).Top().Position(0).CaptionVisible(false));
-    mUiManager.InsertPane(mPreview,         wxAuiPaneInfo().BestSize(wxSize(200,100)).MinSize(wxSize(400,100)).Top().Position(1).CaptionVisible(false));
-    mUiManager.InsertPane(mTimelinesView,   wxAuiPaneInfo().BestSize(wxSize(200,100)).MinSize(wxSize(200,100)).Center().CaptionVisible(false));
+    mUiManager.InsertPane(mProjectView,     wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(0).CaptionVisible(false));
+    mUiManager.InsertPane(mPreview,         wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(1).CaptionVisible(false));
+    mUiManager.InsertPane(mTimelinesView,   wxAuiPaneInfo().BestSize(wxSize(400,100)).MinSize(wxSize(400,100)).Center().CaptionVisible(false));
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
     mUiManager.Update();
 

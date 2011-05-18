@@ -11,9 +11,9 @@
 
 namespace gui { namespace timeline {
 
-    DEFINE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
+DEFINE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
 
-    static rational sDefaultZoom(1,5);
+static rational sDefaultZoom(1,5);
 typedef std::list<rational> zoomlist;
 static zoomlist sZooms = boost::assign::list_of
 (rational(1,10))

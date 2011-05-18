@@ -15,6 +15,11 @@ typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves m
 
 namespace gui { namespace timeline { namespace state {
 
+struct EvLeftUp;
+struct EvMotion;
+struct EvLeave;
+struct EvKeyDown;
+
 class StateLeftDown
     :   public TimeLineState< StateLeftDown, Machine >
 {

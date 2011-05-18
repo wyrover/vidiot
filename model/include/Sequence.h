@@ -54,6 +54,11 @@ struct TrackChange
         ,   removePosition(_removePosition)
     {
     }
+    friend std::ostream& operator<<( std::ostream& os, const TrackChange& obj )
+    {
+        os << &obj << '|' << obj.addedTracks << '|' << obj.addPosition << '|' << obj.removedTracks << '|' << obj.removePosition;
+        return os;
+    }
 };
 
 DECLARE_EVENT(EVENT_ADD_VIDEO_TRACK,      EventAddVideoTracks,      TrackChange);

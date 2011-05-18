@@ -1,17 +1,20 @@
 #include "Scrolling.h"
 
-#include "UtilLog.h"
 #include "Timeline.h"
+#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
+
+DEFINE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts); // TODO GENERATE and use 
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
 Scrolling::Scrolling(Timeline* timeline)
-:   Part(timeline)
+:   wxEvtHandler()
+,   Part(timeline)
 {
     VAR_DEBUG(this);
 

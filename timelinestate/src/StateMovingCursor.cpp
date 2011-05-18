@@ -1,10 +1,13 @@
 #include "StateMovingCursor.h"
 
-#include "StateIdle.h"
-#include "UtilLog.h"
 #include "Cursor.h"
+#include "EventDrag.h"
+#include "EventKey.h"
+#include "EventMouse.h"
 #include "Intervals.h"
+#include "StateIdle.h"
 #include "Tooltip.h"
+#include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
 

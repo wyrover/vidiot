@@ -6,6 +6,13 @@
 
 namespace gui { namespace timeline { namespace state {
 
+struct EvLeftDown;
+struct EvLeftUp;
+struct EvMotion;
+struct EvLeave;
+struct EvKeyDown;
+struct EvKeyUp;
+
 class MovingCursor
     :   public TimeLineState< MovingCursor, Machine >
 {

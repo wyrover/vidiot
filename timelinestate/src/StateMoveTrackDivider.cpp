@@ -1,18 +1,21 @@
 #include "StateMoveTrackDivider.h"
 
 #include <boost/foreach.hpp>
-#include "StateIdle.h"
-#include "UtilLog.h"
-#include "MousePointer.h"
-#include "ViewMap.h"
-#include "PositionInfo.h"
-#include "Track.h"
-#include "Layout.h"
-#include "Transition.h"
-#include "SequenceView.h"
-#include "ClipView.h"
 #include "AudioTrack.h"
+#include "ClipView.h"
+#include "EventKey.h"
+#include "EventDrag.h"
+#include "EventMouse.h"
+#include "Layout.h"
+#include "MousePointer.h"
+#include "PositionInfo.h"
+#include "SequenceView.h"
+#include "StateIdle.h"
 #include "Tooltip.h"
+#include "Track.h"
+#include "Transition.h"
+#include "UtilLog.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline { namespace state {
 

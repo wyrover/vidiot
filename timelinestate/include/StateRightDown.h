@@ -3,9 +3,14 @@
 
 #include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
-#include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace state {
+
+struct EvRightDown;
+struct EvRightUp;
+struct EvMotion;
+struct EvLeave;
+struct EvKeyDown;
 
 class StateRightDown 
     :   public TimeLineState< StateRightDown, Machine >

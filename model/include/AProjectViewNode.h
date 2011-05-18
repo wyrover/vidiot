@@ -27,6 +27,11 @@ struct ParentAndChild
     ParentAndChild(model::ProjectViewPtr _parent, model::ProjectViewPtr _child) : parent(_parent), child(_child) {}
     model::ProjectViewPtr parent;
     model::ProjectViewPtr child;
+    friend std::ostream& operator<<( std::ostream& os, const ParentAndChild& obj )
+    {
+        os << &obj << '|' << obj.parent << '|' << obj.child;
+        return os;
+    }
 };
 
 DECLARE_EVENT(EVENT_ADD_ASSET,      EventAddAsset,      ParentAndChild);
@@ -37,6 +42,11 @@ struct NodeWithNewName
     NodeWithNewName(model::ProjectViewPtr _node, wxString _newname) : node(_node), newname(_newname) {}
     model::ProjectViewPtr node;
     wxString newname;
+    friend std::ostream& operator<<( std::ostream& os, const NodeWithNewName& obj )
+    {
+        os << &obj << '|' << obj.node << '|' << obj.newname;
+        return os;
+    }
 };
 
 DECLARE_EVENT(EVENT_RENAME_ASSET,   EventRenameAsset,   NodeWithNewName);

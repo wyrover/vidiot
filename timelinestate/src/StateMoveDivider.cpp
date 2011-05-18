@@ -1,10 +1,13 @@
 #include "StateMoveDivider.h"
 
-#include "StateIdle.h"
-#include "UtilLog.h"
-#include "SequenceView.h"
-#include "Tooltip.h"
+#include "EventDrag.h"
+#include "EventKey.h"
+#include "EventMouse.h"
 #include "Sequence.h"
+#include "SequenceView.h"
+#include "StateIdle.h"
+#include "Tooltip.h"
+#include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
 

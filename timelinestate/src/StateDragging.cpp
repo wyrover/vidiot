@@ -2,10 +2,14 @@
 
 #include <wx/utils.h>
 #include "Drag.h"
-#include "UtilLog.h"
+#include "EventDrag.h"
+#include "EventKey.h"
+#include "EventMouse.h"
+#include "EventPart.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 #include "Timeline.h"
+#include "Tooltip.h"
+#include "UtilLog.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -139,5 +143,13 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
     }
     return forward_event();
 }
+
+boost::statechart::result Dragging::react( const EvZoomChanged& evt )
+{
+    VAR_DEBUG(evt);
+    getDrag().show();
+    return forward_event();
+}
+// todo evt zoom changed vooral ook vror dragstate
 
 }}} // namespace
