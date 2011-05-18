@@ -1,13 +1,16 @@
 #include "StateScrolling.h"
 
 #include "Drag.h"
-#include "UtilLog.h"
-#include "StateIdle.h"
-#include "Tooltip.h"
+#include "EventDrag.h"
+#include "EventKey.h"
+#include "EventMouse.h"
 #include "Menu.h"
-#include "Timeline.h"
 #include "MousePointer.h"
 #include "Scrolling.h"
+#include "StateIdle.h"
+#include "Timeline.h"
+#include "Tooltip.h"
+#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {

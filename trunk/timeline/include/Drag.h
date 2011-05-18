@@ -33,13 +33,24 @@ public:
     // START/STOP
     //////////////////////////////////////////////////////////////////////////
 
+    /// Must be called whenever a new drag operation is initiated.
     /// \param isInsideDrag true if this is a drag within the timeline, false if there are new clips being dragged into the timeline (from the project view)
     void start(wxPoint hotspot, bool isInsideDrag);
 
+    /// Must be called to show the current drag image. Is required when starting
+    /// a new drag, but also when the drag needs to be redisplayed (for instance,
+    /// as a result of zooming).
+    void show();
+
+    /// Move the drag image to the given position. 
     /// \param position move the mouse pointer to this position
     void move(wxPoint position);
 
+    /// Execute the drop. 
     void drop();
+
+    /// Stop the drag operation, to be called after a drop has been executed or
+    /// the drag operation has been canceled.
     void stop();
 
     //////////////////////////////////////////////////////////////////////////
@@ -66,8 +77,9 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mIsInsideDrag;                 ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
-    model::IClips mDraggedClips;         ///< List of all clips currently being dragged
+    model::IClips mDraggedClips;        ///< List of all clips currently being dragged
     wxPoint mHotspot;                   ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
+    pts mHotspotPts;                    ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
     wxPoint mPosition;                  ///< Current pointer drag position. In timeline coordinates.
     wxBitmap mBitmap;                   ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 
     wxPoint mBitmapOffset;              ///< This offset ensures that correct areas can be used when positioning on the timeline.

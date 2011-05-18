@@ -131,6 +131,9 @@ Options::~Options()
         wxConfigBase::Get()->Write( Config::sPathStrip,                     mStrip->GetValue());
 
         wxConfigBase::Get()->Flush();
+
+        // Use new values
+        Log::SetReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
     }
 }
 

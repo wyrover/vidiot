@@ -1,10 +1,14 @@
 #include "State.h"
 
-#include "Timeline.h"
-#include "StateIdle.h"
-#include "UtilLog.h"
-#include "Scrolling.h"
+#include "EventDrag.h"
+#include "EventKey.h"
+#include "EventMouse.h"
+#include "EventPart.h"
 #include "MousePointer.h"
+#include "Scrolling.h"
+#include "StateIdle.h"
+#include "Timeline.h"
+#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -18,23 +22,25 @@ Machine::Machine(Timeline& tl)
 {
     initiate();
 
-    getTimeline().Bind(wxEVT_MOTION,                 &Machine::onMotion,         this);
-    getTimeline().Bind(wxEVT_LEFT_DOWN,              &Machine::onLeftDown,       this);
-    getTimeline().Bind(wxEVT_LEFT_UP,                &Machine::onLeftUp,         this);
-    getTimeline().Bind(wxEVT_LEFT_DCLICK,            &Machine::onLeftDouble,     this);
-    getTimeline().Bind(wxEVT_MIDDLE_DOWN,            &Machine::onMiddleDown,     this);
-    getTimeline().Bind(wxEVT_MIDDLE_UP,              &Machine::onMiddleUp,       this);
-    getTimeline().Bind(wxEVT_MIDDLE_DCLICK,          &Machine::onMiddleDouble,   this);
-    getTimeline().Bind(wxEVT_RIGHT_DOWN,             &Machine::onRightDown,      this);
-    getTimeline().Bind(wxEVT_RIGHT_UP,               &Machine::onRightUp,        this);
-    getTimeline().Bind(wxEVT_RIGHT_DCLICK,           &Machine::onRightDouble,    this);
-    getTimeline().Bind(wxEVT_ENTER_WINDOW,           &Machine::onEnter,          this);
-    getTimeline().Bind(wxEVT_LEAVE_WINDOW,           &Machine::onLeave,          this);
-    getTimeline().Bind(wxEVT_MOUSEWHEEL,             &Machine::onWheel,          this);
-    getTimeline().Bind(wxEVT_KEY_DOWN,               &Machine::onKeyDown,        this);
-    getTimeline().Bind(wxEVT_KEY_UP,                 &Machine::onKeyUp,          this);
-    getTimeline().Bind(wxEVT_MOUSE_CAPTURE_LOST,     &Machine::onCaptureLost,    this);
-    getTimeline().Bind(wxEVT_MOUSE_CAPTURE_CHANGED,  &Machine::onCaptureChanged, this);
+    getTimeline().  Bind(wxEVT_MOTION,                  &Machine::onMotion,         this);
+    getTimeline().  Bind(wxEVT_LEFT_DOWN,               &Machine::onLeftDown,       this);
+    getTimeline().  Bind(wxEVT_LEFT_UP,                 &Machine::onLeftUp,         this);
+    getTimeline().  Bind(wxEVT_LEFT_DCLICK,             &Machine::onLeftDouble,     this);
+    getTimeline().  Bind(wxEVT_MIDDLE_DOWN,             &Machine::onMiddleDown,     this);
+    getTimeline().  Bind(wxEVT_MIDDLE_UP,               &Machine::onMiddleUp,       this);
+    getTimeline().  Bind(wxEVT_MIDDLE_DCLICK,           &Machine::onMiddleDouble,   this);
+    getTimeline().  Bind(wxEVT_RIGHT_DOWN,              &Machine::onRightDown,      this);
+    getTimeline().  Bind(wxEVT_RIGHT_UP,                &Machine::onRightUp,        this);
+    getTimeline().  Bind(wxEVT_RIGHT_DCLICK,            &Machine::onRightDouble,    this);
+    getTimeline().  Bind(wxEVT_ENTER_WINDOW,            &Machine::onEnter,          this);
+    getTimeline().  Bind(wxEVT_LEAVE_WINDOW,            &Machine::onLeave,          this);
+    getTimeline().  Bind(wxEVT_MOUSEWHEEL,              &Machine::onWheel,          this);
+    getTimeline().  Bind(wxEVT_KEY_DOWN,                &Machine::onKeyDown,        this);
+    getTimeline().  Bind(wxEVT_KEY_UP,                  &Machine::onKeyUp,          this);
+    getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_LOST,      &Machine::onCaptureLost,    this);
+    getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_CHANGED,   &Machine::onCaptureChanged, this);
+    getZoom().      Bind(ZOOM_CHANGE_EVENT,             &Machine::onZoomChanged,    this);
+    getScrolling(). Bind(SCROLL_CHANGE_EVENT,           &Machine::onScrollChanged,  this);
 
     VAR_DEBUG(this);
 }
@@ -43,23 +49,25 @@ Machine::~Machine()
 {
     VAR_DEBUG(this);
 
-    getTimeline().Unbind(wxEVT_MOTION,                 &Machine::onMotion,         this);
-    getTimeline().Unbind(wxEVT_LEFT_DOWN,              &Machine::onLeftDown,       this);
-    getTimeline().Unbind(wxEVT_LEFT_UP,                &Machine::onLeftUp,         this);
-    getTimeline().Unbind(wxEVT_LEFT_DCLICK,            &Machine::onLeftDouble,     this);
-    getTimeline().Unbind(wxEVT_MIDDLE_DOWN,            &Machine::onMiddleDown,     this);
-    getTimeline().Unbind(wxEVT_MIDDLE_UP,              &Machine::onMiddleUp,       this);
-    getTimeline().Unbind(wxEVT_MIDDLE_DCLICK,          &Machine::onMiddleDouble,   this);
-    getTimeline().Unbind(wxEVT_RIGHT_DOWN,             &Machine::onRightDown,      this);
-    getTimeline().Unbind(wxEVT_RIGHT_UP,               &Machine::onRightUp,        this);
-    getTimeline().Unbind(wxEVT_RIGHT_DCLICK,           &Machine::onRightDouble,    this);
-    getTimeline().Unbind(wxEVT_ENTER_WINDOW,           &Machine::onEnter,          this);
-    getTimeline().Unbind(wxEVT_LEAVE_WINDOW,           &Machine::onLeave,          this);
-    getTimeline().Unbind(wxEVT_MOUSEWHEEL,             &Machine::onWheel,          this);
-    getTimeline().Unbind(wxEVT_KEY_DOWN,               &Machine::onKeyDown,        this);
-    getTimeline().Unbind(wxEVT_KEY_UP,                 &Machine::onKeyUp,          this);
-    getTimeline().Unbind(wxEVT_MOUSE_CAPTURE_LOST,     &Machine::onCaptureLost,    this);
-    getTimeline().Unbind(wxEVT_MOUSE_CAPTURE_CHANGED,  &Machine::onCaptureChanged, this);
+    getTimeline().  Unbind(wxEVT_MOTION,                &Machine::onMotion,         this);
+    getTimeline().  Unbind(wxEVT_LEFT_DOWN,             &Machine::onLeftDown,       this);
+    getTimeline().  Unbind(wxEVT_LEFT_UP,               &Machine::onLeftUp,         this);
+    getTimeline().  Unbind(wxEVT_LEFT_DCLICK,           &Machine::onLeftDouble,     this);
+    getTimeline().  Unbind(wxEVT_MIDDLE_DOWN,           &Machine::onMiddleDown,     this);
+    getTimeline().  Unbind(wxEVT_MIDDLE_UP,             &Machine::onMiddleUp,       this);
+    getTimeline().  Unbind(wxEVT_MIDDLE_DCLICK,         &Machine::onMiddleDouble,   this);
+    getTimeline().  Unbind(wxEVT_RIGHT_DOWN,            &Machine::onRightDown,      this);
+    getTimeline().  Unbind(wxEVT_RIGHT_UP,              &Machine::onRightUp,        this);
+    getTimeline().  Unbind(wxEVT_RIGHT_DCLICK,          &Machine::onRightDouble,    this);
+    getTimeline().  Unbind(wxEVT_ENTER_WINDOW,          &Machine::onEnter,          this);
+    getTimeline().  Unbind(wxEVT_LEAVE_WINDOW,          &Machine::onLeave,          this);
+    getTimeline().  Unbind(wxEVT_MOUSEWHEEL,            &Machine::onWheel,          this);
+    getTimeline().  Unbind(wxEVT_KEY_DOWN,              &Machine::onKeyDown,        this);
+    getTimeline().  Unbind(wxEVT_KEY_UP,                &Machine::onKeyUp,          this);
+    getTimeline().  Unbind(wxEVT_MOUSE_CAPTURE_LOST,    &Machine::onCaptureLost,    this);
+    getTimeline().  Unbind(wxEVT_MOUSE_CAPTURE_CHANGED, &Machine::onCaptureChanged, this);
+    getZoom().      Unbind(ZOOM_CHANGE_EVENT,           &Machine::onZoomChanged,    this);
+    getScrolling(). Unbind(SCROLL_CHANGE_EVENT,         &Machine::onScrollChanged,  this);
 }
 
 void Machine::onMotion(wxMouseEvent& event)
@@ -185,5 +193,17 @@ void Machine::onCaptureLost(wxMouseCaptureLostEvent& event)
 void Machine::onCaptureChanged(wxMouseCaptureChangedEvent& event) 
 {
 };
+
+void Machine::onZoomChanged( timeline::ZoomChangeEvent& event )
+{
+    process_event(EvZoomChanged(event));
+    event.Skip();
+}
+
+void Machine::onScrollChanged( timeline::ScrollChangeEvent& event )
+{
+    process_event(EvScrollChanged(event));
+    event.Skip();
+}
 
 }}} // namespace

@@ -6,6 +6,10 @@
 
 namespace gui { namespace timeline { namespace state {
 
+struct EvLeftDown;
+struct EvKeyDown;
+struct EvKeyUp;
+
 class Playing
     :   public TimeLineState< Playing, Machine >
 {

@@ -22,6 +22,12 @@ namespace gui {
 
 namespace gui { namespace timeline { namespace state {
 
+struct EvLeftUp;
+struct EvLeave;
+struct EvMotion;
+struct EvKeyUp;
+struct EvKeyDown;
+
 class Trim
     :   public TimeLineState< Trim, Machine >
 {

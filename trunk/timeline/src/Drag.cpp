@@ -1,42 +1,43 @@
 #include "Drag.h"
 
+#include <wx/config.h>
 #include <wx/dnd.h>
 #include <wx/pen.h>
 #include <wx/tooltip.h>
-#include <wx/config.h>
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
-#include <boost/assign/list_of.hpp>
-#include "Timeline.h"
-#include "MousePointer.h"
-#include "VideoFile.h"
-#include "AudioFile.h"
-#include "PositionInfo.h"
-#include "Layout.h"
-#include "VideoClip.h"
-#include "Config.h"
 #include "AudioClip.h"
-#include "EmptyClip.h"
-#include "Cursor.h"
-#include "VideoTrack.h"
+#include "AudioFile.h"
 #include "AudioTrack.h"
-#include "File.h"
-#include "State.h"
-#include "TrackView.h"
-#include "ProjectView.h"
-#include "Scrolling.h"
-#include "UtilLogWxwidgets.h"
-#include "UtilList.h"
-#include "Track.h"
-#include "Sequence.h"
-#include "Selection.h"
-#include "SequenceView.h"
-#include "ViewMap.h"
-#include "Zoom.h"
-#include "DataObject.h"
-#include "UtilLogStl.h"
 #include "Clip.h"
 #include "ClipView.h"
+#include "Config.h"
+#include "Cursor.h"
+#include "DataObject.h"
+#include "EmptyClip.h"
+#include "EventDrag.h"
+#include "File.h"
+#include "Layout.h"
+#include "MousePointer.h"
+#include "PositionInfo.h"
+#include "ProjectView.h"
+#include "Scrolling.h"
+#include "Selection.h"
+#include "Sequence.h"
+#include "SequenceView.h"
+#include "State.h"
+#include "Timeline.h"
+#include "Track.h"
+#include "TrackView.h"
+#include "UtilList.h"
+#include "UtilLogStl.h"
+#include "UtilLogWxwidgets.h"
+#include "VideoClip.h"
+#include "VideoFile.h"
+#include "VideoTrack.h"
+#include "ViewMap.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -139,6 +140,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     mActive = true;
     mIsInsideDrag = isInsideDrag;
     mHotspot = hotspot;
+    mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
     mPosition = hotspot;
     mBitmapOffset = wxPoint(0,0);
     mDropTrack = info.track;
@@ -171,8 +173,16 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 
     determinePossibleSnapPoints();
     determinePossibleDragPoints(); // Required initialized mDraggedClips
+    show();
+}
+
+void Drag::show()
+{
+    // mHotspotPts must be aligned with pixelsToPts(position)
+    mHotspot.x = getZoom().ptsToPixels(mHotspotPts);
     mBitmap = getDragBitmap();
-    move(hotspot);
+    move(mHotspot);
+
 }
 
 void Drag::move(wxPoint position)
@@ -190,10 +200,11 @@ void Drag::move(wxPoint position)
 
     PointerPositionInfo info = getMousePointer().getInfo(position);
 
-    if (wxGetMouseState().ControlDown())
+    if (wxGetMouseState().ControlDown() && false)
     {
         // As long as CTRL is down, the dragged image stays the same, but the hotspot is moved
         mHotspot -=  mPosition - position;
+        mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
         updateDraggedTrack(info.track);
     }
     else if (!info.track || info.track == mDropTrack)
@@ -547,6 +558,7 @@ void Drag::reset()
 {
     mDraggedClips.clear();
     mHotspot = wxPoint(0,0);
+    mHotspotPts = 0;
     mPosition = wxPoint(0,0);
     mBitmapOffset = wxPoint(0,0);
     mSnapPoints.clear();
