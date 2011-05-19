@@ -150,6 +150,5 @@ boost::statechart::result Dragging::react( const EvZoomChanged& evt )
     getDrag().show();
     return forward_event();
 }
-// todo evt zoom changed vooral ook vror dragstate
 
 }}} // namespace

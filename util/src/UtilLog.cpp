@@ -158,7 +158,8 @@ LogVar::~LogVar()
 {
     if (mAssert)
     {
-        /** /todo how to guarantee that this log line is always written to file, given the fact that the next step is termination of the logging... */
+        // NOTE: In this case, the debug break may cause the log line not to be written to file.
+        //       Not an issue, since this is for developers only.
         Log().Get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str() ;
         IAssert::breakIntoDebugger(*mAssert);
     }

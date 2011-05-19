@@ -299,7 +299,10 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
         if (amount > 0)
         {
             model::IClipPtr clip = track->getClip(start);
-            replaceClip(clip, makeEmptyClips(amount)); // todo shouldn't clip be preserved here. Now it's 'thrown away'...
+            model::IClipPtr clone = make_cloned<model::IClip>(clip);
+            model::IClips newClips = makeEmptyClips(amount);
+            newClips.push_front(clone);
+            replaceClip(clip, newClips);
         }
         else // (amount < 0)
         {
