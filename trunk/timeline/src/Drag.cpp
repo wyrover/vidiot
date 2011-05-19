@@ -200,7 +200,7 @@ void Drag::move(wxPoint position)
 
     PointerPositionInfo info = getMousePointer().getInfo(position);
 
-    if (wxGetMouseState().ControlDown() && false)
+    if (wxGetMouseState().ControlDown())
     {
         // As long as CTRL is down, the dragged image stays the same, but the hotspot is moved
         mHotspot -=  mPosition - position;
@@ -415,10 +415,6 @@ void Drag::draw(wxDC& dc) const
     dc.SetBrush(Layout::sSnapBrush);
     BOOST_FOREACH( pts snap, mSnaps )
     {
-        //if ((mShiftPosition != -1) && (snap >= mShiftPosition))
-        //{
-        //    snap += mShiftLength;
-        //}
         dc.DrawLine(getZoom().ptsToPixels(snap),0,getZoom().ptsToPixels(snap),dc.GetSize().GetHeight());
     }
 }

@@ -161,7 +161,7 @@ void Machine::onWheel(wxMouseEvent& event)
         int x;
         int y;
         getTimeline().GetViewStart(&x,&y);
-        static const int sHorizontalScrollfactor = 25;
+        static const int sHorizontalScrollfactor = 100;
         getTimeline().Scroll(x - nSteps * sHorizontalScrollfactor,y);
     }
     else

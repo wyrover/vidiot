@@ -6,7 +6,7 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts); // TODO GENERATE and use 
+DEFINE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
