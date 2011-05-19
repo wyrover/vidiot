@@ -1,4 +1,3 @@
-* Hangup:
-  Autoload project -> Close project -> Exit
-  
+* Maintain separate (undo) history per timeline... Now, when editing in timeline 1, switching to timeline 2 and pressing undo, the last action in timeline 1 can be undone.
+
   
