@@ -137,7 +137,7 @@ void TrackView::setShift(pts position, pts length)
 
 void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
 {
-    wxPoint adjustedPosition(position); // todo adjust: make into one method
+    wxPoint adjustedPosition(position);
     if (position.x >= getZoom().ptsToPixels(mShiftPosition))
     {
         if (position.x >= getZoom().ptsToPixels(mShiftPosition + mShiftLength))
@@ -146,7 +146,7 @@ void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) con
         }
         else
         {
-            return; // inside shifted stuk
+            return; // Inside shifted area. No clip there.
         }
     }
     info.clip = mTrack->getClip(getZoom().pixelsToPts(adjustedPosition.x));
