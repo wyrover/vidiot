@@ -4,16 +4,11 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "AutoFolder.h"
-#include "VideoFile.h"
-#include "AudioFile.h"
-#include "VideoClip.h"
 #include "Window.h"
 #include "TimeLinesView.h"
-#include "AudioClip.h"
-#include "VideoTrack.h"
-#include "AudioTrack.h"
 #include "Folder.h"
 #include "Sequence.h"
+#include "TrackCreator.h"
 
 namespace command {
 
@@ -60,34 +55,18 @@ bool ProjectViewCreateSequence::Do()
     if (!mSequence)
     {
         mSequence = boost::make_shared<model::Sequence>(mName);
-        model::VideoTrackPtr videoTrack = boost::make_shared<model::VideoTrack>();
-        model::AudioTrackPtr audioTrack = boost::make_shared<model::AudioTrack>();
-        mSequence->addVideoTracks(boost::assign::list_of(videoTrack));
-        mSequence->addAudioTracks(boost::assign::list_of(audioTrack));
 
         if (mInputFolder)
         {
+            // todo remove the update: we have fswatcher now....
             model::AutoFolderPtr autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(mInputFolder);
             if (autofolder)
             {
                 autofolder->update();
             }
-            BOOST_FOREACH( model::ProjectViewPtr child, mInputFolder->getChildren())
-            {
-                model::FilePtr file = boost::dynamic_pointer_cast<model::File>(child);
-                if (file)
-                {
-                    VAR_DEBUG(file);
-                    model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-                    model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-                    model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
-                    model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
-                    videoClip->setLink(audioClip);
-                    audioClip->setLink(videoClip);
-                    videoTrack->addClips(boost::assign::list_of(videoClip));
-                    audioTrack->addClips(boost::assign::list_of(audioClip));
-                }
-            }
+            TrackCreator c(mInputFolder->getChildren());
+            mSequence->addVideoTracks(boost::assign::list_of(c.getVideoTrack()));
+            mSequence->addAudioTracks(boost::assign::list_of(c.getAudioTrack()));
         }
     }
 

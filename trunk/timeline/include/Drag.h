@@ -160,8 +160,6 @@ private:
     /// Reset all members used for the dragging process.
     void reset();
 
-    void makeTracksFromProjectView();
-
     /// \return the track that is currently dragged on top of 'track'
     /// \return 0 if no track is found on top of this track
     /// \param track a track in the timeline

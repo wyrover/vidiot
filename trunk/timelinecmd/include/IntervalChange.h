@@ -18,7 +18,6 @@ public:
     /// \param begin begin pts of interval.
     /// \param end end pts of interval
     /// \param add true if interval must be added, false if interval must be removed
-    /// \todo Clean up these commands when the associated timeline is destroyed. Hmmm, or make closing the timeline undo-able.
     IntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add);
 
     ~IntervalChange();
