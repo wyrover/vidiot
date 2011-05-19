@@ -1,12 +1,12 @@
 #include "Drag.h"
 
+#include <boost/assign/list_of.hpp>
+#include <boost/foreach.hpp>
+#include <boost/function.hpp>
 #include <wx/config.h>
 #include <wx/dnd.h>
 #include <wx/pen.h>
 #include <wx/tooltip.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
 #include "AudioClip.h"
 #include "AudioFile.h"
 #include "AudioTrack.h"
@@ -29,6 +29,7 @@
 #include "State.h"
 #include "Timeline.h"
 #include "Track.h"
+#include "TrackCreator.h"
 #include "TrackView.h"
 #include "UtilList.h"
 #include "UtilLogStl.h"
@@ -147,9 +148,12 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 
     if (!mIsInsideDrag)
     {
-        makeTracksFromProjectView();
+        ::command::TrackCreator c(ProjectViewDropSource::current().getData().getAssets());
+        mVideo.setTempTrack(c.getVideoTrack());
+        mAudio.setTempTrack(c.getAudioTrack());
         mDraggedTrack = mVideo.getTempTrack();
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
+        mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
 
         // When dragging new clips into the timeline, the clips also need to be removed first.
         // This ensures that any used View classes are destroyed. Otherwise, there remain multiple
@@ -568,35 +572,6 @@ void Drag::reset()
     mMustUndo = false;
     mShiftPosition = -1;
     mShiftLength = 0;
-}
-
-void Drag::makeTracksFromProjectView()
-{
-    std::list<model::ProjectViewPtr> draggedAssets = ProjectViewDropSource::current().getData().getAssets();
-    // todo refactor into method to be reused in createsequencecommand...
-
-    model::VideoTrackPtr videoTrack = boost::make_shared<model::VideoTrack>();
-    model::AudioTrackPtr audioTrack = boost::make_shared<model::AudioTrack>();
-
-    BOOST_FOREACH( model::ProjectViewPtr asset, draggedAssets )
-    {
-        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
-        if (file)
-        {
-            VAR_DEBUG(file);
-            model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-            model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-            // todo hasvideo and has audio. If not, use emptyclip in other track
-            model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
-            model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
-            videoClip->setLink(audioClip);
-            audioClip->setLink(videoClip);
-            videoTrack->addClips(boost::assign::list_of(videoClip));
-            audioTrack->addClips(boost::assign::list_of(audioClip));
-        }
-    }
-    mVideo.setTempTrack(videoTrack);
-    mAudio.setTempTrack(audioTrack);
 }
 
 model::TrackPtr Drag::trackOnTopOf(model::TrackPtr track)

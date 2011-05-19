@@ -1,3 +1,4 @@
 * Maintain separate (undo) history per timeline... Now, when editing in timeline 1, switching to timeline 2 and pressing undo, the last action in timeline 1 can be undone.
+  OR: Make closing the timeline a command which can be undone. Separate history more user friendly.
 
   
