@@ -31,9 +31,16 @@ public:
         ,   mFifo(sMaximumBufferedLoglines)
         ,   mFile(0)
     {
-        /** /todo what if file not possible (no such disk)  use boost to determine first */
         mFile = _fsopen(sFilename.c_str(),"w",_SH_DENYWR);
-        mThread.reset(new boost::thread(boost::bind(&LogWriter::thread,this)));
+        if (!mFile)
+        {
+            // If file open fails, mFile == 0. Then, nothing will be logged.
+            mEnabled = false;
+        }
+        else
+        {
+            mThread.reset(new boost::thread(boost::bind(&LogWriter::thread,this)));
+        }
     }
     ~LogWriter()
     {
@@ -48,6 +55,7 @@ public:
             fclose(mFile);
             mFile = 0;
         }
+        mFifo.flush();
     }
     void write(const std::string& logLine)
     {
