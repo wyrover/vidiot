@@ -68,7 +68,6 @@ std::ostream& operator<< (std::ostream& os, const PixelFormat& obj)
 
 std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
 {
-    /** /todo skip_frame in order to skip video frames? */
     if (obj)
     {
         os  << '{'
