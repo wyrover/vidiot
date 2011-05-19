@@ -1,27 +1,28 @@
 #include "TrackView.h"
 
+#include <algorithm>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/foreach.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
-#include <boost/foreach.hpp>
-#include <algorithm>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include <wx/pen.h>
-#include "Layout.h"
-#include "Zoom.h"
-#include "ClipView.h"
-#include "UtilLog.h"
 #include "AProjectViewNode.h"
-#include "UtilLogStl.h"
-#include "Transition.h"
-#include "Drag.h"
 #include "Clip.h"
+#include "ClipView.h"
+#include "Drag.h"
+#include "Layout.h"
+#include "PositionInfo.h"
 #include "Selection.h"
 #include "Track.h"
+#include "TrackEvent.h"
+#include "Transition.h"
+#include "UtilLog.h"
+#include "UtilLogStl.h"
 #include "ViewMap.h"
-#include "PositionInfo.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 

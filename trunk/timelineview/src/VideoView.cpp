@@ -11,6 +11,7 @@
 #include "PositionInfo.h"
 #include "Timeline.h"
 #include "SequenceView.h"
+#include "SequenceEvent.h"
 
 namespace gui { namespace timeline {
 

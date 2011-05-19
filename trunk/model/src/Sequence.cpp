@@ -7,23 +7,17 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
-#include "Window.h"
-#include "VideoTrack.h"
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
+#include "SequenceEvent.h"
+#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilSerializeWxwidgets.h"
-#include "UtilList.h"
+#include "VideoTrack.h"
+#include "Window.h"
 
 namespace model {
-
-    // todo SequenceEvents files
-
-DEFINE_EVENT(EVENT_ADD_VIDEO_TRACK,      EventAddVideoTracks,      TrackChange);
-DEFINE_EVENT(EVENT_REMOVE_VIDEO_TRACK,   EventRemoveVideoTracks,   TrackChange);
-DEFINE_EVENT(EVENT_ADD_AUDIO_TRACK,      EventAddAudioTracks,      TrackChange);
-DEFINE_EVENT(EVENT_REMOVE_AUDIO_TRACK,   EventRemoveAudioTracks,   TrackChange);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

@@ -1,10 +1,11 @@
 #ifndef UTIL_LOG_STL_H
 #define UTIL_LOG_STL_H
 
+#include <boost/foreach.hpp>
 #include <list>
 #include <map>
 #include <ostream>
-#include <boost/foreach.hpp>
+#include <vector>
 
 template <class T>
 std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)

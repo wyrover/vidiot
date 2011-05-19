@@ -15,6 +15,7 @@
 #include "Zoom.h"
 #include "Constants.h"
 #include "Sequence.h"
+#include "SequenceEvent.h"
 
 namespace gui { namespace timeline {
 

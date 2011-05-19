@@ -3,20 +3,21 @@
 #include <wx/dcmemory.h>
 #include <wx/pen.h>
 #include "Config.h"
-#include "Zoom.h"
-#include "Layout.h"
-#include "Drag.h"
-#include "UtilLog.h"
-#include "VideoFrame.h"
-#include "VideoClip.h"
-#include "EmptyClip.h"
-#include "Selection.h"
-#include "ViewMap.h"
-#include "Track.h"
-#include "Options.h"
-#include "Transition.h"
 #include "Clip.h"
+#include "ClipEvent.h"
+#include "Drag.h"
+#include "EmptyClip.h"
+#include "Layout.h"
+#include "Options.h"
 #include "PositionInfo.h"
+#include "Selection.h"
+#include "Track.h"
+#include "Transition.h"
+#include "UtilLog.h"
+#include "VideoClip.h"
+#include "VideoFrame.h"
+#include "ViewMap.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 

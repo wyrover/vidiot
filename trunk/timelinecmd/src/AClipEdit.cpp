@@ -1,17 +1,18 @@
 #include "AClipEdit.h"
 
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/assign/list_of.hpp>
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "Track.h"
-#include "Timeline.h"
-#include "Sequence.h"
 #include "Clip.h"
 #include "Cursor.h"
-#include "Transition.h"
 #include "EmptyClip.h"
+#include "Sequence.h"
+#include "Timeline.h"
+#include "Track.h"
+#include "TrackEvent.h"
+#include "Transition.h"
+#include "UtilLog.h"
+#include "UtilLogStl.h"
 
 namespace gui { namespace timeline { namespace command {
 

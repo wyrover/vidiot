@@ -1,28 +1,25 @@
 #include "Track.h"
 
-#include <wx/intl.h> 
 #include <algorithm>
-#include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/list.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/serialization/base_object.hpp>
-#include "UtilLog.h"
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include <wx/intl.h> 
 #include "AProjectViewNode.h"
-#include "UtilLogStl.h"
-#include "Constants.h"
 #include "Clip.h"
+#include "Constants.h"
+#include "EmptyClip.h"
+#include "TrackEvent.h"
 #include "Transition.h"
 #include "UtilList.h"
-#include "EmptyClip.h"
+#include "UtilLog.h"
+#include "UtilLogStl.h"
 
 namespace model {
-
-DEFINE_EVENT(EVENT_ADD_CLIPS,           EventAddClips,          MoveParameter);
-DEFINE_EVENT(EVENT_REMOVE_CLIPS,        EventRemoveClips,       MoveParameter);
-DEFINE_EVENT(EVENT_HEIGHT_CHANGED,      EventHeightChanged,     int);
 
 Track::Track()
 :	IControl()
@@ -363,12 +360,6 @@ void Track::updateClips()
 std::ostream& operator<<( std::ostream& os, const Track& obj )
 {
     os << &obj << '|' << obj.mIndex << '|' << obj.mHeight << '|' << obj.mClips;
-    return os;
-}
-
-std::ostream& operator<<( std::ostream& os, const MoveParameter& obj )
-{
-    os << obj.removeTrack << '|' << obj.removePosition << '|' << obj.removeClips << '|' << obj.addTrack << '|' << obj.addPosition << '|' << obj.addClips; 
     return os;
 }
 
