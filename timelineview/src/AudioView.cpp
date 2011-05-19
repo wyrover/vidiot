@@ -9,6 +9,7 @@
 #include "PositionInfo.h"
 #include "ViewMap.h"
 #include "SequenceView.h"
+#include "SequenceEvent.h"
 
 namespace gui { namespace timeline {
 

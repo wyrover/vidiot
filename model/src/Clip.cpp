@@ -1,13 +1,14 @@
 #include "Clip.h"
 
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
 #include <boost/foreach.hpp>
-#include "UtilLog.h"
-#include "Track.h"
+#include <boost/serialization/shared_ptr.hpp>
+#include "ClipEvent.h"
 #include "Config.h"
 #include "File.h"
+#include "Track.h"
+#include "UtilLog.h"
 
 namespace model {
 
