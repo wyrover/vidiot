@@ -32,28 +32,14 @@ SequenceView::SequenceView(View* parent)
 
     // Ensure that for newly opened timelines the initial position is ok
     resetDividerPosition();
-
-    getSequence()->Bind(model::EVENT_ADD_VIDEO_TRACK, &SequenceView::onVideoTracksAdded, this);
 }
 
 SequenceView::~SequenceView()
 {
     VAR_DEBUG(this);
 
-    getSequence()->Unbind(model::EVENT_ADD_VIDEO_TRACK, &SequenceView::onVideoTracksAdded, this);
-
     delete mAudioView;      mAudioView = 0;
     delete mVideoView;      mVideoView = 0;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void SequenceView::onVideoTracksAdded( model::EventAddVideoTracks& event )
-{
-    resetDividerPosition();
-    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
