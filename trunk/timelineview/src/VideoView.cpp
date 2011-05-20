@@ -61,6 +61,10 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
         new TrackView(track,this);
     }
     invalidateBitmap();
+    // Not via an event in sequence view, since the added video track must 
+    // first be incorporated in the VideoView (the divider height requires 
+    // the correct video height).
+    getSequenceView().resetDividerPosition();
     event.Skip();
 }
 
