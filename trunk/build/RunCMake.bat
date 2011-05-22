@@ -18,7 +18,9 @@ if NOT EXIST GCCR mkdir GCCR
 REM add --trace to a cmake line for more logging 
 
 cd %BUILD_DIR%\MSVC
-cmake -G "Visual Studio 9 2008" -Wdev --debug-output %SOURCE%
+set OUTTYPE="Visual Studio 9 2008"
+if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10 2010"
+cmake -G "%OUTTYPE%" -Wdev --debug-output %SOURCE%
 cmake -LAH  %SOURCE% > CMakeVariables.txt
 pause
 exit
