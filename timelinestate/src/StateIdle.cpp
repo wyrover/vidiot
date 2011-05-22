@@ -158,6 +158,8 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         switch (evt.mWxEvent.GetUnicodeKey())
         {
         case 'S':   model::Project::get().Submit(new command::SplitAtCursor(getTimeline())); break;
+        case ' ':     return start();                                 break;
+
         }
     }
     else
@@ -184,8 +186,8 @@ boost::statechart::result Idle::react( const EvDragEnter& evt)
 
 boost::statechart::result Idle::start()
 {
-getPlayer()->play();
-return transit<Playing>();
+    getPlayer()->play();
+    return transit<Playing>();
 }
 
 }}} // namespace
