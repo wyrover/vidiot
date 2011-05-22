@@ -65,22 +65,20 @@ void Selection::updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool s
     {
         if (altPressed)
         {
+            // Select until the end
             model::IClipPtr firstclip;
-            model::IClipPtr lastclip;
-
-            /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
             BOOST_FOREACH( model::IClipPtr c, track->getClips() )
             {
-                if (c == mPreviouslyClicked)
+                if (c == clip)
                 {
                     firstclip = c;
                 }
                 if (firstclip)
                 {
-                    selectClipAndLink(c ,!currentClickedClipIsSelected);
+                    selectClipAndLink(c , !currentClickedClipIsSelected);
                 }
-                setPreviouslyClicked(clip);
             }
+            setPreviouslyClicked(clip);
         }
         else if (shiftPressed)
         {
@@ -94,7 +92,6 @@ void Selection::updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool s
             model::IClipPtr firstclip;
             BOOST_FOREACH( model::IClipPtr c, track->getClips() )
             {
-                /** /todo this does not work for multiple tracks yet. For multiple tracks the begin and endpoint should indicate both the x position (clip) as well as the y position (track) */
                 if (!firstclip)
                 {
                     if ((c == clip) || (c == otherend))
