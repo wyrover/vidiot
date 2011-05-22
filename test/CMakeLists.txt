@@ -1,8 +1,9 @@
 #### CXXTEST ####
 
 set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR})
-set( CxxTestGen "C:/Program Files (x86)/CxxTest/cxxtestgen.pl" )
-set( CxxTestDir "C:/Program Files (x86)/CxxTest" )
+set( CxxTestDir "$ENV{PROGRAMFILES}/CxxTest" )
+set( CxxTestGen "${CxxTestDir}/cxxtestgen.pl" )
+
 
 macro(AddCxxTest TestProjectName)
     set(TestRunnerDirectory ${CMAKE_CURRENT_BINARY_DIR}/${TestProjectName})
