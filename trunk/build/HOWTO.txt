@@ -8,10 +8,10 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 * Ensure to install with the runtimes (for packaging)
 * Install and set environment variables (vcvars) for cmake
 * Enable Tools (for wxwindows)
-* Install trunk/build/CppUtilities.vb in MSDEV - Add to ALT-O: SwitchBetweenSourceAndHeader
-* Install Quick Open File plugin (http://visualstudiogallery.msdn.microsoft.com/3eb2f230-2728-4d5f-b448-4c0b64154da7)
-  Use CTRL-K CTRL-O to open a file in the project
-  UPDATE: NOT NEEDED< USE CTRL-Comma
+* Install trunk/build/CppUtilities.vb in MSDEV
+* NOTE: Use CTRL-Comma (NavigateTo)
+* Bind ALT-S to CppUtilities.SortSelectedLines Macro
+* Bind ALT-O to CppUtilities.SwitchBetweenSourceAndHeader
 
 =================== CMAKE ===================
 Install cmake into c:\Program Files

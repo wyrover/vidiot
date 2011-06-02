@@ -1,14 +1,14 @@
 #include "Cursor.h"
 
-#include "Layout.h"
 #include "Intervals.h"
-#include "Zoom.h"
+#include "Layout.h"
+#include "Player.h"
 #include "Scrolling.h"
-#include "UtilLog.h"
 #include "SequenceView.h"
 #include "Timeline.h"
-#include "Player.h"
+#include "UtilLog.h"
 #include "VideoDisplayEvent.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
