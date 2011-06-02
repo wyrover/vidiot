@@ -6,6 +6,12 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 
 ================ VISUAL STUDIO ================
 * Ensure to install with the runtimes (for packaging)
+* Install and set environment variables (vcvars) for cmake
+* Enable Tools (for wxwindows)
+* Install trunk/build/CppUtilities.vb in MSDEV - Add to ALT-O: SwitchBetweenSourceAndHeader
+* Install Quick Open File plugin (http://visualstudiogallery.msdn.microsoft.com/3eb2f230-2728-4d5f-b448-4c0b64154da7)
+  Use CTRL-K CTRL-O to open a file in the project
+  UPDATE: NOT NEEDED< USE CTRL-Comma
 
 =================== CMAKE ===================
 Install cmake into c:\Program Files
@@ -61,7 +67,7 @@ Install ActivePerl into C:\Perl64
 * Add  <VIDIOT_DIR>\boost_1_xx_y\stage\lib to system/user path variable
 
 =================== WXWIDGETS ===================
-* Checkout wxWidgets into <VIDIOT_DIR>\wxwidgets_trunk
+* Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
   (I had to change platform.h include of this file to wx/msw/setup.h)
   - #define wxUSE_ON_FATAL_EXCEPTION 1
@@ -125,7 +131,7 @@ Install ActivePerl into C:\Perl64
   - MSys: cd <VIDIOT_DIR>/portaudio_trunk ; ./configure --prefix=/d/Vidiot/portaudio_trunk/build/msys ; make ; make install
 
 =================== SOUNDTOUCH ===================
-* Create folder  D:\VideoApp\InstalledLibraries\soundtouch_trunk
+* Create folder  <VIDIOT_DIR>\soundtouch_trunk
 * Checkout https://soundtouch.svn.sourceforge.net/svnroot/soundtouch/trunk into that dir
 * edit include/STTypes.h -> #define INTEGER_SAMPLES     1    //< 16bit integer samples
 * (MSVC)

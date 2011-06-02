@@ -25,6 +25,7 @@
 #include "SequenceView.h"
 #include "State.h"
 #include "ViewMap.h"
+#include "ViewUpdateEvent.h"
 #include "UtilLogWxwidgets.h"
 #include "ViewMap.h"
 #include "VideoView.h"
