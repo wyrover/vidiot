@@ -3,46 +3,13 @@
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
-#include <wx/region.h>
 #include "Part.h"
-#include "UtilEvent.h"
 #include "UtilInt.h"
 
 namespace gui { namespace timeline {
 
-class View;
+class ViewUpdateEvent;
 class ZoomChangeEvent;
-
-class ViewUpdate
-{
-public:
-    ViewUpdate(View& view, wxRegion area)
-        :   mView(&view)
-        ,   mArea(area)
-    {
-    }
-    ~ViewUpdate()
-    {
-    }
-    ViewUpdate(const ViewUpdate& other)
-        :   mView(other.mView)
-        ,   mArea(other.mArea)
-    {
-    }
-    View& getView()
-    {
-        return *mView;
-    }
-    wxRegion getArea()
-    {
-        return mArea;
-    }
-private:
-    View* mView;    // Stored as pointer, not reference for more info during debugging in IDE
-    wxRegion mArea;
-};
-
-DECLARE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 
 class View
     :   public Part

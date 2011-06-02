@@ -1,11 +1,11 @@
 #include "View.h"
-#include "UtilLog.h"
+
 #include "Timeline.h"
+#include "UtilLog.h"
+#include "ViewUpdateEvent.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
-
-DEFINE_EVENT(VIEW_UPDATE_EVENT, ViewUpdateEvent, ViewUpdate);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS

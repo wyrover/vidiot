@@ -31,6 +31,7 @@
 #include "Track.h"
 #include "TrackCreator.h"
 #include "TrackView.h"
+#include "UtilInt.h"
 #include "UtilList.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
