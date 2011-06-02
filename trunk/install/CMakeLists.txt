@@ -1,8 +1,9 @@
 
 # NOT: INCLUDE(InstallRequiredSystemLibraries)
 # This would include a not working runtime (known Microsoft bug)
+INCLUDE(InstallRequiredSystemLibraries)
 
-# todo: http://www.vtk.org/Wiki/CMake:CPackPackageGenerators#NSIS_Generator_Specifics_settings
+# http://www.vtk.org/Wiki/CMake:CPackPackageGenerators#NSIS_Generator_Specifics_settings
 SET(APPNAME Vidiot)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${APPNAME})
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${APPNAME})
@@ -36,7 +37,7 @@ IF(WIN32 AND NOT UNIX)
         "$ENV{PROGRAMFILES}/Microsoft SDKs/Windows/v6.0A/Bootstrapper/Packages/"
     )
     GET_FILENAME_COMPONENT(vcredist_name "${MSVC_REDIST}" NAME)
-    INSTALL(PROGRAMS ${MSVC_REDIST} COMPONENT VisualStudioRuntime DESTINATION bin)
+    #INSTALL(PROGRAMS ${MSVC_REDIST} COMPONENT VisualStudioRuntime DESTINATION bin)
     SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\bin\\\\${vcredist_name}\\\"'")
     
 ELSE(WIN32 AND NOT UNIX)
