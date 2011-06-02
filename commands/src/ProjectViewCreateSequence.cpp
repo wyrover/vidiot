@@ -58,12 +58,6 @@ bool ProjectViewCreateSequence::Do()
 
         if (mInputFolder)
         {
-            // todo remove the update: we have fswatcher now....
-            model::AutoFolderPtr autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(mInputFolder);
-            if (autofolder)
-            {
-                autofolder->update();
-            }
             TrackCreator c(mInputFolder->getChildren());
             mSequence->addVideoTracks(boost::assign::list_of(c.getVideoTrack()));
             mSequence->addAudioTracks(boost::assign::list_of(c.getAudioTrack()));
