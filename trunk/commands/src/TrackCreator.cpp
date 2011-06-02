@@ -3,19 +3,21 @@
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
-#include "VideoTrack.h"
-#include "AudioTrack.h"
-#include "VideoFile.h"
-#include "VideoClip.h"
+#include "AProjectViewNode.h"
 #include "AudioClip.h"
 #include "AudioFile.h"
-#include "AProjectViewNode.h"
+#include "AudioTrack.h"
+#include "EmptyClip.h"
+#include "VideoClip.h"
+#include "VideoFile.h"
+#include "VideoTrack.h"
 
 namespace command {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
+
 
 TrackCreator::TrackCreator(model::ProjectViewPtrs assets)
 :   mAssets(assets)
@@ -28,11 +30,30 @@ TrackCreator::TrackCreator(model::ProjectViewPtrs assets)
         if (file)
         {
             VAR_DEBUG(file);
-            model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-            model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-            // todo hasvideo and has audio. If not, use emptyclip in other track
-            model::VideoClipPtr videoClip = boost::make_shared<model::VideoClip>(videoFile);
-            model::AudioClipPtr audioClip = boost::make_shared<model::AudioClip>(audioFile);
+            model::IClipPtr videoClip;
+            model::IClipPtr audioClip;
+
+            pts length = file->getLength();
+
+            if (file->hasVideo())
+            {
+                model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
+                videoClip = model::IClip::make(boost::make_shared<model::VideoClip>(videoFile));
+            }
+            else
+            {
+                videoClip = model::IClip::make(boost::make_shared<model::EmptyClip>(length));
+            }
+            if (file->hasAudio())
+            {
+                model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
+                audioClip = model::IClip::make(boost::make_shared<model::AudioClip>(audioFile));
+            }
+            else
+            {
+                audioClip = model::IClip::make(boost::make_shared<model::EmptyClip>(length));
+            }
+
             videoClip->setLink(audioClip);
             audioClip->setLink(videoClip);
             mVideo->addClips(boost::assign::list_of(videoClip));

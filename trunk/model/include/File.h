@@ -123,6 +123,8 @@ private:
     boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
     boost::filesystem::path mPath;
     mutable boost::optional<wxString> mLastModified;
+    bool mHasVideo;
+    bool mHasAudio;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

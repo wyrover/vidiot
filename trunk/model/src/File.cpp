@@ -51,6 +51,8 @@ File::File()
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
 ,   mLastModified(boost::none)
+,   mHasVideo(false)
+,   mHasAudio(false)
 {
     VAR_DEBUG(this);
 }
@@ -71,6 +73,8 @@ File::File(boost::filesystem::path path, int buffersize)
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
 ,   mLastModified(boost::none)
+,   mHasVideo(false)
+,   mHasAudio(false)
 {
     VAR_DEBUG(this);
 }
@@ -91,6 +95,8 @@ File::File(const File& other)
 ,   mNumberOfFrames(0) // For a copy we read the number of packets again from the file in getLength()
 ,   mTwoInARow(0)
 ,   mLastModified(other.mLastModified)
+,   mHasVideo(false)
+,   mHasAudio(false)
 {
     VAR_DEBUG(this);
 }
@@ -192,6 +198,18 @@ bool File::isSupported()
         return true;
     }
     return false;
+}
+
+bool File::hasVideo()
+{
+    openFile();
+    return mHasVideo;
+}
+
+bool File::hasAudio()
+{
+    openFile();
+    return mHasAudio;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -329,6 +347,8 @@ void File::openFile()
 
         if (stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
         {
+            mHasVideo = true;
+
             // If there is video in the file, then the number of video frames is used for the duration.
             FrameRate videoFrameRate = FrameRate(stream->codec->time_base.num, stream->codec->time_base.den);
             mNumberOfFrames = Convert::toProjectFrameRate(stream->duration, videoFrameRate);
@@ -341,6 +361,8 @@ void File::openFile()
         }
         else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
         {
+            mHasAudio = true;
+
             if (isA<AudioFile>())
             {
                 mStreamIndex = i;
