@@ -56,18 +56,13 @@ SET( SOUNDTOUCH_ROOT        ${VIDIOT_DIR}/soundtouch_trunk )
 SET( SOUNDTOUCH_INCLUDE_DIR ${SOUNDTOUCH_ROOT}/include )
 SET( SOUNDTOUCH_LIBRARY_DIR ${SOUNDTOUCH_ROOT}/lib )
 IF (MSVC)
-  SET( SOUNDTOUCH_LIBRARIES_DEBUG   SoundTouchDllD.dll SoundTouchD.lib )
-  SET( SOUNDTOUCH_LIBRARIES debug SoundTouchDllD.dll SoundTouchD.lib optimized SoundTouchDll.dll SoundTouch.lib )
+  SET( SOUNDTOUCH_LIBRARIES debug SoundTouchDllD.dll debug SoundTouchD.lib optimized SoundTouchDll.dll optimized SoundTouch.lib )
   FILE( GLOB SOUNDTOUCH_INSTALL ${SOUNDTOUCH_LIBRARY_DIR}/*.dll )
 ENDIF (MSVC)
 IF (CMAKE_COMPILER_IS_GNUCC)
   SET( SOUNDTOUCH_LIBRARIES  libSoundTouch.a )
 ENDIF (CMAKE_COMPILER_IS_GNUCC )
   #gcc_s )
-
-#SoundTouchDllD.lib SoundTouchD.lib SoundTouchDll.lib SoundTouch.lib
-# ${SOUNDTOUCH_ROOT}/source/SoundTouch/Release/SoundTouch.lib )
-#D:\Vidiot\soundtouch_trunk\source\SoundTouchDLL\Release
 
 #### FIND ALL LOCAL FILES ####
 SET(SOURCES_LIST)
