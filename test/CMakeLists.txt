@@ -1,7 +1,9 @@
 #### CXXTEST ####
 
 set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR})
-set( CxxTestDir "$ENV{PROGRAMFILES}/CxxTest" )
+
+#set( CxxTestDir "$ENV{PROGRAMFILES}/CxxTest" )
+set( CxxTestDir "${VIDIOT_DIR}/cxxtest-3.10.1" )
 set( CxxTestGen "${CxxTestDir}/cxxtestgen.pl" )
 
 
