@@ -23,9 +23,9 @@ Install doxygen into c:\Program Files
 Install graphviz into c:\Program Files
 
 =================== CxxTest ===================
-Install CxxTest into <ProgramFiles>\CxxTest (cxxtest, docs and sample are subdirs of CxxTest)
+Install CxxTest into <VIDIOT_DIR>\CxxTest (cxxtest, docs and sample are subdirs of CxxTest)
 * Note: for 64 bit windows use "Program Files (x86)"
-Install ActivePerl into C:\Perl64
+Install ActivePerl via installer
 
 ========== MSYS + MINGW + CODEBLOCKS ==========
 * Install Code::Blocks, including MingW
@@ -123,8 +123,8 @@ Install ActivePerl into C:\Perl64
     + Define NO_WASAPI
     + Remove ASIO files from project
     + Remove ..asio.. lines from portaudio.def
-    + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include to the include paths
-    + add C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86 to the linker "additional library directories"
+    + add C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include to the include paths
+    + add C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86 to the linker "additional library directories"
   - Build
   - Add <VIDIOT_DIR>\portaudio_trunk\build\msvc\Win32\Release to system/user path variable
 * (GCC)
@@ -137,7 +137,7 @@ Install ActivePerl into C:\Perl64
 * (MSVC)
   - Open SoundTouchDll solution (convert if needed).
   - For all configurations change /MT[d] to /MD[d]
-  - Remove resource.rc from project
+  - (OBSOLETE?) Remove resource.rc from project
   - Build
 * (GCC)
   MSys: cd soundtouch_trunk ; ./bootstrap ; ./configure --enable-integer-samples; make ; make install
