@@ -20,6 +20,8 @@ wxIMPLEMENT_APP_NO_MAIN(Application);
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+const wxString Application::sTestApplicationName = "VidiotTestSuite";
+
 Application::Application()
 :   wxApp()
 ,   IAssert()
