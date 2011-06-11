@@ -1,6 +1,7 @@
 #include "Test.h"
 #include "UtilList.h"
 #include <list>
+#include <wx/event.h>
 #include <wx/uiaction.h>
 #include <boost/assign/list_of.hpp>
 #include "UtilLogStl.h"
@@ -15,65 +16,91 @@
 //        You can call wxTheApp->CallOnInit() to invoke OnInit() when needed in your tests.
 //        You'll need to use
 //        void wxEntryCleanup()
+//
+
+
+class Catcher : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.	
+{
+public:
+	Catcher()
+	{
+	}
+	~Catcher()
+	{
+	}
+	void onDialog(wxInitDialogEvent& event)
+	{
+		LOG_DEBUG << "Test";
+	}
+	
+	wxDECLARE_EVENT_TABLE();
+
+
+};
+
+wxBEGIN_EVENT_TABLE(Catcher, wxEvtHandler)
+	EVT_INIT_DIALOG(Catcher::onDialog)
+    //EVT_MENU(wxID_EXIT, MyFrame::OnExit)
+    //EVT_MENU(DO_TEST, MyFrame::DoTest)
+    //EVT_SIZE(MyFrame::OnSize)
+    //EVT_BUTTON(BUTTON1, MyFrame::OnButton1)
+wxEND_EVENT_TABLE()
+
+void MyTestSuite::testAddition()
+{
+	TS_ASSERT( 1 + 1 > 1 );
+	TS_ASSERT_EQUALS( 1 + 1, 2 );
+
+	model::VideoFile f;
+
+	std::list<int> l;
+	UtilList<int>(l).addElements(boost::assign::list_of(1)(2)(3),-1);
+	TS_ASSERT(l.size() == 3);
+	UtilList<int>(l).removeElements(boost::assign::list_of(1)(2)(3));
+	TS_ASSERT(l.size() == 0);
 
 
 
+}
 
 
-    void MyTestSuite::testAddition()
-    {
-        TS_ASSERT( 1 + 1 > 1 );
-        TS_ASSERT_EQUALS( 1 + 1, 2 );
+void MyTestSuite::testStartup()
+{
+	gui::Application* main = new gui::Application();
+	wxApp::SetInstance(main);
+	int argc = 1;
+	char* argv = _strdup(gui::Application::sTestApplicationName);
+	wxEntryStart(argc, &argv);
+	wxTheApp->OnInit();
 
-        model::VideoFile f;
+	mThread.reset(new boost::thread(boost::bind(&MyTestSuite::thread,this)));
+	wxTheApp->OnRun();
 
-        std::list<int> l;
-        UtilList<int>(l).addElements(boost::assign::list_of(1)(2)(3),-1);
-        TS_ASSERT(l.size() == 3);
-        UtilList<int>(l).removeElements(boost::assign::list_of(1)(2)(3));
-        TS_ASSERT(l.size() == 0);
+	wxTheApp->OnExit();
+	wxEntryCleanup();
 
+	if (mThread)
+	{
+		mThread->join();
+	}
+}
 
+void MyTestSuite::thread()
+{
 
-    }
+	// you can create top level-windows here or in OnInit(). Do your testing here
 
-
-    void MyTestSuite::testStartup()
-    {
-        gui::Application* main = new gui::Application();
-        wxApp::SetInstance(main);
-        int argc = 1;
-        char* arg = "arg";
-        wxEntryStart(argc, &arg);
-        wxTheApp->OnInit();
-
-        mThread.reset(new boost::thread(boost::bind(&MyTestSuite::thread,this)));
-        wxTheApp->OnRun();
-
-        wxTheApp->OnExit();
-        wxEntryCleanup();
-
-        if (mThread)
-        {
-            mThread->join();
-        }
-    }
-
-    void MyTestSuite::thread()
-    {
-
-        // you can create top level-windows here or in OnInit(). Do your testing here
-
-        //wxUIActionSimulator simu();
-        Sleep(5000);
-        gui::Window::get().QueueModelEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,ID_OPTIONS));
-        wxUIActionSimulator().MouseMove(100,100);
-        wxUIActionSimulator().MouseClick();
+	//wxUIActionSimulator simu();
+	Sleep(5000);
+	LOG_DEBUG << "TEst";
+	gui::Window::get().QueueModelEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,ID_OPTIONS));
+	wxUIActionSimulator().MouseMove(100,100);
+	wxUIActionSimulator().MouseClick();
 
 
 
-        //wxTheApp->OnRun();
-        //wxTheApp->OnExit();
-        //wxEntryCleanup();
-    }
+	//wxTheApp->OnRun();
+	//wxTheApp->OnExit();
+	//wxEntryCleanup();
+}
 
