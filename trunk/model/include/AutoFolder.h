@@ -26,12 +26,18 @@ public:
     /// \param path full path to the folder.
     AutoFolder(boost::filesystem::path path);
 
-    ~AutoFolder();
+    virtual ~AutoFolder();
 
     //////////////////////////////////////////////////////////////////////////
     // STRUCTURE
     //////////////////////////////////////////////////////////////////////////
 
+    /// \return list of supported files in the given directory. Folders are returned also.
+    /// \param directory absolute path which is searched for files.
+    /// Note that only supported file types - as indicated by File::isSupported() - are returned.
+    static model::ProjectViewPtrs getSupportedFiles( boost::filesystem::path directory );
+
+    /// Update the autofolder children. The folder is synced with the filesystem. 
     void update();
 
     //////////////////////////////////////////////////////////////////////////

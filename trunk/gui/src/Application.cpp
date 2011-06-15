@@ -22,9 +22,10 @@ wxIMPLEMENT_APP_NO_MAIN(Application);
 
 const wxString Application::sTestApplicationName = "VidiotTestSuite";
 
-Application::Application()
+Application::Application(IEventLoopListener* eventLoopListener)
 :   wxApp()
 ,   IAssert()
+,   mEventLoopListener(eventLoopListener)
 {
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();
@@ -87,6 +88,13 @@ int Application::OnRun()
     return 0;
 }
 
+void Application::OnEventLoopEnter(wxEventLoopBase* loop)
+{
+    if (mEventLoopListener)
+    {
+        mEventLoopListener->OnEventLoopEnter();
+    }
+}
 
 int Application::OnExit()
 {
@@ -153,7 +161,6 @@ void Application::onAssert()
 {
     DebugReport::generate(ReportAssertionFailure);
     exit(-1);
-
 }
 
 } // namespace

@@ -185,38 +185,38 @@ void MenuHandler::Popup(wxPoint position)
 // SEQUENCE MENU
 //////////////////////////////////////////////////////////////////////////
 
-void MenuHandler::onAddVideoTrack(wxCommandEvent& WXUNUSED(event))
+void MenuHandler::onAddVideoTrack(wxCommandEvent& event)
 {
     LOG_INFO;
     getTimeline().Submit(new command::CreateVideoTrack(getTimeline()));
 }
 
-void MenuHandler::onAddAudioTrack(wxCommandEvent& WXUNUSED(event))
+void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
 {
     LOG_INFO;
     getTimeline().Submit(new command::CreateAudioTrack(getTimeline()));
 }
 
 
-void MenuHandler::onDeleteMarked(wxCommandEvent& WXUNUSED(event))
+void MenuHandler::onDeleteMarked(wxCommandEvent& event)
 {
     LOG_INFO;
     getIntervals().deleteMarked();
 }
 
-void MenuHandler::onDeleteUnmarked(wxCommandEvent& WXUNUSED(event))
+void MenuHandler::onDeleteUnmarked(wxCommandEvent& event)
 {
     LOG_INFO;
     getIntervals().deleteUnmarked();
 }
 
-void MenuHandler::onRemoveMarkers(wxCommandEvent& WXUNUSED(event))
+void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 {
     LOG_INFO;
     getIntervals().clear();
 }
 
-void MenuHandler::onCloseSequence(wxCommandEvent& WXUNUSED(event))
+void MenuHandler::onCloseSequence(wxCommandEvent& event)
 {
     LOG_INFO;
     TimelinesView& tv = Window::get().getTimeLines();
@@ -228,7 +228,7 @@ void MenuHandler::onCloseSequence(wxCommandEvent& WXUNUSED(event))
 // POPUP MENU
 //////////////////////////////////////////////////////////////////////////
 
-void MenuHandler::onAddTransition(wxCommandEvent& WXUNUSED(event))
+void MenuHandler::onAddTransition(wxCommandEvent& event)
 {
     LOG_INFO;
     PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getRightDownPosition());

@@ -1,14 +1,58 @@
 #include <cxxtest/TestSuite.h>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
+#include <wx/window.h>
+#include "Application.h"
 
-class MyTestSuite : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
+class ProjectViewTests : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
+    ,   public gui::IEventLoopListener
 {
 public:
-    void testAddition();
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    static ProjectViewTests *createSuite();
+    static void destroySuite(ProjectViewTests *suite);
+
+    ProjectViewTests();
+    virtual ~ProjectViewTests();
+
+    //////////////////////////////////////////////////////////////////////////
+    // PER TEST INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    void setUp();
+    void OnEventLoopEnter();
+    void tearDown();
+
+    //////////////////////////////////////////////////////////////////////////
+    // TEST CASES
+    //////////////////////////////////////////////////////////////////////////
+
     void testStartup();
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // VARIABLES
+    //////////////////////////////////////////////////////////////////////////
+
     boost::scoped_ptr<boost::thread> mThread;
     void thread();
+
+    boost::scoped_ptr<boost::thread> mMainThread;
+    void mainThread();
+    boost::mutex mMutexMainThread;
+    boost::condition_variable conditionMainThread;
+
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void triggerMenu(int id);
+    void triggerMenu(wxWindow& window, int id);
+
 };

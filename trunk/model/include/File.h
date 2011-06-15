@@ -55,6 +55,7 @@ public:
     wxString getName() const;
     boost::filesystem::path getPath() const;
     wxString getLastModified() const;
+
     bool isSupported();
 
     bool hasVideo();

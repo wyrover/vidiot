@@ -72,6 +72,7 @@ wxDataViewItem ProjectViewModel::GetParent( const wxDataViewItem &wxItem ) const
         if (!p->hasParent())
         {
             // Root asset has the invisible root as parent
+            ASSERT(p == model::Project::get().getRoot())(p);
             return wxDataViewItem(0);
         }
         else
@@ -98,7 +99,6 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
         }
     }
 
-    // First, fill the list with the already known children
     model::ProjectViewPtr parent = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
     BOOST_FOREACH( model::ProjectViewPtr child, parent->getChildren() )
     {
@@ -111,19 +111,12 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
         }
     }
 
-    // Third, update the children. These will be added via events resulting from the update.
-    model::AutoFolderPtr autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(parent);
-    if (autofolder)
-    {
-        autofolder->update();
-    }
-
     return wxItemArray.GetCount();
 }
 
 unsigned int ProjectViewModel::GetColumnCount() const
 {
-    return 2;
+    return 3;
 }
 
 wxString ProjectViewModel::GetColumnType(unsigned int col) const
@@ -133,6 +126,7 @@ wxString ProjectViewModel::GetColumnType(unsigned int col) const
     {
     case 0: return wxT("icontext");
     case 1: return wxT("string");
+    case 2: return wxT("string");
     }
     return wxT("string");
 }
@@ -153,18 +147,28 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
             return;
         }
     case 1: 
-        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
-        if (file)
         {
-            wxDateTime t;
-            t.ParseDateTime(file->getLastModified());
-            variant = t;
+            model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
+            if (file)
+            {
+                wxDateTime t;
+                t.ParseDateTime(file->getLastModified());
+                variant = t;
+                return;
+            }
+            else
+            {
+                variant = wxString(""); 
+                return;
+            }
         }
-        else
+    case 2:
         {
-            variant = wxString(""); return;
+            wxString s = wxString::Format("0x%p", wxItem.GetID());
+            variant = s;
+            return;
         }
-    };
+    }
 }
 
 bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col )
@@ -431,6 +435,7 @@ void ProjectViewModel::OnProjectAssetRemoved( model::EventRemoveAsset &event )
     model::ProjectViewPtr parent = event.getValue().parent;
     model::ProjectViewPtr child = event.getValue().child;
     VAR_DEBUG(parent)(child);
+
     ItemDeleted(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
     event.Skip();
 }

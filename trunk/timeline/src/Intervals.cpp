@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <wx/confbase.h>
+#include <wx/dcmemory.h>
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -10,20 +11,21 @@
 #include "Zoom.h"
 #include "Convert.h"
 #include "Config.h"
-#include "Scrolling.h"
-#include "UtilLog.h"
-#include "Layout.h"
 #include "Clip.h"
-#include "TrackView.h"
-#include "Project.h"
 #include "ClipView.h"
-#include "Track.h"
-#include "Project.h"
+#include "Cursor.h"
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
-#include "UtilSerializeWxwidgets.h"
+#include "Layout.h"
 #include "Menu.h"
-#include "Cursor.h"
+#include "Project.h"
+#include "Project.h"
+#include "Scrolling.h"
+#include "SequenceView.h"
+#include "Track.h"
+#include "TrackView.h"
+#include "UtilLog.h"
+#include "UtilSerializeWxwidgets.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
@@ -204,10 +206,20 @@ void Intervals::draw(wxDC& dc) const
         }
     }
 
+    wxBitmap bmp(2,2);
+    wxMemoryDC dcM(bmp);
+    dcM.SelectObject(wxNullBitmap);
+
+    dc.SetPen(*wxGREY_PEN);
+    wxBrush b(*wxLIGHT_GREY,wxBRUSHSTYLE_CROSSDIAG_HATCH);
+    dc.SetBrush(b);
     wxRegionIterator it(drawRegion);
     while (it)
     {
-        dc.DrawRectangle(ptsToPixels(it.GetRect()));
+        wxRect r(it.GetRect());
+        r.SetY(0);
+        r.SetHeight(getSequenceView().getHeight());
+        dc.DrawRectangle(ptsToPixels(r));
         it++;
     }
 } 

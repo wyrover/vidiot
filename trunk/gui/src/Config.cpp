@@ -30,6 +30,7 @@ void Config::init(wxString applicationName, wxString vendorName)
 	if (applicationName.IsSameAs(Application::sTestApplicationName))
 	{
 		logFileName << ".log"; // For test, log file with fixed name in same dir as config file.
+		logFileName = wxFileName(wxFileName::GetCwd(),logFileName).GetFullPath(); // Must be full path for debug report
 	}
 	else
 	{

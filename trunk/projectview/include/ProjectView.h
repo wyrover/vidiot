@@ -25,7 +25,7 @@ public:
 
     ProjectView(wxWindow* parent);
     virtual ~ProjectView();
-    static ProjectView* current();
+    static ProjectView& get();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -39,23 +39,32 @@ public:
     /// when saving the document.
     void OpenRecursive(model::FolderPtr folder);
 
+    //////////////////////////////////////////////////////////////////////////
+    // TEST
+    //////////////////////////////////////////////////////////////////////////
+
+    void select( model::ProjectViewPtrs nodes);
+    void selectAll();
+
 private:
+
+    friend class ProjectViewTests;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
     void onContextMenu( wxDataViewEvent &event );
-    void onCut(wxCommandEvent& WXUNUSED(event));
-    void onCopy(wxCommandEvent& WXUNUSED(event));
-    void onPaste(wxCommandEvent& WXUNUSED(event));
-    void onDelete(wxCommandEvent& WXUNUSED(event));
-    void onNewFolder(wxCommandEvent& WXUNUSED(event));
-    void onNewAutoFolder(wxCommandEvent& WXUNUSED(event));
-    void onNewSequence(wxCommandEvent& WXUNUSED(event));
-    void onNewFile(wxCommandEvent& WXUNUSED(event));
-    void onCreateSequence(wxCommandEvent& WXUNUSED(event));
-    void onUpdateAutoFolder(wxCommandEvent& WXUNUSED(event));
+    void onCut(wxCommandEvent& event);
+    void onCopy(wxCommandEvent& event);
+    void onPaste(wxCommandEvent& event);
+    void onDelete(wxCommandEvent& event);
+    void onNewFolder(wxCommandEvent& event);
+    void onNewAutoFolder(wxCommandEvent& event);
+    void onNewSequence(wxCommandEvent& event);
+    void onNewFile(wxCommandEvent& event);
+    void onCreateSequence(wxCommandEvent& event);
+    void onUpdateAutoFolder(wxCommandEvent& event);
     void onStartEditing( wxDataViewEvent &event );
     void onMotion(wxMouseEvent& event);
     void onDragEnd();

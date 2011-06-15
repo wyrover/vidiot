@@ -50,13 +50,13 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onPlaybackPosition(PlaybackPositionEvent& event);
-    void OnHome(wxCommandEvent& WXUNUSED(event));
-    void OnPrevious(wxCommandEvent& WXUNUSED(event));
-    void OnPause(wxCommandEvent& WXUNUSED(event));
-    void OnPlay(wxCommandEvent& WXUNUSED(event));
-    void OnNext(wxCommandEvent& WXUNUSED(event));
-    void OnEnd(wxCommandEvent& WXUNUSED(event));
-    void OnSpeed(wxCommandEvent& WXUNUSED(event));
+    void OnHome(wxCommandEvent& event);
+    void OnPrevious(wxCommandEvent& event);
+    void OnPause(wxCommandEvent& event);
+    void OnPlay(wxCommandEvent& event);
+    void OnNext(wxCommandEvent& event);
+    void OnEnd(wxCommandEvent& event);
+    void OnSpeed(wxCommandEvent& event);
 
 private:
 
@@ -83,8 +83,8 @@ private:
     wxMiniFrame* mSpeedSliderFrame;
     wxSlider* mSpeedSlider;
 
-    void OnSpeedSliderFocusKill(wxFocusEvent& WXUNUSED(event) );
-    void OnSpeedSliderUpdate( wxCommandEvent& WXUNUSED(event) );
+    void OnSpeedSliderFocusKill(wxFocusEvent& event );
+    void OnSpeedSliderUpdate( wxCommandEvent& event );
     void OnIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event);
     void OnLeftDown(wxMouseEvent& event);
 
