@@ -20,6 +20,7 @@
 #include "Project.h"
 #include "AProjectViewNode.h"
 #include "Layout.h"
+#include "ids.h"
 #include "ProjectViewAddAsset.h"
 #include "ProjectViewDropSource.h"
 #include "ProjectViewDeleteAsset.h"
@@ -29,20 +30,12 @@
 #include "ProjectViewCreateFolder.h"
 #include "ProjectViewCreateAutoFolder.h"
 #include "ProjectViewCreateFile.h"
+#include "UtilDialog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilLog.h"
 #include "Sequence.h"
 
 namespace gui {
-
-enum {
-    meID_NEW_FOLDER= wxID_HIGHEST+1,
-    meID_NEW_AUTOFOLDER,
-    meID_NEW_SEQUENCE,
-    meID_NEW_FILE,
-    meID_CREATE_SEQUENCE,
-    meID_UPDATE_AUTOFOLDER,
-};
 
 static ProjectView* sCurrent = 0;
 
@@ -51,14 +44,14 @@ static ProjectView* sCurrent = 0;
 //////////////////////////////////////////////////////////////////////////
 
 ProjectView::ProjectView(wxWindow* parent)
-:   wxPanel(parent)
-,   mProject(0)
-,   mCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_HORIZ_RULES | wxDV_VERT_RULES)
-,   mModel(new ProjectViewModel(mCtrl))
-,   mDropSource(mCtrl, *mModel)
-,   mOpenFolders()
-,   mDragCount(0)
-,   mDragStart(0,0)
+    :   wxPanel(parent)
+    ,   mProject(0)
+    ,   mCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_HORIZ_RULES | wxDV_VERT_RULES)
+    ,   mModel(new ProjectViewModel(mCtrl))
+    ,   mDropSource(mCtrl, *mModel)
+    ,   mOpenFolders()
+    ,   mDragCount(0)
+    ,   mDragStart(0,0)
 {
     LOG_INFO;
 
@@ -66,7 +59,9 @@ ProjectView::ProjectView(wxWindow* parent)
 
     mCtrl.EnableDropTarget( DataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
-    wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   2, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
+    wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
+    // TODO only if 'debug' flag set
+    wxDataViewColumn* dbgColumn  = mCtrl.AppendTextColumn("Debug",       2, wxDATAVIEW_CELL_INERT,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
 
     mCtrl.AssociateModel( mModel );
     mModel->DecRef();
@@ -131,9 +126,10 @@ ProjectView::~ProjectView()
     sCurrent = 0;
 }
 
-ProjectView* ProjectView::current()
+ProjectView& ProjectView::get()
 {
-    return sCurrent;
+    ASSERT(sCurrent);
+    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -166,6 +162,23 @@ void ProjectView::onAutoOpenFolder( EventAutoFolderOpen& event )
     {
         mCtrl.Expand(wxDataViewItem(event.getValue()->id()));
     }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TEST
+//////////////////////////////////////////////////////////////////////////
+
+void ProjectView::select( model::ProjectViewPtrs nodes)
+{
+    BOOST_FOREACH( model::ProjectViewPtr node, nodes )
+    {
+        mCtrl.Select( wxDataViewItem( node->id() ) );
+    }
+}
+
+void ProjectView::selectAll()
+{
+    mCtrl.SelectAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -286,11 +299,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void ProjectView::onCut(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onCut(wxCommandEvent& event)
 {
     ASSERT(getSelection().size() > 0);
     if (wxTheClipboard->Open())
@@ -301,7 +310,7 @@ void ProjectView::onCut(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ProjectView::onCopy(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onCopy(wxCommandEvent& event)
 {
     ASSERT(getSelection().size() > 0);
     if (wxTheClipboard->Open())
@@ -311,7 +320,7 @@ void ProjectView::onCopy(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ProjectView::onPaste(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onPaste(wxCommandEvent& event)
 {
     if (wxTheClipboard->Open())
     {
@@ -335,12 +344,12 @@ void ProjectView::onPaste(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ProjectView::onDelete(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onDelete(wxCommandEvent& event)
 {
     mProject->Submit(new command::ProjectViewDeleteAsset(getSelection()));
 }
 
-void ProjectView::onNewFolder(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onNewFolder(wxCommandEvent& event)
 {
     wxString s = wxGetTextFromUser (_("Enter folder name"),_("Input text"), "New Folder default value", 0, wxDefaultCoord, wxDefaultCoord, true);
     if ((s.CompareTo(_T("")) != 0) &&
@@ -350,9 +359,10 @@ void ProjectView::onNewFolder(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ProjectView::onNewAutoFolder(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onNewAutoFolder(wxCommandEvent& event)
 {
-    wxString s = wxDirSelector(_("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir(), wxDD_DEFAULT_STYLE);
+    wxString s = UtilDialog::getDir( _("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir(), this );
+//    wxString s = wxDirSelector(_("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this); // Parent given to ensure modality
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
@@ -360,7 +370,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ProjectView::onNewSequence(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onNewSequence(wxCommandEvent& event)
 {
     wxString s = wxGetTextFromUser(_("Enter sequence name"),_("Input text"), "New sequence default value", 0, wxDefaultCoord, wxDefaultCoord, true);
     if ((s.CompareTo(_T("")) != 0) &&
@@ -370,12 +380,12 @@ void ProjectView::onNewSequence(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ProjectView::onNewFile(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onNewFile(wxCommandEvent& event)
 {
     wxString wildcards =
         wxString::Format
         (
-          _("Movie clips (*.avi)|*.avi|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s"),
+        _("Movie clips (*.avi)|*.avi|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s"),
         wxFileSelectorDefaultWildcardStr,
         wxFileSelectorDefaultWildcardStr
         );
@@ -401,13 +411,13 @@ void ProjectView::onNewFile(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void ProjectView::onCreateSequence(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onCreateSequence(wxCommandEvent& event)
 {
     command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
     mProject->Submit(cmd);
 }
 
-void ProjectView::onUpdateAutoFolder(wxCommandEvent& WXUNUSED(event))
+void ProjectView::onUpdateAutoFolder(wxCommandEvent& event)
 {
     BOOST_FOREACH(model::ProjectViewPtr node, getSelection())
     {
@@ -526,13 +536,13 @@ void ProjectView::onDrop( wxDataViewEvent &event )
 
 void ProjectView::onActivated( wxDataViewEvent &event )
 {
-	model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
+    model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(p);
-	if (!sequence)
-	{
-		event.Veto();
-		return;
-	}
+    if (!sequence)
+    {
+        event.Veto();
+        return;
+    }
     Window::get().getTimeLines().Open(sequence);
 }
 

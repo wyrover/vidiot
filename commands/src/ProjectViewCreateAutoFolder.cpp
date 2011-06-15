@@ -28,6 +28,9 @@ bool ProjectViewCreateAutoFolder::Do()
         mNewAutoFolder->setParent(mParent);
     }
     mParent->addChild(mNewAutoFolder);
+    // Update must be done AFTER adding the addition of the folder. Otherwise,
+    // double entries are made visible in the ProjectView.
+    mNewAutoFolder->update();
     return true;
 }
 

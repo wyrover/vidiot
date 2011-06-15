@@ -1,6 +1,7 @@
 #ifndef IDS_H
 #define IDS_H
 
+/// Made global list to be able to trigger these from the tests
 enum 
 {
     ID_FIRST = wxID_HIGHEST + 1,
@@ -16,7 +17,14 @@ enum
     ID_CLOSESEQUENCE,
     // Options menu
     ID_OPTIONS,
-    // Timelne popup menu
+    // Project view popup menu
+    meID_NEW_FOLDER,
+    meID_NEW_AUTOFOLDER,
+    meID_NEW_SEQUENCE,
+    meID_NEW_FILE,
+    meID_CREATE_SEQUENCE,
+    meID_UPDATE_AUTOFOLDER,
+    // Timeline popup menu
     meID_ADD_TRANSITION,
     meID_REMOVE_EMPTY,
 };

@@ -299,7 +299,7 @@ void Window::onSnapCursor(wxCommandEvent& event)
 // TOOLS MENU
 //////////////////////////////////////////////////////////////////////////
 
-void Window::onOptions(wxCommandEvent& WXUNUSED(event))
+void Window::onOptions(wxCommandEvent& event)
 {
     Options w(this);
     w.ShowModal();
@@ -309,14 +309,15 @@ void Window::onOptions(wxCommandEvent& WXUNUSED(event))
 // HELP MENU
 //////////////////////////////////////////////////////////////////////////
 
-void Window::onHelp(wxCommandEvent& WXUNUSED(event))
+void Window::onHelp(wxCommandEvent& event)
 {
     NIY;
 }
 
-void Window::onAbout(wxCommandEvent& WXUNUSED(event))
+void Window::onAbout(wxCommandEvent& event)
 {
     wxMessageBox(_("Vidiot 0.1"), _T("About"), wxOK | wxICON_INFORMATION, this);
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

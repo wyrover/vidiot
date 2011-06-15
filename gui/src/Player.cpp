@@ -193,40 +193,40 @@ void Player::onPlaybackPosition(PlaybackPositionEvent& event)
     GetEventHandler()->QueueEvent(new PlaybackPositionEvent(event)); // Event must be sent by the player. Other components don't see the videodisplay.
 }
 
-void Player::OnHome(wxCommandEvent& WXUNUSED(event))
+void Player::OnHome(wxCommandEvent& event)
 {
     LOG_INFO;
     mDisplay->moveTo(0);
 }
 
-void Player::OnPrevious(wxCommandEvent& WXUNUSED(event))
+void Player::OnPrevious(wxCommandEvent& event)
 {
     LOG_INFO;
 }
 
-void Player::OnPause(wxCommandEvent& WXUNUSED(event))
+void Player::OnPause(wxCommandEvent& event)
 {
     LOG_INFO;
     stop();
 }
 
-void Player::OnPlay(wxCommandEvent& WXUNUSED(event))
+void Player::OnPlay(wxCommandEvent& event)
 {
     LOG_INFO;
     play();
 }
 
-void Player::OnNext(wxCommandEvent& WXUNUSED(event))
+void Player::OnNext(wxCommandEvent& event)
 {
     LOG_INFO;
 }
 
-void Player::OnEnd(wxCommandEvent& WXUNUSED(event))
+void Player::OnEnd(wxCommandEvent& event)
 {
     LOG_INFO;
 }
 
-void Player::OnSpeed(wxCommandEvent& WXUNUSED(event))
+void Player::OnSpeed(wxCommandEvent& event)
 {
     LOG_INFO;
 
@@ -262,7 +262,7 @@ void Player::OnSpeed(wxCommandEvent& WXUNUSED(event))
     mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::OnLeftDown,                 this);
 }
 
-void Player::OnSpeedSliderUpdate( wxCommandEvent& WXUNUSED(event) )
+void Player::OnSpeedSliderUpdate( wxCommandEvent& event )
 {
     VAR_INFO(mSpeedSlider->GetValue());
     mDisplay->setSpeed(mSpeedSlider->GetValue());

@@ -5,6 +5,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include "UtilList.h"
 #include "UtilLog.h"
 #include "Window.h"
 
@@ -86,7 +87,7 @@ ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
     newChild->setParent(shared_from_this());
     // Do not use ProcessEvent: this will cause problems with auto-updating autofolders upon
     // first expansion.
-    gui::Window::get().QueueModelEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
+    gui::Window::get().GetEventHandler()->QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
     return newChild;
 }
 
@@ -115,6 +116,22 @@ ProjectViewPtrs AProjectViewNode::getChildren() const
 void AProjectViewNode::setName(wxString name)
 {
 }
+
+ProjectViewPtrs AProjectViewNode::find(wxString name)
+{
+    ProjectViewPtrs result;
+    wxString _name = getName();
+    if (getName().IsSameAs(name))
+    {
+        result.push_back(shared_from_this());
+    }
+    BOOST_FOREACH( ProjectViewPtr child, mChildren )
+    {
+        UtilList<ProjectViewPtr>(result).addElements(child->find(name), ProjectViewPtr());
+    }
+    return result;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING

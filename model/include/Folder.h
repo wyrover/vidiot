@@ -23,7 +23,7 @@ public:
 
     Folder(wxString name);
 
-    ~Folder();
+    virtual ~Folder();
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES

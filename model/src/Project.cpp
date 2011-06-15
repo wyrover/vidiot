@@ -41,6 +41,7 @@ Project::~Project()
 
 Project& Project::get()
 {
+    ASSERT(sCurrent);
     return *sCurrent;
 }
 

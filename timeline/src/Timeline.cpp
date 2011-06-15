@@ -252,7 +252,7 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
     // NOT: event.Skip(); // The official way of doing it
 }
 
-void Timeline::onPaint( wxPaintEvent &WXUNUSED(event) )
+void Timeline::onPaint( wxPaintEvent &event )
 {
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates

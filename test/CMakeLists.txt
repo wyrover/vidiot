@@ -9,11 +9,12 @@ set( CxxTestGen "${CxxTestDir}/cxxtestgen.pl" )
 
 macro(AddCxxTest TestProjectName)
     set(TestRunnerDirectory ${CMAKE_CURRENT_BINARY_DIR}/${TestProjectName})
-    set(TestRunner ${TestRunnerDirectory}/testrunner.cpp)
+    set(TestRunner ${TestRunnerDirectory}/TestRunner.cpp)
     set(TestRunnerCommand ${EXECUTABLE_OUTPUT_PATH}/${TestProjectName})
     add_custom_command(OUTPUT ${TestRunner}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${TestRunnerDirectory}
-        COMMAND ${PERL_EXECUTABLE} ${CxxTestGen} ${CxxTestGenFlags} --error-printer -o ${TestRunner} ${ARGN}
+        COMMAND ${PERL_EXECUTABLE} ${CxxTestGen} ${CxxTestGenFlags} --runner=StdioPrinter -o ${TestRunner} ${ARGN}
+        # --error-printer --runner=ParenPrinter --gui=Win32Gui 
         DEPENDS ${ARGN}
         WORKING_DIRECTORY ${TESTDIR})
     add_executable(${TestProjectName} ${TestRunner} ${ARGN})

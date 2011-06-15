@@ -4,6 +4,7 @@
 #include <list>
 #include <set>
 #include "UtilLog.h"
+#include "UtilLogStl.h"
 
 template<class ELEMENT>
 class UtilList

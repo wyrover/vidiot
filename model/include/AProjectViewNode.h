@@ -87,6 +87,10 @@ public:
     ProjectViewPtr removeChild(ProjectViewPtr child);
     ProjectViewPtrs getChildren() const;
 
+    /// Find all descendants with the given name, throughout
+    /// the hierarchy.
+    ProjectViewPtrs find(wxString name);
+
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////
@@ -96,8 +100,8 @@ public:
 
 protected:
 
-    WeakProjectViewPtr mParent;             // Children do not keep parents alive
-    std::list<ProjectViewPtr> mChildren;    // Parents keep children alive
+    WeakProjectViewPtr mParent; // Children do not keep parents alive
+    ProjectViewPtrs mChildren;  // Parents keep children alive
 
 private:
 

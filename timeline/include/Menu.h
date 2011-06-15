@@ -43,18 +43,18 @@ public:
     // SEQUENCE MENU
     //////////////////////////////////////////////////////////////////////////
 
-    void onAddVideoTrack(wxCommandEvent& WXUNUSED(event));
-    void onAddAudioTrack(wxCommandEvent& WXUNUSED(event));
-    void onDeleteMarked(wxCommandEvent& WXUNUSED(event));
-    void onDeleteUnmarked(wxCommandEvent& WXUNUSED(event));
-    void onRemoveMarkers(wxCommandEvent& WXUNUSED(event));
-    void onCloseSequence(wxCommandEvent& WXUNUSED(event));
+    void onAddVideoTrack(wxCommandEvent& event);
+    void onAddAudioTrack(wxCommandEvent& event);
+    void onDeleteMarked(wxCommandEvent& event);
+    void onDeleteUnmarked(wxCommandEvent& event);
+    void onRemoveMarkers(wxCommandEvent& event);
+    void onCloseSequence(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // POPUP MENU
     //////////////////////////////////////////////////////////////////////////
 
-    void onAddTransition(wxCommandEvent& WXUNUSED(event));
+    void onAddTransition(wxCommandEvent& event);
 
 private:
 

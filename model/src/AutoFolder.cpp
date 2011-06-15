@@ -47,6 +47,29 @@ AutoFolder::~AutoFolder()
 // STRUCTURE
 //////////////////////////////////////////////////////////////////////////
 
+// static
+model::ProjectViewPtrs AutoFolder::getSupportedFiles( boost::filesystem::path directory )
+{
+    model::ProjectViewPtrs result;
+    for (boost::filesystem::directory_iterator itr(directory); itr != boost::filesystem::directory_iterator(); ++itr)
+    {
+        if (is_directory(*itr))
+        {
+            AutoFolderPtr folder = boost::make_shared<AutoFolder>(itr->path());
+            result.push_back(folder);
+        }
+        else if (is_regular_file(*itr))
+        {
+            model::FilePtr file = boost::make_shared<model::File>(itr->path());
+            if (file->isSupported())
+            {
+                result.push_back(file);
+            }
+        }
+    }
+    return result;
+}
+
 void AutoFolder::update()
 {
     std::list<wxString> allnames;
@@ -55,38 +78,25 @@ void AutoFolder::update()
         allnames.push_back(child->getName());
     }
 
-    for (boost::filesystem::directory_iterator itr(mPath); itr != boost::filesystem::directory_iterator(); ++itr)
+    BOOST_FOREACH( model::ProjectViewPtr asset, getSupportedFiles(mPath) )
     {
-        std::string leaf = itr->path().filename().string();
-        wxString name(leaf);
-        bool isDir(is_directory(*itr));
-        bool isFile(is_regular_file(*itr));
-
-        if (UtilList<wxString>(allnames).hasElement(name))
+        if (UtilList<wxString>(allnames).hasElement(asset->getName()))
         {
-            UtilList<wxString>(allnames).removeElements(boost::assign::list_of(name));
-            continue;
+            // Existing element. Do not remove.
+            UtilList<wxString>(allnames).removeElements(boost::assign::list_of(asset->getName()));
         }
-        if (isDir)
+        else
         {
-            AutoFolderPtr folder = boost::make_shared<AutoFolder>(mPath / leaf);
-            addChild(folder);
-        }
-        else if (isFile)
-        {
-            model::FilePtr file = boost::make_shared<model::File>(mPath  / leaf);
-            if (file->isSupported())
-            {
-                addChild(file);
-            }
+            // New element. Add.
+            addChild(asset);
         }
     }
-    // Remove all other nodes
+    // Remove all other elements (these have been removed)
     BOOST_FOREACH( wxString name, allnames )
     {
         BOOST_FOREACH( ProjectViewPtr child, getChildren() )
         {
-            if (child->getName().CompareTo(name) == 0)
+            if (!child->getName().IsSameAs(name))
             {
                 removeChild(child);
                 break;

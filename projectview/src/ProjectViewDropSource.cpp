@@ -26,7 +26,7 @@ struct wxBitmapCanvas
     {
         Unbind(wxEVT_PAINT, &wxBitmapCanvas::onPaint, this);
     }
-    void onPaint( wxPaintEvent &WXUNUSED(event) )
+    void onPaint( wxPaintEvent &event )
     {
         wxPaintDC dc(this);
         dc.DrawBitmap( mBitmap, 0, 0);
