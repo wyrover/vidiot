@@ -109,7 +109,7 @@ INCLUDE_DIRECTORIES(AFTER
     ${PORTAUDIO_INCLUDE_DIR}
     ${INCLUDE_LIST}
     ${SOUNDTOUCH_INCLUDE_DIR}
-    ${CXXTEST_INCLUDE_DIR}
+    test/include
 )
 
 LINK_DIRECTORIES(
@@ -144,37 +144,6 @@ SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${ConfigurationFiles} ${BuildFiles} PR
 
 #### HELP FILES ####
 #add_custom_command(OUTPUT HelpFiles COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)
-
-#### CXXTEST ####
-#SET(CMAKE_SYSTEM_INCLUDE_PATH ${CMAKE_SYSTEM_INCLUDE_PATH} "C:/Program Files (x86)/CxxTest" )
-#FIND_PACKAGE(CxxTest REQUIRED)
-##ENABLE_TESTING()
-#SET( TEST_DIR ${PROJECT_SOURCE_DIR}/test )
-#FILE(GLOB testfiles RELATIVE ${TEST_DIR} ${TEST_DIR}/*.h)
-#FOREACH (test ${testfiles})
-#    STRING(REPLACE ".h" "" prefix ${test})
-#    CXXTEST_ADD_TEST(Test ${prefix}.cpp ${TEST_DIR}/${test})
-#    MESSAGE("Adding test: ${prefix}")
-#    #add_dependencies(Test ${TEST_DIR}/${test})
-#ENDFOREACH(test)
-#
-#macro(AddCxxTest TestProjectName)
-#    message( --- ${TestProjectName} --- ${CMAKE_CURRENT_BINARY_DIR} --- ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} --- ${CxxTestDirectory} )
-#    set(TestRunnerDirectory ${CMAKE_CURRENT_BINARY_DIR}/${TestProjectName}Source)
-#    set(TestRunner ${TestRunnerDirectory}/${TestProjectName}.cpp)
-#    set(TestRunnerCommand ${EXECUTABLE_OUTPUT_PATH}/${TestProjectName})
-#    message ( ${CxxTestGen} --- ${CxxTestGenFlags} )
-#        set( CxxTestGen "C:/Program Files (x86)/CxxTest/cxxtestgen.pl" )
-#    add_custom_command(OUTPUT ${TestRunner}
-#        COMMAND ${CMAKE_COMMAND} -E make_directory ${TestRunnerDirectory}
-#        COMMAND ${PERL_EXECUTABLE} ${CxxTestGen} ${CxxTestGenFlags} --error-printer -o ${TestRunner} ${ARGN}
-#        DEPENDS ${ARGN}
-#        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test)
-#    add_executable(${TestProjectName} ${TestRunner} ${ARGN})
-#    add_test(${TestProjectName} ${TestRunnerCommand})
-#        
-#    add_dependencies(Test ${TestProjectName})
-#endmacro(AddCxxTest)
 
 ##file(GLOB Tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} test/*.h)
 #file(GLOB Tests ${CMAKE_CURRENT_SOURCE_DIR}/test/*.h)
