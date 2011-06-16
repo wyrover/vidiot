@@ -2,10 +2,10 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
 #include <wx/window.h>
-#include "Application.h"
+#include "IEventLoopListener.h"
 
 class ProjectViewTests : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
-    ,   public gui::IEventLoopListener
+    ,   public test::IEventLoopListener
 {
 public:
 
