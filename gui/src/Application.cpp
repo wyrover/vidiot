@@ -9,6 +9,7 @@
 #include "Window.h"
 #include "Layout.h"
 #include "DebugReport.h"
+#include "IEventLoopListener.h"
 
 /// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
@@ -22,7 +23,7 @@ wxIMPLEMENT_APP_NO_MAIN(Application);
 
 const wxString Application::sTestApplicationName = "VidiotTestSuite";
 
-Application::Application(IEventLoopListener* eventLoopListener)
+Application::Application(test::IEventLoopListener* eventLoopListener)
 :   wxApp()
 ,   IAssert()
 ,   mEventLoopListener(eventLoopListener)

@@ -8,15 +8,11 @@
 #define CATCH_ALL_ERRORS
 #endif // _MSC_VER
 
-namespace gui {
+namespace test {
+    struct IEventLoopListener;
+}
 
-/// Helper interface. Used to signal in the tests that the event loop
-/// has been activated, thus the application is properly started
-/// for running tests.
-struct IEventLoopListener
-{
-    virtual void OnEventLoopEnter() = 0;
-};
+namespace gui {
 
 class Application
     :   public wxApp
@@ -28,7 +24,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Application(IEventLoopListener* eventLoopListener = 0);
+    Application(test::IEventLoopListener* eventLoopListener = 0);
     ~Application();
 
 	static const wxString sTestApplicationName; ///< Fixed string used to determine if application is running in module test
@@ -61,7 +57,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    IEventLoopListener* mEventLoopListener;
+    test::IEventLoopListener* mEventLoopListener;
 };
 
 } // namespace
