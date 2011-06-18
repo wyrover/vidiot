@@ -116,7 +116,7 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
 
 unsigned int ProjectViewModel::GetColumnCount() const
 {
-    return 3;
+    return 2;
 }
 
 wxString ProjectViewModel::GetColumnType(unsigned int col) const
@@ -126,7 +126,6 @@ wxString ProjectViewModel::GetColumnType(unsigned int col) const
     {
     case 0: return wxT("icontext");
     case 1: return wxT("string");
-    case 2: return wxT("string");
     }
     return wxT("string");
 }
@@ -161,12 +160,6 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
                 variant = wxString(""); 
                 return;
             }
-        }
-    case 2:
-        {
-            wxString s = wxString::Format("0x%p", wxItem.GetID());
-            variant = s;
-            return;
         }
     }
 }

@@ -2,6 +2,7 @@
 #define APPLICATION_H
 
 #include <wx/app.h>
+#include <boost/thread.hpp>
 #include "UtilAssert.h"
 
 #ifdef _MSC_VER
@@ -9,7 +10,7 @@
 #endif // _MSC_VER
 
 namespace test {
-    struct IEventLoopListener;
+struct IEventLoopListener;
 }
 
 namespace gui {
@@ -27,16 +28,31 @@ public:
     Application(test::IEventLoopListener* eventLoopListener = 0);
     ~Application();
 
-	static const wxString sTestApplicationName; ///< Fixed string used to determine if application is running in module test
+    static const wxString sTestApplicationName; ///< Fixed string used to determine if application is running in module test
 
     //////////////////////////////////////////////////////////////////////////
-    // GUI EVENTS
+    // IDLE HANDLING
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Helper method for testing. Somehow the Idle events are only correctly
+    /// received by this class. Therefore, the 'wait for idle' used in testing
+    /// uses the implementation here.
+    void waitForIdle();
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI CALLBACKS
     //////////////////////////////////////////////////////////////////////////
 
     bool OnInit();
     int OnRun();
     void OnEventLoopEnter(wxEventLoopBase* loop);
     int OnExit();
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onIdle(wxIdleEvent& event);
 
 #ifdef CATCH_ALL_ERRORS
     virtual void OnAssertFailure(const wxChar *file, int Line, const wxChar *func, const wxChar *cond, const wxChar *msg);
@@ -58,6 +74,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     test::IEventLoopListener* mEventLoopListener;
+    boost::condition_variable mCondition;
 };
 
 } // namespace

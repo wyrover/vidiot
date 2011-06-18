@@ -1,11 +1,12 @@
 #include <cxxtest/TestSuite.h>
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread.hpp>
 #include <wx/window.h>
+#include "FixtureGui.h"
 #include "IEventLoopListener.h"
 
+namespace test
+{
+
 class ProjectViewTests : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
-    ,   public test::IEventLoopListener
 {
 public:
 
@@ -24,7 +25,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void setUp();
-    void OnEventLoopEnter();
     void tearDown();
 
     //////////////////////////////////////////////////////////////////////////
@@ -39,20 +39,10 @@ private:
     // VARIABLES
     //////////////////////////////////////////////////////////////////////////
 
-    boost::scoped_ptr<boost::thread> mThread;
-    void thread();
-
-    boost::scoped_ptr<boost::thread> mMainThread;
-    void mainThread();
-    boost::mutex mMutexMainThread;
-    boost::condition_variable conditionMainThread;
-
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void triggerMenu(int id);
-    void triggerMenu(wxWindow& window, int id);
+    FixtureGui mApplication;
 
 };
+
+}
+using namespace test;
+

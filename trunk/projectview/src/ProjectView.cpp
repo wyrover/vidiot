@@ -60,8 +60,6 @@ ProjectView::ProjectView(wxWindow* parent)
     mCtrl.EnableDropTarget( DataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
     wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
-    // TODO only if 'debug' flag set
-    wxDataViewColumn* dbgColumn  = mCtrl.AppendTextColumn("Debug",       2, wxDATAVIEW_CELL_INERT,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
 
     mCtrl.AssociateModel( mModel );
     mModel->DecRef();
@@ -172,6 +170,7 @@ void ProjectView::select( model::ProjectViewPtrs nodes)
 {
     BOOST_FOREACH( model::ProjectViewPtr node, nodes )
     {
+        VAR_DEBUG(node->id());
         mCtrl.Select( wxDataViewItem( node->id() ) );
     }
 }
@@ -362,7 +361,6 @@ void ProjectView::onNewFolder(wxCommandEvent& event)
 void ProjectView::onNewAutoFolder(wxCommandEvent& event)
 {
     wxString s = UtilDialog::getDir( _("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir(), this );
-//    wxString s = wxDirSelector(_("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this); // Parent given to ensure modality
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
