@@ -416,7 +416,7 @@ void ProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
     // - Note that opening folder A before doing the undo of 'add X' would also cause X to be known
     //   to the control (via 'GetChildren') and thus avoid the crash.
     // As a resolution, all child nodes are made known to the control here.
-    AddRecursive(child);
+    //AddRecursive(child);
 
     mView.Expand(wxDataViewItem(parent->id()));
 
