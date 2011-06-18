@@ -94,7 +94,7 @@ void ProjectViewTests::testStartup()
     gui::ProjectView::get().selectAll();
     model::ProjectViewPtrs selection = gui::ProjectView::get().getSelection();
     model::ProjectViewPtrs files = model::AutoFolder::getSupportedFiles( boost::filesystem::path( sTestDir.fn_str() ) );
-    ASSERT( selection.size() == files.size() + 1); // +1: Root
+    ASSERT( selection.size() == files.size() + 2); // +2: Root + Autofolder node
 
     //    gui::ProjectView::get().select(boost::assign::list_of(nodes.front()));
 

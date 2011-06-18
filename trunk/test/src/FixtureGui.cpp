@@ -50,7 +50,7 @@ void FixtureGui::onEventLoopEnter()
 // static
 void FixtureGui::triggerMenu(int id)
 {
-    gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
+    triggerMenu(gui::Window::get(), id);
 }
 
 // static
