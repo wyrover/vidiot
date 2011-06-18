@@ -16,7 +16,7 @@
 namespace gui {
 
 wxIMPLEMENT_APP_NO_MAIN(Application);
-                                   
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -24,21 +24,47 @@ wxIMPLEMENT_APP_NO_MAIN(Application);
 const wxString Application::sTestApplicationName = "VidiotTestSuite";
 
 Application::Application(test::IEventLoopListener* eventLoopListener)
-:   wxApp()
-,   IAssert()
-,   mEventLoopListener(eventLoopListener)
+    :   wxApp()
+    ,   IAssert()
+    ,   mEventLoopListener(eventLoopListener)
 {
 #ifdef CATCH_ALL_ERRORS
     wxHandleFatalExceptions();
 #endif // CATCH_ALL_ERRORS
+
+    Bind(wxEVT_IDLE, &Application::onIdle, this);
 }
 
 Application::~Application()
 {
+    Unbind(wxEVT_IDLE, &Application::onIdle, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
+// IDLE HANDLING
+//////////////////////////////////////////////////////////////////////////
+
+void Application::waitForIdle()
+{
+    boost::mutex mMutex;
+    boost::mutex::scoped_lock lock(mMutex);
+    wxWakeUpIdle();
+    mCondition.wait(lock);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Application::onIdle(wxIdleEvent& event)
+{
+    mCondition.notify_all();
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GUI CALLBACKS
 //////////////////////////////////////////////////////////////////////////
 
 bool Application::OnInit()
@@ -71,7 +97,7 @@ bool Application::OnInit()
     Avcodec::configureLog();
     Log::Init();
 
-	LOG_INFO << "Start";
+    LOG_INFO << "Start";
 
     SetTopWindow(new Window());
     dynamic_cast<Window*>(GetTopWindow())->init();
@@ -93,7 +119,7 @@ void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 {
     if (mEventLoopListener)
     {
-        mEventLoopListener->OnEventLoopEnter();
+        mEventLoopListener->onEventLoopEnter();
     }
 }
 

@@ -8,7 +8,7 @@ namespace test {
 /// for running tests.
 struct IEventLoopListener
 {
-    virtual void OnEventLoopEnter() = 0;
+    virtual void onEventLoopEnter() = 0;
 };
 
 } // namespace

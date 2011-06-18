@@ -10,6 +10,10 @@
 #include "ProjectViewModel.h"
 #include "ProjectViewDropSource.h"
 
+namespace test {
+    class ProjectViewTests;
+}
+
 namespace gui {
 
 class TimelinesView;
@@ -48,7 +52,7 @@ public:
 
 private:
 
-    friend class ProjectViewTests;
+    friend class test::ProjectViewTests;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
