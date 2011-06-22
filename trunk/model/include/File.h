@@ -1,6 +1,7 @@
 #ifndef MODEL_FILE_H
 #define MODEL_FILE_H
 
+#include <list>
 #include <wx/filename.h>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -20,6 +21,7 @@ namespace model {
 
 class File;
 typedef boost::shared_ptr<File> FilePtr;
+typedef std::list<FilePtr> Files;
 
 class File
     :   public IControl

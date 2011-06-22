@@ -14,7 +14,6 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 namespace gui {
 class Player;
-typedef boost::shared_ptr<Player> PlayerPtr;
 
 namespace timeline { 
     class Timeline; 
@@ -36,7 +35,7 @@ public:
     // TO/FROM OTHER WIDGETS
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline);
+    Player* openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline);
     void closeTimeline(timeline::Timeline* timeline);
     void selectTimeline(timeline::Timeline* timeline);
 
@@ -48,14 +47,14 @@ public:
 
 private:
 
-    PlayerPtr mPlayer;
-    std::map<timeline::Timeline*, PlayerPtr> mPlayers;
+    Player* mPlayer;
+    std::map<timeline::Timeline*, Player*> mPlayers;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void hide(PlayerPtr player);
+    void hide(Player* player);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

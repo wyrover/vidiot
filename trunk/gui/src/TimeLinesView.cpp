@@ -87,7 +87,14 @@ void TimelinesView::onProjectAssetRenamed( model::EventRenameAsset &event )
 
 void TimelinesView::onPageChanged(wxNotebookEvent& event)
 {
-    Window::get().getPreview().selectTimeline(static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection())));
+    //wxNOT_FOUND
+    //int selection = mNotebook.GetSelection();
+
+    // todo handling the unselection of the 'old' one
+
+
+    //Window::get().getPreview().selectTimeline(static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection())
+    static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection()))->activate();
     event.Skip();
 }
 

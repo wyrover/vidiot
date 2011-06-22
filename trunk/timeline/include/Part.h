@@ -12,14 +12,12 @@ namespace model {
 
 namespace gui { 
     class Player;
-    typedef boost::shared_ptr<Player> PlayerPtr;
 
     namespace timeline {
         class ClipView;
         class Cursor;
         class Divider;
         class Drag;
-        class Player;
         class Intervals;
         class MenuHandler;
         class MousePointer;
@@ -101,7 +99,7 @@ public:
     // OTHER HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr getPlayer();
+    Player* getPlayer();
 
     model::SequencePtr getSequence();
     const model::SequencePtr getSequence() const;

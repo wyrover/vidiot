@@ -121,7 +121,12 @@ boost::filesystem::path AutoFolder::getPath() const
 
 wxString AutoFolder::getName() const
 {
-    return mPath.filename().string();
+    AutoFolderPtr parent = boost::dynamic_pointer_cast<AutoFolder>(getParent());
+    if (parent)
+    {
+        return mPath.filename().string();
+    }
+    return mPath.generic_string();
 }
 
 boost::optional<wxString> AutoFolder::getLastModified() const

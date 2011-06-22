@@ -71,15 +71,17 @@ public:
 
     void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onChildViewUpdated()
     void onZoomChanged( ZoomChangeEvent& event ); ///< @see View::onZoomChanged()
-
+    
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    PlayerPtr getPlayer() const;
+    void activate(); ///< To be called when the timeline becomes the active one
 
-    pixel requiredWidth() const;  ///< @see View::requiredWidth()
-    pixel requiredHeight() const; ///< @see View::requiredHeight()
+    Player* getPlayer() const;
+
+    pixel requiredWidth() const;  ///< \see View::requiredWidth()
+    pixel requiredHeight() const; ///< \see View::requiredHeight()
 
     /// Refresh the rectangle for which 
     /// [x,y,w,h] == [position,0,1,height],
@@ -103,7 +105,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::SequencePtr mSequence;
-    PlayerPtr mPlayer;
+    Player* mPlayer;
 
     //////////////////////////////////////////////////////////////////////////
     // PART -> Must be AFTER MEMBERS

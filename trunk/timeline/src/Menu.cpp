@@ -52,12 +52,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
-    wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
-    notebook->Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &MenuHandler::onPageChanged, this);
-
     // Popup menu items
     getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,             this, meID_ADD_TRANSITION);
-
 
     updateItems();
 
@@ -67,9 +63,6 @@ MenuHandler::MenuHandler(Timeline* timeline)
 MenuHandler::~MenuHandler()
 {
     VAR_DEBUG(this);
-
-    wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
-    notebook->Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,    &MenuHandler::onPageChanged, this);
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,  this, ID_ADDAUDIOTRACK);
@@ -82,8 +75,8 @@ MenuHandler::~MenuHandler()
 
     getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,             this, meID_ADD_TRANSITION);
 
+    // todo test the scenario mentioned below
     Window::get().setSequenceMenu(0); // If this is NOT the last timeline to be closed, then a onPageChanged event will reset the menu to that other timeline
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -181,6 +174,11 @@ void MenuHandler::Popup(wxPoint position)
     getTimeline().PopupMenu(&menu);
 }
 
+void MenuHandler::activate()
+{
+    Window::get().setSequenceMenu(getMenu());
+}
+
 //////////////////////////////////////////////////////////////////////////
 // SEQUENCE MENU
 //////////////////////////////////////////////////////////////////////////
@@ -223,7 +221,6 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
     tv.Close();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // POPUP MENU
 //////////////////////////////////////////////////////////////////////////
@@ -255,24 +252,4 @@ void MenuHandler::onAddTransition(wxCommandEvent& event)
     getTimeline().Submit(new command::CreateTransition(getTimeline(), clips));
 }
 
-//////////////////////////////////////////////////////////////////////////
-// EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void MenuHandler::onPageChanged(wxBookCtrlEvent& event)
-{
-    wxNotebook* notebook = dynamic_cast<wxNotebook*>(getTimeline().GetParent());
-    timeline::Timeline* timeline = static_cast<timeline::Timeline*>(notebook->GetPage(event.GetSelection()));
-    if (timeline == &getTimeline())
-    {
-        Window::get().setSequenceMenu(timeline->getMenuHandler().getMenu());
-    }
-    event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
 }} // namespace
-

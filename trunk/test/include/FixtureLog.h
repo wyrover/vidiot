@@ -1,5 +1,5 @@
-#ifndef FIXTURE_LOG_H
-#define FIXTURE_LOG_H
+#ifndef TEST_FIXTURE_LOG_H
+#define TEST_FIXTURE_LOG_H
 
 namespace test {
 
@@ -27,4 +27,4 @@ private:
 
 } // namespace
 
-#endif // FIXTURE_LOG_H
+#endif // TEST_FIXTURE_LOG_H

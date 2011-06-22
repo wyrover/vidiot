@@ -8,9 +8,7 @@
 
 namespace gui {
 
-/**
-* This model links the GUI objects to the actual project items and back.
-*/
+/// This model links the GUI objects to the actual project items and back.
 class ProjectViewModel
     :   public wxDataViewModel
 {
@@ -56,7 +54,6 @@ public:
 
     void OnOpenProject( model::EventOpenProject &event );
     void OnCloseProject( model::EventCloseProject &event );
-    void AddRecursive( model::ProjectViewPtr node );
     void OnProjectAssetAdded( model::EventAddAsset &event );
     void OnProjectAssetRemoved( model::EventRemoveAsset &event );
     void OnProjectAssetRenamed( model::EventRenameAsset &event );
@@ -74,13 +71,11 @@ private:
 	wxIcon mIconVideo;
 };
 
-/**
-* This event is used to signal opening of certain folders after loading
-* a saved project. Is done via an event, due to the trigger moment: it should
-* be done after a certain 'to be opened' folder is known to the control. Thus,
-* it should be done after GetChildren() has returned the node. Hence, the decoupling
-* via the event queue instead of a direct call in the GetChildren() method.
-*/
+/// This event is used to signal opening of certain folders after loading
+/// a saved project. Is done via an event, due to the trigger moment: it should
+/// be done after a certain 'to be opened' folder is known to the control. Thus,
+/// it should be done after GetChildren() has returned the node. Hence, the decoupling
+/// via the event queue instead of a direct call in the GetChildren() method.
 DECLARE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
 
 } // namespace

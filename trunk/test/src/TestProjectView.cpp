@@ -1,106 +1,59 @@
 #include "TestProjectView.h"
 
-#include <wx/evtloop.h> 
-#include "Application.h"
-#include "AProjectViewNode.h"
-#include "ids.h"
+#include <boost/assign/list_of.hpp>
 #include "AutoFolder.h"
-#include "UtilList.h"
-#include "Window.h"
+#include "File.h"
+#include "FixtureGui.h"
+#include "Sequence.h"
 #include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "VideoFile.h"
-#include "ProjectView.h"
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
-#include "Project.h"
-#include <boost/assign/list_of.hpp>
-#include <boost/assign/list_of.hpp>
-#include <list>
-#include <wx/event.h>
-#include <wx/uiaction.h>
-#include "UtilEvent.h"
-#include "UtilDialog.h"
 
 namespace test {
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER CLASSES
-//////////////////////////////////////////////////////////////////////////
-
-
-
-//////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-// static 
-ProjectViewTests *ProjectViewTests::createSuite()
-{ 
-    return new ProjectViewTests(); 
-}
-
-// static 
-void ProjectViewTests::destroySuite(ProjectViewTests *suite)
-{
-    delete suite; 
-}
-
-ProjectViewTests::ProjectViewTests()
-{
-}
-
-ProjectViewTests::~ProjectViewTests()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////
-// PER TEST INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-void ProjectViewTests::setUp()
-{
-}
-
-void ProjectViewTests::tearDown()
-{
-}
+boost::filesystem::path path( "D:\\Vidiot\\test" );
+wxString sFolder1( "Folder1" );
+wxString sSequence1( "Sequence1" );
+wxString sFile( "scene'20100102 12.32.48.avi" ); // Should be a file also in the autofolder
+boost::filesystem::path filepath = path / sFile.fn_str();
+model::ProjectViewPtrs files = model::AutoFolder::getSupportedFiles( path );
 
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewTests::testStartup()
+void ProjectViewTests::testAdditionAndRemoval()
 {
-    // you can create top level-windows here or in OnInit(). Do your testing here
-    //wxUIActionSimulator simu();
+    //  wxUIActionSimulator simu();
+    //  wxUIActionSimulator().MouseMove(100,100);
+    //  wxUIActionSimulator().MouseClick();
 
-    FixtureGui::waitForIdle();
-    FixtureGui::triggerMenu(wxID_NEW);
-    
-    FixtureGui::waitForIdle();
-    model::FolderPtr root = model::Project::get().getRoot();
-    model::ProjectViewPtr rootNode = boost::static_pointer_cast<model::AProjectViewNode>(root);
-    VAR_DEBUG(root->id())(rootNode->id());
-    gui::ProjectView::get().select(boost::assign::list_of(rootNode));
+    model::FolderPtr root = FixtureGui::createProject();
+    model::FolderPtr autofolder1 = FixtureGui::addAutoFolder( path.generic_string() );
+    model::FolderPtr folder1 = FixtureGui::addFolder( sFolder1 );
+    model::SequencePtr sequence1 = FixtureGui::addSequence( sSequence1, folder1 );
+    model::Files files1 = FixtureGui::addFiles( boost::assign::list_of(filepath.generic_string()), folder1 );
 
-    FixtureGui::waitForIdle();
-    wxString sTestDir( "D:\\Vidiot\\test" );
-    UtilDialog::setDir( sTestDir );
-    FixtureGui::triggerMenu(gui::ProjectView::get(),meID_NEW_AUTOFOLDER);
+    ASSERT( autofolder1->getParent() == root );
+    ASSERT( folder1->getParent() == root );
+    ASSERT( sequence1->getParent() == folder1 );
+    ASSERT( FixtureGui::countProjectView() == files.size() + 5); // +4: Root + Autofolder + Folder + Sequence + File node
+    ASSERT( files1.size() == 1);
+    ASSERT( files1.front()->getParent() == folder1 );
+    ASSERT( root->find(sFile).size() == 1 );                     // One file with a relative file name
+    ASSERT( root->find(filepath.generic_string()).size() == 1 ); // And one file with an absolute file name
 
-    FixtureGui::waitForIdle();
-    model::ProjectViewPtrs nodes = root->find("scene'20100102 12.32.48.avi");
-    gui::ProjectView::get().selectAll();
-    model::ProjectViewPtrs selection = gui::ProjectView::get().getSelection();
-    model::ProjectViewPtrs files = model::AutoFolder::getSupportedFiles( boost::filesystem::path( sTestDir.fn_str() ) );
-    ASSERT( selection.size() == files.size() + 2); // +2: Root + Autofolder node
+    FixtureGui::remove( files1.front() );
+    ASSERT( FixtureGui::countProjectView() == files.size() + 4); // +4: Root + Autofolder + Folder + Sequence node
+    FixtureGui::remove( folder1 ); // Also removes sequence1 which is contained in folder1
+    ASSERT( FixtureGui::countProjectView() == files.size() + 2); // +4: Root + Autofolder node
+}
 
-    //    gui::ProjectView::get().select(boost::assign::list_of(nodes.front()));
-
-    //	gui::Window::get().QueueModelEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,ID_OPTIONS));
-    //	wxUIActionSimulator().MouseMove(100,100);
-    //	wxUIActionSimulator().MouseClick();
+void ProjectViewTests::testCreateSequence()
+{
+    model::FolderPtr root = FixtureGui::createProject();
+    model::FolderPtr autofolder1 = FixtureGui::addAutoFolder( path.generic_string() );
+    model::SequencePtr sequence1 = FixtureGui::createSequence( autofolder1 );
+    ASSERT( FixtureGui::countProjectView() == files.size() + 3); // +3: Root + Autofolder + Sequence + File node
+    ASSERT( sequence1->getParent() == root);
 }
 
 } // namespace

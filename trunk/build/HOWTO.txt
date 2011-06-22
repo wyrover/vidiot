@@ -12,6 +12,8 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 * NOTE: Use CTRL-Comma (NavigateTo)
 * Bind ALT-S to CppUtilities.SortSelectedLines Macro
 * Bind ALT-O to CppUtilities.SwitchBetweenSourceAndHeader
+* Bind ALT-T to CppUtilities.ActivateTest
+* Bind ALT-M to CppUtilities.ActivateMain
 
 =================== CMAKE ===================
 Install cmake into c:\Program Files

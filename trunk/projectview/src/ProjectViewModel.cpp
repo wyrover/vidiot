@@ -386,37 +386,12 @@ void ProjectViewModel::OnCloseProject( model::EventCloseProject &event )
     event.Skip();
 }
 
-void ProjectViewModel::AddRecursive( model::ProjectViewPtr node)
-{
-    BOOST_FOREACH( model::ProjectViewPtr child, node->getChildren() )
-    {
-        VAR_DEBUG(node)(child);
-        ItemAdded(wxDataViewItem(node->id()),wxDataViewItem(child->id()));
-        AddRecursive(child);
-    }
-}
-
 void ProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
 {
     model::ProjectViewPtr parent = event.getValue().parent;
     model::ProjectViewPtr child = event.getValue().child;
     VAR_DEBUG(parent)(child);
     ItemAdded(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
-
-    // This is needed to avoid errors with Undo-ing:
-    // - Add a folder A
-    // - In A, add a node X
-    // - Now, delete A (only select A, then right mouse, delete)
-    // - Undo -> The delete is undone, folder A is restored
-    // - At this point, Undoing the add X (being a file, folder, whatever) will cause a crash.
-    //   That's because of when deleting a subtree only the parent is removed (all children
-    //   remain under that parent, just no longer in the main tree). Subsequently, when restoring
-    //   that subtree (undo delete) all children are still under folder A. However, the dataviewctrl
-    //   is not informed (since these nodes aren't added under folder A anymore).
-    // - Note that opening folder A before doing the undo of 'add X' would also cause X to be known
-    //   to the control (via 'GetChildren') and thus avoid the crash.
-    // As a resolution, all child nodes are made known to the control here.
-    //AddRecursive(child);
 
     mView.Expand(wxDataViewItem(parent->id()));
 
