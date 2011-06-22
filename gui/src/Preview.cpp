@@ -34,12 +34,12 @@ Preview::~Preview()
 // TO/FROM OTHER WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr Preview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
+Player* Preview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
 {
     ASSERT(mPlayers.find(timeline) == mPlayers.end());
-    PlayerPtr newplayer = boost::make_shared<Player>(this,sequence);
+    Player* newplayer = new Player(this,sequence);
     mPlayers[timeline] = newplayer;
-    GetSizer()->Add(newplayer.get(),wxSizerFlags(1).Expand());
+    GetSizer()->Add(newplayer,wxSizerFlags(1).Expand());
     selectTimeline(timeline);
     return newplayer;
 }
@@ -49,18 +49,19 @@ void Preview::closeTimeline(timeline::Timeline* timeline)
     ASSERT(mPlayer);
     ASSERT(mPlayers.find(timeline) != mPlayers.end());
     selectTimeline(0);
-    PlayerPtr player = mPlayers[timeline];
+    Player* player = mPlayers[timeline];
     hide(player);
     mPlayers.erase(timeline);
-    GetSizer()->Detach(player.get());
+    GetSizer()->Detach(player);
     if (mPlayers.size() > 0)
     {
         selectTimeline(mPlayers.begin()->first);
     }
     else
     {
-        mPlayer.reset();
+        mPlayer = 0;
     }
+    delete player;
 }
 
 void Preview::selectTimeline(timeline::Timeline* timeline)
@@ -70,7 +71,7 @@ void Preview::selectTimeline(timeline::Timeline* timeline)
     {
         ASSERT(mPlayers.find(timeline) != mPlayers.end());
         mPlayer = mPlayers[timeline];
-        GetSizer()->Show(mPlayer.get());
+        GetSizer()->Show(mPlayer);
     }
 
     GetSizer()->Layout();
@@ -92,12 +93,12 @@ void Preview::play()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Preview::hide(PlayerPtr player)
+void Preview::hide(Player* player)
 {
     if (player)
     {
         player->stop();
-        GetSizer()->Hide(player.get());
+        GetSizer()->Hide(player);
     }
 }
 

@@ -90,13 +90,13 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
     mNextButton    ->SetBitmap(bmpNext,        wxTOP);
     mEndButton     ->SetBitmap(bmpEnd,         wxTOP);
 
-    mHomeButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnHome,     this);
-    mPreviousButton ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnPrevious, this);
-    mPauseButton    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnPause,    this);
-    mPlayButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnPlay,     this);
-    mNextButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnNext,     this);
-    mEndButton      ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnEnd,      this);
-    mSpeedButton    ->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::OnSpeed,    this);
+    mHomeButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
+    mPreviousButton ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
+    mPauseButton    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPause,    this);
+    mPlayButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPlay,     this);
+    mNextButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onNext,     this);
+    mEndButton      ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
+    mSpeedButton    ->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::onSpeed,    this);
 
     mButtonsPanelSizer->Add(mHomeButton,        wxSizerFlags(1).Expand().Bottom().Center());
     mButtonsPanelSizer->Add(mPreviousButton,    wxSizerFlags(1).Expand().Bottom().Center());
@@ -123,20 +123,17 @@ Player::~Player()
 {
     VAR_DEBUG(this);
 
-    mHomeButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnHome,     this);
-    mPreviousButton ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnPrevious, this);
-    mPauseButton    ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnPause,    this);
-    mPlayButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnPlay,     this);
-    mNextButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnNext,     this);
-    mEndButton      ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::OnEnd,      this);
-    mSpeedButton    ->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::OnSpeed,    this);
+    mHomeButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
+    mPreviousButton ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
+    mPauseButton    ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPause,    this);
+    mPlayButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPlay,     this);
+    mNextButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onNext,     this);
+    mEndButton      ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
+    mSpeedButton    ->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,  &Player::onSpeed,    this);
 
-    if (mDisplay != 0)
-    {
-        mDisplay->Unbind(EVENT_PLAYBACK_POSITION, &Player::onPlaybackPosition, this);
-        delete mDisplay;
-        mDisplay = 0;
-    }
+    ASSERT(mDisplay);
+    ASSERT(mEdit);
+    mDisplay->Unbind(EVENT_PLAYBACK_POSITION, &Player::onPlaybackPosition, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -193,40 +190,40 @@ void Player::onPlaybackPosition(PlaybackPositionEvent& event)
     GetEventHandler()->QueueEvent(new PlaybackPositionEvent(event)); // Event must be sent by the player. Other components don't see the videodisplay.
 }
 
-void Player::OnHome(wxCommandEvent& event)
+void Player::onHome(wxCommandEvent& event)
 {
     LOG_INFO;
     mDisplay->moveTo(0);
 }
 
-void Player::OnPrevious(wxCommandEvent& event)
+void Player::onPrevious(wxCommandEvent& event)
 {
     LOG_INFO;
 }
 
-void Player::OnPause(wxCommandEvent& event)
+void Player::onPause(wxCommandEvent& event)
 {
     LOG_INFO;
     stop();
 }
 
-void Player::OnPlay(wxCommandEvent& event)
+void Player::onPlay(wxCommandEvent& event)
 {
     LOG_INFO;
     play();
 }
 
-void Player::OnNext(wxCommandEvent& event)
+void Player::onNext(wxCommandEvent& event)
 {
     LOG_INFO;
 }
 
-void Player::OnEnd(wxCommandEvent& event)
+void Player::onEnd(wxCommandEvent& event)
 {
     LOG_INFO;
 }
 
-void Player::OnSpeed(wxCommandEvent& event)
+void Player::onSpeed(wxCommandEvent& event)
 {
     LOG_INFO;
 
@@ -257,30 +254,30 @@ void Player::OnSpeed(wxCommandEvent& event)
     mSpeedSliderFrame->Show();
 
     mSpeedSlider->SetFocus();
-    mSpeedSlider->Bind(wxEVT_KILL_FOCUS,                &Player::OnSpeedSliderFocusKill,     this);
-    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED,    &Player::OnSpeedSliderUpdate,        this);
-    mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::OnLeftDown,                 this);
+    mSpeedSlider->Bind(wxEVT_KILL_FOCUS,                &Player::onSpeedSliderFocusKill,     this);
+    mSpeedSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED,    &Player::onSpeedSliderUpdate,        this);
+    mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
 }
 
-void Player::OnSpeedSliderUpdate( wxCommandEvent& event )
+void Player::onSpeedSliderUpdate( wxCommandEvent& event )
 {
     VAR_INFO(mSpeedSlider->GetValue());
     mDisplay->setSpeed(mSpeedSlider->GetValue());
     updateSpeedButton();
 }
 
-void Player::OnSpeedSliderFocusKill(wxFocusEvent& event)
+void Player::onSpeedSliderFocusKill(wxFocusEvent& event)
 {
     mSpeedSliderFrame->Hide();
-    mSpeedSlider->Unbind(wxEVT_KILL_FOCUS,                &Player::OnSpeedSliderFocusKill,     this);
-    mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED,    &Player::OnSpeedSliderUpdate,        this);
-    mSpeedButton->Unbind(wxEVT_LEFT_DOWN,                 &Player::OnLeftDown,                 this);
+    mSpeedSlider->Unbind(wxEVT_KILL_FOCUS,                &Player::onSpeedSliderFocusKill,     this);
+    mSpeedSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED,    &Player::onSpeedSliderUpdate,        this);
+    mSpeedButton->Unbind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
     delete mSpeedSliderFrame;
     mSpeedSliderFrame = 0;
-    Bind(wxEVT_IDLE, &Player::OnIdleAfterCloseSpeedSliderFrame, this);
+    Bind(wxEVT_IDLE, &Player::onIdleAfterCloseSpeedSliderFrame, this);
 }
 
-void Player::OnLeftDown(wxMouseEvent& event)
+void Player::onLeftDown(wxMouseEvent& event)
 {
     // NOT: event.Skip();
     // By not calling Skip, the event handling for the toggle button is blocked
@@ -299,10 +296,10 @@ void Player::OnLeftDown(wxMouseEvent& event)
     // enabled again, the Idle event handling was introduced.
 }
 
-void Player::OnIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
+void Player::onIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
 {
     mSpeedButton->SetValue(false);
-    Unbind(wxEVT_IDLE, &Player::OnIdleAfterCloseSpeedSliderFrame, this);
+    Unbind(wxEVT_IDLE, &Player::onIdleAfterCloseSpeedSliderFrame, this);
     event.Skip();
 }
 

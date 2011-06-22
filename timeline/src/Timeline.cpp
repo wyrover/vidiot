@@ -78,12 +78,10 @@ Timeline::~Timeline()
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    Window::get().getPreview().closeTimeline(this);
-
     delete mSequenceView;   mSequenceView = 0;
 
     delete mMenuHandler;    mMenuHandler = 0;
-    delete mStateMachine;     mStateMachine = 0;
+    delete mStateMachine;   mStateMachine = 0;
     delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
@@ -92,6 +90,9 @@ Timeline::~Timeline()
     delete mIntervals;      mIntervals = 0;
     delete mViewMap;        mViewMap = 0;
     delete mZoom;           mZoom = 0;
+
+    Window::get().getPreview().closeTimeline(this); // This closes the Player
+    mPlayer = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -293,11 +294,17 @@ void Timeline::onZoomChanged( ZoomChangeEvent& event )
     event.Skip();
 }
 
+void Timeline::activate()
+{
+    Window::get().getPreview().selectTimeline(this);
+    getMenuHandler().activate();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr Timeline::getPlayer() const
+Player* Timeline::getPlayer() const
 {
     return mPlayer;
 }

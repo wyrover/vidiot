@@ -18,6 +18,7 @@ extern "C" {
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
+#include "AutoFolder.h"
 #include "FilePacket.h"
 #include "Convert.h"
 #include "UtilLog.h"
@@ -188,7 +189,12 @@ wxString File::getLastModified() const
 
 wxString File::getName() const
 {
-    return mPath.filename().string();
+    AutoFolderPtr parent = boost::dynamic_pointer_cast<AutoFolder>(getParent());
+    if (parent)
+    {
+        return mPath.filename().string();
+    }
+    return mPath.generic_string();
 };
 
 bool File::isSupported()

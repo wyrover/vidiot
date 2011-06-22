@@ -28,11 +28,13 @@ Worker::~Worker()
     {
         mThread->join();
     }
+    sCurrent = 0;
 }
 
 // static
 Worker& Worker::get()
 {
+    ASSERT(sCurrent);
     return *sCurrent;
 }
 

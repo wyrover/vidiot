@@ -39,20 +39,17 @@ public:
     void onCloseProject( model::EventCloseProject &event );
     void onAutoOpenFolder( EventAutoFolderOpen& event );
 
-    /// Called to open any folders that were 'marked' as open
-    /// when saving the document.
-    void OpenRecursive(model::FolderPtr folder);
-
     //////////////////////////////////////////////////////////////////////////
-    // TEST
+    // SELECTION
     //////////////////////////////////////////////////////////////////////////
 
-    void select( model::ProjectViewPtrs nodes);
+    /// \nodes these nodes are selected after the call, all others are not
+    void select(model::ProjectViewPtrs nodes);
     void selectAll();
+    model::FolderPtr getSelectedContainer() const;
+    model::ProjectViewPtrs getSelection() const;
 
 private:
-
-    friend class test::ProjectViewTests;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -68,7 +65,6 @@ private:
     void onNewSequence(wxCommandEvent& event);
     void onNewFile(wxCommandEvent& event);
     void onCreateSequence(wxCommandEvent& event);
-    void onUpdateAutoFolder(wxCommandEvent& event);
     void onStartEditing( wxDataViewEvent &event );
     void onMotion(wxMouseEvent& event);
     void onDragEnd();
@@ -94,8 +90,6 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    model::FolderPtr getSelectedContainer() const;
-    model::ProjectViewPtrs getSelection() const;
     bool FindConflictingName(model::FolderPtr parent, wxString name );
 
     //////////////////////////////////////////////////////////////////////////

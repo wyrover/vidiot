@@ -23,7 +23,6 @@ enum
     meID_NEW_SEQUENCE,
     meID_NEW_FILE,
     meID_CREATE_SEQUENCE,
-    meID_UPDATE_AUTOFOLDER,
     // Timeline popup menu
     meID_ADD_TRANSITION,
     meID_REMOVE_EMPTY,

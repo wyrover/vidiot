@@ -66,8 +66,8 @@ Window::Window()
 {
     sCurrent = this;
 
-    mTimelinesView  = new TimelinesView(this);
     mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
+    mTimelinesView  = new TimelinesView(this);
     mProjectView    = new ProjectView(this);
 
     wxMenu* menufile = new wxMenu();
@@ -204,9 +204,9 @@ Window::~Window()
 
     mUiManager.UnInit();
 
-    delete mProjectView;
-    delete mPreview;
-    delete mTimelinesView;
+    delete mProjectView;    // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
+    delete mTimelinesView;  // the timeline view in turn 'knows/uses' the preview (specifically, the player).
+    delete mPreview;        // First, delete the referring windows.
     //NOT: delete mDocTemplate;
 
     sCurrent = 0;

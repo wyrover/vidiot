@@ -6,13 +6,13 @@
 namespace gui { namespace timeline {
 
 Part::Part()
-:   mTimeline(0)
+    :   mTimeline(0)
 {
     VAR_DEBUG(this);
 }
 
 Part::Part(Timeline* timeline)
-:   mTimeline(timeline)
+    :   mTimeline(timeline)
 {
     VAR_DEBUG(this);
 }
@@ -176,7 +176,7 @@ const state::Machine& Part::getStateMachine() const
 // OTHER HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-PlayerPtr Part::getPlayer()
+Player* Part::getPlayer()
 {
     return getTimeline().getPlayer();
 }

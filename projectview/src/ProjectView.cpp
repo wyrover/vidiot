@@ -10,8 +10,6 @@
 #include <wx/dirdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/clipbrd.h>
-#include <wx/textdlg.h>
-#include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include "Folder.h"
 #include "DataObject.h"
@@ -82,7 +80,6 @@ ProjectView::ProjectView(wxWindow* parent)
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,         this, meID_NEW_SEQUENCE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFile,             this, meID_NEW_FILE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCreateSequence,      this, meID_CREATE_SEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onUpdateAutoFolder,    this, meID_UPDATE_AUTOFOLDER);
 
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &ProjectView::onStartEditing,    this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &ProjectView::onContextMenu,     this);
@@ -109,7 +106,6 @@ ProjectView::~ProjectView()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,       this, meID_NEW_SEQUENCE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFile,           this, meID_NEW_FILE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCreateSequence,    this, meID_CREATE_SEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onUpdateAutoFolder,  this, meID_CREATE_SEQUENCE);
 
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,   &ProjectView::onStartEditing,    this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,    &ProjectView::onContextMenu,     this);
@@ -163,11 +159,12 @@ void ProjectView::onAutoOpenFolder( EventAutoFolderOpen& event )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// TEST
+// SELECTION
 //////////////////////////////////////////////////////////////////////////
 
 void ProjectView::select( model::ProjectViewPtrs nodes)
 {
+    mCtrl.UnselectAll();
     BOOST_FOREACH( model::ProjectViewPtr node, nodes )
     {
         VAR_DEBUG(node->id());
@@ -178,6 +175,32 @@ void ProjectView::select( model::ProjectViewPtrs nodes)
 void ProjectView::selectAll()
 {
     mCtrl.SelectAll();
+}
+
+model::FolderPtr ProjectView::getSelectedContainer() const
+{
+    wxDataViewItemArray selection;
+    mCtrl.GetSelections(selection);
+    ASSERT(selection.size() == 1);
+    model::ProjectViewPtr projectNode = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(selection[0].GetID()));
+    model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(projectNode);
+    ASSERT(folder);
+    return folder;
+}
+
+model::ProjectViewPtrs ProjectView::getSelection() const
+{
+    model::ProjectViewPtrs l;
+    wxDataViewItemArray selection;
+    mCtrl.GetSelections(selection);
+
+    BOOST_FOREACH(wxDataViewItem wxItem, selection)
+    {
+        model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
+        ASSERT(node != 0);
+        l.push_back(node);
+    }
+    return l;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -197,7 +220,6 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     bool showNew = true;
     bool showCreateSequence = false;
 
-    bool showUpdateAutoFolder = false;
     bool enableUpdateAutoFolder = true;
 
     bool enableNew = (nSelected == 1);
@@ -209,7 +231,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     {
         model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(item.GetID()));
 
-        bool isRoot = (!node->getParent());
+        bool isRoot = (!node->hasParent());
         bool isFolder = (boost::dynamic_pointer_cast<model::Folder>(node));
         bool isAutoFolder = (boost::dynamic_pointer_cast<model::AutoFolder>(node));
 
@@ -225,7 +247,6 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
             enablePaste = false;
             enableNew = false;
             showCreateSequence = true;
-            showUpdateAutoFolder = true;
         }
         else if (isFolder)
         {
@@ -264,13 +285,6 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     menu.AppendSeparator();
     menu.Append( wxID_DELETE,_("&Delete\tDEL") );
     menu.Enable( wxID_DELETE, enableDelete );
-
-    if (showUpdateAutoFolder)
-    {
-        menu.AppendSeparator();
-        menu.Append(meID_UPDATE_AUTOFOLDER, _("&Update autofolder"));
-        menu.Enable(meID_UPDATE_AUTOFOLDER, enableUpdateAutoFolder);
-    }
 
     if (showCreateSequence)
     {
@@ -350,7 +364,7 @@ void ProjectView::onDelete(wxCommandEvent& event)
 
 void ProjectView::onNewFolder(wxCommandEvent& event)
 {
-    wxString s = wxGetTextFromUser (_("Enter folder name"),_("Input text"), "New Folder default value", 0, wxDefaultCoord, wxDefaultCoord, true);
+    wxString s = UtilDialog::getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value"), this );
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
@@ -370,7 +384,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& event)
 
 void ProjectView::onNewSequence(wxCommandEvent& event)
 {
-    wxString s = wxGetTextFromUser(_("Enter sequence name"),_("Input text"), "New sequence default value", 0, wxDefaultCoord, wxDefaultCoord, true);
+    wxString s = UtilDialog::getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value"), this );
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
@@ -380,31 +394,20 @@ void ProjectView::onNewSequence(wxCommandEvent& event)
 
 void ProjectView::onNewFile(wxCommandEvent& event)
 {
-    wxString wildcards =
-        wxString::Format
-        (
-        _("Movie clips (*.avi)|*.avi|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s"),
-        wxFileSelectorDefaultWildcardStr,
-        wxFileSelectorDefaultWildcardStr
-        );
-    wxFileDialog dialog(this, _T("Select file(s) to add"), wxEmptyString, wxEmptyString, wildcards, wxFD_OPEN|wxFD_MULTIPLE);
-
-    if (dialog.ShowModal() == wxID_OK)
+    wxString filetypes = _("Movie clips (*.avi)|*.avi|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
+    std::list<wxString> files = UtilDialog::getFiles( _("Select file(s) to add"), filetypes, this );
+    std::vector<boost::filesystem::path> list;
+    BOOST_FOREACH( wxString path, files )
     {
-        wxArrayString paths;
-        dialog.GetPaths(paths);
-
-
-        std::vector<boost::filesystem::path> list;
-        BOOST_FOREACH( wxString path, paths)
+        boost::filesystem::path p(path.ToStdString());
+        if (FindConflictingName(getSelectedContainer(),p.filename().string()))
         {
-            boost::filesystem::path p(path.ToStdString());
-            if (FindConflictingName(getSelectedContainer(),p.filename().string()))
-            {
-                return;
-            }
-            list.push_back(p);
+            return;
         }
+        list.push_back(p);
+    }
+    if (list.size() > 0 )
+    {
         mProject->Submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
     }
 }
@@ -413,18 +416,6 @@ void ProjectView::onCreateSequence(wxCommandEvent& event)
 {
     command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
     mProject->Submit(cmd);
-}
-
-void ProjectView::onUpdateAutoFolder(wxCommandEvent& event)
-{
-    BOOST_FOREACH(model::ProjectViewPtr node, getSelection())
-    {
-        if (node->isA<model::AutoFolder>())
-        {
-            model::AutoFolderPtr autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(node);
-            autofolder->update();
-        }
-    }
 }
 
 void ProjectView::onMotion(wxMouseEvent& event)
@@ -575,32 +566,6 @@ void ProjectView::onStartEditing( wxDataViewEvent &event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-model::FolderPtr ProjectView::getSelectedContainer() const
-{
-    wxDataViewItemArray selection;
-    mCtrl.GetSelections(selection);
-    ASSERT(selection.size() == 1);
-    model::ProjectViewPtr projectNode = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(selection[0].GetID()));
-    model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(projectNode);
-    ASSERT(folder);
-    return folder;
-}
-
-model::ProjectViewPtrs ProjectView::getSelection() const
-{
-    model::ProjectViewPtrs l;
-    wxDataViewItemArray selection;
-    mCtrl.GetSelections(selection);
-
-    BOOST_FOREACH(wxDataViewItem wxItem, selection)
-    {
-        model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
-        ASSERT(node != 0);
-        l.push_back(node);
-    }
-    return l;
-}
-
 bool ProjectView::FindConflictingName(model::FolderPtr parent, wxString name )
 {
     BOOST_FOREACH( model::ProjectViewPtr child, parent->getChildren() )
@@ -619,22 +584,6 @@ bool ProjectView::FindConflictingName(model::FolderPtr parent, wxString name )
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////
-
-void ProjectView::OpenRecursive(model::FolderPtr folder)
-{
-    if (mOpenFolders.count(folder) == 1)
-    {
-        mCtrl.Expand(wxDataViewItem(folder->id()));
-    }
-    BOOST_FOREACH( model::ProjectViewPtr child, folder->getChildren())
-    {
-        model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(child);
-        if (folder)
-        {
-            OpenRecursive(folder);
-        }
-    }
-}
 
 template<class Archive>
 void ProjectView::serialize(Archive & ar, const unsigned int version)
