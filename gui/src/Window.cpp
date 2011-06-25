@@ -52,7 +52,7 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 //////////////////////////////////////////////////////////////////////////
 
 const int sStatusProcessing = 8;
-static int sSequenceMenuIndex = 0;
+int Window::sSequenceMenuIndex = 0;
 static Window* sCurrent = 0;
 
 Window::Window()
@@ -203,6 +203,8 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
 
     mUiManager.UnInit();
+
+    setSequenceMenu(0); // Ensure destruction of sequenceMenu
 
     delete mProjectView;    // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
     delete mTimelinesView;  // the timeline view in turn 'knows/uses' the preview (specifically, the player).

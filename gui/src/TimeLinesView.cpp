@@ -16,6 +16,8 @@
 
 namespace gui {
 
+static TimelinesView* sCurrent = 0;
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -24,6 +26,8 @@ TimelinesView::TimelinesView(Window *parent)
 :	wxPanel(parent)
 ,   mNotebook(this,wxID_ANY)
 {
+    sCurrent = this;
+
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL); 
     sizer->Add( &mNotebook, 1, wxGROW );
     SetSizerAndFit(sizer);
@@ -40,6 +44,14 @@ TimelinesView::~TimelinesView()
     gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,            &TimelinesView::onProjectAssetRemoved,       this);
     gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,            &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &TimelinesView::onPageChanged,               this);
+    sCurrent = 0;
+}
+
+// static
+TimelinesView& TimelinesView::get()
+{
+    ASSERT(sCurrent);
+    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,13 +99,6 @@ void TimelinesView::onProjectAssetRenamed( model::EventRenameAsset &event )
 
 void TimelinesView::onPageChanged(wxNotebookEvent& event)
 {
-    //wxNOT_FOUND
-    //int selection = mNotebook.GetSelection();
-
-    // todo handling the unselection of the 'old' one
-
-
-    //Window::get().getPreview().selectTimeline(static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection())
     static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection()))->activate();
     event.Skip();
 }
@@ -131,6 +136,10 @@ void TimelinesView::Close( model::SequencePtr sequence )
         // Close open sequence
         mNotebook.DeletePage(mNotebook.GetSelection());
     }
+    if (mNotebook.GetPageCount() > 0)
+    {
+        static_cast<timeline::Timeline*>(mNotebook.GetPage(mNotebook.GetSelection()))->activate();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,6 +160,15 @@ std::pair<size_t,timeline::Timeline*> TimelinesView::findPage(model::SequencePtr
     }
 
     return std::make_pair<size_t,timeline::Timeline*>(0,0);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TESTING
+//////////////////////////////////////////////////////////////////////////
+
+timeline::Timeline* TimelinesView::getTimeline(int n)
+{
+    return static_cast<timeline::Timeline*>(mNotebook.GetPage(n));
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -16,6 +16,10 @@ namespace model {
     typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 
+namespace test {
+    class TestTimelinesView;
+}
+
 namespace gui {
 
 class Window;
@@ -35,6 +39,8 @@ public:
 
     TimelinesView(Window *parent);
 	virtual ~TimelinesView();
+
+    static TimelinesView& get();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -71,6 +77,15 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     std::pair<size_t,timeline::Timeline*> findPage(model::SequencePtr sequence) const; ///< Find the page associated with a sequence. 0 pointer is returned if not found.
+
+    //////////////////////////////////////////////////////////////////////////
+    // TESTING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class test::TestTimelinesView;
+
+    /// Return tab by number. Counting starts at 0.
+    timeline::Timeline* getTimeline(int n);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
