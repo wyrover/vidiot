@@ -104,6 +104,7 @@ void FixtureGui::triggerMenu(int id)
 void FixtureGui::triggerMenu(wxWindow& window, int id)
 {
     window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
+    waitForIdle();
 }
 
 // static

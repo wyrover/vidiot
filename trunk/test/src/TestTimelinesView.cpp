@@ -1,59 +1,48 @@
 #include "TestTimelinesView.h"
 
-#include <wx/evtloop.h> 
-#include "Application.h"
-#include "AProjectViewNode.h"
 #include "ids.h"
-#include "AutoFolder.h"
-#include "Sequence.h"
-#include "UtilList.h"
-#include "Window.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "VideoFile.h"
-#include "ProjectView.h"
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
-#include "Project.h"
-#include <boost/assign/list_of.hpp>
-#include <boost/assign/list_of.hpp>
-#include <list>
-#include <wx/event.h>
-#include <wx/uiaction.h>
-#include "UtilEvent.h"
-#include "UtilDialog.h"
 #include "FixtureGui.h"
+#include "Menu.h"
+#include "Timeline.h"
+#include "TimeLinesView.h"
+#include "UtilList.h"
+#include "UtilLog.h"
+#include "Window.h"
 
 namespace test {
 
 // TODO replace wxfilename with boost::filesystem everywhere
-void TestTimelinesView::testTabs()
+void TestTimelinesView::testSequenceMenu()
 {
-    //wxUIActionSimulator simu();
-    //	wxUIActionSimulator().MouseMove(100,100);
-    //	wxUIActionSimulator().MouseClick();
-
-    boost::filesystem::path path( "D:\\Vidiot\\test" );
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
+    wxString sSequence2( "Sequence2" );
 
     model::FolderPtr root = FixtureGui::createProject();
-    model::FolderPtr autofolder = FixtureGui::addAutoFolder( path.generic_string() );
 
-    gui::ProjectView::get().selectAll();
-    FixtureGui::waitForIdle();
-    model::ProjectViewPtrs selection = gui::ProjectView::get().getSelection();
-    model::ProjectViewPtrs files = model::AutoFolder::getSupportedFiles( path );
-    ASSERT( selection.size() == files.size() + 2); // +2: Root + Autofolder node
-    
-    model::FolderPtr folder1 = FixtureGui::addFolder( sFolder1 );
-    model::SequencePtr sequence1 = FixtureGui::addSequence( sSequence1, folder1 );
-    ASSERT( sequence1->getParent() == folder1 );
+    model::SequencePtr sequence1 = FixtureGui::addSequence( sSequence1 );
+    ASSERT(getTimeline(sequence1)->getMenuHandler().getMenu() == gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex));
 
-    gui::ProjectView::get().selectAll();
-    FixtureGui::waitForIdle();
-    selection = gui::ProjectView::get().getSelection();
-    ASSERT( selection.size() == files.size() + 4); // +4: Root + Autofolder + Folder + Sequence node
+    model::SequencePtr sequence2 = FixtureGui::addSequence( sSequence2 );
+    ASSERT(getSequenceMenu() == getTimeline(sequence2)->getMenuHandler().getMenu());
+
+    FixtureGui::triggerMenu(ID_CLOSESEQUENCE);
+    ASSERT(getSequenceMenu() == getTimeline(sequence1)->getMenuHandler().getMenu());
+
+    FixtureGui::triggerMenu(ID_CLOSESEQUENCE);
+    ASSERT(getSequenceMenu()->GetMenuItemCount() == 0); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
+}
+
+// static
+wxMenu* TestTimelinesView::getSequenceMenu()
+{
+    return gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex);
+}
+
+// static
+gui::timeline::Timeline* TestTimelinesView::getTimeline( model::SequencePtr sequence )
+{
+    return gui::TimelinesView::get().findPage(sequence).second;
 }
 
 } // namespace

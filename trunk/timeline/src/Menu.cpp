@@ -73,10 +73,10 @@ MenuHandler::~MenuHandler()
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,             this, meID_ADD_TRANSITION);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,   this, meID_ADD_TRANSITION);
 
-    // todo test the scenario mentioned below
-    Window::get().setSequenceMenu(0); // If this is NOT the last timeline to be closed, then a onPageChanged event will reset the menu to that other timeline
+    // todo test the scenario mentioned below    
+    Window::get().setSequenceMenu(0); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
 }
 
 //////////////////////////////////////////////////////////////////////////

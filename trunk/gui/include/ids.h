@@ -1,6 +1,8 @@
 #ifndef IDS_H
 #define IDS_H
 
+#include <wx/defs.h>
+
 /// Made global list to be able to trigger these from the tests
 enum 
 {
