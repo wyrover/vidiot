@@ -55,7 +55,6 @@ wxString Config::getFileName()
 const wxString Config::sPathSnapClips               ("/View/SnapClips");
 const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
 const wxString Config::sPathAutoLoadEnabled         ("/Project/AutoLoad/Enabled");
-const wxString Config::sPathAutoLoadFilename        ("/Project/AutoLoad/Filename");
 const wxString Config::sPathLastOpened              ("/Project/LastOpened");
 const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
 const wxString Config::sPathLogFile                 ("/Debug/LogFile");

@@ -69,10 +69,6 @@ void Application::onIdle(wxIdleEvent& event)
 
 bool Application::OnInit()
 {
-    // Must be called asap to avoid cd'ing before this statement
-    // first initializes the boost initial path variable.
-    boost::filesystem::path initialpath = boost::filesystem::initial_path();
-
     // Required for options.  The application name is explicitly not set.
     // This implies that the name of the executable is used. This allows for
     // running multiple instances with each its own configuration file.

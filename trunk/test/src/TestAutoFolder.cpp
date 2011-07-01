@@ -47,7 +47,7 @@ void TestAutoFolder::testWatch()
     aviFile1.Close();
     
     FixtureGui::waitForIdle();
-    // This loop is required to wait until the FSwatcher has seen the change
+    // This loop is required to wait until the Watcher has seen the change
     // Not the best solution......
     while ( model::AutoFolder::getSupportedFiles( dirpath ).size() < 1 )
     {

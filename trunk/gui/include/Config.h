@@ -28,7 +28,6 @@ public:
     static const wxString sPathSnapClips;
     static const wxString sPathSnapCursor;
     static const wxString sPathAutoLoadEnabled;
-    static const wxString sPathAutoLoadFilename;
     static const wxString sPathLastOpened;
     static const wxString sPathLogLevel;
     static const wxString sPathLogFile;
