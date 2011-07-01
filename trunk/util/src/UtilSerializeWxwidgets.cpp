@@ -25,6 +25,23 @@ template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive&
 template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxString & string, const unsigned int version);
 
 template<class Archive>
+void save(Archive & ar, const wxFileName& filename, const unsigned int version)
+{
+    ar & filename.GetLongPath();
+}
+
+template<class Archive>
+void load(Archive & ar, wxFileName& filename, const unsigned int version)
+{
+    wxString longpath;
+    ar & longpath;
+    filename.Assign(longpath);
+}
+
+template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const wxFileName& filename, const unsigned int version);
+template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxFileName& filename, const unsigned int version);
+
+template<class Archive>
 void serialize(Archive & ar, wxRect & r, const unsigned int version)
 {
     ar & r.x;

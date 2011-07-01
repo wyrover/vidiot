@@ -32,14 +32,14 @@ ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 ,   mIconFolderOpen(folder_horizontal_open_xpm)
 ,	mIconVideo(film_xpm)
 {
-    gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::OnOpenProject,           this);
-    gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::OnCloseProject,          this);
+    gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::onOpenProject,           this);
+    gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::onCloseProject,          this);
 }
 
 ProjectViewModel::~ProjectViewModel()
 {
-    gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,   &ProjectViewModel::OnOpenProject,            this);
-    gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,  &ProjectViewModel::OnCloseProject,           this);
+    gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,   &ProjectViewModel::onOpenProject,            this);
+    gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,  &ProjectViewModel::onCloseProject,           this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -150,9 +150,7 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
             model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
             if (file)
             {
-                wxDateTime t;
-                t.ParseDateTime(file->getLastModified());
-                variant = t;
+                variant = wxDateTime(file->getLastModified());
                 return;
             }
             else
@@ -360,33 +358,33 @@ wxIcon ProjectViewModel::getIcon(model::ProjectViewPtr node) const
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewModel::OnOpenProject( model::EventOpenProject &event )
+void ProjectViewModel::onOpenProject( model::EventOpenProject &event )
 {
     mProject = event.getValue();
 
     Cleared();
 
-    gui::Window::get().Bind(model::EVENT_ADD_ASSET, &ProjectViewModel::OnProjectAssetAdded,         this);
-    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,  &ProjectViewModel::OnProjectAssetRemoved,   this);
-    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,  &ProjectViewModel::OnProjectAssetRenamed,   this);
+    gui::Window::get().Bind(model::EVENT_ADD_ASSET,     &ProjectViewModel::onProjectAssetAdded,     this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,  &ProjectViewModel::onProjectAssetRemoved,   this);
+    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,  &ProjectViewModel::onProjectAssetRenamed,   this);
 
     event.Skip();
 }
 
-void ProjectViewModel::OnCloseProject( model::EventCloseProject &event )
+void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
 {
     mProject = 0;
 
     Cleared();
 
-    gui::Window::get().Unbind(model::EVENT_ADD_ASSET,       &ProjectViewModel::OnProjectAssetAdded,      this);
-    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,    &ProjectViewModel::OnProjectAssetRemoved,    this);
-    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,    &ProjectViewModel::OnProjectAssetRenamed,    this);
+    gui::Window::get().Unbind(model::EVENT_ADD_ASSET,       &ProjectViewModel::onProjectAssetAdded,      this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,    &ProjectViewModel::onProjectAssetRemoved,    this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,    &ProjectViewModel::onProjectAssetRenamed,    this);
 
     event.Skip();
 }
 
-void ProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
+void ProjectViewModel::onProjectAssetAdded( model::EventAddAsset &event )
 {
     model::ProjectViewPtr parent = event.getValue().parent;
     model::ProjectViewPtr child = event.getValue().child;
@@ -398,7 +396,7 @@ void ProjectViewModel::OnProjectAssetAdded( model::EventAddAsset &event )
     event.Skip();
 }
 
-void ProjectViewModel::OnProjectAssetRemoved( model::EventRemoveAsset &event )
+void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveAsset &event )
 {
     model::ProjectViewPtr parent = event.getValue().parent;
     model::ProjectViewPtr child = event.getValue().child;
@@ -408,7 +406,7 @@ void ProjectViewModel::OnProjectAssetRemoved( model::EventRemoveAsset &event )
     event.Skip();
 }
 
-void ProjectViewModel::OnProjectAssetRenamed( model::EventRenameAsset &event )
+void ProjectViewModel::onProjectAssetRenamed( model::EventRenameAsset &event )
 {
     VAR_DEBUG(event.getValue().node);
     ItemChanged(event.getValue().node->id());

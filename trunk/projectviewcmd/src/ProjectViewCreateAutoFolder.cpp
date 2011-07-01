@@ -1,19 +1,21 @@
 #include "ProjectViewCreateAutoFolder.h"
 
 #include <boost/make_shared.hpp>
+#include "AutoFolder.h"
 #include "UtilLog.h"
-#include "UtilLogBoost.h"
+#include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
 
 namespace command {
 
-ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(model::FolderPtr parent, boost::filesystem::path path)
+ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(model::FolderPtr parent, wxFileName path)
 :   ProjectViewCommand()
 ,   mParent(parent)
 ,   mNewAutoFolder()
 ,   mPath(path)
 {
     VAR_INFO(this)(mParent)(mPath);
-    mCommandName = _("Add autofolder")  + _(" \"")   + mPath.filename().c_str()  + _("\"");
+    mCommandName = _("Add folder")  + _(" \"")   + util::path::toName(mPath)  + _("\"");
 }
 
 ProjectViewCreateAutoFolder::~ProjectViewCreateAutoFolder()

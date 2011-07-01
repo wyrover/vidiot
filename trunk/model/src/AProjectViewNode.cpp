@@ -15,6 +15,8 @@ namespace model {
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+// todo in separate event class
+    // todo rename AProjectViewNode to Asset
 DEFINE_EVENT(EVENT_ADD_ASSET,       EventAddAsset,      ParentAndChild);
 DEFINE_EVENT(EVENT_REMOVE_ASSET,    EventRemoveAsset,   ParentAndChild);
 DEFINE_EVENT(EVENT_RENAME_ASSET,    EventRenameAsset,   NodeWithNewName);

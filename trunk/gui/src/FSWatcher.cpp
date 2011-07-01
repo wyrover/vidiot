@@ -1,12 +1,17 @@
 #include "FSWatcher.h"
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 #include <boost/assign/list_of.hpp>
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-#include "UtilLogStl.h"
+#include <boost/foreach.hpp>
 #include "AutoFolder.h"
 #include "File.h"
+#include "Project.h"
 #include "UtilList.h"
+#include "UtilLog.h"
+#include "UtilLogStl.h"
+#include "UtilLogWxwidgets.h"
+#include "Window.h"
 
 namespace gui {
 
@@ -14,105 +19,58 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-static FSWatcher* sCurrent = 0;
+static Watcher* sCurrent = 0;
 
-FSWatcher::FSWatcher()
-:	wxFileSystemWatcher()
-,   mFolders()
-,   mFiles()
+Watcher::Watcher()
+    :   mFileMap()
+    ,   mWatcher(0)
+    ,   mRestartRequired(false)
 {
     VAR_DEBUG(this);
     sCurrent = this;
-    Bind(wxEVT_FSWATCHER, &FSWatcher::onChange, this);
+
+    gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &Watcher::onOpenProject,           this);
+    gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &Watcher::onCloseProject,          this);
 }
 
-FSWatcher::~FSWatcher()
+Watcher::~Watcher()
 {
     VAR_DEBUG(this);
-    Unbind(wxEVT_FSWATCHER, &FSWatcher::onChange, this);
-    mFolders.clear();
-    mFiles.clear();
+
+    gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,   &Watcher::onOpenProject,            this);
+    gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,  &Watcher::onCloseProject,           this);
+
+    stop();
+
     sCurrent = 0;
 }
 
-FSWatcher* FSWatcher::current()
+Watcher* Watcher::current()
 {
     return sCurrent;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// ADD
-//////////////////////////////////////////////////////////////////////////
-
-void FSWatcher::watchFolder(model::AutoFolder* folder)
-{
-    VAR_DEBUG(folder->getFileName());
-    FolderMap::iterator it = mFolders.find(folder->getFileName());
-    if (it == mFolders.end())
-    {
-        // First folder for this path
-        mFolders[folder->getFileName()] = boost::assign::list_of(folder);
-        Add(folder->getFileName());
-    }
-    else
-    {
-        ASSERT(!UtilList<model::AutoFolder*>(it->second).hasElement(folder))(*it);
-        it->second.push_back(folder);
-    }
-}
-
-void FSWatcher::watchFile(model::File* file)
-{
-    VAR_DEBUG(file->getFileName());
-    FileMap::iterator it = mFiles.find(file->getFileName());
-    if (it == mFiles.end())
-    {
-        // First file for this path. Start watching.
-        mFiles[file->getFileName()] = boost::assign::list_of(file);
-        Add(file->getFileName());
-    }
-    else
-    {
-        ASSERT(!UtilList<model::File*>(it->second).hasElement(file))(*it);
-        it->second.push_back(file);
-    }
-}
-
-void FSWatcher::unwatchFolder(model::AutoFolder* folder)
-{
-    VAR_DEBUG(folder->getFileName());
-    ASSERT(mFolders.find(folder->getFileName()) != mFolders.end());
-    UtilList<model::AutoFolder*>(mFolders[folder->getFileName()]).removeElements(boost::assign::list_of(folder));
-    if (mFolders[folder->getFileName()].empty())
-    {
-        // Last entry removed. Remove entire list and stop watching
-        mFolders.erase(folder->getFileName());
-        Remove(folder->getFileName());
-    }
-}
-
-void FSWatcher::unwatchFile(model::File* file)
-{
-    VAR_DEBUG(file->getFileName());
-    ASSERT(mFiles.find(file->getFileName()) != mFiles.end());
-    UtilList<model::File*>(mFiles[file->getFileName()]).removeElements(boost::assign::list_of(file));
-    if (mFiles[file->getFileName()].empty())
-    {
-        // Last entry removed. Remove entire list and stop watching
-        mFiles.erase(file->getFileName());
-        Remove(file->getFileName());
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 // EVENT HANDLING
 //////////////////////////////////////////////////////////////////////////
 
-void FSWatcher::onChange(wxFileSystemWatcherEvent& event)
+void Watcher::onChange(wxFileSystemWatcherEvent& event)
 {
     VAR_INFO(event.GetChangeType())(event.GetPath())(event.GetNewPath());
 
-    wxFileName changedfolder(event.GetPath().GetPath(),"");
+    wxFileName file(event.GetPath());
+    // Get the parent dir.
+    if (file.IsDir())
+    {
+        file.RemoveLastDir(); 
+    }
+    else
+    {
+        file.SetName("");
+        file.ClearExt();
+    }
+    wxFileName folder( file.GetLongPath(), "" );
+    VAR_INFO(folder);
 
     switch (event.GetChangeType())
     {
@@ -135,25 +93,154 @@ void FSWatcher::onChange(wxFileSystemWatcherEvent& event)
     default: FATAL("Unsupported event type.");
     }
 
-    if (changedfolder.IsDir())
+    if (mFileMap.find(folder) != mFileMap.end())
     {
-        ASSERT(mFolders.find(changedfolder) != mFolders.end());
-        BOOST_FOREACH( model::AutoFolder* folder, mFolders.find(changedfolder)->second )
+        BOOST_FOREACH( model::ProjectViewPtr node, mFileMap.find(folder)->second )
         {
-            folder->update();
+            if (node->isA<model::AutoFolder>())
+            {
+                boost::static_pointer_cast<model::AutoFolder>(node)->update();
+            }
         }
     }
-    else
-    {
-        //NOT: ASSERT(mFiles.find(event.GetPath()) != mFiles.end()); Since Folder wathcing also causes file events
-        if (mFiles.find(event.GetPath()) != mFiles.end())
-        {
-            BOOST_FOREACH( model::File* file, mFiles.find(event.GetPath())->second )
-            {
-                //file->update();
-            }
+}
 
+//////////////////////////////////////////////////////////////////////////
+// PROJECT EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Watcher::onOpenProject( model::EventOpenProject &event )
+{
+    gui::Window::get().Bind(model::EVENT_ADD_ASSET,     &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,  &Watcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,  &Watcher::onProjectAssetRenamed,  this);
+
+    event.Skip();
+}
+
+void Watcher::onCloseProject( model::EventCloseProject &event )
+{
+    gui::Window::get().Unbind(model::EVENT_ADD_ASSET,       &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,    &Watcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,    &Watcher::onProjectAssetRenamed,  this);
+    
+    event.Skip();
+}
+
+wxFileName getFileName( model::ProjectViewPtr node )
+{
+    if (node->isA<model::AutoFolder>())
+    {
+        return boost::static_pointer_cast<model::AutoFolder>(node)->getPath();
+    }
+    return wxFileName();
+}
+
+bool isWatchable( model::ProjectViewPtr node )
+{
+    // wxFileSystemWatcher does not support monitoring files yet.
+    // Therefore model::File is not watched yet.
+    return node->isA<model::AutoFolder>();
+}
+
+void Watcher::onProjectAssetAdded( model::EventAddAsset &event )
+{
+    model::ProjectViewPtr node = event.getValue().child;
+    watch( node, getFileName(node) );
+    restart();
+    event.Skip();
+}
+
+void Watcher::onProjectAssetRemoved( model::EventRemoveAsset &event )
+{
+    model::ProjectViewPtr node = event.getValue().child;
+    unwatch( node, getFileName(node) );
+    restart();
+    event.Skip();
+}
+
+void Watcher::onProjectAssetRenamed( model::EventRenameAsset &event )
+{
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// ADD/REMOVE
+//////////////////////////////////////////////////////////////////////////
+
+void Watcher::watch( model::ProjectViewPtr node, wxFileName path )
+{
+    if (isWatchable(node))
+    {
+        VAR_DEBUG(path);
+        FileMap::iterator it = mFileMap.find(path);
+        if (it == mFileMap.end())
+        {
+            // First file for this path
+            mFileMap[path] = boost::assign::list_of(node);
+            mRestartRequired = true;
         }
+        else if (!UtilList<model::ProjectViewPtr>(it->second).hasElement(node))
+        {
+            it->second.push_back(node);
+        }
+        // else: This (name,file) combination is already watched
+    }
+
+    BOOST_FOREACH( model::ProjectViewPtr child, node->getChildren() )
+    {
+        watch(child, getFileName(child));
+    }
+}
+
+void Watcher::unwatch( model::ProjectViewPtr node, wxFileName path )
+{
+    if (isWatchable(node))
+    {
+        VAR_DEBUG(path);
+        ASSERT(mFileMap.find(path) != mFileMap.end());
+        UtilList<model::ProjectViewPtr>(mFileMap[path]).removeElements(boost::assign::list_of(node));
+        if (mFileMap[path].empty())
+        {
+            // Last entry removed. Remove entire list and stop watching
+            mFileMap.erase(path);
+            mRestartRequired = true;
+        }
+    }
+    BOOST_FOREACH( model::ProjectViewPtr child, node->getChildren() )
+    {
+        unwatch(child, getFileName(child));
+    }
+}
+
+void Watcher::stop()
+{
+    if (mWatcher)
+    {
+        mWatcher->Unbind(wxEVT_FSWATCHER, &Watcher::onChange, this);
+        delete mWatcher;
+        mWatcher = 0;
+    }
+}
+
+void Watcher::start()
+{
+    mWatcher = new wxFileSystemWatcher();
+    mWatcher->Bind(wxEVT_FSWATCHER, &Watcher::onChange, this);
+    BOOST_FOREACH( FileMap::value_type nameAndNode, mFileMap )
+    {
+        wxFileName fn = nameAndNode.first;
+        mWatcher->Add(fn);
+    }
+}
+
+void Watcher::restart()
+{
+    if (mRestartRequired)
+    {
+        stop();
+        start();
+        mRestartRequired = false;
     }
 }
 
@@ -161,9 +248,9 @@ void FSWatcher::onChange(wxFileSystemWatcherEvent& event)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const FSWatcher& obj )
+std::ostream& operator<<( std::ostream& os, const Watcher& obj )
 {
-    os << &obj << '|' << obj.mFolders << '|' << obj.mFiles;
+    os << &obj << '|' << obj.mFileMap;
     return os;
 }
 
@@ -186,5 +273,19 @@ static wxString GetFSWEventChangeTypeName(int changeType)
     return "INVALID_TYPE";
 }
 
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION 
+//////////////////////////////////////////////////////////////////////////
+
+template<class Archive>
+void Watcher::serialize(Archive & ar, const unsigned int version)
+{
+    if (Archive::is_loading::value)
+    {
+        start();
+    }
+}
+template void Watcher::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Watcher::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace

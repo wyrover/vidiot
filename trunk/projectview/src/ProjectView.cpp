@@ -11,6 +11,7 @@
 #include <wx/tokenzr.h>
 #include <wx/clipbrd.h>
 #include <wx/msgdlg.h>
+#include "AutoFolder.h"
 #include "Folder.h"
 #include "DataObject.h"
 #include "Window.h"
@@ -378,7 +379,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& event)
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), boost::filesystem::path(s.ToStdString())));
+        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), wxFileName(s)));
     }
 }
 
@@ -396,15 +397,14 @@ void ProjectView::onNewFile(wxCommandEvent& event)
 {
     wxString filetypes = _("Movie clips (*.avi)|*.avi|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
     std::list<wxString> files = UtilDialog::getFiles( _("Select file(s) to add"), filetypes, this );
-    std::vector<boost::filesystem::path> list;
+    std::vector<wxFileName> list;
     BOOST_FOREACH( wxString path, files )
     {
-        boost::filesystem::path p(path.ToStdString());
-        if (FindConflictingName(getSelectedContainer(),p.filename().string()))
+        if (FindConflictingName(getSelectedContainer(),path))
         {
             return;
         }
-        list.push_back(p);
+        list.push_back(wxFileName(path));
     }
     if (list.size() > 0 )
     {

@@ -23,7 +23,7 @@ public:
 
     AudioFile();
 
-	AudioFile(boost::filesystem::path path);
+	AudioFile(wxFileName path);
 
     virtual AudioFile* clone();
 

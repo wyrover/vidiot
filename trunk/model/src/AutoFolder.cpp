@@ -1,6 +1,6 @@
 #include "AutoFolder.h"
+
 #include <boost/foreach.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -8,13 +8,15 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <wx/dir.h>
+#include <wx/filename.h>
 #include "File.h"
 #include "UtilList.h"
+#include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilLogStl.h"
-#include "FSWatcher.h"
 
 namespace model {
 
@@ -29,18 +31,26 @@ AutoFolder::AutoFolder()
     VAR_DEBUG(this);
 }
 
-AutoFolder::AutoFolder(boost::filesystem::path path)
-:   Folder(path.filename().string())
-,   mPath(path)
+AutoFolder::AutoFolder(wxFileName path)
+:   Folder(util::path::toName(path))
+,   mPath(util::path::normalize(path))
 {
+    ASSERT(path.IsDir())(path);
     VAR_DEBUG(this);
-    gui::FSWatcher::current()->watchFolder(this);
 }
 
 AutoFolder::~AutoFolder()
 {
     VAR_DEBUG(this);
-    gui::FSWatcher::current()->unwatchFolder(this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// IPATH
+//////////////////////////////////////////////////////////////////////////
+
+wxFileName AutoFolder::getPath() const
+{
+    return mPath;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,19 +58,24 @@ AutoFolder::~AutoFolder()
 //////////////////////////////////////////////////////////////////////////
 
 // static
-model::ProjectViewPtrs AutoFolder::getSupportedFiles( boost::filesystem::path directory )
+IPaths AutoFolder::getSupportedFiles( wxFileName directory )
 {
-    model::ProjectViewPtrs result;
-    for (boost::filesystem::directory_iterator itr(directory); itr != boost::filesystem::directory_iterator(); ++itr)
+    ASSERT( directory.IsDir() && directory.IsAbsolute() );
+    IPaths result;
+    wxDir dir( directory.GetLongPath() );
+    ASSERT( dir.IsOpened() );
+    wxString path;
+    for (bool cont = dir.GetFirst(&path); cont; cont = dir.GetNext(&path))
     {
-        if (is_directory(*itr))
+        wxFileName filename(directory.GetLongPath(), path);
+        if (filename.IsDir())
         {
-            AutoFolderPtr folder = boost::make_shared<AutoFolder>(itr->path());
+            AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
             result.push_back(folder);
         }
-        else if (is_regular_file(*itr))
+        else
         {
-            model::FilePtr file = boost::make_shared<model::File>(itr->path());
+            model::FilePtr file = boost::make_shared<model::File>(filename);
             if (file->isSupported())
             {
                 result.push_back(file);
@@ -72,26 +87,30 @@ model::ProjectViewPtrs AutoFolder::getSupportedFiles( boost::filesystem::path di
 
 void AutoFolder::update()
 {
+    // Fill 'allnames' with current list of children.
     std::list<wxString> allnames;
     BOOST_FOREACH( ProjectViewPtr child, getChildren() )
     {
         allnames.push_back(child->getName());
     }
 
-    BOOST_FOREACH( model::ProjectViewPtr asset, getSupportedFiles(mPath) )
+    // Add nodes if required. Update 'allnames' if file name still present.
+    BOOST_FOREACH( IPathPtr node, getSupportedFiles(mPath) )
     {
-        if (UtilList<wxString>(allnames).hasElement(asset->getName()))
+        wxString nodename = util::path::toName(node->getPath());
+        if (UtilList<wxString>(allnames).hasElement(nodename))
         {
             // Existing element. Do not remove.
-            UtilList<wxString>(allnames).removeElements(boost::assign::list_of(asset->getName()));
+            UtilList<wxString>(allnames).removeElements(boost::assign::list_of(nodename));
         }
         else
         {
             // New element. Add.
-            addChild(asset);
+            addChild(boost::dynamic_pointer_cast<AProjectViewNode>(node));
         }
     }
-    // Remove all other elements (these have been removed)
+
+    // Remove all other elements (these have been removed).
     BOOST_FOREACH( wxString name, allnames )
     {
         BOOST_FOREACH( ProjectViewPtr child, getChildren() )
@@ -109,24 +128,13 @@ void AutoFolder::update()
 // ATTRIBUTES
 //////////////////////////////////////////////////////////////////////////
 
-wxFileName AutoFolder::getFileName() const
-{
-    return wxFileName(mPath.string(),"");
-}
-
-boost::filesystem::path AutoFolder::getPath() const
-{
-    return mPath;
-}
-
 wxString AutoFolder::getName() const
 {
-    AutoFolderPtr parent = boost::dynamic_pointer_cast<AutoFolder>(getParent());
-    if (parent)
+    if (getParent()->isA<AutoFolder>())
     {
-        return mPath.filename().string();
+        return util::path::toName(mPath);
     }
-    return mPath.generic_string();
+    return mPath.GetFullPath();
 }
 
 boost::optional<wxString> AutoFolder::getLastModified() const
@@ -144,10 +152,6 @@ void AutoFolder::serialize(Archive & ar, const unsigned int version)
     ar & boost::serialization::base_object<Folder>(*this);
     ar & mPath;
     ar & mLastModified;
-    if (Archive::is_loading::value)
-    {
-        gui::FSWatcher::current()->watchFolder(this);
-    }
 }
 template void AutoFolder::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void AutoFolder::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

@@ -2,13 +2,14 @@
 #define MODEL_FILE_H
 
 #include <list>
+#include <wx/datetime.h>
 #include <wx/filename.h>
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/filesystem/path.hpp>
-#include "IControl.h"
 #include "AProjectViewNode.h"
+#include "IControl.h"
+#include "IPath.h"
 #include "UtilFrameRate.h"
 #include "FilePacket.h"
 
@@ -26,6 +27,7 @@ typedef std::list<FilePtr> Files;
 class File
     :   public IControl
     ,   public AProjectViewNode
+    ,   public IPath
 {
 public:
 
@@ -34,7 +36,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     File();
-    File(boost::filesystem::path path, int buffersize = 1);
+    File(wxFileName path, int buffersize = 1);
     virtual File* clone();
     virtual ~File();
 
@@ -50,13 +52,20 @@ public:
     virtual void clean();
 
     //////////////////////////////////////////////////////////////////////////
+    // IPATH
+    //////////////////////////////////////////////////////////////////////////
+
+    wxFileName getPath() const;
+
+    //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    wxFileName getFileName() const;
+    /// Returns the full path if the parent node is not an AutoFolder. Returns 
+    /// the filename only if the parent node is an AutoFolder.
     wxString getName() const;
-    boost::filesystem::path getPath() const;
-    wxString getLastModified() const;
+
+    wxDateTime getLastModified() const;
 
     bool isSupported();
 
@@ -124,8 +133,8 @@ private:
     pts mNumberOfFrames;
     int mTwoInARow;
     boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
-    boost::filesystem::path mPath;
-    mutable boost::optional<wxString> mLastModified;
+    wxFileName mPath;
+    mutable boost::optional<wxDateTime> mLastModified;
     bool mHasVideo;
     bool mHasAudio;
 

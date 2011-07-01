@@ -1,14 +1,16 @@
 #include "ProjectViewCreateFile.h"
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "UtilLogBoost.h"
+
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "File.h"
+#include "Folder.h"
+#include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
+#include "UtilLogStl.h"
 
 namespace command {
 
-ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vector<boost::filesystem::path> paths)
+ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vector<wxFileName> paths)
 :   ProjectViewCommand()
 ,   mParent(parent)
 ,   mPaths(paths)
@@ -18,7 +20,7 @@ ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vecto
     ASSERT(paths.size() > 0);
     if (paths.size() == 1)
     {
-        mCommandName = _("Add file")        + _(" \"")   + paths[0].filename().c_str()  + _("\"");
+        mCommandName = _("Add file")        + _(" \"")   + paths[0].GetFullName()  + _("\"");
     }
     else
     {
@@ -35,7 +37,7 @@ bool ProjectViewCreateFile::Do()
     VAR_INFO(this);
     if (mChildren.size() == 0)
     {
-        BOOST_FOREACH( boost::filesystem::path path, mPaths )
+        BOOST_FOREACH( wxFileName path, mPaths )
         {
             model::FilePtr file = boost::make_shared<model::File>(path);
             mChildren.push_back(file);

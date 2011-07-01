@@ -2,6 +2,7 @@
 #define FIXTURE_GUI_H
 
 #include <cxxtest/GlobalFixture.h>
+#include <wx/filename.h>
 #include <wx/window.h>
 #include <boost/thread.hpp>
 #include <boost/thread/barrier.hpp>
@@ -78,7 +79,7 @@ public:
 
     /// Create a new autofolder to the given path in a given parent folder or in the root (default)
     /// \return new autofolder
-    static model::FolderPtr addAutoFolder( wxString path, model::FolderPtr parent = getRoot() );
+    static model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent = getRoot() );
 
     /// Create a new named folder in a given parent folder or in the root (default)
     /// \return new folder
@@ -94,7 +95,7 @@ public:
 
     /// Create new files in a given parent folder or in the root (default)
     /// \return new files created in the model
-    static model::Files addFiles( std::list<wxString> name, model::FolderPtr parent = getRoot() );
+    static model::Files addFiles( std::list<wxFileName> name, model::FolderPtr parent = getRoot() );
 
     /// Remove given node from the project view via selecting it and then triggering the delete menu option
     /// \node node to be removed
@@ -104,6 +105,12 @@ public:
     /// This is implemented by selecting all nodes, and counting the selection size.
     /// Thus, as a side effect changes the selection of the project view.
     static int countProjectView();
+
+    /// Generate a random string using alphanumeric characters of size length
+    static wxString randomString(int length = 8);
+
+    /// Delay the test for 60 seconds to allow using the GUI (debugging)
+    static void pause();
 
 private:
 

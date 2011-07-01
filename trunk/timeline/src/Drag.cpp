@@ -21,6 +21,7 @@
 #include "Layout.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
+#include "Project.h"
 #include "ProjectView.h"
 #include "Scrolling.h"
 #include "Selection.h"

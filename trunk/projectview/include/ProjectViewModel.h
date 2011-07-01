@@ -3,8 +3,20 @@
 
 #include <wx/event.h>
 #include <wx/dataview.h>
-#include "AProjectViewNode.h"
-#include "Project.h"
+#include "UtilEvent.h"
+
+namespace model {
+    class Project;
+    class AProjectViewNode;
+    typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+    class Folder;
+    typedef boost::shared_ptr<Folder> FolderPtr;
+    class EventOpenProject;
+    class EventCloseProject;
+    class EventAddAsset;
+    class EventRemoveAsset;
+    class EventRenameAsset;
+}
 
 namespace gui {
 
@@ -52,11 +64,11 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnOpenProject( model::EventOpenProject &event );
-    void OnCloseProject( model::EventCloseProject &event );
-    void OnProjectAssetAdded( model::EventAddAsset &event );
-    void OnProjectAssetRemoved( model::EventRemoveAsset &event );
-    void OnProjectAssetRenamed( model::EventRenameAsset &event );
+    void onOpenProject( model::EventOpenProject &event );
+    void onCloseProject( model::EventCloseProject &event );
+    void onProjectAssetAdded( model::EventAddAsset &event );
+    void onProjectAssetRemoved( model::EventRemoveAsset &event );
+    void onProjectAssetRenamed( model::EventRenameAsset &event );
 
 private:
 

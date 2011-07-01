@@ -17,7 +17,7 @@ class EventRenameProject;
 
 namespace gui {
 
-class FSWatcher;
+class Watcher;
 class Worker;
 class TimelinesView;
 class Preview;
@@ -117,11 +117,11 @@ private:
 
     wxDocTemplate*  mDocTemplate;
 
-    boost::scoped_ptr<FSWatcher>    mWatcher;
-    boost::scoped_ptr<Worker>       mWorker;
+    Watcher*            mWatcher;
+    Worker*             mWorker;
 
-    TimelinesView*      mTimelinesView;
     Preview*		    mPreview;
+    TimelinesView*      mTimelinesView;
     ProjectView*	    mProjectView;
 
     wxMenuBar*          menubar;        // For enabling/disabling menus

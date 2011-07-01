@@ -21,7 +21,7 @@ public:
 
     VideoFile();
 
-    VideoFile(boost::filesystem::path path);
+    VideoFile(wxFileName path);
 
     virtual VideoFile* clone();
 
