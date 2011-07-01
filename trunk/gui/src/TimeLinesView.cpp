@@ -1,18 +1,19 @@
 #include "TimelinesView.h"
 
 #include <wx/sizer.h>
-#include <boost/foreach.hpp>
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/foreach.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "Preview.h"
-#include "Timeline.h"
-#include "Menu.h"
-#include "Project.h"
-#include "Window.h"
 #include "AProjectViewNode.h"
-#include "UtilLog.h"
+#include "Menu.h"
+#include "Preview.h"
+#include "Project.h"
 #include "Sequence.h"
+#include "Timeline.h"
+#include "UtilLog.h"
+#include "Window.h"
+#include "ProjectEvent.h"
 
 namespace gui {
 

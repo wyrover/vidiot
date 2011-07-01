@@ -17,6 +17,7 @@
 #include "Folder.h"
 #include "AutoFolder.h"
 #include "File.h"
+#include "ProjectEvent.h"
 #include "Sequence.h"
 #include "Window.h"
 

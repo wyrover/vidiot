@@ -13,6 +13,7 @@
 #include "Options.h"
 #include "Preview.h"
 #include "Project.h"
+#include "ProjectEvent.h"
 #include "ProjectView.h"
 #include "TimelinesView.h"
 #include "UtilLog.h"
