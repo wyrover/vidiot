@@ -1,13 +1,12 @@
 #include "Preview.h"
 
-#include <wx/sizer.h>
-#include <boost/make_shared.hpp>
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/make_shared.hpp>
+#include <wx/sizer.h>
 #include "Player.h"
-#include "UtilLog.h"
-#include "Window.h"
 #include "Timeline.h"
+#include "UtilLog.h"
 
 namespace gui {
 

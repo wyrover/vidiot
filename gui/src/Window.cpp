@@ -1,23 +1,23 @@
 #include "Window.h"
 
-#include <wx/docview.h>
 #include <wx/confbase.h>
+#include <wx/docview.h>
 #include <wx/msgdlg.h>
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/shared_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
 #include <boost/filesystem.hpp>
-#include "Options.h"
-#include "ProjectView.h"
-#include "Preview.h"
-#include "TimelinesView.h"
-#include "Worker.h"
+#include <boost/serialization/shared_ptr.hpp>
+#include "AProjectViewNode.h"
 #include "Config.h"
 #include "FSWatcher.h"
-#include "AProjectViewNode.h"
-#include "UtilLog.h"
 #include "ids.h"
-
+#include "Options.h"
+#include "Preview.h"
+#include "Project.h"
+#include "ProjectView.h"
+#include "TimelinesView.h"
+#include "UtilLog.h"
+#include "Worker.h"
 
 namespace gui {
 
@@ -58,14 +58,20 @@ static Window* sCurrent = 0;
 Window::Window()
     :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1000,600))
     ,	mDocTemplate(new wxDocTemplate(GetDocumentManager(), _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
-    ,   mWatcher(new FSWatcher())
-    ,   mWorker(new Worker())
+    ,   mWatcher(0)
+    ,   mWorker(0)
+    ,   mPreview(0)
+    ,   mTimelinesView(0)
+    ,   mProjectView(0)
     ,   menubar(0)
     ,   menuedit(0)
     ,   menusequence(0)
 {
     sCurrent = this;
 
+    // Construction not done in constructor list due to dependency on sCurrent
+    mWorker         = new Worker();
+    mWatcher        = new Watcher();
     mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
     mTimelinesView  = new TimelinesView(this);
     mProjectView    = new ProjectView(this);
@@ -206,9 +212,11 @@ Window::~Window()
 
     setSequenceMenu(0); // Ensure destruction of sequenceMenu
 
-    delete mProjectView;    // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
-    delete mTimelinesView;  // the timeline view in turn 'knows/uses' the preview (specifically, the player).
-    delete mPreview;        // First, delete the referring windows.
+    delete mProjectView;    // First, delete the referring windows.
+    delete mTimelinesView;  // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
+    delete mPreview;        // the timeline view in turn 'knows/uses' the preview (specifically, the player).
+    delete mWatcher;
+    delete mWorker;
     //NOT: delete mDocTemplate;
 
     sCurrent = 0;
@@ -366,6 +374,7 @@ void Window::serialize(Archive & ar, const unsigned int version)
 {
     ar & *mProjectView;
     ar & *mTimelinesView;
+    ar & *mWatcher;
 }
 template void Window::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Window::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

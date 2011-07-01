@@ -43,7 +43,7 @@ AudioFile::AudioFile()
     VAR_DEBUG(*this);
 }
 
-AudioFile::AudioFile(boost::filesystem::path path)
+AudioFile::AudioFile(wxFileName path)
     :	File(path,sMaxBufferSize)
     ,   mResampleContext(0)
     ,   mDecodingAudio(false)

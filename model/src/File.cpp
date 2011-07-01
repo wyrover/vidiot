@@ -23,6 +23,8 @@ extern "C" {
 #include "Convert.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
+#include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "VideoFile.h"
@@ -58,7 +60,7 @@ File::File()
     VAR_DEBUG(this);
 }
 
-File::File(boost::filesystem::path path, int buffersize)
+File::File(wxFileName path, int buffersize)
 :	IControl()
 ,   AProjectViewNode()
 ,   mPath(path)
@@ -152,9 +154,8 @@ void File::moveTo(pts position)
 
 wxString File::getDescription() const
 {
-    return getName();
+    return util::path::toName(mPath);
 }
-
 
 void File::clean()
 {
@@ -164,42 +165,39 @@ void File::clean()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// GET/SET
+// IPATH
 //////////////////////////////////////////////////////////////////////////
 
-wxFileName File::getFileName() const
-{
-    return wxFileName(mPath.parent_path().string(),mPath.filename().string());
-}
-
-boost::filesystem::path File::getPath() const
+wxFileName File::getPath() const
 {
     return mPath;
 }
 
-wxString File::getLastModified() const
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+wxDateTime File::getLastModified() const
 {
     if (!mLastModified)
     {
-        boost::posix_time::ptime lwt = boost::posix_time::from_time_t(boost::filesystem::last_write_time(mPath));
-        mLastModified = boost::optional<wxString>(boost::posix_time::to_simple_string(lwt));
+        mLastModified = boost::optional<wxDateTime>(mPath.GetModificationTime());
     }
     return *mLastModified;
 }
 
 wxString File::getName() const
 {
-    AutoFolderPtr parent = boost::dynamic_pointer_cast<AutoFolder>(getParent());
-    if (parent)
+    if (hasParent() && getParent()->isA<AutoFolder>())
     {
-        return mPath.filename().string();
+        return util::path::toName(mPath);
     }
-    return mPath.generic_string();
+    return mPath.GetLongPath();
 };
 
 bool File::isSupported()
 {
-    if (mPath.extension().string().compare(".avi") == 0)
+    if (mPath.GetExt().IsSameAs("avi"))
     {
         return true;
     }
@@ -339,7 +337,7 @@ void File::openFile()
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
-    int result = av_open_input_file(&mFileContext, mPath.string().c_str(), NULL, 0, NULL);
+    int result = av_open_input_file(&mFileContext, mPath.GetLongPath(), NULL, 0, NULL);
     ASSERT(result == 0)(result);
 
     result = av_find_stream_info(mFileContext);
@@ -467,7 +465,6 @@ void File::serialize(Archive & ar, const unsigned int version)
     ar & boost::serialization::base_object<IControl>(*this);
     ar & boost::serialization::base_object<AProjectViewNode>(*this);
     ar & mPath;
-    ar & mLastModified;
     ar & mMaxBufferSize;
 }
 

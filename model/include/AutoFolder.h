@@ -3,8 +3,8 @@
 
 #include <wx/filename.h>
 #include <boost/optional.hpp>
-#include <boost/filesystem/path.hpp>
 #include "Folder.h"
+#include "IPath.h"
 
 namespace model {
 
@@ -13,6 +13,7 @@ typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
 
 class AutoFolder
     :   public Folder
+    ,   public IPath
 {
 public:
 
@@ -24,18 +25,24 @@ public:
     AutoFolder();                       
 
     /// \param path full path to the folder.
-    AutoFolder(boost::filesystem::path path);
+    AutoFolder(wxFileName path);
 
     virtual ~AutoFolder();
+
+    //////////////////////////////////////////////////////////////////////////
+    // IPATH
+    //////////////////////////////////////////////////////////////////////////
+
+    wxFileName getPath() const;
 
     //////////////////////////////////////////////////////////////////////////
     // STRUCTURE
     //////////////////////////////////////////////////////////////////////////
 
     /// \return list of supported files in the given directory. Folders are returned also.
-    /// \param directory absolute path which is searched for files.
+    /// \param path absolute path which is searched for files.
     /// Note that only supported file types - as indicated by File::isSupported() - are returned.
-    static model::ProjectViewPtrs getSupportedFiles( boost::filesystem::path directory );
+    static IPaths getSupportedFiles( wxFileName path );
 
     /// Update the autofolder children. The folder is synced with the filesystem. 
     void update();
@@ -44,9 +51,10 @@ public:
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////
 
-    wxFileName getFileName() const;
-    boost::filesystem::path getPath() const;
+    /// Returns the full path if the parent node is not an AutoFolder. Returns 
+    /// the relatve path only if the parent node is an AutoFolder.
     wxString getName() const;
+
     boost::optional<wxString> getLastModified() const;
 
 private:
@@ -55,7 +63,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    boost::filesystem::path mPath;
+    wxFileName mPath;
     boost::optional<wxString> mLastModified;
 
     //////////////////////////////////////////////////////////////////////////

@@ -41,7 +41,7 @@ VideoFile::VideoFile()
     VAR_DEBUG(*this);
 }
 
-VideoFile::VideoFile(boost::filesystem::path path)
+VideoFile::VideoFile(wxFileName path)
 :	File(path,sMaxBufferSize)
 ,   mDecodingVideo(false)
 ,   mPosition(0)

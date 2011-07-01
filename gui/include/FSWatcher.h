@@ -1,23 +1,33 @@
-#ifndef FSWATCHER_H
-#define FSWATCHER_H
+#ifndef WATCHER_H
+#define WATCHER_H
 
-#include <wx/fswatcher.h>
-#include <map>
-#include <list>
-#include <boost/shared_ptr.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/shared_ptr.hpp>
+#include <list>
+#include <map>
+#include <wx/FSWatcher.h>
 
-inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() > r.GetFullPath(); }
+inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
 
 namespace model {
+    class AProjectViewNode;
+    typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+    typedef std::list<ProjectViewPtr> ProjectViewPtrs;
     class AutoFolder;
+    typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
     class File;
+    typedef boost::shared_ptr<File> FilePtr;
+    class EventOpenProject;
+    class EventCloseProject;
+    class EventAddAsset;
+    class EventRemoveAsset;
+    class EventRenameAsset;
 }
 
 namespace  gui {
 
-class FSWatcher
-    :   public wxFileSystemWatcher
+class Watcher
 {
 public:
 
@@ -25,22 +35,12 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    FSWatcher();
-    virtual ~FSWatcher();
+    Watcher();
+    virtual ~Watcher();
 
     /// Get the current project's watcher. Used to avoid having a dependency to
     /// the Project class throughout the code.
-    static FSWatcher* current();
-
-	//////////////////////////////////////////////////////////////////////////
-	// ADD/REMOVE
-	//////////////////////////////////////////////////////////////////////////
-
-    void watchFolder(model::AutoFolder* folder);
-    void watchFile(model::File* file);
-
-    void unwatchFolder(model::AutoFolder* folder);
-    void unwatchFile(model::File* file);
+    static Watcher* current();
 
 protected:
 
@@ -56,22 +56,55 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    typedef std::list<model::AutoFolder*> FolderList;
-    typedef std::list<model::File*> FileList;
-    typedef std::map<wxFileName, FolderList> FolderMap;
-    typedef std::map<wxFileName, FileList> FileMap;
+    typedef std::map<wxFileName, model::ProjectViewPtrs> FileMap;
+    FileMap mFileMap;
 
-    FolderMap mFolders;
-    FileMap mFiles;
+
+    // See wxWidgets Ticket #13294. To avoid this issue, Watcher is not
+    // derived from wxFileSystemWatcher. Instead, mWatcher is going to be
+    // destroyed and restarted again, upon each change. This ensures that
+    // the overlapped io is aborted (PostEmptyStatus() in file watcher 
+    // internals is called when destroying the watcher, which does the trick).
+     wxFileSystemWatcher* mWatcher;
+
+     bool mRestartRequired;
+
+    //////////////////////////////////////////////////////////////////////////
+    // PROJECT EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onOpenProject( model::EventOpenProject &event );
+    void onCloseProject( model::EventCloseProject &event );
+    void onProjectAssetAdded( model::EventAddAsset &event );
+    void onProjectAssetRemoved( model::EventRemoveAsset &event );
+    void onProjectAssetRenamed( model::EventRenameAsset &event );
+
+	//////////////////////////////////////////////////////////////////////////
+	// ADD/REMOVE
+	//////////////////////////////////////////////////////////////////////////
+
+    void watch( model::ProjectViewPtr node, wxFileName path );
+    void unwatch( model::ProjectViewPtr node, wxFileName path );
+
+    void stop();
+    void start();
+    void restart();
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const FSWatcher& obj );
+    friend std::ostream& operator<<( std::ostream& os, const Watcher& obj );
 
+    //////////////////////////////////////////////////////////////////////////
+    // SERIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 
 } // namespace
 
-#endif // FSWATCHER_H
+#endif // WATCHER_H

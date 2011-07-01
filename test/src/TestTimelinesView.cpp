@@ -14,6 +14,7 @@ namespace test {
 // TODO replace wxfilename with boost::filesystem everywhere
 void TestTimelinesView::testSequenceMenu()
 {
+    LOG_DEBUG << "TEST_START";
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
     wxString sSequence2( "Sequence2" );
