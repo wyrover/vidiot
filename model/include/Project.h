@@ -19,10 +19,6 @@ class Properties;
 typedef boost::shared_ptr<Properties> PropertiesPtr;
 class Project;
 
-DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,   model::Project*);
-DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,  model::Project*);
-DECLARE_EVENT(EVENT_RENAME_PROJECT, EventRenameProject,  model::Project*);
-
 /// \class Project
 /// This class is not managed via shared_ptr's since it's construction/destruction
 /// is managed by the wxWidgets document/view framework. Therefore, pointer ownership

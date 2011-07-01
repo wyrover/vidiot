@@ -6,7 +6,7 @@
 #include <boost/foreach.hpp>
 #include "AutoFolder.h"
 #include "File.h"
-#include "Project.h"
+#include "ProjectEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"

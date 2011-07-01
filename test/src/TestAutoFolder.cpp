@@ -12,8 +12,6 @@
 
 namespace test {
 
-// TODO replace boost filename with wxfilename everywhere
-    // TODO convert all paths to generic types and long forms
 void TestAutoFolder::testWatch()
 {
     LOG_DEBUG << "TEST_START";
@@ -21,13 +19,11 @@ void TestAutoFolder::testWatch()
     wxString sFile1Contents( "test" );
     wxFileName sNewDir( "" );
     
-    // todo ensure that in this pasth a ~1 folder is used to test expansion to long form
-
     wxString tmp = wxFileName::GetTempDir ();
     wxFileName path( wxFileName::GetTempDir(), "");
 
     wxFileName dirpath(wxFileName::GetTempDir(), "");
-    dirpath.AppendDir( FixtureGui::randomString(20) ); // todo uniqueify
+    dirpath.AppendDir( FixtureGui::randomString(20) );
     wxFileName filepath( dirpath );
     filepath.SetFullName( "test.avi" );
 

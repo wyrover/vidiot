@@ -1,24 +1,20 @@
 #include "Project.h"
 
 #include <wx/msgdlg.h>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "Folder.h"
-#include "Properties.h"
-#include "UtilLog.h"
 #include "File.h"
-#include "Serialization.h"
+#include "Folder.h"
 #include "IView.h"
+#include "ProjectEvent.h"
+#include "Properties.h"
+#include "Serialization.h"
+#include "UtilLog.h"
 
 namespace model {
-
-// todo move to projectevent class
-DEFINE_EVENT(EVENT_OPEN_PROJECT,    EventOpenProject,   model::Project*);
-DEFINE_EVENT(EVENT_CLOSE_PROJECT,   EventCloseProject,  model::Project*);
-DEFINE_EVENT(EVENT_RENAME_PROJECT,  EventRenameProject, model::Project*);
 
 IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
