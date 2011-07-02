@@ -2,23 +2,24 @@
 
 #include <wx/datetime.h>
 #include <boost/foreach.hpp>
-#include "UtilLog.h"
-#include "Project.h"
 #include "AProjectViewNode.h"
-#include "ProjectViewAddAsset.h"
-#include "ProjectViewDeleteAsset.h"
-#include "ProjectViewMoveAsset.h"
-#include "ProjectViewRenameAsset.h"
+#include "AutoFolder.h"
+#include "File.h"
+#include "film.xpm" 
+#include "Folder.h"
 #include "folder-horizontal.xpm"
 #include "folder-horizontal-open.xpm"
 #include "folder-horizontal-plus.xpm"
 #include "folder-horizontal-plus-open.xpm"
-#include "film.xpm" 
-#include "Folder.h"
-#include "AutoFolder.h"
-#include "File.h"
+#include "Project.h"
 #include "ProjectEvent.h"
+#include "ProjectViewAddAsset.h"
+#include "ProjectViewDeleteAsset.h"
+#include "ProjectViewMoveAsset.h"
+#include "ProjectViewNodeEvent.h"
+#include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
+#include "UtilLog.h"
 #include "Window.h"
 
 namespace gui {
@@ -387,8 +388,8 @@ void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
 
 void ProjectViewModel::onProjectAssetAdded( model::EventAddAsset &event )
 {
-    model::ProjectViewPtr parent = event.getValue().parent;
-    model::ProjectViewPtr child = event.getValue().child;
+    model::ProjectViewPtr parent = event.getValue().getParent();
+    model::ProjectViewPtr child = event.getValue().getChild();
     VAR_DEBUG(parent)(child);
     ItemAdded(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
 
@@ -399,8 +400,8 @@ void ProjectViewModel::onProjectAssetAdded( model::EventAddAsset &event )
 
 void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveAsset &event )
 {
-    model::ProjectViewPtr parent = event.getValue().parent;
-    model::ProjectViewPtr child = event.getValue().child;
+    model::ProjectViewPtr parent = event.getValue().getParent();
+    model::ProjectViewPtr child = event.getValue().getChild();
     VAR_DEBUG(parent)(child);
 
     ItemDeleted(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
@@ -409,8 +410,8 @@ void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveAsset &event )
 
 void ProjectViewModel::onProjectAssetRenamed( model::EventRenameAsset &event )
 {
-    VAR_DEBUG(event.getValue().node);
-    ItemChanged(event.getValue().node->id());
+    VAR_DEBUG(event.getValue().getNode());
+    ItemChanged(event.getValue().getNode()->id());
     event.Skip();
 }
 

@@ -7,7 +7,6 @@
 #include <boost/weak_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include "UtilEvent.h"
 #include "UtilRTTI.h"
 
 namespace model {
@@ -17,43 +16,6 @@ typedef AProjectViewNode* ProjectViewId;
 typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
 typedef boost::weak_ptr<AProjectViewNode> WeakProjectViewPtr;
 typedef std::list<ProjectViewPtr> ProjectViewPtrs;
-
-//////////////////////////////////////////////////////////////////////////
-// EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-struct ParentAndChild
-{
-    ParentAndChild(model::ProjectViewPtr _parent, model::ProjectViewPtr _child) : parent(_parent), child(_child) {}
-    model::ProjectViewPtr parent;
-    model::ProjectViewPtr child;
-    friend std::ostream& operator<<( std::ostream& os, const ParentAndChild& obj )
-    {
-        os << &obj << '|' << obj.parent << '|' << obj.child;
-        return os;
-    }
-};
-
-DECLARE_EVENT(EVENT_ADD_ASSET,      EventAddAsset,      ParentAndChild);
-DECLARE_EVENT(EVENT_REMOVE_ASSET,   EventRemoveAsset,   ParentAndChild);
-
-struct NodeWithNewName
-{
-    NodeWithNewName(model::ProjectViewPtr _node, wxString _newname) : node(_node), newname(_newname) {}
-    model::ProjectViewPtr node;
-    wxString newname;
-    friend std::ostream& operator<<( std::ostream& os, const NodeWithNewName& obj )
-    {
-        os << &obj << '|' << obj.node << '|' << obj.newname;
-        return os;
-    }
-};
-
-DECLARE_EVENT(EVENT_RENAME_ASSET,   EventRenameAsset,   NodeWithNewName);
-
-//////////////////////////////////////////////////////////////////////////
-// CLASS
-//////////////////////////////////////////////////////////////////////////
 
 class AProjectViewNode
     :   public boost::enable_shared_from_this<AProjectViewNode>

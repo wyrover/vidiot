@@ -1,14 +1,15 @@
 #include "Sequence.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/serialization/list.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
+#include "ProjectViewNodeEvent.h"
 #include "SequenceEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"

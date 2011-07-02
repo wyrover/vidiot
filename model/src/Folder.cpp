@@ -2,6 +2,7 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "ProjectViewNodeEvent.h"
 #include "Window.h"
 #include "UtilLog.h"
 #include "UtilSerializeWxwidgets.h"
@@ -43,7 +44,7 @@ void Folder::setName(wxString name)
     if (name != mName)
     {
         mName = name;
-        gui::Window::get().QueueModelEvent(new model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
+        gui::Window::get().QueueModelEvent(new EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
     }
 }
 

@@ -9,11 +9,12 @@
 #include "Menu.h"
 #include "Preview.h"
 #include "Project.h"
+#include "ProjectEvent.h"
+#include "ProjectViewNodeEvent.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "UtilLog.h"
 #include "Window.h"
-#include "ProjectEvent.h"
 
 namespace gui {
 
@@ -71,7 +72,7 @@ void TimelinesView::onCloseProject( model::EventCloseProject &event )
 
 void TimelinesView::onProjectAssetRemoved( model::EventRemoveAsset &event )
 {
-    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().child);
+    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().getChild());
     if (sequence)
     {
         Close(sequence);
@@ -81,14 +82,14 @@ void TimelinesView::onProjectAssetRemoved( model::EventRemoveAsset &event )
 
 void TimelinesView::onProjectAssetRenamed( model::EventRenameAsset &event )
 {
-    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().node);
+    model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().getNode());
 
     if (sequence)
     {
         std::pair<size_t,timeline::Timeline*> f = findPage(sequence);
         if (f.second != 0)
         {
-            mNotebook.SetPageText(f.first, event.getValue().newname);
+            mNotebook.SetPageText(f.first, event.getValue().getName());
         }
     }
     event.Skip();
