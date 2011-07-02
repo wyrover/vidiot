@@ -7,6 +7,7 @@
 #include "AutoFolder.h"
 #include "File.h"
 #include "ProjectEvent.h"
+#include "ProjectViewNodeEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -145,7 +146,7 @@ bool isWatchable( model::ProjectViewPtr node )
 
 void Watcher::onProjectAssetAdded( model::EventAddAsset &event )
 {
-    model::ProjectViewPtr node = event.getValue().child;
+    model::ProjectViewPtr node = event.getValue().getChild();
     watch( node, getFileName(node) );
     restart();
     event.Skip();
@@ -153,7 +154,7 @@ void Watcher::onProjectAssetAdded( model::EventAddAsset &event )
 
 void Watcher::onProjectAssetRemoved( model::EventRemoveAsset &event )
 {
-    model::ProjectViewPtr node = event.getValue().child;
+    model::ProjectViewPtr node = event.getValue().getChild();
     unwatch( node, getFileName(node) );
     restart();
     event.Skip();

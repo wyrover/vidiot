@@ -5,24 +5,17 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include "ProjectViewNodeEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "Window.h"
 
 namespace model {
 
-//////////////////////////////////////////////////////////////////////////
-// EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-// todo in separate event class
-    // todo rename AProjectViewNode to Asset
-DEFINE_EVENT(EVENT_ADD_ASSET,       EventAddAsset,      ParentAndChild);
-DEFINE_EVENT(EVENT_REMOVE_ASSET,    EventRemoveAsset,   ParentAndChild);
-DEFINE_EVENT(EVENT_RENAME_ASSET,    EventRenameAsset,   NodeWithNewName);
+    // todo rename AProjectViewNode to Asset/Node
 
 //////////////////////////////////////////////////////////////////////////
-// CLASS
+// INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 AProjectViewNode::AProjectViewNode()
