@@ -7,7 +7,7 @@
 #include "Window.h"
 #include "UtilLog.h"
 #include "DataObject.h"
-#include "AProjectViewNode.h"
+#include "Node.h"
 
 namespace gui {
 

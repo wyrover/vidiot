@@ -46,8 +46,8 @@ private:
 
 };
 
-DECLARE_EVENT(EVENT_ADD_ASSET,      EventAddAsset,      ParentAndChild);
-DECLARE_EVENT(EVENT_REMOVE_ASSET,   EventRemoveAsset,   ParentAndChild);
+DECLARE_EVENT(EVENT_ADD_NODE,      EventAddNode,      ParentAndChild);
+DECLARE_EVENT(EVENT_REMOVE_NODE,   EventRemoveNode,   ParentAndChild);
 
 class NodeWithNewName
 {
@@ -83,7 +83,7 @@ private:
 
 };
 
-DECLARE_EVENT(EVENT_RENAME_ASSET,   EventRenameAsset,   NodeWithNewName);
+DECLARE_EVENT(EVENT_RENAME_NODE,   EventRenameNode,   NodeWithNewName);
 
 } // namespace
 

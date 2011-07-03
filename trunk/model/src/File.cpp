@@ -40,7 +40,7 @@ boost::mutex File::sMutexAvcodec;
 
 File::File()
 :	IControl()
-,   AProjectViewNode()
+,   Node()
 ,   mPath()
 ,   mName()
 ,	mFileContext(0)
@@ -62,7 +62,7 @@ File::File()
 
 File::File(wxFileName path, int buffersize)
 :	IControl()
-,   AProjectViewNode()
+,   Node()
 ,   mPath(path)
 ,   mName()
 ,	mFileContext(0)
@@ -84,7 +84,7 @@ File::File(wxFileName path, int buffersize)
 
 File::File(const File& other)
 :	IControl()
-,   AProjectViewNode()
+,   Node()
 ,   mPath(other.mPath)
 ,   mName(other.mName)
 ,	mFileContext(0)
@@ -463,7 +463,7 @@ template<class Archive>
 void File::serialize(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<IControl>(*this);
-    ar & boost::serialization::base_object<AProjectViewNode>(*this);
+    ar & boost::serialization::base_object<Node>(*this);
     ar & mPath;
     ar & mMaxBufferSize;
 }

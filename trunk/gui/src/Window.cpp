@@ -7,7 +7,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "Config.h"
 #include "ids.h"
 #include "Options.h"

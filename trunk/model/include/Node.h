@@ -10,7 +10,7 @@
 
 namespace model {
 
-class AProjectViewNode
+class Node
     :   public INode
 {
 public:
@@ -19,8 +19,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    AProjectViewNode();
-    virtual ~AProjectViewNode();
+    Node();
+    virtual ~Node();
 
     //////////////////////////////////////////////////////////////////////////
     // INODE
@@ -52,13 +52,13 @@ private:
     /// (mParent/mChildren) should not be cloned always. Specifically, when using
     /// a File that IS part of the project view tree, and cloning that "INTO" a
     /// sequence, the mParent/mChildren members should not be cloned.
-    AProjectViewNode(const AProjectViewNode& other);
+    Node(const Node& other);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj );
+    friend std::ostream& operator<<( std::ostream& os, const Node& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -75,6 +75,6 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::AProjectViewNode, 1)
+BOOST_CLASS_VERSION(model::Node, 1)
 
 #endif // A_PROJECT_VIEW_NODE

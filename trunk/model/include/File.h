@@ -7,7 +7,7 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/mutex.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "IControl.h"
 #include "IPath.h"
 #include "UtilFrameRate.h"
@@ -26,7 +26,7 @@ typedef std::list<FilePtr> Files;
 
 class File
     :   public IControl
-    ,   public AProjectViewNode
+    ,   public Node
     ,   public IPath
 {
 public:

@@ -48,7 +48,7 @@ public:
 
     /// Required for destruction (closing) of the project, because the lifetime
     /// of the project is handled by wxWidgets. Furthermore, the project tree
-    /// (shared_ptr's to 'AProjectViewNode') is not automatically cleaned up
+    /// (shared_ptr's to 'Node') is not automatically cleaned up
     /// upon destruction since parents and children keep references to each other.
     /// This method ensures that all these bidirectional references are removed.
     bool DeleteContents();

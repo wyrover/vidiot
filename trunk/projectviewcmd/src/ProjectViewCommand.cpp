@@ -1,7 +1,7 @@
 #include "ProjectViewCommand.h"
 
 #include <boost/foreach.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "UtilLog.h"
 
 namespace command {

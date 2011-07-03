@@ -5,7 +5,7 @@
 #include <list>
 #include <wx/event.h>
 #include <boost/optional.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "IAudio.h"
 #include "IControl.h"
 #include "IVideo.h"
@@ -23,7 +23,7 @@ class Sequence
     ,   public IControl
     ,   public IVideo
     ,   public IAudio
-    ,   public AProjectViewNode
+    ,   public Node
 {
 public:
 

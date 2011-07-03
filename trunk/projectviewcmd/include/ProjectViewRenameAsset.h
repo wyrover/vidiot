@@ -2,7 +2,7 @@
 #define PROJECT_VIEW_RENAME_ASSET_H
 
 #include "ProjectViewCommand.h"
-#include "AProjectViewNode.h"
+#include "Node.h"
 
 namespace command {
 

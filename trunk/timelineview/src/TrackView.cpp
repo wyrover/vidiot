@@ -9,7 +9,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/pen.h>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "Clip.h"
 #include "ClipView.h"
 #include "Drag.h"

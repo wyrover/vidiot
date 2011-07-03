@@ -1,24 +1,22 @@
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "ProjectViewNodeEvent.h"
+#include "NodeEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "Window.h"
 
 namespace model {
 
-// todo rename AProjectViewNode to Asset/Node
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AProjectViewNode::AProjectViewNode()
+Node::Node()
     :   INode()
     ,   mParent()
     ,   mChildren()
@@ -26,12 +24,12 @@ AProjectViewNode::AProjectViewNode()
     VAR_DEBUG(this);
 }
 
-AProjectViewNode::~AProjectViewNode()
+Node::~Node()
 {
     VAR_DEBUG(*this);
 }
 
-AProjectViewNode::AProjectViewNode(const AProjectViewNode& other)
+Node::Node(const Node& other)
     :   INode()
     ,   mParent()
     ,   mChildren()
@@ -42,7 +40,7 @@ AProjectViewNode::AProjectViewNode(const AProjectViewNode& other)
 // INODE
 //////////////////////////////////////////////////////////////////////////
 
-bool AProjectViewNode::hasParent() const
+bool Node::hasParent() const
 {
     if (getParent())
     {
@@ -54,27 +52,27 @@ bool AProjectViewNode::hasParent() const
     }
 }
 
-NodePtr AProjectViewNode::getParent() const
+NodePtr Node::getParent() const
 { 
     return mParent.lock(); 
 }
 
-void AProjectViewNode::setParent(NodePtr parent)
+void Node::setParent(NodePtr parent)
 {
     mParent = parent;
 }
 
-NodePtr AProjectViewNode::addChild(NodePtr newChild)
+NodePtr Node::addChild(NodePtr newChild)
 {
     mChildren.push_back(newChild);
     newChild->setParent(shared_from_this());
     // Do not use ProcessEvent: this will cause problems with auto-updating autofolders upon
     // first expansion.
-    gui::Window::get().GetEventHandler()->QueueEvent(new model::EventAddAsset(ParentAndChild(shared_from_this(),newChild)));
+    gui::Window::get().GetEventHandler()->QueueEvent(new model::EventAddNode(ParentAndChild(shared_from_this(),newChild)));
     return newChild;
 }
 
-NodePtr AProjectViewNode::removeChild(NodePtr child)
+NodePtr Node::removeChild(NodePtr child)
 {
     VAR_DEBUG(this)(child.get());
     NodePtrs::iterator it;
@@ -85,22 +83,22 @@ NodePtr AProjectViewNode::removeChild(NodePtr child)
     ASSERT(it != mChildren.end());
     NodePtr p = *it;
     // Do not use ProcessEvent: see addChild
-    gui::Window::get().QueueModelEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
+    gui::Window::get().QueueModelEvent(new model::EventRemoveNode(ParentAndChild(shared_from_this(),child)));
     mChildren.erase(it);
     child->setParent(NodePtr());
     return p;
 }
 
-NodePtrs AProjectViewNode::getChildren() const
+NodePtrs Node::getChildren() const
 {
     return mChildren;
 }
 
-void AProjectViewNode::setName(wxString name)
+void Node::setName(wxString name)
 {
 }
 
-NodePtrs AProjectViewNode::find(wxString name)
+NodePtrs Node::find(wxString name)
 {
     NodePtrs result;
     wxString _name = getName();
@@ -120,7 +118,7 @@ NodePtrs AProjectViewNode::find(wxString name)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj )
+std::ostream& operator<<( std::ostream& os, const Node& obj )
 {
     os << &obj << '|' << obj.mParent.lock() << '|' << obj.mChildren.size();
     return os;
@@ -131,7 +129,7 @@ std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj )
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void AProjectViewNode::serialize(Archive & ar, const unsigned int version)
+void Node::serialize(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<INode>(*this);
     if (Archive::is_loading::value)
@@ -146,7 +144,7 @@ void AProjectViewNode::serialize(Archive & ar, const unsigned int version)
     }
     ar & mChildren;
 }
-template void AProjectViewNode::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void AProjectViewNode::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Node::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Node::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace

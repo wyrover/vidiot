@@ -1,10 +1,10 @@
-#include "ProjectViewNodeEvent.h"
+#include "NodeEvent.h"
 
 namespace model {
 
-DEFINE_EVENT(EVENT_ADD_ASSET,       EventAddAsset,      ParentAndChild);
-DEFINE_EVENT(EVENT_REMOVE_ASSET,    EventRemoveAsset,   ParentAndChild);
-DEFINE_EVENT(EVENT_RENAME_ASSET,    EventRenameAsset,   NodeWithNewName);
+DEFINE_EVENT(EVENT_ADD_NODE,       EventAddNode,      ParentAndChild);
+DEFINE_EVENT(EVENT_REMOVE_NODE,    EventRemoveNode,   ParentAndChild);
+DEFINE_EVENT(EVENT_RENAME_NODE,    EventRenameNode,   NodeWithNewName);
 
 
 //////////////////////////////////////////////////////////////////////////
