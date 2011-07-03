@@ -10,8 +10,8 @@
 
 namespace model {
     class EventCloseProject;
-    class EventRemoveAsset;
-    class EventRenameAsset;
+    class EventRemoveNode;
+    class EventRenameNode;
     class Sequence;
     typedef boost::shared_ptr<Sequence> SequencePtr;
 }
@@ -47,8 +47,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onCloseProject( model::EventCloseProject &event );
-    void onProjectAssetRemoved( model::EventRemoveAsset &event );
-    void onProjectAssetRenamed( model::EventRenameAsset &event );
+    void onProjectAssetRemoved( model::EventRemoveNode &event );
+    void onProjectAssetRenamed( model::EventRenameNode &event );
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS

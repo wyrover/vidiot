@@ -3,7 +3,7 @@
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "AudioClip.h"
 #include "AudioFile.h"
 #include "AudioTrack.h"

@@ -1,7 +1,7 @@
 #include "DataObject.h"
 
 #include <boost/foreach.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "UtilLog.h"
 
 namespace gui {
@@ -64,7 +64,7 @@ bool DataObject::SetData(size_t len, const void *buf)
     model::NodeId* index = static_cast<model::NodeId*>(const_cast<void*>(buf));
     for (unsigned int i = 0; i < len / sizeof(model::NodeId); ++i)
     {
-        mAssets.push_back(model::AProjectViewNode::Ptr(static_cast<const model::NodeId*>(buf)[i]));
+        mAssets.push_back(model::Node::Ptr(static_cast<const model::NodeId*>(buf)[i]));
     }
     return true;
 }

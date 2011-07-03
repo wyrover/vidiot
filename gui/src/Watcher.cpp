@@ -7,7 +7,7 @@
 #include "AutoFolder.h"
 #include "File.h"
 #include "ProjectEvent.h"
-#include "ProjectViewNodeEvent.h"
+#include "NodeEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -112,18 +112,18 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
 
 void Watcher::onOpenProject( model::EventOpenProject &event )
 {
-    gui::Window::get().Bind(model::EVENT_ADD_ASSET,     &Watcher::onProjectAssetAdded,    this);
-    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,  &Watcher::onProjectAssetRemoved,  this);
-    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,  &Watcher::onProjectAssetRenamed,  this);
+    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &Watcher::onProjectAssetRenamed,  this);
 
     event.Skip();
 }
 
 void Watcher::onCloseProject( model::EventCloseProject &event )
 {
-    gui::Window::get().Unbind(model::EVENT_ADD_ASSET,       &Watcher::onProjectAssetAdded,    this);
-    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,    &Watcher::onProjectAssetRemoved,  this);
-    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,    &Watcher::onProjectAssetRenamed,  this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
     
     event.Skip();
 }
@@ -144,7 +144,7 @@ bool isWatchable( model::NodePtr node )
     return node->isA<model::AutoFolder>();
 }
 
-void Watcher::onProjectAssetAdded( model::EventAddAsset &event )
+void Watcher::onProjectAssetAdded( model::EventAddNode &event )
 {
     model::NodePtr node = event.getValue().getChild();
     watch( node, getFileName(node) );
@@ -152,7 +152,7 @@ void Watcher::onProjectAssetAdded( model::EventAddAsset &event )
     event.Skip();
 }
 
-void Watcher::onProjectAssetRemoved( model::EventRemoveAsset &event )
+void Watcher::onProjectAssetRemoved( model::EventRemoveNode &event )
 {
     model::NodePtr node = event.getValue().getChild();
     unwatch( node, getFileName(node) );
@@ -160,7 +160,7 @@ void Watcher::onProjectAssetRemoved( model::EventRemoveAsset &event )
     event.Skip();
 }
 
-void Watcher::onProjectAssetRenamed( model::EventRenameAsset &event )
+void Watcher::onProjectAssetRenamed( model::EventRenameNode &event )
 {
     event.Skip();
 }

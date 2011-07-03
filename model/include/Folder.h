@@ -2,7 +2,7 @@
 #define FOLDER_H
 
 #include <wx/string.h>
-#include "AProjectViewNode.h"
+#include "Node.h"
 
 namespace model {
 
@@ -10,7 +10,7 @@ class Folder;
 typedef boost::shared_ptr<Folder> FolderPtr;
 
 class Folder
-    :   public AProjectViewNode
+    :   public Node
 {
 public:
 

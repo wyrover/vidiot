@@ -9,7 +9,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
-#include "ProjectViewNodeEvent.h"
+#include "NodeEvent.h"
 #include "SequenceEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
@@ -29,7 +29,7 @@ Sequence::Sequence()
     ,	IControl()
     ,   IVideo()
     ,   IAudio()
-    ,   AProjectViewNode()
+    ,   Node()
     ,   mName()
     ,   mDividerPosition(0)
     ,   mVideoTracks()
@@ -45,7 +45,7 @@ Sequence::Sequence(wxString name)
 ,	IControl()
 ,   IVideo()
 ,   IAudio()
-,   AProjectViewNode()
+,   Node()
     ,   mName(name)
     ,   mDividerPosition(0)
     ,   mVideoTracks()
@@ -61,7 +61,7 @@ Sequence::Sequence(const Sequence& other)
 ,	IControl()
 ,   IVideo()
 ,   IAudio()
-,   AProjectViewNode()
+,   Node()
 ,   mName(other.mName)
 ,   mDividerPosition(other.mDividerPosition)
 ,   mVideoTracks(other.mVideoTracks)
@@ -279,7 +279,7 @@ wxString Sequence::getName() const
 void Sequence::setName(wxString name)
 { 
     mName = name;
-    gui::Window::get().ProcessModelEvent(model::EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
+    gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(shared_from_this(),mName)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
     ar & boost::serialization::base_object<IControl>(*this);
     ar & boost::serialization::base_object<IVideo>(*this);
     ar & boost::serialization::base_object<IAudio>(*this);
-    ar & boost::serialization::base_object<AProjectViewNode>(*this);
+    ar & boost::serialization::base_object<Node>(*this);
     ar & mName;
     ar & mDividerPosition;
     ar & mVideoTracks;

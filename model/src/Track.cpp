@@ -9,7 +9,7 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <wx/intl.h> 
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "Clip.h"
 #include "Constants.h"
 #include "EmptyClip.h"

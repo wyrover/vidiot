@@ -2,7 +2,7 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "ProjectViewNodeEvent.h"
+#include "NodeEvent.h"
 #include "Window.h"
 #include "UtilLog.h"
 #include "UtilSerializeWxwidgets.h"
@@ -44,7 +44,7 @@ void Folder::setName(wxString name)
     if (name != mName)
     {
         mName = name;
-        gui::Window::get().QueueModelEvent(new EventRenameAsset(NodeWithNewName(shared_from_this(),mName)));
+        gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(shared_from_this(),mName)));
     }
 }
 
@@ -55,7 +55,7 @@ void Folder::setName(wxString name)
 template<class Archive>
 void Folder::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<AProjectViewNode>(*this);
+    ar & boost::serialization::base_object<Node>(*this);
     ar & mName;
 }
 template void Folder::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

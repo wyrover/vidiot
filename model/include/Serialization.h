@@ -5,7 +5,7 @@ namespace model {
 
 /// Register all objects that need to be serialized. To avoid difficult to resolve
 /// 'unregistered_class' exceptions. Typically, when serializing a - ex. File -
-/// class through a parent - AProjectViewNode - pointer, it may occur that the 
+/// class through a parent - Node - pointer, it may occur that the 
 /// derived class is not automatically registered in the archive. Since that occurs
 /// rather unexpected (when making changes unrelated to serialization), all types
 /// persisted are registered via this method, both for loading and saving.

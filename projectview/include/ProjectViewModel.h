@@ -16,9 +16,9 @@ typedef boost::shared_ptr<Folder> FolderPtr;
 typedef std::list<NodePtr> NodePtrs;
 class EventOpenProject;
 class EventCloseProject;
-class EventAddAsset;
-class EventRemoveAsset;
-class EventRenameAsset;
+class EventAddNode;
+class EventRemoveNode;
+class EventRenameNode;
 }
 
 namespace gui {
@@ -69,9 +69,9 @@ public:
 
     void onOpenProject( model::EventOpenProject &event );
     void onCloseProject( model::EventCloseProject &event );
-    void onProjectAssetAdded( model::EventAddAsset &event );
-    void onProjectAssetRemoved( model::EventRemoveAsset &event );
-    void onProjectAssetRenamed( model::EventRenameAsset &event );
+    void onProjectAssetAdded( model::EventAddNode &event );
+    void onProjectAssetRemoved( model::EventRemoveNode &event );
+    void onProjectAssetRenamed( model::EventRenameNode &event );
 
 private:
 

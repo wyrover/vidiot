@@ -11,7 +11,7 @@
 #include <boost/foreach.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "AutoFolder.h"
 #include "DataObject.h"
 #include "Folder.h"

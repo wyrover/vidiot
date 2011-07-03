@@ -5,12 +5,12 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/foreach.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "Menu.h"
 #include "Preview.h"
 #include "Project.h"
 #include "ProjectEvent.h"
-#include "ProjectViewNodeEvent.h"
+#include "NodeEvent.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "UtilLog.h"
@@ -35,16 +35,16 @@ TimelinesView::TimelinesView(Window *parent)
     SetSizerAndFit(sizer);
 
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,             &TimelinesView::onCloseProject,            this);
-    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,              &TimelinesView::onProjectAssetRemoved,       this);
-    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,              &TimelinesView::onProjectAssetRenamed,       this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,              &TimelinesView::onProjectAssetRemoved,       this);
+    gui::Window::get().Bind(model::EVENT_RENAME_NODE,              &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Bind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,     &TimelinesView::onPageChanged,               this);
 }
 
 TimelinesView::~TimelinesView()
 {
     gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,           &TimelinesView::onCloseProject,              this);
-    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,            &TimelinesView::onProjectAssetRemoved,       this);
-    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,            &TimelinesView::onProjectAssetRenamed,       this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,            &TimelinesView::onProjectAssetRemoved,       this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,            &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &TimelinesView::onPageChanged,               this);
     sCurrent = 0;
 }
@@ -70,7 +70,7 @@ void TimelinesView::onCloseProject( model::EventCloseProject &event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TimelinesView::onProjectAssetRemoved( model::EventRemoveAsset &event )
+void TimelinesView::onProjectAssetRemoved( model::EventRemoveNode &event )
 {
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().getChild());
     if (sequence)
@@ -80,7 +80,7 @@ void TimelinesView::onProjectAssetRemoved( model::EventRemoveAsset &event )
     event.Skip();
 }
 
-void TimelinesView::onProjectAssetRenamed( model::EventRenameAsset &event )
+void TimelinesView::onProjectAssetRenamed( model::EventRenameNode &event )
 {
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().getNode());
 

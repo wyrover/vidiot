@@ -45,7 +45,7 @@ bool ProjectViewCreateFile::Do()
     }
     BOOST_FOREACH(model::FilePtr child, mChildren)
     {
-        mParent->addChild(boost::static_pointer_cast<model::AProjectViewNode>(child));//
+        mParent->addChild(boost::static_pointer_cast<model::Node>(child));//
     }
     return true;
 }
@@ -55,7 +55,7 @@ bool ProjectViewCreateFile::Undo()
     VAR_INFO(this);
     BOOST_FOREACH(model::FilePtr child, mChildren)
     {
-        mParent->removeChild(boost::static_pointer_cast<model::AProjectViewNode>(child));
+        mParent->removeChild(boost::static_pointer_cast<model::Node>(child));
     }
     return true;
 }

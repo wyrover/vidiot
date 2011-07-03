@@ -17,7 +17,7 @@ extern "C" {
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "AudioChunk.h"
-#include "AProjectViewNode.h"
+#include "Node.h"
 
 namespace model
 {

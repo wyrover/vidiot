@@ -2,7 +2,7 @@
 
 #include <wx/datetime.h>
 #include <boost/foreach.hpp>
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "AutoFolder.h"
 #include "File.h"
 #include "film.xpm" 
@@ -16,7 +16,7 @@
 #include "ProjectViewAddAsset.h"
 #include "ProjectViewDeleteAsset.h"
 #include "ProjectViewMoveAsset.h"
-#include "ProjectViewNodeEvent.h"
+#include "NodeEvent.h"
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
 #include "UtilLog.h"
@@ -366,9 +366,9 @@ void ProjectViewModel::onOpenProject( model::EventOpenProject &event )
 
     Cleared();
 
-    gui::Window::get().Bind(model::EVENT_ADD_ASSET,     &ProjectViewModel::onProjectAssetAdded,     this);
-    gui::Window::get().Bind(model::EVENT_REMOVE_ASSET,  &ProjectViewModel::onProjectAssetRemoved,   this);
-    gui::Window::get().Bind(model::EVENT_RENAME_ASSET,  &ProjectViewModel::onProjectAssetRenamed,   this);
+    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &ProjectViewModel::onProjectAssetRemoved,   this);
+    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &ProjectViewModel::onProjectAssetRenamed,   this);
 
     event.Skip();
 }
@@ -379,14 +379,14 @@ void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
 
     Cleared();
 
-    gui::Window::get().Unbind(model::EVENT_ADD_ASSET,       &ProjectViewModel::onProjectAssetAdded,      this);
-    gui::Window::get().Unbind(model::EVENT_REMOVE_ASSET,    &ProjectViewModel::onProjectAssetRemoved,    this);
-    gui::Window::get().Unbind(model::EVENT_RENAME_ASSET,    &ProjectViewModel::onProjectAssetRenamed,    this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &ProjectViewModel::onProjectAssetAdded,      this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &ProjectViewModel::onProjectAssetRemoved,    this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &ProjectViewModel::onProjectAssetRenamed,    this);
 
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetAdded( model::EventAddAsset &event )
+void ProjectViewModel::onProjectAssetAdded( model::EventAddNode &event )
 {
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtr child = event.getValue().getChild();
@@ -398,7 +398,7 @@ void ProjectViewModel::onProjectAssetAdded( model::EventAddAsset &event )
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveAsset &event )
+void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveNode &event )
 {
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtr child = event.getValue().getChild();
@@ -408,7 +408,7 @@ void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveAsset &event )
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetRenamed( model::EventRenameAsset &event )
+void ProjectViewModel::onProjectAssetRenamed( model::EventRenameNode &event )
 {
     VAR_DEBUG(event.getValue().getNode());
     ItemChanged(event.getValue().getNode()->id());

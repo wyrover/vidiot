@@ -17,7 +17,7 @@ extern "C" {
 #include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
-#include "AProjectViewNode.h"
+#include "Node.h"
 #include "VideoFrame.h"
 #include "Convert.h"
 #include "Project.h"

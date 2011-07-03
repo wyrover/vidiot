@@ -106,7 +106,7 @@ void AutoFolder::update()
         else
         {
             // New element. Add.
-            addChild(boost::dynamic_pointer_cast<AProjectViewNode>(node));
+            addChild(boost::dynamic_pointer_cast<Node>(node));
         }
     }
 
