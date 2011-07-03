@@ -36,7 +36,6 @@ public:
 
     NodePtrs find(wxString name);
 
-    virtual wxString getName() const = 0;//todo kan weg
     virtual void setName(wxString name);
 
 protected:
