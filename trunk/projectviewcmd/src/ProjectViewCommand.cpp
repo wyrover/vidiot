@@ -16,22 +16,22 @@ ProjectViewCommand::~ProjectViewCommand()
 }
 
 // static
-ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::ProjectViewPtrs children)
+ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::NodePtrs children)
 {
     ASSERT(children.size() > 0);
 
-    model::ProjectViewPtrs prunedlist = ProjectViewCommand::prune(children);
+    model::NodePtrs prunedlist = ProjectViewCommand::prune(children);
     ParentAndChildPairs pairs;
-    BOOST_FOREACH( model::ProjectViewPtr child, prunedlist )
+    BOOST_FOREACH( model::NodePtr child, prunedlist )
     {
-        pairs.push_back(std::make_pair<model::ProjectViewPtr,model::ProjectViewPtr>(child->getParent(),child));
+        pairs.push_back(std::make_pair<model::NodePtr,model::NodePtr>(child->getParent(),child));
     }
     return pairs;
 }
 
-bool isDescendantOf(model::ProjectViewPtr descendant, model::ProjectViewPtr ascendant)
+bool isDescendantOf(model::NodePtr descendant, model::NodePtr ascendant)
 {
-    model::ProjectViewPtr directparent = descendant->getParent();
+    model::NodePtr directparent = descendant->getParent();
     if (!directparent)
     {
         // Orphan: root node, or node was deleted/cut.
@@ -48,15 +48,15 @@ bool isDescendantOf(model::ProjectViewPtr descendant, model::ProjectViewPtr asce
 }
 
 // static
-model::ProjectViewPtrs ProjectViewCommand::prune(model::ProjectViewPtrs children)
+model::NodePtrs ProjectViewCommand::prune(model::NodePtrs children)
 {
     ASSERT(children.size() > 0);
 
-    model::ProjectViewPtrs newlist;
-    BOOST_FOREACH( model::ProjectViewPtr child, children )
+    model::NodePtrs newlist;
+    BOOST_FOREACH( model::NodePtr child, children )
     {
         bool ascendantFound = false;
-        BOOST_FOREACH( model::ProjectViewPtr possibleParent, children )
+        BOOST_FOREACH( model::NodePtr possibleParent, children )
         {
             if (isDescendantOf(child,possibleParent))
             {

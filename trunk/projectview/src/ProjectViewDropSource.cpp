@@ -77,11 +77,11 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 
     if (!mHint)
     {
-        model::ProjectViewPtrs assets = getData().getAssets();
+        model::NodePtrs assets = getData().getAssets();
 
         int width = 0;
         int height = 0;
-        BOOST_FOREACH( model::ProjectViewPtr asset, assets )
+        BOOST_FOREACH( model::NodePtr asset, assets )
         {
             wxRect rect(mCtrl.GetItemRect(wxDataViewItem(asset->id()), mCtrl.GetColumn(0)));
             if (rect.width > width)
@@ -101,7 +101,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
         //dc->SetTextBackground(*wxBLUE);
 
         int y = 0;
-        BOOST_FOREACH( model::ProjectViewPtr asset, assets )
+        BOOST_FOREACH( model::NodePtr asset, assets )
         {
             wxRect itemRect(mCtrl.GetItemRect(wxDataViewItem(asset->id()), mCtrl.GetColumn(0)));
             drawAsset(&dc, wxRect(0,y,width,itemRect.GetHeight()), asset);
@@ -166,10 +166,10 @@ void ProjectViewDropSource::setFeedback(bool enabled)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewDropSource::drawAsset(wxDC* dc, wxRect rect, model::ProjectViewPtr asset)
+void ProjectViewDropSource::drawAsset(wxDC* dc, wxRect rect, model::NodePtr asset)
 {
     int indent = 0;
-    model::ProjectViewPtr parent = asset->getParent();
+    model::NodePtr parent = asset->getParent();
     while (parent)
     {
         indent++;

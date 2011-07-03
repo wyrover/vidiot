@@ -8,10 +8,10 @@
 #include <boost/shared_ptr.hpp>
 
 namespace model {
-class AProjectViewNode;
-typedef AProjectViewNode* ProjectViewId;
-typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+class INode;
+typedef INode* NodeId;
+typedef boost::shared_ptr<INode> NodePtr;
+typedef std::list<NodePtr> ProjectViewPtrs;
 }
 
 namespace gui {
@@ -67,7 +67,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void drawAsset(wxDC* dc, wxRect rect, model::ProjectViewPtr asset);
+    void drawAsset(wxDC* dc, wxRect rect, model::NodePtr asset);
 
 };
 

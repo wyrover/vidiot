@@ -3,23 +3,15 @@
 
 #include <list>
 #include <wx/string.h>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include "UtilRTTI.h"
+#include "INode.h"
 
 namespace model {
 
-class AProjectViewNode;
-typedef AProjectViewNode* ProjectViewId;
-typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-typedef boost::weak_ptr<AProjectViewNode> WeakProjectViewPtr;
-typedef std::list<ProjectViewPtr> ProjectViewPtrs;
-
 class AProjectViewNode
-    :   public boost::enable_shared_from_this<AProjectViewNode>
-    ,   public IRTTI
+    :   public INode
 {
 public:
 
@@ -31,39 +23,26 @@ public:
     virtual ~AProjectViewNode();
 
     //////////////////////////////////////////////////////////////////////////
-    // IDS
-    //////////////////////////////////////////////////////////////////////////
-
-    ProjectViewId id();
-    static ProjectViewPtr Ptr(ProjectViewId id);
-
-    //////////////////////////////////////////////////////////////////////////
-    // STRUCTURE
+    // INODE
     //////////////////////////////////////////////////////////////////////////
 
     bool hasParent() const;
-    ProjectViewPtr getParent() const;
-    void setParent(ProjectViewPtr parent);
+    NodePtr getParent() const;
+    void setParent(NodePtr parent);
 
-    ProjectViewPtr addChild(ProjectViewPtr newChild);
-    ProjectViewPtr removeChild(ProjectViewPtr child);
-    ProjectViewPtrs getChildren() const;
+    NodePtr addChild(NodePtr newChild);
+    NodePtr removeChild(NodePtr child);
+    NodePtrs getChildren() const;
 
-    /// Find all descendants with the given name, throughout
-    /// the hierarchy.
-    ProjectViewPtrs find(wxString name);
+    NodePtrs find(wxString name);
 
-    //////////////////////////////////////////////////////////////////////////
-    // ATTRIBUTES
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual wxString getName() const = 0;
+    virtual wxString getName() const = 0;//todo kan weg
     virtual void setName(wxString name);
 
 protected:
 
-    WeakProjectViewPtr mParent; // Children do not keep parents alive
-    ProjectViewPtrs mChildren;  // Parents keep children alive
+    WeakNodePtr mParent; // Children do not keep parents alive
+    NodePtrs mChildren;  // Parents keep children alive
 
 private:
 

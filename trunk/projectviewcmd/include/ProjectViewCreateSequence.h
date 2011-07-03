@@ -72,7 +72,7 @@ private:
     /// \pre node has a parent
     /// \param node child node for which such a parent is searched
     /// \return first parent that can be used for adding assets
-    model::FolderPtr findFirstNonAutoFolderParent(model::ProjectViewPtr node) const;
+    model::FolderPtr findFirstNonAutoFolderParent(model::NodePtr node) const;
 };
 
 } // namespace

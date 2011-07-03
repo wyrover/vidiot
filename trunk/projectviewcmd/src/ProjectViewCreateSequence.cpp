@@ -91,9 +91,9 @@ model::SequencePtr ProjectViewCreateSequence::getSequence() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-model::FolderPtr ProjectViewCreateSequence::findFirstNonAutoFolderParent(model::ProjectViewPtr node) const
+model::FolderPtr ProjectViewCreateSequence::findFirstNonAutoFolderParent(model::NodePtr node) const
 {
-    model::ProjectViewPtr parent = node->getParent();
+    model::NodePtr parent = node->getParent();
     ASSERT(parent)(node);
 
     while (parent->isA<model::AutoFolder>())

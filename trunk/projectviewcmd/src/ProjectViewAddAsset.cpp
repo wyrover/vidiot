@@ -6,7 +6,7 @@
 
 namespace command {
 
-ProjectViewAddAsset::ProjectViewAddAsset(model::ProjectViewPtr parent, model::ProjectViewPtrs nodes)
+ProjectViewAddAsset::ProjectViewAddAsset(model::NodePtr parent, model::NodePtrs nodes)
 :   ProjectViewCommand()
 ,   mParent(parent)
 ,   mChildren(ProjectViewCommand::prune(nodes))
@@ -22,7 +22,7 @@ ProjectViewAddAsset::~ProjectViewAddAsset()
 bool ProjectViewAddAsset::Do()
 {
     VAR_INFO(this);
-    BOOST_FOREACH(model::ProjectViewPtr child, mChildren)
+    BOOST_FOREACH(model::NodePtr child, mChildren)
     {
         mParent->addChild(child);
     }
@@ -32,7 +32,7 @@ bool ProjectViewAddAsset::Do()
 bool ProjectViewAddAsset::Undo()
 {
     VAR_INFO(this);
-    BOOST_FOREACH(model::ProjectViewPtr child, mChildren)
+    BOOST_FOREACH(model::NodePtr child, mChildren)
     {
         mParent->removeChild(child);
     }

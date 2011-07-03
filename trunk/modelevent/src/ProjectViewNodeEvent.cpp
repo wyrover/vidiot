@@ -11,7 +11,7 @@ DEFINE_EVENT(EVENT_RENAME_ASSET,    EventRenameAsset,   NodeWithNewName);
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ParentAndChild::ParentAndChild( ProjectViewPtr parent, ProjectViewPtr child )
+ParentAndChild::ParentAndChild( NodePtr parent, NodePtr child )
     :  mParent(parent)
     ,  mChild(child) 
 {
@@ -21,12 +21,12 @@ ParentAndChild::ParentAndChild( ProjectViewPtr parent, ProjectViewPtr child )
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-ProjectViewPtr ParentAndChild::getParent() const
+NodePtr ParentAndChild::getParent() const
 {
     return mParent;
 }
 
-ProjectViewPtr ParentAndChild::getChild() const
+NodePtr ParentAndChild::getChild() const
 {
     return mChild;
 }
@@ -45,7 +45,7 @@ std::ostream& operator<<( std::ostream& os, const ParentAndChild& obj )
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-NodeWithNewName::NodeWithNewName( ProjectViewPtr node, wxString name)
+NodeWithNewName::NodeWithNewName( NodePtr node, wxString name )
     :   mNode(node)
     ,   mName(name)
 {
@@ -55,7 +55,7 @@ NodeWithNewName::NodeWithNewName( ProjectViewPtr node, wxString name)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-ProjectViewPtr NodeWithNewName::getNode() const
+NodePtr NodeWithNewName::getNode() const
 {
     return mNode;
 }

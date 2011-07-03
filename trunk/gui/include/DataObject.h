@@ -1,10 +1,16 @@
 #ifndef DATA_OBJECT_H
 #define DATA_OBJECT_H
 
+#include <list>
 #include <wx/dataobj.h>
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
-#include "AProjectViewNode.h"
+
+namespace model {
+class INode;
+typedef boost::shared_ptr<INode> NodePtr;
+typedef std::list<NodePtr> NodePtrs;
+}
 
 namespace gui {
 
@@ -23,7 +29,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     DataObject();
-    DataObject(model::ProjectViewPtrs assets, CallbackOnDestruction callback = 0);
+    DataObject(model::NodePtrs assets, CallbackOnDestruction callback = 0);
     ~DataObject();
 
     static const wxString sFormat;
@@ -40,12 +46,12 @@ public:
     // GET ALL ASSETS
     //////////////////////////////////////////////////////////////////////////
 
-    model::ProjectViewPtrs getAssets() const;
+    model::NodePtrs getAssets() const;
 
 private:
 
     wxDataFormat mFormat;
-    model::ProjectViewPtrs mAssets;
+    model::NodePtrs mAssets;
     CallbackOnDestruction mCallback;
 };
 

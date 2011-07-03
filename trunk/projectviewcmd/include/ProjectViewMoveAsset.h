@@ -9,13 +9,13 @@ namespace command {
 class ProjectViewMoveAsset : public ProjectViewCommand
 {
 public:
-    ProjectViewMoveAsset(model::ProjectViewPtrs nodes, model::ProjectViewPtr parent);
+    ProjectViewMoveAsset(model::NodePtrs nodes, model::NodePtr parent);
     ~ProjectViewMoveAsset();
     bool Do();
     bool Undo();
 private:
     ParentAndChildPairs mPairs;
-    model::ProjectViewPtr mNewParent;
+    model::NodePtr mNewParent;
 };
 
 } // namespace

@@ -1,21 +1,24 @@
 #ifndef GUI_PROJECT_VIEW_MODEL_H
 #define GUI_PROJECT_VIEW_MODEL_H
 
+#include <list>
 #include <wx/event.h>
 #include <wx/dataview.h>
+#include <boost/shared_ptr.hpp>
 #include "UtilEvent.h"
 
 namespace model {
-    class Project;
-    class AProjectViewNode;
-    typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-    class Folder;
-    typedef boost::shared_ptr<Folder> FolderPtr;
-    class EventOpenProject;
-    class EventCloseProject;
-    class EventAddAsset;
-    class EventRemoveAsset;
-    class EventRenameAsset;
+class Project;
+class INode;
+typedef boost::shared_ptr<INode> NodePtr;
+class Folder;
+typedef boost::shared_ptr<Folder> FolderPtr;
+typedef std::list<NodePtr> NodePtrs;
+class EventOpenProject;
+class EventCloseProject;
+class EventAddAsset;
+class EventRemoveAsset;
+class EventRenameAsset;
 }
 
 namespace gui {
@@ -51,14 +54,14 @@ public:
     // 
     //////////////////////////////////////////////////////////////////////////
 
-    bool isRoot(model::ProjectViewPtr node) const;
-    bool isAutomaticallyGenerated(model::ProjectViewPtr node) const;
-    bool isFolder(model::ProjectViewPtr node) const;
-    bool isAutoFolder(model::ProjectViewPtr node) const;
-    bool isSequence(model::ProjectViewPtr node) const;
-    bool isDescendantOf(model::ProjectViewPtr node, model::ProjectViewPtr ascendant) const;
-    bool canBeRenamed(model::ProjectViewPtr node) const;
-    wxIcon getIcon(model::ProjectViewPtr node) const;
+    bool isRoot( model::NodePtr node ) const;
+    bool isAutomaticallyGenerated( model::NodePtr node ) const;
+    bool isFolder( model::NodePtr node ) const;
+    bool isAutoFolder( model::NodePtr node) const;
+    bool isSequence( model::NodePtr node) const;
+    bool isDescendantOf( model::NodePtr node, model::NodePtr ascendant ) const;
+    bool canBeRenamed( model::NodePtr node ) const;
+    wxIcon getIcon( model::NodePtr node ) const;
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -80,7 +83,7 @@ private:
     wxIcon mIconAutoFolderOpen;
     wxIcon mIconFolder;
     wxIcon mIconFolderOpen;
-	wxIcon mIconVideo;
+    wxIcon mIconVideo;
 };
 
 /// This event is used to signal opening of certain folders after loading

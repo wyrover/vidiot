@@ -12,15 +12,16 @@
 
 namespace model {
 
-    // todo rename AProjectViewNode to Asset/Node
+// todo rename AProjectViewNode to Asset/Node
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 AProjectViewNode::AProjectViewNode()
-:   mParent()
-,   mChildren()
+    :   INode()
+    ,   mParent()
+    ,   mChildren()
 {
     VAR_DEBUG(this);
 }
@@ -31,27 +32,14 @@ AProjectViewNode::~AProjectViewNode()
 }
 
 AProjectViewNode::AProjectViewNode(const AProjectViewNode& other)
-:   mParent()
-,   mChildren()
+    :   INode()
+    ,   mParent()
+    ,   mChildren()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// IDS
-//////////////////////////////////////////////////////////////////////////
-
-ProjectViewId AProjectViewNode::id()
-{
-    return static_cast<ProjectViewId>(this);
-}
-
-ProjectViewPtr AProjectViewNode::Ptr( ProjectViewId id )
-{
-    return id->shared_from_this();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// SET/GET STRUCTURE
+// INODE
 //////////////////////////////////////////////////////////////////////////
 
 bool AProjectViewNode::hasParent() const
@@ -66,17 +54,17 @@ bool AProjectViewNode::hasParent() const
     }
 }
 
-ProjectViewPtr AProjectViewNode::getParent() const
+NodePtr AProjectViewNode::getParent() const
 { 
     return mParent.lock(); 
 }
 
-void AProjectViewNode::setParent(ProjectViewPtr parent)
+void AProjectViewNode::setParent(NodePtr parent)
 {
     mParent = parent;
 }
 
-ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
+NodePtr AProjectViewNode::addChild(NodePtr newChild)
 {
     mChildren.push_back(newChild);
     newChild->setParent(shared_from_this());
@@ -86,24 +74,24 @@ ProjectViewPtr AProjectViewNode::addChild(ProjectViewPtr newChild)
     return newChild;
 }
 
-ProjectViewPtr AProjectViewNode::removeChild(ProjectViewPtr child)
+NodePtr AProjectViewNode::removeChild(NodePtr child)
 {
     VAR_DEBUG(this)(child.get());
-    ProjectViewPtrs::iterator it;
+    NodePtrs::iterator it;
     for (it = mChildren.begin(); it != mChildren.end(); ++it)
     {
         if (*it == child) break;
     }
     ASSERT(it != mChildren.end());
-    ProjectViewPtr p = *it;
+    NodePtr p = *it;
     // Do not use ProcessEvent: see addChild
     gui::Window::get().QueueModelEvent(new model::EventRemoveAsset(ParentAndChild(shared_from_this(),child)));
     mChildren.erase(it);
-    child->setParent(ProjectViewPtr());
+    child->setParent(NodePtr());
     return p;
 }
 
-ProjectViewPtrs AProjectViewNode::getChildren() const
+NodePtrs AProjectViewNode::getChildren() const
 {
     return mChildren;
 }
@@ -112,17 +100,17 @@ void AProjectViewNode::setName(wxString name)
 {
 }
 
-ProjectViewPtrs AProjectViewNode::find(wxString name)
+NodePtrs AProjectViewNode::find(wxString name)
 {
-    ProjectViewPtrs result;
+    NodePtrs result;
     wxString _name = getName();
     if (getName().IsSameAs(name))
     {
         result.push_back(shared_from_this());
     }
-    BOOST_FOREACH( ProjectViewPtr child, mChildren )
+    BOOST_FOREACH( NodePtr child, mChildren )
     {
-        UtilList<ProjectViewPtr>(result).addElements(child->find(name), ProjectViewPtr());
+        UtilList<NodePtr>(result).addElements(child->find(name), NodePtr());
     }
     return result;
 }
@@ -145,9 +133,10 @@ std::ostream& operator<<( std::ostream& os, const AProjectViewNode& obj )
 template<class Archive>
 void AProjectViewNode::serialize(Archive & ar, const unsigned int version)
 {
+    ar & boost::serialization::base_object<INode>(*this);
     if (Archive::is_loading::value)
     {
-        ProjectViewPtr parent;
+        NodePtr parent;
         ar & parent;
         setParent(parent);
     }

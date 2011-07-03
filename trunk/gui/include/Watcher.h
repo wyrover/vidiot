@@ -11,9 +11,9 @@
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
 
 namespace model {
-    class AProjectViewNode;
-    typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-    typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+    class INode;
+    typedef boost::shared_ptr<INode> NodePtr;
+    typedef std::list<NodePtr> NodePtrs;
     class AutoFolder;
     typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
     class File;
@@ -56,7 +56,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    typedef std::map<wxFileName, model::ProjectViewPtrs> FileMap;
+    typedef std::map<wxFileName, model::NodePtrs> FileMap;
     FileMap mFileMap;
 
 
@@ -83,8 +83,8 @@ private:
 	// ADD/REMOVE
 	//////////////////////////////////////////////////////////////////////////
 
-    void watch( model::ProjectViewPtr node, wxFileName path );
-    void unwatch( model::ProjectViewPtr node, wxFileName path );
+    void watch( model::NodePtr node, wxFileName path );
+    void unwatch( model::NodePtr node, wxFileName path );
 
     void stop();
     void start();
