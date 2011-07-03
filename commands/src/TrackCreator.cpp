@@ -19,12 +19,12 @@ namespace command {
 //////////////////////////////////////////////////////////////////////////
 
 
-TrackCreator::TrackCreator(model::ProjectViewPtrs assets)
+TrackCreator::TrackCreator(model::NodePtrs assets)
 :   mAssets(assets)
 ,   mVideo(boost::make_shared<model::VideoTrack>())
 ,   mAudio(boost::make_shared<model::AudioTrack>())
 {
-    BOOST_FOREACH( model::ProjectViewPtr asset, mAssets )
+    BOOST_FOREACH( model::NodePtr asset, mAssets )
     {
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
         if (file)

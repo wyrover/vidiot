@@ -3,16 +3,14 @@
 
 #include <list>
 #include <wx/string.h>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/weak_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include "UtilEvent.h"
 
 namespace model {
 
-class AProjectViewNode;
-typedef AProjectViewNode* ProjectViewId;
-typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+class INode;
+typedef boost::shared_ptr<INode> NodePtr;
+typedef std::list<NodePtr> NodePtrs;
 
 class ParentAndChild
 {
@@ -22,14 +20,14 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ParentAndChild(model::ProjectViewPtr parent, model::ProjectViewPtr child);
+    ParentAndChild(NodePtr parent, NodePtr child);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    model::ProjectViewPtr getParent() const;
-    model::ProjectViewPtr getChild() const;
+    NodePtr getParent() const;
+    NodePtr getChild() const;
 
 private:
 
@@ -37,8 +35,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::ProjectViewPtr mParent;
-    model::ProjectViewPtr mChild;
+    NodePtr mParent;
+    NodePtr mChild;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -59,13 +57,13 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    NodeWithNewName( model::ProjectViewPtr node, wxString name);
+    NodeWithNewName( NodePtr node, wxString name);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    ProjectViewPtr getNode() const;
+    NodePtr getNode() const;
     wxString getName() const;
 
 private:
@@ -74,7 +72,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::ProjectViewPtr mNode;
+    NodePtr mNode;
     wxString mName;
 
     //////////////////////////////////////////////////////////////////////////

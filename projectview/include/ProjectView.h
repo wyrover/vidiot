@@ -44,10 +44,10 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \nodes these nodes are selected after the call, all others are not
-    void select(model::ProjectViewPtrs nodes);
+    void select( model::NodePtrs nodes );
     void selectAll();
     model::FolderPtr getSelectedContainer() const;
-    model::ProjectViewPtrs getSelection() const;
+    model::NodePtrs getSelection() const;
 
 private:
 

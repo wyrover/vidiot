@@ -9,7 +9,7 @@ namespace command {
 class ProjectViewDeleteAsset : public ProjectViewCommand
 {
 public:
-    ProjectViewDeleteAsset(model::ProjectViewPtrs nodes);
+    ProjectViewDeleteAsset(model::NodePtrs nodes);
     ~ProjectViewDeleteAsset();
     bool Do();
     bool Undo();

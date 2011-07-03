@@ -57,7 +57,7 @@ bool ProjectViewModel::IsContainer (const wxDataViewItem &wxItem) const
     }
     else
     {
-        return isFolder(model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID())));
+        return isFolder(model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID())));
     }
 }
 
@@ -70,7 +70,7 @@ wxDataViewItem ProjectViewModel::GetParent( const wxDataViewItem &wxItem ) const
     }
     else
     {
-        model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
+        model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
         if (!p->hasParent())
         {
             // Root asset has the invisible root as parent
@@ -101,8 +101,8 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
         }
     }
 
-    model::ProjectViewPtr parent = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
-    BOOST_FOREACH( model::ProjectViewPtr child, parent->getChildren() )
+    model::NodePtr parent = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
+    BOOST_FOREACH( model::NodePtr child, parent->getChildren() )
     {
         wxItemArray.Add(wxDataViewItem(child->id()));
 
@@ -137,7 +137,7 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
     ASSERT(wxItem.IsOk());
     ASSERT(col <= GetColumnCount());
 
-    model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
+    model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
     switch (col)
     {
     case 0: 
@@ -170,7 +170,7 @@ bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem 
     ASSERT(col <= GetColumnCount());
     ASSERT(col == 0); // Only rename is possible
 
-    model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
+    model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
     if (canBeRenamed(node))
     {
         wxDataViewIconText icontext;
@@ -195,8 +195,8 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
         column = 0;
     }
 
-    model::ProjectViewPtr node1 = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(item1.GetID()));
-    model::ProjectViewPtr node2 = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(item2.GetID()));
+    model::NodePtr node1 = model::INode::Ptr(static_cast<model::NodeId>(item1.GetID()));
+    model::NodePtr node2 = model::INode::Ptr(static_cast<model::NodeId>(item2.GetID()));
 
     if (node1.get() == node2.get())
     {
@@ -273,7 +273,7 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
 // 
 //////////////////////////////////////////////////////////////////////////
 
-bool ProjectViewModel::isAutomaticallyGenerated(model::ProjectViewPtr node) const
+bool ProjectViewModel::isAutomaticallyGenerated(model::NodePtr node) const
 {
     if (!node->hasParent())
     {
@@ -281,7 +281,7 @@ bool ProjectViewModel::isAutomaticallyGenerated(model::ProjectViewPtr node) cons
     }
     else
     {
-        model::ProjectViewPtr parent = node->getParent();
+        model::NodePtr parent = node->getParent();
         if (isAutoFolder(parent))
         {
             return true;
@@ -293,34 +293,34 @@ bool ProjectViewModel::isAutomaticallyGenerated(model::ProjectViewPtr node) cons
     }
 }
 
-bool ProjectViewModel::isRoot(model::ProjectViewPtr node) const
+bool ProjectViewModel::isRoot(model::NodePtr node) const
 {
     return !node->hasParent();
 }
 
-bool ProjectViewModel::isFolder(model::ProjectViewPtr node) const
+bool ProjectViewModel::isFolder(model::NodePtr node) const
 {
     return boost::dynamic_pointer_cast<model::Folder>(node) != 0;
 }
 
-bool ProjectViewModel::isAutoFolder(model::ProjectViewPtr node) const
+bool ProjectViewModel::isAutoFolder(model::NodePtr node) const
 {
     return boost::dynamic_pointer_cast<model::AutoFolder>(node) != 0;
 }
 
-bool ProjectViewModel::isSequence(model::ProjectViewPtr node) const
+bool ProjectViewModel::isSequence(model::NodePtr node) const
 {
     return boost::dynamic_pointer_cast<model::Sequence>(node) != 0;
 }
 
-bool ProjectViewModel::isDescendantOf(model::ProjectViewPtr node, model::ProjectViewPtr ascendant) const
+bool ProjectViewModel::isDescendantOf(model::NodePtr node, model::NodePtr ascendant) const
 {
     if (!node->hasParent())
     {
         // this node is an orphan. It might be the root (project) node, or it was deleted/cut.
         return false;
     }
-    model::ProjectViewPtr parent = node->getParent();
+    model::NodePtr parent = node->getParent();
     if (parent == ascendant)
     {
         return true;
@@ -328,12 +328,12 @@ bool ProjectViewModel::isDescendantOf(model::ProjectViewPtr node, model::Project
     return isDescendantOf(parent, ascendant);
 }
 
-bool ProjectViewModel::canBeRenamed(model::ProjectViewPtr node) const
+bool ProjectViewModel::canBeRenamed(model::NodePtr node) const
 {
     return !isRoot(node) && !isAutomaticallyGenerated(node) && !isAutoFolder(node);
 }
 
-wxIcon ProjectViewModel::getIcon(model::ProjectViewPtr node) const
+wxIcon ProjectViewModel::getIcon(model::NodePtr node) const
 {
     wxIcon icon = mIconVideo;
     wxDataViewItem wxItem = wxDataViewItem(node->id());
@@ -388,8 +388,8 @@ void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
 
 void ProjectViewModel::onProjectAssetAdded( model::EventAddAsset &event )
 {
-    model::ProjectViewPtr parent = event.getValue().getParent();
-    model::ProjectViewPtr child = event.getValue().getChild();
+    model::NodePtr parent = event.getValue().getParent();
+    model::NodePtr child = event.getValue().getChild();
     VAR_DEBUG(parent)(child);
     ItemAdded(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
 
@@ -400,8 +400,8 @@ void ProjectViewModel::onProjectAssetAdded( model::EventAddAsset &event )
 
 void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveAsset &event )
 {
-    model::ProjectViewPtr parent = event.getValue().getParent();
-    model::ProjectViewPtr child = event.getValue().getChild();
+    model::NodePtr parent = event.getValue().getParent();
+    model::NodePtr child = event.getValue().getChild();
     VAR_DEBUG(parent)(child);
 
     ItemDeleted(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));

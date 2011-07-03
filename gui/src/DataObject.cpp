@@ -18,7 +18,7 @@ DataObject::DataObject()
 }
 
 
-DataObject::DataObject(model::ProjectViewPtrs assets, CallbackOnDestruction callback)
+DataObject::DataObject(model::NodePtrs assets, CallbackOnDestruction callback)
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets(assets)
@@ -42,9 +42,9 @@ DataObject::~DataObject()
 bool DataObject::GetDataHere(void *buf) const
 {
     unsigned int i = 0;
-    BOOST_FOREACH(model::ProjectViewPtr asset, mAssets)
+    BOOST_FOREACH( model::NodePtr asset, mAssets )
     {
-        static_cast<model::ProjectViewId*>(buf)[i] = asset->id();
+        static_cast<model::NodeId*>(buf)[i] = asset->id();
         i++;
     }
     return true;
@@ -52,19 +52,19 @@ bool DataObject::GetDataHere(void *buf) const
 
 size_t DataObject::GetDataSize () const
 {
-    return sizeof(model::ProjectViewId) * mAssets.size();
+    return sizeof(model::NodeId) * mAssets.size();
 }
 
 bool DataObject::SetData(size_t len, const void *buf)
 {
-    ASSERT(len % sizeof(model::ProjectViewId) == 0)(len);
+    ASSERT(len % sizeof(model::NodeId) == 0)(len);
 
     mAssets.clear();
 
-    model::ProjectViewId* index = static_cast<model::ProjectViewId*>(const_cast<void*>(buf));
-    for (unsigned int i = 0; i < len / sizeof(model::ProjectViewId); ++i)
+    model::NodeId* index = static_cast<model::NodeId*>(const_cast<void*>(buf));
+    for (unsigned int i = 0; i < len / sizeof(model::NodeId); ++i)
     {
-        mAssets.push_back(model::AProjectViewNode::Ptr(static_cast<const model::ProjectViewId*>(buf)[i]));
+        mAssets.push_back(model::AProjectViewNode::Ptr(static_cast<const model::NodeId*>(buf)[i]));
     }
     return true;
 }
@@ -73,7 +73,7 @@ bool DataObject::SetData(size_t len, const void *buf)
 // GET ALL ASSETS
 //////////////////////////////////////////////////////////////////////////
 
-model::ProjectViewPtrs DataObject::getAssets() const
+model::NodePtrs DataObject::getAssets() const
 {
     return mAssets;
 }

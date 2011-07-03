@@ -9,8 +9,8 @@
 #include "IEventLoopListener.h"
 
 namespace model {
-class AProjectViewNode;
-typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
+class INode;
+typedef boost::shared_ptr<INode> NodePtr;
 class Folder;
 typedef boost::shared_ptr<Folder> FolderPtr;
 class Sequence;
@@ -99,7 +99,7 @@ public:
 
     /// Remove given node from the project view via selecting it and then triggering the delete menu option
     /// \node node to be removed
-    static void remove( model::ProjectViewPtr node );
+    static void remove( model::NodePtr node );
 
     /// Count the number of nodes currently visible in the project view.
     /// This is implemented by selecting all nodes, and counting the selection size.

@@ -5,9 +5,9 @@
 #include <boost/make_shared.hpp>
 
 namespace model {
-class AProjectViewNode;
-typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+class INode;
+typedef boost::shared_ptr<INode> NodePtr;
+typedef std::list<NodePtr> NodePtrs;
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 }
@@ -23,7 +23,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit TrackCreator(model::ProjectViewPtrs assets);
+    explicit TrackCreator(model::NodePtrs assets);
 
     ~TrackCreator();
 
@@ -40,7 +40,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::ProjectViewPtrs mAssets;
+    model::NodePtrs mAssets;
     model::TrackPtr mVideo;
     model::TrackPtr mAudio;
 };

@@ -12,14 +12,14 @@ public:
     /**
     * Add an existing asset which was removed/copied 
     */
-    ProjectViewAddAsset(model::ProjectViewPtr parent, model::ProjectViewPtrs nodes);
+    ProjectViewAddAsset(model::NodePtr parent, model::NodePtrs nodes);
 
     ~ProjectViewAddAsset();
     bool Do();
     bool Undo();
 private:
-    model::ProjectViewPtr mParent;
-    model::ProjectViewPtrs mChildren;
+    model::NodePtr mParent;
+    model::NodePtrs mChildren;
 
 };
 

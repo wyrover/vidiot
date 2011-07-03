@@ -89,7 +89,7 @@ void AutoFolder::update()
 {
     // Fill 'allnames' with current list of children.
     std::list<wxString> allnames;
-    BOOST_FOREACH( ProjectViewPtr child, getChildren() )
+    BOOST_FOREACH( NodePtr child, getChildren() )
     {
         allnames.push_back(child->getName());
     }
@@ -113,7 +113,7 @@ void AutoFolder::update()
     // Remove all other elements (these have been removed).
     BOOST_FOREACH( wxString name, allnames )
     {
-        BOOST_FOREACH( ProjectViewPtr child, getChildren() )
+        BOOST_FOREACH( NodePtr child, getChildren() )
         {
             if (!child->getName().IsSameAs(name))
             {

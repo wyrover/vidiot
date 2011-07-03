@@ -7,16 +7,15 @@
 #include "RootCommand.h"
 
 namespace model {
-class AProjectViewNode;
-typedef AProjectViewNode* ProjectViewId;
-typedef boost::shared_ptr<AProjectViewNode> ProjectViewPtr;
-typedef std::list<ProjectViewPtr> ProjectViewPtrs;
+class INode;
+typedef boost::shared_ptr<INode> NodePtr;
+typedef std::list<NodePtr> NodePtrs;
 }
 
 namespace command {
 
-typedef std::pair<model::ProjectViewPtr ,model::ProjectViewPtr>  ParentAndChildPair;
-typedef std::vector<ParentAndChildPair>  ParentAndChildPairs;
+typedef std::pair<model::NodePtr ,model::NodePtr>  ParentAndChildPair;
+typedef std::vector<ParentAndChildPair> ParentAndChildPairs;
 
 class ProjectViewCommand
     :   public RootCommand
@@ -32,14 +31,14 @@ protected:
     /// - Prune the list of selected nodes (See ProjectViewCommand::prune)
     /// - Convert the resulting list of pruning to a list of parent and children
     ///   pairs (the currently associated parent with each node is stored).
-    static ParentAndChildPairs makeParentAndChildPairs(model::ProjectViewPtrs children);
+    static ParentAndChildPairs makeParentAndChildPairs(model::NodePtrs children);
 
     /// Strip any nodes for which an ascendant (direct or indirect parent)
     /// is also in the list of nodes. Example: when selecting both a parent
     /// node AND a child node of this parent, moving these two should 
     /// only move the actual parent, and keep the parent child relation
     /// intact.
-    static model::ProjectViewPtrs prune(model::ProjectViewPtrs children);
+    static model::NodePtrs prune(model::NodePtrs children);
 };
 
 } // namespace

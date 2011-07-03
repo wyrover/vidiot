@@ -164,10 +164,10 @@ void ProjectView::onAutoOpenFolder( EventAutoFolderOpen& event )
 // SELECTION
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectView::select( model::ProjectViewPtrs nodes)
+void ProjectView::select( model::NodePtrs nodes)
 {
     mCtrl.UnselectAll();
-    BOOST_FOREACH( model::ProjectViewPtr node, nodes )
+    BOOST_FOREACH( model::NodePtr node, nodes )
     {
         VAR_DEBUG(node->id());
         mCtrl.Select( wxDataViewItem( node->id() ) );
@@ -184,21 +184,21 @@ model::FolderPtr ProjectView::getSelectedContainer() const
     wxDataViewItemArray selection;
     mCtrl.GetSelections(selection);
     ASSERT(selection.size() == 1);
-    model::ProjectViewPtr projectNode = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(selection[0].GetID()));
+    model::NodePtr projectNode = model::INode::Ptr(static_cast<model::NodeId>(selection[0].GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(projectNode);
     ASSERT(folder);
     return folder;
 }
 
-model::ProjectViewPtrs ProjectView::getSelection() const
+model::NodePtrs ProjectView::getSelection() const
 {
-    model::ProjectViewPtrs l;
+    model::NodePtrs l;
     wxDataViewItemArray selection;
     mCtrl.GetSelections(selection);
 
     BOOST_FOREACH(wxDataViewItem wxItem, selection)
     {
-        model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(wxItem.GetID()));
+        model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
         ASSERT(node != 0);
         l.push_back(node);
     }
@@ -231,7 +231,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
 
     BOOST_FOREACH( wxDataViewItem item, sel )
     {
-        model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(item.GetID()));
+        model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(item.GetID()));
 
         bool isRoot = (!node->hasParent());
         bool isFolder = (boost::dynamic_pointer_cast<model::Folder>(node));
@@ -345,7 +345,7 @@ void ProjectView::onPaste(wxCommandEvent& event)
             wxTheClipboard->GetData( data );
             if (data.getAssets().size() > 0)
             {
-                BOOST_FOREACH( model::ProjectViewPtr node, data.getAssets() )
+                BOOST_FOREACH( model::NodePtr node, data.getAssets() )
                 {
                     if (FindConflictingName( getSelectedContainer(), node->getName() ))
                     {
@@ -469,7 +469,7 @@ void ProjectView::onDropPossible( wxDataViewEvent &event )
     }
 
     // Cannot drop into an autofolder tree
-    model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
+    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))
     {
         event.Veto();
@@ -477,7 +477,7 @@ void ProjectView::onDropPossible( wxDataViewEvent &event )
     }
 
     // Cannot drop a node into itselves, or one of its children
-    BOOST_FOREACH( model::ProjectViewPtr node, mDropSource.getData().getAssets())
+    BOOST_FOREACH( model::NodePtr node, mDropSource.getData().getAssets())
     {
         if (p == node || mModel->isDescendantOf(p, node))
         {
@@ -496,7 +496,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
         event.Veto();
         return;
     }
-    model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
+    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     if (mModel->isAutomaticallyGenerated(p) || !mModel->isFolder(p) || mModel->isAutoFolder(p))
     {
         event.Veto();
@@ -510,7 +510,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
     ASSERT(folder);
 
     bool conflictingChildExists = false;
-    BOOST_FOREACH( model::ProjectViewPtr node, o.getAssets())
+    BOOST_FOREACH( model::NodePtr node, o.getAssets())
     {
         if (FindConflictingName(folder, node->getName()))
         {
@@ -526,7 +526,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
 
 void ProjectView::onActivated( wxDataViewEvent &event )
 {
-    model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
+    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(p);
     if (!sequence)
     {
@@ -538,7 +538,7 @@ void ProjectView::onActivated( wxDataViewEvent &event )
 
 void ProjectView::onExpanded( wxDataViewEvent &event )
 {
-    model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
+    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
     mOpenFolders.insert(folder);
@@ -546,7 +546,7 @@ void ProjectView::onExpanded( wxDataViewEvent &event )
 
 void ProjectView::onCollapsed( wxDataViewEvent &event )
 {
-    model::ProjectViewPtr p = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
+    model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
     mOpenFolders.erase(folder);
@@ -554,7 +554,7 @@ void ProjectView::onCollapsed( wxDataViewEvent &event )
 
 void ProjectView::onStartEditing( wxDataViewEvent &event )
 {
-    model::ProjectViewPtr node = model::AProjectViewNode::Ptr(static_cast<model::ProjectViewId>(event.GetItem().GetID()));
+    model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     if (!mModel->canBeRenamed(node))
     {
         event.Veto();
@@ -569,7 +569,7 @@ void ProjectView::onStartEditing( wxDataViewEvent &event )
 
 bool ProjectView::FindConflictingName(model::FolderPtr parent, wxString name )
 {
-    BOOST_FOREACH( model::ProjectViewPtr child, parent->getChildren() )
+    BOOST_FOREACH( model::NodePtr child, parent->getChildren() )
     {
         if (child->getName().IsSameAs(name))
         {

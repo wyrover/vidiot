@@ -96,7 +96,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
 
     if (mFileMap.find(folder) != mFileMap.end())
     {
-        BOOST_FOREACH( model::ProjectViewPtr node, mFileMap.find(folder)->second )
+        BOOST_FOREACH( model::NodePtr node, mFileMap.find(folder)->second )
         {
             if (node->isA<model::AutoFolder>())
             {
@@ -128,7 +128,7 @@ void Watcher::onCloseProject( model::EventCloseProject &event )
     event.Skip();
 }
 
-wxFileName getFileName( model::ProjectViewPtr node )
+wxFileName getFileName( model::NodePtr node )
 {
     if (node->isA<model::AutoFolder>())
     {
@@ -137,7 +137,7 @@ wxFileName getFileName( model::ProjectViewPtr node )
     return wxFileName();
 }
 
-bool isWatchable( model::ProjectViewPtr node )
+bool isWatchable( model::NodePtr node )
 {
     // wxFileSystemWatcher does not support monitoring files yet.
     // Therefore model::File is not watched yet.
@@ -146,7 +146,7 @@ bool isWatchable( model::ProjectViewPtr node )
 
 void Watcher::onProjectAssetAdded( model::EventAddAsset &event )
 {
-    model::ProjectViewPtr node = event.getValue().getChild();
+    model::NodePtr node = event.getValue().getChild();
     watch( node, getFileName(node) );
     restart();
     event.Skip();
@@ -154,7 +154,7 @@ void Watcher::onProjectAssetAdded( model::EventAddAsset &event )
 
 void Watcher::onProjectAssetRemoved( model::EventRemoveAsset &event )
 {
-    model::ProjectViewPtr node = event.getValue().getChild();
+    model::NodePtr node = event.getValue().getChild();
     unwatch( node, getFileName(node) );
     restart();
     event.Skip();
@@ -169,7 +169,7 @@ void Watcher::onProjectAssetRenamed( model::EventRenameAsset &event )
 // ADD/REMOVE
 //////////////////////////////////////////////////////////////////////////
 
-void Watcher::watch( model::ProjectViewPtr node, wxFileName path )
+void Watcher::watch( model::NodePtr node, wxFileName path )
 {
     if (isWatchable(node))
     {
@@ -181,26 +181,26 @@ void Watcher::watch( model::ProjectViewPtr node, wxFileName path )
             mFileMap[path] = boost::assign::list_of(node);
             mRestartRequired = true;
         }
-        else if (!UtilList<model::ProjectViewPtr>(it->second).hasElement(node))
+        else if (!UtilList<model::NodePtr>(it->second).hasElement(node))
         {
             it->second.push_back(node);
         }
         // else: This (name,file) combination is already watched
     }
 
-    BOOST_FOREACH( model::ProjectViewPtr child, node->getChildren() )
+    BOOST_FOREACH( model::NodePtr child, node->getChildren() )
     {
         watch(child, getFileName(child));
     }
 }
 
-void Watcher::unwatch( model::ProjectViewPtr node, wxFileName path )
+void Watcher::unwatch( model::NodePtr node, wxFileName path )
 {
     if (isWatchable(node))
     {
         VAR_DEBUG(path);
         ASSERT(mFileMap.find(path) != mFileMap.end());
-        UtilList<model::ProjectViewPtr>(mFileMap[path]).removeElements(boost::assign::list_of(node));
+        UtilList<model::NodePtr>(mFileMap[path]).removeElements(boost::assign::list_of(node));
         if (mFileMap[path].empty())
         {
             // Last entry removed. Remove entire list and stop watching
@@ -208,7 +208,7 @@ void Watcher::unwatch( model::ProjectViewPtr node, wxFileName path )
             mRestartRequired = true;
         }
     }
-    BOOST_FOREACH( model::ProjectViewPtr child, node->getChildren() )
+    BOOST_FOREACH( model::NodePtr child, node->getChildren() )
     {
         unwatch(child, getFileName(child));
     }

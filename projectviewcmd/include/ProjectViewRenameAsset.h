@@ -9,12 +9,12 @@ namespace command {
 class ProjectViewRenameAsset : public ProjectViewCommand
 {
 public:
-    ProjectViewRenameAsset(model::ProjectViewPtr node, wxString assetName);
+    ProjectViewRenameAsset(model::NodePtr node, wxString assetName);
     ~ProjectViewRenameAsset();
     bool Do();
     bool Undo();
 private:
-    model::ProjectViewPtr mNode;
+    model::NodePtr mNode;
     wxString mNewName;
     wxString mOldName;
 };
