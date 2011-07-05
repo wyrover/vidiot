@@ -21,8 +21,8 @@ VideoTransition::VideoTransition()
     VAR_DEBUG(this);
 }
 
-VideoTransition::VideoTransition(pts nFramesLeft, pts nFramesRight)
-    :   Transition(nFramesLeft,nFramesRight)
+VideoTransition::VideoTransition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight)
+    :   Transition(left, nFramesLeft, right, nFramesRight)
     ,   IVideo()
     ,   mPosition(-1)
 {

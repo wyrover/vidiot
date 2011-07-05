@@ -18,7 +18,7 @@ public:
 
     VideoTransition();
 
-    VideoTransition(pts nFramesLeft, pts nFramesRight);
+    VideoTransition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight);
 
     virtual VideoTransition* clone();
 
