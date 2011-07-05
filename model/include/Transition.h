@@ -27,12 +27,15 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Transition();                                   ///< Constructor for recovery from disk
+    ///< Constructor for recovery from disk
+    Transition();
 
-    Transition(pts nFramesLeft, pts nFramesRight);  ///< Constructor for creating new transition
+      ///< Constructor for creating new transition
+    Transition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight);
 
-    virtual Transition* clone();                    ///< Used for making deep copies (clones) 
-
+    ///< Used for making deep copies (clones) 
+    virtual Transition* clone();           
+    
     virtual ~Transition();
 
     //////////////////////////////////////////////////////////////////////////
@@ -80,8 +83,14 @@ public:
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLeft() const;    ///< \return number of frames to 'snoop' from left clip
-    virtual pts getRight() const;   ///< \return number of frames to 'snoop' from right clip
+    virtual pts getLeft() const;    ///< \return number of frames to the left of the cut between the two clips
+    virtual pts getRight() const;   ///< \return number of frames to the right of the cut between the two clips
+
+    virtual IClipPtr getLeftClip() const;   ///< \return clip to the left of this transition
+    virtual IClipPtr getRightClip() const;  ///< \return clip to the right of this transition
+
+    virtual void setLeftClip(IClipPtr clip);
+    virtual void setRightClip(IClipPtr clip);
 
 protected:
 
@@ -100,8 +109,11 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mFramesLeft;    ///< Number of frames to use from the left clip
-    pts mFramesRight;   ///< Number of frames to use from the right clip
+    IClipPtr mLeft;     ///< Clip to the left of transition
+    IClipPtr mRight;    ///< Clip to the right of transition
+
+    pts mFramesLeft;    ///< Number of frames to the left of the cut between the two clips
+    pts mFramesRight;   ///< Number of frames to the right of the cut between the two clips
 
     boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.
     pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*

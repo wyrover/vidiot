@@ -345,11 +345,26 @@ void Track::updateClips()
     // NOTE: any information updated here must also be serialized in the clip,
     //       since this method is not called during (de)serialization, since
     //       the shared_from_this() handling causes problems then.
+    IClipPtr previous;
+    IClipPtr next;
 	BOOST_FOREACH( IClipPtr clip, mClips )
 	{
+        if (previous)
+        {
+            if (previous->isA<Transition>())
+            {
+                ASSERT(!clip->isA<Transition>());
+                boost::static_pointer_cast<Transition>(previous)->setRightClip(clip);
+            }
+            else if (clip->isA<Transition>())
+            {
+                boost::static_pointer_cast<Transition>(clip)->setLeftClip(previous);
+            }
+        }
 		clip->setTrack(shared_from_this(), position, index);
 		position += clip->getLength();
         index++;
+        previous = clip;
 	}
 }
 

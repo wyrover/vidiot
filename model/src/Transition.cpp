@@ -17,6 +17,8 @@ namespace model {
 
 Transition::Transition()
     :   IClip()
+    ,   mLeft()
+    ,   mRight()
     ,   mFramesLeft(0)
     ,   mFramesRight(0)
     ,   mLastSetPosition(boost::none)
@@ -30,8 +32,10 @@ Transition::Transition()
     VAR_DEBUG(this);
 }
 
-Transition::Transition(pts nFramesLeft, pts nFramesRight)
+Transition::Transition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight)
     :   IClip()
+    ,   mLeft(left)
+    ,   mRight(right)
     ,   mFramesLeft(nFramesLeft)
     ,   mFramesRight(nFramesRight)
     ,   mLastSetPosition(boost::none)
@@ -47,6 +51,8 @@ Transition::Transition(pts nFramesLeft, pts nFramesRight)
 
 Transition::Transition(const Transition& other)
     :   IClip()
+    ,   mLeft(other.mLeft)
+    ,   mRight(other.mRight)
     ,   mFramesLeft(other.mFramesLeft)
     ,   mFramesRight(other.mFramesRight)
     ,   mLastSetPosition(boost::none)
@@ -230,6 +236,26 @@ pts Transition::getRight() const
     return mFramesRight;
 }
 
+IClipPtr Transition::getLeftClip() const
+{
+    return mLeft;
+}
+
+IClipPtr Transition::getRightClip() const
+{
+    return mRight;
+}
+
+void Transition::setLeftClip(IClipPtr clip)
+{
+    mLeft = clip;
+}
+
+void Transition::setRightClip(IClipPtr clip)
+{
+    mRight = clip;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -252,6 +278,7 @@ void Transition::serialize(Archive & ar, const unsigned int version)
     ar & mFramesRight;
     ar & mTrack;
     ar & mLeftPtsInTrack;
+    // todo mright mleft
 }
 template void Transition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Transition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
