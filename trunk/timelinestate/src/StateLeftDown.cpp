@@ -4,6 +4,7 @@
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
+#include "MousePointer.h"
 #include "StateDragging.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
@@ -23,11 +24,7 @@ StateLeftDown::StateLeftDown( my_context ctx ) // entry
     ,   mStartPosition(0,0)
 {
     LOG_DEBUG; 
-
-    const EvLeftDown* event = dynamic_cast<const EvLeftDown*>(triggering_event());
-    ASSERT(event); // Only way to get here is to press left button in the Idle state
-
-    mStartPosition = event->mPosition;
+    mStartPosition = getMousePointer().getLeftDownPosition();
 }
 
 StateLeftDown::~StateLeftDown() // exit
@@ -37,6 +34,13 @@ StateLeftDown::~StateLeftDown() // exit
 //////////////////////////////////////////////////////////////////////////
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+boost::statechart::result StateLeftDown::react( const EvLeftDown& evt )
+{
+    VAR_DEBUG(evt);
+    FATAL("Not allowed");
+    return discard_event();
+}
 
 boost::statechart::result StateLeftDown::react( const EvLeftUp& evt )
 {

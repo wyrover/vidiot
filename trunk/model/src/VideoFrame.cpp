@@ -96,7 +96,7 @@ int VideoFrame::getSizeInBytes() const
     return mBufferSize;
 }
 
-boost::shared_ptr<wxBitmap> VideoFrame::getBitmap()
+wxBitmapPtr VideoFrame::getBitmap()
 {
     return boost::make_shared<wxBitmap>(wxImage(getWidth(), getHeight(), getData()[0], true));
 }

@@ -4,6 +4,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "Clip.h"
+#include "CreateTransition.h"
 #include "Drag.h"
 #include "EmptyClip.h"
 #include "EventDrag.h"
@@ -57,45 +58,14 @@ Idle::~Idle() // exit
 boost::statechart::result Idle::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info = getMousePointer().getInfo(evt.mPosition);
-
-    if (info.onAudioVideoDivider)
-    {
-        return transit<MoveDivider>();
-    }
-    else if (info.onTrackDivider)
-    {
-        return transit<MoveTrackDivider>();
-    }
-    else
-    {
-        getSelection().updateOnLeftClick(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
-        if (info.clip && !info.clip->isA<model::EmptyClip>())
-        {
-            switch (info.logicalclipposition)
-            {
-            case ClipBegin:
-                return transit<Trim>();
-                break;
-            case ClipInterior:
-                return transit<StateLeftDown>();
-                break;
-            case ClipEnd:
-                return transit<Trim>();
-                break;
-            default:
-                FATAL("Unexpected logical clip position.");
-            }
-        }
-        else
-        {
-            post_event(evt); // Handle this in the MovingCursor state.
-            return transit<MovingCursor>();
-        }
-    }
-
-    return forward_event();
+    return leftDown();
 }
+
+boost::statechart::result Idle::react( const EvLeftDouble& evt )
+{
+    VAR_DEBUG(evt);
+    return leftDown();
+ }
 
 boost::statechart::result Idle::react( const EvRightDown& evt )
 {
@@ -112,7 +82,7 @@ boost::statechart::result Idle::react( const EvRightDown& evt )
     }
     else
     {
-        getSelection().updateOnRightClick(info.clip,evt.mWxEvent.ControlDown(),evt.mWxEvent.ShiftDown(),evt.mWxEvent.AltDown());
+        getSelection().updateOnRightClick(info.clip);
     }
     return transit<StateRightDown>();
 }
@@ -158,8 +128,10 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         switch (evt.mWxEvent.GetUnicodeKey())
         {
         case 'S':   model::Project::get().Submit(new command::SplitAtCursor(getTimeline())); break;
+        case 'C':   addTransition(); break;
+        case '-':   getZoom().change( evt.mWxEvent.ControlDown() ? -1000 : -1); break;
+        case '=':   getZoom().change( evt.mWxEvent.ControlDown() ?  1000 :  1); break;
         case ' ':     return start();                                 break;
-
         }
     }
     else
@@ -169,6 +141,8 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case WXK_SPACE:     return start();                                 break;
         case WXK_DELETE:    getSelection().deleteClips();                   break;
         case WXK_F1:        getTooltip().show(sTooltip);                    break;
+        case 'c': addTransition(); break;
+        case 'C': addTransition(); break;
         }
     }
     return forward_event();
@@ -188,6 +162,60 @@ boost::statechart::result Idle::start()
 {
     getPlayer()->play();
     return transit<Playing>();
+}
+
+boost::statechart::result Idle::leftDown()
+{
+   PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getLeftDownPosition());
+
+    if (info.onAudioVideoDivider)
+    {
+        return transit<MoveDivider>();
+    }
+    else if (info.onTrackDivider)
+    {
+        return transit<MoveTrackDivider>();
+    }
+    else
+    {
+        getSelection().updateOnLeftClick(info.clip);
+        if (info.clip && !info.clip->isA<model::EmptyClip>())
+        {
+            switch (info.logicalclipposition)
+            {
+            case ClipBegin:
+                return transit<Trim>();
+                break;
+            case ClipInterior:
+                return transit<StateLeftDown>();
+                break;
+            case ClipEnd:
+                return transit<Trim>();
+                break;
+            default:
+                FATAL("Unexpected logical clip position.");
+            }
+        }
+        else
+        {
+            return transit<MovingCursor>();
+        }
+    }
+
+    return forward_event();
+}
+
+void Idle::addTransition()
+{
+   command::CreateTransition* cmd = new command::CreateTransition(getTimeline(), getMousePointer().getPosition());
+   if (cmd->isPossible())
+   {
+        model::Project::get().Submit(cmd);
+   }
+   else
+   {
+       delete cmd;
+   }
 }
 
 }}} // namespace

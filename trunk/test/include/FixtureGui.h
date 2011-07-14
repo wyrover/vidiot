@@ -7,10 +7,14 @@
 #include <boost/thread.hpp>
 #include <boost/thread/barrier.hpp>
 #include "IEventLoopListener.h"
+#include "UtilInt.h"
 
 namespace model {
 class INode;
 typedef boost::shared_ptr<INode> NodePtr;
+class IClip;
+typedef boost::shared_ptr<IClip> IClipPtr;
+typedef std::list<IClipPtr> IClips;
 class Folder;
 typedef boost::shared_ptr<Folder> FolderPtr;
 class Sequence;
@@ -19,6 +23,10 @@ class File;
 typedef boost::shared_ptr<File> FilePtr;
 typedef std::list<FilePtr> Files;
 }
+
+namespace gui { namespace timeline {
+    class Timeline;
+}}
 
 namespace test {
 
@@ -110,7 +118,50 @@ public:
     static wxString randomString(int length = 8);
 
     /// Delay the test for 60 seconds to allow using the GUI (debugging)
-    static void pause();
+    static void pause(int ms = 60000);
+
+    /// \return Currently active seqence (the sequence for which the timeline is the active notebook page)
+    static model::SequencePtr getActiveSequence();
+
+    /// Return the currently active sequence menu
+    static wxMenu* getSequenceMenu();
+
+    /// Return the opened timeline for a sequence
+    /// \param sequence if this equals 0 then the active timeline is returned
+    static gui::timeline::Timeline& getTimeline(model::SequencePtr sequence = model::SequencePtr());
+
+    /// Return the number of clips in a given video track
+    /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
+    static int getNumberOfClipsInVideoTrack(int trackindex = 0);
+
+    /// Return a clip in a video track
+    /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
+    /// \param clipindex index position (0-based) of the clip in the track, counting from left to right
+    static model::IClipPtr getVideoClip(int trackindex = 0, int clipindex = 0);
+    
+    /// Count selected clips (both audio and video) in given timeline
+    /// \param sequence if 0 then the active timeline is used
+    static int getSelectedClipsCount(model::SequencePtr sequence  = model::SequencePtr());
+
+    /// Return left x position of given clip
+    /// \param sequence if 0 then the active timeline is used
+    /// \param clip given clip
+    static pixel getLeft(model::IClipPtr clip, model::SequencePtr sequence  = model::SequencePtr());
+
+    /// Return right x position of given clip
+    /// \param sequence if 0 then the active timeline is used
+    /// \param clip given clip
+    static pixel getRight(model::IClipPtr clip, model::SequencePtr sequence  = model::SequencePtr());
+
+    /// Return top y position of given clip
+    /// \param sequence if 0 then the active timeline is used
+    /// \param clip given clip
+    static pixel getTop(model::IClipPtr clip, model::SequencePtr sequence  = model::SequencePtr());
+
+    /// Return bottom y position of given clip
+    /// \param sequence if 0 then the active timeline is used
+    /// \param clip given clip
+    static pixel getBottom(model::IClipPtr clip, model::SequencePtr sequence  = model::SequencePtr());
 
 private:
 

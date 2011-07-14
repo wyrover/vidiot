@@ -1,7 +1,9 @@
 #ifndef CREATE_TRANSITION_H
 #define CREATE_TRANSITION_H
 
+#include <wx/gdicmn.h>
 #include "AClipEdit.h"
+
 
 namespace gui { namespace timeline { namespace command {
 
@@ -14,7 +16,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CreateTransition(gui::timeline::Timeline& timeline, model::IClips clips);
+    CreateTransition(gui::timeline::Timeline& timeline, wxPoint position);
 
     ~CreateTransition();
 
@@ -24,13 +26,24 @@ public:
 
     void initialize();
 
+    //////////////////////////////////////////////////////////////////////////
+    // 
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Determine if a transition is possible
+    bool isPossible();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClips mClips;
+    model::IClipPtr mLeft;
+    model::IClipPtr mRight;
+
+    pts mLeftSize;
+    pts mRightSize;
 };
 
 }}} // namespace

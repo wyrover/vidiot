@@ -2,6 +2,7 @@
 
 #include <wx/dcmemory.h>
 #include <wx/pen.h>
+#include <boost/foreach.hpp>
 #include "Config.h"
 #include "Clip.h"
 #include "ClipEvent.h"
@@ -65,12 +66,22 @@ model::IClipPtr ClipView::getClip()
 
 pixel ClipView::getLeftPosition() const
 {
-    return getZoom().ptsToPixels(mClip->getLeftPts());
+    pixel left = getZoom().ptsToPixels(mClip->getLeftPts());
+// todo    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getPreviousClip(mClip));
+// todo    left -= transition ? transition->getRight() : 0;
+    return left;
 }
 
 pixel ClipView::getRightPosition() const
 {
-    return getZoom().ptsToPixels(mClip->getRightPts());
+    pixel right = getZoom().ptsToPixels(mClip->getRightPts());
+    if (mClip->isA<model::Transition>())
+    {
+        LOG_DEBUG << "ff";
+    }
+//todo    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getNextClip(mClip));
+//todo    right -= transition ? transition->getLeft() : 0;
+    return right;
 }
 
 void ClipView::show(wxRect rect)

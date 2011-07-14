@@ -24,6 +24,7 @@ typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 typedef std::list<VideoFramePtr> VideoFrames;
 typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
+typedef boost::shared_ptr<wxBitmap> wxBitmapPtr;
 
 class VideoFrame
     :   public boost::noncopyable
@@ -57,7 +58,7 @@ public:
     int getWidth() const;
     int getHeight() const;
     int getSizeInBytes() const;
-    boost::shared_ptr<wxBitmap> getBitmap();    ///< \return this frame as a wxBitmap
+    wxBitmapPtr getBitmap();    ///< \return this frame as a wxBitmap
 
     //////////////////////////////////////////////////////////////////////////
     // DATA ACCESS

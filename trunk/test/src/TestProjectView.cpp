@@ -16,9 +16,6 @@ namespace test {
 void ProjectViewTests::testAdditionAndRemoval()
 {
     LOG_DEBUG << "TEST_START";
-    //  wxUIActionSimulator simu();
-    //  wxUIActionSimulator().MouseMove(100,100);
-    //  wxUIActionSimulator().MouseClick();
 
     wxFileName path( "D:\\Vidiot\\test", "" );
     wxString sFolder1( "Folder1" );

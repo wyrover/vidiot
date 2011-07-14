@@ -59,6 +59,9 @@ public:
     /// If there is no clip at this pts then an empty Ptr is returned.
     IClipPtr getClip(pts position);
 
+    /// \return the index'th clip in the list of clips
+    IClipPtr getClipByIndex(int index);
+
     /// Find the clip following 'clip'. 
     /// Returns a '0' pointer if clip is not found.
     /// \pre clip is a part of this track

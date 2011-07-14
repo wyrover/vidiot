@@ -89,9 +89,6 @@ public:
     virtual IClipPtr getLeftClip() const;   ///< \return clip to the left of this transition
     virtual IClipPtr getRightClip() const;  ///< \return clip to the right of this transition
 
-    virtual void setLeftClip(IClipPtr clip);
-    virtual void setRightClip(IClipPtr clip);
-
 protected:
 
     //////////////////////////////////////////////////////////////////////////

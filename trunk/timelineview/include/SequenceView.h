@@ -4,6 +4,8 @@
 #include "View.h"
 
 namespace model { 
+    class Track;
+    typedef boost::shared_ptr<Track> TrackPtr;
     class EventAddVideoTracks; 
 }
 
@@ -44,6 +46,9 @@ public:
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info ) const;
 
+    /// \return y position (top) of given track (excluding the divider)
+    pixel getPosition(model::TrackPtr track) const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -52,6 +57,7 @@ private:
 
     VideoView*  mVideoView;
     AudioView*  mAudioView;
+
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

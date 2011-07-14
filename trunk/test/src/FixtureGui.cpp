@@ -7,14 +7,22 @@
 #include <boost/foreach.hpp>
 #include "Application.h"
 #include "AutoFolder.h"
+#include "ClipView.h"
 #include "File.h"
+#include "IClip.h"
+#include "ids.h"
 #include "Project.h"
 #include "ProjectView.h"
+#include "Selection.h"
 #include "Sequence.h"
-#include "Window.h"
+#include "SequenceView.h"
+#include "Timeline.h"
+#include "TimeLinesView.h"
+#include "Track.h"
 #include "UtilDialog.h"
 #include "UtilLog.h"
-#include "ids.h"
+#include "ViewMap.h"
+#include "Window.h"
 
 namespace test {
 
@@ -270,15 +278,80 @@ wxString FixtureGui::randomString(int length)
 }
 
 // static 
-void FixtureGui::pause()
+void FixtureGui::pause(int ms)
 {
-    boost::this_thread::sleep(boost::posix_time::milliseconds(60000));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(ms));
+}
+
+// static 
+model::SequencePtr FixtureGui::getActiveSequence()
+{
+    return getTimeline().getSequence();
+}
+
+// static
+wxMenu* FixtureGui::getSequenceMenu()
+{
+    return gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex);
+}
+
+// static
+gui::timeline::Timeline& FixtureGui::getTimeline(model::SequencePtr sequence)
+{
+    if (!sequence)
+    {
+        return *gui::TimelinesView::get().getTimeline(0);
+    }
+    return *gui::TimelinesView::get().findPage(sequence).second;
+}
+
+// static 
+int FixtureGui::getNumberOfClipsInVideoTrack(int trackindex)
+{
+    model::TrackPtr videoTrack = getActiveSequence()->getVideoTrack(trackindex);
+    return videoTrack->getClips().size();
+}
+
+// static 
+model::IClipPtr FixtureGui::getVideoClip(int trackindex, int clipindex)
+{
+    model::TrackPtr videoTrack = getActiveSequence()->getVideoTrack(trackindex);
+    return videoTrack->getClipByIndex(clipindex);
+}
+
+//static 
+int FixtureGui::getSelectedClipsCount(model::SequencePtr sequence)
+{
+    return getTimeline(sequence).getSelection().getClips().size();
+}
+
+// static 
+pixel FixtureGui::getLeft(model::IClipPtr clip, model::SequencePtr sequence)
+{
+    return getTimeline(sequence).getViewMap().getView(clip)->getLeftPosition();
+}
+
+// static 
+pixel FixtureGui::getRight(model::IClipPtr clip, model::SequencePtr sequence)
+{
+    return getTimeline(sequence).getViewMap().getView(clip)->getRightPosition();
+}
+
+// static 
+pixel FixtureGui::getTop(model::IClipPtr clip, model::SequencePtr sequence)
+{
+    return getTimeline(sequence).getSequenceView().getPosition(clip->getTrack());
+}
+
+// static 
+pixel FixtureGui::getBottom(model::IClipPtr clip, model::SequencePtr sequence)
+{
+    return getTop(clip,sequence) + clip->getTrack()->getHeight();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // MAIN WXWIDGETS THREAD
 //////////////////////////////////////////////////////////////////////////
-
 
 void FixtureGui::mainThread()
 {

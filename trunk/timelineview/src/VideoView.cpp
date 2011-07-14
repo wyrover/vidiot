@@ -51,35 +51,7 @@ VideoView::~VideoView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
-{
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks )
-    {
-        new TrackView(track,this);
-    }
-    invalidateBitmap();
-    // Not via an event in sequence view, since the added video track must 
-    // first be incorporated in the VideoView (the divider height requires 
-    // the correct video height).
-    getSequenceView().resetDividerPosition();
-    event.Skip();
-}
-
-void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
-{
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().removedTracks )
-    {
-        delete getViewMap().getView(track);
-    }
-    invalidateBitmap();
-    event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
+// GET/SET
 //////////////////////////////////////////////////////////////////////////
 
 pixel VideoView::requiredWidth() const
@@ -114,6 +86,53 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
         top = bottom;
     }
 }
+
+pixel VideoView::getPosition(model::TrackPtr track) const
+{
+    int y = 0;
+    BOOST_REVERSE_FOREACH(model::TrackPtr _track, getSequence()->getVideoTracks())
+    {
+        y += Layout::sTrackDividerHeight;
+        if (track == _track)
+        {
+            break;
+        }
+        y += _track->getHeight();
+    }
+    return y;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
+{
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks )
+    {
+        new TrackView(track,this);
+    }
+    invalidateBitmap();
+    // Not via an event in sequence view, since the added video track must 
+    // first be incorporated in the VideoView (the divider height requires 
+    // the correct video height).
+    getSequenceView().resetDividerPosition();
+    event.Skip();
+}
+
+void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
+{
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().removedTracks )
+    {
+        delete getViewMap().getView(track);
+    }
+    invalidateBitmap();
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
 
 void VideoView::draw(wxBitmap& bitmap) const
 {

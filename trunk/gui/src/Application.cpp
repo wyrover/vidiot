@@ -108,6 +108,9 @@ int Application::OnRun()
     //throw 4;                       // Uncomment for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
 
     wxApp::OnRun(); // Make exception in this call for testing OnExceptionInMainLoop() - Typically, normal code of app.
+
+    Log::Terminate();
+
     return 0;
 }
 

@@ -26,7 +26,6 @@ public:
     ~MoveDivider();
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction< EvLeftUp >,
         boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvLeave >,
         boost::statechart::custom_reaction< EvKeyDown >

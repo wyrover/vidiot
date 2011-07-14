@@ -32,6 +32,7 @@ IMPLEMENTENUM(MousePointerImage);
 
 MousePointer::MousePointer(Timeline* timeline)
 :   Part(timeline)
+,   mCurrent(-1,-1)
 ,   mLeft(-1,-1)
 ,   mRight(-1,-1)
 {
@@ -106,6 +107,17 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
     PointerPositionInfo info;
     getSequenceView().getPositionInfo(pointerposition, info);
     return info;
+}
+
+void MousePointer::setPosition(wxPoint position)
+{
+    VAR_DEBUG(mCurrent)(position);
+    mCurrent = position;
+}
+
+wxPoint MousePointer::getPosition() const
+{
+    return mCurrent;
 }
 
 void MousePointer::setLeftDownPosition(wxPoint position)

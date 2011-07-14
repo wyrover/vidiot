@@ -1,6 +1,7 @@
 #ifndef CONVERT_H
 #define CONVERT_H
 
+#include <wx/gdicmn.h>
 #include "UtilInt.h"
 #include "UtilFrameRate.h"
 
@@ -45,6 +46,12 @@ public:
     /// \return the related to be decoded frame number
     static pts fromProjectFrameRate(pts outputposition, FrameRate inputrate);
 
+    /// Convert an input size to a size fitting in a given bounding
+    /// box. Width and height ratio is repected.
+    /// \param input input size
+    /// \param boundingbox output size is constrained to this bounding box
+    /// \return maximum size fitting in bounding box with given width/height ratio
+    static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox);
 };
 
 } // namespace

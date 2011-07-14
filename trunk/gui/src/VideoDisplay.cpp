@@ -198,7 +198,7 @@ void VideoDisplay::moveTo(pts position)
         mCurrentVideoFrame = mProducer->getNextVideo(mWidth,mHeight,false);
         if (mCurrentVideoFrame)
         {
-            mCurrentBitmap = boost::make_shared<wxBitmap>(wxImage(mCurrentVideoFrame->getWidth(), mCurrentVideoFrame->getHeight(), mCurrentVideoFrame->getData()[0], true));
+            mCurrentBitmap = mCurrentVideoFrame->getBitmap();
         }
         else
         {

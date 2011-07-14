@@ -4,8 +4,14 @@
 #include "View.h"
 
 namespace model {
+    class Track;
+    typedef boost::shared_ptr<Track> TrackPtr;
     class EventAddVideoTracks;
     class EventRemoveVideoTracks;
+}
+
+namespace test {
+    class TestTimeline;
 }
 
 namespace gui { namespace timeline {
@@ -33,6 +39,9 @@ public:
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
+    /// \return y position of the track within this View
+    pixel getPosition(model::TrackPtr track) const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -41,10 +50,6 @@ private:
 
     void onVideoTracksAdded( model::EventAddVideoTracks& event );
     void onVideoTracksRemoved( model::EventRemoveVideoTracks& event );
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
