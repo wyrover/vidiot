@@ -120,7 +120,8 @@ protected:
     void mergeConsecutiveEmptyClips(model::Tracks tracks);
 
     /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
-    /// The new Move is executed immediately.
+    /// The new Move is executed immediately. This method is also used to add new clips, 
+    /// by using the defaults for the remove* parameters.
     void newMove(
         model::TrackPtr addTrack, 
         model::IClipPtr addPosition, 

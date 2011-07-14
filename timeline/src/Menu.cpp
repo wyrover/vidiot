@@ -4,22 +4,23 @@
 #include <set>
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
-#include "UtilLog.h"
+#include "Clip.h"
+#include "CreateAudioTrack.h"
+#include "CreateTransition.h"
+#include "CreateVideoTrack.h"
+#include "EmptyClip.h"
+#include "ids.h"
+#include "Intervals.h"
+#include "MousePointer.h"
+#include "PositionInfo.h"
+#include "Project.h"
 #include "Selection.h"
-#include "Window.h"
+#include "Timeline.h"
 #include "TimeLinesView.h"
 #include "Track.h"
-#include "CreateVideoTrack.h"
-#include "CreateTransition.h"
-#include "CreateAudioTrack.h"
-#include "PositionInfo.h"
-#include "EmptyClip.h"
-#include "Clip.h"
+#include "UtilLog.h"
+#include "Window.h"
 #include "Zoom.h"
-#include "MousePointer.h"
-#include "Intervals.h"
-#include "Timeline.h"
-#include "ids.h"
 
 namespace gui { namespace timeline {
 
@@ -227,28 +228,15 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
 void MenuHandler::onAddTransition(wxCommandEvent& event)
 {
     LOG_INFO;
-    PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getRightDownPosition());
-    ASSERT(info.clip)(info);
-
-    model::IClipPtr firstClip;
-    model::IClipPtr secondClip;
-
-    model::IClips clips;
-    switch (info.logicalclipposition)
+    command::CreateTransition* cmd = new command::CreateTransition(getTimeline(), getMousePointer().getRightDownPosition());
+    if (cmd->isPossible())
     {
-    case ClipBegin:
-        clips = boost::assign::list_of(info.track->getPreviousClip(info.clip))(info.clip);
-        break;
-    case ClipInterior:
-        break;
-    case ClipEnd:
-        clips = boost::assign::list_of(info.clip)(info.track->getNextClip(info.clip));
-        break;
-    default:
-        FATAL("Unexpected logical clip position.");
+        model::Project::get().Submit(cmd);
     }
-
-    getTimeline().Submit(new command::CreateTransition(getTimeline(), clips));
+    else
+    {
+        delete cmd;
+    }
 }
 
 }} // namespace

@@ -89,7 +89,7 @@ void Track::moveTo(pts position)
     pts lastFrame = (*mItClips)->getLength(); // There is at least one clip due to the check above
     pts firstFrame = 0;
 
-    while (lastFrame < position)
+    while (lastFrame <= position)
     {
         firstFrame += (*mItClips)->getLength();
         ++mItClips;
@@ -187,28 +187,26 @@ IClipPtr Track::getClip(pts position)
     {
         pts length = clip->getLength();
         right += length;
+        VAR_DEBUG(position)(clip)(left)(right);
         if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
         {
-            found = clip;
-            break;
+            LOG_DEBUG << "Found";
+            return clip;
         }
         left += length;
     }
-    if (found)
-    {
-        IClipPtr next = getNextClip(found);
-        if (next && next->isA<Transition>() && next->getLeftPts() <= position && next->getRightPts() > position)
-        {
-            return next;
-        }
-        IClipPtr previous = getPreviousClip(found);
-        if (previous && previous->isA<Transition>() && previous->getLeftPts() <= position && previous->getRightPts() > position)
-        {
-            return previous;
-        }
-        return found;
-    }
     return IClipPtr();
+}
+
+IClipPtr Track::getClipByIndex(int index)
+{
+    IClips::iterator it = mClips.begin();
+    while (index > 0)
+    {
+        ++it;
+        --index;
+    }
+    return *it;
 }
 
 IClipPtr Track::getNextClip(IClipPtr clip)
@@ -345,26 +343,11 @@ void Track::updateClips()
     // NOTE: any information updated here must also be serialized in the clip,
     //       since this method is not called during (de)serialization, since
     //       the shared_from_this() handling causes problems then.
-    IClipPtr previous;
-    IClipPtr next;
 	BOOST_FOREACH( IClipPtr clip, mClips )
 	{
-        if (previous)
-        {
-            if (previous->isA<Transition>())
-            {
-                ASSERT(!clip->isA<Transition>());
-                boost::static_pointer_cast<Transition>(previous)->setRightClip(clip);
-            }
-            else if (clip->isA<Transition>())
-            {
-                boost::static_pointer_cast<Transition>(clip)->setLeftClip(previous);
-            }
-        }
-		clip->setTrack(shared_from_this(), position, index);
-		position += clip->getLength();
+        clip->setTrack(shared_from_this(), position, index);
+        position += clip->getLength();
         index++;
-        previous = clip;
 	}
 }
 

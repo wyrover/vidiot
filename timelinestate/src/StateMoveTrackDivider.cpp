@@ -33,10 +33,7 @@ MoveTrackDivider::MoveTrackDivider( my_context ctx ) // entry
 {
     LOG_DEBUG;
 
-    const EvLeftDown* event = dynamic_cast<const EvLeftDown*>(triggering_event());
-    ASSERT(event); // Only way to get here is to press left button in the Idle state
-
-    mStartPosition = event->mPosition;
+    mStartPosition = getMousePointer().getLeftDownPosition();
 
     PointerPositionInfo info = getMousePointer().getInfo(mStartPosition);
     ASSERT(info.onTrackDivider);

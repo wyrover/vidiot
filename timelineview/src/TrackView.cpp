@@ -164,8 +164,9 @@ void TrackView::draw(wxBitmap& bitmap) const
     dc.SetBrush(b);
     dc.SetPen(Layout::sBackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
-    wxPoint position(0,0);    
+    wxPoint position(0,0);
     bool shiftApplied = mShiftLength > 0 ? false : true;
+    model::IClipPtr previous;
     BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
     {
         if (!shiftApplied && modelclip->getLeftPts() >= mShiftPosition)
@@ -173,20 +174,32 @@ void TrackView::draw(wxBitmap& bitmap) const
             position.x += getZoom().ptsToPixels(mShiftLength);
             shiftApplied = true;
         }
+
         wxBitmap bitmap = getViewMap().getView(modelclip)->getBitmap();
-        if (modelclip->isA<model::Transition>())
-        {
-            model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(modelclip);
-            dc.DrawBitmap(bitmap,wxPoint(position.x - transition->getLeft(), position.y));
+
+        //if (!modelclip->isA<model::Transition>())
+        //{
+            wxPoint positionPts(0,0);
+            positionPts.x = getZoom().ptsToPixels(modelclip->getLeftPts());
+            dc.DrawBitmap(bitmap,positionPts);
             position.x += bitmap.GetWidth();
-            // todo first do the clip to the right of the transition
-        }
-        else
-        {
-            dc.DrawBitmap(bitmap,position);
-            position.x += bitmap.GetWidth();
-        }
+        //}
+        //if (previous && previous->isA<model::Transition>())
+        //{
+        //    model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(previous);
+        //    pixel transitionxpos = getZoom().ptsToPixels(transition->getLeftPts());
+        //    dc.DrawBitmap(bitmap,wxPoint(transitionxpos, position.y));
+        //    // todo refactor, duplication with below
+        //}
+        //previous = modelclip;
     }
+    //if (previous && previous->isA<model::Transition>())
+    //{
+    //    model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(previous);
+    //    pixel transitionxpos = getZoom().ptsToPixels(transition->getLeftPts());
+    //    dc.DrawBitmap(bitmap,wxPoint(transitionxpos, position.y));
+    //    // todo refactor, duplication with above
+    //}
 }
 
 void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const

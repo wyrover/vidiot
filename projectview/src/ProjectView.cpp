@@ -380,7 +380,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& event)
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), wxFileName(s)));
+        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), wxFileName(s,"")));
     }
 }
 

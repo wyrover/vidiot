@@ -7,6 +7,7 @@
 namespace gui { namespace timeline { namespace state {
 
 struct EvLeftDown;
+struct EvLeftDouble;
 struct EvRightDown;
 struct EvMotion;
 struct EvKeyDown;
@@ -27,6 +28,7 @@ public:
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,
+        boost::statechart::custom_reaction< EvLeftDouble >,
         boost::statechart::custom_reaction< EvRightDown >,
         boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvKeyDown >,
@@ -38,6 +40,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     boost::statechart::result react( const EvLeftDown& evt );
+    boost::statechart::result react( const EvLeftDouble& evt );
     boost::statechart::result react( const EvRightDown& evt );
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvKeyDown& evt);
@@ -51,6 +54,9 @@ private:
 
     boost::statechart::result start();
 
+    boost::statechart::result leftDown();
+
+    void addTransition();
 };
 
 }}} // namespace

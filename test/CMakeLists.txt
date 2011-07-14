@@ -31,5 +31,12 @@ INCLUDE_DIRECTORIES(AFTER
 
 file(GLOB TestHeaders ${TESTDIR}/*/*.h)
 file(GLOB TestSources ${TESTDIR}/*/*.cpp)
-AddCxxTest(test ${TestHeaders} ${TestSources})
+set(SingleSuite FALSE)
+#set(SingleSuite TestTimeline)
+if (SingleSuite)
+    message( "yes" )
+    AddCxxTest(test ${TESTDIR}/include/${SingleSuite}.h ${TESTDIR}/src/${SingleSuite}.cpp)
+else (SingleSuite)
+    AddCxxTest(test ${TestHeaders} ${TestSources})
+endif (SingleSuite)
 TARGET_LINK_LIBRARIES(test vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})

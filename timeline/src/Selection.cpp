@@ -31,8 +31,14 @@ Selection::~Selection()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Selection::updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void Selection::updateOnLeftClick(model::IClipPtr clip)
 {
+    bool ctrlPressed = wxGetMouseState().ControlDown();
+    bool shiftPressed = wxGetMouseState().ShiftDown();
+    bool altPressed = wxGetMouseState().AltDown();
+
+    VAR_DEBUG(clip)(ctrlPressed)(shiftPressed)(altPressed);
+
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
     // Must be determined before deselecting all clips.
@@ -128,8 +134,14 @@ void Selection::updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool s
     }
 }
 
-void Selection::updateOnRightClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed)
+void Selection::updateOnRightClick(model::IClipPtr clip)
 {
+    bool ctrlPressed = wxGetMouseState().ControlDown();
+    bool shiftPressed = wxGetMouseState().ShiftDown();
+    bool altPressed = wxGetMouseState().AltDown();
+
+    VAR_DEBUG(clip)(ctrlPressed)(shiftPressed)(altPressed);
+
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
 
     // Must be determined before deselecting all clips.
@@ -175,6 +187,18 @@ std::set<model::IClipPtr> Selection::getClips() const
         }
     }
     return selectedclips;
+}
+
+void Selection::unselectAll()
+{
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            selectClip(clip,false);
+        }
+    }
+    setPreviouslyClicked(model::IClipPtr()); // reset
 }
 
 //////////////////////////////////////////////////////////////////////////

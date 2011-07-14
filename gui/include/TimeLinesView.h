@@ -17,7 +17,7 @@ namespace model {
 }
 
 namespace test {
-    class TestTimelinesView;
+    class FixtureGui;
 }
 
 namespace gui {
@@ -82,7 +82,7 @@ private:
     // TESTING
     //////////////////////////////////////////////////////////////////////////
 
-    friend class test::TestTimelinesView;
+    friend class test::FixtureGui;
 
     /// Return tab by number. Counting starts at 0.
     timeline::Timeline* getTimeline(int n);

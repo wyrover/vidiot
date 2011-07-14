@@ -134,8 +134,7 @@ void Transition::setLink(IClipPtr link)
 
 IClipPtr Transition::getLink() const
 {
-    FATAL("Not allowed for transition");
-    return IClipPtr();
+    return IClipPtr(); // Transition never has a link
 }
 
 pts Transition::getMinAdjustBegin() const
@@ -245,24 +244,13 @@ IClipPtr Transition::getRightClip() const
 {
     return mRight;
 }
-
-void Transition::setLeftClip(IClipPtr clip)
-{
-    mLeft = clip;
-}
-
-void Transition::setRightClip(IClipPtr clip)
-{
-    mRight = clip;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
-    os << &obj << '|' << obj.mFramesLeft << '|' << obj.mFramesRight << '|' << obj.mTrack << '|' << obj.mLeftPtsInTrack;
+    os << &obj << '|' << obj.mLeft << '|' << obj.mFramesLeft << '|' << obj.mRight << '|' << obj.mFramesRight << '|' << obj.mTrack << '|' << obj.mLeftPtsInTrack;
     return os;
 }
 

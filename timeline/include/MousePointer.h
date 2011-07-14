@@ -42,9 +42,12 @@ public:
     **/
     PointerPositionInfo getInfo(wxPoint pointerposition);
 
-    
+        void setPosition(wxPoint position);  ///< \param position current mouse pointer position.
+    wxPoint getPosition() const;    ///< \return current mouse pointer position.
+
     void setLeftDownPosition(wxPoint position);  ///< \param position last (most recent) position at which a 'left down' event was received.
     wxPoint getLeftDownPosition() const;    ///< \return last (most recent) position at which a 'left down' event was received.
+
     void setRightDownPosition(wxPoint position); ///< \param position last (most recent) position at which a 'right down' event was received.
     wxPoint getRightDownPosition() const;   ///< \return last (most recent) position at which a 'right down' event was received.
 
@@ -58,6 +61,7 @@ private:
     wxCursor mCursorTrimShiftEnd;
     wxCursor mCursorTrackResize;
 
+    wxPoint mCurrent;
     wxPoint mLeft;
     wxPoint mRight;
 };

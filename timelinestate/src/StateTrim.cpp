@@ -54,18 +54,19 @@ Trim::Trim( my_context ctx ) // entry
 {
     LOG_DEBUG; 
 
-    const EvLeftDown* event = dynamic_cast<const EvLeftDown*>(triggering_event());
-    ASSERT(event); // Only way to get here is to press left button in the Idle state
-
     // Determine if pointer was at begin or at end of clip
-    PointerPositionInfo info = getMousePointer().getInfo(event->mPosition);
+    wxPoint virtualMousePosition = getMousePointer().getLeftDownPosition();
+    PointerPositionInfo info = getMousePointer().getInfo(virtualMousePosition);
     ASSERT(info.clip && !info.clip->isA<model::EmptyClip>())(info);
     mTrimBegin = (info.logicalclipposition == ClipBegin);
 
-    mShiftDown = event->mWxEvent.ShiftDown();
+    mShiftDown = wxGetMouseState().ShiftDown();
 
     // \todo use the leftmost of the clip and/or its link
-    mStartPosition = event->mWxEvent.GetPosition();
+    
+    // Start position is the physical position of the mouse within the timeline
+    getTimeline().CalcScrolledPosition(virtualMousePosition.x,virtualMousePosition.y,&mStartPosition.x,&mStartPosition.y); 
+    
     mCurrentPosition = mStartPosition;
     mOriginalClip = info.clip;
     model::IClipPtr adjacentClip;
@@ -92,7 +93,7 @@ Trim::Trim( my_context ctx ) // entry
     {
         model::VideoClipPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(adjacentClip);
         model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(mEdit->getSize().GetWidth() / 2,  mEdit->getSize().GetHeight(), false);
-        mAdjacentBitmap = boost::make_shared<wxBitmap>(wxImage(adjacentFrame->getWidth(), adjacentFrame->getHeight(), adjacentFrame->getData()[0], true));
+        mAdjacentBitmap = adjacentFrame->getBitmap();
     }
 
     // Determine boundaries for shifting other tracks
@@ -277,8 +278,8 @@ void Trim::preview()
 
             // Draw preview of trim operation
             model::VideoFramePtr videoFrame = videoclip->getNextVideo(previewwidth, s.GetHeight(), false);
-            wxBitmap trimmedBmp = wxBitmap(wxImage(videoFrame->getWidth(), videoFrame->getHeight(), videoFrame->getData()[0], true));
-            dc.DrawBitmap(trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp.GetHeight()) / 2);
+            model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
+            dc.DrawBitmap(*trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp->GetHeight()) / 2);
 
             // Draw adjacent clip if present. Is only relevant when holding shift
             if (drawadjacentclip)

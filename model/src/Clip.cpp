@@ -90,6 +90,7 @@ pts Clip::getLength()
 void Clip::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
+    ASSERT(position < mLength)(position)(mLength);
     mLastSetPosition.reset(position);
     setGenerationProgress(0);
     mRender->moveTo(mOffset + position);
@@ -196,8 +197,11 @@ bool Clip::getSelected() const
 
 void Clip::setSelected(bool selected)
 {
-    mSelected = selected;
-    ProcessEvent(EventSelectClip(selected));
+    if (mSelected != selected)
+    {
+        mSelected = selected;
+        ProcessEvent(EventSelectClip(selected));
+    }
 }
 
 bool Clip::getDragged() const

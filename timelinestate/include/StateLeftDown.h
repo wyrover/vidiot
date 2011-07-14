@@ -15,6 +15,7 @@ typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves m
 
 namespace gui { namespace timeline { namespace state {
 
+struct EvLeftDown;
 struct EvLeftUp;
 struct EvMotion;
 struct EvLeave;
@@ -34,6 +35,7 @@ public:
     ~StateLeftDown();
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction< EvLeftDown >,
         boost::statechart::custom_reaction< EvLeftUp >,
         boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvLeave >,
@@ -44,6 +46,7 @@ public:
     // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    boost::statechart::result react( const EvLeftDown& evt );
     boost::statechart::result react( const EvLeftUp& evt );
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvLeave& evt );

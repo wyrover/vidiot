@@ -1,20 +1,21 @@
 #include "SequenceView.h"
 
-#include <wx/dcclient.h>
 #include <algorithm>
+#include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include "AudioView.h"
-#include "Drag.h"
+#include "Constants.h"
 #include "Cursor.h"
+#include "Drag.h"
 #include "Intervals.h"
 #include "Layout.h"
-#include "VideoView.h"
 #include "PositionInfo.h"
+#include "Sequence.h"
 #include "Timeline.h"
 #include "UtilLog.h"
+#include "VideoTrack.h"
+#include "VideoView.h"
 #include "Zoom.h"
-#include "Constants.h"
-#include "Sequence.h"
 #include "SequenceEvent.h"
 
 namespace gui { namespace timeline {
@@ -130,6 +131,16 @@ int SequenceView::getAudioPosition() const
 int SequenceView::getVideoPosition() const
 {
     return getSequence()->getDividerPosition() - getVideo().getHeight();
+}
+
+pixel SequenceView::getPosition(model::TrackPtr track) const
+{
+    if (track->isA<model::VideoTrack>())
+    {
+        return getVideoPosition() + getVideo().getPosition(track);
+    }
+    NIY;
+    return -1;
 }
 
 //////////////////////////////////////////////////////////////////////////

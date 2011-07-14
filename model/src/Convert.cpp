@@ -79,4 +79,18 @@ pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
     return convertFrameRate(outputposition, Project::get().getProperties()->getFrameRate(), inputrate);
 }
 
+// static 
+wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox)
+{
+    static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
+    double w = std::max(sMinimumSize, boundingbox.GetWidth());
+    double h = std::max(sMinimumSize, boundingbox.GetHeight());
+    double scalingW = w / static_cast<double>(input.GetWidth());
+    double scalingH = h / static_cast<double>(input.GetHeight());
+    double scaling  = std::min(scalingW, scalingH);
+    int scaledWidth  = static_cast<int>(floor(scaling * input.GetWidth()));
+    int scaledHeight = static_cast<int>(floor(scaling * input.GetHeight()));
+    return wxSize(scaledWidth,scaledHeight);
+}
+
 } // namespace

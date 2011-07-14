@@ -196,24 +196,16 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             NIY; // TO BE TESTED: FILES USING 'REPEAT'
         }
 
-        static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
-        double w = std::max(sMinimumSize, requestedWidth);
-        double h = std::max(sMinimumSize, requestedHeight);
-        double scalingW = w / static_cast<double>(getCodec()->width);
-        double scalingH = h / static_cast<double>(getCodec()->height);
-        double scaling  = std::min(scalingW, scalingH);
-        int scaledWidth  = static_cast<int>(floor(scaling * getCodec()->width));
-        int scaledHeight = static_cast<int>(floor(scaling * getCodec()->height));
-
-        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledWidth, scaledHeight, mPosition, pFrame->repeat_pict + 1);
+        wxSize scaledSize = Convert::sizeInBoundingBox(wxSize(getCodec()->width, getCodec()->height), wxSize(requestedWidth,requestedHeight));
+        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledSize.GetWidth(), scaledSize.GetHeight(), mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(
             getCodec()->width,
             getCodec()->height,
             getCodec()->pix_fmt,
-            scaledWidth,
-            scaledHeight,
+            scaledSize.GetWidth(),
+            scaledSize.GetHeight(),
             alpha ? PIX_FMT_RGBA : PIX_FMT_RGB24, SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
         sws_scale(ctx,pFrame->data,pFrame->linesize,0,getCodec()->height,mDeliveredFrame->getData(),mDeliveredFrame->getLineSizes());
         sws_freeContext(ctx);

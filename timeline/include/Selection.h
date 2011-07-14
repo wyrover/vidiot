@@ -37,13 +37,16 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void updateOnLeftClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
-    void updateOnRightClick(model::IClipPtr clip, bool ctrlPressed, bool shiftPressed, bool altPressed);
+    void updateOnLeftClick(model::IClipPtr clip);
+    void updateOnRightClick(model::IClipPtr clip);
 
     /// Deletes all selected clips.
     void deleteClips();
 
     std::set<model::IClipPtr> getClips() const;
+
+    /// Unselect all clips
+    void unselectAll();
 
 private:
 
