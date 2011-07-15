@@ -10,5 +10,11 @@ typedef boost::int16_t sample;
 
 samplecount min(samplecount first, samplecount second);
 
+template <typename TYPE>
+TYPE min3(TYPE t1, TYPE t2, TYPE t3)
+{
+    return std::min(std::min(t1,t2),t3);
+}
+
 #endif //UTIL_INT_H
 
