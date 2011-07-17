@@ -7,6 +7,7 @@
 #include "AudioTrack.h"
 #include "AutoFolder.h"
 #include "Clip.h"
+#include "CrossFade.h"
 #include "EmptyClip.h"
 #include "EmptyFile.h"
 #include "File.h"
@@ -39,7 +40,7 @@ void registerClasses(Archive& ar)
     ar.template register_type<VideoClip>();
     ar.template register_type<VideoFile>();
     ar.template register_type<VideoTrack>();
-    ar.template register_type<VideoTransition>();
+    ar.template register_type<transition::CrossFade>();
 }
 
 template void registerClasses<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);

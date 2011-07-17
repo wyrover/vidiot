@@ -143,6 +143,5 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Transition, 1)
-//BOOST_CLASS_TRACKING(model::Transition, boost::serialization::track_always)
 
 #endif // MODEL_TRANSITION_H

@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/assign/list_of.hpp>
+#include "CrossFade.h"
 #include "EmptyClip.h"
 #include "IClip.h"
 #include "MousePointer.h"
@@ -146,7 +147,7 @@ void CreateTransition::initialize()
     }
     ASSERT(track);
     ASSERT(position);
-    model::IClipPtr transition = boost::make_shared<model::VideoTransition>(transitionLeftClip, mLeftSize, transitionRightClip, mRightSize); 
+    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(transitionLeftClip, mLeftSize, transitionRightClip, mRightSize); 
     newMove(track,position,boost::assign::list_of(transition));
 
     LOG_DEBUG << "STEP 3: Ensure that links are maintained.";

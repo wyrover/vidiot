@@ -3,6 +3,7 @@
 
 #include "Transition.h"
 #include "IVideo.h"
+#include <boost/serialization/assume_abstract.hpp>
 
 namespace model {
 
@@ -19,8 +20,6 @@ public:
     VideoTransition();
 
     VideoTransition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight);
-
-    virtual VideoTransition* clone();
 
     virtual ~VideoTransition();
 
@@ -39,6 +38,12 @@ protected:
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
     VideoTransition(const VideoTransition& other);
+
+    //////////////////////////////////////////////////////////////////////////
+    // IMPLEMENTATION OF TRANSITION
+    //////////////////////////////////////////////////////////////////////////
+
+    virtual VideoFramePtr getVideo(pts position, int requestedWidth, int requestedHeight, bool alpha) = 0;
 
 private:
 
@@ -71,6 +76,7 @@ typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 #include  <boost/preprocessor/slot/counter.hpp>
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::VideoTransition, 1)
+BOOST_CLASS_VERSION(model::VideoTransition, 1);
+
 
 #endif // MODEL_VIDEO_TRANSITION_H

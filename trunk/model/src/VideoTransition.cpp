@@ -40,11 +40,6 @@ VideoTransition::VideoTransition(const VideoTransition& other)
     VAR_DEBUG(*this);
 }
 
-VideoTransition* VideoTransition::clone()
-{ 
-    return new VideoTransition(static_cast<const VideoTransition&>(*this)); 
-}
-
 VideoTransition::~VideoTransition()
 {
     VAR_DEBUG(this);
@@ -65,47 +60,11 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
         getRightClip()->moveTo(mPosition);
     }
 
-    VideoFramePtr leftFrame = boost::static_pointer_cast<VideoClip>(getLeftClip())->getNextVideo(requestedWidth,requestedHeight,alpha);
-    VideoFramePtr rightFrame = boost::static_pointer_cast<VideoClip>(getRightClip())->getNextVideo(requestedWidth,requestedHeight,alpha);
-    VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, 1, 1);
-
-    pts steps = getLength();
-    float factorLeft = ((float)getLength() - (float)mPosition) / (float)getLength();
-    float factorRight = (float)mPosition / (float)getLength();
-    VAR_DEBUG(factorLeft)(factorRight);
-
-    unsigned char* leftData = leftFrame->getData()[0];
-    unsigned char* rightData = rightFrame->getData()[0];
-    unsigned char* targetData = targetFrame->getData()[0];
-
-    int leftBytesPerLine = leftFrame->getLineSizes()[0];
-    int rightBytesPerLine = rightFrame->getLineSizes()[0];
-    int targetBytesPerLine = targetFrame->getLineSizes()[0];
-
-    int bytesPerPixel = alpha ? 4 : 3;
-
-    for (int y = 0; y < targetFrame->getHeight(); ++y)
-    {
-        for (int x = 0; x < targetFrame->getWidth() * bytesPerPixel; x += 1) // todo 3 vs 4 for alpha
-        {
-            unsigned char left = 0;
-            if (y < leftFrame->getHeight() && x < leftFrame->getWidth() * bytesPerPixel)
-            {
-                left = *(leftData + y * leftBytesPerLine + x);
-            }
-            unsigned char right = 0;
-            if (y < rightFrame->getHeight() && x < rightFrame->getWidth() * bytesPerPixel)
-            {
-                right = *(rightData + y * rightBytesPerLine + x);
-            }
-            unsigned char* target = targetData + y * targetBytesPerLine + x;
-            target[0] = (unsigned char)(left * factorLeft + right * factorRight);
-        }
-    }
+    VideoFramePtr nextFrame = getVideo(mPosition, requestedWidth, requestedHeight, alpha);
 
     mPosition++;
 
-    return targetFrame;
+    return nextFrame;
 }
 
 //////////////////////////////////////////////////////////////////////////
