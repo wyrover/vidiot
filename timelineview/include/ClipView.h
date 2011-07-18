@@ -33,11 +33,14 @@ public:
 
     model::IClipPtr getClip();
 
-    pixel getLeftPosition() const;  ///< @return left position in pixels
-    pixel getRightPosition() const; ///< @return right position in pixels
+    pts getLeftPts() const;         ///< \return left pts value of the view. That includes the part oerlapping with any preceding transition (which is not the case for model::IClip)
+    pts getRightPts() const;        ///< \return right pts value of the view. That includes the part oerlapping with any succeeding transition (which is not the case for model::IClip)
 
-    pixel requiredWidth() const;  ///< @see View::requiredWidth()
-    pixel requiredHeight() const; ///< @see View::requiredHeight()
+    pixel getLeftPosition() const;  ///< \return left position in pixels
+    pixel getRightPosition() const; ///< \return right position in pixels
+
+    pixel requiredWidth() const;    ///< \see View::requiredWidth()
+    pixel requiredHeight() const;   ///< \see View::requiredHeight()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 

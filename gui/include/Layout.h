@@ -28,9 +28,9 @@ public:
     static const pixel sMinTrackHeight;
     static const pixel sMaxTrackHeight;
     static const pixel sClipBorderSize;
-    static const pixel sTransitionHeight;
     static const pixel sVideoPosition;
-    static pixel sClipDescriptionBarHeight;
+    static       pixel sClipDescriptionBarHeight;
+    static       pixel sTransitionHeight;
 
     //////////////////////////////////////////////////////////////////////////
     // BRUSHES AND PENS
@@ -74,6 +74,12 @@ public:
     static const wxColour   sDebugColour;
     static const wxPen      sDebugPen;
     static const wxBrush    sDebugBrush;
+
+    static const wxColour   sTransitionColour;
+    static const wxPen      sTransitionPen;
+    static const wxBrush    sTransitionBrush;
+    static const wxBrush    sTransitionBgUnselected;
+    static const wxBrush    sTransitionBgSelected;
 
     //////////////////////////////////////////////////////////////////////////
     // SNAP

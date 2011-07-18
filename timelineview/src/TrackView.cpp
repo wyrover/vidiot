@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
@@ -164,53 +165,43 @@ void TrackView::draw(wxBitmap& bitmap) const
     dc.SetBrush(b);
     dc.SetPen(Layout::sBackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
-    wxPoint position(0,0);
-    bool shiftApplied = mShiftLength > 0 ? false : true;
-    model::IClipPtr previous;
-    BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
+    std::list<bool> tf = boost::assign::list_of(false)(true);
+    BOOST_FOREACH( bool transitionValue, tf ) // First, normal clips, second transitions
     {
-        if (!shiftApplied && modelclip->getLeftPts() >= mShiftPosition)
+        BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
         {
-            position.x += getZoom().ptsToPixels(mShiftLength);
-            shiftApplied = true;
+            ClipView* view = getViewMap().getView(modelclip);
+            wxBitmap bitmap = view->getBitmap();
+            if (modelclip->isA<model::Transition>() == transitionValue)
+            {
+                pts left = view->getLeftPts();
+                // todo handle dragging over a transition (split the transition, or what?)
+                wxPoint position(getZoom().ptsToPixels(left),0);
+                if (left >= mShiftPosition)
+                {
+                    position.x += getZoom().ptsToPixels(mShiftLength);
+                }
+                dc.DrawBitmap(bitmap,position);
+            }
         }
-
-        wxBitmap bitmap = getViewMap().getView(modelclip)->getBitmap();
-
-        //if (!modelclip->isA<model::Transition>())
-        //{
-            wxPoint positionPts(0,0);
-            positionPts.x = getZoom().ptsToPixels(modelclip->getLeftPts());
-            dc.DrawBitmap(bitmap,positionPts);
-            position.x += bitmap.GetWidth();
-        //}
-        //if (previous && previous->isA<model::Transition>())
-        //{
-        //    model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(previous);
-        //    pixel transitionxpos = getZoom().ptsToPixels(transition->getLeftPts());
-        //    dc.DrawBitmap(bitmap,wxPoint(transitionxpos, position.y));
-        //    // todo refactor, duplication with below
-        //}
-        //previous = modelclip;
     }
-    //if (previous && previous->isA<model::Transition>())
-    //{
-    //    model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(previous);
-    //    pixel transitionxpos = getZoom().ptsToPixels(transition->getLeftPts());
-    //    dc.DrawBitmap(bitmap,wxPoint(transitionxpos, position.y));
-    //    // todo refactor, duplication with above
-    //}
 }
 
 void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
 {
     wxPoint pos(position);
-    BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
+    std::list<bool> tf = boost::assign::list_of(false)(true);
+    BOOST_FOREACH( bool transitionValue, tf ) // First, normal clips, second transitions
     {
-        ClipView* view = getViewMap().getView(modelclip);
-        // todo first do the clip to the right of the transition
-        view->drawForDragging(pos, height, dc, dcMask);
-        pos.x += view->getWidth();
+        BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
+        {
+            if (modelclip->isA<model::Transition>() == transitionValue)
+            {
+                ClipView* view = getViewMap().getView(modelclip);
+                view->drawForDragging(pos, height, dc, dcMask);
+                pos.x += view->getWidth();
+            }
+        }
     }
 }
 

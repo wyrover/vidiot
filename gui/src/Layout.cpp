@@ -20,9 +20,9 @@ const pixel Layout::sAudioVideoDividerHeight              = 5;
 const pixel Layout::sMinTrackHeight                       = 10;
 const pixel Layout::sMaxTrackHeight                       = 100;
 const pixel Layout::sClipBorderSize                       = 2;
-const pixel Layout::sTransitionHeight                     = 8;
 const pixel Layout::sVideoPosition                        = Layout::sTimeScaleHeight + Layout::sMinimalGreyAboveVideoTracksHeight;
       pixel Layout::sClipDescriptionBarHeight             = 5; // Default value.
+      pixel Layout::sTransitionHeight                     = 8; // Default value
 
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS
@@ -67,6 +67,12 @@ const wxColour  Layout::sDebugColour             (*wxGREEN);
 const wxPen     Layout::sDebugPen                (Layout::sDebugColour, 1);
 const wxBrush   Layout::sDebugBrush              (Layout::sDebugColour,wxBRUSHSTYLE_STIPPLE);
 
+const wxColour  Layout::sTransitionColour        (wxColour(224,0,224));
+const wxPen     Layout::sTransitionPen           (Layout::sTransitionColour, 1);
+const wxBrush   Layout::sTransitionBrush         (Layout::sTransitionColour,wxBRUSHSTYLE_FDIAGONAL_HATCH);
+const wxBrush   Layout::sTransitionBgUnselected  (wxColour(123,123,123),wxBRUSHSTYLE_SOLID);
+const wxBrush   Layout::sTransitionBgSelected    (wxColour(80,80,80),wxBRUSHSTYLE_SOLID);
+
 //////////////////////////////////////////////////////////////////////////
 // SNAP
 //////////////////////////////////////////////////////////////////////////
@@ -93,7 +99,7 @@ void Layout::initializeFonts()
     wxMemoryDC dc(tmp);
     dc.SetFont(*sClipDescriptionFont);
     sClipDescriptionBarHeight = dc.GetCharHeight() + 2;
-
+    sTransitionHeight = sClipDescriptionBarHeight + 4;
 }
 
 } // namespace
