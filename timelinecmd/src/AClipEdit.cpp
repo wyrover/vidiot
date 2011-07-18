@@ -173,8 +173,6 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts lef
 
 void AClipEdit::replaceLinks(ReplacementMap& conversionmap)
 {
-    // TODO IGNORE TRANSITIONS
-
     // For all replaced clips, ensure that the linked clip is also replaced,
     // at least with just a plain clone of the original link. This is needed to
     // avoid having these links 'dangling' after removal.

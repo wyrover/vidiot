@@ -117,9 +117,12 @@ void CreateTransition::initialize()
         track = mLeft->getTrack();
         position = track->getNextClip(mLeft);
 
-        // Adjust left clip
+        // Determine adjustment and adjust clip
         model::IClipPtr updatedLeft = make_cloned<model::IClip>(mLeft);
-        updatedLeft->adjustEnd(-mLeftSize); // todo maxen met maxleft en een default setting meenemen als minimum?
+        pts adjustment = -mLeftSize;
+        adjustment = std::max( adjustment, updatedLeft->getMinAdjustEnd() );
+        adjustment = std::min( adjustment, updatedLeft->getMaxAdjustEnd() );
+        updatedLeft->adjustEnd(adjustment);
         replaceClip(mLeft,boost::assign::list_of(updatedLeft),&linkmapper);
 
         // Make copy of left clip for the transition
@@ -132,9 +135,12 @@ void CreateTransition::initialize()
         // Determine position of transition
         track = mRight->getTrack();
 
-        // Adjust right clip
+        // Determine adjustment and adjust clip
         model::IClipPtr updatedRight = make_cloned<model::IClip>(mRight);
-        updatedRight->adjustBegin(mRightSize);  // todo see above
+        pts adjustment = mRightSize;
+        adjustment = std::max( adjustment, updatedRight->getMinAdjustBegin() );
+        adjustment = std::min( adjustment, updatedRight->getMaxAdjustBegin() );
+        updatedRight->adjustBegin(adjustment);
         replaceClip(mRight,boost::assign::list_of(updatedRight),&linkmapper);
         
         // Make copy of right clip for the transition

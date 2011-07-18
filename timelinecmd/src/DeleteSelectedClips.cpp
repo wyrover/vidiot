@@ -49,11 +49,26 @@ void DeleteSelectedClips::deleteSelectedClips(model::Tracks tracks)
         {
             if (clip->getSelected())
             {
-                removed.push_back(clip);
-                // todo remove any related transitions also
-                if (!clip->isA<model::Transition>()) // Transitions do not count for length. TODO use Track::getCombinedLength
+                model::TrackPtr track = clip->getTrack();
+
+                // The clip and the two (possible) transitions should be added in the same consecutive order (see UtilList::remove)
+
+                model::IClipPtr prev = track->getPreviousClip(clip);
+                if (prev && prev->isA<model::Transition>())
                 {
-                    nRemovedFrames += clip->getLength();
+                    removed.push_back(prev);
+                    nRemovedFrames += prev->getLength();
+
+                }
+
+                removed.push_back(clip);
+                nRemovedFrames += clip->getLength();
+
+                model::IClipPtr next = track->getNextClip(clip);
+                if (next && next->isA<model::Transition>())
+                {
+                    removed.push_back(next);
+                    nRemovedFrames += next->getLength();
                 }
             }
             else

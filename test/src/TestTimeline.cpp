@@ -145,8 +145,18 @@ void TestTimeline::testTransition()
     FixtureGui::waitForIdle();
 
     // Create crossfade
+    ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 );
     wxUIActionSimulator().Char('c');
     FixtureGui::waitForIdle();
+    ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 + 1); // Transition added
+
+    // Delete clip after the crossfade
+    click(timeline, FixtureGui::getVideoClip(0,3));
+    ASSERT_SELECTION_SIZE(1);
+    wxUIActionSimulator().KeyDown(WXK_DELETE);
+    wxUIActionSimulator().KeyUp(WXK_DELETE);
+    FixtureGui::waitForIdle();
+    ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 - 2); // Clip and link and transition removed
     
     FixtureGui::pause();
 }

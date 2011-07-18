@@ -19,7 +19,7 @@ namespace model {
 VideoTransition::VideoTransition()
     :	Transition()
     ,   IVideo()
-    ,   mPosition(-1)
+    ,   mProgress(-1)
 {
     VAR_DEBUG(this);
 }
@@ -27,7 +27,7 @@ VideoTransition::VideoTransition()
 VideoTransition::VideoTransition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight)
     :   Transition(left, nFramesLeft, right, nFramesRight)
     ,   IVideo()
-    ,   mPosition(-1)
+    ,   mProgress(-1)
 {
     VAR_DEBUG(this);
 }
@@ -35,7 +35,7 @@ VideoTransition::VideoTransition(IClipPtr left, pts nFramesLeft, IClipPtr right,
 VideoTransition::VideoTransition(const VideoTransition& other)
     :   Transition(other)
     ,   IVideo()
-    ,   mPosition(-1)
+    ,   mProgress(-1)
 {
     VAR_DEBUG(*this);
 }
@@ -53,18 +53,17 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
 {
     if (getLastSetPosition())
     {
-        mPosition = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateLastSetPosition();
 
-        getLeftClip()->moveTo(mPosition);
-        getRightClip()->moveTo(mPosition);
+        getLeftClip()->moveTo(mProgress);
+        getRightClip()->moveTo(mProgress);
     }
-
-    VideoFramePtr nextFrame = getVideo(mPosition, requestedWidth, requestedHeight, alpha);
-
-    mPosition++;
-
-    return nextFrame;
+    VideoFramePtr videoFrame = getVideo(mProgress, requestedWidth, requestedHeight, alpha);
+    mProgress++;
+    VAR_VIDEO(videoFrame);
+    setGenerationProgress(mProgress);
+    return videoFrame;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,7 +72,7 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
 
 std::ostream& operator<<( std::ostream& os, const VideoTransition& obj )
 {
-    os << static_cast<const Transition&>(obj) << '|' << obj.mPosition;
+    os << static_cast<const Transition&>(obj) << '|' << obj.mProgress;
     return os;
 }
 

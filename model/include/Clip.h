@@ -102,7 +102,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     IControlPtr mRender;    ///< The producer of audiovisual data for this clip
-    WeakTrackPtr mTrack;    ///< Track which holds this clip
+    WeakTrackPtr mTrack;    ///< Track which holds this clip. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 

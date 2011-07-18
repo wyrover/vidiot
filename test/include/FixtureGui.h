@@ -139,6 +139,10 @@ public:
     /// \param clipindex index position (0-based) of the clip in the track, counting from left to right
     static model::IClipPtr getVideoClip(int trackindex = 0, int clipindex = 0);
     
+    /// Count non-empty clips (both audio and video) in given timeline
+    /// \param sequence if 0 then the active timeline is used
+    static int getNonEmptyClipsCount(model::SequencePtr sequence  = model::SequencePtr());
+
     /// Count selected clips (both audio and video) in given timeline
     /// \param sequence if 0 then the active timeline is used
     static int getSelectedClipsCount(model::SequencePtr sequence  = model::SequencePtr());

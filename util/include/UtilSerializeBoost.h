@@ -6,8 +6,9 @@
 #pragma once
 #endif
 
-#include <boost/rational.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/rational.hpp>
+#include <boost/weak_ptr.hpp>
 
 namespace boost { namespace serialization {
 
@@ -43,6 +44,21 @@ void serialize(Archive& ar, boost::rational<int>& r, const unsigned int version)
     if (Archive::is_loading::value)
     {
         r.assign(n,d);
+    }
+}
+
+template<class Archive, class TYPE>
+void serialize(Archive &ar, boost::weak_ptr<TYPE>& p, const unsigned int version)
+{
+    if (Archive::is_loading::value)
+    {
+        boost::shared_ptr<TYPE> shared;
+        ar & shared;
+        p = shared;
+    }
+    else
+    {
+        ar & p.lock();
     }
 }
 

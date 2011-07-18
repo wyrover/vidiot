@@ -9,6 +9,7 @@
 #include "File.h"
 #include "Track.h"
 #include "UtilLog.h"
+#include "UtilSerializeBoost.h"
 
 namespace model {
 
@@ -260,27 +261,10 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     ar & mRender;
     ar & mOffset;
     ar & mLength;
+    ar & mLink;
+    ar & mTrack;
     ar & mLeftPtsInTrack;
     ar & mIndex;
-
-    // Links and tracks are stored as weak_ptr to avoid cyclic dependencies (leading to 
-    // excessive memory leaks). Storing/reading is done via shared_ptr. Hence,
-    // these conversions are required.
-    if (Archive::is_loading::value)
-    {
-        IClipPtr link;
-        ar & link;
-        setLink(link);
-
-        TrackPtr track;
-        ar & track;
-        setTrack(track, mLeftPtsInTrack, mIndex);
-    }
-    else
-    {
-        ar & mLink.lock();
-        ar & mTrack.lock();
-    }
     // NOT: mSelected. After loading, nothing is selected.
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

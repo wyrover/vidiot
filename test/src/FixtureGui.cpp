@@ -8,6 +8,7 @@
 #include "Application.h"
 #include "AutoFolder.h"
 #include "ClipView.h"
+#include "EmptyClip.h"
 #include "File.h"
 #include "IClip.h"
 #include "ids.h"
@@ -320,9 +321,28 @@ model::IClipPtr FixtureGui::getVideoClip(int trackindex, int clipindex)
 }
 
 //static 
+int FixtureGui::getNonEmptyClipsCount(model::SequencePtr sequence)
+{
+    int result = 0;
+    BOOST_FOREACH( model::TrackPtr track, getTimeline(sequence).getSequence()->getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (!clip->isA<model::EmptyClip>())
+            {
+                result++;
+            }
+        }
+    }
+    return result;
+}
+
+//static 
 int FixtureGui::getSelectedClipsCount(model::SequencePtr sequence)
 {
-    return getTimeline(sequence).getSelection().getClips().size();
+    int result = getTimeline(sequence).getSelection().getClips().size();
+    VAR_DEBUG(result);
+    return result;
 }
 
 // static 
