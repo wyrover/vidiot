@@ -116,7 +116,7 @@ private:
     boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.
     pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
 
-    WeakTrackPtr mTrack;    ///< Track which holds this transition
+    WeakTrackPtr mTrack;    ///< Track which holds this transition. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     bool mSelected;         ///< True if this clip is currently selected

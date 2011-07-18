@@ -8,6 +8,7 @@
 #include "ClipEvent.h"
 #include "Track.h"
 #include "UtilLog.h"
+#include "UtilSerializeBoost.h"
 
 namespace model {
 
@@ -226,7 +227,6 @@ boost::optional<pts> Transition::getLastSetPosition() const
     return mLastSetPosition;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
@@ -268,24 +268,13 @@ template<class Archive>
 void Transition::serialize(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<IClip>(*this);
+    ar & mLeft;
+    ar & mRight;
     ar & mFramesLeft;
     ar & mFramesRight;
+    ar & mTrack;
     ar & mLeftPtsInTrack;
-    // todo mright mleft
-
-    // Tracks are stored as weak_ptr to avoid cyclic dependencies (leading to 
-    // excessive memory leaks). Storing/reading is done via shared_ptr. Hence,
-    // these conversions are required.
-    if (Archive::is_loading::value)
-    {
-        TrackPtr track;
-        ar & track;
-        setTrack(track, mLeftPtsInTrack, mIndex);
-    }
-    else
-    {
-        ar & mTrack.lock();
-    }
+    ar & mIndex;
     // NOT: mSelected. After loading, nothing is selected.
 }
 template void Transition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
