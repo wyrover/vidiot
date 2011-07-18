@@ -88,7 +88,6 @@ pts Transition::getLength()
 void Transition::moveTo(pts position)
 {
     mLastSetPosition.reset(position);
-    // todo
 }
 
 wxString Transition::getDescription() const
@@ -114,7 +113,7 @@ void Transition::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
 
 TrackPtr Transition::getTrack()
 {
-    return mTrack;
+    return mTrack.lock();
 }
 
 pts Transition::getLeftPts() const
@@ -139,39 +138,46 @@ IClipPtr Transition::getLink() const
 
 pts Transition::getMinAdjustBegin() const
 {
-    //todo
-    NIY;
-    return 0;
+    pts result = 0;
+    if (getLeftClip())
+    {
+        result = -getLeftClip()->getLength();
+    }
+    return result;
 }
 
 pts Transition::getMaxAdjustBegin() const
 {
-    NIY;
-    return 0;
+    return getLeft();
 }
 
 void Transition::adjustBegin(pts adjustment)
 {
-    NIY;
     VAR_DEBUG(*this)(adjustment);
+    ASSERT(adjustment >= getMinAdjustBegin() && adjustment <= getMaxAdjustBegin())(adjustment);
+    mFramesLeft += adjustment;
 }
 
 pts Transition::getMinAdjustEnd() const
 {
-    NIY;
-    return 0;
+    return -getRight();
 }
 
 pts Transition::getMaxAdjustEnd() const
 {
-    NIY;
+    pts result = 0;
+    if (getRightClip())
+    {
+        result = getRightClip()->getLength();
+    }
     return 0;
 }
 
 void Transition::adjustEnd(pts adjustment)
 {
-    NIY;
     VAR_DEBUG(*this)(adjustment);
+    ASSERT(adjustment >= getMinAdjustEnd() && adjustment <= getMaxAdjustEnd())(adjustment);
+    mFramesRight += adjustment;
 }
 
 bool Transition::getSelected() const
@@ -250,7 +256,7 @@ IClipPtr Transition::getRightClip() const
 
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
-    os << &obj << '|' << obj.mLeft << '|' << obj.mFramesLeft << '|' << obj.mRight << '|' << obj.mFramesRight << '|' << obj.mTrack << '|' << obj.mLeftPtsInTrack;
+    os << &obj << '|' << obj.mLeft << '|' << obj.mFramesLeft << '|' << obj.mRight << '|' << obj.mFramesRight << '|' << obj.mTrack.lock() << '|' << obj.mLeftPtsInTrack;
     return os;
 }
 
@@ -261,12 +267,26 @@ std::ostream& operator<<( std::ostream& os, const Transition& obj )
 template<class Archive>
 void Transition::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IControl>(*this);
+    ar & boost::serialization::base_object<IClip>(*this);
     ar & mFramesLeft;
     ar & mFramesRight;
-    ar & mTrack;
     ar & mLeftPtsInTrack;
     // todo mright mleft
+
+    // Tracks are stored as weak_ptr to avoid cyclic dependencies (leading to 
+    // excessive memory leaks). Storing/reading is done via shared_ptr. Hence,
+    // these conversions are required.
+    if (Archive::is_loading::value)
+    {
+        TrackPtr track;
+        ar & track;
+        setTrack(track, mLeftPtsInTrack, mIndex);
+    }
+    else
+    {
+        ar & mTrack.lock();
+    }
+    // NOT: mSelected. After loading, nothing is selected.
 }
 template void Transition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Transition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

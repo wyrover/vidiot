@@ -64,24 +64,36 @@ model::IClipPtr ClipView::getClip()
     return mClip;
 }
 
+pts ClipView::getLeftPts() const
+{
+    pts left = mClip->getLeftPts();
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getPreviousClip(mClip));
+    if (transition)
+    {
+        left -= transition->getRight();
+    }
+    return left;
+}
+
+pts ClipView::getRightPts() const
+{
+    pts right = mClip->getRightPts();
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getNextClip(mClip));
+    if (transition)
+    {
+        right += transition->getLeft();
+    }
+    return right;
+}
+
 pixel ClipView::getLeftPosition() const
 {
-    pixel left = getZoom().ptsToPixels(mClip->getLeftPts());
-// todo    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getPreviousClip(mClip));
-// todo    left -= transition ? transition->getRight() : 0;
-    return left;
+    return getZoom().ptsToPixels(getLeftPts());
 }
 
 pixel ClipView::getRightPosition() const
 {
-    pixel right = getZoom().ptsToPixels(mClip->getRightPts());
-    if (mClip->isA<model::Transition>())
-    {
-        LOG_DEBUG << "ff";
-    }
-//todo    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getNextClip(mClip));
-//todo    right -= transition ? transition->getLeft() : 0;
-    return right;
+    return getZoom().ptsToPixels(getRightPts());
 }
 
 void ClipView::show(wxRect rect)
@@ -184,14 +196,15 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     {
         if (mClip->getSelected())
         {
-            dc.SetBrush(Layout::sSelectedClipBrush);
-            dc.SetPen(Layout::sSelectedClipPen);
+            dc.SetBrush(Layout::sTransitionBgSelected);
         }
         else
         {
-            dc.SetBrush(Layout::sClipBrush);
-            dc.SetPen(Layout::sClipPen);
+            dc.SetBrush(Layout::sTransitionBgUnselected);
         }
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
+        dc.SetPen(Layout::sTransitionPen);
+        dc.SetBrush(Layout::sTransitionBrush);
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     }
     else

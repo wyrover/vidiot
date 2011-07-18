@@ -13,6 +13,7 @@ namespace model {
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
+typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<TrackPtr> Tracks;
 class Transition;
 typedef boost::shared_ptr<Transition> TransitionPtr;
@@ -115,7 +116,7 @@ private:
     boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.
     pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
 
-    TrackPtr mTrack;        ///< Track which holds this transition
+    WeakTrackPtr mTrack;    ///< Track which holds this transition
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     bool mSelected;         ///< True if this clip is currently selected

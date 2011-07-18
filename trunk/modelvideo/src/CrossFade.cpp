@@ -52,6 +52,7 @@ VideoFramePtr CrossFade::getVideo(pts position, int requestedWidth, int requeste
     VideoFramePtr leftFrame = boost::static_pointer_cast<VideoClip>(getLeftClip())->getNextVideo(requestedWidth,requestedHeight,alpha);
     VideoFramePtr rightFrame = boost::static_pointer_cast<VideoClip>(getRightClip())->getNextVideo(requestedWidth,requestedHeight,alpha);
     VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, 1, 1);
+    VAR_DEBUG(position)(requestedWidth)(requestedHeight)(alpha)(leftFrame)(rightFrame)(targetFrame);
 
     pts steps = getLength();
     float factorLeft = ((float)getLength() - (float)position) / (float)getLength();
@@ -65,12 +66,13 @@ VideoFramePtr CrossFade::getVideo(pts position, int requestedWidth, int requeste
     int leftBytesPerLine = leftFrame->getLineSizes()[0];
     int rightBytesPerLine = rightFrame->getLineSizes()[0];
     int targetBytesPerLine = targetFrame->getLineSizes()[0];
+    VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
 
     int bytesPerPixel = alpha ? 4 : 3;
 
     for (int y = 0; y < targetFrame->getHeight(); ++y)
     {
-        for (int x = 0; x < targetFrame->getWidth() * bytesPerPixel; x += 1) // todo 3 vs 4 for alpha
+        for (int x = 0; x < targetFrame->getWidth() * bytesPerPixel; x += 1)
         {
             unsigned char left = 0;
             if (y < leftFrame->getHeight() && x < leftFrame->getWidth() * bytesPerPixel)
@@ -82,8 +84,7 @@ VideoFramePtr CrossFade::getVideo(pts position, int requestedWidth, int requeste
             {
                 right = *(rightData + y * rightBytesPerLine + x);
             }
-            unsigned char* target = targetData + y * targetBytesPerLine + x;
-            target[0] = (unsigned char)(left * factorLeft + right * factorRight);
+            *(targetData + y * targetBytesPerLine + x) = (unsigned char)(left * factorLeft + right * factorRight);
         }
     }
 
