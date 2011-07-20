@@ -32,20 +32,10 @@ DeleteSelectedClips::~DeleteSelectedClips()
 
 void DeleteSelectedClips::initialize()
 {
-    deleteSelectedClips(getTimeline().getSequence()->getVideoTracks());
-    deleteSelectedClips(getTimeline().getSequence()->getAudioTracks());
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void DeleteSelectedClips::deleteSelectedClips(model::Tracks tracks)
-{
     ReplacementMap linkmapper;
     std::set<model::TransitionPtr> transitionsToBeRemoved;
 
-    BOOST_FOREACH( model::TrackPtr track, tracks )
+    BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
     {
         model::IClips clips = track->getClips(); // Make copy of list. In the loop (iteration) the original list (track->getClips()) is changed thus cannot be used for iteration.
 
