@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime> 
 #include <wx/evtloop.h> 
+#include <wx/uiaction.h>
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include "Application.h"
@@ -348,13 +349,13 @@ int FixtureGui::getSelectedClipsCount(model::SequencePtr sequence)
 // static 
 pixel FixtureGui::getLeft(model::IClipPtr clip, model::SequencePtr sequence)
 {
-    return getTimeline(sequence).getViewMap().getView(clip)->getLeftPosition();
+    return getTimeline(sequence).getViewMap().getView(clip)->getLeftPixel();
 }
 
 // static 
 pixel FixtureGui::getRight(model::IClipPtr clip, model::SequencePtr sequence)
 {
-    return getTimeline(sequence).getViewMap().getView(clip)->getRightPosition();
+    return getTimeline(sequence).getViewMap().getView(clip)->getRightPixel();
 }
 
 // static 
@@ -367,6 +368,15 @@ pixel FixtureGui::getTop(model::IClipPtr clip, model::SequencePtr sequence)
 pixel FixtureGui::getBottom(model::IClipPtr clip, model::SequencePtr sequence)
 {
     return getTop(clip,sequence) + clip->getTrack()->getHeight();
+}
+
+// static
+void FixtureGui::triggerUndo()
+{
+    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+    wxUIActionSimulator().Char('z');
+    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
+    FixtureGui::waitForIdle();
 }
 
 //////////////////////////////////////////////////////////////////////////

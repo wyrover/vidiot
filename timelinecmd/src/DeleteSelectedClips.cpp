@@ -1,5 +1,6 @@
 #include "DeleteSelectedClips.h"
 
+#include <set>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/assign/list_of.hpp>
@@ -15,7 +16,7 @@
 namespace gui { namespace timeline { namespace command {
 
 DeleteSelectedClips::DeleteSelectedClips(gui::timeline::Timeline& timeline)
-:   AClipEdit(timeline)
+    :   AClipEdit(timeline)
 {
     VAR_INFO(this);
     mCommandName = _("Delete selected clips");
@@ -41,53 +42,51 @@ void DeleteSelectedClips::initialize()
 
 void DeleteSelectedClips::deleteSelectedClips(model::Tracks tracks)
 {
+    ReplacementMap linkmapper;
+    std::set<model::TransitionPtr> transitionsToBeRemoved;
+
     BOOST_FOREACH( model::TrackPtr track, tracks )
     {
-        long nRemovedFrames = 0;
-        model::IClips removed;
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        model::IClips clips = track->getClips(); // Make copy of list. In the loop (iteration) the original list (track->getClips()) is changed thus cannot be used for iteration.
+
+        BOOST_FOREACH( model::IClipPtr clip, clips )
         {
             if (clip->getSelected())
             {
-                model::TrackPtr track = clip->getTrack();
-
-                // The clip and the two (possible) transitions should be added in the same consecutive order (see UtilList::remove)
-
-                model::IClipPtr prev = track->getPreviousClip(clip);
-                if (prev && prev->isA<model::Transition>())
+                model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+                if (transition)
                 {
-                    removed.push_back(prev);
-                    nRemovedFrames += prev->getLength();
-
+                    transitionsToBeRemoved.insert(transition);
                 }
-
-                removed.push_back(clip);
-                nRemovedFrames += clip->getLength();
-
-                model::IClipPtr next = track->getNextClip(clip);
-                if (next && next->isA<model::Transition>())
+                else
                 {
-                    removed.push_back(next);
-                    nRemovedFrames += next->getLength();
-                }
-            }
-            else
-            {
-                if (!removed.empty())
-                {
-                    // First not selected clip after some selected clips found. Replace these clips with an empty one.
-                    newMove(track, clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(nRemovedFrames)), track, clip, removed );
-                    removed.clear();    // Prepare for possible next region
-                    nRemovedFrames = 0; // Prepare for possible next region
+                    // Also delete transitions that overlap with this clip
+                    model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(track->getPreviousClip(clip));
+                    model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
+
+                    if (prevTransition && prevTransition->getRight() > 0)
+                    {
+                        transitionsToBeRemoved.insert(prevTransition);
+                    }
+                    if (nextTransition && nextTransition->getLeft() > 0)
+                    {
+                        transitionsToBeRemoved.insert(nextTransition);
+                    }
+
+                    replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())),&linkmapper);
                 }
             }
-        }
-        if (!removed.empty())
-        {
-            // The last clips of the track are removed.
-            newMove(track, model::IClipPtr(), boost::assign::list_of(boost::make_shared<model::EmptyClip>(nRemovedFrames)), track, model::IClipPtr(), removed );
         }
     }
+
+    // Replace transitions. Is done in a second step to simplify the various possible options (transitions with and without left and right clips)
+    // and to avoid problems with removing the left clip first, without the transition or removing the transition before the right clip
+    BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeRemoved )
+    {
+        removeTransition(transition, linkmapper);
+    }
+
+    replaceLinks(linkmapper);
 }
 
 }}} // namespace

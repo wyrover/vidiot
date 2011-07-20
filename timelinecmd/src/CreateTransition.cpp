@@ -105,58 +105,8 @@ void CreateTransition::initialize()
 
     ReplacementMap linkmapper;
 
-    model::TrackPtr track;
-    model::IClipPtr position;
+    AClipEdit::makeTransition(mLeft,mLeftSize,mRight,mRightSize,linkmapper);
 
-    model::IClipPtr transitionLeftClip;
-    model::IClipPtr transitionRightClip;
-    
-    if (mLeftSize > 0)
-    {
-        // Determine position of transition
-        track = mLeft->getTrack();
-        position = track->getNextClip(mLeft);
-
-        // Determine adjustment and adjust clip
-        model::IClipPtr updatedLeft = make_cloned<model::IClip>(mLeft);
-        pts adjustment = -mLeftSize;
-        adjustment = std::max( adjustment, updatedLeft->getMinAdjustEnd() );
-        adjustment = std::min( adjustment, updatedLeft->getMaxAdjustEnd() );
-        updatedLeft->adjustEnd(adjustment);
-        replaceClip(mLeft,boost::assign::list_of(updatedLeft),&linkmapper);
-
-        // Make copy of left clip for the transition
-        transitionLeftClip = make_cloned<model::IClip>(mLeft);
-        transitionLeftClip->adjustBegin(transitionLeftClip->getLength() - mLeftSize);
-        transitionLeftClip->adjustEnd(mRightSize);
-    }
-    if (mRightSize > 0)
-    {
-        // Determine position of transition
-        track = mRight->getTrack();
-
-        // Determine adjustment and adjust clip
-        model::IClipPtr updatedRight = make_cloned<model::IClip>(mRight);
-        pts adjustment = mRightSize;
-        adjustment = std::max( adjustment, updatedRight->getMinAdjustBegin() );
-        adjustment = std::min( adjustment, updatedRight->getMaxAdjustBegin() );
-        updatedRight->adjustBegin(adjustment);
-        replaceClip(mRight,boost::assign::list_of(updatedRight),&linkmapper);
-        
-        // Make copy of right clip for the transition
-        transitionRightClip = make_cloned<model::IClip>(mRight);
-        transitionRightClip->adjustEnd(mRightSize - transitionRightClip->getLength());
-        transitionRightClip->adjustBegin(-mLeftSize);
-
-        // Determine position of transition
-        position = updatedRight;
-    }
-    ASSERT(track);
-    ASSERT(position);
-    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(transitionLeftClip, mLeftSize, transitionRightClip, mRightSize); 
-    newMove(track,position,boost::assign::list_of(transition));
-
-    LOG_DEBUG << "STEP 3: Ensure that links are maintained.";
     replaceLinks(linkmapper);
 }
 

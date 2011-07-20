@@ -137,6 +137,12 @@ void MenuHandler::Popup(wxPoint position)
         {
             switch (info.logicalclipposition)
             {
+            case TransitionBegin:
+            case TransitionLeftClipEnd:
+            case TransitionInterior:
+            case TransitionRightClipBegin:
+            case TransitionEnd:
+                break;
             case ClipBegin:
                 showAddTransition = true;
                 break;

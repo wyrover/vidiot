@@ -167,6 +167,9 @@ public:
     /// \param clip given clip
     static pixel getBottom(model::IClipPtr clip, model::SequencePtr sequence  = model::SequencePtr());
 
+    /// Trigger an undo via pressing CTRL-z
+    static void triggerUndo();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

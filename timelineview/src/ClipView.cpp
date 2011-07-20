@@ -12,9 +12,11 @@
 #include "Options.h"
 #include "PositionInfo.h"
 #include "Selection.h"
+#include "SequenceView.h"
 #include "Track.h"
 #include "Transition.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
 #include "ViewMap.h"
@@ -40,7 +42,6 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
     mClip->Bind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,           this);
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
     mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
-    // todo also handle these events for transitions
     updateThumbnail();
 }
 
@@ -86,12 +87,12 @@ pts ClipView::getRightPts() const
     return right;
 }
 
-pixel ClipView::getLeftPosition() const
+pixel ClipView::getLeftPixel() const
 {
     return getZoom().ptsToPixels(getLeftPts());
 }
 
-pixel ClipView::getRightPosition() const
+pixel ClipView::getRightPixel() const
 {
     return getZoom().ptsToPixels(getRightPts());
 }
@@ -107,7 +108,7 @@ void ClipView::show(wxRect rect)
 
 pixel ClipView::requiredWidth() const
 {
-    return getRightPosition() - getLeftPosition();
+    return getRightPixel() - getLeftPixel();
 }
 
 pixel ClipView::requiredHeight() const
@@ -126,25 +127,59 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     // This is handled on a per-pixel and not per-pts basis. That ensures
     // that this still works for clips which are very small when zoomed out.
     // (then the cursor won't flip too much).
-    int dist_begin = position.x - getLeftPosition();
-    int dist_end = getRightPosition() - position.x;
+    pixel dist_begin = position.x - getLeftPixel();
+    pixel dist_end = getRightPixel() - position.x;
+    ASSERT(dist_begin >= 0 && dist_end >= 0)(dist_begin)(dist_end)(position)(info);
 
-    // todo add if is transition and add three enums for begin, end, middle of transition
+    model::TrackPtr track = mClip->getTrack();
+    ASSERT(track == info.track)(position)(mClip)(track)(info);
 
-
-    ASSERT(dist_begin >= 0 && dist_end >= 0)(dist_begin)(dist_end);
-
-    if (dist_begin < 10)
+    if (mClip->isA<model::Transition>())
     {
-        info.logicalclipposition = ClipBegin;
+        pixel dist_top = position.y - info.trackPosition;
+        ASSERT(dist_top >= 0)(dist_top)(position)(info);
+
+        if (dist_top <= Layout::sTransitionHeight)
+        {
+            info.logicalclipposition =
+             (dist_begin < Layout::sCursorClipEditDistance)     ? TransitionBegin :
+             (dist_end < Layout::sCursorClipEditDistance)       ? TransitionEnd :
+             TransitionInterior; // Default
+        }
+        else // below transition
+        {
+            model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(mClip);
+            pixel cut = getZoom().ptsToPixels(transition->getLeftPts() + transition->getLeft());
+            pixel dist_cut = position.x - cut;
+
+            if (dist_cut < 0)
+            {
+                info.logicalclipposition = 
+                    (dist_cut > -Layout::sCursorClipEditDistance) ? TransitionLeftClipEnd : TransitionLeftClipInterior;
+            }
+            else // (dist_cut >= 0)
+            {
+                info.logicalclipposition = 
+                    (dist_cut < Layout::sCursorClipEditDistance) ? TransitionRightClipBegin : TransitionRightClipInterior;
+            }
+        }
     }
-    else if (dist_end < 10)
+    else// Regular clip
     {
-        info.logicalclipposition = ClipEnd;
-    }
-    else
-    {
-        info.logicalclipposition = ClipInterior;
+        model::IClipPtr next = track->getNextClip(mClip);
+        model::IClipPtr prev = track->getPreviousClip(mClip);
+        if ((dist_begin < Layout::sCursorClipEditDistance) && (!prev->isA<model::Transition>()))
+        {
+            info.logicalclipposition = ClipBegin;
+        }
+        else if ((dist_end < Layout::sCursorClipEditDistance) && (!next->isA<model::Transition>()))
+        {
+            info.logicalclipposition = ClipEnd;
+        }
+        else
+        {
+            info.logicalclipposition = ClipInterior;
+        }
     }
 }
 
@@ -247,13 +282,15 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
 
     if (wxConfigBase::Get()->ReadBool(Config::sPathShowDebugInfoOnWidgets,false))
     {
-        dc.SetTextForeground(Layout::sDebugColour);
-        dc.SetFont(*Layout::sDebugFont);
-        dc.DrawText(wxString::Format(wxT("%lld"), mClip->getLength()), wxPoint(5,15));
-        wxString sPts; 
-        sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
-        dc.DrawText(sPts, wxPoint(5,25));
-
+        if (!mClip->isA<model::Transition>())
+        {
+            dc.SetTextForeground(Layout::sDebugColour);
+            dc.SetFont(*Layout::sDebugFont);
+            dc.DrawText(wxString::Format(wxT("%lld"), mClip->getLength()), wxPoint(5,15));
+            wxString sPts; 
+            sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
+            dc.DrawText(sPts, wxPoint(5,25));
+        }
         pts progress = mClip->getGenerationProgress();
         pixel pos = getZoom().ptsToPixels(progress);
         dc.SetPen(Layout::sDebugPen);

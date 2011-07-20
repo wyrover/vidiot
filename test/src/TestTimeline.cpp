@@ -32,7 +32,7 @@ void click(gui::timeline::Timeline& timeline, model::IClipPtr clip)
 
     // xposition
     gui::timeline::ClipView* view = timeline.getViewMap().getView(clip);
-    pixel clickX = (view->getLeftPosition() + view->getRightPosition()) / 2;
+    pixel clickX = (view->getLeftPixel() + view->getRightPixel()) / 2;
    
     wxUIActionSimulator().MouseMove(timeline.GetScreenPosition() + wxPoint(clickX, clickY));
     wxUIActionSimulator().MouseClick();
@@ -144,19 +144,39 @@ void TestTimeline::testTransition()
     wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
     FixtureGui::waitForIdle();
 
+    // Determine length of second and third clips
+    pts secondClipLength = FixtureGui::getVideoClip(0,1)->getLength();
+    pts thirdClipLength = FixtureGui::getVideoClip(0,2)->getLength();
+
     // Create crossfade
     ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 );
     wxUIActionSimulator().Char('c');
     FixtureGui::waitForIdle();
     ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 + 1); // Transition added
+    pts secondClipLengthWithTransition = FixtureGui::getVideoClip(0,1)->getLength(); // Counting is 0-based, 1 -> clip 2
+    pts thirdClipLengthWithTransition  = FixtureGui::getVideoClip(0,3)->getLength(); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
     // Delete clip after the crossfade
-    click(timeline, FixtureGui::getVideoClip(0,3));
+    click(timeline, FixtureGui::getVideoClip(0,3)); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
     ASSERT_SELECTION_SIZE(1);
     wxUIActionSimulator().KeyDown(WXK_DELETE);
     wxUIActionSimulator().KeyUp(WXK_DELETE);
     FixtureGui::waitForIdle();
     ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 - 2); // Clip and link and transition removed
+    ASSERT(secondClipLength == FixtureGui::getVideoClip(0,1)->getLength()); // Original length of second clip must be restored
+    
+    FixtureGui::triggerUndo(); // Trigger undo of delete
+    ASSERT(secondClipLengthWithTransition == FixtureGui::getVideoClip(0,1)->getLength());
+    ASSERT(thirdClipLengthWithTransition  == FixtureGui::getVideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
+
+    // Delete clip before the crossfade
+    click(timeline, FixtureGui::getVideoClip(0,1));
+    ASSERT_SELECTION_SIZE(1);
+    wxUIActionSimulator().KeyDown(WXK_DELETE);
+    wxUIActionSimulator().KeyUp(WXK_DELETE);
+    FixtureGui::waitForIdle();
+    ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 - 2); // Clip and link and transition removed
+    ASSERT(thirdClipLength == FixtureGui::getVideoClip(0,2)->getLength()); // Original length of third clip must be restored
     
     FixtureGui::pause();
 }
