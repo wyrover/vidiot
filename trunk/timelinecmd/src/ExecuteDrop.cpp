@@ -41,6 +41,7 @@ void ExecuteDrop::initialize()
     LOG_DEBUG << "STEP 1: Replace all drags with EmptyClips";
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
+        // todo if the clips to the left or right of a transition are removed here, the transition must also be removed
         if (clip->isA<model::Transition>())
         {
             // Transitions are simply removed

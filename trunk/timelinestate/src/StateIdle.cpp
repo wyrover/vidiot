@@ -108,7 +108,11 @@ boost::statechart::result Idle::react( const EvMotion& evt )
             {
                 switch (info.logicalclipposition)
                 {
+                case TransitionBegin:
+                case TransitionRightClipBegin: // FALLTHROUGH
                 case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
+                case TransitionEnd:
+                case TransitionLeftClipEnd: // FALLTHROUGH
                 case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
                 }
             }
@@ -192,6 +196,13 @@ boost::statechart::result Idle::leftDown()
             case ClipEnd:
                 return transit<Trim>();
                 break;
+            case TransitionBegin:       NIY;
+            case TransitionLeftClipInterior:       NIY;
+            case TransitionLeftClipEnd:       NIY;
+            case TransitionInterior:       NIY;
+            case TransitionRightClipBegin:       NIY;
+            case TransitionRightClipInterior:       NIY;
+            case TransitionEnd:       NIY;
             default:
                 FATAL("Unexpected logical clip position.");
             }

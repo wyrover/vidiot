@@ -58,7 +58,7 @@ Trim::Trim( my_context ctx ) // entry
     wxPoint virtualMousePosition = getMousePointer().getLeftDownPosition();
     PointerPositionInfo info = getMousePointer().getInfo(virtualMousePosition);
     ASSERT(info.clip && !info.clip->isA<model::EmptyClip>())(info);
-    mTrimBegin = (info.logicalclipposition == ClipBegin);
+    mTrimBegin = (info.logicalclipposition == ClipBegin) || (info.logicalclipposition == TransitionBegin) || (info.logicalclipposition == TransitionRightClipBegin);
 
     mShiftDown = wxGetMouseState().ShiftDown();
 

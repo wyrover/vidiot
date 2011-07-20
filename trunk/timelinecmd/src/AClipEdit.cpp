@@ -5,6 +5,7 @@
 #include <boost/make_shared.hpp>
 #include "Clip.h"
 #include "Cursor.h"
+#include "CrossFade.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -323,6 +324,92 @@ model::IClipPtr AClipEdit::makeEmptyClip(pts length)
 model::IClips AClipEdit::makeEmptyClips(pts length)
 {
     return boost::assign::list_of(makeEmptyClip(length));
+}
+
+model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength, ReplacementMap& conversionmap )
+{
+    model::TrackPtr track;
+    model::IClipPtr position;
+
+    model::IClipPtr transitionLeftClip;
+    model::IClipPtr transitionRightClip;
+
+    if (leftLength > 0)
+    {
+        // Determine position of transition
+        track = leftClip->getTrack();
+        position = track->getNextClip(leftClip);
+
+        // Determine adjustment and adjust clip
+        model::IClipPtr updatedLeft = make_cloned<model::IClip>(leftClip);
+        pts adjustment = -leftLength;
+        adjustment = std::max( adjustment, updatedLeft->getMinAdjustEnd() );
+        adjustment = std::min( adjustment, updatedLeft->getMaxAdjustEnd() );
+        updatedLeft->adjustEnd(adjustment);
+        replaceClip(leftClip,boost::assign::list_of(updatedLeft),&conversionmap);
+
+        // Make copy of left clip for the transition
+        transitionLeftClip = make_cloned<model::IClip>(leftClip);
+        transitionLeftClip->adjustBegin(transitionLeftClip->getLength() - leftLength);
+        transitionLeftClip->adjustEnd(rightLength);
+    }
+    if (rightLength > 0)
+    {
+        // Determine position of transition
+        track = rightClip->getTrack();
+
+        // Determine adjustment and adjust clip
+        model::IClipPtr updatedRight = make_cloned<model::IClip>(rightClip);
+        pts adjustment = rightLength;
+        adjustment = std::max( adjustment, updatedRight->getMinAdjustBegin() );
+        adjustment = std::min( adjustment, updatedRight->getMaxAdjustBegin() );
+        updatedRight->adjustBegin(adjustment);
+        replaceClip(rightClip,boost::assign::list_of(updatedRight),&conversionmap);
+        
+        // Make copy of right clip for the transition
+        transitionRightClip = make_cloned<model::IClip>(rightClip);
+        transitionRightClip->adjustEnd(rightLength - transitionRightClip->getLength());
+        transitionRightClip->adjustBegin(-leftLength);
+
+        // Determine position of transition
+        position = updatedRight;
+    }
+    ASSERT(track);
+    ASSERT(position);
+    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(transitionLeftClip, leftLength, transitionRightClip, rightLength); 
+    newMove(track,position,boost::assign::list_of(transition));
+    return transition;
+}
+
+void AClipEdit::removeTransition( model::TransitionPtr transition, ReplacementMap& conversionmap )
+{
+    model::IClipPtr prev = transition->getTrack()->getPreviousClip(transition);
+    model::IClipPtr next = transition->getTrack()->getNextClip(transition);
+
+    pts removedLength = transition->getLength();
+
+    if (prev && !prev->isA<model::EmptyClip>() && !prev->getSelected())
+    {
+        model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
+        adjustedLeft->adjustEnd(transition->getLeft());
+        removedLength -= transition->getLeft(); // Do not add emptyclip space for the part that we extend 'prev' with
+        replaceClip(prev,boost::assign::list_of(adjustedLeft),&conversionmap);
+    }
+
+    if (next && !next->isA<model::EmptyClip>() && !next->getSelected())
+    {
+        model::IClipPtr adjustedRight = make_cloned<model::IClip>(next);
+        adjustedRight->adjustBegin(-transition->getRight());
+        removedLength -= transition->getRight(); // Do not add emptyclip space for the part that we extend 'next' with
+        replaceClip(next,boost::assign::list_of(adjustedRight),&conversionmap);
+    }
+
+    model::IClips replacement;
+    if (removedLength > 0)
+    {
+        replacement.push_back(boost::make_shared<model::EmptyClip>(removedLength));
+    }
+    replaceClip(transition,replacement,&conversionmap);
 }
 
 void AClipEdit::doMove(model::MoveParameterPtr move)

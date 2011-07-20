@@ -17,6 +17,10 @@ typedef boost::shared_ptr<IClip> IClipPtr;
 typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef std::list<IClipPtr> IClips;
 
+class Transition;
+typedef boost::shared_ptr<Transition> TransitionPtr;
+typedef std::list<TransitionPtr> Transitions;
+
 struct MoveParameter;
 typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
 typedef std::list<MoveParameterPtr> MoveParameters;
@@ -150,6 +154,21 @@ protected:
     /// Make a new list of one EmptyClip with the given length
     /// \see makeEmptyClip
     model::IClips makeEmptyClips(pts length);
+
+    /// Make a new transition replacing the two given clips with two new clips
+    /// with a transition in between.
+    /// \param leftClip clip to the left of the transition. May be 0 in case only right clip applies.
+    /// \param leftLength length to the left of the cut between the clips to be used for the transition
+    /// \param rightClip clip to the right of the transition. May be 0 in case only left clip applies.
+    /// \param rightLength length to the right of the cut between the clips to be used for the transition
+    /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
+    model::IClipPtr makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength, ReplacementMap& conversionmap);
+
+    /// Remove transition. If there are adjacent clips that are part of the transition,
+    /// these clips will be extended with the part of that clip that is 'part of the transition'.
+    /// \param transition transition to be removed
+    /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
+    void removeTransition( model::TransitionPtr transition, ReplacementMap& conversionmap );
 
 private:
 

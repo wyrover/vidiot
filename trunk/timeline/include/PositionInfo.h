@@ -12,11 +12,45 @@ namespace model {
 }
 
 namespace gui { namespace timeline {
-
+    
+    /**
+    *
+    *                                K->   <--N-->   <-Q
+    *        ------------------------|-----------------|------------------------
+    *        |                       |                 |                       |   ^
+    *        |                       |                 |                       |   |
+    *        |                       |-----------------|                       |   y
+    *        |                                |                                |   |
+    *        |                                |                                |   v
+    *        |                                |                                |
+    *        -------------------------------------------------------------------
+    *
+    *        A->    <----B---->      L->   <-M O->   <-P     <----B---->     <-C
+    *
+    *
+    * A: ClipBegin
+    * B: ClipInterior
+    * C: ClipEnd
+    *
+    * K: TransitionBegin                (y <= transition height)
+    * L: TransitionLeftClipInterior     (y >  transition height)
+    * M: TransitionLeftClipEnd          (y >  transition height)
+    * N: TransitionInterior             (y <= transition height)
+    * O: TransitionRightClipBegin       (y >  transition height)
+    * P: TransitionRightClipInterior    (y >  transition height)
+    * Q: TransitionEnd                  (y <= transition height)
+    */
 DECLAREENUM(MouseOnClipPosition, \
             ClipBegin, \
             ClipInterior, \
-            ClipEnd);
+            ClipEnd, \
+            TransitionBegin, \
+            TransitionLeftClipInterior, \
+            TransitionLeftClipEnd, \
+            TransitionInterior, \
+            TransitionRightClipBegin, \
+            TransitionRightClipInterior, \
+            TransitionEnd);
 
 struct PointerPositionInfo
 {
