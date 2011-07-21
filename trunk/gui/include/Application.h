@@ -4,6 +4,7 @@
 #include <wx/app.h>
 #include <boost/thread.hpp>
 #include "UtilAssert.h"
+#include "UtilEvent.h"
 
 #ifdef _MSC_VER
 #define CATCH_ALL_ERRORS
@@ -14,6 +15,8 @@ struct IEventLoopListener;
 }
 
 namespace gui {
+
+DECLARE_EVENT(EVENT_IDLE_TRIGGER, EventIdleTrigger, bool);
 
 class Application
     :   public wxApp
@@ -33,6 +36,17 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // IDLE HANDLING
     //////////////////////////////////////////////////////////////////////////
+
+    /// Original implementation:
+    ///    wxWakeUpIdle();
+    ///    mCondition.wait(lock);
+    /// However, it is possible that the idle event is received between these
+    /// two statements. This results in a (temporary) hangup of the tests. After
+    /// a while another idle event is received (guess), which resolves the hangup.
+    /// To avoid this, first an event is generated. This causes a method to be 
+    /// called on the event loop. When wxWakeUpIdle() is called in that method, 
+    /// the aforementioned interleaving problem cannot occur.
+    void triggerIdle(EventIdleTrigger& event);
 
     /// Helper method for testing. Somehow the Idle events are only correctly
     /// received by this class. Therefore, the 'wait for idle' used in testing
