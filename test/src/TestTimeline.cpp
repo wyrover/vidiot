@@ -12,6 +12,7 @@
 #include "PositionInfo.h"
 #include "UtilLogWxwidgets.h"
 #include "Track.h"
+#include "Transition.h"
 #include "UtilList.h"
 #include "ViewMap.h"
 #include "Selection.h"
@@ -52,7 +53,7 @@ void TestTimeline::testSelection()
     KeyDown(0, wxMOD_CONTROL);
     BOOST_FOREACH(model::IClipPtr clip, clips)
     {
-        click(clip);
+        Click(clip);
     }
     KeyUp(0, wxMOD_CONTROL);
     ASSERT_SELECTION_SIZE(InputFiles.size());
@@ -61,28 +62,28 @@ void TestTimeline::testSelection()
 
     // Test SHIFT clicking the entire list
     KeyDown(0, wxMOD_SHIFT);
-    click(clips.front());
-    click(clips.back());
+    Click(clips.front());
+    Click(clips.back());
     KeyUp(0, wxMOD_SHIFT);
     ASSERT_SELECTION_SIZE(InputFiles.size());
 
     // Test SHIFT clicking only the partial list
     FixtureGui::getTimeline().getSelection().unselectAll();
     ASSERT_SELECTION_SIZE(0);
-    click(VideoClip(0,2));
+    Click(VideoClip(0,2));
     KeyDown(0, wxMOD_SHIFT);
-    click(VideoClip(0,4));
+    Click(VideoClip(0,4));
     KeyUp(0, wxMOD_SHIFT);
     ASSERT_SELECTION_SIZE(3);
 
     // Test (de)selecting one clip with CTRL click
     KeyDown(0, wxMOD_CONTROL);
-    click(VideoClip(0,3));
+    Click(VideoClip(0,3));
     KeyUp(0, wxMOD_CONTROL);
     ASSERT_SELECTION_SIZE(2);
     FixtureGui::waitForIdle();
     KeyDown(0, wxMOD_CONTROL);
-    click(VideoClip(0,3));
+    Click(VideoClip(0,3));
     KeyUp(0, wxMOD_CONTROL);
     ASSERT_SELECTION_SIZE(3);
 }
@@ -102,27 +103,9 @@ void TestTimeline::testTransition()
     KeyUp(0, wxMOD_CONTROL);
     FixtureGui::waitForIdle();
 
-    // Shift Trim right clip
-    pixel x = LeftPixel(VideoClip(0,2)) + 1; // The +1 is required to fix errors where the pointer is moved to a slightly different position (don't know why exactly)
-    pixel y = TopPixel(VideoClip(0,2)) + 10;
-    MouseMove(TimelinePosition() + wxPoint(x, y));
-    KeyDown(0, wxMOD_SHIFT);
-    MouseDown();
-    MouseMove(TimelinePosition() + wxPoint(x + 50, y));
-    MouseUp();
-    KeyUp(0, wxMOD_SHIFT);
-    FixtureGui::waitForIdle();
-
-    // Shift Trim left clip
-    pixel xr = RightPixel(VideoClip(0,1)); // The +1 is required to fix errors where the pointer is moved to a slightly different position (don't know why exactly)
-    pixel yr = TopPixel(VideoClip(0,1)) + 10;
-    MouseMove(TimelinePosition() + wxPoint(xr, yr));
-    KeyDown(0, wxMOD_SHIFT);
-    MouseDown();
-    MouseMove(TimelinePosition() + wxPoint(xr - 50, yr));
-    MouseUp();
-    KeyUp(0, wxMOD_SHIFT);
-    FixtureGui::waitForIdle();
+    // Shift Trim clips to make room for transition
+    TrimLeft(VideoClip(0,2),50,true);
+    TrimRight(VideoClip(0,1),50,true);
 
     // Determine length of second and third clips
     pts secondClipLength = VideoClip(0,1)->getLength();
@@ -133,11 +116,16 @@ void TestTimeline::testTransition()
     Char('c');
     FixtureGui::waitForIdle();
     ASSERT(getNonEmptyClipsCount() == InputFiles.size() * 2 + 1); // Transition added
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(VideoClip(0,2));
+    ASSERT(transition);
+    ASSERT(transition->getLeft() > 0)(transition);
+    ASSERT(transition->getRight() > 0)(transition);
+
     pts secondClipLengthWithTransition = VideoClip(0,1)->getLength(); // Counting is 0-based, 1 -> clip 2
     pts thirdClipLengthWithTransition  = VideoClip(0,3)->getLength(); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
     // Delete clip after the crossfade
-    click(VideoClip(0,3)); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
+    Click(VideoClip(0,3)); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
     ASSERT_SELECTION_SIZE(1);
     KeyDown(WXK_DELETE);
     KeyUp(WXK_DELETE);
@@ -150,7 +138,7 @@ void TestTimeline::testTransition()
     ASSERT(thirdClipLengthWithTransition  == VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
     // Delete clip before the crossfade
-    click(VideoClip(0,1));
+    Click(VideoClip(0,1));
     ASSERT_SELECTION_SIZE(1);
     KeyDown(WXK_DELETE);
     KeyUp(WXK_DELETE);
@@ -178,6 +166,26 @@ void TestTimeline::testTransition()
 void TestTimeline::testDnd()
 {
     LOG_DEBUG << "TEST_START";
+
+
+    wxPoint from = Center(VideoClip(0,3));
+    wxPoint to = Center(VideoClip(0,2));
+
+    MouseMove(TimelinePosition() + Center(VideoClip(0,3)));
+    FixtureGui::waitForIdle();
+    MouseDown();
+    FixtureGui::waitForIdle();
+
+    for (int i = 1; i < 10; ++i)
+    {
+        wxPoint p(from.x + (from.x - to.x) / i, from.y + (from.y - to.y) / i); 
+        MouseMove(TimelinePosition() + p);
+        FixtureGui::waitForIdle();
+    }
+    MouseUp();
+    FixtureGui::waitForIdle();
+
+    FixtureGui::pause();
 }
 
 } // namespace

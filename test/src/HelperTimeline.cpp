@@ -94,7 +94,22 @@ pixel HelperTimeline::BottomPixel(model::IClipPtr clip)
     return TopPixel(clip) + clip->getTrack()->getHeight();
 }
 
-void HelperTimeline::click(model::IClipPtr clip)
+wxPoint HelperTimeline::Center(model::IClipPtr clip)
+{
+    return wxPoint( (LeftPixel(clip) + RightPixel(clip)) / 2, (TopPixel(clip) + BottomPixel(clip)) / 2);
+}
+
+wxPoint HelperTimeline::RightCenter(model::IClipPtr clip)
+{
+    return wxPoint( RightPixel(clip), (TopPixel(clip) + BottomPixel(clip)) / 2);
+}
+
+wxPoint HelperTimeline::LeftCenter(model::IClipPtr clip)
+{
+    return wxPoint( LeftPixel(clip), (TopPixel(clip) + BottomPixel(clip)) / 2);
+}
+
+void HelperTimeline::Click(model::IClipPtr clip)
 {
     // yposition
     pixel trackY = FixtureGui::getTimeline().getSequenceView().getPosition(clip->getTrack());
@@ -107,6 +122,35 @@ void HelperTimeline::click(model::IClipPtr clip)
     MouseMove(FixtureGui::getTimeline().GetScreenPosition() + wxPoint(clickX, clickY));
     MouseClick();
     FixtureGui::waitForIdle();
+}
+
+void HelperTimeline::TrimLeft(model::IClipPtr clip, pixel length, bool shift)
+{
+    wxPoint from = LeftCenter(clip);
+    from.x += 1; // The +1 is required to fix errors where the pointer is moved to a slightly different position (don't know why exactly)
+    wxPoint to = from;
+    to.x += length;
+    MouseMove(TimelinePosition() + from);
+    if (shift) KeyDown(0, wxMOD_SHIFT);
+    MouseDown();
+    MouseMove(TimelinePosition() + to);
+    MouseUp();
+    FixtureGui::waitForIdle();
+    if (shift) KeyUp(0, wxMOD_SHIFT);
+}
+
+void HelperTimeline::TrimRight(model::IClipPtr clip, pixel length, bool shift)
+{
+    wxPoint from = RightCenter(clip);
+    wxPoint to = from;
+    to.x -= length;
+    MouseMove(TimelinePosition() + from);
+    if (shift) KeyDown(0, wxMOD_SHIFT);
+    MouseDown();
+    MouseMove(TimelinePosition() + to);
+    MouseUp();
+    FixtureGui::waitForIdle();
+    if (shift) KeyUp(0, wxMOD_SHIFT);
 }
 
 void HelperTimeline::ASSERT_SELECTION_SIZE(int size)

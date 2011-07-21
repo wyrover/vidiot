@@ -168,11 +168,11 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     {
         model::IClipPtr next = track->getNextClip(mClip);
         model::IClipPtr prev = track->getPreviousClip(mClip);
-        if ((dist_begin < Layout::sCursorClipEditDistance) && (!prev->isA<model::Transition>()))
+        if ((dist_begin < Layout::sCursorClipEditDistance) && (!prev || !prev->isA<model::Transition>()))
         {
             info.logicalclipposition = ClipBegin;
         }
-        else if ((dist_end < Layout::sCursorClipEditDistance) && (!next->isA<model::Transition>()))
+        else if ((dist_end < Layout::sCursorClipEditDistance) && (!next || !next->isA<model::Transition>()))
         {
             info.logicalclipposition = ClipEnd;
         }
