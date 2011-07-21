@@ -17,6 +17,8 @@ namespace gui {
 
 wxIMPLEMENT_APP_NO_MAIN(Application);
 
+DEFINE_EVENT(EVENT_IDLE_TRIGGER,  EventIdleTrigger, bool);
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -33,11 +35,13 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
 #endif // CATCH_ALL_ERRORS
 
     Bind(wxEVT_IDLE, &Application::onIdle, this);
+    Bind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
 }
 
 Application::~Application()
 {
     Unbind(wxEVT_IDLE, &Application::onIdle, this);
+    Unbind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,7 +52,7 @@ void Application::waitForIdle()
 {
     boost::mutex mMutex;
     boost::mutex::scoped_lock lock(mMutex);
-    wxWakeUpIdle();
+    QueueEvent(new EventIdleTrigger(false));
     mCondition.wait(lock);
 }
 
@@ -56,6 +60,11 @@ void Application::waitForIdle()
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void Application::triggerIdle(EventIdleTrigger& event)
+{
+    wxWakeUpIdle();
+}
 
 void Application::onIdle(wxIdleEvent& event)
 {

@@ -23,6 +23,7 @@ class TestTimeline : public CxxTest::TestSuite // Must be on same line as class 
 public:
     void testSelection();
     void testTransition();
+    void testDnd();
 };
 
 }

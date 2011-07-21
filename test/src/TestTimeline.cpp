@@ -178,7 +178,27 @@ void TestTimeline::testTransition()
     ASSERT(FixtureGui::getNonEmptyClipsCount() == files.size() * 2 - 2); // Clip and link and transition removed
     ASSERT(thirdClipLength == FixtureGui::getVideoClip(0,2)->getLength()); // Original length of third clip must be restored
     
+    FixtureGui::triggerUndo(); // Trigger undo of delete
+    ASSERT(secondClipLengthWithTransition == FixtureGui::getVideoClip(0,1)->getLength());
+    ASSERT(thirdClipLengthWithTransition  == FixtureGui::getVideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
+
+    pixel top = FixtureGui::getTop(FixtureGui::getVideoClip(0,2)) - 5;
+    pixel left = FixtureGui::getLeft(FixtureGui::getVideoClip(0,2)) - 1;
+    pixel right = FixtureGui::getRight(FixtureGui::getVideoClip(0,2)) + 1;
+    wxUIActionSimulator().MouseMove(timeline.GetScreenPosition() + wxPoint(left,top));
+    wxUIActionSimulator().MouseDown();
+    for (int i = left; i < right; ++i)
+    {
+        wxUIActionSimulator().MouseMove(timeline.GetScreenPosition() + wxPoint(i,top));
+        FixtureGui::waitForIdle();
+    }
+    wxUIActionSimulator().MouseUp();
     FixtureGui::pause();
+}
+
+void TestTimeline::testDnd()
+{
+    LOG_DEBUG << "TEST_START";
 }
 
 } // namespace
