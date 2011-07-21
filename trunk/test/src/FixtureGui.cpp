@@ -307,69 +307,6 @@ gui::timeline::Timeline& FixtureGui::getTimeline(model::SequencePtr sequence)
     return *gui::TimelinesView::get().findPage(sequence).second;
 }
 
-// static 
-int FixtureGui::getNumberOfClipsInVideoTrack(int trackindex)
-{
-    model::TrackPtr videoTrack = getActiveSequence()->getVideoTrack(trackindex);
-    return videoTrack->getClips().size();
-}
-
-// static 
-model::IClipPtr FixtureGui::getVideoClip(int trackindex, int clipindex)
-{
-    model::TrackPtr videoTrack = getActiveSequence()->getVideoTrack(trackindex);
-    return videoTrack->getClipByIndex(clipindex);
-}
-
-//static 
-int FixtureGui::getNonEmptyClipsCount(model::SequencePtr sequence)
-{
-    int result = 0;
-    BOOST_FOREACH( model::TrackPtr track, getTimeline(sequence).getSequence()->getTracks() )
-    {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
-        {
-            if (!clip->isA<model::EmptyClip>())
-            {
-                result++;
-            }
-        }
-    }
-    return result;
-}
-
-//static 
-int FixtureGui::getSelectedClipsCount(model::SequencePtr sequence)
-{
-    int result = getTimeline(sequence).getSelection().getClips().size();
-    VAR_DEBUG(result);
-    return result;
-}
-
-// static 
-pixel FixtureGui::getLeft(model::IClipPtr clip, model::SequencePtr sequence)
-{
-    return getTimeline(sequence).getViewMap().getView(clip)->getLeftPixel();
-}
-
-// static 
-pixel FixtureGui::getRight(model::IClipPtr clip, model::SequencePtr sequence)
-{
-    return getTimeline(sequence).getViewMap().getView(clip)->getRightPixel();
-}
-
-// static 
-pixel FixtureGui::getTop(model::IClipPtr clip, model::SequencePtr sequence)
-{
-    return getTimeline(sequence).getSequenceView().getPosition(clip->getTrack());
-}
-
-// static 
-pixel FixtureGui::getBottom(model::IClipPtr clip, model::SequencePtr sequence)
-{
-    return getTop(clip,sequence) + clip->getTrack()->getHeight();
-}
-
 // static
 void FixtureGui::triggerUndo()
 {
