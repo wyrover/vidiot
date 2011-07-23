@@ -14,6 +14,7 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 * Bind ALT-O to CppUtilities.SwitchBetweenSourceAndHeader
 * Bind ALT-T to CppUtilities.ActivateTest
 * Bind ALT-M to CppUtilities.ActivateMain
+* Use regex "^~(:Wh@//.+)~(:Wh@\{:Wh@)~(:Wh@\}:Wh@)~(:Wh@/#).+" in search in files dialog to count lines of code..
 
 =================== CMAKE ===================
 Install cmake into c:\Program Files
