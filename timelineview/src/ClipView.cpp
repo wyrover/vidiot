@@ -221,7 +221,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         (!drawNotDraggedClips && !getDrag().contains(mClip)))
     {
         // For empty clips, the bitmap is empty.
-        // Selected clips that are being dragged should no longer be drawn
+        // Selected clips/transitions that are being dragged should no longer be drawn
         // in the regular tracks as they have become part of 'getDrag()'s bitmap.
         dc.SetBrush(Layout::sBackgroundBrush);
         dc.SetPen(Layout::sBackgroundPen);

@@ -32,6 +32,7 @@
 #include "Track.h"
 #include "TrackCreator.h"
 #include "TrackView.h"
+#include "Transition.h"
 #include "UtilInt.h"
 #include "UtilList.h"
 #include "UtilLogStl.h"
@@ -166,7 +167,35 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     else
     {
         mDraggedTrack = info.track;
+
         UtilList<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
+
+        // For all transitions that are not selected, check if they must be dragged also.
+        // That is the case if all the clips to which a transition applies are selected.
+        BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() ) // Do not use mDraggedClips as it is edited inside the loop
+        {
+            model::TrackPtr track = clip->getTrack();
+            model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(track->getPreviousClip(clip));
+            if (prevTransition)
+            {
+                model::IClipPtr prev = track->getPreviousClip(prevTransition);
+                if ((prevTransition->getLeft() == 0) ||     // Clip to the left of the transition is not part of the transition
+                    (prev && prev->getSelected()))          // Clip to the left of the transition is also being dragged
+                {
+                    mDraggedClips.push_back(prevTransition); // todo this insertion is not 'in order'
+                }
+            }
+            model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
+            if (nextTransition)
+            {
+                model::IClipPtr next = track->getNextClip(nextTransition);
+                if ((nextTransition->getRight() == 0) ||    // Clip to the right of the transition is not part of the transition
+                    (next && next->getSelected()))          // Clip to the right of the transition is also being dragged
+                {
+                    mDraggedClips.push_back(nextTransition); // todo this insertion is not 'in order'
+                }
+            }
+        }
     }
 
     BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )

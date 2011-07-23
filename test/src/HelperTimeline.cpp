@@ -135,13 +135,14 @@ void HelperTimeline::TrimLeft(model::IClipPtr clip, pixel length, bool shift)
     MouseDown();
     MouseMove(TimelinePosition() + to);
     MouseUp();
-    FixtureGui::waitForIdle();
     if (shift) KeyUp(0, wxMOD_SHIFT);
+    FixtureGui::waitForIdle();
 }
 
 void HelperTimeline::TrimRight(model::IClipPtr clip, pixel length, bool shift)
 {
     wxPoint from = RightCenter(clip);
+    from.x -= 1; // The -1 is required to fix errors where the pointer is moved to a slightly different position (don't know why exactly)
     wxPoint to = from;
     to.x -= length;
     MouseMove(TimelinePosition() + from);
@@ -149,8 +150,8 @@ void HelperTimeline::TrimRight(model::IClipPtr clip, pixel length, bool shift)
     MouseDown();
     MouseMove(TimelinePosition() + to);
     MouseUp();
-    FixtureGui::waitForIdle();
     if (shift) KeyUp(0, wxMOD_SHIFT);
+    FixtureGui::waitForIdle();
 }
 
 void HelperTimeline::ASSERT_SELECTION_SIZE(int size)

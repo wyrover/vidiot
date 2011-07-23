@@ -1,22 +1,23 @@
 #include "TestTimeline.h"
 
 #include <boost/foreach.hpp>
+#include "ClipView.h"
+#include "EmptyClip.h"
 #include "FixtureGui.h"
-#include "Menu.h"
 #include "IClip.h"
+#include "Menu.h"
+#include "PositionInfo.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
-#include "ClipView.h"
 #include "TimeLinesView.h"
-#include "PositionInfo.h"
-#include "UtilLogWxwidgets.h"
 #include "Track.h"
 #include "Transition.h"
 #include "UtilList.h"
-#include "ViewMap.h"
-#include "Selection.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
+#include "ViewMap.h"
 #include "Window.h"
 #include "Zoom.h"
 
@@ -86,6 +87,18 @@ void TestTimeline::testSelection()
     Click(VideoClip(0,3));
     KeyUp(0, wxMOD_CONTROL);
     ASSERT_SELECTION_SIZE(3);
+
+    // Test selection the transition between two clips when shift selecting
+    FixtureGui::getTimeline().getSelection().unselectAll();
+    TrimLeft(VideoClip(0,2),30,true);
+    TrimRight(VideoClip(0,1),30,true);
+    Char('c');
+    FixtureGui::waitForIdle();
+    Click(VideoClip(0,1));
+    KeyDown(0, wxMOD_SHIFT);
+    Click(VideoClip(0,3));
+    KeyUp(0, wxMOD_SHIFT);
+    ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
 }
 
 void TestTimeline::testTransition()
@@ -167,12 +180,14 @@ void TestTimeline::testDnd()
 {
     LOG_DEBUG << "TEST_START";
 
-
+    // Test moving one clip around
     wxPoint from = Center(VideoClip(0,3));
-    wxPoint to = Center(VideoClip(0,2));
+    wxPoint to = from;
+    to.x = 2; // Move to the beginning of timeline
+
+    pts length = VideoClip(0,3)->getLength();
 
     MouseMove(TimelinePosition() + Center(VideoClip(0,3)));
-    FixtureGui::waitForIdle();
     MouseDown();
     FixtureGui::waitForIdle();
 
@@ -185,6 +200,39 @@ void TestTimeline::testDnd()
     MouseUp();
     FixtureGui::waitForIdle();
 
+    ASSERT( VideoClip(0,0)->getLength() == length );
+    FixtureGui::triggerUndo();
+    ASSERT( VideoClip(0,3)->getLength() == length );
+
+    // Zoom in
+    Char('=');
+    FixtureGui::waitForIdle();
+
+    // Make transition after clip 2
+    TrimLeft(VideoClip(0,2),30,true);
+    TrimRight(VideoClip(0,1),30,true);
+    Char('c');
+    FixtureGui::waitForIdle();
+    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+
+    // Move clip 2: the transition must be removed
+    FixtureGui::getTimeline().getSelection().unselectAll();
+    from = Center(VideoClip(0,1));
+    to = Center(VideoClip(0,4));
+    MouseMove(TimelinePosition() + from);
+    MouseDown();
+    for (int i = 1; i < 25; ++i)
+    {
+        from.x += 5;
+        wxPoint p(from.x + (from.x - to.x) / i, from.y + (from.y - to.y) / i); 
+        MouseMove(TimelinePosition() + p);
+        FixtureGui::waitForIdle();
+    }
+
+    MouseUp();
+    FixtureGui::waitForIdle();
+    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
     FixtureGui::pause();
 }
 
