@@ -170,8 +170,8 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 
         UtilList<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
 
-        // For all transitions that are not selected, check if they must be dragged also.
-        // That is the case if all the clips to which a transition applies are selected.
+        // For all transitions that are not selected, if all the clips to which a 
+        // transition applies are selected, the transition must be dragged also.
         BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() ) // Do not use mDraggedClips as it is edited inside the loop
         {
             model::TrackPtr track = clip->getTrack();
@@ -338,7 +338,8 @@ void Drag::drop()
     {
         drops.splice(drops.end(), getDrops(track));
     }
-    getTimeline().Submit(new command::ExecuteDrop(getTimeline(),mDraggedClips,drops, mShiftPosition, mShiftLength));
+
+    getTimeline().Submit(new command::ExecuteDrop(getSequence(),mDraggedClips,drops, mShiftPosition, mShiftLength));
 }
 
 void Drag::stop()
