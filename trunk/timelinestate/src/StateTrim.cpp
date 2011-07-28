@@ -306,7 +306,7 @@ void Trim::show()
 
         preview();
 
-        model::Project::get().Submit(new command::Trim(getTimeline(), mOriginalClip, diff, mTrimBegin, mShiftDown));
+        getTimeline().Submit(new command::Trim(getSequence(), mOriginalClip, diff, mTrimBegin, mShiftDown));
         // From here we can no longer use mOriginalClip: it is changed by applying the command::Trim
 
         mMustUndo = true;

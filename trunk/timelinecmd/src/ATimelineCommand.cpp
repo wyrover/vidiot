@@ -1,14 +1,16 @@
 #include "ATimelineCommand.h"
 
+#include "TimeLinesView.h"
+
 namespace gui { namespace timeline { namespace command {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ATimelineCommand::ATimelineCommand(gui::timeline::Timeline& timeline)
+ATimelineCommand::ATimelineCommand(model::SequencePtr sequence)
 :   RootCommand()
-,   mTimeline(timeline)
+,   mSequence(sequence)
 {
 }
 
@@ -20,9 +22,19 @@ ATimelineCommand::~ATimelineCommand()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-gui::timeline::Timeline& ATimelineCommand::getTimeline()
+gui::timeline::Timeline& ATimelineCommand::getTimeline() const
 {
-    return mTimeline;
+    return gui::TimelinesView::get().getTimeline(mSequence);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const ATimelineCommand& obj )
+{
+    os << &obj << '|' << typeid(obj).name();
+    return os;
 }
 
 }}} // namespace

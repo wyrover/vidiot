@@ -89,7 +89,7 @@ void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-        model::Project::get().Submit(new command::IntervalChange(getTimeline(), mNewIntervalBegin, mNewIntervalEnd, true));
+        model::Project::get().Submit(new command::IntervalChange(getSequence(), mNewIntervalBegin, mNewIntervalEnd, true));
     }
     mNewIntervalActive = false;
 }
@@ -106,7 +106,7 @@ void Intervals::endToggle()
     if (mToggleActive)
     {
         wxRect r(makeRect(mToggleBegin,mToggleEnd));
-        model::Project::get().Submit(new command::IntervalChange(getTimeline(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
+        model::Project::get().Submit(new command::IntervalChange(getSequence(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
     }
     mToggleActive = false;
 }
@@ -142,7 +142,7 @@ void Intervals::change(long begin, long end, bool add)
 
 void Intervals::clear()
 {
-    model::Project::get().Submit(new command::IntervalRemoveAll(getTimeline()));
+    model::Project::get().Submit(new command::IntervalRemoveAll(getSequence()));
 }
 
 //////////////////////////////////////////////////////////////////////////

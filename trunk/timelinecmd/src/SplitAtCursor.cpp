@@ -13,9 +13,9 @@ namespace gui { namespace timeline { namespace command {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
-
-SplitAtCursor::SplitAtCursor(gui::timeline::Timeline& timeline)
-    :   AClipEdit(timeline)
+    // todo splitting of transition????
+SplitAtCursor::SplitAtCursor(model::SequencePtr sequence)
+    :   AClipEdit(sequence)
 {
     VAR_INFO(this);
     mCommandName = _("Insert split at cursor position");
@@ -49,6 +49,16 @@ void SplitAtCursor::splittrack(model::Tracks tracks, pts position, ReplacementMa
     {
         split(track, position, &linkmapper);
     }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const SplitAtCursor& obj )
+{
+    os << static_cast<const AClipEdit&>(obj);
+    return os;
 }
 
 }}} // namespace

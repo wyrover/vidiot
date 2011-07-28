@@ -170,7 +170,7 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
 void Selection::deleteClips()
 {
     setPreviouslyClicked(model::IClipPtr()); // reset
-    getTimeline().Submit(new command::DeleteSelectedClips(getTimeline()));
+    getTimeline().Submit(new command::DeleteSelectedClips(getSequence()));
 }
 
 std::set<model::IClipPtr> Selection::getClips() const

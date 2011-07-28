@@ -131,7 +131,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         wxChar c = evt.mWxEvent.GetUnicodeKey();
         switch (evt.mWxEvent.GetUnicodeKey())
         {
-        case 'S':   model::Project::get().Submit(new command::SplitAtCursor(getTimeline())); break;
+        case 'S':   getTimeline().Submit(new command::SplitAtCursor(getSequence())); break;
         case 'C':   addTransition(); break;
         case '-':   getZoom().change( evt.mWxEvent.ControlDown() ? -1000 : -1); break;
         case '=':   getZoom().change( evt.mWxEvent.ControlDown() ?  1000 :  1); break;
@@ -218,7 +218,7 @@ boost::statechart::result Idle::leftDown()
 
 void Idle::addTransition()
 {
-   command::CreateTransition* cmd = new command::CreateTransition(getTimeline(), getMousePointer().getPosition());
+   command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getPosition());
    if (cmd->isPossible())
    {
         model::Project::get().Submit(cmd);

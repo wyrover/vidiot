@@ -15,8 +15,8 @@
 
 namespace gui { namespace timeline { namespace command {
 
-DeleteSelectedClips::DeleteSelectedClips(gui::timeline::Timeline& timeline)
-    :   AClipEdit(timeline)
+DeleteSelectedClips::DeleteSelectedClips(model::SequencePtr sequence)
+    :   AClipEdit(sequence)
 {
     VAR_INFO(this);
     mCommandName = _("Delete selected clips");
@@ -77,6 +77,16 @@ void DeleteSelectedClips::initialize()
     }
 
     replaceLinks(linkmapper);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const DeleteSelectedClips& obj )
+{
+    os << static_cast<const AClipEdit&>(obj);
+    return os;
 }
 
 }}} // namespace

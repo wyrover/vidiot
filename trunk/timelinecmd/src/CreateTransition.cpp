@@ -19,8 +19,8 @@ namespace gui { namespace timeline { namespace command {
 
     static const int sDefaultTransitionSize = 24;
 
-CreateTransition::CreateTransition(gui::timeline::Timeline& timeline, wxPoint position)
-:   AClipEdit(timeline)
+CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position)
+:   AClipEdit(sequence)
 ,   mLeft()
 ,   mRight()
 ,   mLeftSize(0)
@@ -113,6 +113,16 @@ void CreateTransition::initialize()
 bool CreateTransition::isPossible()
 {
     return mLeftSize != 0 || mRightSize != 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const CreateTransition& obj )
+{
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mLeft << '|' << obj.mRight << '|' << obj.mLeftSize << '|' << obj.mRightSize;
+    return os;
 }
 
 }}} // namespace

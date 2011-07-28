@@ -18,7 +18,7 @@ public:
     /// \param begin begin pts of interval.
     /// \param end end pts of interval
     /// \param add true if interval must be added, false if interval must be removed
-    IntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add);
+    IntervalChange(model::SequencePtr sequence, long begin, long end, bool add);
 
     ~IntervalChange();
 
@@ -38,6 +38,12 @@ private:
     long mBegin;
     long mEnd;
     bool mAdd;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const IntervalChange& obj );
 };
 
 }}} // namespace
