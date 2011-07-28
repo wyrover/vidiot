@@ -3,6 +3,8 @@
 
 namespace test {
 
+    // todo delete
+
 /// Fixture for running tests without a full fledged application. The 
 /// minimal required fixture for most non-gui classes is the existence
 /// of an active logger.

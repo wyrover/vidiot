@@ -12,12 +12,7 @@
 
 namespace test {
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-// static
-model::FolderPtr HelperProjectView::addAutoFolder( wxFileName path, model::FolderPtr parent )
+model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(parent));
@@ -34,8 +29,7 @@ model::FolderPtr HelperProjectView::addAutoFolder( wxFileName path, model::Folde
     return folder;
 }
 
-// static
-model::FolderPtr HelperProjectView::addFolder( wxString name, model::FolderPtr parent )
+model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(parent));
@@ -51,8 +45,7 @@ model::FolderPtr HelperProjectView::addFolder( wxString name, model::FolderPtr p
     return folder;
 }
 
-// static
-model::SequencePtr HelperProjectView::addSequence( wxString name, model::FolderPtr parent )
+model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(parent));
@@ -68,8 +61,7 @@ model::SequencePtr HelperProjectView::addSequence( wxString name, model::FolderP
     return sequence;
 }
 
-// static 
-model::SequencePtr HelperProjectView::createSequence( model::FolderPtr folder )
+model::SequencePtr createSequence( model::FolderPtr folder )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(folder));
@@ -91,8 +83,7 @@ model::SequencePtr HelperProjectView::createSequence( model::FolderPtr folder )
     return result;
 }
 
-// static
-model::Files HelperProjectView::addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
+model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(parent));
@@ -118,8 +109,7 @@ model::Files HelperProjectView::addFiles( std::list<wxFileName> paths, model::Fo
     return result;
 }
 
-// static
-void HelperProjectView::remove( model::NodePtr node )
+void remove( model::NodePtr node )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(node));
@@ -129,8 +119,7 @@ void HelperProjectView::remove( model::NodePtr node )
 }
 
 
-// static 
-int HelperProjectView::countProjectView()
+int countProjectView()
 {
     waitForIdle();
     gui::ProjectView::get().selectAll();

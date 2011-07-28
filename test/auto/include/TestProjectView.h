@@ -1,14 +1,12 @@
 #ifndef TEST_PROJECT_VIEW_H
 #define TEST_PROJECT_VIEW_H
 
-#include "HelperProjectView.h"
 #include "SuiteCreator.h"
 
 namespace test {
 
 class ProjectViewTests : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
     ,   public SuiteCreator<ProjectViewTests>
-    ,   public HelperProjectView
 {
 public:
     void testAdditionAndRemoval();

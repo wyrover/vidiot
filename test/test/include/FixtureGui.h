@@ -12,6 +12,8 @@ namespace gui { namespace timeline {
 
 namespace test {
 
+    // todo rename to fixtureapplication
+
 /// Fixture for the complete GUI. The complete application is started, with the
 /// main thread running in a separate thread so that tests can be ran from the main
 /// application thread. This fixture also ensures that test execution waits 

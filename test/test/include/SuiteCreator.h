@@ -2,6 +2,7 @@
 #define TEST_SUITE_CREATOR_H
 
 #include <cxxtest/TestSuite.h>
+#include "FixtureGui.h"
 
 namespace test {
 

@@ -21,27 +21,23 @@
 
 namespace test {
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void HelperWindow::triggerMenu(int id)
+void triggerMenu(int id)
 {
     triggerMenu(gui::Window::get(), id);
 }
 
-void HelperWindow::triggerMenu(wxWindow& window, int id)
+void triggerMenu(wxWindow& window, int id)
 {
     window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
     waitForIdle();
 }
 
-void HelperWindow::waitForIdle()
+void waitForIdle()
 {
     static_cast<gui::Application*>(wxTheApp)->waitForIdle();
 }
 
-model::FolderPtr HelperWindow::createProject()
+model::FolderPtr createProject()
 {
     waitForIdle();
     triggerMenu(wxID_NEW);
@@ -49,13 +45,13 @@ model::FolderPtr HelperWindow::createProject()
     return getRoot();
 }
 
-model::FolderPtr HelperWindow::getRoot()
+model::FolderPtr getRoot()
 {
     model::FolderPtr root = model::Project::get().getRoot();
     return boost::static_pointer_cast<model::Folder>(root);
 }
 
-wxString HelperWindow::randomString(int length)
+wxString randomString(int length)
 {
     srand((unsigned)time(0)); 
     static const wxString alphanum = "0123456789" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz";
@@ -68,27 +64,27 @@ wxString HelperWindow::randomString(int length)
     return result;
 }
 
-void HelperWindow::pause(int ms)
+void pause(int ms)
 {
     boost::this_thread::sleep(boost::posix_time::milliseconds(ms));
 }
 
-model::SequencePtr HelperWindow::getSequence()
+model::SequencePtr getSequence()
 {
     return getTimeline().getSequence();
 }
 
-wxMenu* HelperWindow::getSequenceMenu()
+wxMenu* getSequenceMenu()
 {
     return gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex);
 }
 
-gui::timeline::Timeline& HelperWindow::getTimeline(model::SequencePtr sequence)
+gui::timeline::Timeline& getTimeline(model::SequencePtr sequence)
 {
     return gui::TimelinesView::get().getTimeline(sequence);
 }
 
-void HelperWindow::triggerUndo()
+void triggerUndo()
 {
     LOG_DEBUG;
     wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
@@ -98,7 +94,7 @@ void HelperWindow::triggerUndo()
     logHistory();
 }
 
-void HelperWindow::triggerRedo()
+void triggerRedo()
 {
     LOG_DEBUG;
     wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
@@ -108,7 +104,7 @@ void HelperWindow::triggerRedo()
     logHistory();
 }
 
-void HelperWindow::logHistory()
+void logHistory()
 {
     LOG_DEBUG;
     wxCommandProcessor* proc = gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor();
@@ -121,9 +117,9 @@ void HelperWindow::logHistory()
         VAR_DEBUG(command)(type);
         it = it->GetNext();
     }
-        wxCommand* current = proc->GetCurrentCommand();
-        VAR_DEBUG(current);
-        //pause(1000);
+    wxCommand* current = proc->GetCurrentCommand();
+    VAR_DEBUG(current);
+    //pause(1000);
 };
 
 } // namespace

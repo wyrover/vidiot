@@ -1,11 +1,9 @@
 #ifndef TEST_TIMELINE_H
 #define TEST_TIMELINE_H
 
-#include <wx/menu.h>
-#include <wx/uiaction.h>
+#include <list>
+#include <wx/filename.h>
 #include <boost/shared_ptr.hpp>
-#include "HelperProjectView.h"
-#include "HelperTimeline.h"
 #include "SuiteCreator.h"
 
 namespace model {
@@ -25,7 +23,6 @@ namespace test
 
 class TestTimeline : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
     ,   public SuiteCreator<TestTimeline>
-    ,   public HelperTimeline
 {
 public:
 
