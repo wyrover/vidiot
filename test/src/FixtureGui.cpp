@@ -82,7 +82,7 @@ bool FixtureGui::tearDown()
     // Must be done via an Event, since all wxWindows derived classes must be 
     // destroyed in the same thread as in which they were created, which is 
     // the main wxWidgets event thread.
-    FixtureGui::triggerMenu(wxID_EXIT);
+    gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
 
     // The exit causes the event loop to be activated again, resulting in one
     // extra call to onEventLoopEnter. That must be unblocked.
@@ -93,6 +93,12 @@ bool FixtureGui::tearDown()
     return true;
 }
 
+void FixtureGui::start()
+{
+    // Do not define in header file. Then it will be optimized away also 
+    // (at least on Visual Studio 2010).
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IEventLoopListener
 //////////////////////////////////////////////////////////////////////////
@@ -100,220 +106,6 @@ bool FixtureGui::tearDown()
 void FixtureGui::onEventLoopEnter()
 {
     mBarrierStarted.wait();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-// static
-void FixtureGui::triggerMenu(int id)
-{
-    triggerMenu(gui::Window::get(), id);
-}
-
-// static
-void FixtureGui::triggerMenu(wxWindow& window, int id)
-{
-    window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
-    waitForIdle();
-}
-
-// static
-void FixtureGui::waitForIdle()
-{
-    static_cast<gui::Application*>(wxTheApp)->waitForIdle();
-}
-
-// static
-model::FolderPtr FixtureGui::createProject()
-{
-    waitForIdle();
-    triggerMenu(wxID_NEW);
-    waitForIdle();
-    return getRoot();
-}
-
-// static
-model::FolderPtr FixtureGui::getRoot()
-{
-    model::FolderPtr root = model::Project::get().getRoot();
-    return boost::static_pointer_cast<model::Folder>(root);
-}
-
-// static
-model::FolderPtr FixtureGui::addAutoFolder( wxFileName path, model::FolderPtr parent )
-{
-    waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
-    waitForIdle();
-    UtilDialog::setDir( path.GetShortPath() ); // Add with short path
-    triggerMenu(gui::ProjectView::get(),meID_NEW_AUTOFOLDER);
-    waitForIdle();
-
-    model::NodePtrs nodes = getRoot()->find( path.GetLongPath() ); // Converted to long path in vidiot
-    ASSERT(nodes.size() == 1);
-    model::NodePtr node = nodes.front();
-    ASSERT(node->isA<model::AutoFolder>())(node);
-    model::FolderPtr folder = boost::static_pointer_cast<model::Folder>(node);
-    return folder;
-}
-
-// static
-model::FolderPtr FixtureGui::addFolder( wxString name, model::FolderPtr parent )
-{
-    waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
-    UtilDialog::setText( name );
-    triggerMenu(gui::ProjectView::get(),meID_NEW_FOLDER);
-    waitForIdle();
-
-    model::NodePtrs nodes = getRoot()->find( name );
-    ASSERT(nodes.size() == 1);
-    model::NodePtr node = nodes.front();
-    ASSERT(node->isA<model::Folder>())(node);
-    model::FolderPtr folder = boost::static_pointer_cast<model::Folder>(node);
-    return folder;
-}
-
-// static
-model::SequencePtr FixtureGui::addSequence( wxString name, model::FolderPtr parent )
-{
-    waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
-    UtilDialog::setText( name );
-    triggerMenu(gui::ProjectView::get(),meID_NEW_SEQUENCE);
-    waitForIdle();
-
-    model::NodePtrs nodes = getRoot()->find( name );
-    ASSERT(nodes.size() == 1);
-    model::NodePtr node = nodes.front();
-    ASSERT(node->isA<model::Sequence>())(node);
-    model::SequencePtr sequence = boost::static_pointer_cast<model::Sequence>(node);
-    return sequence;
-}
-
-// static 
-model::SequencePtr FixtureGui::createSequence( model::FolderPtr folder )
-{
-    waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(folder));
-    waitForIdle();
-    triggerMenu(gui::ProjectView::get(),meID_CREATE_SEQUENCE);
-    waitForIdle();
-
-    model::NodePtrs nodes = getRoot()->find( folder->getName() );
-    ASSERT(nodes.size() == 2); // The sequence and the folder
-    model::SequencePtr result;
-    BOOST_FOREACH( model::NodePtr node, nodes )
-    {
-        if (node->isA<model::Sequence>())
-        {
-            result = boost::static_pointer_cast<model::Sequence>(node);
-        }
-    }
-    ASSERT(result);
-    return result;
-}
-
-// static
-model::Files FixtureGui::addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
-{
-    waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
-    std::list<wxString> shortpaths;
-    BOOST_FOREACH( wxFileName path, paths )
-    {
-        ASSERT( path.IsAbsolute() );
-        shortpaths.push_back( path.GetShortPath() ); // Add with short path
-    }
-    UtilDialog::setFiles( shortpaths );
-    triggerMenu(gui::ProjectView::get(),meID_NEW_FILE);
-    waitForIdle();
-
-    model::Files result;
-    BOOST_FOREACH( wxFileName path, paths )
-    {
-        model::NodePtrs nodes = parent->find( path.GetLongPath() ); // Check that long path is generated by vidiot
-        ASSERT(nodes.size() == 1);
-        model::NodePtr node = nodes.front();
-        ASSERT(node->isA<model::File>())(node);
-        result.push_back(boost::static_pointer_cast<model::File>(node));
-    }
-    return result;
-}
-
-// static
-void FixtureGui::remove( model::NodePtr node )
-{
-    waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(node));
-    waitForIdle();
-    triggerMenu(gui::ProjectView::get(),wxID_DELETE);
-    waitForIdle();
-}
-
-
-// static 
-int FixtureGui::countProjectView()
-{
-    FixtureGui::waitForIdle();
-    gui::ProjectView::get().selectAll();
-    model::NodePtrs selection = gui::ProjectView::get().getSelection();
-    int result = selection.size();
-    VAR_DEBUG(result);
-    return result;
-}
-
-// static
-wxString FixtureGui::randomString(int length)
-{
-    srand((unsigned)time(0)); 
-    static const wxString alphanum = "0123456789" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz";
-
-    wxString result;
-    for (int i = 0; i < length; ++i) 
-    {
-        result += alphanum.GetChar(rand() % (sizeof(alphanum) - 1));
-    }
-    return result;
-}
-
-// static 
-void FixtureGui::pause(int ms)
-{
-    boost::this_thread::sleep(boost::posix_time::milliseconds(ms));
-}
-
-// static 
-model::SequencePtr FixtureGui::getActiveSequence()
-{
-    return getTimeline().getSequence();
-}
-
-// static
-wxMenu* FixtureGui::getSequenceMenu()
-{
-    return gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex);
-}
-
-// static
-gui::timeline::Timeline& FixtureGui::getTimeline(model::SequencePtr sequence)
-{
-    if (!sequence)
-    {
-        return *gui::TimelinesView::get().getTimeline(0);
-    }
-    return *gui::TimelinesView::get().findPage(sequence).second;
-}
-
-// static
-void FixtureGui::triggerUndo()
-{
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
-    wxUIActionSimulator().Char('z');
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-    FixtureGui::waitForIdle();
 }
 
 //////////////////////////////////////////////////////////////////////////
