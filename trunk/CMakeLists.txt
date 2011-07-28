@@ -112,7 +112,7 @@ INCLUDE_DIRECTORIES(AFTER
     ${PORTAUDIO_INCLUDE_DIR}
     ${INCLUDE_LIST}
     ${SOUNDTOUCH_INCLUDE_DIR}
-    test/include
+    test/test/include
 )
 
 LINK_DIRECTORIES(
@@ -144,7 +144,7 @@ GROUPFILES(commands)
 GROUPFILES(util)
 SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
 SOURCE_GROUP("cursors"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/cursors/*.*)
-SOURCE_GROUP("build" FILES CMakeLists.txt ${BuildFiles} ${CmakeModulesFiles})
+SOURCE_GROUP("build" FILES ${BuildFiles} ${CmakeModulesFiles})
 SOURCE_GROUP("help" FILES ${HelpFiles})
 SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${ConfigurationFiles} ${BuildFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 

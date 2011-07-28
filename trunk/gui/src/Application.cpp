@@ -100,6 +100,10 @@ bool Application::OnInit()
     Layout::initializeFonts();
 
     Avcodec::configureLog();
+    if (inTestMode())
+    {
+        Log::SetReportingLevel(logDEBUG);
+    }
     Log::Init();
 
     LOG_INFO << "Start";
@@ -196,6 +200,15 @@ void Application::onAssert()
 {
     DebugReport::generate(ReportAssertionFailure);
     exit(-1);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+bool Application::inTestMode() const
+{
+    return mEventLoopListener != 0;
 }
 
 } // namespace
