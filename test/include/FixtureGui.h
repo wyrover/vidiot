@@ -2,27 +2,9 @@
 #define FIXTURE_GUI_H
 
 #include <cxxtest/GlobalFixture.h>
-#include <wx/filename.h>
-#include <wx/window.h>
 #include <boost/thread.hpp>
 #include <boost/thread/barrier.hpp>
 #include "IEventLoopListener.h"
-#include "UtilInt.h"
-
-namespace model {
-class INode;
-typedef boost::shared_ptr<INode> NodePtr;
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-typedef std::list<IClipPtr> IClips;
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-class File;
-typedef boost::shared_ptr<File> FilePtr;
-typedef std::list<FilePtr> Files;
-}
 
 namespace gui { namespace timeline {
     class Timeline;
@@ -56,82 +38,16 @@ public:
     virtual bool setUp();       ///< Called before each test. Starts the window.
     virtual bool tearDown();    ///< Called after each test. Closes the window.
 
+    /// No behaviour but the inclusion of this method in any test suite ensures 
+    /// that the test fixture (which is a global object) is not discarded during 
+    /// compilation (linking?) due to not being referenced anywhere.
+    static void start();
+
     //////////////////////////////////////////////////////////////////////////
     // IEventLoopListener
     //////////////////////////////////////////////////////////////////////////
 
     void onEventLoopEnter();    ///< Receive notification that the OnRun thread is running the wxWidgets event loop for the (re)started Window
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Trigger the menu given. That menu should be in the main menu bar.
-    /// \param id menu identifier
-    static void triggerMenu(int id);
-
-    /// Trigger the menu given on the window given.
-    /// \param id menu identifier
-    static void triggerMenu(wxWindow& window, int id);
-
-    /// Wait until the main application loop signals Idle via a idle event.
-    /// If the loop is already idle, an extra idle event is triggered.
-    static void waitForIdle();
-
-    /// Create a new project in a blank application by triggering File->New
-    /// \return root node of the project
-    static model::FolderPtr createProject();
-
-    /// \return root node of the project
-    static model::FolderPtr getRoot();
-
-    /// Create a new autofolder to the given path in a given parent folder or in the root (default)
-    /// \return new autofolder
-    static model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent = getRoot() );
-
-    /// Create a new named folder in a given parent folder or in the root (default)
-    /// \return new folder
-    static model::FolderPtr addFolder( wxString name, model::FolderPtr parent = getRoot() );
-
-    /// Create a new sequence in a given parent folder or in the root (default)
-    /// \return new sequence
-    static model::SequencePtr addSequence( wxString name, model::FolderPtr parent = getRoot() );
-
-    /// Create a new sequence from a given folder
-    /// \return new sequence
-    static model::SequencePtr createSequence( model::FolderPtr folder );
-
-    /// Create new files in a given parent folder or in the root (default)
-    /// \return new files created in the model
-    static model::Files addFiles( std::list<wxFileName> name, model::FolderPtr parent = getRoot() );
-
-    /// Remove given node from the project view via selecting it and then triggering the delete menu option
-    /// \node node to be removed
-    static void remove( model::NodePtr node );
-
-    /// Count the number of nodes currently visible in the project view.
-    /// This is implemented by selecting all nodes, and counting the selection size.
-    /// Thus, as a side effect changes the selection of the project view.
-    static int countProjectView();
-
-    /// Generate a random string using alphanumeric characters of size length
-    static wxString randomString(int length = 8);
-
-    /// Delay the test for 60 seconds to allow using the GUI (debugging)
-    static void pause(int ms = 60000);
-
-    /// \return Currently active seqence (the sequence for which the timeline is the active notebook page)
-    static model::SequencePtr getActiveSequence();
-
-    /// Return the currently active sequence menu
-    static wxMenu* getSequenceMenu();
-
-    /// Return the opened timeline for a sequence
-    /// \param sequence if this equals 0 then the active timeline is returned
-    static gui::timeline::Timeline& getTimeline(model::SequencePtr sequence = model::SequencePtr());
-
-    /// Trigger an undo via pressing CTRL-z
-    static void triggerUndo();
 
 private:
 

@@ -9,8 +9,18 @@ template <typename TESTS>
 class SuiteCreator
 {
 public:
-    static TESTS *createSuite() { return new TESTS(); };
-    static void destroySuite(TESTS *suite) { delete suite; };
+    SuiteCreator()
+    {
+        FixtureGui::start(); // Include this 'do nothing' method to avoid FixtureGui being optimized out of the executable.
+    }
+    static TESTS *createSuite()
+    {
+        return new TESTS(); 
+    };
+    static void destroySuite(TESTS *suite)
+    {
+        delete suite;
+    };
 };
 
 } // namespace
