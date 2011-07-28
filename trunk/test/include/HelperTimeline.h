@@ -1,26 +1,20 @@
 #ifndef HELPER_TIMELINE_H
 #define HELPER_TIMELINE_H
 
-#include <list>
-#include <wx/filename.h>
 #include <wx/uiaction.h>
 #include <boost/shared_ptr.hpp>
 #include "UtilInt.h"
+#include "HelperProjectView.h"
 
 namespace model {
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
-class IPath;
-typedef boost::shared_ptr<IPath> IPathPtr;
-typedef std::list<IPathPtr> IPaths;
-
 }
 
 namespace test {
 
-/// Base class for timeline tests. Contains helper methods for dealing with the active timeline.
 class HelperTimeline
-    :    public wxUIActionSimulator
+    :   public HelperProjectView
 {
 public:
 
@@ -34,7 +28,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
-
     
     wxPoint TimelinePosition();                 ///< \return the physical position of the active timeline on the screen
 
@@ -62,16 +55,11 @@ public:
     void Click(model::IClipPtr clip);                                       ///< Click (down+up) the mouse in the center of a clip
     void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
     void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side
+    void Drag(wxPoint from, wxPoint to);                                    ///< Do a drag and drop between the two points (press, move, release)
     
     /// Assert for the count of the selected clips.
     /// Named such for readibility of test cases.
     void ASSERT_SELECTION_SIZE(int size);
-
-protected:
-
-    wxFileName TestFilesPath;               ///< Contains the path to the test files
-    model::IPaths InputFiles;               ///< Contains the filenames of the input files in the test directory
-
 };
 
 } // namespace
