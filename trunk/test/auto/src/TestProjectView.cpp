@@ -4,6 +4,8 @@
 #include "AutoFolder.h"
 #include "File.h"
 #include "FixtureGui.h"
+#include "HelperWindow.h"
+#include "HelperProjectView.h"
 #include "Sequence.h"
 #include "UtilLog.h"
 

@@ -4,8 +4,6 @@
 #include <list>
 #include <wx/filename.h>
 #include "FixtureGui.h"
-#include "HelperProjectView.h"
-#include "HelperTimeline.h"
 #include "SuiteCreator.h"
 
 namespace model {
@@ -19,7 +17,6 @@ namespace test
 
 class TestManual : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
     ,   public SuiteCreator<TestManual>
-    ,   public HelperTimeline
 {
 public:
 

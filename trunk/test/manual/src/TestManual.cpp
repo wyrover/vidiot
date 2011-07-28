@@ -10,6 +10,9 @@
 #include "ProjectViewCreateAutoFolder.h"
 #include "SequenceView.h"
 #include "Timeline.h"
+#include "HelperTimeline.h"
+#include "HelperWindow.h"
+#include "HelperProjectView.h"
 #include "Track.h"
 #include "Transition.h"
 #include "Trim.h"
@@ -27,6 +30,7 @@ namespace test {
 
 void TestManual::setUp()
 {
+    // Todo make defaultprojectfixture and remove helperprojectview
     TestFilesPath = wxFileName("D:\\Vidiot\\test", "");
     InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
     model::FolderPtr root = createProject();
@@ -59,13 +63,13 @@ void TestManual::testManual()
     ASSERT( VideoClip(0,3)->getLength() == length );
 
     // Zoom in
-    Char('=');
+    wxUIActionSimulator().Char('=');
     waitForIdle();
 
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
-    Char('c');
+    wxUIActionSimulator().Char('c');
     waitForIdle();
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
 
