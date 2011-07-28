@@ -22,6 +22,7 @@ IAssert::~IAssert()
 // static
 void IAssert::breakIntoDebugger(const std::string& message)
 {
+    Log::Terminate();
 #ifdef _DEBUG
     #if (defined _MSC_VER) || (defined __BORLANDC__)
         __asm { int 3 };
@@ -33,6 +34,5 @@ void IAssert::breakIntoDebugger(const std::string& message)
 #else
     wxMessageOutputMessageBox().Printf("A fatal error was encountered:\n%s",message);
     sInstance->onAssert();
-    Log::Terminate();
 #endif
 }

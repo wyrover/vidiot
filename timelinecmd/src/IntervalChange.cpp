@@ -6,8 +6,12 @@
 
 namespace gui { namespace timeline { namespace command {
 
-IntervalChange::IntervalChange(gui::timeline::Timeline& timeline, long begin, long end, bool add)
-:   ATimelineCommand(timeline)
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+    IntervalChange::IntervalChange(model::SequencePtr sequence, long begin, long end, bool add)
+:   ATimelineCommand(sequence)
 ,   mBegin(begin)
 ,   mEnd(end)
 ,   mAdd(add)
@@ -27,6 +31,10 @@ IntervalChange::~IntervalChange()
 {
 }
 
+//////////////////////////////////////////////////////////////////////////
+// COMMAND
+//////////////////////////////////////////////////////////////////////////
+
 bool IntervalChange::Do()
 {
     VAR_INFO(this);
@@ -39,6 +47,16 @@ bool IntervalChange::Undo()
     VAR_INFO(this);
     getTimeline().getIntervals().change(mBegin,mEnd,!mAdd);
     return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const IntervalChange& obj )
+{
+    os << static_cast<const ATimelineCommand&>(obj) << '|' << obj.mBegin << '|' << obj.mEnd << '|' << obj.mAdd;
+    return os;
 }
 
 }}} // namespace

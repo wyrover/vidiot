@@ -16,7 +16,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CreateTransition(gui::timeline::Timeline& timeline, wxPoint position);
+    CreateTransition(model::SequencePtr sequence, wxPoint position);
 
     ~CreateTransition();
 
@@ -44,6 +44,12 @@ private:
 
     pts mLeftSize;
     pts mRightSize;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const CreateTransition& obj );
 };
 
 }}} // namespace

@@ -14,8 +14,8 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-CreateAudioTrack::CreateAudioTrack(gui::timeline::Timeline& timeline)
-    :   ATimelineCommand(timeline)
+CreateAudioTrack::CreateAudioTrack(model::SequencePtr sequence)
+    :   ATimelineCommand(sequence)
     ,   mNewTrack()
 {
     VAR_INFO(this);

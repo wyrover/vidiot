@@ -192,13 +192,13 @@ void MenuHandler::activate()
 void MenuHandler::onAddVideoTrack(wxCommandEvent& event)
 {
     LOG_INFO;
-    getTimeline().Submit(new command::CreateVideoTrack(getTimeline()));
+    getTimeline().Submit(new command::CreateVideoTrack(getSequence()));
 }
 
 void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
 {
     LOG_INFO;
-    getTimeline().Submit(new command::CreateAudioTrack(getTimeline()));
+    getTimeline().Submit(new command::CreateAudioTrack(getSequence()));
 }
 
 
@@ -234,7 +234,7 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
 void MenuHandler::onAddTransition(wxCommandEvent& event)
 {
     LOG_INFO;
-    command::CreateTransition* cmd = new command::CreateTransition(getTimeline(), getMousePointer().getRightDownPosition());
+    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getRightDownPosition());
     if (cmd->isPossible())
     {
         model::Project::get().Submit(cmd);

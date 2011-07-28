@@ -1,24 +1,26 @@
 #include "ExecuteDrop.h"
 
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/assign/list_of.hpp>
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "Track.h"
 #include "Clip.h"
 #include "EmptyClip.h"
-#include "Transition.h"
-#include "Timeline.h"
 #include "Sequence.h"
+#include "Timeline.h"
+#include "Track.h"
+#include "Transition.h"
+#include "UtilList.h"
+#include "UtilLog.h"
+#include "UtilLogStl.h"
 
 namespace gui { namespace timeline { namespace command {
 
 // static
 const pts ExecuteDrop::sNoShift = -1;
 
-ExecuteDrop::ExecuteDrop(gui::timeline::Timeline& timeline, model::IClips drags, Drops drops, pts shiftPosition, pts shiftSize)
-:   AClipEdit(timeline)
+ExecuteDrop::ExecuteDrop(model::SequencePtr sequence, model::IClips drags, Drops drops, pts shiftPosition, pts shiftSize)
+:   AClipEdit(sequence)
+,   mTransitions()
 ,   mDrags(drags)
 ,   mDrops(drops)
 ,   mShiftPosition(shiftPosition)
@@ -38,24 +40,31 @@ void ExecuteDrop::initialize()
 
     ReplacementMap linkmapper;
 
-    LOG_DEBUG << "STEP 1: Replace all drags with EmptyClips";
+    LOG_DEBUG << "STEP 1: Remove all transitions for which the transitioned clips are 'torn apart'";
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
-        // todo if the clips to the left or right of a transition are removed here, the transition must also be removed
-        if (clip->isA<model::Transition>())
+        model::TrackPtr track = clip->getTrack();
+        model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(track->getPreviousClip(clip));
+        if (prevTransition && transitionMustBeRemovedOnDrop(prevTransition))
         {
-            // Transitions are simply removed
-            removeClip(clip);
+            removeTransition(prevTransition, linkmapper);
         }
-        else
+        model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
+        if (nextTransition && transitionMustBeRemovedOnDrop(nextTransition))
         {
-            replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
+            removeTransition(nextTransition, linkmapper);
         }
+    }
+
+    LOG_DEBUG << "STEP 2: Replace all drags with EmptyClips";
+    BOOST_FOREACH( model::IClipPtr clip, mDrags )
+    {
+        replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
     }
 
     if (mShiftPosition >= 0)
     {
-        LOG_DEBUG << "STEP 2: Apply shift";
+        LOG_DEBUG << "STEP 3: Apply shift";
         BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(mShiftPosition);
@@ -64,10 +73,10 @@ void ExecuteDrop::initialize()
     }
     else
     {
-        LOG_DEBUG << "STEP 2: Apply shift (none)";
+        LOG_DEBUG << "STEP 3: Apply shift (none)";
     }
 
-    LOG_DEBUG << "STEP 3: Execute the drops AND fill replacement map";
+    LOG_DEBUG << "STEP 4: Execute the drops AND fill replacement map";
     BOOST_FOREACH( Drop drop, mDrops )
     {
         ASSERT(drop.position >= 0)(drop.position);
@@ -100,7 +109,7 @@ void ExecuteDrop::initialize()
         newMove(drop.track, remove.second, drop.clips, drop.track, remove.second, remove.first);
     }
 
-    LOG_DEBUG << "STEP 4: Ensure that links are maintained.";
+    LOG_DEBUG << "STEP 5: Ensure that links are maintained.";
     replaceLinks(linkmapper);
 }
 
@@ -111,6 +120,54 @@ void ExecuteDrop::initialize()
 std::ostream& operator<<( std::ostream& os, const ExecuteDrop::Drop& obj )
 {
     os << &obj << '|' << obj.track << '|' << obj.position << '|' << obj.clips;
+    return os;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition) const
+{
+    model::TrackPtr track = transition->getTrack();
+    model::IClipPtr prev = track->getPreviousClip(transition);
+    model::IClipPtr next = track->getNextClip(transition);
+    bool adjacentClipDragged = false;
+    bool adjacentClipMissing = false;
+    if (transition->getLeft() > 0)
+    {
+        ASSERT(prev);
+        if (UtilList<model::IClipPtr>(static_cast<const model::IClips>(mDrags)).hasElement(prev))
+        {
+            adjacentClipDragged = true;
+        }
+        else
+        {
+            adjacentClipMissing = true;
+        }
+    }
+    if (transition->getRight() > 0)
+    {
+        ASSERT(next);
+        if (UtilList<model::IClipPtr>(static_cast<const model::IClips>(mDrags)).hasElement(next))
+        {
+            adjacentClipDragged = true;
+        }
+        else
+        {
+            adjacentClipMissing = true;
+        }
+    }
+    return adjacentClipDragged && adjacentClipMissing;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const ExecuteDrop& obj )
+{
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mTransitions << '|' << obj.mDrags << '|' << obj.mShiftPosition << '|' << obj.mShiftSize;
     return os;
 }
 

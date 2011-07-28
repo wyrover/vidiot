@@ -17,8 +17,8 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Trim::Trim(gui::timeline::Timeline& timeline, model::IClipPtr clip, pts diff, bool left, bool shift)
-    :   AClipEdit(timeline)
+Trim::Trim(model::SequencePtr sequence, model::IClipPtr clip, pts diff, bool left, bool shift)
+    :   AClipEdit(sequence)
     ,   mClip(clip)
     ,   mDiff(diff)
     ,   mLeft(left)
@@ -126,10 +126,10 @@ void Trim::initialize()
             }
             else // (mDiff < 0) // Enlarge: Move clip begin point to the left
             {
-                removehitespace(mClip->getTrack()->getPreviousClip(mClip), -mDiff, &linkmapper);
+                removewhitespace(mClip->getTrack()->getPreviousClip(mClip), -mDiff, &linkmapper);
                 if (linked)
                 {
-                    removehitespace(linked->getTrack()->getPreviousClip(linked), -mDiff, &linkmapper);
+                    removewhitespace(linked->getTrack()->getPreviousClip(linked), -mDiff, &linkmapper);
                 }
             }
         }
@@ -143,10 +143,10 @@ void Trim::initialize()
             }
             else // (mDiff > 0) // Enlarge: Move clip end point to the right
             {
-                removehitespace(mClip->getTrack()->getNextClip(mClip), mDiff, &linkmapper);
+                removewhitespace(mClip->getTrack()->getNextClip(mClip), mDiff, &linkmapper);
                 if (linked)
                 {
-                    removehitespace(linked->getTrack()->getNextClip(linked), mDiff, &linkmapper);
+                    removewhitespace(linked->getTrack()->getNextClip(linked), mDiff, &linkmapper);
                 }
             }
 
@@ -165,10 +165,20 @@ void Trim::initialize()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Trim::removehitespace(model::IClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
+void Trim::removewhitespace(model::IClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
 {
     ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getLength() >= toberemoved); // The area to be removed must be available
     replaceClip(emptyclip, makeEmptyClips(emptyclip->getLength() - toberemoved), conversionmap);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const Trim& obj )
+{
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mClip << '|' << obj.mDiff << '|' << obj.mLeft << '|' << obj.mShift;
+    return os;
 }
 
 }}} // namespace

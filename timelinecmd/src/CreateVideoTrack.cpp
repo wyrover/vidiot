@@ -9,8 +9,8 @@
 
 namespace gui { namespace timeline { namespace command {
 
-CreateVideoTrack::CreateVideoTrack(gui::timeline::Timeline& timeline)
-:   ATimelineCommand(timeline)
+CreateVideoTrack::CreateVideoTrack(model::SequencePtr sequence)
+:   ATimelineCommand(sequence)
 ,   mNewTrack()
 {
     VAR_INFO(this);

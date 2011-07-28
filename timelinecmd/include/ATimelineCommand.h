@@ -1,8 +1,13 @@
 #ifndef TIMELINE_COMMAND_H
 #define TIMELINE_COMMAND_H
 
+#include <boost/shared_ptr.hpp>
 #include "RootCommand.h"
 
+namespace model {
+class Sequence;
+typedef boost::shared_ptr<Sequence> SequencePtr;
+}
 namespace gui { namespace timeline { 
     class Timeline; 
 }}
@@ -19,14 +24,14 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ATimelineCommand(gui::timeline::Timeline& timeline);
+    explicit ATimelineCommand(model::SequencePtr sequence);
     virtual ~ATimelineCommand();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    gui::timeline::Timeline& getTimeline();
+    gui::timeline::Timeline& getTimeline() const;
 
 private:
 
@@ -34,7 +39,13 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    gui::timeline::Timeline& mTimeline;
+    model::SequencePtr mSequence;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const ATimelineCommand& obj );
 };
 
 }}} // namespace

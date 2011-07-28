@@ -21,8 +21,8 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AClipEdit::AClipEdit(gui::timeline::Timeline& timeline)
-    :   ATimelineCommand(timeline)
+AClipEdit::AClipEdit(model::SequencePtr sequence)
+    :   ATimelineCommand(sequence)
     ,   mParams()
     ,   mParamsUndo()
     ,   mInitialized(false)
@@ -40,11 +40,10 @@ AClipEdit::~AClipEdit()
 
 bool AClipEdit::Do()
 {
-    VAR_INFO(this);
+    VAR_INFO(*this)(mInitialized);
 
     if (!mInitialized)
     {
-        // "Do" for the first time
         initialize();
 
         mergeConsecutiveEmptyClips();
@@ -53,7 +52,6 @@ bool AClipEdit::Do()
     }
     else
     {
-        // "Redo"
         ASSERT(mParams.size() != 0);
         BOOST_FOREACH( model::MoveParameterPtr move, mParams )
         {
@@ -71,7 +69,7 @@ bool AClipEdit::Do()
 
 bool AClipEdit::Undo()
 {
-    VAR_INFO(this);
+    VAR_INFO(*this);
     ASSERT(mParamsUndo.size() != 0);
     BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
@@ -422,6 +420,16 @@ void AClipEdit::doMove(model::MoveParameterPtr move)
     {
         move->addTrack->addClips(move->addClips,move->addPosition);
     }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const AClipEdit& obj )
+{
+    os << static_cast<const ATimelineCommand&>(obj);
+    return os;
 }
 
 }}} // namespace
