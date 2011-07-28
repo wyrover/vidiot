@@ -12,8 +12,8 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 * NOTE: Use CTRL-Comma (NavigateTo)
 * Bind ALT-S to CppUtilities.SortSelectedLines Macro
 * Bind ALT-O to CppUtilities.SwitchBetweenSourceAndHeader
-* Bind ALT-T to CppUtilities.ActivateTest
-* Bind ALT-M to CppUtilities.ActivateMain
+* Bind ALT-T to CppUtilities.ActivateTestAuto
+* Bind ALT-M to CppUtilities.ActivateTestManual
 * Use regex "^~(:Wh@//.+)~(:Wh@\{:Wh@)~(:Wh@\}:Wh@)~(:Wh@/#).+" in search in files dialog to count lines of code..
 
 =================== CMAKE ===================
@@ -72,6 +72,7 @@ Install ActivePerl via installer
 =================== WXWIDGETS ===================
 * Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
+* Copy include/wx/msw/setup0.h to include/wx/setup.h
   (I had to change platform.h include of this file to wx/msw/setup.h)
   - #define wxUSE_ON_FATAL_EXCEPTION 1
   - #define wxUSE_STACKWALKER 1

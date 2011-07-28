@@ -144,6 +144,17 @@ void TimelinesView::Close( model::SequencePtr sequence )
     }
 }
 
+timeline::Timeline& TimelinesView::getTimeline( model::SequencePtr sequence )
+{
+    if (sequence)
+    {
+        std::pair<size_t,timeline::Timeline*> f = findPage(sequence);
+        ASSERT(f.second);
+        return *(f.second);
+    }
+    return static_cast<timeline::Timeline&>(*mNotebook.GetPage(0));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -162,15 +173,6 @@ std::pair<size_t,timeline::Timeline*> TimelinesView::findPage(model::SequencePtr
     }
 
     return std::make_pair<size_t,timeline::Timeline*>(0,0);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// TESTING
-//////////////////////////////////////////////////////////////////////////
-
-timeline::Timeline* TimelinesView::getTimeline(int n)
-{
-    return static_cast<timeline::Timeline*>(mNotebook.GetPage(n));
 }
 
 //////////////////////////////////////////////////////////////////////////

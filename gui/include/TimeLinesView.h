@@ -68,6 +68,11 @@ public:
     /// Close current open sequence by default.
     void Close( model::SequencePtr sequence = model::SequencePtr() );
 
+    /// \return timeline for the given sequence
+    /// \param sequence if 0, then the first timeline (the first notebook page) is returned.
+    /// \pre sequence must be opened (thus, timeline must exist)
+    timeline::Timeline& getTimeline( model::SequencePtr sequence = model::SequencePtr() );
+
 private:
 
 	wxNotebook mNotebook;
@@ -77,15 +82,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     std::pair<size_t,timeline::Timeline*> findPage(model::SequencePtr sequence) const; ///< Find the page associated with a sequence. 0 pointer is returned if not found.
-
-    //////////////////////////////////////////////////////////////////////////
-    // TESTING
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class test::FixtureGui;
-
-    /// Return tab by number. Counting starts at 0.
-    timeline::Timeline* getTimeline(int n);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
