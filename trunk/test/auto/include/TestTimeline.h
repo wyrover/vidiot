@@ -41,6 +41,7 @@ public:
     void testSelection();
     void testTransition();
     void testDnd();
+    void testUndo();
 
 private:
 

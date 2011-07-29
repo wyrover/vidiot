@@ -79,4 +79,28 @@ void logHistory()
     VAR_DEBUG(current);
 };
 
+void ControlDown()
+{
+    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+    waitForIdle();
+}
+
+void ControlUp()
+{
+    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
+    waitForIdle();
+}
+
+void ShiftDown()
+{
+    wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
+    waitForIdle();
+}
+
+void ShiftUp()
+{
+    wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+    waitForIdle();
+}
+
 } // namespace

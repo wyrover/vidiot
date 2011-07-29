@@ -54,6 +54,12 @@ void ASSERT_CURRENT_COMMAND_TYPE()
 /// Log the command history
 void logHistory();
 
+void ControlDown();     ///< Press down CTRL
+void ControlUp();       ///< Release CTRL
+
+void ShiftDown();       ///< Press down Shift
+void ShiftUp();         ///< Release Shift
+
 } // namespace
 
 #endif // HELPER_WINDOW_H
