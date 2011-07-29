@@ -41,7 +41,9 @@ void triggerRedo();
 /// Return current command in the history
 wxCommand* getCurrentCommand();
 
-// todo make these methods also base members
+/// Assert if the current active command in the history
+/// (the command that will be undone if undo is triggered)
+/// is of the given type.
 template <class COMMAND>
 void ASSERT_CURRENT_COMMAND_TYPE()
 {
