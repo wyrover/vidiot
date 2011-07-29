@@ -182,7 +182,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 if ((prevTransition->getLeft() == 0) ||     // Clip to the left of the transition is not part of the transition
                     (prev && prev->getSelected()))          // Clip to the left of the transition is also being dragged
                 {
-                    mDraggedClips.push_back(prevTransition); // todo this insertion is not 'in order'
+                    mDraggedClips.push_back(prevTransition); // This insertion is not 'in order'
                 }
             }
             model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
@@ -192,7 +192,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 if ((nextTransition->getRight() == 0) ||    // Clip to the right of the transition is not part of the transition
                     (next && next->getSelected()))          // Clip to the right of the transition is also being dragged
                 {
-                    mDraggedClips.push_back(nextTransition); // todo this insertion is not 'in order'
+                    mDraggedClips.push_back(nextTransition); // This insertion is not 'in order'
                 }
             }
         }
@@ -207,7 +207,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     ASSERT(mDraggedTrack);
 
     determinePossibleSnapPoints();
-    determinePossibleDragPoints(); // Required initialized mDraggedClips
+    determinePossibleDragPoints(); // Requires initialized mDraggedClips
     show();
 }
 
@@ -339,7 +339,7 @@ void Drag::drop()
         drops.splice(drops.end(), getDrops(track));
     }
 
-    getTimeline().Submit(new command::ExecuteDrop(getSequence(),mDraggedClips,drops, mShiftPosition, mShiftLength));
+    getTimeline().Submit(new command::ExecuteDrop(getSequence(), mDraggedClips, drops, mShiftPosition, mShiftLength));
 }
 
 void Drag::stop()
