@@ -6,7 +6,7 @@
 #include "CreateTransition.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
-#include "FixtureGui.h"
+#include "FixtureApplication.h"
 #include "HelperApplication.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"

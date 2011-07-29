@@ -1,7 +1,7 @@
 #include "TestTimelinesView.h"
 
 #include "ids.h"
-#include "FixtureGui.h"
+#include "FixtureApplication.h"
 #include "HelperWindow.h"
 #include "HelperProjectView.h"
 #include "HelperTimelinesView.h"
