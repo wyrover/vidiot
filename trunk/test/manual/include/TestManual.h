@@ -3,7 +3,7 @@
 
 #include <list>
 #include <wx/filename.h>
-#include "FixtureApplication.h"
+#include "FixtureProject.h"
 #include "SuiteCreator.h"
 
 namespace model {
@@ -35,9 +35,7 @@ public:
 
 private:
 
-    wxFileName TestFilesPath;               ///< Contains the path to the test files
-    model::IPaths InputFiles;               ///< Contains the filenames of the input files in the test directory
-
+    FixtureProject mProjectFixture;
 };
 
 }

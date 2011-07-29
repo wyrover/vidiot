@@ -2,31 +2,32 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
-#include "AutoFolder.h"
-#include "ClipView.h"
+//#include "AutoFolder.h"
+//#include "ClipView.h"
 #include "EmptyClip.h"
-#include "FixtureApplication.h"
+//#include "FixtureApplication.h"
 #include "HelperApplication.h"
 #include "HelperWindow.h"
-#include "HelperProjectView.h"
+//#include "HelperProjectView.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "IClip.h"
-#include "Menu.h"
-#include "PositionInfo.h"
+//#include "Menu.h"
+//#include "PositionInfo.h"
 #include "Selection.h"
 #include "Sequence.h"
-#include "SequenceView.h"
+//#include "SequenceView.h"
 #include "Timeline.h"
-#include "TimeLinesView.h"
+//#include "TimeLinesView.h"
 #include "Track.h"
 #include "Transition.h"
-#include "UtilList.h"
+//#include "UtilList.h"
 #include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-#include "ViewMap.h"
-#include "Window.h"
-#include "Zoom.h"
+//#include "UtilLogWxwidgets.h"
+//#include "ViewMap.h"
+//#include "Window.h"
+#include "VideoClip.h"
+//#include "Zoom.h"
 
 namespace test {
 
@@ -36,19 +37,12 @@ namespace test {
 
 void TestTimeline::setUp()
 {
-    // Todo make a fixtureproject?
-    TestFilesPath = wxFileName("D:\\Vidiot\\test", "");
-    InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
-    model::FolderPtr root = createProject();
-    model::FolderPtr autofolder1 = addAutoFolder( TestFilesPath );
-    model::SequencePtr sequence1 = createSequence( autofolder1 );
+    mProjectFixture.init();
 }
 
 void TestTimeline::tearDown()
 {
-    // Must be done here, since the deletion of files causes logging. 
-    // Logging is stopped (unavailable) after tearDown since application window is closed.
-    InputFiles.clear(); 
+    mProjectFixture.destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +64,7 @@ void TestTimeline::testSelection()
         Click(clip);
     }
     wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-    ASSERT_SELECTION_SIZE(InputFiles.size());
+    ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
     getTimeline().getSelection().unselectAll();
     ASSERT_SELECTION_SIZE(0);
 
@@ -79,7 +73,7 @@ void TestTimeline::testSelection()
     Click(clips.front());
     Click(clips.back());
     wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
-    ASSERT_SELECTION_SIZE(InputFiles.size());
+    ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
 
     // Test SHIFT clicking only the partial list
     getTimeline().getSelection().unselectAll();
@@ -138,10 +132,10 @@ void TestTimeline::testTransition()
     pts thirdClipLength = VideoClip(0,2)->getLength();
 
     // Create crossfade
-    ASSERT(getNonEmptyClipsCount() == InputFiles.size() * 2 );
+    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 );
     wxUIActionSimulator().Char('c');
     waitForIdle();
-    ASSERT(getNonEmptyClipsCount() == InputFiles.size() * 2 + 1); // Transition added
+    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 + 1); // Transition added
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(VideoClip(0,2));
     ASSERT(transition);
     ASSERT(transition->getLeft() > 0)(transition);
@@ -156,7 +150,7 @@ void TestTimeline::testTransition()
     wxUIActionSimulator().KeyDown(WXK_DELETE);
     wxUIActionSimulator().KeyUp(WXK_DELETE);
     waitForIdle();
-    ASSERT(getNonEmptyClipsCount() == InputFiles.size() * 2 - 2); // Clip and link and transition removed
+    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
     ASSERT(secondClipLength == VideoClip(0,1)->getLength()); // Original length of second clip must be restored
 
     triggerUndo(); // Trigger undo of delete
@@ -169,7 +163,7 @@ void TestTimeline::testTransition()
     wxUIActionSimulator().KeyDown(WXK_DELETE);
     wxUIActionSimulator().KeyUp(WXK_DELETE);
     waitForIdle();
-    ASSERT(getNonEmptyClipsCount() == InputFiles.size() * 2 - 2); // Clip and link and transition removed
+    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
     ASSERT(thirdClipLength == VideoClip(0,2)->getLength()); // Original length of third clip must be restored
 
     triggerUndo(); // Trigger undo of delete
