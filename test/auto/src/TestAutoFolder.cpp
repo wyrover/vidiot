@@ -7,6 +7,7 @@
 #include <boost/thread.hpp>
 #include "AutoFolder.h"
 #include "FixtureGui.h"
+#include "HelperApplication.h"
 #include "HelperWindow.h"
 #include "HelperProjectView.h"
 #include "UtilLog.h"

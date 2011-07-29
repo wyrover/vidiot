@@ -1,18 +1,14 @@
 #ifndef HELPER_PROJECT_VIEW_H
 #define HELPER_PROJECT_VIEW_H
 
-#include <boost/shared_ptr.hpp>
 #include <list>
 #include <wx/filename.h>
-#include <wx/string.h>
+#include <boost/shared_ptr.hpp>
 #include "HelperWindow.h"
 
 namespace model {
 class INode;
 typedef boost::shared_ptr<INode> NodePtr;
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-typedef std::list<IClipPtr> IClips;
 class Folder;
 typedef boost::shared_ptr<Folder> FolderPtr;
 class Sequence;

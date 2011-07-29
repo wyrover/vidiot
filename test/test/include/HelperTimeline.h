@@ -1,7 +1,7 @@
 #ifndef HELPER_TIMELINE_H
 #define HELPER_TIMELINE_H
 
-#include <wx/uiaction.h>
+#include <wx/gdicmn.h>
 #include <boost/shared_ptr.hpp>
 #include "UtilInt.h"
 

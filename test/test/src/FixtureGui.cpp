@@ -1,29 +1,7 @@
 #include "FixtureGui.h"
 
-#include <cstdlib>
-#include <ctime> 
-#include <wx/evtloop.h> 
-#include <wx/uiaction.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
 #include "Application.h"
-#include "AutoFolder.h"
-#include "ClipView.h"
-#include "EmptyClip.h"
-#include "File.h"
-#include "IClip.h"
-#include "ids.h"
-#include "Project.h"
-#include "ProjectView.h"
-#include "Selection.h"
-#include "Sequence.h"
-#include "SequenceView.h"
-#include "Timeline.h"
-#include "TimeLinesView.h"
-#include "Track.h"
-#include "UtilDialog.h"
 #include "UtilLog.h"
-#include "ViewMap.h"
 #include "Window.h"
 
 namespace test {

@@ -1,14 +1,15 @@
 #include "HelperProjectView.h"
 
-#include <wx/uiaction.h>
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include "AutoFolder.h"
 #include "File.h"
+#include "HelperApplication.h"
 #include "ids.h"
 #include "ProjectView.h"
 #include "Sequence.h"
 #include "UtilDialog.h"
+#include "UtilLog.h"
 
 namespace test {
 

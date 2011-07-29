@@ -4,6 +4,7 @@
 #include "FixtureGui.h"
 #include "HelperWindow.h"
 #include "HelperProjectView.h"
+#include "HelperTimelinesView.h"
 #include "Menu.h"
 #include "Timeline.h"
 #include "TimeLinesView.h"

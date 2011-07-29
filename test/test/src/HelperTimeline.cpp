@@ -1,20 +1,18 @@
 #include "HelperTimeline.h"
 
+#include <wx/uiaction.h>
 #include <boost/foreach.hpp>
-#include "AutoFolder.h"
 #include "ClipView.h"
 #include "EmptyClip.h"
-#include "FixtureGui.h"
-#include "HelperWindow.h"
+#include "HelperApplication.h"
+#include "HelperTimelinesView.h"
 #include "IClip.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
-#include "UtilLog.h"
 #include "ViewMap.h"
-#include "Window.h"
 
 namespace test {
 
