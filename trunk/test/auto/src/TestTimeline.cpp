@@ -1,13 +1,16 @@
 #include "TestTimeline.h"
 
+#include <wx/uiaction.h>
 #include <boost/foreach.hpp>
 #include "AutoFolder.h"
 #include "ClipView.h"
 #include "EmptyClip.h"
 #include "FixtureGui.h"
+#include "HelperApplication.h"
 #include "HelperWindow.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"
+#include "HelperTimelinesView.h"
 #include "IClip.h"
 #include "Menu.h"
 #include "PositionInfo.h"

@@ -6,10 +6,6 @@
 #include <boost/thread/barrier.hpp>
 #include "IEventLoopListener.h"
 
-namespace gui { namespace timeline {
-    class Timeline;
-}}
-
 namespace test {
 
     // todo rename to fixtureapplication
