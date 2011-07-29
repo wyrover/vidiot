@@ -11,7 +11,6 @@ class TestAutoFolder : public CxxTest::TestSuite // Must be on same line as clas
 {
 public:
     void testWatch();
-private:
 };
 
 }

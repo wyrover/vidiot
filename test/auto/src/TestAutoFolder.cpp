@@ -18,6 +18,7 @@ namespace test {
 void TestAutoFolder::testWatch()
 {
     LOG_DEBUG << "TEST_START";
+
     wxString sFolder1( "Folder1" );
     wxString sFile1Contents( "test" );
     wxFileName sNewDir( "" );
