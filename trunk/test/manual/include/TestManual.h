@@ -3,7 +3,7 @@
 
 #include <list>
 #include <wx/filename.h>
-#include "FixtureGui.h"
+#include "FixtureApplication.h"
 #include "SuiteCreator.h"
 
 namespace model {

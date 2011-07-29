@@ -5,7 +5,7 @@
 #include "AutoFolder.h"
 #include "ClipView.h"
 #include "EmptyClip.h"
-#include "FixtureGui.h"
+#include "FixtureApplication.h"
 #include "HelperApplication.h"
 #include "HelperWindow.h"
 #include "HelperProjectView.h"
