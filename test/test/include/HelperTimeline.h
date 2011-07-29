@@ -44,6 +44,9 @@ void Drag(wxPoint from, wxPoint to);                                    ///< Do 
 /// Named such for readibility of test cases.
 void ASSERT_SELECTION_SIZE(int size);
 
+/// Unselect all clips in the timeline
+void DeselectAllClips();
+
 } // namespace
 
 #endif // HELPER_TIMELINE_H

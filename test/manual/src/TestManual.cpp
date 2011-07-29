@@ -49,17 +49,11 @@ void TestManual::testManual()
 {
     LOG_DEBUG << "TEST_START";
 
-    // Test moving one clip around
-    wxPoint from = Center(VideoClip(0,3));
-    wxPoint to(2,from.y); // Move to the beginning of timeline
-    pts length = VideoClip(0,3)->getLength();
-    Drag(from,to);
-    ASSERT( VideoClip(0,0)->getLength() == length );
-    triggerUndo();
-    ASSERT( VideoClip(0,3)->getLength() == length );
+    // This test ensures that when moving two clips around without selecting
+    // the transition between them, that the transition is also dragged.
 
     // Zoom in
-    wxUIActionSimulator().Char('=');
+//    wxUIActionSimulator().Char('=');
     waitForIdle();
 
     // Make transition after clip 2
@@ -70,7 +64,8 @@ void TestManual::testManual()
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
 
     // Move clip 2: the transition must be removed
-    getTimeline().getSelection().unselectAll();
+    DeselectAllClips();
+
     Drag(Center(VideoClip(0,1)), Center(VideoClip(0,4)));
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
@@ -81,39 +76,12 @@ void TestManual::testManual()
 
     // Move clip 3: the transition must be removed and the fourth clip becomes the third one (clip+transition removed)
     model::IClipPtr afterclip = VideoClip(0,4);
-    getTimeline().getSelection().unselectAll();
+    DeselectAllClips();
     Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
     ASSERT(afterclip == VideoClip(0,3));
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
 
-    triggerUndo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-
-    triggerUndo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
-
-    triggerUndo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
-
-    triggerUndo();
-    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-
-    triggerUndo();
-    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateAutoFolder>();
-
-    triggerRedo();
-    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-
-    triggerRedo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
-
-    triggerRedo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
-    triggerRedo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    triggerRedo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
 }
 
 } // namespace

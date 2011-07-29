@@ -2,32 +2,24 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
-//#include "AutoFolder.h"
-//#include "ClipView.h"
+#include "CreateTransition.h"
 #include "EmptyClip.h"
-//#include "FixtureApplication.h"
+#include "ExecuteDrop.h"
 #include "HelperApplication.h"
-#include "HelperWindow.h"
-//#include "HelperProjectView.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
+#include "HelperWindow.h"
 #include "IClip.h"
-//#include "Menu.h"
-//#include "PositionInfo.h"
+#include "ProjectViewCreateAutoFolder.h"
+#include "ProjectViewCreateSequence.h"
 #include "Selection.h"
 #include "Sequence.h"
-//#include "SequenceView.h"
 #include "Timeline.h"
-//#include "TimeLinesView.h"
 #include "Track.h"
 #include "Transition.h"
-//#include "UtilList.h"
+#include "Trim.h"
 #include "UtilLog.h"
-//#include "UtilLogWxwidgets.h"
-//#include "ViewMap.h"
-//#include "Window.h"
 #include "VideoClip.h"
-//#include "Zoom.h"
 
 namespace test {
 
@@ -58,53 +50,52 @@ void TestTimeline::testSelection()
     int nClips = NumberOfVideoClipsInTrack(0);
 
     // Test CTRL clicking all clips one by one
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+    ControlDown();
     BOOST_FOREACH(model::IClipPtr clip, clips)
     {
         Click(clip);
     }
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
+    ControlUp();
     ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
-    getTimeline().getSelection().unselectAll();
+    DeselectAllClips();
     ASSERT_SELECTION_SIZE(0);
 
     // Test SHIFT clicking the entire list
-    wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
+    ShiftDown();
     Click(clips.front());
     Click(clips.back());
-    wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+    ShiftUp();
     ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
 
     // Test SHIFT clicking only the partial list
-    getTimeline().getSelection().unselectAll();
+    DeselectAllClips();
     ASSERT_SELECTION_SIZE(0);
     Click(VideoClip(0,2));
-    wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
+    ShiftDown();
     Click(VideoClip(0,4));
-    wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+    ShiftUp();
     ASSERT_SELECTION_SIZE(3);
 
     // Test (de)selecting one clip with CTRL click
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+    ControlDown();
     Click(VideoClip(0,3));
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
+    ControlUp();
     ASSERT_SELECTION_SIZE(2);
-    waitForIdle();
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+    ControlDown();
     Click(VideoClip(0,3));
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
+    ControlUp();
     ASSERT_SELECTION_SIZE(3);
 
     // Test selection the transition between two clips when shift selecting
-    getTimeline().getSelection().unselectAll();
+    DeselectAllClips();
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
     wxUIActionSimulator().Char('c');
     waitForIdle();
     Click(VideoClip(0,1));
-    wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
+    ShiftDown();
     Click(VideoClip(0,3));
-    wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+    ShiftUp();
     ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
 }
 
@@ -118,10 +109,9 @@ void TestTimeline::testTransition()
 
     // Zoom in maximally. This is required to have accurate pointer positioning further on.
     // Without this, truncating integers in ptsToPixels and pixelsToPts causes wrong pointer placement.
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+    ControlDown();
     wxUIActionSimulator().Char('=');
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-    waitForIdle();
+    ControlUp();
 
     // Shift Trim clips to make room for transition
     TrimLeft(VideoClip(0,2),50,true);
@@ -241,5 +231,87 @@ void TestTimeline::testDnd()
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
 }
+
+void TestTimeline::testUndo()
+{
+    LOG_DEBUG << "TEST_START";
+
+    // The undo scenario at end was difficult to fix. It was caused by using Timeline as a 
+    // identifying member for AClipEdit commands. Since the undo included undo'ing the creation
+    // of the timeline, the timeline was no longer a good identifier. Therefore, these commands
+    // now contain SequencePtr as identifier.
+    //
+    // This test also tests that when only one of the clips in a transition is moved, the 
+    // transition is removed after dropping that clip.
+
+    // Test moving one clip around
+    wxPoint from = Center(VideoClip(0,3));
+    wxPoint to(2,from.y); // Move to the beginning of timeline
+    pts length = VideoClip(0,3)->getLength();
+    Drag(from,to);
+    ASSERT( VideoClip(0,0)->getLength() == length );
+    triggerUndo();
+    ASSERT( VideoClip(0,3)->getLength() == length );
+
+    // Zoom in
+    wxUIActionSimulator().Char('=');
+    waitForIdle();
+
+    // Make transition after clip 2
+    TrimLeft(VideoClip(0,2),30,true);
+    TrimRight(VideoClip(0,1),30,true);
+    wxUIActionSimulator().Char('c');
+    waitForIdle();
+    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+
+    // Move clip 2: the transition must be removed
+    DeselectAllClips();
+    Drag(Center(VideoClip(0,1)), Center(VideoClip(0,4)));
+    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+
+    triggerUndo();
+    ASSERT(!VideoClip(0,1)->isA<model::EmptyClip>());
+    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+
+    // Move clip 3: the transition must be removed and the fourth clip becomes the third one (clip+transition removed)
+    model::IClipPtr afterclip = VideoClip(0,4);
+    DeselectAllClips();
+    Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
+    ASSERT(afterclip == VideoClip(0,3));
+    ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+
+    triggerUndo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+
+    triggerUndo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+
+    triggerUndo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+
+    triggerUndo();
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+
+    triggerUndo();
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateAutoFolder>();
+
+    triggerRedo();
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+
+    triggerRedo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+
+    triggerRedo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+
+    triggerRedo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+
+    triggerRedo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+}
+
 
 } // namespace

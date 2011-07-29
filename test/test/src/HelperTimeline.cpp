@@ -157,4 +157,9 @@ void ASSERT_SELECTION_SIZE(int size)
     ASSERT(getSelectedClipsCount() == 2 * size); // * 2 since AudioClips are selected also
 }
 
+void DeselectAllClips()
+{
+    getTimeline().getSelection().unselectAll();
+};
+
 } // namespace
