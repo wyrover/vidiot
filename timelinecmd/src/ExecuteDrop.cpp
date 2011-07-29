@@ -59,6 +59,9 @@ void ExecuteDrop::initialize()
     LOG_DEBUG << "STEP 2: Replace all drags with EmptyClips";
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
+        // If ever this mechanism (replace clip by clip) is replaced, take into account that the
+        // clips in mDrags are initialized in Drag.cpp. The list is not created 'in timeline order'
+        // in that class.
         replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
     }
 
