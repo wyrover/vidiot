@@ -183,7 +183,7 @@ model::FolderPtr ProjectView::getSelectedContainer() const
 {
     wxDataViewItemArray selection;
     mCtrl.GetSelections(selection);
-    ASSERT(selection.size() == 1);
+    ASSERT_EQUALS(selection.size(),1);
     model::NodePtr projectNode = model::INode::Ptr(static_cast<model::NodeId>(selection[0].GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(projectNode);
     ASSERT(folder);
@@ -199,7 +199,7 @@ model::NodePtrs ProjectView::getSelection() const
     BOOST_FOREACH(wxDataViewItem wxItem, selection)
     {
         model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
-        ASSERT(node != 0);
+        ASSERT_NONZERO(node);
         l.push_back(node);
     }
     return l;
@@ -316,7 +316,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
 
 void ProjectView::onCut(wxCommandEvent& event)
 {
-    ASSERT(getSelection().size() > 0);
+    ASSERT_MORE_THAN_ZERO(getSelection().size());
     if (wxTheClipboard->Open())
     {
         wxTheClipboard->SetData(new DataObject(getSelection()));
@@ -327,7 +327,7 @@ void ProjectView::onCut(wxCommandEvent& event)
 
 void ProjectView::onCopy(wxCommandEvent& event)
 {
-    ASSERT(getSelection().size() > 0);
+    ASSERT_MORE_THAN_ZERO(getSelection().size());
     if (wxTheClipboard->Open())
     {
         wxTheClipboard->SetData(new DataObject(getSelection()));

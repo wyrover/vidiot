@@ -32,19 +32,19 @@ void ProjectViewTests::testAdditionAndRemoval()
     model::SequencePtr sequence1 = addSequence( sSequence1, folder1 );
     model::Files files1 = addFiles( boost::assign::list_of(filepath), folder1 );
 
-    ASSERT( autofolder1->getParent() == root );
-    ASSERT( folder1->getParent() == root );
-    ASSERT( sequence1->getParent() == folder1 );
-    ASSERT( countProjectView() == files.size() + 5); // +4: Root + Autofolder + Folder + Sequence + File node
-    ASSERT( files1.size() == 1);
-    ASSERT( files1.front()->getParent() == folder1 );
-    ASSERT( root->find(sFile).size() == 1 );    // One file with a relative file name
-    ASSERT( root->find(filepath.GetLongPath()).size() == 1 ); // And one file with an absolute file name
+    ASSERT_EQUALS(autofolder1->getParent(),root);
+    ASSERT_EQUALS(folder1->getParent(),root);
+    ASSERT_EQUALS(sequence1->getParent(),folder1);
+    ASSERT_EQUALS(countProjectView(),files.size() + 5); // +4: Root + Autofolder + Folder + Sequence + File node
+    ASSERT_EQUALS(files1.size(),1);
+    ASSERT_EQUALS(files1.front()->getParent(),folder1);
+    ASSERT_EQUALS(root->find(sFile).size(),1);    // One file with a relative file name
+    ASSERT_EQUALS(root->find(filepath.GetLongPath()).size(),1); // And one file with an absolute file name
 
     remove( files1.front() );
-    ASSERT( countProjectView() == files.size() + 4); // +4: Root + Autofolder + Folder + Sequence node
+    ASSERT_EQUALS(countProjectView(),files.size() + 4); // +4: Root + Autofolder + Folder + Sequence node
     remove( folder1 ); // Also removes sequence1 which is contained in folder1
-    ASSERT( countProjectView() == files.size() + 2); // +4: Root + Autofolder node
+    ASSERT_EQUALS(countProjectView(),files.size() + 2); // +4: Root + Autofolder node
 }
 
 void ProjectViewTests::testCreateSequence()
@@ -55,8 +55,8 @@ void ProjectViewTests::testCreateSequence()
     model::FolderPtr root = createProject();
     model::FolderPtr autofolder1 = addAutoFolder( path );
     model::SequencePtr sequence1 = createSequence( autofolder1 );
-    ASSERT( countProjectView() == files.size() + 3); // +3: Root + Autofolder + Sequence + File node
-    ASSERT( sequence1->getParent() == root);
+    ASSERT_EQUALS(countProjectView(),files.size() + 3); // +3: Root + Autofolder + Sequence + File node
+    ASSERT_EQUALS(sequence1->getParent(),root);
 }
 
 } // namespace

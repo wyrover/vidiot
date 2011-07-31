@@ -74,7 +74,7 @@ wxDataViewItem ProjectViewModel::GetParent( const wxDataViewItem &wxItem ) const
         if (!p->hasParent())
         {
             // Root asset has the invisible root as parent
-            ASSERT(p == model::Project::get().getRoot())(p);
+            ASSERT_EQUALS(p,model::Project::get().getRoot());
             return wxDataViewItem(0);
         }
         else
@@ -123,7 +123,7 @@ unsigned int ProjectViewModel::GetColumnCount() const
 
 wxString ProjectViewModel::GetColumnType(unsigned int col) const
 {
-    ASSERT(col <= GetColumnCount());
+    ASSERT_LESS_THAN_EQUALS(col,GetColumnCount());
     switch (col)
     {
     case 0: return wxT("icontext");
@@ -135,7 +135,7 @@ wxString ProjectViewModel::GetColumnType(unsigned int col) const
 void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) const
 {
     ASSERT(wxItem.IsOk());
-    ASSERT(col <= GetColumnCount());
+    ASSERT_LESS_THAN_EQUALS(col,GetColumnCount());
 
     model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
     switch (col)
@@ -167,8 +167,8 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
 bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col )
 {
     ASSERT(wxItem.IsOk());
-    ASSERT(col <= GetColumnCount());
-    ASSERT(col == 0); // Only rename is possible
+    ASSERT_LESS_THAN_EQUALS(col,GetColumnCount());
+    ASSERT_ZERO(col); // Only rename is possible
 
     model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
     if (canBeRenamed(node))

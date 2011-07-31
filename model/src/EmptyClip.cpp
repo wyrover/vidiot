@@ -92,7 +92,7 @@ void EmptyClip::adjustBegin(pts adjustment)
 {
     // Enlarging is not possible, since that requires enlarging the underlying EmptyFile.
     // Only reducing the emptyclip/file is needed for pasting a clip somewhere inside an empty area.
-    ASSERT(adjustment > 0)(adjustment); 
+    ASSERT_MORE_THAN_ZERO(adjustment); 
     Clip::adjustBegin(adjustment);
     VAR_DEBUG(*this)(adjustment);
 }

@@ -199,7 +199,7 @@ void Watcher::unwatch( model::NodePtr node, wxFileName path )
     if (isWatchable(node))
     {
         VAR_DEBUG(path);
-        ASSERT(mFileMap.find(path) != mFileMap.end());
+        ASSERT_MAP_CONTAINS(mFileMap,path);
         UtilList<model::NodePtr>(mFileMap[path]).removeElements(boost::assign::list_of(node));
         if (mFileMap[path].empty())
         {

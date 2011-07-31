@@ -56,8 +56,14 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
         mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateLastSetPosition();
 
-        getLeftClip()->moveTo(mProgress);
-        getRightClip()->moveTo(mProgress);
+        if (getLeftClip())
+        {
+            getLeftClip()->moveTo(mProgress);
+        }
+        if (getRightClip())
+        {
+            getRightClip()->moveTo(mProgress);
+        }
     }
     VideoFramePtr videoFrame = getVideo(mProgress, requestedWidth, requestedHeight, alpha);
     mProgress++;

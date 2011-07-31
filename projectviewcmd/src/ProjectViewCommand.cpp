@@ -18,7 +18,7 @@ ProjectViewCommand::~ProjectViewCommand()
 // static
 ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::NodePtrs children)
 {
-    ASSERT(children.size() > 0);
+    ASSERT_MORE_THAN_ZERO(children.size());
 
     model::NodePtrs prunedlist = ProjectViewCommand::prune(children);
     ParentAndChildPairs pairs;
@@ -50,7 +50,7 @@ bool isDescendantOf(model::NodePtr descendant, model::NodePtr ascendant)
 // static
 model::NodePtrs ProjectViewCommand::prune(model::NodePtrs children)
 {
-    ASSERT(children.size() > 0);
+    ASSERT_MORE_THAN_ZERO(children.size());
 
     model::NodePtrs newlist;
     BOOST_FOREACH( model::NodePtr child, children )

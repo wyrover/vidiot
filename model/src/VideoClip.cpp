@@ -78,7 +78,7 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
         videoFrame = getDataGenerator<VideoFile>()->getNextVideo(requestedWidth, requestedHeight, alpha);
         if (videoFrame)
         {
-            ASSERT(videoFrame->getRepeat() > 0);
+            ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());
             if (mProgress + videoFrame->getRepeat() > length)
             {
                 videoFrame->setRepeat(length - mProgress);

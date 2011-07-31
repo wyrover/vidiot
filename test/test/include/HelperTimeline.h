@@ -8,6 +8,10 @@
 namespace model {
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
+class VideoTrack;
+typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
+class AudioTrack;
+typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
 }
 
 namespace test {
@@ -18,10 +22,23 @@ wxPoint TimelinePosition();                 ///< \return the physical position o
 /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
 int NumberOfVideoClipsInTrack(int trackindex = 0);
 
+/// Return a video track
+/// \param trackindex index position (0-based) of the video track, counting from the divider upwards
+model::VideoTrackPtr VideoTrack(int trackindex = 0);
+
+/// Return a audio track
+/// \param trackindex index position (0-based) of the audio track, counting from the divider downwards
+model::AudioTrackPtr AudioTrack(int trackindex = 0);
+
 /// Return a clip in a video track
 /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
 /// \param clipindex index position (0-based) of the clip in the track, counting from left to right
 model::IClipPtr VideoClip(int trackindex = 0, int clipindex = 0);
+
+/// Return a clip in an audio track
+/// \param trackindex index position (0-based) of the audio track, counting from the divider upwards
+/// \param clipindex index position (0-based) of the clip in the track, counting from left to right
+model::IClipPtr AudioClip(int trackindex = 0, int clipindex = 0);
 
 int getNonEmptyClipsCount();                ///< \return number of non-empty clips (both audio and video) in given timeline
 int getSelectedClipsCount();                ///< \return number of selected clips (both audio and video) in given timeline
@@ -38,7 +55,7 @@ wxPoint RightCenter(model::IClipPtr clip);  ///< \return right center position (
 void Click(model::IClipPtr clip);                                       ///< Click (down+up) the mouse in the center of a clip
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
 void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side
-void Drag(wxPoint from, wxPoint to);                                    ///< Do a drag and drop between the two points (press, move, release)
+void Drag(wxPoint from, wxPoint to, bool ctrl = false);                 ///< Do a drag and drop between the two points (press, move, release). If ctrl = true, then ctrl is pressed at the beginning of the drag (is released directly after moving 'a bit')
 
 /// Assert for the count of the selected clips.
 /// Named such for readibility of test cases.

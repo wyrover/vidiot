@@ -47,7 +47,7 @@ int Convert::ptsToFrames(int audioRate, int nAudioChannels, pts position)
         static_cast<boost::int64_t>(audioRate * nAudioChannels) * 
         static_cast<boost::int64_t>(model::Convert::ptsToTime(position)) /
         static_cast<boost::int64_t>(Constants::sSecond);
-    ASSERT(nFrames >= 0);
+    ASSERT_MORE_THAN_EQUALS_ZERO(nFrames);
     return nFrames;
 }
 
@@ -58,7 +58,7 @@ pts Convert::framesToPts(int audioRate, int nAudioChannels, int nFrames)
         static_cast<boost::int64_t>(nFrames) * 
         static_cast<boost::int64_t>(Constants::sSecond) /
         static_cast<boost::int64_t>(audioRate * nAudioChannels);
-    ASSERT(time >= 0);
+    ASSERT_MORE_THAN_EQUALS_ZERO(time);
     return model::Convert::timeToPts(time); 
 }
 

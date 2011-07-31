@@ -101,7 +101,23 @@ DECLAREENUM(LogLevel, \
 #define FATAL                               LogVar("FATAL", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 #define NIY                                 LogVar("NIY",   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 
+#define ASSERT_EQUALS(value1,value2)                ASSERT(value1 == value2)(value1)(value2)
+#define ASSERT_DIFFERS(value1,value2)               ASSERT(value1 != value2)(value1)(value2)
+#define ASSERT_MORE_THAN(value1,value2)             ASSERT(value1 >  value2)(value1)(value2)
+#define ASSERT_MORE_THAN_EQUALS(value1,value2)      ASSERT(value1 >= value2)(value1)(value2)
+#define ASSERT_LESS_THAN(value1,value2)             ASSERT(value1 < value2)(value1)(value2)
+#define ASSERT_LESS_THAN_EQUALS(value1,value2)      ASSERT(value1 <= value2)(value1)(value2)
+#define ASSERT_CONTAINS(container,value)            ASSERT(find(container.begin(),container.end(),value) != container.end())(#container)(value)
+#define ASSERT_CONTAINS_NOT(container,value)        ASSERT(find(container.begin(),container.end(),value) == container.end())(#container)(value)
+#define ASSERT_MAP_CONTAINS(container,value)        ASSERT(container.find(value) != container.end())(#container)(value)
+#define ASSERT_MAP_CONTAINS_NOT(container,value)    ASSERT(container.find(value) == container.end())(#container)(value)
 
+#define ASSERT_ZERO(value)                          ASSERT(value == 0)(value)
+#define ASSERT_NONZERO(value)                       ASSERT(value != 0)(value)
+#define ASSERT_MORE_THAN_ZERO(value)                ASSERT(value >  0)(value)
+#define ASSERT_MORE_THAN_EQUALS_ZERO(value)         ASSERT(value >= 0)(value)
+#define ASSERT_LESS_THAN_ZERO(value)                ASSERT(value <  0)(value)
+#define ASSERT_LESS_THAN_EQUALS_ZERO(value)         ASSERT(value <= 0)(value)
 
 ////////////////////////////////////////////////////////////////////////////////
 // LOG CLASS

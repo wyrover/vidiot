@@ -57,7 +57,7 @@ size_t DataObject::GetDataSize () const
 
 bool DataObject::SetData(size_t len, const void *buf)
 {
-    ASSERT(len % sizeof(model::NodeId) == 0)(len);
+    ASSERT_ZERO(len % sizeof(model::NodeId));
 
     mAssets.clear();
 

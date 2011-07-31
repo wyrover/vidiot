@@ -121,7 +121,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     int16_t* targetData = audioDecodeBuffer;
     int sourceSize = audioPacket->getPacket()->size;
     int targetSize = 0;
-    ASSERT(sourceSize > 0)(sourceSize);
+    ASSERT_MORE_THAN_ZERO(sourceSize);
 
     while (sourceSize > 0)
     {
@@ -130,7 +130,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
         packet.data = sourceData;
         packet.size = sourceSize;
         int usedSourceBytes = avcodec_decode_audio3(getCodec(), targetData, &decodeSize, &packet);
-        ASSERT(usedSourceBytes >= 0)(usedSourceBytes);
+        ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
 
         if (decodeSize <= 0)
         {
@@ -143,7 +143,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
         sourceData += usedSourceBytes;
         sourceSize -= usedSourceBytes;
 
-        ASSERT(decodeSize % 2 == 0)(decodeSize);
+        ASSERT_ZERO(decodeSize % 2)(decodeSize);
         targetSize += decodeSize;
         targetData += decodeSize / AudioChunk::sBytesPerSample;
     }
@@ -169,7 +169,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
         // Use the plain decoded data without resampling.
         targetData = audioDecodeBuffer;
     }
-    ASSERT(nSamples > 0)(nSamples);
+    ASSERT_MORE_THAN_ZERO(nSamples);
 
     //////////////////////////////////////////////////////////////////////////
     // PTS
@@ -222,12 +222,12 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
     AVCodec* audioCodec = avcodec_find_decoder(getCodec()->codec_id);
-    ASSERT(audioCodec != 0)(audioCodec);
+    ASSERT_NONZERO(audioCodec);
 
     int result = avcodec_open(getCodec(), audioCodec);
-    ASSERT(result >= 0)(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
-    ASSERT(getCodec()->sample_fmt == AV_SAMPLE_FMT_S16)(getCodec()->sample_fmt);
+    ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16);
     //AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
     //AV_SAMPLE_FMT_S16,         ///< signed 16 bits
     //AV_SAMPLE_FMT_S32,         ///< signed 32 bits
@@ -244,7 +244,7 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
                 audioRate, getCodec()->sample_rate,
                 SAMPLE_FMT_S16, SAMPLE_FMT_S16,
                 taps, 10, 0, 0.8);
-        ASSERT(mResampleContext != 0);
+        ASSERT_NONZERO(mResampleContext);
     }
 
     VAR_DEBUG(this)(getCodec());

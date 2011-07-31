@@ -34,7 +34,7 @@ public:
     {
         {
             boost::mutex::scoped_lock lock(mMutex);
-            ASSERT(newMaxSize > mSize)(newMaxSize)(mSize);
+            ASSERT_MORE_THAN(newMaxSize,mSize);
             mMaxSize = newMaxSize;
         }
         conditionNotFull.notify_all();
@@ -68,7 +68,7 @@ public:
         ELEMENT frame = items.front();
         items.pop_front();
         --mSize;
-        ASSERT(mSize >= 0)(mSize);
+        ASSERT_MORE_THAN_EQUALS_ZERO(mSize);
         conditionNotFull.notify_all();
         return frame;
     }
@@ -88,7 +88,7 @@ public:
             }
             items.push_back(frame);
             ++mSize;
-            ASSERT(mSize > 0)(mSize);
+            ASSERT_MORE_THAN_ZERO(mSize);
         }
         conditionNotEmpty.notify_all();
         return mSize;

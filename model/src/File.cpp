@@ -141,9 +141,9 @@ void File::moveTo(pts position)
     stopReadingPackets();
 
     int result = av_seek_frame(mFileContext, -1, model::Convert::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
-    ASSERT(result >= 0)(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
-    ASSERT(mPackets.getSize() == 0)(mPackets.getSize());
+    ASSERT_ZERO(mPackets.getSize());
     mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
     mTwoInARow = 0;
 
@@ -338,10 +338,10 @@ void File::openFile()
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
     int result = av_open_input_file(&mFileContext, mPath.GetLongPath(), NULL, 0, NULL);
-    ASSERT(result == 0)(result);
+    ASSERT_ZERO(result);
 
     result = av_find_stream_info(mFileContext);
-    ASSERT(result >= 0)(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     mNumberOfFrames = -1;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
@@ -411,10 +411,10 @@ void File::bufferPacketsThread()
             mPackets.push(PacketPtr());
             break;
         }
-        ASSERT(packet->size > 0);
+        ASSERT_MORE_THAN_ZERO(packet->size);
 
         int retval = av_dup_packet(packet);
-        ASSERT(retval >= 0)(retval);
+        ASSERT_MORE_THAN_EQUALS_ZERO(retval);
 
         if(packet->stream_index == mStreamIndex)
         {

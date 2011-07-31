@@ -3,6 +3,10 @@
 
 #include <string>
 
+#define ASSERT(expr)    if ((expr)) ; else  LogVar(#expr,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define FATAL                               LogVar("FATAL", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define NIY                                 LogVar("NIY",   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+
 ////////////////////////////////////////////////////////////////////////////////
 // IASSERT
 ////////////////////////////////////////////////////////////////////////////////

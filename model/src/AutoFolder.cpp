@@ -60,10 +60,10 @@ wxFileName AutoFolder::getPath() const
 // static
 IPaths AutoFolder::getSupportedFiles( wxFileName directory )
 {
-    ASSERT( directory.IsDir() && directory.IsAbsolute() );
+    ASSERT(directory.IsDir() && directory.IsAbsolute())(directory);
     IPaths result;
     wxDir dir( directory.GetLongPath() );
-    ASSERT( dir.IsOpened() );
+    ASSERT(dir.IsOpened());
     wxString path;
     for (bool cont = dir.GetFirst(&path); cont; cont = dir.GetNext(&path))
     {
