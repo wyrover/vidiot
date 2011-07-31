@@ -103,7 +103,7 @@ void Track::moveTo(pts position)
         lastFrame += (*mItClips)->getLength();
     }
 
-    ASSERT(position <= lastFrame)(position)(lastFrame);
+    ASSERT_LESS_THAN_EQUALS(position,lastFrame);
     mItCurrent = *mItClips;
     mItCurrent->moveTo(position - firstFrame);// - 1); // -1: Counting starts at 0
 }
@@ -235,7 +235,7 @@ IClipPtr Track::getPreviousClip(IClipPtr clip)
 
 pts Track::getLeftEmptyArea(IClipPtr clip)
 {
-    ASSERT(UtilList<IClipPtr>(mClips).hasElement(clip));
+    ASSERT_CONTAINS(mClips,clip);
     pts leftmost = clip->getLeftPts();
     IClipPtr previous = getPreviousClip(clip);
     while (previous && previous->isA<EmptyClip>())
@@ -248,7 +248,7 @@ pts Track::getLeftEmptyArea(IClipPtr clip)
 
 pts Track::getRightEmptyArea(IClipPtr clip)
 {
-    ASSERT(UtilList<IClipPtr>(mClips).hasElement(clip));
+    ASSERT_CONTAINS(mClips,clip);
     pts rightmost = clip->getRightPts();
     IClipPtr next = getNextClip(clip);
     while (next && next->isA<EmptyClip>())

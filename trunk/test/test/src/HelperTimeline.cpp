@@ -2,16 +2,19 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
+#include "AudioTrack.h"
 #include "ClipView.h"
 #include "EmptyClip.h"
 #include "HelperApplication.h"
 #include "HelperTimelinesView.h"
+#include "HelperWindow.h"
 #include "IClip.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
+#include "VideoTrack.h"
 #include "ViewMap.h"
 
 namespace test {
@@ -27,10 +30,24 @@ int NumberOfVideoClipsInTrack(int trackindex)
     return videoTrack->getClips().size();
 }
 
+model::VideoTrackPtr VideoTrack(int trackindex)
+{
+    return boost::dynamic_pointer_cast<model::VideoTrack>(getSequence()->getVideoTrack(trackindex));
+}
+
+model::AudioTrackPtr AudioTrack(int trackindex)
+{
+    return boost::dynamic_pointer_cast<model::AudioTrack>(getSequence()->getAudioTrack(trackindex));
+}
+
 model::IClipPtr VideoClip(int trackindex, int clipindex)
 {
-    model::TrackPtr videoTrack = getSequence()->getVideoTrack(trackindex);
-    return videoTrack->getClipByIndex(clipindex);
+    return getSequence()->getVideoTrack(trackindex)->getClipByIndex(clipindex);
+}
+
+model::IClipPtr AudioClip(int trackindex, int clipindex)
+{
+    return getSequence()->getAudioTrack(trackindex)->getClipByIndex(clipindex);
 }
 
 int getNonEmptyClipsCount()
@@ -136,15 +153,18 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
     waitForIdle();
 }
 
-void Drag(wxPoint from, wxPoint to)
+void Drag(wxPoint from, wxPoint to, bool ctrl)
 {
+    if (ctrl) { ControlDown(); }
     wxUIActionSimulator().MouseMove(TimelinePosition() + from);
     wxUIActionSimulator().MouseDown();
+    if (ctrl) { ControlUp(); }
     waitForIdle();
     for (int i = 10; i > 0; --i)
     {
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i); 
         wxUIActionSimulator().MouseMove(TimelinePosition() + p);
+        pause(100);
         waitForIdle();
     }
     waitForIdle();
@@ -154,7 +174,8 @@ void Drag(wxPoint from, wxPoint to)
 
 void ASSERT_SELECTION_SIZE(int size)
 {
-    ASSERT(getSelectedClipsCount() == 2 * size); // * 2 since AudioClips are selected also
+    // todo in case of transitions this won't work
+    ASSERT_EQUALS(getSelectedClipsCount(),2 * size); // * 2 since AudioClips are selected also
 }
 
 void DeselectAllClips()

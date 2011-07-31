@@ -122,7 +122,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
 
         int frameFinished = 0;
         AVFrame* pFrame = avcodec_alloc_frame();
-        ASSERT(pFrame != 0);
+        ASSERT_NONZERO(pFrame);
 
         boost::optional<pts> ptsOfFirstPacket = boost::none;
 
@@ -190,7 +190,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
                 mPosition = Convert::toProjectFrameRate(mDeliveredFrameInputPts, videoFrameRate);
             }
         }
-        ASSERT(pFrame->repeat_pict >= 0)(pFrame->repeat_pict);
+        ASSERT_MORE_THAN_EQUALS_ZERO(pFrame->repeat_pict);
         if (pFrame->repeat_pict > 0)
         {
             NIY; // TO BE TESTED: FILES USING 'REPEAT'
@@ -248,10 +248,10 @@ void VideoFile::startDecodingVideo()
     //mStream->codec->lowres = 2; For decoding only a 1/4 image
 
     AVCodec *videoCodec = avcodec_find_decoder(getCodec()->codec_id);
-    ASSERT(videoCodec != 0)(videoCodec);
+    ASSERT_NONZERO(videoCodec);
 
     int result = avcodec_open(getCodec(), videoCodec);
-    ASSERT(result >= 0)(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);

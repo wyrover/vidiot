@@ -2,6 +2,7 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
+#include "AudioTrack.h"
 #include "CreateTransition.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
@@ -20,6 +21,7 @@
 #include "Trim.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
+#include "VideoTrack.h"
 
 namespace test {
 
@@ -122,14 +124,14 @@ void TestTimeline::testTransition()
     pts thirdClipLength = VideoClip(0,2)->getLength();
 
     // Create crossfade
-    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 );
+    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 );
     wxUIActionSimulator().Char('c');
     waitForIdle();
-    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 + 1); // Transition added
+    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 + 1); // Transition added
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(VideoClip(0,2));
     ASSERT(transition);
-    ASSERT(transition->getLeft() > 0)(transition);
-    ASSERT(transition->getRight() > 0)(transition);
+    ASSERT_MORE_THAN(transition->getLeft(),0);
+    ASSERT_MORE_THAN(transition->getRight(),0);
 
     pts secondClipLengthWithTransition = VideoClip(0,1)->getLength(); // Counting is 0-based, 1 -> clip 2
     pts thirdClipLengthWithTransition  = VideoClip(0,3)->getLength(); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
@@ -140,12 +142,12 @@ void TestTimeline::testTransition()
     wxUIActionSimulator().KeyDown(WXK_DELETE);
     wxUIActionSimulator().KeyUp(WXK_DELETE);
     waitForIdle();
-    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
-    ASSERT(secondClipLength == VideoClip(0,1)->getLength()); // Original length of second clip must be restored
+    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
+    ASSERT_EQUALS(secondClipLength,VideoClip(0,1)->getLength()); // Original length of second clip must be restored
 
     triggerUndo(); // Trigger undo of delete
-    ASSERT(secondClipLengthWithTransition == VideoClip(0,1)->getLength());
-    ASSERT(thirdClipLengthWithTransition  == VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
+    ASSERT_EQUALS(secondClipLengthWithTransition,VideoClip(0,1)->getLength());
+    ASSERT_EQUALS(thirdClipLengthWithTransition,VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
     // Delete clip before the crossfade
     Click(VideoClip(0,1));
@@ -153,12 +155,12 @@ void TestTimeline::testTransition()
     wxUIActionSimulator().KeyDown(WXK_DELETE);
     wxUIActionSimulator().KeyUp(WXK_DELETE);
     waitForIdle();
-    ASSERT(getNonEmptyClipsCount() == mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
-    ASSERT(thirdClipLength == VideoClip(0,2)->getLength()); // Original length of third clip must be restored
+    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
+    ASSERT_EQUALS(thirdClipLength,VideoClip(0,2)->getLength()); // Original length of third clip must be restored
 
     triggerUndo(); // Trigger undo of delete
-    ASSERT(secondClipLengthWithTransition == VideoClip(0,1)->getLength());
-    ASSERT(thirdClipLengthWithTransition  == VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
+    ASSERT_EQUALS(secondClipLengthWithTransition,VideoClip(0,1)->getLength());
+    ASSERT_EQUALS(thirdClipLengthWithTransition,VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
     pixel top = TopPixel(VideoClip(0,2)) - 5;
     pixel left = LeftPixel(VideoClip(0,2)) - 1;
@@ -197,9 +199,9 @@ void TestTimeline::testDnd()
     wxUIActionSimulator().MouseUp();
     waitForIdle();
 
-    ASSERT( VideoClip(0,0)->getLength() == length );
+    ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
     triggerUndo();
-    ASSERT( VideoClip(0,3)->getLength() == length );
+    ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
 
     // Zoom in
     wxUIActionSimulator().Char('=');
@@ -249,9 +251,9 @@ void TestTimeline::testUndo()
     wxPoint to(2,from.y); // Move to the beginning of timeline
     pts length = VideoClip(0,3)->getLength();
     Drag(from,to);
-    ASSERT( VideoClip(0,0)->getLength() == length );
+    ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
     triggerUndo();
-    ASSERT( VideoClip(0,3)->getLength() == length );
+    ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
 
     // Zoom in
     wxUIActionSimulator().Char('=');
@@ -260,6 +262,7 @@ void TestTimeline::testUndo()
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
+    ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
     wxUIActionSimulator().Char('c');
     waitForIdle();
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
@@ -278,7 +281,7 @@ void TestTimeline::testUndo()
     model::IClipPtr afterclip = VideoClip(0,4);
     DeselectAllClips();
     Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
-    ASSERT(afterclip == VideoClip(0,3));
+    ASSERT_EQUALS(afterclip,VideoClip(0,3));
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
 

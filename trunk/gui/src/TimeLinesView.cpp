@@ -210,7 +210,7 @@ void TimelinesView::load(Archive & ar, const unsigned int version)
     }
     if (selectedPage != wxNOT_FOUND)
     {
-        ASSERT(selectedPage < mNotebook.GetPageCount());
+        ASSERT_LESS_THAN(selectedPage,mNotebook.GetPageCount());
         mNotebook.SetSelection(selectedPage);
     }
 }

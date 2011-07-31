@@ -52,7 +52,7 @@ bool AClipEdit::Do()
     }
     else
     {
-        ASSERT(mParams.size() != 0);
+        ASSERT_NONZERO(mParams.size());
         BOOST_FOREACH( model::MoveParameterPtr move, mParams )
         {
             doMove(move);
@@ -70,7 +70,7 @@ bool AClipEdit::Do()
 bool AClipEdit::Undo()
 {
     VAR_INFO(*this);
-    ASSERT(mParamsUndo.size() != 0);
+    ASSERT_NONZERO(mParamsUndo.size());
     BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
         doMove(move);
@@ -105,7 +105,7 @@ void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conve
             position -= clip->getLeftPts();
             if (position != 0) // If there is already a cut at the given position, nothing is changed.
             {
-                ASSERT(position < clip->getLength())(position)(clip->getLength());
+                ASSERT_LESS_THAN(position,clip->getLength());
                 model::IClipPtr left = make_cloned<model::IClip>(clip);
                 model::IClipPtr right = make_cloned<model::IClip>(clip);
                 left->adjustEnd(position - clip->getLength());
@@ -121,12 +121,13 @@ void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conve
 void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements, ReplacementMap* conversionmap)
 {
     model::TrackPtr track = original->getTrack();
+    ASSERT(track);
     model::IClipPtr position = track->getNextClip(original);
     model::IClips originallist = boost::assign::list_of(original);
 
     if (conversionmap)
     {
-        ASSERT(conversionmap->find(original) == conversionmap->end());
+        ASSERT_MAP_CONTAINS_NOT((*conversionmap),original);
         (*conversionmap)[ original ] = replacements;
     }
 
@@ -147,7 +148,7 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts lef
     model::IClipPtr from = track->getClip(left);
     if (from)
     {
-        ASSERT(from->getLeftPts() == left)(from)(left);
+        ASSERT_EQUALS(from->getLeftPts(),left);
 
         // Remove until the clip BEFORE to
         to = track->getClip(right);
@@ -292,7 +293,7 @@ void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
 
 void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
 {
-    ASSERT(amount != 0)(tracks)(start)(amount);
+    ASSERT_NONZERO(amount);
     BOOST_FOREACH( model::TrackPtr track, tracks )
     {
         if (amount > 0)
@@ -306,9 +307,9 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
         else // (amount < 0)
         {
             model::IClipPtr clip = track->getClip(start);
-            ASSERT((clip->isA<model::EmptyClip>()) && 
-                (clip->getLeftPts() <= start) && 
-                (start <= clip->getRightPts()))(tracks)(start)(amount)(track)(clip); // Enough room must be available for the shift
+            ASSERT(clip->isA<model::EmptyClip>());
+            ASSERT_MORE_THAN_EQUALS(start,clip->getLeftPts());  // Enough room must be available for the shift
+            ASSERT_LESS_THAN_EQUALS(start,clip->getRightPts()); // Enough room must be available for the shift
             replaceClip(clip, makeEmptyClips(clip->getLength() + amount));  // NOTE: amount < 0
         }
     }

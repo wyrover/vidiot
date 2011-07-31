@@ -24,16 +24,16 @@ void TestTimelinesView::testSequenceMenu()
     model::FolderPtr root = createProject();
 
     model::SequencePtr sequence1 = addSequence( sSequence1 );
-    ASSERT(getTimeline(sequence1).getMenuHandler().getMenu() == gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex));
+    ASSERT_EQUALS(getTimeline(sequence1).getMenuHandler().getMenu(), gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex));
 
     model::SequencePtr sequence2 = addSequence( sSequence2 );
-    ASSERT(getSequenceMenu() == getTimeline(sequence2).getMenuHandler().getMenu());
+    ASSERT_EQUALS(getSequenceMenu(),getTimeline(sequence2).getMenuHandler().getMenu());
 
     triggerMenu(ID_CLOSESEQUENCE);
-    ASSERT(getSequenceMenu() == getTimeline(sequence1).getMenuHandler().getMenu());
+    ASSERT_EQUALS(getSequenceMenu(),getTimeline(sequence1).getMenuHandler().getMenu());
 
     triggerMenu(ID_CLOSESEQUENCE);
-    ASSERT(getSequenceMenu()->GetMenuItemCount() == 0); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
+    ASSERT_ZERO(getSequenceMenu()->GetMenuItemCount()); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
 }
 
 } // namespace

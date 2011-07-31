@@ -72,7 +72,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
     Bind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
 
     PaError err = Pa_Initialize();
-    ASSERT(err == paNoError)(Pa_GetErrorText(err));
+    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
 	LOG_INFO;
 }
@@ -88,7 +88,7 @@ VideoDisplay::~VideoDisplay()
     stop(); // stops playback
 
     PaError err = Pa_Terminate();
-    ASSERT(err == paNoError)(Pa_GetErrorText(err));
+    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -126,10 +126,10 @@ void VideoDisplay::play()
     mCurrentAudioChunk.reset();
 
     PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, 2, paInt16, sFrameRate, paFramesPerBufferUnspecified, portaudio_callback, this );
-    ASSERT(err == paNoError)(Pa_GetErrorText(err));
+    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
     err = Pa_StartStream( mAudioOutputStream );
-    ASSERT(err == paNoError)(Pa_GetErrorText(err));
+    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
     mPlaying = true;
 
@@ -148,10 +148,10 @@ void VideoDisplay::stop()
 
         // Stop audio
         PaError err = Pa_AbortStream(mAudioOutputStream);
-        ASSERT(err == paNoError)(Pa_GetErrorText(err));
+        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
         err = Pa_CloseStream(mAudioOutputStream);
-        ASSERT(err == paNoError)(Pa_GetErrorText(err));
+        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
         // End buffer threads
         mVideoFrames.flush(); // Unblock 'push()', if needed
@@ -247,7 +247,7 @@ void VideoDisplay::audioBufferThread()
                 sample* p = 0;
                 model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFramesAvailable * sStereo, 0);
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
-                ASSERT(nFrames == nFramesAvailable)(nFrames)(nFramesAvailable);
+                ASSERT_EQUALS(nFrames,nFramesAvailable);
                 mAudioChunks.push(audioChunk);
             }
         }
@@ -308,7 +308,7 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
         memcpy(out,mCurrentAudioChunk->getUnreadSamples(),nSamples * model::AudioChunk::sBytesPerSample);
         mCurrentAudioChunk->read(nSamples);
 
-        ASSERT(remainingSamples >= nSamples)(remainingSamples)(nSamples);
+        ASSERT_MORE_THAN_EQUALS(remainingSamples,nSamples);
         remainingSamples -= nSamples;
         out += nSamples;
     }

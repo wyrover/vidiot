@@ -155,7 +155,7 @@ pts Transition::getMaxAdjustBegin() const
 void Transition::adjustBegin(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
-    ASSERT(adjustment >= getMinAdjustBegin() && adjustment <= getMaxAdjustBegin())(adjustment);
+    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustBegin());
     mFramesLeft += adjustment;
 }
 
@@ -177,7 +177,7 @@ pts Transition::getMaxAdjustEnd() const
 void Transition::adjustEnd(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
-    ASSERT(adjustment >= getMinAdjustEnd() && adjustment <= getMaxAdjustEnd())(adjustment);
+    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustEnd());
     mFramesRight += adjustment;
 }
 

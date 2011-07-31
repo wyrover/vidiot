@@ -15,9 +15,9 @@ void TestExample::testAddRemove()
 {
     std::list<int> l;
     UtilList<int>(l).addElements(boost::assign::list_of(1)(2)(3),-1);
-    ASSERT(l.size() == 3);
+    ASSERT_EQUALS(l.size(),3);
     UtilList<int>(l).removeElements(boost::assign::list_of(1)(2)(3));
-    ASSERT(l.size() == 0);
+    ASSERT_ZERO(l.size());
 }
 
 } // namespace

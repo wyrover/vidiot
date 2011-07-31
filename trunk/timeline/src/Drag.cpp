@@ -182,7 +182,10 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 if ((prevTransition->getLeft() == 0) ||     // Clip to the left of the transition is not part of the transition
                     (prev && prev->getSelected()))          // Clip to the left of the transition is also being dragged
                 {
-                    mDraggedClips.push_back(prevTransition); // This insertion is not 'in order'
+                    if (!contains(prevTransition))          // May only be added once (avoid it being added upon inspection of left clip AND upon inspection of right clip)
+                    {
+                        mDraggedClips.push_back(prevTransition); // This insertion is not 'in order'
+                    }
                 }
             }
             model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
@@ -192,7 +195,10 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 if ((nextTransition->getRight() == 0) ||    // Clip to the right of the transition is not part of the transition
                     (next && next->getSelected()))          // Clip to the right of the transition is also being dragged
                 {
-                    mDraggedClips.push_back(nextTransition); // This insertion is not 'in order'
+                    if (!contains(prevTransition))          // May only be added once (avoid it being added upon inspection of left clip AND upon inspection of right clip)
+                    {
+                        mDraggedClips.push_back(nextTransition); // This insertion is not 'in order'
+                    }
                 }
             }
         }
@@ -436,7 +442,8 @@ wxBitmap Drag::getDragBitmap() //const
     temp.SetMask(new wxMask(mask));
 
     VAR_DEBUG(mBitmapOffset)(size_x)(size_y);
-    ASSERT(size_x > 0 && size_y > 0)(size_x)(size_y);
+    ASSERT_MORE_THAN_ZERO(size_x);
+    ASSERT_MORE_THAN_ZERO(size_y);
     return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
 }
 

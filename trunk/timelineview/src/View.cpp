@@ -24,7 +24,7 @@ View::View(Timeline* timeline)
 void View::init()
 {
     VAR_DEBUG(this);
-    ASSERT(this == &getTimeline());
+    ASSERT_EQUALS(this,&getTimeline());
     mEvtHandler.Bind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, &getTimeline());
     getZoom().Bind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, &getTimeline());
 }
@@ -32,7 +32,7 @@ void View::init()
 void View::deinit()
 {
     VAR_DEBUG(this);
-    ASSERT(this == &getTimeline());
+    ASSERT_EQUALS(this,&getTimeline());
     mEvtHandler.Unbind(VIEW_UPDATE_EVENT, &Timeline::onViewUpdated, &getTimeline());
     getZoom().Unbind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, &getTimeline());
 }

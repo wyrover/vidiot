@@ -35,7 +35,7 @@ Preview::~Preview()
 
 Player* Preview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
 {
-    ASSERT(mPlayers.find(timeline) == mPlayers.end());
+    ASSERT_MAP_CONTAINS_NOT(mPlayers,timeline);
     Player* newplayer = new Player(this,sequence);
     mPlayers[timeline] = newplayer;
     GetSizer()->Add(newplayer,wxSizerFlags(1).Expand());
@@ -46,7 +46,7 @@ Player* Preview::openTimeline(model::SequencePtr sequence, timeline::Timeline* t
 void Preview::closeTimeline(timeline::Timeline* timeline)
 {
     ASSERT(mPlayer);
-    ASSERT(mPlayers.find(timeline) != mPlayers.end());
+    ASSERT_MAP_CONTAINS(mPlayers,timeline);
     selectTimeline(0);
     Player* player = mPlayers[timeline];
     hide(player);
@@ -68,7 +68,7 @@ void Preview::selectTimeline(timeline::Timeline* timeline)
     hide(mPlayer);
     if (timeline != 0)
     {
-        ASSERT(mPlayers.find(timeline) != mPlayers.end());
+        ASSERT_MAP_CONTAINS(mPlayers,timeline);
         mPlayer = mPlayers[timeline];
         GetSizer()->Show(mPlayer);
     }
@@ -101,7 +101,6 @@ void Preview::hide(Player* player)
     }
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION 
 //////////////////////////////////////////////////////////////////////////
@@ -110,6 +109,7 @@ template<class Archive>
 void Preview::serialize(Archive & ar, const unsigned int version)
 {
 }
+
 template void Preview::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Preview::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 

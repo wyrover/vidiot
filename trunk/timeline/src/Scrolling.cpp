@@ -36,7 +36,8 @@ wxPoint Scrolling::getOffset() const
     int scrollX, scrollY, ppuX, ppuY;
     getTimeline().GetViewStart(&scrollX,&scrollY);
     getTimeline().GetScrollPixelsPerUnit(&ppuX,&ppuY);
-    ASSERT(ppuX == 1 && ppuY == 1)(ppuX)(ppuY); // Other values not allowed: see Scrolling::align()
+    ASSERT_EQUALS(ppuX,1); // Other values not allowed: see Scrolling::align()
+    ASSERT_EQUALS(ppuY,1); // Other values not allowed: see Scrolling::align()
     return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 

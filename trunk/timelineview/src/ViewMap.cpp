@@ -19,8 +19,8 @@ ViewMap::ViewMap(Timeline* timeline)
 ViewMap::~ViewMap()
 {
     VAR_DEBUG(this);
-    ASSERT(mTracks.size() == 0)(mTracks);
-    ASSERT(mClips.size() == 0)(mClips);
+    ASSERT_ZERO(mTracks.size());
+    ASSERT_ZERO(mClips.size());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,25 +29,25 @@ ViewMap::~ViewMap()
 
 void ViewMap::registerView(model::IClipPtr clip, ClipView* view)
 {
-    ASSERT(mClips.find(clip) == mClips.end());
+    ASSERT_MAP_CONTAINS_NOT(mClips,clip);
     mClips.insert(std::make_pair(clip, view));
 }
 
 void ViewMap::registerView(model::TrackPtr track, TrackView* view)
 {
-    ASSERT(mTracks.find(track) == mTracks.end());
+    ASSERT_MAP_CONTAINS_NOT(mTracks,track);
     mTracks.insert(std::make_pair(track, view));
 }
 
 void ViewMap::unregisterView(model::IClipPtr clip)
 {
-    ASSERT(mClips.find(clip) != mClips.end());
+    ASSERT_MAP_CONTAINS(mClips,clip);
     mClips.erase(clip);
 }
 
 void ViewMap::unregisterView(model::TrackPtr track)
 {
-    ASSERT(mTracks.find(track) != mTracks.end());
+    ASSERT_MAP_CONTAINS(mTracks,track);
     mTracks.erase(track);
 }
 

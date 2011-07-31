@@ -1,6 +1,8 @@
 #include "TestManual.h"
 
 #include <wx/uiaction.h>
+#include <boost/foreach.hpp>
+#include "AudioTrack.h"
 #include "AutoFolder.h"
 #include "ClipView.h"
 #include "CreateTransition.h"
@@ -23,6 +25,7 @@
 #include "Transition.h"
 #include "Trim.h"
 #include "UtilLog.h"
+#include "VideoTrack.h"
 #include "ViewMap.h"
 
 namespace test {
@@ -52,10 +55,6 @@ void TestManual::testManual()
     // This test ensures that when moving two clips around without selecting
     // the transition between them, that the transition is also dragged.
 
-    // Zoom in
-//    wxUIActionSimulator().Char('=');
-    waitForIdle();
-
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
@@ -65,23 +64,23 @@ void TestManual::testManual()
 
     // Move clip 2: the transition must be removed
     DeselectAllClips();
-
-    Drag(Center(VideoClip(0,1)), Center(VideoClip(0,4)));
+    Click(VideoClip(0,1));
+    // todo why sometimes crash on aeditclip assert(track)???
+    Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(VideoClip(0,5)->isA<model::Transition>());
+    ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
+    ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
+    pause();
+    BOOST_FOREACH( model::IClipPtr clip, VideoTrack(0)->getClips() )
+    {
+        ASSERT(!clip->isA<model::Transition>());
+    }
 
-    triggerUndo();
-    ASSERT(!VideoClip(0,1)->isA<model::EmptyClip>());
-    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+pause();
 
-    // Move clip 3: the transition must be removed and the fourth clip becomes the third one (clip+transition removed)
-    model::IClipPtr afterclip = VideoClip(0,4);
-    DeselectAllClips();
-    Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
-    ASSERT(afterclip == VideoClip(0,3));
-    ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
-    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-
+// todo playback moved transition (causes a bug since transition is not ended after last frame...)
+// todo during drag the transition is shown but too far to the right...
 }
 
 } // namespace

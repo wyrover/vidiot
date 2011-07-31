@@ -25,7 +25,7 @@ Trim::Trim(model::SequencePtr sequence, model::IClipPtr clip, pts diff, bool lef
     ,   mShift(shift)
 {
     VAR_INFO(this)(mClip)(mDiff)(mLeft)(mShift);
-    ASSERT(mDiff != 0); // Useless to add an action to the undo list, when there is no change
+    ASSERT_NONZERO(mDiff); // Useless to add an action to the undo list, when there is no change
     if (mLeft)
     {
         mCommandName = _("Adjust clip begin point");
@@ -65,8 +65,8 @@ void Trim::initialize()
     if (linked)
     {
         // NIY: What if the link is 'shifted' wrt original clip?
-        ASSERT(mClip->getLeftPts() == linked->getLeftPts());
-        ASSERT(mClip->getRightPts() == linked->getRightPts());
+        ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
+        ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
 
         newlink = make_cloned<model::IClip>(linked);
         if (mLeft)
@@ -109,8 +109,8 @@ void Trim::initialize()
 
         // \todo what if the linked clip is more to the left. Then that position should 
         // be used for shifting other tracks?
-        ASSERT(mClip->getLeftPts() == linked->getLeftPts());
-        ASSERT(mClip->getRightPts() == linked->getRightPts());
+        ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
+        ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
 
         shiftAllTracks(mClip->getLeftPts(), -mDiff,  exclude);
     }
@@ -167,7 +167,9 @@ void Trim::initialize()
 
 void Trim::removewhitespace(model::IClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
 {
-    ASSERT(emptyclip && emptyclip->isA<model::EmptyClip>() && emptyclip->getLength() >= toberemoved); // The area to be removed must be available
+    ASSERT(emptyclip);
+    ASSERT(emptyclip->isA<model::EmptyClip>());
+    ASSERT_MORE_THAN_EQUALS(emptyclip->getLength(),toberemoved); // The area to be removed must be available
     replaceClip(emptyclip, makeEmptyClips(emptyclip->getLength() - toberemoved), conversionmap);
 }
 

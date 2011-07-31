@@ -129,15 +129,16 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     // (then the cursor won't flip too much).
     pixel dist_begin = position.x - getLeftPixel();
     pixel dist_end = getRightPixel() - position.x;
-    ASSERT(dist_begin >= 0 && dist_end >= 0)(dist_begin)(dist_end)(position)(info);
+    ASSERT_MORE_THAN_EQUALS_ZERO(dist_begin);
+    ASSERT_MORE_THAN_EQUALS_ZERO(dist_end);
 
     model::TrackPtr track = mClip->getTrack();
-    ASSERT(track == info.track)(position)(mClip)(track)(info);
+    ASSERT_EQUALS(track,info.track);
 
     if (mClip->isA<model::Transition>())
     {
         pixel dist_top = position.y - info.trackPosition;
-        ASSERT(dist_top >= 0)(dist_top)(position)(info);
+        ASSERT_MORE_THAN_EQUALS_ZERO(dist_top);
 
         if (dist_top <= Layout::sTransitionHeight)
         {
@@ -237,10 +238,10 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         {
             dc.SetBrush(Layout::sTransitionBgUnselected);
         }
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::sTransitionHeight);
         dc.SetPen(Layout::sTransitionPen);
         dc.SetBrush(Layout::sTransitionBrush);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::sTransitionHeight);
     }
     else
     {

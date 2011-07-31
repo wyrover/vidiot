@@ -189,7 +189,6 @@ void TrackView::draw(wxBitmap& bitmap) const
 
 void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
 {
-    wxPoint pos(position);
     std::list<bool> tf = boost::assign::list_of(false)(true);
     BOOST_FOREACH( bool transitionValue, tf ) // First, normal clips, second transitions
     {
@@ -198,8 +197,8 @@ void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dc
             if (modelclip->isA<model::Transition>() == transitionValue)
             {
                 ClipView* view = getViewMap().getView(modelclip);
-                view->drawForDragging(pos, height, dc, dcMask);
-                pos.x += view->getWidth();
+                pixel left = view->getLeftPixel();
+                view->drawForDragging(wxPoint(position.x + left,position.y), height, dc, dcMask);
             }
         }
     }

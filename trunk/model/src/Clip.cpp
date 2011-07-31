@@ -91,7 +91,7 @@ pts Clip::getLength()
 void Clip::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
-    ASSERT(position < mLength)(position)(mLength);
+    ASSERT_LESS_THAN(position,mLength);
     mLastSetPosition.reset(position);
     setGenerationProgress(0);
     mRender->moveTo(mOffset + position);
@@ -164,11 +164,12 @@ pts Clip::getMaxAdjustBegin() const
 
 void Clip::adjustBegin(pts adjustment)
 {
-    ASSERT(adjustment >= getMinAdjustBegin() && adjustment <= getMaxAdjustBegin())(adjustment)(getMinAdjustBegin())(getMaxAdjustBegin());
+    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustBegin());
+    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustBegin());
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mOffset += adjustment;
     mLength -= adjustment;
-    ASSERT(mLength <=  mRender->getLength() - mOffset)(mLength);
+    ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset);
     VAR_DEBUG(*this)(adjustment);
 }
 
@@ -184,10 +185,11 @@ pts Clip::getMaxAdjustEnd() const
 
 void Clip::adjustEnd(pts adjustment)
 {
-    ASSERT(adjustment >= getMinAdjustEnd() && adjustment <= getMaxAdjustEnd())(adjustment)(getMinAdjustEnd())(getMaxAdjustEnd());
+    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustEnd());
+    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustEnd());
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
-    ASSERT(mLength <=  mRender->getLength() - mOffset)(mLength);
+    ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset);
     VAR_DEBUG(*this)(adjustment);
 }
 

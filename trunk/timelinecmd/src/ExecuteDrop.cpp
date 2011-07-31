@@ -82,9 +82,9 @@ void ExecuteDrop::initialize()
     LOG_DEBUG << "STEP 4: Execute the drops AND fill replacement map";
     BOOST_FOREACH( Drop drop, mDrops )
     {
-        ASSERT(drop.position >= 0)(drop.position);
+        ASSERT_MORE_THAN_EQUALS_ZERO(drop.position);
         ASSERT(drop.track);
-        ASSERT(drop.clips.size() != 0);
+        ASSERT_NONZERO(drop.clips.size());
         VAR_DEBUG(drop.position)(drop.track)(drop.clips);
 
         // Determine size and end pts of dropped clips

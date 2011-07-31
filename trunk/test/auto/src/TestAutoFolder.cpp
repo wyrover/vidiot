@@ -27,19 +27,19 @@ void TestAutoFolder::testWatch()
     wxFileName path( wxFileName::GetTempDir(), "");
 
     wxFileName dirpath(wxFileName::GetTempDir(), "");
-    dirpath.AppendDir( randomString(20) );
-    wxFileName filepath( dirpath );
-    filepath.SetFullName( "test.avi" );
+    dirpath.AppendDir(randomString(20));
+    wxFileName filepath(dirpath);
+    filepath.SetFullName("test.avi");
 
-    ASSERT( !wxDirExists( dirpath.GetLongPath() ) );
+    ASSERT(!wxDirExists(dirpath.GetLongPath()));
     dirpath.Mkdir();
-    ASSERT( wxDirExists( dirpath.GetLongPath() ) );
+    ASSERT(wxDirExists(dirpath.GetLongPath()));
     VAR_DEBUG(path);
-    model::IPaths files = model::AutoFolder::getSupportedFiles( dirpath );
+    model::IPaths files = model::AutoFolder::getSupportedFiles(dirpath);
 
     model::FolderPtr root = createProject();
     model::FolderPtr autofolder1 = addAutoFolder( dirpath );
-    ASSERT( countProjectView() == 2); // Root + Autofolder
+    ASSERT_EQUALS(countProjectView(),2); // Root + Autofolder
 
     wxString ff = filepath.GetLongPath();
     wxFFile aviFile1( filepath.GetLongPath(), "w" );
@@ -51,9 +51,9 @@ void TestAutoFolder::testWatch()
     // Not the best solution......
     while ( model::AutoFolder::getSupportedFiles( dirpath ).size() < 1 )
     {
-        boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+        pause(10);
     }
-    ASSERT( countProjectView() == 3 ); // Root + Autofolder
+    ASSERT_EQUALS(countProjectView(),3); // Root + Autofolder
 
     remove( autofolder1 );
     bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
