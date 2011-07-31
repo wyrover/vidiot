@@ -50,10 +50,9 @@ Application::~Application()
 
 void Application::waitForIdle()
 {
-    boost::mutex mMutex;
-    boost::mutex::scoped_lock lock(mMutex);
+    boost::mutex::scoped_lock lock(mMutexIdle);
     QueueEvent(new EventIdleTrigger(false));
-    mCondition.wait(lock);
+    mConditionIdle.wait(lock);
 }
 
 
@@ -63,12 +62,13 @@ void Application::waitForIdle()
 
 void Application::triggerIdle(EventIdleTrigger& event)
 {
+    boost::mutex::scoped_lock lock(mMutexIdle);
     wxWakeUpIdle();
 }
 
 void Application::onIdle(wxIdleEvent& event)
 {
-    mCondition.notify_all();
+    mConditionIdle.notify_all();
     event.Skip();
 }
 

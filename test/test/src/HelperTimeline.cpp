@@ -164,7 +164,7 @@ void Drag(wxPoint from, wxPoint to, bool ctrl)
     {
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i); 
         wxUIActionSimulator().MouseMove(TimelinePosition() + p);
-        pause(100);
+        //pause(100);
         waitForIdle();
     }
     waitForIdle();
