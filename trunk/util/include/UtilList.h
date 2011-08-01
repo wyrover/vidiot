@@ -80,7 +80,7 @@ public:
     }
 
 private:
-    std::list<ELEMENT>& mList;
+    ELEMENTS& mList;
 };
 
 #endif // UTIL_LIST_H

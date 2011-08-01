@@ -35,6 +35,7 @@
 #include "Transition.h"
 #include "UtilInt.h"
 #include "UtilList.h"
+#include "UtilSet.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
@@ -161,17 +162,18 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
         // When dragging new clips into the timeline, the clips also need to be removed first.
         // This ensures that any used View classes are destroyed. Otherwise, there remain multiple
         // Views for a clip.
-        UtilList<model::IClipPtr>(mDraggedClips).addElements(mVideo.getTempTrack()->getClips(),model::IClipPtr());
-        UtilList<model::IClipPtr>(mDraggedClips).addElements(mAudio.getTempTrack()->getClips(),model::IClipPtr());
+        UtilSet<model::IClipPtr>(mDraggedClips).addElements(mVideo.getTempTrack()->getClips());
+        UtilSet<model::IClipPtr>(mDraggedClips).addElements(mAudio.getTempTrack()->getClips());
     }
     else
     {
         mDraggedTrack = info.track;
 
-        UtilList<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
+        UtilSet<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
 
         // For all transitions that are not selected, if all the clips to which a 
         // transition applies are selected, the transition must be dragged also.
+
         BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() ) // Do not use mDraggedClips as it is edited inside the loop
         {
             model::TrackPtr track = clip->getTrack();
@@ -184,7 +186,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 {
                     if (!contains(prevTransition))          // May only be added once (avoid it being added upon inspection of left clip AND upon inspection of right clip)
                     {
-                        mDraggedClips.push_back(prevTransition); // This insertion is not 'in order'
+                        UtilSet<model::IClipPtr>(mDraggedClips).addElement(prevTransition); // This insertion is not 'in order'
                     }
                 }
             }
@@ -197,7 +199,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 {
                     if (!contains(prevTransition))          // May only be added once (avoid it being added upon inspection of left clip AND upon inspection of right clip)
                     {
-                        mDraggedClips.push_back(nextTransition); // This insertion is not 'in order'
+                        UtilSet<model::IClipPtr>(mDraggedClips).addElement(nextTransition); // This insertion is not 'in order'
                     }
                 }
             }
@@ -375,7 +377,7 @@ bool Drag::isActive() const
 
 bool Drag::contains(model::IClipPtr clip) const
 {
-    return UtilList<model::IClipPtr>(static_cast<const model::IClips>(mDraggedClips)).hasElement(clip);
+    return mDraggedClips.find(clip) != mDraggedClips.end();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -812,7 +814,6 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
             }
             position += clip->getLength();
         }
-        // TODO insert all transitions for which a clip is moved, but the transition is not. These transitions must be removed. Idea: make part of AClipEdit methods... 9maybe: newMove)
         if (inregion)
         {
             drops.push_back(pi); // Insertion at end

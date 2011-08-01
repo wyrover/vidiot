@@ -2,6 +2,7 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
+#include "AudioClip.h"
 #include "AudioTrack.h"
 #include "ClipView.h"
 #include "EmptyClip.h"
@@ -14,7 +15,10 @@
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
+#include "Transition.h"
+#include "VideoClip.h"
 #include "VideoTrack.h"
+#include "VideoTransition.h"
 #include "ViewMap.h"
 
 namespace test {
@@ -174,7 +178,6 @@ void Drag(wxPoint from, wxPoint to, bool ctrl)
 
 void ASSERT_SELECTION_SIZE(int size)
 {
-    // todo in case of transitions this won't work
     ASSERT_EQUALS(getSelectedClipsCount(),2 * size); // * 2 since AudioClips are selected also
 }
 
@@ -182,5 +185,55 @@ void DeselectAllClips()
 {
     getTimeline().getSelection().unselectAll();
 };
+
+void DumpSequence()
+{
+    model::SequencePtr sequence = getSequence();
+    wxString tab("    ");
+    LOG_DEBUG << "============================================================";
+    VAR_DEBUG(*sequence);
+    BOOST_FOREACH( model::TrackPtr track, sequence->getVideoTracks() )
+    {
+        LOG_DEBUG << "------------------------------------------------------------";
+        LOG_DEBUG << tab << *track;
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (clip->isA<model::VideoTransition>())
+            {
+                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::VideoTransition>(clip));
+            }
+            else if (clip->isA<model::EmptyClip>())
+            {
+                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::EmptyClip>(clip));
+            }
+            else
+            {
+                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::VideoClip>(clip));
+            }
+        }
+    }
+    BOOST_FOREACH( model::TrackPtr track, sequence->getAudioTracks() )
+    {
+        LOG_DEBUG << "------------------------------------------------------------";
+        LOG_DEBUG << tab << *track;
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            //if (clip->isA<model::AudioTransition>())
+            //{
+            //    LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::AudioTransition>(clip));
+            //}
+            //else
+            if (clip->isA<model::EmptyClip>())
+            {
+                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::EmptyClip>(clip));
+            }
+            else
+            {
+                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::AudioClip>(clip));
+            }
+        }
+    }
+    LOG_DEBUG << "============================================================";
+}
 
 } // namespace

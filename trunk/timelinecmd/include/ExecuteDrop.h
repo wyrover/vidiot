@@ -1,6 +1,7 @@
 #ifndef EXECUTE_DROPS_H
 #define EXECUTE_DROPS_H
 
+#include <set>
 #include "AClipEdit.h"
 
 namespace gui { namespace timeline { namespace command {
@@ -25,7 +26,7 @@ public:
     };
     typedef std::list<Drop> Drops;
 
-    ExecuteDrop(model::SequencePtr sequence, model::IClips drags, Drops drops, pts shiftPosition = sNoShift, pts shiftSize = sNoShift);
+    ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, pts shiftPosition = sNoShift, pts shiftSize = sNoShift);
 
     ~ExecuteDrop();
 
@@ -42,7 +43,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::Transitions mTransitions;    ///< List of transitions that must be removed because one but not all of their adjacent clips are moved
-    model::IClips mDrags;               ///< List of clips that are removed
+    std::set<model::IClipPtr> mDrags;   ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Drops mDrops;
     pts mShiftPosition;
     pts mShiftSize;

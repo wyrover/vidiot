@@ -59,10 +59,16 @@ void Drag(wxPoint from, wxPoint to, bool ctrl = false);                 ///< Do 
 
 /// Assert for the count of the selected clips.
 /// Named such for readibility of test cases.
+/// Note that the current selected clips (getSelectedClipsCount())
+/// are compared to size * 2 (to avoid having to duplicate for
+/// the combination of audio and video clips throughout the tests).
 void ASSERT_SELECTION_SIZE(int size);
 
 /// Unselect all clips in the timeline
 void DeselectAllClips();
+
+/// Dump the sequence's contents
+void DumpSequence();
 
 } // namespace
 

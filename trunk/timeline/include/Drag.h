@@ -76,22 +76,22 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mIsInsideDrag;                 ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
-    model::IClips mDraggedClips;        ///< List of all clips currently being dragged
-    wxPoint mHotspot;                   ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
-    pts mHotspotPts;                    ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
-    wxPoint mPosition;                  ///< Current pointer drag position. In timeline coordinates.
-    wxBitmap mBitmap;                   ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 
-    wxPoint mBitmapOffset;              ///< This offset ensures that correct areas can be used when positioning on the timeline.
-    bool mActive;                       ///< True if dragging is currently active.
-    bool mSnap;                         ///< true if the drag image snaps to the nearest track(s)
-    std::list<pts> mSnapPoints;         ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
-    std::list<pts> mDragPoints;         ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
-    pts mSnapOffset;                    ///< Resulting offset caused by 'snapping to' a clip
-    std::list<pts> mSnaps;              ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
-    bool mMustUndo;                     ///< True if a command has been submitted for giving feedback. 
-    pts mShiftPosition;                 ///< Position at which clips must be shifted to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
-    pts mShiftLength;                   ///< Length of the shift required to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
+    bool mIsInsideDrag;                         ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
+    std::set<model::IClipPtr> mDraggedClips;    ///< List of all clips currently being dragged
+    wxPoint mHotspot;                           ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
+    pts mHotspotPts;                            ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
+    wxPoint mPosition;                          ///< Current pointer drag position. In timeline coordinates.
+    wxBitmap mBitmap;                           ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 
+    wxPoint mBitmapOffset;                      ///< This offset ensures that correct areas can be used when positioning on the timeline.
+    bool mActive;                               ///< True if dragging is currently active.
+    bool mSnap;                                 ///< true if the drag image snaps to the nearest track(s)
+    std::list<pts> mSnapPoints;                 ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
+    std::list<pts> mDragPoints;                 ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
+    pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
+    std::list<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
+    bool mMustUndo;                             ///< True if a command has been submitted for giving feedback. 
+    pts mShiftPosition;                         ///< Position at which clips must be shifted to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
+    pts mShiftLength;                           ///< Length of the shift required to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
 
     //////////////////////////////////////////////////////////////////////////
     // DRAGINFO

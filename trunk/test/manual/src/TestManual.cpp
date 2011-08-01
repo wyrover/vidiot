@@ -58,18 +58,17 @@ void TestManual::testManual()
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
-    wxUIActionSimulator().Char('c');
-    waitForIdle();
+    Type('c');
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
 
     // Move clip 2: the transition must be removed
     DeselectAllClips();
     Click(VideoClip(0,1));
-    // todo why sometimes crash on aeditclip assert(track)???
     Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(VideoClip(0,5)->isA<model::Transition>());
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
+    DumpSequence();
     ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
     pause();
     BOOST_FOREACH( model::IClipPtr clip, VideoTrack(0)->getClips() )

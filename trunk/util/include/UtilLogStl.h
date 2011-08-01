@@ -1,11 +1,12 @@
 #ifndef UTIL_LOG_STL_H
 #define UTIL_LOG_STL_H
 
-#include <boost/foreach.hpp>
 #include <list>
 #include <map>
 #include <ostream>
+#include <set>
 #include <vector>
+#include <boost/foreach.hpp>
 
 template <class T>
 std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)
@@ -21,6 +22,18 @@ std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)
 
 template <class T>
 std::ostream& operator<< (std::ostream& os, const std::vector<T>& obj)
+{
+    os << "{";
+    BOOST_FOREACH( T child, obj )
+    {
+        os << child << " ";
+    }
+    os << "}";
+    return os;
+}
+
+template <class T>
+std::ostream& operator<< (std::ostream& os, const std::set<T>& obj)
 {
     os << "{";
     BOOST_FOREACH( T child, obj )

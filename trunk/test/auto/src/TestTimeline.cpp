@@ -92,8 +92,7 @@ void TestTimeline::testSelection()
     DeselectAllClips();
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
-    wxUIActionSimulator().Char('c');
-    waitForIdle();
+    Type('c');
     Click(VideoClip(0,1));
     ShiftDown();
     Click(VideoClip(0,3));
@@ -125,13 +124,12 @@ void TestTimeline::testTransition()
 
     // Create crossfade
     ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 );
-    wxUIActionSimulator().Char('c');
-    waitForIdle();
+    Type('c');
     ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 + 1); // Transition added
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(VideoClip(0,2));
     ASSERT(transition);
-    ASSERT_MORE_THAN(transition->getLeft(),0);
-    ASSERT_MORE_THAN(transition->getRight(),0);
+    ASSERT_MORE_THAN_ZERO(transition->getLeft());
+    ASSERT_MORE_THAN_ZERO(transition->getRight());
 
     pts secondClipLengthWithTransition = VideoClip(0,1)->getLength(); // Counting is 0-based, 1 -> clip 2
     pts thirdClipLengthWithTransition  = VideoClip(0,3)->getLength(); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
@@ -145,7 +143,7 @@ void TestTimeline::testTransition()
     ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
     ASSERT_EQUALS(secondClipLength,VideoClip(0,1)->getLength()); // Original length of second clip must be restored
 
-    triggerUndo(); // Trigger undo of delete
+    Undo(); // Trigger undo of delete
     ASSERT_EQUALS(secondClipLengthWithTransition,VideoClip(0,1)->getLength());
     ASSERT_EQUALS(thirdClipLengthWithTransition,VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
@@ -158,10 +156,11 @@ void TestTimeline::testTransition()
     ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
     ASSERT_EQUALS(thirdClipLength,VideoClip(0,2)->getLength()); // Original length of third clip must be restored
 
-    triggerUndo(); // Trigger undo of delete
+    Undo(); // Trigger undo of delete
     ASSERT_EQUALS(secondClipLengthWithTransition,VideoClip(0,1)->getLength());
     ASSERT_EQUALS(thirdClipLengthWithTransition,VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
+    // Scrub over the transition
     pixel top = TopPixel(VideoClip(0,2)) - 5;
     pixel left = LeftPixel(VideoClip(0,2)) - 1;
     pixel right = RightPixel(VideoClip(0,2)) + 1;
@@ -183,53 +182,24 @@ void TestTimeline::testDnd()
     wxPoint from = Center(VideoClip(0,3));
     wxPoint to = from;
     to.x = 2; // Move to the beginning of timeline
-
     pts length = VideoClip(0,3)->getLength();
-
-    wxUIActionSimulator().MouseMove(TimelinePosition() + Center(VideoClip(0,3)));
-    wxUIActionSimulator().MouseDown();
-    waitForIdle();
-
-    for (int i = 1; i < 10; ++i)
-    {
-        wxPoint p(from.x + (from.x - to.x) / i, from.y + (from.y - to.y) / i); 
-        wxUIActionSimulator().MouseMove(TimelinePosition() + p);
-        waitForIdle();
-    }
-    wxUIActionSimulator().MouseUp();
-    waitForIdle();
-
+    Drag(from,to);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
-    triggerUndo();
+    Undo();
     ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
 
-    // Zoom in
-    wxUIActionSimulator().Char('=');
-    waitForIdle();
+    Type('=');  // Zoom in
 
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
-    wxUIActionSimulator().Char('c');
+    Type('c');
     waitForIdle();
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
 
     // Move clip 2: the transition must be removed
     getTimeline().getSelection().unselectAll();
-    from = Center(VideoClip(0,1));
-    to = Center(VideoClip(0,4));
-    wxUIActionSimulator().MouseMove(TimelinePosition() + from);
-    wxUIActionSimulator().MouseDown();
-    for (int i = 1; i < 25; ++i)
-    {
-        from.x += 5;
-        wxPoint p(from.x + (from.x - to.x) / i, from.y + (from.y - to.y) / i); 
-        wxUIActionSimulator().MouseMove(TimelinePosition() + p);
-        waitForIdle();
-    }
-
-    wxUIActionSimulator().MouseUp();
-    waitForIdle();
+    Drag(Center(VideoClip(0,1)),Center(VideoClip(0,4)));
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
 }
@@ -252,18 +222,16 @@ void TestTimeline::testUndo()
     pts length = VideoClip(0,3)->getLength();
     Drag(from,to);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
-    triggerUndo();
+    Undo();
     ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
 
-    // Zoom in
-    wxUIActionSimulator().Char('=');
-    waitForIdle();
+    Type('=');  // Zoom in
 
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
-    wxUIActionSimulator().Char('c');
+    Type('c');
     waitForIdle();
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
 
@@ -273,7 +241,7 @@ void TestTimeline::testUndo()
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
 
-    triggerUndo();
+    Undo();
     ASSERT(!VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
 
@@ -285,34 +253,34 @@ void TestTimeline::testUndo()
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
 
-    triggerUndo();
+    Undo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
 
-    triggerUndo();
+    Undo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 
-    triggerUndo();
+    Undo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 
-    triggerUndo();
+    Undo();
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
-    triggerUndo();
+    Undo();
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateAutoFolder>();
 
-    triggerRedo();
+    Redo();
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
-    triggerRedo();
+    Redo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 
-    triggerRedo();
+    Redo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 
-    triggerRedo();
+    Redo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
 
-    triggerRedo();
+    Redo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
 }
 
