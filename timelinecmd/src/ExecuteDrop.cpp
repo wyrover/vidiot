@@ -9,7 +9,7 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-#include "UtilList.h"
+#include "UtilSet.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
@@ -18,7 +18,7 @@ namespace gui { namespace timeline { namespace command {
 // static
 const pts ExecuteDrop::sNoShift = -1;
 
-ExecuteDrop::ExecuteDrop(model::SequencePtr sequence, model::IClips drags, Drops drops, pts shiftPosition, pts shiftSize)
+ExecuteDrop::ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, pts shiftPosition, pts shiftSize)
 :   AClipEdit(sequence)
 ,   mTransitions()
 ,   mDrags(drags)
@@ -60,8 +60,7 @@ void ExecuteDrop::initialize()
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
         // If ever this mechanism (replace clip by clip) is replaced, take into account that the
-        // clips in mDrags are initialized in Drag.cpp. The list is not created 'in timeline order'
-        // in that class.
+        // clips in mDrags are not 'in timeline order' in the set.
         replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
     }
 
@@ -140,7 +139,7 @@ bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition)
     if (transition->getLeft() > 0)
     {
         ASSERT(prev);
-        if (UtilList<model::IClipPtr>(static_cast<const model::IClips>(mDrags)).hasElement(prev))
+        if (mDrags.find(prev) != mDrags.end())
         {
             adjacentClipDragged = true;
         }
@@ -152,7 +151,7 @@ bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition)
     if (transition->getRight() > 0)
     {
         ASSERT(next);
-        if (UtilList<model::IClipPtr>(static_cast<const model::IClips>(mDrags)).hasElement(next))
+        if (mDrags.find(next) != mDrags.end())
         {
             adjacentClipDragged = true;
         }

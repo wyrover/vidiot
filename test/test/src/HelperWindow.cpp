@@ -37,7 +37,7 @@ wxMenu* getSequenceMenu()
     return gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex);
 }
 
-void triggerUndo()
+void Undo()
 {
     LOG_DEBUG;
     wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
@@ -47,7 +47,7 @@ void triggerUndo()
     logHistory();
 }
 
-void triggerRedo()
+void Redo()
 {
     LOG_DEBUG;
     wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
@@ -100,6 +100,12 @@ void ShiftDown()
 void ShiftUp()
 {
     wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+    waitForIdle();
+}
+
+void Type(int keycode, int modifiers)
+{
+    wxUIActionSimulator().Char(keycode);
     waitForIdle();
 }
 

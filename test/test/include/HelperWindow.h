@@ -33,10 +33,10 @@ model::FolderPtr getRoot();
 wxMenu* getSequenceMenu();
 
 /// Trigger an undo via pressing CTRL-z
-void triggerUndo();
+void Undo();
 
 /// Trigger a redo via pressing CTRL-y
-void triggerRedo();
+void Redo();
 
 /// Return current command in the history
 wxCommand* getCurrentCommand();
@@ -59,6 +59,8 @@ void ControlUp();       ///< Release CTRL
 
 void ShiftDown();       ///< Press down Shift
 void ShiftUp();         ///< Release Shift
+
+void Type(int keycode, int modifiers = wxMOD_NONE); 	
 
 } // namespace
 
