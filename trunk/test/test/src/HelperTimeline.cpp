@@ -10,6 +10,7 @@
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "IClip.h"
+#include "Layout.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
@@ -20,6 +21,7 @@
 #include "VideoTrack.h"
 #include "VideoTransition.h"
 #include "ViewMap.h"
+#include "Zoom.h"
 
 namespace test {
 
@@ -112,6 +114,12 @@ wxPoint LeftCenter(model::IClipPtr clip)
     return wxPoint( LeftPixel(clip), (TopPixel(clip) + BottomPixel(clip)) / 2);
 }
 
+void PositionCursor(pixel position)
+{
+    wxUIActionSimulator().MouseMove(getTimeline().GetScreenPosition() + wxPoint(gui::Layout::sVideoPosition - 4, position));
+    wxUIActionSimulator().MouseClick();
+}
+
 void Click(model::IClipPtr clip)
 {
     // yposition
@@ -192,44 +200,46 @@ void DumpSequence()
     wxString tab("    ");
     LOG_DEBUG << "============================================================";
     VAR_DEBUG(*sequence);
+    int tracknum = 0;
     BOOST_FOREACH( model::TrackPtr track, sequence->getVideoTracks() )
     {
-        LOG_DEBUG << "------------------------------------------------------------";
-        LOG_DEBUG << tab << *track;
+        LOG_DEBUG << "-------------------- VIDEOTRACK " << tracknum++ << " (length=" << track->getLength() << ") --------------------";
+        LOG_DEBUG << tab << "TRACK " << *track;
         BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
         {
             if (clip->isA<model::VideoTransition>())
             {
-                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::VideoTransition>(clip));
+                LOG_DEBUG << tab << tab << "TRANSITION " << *(boost::dynamic_pointer_cast<model::VideoTransition>(clip));
             }
             else if (clip->isA<model::EmptyClip>())
             {
-                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::EmptyClip>(clip));
+                LOG_DEBUG << tab << tab << "EMPTY      " << *(boost::dynamic_pointer_cast<model::EmptyClip>(clip));
             }
             else
             {
-                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::VideoClip>(clip));
+                LOG_DEBUG << tab << tab << "CLIP       " << *(boost::dynamic_pointer_cast<model::VideoClip>(clip));
             }
         }
     }
+    tracknum = 0;
     BOOST_FOREACH( model::TrackPtr track, sequence->getAudioTracks() )
     {
-        LOG_DEBUG << "------------------------------------------------------------";
+        LOG_DEBUG << "-------------------- AUDIOTRACK " << tracknum++ << " (length=" << track->getLength() << ") --------------------";
         LOG_DEBUG << tab << *track;
         BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
         {
             //if (clip->isA<model::AudioTransition>())
             //{
-            //    LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::AudioTransition>(clip));
+            //    LOG_DEBUG << tab << tab << "TRANSITION " << *(boost::dynamic_pointer_cast<model::AudioTransition>(clip));
             //}
             //else
             if (clip->isA<model::EmptyClip>())
             {
-                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::EmptyClip>(clip));
+                LOG_DEBUG << tab << tab << "EMPTY      " << *(boost::dynamic_pointer_cast<model::EmptyClip>(clip));
             }
             else
             {
-                LOG_DEBUG << tab << tab << *(boost::dynamic_pointer_cast<model::AudioClip>(clip));
+                LOG_DEBUG << tab << tab << "CLIP       " << *(boost::dynamic_pointer_cast<model::AudioClip>(clip));
             }
         }
     }

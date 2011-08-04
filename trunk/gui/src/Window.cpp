@@ -2,6 +2,7 @@
 
 #include <wx/confbase.h>
 #include <wx/docview.h>
+#include <wx/gdicmn.h>
 #include <wx/msgdlg.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -169,6 +170,12 @@ Window::Window()
     GetDocumentManager()->FileHistoryUseMenu(menufile);
     GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
 
+    if (wxConfigBase::Get()->ReadBool(Config::sPathTest, false))
+    {
+        wxSize screenSize = wxGetDisplaySize();
+        wxSize winSize = GetSize();
+        Move(screenSize.GetWidth() - winSize.GetWidth(),0);
+    }
     Show();
 }
 
