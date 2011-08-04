@@ -58,8 +58,9 @@ void TestManual::testManual()
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
+    PositionCursor(LeftPixel(VideoClip(0,2)));
     Type('c');
-    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(VideoClip(0,2)->isA<model::Transition>())(VideoClip(0,2));
 
     // Move clip 2: the transition must be removed
     DeselectAllClips();

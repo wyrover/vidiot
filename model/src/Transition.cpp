@@ -256,7 +256,8 @@ IClipPtr Transition::getRightClip() const
 
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
-    os << &obj << '|' << obj.mLeft << '|' << obj.mFramesLeft << '|' << obj.mRight << '|' << obj.mFramesRight << '|' << obj.mTrack.lock() << '|' << obj.mLeftPtsInTrack;
+    // Keep order same as Clip and EmptyClip for 'DumpSequence' method
+    os << &obj << '|' <<obj.mTrack.lock() << '|' << std::setw(3) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << obj.mLeft << '|' << std::setw(3) << obj.mFramesLeft << '|' << obj.mRight << '|' << std::setw(3) << obj.mFramesRight << '|' << obj.mSelected;
     return os;
 }
 

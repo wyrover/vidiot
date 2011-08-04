@@ -17,7 +17,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    static void init(wxString applicationName, wxString vendorName);
+    static void init(wxString applicationName, wxString vendorName, bool inTestMode);
 
     static wxString getFileName();
 
@@ -32,6 +32,7 @@ public:
     static const wxString sPathLogLevel;
     static const wxString sPathLogFile;
     static const wxString sPathShowDebugInfoOnWidgets;
+    static const wxString sPathTest;
     static const wxString sPathFrameRate;
     static const wxString sPathMarkerBeginAddition;
     static const wxString sPathMarkerEndAddition;

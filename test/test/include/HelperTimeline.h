@@ -52,6 +52,7 @@ wxPoint Center(model::IClipPtr clip);       ///< \return center (pixel) position
 wxPoint LeftCenter(model::IClipPtr clip);   ///< \return left center position (centered vertically)
 wxPoint RightCenter(model::IClipPtr clip);  ///< \return right center position (centered vertically)
 
+void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
 void Click(model::IClipPtr clip);                                       ///< Click (down+up) the mouse in the center of a clip
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
 void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side

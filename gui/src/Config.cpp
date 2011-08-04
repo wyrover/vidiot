@@ -16,13 +16,14 @@ wxString Config::sFileName("");
 //////////////////////////////////////////////////////////////////////////
 
 // static
-void Config::init(wxString applicationName, wxString vendorName)
+void Config::init(wxString applicationName, wxString vendorName, bool inTestMode)
 {
 	// Initialize config object. Will be destructed by wxWidgets at the end of the application
 	// This method ensures that the .ini file is created in the current working directory
 	// which enables having multiple executables with multiple settings.
 	sFileName = wxFileName(wxFileName::GetCwd(), applicationName + ".ini").GetFullPath();
 	wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
+    wxConfigBase::Get()->Write(Config::sPathTest, inTestMode);
 	
 	// Initialize log file name.  Normally ApplicationName_ProcessId.log is used.
 	// For module test, Application::sTestApplicationName.log is used.
@@ -59,6 +60,7 @@ const wxString Config::sPathLastOpened              ("/Project/LastOpened");
 const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
 const wxString Config::sPathLogFile                 ("/Debug/LogFile");
 const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
+const wxString Config::sPathTest                  ("/Debug/Test");
 const wxString Config::sPathFrameRate               ("/Video/FrameRate");
 const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");

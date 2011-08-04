@@ -248,7 +248,8 @@ boost::optional<pts> Clip::getLastSetPosition() const
 
 std::ostream& operator<<( std::ostream& os, const Clip& obj )
 {
-    os << &obj << '|' << obj.mIndex << '|' << obj.mOffset << '|' << obj.mLength << '|' << obj.mLeftPtsInTrack << '|' << obj.mSelected;
+    // Keep order same as Clip and EmptyClip for 'DumpSequence' method
+    os << &obj << '|' << obj.mTrack.lock() << '|' << std::setw(3) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << std::setw(6) << obj.mOffset << '|' << std::setw(6) << obj.mLength << '|' << obj.mSelected;
     return os;
 }
 
