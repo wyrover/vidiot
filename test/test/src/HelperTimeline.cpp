@@ -11,12 +11,15 @@
 #include "HelperWindow.h"
 #include "IClip.h"
 #include "Layout.h"
+#include "MousePointer.h"
+#include "PositionInfo.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
+#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
 #include "VideoTransition.h"
@@ -51,6 +54,13 @@ model::IClipPtr VideoClip(int trackindex, int clipindex)
     return getSequence()->getVideoTrack(trackindex)->getClipByIndex(clipindex);
 }
 
+model::VideoTransitionPtr VideoTransition(int trackindex, int clipindex)
+{
+    model::VideoTransitionPtr t = boost::dynamic_pointer_cast<model::VideoTransition>(getSequence()->getVideoTrack(trackindex)->getClipByIndex(clipindex));
+    ASSERT(t);
+    return t;
+}
+
 model::IClipPtr AudioClip(int trackindex, int clipindex)
 {
     return getSequence()->getAudioTrack(trackindex)->getClipByIndex(clipindex);
@@ -81,7 +91,20 @@ int getSelectedClipsCount()
 
 pixel LeftPixel(model::IClipPtr clip)
 {
-    return getTimeline().getViewMap().getView(clip)->getLeftPixel();
+    wxPoint p( getTimeline().getViewMap().getView(clip)->getLeftPixel(), VCenter(clip) );
+    gui::timeline::PointerPositionInfo info =  getTimeline().getMousepointer().getInfo(p);
+    while (info.clip != clip)
+    {
+        // This special handling is required to adjust for rounding errors in case of zooming.
+        // Given that 'getInfo' first looks upon the leftmost clip, and the fact that the right
+        // edge of that clip may overlap with the left edge of the given clip, we need to look
+        // more to the right to find the left most pixel of this clip that will be found in
+        // mouse lookup functions (getInfo()).
+        p.x++;
+        info = getTimeline().getMousepointer().getInfo(p);
+    }
+    ASSERT(info.clip == clip);
+    return p.x;
 }
 
 pixel RightPixel(model::IClipPtr clip)
@@ -99,52 +122,68 @@ pixel BottomPixel(model::IClipPtr clip)
     return TopPixel(clip) + clip->getTrack()->getHeight();
 }
 
+pixel VCenter(model::IClipPtr clip)
+{
+    return (TopPixel(clip) + BottomPixel(clip)) / 2;
+}
+
+pixel HCenter(model::IClipPtr clip)
+{
+    return (LeftPixel(clip) + RightPixel(clip)) / 2;
+}
+
 wxPoint Center(model::IClipPtr clip)
 {
-    return wxPoint( (LeftPixel(clip) + RightPixel(clip)) / 2, (TopPixel(clip) + BottomPixel(clip)) / 2);
+    return wxPoint( HCenter(clip), VCenter(clip) );
 }
 
 wxPoint RightCenter(model::IClipPtr clip)
 {
-    return wxPoint( RightPixel(clip), (TopPixel(clip) + BottomPixel(clip)) / 2);
+    return wxPoint( RightPixel(clip), VCenter(clip) );
 }
 
 wxPoint LeftCenter(model::IClipPtr clip)
 {
-    return wxPoint( LeftPixel(clip), (TopPixel(clip) + BottomPixel(clip)) / 2);
+    return wxPoint( LeftPixel(clip), VCenter(clip) );
 }
 
 void PositionCursor(pixel position)
 {
-    wxUIActionSimulator().MouseMove(getTimeline().GetScreenPosition() + wxPoint(gui::Layout::sVideoPosition - 4, position));
+    VAR_DEBUG(position);
+    Move(wxPoint(position, gui::Layout::sVideoPosition - 4));
     wxUIActionSimulator().MouseClick();
 }
 
-void Click(model::IClipPtr clip)
+void Move(wxPoint position)
 {
-    // yposition
-    pixel trackY = getTimeline().getSequenceView().getPosition(clip->getTrack());
-    pixel trackH = clip->getTrack()->getHeight();
-    pixel clickY = trackY + (trackH / 2);
+    VAR_DEBUG(position);
+    // wxPoint(1,1): Needed to get the same position in the application as specified in the test. Don't know why but there's always an offset of (-1,-1)
+    wxUIActionSimulator().MouseMove(getTimeline().GetScreenPosition() + position + wxPoint(1,1));
+}
 
-    // xposition
-    pixel clickX = (LeftPixel(clip) + RightPixel(clip)) / 2;
-
-    wxUIActionSimulator().MouseMove(getTimeline().GetScreenPosition() + wxPoint(clickX, clickY));
+void Click(wxPoint position)
+{
+    Move(position);
+    VAR_DEBUG(position);
     wxUIActionSimulator().MouseClick();
     waitForIdle();
+    ASSERT_EQUALS(getTimeline().getMousePointer().getLeftDownPosition(), position);
 }
 
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift)
 {
+    VAR_DEBUG(clip)(length)(shift);
     wxPoint from = LeftCenter(clip);
-    from.x += 1; // The +1 is required to fix errors where the pointer is moved to a slightly different position (don't know why exactly)
     wxPoint to = from;
     to.x += length;
-    wxUIActionSimulator().MouseMove(TimelinePosition() + from);
+    Move(from);
+    ASSERT(getTimeline().getMousepointer().getInfo(from).logicalclipposition == gui::timeline::ClipBegin)(getTimeline().getMousepointer().getInfo(from));
+    ASSERT(getTimeline().getMousepointer().getInfo(from).clip == clip)(getTimeline().getMousepointer().getInfo(from));
     if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
     wxUIActionSimulator().MouseDown();
-    wxUIActionSimulator().MouseMove(TimelinePosition() + to);
+    waitForIdle();
+    Move(to);
+    waitForIdle();
     wxUIActionSimulator().MouseUp();
     if (shift) wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
     waitForIdle();
@@ -152,14 +191,14 @@ void TrimLeft(model::IClipPtr clip, pixel length, bool shift)
 
 void TrimRight(model::IClipPtr clip, pixel length, bool shift)
 {
+    VAR_DEBUG(clip)(length)(shift);
     wxPoint from = RightCenter(clip);
-    from.x -= 1; // The -1 is required to fix errors where the pointer is moved to a slightly different position (don't know why exactly)
     wxPoint to = from;
     to.x -= length;
-    wxUIActionSimulator().MouseMove(TimelinePosition() + from);
+    Move(from);
     if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
     wxUIActionSimulator().MouseDown();
-    wxUIActionSimulator().MouseMove(TimelinePosition() + to);
+    Move(to);
     wxUIActionSimulator().MouseUp();
     if (shift) wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
     waitForIdle();
@@ -167,21 +206,30 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
 
 void Drag(wxPoint from, wxPoint to, bool ctrl)
 {
+    VAR_DEBUG(from)(to)(ctrl);
     if (ctrl) { ControlDown(); }
-    wxUIActionSimulator().MouseMove(TimelinePosition() + from);
+    waitForIdle();
+    Move(from);
+    waitForIdle();
     wxUIActionSimulator().MouseDown();
+    waitForIdle();
     if (ctrl) { ControlUp(); }
     waitForIdle();
     for (int i = 10; i > 0; --i)
     {
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i); 
-        wxUIActionSimulator().MouseMove(TimelinePosition() + p);
-        //pause(100);
+        Move(p);
+        pause(100);
         waitForIdle();
     }
     waitForIdle();
     wxUIActionSimulator().MouseUp();
     waitForIdle();
+}
+
+gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
+{
+    return getTimeline().getMousepointer().getInfo(position).logicalclipposition;
 }
 
 void ASSERT_SELECTION_SIZE(int size)
@@ -191,6 +239,7 @@ void ASSERT_SELECTION_SIZE(int size)
 
 void DeselectAllClips()
 {
+    LOG_DEBUG;
     getTimeline().getSelection().unselectAll();
 };
 

@@ -10,9 +10,15 @@ class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
 class VideoTrack;
 typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
+class VideoTransition;
+typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 class AudioTrack;
 typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
 }
+
+namespace gui { namespace timeline {
+    enum MouseOnClipPosition;
+}}
 
 namespace test {
 
@@ -35,6 +41,12 @@ model::AudioTrackPtr AudioTrack(int trackindex = 0);
 /// \param clipindex index position (0-based) of the clip in the track, counting from left to right
 model::IClipPtr VideoClip(int trackindex = 0, int clipindex = 0);
 
+/// Return a video transition in a video track
+/// \param trackindex index position (0-based) of the video track, counting from the divider upwards
+/// \param clipindex index position (0-based) of the clip in the track, counting from left to right
+/// \pre the clip at the given position is a transitin
+model::VideoTransitionPtr VideoTransition(int trackindex, int clipindex);
+
 /// Return a clip in an audio track
 /// \param trackindex index position (0-based) of the audio track, counting from the divider upwards
 /// \param clipindex index position (0-based) of the clip in the track, counting from left to right
@@ -47,16 +59,21 @@ pixel LeftPixel(model::IClipPtr clip);      ///< \return left x position of give
 pixel RightPixel(model::IClipPtr clip);     ///< \return right x position of given clip
 pixel TopPixel(model::IClipPtr clip);       ///< \return top y position of given clip
 pixel BottomPixel(model::IClipPtr clip);    ///< \return bottom y position of given clip
+pixel VCenter(model::IClipPtr clip);        ///< \return vertical center position of given clip
+pixel HCenter(model::IClipPtr clip);        ///< \return horizontal center position of given clip
 
 wxPoint Center(model::IClipPtr clip);       ///< \return center (pixel) position of a clip
 wxPoint LeftCenter(model::IClipPtr clip);   ///< \return left center position (centered vertically)
 wxPoint RightCenter(model::IClipPtr clip);  ///< \return right center position (centered vertically)
 
 void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
-void Click(model::IClipPtr clip);                                       ///< Click (down+up) the mouse in the center of a clip
+void Move(wxPoint position);                                            ///< Move the mouse to the given position within the timeline
+void Click(wxPoint position);                                           ///< Move the mouse to the given position and (left) click there
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
 void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side
 void Drag(wxPoint from, wxPoint to, bool ctrl = false);                 ///< Do a drag and drop between the two points (press, move, release). If ctrl = true, then ctrl is pressed at the beginning of the drag (is released directly after moving 'a bit')
+
+gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \return logical mouse position of the given (pixel) position.
 
 /// Assert for the count of the selected clips.
 /// Named such for readibility of test cases.

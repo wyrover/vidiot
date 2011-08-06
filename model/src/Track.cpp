@@ -269,10 +269,7 @@ pts Track::getCombinedLength(IClips clips)
     int length = 0;
     BOOST_FOREACH( IClipPtr clip, clips )
     {
-        if (!clip->isA<Transition>())
-        {
-            length += clip->getLength();
-        }
+        length += clip->getLength();
     }
     return length;
 }

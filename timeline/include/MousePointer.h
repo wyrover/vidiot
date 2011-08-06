@@ -42,7 +42,7 @@ public:
     **/
     PointerPositionInfo getInfo(wxPoint pointerposition);
 
-        void setPosition(wxPoint position);  ///< \param position current mouse pointer position.
+    void setPosition(wxPoint position);  ///< \param position current mouse pointer position.
     wxPoint getPosition() const;    ///< \return current mouse pointer position.
 
     void setLeftDownPosition(wxPoint position);  ///< \param position last (most recent) position at which a 'left down' event was received.
