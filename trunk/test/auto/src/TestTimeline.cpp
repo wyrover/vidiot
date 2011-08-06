@@ -55,7 +55,7 @@ void TestTimeline::testSelection()
     ControlDown();
     BOOST_FOREACH(model::IClipPtr clip, clips)
     {
-        Click(clip);
+        Click(Center(clip));
     }
     ControlUp();
     ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
@@ -64,27 +64,27 @@ void TestTimeline::testSelection()
 
     // Test SHIFT clicking the entire list
     ShiftDown();
-    Click(clips.front());
-    Click(clips.back());
+    Click(Center(clips.front()));
+    Click(Center(clips.back()));
     ShiftUp();
     ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
 
     // Test SHIFT clicking only the partial list
     DeselectAllClips();
     ASSERT_SELECTION_SIZE(0);
-    Click(VideoClip(0,2));
+    Click(Center(VideoClip(0,2)));
     ShiftDown();
-    Click(VideoClip(0,4));
+    Click(Center(VideoClip(0,4)));
     ShiftUp();
     ASSERT_SELECTION_SIZE(3);
 
     // Test (de)selecting one clip with CTRL click
     ControlDown();
-    Click(VideoClip(0,3));
+    Click(Center(VideoClip(0,3)));
     ControlUp();
     ASSERT_SELECTION_SIZE(2);
     ControlDown();
-    Click(VideoClip(0,3));
+    Click(Center(VideoClip(0,3)));
     ControlUp();
     ASSERT_SELECTION_SIZE(3);
 
@@ -93,9 +93,9 @@ void TestTimeline::testSelection()
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
     Type('c');
-    Click(VideoClip(0,1));
+    Click(Center(VideoClip(0,1)));
     ShiftDown();
-    Click(VideoClip(0,3));
+    Click(Center(VideoClip(0,3)));
     ShiftUp();
     ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
 }
@@ -135,7 +135,7 @@ void TestTimeline::testTransition()
     pts thirdClipLengthWithTransition  = VideoClip(0,3)->getLength(); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
     // Delete clip after the crossfade
-    Click(VideoClip(0,3)); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
+    Click(Center(VideoClip(0,3))); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
     ASSERT_SELECTION_SIZE(1);
     wxUIActionSimulator().KeyDown(WXK_DELETE);
     wxUIActionSimulator().KeyUp(WXK_DELETE);
@@ -148,7 +148,7 @@ void TestTimeline::testTransition()
     ASSERT_EQUALS(thirdClipLengthWithTransition,VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
 
     // Delete clip before the crossfade
-    Click(VideoClip(0,1));
+    Click(Center(VideoClip(0,1)));
     ASSERT_SELECTION_SIZE(1);
     wxUIActionSimulator().KeyDown(WXK_DELETE);
     wxUIActionSimulator().KeyUp(WXK_DELETE);
