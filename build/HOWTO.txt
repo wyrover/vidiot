@@ -78,6 +78,9 @@ Install ActivePerl via installer
   - #define wxUSE_STACKWALKER 1
   - #define wxUSE_DEBUGREPORT 1
   - #define wxUSE_CRASHREPORT 1
+* Apply path to wxUIActionSimulator::MouseMove:
+    int scaledx = std::ceil((float)x * 65535.0 / (displayx-1));
+    int scaledy = std::ceil((float)y * 65535.0 / (displayy-1));
 * (MSVC) build solution Release & Debug
 * (GCC)
   - cd <wxWidgets>\build\msw
