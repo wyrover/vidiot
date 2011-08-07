@@ -56,16 +56,12 @@ void TestManual::testManual()
 {
     LOG_DEBUG << "TEST_START";
 
-    Click(wxPoint(100,100));
-    waitForIdle();
-    ASSERT_EQUALS(getTimeline().getMousePointer().getLeftDownPosition(), wxPoint(100,100));
+    // Zoom in once to avoid clicking in the middle of a clip which is then 
+    // seen (logically) as clip end due to the zooming
+    Type('=');
 
     // This test ensures that when moving two clips around without selecting
     // the transition between them, that the transition is also dragged.
-
-    // Zoom in once to avoid clickin in the middle of a clip which is then 
-    // seen (logically) as clip end due to the zooming
-    Type('=');
 
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);

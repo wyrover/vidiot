@@ -1,6 +1,7 @@
 #include "HelperTimeline.h"
 
 #include <wx/uiaction.h>
+#include <wx/mousestate.h>
 #include <boost/foreach.hpp>
 #include "AudioClip.h"
 #include "AudioTrack.h"
@@ -157,8 +158,9 @@ void PositionCursor(pixel position)
 void Move(wxPoint position)
 {
     VAR_DEBUG(position);
-    // wxPoint(1,1): Needed to get the same position in the application as specified in the test. Don't know why but there's always an offset of (-1,-1)
-    wxUIActionSimulator().MouseMove(getTimeline().GetScreenPosition() + position + wxPoint(1,1));
+    wxPoint absoluteposition = getTimeline().GetScreenPosition() + position;
+    wxUIActionSimulator().MouseMove(absoluteposition);
+    ASSERT_EQUALS(wxGetMouseState().GetPosition(), absoluteposition);
 }
 
 void Click(wxPoint position)
