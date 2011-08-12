@@ -206,6 +206,7 @@ IClipPtr Track::getClipByIndex(int index)
         ++it;
         --index;
     }
+    ASSERT(it != mClips.end());
     return *it;
 }
 
