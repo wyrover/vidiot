@@ -72,6 +72,8 @@ void Click(wxPoint position);                                           ///< Mov
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
 void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side
 void Drag(wxPoint from, wxPoint to, bool ctrl = false);                 ///< Do a drag and drop between the two points (press, move, release). If ctrl = true, then ctrl is pressed at the beginning of the drag (is released directly after moving 'a bit')
+void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)
+void Play(pixel from, int ms);                                          ///< Play from the given position, with the given time.
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \return logical mouse position of the given (pixel) position.
 
@@ -85,8 +87,8 @@ void ASSERT_SELECTION_SIZE(int size);
 /// Unselect all clips in the timeline
 void DeselectAllClips();
 
-/// Dump the sequence's contents
-void DumpSequence();
+/// Dump the timeline: the sequence's contents and some parameters of the timeline (positions)
+void DumpTimeline();
 
 } // namespace
 

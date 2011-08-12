@@ -97,10 +97,10 @@ pixel LeftPixel(model::IClipPtr clip)
     while (info.clip != clip)
     {
         // This special handling is required to adjust for rounding errors in case of zooming.
-        // Given that 'getInfo' first looks upon the leftmost clip, and the fact that the right
-        // edge of that clip may overlap with the left edge of the given clip, we need to look
-        // more to the right to find the left most pixel of this clip that will be found in
-        // mouse lookup functions (getInfo()).
+        // The leftmost pts value may not be corresponding with an exact pixel value.
+        // Thus sometimes, we need to look more to the right to find the leftmost pixel of 
+        // this clip - to ensure that lookups at the returned pixel value correspond with the
+        // given clip and not its left neighbour.
         p.x++;
         info = getTimeline().getMousepointer().getInfo(p);
     }
@@ -110,7 +110,20 @@ pixel LeftPixel(model::IClipPtr clip)
 
 pixel RightPixel(model::IClipPtr clip)
 {
-    return getTimeline().getViewMap().getView(clip)->getRightPixel();
+    wxPoint p( getTimeline().getViewMap().getView(clip)->getRightPixel(), VCenter(clip) );
+    gui::timeline::PointerPositionInfo info =  getTimeline().getMousepointer().getInfo(p);
+    while (info.clip != clip)
+    {
+        // This special handling is required to adjust for rounding errors in case of zooming.
+        // The rightmost pts value may not be corresponding with an exact pixel value.
+        // Thus sometimes, we need to look more to the left to find the rightmost pixel of 
+        // this clip - to ensure that lookups at the returned pixel value correspond with the
+        // given clip and not its right neighbour.
+        p.x--;
+        info = getTimeline().getMousepointer().getInfo(p);
+    }
+    ASSERT(info.clip == clip);
+    return p.x;
 }
 
 pixel TopPixel(model::IClipPtr clip)
@@ -210,22 +223,36 @@ void Drag(wxPoint from, wxPoint to, bool ctrl)
 {
     VAR_DEBUG(from)(to)(ctrl);
     if (ctrl) { ControlDown(); }
-    waitForIdle();
     Move(from);
-    waitForIdle();
     wxUIActionSimulator().MouseDown();
     waitForIdle();
     if (ctrl) { ControlUp(); }
     waitForIdle();
-    for (int i = 10; i > 0; --i)
+    static const int DRAGSTEPS = 10; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
+    for (int i = DRAGSTEPS; i > 0; --i)
     {
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i); 
         Move(p);
-        pause(100);
         waitForIdle();
     }
-    waitForIdle();
     wxUIActionSimulator().MouseUp();
+    waitForIdle();
+}
+
+void Scrub(pixel from, pixel to)
+{
+    for (int i = from; i < to; ++i)
+    {
+        PositionCursor(i);
+    }
+}
+
+void Play(pixel from, int ms)
+{
+    PositionCursor(from);
+    Type(' ');
+    pause(ms);
+    Type(' ');
     waitForIdle();
 }
 
@@ -245,10 +272,13 @@ void DeselectAllClips()
     getTimeline().getSelection().unselectAll();
 };
 
-void DumpSequence()
+void DumpTimeline()
 {
     model::SequencePtr sequence = getSequence();
     wxString tab("    ");
+    LOG_DEBUG << "============================================================";
+    LOG_DEBUG << "LEFTDOWN:  " << getTimeline().getMousePointer().getLeftDownPosition();
+    LOG_DEBUG << "RIGHTDOWN: " << getTimeline().getMousePointer().getRightDownPosition();
     LOG_DEBUG << "============================================================";
     VAR_DEBUG(*sequence);
     int tracknum = 0;

@@ -49,9 +49,12 @@ CrossFade::~CrossFade()
 
 VideoFramePtr CrossFade::getVideo(pts position, int requestedWidth, int requestedHeight, bool alpha)
 {
-    VideoFramePtr leftFrame = boost::static_pointer_cast<VideoClip>(getLeftClip())->getNextVideo(requestedWidth,requestedHeight,alpha);
-    VideoFramePtr rightFrame = boost::static_pointer_cast<VideoClip>(getRightClip())->getNextVideo(requestedWidth,requestedHeight,alpha);
-    VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, 1, 1);
+    model::IClipPtr leftClip = getLeftClip();
+    model::IClipPtr rightClip = getRightClip();
+
+    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(getLeftClip())->getNextVideo(requestedWidth,requestedHeight,alpha)  : VideoFramePtr();
+    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(getRightClip())->getNextVideo(requestedWidth,requestedHeight,alpha) : VideoFramePtr();
+    VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, 1, 1);
     VAR_DEBUG(position)(requestedWidth)(requestedHeight)(alpha)(leftFrame)(rightFrame)(targetFrame);
 
     pts steps = getLength();
@@ -59,13 +62,14 @@ VideoFramePtr CrossFade::getVideo(pts position, int requestedWidth, int requeste
     float factorRight = (float)position / (float)getLength();
     VAR_DEBUG(factorLeft)(factorRight);
 
-    unsigned char* leftData = leftFrame->getData()[0];
-    unsigned char* rightData = rightFrame->getData()[0];
-    unsigned char* targetData = targetFrame->getData()[0];
+    unsigned char* leftData   = leftFrame  ? leftFrame  ->getData()[0] : 0;
+    unsigned char* rightData  = rightFrame ? rightFrame ->getData()[0] : 0;
+    unsigned char* targetData =              targetFrame->getData()[0];
 
-    int leftBytesPerLine = leftFrame->getLineSizes()[0];
-    int rightBytesPerLine = rightFrame->getLineSizes()[0];
-    int targetBytesPerLine = targetFrame->getLineSizes()[0];
+    int leftBytesPerLine   = leftFrame  ? leftFrame  ->getLineSizes()[0] : 0;
+    int rightBytesPerLine  = rightFrame ? rightFrame ->getLineSizes()[0] : 0;
+    int targetBytesPerLine =              targetFrame->getLineSizes()[0];
+
     VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
 
     int bytesPerPixel = alpha ? 4 : 3;
@@ -75,12 +79,12 @@ VideoFramePtr CrossFade::getVideo(pts position, int requestedWidth, int requeste
         for (int x = 0; x < targetFrame->getWidth() * bytesPerPixel; x += 1)
         {
             unsigned char left = 0;
-            if (y < leftFrame->getHeight() && x < leftFrame->getWidth() * bytesPerPixel)
+            if (leftFrame && y < leftFrame->getHeight() && x < leftFrame->getWidth() * bytesPerPixel)
             {
                 left = *(leftData + y * leftBytesPerLine + x);
             }
             unsigned char right = 0;
-            if (y < rightFrame->getHeight() && x < rightFrame->getWidth() * bytesPerPixel)
+            if (rightFrame && y < rightFrame->getHeight() && x < rightFrame->getWidth() * bytesPerPixel)
             {
                 right = *(rightData + y * rightBytesPerLine + x);
             }
