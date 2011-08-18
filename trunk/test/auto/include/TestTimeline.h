@@ -39,9 +39,22 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testSelection();
-    void testTransition();
     void testDnd();
+
+    /// The undo scenario at end was difficult to fix. It was caused by using Timeline as a 
+    /// identifying member for AClipEdit commands. Since the undo included undo'ing the creation
+    /// of the timeline, the timeline was no longer a good identifier. Therefore, these commands
+    /// now contain SequencePtr as identifier.
+    ///
+    /// This test also tests that when only one of the clips in a transition is moved, the 
+    /// transition is removed after dropping that clip.
     void testUndo();
+
+    /// Test the following for In, Out, InAndOut transition:
+    /// - Move all related clips, resulting in transition move also
+    /// - Scrub transition
+    /// - Playback transition
+    void testTransition();
 
 private:
 
