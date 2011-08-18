@@ -65,8 +65,12 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
             getRightClip()->moveTo(mProgress);
         }
     }
-    VideoFramePtr videoFrame = getVideo(mProgress, requestedWidth, requestedHeight, alpha);
-    mProgress++;
+    VideoFramePtr videoFrame;
+    if (mProgress < getLength())
+    {
+        videoFrame = getVideo(mProgress, requestedWidth, requestedHeight, alpha);
+        mProgress++;
+    }
     VAR_VIDEO(videoFrame);
     setGenerationProgress(mProgress);
     return videoFrame;

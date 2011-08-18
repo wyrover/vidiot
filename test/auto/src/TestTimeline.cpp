@@ -4,6 +4,7 @@
 #include <boost/foreach.hpp>
 #include "AudioTrack.h"
 #include "CreateTransition.h"
+#include "DeleteSelectedClips.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
@@ -20,8 +21,10 @@
 #include "Transition.h"
 #include "Trim.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
+#include "VideoTransition.h"
 
 namespace test {
 
@@ -100,80 +103,6 @@ void TestTimeline::testSelection()
     ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
 }
 
-void TestTimeline::testTransition()
-{
-    LOG_DEBUG << "TEST_START";
-
-    // Give focus to timeline
-    wxUIActionSimulator().MouseMove(TimelinePosition() + wxPoint(LeftPixel(VideoClip(0,2)), TopPixel(VideoClip(0,2))));
-    wxUIActionSimulator().MouseClick();
-
-    // Zoom in maximally. This is required to have accurate pointer positioning further on.
-    // Without this, truncating integers in ptsToPixels and pixelsToPts causes wrong pointer placement.
-    ControlDown();
-    wxUIActionSimulator().Char('=');
-    ControlUp();
-
-    // Shift Trim clips to make room for transition
-    TrimLeft(VideoClip(0,2),50,true);
-    TrimRight(VideoClip(0,1),50,true);
-
-    // Determine length of second and third clips
-    pts secondClipLength = VideoClip(0,1)->getLength();
-    pts thirdClipLength = VideoClip(0,2)->getLength();
-
-    // Create crossfade
-    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 );
-    Type('c');
-    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 + 1); // Transition added
-    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(VideoClip(0,2));
-    ASSERT(transition);
-    ASSERT_MORE_THAN_ZERO(transition->getLeft());
-    ASSERT_MORE_THAN_ZERO(transition->getRight());
-
-    pts secondClipLengthWithTransition = VideoClip(0,1)->getLength(); // Counting is 0-based, 1 -> clip 2
-    pts thirdClipLengthWithTransition  = VideoClip(0,3)->getLength(); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
-
-    // Delete clip after the crossfade
-    Click(Center(VideoClip(0,3))); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
-    ASSERT_SELECTION_SIZE(1);
-    wxUIActionSimulator().KeyDown(WXK_DELETE);
-    wxUIActionSimulator().KeyUp(WXK_DELETE);
-    waitForIdle();
-    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
-    ASSERT_EQUALS(secondClipLength,VideoClip(0,1)->getLength()); // Original length of second clip must be restored
-
-    Undo(); // Trigger undo of delete
-    ASSERT_EQUALS(secondClipLengthWithTransition,VideoClip(0,1)->getLength());
-    ASSERT_EQUALS(thirdClipLengthWithTransition,VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
-
-    // Delete clip before the crossfade
-    Click(Center(VideoClip(0,1)));
-    ASSERT_SELECTION_SIZE(1);
-    wxUIActionSimulator().KeyDown(WXK_DELETE);
-    wxUIActionSimulator().KeyUp(WXK_DELETE);
-    waitForIdle();
-    ASSERT_EQUALS(getNonEmptyClipsCount(),mProjectFixture.InputFiles.size() * 2 - 2); // Clip and link and transition removed
-    ASSERT_EQUALS(thirdClipLength,VideoClip(0,2)->getLength()); // Original length of third clip must be restored
-
-    Undo(); // Trigger undo of delete
-    ASSERT_EQUALS(secondClipLengthWithTransition,VideoClip(0,1)->getLength());
-    ASSERT_EQUALS(thirdClipLengthWithTransition,VideoClip(0,3)->getLength()); // Clip 3 has become index 3 due to addition of transition (counting is 0-based)
-
-    // Scrub over the transition
-    pixel top = TopPixel(VideoClip(0,2)) - 5;
-    pixel left = LeftPixel(VideoClip(0,2)) - 1;
-    pixel right = RightPixel(VideoClip(0,2)) + 1;
-    wxUIActionSimulator().MouseMove(TimelinePosition() + wxPoint(left,top));
-    wxUIActionSimulator().MouseDown();
-    for (int i = left; i < right; ++i)
-    {
-        wxUIActionSimulator().MouseMove(TimelinePosition() + wxPoint(i,top));
-        waitForIdle();
-    }
-    wxUIActionSimulator().MouseUp();
-}
-
 void TestTimeline::testDnd()
 {
     LOG_DEBUG << "TEST_START";
@@ -207,14 +136,6 @@ void TestTimeline::testDnd()
 void TestTimeline::testUndo()
 {
     LOG_DEBUG << "TEST_START";
-
-    // The undo scenario at end was difficult to fix. It was caused by using Timeline as a 
-    // identifying member for AClipEdit commands. Since the undo included undo'ing the creation
-    // of the timeline, the timeline was no longer a good identifier. Therefore, these commands
-    // now contain SequencePtr as identifier.
-    //
-    // This test also tests that when only one of the clips in a transition is moved, the 
-    // transition is removed after dropping that clip.
 
     // Test moving one clip around
     wxPoint from = Center(VideoClip(0,3));
@@ -282,6 +203,136 @@ void TestTimeline::testUndo()
 
     Redo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+}
+
+void TestTimeline::testTransition()
+{
+    LOG_DEBUG << "TEST_START";
+
+    // Zoom in once to avoid clicking in the middle of a clip which is then 
+    // seen (logically) as clip end due to the zooming
+    Type('=');
+
+    // This test ensures that when moving one or two clips around without
+    // selecting the releated transition, the transition is also dragged.
+
+    //////////////////////////////////////////////////////////////////////////
+    // Transition between two clips
+
+    // Make transition before clip 3
+    TrimLeft(VideoClip(0,2),30,true);
+    TrimRight(VideoClip(0,1),30,true);
+    ASSERT(VideoClip(0,1)->getMaxAdjustEnd() > 0)(VideoClip(0,1));
+    ASSERT(VideoClip(0,2)->getMinAdjustBegin() < 0)(VideoClip(0,2));
+    PositionCursor(LeftPixel(VideoClip(0,2)));
+    Move(LeftCenter(VideoClip(0,2)));
+    Type('c');
+    ASSERT(VideoClip(0,2)->isA<model::Transition>())(VideoClip(0,2));
+    ASSERT(VideoTransition(0,2)->getRight());
+    ASSERT(VideoTransition(0,2)->getLeft());
+
+    // Move clips around transition: the transition must be moved also
+    DeselectAllClips();
+    Click(Center(VideoClip(0,1)));
+    Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
+    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+    ASSERT(VideoClip(0,5)->isA<model::Transition>());
+    ASSERT(VideoTransition(0,5)->getRight());
+    ASSERT(VideoTransition(0,5)->getLeft());
+    ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
+    ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
+
+    // Scrub and play  the transition
+    Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
+    Play(LeftPixel(VideoTransition(0,5)) - 5, 2200);
+
+    // Undo until the two trimmed clips are present
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+
+    //////////////////////////////////////////////////////////////////////////
+    // "In" Transition 
+
+    // Delete leftmost clip (clip 2)
+    DeselectAllClips();
+    Click(Center(VideoClip(0,1)));
+    Type(WXK_DELETE);
+    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+
+    // Make transition before clip 3
+    Move(LeftCenter(VideoClip(0,2)));
+    Type('c');
+    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(VideoTransition(0,2)->getRight());
+    ASSERT(!VideoTransition(0,2)->getLeft());
+
+    // Move clip related to transition: the transition must be moved also
+    DeselectAllClips();
+    Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
+    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+    ASSERT(VideoClip(0,4)->isA<model::Transition>());
+    ASSERT(VideoTransition(0,4)->getRight());
+    ASSERT(!VideoTransition(0,4)->getLeft());
+    ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
+    ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
+
+    // Scrub and play the transition
+    Scrub(LeftPixel(VideoTransition(0,4)) - 5, RightPixel(VideoTransition(0,4)) + 5);
+    Play(LeftPixel(VideoTransition(0,4)) - 5, 2200);
+
+    // Undo until the two trimmed clips are present
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+
+    //////////////////////////////////////////////////////////////////////////
+    // "Out" Transition 
+
+    // Delete rightmost clip (clip 3)
+    DeselectAllClips();
+    Click(Center(VideoClip(0,2)));
+    Type(WXK_DELETE);
+    ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+
+    // Make transition before clip 3
+    PositionCursor(RightPixel(VideoClip(0,1)));
+    Move(RightCenter(VideoClip(0,1)));
+    Type('c');
+    DumpTimeline();
+    VAR_DEBUG(RightCenter(VideoClip(0,1)));
+    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(!VideoTransition(0,2)->getRight());
+    ASSERT(VideoTransition(0,2)->getLeft());
+
+    // Move clip related to transition: the transition must be moved also
+    DeselectAllClips();
+    Drag(Center(VideoClip(0,1)), Center(VideoClip(0,5)), true);
+    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+    ASSERT(VideoClip(0,5)->isA<model::Transition>());
+    ASSERT(!VideoTransition(0,5)->getRight());
+    ASSERT(VideoTransition(0,5)->getLeft());
+    ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
+    ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
+
+    // Scrub and play the transition
+    Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
+    Play(LeftPixel(VideoTransition(0,5)) - 5, 2200);
+
+    // Undo until the two trimmed clips are present
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 }
 
 

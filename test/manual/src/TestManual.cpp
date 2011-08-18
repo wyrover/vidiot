@@ -181,10 +181,6 @@ void TestManual::testManual()
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
     Undo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
-
-    pause();
-// todo playback moved transition (causes a bug since transition is not ended after last frame...)
-    // todo ending of transition when playing: after playing a transition all video remains blank (no end marker in transition?)
 }
 
 } // namespace
