@@ -71,9 +71,6 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
     Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::OnEraseBackground,    this);
     Bind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
 
-    PaError err = Pa_Initialize();
-    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
-
 	LOG_INFO;
 }
 
@@ -86,9 +83,6 @@ VideoDisplay::~VideoDisplay()
     Unbind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
 
     stop(); // stops playback
-
-    PaError err = Pa_Terminate();
-    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 }
 
 //////////////////////////////////////////////////////////////////////////

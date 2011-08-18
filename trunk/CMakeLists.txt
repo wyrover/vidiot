@@ -46,7 +46,7 @@ foreach(BOOSTLIB date_time thread filesystem serialization system)
 endforeach(BOOSTLIB)
 
 #### PORTAUDIO ####
-SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include)
+SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include ${VIDIOT_DIR}/portaudio_trunk/src/common)
 SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_trunk/build/msvc/Win32/Release)
 SET(PORTAUDIO_LIBRARIES   portaudio_x86.dll)
 SET(PORTAUDIO_INSTALL ${PORTAUDIO_LIBRARY_DIR}/portaudio_x86.dll)

@@ -3,13 +3,14 @@
 #include <wx/msgdlg.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/exception/all.hpp>
-#include "UtilLog.h"
-#include "UtilLogAvcodec.h"
 #include "Config.h"
-#include "Window.h"
-#include "Layout.h"
 #include "DebugReport.h"
 #include "IEventLoopListener.h"
+#include "Layout.h"
+#include "UtilLog.h"
+#include "UtilLogAvcodec.h"
+#include "UtilLogPortAudio.h"
+#include "Window.h"
 
 /// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
 
@@ -90,6 +91,7 @@ bool Application::OnInit()
     // in requires that avcodec is initialized.
     Avcodec::init();
 
+
     // Must be called before anything else,
     // since it distributes the initial options
     // which are used below.
@@ -105,6 +107,10 @@ bool Application::OnInit()
         Log::SetReportingLevel(logDEBUG);
     }
     Log::Init();
+
+    // Can only be initialized after the logging has been initialized,
+    // because it will log a lot during initialization.
+    PortAudio::init();
 
     LOG_INFO << "Start";
 
@@ -140,6 +146,7 @@ int Application::OnExit()
     LOG_INFO;
     //Not: Log::Terminate() - OnUnhandledException() is called after leaving this method, and uses the log methods.
 
+    PortAudio::exit();
     Avcodec::exit();
 
     return wxApp::OnExit();
