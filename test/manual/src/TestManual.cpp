@@ -184,7 +184,6 @@ void TestManual::testManual()
 
     pause();
 // todo playback moved transition (causes a bug since transition is not ended after last frame...)
-    // todo portaudio logging into logfile not stdout
     // todo ending of transition when playing: after playing a transition all video remains blank (no end marker in transition?)
 }
 
