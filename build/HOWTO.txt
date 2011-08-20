@@ -16,6 +16,12 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 * Bind ALT-M to CppUtilities.ActivateTestManual
 * Use regex "^~(:Wh@//.+)~(:Wh@\{:Wh@)~(:Wh@\}:Wh@)~(:Wh@/#).+" in search in files dialog to count lines of code..
 
+* DONT: Install "Productivity Power Tools"
+  http://visualstudiogallery.msdn.microsoft.com/d0d33361-18e2-46c0-8ff2-4adea1e34fef/
+  + CTRL-ALT-J - Align assignments
+  NOTE: DONT Added since the extension crashes MSDEV continuously (May 2011 version)
+
+
 =================== CMAKE ===================
 Install cmake into c:\Program Files
 
