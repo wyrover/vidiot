@@ -91,7 +91,6 @@ bool Application::OnInit()
     // in requires that avcodec is initialized.
     Avcodec::init();
 
-
     // Must be called before anything else,
     // since it distributes the initial options
     // which are used below.
@@ -122,9 +121,9 @@ bool Application::OnInit()
 
 int Application::OnRun()
 {
-    //int j = 8; j = 0; int i = 6/j; // Uncomment for testing OnFatalException()
-    //wxArrayString arr;arr[0];      // Uncomment for testing OnAssertFailure()
-    //throw 4;                       // Uncomment for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
+    //int j = 8; j = 0; int i = 6/j; // todo make test for Uncomment for testing OnFatalException()
+    //wxArrayString arr;arr[0];      // todo make test for Uncomment for testing OnAssertFailure()
+    //throw 4;                       // todo make test for Uncomment for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
 
     wxApp::OnRun(); // Make exception in this call for testing OnExceptionInMainLoop() - Typically, normal code of app.
 
@@ -143,8 +142,10 @@ void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 
 int Application::OnExit()
 {
-    LOG_INFO;
+    //Not: LOG_INFO;// todo logging init _ terminate + startup/shutdown + exception handling
     //Not: Log::Terminate() - OnUnhandledException() is called after leaving this method, and uses the log methods.
+
+
 
     PortAudio::exit();
     Avcodec::exit();
