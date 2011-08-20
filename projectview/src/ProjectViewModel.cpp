@@ -411,7 +411,7 @@ void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveNode &event )
 void ProjectViewModel::onProjectAssetRenamed( model::EventRenameNode &event )
 {
     VAR_DEBUG(event.getValue().getNode());
-    ItemChanged(event.getValue().getNode()->id());
+    ItemChanged(wxDataViewItem(event.getValue().getNode()->id()));
     event.Skip();
 }
 
