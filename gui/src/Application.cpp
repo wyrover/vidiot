@@ -8,8 +8,8 @@
 #include "IEventLoopListener.h"
 #include "Layout.h"
 #include "UtilLog.h"
-#include "UtilLogAvcodec.h"
-#include "UtilLogPortAudio.h"
+#include "UtilInitAvcodec.h"
+#include "UtilInitPortAudio.h"
 #include "Window.h"
 
 /// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
@@ -37,12 +37,24 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
 
     Bind(wxEVT_IDLE, &Application::onIdle, this);
     Bind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
+
+    SetAppName(mEventLoopListener ? sTestApplicationName : "Vidiot");
+    SetVendorName("Eric Raijmakers");
+
+    // Logging initialization/termination is node made part of wxWidgets Init/Run/Exit
+    // mechanism. Logging must be terminated as late as possible to avoid methods 
+    // that log during shutdown to crash the shutdown process.
+    // 
+    // Typical example of that: logging the type of crash when generating a debugreport.
+    Log::init(sTestApplicationName, GetAppName());
 }
 
 Application::~Application()
 {
     Unbind(wxEVT_IDLE, &Application::onIdle, this);
     Unbind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
+
+    Log::exit();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,7 +67,6 @@ void Application::waitForIdle()
     QueueEvent(new EventIdleTrigger(false));
     mConditionIdle.wait(lock);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
@@ -79,11 +90,10 @@ void Application::onIdle(wxIdleEvent& event)
 
 bool Application::OnInit()
 {
-    // Required for options.  The application name is explicitly not set.
-    // This implies that the name of the executable is used. This allows for
-    // running multiple instances with each its own configuration file.
-    //SetAppName(_("Vidiot"));
-    SetVendorName("Eric Raijmakers");
+    if ( !wxApp::OnInit() )
+    {
+        return false;
+    }
 
     // Done before options initialization
     // since after initializing the options,
@@ -100,13 +110,6 @@ bool Application::OnInit()
     // (leads to uninitialized wxStockGDI)
     Layout::initializeFonts();
 
-    Avcodec::configureLog();
-    if (inTestMode())
-    {
-        Log::SetReportingLevel(logDEBUG);
-    }
-    Log::Init();
-
     // Can only be initialized after the logging has been initialized,
     // because it will log a lot during initialization.
     PortAudio::init();
@@ -121,13 +124,11 @@ bool Application::OnInit()
 
 int Application::OnRun()
 {
-    //int j = 8; j = 0; int i = 6/j; // todo make test for Uncomment for testing OnFatalException()
-    //wxArrayString arr;arr[0];      // todo make test for Uncomment for testing OnAssertFailure()
-    //throw 4;                       // todo make test for Uncomment for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
-
+    // ASSERT_EQUALS(1,2);
+    // int j = 8; j = 0; int i = 6/j; // for testing OnFatalException()
+    // wxArrayString arr;arr[0];      // for testing OnAssertFailure()
+    // throw 4;                       // for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
     wxApp::OnRun(); // Make exception in this call for testing OnExceptionInMainLoop() - Typically, normal code of app.
-
-    Log::Terminate();
 
     return 0;
 }
@@ -142,10 +143,7 @@ void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 
 int Application::OnExit()
 {
-    //Not: LOG_INFO;// todo logging init _ terminate + startup/shutdown + exception handling
-    //Not: Log::Terminate() - OnUnhandledException() is called after leaving this method, and uses the log methods.
-
-
+    LOG_INFO;
 
     PortAudio::exit();
     Avcodec::exit();

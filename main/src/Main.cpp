@@ -5,15 +5,23 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
                               wxCmdLineArgType lpCmdLine,     
                               int nCmdShow)                             
 {                           
-    wxDISABLE_DEBUG_SUPPORT();    
-    
-    gui::Application* main = new gui::Application();
-    wxApp::SetInstance(main);
-    wxEntryStart(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
-    wxTheApp->OnInit();
-    // you can create top level-windows here or in OnInit(). Do your testing here
-    wxTheApp->OnRun();
-    wxTheApp->OnExit();
-    wxEntryCleanup();
+    //wxDISABLE_DEBUG_SUPPORT();
+    //wxDISABLE_ASSERTS_IN_RELEASE_BUILD();
+    wxDISABLE_DEBUG_LOGGING_IN_RELEASE_BUILD();
+    gui::Application* main;
+    try
+    {
+        main = new gui::Application();
+        wxApp::SetInstance(main);
+        wxEntryStart(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
+        wxTheApp->OnInit();
+        wxTheApp->OnRun();
+        wxTheApp->OnExit();
+        wxEntryCleanup();
+    }
+    catch (...)
+    {
+        main->OnUnhandledException();
+    }
     return 0;
 }                                                                       
