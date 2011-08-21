@@ -14,7 +14,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include "UtilLog.h"
-#include "UtilLogAvcodec.h"
+#include "UtilInitAvcodec.h"
 #include "UtilFrameRate.h"
 #include "Config.h"
 
@@ -133,7 +133,7 @@ Options::~Options()
         wxConfigBase::Get()->Flush();
 
         // Use new values
-        Log::SetReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
+        Log::setReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
     }
 }
 
