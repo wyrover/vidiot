@@ -22,8 +22,8 @@ IAssert::~IAssert()
 // static
 void IAssert::breakIntoDebugger(const std::string& message)
 {
-    Log::Terminate();
 #ifdef _DEBUG
+    Log::exit(); // Ensures that remaining log lines are flushed
     #if (defined _MSC_VER) || (defined __BORLANDC__)
         __asm { int 3 };
     #elif defined(__GNUC__)
@@ -33,6 +33,6 @@ void IAssert::breakIntoDebugger(const std::string& message)
     #endif
 #else
     wxMessageOutputMessageBox().Printf("A fatal error was encountered:\n%s",message);
-    sInstance->onAssert();
+    sInstance->onAssert(); // TODO causes a hangup in module test, due to 'onEventLoopEnter' being triggered for the debugrpt window. In general, maybe hangups with module test and popup windows?
 #endif
 }

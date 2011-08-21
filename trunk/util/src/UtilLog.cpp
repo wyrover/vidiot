@@ -81,7 +81,7 @@ private:
         // Log the remaining lines. This is useful for the
         // case of a failed assertion. breakIntoDebugger()
         // causes the addition of new log lines to stop.
-        // (via Log::terminate()->~LogWriter()->mEnabled=false)
+        // (via Log::exit()->~LogWriter()->mEnabled=false)
         // However, the assert message has already been pushed,
         // and must still be logged. This also helps in ensuring
         // that codec issues are logged via the ffmpeg decoding
