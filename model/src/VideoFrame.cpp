@@ -4,7 +4,7 @@ extern "C" {
 };
 
 #include <boost/make_shared.hpp>
-#include "UtilLogAvcodec.h"
+#include "UtilInitAvcodec.h"
 
 namespace model {
 

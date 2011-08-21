@@ -22,7 +22,7 @@ extern "C" {
 #include "FilePacket.h"
 #include "Convert.h"
 #include "UtilLog.h"
-#include "UtilLogAvcodec.h"
+#include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"

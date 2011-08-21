@@ -16,7 +16,7 @@ extern "C" {
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
-#include "UtilLogAvcodec.h"
+#include "UtilInitAvcodec.h"
 #include "Node.h"
 #include "VideoFrame.h"
 #include "Convert.h"
