@@ -2,10 +2,8 @@
 
 #include <wx/fileconf.h>
 #include <wx/filename.h>
-#include <wx/utils.h>
-#include <wx/stdpaths.h>
-#include "Application.h"
 #include "UtilLog.h"
+#include "UtilInitAvcodec.h"
 
 namespace gui {
 
@@ -18,35 +16,24 @@ wxString Config::sFileName("");
 // static
 void Config::init(wxString applicationName, wxString vendorName, bool inTestMode)
 {
-	// Initialize config object. Will be destructed by wxWidgets at the end of the application
-	// This method ensures that the .ini file is created in the current working directory
-	// which enables having multiple executables with multiple settings.
-	sFileName = wxFileName(wxFileName::GetCwd(), applicationName + ".ini").GetFullPath();
-	wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
+    // Initialize config object. Will be destructed by wxWidgets at the end of the application
+    // This method ensures that the .ini file is created in the current working directory
+    // which enables having multiple executables with multiple settings.
+    sFileName = wxFileName(wxFileName::GetCwd(), applicationName + ".ini").GetFullPath();
+    wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
     wxConfigBase::Get()->Write(Config::sPathTest, inTestMode);
-	
-	// Initialize log file name.  Normally ApplicationName_ProcessId.log is used.
-	// For module test, Application::sTestApplicationName.log is used.
-	wxString logFileName(applicationName);
-	if (applicationName.IsSameAs(Application::sTestApplicationName))
-	{
-		logFileName << ".log"; // For test, log file with fixed name in same dir as config file.
-		logFileName = wxFileName(wxFileName::GetCwd(),logFileName).GetFullPath(); // Must be full path for debug report
-	}
-	else
-	{
-		logFileName << "_" << wxGetProcessId() << ".log";
-		logFileName = wxFileName(wxStandardPaths::Get().GetTempDir(),logFileName).GetFullPath();	// Default in TEMP
-		logFileName = wxConfigBase::Get()->Read(Config::sPathLogFile, logFileName);// Overruled by path in config file
-	}
-	Log::setFileName(std::string(logFileName));
-
-	Log::SetReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
+    
+    Log::setReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
+    if (inTestMode)
+    {
+        Log::setReportingLevel(logDEBUG);
+    }
+    Avcodec::configureLog();
 }
 
 wxString Config::getFileName()
 {
-	return sFileName;
+    return sFileName;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,9 +45,8 @@ const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
 const wxString Config::sPathAutoLoadEnabled         ("/Project/AutoLoad/Enabled");
 const wxString Config::sPathLastOpened              ("/Project/LastOpened");
 const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
-const wxString Config::sPathLogFile                 ("/Debug/LogFile");
 const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
-const wxString Config::sPathTest                  ("/Debug/Test");
+const wxString Config::sPathTest                    ("/Debug/Test");
 const wxString Config::sPathFrameRate               ("/Video/FrameRate");
 const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
