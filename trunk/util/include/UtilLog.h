@@ -59,6 +59,7 @@
 
 
 #include <sstream>
+#include <wx/string.h>
 #include <boost/optional.hpp>
 #include <boost/noncopyable.hpp>
 #include "UtilEnum.h"
@@ -78,7 +79,7 @@ DECLAREENUM(LogLevel, \
 // LOGGING MACROS
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LOG_X(level) if (level <= Log::sReportingLevel) Log().Get(level,  __FILE__, __LINE__, __FUNCTION__)
+#define LOG_X(level) if (level <= Log::sReportingLevel) Log().get(level,  __FILE__, __LINE__, __FUNCTION__)
 #define VAR_X(level) if (level <= Log::sReportingLevel) LogVar(level,  __FILE__, __LINE__, __FUNCTION__).LOGVAR_A
 
 #define LOG_DETAIL  LOG_X(logDETAIL)
@@ -136,16 +137,18 @@ public:
     Log();
     virtual ~Log();
 
-    static void Init();
-    static void Terminate();
+    /// Initialize logging.
+    /// \param testApplicationName fixed string used for module test application name
+    /// \param applicationName current application name
+    static void init(const wxString& testApplicationName, const wxString& applicationName);
+    static void exit();
 
     static LogLevel sReportingLevel;
-    static void SetReportingLevel(LogLevel level);
-    static void setFileName(std::string path);
+    static void setReportingLevel(LogLevel level);
     static std::string getFileName();
 
     /// Log info in a separate line, preceded with meta data.
-    std::ostringstream& Get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);
+    std::ostringstream& get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);
 
 private:
     std::ostringstream os;

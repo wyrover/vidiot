@@ -1,6 +1,9 @@
 #include "UtilLog.h"
 
 #include <wx/datetime.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
+#include <wx/utils.h>
 #include <wx/thread.h>
 #include <boost/format.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -73,7 +76,7 @@ private:
         {
             s = mFifo.pop();
             fprintf(mFile, "%s", s.c_str());
-        	fflush(mFile);
+            fflush(mFile);
         }
         // Log the remaining lines. This is useful for the
         // case of a failed assertion. breakIntoDebugger()
@@ -111,21 +114,16 @@ Log::~Log()
     sWriter->write(os.str());
 }
 
-void Log::SetReportingLevel(LogLevel level)
+void Log::setReportingLevel(LogLevel level)
 {
-	if (level > logDETAIL)
-	{
-		sReportingLevel = logDETAIL;
-	}
-	else
-	{
-		sReportingLevel = level;
-	}
-}
-
-void Log::setFileName(std::string path)
-{
-    sFilename = path;
+    if (level > logDETAIL)
+    {
+        sReportingLevel = logDETAIL;
+    }
+    else
+    {
+        sReportingLevel = level;
+    }
 }
 
 std::string Log::getFileName()
@@ -133,22 +131,39 @@ std::string Log::getFileName()
     return sFilename;
 }
 
-void Log::Init()
+void Log::init(const wxString& testApplicationName, const wxString& applicationName)
 {
+    // File name initialization:
+    // - Normally, <Temp>/ApplicationName_ProcessId.log is used.
+    // - For module test, <Cwd>/Application::sTestApplicationName.log is used.
+    wxString logFileName(applicationName);
+    if (applicationName.IsSameAs(testApplicationName))
+    {
+        logFileName << ".log"; // For test, log file with fixed name in same dir as config file.
+        logFileName = wxFileName(wxFileName::GetCwd(),logFileName).GetFullPath(); // Must be full path for debug report
+    }
+    else
+    {
+        logFileName << "_" << wxGetProcessId() << ".log";
+        logFileName = wxFileName(wxStandardPaths::Get().GetTempDir(),logFileName).GetFullPath();	// Default in TEMP
+    }
+    sFilename = std::string(logFileName);
+
+    // Start the logger
     sWriter = new LogWriter();
 }
 
-void Log::Terminate()
+void Log::exit()
 {
     delete sWriter;
     sWriter = 0;
 }
 
-std::ostringstream& Log::Get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
+std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
 {
-	static const char* levelstring[] = {"NONE", "ERROR", "WARNING", "INFO", "DEBUG", "VIDEO", "AUDIO", "DETAIL", "ASSERT"};
+    static const char* levelstring[] = {"NONE", "ERROR", "WARNING", "INFO", "DEBUG", "VIDEO", "AUDIO", "DETAIL", "ASSERT"};
     os << boost::format("%s % 7s: t@%04x %s(%d): %s: ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % levelstring[level] % wxThread::GetCurrentId() % p_szFileName % p_lLine % p_szFunction;
-	return os;
+    return os;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -161,11 +176,11 @@ LogVar::~LogVar()
     {
         // NOTE: In this case, the debug break may cause the log line not to be written to file.
         //       Not an issue, since this is for developers only.
-        Log().Get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str() ;
+        Log().get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str() ;
         IAssert::breakIntoDebugger(*mAssert);
     }
     else
     {
-        Log().Get(mLevel, mFileName, mLine, mFunction) << osVars.str();
+        Log().get(mLevel, mFileName, mLine, mFunction) << osVars.str();
     }
 }
