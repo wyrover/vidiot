@@ -2,7 +2,7 @@
 extern "C" {
 #include <avformat.h>
 };
-#include "UtilLogAvcodec.h"
+#include "UtilInitAvcodec.h"
 
 namespace model {
 
