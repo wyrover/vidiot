@@ -2,6 +2,7 @@
 
 #include <wx/debugrpt.h>
 #include <wx/confbase.h>
+#include <wx/filename.h>
 #include "UtilLog.h"
 #include "Config.h"
 #include "Options.h"
@@ -26,16 +27,21 @@ void DebugReport::generate(ReportType type)
     wxDebugReportCompress report;
 
     report.AddAll(ctx);
-    
-    report.AddFile(Config::getFileName(), wxT("options file"));
-    report.AddFile(Log::getFileName(), wxT("text log file"));
+
+    if (wxFileName(Config::getFileName()).FileExists())
+    {
+        report.AddFile(Config::getFileName(), wxT("options file"));
+    }
+
+    if (wxFileName(Log::getFileName()).FileExists())
+    {
+        Log::exit(); // NO MORE LOGGING BEYOND THIS POINT!!!
+        report.AddFile(Log::getFileName(), wxT("text log file"));
+    }
 
     if ( wxDebugReportPreviewStd().Show(report) )
     {
-        if ( report.Process() )
-        {
-            LOG_INFO << "Report generated in '" <<  report.GetCompressedFileName().c_str() << "'";
-        }
+        report.Process();
     }
 }
 
