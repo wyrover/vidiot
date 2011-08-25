@@ -4,6 +4,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "Clip.h"
+#include "ClipView.h"
 #include "CreateTransition.h"
 #include "Drag.h"
 #include "EmptyClip.h"
@@ -30,6 +31,7 @@
 #include "Tooltip.h"
 #include "Track.h"
 #include "UtilLog.h"
+#include "ViewMap.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -196,13 +198,14 @@ boost::statechart::result Idle::leftDown()
             case ClipEnd:
                 return transit<Trim>();
                 break;
-            case TransitionBegin:       NIY;
-            case TransitionLeftClipInterior:       NIY;
-            case TransitionLeftClipEnd:       NIY;
-            case TransitionInterior:       NIY;
-            case TransitionRightClipBegin:       NIY;
-            case TransitionRightClipInterior:       NIY;
-            case TransitionEnd:       NIY;
+            case TransitionBegin://todo temp 
+            case TransitionLeftClipInterior://todo temp 
+            case TransitionLeftClipEnd://todo temp 
+            case TransitionInterior://todo temp 
+            case TransitionRightClipBegin://todo temp 
+            case TransitionRightClipInterior://todo temp 
+            case TransitionEnd://todo temp 
+                return forward_event();
             default:
                 FATAL("Unexpected logical clip position.");
             }
