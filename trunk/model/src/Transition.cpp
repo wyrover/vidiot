@@ -61,7 +61,7 @@ Transition::Transition(const Transition& other)
     ,   mTrack()            // Clone is not automatically part of same track!!!
     ,   mIndex(0)           // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)  // Clone is not automatically part of same track!!!
-    ,   mSelected(false)
+    ,   mSelected(other.mSelected)
     ,   mDragged(false)
 {
     VAR_DEBUG(*this);
