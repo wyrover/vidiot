@@ -57,27 +57,43 @@ void TestManual::testManual()
 {
     LOG_DEBUG << "TEST_START";
 
+    // This test ensures that when deleting a transition, the related clip's
+    // lengths are adjusted accordingly (so that it looks as if the transition
+    // is just removed, without affecting these clips. which in fact are changed).
+
     // Zoom in once to avoid clicking in the middle of a clip which is then 
     // seen (logically) as clip end due to the zooming
     Type('=');
-
-    // This test ensures that when moving one or two clips around without
-    // selecting the releated transition, the transition is also dragged.
+    Type('=');
 
     //////////////////////////////////////////////////////////////////////////
     // Transition between two clips
+
 
     // Make transition before clip 3
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
     ASSERT(VideoClip(0,1)->getMaxAdjustEnd() > 0)(VideoClip(0,1));
     ASSERT(VideoClip(0,2)->getMinAdjustBegin() < 0)(VideoClip(0,2));
+    pts l1 = VideoClip(0,1)->getLength(); // Store for checking later on
+    pts l2 = VideoClip(0,2)->getLength(); // Store for checking later on
     PositionCursor(LeftPixel(VideoClip(0,2)));
     Move(LeftCenter(VideoClip(0,2)));
     Type('c');
     ASSERT(VideoClip(0,2)->isA<model::Transition>())(VideoClip(0,2));
     ASSERT(VideoTransition(0,2)->getRight());
     ASSERT(VideoTransition(0,2)->getLeft());
+
+    // Select and delete transition only. Then, the remaining clips 
+    // must have their original lengths restored.
+    VAR_DEBUG(VQuarterHCenter(VideoClip(0,2)));
+    Click(VQuarterHCenter(VideoClip(0,2)));
+    ASSERT(VideoClip(0,2)->getSelected());
+    Type(WXK_DELETE);
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1); 
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2); 
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+    Undo();
 
     // Move clips around transition: the transition must be moved also
     DeselectAllClips();

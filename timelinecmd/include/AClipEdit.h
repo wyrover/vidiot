@@ -164,11 +164,17 @@ protected:
     /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     model::IClipPtr makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength, ReplacementMap& conversionmap);
 
-    /// Remove transition. If there are adjacent clips that are part of the transition,
-    /// these clips will be extended with the part of that clip that is 'part of the transition'.
+    /// Remove transition. That means remove the transition AND any clip (part) it was
+    /// covering, leaving white space as a result.
     /// \param transition transition to be removed
     /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void removeTransition( model::TransitionPtr transition, ReplacementMap& conversionmap );
+
+    /// Unapply transition. If there are adjacent clips that are part of the transition,
+    /// these clips will be extended with the part of that clip that is 'part of the transition'.
+    /// \param transition transition to be removed
+    /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
+    void unapplyTransition( model::TransitionPtr transition, ReplacementMap& conversionmap );
 
 private:
 
