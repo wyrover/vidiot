@@ -34,6 +34,7 @@ void DeleteSelectedClips::initialize()
 {
     ReplacementMap linkmapper;
     std::set<model::TransitionPtr> transitionsToBeRemoved;
+   std::set<model::TransitionPtr> transitionsToBeUnapplied;
 
     BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
     {
@@ -46,7 +47,7 @@ void DeleteSelectedClips::initialize()
                 model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
                 if (transition)
                 {
-                    transitionsToBeRemoved.insert(transition);
+                    transitionsToBeUnapplied.insert(transition);
                 }
                 else
                 {
@@ -69,11 +70,18 @@ void DeleteSelectedClips::initialize()
         }
     }
 
-    // Replace transitions. Is done in a second step to simplify the various possible options (transitions with and without left and right clips)
+    // Remove/unapply transitions. Is done in separate steps to simplify the various possible options (transitions with and without left and right clips)
     // and to avoid problems with removing the left clip first, without the transition or removing the transition before the right clip
     BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeRemoved )
     {
         removeTransition(transition, linkmapper);
+        // Transitions that are deleted (one of their clips is deleted also) 
+        // do not have to be unapplied.
+        transitionsToBeUnapplied.erase(transition); // If it is part of the set it is erased. Nothing is changed if it's not part of the set.
+    }
+    BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
+    {
+        unapplyTransition(transition, linkmapper);
     }
 
     replaceLinks(linkmapper);

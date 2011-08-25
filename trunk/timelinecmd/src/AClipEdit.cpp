@@ -382,33 +382,50 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
 
 void AClipEdit::removeTransition( model::TransitionPtr transition, ReplacementMap& conversionmap )
 {
-    model::IClipPtr prev = transition->getTrack()->getPreviousClip(transition);
-    model::IClipPtr next = transition->getTrack()->getNextClip(transition);
+    // Delete the transition and the underlying clips
+    ASSERT_MORE_THAN_ZERO(transition->getLength());
+    replaceClip(transition, makeEmptyClips(transition->getLength()), &conversionmap);
+}
 
-    pts removedLength = transition->getLength();
-
-    if (prev && !prev->isA<model::EmptyClip>() && !prev->getSelected())
+void AClipEdit::unapplyTransition( model::TransitionPtr transition, ReplacementMap& conversionmap )
+{
+    model::IClips replacements;
+    if (transition->getLeftClip())
     {
-        model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
-        adjustedLeft->adjustEnd(transition->getLeft());
-        removedLength -= transition->getLeft(); // Do not add emptyclip space for the part that we extend 'prev' with
-        replaceClip(prev,boost::assign::list_of(adjustedLeft),&conversionmap);
-    }
+        model::IClipPtr prev = transition->getTrack()->getPreviousClip(transition);
+        // NOT: ASSERT(prev): The transition may cover the clip entirely
+        if (prev && !prev->isA<model::EmptyClip>())
+        {
+            // Extend previous clip with left length of the transition
+            model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
+            adjustedLeft->adjustEnd(transition->getLeft());
+            replaceClip(prev,boost::assign::list_of(adjustedLeft),&conversionmap);
+        }
+        else
+        {
+            // Make new clip replacing the left part of the transition
+            replacements.push_back(make_cloned<model::IClip>(transition->getLeftClip()));
 
-    if (next && !next->isA<model::EmptyClip>() && !next->getSelected())
-    {
-        model::IClipPtr adjustedRight = make_cloned<model::IClip>(next);
-        adjustedRight->adjustBegin(-transition->getRight());
-        removedLength -= transition->getRight(); // Do not add emptyclip space for the part that we extend 'next' with
-        replaceClip(next,boost::assign::list_of(adjustedRight),&conversionmap);
+        }
     }
-
-    model::IClips replacement;
-    if (removedLength > 0)
+    if (transition->getRightClip())
     {
-        replacement.push_back(boost::make_shared<model::EmptyClip>(removedLength));
+        model::IClipPtr next = transition->getTrack()->getNextClip(transition);
+        // NOT: ASSERT(next): The transition may cover the clip entirely
+        if (next && !next->isA<model::EmptyClip>())
+        {
+            // Extend next clip with right length of the transition
+            model::IClipPtr adjustedRight = make_cloned<model::IClip>(next);
+            adjustedRight->adjustBegin(-transition->getRight());
+            replaceClip(next,boost::assign::list_of(adjustedRight),&conversionmap);
+        }
+        else
+        {
+            // Make new clip replacing the right part of the transition
+            replacements.push_back(make_cloned<model::IClip>(transition->getRightClip()));
+        }
     }
-    replaceClip(transition,replacement,&conversionmap);
+    replaceClip(transition, replacements, &conversionmap);
 }
 
 void AClipEdit::doMove(model::MoveParameterPtr move)
