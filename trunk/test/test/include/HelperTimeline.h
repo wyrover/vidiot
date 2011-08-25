@@ -55,16 +55,18 @@ model::IClipPtr AudioClip(int trackindex = 0, int clipindex = 0);
 int getNonEmptyClipsCount();                ///< \return number of non-empty clips (both audio and video) in given timeline
 int getSelectedClipsCount();                ///< \return number of selected clips (both audio and video) in given timeline
 
-pixel LeftPixel(model::IClipPtr clip);      ///< \return left x position of given clip
-pixel RightPixel(model::IClipPtr clip);     ///< \return right x position of given clip
-pixel TopPixel(model::IClipPtr clip);       ///< \return top y position of given clip
-pixel BottomPixel(model::IClipPtr clip);    ///< \return bottom y position of given clip
-pixel VCenter(model::IClipPtr clip);        ///< \return vertical center position of given clip
-pixel HCenter(model::IClipPtr clip);        ///< \return horizontal center position of given clip
+pixel LeftPixel(model::IClipPtr clip);          ///< \return left x position of given clip
+pixel RightPixel(model::IClipPtr clip);         ///< \return right x position of given clip
+pixel TopPixel(model::IClipPtr clip);           ///< \return top y position of given clip
+pixel BottomPixel(model::IClipPtr clip);        ///< \return bottom y position of given clip
+pixel VCenter(model::IClipPtr clip);            ///< \return vertical center position of given clip
+pixel VQuarter(model::IClipPtr clip);           ///< \return y position at one quarter from the top
+pixel HCenter(model::IClipPtr clip);            ///< \return horizontal center position of given clip
 
-wxPoint Center(model::IClipPtr clip);       ///< \return center (pixel) position of a clip
-wxPoint LeftCenter(model::IClipPtr clip);   ///< \return left center position (centered vertically)
-wxPoint RightCenter(model::IClipPtr clip);  ///< \return right center position (centered vertically)
+wxPoint Center(model::IClipPtr clip);           ///< \return center (pixel) position of a clip
+wxPoint VQuarterHCenter(model::IClipPtr clip);  ///< \return pixel at one quarter from the top (centered horizontally)
+wxPoint LeftCenter(model::IClipPtr clip);       ///< \return left center position (centered vertically)
+wxPoint RightCenter(model::IClipPtr clip);      ///< \return right center position (centered vertically)
 
 void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
 void Move(wxPoint position);                                            ///< Move the mouse to the given position within the timeline
