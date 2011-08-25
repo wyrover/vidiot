@@ -5,6 +5,7 @@
 #include <boost/foreach.hpp>
 #include "AudioClip.h"
 #include "AudioTrack.h"
+#include "AudioView.h"
 #include "ClipView.h"
 #include "EmptyClip.h"
 #include "HelperApplication.h"
@@ -24,6 +25,7 @@
 #include "VideoClip.h"
 #include "VideoTrack.h"
 #include "VideoTransition.h"
+#include "VideoView.h"
 #include "ViewMap.h"
 #include "Zoom.h"
 
@@ -141,6 +143,11 @@ pixel VCenter(model::IClipPtr clip)
     return (TopPixel(clip) + BottomPixel(clip)) / 2;
 }
 
+pixel VQuarter(model::IClipPtr clip)
+{
+    return TopPixel(clip) + clip->getTrack()->getHeight() / 4;
+}
+
 pixel HCenter(model::IClipPtr clip)
 {
     return (LeftPixel(clip) + RightPixel(clip)) / 2;
@@ -149,6 +156,11 @@ pixel HCenter(model::IClipPtr clip)
 wxPoint Center(model::IClipPtr clip)
 {
     return wxPoint( HCenter(clip), VCenter(clip) );
+}
+
+wxPoint VQuarterHCenter(model::IClipPtr clip)
+{
+    return wxPoint( HCenter(clip), VQuarter(clip) );
 }
 
 wxPoint RightCenter(model::IClipPtr clip)
@@ -284,7 +296,11 @@ void DumpTimeline()
     int tracknum = 0;
     BOOST_FOREACH( model::TrackPtr track, sequence->getVideoTracks() )
     {
-        LOG_DEBUG << "-------------------- VIDEOTRACK " << tracknum++ << " (length=" << track->getLength() << ") --------------------";
+        LOG_DEBUG 
+            << "-------------------- VIDEOTRACK " << tracknum++ 
+            << " (length=" << track->getLength() 
+            << ", position=" << getTimeline().getSequenceView().getVideoPosition() + getTimeline().getSequenceView().getVideo().getPosition(track) 
+            << ") --------------------";
         LOG_DEBUG << tab << "TRACK " << *track;
         BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
         {
