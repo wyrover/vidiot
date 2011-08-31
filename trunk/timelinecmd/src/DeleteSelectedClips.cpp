@@ -52,8 +52,8 @@ void DeleteSelectedClips::initialize()
                 else
                 {
                     // Also delete transitions that overlap with this clip
-                    model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(track->getPreviousClip(clip));
-                    model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
+                    model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
+                    model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
 
                     if (prevTransition && prevTransition->getRight() > 0)
                     {

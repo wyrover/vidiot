@@ -44,12 +44,12 @@ void ExecuteDrop::initialize()
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
         model::TrackPtr track = clip->getTrack();
-        model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(track->getPreviousClip(clip));
+        model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
         if (prevTransition && transitionMustBeRemovedOnDrop(prevTransition))
         {
             removeTransition(prevTransition, linkmapper);
         }
-        model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
+        model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
         if (nextTransition && transitionMustBeRemovedOnDrop(nextTransition))
         {
             removeTransition(nextTransition, linkmapper);
@@ -131,13 +131,11 @@ std::ostream& operator<<( std::ostream& os, const ExecuteDrop::Drop& obj )
 
 bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition) const
 {
-    model::TrackPtr track = transition->getTrack();
-    model::IClipPtr prev = track->getPreviousClip(transition);
-    model::IClipPtr next = track->getNextClip(transition);
     bool adjacentClipDragged = false;
     bool adjacentClipMissing = false;
     if (transition->getLeft() > 0)
     {
+        model::IClipPtr prev = transition->getPrev();
         ASSERT(prev);
         if (mDrags.find(prev) != mDrags.end())
         {
@@ -150,6 +148,7 @@ bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition)
     }
     if (transition->getRight() > 0)
     {
+        model::IClipPtr next = transition->getNext();
         ASSERT(next);
         if (mDrags.find(next) != mDrags.end())
         {
