@@ -126,10 +126,10 @@ void Trim::initialize()
             }
             else // (mDiff < 0) // Enlarge: Move clip begin point to the left
             {
-                removewhitespace(mClip->getTrack()->getPreviousClip(mClip), -mDiff, &linkmapper);
+                removewhitespace(mClip->getPrev(), -mDiff, &linkmapper);
                 if (linked)
                 {
-                    removewhitespace(linked->getTrack()->getPreviousClip(linked), -mDiff, &linkmapper);
+                    removewhitespace(linked->getPrev(), -mDiff, &linkmapper);
                 }
             }
         }
@@ -143,10 +143,10 @@ void Trim::initialize()
             }
             else // (mDiff > 0) // Enlarge: Move clip end point to the right
             {
-                removewhitespace(mClip->getTrack()->getNextClip(mClip), mDiff, &linkmapper);
+                removewhitespace(mClip->getNext(), mDiff, &linkmapper);
                 if (linked)
                 {
-                    removewhitespace(linked->getTrack()->getNextClip(linked), mDiff, &linkmapper);
+                    removewhitespace(linked->getNext(), mDiff, &linkmapper);
                 }
             }
 
