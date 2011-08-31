@@ -3,6 +3,7 @@
 #include "AutoFolder.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"
+#include "Project.h"
 #include "Sequence.h"
 
 namespace test {
@@ -22,10 +23,10 @@ FixtureProject::~FixtureProject()
 void FixtureProject::init()
 {
     TestFilesPath = wxFileName("D:\\Vidiot\\test", "");
-    InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
     model::FolderPtr root = createProject();
     model::FolderPtr autofolder1 = addAutoFolder( TestFilesPath );
     model::SequencePtr sequence1 = createSequence( autofolder1 );
+    InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
     // Click in the timeline to give it the focus. A lot of test cases start
     // with zooming in via keyboard commands. For that purpose, timeline must
     // have the current focus.
