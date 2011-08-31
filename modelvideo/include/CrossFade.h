@@ -16,7 +16,7 @@ public:
 
     CrossFade();
 
-    CrossFade(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight);
+    CrossFade(pts nFramesLeft, pts nFramesRight);
 
     virtual CrossFade* clone();
 
@@ -26,7 +26,7 @@ public:
     // VIDEOTRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFramePtr getVideo(pts position, int requestedWidth, int requestedHeight, bool alpha = true);
+    VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, int requestedWidth, int requestedHeight, bool alpha = true);
 
 protected:
 

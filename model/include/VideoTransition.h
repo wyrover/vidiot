@@ -19,7 +19,7 @@ public:
 
     VideoTransition();
 
-    VideoTransition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight);
+    VideoTransition(pts nFramesLeft, pts nFramesRight);
 
     virtual ~VideoTransition();
 
@@ -43,7 +43,7 @@ protected:
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getVideo(pts position, int requestedWidth, int requestedHeight, bool alpha) = 0;
+    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, int requestedWidth, int requestedHeight, bool alpha) = 0;
 
 private:
 
@@ -51,7 +51,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress;      ///< Last rendered position
+    pts mProgress;          ///< Last rendered position
+    IClipPtr mLeftClip;     ///< Clip generating 'left' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'getPrev'
+    IClipPtr mRightClip;    ///< Clip generating 'right' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'getNext'
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

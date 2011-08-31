@@ -18,8 +18,6 @@ namespace model {
 
 Transition::Transition()
     :   IClip()
-    ,   mLeft()
-    ,   mRight()
     ,   mFramesLeft(0)
     ,   mFramesRight(0)
     ,   mLastSetPosition(boost::none)
@@ -33,10 +31,8 @@ Transition::Transition()
     VAR_DEBUG(this);
 }
 
-Transition::Transition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight)
+Transition::Transition(pts nFramesLeft, pts nFramesRight)
     :   IClip()
-    ,   mLeft(left)
-    ,   mRight(right)
     ,   mFramesLeft(nFramesLeft)
     ,   mFramesRight(nFramesRight)
     ,   mLastSetPosition(boost::none)
@@ -52,8 +48,6 @@ Transition::Transition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFram
 
 Transition::Transition(const Transition& other)
     :   IClip()
-    ,   mLeft(other.mLeft)
-    ,   mRight(other.mRight)
     ,   mFramesLeft(other.mFramesLeft)
     ,   mFramesRight(other.mFramesRight)
     ,   mLastSetPosition(boost::none)
@@ -81,7 +75,7 @@ Transition::~Transition()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts Transition::getLength()
+pts Transition::getLength() const
 {
     return mFramesLeft + mFramesRight;
 }
@@ -112,7 +106,7 @@ void Transition::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
     mLeftPtsInTrack = trackPosition;
 }
 
-TrackPtr Transition::getTrack()
+TrackPtr Transition::getTrack() 
 {
     return mTrack.lock();
 }
@@ -140,9 +134,9 @@ IClipPtr Transition::getLink() const
 pts Transition::getMinAdjustBegin() const
 {
     pts result = 0;
-    if (getLeftClip())
+    if (getLeft() > 0)
     {
-        result = -getLeftClip()->getLength();
+        result = -1 *  getPrev()->getLength();
     }
     return result;
 }
@@ -167,9 +161,9 @@ pts Transition::getMinAdjustEnd() const
 pts Transition::getMaxAdjustEnd() const
 {
     pts result = 0;
-    if (getRightClip())
+    if (getRight() > 0)
     {
-        result = getRightClip()->getLength();
+        result = getNext()->getLength();
     }
     return 0;
 }
@@ -241,15 +235,6 @@ pts Transition::getRight() const
     return mFramesRight;
 }
 
-IClipPtr Transition::getLeftClip() const
-{
-    return mLeft;
-}
-
-IClipPtr Transition::getRightClip() const
-{
-    return mRight;
-}
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -257,7 +242,7 @@ IClipPtr Transition::getRightClip() const
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
     // Keep order same as Clip and EmptyClip for 'DumpSequence' method
-    os << &obj << '|' <<obj.mTrack.lock() << '|' << std::setw(3) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << obj.mLeft << '|' << std::setw(3) << obj.mFramesLeft << '|' << obj.mRight << '|' << std::setw(3) << obj.mFramesRight << '|' << obj.mSelected;
+    os << &obj << '|' <<obj.mTrack.lock() << '|' << std::setw(3) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << std::setw(3) << obj.mFramesLeft << '|' << std::setw(3) << obj.mFramesRight << '|' << obj.mSelected;
     return os;
 }
 
@@ -269,8 +254,6 @@ template<class Archive>
 void Transition::serialize(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<IClip>(*this);
-    ar & mLeft;
-    ar & mRight;
     ar & mFramesLeft;
     ar & mFramesRight;
     ar & mTrack;

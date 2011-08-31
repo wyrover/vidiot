@@ -13,11 +13,13 @@ namespace model {
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
+typedef boost::shared_ptr<const Track> ConstTrackPtr;
 typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<TrackPtr> Tracks;
 class Transition;
 typedef boost::shared_ptr<Transition> TransitionPtr;
 typedef std::list<TransitionPtr> Transitions;
+typedef boost::shared_ptr<const IClip> ConstIClipPtr;
 
 class Transition
     :   public IClip
@@ -32,7 +34,7 @@ public:
     Transition();
 
       ///< Constructor for creating new transition
-    Transition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight);
+    Transition(pts nFramesLeft, pts nFramesRight);
 
     ///< Used for making deep copies (clones) 
     virtual Transition* clone();           
@@ -43,7 +45,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength();
+    virtual pts getLength() const;
     virtual void moveTo(pts position);
     virtual wxString getDescription() const;
     virtual void clean();
@@ -54,6 +56,7 @@ public:
 
     virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0);
     virtual TrackPtr getTrack();
+
     virtual pts getLeftPts() const;
     virtual pts getRightPts() const; 
 
@@ -87,9 +90,6 @@ public:
     virtual pts getLeft() const;    ///< \return number of frames to the left of the cut between the two clips
     virtual pts getRight() const;   ///< \return number of frames to the right of the cut between the two clips
 
-    virtual IClipPtr getLeftClip() const;   ///< \return clip to the left of this transition
-    virtual IClipPtr getRightClip() const;  ///< \return clip to the right of this transition
-
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -106,9 +106,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
-
-    IClipPtr mLeft;     ///< Clip to the left of transition
-    IClipPtr mRight;    ///< Clip to the right of transition
 
     pts mFramesLeft;    ///< Number of frames to the left of the cut between the two clips
     pts mFramesRight;   ///< Number of frames to the right of the cut between the two clips
