@@ -80,6 +80,15 @@ File::File(wxFileName path, int buffersize)
 ,   mHasAudio(false)
 {
     VAR_DEBUG(this);
+    if (isSupported())
+    {
+        // These two lines are required to correctly read the length
+        // (and/or any other meta data) from the file.
+        // This can only be done for supported formats, since avcodec
+        // can only read the lengths from those.
+        openFile();
+        closeFile();
+    }
 }
 
 File::File(const File& other)
@@ -95,11 +104,11 @@ File::File(const File& other)
 ,   mStreamIndex(-1)
 ,   mBufferPacketsThreadPtr(0)
 ,   mFileOpen(false)
-,   mNumberOfFrames(0) // For a copy we read the number of packets again from the file in getLength()
+,   mNumberOfFrames(other.mNumberOfFrames)
 ,   mTwoInARow(0)
 ,   mLastModified(other.mLastModified)
-,   mHasVideo(false)
-,   mHasAudio(false)
+,   mHasVideo(other.mHasVideo)
+,   mHasAudio(other.mHasAudio)
 {
     VAR_DEBUG(this);
 }
@@ -127,9 +136,8 @@ void File::abort()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts File::getLength()
+pts File::getLength() const
 {
-    openFile();
     return mNumberOfFrames;
 }
 
@@ -338,7 +346,7 @@ void File::openFile()
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
     int result = av_open_input_file(&mFileContext, mPath.GetLongPath(), NULL, 0, NULL);
-    ASSERT_ZERO(result);
+    ASSERT_ZERO(result)(Avcodec::getErrorMessage(result));
 
     result = av_find_stream_info(mFileContext);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);

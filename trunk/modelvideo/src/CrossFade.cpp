@@ -21,8 +21,8 @@ CrossFade::CrossFade()
     VAR_DEBUG(this);
 }
 
-CrossFade::CrossFade(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight)
-    :   VideoTransition(left, nFramesLeft, right, nFramesRight)
+CrossFade::CrossFade(pts nFramesLeft, pts nFramesRight)
+    :   VideoTransition(nFramesLeft, nFramesRight)
 {
     VAR_DEBUG(this);
 }
@@ -47,13 +47,10 @@ CrossFade::~CrossFade()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr CrossFade::getVideo(pts position, int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, int requestedWidth, int requestedHeight, bool alpha)
 {
-    model::IClipPtr leftClip = getLeftClip();
-    model::IClipPtr rightClip = getRightClip();
-
-    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(getLeftClip())->getNextVideo(requestedWidth,requestedHeight,alpha)  : VideoFramePtr();
-    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(getRightClip())->getNextVideo(requestedWidth,requestedHeight,alpha) : VideoFramePtr();
+    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(requestedWidth,requestedHeight,alpha)  : VideoFramePtr();
+    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(requestedWidth,requestedHeight,alpha) : VideoFramePtr();
     VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, 1, 1);
     VAR_DEBUG(position)(requestedWidth)(requestedHeight)(alpha)(leftFrame)(rightFrame)(targetFrame);
 

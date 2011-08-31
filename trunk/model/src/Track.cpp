@@ -25,7 +25,6 @@ Track::Track()
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
-,   mItCurrent()
 ,   mItClips(mClips.end())
 ,   mHeight(Constants::sDefaultTrackHeight)
 ,   mIndex(0)
@@ -37,7 +36,6 @@ Track::Track(const Track& other)
 :	IControl()
 ,   wxEvtHandler()
 ,   mClips()
-,   mItCurrent()
 ,   mItClips(mClips.end())
 ,   mHeight(other.mHeight)
 ,   mIndex(0)
@@ -67,7 +65,7 @@ Track::~Track()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts Track::getLength()
+pts Track::getLength() const
 {
     return getCombinedLength(mClips);
 }
@@ -104,8 +102,7 @@ void Track::moveTo(pts position)
     }
 
     ASSERT_LESS_THAN_EQUALS(position,lastFrame);
-    mItCurrent = *mItClips;
-    mItCurrent->moveTo(position - firstFrame);// - 1); // -1: Counting starts at 0
+    (*mItClips)->moveTo(position - firstFrame);// - 1); // -1: Counting starts at 0
 }
 
 wxString Track::getDescription() const
@@ -121,7 +118,6 @@ void Track::clean()
     {
         clip->clean();
     }
-    mItCurrent.reset();
     mItClips = mClips.end();
 }
 
@@ -135,7 +131,7 @@ void Track::addClips(IClips clips, IClipPtr position)
 
     UtilList<IClipPtr>(mClips).addElements(clips,position);
 
-	updateClips();
+    updateClips();
 
     moveTo(0); // Required since the iteration has become invalid.
 
@@ -158,7 +154,7 @@ void Track::removeClips(IClips clips)
         clip->setTrack(TrackPtr(), 0);
     }
 
-	IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);
+    IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);
 
     updateClips();
 
@@ -170,7 +166,7 @@ void Track::removeClips(IClips clips)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-	ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), shared_from_this(), position, clips))); // Must be handled immediately
+    ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), shared_from_this(), position, clips))); // Must be handled immediately
 }
 
 const IClips& Track::getClips()
@@ -180,7 +176,7 @@ const IClips& Track::getClips()
 
 IClipPtr Track::getClip(pts position)
 {
-	pts left = 0;
+    pts left = 0;
     pts right = left;
     IClipPtr found;
     BOOST_FOREACH( IClipPtr clip, mClips )
@@ -200,7 +196,7 @@ IClipPtr Track::getClip(pts position)
 
 IClipPtr Track::getClipByIndex(int index)
 {
-    IClips::iterator it = mClips.begin();
+    IClips::const_iterator it = mClips.begin();
     while (index > 0)
     {
         ++it;
@@ -210,39 +206,15 @@ IClipPtr Track::getClipByIndex(int index)
     return *it;
 }
 
-IClipPtr Track::getNextClip(IClipPtr clip)
-{
-    IClips::iterator it = find(mClips.begin(),mClips.end(),clip);
-    ASSERT(it != mClips.end());
-    ++it;
-    if (it == mClips.end())
-    {
-        return IClipPtr();
-    }
-    return *it;
-}
-
-IClipPtr Track::getPreviousClip(IClipPtr clip)
-{
-    IClips::iterator it = find(mClips.begin(),mClips.end(),clip);
-    ASSERT(it != mClips.end());
-    if (it == mClips.begin())
-    {
-        return IClipPtr();
-    }
-    --it;
-    return *it; 
-}
-
 pts Track::getLeftEmptyArea(IClipPtr clip)
 {
     ASSERT_CONTAINS(mClips,clip);
     pts leftmost = clip->getLeftPts();
-    IClipPtr previous = getPreviousClip(clip);
+    IClipPtr previous = clip->getPrev();
     while (previous && previous->isA<EmptyClip>())
     {
         leftmost = previous->getLeftPts();
-        previous = getPreviousClip(previous);
+        previous = previous->getPrev();
     }
     return leftmost - clip->getLeftPts();
 }
@@ -251,11 +223,11 @@ pts Track::getRightEmptyArea(IClipPtr clip)
 {
     ASSERT_CONTAINS(mClips,clip);
     pts rightmost = clip->getRightPts();
-    IClipPtr next = getNextClip(clip);
+    IClipPtr next = clip->getNext();
     while (next && next->isA<EmptyClip>())
     {
         rightmost = next->getRightPts();
-        next = getNextClip(next);
+        next = next->getNext();
     }
     return rightmost - clip->getRightPts();
 }
@@ -311,23 +283,14 @@ bool Track::iterate_atEnd()
 
 IClipPtr Track::iterate_get()
 {
-    ASSERT(mItCurrent);
-    return mItCurrent;
+    ASSERT(*mItClips);
+    return *mItClips;
 }
 
 void Track::iterate_next()
 {
     ASSERT(!iterate_atEnd());
     mItClips++;
-    if (!iterate_atEnd())
-    {
-        IClipPtr clip = make_cloned<IClip>(*mItClips);
-        mItCurrent = clip;
-    }
-    else
-    {
-        mItCurrent.reset();
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -336,17 +299,27 @@ void Track::iterate_next()
 
 void Track::updateClips()
 {
-	pts position = 0;
+    pts position = 0;
     int index = 0;
     // NOTE: any information updated here must also be serialized in the clip,
     //       since this method is not called during (de)serialization, since
     //       the shared_from_this() handling causes problems then.
-	BOOST_FOREACH( IClipPtr clip, mClips )
-	{
+    IClipPtr next;
+    IClipPtr prev;
+    BOOST_FOREACH( IClipPtr clip, mClips )
+    {
+        if (prev)
+        {
+            prev->setNext(clip);
+        }
         clip->setTrack(shared_from_this(), position, index);
+        clip->setPrev(prev);
+        clip->setNext(IClipPtr()); // Will be overwritten for next clip, if any
         position += clip->getLength();
         index++;
-	}
+        prev = clip;
+    }
+    mItClips = mClips.end(); // Must be reset, since it has become invalid
 }
 
 //////////////////////////////////////////////////////////////////////////

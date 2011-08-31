@@ -35,14 +35,14 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
         switch (info.logicalclipposition)
         {
         case ClipBegin:
-            mLeft = info.track->getPreviousClip(info.clip);
+            mLeft = info.clip->getPrev();
             mRight = info.clip;
             break;
         case ClipInterior:
             break;
         case ClipEnd:
             mLeft = info.clip;
-            mRight = info.track->getNextClip(info.clip);
+            mRight = info.clip->getNext();
             break;
         default:
             FATAL("Unexpected logical clip position.");

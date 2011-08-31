@@ -20,14 +20,18 @@ VideoTransition::VideoTransition()
     :	Transition()
     ,   IVideo()
     ,   mProgress(-1)
+    ,   mLeftClip()
+    ,   mRightClip()
 {
     VAR_DEBUG(this);
 }
 
-VideoTransition::VideoTransition(IClipPtr left, pts nFramesLeft, IClipPtr right, pts nFramesRight)
-    :   Transition(left, nFramesLeft, right, nFramesRight)
+VideoTransition::VideoTransition(pts nFramesLeft, pts nFramesRight)
+    :   Transition(nFramesLeft, nFramesRight)
     ,   IVideo()
     ,   mProgress(-1)
+    ,   mLeftClip()
+    ,   mRightClip()
 {
     VAR_DEBUG(this);
 }
@@ -36,6 +40,8 @@ VideoTransition::VideoTransition(const VideoTransition& other)
     :   Transition(other)
     ,   IVideo()
     ,   mProgress(-1)
+    ,   mLeftClip()
+    ,   mRightClip()
 {
     VAR_DEBUG(*this);
 }
@@ -56,19 +62,33 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
         mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateLastSetPosition();
 
-        if (getLeftClip())
+        // Note: When creating a transition, the left and right clip are adjusted (shortened) to
+        // accomodate for the addition of the transition. Therefore, the computations below take these
+        // shortened clips as input.
+
+        if (getLeft() > 0)
         {
-            getLeftClip()->moveTo(mProgress);
+            ASSERT(getPrev());
+            mLeftClip = make_cloned<model::IClip>(getPrev());
+            mLeftClip->adjustBegin(mLeftClip->getLength());
+            mLeftClip->adjustEnd(getLength());
+            mLeftClip->moveTo(mProgress);
         }
-        if (getRightClip())
+        if (getRight() > 0)
         {
-            getRightClip()->moveTo(mProgress);
+            ASSERT(getNext());
+            mRightClip = make_cloned<model::IClip>(getNext());
+            mRightClip->adjustEnd(- mRightClip->getLength());
+            mRightClip->adjustBegin(-getLength());
+            mRightClip->moveTo(mProgress);
         }
+
+        ASSERT(!mLeftClip || !mRightClip || mLeftClip->getLength() == mRightClip->getLength());
     }
     VideoFramePtr videoFrame;
     if (mProgress < getLength())
     {
-        videoFrame = getVideo(mProgress, requestedWidth, requestedHeight, alpha);
+        videoFrame = getVideo(mProgress, mLeftClip, mRightClip, requestedWidth, requestedHeight, alpha);
         mProgress++;
     }
     VAR_VIDEO(videoFrame);
