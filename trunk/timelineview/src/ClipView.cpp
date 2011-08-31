@@ -68,9 +68,10 @@ model::IClipPtr ClipView::getClip()
 pts ClipView::getLeftPts() const
 {
     pts left = mClip->getLeftPts();
-    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getPreviousClip(mClip));
-    if (transition && transition->getRightClip())
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getPrev());
+    if (transition && transition->getRight() > 0)
     {
+        ASSERT(!mClip->isA<model::Transition>());
         left -= transition->getRight();
     }
     return left;
@@ -79,9 +80,10 @@ pts ClipView::getLeftPts() const
 pts ClipView::getRightPts() const
 {
     pts right = mClip->getRightPts();
-    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getTrack()->getNextClip(mClip));
-    if (transition && transition->getLeftClip())
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getNext());
+    if (transition && transition->getLeft() > 0)
     {
+        ASSERT(!mClip->isA<model::Transition>());
         right += transition->getLeft();
     }
     return right;
@@ -167,8 +169,8 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     }
     else// Regular clip
     {
-        model::IClipPtr next = track->getNextClip(mClip);
-        model::IClipPtr prev = track->getPreviousClip(mClip);
+        model::IClipPtr next = mClip->getNext();
+        model::IClipPtr prev = mClip->getPrev();
         if ((dist_begin < Layout::sCursorClipEditDistance) && (!prev || !prev->isA<model::Transition>()))
         {
             info.logicalclipposition = ClipBegin;
