@@ -1,5 +1,6 @@
 #include "UtilInitAvcodec.h"
 #include <sstream>
+#include <boost/format.hpp>
 #include "UtilLog.h"
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
@@ -7,6 +8,10 @@
 extern "C" {
 #include <avformat.h>
 };
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<< (std::ostream& os, const AVRational& obj)
 {
@@ -224,6 +229,10 @@ void Avcodec::exit()
     sFixedBuffer = 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
 void Avcodec::configureLog()
 {
     if (Log::sReportingLevel == logDETAIL)
@@ -242,6 +251,15 @@ void Avcodec::configureLog()
     {
         av_log_set_level(AV_LOG_WARNING);
     }
+}
+
+std::string Avcodec::getErrorMessage(int errorcode)
+{
+    static const int errbuf_size = 256;
+    char errbuf[errbuf_size];
+    int errorDecodeResult = av_strerror(errorcode, errbuf, errbuf_size);
+    VAR_ERROR(errorDecodeResult);
+    return str( boost::format("'%1%'") % errbuf );
 }
 
 //////////////////////////////////////////////////////////////////////////
