@@ -177,10 +177,10 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
         BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() ) // Do not use mDraggedClips as it is edited inside the loop
         {
             model::TrackPtr track = clip->getTrack();
-            model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(track->getPreviousClip(clip));
+            model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
             if (prevTransition)
             {
-                model::IClipPtr prev = track->getPreviousClip(prevTransition);
+                model::IClipPtr prev = prevTransition->getPrev();
                 if ((prevTransition->getLeft() == 0) ||     // Clip to the left of the transition is not part of the transition
                     (prev && prev->getSelected()))          // Clip to the left of the transition is also being dragged
                 {
@@ -190,10 +190,10 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                     }
                 }
             }
-            model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(track->getNextClip(clip));
+            model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
             if (nextTransition)
             {
-                model::IClipPtr next = track->getNextClip(nextTransition);
+                model::IClipPtr next = nextTransition->getNext();
                 if ((nextTransition->getRight() == 0) ||    // Clip to the right of the transition is not part of the transition
                     (next && next->getSelected()))          // Clip to the right of the transition is also being dragged
                 {
