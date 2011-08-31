@@ -86,7 +86,7 @@ Sequence::~Sequence()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts Sequence::getLength()
+pts Sequence::getLength() const
 {
     pts nFrames = 0;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
