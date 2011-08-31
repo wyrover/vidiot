@@ -46,7 +46,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength();
+    virtual pts getLength() const;
     virtual void moveTo(pts position);
     virtual wxString getDescription() const;
     virtual void clean();

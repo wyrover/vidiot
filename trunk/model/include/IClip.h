@@ -11,14 +11,17 @@
 #include <boost/serialization/version.hpp>
 #include "IControl.h"
 #include "UtilInt.h"
+#include "UtilSerializeBoost.h" // todo in cpp file?
 
 namespace model {
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
+typedef boost::shared_ptr<const Track> ConstTrackPtr;
 typedef std::list<TrackPtr> Tracks;
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
+typedef boost::shared_ptr<const IClip> ConstIClipPtr;
 typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef std::list<IClipPtr> IClips;
 
@@ -68,6 +71,23 @@ public:
     /// The frame at this position is AFTER the last frame of this clip
     /// The frames of a clip are [ getLeftPts,getRightPts )
     virtual pts getRightPts() const = 0; 
+
+    IClipPtr getNext()
+    {
+        return mNext.lock();
+    }
+    IClipPtr getPrev()
+    {
+        return mPrev.lock();
+    }
+    ConstIClipPtr getNext() const
+    {
+        return mNext.lock();
+    }
+    ConstIClipPtr getPrev() const
+    {
+        return mPrev.lock();
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // LINK
@@ -133,6 +153,23 @@ protected:
 private:
 
     //////////////////////////////////////////////////////////////////////////
+    // LIST LINKING
+    //////////////////////////////////////////////////////////////////////////
+
+    // TODO better mechanism than this duplication
+    friend class Track;
+    void setNext(IClipPtr next)
+    {
+        mNext = next;
+    }
+    void setPrev(IClipPtr prev)
+    {
+        mPrev = prev;
+    }
+    WeakIClipPtr mNext;
+    WeakIClipPtr mPrev;
+
+    //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
@@ -141,6 +178,8 @@ private:
     void serialize(Archive & ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<IControl>(*this);
+        ar & mNext;
+        ar & mPrev;
     }
 };
 
