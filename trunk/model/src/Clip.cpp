@@ -83,7 +83,7 @@ Clip::~Clip()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts Clip::getLength()
+pts Clip::getLength() const
 {
     return mLength; 
 }

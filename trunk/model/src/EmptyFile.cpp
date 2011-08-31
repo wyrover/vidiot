@@ -54,7 +54,7 @@ EmptyFile::~EmptyFile()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts EmptyFile::getLength()
+pts EmptyFile::getLength() const
 {
     return mLength;
 }
