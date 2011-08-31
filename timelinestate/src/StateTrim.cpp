@@ -73,7 +73,7 @@ Trim::Trim( my_context ctx ) // entry
     if (mTrimBegin)
     {
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
-        adjacentClip = mOriginalClip->getTrack()->getPreviousClip(mOriginalClip);
+        adjacentClip = mOriginalClip->getPrev();
         if (adjacentClip)
         {
             adjacentClip->moveTo(adjacentClip->getLength() - 1);
@@ -82,7 +82,7 @@ Trim::Trim( my_context ctx ) // entry
     else
     {
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clip's are added/removed, that's very volatile information).
-        adjacentClip = mOriginalClip->getTrack()->getNextClip(mOriginalClip);
+        adjacentClip = mOriginalClip->getNext();
         if (adjacentClip)
         {
             adjacentClip->moveTo(0);
