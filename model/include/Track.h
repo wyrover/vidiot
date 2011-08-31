@@ -13,9 +13,11 @@ namespace model {
 
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
+typedef boost::shared_ptr<const Track> ConstTrackPtr;
 typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<TrackPtr> Tracks;
 class IClip;
+typedef boost::shared_ptr<const IClip> ConstIClipPtr;
 typedef boost::shared_ptr<IClip> IClipPtr;
 typedef std::list<IClipPtr> IClips;
 
@@ -40,7 +42,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength();
+    virtual pts getLength() const;
     virtual void moveTo(pts position);
     virtual wxString getDescription() const;
     virtual void clean();
@@ -61,16 +63,6 @@ public:
 
     /// \return the index'th clip in the list of clips
     IClipPtr getClipByIndex(int index);
-
-    /// Find the clip following 'clip'. 
-    /// Returns a '0' pointer if clip is not found.
-    /// \pre clip is a part of this track
-    IClipPtr getNextClip(IClipPtr clip);
-
-    /// Find the clip preceding 'clip'. 
-    /// Returns a '0' pointer if clip is not found.
-    /// \pre clip is a part of this track
-    IClipPtr getPreviousClip(IClipPtr clip);
 
     /// /return size of area to the left of clip that is empty
     pts getLeftEmptyArea(IClipPtr clip);
@@ -120,7 +112,6 @@ private:
 
     IClips mClips;
 
-    IClipPtr mItCurrent;
     IClips::const_iterator mItClips;
 
     int mHeight;    ///< Height of this track when viewed in a timeline
