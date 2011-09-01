@@ -330,13 +330,16 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
     model::TrackPtr track;
     model::IClipPtr position;
 
-    ASSERT( !leftClip || ((rightClip->getPrev() ==  leftClip) && ! leftClip->isA<model::Transition>()) );
-    ASSERT(!rightClip || (( leftClip->getNext() == rightClip) && !rightClip->isA<model::Transition>()) );
-
-    // todo if left or right clips are transitions, then do not add transitions over them again. Then only add transition to the other end.
+    ASSERT(  !leftClip ||  !leftClip->isA<model::Transition>() );
+    ASSERT(  !leftClip ||  !leftClip->isA<model::EmptyClip>() );
+    ASSERT( !rightClip || !rightClip->isA<model::Transition>() );
+    ASSERT( !rightClip || !rightClip->isA<model::EmptyClip>() );
+    ASSERT( !rightClip || !leftClip || ((leftClip->getNext() == rightClip) && (rightClip->getPrev() ==  leftClip)) );
 
     if (leftLength > 0)
     {
+        ASSERT(leftClip);
+
         // Determine position of transition
         track = leftClip->getTrack();
         position = leftClip->getNext();
@@ -344,22 +347,24 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
         // Determine adjustment and adjust left clip
         model::IClipPtr updatedLeft = make_cloned<model::IClip>(leftClip);
         pts adjustment = -leftLength;
-        adjustment = std::max( adjustment, updatedLeft->getMinAdjustEnd() ); // todo this should be handled by the command, not here. + add asserts in this method checking these bounds
-        adjustment = std::min( adjustment, updatedLeft->getMaxAdjustEnd() ); // todo this should be handled by the command, not here. + add asserts in this method checking these bounds
+        ASSERT_MORE_THAN_EQUALS( adjustment, updatedLeft->getMinAdjustEnd() );
+        ASSERT_LESS_THAN_EQUALS( adjustment, updatedLeft->getMaxAdjustEnd() );
         updatedLeft->adjustEnd(adjustment);
         replaceClip(leftClip,boost::assign::list_of(updatedLeft),&conversionmap);
         VAR_DEBUG(updatedLeft);
     }
     if (rightLength > 0)
     {
+        ASSERT(rightClip);
+
         // Determine position of transition
         track = rightClip->getTrack();
 
         // Determine adjustment and adjust right clip
         model::IClipPtr updatedRight = make_cloned<model::IClip>(rightClip);
         pts adjustment = rightLength;
-        adjustment = std::max( adjustment, updatedRight->getMinAdjustBegin() ); // todo this should be handled by the command, not here. + add asserts in this method checking these bounds
-        adjustment = std::min( adjustment, updatedRight->getMaxAdjustBegin() ); // todo this should be handled by the command, not here. + add asserts in this method checking these bounds
+        ASSERT_MORE_THAN_EQUALS( adjustment, updatedRight->getMinAdjustBegin() );
+        ASSERT_LESS_THAN_EQUALS( adjustment, updatedRight->getMaxAdjustBegin() );
         updatedRight->adjustBegin(adjustment);
         replaceClip(rightClip,boost::assign::list_of(updatedRight),&conversionmap);
         
@@ -386,7 +391,7 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition, ReplacementM
     model::IClips replacements;
     if (transition->getLeft() > 0)
     {
-        model::IClipPtr prev = transition->getPrev(); // todo make prev and next methods part of iclip
+        model::IClipPtr prev = transition->getPrev();
         ASSERT(prev && !prev->isA<model::EmptyClip>());
         // Extend previous clip with left length of the transition
         model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
