@@ -11,7 +11,6 @@
 #include <boost/serialization/version.hpp>
 #include "IControl.h"
 #include "UtilInt.h"
-#include "UtilSerializeBoost.h" // todo in cpp file?
 
 namespace model {
 
@@ -72,22 +71,17 @@ public:
     /// The frames of a clip are [ getLeftPts,getRightPts )
     virtual pts getRightPts() const = 0; 
 
-    IClipPtr getNext()
-    {
-        return mNext.lock();
-    }
-    IClipPtr getPrev()
-    {
-        return mPrev.lock();
-    }
-    ConstIClipPtr getNext() const
-    {
-        return mNext.lock();
-    }
-    ConstIClipPtr getPrev() const
-    {
-        return mPrev.lock();
-    }
+    /// \return next clip in track. IClipPtr() if there is none.
+    IClipPtr getNext();
+
+    /// \return previous clip in track. IClipPtr() if there is none.
+    IClipPtr getPrev();
+
+    /// \return next clip in track. IClipPtr() if there is none.
+    ConstIClipPtr getNext() const;
+
+    /// \return previous clip in track. IClipPtr() if there is none.
+    ConstIClipPtr getPrev() const;
 
     //////////////////////////////////////////////////////////////////////////
     // LINK
@@ -172,14 +166,9 @@ private:
 
     // TODO better mechanism than this duplication
     friend class Track;
-    void setNext(IClipPtr next)
-    {
-        mNext = next;
-    }
-    void setPrev(IClipPtr prev)
-    {
-        mPrev = prev;
-    }
+    void setNext(IClipPtr next);
+    void setPrev(IClipPtr prev);
+    
     WeakIClipPtr mNext;
     WeakIClipPtr mPrev;
 
@@ -189,12 +178,7 @@ private:
 
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & boost::serialization::base_object<IControl>(*this);
-        ar & mNext;
-        ar & mPrev;
-    }
+    void serialize(Archive & ar, const unsigned int version);
 };
 
 } // namespace

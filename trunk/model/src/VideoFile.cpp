@@ -217,6 +217,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
         LOG_DEBUG << "Same frame again";
     }
 
+    ASSERT(mDeliveredFrame);
     mPosition += mDeliveredFrame->getRepeat();
 
     VAR_VIDEO(this)(mPosition)(mDeliveredFrame)(requiredInputPts)(mDeliveredFrameInputPts);
