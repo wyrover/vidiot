@@ -100,22 +100,36 @@ public:
     // POSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getMinAdjustBegin() const = 0;  ///< \return Minimum allowed value for adjustBegin given the available data.
-    virtual pts getMaxAdjustBegin() const = 0;  ///< \return Maximum allowed value for adjustBegin given the available data.
+    /// \return Minimum allowed value for adjustBegin given the available data.
+    /// \post getMinAdjustBegin() <= 0
+    virtual pts getMinAdjustBegin() const = 0;
+
+    /// \return Maximum allowed value for adjustBegin given the available data.
+    /// \post getMaxAdjustBegin() >= 0
+    virtual pts getMaxAdjustBegin() const = 0;
 
     /// If adjustment is positive then move the begin point of the clip backwards
     /// in time (increase the start pts). If adjustment is negative then move the
     /// begin point of the clip forward in time (decrease the start pts).
     /// \param adjustment pts count to add/subtract from the begin point
     /// \pre clip is not part of a track
+    /// \pre adjustment >= getMinAdjustBegin()
+    /// \pre adjustment <= getMaxAdjustBegin()
     virtual void adjustBegin(pts adjustment) = 0;
 
-    virtual pts getMinAdjustEnd() const = 0;    ///< \return Minimum allowed value for adjustEnd given the available data.
-    virtual pts getMaxAdjustEnd() const = 0;    ///< \return Maximum allowed value for adjustEnd given the available data.
+    /// \return Minimum allowed value for adjustEnd given the available data.
+    /// \post getMinAdjustEnd() <= 0
+    virtual pts getMinAdjustEnd() const = 0; 
+
+    /// \return Maximum allowed value for adjustEnd given the available data.
+    /// \post getMaxAdjustEnd() >= 0
+    virtual pts getMaxAdjustEnd() const = 0;
 
     /// Set the new length of the clip.
     /// \param adjustment pts count to add/subtract from the length
     /// \pre clip is not part of a track
+    /// \pre adjustment >= getMinAdjustEnd()
+    /// \pre adjustment <= getMaxAdjustEnd()
     virtual void adjustEnd(pts adjustment) = 0;
 
     //////////////////////////////////////////////////////////////////////////

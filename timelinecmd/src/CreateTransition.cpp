@@ -10,6 +10,7 @@
 #include "PositionInfo.h"
 #include "Timeline.h"
 #include "Track.h"
+#include "Transition.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
@@ -48,50 +49,41 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
             FATAL("Unexpected logical clip position.");
         }
     }
-    if (mLeft && !mLeft->isA<model::EmptyClip>())
+
+    if  (mLeft)
     {
-        if (mRight && !mRight->isA<model::EmptyClip>())
+        if (mLeft->isA<model::EmptyClip>() || mLeft->isA<model::Transition>())
         {
-            mLeftSize = -1 * mRight->getMinAdjustBegin();
-        }
-        else
-        {
-            mLeftSize = mLeft->getLength();
+            mLeft.reset();
         }
     }
-    if (mRight && !mRight->isA<model::EmptyClip>())
+    if  (mRight)
     {
-        if (mLeft && !mLeft->isA<model::EmptyClip>())
+        if (mRight->isA<model::EmptyClip>() || mRight->isA<model::Transition>())
         {
-            mRightSize  = mLeft->getMaxAdjustEnd();
-        }
-        else
-        {
-            mRightSize = mRight->getLength();
+            mRight.reset();
         }
     }
-    if (mLeftSize > 0 && mRightSize > 0)
+
+    if (mLeft)
     {
-        if (mLeftSize + mRightSize > sDefaultTransitionSize)
+        mLeftSize = sDefaultTransitionSize / 2; // Default length
+        mLeftSize = std::min( mLeftSize, -1 * mLeft->getMinAdjustEnd() ); // -1 * : getMinAdjustEnd() <= 0
+        if (mRight)
         {
-            if (mLeftSize > sDefaultTransitionSize / 2)
-            {
-                mLeftSize = sDefaultTransitionSize / 2;
-            }
-            if (mRightSize > sDefaultTransitionSize / 2)
-            {
-                mRightSize = sDefaultTransitionSize / 2;
-            }
+            mLeftSize = std::min( mLeftSize, -1 * mRight->getMinAdjustBegin() ); // -1 * : getMinAdjustBegin() <= 0
         }
     }
-    else if (mLeftSize > 0)
+    if (mRight)
     {
-        mLeftSize = sDefaultTransitionSize;
+        mRightSize = sDefaultTransitionSize / 2; // Default length
+        mRightSize = std::min( mRightSize, mRight->getMaxAdjustBegin() );
+        if (mLeft)
+        {
+            mRightSize = std::min( mRightSize, mLeft->getMaxAdjustEnd() );
+        }
     }
-    else if (mRightSize > 0)
-    {
-        mRightSize = sDefaultTransitionSize;
-    }
+    ASSERT_LESS_THAN_EQUALS(mLeftSize + mRightSize,sDefaultTransitionSize);
 }
 
 CreateTransition::~CreateTransition()

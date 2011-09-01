@@ -180,6 +180,7 @@ pts Clip::getMinAdjustEnd() const
 
 pts Clip::getMaxAdjustEnd() const
 {
+    ASSERT_MORE_THAN_EQUALS(mRender->getLength(),mLength + mOffset);
     return mRender->getLength() - mLength - mOffset;
 }
 
