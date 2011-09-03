@@ -9,6 +9,10 @@ namespace model {
 class IPath;
 typedef boost::shared_ptr<IPath> IPathPtr;
 typedef std::list<IPathPtr> IPaths;
+class Folder;
+typedef boost::shared_ptr<Folder> FolderPtr;
+class Sequence;
+typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 
 namespace test {
@@ -40,6 +44,9 @@ public:
     wxFileName TestFilesPath;               ///< Contains the path to the test files
     model::IPaths InputFiles;               ///< Contains the filenames of the input files in the test directory
 
+    model::FolderPtr mRoot;
+    model::FolderPtr mAutoFolder;
+    model::SequencePtr mSequence;
 };
 
 } // namespace
