@@ -137,11 +137,8 @@ void TestTimeline::testUndo()
 {
     LOG_DEBUG << "TEST_START";
 
-    // Test moving one clip around
-    wxPoint from = Center(VideoClip(0,3));
-    wxPoint to(2,from.y); // Move to the beginning of timeline
     pts length = VideoClip(0,3)->getLength();
-    Drag(from,to);
+    Drag(Center(VideoClip(0,3)),wxPoint(2,Center(VideoClip(0,3)).y));
     ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
     Undo();
     ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
@@ -209,12 +206,20 @@ void TestTimeline::testTransition()
 {
     LOG_DEBUG << "TEST_START";
 
+    // This tests (for In, Out as well as In&Out transitions)
+    // - when deleting a transition, the related clip's lengths are adjusted 
+    //   accordingly (so that it looks as if the transition is just removed, 
+    //   without affecting these clips. which in fact are changed).
+    // - when selecting only the clips related to the transition but not the
+    //   transition itselves, the transition is also taken along when doing
+    //   a DND operation.
+    // - playback of transition
+    // - scrubbing over the transition
+    // - Undoing 
+
     // Zoom in once to avoid clicking in the middle of a clip which is then 
     // seen (logically) as clip end due to the zooming
     Type('=');
-
-    // This test ensures that when moving one or two clips around without
-    // selecting the releated transition, the transition is also dragged.
 
     //////////////////////////////////////////////////////////////////////////
     // Transition between two clips
@@ -222,14 +227,26 @@ void TestTimeline::testTransition()
     // Make transition before clip 3
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
-    ASSERT(VideoClip(0,1)->getMaxAdjustEnd() > 0)(VideoClip(0,1));
-    ASSERT(VideoClip(0,2)->getMinAdjustBegin() < 0)(VideoClip(0,2));
+    ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd())(VideoClip(0,1));
+    ASSERT_LESS_THAN_ZERO(VideoClip(0,2)->getMinAdjustBegin())(VideoClip(0,2));
+    pts l1 = VideoClip(0,1)->getLength(); // Store for checking later on
+    pts l2 = VideoClip(0,2)->getLength(); // Store for checking later on
     PositionCursor(LeftPixel(VideoClip(0,2)));
     Move(LeftCenter(VideoClip(0,2)));
     Type('c');
     ASSERT(VideoClip(0,2)->isA<model::Transition>())(VideoClip(0,2));
-    ASSERT(VideoTransition(0,2)->getRight());
-    ASSERT(VideoTransition(0,2)->getLeft());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getRight());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getLeft());
+
+    // Select and delete transition only. Then, the remaining clips 
+    // must have their original lengths restored.
+    Click(VQuarterHCenter(VideoClip(0,2)));
+    ASSERT(VideoClip(0,2)->getSelected());
+    Type(WXK_DELETE);
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1); 
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2); 
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+    Undo();
 
     // Move clips around transition: the transition must be moved also
     DeselectAllClips();
@@ -237,20 +254,22 @@ void TestTimeline::testTransition()
     Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(VideoClip(0,5)->isA<model::Transition>());
-    ASSERT(VideoTransition(0,5)->getRight());
-    ASSERT(VideoTransition(0,5)->getLeft());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getRight());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getLeft());
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
     ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
 
     // Scrub and play  the transition
     Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
+    VideoTransition(0,5)->getPrev();
+    ASSERT(VideoTransition(0,5)->getTrack());
     Play(LeftPixel(VideoTransition(0,5)) - 5, 2200);
 
     // Undo until the two trimmed clips are present
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     Undo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); 
+    Undo(); 
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 
     //////////////////////////////////////////////////////////////////////////
@@ -266,16 +285,26 @@ void TestTimeline::testTransition()
     Move(LeftCenter(VideoClip(0,2)));
     Type('c');
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
-    ASSERT(VideoTransition(0,2)->getRight());
-    ASSERT(!VideoTransition(0,2)->getLeft());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getRight());
+    ASSERT_ZERO(VideoTransition(0,2)->getLeft());
+
+    // Select and delete transition only. Then, the remaining clips 
+    // must have their original lengths restored.
+    Click(VQuarterHCenter(VideoClip(0,2)));
+    ASSERT(VideoClip(0,2)->getSelected());
+    Type(WXK_DELETE);
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1); 
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2); 
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+    Undo();
 
     // Move clip related to transition: the transition must be moved also
     DeselectAllClips();
     Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(VideoClip(0,4)->isA<model::Transition>());
-    ASSERT(VideoTransition(0,4)->getRight());
-    ASSERT(!VideoTransition(0,4)->getLeft());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,4)->getRight());
+    ASSERT_ZERO(VideoTransition(0,4)->getLeft());
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
     ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
 
@@ -308,16 +337,26 @@ void TestTimeline::testTransition()
     DumpTimeline();
     VAR_DEBUG(RightCenter(VideoClip(0,1)));
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
-    ASSERT(!VideoTransition(0,2)->getRight());
-    ASSERT(VideoTransition(0,2)->getLeft());
+    ASSERT_ZERO(VideoTransition(0,2)->getRight());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getLeft());
+
+    // Select and delete transition only. Then, the remaining clips 
+    // must have their original lengths restored.
+    Click(VQuarterHCenter(VideoClip(0,2)));
+    ASSERT(VideoClip(0,2)->getSelected());
+    Type(WXK_DELETE);
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1); 
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2); 
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+    Undo();
 
     // Move clip related to transition: the transition must be moved also
     DeselectAllClips();
     Drag(Center(VideoClip(0,1)), Center(VideoClip(0,5)), true);
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(VideoClip(0,5)->isA<model::Transition>());
-    ASSERT(!VideoTransition(0,5)->getRight());
-    ASSERT(VideoTransition(0,5)->getLeft());
+    ASSERT_ZERO(VideoTransition(0,5)->getRight());
+    ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getLeft());
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
     ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
 

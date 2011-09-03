@@ -67,7 +67,8 @@ public:
 
     wxDateTime getLastModified() const;
 
-    bool isSupported();
+    bool isSupported();     ///< \return true if this file is of a known format
+    bool isValid();         ///< \return true if this file can be opened properly
 
     bool hasVideo();
     bool hasAudio();
@@ -137,6 +138,7 @@ private:
     mutable boost::optional<wxDateTime> mLastModified;
     bool mHasVideo;
     bool mHasAudio;
+    bool mValid;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -26,6 +26,8 @@ LogLevel Log::sReportingLevel = logINFO;
 class LogWriter;
 static LogWriter* sWriter = 0;
 
+static std::string sEndString("END");
+
 class LogWriter : boost::noncopyable
 {
 public:
@@ -50,7 +52,7 @@ public:
         mEnabled = false;
         if (mThread)
         {
-            mFifo.push("END"); // To avoid deadlock if the thread() code has just passed the 'while (enabled)' guard and is waiting for a new log message
+            mFifo.push(sEndString); // To avoid deadlock if the thread() code has just passed the 'while (enabled)' guard and is waiting for a new log message
             mThread->join();
         }
         mThread.reset();

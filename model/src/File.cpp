@@ -56,6 +56,7 @@ File::File()
 ,   mLastModified(boost::none)
 ,   mHasVideo(false)
 ,   mHasAudio(false)
+,   mValid(false)
 {
     VAR_DEBUG(this);
 }
@@ -78,6 +79,7 @@ File::File(wxFileName path, int buffersize)
 ,   mLastModified(boost::none)
 ,   mHasVideo(false)
 ,   mHasAudio(false)
+,   mValid(false)
 {
     VAR_DEBUG(this);
     if (isSupported())
@@ -109,6 +111,7 @@ File::File(const File& other)
 ,   mLastModified(other.mLastModified)
 ,   mHasVideo(other.mHasVideo)
 ,   mHasAudio(other.mHasAudio)
+,   mValid(other.mValid)
 {
     VAR_DEBUG(this);
 }
@@ -210,6 +213,11 @@ bool File::isSupported()
         return true;
     }
     return false;
+}
+
+bool File::isValid()
+{
+    return mValid;
 }
 
 bool File::hasVideo()
@@ -345,11 +353,21 @@ void File::openFile()
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
-    int result = av_open_input_file(&mFileContext, mPath.GetLongPath(), NULL, 0, NULL);
-    ASSERT_ZERO(result)(Avcodec::getErrorMessage(result));
+    int result = av_open_input_file(&mFileContext, mPath.GetLongPath(), 0, 0, 0);
+    if (result != 0)
+    {
+        // Some error occured. TODO GUI feedback
+        VAR_INFO(Avcodec::getErrorMessage(result));
+        return;
+    }
 
     result = av_find_stream_info(mFileContext);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    if (result < 0)
+    {
+        // Some error occured. TODO GUI feedback
+        VAR_INFO(Avcodec::getErrorMessage(result));
+        return;
+    }
 
     mNumberOfFrames = -1;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
@@ -388,6 +406,7 @@ void File::openFile()
     }
     VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
     mFileOpen = true;
+    mValid = true;
 }
 
 void File::closeFile()

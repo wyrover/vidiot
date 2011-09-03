@@ -15,50 +15,60 @@
 
 namespace test {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+void TestAutoFolder::setUp()
+{
+    mProjectFixture.init();
+}
+
+void TestAutoFolder::tearDown()
+{
+    mProjectFixture.destroy();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TEST CASES
+//////////////////////////////////////////////////////////////////////////
+
 void TestAutoFolder::testWatch()
 {
     LOG_DEBUG << "TEST_START";
 
-    wxString sFolder1( "Folder1" );
-    wxString sFile1Contents( "test" );
-    wxFileName sNewDir( "" );
-    
-    wxString tmp = wxFileName::GetTempDir ();
-    wxFileName path( wxFileName::GetTempDir(), "");
+    int nDefaultItems = countProjectView();
 
+    // Make dir on disk
     wxFileName dirpath(wxFileName::GetTempDir(), "");
     dirpath.AppendDir(randomString(20));
-    wxFileName filepath(dirpath);
-    filepath.SetFullName("test.avi");
-
     ASSERT(!wxDirExists(dirpath.GetLongPath()));
     dirpath.Mkdir();
     ASSERT(wxDirExists(dirpath.GetLongPath()));
-    VAR_DEBUG(path);
-    model::IPaths files = model::AutoFolder::getSupportedFiles(dirpath);
 
-    model::FolderPtr root = createProject();
+    // Add autofolder to project view
     model::FolderPtr autofolder1 = addAutoFolder( dirpath );
-    ASSERT_EQUALS(countProjectView(),2); // Root + Autofolder
+    ASSERT_EQUALS(countProjectView(),nDefaultItems + 1); // Added Autofolder
 
-    wxString ff = filepath.GetLongPath();
+    // Add file on disk
+    wxFileName filepath(dirpath);
+    filepath.SetFullName("test.avi");
     wxFFile aviFile1( filepath.GetLongPath(), "w" );
-    aviFile1.Write( sFile1Contents, wxFile::read_write );
+    aviFile1.Write( "Dummy Contents", wxFile::read_write );
     aviFile1.Close();
     
+    // Wait until file addition seen. Loop is required to wait until the Watcher has seen the change
     waitForIdle();
-    // This loop is required to wait until the Watcher has seen the change
-    // Not the best solution......
     while ( model::AutoFolder::getSupportedFiles( dirpath ).size() < 1 )
     {
         pause(10);
     }
-    ASSERT_EQUALS(countProjectView(),3); // Root + Autofolder
+    ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added AutoFolder and File
 
+    // Clean up
     remove( autofolder1 );
     bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
     ASSERT(removed);
-    waitForIdle();
 }
 
 
