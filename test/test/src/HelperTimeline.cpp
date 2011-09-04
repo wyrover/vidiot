@@ -240,7 +240,7 @@ void Drag(wxPoint from, wxPoint to, bool ctrl)
     waitForIdle();
     if (ctrl) { ControlUp(); }
     waitForIdle();
-    static const int DRAGSTEPS = 10; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
+    static const int DRAGSTEPS = 20; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
     for (int i = DRAGSTEPS; i > 0; --i)
     {
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i); 
@@ -263,7 +263,9 @@ void Play(pixel from, int ms)
 {
     PositionCursor(from);
     Type(' ');
+    VAR_DEBUG(from)(ms);
     pause(ms);
+    VAR_DEBUG(from)(ms);
     Type(' ');
     waitForIdle();
 }

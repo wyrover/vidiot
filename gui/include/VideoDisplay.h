@@ -48,6 +48,7 @@ public:
     void moveTo(pts position);
     void setSpeed(int speed);
     int getSpeed() const;
+    bool isPlaying() const;
 
     //////////////////////////////////////////////////////////////////////////
     // AUDIO
