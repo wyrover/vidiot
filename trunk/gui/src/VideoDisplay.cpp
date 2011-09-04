@@ -91,8 +91,10 @@ VideoDisplay::~VideoDisplay()
 
 void VideoDisplay::play()
 {
-    VAR_DEBUG(this)(mPlaying);
-    if (mPlaying) return;
+    ASSERT(!mPlaying);
+    VAR_DEBUG(this);
+    //(mPlaying);
+    //if (mPlaying) return;
 
     // Ensure that the to-be-started threads do not immediately stop
     mAbortThreads = false;
@@ -218,6 +220,11 @@ void VideoDisplay::setSpeed(int speed)
 int VideoDisplay::getSpeed() const
 {
     return mSpeed;
+}
+
+bool VideoDisplay::isPlaying() const
+{
+    return mPlaying;
 }
 
 //////////////////////////////////////////////////////////////////////////

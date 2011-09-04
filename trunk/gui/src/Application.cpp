@@ -65,7 +65,11 @@ void Application::waitForIdle()
 {
     boost::mutex::scoped_lock lock(mMutexIdle);
     QueueEvent(new EventIdleTrigger(false));
-    mConditionIdle.wait(lock);
+    static int maxWaitTime = 4000;
+    // timed_wait: To avoid indefinite waits. Not the best solution, but working...for now.
+    // This caused problems, particularly with the Play() method of the HelperTimeline class.
+    // Playback would continue indefinitely...
+    mConditionIdle.timed_wait(lock, boost::posix_time::milliseconds(maxWaitTime));
 }
 
 //////////////////////////////////////////////////////////////////////////
