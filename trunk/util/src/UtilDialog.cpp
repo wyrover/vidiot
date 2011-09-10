@@ -2,12 +2,15 @@
 
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
+#include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <boost/foreach.hpp>
+#include "UtilLog.h"
 
-boost::optional<wxString> UtilDialog::sDir = boost::none;
-boost::optional<std::list< wxString > > UtilDialog::sFiles = boost::none;
-boost::optional<wxString> UtilDialog::sText = boost::none;
+boost::optional<wxString>               UtilDialog::sDir        = boost::none;
+boost::optional<std::list< wxString > > UtilDialog::sFiles      = boost::none;
+boost::optional<wxString>               UtilDialog::sText       = boost::none;
+boost::optional<int>                    UtilDialog::sButton     = boost::none;
 
 // static
 void UtilDialog::setDir(wxString dir)
@@ -77,3 +80,20 @@ wxString UtilDialog::getText( const wxString & title, const wxString & message, 
     return wxGetTextFromUser( message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true);
 }
 
+// static 
+void UtilDialog::setButton(int button)
+{
+    sButton = boost::optional<int>(button);
+}
+
+// static 
+int UtilDialog::showMessage(wxString caption, wxString message, int buttons)
+{
+    if (sButton)
+    {
+        int result = *sButton;
+        sButton.reset();
+        return result;
+    }
+    return wxMessageBox( message, caption, buttons, 0 );
+}
