@@ -48,11 +48,26 @@ public:
     /// \post !sText 
     static wxString getText( const wxString& title, const wxString& message, const wxString& default, wxWindow* parent );
 
+    /// Set a fixed outcome for the next message dialog.
+    /// \param button fixed button value (wxYES, wxNO, wxCANCEL, wxOK or wxHELP) to be returned by next showMessage(); 
+    /// \post sButton
+    static void setButton(int button);
+
+    /// Show a message dialog
+    /// \post !sButton
+    /// \see wxMessageBox()
+    /// \return wxYES, wxNO, wxCANCEL, wxOK, or wxHELP (whichever button was pressed)
+    /// \param caption title text
+    /// \param message message text in dialog
+    /// \param buttons wxYES | wxNO | wxCANCEL | wxOK | wxHELP (use whichever should apply)
+    static int showMessage(wxString caption, wxString message, int buttons = wxOK);
+
 private:
 
     static boost::optional<wxString> sDir;
     static boost::optional< std::list<wxString> > sFiles;
     static boost::optional<wxString> sText;
+    static boost::optional<int> sButton;
 
 };
 
