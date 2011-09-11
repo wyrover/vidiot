@@ -1,15 +1,16 @@
 #include "Application.h"
 
+#include <wx/evtloop.h>
 #include <wx/msgdlg.h>
-#include <boost/filesystem/operations.hpp>
 #include <boost/exception/all.hpp>
+#include <boost/filesystem/operations.hpp>
 #include "Config.h"
 #include "DebugReport.h"
 #include "IEventLoopListener.h"
 #include "Layout.h"
-#include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 #include "UtilInitPortAudio.h"
+#include "UtilLog.h"
 #include "Window.h"
 
 /// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
@@ -139,7 +140,7 @@ int Application::OnRun()
 
 void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 {
-    if (mEventLoopListener)
+    if (inTestMode())
     {
         mEventLoopListener->onEventLoopEnter();
     }

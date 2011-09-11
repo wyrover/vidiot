@@ -1,5 +1,8 @@
 #include "SequenceEvent.h"
 
+#include "UtilLogStl.h"
+#include "Track.h"
+
 namespace model {
 
 DEFINE_EVENT(EVENT_ADD_VIDEO_TRACK,      EventAddVideoTracks,      TrackChange);

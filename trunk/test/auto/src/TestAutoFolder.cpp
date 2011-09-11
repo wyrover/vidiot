@@ -1,6 +1,7 @@
 #include "TestAutoFolder.h"
 
 #include <wx/ffile.h>
+#include <wx/filefn.h> 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/path.hpp>
@@ -50,20 +51,26 @@ void TestAutoFolder::testWatch()
     model::FolderPtr autofolder1 = addAutoFolder( dirpath );
     ASSERT_EQUALS(countProjectView(),nDefaultItems + 1); // Added Autofolder
 
-    // Add file on disk
+    // Add supported but not valid file on disk
     wxFileName filepath(dirpath);
-    filepath.SetFullName("test.avi");
+    filepath.SetFullName("invalid.avi");
     wxFFile aviFile1( filepath.GetLongPath(), "w" );
     aviFile1.Write( "Dummy Contents", wxFile::read_write );
     aviFile1.Close();
+
+    // Add supported and valid file on disk
+    wxString aviFileName = mProjectFixture.InputFiles.front()->getPath().GetLongPath();
+    filepath.SetFullName("valid.avi");
+    bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );
+    ASSERT(copyok);
     
-    // Wait until file addition seen. Loop is required to wait until the Watcher has seen the change
+    // Wait until file addition seen. Loop is required to wait until the Watcher has seen the valid file
     waitForIdle();
     while ( model::AutoFolder::getSupportedFiles( dirpath ).size() < 1 )
     {
         pause(10);
     }
-    ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added AutoFolder and File
+    ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added AutoFolder and the valid File
 
     // Clean up
     remove( autofolder1 );

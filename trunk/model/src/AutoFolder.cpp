@@ -76,7 +76,7 @@ IPaths AutoFolder::getSupportedFiles( wxFileName directory )
         else
         {
             model::FilePtr file = boost::make_shared<model::File>(filename);
-            if (file->isSupported())
+            if (file->canBeOpened())
             {
                 result.push_back(file);
             }

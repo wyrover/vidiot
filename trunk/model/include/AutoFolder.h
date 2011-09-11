@@ -41,7 +41,9 @@ public:
 
     /// \return list of supported files in the given directory. Folders are returned also.
     /// \param path absolute path which is searched for files.
-    /// Note that only supported file types - as indicated by File::isSupported() - are returned.
+    /// Note that only supported file types - as indicated by File::isSupportedFileType() - are returned.
+    /// Furthermore, not that files are opened with avcodec. If that returns an error, the file
+    /// is not added to the returned list - see File::canBeOpened().
     static IPaths getSupportedFiles( wxFileName path );
 
     /// Update the autofolder children. The folder is synced with the filesystem. 
