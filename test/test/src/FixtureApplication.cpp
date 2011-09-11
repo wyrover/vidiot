@@ -15,6 +15,7 @@ FixtureGui sInstance;
 
 FixtureGui::FixtureGui()
     :   mEnd(false)
+    ,   mStartingMainThread(false)
     ,   mBarrierStart(2)
     ,   mBarrierStarted(2)
     ,   mBarrierStopped(2)
@@ -45,6 +46,9 @@ bool FixtureGui::tearDownWorld()
 
 bool FixtureGui::setUp()
 {
+     // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
+    // only be done for starting the main (application) event loop, not for any dialogs.
+    mStartingMainThread = true;
     mBarrierStart.wait();
     mBarrierStarted.wait();
     return true;
@@ -57,6 +61,11 @@ bool FixtureGui::tearDown()
     {
         doc->Modify(false); // Avoid "Save yes/no/Cancel" dialog
     }
+
+     // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
+    // only be done for (re)starting the main (application) event loop, not for any dialogs.
+    mStartingMainThread = true;
+
     // Must be done via an Event, since all wxWindows derived classes must be 
     // destroyed in the same thread as in which they were created, which is 
     // the main wxWidgets event thread.
@@ -73,7 +82,7 @@ bool FixtureGui::tearDown()
 
 void FixtureGui::start()
 {
-    // Do not define in header file. Then it will be optimized away also 
+    // Do not define in header file. Then it will be optimized away 
     // (at least on Visual Studio 2010).
 }
 
@@ -83,7 +92,20 @@ void FixtureGui::start()
 
 void FixtureGui::onEventLoopEnter()
 {
-    mBarrierStarted.wait();
+    if (mStartingMainThread)
+    {
+        // This check is needed to avoid hangups when opening new dialogs.
+        // These will also cause the onEventLoopEnter event (since a modal
+        // dialog can have its own event loop). In that case, there is only this
+        // mBarrierStarted.wait() - the one in setup() is not called - it's
+        // an immediate hangup.
+
+        mBarrierStarted.wait();
+
+        // Any subsequent 'onEventLoopEnter' will not block, except if that is indicated
+        // specifically via mStartingMainThread
+        mStartingMainThread = false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

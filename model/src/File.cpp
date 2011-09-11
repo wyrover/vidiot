@@ -21,6 +21,7 @@ extern "C" {
 #include "AutoFolder.h"
 #include "FilePacket.h"
 #include "Convert.h"
+#include "Dialog.h"
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
@@ -56,7 +57,7 @@ File::File()
 ,   mLastModified(boost::none)
 ,   mHasVideo(false)
 ,   mHasAudio(false)
-,   mValid(false)
+,   mCanBeOpened(false)
 {
     VAR_DEBUG(this);
 }
@@ -79,15 +80,18 @@ File::File(wxFileName path, int buffersize)
 ,   mLastModified(boost::none)
 ,   mHasVideo(false)
 ,   mHasAudio(false)
-,   mValid(false)
+,   mCanBeOpened(false)
 {
     VAR_DEBUG(this);
-    if (isSupported())
+    if (isSupportedFileType())
     {
         // These two lines are required to correctly read the length
         // (and/or any other meta data) from the file.
         // This can only be done for supported formats, since avcodec
         // can only read the lengths from those.
+        //
+        // Note that the opening of a file sets mCanBeOpened
+        // to the correct value.
         openFile();
         closeFile();
     }
@@ -111,7 +115,7 @@ File::File(const File& other)
 ,   mLastModified(other.mLastModified)
 ,   mHasVideo(other.mHasVideo)
 ,   mHasAudio(other.mHasAudio)
-,   mValid(other.mValid)
+,   mCanBeOpened(other.mCanBeOpened)
 {
     VAR_DEBUG(this);
 }
@@ -206,7 +210,7 @@ wxString File::getName() const
     return mPath.GetLongPath();
 };
 
-bool File::isSupported()
+bool File::isSupportedFileType()
 {
     if (mPath.GetExt().IsSameAs("avi"))
     {
@@ -215,9 +219,9 @@ bool File::isSupported()
     return false;
 }
 
-bool File::isValid()
+bool File::canBeOpened()
 {
-    return mValid;
+    return mCanBeOpened;
 }
 
 bool File::hasVideo()
@@ -351,21 +355,24 @@ void File::openFile()
 
     VAR_DEBUG(this);
 
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
+    int result = 0;
 
-    int result = av_open_input_file(&mFileContext, mPath.GetLongPath(), 0, 0, 0);
+    {
+        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        result = av_open_input_file(&mFileContext, mPath.GetLongPath(), 0, 0, 0);
+    }
     if (result != 0)
     {
-        // Some error occured. TODO GUI feedback
-        VAR_INFO(Avcodec::getErrorMessage(result));
+        // Some error occured when opening the file.
+        VAR_WARNING(mPath)(Avcodec::getErrorMessage(result));
         return;
     }
 
     result = av_find_stream_info(mFileContext);
     if (result < 0)
     {
-        // Some error occured. TODO GUI feedback
-        VAR_INFO(Avcodec::getErrorMessage(result));
+        // Some error occured when opening the file.
+        VAR_WARNING(Avcodec::getErrorMessage(result));
         return;
     }
 
@@ -406,7 +413,7 @@ void File::openFile()
     }
     VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
     mFileOpen = true;
-    mValid = true;
+    mCanBeOpened = true;
 }
 
 void File::closeFile()
@@ -414,7 +421,10 @@ void File::closeFile()
     VAR_DEBUG(this);
     if (!mFileOpen) return;
 
-    av_close_input_file(mFileContext);
+    {
+        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        av_close_input_file(mFileContext);
+    }
     mFileOpen = false;
 }
 

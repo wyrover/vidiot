@@ -64,6 +64,7 @@ private:
     boost::barrier mBarrierStopped;
 
     bool mEnd;
+    bool mStartingMainThread;
 };
 
 } // namespace

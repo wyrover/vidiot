@@ -17,6 +17,7 @@ class EventRenameProject;
 
 namespace gui {
 
+class Dialog;
 class Watcher;
 class Worker;
 class TimelinesView;
@@ -116,6 +117,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxDocTemplate*  mDocTemplate;
+
+    Dialog*             mDialog;
 
     Watcher*            mWatcher;
     Worker*             mWorker;

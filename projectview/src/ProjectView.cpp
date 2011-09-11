@@ -30,7 +30,7 @@
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
 #include "TimeLinesView.h"
-#include "UtilDialog.h"
+#include "Dialog.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "Window.h"
@@ -366,7 +366,7 @@ void ProjectView::onDelete(wxCommandEvent& event)
 
 void ProjectView::onNewFolder(wxCommandEvent& event)
 {
-    wxString s = UtilDialog::getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value"), this );
+    wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
@@ -376,7 +376,7 @@ void ProjectView::onNewFolder(wxCommandEvent& event)
 
 void ProjectView::onNewAutoFolder(wxCommandEvent& event)
 {
-    wxString s = UtilDialog::getDir( _("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir(), this );
+    wxString s = gui::Dialog::get().getDir( _("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir() );
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
@@ -386,7 +386,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& event)
 
 void ProjectView::onNewSequence(wxCommandEvent& event)
 {
-    wxString s = UtilDialog::getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value"), this );
+    wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
@@ -397,7 +397,7 @@ void ProjectView::onNewSequence(wxCommandEvent& event)
 void ProjectView::onNewFile(wxCommandEvent& event)
 {
     wxString filetypes = _("Movie clips (*.avi)|*.avi|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
-    std::list<wxString> files = UtilDialog::getFiles( _("Select file(s) to add"), filetypes, this );
+    wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add"), filetypes );
     std::vector<wxFileName> list;
     BOOST_FOREACH( wxString path, files )
     {

@@ -8,6 +8,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include "Dialog.h"
 #include "Node.h"
 #include "Config.h"
 #include "ids.h"
@@ -60,6 +61,7 @@ static Window* sCurrent = 0;
 Window::Window()
     :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1000,600))
     ,	mDocTemplate(new wxDocTemplate(GetDocumentManager(), _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
+    ,   mDialog(new Dialog())
     ,   mWatcher(0)
     ,   mWorker(0)
     ,   mPreview(0)
@@ -224,6 +226,7 @@ Window::~Window()
     delete mPreview;        // the timeline view in turn 'knows/uses' the preview (specifically, the player).
     delete mWatcher;
     delete mWorker;
+    delete mDialog;
     //NOT: delete mDocTemplate;
 
     sCurrent = 0;

@@ -8,7 +8,7 @@
 #include "ids.h"
 #include "ProjectView.h"
 #include "Sequence.h"
-#include "UtilDialog.h"
+#include "Dialog.h"
 #include "UtilLog.h"
 
 namespace test {
@@ -18,7 +18,7 @@ model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(parent));
     waitForIdle();
-    UtilDialog::setDir( path.GetShortPath() ); // Add with short path
+    gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path
     triggerMenu(gui::ProjectView::get(),meID_NEW_AUTOFOLDER);
     waitForIdle();
 
@@ -34,7 +34,7 @@ model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(parent));
-    UtilDialog::setText( name );
+    gui::Dialog::get().setText( name );
     triggerMenu(gui::ProjectView::get(),meID_NEW_FOLDER);
     waitForIdle();
 
@@ -50,7 +50,7 @@ model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
 {
     waitForIdle();
     gui::ProjectView::get().select(boost::assign::list_of(parent));
-    UtilDialog::setText( name );
+    gui::Dialog::get().setText( name );
     triggerMenu(gui::ProjectView::get(),meID_NEW_SEQUENCE);
     waitForIdle();
 
@@ -94,7 +94,7 @@ model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
         ASSERT( path.IsAbsolute() );
         shortpaths.push_back( path.GetShortPath() ); // Add with short path
     }
-    UtilDialog::setFiles( shortpaths );
+    gui::Dialog::get().setFiles( shortpaths );
     triggerMenu(gui::ProjectView::get(),meID_NEW_FILE);
     waitForIdle();
 

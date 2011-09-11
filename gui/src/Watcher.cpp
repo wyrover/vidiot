@@ -57,10 +57,8 @@ Watcher* Watcher::current()
 
 void Watcher::onChange(wxFileSystemWatcherEvent& event)
 {
-    VAR_INFO(event.GetChangeType())(event.GetPath())(event.GetNewPath());
-
-    wxFileName file(event.GetPath());
     // Get the parent dir.
+    wxFileName file(event.GetPath());
     if (file.IsDir())
     {
         file.RemoveLastDir(); 
@@ -71,28 +69,8 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
         file.ClearExt();
     }
     wxFileName folder( file.GetLongPath(), "" );
-    VAR_INFO(folder);
 
-    switch (event.GetChangeType())
-    {
-    case wxFSW_EVENT_CREATE:
-        LOG_DEBUG << "CREATE"; 
-        break;
-    case wxFSW_EVENT_DELETE:
-        LOG_DEBUG << "DELETE"; 
-        break;
-    case wxFSW_EVENT_RENAME: 
-        LOG_DEBUG << "RENAME"; 
-        FATAL("Do not rename files");
-        break;
-    case wxFSW_EVENT_MODIFY: 
-        LOG_DEBUG << "MODIFY"; 
-        break;
-    case wxFSW_EVENT_ACCESS: 
-        LOG_DEBUG << "ACCESS"; 
-        return;
-    default: FATAL("Unsupported event type.");
-    }
+    VAR_INFO(folder)(GetFSWEventChangeTypeName(event.GetChangeType()))(event.GetPath())(event.GetNewPath());
 
     if (mFileMap.find(folder) != mFileMap.end())
     {
@@ -255,7 +233,8 @@ std::ostream& operator<<( std::ostream& os, const Watcher& obj )
     return os;
 }
 
-static wxString GetFSWEventChangeTypeName(int changeType)
+// static 
+wxString Watcher::GetFSWEventChangeTypeName(int changeType)
 {
     switch (changeType)
     {
