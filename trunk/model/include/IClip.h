@@ -164,7 +164,6 @@ private:
     // LIST LINKING
     //////////////////////////////////////////////////////////////////////////
 
-    // TODO better mechanism than this duplication
     friend class Track;
     void setNext(IClipPtr next);
     void setPrev(IClipPtr prev);

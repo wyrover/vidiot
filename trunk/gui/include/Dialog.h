@@ -44,6 +44,8 @@ public:
     /// \post !sDir 
     wxString getDir( const wxString & message, const wxString & default );
 
+    //////////////////////////////////////////////////////////////////////////
+
     /// Set a fixed outcome for the next files selection for testing.
     /// \param files fixed list of absolute file names which will be returned for the next getFiles() call
     void setFiles(std::list<wxString> files);
@@ -54,6 +56,8 @@ public:
     /// \post !sFiles
     wxStrings getFiles( const wxString& message, const wxString& filetypes );
 
+    //////////////////////////////////////////////////////////////////////////
+
     /// Set a fixed outcome for the next text selection for testing.
     /// \param text fixed text which will be returned for the next getText() call
     /// \post sText
@@ -63,6 +67,8 @@ public:
     /// given in setText() is returned and that text is reset.
     /// \post !sText 
     wxString getText( wxString title, wxString message, wxString default );
+
+    //////////////////////////////////////////////////////////////////////////
 
     /// Set a fixed outcome for the next message dialog.
     /// \param button fixed button value (wxYES, wxNO, wxCANCEL, wxOK or wxHELP) to be returned by next getConfirmation(); 
@@ -78,6 +84,13 @@ public:
     /// \param buttons wxYES | wxNO | wxCANCEL | wxOK | wxHELP (use whichever should apply)
     int getConfirmation( wxString title, wxString message, int buttons = wxOK);
 
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Show a debug report
+    /// \param type type of report
+    /// \param exit if true, application is exited via exit(-1)
+    void getDebugReport(bool doexit = true);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -89,6 +102,10 @@ private:
     boost::optional<wxString> mText;
     boost::optional<int> mButton;
 
+    /// Only one report is generated. After that application should end.
+    /// Handling more errors after the initial fatal one serves no purpose
+    /// and leads to more errors.
+    bool mDebugReportGenerated;
 };
 
 } // namespace

@@ -6,10 +6,6 @@
 #include "UtilAssert.h"
 #include "UtilEvent.h"
 
-#ifdef _MSC_VER
-#define CATCH_ALL_ERRORS
-#endif // _MSC_VER
-
 namespace test {
 struct IEventLoopListener;
 }
@@ -37,6 +33,15 @@ public:
     // IDLE HANDLING
     //////////////////////////////////////////////////////////////////////////
 
+    /// Helper method for testing. Somehow the Idle events are only correctly
+    /// received by this class. Therefore, the 'wait for idle' used in testing
+    /// uses the implementation here.
+    /// This method is steps 1 and 4 of the waitForIdle mechanism:
+    /// Trigger an event initiating the idle mechanism, and start the wait
+    /// until the idle sequence has finished. Thus, this method blocks until
+    /// idle seen.
+    void waitForIdle();
+
     /// Original implementation:
     ///    wxWakeUpIdle();
     ///    mCondition.wait(lock);
@@ -46,12 +51,14 @@ public:
     /// To avoid this, first an event is generated. This causes a method to be 
     /// called on the event loop. When wxWakeUpIdle() is called in that method, 
     /// the aforementioned interleaving problem cannot occur.
+    /// This method is step 2 of the waitForIdle mechanism: handle the
+    /// IdleTrigger event and consequently initiate step 3: wxWaitForIdle.
     void triggerIdle(EventIdleTrigger& event);
 
-    /// Helper method for testing. Somehow the Idle events are only correctly
-    /// received by this class. Therefore, the 'wait for idle' used in testing
-    /// uses the implementation here.
-    void waitForIdle();
+    /// This method is step 3 of the waitForIdle mechanism: after wxWidgets 
+    /// signals the Idle event, we know that it was not an already pending
+    /// idle event (bec
+    void onIdle(wxIdleEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // GUI CALLBACKS
@@ -61,19 +68,10 @@ public:
     int OnRun();
     void OnEventLoopEnter(wxEventLoopBase* loop);
     int OnExit();
-
-    //////////////////////////////////////////////////////////////////////////
-    // GUI EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onIdle(wxIdleEvent& event);
-
-#ifdef CATCH_ALL_ERRORS
-    virtual void OnAssertFailure(const wxChar *file, int Line, const wxChar *func, const wxChar *cond, const wxChar *msg);
-    virtual bool OnExceptionInMainLoop();
-    virtual void OnUnhandledException();
-    virtual void OnFatalException();
-#endif //CATCH_ALL_ERRORS
+    void OnAssertFailure(const wxChar *file, int Line, const wxChar *function, const wxChar *condition, const wxChar *message);
+    bool OnExceptionInMainLoop();
+    void OnUnhandledException();
+    void OnFatalException();
 
     //////////////////////////////////////////////////////////////////////////
     // IASSERT

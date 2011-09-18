@@ -28,6 +28,8 @@ enum
     // Timeline popup menu
     meID_ADD_TRANSITION,
     meID_REMOVE_EMPTY,
+    // Should always be the last value!!!
+    meID_LAST
 };
 
 #endif // IDS_H

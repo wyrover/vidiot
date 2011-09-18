@@ -9,6 +9,10 @@
 #include <boost/scoped_ptr.hpp>
 #include "IView.h"
 
+namespace util {
+    class TestCrash;
+}
+
 namespace model {
 class EventOpenProject;
 class EventCloseProject;
@@ -130,6 +134,8 @@ private:
     wxMenuBar*          menubar;        // For enabling/disabling menus
     wxMenu*             menuedit;       // For associating with do/undo
     wxMenu*             menusequence;   // For determining cleanup of the sequence menu's
+
+    util::TestCrash*    mTestCrash;
 
     wxAuiManager mUiManager;
 

@@ -5,7 +5,6 @@
 #include <boost/optional.hpp>
 #include <boost/weak_ptr.hpp>
 #include "IClip.h"
-#include "UtilLogGeneric.h"
 
 namespace model {
 

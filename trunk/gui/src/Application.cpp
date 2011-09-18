@@ -5,12 +5,13 @@
 #include <boost/exception/all.hpp>
 #include <boost/filesystem/operations.hpp>
 #include "Config.h"
-#include "DebugReport.h"
+#include "Dialog.h"
 #include "IEventLoopListener.h"
 #include "Layout.h"
 #include "UtilInitAvcodec.h"
 #include "UtilInitPortAudio.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "Window.h"
 
 /// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
@@ -32,9 +33,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     ,   IAssert()
     ,   mEventLoopListener(eventLoopListener)
 {
-#ifdef CATCH_ALL_ERRORS
-    wxHandleFatalExceptions();
-#endif // CATCH_ALL_ERRORS
+    // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
 
     Bind(wxEVT_IDLE, &Application::onIdle, this);
     Bind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
@@ -64,7 +63,19 @@ Application::~Application()
 
 void Application::waitForIdle()
 {
+    // Original implementation:
+    //    wxWakeUpIdle();
+    //    mCondition.wait(lock);
+    // However, it is possible that the idle event is received between these
+    // two statements. This results in a (temporary) hangup of the tests. After
+    // a while another idle event is received (guess), which resolves the hangup.
+    // To avoid this, first an event is generated. This causes a method to be 
+    // called on the event loop. When wxWakeUpIdle() is called in that method, 
+    // the aforementioned interleaving problem cannot occur.
+
     boost::mutex::scoped_lock lock(mMutexIdle);
+    // todo why not bind for the idle trigger here, and unbind when it is seen? 
+    // same for idle event itselves?
     QueueEvent(new EventIdleTrigger(false));
     static int maxWaitTime = 4000;
     // timed_wait: To avoid indefinite waits. Not the best solution, but working...for now.
@@ -82,7 +93,6 @@ void Application::triggerIdle(EventIdleTrigger& event)
     boost::mutex::scoped_lock lock(mMutexIdle);
     wxWakeUpIdle();
 }
-
 void Application::onIdle(wxIdleEvent& event)
 {
     mConditionIdle.notify_all();
@@ -95,6 +105,8 @@ void Application::onIdle(wxIdleEvent& event)
 
 bool Application::OnInit()
 {
+    LOG_INFO;
+
     if ( !wxApp::OnInit() )
     {
         return false;
@@ -119,7 +131,7 @@ bool Application::OnInit()
     // because it will log a lot during initialization.
     PortAudio::init();
 
-    LOG_INFO << "Start";
+    LOG_INFO;
 
     SetTopWindow(new Window());
     dynamic_cast<Window*>(GetTopWindow())->init();
@@ -129,18 +141,18 @@ bool Application::OnInit()
 
 int Application::OnRun()
 {
-    // ASSERT_EQUALS(1,2);
-    // int j = 8; j = 0; int i = 6/j; // for testing OnFatalException()
-    // wxArrayString arr;arr[0];      // for testing OnAssertFailure()
-    // throw 4;                       // for testing OnUnhandledException() directly (without going via OnExceptionInMainLoop())
-    wxApp::OnRun(); // Make exception in this call for testing OnExceptionInMainLoop() - Typically, normal code of app.
+    LOG_INFO;
+
+    wxApp::OnRun();
 
     return 0;
 }
 
 void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 {
-    if (inTestMode())
+    LOG_INFO;
+
+    if (mEventLoopListener)
     {
         mEventLoopListener->onEventLoopEnter();
     }
@@ -156,61 +168,79 @@ int Application::OnExit()
     return wxApp::OnExit();
 }
 
-#ifdef CATCH_ALL_ERRORS
-
-void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *func, const wxChar *cond, const wxChar *msg)
+void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *function, const wxChar *condition, const wxChar *message)
 {
+    LOG_ERROR;
     wxString File(file);
-    wxString Function(func);
-    wxString Condition(cond);
-    wxString Message(msg);
+    wxString Function(function);
+    wxString Condition(condition);
+    wxString Message(message);
     VAR_ERROR(File)(Line)(Function)(Condition)(Message);
-    DebugReport::generate(ReportWxwidgetsAssertionFailure);
-    wxApp::OnAssertFailure(file, Line, func, cond, msg);
+    Dialog::get().getDebugReport();
 }
 
 bool Application::OnExceptionInMainLoop()
 {
-    // Rethrown in order to be handled in 'OnUnhandledException()'
-    throw;
-    return true;
-}
-
-void Application::OnUnhandledException()
-{
+    LOG_ERROR;
     try
     {
         throw;
     }
     catch (boost::exception &e)
     {
-        LOG_ERROR << std::endl << "boost::exception" << std::endl << boost::diagnostic_information(e);
-        DebugReport::generate(ReportBoostException);
+        LOG_ERROR << "boost::exception" << std::endl << boost::diagnostic_information(e);
     }
     catch (std::exception const& e)
     {
-        LOG_ERROR << std::endl << "std::exception" << std::endl << boost::diagnostic_information(e);
-        DebugReport::generate(ReportStdException);
+        LOG_ERROR << "std::exception" << std::endl << boost::diagnostic_information(e);
     }
     catch ( ... )
     {
-        LOG_ERROR << std::endl << "unknown exception type";
-        DebugReport::generate(ReportUnhandledException);
+        LOG_ERROR << "unknown exception type";
     }
+    Dialog::get().getDebugReport();
+    return true; // Continue the main loop, in order to be able to show the crash dialog
+}
+
+void Application::OnUnhandledException()
+{
+    LOG_ERROR;
+    try
+    {
+        throw;
+    }
+    catch (boost::exception &e)
+    {
+        LOG_ERROR << "boost::exception" << std::endl << boost::diagnostic_information(e);
+        Dialog::get().getDebugReport();
+    }
+    catch (std::exception const& e)
+    {
+        LOG_ERROR << "std::exception" << std::endl << boost::diagnostic_information(e);
+        Dialog::get().getDebugReport();
+    }
+    catch ( ... )
+    {
+        LOG_ERROR << "unknown exception type";
+        Dialog::get().getDebugReport();
+    }
+    Dialog::get().getDebugReport();
 }
 
 void Application::OnFatalException()
 {
-    LOG_ERROR << std::endl;
-    DebugReport::generate(ReportFatalException);
+    LOG_ERROR;
+    Dialog::get().getDebugReport();
 }
 
-#endif // CATCH_ALL_ERRORS
+//////////////////////////////////////////////////////////////////////////
+// IASSERT
+//////////////////////////////////////////////////////////////////////////
 
 void Application::onAssert()
 {
-    DebugReport::generate(ReportAssertionFailure);
-    exit(-1);
+    LOG_ERROR;
+    Dialog::get().getDebugReport();
 }
 
 //////////////////////////////////////////////////////////////////////////

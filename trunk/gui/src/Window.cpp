@@ -6,7 +6,9 @@
 #include <wx/msgdlg.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/assign/list_of.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "Dialog.h"
 #include "Node.h"
@@ -18,6 +20,7 @@
 #include "ProjectEvent.h"
 #include "ProjectView.h"
 #include "TimelinesView.h"
+#include "UtilTestCrash.h"
 #include "UtilLog.h"
 #include "Watcher.h"
 #include "Worker.h"
@@ -70,6 +73,7 @@ Window::Window()
     ,   menubar(0)
     ,   menuedit(0)
     ,   menusequence(0)
+    ,   mTestCrash(new util::TestCrash(this))
 {
     sCurrent = this;
 
@@ -123,6 +127,7 @@ Window::Window()
     menubar->Append(menusequence, _("&Sequence"));
     sSequenceMenuIndex = 3;
     menubar->Append(menutools,    _("&Tools"));
+    menubar->Append(mTestCrash->getMenu(),     _("&Crash"));
     menubar->Append(menuhelp,     _("&Help"));
 
     SetMenuBar( menubar );
@@ -219,8 +224,8 @@ Window::~Window()
 
     mUiManager.UnInit();
 
+    delete mTestCrash; // Unbind the crash method
     setSequenceMenu(0); // Ensure destruction of sequenceMenu
-
     delete mProjectView;    // First, delete the referring windows.
     delete mTimelinesView;  // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
     delete mPreview;        // the timeline view in turn 'knows/uses' the preview (specifically, the player).
@@ -238,7 +243,6 @@ Window& Window::get()
     ASSERT(sCurrent);
     return *sCurrent;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
@@ -333,6 +337,7 @@ void Window::onHelp(wxCommandEvent& event)
 void Window::onAbout(wxCommandEvent& event)
 {
     wxMessageBox(_("Vidiot 0.1"), _T("About"), wxOK | wxICON_INFORMATION, this);
+
     event.Skip();
 }
 

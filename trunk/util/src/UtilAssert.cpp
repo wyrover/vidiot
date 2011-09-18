@@ -32,6 +32,5 @@ void IAssert::breakIntoDebugger(const std::string& message)
 #elif (defined __GNUC__) && (defined _DEBUG)
     __asm ("int $0x3");
 #endif
-    wxMessageOutputMessageBox().Printf("A fatal error was encountered:\n%s",message);
-    sInstance->onAssert(); // TODO causes a hangup in module test, due to 'onEventLoopEnter' being triggered for the debugrpt window. In general, maybe hangups with module test and popup windows?
+    sInstance->onAssert();
 }
