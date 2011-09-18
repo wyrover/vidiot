@@ -2,17 +2,9 @@
 #define DEBUG_REPORT_H
 
 #include "UtilEnum.h"
+#include "Dialog.h"
 
 namespace gui {
-
-DECLAREENUM(ReportType, \
-            ReportUnhandledException, \
-            ReportFatalException, \
-            ReportBoostException, \
-            ReportStdException, \
-            ReportAssertionFailure, \
-            ReportWxwidgetsAssertionFailure, \
-            ReportOther);
 
 class DebugReport
 {
