@@ -9,8 +9,6 @@
 
 namespace gui {
 
-IMPLEMENTENUM(ReportType)
-
 //////////////////////////////////////////////////////////////////////////
 // GENERATE REPORT
 //////////////////////////////////////////////////////////////////////////
@@ -26,7 +24,7 @@ void DebugReport::generate(ReportType type)
     }
     wxDebugReportCompress report;
 
-    report.AddAll(ctx);
+    //report.AddAll(ctx);
 
     if (wxFileName(Config::getFileName()).FileExists())
     {
