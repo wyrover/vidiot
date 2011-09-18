@@ -58,6 +58,7 @@ void TestManual::tearDown()
 
 void TestManual::testManual()
 {
+    ASSERT(false);
 }
 
 } // namespace

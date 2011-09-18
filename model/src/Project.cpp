@@ -1,11 +1,13 @@
 #include "Project.h"
 
+#include <fstream>
 #include <wx/msgdlg.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include "Dialog.h"
 #include "File.h"
 #include "Folder.h"
 #include "IView.h"
@@ -137,18 +139,38 @@ std::istream& Project::LoadObject(std::istream& istream)
     }
     catch (boost::archive::archive_exception& e)
     {
-        FATAL(e.what());
+        VAR_ERROR(e.what());
+        istream.setstate(std::ios_base::failbit);
     }
     catch (std::exception& e)
     {
-        FATAL(e.what());
+        VAR_ERROR(e.what());
+        istream.setstate(std::ios_base::failbit);
     }
     catch (...)
     {
-        FATAL;
+        LOG_ERROR;
+        istream.setstate(std::ios_base::failbit);
     }
 
     return istream;
+}
+
+bool Project::DoOpenDocument(const wxString& file)
+{
+    std::ifstream store(file.mb_str(), wxSTD ios::binary);
+    if ( !store )
+    {
+        gui::Dialog::get().getConfirmation(_("Open Failed"),_("The file could not be opened."));
+        return false;
+    }
+    LoadObject(store);
+    if ( !store )
+    {
+        gui::Dialog::get().getConfirmation(_("Open Failed"),_("The file contents could not be read."));
+        return false;
+    }
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

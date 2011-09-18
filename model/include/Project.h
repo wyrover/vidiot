@@ -65,6 +65,10 @@ public:
     std::ostream& SaveObject(std::ostream& stream);
     std::istream& LoadObject(std::istream& stream);
 
+    /// Overridden to change the error dialogs.
+    bool DoOpenDocument(const wxString& file);
+
+
     //////////////////////////////////////////////////////////////////////////
     // CHANGE COMMANDS
     //////////////////////////////////////////////////////////////////////////
