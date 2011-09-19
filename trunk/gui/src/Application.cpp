@@ -35,9 +35,6 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
 {
     // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
 
-    Bind(wxEVT_IDLE, &Application::onIdle, this);
-    Bind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
-
     SetAppName(mEventLoopListener ? sTestApplicationName : "Vidiot");
     SetVendorName("Eric Raijmakers");
 
@@ -51,9 +48,6 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
 
 Application::~Application()
 {
-    Unbind(wxEVT_IDLE, &Application::onIdle, this);
-    Unbind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
-
     Log::exit();
 }
 
@@ -74,9 +68,13 @@ void Application::waitForIdle()
     // the aforementioned interleaving problem cannot occur.
 
     boost::mutex::scoped_lock lock(mMutexIdle);
-    // todo why not bind for the idle trigger here, and unbind when it is seen? 
-    // same for idle event itselves?
+
+    // Queue a new event at the end of the queue. That ensures that any pending events
+    // (including Idle events) are first handled. When this specific event is seen,
+    // processing (for 'idle waiting') continues with method triggerIdle().
+    Bind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
     QueueEvent(new EventIdleTrigger(false));
+
     static int maxWaitTime = 4000;
     // timed_wait: To avoid indefinite waits. Not the best solution, but working...for now.
     // This caused problems, particularly with the Play() method of the HelperTimeline class.
@@ -91,11 +89,14 @@ void Application::waitForIdle()
 void Application::triggerIdle(EventIdleTrigger& event)
 {
     boost::mutex::scoped_lock lock(mMutexIdle);
+    Unbind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
+    Bind(wxEVT_IDLE, &Application::onIdle, this);
     wxWakeUpIdle();
 }
 void Application::onIdle(wxIdleEvent& event)
 {
     mConditionIdle.notify_all();
+    Unbind(wxEVT_IDLE, &Application::onIdle, this);
     event.Skip();
 }
 
