@@ -56,6 +56,10 @@ public:
     /// - Playback transition
     void testTransition();
 
+    /// Test the splitting of the sequence at the position of the cursor
+    void testSplitting();
+
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

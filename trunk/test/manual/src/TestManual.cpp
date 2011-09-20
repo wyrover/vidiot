@@ -69,7 +69,7 @@ void TestManual::testManual()
 
     PositionCursor(HCenter(VideoClip(0,2)));
 
-    Type('s');
+    //Type('s');
 
     pause();
 

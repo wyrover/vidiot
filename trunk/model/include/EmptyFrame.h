@@ -27,7 +27,7 @@ public:
 
     /// Override from VideoFrame. When this method is called for the first time,
     /// the zeroed buffer is generated.
-    DataPointer getData();
+    DataPointer getData() override;
 
 private:
 

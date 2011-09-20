@@ -11,7 +11,7 @@ class RootCommand : public wxCommand
 public:
     RootCommand();
     virtual ~RootCommand();
-    wxString GetName() const;
+    wxString GetName() const override;
 
 protected:
     wxString mCommandName;

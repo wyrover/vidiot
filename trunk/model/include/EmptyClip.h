@@ -25,7 +25,7 @@ public:
 
     EmptyClip(pts length);
 
-    virtual EmptyClip* clone();
+    virtual EmptyClip* clone() override;
 
     virtual ~EmptyClip();
 
@@ -33,25 +33,25 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean();
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
+    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) override;
 
     //////////////////////////////////////////////////////////////////////////
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void adjustBegin(pts adjustment); /// \see Clip::adjustBegin
+    virtual void adjustBegin(pts adjustment) override; /// \see Clip::adjustBegin
 
 protected:
 

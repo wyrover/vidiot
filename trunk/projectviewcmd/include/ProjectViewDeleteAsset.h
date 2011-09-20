@@ -11,8 +11,8 @@ class ProjectViewDeleteAsset : public ProjectViewCommand
 public:
     ProjectViewDeleteAsset(model::NodePtrs nodes);
     ~ProjectViewDeleteAsset();
-    bool Do();
-    bool Undo();
+    bool Do() override;
+    bool Undo() override;
 private:
     ParentAndChildPairs mPairs;
 };

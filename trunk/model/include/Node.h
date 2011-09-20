@@ -26,17 +26,17 @@ public:
     // INODE
     //////////////////////////////////////////////////////////////////////////
 
-    bool hasParent() const;
-    NodePtr getParent() const;
-    void setParent(NodePtr parent);
+    bool hasParent() const override;
+    NodePtr getParent() const override;
+    void setParent(NodePtr parent) override;
 
-    NodePtr addChild(NodePtr newChild);
-    NodePtr removeChild(NodePtr child);
-    NodePtrs getChildren() const;
+    NodePtr addChild(NodePtr newChild) override;
+    NodePtr removeChild(NodePtr child) override;
+    NodePtrs getChildren() const override;
 
-    NodePtrs find(wxString name);
+    NodePtrs find(wxString name) override;
 
-    virtual void setName(wxString name);
+    virtual void setName(wxString name) override;
 
 protected:
 

@@ -15,8 +15,8 @@ public:
     ProjectViewAddAsset(model::NodePtr parent, model::NodePtrs nodes);
 
     ~ProjectViewAddAsset();
-    bool Do();
-    bool Undo();
+    bool Do() override;
+    bool Undo() override;
 private:
     model::NodePtr mParent;
     model::NodePtrs mChildren;

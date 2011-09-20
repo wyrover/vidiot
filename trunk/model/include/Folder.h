@@ -29,8 +29,8 @@ public:
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////
 
-    virtual wxString getName() const;
-    void setName(wxString name);
+    virtual wxString getName() const override;
+    void setName(wxString name) override;
 
 private:
 

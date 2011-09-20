@@ -40,15 +40,15 @@ public:
     // OVERRIDES FROM WXDATAVIEWMODEL
     //////////////////////////////////////////////////////////////////////////
 
-    bool IsContainer (const wxDataViewItem &wxItem) const;
-    wxDataViewItem GetParent( const wxDataViewItem &wxItem ) const;
-    unsigned int GetChildren( const wxDataViewItem &wxItem, wxDataViewItemArray &wxItemArray ) const;
-    unsigned int GetColumnCount() const;
-    wxString GetColumnType(unsigned int col) const;
-    void GetValue( wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) const;
-    bool SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col );
-    bool HasDefaultCompare() const;
-    int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const;
+    bool IsContainer (const wxDataViewItem &wxItem) const override;
+    wxDataViewItem GetParent( const wxDataViewItem &wxItem ) const override;
+    unsigned int GetChildren( const wxDataViewItem &wxItem, wxDataViewItemArray &wxItemArray ) const override;
+    unsigned int GetColumnCount() const override;
+    wxString GetColumnType(unsigned int col) const override;
+    void GetValue( wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) const override;
+    bool SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) override;
+    bool HasDefaultCompare() const override;
+    int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const override;
 
     //////////////////////////////////////////////////////////////////////////
     // 

@@ -39,8 +39,8 @@ public:
     pixel getLeftPixel() const;     ///< \return left position in pixels
     pixel getRightPixel() const;    ///< \return right position in pixels
 
-    pixel requiredWidth() const;    ///< \see View::requiredWidth()
-    pixel requiredHeight() const;   ///< \see View::requiredHeight()
+    pixel requiredWidth() const override;    ///< \see View::requiredWidth()
+    pixel requiredHeight() const override;   ///< \see View::requiredHeight()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
@@ -76,7 +76,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap) const;                      ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const override;                      ///< @see View::draw()
 
     /// Actual drawing implementation. Reused for drawing clips when dragging.
     /// \param drawDraggedClips indicates if clips currently being dragged must be drawn or left empty

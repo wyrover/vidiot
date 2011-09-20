@@ -25,7 +25,7 @@ public:
 
     AudioClip(AudioFilePtr clip);
 
-    virtual AudioClip* clone();
+    virtual AudioClip* clone() override;
 
     virtual ~AudioClip();
 
@@ -33,13 +33,13 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean();
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
+    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) override;
 
 protected:
 

@@ -34,7 +34,7 @@ public:
     // ACLIPEDIT INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    void initialize();
+    void initialize() override;
 
 private:
 
@@ -52,10 +52,11 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /// \return true if the transition must be removed when the current drag is dropped
-    /// This is required for the purpose of removing a transition of which one but not
-    /// all related (left+right) clips are being dragged.
-    bool transitionMustBeRemovedOnDrop(model::TransitionPtr transition) const;
+    /// \return true if the transition must be removed (unapplied) when the current drag is dropped
+    /// This is required for the purpose of removing a transition (and putting the
+    /// original clip's length back) of which one but not all related (left+right)
+    /// clips are being dragged.
+    bool transitionMustBeUnapplied(model::TransitionPtr transition) const;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

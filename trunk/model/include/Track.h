@@ -34,7 +34,7 @@ public:
 
     Track();
 
-    virtual Track* clone();
+    virtual Track* clone() override;
 
     virtual ~Track();
 
@@ -42,10 +42,10 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength() const;
-    virtual void moveTo(pts position);
-    virtual wxString getDescription() const;
-    virtual void clean();
+    virtual pts getLength() const override;
+    virtual void moveTo(pts position) override;
+    virtual wxString getDescription() const override;
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // CLIPS

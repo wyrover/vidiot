@@ -37,7 +37,7 @@ public:
 
     File();
     File(wxFileName path, int buffersize = 1);
-    virtual File* clone();
+    virtual File* clone() override;
     virtual ~File();
 
     void abort();
@@ -46,16 +46,16 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength() const;
-    virtual void moveTo(pts position);
-    virtual wxString getDescription() const;
-    virtual void clean();
+    virtual pts getLength() const override;
+    virtual void moveTo(pts position) override;
+    virtual wxString getDescription() const override;
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // IPATH
     //////////////////////////////////////////////////////////////////////////
 
-    wxFileName getPath() const;
+    wxFileName getPath() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -63,7 +63,7 @@ public:
 
     /// Returns the full path if the parent node is not an AutoFolder. Returns 
     /// the filename only if the parent node is an AutoFolder.
-    wxString getName() const;
+    wxString getName() const override;
 
     wxDateTime getLastModified() const;
 

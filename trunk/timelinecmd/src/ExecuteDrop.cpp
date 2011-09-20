@@ -40,19 +40,20 @@ void ExecuteDrop::initialize()
 
     ReplacementMap linkmapper;
 
-    LOG_DEBUG << "STEP 1: Remove all transitions for which the transitioned clips are 'torn apart'";
+    LOG_DEBUG << "STEP 1: Determine the transitions for which the transitioned clips are 'torn apart'";
+   std::set<model::TransitionPtr> transitionsToBeUnapplied;
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
         model::TrackPtr track = clip->getTrack();
         model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
-        if (prevTransition && transitionMustBeRemovedOnDrop(prevTransition))
+        if (prevTransition && transitionMustBeUnapplied(prevTransition))
         {
-            removeTransition(prevTransition, linkmapper);
+            transitionsToBeUnapplied.insert(prevTransition);
         }
         model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
-        if (nextTransition && transitionMustBeRemovedOnDrop(nextTransition))
+        if (nextTransition && transitionMustBeUnapplied(nextTransition))
         {
-            removeTransition(nextTransition, linkmapper);
+            transitionsToBeUnapplied.insert(nextTransition);
         }
     }
 
@@ -111,7 +112,10 @@ void ExecuteDrop::initialize()
         newMove(drop.track, remove.second, drop.clips, drop.track, remove.second, remove.first);
     }
 
-    LOG_DEBUG << "STEP 5: Ensure that links are maintained.";
+    LOG_DEBUG << "STEP 5: Unapply 'torn apart' transitions..";
+
+
+    LOG_DEBUG << "STEP 6: Ensure that links are maintained.";
     replaceLinks(linkmapper);
 }
 
@@ -129,10 +133,10 @@ std::ostream& operator<<( std::ostream& os, const ExecuteDrop::Drop& obj )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition) const
+bool ExecuteDrop::transitionMustBeUnapplied(model::TransitionPtr transition) const
 {
     bool adjacentClipDragged = false;
-    bool adjacentClipMissing = false;
+    bool adjacentClipNotDragged = false;
     if (transition->getLeft() > 0)
     {
         model::IClipPtr prev = transition->getPrev();
@@ -143,7 +147,7 @@ bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition)
         }
         else
         {
-            adjacentClipMissing = true;
+            adjacentClipNotDragged = true;
         }
     }
     if (transition->getRight() > 0)
@@ -156,10 +160,10 @@ bool ExecuteDrop::transitionMustBeRemovedOnDrop(model::TransitionPtr transition)
         }
         else
         {
-            adjacentClipMissing = true;
+            adjacentClipNotDragged = true;
         }
     }
-    return adjacentClipDragged && adjacentClipMissing;
+    return adjacentClipDragged && adjacentClipNotDragged;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -35,8 +35,8 @@ public:
     AudioView& getAudio();
     const AudioView& getAudio() const;
 
-    pixel requiredWidth() const;  ///< @see View::requiredWidth()
-    pixel requiredHeight() const; ///< @see View::requiredHeight()
+    pixel requiredWidth() const override;  ///< @see View::requiredWidth()
+    pixel requiredHeight() const override; ///< @see View::requiredHeight()
 
     void setDividerPosition(pixel position);
     void resetDividerPosition();
@@ -63,7 +63,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap) const; ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const override; ///< @see View::draw()
 };
 
 }} // namespace

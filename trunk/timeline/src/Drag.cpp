@@ -204,6 +204,11 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 }
             }
         }
+
+        //TODO For all transitions that are selected, if NOT all the clips to which a 
+        // transition applies are selected, the transition must NOT be dragged.
+//TODO
+
     }
 
     BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )

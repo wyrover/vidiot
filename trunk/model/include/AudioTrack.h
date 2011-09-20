@@ -21,7 +21,7 @@ public:
 
 	AudioTrack();
 
-    virtual AudioTrack* clone();
+    virtual AudioTrack* clone() override;
 
 	virtual ~AudioTrack();
 
@@ -29,13 +29,13 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean();
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // PLAYBACK
     //////////////////////////////////////////////////////////////////////////
 
-    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
+    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) override;
 
 protected:
 
