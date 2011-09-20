@@ -13,7 +13,7 @@ namespace gui { namespace timeline { namespace command {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
-    // todo splitting of transition????
+
 SplitAtCursor::SplitAtCursor(model::SequencePtr sequence)
     :   AClipEdit(sequence)
 {
@@ -47,7 +47,7 @@ void SplitAtCursor::splittrack(model::Tracks tracks, pts position, ReplacementMa
 {
     BOOST_FOREACH( model::TrackPtr track, tracks )
     {
-        split(track, position, &linkmapper);
+        split(track, position, linkmapper);
     }
 }
 

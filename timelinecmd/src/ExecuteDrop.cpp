@@ -91,8 +91,8 @@ void ExecuteDrop::initialize()
         pts dropEndPosition = drop.position + droppedSize;
 
         // Ensure that the track has cuts at the begin and the end of the dropped clips
-        split(drop.track, drop.position,   &linkmapper);
-        split(drop.track, dropEndPosition, &linkmapper);
+        split(drop.track, drop.position,   linkmapper);
+        split(drop.track, dropEndPosition, linkmapper);
 
         // Determine the clips to be replaced.
         // Done AFTER the splitting above, since that requires clip addition/removal.
