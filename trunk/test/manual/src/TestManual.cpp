@@ -58,12 +58,20 @@ void TestManual::tearDown()
 
 void TestManual::testManual()
 {
+    // rename to testSplitting
+
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
     Type('c');
     waitForIdle();
     ASSERT(VideoClip(0,2)->isA<model::Transition>());
+
+    PositionCursor(HCenter(VideoClip(0,2)));
+
+    Type('s');
+
+    pause();
 
 
 }

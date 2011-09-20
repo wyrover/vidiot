@@ -88,15 +88,16 @@ bool AClipEdit::Undo()
 // HELPER METHODS FOR SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
 
-void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conversionmap)
+void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap& conversionmap)
 {
     model::IClipPtr clip = track->getClip(position);
     if (clip)
     {
-        if (clip->isA<model::Transition>())
+        model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+        if (transition)
         {
-            // There is a transition at the given position. Remove it.
-            removeClip(clip);
+            // There is a transition at the given position. Remove it and restore the underlying clip's lengths.
+            unapplyTransition(transition, conversionmap);
         }
         model::IClipPtr clip = track->getClip(position);
         if (clip) // If there is a clip at the given position, it might need to be split
@@ -111,7 +112,7 @@ void AClipEdit::split(model::TrackPtr track, pts position, ReplacementMap* conve
                 left->adjustEnd(position - clip->getLength());
                 right->adjustBegin(position);
                 model::IClips replacements = boost::assign::list_of(left)(right);
-                replaceClip(clip, replacements, conversionmap);
+                replaceClip(clip, replacements, &conversionmap);
             }
 
         }

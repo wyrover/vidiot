@@ -78,7 +78,7 @@ protected:
     /// \param track track in which a cut must be made at the given position
     /// \param position position in the track where the split should occur
     /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
-    void split(model::TrackPtr track, pts position, ReplacementMap* conversionmap = 0);
+    void split(model::TrackPtr track, pts position, ReplacementMap& conversionmap);
 
     /// Replace the given clip (original) with a list of other clips.
     /// In the ReplacementMap (if != 0) the mapping clip->replacements is added.
