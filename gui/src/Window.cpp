@@ -37,14 +37,14 @@ class ViewHelper
 public:
     ViewHelper() : wxView() {};
     virtual ~ViewHelper() {};
-    void OnDraw(wxDC *dc) {}
-    void OnUpdate(wxView *sender, wxObject *hint = NULL) {}
-    bool OnCreate(wxDocument *doc, long flags) 
+    void OnDraw(wxDC *dc) override {}
+    void OnUpdate(wxView *sender, wxObject *hint = NULL) override {}
+    bool OnCreate(wxDocument *doc, long flags) override
     {
         Activate(true); // Make sure the document manager knows that this is the get view.
         return true;
     }
-    bool OnClose(bool deleteWindow = true)
+    bool OnClose(bool deleteWindow = true) override
     {
         Activate(false);
         return true;

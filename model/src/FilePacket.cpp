@@ -9,27 +9,40 @@ extern "C" {
 #include <avcodec.h>
 };
 
+namespace model {
+
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 Packet::Packet(AVPacket* packet)
-:	mPacket(0)
+    :	mPacket(0)
 {
     mPacket = new AVPacket(*packet);
 }
 
 Packet::~Packet()
 {
-	if (mPacket->data)
-	{
-		av_free_packet(mPacket);
-	}
+    if (mPacket->data)
+    {
+        av_free_packet(mPacket);
+    }
     delete mPacket;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
 AVPacket* Packet::getPacket()
 {
-	return mPacket;
+    return mPacket;
 }
 
 int Packet::getSizeInBytes()
 {
     return mPacket->size;
 }
+
+} // namespace
+

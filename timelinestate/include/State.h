@@ -34,7 +34,7 @@ public:
     {
     };
 protected:
-    Timeline& getTimeline() 
+    Timeline& getTimeline() override 
     { 
         return outermost_context().getTimeline();
     };

@@ -51,22 +51,22 @@ public:
     /// (shared_ptr's to 'Node') is not automatically cleaned up
     /// upon destruction since parents and children keep references to each other.
     /// This method ensures that all these bidirectional references are removed.
-    bool DeleteContents();
-    bool OnCloseDocument();
-    bool OnNewDocument();
-    bool OnCreate(const wxString& path, long flags);
-    void OnChangeFilename(bool notifyViews);
-    virtual void Modify(bool modify);
+    bool DeleteContents() override;
+    bool OnCloseDocument() override;
+    bool OnNewDocument() override;
+    bool OnCreate(const wxString& path, long flags) override;
+    void OnChangeFilename(bool notifyViews) override;
+    virtual void Modify(bool modify) override;
 
     //////////////////////////////////////////////////////////////////////////
     // LOAD/SAVE - wxDocument
     //////////////////////////////////////////////////////////////////////////
 
-    std::ostream& SaveObject(std::ostream& stream);
-    std::istream& LoadObject(std::istream& stream);
+    std::ostream& SaveObject(std::ostream& stream) override;
+    std::istream& LoadObject(std::istream& stream) override;
 
     /// Overridden to change the error dialogs.
-    bool DoOpenDocument(const wxString& file);
+    bool DoOpenDocument(const wxString& file) override;
 
 
     //////////////////////////////////////////////////////////////////////////

@@ -34,7 +34,7 @@ void DeleteSelectedClips::initialize()
 {
     ReplacementMap linkmapper;
     std::set<model::TransitionPtr> transitionsToBeRemoved;
-   std::set<model::TransitionPtr> transitionsToBeUnapplied;
+    std::set<model::TransitionPtr> transitionsToBeUnapplied;
 
     BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
     {

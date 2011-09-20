@@ -23,7 +23,7 @@ public:
 
     VideoClip(IControlPtr clip);
 
-    virtual VideoClip* clone();
+    virtual VideoClip* clone() override;
 
     virtual ~VideoClip();
 
@@ -31,13 +31,13 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean();
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
 
 protected:
 

@@ -64,14 +64,14 @@ public:
     // GUI CALLBACKS
     //////////////////////////////////////////////////////////////////////////
 
-    bool OnInit();
-    int OnRun();
-    void OnEventLoopEnter(wxEventLoopBase* loop);
-    int OnExit();
-    void OnAssertFailure(const wxChar *file, int Line, const wxChar *function, const wxChar *condition, const wxChar *message);
-    bool OnExceptionInMainLoop();
-    void OnUnhandledException();
-    void OnFatalException();
+    bool OnInit() override;
+    int OnRun() override;
+    void OnEventLoopEnter(wxEventLoopBase* loop) override;
+    int OnExit() override;
+    void OnAssertFailure(const wxChar *file, int Line, const wxChar *function, const wxChar *condition, const wxChar *message) override;
+    bool OnExceptionInMainLoop() override;
+    void OnUnhandledException() override;
+    void OnFatalException() override;
 
     //////////////////////////////////////////////////////////////////////////
     // IASSERT

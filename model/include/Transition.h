@@ -37,7 +37,7 @@ public:
     Transition(pts nFramesLeft, pts nFramesRight);
 
     ///< Used for making deep copies (clones) 
-    virtual Transition* clone();           
+    virtual Transition* clone() override;           
     
     virtual ~Transition();
 
@@ -45,43 +45,43 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength() const;
-    virtual void moveTo(pts position);
-    virtual wxString getDescription() const;
-    virtual void clean();
+    virtual pts getLength() const override;
+    virtual void moveTo(pts position) override;
+    virtual wxString getDescription() const override;
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0);
-    virtual TrackPtr getTrack();
+    virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
+    virtual TrackPtr getTrack() override;
 
-    virtual pts getLeftPts() const;
-    virtual pts getRightPts() const; 
+    virtual pts getLeftPts() const override;
+    virtual pts getRightPts() const override; 
 
-    virtual void setLink(IClipPtr link);
-    virtual IClipPtr getLink() const;
+    virtual void setLink(IClipPtr link) override;
+    virtual IClipPtr getLink() const override;
 
-    virtual pts getMinAdjustBegin() const;
-    virtual pts getMaxAdjustBegin() const;
-    virtual void adjustBegin(pts adjustment);
+    virtual pts getMinAdjustBegin() const override;
+    virtual pts getMaxAdjustBegin() const override;
+    virtual void adjustBegin(pts adjustment) override;
 
-    virtual pts getMinAdjustEnd() const;
-    virtual pts getMaxAdjustEnd() const;
-    virtual void adjustEnd(pts adjustment);
+    virtual pts getMinAdjustEnd() const override;
+    virtual pts getMaxAdjustEnd() const override;
+    virtual void adjustEnd(pts adjustment) override;
 
-    virtual bool getSelected() const;
-    virtual void setSelected(bool selected);
+    virtual bool getSelected() const override;
+    virtual void setSelected(bool selected) override;
 
-    virtual bool getDragged() const;
-    virtual void setDragged(bool dragged);
+    virtual bool getDragged() const override;
+    virtual void setDragged(bool dragged) override;
 
-    virtual pts getGenerationProgress() const;          
-    virtual void setGenerationProgress(pts progress);
+    virtual pts getGenerationProgress() const override;          
+    virtual void setGenerationProgress(pts progress) override;
 
-    void invalidateLastSetPosition();
-    boost::optional<pts> getLastSetPosition() const;
+    void invalidateLastSetPosition() override;
+    boost::optional<pts> getLastSetPosition() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION

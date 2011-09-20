@@ -39,8 +39,8 @@ public:
      // GET/SET
      //////////////////////////////////////////////////////////////////////////
 
-     pixel requiredWidth() const;  ///< @see View::requiredWidth()
-     pixel requiredHeight() const; ///< @see View::requiredHeight()
+     pixel requiredWidth() const override;  ///< @see View::requiredWidth()
+     pixel requiredHeight() const override; ///< @see View::requiredHeight()
 
      void setShift(pts position, pts length);
 
@@ -68,7 +68,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap) const; ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const override; ///< @see View::draw()
 };
 
 }} // namespace

@@ -25,8 +25,8 @@ public:
     // WXWIDGETS DO/UNDO INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    bool Do();
-    bool Undo();
+    bool Do() override;
+    bool Undo() override;
 
 private:
 

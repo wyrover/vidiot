@@ -38,9 +38,9 @@ public:
     // FROM wxDataObjectSimple
     //////////////////////////////////////////////////////////////////////////
 
-    virtual bool GetDataHere(void *buf) const;
-    virtual size_t GetDataSize () const;
-    virtual bool SetData(size_t len, const void *buf);
+    virtual bool GetDataHere(void *buf) const override;
+    virtual size_t GetDataSize () const override;
+    virtual bool SetData(size_t len, const void *buf) override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET ALL ASSETS

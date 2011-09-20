@@ -19,8 +19,8 @@ class ProjectViewCreateAutoFolder
 public:
     ProjectViewCreateAutoFolder(model::FolderPtr parent, wxFileName path);
     ~ProjectViewCreateAutoFolder();
-    bool Do();
-    bool Undo();
+    bool Do() override;
+    bool Undo() override;
 private:
     model::FolderPtr mParent;
     model::AutoFolderPtr mNewAutoFolder;

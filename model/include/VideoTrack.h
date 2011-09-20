@@ -21,7 +21,7 @@ public:
 
     VideoTrack();
 
-    virtual VideoTrack* clone();
+    virtual VideoTrack* clone() override;
 
     virtual ~VideoTrack();
 
@@ -29,15 +29,15 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean();
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // PLAYBACK
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void moveTo(pts position);
+    virtual void moveTo(pts position) override;
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
 
 protected:
 

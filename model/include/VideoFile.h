@@ -23,7 +23,7 @@ public:
 
     VideoFile(wxFileName path);
 
-    virtual VideoFile* clone();
+    virtual VideoFile* clone() override;
 
     virtual ~VideoFile();
 
@@ -31,14 +31,14 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    void moveTo(pts position);
-    virtual void clean();
+    void moveTo(pts position) override;
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true);
+    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
 
 protected:
 

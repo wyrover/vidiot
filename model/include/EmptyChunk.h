@@ -27,7 +27,7 @@ public:
 
     /// Override from AudioChunk. When this method is called for the first time,
     /// then the zeroed buffer is generated.
-    sample* getUnreadSamples();
+    sample* getUnreadSamples() override;
 
 private:
 

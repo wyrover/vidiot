@@ -33,7 +33,7 @@ public:
     // IPATH
     //////////////////////////////////////////////////////////////////////////
 
-    wxFileName getPath() const;
+    wxFileName getPath() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // STRUCTURE
@@ -55,7 +55,7 @@ public:
 
     /// Returns the full path if the parent node is not an AutoFolder. Returns 
     /// the relatve path only if the parent node is an AutoFolder.
-    wxString getName() const;
+    wxString getName() const override;
 
     boost::optional<wxString> getLastModified() const;
 

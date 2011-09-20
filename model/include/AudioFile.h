@@ -25,7 +25,7 @@ public:
 
 	AudioFile(wxFileName path);
 
-    virtual AudioFile* clone();
+    virtual AudioFile* clone() override;
 
 	virtual ~AudioFile();
 
@@ -33,13 +33,13 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean();
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels);
+    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) override;
 
 protected:
 
@@ -78,7 +78,7 @@ private:
     // FROM FILE
     //////////////////////////////////////////////////////////////////////////
 
-    void flush();
+    void flush() override;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

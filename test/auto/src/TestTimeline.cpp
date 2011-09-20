@@ -374,5 +374,27 @@ void TestTimeline::testTransition()
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 }
 
+void TestTimeline::testSplitting()
+{
+    // rename to testSplitting
 
+    // Make transition after clip 2
+    TrimLeft(VideoClip(0,2),30,true);
+    TrimRight(VideoClip(0,1),30,true);
+    Type('c');
+    waitForIdle();
+    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+
+    PositionCursor(HCenter(VideoClip(0,2)));
+    Type('s');
+    ASSERT(!VideoClip(0,0)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,1)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,3)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,4)->isA<model::Transition>());
+
+    pause();
+
+
+}
 } // namespace

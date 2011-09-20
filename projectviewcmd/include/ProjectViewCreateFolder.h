@@ -12,8 +12,8 @@ public:
     /** Create a new folder in another folder. */
     ProjectViewCreateFolder(model::FolderPtr parent, wxString name);
     ~ProjectViewCreateFolder();
-    bool Do();
-    bool Undo();
+    bool Do() override;
+    bool Undo() override;
 private:
     model::FolderPtr mParent;
     model::FolderPtr mNewFolder;

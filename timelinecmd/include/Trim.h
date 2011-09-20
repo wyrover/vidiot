@@ -34,7 +34,7 @@ public:
     // ACLIPEDIT INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    void initialize();
+    void initialize() override;
 
 private:
 

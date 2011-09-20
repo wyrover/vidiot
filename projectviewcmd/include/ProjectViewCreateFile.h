@@ -22,8 +22,8 @@ public:
     /// \param paths list of full paths to files
     ProjectViewCreateFile(model::FolderPtr parent, std::vector<wxFileName> paths);
     ~ProjectViewCreateFile();
-    bool Do();
-    bool Undo();
+    bool Do() override;
+    bool Undo() override;
 private:
     std::vector<wxFileName> mPaths;
     model::FolderPtr mParent;
