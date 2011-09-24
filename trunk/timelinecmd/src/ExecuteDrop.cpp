@@ -62,7 +62,7 @@ void ExecuteDrop::initialize()
     {
         // If ever this mechanism (replace clip by clip) is replaced, take into account that the
         // clips in mDrags are not 'in timeline order' in the set.
-        replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
+        replaceClip(clip, boost::assign::list_of(model::EmptyClip::replace(clip)));
     }
 
     if (mShiftPosition >= 0)
@@ -113,7 +113,10 @@ void ExecuteDrop::initialize()
     }
 
     LOG_DEBUG << "STEP 5: Unapply 'torn apart' transitions..";
-
+    BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
+    {
+        unapplyTransition(transition, linkmapper);
+    }
 
     LOG_DEBUG << "STEP 6: Ensure that links are maintained.";
     replaceLinks(linkmapper);

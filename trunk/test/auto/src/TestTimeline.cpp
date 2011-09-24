@@ -107,6 +107,12 @@ void TestTimeline::testDnd()
 {
     LOG_DEBUG << "TEST_START";
 
+    ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
+    ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
+    ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
+    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
+    ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
+
     // Test moving one clip around
     wxPoint from = Center(VideoClip(0,3));
     wxPoint to = from;
@@ -116,6 +122,11 @@ void TestTimeline::testDnd()
     ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
     Undo();
     ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
+    ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
+    ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
+    ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
+    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
+    ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
 
     Type('=');  // Zoom in
 
@@ -131,6 +142,12 @@ void TestTimeline::testDnd()
     Drag(Center(VideoClip(0,1)),Center(VideoClip(0,4)));
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+    ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
+    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+    ASSERT(AudioClip(0,1)->isA<model::EmptyClip>());
+    ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
+    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
+    ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
 }
 
 void TestTimeline::testUndo()
@@ -392,9 +409,5 @@ void TestTimeline::testSplitting()
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
     ASSERT(!VideoClip(0,3)->isA<model::Transition>());
     ASSERT(!VideoClip(0,4)->isA<model::Transition>());
-
-    pause();
-
-
 }
 } // namespace

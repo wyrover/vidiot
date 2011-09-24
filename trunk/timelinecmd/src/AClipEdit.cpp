@@ -136,6 +136,24 @@ void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements
     newMove(track, position, replacements, track, position, originallist);
 }
 
+void AClipEdit::replaceWithEmpty(model::IClips clips)
+{
+    ASSERT_MORE_THAN_ZERO(clips.size());
+
+    model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
+    model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
+    pts length = model::Track::getCombinedLength(clips);
+    ASSERT_MORE_THAN_ZERO(length);
+
+    // Ensure that for regions the 'extra' space for transitions is added.
+    // Basically the 'extra' space at the beginning of the first clip and the extra 
+    // space at the ending of the last clip must be added to the region.
+    model::EmptyClipPtr empty = boost::make_shared<model::EmptyClip>(length, -clips.front()->getMinAdjustBegin(), clips.back()->getMaxAdjustEnd());
+
+    //      ================== ADD ======================   ======= REMOVE =======
+    newMove(track, position, boost::assign::list_of(empty), track, position, clips);
+}
+
 void AClipEdit::removeClip(model::IClipPtr original)
 {
     replaceClip(original, model::IClips());
@@ -251,8 +269,7 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
             {
                 if (inregion)
                 {
-                    //      ======================================= ADD =====================================  ====== REMOVE ======
-                    newMove(track, clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(length)), track, clip, removed);
+                    replaceWithEmpty(removed);
                     length = 0;
                     removed.clear();
                 }
@@ -261,8 +278,7 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
         }
         if (inregion)
         {
-            //      ======================================= ADD =====================================
-            newMove(track, model::IClipPtr(), boost::assign::list_of(boost::make_shared<model::EmptyClip>(length)), track, model::IClipPtr(), removed);
+            replaceWithEmpty(removed);
         }
     }
 }
@@ -301,7 +317,7 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
         {
             model::IClipPtr clip = track->getClip(start);
             model::IClipPtr clone = make_cloned<model::IClip>(clip);
-            model::IClips newClips = makeEmptyClips(amount);
+            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(amount));
             newClips.push_front(clone);
             replaceClip(clip, newClips);
         }
@@ -311,19 +327,10 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
             ASSERT(clip->isA<model::EmptyClip>());
             ASSERT_MORE_THAN_EQUALS(start,clip->getLeftPts());  // Enough room must be available for the shift
             ASSERT_LESS_THAN_EQUALS(start,clip->getRightPts()); // Enough room must be available for the shift
-            replaceClip(clip, makeEmptyClips(clip->getLength() + amount));  // NOTE: amount < 0
+            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength() + amount)); // NOTE: amount < 0
+            replaceClip(clip, newClips);
         }
     }
-}
-
-model::IClipPtr AClipEdit::makeEmptyClip(pts length)
-{
-    return boost::static_pointer_cast<model::IClip>(boost::make_shared<model::EmptyClip>(length));
-}
-
-model::IClips AClipEdit::makeEmptyClips(pts length)
-{
-    return boost::assign::list_of(makeEmptyClip(length));
 }
 
 model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength, ReplacementMap& conversionmap )
@@ -384,17 +391,18 @@ void AClipEdit::removeTransition( model::TransitionPtr transition, ReplacementMa
 {
     // Delete the transition and the underlying clips
     ASSERT_MORE_THAN_ZERO(transition->getLength());
-    replaceClip(transition, makeEmptyClips(transition->getLength()), &conversionmap);
+    replaceClip(transition, boost::assign::list_of(boost::make_shared<model::EmptyClip>(transition->getLength())), &conversionmap);
 }
 
 void AClipEdit::unapplyTransition( model::TransitionPtr transition, ReplacementMap& conversionmap )
 {
     model::IClips replacements;
+    // Note that, due to the usage after a drop operation, the left and/or right clips of the given
+    // transition may be empty clips.
     if (transition->getLeft() > 0)
     {
         model::IClipPtr prev = transition->getPrev();
-        ASSERT(prev && !prev->isA<model::EmptyClip>());
-        // Extend previous clip with left length of the transition
+        ASSERT(prev);
         model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
         adjustedLeft->adjustEnd(transition->getLeft());
         replaceClip(prev,boost::assign::list_of(adjustedLeft),&conversionmap);
@@ -402,7 +410,7 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition, ReplacementM
     if (transition->getRight() > 0)
     {
         model::IClipPtr next = transition->getNext();
-        ASSERT(next && !next->isA<model::EmptyClip>());
+        ASSERT(next);
         // Extend next clip with right length of the transition
         model::IClipPtr adjustedRight = make_cloned<model::IClip>(next);
         adjustedRight->adjustBegin(-transition->getRight());

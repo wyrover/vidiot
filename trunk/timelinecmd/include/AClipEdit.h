@@ -87,6 +87,11 @@ protected:
     /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceClip(model::IClipPtr original, model::IClips replacements, ReplacementMap* conversionmap = 0);
 
+    /// Replace the given list of clips with one empty clip of the same length. Note that the given
+    /// list of clips must be consecutive clips within one track.
+    /// \param clips list of clips to be replaced
+    void replaceWithEmpty(model::IClips clips);
+
     /// Remove the given clip
     /// \param clip original clip to be removed
     void removeClip(model::IClipPtr original);
@@ -146,14 +151,6 @@ protected:
     /// \param amount distance that must be shifted
     /// \param exclude list of tracks that are not to be changed
     void shiftTracks(model::Tracks tracks, pts start, pts amount);
-
-    /// Make a new EmptyClip with the given length and return it as a Clip
-    /// \param length length of new clip
-    model::IClipPtr makeEmptyClip(pts length);
-
-    /// Make a new list of one EmptyClip with the given length
-    /// \see makeEmptyClip
-    model::IClips makeEmptyClips(pts length);
 
     /// Make a new transition replacing the two given clips with two new clips
     /// with a transition in between.
