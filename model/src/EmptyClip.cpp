@@ -9,6 +9,7 @@
 #include "EmptyFile.h"
 #include "AudioChunk.h"
 #include "VideoFrame.h"
+#include "Transition.h"
 
 namespace model {
 
@@ -22,10 +23,13 @@ EmptyClip::EmptyClip()
     VAR_DEBUG(this);
 }
 
-EmptyClip::EmptyClip(pts length)
-    :	Clip(boost::make_shared<EmptyFile>(length))
+EmptyClip::EmptyClip(pts length, pts extraBegin, pts extraEnd)
+    :	Clip(boost::make_shared<EmptyFile>(extraBegin + length + extraEnd))
 {
     VAR_DEBUG(this);
+    // Ensure that Clip::mOffset and Clip::mLength have the correct values.
+    adjustBegin(extraBegin);
+    adjustEnd(-extraEnd);
 }
 
 EmptyClip::EmptyClip(const EmptyClip& other)
@@ -42,6 +46,26 @@ EmptyClip* EmptyClip::clone()
 EmptyClip::~EmptyClip()
 {
     VAR_DEBUG(this);
+}
+
+// static
+EmptyClipPtr EmptyClip::replace( IClipPtr original )
+{
+    EmptyClipPtr clip;
+    if (original->isA<Transition>())
+    {
+        clip = boost::make_shared<EmptyClip>(original->getLength(), 0, 0);
+    }
+    else
+    {
+        clip = boost::make_shared<EmptyClip>(original->getLength(), -1 * original->getMinAdjustBegin(),  original->getMaxAdjustEnd());
+        ASSERT_EQUALS(clip->getMaxAdjustBegin(),original->getMaxAdjustBegin());
+        ASSERT_EQUALS(clip->getMinAdjustBegin(),original->getMinAdjustBegin());
+        ASSERT_EQUALS(clip->getMaxAdjustEnd(),original->getMaxAdjustEnd());
+        ASSERT_EQUALS(clip->getMinAdjustEnd(),original->getMinAdjustEnd());
+    }
+    ASSERT_EQUALS(clip->getLength(),original->getLength());
+    return clip;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,19 +106,6 @@ VideoFramePtr EmptyClip::getNextVideo(int requestedWidth, int requestedHeight, b
         setGenerationProgress(videoFrame->getPts());
     }
     return videoFrame;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-void EmptyClip::adjustBegin(pts adjustment)
-{
-    // Enlarging is not possible, since that requires enlarging the underlying EmptyFile.
-    // Only reducing the emptyclip/file is needed for pasting a clip somewhere inside an empty area.
-    ASSERT_MORE_THAN_ZERO(adjustment); 
-    Clip::adjustBegin(adjustment);
-    VAR_DEBUG(*this)(adjustment);
 }
 
 //////////////////////////////////////////////////////////////////////////

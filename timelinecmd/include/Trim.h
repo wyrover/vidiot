@@ -51,7 +51,15 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void removewhitespace(model::IClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap);
+    /// Replace the given clip with a new clip. The new clip's begin and end
+    /// are adjusted according to parameters begin and end.
+    /// \param clip clip to be replaced
+    /// \param begin amount to be removed from beginning of clip
+    /// \param end amount to be removed from end of clip
+    /// \pre clip is a empty clip
+    /// \pre begin >= 0
+    /// \pre end >= 0
+    void reduceSize(model::IClipPtr emptyclip, pts begin, pts end);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

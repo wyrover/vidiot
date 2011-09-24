@@ -38,20 +38,20 @@ TrackCreator::TrackCreator(model::NodePtrs assets)
             if (file->hasVideo())
             {
                 model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-                videoClip = model::IClip::make(boost::make_shared<model::VideoClip>(videoFile));
+                videoClip = boost::make_shared<model::VideoClip>(videoFile);
             }
             else
             {
-                videoClip = model::IClip::make(boost::make_shared<model::EmptyClip>(length));
+                videoClip = boost::make_shared<model::EmptyClip>(length);
             }
             if (file->hasAudio())
             {
                 model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-                audioClip = model::IClip::make(boost::make_shared<model::AudioClip>(audioFile));
+                audioClip = boost::make_shared<model::AudioClip>(audioFile);
             }
             else
             {
-                audioClip = model::IClip::make(boost::make_shared<model::EmptyClip>(length));
+                audioClip = boost::make_shared<model::EmptyClip>(length);
             }
 
             videoClip->setLink(audioClip);

@@ -23,11 +23,32 @@ public:
 
     EmptyClip();
 
-    EmptyClip(pts length);
+    /// Create a new empty clip. The two 'extra*' parameters are used to make
+    /// the contained EmptyFile larger at the beginning/end than the clip itselves.
+    /// This is used for EmptyClips that replace clips which are adjacent to
+    /// a transition in a track. The extra area used in the transition is also
+    /// replaced with extra area in the empty clip. As a result, when replacing
+    /// clips with empty clips, the adjacent transitions do not have to be 
+    /// changed.
+    /// \param length size of the clip
+    /// \param extraBegin extra size of the contained EmptyFile at the beginning (the truncated part at the beginning)
+    /// \param extraEnd extra size of the contained EmptyFile at the end (the truncated part at the end)
+    EmptyClip(pts length, pts extraBegin = 0, pts extraEnd = 0);
 
     virtual EmptyClip* clone() override;
 
     virtual ~EmptyClip();
+
+    /// Make an empty clip that has the same values as the original clip.
+    /// When a clip is replaced with 'emptyness' the values for *adjustBegin
+    /// and *adjustEnd of the emptyness should equal the original clip. That
+    /// is required in case transitions are adjacent.
+    ///
+    /// This method ensures that, when replacing clips, the resulting empty space
+    /// has (in its Render object) enough space to accommodate any adjacent transitions.
+    /// \return empty clip that is a 'replica' of original , with the same offset/length etc, but only for non-transitions. For transitions empty space with the same length as original is returned.
+    /// \param original clip to be cloned
+    static EmptyClipPtr replace( IClipPtr original );
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
@@ -47,12 +68,6 @@ public:
 
     virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
 
-    //////////////////////////////////////////////////////////////////////////
-    // GET/SET
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual void adjustBegin(pts adjustment) override; /// \see Clip::adjustBegin
-
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -61,7 +76,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    EmptyClip(const EmptyClip& other);
+    explicit EmptyClip(const EmptyClip& other);
 
 private:
 

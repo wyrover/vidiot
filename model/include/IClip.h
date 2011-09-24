@@ -37,12 +37,6 @@ public:
 
     virtual ~IClip() {};
 
-    template <class CLIPTYPE>
-    static IClipPtr make(CLIPTYPE& clip)
-    {
-        return boost::static_pointer_cast<IClip>(clip);
-    }
-
     //////////////////////////////////////////////////////////////////////////
     // ICLONEABLE
     //////////////////////////////////////////////////////////////////////////

@@ -26,7 +26,9 @@ void Config::init(wxString applicationName, wxString vendorName, bool inTestMode
     Log::setReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
     if (inTestMode)
     {
-        Log::setReportingLevel(logDEBUG);
+        // Specific stuff for tests
+        // Example: Log::setReportingLevel(logDEBUG); (Set to warning for performance reasons)
+        Log::setReportingLevel(logWARNING);
     }
     Avcodec::configureLog();
 }

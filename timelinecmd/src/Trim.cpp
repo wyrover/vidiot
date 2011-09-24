@@ -121,15 +121,15 @@ void Trim::initialize()
             if (mDiff > 0) // Reduce: Move clip begin point to the right
             {
                 // Add empty clip in front of new clip: new clip is shorter than original clip and the frames should maintain their position.
-                replace.push_front(makeEmptyClip(mDiff));
-                replacelink.push_front(makeEmptyClip(mDiff));
+                replace.push_front(boost::make_shared<model::EmptyClip>(mDiff));
+                replacelink.push_front(boost::make_shared<model::EmptyClip>(mDiff));
             }
             else // (mDiff < 0) // Enlarge: Move clip begin point to the left
             {
-                removewhitespace(mClip->getPrev(), -mDiff, &linkmapper);
+                reduceSize(mClip->getPrev(), 0, -mDiff);
                 if (linked)
                 {
-                    removewhitespace(linked->getPrev(), -mDiff, &linkmapper);
+                    reduceSize(linked->getPrev(), 0, -mDiff);
                 }
             }
         }
@@ -138,18 +138,17 @@ void Trim::initialize()
             if (mDiff < 0) // Reduce: Move clip end point to the left
             {
                 // Add empty clip after new clip: new clip is shorter than original clip and the frames should maintain their position.
-                replace.push_back(makeEmptyClip(-mDiff));
-                replacelink.push_back(makeEmptyClip(-mDiff));
+                replace.push_back(boost::make_shared<model::EmptyClip>(-mDiff));
+                replacelink.push_back(boost::make_shared<model::EmptyClip>(-mDiff));
             }
             else // (mDiff > 0) // Enlarge: Move clip end point to the right
             {
-                removewhitespace(mClip->getNext(), mDiff, &linkmapper);
+                reduceSize(mClip->getNext(), mDiff, 0);
                 if (linked)
                 {
-                    removewhitespace(linked->getNext(), mDiff, &linkmapper);
+                    reduceSize(linked->getNext(), mDiff, 0);
                 }
             }
-
         }
     }
 
@@ -165,12 +164,25 @@ void Trim::initialize()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Trim::removewhitespace(model::IClipPtr emptyclip, pts toberemoved, ReplacementMap* conversionmap)
+void Trim::reduceSize(model::IClipPtr emptyclip, pts begin, pts end)
 {
     ASSERT(emptyclip);
     ASSERT(emptyclip->isA<model::EmptyClip>());
-    ASSERT_MORE_THAN_EQUALS(emptyclip->getLength(),toberemoved); // The area to be removed must be available
-    replaceClip(emptyclip, makeEmptyClips(emptyclip->getLength() - toberemoved), conversionmap);
+    ASSERT_MORE_THAN_EQUALS_ZERO(begin);
+    ASSERT_MORE_THAN_EQUALS_ZERO(end);
+    ASSERT_MORE_THAN_EQUALS(emptyclip->getMaxAdjustBegin(),begin);
+    ASSERT_MORE_THAN_EQUALS(emptyclip->getMinAdjustEnd(),-end);
+
+    model::IClipPtr clone = make_cloned<model::IClip>(emptyclip);
+    if (begin > 0)
+    {
+        clone->adjustBegin(begin);
+    }
+    if (end > 0)
+    {
+        clone->adjustEnd(-end);
+    }
+    replaceClip(emptyclip, boost::assign::list_of(clone));
 }
 
 //////////////////////////////////////////////////////////////////////////
