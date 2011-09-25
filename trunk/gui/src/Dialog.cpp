@@ -2,7 +2,6 @@
 
 #include <wx/dirdlg.h>
 #include <wx/debugrpt.h>
-//#include <wx/confbase.h>
 #include <wx/filename.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
