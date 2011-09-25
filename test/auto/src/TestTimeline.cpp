@@ -393,8 +393,6 @@ void TestTimeline::testTransition()
 
 void TestTimeline::testSplitting()
 {
-    // rename to testSplitting
-
     // Make transition after clip 2
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
@@ -409,5 +407,24 @@ void TestTimeline::testSplitting()
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
     ASSERT(!VideoClip(0,3)->isA<model::Transition>());
     ASSERT(!VideoClip(0,4)->isA<model::Transition>());
+
+    Undo();
+    PositionCursor(LeftPixel(VideoClip(0,2)));
+    Type('s');
+    ASSERT(!VideoClip(0,0)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,1)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,3)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,4)->isA<model::Transition>());
+
+    Undo();
+    PositionCursor(RightPixel(VideoClip(0,2)));
+    Type('s');
+    ASSERT(!VideoClip(0,0)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,1)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,3)->isA<model::Transition>());
+    ASSERT(!VideoClip(0,4)->isA<model::Transition>());
 }
+
 } // namespace
