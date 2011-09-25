@@ -2,7 +2,8 @@
 #define APPLICATION_H
 
 #include <wx/app.h>
-#include <boost/thread.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/condition_variable.hpp>
 #include "UtilAssert.h"
 #include "UtilEvent.h"
 
