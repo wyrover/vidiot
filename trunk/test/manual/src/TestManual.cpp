@@ -61,8 +61,14 @@ void TestManual::testManual()
     // rename to testSplitting
 
     // Make transition after clip 2
+    pause(3000);
+    PositionCursor(LeftPixel(VideoClip(0,2)));
     TrimLeft(VideoClip(0,2),30,true);
-    TrimRight(VideoClip(0,1),30,true);
+    pause(3000);
+    PositionCursor(RightPixel(VideoClip(0,1)));
+    pause();
+//    TrimRight(VideoClip(0,1),30,true);
+    pause(3000);
     Type('c');
     waitForIdle();
     ASSERT(VideoClip(0,2)->isA<model::Transition>());

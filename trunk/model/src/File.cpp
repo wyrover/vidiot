@@ -50,7 +50,7 @@ File::File()
 ,   mPackets(1)
 ,   mMaxBufferSize(0)
 ,   mStreamIndex(-1)
-,   mBufferPacketsThreadPtr(0)
+,   mBufferPacketsThreadPtr()
 ,   mFileOpen(false)
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
@@ -73,7 +73,7 @@ File::File(wxFileName path, int buffersize)
 ,   mPackets(1)
 ,   mMaxBufferSize(buffersize)
 ,   mStreamIndex(-1)
-,   mBufferPacketsThreadPtr(0)
+,   mBufferPacketsThreadPtr()
 ,   mFileOpen(false)
 ,   mNumberOfFrames(0)
 ,   mTwoInARow(0)
@@ -108,7 +108,7 @@ File::File(const File& other)
 ,   mPackets(1)
 ,   mMaxBufferSize(other.mMaxBufferSize)
 ,   mStreamIndex(-1)
-,   mBufferPacketsThreadPtr(0)
+,   mBufferPacketsThreadPtr()
 ,   mFileOpen(false)
 ,   mNumberOfFrames(other.mNumberOfFrames)
 ,   mTwoInARow(0)
@@ -152,6 +152,7 @@ void File::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
     openFile(); // Needed for avcodec calls below
+
 
     stopReadingPackets();
 
@@ -274,7 +275,7 @@ void File::stopReadingPackets()
         mBufferPacketsThreadPtr->join();
         mBufferPacketsThreadPtr.reset();
     }
-
+    
     // When this lock is taken, it is certain that no 'pop' is
     // blocking the return of getNextPacket().
     boost::mutex::scoped_lock stoplock(sMutexStop);

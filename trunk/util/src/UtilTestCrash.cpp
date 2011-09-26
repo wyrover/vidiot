@@ -7,9 +7,10 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/function.hpp>
 #include <boost/archive/archive_exception.hpp>
+#include <boost/thread.hpp>
 #include "UtilLog.h"
-#include "UtilThread.h"
 #include "ids.h"
 
 namespace util {
@@ -131,6 +132,7 @@ void triggerPureVirtualCall()
 
 const int FirstId = meID_LAST + 1;
 
+typedef boost::function<void()> Method;
 typedef std::pair<wxString,util::Method> CrashInfo;
 const std::vector< CrashInfo > crashes = boost::assign::list_of
     (std::make_pair("Access Violation", boost::bind(&triggerAccessViolation)))
@@ -153,10 +155,10 @@ void TestCrash::onCrashTest(wxCommandEvent& event)
     wxString description = crashes[index].first;
     util::Method method = crashes[index].second;
 
-    VAR_ERROR(description);
+    VAR_ERROR(description)(inThread);
     if (inThread)
     {
-        util::SpawnThread(boost::bind(method));
+        new boost::thread(boost::bind(method));
     }
     else
     {
