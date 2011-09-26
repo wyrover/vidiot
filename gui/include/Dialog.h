@@ -86,10 +86,12 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
 
-    /// Show a debug report
-    /// \param type type of report
+    /// Show a debug report. In some scenarios adding a context/dump
+    /// leads to hangups (particularly, wxWidgets assert in a separate
+    /// thread), so that behaviour can be disabled via the addcontext flag.
     /// \param exit if true, application is exited via exit(-1)
-    void getDebugReport(bool doexit = true);
+    /// \param addcontext if true, then add context and dump
+    void getDebugReport(bool doexit = true, bool addcontext = true);
 
 private:
 

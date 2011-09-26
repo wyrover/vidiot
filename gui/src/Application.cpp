@@ -34,6 +34,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     ,   mEventLoopListener(eventLoopListener)
 {
     // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
+    wxHandleFatalExceptions(false);
 
     SetAppName(mEventLoopListener ? sTestApplicationName : "Vidiot");
     SetVendorName("Eric Raijmakers");
@@ -177,7 +178,7 @@ void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *fu
     wxString Condition(condition);
     wxString Message(message);
     VAR_ERROR(File)(Line)(Function)(Condition)(Message);
-    Dialog::get().getDebugReport();
+    Dialog::get().getDebugReport(true, wxThread::IsMain());
 }
 
 bool Application::OnExceptionInMainLoop()

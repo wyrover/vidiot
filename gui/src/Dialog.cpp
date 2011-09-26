@@ -191,7 +191,7 @@ int Dialog::getConfirmation( wxString title, wxString message, int buttons )
 
 //////////////////////////////////////////////////////////////////////////
 
-int generateDebugReport(bool doexit)
+int generateDebugReport(bool doexit, bool addcontext)
 {
     VAR_ERROR(doexit);
     if (doexit && wxCANCEL == wxMessageBox("A fatal error was encountered. Press OK to generate debug report. Press Cancel to terminate.", "Error", wxOK | wxCANCEL, &Window::get()))
@@ -202,8 +202,11 @@ int generateDebugReport(bool doexit)
 
     wxDebugReportCompress report;
 
-    report.AddCurrentContext();
-    report.AddCurrentDump();
+    if (addcontext)
+    {
+        report.AddCurrentContext();
+        report.AddCurrentDump();
+    }
 
     if (wxFileName(Config::getFileName()).FileExists())
     {
@@ -227,13 +230,13 @@ int generateDebugReport(bool doexit)
     return 0;
 }
 
-void Dialog::getDebugReport(bool doexit)
+void Dialog::getDebugReport(bool doexit, bool addcontext)
 {
     VAR_ERROR(doexit);
     if (!mDebugReportGenerated)
     {
        mDebugReportGenerated = true;
-       RunInMainThread<int>(boost::bind(&generateDebugReport, doexit));
+       RunInMainThread<int>(boost::bind(&generateDebugReport, doexit, addcontext));
     }
 }
 
