@@ -3,6 +3,10 @@
 
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <wx/thread.h>
 
 namespace util {
 
@@ -20,7 +24,25 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit SpawnThread(Method threadmethod);
+    /// Start a new thread running 'threadmethod'
+    /// \param threadmethod method to be ran in the thread
+    /// \param joinable if true, then the thread is joinable; getThread().Wait() must be called to avoid memory leaks. 
+    explicit SpawnThread(Method threadmethod, bool joinable = false);
+
+    /// For joinable threads, this destructor blocks until the thread is joined.
+    virtual ~SpawnThread();
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    //wxThread& getThread();
+
+private:
+
+    bool mJoinable;
+    //wxThread* mThread;
+    boost::scoped_ptr<boost::thread> mThread;
 };
 
 } // namespace
