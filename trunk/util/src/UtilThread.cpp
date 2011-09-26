@@ -7,7 +7,7 @@
 
 namespace util {
 
-    // todo more use of this class
+// todo more use of this class
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASS
@@ -16,8 +16,9 @@ namespace util {
 class NewThread : public wxThread
 {
 public:
-    NewThread(Method threadmethod)
-        :   mMethod(threadmethod)
+    NewThread(Method threadmethod, bool joinable = false)
+        :   wxThread(joinable ? wxTHREAD_JOINABLE : wxTHREAD_DETACHED)
+        ,   mMethod(threadmethod)
     {
     }
     wxThread::ExitCode Entry()
@@ -33,11 +34,37 @@ private:
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-SpawnThread::SpawnThread(Method threadmethod)
+SpawnThread::SpawnThread(Method threadmethod, bool joinable)
+    :   mThread(new boost::thread(threadmethod))
+//    :   mThread(new NewThread(threadmethod, joinable))
+    ,   mJoinable(joinable)
 {
-    NewThread* thread = new NewThread(threadmethod);
-    thread->Create();
-    thread->Run();
+    //wxThreadError result = wxTHREAD_NO_ERROR;
+    //result = mThread->Create();
+    //ASSERT_ZERO(result)(result); // Todo nice exception message
+    //result = mThread->Run();
+    //ASSERT_ZERO(result)(result); // Todo nice exception message
 }
 
+SpawnThread::~SpawnThread()
+{
+    if (mThread)
+    {
+        //mThread->join();
+    }
+    //if (mJoinable)
+    //{
+    //    mThread->Wait();
+    //}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+//wxThread& SpawnThread::getThread()
+//{
+//    return *mThread;
+//}
+//
 } // namespace
