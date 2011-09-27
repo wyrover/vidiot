@@ -91,13 +91,13 @@ void MousePointer::set(MousePointerImage image)
 {
     switch (image)
     {
-    case PointerNormal:         getWindow().SetCursor(mCursorNormal);         return;
-    case PointerMoveCut:        getWindow().SetCursor(mCursorMoveCut);        return;
-    case PointerTrimBegin:      getWindow().SetCursor(mCursorTrimBegin);      return;
-    case PointerTrimShiftBegin: getWindow().SetCursor(mCursorTrimShiftBegin); return;
-    case PointerTrimEnd:        getWindow().SetCursor(mCursorTrimEnd);        return;
-    case PointerTrimShiftEnd:   getWindow().SetCursor(mCursorTrimShiftEnd);   return;
-    case PointerTrackResize:    getWindow().SetCursor(mCursorTrackResize);    return;
+    case PointerNormal:         getTimeline().SetCursor(mCursorNormal);         return;
+    case PointerMoveCut:        getTimeline().SetCursor(mCursorMoveCut);        return;
+    case PointerTrimBegin:      getTimeline().SetCursor(mCursorTrimBegin);      return;
+    case PointerTrimShiftBegin: getTimeline().SetCursor(mCursorTrimShiftBegin); return;
+    case PointerTrimEnd:        getTimeline().SetCursor(mCursorTrimEnd);        return;
+    case PointerTrimShiftEnd:   getTimeline().SetCursor(mCursorTrimShiftEnd);   return;
+    case PointerTrackResize:    getTimeline().SetCursor(mCursorTrackResize);    return;
     default:                    FATAL("Unknown image");
     }
 }

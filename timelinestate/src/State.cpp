@@ -82,7 +82,7 @@ void Machine::onMotion(wxMouseEvent& event)
 void Machine::onLeftDown(wxMouseEvent& event)
 { 
     LOG_DEBUG;
-    getWindow().SetFocus();
+    getTimeline().SetFocus();
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setLeftDownPosition(virtualPosition);
     process_event(EvLeftDown(event, virtualPosition)); 
@@ -130,7 +130,7 @@ void Machine::onMiddleDouble(wxMouseEvent& event)
 void Machine::onRightDown(wxMouseEvent& event)  
 { 
     LOG_DEBUG;
-    getWindow().SetFocus();
+    getTimeline().SetFocus();
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setRightDownPosition(virtualPosition);
     process_event(EvRightDown(event, virtualPosition)); 
