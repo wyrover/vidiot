@@ -56,10 +56,6 @@ public:
     virtual Timeline& getTimeline(); ///< Virtual to be overridden in the statechart states
     virtual const Timeline& getTimeline() const; ///< Virtual to be overridden in the statechart states
 
-    // TODO UNUSED?:
-    virtual wxScrolledWindow& getWindow(); ///< Virtual to be overridden in the statechart states
-    virtual const wxScrolledWindow& getWindow() const; ///< Virtual to be overridden in the statechart states
-
     SequenceView& getSequenceView();
     const SequenceView& getSequenceView() const;
 

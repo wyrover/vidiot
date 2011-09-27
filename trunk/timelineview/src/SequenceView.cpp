@@ -72,7 +72,7 @@ pixel SequenceView::requiredWidth() const
     return
         std::max(
             std::max(
-                getWindow().GetClientSize().GetWidth(),                         // At least the widget size
+                getTimeline().GetClientSize().GetWidth(),                         // At least the widget size
                 getZoom().timeToPixels(5 * model::Constants::sMinute)),         // Minimum width of 5 minutes
                 getZoom().ptsToPixels(getSequence()->getLength()));             // At least enough to hold all clips
 }
@@ -81,7 +81,7 @@ pixel SequenceView::requiredHeight() const
 {
     return
         std::max(
-        getWindow().GetClientSize().GetHeight(),        // At least the widget size
+        getTimeline().GetClientSize().GetHeight(),        // At least the widget size
         Layout::sTimeScaleHeight +
         Layout::sMinimalGreyAboveVideoTracksHeight +
         getVideo().getHeight() +

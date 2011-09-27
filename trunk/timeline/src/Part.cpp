@@ -42,16 +42,6 @@ const Timeline& Part::getTimeline() const
 // state classes (these override getTimeline).
 #define mTimeline DO_NOT_USE_MEMBER_USE_METHOD
 
-wxScrolledWindow& Part::getWindow()
-{
-    return getTimeline();
-}
-
-const wxScrolledWindow& Part::getWindow() const
-{
-    return getTimeline();
-}
-
 SequenceView& Part::getSequenceView()
 {
     return getTimeline().getSequenceView();
