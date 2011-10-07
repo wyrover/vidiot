@@ -280,7 +280,7 @@ void AClipEdit::replaceLinks()
             model::IClipPtr clone = make_cloned<model::IClip>(originallink);
             clone->setLink(model::IClipPtr()); // The clone is linked to nothing, since linking is done below.
             ASSERT(originallink->getTrack())(originallink); // Must still be part of a track (thus, can't have been removed, because then it would have to be part of the map)
-            replaceClip(originallink, boost::assign::list_of(clone)); // todo will this work, changing while looping??
+            replaceClip(originallink, boost::assign::list_of(clone)); // std::map iterators - foreach - remain valid
         }
     }
 
