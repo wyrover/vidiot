@@ -82,7 +82,7 @@ void EmptyClip::clean()
 // ICLIP
 //////////////////////////////////////////////////////////////////////////
 
-virtual void setLink(IClipPtr link) override
+void EmptyClip::setLink(IClipPtr link)
 {
     // Empty clips may never be linked to anything
     ASSERT(!link)(link);
