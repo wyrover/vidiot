@@ -284,8 +284,6 @@ void AClipEdit::replaceLinks()
         }
     }
 
-    // todo do not link to empty clips
-
     ReplacementMap expandedMap = Expander(mReplacements).get();
 
     // At this point all clips AND their original links (or their clones)
@@ -300,26 +298,39 @@ void AClipEdit::replaceLinks()
         model::IClipPtr clip2 = clip1->getLink();
         if (clip2) // The clip doesn't necessarily have a link with another clip
         {
+            ASSERT(!clip2->isA<model::EmptyClip>())(clip2); // Linking to an empty clip is not allowed
             model::IClips new2 = expandedMap[clip2];
             model::IClips::iterator it2 = new2.begin();
 
             while ( it1 != new1.end() && it2 != new2.end() )
             {
-                (*it1)->setLink(*it2);
-                (*it2)->setLink(*it1);
+                model::IClipPtr newclip1 = *it1;
+                model::IClipPtr newclip2 = *it2;
+                if ( newclip1->isA<model::EmptyClip>() ) // Linking to/from empty clips is not allowed. Skip these.
+                {
+                    newclip1->setLink(model::IClipPtr());
+                    ++it1;
+                    continue;
+                }
+                if ( newclip2->isA<model::EmptyClip>() ) // Linking to/from empty clips is not allowed. Skip these.
+                {
+                    newclip2->setLink(model::IClipPtr());
+                    ++it2;
+                    continue;
+                }
+                newclip1->setLink(newclip2);
+                newclip2->setLink(newclip1);
                 ++it1;
                 ++it2;
             }
             // For all remaining clips in both lists: not linked.
-            while ( it1 != new1.end() )
+            for (; it1 != new1.end(); ++it1)
             {
                 (*it1)->setLink(model::IClipPtr());
-                ++it1;
             }
-            while ( it2 != new2.end() )
+            for (; it2 != new2.end(); ++it2)
             {
                 (*it2)->setLink(model::IClipPtr());
-                ++it2;
             }
         }
     }

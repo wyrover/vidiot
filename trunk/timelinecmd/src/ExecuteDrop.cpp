@@ -107,10 +107,9 @@ void ExecuteDrop::initialize()
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
             addClip(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()), drop.track, remove.second);
-//todo delete            newMove(drop.track, remove.second, boost::assign::list_of(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength())) ); // Only addition, so link mapping not required
         }
 
-        replaceClips(remove.first, drop.clips); //todo remove opschonen
+        replaceClips(remove.first, drop.clips);
     }
 
     LOG_DEBUG << "STEP 5: Unapply 'torn apart' transitions..";
