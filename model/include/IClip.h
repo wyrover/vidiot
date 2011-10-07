@@ -35,6 +35,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
+    IClip();
+
     virtual ~IClip() {};
 
     //////////////////////////////////////////////////////////////////////////
@@ -46,11 +48,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // TRACK
     //////////////////////////////////////////////////////////////////////////
-
-    /// Set the track which contains this clip. Also sets the leftmost pts
-    /// of the clip inside the track. When called without parameters
-    /// (thus using the defaults), this information is 'reset'.
-    virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) = 0;
 
     /// \return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
     virtual TrackPtr getTrack() = 0;
@@ -140,6 +137,15 @@ public:
 protected:
 
     //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// \note the clone is not automatically part of the track!!!
+    /// \see make_cloned
+    IClip(const IClip& other);
+
+    //////////////////////////////////////////////////////////////////////////
     // CURRENT POSITION HANDLING
     //////////////////////////////////////////////////////////////////////////
 
@@ -159,6 +165,12 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     friend class Track;
+
+    /// Set the track which contains this clip. Also sets the leftmost pts
+    /// of the clip inside the track. When called without parameters
+    /// (thus using the defaults), this information is 'reset'.
+    virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) = 0;
+
     void setNext(IClipPtr next);
     void setPrev(IClipPtr prev);
     

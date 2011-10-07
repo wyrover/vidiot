@@ -33,21 +33,19 @@ void SplitAtCursor::initialize()
 {
     VAR_INFO(this);
     pts position = getTimeline().getZoom().pixelsToPts(getTimeline().getCursor().getPosition());
-    ReplacementMap linkmapper;
-    splittrack(getTimeline().getSequence()->getVideoTracks(), position, linkmapper);
-    splittrack(getTimeline().getSequence()->getAudioTracks(), position, linkmapper);
-    replaceLinks(linkmapper);
+    splittrack(getTimeline().getSequence()->getVideoTracks(), position);
+    splittrack(getTimeline().getSequence()->getAudioTracks(), position);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void SplitAtCursor::splittrack(model::Tracks tracks, pts position, ReplacementMap& linkmapper)
+void SplitAtCursor::splittrack(model::Tracks tracks, pts position)
 {
     BOOST_FOREACH( model::TrackPtr track, tracks )
     {
-        split(track, position, linkmapper);
+        split(track, position);
     }
 }
 

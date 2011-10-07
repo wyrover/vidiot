@@ -176,6 +176,7 @@ void TrackView::draw(wxBitmap& bitmap) const
             {
                 pts left = view->getLeftPts();
                 // todo handle dragging over a transition (split the transition, or what?)
+                // todo transitions must have the possibility to be temp hidden (for this purpose)
                 wxPoint position(getZoom().ptsToPixels(left),0);
                 if (left >= mShiftPosition)
                 {

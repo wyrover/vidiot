@@ -95,11 +95,7 @@ void CreateTransition::initialize()
     VAR_INFO(this);
     ASSERT(isPossible());
 
-    ReplacementMap linkmapper;
-
-    AClipEdit::makeTransition(mLeft,mLeftSize,mRight,mRightSize,linkmapper);
-
-    replaceLinks(linkmapper);
+    makeTransition(mLeft,mLeftSize,mRight,mRightSize);
 }
 
 bool CreateTransition::isPossible()
