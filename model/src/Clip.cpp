@@ -60,7 +60,7 @@ Clip::Clip(const Clip& other)
     ,   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
     ,   mIndex(0)                   // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
-    ,   mLink(other.mLink) // todo shouldn't this be completely handled by the link maintaining code in aclipedit? should this not be initialized to '0'??
+    ,   mLink()                     // Clone is not automatically linked to same clip, since it will typically be used in ClipEdit derived classes, using link mapping for maintaining the links
     ,   mLastSetPosition(boost::none)
     ,   mSelected(other.mSelected)
     ,   mDragged(false)             // Clone is not automatically also dragged!!!
