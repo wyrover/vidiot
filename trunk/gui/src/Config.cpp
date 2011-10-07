@@ -27,9 +27,9 @@ void Config::init(wxString applicationName, wxString vendorName, bool inTestMode
     if (inTestMode)
     {
         // Specific stuff for tests
-        //Log::setReportingLevel(logWARNING);
+        Log::setReportingLevel(logWARNING);
         // 
-        Log::setReportingLevel(logDEBUG); // (Set to warning for performance reasons)
+        // Log::setReportingLevel(logDEBUG); // (Set to warning for performance reasons)
     }
     Avcodec::configureLog();
 }
