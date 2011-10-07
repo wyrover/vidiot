@@ -38,22 +38,22 @@ void ExecuteDrop::initialize()
 {
     VAR_INFO(this);
 
-    ReplacementMap linkmapper;
-
     LOG_DEBUG << "STEP 1: Determine the transitions for which the transitioned clips are 'torn apart'";
-   std::set<model::TransitionPtr> transitionsToBeUnapplied;
+    std::set<model::TransitionPtr> transitionsToBeUnapplied;
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
         model::TrackPtr track = clip->getTrack();
         model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
         if (prevTransition && transitionMustBeUnapplied(prevTransition))
         {
+            VAR_DEBUG(prevTransition);
             transitionsToBeUnapplied.insert(prevTransition);
         }
         model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
         if (nextTransition && transitionMustBeUnapplied(nextTransition))
         {
             transitionsToBeUnapplied.insert(nextTransition);
+            VAR_DEBUG(nextTransition);
         }
     }
 
@@ -62,7 +62,8 @@ void ExecuteDrop::initialize()
     {
         // If ever this mechanism (replace clip by clip) is replaced, take into account that the
         // clips in mDrags are not 'in timeline order' in the set.
-        replaceClip(clip, boost::assign::list_of(model::EmptyClip::replace(clip)));
+        VAR_DEBUG(clip);
+        replaceClip(clip, boost::assign::list_of(model::EmptyClip::replace(clip))); // todo replaceclip?
     }
 
     if (mShiftPosition >= 0)
@@ -71,7 +72,7 @@ void ExecuteDrop::initialize()
         BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(mShiftPosition);
-            newMove(track, clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(mShiftSize)));
+            replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(mShiftSize)));
         }
     }
     else
@@ -92,8 +93,8 @@ void ExecuteDrop::initialize()
         pts dropEndPosition = drop.position + droppedSize;
 
         // Ensure that the track has cuts at the begin and the end of the dropped clips
-        split(drop.track, drop.position,   linkmapper);
-        split(drop.track, dropEndPosition, linkmapper);
+        split(drop.track, drop.position);
+        split(drop.track, dropEndPosition);
 
         // Determine the clips to be replaced.
         // Done AFTER the splitting above, since that requires clip addition/removal.
@@ -105,21 +106,18 @@ void ExecuteDrop::initialize()
         {
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
-            newMove(drop.track, remove.second, boost::assign::list_of(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength())) );
+            addClip(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()), drop.track, remove.second);
+//todo delete            newMove(drop.track, remove.second, boost::assign::list_of(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength())) ); // Only addition, so link mapping not required
         }
 
-        //      ================ ADD ===============  =============== REMOVE ================
-        newMove(drop.track, remove.second, drop.clips, drop.track, remove.second, remove.first);
+        replaceClips(remove.first, drop.clips); //todo remove opschonen
     }
 
     LOG_DEBUG << "STEP 5: Unapply 'torn apart' transitions..";
     BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
     {
-        unapplyTransition(transition, linkmapper);
+        unapplyTransition(transition);
     }
-
-    LOG_DEBUG << "STEP 6: Ensure that links are maintained.";
-    replaceLinks(linkmapper);
 }
 
 //////////////////////////////////////////////////////////////////////////

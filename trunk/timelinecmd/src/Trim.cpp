@@ -79,7 +79,6 @@ void Trim::initialize()
         }
     }
 
-    ReplacementMap linkmapper;
     model::IClips replace = boost::assign::list_of(newclip);
     model::IClips replacelink = boost::assign::list_of(newlink);
 
@@ -152,12 +151,11 @@ void Trim::initialize()
         }
     }
 
-    replaceClip(mClip, replace, &linkmapper);
+    replaceClip(mClip, replace);
     if (linked)
     {
-        replaceClip(mClip->getLink(), replacelink, &linkmapper);
+        replaceClip(mClip->getLink(), replacelink);
     }
-    replaceLinks(linkmapper);
 }
 
 //////////////////////////////////////////////////////////////////////////

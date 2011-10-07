@@ -53,14 +53,14 @@ Clip::Clip(IControlPtr render)
 }
 
 Clip::Clip(const Clip& other)
-    :	IClip()
+    :	IClip(other)
     ,   mRender(make_cloned<model::IControl>(other.mRender))
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
     ,   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
     ,   mIndex(0)                   // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
-    ,   mLink(other.mLink)
+    ,   mLink(other.mLink) // todo shouldn't this be completely handled by the link maintaining code in aclipedit? should this not be initialized to '0'??
     ,   mLastSetPosition(boost::none)
     ,   mSelected(other.mSelected)
     ,   mDragged(false)             // Clone is not automatically also dragged!!!

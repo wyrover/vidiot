@@ -311,6 +311,7 @@ void Drag::move(wxPoint position)
     {
         pos = getDragPtsPosition();
         len = getDragPtsSize();
+        //todo shift transition?
         BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(pos);

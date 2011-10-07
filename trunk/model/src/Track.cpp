@@ -151,7 +151,9 @@ void Track::removeClips(IClips clips)
     BOOST_FOREACH( IClipPtr clip, clips )
     {
         clip->clean();
-        clip->setTrack(TrackPtr(), 0);
+        clip->setTrack(TrackPtr(), 0); // Todo administer completely in ICip?
+        clip->setPrev(IClipPtr()); // Todo administer completely in ICip?
+        clip->setNext(IClipPtr());// Todo administer completely in ICip?
     }
 
     IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);

@@ -60,22 +60,27 @@ void TestManual::testManual()
 {
     // rename to testSplitting
 
-    // Make transition after clip 2
-    pause(3000);
-    PositionCursor(LeftPixel(VideoClip(0,2)));
+    // Make transition before clip 3
     TrimLeft(VideoClip(0,2),30,true);
-    pause(3000);
-    PositionCursor(RightPixel(VideoClip(0,1)));
-    pause();
-//    TrimRight(VideoClip(0,1),30,true);
-    pause(3000);
+    TrimRight(VideoClip(0,1),30,true);
+    ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd())(VideoClip(0,1));
+    ASSERT_LESS_THAN_ZERO(VideoClip(0,2)->getMinAdjustBegin())(VideoClip(0,2));
+    PositionCursor(LeftPixel(VideoClip(0,2)));
+    Move(LeftCenter(VideoClip(0,2)));
+    //pause();
     Type('c');
-    waitForIdle();
-    ASSERT(VideoClip(0,2)->isA<model::Transition>());
+    ASSERT(VideoClip(0,2)->isA<model::Transition>())(VideoClip(0,2));
 
-    PositionCursor(HCenter(VideoClip(0,2)));
+    DeselectAllClips();
+    Click(Center(VideoClip(0,1)));
+    wxPoint from = LeftCenter(VideoClip(0,6));
+    from.x += 10;
+    wxPoint to = Center(VideoClip(0,2));
+    Drag(from, to, false);
 
-    //Type('s');
+                //todo this now goes wrong because originallink has been removed completely (obscured with dropped clip)
+                //make test case specific for this
+
 
     pause();
 

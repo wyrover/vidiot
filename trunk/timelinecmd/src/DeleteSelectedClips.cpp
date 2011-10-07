@@ -32,7 +32,6 @@ DeleteSelectedClips::~DeleteSelectedClips()
 
 void DeleteSelectedClips::initialize()
 {
-    ReplacementMap linkmapper;
     std::set<model::TransitionPtr> transitionsToBeRemoved;
     std::set<model::TransitionPtr> transitionsToBeUnapplied;
 
@@ -64,7 +63,7 @@ void DeleteSelectedClips::initialize()
                         transitionsToBeRemoved.insert(nextTransition);
                     }
 
-                    replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())),&linkmapper);
+                    replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
                 }
             }
         }
@@ -74,17 +73,15 @@ void DeleteSelectedClips::initialize()
     // and to avoid problems with removing the left clip first, without the transition or removing the transition before the right clip
     BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeRemoved )
     {
-        removeTransition(transition, linkmapper);
+        removeTransition(transition);
         // Transitions that are deleted (one of their clips is deleted also) 
         // do not have to be unapplied.
         transitionsToBeUnapplied.erase(transition); // If it is part of the set it is erased. Nothing is changed if it's not part of the set.
     }
     BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
     {
-        unapplyTransition(transition, linkmapper);
+        unapplyTransition(transition);
     }
-
-    replaceLinks(linkmapper);
 }
 
 //////////////////////////////////////////////////////////////////////////
