@@ -63,7 +63,7 @@ void ExecuteDrop::initialize()
         // If ever this mechanism (replace clip by clip) is replaced, take into account that the
         // clips in mDrags are not 'in timeline order' in the set.
         VAR_DEBUG(clip);
-        replaceClip(clip, boost::assign::list_of(model::EmptyClip::replace(clip))); // todo replaceclip?
+        replaceClip(clip, boost::assign::list_of(model::EmptyClip::replace(clip)));
     }
 
     if (mShiftPosition >= 0)
@@ -112,10 +112,13 @@ void ExecuteDrop::initialize()
         replaceClips(remove.first, drop.clips);
     }
 
-    LOG_DEBUG << "STEP 5: Unapply 'torn apart' transitions..";
+    LOG_DEBUG << "STEP 5: Unapply 'torn apart' transitions that have not yet been removed";
     BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
     {
-        unapplyTransition(transition);
+        if (!hasBeenReplaced(transition))
+        {
+            unapplyTransition(transition);
+        }
     }
 }
 

@@ -73,7 +73,15 @@ void Move(wxPoint position);                                            ///< Mov
 void Click(wxPoint position);                                           ///< Move the mouse to the given position and (left) click there
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
 void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side
-void Drag(wxPoint from, wxPoint to, bool ctrl = false);                 ///< Do a drag and drop between the two points (press, move, release). If ctrl = true, then ctrl is pressed at the beginning of the drag (is released directly after moving 'a bit')
+
+/// Do a drag and drop between the two points (press, move, release).
+/// \param from starting position to move to initially
+/// \param to final position to drag to
+/// \param ctrl if true, then ctrl is pressed at the beginning of the drag and released directly after moving 'a bit'
+/// \param mousedown if true, then the mouse button is pressed just after moving to 'from' and before initiating the drag
+/// \param mouseup if true, then the mouse button is released after the mouse has reached position 'to'
+void Drag(wxPoint from, wxPoint to, bool ctrl = false, bool mousedown = true, bool mouseup = true);
+
 void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)
 void Play(pixel from, int ms);                                          ///< Play from the given position, with the given time.
 

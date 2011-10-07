@@ -505,21 +505,32 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition )
     if (transition->getLeft() > 0)
     {
         model::IClipPtr prev = transition->getPrev();
-        ASSERT(prev);
-        model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
-        adjustedLeft->adjustEnd(transition->getLeft());
-        replaceClip(prev,boost::assign::list_of(adjustedLeft));
+        if (prev)
+        {
+            model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
+            adjustedLeft->adjustEnd(transition->getLeft());
+            replaceClip(prev,boost::assign::list_of(adjustedLeft));
+        } 
+        // else: prev has already been removed (for instance during drag-and-drop)
     }
     if (transition->getRight() > 0)
     {
         model::IClipPtr next = transition->getNext();
-        ASSERT(next);
-        // Extend next clip with right length of the transition
-        model::IClipPtr adjustedRight = make_cloned<model::IClip>(next);
-        adjustedRight->adjustBegin(-transition->getRight());
-        replaceClip(next,boost::assign::list_of(adjustedRight));
+        if (next)
+        {
+            // Extend next clip with right length of the transition
+            model::IClipPtr adjustedRight = make_cloned<model::IClip>(next);
+            adjustedRight->adjustBegin(-transition->getRight());
+            replaceClip(next,boost::assign::list_of(adjustedRight));
+        }
+        // else: next has already been removed (for instance during drag-and-drop)
     }
     removeClip(transition);
+}
+
+bool AClipEdit::hasBeenReplaced(model::IClipPtr clip) const
+{
+    return mReplacements.find(clip) != mReplacements.end();
 }
 
 //////////////////////////////////////////////////////////////////////////

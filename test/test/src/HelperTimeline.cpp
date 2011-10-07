@@ -231,12 +231,12 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
     waitForIdle();
 }
 
-void Drag(wxPoint from, wxPoint to, bool ctrl)
+void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
 {
     VAR_DEBUG(from)(to)(ctrl);
     if (ctrl) { ControlDown(); }
     Move(from);
-    wxUIActionSimulator().MouseDown();
+    if (mousedown) { wxUIActionSimulator().MouseDown(); }
     waitForIdle();
     if (ctrl) { ControlUp(); }
     waitForIdle();
@@ -247,7 +247,7 @@ void Drag(wxPoint from, wxPoint to, bool ctrl)
         Move(p);
         waitForIdle();
     }
-    wxUIActionSimulator().MouseUp();
+    if (mouseup) { wxUIActionSimulator().MouseUp(); }
     waitForIdle();
 }
 

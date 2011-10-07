@@ -141,6 +141,11 @@ protected:
     /// \param transition transition to be removed
     void unapplyTransition( model::TransitionPtr transition );
 
+    /// Determine if the given clip has already been removed/replaced in 
+    /// a previous step.
+    /// \return true if the clip has already been removed/replaced
+    bool hasBeenReplaced(model::IClipPtr clip) const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

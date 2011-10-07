@@ -60,30 +60,37 @@ void TestManual::testManual()
 {
     // rename to testSplitting
 
+
     // Make transition before clip 3
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
+    
     ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd())(VideoClip(0,1));
     ASSERT_LESS_THAN_ZERO(VideoClip(0,2)->getMinAdjustBegin())(VideoClip(0,2));
     PositionCursor(LeftPixel(VideoClip(0,2)));
     Move(LeftCenter(VideoClip(0,2)));
-    //pause();
     Type('c');
     ASSERT(VideoClip(0,2)->isA<model::Transition>())(VideoClip(0,2));
 
+    // Move a large clip onto a smaller clip. This causes linking issues
+    // (the video clip was not completely removed, but the linked audio
+    // clip was - or vice versa? - anyway: crashed....)
     DeselectAllClips();
     Click(Center(VideoClip(0,1)));
-    wxPoint from = LeftCenter(VideoClip(0,6));
+    wxPoint from = LeftCenter(VideoClip(0,2));
     from.x += 10;
-    wxPoint to = Center(VideoClip(0,2));
-    Drag(from, to, false);
+    wxPoint to = Center(VideoClip(0,6));
+    Drag(from, to);
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+    Undo();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
 
-                //todo this now goes wrong because originallink has been removed completely (obscured with dropped clip)
-                //make test case specific for this
-
-
-    pause();
-
+    // Drag and drop the clip onto (approx.) the same position. That scenario caused bugs:
+    // clip is removed (during drag-and-drop). At the end of the drag-and-drop, 
+    // the transition is 'undone'. The undoing of the transition made assumptions
+    // on availability of adjacent clips, which was invalid (clip has just been moved).
+    Drag(from,to,false,true,false);
+    Drag(to,from,false,false,true);
 
 }
 
