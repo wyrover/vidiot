@@ -179,6 +179,7 @@ LogVar::~LogVar()
         // NOTE: In this case, the debug break may cause the log line not to be written to file.
         //       Not an issue, since this is for developers only.
         Log().get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str() ;
+        std::cout << std::endl << std::endl << *mAssert << std::endl << std::endl << osVars.str();
         IAssert::breakIntoDebugger(*mAssert);
     }
     else
