@@ -72,7 +72,16 @@ void ExecuteDrop::initialize()
         BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(mShiftPosition);
-            replaceClip(clip, boost::assign::list_of(boost::make_shared<model::EmptyClip>(mShiftSize)));
+
+            addClip(boost::make_shared<model::EmptyClip>(mShiftSize), track, clip );
+            //if (transition)
+            //{
+            //    // If an empty clip is inserted just before a transition, this transition is
+            //    // 'torn apart' and must be removed.
+            //    unapplyTransition(transition);
+            //}
+            //
+            //model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
         }
     }
     else

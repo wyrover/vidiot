@@ -175,7 +175,7 @@ void TrackView::draw(wxBitmap& bitmap) const
             if (modelclip->isA<model::Transition>() == transitionValue)
             {
                 pts left = view->getLeftPts();
-                // todo handle dragging over a transition (split the transition, or what?)
+                // todo handle shift dragging over a transition (split the transition, or what?)
                 // todo transitions must have the possibility to be temp hidden (for this purpose)
                 wxPoint position(getZoom().ptsToPixels(left),0);
                 if (left >= mShiftPosition)

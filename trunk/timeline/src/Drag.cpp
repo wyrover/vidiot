@@ -307,19 +307,30 @@ void Drag::move(wxPoint position)
     // Shift if required
     pts pos = command::ExecuteDrop::sNoShift;
     pts len = command::ExecuteDrop::sNoShift;
+
     if (wxGetMouseState().ShiftDown())
     {
+        pts origPos = getDragPtsPosition();
+        pts origLen = getDragPtsSize();
+
         pos = getDragPtsPosition();
         len = getDragPtsSize();
         //todo shift transition?
         BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
         {
-            model::IClipPtr clip = track->getClip(pos);
-            if (clip && !clip->isA<model::EmptyClip>())
+            model::IClipPtr clip = track->getClip(origPos);
+            if (clip && !clip->isA<model::EmptyClip>()) // todo halverwege een empty clip droppen?
             {
-                pts diff = pos - clip->getLeftPts();
-                pos = clip->getLeftPts();
-                len += diff;
+                if (clip->isA<model::Transition>())
+                {
+                    LOG_DEBUG;
+                    //
+                }
+                if ((clip->getLeftPts() < origPos) && (clip->getLeftPts() < pos))
+                {
+                    pos = clip->getLeftPts();
+                    len = origPos - clip->getLeftPts() + getDragPtsSize();
+                }
             }
         }
     }

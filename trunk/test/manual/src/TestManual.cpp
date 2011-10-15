@@ -72,26 +72,25 @@ void TestManual::testManual()
     Type('c');
     ASSERT(VideoClip(0,2)->isA<model::Transition>())(VideoClip(0,2));
 
-    // Move a large clip onto a smaller clip. This causes linking issues
-    // (the video clip was not completely removed, but the linked audio
-    // clip was - or vice versa? - anyway: crashed....)
-    DeselectAllClips();
-    Click(Center(VideoClip(0,1)));
-    wxPoint from = LeftCenter(VideoClip(0,2));
-    from.x += 10;
-    wxPoint to = Center(VideoClip(0,6));
-    Drag(from, to);
+    //  Turn off snapping
+    checkMenu(ID_SNAP_CLIPS, false);
+    checkMenu(ID_SNAP_CURSOR, false);
+
+    DeselectAllClips(); 
+    Drag(Center(VideoClip(0,6)), Center(VideoClip(0,5)), false, true, false);
+    ShiftDown();
+    Drag(Center(VideoClip(0,5)), Center(VideoClip(0,3)), false, false, true);
+    ShiftUp();
+
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     Undo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-
-    // Drag and drop the clip onto (approx.) the same position. That scenario caused bugs:
-    // clip is removed (during drag-and-drop). At the end of the drag-and-drop, 
-    // the transition is 'undone'. The undoing of the transition made assumptions
-    // on availability of adjacent clips, which was invalid (clip has just been moved).
-    Drag(from,to,false,true,false);
-    Drag(to,from,false,false,true);
-
+    
+    DeselectAllClips(); 
+    Drag(Center(VideoClip(0,6)), Center(VideoClip(0,5)), false, true, false);
+    ShiftDown();
+    Drag(Center(VideoClip(0,5)), Center(VideoClip(0,4)), false, false, true);
+    ShiftUp();
 }
 
 } // namespace

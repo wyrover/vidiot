@@ -2,6 +2,7 @@
 #define HELPER_WINDOW_H
 
 #include <wx/cmdproc.h> 
+#include <wx/frame.h>
 #include <wx/menu.h>
 #include <wx/window.h>
 #include <boost/shared_ptr.hpp>
@@ -21,6 +22,22 @@ void triggerMenu(int id);
 /// Trigger the menu given on the window given.
 /// \param id menu identifier
 void triggerMenu(wxWindow& window, int id);
+
+/// Check the menu given. That menu should be in the main menu bar.
+/// Note that the corresponding event will always be triggered, even
+/// if the control indicated with 'id' already has the value indicated
+/// by 'checked'.
+/// \param id menu identifier
+/// \param checked if true, the menu is checked, unchecked otherwise
+void checkMenu(int id, bool checked = true);
+
+/// Check the menu given on the window given.
+/// Note that the corresponding event will always be triggered, even
+/// if the control indicated with 'id' already has the value indicated
+/// by 'checked'.
+/// \param id menu identifier
+/// \param checked if true, the menu is checked, unchecked otherwise
+void checkMenu(wxFrame& window, int id, bool checked = true);
 
 /// Create a new project in a blank application by triggering File->New
 /// \return root node of the project
