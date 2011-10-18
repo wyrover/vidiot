@@ -129,7 +129,6 @@ std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
         LOGKEY(WXK_WINDOWS_LEFT);
         LOGKEY(WXK_WINDOWS_RIGHT);
         LOGKEY(WXK_WINDOWS_MENU);
-        LOGKEY(WXK_COMMAND);
         LOGKEY(WXK_SPECIAL1);
         LOGKEY(WXK_SPECIAL2);
         LOGKEY(WXK_SPECIAL3);
