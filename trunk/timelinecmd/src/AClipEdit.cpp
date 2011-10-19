@@ -102,8 +102,8 @@ void AClipEdit::split(model::TrackPtr track, pts position)
         {
             // There is a transition at the given position. Remove it and restore the underlying clip's lengths.
             unapplyTransition(transition);
+            clip = track->getClip(position); // Must be done again, since the unapplyTransition changes the track
         }
-        model::IClipPtr clip = track->getClip(position);
         if (clip) // If there is a clip at the given position, it might need to be split
         {
             ASSERT(clip->isA<model::IClip>())(clip);
@@ -499,17 +499,27 @@ void AClipEdit::removeTransition( model::TransitionPtr transition )
 
 void AClipEdit::unapplyTransition( model::TransitionPtr transition )
 {
-    model::IClips replacements;
     // Note that, due to the usage after a drop operation, the left and/or right clips of the given
-    // transition may be empty clips.
+    // transition may be empty clips (for instance, when only dragging one of the two clips in the 
+    // transition, or when using shift & drag).
     if (transition->getLeft() > 0)
     {
         model::IClipPtr prev = transition->getPrev();
         if (prev)
         {
-            model::IClipPtr adjustedLeft = make_cloned<model::IClip>(prev);
-            adjustedLeft->adjustEnd(transition->getLeft());
-            replaceClip(prev,boost::assign::list_of(adjustedLeft));
+            model::IClipPtr replacement;
+            if (prev->isA<model::EmptyClip>())
+            {
+                // Extend empty clip
+                replacement = boost::make_shared<model::EmptyClip>(prev->getLength() + transition->getLeft());
+            }
+            else
+            {
+                // Extend the left clip
+                replacement = make_cloned<model::IClip>(prev);
+                replacement->adjustEnd(transition->getLeft());
+            }
+            replaceClip(prev,boost::assign::list_of(replacement));
         } 
         // else: prev has already been removed (for instance during drag-and-drop)
     }
@@ -518,10 +528,19 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition )
         model::IClipPtr next = transition->getNext();
         if (next)
         {
-            // Extend next clip with right length of the transition
-            model::IClipPtr adjustedRight = make_cloned<model::IClip>(next);
-            adjustedRight->adjustBegin(-transition->getRight());
-            replaceClip(next,boost::assign::list_of(adjustedRight));
+            model::IClipPtr replacement;
+            if (next->isA<model::EmptyClip>())
+            {
+                // Extend empty clip
+                replacement = boost::make_shared<model::EmptyClip>(next->getLength() + transition->getRight());
+            }
+            else
+            {
+                // Extend next clip with right length of the transition
+                replacement = make_cloned<model::IClip>(next);
+                replacement->adjustBegin(-transition->getRight());
+            }
+            replaceClip(next,boost::assign::list_of(replacement));
         }
         // else: next has already been removed (for instance during drag-and-drop)
     }

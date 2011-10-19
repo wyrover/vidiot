@@ -64,6 +64,8 @@ void TestManual::testManual()
     // Make transition before clip 3
     TrimLeft(VideoClip(0,2),30,true);
     TrimRight(VideoClip(0,1),30,true);
+    pts leftLen = VideoClip(0,1)->getLength();
+    pts rightLen = VideoClip(0,2)->getLength();
     
     ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd())(VideoClip(0,1));
     ASSERT_LESS_THAN_ZERO(VideoClip(0,2)->getMinAdjustBegin())(VideoClip(0,2));
@@ -86,11 +88,20 @@ void TestManual::testManual()
     Undo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
     
+    DumpTimeline();
     DeselectAllClips(); 
     Drag(Center(VideoClip(0,6)), Center(VideoClip(0,5)), false, true, false);
     ShiftDown();
     Drag(Center(VideoClip(0,5)), Center(VideoClip(0,4)), false, false, true);
     ShiftUp();
+    for (int i = 0; i < NumberOfVideoClipsInTrack(); ++i)
+    {
+        ASSERT(!VideoClip(0,i)->isA<model::Transition>());
+    }
+    DumpTimeline();
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), leftLen);
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), rightLen);
+    pause();
 }
 
 } // namespace
