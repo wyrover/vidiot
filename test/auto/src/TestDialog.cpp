@@ -19,12 +19,10 @@ namespace test {
 
 void TestDialog::setUp()
 {
-    mProjectFixture.init();
 }
 
 void TestDialog::tearDown()
 {
-    mProjectFixture.destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////

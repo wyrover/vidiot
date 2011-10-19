@@ -26,10 +26,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testEscape();
-
-private:
-
-    FixtureProject mProjectFixture;
 };
 
 }
