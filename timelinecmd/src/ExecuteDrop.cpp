@@ -39,6 +39,8 @@ void ExecuteDrop::initialize()
     VAR_INFO(this);
 
     LOG_DEBUG << "STEP 1: Determine the transitions for which the transitioned clips are 'torn apart'";
+    // todo dit naderhand doen: alle clips doorlopen op 'invalid' transitions
+
     std::set<model::TransitionPtr> transitionsToBeUnapplied;
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
@@ -74,14 +76,6 @@ void ExecuteDrop::initialize()
             model::IClipPtr clip = track->getClip(mShiftPosition);
 
             addClip(boost::make_shared<model::EmptyClip>(mShiftSize), track, clip );
-            //if (transition)
-            //{
-            //    // If an empty clip is inserted just before a transition, this transition is
-            //    // 'torn apart' and must be removed.
-            //    unapplyTransition(transition);
-            //}
-            //
-            //model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
         }
     }
     else
