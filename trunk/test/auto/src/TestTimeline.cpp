@@ -150,7 +150,7 @@ void TestTimeline::testDnd()
     ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
     ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
     ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
-
+     
     Undo();
 
     // Move a large clip onto a smaller clip. This causes linking issues
