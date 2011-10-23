@@ -6,7 +6,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-class ExecuteDrop 
+class ExecuteDrop  
     :   public AClipEdit
 {
 public:
