@@ -8,6 +8,7 @@
 #include <boost/format.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <string>
+#include <iostream> 
 #include <share.h> // _SH_DENYWR
 #include "UtilFifo.h"
 #include "UtilAssert.h"
