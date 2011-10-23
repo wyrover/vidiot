@@ -83,13 +83,9 @@ Install ActivePerl via installer
 * Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
 * Copy include/wx/msw/setup0.h to include/wx/setup.h
-  (I had to change platform.h include of this file to wx/msw/setup.h)
-  - #define wxUSE_ON_FATAL_EXCEPTION 1
-  - #define wxUSE_STACKWALKER 1
-  - #define wxUSE_DEBUGREPORT 1
-  - #define wxUSE_CRASHREPORT 1
 * Clean <VIDIOT_DIR>\wxwidgets_trunk\lib\vc_lib (particularly, remove all setup.h files)
 * Apply path to wxUIActionSimulator::MouseMove:
+  (see <vidiot_trunk>/build/patches)
     int scaledx = std::ceil((float)x * 65535.0 / (displayx-1));
     int scaledy = std::ceil((float)y * 65535.0 / (displayy-1));
 * (MSVC) build solution Release & Debug
