@@ -1,0 +1,28 @@
+Index: uiaction.cpp
+===================================================================
+--- uiaction.cpp	(revision 68435)
++++ uiaction.cpp	(working copy)
+@@ -168,6 +168,23 @@
+ {
+     wxUIActionSimulator sim;
+ 
++    wxPoint p(1,1);
++    wxSize screenSize = wxGetDisplaySize();
++    while ((p.x < screenSize.GetWidth() - 1) || (p.y < screenSize.GetHeight() - 1))
++    {
++        if (p.x < screenSize.GetWidth() - 1)
++        {
++            p.x++;
++        }
++        if (p.y < screenSize.GetHeight() - 1)
++        {
++            p.y++;
++        }
++        sim.MouseMove(p);
++        //wxYield();
++        assert(wxGetMouseState().GetPosition() == p);
++    }
++
+     // Add some extra distance to take account of window decorations
+     sim.MouseMove(m_button->GetScreenPosition() + wxPoint(10, 10));
+     sim.MouseClick(wxMOUSE_BTN_LEFT);
