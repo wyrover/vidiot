@@ -1,0 +1,12 @@
+Requires Visual Studio 2010 SP1 SDK:
+http://www.microsoft.com/download/en/details.aspx?id=21835
+
+Installation:
+Copy both .addin file and .dll to one of the AddIns folder
+of Visual Studio (See Options dialog in Visual Studio for list).
+Or: Add to Tools->Options->Addin and Macro security, add the folder
+    <bin/Release> or <bin/Debug>
+    
+Debugging: Add <bin/Debug> to Addin paths, delete the dll from <bin/Debug>
+           and start the Addin solution (if the dll is already found when
+           opening this solution, it cannot be rebuilt since it is in use)

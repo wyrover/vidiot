@@ -121,6 +121,7 @@
   <ItemGroup>
     <Content Include="VisualStudioAddin.AddIn">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
