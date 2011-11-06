@@ -1,6 +1,5 @@
 #include "Window.h"
 
-#include <wx/confbase.h>
 #include <wx/docview.h>
 #include <wx/gdicmn.h>
 #include <wx/msgdlg.h>
@@ -134,15 +133,9 @@ Window::Window()
 
     menubar->EnableTop(sSequenceMenuIndex,false); // Disable sequence menu
 
-    CreateStatusBar(9);
-    SetStatusText( _T("LMB:"), 1 );
-    SetStatusText( _T("MMB:"), 2 );
-    SetStatusText( _T("RMB:"), 3 );
-    SetStatusText( _T("WHEEL:"), 4 );
-    SetStatusText( _T("CTRL:"), 5 );
-    SetStatusText( _T("SHIFT:"), 6 );
-    SetStatusText( _T("ALT:"), 7 );
-    SetProcessingText(_(""));
+    CreateStatusBar(getNumberOfStatusBars());
+    setDebugText(_(""));
+    setProcessingText(_(""));
 
     mUiManager.SetManagedWindow(this);
     mUiManager.InsertPane(mProjectView,     wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(0).CaptionVisible(false));
@@ -177,7 +170,7 @@ Window::Window()
     GetDocumentManager()->FileHistoryUseMenu(menufile);
     GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
 
-    if (wxConfigBase::Get()->ReadBool(Config::sPathTest, false))
+    if (Config::ReadBool(Config::sPathTest))
     {
         wxSize screenSize = wxGetDisplaySize();
         wxSize winSize = GetSize();
@@ -285,9 +278,22 @@ void Window::onRenameProject( model::EventRenameProject &event )
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Window::SetProcessingText(wxString text)
+int Window::getNumberOfStatusBars() const
 {
-    SetStatusText( text, 8 );
+    return (Config::getShowDebugInfo() ? 2 : 1);
+}
+
+void Window::setDebugText(wxString text)
+{
+    if (Config::getShowDebugInfo())
+    {
+        SetStatusText( text, 0 );
+    }
+}
+
+void Window::setProcessingText(wxString text)
+{
+    SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
 }
 
 //////////////////////////////////////////////////////////////////////////

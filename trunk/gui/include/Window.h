@@ -66,7 +66,9 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void SetProcessingText(wxString text);
+    int getNumberOfStatusBars() const;
+    void setDebugText(wxString text);
+    void setProcessingText(wxString text);
 
     //////////////////////////////////////////////////////////////////////////
     // FILE MENU
