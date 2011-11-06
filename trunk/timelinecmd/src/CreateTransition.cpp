@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/assign/list_of.hpp>
+#include "Config.h"
 #include "CrossFade.h"
 #include "EmptyClip.h"
 #include "IClip.h"
@@ -18,8 +19,6 @@
 
 namespace gui { namespace timeline { namespace command {
 
-    static const int sDefaultTransitionSize = 24;
-
 CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position)
 :   AClipEdit(sequence)
 ,   mLeft()
@@ -29,6 +28,8 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
 {
     VAR_INFO(this)(position);
     mCommandName = _("Create transition");
+
+    pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
 
     PointerPositionInfo info = getTimeline().getMousePointer().getInfo(position);
     if (info.clip && !info.clip->isA<model::EmptyClip>())
@@ -67,7 +68,7 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
 
     if (mLeft)
     {
-        mLeftSize = sDefaultTransitionSize / 2; // Default length
+        mLeftSize = defaultSize / 2; // Default length
         mLeftSize = std::min( mLeftSize, -1 * mLeft->getMinAdjustEnd() ); // -1 * : getMinAdjustEnd() <= 0
         if (mRight)
         {
@@ -76,14 +77,14 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
     }
     if (mRight)
     {
-        mRightSize = sDefaultTransitionSize / 2; // Default length
+        mRightSize = defaultSize / 2; // Default length
         mRightSize = std::min( mRightSize, mRight->getMaxAdjustBegin() );
         if (mLeft)
         {
             mRightSize = std::min( mRightSize, mLeft->getMaxAdjustEnd() );
         }
     }
-    ASSERT_LESS_THAN_EQUALS(mLeftSize + mRightSize,sDefaultTransitionSize);
+    ASSERT_LESS_THAN_EQUALS(mLeftSize + mRightSize,defaultSize);
 }
 
 CreateTransition::~CreateTransition()
