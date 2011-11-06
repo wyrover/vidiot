@@ -8,35 +8,85 @@
 namespace gui {
 
 wxString Config::sFileName("");
+bool Config::sShowDebugInfo(false);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+template <class T>
+void setDefault(wxString path, T value)
+{
+    if (!wxConfigBase::Get()->Exists(path))
+    {
+        wxConfigBase::Get()->Write(path, value);
+    }
+}
+
+template <class T>
+T readWithoutDefault(wxString path)
+{
+    T result = T();
+    T dummy = T();
+    bool found = wxConfigBase::Get()->Read(path, &result, dummy);
+    ASSERT(found)(path);
+    return result;
+}
+
 // static
-void Config::init(wxString applicationName, wxString vendorName, bool inTestMode)
+void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestMode)
 {
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
     // This method ensures that the .ini file is created in the current working directory
     // which enables having multiple executables with multiple settings.
     sFileName = wxFileName(wxFileName::GetCwd(), applicationName + ".ini").GetFullPath();
     wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
-    wxConfigBase::Get()->Write(Config::sPathTest, inTestMode);
+    wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
+
+    // todo set all defaults here
+    setDefault(Config::sPathDefaultTransitionLength, 24);
+    setDefault(Config::sPathShowDebugInfoOnWidgets, false);
+    setDefault(Config::sPathLogLevel, LogLevel_toString(logINFO).c_str());
+    wxConfigBase::Get()->Flush();
     
-    Log::setReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
-    if (inTestMode)
-    {
-        // Specific stuff for tests
-        //Log::setReportingLevel(logWARNING);
-        // 
-         Log::setReportingLevel(logDEBUG); // (Set to warning for performance reasons)
-    }
+    // Read cached values here
+    Log::setReportingLevel(LogLevel_fromString(std::string(ReadString(Config::sPathLogLevel).mb_str())));
+    sShowDebugInfo = Config::ReadBool(Config::sPathShowDebugInfoOnWidgets);
+
     Avcodec::configureLog();
 }
 
 wxString Config::getFileName()
 {
     return sFileName;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+// static 
+bool Config::ReadBool(const wxString& key)
+{
+    return readWithoutDefault<bool>(key);
+}
+
+// static 
+long Config::ReadLong(const wxString& key)
+{
+    return readWithoutDefault<long>(key);
+}
+
+// static 
+wxString Config::ReadString(const wxString& key)
+{
+    return readWithoutDefault<wxString>(key);
+}
+
+// static
+bool Config::getShowDebugInfo()
+{
+    return sShowDebugInfo;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,5 +104,6 @@ const wxString Config::sPathFrameRate               ("/Video/FrameRate");
 const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
 const wxString Config::sPathStrip                   ("/Timeline/Strip");
+const wxString Config::sPathDefaultTransitionLength ("/Timeline/DefaultTransitionLength");
 
 } // namespace
