@@ -283,7 +283,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         dc.DrawRectangle(mRect);
     }
 
-    if (wxConfigBase::Get()->ReadBool(Config::sPathShowDebugInfoOnWidgets,false))
+    if (Config::getShowDebugInfo())
     {
         if (!mClip->isA<model::Transition>())
         {
