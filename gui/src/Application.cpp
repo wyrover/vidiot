@@ -245,13 +245,4 @@ void Application::onAssert()
     Dialog::get().getDebugReport();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-bool Application::inTestMode() const
-{
-    return wxConfigBase::Get()->ReadBool(Config::sPathTest, false);
-}
-
 } // namespace
