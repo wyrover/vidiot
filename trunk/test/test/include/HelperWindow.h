@@ -79,6 +79,8 @@ void ShiftUp();         ///< Release Shift
 
 void Type(int keycode, int modifiers = wxMOD_NONE); 	
 
+// todo split into HelperWindowGet and HelperWindowAction
+
 } // namespace
 
 #endif // HELPER_WINDOW_H
