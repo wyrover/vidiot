@@ -2,25 +2,27 @@
 
 #include <wx/image.h>
 #include <wx/bitmap.h>
+#include "AudioView.h"
 #include "Clip.h"
 #include "ClipView.h"
-#include "UtilLog.h"
+#include "Config.h"
 #include "cursor_move_cut.xpm"
-#include "cursor_trim_begin.xpm"
-#include "cursor_trim_end.xpm"
 #include "cursor_normal.xpm"
 #include "cursor_track_resize.xpm"
-#include "Track.h"
-#include "Sequence.h"
-#include "VideoView.h"
-#include "AudioView.h"
-#include "Timeline.h"
-#include "SequenceView.h"
-#include "UtilLogWxwidgets.h"
-#include "Zoom.h"
-#include "ViewMap.h"
-#include "TrackView.h"
+#include "cursor_trim_begin.xpm"
+#include "cursor_trim_end.xpm"
 #include "PositionInfo.h"
+#include "Sequence.h"
+#include "SequenceView.h"
+#include "Timeline.h"
+#include "Track.h"
+#include "TrackView.h"
+#include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
+#include "VideoView.h"
+#include "ViewMap.h"
+#include "Window.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -113,6 +115,18 @@ void MousePointer::setPosition(wxPoint position)
 {
     VAR_DEBUG(mCurrent)(position);
     mCurrent = position;
+    if (Config::getShowDebugInfo())
+    {
+        PointerPositionInfo info = getInfo(position);
+        pts left = 0;
+        pts right = 0;
+        if (info.clip)
+        {
+            left = info.clip->getLeftPts();
+            right = info.clip->getRightPts();
+        }
+        gui::Window::get().setDebugText( wxString::Format("MOUSE: (%3d,%3d) PTS: [%5d] CLIP: [%5lld,%5lld)", mCurrent.x, mCurrent.y, getZoom().pixelsToPts(mCurrent.x), left, right) );
+    }
 }
 
 wxPoint MousePointer::getPosition() const
