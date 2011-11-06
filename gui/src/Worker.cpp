@@ -61,9 +61,9 @@ void Worker::thread()
 
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
-            Window::get().SetProcessingText(w->getDescription());
+            Window::get().setProcessingText(w->getDescription());
             w->execute();
-            Window::get().SetProcessingText(_(""));
+            Window::get().setProcessingText(_(""));
         }
     }
 }
