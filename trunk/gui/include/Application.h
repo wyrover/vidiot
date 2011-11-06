@@ -89,13 +89,6 @@ private:
     test::IEventLoopListener* mEventLoopListener;
     boost::condition_variable mConditionIdle;
     boost::mutex mMutexIdle;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    bool inTestMode() const;
-
 };
 
 } // namespace
