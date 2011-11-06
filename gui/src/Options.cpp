@@ -107,7 +107,7 @@ Options::Options(wxWindow* win)
     addoption(_("Log level"), mLogLevel);
 
     mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
-    mShowDebugInfoOnWidgets->SetValue(wxConfigBase::Get()->ReadBool(Config::sPathShowDebugInfoOnWidgets,false));
+    mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
     addoption(_("Show debug info on widgets (requires restart)"), mShowDebugInfoOnWidgets);
 
     //////////////////////////////////////////////////////////////////////////
