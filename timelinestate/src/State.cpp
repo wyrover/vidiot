@@ -75,7 +75,7 @@ void Machine::onMotion(wxMouseEvent& event)
     LOG_DEBUG;
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setPosition(virtualPosition);
-    process_event(EvMotion(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    process_event(EvMotion(event, virtualPosition));
     event.Skip();
 }
 
@@ -92,7 +92,8 @@ void Machine::onLeftDown(wxMouseEvent& event)
 void Machine::onLeftUp(wxMouseEvent& event)
 { 
     LOG_DEBUG;
-    process_event(EvLeftUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
+    wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
+    process_event(EvLeftUp(event, virtualPosition)); 
     event.Skip(); 
 }
 
