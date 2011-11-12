@@ -225,7 +225,7 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     ASSERT_NONZERO(audioCodec);
 
     int result = avcodec_open(getCodec(), audioCodec);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result); // todo why crashes here during testauto sometimes??
 
     ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16);
     //AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits

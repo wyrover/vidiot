@@ -87,6 +87,7 @@ public:
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
+    pts getTouchPosition() const;   ///< \return position where the two transitioned clips are 'touching'
     virtual pts getLeft() const;    ///< \return number of frames to the left of the cut between the two clips
     virtual pts getRight() const;   ///< \return number of frames to the right of the cut between the two clips
 

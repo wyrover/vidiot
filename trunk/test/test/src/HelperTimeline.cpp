@@ -1,12 +1,13 @@
 #include "HelperTimeline.h"
 
-#include <wx/uiaction.h>
-#include <wx/mousestate.h>
 #include <boost/foreach.hpp>
+#include <wx/mousestate.h>
+#include <wx/uiaction.h>
 #include "AudioClip.h"
 #include "AudioTrack.h"
 #include "AudioView.h"
 #include "ClipView.h"
+#include "Drag.h"
 #include "EmptyClip.h"
 #include "HelperApplication.h"
 #include "HelperTimelinesView.h"
@@ -163,14 +164,59 @@ wxPoint VQuarterHCenter(model::IClipPtr clip)
     return wxPoint( HCenter(clip), VQuarter(clip) );
 }
 
+wxPoint LeftCenter(model::IClipPtr clip)
+{
+    return wxPoint( LeftPixel(clip), VCenter(clip) );
+}
+
 wxPoint RightCenter(model::IClipPtr clip)
 {
     return wxPoint( RightPixel(clip), VCenter(clip) );
 }
 
-wxPoint LeftCenter(model::IClipPtr clip)
+pixel LeftPixel(DraggedClips drag)
 {
-    return wxPoint( LeftPixel(clip), VCenter(clip) );
+    return getTimeline().getDrag().getBitmapPosition().x;
+}
+
+pixel RightPixel(DraggedClips drag)
+{
+    return getTimeline().getDrag().getBitmapPosition().x + getTimeline().getDrag().getBitmapSize().x;
+}
+
+pixel TopPixel(DraggedClips drag)
+{
+    return getTimeline().getDrag().getBitmapPosition().y;
+}
+
+pixel BottomPixel(DraggedClips drag)
+{
+    return getTimeline().getDrag().getBitmapPosition().y + getTimeline().getDrag().getBitmapSize().y;
+}
+
+pixel VCenter(DraggedClips drag)
+{
+    return (TopPixel(drag) + BottomPixel(drag)) / 2;
+}
+
+pixel HCenter(DraggedClips drag)
+{
+    return (LeftPixel(drag) + RightPixel(drag)) / 2;
+}
+
+wxPoint Center(DraggedClips drag)
+{
+    return wxPoint( HCenter(drag), VCenter(drag) );
+}
+
+wxPoint LeftCenter(DraggedClips drag)
+{
+    return wxPoint( LeftPixel(drag), VCenter(drag) );
+}
+
+wxPoint RightCenter(DraggedClips drag)
+{
+    return wxPoint( RightPixel(drag), VCenter(drag) );
 }
 
 void PositionCursor(pixel position)
@@ -238,11 +284,13 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
     Move(from);
     if (mousedown) { wxUIActionSimulator().MouseDown(); }
     waitForIdle();
-    if (ctrl) { ControlUp(); }
+    if (ctrl) { ControlUp(); } // todo move waitforidles between if-then
     waitForIdle();
     static const int DRAGSTEPS = 50; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
     for (int i = DRAGSTEPS; i > 0; --i)
     {
+        // todo add shiftdown to interface and then apply the shiftdown after doing the first drag? or do it upon the first wxPoint p != from?
+        // Or make DragBegin and DragEnd methods, where the dragend is merely mouseUp()???
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i); 
         Move(p);
         waitForIdle();
@@ -251,8 +299,45 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
     waitForIdle();
 }
 
+void DragAlignLeft(pixel position)
+{
+    VAR_DEBUG(position);
+    wxPoint targetposition = wxGetMousePosition();
+    targetposition.x += (position - LeftPixel(DraggedClips()));
+    wxUIActionSimulator().MouseMove(targetposition);
+    waitForIdle();
+    ASSERT_EQUALS(wxGetMousePosition(),targetposition);
+}
+
+void DragAlignLeft(wxPoint from, pixel position, bool shift)
+{
+    // todo combine into one method
+    ASSERT_DIFFERS(from.x, position);
+    wxPoint to(from);
+    to.x += (from.x > position) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    Drag(from, to, false, true, false);
+    if (shift) 
+    { 
+        ShiftDown(); 
+    }
+    DragAlignLeft(position);
+    wxUIActionSimulator().MouseUp();
+    waitForIdle();
+    if (shift) 
+    { 
+        ShiftUp();
+        waitForIdle();
+    }
+}
+
+void ShiftDragAlignLeft(wxPoint from, pixel position)
+{
+    DragAlignLeft(from,position,true);
+}
+
 void Scrub(pixel from, pixel to)
 {
+    VAR_DEBUG(from)(to);
     for (int i = from; i < to; ++i)
     {
         PositionCursor(i);
@@ -273,6 +358,14 @@ void Play(pixel from, int ms)
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 {
     return getTimeline().getMousepointer().getInfo(position).logicalclipposition;
+}
+
+void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex)
+{
+    for (int i = 0; i < NumberOfVideoClipsInTrack(trackindex); ++i)
+    {
+        ASSERT(!VideoClip(trackindex,i)->isA<model::Transition>());
+    }
 }
 
 void ASSERT_SELECTION_SIZE(int size)

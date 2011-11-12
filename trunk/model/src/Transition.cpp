@@ -225,6 +225,11 @@ boost::optional<pts> Transition::getLastSetPosition() const
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
+pts Transition::getTouchPosition() const
+{
+    return getLeftPts() + getLeft();
+}
+
 pts Transition::getLeft() const
 {
     return mFramesLeft;

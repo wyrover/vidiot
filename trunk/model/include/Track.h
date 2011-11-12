@@ -61,6 +61,11 @@ public:
     /// If there is no clip at this pts then an empty Ptr is returned.
     IClipPtr getClip(pts position);
 
+    ///// Find the clips which provide the frames for the pts region [start, end).
+    ///// Also partially overlapping clips are returned.
+    ///// If there are no clips in the region then an empty list is returned.
+    //IClips getClips(pts start, pts end);
+
     /// \return the index'th clip in the list of clips
     IClipPtr getClipByIndex(int index);
 

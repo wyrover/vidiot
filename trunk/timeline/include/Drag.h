@@ -6,6 +6,7 @@
 #include <wx/dcmemory.h>
 #include "Part.h"
 #include "ExecuteDrop.h"
+#include "Drag_Shift.h"
 
 namespace model {
     class Track;
@@ -57,11 +58,20 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
     
-    bool isActive() const; ///< @return true if a drag operation with the currently selected clips is in effect.
+    bool isActive() const; ///< \return true if a drag operation with the currently selected clips is in effect.
 
     /// \return true if the given clip is currently being dragged
     /// \param clip clip to be checked
     bool contains(model::IClipPtr clip) const;
+
+    /// \return size of the current drag bitmap
+    wxSize getBitmapSize() const;
+
+    /// \return position of the current drag bitmap
+    wxPoint getBitmapPosition() const;
+
+    /// \return the current shift to be applied
+    Shift getShift() const;
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW
@@ -90,8 +100,7 @@ private:
     pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
     std::list<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
     bool mMustUndo;                             ///< True if a command has been submitted for giving feedback. 
-    pts mShiftPosition;                         ///< Position at which clips must be shifted to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
-    pts mShiftLength;                           ///< Length of the shift required to make room for the clips being dragged. ExecuteDrop::sNoShift: No shift
+    Shift mShift;                               ///< Uninitialized if no shift active. When initialized holds info on the current shift.
 
     //////////////////////////////////////////////////////////////////////////
     // DRAGINFO

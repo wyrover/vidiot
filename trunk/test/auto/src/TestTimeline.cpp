@@ -25,6 +25,7 @@
 #include "VideoClip.h"
 #include "VideoTrack.h"
 #include "VideoTransition.h"
+#include "Zoom.h"
 
 namespace test {
 
@@ -451,5 +452,27 @@ void TestTimeline::testSplitting()
     ASSERT(!VideoClip(0,3)->isA<model::Transition>());
     ASSERT(!VideoClip(0,4)->isA<model::Transition>());
 }
+
+void TestTimeline::testAbortDrag()
+{
+    for (int zoom = 0; zoom < 4; zoom++)
+    {
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+
+        DeselectAllClips(); 
+        Drag(Center(VideoClip(0,5)), Center(VideoClip(0,4)), false, true, false);
+        ShiftDown();
+        Move(Center(VideoClip(0,3)));
+        Type(WXK_ESCAPE); // Abort the drop
+        wxUIActionSimulator().MouseUp();
+        ShiftUp();
+
+        ASSERT_MORE_THAN_EQUALS(getTimeline().getZoom().pixelsToPts(LeftCenter(VideoClip(0,1)).x),VideoClip(0,1)->getLeftPts()); 
+
+        Undo();
+        Type('=');  // Zoom in and test again
+    }
+}
+
 
 } // namespace

@@ -50,6 +50,7 @@ namespace gui { namespace timeline {
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
 
+    // todo these two in separate files
 /// Helper class required to receive DND event from wxWidgets, in case new assets are
 /// being dragged into the timeline (for instance, originating from the Project View).
 class DropTarget
@@ -121,8 +122,7 @@ Drag::Drag(Timeline* timeline)
     ,   mVideo(timeline, true)
     ,   mAudio(timeline, false)
     ,   mMustUndo(false)
-    ,   mShiftPosition(-1)
-    ,   mShiftLength(0)
+    ,   mShift(boost::none)
 {
     VAR_DEBUG(this);
     getTimeline().SetDropTarget(new DropTarget(timeline)); // Drop target is deleted by wxWidgets
@@ -305,43 +305,59 @@ void Drag::move(wxPoint position)
     }
 
     // Shift if required
-    pts pos = command::ExecuteDrop::sNoShift;
-    pts len = command::ExecuteDrop::sNoShift;
-
+    Shift shift = boost::none; // todo in separate method....
     if (wxGetMouseState().ShiftDown())
     {
         pts origPos = getDragPtsPosition();
         pts origLen = getDragPtsSize();
 
-        pos = getDragPtsPosition();
-        len = getDragPtsSize();
-        //todo shift transition?
+        pts pos = getDragPtsPosition();
+        pts len = getDragPtsSize();
+
         BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(origPos);
-            if (clip && !clip->isA<model::EmptyClip>()) // todo halverwege een empty clip droppen?
+
+            // Given the current estimated shift position, determine if for the given clip a bit of extra shift
+            // is required, because the clip extends to the left of the shift position which must be shifted also.
+            // For transitions, extra code is required, since the clip left/right of the transition are what the
+            // user expects to be shifted. The actual transition itselves provides no 'shift' positions.
+            // Finally, for empty clips, there is never additional RELEVANT clip to the left of the shift position
+            // that needs to be shifted (shift means adding more empty clips which will be adjoined anyway).
+
+            model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+            if (transition)
             {
-                if (clip->isA<model::Transition>())
-                {
-                    LOG_DEBUG;
-                    //
-                }
-                if ((clip->getLeftPts() < origPos) && (clip->getLeftPts() < pos))
-                {
-                    pos = clip->getLeftPts();
-                    len = origPos - clip->getLeftPts() + getDragPtsSize();
-                }
+
+                // todo test the code below with two aligned transitions (one 'in' and one 'out')
+
+                // The drag is either over the left or the right part of the transition, depending on the
+                // position where the two clips 'touch' from a user perspective.
+                clip = (origPos < transition->getTouchPosition()) ? clip = clip->getPrev() : clip = clip->getNext();
+                ASSERT(clip);
+                ASSERT(!clip->isA<model::Transition>())(clip);
+            }
+            if ((clip) &&                               // Maybe no clip at given position
+                (!clip->isA<model::EmptyClip>()) &&     // See remark above
+                //(clip->getLeftPts() < origPos) &&       // Start of this clip is to the left of the leftmost dragged position (obsolete due to check below?) // todo
+                (clip->getLeftPts() < pos))             // Start of this clip is to the left of the currently calculated shift start position
+            {
+                pos = clip->getLeftPts();               // New shift start position: shift this clip entirely
+                len =
+                    getDragPtsSize() +                  // The original shift length
+                    (origPos - clip->getLeftPts());     // The part of the clip that is left of that position must be shifted also
+                // Note: do not make the mistake of using 'pos' here (origPos is used, since also the original drag size getDragSize() is used).
             }
         }
+        shift.reset(ShiftParams(pos,len));
     }
-    if (mShiftPosition != pos || mShiftLength != len)
+    if (shift != mShift)
     {
-        mShiftPosition = pos;
-        mShiftLength = len;
-        VAR_DEBUG(mShiftPosition)(mShiftLength);
+        mShift = shift;
+        VAR_DEBUG(shift);
         BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
         {
-            getViewMap().getView(track)->setShift(pos, len);
+            getViewMap().getView(track)->onShiftChanged();
         }
     }
 
@@ -364,7 +380,7 @@ void Drag::drop()
         drops.splice(drops.end(), getDrops(track));
     }
 
-    getTimeline().Submit(new command::ExecuteDrop(getSequence(), mDraggedClips, drops, mShiftPosition, mShiftLength));
+    getTimeline().Submit(new command::ExecuteDrop(getSequence(), mDraggedClips, drops, mShift));
 }
 
 void Drag::stop()
@@ -375,9 +391,10 @@ void Drag::stop()
     {
         clip->setDragged(false);
     }
+    mShift = boost::none;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
-        getViewMap().getView(track)->setShift(command::ExecuteDrop::sNoShift, command::ExecuteDrop::sNoShift);
+        getViewMap().getView(track)->onShiftChanged();
     }
     reset();
     getTimeline().Refresh(false);
@@ -395,6 +412,22 @@ bool Drag::isActive() const
 bool Drag::contains(model::IClipPtr clip) const
 {
     return mDraggedClips.find(clip) != mDraggedClips.end();
+}
+
+wxSize Drag::getBitmapSize() const
+{
+    return mBitmap.GetSize();
+}
+
+wxPoint Drag::getBitmapPosition() const
+{
+    ASSERT(isActive());
+    return mBitmapOffset + getDraggedDistance() + getSnapPixels();
+}
+
+Shift Drag::getShift() const
+{
+    return mShift;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -472,7 +505,7 @@ void Drag::draw(wxDC& dc) const
     {
         return;
     }
-    dc.DrawBitmap(mBitmap,mBitmapOffset + getDraggedDistance() + getSnapPixels(),true);
+    dc.DrawBitmap(mBitmap, getBitmapPosition(),true);
     dc.SetPen(Layout::sSnapPen);
     dc.SetBrush(Layout::sSnapBrush);
     BOOST_FOREACH( pts snap, mSnaps )
@@ -628,8 +661,7 @@ void Drag::reset()
     mDraggedTrack.reset();
     mDropTrack.reset();
     mMustUndo = false;
-    mShiftPosition = -1;
-    mShiftLength = 0;
+    mShift = boost::none;
 }
 
 model::TrackPtr Drag::trackOnTopOf(model::TrackPtr track)

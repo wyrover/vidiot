@@ -101,6 +101,7 @@ FILE(GLOB HelpFiles         ${PROJECT_SOURCE_DIR}/help/??*.*)
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
 IF (MSVC)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /EHa")
+        string(REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
         ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
 ENDIF (MSVC)
 
