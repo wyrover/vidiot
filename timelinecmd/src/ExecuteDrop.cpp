@@ -15,18 +15,14 @@
 
 namespace gui { namespace timeline { namespace command {
 
-// static
-const pts ExecuteDrop::sNoShift = -1;
-
-ExecuteDrop::ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, pts shiftPosition, pts shiftSize)
+ExecuteDrop::ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, Shift shift)
 :   AClipEdit(sequence)
 ,   mTransitions()
 ,   mDrags(drags)
 ,   mDrops(drops)
-,   mShiftPosition(shiftPosition)
-,   mShiftSize(shiftSize)
+,   mShift(shift)
 {
-    VAR_INFO(this)(drags)(drops)(shiftPosition)(shiftSize);
+    VAR_INFO(this)(drags)(drops)(shift);
     mCommandName = _("Move clips");
 }
 
@@ -68,14 +64,14 @@ void ExecuteDrop::initialize()
         replaceClip(clip, boost::assign::list_of(model::EmptyClip::replace(clip)));
     }
 
-    if (mShiftPosition >= 0)
+    if (mShift)
     {
         LOG_DEBUG << "STEP 3: Apply shift";
         BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
         {
-            model::IClipPtr clip = track->getClip(mShiftPosition);
+            model::IClipPtr clip = track->getClip(mShift->mPosition);
 
-            addClip(boost::make_shared<model::EmptyClip>(mShiftSize), track, clip );
+            addClip(boost::make_shared<model::EmptyClip>(mShift->mLength), track, clip );
         }
     }
     else
@@ -178,7 +174,7 @@ bool ExecuteDrop::transitionMustBeUnapplied(model::TransitionPtr transition) con
 
 std::ostream& operator<<( std::ostream& os, const ExecuteDrop& obj )
 {
-    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mTransitions << '|' << obj.mDrags << '|' << obj.mShiftPosition << '|' << obj.mShiftSize;
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mTransitions << '|' << obj.mDrags << '|' << obj.mShift;
     return os;
 }
 

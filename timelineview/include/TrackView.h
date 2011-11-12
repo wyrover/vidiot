@@ -3,17 +3,19 @@
 
 #include "View.h"
 #include <boost/optional.hpp>
+#include <ostream>
 
 namespace model {
-    class Track;
-    typedef boost::shared_ptr<Track> TrackPtr;
-    class EventAddClips;
-    class EventRemoveClips;
-    class EventHeightChanged;
+class Track;
+typedef boost::shared_ptr<Track> TrackPtr;
+class EventAddClips;
+class EventRemoveClips;
+class EventHeightChanged;
 }
 
 namespace gui { namespace timeline {
-    struct PointerPositionInfo;
+
+struct PointerPositionInfo;
 
 class TrackView
     :   public View
@@ -25,30 +27,26 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     TrackView(model::TrackPtr track, View* parent);
-	virtual ~TrackView();
+    virtual ~TrackView();
 
     model::TrackPtr getTrack() const;
 
-     /// Draw the selected clips of this track only.
-     /// This is required for drawing these clips when dragging.
-     /// The height parameter is required for the case where this
-     /// track is dragged over another track which has another height.
-     void drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const;
-
-     //////////////////////////////////////////////////////////////////////////
-     // GET/SET
-     //////////////////////////////////////////////////////////////////////////
-
-     pixel requiredWidth() const override;  ///< @see View::requiredWidth()
-     pixel requiredHeight() const override; ///< @see View::requiredHeight()
-
-     void setShift(pts position, pts length);
-
-     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
+    /// Draw the selected clips of this track only.
+    /// This is required for drawing these clips when dragging.
+    /// The height parameter is required for the case where this
+    /// track is dragged over another track which has another height.
+    void drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const;
 
     //////////////////////////////////////////////////////////////////////////
-    // GUI EVENTS
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
+
+    pixel requiredWidth() const override;  ///< @see View::requiredWidth()
+    pixel requiredHeight() const override; ///< @see View::requiredHeight()
+
+    void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
+
+    void onShiftChanged();
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -61,8 +59,6 @@ public:
 private:
 
     model::TrackPtr mTrack;
-    pts mShiftPosition;
-    pts mShiftLength;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -14,12 +14,14 @@
 #include "Clip.h"
 #include "ClipView.h"
 #include "Drag.h"
+#include "Drag_Shift.h"
 #include "Layout.h"
 #include "PositionInfo.h"
 #include "Selection.h"
 #include "Track.h"
 #include "TrackEvent.h"
 #include "Transition.h"
+#include "UtilLogWxwidgets.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "ViewMap.h"
@@ -34,8 +36,6 @@ namespace gui { namespace timeline {
 TrackView::TrackView(model::TrackPtr track, View* parent)
 :   View(parent)
 ,   mTrack(track)
-,   mShiftPosition(0)
-,   mShiftLength(0)
 {
     VAR_DEBUG(this);
     ASSERT(mTrack); // Must be initialized
@@ -76,10 +76,6 @@ model::TrackPtr TrackView::getTrack() const
 {
     return mTrack;
 }
-
-//////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
-//////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
@@ -125,31 +121,30 @@ pixel TrackView::requiredHeight() const
     return mTrack->getHeight();
 }
 
-void TrackView::setShift(pts position, pts length)
+void TrackView::onShiftChanged()
 {
-    if (length > 0)
-    {
-        VAR_DEBUG(length);
-    }
-    mShiftPosition = position;
-    mShiftLength = length;
     invalidateBitmap();
 }
 
 void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
 {
     wxPoint adjustedPosition(position);
-    if (position.x >= getZoom().ptsToPixels(mShiftPosition))
+
+    Shift shift = getDrag().getShift();
+    if (shift && (position.x >= getZoom().ptsToPixels(shift->mPosition)))
     {
-        if (position.x >= getZoom().ptsToPixels(mShiftPosition + mShiftLength))
+        // Apply shift if (A) shift is enabled, and (B) current position is after the shift start
+        if (position.x >= getZoom().ptsToPixels(shift->mPosition + shift->mLength))
         {
-            adjustedPosition.x -= getZoom().ptsToPixels(mShiftLength);
+            // Clip is AFTER the shifted area, adjust accordingly
+            adjustedPosition.x -= getZoom().ptsToPixels(shift->mLength);
         }
         else
         {
             return; // Inside shifted area. No clip there.
         }
     }
+
     info.clip = mTrack->getClip(getZoom().pixelsToPts(adjustedPosition.x));
     if (info.clip)
     {
@@ -178,9 +173,10 @@ void TrackView::draw(wxBitmap& bitmap) const
                 // todo handle shift dragging over a transition (split the transition, or what?)
                 // todo transitions must have the possibility to be temp hidden (for this purpose)
                 wxPoint position(getZoom().ptsToPixels(left),0);
-                if (left >= mShiftPosition)
+                Shift shift = getDrag().getShift();
+                if (shift && left >= shift->mPosition)
                 {
-                    position.x += getZoom().ptsToPixels(mShiftLength);
+                    position.x += getZoom().ptsToPixels(shift->mLength);
                 }
                 dc.DrawBitmap(bitmap,position);
             }

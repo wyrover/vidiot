@@ -185,7 +185,6 @@ IClipPtr Track::getClip(pts position)
     {
         pts length = clip->getLength();
         right += length;
-        VAR_DEBUG(position)(clip)(left)(right);
         if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
         {
             LOG_DEBUG << "Found";
@@ -195,6 +194,29 @@ IClipPtr Track::getClip(pts position)
     }
     return IClipPtr();
 }
+
+//IClips Track::getClips(pts start, pts end)
+//{
+//    IClips result;
+//    pts left = 0;
+//    pts right = left;
+//    BOOST_FOREACH( IClipPtr clip, mClips )
+//    {
+//        pts length = clip->getLength();
+//        right += length;
+//        if ((left <= start && right > start) || // First clip contains pts 'start'
+//            (!result.empty()))                  // Start pts already found, keep adding until the break below.
+//        {
+//            result.push_back(clip);
+//        }
+//        left += length;
+//        if (left >= end) // Subsequent clip is after end
+//        {
+//            break;
+//        }
+//    }
+//    return result;
+//}
 
 IClipPtr Track::getClipByIndex(int index)
 {

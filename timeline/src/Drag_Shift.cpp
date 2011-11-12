@@ -1,4 +1,5 @@
 #include "Drag_Shift.h"
+#include "UtilLog.h"
 
 namespace gui { namespace timeline {
 

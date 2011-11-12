@@ -3,6 +3,7 @@
 
 #include <set>
 #include "AClipEdit.h"
+#include "Drag_Shift.h"
 
 namespace gui { namespace timeline { namespace command {
 
@@ -10,8 +11,6 @@ class ExecuteDrop
     :   public AClipEdit
 {
 public:
-
-    static const pts sNoShift;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
@@ -26,9 +25,9 @@ public:
     };
     typedef std::list<Drop> Drops;
 
-    ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, pts shiftPosition = sNoShift, pts shiftSize = sNoShift);
+    ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, Shift shift = boost::none);
 
-    ~ExecuteDrop();
+    virtual ~ExecuteDrop();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE
@@ -45,8 +44,7 @@ private:
     model::Transitions mTransitions;    ///< List of transitions that must be removed because one but not all of their adjacent clips are moved
     std::set<model::IClipPtr> mDrags;   ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Drops mDrops;
-    pts mShiftPosition;
-    pts mShiftSize;
+    Shift mShift;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
