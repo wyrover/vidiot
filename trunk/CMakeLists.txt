@@ -10,6 +10,21 @@ SET(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/build )
 # Needed for Makefiles/Code::Blocks
 #SET( CMAKE_BUILD_TYPE DEBUG )
 
+# Fill this variable with extra dll paths required for running the application
+# in a debugging context. The variable is used to set MSVC debugging paths.
+# This avoids having to change the system path for running with dlls from E.g.
+# ffmpeg, boost, and portaudio in the debugger.
+SET(MSVC_DLL_PATH "")
+SET(MSVC_USER_TEMPLATE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/build/template.vcxproj.user)
+MACRO(ADD_DLL_PATH dllpath)
+    IF (MSVC)
+        SET(MSVC_DLL_PATH ${MSVC_DLL_PATH};${dllpath})
+    ENDIF (MSVC)
+ENDMACRO(ADD_DLL_PATH)
+MACRO(COPY_MSVC_PROJECT_USER_FILE projectname)
+    CONFIGURE_FILE(${MSVC_USER_TEMPLATE_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${projectname}.vcxproj.user @ONLY)
+ENDMACRO(COPY_MSVC_PROJECT_USER_FILE)
+
 #### FFMPEG ####
 #SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-precompiled )
 SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-r26182 )
@@ -20,8 +35,9 @@ SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} $ENV{FFMPEGDIR}/build )
 # Add include for ctypes (C99 vs. MSVC)
 IF (MSVC)
     SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} ${VIDIOT_DIR}/ffmpeg-ctypes )
-  file(GLOB FFMPEG_INSTALL $ENV{FFMPEGDIR}/bin/*.dll)
+    FILE(GLOB FFMPEG_INSTALL $ENV{FFMPEGDIR}/bin/*.dll)
 ENDIF (MSVC)
+ADD_DLL_PATH($ENV{FFMPEGDIR}/bin)
 
 #### WXWIDGETS ####
 SET( WX_USE_REL_AND_DBG TRUE )
@@ -44,12 +60,14 @@ foreach(BOOSTLIB date_time thread filesystem serialization system)
         endif((${DLLNAME} MATCHES "release") AND (${DLLNAME} MATCHES "threading-multi"))
     endforeach(DLLNAME)
 endforeach(BOOSTLIB)
+ADD_DLL_PATH($ENV{BOOST_ROOT}/stage/lib)
 
 #### PORTAUDIO ####
 SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include ${VIDIOT_DIR}/portaudio_trunk/src/common)
 SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_trunk/build/msvc/Win32/Release)
 SET(PORTAUDIO_LIBRARIES   portaudio_x86.dll)
 SET(PORTAUDIO_INSTALL ${PORTAUDIO_LIBRARY_DIR}/portaudio_x86.dll)
+ADD_DLL_PATH(${PORTAUDIO_LIBRARY_DIR})
 
 #### SOUNDTOUCH ####
 SET( SOUNDTOUCH_ROOT        ${VIDIOT_DIR}/soundtouch_trunk )
@@ -153,12 +171,6 @@ SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${ConfigurationFiles} ${BuildFiles} PR
 
 #### HELP FILES ####
 #add_custom_command(OUTPUT HelpFiles COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)
-
-##file(GLOB Tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} test/*.h)
-#file(GLOB Tests ${CMAKE_CURRENT_SOURCE_DIR}/test/*.h)
-#AddCxxTest(SomeUnitTest ${Tests})
-#    add_dependencies(Test Vidiot)
-# TARGET_LINK_LIBRARIES(SomeUnitTest VidiotLib)
 
 ADD_LIBRARY(vidiot ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${BuildFiles} ${HelpFiles}) # Add HelpFiles Here to make Vidiot dependent on copying the helpfiles
 

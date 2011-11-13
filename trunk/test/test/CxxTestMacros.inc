@@ -16,5 +16,5 @@ macro(AddCxxTest TestProjectName)
         WORKING_DIRECTORY ${TESTDIR})
         # --error-printer --runner=ParenPrinter --gui=Win32Gui 
     add_executable(${TestProjectName} ${TestRunner} ${ARGN})
-    add_test(${TestProjectName} ${TestRunnerCommand})
+#    add_test(${TestProjectName} ${TestRunnerCommand})
 endmacro(AddCxxTest)
