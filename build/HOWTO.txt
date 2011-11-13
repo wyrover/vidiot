@@ -5,27 +5,21 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
       checing compatibility with GCC.
 
 ================ VISUAL STUDIO ================
-* Ensure to install with the runtimes (for packaging)
-* Install and set environment variables (vcvars) for cmake
-* Enable Tools (for wxwindows)
-* Install trunk/build/CppUtilities.vb in MSDEV
-* NOTE: Use CTRL-Comma (NavigateTo)
-* Bind ALT-S to CppUtilities.SortSelectedLines Macro
-* Bind ALT-O to CppUtilities.SwitchBetweenSourceAndHeader
-* Bind ALT-T to CppUtilities.ActivateTestAuto
-* Bind ALT-M to CppUtilities.ActivateTestManual
+* Install MSVS2010
+* Install MSVS2010 SP1
+* Set Tabs to 4 spaces, via Tools
+* NOTE: Ensure to install with the runtimes (for packaging)
+* NOTE: Install and set environment variables (vcvars) for cmake
+* NOTE: Enable Tools (for wxwindows)
 * Use regex "^~(:Wh@//.+)~(:Wh@\{:Wh@)~(:Wh@\}:Wh@)~(:Wh@/#).+" in search in files dialog to count lines of code..
+* Install CodeMaid plugin
+* Install <vidiot_trunk>/build/VisualStudioAddin
+  - Install Microsoft Visual Studio 2010 SP1 SDK from
+    http://www.microsoft.com/download/en/details.aspx?id=21835
+  - Build VisualStudioAddin
+  - Add <vidiot_trunk>\build\VisualStudioAddin\bin\Release to AddIn paths
+    via Tools->Options->Addin/macro security
 
-* Install "Productivity Power Tools"
-  http://visualstudiogallery.msdn.microsoft.com/d0d33361-18e2-46c0-8ff2-4adea1e34fef/
-  + CTRL-ALT-J - Align assignments
-  NOTE: DONT Added since the extension crashes MSDEV continuously (May 2011 version)
-* Install: Quick Open File for Visual Studio 2010
-  http://visualstudiogallery.msdn.microsoft.com/3eb2f230-2728-4d5f-b448-4c0b64154da7
-  CTRL-K, CTRL-O: Open file
-* INSTALL: Go To Definition Plugin
-  http://visualstudiogallery.msdn.microsoft.com/4b286b9c-4dd5-416b-b143-e31d36dc622b/
-  CTRL-CLICK: Go to definition of object
 =================== CMAKE ===================
 Install cmake into c:\Program Files
 
@@ -33,7 +27,7 @@ Install cmake into c:\Program Files
 Install doxygen into c:\Program Files
 
 =================== GRAPHVIZ ===================
-Install graphviz into c:\Program Files
+(obsolete) Install graphviz into c:\Program Files
 
 =================== CxxTest ===================
 Install CxxTest into <VIDIOT_DIR>\CxxTest (cxxtest, docs and sample are subdirs of CxxTest)
@@ -64,6 +58,9 @@ Install ActivePerl via installer
   - coreutils-5.97-MSYS-1.0.11: extract pr.exe
   (Note: ffmpeg binaries not working)
 
+===================== SVN  ===================
+* Install SVN (tortoise)
+
 =================== VIDIOT ===================
 * Checkout Vidiot into <VIDIOT_DIR>
   Example (VIDIOT_DIR=D:\Vidiot): D:\Vidiot\vidiot_trunk
@@ -77,7 +74,6 @@ Install ActivePerl via installer
   - bootstrap
   - (MSVC) .\bjam --toolset=msvc --build-type=complete stage
   - (GCC) .\bjam --toolset=gcc --build-type=complete stage
-* Add  <VIDIOT_DIR>\boost_1_xx_y\stage\lib to system/user path variable
 
 =================== WXWIDGETS ===================
 * Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
@@ -113,6 +109,7 @@ Install ActivePerl via installer
 * Add <VIDIOT_DIR>\ffmpeg-precompiled\bin to system/user path variable
 * Delete
   <VIDIOT_DIR>/ffmpeg-precompiled/include/libavutil/file.h
+* NOTE: If in another dir then 'ffmpeg-precompiled' then change CMakelists.txt accordingly
 
 * The steps below are how I tried compiling. However, it 'suddenly' stopped
   working; resulting in an avutil.dll that - when loaded - caused a 0x00000005
@@ -140,7 +137,6 @@ Install ActivePerl via installer
     + add C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include to the include paths
     + add C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86 to the linker "additional library directories"
   - Build
-  - Add <VIDIOT_DIR>\portaudio_trunk\build\msvc\Win32\Release to system/user path variable
 * (GCC)
   - MSys: cd <VIDIOT_DIR>/portaudio_trunk ; ./configure --prefix=/d/Vidiot/portaudio_trunk/build/msys ; make ; make install
 

@@ -17,5 +17,7 @@ macro(AddTests TestProjectName)
     SOURCE_GROUP("include" REGULAR_EXPRESSION ${TESTDIR}/include/.*)
 
     TARGET_LINK_LIBRARIES(${TestProjectName} test vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
+
+    COPY_MSVC_PROJECT_USER_FILE(${TestProjectName})
 endmacro(AddTests)
 
