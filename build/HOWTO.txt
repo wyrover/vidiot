@@ -13,6 +13,8 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 * NOTE: Enable Tools (for wxwindows)
 * Use regex "^~(:Wh@//.+)~(:Wh@\{:Wh@)~(:Wh@\}:Wh@)~(:Wh@/#).+" in search in files dialog to count lines of code..
 * Install CodeMaid plugin
+  - Disable remove blank lines after opening brace
+  - Disable remove blank lines before closing brace
 * Install <vidiot_trunk>/build/VisualStudioAddin
   - Install Microsoft Visual Studio 2010 SP1 SDK from
     http://www.microsoft.com/download/en/details.aspx?id=21835

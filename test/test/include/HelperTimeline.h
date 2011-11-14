@@ -99,6 +99,11 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Tri
 /// \param mouseup if true, then the mouse button is released after the mouse has reached position 'to'
 void Drag(wxPoint from, wxPoint to, bool ctrl = false, bool mousedown = true, bool mouseup = true);
 
+/// Do a shift drag and drop between the two points (press, move a bit, hold shift, move to 'to', release mouse and shift).
+/// \param from starting position to move to initially
+/// \param to final position to drag to
+void ShiftDrag(wxPoint from, wxPoint to);
+
 /// Do a drag from the current position until the left position of the dragged object is exactly on top of 'align'
 /// \param align point to which the left position of the drag must be aligned
 /// \note

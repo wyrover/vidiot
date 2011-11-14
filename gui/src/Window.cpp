@@ -301,8 +301,8 @@ void Window::setProcessingText(wxString text)
 //////////////////////////////////////////////////////////////////////////
 
 void Window::onExit(wxCommandEvent &)
-{ 
-    Close(); 
+{
+    Close();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -383,7 +383,7 @@ void Window::setSequenceMenu(wxMenu* menu)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -413,4 +413,3 @@ namespace model {
     template void IView::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
     template void IView::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 }
-
