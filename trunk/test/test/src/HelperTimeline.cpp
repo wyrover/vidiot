@@ -101,7 +101,7 @@ pixel LeftPixel(model::IClipPtr clip)
     {
         // This special handling is required to adjust for rounding errors in case of zooming.
         // The leftmost pts value may not be corresponding with an exact pixel value.
-        // Thus sometimes, we need to look more to the right to find the leftmost pixel of 
+        // Thus sometimes, we need to look more to the right to find the leftmost pixel of
         // this clip - to ensure that lookups at the returned pixel value correspond with the
         // given clip and not its left neighbour.
         p.x++;
@@ -119,7 +119,7 @@ pixel RightPixel(model::IClipPtr clip)
     {
         // This special handling is required to adjust for rounding errors in case of zooming.
         // The rightmost pts value may not be corresponding with an exact pixel value.
-        // Thus sometimes, we need to look more to the left to find the rightmost pixel of 
+        // Thus sometimes, we need to look more to the left to find the rightmost pixel of
         // this clip - to ensure that lookups at the returned pixel value correspond with the
         // given clip and not its right neighbour.
         p.x--;
@@ -291,7 +291,7 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
     {
         // todo add shiftdown to interface and then apply the shiftdown after doing the first drag? or do it upon the first wxPoint p != from?
         // Or make DragBegin and DragEnd methods, where the dragend is merely mouseUp()???
-        wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i); 
+        wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i);
         Move(p);
         waitForIdle();
     }
@@ -299,9 +299,21 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
     waitForIdle();
 }
 
+void ShiftDrag(wxPoint from, wxPoint to)
+{
+    wxPoint between(from);
+    between.x += (from.x > to.x) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    Drag(from, between, false, true, false);
+    ShiftDown();
+    Move(to);
+    waitForIdle();
+    wxUIActionSimulator().MouseUp();
+    ShiftUp();
+    waitForIdle();
+}
+
 void DragAlignLeft(pixel position)
 {
-    VAR_DEBUG(position);
     wxPoint targetposition = wxGetMousePosition();
     targetposition.x += (position - LeftPixel(DraggedClips()));
     wxUIActionSimulator().MouseMove(targetposition);
@@ -316,15 +328,15 @@ void DragAlignLeft(wxPoint from, pixel position, bool shift)
     wxPoint to(from);
     to.x += (from.x > position) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
     Drag(from, to, false, true, false);
-    if (shift) 
-    { 
-        ShiftDown(); 
+    if (shift)
+    {
+        ShiftDown();
     }
     DragAlignLeft(position);
     wxUIActionSimulator().MouseUp();
     waitForIdle();
-    if (shift) 
-    { 
+    if (shift)
+    {
         ShiftUp();
         waitForIdle();
     }
@@ -364,7 +376,7 @@ void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex)
 {
     for (int i = 0; i < NumberOfVideoClipsInTrack(trackindex); ++i)
     {
-        ASSERT(!VideoClip(trackindex,i)->isA<model::Transition>());
+        ASSERT(!VideoClip(trackindex,i)->isA<model::Transition>())(i);
     }
 }
 
@@ -391,10 +403,10 @@ void DumpTimeline()
     int tracknum = 0;
     BOOST_FOREACH( model::TrackPtr track, sequence->getVideoTracks() )
     {
-        LOG_DEBUG 
-            << "-------------------- VIDEOTRACK " << tracknum++ 
-            << " (length=" << track->getLength() 
-            << ", position=" << getTimeline().getSequenceView().getVideoPosition() + getTimeline().getSequenceView().getVideo().getPosition(track) 
+        LOG_DEBUG
+            << "-------------------- VIDEOTRACK " << tracknum++
+            << " (length=" << track->getLength()
+            << ", position=" << getTimeline().getSequenceView().getVideoPosition() + getTimeline().getSequenceView().getVideo().getPosition(track)
             << ") --------------------";
         LOG_DEBUG << tab << "TRACK " << *track;
         BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
