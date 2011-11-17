@@ -40,6 +40,10 @@ public:
 
     void testSelection();
     void testDnd();
+    
+    /// Test the handling of transitions when doing drag and drop operations
+    /// with clips.
+    void testDnDTransition();
 
     /// The undo scenario at end was difficult to fix. It was caused by using Timeline as a 
     /// identifying member for AClipEdit commands. Since the undo included undo'ing the creation

@@ -104,8 +104,10 @@ void Drag(wxPoint from, wxPoint to, bool ctrl = false, bool mousedown = true, bo
 /// \param to final position to drag to
 void ShiftDrag(wxPoint from, wxPoint to);
 
-/// Do a drag from the current position until the left position of the dragged object is exactly on top of 'align'
-/// \param align point to which the left position of the drag must be aligned
+/// Do a drag from the current position until the left position of the dragged object is exactly on top of 'position'
+/// \param position point to which the left position of the drag must be aligned
+/// \param from starting position of the drag operation (the mouse will be pressed here)
+/// Shift is not pressed during the drag operation.
 /// \note
 /// The current LeftPixel(DraggedClips()) may be slightly different than the requested position.
 /// When snapping is enabled, the snapping algorithm may cause a difference. If snapping is not
@@ -113,10 +115,20 @@ void ShiftDrag(wxPoint from, wxPoint to);
 /// not all pts values may be possible to 'drop on', since there's no matching pixel value. For
 /// instance when zoomed with a factor 5 (each pixel corresponds to 5 pts values), then only the
 /// pts values 1, and 5 are possible.
-void DragAlignLeft(pixel position);
-void DragAlignLeft(wxPoint from, pixel position, bool shift = false);
+void DragAlignLeft(wxPoint from, pixel position);
 
+/// \see DragAlignLeft
+/// Do a drag from the current position until the left position of the dragged object is exactly on top of 'align'
+/// Shift is pressed during the drag operation causing a shift-drag (insert clips instead of overwrite)
 void ShiftDragAlignLeft(wxPoint from, pixel position);
+
+/// Similar to DragAlignLeft with the exception that the right position of the dragged object is aligned to the given position.
+/// \see DragAlignLeft
+void DragAlignRight(wxPoint from, pixel position);
+
+/// Similar to ShiftDragAlignLeft with the exception that the right position of the dragged object is aligned to the given position.
+/// \see ShiftDragAlignLeft
+void DragAlignRight(wxPoint from, pixel position);
 
 void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)
 void Play(pixel from, int ms);                                          ///< Play from the given position, with the given time.

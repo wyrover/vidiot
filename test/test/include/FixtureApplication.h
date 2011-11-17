@@ -63,6 +63,8 @@ private:
     boost::barrier mBarrierStarted;
     boost::barrier mBarrierStopped;
 
+	boost::mutex mEndMutex;
+
     bool mEnd;
     bool mStartingMainThread;
 };
