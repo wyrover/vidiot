@@ -107,12 +107,6 @@ void TestManual::testManual()
         // transition and its adjacent clips are shifted backwards
         PrepareSnapping(false);
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,3)));
-        todo dit werkt...
-            //leftPositionOfClipBeforeTransitionAfterTransitionApplied);
-        //Drag(Center(VideoClip(0,6)), Center(VideoClip(0,5)), false, true, false); // todo deze kan sneller
-        //ShiftDown();
-        //Drag(Center(VideoClip(0,5)), Center(VideoClip(0,3)), false, false, true);
-        //ShiftUp();
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
         ASSERT(VideoClip(0,4)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -125,10 +119,7 @@ void TestManual::testManual()
         // transition is removed because the two 'transitioned clips
         // are separated'. (clip in front of transition remains intact)
         PrepareSnapping(false);
-        Drag(Center(VideoClip(0,6)), Center(VideoClip(0,5)), false, true, false); // todo deze kan sneller
-        ShiftDown();
-        Drag(Center(VideoClip(0,5)), Center(VideoClip(0,4)), false, false, true);
-        ShiftUp();
+		ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,4)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
@@ -139,8 +130,8 @@ void TestManual::testManual()
         // Shift drag with snapping enabled. The drop is done such that
         // the left position of the drop is aligned with the left
         // position of the clip left of the transitions
-        pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
         PrepareSnapping(true);
+        pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,6)),leftPositionOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(!VideoClip(0,1)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),lengthOfFirstClip);
@@ -155,7 +146,7 @@ void TestManual::testManual()
         // the transition. This causes the clip left of the transition
         // to be shifted back.
         PrepareSnapping(true);
-        pts lengthOfDraggedClip = VideoClip(0,5)->getLength(); // todo duplicate name, or store original values somewhere?
+        pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,5)),leftPositionOfTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),lengthOfFirstClip);
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
@@ -166,7 +157,7 @@ void TestManual::testManual()
         Undo();
     }
     {
-        // Shift drag with snapping enabled. The drop is done such that the left position
+        // Shift drag with snapping enabled. The drop is done such that the left position@
         // of the drop is aligned with the center position of the transition.
         // This causes the clip right of the transition to be shifted back, and the transition
         // to be removed.
@@ -187,7 +178,7 @@ void TestManual::testManual()
         // This causes the clip right of the transition to be shifted back, and the transition
         // to be removed.
         PrepareSnapping(true);
-        pts lengthOfDraggedClip = VideoClip(0,5)->getLength(); // todo duplicate name, or store original values somewhere?
+        pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,5)),LeftPixel(VideoClip(0,3)));
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),lengthOfFirstClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
@@ -197,18 +188,36 @@ void TestManual::testManual()
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfClipAfterTransitionBeforeApplyingTransition);
         Undo();
     }
-
-    // Test 6: Drag a small clip on top of the clip left of the transition. This left clip
-    //         is made shorter, but the transition remains.
-
-    // Test 7: Drag a small clip on top of the clip right of the transition. This right clip
-    //         is made shorter, but the transition remains.
-
-    pause(3000);
-    DragAlignLeft(leftPositionOfTransitionAfterTransitionApplied);
-    //pause(3000);
-    DragAlignLeft(leftPositionOfClipAfterTransitionAfterTransitionApplied);
-    pause();
+	{
+		// Drag a small clip on top of the clip left of the transition. This left clip
+		// is made shorter, but the transition remains.
+        PrepareSnapping(false);
+		pixel right = RightPixel(VideoClip(0,1));
+		right -= 20; // Ensure that 'a bit' of the clip left of the transition remains, causing the transition to remain also
+        pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
+        DragAlignRight(Center(VideoClip(0,6)),right);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
+		ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT(VideoClip(0,3)->isA<model::Transition>());
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),defaultSize);
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),lengthOfClipAfterTransitionAfterTransitionApplied);
+		Undo();
+	}
+	{
+		// Drag a small clip on top of the clip right of the transition. This right clip
+		// is made shorter, but the transition remains.
+		PrepareSnapping(false);
+		pixel left = LeftPixel(VideoClip(0,3));
+		left += 20; // Ensure that 'a bit' of the clip right of the transition remains, causing the transition to remain also
+		pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
+		DragAlignLeft(Center(VideoClip(0,6)),left);
+		ASSERT_EQUALS(VideoClip(0,4)->getLength(),lengthOfDraggedClip);
+		ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfClipBeforeTransitionAfterTransitionApplied);
+		ASSERT(VideoClip(0,2)->isA<model::Transition>());
+		ASSERT_EQUALS(VideoClip(0,2)->getLength(),defaultSize);
+		ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),lengthOfClipAfterTransitionAfterTransitionApplied);
+		Undo();
+	}
 
     //  Turn on snapping again
     checkMenu(ID_SNAP_CLIPS, true);

@@ -228,10 +228,18 @@ void PositionCursor(pixel position)
 
 void Move(wxPoint position)
 {
-    VAR_DEBUG(position);
-    wxPoint absoluteposition = getTimeline().GetScreenPosition() + position;
-    wxUIActionSimulator().MouseMove(absoluteposition);
-    ASSERT_EQUALS(wxGetMouseState().GetPosition(), absoluteposition);
+	VAR_DEBUG(position);
+	wxPoint absoluteposition = getTimeline().GetScreenPosition() + position;
+    int count = 0;
+	while (wxGetMouseState().GetPosition() != absoluteposition)
+	{
+		// Loop is required since sometimes the move fails the first time.
+		// Particularly seen when working through remote desktop/using touchpad.
+		wxUIActionSimulator().MouseMove(absoluteposition);
+		waitForIdle();
+        if (++count > 3) break;  
+	}
+	ASSERT_EQUALS(wxGetMouseState().GetPosition(), absoluteposition);
 }
 
 void Click(wxPoint position)
@@ -286,6 +294,7 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
     waitForIdle();
     if (ctrl) { ControlUp(); } // todo move waitforidles between if-then
     waitForIdle();
+	// todo lower dragsteps and retest
     static const int DRAGSTEPS = 50; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
     for (int i = DRAGSTEPS; i > 0; --i)
     {
@@ -312,18 +321,8 @@ void ShiftDrag(wxPoint from, wxPoint to)
     waitForIdle();
 }
 
-void DragAlignLeft(pixel position)
+void DragAlign(wxPoint from, pixel position, bool shift, bool left)
 {
-    wxPoint targetposition = wxGetMousePosition();
-    targetposition.x += (position - LeftPixel(DraggedClips()));
-    wxUIActionSimulator().MouseMove(targetposition);
-    waitForIdle();
-    ASSERT_EQUALS(wxGetMousePosition(),targetposition);
-}
-
-void DragAlignLeft(wxPoint from, pixel position, bool shift)
-{
-    // todo combine into one method
     ASSERT_DIFFERS(from.x, position);
     wxPoint to(from);
     to.x += (from.x > position) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
@@ -332,19 +331,36 @@ void DragAlignLeft(wxPoint from, pixel position, bool shift)
     {
         ShiftDown();
     }
-    DragAlignLeft(position);
-    wxUIActionSimulator().MouseUp();
-    waitForIdle();
+	// Now drag until the left position of the drag is aligned with position
+	pixel alignposition = left ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips());
+    to.x += (position - alignposition);
+	Move(to);
+	wxUIActionSimulator().MouseUp();
     if (shift)
     {
         ShiftUp();
-        waitForIdle();
     }
+    waitForIdle();
+}
+
+void DragAlignLeft(wxPoint from, pixel position)
+{
+	DragAlign(from,position,false,true);
 }
 
 void ShiftDragAlignLeft(wxPoint from, pixel position)
 {
-    DragAlignLeft(from,position,true);
+    DragAlign(from,position,true,true);
+}
+
+void DragAlignRight(wxPoint from, pixel position)
+{
+	DragAlign(from,position,false,false);
+}
+
+void ShiftDragAlignRight(wxPoint from, pixel position)
+{
+	DragAlign(from,position,true,false);
 }
 
 void Scrub(pixel from, pixel to)

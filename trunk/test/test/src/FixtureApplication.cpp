@@ -34,9 +34,13 @@ bool FixtureGui::setUpWorld()
 
 bool FixtureGui::tearDownWorld()
 {
-    ASSERT(!mEnd);
-    mEnd = true;
-    mBarrierStart.wait();
+    ASSERT(!mEnd);// 
+    {
+        boost::mutex::scoped_lock lock(mEndMutex);
+        mEnd = true;
+        mBarrierStart.wait();
+        // Release lock ensures main loop may insect mEnd now
+    }
     if (mThread)
     {
         mThread->join();
@@ -119,15 +123,16 @@ void FixtureGui::mainThread()
     char* argv = _strdup(gui::Application::sTestApplicationName);
     wxEntryStart(argc, &argv);
 
-    while (!mEnd)
+    while (true)
     {
         mBarrierStart.wait();
-        if (!mEnd)
         {
-            wxTheApp->CallOnInit();
-            wxTheApp->OnRun();
-            mBarrierStopped.wait();
-        }
+            boost::mutex::scoped_lock lock(mEndMutex);
+            if (mEnd) break;
+        }	
+        wxTheApp->CallOnInit();
+        wxTheApp->OnRun();
+        mBarrierStopped.wait();
     }
 
     wxEntryCleanup();
