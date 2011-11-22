@@ -6,7 +6,6 @@
 #include "UtilInitAvcodec.h"
 
 namespace gui {
-
 wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);
 
@@ -43,13 +42,21 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
     wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
 
-    // todo set all defaults here
+    // Set all defaults here
+    setDefault(Config::sPathAutoLoadEnabled, false);
     setDefault(Config::sPathDefaultTransitionLength, 24);
-    setDefault(Config::sPathShowDebugInfoOnWidgets, false);
+    setDefault(Config::sPathFrameRate, "25");
+    setDefault(Config::sPathLastOpened, "");
     setDefault(Config::sPathLogLevel, LogLevel_toString(logINFO).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
+    setDefault(Config::sPathMarkerBeginAddition, 0);
+    setDefault(Config::sPathMarkerEndAddition, 0);
+    setDefault(Config::sPathShowDebugInfoOnWidgets, false);
+    setDefault(Config::sPathSnapClips, true);
+    setDefault(Config::sPathSnapCursor, true);
+    setDefault(Config::sPathStrip, "");
     wxConfigBase::Get()->Flush();
-    
+
     // Read cached values here
     Log::setReportingLevel(LogLevel_fromString(std::string(ReadString(Config::sPathLogLevel).mb_str())));
     sShowDebugInfo = Config::ReadBool(Config::sPathShowDebugInfoOnWidgets);
@@ -66,19 +73,25 @@ wxString Config::getFileName()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-// static 
+// static
 bool Config::ReadBool(const wxString& key)
 {
     return readWithoutDefault<bool>(key);
 }
 
-// static 
+// static
 long Config::ReadLong(const wxString& key)
 {
     return readWithoutDefault<long>(key);
 }
 
-// static 
+// static
+double Config::ReadDouble(const wxString& key)
+{
+    return readWithoutDefault<double>(key);
+}
+
+// static
 wxString Config::ReadString(const wxString& key)
 {
     return readWithoutDefault<wxString>(key);
@@ -107,5 +120,4 @@ const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddit
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
 const wxString Config::sPathStrip                   ("/Timeline/Strip");
 const wxString Config::sPathDefaultTransitionLength ("/Timeline/DefaultTransitionLength");
-
 } // namespace

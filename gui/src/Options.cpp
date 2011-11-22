@@ -19,7 +19,6 @@
 #include "Config.h"
 
 namespace gui {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -31,13 +30,13 @@ Options::Options(wxWindow* win)
 ,   mBoxSizer(0)
 {
     //////////////////////////////////////////////////////////////////////////
- 
+
     addtab(_("General"));
 
     addbox(_("Startup"));
 
     mLoadLast = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
-    mLoadLast->SetValue(wxConfigBase::Get()->ReadBool(Config::sPathAutoLoadEnabled,false));
+    mLoadLast->SetValue(Config::ReadBool(Config::sPathAutoLoadEnabled));
     addoption(_("Load last project on startup"), mLoadLast);
 
     //////////////////////////////////////////////////////////////////////////
@@ -48,7 +47,7 @@ Options::Options(wxWindow* win)
 
     wxArrayString choices;
     unsigned int selection = 0;
-    wxString currentFrameRate = wxConfigBase::Get()->Read(Config::sPathFrameRate,"25");
+    wxString currentFrameRate = Config::ReadString(Config::sPathFrameRate);
     BOOST_FOREACH( FrameRate fr, framerate::getSupported() )
     {
         wxString frs = framerate::toString(fr);
@@ -68,16 +67,16 @@ Options::Options(wxWindow* win)
 
     addbox(_("Marking selection"));
 
-    double initial = wxConfigBase::Get()->ReadDouble(Config::sPathMarkerBeginAddition, 0);
+    double initial = Config::ReadDouble(Config::sPathMarkerBeginAddition);
     mMarkerBeginAddition = new wxSpinCtrlDouble(mPanel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
     addoption(_("Begin marker expansion/contraction (s)."), mMarkerBeginAddition);
 
-    initial = wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0);
+    initial = Config::ReadDouble(Config::sPathMarkerEndAddition);
     mMarkerEndAddition = new wxSpinCtrlDouble(mPanel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
     addoption(_("End marker expansion/contraction (s)."), mMarkerEndAddition);
 
     addbox(_("Clips"));
-    mStrip = new wxTextCtrl(mPanel, wxID_ANY, wxConfigBase::Get()->Read(Config::sPathStrip,""));
+    mStrip = new wxTextCtrl(mPanel, wxID_ANY, Config::ReadString(Config::sPathStrip));
     addoption(_("Text to remove once from clip names (requires restart)"), mStrip);
 
     //////////////////////////////////////////////////////////////////////////
@@ -186,5 +185,4 @@ void Options::addoption(const wxString& name, wxWindow* widget)
     hSizer->Add(5, 5, 1, wxALL, 0);
     hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP, 5);
 }
-
 } // namespace

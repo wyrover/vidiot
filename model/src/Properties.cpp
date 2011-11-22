@@ -6,9 +6,8 @@
 #include "Config.h"
 
 namespace model {
-
 Properties::Properties()
-:   mFrameRate(framerate::fromString(wxConfigBase::Get()->Read(gui::Config::sPathFrameRate,wxT(""))))
+:   mFrameRate(framerate::fromString(gui::Config::ReadString(gui::Config::sPathFrameRate)))
 {
 }
 
@@ -26,7 +25,7 @@ FrameRate Properties::getFrameRate()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -36,5 +35,4 @@ void Properties::serialize(Archive & ar, const unsigned int version)
 }
 template void Properties::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Properties::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } //namespace

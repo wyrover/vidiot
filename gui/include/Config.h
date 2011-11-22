@@ -5,12 +5,11 @@
 #include <wx/string.h>
 
 namespace gui {
-
 /// This class holds everything related to the persistence of global settings.
 /// Global settings include the application options but also checked menu items
 /// that are preserved upon application restart.
 ///
-/// The class also specifies getters values stored in the config file. Since default 
+/// The class also specifies getters values stored in the config file. Since default
 /// values are always filled in during 'init()', the use of default values
 /// is not neccesary, and therefore these methods are provided (which do not require
 // defaults).
@@ -33,6 +32,7 @@ public:
 
     static bool     ReadBool  (const wxString& key);
     static long     ReadLong  (const wxString& key);
+    static double   ReadDouble(const wxString& key);
     static wxString ReadString(const wxString& key);
 
     // Specific getters for dedicated attributes are only cached for performance
@@ -64,9 +64,7 @@ private:
 
     static wxString sFileName;
     static bool sShowDebugInfo;
-
 };
-
 } // namespace
 
 #endif // CONFIG_H
