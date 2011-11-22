@@ -21,7 +21,6 @@ extern "C" {
 
 namespace model
 {
-
 static const int sMicroSecondsPerSeconds = 1000 * 1000;
 static const int sBytesPerSample = 2;
 static const int sMaxBufferSize = 100;
@@ -157,7 +156,6 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 
     if (mResampleContext != 0)
     {
-
         nFrames = audio_resample(mResampleContext, audioResampleBuffer, audioDecodeBuffer, nSamples / getCodec()->channels);
         nSamples = nFrames * sSamplesPerStereoFrame;
 
@@ -199,7 +197,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
 {
     // If the end of file is reached, a subsequent getNextAudio should not
-    // trigger a new (useless) sequence of startReadingPackets, 
+    // trigger a new (useless) sequence of startReadingPackets,
     // bufferPacketsThread, "bufferPacketsThread: End of file."
     // (and this, over and over again....).
     //
@@ -225,7 +223,7 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     ASSERT_NONZERO(audioCodec);
 
     int result = avcodec_open(getCodec(), audioCodec);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result); // todo why crashes here during testauto sometimes??
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16);
     //AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
@@ -303,5 +301,4 @@ void AudioFile::serialize(Archive & ar, const unsigned int version)
 }
 template void AudioFile::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void AudioFile::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } //namespace
