@@ -212,7 +212,7 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     // on GCC in combination with make_shared.
     if (!audioDecodeBuffer)
     {
-        audioDecodeBuffer = new sample[sAudioBufferSize];
+        audioDecodeBuffer   = new sample[sAudioBufferSize];
         audioResampleBuffer = new sample[sAudioBufferSize];
     }
 

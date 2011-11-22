@@ -150,6 +150,10 @@ public:
     /// Log info in a separate line, preceded with meta data.
     std::ostringstream& get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);
 
+    /// Log info in a separate line, without meta data.
+    /// \param category identifier to be used in log file
+    std::ostringstream& get(std::string category);
+
 private:
     std::ostringstream os;
 };

@@ -1,9 +1,11 @@
 #ifndef UTIL_LOG_AVCODEC_H
 #define UTIL_LOG_AVCODEC_H
 
+#include "pixfmt.h"
+#include <list>
 #include <ostream>
 #include <stdarg.h> // va_list
-#include "pixfmt.h"
+#include <wx/string.h>
 
 struct AVRational;
 struct AVCodecContext;
@@ -35,6 +37,8 @@ public:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
+    static wxString getDefaultLogLevel();
+    static std::list<wxString> getLogLevels();
     static void configureLog();
     static std::string getErrorMessage(int errorcode);
 
@@ -44,6 +48,7 @@ public:
 
     static const int sMaxLogSize;
     static char* sFixedBuffer;
+    static int sLevel;
 
 private:
 
@@ -51,7 +56,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    static void log(void *ptr, int val, const char * msg, va_list ap);
+    static void log(void *ptr, int level, const char * msg, va_list ap);
 };
 
 #endif //UTIL_LOG_AVCODEC_H

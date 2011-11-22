@@ -376,11 +376,12 @@ void Play(pixel from, int ms)
 {
     PositionCursor(from);
     Type(' ');
-    VAR_DEBUG(from)(ms);
-    pause(ms);
-    VAR_DEBUG(from)(ms);
-    Type(' ');
-    waitForIdle();
+    VAR_INFO(from)(ms);
+    pause(ms); // todo this pause works nicely but why doesn't the playback stop? Actually, in the log i saw that the 'extra' time has already passed before starting to pause!!!
+    VAR_INFO(from)(ms);
+    PositionCursor(from);
+//    Type(' ');
+//    waitForIdle();
 }
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)

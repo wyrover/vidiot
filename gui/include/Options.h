@@ -27,20 +27,21 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxCheckBox* mLoadLast;
+    wxCheckBox*         mLoadLast;
 
-    wxRadioBox* mFrameRate;
+    wxRadioBox*         mFrameRate;
 
     wxSpinCtrlDouble*   mMarkerBeginAddition;
     wxSpinCtrlDouble*   mMarkerEndAddition;
     wxTextCtrl*         mStrip;
 
-    wxChoice*   mLogLevel;
-    wxCheckBox* mShowDebugInfoOnWidgets;
+    wxChoice*           mLogLevel;
+    wxChoice*           mLogLevelAvcodec;
+    wxCheckBox*         mShowDebugInfoOnWidgets;
 
-    wxPanel* mPanel;       ///< tab:The topmost widget
-    wxBoxSizer* mTopSizer;  ///< tab:Sizer for panel
-    wxBoxSizer* mBoxSizer;  ///< box:Sizer for current box
+    wxPanel*            mPanel;     ///< tab:The topmost widget
+    wxBoxSizer*         mTopSizer;  ///< tab:Sizer for panel
+    wxBoxSizer*         mBoxSizer;  ///< box:Sizer for current box
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

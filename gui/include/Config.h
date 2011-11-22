@@ -47,6 +47,7 @@ public:
     static const wxString sPathAutoLoadEnabled;
     static const wxString sPathLastOpened;
     static const wxString sPathLogLevel;
+    static const wxString sPathLogLevelAvcodec;
     static const wxString sPathShowDebugInfoOnWidgets;
     static const wxString sPathTest;
     static const wxString sPathFrameRate;

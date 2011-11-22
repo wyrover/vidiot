@@ -1,13 +1,31 @@
 #include "UtilInitAvcodec.h"
-#include <sstream>
-#include <boost/format.hpp>
+
+#include "Config.h"
+#include "UtilEnum.h"
 #include "UtilLog.h"
+#include <boost/assign/list_of.hpp>
+#include <boost/foreach.hpp>
+#include <boost/format.hpp>
+#include <map>
+#include <sstream>
+#include <utility>
+#include <wx/intl.h>
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
 #pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.
 extern "C" {
 #include <avformat.h>
 };
+
+// NOTE: First value is the default
+typedef std::pair<wxString, int> LevelString;
+const std::list<LevelString> sLogLevels = boost::assign::list_of
+    (std::make_pair(_("None")   ,AV_LOG_QUIET))
+    (std::make_pair(_("Fatal")  ,AV_LOG_FATAL))
+    (std::make_pair(_("Error")  ,AV_LOG_ERROR))
+    (std::make_pair(_("Warning"),AV_LOG_WARNING))
+    (std::make_pair(_("Info")   ,AV_LOG_INFO))
+    (std::make_pair(_("Verbose"),AV_LOG_VERBOSE));
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -68,7 +86,6 @@ std::ostream& operator<< (std::ostream& os, const PixelFormat& obj)
     default:                         os << "Unknown PixelFormat";
     }
     return os;
-
 };
 
 std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
@@ -194,7 +211,7 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
             << "sample_aspect_ratio="           << obj->sample_aspect_ratio             << ','
             << "reference_dts="                 << obj->reference_dts                   << ','
             << "avg_frame_rate="                << obj->avg_frame_rate                  << ','
-            << "codec_info_nb_frames="          << obj->codec_info_nb_frames                       
+            << "codec_info_nb_frames="          << obj->codec_info_nb_frames
             << '}';
     }
     else
@@ -210,6 +227,7 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
 
 const int Avcodec::sMaxLogSize = 500;
 char* Avcodec::sFixedBuffer = 0;
+int Avcodec::sLevel = AV_LOG_FATAL;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -220,7 +238,6 @@ void Avcodec::init()
     sFixedBuffer = new char[sMaxLogSize];
     av_register_all();
     url_set_interrupt_cb(0);
-    av_log_set_callback( Avcodec::log );
 }
 
 void Avcodec::exit()
@@ -233,24 +250,35 @@ void Avcodec::exit()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
+//static
+wxString Avcodec::getDefaultLogLevel()
+{
+    return (*sLogLevels.begin()).first;
+}
+
+//static
+std::list<wxString> Avcodec::getLogLevels()
+{
+    std::list<wxString> result;
+    BOOST_FOREACH( auto value, sLogLevels )
+    {
+        result.push_back(value.first);
+    }
+    return result;
+}
+
 void Avcodec::configureLog()
 {
-    if (Log::sReportingLevel == logDETAIL)
+    BOOST_FOREACH( auto value, sLogLevels )
     {
-        av_log_set_level(AV_LOG_VERBOSE);
+        if (value.first.IsSameAs(gui::Config::ReadString(gui::Config::sPathLogLevelAvcodec)))
+        {
+            sLevel = value.second;
+            break;
+        }
     }
-    else if (Log::sReportingLevel == logVIDEO)
-    {
-        av_log_set_level(AV_LOG_INFO);
-    }
-    else if (Log::sReportingLevel == logAUDIO)
-    {
-        av_log_set_level(AV_LOG_INFO);
-    }
-    else
-    {
-        av_log_set_level(AV_LOG_WARNING);
-    }
+    av_log_set_level(sLevel); // Only required for default avcodec log method
+    av_log_set_callback(Avcodec::log);
 }
 
 std::string Avcodec::getErrorMessage(int errorcode)
@@ -266,8 +294,9 @@ std::string Avcodec::getErrorMessage(int errorcode)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Avcodec::log(void *ptr, int val, const char * msg, va_list ap)
+void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
 {
+    if (level > sLevel) return;
     int len = vsnprintf(sFixedBuffer, sMaxLogSize, msg, ap);
     if ( len > 0 && sFixedBuffer[len-1] == '\n' )
     {
@@ -288,6 +317,5 @@ void Avcodec::log(void *ptr, int val, const char * msg, va_list ap)
     {
         o << "";
     }
-    LOG_DETAIL << o.str() << " [" << sFixedBuffer << "]";
+    Log().get("AVCODEC") << o.str() << " [" << sFixedBuffer << "]";
 }
-

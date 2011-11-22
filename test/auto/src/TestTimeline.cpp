@@ -30,7 +30,6 @@
 #include "Zoom.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -156,7 +155,7 @@ void TestTimeline::testDnd()
     ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
     ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
     ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
-     
+
     Undo();
 
     // Move a large clip onto a smaller clip. This causes linking issues
@@ -173,12 +172,11 @@ void TestTimeline::testDnd()
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
 
     // Drag and drop the clip onto (approx.) the same position. That scenario caused bugs:
-    // clip is removed (during drag-and-drop). At the end of the drag-and-drop, 
+    // clip is removed (during drag-and-drop). At the end of the drag-and-drop,
     // the transition is 'undone'. The undoing of the transition made assumptions
     // on availability of adjacent clips, which was invalid (clip has just been moved).
     Drag(from,to,false,true,false);
     Drag(to,from,false,false,true);
-
 }
 
 void TestTimeline::testDnDTransition()
@@ -418,17 +416,17 @@ void TestTimeline::testTransition()
     LOG_DEBUG << "TEST_START";
 
     // This tests (for In, Out as well as In&Out transitions)
-    // - when deleting a transition, the related clip's lengths are adjusted 
-    //   accordingly (so that it looks as if the transition is just removed, 
+    // - when deleting a transition, the related clip's lengths are adjusted
+    //   accordingly (so that it looks as if the transition is just removed,
     //   without affecting these clips. which in fact are changed).
     // - when selecting only the clips related to the transition but not the
     //   transition itselves, the transition is also taken along when doing
     //   a DND operation.
     // - playback of transition
     // - scrubbing over the transition
-    // - Undoing 
+    // - Undoing
 
-    // Zoom in once to avoid clicking in the middle of a clip which is then 
+    // Zoom in once to avoid clicking in the middle of a clip which is then
     // seen (logically) as clip end due to the zooming
     Type('=');
 
@@ -449,13 +447,13 @@ void TestTimeline::testTransition()
     ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getRight());
     ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getLeft());
 
-    // Select and delete transition only. Then, the remaining clips 
+    // Select and delete transition only. Then, the remaining clips
     // must have their original lengths restored.
     Click(VQuarterHCenter(VideoClip(0,2)));
     ASSERT(VideoClip(0,2)->getSelected());
     Type(WXK_DELETE);
-    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1); 
-    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2); 
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1);
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2);
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
     Undo();
 
@@ -479,12 +477,12 @@ void TestTimeline::testTransition()
     // Undo until the two trimmed clips are present
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     Undo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); 
-    Undo(); 
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+    Undo();
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 
     //////////////////////////////////////////////////////////////////////////
-    // "In" Transition 
+    // "In" Transition
 
     // Delete leftmost clip (clip 2)
     DeselectAllClips();
@@ -499,13 +497,13 @@ void TestTimeline::testTransition()
     ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getRight());
     ASSERT_ZERO(VideoTransition(0,2)->getLeft());
 
-    // Select and delete transition only. Then, the remaining clips 
+    // Select and delete transition only. Then, the remaining clips
     // must have their original lengths restored.
     Click(VQuarterHCenter(VideoClip(0,2)));
     ASSERT(VideoClip(0,2)->getSelected());
     Type(WXK_DELETE);
-    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1); 
-    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2); 
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1);
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2);
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
     Undo();
 
@@ -533,7 +531,7 @@ void TestTimeline::testTransition()
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
 
     //////////////////////////////////////////////////////////////////////////
-    // "Out" Transition 
+    // "Out" Transition
 
     // Delete rightmost clip (clip 3)
     DeselectAllClips();
@@ -551,13 +549,13 @@ void TestTimeline::testTransition()
     ASSERT_ZERO(VideoTransition(0,2)->getRight());
     ASSERT_MORE_THAN_ZERO(VideoTransition(0,2)->getLeft());
 
-    // Select and delete transition only. Then, the remaining clips 
+    // Select and delete transition only. Then, the remaining clips
     // must have their original lengths restored.
     Click(VQuarterHCenter(VideoClip(0,2)));
     ASSERT(VideoClip(0,2)->getSelected());
     Type(WXK_DELETE);
-    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1); 
-    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2); 
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), l1);
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), l2);
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
     Undo();
 
@@ -627,7 +625,7 @@ void TestTimeline::testAbortDrag()
     {
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
-        DeselectAllClips(); 
+        DeselectAllClips();
         Drag(Center(VideoClip(0,5)), Center(VideoClip(0,4)), false, true, false);
         ShiftDown();
         Move(Center(VideoClip(0,3)));
@@ -635,12 +633,10 @@ void TestTimeline::testAbortDrag()
         wxUIActionSimulator().MouseUp();
         ShiftUp();
 
-        ASSERT_MORE_THAN_EQUALS(getTimeline().getZoom().pixelsToPts(LeftCenter(VideoClip(0,1)).x),VideoClip(0,1)->getLeftPts()); 
+        ASSERT_MORE_THAN_EQUALS(getTimeline().getZoom().pixelsToPts(LeftCenter(VideoClip(0,1)).x),VideoClip(0,1)->getLeftPts());
 
         Undo();
         Type('=');  // Zoom in and test again
     }
 }
-
-
 } // namespace

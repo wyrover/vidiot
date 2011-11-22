@@ -47,6 +47,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathDefaultTransitionLength, 24);
     setDefault(Config::sPathShowDebugInfoOnWidgets, false);
     setDefault(Config::sPathLogLevel, LogLevel_toString(logINFO).c_str());
+    setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
     wxConfigBase::Get()->Flush();
     
     // Read cached values here
@@ -98,6 +99,7 @@ const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
 const wxString Config::sPathAutoLoadEnabled         ("/Project/AutoLoad/Enabled");
 const wxString Config::sPathLastOpened              ("/Project/LastOpened");
 const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
+const wxString Config::sPathLogLevelAvcodec         ("/Debug/LogLevelAvcodec");
 const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
 const wxString Config::sPathTest                    ("/Debug/Test");
 const wxString Config::sPathFrameRate               ("/Video/FrameRate");
