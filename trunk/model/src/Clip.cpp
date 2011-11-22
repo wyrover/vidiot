@@ -12,7 +12,6 @@
 #include "UtilSerializeBoost.h"
 
 namespace model {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -30,7 +29,7 @@ Clip::Clip()
     ,   mSelected(false)
     ,   mDragged(false)
     ,   mGeneratedPts(0)
-{ 
+{
     VAR_DEBUG(*this);
 }
 
@@ -47,7 +46,7 @@ Clip::Clip(IControlPtr render)
     ,   mSelected(false)
     ,   mDragged(false)
     ,   mGeneratedPts(0)
-{ 
+{
     mLength = mRender->getLength() - mOffset;
     VAR_DEBUG(*this);
 }
@@ -70,8 +69,8 @@ Clip::Clip(const Clip& other)
 }
 
 Clip* Clip::clone()
-{ 
-    return new Clip(static_cast<const Clip&>(*this)); 
+{
+    return new Clip(static_cast<const Clip&>(*this));
 }
 
 Clip::~Clip()
@@ -85,7 +84,7 @@ Clip::~Clip()
 
 pts Clip::getLength() const
 {
-    return mLength; 
+    return mLength;
 }
 
 void Clip::moveTo(pts position)
@@ -100,7 +99,7 @@ void Clip::moveTo(pts position)
 wxString Clip::getDescription() const
 {
     wxString s = mRender->getDescription();
-    wxString strip = wxConfigBase::Get()->Read(gui::Config::sPathStrip,"");
+    wxString strip = gui::Config::ReadString(gui::Config::sPathStrip);
     if (!strip.IsSameAs(_T("")))
     {
         s.Replace(strip,_T(""),false);
@@ -255,7 +254,7 @@ std::ostream& operator<<( std::ostream& os, const Clip& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -273,6 +272,4 @@ void Clip::serialize(Archive & ar, const unsigned int version)
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Clip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } //namespace
-

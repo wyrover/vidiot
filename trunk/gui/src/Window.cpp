@@ -25,7 +25,6 @@
 #include "Worker.h"
 
 namespace gui {
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -103,9 +102,9 @@ Window::Window()
 
     wxMenu* menuview = new wxMenu();
     menuview->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"));
-    menuview->Check(ID_SNAP_CLIPS, wxConfigBase::Get()->ReadBool(Config::sPathSnapClips, true));
+    menuview->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathSnapClips));
     menuview->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
-    menuview->Check(ID_SNAP_CURSOR, wxConfigBase::Get()->ReadBool(Config::sPathSnapCursor, true));
+    menuview->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathSnapCursor));
 
     menusequence = new wxMenu();
 
@@ -395,7 +394,6 @@ void Window::serialize(Archive & ar, const unsigned int version)
 }
 template void Window::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Window::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } // namespace
 
 namespace model {

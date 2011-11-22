@@ -29,7 +29,6 @@
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -77,8 +76,8 @@ void Intervals::set(wxRegion region)
 void Intervals::addBeginMarker()
 {
     long c = getZoom().pixelsToPts(getCursor().getPosition());
-    long b = c + model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerBeginAddition, 0) * model::Constants::sSecond);
-    long e = c + model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0)   * model::Constants::sSecond);
+    long b = c + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
+    long e = c + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
 
     mNewIntervalActive = true;
     mNewIntervalBegin = b;
@@ -222,7 +221,7 @@ void Intervals::draw(wxDC& dc) const
         dc.DrawRectangle(ptsToPixels(r));
         it++;
     }
-} 
+}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
@@ -243,7 +242,7 @@ wxRect Intervals::ptsToPixels(wxRect rect) const
 void Intervals::refresh(long begin, long end)
 {
     wxRect r(ptsToPixels(makeRect(begin,end)));
-    
+
     // Adjust for scrolling
     r.x -= getScrolling().getOffset().x;
     r.y -= getScrolling().getOffset().y;
@@ -269,7 +268,7 @@ Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
         //wxRegionContain {
         //    wxOutRegion = 0,
         //        wxPartRegion = 1,
-        //        wxInRegion = 2 
+        //        wxInRegion = 2
         if (wxOutRegion != mMarkedIntervals.Contains(cliprect))
         {
             //clip->setSelected(true);
@@ -292,7 +291,6 @@ Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
 
                 it++;
             }
-
         }
         pts_left += clip->getClip()->getLength();
     }
@@ -300,9 +298,8 @@ Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
     return replacements;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -312,6 +309,4 @@ void Intervals::serialize(Archive & ar, const unsigned int version)
 }
 template void Intervals::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Intervals::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 }} // namespace
-
