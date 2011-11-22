@@ -87,8 +87,13 @@ protected:
     // AVCODEC
     //////////////////////////////////////////////////////////////////////////
 
-    /// This mutex is needed to ensure that never multiple avcodec open/close
-    /// calls are executed in parallel.
+    /// This mutex is needed to ensure that several non-thread-safe avcodec
+    /// methods are never executed in parallel:
+    /// - av_open_input_file
+    /// - av_close_input_file
+    /// - av_find_stream_info
+    /// - avcodec_open
+    /// - avcodec_close
     static boost::mutex sMutexAvcodec;
 
     //////////////////////////////////////////////////////////////////////////

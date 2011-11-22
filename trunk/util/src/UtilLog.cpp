@@ -8,7 +8,7 @@
 #include <boost/format.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <string>
-#include <iostream> 
+#include <iostream>
 #include <share.h> // _SH_DENYWR
 #include "UtilFifo.h"
 #include "UtilAssert.h"
@@ -165,7 +165,13 @@ void Log::exit()
 std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
 {
     static const char* levelstring[] = {"NONE", "ERROR", "WARNING", "INFO", "DEBUG", "VIDEO", "AUDIO", "DETAIL", "ASSERT"};
-    os << boost::format("%s % 7s: t@%04x %s(%d): %s: ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % levelstring[level] % wxThread::GetCurrentId() % p_szFileName % p_lLine % p_szFunction;
+    os << boost::format("%s% 8s t@%04x %s(%d) %s ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % levelstring[level] % wxThread::GetCurrentId() % p_szFileName % p_lLine % p_szFunction;
+    return os;
+}
+
+std::ostringstream& Log::get(std::string category)
+{
+    os << boost::format("%s% 8s t@%04x ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % category % wxThread::GetCurrentId();
     return os;
 }
 

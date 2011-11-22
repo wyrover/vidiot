@@ -106,6 +106,24 @@ Options::Options(wxWindow* win)
     }
     addoption(_("Log level"), mLogLevel);
 
+    mLogLevelAvcodec = new wxChoice(mPanel, wxID_ANY);
+    int current = 0;
+    bool currentfound = false;
+    BOOST_FOREACH( auto value, Avcodec::getLogLevels() )
+    {
+        mLogLevelAvcodec->Append(value);
+        if (!currentfound && !Config::ReadString(Config::sPathLogLevelAvcodec).IsSameAs(value))
+        {
+            current++;
+        }
+        else
+        {
+            currentfound = true;
+        }
+    }
+    mLogLevelAvcodec->SetSelection(currentfound ? current : 0);
+    addoption(_("Avcodec log level (requires restart)"), mLogLevelAvcodec);
+
     mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
     mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
     addoption(_("Show debug info on widgets (requires restart)"), mShowDebugInfoOnWidgets);
@@ -124,6 +142,7 @@ Options::~Options()
     {
         wxConfigBase::Get()->Write( Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
         wxConfigBase::Get()->Write( Config::sPathLogLevel,                  LogLevel_toString(static_cast<LogLevel>(reinterpret_cast<int>(mLogLevel->GetClientData(mLogLevel->GetSelection())))).c_str());
+        wxConfigBase::Get()->Write( Config::sPathLogLevelAvcodec,           mLogLevelAvcodec->GetString(mLogLevelAvcodec->GetSelection()));
         wxConfigBase::Get()->Write( Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
         wxConfigBase::Get()->Write( Config::sPathFrameRate,                 framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
         wxConfigBase::Get()->Write( Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());

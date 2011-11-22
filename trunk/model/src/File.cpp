@@ -369,7 +369,10 @@ void File::openFile()
         return;
     }
 
-    result = av_find_stream_info(mFileContext);
+    {
+        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        result = av_find_stream_info(mFileContext);
+    }
     if (result < 0)
     {
         // Some error occured when opening the file.
