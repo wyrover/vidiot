@@ -302,12 +302,9 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
         ControlUp();
         waitForIdle();
     }
-	// todo lower dragsteps and retest
-    static const int DRAGSTEPS = 50; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
+    static const int DRAGSTEPS = 10; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
     for (int i = DRAGSTEPS; i > 0; --i)
     {
-        // todo add shiftdown to interface and then apply the shiftdown after doing the first drag? or do it upon the first wxPoint p != from?
-        // Or make DragBegin and DragEnd methods, where the dragend is merely mouseUp()???
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i);
         Move(p);
     }
