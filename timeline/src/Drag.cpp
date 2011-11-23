@@ -49,7 +49,6 @@ namespace gui { namespace timeline {
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
 
-    // todo these two in separate files
 /// Helper class required to receive DND event from wxWidgets, in case new assets are
 /// being dragged into the timeline (for instance, originating from the Project View).
 class DropTarget
@@ -203,10 +202,6 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
                 }
             }
         }
-
-        //TODO For all transitions that are selected, if NOT all the clips to which a
-        // transition applies are selected, the transition must NOT be dragged.
-//TODO
     }
 
     BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
@@ -302,59 +297,7 @@ void Drag::move(wxPoint position)
     }
 
     // Shift if required
-    Shift shift = boost::none; // todo in separate method....
-    if (wxGetMouseState().ShiftDown())
-    {
-        pts origPos = getDragPtsPosition();
-        pts origLen = getDragPtsSize();
-
-        pts pos = getDragPtsPosition();
-        pts len = getDragPtsSize();
-
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-        {
-            model::IClipPtr clip = track->getClip(origPos);
-
-            // Given the current estimated shift position, determine if for the given clip a bit of extra shift
-            // is required, because the clip extends to the left of the shift position which must be shifted also.
-            // For transitions, extra code is required, since the clip left/right of the transition are what the
-            // user expects to be shifted. The actual transition itselves provides no 'shift' positions.
-            // Finally, for empty clips, there is never additional RELEVANT clip to the left of the shift position
-            // that needs to be shifted (shift means adding more empty clips which will be adjoined anyway).
-
-            model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
-            if (transition)
-            {
-                // todo test the code below with two aligned transitions (one 'in' and one 'out')
-
-                // The drag is either over the left or the right part of the transition, depending on the
-                // position where the two clips 'touch' from a user perspective.
-                clip = (origPos < transition->getTouchPosition()) ? clip = clip->getPrev() : clip = clip->getNext();
-                ASSERT(clip);
-                ASSERT(!clip->isA<model::Transition>())(clip);
-            }
-            if ((clip) &&                               // Maybe no clip at given position
-                (!clip->isA<model::EmptyClip>()) &&     // See remark above
-                (clip->getLeftPts() < pos))             // Start of this clip is to the left of the currently calculated shift start position
-            {
-                pos = clip->getLeftPts();               // New shift start position: shift this clip entirely
-                len =
-                    getDragPtsSize() +                  // The original shift length
-                    (origPos - clip->getLeftPts());     // The part of the clip that is left of that position must be shifted also
-                // Note: do not make the mistake of using 'pos' here (origPos is used, since also the original drag size getDragSize() is used).
-            }
-        }
-        shift.reset(ShiftParams(pos,len));
-    }
-    if (shift != mShift)
-    {
-        mShift = shift;
-        VAR_DEBUG(shift);
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-        {
-            getViewMap().getView(track)->onShiftChanged();
-        }
-    }
+    determineShift();
 
     wxRegionIterator it(redrawRegion);
     while (it)
@@ -823,6 +766,63 @@ void Drag::determinePossibleDragPoints()
 
     mDragPoints.sort();
     mDragPoints.unique();
+}
+
+void Drag::determineShift()
+{
+    Shift shift = boost::none;
+    if (wxGetMouseState().ShiftDown())
+    {
+        pts origPos = getDragPtsPosition();
+        pts origLen = getDragPtsSize();
+
+        pts pos = getDragPtsPosition();
+        pts len = getDragPtsSize();
+
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        {
+            model::IClipPtr clip = track->getClip(origPos);
+
+            // Given the current estimated shift position, determine if for the given clip a bit of extra shift
+            // is required, because the clip extends to the left of the shift position which must be shifted also.
+            // For transitions, extra code is required, since the clip left/right of the transition are what the
+            // user expects to be shifted. The actual transition itselves provides no 'shift' positions.
+            // Finally, for empty clips, there is never additional RELEVANT clip to the left of the shift position
+            // that needs to be shifted (shift means adding more empty clips which will be adjoined anyway).
+
+            model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+            if (transition)
+            {
+                // todo test the code below with two aligned transitions (one 'in' and one 'out')
+
+                // The drag is either over the left or the right part of the transition, depending on the
+                // position where the two clips 'touch' from a user perspective.
+                clip = (origPos < transition->getTouchPosition()) ? clip = clip->getPrev() : clip = clip->getNext();
+                ASSERT(clip);
+                ASSERT(!clip->isA<model::Transition>())(clip);
+            }
+            if ((clip) &&                               // Maybe no clip at given position
+                (!clip->isA<model::EmptyClip>()) &&     // See remark above
+                (clip->getLeftPts() < pos))             // Start of this clip is to the left of the currently calculated shift start position
+            {
+                pos = clip->getLeftPts();               // New shift start position: shift this clip entirely
+                len =
+                    getDragPtsSize() +                  // The original shift length
+                    (origPos - clip->getLeftPts());     // The part of the clip that is left of that position must be shifted also
+                // Note: do not make the mistake of using 'pos' here (origPos is used, since also the original drag size getDragSize() is used).
+            }
+        }
+        shift.reset(ShiftParams(pos,len));
+    }
+    if (shift != mShift)
+    {
+        mShift = shift;
+        VAR_DEBUG(shift);
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        {
+            getViewMap().getView(track)->onShiftChanged();
+        }
+    }
 }
 
 command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)

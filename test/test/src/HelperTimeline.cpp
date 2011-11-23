@@ -287,7 +287,10 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
 void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
 {
     VAR_DEBUG(from)(to)(ctrl);
-    if (ctrl) { ControlDown(); }
+    if (ctrl)
+    {
+        ControlDown();
+    }
     Move(from);
     if (mousedown)
     {

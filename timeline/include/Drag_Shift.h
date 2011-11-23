@@ -5,7 +5,6 @@
 #include "UtilInt.h"
 
 namespace gui { namespace timeline {
-
 /// Helper class for administering a shift during the DND operation
 struct ShiftParams
 {
@@ -29,7 +28,6 @@ bool operator== ( ShiftParams const& x, ShiftParams const& y );
 bool operator!= ( ShiftParams const& x, ShiftParams const& y );
 
 typedef boost::optional<ShiftParams> Shift;
-
 }} // namespace
 
-#endif // todo remove all these
+#endif
