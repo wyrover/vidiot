@@ -14,7 +14,6 @@
 #include "UtilLogStl.h"
 
 namespace gui { namespace timeline { namespace command {
-
 ExecuteDrop::ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, Shift shift)
 :   AClipEdit(sequence)
 ,   mTransitions()
@@ -35,8 +34,6 @@ void ExecuteDrop::initialize()
     VAR_INFO(this);
 
     LOG_DEBUG << "STEP 1: Determine the transitions for which the transitioned clips are 'torn apart'";
-    // todo dit naderhand doen: alle clips doorlopen op 'invalid' transitions
-
     std::set<model::TransitionPtr> transitionsToBeUnapplied;
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
@@ -177,5 +174,4 @@ std::ostream& operator<<( std::ostream& os, const ExecuteDrop& obj )
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mTransitions << '|' << obj.mDrags << '|' << obj.mShift;
     return os;
 }
-
 }}} // namespace
