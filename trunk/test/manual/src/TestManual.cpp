@@ -162,7 +162,7 @@ void TestManual::testManual()
         // This causes the clip right of the transition to be shifted back, and the transition
         // to be removed.
         PrepareSnapping(true);
-        pts lengthOfDraggedClip = VideoClip(0,5)->getLength(); // todo duplicate name, or store original values somewhere?
+        pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,5)),touchPositionOfTransition);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),lengthOfFirstClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
