@@ -28,7 +28,6 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -42,7 +41,7 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 
     getViewMap().registerView(mTrack,this);
 
-    // Not via onClipsAdded: do not trigger a whole sequence of 
+    // Not via onClipsAdded: do not trigger a whole sequence of
     // invalidateBitmaps calls: Bad performance and crashes
     // (view of second item added is not initialized when processing
     // the invalidateBitmap events for the first added item)
@@ -170,8 +169,6 @@ void TrackView::draw(wxBitmap& bitmap) const
             if (modelclip->isA<model::Transition>() == transitionValue)
             {
                 pts left = view->getLeftPts();
-                // todo handle shift dragging over a transition (split the transition, or what?)
-                // todo transitions must have the possibility to be temp hidden (for this purpose)
                 wxPoint position(getZoom().ptsToPixels(left),0);
                 Shift shift = getDrag().getShift();
                 if (shift && left >= shift->mPosition)
@@ -200,6 +197,4 @@ void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dc
         }
     }
 }
-
 }} // namespace
-

@@ -15,7 +15,6 @@ namespace model {
 }
 
 namespace gui { namespace timeline {
-
 class DummyView;
 
 class Drag
@@ -29,7 +28,7 @@ public:
 
     Drag(Timeline* timeline);
     ~Drag();
-	
+
     //////////////////////////////////////////////////////////////////////////
     // START/STOP
     //////////////////////////////////////////////////////////////////////////
@@ -43,11 +42,11 @@ public:
     /// as a result of zooming).
     void show();
 
-    /// Move the drag image to the given position. 
+    /// Move the drag image to the given position.
     /// \param position move the mouse pointer to this position
     void move(wxPoint position);
 
-    /// Execute the drop. 
+    /// Execute the drop.
     void drop();
 
     /// Stop the drag operation, to be called after a drop has been executed or
@@ -57,7 +56,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
-    
+
     bool isActive() const; ///< \return true if a drag operation with the currently selected clips is in effect.
 
     /// \return true if the given clip is currently being dragged
@@ -91,7 +90,7 @@ private:
     wxPoint mHotspot;                           ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
     pts mHotspotPts;                            ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
     wxPoint mPosition;                          ///< Current pointer drag position. In timeline coordinates.
-    wxBitmap mBitmap;                           ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'. 
+    wxBitmap mBitmap;                           ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'.
     wxPoint mBitmapOffset;                      ///< This offset ensures that correct areas can be used when positioning on the timeline.
     bool mActive;                               ///< True if dragging is currently active.
     bool mSnap;                                 ///< true if the drag image snaps to the nearest track(s)
@@ -99,7 +98,7 @@ private:
     std::list<pts> mDragPoints;                 ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
     pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
     std::list<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
-    bool mMustUndo;                             ///< True if a command has been submitted for giving feedback. 
+    bool mMustUndo;                             ///< True if a command has been submitted for giving feedback.
     Shift mShift;                               ///< Uninitialized if no shift active. When initialized holds info on the current shift.
 
     //////////////////////////////////////////////////////////////////////////
@@ -107,9 +106,9 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     /// This class is used to hide if-then-else constructs for distinguishing between
-    /// video and audio tracks as much as possible. It provides one entry point to the 
+    /// video and audio tracks as much as possible. It provides one entry point to the
     /// list of tracks, and abstracts away if this is about video or about audio tracks.
-    class DragInfo 
+    class DragInfo
         :   public Part
     {
     public:
@@ -153,7 +152,6 @@ private:
         model::TrackPtr mTempTrack; ///< For 'outside' drags, holds the temporary track that contains the new assets
         bool mIsVideo;              ///< true if this object applies to about video tracks, false if this object applies to audio tracks
         DummyView* mView;           ///< This view can be used as a container for temporary tracks used for drawing a 'outside' drag operation
-
     };
 
     DragInfo mVideo;
@@ -220,7 +218,7 @@ private:
     void determineSnapOffset();
 
     /// Fill mPossibleSnapPoints with a list of possible 'snap to' points.
-    /// Basically, these are lists of all the cuts in all the tracks in the timeline 
+    /// Basically, these are lists of all the cuts in all the tracks in the timeline
     /// (excluding the selected==dragged clips).
     /// This is done at the start of a drag only, for performance reasons.
     /// This is also done when a shift is applied to make room for dragged clips.
@@ -230,6 +228,10 @@ private:
     /// Basically, these are lists of all the cuts in the dragged area (thus, the selected clips).
     /// This is done at the start of a drag only, for performance reasons.
     void determinePossibleDragPoints();
+
+    /// Determine the shift to be applied to 'fit' the dragged clips in between the clips
+    /// it is currently hovering over
+    void determineShift();
 
     /// Return the list of 'drops' on the given track
     /// \param track onto which clips are dropped
@@ -248,7 +250,6 @@ private:
 
 std::ostream& operator<< (std::ostream& os, const Drag& obj);
 std::ostream& operator<< (std::ostream& os, const Drag::DragInfo& obj);
-
 }} // namespace
 
 #endif // DRAG_H
