@@ -1,7 +1,7 @@
 #ifndef HELPER_WINDOW_H
 #define HELPER_WINDOW_H
 
-#include <wx/cmdproc.h> 
+#include <wx/cmdproc.h>
 #include <wx/frame.h>
 #include <wx/menu.h>
 #include <wx/window.h>
@@ -14,7 +14,6 @@ typedef boost::shared_ptr<Folder> FolderPtr;
 }
 
 namespace test {
-
 /// Trigger the menu given. That menu should be in the main menu bar.
 /// \param id menu identifier
 void triggerMenu(int id);
@@ -77,10 +76,7 @@ void ControlUp();       ///< Release CTRL
 void ShiftDown();       ///< Press down Shift
 void ShiftUp();         ///< Release Shift
 
-void Type(int keycode, int modifiers = wxMOD_NONE); 	
-
-// todo split into HelperWindowGet and HelperWindowAction
-
+void Type(int keycode, int modifiers = wxMOD_NONE);
 } // namespace
 
 #endif // HELPER_WINDOW_H
