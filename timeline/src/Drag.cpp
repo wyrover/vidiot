@@ -1,5 +1,5 @@
 #include "Drag.h"
- 
+
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
@@ -45,7 +45,6 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -63,12 +62,12 @@ public:
         ,   wxDropTarget(new DataObject())
     {
     }
-    ~DropTarget() 
+    ~DropTarget()
     {
     }
     wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def)
     {
-        return def; 
+        return def;
     };
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def)
     {
@@ -171,7 +170,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 
         UtilSet<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
 
-        // For all transitions that are not selected, if all the clips to which a 
+        // For all transitions that are not selected, if all the clips to which a
         // transition applies are selected, the transition must be dragged also.
 
         BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() ) // Do not use mDraggedClips as it is edited inside the loop
@@ -205,10 +204,9 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
             }
         }
 
-        //TODO For all transitions that are selected, if NOT all the clips to which a 
+        //TODO For all transitions that are selected, if NOT all the clips to which a
         // transition applies are selected, the transition must NOT be dragged.
 //TODO
-
     }
 
     BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
@@ -230,7 +228,6 @@ void Drag::show()
     mHotspot.x = getZoom().ptsToPixels(mHotspotPts);
     mBitmap = getDragBitmap();
     move(mHotspot);
-
 }
 
 void Drag::move(wxPoint position)
@@ -285,7 +282,7 @@ void Drag::move(wxPoint position)
     mDropTrack = info.track;
     mPosition = position;
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
-    
+
     // Snapping determination
     std::list<pts> prevsnaps = mSnaps;
     determineSnapOffset();
@@ -328,7 +325,6 @@ void Drag::move(wxPoint position)
             model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
             if (transition)
             {
-
                 // todo test the code below with two aligned transitions (one 'in' and one 'out')
 
                 // The drag is either over the left or the right part of the transition, depending on the
@@ -339,7 +335,6 @@ void Drag::move(wxPoint position)
             }
             if ((clip) &&                               // Maybe no clip at given position
                 (!clip->isA<model::EmptyClip>()) &&     // See remark above
-                //(clip->getLeftPts() < origPos) &&       // Start of this clip is to the left of the leftmost dragged position (obsolete due to check below?) // todo
                 (clip->getLeftPts() < pos))             // Start of this clip is to the left of the currently calculated shift start position
             {
                 pos = clip->getLeftPts();               // New shift start position: shift this clip entirely
@@ -565,9 +560,9 @@ void Drag::DragInfo::updateOffset(int indexOfTrackInTimeline, int indexOfDragged
     if (!mTempTrack)
     {
         // 'inside' drag
-        mOffset = 
+        mOffset =
             std::min(mMaxOffset,
-            std::max(mMinOffset, 
+            std::max(mMinOffset,
             indexOfTrackInTimeline - indexOfDraggedTrack));
     }
     else
@@ -576,7 +571,6 @@ void Drag::DragInfo::updateOffset(int indexOfTrackInTimeline, int indexOfDragged
         mOffset = indexOfTrackInTimeline;
     }
 }
-
 
 model::TrackPtr Drag::DragInfo::getTrack(int index)
 {
@@ -716,7 +710,7 @@ pts Drag::getDraggedPosition(pts dragpoint) const
     return dragpoint + getDraggedPtsDistance() + mSnapOffset;
 }
 
-pts Drag::getDragPtsSize() const 
+pts Drag::getDragPtsSize() const
 {
     return mDragPoints.back() - mDragPoints.front();
 }
@@ -747,7 +741,7 @@ void Drag::determineSnapOffset()
         {
             // This snap point is closer than the currently stored snap point, or it is equally
             // close, but is closer to the mouse pointer.
-            if ((diff < minDiff) || 
+            if ((diff < minDiff) ||
                 ((diff == minDiff) && (abs(pts_drag - ptsmouse) < abs(snapPoint - ptsmouse))))
             {
                 minDiff = diff;
@@ -892,7 +886,7 @@ std::ostream& operator<< (std::ostream& os, const Drag& obj)
         << obj.mSnap            << '|'
         << obj.mActive          << '|'
         << obj.mHotspot         << '|'
-        << obj.mPosition        << '|' 
+        << obj.mPosition        << '|'
         << obj.mVideo           << '|'
         << obj.mAudio           << '|'
         << obj.mDraggedTrack    << '|'
@@ -909,6 +903,4 @@ std::ostream& operator<< (std::ostream& os, const Drag::DragInfo& obj)
         << obj.mTempTrack;
     return os;
 }
-
 }} // namespace
-
