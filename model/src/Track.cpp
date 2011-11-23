@@ -8,7 +8,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include <wx/intl.h> 
+#include <wx/intl.h>
 #include "Node.h"
 #include "Clip.h"
 #include "Constants.h"
@@ -20,7 +20,6 @@
 #include "UtilLogStl.h"
 
 namespace model {
-
 Track::Track()
 :	IControl()
 ,   wxEvtHandler()
@@ -28,7 +27,7 @@ Track::Track()
 ,   mItClips(mClips.end())
 ,   mHeight(Constants::sDefaultTrackHeight)
 ,   mIndex(0)
-{ 
+{
     VAR_DEBUG(this);
 }
 
@@ -52,8 +51,8 @@ Track::Track(const Track& other)
 }
 
 Track* Track::clone()
-{ 
-    return new Track(static_cast<const Track&>(*this)); 
+{
+    return new Track(static_cast<const Track&>(*this));
 }
 
 Track::~Track()
@@ -69,7 +68,6 @@ pts Track::getLength() const
 {
     return getCombinedLength(mClips);
 }
-
 
 void Track::moveTo(pts position)
 {
@@ -151,9 +149,9 @@ void Track::removeClips(IClips clips)
     BOOST_FOREACH( IClipPtr clip, clips )
     {
         clip->clean();
-        clip->setTrack(TrackPtr(), 0); // Todo administer completely in ICip?
-        clip->setPrev(IClipPtr()); // Todo administer completely in ICip?
-        clip->setNext(IClipPtr());// Todo administer completely in ICip?
+        clip->setTrack(TrackPtr(), 0);
+        clip->setPrev(IClipPtr());
+        clip->setNext(IClipPtr());
     }
 
     IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);
@@ -260,7 +258,7 @@ pts Track::getRightEmptyArea(IClipPtr clip)
 // STATIC HELPER METHOD
 //////////////////////////////////////////////////////////////////////////
 
-//static 
+//static
 pts Track::getCombinedLength(IClips clips)
 {
     int length = 0;
@@ -300,7 +298,7 @@ void Track::setIndex(int index)
 // ITERATION
 //////////////////////////////////////////////////////////////////////////
 
-bool Track::iterate_atEnd() 
+bool Track::iterate_atEnd()
 {
     return (mItClips == mClips.end());
 }
@@ -357,7 +355,7 @@ std::ostream& operator<<( std::ostream& os, const Track& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -369,6 +367,4 @@ void Track::serialize(Archive & ar, const unsigned int version)
 }
 template void Track::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Track::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } //namespace
-
