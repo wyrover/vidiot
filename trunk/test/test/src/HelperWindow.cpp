@@ -6,7 +6,6 @@
 #include "Window.h"
 
 namespace test {
-
 void triggerMenu(int id)
 {
     triggerMenu(gui::Window::get(), id);
@@ -14,7 +13,6 @@ void triggerMenu(int id)
 
 void triggerMenu(wxWindow& window, int id)
 {
-    // todo does this work: window.ProcessCommand(id);
     window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
     waitForIdle();
 }
@@ -26,8 +24,8 @@ void checkMenu(int id, bool checked)
 
 void checkMenu(wxFrame& window, int id, bool checked)
 {
-     // Set with the 'other' value. Required to ensure that the 
-    // correct value is received when triggering the event, 
+     // Set with the 'other' value. Required to ensure that the
+    // correct value is received when triggering the event,
     // since the event causes a 'toggle'.
     window.GetMenuBar()->Check(id,!checked);
     window.ProcessCommand(id);
@@ -124,5 +122,4 @@ void Type(int keycode, int modifiers)
     wxUIActionSimulator().Char(keycode);
     waitForIdle();
 }
-
 } // namespace
