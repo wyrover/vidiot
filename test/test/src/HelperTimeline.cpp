@@ -31,7 +31,6 @@
 #include "Zoom.h"
 
 namespace test {
-
 wxPoint TimelinePosition()
 {
     return getTimeline().GetScreenPosition();
@@ -237,7 +236,7 @@ void Move(wxPoint position)
 		// Particularly seen when working through remote desktop/using touchpad.
 		wxUIActionSimulator().MouseMove(absoluteposition);
 		waitForIdle();
-        if (++count > 3) break;  
+        if (++count > 3) break;
 	}
 	ASSERT_EQUALS(wxGetMouseState().GetPosition(), absoluteposition);
 }
@@ -290,10 +289,16 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
     VAR_DEBUG(from)(to)(ctrl);
     if (ctrl) { ControlDown(); }
     Move(from);
-    if (mousedown) { wxUIActionSimulator().MouseDown(); }
-    waitForIdle();
-    if (ctrl) { ControlUp(); } // todo move waitforidles between if-then
-    waitForIdle();
+    if (mousedown)
+    {
+        wxUIActionSimulator().MouseDown();
+        waitForIdle();
+    }
+    if (ctrl)
+    {
+        ControlUp();
+        waitForIdle();
+    }
 	// todo lower dragsteps and retest
     static const int DRAGSTEPS = 50; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
     for (int i = DRAGSTEPS; i > 0; --i)
@@ -302,10 +307,12 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
         // Or make DragBegin and DragEnd methods, where the dragend is merely mouseUp()???
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i);
         Move(p);
+    }
+    if (mouseup)
+    {
+        wxUIActionSimulator().MouseUp();
         waitForIdle();
     }
-    if (mouseup) { wxUIActionSimulator().MouseUp(); }
-    waitForIdle();
 }
 
 void ShiftDrag(wxPoint from, wxPoint to)
@@ -466,5 +473,4 @@ void DumpTimeline()
     }
     LOG_DEBUG << "============================================================";
 }
-
 } // namespace
