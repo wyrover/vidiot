@@ -16,7 +16,7 @@
 // Log::Terminate();
 //
 // The log level is set as follows
-// Log::SetReportingLevel(logDEBUG);
+// Log::SetReportingLevel(LogDebug);
 //
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -57,7 +57,6 @@
 //      Dr. Dobbs journal, August 01, 2003
 //      http://www.ddj.com/cpp/184403745
 
-
 #include <sstream>
 #include <wx/string.h>
 #include <boost/optional.hpp>
@@ -65,15 +64,15 @@
 #include "UtilEnum.h"
 
 DECLAREENUM(LogLevel, \
-            logNONE, \
-            logERROR, \
-            logWARNING, \
-            logINFO, \
-            logDEBUG, \
-            logVIDEO, \
-            logAUDIO, \
-            logDETAIL, \
-            logASSERT);
+            LogNone, \
+            LogError, \
+            LogWarning, \
+            LogInfo, \
+            LogDebug, \
+            LogVideo, \
+            LogAudio, \
+            LogDetail, \
+            LogAssert);
 
 ////////////////////////////////////////////////////////////////////////////////
 // LOGGING MACROS
@@ -82,21 +81,21 @@ DECLAREENUM(LogLevel, \
 #define LOG_X(level) if (level <= Log::sReportingLevel) Log().get(level,  __FILE__, __LINE__, __FUNCTION__)
 #define VAR_X(level) if (level <= Log::sReportingLevel) LogVar(level,  __FILE__, __LINE__, __FUNCTION__).LOGVAR_A
 
-#define LOG_DETAIL  LOG_X(logDETAIL)
-#define LOG_AUDIO   LOG_X(logAUDIO)
-#define LOG_VIDEO   LOG_X(logVIDEO)
-#define LOG_DEBUG   LOG_X(logDEBUG)
-#define LOG_INFO    LOG_X(logINFO)
-#define LOG_WARNING LOG_X(logWARNING)
-#define LOG_ERROR   LOG_X(logERROR)
+#define LOG_DETAIL  LOG_X(LogDetail)
+#define LOG_AUDIO   LOG_X(LogAudio)
+#define LOG_VIDEO   LOG_X(LogVideo)
+#define LOG_DEBUG   LOG_X(LogDebug)
+#define LOG_INFO    LOG_X(LogInfo)
+#define LOG_WARNING LOG_X(LogWarning)
+#define LOG_ERROR   LOG_X(LogError)
 
-#define VAR_DETAIL  VAR_X(logDETAIL)
-#define VAR_AUDIO   VAR_X(logAUDIO)
-#define VAR_VIDEO   VAR_X(logVIDEO)
-#define VAR_DEBUG   VAR_X(logDEBUG)
-#define VAR_INFO    VAR_X(logINFO)
-#define VAR_WARNING VAR_X(logWARNING)
-#define VAR_ERROR   VAR_X(logERROR)
+#define VAR_DETAIL  VAR_X(LogDetail)
+#define VAR_AUDIO   VAR_X(LogAudio)
+#define VAR_VIDEO   VAR_X(LogVideo)
+#define VAR_DEBUG   VAR_X(LogDebug)
+#define VAR_INFO    VAR_X(LogInfo)
+#define VAR_WARNING VAR_X(LogWarning)
+#define VAR_ERROR   VAR_X(LogError)
 
 #define ASSERT(expr)    if ((expr)) ; else  LogVar(#expr,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 #define FATAL                               LogVar("FATAL", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
@@ -171,7 +170,6 @@ private:
 struct LogVar
     :   boost::noncopyable
 {
-    
     LogVar& LOGVAR_A;   ///< Helper, in order to be able to compile the code (LOGVAR_* macros)
     LogVar& LOGVAR_B;   ///< Helper, in order to be able to compile the code (LOGVAR_* macros)
 
@@ -195,14 +193,14 @@ struct LogVar
     LogVar(const char * expr, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
         :   LOGVAR_A(*this)
         ,   LOGVAR_B(*this)
-        ,   mLevel(logASSERT)
+        ,   mLevel(LogAssert)
         ,   mFileName(p_szFileName)
         ,   mLine(p_lLine)
         ,   mFunction(p_szFunction)
         ,   mAssert(boost::optional<std::string>(std::string("[ASSERT:") + expr + ']'))
     {
     }
-    
+
     ~LogVar();  ///< Upon destruction of this object, the actual logging is executed.
 
     /// Append one variable to the list of logged variables.
@@ -227,4 +225,3 @@ private:
 #define LOGVAR_OP(x, next) LOGVAR_A.logVar(x, #x).LOGVAR_ ## next
 
 #endif //LOG_H__
-

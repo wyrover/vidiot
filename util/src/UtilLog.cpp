@@ -18,7 +18,7 @@ IMPLEMENTENUM(LogLevel);
 static std::string sFilename("");
 static const unsigned int sMaximumBufferedLoglines = 1000;
 
-LogLevel Log::sReportingLevel = logINFO;
+LogLevel Log::sReportingLevel = LogWarning;
 
 ////////////////////////////////////////////////////////////////////////////////
 // THREAD SAFETY & WRITING TO DISK
@@ -119,14 +119,8 @@ Log::~Log()
 
 void Log::setReportingLevel(LogLevel level)
 {
-    if (level > logDETAIL)
-    {
-        sReportingLevel = logDETAIL;
-    }
-    else
-    {
-        sReportingLevel = level;
-    }
+    ASSERT_LESS_THAN(level,LogLevel_MAX);
+    sReportingLevel = level;
 }
 
 std::string Log::getFileName()

@@ -86,22 +86,22 @@ Options::Options(wxWindow* win)
     addbox(_("Logging"));
 
     mLogLevel = new wxChoice(mPanel, wxID_ANY);
-    mLogLevel->Append(_("Error"),      reinterpret_cast<void*>(logERROR));
-    mLogLevel->Append(_("Warning"),    reinterpret_cast<void*>(logWARNING));
-    mLogLevel->Append(_("Info"),       reinterpret_cast<void*>(logINFO));
-    mLogLevel->Append(_("Debug"),      reinterpret_cast<void*>(logDEBUG));
-    mLogLevel->Append(_("Video"),      reinterpret_cast<void*>(logVIDEO));
-    mLogLevel->Append(_("Audio"),      reinterpret_cast<void*>(logAUDIO));
-    mLogLevel->Append(_("Detailed"),   reinterpret_cast<void*>(logDETAIL));
-    switch (LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())))
+    mLogLevel->Append(_("Error"),      reinterpret_cast<void*>(LogError));
+    mLogLevel->Append(_("Warning"),    reinterpret_cast<void*>(LogWarning));
+    mLogLevel->Append(_("Info"),       reinterpret_cast<void*>(LogInfo));
+    mLogLevel->Append(_("Debug"),      reinterpret_cast<void*>(LogDebug));
+    mLogLevel->Append(_("Video"),      reinterpret_cast<void*>(LogVideo));
+    mLogLevel->Append(_("Audio"),      reinterpret_cast<void*>(LogAudio));
+    mLogLevel->Append(_("Detailed"),   reinterpret_cast<void*>(LogDetail));
+    switch (LogLevel_fromString(std::string(Config::ReadString(Config::sPathLogLevel).mb_str())))
     {
-    case logERROR:      mLogLevel->SetSelection(0); break;
-    case logWARNING:    mLogLevel->SetSelection(1); break;
-    case logINFO:       mLogLevel->SetSelection(2); break;
-    case logDEBUG:      mLogLevel->SetSelection(3); break;
-    case logVIDEO:      mLogLevel->SetSelection(4); break;
-    case logAUDIO:      mLogLevel->SetSelection(5); break;
-    case logDETAIL:     mLogLevel->SetSelection(6); break;
+    case LogError:      mLogLevel->SetSelection(0); break;
+    case LogWarning:    mLogLevel->SetSelection(1); break;
+    case LogInfo:       mLogLevel->SetSelection(2); break;
+    case LogDebug:      mLogLevel->SetSelection(3); break;
+    case LogVideo:      mLogLevel->SetSelection(4); break;
+    case LogAudio:      mLogLevel->SetSelection(5); break;
+    case LogDetail:     mLogLevel->SetSelection(6); break;
     }
     addoption(_("Log level"), mLogLevel);
 
@@ -151,7 +151,7 @@ Options::~Options()
         wxConfigBase::Get()->Flush();
 
         // Use new values
-        Log::setReportingLevel(LogLevel_fromString(std::string(wxConfigBase::Get()->Read(Config::sPathLogLevel,"logINFO").mb_str())));
+        Log::setReportingLevel(LogLevel_fromString(std::string(Config::ReadString(Config::sPathLogLevel).mb_str())));
     }
 }
 
