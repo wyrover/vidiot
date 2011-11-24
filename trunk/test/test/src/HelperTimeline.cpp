@@ -382,13 +382,12 @@ void Scrub(pixel from, pixel to)
 void Play(pixel from, int ms)
 {
     PositionCursor(from);
-    Type(' ');
-    VAR_INFO(from)(ms);
-    pause(ms); // todo this pause works nicely but why doesn't the playback stop? Actually, in the log i saw that the 'extra' time has already passed before starting to pause!!!
-    VAR_INFO(from)(ms);
-    PositionCursor(from);
-//    Type(' ');
-//    waitForIdle();
+    // NOTE: Don't use waitForIdle() when the video is playing!!!
+    //       When the video is playing, the system does not become Idle (playback events).
+    wxUIActionSimulator().Char(' ');
+    pause(ms);
+    wxUIActionSimulator().Char(' ');
+    waitForIdle();
 }
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)

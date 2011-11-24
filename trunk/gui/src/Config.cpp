@@ -47,7 +47,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathDefaultTransitionLength, 24);
     setDefault(Config::sPathFrameRate, "25");
     setDefault(Config::sPathLastOpened, "");
-    setDefault(Config::sPathLogLevel, LogLevel_toString(logINFO).c_str());
+    setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
     setDefault(Config::sPathMarkerBeginAddition, 0);
     setDefault(Config::sPathMarkerEndAddition, 0);
