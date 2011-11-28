@@ -312,6 +312,7 @@ void Drag::move(wxPoint position)
 void Drag::drop()
 {
     undo();
+    VAR_DEBUG(*this);
     command::ExecuteDrop::Drops drops;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
@@ -702,6 +703,7 @@ void Drag::determineSnapOffset()
         }
     }
 
+    VAR_DEBUG(snapPoint)(snapOffset);
     mSnapOffset = snapOffset;
 
     // Now determine all 'snaps' (positions where dragged cuts and timeline cuts are aligned)
@@ -793,8 +795,6 @@ void Drag::determineShift()
             model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
             if (transition)
             {
-                // todo test the code below with two aligned transitions (one 'in' and one 'out')
-
                 // The drag is either over the left or the right part of the transition, depending on the
                 // position where the two clips 'touch' from a user perspective.
                 clip = (origPos < transition->getTouchPosition()) ? clip = clip->getPrev() : clip = clip->getNext();
@@ -883,14 +883,23 @@ bool Drag::undo()
 std::ostream& operator<< (std::ostream& os, const Drag& obj)
 {
     os  << &obj                 << '|'
-        << obj.mSnap            << '|'
-        << obj.mActive          << '|'
+        << obj.mIsInsideDrag    << '|'
         << obj.mHotspot         << '|'
+        << obj.mHotspotPts      << '|'
         << obj.mPosition        << '|'
+        << obj.mBitmapOffset    << '|'
+        << obj.mActive          << '|'
+        << obj.mSnapOffset      << '|'
+        //<< obj.mSnaps           << '|' todo why not?
+        << obj.mShift           << '|'
         << obj.mVideo           << '|'
         << obj.mAudio           << '|'
         << obj.mDraggedTrack    << '|'
-        << obj.mDropTrack;
+        << obj.mDropTrack       << '|'
+        << obj.mDraggedClips    << '|'
+        //<< obj.mSnapPoints      << '|'
+        //<< obj.mDragPoints      << '|'
+        << obj.mDraggedClips;
     return os;
 }
 

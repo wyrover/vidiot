@@ -44,6 +44,13 @@ void TestTimeline::tearDown()
     mProjectFixture.destroy();
 }
 
+auto PrepareSnapping = [](bool enableSnapping)
+{
+    checkMenu(ID_SNAP_CLIPS, enableSnapping);
+    checkMenu(ID_SNAP_CURSOR, enableSnapping);
+    DeselectAllClips();
+};
+
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
@@ -107,87 +114,95 @@ void TestTimeline::testSelection()
 
 void TestTimeline::testDnd()
 {
-    auto PrepareSnapping = [](bool enableSnapping)
+    ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
+    ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
+    ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
+    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
+    ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
     {
-        checkMenu(ID_SNAP_CLIPS, enableSnapping);
-        checkMenu(ID_SNAP_CURSOR, enableSnapping);
+        // Test moving one clip around
+        PrepareSnapping(true);
+        pts length = VideoClip(0,3)->getLength();
+        DragAlignLeft(Center(VideoClip(0,3)),1); // Move to a bit after the beginning of timeline
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
+        Undo();
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
+        ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
+        ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
+        ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
+    }
+    {
+        Type('=');  // Zoom in
+        // Make transition after clip 2
+        TrimLeft(VideoClip(0,2),30,true);
+        TrimRight(VideoClip(0,1),30,true);
+        ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd())(VideoClip(0,1));
+        ASSERT_LESS_THAN_ZERO(VideoClip(0,2)->getMinAdjustBegin())(VideoClip(0,2));
+        Type('c');
+        waitForIdle();
+        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        // Move clip 2: the transition must be removed
+        getTimeline().getSelection().unselectAll();
+        Drag(Center(VideoClip(0,1)),Center(VideoClip(0,4)));
+        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+        ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
+        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,1)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
+        ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
+        Undo();
+    }
+    {
+        // Move a large clip onto a smaller clip. This causes linking issues
+        // (the video clip was not completely removed, but the linked audio
+        // clip was - or vice versa? - anyway: crashed....)
         DeselectAllClips();
-    };
-
-    ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
-    ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
-    ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
-    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
-    ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
-
-    // Test moving one clip around
-    PrepareSnapping(true);
-    pts length = VideoClip(0,3)->getLength();
-    DragAlignLeft(Center(VideoClip(0,3)),1); // Move to a bit after the beginning of timeline
-    ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
-    Undo();
-    ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
-    ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
-    ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
-    ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
-    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
-    ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
-
-    Type('=');  // Zoom in
-
-    // Make transition after clip 2
-    TrimLeft(VideoClip(0,2),30,true);
-    TrimRight(VideoClip(0,1),30,true);
-    ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd())(VideoClip(0,1));
-    ASSERT_LESS_THAN_ZERO(VideoClip(0,2)->getMinAdjustBegin())(VideoClip(0,2));
-    Type('c');
-    waitForIdle();
-    ASSERT(VideoClip(0,2)->isA<model::Transition>());
-
-    // Move clip 2: the transition must be removed
-    getTimeline().getSelection().unselectAll();
-    Drag(Center(VideoClip(0,1)),Center(VideoClip(0,4)));
-    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-    ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-    ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
-    ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-    ASSERT(AudioClip(0,1)->isA<model::EmptyClip>());
-    ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
-    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
-    ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
-
-    Undo();
-
-    // Move a large clip onto a smaller clip. This causes linking issues
-    // (the video clip was not completely removed, but the linked audio
-    // clip was - or vice versa? - anyway: crashed....)
-    DeselectAllClips();
-    Click(Center(VideoClip(0,1)));
-    wxPoint from = LeftCenter(VideoClip(0,2));
-    from.x += 10;
-    wxPoint to = Center(VideoClip(0,6));
-    Drag(from, to);
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
-    Undo();
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-
-    // Drag and drop the clip onto (approx.) the same position. That scenario caused bugs:
-    // clip is removed (during drag-and-drop). At the end of the drag-and-drop,
-    // the transition is 'undone'. The undoing of the transition made assumptions
-    // on availability of adjacent clips, which was invalid (clip has just been moved).
-    Drag(from,to,false,true,false);
-    Drag(to,from,false,false,true);
+        Click(Center(VideoClip(0,1)));
+        wxPoint from = LeftCenter(VideoClip(0,2));
+        from.x += 10;
+        wxPoint to = Center(VideoClip(0,6));
+        Drag(from, to);
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+        Undo();
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+        // Drag and drop the clip onto (approx.) the same position. That scenario caused bugs:
+        // clip is removed (during drag-and-drop). At the end of the drag-and-drop,
+        // the transition is 'undone'. The undoing of the transition made assumptions
+        // on availability of adjacent clips, which was invalid (clip has just been moved).
+        Drag(from,to,false,true,false);
+        Drag(to,from,false,false,true);
+        Undo();
+        Undo();
+    }
+    {
+        // Test that dropping a clip with snapping enabled does not affect the clip to the right of the snapping point.
+        PrepareSnapping(true);
+        pts lengthOfClipRightOfTheDrop = VideoClip(0,2)->getLength();
+        pts lengthOfDroppedClip = VideoClip(0,3)->getLength();
+        DragAlignRight(Center(VideoClip(0,3)),RightPixel(VideoClip(0,1)));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfClipRightOfTheDrop);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDroppedClip);
+        Undo();
+        // +wxPoint(): Move the pointer a bit to the right to ensure that the snapping is done one the right edge.
+        //             Given the lengths of the VideoClip(0,2) and VideoClip(0,3) - 246 and 250 - the snapping can
+        //             easily change from 'the right edge of clip (2)' to 'the left edge of clip (2)', since that's
+        //             only a diff of four pts values, which is less than one pixel with the given zoom. When the
+        //             mouse pointer is positioned to the right of the center position of the dragged clip, snapping
+        //             will first be done on the clip's right edge. The '-2' was added to the target position to
+        //             test that the snapping causes an actual extra movement on the drop position.
+        DragAlignRight(Center(VideoClip(0,3)) + wxPoint(5,0),LeftPixel(VideoClip(0,2)) - 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfClipRightOfTheDrop);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDroppedClip);
+        Undo();
+    }
 }
 
 void TestTimeline::testDnDTransition()
 {
-    auto PrepareSnapping = [](bool enableSnapping)
-    {
-        checkMenu(ID_SNAP_CLIPS, enableSnapping);
-        checkMenu(ID_SNAP_CURSOR, enableSnapping);
-        DeselectAllClips();
-    };
-
     // Zoom in
     Type('=');
     Type('=');
@@ -336,6 +351,76 @@ void TestTimeline::testDnDTransition()
 		ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),lengthOfClipAfterTransitionAfterTransitionApplied);
 		Undo();
 	}
+
+    //  Turn on snapping again
+    checkMenu(ID_SNAP_CLIPS, true);
+    checkMenu(ID_SNAP_CURSOR, true);
+}
+
+void TestTimeline::testAdjacentTransitions()
+{
+    PrepareSnapping(true);
+    Type('=');
+    Type('=');
+    Type('=');
+
+    {
+        // Reduce size of second and third clip to be able to create transitions
+        TrimRight(VideoClip(0,1),30,false);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        TrimLeft(VideoClip(0,3),30,false); // Note: the trim of clip 1 causes clip 2 to become clip 3 (clip 2 is empty space)
+        ASSERT(!VideoClip(0,3)->isA<model::EmptyClip>());
+        ASSERT(!VideoClip(0,4)->isA<model::EmptyClip>());
+        ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd())(VideoClip(0,1));
+        ASSERT_LESS_THAN_ZERO(VideoClip(0,3)->getMinAdjustBegin())(VideoClip(0,2));
+        // Make transitions between clips 2 and 3
+        Move(RightCenter(VideoClip(0,1)));
+        Type('c');
+        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        ASSERT(VideoClip(0,3)->isA<model::EmptyClip>());
+        waitForIdle();
+        Move(LeftCenter(VideoClip(0,4)));
+        Type('c');
+        ASSERT(VideoClip(0,4)->isA<model::Transition>());
+        ASSERT(!VideoClip(0,5)->isA<model::EmptyClip>());
+        DragAlignLeft(Center(VideoClip(0,5)),RightPixel(VideoClip(0,2)));
+        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        ASSERT(VideoClip(0,3)->isA<model::Transition>());
+        Scrub(LeftPixel(VideoTransition(0,2)) - 5, RightPixel(VideoTransition(0,3)) + 5);
+        Play(LeftPixel(VideoTransition(0,2)) - 2, 1500); // -2: Also take some frames from the left clip
+    }
+    {
+        // Drag a clip just on top of the right transition. This effectively removes
+        // that right transition and (part) of the clip to its right. The clips to the left
+        // of the removed transition must remain unaffected.
+        pts cliplength = VideoClip(0,1)->getLength();
+        pts transitionlength = VideoClip(0,2)->getLength();
+        pts length = VideoClip(0,8)->getLength();
+        DragAlignLeft(Center(VideoClip(0,8)),LeftPixel(VideoClip(0,3)));
+        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
+        ASSERT(!VideoClip(0,3)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),cliplength);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
+        Undo();
+    }
+    {
+        // Drag a clip just on top of the left transition. This effectively removes
+        // that left transition and (part) of the clip to its left. The clips to the right
+        // of the removed transition must remain unaffected.
+        pts cliplength = VideoClip(0,4)->getLength();
+        pts transitionlength = VideoClip(0,3)->getLength();
+        pts length = VideoClip(0,8)->getLength();
+        DragAlignRight(Center(VideoClip(0,8)) + wxPoint(5,0),RightPixel(VideoClip(0,2))-2);
+        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
+        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),cliplength);
+        Undo();
+    }
 
     //  Turn on snapping again
     checkMenu(ID_SNAP_CLIPS, true);

@@ -93,7 +93,6 @@ private:
     wxBitmap mBitmap;                           ///< The bitmap containing the dragged clips. It is reduced to 'only visible area'.
     wxPoint mBitmapOffset;                      ///< This offset ensures that correct areas can be used when positioning on the timeline.
     bool mActive;                               ///< True if dragging is currently active.
-    bool mSnap;                                 ///< true if the drag image snaps to the nearest track(s)
     std::list<pts> mSnapPoints;                 ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of drag.
     std::list<pts> mDragPoints;                 ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
     pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
