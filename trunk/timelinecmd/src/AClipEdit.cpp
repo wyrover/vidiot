@@ -18,7 +18,6 @@
 #include "UtilLogStl.h"
 
 namespace gui { namespace timeline { namespace command {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -95,22 +94,30 @@ bool AClipEdit::Undo()
 void AClipEdit::split(model::TrackPtr track, pts position)
 {
     model::IClipPtr clip = track->getClip(position);
-    if (clip)
+    if (clip && clip->getLeftPts() < position)
     {
+        // If there already is a cut at the given position (leftpts != position) then there's no need to cut again.
+        // Furthermore, doing the check at the beginning makes the handling of transitions (and the possible
+        // 'unapplying of them' a bit simpler in the code below (no more checks for 'if already cut' required.
+
         model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
         if (transition)
         {
-            // There is a transition at the given position. Remove it and restore the underlying clip's lengths.
+            // There is a transition at the given position: Restore the underlying clips.
+            ASSERT_LESS_THAN(transition->getLeftPts(),position);
             unapplyTransition(transition);
-            clip = track->getClip(position); // Must be done again, since the unapplyTransition changes the track
+            clip = track->getClip(position); // Must be done again, since unapplyTransition changes the track.
         }
         if (clip) // If there is a clip at the given position, it might need to be split
         {
             ASSERT(clip->isA<model::IClip>())(clip);
             ASSERT(!clip->isA<model::Transition>())(clip);
             position -= clip->getLeftPts();
-            if (position != 0) // If there is already a cut at the given position, nothing is changed.
+            if (position != 0)
             {
+                // If there is already a cut at the given position, nothing is changed.
+                // Note that unapplying a transition creates a new cut, therefore this
+                // check must be done again AFTER unapplyTransition has been applied.
                 ASSERT_LESS_THAN(position,clip->getLength());
                 model::IClipPtr left = make_cloned<model::IClip>(clip);
                 model::IClipPtr right = make_cloned<model::IClip>(clip);
@@ -119,7 +126,6 @@ void AClipEdit::split(model::TrackPtr track, pts position)
                 model::IClips replacements = boost::assign::list_of(left)(right);
                 replaceClip(clip, replacements);
             }
-
         }
     }
 }
@@ -192,10 +198,10 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts lef
     model::IClips::const_iterator it = track->getClips().begin();
     model::IClips removedClips;
     while (it != track->getClips().end() && *it != from)
-    { 
-        ++it; 
+    {
+        ++it;
     }
-    while (it != track->getClips().end() && *it != to) 
+    while (it != track->getClips().end() && *it != to)
     {
         removedClips.push_back(*it);
         ++it;
@@ -210,7 +216,7 @@ void AClipEdit::replaceLinks()
     // are replaced with other clips that, in turn, are replaced with yet other clips.
     //
     // This works as follows:
-    // (note: 'left' are all clips that are mapped onto other clips, 
+    // (note: 'left' are all clips that are mapped onto other clips,
     //        'right' are all clips that are a replacement clip).
     //
     // As long as there are 'right' clips that are also present 'left',
@@ -346,7 +352,7 @@ void AClipEdit::replaceWithEmpty(model::IClips clips)
     ASSERT_MORE_THAN_ZERO(length);
 
     // Ensure that for regions the 'extra' space for transitions is added.
-    // Basically the 'extra' space at the beginning of the first clip and the extra 
+    // Basically the 'extra' space at the beginning of the first clip and the extra
     // space at the ending of the last clip must be added to the region.
     model::EmptyClipPtr empty = boost::make_shared<model::EmptyClip>(length, -clips.front()->getMinAdjustBegin(), clips.back()->getMaxAdjustEnd());
 
@@ -478,14 +484,14 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
         ASSERT_LESS_THAN_EQUALS( adjustment, updatedRight->getMaxAdjustBegin() );
         updatedRight->adjustBegin(adjustment);
         replaceClip(rightClip,boost::assign::list_of(updatedRight));
-        
+
         // Determine position of transition
         position = updatedRight;
         VAR_DEBUG(updatedRight);
     }
     ASSERT(track);
     ASSERT(position);
-    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(leftLength, rightLength); 
+    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(leftLength, rightLength);
     addClip(transition, track, position);
     return transition;
 }
@@ -500,7 +506,7 @@ void AClipEdit::removeTransition( model::TransitionPtr transition )
 void AClipEdit::unapplyTransition( model::TransitionPtr transition )
 {
     // Note that, due to the usage after a drop operation, the left and/or right clips of the given
-    // transition may be empty clips (for instance, when only dragging one of the two clips in the 
+    // transition may be empty clips (for instance, when only dragging one of the two clips in the
     // transition, or when using shift & drag).
     if (transition->getLeft() > 0)
     {
@@ -520,7 +526,7 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition )
                 replacement->adjustEnd(transition->getLeft());
             }
             replaceClip(prev,boost::assign::list_of(replacement));
-        } 
+        }
         // else: prev has already been removed (for instance during drag-and-drop)
     }
     if (transition->getRight() > 0)
@@ -586,5 +592,4 @@ std::ostream& operator<<( std::ostream& os, const AClipEdit& obj )
     os << static_cast<const ATimelineCommand&>(obj);
     return os;
 }
-
 }}} // namespace
