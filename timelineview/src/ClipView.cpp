@@ -23,7 +23,6 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -52,7 +51,7 @@ ClipView::~ClipView()
     mClip->Unbind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,         this);
     mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
     mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
-    
+
     getViewMap().unregisterView(mClip);
 }
 
@@ -104,7 +103,7 @@ void ClipView::show(wxRect rect)
     mRect.width = rect.width;
     mRect.x = rect.x;
     mRect.y = 4;
-    mRect.height = getHeight() - 8; 
+    mRect.height = getHeight() - 8;
     invalidateBitmap();;
 }
 
@@ -152,17 +151,17 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
         else // below transition
         {
             model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(mClip);
-            pixel cut = getZoom().ptsToPixels(transition->getLeftPts() + transition->getLeft());
+            pixel cut = getZoom().ptsToPixels(transition->getLeftPts() + transition->getLeft()); // todo use transition->getTouchPosition()?
             pixel dist_cut = position.x - cut;
 
             if (dist_cut < 0)
             {
-                info.logicalclipposition = 
+                info.logicalclipposition =
                     (dist_cut > -Layout::sCursorClipEditDistance) ? TransitionLeftClipEnd : TransitionLeftClipInterior;
             }
             else // (dist_cut >= 0)
             {
-                info.logicalclipposition = 
+                info.logicalclipposition =
                     (dist_cut < Layout::sCursorClipEditDistance) ? TransitionRightClipBegin : TransitionRightClipInterior;
             }
         }
@@ -219,7 +218,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
 
     wxMemoryDC dc(bitmap);
 
-    if (mClip->isA<model::EmptyClip>() || 
+    if (mClip->isA<model::EmptyClip>() ||
         (!drawDraggedClips && getDrag().contains(mClip)) ||
         (!drawNotDraggedClips && !getDrag().contains(mClip)))
     {
@@ -290,7 +289,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
             dc.SetTextForeground(Layout::sDebugColour);
             dc.SetFont(*Layout::sDebugFont);
             dc.DrawText(wxString::Format(wxT("%lld"), mClip->getLength()), wxPoint(5,15));
-            wxString sPts; 
+            wxString sPts;
             sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
             dc.DrawText(sPts, wxPoint(5,25));
         }
@@ -333,5 +332,4 @@ void ClipView::onGenerationProgress( model::DebugEventRenderProgress& event )
     invalidateBitmap();
     event.Skip();
 }
-
 }} // namespace

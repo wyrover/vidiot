@@ -63,7 +63,8 @@ wxCommand* getCurrentCommand();
 template <class COMMAND>
 void ASSERT_CURRENT_COMMAND_TYPE()
 {
-    COMMAND* command = dynamic_cast<COMMAND*>(getCurrentCommand());
+    wxCommand* cmd = getCurrentCommand(); // Split to make debugging easier (inspect cmd to see what the current command is in case of failure)
+    COMMAND* command = dynamic_cast<COMMAND*>(cmd);
     ASSERT(command);
 };
 
