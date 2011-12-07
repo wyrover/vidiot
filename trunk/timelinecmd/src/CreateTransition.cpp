@@ -47,6 +47,7 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
             mRight = info.clip->getNext();
             break;
         default:
+            // TODO what if clip is a transition?
             FATAL("Unexpected logical clip position.");
         }
     }
@@ -115,4 +116,3 @@ std::ostream& operator<<( std::ostream& os, const CreateTransition& obj )
 }
 
 }}} // namespace
-
