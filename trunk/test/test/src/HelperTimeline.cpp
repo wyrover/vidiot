@@ -135,7 +135,7 @@ pixel TopPixel(model::IClipPtr clip)
 
 pixel BottomPixel(model::IClipPtr clip)
 {
-    return TopPixel(clip) + clip->getTrack()->getHeight();
+    return TopPixel(clip) + clip->getTrack()->getHeight() - 1;
 }
 
 pixel VCenter(model::IClipPtr clip)
@@ -143,9 +143,14 @@ pixel VCenter(model::IClipPtr clip)
     return (TopPixel(clip) + BottomPixel(clip)) / 2;
 }
 
-pixel VQuarter(model::IClipPtr clip)
+pixel VTopQuarter(model::IClipPtr clip)
 {
     return TopPixel(clip) + clip->getTrack()->getHeight() / 4;
+}
+
+pixel VBottomQuarter(model::IClipPtr clip)
+{
+    return BottomPixel(clip) - clip->getTrack()->getHeight() / 4;
 }
 
 pixel HCenter(model::IClipPtr clip)
@@ -158,9 +163,14 @@ wxPoint Center(model::IClipPtr clip)
     return wxPoint( HCenter(clip), VCenter(clip) );
 }
 
-wxPoint VQuarterHCenter(model::IClipPtr clip)
+wxPoint VTopQuarterHCenter(model::IClipPtr clip)
 {
-    return wxPoint( HCenter(clip), VQuarter(clip) );
+    return wxPoint( HCenter(clip), VTopQuarter(clip) );
+}
+
+wxPoint VBottomQuarterHCenter(model::IClipPtr clip)
+{
+    return wxPoint( HCenter(clip), VBottomQuarter(clip) );
 }
 
 wxPoint LeftCenter(model::IClipPtr clip)
@@ -171,6 +181,16 @@ wxPoint LeftCenter(model::IClipPtr clip)
 wxPoint RightCenter(model::IClipPtr clip)
 {
     return wxPoint( RightPixel(clip), VCenter(clip) );
+}
+
+wxPoint LeftBottom(model::IClipPtr clip)
+{
+    return wxPoint(LeftPixel(clip),BottomPixel(clip));
+}
+
+wxPoint RightBottom(model::IClipPtr clip)
+{
+    return wxPoint(RightPixel(clip),BottomPixel(clip));
 }
 
 pixel LeftPixel(DraggedClips drag)

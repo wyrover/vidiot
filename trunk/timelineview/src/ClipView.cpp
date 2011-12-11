@@ -151,7 +151,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
         else // below transition
         {
             model::TransitionPtr transition = boost::static_pointer_cast<model::Transition>(mClip);
-            pixel cut = getZoom().ptsToPixels(transition->getLeftPts() + transition->getLeft()); // todo use transition->getTouchPosition()?
+            pixel cut = getZoom().ptsToPixels(transition->getTouchPosition());
             pixel dist_cut = position.x - cut;
 
             if (dist_cut < 0)

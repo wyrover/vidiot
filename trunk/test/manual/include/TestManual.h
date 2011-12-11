@@ -1,21 +1,13 @@
 #ifndef TEST_MANUAL_H
 #define TEST_MANUAL_H
 
-#include <list>
-#include <wx/filename.h>
 #include "FixtureProject.h"
 #include "SuiteCreator.h"
-
-namespace model {
-class IPath;
-typedef boost::shared_ptr<IPath> IPathPtr;
-typedef std::list<IPathPtr> IPaths;
-}
 
 namespace test
 {
 
-class TestManual : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
+class TestManual : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
     ,   public SuiteCreator<TestManual>
 {
 public:

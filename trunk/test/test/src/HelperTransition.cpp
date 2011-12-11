@@ -1,17 +1,65 @@
 #include "HelperTransition.h"
 
 #include "Config.h"
+#include "CreateTransition.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
+#include "Layout.h"
+#include "PositionInfo.h"
+#include "Sequence.h"
 #include "Timeline.h"
+#include "MousePointer.h"
+#include "PositionInfo.h"
 #include "Transition.h"
-#include "CreateTransition.h"
-#include"Trim.h"
+#include "Trim.h"
 #include "VideoClip.h"
 #include "Zoom.h"
 
 namespace test {
+
+void ASSERT_LOGICALCLIPPOSITION(wxPoint position, gui::timeline::MouseOnClipPosition expected)
+{
+    // This assert is done to detect some 'clicking' problems as soon as possible. With some zoom
+    // values, using Transition* methods actually return a previous or next clip (typically happens
+    // when not zoomed in enough).
+    gui::timeline::PointerPositionInfo info = getTimeline().getMousePointer().getInfo(position);
+    ASSERT_EQUALS(expected, info.logicalclipposition);
+}
+
+wxPoint TransitionLeftClipInterior(model::IClipPtr clip)
+{
+    ASSERT(clip->isA<model::Transition>());
+    wxPoint position = LeftBottom(clip);
+    ASSERT_LOGICALCLIPPOSITION(position,gui::timeline::TransitionLeftClipInterior);
+    return position;
+}
+
+wxPoint TransitionLeftClipEnd(model::IClipPtr clip)
+{
+    ASSERT(clip->isA<model::Transition>());
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+    wxPoint position = wxPoint(getTimeline().getZoom().ptsToPixels(transition->getTouchPosition()) - 1,BottomPixel(clip));
+    ASSERT_LOGICALCLIPPOSITION(position, gui::timeline::TransitionLeftClipEnd);
+    return position;
+}
+
+wxPoint TransitionRightClipInterior(model::IClipPtr clip)
+{
+    ASSERT(clip->isA<model::Transition>());
+    wxPoint position = RightBottom(clip);
+    ASSERT_LOGICALCLIPPOSITION(position, gui::timeline::TransitionRightClipInterior);
+    return position;
+}
+
+wxPoint TransitionRightClipBegin(model::IClipPtr clip)
+{
+    ASSERT(clip->isA<model::Transition>());
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+    wxPoint position = wxPoint(getTimeline().getZoom().ptsToPixels(transition->getTouchPosition()),BottomPixel(clip));
+    ASSERT_LOGICALCLIPPOSITION(position, gui::timeline::TransitionRightClipBegin);
+    return position;
+}
 
 MakeTransitionAfterClip::MakeTransitionAfterClip(int afterclip)
     : clipNumberBeforeTransition(afterclip)
