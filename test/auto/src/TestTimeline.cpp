@@ -60,7 +60,6 @@ void TestTimeline::tearDown()
 void TestTimeline::testSelection()
 {
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
-    int nClips = NumberOfVideoClipsInTrack(0);
     {
         // Test CTRL clicking all clips one by one
         ControlDown();
@@ -112,6 +111,55 @@ void TestTimeline::testSelection()
         Click(Center(VideoClip(0,3)));
         ShiftUp();
         ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
+    }
+    // Zoom in (required for correct positioning)
+    Type('=');
+    Type('=');
+    Type('=');
+    Type('=');
+    {
+        // Selection tests for an in-out-transition
+        MakeInOutTransitionAfterClip preparation(1);
+        // Clicking on TransitionLeftClipInterior selects the clip left of the transition.
+        DeselectAllClips();
+        Click(TransitionLeftClipInterior(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        // Clicking on TransitionLeftClipEnd selects the clip left of the transition.
+        DeselectAllClips();
+        Click(TransitionLeftClipEnd(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        // Clicking on TransitionRightClipInterior selects the clip right of the transition.
+        DeselectAllClips();
+        Click(TransitionRightClipInterior(VideoClip(0,2)));
+        ASSERT(VideoClip(0,3)->getSelected());
+        // Clicking on TransitionRightClipBegin selects the clip right of the transition.
+        DeselectAllClips();
+        Click(TransitionRightClipBegin(VideoClip(0,2)));
+        ASSERT(VideoClip(0,3)->getSelected());
+    }
+    {
+        // Selection tests for an out-only-transition
+        MakeOutTransitionAfterClip preparation(1);
+        // Clicking on TransitionLeftClipInterior selects the clip left of the transition.
+        DeselectAllClips();
+        Click(TransitionLeftClipInterior(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        // Clicking on TransitionLeftClipEnd selects the clip left of the transition.
+        DeselectAllClips();
+        Click(TransitionLeftClipEnd(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+    }
+    {
+        // Selection tests for an in-only-transition
+        MakeInTransitionAfterClip preparation(1);
+        // Clicking on TransitionRightClipInterior selects the clip right of the transition.
+        DeselectAllClips();
+        Click(TransitionRightClipInterior(VideoClip(0,2)));
+        ASSERT(VideoClip(0,3)->getSelected());
+        // Clicking on TransitionRightClipBegin selects the clip right of the transition.
+        DeselectAllClips();
+        Click(TransitionRightClipBegin(VideoClip(0,2)));
+        ASSERT(VideoClip(0,3)->getSelected());
     }
 }
 
@@ -456,7 +504,7 @@ void TestTimeline::testTransition()
 
         // Select and delete transition only. Then, the remaining clips
         // must have their original lengths restored.
-        Click(VQuarterHCenter(VideoClip(0,2)));
+        Click(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(VideoClip(0,2)->getSelected());
         Type(WXK_DELETE);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
@@ -489,7 +537,7 @@ void TestTimeline::testTransition()
 
         // Select and delete transition only. Then, the remaining clips
         // must have their original lengths restored.
-        Click(VQuarterHCenter(VideoClip(0,2)));
+        Click(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(VideoClip(0,2)->getSelected());
         Type(WXK_DELETE);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
@@ -520,7 +568,7 @@ void TestTimeline::testTransition()
 
         // Select and delete transition only. Then, the remaining clips
         // must have their original lengths restored.
-        Click(VQuarterHCenter(VideoClip(0,2)));
+        Click(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(VideoClip(0,2)->getSelected());
         Type(WXK_DELETE);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);

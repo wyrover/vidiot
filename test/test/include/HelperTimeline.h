@@ -56,31 +56,35 @@ model::IClipPtr AudioClip(int trackindex = 0, int clipindex = 0);
 int getNonEmptyClipsCount();     ///< \return number of non-empty clips (both audio and video) in given timeline
 int getSelectedClipsCount(); ///< \return number of selected clips (both audio and video) in given timeline
 
-pixel LeftPixel(model::IClipPtr clip);           ///< \return left x position of given clip. Note: Returns the leftmost pixel value in the timeline that corresponds to the given clip.
-pixel RightPixel(model::IClipPtr clip);          ///< \return right x position of given clip. Note: Returns the rightmost pixel value in the timeline that corresponds to the given clip.
-pixel TopPixel(model::IClipPtr clip);            ///< \return top y position of given clip
-pixel BottomPixel(model::IClipPtr clip);         ///< \return bottom y position of given clip
+pixel LeftPixel(model::IClipPtr clip);               ///< \return left x position of given clip. Note: Returns the leftmost pixel value in the timeline that corresponds to the given clip.
+pixel RightPixel(model::IClipPtr clip);              ///< \return right x position of given clip. Note: Returns the rightmost pixel value in the timeline that corresponds to the given clip.
+pixel TopPixel(model::IClipPtr clip);                ///< \return top y position of given clip
+pixel BottomPixel(model::IClipPtr clip);             ///< \return bottom y position of given clip
 
-pixel VCenter(model::IClipPtr clip);             ///< \return vertical center position of given clip
-pixel VQuarter(model::IClipPtr clip);            ///< \return y position at one quarter from the top
-pixel HCenter(model::IClipPtr clip);             ///< \return horizontal center position of given clip
-wxPoint Center(model::IClipPtr clip);            ///< \return center (pixel) position of a clip
-wxPoint VQuarterHCenter(model::IClipPtr clip);   ///< \return pixel at one quarter from the top (centered horizontally)
-wxPoint LeftCenter(model::IClipPtr clip);        ///< \return left center position (centered vertically)
-wxPoint RightCenter(model::IClipPtr clip);       ///< \return right center position (centered vertically)
+pixel VCenter(model::IClipPtr clip);                 ///< \return vertical center position of given clip
+pixel VTopQuarter(model::IClipPtr clip);             ///< \return y position at one quarter from the top
+pixel VBottomQuarter(model::IClipPtr clip);          ///< \return y position at one quarter from the bottom
+pixel HCenter(model::IClipPtr clip);                 ///< \return horizontal center position of given clip
+wxPoint Center(model::IClipPtr clip);                ///< \return center (pixel) position of a clip
+wxPoint VTopQuarterHCenter(model::IClipPtr clip);    ///< \return pixel at one quarter from the top (centered horizontally)
+wxPoint VBottomQuarterHCenter(model::IClipPtr clip); ///< \return pixel at one quarter from the bottom (centered horizontally)
+wxPoint LeftCenter(model::IClipPtr clip);            ///< \return left center position (centered vertically)
+wxPoint RightCenter(model::IClipPtr clip);           ///< \return right center position (centered vertically)
+wxPoint LeftBottom(model::IClipPtr clip);            ///< \return left bottom position
+wxPoint RightBottom(model::IClipPtr clip);           ///< \return right bottom position
 
-class DraggedClips {};                           ///< Syntactic sugar to be able to use the same syntax (as used for determinig clip positions) for determining the position of the current drag object
+class DraggedClips {};                               ///< Syntactic sugar to be able to use the same syntax (as used for determinig clip positions) for determining the position of the current drag object
 
-pixel LeftPixel(DraggedClips drag);              ///< \return left x position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
-pixel RightPixel(DraggedClips drag);             ///< \return right x position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
-pixel TopPixel(DraggedClips drag);               ///< \return top y position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
-pixel BottomPixel(DraggedClips drag);            ///< \return bottom y position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
+pixel LeftPixel(DraggedClips drag);                  ///< \return left x position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
+pixel RightPixel(DraggedClips drag);                 ///< \return right x position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
+pixel TopPixel(DraggedClips drag);                   ///< \return top y position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
+pixel BottomPixel(DraggedClips drag);                ///< \return bottom y position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
 
-pixel VCenter(DraggedClips drag);                ///< \return vertical center position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
-pixel HCenter(DraggedClips drag);                ///< \return horizontal center position of given clip (absolute position in the timeline, not relative to the drag offset)
-wxPoint Center(DraggedClips drag);               ///< \return center (pixel) position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
-wxPoint LeftCenter(DraggedClips drag);           ///< \return left center position (centered vertically) (absolute position in the timeline, not relative to the drag offset)
-wxPoint RightCenter(DraggedClips drag);          ///< \return right center position (centered vertically) (absolute position in the timeline, not relative to the drag offset)
+pixel VCenter(DraggedClips drag);                    ///< \return vertical center position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
+pixel HCenter(DraggedClips drag);                    ///< \return horizontal center position of given clip (absolute position in the timeline, not relative to the drag offset)
+wxPoint Center(DraggedClips drag);                   ///< \return center (pixel) position of the currently dragged clips (absolute position in the timeline, not relative to the drag offset)
+wxPoint LeftCenter(DraggedClips drag);               ///< \return left center position (centered vertically) (absolute position in the timeline, not relative to the drag offset)
+wxPoint RightCenter(DraggedClips drag);              ///< \return right center position (centered vertically) (absolute position in the timeline, not relative to the drag offset)
 
 void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
 void Move(wxPoint position);                                            ///< Move the mouse to the given position within the timeline

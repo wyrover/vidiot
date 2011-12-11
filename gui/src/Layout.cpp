@@ -78,7 +78,7 @@ const wxBrush   Layout::sTransitionBgSelected    (wxColour(80,80,80),wxBRUSHSTYL
 //////////////////////////////////////////////////////////////////////////
 
 const int       Layout::sSnapDistance           = 50;
-const int       Layout::sCursorClipEditDistance = 10;
+const int       Layout::sCursorClipEditDistance = 6;
 
 //////////////////////////////////////////////////////////////////////////
 // FONTS

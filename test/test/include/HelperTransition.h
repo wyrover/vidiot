@@ -1,9 +1,21 @@
 #ifndef HELPER_TRANSITION_H
 #define HELPER_TRANSITION_H
 
+#include <wx/gdicmn.h>
+#include <boost/shared_ptr.hpp>
 #include "UtilInt.h"
 
+namespace model {
+class IClip;
+typedef boost::shared_ptr<IClip> IClipPtr;
+}
+
 namespace test {
+
+wxPoint TransitionLeftClipInterior(model::IClipPtr clip);
+wxPoint TransitionLeftClipEnd(model::IClipPtr clip);
+wxPoint TransitionRightClipInterior(model::IClipPtr clip);
+wxPoint TransitionRightClipBegin(model::IClipPtr clip);
 
 /// Base class for reusing several variables
 /// and the creation of the trimmed clips before creating

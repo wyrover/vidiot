@@ -45,12 +45,12 @@ const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and se
 Idle::Idle( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
-    LOG_DEBUG; 
+    LOG_DEBUG;
 }
 
 Idle::~Idle() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ boost::statechart::result Idle::start()
 
 boost::statechart::result Idle::leftDown()
 {
-   PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getLeftDownPosition());
+    PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getLeftDownPosition());
 
     if (info.onAudioVideoDivider)
     {
@@ -184,7 +184,7 @@ boost::statechart::result Idle::leftDown()
     }
     else
     {
-        getSelection().updateOnLeftClick(info.clip);
+        getSelection().updateOnLeftClick(info);
         if (info.clip && !info.clip->isA<model::EmptyClip>())
         {
             switch (info.logicalclipposition)
@@ -193,18 +193,18 @@ boost::statechart::result Idle::leftDown()
                 return transit<Trim>();
                 break;
             case ClipInterior:
+            case TransitionLeftClipInterior:
                 return transit<StateLeftDown>();
                 break;
             case ClipEnd:
                 return transit<Trim>();
                 break;
-            case TransitionBegin://todo temp 
-            case TransitionLeftClipInterior://todo temp 
-            case TransitionLeftClipEnd://todo temp 
-            case TransitionInterior://todo temp 
-            case TransitionRightClipBegin://todo temp 
-            case TransitionRightClipInterior://todo temp 
-            case TransitionEnd://todo temp 
+            case TransitionBegin://todo temp
+            case TransitionLeftClipEnd://todo temp
+            case TransitionInterior://todo temp
+            case TransitionRightClipBegin://todo temp
+            case TransitionRightClipInterior://todo temp
+            case TransitionEnd://todo temp
                 return forward_event();
             default:
                 FATAL("Unexpected logical clip position.");
@@ -233,4 +233,3 @@ void Idle::addTransition()
 }
 
 }}} // namespace
-

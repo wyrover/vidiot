@@ -6,6 +6,7 @@
 #include "ClipView.h"
 #include "Track.h"
 #include "TrackView.h"
+#include "Transition.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
 #include "Sequence.h"
@@ -31,15 +32,13 @@ Selection::~Selection()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Selection::updateOnLeftClick(model::IClipPtr clip)
+void Selection::updateOnLeftClick(const PointerPositionInfo& info)
 {
     bool ctrlPressed = wxGetMouseState().ControlDown();
     bool shiftPressed = wxGetMouseState().ShiftDown();
     bool altPressed = wxGetMouseState().AltDown();
 
-    VAR_DEBUG(clip)(ctrlPressed)(shiftPressed)(altPressed);
-
-    model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();
+    VAR_DEBUG(info)(ctrlPressed)(shiftPressed)(altPressed);
 
     // Must be determined before deselecting all clips.
     bool previousClickedClipWasSelected = true;
@@ -56,6 +55,34 @@ void Selection::updateOnLeftClick(model::IClipPtr clip)
             previousClickedClipWasSelected = mPreviouslyClicked->getSelected();
         }
     }
+
+    // Determine the 'logically clicked' clip and track
+    model::IClipPtr clip = info.clip;
+    model::TrackPtr track = info.track;
+    if (clip && clip->isA<model::Transition>())
+    {
+        switch (info.logicalclipposition)
+        {
+        case TransitionLeftClipInterior:
+        case TransitionLeftClipEnd:
+            clip = info.clip->getPrev();
+            ASSERT(clip);
+            break;
+        case TransitionRightClipBegin:
+        case TransitionRightClipInterior:
+            clip = info.clip->getNext();
+            ASSERT(clip);
+            break;
+        case TransitionBegin:
+        case TransitionInterior:
+        case TransitionEnd:
+            // Transition is actually clicked
+            break;
+        default:
+            FATAL("Unexpected logical clip position.");
+        }
+    }
+
     bool currentClickedClipIsSelected = clip ? clip->getSelected() : false;
 
     // Deselect all clips first, but only if control is not pressed.
@@ -69,6 +96,7 @@ void Selection::updateOnLeftClick(model::IClipPtr clip)
 
     if (clip)
     {
+        ASSERT(track);
         if (altPressed)
         {
             // Select until the end
@@ -90,7 +118,7 @@ void Selection::updateOnLeftClick(model::IClipPtr clip)
         {
             // Range selection. Select from last selected clip until the current clip.
             // Selection value equals the state of the last selected clip. If that was
-            // just selected, then the whole range is selected. If the last selected 
+            // just selected, then the whole range is selected. If the last selected
             // clip was deselected, then the whole range is deselected.
 
             model::IClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(track->getClips().begin());
@@ -108,7 +136,7 @@ void Selection::updateOnLeftClick(model::IClipPtr clip)
                 if (firstclip)
                 {
                     selectClipAndLink(c, previousClickedClipWasSelected);
-                    if ((c != firstclip) && 
+                    if ((c != firstclip) &&
                         ((c == clip) || (c == otherend)))
                     {
                         break; // Stop (de)selecting clips

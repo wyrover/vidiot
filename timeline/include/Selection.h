@@ -5,6 +5,7 @@
 #include <list>
 #include <wx/event.h>
 #include "Part.h"
+#include "PositionInfo.h"
 
 namespace model {
     class IClip;
@@ -37,7 +38,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void updateOnLeftClick(model::IClipPtr clip);
+    void updateOnLeftClick(const PointerPositionInfo& info);
     void updateOnRightClick(model::IClipPtr clip);
 
     /// Deletes all selected clips.
@@ -53,7 +54,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
-    
+
     model::IClipPtr mPreviouslyClicked;      ///< Clip which was previously (de)selected.
 
     //////////////////////////////////////////////////////////////////////////
