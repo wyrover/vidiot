@@ -26,8 +26,7 @@ MACRO(COPY_MSVC_PROJECT_USER_FILE projectname)
 ENDMACRO(COPY_MSVC_PROJECT_USER_FILE)
 
 #### FFMPEG ####
-#SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-precompiled )
-SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-r26182 )
+SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-precompiled )
 INCLUDE(build/FindFFMPEG.cmake)
 FIND_PACKAGE(FFMPEG REQUIRED COMPONENTS SWSCALE)
 # Add include dir for generated avconfig.h
@@ -45,12 +44,11 @@ SET( WX_USE_REL_AND_DBG TRUE )
 FIND_PACKAGE(wxWidgets REQUIRED core base aui adv xml html qa)
 
 #### BOOST ####
-SET(Boost_ADDITIONAL_VERSIONS "1.46" "1.46.1")
-SET( ENV{BOOST_ROOT} ${VIDIOT_DIR}/boost_1_46_1 )
+#SET(Boost_ADDITIONAL_VERSIONS ENV{FOUND_BOOST_VERSION})
 SET(Boost_DEBUG TRUE)
 #SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS date_time thread filesystem serialization system)
+FIND_PACKAGE(Boost 1.45 REQUIRED COMPONENTS date_time thread filesystem serialization system)
 # Find all dlls matching 'release' and 'threading-multi'
 foreach(BOOSTLIB date_time thread filesystem serialization system)
     FILE( GLOB_RECURSE BOOST_INSTALL_NEW $ENV{BOOST_ROOT}/bin.v2/libs/${BOOSTLIB}/*.dll )
