@@ -30,7 +30,7 @@ dir boost* /b /o-d > %TEMP%\boostdir.txt
 set /p BOOSTDIR=<%TEMP%\boostdir.txt
 set BOOSTVERSION=%BOOSTDIR:boost_=%
 set FOUND_BOOST_VERSION="%BOOSTVERSION:_=.%"
-set BOOST_ROOT=%VIDIOT_DIR%\BOOSTDIR
+set BOOST_ROOT=%VIDIOT_DIR%\%BOOSTDIR%
 
 
 
