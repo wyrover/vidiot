@@ -1,11 +1,41 @@
-set VIDIOT_DIR=D:\Vidiot
-set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
+goto BEGIN
 
-d:
+:EXTRACTDRIVE
+set DRIVE=%~d1
+goto:eof
+
+:NOVAR
+echo Define system variable VIDIOT_DIR first
+echo Press any key to exit
+pause
+exit
+
+
+
+REM ==== BEGIN ====
+:BEGIN
+echo %CD%
+if NOT DEFINED VIDIOT_DIR goto NOVAR
+call:EXTRACTDRIVE %VIDIOT_DIR%
+%DRIVE%
 cd %VIDIOT_DIR%
-set SOURCE=%VIDIOT_DIR%\vidiot_trunk
 
+
+
+REM === FIND BOOST ====
+REM o-d: always use newest version
+dir boost* /b /o-d > %TEMP%\boostdir.txt
+set /p BOOSTDIR=<%TEMP%\boostdir.txt
+set BOOSTVERSION=%BOOSTDIR:boost_=%
+set FOUND_BOOST_VERSION="%BOOSTVERSION:_=.%"
+
+
+
+
+REM === CREATE SOLUTION ====
 REM del /s/q Build 
+set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
+set SOURCE=%VIDIOT_DIR%\vidiot_trunk
 
 cd %VIDIOT_DIR%
 if NOT EXIST Build mkdir Build
@@ -30,10 +60,6 @@ exit
 cd %BUILD_DIR%\GCCD
 cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
-REM pause
-
 cd %BUILD_DIR%\GCCR
 cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
-
-REM pause
 

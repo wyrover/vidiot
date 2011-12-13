@@ -4,6 +4,10 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
       a working executable (crashes upon startup). Anyway, this allows for
       checing compatibility with GCC.
 
+================ ENVIRONMENT VARIABLE ================
+* set VIDIOT_DIR=D:\Vidiot (example) system level variable to the absolute
+  path containing all sources/builds/included libraries for building
+
 ================ VISUAL STUDIO ================
 * Install MSVS2010
 * Install MSVS2010 SP1
@@ -82,7 +86,7 @@ Install ActivePerl via installer
 * Copy include/wx/msw/setup0.h to setup.h
 * Copy include/wx/msw/setup0.h to include/wx/setup.h
 * Clean <VIDIOT_DIR>\wxwidgets_trunk\lib\vc_lib (particularly, remove all setup.h files)
-* Apply path to wxUIActionSimulator::MouseMove:
+* Apply patch to wxUIActionSimulator::MouseMove:
   (see <vidiot_trunk>/build/patches)
     int scaledx = std::ceil((float)x * 65535.0 / (displayx-1));
     int scaledy = std::ceil((float)y * 65535.0 / (displayy-1));
@@ -103,11 +107,8 @@ Install ActivePerl via installer
   - ffmpeg-r<x>-swscale-r<y>-mingw32-shared-dev
 * Extract both into
   <VIDIOT_DIR>\ffmpeg-precomiled
-* MOVE
-  <VIDIOT_DIR>/ffmpeg-precomiled/stdint.h
-  <VIDIOT_DIR>/ffmpeg-precomiled/inttypes.h
-  to
-  <VIDIOT_DIR>/ffmpeg-ctypes
+*  Inttypes: http://code.google.com/p/msinttypes/
+  Copy stdint.h AND inttypes.h to <VIDIOT_DIR>/ffmpeg-ctypes
 * Add <VIDIOT_DIR>\ffmpeg-precompiled\bin to system/user path variable
 * Delete
   <VIDIOT_DIR>/ffmpeg-precompiled/include/libavutil/file.h
