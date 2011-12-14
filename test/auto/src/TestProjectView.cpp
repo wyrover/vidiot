@@ -11,7 +11,6 @@
 
 namespace test {
 
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -39,7 +38,11 @@ void ProjectViewTests::testAdditionAndRemoval()
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
     wxString sFile( "scene'20100102 12.32.48.avi" ); // Should be a file also in the autofolder
-    wxFileName filepath = wxFileName( "D:\\Vidiot\\test", sFile );
+
+    wxString sVidiotDir;
+    bool found = wxGetEnv( _T("VIDIOT_DIR"), &sVidiotDir);
+    ASSERT(found);
+    wxFileName filepath = wxFileName( sVidiotDir + "\\test", sFile );
 
     model::FolderPtr folder1 = addFolder( sFolder1 );
     model::SequencePtr sequence1 = addSequence( sSequence1, folder1 );
