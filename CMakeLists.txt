@@ -29,11 +29,7 @@ ENDMACRO(COPY_MSVC_PROJECT_USER_FILE)
 SET( ENV{FFMPEGDIR} ${VIDIOT_DIR}/ffmpeg-precompiled )
 INCLUDE(build/FindFFMPEG.cmake)
 FIND_PACKAGE(FFMPEG REQUIRED COMPONENTS SWSCALE)
-# Add include dir for generated avconfig.h
-SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} $ENV{FFMPEGDIR}/build )
-# Add include for ctypes (C99 vs. MSVC)
 IF (MSVC)
-    SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} ${VIDIOT_DIR}/ffmpeg-ctypes )
     FILE(GLOB FFMPEG_INSTALL $ENV{FFMPEGDIR}/bin/*.dll)
 ENDIF (MSVC)
 ADD_DLL_PATH($ENV{FFMPEGDIR}/bin)
@@ -78,7 +74,6 @@ ENDIF (MSVC)
 IF (CMAKE_COMPILER_IS_GNUCC)
   SET( SOUNDTOUCH_LIBRARIES  libSoundTouch.a )
 ENDIF (CMAKE_COMPILER_IS_GNUCC )
-  #gcc_s )
 
 #### FIND ALL LOCAL FILES ####
 SET(SOURCES_LIST)
@@ -121,10 +116,14 @@ IF (MSVC)
         ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
 ENDIF (MSVC)
 
+# Don't change the order of FFMPEG includes: Both ffmpeg and Vidiot have an include file
+# File.h. Be sure that the vidiot one is found first. That's also the rationale for explicitly
+# including model/include in this list (that's where the correct File.h resides)
 INCLUDE_DIRECTORIES(AFTER
-    include
+    model/include
     icons
     cursors
+    ctypes
     ${FFMPEG_INCLUDE_DIR}
     ${Boost_INCLUDE_DIRS}
     ${PORTAUDIO_INCLUDE_DIR}
