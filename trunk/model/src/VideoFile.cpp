@@ -108,7 +108,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again
-    // \todo instead of duplicating frames, nicely take the two input frames 'around' the 
+    // \todo instead of duplicating frames, nicely take the two input frames 'around' the
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
     FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
@@ -157,7 +157,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             }
 
             // \todo decoders that hold multiple frames in one packet
-            int len1 = avcodec_decode_video(getCodec(), pFrame, &frameFinished, packet->getPacket()->data, packet->getPacket()->size);
+            int len1 = avcodec_decode_video2(getCodec(), pFrame, &frameFinished, packet->getPacket());
 
             if (packet->getPacket()->dts != AV_NOPTS_VALUE)
             {
@@ -232,7 +232,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
 void VideoFile::startDecodingVideo()
 {
     // If the end of file is reached, a subsequent getNextVideo should not
-    // trigger a new (useless) sequence of startReadingPackets, 
+    // trigger a new (useless) sequence of startReadingPackets,
     // bufferPacketsThread, "bufferPacketsThread: End of file."
     // (and this, over and over again....).
     //
@@ -256,7 +256,6 @@ void VideoFile::startDecodingVideo()
 
     FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
-
 
     if (videoFrameRate != Project::get().getProperties()->getFrameRate())
     {
@@ -313,4 +312,3 @@ template void VideoFile::serialize<boost::archive::text_oarchive>(boost::archive
 template void VideoFile::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-
