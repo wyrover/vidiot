@@ -102,14 +102,14 @@ Install ActivePerl via installer
 * (GCC) Add <VIDIOT_DIR>\wxwidgets_trunk\lib\gcc_dll to the path
 
 =================== FFMPEG ===================
-* Download from http://ffmpeg.arrozcru.org/autobuilds/:
-  - ffmpeg-r<x>-swscale-r<y>-mingw32-shared
-  - ffmpeg-r<x>-swscale-r<y>-mingw32-shared-dev
+* Download from http://ffmpeg.zeranoe.com/builds/:
+  - 32-bit Builds (Shared)
+  - 32-bit Builds (Dev)
 * Extract both into
   <VIDIOT_DIR>\ffmpeg-precomiled
+  (bin/doc/lib/include/licenses etc. are direct subdirs of ffmpeg-precompiled)
 *  Inttypes: http://code.google.com/p/msinttypes/
   Copy stdint.h AND inttypes.h to <VIDIOT_DIR>/ffmpeg-ctypes
-* Add <VIDIOT_DIR>\ffmpeg-precompiled\bin to system/user path variable
 * Delete
   <VIDIOT_DIR>/ffmpeg-precompiled/include/libavutil/file.h
 * NOTE: If in another dir then 'ffmpeg-precompiled' then change CMakelists.txt accordingly
@@ -161,3 +161,6 @@ Install ActivePerl via installer
 
 =================== INSTALLER ===================
 * Install NSIS
+
+=================== BUILD ===================
+* Run <VIDIOT_DIR>/build/RunCMake.bat
