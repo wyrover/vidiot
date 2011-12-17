@@ -8,14 +8,14 @@ namespace model {
 class Sequence;
 typedef boost::shared_ptr<Sequence> SequencePtr;
 }
-namespace gui { namespace timeline { 
-    class Timeline; 
+namespace gui { namespace timeline {
+    class Timeline;
 }}
 
 namespace gui { namespace timeline { namespace command {
 
 /// Abstract base for all modifications on the timeline/sequence.
-class ATimelineCommand 
+class ATimelineCommand
     :   public ::command::RootCommand
 {
 public:
@@ -31,6 +31,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    model::SequencePtr getSequence() const;
     gui::timeline::Timeline& getTimeline() const;
 
 private:

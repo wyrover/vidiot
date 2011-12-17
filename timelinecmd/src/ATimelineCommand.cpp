@@ -9,18 +9,23 @@ namespace gui { namespace timeline { namespace command {
 //////////////////////////////////////////////////////////////////////////
 
 ATimelineCommand::ATimelineCommand(model::SequencePtr sequence)
-:   RootCommand()
-,   mSequence(sequence)
+    :   RootCommand()
+    ,   mSequence(sequence)
 {
 }
 
 ATimelineCommand::~ATimelineCommand()
 {
-} 
+}
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+model::SequencePtr ATimelineCommand::getSequence() const
+{
+    return mSequence;
+}
 
 gui::timeline::Timeline& ATimelineCommand::getTimeline() const
 {
