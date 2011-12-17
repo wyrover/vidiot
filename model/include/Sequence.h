@@ -1,7 +1,8 @@
-    #ifndef MODEL_SEQUENCE_H
-    #define MODEL_SEQUENCE_H
+#ifndef MODEL_SEQUENCE_H
+#define MODEL_SEQUENCE_H
 
 #include <map>
+#include <set>
 #include <list>
 #include <wx/event.h>
 #include <boost/optional.hpp>
@@ -12,6 +13,8 @@
 
 namespace model {
 
+class IClip;
+typedef boost::shared_ptr<IClip> IClipPtr;
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;
@@ -78,6 +81,8 @@ public:
 
     pixel getDividerPosition() const;
     void setDividerPosition(pixel position);
+
+    std::set<IClipPtr> getSelectedClips();
 
     //////////////////////////////////////////////////////////////////////////
     // NODE
