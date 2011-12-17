@@ -62,8 +62,8 @@ Transition::Transition(const Transition& other)
 }
 
 Transition* Transition::clone()
-{ 
-    return new Transition(static_cast<const Transition&>(*this)); 
+{
+    return new Transition(static_cast<const Transition&>(*this));
 }
 
 Transition::~Transition()
@@ -106,7 +106,7 @@ void Transition::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
     mLeftPtsInTrack = trackPosition;
 }
 
-TrackPtr Transition::getTrack() 
+TrackPtr Transition::getTrack()
 {
     return mTrack.lock();
 }
@@ -123,7 +123,8 @@ pts Transition::getRightPts() const
 
 void Transition::setLink(IClipPtr link)
 {
-    FATAL("Not allowed for transition");
+    // Transitions may never be linked to anything
+    ASSERT(!link)(link);
 }
 
 IClipPtr Transition::getLink() const
@@ -252,7 +253,7 @@ std::ostream& operator<<( std::ostream& os, const Transition& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -270,4 +271,3 @@ template void Transition::serialize<boost::archive::text_oarchive>(boost::archiv
 template void Transition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-
