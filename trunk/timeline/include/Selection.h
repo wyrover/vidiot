@@ -44,8 +44,6 @@ public:
     /// Deletes all selected clips.
     void deleteClips();
 
-    std::set<model::IClipPtr> getClips() const;
-
     /// Unselect all clips
     void unselectAll();
 

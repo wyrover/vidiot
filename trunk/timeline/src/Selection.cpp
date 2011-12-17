@@ -88,7 +88,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     // Deselect all clips first, but only if control is not pressed.
     if (!ctrlPressed)
     {
-        BOOST_FOREACH( model::IClipPtr c, getClips() )
+        BOOST_FOREACH( model::IClipPtr c, getSequence()->getSelectedClips() )
         {
             c->setSelected(false);
         }
@@ -178,7 +178,7 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
     // Deselect clips first, in certain cases
     if (!ctrlPressed && (!clip || !clip->getSelected()))
     {
-        BOOST_FOREACH( model::IClipPtr c, getClips() )
+        BOOST_FOREACH( model::IClipPtr c, getSequence()->getSelectedClips() )
         {
             c->setSelected(false);
         }
@@ -199,12 +199,6 @@ void Selection::deleteClips()
 {
     setPreviouslyClicked(model::IClipPtr()); // reset
     getTimeline().Submit(new command::DeleteSelectedClips(getSequence()));
-}
-
-std::set<model::IClipPtr> Selection::getClips() const
-{
-    // todo remove: all users can use the used method below...
-    return getSequence()->getSelectedClips();
 }
 
 void Selection::unselectAll()
