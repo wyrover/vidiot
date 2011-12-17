@@ -42,6 +42,12 @@ int NumberOfVideoClipsInTrack(int trackindex)
     return videoTrack->getClips().size();
 }
 
+int NumberOfAudioClipsInTrack(int trackindex)
+{
+    model::TrackPtr audioTrack = getSequence()->getAudioTrack(trackindex);
+    return audioTrack->getClips().size();
+}
+
 model::VideoTrackPtr VideoTrack(int trackindex)
 {
     return boost::dynamic_pointer_cast<model::VideoTrack>(getSequence()->getVideoTrack(trackindex));
@@ -54,7 +60,13 @@ model::AudioTrackPtr AudioTrack(int trackindex)
 
 model::IClipPtr VideoClip(int trackindex, int clipindex)
 {
-    return getSequence()->getVideoTrack(trackindex)->getClipByIndex(clipindex);
+    int index = clipindex;
+    if (clipindex < 0)
+    {
+        index = NumberOfVideoClipsInTrack(trackindex);
+        index += clipindex;
+    }
+    return getSequence()->getVideoTrack(trackindex)->getClipByIndex(index);
 }
 
 model::VideoTransitionPtr VideoTransition(int trackindex, int clipindex)
@@ -66,7 +78,13 @@ model::VideoTransitionPtr VideoTransition(int trackindex, int clipindex)
 
 model::IClipPtr AudioClip(int trackindex, int clipindex)
 {
-    return getSequence()->getAudioTrack(trackindex)->getClipByIndex(clipindex);
+    int index = clipindex;
+    if (clipindex < 0)
+    {
+        index = NumberOfAudioClipsInTrack(trackindex);
+        index += clipindex;
+    }
+    return getSequence()->getAudioTrack(trackindex)->getClipByIndex(index);
 }
 
 int getNonEmptyClipsCount()
