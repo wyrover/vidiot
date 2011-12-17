@@ -58,6 +58,7 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 const int sStatusProcessing = 8;
 int Window::sSequenceMenuIndex = 0;
 static Window* sCurrent = 0;
+static const wxString sTitle(_("Vidiot"));
 
 Window::Window()
     :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,600))
