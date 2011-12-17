@@ -34,7 +34,7 @@ typedef std::map<model::IClipPtr, model::IClips> ReplacementMap;
 /// It provides a reusable undo/redo mechanism for such edits.
 /// Furthermore, it contains several helper methods for making
 /// the edits.
-class AClipEdit 
+class AClipEdit
     :   public ATimelineCommand
 {
 public:
@@ -90,7 +90,7 @@ protected:
     /// \pre originals.size() > 1 || replacements.size() > 1
     void replaceClips(model::IClips originals, model::IClips replacements);
 
-    /// Add given clip to given track at given position. This method is only allowed 
+    /// Add given clip to given track at given position. This method is only allowed
     /// for new clips (clip that are not yet contained in a track). For existing
     // (part of a track) clips, replaceClip must be used.
     /// \pre !clip->getLink()
@@ -110,13 +110,13 @@ protected:
     typedef std::pair<model::IClips, model::IClipPtr> ClipsWithPosition;
     ClipsWithPosition findClips(model::TrackPtr track, pts left, pts right);
 
-    /// Move all clips in all tracks a certain amount. 
+    /// Move all clips in all tracks a certain amount.
     /// \param start only clips clips that are on or after this position must be moved
     /// \param amount distance that must be shifted
     /// \param exclude list of tracks that are not to be changed
     void shiftAllTracks(pts start, pts amount, model::Tracks exclude);
 
-    /// Move all clips in the given tracks a certain amount. 
+    /// Move all clips in the given tracks a certain amount.
     /// \param tracks list of tracks which must be shifted
     /// \param start only clips clips that are on or after this position must be moved
     /// \param amount distance that must be shifted
@@ -141,11 +141,6 @@ protected:
     /// \param transition transition to be removed
     void unapplyTransition( model::TransitionPtr transition );
 
-    /// Determine if the given clip has already been removed/replaced in 
-    /// a previous step.
-    /// \return true if the clip has already been removed/replaced
-    bool hasBeenReplaced(model::IClipPtr clip) const;
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -160,14 +155,20 @@ private:
     /// Used to keep updated clip link information correct.
     /// Note that a clip may be mapped onto an empty list. That indicates
     /// the clip has been removed, without replacing it with new clips.
-    ReplacementMap mReplacements;       
+    ReplacementMap mReplacements;
+
+    /// \see mReplacements
+    /// \see expandReplacements
+    /// In this map, all entries are 'expanded' until no more replaced clips
+    /// are part of any replacement anymore.
+    ReplacementMap mExpandedReplacements;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
-    /// The new Move is executed immediately. This method is also used to add new clips, 
+    /// The new Move is executed immediately. This method is also used to add new clips,
     /// by using the defaults for the remove* parameters.
     /// This is private for a reason: All the public methods use the 'conversionmap'.
     /// This ensures that all clip changes are done while updating the conversionmap.
@@ -179,19 +180,46 @@ private:
     /// - Clip V1 is replaced with clip VR1
     /// - Clip A1 is removed completely
     /// If. at the end of the edit, the link replacement is done (replaceLinks), then
-    /// it's unclear to what clip(s) VR1 must be linked (there is no information 
-    /// indicating that A1 was actually removed). Therefore: all edits must use 
+    /// it's unclear to what clip(s) VR1 must be linked (there is no information
+    /// indicating that A1 was actually removed). Therefore: all edits must use
     /// the link conversion map.
     void newMove(
-        model::TrackPtr addTrack, 
-        model::IClipPtr addPosition, 
-        model::IClips addClips, 
-        model::TrackPtr removeTrack = model::TrackPtr(), 
-        model::IClipPtr removePosition = model::IClipPtr(), 
+        model::TrackPtr addTrack,
+        model::IClipPtr addPosition,
+        model::IClips addClips,
+        model::TrackPtr removeTrack = model::TrackPtr(),
+        model::IClipPtr removePosition = model::IClipPtr(),
         model::IClips removeClips = model::IClips());
 
     /// Execute a move.
     void doMove(model::MoveParameterPtr move);
+
+    /// For all replaced clips, ensure that the linked clip (if any) is also replaced,
+    /// at least with just a plain clone of the original link. This is needed to
+    /// avoid having these links 'dangling' after removal (for instance, when deleting
+    /// only the audio part of a audio-video couple, by moving a large new audio clip
+    /// over the audio part of the couple).
+    void avoidDanglingLinks();
+
+    /// Update mExpandedReplacements
+    /// Expand/Recurse, to ensure that the algorithm also works when clips (during the edit)
+    /// are replaced with other clips that, in turn, are replaced with yet other clips.
+    ///
+    /// This works as follows:
+    /// (note: 'left' are all clips that are mapped onto other clips,
+    ///        'right' are all clips that are a replacement clip).
+    ///
+    /// As long as there are 'right' clips that are also present 'left',
+    /// replace these 'right clips' with their replacements (thus the result
+    /// of using them as 'left' keys) in the mappings.
+    void expandReplacements();
+
+    /// Helper method for expandReplacements. This method expands all the clips in
+    /// original to contain all 'final' clips, after consecutively having applied
+    /// a list of clip replacements.
+    /// \param original list of clips to be expanded
+    /// \return list containing all fully expanded clips
+    model::IClips expandReplacements(model::IClips original);
 
     /// Repair 'linking of clips' information after replacing several clips.
     /// For each

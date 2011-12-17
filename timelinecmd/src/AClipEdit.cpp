@@ -49,6 +49,10 @@ bool AClipEdit::Do()
 
         mergeConsecutiveEmptyClips();
 
+        avoidDanglingLinks();
+
+        expandReplacements();
+
         replaceLinks();
 
         mInitialized = true;
@@ -209,72 +213,8 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts lef
     return make_pair(removedClips,to);
 }
 
-void AClipEdit::replaceLinks()
+void AClipEdit::avoidDanglingLinks()
 {
-    LOG_DEBUG;
-    // Expand/Recurse, to ensure that the algorithm also works when clips (during the edit)
-    // are replaced with other clips that, in turn, are replaced with yet other clips.
-    //
-    // This works as follows:
-    // (note: 'left' are all clips that are mapped onto other clips,
-    //        'right' are all clips that are a replacement clip).
-    //
-    // As long as there are 'right' clips that are also present 'left',
-    // replace these 'right clips' with their replacements (thus the result
-    // of using them as 'left' keys) in the mappings.
-    struct Expander
-    {
-        Expander(ReplacementMap& _conversionmap)
-            :   conversionmap(_conversionmap)
-            ,   expandedMap()
-        {
-            std::set<model::IClipPtr> allReplacements;
-            BOOST_FOREACH( auto entry, conversionmap )
-            {
-                allReplacements.insert(entry.second.begin(),entry.second.end());
-            }
-            BOOST_FOREACH( auto entry, conversionmap )
-            {
-                if (allReplacements.find(entry.first) == allReplacements.end())
-                {
-                    expandedMap[entry.first] = Expand(entry.second);
-                }
-                // else:
-                // This 'original' was already a replacement clip. It's 'link status' is irrelevant,
-                // since it's only an 'intermediate' clip.
-            }
-        }
-        model::IClips Expand(model::IClips original)
-        {
-            model::IClips result;
-            BOOST_FOREACH( model::IClipPtr clip, original )
-            {
-                if (conversionmap.find(clip) == conversionmap.end())
-                {
-                    result.push_back(clip);
-                }
-                else
-                {
-                    model::IClips replacements = conversionmap[clip];
-                    result.splice(result.begin(), Expand(replacements));
-                }
-            }
-            return result;
-        }
-        ReplacementMap get()
-        {
-            return expandedMap;
-        }
-    private:
-        ReplacementMap& conversionmap;
-        ReplacementMap expandedMap;
-    };
-
-    // For all replaced clips, ensure that the linked clip (if any) is also replaced,
-    // at least with just a plain clone of the original link. This is needed to
-    // avoid having these links 'dangling' after removal (for instance, when deleting
-    // only the audio part of a audio-video couple, by moving a large new audio clip
-    // over the audio part of the couple).
     BOOST_FOREACH( auto link, mReplacements )
     {
         model::IClipPtr original = link.first;
@@ -289,13 +229,52 @@ void AClipEdit::replaceLinks()
             replaceClip(originallink, boost::assign::list_of(clone)); // std::map iterators - foreach - remain valid
         }
     }
+}
 
-    ReplacementMap expandedMap = Expander(mReplacements).get();
+void AClipEdit::expandReplacements()
+{
+    std::set<model::IClipPtr> allReplacements;
+    BOOST_FOREACH( auto entry, mReplacements )
+    {
+        allReplacements.insert(entry.second.begin(),entry.second.end());
+    }
+    BOOST_FOREACH( auto entry, mReplacements )
+    {
+        if (allReplacements.find(entry.first) == allReplacements.end())
+        {
+            // The expansion is done for all non-intermediate clips in the map. Since the replacement
+            // map is only required for linking of clips, only the original clips and their replacement
+            // are relevant. Intermediate clips are not.
+            mExpandedReplacements[entry.first] = expandReplacements(entry.second);
+        }
+    }
+}
 
-    // At this point all clips AND their original links (or their clones)
-    // are part of the replacement map. Now the replacements for a clip
-    // are linked to the replacements of its link.
-    BOOST_FOREACH( ReplacementMap::value_type link, expandedMap )
+model::IClips AClipEdit::expandReplacements(model::IClips original)
+{
+
+    model::IClips result;
+    BOOST_FOREACH( model::IClipPtr clip, original )
+    {
+        if (mReplacements.find(clip) == mReplacements.end())
+        {
+            // The replacement clip is not replaced
+            result.push_back(clip);
+        }
+        else
+        {
+            // The replacement clip has been replaced also
+            model::IClips replacements = mReplacements[clip];
+            result.splice(result.end(), expandReplacements(replacements));
+        }
+    }
+    return result;
+}
+
+void AClipEdit::replaceLinks()
+{
+    LOG_DEBUG;
+    BOOST_FOREACH( ReplacementMap::value_type link, mExpandedReplacements )
     {
         model::IClipPtr clip1 = link.first;
         model::IClips new1 = link.second;
@@ -305,22 +284,25 @@ void AClipEdit::replaceLinks()
         if (clip2) // The clip doesn't necessarily have a link with another clip
         {
             ASSERT(!clip2->isA<model::EmptyClip>())(clip2); // Linking to an empty clip is not allowed
-            model::IClips new2 = expandedMap[clip2];
+            model::IClips new2 = mExpandedReplacements[clip2];
             model::IClips::iterator it2 = new2.begin();
+
+            auto NoLinkingAllowed = [](model::IClipPtr clip)->bool
+            {
+                return ( clip->isA<model::EmptyClip>() || clip->isA<model::Transition>()); // Linking to/from empty clips and transitions is not allowed. Skip these.
+            };
 
             while ( it1 != new1.end() && it2 != new2.end() )
             {
                 model::IClipPtr newclip1 = *it1;
                 model::IClipPtr newclip2 = *it2;
-                if ( newclip1->isA<model::EmptyClip>() ) // Linking to/from empty clips is not allowed. Skip these.
+                if (NoLinkingAllowed(newclip1))
                 {
-                    newclip1->setLink(model::IClipPtr());
                     ++it1;
                     continue;
                 }
-                if ( newclip2->isA<model::EmptyClip>() ) // Linking to/from empty clips is not allowed. Skip these.
+                if (NoLinkingAllowed(newclip2))
                 {
-                    newclip2->setLink(model::IClipPtr());
                     ++it2;
                     continue;
                 }
@@ -551,11 +533,6 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition )
         // else: next has already been removed (for instance during drag-and-drop)
     }
     removeClip(transition);
-}
-
-bool AClipEdit::hasBeenReplaced(model::IClipPtr clip) const
-{
-    return mReplacements.find(clip) != mReplacements.end();
 }
 
 //////////////////////////////////////////////////////////////////////////

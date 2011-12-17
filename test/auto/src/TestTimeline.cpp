@@ -59,6 +59,7 @@ void TestTimeline::tearDown()
 
 void TestTimeline::testSelection()
 {
+    START_TEST;
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
         // Test CTRL clicking all clips one by one
@@ -165,6 +166,7 @@ void TestTimeline::testSelection()
 
 void TestTimeline::testDnd()
 {
+    START_TEST;
     ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
     ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
     ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
@@ -206,15 +208,28 @@ void TestTimeline::testDnd()
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDroppedClip);
         Undo();
     }
+    {
+        // Test moving one clip partially on top of its original location (caused a recursion error in AClipEdit,
+        // for expanding the replacement map).
+        PrepareSnapping(true);
+        pts length = VideoClip(0,3)->getLength();
+        Drag(Center(VideoClip(0,3)), Center(VideoClip(0,3)) + wxPoint(20,0)); // Move the clip only a bit to the right
+        ASSERT(VideoClip(0,3)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),length );
+        Undo();
+    }
 }
 
 void TestTimeline::testDnDTransition()
 {
+    START_TEST;
     // Zoom in
     Type('=');
     Type('=');
     Type('=');
     MakeInOutTransitionAfterClip preparation(1);
+    ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
+    ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,2));
 
     {
         // Shift drag without snapping enabled,
@@ -377,6 +392,7 @@ void TestTimeline::testDnDTransition()
 
 void TestTimeline::testAdjacentTransitions()
 {
+    START_TEST;
     Type('=');
     Type('=');
     Type('=');
@@ -441,7 +457,7 @@ void TestTimeline::testAdjacentTransitions()
 
 void TestTimeline::testUndo()
 {
-    LOG_DEBUG << "TEST_START";
+    START_TEST;
 
     pts length = VideoClip(0,3)->getLength();
     Drag(Center(VideoClip(0,3)),wxPoint(2,Center(VideoClip(0,3)).y));
@@ -484,6 +500,7 @@ void TestTimeline::testUndo()
 
 void TestTimeline::testTransition()
 {
+    START_TEST;
     // This tests (for In, Out as well as In&Out transitions)
     // - when deleting a transition, the related clip's lengths are adjusted
     //   accordingly (so that it looks as if the transition is just removed,
@@ -601,6 +618,7 @@ void TestTimeline::testTransition()
 
 void TestTimeline::testSplitting()
 {
+    START_TEST;
     MakeInOutTransitionAfterClip preparation(1);
     {
         PositionCursor(HCenter(VideoClip(0,2)));
@@ -636,6 +654,7 @@ void TestTimeline::testSplitting()
 
 void TestTimeline::testAbortDrag()
 {
+    START_TEST;
     for (int zoom = 0; zoom < 4; zoom++)
     {
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();

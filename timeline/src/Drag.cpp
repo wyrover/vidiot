@@ -45,6 +45,7 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -109,6 +110,7 @@ public:
 
 Drag::Drag(Timeline* timeline)
     :   Part(timeline)
+    ,   mCommand(0)
     ,   mIsInsideDrag(true)
     ,   mHotspot(0,0)
     ,   mPosition(0,0)
@@ -147,6 +149,8 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     mPosition = hotspot;
     mBitmapOffset = wxPoint(0,0);
     mDropTrack = info.track;
+    mCommand = new command::ExecuteDrop(getSequence());
+    command::ExecuteDrop::Drags drags;
 
     if (!mIsInsideDrag)
     {
@@ -160,60 +164,23 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
         // When dragging new clips into the timeline, the clips also need to be removed first.
         // This ensures that any used View classes are destroyed. Otherwise, there remain multiple
         // Views for a clip.
-        UtilSet<model::IClipPtr>(mDraggedClips).addElements(mVideo.getTempTrack()->getClips());
-        UtilSet<model::IClipPtr>(mDraggedClips).addElements(mAudio.getTempTrack()->getClips());
+        UtilSet<model::IClipPtr>(drags).addElements(mVideo.getTempTrack()->getClips());
+        UtilSet<model::IClipPtr>(drags).addElements(mAudio.getTempTrack()->getClips());
     }
     else
     {
         mDraggedTrack = info.track;
-
-        UtilSet<model::IClipPtr>(mDraggedClips).addElements(getSelection().getClips());
-
-        // For all transitions that are not selected, if all the clips to which a
-        // transition applies are selected, the transition must be dragged also.
-
-        BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() ) // Do not use mDraggedClips as it is edited inside the loop
-        {
-            model::TrackPtr track = clip->getTrack();
-            model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
-            if (prevTransition)
-            {
-                model::IClipPtr prev = prevTransition->getPrev();
-                if ((prevTransition->getLeft() == 0) ||     // Clip to the left of the transition is not part of the transition
-                    (prev && prev->getSelected()))          // Clip to the left of the transition is also being dragged
-                {
-                    if (!contains(prevTransition))          // May only be added once (avoid it being added upon inspection of left clip AND upon inspection of right clip)
-                    {
-                        UtilSet<model::IClipPtr>(mDraggedClips).addElement(prevTransition); // This insertion is not 'in order'
-                    }
-                }
-            }
-            model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
-            if (nextTransition)
-            {
-                model::IClipPtr next = nextTransition->getNext();
-                if ((nextTransition->getRight() == 0) ||    // Clip to the right of the transition is not part of the transition
-                    (next && next->getSelected()))          // Clip to the right of the transition is also being dragged
-                {
-                    if (!contains(prevTransition))          // May only be added once (avoid it being added upon inspection of left clip AND upon inspection of right clip)
-                    {
-                        UtilSet<model::IClipPtr>(mDraggedClips).addElement(nextTransition); // This insertion is not 'in order'
-                    }
-                }
-            }
-        }
+        UtilSet<model::IClipPtr>(drags).addElements(getSelection().getClips());
     }
 
-    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
-    {
-        clip->setDragged(true);
-    }
+    ASSERT(mCommand);
+    mCommand->onDrag(drags, mIsInsideDrag);
 
     VAR_DEBUG(*this);
     ASSERT(mDraggedTrack);
 
     determinePossibleSnapPoints();
-    determinePossibleDragPoints(); // Requires initialized mDraggedClips
+    determinePossibleDragPoints(); // Requires initialized getDrags() in mCommand
     show();
 }
 
@@ -319,21 +286,25 @@ void Drag::drop()
         drops.splice(drops.end(), getDrops(track));
     }
 
-    getTimeline().Submit(new command::ExecuteDrop(getSequence(), mDraggedClips, drops, mShift));
+    mCommand->onDrop(drops, mShift);
+    getTimeline().Submit(mCommand); // Command in 'handed over' to wxWidgets undo system
+    mCommand = 0;
 }
 
 void Drag::stop()
 {
     VAR_DEBUG(*this);
     mActive = false;            // Ensure that moved clips are not blanked out anymore. See ClipView::draw().
-    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
-    {
-        clip->setDragged(false);
-    }
     mShift = boost::none;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         getViewMap().getView(track)->onShiftChanged();
+    }
+    if (mCommand) // Was not reset in 'drop()', therefore the draganddrop was aborted
+    {
+        mCommand->onAbort();
+        delete mCommand;
+        mCommand = 0;
     }
     reset();
     getTimeline().Refresh(false);
@@ -350,7 +321,8 @@ bool Drag::isActive() const
 
 bool Drag::contains(model::IClipPtr clip) const
 {
-    return mDraggedClips.find(clip) != mDraggedClips.end();
+    ASSERT(mCommand);
+    return mCommand->getDrags().find(clip) != mCommand->getDrags().end();
 }
 
 wxSize Drag::getBitmapSize() const
@@ -585,7 +557,7 @@ int Drag::DragInfo::nTracks()
 
 void Drag::reset()
 {
-    mDraggedClips.clear();
+    delete mCommand;
     mHotspot = wxPoint(0,0);
     mHotspotPts = 0;
     mPosition = wxPoint(0,0);
@@ -760,7 +732,7 @@ void Drag::determinePossibleDragPoints()
 {
     mDragPoints.clear();
 
-    BOOST_FOREACH( model::IClipPtr clip, mDraggedClips )
+    BOOST_FOREACH( model::IClipPtr clip, mCommand->getDrags() )
     {
         mDragPoints.push_back(clip->getLeftPts());
         mDragPoints.push_back(clip->getRightPts());
@@ -890,16 +862,11 @@ std::ostream& operator<< (std::ostream& os, const Drag& obj)
         << obj.mBitmapOffset    << '|'
         << obj.mActive          << '|'
         << obj.mSnapOffset      << '|'
-        //<< obj.mSnaps           << '|' todo why not?
         << obj.mShift           << '|'
         << obj.mVideo           << '|'
         << obj.mAudio           << '|'
         << obj.mDraggedTrack    << '|'
-        << obj.mDropTrack       << '|'
-        << obj.mDraggedClips    << '|'
-        //<< obj.mSnapPoints      << '|'
-        //<< obj.mDragPoints      << '|'
-        << obj.mDraggedClips;
+        << obj.mDropTrack       << '|';
     return os;
 }
 

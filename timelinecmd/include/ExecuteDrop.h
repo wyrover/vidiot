@@ -7,14 +7,16 @@
 
 namespace gui { namespace timeline { namespace command {
 
-class ExecuteDrop  
+class ExecuteDrop
     :   public AClipEdit
 {
 public:
 
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION
+    // TYPES
     //////////////////////////////////////////////////////////////////////////
+
+    typedef std::set<model::IClipPtr> Drags;
 
     struct Drop
     {
@@ -25,9 +27,38 @@ public:
     };
     typedef std::list<Drop> Drops;
 
-    ExecuteDrop(model::SequencePtr sequence, std::set<model::IClipPtr> drags, Drops drops, Shift shift = boost::none);
+    typedef std::set<model::TransitionPtr> UnappliedTransitions;
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    ExecuteDrop(model::SequencePtr sequence);
 
     virtual ~ExecuteDrop();
+
+    /// Called when the drag operation starts. This prepares the timeline for the dragging:
+    /// - In-Out-Transitions for which only of of the two adjacent clips are selected, are unapplied
+    /// - Transitions for which all 'related' clips are selected, are also made part of the drag
+    /// Doing this preparation inside this ClipEdit command ensures that this preparation
+    /// (which may make changes to the timeline) will be part of the same command that
+    /// does the drag and drop. That ensures that both are Undone with one operation.
+    /// Furthermore, explicitly changing the timeline (as opposed to 'faking it') makes
+    /// the code handling the drop easier (don't have to take into account that some of
+    /// the clips have been changed for unapplying transitions).
+    /// \param drags initial list of dragged clips (note that this also applies to new clips being dragged into the timeline)
+    /// \param isInsideDrag true if this is a drag and drop inside the timeline. False if new clips are being inserted.
+    /// \post mDrags contains updated list of dragged clips
+    void onDrag(const Drags& drags, bool isInsideDrag);
+
+    /// Called when the drop operation was finished. After this call, the command will be
+    /// executed on the sequence via 'initialize'.
+    void onDrop(Drops drops, Shift shift = boost::none);
+
+    /// Called when the drag operation is aborted. Any changes made to the timeline must be
+    /// undone. The object will be destructed after this call.
+    /// \see onStartDrag for operations that must be undone.
+    void onAbort();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE
@@ -35,26 +66,27 @@ public:
 
     void initialize() override;
 
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    /// The list of dragged clips is stored in one and only one place to
+    /// avoid duplication. Since the updating of these clips involves changing
+    /// the timeline (at the start of the drag, some transitions may be
+    /// unapplied) it is stored inside this command. That ensures that both
+    /// the actual drag and drop as well as its preparation actions are
+    /// undone with one undo action.
+    const Drags& getDrags() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::Transitions mTransitions;    ///< List of transitions that must be removed because one but not all of their adjacent clips are moved
-    std::set<model::IClipPtr> mDrags;   ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
+    Drags mDrags; ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Drops mDrops;
     Shift mShift;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    /// \return true if the transition must be removed (unapplied) when the current drag is dropped
-    /// This is required for the purpose of removing a transition (and putting the
-    /// original clip's length back) of which one but not all related (left+right)
-    /// clips are being dragged.
-    bool transitionMustBeUnapplied(model::TransitionPtr transition) const;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
