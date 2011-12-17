@@ -29,6 +29,10 @@ wxPoint TimelinePosition();
 /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
 int NumberOfVideoClipsInTrack(int trackindex = 0);
 
+/// Return the number of clips in a given audio track
+/// \param trackindex index position (0-based) of the audio track, counting from the divider downwards
+int NumberOfAudioClipsInTrack(int trackindex = 0);
+
 /// Return a video track
 /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
 model::VideoTrackPtr VideoTrack(int trackindex = 0);
@@ -39,12 +43,12 @@ model::AudioTrackPtr AudioTrack(int trackindex = 0);
 
 /// Return a clip in a video track
 /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
-/// \param clipindex index position (0-based) of the clip in the track, counting from left to right
+/// \param clipindex index position (0-based) of the clip in the track, counting from left to right; if index < 0 then the counting is done 'from the right', where -1 is the last clip in the track.
 model::IClipPtr VideoClip(int trackindex = 0, int clipindex = 0);
 
 /// Return a video transition in a video track
 /// \param trackindex index position (0-based) of the video track, counting from the divider upwards
-/// \param clipindex index position (0-based) of the clip in the track, counting from left to right
+/// \param clipindex index position (0-based) of the clip in the track, counting from left to right if index < 0 then the counting is done 'from the right', where -1 is the last clip in the track.
 /// \pre the clip at the given position is a transitin
 model::VideoTransitionPtr VideoTransition(int trackindex, int clipindex);
 
