@@ -29,7 +29,6 @@ void TestDialog::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-
 class Escape
 {
 public:
@@ -76,28 +75,29 @@ private:
 
 void TestDialog::testEscape()
 {
+    START_TEST;
     {
-        Escape e; 
+        Escape e;
         wxStrings result = gui::Dialog::get().getFiles("message", _("Movie clips (*.avi)|*.avi|All files (%s)|%s"));
         ASSERT_ZERO(result.size());
     }
     {
-        Escape e; 
+        Escape e;
         int result = gui::Dialog::get().getConfirmation("title","message", wxOK | wxCANCEL);
         ASSERT_EQUALS(result,wxCANCEL);
     }
     {
-        Escape e; 
+        Escape e;
         wxString result = gui::Dialog::get().getDir("message","defualt");
         ASSERT_EQUALS(result,"");
     }
     {
-        Escape e; 
+        Escape e;
         wxString result = gui::Dialog::get().getText("title", "message","defualt");
         ASSERT_EQUALS(result,"");
     }
     {
-        Escape e; 
+        Escape e;
         triggerMenu(ID_OPTIONS);
         waitForIdle();
     }

@@ -31,7 +31,7 @@ void ProjectViewTests::tearDown()
 
 void ProjectViewTests::testAdditionAndRemoval()
 {
-    LOG_DEBUG << "TEST_START";
+    START_TEST;
 
     int nDefaultItems = countProjectView();
 

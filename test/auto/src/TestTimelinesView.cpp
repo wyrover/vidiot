@@ -16,7 +16,7 @@ namespace test {
 
 void TestTimelinesView::testSequenceMenu()
 {
-    LOG_DEBUG << "TEST_START";
+    START_TEST;
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
     wxString sSequence2( "Sequence2" );
