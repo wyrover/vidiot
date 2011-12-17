@@ -15,6 +15,7 @@
 #include "PositionInfo.h"
 #include "Project.h"
 #include "Selection.h"
+#include "Sequence.h"
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "Track.h"
@@ -104,7 +105,7 @@ void MenuHandler::Popup(wxPoint position)
     // If an item is selected for which a menu option makes sense, then the option is shown.
     // If an item is selected for which a menu option does not make sense, then the option is disabled.
 
-    std::set<model::IClipPtr> selectedClips = getSelection().getClips();
+    std::set<model::IClipPtr> selectedClips = getSequence()->getSelectedClips();
 
     bool showAddTransition = false;
     bool showRemoveEmpty = false;
@@ -123,7 +124,6 @@ void MenuHandler::Popup(wxPoint position)
             enableRemoveEmpty = false;
         }
     }
-
 
     if (info.onAudioVideoDivider)
     {
@@ -156,7 +156,6 @@ void MenuHandler::Popup(wxPoint position)
             }
         }
     }
-
 
     wxMenu menu;
     if (showAddTransition)
@@ -200,7 +199,6 @@ void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
     LOG_INFO;
     getTimeline().Submit(new command::CreateAudioTrack(getSequence()));
 }
-
 
 void MenuHandler::onDeleteMarked(wxCommandEvent& event)
 {

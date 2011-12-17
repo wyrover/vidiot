@@ -170,7 +170,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     else
     {
         mDraggedTrack = info.track;
-        UtilSet<model::IClipPtr>(drags).addElements(getSelection().getClips());
+        UtilSet<model::IClipPtr>(drags).addElements(getSequence()->getSelectedClips());
     }
 
     ASSERT(mCommand);
@@ -460,7 +460,7 @@ void Drag::DragInfo::reset()
 
     // Determine boundaries for 'inside' drags
     std::set<model::TrackPtr> selectedTracks;
-    BOOST_FOREACH( model::IClipPtr clip, getSelection().getClips() )
+    BOOST_FOREACH( model::IClipPtr clip, getSequence()->getSelectedClips() )
     {
         model::TrackPtr track = clip->getTrack();
         if (track->isA<model::VideoTrack>() == mIsVideo)

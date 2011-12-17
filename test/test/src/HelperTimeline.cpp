@@ -105,7 +105,7 @@ int getNonEmptyClipsCount()
 
 int getSelectedClipsCount()
 {
-    int result = getTimeline().getSelection().getClips().size();
+    int result = getSequence()->getSelectedClips().size();
     VAR_DEBUG(result);
     return result;
 }
