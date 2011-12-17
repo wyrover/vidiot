@@ -16,13 +16,17 @@ public:
     }
     static TESTS *createSuite()
     {
-        return new TESTS(); 
+        return new TESTS();
     };
     static void destroySuite(TESTS *suite)
     {
         delete suite;
     };
 };
+
+void setTitle(const char* title);
+
+#define START_TEST setTitle(__FUNCTION__)
 
 } // namespace
 

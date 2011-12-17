@@ -116,6 +116,14 @@ public:
     /// \param menu 0 to indicate that the default disabled menu should be shown
     void setSequenceMenu(wxMenu* menu);
 
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Used in tests to easily see which test is being executed
+    /// \param title will be added after the original title
+    void setAdditionalTitle(wxString title);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
