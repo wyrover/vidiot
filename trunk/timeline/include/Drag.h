@@ -85,8 +85,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    command::ExecuteDrop* mCommand;             ///< The command that is submitted when the drop operation finishes.
     bool mIsInsideDrag;                         ///< True: drag&drop within the timeline. False: dropping new clips in the timeline (from the project view).
-    std::set<model::IClipPtr> mDraggedClips;    ///< List of all clips currently being dragged
     wxPoint mHotspot;                           ///< Hotspot within the timeline. Basically: pointer position at start of dragging.
     pts mHotspotPts;                            ///< The pts value that corresponds to the hotspot's x position. Required when changing zoom/scrolling.
     wxPoint mPosition;                          ///< Current pointer drag position. In timeline coordinates.

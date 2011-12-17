@@ -83,8 +83,12 @@ void TestOnce::testOnce()
         // starts a drag and drop operation, not with the transition but the clip left of the transition.
         MakeInOutTransitionAfterClip preparation(1);
 
-        //Drag(TransitionLeftClipInterior(VideoClip(0,2)),Center(VideoClip(0,5)));
+        Drag(TransitionLeftClipInterior(VideoClip(0,2)),Center(VideoClip(0,4)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),AudioClip(0,4)->getLength()); // Transition is unapplied which causes the audio and video to have the same lengths again
+        ASSERT_EQUALS(VideoClip(0,-1)->getRightPts(),AudioClip(0,-1)->getRightPts()); // Both tracks have the same length
         pause(10000);
+        Undo();
     }
     {
         // Test - for an out-only-transition - that dragging when clicking on TransitionLeftClipInterior
@@ -196,5 +200,7 @@ void TestOnce::testOnce()
     // todo test clicking + dragging + trimming transition begin + end + interior
     // todo test clicking outside tracks etc.
     // todo test clicking on dividers
+
+    // todo test for A-transition-B, moving A on top of the 'end' of B, and dropping B on the 'begin' of A
 }
 } // namespace
