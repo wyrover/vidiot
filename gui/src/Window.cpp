@@ -60,7 +60,7 @@ int Window::sSequenceMenuIndex = 0;
 static Window* sCurrent = 0;
 
 Window::Window()
-    :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, _("Vidiot"), wxDefaultPosition, wxSize(1000,600))
+    :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,600))
     ,	mDocTemplate(new wxDocTemplate(GetDocumentManager(), _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     ,   mDialog(new Dialog())
     ,   mWatcher(0)
@@ -379,6 +379,15 @@ void Window::setSequenceMenu(wxMenu* menu)
         previous = menubar->Replace(sSequenceMenuIndex, menu, _("&Sequence"));
         menubar->EnableTop(sSequenceMenuIndex,enable);
     }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+void Window::setAdditionalTitle(wxString title)
+{
+    SetTitle(sTitle + " - " + title);
 }
 
 //////////////////////////////////////////////////////////////////////////
