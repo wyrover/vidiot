@@ -203,18 +203,8 @@ void Selection::deleteClips()
 
 std::set<model::IClipPtr> Selection::getClips() const
 {
-    std::set<model::IClipPtr> selectedclips;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-    {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
-        {
-            if (clip->getSelected())
-            {
-                selectedclips.insert(clip);
-            }
-        }
-    }
-    return selectedclips;
+    // todo remove: all users can use the used method below...
+    return getSequence()->getSelectedClips();
 }
 
 void Selection::unselectAll()

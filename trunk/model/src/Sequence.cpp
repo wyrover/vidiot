@@ -9,6 +9,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
+#include "IClip.h"
 #include "NodeEvent.h"
 #include "SequenceEvent.h"
 #include "UtilList.h"
@@ -73,8 +74,8 @@ Sequence::Sequence(const Sequence& other)
 }
 
 Sequence* Sequence::clone()
-{ 
-    return new Sequence(static_cast<const Sequence&>(*this)); 
+{
+    return new Sequence(static_cast<const Sequence&>(*this));
 }
 
 Sequence::~Sequence()
@@ -151,7 +152,7 @@ VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bo
             }
             else
             {
-                // From the top track, the first found frame is returned. 
+                // From the top track, the first found frame is returned.
                 videoFrame = frame;
                 break;
             }
@@ -267,17 +268,33 @@ void Sequence::setDividerPosition(pixel position)
     mDividerPosition = position;
 }
 
+std::set<model::IClipPtr> Sequence::getSelectedClips()
+{
+    std::set<model::IClipPtr> selectedclips;
+    BOOST_FOREACH( model::TrackPtr track, getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (clip->getSelected())
+            {
+                selectedclips.insert(clip);
+            }
+        }
+    }
+    return selectedclips;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IPROJECTVIEW
 //////////////////////////////////////////////////////////////////////////
 
 wxString Sequence::getName() const
-{ 
-    return mName; 
+{
+    return mName;
 };
 
 void Sequence::setName(wxString name)
-{ 
+{
     mName = name;
     gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(shared_from_this(),mName)));
 }
@@ -307,7 +324,7 @@ void Sequence::updateTracks()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -330,4 +347,3 @@ template void Sequence::serialize<boost::archive::text_oarchive>(boost::archive:
 template void Sequence::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-
