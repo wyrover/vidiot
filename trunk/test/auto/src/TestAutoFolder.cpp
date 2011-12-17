@@ -1,7 +1,7 @@
 #include "TestAutoFolder.h"
 
 #include <wx/ffile.h>
-#include <wx/filefn.h> 
+#include <wx/filefn.h>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/path.hpp>
@@ -36,7 +36,7 @@ void TestAutoFolder::tearDown()
 
 void TestAutoFolder::testWatch()
 {
-    LOG_DEBUG << "TEST_START";
+    START_TEST;
 
     int nDefaultItems = countProjectView();
 
@@ -63,7 +63,7 @@ void TestAutoFolder::testWatch()
     filepath.SetFullName("valid.avi");
     bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );
     ASSERT(copyok);
-    
+
     // Wait until file addition seen. Loop is required to wait until the Watcher has seen the valid file
     waitForIdle();
     while ( model::AutoFolder::getSupportedFiles( dirpath ).size() < 1 )
@@ -77,6 +77,5 @@ void TestAutoFolder::testWatch()
     bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
     ASSERT(removed);
 }
-
 
 } // namespace
