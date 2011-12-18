@@ -65,12 +65,12 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
         {
         case TransitionLeftClipInterior:
         case TransitionLeftClipEnd:
-            clip = info.clip->getPrev();
+            clip = info.clip->getPrev(); // todo for an out-only transition shouldn't the transition be also selected?
             ASSERT(clip);
             break;
         case TransitionRightClipBegin:
         case TransitionRightClipInterior:
-            clip = info.clip->getNext();
+            clip = info.clip->getNext(); // todo for an in-only transition shouldn't the transition be also selected?
             ASSERT(clip);
             break;
         case TransitionBegin:
