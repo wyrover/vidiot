@@ -57,20 +57,20 @@ void TestOnce::tearDown()
     mProjectFixture.destroy();
 }
 
+auto PrepareSnapping = [](bool enableSnapping)
+{
+    checkMenu(ID_SNAP_CLIPS, enableSnapping);
+    checkMenu(ID_SNAP_CURSOR, enableSnapping);
+    DeselectAllClips();
+};
+
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
 void TestOnce::testOnce()
 {
-    // rename to testTouchingTransitions
-
-    auto PrepareSnapping = [](bool enableSnapping)
-    {
-        checkMenu(ID_SNAP_CLIPS, enableSnapping);
-        checkMenu(ID_SNAP_CURSOR, enableSnapping);
-        DeselectAllClips();
-    };
+    START_TEST;
 
         // Zoom in
     Type('=');
@@ -79,48 +79,10 @@ void TestOnce::testOnce()
     Type('=');
 
     {
-        // Test - for an in-out-transition- that dragging when clicking on TransitionLeftClipInterior
-        // starts a drag and drop operation, not with the transition but the clip left of the transition.
-        MakeInOutTransitionAfterClip preparation(1);
-
-        Drag(TransitionLeftClipInterior(VideoClip(0,2)),Center(VideoClip(0,4)));
-        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
-        ASSERT_EQUALS(VideoClip(0,4)->getLength(),AudioClip(0,4)->getLength()); // Transition is unapplied which causes the audio and video to have the same lengths again
-        ASSERT_EQUALS(VideoClip(0,-1)->getRightPts(),AudioClip(0,-1)->getRightPts()); // Both tracks have the same length
-        pause(10000);
-        Undo();
-    }
-    {
-        // Test - for an out-only-transition - that dragging when clicking on TransitionLeftClipInterior
-        // starts a drag and drop operation, not with the transition but the clip left of the transition.
-    }
-    {
-        // Test - for an in-out-transition - that dragging when clicking on TransitionRightClipInterior starts a
-        // drag and drop operation, not with the transition but the clip right of the transition.
-        MakeOutTransitionAfterClip preparation(1);
-    }
-    {
-        // Test - for an in-only-transition- that clicking on TransitionRightClipInterior
-        // selects the clip right of the transition.
-        MakeInTransitionAfterClip preparation(1);
-
-    }
-    {
-        // Test - for an in-only-transition - that dragging when clicking on TransitionRightClipInterior starts a
-        // drag and drop operation, not with the transition but the clip right of the transition.
-        MakeInTransitionAfterClip preparation(1);
-    }
-    {
         // Test - for an in-out-transition- that clicking on TransitionLeftClipEnd
         // starts a trim operation, not with the transition but the clip left of the transition.
 
         // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-    {
-        // Test - for an out-only-transition- that clicking on TransitionLeftClipInterior
-        // selects the clip left of the transition.
-        MakeOutTransitionAfterClip preparation(1);
-
     }
     {
         // Test - for an out-only-transition - that clicking on TransitionLeftClipEnd

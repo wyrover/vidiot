@@ -32,7 +32,7 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
     pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
 
     PointerPositionInfo info = getTimeline().getMousePointer().getInfo(position);
-    if (info.clip && !info.clip->isA<model::EmptyClip>())
+    if (info.clip && !info.clip->isA<model::EmptyClip>() && !info.clip->isA<model::Transition>())
     {
         switch (info.logicalclipposition)
         {
@@ -47,7 +47,6 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
             mRight = info.clip->getNext();
             break;
         default:
-            // TODO what if clip is a transition?
             FATAL("Unexpected logical clip position.");
         }
     }
