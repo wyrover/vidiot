@@ -31,8 +31,8 @@ struct EvMotion;
 struct EvKeyUp;
 struct EvKeyDown;
 
-class Trim
-    :   public TimeLineState< Trim, Machine >
+class StateTrim
+    :   public TimeLineState< StateTrim, Machine >
 {
 public:
 
@@ -40,9 +40,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Trim( my_context ctx );
+    StateTrim( my_context ctx );
 
-    virtual ~Trim();
+    virtual ~StateTrim();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftUp >,

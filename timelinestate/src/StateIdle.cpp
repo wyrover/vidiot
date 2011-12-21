@@ -190,7 +190,7 @@ boost::statechart::result Idle::leftDown()
             switch (info.logicalclipposition)
             {
             case ClipBegin:
-                return transit<Trim>();
+                return transit<StateTrim>();
                 break;
             case ClipInterior:
             case TransitionLeftClipInterior:
@@ -200,7 +200,7 @@ boost::statechart::result Idle::leftDown()
             case ClipEnd:
             case TransitionLeftClipEnd:
             case TransitionRightClipBegin:
-                return transit<Trim>();
+                return transit<StateTrim>();
                 break;
             case TransitionBegin://todo temp
             case TransitionInterior://todo temp

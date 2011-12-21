@@ -42,7 +42,7 @@ const wxString sTooltip = _(
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Trim::Trim( my_context ctx ) // entry
+StateTrim::StateTrim( my_context ctx ) // entry
     :   TimeLineState( ctx )
     ,   mStartPosition(0,0)
     ,   mEdit(getPlayer()->startEdit())
@@ -171,7 +171,7 @@ Trim::Trim( my_context ctx ) // entry
     preview();
 }
 
-Trim::~Trim() // exit
+StateTrim::~StateTrim() // exit
 {
     getPlayer()->endEdit();
     LOG_DEBUG;
@@ -180,13 +180,13 @@ Trim::~Trim() // exit
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-boost::statechart::result Trim::react( const EvLeftUp& evt )
+boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
     return transit<Idle>();
 }
 
-boost::statechart::result Trim::react( const EvMotion& evt )
+boost::statechart::result StateTrim::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
     if (mCurrentPosition != evt.mWxEvent.GetPosition())
@@ -197,7 +197,7 @@ boost::statechart::result Trim::react( const EvMotion& evt )
     return forward_event();
 }
 
-boost::statechart::result Trim::react( const EvLeave& evt )
+boost::statechart::result StateTrim::react( const EvLeave& evt )
 {
     VAR_DEBUG(evt);
     if (undo())
@@ -207,7 +207,7 @@ boost::statechart::result Trim::react( const EvLeave& evt )
     return transit<Idle>();
 }
 
-boost::statechart::result Trim::react( const EvKeyDown& evt)
+boost::statechart::result StateTrim::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
     if (mShiftDown != evt.mWxEvent.ShiftDown())
@@ -230,7 +230,7 @@ boost::statechart::result Trim::react( const EvKeyDown& evt)
     return forward_event();
 }
 
-boost::statechart::result Trim::react( const EvKeyUp& evt)
+boost::statechart::result StateTrim::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
     if (mShiftDown != evt.mWxEvent.ShiftDown())
@@ -255,7 +255,7 @@ void upperlimit(pts& p, pts limit)
     if (p > limit) { p = limit; }
 }
 
-pts Trim::getDiff()
+pts StateTrim::getDiff()
 {
     ASSERT(!mMustUndo); // If a command has been submitted, mOriginalClip can not be used.
 
@@ -320,7 +320,7 @@ pts Trim::getDiff()
     return diff;
 }
 
-void Trim::preview()
+void StateTrim::preview()
 {
     model::IClipPtr updatedClip = make_cloned<model::IClip>(mOriginalClip);
     if (updatedClip->isA<model::VideoClip>())
@@ -378,9 +378,9 @@ void Trim::preview()
     }
 }
 
-void Trim::show()
+void StateTrim::show()
 {
-    // Do not use mOriginalClip: it may have been removed from the track by applying command::Trim previously
+    // Do not use mOriginalClip: it may have been removed from the track by applying command::TrimClip previously
     LOG_ERROR << "BEGIN";
     bool update = undo();
     // From here we can safely use mOriginalClip again
@@ -415,7 +415,7 @@ void Trim::show()
     }
 }
 
-bool Trim::undo()
+bool StateTrim::undo()
 {
     if (mMustUndo)
     {
