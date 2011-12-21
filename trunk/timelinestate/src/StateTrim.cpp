@@ -27,7 +27,7 @@
 #include "Tooltip.h"
 #include "Track.h"
 #include "Transition.h"
-#include "Trim.h"
+#include "TrimClip.h"
 #include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
@@ -396,8 +396,8 @@ void Trim::show()
         preview();
 
     LOG_ERROR << "submit";
-        getTimeline().Submit(new command::Trim(getSequence(), mOriginalClip, mTransition, diff, mTrimBegin, mShiftDown));
-        // From here we can no longer use mOriginalClip: it is changed by applying the command::Trim
+        getTimeline().Submit(new command::TrimClip(getSequence(), mOriginalClip, mTransition, diff, mTrimBegin, mShiftDown));
+        // From here we can no longer use mOriginalClip: it is changed by applying the command::TrimClip
 
     LOG_ERROR << "align";
         mMustUndo = true;

@@ -22,7 +22,7 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-#include "Trim.h"
+#include "TrimClip.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
@@ -202,13 +202,13 @@ void TestTimeline::testUndo()
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
     Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
-    Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+    Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+    Undo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
     Undo(); ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     Undo(); ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateAutoFolder>();
     Redo(); ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
-    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+    Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
     Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
     Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     Undo();
