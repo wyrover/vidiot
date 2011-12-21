@@ -39,8 +39,8 @@ EmptyClip::EmptyClip(const EmptyClip& other)
 }
 
 EmptyClip* EmptyClip::clone()
-{ 
-    return new EmptyClip(static_cast<const EmptyClip&>(*this)); 
+{
+    return new EmptyClip(static_cast<const EmptyClip&>(*this));
 }
 
 EmptyClip::~EmptyClip()
@@ -65,6 +65,8 @@ EmptyClipPtr EmptyClip::replace( IClipPtr original )
         ASSERT_EQUALS(clip->getMinAdjustEnd(),original->getMinAdjustEnd());
     }
     ASSERT_EQUALS(clip->getLength(),original->getLength());
+
+    // todo see AClipEdit::replaceWithEmpty, there the same algorithm is applied, but then to a list. Make generic (list) and reuse in this method
     return clip;
 }
 
@@ -119,7 +121,7 @@ VideoFramePtr EmptyClip::getNextVideo(int requestedWidth, int requestedHeight, b
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

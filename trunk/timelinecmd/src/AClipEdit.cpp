@@ -485,16 +485,18 @@ void AClipEdit::removeTransition( model::TransitionPtr transition )
     replaceClip(transition, boost::assign::list_of(boost::make_shared<model::EmptyClip>(transition->getLength())));
 }
 
-void AClipEdit::unapplyTransition( model::TransitionPtr transition )
+model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
 {
     // Note that, due to the usage after a drop operation, the left and/or right clips of the given
     // transition may be empty clips (for instance, when only dragging one of the two clips in the
     // transition, or when using shift & drag).
+    model::IClips replacements;
     if (transition->getLeft() > 0)
     {
         model::IClipPtr prev = transition->getPrev();
-        if (prev)
-        {
+        ASSERT(prev);
+        //if (prev)
+        //{
             model::IClipPtr replacement;
             if (prev->isA<model::EmptyClip>())
             {
@@ -508,14 +510,16 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition )
                 replacement->adjustEnd(transition->getLeft());
             }
             replaceClip(prev,boost::assign::list_of(replacement));
-        }
-        // else: prev has already been removed (for instance during drag-and-drop)
+            replacements.push_back(replacement);
+        //}
+        //// else: prev has already been removed (for instance during drag-and-drop)
     }
     if (transition->getRight() > 0)
     {
         model::IClipPtr next = transition->getNext();
-        if (next)
-        {
+        ASSERT(next);
+        //if (next)
+        //{
             model::IClipPtr replacement;
             if (next->isA<model::EmptyClip>())
             {
@@ -529,10 +533,12 @@ void AClipEdit::unapplyTransition( model::TransitionPtr transition )
                 replacement->adjustBegin(-transition->getRight());
             }
             replaceClip(next,boost::assign::list_of(replacement));
-        }
-        // else: next has already been removed (for instance during drag-and-drop)
+            replacements.push_back(replacement);
+        //}
+        //// else: next has already been removed (for instance during drag-and-drop)
     }
     removeClip(transition);
+    return replacements;
 }
 
 //////////////////////////////////////////////////////////////////////////

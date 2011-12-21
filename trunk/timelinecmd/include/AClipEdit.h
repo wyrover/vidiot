@@ -139,7 +139,8 @@ protected:
     /// Unapply transition. If there are adjacent clips that are part of the transition,
     /// these clips will be extended with the part of that clip that is 'part of the transition'.
     /// \param transition transition to be removed
-    void unapplyTransition( model::TransitionPtr transition );
+    /// \return list of clips with which the transition and all its related clips are replaced
+    model::IClips unapplyTransition( model::TransitionPtr transition );
 
 private:
 

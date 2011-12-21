@@ -8,6 +8,7 @@
 #include "Config.h"
 #include "File.h"
 #include "Track.h"
+#include "Transition.h"
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
 
@@ -153,7 +154,13 @@ IClipPtr Clip::getLink() const
 
 pts Clip::getMinAdjustBegin() const
 {
-    return -mOffset;
+    TransitionPtr transition = boost::dynamic_pointer_cast<Transition>(boost::const_pointer_cast<IClip>(getPrev()));
+    pts reservedForTransition = 0;
+    if (transition && transition->getRight() > 0) // The transition is overlapping with this clip
+    {
+        reservedForTransition = transition->getLength(); // Do not use right part only. The left part (if present) is also using frames from this clip!
+    }
+    return -mOffset + reservedForTransition;
 }
 
 pts Clip::getMaxAdjustBegin() const
@@ -179,8 +186,14 @@ pts Clip::getMinAdjustEnd() const
 
 pts Clip::getMaxAdjustEnd() const
 {
-    ASSERT_MORE_THAN_EQUALS(mRender->getLength(),mLength + mOffset);
-    return mRender->getLength() - mLength - mOffset;
+    pts reservedForTransition = 0;
+    TransitionPtr transition = boost::dynamic_pointer_cast<Transition>(boost::const_pointer_cast<IClip>(getNext()));
+    if (transition && transition->getLeft() > 0) // The transition is overlapping with this clip
+    {
+        reservedForTransition = transition->getLength(); // Do not use left part only. The right part (if present) is also using frames from this clip!
+    }
+    ASSERT_MORE_THAN_EQUALS(mRender->getLength(),mLength + mOffset + reservedForTransition);
+    return mRender->getLength() - mLength - mOffset - reservedForTransition;
 }
 
 void Clip::adjustEnd(pts adjustment)

@@ -198,12 +198,12 @@ boost::statechart::result Idle::leftDown()
                 return transit<StateLeftDown>();
                 break;
             case ClipEnd:
+            case TransitionLeftClipEnd:
+            case TransitionRightClipBegin:
                 return transit<Trim>();
                 break;
             case TransitionBegin://todo temp
-            case TransitionLeftClipEnd://todo temp
             case TransitionInterior://todo temp
-            case TransitionRightClipBegin://todo temp
             case TransitionEnd://todo temp
                 return forward_event();
             default:
