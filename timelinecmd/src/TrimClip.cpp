@@ -1,4 +1,4 @@
-#include "Trim.h"
+#include "TrimClip.h"
 
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
@@ -17,7 +17,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Trim::Trim(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, pts diff, bool left, bool shift)
+TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, pts diff, bool left, bool shift)
     :   AClipEdit(sequence)
     ,   mClip(clip)
     ,   mTransition(transition)
@@ -37,7 +37,7 @@ Trim::Trim(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionP
     }
 }
 
-Trim::~Trim()
+TrimClip::~TrimClip()
 {
 }
 
@@ -45,7 +45,7 @@ Trim::~Trim()
 // ACLIPEDIT INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
-void Trim::initialize()
+void TrimClip::initialize()
 {
     VAR_INFO(this);
     model::IClipPtr newclip;
@@ -188,7 +188,7 @@ void Trim::initialize()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Trim::reduceSize(model::IClipPtr emptyclip, pts begin, pts end)
+void TrimClip::reduceSize(model::IClipPtr emptyclip, pts begin, pts end)
 {
     ASSERT(emptyclip);
     ASSERT(emptyclip->isA<model::EmptyClip>());
@@ -213,7 +213,7 @@ void Trim::reduceSize(model::IClipPtr emptyclip, pts begin, pts end)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Trim& obj )
+std::ostream& operator<<( std::ostream& os, const TrimClip& obj )
 {
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mClip << '|' << obj.mDiff << '|' << obj.mLeft << '|' << obj.mShift;
     return os;

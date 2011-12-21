@@ -5,7 +5,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-class Trim
+class TrimClip
     :   public AClipEdit
 {
 public:
@@ -27,9 +27,9 @@ public:
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
     /// \param left if true, shift leftmost point of clip. if false, shift rightmost point of clip.
     /// \param shift indicates if the clip may be enlarged, even when there is no empty space in front of it.
-    Trim(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, pts diff, bool left, bool shift);
+    TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, pts diff, bool left, bool shift);
 
-    ~Trim();
+    ~TrimClip();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE
@@ -67,7 +67,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const Trim& obj );
+    friend std::ostream& operator<<( std::ostream& os, const TrimClip& obj );
 };
 
 }}} // namespace

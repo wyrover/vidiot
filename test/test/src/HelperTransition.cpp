@@ -6,13 +6,13 @@
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "Layout.h"
+#include "MousePointer.h"
+#include "PositionInfo.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
 #include "Timeline.h"
-#include "MousePointer.h"
-#include "PositionInfo.h"
 #include "Transition.h"
-#include "Trim.h"
+#include "TrimClip.h"
 #include "VideoClip.h"
 #include "Zoom.h"
 
@@ -115,14 +115,13 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip)
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - defaultSize / 2);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - defaultSize / 2);
 }
-
 MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 {
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
     Undo(); // Undo create transition
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
     Undo(); // Undo TrimRight
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
     Undo(); // Undo TrimLeft
 }
 
@@ -145,7 +144,7 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
 {
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
     Undo(); // Undo create transition
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
     Undo(); // Undo TrimRight
 }
 
@@ -168,7 +167,7 @@ MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
 {
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
     Undo(); // Undo create transition
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::Trim>();
+    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
     Undo(); // Undo TrimLeft
 }
 
