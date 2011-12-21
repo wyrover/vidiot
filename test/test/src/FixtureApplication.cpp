@@ -6,7 +6,7 @@
 
 namespace test {
 
-//static 
+//static
 FixtureGui sInstance;
 
 //////////////////////////////////////////////////////////////////////////
@@ -34,12 +34,12 @@ bool FixtureGui::setUpWorld()
 
 bool FixtureGui::tearDownWorld()
 {
-    ASSERT(!mEnd);// 
+    ASSERT(!mEnd);//
     {
         boost::mutex::scoped_lock lock(mEndMutex);
         mEnd = true;
         mBarrierStart.wait();
-        // Release lock ensures main loop may insect mEnd now
+        // Release lock ensures main loop may inspect mEnd now
     }
     if (mThread)
     {
@@ -70,8 +70,8 @@ bool FixtureGui::tearDown()
     // only be done for (re)starting the main (application) event loop, not for any dialogs.
     mStartingMainThread = true;
 
-    // Must be done via an Event, since all wxWindows derived classes must be 
-    // destroyed in the same thread as in which they were created, which is 
+    // Must be done via an Event, since all wxWindows derived classes must be
+    // destroyed in the same thread as in which they were created, which is
     // the main wxWidgets event thread.
     gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
 
@@ -86,7 +86,7 @@ bool FixtureGui::tearDown()
 
 void FixtureGui::start()
 {
-    // Do not define in header file. Then it will be optimized away 
+    // Do not define in header file. Then it will be optimized away
     // (at least on Visual Studio 2010).
 }
 
@@ -129,7 +129,7 @@ void FixtureGui::mainThread()
         {
             boost::mutex::scoped_lock lock(mEndMutex);
             if (mEnd) break;
-        }	
+        }
         wxTheApp->CallOnInit();
         wxTheApp->OnRun();
         mBarrierStopped.wait();

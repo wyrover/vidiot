@@ -17,15 +17,16 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Trim::Trim(model::SequencePtr sequence, model::IClipPtr clip, pts diff, bool left, bool shift)
+Trim::Trim(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, pts diff, bool left, bool shift)
     :   AClipEdit(sequence)
     ,   mClip(clip)
+    ,   mTransition(transition)
     ,   mDiff(diff)
     ,   mLeft(left)
     ,   mShift(shift)
 {
-    VAR_INFO(this)(mClip)(mDiff)(mLeft)(mShift);
-    ASSERT_NONZERO(mDiff); // Useless to add an action to the undo list, when there is no change
+    VAR_INFO(this)(mClip)(mTransition)(mDiff)(mLeft)(mShift);
+    ASSERT_NONZERO(mDiff); // Useless to add an action to the undo list, when there is no change. Furthermore, this ensures that not a transition is unapplied although no actual trim was done.
     if (mLeft)
     {
         mCommandName = _("Adjust clip begin point");
@@ -50,9 +51,27 @@ void Trim::initialize()
     model::IClipPtr newclip;
     model::IClipPtr newlink;
 
+    // todo bug: start application, make sequence, shift click clip four. all first four clips selected!
+
+    model::IClipPtr clip = mClip;
     model::IClipPtr linked = mClip->getLink();
 
-    newclip = make_cloned<model::IClip>(mClip);
+    if (!mShift && mTransition)
+    {
+        model::IClips replacements = unapplyTransition(mTransition);
+        ASSERT_MORE_THAN_ZERO(replacements.size());
+        if (mLeft)
+        {
+            clip = replacements.back();
+        }
+        else
+        {
+            clip = replacements.front();
+        }
+        ASSERT(!clip->isA<model::EmptyClip>());
+    }
+
+    newclip = make_cloned<model::IClip>(clip);
     if (mLeft)
     {
         newclip->adjustBegin(mDiff);
@@ -64,9 +83,10 @@ void Trim::initialize()
 
     if (linked)
     {
-        // NIY: What if the link is 'shifted' wrt original clip?
-        ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
-        ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
+        // TODO NIY: What if the link is 'shifted' wrt original clip?
+        //ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
+        //ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
+        // This is already seen when trimming with transitions
 
         newlink = make_cloned<model::IClip>(linked);
         if (mLeft)
@@ -82,7 +102,9 @@ void Trim::initialize()
     model::IClips replace = boost::assign::list_of(newclip);
     model::IClips replacelink = boost::assign::list_of(newlink);
 
-    // If the clip or its link is resized to 0 frames, then replace the original clip with nothing
+    // If the clip or its link is resized to 0 frames, then replace with "nothing"
+    ASSERT_MORE_THAN_EQUALS_ZERO(newclip->getLength());
+    ASSERT_MORE_THAN_EQUALS_ZERO(newlink->getLength());
     if (newclip->getLength() == 0)
     {
         replace.clear();
@@ -97,7 +119,7 @@ void Trim::initialize()
         // Move clips in other tracks (that's the 'shift') - and only in other tracks
         // The clips in the same track as mClip and linked are shifted automatically
         // because of the enlargement/reduction of these two clips.
-        model::Tracks exclude = boost::assign::list_of(mClip->getTrack());
+        model::Tracks exclude = boost::assign::list_of(clip->getTrack());
         if (linked)
         {
             exclude.push_back(linked->getTrack());
@@ -106,12 +128,12 @@ void Trim::initialize()
         // Note that the state class is responsible for checking that there is enough space
         // in case of moving clips to the left.
 
-        // \todo what if the linked clip is more to the left. Then that position should 
+        // \todo what if the linked clip is more to the left. Then that position should
         // be used for shifting other tracks?
-        ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
-        ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
+        //ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
+        //ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
 
-        shiftAllTracks(mClip->getLeftPts(), -mDiff,  exclude);
+        shiftAllTracks(clip->getLeftPts(), -mDiff,  exclude);
     }
     else
     {
@@ -125,9 +147,11 @@ void Trim::initialize()
             }
             else // (mDiff < 0) // Enlarge: Move clip begin point to the left
             {
-                reduceSize(mClip->getPrev(), 0, -mDiff);
+                ASSERT(clip->getPrev()->isA<model::EmptyClip>());
+                reduceSize(clip->getPrev(), 0, -mDiff);
                 if (linked)
                 {
+                    ASSERT(linked->getPrev()->isA<model::EmptyClip>());
                     reduceSize(linked->getPrev(), 0, -mDiff);
                 }
             }
@@ -142,19 +166,21 @@ void Trim::initialize()
             }
             else // (mDiff > 0) // Enlarge: Move clip end point to the right
             {
-                reduceSize(mClip->getNext(), mDiff, 0);
+                ASSERT(clip->getNext()->isA<model::EmptyClip>());
+                reduceSize(clip->getNext(), mDiff, 0);
                 if (linked)
                 {
+                    ASSERT(linked->getNext()->isA<model::EmptyClip>());
                     reduceSize(linked->getNext(), mDiff, 0);
                 }
             }
         }
     }
 
-    replaceClip(mClip, replace);
+    replaceClip(clip, replace);
     if (linked)
     {
-        replaceClip(mClip->getLink(), replacelink);
+        replaceClip(linked, replacelink);
     }
 }
 

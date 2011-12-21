@@ -5,7 +5,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-class Trim 
+class Trim
     :   public AClipEdit
 {
 public:
@@ -23,10 +23,11 @@ public:
     /// shift equals true.
     ///
     /// \param clip clip to be changed
+    /// \param transition transition that must be unapplied if this is not a shift trim operation (of 0 then nothing needs to be done)
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
     /// \param left if true, shift leftmost point of clip. if false, shift rightmost point of clip.
     /// \param shift indicates if the clip may be enlarged, even when there is no empty space in front of it.
-    Trim(model::SequencePtr sequence, model::IClipPtr clip, pts diff, bool left, bool shift);
+    Trim(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, pts diff, bool left, bool shift);
 
     ~Trim();
 
@@ -43,6 +44,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::IClipPtr mClip;
+    model::TransitionPtr mTransition;
     pts mDiff;
     bool mLeft;
     bool mShift;

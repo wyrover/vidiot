@@ -83,6 +83,14 @@ void TestOnce::testOnce()
         // starts a trim operation, not with the transition but the clip left of the transition.
 
         // Also test that the minadjustbegin/maxadjustend values are honored
+        // test move to the left
+        // test move to the right
+        PrepareSnapping(true);
+        MakeInOutTransitionAfterClip preparation(1);
+
+      //  Drag(TransitionLeftClipEnd(VideoClip(0,2)),Center(VideoClip(0,1)));
+        pause();
+        Undo();
     }
     {
         // Test - for an out-only-transition - that clicking on TransitionLeftClipEnd

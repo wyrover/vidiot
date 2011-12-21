@@ -3,11 +3,14 @@
 
 #include <boost/statechart/custom_reaction.hpp>
 #include "UtilInt.h"
+#include "PositionInfo.h"
 #include "State.h"
 
 namespace model {
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
+class Transition;
+typedef boost::shared_ptr<Transition> TransitionPtr;
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef std::list<TrackPtr> Tracks;
@@ -64,6 +67,7 @@ protected:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    MouseOnClipPosition mPosition;  ///< The logical mouse position where the trim was started
     bool mTrimBegin;                ///< True if begin of clip is changed, false if end of clip is changed.
 
     bool mMustUndo;                 ///< True if, for a new update, first a previous trim must be undone
@@ -71,11 +75,13 @@ protected:
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
     wxPoint mCurrentPosition;       ///< Current mouse position (in unscrolled coordinates)
 
-    model::IClipPtr mOriginalClip;
+    model::IClipPtr mOriginalClip;  ///< Clip whose size is changed
+    model::TransitionPtr mTransition;  ///< Transition that is changed, or in case of trimming a clip 'under' a transition, the transition which may need to be unapplied
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
 
     pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
     pts mMaxShiftOtherTrackContent; ///< Maximum allowed shift (to the right) of 'other' tracks
+
     bool mShiftDown;                ///< True if shift is down, false if not
 
     EditDisplay* mEdit;
