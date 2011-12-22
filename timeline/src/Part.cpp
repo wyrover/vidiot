@@ -23,7 +23,7 @@ Part::~Part()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// PARTS 
+// PARTS
 //////////////////////////////////////////////////////////////////////////
 
 Timeline& Part::getTimeline()
@@ -52,23 +52,23 @@ const SequenceView& Part::getSequenceView() const
     return getTimeline().getSequenceView();
 }
 
-Zoom& Part::getZoom() 
-{ 
-    return getTimeline().getZoom(); 
+Zoom& Part::getZoom()
+{
+    return getTimeline().getZoom();
 }
 
 const Zoom& Part::getZoom() const
-{ 
-    return getTimeline().getZoom(); 
+{
+    return getTimeline().getZoom();
 }
 
-Intervals& Part::getIntervals() 
-{ 
+Intervals& Part::getIntervals()
+{
     return getTimeline().getIntervals();
 }
 
 const Intervals& Part::getIntervals() const
-{ 
+{
     return getTimeline().getIntervals();
 }
 
@@ -150,6 +150,16 @@ Tooltip& Part::getTooltip()
 const Tooltip& Part::getTooltip() const
 {
     return getTimeline().getTooltip();
+}
+
+Trim& Part::getTrim()
+{
+    return getTimeline().getTrim();
+}
+
+const Trim& Part::getTrim() const
+{
+    return getTimeline().getTrim();
 }
 
 state::Machine& Part::getStateMachine()

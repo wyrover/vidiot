@@ -10,7 +10,7 @@ namespace model {
     typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 
-namespace gui { 
+namespace gui {
     class Player;
 
     namespace timeline {
@@ -29,11 +29,12 @@ namespace gui {
         class SequenceView;
         class TrackView;
         class Tooltip;
+        class Trim;
         class ViewMap;
         class Zoom;
 
-        namespace state { 
-            class Machine; 
+        namespace state {
+            class Machine;
         } // namespace
 
 class Part
@@ -88,6 +89,9 @@ public:
 
     Tooltip& getTooltip();
     const Tooltip& getTooltip() const;
+
+    Trim& getTrim();
+    const Trim& getTrim() const;
 
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;
