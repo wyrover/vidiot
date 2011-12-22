@@ -12,9 +12,6 @@
 #include "ClipView.h"
 #include "EditDisplay.h"
 #include "EmptyClip.h"
-#include "EventDrag.h"
-#include "EventKey.h"
-#include "EventMouse.h"
 #include "Layout.h"
 #include "MousePointer.h"
 #include "Player.h"
@@ -22,7 +19,6 @@
 #include "Project.h"
 #include "Scrolling.h"
 #include "Sequence.h"
-#include "StateIdle.h"
 #include "Timeline.h"
 #include "Tooltip.h"
 #include "Track.h"
@@ -63,6 +59,15 @@ void Trim::start()
     LOG_DEBUG;
 
     mEdit = getPlayer()->startEdit();
+
+    // Reset first
+     mStartPosition = wxPoint(0,0);
+    mOriginalClip.reset();
+    mMinShiftOtherTrackContent = (std::numeric_limits<pts>::min)();
+    mMaxShiftOtherTrackContent = ((std::numeric_limits<pts>::max)());
+    mMustUndo = false;
+    mShiftDown = false;
+    mFixedPixel = 0;
 
     // Determine if pointer was at begin or at end of clip
     wxPoint virtualMousePosition = getMousePointer().getLeftDownPosition();
@@ -211,6 +216,33 @@ void Trim::update()
     LOG_ERROR << "update";
         getTimeline().Update();
     LOG_ERROR << "update2";
+    }
+}
+
+void Trim::onShift(bool shift)
+{
+        if (mShiftDown != shift)
+    {
+        mShiftDown = shift;
+        update();
+    }
+
+}
+
+void Trim::onMove(wxPoint position)
+{
+ if (mCurrentPosition != position)
+    {
+        mCurrentPosition = position;
+        update();
+    }
+}
+
+void Trim::abort()
+{
+    if (undo())
+    {
+        getTimeline().Update();
     }
 }
 

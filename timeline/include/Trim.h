@@ -51,6 +51,9 @@ public:
     /// mouse/keyboard changes.
     void update();
 
+    void onShift(bool shift);
+    void onMove(wxPoint position);
+
     /// Abort a pending trim operation. If changes were made, undo them.
     void abort();
 
