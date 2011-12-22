@@ -52,6 +52,8 @@ public:
     const Drag& getDrag() const;
     Tooltip& getTooltip();
     const Tooltip& getTooltip() const;
+    Trim& getTrim();
+    const Trim& getTrim() const;
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;
     model::SequencePtr getSequence();
@@ -71,7 +73,7 @@ public:
 
     void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onChildViewUpdated()
     void onZoomChanged( ZoomChangeEvent& event ); ///< @see View::onZoomChanged()
-    
+
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
@@ -83,7 +85,7 @@ public:
     pixel requiredWidth() const;  ///< \see View::requiredWidth()
     pixel requiredHeight() const; ///< \see View::requiredHeight()
 
-    /// Refresh the rectangle for which 
+    /// Refresh the rectangle for which
     /// [x,y,w,h] == [position,0,1,height],
     /// using logical coordinates and
     /// taking into account scrolling and zooming
@@ -120,6 +122,7 @@ private:
     Cursor* mCursor;  // Must be AFTER mPlayer
     Drag* mDrag;
     Tooltip* mTooltip;
+    Trim* mTrim;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts
 

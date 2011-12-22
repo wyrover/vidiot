@@ -24,6 +24,7 @@
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "State.h"
+#include "Trim.h"
 #include "ViewMap.h"
 #include "ViewUpdateEvent.h"
 #include "UtilLogWxwidgets.h"
@@ -53,6 +54,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
 ,   mTooltip(new Tooltip(this))
+,   mTrim(new Trim(this))
 ,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 //////////////////////////////////////////////////////////////////////////
@@ -82,6 +84,7 @@ Timeline::~Timeline()
 
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;   mStateMachine = 0;
+    delete mTrim;           mTrim = 0;
     delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
@@ -120,103 +123,113 @@ const SequenceView& Timeline::getSequenceView() const
 }
 
 Zoom& Timeline::getZoom()
-{ 
-    return *mZoom; 
+{
+    return *mZoom;
 }
 
 const Zoom& Timeline::getZoom() const
-{ 
-    return *mZoom; 
+{
+    return *mZoom;
 }
 
 ViewMap& Timeline::getViewMap()
-{ 
-    return *mViewMap; 
+{
+    return *mViewMap;
 }
 
 const ViewMap& Timeline::getViewMap() const
-{ 
-    return *mViewMap; 
+{
+    return *mViewMap;
 }
 
 Intervals& Timeline::getIntervals()
-{ 
-    return *mIntervals; 
+{
+    return *mIntervals;
 }
 
 const Intervals& Timeline::getIntervals() const
-{ 
-    return *mIntervals; 
+{
+    return *mIntervals;
 }
 
 MousePointer& Timeline::getMousepointer()
-{ 
-    return *mMousePointer; 
+{
+    return *mMousePointer;
 }
 
 const MousePointer& Timeline::getMousepointer() const
-{ 
-    return *mMousePointer; 
+{
+    return *mMousePointer;
 }
 
 Scrolling& Timeline::getScrolling()
-{ 
-    return *mScroll; 
+{
+    return *mScroll;
 }
 
 const Scrolling& Timeline::getScrolling() const
-{ 
-    return *mScroll; 
+{
+    return *mScroll;
 }
 
 Selection& Timeline::getSelection()
-{ 
+{
     return *mSelection;
 }
 
 const Selection& Timeline::getSelection() const
-{ 
+{
     return *mSelection;
 }
 
 MenuHandler& Timeline::getMenuHandler()
-{ 
-    return *mMenuHandler; 
+{
+    return *mMenuHandler;
 }
 
 const MenuHandler& Timeline::getMenuHandler() const
-{ 
-    return *mMenuHandler; 
+{
+    return *mMenuHandler;
 }
 
 Cursor& Timeline::getCursor()
-{ 
-    return *mCursor; 
+{
+    return *mCursor;
 }
 
 const Cursor& Timeline::getCursor() const
-{ 
-    return *mCursor; 
+{
+    return *mCursor;
 }
 
 Drag& Timeline::getDrag()
-{ 
-    return *mDrag; 
+{
+    return *mDrag;
 }
 
 const Drag& Timeline::getDrag() const
-{ 
-    return *mDrag; 
+{
+    return *mDrag;
 }
 
 Tooltip& Timeline::getTooltip()
-{ 
-    return *mTooltip; 
+{
+    return *mTooltip;
 }
 
 const Tooltip& Timeline::getTooltip() const
-{ 
-    return *mTooltip; 
+{
+    return *mTooltip;
+}
+
+Trim& Timeline::getTrim()
+{
+    return *mTrim;
+}
+
+const Trim& Timeline::getTrim() const
+{
+    return *mTrim;
 }
 
 state::Machine& Timeline::getStateMachine()
@@ -340,7 +353,7 @@ void Timeline::resize()
 {
     SetVirtualSize(getSequenceView().getWidth(),getSequenceView().getHeight());
     Refresh();
-    // NOT: Update(); RATIONALE: This will cause too much updates when 
+    // NOT: Update(); RATIONALE: This will cause too much updates when
     //                           adding/removing/changing/replacing clips
     //                           which causes flickering.
 }
