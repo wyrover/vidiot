@@ -195,7 +195,7 @@ void TrimClip::reduceSize(model::IClipPtr emptyclip, pts begin, pts end)
     ASSERT_MORE_THAN_EQUALS_ZERO(begin);
     ASSERT_MORE_THAN_EQUALS_ZERO(end);
     ASSERT_MORE_THAN_EQUALS(emptyclip->getMaxAdjustBegin(),begin);
-    ASSERT_MORE_THAN_EQUALS(emptyclip->getMinAdjustEnd(),-end);
+    ASSERT_LESS_THAN_EQUALS(emptyclip->getMinAdjustEnd(),-end);
 
     model::IClipPtr clone = make_cloned<model::IClip>(emptyclip);
     if (begin > 0)
