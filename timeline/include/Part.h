@@ -27,6 +27,7 @@ namespace gui {
         class AudioView;
         class Timeline;
         class SequenceView;
+        class ThumbnailView;
         class TrackView;
         class Tooltip;
         class Trim;
