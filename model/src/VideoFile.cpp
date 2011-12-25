@@ -196,7 +196,7 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             NIY; // TO BE TESTED: FILES USING 'REPEAT'
         }
 
-        wxSize scaledSize = Convert::sizeInBoundingBox(wxSize(getCodec()->width, getCodec()->height), wxSize(requestedWidth,requestedHeight));
+        wxSize scaledSize = Convert::sizeInBoundingBox(getSize(), wxSize(requestedWidth,requestedHeight));
         mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledSize.GetWidth(), scaledSize.GetHeight(), mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size
@@ -223,6 +223,16 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
     VAR_VIDEO(this)(mPosition)(mDeliveredFrame)(requiredInputPts)(mDeliveredFrameInputPts);
 
     return mDeliveredFrame;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+wxSize VideoFile::getSize()
+{
+    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
+    return wxSize(getCodec()->width, getCodec()->height);
 }
 
 //////////////////////////////////////////////////////////////////////////
