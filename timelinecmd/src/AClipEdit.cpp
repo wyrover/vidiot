@@ -66,27 +66,21 @@ bool AClipEdit::Do()
         }
     }
 
-    // This is required to
-    // - reset model::Track iterators
-    // - start at the last played position (and not start at the "buffered" position)
-    getTimeline().getCursor().moveCursorOnUser(getTimeline().getCursor().getPosition());
+    getTimeline().modelChanged();
 
     return true;
 }
 
 bool AClipEdit::Undo()
 {
-    VAR_INFO(*this);
+    VAR_INFO(*this)(mParamsUndo.size());
     ASSERT_NONZERO(mParamsUndo.size());
     BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
         doMove(move);
     }
 
-    // This is required to
-    // - reset model::Track iterators
-    // - start at the last played position (and not start at the "buffered" position)
-    getTimeline().getCursor().moveCursorOnUser(getTimeline().getCursor().getPosition());
+    getTimeline().modelChanged();
 
     return true;
 }

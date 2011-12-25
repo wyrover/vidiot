@@ -184,6 +184,7 @@ void Trim::start()
 
 void Trim::update()
 {
+    getTimeline().beginTransaction();
     // Do not use mOriginalClip: it may have been removed from the track by applying command::TrimClip previously
     LOG_ERROR << "BEGIN";
     bool update = undo();
@@ -211,6 +212,7 @@ void Trim::update()
             getScrolling().align(mFixedPts - diff, mFixedPixel);
         }
     }
+    getTimeline().endTransaction();
     if (update)
     {
     LOG_ERROR << "update";

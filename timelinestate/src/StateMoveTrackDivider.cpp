@@ -12,8 +12,9 @@
 #include "SequenceView.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
+#include "ThumbnailView.h"
 #include "Track.h"
-#include "Transition.h"
+#include "VideoClip.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
 
@@ -43,8 +44,8 @@ MoveTrackDivider::MoveTrackDivider( my_context ctx ) // entry
 }
 
 MoveTrackDivider::~MoveTrackDivider() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,9 +64,9 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
     VAR_DEBUG(evt);
     BOOST_FOREACH( model::IClipPtr clip, mTrack->getClips() )
     {
-        if (!clip->isA<model::Transition>())
+        if (clip->isA<model::VideoClip>())
         {
-            getViewMap().getView(clip)->updateThumbnail();
+            getViewMap().getThumbnail(clip)->redraw();
         }
     }
     return transit<Idle>();
@@ -101,7 +102,7 @@ boost::statechart::result MoveTrackDivider::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.mWxEvent.GetKeyCode())
     {
-    case WXK_ESCAPE: 
+    case WXK_ESCAPE:
         return abort();
     case WXK_F1:
         getTooltip().show(sTooltip);
