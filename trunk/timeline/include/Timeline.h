@@ -95,10 +95,31 @@ public:
     void refreshLines(pixel from, pixel length);
 
     //////////////////////////////////////////////////////////////////////////
+    // TRANSACTION
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Start a 'transaction'. All operations within the transaction do not lead
+    /// to screen updates. When the complete set of operations is done (typically,
+    /// after a editing operation is done completely), call endTransaction() to
+    /// enable screen updates again. This is done to avoid useless intermediate
+    /// updates during clip edits (only the result after the final modification
+    /// is interesting).
+    void beginTransaction();
+
+    /// End a 'transaction'. This enables screen updates again.
+    /// Typically, call modelChanged after doing this.
+    void endTransaction();
+
+    //////////////////////////////////////////////////////////////////////////
     // CHANGE COMMANDS
     //////////////////////////////////////////////////////////////////////////
 
     void Submit(::command::RootCommand* c);
+
+    /// Reset the mouse pointer, triggering an update of both the model (since
+    /// iterators are reset via the moveTo method) and the timeline (since
+    /// resetting the cursor causes an update).
+    void modelChanged();
 
 private:
 
@@ -108,6 +129,7 @@ private:
 
     model::SequencePtr mSequence;
     Player* mPlayer;
+    bool mTransaction;
 
     //////////////////////////////////////////////////////////////////////////
     // PART -> Must be AFTER MEMBERS
