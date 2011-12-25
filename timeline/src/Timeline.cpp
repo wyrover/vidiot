@@ -44,6 +44,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
 ,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
+,   mTransaction(false)
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
 ,   mViewMap(new ViewMap(this))
@@ -271,6 +272,11 @@ void Timeline::onPaint( wxPaintEvent &event )
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
+    if (mTransaction)
+    {
+        return;
+    }
+
     wxPoint scroll = getScrolling().getOffset();
 
     wxBitmap bitmap = getSequenceView().getBitmap();
@@ -363,13 +369,36 @@ void Timeline::draw(wxBitmap& bitmap) const
     FATAL;
 }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    // TRANSACTION
+    //////////////////////////////////////////////////////////////////////////
+
+    void Timeline::beginTransaction()
+    {
+        mTransaction = true;
+    }
+
+    void Timeline::endTransaction()
+    {
+        mTransaction = false;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
 // CHANGE COMMANDS
 //////////////////////////////////////////////////////////////////////////
 
 void Timeline::Submit(::command::RootCommand* c)
 {
     model::Project::get().Submit(c);
+}
+
+void Timeline::modelChanged()
+{
+    if (mTransaction) return;
+    // This is required to
+    // - reset model::Track iterators
+    // - start at the last played position (and not start at the "buffered" position)
+    getTimeline().getCursor().moveCursorOnUser(getTimeline().getCursor().getPosition());
 }
 
 //////////////////////////////////////////////////////////////////////////
