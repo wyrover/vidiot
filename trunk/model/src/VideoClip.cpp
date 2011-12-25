@@ -37,8 +37,8 @@ VideoClip::VideoClip(const VideoClip& other)
 }
 
 VideoClip* VideoClip::clone()
-{ 
-    return new VideoClip(static_cast<const VideoClip&>(*this)); 
+{
+    return new VideoClip(static_cast<const VideoClip&>(*this));
 }
 
 VideoClip::~VideoClip()
@@ -92,7 +92,7 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
         else
         {
             // See AudioClip::getNextAudio
-            // The clip has not provided enough video data yet (for the pts length of the clip) 
+            // The clip has not provided enough video data yet (for the pts length of the clip)
             // but there is no more video data. This can typically happen by using a avi file
             // for which the audio data is longer than the video data. Instead of clipping the
             // extra audio part, empty video is added here (the user can make the clip shorter if
@@ -111,6 +111,15 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+wxSize VideoClip::getSize()
+{
+    return getDataGenerator<VideoFile>()->getSize();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
@@ -121,7 +130,7 @@ std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
