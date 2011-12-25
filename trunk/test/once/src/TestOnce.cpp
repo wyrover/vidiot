@@ -89,7 +89,7 @@ void TestOnce::testOnce()
         MakeInOutTransitionAfterClip preparation(1);
 
       //  Drag(TransitionLeftClipEnd(VideoClip(0,2)),Center(VideoClip(0,1)));
-        pause();
+        pause(300000);
         Undo();
     }
     {

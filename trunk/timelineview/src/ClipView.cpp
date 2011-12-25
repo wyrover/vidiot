@@ -13,6 +13,7 @@
 #include "PositionInfo.h"
 #include "Selection.h"
 #include "SequenceView.h"
+#include "ThumbnailView.h"
 #include "Track.h"
 #include "Transition.h"
 #include "UtilLog.h"
@@ -30,7 +31,6 @@ namespace gui { namespace timeline {
 ClipView::ClipView(model::IClipPtr clip, View* parent)
 :   View(parent)
 ,   mClip(clip)
-,   mThumbnail()
 ,   mRect(0,0,0,0)
 ,   mBeginAddition(0)
 {
@@ -38,10 +38,16 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
     ASSERT(mClip);
 
     getViewMap().registerView(mClip,this);
+    if (mClip->isA<model::VideoClip>())
+    {
+        new ThumbnailView(clip,this);
+    }
     mClip->Bind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,           this);
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
     mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
-    updateThumbnail();
+
+    // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as
+    //            part of edit operations, that will severely impact performance.
 }
 
 ClipView::~ClipView()
@@ -52,6 +58,10 @@ ClipView::~ClipView()
     mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
     mClip->Unbind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,  this);
 
+    if (mClip->isA<model::VideoClip>())
+    {
+        delete getViewMap().getThumbnail(mClip);
+    }
     getViewMap().unregisterView(mClip);
 }
 
@@ -189,19 +199,6 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void ClipView::updateThumbnail(bool invalidate)
-{
-    model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(mClip);
-    if (videoclip)
-    {
-        mClip->moveTo(0);
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(getWidth() - 2 * Layout::sClipBorderSize, getHeight() - 2 * Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight, false);
-        mThumbnail = videoFrame->getBitmap();
-        mClip->moveTo(0);
-    }
-    if (invalidate) invalidateBitmap();
-}
-
 void ClipView::draw(wxBitmap& bitmap) const
 {
     draw(bitmap, !getDrag().isActive(), true);
@@ -258,12 +255,6 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         }
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
 
-        // Thumbnail
-        if (mThumbnail)
-        {
-            dc.DrawBitmap(*mThumbnail,wxPoint(Layout::sClipBorderSize, Layout::sClipDescriptionBarHeight));
-        }
-
         // Text at top of clip
         dc.SetFont(*Layout::sClipDescriptionFont);
         dc.SetTextForeground(Layout::sClipDescriptionFGColour);
@@ -297,6 +288,13 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         pixel pos = getZoom().ptsToPixels(progress);
         dc.SetPen(Layout::sDebugPen);
         dc.DrawLine(wxPoint(pos,0), wxPoint(pos,bitmap.GetHeight()));
+    }
+
+    // Thumbnail
+    wxSize thumbnailSize(0,0);
+    if (mClip->isA<model::VideoClip>())
+    {
+        dc.DrawBitmap(getViewMap().getThumbnail(mClip)->getBitmap(),wxPoint(Layout::sClipBorderSize, Layout::sClipDescriptionBarHeight));
     }
 }
 

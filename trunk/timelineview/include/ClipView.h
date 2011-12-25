@@ -46,10 +46,6 @@ public:
 
     void show(wxRect rect); ///< tmp for showing intersect with selected regions
 
-    /// This will reread the thumbnail from disk. It will also invalidate the 
-    /// bitmap and force a redraw.
-    void updateThumbnail(bool invalidate = false);
-
     //////////////////////////////////////////////////////////////////////////
     // DRAW
     //////////////////////////////////////////////////////////////////////////
@@ -67,7 +63,6 @@ public:
 private:
 
     model::IClipPtr mClip;
-    boost::shared_ptr<wxBitmap> mThumbnail;
 
     wxRect mRect;       ///< @see show()
     pts mBeginAddition; ///< if >0 then this area is (temporarily, during editing) added. if <0 then it is removed from the clip.
