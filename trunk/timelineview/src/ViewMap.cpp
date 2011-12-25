@@ -12,6 +12,7 @@ ViewMap::ViewMap(Timeline* timeline)
 :   Part(timeline)
 ,   mTracks()
 ,   mClips()
+,   mThumbnails()
 {
     VAR_DEBUG(this);
 }
@@ -21,6 +22,7 @@ ViewMap::~ViewMap()
     VAR_DEBUG(this);
     ASSERT_ZERO(mTracks.size());
     ASSERT_ZERO(mClips.size());
+    ASSERT_ZERO(mThumbnails.size());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,6 +33,12 @@ void ViewMap::registerView(model::IClipPtr clip, ClipView* view)
 {
     ASSERT_MAP_CONTAINS_NOT(mClips,clip);
     mClips.insert(std::make_pair(clip, view));
+}
+
+void ViewMap::registerThumbnail(model::IClipPtr clip, ThumbnailView* view)
+{
+    ASSERT_MAP_CONTAINS_NOT(mThumbnails,clip);
+    mThumbnails.insert(std::make_pair(clip, view));
 }
 
 void ViewMap::registerView(model::TrackPtr track, TrackView* view)
@@ -51,6 +59,12 @@ void ViewMap::unregisterView(model::TrackPtr track)
     mTracks.erase(track);
 }
 
+void ViewMap::unregisterThumbnail(model::IClipPtr clip)
+{
+    ASSERT_MAP_CONTAINS(mThumbnails,clip);
+    mThumbnails.erase(clip);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CONVERSION
 //////////////////////////////////////////////////////////////////////////
@@ -66,6 +80,13 @@ TrackView* ViewMap::getView(model::TrackPtr track) const
 {
     TrackMap::const_iterator it = mTracks.find(track);
     ASSERT(it != mTracks.end())(track)(mTracks);
+    return it->second;
+}
+
+ThumbnailView* ViewMap::getThumbnail(model::IClipPtr clip) const
+{
+    ThumbnailMap::const_iterator it = mThumbnails.find(clip);
+    ASSERT(it != mThumbnails.end())(clip)(mThumbnails);
     return it->second;
 }
 
