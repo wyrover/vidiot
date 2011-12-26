@@ -37,7 +37,7 @@ public:
 
     virtual void moveTo(pts position) override;
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
 
 protected:
 
@@ -52,7 +52,6 @@ protected:
 private:
 
     pts mPts;
-
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

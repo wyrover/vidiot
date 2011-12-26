@@ -110,14 +110,9 @@ void TrackView::onHeightChanged( model::EventHeightChanged& event )
 // DRAWING EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-pixel TrackView::requiredWidth() const
+wxSize TrackView::requiredSize() const
 {
-    return getParent().getWidth();
-}
-
-pixel TrackView::requiredHeight() const
-{
-    return mTrack->getHeight();
+    return wxSize(getParent().getSize().GetWidth(),mTrack->getHeight());
 }
 
 void TrackView::onShiftChanged()

@@ -217,7 +217,7 @@ void Intervals::draw(wxDC& dc) const
     {
         wxRect r(it.GetRect());
         r.SetY(0);
-        r.SetHeight(getSequenceView().getHeight());
+        r.SetHeight(getSequenceView().getSize().GetHeight());
         dc.DrawRectangle(ptsToPixels(r));
         it++;
     }

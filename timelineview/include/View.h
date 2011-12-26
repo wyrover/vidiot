@@ -3,6 +3,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
+#include <wx/gdicmn.h>
 #include "Part.h"
 #include "UtilInt.h"
 
@@ -21,23 +22,23 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// For initializing the topmost (sequence) view
-    /// Also, for initializing top views that ignore all events. In the latter 
+    /// Also, for initializing top views that ignore all events. In the latter
     /// case, do not call init() and deinit(). Then, that ignoring top view
     /// can be used for creating temporary View trees.
     View(Timeline* timeline);
 
-    /// For initializing the topmost (sequence) view (separated into 
-    /// constructor + this method, since it requires the parts of the 
+    /// For initializing the topmost (sequence) view (separated into
+    /// constructor + this method, since it requires the parts of the
     /// timeline to be created also)... at least for getZoom()
     void init();
 
-    /// For destroying the topmost (sequence) view (separated into 
-    /// destructor + this method, since it requires the parts of the 
+    /// For destroying the topmost (sequence) view (separated into
+    /// destructor + this method, since it requires the parts of the
     /// timeline to be destroyed afterwards)
-    void deinit();      
+    void deinit();
 
     /// For initializing child views.
-    View(View* parent); 
+    View(View* parent);
 
     virtual ~View();
 
@@ -47,10 +48,10 @@ public:
 
     View& getParent() const;
 
-    /// These are only required for use in this base class to construct the
-    /// bitmap. Use getWidth() and getHeight() to retrieve the size.
-    virtual pixel requiredWidth() const = 0;
-    virtual pixel requiredHeight() const = 0;
+    /// \return the size required to render this object.
+    /// Is required for use in this base class to construct the bitmap.
+    /// Use getSize() to retrieve the size of the created bitmap.
+    virtual wxSize requiredSize() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS
@@ -65,8 +66,7 @@ public:
 
     const wxBitmap& getBitmap() const;
 
-    pixel getWidth() const;
-    pixel getHeight() const;
+    wxSize getSize() const;
 
 protected:
 
@@ -75,7 +75,6 @@ protected:
     void invalidateBitmap();                        ///< Should be called whenever the bitmap must be recreated.
 
 private:
-
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

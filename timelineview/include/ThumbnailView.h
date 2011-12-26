@@ -29,8 +29,7 @@ public:
     //  GET & SET
     //////////////////////////////////////////////////////////////////////////
 
-    pixel requiredWidth() const override;    ///< \see View::requiredWidth()
-    pixel requiredHeight() const override;   ///< \see View::requiredHeight()
+    wxSize requiredSize() const override;    ///< \see View::requiredSize()
 
     void redraw(); ///< Invalidates the bitmap
 

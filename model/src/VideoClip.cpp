@@ -61,7 +61,7 @@ void VideoClip::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
 {
     if (getLastSetPosition())
     {
@@ -75,7 +75,7 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
 
     if (mProgress < length)
     {
-        videoFrame = getDataGenerator<VideoFile>()->getNextVideo(requestedWidth, requestedHeight, alpha);
+        videoFrame = getDataGenerator<VideoFile>()->getNextVideo(size, alpha);
         if (videoFrame)
         {
             ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());
@@ -99,7 +99,7 @@ VideoFramePtr VideoClip::getNextVideo(int requestedWidth, int requestedHeight, b
             // required - thus removing the extra audio, but that's a user decision to be made).
             LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
 
-            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, mProgress));
+            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, size, mProgress));
 
             mProgress += 1;
         }

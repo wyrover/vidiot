@@ -57,7 +57,7 @@ public:
     const IClips& getClips();
 
     /// Find the clip which provides the frame at the given pts.
-    /// If pts is 'on a cut' then the clip AFTER the cut is returned. 
+    /// If pts is 'on a cut' then the clip AFTER the cut is returned.
     /// If there is no clip at this pts then an empty Ptr is returned.
     IClipPtr getClip(pts position);
 
@@ -73,13 +73,13 @@ public:
     pts getLeftEmptyArea(IClipPtr clip);
 
     /// /return size of area to the right of clip that is empty
-    pts getRightEmptyArea(IClipPtr clip); 
+    pts getRightEmptyArea(IClipPtr clip);
 
     //////////////////////////////////////////////////////////////////////////
     // STATIC HELPER METHOD
     //////////////////////////////////////////////////////////////////////////
 
-    static pts getCombinedLength(IClips clips);
+    static pts getCombinedLength(const IClips& clips);
 
     //////////////////////////////////////////////////////////////////////////
     // GET & SET

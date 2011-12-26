@@ -5,6 +5,7 @@ extern "C" {
 
 #include <boost/make_shared.hpp>
 #include "UtilInitAvcodec.h"
+#include "UtilLogWxwidgets.h"
 
 namespace model {
 
@@ -14,31 +15,29 @@ IMPLEMENTENUM(VideoFrameType);
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(VideoFrameType type, int width, int height, pts position, int repeat)
+VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position, int repeat)
 :   mFrame(0)
 ,   mBuffer(0)
 ,   mType(type)
-,	mWidth(width)
-,   mHeight(height)
+,	mSize(size)
 ,   mPts(position)
 ,   mRepeat(repeat)
 {
     PixelFormat format = type == videoRGB ? PIX_FMT_RGB24 : PIX_FMT_RGBA;
-    mBufferSize = avpicture_get_size(format, mWidth, mHeight);
+    mBufferSize = avpicture_get_size(format, mSize.GetWidth(), mSize.GetHeight());
     mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
 
     mFrame = avcodec_alloc_frame();
 
     // Assign appropriate parts of buffer to image planes in mFrame
-    avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, mWidth, mHeight);
+    avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, mSize.GetWidth(), mSize.GetHeight());
 }
 
-VideoFrame::VideoFrame(VideoFrameType type, int width, int height, pts position)
+VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position)
 :   mFrame(0)
 ,   mBuffer(0)
 ,   mType(type)
-,	mWidth(width)
-,   mHeight(height)
+,	mSize(size)
 ,   mPts(position)
 ,   mRepeat(1)
 {
@@ -71,14 +70,9 @@ void VideoFrame::setRepeat(int repeat)
     mRepeat = repeat;
 }
 
-int VideoFrame::getWidth() const
+wxSize VideoFrame::getSize() const
 {
-    return mWidth;
-}
-
-int VideoFrame::getHeight() const
-{
-    return mHeight;
+    return mSize;
 }
 
 pts VideoFrame::getPts() const
@@ -98,7 +92,7 @@ int VideoFrame::getSizeInBytes() const
 
 wxBitmapPtr VideoFrame::getBitmap()
 {
-    return boost::make_shared<wxBitmap>(wxImage(getWidth(), getHeight(), getData()[0], true));
+    return boost::make_shared<wxBitmap>(wxImage(mSize, getData()[0], true));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -107,11 +101,10 @@ wxBitmapPtr VideoFrame::getBitmap()
 
 std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
 {
-    os  << &obj                 << "|" 
-        << obj.getPts()         << "|" 
-        << obj.getRepeat()      << "|" 
-        << obj.getWidth()       << "|"
-        << obj.getHeight();
+    os  << &obj                 << "|"
+        << obj.getPts()         << "|"
+        << obj.getRepeat()      << "|"
+        << obj.getSize()        << "|";
     return os;
 }
 
@@ -142,4 +135,3 @@ LineSizePointer VideoFrame::getLineSizes() const
 }
 
 } // namespace
-

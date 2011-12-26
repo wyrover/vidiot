@@ -131,12 +131,12 @@ void Sequence::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr Sequence::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr Sequence::getNextVideo(wxSize size, bool alpha)
 {
     VideoFrames frames;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
-        VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(requestedWidth, requestedHeight, alpha);
+        VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(size, alpha);
         frames.push_back(videoFrame);
     }
     VideoFramePtr videoFrame; // Default: Null ptr (at end)

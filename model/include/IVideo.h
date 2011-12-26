@@ -1,6 +1,7 @@
 #ifndef MODEL_I_VIDEO_H
 #define MODEL_I_VIDEO_H
 
+#include <wx/gdicmn.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "UtilFrameRate.h"
@@ -24,7 +25,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) = 0;
+    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

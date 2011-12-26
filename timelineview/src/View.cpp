@@ -91,11 +91,10 @@ const wxBitmap& View::getBitmap() const
 {
     if (!mBitmapValid)
     {
-        int w = requiredWidth();
-        int h = requiredHeight();
-        if ((mBitmap.GetWidth() != w) || (mBitmap.GetHeight() != h))
+        wxSize required = requiredSize();
+        if (mBitmap.GetSize() != required)
         {
-            mBitmap.Create(requiredWidth(),requiredHeight());
+            mBitmap.Create(required);
         }
         draw(mBitmap);
         mBitmapValid = true;
@@ -104,22 +103,13 @@ const wxBitmap& View::getBitmap() const
     return mBitmap;
 }
 
-pixel View::getWidth() const
+wxSize View::getSize() const
 {
     if (!mBitmapValid)
     {
-        return requiredWidth();
+        return requiredSize();
     }
-    return mBitmap.GetWidth();
-}
-
-pixel View::getHeight() const
-{
-    if (!mBitmapValid)
-    {
-        return requiredHeight();
-    }
-    return mBitmap.GetHeight();
+    return mBitmap.GetSize();
 }
 
 void View::invalidateBitmap()

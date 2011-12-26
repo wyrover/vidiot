@@ -37,12 +37,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Initialization AND allocation.
-    VideoFrame(VideoFrameType type, int width, int height, pts position, int repeat);
+    VideoFrame(VideoFrameType type, wxSize size, pts position, int repeat);
 
     /// Initialization without allocation. Used for empty frames. Then, allocation only
-    /// needed when the data is needed for playback. During 'track combining' empty 
+    /// needed when the data is needed for playback. During 'track combining' empty
     /// frames can be ignored. This avoids needless allocation.
-    VideoFrame(VideoFrameType type, int width, int height, pts position);
+    VideoFrame(VideoFrameType type, wxSize size, pts position);
 
     virtual ~VideoFrame();
 
@@ -53,10 +53,9 @@ public:
     int getRepeat() const;      ///< \return the number of times this frame should be displayed
     void setRepeat(int repeat); ///< \param new number of times to show this frame (used at end of clips)
 
-    pts getPts() const; 
+    pts getPts() const;
     void setPts(pts position);
-    int getWidth() const;
-    int getHeight() const;
+    wxSize getSize() const;
     int getSizeInBytes() const;
     wxBitmapPtr getBitmap();    ///< \return this frame as a wxBitmap
 
@@ -79,8 +78,7 @@ protected:
     VideoFrameType mType;
     int mRepeat;
     double mTimeStamp;
-    int mWidth;
-    int mHeight;
+    wxSize mSize;
     pts mPts;
     boost::uint8_t *mBuffer;
     int mBufferSize;

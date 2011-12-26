@@ -42,26 +42,14 @@ ThumbnailView::~ThumbnailView()
 //  GET & SET
 //////////////////////////////////////////////////////////////////////////
 
-pixel ThumbnailView::requiredWidth() const
-{
-    // todo refactor this (in View class) into requiredSize method, to avoid duplicate code for x and y
-    wxSize requestedSize = mVideoClip->getSize();
-    wxSize boundingBox = wxSize(
-        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getWidth()  - 2 * Layout::sClipBorderSize,
-        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getHeight() - Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight);
-    wxSize scaledSize = model::Convert::sizeInBoundingBox(requestedSize, boundingBox);
-    return scaledSize.GetWidth();
-    // todo move scale algorithm ?
-}
-
-pixel ThumbnailView::requiredHeight() const
+wxSize ThumbnailView::requiredSize() const
 {
     wxSize requestedSize = mVideoClip->getSize();
     wxSize boundingBox = wxSize(
-        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getWidth()  - 2 * Layout::sClipBorderSize,
-        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getHeight() - Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight);
+        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetWidth()  - 2 * Layout::sClipBorderSize,
+        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetHeight() - Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight);
     wxSize scaledSize = model::Convert::sizeInBoundingBox(requestedSize, boundingBox);
-    return scaledSize.GetHeight();
+    return scaledSize;
 }
 
 void ThumbnailView::redraw()
@@ -78,7 +66,7 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     wxMemoryDC dc(bitmap);
     // TODO clone the clip here to avoid problems?
     mVideoClip->moveTo(0);
-    model::VideoFramePtr videoFrame = mVideoClip->getNextVideo(requiredWidth(), requiredHeight(), false);
+    model::VideoFramePtr videoFrame = mVideoClip->getNextVideo(requiredSize(), false);
     model::wxBitmapPtr thumbnail = videoFrame->getBitmap();
     dc.DrawBitmap(*thumbnail,0,0,false);
 }

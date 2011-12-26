@@ -22,7 +22,7 @@ AudioView::AudioView(View* parent)
 {
     VAR_DEBUG(this);
 
-    // Not via onAudioTracksAdded: do not trigger a whole sequence of 
+    // Not via onAudioTracksAdded: do not trigger a whole sequence of
     // invalidateBitmaps calls: Bad performance and crashes
     // (view of second item added is not initialized when processing
     // the invalidateBitmap events for the first added item)
@@ -80,19 +80,15 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-pixel AudioView::requiredWidth() const
+wxSize AudioView::requiredSize() const
 {
-    return getParent().getWidth();
-}
-
-pixel AudioView::requiredHeight() const
-{
-    pixel requiredHeight = 0;
+    int width = getSequenceView().minimumWidth();
+    int height = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        requiredHeight += track->getHeight() + Layout::sTrackDividerHeight;
+        height += track->getHeight() + Layout::sTrackDividerHeight;
     }
-    return requiredHeight;
+    return wxSize(width,height);
 }
 
 void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const

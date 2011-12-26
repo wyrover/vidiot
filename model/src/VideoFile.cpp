@@ -101,7 +101,7 @@ void VideoFile::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
 {
     startDecodingVideo();
 
@@ -196,8 +196,8 @@ VideoFramePtr VideoFile::getNextVideo(int requestedWidth, int requestedHeight, b
             NIY; // TO BE TESTED: FILES USING 'REPEAT'
         }
 
-        wxSize scaledSize = Convert::sizeInBoundingBox(getSize(), wxSize(requestedWidth,requestedHeight));
-        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledSize.GetWidth(), scaledSize.GetHeight(), mPosition, pFrame->repeat_pict + 1);
+        wxSize scaledSize = Convert::sizeInBoundingBox(getSize(), size);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledSize, mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(

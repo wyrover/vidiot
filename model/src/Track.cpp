@@ -259,7 +259,7 @@ pts Track::getRightEmptyArea(IClipPtr clip)
 //////////////////////////////////////////////////////////////////////////
 
 //static
-pts Track::getCombinedLength(IClips clips)
+pts Track::getCombinedLength(const IClips& clips)
 {
     int length = 0;
     BOOST_FOREACH( IClipPtr clip, clips )

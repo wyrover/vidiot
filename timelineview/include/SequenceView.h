@@ -3,10 +3,10 @@
 
 #include "View.h"
 
-namespace model { 
+namespace model {
     class Track;
     typedef boost::shared_ptr<Track> TrackPtr;
-    class EventAddVideoTracks; 
+    class EventAddVideoTracks;
 }
 
 namespace gui { namespace timeline {
@@ -35,8 +35,8 @@ public:
     AudioView& getAudio();
     const AudioView& getAudio() const;
 
-    pixel requiredWidth() const override;  ///< @see View::requiredWidth()
-    pixel requiredHeight() const override; ///< @see View::requiredHeight()
+    pixel minimumWidth() const; ///< Required to avoid infinite recursion in SequenceView::requiredSize() and Video/AudioView::getSize()
+    wxSize requiredSize() const override;  ///< @see View::requiredSize()
 
     void setDividerPosition(pixel position);
     void resetDividerPosition();
@@ -57,7 +57,6 @@ private:
 
     VideoView*  mVideoView;
     AudioView*  mAudioView;
-
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

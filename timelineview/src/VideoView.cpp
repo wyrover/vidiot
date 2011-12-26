@@ -24,7 +24,7 @@ VideoView::VideoView(View* parent)
 {
     VAR_DEBUG(this);
 
-    // Not via onVideoTracksAdded: do not trigger a whole sequence of 
+    // Not via onVideoTracksAdded: do not trigger a whole sequence of
     // invalidateBitmaps calls: Bad performance and crashes
     // (view of second item added is not initialized when processing
     // the invalidateBitmap events for the first added item)
@@ -54,19 +54,15 @@ VideoView::~VideoView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-pixel VideoView::requiredWidth() const
+wxSize VideoView::requiredSize() const
 {
-    return getParent().getWidth();
-}
-
-pixel VideoView::requiredHeight() const
-{
-    pixel requiredHeight = 0;
+    int width = getSequenceView().minimumWidth();
+    int height = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        requiredHeight += track->getHeight() + Layout::sTrackDividerHeight;
+        height += track->getHeight() + Layout::sTrackDividerHeight;
     }
-    return requiredHeight;
+    return wxSize(width,height);
 }
 
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
@@ -113,8 +109,8 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
         new TrackView(track,this);
     }
     invalidateBitmap();
-    // Not via an event in sequence view, since the added video track must 
-    // first be incorporated in the VideoView (the divider height requires 
+    // Not via an event in sequence view, since the added video track must
+    // first be incorporated in the VideoView (the divider height requires
     // the correct video height).
     getSequenceView().resetDividerPosition();
     event.Skip();

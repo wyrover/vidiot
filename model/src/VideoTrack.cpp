@@ -20,7 +20,7 @@ namespace model {
 VideoTrack::VideoTrack()
 :	Track()
 ,   mPts(0)
-{ 
+{
     VAR_DEBUG(this);
 }
 
@@ -32,8 +32,8 @@ VideoTrack::VideoTrack(const VideoTrack& other)
 }
 
 VideoTrack* VideoTrack::clone()
-{ 
-    return new VideoTrack(static_cast<const VideoTrack&>(*this)); 
+{
+    return new VideoTrack(static_cast<const VideoTrack&>(*this));
 }
 
 VideoTrack::~VideoTrack()
@@ -62,13 +62,13 @@ void VideoTrack::moveTo(pts position)
     mPts = position;
 }
 
-VideoFramePtr VideoTrack::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr VideoTrack::getNextVideo(wxSize size, bool alpha)
 {
     VideoFramePtr videoFrame;
 
     while (!videoFrame && !iterate_atEnd())
     {
-        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_get())->getNextVideo(requestedWidth, requestedHeight, alpha);
+        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_get())->getNextVideo(size, alpha);
         if (!videoFrame)
         {
             iterate_next();
@@ -87,7 +87,7 @@ VideoFramePtr VideoTrack::getNextVideo(int requestedWidth, int requestedHeight, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -100,4 +100,3 @@ template void VideoTrack::serialize<boost::archive::text_oarchive>(boost::archiv
 template void VideoTrack::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-

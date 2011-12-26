@@ -28,7 +28,7 @@ public:
     /// This is used for EmptyClips that replace clips which are adjacent to
     /// a transition in a track. The extra area used in the transition is also
     /// replaced with extra area in the empty clip. As a result, when replacing
-    /// clips with empty clips, the adjacent transitions do not have to be 
+    /// clips with empty clips, the adjacent transitions do not have to be
     /// changed.
     /// \param length size of the clip
     /// \param extraBegin extra size of the contained EmptyFile at the beginning (the truncated part at the beginning)
@@ -72,7 +72,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
 
 protected:
 

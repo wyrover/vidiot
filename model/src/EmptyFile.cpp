@@ -20,7 +20,7 @@ EmptyFile::EmptyFile()
 :   mLength(0)
 ,   mAudioPosition(0)
 ,   mVideoPosition(0)
-{ 
+{
     VAR_DEBUG(this);
 }
 
@@ -28,7 +28,7 @@ EmptyFile::EmptyFile(pts length)
 :   mLength(length)
 ,   mAudioPosition(0)
 ,   mVideoPosition(0)
-{ 
+{
     VAR_DEBUG(this)(mLength);
 }
 
@@ -36,13 +36,13 @@ EmptyFile::EmptyFile(const EmptyFile& other)
 :   mLength(other.mLength)
 ,   mAudioPosition(0)
 ,   mVideoPosition(0)
-{ 
+{
     VAR_DEBUG(this)(mLength);
 }
 
 EmptyFile* EmptyFile::clone()
-{ 
-    return new EmptyFile(static_cast<const EmptyFile&>(*this)); 
+{
+    return new EmptyFile(static_cast<const EmptyFile&>(*this));
 }
 
 EmptyFile::~EmptyFile()
@@ -94,13 +94,13 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
     int nSamples = Convert::ptsToFrames(audioRate,nAudioChannels,1);
 
     return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, nSamples, mAudioPosition));
-} 
+}
 
 //////////////////////////////////////////////////////////////////////////
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr EmptyFile::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr EmptyFile::getNextVideo(wxSize size, bool alpha)
 {
     ASSERT_LESS_THAN_EQUALS(mVideoPosition,mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mVideoPosition++;
@@ -109,11 +109,11 @@ VideoFramePtr EmptyFile::getNextVideo(int requestedWidth, int requestedHeight, b
         return VideoFramePtr();
     }
 
-    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, mVideoPosition));
+    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, size, mVideoPosition));
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -128,4 +128,3 @@ template void EmptyFile::serialize<boost::archive::text_oarchive>(boost::archive
 template void EmptyFile::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-
