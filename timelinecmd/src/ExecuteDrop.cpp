@@ -207,13 +207,7 @@ void ExecuteDrop::initialize()
         // - Clip A is dropped onto it's original position (at least partially over that empty clip)
         // Then, without this cloning, A->Empty->A in terms of replacements. That would cause stack overflows
         // (indefinite recursion) when expanding the replacements.
-        model::IClips clones;
-        BOOST_FOREACH( model::IClipPtr clip, drop.clips )
-        {
-            clones.push_back(make_cloned<model::IClip>(clip)); // todo make_cloned variant for entire list in UtilClone
-        }
-
-        replaceClips(remove.first, clones);
+        replaceClips(remove.first, make_cloned(drop.clips));
     }
 }
 
