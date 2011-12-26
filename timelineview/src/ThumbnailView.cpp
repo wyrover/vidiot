@@ -6,6 +6,7 @@
 #include "ClipView.h"
 #include "Convert.h"
 #include "Layout.h"
+#include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
@@ -64,9 +65,9 @@ void ThumbnailView::redraw()
 void ThumbnailView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
-    // TODO clone the clip here to avoid problems?
-    mVideoClip->moveTo(0);
-    model::VideoFramePtr videoFrame = mVideoClip->getNextVideo(requiredSize(), false);
+    model::VideoClipPtr clone = make_cloned<model::VideoClip>(mVideoClip); // Clone to avoid 'moving' the original clip
+    clone->moveTo(0);
+    model::VideoFramePtr videoFrame = clone->getNextVideo(requiredSize(), false);
     model::wxBitmapPtr thumbnail = videoFrame->getBitmap();
     dc.DrawBitmap(*thumbnail,0,0,false);
 }
