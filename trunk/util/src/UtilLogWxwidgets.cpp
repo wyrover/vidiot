@@ -9,13 +9,19 @@ std::ostream& operator<< (std::ostream& os, const wxFileName& obj)
 
 std::ostream& operator<< (std::ostream& os, const wxPoint& obj)
 {
-    os << obj.x << ',' << obj.y;
+    os << '(' << obj.x << ',' << obj.y << ')';
+    return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const wxSize& obj)
+{
+    os << '(' << obj.GetWidth() << ',' << obj.GetHeight() << ')';
     return os;
 }
 
 std::ostream& operator<< (std::ostream& os, const wxMouseEvent& obj)
 {
-    os  << obj.GetX() << ',' 
+    os  << obj.GetX() << ','
         << obj.GetY() << ','
         << static_cast<const wxKeyboardState&>(obj);
     return os;
@@ -153,8 +159,8 @@ std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
             key = obj.GetKeyCode();
     }
 
-    os  << key << ',' 
-        << obj.GetX() << ',' 
+    os  << key << ','
+        << obj.GetX() << ','
         << obj.GetY() << ','
         << static_cast<const wxKeyboardState&>(obj);
 
@@ -164,8 +170,8 @@ std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
 std::ostream& operator<< (std::ostream& os, const wxKeyboardState& obj)
 {
     os  << (obj.ControlDown()   ? 'C' : '_' )
-        << (obj.AltDown()       ? 'A' : '_' ) 
-        << (obj.ShiftDown()     ? 'S' : '_' ) 
+        << (obj.AltDown()       ? 'A' : '_' )
+        << (obj.ShiftDown()     ? 'S' : '_' )
         << (obj.MetaDown()      ? 'M' : '_' )
         << (obj.CmdDown()       ? 'C' : '_' );
     return os;

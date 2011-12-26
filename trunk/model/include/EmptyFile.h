@@ -35,7 +35,6 @@ public:
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
-
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
     //////////////////////////////////////////////////////////////////////////
@@ -46,7 +45,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
 
 protected:
 

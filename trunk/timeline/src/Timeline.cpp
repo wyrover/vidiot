@@ -69,6 +69,9 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
+
+    // Ensure that for newly opened timelines the initial position is ok
+    getSequenceView().resetDividerPosition();
 }
 
 Timeline::~Timeline()
@@ -328,27 +331,21 @@ Player* Timeline::getPlayer() const
     return mPlayer;
 }
 
-pixel Timeline::requiredWidth() const
+wxSize Timeline::requiredSize() const
 {
     FATAL;
-    return 0;
-}
-
-pixel Timeline::requiredHeight() const
-{
-    FATAL;
-    return 0;
+    return wxSize(0,0);
 }
 
 void Timeline::refreshPts(pts position)
 {
     pixel pixpos = getZoom().ptsToPixels(position) - getScrolling().getOffset().x;
-    getTimeline().RefreshRect(wxRect(pixpos,0,1,getSequenceView().getHeight()), false);
+    getTimeline().RefreshRect(wxRect(pixpos,0,1,getSequenceView().getSize().GetHeight()), false);
 }
 
 void Timeline::refreshLines(pixel from, pixel length)
 {
-    getTimeline().RefreshRect(wxRect(0,from,getSequenceView().getWidth(),length), false);
+    getTimeline().RefreshRect(wxRect(0,from,getSequenceView().getSize().GetWidth(),length), false);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -357,7 +354,7 @@ void Timeline::refreshLines(pixel from, pixel length)
 
 void Timeline::resize()
 {
-    SetVirtualSize(getSequenceView().getWidth(),getSequenceView().getHeight());
+    SetVirtualSize(getSequenceView().getSize());
     Refresh();
     // NOT: Update(); RATIONALE: This will cause too much updates when
     //                           adding/removing/changing/replacing clips

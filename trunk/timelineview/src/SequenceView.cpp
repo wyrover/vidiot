@@ -30,9 +30,6 @@ SequenceView::SequenceView(View* parent)
 ,   mAudioView(new AudioView(this))
 {
     VAR_DEBUG(this);
-
-    // Ensure that for newly opened timelines the initial position is ok
-    resetDividerPosition();
 }
 
 SequenceView::~SequenceView()
@@ -67,33 +64,34 @@ const AudioView& SequenceView::getAudio() const
     return *mAudioView;
 }
 
-pixel SequenceView::requiredWidth() const
+pixel SequenceView::minimumWidth() const
 {
     return
         std::max(
-            std::max(
-                getTimeline().GetClientSize().GetWidth(),                         // At least the widget size
-                getZoom().timeToPixels(5 * model::Constants::sMinute)),         // Minimum width of 5 minutes
-                getZoom().ptsToPixels(getSequence()->getLength()));             // At least enough to hold all clips
+        std::max(
+        getTimeline().GetClientSize().GetWidth(),                       // At least the widget size
+        getZoom().timeToPixels(5 * model::Constants::sMinute)),         // Minimum width of 5 minutes
+        getZoom().ptsToPixels(getSequence()->getLength()));             // At least enough to hold all clips
 }
 
-pixel SequenceView::requiredHeight() const
+wxSize SequenceView::requiredSize() const
 {
-    return
+    int height =
         std::max(
         getTimeline().GetClientSize().GetHeight(),        // At least the widget size
         Layout::sTimeScaleHeight +
         Layout::sMinimalGreyAboveVideoTracksHeight +
-        getVideo().getHeight() +
+        getVideo().getSize().GetHeight() +
         Layout::sAudioVideoDividerHeight +
-        getAudio().getHeight() +
+        getAudio().getSize().GetHeight() +
         Layout::sMinimalGreyBelowAudioTracksHeight);    // Height of all combined components
+    return wxSize(minimumWidth(),height);
 }
 
 void SequenceView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
     info.onAudioVideoDivider =
-        position.y >= getSequence()->getDividerPosition() && 
+        position.y >= getSequence()->getDividerPosition() &&
         position.y <= getAudioPosition();
 
     if (!info.onAudioVideoDivider)
@@ -108,7 +106,7 @@ void SequenceView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
 
 void SequenceView::setDividerPosition(int position)
 {
-    int minimum = Layout::sVideoPosition + getVideo().getHeight();
+    int minimum = Layout::sVideoPosition + getVideo().getSize().GetHeight();
     if (position < minimum)
     {
         position = minimum;
@@ -130,7 +128,7 @@ int SequenceView::getAudioPosition() const
 
 int SequenceView::getVideoPosition() const
 {
-    return getSequence()->getDividerPosition() - getVideo().getHeight();
+    return getSequence()->getDividerPosition() - getVideo().getSize().GetHeight();
 }
 
 pixel SequenceView::getPosition(model::TrackPtr track) const
@@ -201,7 +199,7 @@ void SequenceView::draw(wxBitmap& bitmap) const
 
     dc.SetBrush(Layout::sAudioVideoDividerBrush);
     dc.SetPen(Layout::sAudioVideoDividerPen);
-    dc.DrawRectangle(wxPoint(0,getSequence()->getDividerPosition()),wxSize(getSequenceView().getWidth(), Layout::sAudioVideoDividerHeight));
+    dc.DrawRectangle(wxPoint(0,getSequence()->getDividerPosition()),wxSize(getSequenceView().getSize().GetWidth(), Layout::sAudioVideoDividerHeight));
 
     dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
 

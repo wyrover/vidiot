@@ -39,8 +39,7 @@ public:
     pixel getLeftPixel() const;     ///< \return left position in pixels
     pixel getRightPixel() const;    ///< \return right position in pixels
 
-    pixel requiredWidth() const override;    ///< \see View::requiredWidth()
-    pixel requiredHeight() const override;   ///< \see View::requiredHeight()
+    wxSize requiredSize() const override;    ///< \see View::requiredSize()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 

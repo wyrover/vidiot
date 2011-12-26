@@ -99,8 +99,7 @@ class DummyView : public View
 public:
     DummyView(Timeline* timeline) : View(timeline) {}
     ~DummyView() {}
-    pixel requiredWidth() const { FATAL; return 0; }
-    pixel requiredHeight() const {  FATAL; return 0; }
+    wxSize requiredSize() const { FATAL; return wxSize(0,0); }
     void draw(wxBitmap& bitmap) const { FATAL; }
 };
 
@@ -348,11 +347,10 @@ Shift Drag::getShift() const
 wxBitmap Drag::getDragBitmap() //const
 {
     VAR_DEBUG(*this);
-    int w = getSequenceView().getWidth();
-    int h = getSequenceView().getHeight();
+    wxSize size = getSequenceView().getSize();
 
-    wxBitmap temp(w,h); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
-    wxBitmap mask(w,h,1);
+    wxBitmap temp(size); // Create a bitmap equal in size to the entire virtual area (for simpler drawing code)
+    wxBitmap mask(size,1);
 
     wxMemoryDC dc(temp); // Must go out of scope to be able to use temp.data below
     wxMemoryDC dcMask(mask);
@@ -361,7 +359,7 @@ wxBitmap Drag::getDragBitmap() //const
     dc.Clear();
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.DrawRectangle(0,0,w,h);
+    dc.DrawRectangle(wxPoint(0,0),size);
 
     dcMask.SetBackground(*wxBLACK_BRUSH);
     dcMask.Clear();

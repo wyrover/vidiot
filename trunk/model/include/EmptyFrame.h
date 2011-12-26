@@ -8,7 +8,7 @@ namespace model {
 class EmptyFrame;
 typedef boost::shared_ptr<EmptyFrame> EmptyFramePtr;
 
-class EmptyFrame 
+class EmptyFrame
     :   public VideoFrame
 {
 public:
@@ -17,7 +17,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyFrame(VideoFrameType type, int width, int height, pts position);
+    EmptyFrame(VideoFrameType type, wxSize size, pts position);
 
     virtual ~EmptyFrame();
 

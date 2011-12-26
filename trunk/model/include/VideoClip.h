@@ -37,7 +37,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

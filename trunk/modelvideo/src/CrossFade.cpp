@@ -6,6 +6,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
 
@@ -34,8 +35,8 @@ CrossFade::CrossFade(const CrossFade& other)
 }
 
 CrossFade* CrossFade::clone()
-{ 
-    return new CrossFade(static_cast<const CrossFade&>(*this)); 
+{
+    return new CrossFade(static_cast<const CrossFade&>(*this));
 }
 
 CrossFade::~CrossFade()
@@ -47,12 +48,12 @@ CrossFade::~CrossFade()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, wxSize size, bool alpha)
 {
-    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(requestedWidth,requestedHeight,alpha)  : VideoFramePtr();
-    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(requestedWidth,requestedHeight,alpha) : VideoFramePtr();
-    VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, requestedWidth, requestedHeight, 1, 1);
-    VAR_DEBUG(position)(requestedWidth)(requestedHeight)(alpha)(leftFrame)(rightFrame)(targetFrame);
+    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(size,alpha)  : VideoFramePtr();
+    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(size,alpha) : VideoFramePtr();
+    VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, size, 1, 1);
+    VAR_DEBUG(position)(size)(alpha)(leftFrame)(rightFrame)(targetFrame);
 
     pts steps = getLength();
     float factorLeft = ((float)getLength() - (float)position) / (float)getLength();
@@ -71,17 +72,17 @@ VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr righ
 
     int bytesPerPixel = alpha ? 4 : 3;
 
-    for (int y = 0; y < targetFrame->getHeight(); ++y)
+    for (int y = 0; y < targetFrame->getSize().GetHeight(); ++y)
     {
-        for (int x = 0; x < targetFrame->getWidth() * bytesPerPixel; x += 1)
+        for (int x = 0; x < targetFrame->getSize().GetWidth() * bytesPerPixel; x += 1)
         {
             unsigned char left = 0;
-            if (leftFrame && y < leftFrame->getHeight() && x < leftFrame->getWidth() * bytesPerPixel)
+            if (leftFrame && y < leftFrame->getSize().GetHeight() && x < leftFrame->getSize().GetWidth() * bytesPerPixel)
             {
                 left = *(leftData + y * leftBytesPerLine + x);
             }
             unsigned char right = 0;
-            if (rightFrame && y < rightFrame->getHeight() && x < rightFrame->getWidth() * bytesPerPixel)
+            if (rightFrame && y < rightFrame->getSize().GetHeight() && x < rightFrame->getSize().GetWidth() * bytesPerPixel)
             {
                 right = *(rightData + y * rightBytesPerLine + x);
             }
@@ -103,7 +104,7 @@ std::ostream& operator<<( std::ostream& os, const CrossFade& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -115,4 +116,3 @@ template void CrossFade::serialize<boost::archive::text_oarchive>(boost::archive
 template void CrossFade::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 }} //namespace
-

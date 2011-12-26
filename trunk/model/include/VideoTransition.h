@@ -27,7 +27,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(int requestedWidth, int requestedHeight, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
 
 protected:
 
@@ -43,7 +43,7 @@ protected:
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, int requestedWidth, int requestedHeight, bool alpha) = 0;
+    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, wxSize size, bool alpha) = 0;
 
 private:
 
@@ -79,6 +79,5 @@ typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
 BOOST_CLASS_VERSION(model::VideoTransition, 1);
-
 
 #endif // MODEL_VIDEO_TRANSITION_H

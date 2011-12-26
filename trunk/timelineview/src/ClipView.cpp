@@ -113,22 +113,15 @@ void ClipView::show(wxRect rect)
     mRect.width = rect.width;
     mRect.x = rect.x;
     mRect.y = 4;
-    mRect.height = getHeight() - 8;
+    mRect.height = getSize().GetHeight() - 8;
     invalidateBitmap();;
 }
 
-pixel ClipView::requiredWidth() const
+wxSize ClipView::requiredSize() const
 {
-    return getRightPixel() - getLeftPixel();
-}
-
-pixel ClipView::requiredHeight() const
-{
-    if (mClip->isA<model::Transition>())
-    {
-        return Layout::sTransitionHeight;
-    }
-    return mClip->getTrack()->getHeight();
+    int width = getRightPixel() - getLeftPixel();
+    int height = (mClip->isA<model::Transition>()) ? Layout::sTransitionHeight : mClip->getTrack()->getHeight();
+    return wxSize(width, height);
 }
 
 void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
@@ -302,7 +295,7 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 {
     if (getDrag().contains(mClip))
     {
-        wxBitmap b(getWidth(), height);
+        wxBitmap b(getSize());
         draw(b, true, false);
         dc.DrawBitmap(b,position);
         dcMask.DrawRectangle(position,b.GetSize());

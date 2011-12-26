@@ -82,8 +82,7 @@ public:
 
     Player* getPlayer() const;
 
-    pixel requiredWidth() const;  ///< \see View::requiredWidth()
-    pixel requiredHeight() const; ///< \see View::requiredHeight()
+    wxSize requiredSize() const;  ///< \see View::requiredSize()
 
     /// Refresh the rectangle for which
     /// [x,y,w,h] == [position,0,1,height],

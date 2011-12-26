@@ -55,7 +55,7 @@ VideoTransition::~VideoTransition()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHeight, bool alpha)
+VideoFramePtr VideoTransition::getNextVideo(wxSize size, bool alpha)
 {
     if (getLastSetPosition())
     {
@@ -88,7 +88,7 @@ VideoFramePtr VideoTransition::getNextVideo(int requestedWidth, int requestedHei
     VideoFramePtr videoFrame;
     if (mProgress < getLength())
     {
-        videoFrame = getVideo(mProgress, mLeftClip, mRightClip, requestedWidth, requestedHeight, alpha);
+        videoFrame = getVideo(mProgress, mLeftClip, mRightClip, size, alpha);
         mProgress++;
     }
     VAR_VIDEO(videoFrame);
@@ -107,7 +107,7 @@ std::ostream& operator<<( std::ostream& os, const VideoTransition& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -120,4 +120,3 @@ template void VideoTransition::serialize<boost::archive::text_oarchive>(boost::a
 template void VideoTransition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-

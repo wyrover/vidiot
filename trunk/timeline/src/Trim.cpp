@@ -159,7 +159,7 @@ void Trim::start()
     if (adjacentClip && adjacentClip->isA<model::VideoClip>())
     {
         model::VideoClipPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(adjacentClip);
-        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(mEdit->getSize().GetWidth() / 2,  mEdit->getSize().GetHeight(), false);
+        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(wxSize(mEdit->getSize().GetWidth() / 2,  mEdit->getSize().GetHeight()), false);
         mAdjacentBitmap = adjacentFrame->getBitmap();
     }
 
@@ -375,7 +375,7 @@ void Trim::preview()
             dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
 
             // Draw preview of trim operation
-            model::VideoFramePtr videoFrame = videoclip->getNextVideo(previewwidth, s.GetHeight(), false);
+            model::VideoFramePtr videoFrame = videoclip->getNextVideo(wxSize(previewwidth, s.GetHeight()), false);
             model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
             dc.DrawBitmap(*trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp->GetHeight()) / 2);
 
