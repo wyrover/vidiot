@@ -121,6 +121,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
             // just selected, then the whole range is selected. If the last selected
             // clip was deselected, then the whole range is deselected.
 
+            // If no previous clip was selected: select from the start of the track
             model::IClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(track->getClips().begin());
 
             model::IClipPtr firstclip;
