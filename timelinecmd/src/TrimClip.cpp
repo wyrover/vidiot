@@ -51,8 +51,6 @@ void TrimClip::initialize()
     model::IClipPtr newclip;
     model::IClipPtr newlink;
 
-    // todo bug: start application, make sequence, shift click clip four. all first four clips selected!
-
     model::IClipPtr clip = mClip;
     model::IClipPtr linked = mClip->getLink();
 
