@@ -20,7 +20,9 @@ call:EXTRACTDRIVE %VIDIOT_DIR%
 %DRIVE%
 cd %VIDIOT_DIR%
 
-
+if NOT DEFINED VIDIOT_BUILD SET VIDIOT_BUILD=%VIDIOT_DIR%\Build
+call:EXTRACTDRIVE %VIDIOT_BUILD%
+SET VIDIOT_BUILD_DRIVE=%DRIVE%
 
 REM === FIND BOOST ====
 REM o-d: always use newest version
@@ -40,9 +42,10 @@ REM del /s/q Build
 set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
 set SOURCE=%VIDIOT_DIR%\vidiot_trunk
 
-cd %VIDIOT_DIR%
+%VIDIOT_BUILD_DRIVE%
+cd %VIDIOT_BUILD%\..
 if NOT EXIST Build mkdir Build
-set BUILD_DIR=%VIDIOT_DIR%\Build
+set BUILD_DIR=%VIDIOT_BUILD%
 cd Build
 if NOT EXIST MSVC mkdir MSVC
 if NOT EXIST GCCD mkdir GCCD
