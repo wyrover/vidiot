@@ -28,6 +28,10 @@ struct EvMotion;
 struct EvKeyUp;
 struct EvKeyDown;
 
+namespace command {
+    class TrimClip;
+}
+
 class Trim
     :   public Part
 {
@@ -69,8 +73,6 @@ private:
     MouseOnClipPosition mPosition;  ///< The logical mouse position where the trim was started
     bool mTrimBegin;                ///< True if begin of clip is changed, false if end of clip is changed.
 
-    bool mMustUndo;                 ///< True if, for a new update, first a previous trim must be undone
-
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
     wxPoint mCurrentPosition;       ///< Current mouse position (in unscrolled coordinates)
 
@@ -78,12 +80,11 @@ private:
     model::TransitionPtr mTransition;  ///< Transition that is changed, or in case of trimming a clip 'under' a transition, the transition which may need to be unapplied
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
 
-    pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
-    pts mMaxShiftOtherTrackContent; ///< Maximum allowed shift (to the right) of 'other' tracks
-
     bool mShiftDown;                ///< True if shift is down, false if not
 
     EditDisplay* mEdit;
+
+    command::TrimClip* mCommand;    ///< The command that executes the Trim operation
 
     pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
     pixel mFixedPixel;              ///< Pixel value (physical) that mFixedPts must be aligned with. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
@@ -92,9 +93,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    pts getDiff();
     void preview();
-    bool undo();                    ///< \return true if a command was undone.
 };
 
 }} // namespace
