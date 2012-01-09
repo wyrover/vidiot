@@ -68,6 +68,11 @@ protected:
     // HELPER METHODS FOR SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
 
+    /// Undo all changes done so far, and clear the Do/Undo administration
+    /// Used for edits that already update the model during the edit operation,
+    /// before the command is actually submitted.
+    void Revert();
+
     /// Split the clip at the given (track) position. If there already is a cut at the given
     /// position, then nothing is changed. When the clip is replaced by (two) other clips, then
     /// In the ReplacementMap (if != 0) the mapping clip->(first,second) is added.

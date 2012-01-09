@@ -74,7 +74,7 @@ bool AClipEdit::Do()
 bool AClipEdit::Undo()
 {
     VAR_INFO(*this)(mParamsUndo.size());
-    ASSERT_NONZERO(mParamsUndo.size());
+    //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
     BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
         doMove(move);
@@ -88,6 +88,17 @@ bool AClipEdit::Undo()
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS FOR SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
+
+void AClipEdit::Revert()
+{
+    VAR_INFO(this);
+    Undo();
+    mParams.clear();
+    mParamsUndo.clear();
+    mReplacements.clear();
+    mExpandedReplacements.clear();
+    mInitialized = false;
+}
 
 void AClipEdit::split(model::TrackPtr track, pts position)
 {
