@@ -25,7 +25,7 @@ StateTrim::StateTrim( my_context ctx ) // entry
 
 StateTrim::~StateTrim() // exit
 {
-    getTrim().stop();
+    getTrim().abort();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,6 +35,8 @@ StateTrim::~StateTrim() // exit
 boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
+    getTrim().onMove(evt.mWxEvent.GetPosition()); // Give the last position (is required to 'undo' the trim if moved back to the original position)
+    getTrim().stop();
     return transit<Idle>();
 }
 
@@ -48,7 +50,6 @@ boost::statechart::result StateTrim::react( const EvMotion& evt )
 boost::statechart::result StateTrim::react( const EvLeave& evt )
 {
     VAR_DEBUG(evt);
-    getTrim().abort();
     return transit<Idle>();
 }
 
