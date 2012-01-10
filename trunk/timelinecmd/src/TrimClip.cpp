@@ -17,7 +17,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, MouseOnClipPosition position, bool left)
+TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, MouseOnClipPosition position)
     :   AClipEdit(sequence)
     ,   mOriginalClip(clip)
     ,   mOriginalLink(mOriginalClip->getLink())
@@ -26,14 +26,13 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mTransition(transition)
     ,   mPosition(position)
     ,   mDiff(0)
-    ,   mLeft(left)
     ,   mShift(false)
     ,   mMinShiftOtherTrackContent(0)
     ,   mMaxShiftOtherTrackContent(0)
     ,   mSubmitted(false)
 {
-    VAR_INFO(this)(mClip)(mTransition)(left);
-    if (mLeft)
+    VAR_INFO(this)(mClip)(mTransition)(mPosition);
+    if (isBeginTrim())
     {
         mCommandName = _("Adjust clip begin point");
     }
@@ -94,6 +93,31 @@ model::IClipPtr TrimClip::getClip() const
     return mClip;
 }
 
+bool TrimClip::isBeginTrim() const
+{
+    bool result = false;
+
+    switch (mPosition)
+    {
+    case ClipBegin:
+    case TransitionRightClipBegin:
+    case TransitionBegin:
+        result = true;
+        break;
+    case ClipEnd:
+    case TransitionLeftClipEnd:
+    case TransitionEnd:
+        break;
+    case ClipInterior:
+    case TransitionLeftClipInterior:
+    case TransitionInterior:
+    case TransitionRightClipInterior:
+    default:
+        FATAL("Illegal clip position");
+    }
+    return result;
+}
+
 pts TrimClip::getDiff() const
 {
     return mDiff;
@@ -131,7 +155,7 @@ void TrimClip::removeTransition()
     {
         model::IClips replacements = unapplyTransition(mTransition);
         ASSERT_MORE_THAN_ZERO(replacements.size());
-        if (mLeft)
+        if (isBeginTrim())
         {
             mClip = replacements.back();
         }
@@ -183,7 +207,7 @@ void TrimClip::determineTrim(pts mousediff)
         upperlimit(mMaxShiftOtherTrackContent);       // When shift trimming: the contents in other tracks must be able to be shifted accordingly
     }
 
-    if (mLeft)
+    if (isBeginTrim())
     {
         upperlimit(mClip->getMaxAdjustBegin());    // Clip cannot be trimmed further than the original number of frames
         upperlimit(mLink->getMaxAdjustBegin());    // Clip cannot be trimmed further than the original number of frames in the linked clip
@@ -247,7 +271,7 @@ void TrimClip::applyTrim()
     model::IClipPtr newlink;
 
     newclip = make_cloned<model::IClip>(mClip);
-    if (mLeft)
+    if (isBeginTrim())
     {
         newclip->adjustBegin(mDiff);
     }
@@ -264,7 +288,7 @@ void TrimClip::applyTrim()
         // This is already seen when trimming with transitions
 
         newlink = make_cloned<model::IClip>(mLink);
-        if (mLeft)
+        if (isBeginTrim())
         {
             newlink->adjustBegin(mDiff);
         }
@@ -310,7 +334,7 @@ void TrimClip::applyTrim()
     }
     else
     {
-        if (mLeft)
+        if (isBeginTrim())
         {
             if (mDiff > 0) // Reduce: Move clip begin point to the right
             {
@@ -329,7 +353,7 @@ void TrimClip::applyTrim()
                 }
             }
         }
-        else // !mLeft
+        else // !isBeginTrim()
         {
             if (mDiff < 0) // Reduce: Move clip end point to the left
             {
@@ -363,7 +387,7 @@ void TrimClip::applyTrim()
 
 std::ostream& operator<<( std::ostream& os, const TrimClip& obj )
 {
-    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mOriginalClip << '|' << obj.mClip << '|' << obj.mDiff << '|' << obj.mLeft << '|' << obj.mShift;
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mOriginalClip << '|' << obj.mClip << '|' << obj.mDiff << '|' << obj.mPosition << '|' << obj.mShift;
     return os;
 }
 

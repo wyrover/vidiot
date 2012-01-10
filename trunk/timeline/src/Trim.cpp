@@ -81,7 +81,6 @@ void Trim::start()
     {
     case ClipBegin:
         ASSERT(!mTransition);
-        mTrimBegin = true;
         mOriginalClip = info.clip;
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         adjacentClip = mOriginalClip->getPrev();
@@ -92,7 +91,6 @@ void Trim::start()
         break;
     case ClipEnd:
         ASSERT(!mTransition);
-        mTrimBegin = false;
         mOriginalClip = info.clip;
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         adjacentClip = mOriginalClip->getNext();
@@ -103,7 +101,6 @@ void Trim::start()
         break;
     case TransitionRightClipBegin:
         ASSERT(mTransition);
-        mTrimBegin = true;
         mOriginalClip = info.clip->getNext();
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         if (mTransition->getLeft() > 0)
@@ -117,7 +114,6 @@ void Trim::start()
         break;
     case TransitionLeftClipEnd:
         ASSERT(mTransition);
-        mTrimBegin = false;
         mOriginalClip = info.clip->getPrev();
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         if (mTransition->getRight() > 0)
@@ -131,12 +127,10 @@ void Trim::start()
         break;
     case TransitionBegin:
         ASSERT(mTransition);
-        mTrimBegin = true;
         mOriginalClip = info.clip;
         //break;
     case TransitionEnd:
         ASSERT(mTransition);
-        mTrimBegin = false;
         mOriginalClip = info.clip;
        // break;
     case ClipInterior:
@@ -158,7 +152,7 @@ void Trim::start()
         mAdjacentBitmap = adjacentFrame->getBitmap();
     }
 
-    mCommand = new command::TrimClip(getSequence(), mOriginalClip, mTransition, mPosition, mTrimBegin);
+    mCommand = new command::TrimClip(getSequence(), mOriginalClip, mTransition, mPosition);
     mCommand->update(mShiftDown,0);
     preview();
 }
@@ -173,7 +167,7 @@ void Trim::update()
     mCommand->update(mShiftDown,diff);
     preview();
 
-    if (mShiftDown && mTrimBegin)
+    if (mShiftDown && mCommand->isBeginTrim())
     {
         // Ensure that the rightmost pts is kept at the same position when shift dragging
         getScrolling().align(mFixedPts - diff, mFixedPixel);
@@ -233,7 +227,7 @@ void Trim::preview()
 
     if (updatedClip->isA<model::VideoClip>())
     {
-        if (mTrimBegin)
+        if (mCommand->isBeginTrim())
         {
             updatedClip->adjustBegin(mCommand->getDiff());
         }
@@ -252,7 +246,7 @@ void Trim::preview()
             boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
             wxMemoryDC dc(*bmp);
 
-            if (mTrimBegin)
+            if (mCommand->isBeginTrim())
             {
                 videoclip->moveTo(0);
                 previewxpos = s.GetWidth() - previewwidth; // This works for both with and without an adjacent clip
@@ -276,7 +270,7 @@ void Trim::preview()
             // Draw adjacent clip if present. Is only relevant when holding shift
             if (drawadjacentclip)
             {
-                int xAdjacent = (mTrimBegin ? 0 : s.GetWidth() / 2);
+                int xAdjacent = (mCommand->isBeginTrim() ? 0 : s.GetWidth() / 2);
                 dc.DrawBitmap(*mAdjacentBitmap, xAdjacent, (s.GetHeight() - mAdjacentBitmap->GetHeight()) / 2);
             }
             dc.SelectObject(wxNullBitmap);

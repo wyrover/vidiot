@@ -17,7 +17,7 @@ public:
 
     /// Enlarge/reduce the size of a clip by moving its leftmost/rightmost position.
     ///
-    /// Note that if parameter shift equals true, then all clips (in all tracks)
+    /// Note that if shift equals true, then all clips (in all tracks)
     /// after the clip's original leftmost pts value are shifted backwards to
     /// accommodate for the extra length. Furthermore note, that clip's leftmost
     /// position (getLeftPts()) will remain at the exact same position in case
@@ -26,7 +26,8 @@ public:
     /// \param left if true, shift leftmost point of clip. if false, shift rightmost point of clip.
     /// \param clip clip to be changed
     /// \param transition transition that must be unapplied if this is not a shift trim operation (of 0 then nothing needs to be done)
-    TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, MouseOnClipPosition position, bool left);
+    /// \param position position when the trim was started
+    TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, MouseOnClipPosition position);
 
     /// \param shift indicates if the clip may be enlarged, even when there is no empty space in front of it.
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
@@ -46,6 +47,8 @@ public:
 
     model::IClipPtr getClip() const;
 
+    bool isBeginTrim() const;
+
     pts getDiff() const;
 
 private:
@@ -61,7 +64,6 @@ private:
     // todo mLink and mOriginalLink for the link also, since the link may also be under a transition
     model::TransitionPtr mTransition;
     pts mDiff;
-    bool mLeft;
     bool mShift;
 
     pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
