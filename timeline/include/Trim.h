@@ -71,7 +71,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     MouseOnClipPosition mPosition;  ///< The logical mouse position where the trim was started
-    bool mTrimBegin;                ///< True if begin of clip is changed, false if end of clip is changed.
 
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
     wxPoint mCurrentPosition;       ///< Current mouse position (in unscrolled coordinates)
