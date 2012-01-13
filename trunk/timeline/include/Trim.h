@@ -32,6 +32,9 @@ namespace command {
     class TrimClip;
 }
 
+/// Class responsible for any previewing during the edit operation. This includes
+/// changing the timeline contents (via the command) and the preview in the player
+/// window. Finally, this class executes the operation via the submit of the command.
 class Trim
     :   public Part
 {
@@ -53,15 +56,15 @@ public:
 
     /// Do an update of the trim operation. Must be called upon relevant
     /// mouse/keyboard changes.
-    void update();
-
-    void onShift(bool shift);
-    void onMove(wxPoint position);
+    /// \position mouse position on screen. Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
+    void update(wxPoint position);
 
     /// Abort a pending trim operation. If changes were made, undo them.
     void abort();
 
     /// Stop any pending trim operation. Do not undo the change that was done.
+    /// Instead, ensure that the operation becomes undoable via the submit of
+    /// the command.
     void stop();
 
 private:
@@ -70,16 +73,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    MouseOnClipPosition mPosition;  ///< The logical mouse position where the trim was started
-
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
-    wxPoint mCurrentPosition;       ///< Current mouse position (in unscrolled coordinates)
 
-    model::IClipPtr mOriginalClip;  ///< Clip whose size is changed
-    model::TransitionPtr mTransition;  ///< Transition that is changed, or in case of trimming a clip 'under' a transition, the transition which may need to be unapplied
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
-
-    bool mShiftDown;                ///< True if shift is down, false if not
 
     EditDisplay* mEdit;
 

@@ -35,7 +35,7 @@ StateTrim::~StateTrim() // exit
 boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
-    getTrim().onMove(evt.mWxEvent.GetPosition()); // Give the last position (is required to 'undo' the trim if moved back to the original position)
+    getTrim().update(evt.mWxEvent.GetPosition());
     getTrim().stop();
     return transit<Idle>();
 }
@@ -43,7 +43,7 @@ boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 boost::statechart::result StateTrim::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getTrim().onMove(evt.mWxEvent.GetPosition());
+    getTrim().update(evt.mWxEvent.GetPosition());
     return forward_event();
 }
 
@@ -56,7 +56,7 @@ boost::statechart::result StateTrim::react( const EvLeave& evt )
 boost::statechart::result StateTrim::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
-    getTrim().onShift(evt.mWxEvent.ShiftDown());
+    getTrim().update(evt.mWxEvent.GetPosition());
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_F1:
@@ -72,7 +72,7 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
 boost::statechart::result StateTrim::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
-    getTrim().onShift(evt.mWxEvent.ShiftDown());
+    getTrim().update(evt.mWxEvent.GetPosition());
     return forward_event();
 }
 

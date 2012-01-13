@@ -39,8 +39,6 @@ Trim::Trim(Timeline* timeline)
     :   Part(timeline)
     ,   mStartPosition(0,0)
     ,   mEdit(0)
-    ,   mOriginalClip()
-    ,   mShiftDown(false)
     ,   mFixedPixel(0)
     ,   mCommand(0)
 {
@@ -52,6 +50,10 @@ Trim::~Trim()
     VAR_DEBUG(this);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// TRIM OPERATION
+//////////////////////////////////////////////////////////////////////////
+
 void Trim::start()
 {
     LOG_DEBUG;
@@ -59,80 +61,77 @@ void Trim::start()
     mEdit = getPlayer()->startEdit();
 
     // Reset first
-     mStartPosition = wxPoint(0,0);
-    mOriginalClip.reset();
-    mShiftDown = false;
+    mStartPosition = wxPoint(0,0);
     mFixedPixel = 0;
 
     // Determine if pointer was at begin or at end of clip
     wxPoint virtualMousePosition = getMousePointer().getLeftDownPosition();
     PointerPositionInfo info = getMousePointer().getInfo(virtualMousePosition);
     ASSERT(info.clip && !info.clip->isA<model::EmptyClip>())(info);
-    mTransition = boost::dynamic_pointer_cast<model::Transition>(info.clip);
-    mPosition = info.logicalclipposition;
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(info.clip);
+    MouseOnClipPosition mPosition = info.logicalclipposition;
 
     // Start position is the physical position of the mouse within the timeline
     getTimeline().CalcScrolledPosition(virtualMousePosition.x,virtualMousePosition.y,&mStartPosition.x,&mStartPosition.y);
-    mCurrentPosition = mStartPosition;
-    mShiftDown = wxGetMouseState().ShiftDown();
 
+    model::IClipPtr originalClip;
     model::IClipPtr adjacentClip;
     switch (mPosition)
     {
     case ClipBegin:
-        ASSERT(!mTransition);
-        mOriginalClip = info.clip;
-        mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-        adjacentClip = mOriginalClip->getPrev();
+        ASSERT(!transition);
+        originalClip = info.clip;
+        mFixedPts = originalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        adjacentClip = originalClip->getPrev();
         if (adjacentClip)
         {
             adjacentClip->moveTo(adjacentClip->getLength() - 1);
         }
         break;
     case ClipEnd:
-        ASSERT(!mTransition);
-        mOriginalClip = info.clip;
-        mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-        adjacentClip = mOriginalClip->getNext();
+        ASSERT(!transition);
+        originalClip = info.clip;
+        mFixedPts = originalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        adjacentClip = originalClip->getNext();
         if (adjacentClip)
         {
             adjacentClip->moveTo(0);
         }
         break;
     case TransitionRightClipBegin:
-        ASSERT(mTransition);
-        mOriginalClip = info.clip->getNext();
-        mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-        if (mTransition->getLeft() > 0)
+        ASSERT(transition);
+        originalClip = info.clip->getNext();
+        mFixedPts = originalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        if (transition->getLeft() > 0)
         {
-            adjacentClip = make_cloned<model::IClip>(mTransition->getPrev());
+            adjacentClip = make_cloned<model::IClip>(transition->getPrev());
             ASSERT(adjacentClip);
             adjacentClip->adjustBegin(adjacentClip->getLength());
-            adjacentClip->adjustEnd(mTransition->getLeft());
+            adjacentClip->adjustEnd(transition->getLeft());
             adjacentClip->moveTo(adjacentClip->getLength() - 1);
         }
         break;
     case TransitionLeftClipEnd:
-        ASSERT(mTransition);
-        mOriginalClip = info.clip->getPrev();
-        mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
-        if (mTransition->getRight() > 0)
+        ASSERT(transition);
+        originalClip = info.clip->getPrev();
+        mFixedPts = originalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        if (transition->getRight() > 0)
         {
-            adjacentClip = make_cloned<model::IClip>(mTransition->getNext());
+            adjacentClip = make_cloned<model::IClip>(transition->getNext());
             ASSERT(adjacentClip);
             adjacentClip->adjustEnd(- adjacentClip->getLength());
-            adjacentClip->adjustBegin(-mTransition->getRight());
+            adjacentClip->adjustBegin(-transition->getRight());
             adjacentClip->moveTo(0);
         }
         break;
     case TransitionBegin:
-        ASSERT(mTransition);
-        mOriginalClip = info.clip;
+        ASSERT(transition);
+        originalClip = info.clip;
         //break;
     case TransitionEnd:
-        ASSERT(mTransition);
-        mOriginalClip = info.clip;
-       // break;
+        ASSERT(transition);
+        originalClip = info.clip;
+        // break;
     case ClipInterior:
     case TransitionLeftClipInterior:
     case TransitionInterior:
@@ -140,7 +139,7 @@ void Trim::start()
     default:
         FATAL("Illegal clip position");
     }
-    ASSERT(mOriginalClip);
+    ASSERT(originalClip);
 
     // \todo use the leftmost of the clip and/or its link
 
@@ -152,47 +151,26 @@ void Trim::start()
         mAdjacentBitmap = adjacentFrame->getBitmap();
     }
 
-    mCommand = new command::TrimClip(getSequence(), mOriginalClip, mTransition, mPosition);
-    mCommand->update(mShiftDown,0);
+    mCommand = new command::TrimClip(getSequence(), originalClip, transition, mPosition);
+    mCommand->update(0);
     preview();
 }
 
-void Trim::update()
+void Trim::update(wxPoint position)
 {
     getTimeline().beginTransaction();
-    // Do not use mOriginalClip: it may have been removed from the track by applying command::TrimClip previously
-    // From here we can no longer use mOriginalClip: it is changed by applying the command::TrimClip
 
-    pts diff = getZoom().pixelsToPts(mCurrentPosition.x - mStartPosition.x);
-    mCommand->update(mShiftDown,diff);
+    pts diff = getZoom().pixelsToPts(position.x - mStartPosition.x);
+    mCommand->update(diff);
     preview();
 
-    if (mShiftDown && mCommand->isBeginTrim())
+    if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
     {
         // Ensure that the rightmost pts is kept at the same position when shift dragging
         getScrolling().align(mFixedPts - diff, mFixedPixel);
     }
     getTimeline().endTransaction();
     getTimeline().Update();
-}
-
-void Trim::onShift(bool shift)
-{
-        if (mShiftDown != shift)
-    {
-        mShiftDown = shift;
-        update();
-    }
-
-}
-
-void Trim::onMove(wxPoint position)
-{
- if (mCurrentPosition != position)
-    {
-        mCurrentPosition = position;
-        update();
-    }
 }
 
 void Trim::abort()
@@ -211,10 +189,11 @@ void Trim::stop()
     {
         // Only submit the command if there's an actual diff to be applied
         getTimeline().Submit(mCommand); // todo: test if performance improves by not submitting the command, but only when really submitting, and doing 'local' do/undo otherwise
-        getPlayer()->endEdit();
         mCommand = 0; // To ensure that any following 'abort' (see StateTrim) will not cause a revert
         LOG_DEBUG;
     }
+
+    getPlayer()->endEdit();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -240,7 +219,7 @@ void Trim::preview()
         {
             model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
             wxSize s = mEdit->getSize();
-            bool drawadjacentclip = mShiftDown && mAdjacentBitmap;
+            bool drawadjacentclip = wxGetMouseState().ShiftDown() && mAdjacentBitmap;
             int previewwidth = (drawadjacentclip ? s.GetWidth() / 2 : s.GetWidth());
             int previewxpos = 0;
             boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
