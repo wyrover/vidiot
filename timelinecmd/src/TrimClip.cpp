@@ -52,12 +52,12 @@ TrimClip::~TrimClip()
     }
 }
 
-void TrimClip::update(bool shift, pts diff)
+void TrimClip::update(pts diff)
 {
     Revert();
 
-    mShift = shift;
-    VAR_INFO(this)(shift)(diff);
+    mShift = wxGetMouseState().ShiftDown();
+    VAR_INFO(this)(mShift)(diff);
 
     removeTransition();
 
@@ -163,8 +163,8 @@ void TrimClip::removeTransition()
         {
             mClip = replacements.front();
         }
-        ASSERT(!mClip->isA<model::EmptyClip>());
     }
+    ASSERT(!mClip->isA<model::EmptyClip>());
     mLink = mOriginalLink;
     // todo unapply linked transition instead of using originallink
     VAR_INFO(this)(mClip)(mLink);
@@ -203,14 +203,14 @@ void TrimClip::determineTrim(pts mousediff)
 
     if (mShift)
     {
-        lowerlimit(mMinShiftOtherTrackContent);       // When shift trimming: the contents in other tracks must be able to be shifted accordingly
-        upperlimit(mMaxShiftOtherTrackContent);       // When shift trimming: the contents in other tracks must be able to be shifted accordingly
+        lowerlimit(mMinShiftOtherTrackContent);        // When shift trimming: the contents in other tracks must be able to be shifted accordingly
+        upperlimit(mMaxShiftOtherTrackContent);        // When shift trimming: the contents in other tracks must be able to be shifted accordingly
     }
 
     if (isBeginTrim())
     {
-        upperlimit(mClip->getMaxAdjustBegin());    // Clip cannot be trimmed further than the original number of frames
-        upperlimit(mLink->getMaxAdjustBegin());    // Clip cannot be trimmed further than the original number of frames in the linked clip
+        upperlimit(mClip->getMaxAdjustBegin());        // Clip cannot be trimmed further than the original number of frames
+        upperlimit(mLink->getMaxAdjustBegin());        // Clip cannot be trimmed further than the original number of frames in the linked clip
 
         if (mLink)
         {
@@ -220,8 +220,8 @@ void TrimClip::determineTrim(pts mousediff)
     }
     else
     {
-        lowerlimit(mClip->getMinAdjustEnd());      // Clip cannot be trimmed further than the original number of frames
-        upperlimit(mClip->getMaxAdjustEnd());      // Clip cannot be extended further than the last frame of the underlying video provider.
+        lowerlimit(mClip->getMinAdjustEnd());          // Clip cannot be trimmed further than the original number of frames
+        upperlimit(mClip->getMaxAdjustEnd());          // Clip cannot be extended further than the last frame of the underlying video provider.
 
         if (mLink)
         {
@@ -234,7 +234,7 @@ void TrimClip::determineTrim(pts mousediff)
     {
         switch (mPosition)
         {
-        case ClipBegin:
+        case ClipBegin: // todo avoid duplication for the transition cases (is possible to remove these by using the same code as the normal cases)
             lowerlimit(mClip->getTrack()->getLeftEmptyArea(mClip));   // When not shift trimming: extended clip must fit into the available empty area in front of the clip
             if (mLink) { lowerlimit(mLink->getTrack()->getLeftEmptyArea(mLink)); }                // When not shift trimming: extended link must fit into the available empty area in front of the link
             break;

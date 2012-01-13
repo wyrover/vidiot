@@ -31,7 +31,7 @@ public:
 
     /// \param shift indicates if the clip may be enlarged, even when there is no empty space in front of it.
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
-    void update(bool shift, pts diff);
+    void update(pts diff);
 
     ~TrimClip();
 
