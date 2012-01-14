@@ -18,7 +18,7 @@ public:
 
     CrossFade(pts nFramesLeft, pts nFramesRight);
 
-    virtual CrossFade* clone();
+    virtual CrossFade* clone() const;
 
     virtual ~CrossFade();
 

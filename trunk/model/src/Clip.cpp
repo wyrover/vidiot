@@ -69,7 +69,7 @@ Clip::Clip(const Clip& other)
     VAR_DEBUG(*this)(other);
 }
 
-Clip* Clip::clone()
+Clip* Clip::clone() const
 {
     return new Clip(static_cast<const Clip&>(*this));
 }

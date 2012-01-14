@@ -25,7 +25,7 @@ public:
 
     AudioClip(AudioFilePtr clip);
 
-    virtual AudioClip* clone() override;
+    virtual AudioClip* clone() const override;
 
     virtual ~AudioClip();
 

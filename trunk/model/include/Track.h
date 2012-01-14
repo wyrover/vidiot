@@ -34,7 +34,7 @@ public:
 
     Track();
 
-    virtual Track* clone() override;
+    virtual Track* clone() const override;
 
     virtual ~Track();
 

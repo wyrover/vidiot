@@ -25,7 +25,7 @@ public:
 
 	AudioFile(wxFileName path);
 
-    virtual AudioFile* clone() override;
+    virtual AudioFile* clone() const override;
 
 	virtual ~AudioFile();
 

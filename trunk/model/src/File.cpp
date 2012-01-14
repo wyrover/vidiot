@@ -120,7 +120,7 @@ File::File(const File& other)
     VAR_DEBUG(this);
 }
 
-File* File::clone()
+File* File::clone() const
 {
     return new File(static_cast<const File&>(*this));
 }
@@ -152,7 +152,6 @@ void File::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
     openFile(); // Needed for avcodec calls below
-
 
     stopReadingPackets();
 
@@ -275,7 +274,7 @@ void File::stopReadingPackets()
         mBufferPacketsThreadPtr->join();
         mBufferPacketsThreadPtr.reset();
     }
-    
+
     // When this lock is taken, it is certain that no 'pop' is
     // blocking the return of getNextPacket().
     boost::mutex::scoped_lock stoplock(sMutexStop);
@@ -306,7 +305,7 @@ AVCodecContext* File::getCodec()
 
 PacketPtr File::getNextPacket()
 {
-    if (mEOF) 
+    if (mEOF)
     {
         // After EOF is reached, first a 'moveTo' must be done.
         // Since in bufferPacketsThread() mReadingPackets is set to
@@ -513,4 +512,3 @@ template void File::serialize<boost::archive::text_oarchive>(boost::archive::tex
 template void File::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-

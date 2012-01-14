@@ -285,7 +285,7 @@ void TrimClip::applyTrim()
         // TODO NIY: What if the link is 'shifted' wrt original clip?
         //ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
         //ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
-        // This is already seen when trimming with transitions
+        // This is already seen wheen trimming with transitions
 
         newlink = make_cloned<model::IClip>(mLink);
         if (isBeginTrim())
@@ -298,18 +298,28 @@ void TrimClip::applyTrim()
         }
     }
 
-    auto makelist = [](model::IClipPtr clip) -> model::IClips
+    auto makelist = [](model::IClipPtr clip, model::TransitionPtr transition, bool shift) -> model::IClips
     {
         if (clip->getLength() == 0)
         {
             // If the clip or its link is resized to 0 frames, then replace with "nothing"
-            return model::IClips();
+            if (transition && shift)
+            {
+                // An exception is shift dragging with a clip that is part of a transition:
+                // The clip may be reduced to 'zero' frames. However, the clip must still be
+                // a part of the timeline (with length 0), since it is used by the transition
+                // that comes directly after it.
+            }
+            else
+            {
+                return model::IClips();
+            }
         }
         return boost::assign::list_of(clip);
     };
 
-    model::IClips replaceclip = makelist(newclip);
-    model::IClips replacelink = makelist(newlink);
+    model::IClips replaceclip = makelist(newclip, mTransition, mShift);
+    model::IClips replacelink = makelist(newlink, model::TransitionPtr(), mShift); // todo unapply the transition in the 'other' track also
 
     if (mShift)
     {

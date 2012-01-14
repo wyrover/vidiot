@@ -27,21 +27,26 @@ struct MakeTransitionAfterClip
 
     pts clipNumberBeforeTransition;
 
+    // Before trimming the clips to make room for the transition
+    pts leftPositionOfClipBeforeTransitionOriginal;
+    pts leftPositionOfClipAfterTransitionOriginal;
+    pts lengthOfClipBeforeTransitionOriginal;
+    pts lengthOfClipAfterTransitionOriginal;
+
+    // Before making the transition
     pts leftPositionOfClipBeforeTransitionBeforeApplyingTransition;
     pts leftPositionOfClipAfterTransitionBeforeApplyingTransition;
-    pts defaultSize;
     pts lengthOfFirstClip;
-
     pts lengthOfClipBeforeTransitionBeforeTransitionApplied;
     pts lengthOfClipAfterTransitionBeforeTransitionApplied;
 
+    // After making the transition
     pixel leftPositionOfClipBeforeTransitionAfterTransitionApplied;
     pixel leftPositionOfTransitionAfterTransitionApplied;
     pixel leftPositionOfClipAfterTransitionAfterTransitionApplied;
-
     pts lengthOfClipBeforeTransitionAfterTransitionApplied;
     pts lengthOfClipAfterTransitionAfterTransitionApplied;
-
+    pts lengthOfTransition;
     pixel touchPositionOfTransition;
 
 protected:
@@ -52,6 +57,7 @@ protected:
 
 private:
 
+    void storeVariablesBeforeTrimming();
     void storeVariablesBeforeMakingTransition();
     void storeVariablesAfterMakingTransition();
 };

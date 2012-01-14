@@ -23,7 +23,7 @@ public:
 
     EmptyFile();
     EmptyFile(pts length);
-    virtual EmptyFile* clone();
+    virtual EmptyFile* clone() const;
     virtual ~EmptyFile();
 
     //////////////////////////////////////////////////////////////////////////

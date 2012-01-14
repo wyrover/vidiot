@@ -50,7 +50,7 @@ Track::Track(const Track& other)
     addClips(clonedClips,IClipPtr());
 }
 
-Track* Track::clone()
+Track* Track::clone() const
 {
     return new Track(static_cast<const Track&>(*this));
 }

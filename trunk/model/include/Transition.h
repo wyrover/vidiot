@@ -36,9 +36,9 @@ public:
       ///< Constructor for creating new transition
     Transition(pts nFramesLeft, pts nFramesRight);
 
-    ///< Used for making deep copies (clones) 
-    virtual Transition* clone() override;           
-    
+    ///< Used for making deep copies (clones)
+    virtual Transition* clone() const override;
+
     virtual ~Transition();
 
     //////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
     virtual TrackPtr getTrack() override;
 
     virtual pts getLeftPts() const override;
-    virtual pts getRightPts() const override; 
+    virtual pts getRightPts() const override;
 
     virtual void setLink(IClipPtr link) override;
     virtual IClipPtr getLink() const override;
@@ -77,7 +77,7 @@ public:
     virtual bool getDragged() const override;
     virtual void setDragged(bool dragged) override;
 
-    virtual pts getGenerationProgress() const override;          
+    virtual pts getGenerationProgress() const override;
     virtual void setGenerationProgress(pts progress) override;
 
     void invalidateLastSetPosition() override;
@@ -90,6 +90,24 @@ public:
     pts getTouchPosition() const;   ///< \return position where the two transitioned clips are 'touching'
     virtual pts getLeft() const;    ///< \return number of frames to the left of the cut between the two clips
     virtual pts getRight() const;   ///< \return number of frames to the right of the cut between the two clips
+
+    /// Make the 'in' clip that is to be used for rendering data
+    /// This takes the previous clip in the track, clones it, and adjust the
+    /// clone such that it has the offset and length as required for the
+    /// transition.
+    /// If there is no 'in' clip for this transition (out-only transition) then
+    /// returns '0'.
+    /// \return a clone of the clip to be used for rendering transition data
+    model::IClipPtr makeLeftClip() const;
+
+    /// Make the 'out' clip that is to be used for rendering data
+    /// This takes the previous clip in the track, clones it, and adjust the
+    /// clone such that it has the offset and length as required for the
+    /// transition.
+    /// If there is no 'out' clip for this transition (in-only transition) then
+    /// returns '0'.
+    /// \return a clone of the clip to be used for rendering transition data
+    model::IClipPtr makeRightClip() const;
 
 protected:
 

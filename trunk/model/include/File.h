@@ -37,7 +37,7 @@ public:
 
     File();
     File(wxFileName path, int buffersize = 1);
-    virtual File* clone() override;
+    virtual File* clone() const override;
     virtual ~File();
 
     void abort();
@@ -61,7 +61,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    /// Returns the full path if the parent node is not an AutoFolder. Returns 
+    /// Returns the full path if the parent node is not an AutoFolder. Returns
     /// the filename only if the parent node is an AutoFolder.
     wxString getName() const override;
 
@@ -104,7 +104,7 @@ protected:
     void stopReadingPackets();
 
     /// This method is called when the reading/decoding process must be restarted.
-    /// Default behavior is to do nothing. Derived classes can reimplement this 
+    /// Default behavior is to do nothing. Derived classes can reimplement this
     /// to flush any pending (avcodec) buffers when the decoding is stopped/restarted
     /// for some reason (for instance, in case of moveTo()).
     virtual void flush();

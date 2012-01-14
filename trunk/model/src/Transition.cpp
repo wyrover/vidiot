@@ -9,6 +9,7 @@
 #include "Track.h"
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
+#include "UtilCloneable.h"
 
 namespace model {
 
@@ -61,7 +62,7 @@ Transition::Transition(const Transition& other)
     VAR_DEBUG(*this);
 }
 
-Transition* Transition::clone()
+Transition* Transition::clone() const
 {
     return new Transition(static_cast<const Transition&>(*this));
 }
@@ -239,6 +240,32 @@ pts Transition::getLeft() const
 pts Transition::getRight() const
 {
     return mFramesRight;
+}
+
+model::IClipPtr Transition::makeLeftClip() const
+{
+    model::IClipPtr result;
+    if (getLeft() > 0)
+    {
+        ASSERT(getPrev());
+        result = boost::const_pointer_cast<model::IClip>(make_cloned<const model::IClip>(getPrev()));
+        result->adjustBegin(result->getLength());
+        result->adjustEnd(getLength());
+    }
+    return result;
+}
+
+model::IClipPtr Transition::makeRightClip() const
+{
+    model::IClipPtr result;
+    if (getRight() > 0)
+    {
+        ASSERT(getNext());
+        result = boost::const_pointer_cast<model::IClip>(make_cloned<const model::IClip>(getNext()));
+        result->adjustEnd(- result->getLength());
+        result->adjustBegin(-getLength());
+    }
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

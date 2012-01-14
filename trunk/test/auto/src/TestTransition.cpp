@@ -233,7 +233,7 @@ void TestTransition::testDragAndDrop()
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
         ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,3)->isA<model::Transition>());
-        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.defaultSize);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfTransition);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
     }
@@ -248,7 +248,7 @@ void TestTransition::testDragAndDrop()
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.defaultSize);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
         ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
     }
