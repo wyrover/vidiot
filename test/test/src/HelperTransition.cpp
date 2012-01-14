@@ -64,6 +64,7 @@ wxPoint TransitionRightClipBegin(model::IClipPtr clip)
 MakeTransitionAfterClip::MakeTransitionAfterClip(int afterclip)
     : clipNumberBeforeTransition(afterclip)
 {
+    storeVariablesBeforeTrimming();
 }
 
 MakeTransitionAfterClip::~MakeTransitionAfterClip()
@@ -79,14 +80,21 @@ void MakeTransitionAfterClip::makeTransition()
     storeVariablesAfterMakingTransition();
 }
 
+void MakeTransitionAfterClip::storeVariablesBeforeTrimming()
+{
+    leftPositionOfClipBeforeTransitionOriginal = LeftPixel(VideoClip(0,clipNumberBeforeTransition));
+    leftPositionOfClipAfterTransitionOriginal  = LeftPixel(VideoClip(0,clipNumberBeforeTransition + 1));
+    lengthOfClipBeforeTransitionOriginal = VideoClip(0,clipNumberBeforeTransition)->getLength();
+    lengthOfClipAfterTransitionOriginal  = VideoClip(0,clipNumberBeforeTransition + 1)->getLength();
+}
+
 void MakeTransitionAfterClip::storeVariablesBeforeMakingTransition()
 {
     leftPositionOfClipBeforeTransitionBeforeApplyingTransition  = LeftPixel(VideoClip(0,clipNumberBeforeTransition));
     leftPositionOfClipAfterTransitionBeforeApplyingTransition   = LeftPixel(VideoClip(0,clipNumberBeforeTransition + 1));
-    defaultSize                                                 = gui::Config::ReadLong(gui::Config::sPathDefaultTransitionLength);
-    lengthOfFirstClip                                           = VideoClip(0,0)->getLength();
-    lengthOfClipBeforeTransitionBeforeTransitionApplied        = VideoClip(0,clipNumberBeforeTransition)->getLength();
-    lengthOfClipAfterTransitionBeforeTransitionApplied         = VideoClip(0,clipNumberBeforeTransition + 1)->getLength();
+    lengthOfFirstClip                                           = VideoClip(0,0)->getLength(); // todo: this is a fixed index ????
+    lengthOfClipBeforeTransitionBeforeTransitionApplied         = VideoClip(0,clipNumberBeforeTransition)->getLength();
+    lengthOfClipAfterTransitionBeforeTransitionApplied          = VideoClip(0,clipNumberBeforeTransition + 1)->getLength();
 }
 
 void MakeTransitionAfterClip::storeVariablesAfterMakingTransition()
@@ -96,8 +104,9 @@ void MakeTransitionAfterClip::storeVariablesAfterMakingTransition()
     leftPositionOfClipAfterTransitionAfterTransitionApplied  = LeftPixel(VideoClip(0,clipNumberBeforeTransition + 2));
     lengthOfClipBeforeTransitionAfterTransitionApplied       = VideoClip(0,clipNumberBeforeTransition)->getLength();
     lengthOfClipAfterTransitionAfterTransitionApplied        = VideoClip(0,clipNumberBeforeTransition + 2)->getLength();
-    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(VideoClip(0,clipNumberBeforeTransition + 1));
-    touchPositionOfTransition = getTimeline().getZoom().ptsToPixels(transition->getTouchPosition());
+    model::TransitionPtr transition                          = boost::dynamic_pointer_cast<model::Transition>(VideoClip(0,clipNumberBeforeTransition + 1));
+    touchPositionOfTransition                                = getTimeline().getZoom().ptsToPixels(transition->getTouchPosition());
+    lengthOfTransition                                       = transition->getLength();
 }
 
 MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip)
@@ -112,8 +121,9 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip)
     makeTransition();
 
     ASSERT(VideoClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(VideoClip(0,clipNumberBeforeTransition + 1));
-    ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - defaultSize / 2);
-    ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - defaultSize / 2);
+    ASSERT_EQUALS(lengthOfTransition, gui::Config::ReadLong(gui::Config::sPathDefaultTransitionLength));
+    ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition / 2);
+    ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition / 2);
 }
 MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 {
@@ -136,8 +146,9 @@ MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip)
     makeTransition();
 
     ASSERT(VideoClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(VideoClip(0,clipNumberBeforeTransition + 1));
+    ASSERT_EQUALS(lengthOfTransition, gui::Config::ReadLong(gui::Config::sPathDefaultTransitionLength) / 2);
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied);
-    ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - defaultSize / 2);
+    ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition);
 }
 
 MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
@@ -159,7 +170,8 @@ MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip)
     makeTransition();
 
     ASSERT(VideoClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(VideoClip(0,clipNumberBeforeTransition + 1));
-    ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - defaultSize / 2);
+    ASSERT_EQUALS(lengthOfTransition, gui::Config::ReadLong(gui::Config::sPathDefaultTransitionLength) / 2);
+    ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied);
 }
 

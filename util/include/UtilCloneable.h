@@ -12,7 +12,7 @@ class ICloneable
 {
 public:
     virtual ~ICloneable() {};
-    virtual ICloneable* clone() = 0;
+    virtual ICloneable* clone() const = 0;
 };
 
 template <typename T>

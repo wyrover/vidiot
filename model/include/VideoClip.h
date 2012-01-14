@@ -23,7 +23,7 @@ public:
 
     VideoClip(IControlPtr clip);
 
-    virtual VideoClip* clone() override;
+    virtual VideoClip* clone() const override;
 
     virtual ~VideoClip();
 

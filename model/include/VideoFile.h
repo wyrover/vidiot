@@ -24,7 +24,7 @@ public:
 
     VideoFile(wxFileName path);
 
-    virtual VideoFile* clone() override;
+    virtual VideoFile* clone() const override;
 
     virtual ~VideoFile();
 

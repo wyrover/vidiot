@@ -36,7 +36,7 @@ VideoClip::VideoClip(const VideoClip& other)
     VAR_DEBUG(*this);
 }
 
-VideoClip* VideoClip::clone()
+VideoClip* VideoClip::clone() const
 {
     return new VideoClip(static_cast<const VideoClip&>(*this));
 }

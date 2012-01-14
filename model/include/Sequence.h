@@ -38,7 +38,7 @@ public:
 
     Sequence(wxString name);
 
-    virtual Sequence* clone() override;
+    virtual Sequence* clone() const override;
 
 	virtual ~Sequence();
 

@@ -43,7 +43,7 @@ public:
     // ICLONEABLE
     //////////////////////////////////////////////////////////////////////////
 
-    virtual IClip* clone() = 0;
+    virtual IClip* clone() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // TRACK
@@ -60,7 +60,7 @@ public:
     /// \return pts (in containing track) AFTER end point of clip.
     /// The frame at this position is AFTER the last frame of this clip
     /// The frames of a clip are [ getLeftPts,getRightPts )
-    virtual pts getRightPts() const = 0; 
+    virtual pts getRightPts() const = 0;
 
     /// \return next clip in track. IClipPtr() if there is none.
     IClipPtr getNext();
@@ -104,7 +104,7 @@ public:
 
     /// \return Minimum allowed value for adjustEnd given the available data.
     /// \post getMinAdjustEnd() <= 0
-    virtual pts getMinAdjustEnd() const = 0; 
+    virtual pts getMinAdjustEnd() const = 0;
 
     /// \return Maximum allowed value for adjustEnd given the available data.
     /// \post getMaxAdjustEnd() >= 0
@@ -128,7 +128,7 @@ public:
     virtual void setDragged(bool dragged) = 0;     ///< Set dragged value for clip
 
     /// \return pts value of most recently returned audio/video in getNext*.
-    virtual pts getGenerationProgress() const = 0;          
+    virtual pts getGenerationProgress() const = 0;
 
     /// \param delivered value of most recently returned audio/video in getNext*.
     /// Triggers DebugEventRenderProgress.
@@ -173,7 +173,7 @@ private:
 
     void setNext(IClipPtr next);
     void setPrev(IClipPtr prev);
-    
+
     WeakIClipPtr mNext;
     WeakIClipPtr mPrev;
 

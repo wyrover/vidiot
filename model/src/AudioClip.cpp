@@ -39,9 +39,9 @@ AudioClip::AudioClip(const AudioClip& other)
     VAR_DEBUG(this);
 }
 
-AudioClip* AudioClip::clone()
-{ 
-    return new AudioClip(static_cast<const AudioClip&>(*this)); 
+AudioClip* AudioClip::clone() const
+{
+    return new AudioClip(static_cast<const AudioClip&>(*this));
 }
 
 AudioClip::~AudioClip()
@@ -95,7 +95,7 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
         }
         else
         {
-            // The clip has not provided enough audio data yet (for the pts length of the clip) 
+            // The clip has not provided enough audio data yet (for the pts length of the clip)
             // but there is no more audio data. This can typically happen by using a avi file
             // for which the video data is longer than the audio data. Instead of clipping the
             // extra video part, silence is added here (the user can make the clip shorter if
@@ -123,7 +123,7 @@ std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

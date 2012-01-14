@@ -35,7 +35,7 @@ public:
     /// \param extraEnd extra size of the contained EmptyFile at the end (the truncated part at the end)
     EmptyClip(pts length, pts extraBegin = 0, pts extraEnd = 0);
 
-    virtual EmptyClip* clone() override;
+    virtual EmptyClip* clone() const override;
 
     virtual ~EmptyClip();
 

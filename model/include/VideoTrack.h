@@ -21,7 +21,7 @@ public:
 
     VideoTrack();
 
-    virtual VideoTrack* clone() override;
+    virtual VideoTrack* clone() const override;
 
     virtual ~VideoTrack();
 

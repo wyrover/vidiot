@@ -34,7 +34,7 @@ CrossFade::CrossFade(const CrossFade& other)
     VAR_DEBUG(*this);
 }
 
-CrossFade* CrossFade::clone()
+CrossFade* CrossFade::clone() const
 {
     return new CrossFade(static_cast<const CrossFade&>(*this));
 }

@@ -62,7 +62,7 @@ AudioFile::AudioFile(const AudioFile& other)
     VAR_DEBUG(*this);
 }
 
-AudioFile* AudioFile::clone()
+AudioFile* AudioFile::clone() const
 {
     return new AudioFile(static_cast<const AudioFile&>(*this));
 }

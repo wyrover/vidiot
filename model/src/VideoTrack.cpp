@@ -31,7 +31,7 @@ VideoTrack::VideoTrack(const VideoTrack& other)
     VAR_DEBUG(this);
 }
 
-VideoTrack* VideoTrack::clone()
+VideoTrack* VideoTrack::clone() const
 {
     return new VideoTrack(static_cast<const VideoTrack&>(*this));
 }

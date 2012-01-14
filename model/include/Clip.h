@@ -22,11 +22,11 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Clip();                     ///< Constructor for recovery from disk
+    Clip();                      ///< Constructor for recovery from disk
 
-    Clip(IControlPtr render);   ///< Constructor for creating new clip from other asset
+    Clip(IControlPtr render);    ///< Constructor for creating new clip from other asset
 
-    virtual Clip* clone();      ///< Used for making deep copies (clones) 
+    virtual Clip* clone() const; ///< Used for making deep copies (clones)
 
     virtual ~Clip();
 
@@ -38,7 +38,7 @@ public:
     virtual void moveTo(pts position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
-    
+
     //////////////////////////////////////////////////////////////////////////
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
     virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
     virtual TrackPtr getTrack() override;
     virtual pts getLeftPts() const override;
-    virtual pts getRightPts() const override; 
+    virtual pts getRightPts() const override;
 
     virtual void setLink(IClipPtr link) override;
     virtual IClipPtr getLink() const override;
@@ -65,7 +65,7 @@ public:
     virtual bool getDragged() const override;
     virtual void setDragged(bool dragged) override;
 
-    virtual pts getGenerationProgress() const override;          
+    virtual pts getGenerationProgress() const override;
     virtual void setGenerationProgress(pts progress) override;
 
     void invalidateLastSetPosition() override;

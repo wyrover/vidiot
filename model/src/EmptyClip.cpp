@@ -38,7 +38,7 @@ EmptyClip::EmptyClip(const EmptyClip& other)
     VAR_DEBUG(this);
 }
 
-EmptyClip* EmptyClip::clone()
+EmptyClip* EmptyClip::clone() const
 {
     return new EmptyClip(static_cast<const EmptyClip&>(*this));
 }

@@ -40,7 +40,7 @@ EmptyFile::EmptyFile(const EmptyFile& other)
     VAR_DEBUG(this)(mLength);
 }
 
-EmptyFile* EmptyFile::clone()
+EmptyFile* EmptyFile::clone() const
 {
     return new EmptyFile(static_cast<const EmptyFile&>(*this));
 }

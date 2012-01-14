@@ -21,7 +21,7 @@ public:
 
 	AudioTrack();
 
-    virtual AudioTrack* clone() override;
+    virtual AudioTrack* clone() const override;
 
 	virtual ~AudioTrack();
 

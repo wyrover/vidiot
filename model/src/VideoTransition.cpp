@@ -69,17 +69,13 @@ VideoFramePtr VideoTransition::getNextVideo(wxSize size, bool alpha)
         if (getLeft() > 0)
         {
             ASSERT(getPrev());
-            mLeftClip = make_cloned<model::IClip>(getPrev());
-            mLeftClip->adjustBegin(mLeftClip->getLength());
-            mLeftClip->adjustEnd(getLength());
+            mLeftClip = makeLeftClip();
             mLeftClip->moveTo(mProgress);
         }
         if (getRight() > 0)
         {
             ASSERT(getNext());
-            mRightClip = make_cloned<model::IClip>(getNext());
-            mRightClip->adjustEnd(- mRightClip->getLength());
-            mRightClip->adjustBegin(-getLength());
+            mRightClip = makeRightClip();
             mRightClip->moveTo(mProgress);
         }
 

@@ -61,7 +61,7 @@ VideoFile::VideoFile(const VideoFile& other)
     VAR_DEBUG(*this);
 }
 
-VideoFile* VideoFile::clone()
+VideoFile* VideoFile::clone() const
 {
     return new VideoFile(static_cast<const VideoFile&>(*this));
 }

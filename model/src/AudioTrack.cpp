@@ -16,7 +16,7 @@ namespace model {
 
 AudioTrack::AudioTrack()
 :	Track()
-{ 
+{
     VAR_DEBUG(this);
 }
 
@@ -26,9 +26,9 @@ AudioTrack::AudioTrack(const AudioTrack& other)
     VAR_DEBUG(this);
 }
 
-AudioTrack* AudioTrack::clone()
-{ 
-    return new AudioTrack(static_cast<const AudioTrack&>(*this)); 
+AudioTrack* AudioTrack::clone() const
+{
+    return new AudioTrack(static_cast<const AudioTrack&>(*this));
 }
 
 AudioTrack::~AudioTrack()
@@ -71,7 +71,7 @@ AudioChunkPtr AudioTrack::getNextAudio(int audioRate, int nAudioChannels)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
