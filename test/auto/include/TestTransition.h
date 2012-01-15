@@ -48,6 +48,11 @@ public:
     /// - Undoing
     void testPlaybackAndScrubbing();
 
+    /// Tests the trimming of the transition as well as trimming the clips related
+    /// to the transition. Also tests that maximum/minimum bounds are honored when
+    /// trimming.
+    void testTrimming();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

@@ -64,8 +64,14 @@ template <class COMMAND>
 void ASSERT_CURRENT_COMMAND_TYPE()
 {
     wxCommand* cmd = getCurrentCommand(); // Split to make debugging easier (inspect cmd to see what the current command is in case of failure)
+    ASSERT(cmd);
     COMMAND* command = dynamic_cast<COMMAND*>(cmd);
-    ASSERT(command);
+    if (!command)
+    {
+        const char* Expected = (typeid(COMMAND).name());
+        const char* Actual = (typeid(*cmd).name());
+        ASSERT(command)(Expected)(Actual);
+    }
 };
 
 /// Log the command history

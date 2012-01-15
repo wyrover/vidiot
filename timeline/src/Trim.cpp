@@ -164,13 +164,18 @@ void Trim::update(wxPoint position)
     mCommand->update(diff);
     preview();
 
+    getTimeline().endTransaction();
+    getTimeline().Update();
+
     if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
     {
         // Ensure that the rightmost pts is kept at the same position when shift dragging
-        getScrolling().align(mFixedPts - diff, mFixedPixel);
+
+        // this caused one of the automated test scenarios to fail (the scroll change causes an error in the trim code)
+   //     getScrolling().align(mFixedPts - diff, mFixedPixel);// TODO improve: the feedback looks crappy and sometimes the alignment is incorrect
+        // idea: do not change scrolling but just shift the bitmap a bit during the edit operation.
+        // do the scroll adjust at the end of the edit operation?
     }
-    getTimeline().endTransaction();
-    getTimeline().Update();
 }
 
 void Trim::abort()
