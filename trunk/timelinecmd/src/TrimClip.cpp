@@ -209,13 +209,13 @@ void TrimClip::determineTrim(pts mousediff)
 
     if (isBeginTrim())
     {
+        lowerlimit(mClip->getMinAdjustBegin());        // Clip cannot be extended further than the '0'th frame of the underlying video provider.
         upperlimit(mClip->getMaxAdjustBegin());        // Clip cannot be trimmed further than the original number of frames
-        upperlimit(mLink->getMaxAdjustBegin());        // Clip cannot be trimmed further than the original number of frames in the linked clip
 
         if (mLink)
         {
-            lowerlimit(mClip->getMinAdjustBegin());    // Clip cannot be extended further than the '0'th frame of the underlying video provider.
             lowerlimit(mLink->getMinAdjustBegin());    // Link cannot be extended further than the '0'th frame of the underlying video provider.
+            upperlimit(mLink->getMaxAdjustBegin());    // Clip cannot be trimmed further than the original number of frames in the linked clip
         }
     }
     else
