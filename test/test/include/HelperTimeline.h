@@ -71,6 +71,8 @@ pixel VBottomQuarter(model::IClipPtr clip);          ///< \return y position at 
 pixel HCenter(model::IClipPtr clip);                 ///< \return horizontal center position of given clip
 wxPoint Center(model::IClipPtr clip);                ///< \return center (pixel) position of a clip
 wxPoint VTopQuarterHCenter(model::IClipPtr clip);    ///< \return pixel at one quarter from the top (centered horizontally)
+wxPoint VTopQuarterLeft(model::IClipPtr clip);       ///< \return pixel at one quarter from the top, left edge
+wxPoint VTopQuarterRight(model::IClipPtr clip);      ///< \return pixel at one quarter from the top, right edge
 wxPoint VBottomQuarterHCenter(model::IClipPtr clip); ///< \return pixel at one quarter from the bottom (centered horizontally)
 wxPoint LeftCenter(model::IClipPtr clip);            ///< \return left center position (centered vertically)
 wxPoint RightCenter(model::IClipPtr clip);           ///< \return right center position (centered vertically)
@@ -95,6 +97,16 @@ void Move(wxPoint position);                                            ///< Mov
 void Click(wxPoint position);                                           ///< Move the mouse to the given position and (left) click there
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
 void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side
+
+/// Zoom in the given amount of times by zooming in the given amount of times.
+/// When going out of scope, will reset to the default zoom level by zooming out an equal amount of times.
+struct Zoom
+{
+    explicit Zoom(int level);
+    ~Zoom();
+private:
+    int mLevel;
+};
 
 /// Do a drag and drop between the two points (press, move, release).
 /// \param from starting position to move to initially

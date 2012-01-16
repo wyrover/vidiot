@@ -186,6 +186,16 @@ wxPoint VTopQuarterHCenter(model::IClipPtr clip)
     return wxPoint( HCenter(clip), VTopQuarter(clip) );
 }
 
+wxPoint VTopQuarterLeft(model::IClipPtr clip)
+{
+    return wxPoint( LeftPixel(clip), VTopQuarter(clip) );
+}
+
+wxPoint VTopQuarterRight(model::IClipPtr clip)
+{
+    return wxPoint( RightPixel(clip), VTopQuarter(clip) );
+}
+
 wxPoint VBottomQuarterHCenter(model::IClipPtr clip)
 {
     return wxPoint( HCenter(clip), VBottomQuarter(clip) );
@@ -320,6 +330,23 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
     wxUIActionSimulator().MouseUp();
     if (shift) wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
     waitForIdle();
+}
+
+Zoom::Zoom(int level)
+    : mLevel(level)
+{
+    for (int i = 0; i < mLevel; ++i)
+    {
+        Type('=');
+    }
+}
+
+Zoom::~Zoom()
+{
+    for (int i = 0; i < mLevel; ++i)
+    {
+        Type('-');
+    }
 }
 
 void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)

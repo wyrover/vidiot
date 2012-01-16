@@ -72,24 +72,7 @@ void TestOnce::testOnce()
 {
     START_TEST;
 
-        // Zoom in
-    Type('=');
-    Type('=');
-    Type('=');
-    Type('=');
-
-    {
-        // Test - for an in-out-transition - that clicking on TransitionInterior selects the clip.
-        // Test that dragging works!?
-    }
-    {
-        // Test - for an in-only-transition - that clicking on TransitionInterior selects the clip.
-        // Test that dragging works!?
-    }
-    {
-        // Test - for an out-only-transition - that clicking on TransitionInterior selects the clip.
-        // Test that dragging works!?
-    }
+    Zoom Level(4);
 
     {
         // Test - for an in-out-transition - that clicking on TransitionBegin starts trimming the

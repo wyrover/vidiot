@@ -113,6 +113,66 @@ void TestTimeline::testSelection()
         ShiftUp();
         ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
     }
+        {
+        // Test selecting an in-out-transition
+        MakeInOutTransitionAfterClip preparation(1);
+        DeselectAllClips();
+        Click(VTopQuarterHCenter(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+        Click(VTopQuarterLeft(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+        Click(VTopQuarterRight(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+    }
+    {
+        // Test selecting an out-only-transition
+        MakeOutTransitionAfterClip preparation(1);
+        DeselectAllClips();
+        Click(VTopQuarterHCenter(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+        Click(VTopQuarterLeft(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+        Click(VTopQuarterRight(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+    }
+    {
+        // Test selecting an in-only-transition
+        MakeInTransitionAfterClip preparation(1);
+        DeselectAllClips();
+        Click(VTopQuarterHCenter(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+        Click(VTopQuarterLeft(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+        Click(VTopQuarterRight(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        DeselectAllClips();
+    }
 }
 
 void TestTimeline::testDnd()

@@ -203,8 +203,9 @@ boost::statechart::result Idle::leftDown()
                 return transit<StateTrim>();
                 break;
             case TransitionBegin://todo temp
-            case TransitionInterior://todo temp
             case TransitionEnd://todo temp
+                return forward_event();
+            case TransitionInterior:
                 return forward_event();
             default:
                 FATAL("Unexpected logical clip position.");
