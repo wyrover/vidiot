@@ -297,6 +297,7 @@ void TestTransition::testDragAndDrop()
 
 void TestTransition::testInOutTransitionDragAndDrop()
 {
+    START_TEST;
     // Zoom in (required for correct positioning)
     Type('=');
     Type('=');
@@ -336,6 +337,7 @@ void TestTransition::testInOutTransitionDragAndDrop()
 
 void TestTransition::testInTransitionDragAndDrop()
 {
+    START_TEST;
     // Zoom in (required for correct positioning)
     Type('=');
     Type('=');
@@ -360,6 +362,7 @@ void TestTransition::testInTransitionDragAndDrop()
 
 void TestTransition::testOutTransitionDragAndDrop()
 {
+    START_TEST;
     // Zoom in (required for correct positioning)
     Type('=');
     Type('=');
