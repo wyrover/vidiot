@@ -10,6 +10,7 @@
 #include "AudioChunk.h"
 #include "VideoFrame.h"
 #include "Transition.h"
+#include "Track.h"
 
 namespace model {
 
@@ -65,9 +66,22 @@ EmptyClipPtr EmptyClip::replace( IClipPtr original )
         ASSERT_EQUALS(clip->getMinAdjustEnd(),original->getMinAdjustEnd());
     }
     ASSERT_EQUALS(clip->getLength(),original->getLength());
-
-    // todo see AClipEdit::replaceWithEmpty, there the same algorithm is applied, but then to a list. Make generic (list) and reuse in this method
     return clip;
+}
+
+//static
+EmptyClipPtr EmptyClip::replace(model::IClips clips)
+{
+    ASSERT_MORE_THAN_ZERO(clips.size());
+
+    model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
+    pts length = Track::getCombinedLength(clips);
+    ASSERT_MORE_THAN_ZERO(length);
+
+    // Ensure that for regions the 'extra' space for transitions is added.
+    // Basically the 'extra' space at the beginning of the first clip and the extra
+    // space at the ending of the last clip must be added to the region.
+    return boost::make_shared<model::EmptyClip>(length, -1 * clips.front()->getMinAdjustBegin(), clips.back()->getMaxAdjustEnd());
 }
 
 //////////////////////////////////////////////////////////////////////////

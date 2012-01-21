@@ -257,7 +257,7 @@ pts Track::getRightEmptyArea(IClipPtr clip)
 //////////////////////////////////////////////////////////////////////////
 // STATIC HELPER METHOD
 //////////////////////////////////////////////////////////////////////////
-
+// todo: such stuff in utility classes to avoid circular dependencies? (exmaple: emptyclip uses this and is now dependent on track)
 //static
 pts Track::getCombinedLength(const IClips& clips)
 {
