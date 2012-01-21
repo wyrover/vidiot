@@ -25,7 +25,7 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mLink()
     ,   mTransition(transition)
     ,   mPosition(position)
-    ,   mDiff(0)
+    ,   mTrim(0)
     ,   mShift(false)
     ,   mMinShiftOtherTrackContent(0)
     ,   mMaxShiftOtherTrackContent(0)
@@ -65,7 +65,7 @@ void TrimClip::update(pts diff)
 
     // This statement is deliberately after removeTransition, since that methods initializes mClip
     // mClip, in turn, is used for preview(). TODO: better solution
-    if (mDiff == 0)
+    if (mTrim == 0)
     {
         Revert(); // Undo any changes
         return; // Nothing is changed
@@ -120,7 +120,7 @@ bool TrimClip::isBeginTrim() const
 
 pts TrimClip::getDiff() const
 {
-    return mDiff;
+    return mTrim;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ void TrimClip:: determineShiftBoundariesForOtherTracks()
 void TrimClip::removeTransition()
 {
     mClip = mOriginalClip;
-    if (!mShift && mTransition && mDiff != 0)
+    if (!mShift && mTransition && mTrim != 0)
     {
         model::IClips replacements = unapplyTransition(mTransition);
         ASSERT_MORE_THAN_ZERO(replacements.size());
@@ -196,10 +196,10 @@ void TrimClip::reduceSize(model::IClipPtr emptyclip, pts begin, pts end)
 
 void TrimClip::determineTrim(pts mousediff)
 {
-    mDiff = mousediff;
+    mTrim = mousediff;
 
-    auto lowerlimit = [this](pts limit) { if (mDiff < limit) { mDiff = limit; } };
-    auto upperlimit = [this](pts limit) { if (mDiff > limit) { mDiff = limit; } };
+    auto lowerlimit = [this](pts limit) { if (mTrim < limit) { mTrim = limit; } };
+    auto upperlimit = [this](pts limit) { if (mTrim > limit) { mTrim = limit; } };
 
     if (mShift)
     {
@@ -262,7 +262,7 @@ void TrimClip::determineTrim(pts mousediff)
         }
     }
 
-    VAR_INFO(this)(mDiff);
+    VAR_INFO(this)(mTrim);
 }
 
 void TrimClip::applyTrim()
@@ -273,11 +273,11 @@ void TrimClip::applyTrim()
     newclip = make_cloned<model::IClip>(mClip);
     if (isBeginTrim())
     {
-        newclip->adjustBegin(mDiff);
+        newclip->adjustBegin(mTrim);
     }
     else
     {
-        newclip->adjustEnd(mDiff);
+        newclip->adjustEnd(mTrim);
     }
 
     if (mLink)
@@ -290,11 +290,11 @@ void TrimClip::applyTrim()
         newlink = make_cloned<model::IClip>(mLink);
         if (isBeginTrim())
         {
-            newlink->adjustBegin(mDiff);
+            newlink->adjustBegin(mTrim);
         }
         else
         {
-            newlink->adjustEnd(mDiff);
+            newlink->adjustEnd(mTrim);
         }
     }
 
@@ -340,45 +340,45 @@ void TrimClip::applyTrim()
         //ASSERT_EQUALS(mClip->getLeftPts(),linked->getLeftPts());
         //ASSERT_EQUALS(mClip->getRightPts(),linked->getRightPts());
 
-        shiftAllTracks(mClip->getLeftPts(), -mDiff,  exclude);
+        shiftAllTracks(mClip->getLeftPts(), -mTrim,  exclude);
     }
     else
     {
         if (isBeginTrim())
         {
-            if (mDiff > 0) // Reduce: Move clip begin point to the right
+            if (mTrim > 0) // Reduce: Move clip begin point to the right
             {
                 // Add empty clip in front of new clip: new clip is shorter than original clip and the frames should maintain their position.
-                replaceclip.push_front(boost::make_shared<model::EmptyClip>(mDiff));
-                replacelink.push_front(boost::make_shared<model::EmptyClip>(mDiff));
+                replaceclip.push_front(boost::make_shared<model::EmptyClip>(mTrim));
+                replacelink.push_front(boost::make_shared<model::EmptyClip>(mTrim));
             }
-            else // (mDiff < 0) // Enlarge: Move clip begin point to the left
+            else // (mTrim < 0) // Enlarge: Move clip begin point to the left
             {
                 ASSERT(mClip->getPrev()->isA<model::EmptyClip>());
-                reduceSize(mClip->getPrev(), 0, -mDiff);
+                reduceSize(mClip->getPrev(), 0, -mTrim);
                 if (mLink)
                 {
                     ASSERT(mLink->getPrev()->isA<model::EmptyClip>());
-                    reduceSize(mLink->getPrev(), 0, -mDiff);
+                    reduceSize(mLink->getPrev(), 0, -mTrim);
                 }
             }
         }
         else // !isBeginTrim()
         {
-            if (mDiff < 0) // Reduce: Move clip end point to the left
+            if (mTrim < 0) // Reduce: Move clip end point to the left
             {
                 // Add empty clip after new clip: new clip is shorter than original clip and the frames should maintain their position.
-                replaceclip.push_back(boost::make_shared<model::EmptyClip>(-mDiff));
-                replacelink.push_back(boost::make_shared<model::EmptyClip>(-mDiff));
+                replaceclip.push_back(boost::make_shared<model::EmptyClip>(-mTrim));
+                replacelink.push_back(boost::make_shared<model::EmptyClip>(-mTrim));
             }
-            else // (mDiff > 0) // Enlarge: Move clip end point to the right
+            else // (mTrim > 0) // Enlarge: Move clip end point to the right
             {
                 ASSERT(mClip->getNext()->isA<model::EmptyClip>());
-                reduceSize(mClip->getNext(), mDiff, 0);
+                reduceSize(mClip->getNext(), mTrim, 0);
                 if (mLink)
                 {
                     ASSERT(mLink->getNext()->isA<model::EmptyClip>());
-                    reduceSize(mLink->getNext(), mDiff, 0);
+                    reduceSize(mLink->getNext(), mTrim, 0);
                 }
             }
         }
@@ -397,7 +397,7 @@ void TrimClip::applyTrim()
 
 std::ostream& operator<<( std::ostream& os, const TrimClip& obj )
 {
-    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mOriginalClip << '|' << obj.mClip << '|' << obj.mDiff << '|' << obj.mPosition << '|' << obj.mShift;
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mOriginalClip << '|' << obj.mClip << '|' << obj.mTrim << '|' << obj.mPosition << '|' << obj.mShift;
     return os;
 }
 

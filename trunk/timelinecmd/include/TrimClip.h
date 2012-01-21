@@ -63,7 +63,7 @@ private:
     model::IClipPtr mLink;              ///< Same as mOriginalLink or its replacement in case a transition was unapplied
     // todo mLink and mOriginalLink for the link also, since the link may also be under a transition
     model::TransitionPtr mTransition;
-    pts mDiff;
+    pts mTrim;
     bool mShift;
 
     pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
@@ -89,7 +89,6 @@ private:
     void removeTransition();
 
     // Determine mDiff which is the actual trim to be applied
-    // todo rename mDiff to mTrim
     /// \param mousediff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right) given the mouse motion, but not taking into account any boundaries
     void determineTrim(pts mousediff);
 
