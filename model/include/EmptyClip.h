@@ -50,6 +50,12 @@ public:
     /// \param original clip to be cloned
     static EmptyClipPtr replace( IClipPtr original );
 
+    /// Make an empty clip that has the same length as the original list of clips.
+    /// \post resulting clip getMaxAdjustBegin() equals clips.front()->getMaxAdjustBegin()
+    /// \post resulting clip getMinAdjustEnd() equals clips.back()->getMinAdjustEnd()
+    /// \pre All clips are part of the same track
+    static EmptyClipPtr replace(model::IClips clips);
+
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////

@@ -5,7 +5,11 @@ namespace test {
 
 void setTitle(const char* title)
 {
-    gui::Window::get().setAdditionalTitle(wxString(title));
+    static int testcount = 1;
+    wxString s;
+    s << testcount << " - " << title;
+    gui::Window::get().setAdditionalTitle(s);
+    testcount++;
 }
 
 } // namespace

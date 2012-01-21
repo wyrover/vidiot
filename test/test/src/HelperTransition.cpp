@@ -92,7 +92,7 @@ void MakeTransitionAfterClip::storeVariablesBeforeMakingTransition()
 {
     leftPositionOfClipBeforeTransitionBeforeApplyingTransition  = LeftPixel(VideoClip(0,clipNumberBeforeTransition));
     leftPositionOfClipAfterTransitionBeforeApplyingTransition   = LeftPixel(VideoClip(0,clipNumberBeforeTransition + 1));
-    lengthOfFirstClip                                           = VideoClip(0,0)->getLength(); // todo: this is a fixed index ????
+    lengthOfFirstClip                                           = VideoClip(0,0)->getLength(); // This is a fixed index, since really the first clip's length is used
     lengthOfClipBeforeTransitionBeforeTransitionApplied         = VideoClip(0,clipNumberBeforeTransition)->getLength();
     lengthOfClipAfterTransitionBeforeTransitionApplied          = VideoClip(0,clipNumberBeforeTransition + 1)->getLength();
 }
