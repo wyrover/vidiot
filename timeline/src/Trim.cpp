@@ -193,7 +193,7 @@ void Trim::stop()
     if (mCommand->getDiff() != 0)
     {
         // Only submit the command if there's an actual diff to be applied
-        getTimeline().Submit(mCommand); // todo: test if performance improves by not submitting the command, but only when really submitting, and doing 'local' do/undo otherwise
+        getTimeline().Submit(mCommand);
         mCommand = 0; // To ensure that any following 'abort' (see StateTrim) will not cause a revert
         LOG_DEBUG;
     }
