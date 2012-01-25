@@ -4,6 +4,8 @@
 #include "View.h"
 
 namespace model {
+    class Track;
+    typedef boost::shared_ptr<Track> TrackPtr;
     class EventAddAudioTracks;
     class EventRemoveAudioTracks;
 }
@@ -30,6 +32,9 @@ public:
     wxSize requiredSize() const override;  ///< @see View::requiredSize()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
+
+    /// \return y position of the track within this View
+    pixel getPosition(model::TrackPtr track) const;
 
 private:
 

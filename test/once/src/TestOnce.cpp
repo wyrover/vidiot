@@ -75,6 +75,62 @@ void TestOnce::testOnce()
     Zoom Level(4);
 
     {
+        // Test - for an in-out-transition - that when trimming the linked audio clips,
+        // the transition is also unapplied.
+        MakeInOutTransitionAfterClip preparation(1);
+        pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
+        pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
+
+        //////// TESTS WITHOUT SHIFT ////////
+        // Test reducing the linked audio clip size (transition between videos must be removed)
+        Drag(RightCenter(AudioClip(0,1)),Center(AudioClip(0,1)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+        // Test reducing the linked audio clip size (transition between videos must be removed)
+        Drag(LeftCenter(AudioClip(0,2)),Center(AudioClip(0,2)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
+        ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+        // Test reducing the linked audio clip size as much as possible (transition between videos must be removed)
+        Drag(RightCenter(AudioClip(0,1)),LeftCenter(AudioClip(0,0)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,1)->isA<model::EmptyClip>());
+
+        assert that clip is removed and that clip 4 after it becomes 3 etc.
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+        // Test reducing the linked audio clip size as much as possible (transition between videos must be removed)
+        Drag(LeftCenter(AudioClip(0,2)),Center(AudioClip(0,2)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
+        ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+
+        // Test reducing the 'other' side of the linked audio clip size as much as possible
+        Drag(LeftCenter(AudioClip(0,1)),Center(AudioClip(0,4)));
+        Undo();
+        // Test reducing the 'other' side of the linked audio clip size as much as possible
+        Drag(RightCenter(AudioClip(0,2)),Center(AudioClip(0,0)));
+        Undo();
+    }
+    {
         // Test - for an in-out-transition - that clicking on TransitionBegin starts trimming the
         // selected transition.
         // Also test that the minadjustbegin/maxadjustend values are honored
