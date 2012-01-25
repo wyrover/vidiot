@@ -14,6 +14,7 @@
 #include "Timeline.h"
 #include "UtilLog.h"
 #include "VideoTrack.h"
+#include "AudioTrack.h"
 #include "VideoView.h"
 #include "Zoom.h"
 #include "SequenceEvent.h"
@@ -137,7 +138,10 @@ pixel SequenceView::getPosition(model::TrackPtr track) const
     {
         return getVideoPosition() + getVideo().getPosition(track);
     }
-    NIY;
+    if (track->isA<model::AudioTrack>())
+    {
+        return getAudioPosition() + getAudio().getPosition(track);
+    }
     return -1;
 }
 
