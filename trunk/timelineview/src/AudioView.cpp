@@ -76,6 +76,21 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+pixel AudioView::getPosition(model::TrackPtr track) const
+{
+    int y = 0;
+    BOOST_REVERSE_FOREACH(model::TrackPtr _track, getSequence()->getAudioTracks())
+    {
+        y += Layout::sTrackDividerHeight;
+        if (track == _track)
+        {
+            break;
+        }
+        y += _track->getHeight();
+    }
+    return y;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
