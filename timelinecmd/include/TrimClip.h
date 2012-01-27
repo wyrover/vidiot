@@ -5,7 +5,6 @@
 #include "PositionInfo.h"
 
 namespace gui { namespace timeline { namespace command {
-
 class TrimClip
     :   public AClipEdit
 {
@@ -58,11 +57,12 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::IClipPtr mOriginalClip;
+    model::TransitionPtr mTransition;       ///< The (optional) transition before or after mOriginalClip, or the transition which IS mClip
     model::IClipPtr mOriginalLink;
-    model::IClipPtr mClip;              ///< Same as mOriginalClip or its replacement in case a transition was unapplied
-    model::IClipPtr mLink;              ///< Same as mOriginalLink or its replacement in case a transition was unapplied
+    model::TransitionPtr mLinkTransition;   ///< The (optional) transition before or after mOriginalLink, or the transition which IS mClip
+    model::IClipPtr mClip;                  ///< Same as mOriginalClip or its replacement in case a transition was unapplied
+    model::IClipPtr mLink;                  ///< Same as mOriginalLink or its replacement in case a transition was unapplied
     // todo mLink and mOriginalLink for the link also, since the link may also be under a transition
-    model::TransitionPtr mTransition;
     pts mTrim;
     bool mShift;
 
@@ -115,7 +115,6 @@ private:
 
     friend std::ostream& operator<<( std::ostream& os, const TrimClip& obj );
 };
-
 }}} // namespace
 
 #endif // TRIM_BEGIN_H

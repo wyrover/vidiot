@@ -14,7 +14,6 @@
 #include "UtilLogStl.h"
 
 namespace gui { namespace timeline { namespace command {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -56,16 +55,26 @@ void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
             }
             else
             {
-                transition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
-                if (transition && transition->getRight() > 0)
+                model::TransitionPtr inTransition = getInTransition(clip);
+                if (inTransition)
                 {
-                    allTransitions.insert(transition);
+                    allTransitions.insert(inTransition);
                 }
-                transition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
-                if (transition && transition->getLeft() > 0)
+                model::TransitionPtr outTransition = getOutTransition(clip);
+                if (outTransition)
                 {
-                    allTransitions.insert(transition);
+                    allTransitions.insert(outTransition);
                 }
+                //transition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
+                //if (transition && transition->getRight() > 0)
+                //{
+                //    allTransitions.insert(transition);
+                //}
+                //transition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
+                //if (transition && transition->getLeft() > 0)
+                //{
+                //    allTransitions.insert(transition);
+                //}
             }
         }
 
@@ -239,5 +248,4 @@ std::ostream& operator<<( std::ostream& os, const ExecuteDrop& obj )
     os << static_cast<const AClipEdit&>(obj) << '|' << '|' << obj.mDrags << '|' << obj.mShift;
     return os;
 }
-
 }}} // namespace

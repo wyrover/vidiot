@@ -37,7 +37,6 @@ Install doxygen into c:\Program Files
 
 =================== CxxTest ===================
 Install CxxTest into <VIDIOT_DIR>\CxxTest (cxxtest, docs and sample are subdirs of CxxTest)
-* Note: for 64 bit windows use "Program Files (x86)"
 Install ActivePerl via installer
 
 ========== MSYS + MINGW + CODEBLOCKS ==========
@@ -129,7 +128,27 @@ Install ActivePerl via installer
   - Adjust solution:
     + Define NO_ASIO (Project->Properties->Preprocessor defined - /D )
     + Define NO_WASAPI
+    PA_USE_ASIO=0
+PA_USE_WASAPI=0
+
+PA_USE_ASIO
+PA_USE_DS (DirectSound)
+PA_USE_WMME (MME)
+PA_USE_WASAPI
+PA_USE_WDMKS
+PA_USE_SKELETON 
+set all to 0 except ds
+TODO BUILD WITH LATEST FILES FROM PORTAUDIO!!!
+C
+
+/C++ -> Optimization -> Omit frame pointers = Yes
+
+C/C++ -> Code Generation -> Runtime library = /MT
+
+Optional: C/C++ -> Code Generation -> Floating point model = fast 
     + Remove ASIO files from project
+    + Remove hostapi/wasapi files
+    + Remove ..wasapi.. lines from portaudio.def
     + Remove ..asio.. lines from portaudio.def
     + add C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include to the include paths
     + add C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86 to the linker "additional library directories"
@@ -144,7 +163,7 @@ Install ActivePerl via installer
 * (MSVC)
   - Open SoundTouchDll solution (convert if needed).
   - For all configurations change /MT[d] to /MD[d]
-  - (OBSOLETE?) Remove resource.rc from project
+  - Exclude SoundTouch.rc from project (doesn't build)
   - Build
 * (GCC)
   MSys: cd soundtouch_trunk ; ./bootstrap ; ./configure --enable-integer-samples; make ; make install

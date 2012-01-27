@@ -85,7 +85,7 @@ void TestOnce::testOnce()
         // Test reducing the linked audio clip size (transition between videos must be removed)
         Drag(RightCenter(AudioClip(0,1)),Center(AudioClip(0,1)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
-        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT_LESS_THAN(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
@@ -95,11 +95,11 @@ void TestOnce::testOnce()
         // Test reducing the linked audio clip size (transition between videos must be removed)
         Drag(LeftCenter(AudioClip(0,2)),Center(AudioClip(0,2)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT_EQUALS(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
-        ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         ASSERT_LESS_THAN(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
         Undo();
         // Test reducing the linked audio clip size as much as possible (transition between videos must be removed)
@@ -107,10 +107,8 @@ void TestOnce::testOnce()
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
         ASSERT(AudioClip(0,1)->isA<model::EmptyClip>());
-
-        assert that clip is removed and that clip 4 after it becomes 3 etc.
-        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-        ASSERT_EQUALS(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(),originalLengthOfAudioClip2);
         Undo();
         // Test reducing the linked audio clip size as much as possible (transition between videos must be removed)
         Drag(LeftCenter(AudioClip(0,2)),Center(AudioClip(0,2)));
