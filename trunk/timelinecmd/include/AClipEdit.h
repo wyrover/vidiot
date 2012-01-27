@@ -27,7 +27,6 @@ typedef std::list<MoveParameterPtr> MoveParameters;
 }
 
 namespace gui { namespace timeline { namespace command {
-
 typedef std::map<model::IClipPtr, model::IClips> ReplacementMap;
 
 /// Base class for all edits of clip lengths/position/etc.
@@ -147,6 +146,18 @@ protected:
     /// \return list of clips with which the transition and all its related clips are replaced
     model::IClips unapplyTransition( model::TransitionPtr transition );
 
+    /// Return the transition left of the given clip, but only if that transition actually
+    /// applies to that clip.
+    /// \param clip clip for which the 'in' transition is searched
+    /// \return 'in' transition for given clip, 0 if there is no such clip
+    model::TransitionPtr getInTransition(model::IClipPtr clip) const;
+
+    /// Return the transition right of the given clip, but only if that transition actually
+    /// applies to that clip.
+    /// \param clip clip for which the 'out' transition is searched
+    /// \return 'out' transition for given clip, 0 if there is no such clip
+    model::TransitionPtr getOutTransition(model::IClipPtr clip) const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -260,7 +271,6 @@ private:
 
     friend std::ostream& operator<<( std::ostream& os, const AClipEdit& obj );
 };
-
 }}} // namespace
 
 #endif // CLIP_EDIT_H

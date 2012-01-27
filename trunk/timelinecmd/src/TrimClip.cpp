@@ -2,17 +2,17 @@
 
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
-#include "UtilLog.h"
-#include "Timeline.h"
 #include "Cursor.h"
-#include "Track.h"
-#include "Sequence.h"
-#include "Zoom.h"
 #include "EmptyClip.h"
 #include "IClip.h"
+#include "Sequence.h"
+#include "Timeline.h"
+#include "Track.h"
+#include "Transition.h"
+#include "UtilLog.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline { namespace command {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mClip()
     ,   mLink()
     ,   mTransition(transition)
+    ,   mLinkTransition()
     ,   mPosition(position)
     ,   mTrim(0)
     ,   mShift(false)
@@ -35,10 +36,18 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     if (isBeginTrim())
     {
         mCommandName = _("Adjust clip begin point");
+        if (mOriginalLink)
+        {
+            mLinkTransition = getInTransition(mOriginalLink);
+        }
     }
     else
     {
         mCommandName = _("Adjust clip end point");
+        if (mOriginalLink)
+        {
+            mLinkTransition = getOutTransition(mOriginalLink);
+        }
     }
 
     determineShiftBoundariesForOtherTracks();
@@ -150,23 +159,32 @@ void TrimClip:: determineShiftBoundariesForOtherTracks()
 
 void TrimClip::removeTransition()
 {
-    mClip = mOriginalClip;
-    if (!mShift && mTransition && mTrim != 0)
+    auto unapplyIfNeeded = [this](model::IClipPtr clip, model::TransitionPtr transition) -> model::IClipPtr
     {
-        model::IClips replacements = unapplyTransition(mTransition);
-        ASSERT_MORE_THAN_ZERO(replacements.size());
-        if (isBeginTrim())
+        model::IClipPtr result = clip;
+        if (!mShift && transition && mTrim != 0)
         {
-            mClip = replacements.back();
+            model::IClips replacements = unapplyTransition(transition);
+            ASSERT_MORE_THAN_ZERO(replacements.size());
+            if (isBeginTrim())
+            {
+                result = replacements.back();
+            }
+            else
+            {
+                result = replacements.front();
+            }
         }
-        else
-        {
-            mClip = replacements.front();
-        }
+        ASSERT(!result->isA<model::EmptyClip>());
+        return result;
+    };
+
+    mClip = unapplyIfNeeded(mOriginalClip,mTransition);
+    if (mOriginalLink)
+    {
+        mLink = unapplyIfNeeded(mOriginalLink,mLinkTransition);
     }
-    ASSERT(!mClip->isA<model::EmptyClip>());
-    mLink = mOriginalLink;
-    // todo unapply linked transition instead of using originallink
+
     VAR_INFO(this)(mClip)(mLink);
     ASSERT(mOriginalClip);
     ASSERT(mClip);
@@ -400,5 +418,4 @@ std::ostream& operator<<( std::ostream& os, const TrimClip& obj )
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mOriginalClip << '|' << obj.mClip << '|' << obj.mTrim << '|' << obj.mPosition << '|' << obj.mShift;
     return os;
 }
-
 }}} // namespace

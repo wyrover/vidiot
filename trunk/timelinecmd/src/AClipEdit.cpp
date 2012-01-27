@@ -257,7 +257,6 @@ void AClipEdit::expandReplacements()
 
 model::IClips AClipEdit::expandReplacements(model::IClips original)
 {
-
     model::IClips result;
     BOOST_FOREACH( model::IClipPtr clip, original )
     {
@@ -540,6 +539,26 @@ model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
     }
     removeClip(transition);
     return replacements;
+}
+
+model::TransitionPtr AClipEdit::getInTransition(model::IClipPtr clip) const
+{
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
+    if (transition && transition->getRight() > 0)
+    {
+        return transition;
+    }
+    return model::TransitionPtr();
+}
+
+model::TransitionPtr AClipEdit::getOutTransition(model::IClipPtr clip) const
+{
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
+    if (transition && transition->getLeft() > 0)
+    {
+        return transition;
+    }
+    return model::TransitionPtr();
 }
 
 //////////////////////////////////////////////////////////////////////////
