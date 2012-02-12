@@ -313,6 +313,11 @@ void Track::iterate_next()
 {
     ASSERT(!iterate_atEnd());
     mItClips++;
+    while (!iterate_atEnd() && iterate_get()->getLength() == 0)
+    {
+        // Step over clips with length 0. These are only used as part of a transition.
+        mItClips++;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
