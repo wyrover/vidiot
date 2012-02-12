@@ -5,7 +5,6 @@
 #include "FixtureApplication.h"
 
 namespace test {
-
 template <typename TESTS>
 class SuiteCreator
 {
@@ -24,10 +23,11 @@ public:
     };
 };
 
+void StartTestSuite();
+
+#define StartTest(expr) LOG_WARNING << "Test: " << expr
+
 void setTitle(const char* title);
-
-#define START_TEST setTitle(__FUNCTION__)
-
 } // namespace
 
 #endif // TEST_SUITE_CREATOR_H

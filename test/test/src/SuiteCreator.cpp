@@ -2,6 +2,10 @@
 #include "Window.h"
 
 namespace test {
+void StartTestSuite()
+{
+    setTitle(__FUNCTION__);
+}
 
 void setTitle(const char* title)
 {
@@ -11,5 +15,4 @@ void setTitle(const char* title)
     gui::Window::get().setAdditionalTitle(s);
     testcount++;
 }
-
 } // namespace
