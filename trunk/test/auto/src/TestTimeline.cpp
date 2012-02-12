@@ -59,7 +59,7 @@ void TestTimeline::tearDown()
 
 void TestTimeline::testSelection()
 {
-    START_TEST;
+    StartTestSuite();
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
         // Test CTRL clicking all clips one by one
@@ -177,7 +177,7 @@ void TestTimeline::testSelection()
 
 void TestTimeline::testDnd()
 {
-    START_TEST;
+    StartTestSuite();
     ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
     ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
     ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
@@ -233,7 +233,7 @@ void TestTimeline::testDnd()
 
 void TestTimeline::testUndo()
 {
-    START_TEST;
+    StartTestSuite();
 
     pts length = VideoClip(0,3)->getLength();
     Drag(Center(VideoClip(0,3)),wxPoint(2,Center(VideoClip(0,3)).y));
@@ -276,7 +276,7 @@ void TestTimeline::testUndo()
 
 void TestTimeline::testSplitting()
 {
-    START_TEST;
+    StartTestSuite();
     MakeInOutTransitionAfterClip preparation(1);
     {
         PositionCursor(HCenter(VideoClip(0,2)));
@@ -312,7 +312,7 @@ void TestTimeline::testSplitting()
 
 void TestTimeline::testAbortDrag()
 {
-    START_TEST;
+    StartTestSuite();
     for (int zoom = 0; zoom < 4; zoom++)
     {
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();

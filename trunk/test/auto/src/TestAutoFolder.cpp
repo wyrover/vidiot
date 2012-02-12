@@ -15,7 +15,6 @@
 #include "UtilLogWxwidgets.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -36,7 +35,7 @@ void TestAutoFolder::tearDown()
 
 void TestAutoFolder::testWatch()
 {
-    START_TEST;
+    StartTestSuite();
 
     int nDefaultItems = countProjectView();
 
@@ -77,5 +76,4 @@ void TestAutoFolder::testWatch()
     bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
     ASSERT(removed);
 }
-
 } // namespace
