@@ -23,11 +23,12 @@ public:
     };
 };
 
-void StartTestSuite();
+#define StartTestSuite() setSuite(__FUNCTION__); LOG_WARNING << "Suite start: " << __FUNCTION__
+#define StartTest(expr) setTest(expr); LOG_WARNING << "Test: " << expr
 
-#define StartTest(expr) LOG_WARNING << "Test: " << expr
+void setSuite(const char* suite);
+void setTest(const char* test);
 
-void setTitle(const char* title);
 } // namespace
 
 #endif // TEST_SUITE_CREATOR_H

@@ -201,6 +201,16 @@ wxPoint VBottomQuarterHCenter(model::IClipPtr clip)
     return wxPoint( HCenter(clip), VBottomQuarter(clip) );
 }
 
+wxPoint LeftVBottomQuarter(model::IClipPtr clip)
+{
+    return wxPoint( LeftPixel(clip), VBottomQuarter(clip) );
+}
+
+wxPoint RightVBottomQuarter(model::IClipPtr clip)
+{
+    return wxPoint( RightPixel(clip), VBottomQuarter(clip) );
+}
+
 wxPoint LeftCenter(model::IClipPtr clip)
 {
     return wxPoint( LeftPixel(clip), VCenter(clip) );

@@ -74,6 +74,8 @@ wxPoint VTopQuarterHCenter(model::IClipPtr clip);    ///< \return pixel at one q
 wxPoint VTopQuarterLeft(model::IClipPtr clip);       ///< \return pixel at one quarter from the top, left edge
 wxPoint VTopQuarterRight(model::IClipPtr clip);      ///< \return pixel at one quarter from the top, right edge
 wxPoint VBottomQuarterHCenter(model::IClipPtr clip); ///< \return pixel at one quarter from the bottom (centered horizontally)
+wxPoint LeftVBottomQuarter(model::IClipPtr clip);    ///< \return pixel at one quarter from the bottom (horizontally left)
+wxPoint RightVBottomQuarter(model::IClipPtr clip);   ///< \return pixel at one quarter from the bottom (horizontally right)
 wxPoint LeftCenter(model::IClipPtr clip);            ///< \return left center position (centered vertically)
 wxPoint RightCenter(model::IClipPtr clip);           ///< \return right center position (centered vertically)
 wxPoint LeftBottom(model::IClipPtr clip);            ///< \return left bottom position
