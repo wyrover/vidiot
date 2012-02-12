@@ -12,7 +12,6 @@
 #include "Window.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -75,7 +74,7 @@ private:
 
 void TestDialog::testEscape()
 {
-    START_TEST;
+    StartTestSuite();
     {
         Escape e;
         wxStrings result = gui::Dialog::get().getFiles("message", _("Movie clips (*.avi)|*.avi|All files (%s)|%s"));
@@ -102,5 +101,4 @@ void TestDialog::testEscape()
         waitForIdle();
     }
 }
-
 } // namespace

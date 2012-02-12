@@ -13,10 +13,9 @@
 #include "Window.h"
 
 namespace test {
-
 void TestTimelinesView::testSequenceMenu()
 {
-    START_TEST;
+    StartTestSuite();
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
     wxString sSequence2( "Sequence2" );
@@ -35,5 +34,4 @@ void TestTimelinesView::testSequenceMenu()
     triggerMenu(ID_CLOSESEQUENCE);
     ASSERT_ZERO(getSequenceMenu()->GetMenuItemCount()); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
 }
-
 } // namespace

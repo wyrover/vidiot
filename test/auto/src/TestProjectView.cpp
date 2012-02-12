@@ -10,7 +10,6 @@
 #include "UtilLog.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ void ProjectViewTests::tearDown()
 
 void ProjectViewTests::testAdditionAndRemoval()
 {
-    START_TEST;
+    StartTestSuite();
 
     int nDefaultItems = countProjectView();
 
@@ -61,5 +60,4 @@ void ProjectViewTests::testAdditionAndRemoval()
     remove( folder1 ); // Also removes sequence1 which is contained in folder1
     ASSERT_EQUALS(countProjectView(), nDefaultItems); // Added: None
 }
-
 } // namespace
