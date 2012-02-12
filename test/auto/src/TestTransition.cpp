@@ -30,7 +30,6 @@
 #include "Zoom.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ void TestTransition::tearDown()
 
 void TestTransition::testSelection()
 {
-    START_TEST;
+    StartTestSuite();
     // Zoom in (required for correct positioning)
     Type('=');
     Type('=');
@@ -127,7 +126,7 @@ void TestTransition::testSelection()
 
 void TestTransition::testDragAndDrop()
 {
-    START_TEST;
+    StartTestSuite();
     // Zoom in
     Type('=');
     Type('=');
@@ -297,7 +296,7 @@ void TestTransition::testDragAndDrop()
 
 void TestTransition::testInOutTransitionDragAndDrop()
 {
-    START_TEST;
+    StartTestSuite();
     // Zoom in (required for correct positioning)
     Type('=');
     Type('=');
@@ -337,7 +336,7 @@ void TestTransition::testInOutTransitionDragAndDrop()
 
 void TestTransition::testInTransitionDragAndDrop()
 {
-    START_TEST;
+    StartTestSuite();
     // Zoom in (required for correct positioning)
     Type('=');
     Type('=');
@@ -362,7 +361,7 @@ void TestTransition::testInTransitionDragAndDrop()
 
 void TestTransition::testOutTransitionDragAndDrop()
 {
-    START_TEST;
+    StartTestSuite();
     // Zoom in (required for correct positioning)
     Type('=');
     Type('=');
@@ -390,7 +389,7 @@ void TestTransition::testOutTransitionDragAndDrop()
 
 void TestTransition::testAdjacentTransitions()
 {
-    START_TEST;
+    StartTestSuite();
     Type('=');
     Type('=');
     Type('=');
@@ -455,7 +454,7 @@ void TestTransition::testAdjacentTransitions()
 
 void TestTransition::testPlaybackAndScrubbing()
 {
-    START_TEST;
+    StartTestSuite();
 
     // Zoom in once to avoid clicking in the middle of a clip which is then
     // seen (logically) as clip end due to the zooming
@@ -560,7 +559,7 @@ void TestTransition::testPlaybackAndScrubbing()
 
 void TestTransition::testTrimming()
 {
-    START_TEST;
+    StartTestSuite();
 
     // Zoom in
     Type('=');
@@ -798,5 +797,4 @@ void TestTransition::testTrimming()
         // NOT: Undo();
     }
 }
-
 } // namespace
