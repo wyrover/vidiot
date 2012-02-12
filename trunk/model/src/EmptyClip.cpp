@@ -13,7 +13,6 @@
 #include "Track.h"
 
 namespace model {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -60,10 +59,9 @@ EmptyClipPtr EmptyClip::replace( IClipPtr original )
     else
     {
         clip = boost::make_shared<EmptyClip>(original->getLength(), -1 * original->getMinAdjustBegin(),  original->getMaxAdjustEnd());
-        ASSERT_EQUALS(clip->getMaxAdjustBegin(),original->getMaxAdjustBegin());
-        ASSERT_EQUALS(clip->getMinAdjustBegin(),original->getMinAdjustBegin());
-        ASSERT_EQUALS(clip->getMaxAdjustEnd(),original->getMaxAdjustEnd());
-        ASSERT_EQUALS(clip->getMinAdjustEnd(),original->getMinAdjustEnd());
+        // Do not assert for equality on getMin/MaxadjustBegin/End here: The original clip may still be part of a track, and thus
+        // be preceded/followed by a transition, which impacts these methods results. The replacement clip is not yet part of a track
+        // and thus has different values for these methods.
     }
     ASSERT_EQUALS(clip->getLength(),original->getLength());
     return clip;
@@ -147,5 +145,4 @@ void EmptyClip::serialize(Archive & ar, const unsigned int version)
 }
 template void EmptyClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void EmptyClip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } //namespace
