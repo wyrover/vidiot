@@ -154,18 +154,20 @@ IClipPtr Clip::getLink() const
 
 pts Clip::getMinAdjustBegin() const
 {
-    TransitionPtr transition = boost::dynamic_pointer_cast<Transition>(boost::const_pointer_cast<IClip>(getPrev()));
-    pts reservedForTransition = 0;
-    if (transition && transition->getRight() > 0) // The transition is overlapping with this clip
-    {
-        reservedForTransition = transition->getLength(); // Do not use right part only. The left part (if present) is also using frames from this clip!
-    }
-    return -mOffset + reservedForTransition;
+    TransitionPtr inTransition = getInTransition();
+    pts reservedForInTransition = inTransition ? inTransition->getLength() : 0; // Do not use right part only. The left part (if present) is also using frames from this clip!
+    pts minAdjustBegin = -mOffset + reservedForInTransition;
+    ASSERT_LESS_THAN_EQUALS_ZERO(minAdjustBegin)(mOffset)(reservedForInTransition);
+    return minAdjustBegin;
 }
 
 pts Clip::getMaxAdjustBegin() const
 {
-    return mLength;
+    TransitionPtr outTransition = getOutTransition();
+    pts reservedForOutTransition = outTransition ? outTransition->getLength() : 0; // Do not use left part only. The right part (if present) is also using frames from this clip! TODO dit kan weg
+    pts maxAdjustBegin = mLength; // NOT: - reservedForOutTransition; The 'reserved' part is already incorporated in mLength when a possible out transition was created
+    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustBegin)(mLength)(reservedForOutTransition);
+    return maxAdjustBegin;
 }
 
 void Clip::adjustBegin(pts adjustment)
@@ -181,19 +183,20 @@ void Clip::adjustBegin(pts adjustment)
 
 pts Clip::getMinAdjustEnd() const
 {
-    return -mLength;
+    TransitionPtr inTransition = getInTransition();
+    pts reservedForInTransition = inTransition ? inTransition->getLength() : 0; // Do not use right part only. The left part (if present) is also using frames from this clip! TODO dit kan weg
+    pts minAdjustEnd = -mLength; // NOT: + reservedForInTransition; The 'reserved' part is already incorporated in mOffset when a possible in transition was created
+    ASSERT_LESS_THAN_EQUALS_ZERO(minAdjustEnd)(mLength)(reservedForInTransition);
+    return minAdjustEnd;
 }
 
 pts Clip::getMaxAdjustEnd() const
 {
-    pts reservedForTransition = 0;
-    TransitionPtr transition = boost::dynamic_pointer_cast<Transition>(boost::const_pointer_cast<IClip>(getNext()));
-    if (transition && transition->getLeft() > 0) // The transition is overlapping with this clip
-    {
-        reservedForTransition = transition->getLength(); // Do not use left part only. The right part (if present) is also using frames from this clip!
-    }
-    ASSERT_MORE_THAN_EQUALS(mRender->getLength(),mLength + mOffset + reservedForTransition);
-    return mRender->getLength() - mLength - mOffset - reservedForTransition;
+    TransitionPtr outTransition = getOutTransition();
+    pts reservedForOutTransition = outTransition ? outTransition->getLength() : 0; // Do not use left part only. The right part (if present) is also using frames from this clip!
+    pts maxAdjustEnd =  mRender->getLength() - mLength - mOffset - reservedForOutTransition;
+    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustEnd)(mRender->getLength())(mLength)(mOffset)(reservedForOutTransition);
+    return maxAdjustEnd;
 }
 
 void Clip::adjustEnd(pts adjustment)
@@ -253,6 +256,30 @@ void Clip::invalidateLastSetPosition()
 boost::optional<pts> Clip::getLastSetPosition() const
 {
     return mLastSetPosition;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// ADJACENT TRANSITION HANDLING
+//////////////////////////////////////////////////////////////////////////
+
+TransitionPtr Clip::getInTransition() const
+{
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(boost::const_pointer_cast<IClip>(getPrev()));
+    if (transition && transition->getRight() > 0)
+    {
+        return transition;
+    }
+    return model::TransitionPtr();
+}
+
+TransitionPtr Clip::getOutTransition() const
+{
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(boost::const_pointer_cast<IClip>(getNext()));
+    if (transition && transition->getLeft() > 0)
+    {
+        return transition;
+    }
+    return model::TransitionPtr();
 }
 
 //////////////////////////////////////////////////////////////////////////

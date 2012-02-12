@@ -55,12 +55,12 @@ void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
             }
             else
             {
-                model::TransitionPtr inTransition = getInTransition(clip);
+                model::TransitionPtr inTransition = clip->getInTransition();
                 if (inTransition)
                 {
                     allTransitions.insert(inTransition);
                 }
-                model::TransitionPtr outTransition = getOutTransition(clip);
+                model::TransitionPtr outTransition = clip->getOutTransition();
                 if (outTransition)
                 {
                     allTransitions.insert(outTransition);

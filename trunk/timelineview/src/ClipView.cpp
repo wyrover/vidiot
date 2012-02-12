@@ -159,13 +159,60 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
 
             if (dist_cut < 0)
             {
-                info.logicalclipposition =
-                    (dist_cut > -Layout::sCursorClipEditDistance) ? TransitionLeftClipEnd : TransitionLeftClipInterior;
+                ASSERT_MORE_THAN_ZERO(transition->getLeft());
+                if (dist_cut > -Layout::sCursorClipEditDistance)
+                {
+                    info.logicalclipposition = TransitionLeftClipEnd;
+                }
+                else
+                {
+                    // First determine if the pointer is 'near' the begin of the 'in' clip of the transition.
+                    // If that is the case, use that clip and not the transition.
+                    model::IClipPtr inClip = transition->getPrev();
+                    pixel inpoint = getZoom().ptsToPixels(inClip->getLeftPts());
+                    pixel dist_left = position.x - inpoint;
+                    ASSERT_MORE_THAN_EQUALS_ZERO(dist_left)(inpoint)(position);
+
+                    if (dist_left < Layout::sCursorClipEditDistance)
+                    {
+                        // Logically, the pointer is hovering 'over' the clip left of the transition
+                        info.clip = inClip;
+                        info.logicalclipposition = ClipBegin;
+                    }
+                    else
+                    {
+                        info.logicalclipposition = TransitionLeftClipInterior; // todo check of we deze overal kunnen vervangen door 'inClip ++ logische waarden tov inclip'?
+                    }
+                }
             }
             else // (dist_cut >= 0)
             {
-                info.logicalclipposition =
-                    (dist_cut < Layout::sCursorClipEditDistance) ? TransitionRightClipBegin : TransitionRightClipInterior;
+                // todo test for dist_cut == 0 (see the assert below)
+                ASSERT_MORE_THAN_ZERO(transition->getRight());
+                if (dist_cut < Layout::sCursorClipEditDistance)
+                {
+                    info.logicalclipposition = TransitionRightClipBegin;
+                }
+                else
+                {
+                    // First determine if the pointer is 'near' the end of the 'out' clip of the transition.
+                    // If that is the case, use that clip and not the transition.
+                    model::IClipPtr outClip = transition->getNext();
+                    pixel outpoint = getZoom().ptsToPixels(outClip->getRightPts());
+                    pixel dist_right = outpoint - position.x;
+                    ASSERT_MORE_THAN_EQUALS_ZERO(dist_right)(outpoint)(position);
+
+                    if (dist_right < Layout::sCursorClipEditDistance)
+                    {
+                        // Logically, the pointer is hovering 'over' the clip right of the transition
+                        info.clip = outClip;
+                        info.logicalclipposition = ClipEnd;
+                    }
+                    else
+                    {
+                        info.logicalclipposition = TransitionRightClipInterior; // todo check of we deze overal kunnen vervangen door 'outClip ++ logische waarden tov outclip'?
+                    }
+                }
             }
         }
     }

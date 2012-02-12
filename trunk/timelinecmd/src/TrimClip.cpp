@@ -24,7 +24,9 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mClip()
     ,   mLink()
     ,   mTransition(transition)
-    ,   mLinkTransition()
+    ,   mLinkTransition() // todo obsolete?
+    ,   mLinkIsPartOfTransition(false)
+    ,   mClipIsPartOfTransition(false)
     ,   mPosition(position)
     ,   mTrim(0)
     ,   mShift(false)
@@ -36,18 +38,12 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     if (isBeginTrim())
     {
         mCommandName = _("Adjust clip begin point");
-        if (mOriginalLink)
-        {
-            mLinkTransition = getInTransition(mOriginalLink);
-        }
+        mLinkTransition = mOriginalLink ? mOriginalLink->getInTransition() : model::TransitionPtr();
     }
     else
     {
         mCommandName = _("Adjust clip end point");
-        if (mOriginalLink)
-        {
-            mLinkTransition = getOutTransition(mOriginalLink);
-        }
+        mLinkTransition = mOriginalLink ? mOriginalLink->getOutTransition() : model::TransitionPtr();
     }
 
     determineShiftBoundariesForOtherTracks();
@@ -180,12 +176,14 @@ void TrimClip::removeTransition()
     };
 
     mClip = unapplyIfNeeded(mOriginalClip,mTransition);
+    mClipIsPartOfTransition = mClip->getInTransition() || mClip->getOutTransition();
     if (mOriginalLink)
     {
         mLink = unapplyIfNeeded(mOriginalLink,mLinkTransition);
+        mLinkIsPartOfTransition = mLink->getInTransition() || mLink->getOutTransition();
     }
 
-    VAR_INFO(this)(mClip)(mLink);
+    VAR_INFO(this)(mClip)(mLink)(mClipIsPartOfTransition)(mLinkIsPartOfTransition);
     ASSERT(mOriginalClip);
     ASSERT(mClip);
     ASSERT(!mOriginalLink || mLink);
@@ -316,28 +314,23 @@ void TrimClip::applyTrim()
         }
     }
 
-    auto makelist = [](model::IClipPtr clip, model::TransitionPtr transition, bool shift) -> model::IClips
+    auto makelist = [](model::IClipPtr clip, bool clipIsPartOfTransition) -> model::IClips
     {
-        if (clip->getLength() == 0)
+        if ((clip->getLength() == 0) && !clipIsPartOfTransition)
         {
             // If the clip or its link is resized to 0 frames, then replace with "nothing"
-            if (transition && shift)
-            {
-                // An exception is shift dragging with a clip that is part of a transition:
-                // The clip may be reduced to 'zero' frames. However, the clip must still be
-                // a part of the timeline (with length 0), since it is used by the transition
-                // that comes directly after it.
-            }
-            else
-            {
-                return model::IClips();
-            }
+            //
+            // An exception is a clip that is part of a transition:
+            // The clip may be reduced to 'zero' frames. However, the clip must still be
+            // a part of the timeline (with length 0), since it is used by the transition
+            // that comes directly after it.
+            return model::IClips();
         }
         return boost::assign::list_of(clip);
     };
 
-    model::IClips replaceclip = makelist(newclip, mTransition, mShift);
-    model::IClips replacelink = makelist(newlink, model::TransitionPtr(), mShift); // todo unapply the transition in the 'other' track also
+    model::IClips replaceclip = makelist(newclip, mClipIsPartOfTransition);
+    model::IClips replacelink = makelist(newlink, mLinkIsPartOfTransition);
 
     if (mShift)
     {

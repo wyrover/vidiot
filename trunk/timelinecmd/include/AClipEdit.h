@@ -146,18 +146,6 @@ protected:
     /// \return list of clips with which the transition and all its related clips are replaced
     model::IClips unapplyTransition( model::TransitionPtr transition );
 
-    /// Return the transition left of the given clip, but only if that transition actually
-    /// applies to that clip.
-    /// \param clip clip for which the 'in' transition is searched
-    /// \return 'in' transition for given clip, 0 if there is no such clip
-    model::TransitionPtr getInTransition(model::IClipPtr clip) const;
-
-    /// Return the transition right of the given clip, but only if that transition actually
-    /// applies to that clip.
-    /// \param clip clip for which the 'out' transition is searched
-    /// \return 'out' transition for given clip, 0 if there is no such clip
-    model::TransitionPtr getOutTransition(model::IClipPtr clip) const;
-
 private:
 
     //////////////////////////////////////////////////////////////////////////

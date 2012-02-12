@@ -13,7 +13,6 @@
 #include "UtilInt.h"
 
 namespace model {
-
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef boost::shared_ptr<const Track> ConstTrackPtr;
@@ -23,6 +22,8 @@ typedef boost::shared_ptr<IClip> IClipPtr;
 typedef boost::shared_ptr<const IClip> ConstIClipPtr;
 typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef std::list<IClipPtr> IClips;
+class Transition;
+typedef boost::shared_ptr<Transition> TransitionPtr;
 
 class IClip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
@@ -86,10 +87,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \return Minimum allowed value for adjustBegin given the available data.
+    /// \note This takes into account any spare room that must be kept for adjacent transitions
     /// \post getMinAdjustBegin() <= 0
     virtual pts getMinAdjustBegin() const = 0;
 
     /// \return Maximum allowed value for adjustBegin given the available data.
+    /// \note This takes into account any spare room that must be kept for adjacent transitions
     /// \post getMaxAdjustBegin() >= 0
     virtual pts getMaxAdjustBegin() const = 0;
 
@@ -103,10 +106,12 @@ public:
     virtual void adjustBegin(pts adjustment) = 0;
 
     /// \return Minimum allowed value for adjustEnd given the available data.
+    /// \note This takes into account any spare room that must be kept for adjacent transitions
     /// \post getMinAdjustEnd() <= 0
     virtual pts getMinAdjustEnd() const = 0;
 
     /// \return Maximum allowed value for adjustEnd given the available data.
+    /// \note This takes into account any spare room that must be kept for adjacent transitions
     /// \post getMaxAdjustEnd() >= 0
     virtual pts getMaxAdjustEnd() const = 0;
 
@@ -116,6 +121,18 @@ public:
     /// \pre adjustment >= getMinAdjustEnd()
     /// \pre adjustment <= getMaxAdjustEnd()
     virtual void adjustEnd(pts adjustment) = 0;
+
+    //////////////////////////////////////////////////////////////////////////
+    // ADJACENT TRANSITION HANDLING
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Return the transition left of this clip, but only if that transition actually applies to this clip.
+    /// \return 'in' transition for this clip, 0 if there is no transition snooping away frames from this clip
+    virtual TransitionPtr getInTransition() const = 0;
+
+    /// Return the transition right of this clip, but only if that transition actually applies to this clip.
+    /// \return 'out' transition for this clip, 0 if there is no transition snooping away frames from this clip
+    virtual TransitionPtr getOutTransition() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -185,7 +202,6 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
-
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc

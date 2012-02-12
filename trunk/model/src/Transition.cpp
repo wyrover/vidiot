@@ -12,7 +12,6 @@
 #include "UtilCloneable.h"
 
 namespace model {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -93,7 +92,6 @@ wxString Transition::getDescription() const
 
 void Transition::clean()
 {
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -175,6 +173,16 @@ void Transition::adjustEnd(pts adjustment)
     VAR_DEBUG(*this)(adjustment);
     ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustEnd());
     mFramesRight += adjustment;
+}
+
+TransitionPtr Transition::getInTransition() const
+{
+    return TransitionPtr();
+}
+
+TransitionPtr Transition::getOutTransition() const
+{
+    return TransitionPtr();
 }
 
 bool Transition::getSelected() const
@@ -296,5 +304,4 @@ void Transition::serialize(Archive & ar, const unsigned int version)
 }
 template void Transition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Transition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } //namespace

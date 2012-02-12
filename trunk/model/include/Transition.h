@@ -10,7 +10,6 @@
 #include "IClip.h"
 
 namespace model {
-
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef boost::shared_ptr<const Track> ConstTrackPtr;
@@ -21,6 +20,13 @@ typedef boost::shared_ptr<Transition> TransitionPtr;
 typedef std::list<TransitionPtr> Transitions;
 typedef boost::shared_ptr<const IClip> ConstIClipPtr;
 
+/// Class representing transitions in the timeline. Note that the actual transition
+/// is rendered by taking its adjacent clips, cloning these, and adjusting the clones
+/// to provide the correct frames.
+///
+/// When transitions are added to a track, the adjacent clips are shortened in such a
+/// way that they 'make room' for the transition. A clips offset is increased and/or
+/// its length is reduced.
 class Transition
     :   public IClip
 {
@@ -45,40 +51,43 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength() const override;
-    virtual void moveTo(pts position) override;
-    virtual wxString getDescription() const override;
-    virtual void clean() override;
+    pts getLength() const override;
+    void moveTo(pts position) override;
+    wxString getDescription() const override;
+    void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
-    virtual TrackPtr getTrack() override;
+    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
+    TrackPtr getTrack() override;
 
-    virtual pts getLeftPts() const override;
-    virtual pts getRightPts() const override;
+    pts getLeftPts() const override;
+    pts getRightPts() const override;
 
-    virtual void setLink(IClipPtr link) override;
-    virtual IClipPtr getLink() const override;
+    void setLink(IClipPtr link) override;
+    IClipPtr getLink() const override;
 
-    virtual pts getMinAdjustBegin() const override;
-    virtual pts getMaxAdjustBegin() const override;
-    virtual void adjustBegin(pts adjustment) override;
+    pts getMinAdjustBegin() const override;
+    pts getMaxAdjustBegin() const override;
+    void adjustBegin(pts adjustment) override;
 
-    virtual pts getMinAdjustEnd() const override;
-    virtual pts getMaxAdjustEnd() const override;
-    virtual void adjustEnd(pts adjustment) override;
+    pts getMinAdjustEnd() const override;
+    pts getMaxAdjustEnd() const override;
+    void adjustEnd(pts adjustment) override;
 
-    virtual bool getSelected() const override;
-    virtual void setSelected(bool selected) override;
+    TransitionPtr getInTransition() const override;
+    TransitionPtr getOutTransition() const override;
 
-    virtual bool getDragged() const override;
-    virtual void setDragged(bool dragged) override;
+    bool getSelected() const override;
+    void setSelected(bool selected) override;
 
-    virtual pts getGenerationProgress() const override;
-    virtual void setGenerationProgress(pts progress) override;
+    bool getDragged() const override;
+    void setDragged(bool dragged) override;
+
+    pts getGenerationProgress() const override;
+    void setGenerationProgress(pts progress) override;
 
     void invalidateLastSetPosition() override;
     boost::optional<pts> getLastSetPosition() const override;
@@ -88,8 +97,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     pts getTouchPosition() const;   ///< \return position where the two transitioned clips are 'touching'
-    virtual pts getLeft() const;    ///< \return number of frames to the left of the cut between the two clips
-    virtual pts getRight() const;   ///< \return number of frames to the right of the cut between the two clips
+    pts getLeft() const;    ///< \return number of frames to the left of the cut between the two clips
+    pts getRight() const;   ///< \return number of frames to the right of the cut between the two clips
 
     /// Make the 'in' clip that is to be used for rendering data
     /// This takes the previous clip in the track, clones it, and adjust the
@@ -152,7 +161,6 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
-
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc

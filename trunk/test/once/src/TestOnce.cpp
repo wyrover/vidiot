@@ -1,7 +1,10 @@
+#pragma warning(disable:4996)
 #include "TestOnce.h"
 
 #include <wx/uiaction.h>
+#include "typeinfo.h"
 
+#include <boost/algorithm/string.hpp>
 #include <wx/gdicmn.h>
 #include <boost/foreach.hpp>
 #include "AudioTrack.h"
@@ -37,12 +40,14 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoTrack.h"
 #include "VideoTransition.h"
+#include "VideoClip.h"
 #include "ViewMap.h"
 #include "Window.h"
 #include "Zoom.h"
 #include "ids.h"
 
 namespace test {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -67,6 +72,60 @@ auto PrepareSnapping = [](bool enableSnapping)
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
+
+struct TypeAsserter
+    :   boost::noncopyable
+{
+    TypeAsserter& TYPEASSERTER_A;   ///< Helper, in order to be able to compile the code (TYPEASSERTER_* macros)
+    TypeAsserter& TYPEASSERTER_B;   ///< Helper, in order to be able to compile the code (TYPEASSERTER_* macros)
+
+    TypeAsserter(bool video, int TrackNumber)
+        :   TYPEASSERTER_A(*this)
+        ,   TYPEASSERTER_B(*this)
+        ,   mVideo(video)
+        ,   mTrackNumber(TrackNumber)
+        ,   mClipNumber(0)
+    {
+    }
+
+    ~TypeAsserter()
+    {
+    };
+
+    template<class type>
+    TypeAsserter& AssertClipType()
+    {
+        bool ok = mVideo ? VideoClip(mTrackNumber,mClipNumber)->isA<type>() : AudioClip(mTrackNumber,mClipNumber)->isA<type>();
+        if (!ok)
+        {
+            int TrackNumber = mTrackNumber;
+            int ClipNumber = mClipNumber;
+            std::string TrackType = mVideo ? "VIDEO" : "AUDIO";
+            auto convert = [](const type_info& info) -> std::string
+            {
+                std::vector<std::string> strs;
+                boost::split(strs, std::string(info.name()), boost::is_any_of(":"));
+                return strs.back();
+            };
+
+            std::string Expected = convert(typeid(type));
+            std::string Got = convert(typeid(*VideoClip(TrackNumber,mClipNumber)));
+            LogVar("Clip type error", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A(TrackType)(TrackNumber)(mClipNumber)(Expected)(Got);
+        }
+        mClipNumber++;
+        return *this;
+    }
+
+    int mTrackNumber;
+    int mClipNumber;
+    bool mVideo;
+};
+
+#define TYPEASSERTER_A(type) TYPEASSERTER_OP(type, B)
+#define TYPEASSERTER_B(type) TYPEASSERTER_OP(type, A)
+#define TYPEASSERTER_OP(type, next) TYPEASSERTER_A.AssertClipType<model::type>().TYPEASSERTER_ ## next
+#define ASSERT_VIDEOTRACK(TrackNumber) TypeAsserter(true,TrackNumber).TYPEASSERTER_A
+#define ASSERT_AUDIOCLIPTYPES TypeAsserter(false,TrackNumber).TYPEASSERTER_A
 
 void TestOnce::testOnce()
 {
@@ -123,8 +182,13 @@ void TestOnce::testOnce()
         //Undo();
         StartTest("In-out-transition: reduce the 'other' side of the clip linked to the in-clip as much as possible (transition is NOT removed)");
         Drag(LeftCenter(AudioClip(0,1)),RightCenter(AudioClip(0,2)));
+//        ASSERT_VIDEO_TYPES<model::VideoClip, model::EmptyClip, model::VideoClip, model::Transition, model::VideoClip, model::Transition>();
+        //ASSERT_VIDEOCLIPTYPES(model::VideoClip)(model::EmptyClip)(model::VideoClip)(model::Transition)(model::VideoClip)(model::Transition);
+        ASSERT_VIDEOTRACK(0)(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip);
+        //ASSERT_VIDEOCLIPTYPES(model::VideoClip,0)(model::EmptyClip,1)(model::VideoClip,2)(model::Transition,3)(model::VideoClip,4)(model::VideoClip,5)(model::VideoClip,6);
         ASSERT(!VideoClip(0,0)->isA<model::EmptyClip>());
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(!VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_ZERO(VideoClip(0,2)->getLength());
         ASSERT(!VideoClip(0,3)->isA<model::EmptyClip>());
@@ -134,13 +198,32 @@ void TestOnce::testOnce()
         ASSERT(!AudioClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(AudioClip(0,1)->getLength() + AudioClip(0,2)->getLength(), originalLengthOfAudioClip1);
         ASSERT(!AudioClip(0,3)->isA<model::EmptyClip>());
+        StartTest("In-out-transition: test scrubbing with an 'in' clip which is fully obscured by the transition");
         Scrub(RightPixel(VideoClip(0,1))-5, HCenter(VideoClip(0,3))); // Bug once: The empty video clip that is 'just before' the transition asserted when doing a moveTo(0), since !(0<length) for a clip with length 0.
-
+        StartTest("In-out-transition: test enlarging an 'in' clip which is fully obscured by the transition");
+        Drag(LeftVBottomQuarter(VideoClip(0,3)),LeftCenter(VideoClip(0,1)));
         // todo enlarge the clip again by trimming (does not work yet!!!)
-pause();        Undo();
+       pause();
+       Undo();
         StartTest("In-out-transition: reduce the 'other' side of the clip linked to the out-clip as much as possible (transition is NOT removed)");
         Drag(RightCenter(AudioClip(0,2)),Center(AudioClip(0,0)));
-        Undo();
+        ASSERT(!VideoClip(0,0)->isA<model::EmptyClip>());
+        ASSERT(!VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        ASSERT(!VideoClip(0,3)->isA<model::EmptyClip>());
+        ASSERT_ZERO(VideoClip(0,3)->getLength());
+        ASSERT(VideoClip(0,4)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT(!AudioClip(0,0)->isA<model::EmptyClip>());
+        ASSERT(!AudioClip(0,1)->isA<model::EmptyClip>());
+        ASSERT(!AudioClip(0,2)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,3)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(AudioClip(0,2)->getLength() + AudioClip(0,3)->getLength(), originalLengthOfAudioClip2);
+        StartTest("In-out-transition: test scrubbing with an 'out' clip which is fully obscured by the transition");
+        Scrub(HCenter(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5); // Bug once: The empty video clip that is 'just before' the transition asserted when doing a moveTo(0), since !(0<length) for a clip with length 0.
+        StartTest("In-out-transition: test enlarging an 'out' clip which is fully obscured by the transition");
+        // todo enlarge the clip again by trimming (does not work yet)
+pause();        Undo();
     }
     {
         // Test - for an in-out-transition - that clicking on TransitionBegin starts trimming the
