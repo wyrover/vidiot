@@ -383,6 +383,23 @@ Zoom::~Zoom()
     }
 }
 
+void Trim(wxPoint from, wxPoint to, bool shift)
+{
+    Move(from);
+    wxUIActionSimulator().MouseDown();
+    if (shift) { ShiftDown(); }
+    waitForIdle();
+    Move(to);
+    wxUIActionSimulator().MouseUp();
+    waitForIdle();
+    if (shift) { ShiftUp(); }
+}
+
+void ShiftTrim(wxPoint from, wxPoint to)
+{
+    Trim(from,to,true);
+}
+
 void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
 {
     VAR_DEBUG(from)(to)(ctrl);
@@ -412,17 +429,6 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
         wxUIActionSimulator().MouseUp();
         waitForIdle();
     }
-}
-
-void Trim(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
-{
-    LOG_DEBUG;
-    Move(from);
-    wxUIActionSimulator().MouseDown();
-    waitForIdle();
-    Move(to);
-    wxUIActionSimulator().MouseUp();
-    waitForIdle();
 }
 
 void ShiftDrag(wxPoint from, wxPoint to)
