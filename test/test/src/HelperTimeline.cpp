@@ -203,11 +203,35 @@ wxPoint VBottomQuarterHCenter(model::IClipPtr clip)
 
 wxPoint LeftVBottomQuarter(model::IClipPtr clip)
 {
+    // Not allowed for transitions:
+    // When the clip in front of the transition has length 0, then using this position
+    // on the transition causes the mouse pointer information to actually return the clip
+    // in front of the transition (so that it can be selected for trimming).
+    //
+    // The algoritm in the method 'LeftPixel' contains code for 'adjusting the found point'
+    // until the actual given clip is found (to accommodate for rounding errors). However,
+    // that algorithm, in combination with the 'return the empty clip in front of the transition
+    // and not the transition' causes the wrong position to be returned here.
+    //
+    // To resolve this issue: call this method with the clip before the transition as input.
+    ASSERT(!clip->isA<model::Transition>());
     return wxPoint( LeftPixel(clip), VBottomQuarter(clip) );
 }
 
 wxPoint RightVBottomQuarter(model::IClipPtr clip)
 {
+    // Not allowed for transitions:
+    // When the clip in front of the transition has length 0, then using this position
+    // on the transition causes the mouse pointer information to actually return the clip
+    // in front of the transition (so that it can be selected for trimming).
+    //
+    // The algoritm in the method 'RightPixel' contains code for 'adjusting the found point'
+    // until the actual given clip is found (to accommodate for rounding errors). However,
+    // that algorithm, in combination with the 'return the empty clip in front of the transition
+    // and not the transition' causes the wrong position to be returned here.
+    //
+    // To resolve this issue: call this method with the clip after the transition as input.
+    ASSERT(!clip->isA<model::Transition>());
     return wxPoint( RightPixel(clip), VBottomQuarter(clip) );
 }
 
@@ -468,19 +492,6 @@ void Play(pixel from, int ms)
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 {
     return getTimeline().getMousepointer().getInfo(position).logicalclipposition;
-}
-
-void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex)
-{
-    for (int i = 0; i < NumberOfVideoClipsInTrack(trackindex); ++i)
-    {
-        ASSERT(!VideoClip(trackindex,i)->isA<model::Transition>())(i);
-    }
-}
-
-void ASSERT_SELECTION_SIZE(int size)
-{
-    ASSERT_EQUALS(getSelectedClipsCount(),2 * size); // * 2 since AudioClips are selected also
 }
 
 void DeselectAllClips()

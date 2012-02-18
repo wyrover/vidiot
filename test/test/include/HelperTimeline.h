@@ -154,16 +154,6 @@ void Play(pixel from, int ms);                                          ///< Pla
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \return logical mouse position of the given (pixel) position.
 
-/// Assert that there are no more transitions in the given track
-void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex = 0);
-
-/// Assert for the count of the selected clips.
-/// Named such for readibility of test cases.
-/// Note that the current selected clips (getSelectedClipsCount())
-/// are compared to size * 2 (to avoid having to duplicate for
-/// the combination of audio and video clips throughout the tests).
-void ASSERT_SELECTION_SIZE(int size);
-
 /// Unselect all clips in the timeline
 void DeselectAllClips();
 
