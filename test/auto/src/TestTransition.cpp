@@ -9,6 +9,7 @@
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
 #include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
 #include "HelperTimelinesView.h"
 #include "HelperTransition.h"
 #include "HelperWindow.h"
