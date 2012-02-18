@@ -64,7 +64,6 @@ private:
     model::IClipPtr mLink;                  ///< Same as mOriginalLink or its replacement in case a transition was unapplied
     bool mClipIsPartOfTransition;           ///< True if mClip is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
     bool mLinkIsPartOfTransition;           ///< True if mLink is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
-    // todo mLink and mOriginalLink for the link also, since the link may also be under a transition
     pts mTrim;
     bool mShift;
 
