@@ -1,6 +1,7 @@
 #include "TestTransition.h"
 
 #include <boost/foreach.hpp>
+#include "AudioClip.h"
 #include "AudioTrack.h"
 #include "Config.h"
 #include "CreateTransition.h"
@@ -31,6 +32,7 @@
 #include "Zoom.h"
 
 namespace test {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -60,11 +62,12 @@ void TestTransition::tearDown()
 void TestTransition::testSelection()
 {
     StartTestSuite();
-    // Zoom in (required for correct positioning)
-    Type('=');
-    Type('=');
-    Type('=');
-    Type('=');
+    Zoom level(4);
+    //// Zoom in (required for correct positioning)
+    //Type('=');
+    //Type('=');
+    //Type('=');todo remove if ok
+    //Type('=');
     {
         DeselectAllClips();
         MakeInOutTransitionAfterClip preparation(1);
@@ -562,47 +565,37 @@ void TestTransition::testTrimming()
 {
     StartTestSuite();
 
-    // Zoom in
-    Type('=');
-    Type('=');
-    Type('=');
-    Type('=');
+    Zoom level(4);
 
     {
-        // Test - for an in-out-transition- that clicking on TransitionLeftClipEnd
-        // starts a trim operation, not with the transition but the clip left of the transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-
         PrepareSnapping(true);
         MakeInOutTransitionAfterClip preparation(1);
 
-        //////// TESTS WITHOUT SHIFT ////////
-        // Test reducing the clip size
+        StartTest("InOutTransition: Without shift: TransitionLeftClipEnd: reduce clip size.");
         Drag(TransitionLeftClipEnd(VideoClip(0,2)),Center(VideoClip(0,1)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
-        // Test the lower resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied)
+        StartTest("InOutTransition: Without shift: TransitionLeftClipEnd: Verify lower resize bound (must be such that the entire clip can be trimmed away, since the transition is unapplied).");
         Drag(TransitionLeftClipEnd(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
-        // Test enlarging the clip size (which is not possible)
+        StartTest("InOutTransition: Without shift: TransitionLeftClipEnd: enlarge clip size (is not possible).");
         Drag(TransitionLeftClipEnd(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-        //////// TESTS WITH SHIFT ////////
-        // Test reducing the clip size
+        StartTest("InOutTransition: With shift: TransitionLeftClipEnd: reduce the clip size.");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),Center(VideoClip(0,1)));
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
-        // Test the lower resize bound (which is such that of the left clip only the part under the transition remains)
+        StartTest("InOutTransition: With shift: TransitionLeftClipEnd: Verify lower resize bound (must be such that of the left clip only the part under the transition remains).");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
         ASSERT(!VideoClip(0,1)->isA<model::Transition>()); // There should still be a clip with length 0
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),0); // The left clip itselves has length 0, only the part under the transition is used
@@ -611,13 +604,13 @@ void TestTransition::testTrimming()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
-        // Test enlarging the clip size (which is possible when shift dragging)
+        StartTest("InOutTransition: With shift: TransitionLeftClipEnd: enlarge clip size (which is possible when shift dragging).");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),RightCenter(VideoClip(0,2)));
         ASSERT_MORE_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
-        // Test the upper resize bound (only useful for shift dragging)
+        StartTest("InOutTransition: With shift: TransitionLeftClipEnd: Verify upper resize bound (only useful for shift dragging).");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionOriginal - preparation.lengthOfTransition);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
@@ -625,47 +618,41 @@ void TestTransition::testTrimming()
         Undo();
     }
     {
-        // Test - for an out-only-transition - that clicking on TransitionLeftClipEnd
-        // starts a trim operation, not with the transition but the clip left of the transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-
         PrepareSnapping(true);
         MakeOutTransitionAfterClip preparation(1);
 
-        //////// TESTS WITHOUT SHIFT ////////
-        // Test reducing the clip size
+        StartTest("OutTransition: Without shift: TransitionLeftClipEnd: reducing clip size");
         Drag(TransitionLeftClipEnd(VideoClip(0,2)),Center(VideoClip(0,1)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
-        // Test the lower resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied)
+        StartTest("OutTransition: Without shift: TransitionLeftClipEnd: Verify lower resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied).");
         Drag(TransitionLeftClipEnd(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
-        // Test enlarging the clip size (which is not possible)
+        StartTest("OutTransition: Without shift: TransitionLeftClipEnd: enlarge clip size (is not possible).");
         Drag(TransitionLeftClipEnd(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-        //////// TESTS WITH SHIFT ////////
-        // Test reducing the clip size (done without undo, since the 'reduce' makes room for enlarging)
+        StartTest("OutTransition: With shift: TransitionLeftClipEnd: reduce clip size (done without undo, since the 'reduce' makes room for enlarging).");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),Center(VideoClip(0,1)));
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getMaxAdjustEnd());
-        // Test enlarging the clip size (which is possible since the left clip was just shortened)
+        StartTest("OutTransition: With shift: TransitionLeftClipEnd: enlarge the clip size (which is possible since the left clip was just shortened).");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),RightCenter(VideoClip(0,3)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo(); // Undo Trim 2
         Undo(); // Undo Trim 1
-        // Test the lower resize bound (which is such that of the left clip only the part under the transition remains)
+        StartTest("OutTransition: With shift: TransitionLeftClipEnd: Verify lower resize bound (which is such that of the left clip only the part under the transition remains).");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),0); // The left clip itselves has length 0, only the part under the transition is used
@@ -674,7 +661,7 @@ void TestTransition::testTrimming()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
-        // Test enlarging the clip size directly after creating the transition (impossible since left clip cannot be extended further)
+        StartTest("OutTransition: With shift: TransitionLeftClipEnd: enlarge clip size directly after creating the transition (impossible since left clip cannot be extended further).");
         ShiftDrag(TransitionLeftClipEnd(VideoClip(0,2)),RightCenter(VideoClip(0,3)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
@@ -682,41 +669,34 @@ void TestTransition::testTrimming()
         // NOT: Undo();
     }
     {
-        // Test - for an in-out-transition- that clicking on TransitionRightClipBegin
-        // starts a trim operation, not with the transition but the clip right of the transition.
-
-        // Also test that the minadjustbegin/maxadjustend values are honored
-
         PrepareSnapping(true);
         MakeInOutTransitionAfterClip preparation(1);
 
-        //////// TESTS WITHOUT SHIFT ////////
-        // Test reducing the clip size
+        StartTest("InOutTransition: Without shift: TransitionRightClipBegin: reduce clip size.");
         Drag(TransitionRightClipBegin(VideoClip(0,2)),Center(VideoClip(0,3)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
-        // Test the upper resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied)
+        StartTest("InOutTransition: Without shift: TransitionRightClipBegin: Verify upper resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied).");
         Drag(TransitionRightClipBegin(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         Undo();
-        // Test enlarging the clip size (which is not possible)
+        StartTest("InOutTransition: Without shift: TransitionRightClipBegin: enlarge clip size (which is not possible).");
         Drag(TransitionRightClipBegin(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-        //////// TESTS WITH SHIFT ////////
-        // Test reducing the clip size
+        StartTest("InOutTransition: With shift: TransitionRightClipBegin: reduce clip size.");
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),Center(VideoClip(0,3)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
-        // Test the upper resize bound (which is such that of the right clip only the part under the transition remains)
+        StartTest("InOutTransition: With shift: TransitionRightClipBegin: Verify upper resize bound (which is such that of the right clip only the part under the transition remains).");
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT(!VideoClip(0,1)->isA<model::Transition>()); // There should still be a clip with length 0
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -725,13 +705,13 @@ void TestTransition::testTrimming()
         ASSERT(!VideoClip(0,3)->isA<model::Transition>()); // There should still be a clip with length 0
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),0); // The left clip itselves has length 0, only the part under the transition is used
         Undo();
-        // Test enlarging the clip size (which is possible when shift dragging)
+        StartTest("InOutTransition: With shift: TransitionRightClipBegin: enlarge clip size (which is possible when shift dragging).");
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),LeftCenter(VideoClip(0,2)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
-        // Test the lower resize bound (only useful for shift dragging)
+        StartTest("InOutTransition: With shift: TransitionRightClipBegin: Verify lower resize bound (only useful for shift dragging).");
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -740,47 +720,41 @@ void TestTransition::testTrimming()
         Undo();
     }
     {
-        // Test - for an in-only-transition - that clicking on TransitionRightClipBegin
-        // starts a trim operation, not with the transition but the clip right of the transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-
         PrepareSnapping(true);
         MakeInTransitionAfterClip preparation(1);
 
-        //////// TESTS WITHOUT SHIFT ////////
-        // Test reducing the clip size
+        StartTest("InTransition: Without shift: TransitionRightClipBegin: reduce clip size.");
         Drag(TransitionRightClipBegin(VideoClip(0,2)),Center(VideoClip(0,3)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
-        // Test the upper resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied)
+        StartTest("InTransition: Without shift: TransitionRightClipBegin: Verify upper resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied).");
         Drag(TransitionRightClipBegin(VideoClip(0,2)),LeftCenter(VideoClip(0,4)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         Undo();
-        // Test enlarging the clip size (which is not possible)
+        StartTest("InTransition: Without shift: TransitionRightClipBegin: enlarge clip size (which is not possible).");
         Drag(TransitionRightClipBegin(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-        //////// TESTS WITH SHIFT ////////
-        // Test reducing the clip size (done without undo, since the 'reduce' makes room for enlarging)
+        StartTest("InTransition: With shift: TransitionRightClipBegin: reduce clip size (done without undo, since the 'reduce' makes room for enlarging).");
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),Center(VideoClip(0,3)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         ASSERT_LESS_THAN_ZERO(VideoClip(0,3)->getMinAdjustBegin());
-        // Test enlarging the clip size (which is possible since the left clip was just shortened)
+        StartTest("InTransition: With shift: TransitionRightClipBegin: enlarge the clip size (which is possible since the left clip was just shortened).");
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo(); // Undo Trim 2
         Undo(); // Undo Trim 1
-        // Test the upper resize bound (which is such that of the right clip only the part under the transition remains)
+        StartTest("InTransition: With shift: TransitionRightClipBegin: Verify upper resize bound (which is such that of the right clip only the part under the transition remains).");
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -789,7 +763,7 @@ void TestTransition::testTrimming()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),0); // The right clip itselves has length 0, only the part under the transition is used
         Undo();
-        // Test enlarging the clip size directly after creating the transition (impossible since right clip cannot be extended further)
+        StartTest("InTransition: With shift: TransitionRightClipBegin: enlarge clip size directly after creating the transition (impossible since right clip cannot be extended further).");
         ShiftDrag(TransitionRightClipBegin(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
@@ -798,4 +772,94 @@ void TestTransition::testTrimming()
         // NOT: Undo();
     }
 }
+
+void TestTransition::testTrimmingLinkedClips()
+{
+    StartTestSuite();
+
+    Zoom Level(4);
+
+    {
+        StartTest("In-out-transition: when trimming the linked audio clips the transition is also unapplied.");
+        MakeInOutTransitionAfterClip preparation(1);
+        pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
+        pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
+        StartTest("InOutTransition: Without shift: reduce size of clip linked to the out-clip (transition must be removed)");
+        Drag(RightCenter(AudioClip(0,1)),Center(AudioClip(0,1)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
+        ASSERT_LESS_THAN(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InOutTransition: Without shift: reduce the size of the clip linked to the in-clip (transition must be removed)");
+        Drag(LeftCenter(AudioClip(0,2)),Center(AudioClip(0,2)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
+        ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_LESS_THAN(AudioClip(0,3)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InOutTransition: Without shift: reduce the size of the clip linked to the out-clip  as much as possible (transition must be removed)");
+        Drag(RightCenter(AudioClip(0,1)),LeftCenter(AudioClip(0,0)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,1)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InOutTransition: Without shift: reduce the size of the clip linked to the in-clip as much as possible (transition between videos must be removed)");
+        pts lengthOfVideoClipAfterOutClip = VideoClip(0,4)->getLength();
+        pts lengthOfAudioClipLinkedToVideoClipAfterOutClip = AudioClip(0,3)->getLength();
+        Drag(LeftCenter(AudioClip(0,2)),RightCenter(AudioClip(0,3)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        ASSERT(AudioClip(0,2)->isA<model::EmptyClip>());
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),lengthOfVideoClipAfterOutClip);
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(),lengthOfAudioClipLinkedToVideoClipAfterOutClip);
+        Undo();
+        StartTest("InOutTransition: Without shift: reduce the 'other' side of the clip linked to the in-clip as much as possible (transition is NOT removed)");
+        Drag(LeftCenter(AudioClip(0,1)),RightCenter(AudioClip(0,2)));
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip); // todo apply this assert in all tests
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip )(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_ZERO(VideoClip(0,2)->getLength());
+        ASSERT_EQUALS(AudioClip(0,1)->getLength() + AudioClip(0,2)->getLength(), originalLengthOfAudioClip1);
+        StartTest("InOutTransition: Without shift: scrub with an 'in' clip which is fully obscured by the transition");
+        Scrub(RightPixel(VideoClip(0,1))-5, HCenter(VideoClip(0,3))); // Bug once: The empty video clip that is 'just before' the transition asserted when doing a moveTo(0), since !(0<length) for a clip with length 0.
+        StartTest("InOutTransition: Without shift: enlarge 'in' clip which is fully obscured by the transition");
+        Drag(LeftVBottomQuarter(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
+        // todo make ASSERT_LENGTH(model::ICLipPtr) instead of the line above
+        Undo();
+        Undo();
+        StartTest("InOutTransition: Without shift: reduce 'other' side of the clip linked to the out-clip as much as possible (transition is NOT removed)");
+        Drag(RightCenter(AudioClip(0,2)),Center(AudioClip(0,0)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        ASSERT_ZERO(VideoClip(0,3)->getLength());
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength() + AudioClip(0,3)->getLength(), originalLengthOfAudioClip2);
+        StartTest("InOutTransition: Without shift: scrub an 'out' clip which is fully obscured by the transition");
+        Scrub(HCenter(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5); // Bug once: The empty video clip that is 'just before' the transition asserted when doing a moveTo(0), since !(0<length) for a clip with length 0.
+        StartTest("InOutTransition: Without shift: enlarge 'out' clip which is fully obscured by the transition");
+        Drag(RightVBottomQuarter(VideoClip(0,3)),RightCenter(VideoClip(0,4)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(),originalLengthOfAudioClip2);
+        Undo();
+        Undo();
+    }
+}
+
 } // namespace

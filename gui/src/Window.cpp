@@ -388,7 +388,7 @@ void Window::setSequenceMenu(wxMenu* menu)
 
 void Window::setAdditionalTitle(wxString title)
 {
-    SetTitle(sTitle + " - " + title);
+    SetTitle(sTitle + ": " + title);
 }
 
 //////////////////////////////////////////////////////////////////////////

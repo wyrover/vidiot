@@ -96,10 +96,14 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     }
     ASSERT(clone);
     ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
-    clone->moveTo(0);
-    model::VideoFramePtr videoFrame = clone->getNextVideo(requiredSize(), false);
-    model::wxBitmapPtr thumbnail = videoFrame->getBitmap();
-    dc.DrawBitmap(*thumbnail,0,0,false);
+    if (clone->getLength() > 0)
+    {
+        // The if is required to avoid errors during editing operations.
+        clone->moveTo(0);
+        model::VideoFramePtr videoFrame = clone->getNextVideo(requiredSize(), false);
+        model::wxBitmapPtr thumbnail = videoFrame->getBitmap();
+        dc.DrawBitmap(*thumbnail,0,0,false);
+    }
 }
 
 }} // namespace

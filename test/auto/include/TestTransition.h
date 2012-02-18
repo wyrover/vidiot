@@ -53,6 +53,11 @@ public:
     /// trimming.
     void testTrimming();
 
+    /// Test the trimming of clips which are linked to clips which, in turn, are
+    /// used in a transition. Also tests that minimum/maximum bounds are honored when
+    /// trimming.
+    void testTrimmingLinkedClips();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

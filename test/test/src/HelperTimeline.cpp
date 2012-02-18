@@ -414,6 +414,17 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
     }
 }
 
+void Trim(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
+{
+    LOG_DEBUG;
+    Move(from);
+    wxUIActionSimulator().MouseDown();
+    waitForIdle();
+    Move(to);
+    wxUIActionSimulator().MouseUp();
+    waitForIdle();
+}
+
 void ShiftDrag(wxPoint from, wxPoint to)
 {
     wxPoint between(from);

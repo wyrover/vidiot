@@ -328,7 +328,7 @@ void AClipEdit::replaceLinks()
     }
 }
 
-void AClipEdit::replaceWithEmpty(model::IClips clips)
+void AClipEdit::replaceWithEmpty(model::IClips clips, pts length)
 {
     model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
     model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
@@ -345,12 +345,30 @@ void AClipEdit::replaceWithEmpty(model::IClips clips)
 void AClipEdit::mergeConsecutiveEmptyClips()
 {
     LOG_DEBUG;
+    // todo make 'dirty' mechanism to avoid useless updates: each track is clean, whenever a move is done, it becomes dirty. When AClipEdit has finalized its transition all tracks are 'clean' again
     mergeConsecutiveEmptyClips(getTimeline().getSequence()->getVideoTracks());
     mergeConsecutiveEmptyClips(getTimeline().getSequence()->getAudioTracks());
 }
 
 void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
 {
+    auto replace = [this](model::TrackPtr track, model::IClips& clips, pts length)
+    {
+        model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
+        model::IClips replacement;
+        if (length > 0)
+        {
+            // Ensure that for regions the 'extra' space for transitions is added.
+            // Basically the 'extra' space at the beginning of the first clip and the extra
+            // space at the ending of the last clip must be added to the region.
+            replacement.push_back(model::EmptyClip::replace(clips));
+        }
+        // else: Simply replace with an empty list, thus remove the clip(s)
+
+        //      ================== ADD =====   ======= REMOVE =======
+        newMove(track, position, replacement, track, position, clips);
+    };
+
     BOOST_FOREACH( model::TrackPtr track, tracks )
     {
         pts length = 0;
@@ -369,7 +387,8 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
             {
                 if (inregion)
                 {
-                    replaceWithEmpty(removed);
+ //replaceWithEmpty(removed,length);
+                    replace(track,removed,length);
                     length = 0;
                     removed.clear();
                 }
@@ -378,7 +397,8 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
         }
         if (inregion)
         {
-            replaceWithEmpty(removed);
+ //replaceWithEmpty(removed,length);
+            replace(track,removed,length);
         }
     }
 }
