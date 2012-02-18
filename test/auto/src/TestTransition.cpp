@@ -63,11 +63,7 @@ void TestTransition::testSelection()
 {
     StartTestSuite();
     Zoom level(4);
-    //// Zoom in (required for correct positioning)
-    //Type('=');
-    //Type('=');
-    //Type('=');todo remove if ok
-    //Type('=');
+
     {
         DeselectAllClips();
         MakeInOutTransitionAfterClip preparation(1);
@@ -76,25 +72,25 @@ void TestTransition::testSelection()
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end TODO also do this test without transition involved
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end
         // Test - for an in-out-transition- that clicking on TransitionRightClipInterior selects the clip right of the transition.
         Click(TransitionRightClipInterior(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end TODO also do this test without transition involved
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end
         // Test - for an in-out-transition- that clicking on TransitionLeftClipEnd selects the clip left of the transition.
         Click(TransitionLeftClipEnd(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end TODO also do this test without transition involved
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end
         // Test - for an in-out-transition- that clicking on TransitionRightClipBegin selects the clip right of the transition.
         Click(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end TODO also do this test without transition involved
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end
     }
     {
         DeselectAllClips();
@@ -144,8 +140,7 @@ void TestTransition::testDragAndDrop()
         // transition and its adjacent clips are shifted backwards
         PrepareSnapping(false);
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,3)));
-        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-        ASSERT(VideoClip(0,4)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip); // todo apply this assert in all tests
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
@@ -157,9 +152,9 @@ void TestTransition::testDragAndDrop()
         // are separated'. (clip in front of transition remains intact)
         PrepareSnapping(false);
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,4)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
     }
@@ -170,11 +165,10 @@ void TestTransition::testDragAndDrop()
         PrepareSnapping(true);
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,6)),preparation.leftPositionOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(!VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,3)->isA<model::Transition>());
         Undo();
     }
     {

@@ -27,7 +27,7 @@ std::list< boost::shared_ptr<T> > make_cloned(std::list< boost::shared_ptr<T> > 
     std::list< boost::shared_ptr<T> > result;
     BOOST_FOREACH( boost::shared_ptr<T> element, elements )
     {
-        result.push_back(make_cloned<T>(element)); // todo make_cloned variant for entire list in UtilClone
+        result.push_back(make_cloned<T>(element));
     }
     return result;
 }

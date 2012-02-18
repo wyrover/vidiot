@@ -164,9 +164,8 @@ pts Clip::getMinAdjustBegin() const
 pts Clip::getMaxAdjustBegin() const
 {
     TransitionPtr outTransition = getOutTransition();
-    pts reservedForOutTransition = outTransition ? outTransition->getLength() : 0; // Do not use left part only. The right part (if present) is also using frames from this clip! TODO dit kan weg
     pts maxAdjustBegin = mLength; // NOT: - reservedForOutTransition; The 'reserved' part is already incorporated in mLength when a possible out transition was created
-    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustBegin)(mLength)(reservedForOutTransition);
+    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustBegin)(mLength);
     return maxAdjustBegin;
 }
 
@@ -184,9 +183,8 @@ void Clip::adjustBegin(pts adjustment)
 pts Clip::getMinAdjustEnd() const
 {
     TransitionPtr inTransition = getInTransition();
-    pts reservedForInTransition = inTransition ? inTransition->getLength() : 0; // Do not use right part only. The left part (if present) is also using frames from this clip! TODO dit kan weg
     pts minAdjustEnd = -mLength; // NOT: + reservedForInTransition; The 'reserved' part is already incorporated in mOffset when a possible in transition was created
-    ASSERT_LESS_THAN_EQUALS_ZERO(minAdjustEnd)(mLength)(reservedForInTransition);
+    ASSERT_LESS_THAN_EQUALS_ZERO(minAdjustEnd)(mLength);
     return minAdjustEnd;
 }
 
