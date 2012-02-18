@@ -243,7 +243,7 @@ private:
     /// Replace the given list of clips with one empty clip of the same length. Note that the given
     /// list of clips must be consecutive clips within one track.
     /// \param clips list of clips to be replaced
-    void replaceWithEmpty(model::IClips clips);
+    void replaceWithEmpty(model::IClips clips, pts length);
 
     /// Merge all consecutive empty clips in any track of the sequence into one clip
     /// \see mergeConsecutiveEmptyClips(model::Tracks tracks)

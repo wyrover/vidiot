@@ -118,6 +118,13 @@ private:
 /// \param mouseup if true, then the mouse button is released after the mouse has reached position 'to'
 void Drag(wxPoint from, wxPoint to, bool ctrl = false, bool mousedown = true, bool mouseup = true);
 
+/// Do a trim between the two points (press, move, release). This basically does the same as 'Drag' but faster. The Drag
+/// method does the move in several (10) steps. This method simply moves to the begin point, presses the mouse, moves
+/// to the end point (without intermediate points) and releases the button.
+/// \param from starting position to move to initially
+/// \param to final position to drag to
+void Trim(wxPoint from, wxPoint to);
+
 /// Do a shift drag and drop between the two points (press, move a bit, hold shift, move to 'to', release mouse and shift).
 /// \param from starting position to move to initially
 /// \param to final position to drag to

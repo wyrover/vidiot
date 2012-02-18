@@ -8,20 +8,19 @@
 
 namespace test {
 
-std::string sSuite("");
+wxString sSuite;
 boost::optional<std::string> sTest(boost::none);
+int sSuiteCount = 1;
 
 void updateTitle()
 {
-    static int testcount = 1;
     wxString s;
-    s << testcount << " - " << sSuite;
+    s << sSuiteCount << ": " << sSuite;
     if (sTest)
     {
-        s << " - " << *sTest;
+        s << ": " << *sTest;
     }
     gui::Window::get().setAdditionalTitle(s);
-    testcount++;
 }
 
 void setSuite(const char* suite)
@@ -29,8 +28,10 @@ void setSuite(const char* suite)
     std::vector<std::string> strs;
     boost::split(strs, suite, boost::is_any_of(":"));
     sSuite = strs.back();
+    sSuite.Replace("test","Test",false);
     sTest.reset();
     updateTitle();
+    sSuiteCount++;
 }
 
 void setTest(const char* test)

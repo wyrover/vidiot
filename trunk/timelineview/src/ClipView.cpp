@@ -185,9 +185,8 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
                     }
                 }
             }
-            else // (dist_cut >= 0)
+            else if (dist_cut > 0)
             {
-                // todo test for dist_cut == 0 (see the assert below)
                 ASSERT_MORE_THAN_ZERO(transition->getRight());
                 if (dist_cut < Layout::sCursorClipEditDistance)
                 {
@@ -214,6 +213,21 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
                     }
                 }
             }
+            else // dist_cut == 0
+            {
+                if (transition->getNext())
+                {
+                    //info.clip = transition->getNext();
+                    info.logicalclipposition = TransitionRightClipBegin;
+                }
+                else
+                {
+                    ASSERT(transition->getPrev())(transition);
+                    //info.clip = transition->getPrev();
+                    info.logicalclipposition = TransitionLeftClipEnd;
+                }
+            }
+
         }
     }
     else// Regular clip
