@@ -141,8 +141,6 @@ void Trim::start()
     }
     ASSERT(originalClip);
 
-    // \todo use the leftmost of the clip and/or its link
-
     mFixedPixel = getScrolling().ptsToPixel(mFixedPts); // See remark above.
     if (adjacentClip && adjacentClip->isA<model::VideoClip>())
     {
