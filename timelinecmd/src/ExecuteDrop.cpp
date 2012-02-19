@@ -3,15 +3,16 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
+#include "Calculate.h"
 #include "Clip.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-#include "UtilSet.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
+#include "UtilSet.h"
 
 namespace gui { namespace timeline { namespace command {
 //////////////////////////////////////////////////////////////////////////
@@ -191,7 +192,7 @@ void ExecuteDrop::initialize()
         VAR_DEBUG(drop.position)(drop.track)(drop.clips);
 
         // Determine size and end pts of dropped clips
-        pts droppedSize = model::Track::getCombinedLength(drop.clips);
+        pts droppedSize = model::calculate::combinedLength(drop.clips);
         pts dropEndPosition = drop.position + droppedSize;
 
         // Ensure that the track has cuts at the begin and the end of the dropped clips

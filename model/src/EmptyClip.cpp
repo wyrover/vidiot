@@ -5,14 +5,15 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include "Calculate.h"
 #include "UtilLog.h"
 #include "EmptyFile.h"
 #include "AudioChunk.h"
 #include "VideoFrame.h"
 #include "Transition.h"
-#include "Track.h"
 
 namespace model {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -73,7 +74,7 @@ EmptyClipPtr EmptyClip::replace(model::IClips clips)
     ASSERT_MORE_THAN_ZERO(clips.size());
 
     model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
-    pts length = Track::getCombinedLength(clips);
+    pts length = calculate::combinedLength(clips);
     ASSERT_MORE_THAN_ZERO(length);
 
     // Ensure that for regions the 'extra' space for transitions is added.

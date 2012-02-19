@@ -9,6 +9,7 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <wx/intl.h>
+#include "Calculate.h"
 #include "Node.h"
 #include "Clip.h"
 #include "Constants.h"
@@ -20,6 +21,7 @@
 #include "UtilLogStl.h"
 
 namespace model {
+
 Track::Track()
 :	IControl()
 ,   wxEvtHandler()
@@ -66,7 +68,7 @@ Track::~Track()
 
 pts Track::getLength() const
 {
-    return getCombinedLength(mClips);
+    return calculate::combinedLength(mClips);
 }
 
 void Track::moveTo(pts position)
@@ -252,21 +254,6 @@ pts Track::getRightEmptyArea(IClipPtr clip)
         next = next->getNext();
     }
     return rightmost - clip->getRightPts();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// STATIC HELPER METHOD
-//////////////////////////////////////////////////////////////////////////
-// todo: such stuff in utility classes to avoid circular dependencies? (exmaple: emptyclip uses this and is now dependent on track)
-//static
-pts Track::getCombinedLength(const IClips& clips)
-{
-    int length = 0;
-    BOOST_FOREACH( IClipPtr clip, clips )
-    {
-        length += clip->getLength();
-    }
-    return length;
 }
 
 //////////////////////////////////////////////////////////////////////////
