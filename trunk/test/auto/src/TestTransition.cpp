@@ -124,13 +124,10 @@ void TestTransition::testSelection()
     }
 }
 
-void TestTransition::testDragAndDrop()
+void TestTransition::testDragAndDropOfOtherClips()
 {
     StartTestSuite();
-    // Zoom in
-    Type('=');
-    Type('=');
-    Type('=');
+    Zoom level(3);
     MakeInOutTransitionAfterClip preparation(1);
     ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
     ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,2));
@@ -140,7 +137,7 @@ void TestTransition::testDragAndDrop()
         // transition and its adjacent clips are shifted backwards
         PrepareSnapping(false);
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,3)));
-        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip); // todo apply this assert in all tests
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
@@ -179,11 +176,10 @@ void TestTransition::testDragAndDrop()
         PrepareSnapping(true);
         pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,5)),preparation.leftPositionOfTransitionAfterTransitionApplied);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
-        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,4)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,5)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
     }
@@ -197,8 +193,8 @@ void TestTransition::testDragAndDrop()
         ShiftDragAlignLeft(Center(VideoClip(0,5)),preparation.touchPositionOfTransition);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
@@ -213,8 +209,8 @@ void TestTransition::testDragAndDrop()
         ShiftDragAlignLeft(Center(VideoClip(0,5)),LeftPixel(VideoClip(0,3)));
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
@@ -229,7 +225,7 @@ void TestTransition::testDragAndDrop()
         DragAlignRight(Center(VideoClip(0,6)),right);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
         ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,3)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfTransition);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
@@ -244,7 +240,7 @@ void TestTransition::testDragAndDrop()
         DragAlignLeft(Center(VideoClip(0,6)),left);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,2)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
         ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
@@ -253,11 +249,9 @@ void TestTransition::testDragAndDrop()
         // Move the leftmost of the two clips adjacent to the transition: the transition must be removed
         DeselectAllClips();
         Drag(Center(VideoClip(0,1)),Center(VideoClip(0,4)));
-        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
-        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-        ASSERT(AudioClip(0,1)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
         ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
         ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
@@ -292,20 +286,15 @@ void TestTransition::testDragAndDrop()
     checkMenu(ID_SNAP_CURSOR, true);
 }
 
-void TestTransition::testInOutTransitionDragAndDrop()
+void TestTransition::testDragAndDropOfClipsUnderTransition()
 {
     StartTestSuite();
-    // Zoom in (required for correct positioning)
-    Type('=');
-    Type('=');
-    Type('=');
-    Type('=');
+    Zoom level(4);
     {
         PrepareSnapping(true);
         // Test - for an in-out-transition- that dragging when clicking on TransitionLeftClipInterior
         // starts a drag and drop operation, not with the transition but the clip left of the transition.
         MakeInOutTransitionAfterClip preparation(1);
-
         ShiftDragAlignLeft(TransitionLeftClipInterior(VideoClip(0,2)),LeftPixel(VideoClip(0,4)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
         ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
@@ -330,16 +319,6 @@ void TestTransition::testInOutTransitionDragAndDrop()
         ASSERT_EQUALS(VideoClip(0,-1)->getRightPts(),AudioClip(0,-1)->getRightPts()); // Both tracks have the same length
         Undo();
     }
-}
-
-void TestTransition::testInTransitionDragAndDrop()
-{
-    StartTestSuite();
-    // Zoom in (required for correct positioning)
-    Type('=');
-    Type('=');
-    Type('=');
-    Type('=');
     {
         // Test - for an in-only-transition - that dragging when clicking on TransitionRightClipInterior starts a
         // drag and drop operation, not with the transition but the clip right of the transition.
@@ -347,24 +326,13 @@ void TestTransition::testInTransitionDragAndDrop()
         // transition is the clip being dragged.
         MakeInTransitionAfterClip preparation(1);
         ShiftDragAlignLeft(TransitionRightClipInterior(VideoClip(0,2)),LeftPixel(VideoClip(0,4)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
-        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
-        ASSERT(VideoClip(0,3)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,3)->getLength() + VideoClip(0,4)->getLength(),AudioClip(0,3)->getLength());
         ASSERT_EQUALS(VideoClip(0,-1)->getRightPts(),AudioClip(0,-1)->getRightPts()); // Both tracks have the same length
         Undo();
     }
-}
-
-void TestTransition::testOutTransitionDragAndDrop()
-{
-    StartTestSuite();
-    // Zoom in (required for correct positioning)
-    Type('=');
-    Type('=');
-    Type('=');
-    Type('=');
     {
         // Test - for an out-only-transition - that dragging when clicking on TransitionLeftClipInterior
         // starts a drag and drop operation, not with the transition but the clip left of the transition.
@@ -374,11 +342,10 @@ void TestTransition::testOutTransitionDragAndDrop()
 
         ASSERT_EQUALS(VideoClip(0,1)->getLength() + VideoClip(0,2)->getLength(),AudioClip(0,1)->getLength()); // Transition is unapplied which causes the audio and video to have the same lengths again
         ShiftDragAlignLeft(TransitionLeftClipInterior(VideoClip(0,2)),LeftPixel(VideoClip(0,4)));
-        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied); // Clip and transition are replaced with emptyness
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT(VideoClip(0,4)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength() + VideoClip(0,4)->getLength(),AudioClip(0,3)->getLength());
         ASSERT_EQUALS(VideoClip(0,-1)->getRightPts(),AudioClip(0,-1)->getRightPts()); // Both tracks have the same length
         Undo();
@@ -388,9 +355,7 @@ void TestTransition::testOutTransitionDragAndDrop()
 void TestTransition::testAdjacentTransitions()
 {
     StartTestSuite();
-    Type('=');
-    Type('=');
-    Type('=');
+    Zoom level(3);
     {
         // Reduce size of second and third clip to be able to create transitions
         TrimRight(VideoClip(0,1),30,false);
@@ -424,9 +389,7 @@ void TestTransition::testAdjacentTransitions()
         pts transitionlength = VideoClip(0,2)->getLength();
         pts length = VideoClip(0,8)->getLength();
         DragAlignLeft(Center(VideoClip(0,8)),LeftPixel(VideoClip(0,3)));
-        ASSERT(VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::EmptyClip>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),cliplength);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
@@ -440,9 +403,7 @@ void TestTransition::testAdjacentTransitions()
         pts transitionlength = VideoClip(0,3)->getLength();
         pts length = VideoClip(0,8)->getLength();
         DragAlignRight(Center(VideoClip(0,8)) + wxPoint(5,0),RightPixel(VideoClip(0,2))-2);
-        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
-        ASSERT(VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),cliplength);
@@ -453,11 +414,7 @@ void TestTransition::testAdjacentTransitions()
 void TestTransition::testPlaybackAndScrubbing()
 {
     StartTestSuite();
-
-    // Zoom in once to avoid clicking in the middle of a clip which is then
-    // seen (logically) as clip end due to the zooming
-    Type('=');
-
+    Zoom level(1); // Zoom in once to avoid clicking in the middle of a clip which is then seen (logically) as clip end due to the zooming
     {
         MakeInOutTransitionAfterClip preparation(1);
 
@@ -475,8 +432,7 @@ void TestTransition::testPlaybackAndScrubbing()
         DeselectAllClips();
         Click(Center(VideoClip(0,1)));
         Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
-        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-        ASSERT(VideoClip(0,5)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getRight());
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getLeft());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
@@ -507,8 +463,7 @@ void TestTransition::testPlaybackAndScrubbing()
         // Move clip related to transition: the transition must be moved also
         DeselectAllClips();
         Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
-        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
-        ASSERT(VideoClip(0,5)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition);
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getRight());
         ASSERT_ZERO(VideoTransition(0,5)->getLeft());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
@@ -538,8 +493,7 @@ void TestTransition::testPlaybackAndScrubbing()
         // Move clip related to transition: the transition must be moved also
         DeselectAllClips();
         Drag(Center(VideoClip(0,1)), Center(VideoClip(0,5)), true);
-        ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
-        ASSERT(VideoClip(0,6)->isA<model::Transition>());
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
         ASSERT_ZERO(VideoTransition(0,6)->getRight());
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,6)->getLeft());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
@@ -820,7 +774,7 @@ void TestTransition::testTrimmingLinkedClips()
         Undo();
         StartTest("InOutTransition: Without shift: reduce the 'other' side of the clip linked to the in-clip as much as possible (transition is NOT removed)");
         Trim(LeftCenter(AudioClip(0,1)),RightCenter(AudioClip(0,2)));
-        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip); // todo apply this assert in all tests
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(Transition)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip )(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_ZERO(VideoClip(0,2)->getLength());
@@ -833,7 +787,6 @@ void TestTransition::testTrimmingLinkedClips()
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(AudioClip(0,1)->getLength(),originalLengthOfAudioClip1);
-        // todo make ASSERT_LENGTH(model::ICLipPtr) instead of the line above
         Undo();
         Undo();
         StartTest("InOutTransition: Without shift: reduce 'other' side of the clip linked to the out-clip as much as possible (transition is NOT removed)");

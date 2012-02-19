@@ -24,13 +24,9 @@ public:
 
     void testSelection();
 
-    void testDragAndDrop();
+    void testDragAndDropOfOtherClips();
 
-    void testInOutTransitionDragAndDrop();
-
-    void testInTransitionDragAndDrop();
-
-    void testOutTransitionDragAndDrop();
+    void testDragAndDropOfClipsUnderTransition();
 
     /// Test the handling of two transitions that are adjacent. This means the
     /// first transition is a fade-out and the second is a fade-in type transition.
