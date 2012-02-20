@@ -509,7 +509,7 @@ void TestTransition::testPlaybackAndScrubbing()
     }
 }
 
-void TestTransition::testTrimming()
+void TestTransition::testTrimmingClipsInTransition()
 {
     StartTestSuite();
 
@@ -724,9 +724,7 @@ void TestTransition::testTrimming()
 void TestTransition::testTrimmingLinkedClips()
 {
     StartTestSuite();
-
     Zoom Level(4);
-
     {
         StartTest("In-out-transition: when trimming the linked audio clips the transition is also unapplied.");
         MakeInOutTransitionAfterClip preparation(1);
@@ -807,6 +805,14 @@ void TestTransition::testTrimmingLinkedClips()
         Undo();
         Undo();
     }
+}
+
+void TestTransition::testTrimmingTransition()
+{
+    StartTestSuite();
+
+    Zoom Level(4);
+
 }
 
 } // namespace

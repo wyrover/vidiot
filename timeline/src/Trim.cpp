@@ -127,11 +127,13 @@ void Trim::start()
     case TransitionBegin:
         ASSERT(transition);
         originalClip = info.clip;
-        //break;
+        transition.reset();
+        break;
     case TransitionEnd:
         ASSERT(transition);
         originalClip = info.clip;
-        // break;
+        transition.reset();
+        break;
     case ClipInterior:
     case TransitionLeftClipInterior:
     case TransitionInterior:
@@ -205,6 +207,7 @@ void Trim::stop()
 
 void Trim::preview()
 {
+    if (mCommand->getClip()->isA<model::Transition>()) { return; } // todo? preview for transition trim
     model::IClipPtr updatedClip = make_cloned<model::IClip>(mCommand->getClip());
 
     if (updatedClip->isA<model::VideoClip>())

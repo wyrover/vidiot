@@ -47,12 +47,15 @@ public:
     /// Tests the trimming of the transition as well as trimming the clips related
     /// to the transition. Also tests that maximum/minimum bounds are honored when
     /// trimming.
-    void testTrimming();
+    void testTrimmingClipsInTransition();
 
     /// Test the trimming of clips which are linked to clips which, in turn, are
     /// used in a transition. Also tests that minimum/maximum bounds are honored when
     /// trimming.
     void testTrimmingLinkedClips();
+
+    /// Test the trimming of the transition itselves
+    void testTrimmingTransition();
 
 private:
 

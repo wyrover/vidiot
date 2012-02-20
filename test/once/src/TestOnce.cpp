@@ -77,12 +77,18 @@ auto PrepareSnapping = [](bool enableSnapping)
 void TestOnce::testOnce()
 {
     StartTestSuite();
-
     Zoom Level(4);
-
     {
-        // Test - for an in-out-transition - that clicking on TransitionBegin starts trimming the
-        // selected transition.
+        MakeInOutTransitionAfterClip preparation(1);
+        StartTest("InOutTransition: Trim left: Reduce size.");
+        wxPoint pos = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(20,0);
+        //BREAK();
+        pause();
+        Trim(VTopQuarterLeft(VideoClip(0,2)),pos);
+
+        StartTest("InOutTransition: Trim left: Enlarge size.");
+        StartTest("InOutTransition: Trim left: Verify lower resize bound.");
+        StartTest("InOutTransition: Trim left: Verify upper resize bound.");
         // Also test that the minadjustbegin/maxadjustend values are honored
     }
     {
@@ -123,10 +129,9 @@ void TestOnce::testOnce()
         // TransitionBegin starts trimming the selected transition.
         // Also test that the minadjustbegin/maxadjustend values are honored
     }
-    // todo test clicking outside tracks etc.
-    // todo test clicking on dividers
-     // todo test trimming a clip so far that none of it remains
-    // todo test for A-transition-B, moving A on top of the 'end' of B, and dropping B on the 'begin' of A
+    {
+        StartTest("For trimming a transition, pressing shift has no effect.");
+    }
     // todo bug: start application, make sequence, shift click clip four. all first four clips selected!
 }
 } // namespace

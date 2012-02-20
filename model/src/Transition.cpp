@@ -1,5 +1,6 @@
 #include "Transition.h"
 
+#include <limits.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/make_shared.hpp>
@@ -133,8 +134,8 @@ IClipPtr Transition::getLink() const
 
 pts Transition::getMinAdjustBegin() const
 {
-    pts result = 0;
-    if (getLeft() > 0)
+    pts result = std::numeric_limits<pts>().min();
+    if ((getLeft() > 0) && (getPrev())) // NOTE: The getPrev() part is required for the case where a clone is adjusted. The clone does not have a getPrev() automatically.
     {
         result = -1 *  getPrev()->getLength();
     }
@@ -150,7 +151,8 @@ void Transition::adjustBegin(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustBegin());
-    mFramesLeft += adjustment;
+    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustBegin());
+    mFramesLeft -= adjustment;
 }
 
 pts Transition::getMinAdjustEnd() const
@@ -160,18 +162,19 @@ pts Transition::getMinAdjustEnd() const
 
 pts Transition::getMaxAdjustEnd() const
 {
-    pts result = 0;
-    if (getRight() > 0)
+    pts result = std::numeric_limits<pts>().max();
+    if ((getRight() > 0) && (getNext()))// NOTE: The getNext() part is required for the case where a clone is adjusted. The clone does not have a getNext() automatically.
     {
         result = getNext()->getLength();
     }
-    return 0;
+    return result;
 }
 
 void Transition::adjustEnd(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustEnd());
+    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustEnd());
     mFramesRight += adjustment;
 }
 

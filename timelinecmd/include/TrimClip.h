@@ -24,11 +24,11 @@ public:
     ///
     /// \param left if true, shift leftmost point of clip. if false, shift rightmost point of clip.
     /// \param clip clip to be changed
-    /// \param transition transition that must be unapplied if this is not a shift trim operation (of 0 then nothing needs to be done)
+    /// \param transition transition that must be unapplied if this is not a shift trim operation (if 0 then nothing needs to be done)
     /// \param position position when the trim was started
     TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, MouseOnClipPosition position);
 
-    /// \param shift indicates if the clip may be enlarged, even when there is no empty space in front of it.
+    /// To be called when the mouse is moved
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
     void update(pts diff);
 
@@ -99,12 +99,10 @@ private:
     /// Replace the given clip with a new clip. The new clip's begin and end
     /// are adjusted according to parameters begin and end.
     /// \param clip clip to be replaced
-    /// \param begin amount to be removed from beginning of clip
-    /// \param end amount to be removed from end of clip
-    /// \pre clip is a empty clip
-    /// \pre begin >= 0
-    /// \pre end >= 0
-    void reduceSize(model::IClipPtr emptyclip, pts begin, pts end);
+    /// \param begin amount to be added (<0) or removed (>0) from beginning of clip
+    /// \param end amount to be added (>0) or removed (<0) from end of clip
+    /// \pre !clip->isA<Transition>()
+    void adjust(model::IClipPtr clip, pts begin, pts end);
 
     /// Given the mouse movement, determine how far to stretch/reduce the clip
     /// \param diff mouse movement in video frames length
