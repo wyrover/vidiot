@@ -76,6 +76,12 @@ wxCommand* getCurrentCommand()
     return gui::Window::get().GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->GetCurrentCommand();
 }
 
+void BREAK()
+{
+    __asm { int 3 };
+    gui::Window::get().Raise();
+}
+
 void logHistory()
 {
     LOG_DEBUG;

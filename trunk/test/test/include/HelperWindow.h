@@ -74,6 +74,12 @@ void ASSERT_CURRENT_COMMAND_TYPE()
     }
 };
 
+/// Use this to set a breakpoint, after which the window is given focus
+/// again so that the test case won't fail. This can be used to enable
+/// specific other breakpoints at desired times (particularly, after
+/// certain init code has been done.
+void BREAK();
+
 /// Log the command history
 void logHistory();
 
