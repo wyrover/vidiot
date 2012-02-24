@@ -202,10 +202,6 @@ void TrimClip::adjust(model::IClipPtr clip, pts begin, pts end)
     ASSERT(clip);
     ASSERT(!clip->isA<model::Transition>());
     ASSERT((begin != 0) || (end != 0));
-    ASSERT_MORE_THAN_EQUALS(clip->getMaxAdjustBegin(), begin);
-    ASSERT_LESS_THAN_EQUALS(clip->getMinAdjustBegin(), begin);
-    ASSERT_MORE_THAN_EQUALS(clip->getMaxAdjustEnd(), end);
-    ASSERT_LESS_THAN_EQUALS(clip->getMinAdjustEnd(), end);
 
     model::IClipPtr clone = make_cloned<model::IClip>(clip);
     if (begin != 0)

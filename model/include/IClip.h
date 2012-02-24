@@ -87,12 +87,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \return Minimum allowed value for adjustBegin given the available data.
-    /// \note This takes into account any spare room that must be kept for adjacent transitions
+    /// \note This takes into account any spare room that must be kept for adjacent transitions/clips
     /// \post getMinAdjustBegin() <= 0
     virtual pts getMinAdjustBegin() const = 0;
 
     /// \return Maximum allowed value for adjustBegin given the available data.
-    /// \note This takes into account any spare room that must be kept for adjacent transitions
+    /// \note This takes into account any spare room that must be kept for adjacent transitions/clips
     /// \post getMaxAdjustBegin() >= 0
     virtual pts getMaxAdjustBegin() const = 0;
 
@@ -106,12 +106,12 @@ public:
     virtual void adjustBegin(pts adjustment) = 0;
 
     /// \return Minimum allowed value for adjustEnd given the available data.
-    /// \note This takes into account any spare room that must be kept for adjacent transitions
+    /// \note This takes into account any spare room that must be kept for adjacent transitions/clips
     /// \post getMinAdjustEnd() <= 0
     virtual pts getMinAdjustEnd() const = 0;
 
     /// \return Maximum allowed value for adjustEnd given the available data.
-    /// \note This takes into account any spare room that must be kept for adjacent transitions
+    /// \note This takes into account any spare room that must be kept for adjacent transitions/clips
     /// \post getMaxAdjustEnd() >= 0
     virtual pts getMaxAdjustEnd() const = 0;
 

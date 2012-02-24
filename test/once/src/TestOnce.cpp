@@ -76,62 +76,9 @@ auto PrepareSnapping = [](bool enableSnapping)
 
 void TestOnce::testOnce()
 {
+        //BREAK();
     StartTestSuite();
     Zoom Level(4);
-    {
-        MakeInOutTransitionAfterClip preparation(1);
-        StartTest("InOutTransition: Trim left: Reduce size.");
-        wxPoint pos = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(20,0);
-        //BREAK();
-        pause();
-        Trim(VTopQuarterLeft(VideoClip(0,2)),pos);
-
-        StartTest("InOutTransition: Trim left: Enlarge size.");
-        StartTest("InOutTransition: Trim left: Verify lower resize bound.");
-        StartTest("InOutTransition: Trim left: Verify upper resize bound.");
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-    {
-        // Test - for an in-only-transition - that clicking on TransitionBegin starts trimming the
-        // selected transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-    {
-        // Test - for an out-only-transition - that clicking on TransitionBegin starts trimming the
-        // selected transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-
-    {
-        // Test - for an in-out-transition - that clicking on TransitionEnd starts trimming the
-        // selected transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-    {
-        // Test - for an in-only-transition - that clicking on TransitionEnd starts trimming the
-        // selected transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-    {
-        // Test - for an out-only-transition - that clicking on TransitionEnd starts trimming the
-        // selected transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-
-    {
-        // Test - for an out-only-transition adjacent to an in-only-transition - that clicking on
-        // TransitionEnd starts trimming the selected transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-
-    {
-        // Test - for an in-only-transition adjacent to an out-only-transition - that clicking on
-        // TransitionBegin starts trimming the selected transition.
-        // Also test that the minadjustbegin/maxadjustend values are honored
-    }
-    {
-        StartTest("For trimming a transition, pressing shift has no effect.");
-    }
     // todo bug: start application, make sequence, shift click clip four. all first four clips selected!
 }
 } // namespace

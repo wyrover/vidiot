@@ -464,10 +464,10 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
         position = leftClip->getNext();
 
         // Determine adjustment and adjust left clip
-        model::IClipPtr updatedLeft = make_cloned<model::IClip>(leftClip);
         pts adjustment = -leftLength;
-        ASSERT_MORE_THAN_EQUALS( adjustment, updatedLeft->getMinAdjustEnd() );
-        ASSERT_LESS_THAN_EQUALS( adjustment, updatedLeft->getMaxAdjustEnd() );
+        ASSERT_MORE_THAN_EQUALS( adjustment, leftClip->getMinAdjustEnd() );
+        ASSERT_LESS_THAN_EQUALS( adjustment, leftClip->getMaxAdjustEnd() );
+        model::IClipPtr updatedLeft = make_cloned<model::IClip>(leftClip);
         updatedLeft->adjustEnd(adjustment);
         replaceClip(leftClip,boost::assign::list_of(updatedLeft));
         VAR_DEBUG(updatedLeft);
@@ -480,10 +480,10 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
         track = rightClip->getTrack();
 
         // Determine adjustment and adjust right clip
-        model::IClipPtr updatedRight = make_cloned<model::IClip>(rightClip);
         pts adjustment = rightLength;
-        ASSERT_MORE_THAN_EQUALS( adjustment, updatedRight->getMinAdjustBegin() );
-        ASSERT_LESS_THAN_EQUALS( adjustment, updatedRight->getMaxAdjustBegin() );
+        ASSERT_MORE_THAN_EQUALS( adjustment, rightClip->getMinAdjustBegin() );
+        ASSERT_LESS_THAN_EQUALS( adjustment, rightClip->getMaxAdjustBegin() );
+        model::IClipPtr updatedRight = make_cloned<model::IClip>(rightClip);
         updatedRight->adjustBegin(adjustment);
         replaceClip(rightClip,boost::assign::list_of(updatedRight));
 

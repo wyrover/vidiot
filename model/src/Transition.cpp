@@ -134,38 +134,53 @@ IClipPtr Transition::getLink() const
 
 pts Transition::getMinAdjustBegin() const
 {
+    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     pts result = std::numeric_limits<pts>().min();
-    if ((getLeft() > 0) && (getPrev())) // NOTE: The getPrev() part is required for the case where a clone is adjusted. The clone does not have a getPrev() automatically.
+    if (getLeft() > 0)
     {
+        ASSERT(getPrev()); // Avoid bugs where this method is called before a transition has been made part of a track
         result = -1 *  getPrev()->getLength();
+    }
+    if (getRight() > 0)
+    {
+        ASSERT(getNext());
+        result = std::max(result, getNext()->getMinAdjustBegin());
     }
     return result;
 }
 
 pts Transition::getMaxAdjustBegin() const
 {
+    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     return getLeft();
 }
 
 void Transition::adjustBegin(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
-    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustBegin());
-    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustBegin());
+    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mFramesLeft -= adjustment;
 }
 
 pts Transition::getMinAdjustEnd() const
 {
+    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     return -getRight();
 }
 
 pts Transition::getMaxAdjustEnd() const
 {
+    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     pts result = std::numeric_limits<pts>().max();
-    if ((getRight() > 0) && (getNext()))// NOTE: The getNext() part is required for the case where a clone is adjusted. The clone does not have a getNext() automatically.
+    if (getRight() > 0)
     {
+        ASSERT(getNext()); // Avoid bugs where this method is called before a transition has been made part of a track
         result = getNext()->getLength();
+    }
+    if (getLeft() > 0)
+    {
+        ASSERT(getPrev());
+        result = std::min(result, getPrev()->getMaxAdjustEnd());
     }
     return result;
 }
@@ -173,8 +188,7 @@ pts Transition::getMaxAdjustEnd() const
 void Transition::adjustEnd(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
-    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustEnd());
-    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustEnd());
+    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mFramesRight += adjustment;
 }
 
