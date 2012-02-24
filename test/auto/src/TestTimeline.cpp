@@ -64,7 +64,17 @@ void TestTimeline::testSelection()
     StartTestSuite();
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
+        // Start application, make sequence, shift click clip five. All first five clips selected!
+        DeselectAllClips();
+        ASSERT_SELECTION_SIZE(0);
+        ShiftDown();
+        Click(Center(VideoClip(0,4)));
+        ShiftUp();
+        ASSERT_SELECTION_SIZE(5);
+    }
+    {
         // Test CTRL clicking all clips one by one
+        DeselectAllClips();
         ControlDown();
         BOOST_FOREACH(model::IClipPtr clip, clips)
         {
