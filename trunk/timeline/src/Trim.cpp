@@ -207,7 +207,7 @@ void Trim::stop()
 
 void Trim::preview()
 {
-    if (mCommand->getClip()->isA<model::Transition>()) { return; } // todo? preview for transition trim
+    if (mCommand->getClip()->isA<model::Transition>()) { return; } // No preview for transition trim
     model::IClipPtr updatedClip = make_cloned<model::IClip>(mCommand->getClip());
 
     if (updatedClip->isA<model::VideoClip>())

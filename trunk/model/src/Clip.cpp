@@ -154,6 +154,7 @@ IClipPtr Clip::getLink() const
 
 pts Clip::getMinAdjustBegin() const
 {
+    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
     TransitionPtr inTransition = getInTransition();
     pts reservedForInTransition = inTransition ? inTransition->getLength() : 0; // Do not use right part only. The left part (if present) is also using frames from this clip!
     pts minAdjustBegin = -mOffset + reservedForInTransition;
@@ -163,6 +164,7 @@ pts Clip::getMinAdjustBegin() const
 
 pts Clip::getMaxAdjustBegin() const
 {
+    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
     TransitionPtr outTransition = getOutTransition();
     pts maxAdjustBegin = mLength; // NOT: - reservedForOutTransition; The 'reserved' part is already incorporated in mLength when a possible out transition was created
     ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustBegin)(mLength);
@@ -171,8 +173,6 @@ pts Clip::getMaxAdjustBegin() const
 
 void Clip::adjustBegin(pts adjustment)
 {
-    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustBegin());
-    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustBegin());
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mOffset += adjustment;
     mLength -= adjustment;
@@ -182,6 +182,7 @@ void Clip::adjustBegin(pts adjustment)
 
 pts Clip::getMinAdjustEnd() const
 {
+    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
     TransitionPtr inTransition = getInTransition();
     pts minAdjustEnd = -mLength; // NOT: + reservedForInTransition; The 'reserved' part is already incorporated in mOffset when a possible in transition was created
     ASSERT_LESS_THAN_EQUALS_ZERO(minAdjustEnd)(mLength);
@@ -190,6 +191,7 @@ pts Clip::getMinAdjustEnd() const
 
 pts Clip::getMaxAdjustEnd() const
 {
+    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
     TransitionPtr outTransition = getOutTransition();
     pts reservedForOutTransition = outTransition ? outTransition->getLength() : 0; // Do not use left part only. The right part (if present) is also using frames from this clip!
     pts maxAdjustEnd =  mRender->getLength() - mLength - mOffset - reservedForOutTransition;
@@ -199,8 +201,6 @@ pts Clip::getMaxAdjustEnd() const
 
 void Clip::adjustEnd(pts adjustment)
 {
-    ASSERT_MORE_THAN_EQUALS(adjustment,getMinAdjustEnd());
-    ASSERT_LESS_THAN_EQUALS(adjustment,getMaxAdjustEnd());
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
     ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset);
