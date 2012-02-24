@@ -78,7 +78,8 @@ void TestOnce::testOnce()
 {
         //BREAK();
     StartTestSuite();
-    Zoom Level(4);
-    // todo bug: start application, make sequence, shift click clip four. all first four clips selected!
+    //Zoom Level(1);
+
 }
+
 } // namespace
