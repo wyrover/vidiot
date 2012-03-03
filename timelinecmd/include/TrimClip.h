@@ -1,5 +1,5 @@
-#ifndef TRIM_BEGIN_H
-#define TRIM_BEGIN_H
+#ifndef TRIM_CLIP_H
+#define TRIM_CLIP_H
 
 #include "AClipEdit.h"
 #include "PositionInfo.h"
@@ -116,4 +116,4 @@ private:
 };
 }}} // namespace
 
-#endif // TRIM_BEGIN_H
+#endif // TRIM_CLIP_H

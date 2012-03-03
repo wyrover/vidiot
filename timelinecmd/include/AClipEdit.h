@@ -49,8 +49,18 @@ public:
     // WXWIDGETS DO/UNDO INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    bool Do() override;
+    bool Do() override; // todo make private?
     bool Undo() override;
+
+    /// This method can be used by derived commands to do extra actions that
+    /// are not related to adding/removing/replacing/changing clips when doing
+    /// a certain timeline operation.
+    virtual void doExtra();
+
+    /// This method can be used by derived commands to undo extra actions that
+    /// are not related to adding/removing/replacing/changing clips when undoing
+    /// a certain timeline operation.
+    virtual void undoExtra();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE
@@ -104,6 +114,11 @@ protected:
     /// \param clip original clip to be removed
     void removeClip(model::IClipPtr original);
 
+    /// Remove the given list of clips
+    /// \param originals list of clips to be removed
+    /// \pre originals is a contiguous list of clips in one track
+    void removeClips(model::IClips originals);
+
     /// Find the list of clips, indicated with the pts'es [left, right). Thus, the left pts is part
     /// of these clips, the right pts is not.
     /// \param track of which the clips are to be removed
@@ -145,6 +160,12 @@ protected:
     /// \param transition transition to be removed
     /// \return list of clips with which the transition and all its related clips are replaced
     model::IClips unapplyTransition( model::TransitionPtr transition );
+
+    /// Replace the given list of clips with one empty clip of the same length. Note that the given
+    /// list of clips must be consecutive clips within one track.
+    /// \param clips list of clips to be replaced
+    /// \return replacement (empty) clip
+    model::IClipPtr replaceWithEmpty(model::IClips clips);
 
 private:
 
@@ -239,11 +260,6 @@ private:
     /// are linked to nothing.
     /// \param conversionmap mapping for 'maintaining links' that will be updated when splitting
     void replaceLinks();
-
-    /// Replace the given list of clips with one empty clip of the same length. Note that the given
-    /// list of clips must be consecutive clips within one track.
-    /// \param clips list of clips to be replaced
-    void replaceWithEmpty(model::IClips clips, pts length);
 
     /// Merge all consecutive empty clips in any track of the sequence into one clip
     /// \see mergeConsecutiveEmptyClips(model::Tracks tracks)

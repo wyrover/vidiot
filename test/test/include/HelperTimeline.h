@@ -22,6 +22,7 @@ namespace gui { namespace timeline {
 }}
 
 namespace test {
+
 /// \return the physical position of the active timeline on the screen
 wxPoint TimelinePosition();
 
@@ -80,6 +81,8 @@ wxPoint LeftCenter(model::IClipPtr clip);            ///< \return left center po
 wxPoint RightCenter(model::IClipPtr clip);           ///< \return right center position (centered vertically)
 wxPoint LeftBottom(model::IClipPtr clip);            ///< \return left bottom position
 wxPoint RightBottom(model::IClipPtr clip);           ///< \return right bottom position
+
+wxPoint OnTimescaleAbove(wxPoint position);          ///< \return position adjusted such that the y-position is on the time scale above the clips
 
 class DraggedClips {};                               ///< Syntactic sugar to be able to use the same syntax (as used for determinig clip positions) for determining the position of the current drag object
 

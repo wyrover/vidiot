@@ -1,14 +1,14 @@
 #ifndef INTERVAL_REMOVE_ALL_H
 #define INTERVAL_REMOVE_ALL_H
 
-#include <wx/region.h>
 #include "ATimelineCommand.h"
+#include "UtilInt.h"
 
 namespace gui { namespace timeline { namespace command {
 
 /// This command removes all marked intervals from the timeline.
 /// This does not change the sequence, only the marked range is changed.
-class IntervalRemoveAll 
+class IntervalRemoveAll
     :   public ATimelineCommand
 {
 public:
@@ -17,7 +17,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    IntervalRemoveAll(model::SequencePtr sequence);
+    IntervalRemoveAll(model::SequencePtr sequence, PtsIntervals intervals);
 
     ~IntervalRemoveAll();
 
@@ -34,7 +34,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxRegion mOldRegion;
+    PtsIntervals mIntervals;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

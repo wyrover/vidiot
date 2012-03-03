@@ -43,6 +43,8 @@ bool AClipEdit::Do()
 {
     VAR_INFO(*this)(mInitialized);
 
+    doExtra();
+
     if (!mInitialized)
     {
         initialize();
@@ -75,14 +77,25 @@ bool AClipEdit::Undo()
 {
     VAR_INFO(*this)(mParamsUndo.size());
     //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
+
     BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
         doMove(move);
     }
 
+    undoExtra();
+
     getTimeline().modelChanged();
 
     return true;
+}
+
+void AClipEdit::doExtra()
+{
+}
+
+void AClipEdit::undoExtra()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -185,6 +198,22 @@ void AClipEdit::addClip(model::IClipPtr clip, model::TrackPtr track, model::ICli
 void AClipEdit::removeClip(model::IClipPtr original)
 {
     replaceClip(original, model::IClips());
+}
+
+void AClipEdit::removeClips(model::IClips originals)
+{
+    model::TrackPtr track = originals.front()->getTrack();
+    ASSERT(track);
+    model::IClipPtr position = originals.back()->getNext();
+
+    BOOST_FOREACH( model::IClipPtr original, originals )
+    {
+        ASSERT_MAP_CONTAINS_NOT((mReplacements),original);
+        mReplacements[ original ] = model::IClips();
+    }
+
+    //      ============== ADD =============  ======== REMOVE =========
+    newMove(track, position, model::IClips(), track, position, originals);
 }
 
 AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts left, pts right)
@@ -293,7 +322,7 @@ void AClipEdit::replaceLinks()
 
             auto NoLinkingAllowed = [](model::IClipPtr clip)->bool
             {
-                return ( clip->isA<model::EmptyClip>() || clip->isA<model::Transition>()); // Linking to/from empty clips and transitions is not allowed. Skip these.
+                return (clip->isA<model::EmptyClip>() || clip->isA<model::Transition>()); // Linking to/from empty clips and transitions is not allowed. Skip these.
             };
 
             while ( it1 != new1.end() && it2 != new2.end() )
@@ -326,20 +355,6 @@ void AClipEdit::replaceLinks()
             }
         }
     }
-}
-
-void AClipEdit::replaceWithEmpty(model::IClips clips, pts length)
-{
-    model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
-    model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
-
-    // Ensure that for regions the 'extra' space for transitions is added.
-    // Basically the 'extra' space at the beginning of the first clip and the extra
-    // space at the ending of the last clip must be added to the region.
-    model::EmptyClipPtr empty = model::EmptyClip::replace(clips);
-
-    //      ================== ADD ======================   ======= REMOVE =======
-    newMove(track, position, boost::assign::list_of(empty), track, position, clips);
 }
 
 void AClipEdit::mergeConsecutiveEmptyClips()
@@ -387,7 +402,6 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
             {
                 if (inregion)
                 {
- //replaceWithEmpty(removed,length);
                     replace(track,removed,length);
                     length = 0;
                     removed.clear();
@@ -397,7 +411,6 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
         }
         if (inregion)
         {
- //replaceWithEmpty(removed,length);
             replace(track,removed,length);
         }
     }
@@ -559,6 +572,22 @@ model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
     }
     removeClip(transition);
     return replacements;
+}
+
+model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
+{
+    model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
+    model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
+
+    // Ensure that for regions the 'extra' space for transitions is added.
+    // Basically the 'extra' space at the beginning of the first clip and the extra
+    // space at the ending of the last clip must be added to the region.
+    model::EmptyClipPtr empty = model::EmptyClip::replace(clips);
+
+    //      ================== ADD ======================   ======= REMOVE =======
+    newMove(track, position, boost::assign::list_of(empty), track, position, clips);
+
+    return empty;
 }
 
 //////////////////////////////////////////////////////////////////////////

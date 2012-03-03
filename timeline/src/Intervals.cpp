@@ -6,29 +6,24 @@
 #include <boost/foreach.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "Constants.h"
-#include "Timeline.h"
-#include "Zoom.h"
-#include "Convert.h"
 #include "Config.h"
-#include "Clip.h"
-#include "ClipView.h"
+#include "Constants.h"
+#include "Convert.h"
 #include "Cursor.h"
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
-#include "Layout.h"
 #include "Menu.h"
-#include "Project.h"
 #include "Project.h"
 #include "Scrolling.h"
 #include "SequenceView.h"
-#include "Track.h"
-#include "TrackView.h"
+#include "Timeline.h"
+#include "TrimIntervals.h"
 #include "UtilLog.h"
-#include "UtilSerializeWxwidgets.h"
-#include "ViewMap.h"
+#include "UtilSerializeBoost.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -57,38 +52,46 @@ Intervals::~Intervals()
 
 bool Intervals::isEmpty()
 {
-    return mMarkedIntervals.IsEmpty();
+    return mMarkedIntervals.empty();
 }
 
-wxRegion Intervals::get()
+PtsIntervals Intervals::get()
 {
     return mMarkedIntervals;
 }
 
-void Intervals::set(wxRegion region)
+void Intervals::set(PtsIntervals intervals)
 {
-    wxRect r = mMarkedIntervals.GetBox().Union(region.GetBox());
-    mMarkedIntervals = region;
+    PtsIntervals refresh = intervals + mMarkedIntervals; // +: Union
+    mMarkedIntervals = intervals;
+    VAR_INFO(mMarkedIntervals);
     getMenuHandler().updateItems();
-    refresh(r.x,r.x + r.width);
+    BOOST_FOREACH( PtsInterval i, refresh )
+    {
+        refreshInterval( i );
+    }
+}
+
+void Intervals::removeAll()
+{
+    LOG_INFO;
+    set(PtsIntervals());
+    getTimeline().getSequenceView().resetDividerPosition(); // trigger redraw of the sequence view
 }
 
 void Intervals::addBeginMarker()
 {
-    long c = getZoom().pixelsToPts(getCursor().getPosition());
-    long b = c + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
-    long e = c + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
-
+    pts cursor = getZoom().pixelsToPts(getCursor().getPosition());
     mNewIntervalActive = true;
-    mNewIntervalBegin = b;
-    mNewIntervalEnd = e;
+    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
+    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
 }
 
 void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-        model::Project::get().Submit(new command::IntervalChange(getSequence(), mNewIntervalBegin, mNewIntervalEnd, true));
+        model::Project::get().Submit(new command::IntervalChange(getSequence(), makeInterval(mNewIntervalBegin, mNewIntervalEnd), true));
     }
     mNewIntervalActive = false;
 }
@@ -104,44 +107,55 @@ void Intervals::endToggle()
 {
     if (mToggleActive)
     {
-        wxRect r(makeRect(mToggleBegin,mToggleEnd));
-        model::Project::get().Submit(new command::IntervalChange(getSequence(), mToggleBegin, mToggleEnd, (mMarkedIntervals.Contains(r) == wxOutRegion)));
+        model::Project::get().Submit(new command::IntervalChange(getSequence(), makeInterval(mToggleBegin,mToggleEnd), toggleIsAddition()));
     }
     mToggleActive = false;
 }
 
-void Intervals::update(long newCursorPosition)
+bool Intervals::toggleIsAddition() const
 {
+    PtsIntervals overlap = mMarkedIntervals & makeInterval(mToggleBegin,mToggleBegin+1); // &: Intersection
+    return overlap.empty();
+}
+
+void Intervals::update(pixel newCursorPosition)
+{
+    pts cursor = getZoom().pixelsToPts(newCursorPosition);
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = getZoom().pixelsToPts(newCursorPosition) +  model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0) * model::Constants::sSecond);
-        refresh(mNewIntervalBegin,mNewIntervalEnd);
+        mNewIntervalEnd = cursor +  model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0) * model::Constants::sSecond);
+        refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
     }
     if (mToggleActive)
     {
-        mToggleEnd = getZoom().pixelsToPts(newCursorPosition);
-        refresh(mToggleBegin,mToggleEnd);
+        mToggleEnd = cursor;
+        refreshInterval(makeInterval(mToggleBegin,mToggleEnd));
     }
 }
 
-void Intervals::change(long begin, long end, bool add)
+void Intervals::change(PtsInterval interval, bool add)
 {
-    wxRect r(makeRect(begin,end));
     if (add)
     {
-        mMarkedIntervals.Union(r);
+        mMarkedIntervals += interval;
     }
     else
     {
-        mMarkedIntervals.Subtract(r);
+        mMarkedIntervals -= interval;
     }
+    VAR_INFO(mMarkedIntervals);
     getMenuHandler().updateItems();
-    refresh(begin,end);
+    refreshInterval(interval);
+     getTimeline().Update();
 }
 
 void Intervals::clear()
 {
-    model::Project::get().Submit(new command::IntervalRemoveAll(getSequence()));
+    model::Project::get().Submit(new command::IntervalRemoveAll(getSequence(), mMarkedIntervals));
+}
+
+void Intervals::refresh()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -150,31 +164,12 @@ void Intervals::clear()
 
 void Intervals::deleteMarked()
 {
-    NIY;
-        // First, make one entire list containing a mapping of each clip to
-        // the clips it is replaced with.
-
-        ReplacementMap replacements;
-
-    //BOOST_FOREACH( TrackView* track, getTimeline().mVideoTracks )
-    //{
-    //    ReplacementMap newreplacments = findReplacements(track);
-    //    replacements.insert(newreplacments.begin(),newreplacments.end());
-    //}
-    //BOOST_FOREACH( TrackView* track, getTimeline().mAudioTracks )
-    //{
-    //    ReplacementMap newreplacments = findReplacements(track);
-    //    replacements.insert(newreplacments.begin(),newreplacments.end());
-    //}
-    //BOOST_FOREACH(ReplacementMap::value_type entry, replacements)
-    //{
-    //    VAR_DEBUG(*entry.first)(*entry.second);
-    //}
+    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mMarkedIntervals, true));
 }
 
 void Intervals::deleteUnmarked()
 {
-    NIY;
+    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mMarkedIntervals, false));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,25 +178,23 @@ void Intervals::deleteUnmarked()
 
 void Intervals::draw(wxDC& dc) const
 {
-    wxRegion drawRegion(mMarkedIntervals);
-
     VAR_DEBUG(mNewIntervalActive)(mNewIntervalBegin)(mNewIntervalEnd)(mToggleActive)(mToggleBegin)(mToggleEnd);
+
+    PtsIntervals intervals = mMarkedIntervals;
 
     if (mNewIntervalActive)
     {
-        wxRect r(makeRect(mNewIntervalBegin,mNewIntervalEnd));
-        drawRegion.Union(r);
+        intervals += makeInterval(mNewIntervalBegin,mNewIntervalEnd);
     }
     if (mToggleActive)
     {
-        wxRect r(makeRect(mToggleBegin,mToggleEnd));
-        if (mMarkedIntervals.Contains(r) == wxOutRegion)
+        if (toggleIsAddition())
         {
-            drawRegion.Union(r);
+            intervals += makeInterval(mToggleBegin,mToggleEnd);
         }
         else
         {
-            drawRegion.Subtract(r);
+            intervals -= makeInterval(mToggleBegin,mToggleEnd);
         }
     }
 
@@ -212,14 +205,10 @@ void Intervals::draw(wxDC& dc) const
     dc.SetPen(*wxGREY_PEN);
     wxBrush b(*wxLIGHT_GREY,wxBRUSHSTYLE_CROSSDIAG_HATCH);
     dc.SetBrush(b);
-    wxRegionIterator it(drawRegion);
-    while (it)
+
+    BOOST_FOREACH( PtsInterval i, intervals )
     {
-        wxRect r(it.GetRect());
-        r.SetY(0);
-        r.SetHeight(getSequenceView().getSize().GetHeight());
-        dc.DrawRectangle(ptsToPixels(r));
-        it++;
+        dc.DrawRectangle(makeRect(i));
     }
 }
 
@@ -227,21 +216,25 @@ void Intervals::draw(wxDC& dc) const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-wxRect Intervals::makeRect(long x1, long x2) const
+PtsInterval Intervals::makeInterval(pts a, pts b) const
 {
-    return wxRect(std::min(x1,x2),Layout::sTimeScaleHeight,std::abs(x2 - x1) + 1,Layout::sMinimalGreyAboveVideoTracksHeight);
+    return PtsInterval(std::min(a,b),std::max(a,b));
 }
 
-wxRect Intervals::ptsToPixels(wxRect rect) const
+wxRect Intervals::makeRect(PtsInterval interval) const
 {
-    rect.x = getZoom().ptsToPixels(rect.x);
-    rect.width = getZoom().ptsToPixels(rect.width);
-    return rect;
+    PixelInterval pixels(ptsToPixels(interval));
+    return wxRect(pixels.lower(),0,pixels.upper() - pixels.lower() + 1,getSequenceView().getSize().GetHeight());
 }
 
-void Intervals::refresh(long begin, long end)
+PixelInterval Intervals::ptsToPixels(PtsInterval interval) const
 {
-    wxRect r(ptsToPixels(makeRect(begin,end)));
+    return PixelInterval( getZoom().ptsToPixels(interval.lower()), getZoom().ptsToPixels(interval.upper()) );
+}
+
+void Intervals::refreshInterval(PtsInterval interval)
+{
+    wxRect r(makeRect(interval));
 
     // Adjust for scrolling
     r.x -= getScrolling().getOffset().x;
@@ -251,51 +244,6 @@ void Intervals::refresh(long begin, long end)
     r.x -= 1;
     r.width += 2;
     getTimeline().RefreshRect(r);
-}
-
-Intervals::ReplacementMap Intervals::findReplacements(TrackView* track)
-{
-    std::map< model::IClipPtr, model::IClipPtr > replacements;
-
-    int pts_left = 0;
-    int pts_right = 0;
-
-    BOOST_FOREACH( model::IClipPtr modelclip, track->getTrack()->getClips() )
-    {
-        ClipView* clip = getViewMap().getView(modelclip);
-        pts_right += clip->getClip()->getLength();
-        wxRect cliprect = makeRect(pts_left, pts_right);
-        //wxRegionContain {
-        //    wxOutRegion = 0,
-        //        wxPartRegion = 1,
-        //        wxInRegion = 2
-        if (wxOutRegion != mMarkedIntervals.Contains(cliprect))
-        {
-            //clip->setSelected(true);
-            wxRegion intersect(mMarkedIntervals);
-            intersect.Intersect(cliprect);
-            wxRegionIterator it(intersect);
-            while (it)
-            {
-                wxRect marked = it.GetRect();
-                marked.x -= pts_left;
-                // todo only shows last segment
-                clip->show(ptsToPixels(marked));
-
-                model::IClipPtr original = clip->getClip();
-                model::IClipPtr replacement = make_cloned<model::IClip>(original);
-                //replacement->setOffset(original->getOffset() + it.GetRect().GetX() - pts_left);
-                //replacement->setLength(it.GetRect().GetWidth());
-
-                replacements[clip->getClip()] = replacement;
-
-                it++;
-            }
-        }
-        pts_left += clip->getClip()->getLength();
-    }
-
-    return replacements;
 }
 
 //////////////////////////////////////////////////////////////////////////
