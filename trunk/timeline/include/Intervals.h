@@ -3,9 +3,11 @@
 
 #include <map>
 #include <wx/dc.h>
+#include <boost/icl/interval_set.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "Part.h"
+#include "UtilInt.h"
 
 namespace model {
 class IClip;
@@ -31,21 +33,25 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // MARKING / TOGGLING INTERFACE
     //////////////////////////////////////////////////////////////////////////
-    
+
     bool isEmpty(); ///< @return true if there is at least one marked interval
 
-    wxRegion get();
-    void set(wxRegion region);
+    PtsIntervals get();
+    void set(PtsIntervals region);
+    void removeAll();
 
     void addBeginMarker();
     void addEndMarker();
 
     void startToggle();
     void endToggle();
+    bool toggleIsAddition() const;
 
-    void update(long newCursorPosition); ///< To be called when the cursor is moved.
-    void change(long begin, long end, bool add); ///< To be called for the undo/redo mechanism.
+    void update(pixel newCursorPosition); ///< To be called when the cursor is moved.
+    void change(PtsInterval interval, bool add); ///< To be called for the undo/redo mechanism.
     void clear(); ///< Clear all marked intervals.
+
+    void refresh(); ///< Trigger a refresh
 
     //////////////////////////////////////////////////////////////////////////
     // ACTIONS ON THE MARKED AREAS
@@ -62,15 +68,15 @@ public:
 
 private:
 
-    wxRegion mMarkedIntervals;
+    PtsIntervals mMarkedIntervals;
 
     bool mNewIntervalActive;
-    long mNewIntervalBegin;
-    long mNewIntervalEnd;
+    pts mNewIntervalBegin;
+    pts mNewIntervalEnd;
 
     bool mToggleActive;
-    long mToggleBegin;
-    long mToggleEnd;
+    pts mToggleBegin;
+    pts mToggleEnd;
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS
@@ -80,12 +86,10 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    wxRect makeRect(long x1, long x2) const;
-    wxRect ptsToPixels(wxRect rect) const;
-    void refresh(long begin, long end);
-
-    typedef std::map< model::IClipPtr, model::IClipPtr > ReplacementMap;
-    ReplacementMap findReplacements(TrackView* track);
+    PtsInterval makeInterval(pts a, pts b) const;
+    wxRect makeRect(PtsInterval interval) const;
+    PixelInterval ptsToPixels(PtsInterval interval) const;
+    void refreshInterval(PtsInterval interval);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

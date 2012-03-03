@@ -255,6 +255,13 @@ wxPoint RightBottom(model::IClipPtr clip)
     return wxPoint(RightPixel(clip),BottomPixel(clip));
 }
 
+wxPoint OnTimescaleAbove(wxPoint position)
+{
+    wxPoint result(position);
+    result.y = gui::Layout::sTimeScaleHeight - 5;
+    return result;
+}
+
 pixel LeftPixel(DraggedClips drag)
 {
     return getTimeline().getDrag().getBitmapPosition().x;

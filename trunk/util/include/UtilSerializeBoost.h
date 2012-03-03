@@ -7,7 +7,10 @@
 #endif
 
 #include <boost/filesystem/path.hpp>
+#include <boost/icl/interval_set.hpp>
 #include <boost/rational.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/utility.hpp>
 #include <boost/weak_ptr.hpp>
 
 namespace boost { namespace serialization {
@@ -62,7 +65,33 @@ void serialize(Archive &ar, boost::weak_ptr<TYPE>& p, const unsigned int version
     }
 }
 
+template<class Archive, class TYPE>
+void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned int version)
+{
+    typedef std::pair<TYPE,TYPE> Pair;
+    typedef boost::icl::discrete_interval<TYPE> AnInterval;
+    if (Archive::is_loading::value)
+    {
+        std::list< Pair > list;
+        ar & list;
+        while (!list.empty())
+        {
+            Pair a = list.front();
+            list.pop_front();
+            set += AnInterval(a.first,a.second);
+        }
+    }
+    else
+    {
+        std::list< Pair > list;
+        BOOST_FOREACH( AnInterval interval, set )
+        {
+            list.push_back(std::pair<TYPE,TYPE>(interval.lower(),interval.upper()));
+        }
+        ar & list;
+    }
+}
+
 }} // namespace
 
 #endif //UTIL_SERIALIZE_BOOST_H
-

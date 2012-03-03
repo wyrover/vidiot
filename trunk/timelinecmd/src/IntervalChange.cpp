@@ -10,13 +10,12 @@ namespace gui { namespace timeline { namespace command {
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-    IntervalChange::IntervalChange(model::SequencePtr sequence, long begin, long end, bool add)
+    IntervalChange::IntervalChange(model::SequencePtr sequence, PtsInterval interval, bool add)
 :   ATimelineCommand(sequence)
-,   mBegin(begin)
-,   mEnd(end)
+,   mInterval(interval)
 ,   mAdd(add)
 {
-    VAR_INFO(this);
+    VAR_INFO(this)(interval);
     if (mAdd)
     {
         mCommandName = _("Add new interval selection");
@@ -38,14 +37,14 @@ IntervalChange::~IntervalChange()
 bool IntervalChange::Do()
 {
     VAR_INFO(this);
-    getTimeline().getIntervals().change(mBegin,mEnd,mAdd);
+    getTimeline().getIntervals().change(mInterval,mAdd);
     return true;
 }
 
 bool IntervalChange::Undo()
 {
     VAR_INFO(this);
-    getTimeline().getIntervals().change(mBegin,mEnd,!mAdd);
+    getTimeline().getIntervals().change(mInterval,!mAdd);
     return true;
 }
 
@@ -55,7 +54,7 @@ bool IntervalChange::Undo()
 
 std::ostream& operator<<( std::ostream& os, const IntervalChange& obj )
 {
-    os << static_cast<const ATimelineCommand&>(obj) << '|' << obj.mBegin << '|' << obj.mEnd << '|' << obj.mAdd;
+    os << static_cast<const ATimelineCommand&>(obj) << '|' << obj.mInterval << '|' << obj.mAdd;
     return os;
 }
 

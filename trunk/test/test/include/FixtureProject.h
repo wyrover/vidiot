@@ -2,8 +2,10 @@
 #define FIXTURE_PROJECT_H
 
 #include <list>
+#include <vector>
 #include <wx/filename.h>
 #include <boost/shared_ptr.hpp>
+#include "UtilInt.h"
 
 namespace model {
 class IPath;
@@ -17,7 +19,7 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 
 namespace test {
 
-class FixtureProject 
+class FixtureProject
 {
 public:
 
@@ -33,7 +35,7 @@ public:
     /// method.
     void init();
 
-    /// Destruct objects here. This method must be called in a test's 
+    /// Destruct objects here. This method must be called in a test's
     /// teardown method.
     void destroy();
 
@@ -47,6 +49,10 @@ public:
     model::FolderPtr mRoot;
     model::FolderPtr mAutoFolder;
     model::SequencePtr mSequence;
+
+    pts OriginalLengthOfVideoClip(int trackindex = 0, int clipindex = 0);
+
+    std::vector<pts> mOriginalLengthOfVideoClip;
 };
 
 } // namespace

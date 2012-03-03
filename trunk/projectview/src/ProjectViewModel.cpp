@@ -5,7 +5,7 @@
 #include "Node.h"
 #include "AutoFolder.h"
 #include "File.h"
-#include "film.xpm" 
+#include "film.xpm"
 #include "Folder.h"
 #include "folder-horizontal.xpm"
 #include "folder-horizontal-open.xpm"
@@ -23,6 +23,10 @@
 #include "Window.h"
 
 namespace gui {
+
+const int sNameColumn = 0;
+const int sModifiedColumn = 1;
+const int sNumberOfColumns = 2;
 
 ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 :   wxDataViewModel()
@@ -86,7 +90,7 @@ wxDataViewItem ProjectViewModel::GetParent( const wxDataViewItem &wxItem ) const
 
 unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxDataViewItemArray &wxItemArray ) const
 {
-    if (!wxItem.IsOk()) 
+    if (!wxItem.IsOk())
     {
         if (mProject != 0)
         {
@@ -118,7 +122,7 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
 
 unsigned int ProjectViewModel::GetColumnCount() const
 {
-    return 2;
+    return sNumberOfColumns;
 }
 
 wxString ProjectViewModel::GetColumnType(unsigned int col) const
@@ -126,8 +130,8 @@ wxString ProjectViewModel::GetColumnType(unsigned int col) const
     ASSERT_LESS_THAN_EQUALS(col,GetColumnCount());
     switch (col)
     {
-    case 0: return wxT("icontext");
-    case 1: return wxT("string");
+    case sNameColumn: return wxT("icontext");
+    case sModifiedColumn: return wxT("string");
     }
     return wxT("string");
 }
@@ -140,14 +144,14 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
     model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
     switch (col)
     {
-    case 0: 
+    case sNameColumn:
         {
             wxDataViewIconText icontext(node->getName());
             icontext.SetIcon(getIcon(node));
             variant << icontext;
             return;
         }
-    case 1: 
+    case sModifiedColumn:
         {
             model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
             if (file)
@@ -157,7 +161,7 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
             }
             else
             {
-                variant = wxString(""); 
+                variant = wxString("");
                 return;
             }
         }
@@ -192,7 +196,7 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
     if (column == UINT_MAX)
     {
         // Default when no column header has been clicked
-        column = 0;
+        column = sNameColumn;
     }
 
     model::NodePtr node1 = model::INode::Ptr(static_cast<model::NodeId>(item1.GetID()));
@@ -226,11 +230,11 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
 
         switch (column)
         {
-        case 0:
+        case sNameColumn:
             {
                 wxDataViewIconText icontext1;
                 icontext1 << value1;
-                wxDataViewIconText icontext2; 
+                wxDataViewIconText icontext2;
                 icontext2 << value2;
 
                 wxString str1 = icontext1.GetText();
@@ -238,7 +242,7 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
                 result = str1.CmpNoCase(str2);
                 break;
             }
-        case 1:
+        case sModifiedColumn:
             {
                 wxDateTime dt1 = value1.GetDateTime();
                 wxDateTime dt2 = value2.GetDateTime();
@@ -260,7 +264,6 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
             FATAL("Unknown column");
         }
 
-
         if (!ascending)
         {
             result *= -1;
@@ -270,7 +273,7 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
 }
 
 //////////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 bool ProjectViewModel::isAutomaticallyGenerated(model::NodePtr node) const
@@ -418,4 +421,3 @@ void ProjectViewModel::onProjectAssetRenamed( model::EventRenameNode &event )
 DEFINE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
 
 } // namespace
-

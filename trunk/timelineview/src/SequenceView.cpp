@@ -207,7 +207,7 @@ void SequenceView::draw(wxBitmap& bitmap) const
 
     dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
 
-    getIntervals().draw(dc);
+    getIntervals().draw(dc); // todo make a sequenceview parent class which draws the intervals (and which can be triggered to refresh if the intervals change, but in that case does not need to redraw all other stuff - like the timescale
 }
 
 }} // namespace

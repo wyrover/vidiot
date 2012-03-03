@@ -1,11 +1,16 @@
 #include "FixtureProject.h"
 
 #include <wx/utils.h>
+#include <boost/foreach.hpp>
 #include "AutoFolder.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"
+#include "HelperTimelinesView.h"
+#include "IClip.h"
 #include "Project.h"
 #include "Sequence.h"
+#include "Track.h"
+#include "UtilLog.h"
 
 namespace test {
 
@@ -37,6 +42,11 @@ void FixtureProject::init()
 
     InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
 
+    BOOST_FOREACH( model::IClipPtr clip, getSequence()->getVideoTrack(0)->getClips() )
+    {
+        mOriginalLengthOfVideoClip.push_back(clip->getLength());
+    }
+
     // Click in the timeline to give it the focus. A lot of test cases start
     // with zooming in via keyboard commands. For that purpose, timeline must
     // have the current focus.
@@ -53,6 +63,14 @@ void FixtureProject::destroy()
     mSequence.reset();
     mAutoFolder.reset();
     mRoot.reset();
+}
+
+pts FixtureProject::OriginalLengthOfVideoClip(int trackindex, int clipindex)
+{
+    ASSERT_ZERO(trackindex); // Other tracks are not stored
+    ASSERT_LESS_THAN(clipindex,mOriginalLengthOfVideoClip.size());
+    return mOriginalLengthOfVideoClip[clipindex];
+
 }
 
 } // namespace
