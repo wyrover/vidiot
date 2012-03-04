@@ -17,7 +17,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    IntervalRemoveAll(model::SequencePtr sequence, PtsIntervals intervals);
+    IntervalRemoveAll(model::SequencePtr sequence);
 
     ~IntervalRemoveAll();
 

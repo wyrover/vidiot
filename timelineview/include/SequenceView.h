@@ -12,6 +12,8 @@ namespace model {
 namespace gui { namespace timeline {
 
 struct PointerPositionInfo;
+class TimescaleView;
+class IntervalsView;
 
 class SequenceView
     :   public View
@@ -28,6 +30,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
+
+    TimescaleView& getTimescale();
+    const TimescaleView& getTimescale() const;
 
     VideoView& getVideo();
     const VideoView& getVideo() const;
@@ -55,8 +60,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    TimescaleView* mTimescaleView;
     VideoView*  mVideoView;
     AudioView*  mAudioView;
+    IntervalsView* mIntervalsView;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

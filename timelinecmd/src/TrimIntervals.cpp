@@ -25,8 +25,8 @@ namespace gui { namespace timeline { namespace command {
 
 TrimIntervals::TrimIntervals(model::SequencePtr sequence, PtsIntervals intervals, bool deleteMarked)
     :   AClipEdit(sequence)
-    ,   mIntervals(intervals)
-    ,   mRemoved(intervals)
+    ,   mIntervals(getTimeline().getIntervals().get())
+    ,   mRemoved(getTimeline().getIntervals().get())
     ,   mDeleteMarked(deleteMarked)
 {
     VAR_INFO(this)(mIntervals)(mDeleteMarked);

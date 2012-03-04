@@ -11,7 +11,7 @@ namespace gui {
 
 const pixel Layout::sTimeScaleMinutesHeight               = 10;
 const pixel Layout::sTimeScaleSecondHeight                = 5;
-const pixel Layout::sTimeScaleHeight                      = 20;
+const pixel Layout::sTimeScaleHeight                      = 25;
 const pixel Layout::sMinimalGreyAboveVideoTracksHeight    = 10;
 const pixel Layout::sMinimalGreyBelowAudioTracksHeight    = 10;
 const pixel Layout::sTrackDividerHeight                   = 4;

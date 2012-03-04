@@ -101,6 +101,8 @@ void TestOnce::testOnce()
     Undo();
     Undo();
     pause();
+
+    // todo test move audiovideo divider... test move track divider
 }
 
 } // namespace

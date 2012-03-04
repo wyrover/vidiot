@@ -17,6 +17,7 @@ typedef boost::shared_ptr<IClip> IClipPtr;
 namespace gui { namespace timeline {
 
 class EventTimelineCursorMoved;
+class IntervalsView;
 
 class Intervals
     :   public Part
@@ -31,11 +32,14 @@ public:
     virtual ~Intervals();
 
     //////////////////////////////////////////////////////////////////////////
-    // MARKING / TOGGLING INTERFACE
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    bool isEmpty(); ///< @return true if there is at least one marked interval
+    void setView(IntervalsView* view);
+    IntervalsView& getView();
+    const IntervalsView& getView() const;
 
+    bool isEmpty(); ///< @return true if there is at least one marked interval
     PtsIntervals get();
     void set(PtsIntervals region);
     void removeAll();
@@ -51,7 +55,7 @@ public:
     void change(PtsInterval interval, bool add); ///< To be called for the undo/redo mechanism.
     void clear(); ///< Clear all marked intervals.
 
-    void refresh(); ///< Trigger a refresh
+    PtsIntervals getIntervalsForDrawing() const;
 
     //////////////////////////////////////////////////////////////////////////
     // ACTIONS ON THE MARKED AREAS
@@ -60,15 +64,11 @@ public:
     void deleteMarked();
     void deleteUnmarked();
 
-    //////////////////////////////////////////////////////////////////////////
-    // DRAWING
-    //////////////////////////////////////////////////////////////////////////
-
-    void draw(wxDC& dc) const;
-
 private:
 
-    PtsIntervals mMarkedIntervals;
+    IntervalsView* mView;
+
+    PtsIntervals mIntervals;
 
     bool mNewIntervalActive;
     pts mNewIntervalBegin;
@@ -81,15 +81,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // EVENTS
     //////////////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    PtsInterval makeInterval(pts a, pts b) const;
-    wxRect makeRect(PtsInterval interval) const;
-    PixelInterval ptsToPixels(PtsInterval interval) const;
-    void refreshInterval(PtsInterval interval);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
