@@ -12,10 +12,10 @@
 #include "Cursor.h"
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
+#include "IntervalsView.h"
 #include "Menu.h"
 #include "Project.h"
 #include "Scrolling.h"
-#include "SequenceView.h"
 #include "Timeline.h"
 #include "TrimIntervals.h"
 #include "UtilLog.h"
@@ -25,18 +25,27 @@
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+PtsInterval makeInterval(pts a, pts b)
+{
+    return PtsInterval(std::min(a,b),std::max(a,b));
+}
+
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
 Intervals::Intervals(Timeline* timeline)
-:   Part(timeline)
-,   mMarkedIntervals()
-,   mNewIntervalActive(false)
-,   mNewIntervalBegin(0)
-,   mNewIntervalEnd(0)
-,   mToggleActive(false)
-,   mToggleBegin(0)
-,   mToggleEnd(0)
+    :   Part(timeline)
+    ,   mIntervals()
+    ,   mNewIntervalActive(false)
+    ,   mNewIntervalBegin(0)
+    ,   mNewIntervalEnd(0)
+    ,   mToggleActive(false)
+    ,   mToggleBegin(0)
+    ,   mToggleEnd(0)
 {
     VAR_DEBUG(this);
 }
@@ -47,36 +56,56 @@ Intervals::~Intervals()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MARKING / TOGGLING INTERFACE
+// GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+void Intervals::setView(IntervalsView* view)
+{
+    mView = view;
+}
+
+IntervalsView& Intervals::getView()
+{
+    ASSERT(mView);
+    return *mView;
+}
+
+const IntervalsView& Intervals::getView() const
+{
+    ASSERT(mView);
+    return *mView;
+}
 
 bool Intervals::isEmpty()
 {
-    return mMarkedIntervals.empty();
+    return mIntervals.empty();
 }
 
 PtsIntervals Intervals::get()
 {
-    return mMarkedIntervals;
+    return mIntervals;
 }
 
 void Intervals::set(PtsIntervals intervals)
 {
-    PtsIntervals refresh = intervals + mMarkedIntervals; // +: Union
-    mMarkedIntervals = intervals;
-    VAR_INFO(mMarkedIntervals);
+    PtsIntervals refresh = intervals + mIntervals; // +: Union
+    mIntervals = intervals;
+    VAR_INFO(mIntervals);
     getMenuHandler().updateItems();
     BOOST_FOREACH( PtsInterval i, refresh )
     {
-        refreshInterval( i );
+        getView().refreshInterval( i );
     }
 }
 
 void Intervals::removeAll()
 {
     LOG_INFO;
+    BOOST_FOREACH( PtsInterval i, mIntervals )
+    {
+        getView().refreshInterval( i );
+    }
     set(PtsIntervals());
-    getTimeline().getSequenceView().resetDividerPosition(); // trigger redraw of the sequence view
 }
 
 void Intervals::addBeginMarker()
@@ -107,14 +136,14 @@ void Intervals::endToggle()
 {
     if (mToggleActive)
     {
+        mToggleActive = false;
         model::Project::get().Submit(new command::IntervalChange(getSequence(), makeInterval(mToggleBegin,mToggleEnd), toggleIsAddition()));
     }
-    mToggleActive = false;
 }
 
 bool Intervals::toggleIsAddition() const
 {
-    PtsIntervals overlap = mMarkedIntervals & makeInterval(mToggleBegin,mToggleBegin+1); // &: Intersection
+    PtsIntervals overlap = mIntervals & makeInterval(mToggleBegin,mToggleBegin+1); // &: Intersection
     return overlap.empty();
 }
 
@@ -124,12 +153,12 @@ void Intervals::update(pixel newCursorPosition)
     if (mNewIntervalActive)
     {
         mNewIntervalEnd = cursor +  model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0) * model::Constants::sSecond);
-        refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
+        getView().refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
     }
     if (mToggleActive)
     {
         mToggleEnd = cursor;
-        refreshInterval(makeInterval(mToggleBegin,mToggleEnd));
+        getView().refreshInterval(makeInterval(mToggleBegin,mToggleEnd));
     }
 }
 
@@ -137,50 +166,26 @@ void Intervals::change(PtsInterval interval, bool add)
 {
     if (add)
     {
-        mMarkedIntervals += interval;
+        mIntervals += interval;
     }
     else
     {
-        mMarkedIntervals -= interval;
+        mIntervals -= interval;
     }
-    VAR_INFO(mMarkedIntervals);
+    VAR_INFO(mIntervals);
     getMenuHandler().updateItems();
-    refreshInterval(interval);
-     getTimeline().Update();
+    getView().refreshInterval(interval);
+    getTimeline().Update();
 }
 
 void Intervals::clear()
 {
-    model::Project::get().Submit(new command::IntervalRemoveAll(getSequence(), mMarkedIntervals));
+    model::Project::get().Submit(new command::IntervalRemoveAll(getSequence()));
 }
 
-void Intervals::refresh()
+PtsIntervals Intervals::getIntervalsForDrawing() const
 {
-}
-
-//////////////////////////////////////////////////////////////////////////
-// ACTIONS ON THE MARKED AREAS
-//////////////////////////////////////////////////////////////////////////
-
-void Intervals::deleteMarked()
-{
-    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mMarkedIntervals, true));
-}
-
-void Intervals::deleteUnmarked()
-{
-    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mMarkedIntervals, false));
-}
-
-//////////////////////////////////////////////////////////////////////////
-// DRAWING
-//////////////////////////////////////////////////////////////////////////
-
-void Intervals::draw(wxDC& dc) const
-{
-    VAR_DEBUG(mNewIntervalActive)(mNewIntervalBegin)(mNewIntervalEnd)(mToggleActive)(mToggleBegin)(mToggleEnd);
-
-    PtsIntervals intervals = mMarkedIntervals;
+    PtsIntervals intervals = mIntervals;
 
     if (mNewIntervalActive)
     {
@@ -197,53 +202,21 @@ void Intervals::draw(wxDC& dc) const
             intervals -= makeInterval(mToggleBegin,mToggleEnd);
         }
     }
-
-    wxBitmap bmp(2,2);
-    wxMemoryDC dcM(bmp);
-    dcM.SelectObject(wxNullBitmap);
-
-    dc.SetPen(*wxGREY_PEN);
-    wxBrush b(*wxLIGHT_GREY,wxBRUSHSTYLE_CROSSDIAG_HATCH);
-    dc.SetBrush(b);
-
-    BOOST_FOREACH( PtsInterval i, intervals )
-    {
-        dc.DrawRectangle(makeRect(i));
-    }
+    return intervals;
 }
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
+// ACTIONS ON THE MARKED AREAS
 //////////////////////////////////////////////////////////////////////////
 
-PtsInterval Intervals::makeInterval(pts a, pts b) const
+void Intervals::deleteMarked()
 {
-    return PtsInterval(std::min(a,b),std::max(a,b));
+    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mIntervals, true));
 }
 
-wxRect Intervals::makeRect(PtsInterval interval) const
+void Intervals::deleteUnmarked()
 {
-    PixelInterval pixels(ptsToPixels(interval));
-    return wxRect(pixels.lower(),0,pixels.upper() - pixels.lower() + 1,getSequenceView().getSize().GetHeight());
-}
-
-PixelInterval Intervals::ptsToPixels(PtsInterval interval) const
-{
-    return PixelInterval( getZoom().ptsToPixels(interval.lower()), getZoom().ptsToPixels(interval.upper()) );
-}
-
-void Intervals::refreshInterval(PtsInterval interval)
-{
-    wxRect r(makeRect(interval));
-
-    // Adjust for scrolling
-    r.x -= getScrolling().getOffset().x;
-    r.y -= getScrolling().getOffset().y;
-
-    // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
-    r.x -= 1;
-    r.width += 2;
-    getTimeline().RefreshRect(r);
+    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mIntervals, false));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -253,8 +226,10 @@ void Intervals::refreshInterval(PtsInterval interval)
 template<class Archive>
 void Intervals::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mMarkedIntervals;
+    ar & mIntervals;
 }
+
 template void Intervals::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Intervals::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+
 }} // namespace

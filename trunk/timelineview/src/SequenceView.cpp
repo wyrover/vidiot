@@ -8,10 +8,12 @@
 #include "Cursor.h"
 #include "Drag.h"
 #include "Intervals.h"
+#include "IntervalsView.h"
 #include "Layout.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
 #include "Timeline.h"
+#include "TimescaleView.h"
 #include "UtilLog.h"
 #include "VideoTrack.h"
 #include "AudioTrack.h"
@@ -27,8 +29,10 @@ namespace gui { namespace timeline {
 
 SequenceView::SequenceView(View* parent)
 :   View(parent)
+,   mTimescaleView(new TimescaleView(this))
 ,   mVideoView(new VideoView(this))
 ,   mAudioView(new AudioView(this))
+,   mIntervalsView(new IntervalsView(this))
 {
     VAR_DEBUG(this);
 }
@@ -37,13 +41,25 @@ SequenceView::~SequenceView()
 {
     VAR_DEBUG(this);
 
+    delete mIntervalsView;  mIntervalsView = 0;
     delete mAudioView;      mAudioView = 0;
     delete mVideoView;      mVideoView = 0;
+    delete mTimescaleView;  mTimescaleView = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+TimescaleView& SequenceView::getTimescale()
+{
+    return *mTimescaleView;
+}
+
+const TimescaleView& SequenceView::getTimescale() const
+{
+    return *mTimescaleView;
+}
 
 VideoView& SequenceView::getVideo()
 {
@@ -162,42 +178,7 @@ void SequenceView::draw(wxBitmap& bitmap) const
     dc.SetBrush(Layout::sBackgroundBrush);
     dc.DrawRectangle(0,0,w,h);
 
-    // Draw timescale
-    dc.SetBrush(wxNullBrush);
-    dc.SetPen(Layout::sTimeScaleDividerPen);
-    dc.DrawRectangle(0,0,w,Layout::sTimeScaleHeight);
-
-    dc.SetFont(*Layout::sTimeScaleFont);
-
-    // Draw seconds and minutes lines
-    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += model::Constants::sSecond)
-    {
-        int position = getZoom().timeToPixels(ms);
-        bool isMinute = (ms % model::Constants::sMinute == 0);
-        int height = Layout::sTimeScaleSecondHeight;
-
-        if (isMinute)
-        {
-            height = Layout::sTimeScaleMinutesHeight;
-        }
-
-        dc.DrawLine(position,0,position,height);
-
-        if (ms == 0)
-        {
-            dc.DrawText( "0", 5, Layout::sTimeScaleMinutesHeight );
-        }
-        else
-        {
-            if (isMinute)
-            {
-                wxDateTime t(ms / model::Constants::sHour, (ms % model::Constants::sHour) / model::Constants::sMinute, (ms % model::Constants::sMinute) / model::Constants::sSecond, ms % model::Constants::sSecond);
-                wxString s = t.Format("%H:%M:%S.%l");
-                wxSize ts = dc.GetTextExtent(s);
-                dc.DrawText( s, position - ts.GetX() / 2, Layout::sTimeScaleMinutesHeight );
-            }
-        }
-    }
+    dc.DrawBitmap(getTimescale().getBitmap(), wxPoint(0,0));
 
     dc.DrawBitmap(getVideo().getBitmap(),   wxPoint(0,getVideoPosition()));
 
@@ -207,7 +188,7 @@ void SequenceView::draw(wxBitmap& bitmap) const
 
     dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
 
-    getIntervals().draw(dc); // todo make a sequenceview parent class which draws the intervals (and which can be triggered to refresh if the intervals change, but in that case does not need to redraw all other stuff - like the timescale
+    getIntervals().getView().draw(dc);
 }
 
 }} // namespace

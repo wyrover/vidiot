@@ -11,9 +11,9 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-IntervalRemoveAll::IntervalRemoveAll(model::SequencePtr sequence, PtsIntervals intervals)
+IntervalRemoveAll::IntervalRemoveAll(model::SequencePtr sequence)
 :   ATimelineCommand(sequence)
-,   mIntervals(intervals)
+,   mIntervals(getTimeline().getIntervals().get())
 {
     VAR_INFO(this);
     mCommandName = _("Remove all markers");
