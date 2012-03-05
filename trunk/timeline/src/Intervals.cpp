@@ -10,13 +10,17 @@
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
+#include "IClip.h"
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
 #include "IntervalsView.h"
+#include "Layout.h"
 #include "Menu.h"
 #include "Project.h"
 #include "Scrolling.h"
+#include "Sequence.h"
 #include "Timeline.h"
+#include "Track.h"
 #include "TrimIntervals.h"
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
@@ -30,6 +34,7 @@ namespace gui { namespace timeline {
 
 PtsInterval makeInterval(pts a, pts b)
 {
+    VAR_INFO(a)(b);
     return PtsInterval(std::min(a,b),std::max(a,b));
 }
 
@@ -110,7 +115,7 @@ void Intervals::removeAll()
 
 void Intervals::addBeginMarker()
 {
-    pts cursor = getZoom().pixelsToPts(getCursor().getPosition());
+    pts cursor = determineSnap(getZoom().pixelsToPts(getCursor().getPosition()));
     mNewIntervalActive = true;
     mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
     mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
@@ -127,7 +132,7 @@ void Intervals::addEndMarker()
 
 void Intervals::startToggle()
 {
-    mToggleBegin = getZoom().pixelsToPts(getCursor().getPosition());
+    mToggleBegin = determineSnap(getZoom().pixelsToPts(getCursor().getPosition()));
     mToggleEnd = mToggleBegin;
     mToggleActive = true;
 }
@@ -149,7 +154,7 @@ bool Intervals::toggleIsAddition() const
 
 void Intervals::update(pixel newCursorPosition)
 {
-    pts cursor = getZoom().pixelsToPts(newCursorPosition);
+    pts cursor = determineSnap(getZoom().pixelsToPts(newCursorPosition));
     if (mNewIntervalActive)
     {
         mNewIntervalEnd = cursor +  model::Convert::timeToPts(wxConfigBase::Get()->ReadDouble(Config::sPathMarkerEndAddition, 0) * model::Constants::sSecond);
@@ -217,6 +222,49 @@ void Intervals::deleteMarked()
 void Intervals::deleteUnmarked()
 {
     model::Project::get().Submit(new command::TrimIntervals(getSequence(), mIntervals, false));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+pts Intervals::determineSnap(pts position) const
+{
+    if (!Config::ReadBool(Config::sPathSnapClips))
+    {
+        return position;
+    }
+
+    pts snapAdjust = Layout::sSnapDistance + 1;
+
+    auto adjustSnap = [&snapAdjust,position](pts snappoint)
+    {
+        pts diff = position - snappoint;
+        if ( (abs(diff)  <= Layout::sSnapDistance) && (abs(diff) < abs(snapAdjust)))
+        {
+            snapAdjust = diff;
+        }
+    };
+
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    {
+        model::IClipPtr clip = track->getClip(position);
+        if (!clip)
+        {
+            // Must be beyond track length
+            adjustSnap(track->getLength()); // right pts of rightmost clip
+        }
+        else
+        {
+            adjustSnap(clip->getLeftPts());
+            adjustSnap(clip->getRightPts()+1); // +1: the interval is seen as [left,right) and in case of snapping, a clip's rightmost pixel should be removed also
+        }
+    }
+    if (snapAdjust != Layout::sSnapDistance + 1)
+    {
+        return position - snapAdjust;
+    }
+    return position;
 }
 
 //////////////////////////////////////////////////////////////////////////

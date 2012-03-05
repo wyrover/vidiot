@@ -58,6 +58,9 @@ public:
     /// but the rightmost pixel of the previous clip.
     void testAbortDrag();
 
+    /// Test generation of intervals via toggling
+    void testIntervals();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

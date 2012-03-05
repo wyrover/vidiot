@@ -23,6 +23,7 @@ const pixel Layout::sClipBorderSize                       = 2;
 const pixel Layout::sVideoPosition                        = Layout::sTimeScaleHeight + Layout::sMinimalGreyAboveVideoTracksHeight;
       pixel Layout::sClipDescriptionBarHeight             = 5; // Default value.
       pixel Layout::sTransitionHeight                     = 8; // Default value
+const pixel Layout::sDragThreshold                        = 2;
 
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS
