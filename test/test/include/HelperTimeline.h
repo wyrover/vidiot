@@ -162,7 +162,9 @@ void DragAlignRight(wxPoint from, pixel position);
 
 /// Similar to ShiftDragAlignLeft with the exception that the right position of the dragged object is aligned to the given position.
 /// \see ShiftDragAlignLeft
-void DragAlignRight(wxPoint from, pixel position);
+void ShiftDragAlignRight(wxPoint from, pixel position);
+
+void ToggleInterval(pixel from, pixel to);
 
 void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)
 void Play(pixel from, int ms);                                          ///< Play from the given position, with the given time.

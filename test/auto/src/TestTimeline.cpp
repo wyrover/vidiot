@@ -343,4 +343,42 @@ void TestTimeline::testAbortDrag()
         Type('=');  // Zoom in and test again
     }
 }
+
+void TestTimeline::testIntervals()
+{
+    StartTestSuite();
+    Zoom Level(2);
+    PrepareSnapping(true);
+
+    StartTest("Make an interval from left to right and click 'delete all marked intervals'");
+    ToggleInterval(HCenter(VideoClip(0,1)), HCenter(VideoClip(0,2)));
+    triggerMenu(ID_DELETEMARKED);
+    ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+    ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+    ASSERT_LESS_THAN(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+    pts video1Adjustedlength = VideoClip(0,1)->getLength();
+    pts video2Adjustedlength = VideoClip(0,2)->getLength();
+    ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+    Undo();
+    Undo();
+    StartTest("Make an interval from right to left and click 'delete all marked intervals'");
+    ToggleInterval(HCenter(VideoClip(0,2)), HCenter(VideoClip(0,1)));
+    triggerMenu(ID_DELETEMARKED);
+    ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), video1Adjustedlength);
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), video2Adjustedlength);
+    ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+    Undo();
+    Undo();
+    StartTest("Make an interval that completely deletes a clip");
+    ToggleInterval(LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)));
+    triggerMenu(ID_DELETEMARKED);
+    ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+    ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,4));
+    Undo();
+    Undo();
+}
+
 } // namespace

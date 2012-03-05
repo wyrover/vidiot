@@ -441,7 +441,7 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
 void ShiftDrag(wxPoint from, wxPoint to)
 {
     wxPoint between(from);
-    between.x += (from.x > to.x) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    between.x += (from.x > to.x) ? -(gui::Layout::sDragThreshold+1) : (gui::Layout::sDragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
     Drag(from, between, false, true, false);
     ShiftDown();
     Move(to);
@@ -491,6 +491,22 @@ void DragAlignRight(wxPoint from, pixel position)
 void ShiftDragAlignRight(wxPoint from, pixel position)
 {
 	DragAlign(from,position,true,false);
+}
+
+void ToggleInterval(pixel from, pixel to)
+{
+    // The mouse is moved this amount of pixels before the shift is pressed in 'ShiftDrag'.
+    // The interval creation does not start before shift is pressed.
+    // Therefore, the initial drag is adjusted by this amount, to ensure that the position
+    // where the new interval is started is known.
+    pixel beforeShift = gui::Layout::sDragThreshold + 1;
+    if (to > from)
+    {
+        // In case of moving from left to right, then the 'move before shift' must be on the left side
+        beforeShift = -1 * beforeShift;
+    }
+    static const pixel y = gui::Layout::sTimeScaleHeight - 5;
+    ShiftDrag(wxPoint(from + beforeShift, y), wxPoint(to, y));
 }
 
 void Scrub(pixel from, pixel to)

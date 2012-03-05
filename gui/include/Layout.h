@@ -31,6 +31,7 @@ public:
     static const pixel sVideoPosition;
     static       pixel sClipDescriptionBarHeight;
     static       pixel sTransitionHeight;
+    static const pixel sDragThreshold; ///< Number of pixels to move the mouse before a 'drag start' is detected
 
     //////////////////////////////////////////////////////////////////////////
     // BRUSHES AND PENS

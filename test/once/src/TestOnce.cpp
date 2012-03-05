@@ -27,6 +27,7 @@
 #include "Layout.h"
 #include "MousePointer.h"
 #include "IClip.h"
+#include "Intervals.h"
 #include "PositionInfo.h"
 #include "ProjectViewCreateAutoFolder.h"
 #include "ProjectViewCreateSequence.h"
@@ -78,31 +79,13 @@ void TestOnce::testOnce()
 {
         //BREAK();
     StartTestSuite();
-    Zoom Level(1);
+    Zoom Level(3);
+    PrepareSnapping(true);
 
-    Move(OnTimescaleAbove(Center(VideoClip(0,2))));
+    // todo test move audiovideo divider... test move track divider\
+    // todo animatie voor trimintervals generiek maken -> ook voor delete clips gebruiken
 
-    StartTest("Make an interval from left to right and click 'delete all marked intervals'");
-    ShiftDrag(OnTimescaleAbove(Center(VideoClip(0,1))),OnTimescaleAbove(Center(VideoClip(0,2))));pause();
-    triggerMenu(ID_DELETEMARKED);
-    ASSERT_EQUALS(VideoClip(0,0)->getLength(),      mProjectFixture.OriginalLengthOfVideoClip(0,0));
-    ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),   mProjectFixture.OriginalLengthOfVideoClip(0,1));
-    ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),   mProjectFixture.OriginalLengthOfVideoClip(0,2));
-    ASSERT_EQUALS(VideoClip(0,3)->getLength(),      mProjectFixture.OriginalLengthOfVideoClip(0,3));
-    Undo();
-    Undo();
-    StartTest("Make an interval from right to left and click 'delete all marked intervals'");
-    ShiftDrag(OnTimescaleAbove(Center(VideoClip(0,2))),OnTimescaleAbove(Center(VideoClip(0,1))));
-    triggerMenu(ID_DELETEMARKED);
-    ASSERT_EQUALS(VideoClip(0,0)->getLength(),      mProjectFixture.OriginalLengthOfVideoClip(0,0));
-    ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),   mProjectFixture.OriginalLengthOfVideoClip(0,1));
-    ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),   mProjectFixture.OriginalLengthOfVideoClip(0,2));
-    ASSERT_EQUALS(VideoClip(0,3)->getLength(),      mProjectFixture.OriginalLengthOfVideoClip(0,3));
-    Undo();
-    Undo();
-    pause();
-
-    // todo test move audiovideo divider... test move track divider
+    // todo snapto also for trimming
 }
 
 } // namespace

@@ -4,6 +4,7 @@
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
+#include "Layout.h"
 #include "MousePointer.h"
 #include "StateDragging.h"
 #include "StateIdle.h"
@@ -23,13 +24,13 @@ StateLeftDown::StateLeftDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
     ,   mStartPosition(0,0)
 {
-    LOG_DEBUG; 
+    LOG_DEBUG;
     mStartPosition = getMousePointer().getLeftDownPosition();
 }
 
 StateLeftDown::~StateLeftDown() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 //////////////////////////////////////////////////////////////////////////
 // EVENTS
@@ -52,8 +53,7 @@ boost::statechart::result StateLeftDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
     wxPoint diff = mStartPosition - evt.mPosition;
-    static int tolerance = 2;
-    if ((abs(diff.x) > tolerance) || (abs(diff.y) > tolerance))
+    if ((abs(diff.x) > Layout::sDragThreshold) || (abs(diff.y) > Layout::sDragThreshold))
     {
         getDrag().start(evt.mPosition, true);
         return transit<Dragging>();
