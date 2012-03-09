@@ -61,7 +61,9 @@ bool AClipEdit::Do()
 
         mInitialized = true;
 
-        // todo clear mReplacements and mExpandedReplacements
+        // The following are no longer required (avoid extra memory use):
+        mReplacements.clear();
+        mExpandedReplacements.clear();
     }
     else
     {
