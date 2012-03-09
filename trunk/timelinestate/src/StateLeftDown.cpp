@@ -22,10 +22,9 @@ const wxString sTooltip = _(
 
 StateLeftDown::StateLeftDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
-    ,   mStartPosition(0,0)
+    ,   mStartPosition(getMousePointer().getLeftDownPosition())
 {
     LOG_DEBUG;
-    mStartPosition = getMousePointer().getLeftDownPosition();
 }
 
 StateLeftDown::~StateLeftDown() // exit

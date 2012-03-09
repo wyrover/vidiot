@@ -38,6 +38,9 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testSelection();
+
+    void testDeletion();
+
     void testDnd();
 
     /// The undo scenario at end was difficult to fix. It was caused by using Timeline as a
@@ -60,6 +63,12 @@ public:
 
     /// Test generation of intervals via toggling
     void testIntervals();
+
+    /// Test moving up and down
+    /// - audio/video divider
+    /// - audio track divider
+    /// - video track divider
+    void testDividers();
 
 private:
 

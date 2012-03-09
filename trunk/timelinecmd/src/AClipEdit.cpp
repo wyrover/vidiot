@@ -3,9 +3,11 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread/thread.hpp>
 #include "Clip.h"
-#include "Cursor.h"
 #include "CrossFade.h"
+#include "Cursor.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -14,8 +16,8 @@
 #include "Transition.h"
 #include "UtilList.h"
 #include "UtilLog.h"
-#include "UtilSet.h"
 #include "UtilLogStl.h"
+#include "UtilSet.h"
 
 namespace gui { namespace timeline { namespace command {
 //////////////////////////////////////////////////////////////////////////
@@ -58,6 +60,8 @@ bool AClipEdit::Do()
         replaceLinks();
 
         mInitialized = true;
+
+        // todo clear mReplacements and mExpandedReplacements
     }
     else
     {
@@ -590,6 +594,36 @@ model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
     return empty;
 }
 
+void AClipEdit::animatedTrimEmpty(model::IClips emptyareas)
+{
+    model::MoveParameters cachedParams = mParams;
+    model::MoveParameters cachedParamsUndo = mParamsUndo;
+
+    model::IClips mEmpties = emptyareas;
+    model::IClips newempties;
+    static const int SleepTimePerStep = 25;
+    static const int AnimationDurationInMs = 250;
+    static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
+    for (int step = NumberOfSteps - 1; step >= 0; --step)
+    {
+        BOOST_FOREACH( model::IClipPtr old, mEmpties )
+        {
+            boost::rational<pts> oldFactor(step+1,NumberOfSteps);
+            boost::rational<pts> newFactor(step,NumberOfSteps);
+            boost::rational<pts> newlenrational( boost::rational<pts>(old->getLength(),1) / oldFactor * newFactor );
+            pts newlen = static_cast<pts>(floor(boost::rational_cast<double>(newlenrational)));
+            VAR_INFO(step)(old->getLength())(newlen)(newlenrational);
+            model::IClipPtr empty = model::EmptyClipPtr(new model::EmptyClip(newlen));
+            newempties.push_back(empty);
+            replaceClip(old,boost::assign::list_of(empty));
+        }
+        mEmpties = newempties;
+        newempties.clear();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
+        wxSafeYield(); // Show update progress, but do not allow user input
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -624,4 +658,5 @@ std::ostream& operator<<( std::ostream& os, const AClipEdit& obj )
     os << static_cast<const ATimelineCommand&>(obj);
     return os;
 }
+
 }}} // namespace

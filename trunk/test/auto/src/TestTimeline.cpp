@@ -2,6 +2,7 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
+#include "AudioClip.h"
 #include "AudioTrack.h"
 #include "Config.h"
 #include "CreateTransition.h"
@@ -16,10 +17,12 @@
 #include "HelperWindow.h"
 #include "IClip.h"
 #include "ids.h"
+#include "Layout.h"
 #include "ProjectViewCreateAutoFolder.h"
 #include "ProjectViewCreateSequence.h"
 #include "Selection.h"
 #include "Sequence.h"
+#include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
@@ -125,7 +128,8 @@ void TestTimeline::testSelection()
         ShiftUp();
         ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
     }
-        {
+    Zoom Level(3);
+    {
         // Test selecting an in-out-transition
         MakeInOutTransitionAfterClip preparation(1);
         DeselectAllClips();
@@ -186,6 +190,72 @@ void TestTimeline::testSelection()
         DeselectAllClips();
     }
 }
+
+void TestTimeline::testDeletion()
+{
+    StartTestSuite();
+    {
+        StartTest("When deleting without shift, a clip is replaced with emptyness.");
+        pts len = VideoTrack(0)->getLength();
+        int num = NumberOfVideoClipsInTrack(0);
+        DeselectAllClips();
+        Click(Center(VideoClip(0,1)));
+        ControlDown();
+        Click(Center(VideoClip(0,3)));
+        ASSERT_SELECTION_SIZE(2);
+        ControlUp();
+        Type(WXK_DELETE);
+        ASSERT_SELECTION_SIZE(0);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoTrack(0)->getLength(),len);
+        ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),num);
+        Click(Center(VideoClip(0,5)));
+        ASSERT_SELECTION_SIZE(1);
+        Type(WXK_DELETE);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(EmptyClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip)(EmptyClip);
+        ASSERT_EQUALS(VideoTrack(0)->getLength(),len);
+        ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),num);
+        ASSERT_SELECTION_SIZE(0);
+        Undo();
+        ASSERT_SELECTION_SIZE(1);
+        Undo();
+        ASSERT_SELECTION_SIZE(2);
+    }
+    {
+        StartTest("When deleting with shift, a clip is replaced with emptyness and then the emptyness is removed.");
+        pts len = VideoTrack(0)->getLength();
+        int num = NumberOfVideoClipsInTrack(0);
+        DeselectAllClips();
+        Click(Center(VideoClip(0,1)));
+        ControlDown();
+        Click(Center(VideoClip(0,3)));
+        ControlUp();
+        ShiftDown();
+        ASSERT_SELECTION_SIZE(2);
+        Type(WXK_DELETE);
+        ShiftUp();
+        ASSERT_SELECTION_SIZE(0);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_LESS_THAN(VideoTrack(0)->getLength(),len);
+        ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),num-2);
+        Click(Center(VideoClip(0,2)));
+        ASSERT_SELECTION_SIZE(1);
+        ShiftDown();
+        Type(WXK_DELETE);
+        ShiftUp();
+        ASSERT_SELECTION_SIZE(0);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(NumberOfVideoClipsInTrack(0),num-3);
+        Undo();
+        ASSERT_SELECTION_SIZE(1);
+        Undo();
+        ASSERT_SELECTION_SIZE(2);
+    }
+};
 
 void TestTimeline::testDnd()
 {
@@ -379,6 +449,52 @@ void TestTimeline::testIntervals()
     ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,4));
     Undo();
     Undo();
+}
+
+void TestTimeline::testDividers()
+{
+    StartTestSuite();
+    const pixel fixedX = 100; // Fixed x position on timeline
+    const pixel changeY = 20; // Number of pixels to move the divider
+    const pixel moveToMiddleOfDivider = 2; // Click somewhere in the middle of a divider
+    {
+        StartTest("Move the audio/video divider down and up again.");
+        const pixel originalDividerPosition = getSequence()->getDividerPosition();
+        const pixel adjustedDividerPosition = originalDividerPosition + changeY;
+        wxPoint original(fixedX, originalDividerPosition + moveToMiddleOfDivider);
+        wxPoint adjusted(fixedX, adjustedDividerPosition + moveToMiddleOfDivider);
+        Drag(original, adjusted);
+        Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
+        ASSERT_EQUALS(getSequence()->getDividerPosition(), adjustedDividerPosition);
+        Drag(adjusted, original);
+        ASSERT_EQUALS(getSequence()->getDividerPosition(), originalDividerPosition);
+    }
+    {
+        StartTest("Move audio track divider up and down again.");
+        const pixel originalHeight = AudioTrack(0)->getHeight();
+        const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(AudioTrack(0)) + AudioTrack(0)->getHeight();
+        const pixel adjustedDividerPosition = originalDividerPosition - changeY;
+        wxPoint original(fixedX, originalDividerPosition + moveToMiddleOfDivider);
+        wxPoint adjusted(fixedX, adjustedDividerPosition + moveToMiddleOfDivider);
+        Drag(original, adjusted);
+        Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
+        ASSERT_EQUALS(AudioTrack(0)->getHeight(), originalHeight - changeY);
+        Drag(adjusted, original);
+        ASSERT_EQUALS(AudioTrack(0)->getHeight(), originalHeight);
+    }
+    {
+        StartTest("Move video track divider down and up again.");
+        const pixel originalHeight = VideoTrack(0)->getHeight();
+        const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(VideoTrack(0)) - gui::Layout::sTrackDividerHeight;
+        const pixel adjustedDividerPosition = originalDividerPosition + changeY;
+        wxPoint original(fixedX, originalDividerPosition + moveToMiddleOfDivider);
+        wxPoint adjusted(fixedX, adjustedDividerPosition + moveToMiddleOfDivider);
+        Drag(original, adjusted);
+        Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
+        ASSERT_EQUALS(VideoTrack(0)->getHeight(), originalHeight - changeY);
+        Drag(adjusted, original);
+        ASSERT_EQUALS(VideoTrack(0)->getHeight(), originalHeight);
+    }
 }
 
 } // namespace

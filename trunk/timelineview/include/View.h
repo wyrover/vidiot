@@ -68,11 +68,22 @@ public:
 
     wxSize getSize() const;
 
+    /// Should be called whenever the bitmap must be recreated.
+    /// Originally, this method was protected. However, there are scenarios
+    /// where it is better (performance wise) to have this method public and let
+    /// the invalidation be triggered 'from the outside'. An example of this is
+    /// the changing of the height of a track. Instead of making all clips and
+    /// thumbbnails listen to track height events (lots of administration) it is
+    /// more practical to have one loop (in the code that updates the track height)
+    /// iterating over all affected clips/thumbnails. Not only does this save
+    //// some administration (each clip registered for track heigth events) also the
+    /// redrawing can be made more efficient by using beginTransaction(); For Loop;
+    /// endTransaction();
+    void invalidateBitmap();
+
 protected:
 
     virtual void draw(wxBitmap& bitmap) const = 0;  ///< Is called whenever the bitmap is 'invalidated' and a new bitmap is required.
-
-    void invalidateBitmap();                        ///< Should be called whenever the bitmap must be recreated.
 
 private:
 

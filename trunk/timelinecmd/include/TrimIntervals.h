@@ -43,7 +43,6 @@ private:
     PtsIntervals mIntervals;    ///< Intervals as marked in the sequence before the command was created
     PtsIntervals mRemoved;      ///< Intervals to be removed from the sequence (maybe all 'non-marked' areas)
     bool mDeleteMarked;
-    model::IClips mEmpties;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

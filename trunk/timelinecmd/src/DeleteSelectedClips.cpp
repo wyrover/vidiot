@@ -8,17 +8,20 @@
 #include "UtilLogStl.h"
 #include "Track.h"
 #include "Clip.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "Transition.h"
 #include "Timeline.h"
 #include "EmptyClip.h"
+#include "UtilSet.h"
 
 namespace gui { namespace timeline { namespace command {
 
 DeleteSelectedClips::DeleteSelectedClips(model::SequencePtr sequence)
     :   AClipEdit(sequence)
+    ,   mShift(wxGetMouseState().ShiftDown())
 {
-    VAR_INFO(this);
+    VAR_INFO(this)(mShift);
     mCommandName = _("Delete selected clips");
 }
 
@@ -32,14 +35,14 @@ DeleteSelectedClips::~DeleteSelectedClips()
 
 void DeleteSelectedClips::initialize()
 {
+    LOG_DEBUG << "STEP 1: Determine the clips to be removed, the transitions to be removed, and the transitions to be unapplied";
     std::set<model::TransitionPtr> transitionsToBeRemoved;
     std::set<model::TransitionPtr> transitionsToBeUnapplied;
+    std::set<model::IClipPtr> clipsToBeRemoved;
 
     BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
     {
-        model::IClips clips = track->getClips(); // Make copy of list. In the loop (iteration) the original list (track->getClips()) is changed thus cannot be used for iteration.
-
-        BOOST_FOREACH( model::IClipPtr clip, clips )
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
         {
             if (clip->getSelected())
             {
@@ -62,8 +65,7 @@ void DeleteSelectedClips::initialize()
                     {
                         transitionsToBeRemoved.insert(nextTransition);
                     }
-
-                    replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
+                    clipsToBeRemoved.insert(clip);
                 }
             }
         }
@@ -73,14 +75,84 @@ void DeleteSelectedClips::initialize()
     // and to avoid problems with removing the left clip first, without the transition or removing the transition before the right clip
     BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeRemoved )
     {
-        removeTransition(transition);
-        // Transitions that are deleted (one of their clips is deleted also) 
-        // do not have to be unapplied.
+        // Transitions that are deleted (one of their clips is deleted also) do not have to be unapplied.
         transitionsToBeUnapplied.erase(transition); // If it is part of the set it is erased. Nothing is changed if it's not part of the set.
+        clipsToBeRemoved.insert(boost::static_pointer_cast<model::IClip>(transition));
     }
+
+    if (mShift)
+    {
+        LOG_DEBUG << "STEP 2a: Show animation.";
+        // Animate the shifting of clips onto the empty space
+        model::IClips emptyareas;
+        BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+        {
+            model::IClipPtr emptyness = boost::make_shared<model::EmptyClip>(clip->getLength());
+            emptyareas.push_back(emptyness);
+            replaceClip(clip,boost::assign::list_of(emptyness));
+        }
+        animatedTrimEmpty(emptyareas);
+
+        getTimeline().beginTransaction();
+        Revert();
+        LOG_DEBUG << "STEP 2b: Make the actual change.";
+        BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+        {
+            removeClip(clip);
+        }
+    }
+    else
+    {
+        LOG_DEBUG << "STEP 2: Make the actual change.";
+        getTimeline().beginTransaction();
+        BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+        {
+            replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
+        }
+    }
+
+    LOG_DEBUG << "STEP 3: Unapply deleted transitions (for which no adjacent clip was selected).";
     BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
     {
         unapplyTransition(transition);
+    }
+    getTimeline().endTransaction();
+}
+
+void DeleteSelectedClips::doExtra()
+{
+    storeSelection();
+}
+
+void DeleteSelectedClips::undoExtra()
+{
+    restoreSelection();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void DeleteSelectedClips::storeSelection()
+{
+    BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (clip->getSelected())
+            {
+                mSelected.push_back(clip);
+            }
+        }
+    }
+}
+
+void DeleteSelectedClips::restoreSelection()
+{
+    getTimeline().getSelection().unselectAll();
+    BOOST_FOREACH( model::IClipPtr clip, mSelected )
+    {
+        clip->setSelected(true);
     }
 }
 

@@ -66,16 +66,6 @@ void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
                 {
                     allTransitions.insert(outTransition);
                 }
-                //transition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev());
-                //if (transition && transition->getRight() > 0)
-                //{
-                //    allTransitions.insert(transition);
-                //}
-                //transition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
-                //if (transition && transition->getLeft() > 0)
-                //{
-                //    allTransitions.insert(transition);
-                //}
             }
         }
 

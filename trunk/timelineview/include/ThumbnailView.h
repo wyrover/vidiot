@@ -31,8 +31,6 @@ public:
 
     wxSize requiredSize() const override;    ///< \see View::requiredSize()
 
-    void redraw(); ///< Invalidates the bitmap
-
 private:
 
     model::VideoClipPtr mVideoClip;
