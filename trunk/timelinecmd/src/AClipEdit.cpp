@@ -20,7 +20,8 @@
 #include "UtilSet.h"
 
 namespace gui { namespace timeline { namespace command {
-//////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -38,63 +39,8 @@ AClipEdit::~AClipEdit()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// WXWIDGETS DO/UNDO INTERFACE
+// ACLIPEDIT INTERFACE
 //////////////////////////////////////////////////////////////////////////
-
-bool AClipEdit::Do()
-{
-    VAR_INFO(*this)(mInitialized);
-
-    doExtra();
-
-    if (!mInitialized)
-    {
-        initialize();
-
-        mergeConsecutiveEmptyClips();
-
-        avoidDanglingLinks();
-
-        expandReplacements();
-
-        replaceLinks();
-
-        mInitialized = true;
-
-        // The following are no longer required (avoid extra memory use):
-        mReplacements.clear();
-        mExpandedReplacements.clear();
-    }
-    else
-    {
-        ASSERT_NONZERO(mParams.size());
-        BOOST_FOREACH( model::MoveParameterPtr move, mParams )
-        {
-            doMove(move);
-        }
-    }
-
-    getTimeline().modelChanged();
-
-    return true;
-}
-
-bool AClipEdit::Undo()
-{
-    VAR_INFO(*this)(mParamsUndo.size());
-    //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
-
-    BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
-    {
-        doMove(move);
-    }
-
-    undoExtra();
-
-    getTimeline().modelChanged();
-
-    return true;
-}
 
 void AClipEdit::doExtra()
 {
@@ -251,6 +197,294 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts lef
         ++it;
     }
     return make_pair(removedClips,to);
+}
+
+void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
+{
+    if (amount == 0) return;
+    model::Tracks videoTracks = getTimeline().getSequence()->getVideoTracks();
+    model::Tracks audioTracks = getTimeline().getSequence()->getAudioTracks();
+    BOOST_FOREACH( model::TrackPtr track, exclude )
+    {
+        model::Tracks::iterator itVideo = find(videoTracks.begin(), videoTracks.end(), track);
+        if (itVideo != videoTracks.end()) videoTracks.erase(itVideo);
+        model::Tracks::iterator itAudio = find(audioTracks.begin(), audioTracks.end(), track);
+        if (itAudio != audioTracks.end()) audioTracks.erase(itAudio);
+    }
+    shiftTracks(videoTracks, start, amount);
+    shiftTracks(audioTracks, start, amount);
+}
+
+void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
+{
+    ASSERT_NONZERO(amount);
+    BOOST_FOREACH( model::TrackPtr track, tracks )
+    {
+        if (amount > 0)
+        {
+            model::IClipPtr clip = track->getClip(start);
+            model::IClipPtr clone = make_cloned<model::IClip>(clip);
+            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(amount));
+            newClips.push_front(clone);
+            replaceClip(clip, newClips);
+        }
+        else // (amount < 0)
+        {
+            model::IClipPtr clip = track->getClip(start);
+            ASSERT(clip->isA<model::EmptyClip>());
+            ASSERT_MORE_THAN_EQUALS(start,clip->getLeftPts());  // Enough room must be available for the shift
+            ASSERT_LESS_THAN_EQUALS(start,clip->getRightPts()); // Enough room must be available for the shift
+            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength() + amount)); // NOTE: amount < 0
+            replaceClip(clip, newClips);
+        }
+    }
+}
+
+model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength )
+{
+    model::TrackPtr track;
+    model::IClipPtr position;
+
+    ASSERT(  !leftClip ||  !leftClip->isA<model::Transition>() );
+    ASSERT(  !leftClip ||  !leftClip->isA<model::EmptyClip>() );
+    ASSERT( !rightClip || !rightClip->isA<model::Transition>() );
+    ASSERT( !rightClip || !rightClip->isA<model::EmptyClip>() );
+    ASSERT( !rightClip || !leftClip || ((leftClip->getNext() == rightClip) && (rightClip->getPrev() ==  leftClip)) );
+
+    if (leftLength > 0)
+    {
+        ASSERT(leftClip);
+
+        // Determine position of transition
+        track = leftClip->getTrack();
+        position = leftClip->getNext();
+
+        // Determine adjustment and adjust left clip
+        pts adjustment = -leftLength;
+        ASSERT_MORE_THAN_EQUALS( adjustment, leftClip->getMinAdjustEnd() );
+        ASSERT_LESS_THAN_EQUALS( adjustment, leftClip->getMaxAdjustEnd() );
+        model::IClipPtr updatedLeft = make_cloned<model::IClip>(leftClip);
+        updatedLeft->adjustEnd(adjustment);
+        replaceClip(leftClip,boost::assign::list_of(updatedLeft));
+        VAR_DEBUG(updatedLeft);
+    }
+    if (rightLength > 0)
+    {
+        ASSERT(rightClip);
+
+        // Determine position of transition
+        track = rightClip->getTrack();
+
+        // Determine adjustment and adjust right clip
+        pts adjustment = rightLength;
+        ASSERT_MORE_THAN_EQUALS( adjustment, rightClip->getMinAdjustBegin() );
+        ASSERT_LESS_THAN_EQUALS( adjustment, rightClip->getMaxAdjustBegin() );
+        model::IClipPtr updatedRight = make_cloned<model::IClip>(rightClip);
+        updatedRight->adjustBegin(adjustment);
+        replaceClip(rightClip,boost::assign::list_of(updatedRight));
+
+        // Determine position of transition
+        position = updatedRight;
+        VAR_DEBUG(updatedRight);
+    }
+    ASSERT(track);
+    ASSERT(position);
+    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(leftLength, rightLength);
+    addClip(transition, track, position);
+    return transition;
+}
+
+void AClipEdit::removeTransition( model::TransitionPtr transition )
+{
+    // Delete the transition and the underlying clips
+    ASSERT_MORE_THAN_ZERO(transition->getLength());
+    replaceClip(transition, boost::assign::list_of(boost::make_shared<model::EmptyClip>(transition->getLength())));
+}
+
+model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
+{
+    // Note that, due to the usage after a drop operation, the left and/or right clips of the given
+    // transition may be empty clips (for instance, when only dragging one of the two clips in the
+    // transition, or when using shift & drag).
+    model::IClips replacements;
+    if (transition->getLeft() > 0)
+    {
+        model::IClipPtr prev = transition->getPrev();
+        ASSERT(prev);
+        //if (prev)
+        //{
+        model::IClipPtr replacement;
+        if (prev->isA<model::EmptyClip>())
+        {
+            // Extend empty clip
+            replacement = boost::make_shared<model::EmptyClip>(prev->getLength() + transition->getLeft());
+        }
+        else
+        {
+            // Extend the left clip
+            replacement = make_cloned<model::IClip>(prev);
+            replacement->adjustEnd(transition->getLeft());
+        }
+        replaceClip(prev,boost::assign::list_of(replacement));
+        replacements.push_back(replacement);
+        //}
+        //// else: prev has already been removed (for instance during drag-and-drop)
+    }
+    if (transition->getRight() > 0)
+    {
+        model::IClipPtr next = transition->getNext();
+        ASSERT(next);
+        //if (next)
+        //{
+        model::IClipPtr replacement;
+        if (next->isA<model::EmptyClip>())
+        {
+            // Extend empty clip
+            replacement = boost::make_shared<model::EmptyClip>(next->getLength() + transition->getRight());
+        }
+        else
+        {
+            // Extend next clip with right length of the transition
+            replacement = make_cloned<model::IClip>(next);
+            replacement->adjustBegin(-transition->getRight());
+        }
+        replaceClip(next,boost::assign::list_of(replacement));
+        replacements.push_back(replacement);
+        //}
+        //// else: next has already been removed (for instance during drag-and-drop)
+    }
+    removeClip(transition);
+    return replacements;
+}
+
+model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
+{
+    model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
+    model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
+
+    // Ensure that for regions the 'extra' space for transitions is added.
+    // Basically the 'extra' space at the beginning of the first clip and the extra
+    // space at the ending of the last clip must be added to the region.
+    model::EmptyClipPtr empty = model::EmptyClip::replace(clips);
+
+    //      ================== ADD ======================   ======= REMOVE =======
+    newMove(track, position, boost::assign::list_of(empty), track, position, clips);
+
+    return empty;
+}
+
+void AClipEdit::animatedTrimEmpty(model::IClips emptyareas)
+{
+    model::MoveParameters cachedParams = mParams;
+    model::MoveParameters cachedParamsUndo = mParamsUndo;
+
+    model::IClips mEmpties = emptyareas;
+    model::IClips newempties;
+    static const int SleepTimePerStep = 25;
+    static const int AnimationDurationInMs = 250;
+    static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
+    for (int step = NumberOfSteps - 1; step >= 0; --step)
+    {
+        BOOST_FOREACH( model::IClipPtr old, mEmpties )
+        {
+            boost::rational<pts> oldFactor(step+1,NumberOfSteps);
+            boost::rational<pts> newFactor(step,NumberOfSteps);
+            boost::rational<pts> newlenrational( boost::rational<pts>(old->getLength(),1) / oldFactor * newFactor );
+            pts newlen = static_cast<pts>(floor(boost::rational_cast<double>(newlenrational)));
+            VAR_INFO(step)(old->getLength())(newlen)(newlenrational);
+            model::IClipPtr empty = model::EmptyClipPtr(new model::EmptyClip(newlen));
+            newempties.push_back(empty);
+            replaceClip(old,boost::assign::list_of(empty));
+        }
+        mEmpties = newempties;
+        newempties.clear();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
+        wxSafeYield(); // Show update progress, but do not allow user input
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// WXWIDGETS DO/UNDO INTERFACE
+//////////////////////////////////////////////////////////////////////////
+
+bool AClipEdit::Do()
+{
+    VAR_INFO(*this)(mInitialized);
+
+    doExtra();
+
+    if (!mInitialized)
+    {
+        initialize();
+
+        mergeConsecutiveEmptyClips();
+
+        avoidDanglingLinks();
+
+        expandReplacements();
+
+        replaceLinks();
+
+        mInitialized = true;
+
+        // The following are no longer required (avoid extra memory use):
+        mReplacements.clear();
+        mExpandedReplacements.clear();
+    }
+    else
+    {
+        ASSERT_NONZERO(mParams.size());
+        BOOST_FOREACH( model::MoveParameterPtr move, mParams )
+        {
+            doMove(move);
+        }
+    }
+
+    getTimeline().modelChanged();
+
+    return true;
+}
+
+bool AClipEdit::Undo()
+{
+    VAR_INFO(*this)(mParamsUndo.size());
+    //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
+
+    BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
+    {
+        doMove(move);
+    }
+
+    undoExtra();
+
+    getTimeline().modelChanged();
+
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
+{
+    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
+    model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
+    mParams.push_back(move);
+    mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
+    doMove(move);
+}
+
+void AClipEdit::doMove(model::MoveParameterPtr move)
+{
+    if (move->removeClips.size() > 0)
+    {
+        move->removeTrack->removeClips(move->removeClips);
+    }
+    if (move->addClips.size() > 0)
+    {
+        move->addTrack->addClips(move->addClips,move->addPosition);
+    }
 }
 
 void AClipEdit::avoidDanglingLinks()
@@ -419,235 +653,6 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
         {
             replace(track,removed,length);
         }
-    }
-}
-
-void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
-{
-    if (amount == 0) return;
-    model::Tracks videoTracks = getTimeline().getSequence()->getVideoTracks();
-    model::Tracks audioTracks = getTimeline().getSequence()->getAudioTracks();
-    BOOST_FOREACH( model::TrackPtr track, exclude )
-    {
-        model::Tracks::iterator itVideo = find(videoTracks.begin(), videoTracks.end(), track);
-        if (itVideo != videoTracks.end()) videoTracks.erase(itVideo);
-        model::Tracks::iterator itAudio = find(audioTracks.begin(), audioTracks.end(), track);
-        if (itAudio != audioTracks.end()) audioTracks.erase(itAudio);
-    }
-    shiftTracks(videoTracks, start, amount);
-    shiftTracks(audioTracks, start, amount);
-}
-
-void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
-{
-    ASSERT_NONZERO(amount);
-    BOOST_FOREACH( model::TrackPtr track, tracks )
-    {
-        if (amount > 0)
-        {
-            model::IClipPtr clip = track->getClip(start);
-            model::IClipPtr clone = make_cloned<model::IClip>(clip);
-            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(amount));
-            newClips.push_front(clone);
-            replaceClip(clip, newClips);
-        }
-        else // (amount < 0)
-        {
-            model::IClipPtr clip = track->getClip(start);
-            ASSERT(clip->isA<model::EmptyClip>());
-            ASSERT_MORE_THAN_EQUALS(start,clip->getLeftPts());  // Enough room must be available for the shift
-            ASSERT_LESS_THAN_EQUALS(start,clip->getRightPts()); // Enough room must be available for the shift
-            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength() + amount)); // NOTE: amount < 0
-            replaceClip(clip, newClips);
-        }
-    }
-}
-
-model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength )
-{
-    model::TrackPtr track;
-    model::IClipPtr position;
-
-    ASSERT(  !leftClip ||  !leftClip->isA<model::Transition>() );
-    ASSERT(  !leftClip ||  !leftClip->isA<model::EmptyClip>() );
-    ASSERT( !rightClip || !rightClip->isA<model::Transition>() );
-    ASSERT( !rightClip || !rightClip->isA<model::EmptyClip>() );
-    ASSERT( !rightClip || !leftClip || ((leftClip->getNext() == rightClip) && (rightClip->getPrev() ==  leftClip)) );
-
-    if (leftLength > 0)
-    {
-        ASSERT(leftClip);
-
-        // Determine position of transition
-        track = leftClip->getTrack();
-        position = leftClip->getNext();
-
-        // Determine adjustment and adjust left clip
-        pts adjustment = -leftLength;
-        ASSERT_MORE_THAN_EQUALS( adjustment, leftClip->getMinAdjustEnd() );
-        ASSERT_LESS_THAN_EQUALS( adjustment, leftClip->getMaxAdjustEnd() );
-        model::IClipPtr updatedLeft = make_cloned<model::IClip>(leftClip);
-        updatedLeft->adjustEnd(adjustment);
-        replaceClip(leftClip,boost::assign::list_of(updatedLeft));
-        VAR_DEBUG(updatedLeft);
-    }
-    if (rightLength > 0)
-    {
-        ASSERT(rightClip);
-
-        // Determine position of transition
-        track = rightClip->getTrack();
-
-        // Determine adjustment and adjust right clip
-        pts adjustment = rightLength;
-        ASSERT_MORE_THAN_EQUALS( adjustment, rightClip->getMinAdjustBegin() );
-        ASSERT_LESS_THAN_EQUALS( adjustment, rightClip->getMaxAdjustBegin() );
-        model::IClipPtr updatedRight = make_cloned<model::IClip>(rightClip);
-        updatedRight->adjustBegin(adjustment);
-        replaceClip(rightClip,boost::assign::list_of(updatedRight));
-
-        // Determine position of transition
-        position = updatedRight;
-        VAR_DEBUG(updatedRight);
-    }
-    ASSERT(track);
-    ASSERT(position);
-    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(leftLength, rightLength);
-    addClip(transition, track, position);
-    return transition;
-}
-
-void AClipEdit::removeTransition( model::TransitionPtr transition )
-{
-    // Delete the transition and the underlying clips
-    ASSERT_MORE_THAN_ZERO(transition->getLength());
-    replaceClip(transition, boost::assign::list_of(boost::make_shared<model::EmptyClip>(transition->getLength())));
-}
-
-model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
-{
-    // Note that, due to the usage after a drop operation, the left and/or right clips of the given
-    // transition may be empty clips (for instance, when only dragging one of the two clips in the
-    // transition, or when using shift & drag).
-    model::IClips replacements;
-    if (transition->getLeft() > 0)
-    {
-        model::IClipPtr prev = transition->getPrev();
-        ASSERT(prev);
-        //if (prev)
-        //{
-            model::IClipPtr replacement;
-            if (prev->isA<model::EmptyClip>())
-            {
-                // Extend empty clip
-                replacement = boost::make_shared<model::EmptyClip>(prev->getLength() + transition->getLeft());
-            }
-            else
-            {
-                // Extend the left clip
-                replacement = make_cloned<model::IClip>(prev);
-                replacement->adjustEnd(transition->getLeft());
-            }
-            replaceClip(prev,boost::assign::list_of(replacement));
-            replacements.push_back(replacement);
-        //}
-        //// else: prev has already been removed (for instance during drag-and-drop)
-    }
-    if (transition->getRight() > 0)
-    {
-        model::IClipPtr next = transition->getNext();
-        ASSERT(next);
-        //if (next)
-        //{
-            model::IClipPtr replacement;
-            if (next->isA<model::EmptyClip>())
-            {
-                // Extend empty clip
-                replacement = boost::make_shared<model::EmptyClip>(next->getLength() + transition->getRight());
-            }
-            else
-            {
-                // Extend next clip with right length of the transition
-                replacement = make_cloned<model::IClip>(next);
-                replacement->adjustBegin(-transition->getRight());
-            }
-            replaceClip(next,boost::assign::list_of(replacement));
-            replacements.push_back(replacement);
-        //}
-        //// else: next has already been removed (for instance during drag-and-drop)
-    }
-    removeClip(transition);
-    return replacements;
-}
-
-model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
-{
-    model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
-    model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
-
-    // Ensure that for regions the 'extra' space for transitions is added.
-    // Basically the 'extra' space at the beginning of the first clip and the extra
-    // space at the ending of the last clip must be added to the region.
-    model::EmptyClipPtr empty = model::EmptyClip::replace(clips);
-
-    //      ================== ADD ======================   ======= REMOVE =======
-    newMove(track, position, boost::assign::list_of(empty), track, position, clips);
-
-    return empty;
-}
-
-void AClipEdit::animatedTrimEmpty(model::IClips emptyareas)
-{
-    model::MoveParameters cachedParams = mParams;
-    model::MoveParameters cachedParamsUndo = mParamsUndo;
-
-    model::IClips mEmpties = emptyareas;
-    model::IClips newempties;
-    static const int SleepTimePerStep = 25;
-    static const int AnimationDurationInMs = 250;
-    static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
-    for (int step = NumberOfSteps - 1; step >= 0; --step)
-    {
-        BOOST_FOREACH( model::IClipPtr old, mEmpties )
-        {
-            boost::rational<pts> oldFactor(step+1,NumberOfSteps);
-            boost::rational<pts> newFactor(step,NumberOfSteps);
-            boost::rational<pts> newlenrational( boost::rational<pts>(old->getLength(),1) / oldFactor * newFactor );
-            pts newlen = static_cast<pts>(floor(boost::rational_cast<double>(newlenrational)));
-            VAR_INFO(step)(old->getLength())(newlen)(newlenrational);
-            model::IClipPtr empty = model::EmptyClipPtr(new model::EmptyClip(newlen));
-            newempties.push_back(empty);
-            replaceClip(old,boost::assign::list_of(empty));
-        }
-        mEmpties = newempties;
-        newempties.clear();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
-        wxSafeYield(); // Show update progress, but do not allow user input
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-// LOGGING
-//////////////////////////////////////////////////////////////////////////
-
-void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
-{
-    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
-    model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
-    mParams.push_back(move);
-    mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
-    doMove(move);
-}
-
-void AClipEdit::doMove(model::MoveParameterPtr move)
-{
-    if (move->removeClips.size() > 0)
-    {
-        move->removeTrack->removeClips(move->removeClips);
-    }
-    if (move->addClips.size() > 0)
-    {
-        move->addTrack->addClips(move->addClips,move->addPosition);
     }
 }
 

@@ -120,7 +120,6 @@ Drag::Drag(Timeline* timeline)
     ,   mDropTrack()
     ,   mVideo(timeline, true)
     ,   mAudio(timeline, false)
-    ,   mMustUndo(false)
     ,   mShift(boost::none)
 {
     VAR_DEBUG(this);
@@ -277,7 +276,6 @@ void Drag::move(wxPoint position)
 
 void Drag::drop()
 {
-    undo();
     VAR_DEBUG(*this);
     command::ExecuteDrop::Drops drops;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
@@ -568,7 +566,6 @@ void Drag::reset()
     mAudio.reset();
     mDraggedTrack.reset();
     mDropTrack.reset();
-    mMustUndo = false;
     mShift = boost::none;
 }
 
@@ -833,17 +830,6 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
         }
     }
     return drops;
-}
-
-bool Drag::undo()
-{
-    if (mMustUndo)
-    {
-        model::Project::get().GetCommandProcessor()->Undo();
-        mMustUndo = false;
-        return true;
-    }
-    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
