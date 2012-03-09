@@ -27,6 +27,7 @@ public:
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvMotion >,
+        boost::statechart::custom_reaction< EvLeftUp >,
         boost::statechart::custom_reaction< EvLeave >,
         boost::statechart::custom_reaction< EvKeyDown >
     > reactions;
@@ -47,6 +48,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pixel mOriginalPosition;
+    wxPoint mStartPosition;     ///< Start mouse position when the state was entered
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -58,7 +60,3 @@ private:
 }}} // namespace
 
 #endif // STATE_MOVE_DIVIDER_H
-
-
-
-

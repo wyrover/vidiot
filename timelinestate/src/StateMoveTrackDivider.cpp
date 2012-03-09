@@ -1,21 +1,22 @@
 #include "StateMoveTrackDivider.h"
 
 #include <boost/foreach.hpp>
+#include "AudioClip.h"
 #include "AudioTrack.h"
 #include "ClipView.h"
-#include "EventKey.h"
 #include "EventDrag.h"
+#include "EventKey.h"
 #include "EventMouse.h"
 #include "Layout.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
 #include "SequenceView.h"
 #include "StateIdle.h"
-#include "Tooltip.h"
 #include "ThumbnailView.h"
+#include "Tooltip.h"
 #include "Track.h"
-#include "VideoClip.h"
 #include "UtilLog.h"
+#include "VideoClip.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -66,7 +67,13 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
     {
         if (clip->isA<model::VideoClip>())
         {
-            getViewMap().getThumbnail(clip)->redraw();
+            // Invalidating the thumbnail will also invalidate the clip itselves
+            // Hence, this small optimization (do not invalidate the clip also)
+            getViewMap().getThumbnail(clip)->invalidateBitmap();
+        }
+        else
+        {
+            getViewMap().getView(clip)->invalidateBitmap();
         }
     }
     return transit<Idle>();

@@ -114,6 +114,7 @@ void TrimIntervals::showAnimation()
 {
     std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved();
 
+    model::IClips mEmpties;
     BOOST_FOREACH( model::IClips remove, removedInAllTracks )
     {
         mEmpties.push_back(replaceWithEmpty(remove));
@@ -122,29 +123,9 @@ void TrimIntervals::showAnimation()
     wxSafeYield(); // Show update progress, but do not allow user input
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
 
-    model::IClips newempties;
-    static const int SleepTimePerStep = 25;
-    static const int AnimationDurationInMs = 250;
-    static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
-    for (int step = NumberOfSteps - 1; step >= 0; --step)
-    {
-        BOOST_FOREACH( model::IClipPtr old, mEmpties )
-        {
-            boost::rational<pts> oldFactor(step+1,NumberOfSteps);
-            boost::rational<pts> newFactor(step,NumberOfSteps);
-            boost::rational<pts> newlenrational( boost::rational<pts>(old->getLength(),1) / oldFactor * newFactor );
-            pts newlen = static_cast<pts>(floor(boost::rational_cast<double>(newlenrational)));
-            VAR_INFO(step)(old->getLength())(newlen)(newlenrational);
-            model::IClipPtr empty = model::EmptyClipPtr(new model::EmptyClip(newlen));
-            newempties.push_back(empty);
-            replaceClip(old,boost::assign::list_of(empty));
-        }
-        mEmpties = newempties;
-        newempties.clear();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
-        wxSafeYield(); // Show update progress, but do not allow user input
-    }
+    animatedTrimEmpty(mEmpties);
 }
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

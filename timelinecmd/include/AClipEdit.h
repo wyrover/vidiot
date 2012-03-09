@@ -55,11 +55,23 @@ public:
     /// This method can be used by derived commands to do extra actions that
     /// are not related to adding/removing/replacing/changing clips when doing
     /// a certain timeline operation.
+    ///
+    /// Note: be careful when implementing this method for a command which uses
+    ///       Revert(), for instance after showing an animation. Initialize()
+    ///       (which calls doExtra) is only called after submitting a command.
+    ///       However, Revert() calls Undo() which calls undoExtra(). That can
+    ///       cause issues.
     virtual void doExtra();
 
     /// This method can be used by derived commands to undo extra actions that
     /// are not related to adding/removing/replacing/changing clips when undoing
     /// a certain timeline operation.
+    ///
+    /// Note: be careful when implementing this method for a command which uses
+    ///       Revert(), for instance after showing an animation. Initialize()
+    ///       (which calls doExtra) is only called after submitting a command.
+    ///       However, Revert() calls Undo() which calls undoExtra(). That can
+    ///       cause issues.
     virtual void undoExtra();
 
     //////////////////////////////////////////////////////////////////////////
@@ -167,15 +179,28 @@ protected:
     /// \return replacement (empty) clip
     model::IClipPtr replaceWithEmpty(model::IClips clips);
 
+    /// Make an animation that shows removing the given empty areas (all remaining clips are
+    /// shifted over the empty areas). Note that this is used to animate the edit operation, and
+    /// results in a large undo history (each empty clip is replaced by a smaller empty clip, which
+    /// in turn is replaced with a smaller empty clip, etc).
+    ///
+    /// \param emptyareas list of empty clips to be trimmed away (does not need to be a list of consecutive clips in one track)
+    ///
+    /// In general, use this operation to show the animation in the following way:
+    /// - animatedTrimEmpty
+    /// - undo
+    /// - redo the trim operation, but now without animation
+    void animatedTrimEmpty(model::IClips emptyareas);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mInitialized;                  ///< True if Do has been executed at least once.
-    model::MoveParameters mParams;      ///< Holds the actions to make the 'forward' (Do) change
-    model::MoveParameters mParamsUndo;  ///< Holds the actions to make the 'reverse' (Undo) change
+    bool mInitialized;                      ///< True if Do has been executed at least once.
+    model::MoveParameters mParams;          ///< Holds the actions to make the 'forward' (Do) change
+    model::MoveParameters mParamsUndo;      ///< Holds the actions to make the 'reverse' (Undo) change
 
     /// Holds all replacements that were done for this command.
     /// Used to keep updated clip link information correct.
@@ -275,6 +300,7 @@ private:
 
     friend std::ostream& operator<<( std::ostream& os, const AClipEdit& obj );
 };
+
 }}} // namespace
 
 #endif // CLIP_EDIT_H

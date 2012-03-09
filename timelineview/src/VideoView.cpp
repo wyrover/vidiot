@@ -134,10 +134,10 @@ void VideoView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
+    dc.SetBrush(Layout::sTrackDividerBrush);
+    dc.SetPen(Layout::sTrackDividerPen);
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks())
     {
-        dc.SetBrush(Layout::sTrackDividerBrush);
-        dc.SetPen(Layout::sTrackDividerPen);
         dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::sTrackDividerHeight);
         y += Layout::sTrackDividerHeight;
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));

@@ -79,13 +79,11 @@ void TestOnce::testOnce()
 {
         //BREAK();
     StartTestSuite();
-    Zoom Level(3);
-    PrepareSnapping(true);
-
-    // todo test move audiovideo divider... test move track divider\
-    // todo animatie voor trimintervals generiek maken -> ook voor delete clips gebruiken
+//    Zoom Level(3);
+//    PrepareSnapping(true);
 
     // todo snapto also for trimming
+
 }
 
 } // namespace

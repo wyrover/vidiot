@@ -30,6 +30,16 @@ MoveParameter::MoveParameter(TrackPtr _addTrack, IClipPtr _addPosition, IClips _
 {
 }
 
+MoveParameter::MoveParameter(const MoveParameter& other)
+:   addTrack(other.addTrack)
+,   addPosition(other.addPosition)
+,   addClips(other.addClips)
+,   removeTrack(other.removeTrack)
+,   removePosition(other.removePosition)
+,   removeClips(other.removeClips)
+{
+}
+
 MoveParameterPtr MoveParameter::make_inverted()
 {
     return boost::make_shared<MoveParameter>(removeTrack,removePosition,removeClips,addTrack,addPosition,addClips);
@@ -37,7 +47,7 @@ MoveParameterPtr MoveParameter::make_inverted()
 
 std::ostream& operator<<( std::ostream& os, const MoveParameter& obj )
 {
-    os << obj.removeTrack << '|' << obj.removePosition << '|' << obj.removeClips << '|' << obj.addTrack << '|' << obj.addPosition << '|' << obj.addClips; 
+    os << obj.removeTrack << '|' << obj.removePosition << '|' << obj.removeClips << '|' << obj.addTrack << '|' << obj.addPosition << '|' << obj.addClips;
     return os;
 }
 

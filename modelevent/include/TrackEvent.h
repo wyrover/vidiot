@@ -53,6 +53,9 @@ struct MoveParameter
     /// Helper constructor to initialize all members in one statement.
     MoveParameter(TrackPtr _addTrack, IClipPtr _addPosition, IClips _addClips, TrackPtr _removeTrack = TrackPtr(), IClipPtr _removePosition = IClipPtr(), IClips _removeClips = IClips());
 
+    /// Copy constructor
+    MoveParameter(const MoveParameter& other);
+
     /// \return new move object that is the inverse of this object.
     /// This means that all additions and removals are interchanged.
     MoveParameterPtr make_inverted();

@@ -49,50 +49,7 @@ AudioView::~AudioView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
-{
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
-    {
-        new TrackView(track,this);
-    }
-    invalidateBitmap();
-    event.Skip();
-}
-
-void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
-{
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().removedTracks )
-    {
-        delete getViewMap().getView(track);
-    }
-    invalidateBitmap();
-    event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
 // GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-pixel AudioView::getPosition(model::TrackPtr track) const
-{
-    int y = 0;
-    BOOST_REVERSE_FOREACH(model::TrackPtr _track, getSequence()->getAudioTracks())
-    {
-        y += Layout::sTrackDividerHeight;
-        if (track == _track)
-        {
-            break;
-        }
-        y += _track->getHeight();
-    }
-    return y;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
 wxSize AudioView::requiredSize() const
@@ -124,6 +81,53 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
     }
 }
 
+pixel AudioView::getPosition(model::TrackPtr track) const
+{
+    int y = 0;
+    BOOST_FOREACH(model::TrackPtr _track, getSequence()->getAudioTracks())
+    {
+        if (track == _track)
+        {
+            break;
+        }
+        y += _track->getHeight();
+        y += Layout::sTrackDividerHeight;
+    }
+    return y;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
+{
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks)
+    {
+        new TrackView(track,this);
+    }
+    invalidateBitmap();
+    // Not via an event in sequence view, since the added audio track must
+    // first be incorporated in the AudioView (the divider height requires
+    // the correct audio height).
+    getSequenceView().resetDividerPosition();
+    event.Skip();
+}
+
+void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
+{
+    BOOST_FOREACH( model::TrackPtr track, event.getValue().removedTracks )
+    {
+        delete getViewMap().getView(track);
+    }
+    invalidateBitmap();
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
 void AudioView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
@@ -132,9 +136,9 @@ void AudioView::draw(wxBitmap& bitmap) const
     dc.SetPen(Layout::sTrackDividerPen);
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), 0, y, true);
+        dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), y + Layout::sTrackDividerHeight);
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::sTrackDividerHeight);
         y += Layout::sTrackDividerHeight;
     }
 }
