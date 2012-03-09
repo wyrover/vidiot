@@ -97,7 +97,6 @@ private:
     std::list<pts> mDragPoints;                 ///< Sorted list containing all possible 'snapping' points (pts values) in the dragged area. Filled upon start of drag.
     pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
     std::list<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
-    bool mMustUndo;                             ///< True if a command has been submitted for giving feedback.
     Shift mShift;                               ///< Uninitialized if no shift active. When initialized holds info on the current shift.
 
     //////////////////////////////////////////////////////////////////////////
@@ -236,8 +235,6 @@ private:
     /// \param track onto which clips are dropped
     /// \return list of drops onto that track
     command::ExecuteDrop::Drops getDrops(model::TrackPtr track);
-
-    bool undo();
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -46,11 +46,8 @@ public:
     virtual ~AClipEdit();
 
     //////////////////////////////////////////////////////////////////////////
-    // WXWIDGETS DO/UNDO INTERFACE
+    // ACLIPEDIT INTERFACE
     //////////////////////////////////////////////////////////////////////////
-
-    bool Do() override; // todo make private?
-    bool Undo() override;
 
     /// This method can be used by derived commands to do extra actions that
     /// are not related to adding/removing/replacing/changing clips when doing
@@ -73,10 +70,6 @@ public:
     ///       However, Revert() calls Undo() which calls undoExtra(). That can
     ///       cause issues.
     virtual void undoExtra();
-
-    //////////////////////////////////////////////////////////////////////////
-    // ACLIPEDIT INTERFACE
-    //////////////////////////////////////////////////////////////////////////
 
     /// To be implemented by abstract base class specialization
     /// It's this method that is called to create move objects, the first time
@@ -193,6 +186,13 @@ protected:
     void animatedTrimEmpty(model::IClips emptyareas);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // WXWIDGETS DO/UNDO INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
+    bool Do() override;
+    bool Undo() override;
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
