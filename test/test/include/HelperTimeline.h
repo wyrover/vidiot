@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <set>
 #include <wx/gdicmn.h>
+#include "Timeline.h"
 
 namespace model {
 class IClip;

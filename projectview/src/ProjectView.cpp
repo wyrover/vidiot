@@ -3,6 +3,8 @@
 #include <wx/clipbrd.h>
 #include <wx/dirdlg.h>
 #include <wx/dnd.h>
+#include <wx/headerctrl.h>
+#include <wx/headercol.h>
 #include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
@@ -11,12 +13,13 @@
 #include <boost/foreach.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include "Node.h"
 #include "AutoFolder.h"
 #include "DataObject.h"
+#include "Dialog.h"
 #include "Folder.h"
 #include "ids.h"
 #include "Layout.h"
+#include "Node.h"
 #include "Project.h"
 #include "ProjectEvent.h"
 #include "ProjectViewAddAsset.h"
@@ -30,7 +33,6 @@
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
 #include "TimeLinesView.h"
-#include "Dialog.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "Window.h"
@@ -203,6 +205,49 @@ model::NodePtrs ProjectView::getSelection() const
         l.push_back(node);
     }
     return l;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// FIND NODES
+//////////////////////////////////////////////////////////////////////////
+
+wxPoint ProjectView::find( model::NodePtr node )
+{
+    wxPoint result;
+    wxDataViewItem item =  wxDataViewItem( node->id() );
+    static int HeaderHeight = 0;
+    wxPoint headerAdjust(0,HeaderHeight);
+
+    if (HeaderHeight == 0)
+    {
+        // Rancid, but working... Determine the height of the (well, 'a') header
+        wxDialog win(0,-1,"Bla");
+        wxHeaderCtrlSimple s(&win);
+        wxHeaderColumnSimple col("Title");
+        s.AppendColumn(col);
+        HeaderHeight = s.GetSize().GetHeight();
+    }
+    wxRect rect = mCtrl.GetItemRect(item, 0);
+
+    return wxPoint(40, rect.GetY() + rect.GetHeight() / 2) + headerAdjust;
+    //for (int i = 0; i < mCtrl.GetSize().GetHeight(); ++i)
+    //{
+    //    wxDataViewItem wxItem;
+    //    wxDataViewColumn* column = 0;
+    //    wxPoint point(40,i);
+    //    mCtrl.HitTest(point, wxItem, column);
+
+    //    if (wxItem.IsOk())
+    //    {
+    //        model::NodePtr found = model::Node::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
+    //        if (found == node)
+    //        {
+    //            return point + headerAdjust;
+    //        }
+    //    }
+    //}
+    //FATAL;
+    //return wxPoint(0,0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -562,7 +607,6 @@ void ProjectView::onStartEditing( wxDataViewEvent &event )
     event.Skip();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -583,7 +627,7 @@ bool ProjectView::FindConflictingName(model::FolderPtr parent, wxString name )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

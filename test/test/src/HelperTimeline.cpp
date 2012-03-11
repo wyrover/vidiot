@@ -31,6 +31,7 @@
 #include "Zoom.h"
 
 namespace test {
+
 wxPoint TimelinePosition()
 {
     return getTimeline().GetScreenPosition();
@@ -316,18 +317,7 @@ void PositionCursor(pixel position)
 
 void Move(wxPoint position)
 {
-	VAR_DEBUG(position);
-	wxPoint absoluteposition = getTimeline().GetScreenPosition() + position;
-    int count = 0;
-	while (wxGetMouseState().GetPosition() != absoluteposition)
-	{
-		// Loop is required since sometimes the move fails the first time.
-		// Particularly seen when working through remote desktop/using touchpad.
-		wxUIActionSimulator().MouseMove(absoluteposition);
-		waitForIdle();
-        if (++count > 3) break;
-	}
-	ASSERT_EQUALS(wxGetMouseState().GetPosition(), absoluteposition);
+    MoveWithinWidget(position,getTimeline().GetScreenPosition());
 }
 
 void Click(wxPoint position)

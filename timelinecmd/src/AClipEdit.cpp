@@ -144,7 +144,12 @@ void AClipEdit::replaceClips(model::IClips originals, model::IClips replacements
 void AClipEdit::addClip(model::IClipPtr clip, model::TrackPtr track, model::IClipPtr position)
 {
     ASSERT(!clip->getLink())(clip);
-    newMove(track, position, boost::assign::list_of(clip) );
+    addClips(boost::assign::list_of(clip),track,position);
+}
+
+void AClipEdit::addClips(model::IClips clips, model::TrackPtr track, model::IClipPtr position)
+{
+    newMove(track, position, clips );
 }
 
 void AClipEdit::removeClip(model::IClipPtr original)

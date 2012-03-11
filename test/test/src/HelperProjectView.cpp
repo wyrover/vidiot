@@ -1,22 +1,32 @@
 #include "HelperProjectView.h"
 
+#include <wx/uiaction.h>
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include "AutoFolder.h"
 #include "File.h"
 #include "HelperApplication.h"
+#include "HelperTimeline.h"
+#include "HelperTimelinesView.h"
 #include "ids.h"
 #include "ProjectView.h"
+#include "Timeline.h"
 #include "Sequence.h"
 #include "Dialog.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 
 namespace test {
+
+gui::ProjectView& getProjectView()
+{
+    return gui::ProjectView::get();
+}
 
 model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
 {
     waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
+    getProjectView().select(boost::assign::list_of(parent));
     waitForIdle();
     gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path
     triggerMenu(gui::ProjectView::get(),meID_NEW_AUTOFOLDER);
@@ -33,7 +43,7 @@ model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
 model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
 {
     waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
+    getProjectView().select(boost::assign::list_of(parent));
     gui::Dialog::get().setText( name );
     triggerMenu(gui::ProjectView::get(),meID_NEW_FOLDER);
     waitForIdle();
@@ -49,7 +59,7 @@ model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
 model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
 {
     waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
+    getProjectView().select(boost::assign::list_of(parent));
     gui::Dialog::get().setText( name );
     triggerMenu(gui::ProjectView::get(),meID_NEW_SEQUENCE);
     waitForIdle();
@@ -65,9 +75,9 @@ model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
 model::SequencePtr createSequence( model::FolderPtr folder )
 {
     waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(folder));
+    getProjectView().select(boost::assign::list_of(folder));
     waitForIdle();
-    triggerMenu(gui::ProjectView::get(),meID_CREATE_SEQUENCE);
+    triggerMenu(getProjectView(),meID_CREATE_SEQUENCE);
     waitForIdle();
 
     model::NodePtrs nodes = getRoot()->find( folder->getName() );
@@ -87,7 +97,7 @@ model::SequencePtr createSequence( model::FolderPtr folder )
 model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
 {
     waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(parent));
+    getProjectView().select(boost::assign::list_of(parent));
     std::list<wxString> shortpaths;
     BOOST_FOREACH( wxFileName path, paths )
     {
@@ -113,21 +123,52 @@ model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
 void remove( model::NodePtr node )
 {
     waitForIdle();
-    gui::ProjectView::get().select(boost::assign::list_of(node));
+    getProjectView().select(boost::assign::list_of(node));
     waitForIdle();
     triggerMenu(gui::ProjectView::get(),wxID_DELETE);
     waitForIdle();
 }
 
-
 int countProjectView()
 {
     waitForIdle();
-    gui::ProjectView::get().selectAll();
-    model::NodePtrs selection = gui::ProjectView::get().getSelection();
+    getProjectView().selectAll();
+    model::NodePtrs selection =getProjectView().getSelection();
     int result = selection.size();
     VAR_DEBUG(result);
     return result;
+}
+
+wxPoint findNode( model::NodePtr node )
+{
+    return getProjectView().find(node);
+}
+
+void MoveProjectView(wxPoint position)
+{
+    MoveWithinWidget(position, getProjectView().GetScreenPosition());
+}
+
+void DragFromProjectViewToTimeline(wxPoint from, wxPoint to)
+{
+    FATAL("Does not work yet.");
+    VAR_DEBUG(from)(to);
+    MoveProjectView(from)   ;
+    wxUIActionSimulator().MouseDown();
+    waitForIdle();
+    wxPoint fromAbs = from + getProjectView().GetScreenPosition();
+    wxPoint toAbs = to + getTimeline().GetScreenPosition();
+    MoveProjectView(from + wxPoint(10,0)); // Start drag
+    static const int DRAGSTEPS = 5; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
+    for (int i = DRAGSTEPS; i > 0; --i)
+    {
+        wxPoint p(fromAbs.x + (toAbs.x - fromAbs.x) / i, fromAbs.y + (toAbs.y - fromAbs.y) / i);
+        MoveOnScreen(p);
+        //waitForIdle();
+    }
+    //    pause();
+    wxUIActionSimulator().MouseUp();
+    waitForIdle();
 }
 
 } // namespace

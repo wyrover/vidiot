@@ -2,6 +2,7 @@
 #define EXECUTE_DROPS_H
 
 #include <set>
+#include <list>
 #include "AClipEdit.h"
 #include "Drag_Shift.h"
 
@@ -24,6 +25,17 @@ public:
         pts position;
         model::IClips clips;     ///< Must be contiguous
         friend std::ostream& operator<<( std::ostream& os, const Drop& obj );
+        Drop()
+            : track()
+            , position(0)
+            , clips()
+        {}
+        Drop(const Drop& other)
+            : track(other.track)
+            , position(other.position)
+            , clips(other.clips)
+        {}
+        virtual ~Drop() {}
     };
     typedef std::list<Drop> Drops;
 
@@ -33,7 +45,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ExecuteDrop(model::SequencePtr sequence);
+    explicit ExecuteDrop(model::SequencePtr sequence);
 
     virtual ~ExecuteDrop();
 
@@ -53,7 +65,7 @@ public:
 
     /// Called when the drop operation was finished. After this call, the command will be
     /// executed on the sequence via 'initialize'.
-    void onDrop(Drops drops, Shift shift = boost::none);
+    void onDrop(const Drops& drops, Shift shift = boost::none);
 
     /// Called when the drag operation is aborted. Any changes made to the timeline must be
     /// undone. The object will be destructed after this call.
@@ -84,9 +96,11 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    Drags mDrags; ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Drops mDrops;
+    Drags mDrags; ///< Clips that are removed. Use set to avoid duplicate entries (duplicate entries cause errors since a clip's attributes are changed - removed from a track, for instance - and then the clip is removed 'again' from the now nonexistent track)
     Shift mShift;
+
+    ExecuteDrop();
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

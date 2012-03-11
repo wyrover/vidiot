@@ -90,6 +90,16 @@ void ShiftDown();       ///< Press down Shift
 void ShiftUp();         ///< Release Shift
 
 void Type(int keycode, int modifiers = wxMOD_NONE);
+
+/// Move the mouse to the given position
+/// \param origin Use the origin to specify within which widget the position is offset (default: within the timeline)
+/// \param position Origin of the widget above which the mouse must be moved
+void MoveWithinWidget(wxPoint position, wxPoint origin);
+
+/// Move the mouse to an absolute position on screen
+/// \param position position wrt top-left corner of screen
+void MoveOnScreen(wxPoint position);
+
 } // namespace
 
 #endif // HELPER_WINDOW_H

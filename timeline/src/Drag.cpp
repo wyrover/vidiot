@@ -284,7 +284,7 @@ void Drag::drop()
     }
 
     mCommand->onDrop(drops, mShift);
-    getTimeline().Submit(mCommand); // Command in 'handed over' to wxWidgets undo system
+    getTimeline().Submit(mCommand); // Command is 'handed over' to wxWidgets undo system
     mCommand = 0;
 }
 
