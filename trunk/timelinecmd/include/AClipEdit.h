@@ -112,8 +112,20 @@ protected:
     /// Add given clip to given track at given position. This method is only allowed
     /// for new clips (clip that are not yet contained in a track). For existing
     // (part of a track) clips, replaceClip must be used.
+    /// \param clip clip to be inserted
+    /// \param track track into which insertion must be done
+    /// \param position insertion position
     /// \pre !clip->getLink()
     void addClip(model::IClipPtr clip, model::TrackPtr track, model::IClipPtr position);
+
+    /// Add given clips to given track at given position. This method is only allowed
+    /// for new clips (clip that are not yet contained in a track). For existing
+    // (part of a track) clips, replaceClip must be used.
+    /// \param clips clips to be inserted
+    /// \param track track into which insertion must be done
+    /// \param position insertion position (default: at end of track)
+    /// \pre FOREACH clip in clips: !clip->getLink()
+    void addClips(model::IClips clips, model::TrackPtr track, model::IClipPtr position = model::IClipPtr());
 
     /// Remove the given clip
     /// \param clip original clip to be removed

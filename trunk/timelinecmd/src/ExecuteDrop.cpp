@@ -15,7 +15,18 @@
 #include "UtilSet.h"
 
 namespace gui { namespace timeline { namespace command {
+
 //////////////////////////////////////////////////////////////////////////
+// DROP HELPER CLASS
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const ExecuteDrop::Drop& obj )
+{
+    os << &obj << '|' << obj.track << '|' << obj.position << '|' << obj.clips;
+    return os;
+}
+
+    //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -121,7 +132,7 @@ void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
     VAR_DEBUG(mDrags);
 }
 
-void ExecuteDrop::onDrop(Drops drops, Shift shift)
+void ExecuteDrop::onDrop(const Drops& drops, Shift shift)
 {
     VAR_INFO(this)(drops)(shift);
     mDrops = drops;
@@ -196,17 +207,24 @@ void ExecuteDrop::initialize()
 
         if (drop.position > drop.track->getLength())
         {
+            model::IClips added = make_cloned(drop.clips);
+
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
-            addClip(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()), drop.track, remove.second);
+
+            drop.clips.push_front(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()));
+            addClips(make_cloned(drop.clips), drop.track);
+        }
+        else
+        {
+            // Instead of dropping the clips themselves, clones of these clips are dropped. This is done to avoid recursion:
+            // - Clip A is dragged, hence replaced with an emptyclip
+            // - Clip A is dropped onto it's original position (at least partially over that empty clip)
+            // Then, without this cloning, A->Empty->A in terms of replacements. That would cause stack overflows
+            // (indefinite recursion) when expanding the replacements.
+            replaceClips(remove.first, make_cloned(drop.clips));
         }
 
-        // Instead of dropping the clips themselves, clones of these clips are dropped. This is done to avoid recursion:
-        // - Clip A is dragged, hence replaced with an emptyclip
-        // - Clip A is dropped onto it's original position (at least partially over that empty clip)
-        // Then, without this cloning, A->Empty->A in terms of replacements. That would cause stack overflows
-        // (indefinite recursion) when expanding the replacements.
-        replaceClips(remove.first, make_cloned(drop.clips));
     }
 }
 
@@ -217,16 +235,6 @@ void ExecuteDrop::initialize()
 const ExecuteDrop::Drags& ExecuteDrop::getDrags() const
 {
     return mDrags;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// LOGGING
-//////////////////////////////////////////////////////////////////////////
-
-std::ostream& operator<<( std::ostream& os, const ExecuteDrop::Drop& obj )
-{
-    os << &obj << '|' << obj.track << '|' << obj.position << '|' << obj.clips;
-    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

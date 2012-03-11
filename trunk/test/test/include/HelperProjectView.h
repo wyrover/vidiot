@@ -5,6 +5,7 @@
 #include <wx/filename.h>
 #include <boost/shared_ptr.hpp>
 #include "HelperWindow.h"
+#include "ProjectView.h"
 
 namespace model {
 class INode;
@@ -19,6 +20,9 @@ typedef std::list<FilePtr> Files;
 }
 
 namespace test {
+
+/// \return the project view
+gui::ProjectView& getProjectView();
 
 /// Create a new autofolder to the given path in a given parent folder or in the root (default)
 /// \return new autofolder
@@ -48,6 +52,15 @@ void remove( model::NodePtr node );
 /// This is implemented by selecting all nodes, and counting the selection size.
 /// Thus, as a side effect changes the selection of the project view.
 int countProjectView();
+
+/// \return the coordinates of the given node
+/// \param node node to be found
+wxPoint findNode( model::NodePtr node );
+
+/// Perform a drag and drop operation from project view to the timeline
+/// \param from position within project view
+/// \param to position within timeline
+void DragFromProjectViewToTimeline(wxPoint from, wxPoint to);
 
 } // namespace
 

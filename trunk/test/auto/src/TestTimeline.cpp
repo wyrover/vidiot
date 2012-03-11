@@ -267,7 +267,7 @@ void TestTimeline::testDnd()
     ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
     Type('=');  // Zoom in
     {
-        // Test moving one clip around
+        StartTest("Move one clip around.");
         PrepareSnapping(true);
         pts length = VideoClip(0,3)->getLength();
         DragAlignLeft(Center(VideoClip(0,3)),1); // Move to a bit after the beginning of timeline
@@ -281,7 +281,7 @@ void TestTimeline::testDnd()
         ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
     }
     {
-        // Test that dropping a clip with snapping enabled does not affect the clip to the right of the snapping point.
+        StartTest("Drop a clip with snapping enabled does not affect the clip to the right of the snapping point.");
         PrepareSnapping(true);
         pts lengthOfClipRightOfTheDrop = VideoClip(0,2)->getLength();
         pts lengthOfDroppedClip = VideoClip(0,3)->getLength();
@@ -302,14 +302,22 @@ void TestTimeline::testDnd()
         Undo();
     }
     {
-        // Test moving one clip partially on top of its original location (caused a recursion error in AClipEdit,
-        // for expanding the replacement map).
+        StartTest("Move one clip partially on top of its original location (caused a recursion error in AClipEdit, for expanding the replacement map).");
         PrepareSnapping(true);
         pts length = VideoClip(0,3)->getLength();
         Drag(Center(VideoClip(0,3)), Center(VideoClip(0,3)) + wxPoint(20,0)); // Move the clip only a bit to the right
         ASSERT(VideoClip(0,3)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),length );
         Undo();
+    }
+        {
+        StartTest("Move a clip beyond the track length.");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        Drag(Center(VideoClip(0,1)), wxPoint(RightPixel(VideoClip(0,6)) + VideoClip(0,1)->getLength(), VCenter(VideoClip(0,1)))); // + + VideoClip(0,1)->getLength(): Ensure that it's dropped after a bit of empty space
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,8)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
     }
 }
 

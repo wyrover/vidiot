@@ -82,6 +82,23 @@ void TestOnce::testOnce()
 //    Zoom Level(3);
 //    PrepareSnapping(true);
 
+    //wxString sFile( "scene'20100102 12.32.48.avi" ); // Should be a file also in the autofolder
+    // model::NodePtr file = mProjectFixture.mAutoFolder->find(sFile).front();
+    // wxPoint root = findNode(mProjectFixture.mRoot);
+    // wxPoint from = findNode(file);
+    // MoveWithinWidget(from,getProjectView().GetScreenPosition());
+    // DragFromProjectViewToTimeline(from, Center(VideoClip(0,2)));
+
+        {
+        StartTest("Move a clip beyond the track length.");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        Drag(Center(VideoClip(0,1)), wxPoint(RightPixel(VideoClip(0,6)) + VideoClip(0,1)->getLength(), VCenter(VideoClip(0,1)))); // + + VideoClip(0,1)->getLength(): Ensure that it's dropped after a bit of empty space
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,8)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+    }
+
     // todo snapto also for trimming
 
 }

@@ -3,6 +3,7 @@
 #include <wx/uiaction.h>
 #include "HelperApplication.h"
 #include "Project.h"
+#include "UtilLogWxwidgets.h"
 #include "Window.h"
 
 namespace test {
@@ -128,4 +129,27 @@ void Type(int keycode, int modifiers)
     wxUIActionSimulator().Char(keycode);
     waitForIdle();
 }
+
+void MoveWithinWidget(wxPoint position, wxPoint origin)
+{
+	VAR_DEBUG(position)(origin);
+	wxPoint absoluteposition = origin + position;
+    MoveOnScreen(absoluteposition);
+}
+
+void MoveOnScreen(wxPoint position)
+{
+	VAR_DEBUG(position);
+    int count = 0;
+	while (wxGetMouseState().GetPosition() != position)
+	{
+		// Loop is required since sometimes the move fails the first time.
+		// Particularly seen when working through remote desktop/using touchpad.
+		wxUIActionSimulator().MouseMove(position);
+		waitForIdle();
+        if (++count > 3) break;
+	}
+	ASSERT_EQUALS(wxGetMouseState().GetPosition(), position);
+}
+
 } // namespace
