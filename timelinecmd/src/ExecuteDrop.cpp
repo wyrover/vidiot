@@ -44,6 +44,8 @@ ExecuteDrop::~ExecuteDrop()
 {
 }
 
+// todo by onDragStart: replace dragged clips with emptyclips?
+
 void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
 {
     VAR_INFO(this)(drags)(mIsInsideDrag);
@@ -99,12 +101,19 @@ void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
         }
         BOOST_FOREACH( model::TransitionPtr transition, unapplied )
         {
-            unapplyTransition(transition);
+            // Since no new clips are made for dropping the clips (they're simply removed, keeping the undo
+            // history small, by avoiding cloning constantly), clips that are linked to the clips replaced by
+            // unapplying the transition must be replaced with clones also (otherwise these links had to be
+            // linked both to the original AND the replacement clips which is impossible). Hence: true.
+            unapplyTransition(transition, true);
         }
 
         // Now determine which clips are being dragged. This differs from the input list for the
         // following reasons:
-        // - Unapply transitions causes the timeline to change (unapplied transitions and their adjacent clips do not need to be dragged anymore)
+        // - Unapply transitions causes the timeline to change
+        //   * unapplied transitions do not have to be dragged
+        //   * the clips changed by unapplying the transition do not have to be dragged (but their replacements do!)
+        //   * clips linked to the clips adjacent to the transition are also replaced (todo)
         // - Transitions that are not selected, but their adjacent clips are, are also dragged automatically
         // Since the sequence was (possibly) changed, the initial lists consists of all clips that are
         // selected after applying those changes.
@@ -165,7 +174,12 @@ void ExecuteDrop::initialize()
         // If ever this mechanism (replace clip by clip) is replaced, take into account that the
         // clips in mDrags are not 'in timeline order' in the set.
         VAR_DEBUG(clip);
-        replaceClip(clip, boost::assign::list_of(model::EmptyClip::replace(clip)));
+
+        // Note that specifically no 'link replacement' is done. Keeping links intact is done
+        // with the 'drops', not the 'drags'. Note that clips typically are part of both mDrags
+        // AND mDrops. Replacing them first with empty clips here, and then later on with other
+        // clips (when dropping, for instance) causes problems (unable to correctly map the links).
+        replaceClip(clip,boost::assign::list_of(model::EmptyClip::replace(clip)),false);
     }
 
     if (mShift)
@@ -174,7 +188,6 @@ void ExecuteDrop::initialize()
         BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(mShift->mPosition);
-
             addClip(boost::make_shared<model::EmptyClip>(mShift->mLength), track, clip );
         }
     }
@@ -207,24 +220,16 @@ void ExecuteDrop::initialize()
 
         if (drop.position > drop.track->getLength())
         {
-            model::IClips added = make_cloned(drop.clips);
-
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
-
             drop.clips.push_front(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()));
-            addClips(make_cloned(drop.clips), drop.track);
+            addClips(drop.clips, drop.track);
         }
         else
         {
-            // Instead of dropping the clips themselves, clones of these clips are dropped. This is done to avoid recursion:
-            // - Clip A is dragged, hence replaced with an emptyclip
-            // - Clip A is dropped onto it's original position (at least partially over that empty clip)
-            // Then, without this cloning, A->Empty->A in terms of replacements. That would cause stack overflows
-            // (indefinite recursion) when expanding the replacements.
-            replaceClips(remove.first, make_cloned(drop.clips));
+            // Simply 'reposition' the clips. No linked clips updating is relevant.
+            newMove(drop.track, remove.second, drop.clips, drop.track, remove.second, remove.first);
         }
-
     }
 }
 
