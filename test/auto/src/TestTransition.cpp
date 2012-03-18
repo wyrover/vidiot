@@ -250,7 +250,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         DeselectAllClips();
         Drag(Center(VideoClip(0,1)),Center(VideoClip(0,4)));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
-        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLink(),AudioClip(0,0));
         ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
         ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
@@ -357,7 +357,7 @@ void TestTransition::testAdjacentTransitions()
     StartTestSuite();
     Zoom level(3);
     {
-        // Reduce size of second and third clip to be able to create transitions
+        StartTest("Reduce size of second and third clip to be able to create transitions");
         TrimRight(VideoClip(0,1),30,false);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         TrimLeft(VideoClip(0,3),30,false); // Note: the trim of clip 1 causes clip 2 to become clip 3 (clip 2 is empty space)
@@ -382,9 +382,9 @@ void TestTransition::testAdjacentTransitions()
         Play(LeftPixel(VideoTransition(0,2)) - 2, 1500); // -2: Also take some frames from the left clip
     }
     {
-        // Drag a clip just on top of the right transition. This effectively removes
-        // that right transition and (part) of the clip to its right. The clips to the left
-        // of the removed transition must remain unaffected.
+        StartTest("Drag a clip just on top of the right transition.");
+        // This effectively removes that right transition and (part) of the clip to its right.
+        // The clips to the left of the removed transition must remain unaffected.
         pts cliplength = VideoClip(0,1)->getLength();
         pts transitionlength = VideoClip(0,2)->getLength();
         pts length = VideoClip(0,8)->getLength();
@@ -396,9 +396,9 @@ void TestTransition::testAdjacentTransitions()
         Undo();
     }
     {
-        // Drag a clip just on top of the left transition. This effectively removes
-        // that left transition and (part) of the clip to its left. The clips to the right
-        // of the removed transition must remain unaffected.
+        StartTest("Drag a clip just on top of the left transition.");
+        // This effectively removes that left transition and (part) of the clip to its left.
+        // The clips to the right of the removed transition must remain unaffected.
         pts cliplength = VideoClip(0,4)->getLength();
         pts transitionlength = VideoClip(0,3)->getLength();
         pts length = VideoClip(0,8)->getLength();
