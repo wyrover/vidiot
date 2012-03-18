@@ -111,6 +111,12 @@ int getSelectedClipsCount()
     return result;
 }
 
+pixel VCenter(model::TrackPtr track)
+{
+    pixel top = getTimeline().getSequenceView().getPosition(track);
+    return top + track->getHeight() / 2;
+}
+
 pixel LeftPixel(model::IClipPtr clip)
 {
     wxPoint p( getTimeline().getViewMap().getView(clip)->getLeftPixel(), VCenter(clip) );
