@@ -300,7 +300,7 @@ model::IClipPtr Transition::makeRightClip() const
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
     // Keep order same as Clip and EmptyClip for 'DumpSequence' method
-    os << &obj << '|' <<obj.mTrack.lock() << '|' << std::setw(3) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << std::setw(3) << obj.mFramesLeft << '|' << std::setw(3) << obj.mFramesRight << '|' << obj.mSelected;
+    os << &obj << '|' << obj.mTrack.lock() << '|'  << std::setw(8) << ' ' << '|' << std::setw(6) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << std::setw(6) << obj.mFramesLeft << '|' << std::setw(6) << obj.mFramesRight << '|' << obj.mSelected;
     return os;
 }
 
