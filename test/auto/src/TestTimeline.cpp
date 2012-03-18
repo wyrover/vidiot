@@ -128,7 +128,6 @@ void TestTimeline::testSelection()
         ShiftUp();
         ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
     }
-    Zoom Level(3);
     {
         // Test selecting an in-out-transition
         MakeInOutTransitionAfterClip preparation(1);
@@ -318,6 +317,8 @@ void TestTimeline::testDnd()
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,8)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,8)->getLink(),AudioClip(0,8));
+        ASSERT_EQUALS(AudioClip(0,8)->getLink(),VideoClip(0,8));
     }
 }
 
