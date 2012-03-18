@@ -16,6 +16,8 @@ class VideoTransition;
 typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 class AudioTrack;
 typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
+class Track;
+typedef boost::shared_ptr<Track> TrackPtr;
 }
 
 namespace gui { namespace timeline {
@@ -61,6 +63,8 @@ model::IClipPtr AudioClip(int trackindex = 0, int clipindex = 0);
 
 int getNonEmptyClipsCount();     ///< \return number of non-empty clips (both audio and video) in given timeline
 int getSelectedClipsCount(); ///< \return number of selected clips (both audio and video) in given timeline
+
+pixel VCenter(model::TrackPtr track);          ///< \return vertical center pixel of given track
 
 pixel LeftPixel(model::IClipPtr clip);               ///< \return left x position of given clip. Note: Returns the leftmost pixel value in the timeline that corresponds to the given clip.
 pixel RightPixel(model::IClipPtr clip);              ///< \return right x position of given clip. Note: Returns the rightmost pixel value in the timeline that corresponds to the given clip.
