@@ -87,6 +87,17 @@ protected:
     /// before the command is actually submitted.
     void Revert();
 
+    /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
+    /// The new Move is executed immediately. This method is also used to add new clips,
+    /// by using the defaults for the remove* parameters.
+    void newMove(
+        model::TrackPtr addTrack,
+        model::IClipPtr addPosition,
+        model::IClips addClips,
+        model::TrackPtr removeTrack = model::TrackPtr(),
+        model::IClipPtr removePosition = model::IClipPtr(),
+        model::IClips removeClips = model::IClips());
+
     /// Split the clip at the given (track) position. If there already is a cut at the given
     /// position, then nothing is changed. When the clip is replaced by (two) other clips, then
     /// In the ReplacementMap (if != 0) the mapping clip->(first,second) is added.
@@ -98,16 +109,8 @@ protected:
     /// In the ReplacementMap (if != 0) the mapping clip->replacements is added.
     /// \param clip original clip to be replaced
     /// \param replacements clips to be inserted in place of 'clip'
-    void replaceClip(model::IClipPtr original, model::IClips replacements);
-
-    /// \see replaceClip()
-    /// This replaces multiple clips, one by one replacing a clip in list
-    /// 'originals' with a clip in list replacements. If the list of
-    /// replacements is larger, the last clip in originals is replaced with
-    /// the remainder replacement clips. If the list of replacements is shorter,
-    /// the remainder original clips are replaced with nothing.
-    /// \pre originals.size() > 1 || replacements.size() > 1
-    void replaceClips(model::IClips originals, model::IClips replacements);
+    /// \param maintainlinks if true, then the replacements will be linked to the replacement clips of the links of the original clip (ahum...)
+    void replaceClip(model::IClipPtr original, model::IClips replacements, bool maintainlinks = true);
 
     /// Add given clip to given track at given position. This method is only allowed
     /// for new clips (clip that are not yet contained in a track). For existing
@@ -175,8 +178,13 @@ protected:
     /// Unapply transition. If there are adjacent clips that are part of the transition,
     /// these clips will be extended with the part of that clip that is 'part of the transition'.
     /// \param transition transition to be removed
+    /// \param replacelinkedclipsalso if true, then the links of any affected clips are also replaced (with clones)
     /// \return list of clips with which the transition and all its related clips are replaced
-    model::IClips unapplyTransition( model::TransitionPtr transition );
+    ///
+    /// About replacelinkedclipsalso: This is sometimes required beacuse the clip edit itselves does not
+    /// make new clips for all clips (example: drag and drop), but the unapplytransition DOES changes some
+    /// clips. In that case, it must be ensured that theres also a replacement clip for the link.
+    model::IClips unapplyTransition( model::TransitionPtr transition, bool replacelinkedclipsalso = false );
 
     /// Replace the given list of clips with one empty clip of the same length. Note that the given
     /// list of clips must be consecutive clips within one track.
@@ -229,30 +237,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
-
-    /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
-    /// The new Move is executed immediately. This method is also used to add new clips,
-    /// by using the defaults for the remove* parameters.
-    /// This is private for a reason: All the public methods use the 'conversionmap'.
-    /// This ensures that all clip changes are done while updating the conversionmap.
-    ///
-    /// Rationale:
-    /// Changing clips (particularly, removing them completely) but not administering
-    /// them in the conversionmap can cause problems. Example:
-    /// - Clip V1 is linked to clip A1
-    /// - Clip V1 is replaced with clip VR1
-    /// - Clip A1 is removed completely
-    /// If. at the end of the edit, the link replacement is done (replaceLinks), then
-    /// it's unclear to what clip(s) VR1 must be linked (there is no information
-    /// indicating that A1 was actually removed). Therefore: all edits must use
-    /// the link conversion map.
-    void newMove(
-        model::TrackPtr addTrack,
-        model::IClipPtr addPosition,
-        model::IClips addClips,
-        model::TrackPtr removeTrack = model::TrackPtr(),
-        model::IClipPtr removePosition = model::IClipPtr(),
-        model::IClips removeClips = model::IClips());
 
     /// Execute a move.
     void doMove(model::MoveParameterPtr move);
