@@ -8,6 +8,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
+/// Important: Link information is kept between the clips being dropped by not replacing the dropped clips with other clips, but just by 'moving the originals around'
 class ExecuteDrop
     :   public AClipEdit
 {
