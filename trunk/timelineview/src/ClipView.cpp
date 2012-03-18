@@ -181,7 +181,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
                     }
                     else
                     {
-                        info.logicalclipposition = TransitionLeftClipInterior; // todo check of we deze overal kunnen vervangen door 'inClip ++ logische waarden tov inclip'?
+                        info.logicalclipposition = TransitionLeftClipInterior;
                     }
                 }
             }
@@ -209,7 +209,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
                     }
                     else
                     {
-                        info.logicalclipposition = TransitionRightClipInterior; // todo check of we deze overal kunnen vervangen door 'outClip ++ logische waarden tov outclip'?
+                        info.logicalclipposition = TransitionRightClipInterior;
                     }
                 }
             }
