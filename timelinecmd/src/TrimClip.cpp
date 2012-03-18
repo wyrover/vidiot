@@ -145,19 +145,56 @@ void TrimClip:: determineShiftBoundariesForOtherTracks()
     // Do not use mClip and mLink here, since this is called before 'removeTransition' is done.
     mMinShiftOtherTrackContent = (std::numeric_limits<pts>::min)();
     mMaxShiftOtherTrackContent = (std::numeric_limits<pts>::max)();
-    pts shiftFrom = mOriginalClip->getLeftPts();
+    pts shiftFrom = (isBeginTrim()) ? mOriginalClip->getLeftPts() : mOriginalClip->getRightPts(); // todo test begin + end trim (rightpts)
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         if (mOriginalClip->getTrack() == track) continue;
         if (mOriginalLink && mOriginalLink->getTrack() == track) continue;
-        model::IClipPtr clipAt = track->getClip(shiftFrom);
+        model::IClipPtr clipInOtherTrack = track->getClip(shiftFrom);
+
+        if (!clipInOtherTrack)
+        {
+            // There is no clip at the given position (beyond track length) then the only restriction
+            // is the length of the track.
+            pts tracklength = track->getLength();
+            if (isBeginTrim())
+            {
+                    // todo test
+                mMaxShiftOtherTrackContent = std::min<pts>(mMaxShiftOtherTrackContent, tracklength - shiftFrom);
+            }
+            else
+            {
+                    // todo test
+                mMinShiftOtherTrackContent = std::max<pts>(mMinShiftOtherTrackContent, tracklength - shiftFrom);
+            }
+        }
+        else
+        {
+            if (!clipInOtherTrack->isA<model::EmptyClip>())
+            {
+                    // todo test
+                // No shift allowed if there's a track that has 'filled space' at the shift position
+                mMinShiftOtherTrackContent = 0;
+                mMaxShiftOtherTrackContent = 0;
+            }
+            else
+            {
+                if (isBeginTrim())
+                {
+                    // todo test
+                    mMaxShiftOtherTrackContent = std::min<pts>(mMaxShiftOtherTrackContent, clipInOtherTrack->getRightPts() - shiftFrom);
+                }
+                else
+                {
+                    // todo test
+                    mMinShiftOtherTrackContent = std::max<pts>(mMinShiftOtherTrackContent, clipInOtherTrack->getLeftPts() - shiftFrom);
+                }
+            }
+        }
+
         // todo handle transitions in other tracks
-        // todo this algorithm when trimming under a transition
         // todo this algorithm with more than 1 or two tracks? (or does the max work?)
-        mMinShiftOtherTrackContent =
-            (clipAt->isA<model::EmptyClip>()) ? std::max<pts>(mMinShiftOtherTrackContent, clipAt->getLeftPts() - shiftFrom) : 0;
-        mMaxShiftOtherTrackContent =
-            (clipAt->isA<model::EmptyClip>()) ? std::min<pts>(mMaxShiftOtherTrackContent, clipAt->getRightPts() - shiftFrom) : 0;
+        // todo this fails if one of the other tracks has no clips yet/...
     }
 }
 
@@ -185,6 +222,10 @@ void TrimClip::removeTransition()
 
     mClip = unapplyIfNeeded(mOriginalClip,mTransition);
     mClipIsPartOfTransition = mClip->getInTransition() || mClip->getOutTransition();
+    // todo als ik het al 'goed' maak tijdens unapplytransition dan gaat dit fout!!!
+    // dan is mOriginalLink nl. vervangen!
+    //
+    // Maar zorgt trim er zo niet voor dat de link kapot gaat?
     if (mOriginalLink)
     {
         mLink = unapplyIfNeeded(mOriginalLink,mLinkTransition);

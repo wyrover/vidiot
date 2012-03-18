@@ -6,6 +6,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread.hpp>
 #include "Clip.h"
+#include "Config.h"
 #include "CrossFade.h"
 #include "Cursor.h"
 #include "EmptyClip.h"
@@ -65,6 +66,15 @@ void AClipEdit::Revert()
     mInitialized = false;
 }
 
+void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
+{
+    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
+    model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
+    mParams.push_back(move);
+    mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
+    doMove(move);
+}
+
 void AClipEdit::split(model::TrackPtr track, pts position)
 {
     model::IClipPtr clip = track->getClip(position);
@@ -79,7 +89,7 @@ void AClipEdit::split(model::TrackPtr track, pts position)
         {
             // There is a transition at the given position: Restore the underlying clips.
             ASSERT_LESS_THAN(transition->getLeftPts(),position);
-            unapplyTransition(transition);
+            unapplyTransition(transition,true);
             clip = track->getClip(position); // Must be done again, since unapplyTransition changes the track.
         }
         if (clip) // If there is a clip at the given position, it might need to be split
@@ -104,41 +114,21 @@ void AClipEdit::split(model::TrackPtr track, pts position)
     }
 }
 
-void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements)
+void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements, bool maintainlinks)
 {
     model::TrackPtr track = original->getTrack();
     ASSERT(track);
     model::IClipPtr position = original->getNext();
     model::IClips originallist = boost::assign::list_of(original);
 
-    ASSERT_MAP_CONTAINS_NOT((mReplacements),original);
-    mReplacements[ original ] = replacements;
+    if (maintainlinks)
+    {
+        ASSERT_MAP_CONTAINS_NOT((mReplacements),original);
+        mReplacements[ original ] = replacements;
+    }
 
     //      ============= ADD ===========  ========== REMOVE ===========
     newMove(track, position, replacements, track, position, originallist);
-}
-
-void AClipEdit::replaceClips(model::IClips originals, model::IClips replacements)
-{
-    ASSERT(originals.size() >= 1 || replacements.size() >= 1)(originals)(replacements);
-    while (originals.size() > 1 && replacements.size() > 0)
-    {
-        replaceClip(originals.front(),boost::assign::list_of(replacements.front()));
-        originals.pop_front();
-        replacements.pop_front();
-    }
-    if (originals.size() == 1)
-    {
-        replaceClip(originals.front(),replacements);
-    }
-    else
-    {
-        while (originals.size() > 0)
-        {
-            removeClip(originals.front());
-            originals.pop_front();
-        }
-    }
 }
 
 void AClipEdit::addClip(model::IClipPtr clip, model::TrackPtr track, model::IClipPtr position)
@@ -228,19 +218,27 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
         if (amount > 0)
         {
             model::IClipPtr clip = track->getClip(start);
-            model::IClipPtr clone = make_cloned<model::IClip>(clip);
-            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(amount));
-            newClips.push_front(clone);
-            replaceClip(clip, newClips);
+            if (clip)
+            {
+                model::IClipPtr clone = make_cloned<model::IClip>(clip);
+                model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(amount));
+                newClips.push_front(clone);
+                replaceClip(clip, newClips);
+            }
+            // else: Beyond track length, no need to add a clip
         }
         else // (amount < 0)
         {
             model::IClipPtr clip = track->getClip(start);
-            ASSERT(clip->isA<model::EmptyClip>());
-            ASSERT_MORE_THAN_EQUALS(start,clip->getLeftPts());  // Enough room must be available for the shift
-            ASSERT_LESS_THAN_EQUALS(start,clip->getRightPts()); // Enough room must be available for the shift
-            model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength() + amount)); // NOTE: amount < 0
-            replaceClip(clip, newClips);
+            if (clip)
+            {
+                ASSERT(clip->isA<model::EmptyClip>());
+                ASSERT_MORE_THAN_EQUALS(start,clip->getLeftPts());  // Enough room must be available for the shift
+                ASSERT_LESS_THAN_EQUALS(start,clip->getRightPts()); // Enough room must be available for the shift
+                model::IClips newClips = boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength() + amount)); // NOTE: amount < 0
+                replaceClip(clip, newClips);
+            }
+            // else: Beyond track length, no need to remove
         }
     }
 }
@@ -306,18 +304,13 @@ void AClipEdit::removeTransition( model::TransitionPtr transition )
     replaceClip(transition, boost::assign::list_of(boost::make_shared<model::EmptyClip>(transition->getLength())));
 }
 
-model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
+model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition, bool replacelinkedclipsalso )
 {
-    // Note that, due to the usage after a drop operation, the left and/or right clips of the given
-    // transition may be empty clips (for instance, when only dragging one of the two clips in the
-    // transition, or when using shift & drag).
     model::IClips replacements;
     if (transition->getLeft() > 0)
     {
         model::IClipPtr prev = transition->getPrev();
         ASSERT(prev);
-        //if (prev)
-        //{
         model::IClipPtr replacement;
         if (prev->isA<model::EmptyClip>())
         {
@@ -332,15 +325,16 @@ model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
         }
         replaceClip(prev,boost::assign::list_of(replacement));
         replacements.push_back(replacement);
-        //}
-        //// else: prev has already been removed (for instance during drag-and-drop)
+
+        if (replacelinkedclipsalso && prev->getLink())
+        {
+            replaceClip(prev->getLink(), boost::assign::list_of(make_cloned(prev->getLink())));
+        }
     }
     if (transition->getRight() > 0)
     {
         model::IClipPtr next = transition->getNext();
         ASSERT(next);
-        //if (next)
-        //{
         model::IClipPtr replacement;
         if (next->isA<model::EmptyClip>())
         {
@@ -355,8 +349,11 @@ model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition )
         }
         replaceClip(next,boost::assign::list_of(replacement));
         replacements.push_back(replacement);
-        //}
-        //// else: next has already been removed (for instance during drag-and-drop)
+
+        if (replacelinkedclipsalso && next->getLink())
+        {
+            replaceClip(next->getLink(), boost::assign::list_of(make_cloned(next->getLink())));
+        }
     }
     removeClip(transition);
     return replacements;
@@ -471,15 +468,6 @@ bool AClipEdit::Undo()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
-{
-    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
-    model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
-    mParams.push_back(move);
-    mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
-    doMove(move);
-}
-
 void AClipEdit::doMove(model::MoveParameterPtr move)
 {
     if (move->removeClips.size() > 0)
@@ -562,6 +550,13 @@ void AClipEdit::replaceLinks()
         if (clip2) // The clip doesn't necessarily have a link with another clip
         {
             ASSERT(!clip2->isA<model::EmptyClip>())(clip2); // Linking to an empty clip is not allowed
+
+            // If clip clip1 is replaced with replacement1, then its link link1 MUST also be replaced
+            // (since link1 must be replaced with a clip whose link is replacement1). This must be guaranteed
+            // by all AClipEdit derived classes (not solved generally in the base class since that would
+            // cause lots of redundant replacements).
+            ASSERT(mExpandedReplacements.find(clip2) != mExpandedReplacements.end())(clip1)(clip2)(mReplacements)(mExpandedReplacements);
+
             model::IClips new2 = mExpandedReplacements[clip2];
             model::IClips::iterator it2 = new2.begin();
 
@@ -597,6 +592,25 @@ void AClipEdit::replaceLinks()
             for (; it2 != new2.end(); ++it2)
             {
                 (*it2)->setLink(model::IClipPtr());
+            }
+        }
+    }
+
+    if (gui::Config::ReadBool(gui::Config::sPathTest))
+    {
+        // Only in test mode: verify all links.
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        {
+            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+            {
+                if (clip->getLink())
+                {
+                    if (clip != clip->getLink()->getLink())
+                    {
+                        //test::DumpTimeline(); // todo move this method to the actual timeline class for reuse
+                    }
+                    ASSERT_EQUALS(clip, clip->getLink()->getLink());
+                }
             }
         }
     }
