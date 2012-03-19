@@ -59,7 +59,7 @@ void TestTransition::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestTransition::testSelection()
+void TestTransition::testSelectionAndDeletion()
 {
     StartTestSuite();
     Zoom level(4);
@@ -67,25 +67,25 @@ void TestTransition::testSelection()
     {
         DeselectAllClips();
         MakeInOutTransitionAfterClip preparation(1);
-        // Test - for an in-out-transition- that clicking on TransitionLeftClipInterior selects the clip left of the transition.
+        StartTest("InOutTransition: Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
         Click(TransitionLeftClipInterior(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end
-        // Test - for an in-out-transition- that clicking on TransitionRightClipInterior selects the clip right of the transition.
+        StartTest("InOutTransition: Clicking on TransitionRightClipInterior selects the clip right of the transition.");
         Click(TransitionRightClipInterior(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end
-        // Test - for an in-out-transition- that clicking on TransitionLeftClipEnd selects the clip left of the transition.
+        StartTest("InOutTransition: Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
         Click(TransitionLeftClipEnd(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>(); // Was a bug once when clicking on a clip's begin/end
-        // Test - for an in-out-transition- that clicking on TransitionRightClipBegin selects the clip right of the transition.
+        StartTest("InOutTransition: Clicking on TransitionRightClipBegin selects the clip right of the transition.");
         Click(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
@@ -95,32 +95,52 @@ void TestTransition::testSelection()
     {
         DeselectAllClips();
         MakeOutTransitionAfterClip preparation(1);
-        // Test - for an out-transition - that clicking on TransitionLeftClipInterior selects the clip left of the transition.
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        StartTest("OutTransition: Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
         Click(TransitionLeftClipInterior(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
         DeselectAllClips();
-        // Test - for an out-transition - that clicking on TransitionLeftClipEnd selects the clip left of the transition.
+        StartTest("OutTransition: Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
         Click(TransitionLeftClipEnd(VideoClip(0,2)));
         ASSERT(VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(!VideoClip(0,3)->getSelected());
+        StartTest("OutTransition: When deleting the associated clip, the transition must be deleted also.");
+        DeselectAllClips();
+        Click(Center(VideoClip(0,1)));
+        ASSERT_SELECTION_SIZE(1);
+        Type(WXK_DELETE);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)            (VideoClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,0));
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        Undo();
     }
     {
         DeselectAllClips();
         MakeInTransitionAfterClip preparation(1);
-        // Test - for an in-transition- that clicking on TransitionRightClipInterior selects the clip right of the transition.
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        StartTest("InTransition: Clicking on TransitionRightClipInterior selects the clip right of the transition.");
         Click(TransitionRightClipInterior(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
         DeselectAllClips();
-        // Test - for an in-transition- that clicking on TransitionRightClipBegin selects the clip right of the transition.
+        StartTest("InTransition: Clicking on TransitionRightClipBegin selects the clip right of the transition.");
         Click(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
+        StartTest("InTransition: When deleting the associated clip, the transition must be deleted also.");
+        DeselectAllClips();
+        Click(Center(VideoClip(0,3)));
+        ASSERT_SELECTION_SIZE(1);
+        Type(WXK_DELETE);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)            (VideoClip);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,0));
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        Undo();
     }
 }
 

@@ -254,6 +254,9 @@ void TestTimeline::testDeletion()
         Undo();
         ASSERT_SELECTION_SIZE(2);
     }
+    {
+        StartTest("When deleting a clip, an in-only, and a out-only transition must be deleted also.");
+    }
 };
 
 void TestTimeline::testDnd()

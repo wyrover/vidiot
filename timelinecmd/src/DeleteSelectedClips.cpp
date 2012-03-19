@@ -53,18 +53,15 @@ void DeleteSelectedClips::initialize()
                 }
                 else
                 {
-                    // Also delete transitions that overlap with this clip
-                    model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getPrev()); // todo use intransition and outtransition instead of this with getright >0 ???
-                    model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clip->getNext());
-
-                    if (prevTransition && prevTransition->getRight() > 0)
+                    auto add = [&transitionsToBeRemoved] (model::TransitionPtr transition)
                     {
-                        transitionsToBeRemoved.insert(prevTransition);
-                    }
-                    if (nextTransition && nextTransition->getLeft() > 0)
-                    {
-                        transitionsToBeRemoved.insert(nextTransition);
-                    }
+                        if (transition)
+                        {
+                            transitionsToBeRemoved.insert(transition);
+                        }
+                    };
+                    add(clip->getInTransition());
+                    add(clip->getOutTransition());
                     clipsToBeRemoved.insert(clip);
                 }
             }
