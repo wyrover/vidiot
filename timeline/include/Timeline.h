@@ -56,6 +56,8 @@ public:
     const Trim& getTrim() const;
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;
+    Dump& getDump();
+    const Dump& getDump() const;
     model::SequencePtr getSequence();
     const model::SequencePtr getSequence() const;
 
@@ -144,6 +146,7 @@ private:
     Drag* mDrag;
     Tooltip* mTooltip;
     Trim* mTrim;
+    Dump* mDump;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts
 

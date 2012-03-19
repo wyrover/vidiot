@@ -113,7 +113,7 @@ void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
         // - Unapply transitions causes the timeline to change
         //   * unapplied transitions do not have to be dragged
         //   * the clips changed by unapplying the transition do not have to be dragged (but their replacements do!)
-        //   * clips linked to the clips adjacent to the transition are also replaced (todo)
+        //   * clips linked to the clips adjacent to the transition are also replaced
         // - Transitions that are not selected, but their adjacent clips are, are also dragged automatically
         // Since the sequence was (possibly) changed, the initial lists consists of all clips that are
         // selected after applying those changes.

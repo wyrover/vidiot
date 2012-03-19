@@ -68,7 +68,7 @@ void FixtureProject::destroy()
 pts FixtureProject::OriginalLengthOfVideoClip(int trackindex, int clipindex)
 {
     ASSERT_ZERO(trackindex); // Other tracks are not stored
-    ASSERT_LESS_THAN(clipindex,mOriginalLengthOfVideoClip.size());
+    ASSERT_LESS_THAN(static_cast<size_t>(clipindex),mOriginalLengthOfVideoClip.size());
     return mOriginalLengthOfVideoClip[clipindex];
 
 }

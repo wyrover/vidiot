@@ -1,36 +1,40 @@
 #include "Timeline.h"
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <wx/dcclient.h>
+
 #include <algorithm>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/foreach.hpp>
+#include <wx/dcclient.h>
 #include <wx/dcmemory.h>
+#include "AudioView.h"
 #include "Constants.h"
+#include "Cursor.h"
+#include "Drag.h"
+#include "Dump.h"
+#include "Intervals.h"
 #include "Layout.h"
-#include "UtilLog.h"
+#include "Menu.h"
+#include "MousePointer.h"
 #include "Options.h"
 #include "Player.h"
 #include "Preview.h"
-#include "Window.h"
-#include "Intervals.h"
-#include "Selection.h"
-#include "MousePointer.h"
-#include "Scrolling.h"
-#include "Cursor.h"
-#include "Drag.h"
-#include "Tooltip.h"
-#include "Menu.h"
 #include "Project.h"
-#include "Zoom.h"
+#include "Scrolling.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "State.h"
+#include "Tooltip.h"
+#include "Track.h"
 #include "Trim.h"
+#include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
+#include "VideoView.h"
+#include "ViewMap.h"
 #include "ViewMap.h"
 #include "ViewUpdateEvent.h"
-#include "UtilLogWxwidgets.h"
-#include "ViewMap.h"
-#include "VideoView.h"
-#include "AudioView.h"
+#include "Window.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -56,6 +60,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mDrag(new Drag(this))
 ,   mTooltip(new Tooltip(this))
 ,   mTrim(new Trim(this))
+,   mDump(new Dump(this))
 ,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 //////////////////////////////////////////////////////////////////////////
@@ -88,6 +93,7 @@ Timeline::~Timeline()
 
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;   mStateMachine = 0;
+    delete mDump;           mDump = 0;
     delete mTrim;           mTrim = 0;
     delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
@@ -246,6 +252,16 @@ const state::Machine& Timeline::getStateMachine() const
     return *mStateMachine;
 }
 
+Dump& Timeline::getDump()
+{
+    return *mDump;
+}
+
+const Dump& Timeline::getDump() const
+{
+    return *mDump;
+}
+
 model::SequencePtr Timeline::getSequence()
 {
     return mSequence;
@@ -380,7 +396,7 @@ void Timeline::endTransaction()
     mTransaction = false;
 }
 
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 // CHANGE COMMANDS
 //////////////////////////////////////////////////////////////////////////
 
