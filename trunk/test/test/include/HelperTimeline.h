@@ -179,8 +179,6 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \re
 /// Unselect all clips in the timeline
 void DeselectAllClips();
 
-/// Dump the timeline: the sequence's contents and some parameters of the timeline (positions)
-void DumpTimeline();
 } // namespace
 
 #endif // HELPER_TIMELINE_H

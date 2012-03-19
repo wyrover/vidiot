@@ -14,23 +14,24 @@ namespace gui {
     class Player;
 
     namespace timeline {
+        class AudioView;
         class ClipView;
         class Cursor;
         class Divider;
         class Drag;
+        class Dump;
         class Intervals;
         class MenuHandler;
         class MousePointer;
         class Scrolling;
         class Selection;
-        class VideoView;
-        class AudioView;
-        class Timeline;
         class SequenceView;
         class ThumbnailView;
-        class TrackView;
+        class Timeline;
         class Tooltip;
+        class TrackView;
         class Trim;
+        class VideoView;
         class ViewMap;
         class Zoom;
 
@@ -93,6 +94,9 @@ public:
 
     Trim& getTrim();
     const Trim& getTrim() const;
+
+    Dump& getDump();
+    const Dump& getDump() const;
 
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;
