@@ -22,7 +22,7 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testSelection();
+    void testSelectionAndDeletion();
 
     void testDragAndDropOfOtherClips();
 
