@@ -222,10 +222,6 @@ void TrimClip::removeTransition()
 
     mClip = unapplyIfNeeded(mOriginalClip,mTransition);
     mClipIsPartOfTransition = mClip->getInTransition() || mClip->getOutTransition();
-    // todo als ik het al 'goed' maak tijdens unapplytransition dan gaat dit fout!!!
-    // dan is mOriginalLink nl. vervangen!
-    //
-    // Maar zorgt trim er zo niet voor dat de link kapot gaat?
     if (mOriginalLink)
     {
         mLink = unapplyIfNeeded(mOriginalLink,mLinkTransition);

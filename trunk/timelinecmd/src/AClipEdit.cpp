@@ -9,6 +9,7 @@
 #include "Config.h"
 #include "CrossFade.h"
 #include "Cursor.h"
+#include "Dump.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -607,7 +608,7 @@ void AClipEdit::replaceLinks()
                 {
                     if (clip != clip->getLink()->getLink())
                     {
-                        //test::DumpTimeline(); // todo move this method to the actual timeline class for reuse
+                        getTimeline().getDump().dump();
                     }
                     ASSERT_EQUALS(clip, clip->getLink()->getLink());
                 }
