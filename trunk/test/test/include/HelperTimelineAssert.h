@@ -60,8 +60,10 @@ struct ClipTypeAsserter
 #define CLIPTYPEASSERTER_OP(type, next) CLIPTYPEASSERTER_A.AssertClipType<model::type>().CLIPTYPEASSERTER_ ## next
 #define ASSERT_VIDEOTRACK(TrackNumber,ClipNumber) ClipTypeAsserter(true, TrackNumber,ClipNumber).CLIPTYPEASSERTER_A
 #define ASSERT_AUDIOTRACK(TrackNumber,ClipNumber) ClipTypeAsserter(false,TrackNumber,ClipNumber).CLIPTYPEASSERTER_A
+#define ASSERT_VIDEOTRACK1 ASSERT_VIDEOTRACK(1,0)
 #define ASSERT_VIDEOTRACK0 ASSERT_VIDEOTRACK(0,0)
 #define ASSERT_AUDIOTRACK0 ASSERT_AUDIOTRACK(0,0)
+#define ASSERT_AUDIOTRACK1 ASSERT_AUDIOTRACK(1,0)
 
 } // namespace
 

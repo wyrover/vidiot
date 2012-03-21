@@ -169,6 +169,13 @@ void DragAlignRight(wxPoint from, pixel position);
 /// \see ShiftDragAlignLeft
 void ShiftDragAlignRight(wxPoint from, pixel position);
 
+/// Drag videoclip to VideoTrack(newtrackindex) and
+/// Drag audioclip to AudioTrack(newtrackindex)
+/// \param videoclip video clip to be moved to the video track with index newtrackindex
+/// \param audioclip audio clip to be moved to the audio track with index newtrackindex
+/// \param newtrackindex new track of clip
+void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip);
+
 void ToggleInterval(pixel from, pixel to);
 
 void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)

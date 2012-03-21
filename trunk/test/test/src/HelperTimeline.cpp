@@ -489,6 +489,16 @@ void ShiftDragAlignRight(wxPoint from, pixel position)
 	DragAlign(from,position,true,false);
 }
 
+void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip)
+{
+    Drag(Center(videoclip),wxPoint(HCenter(videoclip),VCenter(VideoTrack(newtrackindex))),false,true,false);
+    ControlDown();
+    Move(Center(audioclip));
+    ControlUp();
+    Drag(Center(audioclip),wxPoint(HCenter(audioclip),VCenter(AudioTrack(newtrackindex))),false,false,true);
+}
+
+
 void ToggleInterval(pixel from, pixel to)
 {
     // The mouse is moved this amount of pixels before the shift is pressed in 'ShiftDrag'.
