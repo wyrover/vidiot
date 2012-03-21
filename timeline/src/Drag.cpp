@@ -172,7 +172,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     }
 
     ASSERT(mCommand);
-    mCommand->onDrag(drags, mIsInsideDrag);
+    mCommand->onDragStart(drags, mIsInsideDrag);
 
     VAR_DEBUG(*this);
     ASSERT(mDraggedTrack);

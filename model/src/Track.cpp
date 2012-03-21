@@ -235,6 +235,11 @@ pts Track::getLeftEmptyArea(IClipPtr clip)
     ASSERT_CONTAINS(mClips,clip);
     pts leftmost = clip->getLeftPts();
     IClipPtr previous = clip->getPrev();
+    if (!previous)
+    {
+        // This clip is the first clip in the track
+        return 0;
+    }
     while (previous && previous->isA<EmptyClip>())
     {
         leftmost = previous->getLeftPts();
@@ -248,6 +253,11 @@ pts Track::getRightEmptyArea(IClipPtr clip)
     ASSERT_CONTAINS(mClips,clip);
     pts rightmost = clip->getRightPts();
     IClipPtr next = clip->getNext();
+    if (!next)
+    {
+        // This clip is the last clip in the track
+        return (std::numeric_limits<pts>::max)();
+    }
     while (next && next->isA<EmptyClip>())
     {
         rightmost = next->getRightPts();

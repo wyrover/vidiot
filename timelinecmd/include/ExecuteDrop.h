@@ -62,7 +62,7 @@ public:
     /// \param drags initial list of dragged clips (note that this also applies to new clips being dragged into the timeline)
     /// \param isInsideDrag true if this is a drag and drop inside the timeline. False if new clips are being inserted.
     /// \post mDrags contains updated list of dragged clips
-    void onDrag(const Drags& drags, bool isInsideDrag);
+    void onDragStart(const Drags& drags, bool isInsideDrag);
 
     /// Called when the drop operation was finished. After this call, the command will be
     /// executed on the sequence via 'initialize'.

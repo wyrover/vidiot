@@ -154,25 +154,20 @@ void TrimClip:: determineShiftBoundariesForOtherTracks()
 
         if (!clipInOtherTrack)
         {
-            // There is no clip at the given position (beyond track length) then the only restriction
-            // is the length of the track.
-            pts tracklength = track->getLength();
+            // There is no clip at the given position (beyond track length) then the only restriction is the length of the track.
             if (isBeginTrim())
             {
-                    // todo test
-                mMaxShiftOtherTrackContent = std::min<pts>(mMaxShiftOtherTrackContent, tracklength - shiftFrom);
+                // No change to mMaxShiftOtherTrackContent
             }
             else
             {
-                    // todo test
-                mMinShiftOtherTrackContent = std::max<pts>(mMinShiftOtherTrackContent, tracklength - shiftFrom);
+                mMinShiftOtherTrackContent = std::max<pts>(mMinShiftOtherTrackContent, track->getLength() - shiftFrom);
             }
         }
         else
         {
             if (!clipInOtherTrack->isA<model::EmptyClip>())
             {
-                    // todo test
                 // No shift allowed if there's a track that has 'filled space' at the shift position
                 mMinShiftOtherTrackContent = 0;
                 mMaxShiftOtherTrackContent = 0;
@@ -182,11 +177,13 @@ void TrimClip:: determineShiftBoundariesForOtherTracks()
                 if (isBeginTrim())
                 {
                     // todo test
+                    // todo test met een clip die helemaal onder een transition zit (is dan de getxpts hetzelfde als die van de transitie?)
                     mMaxShiftOtherTrackContent = std::min<pts>(mMaxShiftOtherTrackContent, clipInOtherTrack->getRightPts() - shiftFrom);
                 }
                 else
                 {
                     // todo test
+                    // todo test met een clip die helemaal onder een transition zit (is dan de getxpts hetzelfde als die van de transitie?)
                     mMinShiftOtherTrackContent = std::max<pts>(mMinShiftOtherTrackContent, clipInOtherTrack->getLeftPts() - shiftFrom);
                 }
             }
@@ -387,7 +384,14 @@ void TrimClip::applyTrim()
                 exclude.push_back(mLink->getTrack());
             }
 
-            shiftAllTracks(mClip->getLeftPts(), -mTrim,  exclude);
+            if (isBeginTrim())
+            {
+                shiftAllTracks(mClip->getLeftPts(), -mTrim,  exclude);
+            }
+            else
+            {
+                shiftAllTracks(mClip->getRightPts(), mTrim,  exclude);
+            }
         }
         else
         {
@@ -420,13 +424,23 @@ void TrimClip::applyTrim()
                 }
                 else // (mTrim > 0) // Enlarge: Move clip end point to the right
                 {
-                    ASSERT(mClip->getNext()->isA<model::EmptyClip>());
-                    adjust(mClip->getNext(), mTrim, 0);
-                    if (mLink)
+                    model::IClipPtr next = mClip->getNext();
+                    if (next)
                     {
-                        ASSERT(mLink->getNext()->isA<model::EmptyClip>());
-                        adjust(mLink->getNext(), mTrim, 0);
+                        ASSERT(next->isA<model::EmptyClip>());
+                        adjust(next, mTrim, 0);
+                        if (mLink)
+                        {
+                            next = mLink->getNext();
+                            if (next)
+                            {
+                                ASSERT(next->isA<model::EmptyClip>());
+                                adjust(next, mTrim, 0);
+                            }
+                            // else: !next: Trimming the last clip in the track
+                        }
                     }
+                    // else: !next: Trimming the last clip in the track
                 }
             }
         }

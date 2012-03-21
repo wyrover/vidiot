@@ -44,9 +44,7 @@ ExecuteDrop::~ExecuteDrop()
 {
 }
 
-// todo by onDragStart: replace dragged clips with emptyclips?
-
-void ExecuteDrop::onDrag(const Drags& drags, bool mIsInsideDrag)
+void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
 {
     VAR_INFO(this)(drags)(mIsInsideDrag);
 
