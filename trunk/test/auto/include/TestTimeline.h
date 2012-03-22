@@ -70,6 +70,9 @@ public:
     /// - video track divider
     void testDividers();
 
+    /// Tests (shift)trimming restrictions imposed by clips in 'other' tracks
+    void testTrimmingWithOtherTrakcs();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

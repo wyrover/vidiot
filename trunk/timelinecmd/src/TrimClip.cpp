@@ -176,22 +176,14 @@ void TrimClip:: determineShiftBoundariesForOtherTracks()
             {
                 if (isBeginTrim())
                 {
-                    // todo test
-                    // todo test met een clip die helemaal onder een transition zit (is dan de getxpts hetzelfde als die van de transitie?)
                     mMaxShiftOtherTrackContent = std::min<pts>(mMaxShiftOtherTrackContent, clipInOtherTrack->getRightPts() - shiftFrom);
                 }
                 else
                 {
-                    // todo test
-                    // todo test met een clip die helemaal onder een transition zit (is dan de getxpts hetzelfde als die van de transitie?)
                     mMinShiftOtherTrackContent = std::max<pts>(mMinShiftOtherTrackContent, clipInOtherTrack->getLeftPts() - shiftFrom);
                 }
             }
         }
-
-        // todo handle transitions in other tracks
-        // todo this algorithm with more than 1 or two tracks? (or does the max work?)
-        // todo this fails if one of the other tracks has no clips yet/...
     }
 }
 
