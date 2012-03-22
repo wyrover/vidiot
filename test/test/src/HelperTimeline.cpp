@@ -359,8 +359,10 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
     VAR_DEBUG(clip)(length)(shift);
     wxPoint from = RightCenter(clip);
     wxPoint to = from;
-    to.x -= length;
+    to.x -= length; // todo flip the '-' and replace all uses
     Move(from);
+    ASSERT(getTimeline().getMousepointer().getInfo(from).logicalclipposition == gui::timeline::ClipEnd)(getTimeline().getMousepointer().getInfo(from));
+    ASSERT(getTimeline().getMousepointer().getInfo(from).clip == clip)(getTimeline().getMousepointer().getInfo(from));
     if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
     wxUIActionSimulator().MouseDown();
     Move(to);
@@ -497,7 +499,6 @@ void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr a
     ControlUp();
     Drag(Center(audioclip),wxPoint(HCenter(audioclip),VCenter(AudioTrack(newtrackindex))),false,false,true);
 }
-
 
 void ToggleInterval(pixel from, pixel to)
 {
