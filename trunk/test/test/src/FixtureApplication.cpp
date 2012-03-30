@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "UtilLog.h"
 #include "Window.h"
+#include "SuiteCreator.h"
 
 namespace test {
 
@@ -50,6 +51,8 @@ bool FixtureGui::tearDownWorld()
 
 bool FixtureGui::setUp()
 {
+    if (ISuite::currentTestIsDisabled()) { return true; } // Test was disabled
+
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for starting the main (application) event loop, not for any dialogs.
     mStartingMainThread = true;
@@ -60,6 +63,8 @@ bool FixtureGui::setUp()
 
 bool FixtureGui::tearDown()
 {
+    if (ISuite::currentTestIsDisabled()) { return true; } // Test was disabled
+
     wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
     if (doc)
     {
