@@ -342,8 +342,6 @@ void TrimLeft(model::IClipPtr clip, pixel length, bool shift)
     wxPoint to = from;
     to.x += length;
     Move(from);
-    ASSERT(getTimeline().getMousepointer().getInfo(from).logicalclipposition == gui::timeline::ClipBegin)(getTimeline().getMousepointer().getInfo(from));
-    ASSERT(getTimeline().getMousepointer().getInfo(from).clip == clip)(getTimeline().getMousepointer().getInfo(from));
     if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
     wxUIActionSimulator().MouseDown();
     waitForIdle();
@@ -361,8 +359,6 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
     wxPoint to = from;
     to.x -= length; // todo flip the '-' and replace all uses
     Move(from);
-    ASSERT(getTimeline().getMousepointer().getInfo(from).logicalclipposition == gui::timeline::ClipEnd)(getTimeline().getMousepointer().getInfo(from));
-    ASSERT(getTimeline().getMousepointer().getInfo(from).clip == clip)(getTimeline().getMousepointer().getInfo(from));
     if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
     wxUIActionSimulator().MouseDown();
     Move(to);
@@ -546,5 +542,11 @@ void DeselectAllClips()
     LOG_DEBUG;
     getTimeline().getSelection().unselectAll();
 };
+
+void DeleteClip(model::IClipPtr clip)
+{
+    Click(Center(clip));
+    Type(WXK_DELETE);
+}
 
 } // namespace
