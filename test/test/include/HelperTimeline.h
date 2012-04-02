@@ -186,6 +186,10 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \re
 /// Unselect all clips in the timeline
 void DeselectAllClips();
 
+/// Delete the given clip from the timeline
+/// \param clip clip to be deleted from the timeline
+void DeleteClip(model::IClipPtr clip);
+
 } // namespace
 
 #endif // HELPER_TIMELINE_H

@@ -62,13 +62,22 @@ void TrimClip::update(pts diff)
 {
     Revert();
 
-    mShift = wxGetMouseState().ShiftDown();
+    //if (diff == 0)
+    //{
+    //    // Moved back to original position
+    //    return;
+    //}
+
     if (mOriginalClip->isA<model::Transition>())
     {
         // When trimming a transition, shift does nothing.
         // Reset here to avoid having to deal with that (if-then-else)
         // later on.
         mShift = false;
+    }
+    else
+    {
+        mShift = wxGetMouseState().ShiftDown();
     }
     VAR_INFO(this)(mShift)(diff);
 
@@ -145,7 +154,7 @@ void TrimClip:: determineShiftBoundariesForOtherTracks()
     // Do not use mClip and mLink here, since this is called before 'removeTransition' is done.
     mMinShiftOtherTrackContent = (std::numeric_limits<pts>::min)();
     mMaxShiftOtherTrackContent = (std::numeric_limits<pts>::max)();
-    pts shiftFrom = (isBeginTrim()) ? mOriginalClip->getLeftPts() : mOriginalClip->getRightPts(); // todo test begin + end trim (rightpts)
+    pts shiftFrom = (isBeginTrim()) ? mOriginalClip->getLeftPts() : mOriginalClip->getRightPts();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         if (mOriginalClip->getTrack() == track) continue;
@@ -192,8 +201,15 @@ void TrimClip::removeTransition()
     auto unapplyIfNeeded = [this](model::IClipPtr clip, model::TransitionPtr transition) -> model::IClipPtr
     {
         model::IClipPtr result = clip;
-        if (!mShift && transition && mTrim != 0)
+        // Do not use mTrim here. That is initialized AFTER this method!
+        if (!mShift && transition && /* mTrim != 0 && todo */ transition->getLeft() > 0 && transition->getRight() > 0)
         {
+            // Only in case
+            // - No shift trim is applied
+            // - the clip is part of a transition (and that side of the transition is trimmed)
+            // - an actual trim is applied
+            // - the transition is an InOut transition
+            // it must be unapplied.
             model::IClips replacements = unapplyTransition(transition);
             ASSERT_MORE_THAN_ZERO(replacements.size());
             if (isBeginTrim())
@@ -317,7 +333,7 @@ void TrimClip::determineTrim(pts mousediff)
 void TrimClip::applyTrim()
 {
     ASSERT_NONZERO(mTrim);
-    auto trim = [this](model::IClipPtr clip, bool clipIsPartOfTransition) -> model::IClips
+    auto makeTrimmedClone = [this](model::IClipPtr clip, bool clipIsPartOfTransition) -> model::IClips
     {
         // Make a clone and adjust that
         model::IClipPtr clone = make_cloned<model::IClip>(clip);
@@ -345,22 +361,23 @@ void TrimClip::applyTrim()
         return boost::assign::list_of(clone);
     };
 
-    model::IClips replaceclip = trim(mClip,mClipIsPartOfTransition);
-    model::IClips replacelink = mLink ? trim(mLink,mLinkIsPartOfTransition) : model::IClips();
+    model::IClips replaceclip = makeTrimmedClone(mClip,mClipIsPartOfTransition);
+    model::IClips replacelink = mLink ? makeTrimmedClone(mLink,mLinkIsPartOfTransition) : model::IClips();
 
+    // Now adjust other clips to ensure that the rest of the track(s) are positioned correctly.
+    // That means enlarging/reducing empty space in front of/after the clip(s) being changed
+    // as well as enlarging/reducing clips as a result of changing a transition's size.
     if (mOriginalClip->isA<model::Transition>())
     {
         if (isBeginTrim())
         {
-            // Adjust the end point of the previous clip in line with the transition size change
             ASSERT(!mClip->getPrev()->isA<model::EmptyClip>());
-            adjust(mClip->getPrev(), 0, mTrim);
+            adjust(mClip->getPrev(), 0, mTrim); // Adjust the end point of the previous clip in line with the transition size change
         }
         else // !isBeginTrim()
         {
-            // Adjust the begin point of the next clip in line with the transition size change
             ASSERT(!mClip->getNext()->isA<model::EmptyClip>());
-            adjust(mClip->getNext(), mTrim, 0);
+            adjust(mClip->getNext(), mTrim, 0); // Adjust the begin point of the next clip in line with the transition size change
         }
     }
     else
@@ -371,10 +388,7 @@ void TrimClip::applyTrim()
             // The clips in the same track as mClip and linked are shifted automatically
             // because of the enlargement/reduction of these two clips.
             model::Tracks exclude = boost::assign::list_of(mClip->getTrack());
-            if (mLink)
-            {
-                exclude.push_back(mLink->getTrack());
-            }
+            if (mLink) { exclude.push_back(mLink->getTrack()); }
 
             if (isBeginTrim())
             {
@@ -385,54 +399,87 @@ void TrimClip::applyTrim()
                 shiftAllTracks(mClip->getRightPts(), mTrim,  exclude);
             }
         }
-        else
+        else // ! mShift
         {
+            // Adjust empty space before/after the clips being changed. This is required to keep all
+            // cuts in the track at the exact same position (with the exception of the cut being moved).
+            model::TransitionPtr intransition = mClip->getInTransition();
+            model::TransitionPtr outtransition = mClip->getOutTransition();
             if (isBeginTrim())
             {
                 if (mTrim > 0) // Reduce: Move clip begin point to the right
                 {
-                    // Add empty clip in front of new clip: new clip is shorter than original clip and the frames should maintain their position.
-                    replaceclip.push_front(boost::make_shared<model::EmptyClip>(mTrim));
-                    replacelink.push_front(boost::make_shared<model::EmptyClip>(mTrim));
+                    auto adjustEmptySpace = [this](model::IClipPtr clip, model::IClips& replacement)
+                    {
+                        model::TransitionPtr intransition = clip->getInTransition(); // An in-only-transition in front of the clip must be 'moved along'
+                        if (intransition)
+                        {
+                            ASSERT_ZERO(intransition->getLeft())(intransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            removeClip(intransition);                           // Remove from the timeline...
+                            replacement.push_front(make_cloned(intransition));  // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
+                        }
+                        replacement.push_front(boost::make_shared<model::EmptyClip>(mTrim)); // Add empty space to keep all clips after the trim in exact the same position
+                    };
+                    adjustEmptySpace(mClip, replaceclip);
+                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
                 }
                 else // (mTrim < 0) // Enlarge: Move clip begin point to the left
                 {
-                    ASSERT(mClip->getPrev()->isA<model::EmptyClip>());
-                    adjust(mClip->getPrev(), 0, mTrim);
-                    if (mLink)
+                    auto adjustEmptySpace = [this](model::IClipPtr clip, model::IClips& replacement)
                     {
-                        ASSERT(mLink->getPrev()->isA<model::EmptyClip>());
-                        adjust(mLink->getPrev(), 0, mTrim);
-                    }
+                        model::TransitionPtr intransition = clip->getInTransition(); // An in-only-transition in front of the clip must be 'moved along'
+                        model::IClipPtr emptyspace = clip->getPrev();
+                        if (intransition)
+                        {
+                            ASSERT_ZERO(intransition->getLeft())(intransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            emptyspace = intransition->getPrev();
+                        }
+                        ASSERT(emptyspace); // There had to be room for enlarging
+                        ASSERT(emptyspace->isA<model::EmptyClip>()); // todo test with in-only transition. will assert?
+                        adjust(emptyspace, 0, mTrim);
+                    };
+                    adjustEmptySpace(mClip, replaceclip);
+                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
                 }
             }
             else // !isBeginTrim()
             {
                 if (mTrim < 0) // Reduce: Move clip end point to the left
                 {
-                    // Add empty clip after new clip: new clip is shorter than original clip and the frames should maintain their position.
-                    replaceclip.push_back(boost::make_shared<model::EmptyClip>(-mTrim));
-                    replacelink.push_back(boost::make_shared<model::EmptyClip>(-mTrim));
+                    auto adjustEmptySpace = [this](model::IClipPtr clip, model::IClips& replacement)
+                    {
+                        model::TransitionPtr outtransition = clip->getOutTransition(); // An out-only-transition after the clip must be 'moved along'
+                        if (outtransition)
+                        {
+                            ASSERT_ZERO(outtransition->getRight())(outtransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            removeClip(outtransition);                             // Remove from the timeline...
+                            replacement.push_back(make_cloned(outtransition));     // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
+                        }
+                        replacement.push_back(boost::make_shared<model::EmptyClip>(-mTrim)); // Add empty space to keep all clips after the trim in exact the same position
+                    };
+                    adjustEmptySpace(mClip, replaceclip);
+                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
                 }
                 else // (mTrim > 0) // Enlarge: Move clip end point to the right
                 {
-                    model::IClipPtr next = mClip->getNext();
-                    if (next)
+                    auto adjustEmptySpace = [this](model::IClipPtr clip, model::IClips& replacement)
                     {
-                        ASSERT(next->isA<model::EmptyClip>());
-                        adjust(next, mTrim, 0);
-                        if (mLink)
+                        model::TransitionPtr outtransition = clip->getOutTransition(); // An out-only-transition after the clip must be 'moved along'
+                        model::IClipPtr emptyspace = clip->getNext();
+                        if (outtransition)
                         {
-                            next = mLink->getNext();
-                            if (next)
-                            {
-                                ASSERT(next->isA<model::EmptyClip>());
-                                adjust(next, mTrim, 0);
-                            }
-                            // else: !next: Trimming the last clip in the track
+                            ASSERT_ZERO(outtransition->getRight())(outtransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            emptyspace = outtransition->getNext();
                         }
-                    }
-                    // else: !next: Trimming the last clip in the track
+                        if (emptyspace)
+                        {
+                            ASSERT(emptyspace->isA<model::EmptyClip>()); // todo test with in-only transition. will assert?
+                            adjust(emptyspace, mTrim, 0);
+                        }
+                        // else: Trimming the last clip in the track (There is not neccessarily an empty clip after it)
+                    };
+                    adjustEmptySpace(mClip, replaceclip);
+                    if (mLink) { adjustEmptySpace(mLink, replacelink); }
                 }
             }
         }

@@ -75,25 +75,14 @@ auto PrepareSnapping = [](bool enableSnapping)
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
+//RUNONLY("testTrimming");
+
 void TestOnce::testOnce()
 {
-    //BREAK();
-    getTimeline().getDump().dump();
-    //    PrepareSnapping(true);
+    // BREAK();
+    // getTimeline().getDump().dump();
+    // PrepareSnapping(true);
     StartTestSuite();
-    Zoom level(2);
-    {
-        StartTest("Trim: EndTrim: Enlarge the last clip in a track (there is no empty clip after it anymore)");
-         TrimRight(VideoClip(0,3),40,false);
-         pts length = VideoClip(0,3)->getLength();
-         DragAlignLeft(Center(VideoClip(0,3)),RightPixel(VideoClip(0,7)));
-         TrimRight(VideoClip(0,7),-20,false);
-         ASSERT_MORE_THAN(VideoClip(0,7)->getLength(), length);
-         Undo();
-         Undo();
-         Undo();
-
-    }
 
        //wxString sFile( "scene'20100102 12.32.48.avi" ); // Should be a file also in the autofolder
     // model::NodePtr file = mProjectFixture.mAutoFolder->find(sFile).front();
@@ -102,9 +91,6 @@ void TestOnce::testOnce()
     // MoveWithinWidget(from,getProjectView().GetScreenPosition());
     // DragFromProjectViewToTimeline(from, Center(VideoClip(0,2)));
     // todo snapto also for trimming
-
-    // todo bug: make intransition/outtransition and then drag inwards: transition is removed!
-
 }
 
 } // namespace

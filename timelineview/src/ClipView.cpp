@@ -215,15 +215,13 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
             }
             else // dist_cut == 0
             {
-                if (transition->getNext())
+                if (transition->getRight() > 0)
                 {
-                    //info.clip = transition->getNext();
                     info.logicalclipposition = TransitionRightClipBegin;
                 }
                 else
                 {
-                    ASSERT(transition->getPrev())(transition);
-                    //info.clip = transition->getPrev();
+                    ASSERT_MORE_THAN_ZERO(transition->getLeft());
                     info.logicalclipposition = TransitionLeftClipEnd;
                 }
             }

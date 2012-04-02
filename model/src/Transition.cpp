@@ -140,11 +140,15 @@ pts Transition::getMinAdjustBegin() const
     {
         ASSERT(getPrev()); // Avoid bugs where this method is called before a transition has been made part of a track
         result = -1 *  getPrev()->getLength();
+        if (getRight() > 0)
+        {
+            ASSERT(getNext());
+            result = std::max(result, getNext()->getMinAdjustBegin());
+        }
     }
-    if (getRight() > 0)
+    else
     {
-        ASSERT(getNext());
-        result = std::max(result, getNext()->getMinAdjustBegin());
+        result = 0; // InOnlyTransition: Cannot enlarge to the left
     }
     return result;
 }
@@ -176,11 +180,16 @@ pts Transition::getMaxAdjustEnd() const
     {
         ASSERT(getNext()); // Avoid bugs where this method is called before a transition has been made part of a track
         result = getNext()->getLength();
+        if (getLeft() > 0)
+        {
+            ASSERT(getPrev());
+            result = std::min(result, getPrev()->getMaxAdjustEnd());
+        }
     }
-    if (getLeft() > 0)
+    else
     {
-        ASSERT(getPrev());
-        result = std::min(result, getPrev()->getMaxAdjustEnd());
+        result = 0;
+        // OutOnlyTransition: Cannot enlarge to the right
     }
     return result;
 }
