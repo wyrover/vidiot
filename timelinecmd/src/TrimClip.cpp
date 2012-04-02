@@ -62,12 +62,6 @@ void TrimClip::update(pts diff)
 {
     Revert();
 
-    //if (diff == 0)
-    //{
-    //    // Moved back to original position
-    //    return;
-    //}
-
     if (mOriginalClip->isA<model::Transition>())
     {
         // When trimming a transition, shift does nothing.
@@ -202,12 +196,11 @@ void TrimClip::removeTransition()
     {
         model::IClipPtr result = clip;
         // Do not use mTrim here. That is initialized AFTER this method!
-        if (!mShift && transition && /* mTrim != 0 && todo */ transition->getLeft() > 0 && transition->getRight() > 0)
+        if (!mShift && transition && transition->getLeft() > 0 && transition->getRight() > 0)
         {
             // Only in case
             // - No shift trim is applied
             // - the clip is part of a transition (and that side of the transition is trimmed)
-            // - an actual trim is applied
             // - the transition is an InOut transition
             // it must be unapplied.
             model::IClips replacements = unapplyTransition(transition);
@@ -435,7 +428,7 @@ void TrimClip::applyTrim()
                             emptyspace = intransition->getPrev();
                         }
                         ASSERT(emptyspace); // There had to be room for enlarging
-                        ASSERT(emptyspace->isA<model::EmptyClip>()); // todo test with in-only transition. will assert?
+                        ASSERT(emptyspace->isA<model::EmptyClip>());
                         adjust(emptyspace, 0, mTrim);
                     };
                     adjustEmptySpace(mClip, replaceclip);
@@ -473,7 +466,7 @@ void TrimClip::applyTrim()
                         }
                         if (emptyspace)
                         {
-                            ASSERT(emptyspace->isA<model::EmptyClip>()); // todo test with in-only transition. will assert?
+                            ASSERT(emptyspace->isA<model::EmptyClip>());
                             adjust(emptyspace, mTrim, 0);
                         }
                         // else: Trimming the last clip in the track (There is not neccessarily an empty clip after it)

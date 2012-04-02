@@ -50,7 +50,6 @@ auto PrepareSnapping = [](bool enableSnapping)
 void TestTimeline::setUp()
 {
     mProjectFixture.init();
-//    PrepareSnapping(true); todo check if dit weg kan...
 }
 
 void TestTimeline::tearDown()
