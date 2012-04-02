@@ -52,24 +52,32 @@ wxMenu* getSequenceMenu()
     return gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex);
 }
 
-void Undo()
+void Undo(int steps)
 {
     LOG_DEBUG;
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
-    wxUIActionSimulator().Char('z');
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-    waitForIdle();
-    logHistory();
+    while (steps > 0)
+    {
+        wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+        wxUIActionSimulator().Char('z');
+        wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
+        waitForIdle();
+        logHistory();
+        steps--;
+    }
 }
 
-void Redo()
+void Redo(int steps)
 {
     LOG_DEBUG;
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
-    wxUIActionSimulator().Char('y');
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-    waitForIdle();
-    logHistory();
+    while (steps > 0)
+    {
+        wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
+        wxUIActionSimulator().Char('y');
+        wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
+        waitForIdle();
+        logHistory();
+        steps--;
+    }
 }
 
 wxCommand* getCurrentCommand()

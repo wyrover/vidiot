@@ -49,10 +49,12 @@ model::FolderPtr getRoot();
 wxMenu* getSequenceMenu();
 
 /// Trigger an undo via pressing CTRL-z
-void Undo();
+/// \param steps number of times an Undo is triggered
+void Undo(int steps = 1);
 
 /// Trigger a redo via pressing CTRL-y
-void Redo();
+/// \param steps number of times an Undo is triggered
+void Redo(int steps = 1);
 
 /// Return current command in the history
 wxCommand* getCurrentCommand();

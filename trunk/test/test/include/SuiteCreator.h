@@ -6,6 +6,22 @@
 
 namespace test {
 
+/// Various helpers exist to simplify working with the large number of test suites, and the fact
+/// that it can be difficult to debug (since the test application depends on mouse positioning
+/// and keyboard states)
+///
+/// Run only one specific test:
+/// RUNONLY("testTrimming");
+/// Note 1: This must be placed just above the method's definition.
+/// Note 2: For this to work all test suites must have the same name as the file they're in
+///         (Thus, if this is part of TestTimeline.cpp, the class should be named TestTimeline).
+///
+/// Break execution and give the focus back to the tests afterwards:
+/// BREAK();
+///
+/// Dump the timeline contents:
+/// getTimeline().getDump().dump();
+
 class ISuite
 {
 public:

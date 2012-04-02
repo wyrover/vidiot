@@ -51,8 +51,14 @@ public:
     model::SequencePtr mSequence;
 
     pts OriginalLengthOfVideoClip(int trackindex = 0, int clipindex = 0);
+    pts OriginalPtsOfVideoClip(int trackindex = 0, int clipindex = 0);
+    pts OriginalLengthOfAudioClip(int trackindex = 0, int clipindex = 0);
+    pts OriginalPtsOfAudioClip(int trackindex = 0, int clipindex = 0);
 
     std::vector<pts> mOriginalLengthOfVideoClip;
+    std::vector<pts> mOriginalPtsOfVideoClip;
+    std::vector<pts> mOriginalLengthOfAudioClip;
+    std::vector<pts> mOriginalPtsOfAudioClip;
 };
 
 } // namespace

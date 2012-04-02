@@ -48,6 +48,12 @@ void FixtureProject::init()
     BOOST_FOREACH( model::IClipPtr clip, getSequence()->getVideoTrack(0)->getClips() )
     {
         mOriginalLengthOfVideoClip.push_back(clip->getLength());
+        mOriginalPtsOfVideoClip.push_back(clip->getLeftPts());
+    }
+    BOOST_FOREACH( model::IClipPtr clip, getSequence()->getAudioTrack(0)->getClips() )
+    {
+        mOriginalLengthOfAudioClip.push_back(clip->getLength());
+        mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());
     }
 
     // Click in the timeline to give it the focus. A lot of test cases start
@@ -75,7 +81,27 @@ pts FixtureProject::OriginalLengthOfVideoClip(int trackindex, int clipindex)
     ASSERT_ZERO(trackindex); // Other tracks are not stored
     ASSERT_LESS_THAN(static_cast<size_t>(clipindex),mOriginalLengthOfVideoClip.size());
     return mOriginalLengthOfVideoClip[clipindex];
+}
 
+pts FixtureProject::OriginalPtsOfVideoClip(int trackindex, int clipindex)
+{
+    ASSERT_ZERO(trackindex); // Other tracks are not stored
+    ASSERT_LESS_THAN(static_cast<size_t>(clipindex),mOriginalPtsOfVideoClip.size());
+    return mOriginalPtsOfVideoClip[clipindex];
+}
+
+pts FixtureProject::OriginalLengthOfAudioClip(int trackindex, int clipindex)
+{
+    ASSERT_ZERO(trackindex); // Other tracks are not stored
+    ASSERT_LESS_THAN(static_cast<size_t>(clipindex),mOriginalLengthOfAudioClip.size());
+    return mOriginalLengthOfAudioClip[clipindex];
+}
+
+pts FixtureProject::OriginalPtsOfAudioClip(int trackindex, int clipindex)
+{
+    ASSERT_ZERO(trackindex); // Other tracks are not stored
+    ASSERT_LESS_THAN(static_cast<size_t>(clipindex),mOriginalPtsOfAudioClip.size());
+    return mOriginalPtsOfAudioClip[clipindex];
 }
 
 } // namespace

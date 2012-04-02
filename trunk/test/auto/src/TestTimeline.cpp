@@ -50,7 +50,7 @@ auto PrepareSnapping = [](bool enableSnapping)
 void TestTimeline::setUp()
 {
     mProjectFixture.init();
-    PrepareSnapping(true);
+//    PrepareSnapping(true); todo check if dit weg kan...
 }
 
 void TestTimeline::tearDown()
@@ -506,6 +506,78 @@ void TestTimeline::testDividers()
         ASSERT_EQUALS(VideoTrack(0)->getHeight(), originalHeight - changeY);
         Drag(adjusted, original);
         ASSERT_EQUALS(VideoTrack(0)->getHeight(), originalHeight);
+    }
+}
+
+void TestTimeline::testTrimming()
+{
+    StartTestSuite();
+    Zoom Level(2);
+    {
+        DeleteClip(VideoClip(0,3));
+        DeleteClip(VideoClip(0,1));
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
+        StartTest("Trim: Without Shift: Reduce clip size left.");
+        TrimLeft(VideoClip(0,2),20,false);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_MORE_THAN(VideoClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,2));
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,4));
+        ASSERT_EQUALS(VideoClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfVideoClip(0,4));
+        ASSERT_MORE_THAN(AudioClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_LESS_THAN(AudioClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,2));
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfAudioClip(0,4));
+        StartTest("Trim: Without Shift: Enlarge clip size left.");
+        TrimLeft(VideoClip(0,2),-20,false);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,2));
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,4));
+        ASSERT_EQUALS(VideoClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfVideoClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,2));
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfAudioClip(0,4));
+        Undo();
+        Undo();
+        StartTest("Trim: Without Shift: Reduce clip size right.");
+        TrimRight(VideoClip(0,2),20,false);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,2));
+        ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,4));
+        ASSERT_EQUALS(VideoClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfVideoClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_LESS_THAN(AudioClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,2));
+        ASSERT_MORE_THAN(AudioClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfAudioClip(0,4));
+        StartTest("Trim: Without Shift: Enlarge clip size right.");
+        TrimRight(VideoClip(0,2),-20,false);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,2));
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,4));
+        ASSERT_EQUALS(VideoClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfVideoClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,2));
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfAudioClip(0,4));
+        Undo();
+        Undo();
     }
 }
 
