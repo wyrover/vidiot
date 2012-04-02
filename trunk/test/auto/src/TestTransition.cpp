@@ -49,7 +49,6 @@ auto PrepareSnapping = [](bool enableSnapping)
 void TestTransition::setUp()
 {
     mProjectFixture.init();
-//    PrepareSnapping(true); todo check if weg kan
 }
 
 void TestTransition::tearDown()

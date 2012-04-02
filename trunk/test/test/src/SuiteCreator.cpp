@@ -47,7 +47,6 @@ bool ISuite::currentTestIsDisabled()
     std::string test = CxxTest::TestTracker::tracker().test().testName();
 
     return ((sInstance->mSuite.compare(suite) != 0) || (sInstance->mTest.compare(test) != 0));
-    // todo testauto war die nou eindigt: doe eens een trim aan de linker kant van de clip voor de transition: lijkt wel of iet met shift is!!!! assert erbij voor de emptys space die kleiner moet worden!!!
 }
 
 void updateTitle()

@@ -100,7 +100,7 @@ void Trim::start()
         break;
     case TransitionRightClipBegin:
         ASSERT(transition);
-        ASSERT_MORE_THAN_ZERO(transition->getRight()); // todo test
+        ASSERT_MORE_THAN_ZERO(transition->getRight());
         originalClip = info.clip->getNext();
         mFixedPts = originalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         if (transition->getLeft() > 0)
@@ -114,7 +114,7 @@ void Trim::start()
         break;
     case TransitionLeftClipEnd:
         ASSERT(transition);
-        ASSERT_MORE_THAN_ZERO(transition->getLeft()); // todo test
+        ASSERT_MORE_THAN_ZERO(transition->getLeft());
         originalClip = info.clip->getPrev();
         mFixedPts = originalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         if (transition->getRight() > 0)
