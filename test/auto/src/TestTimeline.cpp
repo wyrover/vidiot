@@ -548,7 +548,7 @@ void TestTimeline::testTrimming()
         Undo();
         Undo();
         StartTest("Trim: Without Shift: Reduce clip size right.");
-        TrimRight(VideoClip(0,2),20,false);
+        TrimRight(VideoClip(0,2),-20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -562,7 +562,7 @@ void TestTimeline::testTrimming()
         ASSERT_EQUALS(AudioClip(0,4)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,4));
         ASSERT_EQUALS(AudioClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfAudioClip(0,4));
         StartTest("Trim: Without Shift: Enlarge clip size right.");
-        TrimRight(VideoClip(0,2),-20,false);
+        TrimRight(VideoClip(0,2),20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -580,7 +580,7 @@ void TestTimeline::testTrimming()
     }
 }
 
-void TestTimeline::testTrimmingWithOtherTrakcs()
+void TestTimeline::testTrimmingWithOtherTracks()
 {
     StartTestSuite();
     Zoom level(2);
@@ -589,10 +589,10 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
     PrepareSnapping(false);
     {
         StartTest("Trim: EndTrim: Enlarge the last clip in a track (there is no empty clip after it anymore)");
-         TrimRight(VideoClip(0,3),40,false);
+         TrimRight(VideoClip(0,3),-40,false);
          pts length = VideoClip(0,3)->getLength();
          DragAlignLeft(Center(VideoClip(0,3)),RightPixel(VideoClip(0,7)));
-         TrimRight(VideoClip(0,7),-20,false);
+         TrimRight(VideoClip(0,7),20,false);
          ASSERT_MORE_THAN(VideoClip(0,7)->getLength(), length);
          Undo();
          Undo();
@@ -618,7 +618,7 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
     {
         StartTest("ShiftTrim: EndTrim: Shorten: with an empty other track.");
         pts previouslength = VideoClip(0,4)->getLength();
-        TrimRight(VideoClip(0,4),20);
+        TrimRight(VideoClip(0,4),-20);
         ASSERT_LESS_THAN_ZERO(VideoClip(0,4)->getMinAdjustEnd());
         ASSERT_MORE_THAN_ZERO(VideoClip(0,4)->getMaxAdjustEnd());
         ASSERT_LESS_THAN(VideoClip(0,4)->getLength(),previouslength);
@@ -626,7 +626,7 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
     {
         StartTest("ShiftTrim: EndTrim: Enlarge: with an empty other track.");
         pts previouslength = VideoClip(0,4)->getLength();
-        TrimRight(VideoClip(0,4),-10);
+        TrimRight(VideoClip(0,4),10);
         ASSERT_LESS_THAN_ZERO(VideoClip(0,4)->getMinAdjustEnd());
         ASSERT_MORE_THAN_ZERO(VideoClip(0,4)->getMaxAdjustEnd());
         ASSERT_MORE_THAN(VideoClip(0,4)->getLength(),previouslength);
@@ -651,7 +651,7 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
         StartTest("ShiftTrim: EndTrim: Shorten: with another track that is shorter than the trim position (this imposes a lower bound on the shift).");
         pts diff = VideoClip(0,4)->getRightPts() - VideoTrack(1)->getLength();
         pts track0len = VideoTrack(0)->getLength();
-        TrimRight(VideoClip(0,4),400);
+        TrimRight(VideoClip(0,4),-400);
         ASSERT_EQUALS(VideoClip(0,4)->getRightPts(),VideoTrack(1)->getLength());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),track0len - diff);
         Undo(); // Undo the trim
@@ -671,10 +671,10 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
     }
     {
         StartTest("ShiftTrim: EndTrim: Shorten: with another track that has a clip on the trim position (no trim possible).");
-        TrimRight(VideoClip(0,4),+100);
+        TrimRight(VideoClip(0,4),-100);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), previouslength);
         StartTest("ShiftTrim: EndTrim: Enlarge: with another track that has a clip on the trim position (no trim possible).");
-        TrimRight(VideoClip(0,4),-100);
+        TrimRight(VideoClip(0,4),100);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), previouslength);
     }
     {
@@ -682,7 +682,7 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
         Undo();
         Undo();
         DragToTrack(1,VideoClip(0,5),AudioClip(0,5));
-        TrimRight(VideoClip(0,6),40);
+        TrimRight(VideoClip(0,6),-40);
     }
     {
         StartTest("ShiftTrim: Put clips in other tracks 'around' trim points but not exactly ON the trim point so that trimming is possible (Preparation).");
@@ -718,7 +718,7 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
     {
         StartTest("ShiftTrim: EndTrim: Shorten: other track space imposes a trim restriction.");
         pts minadjust = VideoClip(1,3)->getRightPts() - VideoClip(0,4)->getRightPts();
-        TrimRight(VideoClip(0,4),200);
+        TrimRight(VideoClip(0,4),-200);
         ASSERT_MORE_THAN(VideoClip(0,4)->getLength(), previouslength + minend); // Can't trim to the max due to the restriction in the other track
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), previouslength + minadjust ); // Note: minadjust < 0
         ASSERT_EQUALS(VideoClip(0,4)->getRightPts(),VideoClip(1,3)->getRightPts());
@@ -726,7 +726,7 @@ void TestTimeline::testTrimmingWithOtherTrakcs()
     }
     {
         StartTest("ShiftTrim: EndTrim: Enlarge: other track space imposes NO trim restriction.");
-        TrimRight(VideoClip(0,4),-200);
+        TrimRight(VideoClip(0,4),200);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), previouslength + maxend);
         Undo();
     }

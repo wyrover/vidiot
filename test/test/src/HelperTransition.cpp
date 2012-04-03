@@ -114,7 +114,7 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip)
 {
     // Reduce size of clips to be able to create transition
     TrimLeft(VideoClip(0,clipNumberBeforeTransition + 1),30,true);
-    TrimRight(VideoClip(0,clipNumberBeforeTransition),30,true);
+    TrimRight(VideoClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(VideoClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(VideoClip(0,clipNumberBeforeTransition));
     ASSERT_LESS_THAN_ZERO(VideoClip(0,clipNumberBeforeTransition + 1)->getMinAdjustBegin())(VideoClip(0,clipNumberBeforeTransition + 1));
 
@@ -139,7 +139,7 @@ MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip)
     : MakeTransitionAfterClip(afterclip)
 {
     // Reduce size of clips to be able to create transition
-    TrimRight(VideoClip(0,clipNumberBeforeTransition),30,true);
+    TrimRight(VideoClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(VideoClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(VideoClip(0,clipNumberBeforeTransition));
     ASSERT_ZERO(VideoClip(0,clipNumberBeforeTransition + 1)->getMinAdjustBegin())(VideoClip(0,clipNumberBeforeTransition + 1));
 

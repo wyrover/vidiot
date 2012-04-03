@@ -73,7 +73,7 @@ public:
     void testTrimming();
 
     /// Tests (shift)trimming restrictions imposed by clips in 'other' tracks
-    void testTrimmingWithOtherTrakcs();
+    void testTrimmingWithOtherTracks();
 
 private:
 
