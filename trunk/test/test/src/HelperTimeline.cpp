@@ -357,7 +357,7 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift)
     VAR_DEBUG(clip)(length)(shift);
     wxPoint from = RightCenter(clip);
     wxPoint to = from;
-    to.x -= length; // todo flip the '-' and replace all uses
+    to.x += length;
     Move(from);
     if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
     wxUIActionSimulator().MouseDown();

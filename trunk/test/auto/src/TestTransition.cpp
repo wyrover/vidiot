@@ -379,7 +379,7 @@ void TestTransition::testAdjacentTransitions()
     Zoom level(3);
     {
         StartTest("Reduce size of second and third clip to be able to create transitions");
-        TrimRight(VideoClip(0,1),30,false);
+        TrimRight(VideoClip(0,1),-30,false);
         ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
         TrimLeft(VideoClip(0,3),30,false); // Note: the trim of clip 1 causes clip 2 to become clip 3 (clip 2 is empty space)
         ASSERT(!VideoClip(0,3)->isA<model::EmptyClip>());
@@ -609,13 +609,13 @@ void TestTransition::testTrimmingClipsInTransition()
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         StartTest("OutTransition: Without shift: ClipEnd: reduce clip size (verify that transition keeps being positioned alongside the clip.)");
-        TrimRight(VideoClip(0,2),20,false);
+        TrimRight(VideoClip(0,2),-20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip)(VideoClip);
         ASSERT_MORE_THAN_ZERO(VideoClip(0,3)->getLength());
         ASSERT_EQUALS(VideoClip(0,1)->getLength() + VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfTransition);
         StartTest("OutTransition: Without shift: ClipEnd: enlarge clip size (verify that transition keeps being positioned alongside the clip.)");
-        TrimRight(VideoClip(0,2),-20,false);
+        TrimRight(VideoClip(0,2),20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfTransition);
@@ -1068,7 +1068,7 @@ void TestTransition::testTrimmingTransition()
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
             DeleteClip(VideoClip(0,3));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
-            TrimRight(VideoClip(0,2),20);
+            TrimRight(VideoClip(0,2),-20);
             Trim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
             Undo(2);
         }
@@ -1089,7 +1089,7 @@ void TestTransition::testTrimmingTransition()
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
             DeleteClip(VideoClip(0,3));
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
-            TrimRight(VideoClip(0,2),20);
+            TrimRight(VideoClip(0,2),-20);
             Trim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
             Undo(2);
         }
