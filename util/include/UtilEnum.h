@@ -1,6 +1,7 @@
 #include <boost/utility.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/bimap.hpp>
+#include <wx/string.h>
 
 // USAGE:
 //
@@ -56,10 +57,10 @@ private: \
 }; \
     std::ostream& operator<< (std::ostream& os, const ENUMNAME& obj); \
     std::string ENUMNAME ## _toString( ENUMNAME value ); \
-    ENUMNAME ENUMNAME ## _fromString( std::string value )
+    ENUMNAME ENUMNAME ## _fromString( std::string value ); \
+    ENUMNAME Enum_fromConfig(wxString value, ENUMNAME unused);
 
 #else // _MSC_VER
-
 
 #define DECLAREENUM(ENUMNAME,VALUE1,OTHERVALUES...) \
     enum ENUMNAME { VALUE1 = 0, OTHERVALUES , ENUMNAME ## _MAX }; \
@@ -102,9 +103,5 @@ ENUMNAME ENUMNAME ## _fromString( std::string value )
 ENUMNAME ## Converter ENUMNAME ## Converter::sConverter; \
 std::ostream& operator<< (std::ostream& os, const ENUMNAME& obj) { os << ENUMNAME ## _toString(obj); return os; }; \
 std::string ENUMNAME ## _toString( ENUMNAME value ) { return ENUMNAME ## Converter::sConverter.toString(value); }; \
-ENUMNAME ENUMNAME ## _fromString( std::string value ) { return ENUMNAME ## Converter::sConverter.fromString(value); }
-
-
-
-
-
+ENUMNAME ENUMNAME ## _fromString( std::string value ) { return ENUMNAME ## Converter::sConverter.fromString(value); }; \
+ENUMNAME Enum_fromConfig(wxString value, ENUMNAME unused) { return ENUMNAME ## _fromString(std::string(value.mb_str())); };

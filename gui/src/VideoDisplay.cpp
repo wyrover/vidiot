@@ -5,9 +5,11 @@
 #include <wx/dcclient.h>
 #include <boost/make_shared.hpp>
 #include <portaudio.h>
-#include "UtilLog.h"
 #include "Convert.h"
+#include "Layout.h"
+#include "Properties.h"
 #include "Sequence.h"
+#include "UtilLog.h"
 #include "VideoDisplayEvent.h"
 
 namespace gui {
@@ -433,11 +435,19 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
             dc.DrawRectangle( 0, bitmap->GetHeight(), mWidth, mHeight - bitmap->GetHeight());
         }
         dc.DrawBitmap(*bitmap,wxPoint(0,0));
+
+        // Draw the bounding box
+        wxSize projectSize = model::Properties::get()->getVideoSize();
+        wxSize scaledSize = model::Convert::sizeInBoundingBox(projectSize,bitmap->GetSize());
+        dc.SetPen(Layout::sPreviewBoundingBoxPen);
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.DrawRectangle( 0, 0, scaledSize.GetWidth(), scaledSize.GetHeight());
     }
     else
     {
         dc.DrawRectangle( 0, 0, mWidth, mHeight);
     }
+
 }
 
 void VideoDisplay::showNewVideoFrame()

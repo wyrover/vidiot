@@ -1,18 +1,15 @@
-#ifndef PROPERTIES_H
-#define PROPERTIES_H
+#ifndef DETAILS_VIEW_H
+#define DETAILS_VIEW_H
 
-#include <wx/gdicmn.h>
+#include <wx/panel.h>
 #include <boost/shared_ptr.hpp>
-#include <boost/serialization/version.hpp>
 #include <boost/serialization/access.hpp>
-#include "UtilFrameRate.h"
+#include <boost/serialization/version.hpp>
 
-namespace model {
+namespace gui {
 
-class Properties;
-typedef boost::shared_ptr<Properties> PropertiesPtr;
-
-class Properties
+class DetailsView
+:   public wxPanel
 {
 public:
 
@@ -20,22 +17,23 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Properties();
-    ~Properties();
-    static PropertiesPtr get();
+    DetailsView(wxWindow* parent);
+    virtual ~DetailsView();
+    static DetailsView& get();
 
     //////////////////////////////////////////////////////////////////////////
-    // GET/SET
+    // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
-
-    FrameRate getFrameRate() const;
-    wxSize getVideoSize() const;
 
 private:
 
-    FrameRate mFrameRate;
-    long mVideoWidth;
-    long mVideoHeight;
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -52,6 +50,6 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::Properties, 1)
+BOOST_CLASS_VERSION(gui::DetailsView, 1)
 
-#endif // PROPERTIES_H
+#endif // DETAILS_VIEW_H

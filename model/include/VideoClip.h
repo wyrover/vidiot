@@ -2,6 +2,7 @@
 #define MODEL_VIDEO_CLIP_H
 
 #include "Clip.h"
+#include "Enums.h"
 #include "IVideo.h"
 
 namespace model {
@@ -62,6 +63,9 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pts mProgress; ///< Current render position in pts units (delivered video frames count)
+
+    VideoScaling mScaling;
+    VideoAlignment mAlignment;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

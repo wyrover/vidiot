@@ -3,6 +3,7 @@
 
 #include <wx/config.h> // This ensures that in other parts of the code only #include "Config.h" is required
 #include <wx/string.h>
+#include "UtilLog.h"
 
 namespace gui {
 /// This class holds everything related to the persistence of global settings.
@@ -35,6 +36,16 @@ public:
     static double   ReadDouble(const wxString& key);
     static wxString ReadString(const wxString& key);
 
+    template <class TYPE>
+    static TYPE     ReadEnum  (const wxString& key)
+    {
+        wxString result;
+        wxString dummy;
+        bool found = wxConfigBase::Get()->Read(key, &result, dummy);
+        ASSERT(found)(key);
+        return Enum_fromConfig(result,TYPE());
+    }
+
     // Specific getters for dedicated attributes are only cached for performance
     static bool getShowDebugInfo();
 
@@ -50,7 +61,11 @@ public:
     static const wxString sPathLogLevelAvcodec;
     static const wxString sPathShowDebugInfoOnWidgets;
     static const wxString sPathTest;
-    static const wxString sPathFrameRate;
+    static const wxString sPathDefaultFrameRate;
+    static const wxString sPathDefaultVideoWidth;
+    static const wxString sPathDefaultVideoHeight;
+    static const wxString sPathDefaultVideoScaling;
+    static const wxString sPathDefaultVideoAlignment;
     static const wxString sPathMarkerBeginAddition;
     static const wxString sPathMarkerEndAddition;
     static const wxString sPathStrip;

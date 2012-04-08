@@ -41,6 +41,9 @@ public:
     static const wxPen      sBackgroundPen;
     static const wxBrush    sBackgroundBrush;
 
+    static const wxColour   sPreviewBoundingBoxColour;
+    static const wxPen      sPreviewBoundingBoxPen;
+
     static const wxColour	sPreviewBackgroundColour;
     static const wxPen      sPreviewBackgroundPen;
     static const wxBrush    sPreviewBackgroundBrush;

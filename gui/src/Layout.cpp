@@ -29,9 +29,12 @@ const pixel Layout::sDragThreshold                        = 2;
 // BRUSHES AND PENS
 //////////////////////////////////////////////////////////////////////////
 
-const wxColour	Layout::sBackgroundColour		(212,208,200);
+const wxColour	Layout::sBackgroundColour		 (212,208,200);
 const wxPen     Layout::sBackgroundPen           (Layout::sBackgroundColour);
 const wxBrush   Layout::sBackgroundBrush         (Layout::sBackgroundColour,wxBRUSHSTYLE_SOLID);
+
+const wxColour	Layout::sPreviewBoundingBoxColour(*wxWHITE);
+const wxPen     Layout::sPreviewBoundingBoxPen   (Layout::sPreviewBoundingBoxColour, 2);
 
 const wxColour	Layout::sPreviewBackgroundColour (*wxBLACK);
 const wxPen     Layout::sPreviewBackgroundPen    (Layout::sPreviewBackgroundColour);
