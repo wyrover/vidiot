@@ -56,6 +56,8 @@ public:
     pts getPts() const;
     void setPts(pts position);
     wxSize getSize() const;
+    void setRegionOfInterest(wxRect regionOfInterest);
+    wxRect getRegionOfInterest() const;
     int getSizeInBytes() const;
     wxBitmapPtr getBitmap();    ///< \return this frame as a wxBitmap
 
@@ -79,6 +81,7 @@ protected:
     int mRepeat;
     double mTimeStamp;
     wxSize mSize;
+    wxRect mRegionOfInterest;
     pts mPts;
     boost::uint8_t *mBuffer;
     int mBufferSize;

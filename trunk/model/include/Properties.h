@@ -1,6 +1,7 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
+#include <wx/gdicmn.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/access.hpp>
@@ -21,16 +22,20 @@ public:
 
     Properties();
     ~Properties();
+    static PropertiesPtr get();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    FrameRate getFrameRate();
+    FrameRate getFrameRate() const;
+    wxSize getVideoSize() const;
 
 private:
 
     FrameRate mFrameRate;
+    long mVideoWidth;
+    long mVideoHeight;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

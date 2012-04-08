@@ -196,7 +196,10 @@ VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
             NIY; // TO BE TESTED: FILES USING 'REPEAT'
         }
 
-        wxSize scaledSize = Convert::sizeInBoundingBox(getSize(), size);
+        wxSize scaledSize = size; // todo removed Convert::sizeInBoundingBox(getSize(), size);
+        static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
+        size.x = std::min(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
+        size.y = std::min(size.y,sMinimumFrameSize);    // that any excess data is cut off.
         mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledSize, mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size

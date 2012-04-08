@@ -2,10 +2,14 @@
 
 #include <wx/fileconf.h>
 #include <wx/filename.h>
+#include "Enums.h"
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 
 namespace gui {
+
+    // todo move this class to the model
+
 wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);
 
@@ -45,7 +49,11 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     // Set all defaults here
     setDefault(Config::sPathAutoLoadEnabled, false);
     setDefault(Config::sPathDefaultTransitionLength, 24);
-    setDefault(Config::sPathFrameRate, "25");
+    setDefault(Config::sPathDefaultFrameRate, "25");
+    setDefault(Config::sPathDefaultVideoWidth, 720);
+    setDefault(Config::sPathDefaultVideoHeight, 576);
+    setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill).c_str());
+    setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
     setDefault(Config::sPathLastOpened, "");
     setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
@@ -115,9 +123,14 @@ const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
 const wxString Config::sPathLogLevelAvcodec         ("/Debug/LogLevelAvcodec");
 const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
 const wxString Config::sPathTest                    ("/Debug/Test");
-const wxString Config::sPathFrameRate               ("/Video/FrameRate");
+const wxString Config::sPathDefaultFrameRate        ("/Video/DefaultFrameRate");
+const wxString Config::sPathDefaultVideoWidth       ("/Video/DefaultWidth");
+const wxString Config::sPathDefaultVideoHeight      ("/Video/DefaultHeight");
+const wxString Config::sPathDefaultVideoScaling     ("/Video/DefaultVideoScaling");
+const wxString Config::sPathDefaultVideoAlignment   ("/Video/DefaultVideoAlignment");
 const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
 const wxString Config::sPathStrip                   ("/Timeline/Strip");
 const wxString Config::sPathDefaultTransitionLength ("/Timeline/DefaultTransitionLength");
+
 } // namespace

@@ -44,7 +44,7 @@ pts Convert::microsecondsToPts(int us)
 int Convert::ptsToFrames(int audioRate, int nAudioChannels, pts position)
 {
     boost::int64_t nFrames =
-        static_cast<boost::int64_t>(audioRate * nAudioChannels) * 
+        static_cast<boost::int64_t>(audioRate * nAudioChannels) *
         static_cast<boost::int64_t>(model::Convert::ptsToTime(position)) /
         static_cast<boost::int64_t>(Constants::sSecond);
     ASSERT_MORE_THAN_EQUALS_ZERO(nFrames);
@@ -54,12 +54,12 @@ int Convert::ptsToFrames(int audioRate, int nAudioChannels, pts position)
 // static
 pts Convert::framesToPts(int audioRate, int nAudioChannels, int nFrames)
 {
-    boost::int64_t time = 
-        static_cast<boost::int64_t>(nFrames) * 
+    boost::int64_t time =
+        static_cast<boost::int64_t>(nFrames) *
         static_cast<boost::int64_t>(Constants::sSecond) /
         static_cast<boost::int64_t>(audioRate * nAudioChannels);
     ASSERT_MORE_THAN_EQUALS_ZERO(time);
-    return model::Convert::timeToPts(time); 
+    return model::Convert::timeToPts(time);
 }
 
 pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrate)
@@ -67,30 +67,65 @@ pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrat
     return toInt(rational(inputposition) * inputrate / outputrate );
 }
 
-//static 
+//static
 pts Convert::toProjectFrameRate(pts inputposition, FrameRate inputrate)
 {
     return convertFrameRate(inputposition, inputrate, Project::get().getProperties()->getFrameRate());
 }
 
-//static 
+//static
 pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
 {
     return convertFrameRate(outputposition, Project::get().getProperties()->getFrameRate(), inputrate);
 }
 
-// static 
-wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox)
+// static
+int Convert::scale(int input, double factor)
+{
+    return static_cast<int>(floor(factor * input));
+}
+
+// static
+wxSize Convert::scale(wxSize input, double factor)
+{
+    return wxSize(scale(input.x,factor),scale(input.y,factor));
+}
+
+// static
+wxPoint Convert::scale(wxPoint input, double factor)
+{
+    return wxPoint(scale(input.x,factor),scale(input.y,factor));
+}
+
+// static
+wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox, double& scaling)
 {
     static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
     double w = std::max(sMinimumSize, boundingbox.GetWidth());
     double h = std::max(sMinimumSize, boundingbox.GetHeight());
     double scalingW = w / static_cast<double>(input.GetWidth());
     double scalingH = h / static_cast<double>(input.GetHeight());
-    double scaling  = std::min(scalingW, scalingH);
-    int scaledWidth  = static_cast<int>(floor(scaling * input.GetWidth()));
-    int scaledHeight = static_cast<int>(floor(scaling * input.GetHeight()));
-    return wxSize(scaledWidth,scaledHeight);
+    scaling  = std::min(scalingW, scalingH);
+    return scale(input,scaling);
+}
+
+// static
+wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox)
+{
+    double dummy;
+    return sizeInBoundingBox(input,boundingbox,dummy);
+}
+
+// static
+wxSize Convert::fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, double& scaling)
+{
+    static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
+    double w = std::max(sMinimumSize, boundingbox.GetWidth());
+    double h = std::max(sMinimumSize, boundingbox.GetHeight());
+    double scalingW = w / static_cast<double>(input.GetWidth());
+    double scalingH = h / static_cast<double>(input.GetHeight());
+    scaling  = std::max(scalingW, scalingH);
+    return scale(input,scaling);
 }
 
 } // namespace

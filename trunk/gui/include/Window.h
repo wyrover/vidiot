@@ -26,6 +26,7 @@ class Watcher;
 class Worker;
 class TimelinesView;
 class Preview;
+class DetailsView;
 class ProjectView;
 
 class Window
@@ -138,6 +139,7 @@ private:
     Worker*             mWorker;
 
     Preview*		    mPreview;
+    DetailsView*        mDetailsView;
     TimelinesView*      mTimelinesView;
     ProjectView*	    mProjectView;
 

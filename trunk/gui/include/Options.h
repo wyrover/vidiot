@@ -30,6 +30,10 @@ private:
     wxCheckBox*         mLoadLast;
 
     wxRadioBox*         mFrameRate;
+    wxSpinCtrl*         mDefaultVideoWidth;
+    wxSpinCtrl*         mDefaultVideoHeight;
+    wxChoice*           mDefaultVideoScaling;
+    wxChoice*           mDefaultVideoAlignment;
 
     wxSpinCtrlDouble*   mMarkerBeginAddition;
     wxSpinCtrlDouble*   mMarkerEndAddition;

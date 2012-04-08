@@ -16,12 +16,13 @@ IMPLEMENTENUM(VideoFrameType);
 //////////////////////////////////////////////////////////////////////////
 
 VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position, int repeat)
-:   mFrame(0)
-,   mBuffer(0)
-,   mType(type)
-,	mSize(size)
-,   mPts(position)
-,   mRepeat(repeat)
+    : mFrame(0)
+    , mBuffer(0)
+    , mType(type)
+    , mSize(size)
+    , mRegionOfInterest(wxPoint(0,0),size)
+    , mPts(position)
+    , mRepeat(repeat)
 {
     PixelFormat format = type == videoRGB ? PIX_FMT_RGB24 : PIX_FMT_RGBA;
     mBufferSize = avpicture_get_size(format, mSize.GetWidth(), mSize.GetHeight());
@@ -34,12 +35,13 @@ VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position, int repea
 }
 
 VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position)
-:   mFrame(0)
-,   mBuffer(0)
-,   mType(type)
-,	mSize(size)
-,   mPts(position)
-,   mRepeat(1)
+    : mFrame(0)
+    , mBuffer(0)
+    , mType(type)
+    , mSize(size)
+    , mRegionOfInterest(wxPoint(0,0),size)
+    , mPts(position)
+    , mRepeat(1)
 {
 }
 
@@ -75,6 +77,18 @@ wxSize VideoFrame::getSize() const
     return mSize;
 }
 
+void VideoFrame::setRegionOfInterest(wxRect regionOfInterest)
+{
+    ASSERT_LESS_THAN_EQUALS(regionOfInterest.x + regionOfInterest.width,  mSize.x);
+    ASSERT_LESS_THAN_EQUALS(regionOfInterest.y + regionOfInterest.height, mSize.y);
+    mRegionOfInterest = regionOfInterest;
+}
+
+wxRect VideoFrame::getRegionOfInterest() const
+{
+    return mRegionOfInterest;
+}
+
 pts VideoFrame::getPts() const
 {
     return mPts;
@@ -92,7 +106,8 @@ int VideoFrame::getSizeInBytes() const
 
 wxBitmapPtr VideoFrame::getBitmap()
 {
-    return boost::make_shared<wxBitmap>(wxImage(mSize, getData()[0], true));
+    wxBitmap tmp(wxImage(mSize, getData()[0], true));
+    return boost::make_shared<wxBitmap>(tmp.GetSubBitmap(mRegionOfInterest));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -101,10 +116,11 @@ wxBitmapPtr VideoFrame::getBitmap()
 
 std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
 {
-    os  << &obj                 << "|"
-        << obj.getPts()         << "|"
-        << obj.getRepeat()      << "|"
-        << obj.getSize()        << "|";
+    os  << &obj                         << "|"
+        << obj.getPts()                 << "|"
+        << obj.getRepeat()              << "|"
+        << obj.getSize()                << "|"
+        << obj.getRegionOfInterest();
     return os;
 }
 

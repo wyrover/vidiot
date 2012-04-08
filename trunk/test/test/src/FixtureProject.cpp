@@ -41,21 +41,21 @@ void FixtureProject::init()
     mAutoFolder = addAutoFolder( TestFilesPath );
     ASSERT_EQUALS(mAutoFolder->getParent(),mRoot);
     mSequence = createSequence( mAutoFolder );
+
     ASSERT_EQUALS(mSequence->getParent(),mRoot);
 
     InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
 
-    BOOST_FOREACH( model::IClipPtr clip, getSequence()->getVideoTrack(0)->getClips() )
+    BOOST_FOREACH( model::IClipPtr clip, mSequence->getVideoTrack(0)->getClips() )
     {
         mOriginalLengthOfVideoClip.push_back(clip->getLength());
         mOriginalPtsOfVideoClip.push_back(clip->getLeftPts());
     }
-    BOOST_FOREACH( model::IClipPtr clip, getSequence()->getAudioTrack(0)->getClips() )
+    BOOST_FOREACH( model::IClipPtr clip, mSequence->getAudioTrack(0)->getClips() )
     {
         mOriginalLengthOfAudioClip.push_back(clip->getLength());
         mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());
     }
-
     // Click in the timeline to give it the focus. A lot of test cases start
     // with zooming in via keyboard commands. For that purpose, timeline must
     // have the current focus.

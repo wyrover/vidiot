@@ -12,6 +12,7 @@
 #include "Dialog.h"
 #include "Node.h"
 #include "Config.h"
+#include "DetailsView.h"
 #include "ids.h"
 #include "Options.h"
 #include "Preview.h"
@@ -67,6 +68,7 @@ Window::Window()
     ,   mWatcher(0)
     ,   mWorker(0)
     ,   mPreview(0)
+    ,   mDetailsView(0)
     ,   mTimelinesView(0)
     ,   mProjectView(0)
     ,   menubar(0)
@@ -80,6 +82,7 @@ Window::Window()
     mWorker         = new Worker();
     mWatcher        = new Watcher();
     mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
+    mDetailsView    = new DetailsView(this);
     mTimelinesView  = new TimelinesView(this);
     mProjectView    = new ProjectView(this);
 
@@ -139,7 +142,8 @@ Window::Window()
 
     mUiManager.SetManagedWindow(this);
     mUiManager.InsertPane(mProjectView,     wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(0).CaptionVisible(false));
-    mUiManager.InsertPane(mPreview,         wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(1).CaptionVisible(false));
+    mUiManager.InsertPane(mDetailsView,     wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(1).CaptionVisible(false));
+    mUiManager.InsertPane(mPreview,         wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(2).CaptionVisible(false));
     mUiManager.InsertPane(mTimelinesView,   wxAuiPaneInfo().BestSize(wxSize(400,100)).MinSize(wxSize(400,100)).Center().CaptionVisible(false));
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
     mUiManager.Update();
@@ -222,6 +226,7 @@ Window::~Window()
     delete mProjectView;    // First, delete the referring windows.
     delete mTimelinesView;  // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
     delete mPreview;        // the timeline view in turn 'knows/uses' the preview (specifically, the player).
+    delete mDetailsView;
     delete mWatcher;
     delete mWorker;
     delete mDialog;

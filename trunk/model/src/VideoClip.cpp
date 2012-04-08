@@ -5,9 +5,14 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include "Config.h"
+#include "Constants.h"
+#include "Convert.h"
+#include "EmptyFrame.h"
+#include "Properties.h"
 #include "UtilLog.h"
 #include "VideoFile.h"
-#include "EmptyFrame.h"
+#include "UtilLogWxwidgets.h"
 
 namespace model {
 
@@ -16,22 +21,28 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 VideoClip::VideoClip()
-    :	Clip()
-    ,   mProgress(0)
+    : Clip()
+    , mProgress(0)
+    , mScaling(gui::Config::ReadEnum<VideoScaling>(gui::Config::sPathDefaultVideoScaling))
+    , mAlignment(gui::Config::ReadEnum<VideoAlignment>(gui::Config::sPathDefaultVideoAlignment))
 {
     VAR_DEBUG(this);
 }
 
 VideoClip::VideoClip(IControlPtr file)
-    :	Clip(file)
-    ,   mProgress(0)
+    : Clip(file)
+    , mProgress(0)
+    , mScaling(gui::Config::ReadEnum<VideoScaling>(gui::Config::sPathDefaultVideoScaling))
+    , mAlignment(gui::Config::ReadEnum<VideoAlignment>(gui::Config::sPathDefaultVideoAlignment))
 {
     VAR_DEBUG(this);
 }
 
 VideoClip::VideoClip(const VideoClip& other)
-    :   Clip(other)
-    ,   mProgress(0)
+    : Clip(other)
+    , mProgress(0)
+    , mScaling(other.mScaling)
+    , mAlignment(other.mAlignment)
 {
     VAR_DEBUG(*this);
 }
@@ -63,6 +74,7 @@ void VideoClip::clean()
 
 VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
 {
+    VAR_INFO(size);
     if (getLastSetPosition())
     {
         mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
@@ -75,7 +87,66 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
 
     if (mProgress < length)
     {
-        videoFrame = getDataGenerator<VideoFile>()->getNextVideo(size, alpha);
+        VideoFilePtr generator = getDataGenerator<VideoFile>();
+
+        wxSize inputVideoSize = generator->getSize();
+        wxSize projectSize = Properties::get()->getVideoSize();
+
+        // Determine scaling the clip to the project size
+        double scaleInputSizeToProjectSize(0);
+        wxSize scaledToProjectSize(0,0);
+        switch (mScaling)
+        {
+        case VideoScalingFitToFill:
+            scaledToProjectSize = Convert::fillBoundingBoxWithMinimalLoss(inputVideoSize, projectSize, scaleInputSizeToProjectSize); // todo don't use project default but give each clip it's own setting!
+            break;
+        case VideoScalingFitAll:
+            scaledToProjectSize = Convert::sizeInBoundingBox(inputVideoSize, projectSize, scaleInputSizeToProjectSize);
+            break;
+        case VideoScalingNone:
+        case VideoScalingCustom:
+        default:
+            NIY;
+            break;
+        }
+        ASSERT_NONZERO(scaleInputSizeToProjectSize);
+
+        // Determine scaling the project size to the bounding box
+        double scaleProjectSizeToBoundingBox(0);
+        wxSize requiredOutputSize = Convert::sizeInBoundingBox(projectSize, size, scaleProjectSizeToBoundingBox); // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
+        ASSERT_NONZERO(scaleProjectSizeToBoundingBox);
+
+        // Determine region of interest for the project size (this includes clipping)
+        wxPoint regionOfInterestPosition(0,0);
+        wxSize regionOfInterestSize(projectSize);
+        switch (mAlignment)
+        {
+        case VideoAlignmentCenter:
+            {
+                wxSize diff = scaledToProjectSize - projectSize;
+                diff /= 2;
+                regionOfInterestPosition = wxPoint(0,0) + diff;
+                break;
+            }
+        case VideoAlignmentCustom:
+        default:
+            NIY;
+            break;
+        }
+
+        // Scale to the given bounding box
+        wxSize requiredVideoSize = Convert::scale(scaledToProjectSize, scaleProjectSizeToBoundingBox);
+        regionOfInterestPosition = Convert::scale(regionOfInterestPosition, scaleProjectSizeToBoundingBox);
+        regionOfInterestSize     = Convert::scale(regionOfInterestSize, scaleProjectSizeToBoundingBox);
+
+        wxRect regionOfInterest(regionOfInterestPosition,regionOfInterestSize);
+        VAR_INFO(inputVideoSize)(size)(projectSize)(scaledToProjectSize)(requiredVideoSize)(regionOfInterest)(scaleInputSizeToProjectSize)(scaleProjectSizeToBoundingBox);
+        ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterestPosition.x);
+        ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterestPosition.y);
+        ASSERT_LESS_THAN_EQUALS(regionOfInterestSize.x, size.x);
+        ASSERT_LESS_THAN_EQUALS(regionOfInterestSize.y, size.y);
+
+        videoFrame = generator->getNextVideo(requiredVideoSize, alpha);
         if (videoFrame)
         {
             ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());
@@ -88,6 +159,8 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
             {
                 mProgress += videoFrame->getRepeat();
             }
+
+            videoFrame->setRegionOfInterest(regionOfInterest);
         }
         else
         {
@@ -116,7 +189,9 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
 
 wxSize VideoClip::getSize()
 {
-    return getDataGenerator<VideoFile>()->getSize();
+    // Without scaling: use default project size
+    // Todo add scaling (make smaller) for compositing
+    return Properties::get()->getVideoSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
