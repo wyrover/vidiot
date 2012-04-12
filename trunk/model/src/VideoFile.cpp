@@ -210,19 +210,18 @@ VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
             NIY; // TO BE TESTED: FILES USING 'REPEAT'
         }
 
-        wxSize scaledSize = size; // todo removed Convert::sizeInBoundingBox(getSize(), size);
         static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
         size.x = std::min(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
         size.y = std::min(size.y,sMinimumFrameSize);    // that any excess data is cut off.
-        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, scaledSize, mPosition, pFrame->repeat_pict + 1);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, size, mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(
             getCodec()->width,
             getCodec()->height,
             getCodec()->pix_fmt,
-            scaledSize.GetWidth(),
-            scaledSize.GetHeight(),
+            size.GetWidth(),
+            size.GetHeight(),
             alpha ? PIX_FMT_RGBA : PIX_FMT_RGB24, SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
         sws_scale(ctx,pFrame->data,pFrame->linesize,0,getCodec()->height,mDeliveredFrame->getData(),mDeliveredFrame->getLineSizes());
         sws_freeContext(ctx);
