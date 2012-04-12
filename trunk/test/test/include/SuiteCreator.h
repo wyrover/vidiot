@@ -3,6 +3,7 @@
 
 #include <cxxtest/TestSuite.h>
 #include "FixtureApplication.h"
+#include "UtilLog.h"
 
 namespace test {
 

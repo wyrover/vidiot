@@ -50,7 +50,7 @@ public:
     // POPUP MENU
     //////////////////////////////////////////////////////////////////////////
 
-    void onAddTransition(wxCommandEvent& event);
+    void onAddInTransition(wxCommandEvent& event);
 
 private:
 

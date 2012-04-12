@@ -155,7 +155,12 @@ void File::moveTo(pts position)
 
     stopReadingPackets();
 
-    int result = av_seek_frame(mFileContext, -1, model::Convert::ptsToMicroseconds(position), AVSEEK_FLAG_ANY);
+    // todo add check here for positioning beyond the length...
+
+    int64_t timestamp = model::Convert::ptsToMicroseconds(position);
+    ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext);
+    VAR_DEBUG(timestamp)(mFileContext->duration);
+    int result = av_seek_frame(mFileContext, -1, timestamp, AVSEEK_FLAG_ANY);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     ASSERT_ZERO(mPackets.getSize());
@@ -242,6 +247,14 @@ bool File::hasAudio()
 
 void File::startReadingPackets()
 {
+    // If the end of file is reached, a subsequent getNext* should not
+    // trigger a new (useless) sequence of startReadingPackets,
+    // bufferPacketsThread, "bufferPacketsThread: End of file."
+    // (and this, over and over again....).
+    //
+    // First a moveTo() is required to reset EOF.
+    if (getEOF()) return;
+
     openFile();
     if (mReadingPackets) return;
 

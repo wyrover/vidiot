@@ -233,16 +233,19 @@ void Trim::preview()
             boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
             wxMemoryDC dc(*bmp);
 
+            pts position(0);
             if (mCommand->isBeginTrim())
             {
-                videoclip->moveTo(0);
+                position = 0;
                 previewxpos = s.GetWidth() - previewwidth; // This works for both with and without an adjacent clip
             }
             else
             {
-                videoclip->moveTo(videoclip->getLength() - 1);
+                position = videoclip->getLength() - 1;
                 previewxpos = 0;
             }
+            VAR_DEBUG(position);
+            videoclip->moveTo(position);
 
             // Fill with black
             dc.SetBrush(Layout::sPreviewBackgroundBrush);

@@ -83,6 +83,8 @@ void TestOnce::testOnce()
     // getTimeline().getDump().dump();
     // PrepareSnapping(true);
     StartTestSuite();
+    TrimRight(VideoClip(0,3),10);
+    pause();
 
        //wxString sFile( "scene'20100102 12.32.48.avi" ); // Should be a file also in the autofolder
     // model::NodePtr file = mProjectFixture.mAutoFolder->find(sFile).front();

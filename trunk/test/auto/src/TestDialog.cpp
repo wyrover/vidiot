@@ -8,7 +8,6 @@
 #include "HelperApplication.h"
 #include "HelperWindow.h"
 #include "ids.h"
-#include "UtilLog.h"
 #include "Window.h"
 
 namespace test {

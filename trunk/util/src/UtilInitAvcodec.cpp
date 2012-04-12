@@ -210,6 +210,29 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
     return os;
 }
 
+std::ostream& operator<< (std::ostream& os, const AVPacket* obj)
+{
+    if (obj)
+    {
+        os  << '{'
+            << "pts="                  << obj->pts             << ','
+            << "dts="                  << obj->dts             << ','
+            << "size="                 << obj->size            << ','
+            << "stream_index="         << obj->stream_index    << ','
+            << "flags="                << obj->flags           << ','
+            << "side_data_elems="      << obj->side_data_elems << ','
+            << "duration="             << obj->duration        << ','
+            << "pos="                  << obj->pos             << ','
+            << "convergence_duration=" << obj->convergence_duration
+            << '}';
+    }
+    else
+    {
+        os <<'0';
+    }
+    return os;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // MEMBERS
 //////////////////////////////////////////////////////////////////////////

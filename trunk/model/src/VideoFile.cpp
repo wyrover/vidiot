@@ -80,8 +80,20 @@ void VideoFile::moveTo(pts position)
 {
     mDeliveredFrameInputPts = 0;
     mDeliveredFrame.reset();
+
+    //// todo refactor this if it works (also used in getnextvideo):
+
+    //// 'Resample' the frame timebase
+    //// Determine which pts value is required. This is required to first determine
+    //// if the previously returned frame should be returned again
+    //// \todo instead of duplicating frames, nicely take the two input frames 'around' the
+    //// required output pts time and 'interpolate' given these two frames time offsets with the required pts
+    //FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
+    //int requiredInputPts = Convert::fromProjectFrameRate(position, videoFrameRate);
+
     mPosition = position;
     File::moveTo(position); // NOTE: This uses the pts in 'project' timebase units
+
 }
 
 void VideoFile::clean()
@@ -156,7 +168,9 @@ VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
                 ptsOfFirstPacket = static_cast<boost::optional<pts> >(packet->getPacket()->pts);
             }
 
+            VAR_DEBUG(packet->getPacket());
             // \todo decoders that hold multiple frames in one packet
+            // todocrash hier bij trim right sid of clip 4 (is de clip links van die lange)...
             int len1 = avcodec_decode_video2(getCodec(), pFrame, &frameFinished, packet->getPacket());
 
             if (packet->getPacket()->dts != AV_NOPTS_VALUE)
@@ -244,14 +258,6 @@ wxSize VideoFile::getSize()
 
 void VideoFile::startDecodingVideo()
 {
-    // If the end of file is reached, a subsequent getNextVideo should not
-    // trigger a new (useless) sequence of startReadingPackets,
-    // bufferPacketsThread, "bufferPacketsThread: End of file."
-    // (and this, over and over again....).
-    //
-    // First a moveTo() is required to reset EOF.
-    if (getEOF()) return;
-
     if (mDecodingVideo) return;
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
