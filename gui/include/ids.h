@@ -4,7 +4,7 @@
 #include <wx/defs.h>
 
 /// Made global list to be able to trigger these from the tests
-enum 
+enum
 {
     ID_FIRST = wxID_HIGHEST + 1,
     // View menu
@@ -26,7 +26,12 @@ enum
     meID_NEW_FILE,
     meID_CREATE_SEQUENCE,
     // Timeline popup menu
-    meID_ADD_TRANSITION,
+    meID_ADD_INTRANSITION,
+    meID_ADD_INOUTTRANSITION,
+    meID_ADD_OUTTRANSITION,
+    meID_ADD_INFADE,
+    meID_ADD_INOUTFADE,
+    meID_ADD_OUTFADE,
     meID_REMOVE_EMPTY,
     // Should always be the last value!!!
     meID_LAST

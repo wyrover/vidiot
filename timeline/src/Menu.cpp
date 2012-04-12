@@ -4,12 +4,15 @@
 #include <set>
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
+#include "AudioTrack.h"
 #include "Clip.h"
 #include "CreateAudioTrack.h"
 #include "CreateTransition.h"
 #include "CreateVideoTrack.h"
 #include "EmptyClip.h"
 #include "ids.h"
+#include "VideoClip.h"
+#include "AudioClip.h"
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
@@ -20,6 +23,7 @@
 #include "TimeLinesView.h"
 #include "Track.h"
 #include "UtilLog.h"
+#include "VideoTrack.h"
 #include "Window.h"
 #include "Zoom.h"
 
@@ -55,7 +59,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
     // Popup menu items
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,             this, meID_ADD_TRANSITION);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,    this, meID_ADD_INTRANSITION);
 
     updateItems();
 
@@ -75,7 +79,7 @@ MenuHandler::~MenuHandler()
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddTransition,   this, meID_ADD_TRANSITION);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,   this, meID_ADD_INTRANSITION);
 
     Window::get().setSequenceMenu(0); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
 }
@@ -107,23 +111,44 @@ void MenuHandler::Popup(wxPoint position)
 
     std::set<model::IClipPtr> selectedClips = getSequence()->getSelectedClips();
 
-    bool showAddTransition = false;
-    bool showRemoveEmpty = false;
-
-    bool enableAddTransition = info.clip && !info.clip->isA<model::EmptyClip>();
-    bool enableRemoveEmpty = true;
-
-    BOOST_FOREACH( model::IClipPtr clip, selectedClips )
+    struct MenuOption
     {
-        if (clip->isA<model::EmptyClip>())
+        explicit MenuOption(int _id, wxString _text, bool _show = false, bool _enable = true)
+            : id(_id)
+            , show(_show)
+            , enable(_enable)
+            , text(_text)
+        {}
+        int id;
+        bool show;
+        bool enable;
+        wxString text;
+        void add(wxMenu& menu)
         {
-            showRemoveEmpty = true;
+            if (show)
+            {
+                menu.Append( id, text );
+                menu.Enable( id, enable );
+            }
         }
-        else
-        {
-            enableRemoveEmpty = false;
-        }
+    };
+
+    bool selectedSingleClip = false;
+    if ((selectedClips.size() == 1) && (!info.clip->getLink()))
+    {
+        selectedSingleClip = true;
     }
+    if ((selectedClips.size() == 2) && (info.clip->getLink() && info.clip->getLink()->getSelected()))
+    {
+        selectedSingleClip = true;
+    }
+
+    //(info.clip && info.clip->getTrack()->isA<model::VideoTrack>()
+    bool clickedOnVideoClip = (info.clip && info.clip->isA<model::VideoClip>());
+    bool clickedOnAudioClip = (info.clip && info.clip->isA<model::AudioClip>());
+    bool clickedOnEmptyClip = (info.clip && info.clip->isA<model::EmptyClip>());
+
+    bool enableRemoveEmpty = true;
 
     if (info.onAudioVideoDivider)
     {
@@ -134,7 +159,7 @@ void MenuHandler::Popup(wxPoint position)
     else
     {
         if (info.clip)
-        {
+        { // todo test with emptyclips
             switch (info.logicalclipposition)
             {
             case TransitionBegin:
@@ -144,12 +169,10 @@ void MenuHandler::Popup(wxPoint position)
             case TransitionEnd:
                 break;
             case ClipBegin:
-                showAddTransition = true;
                 break;
             case ClipInterior:
                 break;
             case ClipEnd:
-                showAddTransition = true;
                 break;
             default:
                 FATAL("Unexpected logical clip position.");
@@ -158,16 +181,20 @@ void MenuHandler::Popup(wxPoint position)
     }
 
     wxMenu menu;
-    if (showAddTransition)
-    {
-        menu.Append( meID_ADD_TRANSITION, _("&Add Transition") );
-        menu.Enable( meID_ADD_TRANSITION, enableAddTransition );
-    }
-    if (showRemoveEmpty)
-    {
-        menu.Append( meID_REMOVE_EMPTY,   _("&Remove empty space") );
-        menu.Enable( meID_REMOVE_EMPTY, enableRemoveEmpty );
-    }
+
+    MenuOption addInTransition(meID_ADD_INTRANSITION,   _("Add &in transition"),    clickedOnVideoClip, clickedOnVideoClip);
+    MenuOption addOutTransition(meID_ADD_OUTTRANSITION, _("Add &out transition"),   clickedOnVideoClip, clickedOnVideoClip);
+
+    MenuOption addInFade(meID_ADD_INFADE,   _("Add fade &in"),    clickedOnAudioClip, clickedOnAudioClip);
+    MenuOption addOutFade(meID_ADD_OUTFADE, _("Add fade &out"),   clickedOnAudioClip, clickedOnAudioClip);
+
+    MenuOption removeEmptySpace(meID_REMOVE_EMPTY, _("&Remove empty space"),   clickedOnEmptyClip, clickedOnEmptyClip);
+
+    addInTransition.add(menu);
+    addOutTransition.add(menu);
+    addInFade.add(menu);
+    addOutFade.add(menu);
+    removeEmptySpace.add(menu);
     menu.AppendSeparator();
 
     //menu.AppendSeparator();
@@ -229,7 +256,7 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
 // POPUP MENU
 //////////////////////////////////////////////////////////////////////////
 
-void MenuHandler::onAddTransition(wxCommandEvent& event)
+void MenuHandler::onAddInTransition(wxCommandEvent& event)
 {
     LOG_INFO;
     command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getRightDownPosition());

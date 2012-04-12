@@ -196,14 +196,6 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 
 void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
 {
-    // If the end of file is reached, a subsequent getNextAudio should not
-    // trigger a new (useless) sequence of startReadingPackets,
-    // bufferPacketsThread, "bufferPacketsThread: End of file."
-    // (and this, over and over again....).
-    //
-    // First a moveTo() is required to reset EOF.
-    if (getEOF()) return;
-
     if (mDecodingAudio) return;
 
     // Allocated upon first use. See also the remark in the header file

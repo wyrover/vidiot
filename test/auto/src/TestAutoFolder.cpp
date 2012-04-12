@@ -11,7 +11,6 @@
 #include "HelperApplication.h"
 #include "HelperWindow.h"
 #include "HelperProjectView.h"
-#include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 
 namespace test {

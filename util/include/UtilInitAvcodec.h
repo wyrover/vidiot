@@ -11,6 +11,7 @@ struct AVRational;
 struct AVCodecContext;
 struct AVFormatContext;
 struct AVStream;
+struct AVPacket;
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -21,6 +22,7 @@ std::ostream& operator<< (std::ostream& os, const AVRational& obj);
 std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj);
 std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj);
 std::ostream& operator<< (std::ostream& os, const AVStream* obj);
+std::ostream& operator<< (std::ostream& os, const AVPacket* obj);
 
 class Avcodec
 {
@@ -60,4 +62,3 @@ private:
 };
 
 #endif //UTIL_LOG_AVCODEC_H
-

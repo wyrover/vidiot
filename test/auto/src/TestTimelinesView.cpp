@@ -9,7 +9,6 @@
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "UtilList.h"
-#include "UtilLog.h"
 #include "Window.h"
 
 namespace test {
