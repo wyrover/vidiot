@@ -155,8 +155,6 @@ void File::moveTo(pts position)
 
     stopReadingPackets();
 
-    // todo add check here for positioning beyond the length...
-
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
     ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext);
     VAR_DEBUG(timestamp)(mFileContext->duration);
