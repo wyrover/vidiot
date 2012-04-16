@@ -1,8 +1,16 @@
 #include "DetailsView.h"
 
+#include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include "UtilLog.h"
+#include "IClip.h"
+#include "DetailsViewClip.h"
+#include "UtilLogWxwidgets.h"
+#include "Layout.h"
+#include "Window.h"
 
 namespace gui {
 
@@ -36,18 +44,37 @@ DetailsView& DetailsView::get()
 //////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
+// SET THE CURRENTLY FOCUSED ITEM
 //////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
-//////////////////////////////////////////////////////////////////////////
+void DetailsView::focus(model::IClipPtr clip)
+{
+    DestroyChildren();
+    reset(clip->getDescription(), new DetailsViewClip(this,clip));
+    VAR_INFO(GetSize());
+}
 
-template<class Archive>
-void DetailsView::serialize(Archive & ar, const unsigned int version)
+void DetailsView::focus(model::IClips clips)
 {
 }
-template void DetailsView::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void DetailsView::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+// todo wxauimanager::SavePerspective
+
+void DetailsView::reset(wxString title, wxWindow* details)
+{
+    VAR_INFO(GetSize());
+
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+    wxStaticText* header = new wxStaticText(this,wxID_ANY,title, wxDefaultPosition, wxSize(GetSize().GetWidth(),-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
+    header->SetBackgroundColour(Layout::sDetailsViewHeaderColour);
+    sizer->Add(header, wxSizerFlags(0).Center());
+    sizer->Add(details, wxSizerFlags(1).Expand().Center() );
+    SetSizer(sizer);
+
+    gui::Window::get().triggerLayout();
+}
 
 } // namespace

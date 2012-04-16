@@ -1,3 +1,4 @@
+#include <map>
 #include <boost/utility.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/bimap.hpp>
@@ -50,6 +51,7 @@ public: \
     }; \
     ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
+    static std::map<ENUMNAME,wxString> mapToHumanReadibleString; \
     std::string toString( ENUMNAME value ) const { return mMap.left.find(value)->second; }; \
     ENUMNAME fromString( std::string value ) const { return mMap.right.find(value)->second; }; \
 private: \

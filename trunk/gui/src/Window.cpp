@@ -142,7 +142,7 @@ Window::Window()
 
     mUiManager.SetManagedWindow(this);
     mUiManager.InsertPane(mProjectView,     wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(0).CaptionVisible(false));
-    mUiManager.InsertPane(mDetailsView,     wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(1).CaptionVisible(false));
+    mUiManager.InsertPane(mDetailsView,     wxAuiPaneInfo().Top().Position(1).CaptionVisible(false));
     mUiManager.InsertPane(mPreview,         wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(2).CaptionVisible(false));
     mUiManager.InsertPane(mTimelinesView,   wxAuiPaneInfo().BestSize(wxSize(400,100)).MinSize(wxSize(400,100)).Center().CaptionVisible(false));
     mUiManager.SetFlags(wxAUI_MGR_LIVE_RESIZE);
@@ -353,7 +353,7 @@ void Window::onAbout(wxCommandEvent& event)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// GET WIDGETS
+// WIDGET HANDLING
 //////////////////////////////////////////////////////////////////////////
 
 TimelinesView& Window::getTimeLines()
@@ -364,6 +364,11 @@ TimelinesView& Window::getTimeLines()
 Preview& Window::getPreview()
 {
     return *mPreview;
+}
+
+void Window::triggerLayout()
+{
+    mUiManager.Update();
 }
 
 //////////////////////////////////////////////////////////////////////////

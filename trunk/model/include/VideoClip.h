@@ -45,6 +45,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     wxSize getSize(); ///< \return size of underlying video
+    VideoScaling getScaling() const;
+    VideoAlignment getAlignment() const;
 
 protected:
 

@@ -33,6 +33,8 @@ const wxColour	Layout::sBackgroundColour		 (212,208,200);
 const wxPen     Layout::sBackgroundPen           (Layout::sBackgroundColour);
 const wxBrush   Layout::sBackgroundBrush         (Layout::sBackgroundColour,wxBRUSHSTYLE_SOLID);
 
+const wxColour  Layout::sDetailsViewHeaderColour (wxColour(192,192,192));
+
 const wxColour	Layout::sPreviewBoundingBoxColour(*wxWHITE);
 const wxPen     Layout::sPreviewBoundingBoxPen   (Layout::sPreviewBoundingBoxColour, 2);
 

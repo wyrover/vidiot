@@ -144,7 +144,7 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
         ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterestPosition.x);
         ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterestPosition.y);
         ASSERT_LESS_THAN_EQUALS(regionOfInterestSize.x, size.x);
-        ASSERT_LESS_THAN_EQUALS(regionOfInterestSize.y, size.y);
+        ASSERT_LESS_THAN_EQUALS(regionOfInterestSize.y, size.y); // todo assert goes off when resizing (reducing size) with the left edge
 
         videoFrame = generator->getNextVideo(requiredVideoSize, alpha);
         if (videoFrame)
@@ -192,6 +192,16 @@ wxSize VideoClip::getSize()
     // Without scaling: use default project size
     // Todo add scaling (make smaller) for compositing
     return Properties::get()->getVideoSize();
+}
+
+VideoScaling VideoClip::getScaling() const
+{
+    return mScaling;
+}
+
+VideoAlignment VideoClip::getAlignment() const
+{
+    return mAlignment;
 }
 
 //////////////////////////////////////////////////////////////////////////
