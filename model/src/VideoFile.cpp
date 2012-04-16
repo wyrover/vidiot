@@ -211,8 +211,8 @@ VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
         }
 
         static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
-        size.x = std::min(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
-        size.y = std::min(size.y,sMinimumFrameSize);    // that any excess data is cut off.
+        size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
+        size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
         mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, size, mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size

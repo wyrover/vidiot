@@ -102,11 +102,15 @@ public:
     void onAbout(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
-    // GET WIDGETS
+    // WIDGETS HANDLING
     //////////////////////////////////////////////////////////////////////////
 
     TimelinesView&   getTimeLines();
     Preview&         getPreview();
+
+    /// This must be called whenever a new (sub)widget has been added. This
+    /// ensures proper layout.
+    void triggerLayout();
 
     //////////////////////////////////////////////////////////////////////////
     // ENABLING/DISABLING MENUS
@@ -131,7 +135,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxDocTemplate*  mDocTemplate;
+    wxDocTemplate*      mDocTemplate;
 
     Dialog*             mDialog;
 
@@ -149,7 +153,7 @@ private:
 
     util::TestCrash*    mTestCrash;
 
-    wxAuiManager mUiManager;
+    wxAuiManager        mUiManager;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

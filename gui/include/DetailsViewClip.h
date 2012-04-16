@@ -1,19 +1,20 @@
-#ifndef DETAILS_VIEW_H
-#define DETAILS_VIEW_H
+#ifndef DETAILS_VIEW_CLIP_H
+#define DETAILS_VIEW_CLIP_H
 
-#include <list>
 #include <wx/panel.h>
+#include <wx/sizer.h>
 #include <boost/shared_ptr.hpp>
+#include "Enums.h"
+#include "UtilEnumSelector.h"
 
 namespace model {
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
-typedef std::list<IClipPtr> IClips;
 }
 
 namespace gui {
 
-class DetailsView
+class DetailsViewClip
 :   public wxPanel
 {
 public:
@@ -22,20 +23,12 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    DetailsView(wxWindow* parent);
-    virtual ~DetailsView();
-    static DetailsView& get();
+    DetailsViewClip(wxWindow* parent, model::IClipPtr clip);
+    virtual ~DetailsViewClip();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////////////
-    // SET THE CURRENTLY FOCUSED ITEM
-    //////////////////////////////////////////////////////////////////////////
-
-    void focus(model::IClipPtr clip);
-    void focus(model::IClips clips);
 
 private:
 
@@ -43,13 +36,22 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    model::IClipPtr mClip;
+
+    wxBoxSizer*         mTopSizer;  ///< sizer for panel
+    wxBoxSizer*         mBoxSizer;  ///< sizer for current box
+
+    EnumSelector<model::VideoScaling>* mSelectScaling;
+    EnumSelector<model::VideoAlignment>* mSelectAlignment;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void reset(wxString title, wxWindow* details);
+    void addbox(const wxString& name);
+    void addoption(const wxString& name, wxWindow* widget);
 };
 
 } // namespace
 
-#endif // DETAILS_VIEW_H
+#endif // DETAILS_VIEW_CLIP_H

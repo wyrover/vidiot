@@ -114,6 +114,7 @@ Options::Options(wxWindow* win)
 
         addbox(_("Logging"));
 
+        // todo use utilenumselector!
         mLogLevel = new wxChoice(mPanel, wxID_ANY);
         mLogLevel->Append(_("Error"),      reinterpret_cast<void*>(LogError));
         mLogLevel->Append(_("Warning"),    reinterpret_cast<void*>(LogWarning));
@@ -218,4 +219,5 @@ void Options::addoption(const wxString& name, wxWindow* widget)
     hSizer->Add(5, 5, 1, wxALL, 0);
     hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP, 5);
 }
+
 } // namespace
