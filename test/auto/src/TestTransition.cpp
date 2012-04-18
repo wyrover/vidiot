@@ -422,7 +422,7 @@ void TestTransition::testAdjacentTransitions()
         pts cliplength = VideoClip(0,4)->getLength();
         pts transitionlength = VideoClip(0,3)->getLength();
         pts length = VideoClip(0,8)->getLength();
-        DragAlignRight(Center(VideoClip(0,8)) + wxPoint(5,0),RightPixel(VideoClip(0,2))-2);
+        DragAlignRight(Center(VideoClip(0,8)) + wxPoint(5,0),RightPixel(VideoClip(0,2)));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
