@@ -6,6 +6,7 @@
 #include <wx/choice.h>
 #include <wx/radiobox.h>
 #include <wx/spinctrl.h>
+#include "UtilEnumSelector.h"
 
 namespace gui {
 
@@ -27,25 +28,26 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxCheckBox*         mLoadLast;
+    wxCheckBox*             mLoadLast;
 
-    wxRadioBox*         mFrameRate;
-    wxSpinCtrl*         mDefaultVideoWidth;
-    wxSpinCtrl*         mDefaultVideoHeight;
-    wxChoice*           mDefaultVideoScaling;
-    wxChoice*           mDefaultVideoAlignment;
+    wxRadioBox*             mFrameRate;
+    wxSpinCtrl*             mDefaultVideoWidth;
+    wxSpinCtrl*             mDefaultVideoHeight;
+    wxChoice*               mDefaultVideoScaling;
+    wxChoice*               mDefaultVideoAlignment;
 
-    wxSpinCtrlDouble*   mMarkerBeginAddition;
-    wxSpinCtrlDouble*   mMarkerEndAddition;
-    wxTextCtrl*         mStrip;
+    wxSpinCtrlDouble*       mMarkerBeginAddition;
+    wxSpinCtrlDouble*       mMarkerEndAddition;
+    wxTextCtrl*             mStrip;
 
-    wxChoice*           mLogLevel;
-    wxChoice*           mLogLevelAvcodec;
-    wxCheckBox*         mShowDebugInfoOnWidgets;
+    EnumSelector<LogLevel>* mSelectLogLevel;
+    EnumSelector<int>*      mSelectLogLevelAvcodec;
+    wxChoice*               mLogLevelAvcodec;
+    wxCheckBox*             mShowDebugInfoOnWidgets;
 
-    wxPanel*            mPanel;     ///< tab:The topmost widget
-    wxBoxSizer*         mTopSizer;  ///< tab:Sizer for panel
-    wxBoxSizer*         mBoxSizer;  ///< box:Sizer for current box
+    wxPanel*                mPanel;     ///< tab:The topmost widget
+    wxBoxSizer*             mTopSizer;  ///< tab:Sizer for panel
+    wxBoxSizer*             mBoxSizer;  ///< box:Sizer for current box
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

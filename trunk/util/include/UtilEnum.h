@@ -51,7 +51,7 @@ public: \
     }; \
     ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
-    static std::map<ENUMNAME,wxString> mapToHumanReadibleString; \
+    static boost::bimap<ENUMNAME,wxString> mapToHumanReadibleString; \
     std::string toString( ENUMNAME value ) const { return mMap.left.find(value)->second; }; \
     ENUMNAME fromString( std::string value ) const { return mMap.right.find(value)->second; }; \
 private: \

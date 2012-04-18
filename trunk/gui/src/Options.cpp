@@ -10,6 +10,7 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <boost/assign/list_of.hpp>
+#include <boost/bimap.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
@@ -18,6 +19,11 @@
 #include "UtilInitAvcodec.h"
 #include "UtilFrameRate.h"
 #include "Config.h"
+
+// todo remove
+extern "C" {
+#include <avformat.h>
+};
 
 namespace gui {
 //////////////////////////////////////////////////////////////////////////
@@ -114,44 +120,11 @@ Options::Options(wxWindow* win)
 
         addbox(_("Logging"));
 
-        // todo use utilenumselector!
-        mLogLevel = new wxChoice(mPanel, wxID_ANY);
-        mLogLevel->Append(_("Error"),      reinterpret_cast<void*>(LogError));
-        mLogLevel->Append(_("Warning"),    reinterpret_cast<void*>(LogWarning));
-        mLogLevel->Append(_("Info"),       reinterpret_cast<void*>(LogInfo));
-        mLogLevel->Append(_("Debug"),      reinterpret_cast<void*>(LogDebug));
-        mLogLevel->Append(_("Video"),      reinterpret_cast<void*>(LogVideo));
-        mLogLevel->Append(_("Audio"),      reinterpret_cast<void*>(LogAudio));
-        mLogLevel->Append(_("Detailed"),   reinterpret_cast<void*>(LogDetail));
-        switch (LogLevel_fromString(std::string(Config::ReadString(Config::sPathLogLevel).mb_str())))
-        {
-        case LogError:      mLogLevel->SetSelection(0); break;
-        case LogWarning:    mLogLevel->SetSelection(1); break;
-        case LogInfo:       mLogLevel->SetSelection(2); break;
-        case LogDebug:      mLogLevel->SetSelection(3); break;
-        case LogVideo:      mLogLevel->SetSelection(4); break;
-        case LogAudio:      mLogLevel->SetSelection(5); break;
-        case LogDetail:     mLogLevel->SetSelection(6); break;
-        }
-        addoption(_("Log level"), mLogLevel);
+        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevel_fromString(std::string(Config::ReadString(Config::sPathLogLevel).mb_str())));
+        addoption(_("Log level"), mSelectLogLevel);
 
-        mLogLevelAvcodec = new wxChoice(mPanel, wxID_ANY);
-        int current = 0;
-        bool currentfound = false;
-        BOOST_FOREACH( auto value, Avcodec::getLogLevels() )
-        {
-            mLogLevelAvcodec->Append(value);
-            if (!currentfound && !Config::ReadString(Config::sPathLogLevelAvcodec).IsSameAs(value))
-            {
-                current++;
-            }
-            else
-            {
-                currentfound = true;
-            }
-        }
-        mLogLevelAvcodec->SetSelection(currentfound ? current : 0);
-        addoption(_("Avcodec log level (requires restart)"), mLogLevelAvcodec);
+        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, Avcodec::mapAvcodecLevels.right.at(Config::ReadString(Config::sPathLogLevelAvcodec)));
+        addoption(_("Avcodec log level (requires restart)"), mSelectLogLevelAvcodec);
 
         mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
         mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
@@ -170,8 +143,8 @@ Options::~Options()
     if (GetReturnCode() == GetAffirmativeId())
     {
         wxConfigBase::Get()->Write( Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
-        wxConfigBase::Get()->Write( Config::sPathLogLevel,                  LogLevel_toString(static_cast<LogLevel>(reinterpret_cast<int>(mLogLevel->GetClientData(mLogLevel->GetSelection())))).c_str());
-        wxConfigBase::Get()->Write( Config::sPathLogLevelAvcodec,           mLogLevelAvcodec->GetString(mLogLevelAvcodec->GetSelection()));
+        wxConfigBase::Get()->Write( Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
+        wxConfigBase::Get()->Write( Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
         wxConfigBase::Get()->Write( Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
         wxConfigBase::Get()->Write( Config::sPathDefaultFrameRate,          framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
         wxConfigBase::Get()->Write( Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
