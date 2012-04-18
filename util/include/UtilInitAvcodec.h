@@ -6,6 +6,7 @@
 #include <ostream>
 #include <stdarg.h> // va_list
 #include <wx/string.h>
+#include <boost/bimap.hpp>
 
 struct AVRational;
 struct AVCodecContext;
@@ -41,6 +42,7 @@ public:
 
     static wxString getDefaultLogLevel();
     static std::list<wxString> getLogLevels();
+    static boost::bimap<int, wxString> mapAvcodecLevels;
     static void configureLog();
     static std::string getErrorMessage(int errorcode);
 

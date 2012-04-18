@@ -27,6 +27,14 @@ const std::list<LevelString> sLogLevels = boost::assign::list_of
     (std::make_pair(_("Info")   ,AV_LOG_INFO))
     (std::make_pair(_("Verbose"),AV_LOG_VERBOSE));
 
+boost::bimap<int, wxString> Avcodec::mapAvcodecLevels = boost::assign::list_of<boost::bimap<int, wxString>::relation >
+            (AV_LOG_QUIET,     _("None"))
+            (AV_LOG_FATAL,     _("Fatal"))
+            (AV_LOG_ERROR,     _("Error"))
+            (AV_LOG_WARNING,   _("Warning"))
+            (AV_LOG_INFO,      _("Info"))
+            (AV_LOG_VERBOSE,   _("Verbose"));
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

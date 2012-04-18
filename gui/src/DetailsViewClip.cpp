@@ -55,8 +55,6 @@ DetailsViewClip::DetailsViewClip(wxWindow* parent, model::IClipPtr clip)
 
         mSelectAlignment = new EnumSelector<model::VideoAlignment>(this, model::VideoAlignmentConverter::mapToHumanReadibleString, videoclip->getAlignment());
         addoption(_("Alignment"), mSelectAlignment);
-
-// todo remember:        value = mSelectScaling->getValue();
     }
 
     if (audioclip)

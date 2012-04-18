@@ -9,13 +9,13 @@ class EnumSelector
     : public wxChoice
 {
 public:
-    typedef std::map<ITEMTYPE,wxString> Mapping;
-    EnumSelector(wxWindow* parent, std::map<ITEMTYPE,wxString> mapping, ITEMTYPE default )
+    typedef boost::bimap<ITEMTYPE,wxString> Mapping;
+    EnumSelector(wxWindow* parent, Mapping mapping, ITEMTYPE default )
         :   wxChoice(parent, wxID_ANY)
     {
         int index = 0;
         int selection = -1;
-        BOOST_FOREACH( Mapping::value_type entry, mapping )
+        BOOST_FOREACH( Mapping::left_reference entry, mapping.left )
         {
             Append(entry.second);
             if (entry.first == default)

@@ -1,19 +1,29 @@
 #include "UtilLog.h"
 
+#include <boost/assign/list_of.hpp>
+#include <boost/format.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <iostream>
+#include <share.h> // _SH_DENYWR
+#include <string>
 #include <wx/datetime.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
 #include <wx/thread.h>
-#include <boost/format.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <string>
-#include <iostream>
-#include <share.h> // _SH_DENYWR
 #include "UtilFifo.h"
 #include "UtilAssert.h"
 
 IMPLEMENTENUM(LogLevel);
+
+boost::bimap<LogLevel, wxString> LogLevelConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<LogLevel, wxString>::relation >
+    (LogError,     _("Errors"))
+    (LogWarning,   _("Errors & Warnings"))
+    (LogInfo,      _("Info (UI actions)"))
+    (LogDebug,     _("Debugging"))
+    (LogVideo,     _("Video details"))
+    (LogAudio,     _("Audio details"))
+    (LogDetail,    _("All"));
 
 static std::string sFilename("");
 static const unsigned int sMaximumBufferedLoglines = 1000;
