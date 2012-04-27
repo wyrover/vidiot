@@ -8,7 +8,6 @@
 #include "Properties.h"
 
 namespace model {
-
 typedef boost::rational<int> rational;
 
 int toInt(rational r)
@@ -98,6 +97,12 @@ wxPoint Convert::scale(wxPoint input, double factor)
 }
 
 // static
+wxRect Convert::scale(wxRect input, double factor)
+{
+    return wxRect(scale(input.GetPosition(),factor),scale(input.GetSize(),factor));
+}
+
+// static
 wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox, double& scaling)
 {
     static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
@@ -127,5 +132,4 @@ wxSize Convert::fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox,
     scaling  = std::max(scalingW, scalingH);
     return scale(input,scaling);
 }
-
 } // namespace

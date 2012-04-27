@@ -2,9 +2,9 @@
 
 #include "FixtureApplication.h"
 #include "HelperApplication.h"
+#include "HelperTimeline.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ void TestManual::tearDown()
 
 void TestManual::testManual()
 {
+    Click(Center(VideoClip(0,3)));
     pause(60000 * 60); // One hour should be enough...
 }
-
 } // namespace

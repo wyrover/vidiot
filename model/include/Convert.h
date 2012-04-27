@@ -6,7 +6,6 @@
 #include "UtilFrameRate.h"
 
 namespace model {
-
 class Convert
 {
 public:
@@ -49,6 +48,7 @@ public:
     static int      scale(int input,        double factor);
     static wxSize   scale(wxSize input,     double factor);
     static wxPoint  scale(wxPoint input,    double factor);
+    static wxRect   scale(wxRect input,     double factor);
 
     /// Convert an input size to a size fitting entirely in a given bounding
     /// box. Width and height ratio is repected.
@@ -67,7 +67,6 @@ public:
     /// \return maximum size fitting in bounding box with given width/height ratio
     static wxSize fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, double& scaling);
 };
-
 } // namespace
 
 #endif // CONVERT_H

@@ -1,12 +1,12 @@
 #ifndef MODEL_VIDEO_CLIP_H
 #define MODEL_VIDEO_CLIP_H
 
+#include <boost/optional.hpp>
 #include "Clip.h"
 #include "Enums.h"
 #include "IVideo.h"
 
 namespace model {
-
 class VideoClip;
 typedef boost::shared_ptr<VideoClip> VideoClipPtr;
 
@@ -44,9 +44,22 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    wxSize getSize(); ///< \return size of underlying video
+    wxSize getInputSize(); ///< \return size of input video
+
+    void setScaling(VideoScaling scaling, boost::optional<double> factor = boost::none);
     VideoScaling getScaling() const;
+    double getScalingFactor() const;
+
+    wxSize getSize() const; ///< \return size of output video
+
     VideoAlignment getAlignment() const;
+    wxRect getRegionOfInterest() const;
+
+    /// Determine the size and region of interest.
+    void determineTransform();
+
+    double determineScalingFactor(VideoScaling scaling, boost::optional<double> factor = boost::none);
+    wxRect determineRegionOfInterest(wxSize inputsize, wxSize outputsize, VideoAlignment alignment);
 
 protected:
 
@@ -67,7 +80,10 @@ private:
     pts mProgress; ///< Current render position in pts units (delivered video frames count)
 
     VideoScaling mScaling;
+    double mScalingFactor;
+
     VideoAlignment mAlignment;
+    wxRect mRegionOfInterest;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -85,7 +101,6 @@ private:
 };
 
 typedef boost::shared_ptr<VideoClip> VideoClipPtr;
-
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
