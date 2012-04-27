@@ -4,7 +4,6 @@
 #include <boost/archive/text_iarchive.hpp>
 
 namespace boost { namespace serialization {
-
 template<class Archive>
 void save(Archive & ar, const wxString & string, const unsigned int version)
 {
@@ -40,6 +39,16 @@ void load(Archive & ar, wxFileName& filename, const unsigned int version)
 
 template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const wxFileName& filename, const unsigned int version);
 template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxFileName& filename, const unsigned int version);
+
+template<class Archive>
+void serialize(Archive & ar, wxSize & r, const unsigned int version)
+{
+    ar & r.x;
+    ar & r.y;
+}
+
+template void serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, wxSize & r, const unsigned int version);
+template void serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, wxSize & r, const unsigned int version);
 
 template<class Archive>
 void serialize(Archive & ar, wxRect & r, const unsigned int version)
@@ -89,6 +98,4 @@ void load(Archive & ar, wxRegion & region, const unsigned int version)
 
 template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const wxRegion & region, const unsigned int version);
 template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxRegion & region, const unsigned int version);
-
 }} // namespace boost::serialization
-

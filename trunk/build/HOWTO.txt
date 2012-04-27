@@ -7,6 +7,7 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 ================ ENVIRONMENT VARIABLE ================
 * set VIDIOT_DIR=D:\Vidiot (example) system level variable to the absolute
   path containing all sources/builds/included libraries for building
+* set VIDIOT_COMPILE_SINGLETHREADED to 1 to disable parallel compilation
 
 ================ VISUAL STUDIO ================
 * Install MSVS2010

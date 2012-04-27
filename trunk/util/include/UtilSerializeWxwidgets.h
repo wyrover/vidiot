@@ -11,20 +11,20 @@ BOOST_SERIALIZATION_SPLIT_FREE(wxFileName)
 BOOST_SERIALIZATION_SPLIT_FREE(wxRegion)
 
 namespace boost { namespace serialization {
-
 template<class Archive> void save(Archive& ar, const wxString& string, const unsigned int version);
 template<class Archive> void load(Archive& ar,       wxString& string, const unsigned int version);
 
 template<class Archive> void save(Archive& ar, const wxFileName& filename, const unsigned int version);
 template<class Archive> void load(Archive& ar,       wxFileName& filename, const unsigned int version);
 
+template<class Archive> void serialize(Archive& ar, wxSize& r, const unsigned int version);
+template<class Archive> void serialize(Archive& ar, wxSize& r, const unsigned int version);
+
 template<class Archive> void serialize(Archive& ar, wxRect& r, const unsigned int version);
 template<class Archive> void serialize(Archive& ar, wxRect& r, const unsigned int version);
 
 template<class Archive> void save(Archive& ar, const wxRegion& region, const unsigned int version);
 template<class Archive> void load(Archive& ar,       wxRegion& region, const unsigned int version);
-
 }} // namespace boost::serialization
 
 #endif //UTIL_SERIALIZE_WXWIDGETS_H
-

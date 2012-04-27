@@ -90,6 +90,7 @@ MACRO(FINDFILES dir)
     SET(INCLUDE_LIST ${INCLUDE_LIST} ${PROJECT_SOURCE_DIR}/${dir}/include)
 ENDMACRO(FINDFILES)
 FINDFILES(model)
+FINDFILES(modelcmd)
 FINDFILES(modelaudio)
 FINDFILES(modelevent)
 FINDFILES(modelvideo)
@@ -111,9 +112,12 @@ FILE(GLOB HelpFiles         ${PROJECT_SOURCE_DIR}/help/??*.*)
 
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
 IF (MSVC)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /EHa")
-        string(REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
-        ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
+    IF (NOT $ENV{VIDIOT_COMPILE_SINGLETHREADED})
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP ")
+    ENDIF (NOT $ENV{VIDIOT_COMPILE_SINGLETHREADED})
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
+    string(REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
+    ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
 ENDIF (MSVC)
 
 # Don't change the order of FFMPEG includes: Both ffmpeg and Vidiot have an include file
@@ -147,6 +151,7 @@ MACRO(GROUPFILES dir)
     SOURCE_GROUP("${dir}\\src"        REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/${dir}/src/.*)
 ENDMACRO(GROUPFILES)
 GROUPFILES(model)
+GROUPFILES(modelcmd)
 GROUPFILES(modelaudio)
 GROUPFILES(modelevent)
 GROUPFILES(modelvideo)

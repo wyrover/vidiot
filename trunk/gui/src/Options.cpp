@@ -74,7 +74,7 @@ Options::Options(wxWindow* win)
         mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video height"), mDefaultVideoHeight);
 
-        mDefaultVideoScaling = new wxChoice(mPanel, wxID_ANY);
+        mDefaultVideoScaling = new wxChoice(mPanel, wxID_ANY);  // todo use enumselector
         mDefaultVideoScaling->Append(_("Fit all"),       reinterpret_cast<void*>(model::VideoScalingFitAll));
         mDefaultVideoScaling->Append(_("Fit to fill"),   reinterpret_cast<void*>(model::VideoScalingFitToFill));
         mDefaultVideoScaling->Append(_("Original size"), reinterpret_cast<void*>(model::VideoScalingNone));
@@ -88,7 +88,7 @@ Options::Options(wxWindow* win)
         }
         addoption(_("Default video scaling"), mDefaultVideoScaling);
 
-        mDefaultVideoAlignment = new wxChoice(mPanel, wxID_ANY);
+        mDefaultVideoAlignment = new wxChoice(mPanel, wxID_ANY);  // todo use enumselector
         mDefaultVideoAlignment->Append(_("Centered"), reinterpret_cast<void*>(model::VideoAlignmentCenter));
         mDefaultVideoAlignment->Append(_("Custom"),   reinterpret_cast<void*>(model::VideoAlignmentCustom));
         switch (model::VideoAlignment_fromString(std::string(Config::ReadString(Config::sPathDefaultVideoAlignment).mb_str())))
