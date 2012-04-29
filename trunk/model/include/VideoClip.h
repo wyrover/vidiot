@@ -53,6 +53,7 @@ public:
     wxSize getSize() const; ///< \return size of output video
 
     VideoAlignment getAlignment() const;
+    wxPoint getAlignmentOffset() const;
     wxRect getRegionOfInterest() const;
 
     /// Determine the size and region of interest.
@@ -83,6 +84,7 @@ private:
     double mScalingFactor;
 
     VideoAlignment mAlignment;
+    wxPoint mAlignmentOffset;
     wxRect mRegionOfInterest;
 
     //////////////////////////////////////////////////////////////////////////

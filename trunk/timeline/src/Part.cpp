@@ -182,6 +182,16 @@ const state::Machine& Part::getStateMachine() const
     return getTimeline().getStateMachine();
 }
 
+Details& Part::getDetails()
+{
+    return getTimeline().getDetails();
+}
+
+const Details& Part::getDetails() const
+{
+    return getTimeline().getDetails();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // OTHER HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

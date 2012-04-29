@@ -16,7 +16,6 @@
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
-#include "Project.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -218,13 +217,13 @@ void MenuHandler::activate()
 void MenuHandler::onAddVideoTrack(wxCommandEvent& event)
 {
     LOG_INFO;
-    getTimeline().Submit(new command::CreateVideoTrack(getSequence()));
+    (new command::CreateVideoTrack(getSequence()))->submit();
 }
 
 void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
 {
     LOG_INFO;
-    getTimeline().Submit(new command::CreateAudioTrack(getSequence()));
+    (new command::CreateAudioTrack(getSequence()))->submit();
 }
 
 void MenuHandler::onDeleteMarked(wxCommandEvent& event)
@@ -262,7 +261,7 @@ void MenuHandler::onAddInTransition(wxCommandEvent& event)
     command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getRightDownPosition());
     if (cmd->isPossible())
     {
-        model::Project::get().Submit(cmd);
+        cmd->submit();
     }
     else
     {

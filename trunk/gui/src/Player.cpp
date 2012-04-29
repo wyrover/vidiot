@@ -9,12 +9,12 @@
 #include "Convert.h"
 #include "VideoDisplay.h"
 #include "EditDisplay.h"
-#include "preview-home.xpm" 
-#include "preview-end.xpm" 
-#include "preview-next.xpm" 
-#include "preview-play.xpm" 
-#include "preview-pause.xpm" 
-#include "preview-previous.xpm" 
+#include "preview-home.xpm"
+#include "preview-end.xpm"
+#include "preview-next.xpm"
+#include "preview-play.xpm"
+#include "preview-pause.xpm"
+#include "preview-previous.xpm"
 #include "Constants.h"
 #include "Cursor.h"
 #include "VideoDisplayEvent.h"
@@ -44,6 +44,7 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
 ,   mSpeedButton(0)
 ,   mSpeedSliderFrame(0)
 ,   mSpeedSlider(0)
+,   mEditOnTop(false)
 {
 	VAR_DEBUG(this);
 
@@ -140,25 +141,13 @@ Player::~Player()
 // CONTROL METHODS
 //////////////////////////////////////////////////////////////////////////
 
-EditDisplay* Player::startEdit()
-{
-    GetSizer()->Hide(mDisplay);
-    GetSizer()->Show(mEdit);
-    GetSizer()->Layout();
-    return mEdit;
-}
-
-void Player::endEdit()
-{
-    GetSizer()->Hide(mEdit);
-    GetSizer()->Show(mDisplay);
-    GetSizer()->Layout();
-    mEdit->show(boost::shared_ptr<wxBitmap>());
-}
-
 void Player::play()
 {
     LOG_INFO;
+    if (mEditOnTop) // todo via the sizer not via the boolean???
+    {
+        endEdit();
+    }
     mDisplay->play();
 }
 
@@ -171,7 +160,29 @@ void Player::stop()
 void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
+        if (mEditOnTop) // todo via the sizer not via the boolean???
+    {
+        endEdit();
+    }
     mDisplay->moveTo(position);
+}
+
+void Player::show(boost::shared_ptr<wxBitmap> bitmap)
+{
+    if (!mEditOnTop)
+    {
+        startEdit(); // todo rename these methods into puteditontop and only use them local.
+    }
+    mEdit->show(bitmap);
+}
+
+wxSize Player::getVideoSize() const
+{
+    if (mEditOnTop)
+    {
+        return mEdit->GetSize();
+    }
+    return mDisplay->GetSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -259,6 +270,23 @@ void Player::onSpeed(wxCommandEvent& event)
     mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
 }
 
+void Player::startEdit()
+{
+    mEditOnTop = true;
+    GetSizer()->Hide(mDisplay);
+    GetSizer()->Show(mEdit);
+    GetSizer()->Layout();
+}
+
+void Player::endEdit()
+{
+    mEditOnTop = false;
+    GetSizer()->Hide(mEdit);
+    GetSizer()->Show(mDisplay);
+    GetSizer()->Layout();
+    mEdit->show(boost::shared_ptr<wxBitmap>());
+}
+
 void Player::onSpeedSliderUpdate( wxCommandEvent& event )
 {
     VAR_INFO(mSpeedSlider->GetValue());
@@ -288,11 +316,11 @@ void Player::onLeftDown(wxMouseEvent& event)
     // toggle button event ('OnSpeed' again) didn't work. This was caused by
     // first handling the 'outoffocus' event when the button is pressed
     // (then first the speed frame goes out of focus) and subsequently, another
-    // press event was generated, which would be done on the now depressed 
+    // press event was generated, which would be done on the now depressed
     // button that had been closed in handling 'outoffocus'.
     //
     // Now, all exit handling is done via the 'outoffocus' method, and the
-    // extra button press is suppressed here. Since the button must be 
+    // extra button press is suppressed here. Since the button must be
     // enabled again, the Idle event handling was introduced.
 }
 

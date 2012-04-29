@@ -17,6 +17,7 @@ namespace gui {
         class AudioView;
         class ClipView;
         class Cursor;
+        class Details;
         class Divider;
         class Drag;
         class Dump;
@@ -100,6 +101,9 @@ public:
 
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;
+
+    Details& getDetails();
+    const Details& getDetails() const;
 
     //////////////////////////////////////////////////////////////////////////
     // OTHER HELPER METHODS

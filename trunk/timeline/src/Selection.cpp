@@ -2,17 +2,18 @@
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-#include "Timeline.h"
-#include "DetailsView.h" // todo move the 'focused item handling' to one dedicated class? Or make detailsview handle that (not the timeline)
 #include "ClipView.h"
+#include "DeleteSelectedClips.h"
+#include "Details.h"
+#include "EmptyClip.h"
+#include "Sequence.h"
+#include "Timeline.h"
 #include "Track.h"
 #include "TrackView.h"
 #include "Transition.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
-#include "Sequence.h"
-#include "EmptyClip.h"
-#include "DeleteSelectedClips.h"
+//#include "DetailsView.h" // todo move the 'focused item handling' to one dedicated class? Or make detailsview handle that (not the timeline)
 
 namespace gui { namespace timeline {
 
@@ -60,7 +61,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     // todo temp for test
     if (info.clip && info.track)
     {
-        DetailsView::get().focus(info.clip);
+        getDetails().focus(info.clip);
     }
 
     // Determine the 'logically clicked' clip and track
@@ -206,7 +207,7 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
 void Selection::deleteClips()
 {
     setPreviouslyClicked(model::IClipPtr()); // reset
-    getTimeline().Submit(new command::DeleteSelectedClips(getSequence()));
+    (new command::DeleteSelectedClips(getSequence()))->submit();
 }
 
 void Selection::unselectAll()

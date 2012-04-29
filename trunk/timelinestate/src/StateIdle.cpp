@@ -14,7 +14,6 @@
 #include "MousePointer.h"
 #include "Player.h"
 #include "PositionInfo.h"
-#include "Project.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "SplitAtCursor.h"
@@ -133,7 +132,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         wxChar c = evt.mWxEvent.GetUnicodeKey();
         switch (evt.mWxEvent.GetUnicodeKey())
         {
-        case 'S':   getTimeline().Submit(new command::SplitAtCursor(getSequence())); break;
+        case 'S':   (new command::SplitAtCursor(getSequence()))->submit(); break;
         case 'C':   addTransition(); break;
         case '-':   getZoom().change( evt.mWxEvent.ControlDown() ? -1000 : -1); break;
         case '=':   getZoom().change( evt.mWxEvent.ControlDown() ?  1000 :  1); break;
@@ -225,7 +224,7 @@ void Idle::addTransition()
    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getPosition());
    if (cmd->isPossible())
    {
-        model::Project::get().Submit(cmd);
+       cmd->submit();
    }
    else
    {

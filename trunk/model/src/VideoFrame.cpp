@@ -20,6 +20,7 @@ VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position, int repea
     , mBuffer(0)
     , mType(type)
     , mSize(size)
+    , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),size)
     , mPts(position)
     , mRepeat(repeat)
@@ -39,6 +40,7 @@ VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position)
     , mBuffer(0)
     , mType(type)
     , mSize(size)
+    , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),size)
     , mPts(position)
     , mRepeat(1)
@@ -77,8 +79,20 @@ wxSize VideoFrame::getSize() const
     return mSize;
 }
 
+void VideoFrame::setPosition(wxPoint position)
+{
+    mPosition = position;
+}
+
+wxPoint VideoFrame::getPosition() const
+{
+    return mPosition;
+}
+
 void VideoFrame::setRegionOfInterest(wxRect regionOfInterest)
 {
+    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.x);
+    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.y);
     ASSERT_LESS_THAN_EQUALS(regionOfInterest.x + regionOfInterest.width,  mSize.x);
     ASSERT_LESS_THAN_EQUALS(regionOfInterest.y + regionOfInterest.height, mSize.y);
     mRegionOfInterest = regionOfInterest;
@@ -116,11 +130,12 @@ wxBitmapPtr VideoFrame::getBitmap()
 
 std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
 {
-    os  << &obj                         << "|"
-        << obj.getPts()                 << "|"
-        << obj.getRepeat()              << "|"
-        << obj.getSize()                << "|"
-        << obj.getRegionOfInterest();
+    os  << &obj                     << '|'
+        << obj.mPts                 << '|'
+        << obj.mRepeat              << '|'
+        << obj.mSize                << '|'
+        << obj.mPosition            << '|'
+        << obj.mRegionOfInterest;
     return os;
 }
 

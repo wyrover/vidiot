@@ -15,8 +15,8 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 namespace gui {
 class Player;
 
-namespace timeline { 
-    class Timeline; 
+namespace timeline {
+    class Timeline;
 }
 
 class Preview
@@ -46,6 +46,10 @@ public:
     void play();
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
     Player* mPlayer;
     std::map<timeline::Timeline*, Player*> mPlayers;

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <wx/dcclient.h>
+#include <wx/dcbuffer.h>
 #include <boost/make_shared.hpp>
 #include <portaudio.h>
 #include "Convert.h"
@@ -60,11 +61,14 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
 ,   mVideoDisplayThreadPtr(0)
 ,   mCurrentAudioChunk()
 ,   mCurrentBitmap()
+,   mCurrentBitmapPosition(0,0)
 ,   mStartTime(0)
 ,   mStartPts(0)
 ,   mCurrentTime(0)
 {
     VAR_DEBUG(this);
+
+    SetBackgroundStyle(wxBG_STYLE_PAINT); // Required for wxAutoBufferedPaintDC
 
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(mWidth)(mHeight);
@@ -197,6 +201,7 @@ void VideoDisplay::moveTo(pts position)
         if (mCurrentVideoFrame)
         {
             mCurrentBitmap = mCurrentVideoFrame->getBitmap();
+            mCurrentBitmapPosition = mCurrentVideoFrame->getPosition();
         }
         else
         {
@@ -374,6 +379,7 @@ void VideoDisplay::videoDisplayThread()
             boost::mutex::scoped_lock lock(mMutexDraw);
             mCurrentVideoFrame = videoFrame;
             mCurrentBitmap = videoFrame->getBitmap();
+            mCurrentBitmapPosition = videoFrame->getPosition();
             showNewVideoFrame();
             boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
         }
@@ -415,39 +421,29 @@ void VideoDisplay::OnSize(wxSizeEvent& event)
 void VideoDisplay::OnPaint(wxPaintEvent& event)
 {
     boost::shared_ptr<wxBitmap> bitmap;
+    wxPoint position;
     {
         boost::mutex::scoped_lock lock(mMutexDraw);
         bitmap = mCurrentBitmap;
+        position = mCurrentBitmapPosition;
     }
 
-    wxPaintDC dc(this); // Omit this, and suffer the performance consequences ;-)
+    wxAutoBufferedPaintDC dc(this); // Omit this, and suffer the performance consequences ;-)
 
     dc.SetPen(*wxBLACK);
     dc.SetBrush(*wxBLACK_BRUSH);
+    dc.DrawRectangle( 0, 0, mWidth, mHeight); // black bg
     if (bitmap)
     {
-        if (bitmap->GetWidth() < mWidth)
-        {
-            dc.DrawRectangle( bitmap->GetWidth(), 0, mWidth - bitmap->GetWidth(), bitmap->GetHeight());
-        }
-        if (bitmap->GetHeight() < mHeight)
-        {
-            dc.DrawRectangle( 0, bitmap->GetHeight(), mWidth, mHeight - bitmap->GetHeight());
-        }
-        dc.DrawBitmap(*bitmap,wxPoint(0,0));
+        dc.DrawBitmap(*bitmap,position);
 
         // Draw the bounding box
         wxSize projectSize = model::Properties::get()->getVideoSize();
-        wxSize scaledSize = model::Convert::sizeInBoundingBox(projectSize,bitmap->GetSize());
+        wxSize scaledSize = model::Convert::sizeInBoundingBox(projectSize,wxSize(mWidth,mHeight));
         dc.SetPen(Layout::sPreviewBoundingBoxPen);
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.DrawRectangle( 0, 0, scaledSize.GetWidth(), scaledSize.GetHeight());
     }
-    else
-    {
-        dc.DrawRectangle( 0, 0, mWidth, mHeight);
-    }
-
 }
 
 void VideoDisplay::showNewVideoFrame()

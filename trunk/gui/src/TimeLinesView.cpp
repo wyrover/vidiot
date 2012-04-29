@@ -8,7 +8,6 @@
 #include "Node.h"
 #include "Menu.h"
 #include "Preview.h"
-#include "Project.h"
 #include "ProjectEvent.h"
 #include "NodeEvent.h"
 #include "Sequence.h"
@@ -30,7 +29,7 @@ TimelinesView::TimelinesView(Window *parent)
 {
     sCurrent = this;
 
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL); 
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add( &mNotebook, 1, wxGROW );
     SetSizerAndFit(sizer);
 
@@ -176,7 +175,7 @@ std::pair<size_t,timeline::Timeline*> TimelinesView::findPage(model::SequencePtr
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

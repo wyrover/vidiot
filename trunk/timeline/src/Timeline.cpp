@@ -9,6 +9,7 @@
 #include "AudioView.h"
 #include "Constants.h"
 #include "Cursor.h"
+#include "Details.h"
 #include "Drag.h"
 #include "Dump.h"
 #include "Intervals.h"
@@ -18,7 +19,6 @@
 #include "Options.h"
 #include "Player.h"
 #include "Preview.h"
-#include "Project.h"
 #include "Scrolling.h"
 #include "Selection.h"
 #include "Sequence.h"
@@ -33,7 +33,7 @@
 #include "ViewMap.h"
 #include "ViewMap.h"
 #include "ViewUpdateEvent.h"
-#include "Window.h"
+#include "Window.h" // todo reduce dependencies on window...
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
@@ -48,6 +48,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
 ,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
+,   mDetails(Window::get().getDetailsView().openTimeline(this))
 ,   mTransaction(false)
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
@@ -104,6 +105,7 @@ Timeline::~Timeline()
     delete mViewMap;        mViewMap = 0;
     delete mZoom;           mZoom = 0;
 
+    Window::get().getDetailsView().closeTimeline(this); // todo reduce deps on window...
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
 }
@@ -272,6 +274,16 @@ const model::SequencePtr Timeline::getSequence() const
     return mSequence;
 }
 
+Details& Timeline::getDetails()
+{
+    return *mDetails;
+}
+
+const Details& Timeline::getDetails() const
+{
+    return *mDetails;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -335,6 +347,7 @@ void Timeline::onZoomChanged( ZoomChangeEvent& event )
 void Timeline::activate()
 {
     Window::get().getPreview().selectTimeline(this);
+    Window::get().getDetailsView().selectTimeline(this);
     getMenuHandler().activate();
 }
 
@@ -399,11 +412,6 @@ void Timeline::endTransaction()
 //////////////////////////////////////////////////////////////////////////
 // CHANGE COMMANDS
 //////////////////////////////////////////////////////////////////////////
-
-void Timeline::Submit(::command::RootCommand* c)
-{
-    model::Project::get().Submit(c);
-}
 
 void Timeline::modelChanged()
 {

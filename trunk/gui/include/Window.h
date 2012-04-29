@@ -8,6 +8,7 @@
 #include <boost/serialization/version.hpp>
 #include <boost/scoped_ptr.hpp>
 #include "IView.h"
+#include "HelperPanel.h"
 
 namespace util {
     class TestCrash;
@@ -21,13 +22,18 @@ class EventRenameProject;
 
 namespace gui {
 
+    namespace timeline {
+        class Details;
+    }
+
 class Dialog;
 class Watcher;
 class Worker;
 class TimelinesView;
 class Preview;
-class DetailsView;
 class ProjectView;
+
+typedef timeline::HelperPanel<timeline::Details> DetailsView;
 
 class Window
     :   public wxDocParentFrame
@@ -107,6 +113,7 @@ public:
 
     TimelinesView&   getTimeLines();
     Preview&         getPreview();
+    DetailsView&     getDetailsView();
 
     /// This must be called whenever a new (sub)widget has been added. This
     /// ensures proper layout.

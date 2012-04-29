@@ -27,6 +27,7 @@ VideoClip::VideoClip()
     , mScaling()
     , mScalingFactor(1)
     , mAlignment()
+    , mAlignmentOffset(0,0)
     , mRegionOfInterest(0,0,0,0)
 {
     VAR_DEBUG(this);
@@ -38,11 +39,12 @@ VideoClip::VideoClip(IControlPtr file)
     , mScaling(gui::Config::ReadEnum<VideoScaling>(gui::Config::sPathDefaultVideoScaling))
     , mScalingFactor(1)
     , mAlignment(gui::Config::ReadEnum<VideoAlignment>(gui::Config::sPathDefaultVideoAlignment))
+    , mAlignmentOffset(0,0)
     , mRegionOfInterest()
 {
     VAR_DEBUG(this);
     setScaling(mScaling);
-    determineTransform();
+    //determineTransform(); todo
 }
 
 VideoClip::VideoClip(const VideoClip& other)
@@ -51,6 +53,7 @@ VideoClip::VideoClip(const VideoClip& other)
     , mScaling(other.mScaling)
     , mScalingFactor(other.mScalingFactor)
     , mAlignment(other.mAlignment)
+    , mAlignmentOffset(other.mAlignmentOffset)
     , mRegionOfInterest(other.mRegionOfInterest)
 {
     VAR_DEBUG(*this);
@@ -98,17 +101,23 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
     {
         // Scale the clip's size and region of interest to the bounding box
         // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
+            wxSize outputsize = Properties::get()->getVideoSize();
+
         double scaleToBoundingBox(0);
-        wxSize requiredOutputSize = Convert::sizeInBoundingBox(mRegionOfInterest.GetSize(), size, scaleToBoundingBox);
+//        wxSize requiredOutputSize = Convert::sizeInBoundingBox(mRegionOfInterest.GetSize(), size, scaleToBoundingBox);
+                wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, size, scaleToBoundingBox);
         ASSERT_NONZERO(scaleToBoundingBox);
         VideoFilePtr generator = getDataGenerator<VideoFile>();
-        wxSize requiredVideoSize = Convert::scale(generator->getSize(), mScalingFactor * scaleToBoundingBox);
+        double videoscaling = mScalingFactor * scaleToBoundingBox;
+        wxSize inputsize = generator->getSize();
+        wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
         wxRect regionOfInterest(Convert::scale(mRegionOfInterest, scaleToBoundingBox));
-        VAR_INFO(requiredVideoSize)(regionOfInterest)(scaleToBoundingBox);
-        ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.GetX());
-        ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.GetY());
-        ASSERT_LESS_THAN_EQUALS(regionOfInterest.GetWidth(), size.x);
-        ASSERT_LESS_THAN_EQUALS(regionOfInterest.GetHeight(), size.y); // todo assert goes off when resizing (reducing size) with the left edge
+        wxPoint offset(Convert::scale(mAlignmentOffset, scaleToBoundingBox));
+        VAR_INFO(inputsize)(requiredVideoSize)(regionOfInterest)(mScalingFactor)(scaleToBoundingBox)(videoscaling);
+        ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.x);
+        ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.y);
+        ASSERT_LESS_THAN_EQUALS(regionOfInterest.x + regionOfInterest.width,  requiredVideoSize.x);
+        ASSERT_LESS_THAN_EQUALS(regionOfInterest.y + regionOfInterest.height, requiredVideoSize.y);
 
         //VideoFilePtr generator = getDataGenerator<VideoFile>();
         videoFrame = generator->getNextVideo(requiredVideoSize, alpha);
@@ -126,6 +135,7 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
             }
 
             videoFrame->setRegionOfInterest(regionOfInterest);
+            videoFrame->setPosition(offset);
         }
         else
         {
@@ -186,6 +196,7 @@ wxRect VideoClip::getRegionOfInterest() const
 
 void VideoClip::determineTransform()
 {
+    NIY;
     wxSize inputVideoSize = getInputSize();
     wxSize projectSize = Properties::get()->getVideoSize();
 
@@ -204,48 +215,134 @@ void VideoClip::setScaling(VideoScaling scaling, boost::optional<double> factor)
     wxSize inputsize = getInputSize();
     wxSize outputsize = Properties::get()->getVideoSize();
 
-    double result = 0;
-    wxSize scaledsize(0,0);
-    switch (scaling)
+    mScaling = scaling;
+    switch (mScaling)
     {
     case VideoScalingFitToFill:
-        scaledsize = Convert::fillBoundingBoxWithMinimalLoss(inputsize, outputsize, result); // todo don't use project default but give each clip it's own setting!
+        Convert::fillBoundingBoxWithMinimalLoss(inputsize, outputsize, mScalingFactor); // todo don't use project default but give each clip it's own setting!
         break;
     case VideoScalingFitAll:
-        scaledsize = Convert::sizeInBoundingBox(inputsize, outputsize, result);
+        Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor);
         break;
     case VideoScalingNone:
-        result = 1.0;
+        mScalingFactor = 1.0;
         break;
     case VideoScalingCustom:
         if (factor)
         {
-            result = *factor;
+            mScalingFactor = *factor;
         }
-        else
-        {
-            result = mScaling; // Use current scaling factor
-        }
+        // else: Use current scaling factor
         break;
     default:
         NIY;
         break;
     }
-    ASSERT_NONZERO(result);
-    mScaling = scaling;
-    mScalingFactor = result;
+    ASSERT_NONZERO(mScalingFactor);
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Determine region of interest and offset
+
+    // todo always update all these transform vars in one action???, yes, make one method with all optionals for 'to be changeds' then make dedicated change methods which trigger this one method
+    wxSize scaledsize = Convert::scale(inputsize,mScalingFactor);
+    //mRegionOfInterest = determineRegionOfInterest(scaledsize,outputsize,mAlignment);
+
+    mRegionOfInterest.SetPosition(wxPoint(0,0));
+    mRegionOfInterest.SetSize(scaledsize);
+
+    switch (mAlignment)
+    {
+    case VideoAlignmentCenter:
+        {
+            mAlignmentOffset = wxPoint(0,0);
+            pixel ydiff = scaledsize.y - outputsize.y;
+            if (scaledsize.GetWidth() >= outputsize.GetWidth()) // Input is larger than required size. Reduce input size by setting region of interest.
+            {
+                mRegionOfInterest.SetX((scaledsize.GetWidth() - outputsize.GetWidth()) / 2);
+                mRegionOfInterest.SetWidth(outputsize.GetWidth());
+            }
+            else // Input is smaller than required size. Entire input is used.
+            {
+                mRegionOfInterest.SetX(0);
+                mRegionOfInterest.SetWidth(scaledsize.GetWidth());
+                mAlignmentOffset.x = (outputsize.GetWidth() - scaledsize.GetWidth()) / 2; // Set offset to ensure that the remaining smaller clip is centered.
+            }
+            if (scaledsize.GetHeight() >= outputsize.GetHeight()) // Input is larger than required size. Reduce input size by setting region of interest.
+            {
+                mRegionOfInterest.SetY((scaledsize.GetHeight() - outputsize.GetHeight()) / 2);
+                mRegionOfInterest.SetHeight(outputsize.GetHeight());
+            }
+            else // Input is smaller than required size. Entire input is used.
+            {
+                mRegionOfInterest.SetY(0);
+                mRegionOfInterest.SetHeight(scaledsize.GetHeight());
+                mAlignmentOffset.y = (outputsize.GetHeight() - scaledsize.GetHeight()) / 2; // Set offset to ensure that the remaining smaller clip is centered.
+            }
+            break;
+        }
+    case VideoAlignmentCustom:
+    default:
+        NIY;
+        break;
+    }
+    ASSERT_MORE_THAN_EQUALS_ZERO(mRegionOfInterest.GetX());
+    ASSERT_MORE_THAN_EQUALS_ZERO(mRegionOfInterest.GetY());
+    ASSERT_LESS_THAN_EQUALS(mRegionOfInterest.GetWidth(),scaledsize.GetWidth());
+    ASSERT_LESS_THAN_EQUALS(mRegionOfInterest.GetHeight(),scaledsize.GetHeight());
+    ASSERT_LESS_THAN_EQUALS(mRegionOfInterest.GetWidth(),outputsize.GetWidth());
+    ASSERT_LESS_THAN_EQUALS(mRegionOfInterest.GetHeight(),outputsize.GetHeight());
+
+    ////////////////////////////////////////////////////////////////////////////////////
+
     ProcessEvent(EventChangeVideoClipScaling(mScaling));
     ProcessEvent(EventChangeVideoClipScalingFactor(mScalingFactor));
 }
 
 wxRect VideoClip::determineRegionOfInterest(wxSize inputsize, wxSize outputsize, VideoAlignment alignment)
 {
-    wxRect roi(wxPoint(0,0),outputsize);
+    NIY;
+    wxSize size(std::min(inputsize.x,outputsize.x),std::min(inputsize.y,outputsize.y)); // todo make min for sizes?
+
+    pixel xdiff = inputsize.x - outputsize.x;
+    pixel ydiff = inputsize.y - outputsize.y;
+
+    wxRect roi(wxPoint(0,0),size);
+
     switch (alignment)
     {
     case VideoAlignmentCenter:
         {
-            wxSize diff = inputsize - outputsize;
+            mAlignmentOffset = wxPoint(0,0);
+            if (xdiff >= 0)
+            {
+                // Input is larger than required size. Reduce input size by setting region of interest.
+                roi.SetX(xdiff / 2);
+                roi.SetWidth(outputsize.GetWidth());
+            }
+            else
+            {
+                // Input is smaller than required size. Entire input is used.
+                roi.SetX(0);
+                roi.SetWidth(inputsize.GetWidth());
+                // Set offset to ensure that the remaining smaller clip is centered.
+                mAlignmentOffset.x = -1 * xdiff / 2;
+            }
+            if (ydiff >= 0)
+            {
+                // Input is larger than required size. Reduce input size by setting region of interest.
+                roi.SetY(ydiff / 2);
+                roi.SetHeight(outputsize.GetHeight());
+            }
+            else
+            {
+                // Input is smaller than required size. Entire input is used.
+                roi.SetY(0);
+                roi.SetHeight(inputsize.GetHeight());
+                // Set offset to ensure that the remaining smaller clip is centered.
+                mAlignmentOffset.y = -1 * ydiff / 2;
+            }
+
+            wxSize diff = size - outputsize;
             diff /= 2;
             roi.SetPosition(wxPoint(0,0) + diff);
             break;
@@ -255,6 +352,7 @@ wxRect VideoClip::determineRegionOfInterest(wxSize inputsize, wxSize outputsize,
         NIY;
         break;
     }
+
     return roi;
 }
 
@@ -280,6 +378,7 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
     ar & mScaling;
     ar & mScalingFactor;
     ar & mAlignment;
+    ar & mAlignmentOffset;
     ar & mRegionOfInterest;
 }
 template void VideoClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
