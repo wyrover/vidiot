@@ -7,6 +7,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include "CommandProcessor.h"
 #include "Dialog.h"
 #include "File.h"
 #include "Folder.h"
@@ -85,6 +86,11 @@ bool Project::OnCreate(const wxString& path, long flags)
         GetCommandProcessor()->Initialize();
     }
     return created;
+}
+
+wxCommandProcessor* Project::OnCreateCommandProcessor()
+{
+    return new CommandProcessor();
 }
 
 void Project::OnChangeFilename(bool notifyViews)

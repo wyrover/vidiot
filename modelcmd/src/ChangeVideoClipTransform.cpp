@@ -36,6 +36,10 @@ void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<
 {
     mNewScaling = boost::optional<VideoScaling>(scaling);
     mNewScalingFactor = scalingfactor;
+    if (mNewScaling)
+    {
+        mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -46,11 +50,16 @@ bool ChangeVideoClipTransform::Do()
 {
     VAR_INFO(*this)(mInitialized);
 
-    mInitialized = true;
-    if (mNewScaling)
+    if (mInitialized)
     {
-        mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
+        // Only the second time that Do() is called (redo) something actually needs to be done.
+        // The first time is handled by (possibly multiple calls to) setScaling etc.
+        if (mNewScaling)
+        {
+            mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
+        }
     }
+    mInitialized = true;
     return true;
 }
 

@@ -77,8 +77,6 @@ private:
 
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
 
-    EditDisplay* mEdit;
-
     command::TrimClip* mCommand;    ///< The command that executes the Trim operation
 
     pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.

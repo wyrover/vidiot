@@ -16,7 +16,6 @@
 #include "IntervalsView.h"
 #include "Layout.h"
 #include "Menu.h"
-#include "Project.h"
 #include "Scrolling.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -125,7 +124,7 @@ void Intervals::addEndMarker()
 {
     if (mNewIntervalActive)
     {
-        model::Project::get().Submit(new command::IntervalChange(getSequence(), makeInterval(mNewIntervalBegin, mNewIntervalEnd), true));
+        (new command::IntervalChange(getSequence(), makeInterval(mNewIntervalBegin, mNewIntervalEnd), true))->submit();
     }
     mNewIntervalActive = false;
 }
@@ -142,7 +141,7 @@ void Intervals::endToggle()
     if (mToggleActive)
     {
         mToggleActive = false;
-        model::Project::get().Submit(new command::IntervalChange(getSequence(), makeInterval(mToggleBegin,mToggleEnd), toggleIsAddition()));
+        (new command::IntervalChange(getSequence(), makeInterval(mToggleBegin,mToggleEnd), toggleIsAddition()))->submit();
     }
 }
 
@@ -185,7 +184,7 @@ void Intervals::change(PtsInterval interval, bool add)
 
 void Intervals::clear()
 {
-    model::Project::get().Submit(new command::IntervalRemoveAll(getSequence()));
+    (new command::IntervalRemoveAll(getSequence()))->submit();
 }
 
 PtsIntervals Intervals::getIntervalsForDrawing() const
@@ -216,12 +215,12 @@ PtsIntervals Intervals::getIntervalsForDrawing() const
 
 void Intervals::deleteMarked()
 {
-    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mIntervals, true));
+    (new command::TrimIntervals(getSequence(), mIntervals, true))->submit();
 }
 
 void Intervals::deleteUnmarked()
 {
-    model::Project::get().Submit(new command::TrimIntervals(getSequence(), mIntervals, false));
+    (new command::TrimIntervals(getSequence(), mIntervals, false))->submit();
 }
 
 //////////////////////////////////////////////////////////////////////////

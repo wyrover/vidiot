@@ -21,7 +21,6 @@
 #include "Layout.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
-#include "Project.h"
 #include "ProjectView.h"
 #include "Scrolling.h"
 #include "Selection.h"
@@ -284,7 +283,7 @@ void Drag::drop()
     }
 
     mCommand->onDrop(drops, mShift);
-    getTimeline().Submit(mCommand); // Command is 'handed over' to wxWidgets undo system
+    mCommand->submit();
     mCommand = 0;
 }
 

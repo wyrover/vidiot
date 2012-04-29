@@ -56,6 +56,8 @@ public:
     pts getPts() const;
     void setPts(pts position);
     wxSize getSize() const;
+    void setPosition(wxPoint position);
+    wxPoint getPosition() const;
     void setRegionOfInterest(wxRect regionOfInterest);
     wxRect getRegionOfInterest() const;
     int getSizeInBytes() const;
@@ -81,6 +83,7 @@ protected:
     int mRepeat;
     double mTimeStamp;
     wxSize mSize;
+    wxPoint mPosition;
     wxRect mRegionOfInterest;
     pts mPts;
     boost::uint8_t *mBuffer;

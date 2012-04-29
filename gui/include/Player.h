@@ -38,12 +38,13 @@ public:
     // CONTROL METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    EditDisplay* startEdit();
-    void endEdit();
-
     void play();
     void stop();
     void moveTo(pts position);
+
+    void show(boost::shared_ptr<wxBitmap> bitmap);
+
+    wxSize getVideoSize() const;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -68,6 +69,7 @@ private:
     EditDisplay* mEdit;
     wxTextCtrl* mStatus;
     int mPosition;
+    bool mEditOnTop;
 
     //////////////////////////////////////////////////////////////////////////
     // SPEED SLIDER
@@ -82,6 +84,9 @@ private:
     wxToggleButton* mSpeedButton;
     wxMiniFrame* mSpeedSliderFrame;
     wxSlider* mSpeedSlider;
+
+    void startEdit();
+    void endEdit();
 
     void onSpeedSliderFocusKill(wxFocusEvent& event );
     void onSpeedSliderUpdate( wxCommandEvent& event );

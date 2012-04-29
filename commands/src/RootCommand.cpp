@@ -22,9 +22,9 @@ RootCommand::~RootCommand()
 // SUBMIT
 //////////////////////////////////////////////////////////////////////////
 
-void RootCommand::Submit()
+void RootCommand::submit()
 {
-    model::Project::get().Submit(this); // todo use this method for all submits. that avoids #include Project.h everywhere
+    model::Project::get().Submit(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include <boost/rational.hpp>
-#include "Project.h"
 #include "Constants.h"
 #include "UtilLog.h"
 #include "Properties.h"
@@ -18,13 +17,13 @@ int toInt(rational r)
 // static
 pts Convert::timeToPts(int time)
 {
-    return toInt(rational(time) / rational(Constants::sSecond) / Project::get().getProperties()->getFrameRate());
+    return toInt(rational(time) / rational(Constants::sSecond) / Properties::get()->getFrameRate());
 }
 
 // static
 int Convert::ptsToTime(pts position)
 {
-    return toInt(rational(position) * rational(Constants::sSecond) * Project::get().getProperties()->getFrameRate());
+    return toInt(rational(position) * rational(Constants::sSecond) * Properties::get()->getFrameRate());
 }
 
 // static
@@ -69,13 +68,13 @@ pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrat
 //static
 pts Convert::toProjectFrameRate(pts inputposition, FrameRate inputrate)
 {
-    return convertFrameRate(inputposition, inputrate, Project::get().getProperties()->getFrameRate());
+    return convertFrameRate(inputposition, inputrate, Properties::get()->getFrameRate());
 }
 
 //static
 pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
 {
-    return convertFrameRate(outputposition, Project::get().getProperties()->getFrameRate(), inputrate);
+    return convertFrameRate(outputposition, Properties::get()->getFrameRate(), inputrate);
 }
 
 // static

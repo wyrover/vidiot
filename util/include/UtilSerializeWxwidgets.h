@@ -17,6 +17,9 @@ template<class Archive> void load(Archive& ar,       wxString& string, const uns
 template<class Archive> void save(Archive& ar, const wxFileName& filename, const unsigned int version);
 template<class Archive> void load(Archive& ar,       wxFileName& filename, const unsigned int version);
 
+template<class Archive> void serialize(Archive& ar, wxPoint& r, const unsigned int version);
+template<class Archive> void serialize(Archive& ar, wxPoint& r, const unsigned int version);
+
 template<class Archive> void serialize(Archive& ar, wxSize& r, const unsigned int version);
 template<class Archive> void serialize(Archive& ar, wxSize& r, const unsigned int version);
 

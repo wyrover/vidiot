@@ -60,6 +60,8 @@ public:
     const Dump& getDump() const;
     model::SequencePtr getSequence();
     const model::SequencePtr getSequence() const;
+    Details& getDetails();
+    const Details& getDetails() const;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -115,8 +117,6 @@ public:
     // CHANGE COMMANDS
     //////////////////////////////////////////////////////////////////////////
 
-    void Submit(::command::RootCommand* c);
-
     /// Reset the mouse pointer, triggering an update of both the model (since
     /// iterators are reset via the moveTo method) and the timeline (since
     /// resetting the cursor causes an update).
@@ -130,6 +130,7 @@ private:
 
     model::SequencePtr mSequence;
     Player* mPlayer;
+
     bool mTransaction;
 
     //////////////////////////////////////////////////////////////////////////
@@ -149,6 +150,7 @@ private:
     Dump* mDump;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts
+    Details* mDetails;
 
     //////////////////////////////////////////////////////////////////////////
     // CHILDREN -> Must be AFTER PARTS

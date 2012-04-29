@@ -20,7 +20,6 @@ extern "C" {
 #include "Node.h"
 #include "VideoFrame.h"
 #include "Convert.h"
-#include "Project.h"
 #include "Properties.h"
 
 namespace model {
@@ -264,9 +263,9 @@ void VideoFile::startDecodingVideo()
     FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
 
-    if (videoFrameRate != Project::get().getProperties()->getFrameRate())
+    if (videoFrameRate != Properties::get()->getFrameRate())
     {
-        LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Project::get().getProperties()->getFrameRate();
+        LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get()->getFrameRate();
     }
 
     VAR_DEBUG(this)(getCodec());

@@ -10,13 +10,11 @@
 #include <boost/make_shared.hpp>
 #include "Clip.h"
 #include "ClipView.h"
-#include "EditDisplay.h"
 #include "EmptyClip.h"
 #include "Layout.h"
 #include "MousePointer.h"
 #include "Player.h"
 #include "PositionInfo.h"
-#include "Project.h"
 #include "Scrolling.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -27,6 +25,7 @@
 #include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
+#include "VideoFrame.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
@@ -38,7 +37,6 @@ namespace gui { namespace timeline {
 Trim::Trim(Timeline* timeline)
     :   Part(timeline)
     ,   mStartPosition(0,0)
-    ,   mEdit(0)
     ,   mFixedPixel(0)
     ,   mCommand(0)
 {
@@ -57,8 +55,6 @@ Trim::~Trim()
 void Trim::start()
 {
     LOG_DEBUG;
-
-    mEdit = getPlayer()->startEdit();
 
     // Reset first
     mStartPosition = wxPoint(0,0);
@@ -149,7 +145,7 @@ void Trim::start()
     if (adjacentClip && adjacentClip->isA<model::VideoClip>())
     {
         model::VideoClipPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(adjacentClip);
-        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(wxSize(mEdit->getSize().GetWidth() / 2,  mEdit->getSize().GetHeight()), false);
+        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(wxSize(getPlayer()->getVideoSize().GetWidth() / 2,  getPlayer()->getVideoSize().GetHeight()), false);
         mAdjacentBitmap = adjacentFrame->getBitmap();
     }
 
@@ -195,12 +191,10 @@ void Trim::stop()
     if (mCommand->getDiff() != 0)
     {
         // Only submit the command if there's an actual diff to be applied
-        getTimeline().Submit(mCommand);
+        mCommand->submit();
         mCommand = 0; // To ensure that any following 'abort' (see StateTrim) will not cause a revert
         LOG_DEBUG;
     }
-
-    getPlayer()->endEdit();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -226,7 +220,7 @@ void Trim::preview()
         if (updatedClip->getLength() > 0)
         {
             model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
-            wxSize s = mEdit->getSize();
+            wxSize s = getPlayer()->getVideoSize();
             bool drawadjacentclip = wxGetMouseState().ShiftDown() && mAdjacentBitmap;
             int previewwidth = (drawadjacentclip ? s.GetWidth() / 2 : s.GetWidth());
             int previewxpos = 0;
@@ -264,7 +258,7 @@ void Trim::preview()
                 dc.DrawBitmap(*mAdjacentBitmap, xAdjacent, (s.GetHeight() - mAdjacentBitmap->GetHeight()) / 2);
             }
             dc.SelectObject(wxNullBitmap);
-            mEdit->show(bmp);
+            getPlayer()->show(bmp);
         }
     }
 }

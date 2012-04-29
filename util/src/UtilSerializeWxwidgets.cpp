@@ -41,6 +41,16 @@ template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive&
 template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxFileName& filename, const unsigned int version);
 
 template<class Archive>
+void serialize(Archive & ar, wxPoint & r, const unsigned int version)
+{
+    ar & r.x;
+    ar & r.y;
+}
+
+template void serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, wxPoint & r, const unsigned int version);
+template void serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, wxPoint & r, const unsigned int version);
+
+template<class Archive>
 void serialize(Archive & ar, wxSize & r, const unsigned int version)
 {
     ar & r.x;

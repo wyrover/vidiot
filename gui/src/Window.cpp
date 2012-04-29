@@ -12,7 +12,6 @@
 #include "Dialog.h"
 #include "Node.h"
 #include "Config.h"
-#include "DetailsView.h"
 #include "ids.h"
 #include "Options.h"
 #include "Preview.h"
@@ -26,6 +25,7 @@
 #include "Worker.h"
 
 namespace gui {
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -364,6 +364,11 @@ TimelinesView& Window::getTimeLines()
 Preview& Window::getPreview()
 {
     return *mPreview;
+}
+
+DetailsView& Window::getDetailsView()
+{
+    return *mDetailsView;
 }
 
 void Window::triggerLayout()

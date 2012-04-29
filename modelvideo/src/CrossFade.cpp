@@ -72,6 +72,8 @@ VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr righ
 
     int bytesPerPixel = alpha ? 4 : 3;
 
+    // todo incorporate offset and region of interest...
+
     for (int y = 0; y < targetFrame->getSize().GetHeight(); ++y)
     {
         for (int x = 0; x < targetFrame->getSize().GetWidth() * bytesPerPixel; x += 1)

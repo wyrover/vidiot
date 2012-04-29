@@ -83,7 +83,7 @@ private:
     bool mPlaying;
 
     /// Holds the time at which the first audio buffer will be played.
-    /// Effectively, that's the start time of the playback. Time is in 
+    /// Effectively, that's the start time of the playback. Time is in
     /// milliseconds.
     int mStartTime;
 
@@ -123,6 +123,7 @@ private:
     model::FifoVideo mVideoFrames;
     model::VideoFramePtr mCurrentVideoFrame;
     boost::shared_ptr<wxBitmap> mCurrentBitmap;
+    wxPoint mCurrentBitmapPosition;
 
     int mWidth;
     int mHeight;
