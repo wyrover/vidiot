@@ -102,6 +102,11 @@ void MoveWithinWidget(wxPoint position, wxPoint origin);
 /// \param position position wrt top-left corner of screen
 void MoveOnScreen(wxPoint position);
 
+/// Click on the top left pixel of a widget to give it the focus.
+/// \param window window that must receive the focus after clicking
+/// \param extraoffset extra offset (some widgets require this)
+void ClickTopLeft(wxWindow* window, wxPoint extraoffset = wxPoint(0,0));
+
 } // namespace
 
 #endif // HELPER_WINDOW_H

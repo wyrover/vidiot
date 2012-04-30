@@ -85,15 +85,12 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
         wxPanel* scalingpanel = new wxPanel(this);
         wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
 
-        static const double minscaling = 0.01;
-        static const int maxscaling = 10;
-
         static const int sliderFactor = 100; // Each increment of 1 on the slider means 1/100 th increase of scaling.
-        mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, factor * sliderFactor, minscaling * sliderFactor, maxscaling * sliderFactor);
+        mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, factor * sliderFactor, Layout::sMinScalingFactor * sliderFactor, Layout::sMaxScalingFactor * sliderFactor);
         mScalingSpin = new wxSpinCtrlDouble(scalingpanel);
         mScalingSpin->SetValue(factor);
-        mScalingSpin->SetRange(minscaling,maxscaling);
-        mScalingSpin->SetIncrement(0.01);
+        mScalingSpin->SetRange(Layout::sMinScalingFactor,Layout::sMaxScalingFactor);
+        mScalingSpin->SetIncrement(Layout::sScalingIncrement);
         scalingsizer->Add(mScalingSlider);
         scalingsizer->Add(mScalingSpin);
         scalingpanel->SetSizer(scalingsizer);

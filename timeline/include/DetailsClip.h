@@ -50,6 +50,23 @@ public:
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
     void onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event);
 
+    //////////////////////////////////////////////////////////////////////////
+    // TEST
+    //////////////////////////////////////////////////////////////////////////
+
+    wxSlider* getScalingSlider() const
+    {
+        return mScalingSlider;
+    }
+    wxSpinCtrlDouble* getScalingSpin() const
+    {
+        return mScalingSpin; // todo to cpp
+    }
+    wxChoice* getScalingChoice()
+    {
+        return mSelectScaling;
+    }
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

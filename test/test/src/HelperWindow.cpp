@@ -160,4 +160,11 @@ void MoveOnScreen(wxPoint position)
 	ASSERT_EQUALS(wxGetMouseState().GetPosition(), position);
 }
 
+void ClickTopLeft(wxWindow* window, wxPoint extraoffset)
+{
+    MoveOnScreen(window->GetScreenPosition() + extraoffset);
+    wxUIActionSimulator().MouseClick();
+    waitForIdle();
+}
+
 } // namespace

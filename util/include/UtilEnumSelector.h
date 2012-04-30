@@ -1,6 +1,7 @@
 #ifndef UTIL_ENUM_SELECTOR
 #define UTIL_ENUM_SELECTOR
 
+#include <wx/choice.h>
 #include "UtilLog.h"
 #include <boost/foreach.hpp>
 
