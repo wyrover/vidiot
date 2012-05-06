@@ -428,6 +428,7 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
         position = mCurrentBitmapPosition;
     }
 
+    // Buffered dc is used, since first the entire area is blanked with drawrectangle, and then overwritten. Without buffering that causes flickering.
     wxAutoBufferedPaintDC dc(this); // Omit this, and suffer the performance consequences ;-)
 
     dc.SetPen(*wxBLACK);
@@ -436,14 +437,13 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
     if (bitmap)
     {
         dc.DrawBitmap(*bitmap,position);
-
-        // Draw the bounding box
-        wxSize projectSize = model::Properties::get()->getVideoSize();
-        wxSize scaledSize = model::Convert::sizeInBoundingBox(projectSize,wxSize(mWidth,mHeight));
-        dc.SetPen(Layout::sPreviewBoundingBoxPen);
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.DrawRectangle( 0, 0, scaledSize.GetWidth(), scaledSize.GetHeight());
     }
+    // Draw the bounding box
+    wxSize projectSize = model::Properties::get()->getVideoSize();
+    wxSize scaledSize = model::Convert::sizeInBoundingBox(projectSize,wxSize(mWidth,mHeight));
+    dc.SetPen(Layout::sPreviewBoundingBoxPen);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRectangle( 0, 0, scaledSize.GetWidth(), scaledSize.GetHeight());
 }
 
 void VideoDisplay::showNewVideoFrame()

@@ -97,7 +97,10 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
         clone->moveTo(0);
         model::VideoFramePtr videoFrame = clone->getNextVideo(requiredSize(), false);
         model::wxBitmapPtr thumbnail = videoFrame->getBitmap();
-        dc.DrawBitmap(*thumbnail,0,0,false);
+        if (thumbnail)
+        {
+            dc.DrawBitmap(*thumbnail,0,0,false);
+        }
     }
 }
 

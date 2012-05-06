@@ -93,6 +93,8 @@ void VideoFrame::setRegionOfInterest(wxRect regionOfInterest)
 {
     ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.x);
     ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.y);
+    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.width);
+    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.height);
     ASSERT_LESS_THAN_EQUALS(regionOfInterest.x + regionOfInterest.width,  mSize.x);
     ASSERT_LESS_THAN_EQUALS(regionOfInterest.y + regionOfInterest.height, mSize.y);
     mRegionOfInterest = regionOfInterest;
@@ -120,6 +122,10 @@ int VideoFrame::getSizeInBytes() const
 
 wxBitmapPtr VideoFrame::getBitmap()
 {
+    if (mRegionOfInterest.IsEmpty())
+    {
+        return wxBitmapPtr();
+    }
     wxBitmap tmp(wxImage(mSize, getData()[0], true));
     return boost::make_shared<wxBitmap>(tmp.GetSubBitmap(mRegionOfInterest));
 }

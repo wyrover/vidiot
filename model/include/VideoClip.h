@@ -45,22 +45,19 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     wxSize getInputSize(); ///< \return size of input video
-
-    void setScaling(VideoScaling scaling, boost::optional<double> factor = boost::none);
-    VideoScaling getScaling() const;
-    double getScalingFactor() const;
-
     wxSize getSize() const; ///< \return size of output video
 
+    VideoScaling getScaling() const;
+    double getScalingFactor() const;
     VideoAlignment getAlignment() const;
-    wxPoint getAlignmentOffset() const;
-    wxRect getRegionOfInterest() const;
+    wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
-    /// Determine the size and region of interest.
-    void determineTransform();
+    wxPoint getMinPosition();
+    wxPoint getMaxPosition();
 
-    double determineScalingFactor(VideoScaling scaling, boost::optional<double> factor = boost::none);
-    wxRect determineRegionOfInterest(wxSize inputsize, wxSize outputsize, VideoAlignment alignment);
+    void setScaling(VideoScaling scaling, boost::optional<double> factor = boost::none);
+    void setAlignment(VideoAlignment alignment);
+    void setPosition(wxPoint position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
 protected:
 
@@ -84,8 +81,14 @@ private:
     double mScalingFactor;
 
     VideoAlignment mAlignment;
-    wxPoint mAlignmentOffset;
-    wxRect mRegionOfInterest;
+    wxPoint mPosition;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void updateAutomatedScaling();
+    void updateAutomatedPositioning();
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -17,6 +17,8 @@ boost::bimap<VideoScaling, wxString> VideoScalingConverter::mapToHumanReadibleSt
     (VideoScalingCustom,    _("Custom"));
 
 boost::bimap<VideoAlignment,wxString> VideoAlignmentConverter::mapToHumanReadibleString = boost::assign::list_of< boost::bimap<VideoAlignment,wxString>::relation >
-    (VideoAlignmentCenter,    _("Centered"))
-    (VideoAlignmentCustom,    _("Custom"));
+    (VideoAlignmentCenter,              _("Centered"))
+    (VideoAlignmentCenterHorizontal,    _("Centered horizontally"))
+    (VideoAlignmentCenterVertical,      _("Centered vertically"))
+    (VideoAlignmentCustom,              _("Custom"));
 }
