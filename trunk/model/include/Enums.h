@@ -17,6 +17,8 @@ DECLAREENUM(VideoScaling, \
 
 DECLAREENUM(VideoAlignment, \
             VideoAlignmentCenter, \
+            VideoAlignmentCenterHorizontal, \
+            VideoAlignmentCenterVertical, \
             VideoAlignmentCustom);
 
 }

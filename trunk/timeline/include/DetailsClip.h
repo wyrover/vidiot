@@ -42,6 +42,11 @@ public:
     void onScalingChoiceChanged(wxCommandEvent& event);
     void onScalingSliderChanged(wxCommandEvent& event);
     void onScalingSpinChanged(wxSpinDoubleEvent& event);
+    void onAlignmentChoiceChanged(wxCommandEvent& event);
+    void onPositionXSliderChanged(wxCommandEvent& event);
+    void onPositionXSpinChanged(wxSpinEvent& event);
+    void onPositionYSliderChanged(wxCommandEvent& event);
+    void onPositionYSpinChanged(wxSpinEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -49,23 +54,18 @@ public:
 
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
     void onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event);
+    void onAlignmentChanged(model::EventChangeVideoClipAlignment& event);
+    void onPositionChanged(model::EventChangeVideoClipPosition& event);
+    void onMinPositionChanged(model::EventChangeVideoClipMinPosition& event);
+    void onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event);
 
     //////////////////////////////////////////////////////////////////////////
     // TEST
     //////////////////////////////////////////////////////////////////////////
 
-    wxSlider* getScalingSlider() const
-    {
-        return mScalingSlider;
-    }
-    wxSpinCtrlDouble* getScalingSpin() const
-    {
-        return mScalingSpin; // todo to cpp
-    }
-    wxChoice* getScalingChoice()
-    {
-        return mSelectScaling;
-    }
+    wxSlider* getScalingSlider() const;
+    wxSpinCtrlDouble* getScalingSpin() const;
+    wxChoice* getScalingChoice() const;
 
 private:
 
@@ -87,10 +87,10 @@ private:
 
     EnumSelector<model::VideoAlignment>* mSelectAlignment;
 
-    wxSpinCtrl* mOffsetXSpin;
-    wxSlider* mOffsetXSlider;
-    wxSpinCtrl* mOffsetYSpin;
-    wxSlider* mOffsetYSlider;
+    wxSpinCtrl* mPositionXSpin;
+    wxSlider* mPositionXSlider;
+    wxSpinCtrl* mPositionYSpin;
+    wxSlider* mPositionYSlider;
 
     model::ChangeVideoClipTransform* mCommand;
 
@@ -102,6 +102,11 @@ private:
     void addbox(const wxString& name);
     void addoption(const wxString& name, wxWindow* widget);
     void preview();
+
+    /// When a slider or spin control is changed for one of the position values, then update
+    /// the alignment choice accordingly.
+    void updateAlignment(bool horizontalchange);
+
 };
 
 }} // namespace

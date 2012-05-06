@@ -25,6 +25,8 @@ public:
     virtual ~ChangeVideoClipTransform();
 
     void setScaling(VideoScaling scaling, boost::optional<double> scalingfactor = boost::none);
+    void setAlignment(VideoAlignment alignment);
+    void setPosition(wxPoint position);
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE
@@ -51,11 +53,14 @@ private:
 
     VideoScaling mOldScaling;
     double mOldScalingFactor;
+
     VideoAlignment mOldAlignment;
-    wxRect mOldRegionOfInterest;
+    wxPoint mOldPosition;
 
     boost::optional<VideoScaling> mNewScaling;
     boost::optional<double> mNewScalingFactor;
+    boost::optional<VideoAlignment> mNewAlignment;
+    boost::optional<wxPoint> mNewPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

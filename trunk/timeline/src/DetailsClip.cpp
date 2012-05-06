@@ -56,10 +56,10 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
     ,   mScalingSlider(0)
     ,   mScalingSpin(0)
     ,   mSelectAlignment(0)
-    ,   mOffsetXSpin(0)
-    ,   mOffsetXSlider(0)
-    ,   mOffsetYSpin(0)
-    ,   mOffsetYSlider(0)
+    ,   mPositionXSpin(0)
+    ,   mPositionXSlider(0)
+    ,   mPositionYSpin(0)
+    ,   mPositionYSlider(0)
     ,   mCommand(0)
 {
     LOG_INFO;
@@ -74,10 +74,10 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
 
         wxSize originalSize = mVideoClip->getInputSize();
         wxSize scaledSize = mVideoClip->getSize();
-        wxRect regionOfInterest = mVideoClip->getRegionOfInterest();
         double factor = mVideoClip->getScalingFactor();
-        int offsetx = -regionOfInterest.x;
-        int offsety = -regionOfInterest.y;
+        wxPoint position = mVideoClip->getPosition();
+        wxPoint maxpos = mVideoClip->getMaxPosition();
+        wxPoint minpos = mVideoClip->getMinPosition();
 
         mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, mVideoClip->getScaling());
         addoption(_("Scaling"), mSelectScaling);
@@ -99,40 +99,42 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
         mSelectAlignment = new EnumSelector<model::VideoAlignment>(this, model::VideoAlignmentConverter::mapToHumanReadibleString, mVideoClip->getAlignment());
         addoption(_("Alignment"), mSelectAlignment);
 
-        wxString summary = wxString::Format("(%dx%d)->(%dx%d)->(%d,%d)(%d,%d)",
-            originalSize.x, originalSize.y,
-            scaledSize.x, scaledSize.y,
-            regionOfInterest.GetX(), regionOfInterest.GetY(), regionOfInterest.GetWidth(), regionOfInterest.GetHeight());
-        wxStaticText* mSummary = new wxStaticText(this, wxID_ANY, summary );
-        addoption(_("Summary"), mSummary);
+        wxPanel* positionxpanel = new wxPanel(this);
+        wxBoxSizer* positionxsizer = new wxBoxSizer(wxHORIZONTAL);
+        mPositionXSlider = new wxSlider(positionxpanel, wxID_ANY, position.x, minpos.x, maxpos.x);
+        mPositionXSpin = new wxSpinCtrl(positionxpanel);
+        mPositionXSpin->SetRange(minpos.x, maxpos.x);
+        mPositionXSpin->SetValue(position.x);
+        positionxsizer->Add(mPositionXSlider);
+        positionxsizer->Add(mPositionXSpin);
+        positionxpanel->SetSizer(positionxsizer);
+        addoption(_("X position"), positionxpanel);
 
-        wxPanel* offsetxpanel = new wxPanel(this);
-        wxBoxSizer* offsetxsizer = new wxBoxSizer(wxHORIZONTAL);
-        mOffsetXSlider = new wxSlider(offsetxpanel, wxID_ANY, offsetx, -1000, 1000);
-        mOffsetXSpin = new wxSpinCtrl(offsetxpanel);
-        mOffsetXSlider->SetValue(offsetx);
-        mOffsetXSlider->SetRange(-1000,1000);
-        offsetxsizer->Add(mOffsetXSlider);
-        offsetxsizer->Add(mOffsetXSpin);
-        offsetxpanel->SetSizer(offsetxsizer);
-        addoption(_("X offset"), offsetxpanel);
-
-        wxPanel* offsetypanel = new wxPanel(this);
-        wxBoxSizer* offsetysizer = new wxBoxSizer(wxHORIZONTAL);
-        mOffsetYSlider = new wxSlider(offsetypanel, wxID_ANY, offsety, -1000, 1000);
-        mOffsetYSpin = new wxSpinCtrl(offsetypanel);
-        mOffsetYSlider->SetValue(offsety);
-        mOffsetYSlider->SetRange(-1000,1000);
-        offsetysizer->Add(mOffsetYSlider);
-        offsetysizer->Add(mOffsetYSpin);
-        offsetypanel->SetSizer(offsetysizer);
-        addoption(_("Y offset"), offsetypanel);
+        wxPanel* positionypanel = new wxPanel(this);
+        wxBoxSizer* positionysizer = new wxBoxSizer(wxHORIZONTAL);
+        mPositionYSlider = new wxSlider(positionypanel, wxID_ANY, position.y, minpos.y, maxpos.y);
+        mPositionYSpin = new wxSpinCtrl(positionypanel);
+        mPositionYSpin->SetRange(minpos.y,maxpos.y); // todo add a style to wxwidgets for reversing the arrow handling (up means the bitmap goes up)
+        mPositionYSpin->SetValue(position.y);
+        positionysizer->Add(mPositionYSlider);
+        positionysizer->Add(mPositionYSpin);
+        positionypanel->SetSizer(positionysizer);
+        addoption(_("Y position"), positionypanel);
 
         mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
         mScalingSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
         mScalingSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+        mSelectAlignment->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
+        mPositionXSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
+        mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
+        mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
+        mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
         mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
         mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
     }
 
     if (mAudioClip)
@@ -153,8 +155,17 @@ DetailsClip::~DetailsClip()
         mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
         mScalingSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
         mScalingSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+        mSelectAlignment->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
+        mPositionXSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
+        mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
+        mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
+        mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
         mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
         mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
     }
     if (mAudioClip)
     {
@@ -194,6 +205,50 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
     event.Skip();
 }
 
+void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
+{
+    LOG_INFO;
+    makeCommand();
+    mCommand->setAlignment(mSelectAlignment->getValue());
+    event.Skip();
+}
+
+void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mPositionXSlider->GetValue());
+    makeCommand();
+    updateAlignment(true);
+    mCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    event.Skip();
+}
+
+void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(event.GetValue());
+    makeCommand();
+    updateAlignment(true);
+    mCommand->setPosition(wxPoint(event.GetValue(), mPositionYSlider->GetValue()));
+    event.Skip();
+}
+
+void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mPositionYSlider->GetValue());
+    makeCommand();
+    updateAlignment(false);
+    mCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    event.Skip();
+}
+
+void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(event.GetValue());
+    makeCommand();
+    updateAlignment(false);
+    mCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), event.GetValue()));
+    event.Skip();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -208,10 +263,60 @@ void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFacto
 {
     mScalingSpin->SetValue(event.getValue());
     mScalingSlider->SetValue(event.getValue() * 100);
-
     preview();
-
     event.Skip();
+}
+
+void DetailsClip::onAlignmentChanged(model::EventChangeVideoClipAlignment& event)
+{
+    mSelectAlignment->select(event.getValue());
+    preview();
+    event.Skip();
+}
+
+void DetailsClip::onPositionChanged(model::EventChangeVideoClipPosition& event)
+{
+    mPositionXSpin->SetValue(event.getValue().x);
+    mPositionXSlider->SetValue(event.getValue().x);
+    mPositionYSpin->SetValue(event.getValue().y);
+    mPositionYSlider->SetValue(event.getValue().y);
+    preview();
+    event.Skip();
+}
+
+void DetailsClip::onMinPositionChanged(model::EventChangeVideoClipMinPosition& event)
+{
+    mPositionXSpin->SetRange(event.getValue().x,mPositionXSpin->GetMax());
+    mPositionYSpin->SetRange(event.getValue().y,mPositionYSpin->GetMax());
+    mPositionXSlider->SetRange(event.getValue().x,mPositionXSlider->GetMax());
+    mPositionYSlider->SetRange(event.getValue().y,mPositionYSlider->GetMax());
+    event.Skip();
+}
+
+void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event)
+{
+    mPositionXSpin->SetRange(mPositionXSpin->GetMin(),event.getValue().x);
+    mPositionYSpin->SetRange(mPositionYSpin->GetMax(), event.getValue().y);
+    mPositionXSlider->SetRange(mPositionXSlider->GetMin(),event.getValue().x);
+    mPositionYSlider->SetRange(mPositionYSlider->GetMax(), event.getValue().y);
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TEST
+//////////////////////////////////////////////////////////////////////////
+
+wxSlider* DetailsClip::getScalingSlider() const
+{
+    return mScalingSlider;
+}
+wxSpinCtrlDouble* DetailsClip::getScalingSpin() const
+{
+    return mScalingSpin;
+}
+wxChoice* DetailsClip::getScalingChoice() const
+{
+    return mSelectScaling;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -267,11 +372,29 @@ void DetailsClip::preview()
         // Draw preview of operation
         model::VideoFramePtr videoFrame = videoclip->getNextVideo(getPlayer()->getVideoSize(), false);
         model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
-        dc.DrawBitmap(*trimmedBmp, videoFrame->getPosition());
+        if (trimmedBmp)
+        {
+            dc.DrawBitmap(*trimmedBmp, videoFrame->getPosition());
+        }
 
         dc.SelectObject(wxNullBitmap);
         getPlayer()->show(bmp);
     }
+}
+
+void DetailsClip::updateAlignment(bool horizontalchange)
+{
+    auto getAlignment = [this, horizontalchange]() -> model::VideoAlignment
+    {
+        switch (mSelectAlignment->getValue())
+        {
+        case model::VideoAlignmentCenter:           return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentCenterHorizontal);
+        case model::VideoAlignmentCenterHorizontal: return (horizontalchange ? model::VideoAlignmentCustom              : model::VideoAlignmentCenterHorizontal);
+        case model::VideoAlignmentCenterVertical:   return (horizontalchange ? model::VideoAlignmentCenterVertical      : model::VideoAlignmentCustom);
+        }
+        return mSelectAlignment->getValue();
+    };
+    mCommand->setAlignment(getAlignment());
 }
 
 }} // namespace

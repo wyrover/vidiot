@@ -3,6 +3,7 @@
 #include "Enums.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
+#include "UtilLogWxwidgets.h"
 
 namespace model {
 
@@ -20,9 +21,10 @@ ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip
     ,   mOldScaling(mVideoClip->getScaling())
     ,   mOldScalingFactor(mVideoClip->getScalingFactor())
     ,   mOldAlignment(mVideoClip->getAlignment())
-    ,   mOldRegionOfInterest(mVideoClip->getRegionOfInterest())
+    ,   mOldPosition(mVideoClip->getPosition())
     ,   mNewScaling(boost::none)
     ,   mNewScalingFactor(boost::none)
+    ,   mNewPosition(boost::none)
 {
 }
 
@@ -36,10 +38,19 @@ void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<
 {
     mNewScaling = boost::optional<VideoScaling>(scaling);
     mNewScalingFactor = scalingfactor;
-    if (mNewScaling)
-    {
-        mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
-    }
+    mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
+}
+
+void ChangeVideoClipTransform::setAlignment(VideoAlignment alignment)
+{
+    mNewAlignment = boost::optional<VideoAlignment>(alignment);
+    mVideoClip->setAlignment(*mNewAlignment);
+}
+
+void ChangeVideoClipTransform::setPosition(wxPoint position)
+{
+    mNewPosition = boost::optional<wxPoint>(position);
+    mVideoClip->setPosition(*mNewPosition);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,6 +69,14 @@ bool ChangeVideoClipTransform::Do()
         {
             mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
         }
+        if (mNewAlignment)
+        {
+            mVideoClip->setAlignment(*mNewAlignment);
+        }
+        if (mNewPosition)
+        {
+            mVideoClip->setPosition(*mNewPosition);
+        }
     }
     mInitialized = true;
     return true;
@@ -69,6 +88,14 @@ bool ChangeVideoClipTransform::Undo()
     if (mNewScaling)
     {
         mVideoClip->setScaling(mOldScaling, boost::optional<double>(mOldScalingFactor));
+    }
+    if (mNewAlignment)
+    {
+        mVideoClip->setAlignment(mOldAlignment);
+    }
+    if (mNewPosition)
+    {
+        mVideoClip->setPosition(mOldPosition);
     }
     return true;
 }
@@ -88,7 +115,16 @@ model::VideoClipPtr ChangeVideoClipTransform::getVideoClip() const
 
 std::ostream& operator<<( std::ostream& os, const ChangeVideoClipTransform& obj )
 {
-    os << &obj << '|' << typeid(obj).name() << '|' << obj.mVideoClip;
+    os  << &obj << '|'
+        << typeid(obj).name()    << '|'
+        << obj.mVideoClip        << '|'
+        << obj.mOldScaling       << '|'
+        << obj.mOldScalingFactor << '|'
+        << obj.mOldAlignment     << '|'
+        << obj.mOldPosition      << '|'
+        << obj.mNewScaling       << '|'
+        << obj.mNewScalingFactor << '|'
+        << obj.mNewPosition;
     return os;
 }
 

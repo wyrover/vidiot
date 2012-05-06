@@ -61,7 +61,10 @@ public:
     void setRegionOfInterest(wxRect regionOfInterest);
     wxRect getRegionOfInterest() const;
     int getSizeInBytes() const;
-    wxBitmapPtr getBitmap();    ///< \return this frame as a wxBitmap
+
+    /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
+    /// \return this frame as a wxBitmap
+    wxBitmapPtr getBitmap();
 
     //////////////////////////////////////////////////////////////////////////
     // DATA ACCESS

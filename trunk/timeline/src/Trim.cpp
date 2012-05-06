@@ -249,7 +249,10 @@ void Trim::preview()
             // Draw preview of trim operation
             model::VideoFramePtr videoFrame = videoclip->getNextVideo(wxSize(previewwidth, s.GetHeight()), false);
             model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
-            dc.DrawBitmap(*trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp->GetHeight()) / 2);
+            if (trimmedBmp)
+            {
+                dc.DrawBitmap(*trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp->GetHeight()) / 2);
+            }
 
             // Draw adjacent clip if present. Is only relevant when holding shift
             if (drawadjacentclip)
