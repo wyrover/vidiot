@@ -79,7 +79,7 @@ MousePointer::MousePointer(Timeline* timeline)
 
     set(PointerNormal);
 }
-    
+
 MousePointer::~MousePointer()
 {
     VAR_DEBUG(this);
@@ -115,7 +115,7 @@ void MousePointer::setPosition(wxPoint position)
 {
     VAR_DEBUG(mCurrent)(position);
     mCurrent = position;
-    if (Config::getShowDebugInfo())
+    if (model::Config::getShowDebugInfo())
     {
         PointerPositionInfo info = getInfo(position);
         pts left = 0;

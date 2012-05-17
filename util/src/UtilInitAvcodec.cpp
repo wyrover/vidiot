@@ -291,7 +291,7 @@ void Avcodec::configureLog()
 {
     BOOST_FOREACH( auto value, sLogLevels )
     {
-        if (value.first.IsSameAs(gui::Config::ReadString(gui::Config::sPathLogLevelAvcodec)))
+        if (value.first.IsSameAs(model::Config::ReadString(model::Config::sPathLogLevelAvcodec)))
         {
             sLevel = value.second;
             break;

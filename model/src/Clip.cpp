@@ -100,7 +100,7 @@ void Clip::moveTo(pts position)
 wxString Clip::getDescription() const
 {
     wxString s = mRender->getDescription();
-    wxString strip = gui::Config::ReadString(gui::Config::sPathStrip);
+    wxString strip = Config::ReadString(Config::sPathStrip);
     if (!strip.IsSameAs(_T("")))
     {
         s.Replace(strip,_T(""),false);

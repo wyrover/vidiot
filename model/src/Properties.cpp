@@ -9,9 +9,9 @@
 namespace model {
 
 Properties::Properties()
-:   mFrameRate(framerate::fromString(gui::Config::ReadString(gui::Config::sPathDefaultFrameRate)))
-,   mVideoWidth(gui::Config::ReadLong(gui::Config::sPathDefaultVideoWidth))
-,   mVideoHeight(gui::Config::ReadLong(gui::Config::sPathDefaultVideoHeight))
+:   mFrameRate(framerate::fromString(Config::ReadString(Config::sPathDefaultFrameRate)))
+,   mVideoWidth(Config::ReadLong(Config::sPathDefaultVideoWidth))
+,   mVideoHeight(Config::ReadLong(Config::sPathDefaultVideoHeight))
 {
 }
 

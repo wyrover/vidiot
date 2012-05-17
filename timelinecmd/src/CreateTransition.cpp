@@ -29,7 +29,7 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
     VAR_INFO(this)(position);
     mCommandName = _("Create transition");
 
-    pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts defaultSize = model::Config::ReadLong(model::Config::sPathDefaultTransitionLength);
 
     PointerPositionInfo info = getTimeline().getMousePointer().getInfo(position);
     if (info.clip && !info.clip->isA<model::EmptyClip>() && !info.clip->isA<model::Transition>())
