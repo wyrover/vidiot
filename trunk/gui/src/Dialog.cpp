@@ -14,7 +14,7 @@
 #include "UtilLog.h"
 #include "Window.h"
 
-#include <wx/thread.h> 
+#include <wx/thread.h>
 
 namespace gui {
 
@@ -208,9 +208,9 @@ int generateDebugReport(bool doexit, bool addcontext)
         report.AddCurrentDump();
     }
 
-    if (wxFileName(Config::getFileName()).FileExists())
+    if (wxFileName(model::Config::getFileName()).FileExists())
     {
-        report.AddFile(Config::getFileName(), wxT("options file"));
+        report.AddFile(model::Config::getFileName(), wxT("options file"));
     }
 
     if (wxFileName(Log::getFileName()).FileExists())

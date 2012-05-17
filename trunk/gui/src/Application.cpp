@@ -40,9 +40,9 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     SetVendorName("Eric Raijmakers");
 
     // Logging initialization/termination is node made part of wxWidgets Init/Run/Exit
-    // mechanism. Logging must be terminated as late as possible to avoid methods 
+    // mechanism. Logging must be terminated as late as possible to avoid methods
     // that log during shutdown to crash the shutdown process.
-    // 
+    //
     // Typical example of that: logging the type of crash when generating a debugreport.
     Log::init(sTestApplicationName, GetAppName());
 }
@@ -64,8 +64,8 @@ void Application::waitForIdle()
     // However, it is possible that the idle event is received between these
     // two statements. This results in a (temporary) hangup of the tests. After
     // a while another idle event is received (guess), which resolves the hangup.
-    // To avoid this, first an event is generated. This causes a method to be 
-    // called on the event loop. When wxWakeUpIdle() is called in that method, 
+    // To avoid this, first an event is generated. This causes a method to be
+    // called on the event loop. When wxWakeUpIdle() is called in that method,
     // the aforementioned interleaving problem cannot occur.
 
     boost::mutex::scoped_lock lock(mMutexIdle);
@@ -123,7 +123,7 @@ bool Application::OnInit()
     // Must be called before anything else,
     // since it distributes the initial options
     // which are used below.
-    Config::init(GetAppName(), GetVendorName(), mEventLoopListener != 0);
+    model::Config::init(GetAppName(), GetVendorName(), mEventLoopListener != 0);
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)

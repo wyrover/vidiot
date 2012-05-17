@@ -106,9 +106,9 @@ Window::Window()
 
     wxMenu* menuview = new wxMenu();
     menuview->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"));
-    menuview->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathSnapClips));
+    menuview->Check(ID_SNAP_CLIPS, model::Config::ReadBool(model::Config::sPathSnapClips));
     menuview->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
-    menuview->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathSnapCursor));
+    menuview->Check(ID_SNAP_CURSOR, model::Config::ReadBool(model::Config::sPathSnapCursor));
 
     menusequence = new wxMenu();
 
@@ -174,7 +174,7 @@ Window::Window()
     GetDocumentManager()->FileHistoryUseMenu(menufile);
     GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
 
-    if (Config::ReadBool(Config::sPathTest))
+    if (model::Config::ReadBool(model::Config::sPathTest))
     {
         wxSize screenSize = wxGetDisplaySize();
         wxSize winSize = GetSize();
@@ -185,7 +185,7 @@ Window::Window()
 
 void Window::init()
 {
-    if (wxConfigBase::Get()->ReadBool(Config::sPathAutoLoadEnabled,false))
+    if (model::Config::ReadBool(model::Config::sPathAutoLoadEnabled))
     {
         wxFileHistory* history = GetDocumentManager()->GetFileHistory();
         if (history->GetCount() > 0)
@@ -285,12 +285,12 @@ void Window::onRenameProject( model::EventRenameProject &event )
 
 int Window::getNumberOfStatusBars() const
 {
-    return (Config::getShowDebugInfo() ? 2 : 1);
+    return (model::Config::getShowDebugInfo() ? 2 : 1);
 }
 
 void Window::setDebugText(wxString text)
 {
-    if (Config::getShowDebugInfo())
+    if (model::Config::getShowDebugInfo())
     {
         SetStatusText( text, 0 );
     }
@@ -298,7 +298,7 @@ void Window::setDebugText(wxString text)
 
 void Window::setProcessingText(wxString text)
 {
-    SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
+    SetStatusText( text, model::Config::getShowDebugInfo() ? 1 : 0 );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -316,13 +316,13 @@ void Window::onExit(wxCommandEvent &)
 
 void Window::onSnapClips(wxCommandEvent& event)
 {
-    wxConfigBase::Get()->Write(Config::sPathSnapClips, event.IsChecked());
+    wxConfigBase::Get()->Write(model::Config::sPathSnapClips, event.IsChecked());
     wxConfigBase::Get()->Flush();
 }
 
 void Window::onSnapCursor(wxCommandEvent& event)
 {
-    wxConfigBase::Get()->Write(Config::sPathSnapCursor, event.IsChecked());
+    wxConfigBase::Get()->Write(model::Config::sPathSnapCursor, event.IsChecked());
     wxConfigBase::Get()->Flush();
 }
 

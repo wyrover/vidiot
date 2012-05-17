@@ -165,8 +165,6 @@ void File::moveTo(pts position)
     mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
     mTwoInARow = 0;
 
-    mEOF = false;
-
     VAR_DEBUG(this);
 }
 
@@ -268,7 +266,7 @@ void File::startReadingPackets()
 
 void File::stopReadingPackets()
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(this)(mReadingPackets)(mEOF);
     if (!mReadingPackets && !mEOF) return; // !mEOF is needed since we still want the buffers to be cleared, in the case that bufferPacketsThread has already delivered the last packet
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
@@ -301,6 +299,10 @@ void File::stopReadingPackets()
     // The remaining avcodec buffers are no longer necessary.
     flush();
 
+    // From this point onwards, startReadingPackets should initalize reading
+    // again.
+    mEOF = false;
+
     VAR_DEBUG(this);
 }
 
@@ -310,6 +312,7 @@ void File::flush()
 
 AVCodecContext* File::getCodec()
 {
+    ASSERT(mFileOpen)(*this)(mEOF);
     ASSERT(mFileContext->streams[mStreamIndex]);
     return mFileContext->streams[mStreamIndex]->codec;
 }
@@ -438,8 +441,8 @@ void File::closeFile()
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
         av_close_input_file(mFileContext);
+        mFileOpen = false;
     }
-    mFileOpen = false;
 }
 
 //////////////////////////////////////////////////////////////////////////

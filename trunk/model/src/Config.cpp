@@ -6,9 +6,7 @@
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 
-namespace gui {
-
-    // todo move this class to the model
+namespace model {
 
 wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);

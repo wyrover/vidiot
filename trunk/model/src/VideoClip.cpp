@@ -38,9 +38,9 @@ VideoClip::VideoClip()
 VideoClip::VideoClip(IControlPtr file)
     : Clip(file)
     , mProgress(0)
-    , mScaling(gui::Config::ReadEnum<VideoScaling>(gui::Config::sPathDefaultVideoScaling))
+    , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathDefaultVideoScaling))
     , mScalingFactor(sScalingOriginalSize)
-    , mAlignment(gui::Config::ReadEnum<VideoAlignment>(gui::Config::sPathDefaultVideoAlignment))
+    , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathDefaultVideoAlignment))
     , mPosition(0,0)
 {
     VAR_DEBUG(this);

@@ -437,9 +437,7 @@ void TestTransition::testPlaybackAndScrubbing()
     Zoom level(1); // Zoom in once to avoid clicking in the middle of a clip which is then seen (logically) as clip end due to the zooming
     {
         MakeInOutTransitionAfterClip preparation(1);
-
-        // Select and delete transition only. Then, the remaining clips
-        // must have their original lengths restored.
+        StartTest("Select and delete InOutTransition only. Then, the remaining clips must have their original lengths restored.");
         Click(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(VideoClip(0,2)->getSelected());
         Type(WXK_DELETE);
@@ -447,8 +445,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         Undo();
-
-        // Move clips around transition: the transition must be moved also
+        StartTest("Move clips around InOutTransition: the transition must be moved also.");
         DeselectAllClips();
         Click(Center(VideoClip(0,1)));
         Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
@@ -457,21 +454,14 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getLeft());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
-
-        // Scrub and play  the transition
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
-        VideoTransition(0,5)->getPrev();
-        ASSERT(VideoTransition(0,5)->getTrack());
         Play(LeftPixel(VideoTransition(0,5)) - 2, 1000); // -2: Also take some frames from the left clip
-
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
         Undo();
     }
     {
         MakeInTransitionAfterClip preparation(1);
-
-        // Select and delete transition only. Then, the remaining clips
-        // must have their original lengths restored.
+        StartTest("Select and delete InTransition only. Then, the remaining clips must have their original lengths restored.");
         Click(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(VideoClip(0,2)->getSelected());
         Type(WXK_DELETE);
@@ -479,8 +469,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         Undo();
-
-        // Move clip related to transition: the transition must be moved also
+        StartTest("Move clip related to InTransition: the transition must be moved also.");
         DeselectAllClips();
         Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition);
@@ -488,20 +477,14 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_ZERO(VideoTransition(0,5)->getLeft());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
-
-        // Scrub and play the transition
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
         Play(LeftPixel(VideoTransition(0,5)) - 2, 1500); // -2: Also take some frames from the left clip
-
-        // Undo until the two trimmed clips are present
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
-        Undo();
+        Undo(); // Undo until the two trimmed clips are present
     }
     {
         MakeOutTransitionAfterClip preparation(1);
-
-        // Select and delete transition only. Then, the remaining clips
-        // must have their original lengths restored.
+        StartTest("Select and delete OutTransition only. Then, the remaining clips must have their original lengths restored.");
         Click(VTopQuarterHCenter(VideoClip(0,2)));
         ASSERT(VideoClip(0,2)->getSelected());
         Type(WXK_DELETE);
@@ -509,8 +492,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         Undo();
-
-        // Move clip related to transition: the transition must be moved also
+        StartTest("Move clip related to OutTransition: the transition must be moved also.");
         DeselectAllClips();
         Drag(Center(VideoClip(0,1)), Center(VideoClip(0,5)), true);
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
@@ -518,14 +500,10 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,6)->getLeft());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
-
-        // Scrub and play the transition
         Scrub(LeftPixel(VideoTransition(0,6)) - 5, RightPixel(VideoTransition(0,6)) + 5);
         Play(LeftPixel(VideoTransition(0,6)) - 2, 1000); // -1: Also take some frames from the left clip
-
-        // Undo until the two trimmed clips are present
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
-        Undo();
+        Undo(); // Undo until the two trimmed clips are present
     }
 }
 

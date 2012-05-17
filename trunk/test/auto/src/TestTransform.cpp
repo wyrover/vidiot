@@ -51,6 +51,7 @@ void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
 
 void TestTransform::testTransform()
 {
+    StartTestSuite();
     StartTest("If one clip is selected the details view changes accordingly.");
     Click(Center(VideoClip(0,3)));
     wxWindow* current = getTimeline().getDetails().getCurrent();

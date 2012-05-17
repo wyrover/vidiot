@@ -5,7 +5,8 @@
 #include <wx/string.h>
 #include "UtilLog.h"
 
-namespace gui {
+namespace model {
+
 /// This class holds everything related to the persistence of global settings.
 /// Global settings include the application options but also checked menu items
 /// that are preserved upon application restart.
