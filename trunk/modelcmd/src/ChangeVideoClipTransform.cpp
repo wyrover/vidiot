@@ -34,7 +34,7 @@ ChangeVideoClipTransform::~ChangeVideoClipTransform()
 
 // todo rename all commands to *Command?
 
-void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<double> scalingfactor)
+void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<int> scalingfactor)
 {
     mNewScaling = boost::optional<VideoScaling>(scaling);
     mNewScalingFactor = scalingfactor;
@@ -87,7 +87,7 @@ bool ChangeVideoClipTransform::Undo()
     VAR_INFO(*this);
     if (mNewScaling)
     {
-        mVideoClip->setScaling(mOldScaling, boost::optional<double>(mOldScalingFactor));
+        mVideoClip->setScaling(mOldScaling, boost::optional<int>(mOldScalingFactor));
     }
     if (mNewAlignment)
     {

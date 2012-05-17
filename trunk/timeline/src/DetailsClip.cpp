@@ -1,5 +1,6 @@
 #include "DetailsClip.h"
 
+#include <math.h>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <wx/button.h>
@@ -13,7 +14,9 @@
 #include <wx/textctrl.h>
 #include "AudioClip.h"
 #include "ChangeVideoClipTransform.h"
+#include "Convert.h"
 #include "CommandProcessor.h"
+#include "Constants.h"
 #include "IClip.h"
 #include "Layout.h"
 #include "Player.h"
@@ -74,10 +77,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
 
         wxSize originalSize = mVideoClip->getInputSize();
         wxSize scaledSize = mVideoClip->getSize();
-        double factor = mVideoClip->getScalingFactor();
+        int factor = mVideoClip->getScalingFactor();
         wxPoint position = mVideoClip->getPosition();
         wxPoint maxpos = mVideoClip->getMaxPosition();
         wxPoint minpos = mVideoClip->getMinPosition();
+        const double sScalingIncrement = 0.01;
 
         mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, mVideoClip->getScaling());
         addoption(_("Scaling"), mSelectScaling);
@@ -85,12 +89,12 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
         wxPanel* scalingpanel = new wxPanel(this);
         wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
 
-        static const int sliderFactor = 100; // Each increment of 1 on the slider means 1/100 th increase of scaling.
-        mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, factor * sliderFactor, Layout::sMinScalingFactor * sliderFactor, Layout::sMaxScalingFactor * sliderFactor);
+        mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, factor, model::Constants::sMinScaling, model::Constants::sMaxScaling);
         mScalingSpin = new wxSpinCtrlDouble(scalingpanel);
-        mScalingSpin->SetValue(factor);
-        mScalingSpin->SetRange(Layout::sMinScalingFactor,Layout::sMaxScalingFactor);
-        mScalingSpin->SetIncrement(Layout::sScalingIncrement);
+        mScalingSpin->SetDigits(model::Constants::scalingPrecision);
+        mScalingSpin->SetValue(model::Convert::digitsToFactor(factor, model::Constants::scalingPrecision));
+        mScalingSpin->SetRange(model::Convert::digitsToFactor(model::Constants::sMinScaling, model::Constants::scalingPrecision), model::Convert::digitsToFactor(model::Constants::sMaxScaling, model::Constants::scalingPrecision));
+        mScalingSpin->SetIncrement(sScalingIncrement);
         scalingsizer->Add(mScalingSlider);
         scalingsizer->Add(mScalingSpin);
         scalingpanel->SetSizer(scalingsizer);
@@ -179,7 +183,6 @@ DetailsClip::~DetailsClip()
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
     LOG_INFO;
-
     makeCommand();
     mCommand->setScaling(mSelectScaling->getValue(), boost::none);
     event.Skip();
@@ -188,20 +191,17 @@ void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
-    double value = mScalingSlider->GetValue() / 100.0;
-
     makeCommand();
-    mCommand->setScaling(model::VideoScalingCustom, boost::optional<double>(value));
-
+    mCommand->setScaling(model::VideoScalingCustom, boost::optional<int>(mScalingSlider->GetValue()));
     event.Skip();
 }
 
 void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 {
     VAR_INFO(event.GetValue());
-    double value = event.GetValue();
+    int value = model::Convert::factorToDigits(event.GetValue(), model::Constants::scalingPrecision);
     makeCommand();
-    mCommand->setScaling(model::VideoScalingCustom, boost::optional<double>(value));
+    mCommand->setScaling(model::VideoScalingCustom, boost::optional<int>(value));
     event.Skip();
 }
 
@@ -261,8 +261,8 @@ void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
 
 void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event)
 {
-    mScalingSpin->SetValue(event.getValue());
-    mScalingSlider->SetValue(event.getValue() * 100);
+    mScalingSpin->SetValue(model::Convert::digitsToFactor(event.getValue(),model::Constants::scalingPrecision)); // todo make one global method in convert for converting scaling back and forth
+    mScalingSlider->SetValue(event.getValue());
     preview();
     event.Skip();
 }
@@ -306,6 +306,11 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
 // TEST
 //////////////////////////////////////////////////////////////////////////
 
+EnumSelector<model::VideoScaling>* DetailsClip::getScalingSelector() const
+{
+    return mSelectScaling;
+}
+
 wxSlider* DetailsClip::getScalingSlider() const
 {
     return mScalingSlider;
@@ -314,9 +319,30 @@ wxSpinCtrlDouble* DetailsClip::getScalingSpin() const
 {
     return mScalingSpin;
 }
-wxChoice* DetailsClip::getScalingChoice() const
+
+EnumSelector<model::VideoAlignment>* DetailsClip::getAlignmentSelector() const
 {
-    return mSelectScaling;
+    return mSelectAlignment;
+}
+
+wxSlider* DetailsClip::getPositionXSlider() const
+{
+    return mPositionXSlider;
+}
+
+wxSpinCtrl* DetailsClip::getPositionXSpin() const
+{
+    return mPositionXSpin;
+}
+
+wxSlider* DetailsClip::getPositionYSlider() const
+{
+    return mPositionYSlider;
+}
+
+wxSpinCtrl* DetailsClip::getPositionYSpin() const
+{
+    return mPositionYSpin;
 }
 
 //////////////////////////////////////////////////////////////////////////

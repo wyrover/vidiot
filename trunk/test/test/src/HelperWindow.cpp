@@ -138,6 +138,11 @@ void Type(int keycode, int modifiers)
     waitForIdle();
 }
 
+void TypeN(int count, int keycode, int modifiers)
+{
+    for (int i = 0; i < count; ++i) { Type(keycode,modifiers); }
+}
+
 void MoveWithinWidget(wxPoint position, wxPoint origin)
 {
 	VAR_DEBUG(position)(origin);

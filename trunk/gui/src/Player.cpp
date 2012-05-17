@@ -75,13 +75,13 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
     wxPanel* mButtonsPanel = new wxPanel(this);
     wxBoxSizer* mButtonsPanelSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    mHomeButton     = new wxButton(mButtonsPanel, wxID_ANY);
-    mPreviousButton = new wxButton(mButtonsPanel, wxID_ANY);
-    mPauseButton    = new wxButton(mButtonsPanel, wxID_ANY);
-    mPlayButton     = new wxButton(mButtonsPanel, wxID_ANY);
-    mNextButton     = new wxButton(mButtonsPanel, wxID_ANY);
-    mEndButton      = new wxButton(mButtonsPanel, wxID_ANY);
-    mSpeedButton    = new wxToggleButton(mButtonsPanel, wxID_ANY, "");
+    mHomeButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mPreviousButton = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mPauseButton    = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mPlayButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mNextButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mEndButton      = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mSpeedButton    = new wxToggleButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     updateSpeedButton();
 
     mHomeButton    ->SetBitmap(bmpHome,        wxTOP);

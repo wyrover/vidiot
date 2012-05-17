@@ -92,6 +92,7 @@ void ShiftDown();       ///< Press down Shift
 void ShiftUp();         ///< Release Shift
 
 void Type(int keycode, int modifiers = wxMOD_NONE);
+void TypeN(int count, int keycode, int modifiers = wxMOD_NONE);
 
 /// Move the mouse to the given position
 /// \param origin Use the origin to specify within which widget the position is offset (default: within the timeline)
