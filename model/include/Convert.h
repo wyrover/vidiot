@@ -66,6 +66,9 @@ public:
     /// \param[out] scaling used scaling by the algorithm
     /// \return maximum size fitting in bounding box with given width/height ratio
     static wxSize fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, double& scaling);
+
+    static int factorToDigits(double number, int nDigits);
+    static double digitsToFactor(int number, int nDigits);
 };
 } // namespace
 

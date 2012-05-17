@@ -1,6 +1,7 @@
 #ifndef HELPER_MODEL_H
 #define HELPER_MODEL_H
 
+#include <wx/gdicmn.h>
 #include <boost/shared_ptr.hpp>
 #include "Enums.h"
 
@@ -18,11 +19,19 @@ model::VideoClipPtr getVideoClip(model::IClipPtr clip);
 
 /// \return the current scaling factor for the given (video) clip
 /// \pre clip is a video clip
-double getScalingFactor(model::IClipPtr clip);
+int getScalingFactor(model::IClipPtr clip);
 
 /// \return the current scaling type for the given (video) clip
 /// \pre clip is a video clip
 model::VideoScaling getScaling(model::IClipPtr clip);
+
+/// \return the current alignment type for the given (video) clip
+/// \pre clip is a video clip
+model::VideoAlignment getAlignment(model::IClipPtr clip);
+
+/// \return the current position type for the given (video) clip
+/// \pre clip is a video clip
+wxPoint getPosition(model::IClipPtr clip);
 
 } // namespace
 

@@ -63,9 +63,14 @@ public:
     // TEST
     //////////////////////////////////////////////////////////////////////////
 
+    EnumSelector<model::VideoScaling>* getScalingSelector() const;
     wxSlider* getScalingSlider() const;
     wxSpinCtrlDouble* getScalingSpin() const;
-    wxChoice* getScalingChoice() const;
+    EnumSelector<model::VideoAlignment>* getAlignmentSelector() const;
+    wxSlider* getPositionXSlider() const;
+    wxSpinCtrl* getPositionXSpin() const;
+    wxSlider* getPositionYSlider() const;
+    wxSpinCtrl* getPositionYSpin() const;
 
 private:
 

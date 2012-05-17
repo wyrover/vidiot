@@ -18,6 +18,8 @@
 
 namespace model {
 
+const int sScalingOriginalSize = Convert::factorToDigits(1,Constants::scalingPrecision);
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -26,7 +28,7 @@ VideoClip::VideoClip()
     : Clip()
     , mProgress(0)
     , mScaling()
-    , mScalingFactor(1)
+    , mScalingFactor(sScalingOriginalSize)
     , mAlignment()
     , mPosition(0,0)
 {
@@ -37,7 +39,7 @@ VideoClip::VideoClip(IControlPtr file)
     : Clip(file)
     , mProgress(0)
     , mScaling(gui::Config::ReadEnum<VideoScaling>(gui::Config::sPathDefaultVideoScaling))
-    , mScalingFactor(1)
+    , mScalingFactor(sScalingOriginalSize)
     , mAlignment(gui::Config::ReadEnum<VideoAlignment>(gui::Config::sPathDefaultVideoAlignment))
     , mPosition(0,0)
 {
@@ -105,7 +107,7 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
         wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, size, scaleToBoundingBox);
         ASSERT_NONZERO(scaleToBoundingBox);
         VideoFilePtr generator = getDataGenerator<VideoFile>();
-        double videoscaling = mScalingFactor * scaleToBoundingBox;
+        double videoscaling = getScalingFactorDouble() * scaleToBoundingBox;
         wxSize inputsize = generator->getSize();
         wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
@@ -125,7 +127,7 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
 
             wxSize inputsize = getInputSize();
             wxSize outputsize = Properties::get()->getVideoSize();
-            wxSize scaledsize = Convert::scale(inputsize,mScalingFactor);
+            wxSize scaledsize = Convert::scale(inputsize,getScalingFactorDouble());
             wxRect roi(wxPoint(0,0),scaledsize);
 
             auto determineroi = [](pixel area, pixel data, pixel& data_pos, pixel& roi_pos, pixel& roi_size)
@@ -205,9 +207,14 @@ VideoScaling VideoClip::getScaling() const
     return mScaling;
 }
 
-double VideoClip::getScalingFactor() const
+int VideoClip::getScalingFactor() const // todo rename into getscalingvalue and the other into getscalingfactor
 {
     return mScalingFactor;
+}
+
+double VideoClip::getScalingFactorDouble() const
+{
+    return Convert::digitsToFactor(mScalingFactor,Constants::scalingPrecision);
 }
 
 VideoAlignment VideoClip::getAlignment() const
@@ -223,7 +230,7 @@ wxPoint VideoClip::getPosition() const
 wxPoint VideoClip::getMinPosition()
 {
     wxSize inputsize = getInputSize();
-    wxSize scaledsize = Convert::scale(inputsize,mScalingFactor);
+    wxSize scaledsize = Convert::scale(inputsize,getScalingFactorDouble());
     return wxPoint(-1 * scaledsize.x, -1 * scaledsize.y);
 }
 
@@ -233,15 +240,15 @@ wxPoint VideoClip::getMaxPosition()
     return wxPoint(outputsize.x,outputsize.y);
 }
 
-void VideoClip::setScaling(VideoScaling scaling, boost::optional<double> factor)
+void VideoClip::setScaling(VideoScaling scaling, boost::optional<int> factor)
 {
     VideoScaling oldScaling = mScaling;
-    double oldScalingFactor = mScalingFactor;
+    int oldScalingFactor = mScalingFactor;
+    wxPoint oldPosition = mPosition;
     wxPoint oldMinPosition = getMinPosition();
     wxPoint oldMaxPosition = getMaxPosition();
 
     mScaling = scaling;
-    ASSERT(!factor || scaling == VideoScalingCustom)(factor)(scaling); // only if custom scaling is used, the factor can be specified
     if (factor)
     {
         mScalingFactor = *factor;
@@ -249,7 +256,6 @@ void VideoClip::setScaling(VideoScaling scaling, boost::optional<double> factor)
 
     updateAutomatedScaling();
     updateAutomatedPositioning();
-    setPosition(getPosition()); // This is done to ensure that the minposition and maxposition bounds are honored (Example: first move clip to the left, then scale down a lot). 
 
     if (mScaling != oldScaling)
     {
@@ -265,14 +271,18 @@ void VideoClip::setScaling(VideoScaling scaling, boost::optional<double> factor)
     }
     if (getMaxPosition() != oldMaxPosition)
     {
-        ProcessEvent(EventChangeVideoClipMinPosition(getMaxPosition()));
+        ProcessEvent(EventChangeVideoClipMaxPosition(getMaxPosition()));
+    }
+    if (mPosition != oldPosition)
+    {
+        ProcessEvent(EventChangeVideoClipPosition(mPosition));
     }
 }
 
 void VideoClip::setAlignment(VideoAlignment alignment)
 {
     VideoAlignment oldAlignment = mAlignment;
-    wxPoint oldPosition = getPosition();
+    wxPoint oldPosition = mPosition;
 
     mAlignment = alignment;
 
@@ -291,12 +301,11 @@ void VideoClip::setAlignment(VideoAlignment alignment)
 void VideoClip::setPosition(wxPoint position)
 {
     VAR_INFO(position);
-    wxPoint oldPosition = getPosition();
-    if (position.x < getMinPosition().x) { position.x = getMinPosition().x; } // Avoid setting illegal values. This can happen if events for new boundaries
-    if (position.y < getMinPosition().y) { position.y = getMinPosition().y; } // have not been received yet, by the GUI part which triggers these changes.
-    if (position.x > getMaxPosition().x) { position.x = getMaxPosition().x; } // This can also happen when first setting the clip to a certain position, and
-    if (position.y > getMaxPosition().y) { position.y = getMaxPosition().y; } // then changing the scaling.
+    wxPoint oldPosition = mPosition;
     mPosition = position;
+
+    updateAutomatedPositioning();
+
     if (mPosition != oldPosition)
     {
         ProcessEvent(EventChangeVideoClipPosition(mPosition));
@@ -315,27 +324,38 @@ void VideoClip::updateAutomatedScaling()
     switch (mScaling)
     {
     case VideoScalingFitToFill:
-        Convert::fillBoundingBoxWithMinimalLoss(inputsize, outputsize, mScalingFactor);
-        break;
+        {
+            double scalingfactor;
+            Convert::fillBoundingBoxWithMinimalLoss(inputsize, outputsize, scalingfactor);
+            mScalingFactor = Convert::factorToDigits(scalingfactor,Constants::scalingPrecision);
+            break;
+        }
     case VideoScalingFitAll:
-        Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor);
-        break;
+        {
+            double scalingfactor;
+            Convert::sizeInBoundingBox(inputsize, outputsize, scalingfactor);
+            mScalingFactor = Convert::factorToDigits(scalingfactor,Constants::scalingPrecision);
+            break;
+        }
     case VideoScalingNone:
-        mScalingFactor = 1.0;
-        break;
+        {
+            mScalingFactor = sScalingOriginalSize;
+            break;
+        }
     case VideoScalingCustom:
-        // Use current scaling factor
-        break;
     default:
+        // Do not automatically determine scaling factor
         break;
     }
-    ASSERT_NONZERO(mScalingFactor);
+
+    ASSERT_LESS_THAN_EQUALS(mScalingFactor,sScalingOriginalSize);
+    ASSERT_MORE_THAN_ZERO(mScalingFactor);
 }
 
 void VideoClip::updateAutomatedPositioning()
 {
     wxSize inputsize = getInputSize();
-    wxSize scaledsize = Convert::scale(inputsize,mScalingFactor);
+    wxSize scaledsize = Convert::scale(inputsize,getScalingFactorDouble());
     wxSize outputsize = Properties::get()->getVideoSize();
     switch (mAlignment)
     {
@@ -361,6 +381,10 @@ void VideoClip::updateAutomatedPositioning()
         break;
     }
 
+    if (mPosition.x < getMinPosition().x) { mPosition.x = getMinPosition().x; } // Avoid setting illegal values. This can happen if events for new boundaries
+    if (mPosition.y < getMinPosition().y) { mPosition.y = getMinPosition().y; } // have not been received yet, by the GUI part which triggers these changes.
+    if (mPosition.x > getMaxPosition().x) { mPosition.x = getMaxPosition().x; } // This can also happen when first setting the clip to a certain position, and
+    if (mPosition.y > getMaxPosition().y) { mPosition.y = getMaxPosition().y; } // then changing the scaling.
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -12,7 +12,7 @@ model::VideoClipPtr getVideoClip(model::IClipPtr clip)
     return videoclip;
 }
 
-double getScalingFactor(model::IClipPtr clip)
+int getScalingFactor(model::IClipPtr clip)
 {
     return getVideoClip(clip)->getScalingFactor();
 };
@@ -21,5 +21,15 @@ model::VideoScaling getScaling(model::IClipPtr clip)
 {
     return getVideoClip(clip)->getScaling();
 };
+
+model::VideoAlignment getAlignment(model::IClipPtr clip)
+{
+    return getVideoClip(clip)->getAlignment();
+}
+
+wxPoint getPosition(model::IClipPtr clip)
+{
+    return getVideoClip(clip)->getPosition();
+}
 
 } // namespace

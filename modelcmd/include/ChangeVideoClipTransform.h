@@ -24,7 +24,7 @@ public:
     explicit ChangeVideoClipTransform(model::VideoClipPtr videoclip);
     virtual ~ChangeVideoClipTransform();
 
-    void setScaling(VideoScaling scaling, boost::optional<double> scalingfactor = boost::none);
+    void setScaling(VideoScaling scaling, boost::optional<int> scalingfactor = boost::none);
     void setAlignment(VideoAlignment alignment);
     void setPosition(wxPoint position);
 
@@ -52,13 +52,13 @@ private:
     model::VideoClipPtr mVideoClip;
 
     VideoScaling mOldScaling;
-    double mOldScalingFactor;
+    int mOldScalingFactor;
 
     VideoAlignment mOldAlignment;
     wxPoint mOldPosition;
 
     boost::optional<VideoScaling> mNewScaling;
-    boost::optional<double> mNewScalingFactor;
+    boost::optional<int> mNewScalingFactor;
     boost::optional<VideoAlignment> mNewAlignment;
     boost::optional<wxPoint> mNewPosition;
 

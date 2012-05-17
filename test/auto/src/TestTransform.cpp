@@ -1,4 +1,4 @@
-#include "TestManual.h"
+#include "TestTransform.h"
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
@@ -21,12 +21,12 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-void TestManual::setUp()
+void TestTransform::setUp()
 {
     mProjectFixture.init();
 }
 
-void TestManual::tearDown()
+void TestTransform::tearDown()
 {
     mProjectFixture.destroy();
 }
@@ -49,7 +49,7 @@ void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
     waitForIdle();
 }
 
-void TestManual::testManual()
+void TestTransform::testTransform()
 {
     StartTest("If one clip is selected the details view changes accordingly.");
     Click(Center(VideoClip(0,3)));
@@ -176,7 +176,6 @@ void TestManual::testManual()
         Undo();
         ASSERT_CLIPPROPERTIES(oldScaling,oldScalingFactor,oldAlignment,oldPosition);
     }
-
-    pause(60000 * 60); // One hour should be enough...
 }
+
 } // namespace

@@ -48,14 +48,15 @@ public:
     wxSize getSize() const; ///< \return size of output video
 
     VideoScaling getScaling() const;
-    double getScalingFactor() const;
+    int getScalingFactor() const;
+    double getScalingFactorDouble() const;
     VideoAlignment getAlignment() const;
     wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
     wxPoint getMinPosition();
     wxPoint getMaxPosition();
 
-    void setScaling(VideoScaling scaling, boost::optional<double> factor = boost::none);
+    void setScaling(VideoScaling scaling, boost::optional<int> factor = boost::none);
     void setAlignment(VideoAlignment alignment);
     void setPosition(wxPoint position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
@@ -78,7 +79,7 @@ private:
     pts mProgress; ///< Current render position in pts units (delivered video frames count)
 
     VideoScaling mScaling;
-    double mScalingFactor;
+    int mScalingFactor;     ///< mScalingFactor / Constants::scalingPrecisionFactor is the actual scaling to be applied. Stored as an int to avoid rounding errors with doubles (leads to small diffs which cause test asserts to fail).
 
     VideoAlignment mAlignment;
     wxPoint mPosition;
