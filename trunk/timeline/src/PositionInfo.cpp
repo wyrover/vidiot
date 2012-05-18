@@ -1,5 +1,7 @@
 #include "PositionInfo.h"
 
+#include "Config.h"
+
 namespace gui { namespace timeline {
 
 IMPLEMENTENUM(MouseOnClipPosition);

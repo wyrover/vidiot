@@ -6,7 +6,7 @@
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 
-namespace model {
+namespace model { // todo move to util....and rename to utilconfig?
 
 wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);
@@ -64,7 +64,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     wxConfigBase::Get()->Flush();
 
     // Read cached values here
-    Log::setReportingLevel(LogLevel_fromString(std::string(ReadString(Config::sPathLogLevel).mb_str())));
+    Log::setReportingLevel(LogLevelConverter::readConfigValue(model::Config::sPathLogLevel));
     sShowDebugInfo = Config::ReadBool(Config::sPathShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
