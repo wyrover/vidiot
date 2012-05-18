@@ -74,28 +74,10 @@ Options::Options(wxWindow* win)
         mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video height"), mDefaultVideoHeight);
 
-        mDefaultVideoScaling = new wxChoice(mPanel, wxID_ANY);  // todo use enumselector
-        mDefaultVideoScaling->Append(_("Fit all"),       reinterpret_cast<void*>(model::VideoScalingFitAll));
-        mDefaultVideoScaling->Append(_("Fit to fill"),   reinterpret_cast<void*>(model::VideoScalingFitToFill));
-        mDefaultVideoScaling->Append(_("Original size"), reinterpret_cast<void*>(model::VideoScalingNone));
-        mDefaultVideoScaling->Append(_("Custom"),        reinterpret_cast<void*>(model::VideoScalingCustom));
-        switch (model::VideoScaling_fromString(std::string(model::Config::ReadString(model::Config::sPathDefaultVideoScaling).mb_str())))
-        {
-        case model::VideoScalingFitAll:       mDefaultVideoScaling->SetSelection(0); break;
-        case model::VideoScalingFitToFill:    mDefaultVideoScaling->SetSelection(1); break;
-        case model::VideoScalingNone:         mDefaultVideoScaling->SetSelection(2); break;
-        case model::VideoScalingCustom:       mDefaultVideoScaling->SetSelection(3); break;
-        }
+        mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingConverter::readConfigValue(model::Config::sPathDefaultVideoScaling));
         addoption(_("Default video scaling"), mDefaultVideoScaling);
 
-        mDefaultVideoAlignment = new wxChoice(mPanel, wxID_ANY);  // todo use enumselector
-        mDefaultVideoAlignment->Append(_("Centered"), reinterpret_cast<void*>(model::VideoAlignmentCenter));
-        mDefaultVideoAlignment->Append(_("Custom"),   reinterpret_cast<void*>(model::VideoAlignmentCustom));
-        switch (model::VideoAlignment_fromString(std::string(model::Config::ReadString(model::Config::sPathDefaultVideoAlignment).mb_str())))
-        {
-        case model::VideoAlignmentCenter:    mDefaultVideoAlignment->SetSelection(0); break;
-        case model::VideoAlignmentCustom:    mDefaultVideoAlignment->SetSelection(1); break;
-        }
+        mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(model::Config::sPathDefaultVideoAlignment));
         addoption(_("Default video scaling"), mDefaultVideoAlignment);
     }
     {
@@ -120,7 +102,7 @@ Options::Options(wxWindow* win)
 
         addbox(_("Logging"));
 
-        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevel_fromString(std::string(model::Config::ReadString(model::Config::sPathLogLevel).mb_str())));
+        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevelConverter::readConfigValue(model::Config::sPathLogLevel));
         addoption(_("Log level"), mSelectLogLevel);
 
         mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, Avcodec::mapAvcodecLevels.right.at(model::Config::ReadString(model::Config::sPathLogLevelAvcodec)));
@@ -149,8 +131,8 @@ Options::~Options()
         wxConfigBase::Get()->Write( model::Config::sPathDefaultFrameRate,          framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
         wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
         wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
-        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(static_cast<model::VideoScaling>(reinterpret_cast<int>(mDefaultVideoScaling->GetClientData(mDefaultVideoScaling->GetSelection())))).c_str());
-        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(static_cast<model::VideoAlignment>(reinterpret_cast<int>(mDefaultVideoAlignment->GetClientData(mDefaultVideoAlignment->GetSelection())))).c_str());
+        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
+        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
         wxConfigBase::Get()->Write( model::Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
         wxConfigBase::Get()->Write( model::Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
         wxConfigBase::Get()->Write( model::Config::sPathStrip,                     mStrip->GetValue());
@@ -158,7 +140,7 @@ Options::~Options()
         wxConfigBase::Get()->Flush();
 
         // Use new values
-        Log::setReportingLevel(LogLevel_fromString(std::string(model::Config::ReadString(model::Config::sPathLogLevel).mb_str())));
+        Log::setReportingLevel(LogLevelConverter::readConfigValue(model::Config::sPathLogLevel));
     }
 }
 

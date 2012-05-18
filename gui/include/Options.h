@@ -7,6 +7,7 @@
 #include <wx/radiobox.h>
 #include <wx/spinctrl.h>
 #include "UtilEnumSelector.h"
+#include "Enums.h"
 
 namespace gui {
 
@@ -33,8 +34,8 @@ private:
     wxRadioBox*             mFrameRate;
     wxSpinCtrl*             mDefaultVideoWidth;
     wxSpinCtrl*             mDefaultVideoHeight;
-    wxChoice*               mDefaultVideoScaling;
-    wxChoice*               mDefaultVideoAlignment;
+    EnumSelector<model::VideoScaling>* mDefaultVideoScaling;
+    EnumSelector<model::VideoAlignment>* mDefaultVideoAlignment;
 
     wxSpinCtrlDouble*       mMarkerBeginAddition;
     wxSpinCtrlDouble*       mMarkerEndAddition;

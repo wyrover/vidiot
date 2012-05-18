@@ -13,6 +13,7 @@
 #include <wx/thread.h>
 #include "UtilFifo.h"
 #include "UtilAssert.h"
+#include "Config.h"
 
 IMPLEMENTENUM(LogLevel);
 

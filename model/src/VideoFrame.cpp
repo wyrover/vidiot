@@ -6,6 +6,7 @@ extern "C" {
 #include <boost/make_shared.hpp>
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
+#include "Config.h"
 
 namespace model {
 
