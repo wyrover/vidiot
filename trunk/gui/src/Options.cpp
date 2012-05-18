@@ -20,11 +20,6 @@
 #include "UtilFrameRate.h"
 #include "Config.h"
 
-// todo remove
-extern "C" {
-#include <avformat.h>
-};
-
 namespace gui {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
