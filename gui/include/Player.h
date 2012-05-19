@@ -69,7 +69,6 @@ private:
     EditDisplay* mEdit;
     wxTextCtrl* mStatus;
     int mPosition;
-    bool mEditOnTop;
 
     //////////////////////////////////////////////////////////////////////////
     // SPEED SLIDER

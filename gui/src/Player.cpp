@@ -44,7 +44,6 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
 ,   mSpeedButton(0)
 ,   mSpeedSliderFrame(0)
 ,   mSpeedSlider(0)
-,   mEditOnTop(false)
 {
 	VAR_DEBUG(this);
 
@@ -144,7 +143,7 @@ Player::~Player()
 void Player::play()
 {
     LOG_INFO;
-    if (mEditOnTop) // todo via the sizer not via the boolean???
+    if (GetSizer()->IsShown(mEdit))
     {
         endEdit();
     }
@@ -160,7 +159,7 @@ void Player::stop()
 void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
-        if (mEditOnTop) // todo via the sizer not via the boolean???
+    if (GetSizer()->IsShown(mEdit))
     {
         endEdit();
     }
@@ -169,16 +168,16 @@ void Player::moveTo(pts position)
 
 void Player::show(boost::shared_ptr<wxBitmap> bitmap)
 {
-    if (!mEditOnTop)
+    if (!GetSizer()->IsShown(mEdit))
     {
-        startEdit(); // todo rename these methods into puteditontop and only use them local.
+        startEdit();
     }
     mEdit->show(bitmap);
 }
 
 wxSize Player::getVideoSize() const
 {
-    if (mEditOnTop)
+    if (GetSizer()->IsShown(mEdit))
     {
         return mEdit->GetSize();
     }
@@ -272,7 +271,6 @@ void Player::onSpeed(wxCommandEvent& event)
 
 void Player::startEdit()
 {
-    mEditOnTop = true;
     GetSizer()->Hide(mDisplay);
     GetSizer()->Show(mEdit);
     GetSizer()->Layout();
@@ -280,7 +278,6 @@ void Player::startEdit()
 
 void Player::endEdit()
 {
-    mEditOnTop = false;
     GetSizer()->Hide(mEdit);
     GetSizer()->Show(mDisplay);
     GetSizer()->Layout();
