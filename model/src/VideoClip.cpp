@@ -194,14 +194,6 @@ wxSize VideoClip::getInputSize()
     return getDataGenerator<VideoFile>()->getSize();
 }
 
-wxSize VideoClip::getSize() const
-{
-    // Without scaling: use default project size
-    // Todo add scaling (make smaller) for compositing
-    // todo  check if obsolete first?
-    return Properties::get()->getVideoSize();
-}
-
 VideoScaling VideoClip::getScaling() const
 {
     return mScaling;
