@@ -45,7 +45,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     wxSize getInputSize(); ///< \return size of input video
-    wxSize getSize() const; ///< \return size of output video
 
     VideoScaling getScaling() const;
     int getScalingFactor() const;
