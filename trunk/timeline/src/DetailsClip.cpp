@@ -76,7 +76,6 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
         addbox(_("Video"));
 
         wxSize originalSize = mVideoClip->getInputSize();
-        wxSize scaledSize = mVideoClip->getSize();
         int factor = mVideoClip->getScalingFactor();
         wxPoint position = mVideoClip->getPosition();
         wxPoint maxpos = mVideoClip->getMaxPosition();

@@ -699,7 +699,7 @@ void Drag::determinePossibleSnapPoints()
 {
     mSnapPoints.clear();
 
-    if (model::Config::ReadBool(model::Config::sPathSnapClips))
+    if (Config::ReadBool(Config::sPathSnapClips))
     {
         BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
         {
@@ -713,7 +713,7 @@ void Drag::determinePossibleSnapPoints()
             }
         }
     }
-    if (model::Config::ReadBool(model::Config::sPathSnapCursor))
+    if (Config::ReadBool(Config::sPathSnapCursor))
     {
         mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
     }

@@ -208,9 +208,9 @@ int generateDebugReport(bool doexit, bool addcontext)
         report.AddCurrentDump();
     }
 
-    if (wxFileName(model::Config::getFileName()).FileExists())
+    if (wxFileName(Config::getFileName()).FileExists())
     {
-        report.AddFile(model::Config::getFileName(), wxT("options file"));
+        report.AddFile(Config::getFileName(), wxT("options file"));
     }
 
     if (wxFileName(Log::getFileName()).FileExists())

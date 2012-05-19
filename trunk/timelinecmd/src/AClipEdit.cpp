@@ -597,7 +597,7 @@ void AClipEdit::replaceLinks()
         }
     }
 
-    if (model::Config::ReadBool(model::Config::sPathTest))
+    if (Config::ReadBool(Config::sPathTest))
     {
         // Only in test mode: verify all links.
         BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
