@@ -76,7 +76,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
         addbox(_("Video"));
 
         wxSize originalSize = mVideoClip->getInputSize();
-        int factor = mVideoClip->getScalingFactor();
+        int factor = mVideoClip->getScalingDigits();
         wxPoint position = mVideoClip->getPosition();
         wxPoint maxpos = mVideoClip->getMaxPosition();
         wxPoint minpos = mVideoClip->getMinPosition();
@@ -133,7 +133,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
         mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
         mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
         mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
         mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
         mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
         mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
@@ -164,7 +164,7 @@ DetailsClip::~DetailsClip()
         mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
         mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
         mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
         mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
         mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
         mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
@@ -258,7 +258,7 @@ void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
     event.Skip();
 }
 
-void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event)
+void DetailsClip::onScalingDigitsChanged(model::EventChangeVideoClipScalingDigits& event)
 {
     mScalingSpin->SetValue(model::Convert::digitsToFactor(event.getValue(),model::Constants::scalingPrecision)); // todo make one global method in convert for converting scaling back and forth
     mScalingSlider->SetValue(event.getValue());
