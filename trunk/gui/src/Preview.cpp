@@ -8,7 +8,7 @@
 #include "Timeline.h"
 #include "UtilLog.h"
 
-namespace gui { // todo replace this class with timeline helper panel derivative like done for the details view
+namespace gui {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

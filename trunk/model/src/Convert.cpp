@@ -135,30 +135,16 @@ wxSize Convert::fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox,
 }
 
 // static
+int Convert::doubleToInt(double x)
+{
+    return (x >= 0.0) ? static_cast<int>(std::floor(x + 0.5)) : static_cast<int>(std::ceil(x - 0.5));
+}
+
+// static
 int Convert::factorToDigits(double number, int nDigits)
 {
-    // todo cleanup
-    auto round = [](double x)
-    {
-        return (x >= 0.0) ? std::floor(x + 0.5) : std::ceil(x - 0.5);
-    };
-    std::ostringstream os;
-    os << std::setprecision(nDigits) << number;
-    std::istringstream is(os.str());
-    double d;
-    is >> d;
-    ASSERT_EQUALS(round(-0.8),-1);
-    ASSERT_EQUALS(round(-0.5),-1);
-    ASSERT_EQUALS(round(-0.4),0);
-    ASSERT_EQUALS(round(0.4),0);
-    ASSERT_EQUALS(round(0.5),1);
-    ASSERT_EQUALS(round(0.8),1); // todo remove if tested once
     double digitfactor = pow(static_cast<float>(10),nDigits);
-    int result1 = static_cast<int>(floor(round(number * digitfactor)));
-    return result1;
-    //double result = static_cast<int>(result1) / static_cast<int>(digitfactor);
-    //ASSERT_ZERO(fmod(result * digitfactor * 10,10)); // Test for correct number of digits . todo bremove if tested once
-    //return result;
+    return doubleToInt(number * digitfactor);
 }
 
 // static
