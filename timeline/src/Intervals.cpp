@@ -116,8 +116,8 @@ void Intervals::addBeginMarker()
 {
     pts cursor = determineSnap(getZoom().pixelsToPts(getCursor().getPosition()));
     mNewIntervalActive = true;
-    mNewIntervalBegin = cursor + model::Convert::timeToPts(model::Config::ReadDouble(model::Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
-    mNewIntervalEnd = cursor + model::Convert::timeToPts(model::Config::ReadDouble(model::Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
+    mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
+    mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
 }
 
 void Intervals::addEndMarker()
@@ -156,7 +156,7 @@ void Intervals::update(pixel newCursorPosition)
     pts cursor = determineSnap(getZoom().pixelsToPts(newCursorPosition));
     if (mNewIntervalActive)
     {
-        mNewIntervalEnd = cursor +  model::Convert::timeToPts(model::Config::ReadDouble(model::Config::sPathMarkerEndAddition) * model::Constants::sSecond);
+        mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition) * model::Constants::sSecond);
         getView().refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
     }
     if (mToggleActive)
@@ -229,7 +229,7 @@ void Intervals::deleteUnmarked()
 
 pts Intervals::determineSnap(pts position) const
 {
-    if (!model::Config::ReadBool(model::Config::sPathSnapClips))
+    if (!Config::ReadBool(Config::sPathSnapClips))
     {
         return position;
     }

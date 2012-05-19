@@ -37,7 +37,7 @@ Options::Options(wxWindow* win)
         addbox(_("Startup"));
 
         mLoadLast = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
-        mLoadLast->SetValue(model::Config::ReadBool(model::Config::sPathAutoLoadEnabled));
+        mLoadLast->SetValue(Config::ReadBool(Config::sPathAutoLoadEnabled));
         addoption(_("Load last project on startup"), mLoadLast);
     }
     {
@@ -47,7 +47,7 @@ Options::Options(wxWindow* win)
 
         wxArrayString choices;
         unsigned int selection = 0;
-        wxString currentFrameRate = model::Config::ReadString(model::Config::sPathDefaultFrameRate);
+        wxString currentFrameRate = Config::ReadString(Config::sPathDefaultFrameRate);
         BOOST_FOREACH( FrameRate fr, framerate::getSupported() )
         {
             wxString frs = framerate::toString(fr);
@@ -61,18 +61,18 @@ Options::Options(wxWindow* win)
         mFrameRate->SetSelection(selection);
         addoption(_("Framerate for new projects"), mFrameRate);
 
-        long initial = model::Config::ReadLong(model::Config::sPathDefaultVideoWidth);
+        long initial = Config::ReadLong(Config::sPathDefaultVideoWidth);
         mDefaultVideoWidth = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video width"), mDefaultVideoWidth);
 
-        initial = model::Config::ReadLong(model::Config::sPathDefaultVideoHeight);
+        initial = Config::ReadLong(Config::sPathDefaultVideoHeight);
         mDefaultVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
         addoption(_("Default video height"), mDefaultVideoHeight);
 
-        mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingConverter::readConfigValue(model::Config::sPathDefaultVideoScaling));
+        mDefaultVideoScaling = new EnumSelector<model::VideoScaling>(mPanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingConverter::readConfigValue(Config::sPathDefaultVideoScaling));
         addoption(_("Default video scaling"), mDefaultVideoScaling);
 
-        mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(model::Config::sPathDefaultVideoAlignment));
+        mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(Config::sPathDefaultVideoAlignment));
         addoption(_("Default video scaling"), mDefaultVideoAlignment);
     }
     {
@@ -80,16 +80,16 @@ Options::Options(wxWindow* win)
 
         addbox(_("Marking selection"));
 
-        double initial = model::Config::ReadDouble(model::Config::sPathMarkerBeginAddition);
+        double initial = Config::ReadDouble(Config::sPathMarkerBeginAddition);
         mMarkerBeginAddition = new wxSpinCtrlDouble(mPanel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
         addoption(_("Begin marker expansion/contraction (s)."), mMarkerBeginAddition);
 
-        initial = model::Config::ReadDouble(model::Config::sPathMarkerEndAddition);
+        initial = Config::ReadDouble(Config::sPathMarkerEndAddition);
         mMarkerEndAddition = new wxSpinCtrlDouble(mPanel, wxID_ANY, wxString::Format("%1.1f", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, -10, 10, initial, 0.1);
         addoption(_("End marker expansion/contraction (s)."), mMarkerEndAddition);
 
         addbox(_("Clips"));
-        mStrip = new wxTextCtrl(mPanel, wxID_ANY, model::Config::ReadString(model::Config::sPathStrip));
+        mStrip = new wxTextCtrl(mPanel, wxID_ANY, Config::ReadString(Config::sPathStrip));
         addoption(_("Text to remove once from clip names (requires restart)"), mStrip);
     }
     {
@@ -97,14 +97,14 @@ Options::Options(wxWindow* win)
 
         addbox(_("Logging"));
 
-        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevelConverter::readConfigValue(model::Config::sPathLogLevel));
+        mSelectLogLevel = new EnumSelector<LogLevel>(mPanel, LogLevelConverter::mapToHumanReadibleString, LogLevelConverter::readConfigValue(Config::sPathLogLevel));
         addoption(_("Log level"), mSelectLogLevel);
 
-        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, Avcodec::mapAvcodecLevels.right.at(model::Config::ReadString(model::Config::sPathLogLevelAvcodec)));
+        mSelectLogLevelAvcodec = new EnumSelector<int>(mPanel, Avcodec::mapAvcodecLevels, Avcodec::mapAvcodecLevels.right.at(Config::ReadString(Config::sPathLogLevelAvcodec)));
         addoption(_("Avcodec log level (requires restart)"), mSelectLogLevelAvcodec);
 
         mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
-        mShowDebugInfoOnWidgets->SetValue(model::Config::ReadBool(model::Config::sPathShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
+        mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
         addoption(_("Show debug info on widgets (requires restart)"), mShowDebugInfoOnWidgets);
     }
 
@@ -119,23 +119,23 @@ Options::~Options()
 {
     if (GetReturnCode() == GetAffirmativeId())
     {
-        wxConfigBase::Get()->Write( model::Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
-        wxConfigBase::Get()->Write( model::Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
-        wxConfigBase::Get()->Write( model::Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
-        wxConfigBase::Get()->Write( model::Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
-        wxConfigBase::Get()->Write( model::Config::sPathDefaultFrameRate,          framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
-        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
-        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
-        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
-        wxConfigBase::Get()->Write( model::Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
-        wxConfigBase::Get()->Write( model::Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
-        wxConfigBase::Get()->Write( model::Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
-        wxConfigBase::Get()->Write( model::Config::sPathStrip,                     mStrip->GetValue());
+        wxConfigBase::Get()->Write( Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
+        wxConfigBase::Get()->Write( Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
+        wxConfigBase::Get()->Write( Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
+        wxConfigBase::Get()->Write( Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
+        wxConfigBase::Get()->Write( Config::sPathDefaultFrameRate,          framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
+        wxConfigBase::Get()->Write( Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
+        wxConfigBase::Get()->Write( Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
+        wxConfigBase::Get()->Write( Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
+        wxConfigBase::Get()->Write( Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
+        wxConfigBase::Get()->Write( Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
+        wxConfigBase::Get()->Write( Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
+        wxConfigBase::Get()->Write( Config::sPathStrip,                     mStrip->GetValue());
 
         wxConfigBase::Get()->Flush();
 
         // Use new values
-        Log::setReportingLevel(LogLevelConverter::readConfigValue(model::Config::sPathLogLevel));
+        Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathLogLevel));
     }
 }
 

@@ -6,8 +6,6 @@
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 
-namespace model { // todo move to util....and rename to utilconfig?
-
 wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);
 
@@ -64,7 +62,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     wxConfigBase::Get()->Flush();
 
     // Read cached values here
-    Log::setReportingLevel(LogLevelConverter::readConfigValue(model::Config::sPathLogLevel));
+    Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathLogLevel));
     sShowDebugInfo = Config::ReadBool(Config::sPathShowDebugInfoOnWidgets);
 
     Avcodec::configureLog();
@@ -130,5 +128,3 @@ const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddit
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
 const wxString Config::sPathStrip                   ("/Timeline/Strip");
 const wxString Config::sPathDefaultTransitionLength ("/Timeline/DefaultTransitionLength");
-
-} // namespace

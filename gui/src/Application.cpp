@@ -123,7 +123,7 @@ bool Application::OnInit()
     // Must be called before anything else,
     // since it distributes the initial options
     // which are used below.
-    model::Config::init(GetAppName(), GetVendorName(), mEventLoopListener != 0);
+    Config::init(GetAppName(), GetVendorName(), mEventLoopListener != 0);
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)

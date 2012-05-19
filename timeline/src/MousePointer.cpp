@@ -115,7 +115,7 @@ void MousePointer::setPosition(wxPoint position)
 {
     VAR_DEBUG(mCurrent)(position);
     mCurrent = position;
-    if (model::Config::getShowDebugInfo())
+    if (Config::getShowDebugInfo())
     {
         PointerPositionInfo info = getInfo(position);
         pts left = 0;

@@ -6,6 +6,7 @@
 #include "ClipView.h"
 #include "Convert.h"
 #include "Layout.h"
+#include "Properties.h"
 #include "Transition.h"
 #include "UtilCloneable.h"
 #include "UtilLog.h"
@@ -46,11 +47,10 @@ ThumbnailView::~ThumbnailView()
 
 wxSize ThumbnailView::requiredSize() const
 {
-    wxSize requestedSize = mVideoClip->getSize();
     wxSize boundingBox = wxSize(
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetWidth()  - 2 * Layout::sClipBorderSize,
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetHeight() - Layout::sClipBorderSize - Layout::sClipDescriptionBarHeight);
-    wxSize scaledSize = model::Convert::sizeInBoundingBox(requestedSize, boundingBox);
+    wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get()->getVideoSize(), boundingBox);
     return scaledSize;
 }
 

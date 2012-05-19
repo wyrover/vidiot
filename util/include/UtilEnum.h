@@ -109,4 +109,4 @@ std::ostream& operator<< (std::ostream& os, const ENUMNAME& obj) { os << ENUMNAM
 std::string ENUMNAME ## _toString( ENUMNAME value ) { return ENUMNAME ## Converter::sConverter.toString(value); }; \
 ENUMNAME ENUMNAME ## _fromString( std::string value ) { return ENUMNAME ## Converter::sConverter.fromString(value); }; \
 ENUMNAME Enum_fromConfig(wxString value, ENUMNAME unused) { return ENUMNAME ## _fromString(std::string(value.mb_str())); }; \
-ENUMNAME ENUMNAME ## Converter::readConfigValue(wxString path) { return ENUMNAME ## _fromString(std::string(model::Config::ReadString(path).mb_str())); };
+ENUMNAME ENUMNAME ## Converter::readConfigValue(wxString path) { return ENUMNAME ## _fromString(std::string(Config::ReadString(path).mb_str())); };

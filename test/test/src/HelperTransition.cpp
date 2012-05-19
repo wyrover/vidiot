@@ -121,7 +121,7 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip)
     makeTransition();
 
     ASSERT(VideoClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(VideoClip(0,clipNumberBeforeTransition + 1));
-    ASSERT_EQUALS(lengthOfTransition, model::Config::ReadLong(model::Config::sPathDefaultTransitionLength));
+    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength));
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition / 2);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition / 2);
 }
@@ -146,7 +146,7 @@ MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip)
     makeTransition();
 
     ASSERT(VideoClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(VideoClip(0,clipNumberBeforeTransition + 1));
-    ASSERT_EQUALS(lengthOfTransition, model::Config::ReadLong(model::Config::sPathDefaultTransitionLength) / 2);
+    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength) / 2);
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition);
 }
@@ -170,7 +170,7 @@ MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip)
     makeTransition();
 
     ASSERT(VideoClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(VideoClip(0,clipNumberBeforeTransition + 1));
-    ASSERT_EQUALS(lengthOfTransition, model::Config::ReadLong(model::Config::sPathDefaultTransitionLength) / 2);
+    ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength) / 2);
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied);
 }
