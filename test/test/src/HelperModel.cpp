@@ -12,9 +12,9 @@ model::VideoClipPtr getVideoClip(model::IClipPtr clip)
     return videoclip;
 }
 
-int getScalingFactor(model::IClipPtr clip)
+int getScalingDigits(model::IClipPtr clip)
 {
-    return getVideoClip(clip)->getScalingFactor();
+    return getVideoClip(clip)->getScalingDigits();
 };
 
 model::VideoScaling getScaling(model::IClipPtr clip)

@@ -53,7 +53,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
-    void onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event);
+    void onScalingDigitsChanged(model::EventChangeVideoClipScalingDigits& event);
     void onAlignmentChanged(model::EventChangeVideoClipAlignment& event);
     void onPositionChanged(model::EventChangeVideoClipPosition& event);
     void onMinPositionChanged(model::EventChangeVideoClipMinPosition& event);

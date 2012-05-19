@@ -47,8 +47,7 @@ public:
     wxSize getInputSize(); ///< \return size of input video
 
     VideoScaling getScaling() const;
-    int getScalingFactor() const;
-    double getScalingFactorDouble() const;
+    int getScalingDigits() const;
     VideoAlignment getAlignment() const;
     wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
@@ -78,7 +77,7 @@ private:
     pts mProgress; ///< Current render position in pts units (delivered video frames count)
 
     VideoScaling mScaling;
-    int mScalingFactor;     ///< mScalingFactor / Constants::scalingPrecisionFactor is the actual scaling to be applied. Stored as an int to avoid rounding errors with doubles (leads to small diffs which cause test asserts to fail).
+    int mScalingDigits;     ///< mScalingDigits / Constants::scalingPrecisionFactor is the actual scaling to be applied. Stored as an int to avoid rounding errors with doubles (leads to small diffs which cause test asserts to fail).
 
     VideoAlignment mAlignment;
     wxPoint mPosition;
@@ -89,6 +88,7 @@ private:
 
     void updateAutomatedScaling();
     void updateAutomatedPositioning();
+    double getScalingFactor() const;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

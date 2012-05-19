@@ -19,11 +19,11 @@ ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip
     ,   mInitialized(false)
     ,   mVideoClip(videoclip)
     ,   mOldScaling(mVideoClip->getScaling())
-    ,   mOldScalingFactor(mVideoClip->getScalingFactor())
+    ,   moldScalingDigits(mVideoClip->getScalingDigits())
     ,   mOldAlignment(mVideoClip->getAlignment())
     ,   mOldPosition(mVideoClip->getPosition())
     ,   mNewScaling(boost::none)
-    ,   mNewScalingFactor(boost::none)
+    ,   mNewScalingDigits(boost::none)
     ,   mNewPosition(boost::none)
 {
 }
@@ -32,13 +32,11 @@ ChangeVideoClipTransform::~ChangeVideoClipTransform()
 {
 }
 
-// todo rename all commands to *Command?
-
-void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<int> scalingfactor)
+void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<int> scalingdigits)
 {
     mNewScaling = boost::optional<VideoScaling>(scaling);
-    mNewScalingFactor = scalingfactor;
-    mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
+    mNewScalingDigits = scalingdigits;
+    mVideoClip->setScaling(*mNewScaling, mNewScalingDigits);
 }
 
 void ChangeVideoClipTransform::setAlignment(VideoAlignment alignment)
@@ -67,7 +65,7 @@ bool ChangeVideoClipTransform::Do()
         // The first time is handled by (possibly multiple calls to) setScaling etc.
         if (mNewScaling)
         {
-            mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
+            mVideoClip->setScaling(*mNewScaling, mNewScalingDigits);
         }
         if (mNewAlignment)
         {
@@ -87,7 +85,7 @@ bool ChangeVideoClipTransform::Undo()
     VAR_INFO(*this);
     if (mNewScaling)
     {
-        mVideoClip->setScaling(mOldScaling, boost::optional<int>(mOldScalingFactor));
+        mVideoClip->setScaling(mOldScaling, boost::optional<int>(moldScalingDigits));
     }
     if (mNewAlignment)
     {
@@ -119,11 +117,11 @@ std::ostream& operator<<( std::ostream& os, const ChangeVideoClipTransform& obj 
         << typeid(obj).name()    << '|'
         << obj.mVideoClip        << '|'
         << obj.mOldScaling       << '|'
-        << obj.mOldScalingFactor << '|'
+        << obj.moldScalingDigits << '|'
         << obj.mOldAlignment     << '|'
         << obj.mOldPosition      << '|'
         << obj.mNewScaling       << '|'
-        << obj.mNewScalingFactor << '|'
+        << obj.mNewScalingDigits << '|'
         << obj.mNewPosition;
     return os;
 }
