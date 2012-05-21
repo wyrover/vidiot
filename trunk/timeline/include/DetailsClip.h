@@ -48,12 +48,13 @@ public:
 
     void onScalingChoiceChanged(wxCommandEvent& event);
     void onScalingSliderChanged(wxCommandEvent& event);
+    void onScalingSliderChanging(wxCommandEvent& event);
     void onScalingSpinChanged(wxSpinDoubleEvent& event);
     void onAlignmentChoiceChanged(wxCommandEvent& event);
     void onPositionXSliderChanged(wxCommandEvent& event);
-    void onPositionXSpinChanged(wxSpinEvent& event);
+    void onPositionXSpinChanged(wxSpinEvent& event); //todo also changing
     void onPositionYSliderChanged(wxCommandEvent& event);
-    void onPositionYSpinChanged(wxSpinEvent& event);
+    void onPositionYSpinChanged(wxSpinEvent& event); //todo also changing
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
