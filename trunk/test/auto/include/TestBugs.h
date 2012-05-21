@@ -31,6 +31,10 @@ public:
     /// regardless the EOF flag.
     void testVideoDecodingError();
 
+    /// A hangup occurred after resetting the details view multiple times. Apparently, calling
+    /// DestroyChildren too often seemed to (note: seemed to) cause this.
+    void testHangupAfterResettingDetailsView();
+
 };
 }
 

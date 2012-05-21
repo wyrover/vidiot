@@ -47,12 +47,15 @@ boost::shared_ptr<TARGET> getTypedClip(model::IClipPtr clip)
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr clip)
+const double sScalingIncrement = 0.01;
+const int sPositionPageSize = 10;
+
+DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     :   wxPanel(parent)
     ,   Part(&timeline)
-    ,   mClip(clip)
-    ,   mVideoClip(getTypedClip<model::VideoClip>(clip))
-    ,   mAudioClip(getTypedClip<model::AudioClip>(clip))
+    ,   mClip()
+    ,   mVideoClip()
+    ,   mAudioClip()
     ,   mTopSizer(0)
     ,   mBoxSizer(0)
     ,   mSelectScaling(0)
@@ -71,80 +74,65 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
 
     mTopSizer = new wxBoxSizer(wxVERTICAL);
 
-    if (mVideoClip)
-    {
-        addbox(_("Video"));
+    addbox(_("Video"));
 
-        wxSize originalSize = mVideoClip->getInputSize();
-        int factor = mVideoClip->getScalingDigits();
-        wxPoint position = mVideoClip->getPosition();
-        wxPoint maxpos = mVideoClip->getMaxPosition();
-        wxPoint minpos = mVideoClip->getMinPosition();
-        const double sScalingIncrement = 0.01;
+    mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingNone);
+    addoption(_("Scaling"), mSelectScaling);
 
-        mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, mVideoClip->getScaling());
-        addoption(_("Scaling"), mSelectScaling);
+    wxPanel* scalingpanel = new wxPanel(this);
+    wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
+    mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, model::VideoClip::sScalingOriginalSize, model::Constants::sMinScaling, model::Constants::sMaxScaling);
+    mScalingSlider->SetPageSize(model::Constants::scalingPageSize);
+    mScalingSpin = new wxSpinCtrlDouble(scalingpanel);
+    mScalingSpin->SetDigits(model::Constants::scalingPrecision);
+    mScalingSpin->SetValue(model::Convert::digitsToFactor(model::VideoClip::sScalingOriginalSize, model::Constants::scalingPrecision));
+    mScalingSpin->SetRange(model::Convert::digitsToFactor(model::Constants::sMinScaling, model::Constants::scalingPrecision), model::Convert::digitsToFactor(model::Constants::sMaxScaling, model::Constants::scalingPrecision));
+    mScalingSpin->SetIncrement(sScalingIncrement);
+    scalingsizer->Add(mScalingSlider);
+    scalingsizer->Add(mScalingSpin);
+    scalingpanel->SetSizer(scalingsizer);
+    addoption(_("Factor"), scalingpanel);
 
-        wxPanel* scalingpanel = new wxPanel(this);
-        wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
+    mSelectAlignment = new EnumSelector<model::VideoAlignment>(this, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentCustom);
+    addoption(_("Alignment"), mSelectAlignment);
 
-        mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, factor, model::Constants::sMinScaling, model::Constants::sMaxScaling);
-        mScalingSpin = new wxSpinCtrlDouble(scalingpanel);
-        mScalingSpin->SetDigits(model::Constants::scalingPrecision);
-        mScalingSpin->SetValue(model::Convert::digitsToFactor(factor, model::Constants::scalingPrecision));
-        mScalingSpin->SetRange(model::Convert::digitsToFactor(model::Constants::sMinScaling, model::Constants::scalingPrecision), model::Convert::digitsToFactor(model::Constants::sMaxScaling, model::Constants::scalingPrecision));
-        mScalingSpin->SetIncrement(sScalingIncrement);
-        scalingsizer->Add(mScalingSlider);
-        scalingsizer->Add(mScalingSpin);
-        scalingpanel->SetSizer(scalingsizer);
-        addoption(_("Factor"), scalingpanel);
+    wxPanel* positionxpanel = new wxPanel(this);
+    wxBoxSizer* positionxsizer = new wxBoxSizer(wxHORIZONTAL);
+    mPositionXSlider = new wxSlider(positionxpanel, wxID_ANY, 0, 0, 1);
+    mPositionXSlider->SetPageSize(sPositionPageSize);
+    mPositionXSpin = new wxSpinCtrl(positionxpanel);
+    mPositionXSpin->SetRange(0,1);
+    mPositionXSpin->SetValue(0);
+    positionxsizer->Add(mPositionXSlider);
+    positionxsizer->Add(mPositionXSpin);
+    positionxpanel->SetSizer(positionxsizer);
+    addoption(_("X position"), positionxpanel);
 
-        mSelectAlignment = new EnumSelector<model::VideoAlignment>(this, model::VideoAlignmentConverter::mapToHumanReadibleString, mVideoClip->getAlignment());
-        addoption(_("Alignment"), mSelectAlignment);
+    wxPanel* positionypanel = new wxPanel(this);
+    wxBoxSizer* positionysizer = new wxBoxSizer(wxHORIZONTAL);
+    mPositionYSlider = new wxSlider(positionypanel, wxID_ANY, 0, 0, 1);
+    mPositionYSlider->SetPageSize(sPositionPageSize);
+    mPositionYSpin = new wxSpinCtrl(positionypanel);
+    mPositionYSpin->SetRange(0,1);
+    mPositionYSpin->SetValue(0);
+    positionysizer->Add(mPositionYSlider);
+    positionysizer->Add(mPositionYSpin);
+    positionypanel->SetSizer(positionysizer);
+    addoption(_("Y position"), positionypanel);
 
-        wxPanel* positionxpanel = new wxPanel(this);
-        wxBoxSizer* positionxsizer = new wxBoxSizer(wxHORIZONTAL);
-        mPositionXSlider = new wxSlider(positionxpanel, wxID_ANY, position.x, minpos.x, maxpos.x);
-        mPositionXSpin = new wxSpinCtrl(positionxpanel);
-        mPositionXSpin->SetRange(minpos.x, maxpos.x);
-        mPositionXSpin->SetValue(position.x);
-        positionxsizer->Add(mPositionXSlider);
-        positionxsizer->Add(mPositionXSpin);
-        positionxpanel->SetSizer(positionxsizer);
-        addoption(_("X position"), positionxpanel);
+    mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
+    mScalingSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
+    mScalingSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+    mSelectAlignment->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
+    mPositionXSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
+    mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
+    mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
+    mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
 
-        wxPanel* positionypanel = new wxPanel(this);
-        wxBoxSizer* positionysizer = new wxBoxSizer(wxHORIZONTAL);
-        mPositionYSlider = new wxSlider(positionypanel, wxID_ANY, position.y, minpos.y, maxpos.y);
-        mPositionYSpin = new wxSpinCtrl(positionypanel);
-        mPositionYSpin->SetRange(minpos.y,maxpos.y); // todo add a style to wxwidgets for reversing the arrow handling (up means the bitmap goes up)
-        mPositionYSpin->SetValue(position.y);
-        positionysizer->Add(mPositionYSlider);
-        positionysizer->Add(mPositionYSpin);
-        positionypanel->SetSizer(positionysizer);
-        addoption(_("Y position"), positionypanel);
+    addbox(_("Audio"));
+    addoption(_("test"), new wxButton(this,wxID_ANY,_("label")));
 
-        mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
-        mScalingSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
-        mScalingSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
-        mSelectAlignment->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
-        mPositionXSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
-        mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
-        mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
-        mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
-        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
-        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-        mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
-    }
-
-    if (mAudioClip)
-    {
-        addbox(_("Audio"));
-        addoption(_("test"), new wxButton(this,wxID_ANY,_("label")));
-    }
+    setClip(model::IClipPtr()); // Ensures disabling all controls
 
     mTopSizer->AddStretchSpacer();
     SetSizerAndFit(mTopSizer);
@@ -153,25 +141,106 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline, model::IClipPtr c
 
 DetailsClip::~DetailsClip()
 {
-    if (mVideoClip)
+    setClip(model::IClipPtr()); // Ensures Unbind if needed for clip events
+    mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
+    mScalingSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
+    mScalingSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+    mSelectAlignment->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
+    mPositionXSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
+    mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
+    mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
+    mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+model::IClipPtr DetailsClip::getClip() const
+{
+    return mClip;
+}
+
+void DetailsClip::setClip(model::IClipPtr clip)
+{
+    if (mClip == clip) return; // Avoid useless updating
+    if (mClip)
     {
-        mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
-        mScalingSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
-        mScalingSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
-        mSelectAlignment->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
-        mPositionXSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
-        mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
-        mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
-        mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
-        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
-        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-        mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+        if (mVideoClip)
+        {
+            mSelectScaling->Disable();
+            mScalingSlider->Disable();
+            mScalingSpin->Disable();
+            mSelectAlignment->Disable();
+            mPositionXSlider->Disable();
+            mPositionXSpin->Disable();
+            mPositionYSlider->Disable();
+            mPositionYSpin->Disable();
+
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+            mVideoClip.reset();
+        }
+        mAudioClip.reset();
+        mClip.reset();
     }
-    if (mAudioClip)
+
+    mClip = clip;
+    mCommand = 0; // Ensures that a new command is generated for future edits
+    // todo test the following:
+    // 1. make transform (create command)
+    // 2. Hit undo
+    // 3. Edit again in the transform (still uses the same command!!!)
+    // todo make a new command for each (partial) edit and test that
+
+    if (mClip)
     {
+        mVideoClip = getTypedClip<model::VideoClip>(clip);
+        mAudioClip = getTypedClip<model::AudioClip>(clip);
+
+        if (mVideoClip)
+        {
+            wxSize originalSize = mVideoClip->getInputSize();
+            int factor = mVideoClip->getScalingDigits();
+            wxPoint position = mVideoClip->getPosition();
+            wxPoint maxpos = mVideoClip->getMaxPosition();
+            wxPoint minpos = mVideoClip->getMinPosition();
+            const double sScalingIncrement = 0.01;
+
+            mSelectScaling->select(mVideoClip->getScaling());
+            mScalingSlider->SetValue(factor);
+            mScalingSpin->SetValue(model::Convert::digitsToFactor(factor, model::Constants::scalingPrecision));
+
+            mSelectAlignment->select(mVideoClip->getAlignment());
+            mPositionXSlider->SetRange(minpos.x,maxpos.x);
+            mPositionXSlider->SetValue(position.x);
+            mPositionXSpin->SetRange(minpos.x, maxpos.x);
+            mPositionXSpin->SetValue(position.x);
+            mPositionYSlider->SetRange(minpos.y,maxpos.y);
+            mPositionYSlider->SetValue(position.y);
+            mPositionYSpin->SetRange(minpos.y, maxpos.y);
+            mPositionYSpin->SetValue(position.y);
+
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+
+            mSelectScaling->Enable();
+            mScalingSlider->Enable();
+            mScalingSpin->Enable();
+            mSelectAlignment->Enable();
+            mPositionXSlider->Enable();
+            mPositionXSpin->Enable();
+            mPositionYSlider->Enable();
+            mPositionYSpin->Enable();
+        }
     }
 }
 
@@ -260,7 +329,7 @@ void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
 
 void DetailsClip::onScalingDigitsChanged(model::EventChangeVideoClipScalingDigits& event)
 {
-    mScalingSpin->SetValue(model::Convert::digitsToFactor(event.getValue(),model::Constants::scalingPrecision)); // todo make one global method in convert for converting scaling back and forth
+    mScalingSpin->SetValue(model::Convert::digitsToFactor(event.getValue(),model::Constants::scalingPrecision));
     mScalingSlider->SetValue(event.getValue());
     preview();
     event.Skip();
@@ -349,6 +418,7 @@ wxSpinCtrl* DetailsClip::getPositionYSpin() const
 //////////////////////////////////////////////////////////////////////////
 
 void DetailsClip::makeCommand()
+
 {
     if (!mCommand || mCommand != model::CommandProcessor::get().GetCurrentCommand())
     {

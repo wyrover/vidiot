@@ -29,6 +29,7 @@ public:
 
     static const int scalingPrecision;       ///< Number of digits to be used maximally
     static const int scalingPrecisionFactor; ///< 10^scalingPrecision
+    static const int scalingPageSize;        ///< 0.1
     static const int sMinScaling;
     static const int sMaxScaling;
 };
