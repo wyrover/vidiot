@@ -418,12 +418,13 @@ wxSpinCtrl* DetailsClip::getPositionYSpin() const
 //////////////////////////////////////////////////////////////////////////
 
 void DetailsClip::makeCommand()
-
 {
     if (!mCommand || mCommand != model::CommandProcessor::get().GetCurrentCommand())
     {
-        // No command has been submitted yet, or a command was submitted, but another command
-        // was executed afterwards. Insert a new command into the Undo chain.
+        // - No command has been submitted yet, OR
+        // - A command was submitted, but another command was executed afterwards, OR
+        // - The command was undone again.
+        // Insert a new command into the Undo chain.
         mCommand = new model::ChangeVideoClipTransform(mVideoClip);
         mCommand->submit();
     }

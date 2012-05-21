@@ -14,6 +14,8 @@
 #include "Details.h"
 #include "DetailsClip.h"
 #include "VideoClip.h"
+#include "ProjectViewCreateSequence.h"
+#include "HelperWindow.h"
 #include "UtilLogWxwidgets.h"
 
 namespace test {
@@ -49,7 +51,7 @@ void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
     waitForIdle();
 }
 
-//RUNONLY("testTransform");
+RUNONLY("testTransform");
 void TestTransform::testTransform()
 {
     StartTestSuite();
@@ -82,13 +84,16 @@ void TestTransform::testTransform()
     ASSERT_EQUALS(videoclip->getInputSize(), wxSize(1280,720)); //Ensure that all checks are based on the right dimensions
     auto ASSERT_ORIGINAL_CLIPPROPERTIES = [ASSERT_CLIPPROPERTIES] { ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,8000,model::VideoAlignmentCenter,wxPoint(-152,0)); };
     ASSERT_ORIGINAL_CLIPPROPERTIES();
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
     {
         StartTest("Scaling: Slider: If moved to the right, the scaling is increased. Scaling enum is changed to custom.");
         ClickTopLeft(detailsclip->getScalingSlider()); // Give focus
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
         Type(WXK_PAGEUP);
         ASSERT_CLIPPROPERTIES(model::VideoScalingCustom,7000,model::VideoAlignmentCenter,wxPoint(-88,36));
         Undo();
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); // Verify that only one command object was added to the undo history
         ASSERT_ORIGINAL_CLIPPROPERTIES();
         StartTest("Scaling: Slider: If moved to the left, the scaling is decreased. Scaling enum is changed to custom.");
         ClickTopLeft(detailsclip->getScalingSlider()); // Give focus
@@ -175,7 +180,9 @@ void TestTransform::testTransform()
         ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCustom,wxPoint(-142,10));
         ClickOnEnumSelector(detailsclip->getAlignmentSelector(),model::VideoAlignmentCenterVertical);
         ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterVertical,wxPoint(-142,0));
+        wxCommand* command = getCurrentCommand();
         Undo();
+        ASSERT_DIFFERS(command,getCurrentCommand());
         ASSERT_CLIPPROPERTIES(oldScaling,oldScalingDigits,oldAlignment,oldPosition);
     }
 }
