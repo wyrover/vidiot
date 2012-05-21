@@ -26,7 +26,8 @@ const int Constants::sDefaultTrackHeight = 50;
 
 const int Constants::scalingPrecision = 4;
 const int Constants::scalingPrecisionFactor = static_cast<int>(pow(10.0,Constants::scalingPrecision)); ///< 10^scalingPrecision
+const int Constants::scalingPageSize = Constants::scalingPrecisionFactor / 10; // 0.1
 const int Constants::sMinScaling = 1;
-const int Constants::sMaxScaling = 1 * scalingPrecisionFactor;
+const int Constants::sMaxScaling = 10 * scalingPrecisionFactor;
 
 } // namespace

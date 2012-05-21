@@ -3,6 +3,7 @@
 
 #include <list>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 #include "Part.h"
 
 namespace model {
@@ -12,6 +13,8 @@ typedef std::list<IClipPtr> IClips;
 }
 
 namespace gui { namespace timeline {
+
+class DetailsClip;
 
 class Details
     :   public wxPanel
@@ -32,25 +35,32 @@ public:
     // SET THE CURRENTLY FOCUSED ITEM
     //////////////////////////////////////////////////////////////////////////
 
-    void focus();
-    void focus(model::IClipPtr clip);
-    void focus(model::IClips clips);
+    void onSelectionChanged();
+
+    //////////////////////////////////////////////////////////////////////////
+    // TEST
+    //////////////////////////////////////////////////////////////////////////
 
     wxWindow* getCurrent() const;
 
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
+    // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxStaticText* mHeader;
     wxWindow* mCurrent;
+    DetailsClip* mDetailsClip;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void reset(wxString title, wxWindow* details);
+    void focus(model::IClipPtr clip);
+    void focus(model::IClips clips);
+
+    void reset(wxString title = "", wxWindow* details = 0);
 
 };
 

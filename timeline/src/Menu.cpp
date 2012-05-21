@@ -158,7 +158,7 @@ void MenuHandler::Popup(wxPoint position)
     else
     {
         if (info.clip)
-        { // todo test with emptyclips
+        {
             switch (info.logicalclipposition)
             {
             case TransitionBegin:

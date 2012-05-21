@@ -18,7 +18,7 @@
 
 namespace model {
 
-const int sScalingOriginalSize = Convert::factorToDigits(1,Constants::scalingPrecision);
+const int VideoClip::sScalingOriginalSize = Convert::factorToDigits(1,Constants::scalingPrecision);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -335,7 +335,7 @@ void VideoClip::updateAutomatedScaling()
         break;
     }
 
-    ASSERT_LESS_THAN_EQUALS(mScalingDigits,sScalingOriginalSize);
+    ASSERT_LESS_THAN_EQUALS(mScalingDigits,Constants::sMaxScaling);
     ASSERT_MORE_THAN_ZERO(mScalingDigits);
 }
 

@@ -9,9 +9,9 @@
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "UtilList.h"
-#include "Window.h"
 
 namespace test {
+
 void TestTimelinesView::testSequenceMenu()
 {
     StartTestSuite();
@@ -22,7 +22,7 @@ void TestTimelinesView::testSequenceMenu()
     model::FolderPtr root = createProject();
 
     model::SequencePtr sequence1 = addSequence( sSequence1 );
-    ASSERT_EQUALS(getTimeline(sequence1).getMenuHandler().getMenu(), gui::Window::get().GetMenuBar()->GetMenu(gui::Window::sSequenceMenuIndex));
+    ASSERT_EQUALS(getSequenceMenu(), getTimeline(sequence1).getMenuHandler().getMenu());
 
     model::SequencePtr sequence2 = addSequence( sSequence2 );
     ASSERT_EQUALS(getSequenceMenu(),getTimeline(sequence2).getMenuHandler().getMenu());
@@ -33,4 +33,5 @@ void TestTimelinesView::testSequenceMenu()
     triggerMenu(ID_CLOSESEQUENCE);
     ASSERT_ZERO(getSequenceMenu()->GetMenuItemCount()); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
 }
+
 } // namespace

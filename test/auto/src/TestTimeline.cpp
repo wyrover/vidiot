@@ -65,7 +65,7 @@ void TestTimeline::testSelection()
     StartTestSuite();
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
-        // Start application, make sequence, shift click clip five. All first five clips selected!
+        StartTest("Start application, make sequence, shift click clip five. All first five clips selected!");
         DeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         ShiftDown();
@@ -74,7 +74,7 @@ void TestTimeline::testSelection()
         ASSERT_SELECTION_SIZE(5);
     }
     {
-        // Test CTRL clicking all clips one by one
+        StartTest("CTRL clicking all clips one by one");
         DeselectAllClips();
         ControlDown();
         BOOST_FOREACH(model::IClipPtr clip, clips)
@@ -85,7 +85,7 @@ void TestTimeline::testSelection()
         ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
     }
     {
-        // Test SHIFT clicking the entire list
+        StartTest("SHIFT clicking the entire list");
         DeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         ShiftDown();
@@ -95,7 +95,7 @@ void TestTimeline::testSelection()
         ASSERT_SELECTION_SIZE(mProjectFixture.InputFiles.size());
     }
     {
-        // Test SHIFT clicking only the partial list
+        StartTest("SHIFT clicking only the partial list");
         DeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         Click(Center(VideoClip(0,2)));
@@ -105,7 +105,7 @@ void TestTimeline::testSelection()
         ASSERT_SELECTION_SIZE(3);
     }
     {
-        // Test (de)selecting one clip with CTRL click
+        StartTest("(de)selecting one clip with CTRL click");
         ControlDown();
         Click(Center(VideoClip(0,3)));
         ControlUp();
@@ -116,7 +116,7 @@ void TestTimeline::testSelection()
         ASSERT_SELECTION_SIZE(3);
     }
     {
-        // Test selection the transition between two clips when shift selecting
+        StartTest("Select the transition between two clips when shift selecting.");
         DeselectAllClips();
         MakeInOutTransitionAfterClip preparation(1);
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
@@ -127,7 +127,7 @@ void TestTimeline::testSelection()
         ASSERT(VideoClip(0,2)->isA<model::Transition>() && VideoClip(0,2)->getSelected());
     }
     {
-        // Test selecting an in-out-transition
+        StartTest("Select an in-out-transition.");
         MakeInOutTransitionAfterClip preparation(1);
         DeselectAllClips();
         Click(VTopQuarterHCenter(VideoClip(0,2)));
@@ -147,7 +147,7 @@ void TestTimeline::testSelection()
         DeselectAllClips();
     }
     {
-        // Test selecting an out-only-transition
+        StartTest("Select an out-only-transition.");
         MakeOutTransitionAfterClip preparation(1);
         DeselectAllClips();
         Click(VTopQuarterHCenter(VideoClip(0,2)));
@@ -167,7 +167,7 @@ void TestTimeline::testSelection()
         DeselectAllClips();
     }
     {
-        // Test selecting an in-only-transition
+        StartTest("Select an in-only-transition.");
         MakeInTransitionAfterClip preparation(1);
         DeselectAllClips();
         Click(VTopQuarterHCenter(VideoClip(0,2)));

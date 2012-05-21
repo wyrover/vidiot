@@ -49,6 +49,7 @@ void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
     waitForIdle();
 }
 
+//RUNONLY("testTransform");
 void TestTransform::testTransform()
 {
     StartTestSuite();
@@ -86,13 +87,13 @@ void TestTransform::testTransform()
         StartTest("Scaling: Slider: If moved to the right, the scaling is increased. Scaling enum is changed to custom.");
         ClickTopLeft(detailsclip->getScalingSlider()); // Give focus
         Type(WXK_PAGEUP);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingCustom,7001,model::VideoAlignmentCenter,wxPoint(-88,36));
+        ASSERT_CLIPPROPERTIES(model::VideoScalingCustom,7000,model::VideoAlignmentCenter,wxPoint(-88,36));
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
         StartTest("Scaling: Slider: If moved to the left, the scaling is decreased. Scaling enum is changed to custom.");
         ClickTopLeft(detailsclip->getScalingSlider()); // Give focus
         Type(WXK_PAGEDOWN);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingCustom,8999,model::VideoAlignmentCenter,wxPoint(-215,-35));
+        ASSERT_CLIPPROPERTIES(model::VideoScalingCustom,9000,model::VideoAlignmentCenter,wxPoint(-216,-36));
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
@@ -145,7 +146,7 @@ void TestTransform::testTransform()
         Type(WXK_PAGEDOWN);
         ClickTopLeft(detailsclip->getPositionYSlider()); // First, set different values
         Type(WXK_PAGEDOWN);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCustom,wxPoint(22,115));
+        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCustom,wxPoint(-142,10));
         ClickOnEnumSelector(detailsclip->getAlignmentSelector(),model::VideoAlignmentCenter);
         ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenter,wxPoint(-152,0));
         Undo();
@@ -155,12 +156,12 @@ void TestTransform::testTransform()
         StartTest("Alignment: Choice: 'Center Horizontal'");
         ClickTopLeft(detailsclip->getPositionYSlider()); // First, set different values
         Type(WXK_PAGEDOWN);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterHorizontal,wxPoint(-152,115)); // Test that the alignment is changed from center to centerhorizontal automatically
+        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterHorizontal,wxPoint(-152,10)); // Test that the alignment is changed from center to centerhorizontal automatically
         ClickTopLeft(detailsclip->getPositionXSlider()); // First, set different values
         Type(WXK_PAGEDOWN);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCustom,wxPoint(22,115));
+        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCustom,wxPoint(-142,10));
         ClickOnEnumSelector(detailsclip->getAlignmentSelector(),model::VideoAlignmentCenterHorizontal);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterHorizontal,wxPoint(-152,115));
+        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterHorizontal,wxPoint(-152,10));
         Undo();
         ASSERT_CLIPPROPERTIES(oldScaling,oldScalingDigits,oldAlignment,oldPosition);
     }
@@ -168,12 +169,12 @@ void TestTransform::testTransform()
         StartTest("Alignment: Choice: 'Center Vertical'");
         ClickTopLeft(detailsclip->getPositionXSlider()); // First, set different values
         Type(WXK_PAGEDOWN);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterVertical,wxPoint(22,0)); // Test that the alignment is changed from center to centervertical automatically
+        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterVertical,wxPoint(-142,0)); // Test that the alignment is changed from center to centervertical automatically
         ClickTopLeft(detailsclip->getPositionYSlider()); // First, set different values
         Type(WXK_PAGEDOWN);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCustom,wxPoint(22,115));
+        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCustom,wxPoint(-142,10));
         ClickOnEnumSelector(detailsclip->getAlignmentSelector(),model::VideoAlignmentCenterVertical);
-        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterVertical,wxPoint(22,0));
+        ASSERT_CLIPPROPERTIES(model::VideoScalingFitToFill,oldScalingDigits,model::VideoAlignmentCenterVertical,wxPoint(-142,0));
         Undo();
         ASSERT_CLIPPROPERTIES(oldScaling,oldScalingDigits,oldAlignment,oldPosition);
     }

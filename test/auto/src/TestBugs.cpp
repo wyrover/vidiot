@@ -32,4 +32,14 @@ void TestBugs::testVideoDecodingError()
 
 }
 
+void TestBugs::testHangupAfterResettingDetailsView()
+{
+    FixtureProject mProjectFixture;
+    mProjectFixture.init();
+    StartTestSuite();
+    Click(VTopQuarterHCenter(VideoClip(0,2)));
+    DeselectAllClips();
+    mProjectFixture.destroy();
+}
+
 } // namespace

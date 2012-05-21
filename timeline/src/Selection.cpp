@@ -13,7 +13,6 @@
 #include "Transition.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
-//#include "DetailsView.h" // todo move the 'focused item handling' to one dedicated class? Or make detailsview handle that (not the timeline)
 
 namespace gui { namespace timeline {
 
@@ -56,12 +55,6 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
         {
             previousClickedClipWasSelected = mPreviouslyClicked->getSelected();
         }
-    }
-
-    // todo temp for test
-    if (info.clip && info.track)
-    {
-        getDetails().focus(info.clip);
     }
 
     // Determine the 'logically clicked' clip and track
@@ -169,6 +162,8 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     {
         setPreviouslyClicked(model::IClipPtr()); // reset
     }
+
+    getDetails().onSelectionChanged();
 }
 
 void Selection::updateOnRightClick(model::IClipPtr clip)
@@ -202,12 +197,15 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
     {
         setPreviouslyClicked(model::IClipPtr()); // reset
     }
+
+    getDetails().onSelectionChanged();
 }
 
 void Selection::deleteClips()
 {
     setPreviouslyClicked(model::IClipPtr()); // reset
     (new command::DeleteSelectedClips(getSequence()))->submit();
+    getDetails().onSelectionChanged();
 }
 
 void Selection::unselectAll()
@@ -220,6 +218,7 @@ void Selection::unselectAll()
         }
     }
     setPreviouslyClicked(model::IClipPtr()); // reset
+    getDetails().onSelectionChanged();
 }
 
 //////////////////////////////////////////////////////////////////////////

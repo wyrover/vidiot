@@ -33,7 +33,7 @@
 #include "ViewMap.h"
 #include "ViewMap.h"
 #include "ViewUpdateEvent.h"
-#include "Window.h" // todo reduce dependencies on window...
+#include "Window.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
@@ -105,7 +105,7 @@ Timeline::~Timeline()
     delete mViewMap;        mViewMap = 0;
     delete mZoom;           mZoom = 0;
 
-    Window::get().getDetailsView().closeTimeline(this); // todo reduce deps on window...
+    Window::get().getDetailsView().closeTimeline(this);
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
 }
