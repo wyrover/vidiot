@@ -191,11 +191,6 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
     mClip = clip;
     mCommand = 0; // Ensures that a new command is generated for future edits
-    // todo test the following:
-    // 1. make transform (create command)
-    // 2. Hit undo
-    // 3. Edit again in the transform (still uses the same command!!!)
-    // todo make a new command for each (partial) edit and test that
 
     if (mClip)
     {
