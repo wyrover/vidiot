@@ -2,6 +2,7 @@
 #define VIDEO_FRAME_H
 
 #include <wx/bitmap.h>
+#include <wx/image.h>
 #include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
@@ -25,6 +26,7 @@ typedef std::list<VideoFramePtr> VideoFrames;
 typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 typedef boost::shared_ptr<wxBitmap> wxBitmapPtr;
+typedef boost::shared_ptr<wxImage> wxImagePtr;
 
 class VideoFrame
     :   public boost::noncopyable
@@ -62,6 +64,12 @@ public:
     wxRect getRegionOfInterest() const;
     int getSizeInBytes() const;
 
+    /// Return an image, using the frame's data clipped to the region of interest
+    /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
+    /// \return this frame as a wxImage
+    wxImagePtr getImage();
+
+    /// Return a bitmap, using the frame's data clipped to the region of interest
     /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
     /// \return this frame as a wxBitmap
     wxBitmapPtr getBitmap();

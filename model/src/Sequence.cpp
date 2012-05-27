@@ -9,6 +9,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
+#include "FrameBlender.h"
 #include "IClip.h"
 #include "NodeEvent.h"
 #include "SequenceEvent.h"
@@ -133,31 +134,12 @@ void Sequence::clean()
 
 VideoFramePtr Sequence::getNextVideo(wxSize size, bool alpha)
 {
-    VideoFrames frames;
+    FrameBlender blender;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
-        VideoFramePtr videoFrame =  boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(size, alpha);
-        frames.push_back(videoFrame);
+        blender.add(boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(size, alpha));
     }
-    VideoFramePtr videoFrame; // Default: Null ptr (at end)
-    BOOST_REVERSE_FOREACH( VideoFramePtr frame, frames )
-    {
-        if (frame)
-        {
-            if (frame->isA<EmptyFrame>())
-            {
-                // At least send the EmptyFrame (instead of a null ptr which indiates 'end').
-                // Do not exit the loop: one of the lower tracks may have a bitmap.
-                videoFrame = frame;
-            }
-            else
-            {
-                // From the top track, the first found frame is returned.
-                videoFrame = frame;
-                break;
-            }
-        }
-    }
+    VideoFramePtr videoFrame = blender.blend();
     VAR_VIDEO(videoFrame);
     return videoFrame;
 }
