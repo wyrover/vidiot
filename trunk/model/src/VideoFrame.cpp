@@ -121,14 +121,24 @@ int VideoFrame::getSizeInBytes() const
     return mBufferSize;
 }
 
-wxBitmapPtr VideoFrame::getBitmap()
+wxImagePtr VideoFrame::getImage()
 {
     if (mRegionOfInterest.IsEmpty())
     {
+        return wxImagePtr();
+    }
+    wxImage tmp(mSize, getData()[0], true);
+    return boost::make_shared<wxImage>(tmp.GetSubImage(mRegionOfInterest));
+}
+
+wxBitmapPtr VideoFrame::getBitmap()
+{
+    wxImagePtr image(getImage());
+    if (!image)
+    {
         return wxBitmapPtr();
     }
-    wxBitmap tmp(wxImage(mSize, getData()[0], true));
-    return boost::make_shared<wxBitmap>(tmp.GetSubBitmap(mRegionOfInterest));
+    return boost::make_shared<wxBitmap>(*image);
 }
 
 //////////////////////////////////////////////////////////////////////////

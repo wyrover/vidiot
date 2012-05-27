@@ -51,7 +51,7 @@ void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
     waitForIdle();
 }
 
-RUNONLY("testTransform");
+//RUNONLY("testTransform");
 void TestTransform::testTransform()
 {
     StartTestSuite();
