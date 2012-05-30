@@ -17,6 +17,7 @@
 #include "Convert.h"
 #include "CommandProcessor.h"
 #include "Constants.h"
+#include "FrameBlender.h"
 #include "IClip.h"
 #include "Layout.h"
 #include "Player.h"
@@ -49,6 +50,7 @@ boost::shared_ptr<TARGET> getTypedClip(model::IClipPtr clip)
 
 const double sScalingIncrement = 0.01;
 const int sPositionPageSize = 10;
+const int sOpacityPageSize = 10;
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     :   wxPanel(parent)
@@ -58,6 +60,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mAudioClip()
     ,   mTopSizer(0)
     ,   mBoxSizer(0)
+    ,   mOpacitySlider(0)
+    ,   mOpacitySpin(0)
     ,   mSelectScaling(0)
     ,   mScalingSlider(0)
     ,   mScalingSpin(0)
@@ -74,7 +78,21 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mTopSizer = new wxBoxSizer(wxVERTICAL);
 
+    addbox(_("Duration")); // todo handle resizing for clips with a different audio/video length
+
     addbox(_("Video"));
+
+    wxPanel* opacitypanel = new wxPanel(this);
+    wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
+    mOpacitySlider = new wxSlider(opacitypanel, wxID_ANY, model::Constants::sMaxOpacity, model::Constants::sMinOpacity, model::Constants::sMaxOpacity );
+    mOpacitySlider->SetPageSize(sOpacityPageSize);
+    mOpacitySpin = new wxSpinCtrl(opacitypanel);
+    mOpacitySpin->SetRange(model::Constants::sMinOpacity, model::Constants::sMaxOpacity);
+    mOpacitySpin->SetValue(model::Constants::sMaxOpacity);
+    opacitysizer->Add(mOpacitySlider);
+    opacitysizer->Add(mOpacitySpin);
+    opacitypanel->SetSizer(opacitysizer);
+    addoption(_("Opacity"), opacitypanel);
 
     mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingNone);
     addoption(_("Scaling"), mSelectScaling);
@@ -120,6 +138,9 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     positionypanel->SetSizer(positionysizer);
     addoption(_("Y position"), positionypanel);
 
+    Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
+    mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
+    mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
     mScalingSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
     mScalingSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
@@ -142,6 +163,9 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 DetailsClip::~DetailsClip()
 {
     setClip(model::IClipPtr()); // Ensures Unbind if needed for clip events
+    Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
+    mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
+    mOpacitySpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
     mScalingSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
     mScalingSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
@@ -168,6 +192,8 @@ void DetailsClip::setClip(model::IClipPtr clip)
     {
         if (mVideoClip)
         {
+            mOpacitySlider->Disable();
+            mOpacitySpin->Disable();
             mSelectScaling->Disable();
             mScalingSlider->Disable();
             mScalingSpin->Disable();
@@ -177,6 +203,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mPositionYSlider->Disable();
             mPositionYSpin->Disable();
 
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
@@ -204,7 +231,11 @@ void DetailsClip::setClip(model::IClipPtr clip)
             wxPoint position = mVideoClip->getPosition();
             wxPoint maxpos = mVideoClip->getMaxPosition();
             wxPoint minpos = mVideoClip->getMinPosition();
+            int opacity = mVideoClip->getOpacity();
             const double sScalingIncrement = 0.01;
+
+            mOpacitySlider->SetValue(opacity);
+            mOpacitySpin->SetValue(opacity);
 
             mSelectScaling->select(mVideoClip->getScaling());
             mScalingSlider->SetValue(factor);
@@ -220,6 +251,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mPositionYSpin->SetRange(minpos.y, maxpos.y);
             mPositionYSpin->SetValue(position.y);
 
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
@@ -227,6 +259,8 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
 
+            mOpacitySlider->Enable();
+            mOpacitySpin->Enable();
             mSelectScaling->Enable();
             mScalingSlider->Enable();
             mScalingSpin->Enable();
@@ -242,6 +276,31 @@ void DetailsClip::setClip(model::IClipPtr clip)
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void DetailsClip::onShow(wxShowEvent& event)
+{
+    if (!event.IsShown())
+    {
+        setClip(model::IClipPtr());
+    }
+    event.Skip();
+}
+
+void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mOpacitySlider->GetValue());
+    makeCommand();
+    mCommand->setOpacity(mOpacitySlider->GetValue());
+    event.Skip();
+}
+
+void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(event.GetValue());
+    makeCommand();
+    mCommand->setOpacity(event.GetValue());
+    event.Skip();
+}
 
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
@@ -316,6 +375,14 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+void DetailsClip::onOpacityChanged(model::EventChangeVideoClipOpacity& event)
+{
+    mOpacitySlider->SetValue(event.getValue());
+    mOpacitySpin->SetValue(event.getValue());
+    preview();
+    event.Skip();
+}
+
 void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
 {
     mSelectScaling->select(event.getValue());
@@ -368,6 +435,16 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
 //////////////////////////////////////////////////////////////////////////
 // TEST
 //////////////////////////////////////////////////////////////////////////
+
+wxSlider* DetailsClip::getOpacitySlider() const
+{
+    return mOpacitySlider;
+}
+
+wxSpinCtrl* DetailsClip::getOpacitySpin() const
+{
+    return mOpacitySpin;
+}
 
 EnumSelector<model::VideoScaling>* DetailsClip::getScalingSelector() const
 {
@@ -461,11 +538,19 @@ void DetailsClip::preview()
         dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
 
         // Draw preview of operation
+        model::FrameBlender blender(dc.GetSize());
         model::VideoFramePtr videoFrame = videoclip->getNextVideo(getPlayer()->getVideoSize(), false);
-        model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
-        if (trimmedBmp)
+        blender.add(videoFrame);
+
+        model::VideoFramePtr blended = blender.blend();
+        if (blended)
         {
-            dc.DrawBitmap(*trimmedBmp, videoFrame->getPosition());
+        //model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
+        //if (trimmedBmp)
+        //{
+        //    dc.DrawBitmap(*trimmedBmp, videoFrame->getPosition());
+        //}
+            dc.DrawBitmap(*(blended->getBitmap()), wxPoint(0,0));
         }
 
         dc.SelectObject(wxNullBitmap);

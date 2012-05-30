@@ -46,6 +46,9 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onShow(wxShowEvent& event);
+    void onOpacitySliderChanged(wxCommandEvent& event);
+    void onOpacitySpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
     void onScalingSliderChanged(wxCommandEvent& event);
     void onScalingSliderChanging(wxCommandEvent& event);
@@ -60,6 +63,7 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onOpacityChanged(model::EventChangeVideoClipOpacity& event);
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
     void onScalingDigitsChanged(model::EventChangeVideoClipScalingDigits& event);
     void onAlignmentChanged(model::EventChangeVideoClipAlignment& event);
@@ -71,6 +75,8 @@ public:
     // TEST
     //////////////////////////////////////////////////////////////////////////
 
+    wxSlider* getOpacitySlider() const;
+    wxSpinCtrl* getOpacitySpin() const;
     EnumSelector<model::VideoScaling>* getScalingSelector() const;
     wxSlider* getScalingSlider() const;
     wxSpinCtrlDouble* getScalingSpin() const;
@@ -92,6 +98,9 @@ private:
 
     wxBoxSizer*         mTopSizer;  ///< sizer for panel
     wxBoxSizer*         mBoxSizer;  ///< sizer for current box
+
+    wxSpinCtrl* mOpacitySpin;
+    wxSlider* mOpacitySlider;
 
     EnumSelector<model::VideoScaling>* mSelectScaling;
 
