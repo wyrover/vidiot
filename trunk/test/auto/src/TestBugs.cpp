@@ -4,6 +4,8 @@
 #include <boost/foreach.hpp>
 #include "FixtureProject.h"
 #include "HelperTimeline.h"
+#include "HelperDetails.h"
+#include "HelperApplication.h"
 
 namespace test {
 
@@ -40,6 +42,17 @@ void TestBugs::testHangupAfterResettingDetailsView()
     Click(VTopQuarterHCenter(VideoClip(0,2)));
     DeselectAllClips();
     mProjectFixture.destroy();
+}
+
+void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
+{
+    FixtureProject mProjectFixture;
+    mProjectFixture.init();
+    StartTestSuite();
+    Click(Center(VideoClip(0,3)));
+    PositionCursor(HCenter(VideoClip(0,3)));
+    Click(Center(VideoClip(0,3)));
+    ASSERT_DETAILSCLIP(VideoClip(0,3));
 }
 
 } // namespace

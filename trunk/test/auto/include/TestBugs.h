@@ -35,6 +35,10 @@ public:
     /// DestroyChildren too often seemed to (note: seemed to) cause this.
     void testHangupAfterResettingDetailsView();
 
+    /// The details view was sometimes not shown after moving the cursor, and then clicking
+    /// on a clip.
+    void testDetailsNotShownAfterMovingTimelineCursor();
+
 };
 }
 
