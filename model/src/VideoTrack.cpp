@@ -62,13 +62,13 @@ void VideoTrack::moveTo(pts position)
     mPts = position;
 }
 
-VideoFramePtr VideoTrack::getNextVideo(wxSize size, bool alpha)
+VideoFramePtr VideoTrack::getNextVideo(const VideoParameters& parameters)
 {
     VideoFramePtr videoFrame;
 
     while (!videoFrame && !iterate_atEnd())
     {
-        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_get())->getNextVideo(size, alpha);
+        videoFrame = boost::dynamic_pointer_cast<IVideo>(iterate_get())->getNextVideo(parameters);
         if (!videoFrame)
         {
             iterate_next();

@@ -14,19 +14,22 @@
 #include <wx/textctrl.h>
 #include "AudioClip.h"
 #include "ChangeVideoClipTransform.h"
-#include "Convert.h"
 #include "CommandProcessor.h"
 #include "Constants.h"
-#include "FrameBlender.h"
+#include "Convert.h"
+#include "Cursor.h"
 #include "IClip.h"
 #include "Layout.h"
 #include "Player.h"
+#include "Sequence.h"
 #include "UtilEnumSelector.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoClipEvent.h"
 #include "VideoFrame.h"
+#include "VideoFrameComposition.h"
+#include "VideoParameters.h"
 
 namespace gui { namespace timeline {
 
@@ -525,9 +528,20 @@ void DetailsClip::preview()
     if (!mVideoClip) { return; }
     model::VideoClipPtr videoclip = make_cloned<model::VideoClip>(mVideoClip);
 
+    pts position = getCursor().getLogicalPosition(); // By default, show the frame under the cursor (which is already currently shown, typically)
+    if ((position < mVideoClip->getLeftPts()) || (position >= mVideoClip->getRightPts()))
+    {
+        // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
+        position = mVideoClip->getLeftPts() + mVideoClip->getLength() / 2; // Show the middle frame of the clip
+        getCursor().setLogicalPosition(position); // ...and move the cursor to that position
+        // todo make test for this
+    }
+    // todo deze preview lijkt een beetje in te zoomen bij begin....
+
     if (videoclip->getLength() > 0)
     {
-        wxSize s = getPlayer()->getVideoSize();
+        wxSize s = getPlayer()->getVideoSize(); // todo dat inzoomen zal door dit komen?
+        VAR_ERROR(s); // todo remove all var_errors
         boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
         wxMemoryDC dc(*bmp);
         videoclip->moveTo(0);
@@ -538,19 +552,14 @@ void DetailsClip::preview()
         dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
 
         // Draw preview of operation
-        model::FrameBlender blender(dc.GetSize());
-        model::VideoFramePtr videoFrame = videoclip->getNextVideo(getPlayer()->getVideoSize(), false);
-        blender.add(videoFrame);
-
-        model::VideoFramePtr blended = blender.blend();
-        if (blended)
+        getSequence()->moveTo(position);
+        ASSERT_EQUALS(dc.GetSize(),s);
+        VAR_ERROR(dc.GetSize());
+        model::VideoFrameCompositionPtr composition = getSequence()->getVideoComposition(model::VideoParameters().setBoundingBox(dc.GetSize()).setDrawBoundingBox()); // todo make the defaults of this class use an option for 'draw bounding box'
+        model::VideoFramePtr compositeFrame = composition->generate();
+        if (compositeFrame)
         {
-        //model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
-        //if (trimmedBmp)
-        //{
-        //    dc.DrawBitmap(*trimmedBmp, videoFrame->getPosition());
-        //}
-            dc.DrawBitmap(*(blended->getBitmap()), wxPoint(0,0));
+            dc.DrawBitmap(*(compositeFrame->getBitmap()), wxPoint(0,0));
         }
 
         dc.SelectObject(wxNullBitmap);

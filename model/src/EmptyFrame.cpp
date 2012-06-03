@@ -10,8 +10,8 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyFrame::EmptyFrame(VideoFrameType type, wxSize size, pts position)
-:   VideoFrame(type, size, position)
+EmptyFrame::EmptyFrame(wxSize size, pts position)
+:   VideoFrame(size, position)
 ,   mInitialized(false)
 {
 }
@@ -29,7 +29,7 @@ DataPointer EmptyFrame::getData()
 {
     if (!mInitialized)
     {
-        PixelFormat format = mType == videoRGB ? PIX_FMT_RGB24 : PIX_FMT_RGBA;
+        PixelFormat format = PIX_FMT_RGB24;
         mBufferSize = avpicture_get_size(format, getSize().GetWidth(), getSize().GetHeight());
         mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
 

@@ -7,6 +7,7 @@
 #include "AudioTrack.h"
 #include "AudioView.h"
 #include "ClipView.h"
+#include "Cursor.h"
 #include "Drag.h"
 #include "EmptyClip.h"
 #include "HelperApplication.h"
@@ -312,6 +313,11 @@ wxPoint LeftCenter(DraggedClips drag)
 wxPoint RightCenter(DraggedClips drag)
 {
     return wxPoint( RightPixel(drag), VCenter(drag) );
+}
+
+pixel CursorPosition()
+{
+    return getTimeline().getCursor().getPosition();
 }
 
 void PositionCursor(pixel position)

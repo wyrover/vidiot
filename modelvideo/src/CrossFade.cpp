@@ -9,6 +9,7 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
+#include "VideoParameters.h"
 
 namespace model { namespace transition {
 
@@ -48,12 +49,12 @@ CrossFade::~CrossFade()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, wxSize size, bool alpha)
+VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoParameters& parameters)
 {
-    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(size,alpha)  : VideoFramePtr();
-    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(size,alpha) : VideoFramePtr();
-    VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, size, 1, 1);
-    VAR_DEBUG(position)(size)(alpha)(leftFrame)(rightFrame)(targetFrame);
+    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(parameters)  : VideoFramePtr();
+    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(parameters) : VideoFramePtr();
+    VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(parameters.getBoundingBox(), 1, 1);
+    VAR_DEBUG(position)(parameters)(leftFrame)(rightFrame)(targetFrame);
 
     pts steps = getLength();
     float factorLeft = ((float)getLength() - (float)position) / (float)getLength();
@@ -70,7 +71,7 @@ VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr righ
 
     VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
 
-    int bytesPerPixel = alpha ? 4 : 3;
+    int bytesPerPixel = 3;
 
     // todo incorporate offset and region of interest...
     // todo alpha handling

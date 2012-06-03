@@ -1,12 +1,11 @@
-#ifndef FRAME_BLENDER_H
-#define FRAME_BLENDER_H
+#ifndef VIDEO_FRAME_COMPOSITION_PARAMETERS_H
+#define VIDEO_FRAME_COMPOSITION_PARAMETERS_H
 
-#include "VideoFrame.h"
-#include <boost/noncopyable.hpp>
+#include "IVideo.h"
 
 namespace model {
 
-class FrameBlender : public boost::noncopyable
+class VideoParameters
 {
 public:
 
@@ -14,21 +13,19 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    FrameBlender();
+    VideoParameters();
 
-    virtual ~FrameBlender();
-
-    //////////////////////////////////////////////////////////////////////////
-    // ADD TRACKS TO BE BLENDED
-    //////////////////////////////////////////////////////////////////////////
-
-    void add(VideoFramePtr frame);
+    VideoParameters(const VideoParameters& other);
 
     //////////////////////////////////////////////////////////////////////////
-    // BLEND
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFramePtr blend();
+    VideoParameters& setBoundingBox(wxSize boundingBox);
+    wxSize getBoundingBox() const;
+
+    VideoParameters& setDrawBoundingBox();
+    bool getDrawBoundingBox() const;
 
 private:
 
@@ -36,16 +33,17 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFrames mFrames;
+    wxSize mBoundingBox;
+    bool mDrawBoundingBox;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const FrameBlender& obj );
+    friend std::ostream& operator<<( std::ostream& os, const VideoParameters& obj );
 
 };
 
 } // namespace
 
-#endif // FRAME_BLENDER_H
+#endif // VIDEO_FRAME_COMPOSITION_PARAMETERS_H

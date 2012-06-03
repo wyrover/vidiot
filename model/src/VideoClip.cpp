@@ -14,6 +14,7 @@
 #include "VideoFile.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
+#include "VideoParameters.h"
 #include "VideoClipEvent.h"
 
 namespace model {
@@ -27,6 +28,7 @@ const int VideoClip::sScalingOriginalSize = Convert::factorToDigits(1,Constants:
 VideoClip::VideoClip()
     : Clip()
     , mProgress(0)
+    , mOpacity(Constants::sMaxOpacity)
     , mScaling()
     , mScalingDigits(sScalingOriginalSize)
     , mAlignment()
@@ -38,6 +40,7 @@ VideoClip::VideoClip()
 VideoClip::VideoClip(IControlPtr file)
     : Clip(file)
     , mProgress(0)
+    , mOpacity(Constants::sMaxOpacity)
     , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathDefaultVideoScaling))
     , mScalingDigits(sScalingOriginalSize)
     , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathDefaultVideoAlignment))
@@ -51,6 +54,7 @@ VideoClip::VideoClip(IControlPtr file)
 VideoClip::VideoClip(const VideoClip& other)
     : Clip(other)
     , mProgress(0)
+    , mOpacity(other.mOpacity)
     , mScaling(other.mScaling)
     , mScalingDigits(other.mScalingDigits)
     , mAlignment(other.mAlignment)
@@ -84,9 +88,8 @@ void VideoClip::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
+VideoFramePtr VideoClip::getNextVideo(const VideoParameters& parameters)
 {
-    VAR_INFO(size);
     if (getLastSetPosition())
     {
         mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
@@ -104,14 +107,14 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
         wxSize outputsize = Properties::get()->getVideoSize();
 
         double scaleToBoundingBox(0);
-        wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, size, scaleToBoundingBox);
+        wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
         ASSERT_NONZERO(scaleToBoundingBox);
         VideoFilePtr generator = getDataGenerator<VideoFile>();
         double videoscaling = getScalingFactor() * scaleToBoundingBox;
         wxSize inputsize = generator->getSize();
         wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
-        videoFrame = generator->getNextVideo(requiredVideoSize, alpha);
+        videoFrame = generator->getNextVideo(VideoParameters(parameters).setBoundingBox(requiredVideoSize));
         if (videoFrame)
         {
             ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());
@@ -163,6 +166,7 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
             determineroi(outputsize.y,scaledsize.y,position.y,roi.y,roi.height);
             videoFrame->setRegionOfInterest(Convert::scale(roi, scaleToBoundingBox));
             videoFrame->setPosition(Convert::scale(position, scaleToBoundingBox));
+            videoFrame->setOpacity(mOpacity);
         }
         else
         {
@@ -174,7 +178,7 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
             // required - thus removing the extra audio, but that's a user decision to be made).
             LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
 
-            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, size, mProgress));
+            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox(), mProgress));
 
             mProgress += 1;
         }
@@ -192,6 +196,22 @@ VideoFramePtr VideoClip::getNextVideo(wxSize size, bool alpha)
 wxSize VideoClip::getInputSize()
 {
     return getDataGenerator<VideoFile>()->getSize();
+}
+
+int VideoClip::getOpacity() const
+{
+    return mOpacity;
+}
+
+void VideoClip::setOpacity(int opacity)
+{
+    if (mOpacity != opacity)
+    {
+        ASSERT_MORE_THAN_EQUALS(opacity,Constants::sMinOpacity);
+        ASSERT_LESS_THAN_EQUALS(opacity,Constants::sMaxOpacity);
+        mOpacity = opacity;
+        ProcessEvent(EventChangeVideoClipOpacity(mOpacity));
+    }
 }
 
 VideoScaling VideoClip::getScaling() const
@@ -385,7 +405,7 @@ double VideoClip::getScalingFactor() const
 
 std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 {
-    os << static_cast<const Clip&>(obj) << '|' << obj.mProgress << '|' << obj.mScaling << '|' << obj.mScalingDigits << '|' << obj.mAlignment << '|' << obj.mPosition;
+    os << static_cast<const Clip&>(obj) << '|' << obj.mProgress << '|' << obj.mOpacity << '|' << obj.mScaling << '|' << obj.mScalingDigits << '|' << obj.mAlignment << '|' << obj.mPosition;
     return os;
 }
 
@@ -398,6 +418,7 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<Clip>(*this);
     ar & boost::serialization::base_object<IVideo>(*this);
+    ar & mOpacity;
     ar & mScaling;
     ar & mScalingDigits;
     ar & mAlignment;

@@ -7,26 +7,28 @@ extern "C" {
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
 #include "Config.h"
+#include "Constants.h"
 
 namespace model {
-
-IMPLEMENTENUM(VideoFrameType);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position, int repeat)
+VideoFrame::VideoFrame(wxSize size, pts position, int repeat)
     : mFrame(0)
+    , mImage()
+    , mBitmap()
     , mBuffer(0)
-    , mType(type)
     , mSize(size)
     , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),size)
     , mPts(position)
     , mRepeat(repeat)
+    , mOpacity(Constants::sMaxOpacity)
+    , mBufferSize(0)
 {
-    PixelFormat format = type == videoRGB ? PIX_FMT_RGB24 : PIX_FMT_RGBA;
+    PixelFormat format = PIX_FMT_RGB24;
     mBufferSize = avpicture_get_size(format, mSize.GetWidth(), mSize.GetHeight());
     mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
 
@@ -36,15 +38,48 @@ VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position, int repea
     avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, mSize.GetWidth(), mSize.GetHeight());
 }
 
-VideoFrame::VideoFrame(VideoFrameType type, wxSize size, pts position)
+    VideoFrame::VideoFrame(wxImagePtr image, pts position)
     : mFrame(0)
+    , mImage(image)
+    , mBitmap()
     , mBuffer(0)
-    , mType(type)
+    , mSize(image->GetSize())
+    , mPosition(0,0)
+    , mRegionOfInterest(wxPoint(0,0),image->GetSize())
+    , mPts(position)
+    , mRepeat(1)
+    , mOpacity(Constants::sMaxOpacity)
+    , mBufferSize(0)
+    {
+    }
+
+    VideoFrame::VideoFrame(wxBitmapPtr bitmap, pts position)
+    : mFrame(0)
+    , mImage()
+    , mBitmap(bitmap)
+    , mBuffer(0)
+    , mSize(bitmap->GetSize())
+    , mPosition(0,0)
+    , mRegionOfInterest(wxPoint(0,0),bitmap->GetSize())
+    , mPts(position)
+    , mRepeat(1)
+    , mOpacity(Constants::sMaxOpacity)
+    , mBufferSize(0)
+    {
+    }
+
+VideoFrame::VideoFrame(wxSize size, pts position)
+    : mFrame(0)
+    , mImage()
+    , mBitmap()
+    , mBuffer(0)
     , mSize(size)
     , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),size)
     , mPts(position)
     , mRepeat(1)
+    , mOpacity(Constants::sMaxOpacity)
+    , mBufferSize(0)
 {
 }
 
@@ -90,6 +125,16 @@ wxPoint VideoFrame::getPosition() const
     return mPosition;
 }
 
+int VideoFrame::getOpacity() const
+{
+    return mOpacity;
+}
+
+void VideoFrame::setOpacity(int opacity)
+{
+    mOpacity = opacity;
+}
+
 void VideoFrame::setRegionOfInterest(wxRect regionOfInterest)
 {
     ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.x);
@@ -116,16 +161,19 @@ void VideoFrame::setPts(pts position)
     mPts = position;
 }
 
-int VideoFrame::getSizeInBytes() const
-{
-    return mBufferSize;
-}
-
 wxImagePtr VideoFrame::getImage()
 {
     if (mRegionOfInterest.IsEmpty())
     {
         return wxImagePtr();
+    }
+    if (mImage)
+    {
+        return mImage; // todo what if mImage already set AND mRegionOfInterest is 'non-default'? Same for mBitmap???
+    }
+    if (mBitmap)
+    {
+        NIY; //todo
     }
     wxImage tmp(mSize, getData()[0], true);
     return boost::make_shared<wxImage>(tmp.GetSubImage(mRegionOfInterest));
@@ -133,6 +181,10 @@ wxImagePtr VideoFrame::getImage()
 
 wxBitmapPtr VideoFrame::getBitmap()
 {
+    if (mBitmap)
+    {
+        return mBitmap;
+    }
     wxImagePtr image(getImage());
     if (!image)
     {
@@ -152,6 +204,7 @@ std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
         << obj.mRepeat              << '|'
         << obj.mSize                << '|'
         << obj.mPosition            << '|'
+        << obj.mOpacity             << '|'
         << obj.mRegionOfInterest;
     return os;
 }

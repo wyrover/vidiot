@@ -78,7 +78,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) override;
 
 protected:
 

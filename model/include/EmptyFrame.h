@@ -17,7 +17,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyFrame(VideoFrameType type, wxSize size, pts position);
+    EmptyFrame(wxSize size, pts position);
 
     virtual ~EmptyFrame();
 

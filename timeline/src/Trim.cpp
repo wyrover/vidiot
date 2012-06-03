@@ -26,6 +26,7 @@
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
+#include "VideoParameters.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
@@ -145,7 +146,7 @@ void Trim::start()
     if (adjacentClip && adjacentClip->isA<model::VideoClip>())
     {
         model::VideoClipPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(adjacentClip);
-        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(wxSize(getPlayer()->getVideoSize().GetWidth() / 2,  getPlayer()->getVideoSize().GetHeight()), false);
+        model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(model::VideoParameters().setBoundingBox(wxSize(getPlayer()->getVideoSize().GetWidth() / 2,  getPlayer()->getVideoSize().GetHeight())));
         mAdjacentBitmap = adjacentFrame->getBitmap();
     }
 
@@ -247,7 +248,7 @@ void Trim::preview()
             dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
 
             // Draw preview of trim operation
-            model::VideoFramePtr videoFrame = videoclip->getNextVideo(wxSize(previewwidth, s.GetHeight()), false);
+            model::VideoFramePtr videoFrame = videoclip->getNextVideo(model::VideoParameters().setBoundingBox(wxSize(previewwidth, s.GetHeight())));
             model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
             if (trimmedBmp)
             {

@@ -13,6 +13,11 @@
 
 namespace model {
 
+class VideoFrame;
+typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
+typedef std::list<VideoFramePtr> VideoFrames;
+class VideoFrameComposition;
+typedef boost::shared_ptr<VideoFrameComposition> VideoFrameCompositionPtr;
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
 class Track;
@@ -55,7 +60,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) override;
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
@@ -84,6 +89,8 @@ public:
 
     std::set<IClipPtr> getSelectedClips();
 
+    VideoFrameCompositionPtr getVideoComposition(const VideoParameters& parameters);
+
     //////////////////////////////////////////////////////////////////////////
     // NODE
     //////////////////////////////////////////////////////////////////////////
@@ -109,6 +116,7 @@ private:
     Tracks mAudioTracks;
     std::map<int, TrackPtr> mVideoTrackMap;
     std::map<int, TrackPtr> mAudioTrackMap;
+    pts mPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -116,6 +124,12 @@ private:
 
     /// Update the various tracks upon insertion/removal etc.
     void updateTracks();
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const Sequence& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
