@@ -6,17 +6,12 @@
 #include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
-#include "UtilEnum.h"
 #include "UtilFrameRate.h"
 #include "UtilRTTI.h"
 
 struct AVFrame;
 
 namespace model {
-
-DECLAREENUM(VideoFrameType, \
-    videoRGB, \
-    videoRGBA);
 
 typedef boost::uint8_t** DataPointer;
 typedef int* LineSizePointer;
@@ -39,12 +34,20 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Initialization AND allocation.
-    VideoFrame(VideoFrameType type, wxSize size, pts position, int repeat);
+    VideoFrame(wxSize size, pts position, int repeat);
+
+    /// Initialization of a frame based on a generated wxImage (for instance, for
+    /// compositing).
+    VideoFrame(wxImagePtr image, pts position);
+
+    /// Initialization of a frame based on a generated wxBitmap (for instance, for
+    /// compositing).
+    VideoFrame(wxBitmapPtr image, pts position);
 
     /// Initialization without allocation. Used for empty frames. Then, allocation only
     /// needed when the data is needed for playback. During 'track combining' empty
     /// frames can be ignored. This avoids needless allocation.
-    VideoFrame(VideoFrameType type, wxSize size, pts position);
+    VideoFrame(wxSize size, pts position);
 
     virtual ~VideoFrame();
 
@@ -54,15 +57,16 @@ public:
 
     int getRepeat() const;      ///< \return the number of times this frame should be displayed
     void setRepeat(int repeat); ///< \param new number of times to show this frame (used at end of clips)
-
     pts getPts() const;
     void setPts(pts position);
+
     wxSize getSize() const;
     void setPosition(wxPoint position);
     wxPoint getPosition() const;
     void setRegionOfInterest(wxRect regionOfInterest);
     wxRect getRegionOfInterest() const;
-    int getSizeInBytes() const;
+    int getOpacity() const;
+    void setOpacity(int opacity);
 
     /// Return an image, using the frame's data clipped to the region of interest
     /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
@@ -90,13 +94,15 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     AVFrame* mFrame;
-    VideoFrameType mType;
+    wxBitmapPtr mBitmap;
+    wxImagePtr mImage;
     int mRepeat;
     double mTimeStamp;
     wxSize mSize;
     wxPoint mPosition;
     wxRect mRegionOfInterest;
     pts mPts;
+    int mOpacity;
     boost::uint8_t *mBuffer;
     int mBufferSize;
 

@@ -37,7 +37,7 @@ public:
 
     virtual void moveTo(pts position) override;
 
-    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) override;
 
 protected:
 

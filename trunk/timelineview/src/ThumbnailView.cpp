@@ -12,6 +12,7 @@
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
+#include "VideoParameters.h"
 #include "ViewMap.h"
 #include "Zoom.h"
 
@@ -95,7 +96,7 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     {
         // The if is required to avoid errors during editing operations.
         clone->moveTo(0);
-        model::VideoFramePtr videoFrame = clone->getNextVideo(requiredSize(), false);
+        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoParameters().setBoundingBox(requiredSize()));
         model::wxBitmapPtr thumbnail = videoFrame->getBitmap();
         if (thumbnail)
         {

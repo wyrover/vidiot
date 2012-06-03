@@ -9,6 +9,7 @@
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
+#include "VideoParameters.h"
 
 namespace model {
 
@@ -55,7 +56,7 @@ VideoTransition::~VideoTransition()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoTransition::getNextVideo(wxSize size, bool alpha)
+VideoFramePtr VideoTransition::getNextVideo(const VideoParameters& parameters)
 {
     if (getLastSetPosition())
     {
@@ -84,7 +85,7 @@ VideoFramePtr VideoTransition::getNextVideo(wxSize size, bool alpha)
     VideoFramePtr videoFrame;
     if (mProgress < getLength())
     {
-        videoFrame = getVideo(mProgress, mLeftClip, mRightClip, size, alpha);
+        videoFrame = getVideo(mProgress, mLeftClip, mRightClip, parameters);
         mProgress++;
     }
     VAR_VIDEO(videoFrame);

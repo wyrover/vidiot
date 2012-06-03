@@ -4,10 +4,12 @@
 #include <wx/gdicmn.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
+#include <boost/shared_ptr.hpp>
 #include "UtilFrameRate.h"
 
 namespace model {
 
+class VideoParameters;
 class VideoFrame;
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 
@@ -25,7 +27,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) = 0;
+    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

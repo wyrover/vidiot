@@ -9,6 +9,7 @@
 #include "Properties.h"
 #include "EmptyChunk.h"
 #include "EmptyFrame.h"
+#include "VideoParameters.h"
 
 namespace model {
 
@@ -100,7 +101,7 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr EmptyFile::getNextVideo(wxSize size, bool alpha)
+VideoFramePtr EmptyFile::getNextVideo(const VideoParameters& parameters)
 {
     ASSERT_LESS_THAN_EQUALS(mVideoPosition,mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mVideoPosition++;
@@ -109,7 +110,7 @@ VideoFramePtr EmptyFile::getNextVideo(wxSize size, bool alpha)
         return VideoFramePtr();
     }
 
-    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(alpha ? videoRGBA : videoRGB, size, mVideoPosition));
+    return boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox(), mVideoPosition));
 }
 
 //////////////////////////////////////////////////////////////////////////

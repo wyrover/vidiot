@@ -18,6 +18,7 @@ EditDisplay::EditDisplay(wxWindow *parent)
 {
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(this)(mWidth)(mHeight);
+    VAR_ERROR(mWidth)(mHeight);
 
     Bind(wxEVT_PAINT,               &EditDisplay::OnPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &EditDisplay::OnEraseBackground,    this);
@@ -68,7 +69,7 @@ void EditDisplay::OnSize(wxSizeEvent& event)
     int w = mWidth;
     int h = mHeight;
     GetClientSize(&w,&h);
-
+VAR_ERROR(mWidth)(mHeight);
     if (mWidth != w || mHeight != h)
     {
         mWidth = w;

@@ -9,14 +9,17 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
-#include "FrameBlender.h"
+#include "VideoFrameComposition.h"
+#include "VideoParameters.h"
 #include "IClip.h"
 #include "NodeEvent.h"
 #include "SequenceEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
+#include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
+#include "VideoParameters.h"
 #include "VideoTrack.h"
 #include "Window.h"
 
@@ -38,38 +41,41 @@ Sequence::Sequence()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
+    ,   mPosition(0)
 {
     VAR_DEBUG(this);
 }
 
 Sequence::Sequence(wxString name)
-:   wxEvtHandler()
-,	IControl()
-,   IVideo()
-,   IAudio()
-,   Node()
+    :   wxEvtHandler()
+    ,	IControl()
+    ,   IVideo()
+    ,   IAudio()
+    ,   Node()
     ,   mName(name)
     ,   mDividerPosition(0)
     ,   mVideoTracks()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
+    ,   mPosition(0)
 {
     VAR_DEBUG(this);
 }
 
 Sequence::Sequence(const Sequence& other)
-:   wxEvtHandler()
-,	IControl()
-,   IVideo()
-,   IAudio()
-,   Node()
-,   mName(other.mName)
-,   mDividerPosition(other.mDividerPosition)
-,   mVideoTracks(other.mVideoTracks)
-,   mAudioTracks(other.mAudioTracks)
-,   mVideoTrackMap(other.mVideoTrackMap)
-,   mAudioTrackMap(other.mVideoTrackMap)
+    :   wxEvtHandler()
+    ,	IControl()
+    ,   IVideo()
+    ,   IAudio()
+    ,   Node()
+    ,   mName(other.mName)
+    ,   mDividerPosition(other.mDividerPosition)
+    ,   mVideoTracks(other.mVideoTracks)
+    ,   mAudioTracks(other.mAudioTracks)
+    ,   mVideoTrackMap(other.mVideoTrackMap)
+    ,   mAudioTrackMap(other.mVideoTrackMap)
+    ,   mPosition(0)
 {
     VAR_DEBUG(this);
 }
@@ -104,6 +110,8 @@ pts Sequence::getLength() const
 
 void Sequence::moveTo(pts position)
 {
+    VAR_DEBUG(position);
+    mPosition = position;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
         track->moveTo(position);
@@ -132,14 +140,14 @@ void Sequence::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr Sequence::getNextVideo(wxSize size, bool alpha)
+VideoFramePtr Sequence::getNextVideo(const VideoParameters& parameters)
 {
-    FrameBlender blender;
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    VideoFramePtr videoFrame = getVideoComposition(parameters)->generate();
+    if (videoFrame)
     {
-        blender.add(boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(size, alpha));
+        videoFrame->setPts(mPosition);
+        mPosition++;
     }
-    VideoFramePtr videoFrame = blender.blend();
     VAR_VIDEO(videoFrame);
     return videoFrame;
 }
@@ -266,6 +274,16 @@ std::set<model::IClipPtr> Sequence::getSelectedClips()
     return selectedclips;
 }
 
+VideoFrameCompositionPtr Sequence::getVideoComposition(const VideoParameters& parameters)
+{
+    VideoFrameCompositionPtr composition(boost::make_shared<VideoFrameComposition>(parameters));
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    {
+        composition->add(boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(parameters));
+    }
+    return composition;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IPROJECTVIEW
 //////////////////////////////////////////////////////////////////////////
@@ -303,6 +321,21 @@ void Sequence::updateTracks()
         mAudioTrackMap[index] = track;
         ++index;
     }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const Sequence& obj )
+{
+    os << &obj                           << '|'
+        << static_cast<const Node&>(obj) << '|'
+        << obj.mDividerPosition          << '|'
+        << obj.mVideoTracks              << '|'
+        << obj.mAudioTracks              << '|'
+        << obj.mPosition;
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

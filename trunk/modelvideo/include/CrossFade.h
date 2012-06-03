@@ -26,7 +26,7 @@ public:
     // VIDEOTRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, wxSize, bool alpha = true);
+    VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoParameters& parameters);
 
 protected:
 

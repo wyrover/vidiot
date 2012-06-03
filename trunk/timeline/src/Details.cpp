@@ -11,6 +11,7 @@
 #include "Sequence.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "VideoClip.h"
 #include "Window.h"
 
 namespace gui { namespace timeline {
@@ -62,7 +63,8 @@ void Details::onSelectionChanged()
         if (a->getLink() == b)
         {
             ASSERT_EQUALS(b->getLink(),a);
-            focus(a); // Any of the two will do, since DetailsClip handles linked clips.
+            model::IClipPtr focused = (a->isA<model::VideoClip>()) ? a : b; // Always use the videoclip (avoid problems in automated test as a result of timing differences - sometimes the videoclip is focused first, sometimes the audio clip)
+            focus(focused);
         }
     }
     else

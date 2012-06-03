@@ -40,13 +40,16 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(wxSize size, bool alpha = true) override;
+    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     wxSize getInputSize(); ///< \return size of input video
+
+    int getOpacity() const;
+    void setOpacity(int opacity);
 
     VideoScaling getScaling() const;
     int getScalingDigits() const;
@@ -77,6 +80,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pts mProgress; ///< Current render position in pts units (delivered video frames count)
+
+    int mOpacity;
 
     VideoScaling mScaling;
     int mScalingDigits;     ///< mScalingDigits / Constants::scalingPrecisionFactor is the actual scaling to be applied. Stored as an int to avoid rounding errors with doubles (leads to small diffs which cause test asserts to fail).

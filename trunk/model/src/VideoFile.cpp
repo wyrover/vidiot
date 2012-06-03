@@ -15,12 +15,13 @@ extern "C" {
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
-#include "UtilLog.h"
-#include "UtilInitAvcodec.h"
-#include "Node.h"
-#include "VideoFrame.h"
 #include "Convert.h"
+#include "Node.h"
 #include "Properties.h"
+#include "UtilInitAvcodec.h"
+#include "UtilLog.h"
+#include "VideoFrame.h"
+#include "VideoParameters.h"
 
 namespace model {
 
@@ -101,7 +102,7 @@ void VideoFile::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
+VideoFramePtr VideoFile::getNextVideo(const VideoParameters& parameters)
 {
     startDecodingVideo();
 
@@ -199,9 +200,10 @@ VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
         }
 
         static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
+        wxSize size(parameters.getBoundingBox());
         size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
         size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
-        mDeliveredFrame = boost::make_shared<VideoFrame>(alpha ? videoRGBA : videoRGB, size, mPosition, pFrame->repeat_pict + 1);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(size, mPosition, pFrame->repeat_pict + 1);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(
@@ -210,7 +212,8 @@ VideoFramePtr VideoFile::getNextVideo(wxSize size, bool alpha)
             getCodec()->pix_fmt,
             size.GetWidth(),
             size.GetHeight(),
-            alpha ? PIX_FMT_RGBA : PIX_FMT_RGB24, SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
+            PIX_FMT_RGB24,
+            SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
         sws_scale(ctx,pFrame->data,pFrame->linesize,0,getCodec()->height,mDeliveredFrame->getData(),mDeliveredFrame->getLineSizes());
         sws_freeContext(ctx);
 

@@ -24,6 +24,7 @@ public:
     explicit ChangeVideoClipTransform(model::VideoClipPtr videoclip);
     virtual ~ChangeVideoClipTransform();
 
+    void setOpacity(int opacity);
     void setScaling(VideoScaling scaling, boost::optional<int> scalingdigits = boost::none);
     void setAlignment(VideoAlignment alignment);
     void setPosition(wxPoint position);
@@ -51,12 +52,15 @@ private:
 
     model::VideoClipPtr mVideoClip;
 
+    int mOldOpacity;
+
     VideoScaling mOldScaling;
     int moldScalingDigits;
 
     VideoAlignment mOldAlignment;
     wxPoint mOldPosition;
 
+    boost::optional<int> mNewOpacity;
     boost::optional<VideoScaling> mNewScaling;
     boost::optional<int> mNewScalingDigits;
     boost::optional<VideoAlignment> mNewAlignment;

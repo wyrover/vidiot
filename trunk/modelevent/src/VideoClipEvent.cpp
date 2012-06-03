@@ -4,6 +4,7 @@
 
 namespace model {
 
+DEFINE_EVENT(EVENT_CHANGE_VIDEOCLIP_OPACITY,       EventChangeVideoClipOpacity,       int);
 DEFINE_EVENT(EVENT_CHANGE_VIDEOCLIP_SCALING,       EventChangeVideoClipScaling,       VideoScaling);
 DEFINE_EVENT(EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, EventChangeVideoClipScalingDigits, int);
 DEFINE_EVENT(EVENT_CHANGE_VIDEOCLIP_ALIGNMENT,     EventChangeVideoClipAlignment,     VideoAlignment);

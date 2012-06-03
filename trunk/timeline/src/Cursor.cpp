@@ -37,12 +37,12 @@ Cursor::~Cursor()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-long Cursor::getPosition() const
+pixel Cursor::getPosition() const
 {
     return mCursorPosition;
 }
 
-void Cursor::setPosition(long position)
+void Cursor::setPosition(pixel position)
 {
     if (position != mCursorPosition)
     {
@@ -64,12 +64,22 @@ void Cursor::setPosition(long position)
     }
 }
 
-void Cursor::moveCursorOnPlayback(long pts)
+pts Cursor::getLogicalPosition() const
 {
-    setPosition(getZoom().ptsToPixels(pts));
+    return getZoom().pixelsToPts(mCursorPosition);
 }
 
-void Cursor::moveCursorOnUser(long position)
+void Cursor::setLogicalPosition(pts position)
+{
+    setPosition(getZoom().ptsToPixels(position));
+}
+
+void Cursor::moveCursorOnPlayback(pts position)
+{
+    setLogicalPosition(position);
+}
+
+void Cursor::moveCursorOnUser(pixel position)
 {
     setPosition(position);
     getPlayer()->moveTo(getZoom().pixelsToPts(position));

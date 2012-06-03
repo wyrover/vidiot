@@ -3,6 +3,7 @@
 
 #include <wx/event.h>
 #include "Part.h"
+#include "UtilInt.h"
 
 namespace gui { class PlaybackPositionEvent; }
 
@@ -25,10 +26,14 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    long getPosition() const;
-    void setPosition(long position);
-    void moveCursorOnUser(long position);
-    void moveCursorOnPlayback(long pts);
+    pixel getPosition() const;
+    void setPosition(pixel position);
+
+    pts getLogicalPosition() const;
+    void setLogicalPosition(pts position);
+
+    void moveCursorOnUser(pixel position);
+    void moveCursorOnPlayback(pts position);
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW
@@ -38,7 +43,7 @@ public:
 
 private:
 
-    long mCursorPosition;
+    pixel mCursorPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS

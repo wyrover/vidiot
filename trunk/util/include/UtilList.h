@@ -62,6 +62,16 @@ public:
         return position;
     }
 
+    void replace(ELEMENT oldElement, ELEMENT newElement)
+    {
+        ELEMENTS::iterator itOldElement = find(mList.begin(), mList.end(), oldElement);
+        ASSERT(itOldElement != mList.end())(oldElement); // Ensure that the element was found
+
+        ELEMENTS::iterator itNewElement = mList.erase(itOldElement);
+        mList.insert(itNewElement,newElement);
+        VAR_DEBUG(oldElement)(newElement)(mList);
+    }
+
     /// \return true if the list contains the given element
     /// \param element element which is searched for in the list
     bool hasElement(ELEMENT element)

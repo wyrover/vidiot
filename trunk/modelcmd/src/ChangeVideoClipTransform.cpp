@@ -18,10 +18,12 @@ ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip
     :   RootCommand()
     ,   mInitialized(false)
     ,   mVideoClip(videoclip)
+    ,   mOldOpacity(mVideoClip->getOpacity())
     ,   mOldScaling(mVideoClip->getScaling())
     ,   moldScalingDigits(mVideoClip->getScalingDigits())
     ,   mOldAlignment(mVideoClip->getAlignment())
     ,   mOldPosition(mVideoClip->getPosition())
+    ,   mNewOpacity(boost::none)
     ,   mNewScaling(boost::none)
     ,   mNewScalingDigits(boost::none)
     ,   mNewPosition(boost::none)
@@ -30,6 +32,12 @@ ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip
 
 ChangeVideoClipTransform::~ChangeVideoClipTransform()
 {
+}
+
+void ChangeVideoClipTransform::setOpacity(int opacity)
+{
+    mNewOpacity = boost::optional<int>(opacity);
+    mVideoClip->setOpacity(opacity);
 }
 
 void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<int> scalingdigits)
@@ -63,6 +71,10 @@ bool ChangeVideoClipTransform::Do()
     {
         // Only the second time that Do() is called (redo) something actually needs to be done.
         // The first time is handled by (possibly multiple calls to) setScaling etc.
+        if (mNewOpacity)
+        {
+            mVideoClip->setOpacity(*mNewOpacity);
+        }
         if (mNewScaling)
         {
             mVideoClip->setScaling(*mNewScaling, mNewScalingDigits);
@@ -83,6 +95,10 @@ bool ChangeVideoClipTransform::Do()
 bool ChangeVideoClipTransform::Undo()
 {
     VAR_INFO(*this);
+    if (mNewOpacity)
+    {
+        mVideoClip->setOpacity(mOldOpacity);
+    }
     if (mNewScaling)
     {
         mVideoClip->setScaling(mOldScaling, boost::optional<int>(moldScalingDigits));
@@ -116,10 +132,12 @@ std::ostream& operator<<( std::ostream& os, const ChangeVideoClipTransform& obj 
     os  << &obj << '|'
         << typeid(obj).name()    << '|'
         << obj.mVideoClip        << '|'
+        << obj.mOldOpacity       << '|'
         << obj.mOldScaling       << '|'
         << obj.moldScalingDigits << '|'
         << obj.mOldAlignment     << '|'
         << obj.mOldPosition      << '|'
+        << obj.mNewOpacity       << '|'
         << obj.mNewScaling       << '|'
         << obj.mNewScalingDigits << '|'
         << obj.mNewPosition;
