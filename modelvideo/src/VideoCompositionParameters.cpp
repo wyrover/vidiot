@@ -1,4 +1,4 @@
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 
 #include "UtilLogWxwidgets.h"
 
@@ -10,13 +10,13 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoParameters::VideoParameters()
+VideoCompositionParameters::VideoCompositionParameters()
     :   mBoundingBox(0,0)
     ,   mDrawBoundingBox(false)
 {
 }
 
-VideoParameters::VideoParameters(const VideoParameters& other)
+VideoCompositionParameters::VideoCompositionParameters(const VideoCompositionParameters& other)
     :   mBoundingBox(other.mBoundingBox)
     ,   mDrawBoundingBox(other.mDrawBoundingBox)
 {
@@ -26,24 +26,24 @@ VideoParameters::VideoParameters(const VideoParameters& other)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-VideoParameters& VideoParameters::setBoundingBox(wxSize boundingBox)
+VideoCompositionParameters& VideoCompositionParameters::setBoundingBox(wxSize boundingBox)
 {
     mBoundingBox = boundingBox;
     return *this;
 }
 
-wxSize VideoParameters::getBoundingBox() const
+wxSize VideoCompositionParameters::getBoundingBox() const
 {
     return mBoundingBox;
 }
 
-VideoParameters& VideoParameters::setDrawBoundingBox()
+VideoCompositionParameters& VideoCompositionParameters::setDrawBoundingBox()
 {
     mDrawBoundingBox = true;
     return *this;
 }
 
-bool VideoParameters::getDrawBoundingBox() const
+bool VideoCompositionParameters::getDrawBoundingBox() const
 {
     return mDrawBoundingBox;
 }
@@ -52,7 +52,7 @@ bool VideoParameters::getDrawBoundingBox() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoParameters& obj )
+std::ostream& operator<<( std::ostream& os, const VideoCompositionParameters& obj )
 {
     os << &obj << '|' << obj.mBoundingBox << '|' << obj.mDrawBoundingBox;
     return os;

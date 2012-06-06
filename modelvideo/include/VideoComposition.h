@@ -4,18 +4,18 @@
 #include <wx/gdicmn.h>
 #include <list>
 #include <boost/shared_ptr.hpp>
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 
 namespace model {
 
 class VideoFrame;
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 typedef std::list<VideoFramePtr> VideoFrames;
-class VideoParameters;
-class VideoFrameComposition;
-typedef boost::shared_ptr<VideoFrameComposition> VideoFrameCompositionPtr;
+class VideoCompositionParameters;
+class VideoComposition;
+typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
 
-class VideoFrameComposition // todo rename to videocomposition
+class VideoComposition // todo rename to videocomposition
 {
 public:
 
@@ -23,11 +23,11 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFrameComposition(const model::VideoParameters& parameters);
+    VideoComposition(const model::VideoCompositionParameters& parameters);
 
-    VideoFrameComposition(const VideoFrameComposition& other);
+    VideoComposition(const VideoComposition& other);
 
-    virtual ~VideoFrameComposition();
+    virtual ~VideoComposition();
 
     //////////////////////////////////////////////////////////////////////////
     // COMPOSITION
@@ -46,7 +46,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    VideoParameters getParameters() const;
+    VideoCompositionParameters getParameters() const;
 
 private:
 
@@ -54,7 +54,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    VideoParameters mParameters;
+    VideoCompositionParameters mParameters;
     VideoFrames mFrames;
     wxSize mBoundingBox;
 
@@ -62,7 +62,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoFrameComposition& obj );
+    friend std::ostream& operator<<( std::ostream& os, const VideoComposition& obj );
 
 };
 

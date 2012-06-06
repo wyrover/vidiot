@@ -21,7 +21,7 @@ extern "C" {
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "VideoFrame.h"
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 
 namespace model {
 
@@ -102,7 +102,7 @@ void VideoFile::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoFile::getNextVideo(const VideoParameters& parameters)
+VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
     startDecodingVideo();
 

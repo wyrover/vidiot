@@ -9,7 +9,7 @@
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 
 namespace model {
 
@@ -56,7 +56,7 @@ VideoTransition::~VideoTransition()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoTransition::getNextVideo(const VideoParameters& parameters)
+VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& parameters)
 {
     if (getLastSetPosition())
     {

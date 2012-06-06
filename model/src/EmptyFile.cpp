@@ -9,7 +9,7 @@
 #include "Properties.h"
 #include "EmptyChunk.h"
 #include "EmptyFrame.h"
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 
 namespace model {
 
@@ -101,7 +101,7 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr EmptyFile::getNextVideo(const VideoParameters& parameters)
+VideoFramePtr EmptyFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
     ASSERT_LESS_THAN_EQUALS(mVideoPosition,mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mVideoPosition++;

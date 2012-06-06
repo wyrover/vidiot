@@ -62,7 +62,7 @@ void VideoTrack::moveTo(pts position)
     mPts = position;
 }
 
-VideoFramePtr VideoTrack::getNextVideo(const VideoParameters& parameters)
+VideoFramePtr VideoTrack::getNextVideo(const VideoCompositionParameters& parameters)
 {
     VideoFramePtr videoFrame;
 

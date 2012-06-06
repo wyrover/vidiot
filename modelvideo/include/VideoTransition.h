@@ -27,7 +27,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) override;
+    virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
 
 protected:
 
@@ -43,7 +43,7 @@ protected:
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoParameters& parameters) = 0;
+    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters) = 0;
 
 private:
 

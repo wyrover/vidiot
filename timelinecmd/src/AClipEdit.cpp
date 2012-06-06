@@ -7,7 +7,7 @@
 #include <boost/thread/thread.hpp>
 #include "Clip.h"
 #include "Config.h"
-#include "CrossFade.h"
+#include "VideoTransition_CrossFade.h"
 #include "Cursor.h"
 #include "Dump.h"
 #include "EmptyClip.h"
@@ -293,7 +293,7 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
     }
     ASSERT(track);
     ASSERT(position);
-    model::IClipPtr transition = boost::make_shared<model::transition::CrossFade>(leftLength, rightLength);
+    model::IClipPtr transition = boost::make_shared<model::video::transition::CrossFade>(leftLength, rightLength);
     addClip(transition, track, position);
     return transition;
 }

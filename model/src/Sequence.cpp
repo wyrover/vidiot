@@ -9,8 +9,8 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
-#include "VideoFrameComposition.h"
-#include "VideoParameters.h"
+#include "VideoComposition.h"
+#include "VideoCompositionParameters.h"
 #include "IClip.h"
 #include "NodeEvent.h"
 #include "SequenceEvent.h"
@@ -19,7 +19,7 @@
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 #include "VideoTrack.h"
 #include "Window.h"
 
@@ -140,7 +140,7 @@ void Sequence::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr Sequence::getNextVideo(const VideoParameters& parameters)
+VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameters)
 {
     VideoFramePtr videoFrame = getVideoComposition(parameters)->generate();
     if (videoFrame)
@@ -274,9 +274,9 @@ std::set<model::IClipPtr> Sequence::getSelectedClips()
     return selectedclips;
 }
 
-VideoFrameCompositionPtr Sequence::getVideoComposition(const VideoParameters& parameters)
+VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParameters& parameters)
 {
-    VideoFrameCompositionPtr composition(boost::make_shared<VideoFrameComposition>(parameters));
+    VideoCompositionPtr composition(boost::make_shared<VideoComposition>(parameters));
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
         composition->add(boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(parameters));
