@@ -89,6 +89,7 @@ public:
 
     void onSnapClips(wxCommandEvent& event);
     void onSnapCursor(wxCommandEvent& event);
+    void onShowBoundingBox(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU - SEE THE TIMELINE IMPLEMENTATION

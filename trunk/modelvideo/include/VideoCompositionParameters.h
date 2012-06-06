@@ -24,7 +24,7 @@ public:
     VideoCompositionParameters& setBoundingBox(wxSize boundingBox);
     wxSize getBoundingBox() const;
 
-    VideoCompositionParameters& setDrawBoundingBox();
+    VideoCompositionParameters& setDrawBoundingBox(bool draw);
     bool getDrawBoundingBox() const;
 
 private:

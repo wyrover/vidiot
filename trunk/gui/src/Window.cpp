@@ -109,6 +109,9 @@ Window::Window()
     menuview->Check(ID_SNAP_CLIPS, Config::ReadBool(Config::sPathSnapClips));
     menuview->AppendCheckItem(ID_SNAP_CURSOR, _("Snap to cursor"));
     menuview->Check(ID_SNAP_CURSOR, Config::ReadBool(Config::sPathSnapCursor));
+    menuview->AppendSeparator();
+    menuview->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"));
+    menuview->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathShowBoundingBox));
 
     menusequence = new wxMenu();
 
@@ -166,6 +169,7 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
@@ -215,6 +219,7 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,             this, wxID_EXIT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
@@ -323,6 +328,12 @@ void Window::onSnapClips(wxCommandEvent& event)
 void Window::onSnapCursor(wxCommandEvent& event)
 {
     wxConfigBase::Get()->Write(Config::sPathSnapCursor, event.IsChecked());
+    wxConfigBase::Get()->Flush();
+}
+
+void Window::onShowBoundingBox(wxCommandEvent& event)
+{
+    wxConfigBase::Get()->Write(Config::sPathShowBoundingBox, event.IsChecked());
     wxConfigBase::Get()->Flush();
 }
 

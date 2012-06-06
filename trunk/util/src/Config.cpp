@@ -58,6 +58,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathShowDebugInfoOnWidgets, false);
     setDefault(Config::sPathSnapClips, true);
     setDefault(Config::sPathSnapCursor, true);
+    setDefault(Config::sPathShowBoundingBox, true);
     setDefault(Config::sPathStrip, "");
     wxConfigBase::Get()->Flush();
 
@@ -113,6 +114,7 @@ bool Config::getShowDebugInfo()
 
 const wxString Config::sPathSnapClips               ("/View/SnapClips");
 const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
+const wxString Config::sPathShowBoundingBox         ("/View/BoundingBox");
 const wxString Config::sPathAutoLoadEnabled         ("/Project/AutoLoad/Enabled");
 const wxString Config::sPathLastOpened              ("/Project/LastOpened");
 const wxString Config::sPathLogLevel                ("/Debug/LogLevel");

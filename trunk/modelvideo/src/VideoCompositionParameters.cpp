@@ -1,6 +1,7 @@
 #include "VideoCompositionParameters.h"
 
 #include "UtilLogWxwidgets.h"
+#include "Config.h"
 
 // todo move ALL video classes to modelvideo
 
@@ -12,7 +13,7 @@ namespace model {
 
 VideoCompositionParameters::VideoCompositionParameters()
     :   mBoundingBox(0,0)
-    ,   mDrawBoundingBox(false)
+    ,   mDrawBoundingBox(Config::ReadBool(Config::sPathShowBoundingBox))
 {
 }
 
@@ -37,9 +38,9 @@ wxSize VideoCompositionParameters::getBoundingBox() const
     return mBoundingBox;
 }
 
-VideoCompositionParameters& VideoCompositionParameters::setDrawBoundingBox()
+VideoCompositionParameters& VideoCompositionParameters::setDrawBoundingBox(bool draw)
 {
-    mDrawBoundingBox = true;
+    mDrawBoundingBox = draw;
     return *this;
 }
 
