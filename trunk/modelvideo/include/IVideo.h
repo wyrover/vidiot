@@ -9,7 +9,7 @@
 
 namespace model {
 
-class VideoParameters;
+class VideoCompositionParameters;
 class VideoFrame;
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 
@@ -27,7 +27,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) = 0;
+    virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

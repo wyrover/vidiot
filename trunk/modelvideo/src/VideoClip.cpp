@@ -14,7 +14,7 @@
 #include "VideoFile.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 #include "VideoClipEvent.h"
 
 namespace model {
@@ -88,7 +88,7 @@ void VideoClip::clean()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoClip::getNextVideo(const VideoParameters& parameters)
+VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& parameters)
 {
     if (getLastSetPosition())
     {
@@ -114,7 +114,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoParameters& parameters)
         wxSize inputsize = generator->getSize();
         wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
-        videoFrame = generator->getNextVideo(VideoParameters(parameters).setBoundingBox(requiredVideoSize));
+        videoFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
         if (videoFrame)
         {
             ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());

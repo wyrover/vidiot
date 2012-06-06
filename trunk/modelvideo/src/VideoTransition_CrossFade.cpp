@@ -1,4 +1,4 @@
-#include "CrossFade.h"
+#include "VideoTransition_CrossFade.h"
 
 #include <boost/make_shared.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -9,9 +9,9 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
-#include "VideoParameters.h"
+#include "VideoCompositionParameters.h"
 
-namespace model { namespace transition {
+namespace model { namespace video { namespace transition {
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -49,7 +49,7 @@ CrossFade::~CrossFade()
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoParameters& parameters)
+VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters)
 {
     VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(parameters)  : VideoFramePtr();
     VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(parameters) : VideoFramePtr();
@@ -119,4 +119,4 @@ void CrossFade::serialize(Archive & ar, const unsigned int version)
 template void CrossFade::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void CrossFade::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
-}} //namespace
+}}} //namespace

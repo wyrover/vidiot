@@ -3,7 +3,7 @@
 
 #include "VideoTransition.h"
 
-namespace model { namespace transition {
+namespace model { namespace video { namespace transition {
 
 class CrossFade
     :   public VideoTransition
@@ -26,7 +26,7 @@ public:
     // VIDEOTRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoParameters& parameters);
+    VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters);
 
 protected:
 
@@ -55,12 +55,12 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-}} // namespace
+}}} // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
 #include  <boost/preprocessor/slot/counter.hpp>
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::transition::CrossFade, 1)
+BOOST_CLASS_VERSION(model::video::transition::CrossFade, 1)
 
 #endif // CROSSFADE_H

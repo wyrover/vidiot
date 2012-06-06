@@ -4,7 +4,7 @@
 #include <boost/make_shared.hpp>
 #include <boost/assign/list_of.hpp>
 #include "Config.h"
-#include "CrossFade.h"
+#include "VideoTransition_CrossFade.h"
 #include "EmptyClip.h"
 #include "IClip.h"
 #include "MousePointer.h"

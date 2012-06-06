@@ -16,8 +16,8 @@ namespace model {
 class VideoFrame;
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 typedef std::list<VideoFramePtr> VideoFrames;
-class VideoFrameComposition;
-typedef boost::shared_ptr<VideoFrameComposition> VideoFrameCompositionPtr;
+class VideoComposition;
+typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
 class IClip;
 typedef boost::shared_ptr<IClip> IClipPtr;
 class Track;
@@ -60,7 +60,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) override;
+    virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
@@ -89,7 +89,7 @@ public:
 
     std::set<IClipPtr> getSelectedClips();
 
-    VideoFrameCompositionPtr getVideoComposition(const VideoParameters& parameters);
+    VideoCompositionPtr getVideoComposition(const VideoCompositionParameters& parameters);
 
     //////////////////////////////////////////////////////////////////////////
     // NODE

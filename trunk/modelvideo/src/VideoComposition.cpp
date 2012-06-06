@@ -1,4 +1,4 @@
-#include "VideoFrameComposition.h"
+#include "VideoComposition.h"
 
 #include <wx/dcmemory.h>
 #include <wx/dcgraph.h>
@@ -21,20 +21,20 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrameComposition::VideoFrameComposition(const VideoParameters& parameters)
+VideoComposition::VideoComposition(const VideoCompositionParameters& parameters)
     :   mFrames()
     ,   mParameters(parameters)
 {
     VAR_DEBUG(this);
 }
 
-VideoFrameComposition::VideoFrameComposition(const VideoFrameComposition& other)
+VideoComposition::VideoComposition(const VideoComposition& other)
     :   mFrames(other.mFrames)
     ,   mParameters(other.mParameters)
 {
 }
 
-VideoFrameComposition::~VideoFrameComposition()
+VideoComposition::~VideoComposition()
 {
     VAR_DEBUG(this);
 }
@@ -43,7 +43,7 @@ VideoFrameComposition::~VideoFrameComposition()
 // COMPOSITION
 //////////////////////////////////////////////////////////////////////////
 
-void VideoFrameComposition::add(VideoFramePtr frame)
+void VideoComposition::add(VideoFramePtr frame)
 {
     if (frame && !frame->isA<EmptyFrame>())
     {
@@ -52,12 +52,12 @@ void VideoFrameComposition::add(VideoFramePtr frame)
     }
 }
 
-void VideoFrameComposition::replace(VideoFramePtr oldFrame, VideoFramePtr newFrame)
+void VideoComposition::replace(VideoFramePtr oldFrame, VideoFramePtr newFrame)
 {
     UtilList<model::VideoFramePtr>(mFrames).replace(oldFrame,newFrame);
 }
 
-VideoFramePtr VideoFrameComposition::generate()
+VideoFramePtr VideoComposition::generate()
 {
     if (mFrames.empty())
     {
@@ -100,7 +100,7 @@ VideoFramePtr VideoFrameComposition::generate()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-VideoParameters VideoFrameComposition::getParameters() const
+VideoCompositionParameters VideoComposition::getParameters() const
 {
     return mParameters;
 }
@@ -109,7 +109,7 @@ VideoParameters VideoFrameComposition::getParameters() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoFrameComposition& obj )
+std::ostream& operator<<( std::ostream& os, const VideoComposition& obj )
 {
     os << &obj << '|' << obj.mFrames << '|' << obj.mBoundingBox;
     return os;

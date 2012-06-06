@@ -39,7 +39,7 @@ public:
     // IVIDEO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(const VideoParameters& parameters) override;
+    virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

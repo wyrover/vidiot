@@ -122,7 +122,7 @@ AudioChunkPtr EmptyClip::getNextAudio(int audioRate, int nAudioChannels)
 // IVIDEO
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr EmptyClip::getNextVideo(const VideoParameters& parameters)
+VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& parameters)
 {
     VideoFramePtr videoFrame = getDataGenerator<EmptyFile>()->getNextVideo(parameters);
     VAR_VIDEO(videoFrame);

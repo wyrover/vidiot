@@ -5,7 +5,7 @@
 
 namespace model {
 
-class VideoParameters
+class VideoCompositionParameters
 {
 public:
 
@@ -13,18 +13,18 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoParameters();
+    VideoCompositionParameters();
 
-    VideoParameters(const VideoParameters& other);
+    VideoCompositionParameters(const VideoCompositionParameters& other);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    VideoParameters& setBoundingBox(wxSize boundingBox);
+    VideoCompositionParameters& setBoundingBox(wxSize boundingBox);
     wxSize getBoundingBox() const;
 
-    VideoParameters& setDrawBoundingBox();
+    VideoCompositionParameters& setDrawBoundingBox();
     bool getDrawBoundingBox() const;
 
 private:
@@ -40,7 +40,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoParameters& obj );
+    friend std::ostream& operator<<( std::ostream& os, const VideoCompositionParameters& obj );
 
 };
 
