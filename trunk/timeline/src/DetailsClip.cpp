@@ -534,14 +534,11 @@ void DetailsClip::preview()
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
         position = mVideoClip->getLeftPts() + mVideoClip->getLength() / 2; // Show the middle frame of the clip
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
-        // todo make test for this
     }
-    // todo deze preview lijkt een beetje in te zoomen bij begin....
 
     if (videoclip->getLength() > 0)
     {
-        wxSize s = getPlayer()->getVideoSize(); // todo dat inzoomen zal door dit komen?
-        VAR_ERROR(s); // todo remove all var_errors
+        wxSize s = getPlayer()->getVideoSize();
         boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
         wxMemoryDC dc(*bmp);
         videoclip->moveTo(0);
@@ -554,7 +551,6 @@ void DetailsClip::preview()
         // Draw preview of operation
         getSequence()->moveTo(position);
         ASSERT_EQUALS(dc.GetSize(),s);
-        VAR_ERROR(dc.GetSize());
         model::VideoFrameCompositionPtr composition = getSequence()->getVideoComposition(model::VideoParameters().setBoundingBox(dc.GetSize()).setDrawBoundingBox()); // todo make the defaults of this class use an option for 'draw bounding box'
         model::VideoFramePtr compositeFrame = composition->generate();
         if (compositeFrame)

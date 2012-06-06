@@ -169,12 +169,11 @@ wxImagePtr VideoFrame::getImage()
     }
     if (mImage)
     {
-        return mImage; // todo what if mImage already set AND mRegionOfInterest is 'non-default'? Same for mBitmap???
+        ASSERT_EQUALS(mRegionOfInterest.GetPosition(),wxPoint(0,0));  // These checks are done to ensure that no scenarios exist in which mImage is set and the region of
+        ASSERT_EQUALS(mRegionOfInterest.GetSize(),mImage->GetSize()); // interest is changed. That will not work since we here do not take into account region of interest..
+        return mImage;
     }
-    if (mBitmap)
-    {
-        NIY; //todo
-    }
+    ASSERT_ZERO(mBitmap)(mBitmap); // getBitmap() may use mImage() but otherwise is useless
     wxImage tmp(mSize, getData()[0], true);
     return boost::make_shared<wxImage>(tmp.GetSubImage(mRegionOfInterest));
 }
@@ -183,6 +182,8 @@ wxBitmapPtr VideoFrame::getBitmap()
 {
     if (mBitmap)
     {
+        ASSERT_EQUALS(mRegionOfInterest.GetPosition(),wxPoint(0,0));   // These checks are done to ensure that no scenarios exist in which mBitmap is set and the region of
+        ASSERT_EQUALS(mRegionOfInterest.GetSize(),mBitmap->GetSize()); // interest is changed. That will not work since we here do not take into account region of interest..
         return mBitmap;
     }
     wxImagePtr image(getImage());

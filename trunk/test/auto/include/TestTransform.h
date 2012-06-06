@@ -23,7 +23,7 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testTransform();
+    void testTransformViaDetailsView();
 
 private:
 

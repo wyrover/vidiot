@@ -40,8 +40,7 @@ void TestTransform::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY("testTransform");
-void TestTransform::testTransform()
+void TestTransform::testTransformViaDetailsView()
 {
     StartTestSuite();
 
