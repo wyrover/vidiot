@@ -54,6 +54,7 @@ public:
 
     static const wxString sPathSnapClips;
     static const wxString sPathSnapCursor;
+    static const wxString sPathShowBoundingBox;
     static const wxString sPathAutoLoadEnabled;
     static const wxString sPathLastOpened;
     static const wxString sPathLogLevel;

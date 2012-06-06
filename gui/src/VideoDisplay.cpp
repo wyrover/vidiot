@@ -198,7 +198,7 @@ void VideoDisplay::moveTo(pts position)
 
     { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
         boost::mutex::scoped_lock lock(mMutexDraw);
-        mCurrentVideoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox());
+        mCurrentVideoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
         if (mCurrentVideoFrame)
         {
             mCurrentBitmap = mCurrentVideoFrame->getBitmap();
@@ -333,7 +333,7 @@ void VideoDisplay::videoBufferThread()
 	LOG_INFO;
     while (!mAbortThreads)
 	{
-        model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox());
+        model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
         mVideoFrames.push(videoFrame);
 	}
 }

@@ -551,7 +551,7 @@ void DetailsClip::preview()
         // Draw preview of operation
         getSequence()->moveTo(position);
         ASSERT_EQUALS(dc.GetSize(),s);
-        model::VideoCompositionPtr composition = getSequence()->getVideoComposition(model::VideoCompositionParameters().setBoundingBox(dc.GetSize()).setDrawBoundingBox()); // todo make the defaults of this class use an option for 'draw bounding box'
+        model::VideoCompositionPtr composition = getSequence()->getVideoComposition(model::VideoCompositionParameters().setBoundingBox(dc.GetSize()));
         model::VideoFramePtr compositeFrame = composition->generate();
         if (compositeFrame)
         {

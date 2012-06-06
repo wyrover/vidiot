@@ -10,6 +10,7 @@ enum
     // View menu
     ID_SNAP_CLIPS,
     ID_SNAP_CURSOR,
+    ID_SHOW_BOUNDINGBOX,
     // Sequence menu
     ID_ADDVIDEOTRACK,
     ID_ADDAUDIOTRACK,
