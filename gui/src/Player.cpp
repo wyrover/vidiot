@@ -17,7 +17,6 @@
 #include "preview-previous.xpm"
 #include "Constants.h"
 #include "Cursor.h"
-#include "UtilLogWxwidgets.h" // todo remove
 #include "VideoDisplayEvent.h"
 
 namespace gui {
@@ -180,10 +179,8 @@ wxSize Player::getVideoSize() const
 {
     if (GetSizer()->IsShown(mEdit))
     {
-        VAR_ERROR(mEdit->GetClientSize());
         return mEdit->GetClientSize();
     }
-        VAR_ERROR(mDisplay->GetClientSize());
     return mDisplay->GetClientSize();
 }
 

@@ -198,7 +198,6 @@ void VideoDisplay::moveTo(pts position)
 
     { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
         boost::mutex::scoped_lock lock(mMutexDraw);
-        VAR_ERROR(mWidth)(mHeight);
         mCurrentVideoFrame = mProducer->getNextVideo(model::VideoParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox());
         if (mCurrentVideoFrame)
         {
@@ -334,8 +333,6 @@ void VideoDisplay::videoBufferThread()
 	LOG_INFO;
     while (!mAbortThreads)
 	{
-        VAR_ERROR(mWidth)(mHeight);
-        VAR_INFO(mWidth)(mHeight); // todo remvoe
         model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox());
         mVideoFrames.push(videoFrame);
 	}
@@ -442,14 +439,6 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
     {
         dc.DrawBitmap(*bitmap,position);
     }
-
-    //// todo move bounding box drawing to videocomposition class...
-    //// Draw the bounding box
-    //wxSize projectSize = model::Properties::get()->getVideoSize();
-    //wxSize scaledSize = model::Convert::sizeInBoundingBox(projectSize,wxSize(mWidth,mHeight));
-    //dc.SetPen(Layout::sPreviewBoundingBoxPen);
-    //dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    //dc.DrawRectangle( 0, 0, scaledSize.GetWidth(), scaledSize.GetHeight());
 }
 
 void VideoDisplay::showNewVideoFrame()

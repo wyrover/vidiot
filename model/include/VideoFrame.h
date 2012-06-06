@@ -70,6 +70,7 @@ public:
 
     /// Return an image, using the frame's data clipped to the region of interest
     /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
+    /// \pre !mBitmap
     /// \return this frame as a wxImage
     wxImagePtr getImage();
 
