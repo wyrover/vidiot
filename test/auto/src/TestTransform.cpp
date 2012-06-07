@@ -54,7 +54,7 @@ void TestTransform::testTransformViaDetailsView()
 
     StartTest("If one clip is selected the details view changes accordingly.");
     Click(Center(VideoClip(0,3)));
-    ASSERT_DETAILSCLIP(VideoClip(0,3));// todo make 'stripprefix part of tests and set it by default to my prefs'
+    ASSERT_DETAILSCLIP(VideoClip(0,3));
     ASSERT_ORIGINAL_CLIPPROPERTIES();
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
