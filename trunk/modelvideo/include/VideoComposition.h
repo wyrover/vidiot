@@ -15,7 +15,7 @@ class VideoCompositionParameters;
 class VideoComposition;
 typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
 
-class VideoComposition // todo rename to videocomposition
+class VideoComposition
 {
 public:
 

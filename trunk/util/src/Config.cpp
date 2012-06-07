@@ -59,7 +59,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathSnapClips, true);
     setDefault(Config::sPathSnapCursor, true);
     setDefault(Config::sPathShowBoundingBox, true);
-    setDefault(Config::sPathStrip, "");
+    setDefault(Config::sPathStrip, "scene'2010");
     wxConfigBase::Get()->Flush();
 
     // Read cached values here

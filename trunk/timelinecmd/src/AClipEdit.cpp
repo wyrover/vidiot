@@ -620,7 +620,7 @@ void AClipEdit::replaceLinks()
 void AClipEdit::mergeConsecutiveEmptyClips()
 {
     LOG_DEBUG;
-    // todo make 'dirty' mechanism to avoid useless updates: each track is clean, whenever a move is done, it becomes dirty. When AClipEdit has finalized its transition all tracks are 'clean' again
+    // PERF make 'dirty' mechanism to avoid useless updates: each track is clean, whenever a move is done, it becomes dirty. When AClipEdit has finalized its transition all tracks are 'clean' again
     mergeConsecutiveEmptyClips(getTimeline().getSequence()->getVideoTracks());
     mergeConsecutiveEmptyClips(getTimeline().getSequence()->getAudioTracks());
 }

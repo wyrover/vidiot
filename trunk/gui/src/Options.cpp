@@ -90,7 +90,7 @@ Options::Options(wxWindow* win)
 
         addbox(_("Clips"));
         mStrip = new wxTextCtrl(mPanel, wxID_ANY, Config::ReadString(Config::sPathStrip));
-        addoption(_("Text to remove once from clip names (requires restart)"), mStrip);
+        addoption(_("Text to remove from clip names - use '|' for multiple entries \r\n(requires restart)"), mStrip);
     }
     {
         addtab(_("Debug"));

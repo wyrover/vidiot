@@ -3,8 +3,6 @@
 #include "UtilLogWxwidgets.h"
 #include "Config.h"
 
-// todo move ALL video classes to modelvideo
-
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////

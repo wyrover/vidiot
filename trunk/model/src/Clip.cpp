@@ -1,5 +1,6 @@
 #include "Clip.h"
 
+#include <wx/tokenzr.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/foreach.hpp>
@@ -101,9 +102,15 @@ wxString Clip::getDescription() const
 {
     wxString s = mRender->getDescription();
     wxString strip = Config::ReadString(Config::sPathStrip);
-    if (!strip.IsSameAs(_T("")))
+
+    wxStringTokenizer t(strip, "|"); // PERF cache for performance
+    while (t.HasMoreTokens())
     {
-        s.Replace(strip,_T(""),false);
+        wxString token = t.GetNextToken();
+        if (!token.IsEmpty())
+        {
+            s.Replace(token,_T(""),false);
+        }
     }
     return s;
 }
