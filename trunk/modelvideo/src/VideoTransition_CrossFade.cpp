@@ -9,6 +9,7 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
+#include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
 
 namespace model { namespace video { namespace transition {
@@ -51,50 +52,65 @@ CrossFade::~CrossFade()
 
 VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters)
 {
+    VideoComposition composition(VideoCompositionParameters(parameters).setDrawBoundingBox(false));
+
     VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(parameters)  : VideoFramePtr();
     VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(parameters) : VideoFramePtr();
-    VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(parameters.getBoundingBox(), 1, 1);
-    VAR_DEBUG(position)(parameters)(leftFrame)(rightFrame)(targetFrame);
+    VAR_DEBUG(position)(parameters)(leftFrame)(rightFrame);
 
     pts steps = getLength();
-    float factorLeft = ((float)getLength() - (float)position) / (float)getLength();
-    float factorRight = (float)position / (float)getLength();
-    VAR_DEBUG(factorLeft)(factorRight);
 
-    unsigned char* leftData   = leftFrame  ? leftFrame  ->getData()[0] : 0;
-    unsigned char* rightData  = rightFrame ? rightFrame ->getData()[0] : 0;
-    unsigned char* targetData =              targetFrame->getData()[0];
-
-    int leftBytesPerLine   = leftFrame  ? leftFrame  ->getLineSizes()[0] : 0;
-    int rightBytesPerLine  = rightFrame ? rightFrame ->getLineSizes()[0] : 0;
-    int targetBytesPerLine =              targetFrame->getLineSizes()[0];
-
-    VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
-
-    int bytesPerPixel = 3;
-
-    // todo incorporate offset and region of interest...
-    // todo alpha handling
-
-    for (int y = 0; y < targetFrame->getSize().GetHeight(); ++y)
+    if (leftFrame)
     {
-        for (int x = 0; x < targetFrame->getSize().GetWidth() * bytesPerPixel; x += 1)
-        {
-            unsigned char left = 0;
-            if (leftFrame && y < leftFrame->getSize().GetHeight() && x < leftFrame->getSize().GetWidth() * bytesPerPixel)
-            {
-                left = *(leftData + y * leftBytesPerLine + x);
-            }
-            unsigned char right = 0;
-            if (rightFrame && y < rightFrame->getSize().GetHeight() && x < rightFrame->getSize().GetWidth() * bytesPerPixel)
-            {
-                right = *(rightData + y * rightBytesPerLine + x);
-            }
-            *(targetData + y * targetBytesPerLine + x) = (unsigned char)(left * factorLeft + right * factorRight);
-        }
+        float factorLeft = ((float)getLength() - (float)position) / (float)getLength();
+        int opacityLeft = factorLeft * leftFrame->getOpacity();
+        leftFrame->setOpacity(opacityLeft);
+        VAR_DEBUG(factorLeft)(leftFrame->getOpacity())(opacityLeft);
+        composition.add(leftFrame);
     }
 
-    return targetFrame;
+    if (rightFrame)
+    {
+        float factorRight = (float)position / (float)getLength();
+        int opacityRight = factorRight * rightFrame->getOpacity();
+        rightFrame->setOpacity(opacityRight);
+        VAR_DEBUG(factorRight)(rightFrame->getOpacity())(opacityRight);
+        composition.add(rightFrame);
+    }
+
+    return composition.generate();
+
+    // Old code temporarily kept for reference:
+    //VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(parameters.getBoundingBox(), 1, 1);
+
+    //unsigned char* leftData   = leftFrame  ? leftFrame  ->getData()[0] : 0;
+    //unsigned char* rightData  = rightFrame ? rightFrame ->getData()[0] : 0;
+    //unsigned char* targetData =              targetFrame->getData()[0];
+
+    //int leftBytesPerLine   = leftFrame  ? leftFrame  ->getLineSizes()[0] : 0;
+    //int rightBytesPerLine  = rightFrame ? rightFrame ->getLineSizes()[0] : 0;
+    //int targetBytesPerLine =              targetFrame->getLineSizes()[0];
+
+    //VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
+
+    //int bytesPerPixel = 3;
+    //for (int y = 0; y < targetFrame->getSize().GetHeight(); ++y)
+    //{
+    //    for (int x = 0; x < targetFrame->getSize().GetWidth() * bytesPerPixel; x += 1)
+    //    {
+    //        unsigned char left = 0;
+    //        if (leftFrame && y < leftFrame->getSize().GetHeight() && x < leftFrame->getSize().GetWidth() * bytesPerPixel)
+    //        {
+    //            left = *(leftData + y * leftBytesPerLine + x);
+    //        }
+    //        unsigned char right = 0;
+    //        if (rightFrame && y < rightFrame->getSize().GetHeight() && x < rightFrame->getSize().GetWidth() * bytesPerPixel)
+    //        {
+    //            right = *(rightData + y * rightBytesPerLine + x);
+    //        }
+    //        *(targetData + y * targetBytesPerLine + x) = (unsigned char)(left * factorLeft + right * factorRight);
+    //    }
+    //}
 }
 
 //////////////////////////////////////////////////////////////////////////
