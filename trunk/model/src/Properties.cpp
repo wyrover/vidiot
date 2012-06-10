@@ -8,10 +8,15 @@
 
 namespace model {
 
+const int sStereo = 2;
+const int sAudioFrameRate = 44100;
+
 Properties::Properties()
 :   mFrameRate(framerate::fromString(Config::ReadString(Config::sPathDefaultFrameRate)))
 ,   mVideoWidth(Config::ReadLong(Config::sPathDefaultVideoWidth))
 ,   mVideoHeight(Config::ReadLong(Config::sPathDefaultVideoHeight))
+,   mAudioChannels(sStereo)
+,   mAudioFrameRate(sAudioFrameRate)
 {
 }
 
@@ -39,6 +44,16 @@ wxSize Properties::getVideoSize() const
     return wxSize(mVideoWidth,mVideoHeight);
 }
 
+int Properties::getAudioNumberOfChannels() const
+{
+    return mAudioChannels;
+}
+
+int Properties::getAudioFrameRate() const
+{
+    return mAudioFrameRate;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -49,6 +64,8 @@ void Properties::serialize(Archive & ar, const unsigned int version)
     ar & mFrameRate;
     ar & mVideoWidth;
     ar & mVideoHeight;
+    ar & mAudioChannels;
+    ar & mAudioFrameRate;
 }
 
 template void Properties::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

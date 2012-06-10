@@ -5,6 +5,7 @@
 #include "HelperWindow.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
+#include "HelperApplication.h"
 
 namespace test {
 
@@ -34,7 +35,6 @@ void TestOnce::testOnce()
     // getTimeline().getDump().dump();
     // PrepareSnapping(true);
     StartTestSuite();
-
     model::Render render(getSequence());
     render.generate();
 }

@@ -31,11 +31,16 @@ public:
     FrameRate getFrameRate() const;
     wxSize getVideoSize() const;
 
+    int getAudioNumberOfChannels() const; ///< \return number of audio channels, thus the number of independent speakers
+    int getAudioFrameRate() const; ///< \return frame rate used for audio
+
 private:
 
     FrameRate mFrameRate;
     long mVideoWidth;
     long mVideoHeight;
+    int mAudioChannels;
+    int mAudioFrameRate;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

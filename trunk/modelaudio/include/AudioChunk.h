@@ -13,6 +13,10 @@ typedef Fifo<AudioChunkPtr> FifoAudio;
 typedef std::list<AudioChunkPtr> AudioChunks;
 std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
 
+/// Class holds audio samples
+///
+/// A sample is the data for one speaker.  Its size is typically two bytes.
+/// A frame  is the data for all speakers. Its size is 'the number of channels' * 'the size of one sample'
 class AudioChunk
     :   public boost::noncopyable
     ,   public IRTTI
@@ -20,6 +24,8 @@ class AudioChunk
 public:
 
     static const int sBytesPerSample;
+    static const int sSamplesPerStereoFrame;
+    static const int sBytesPerStereoFrame;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
