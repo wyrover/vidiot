@@ -13,6 +13,7 @@ struct AVCodecContext;
 struct AVFormatContext;
 struct AVStream;
 struct AVPacket;
+struct AVOutputFormat;
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -24,6 +25,7 @@ std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj);
 std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj);
 std::ostream& operator<< (std::ostream& os, const AVStream* obj);
 std::ostream& operator<< (std::ostream& os, const AVPacket* obj);
+std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj);
 
 class Avcodec
 {
@@ -34,6 +36,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     static void init();
+    static void registerOutputCodecs(); ///< Not in init, since this method also logs. And init() is called before logging is initialized properly.
     static void exit();
 
     //////////////////////////////////////////////////////////////////////////

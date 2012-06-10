@@ -117,13 +117,18 @@ bool Application::OnInit()
     // Done before options initialization
     // since after initializing the options,
     // the avcodec logging is initialized, which
-    // in requires that avcodec is initialized.
+    // requires that avcodec is initialized.
     Avcodec::init();
 
     // Must be called before anything else,
     // since it distributes the initial options
     // which are used below.
     Config::init(GetAppName(), GetVendorName(), mEventLoopListener != 0);
+
+    // Called after Config::init() since registerOutputCodecs() generates
+    // log lines - which need the correct log file, which is set in
+    // Config::init().
+    Avcodec::registerOutputCodecs();
 
     // The fonts cannot be initialized similar to pens and brushes
     // (leads to uninitialized wxStockGDI)
