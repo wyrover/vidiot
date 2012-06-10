@@ -12,8 +12,12 @@ extern "C" {
 #include <avformat.h>
 }
 #include <stdio.h>
+#include "AudioChunk.h"
+#include "Properties.h"
 #include "Sequence.h"
 #include "UtilLog.h"
+#include "VideoFrame.h"
+#include "VideoCompositionParameters.h"
 
 namespace model {
 
@@ -46,7 +50,8 @@ Render::~Render()
 void Render::generate()
 {
     std::string filename("D:\\out.avi");
-    AVOutputFormat* format = av_guess_format("mpeg", NULL, NULL);
+    //AVOutputFormat* format = av_guess_format("mpeg", NULL, NULL);
+    AVOutputFormat* format = av_guess_format("vob", NULL, NULL);
     ASSERT(format);
     //int result = avformat_alloc_output_context2(AVFormatContext **ctx, AVOutputFormat *oformat, const char *format_name, const char *filename);
 
@@ -70,6 +75,9 @@ void Render::generate()
     uint8_t* audio_outbuf = 0;
     int audio_outbuf_size = 0;
     int audio_input_frame_size = 0;
+    int bytesPerAudioFrame = 0;
+
+    mSequence->moveTo(0);
 
     if (format->video_codec != CODEC_ID_NONE)
     {
@@ -79,9 +87,14 @@ void Render::generate()
         AVCodecContext* video_codec = video_stream->codec;
         video_codec->codec_id = format->video_codec;
         video_codec->codec_type = AVMEDIA_TYPE_VIDEO;
-        video_codec->bit_rate = 400000;
-        video_codec->width = 352; // resolution must be a multiple of two
-        video_codec->height = 288;
+        video_codec->bit_rate = 4000000; // todo configurable
+        //video_codec->width = 352; // resolution must be a multiple of two
+        //video_codec->height = 288;
+        video_codec->width = Properties::get()->getVideoSize().GetWidth(); // resolution must be a multiple of two
+        video_codec->height = Properties::get()->getVideoSize().GetHeight();
+        // todo assert a certain minimum size
+        // todo asserts for even numbers
+
         // Fundamental unit of time (in seconds) in terms of which frame timestamps are represented.
         // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
         video_codec->time_base.den = STREAM_FRAME_RATE;
@@ -154,13 +167,21 @@ void Render::generate()
         picture = alloc_picture(video_codec_context->pix_fmt, video_codec_context->width, video_codec_context->height);
         ASSERT(picture);
 
-        // if the output format is not YUV420P, then a temporary YUV420P picture is needed too. It is then converted to the required output format
-        if (video_codec_context->pix_fmt != PIX_FMT_YUV420P)
+        //// if the output format is not RGB24P, then a temporary YUV420P picture is needed too. It is then converted to the required output format
+        if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
         {
-            tmp_picture = alloc_picture(PIX_FMT_YUV420P, video_codec_context->width, video_codec_context->height);
+            tmp_picture = alloc_picture(PIX_FMT_RGB24, video_codec_context->width, video_codec_context->height);
             ASSERT(tmp_picture);
 
         }
+
+        //// if the output format is not YUV420P, then a temporary YUV420P picture is needed too. It is then converted to the required output format
+        //if (video_codec_context->pix_fmt != PIX_FMT_YUV420P)
+        //{
+        //    tmp_picture = alloc_picture(PIX_FMT_YUV420P, video_codec_context->width, video_codec_context->height);
+        //    ASSERT(tmp_picture);
+
+        //}
     }
 
     if (audio_stream)
@@ -177,6 +198,8 @@ void Render::generate()
         tincr = 2 * M_PI * 110.0 / audio_codec_context->sample_rate;
         /* increment frequency by 110 Hz per second */
         tincr2 = 2 * M_PI * 110.0 / audio_codec_context->sample_rate / audio_codec_context->sample_rate;
+
+        bytesPerAudioFrame = model::AudioChunk::sBytesPerSample * audio_codec_context->channels;
 
         audio_outbuf_size = 10000;
         audio_outbuf = (uint8_t*)av_malloc(audio_outbuf_size);
@@ -201,7 +224,7 @@ void Render::generate()
         {
             audio_input_frame_size = audio_codec_context->frame_size;
         }
-        samples = (int16_t*)av_malloc(audio_input_frame_size * 2 * audio_codec_context->channels);
+        samples = (int16_t*)av_malloc(audio_input_frame_size * bytesPerAudioFrame);
     }
 
     // open the output file, if needed
@@ -217,6 +240,8 @@ void Render::generate()
     double video_pts = 0.0;
 
     bool done = false;
+
+    AudioChunkPtr currentAudioChunk = mSequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
     while (!done)
     {
         if (audio_stream)
@@ -241,16 +266,48 @@ void Render::generate()
             AVPacket pkt;
             av_init_packet(&pkt);
 
-            get_audio_frame(samples, audio_input_frame_size, audio_codec_context->channels, t, tincr, tincr2);
+            int16_t* q = samples;
+            samplecount remainingSamples = audio_input_frame_size * 2; // 2 -> stereo
 
-            pkt.size= avcodec_encode_audio(audio_codec_context, audio_outbuf, audio_outbuf_size, samples);
+            while (remainingSamples > 0)
+            {
+                if (currentAudioChunk)
+                {
+                    // Previous chunk not used completely
+                    //samplecount remainingSamples = audio_input_frame_size - written;
+                    samplecount nSamples = min(remainingSamples, currentAudioChunk->getUnreadSampleCount());
+
+                    memcpy(q,currentAudioChunk->getUnreadSamples(), nSamples * 2); // todo add this to the audiochunk class and then reuse in videodisplay also? // the 2  here is for bytespersample
+                    currentAudioChunk->read(nSamples);                                                              // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^alsothis^^^^^^^^^^^^^^^^
+                    q += nSamples;
+                    remainingSamples -= nSamples;
+
+                    if (currentAudioChunk->getUnreadSampleCount() == 0)
+                    {
+                        currentAudioChunk = mSequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
+                    }
+                }
+                else
+                {
+                    // Generate silence
+                    while (remainingSamples > 0)
+                    {
+                        *q++ = 0;
+                        remainingSamples--;
+                    }
+                }
+            }
+
+            //get_audio_frame(samples, audio_input_frame_size, audio_codec_context->channels, t, tincr, tincr2);
+
+            pkt.size = avcodec_encode_audio(audio_codec_context, audio_outbuf, audio_outbuf_size, samples);
             if (audio_codec_context->coded_frame && audio_codec_context->coded_frame->pts != AV_NOPTS_VALUE)
             {
                 pkt.pts = av_rescale_q(audio_codec_context->coded_frame->pts, audio_codec_context->time_base, audio_stream->time_base);
             }
             pkt.flags |= AV_PKT_FLAG_KEY;
-            pkt.stream_index= audio_stream->index;
-            pkt.data= audio_outbuf;
+            pkt.stream_index = audio_stream->index;
+            pkt.data = audio_outbuf;
 
             // write the compressed frame in the media file/
             int result = av_interleaved_write_frame(context, &pkt);
@@ -271,27 +328,48 @@ void Render::generate()
             }
             else
             {
-                if (video_codec_context->pix_fmt != PIX_FMT_YUV420P)
+                VideoFramePtr frame = mSequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_codec_context->width,video_codec_context->height)).setDrawBoundingBox(false));
+
+                if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
                 {
-                    // as we only generate a YUV420P picture, we must convert it to the codec pixel format if needed
+                    // Convert to desired pixel format
                     if (img_convert_ctx == 0)
                     {
                         img_convert_ctx = sws_getContext(video_codec_context->width, video_codec_context->height,
-                            PIX_FMT_YUV420P,
+                            PIX_FMT_RGB24,
                             video_codec_context->width, video_codec_context->height,
                             video_codec_context->pix_fmt,
                             sws_flags, 0, 0, 0);
                         ASSERT_NONZERO(img_convert_ctx);
 
-                        fill_yuv_image(tmp_picture, frame_count, video_codec_context->width, video_codec_context->height);
+                        wxImagePtr image = frame->getImage();
+                        memcpy(tmp_picture->data[0],  image->GetData(), image->GetWidth() * image->GetHeight() * 3);
+            //            fill_yuv_image(tmp_picture, frame_count, video_codec_context->width, video_codec_context->height);
 
                         sws_scale(img_convert_ctx, tmp_picture->data, tmp_picture->linesize, 0, video_codec_context->height, picture->data, picture->linesize);
                     }
-                    else
-                    {
-                        fill_yuv_image(picture, frame_count, video_codec_context->width, video_codec_context->height);
-                    }
                 }
+                //if (video_codec_context->pix_fmt != PIX_FMT_YUV420P)
+                //{
+                //    // as we only generate a YUV420P picture, we must convert it to the codec pixel format if needed
+                //    if (img_convert_ctx == 0)
+                //    {
+                //        img_convert_ctx = sws_getContext(video_codec_context->width, video_codec_context->height,
+                //            PIX_FMT_YUV420P,
+                //            video_codec_context->width, video_codec_context->height,
+                //            video_codec_context->pix_fmt,
+                //            sws_flags, 0, 0, 0);
+                //        ASSERT_NONZERO(img_convert_ctx);
+
+                //        fill_yuv_image(tmp_picture, frame_count, video_codec_context->width, video_codec_context->height);
+
+                //        sws_scale(img_convert_ctx, tmp_picture->data, tmp_picture->linesize, 0, video_codec_context->height, picture->data, picture->linesize);
+                //    }
+                //    else
+                //    {
+                //        fill_yuv_image(picture, frame_count, video_codec_context->width, video_codec_context->height);
+                //    }
+                //}
             }
 
             if (context->oformat->flags & AVFMT_RAWPICTURE)
