@@ -95,8 +95,8 @@ void Render::generate()
 
         // Fundamental unit of time (in seconds) in terms of which frame timestamps are represented.
         // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
-        video_codec->time_base.den = STREAM_FRAME_RATE;
-        video_codec->time_base.num = 1;
+        video_codec->time_base.den = Properties::get()->getFrameRate().denominator();
+        video_codec->time_base.num = Properties::get()->getFrameRate().numerator();
         video_codec->gop_size = 12; /* emit one intra frame every twelve frames at most */
         video_codec->pix_fmt = STREAM_PIX_FMT;
         if (video_codec->codec_id == CODEC_ID_MPEG2VIDEO)
@@ -126,8 +126,8 @@ void Render::generate()
         audio_codec->codec_type = AVMEDIA_TYPE_AUDIO;
         audio_codec->sample_fmt = AV_SAMPLE_FMT_S16;
         audio_codec->bit_rate = 64000;
-        audio_codec->sample_rate = 44100;
-        audio_codec->channels = 2;
+        audio_codec->sample_rate = Properties::get()->getAudioFrameRate();
+        audio_codec->channels = Properties::get()->getAudioNumberOfChannels();
         // some formats want stream headers to be separate
         if (context->oformat->flags & AVFMT_GLOBALHEADER)
         {
