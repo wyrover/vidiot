@@ -19,10 +19,6 @@ namespace gui {
 const int VideoDisplay::sMinimumSpeed = 50;
 const int VideoDisplay::sMaximumSpeed = 200;
 const int VideoDisplay::sDefaultSpeed = 100;
-const int VideoDisplay::sStereo = 2;
-const int VideoDisplay::sFrameRate = 44100;
-const int VideoDisplay::sChannels = VideoDisplay::sStereo;
-const int VideoDisplay::sBytesPerSample = 2;
 const int VideoDisplay::sVideoFrameRate = 25;
 
 int convertPortAudioTime(double patime)
@@ -66,6 +62,8 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
 ,   mStartTime(0)
 ,   mStartPts(0)
 ,   mCurrentTime(0)
+,   mNumberOfAudioChannels(model::Properties::get()->getAudioNumberOfChannels())
+,   mAudioSampleRate(model::Properties::get()->getAudioFrameRate())
 {
     VAR_DEBUG(this);
 
@@ -107,8 +105,8 @@ void VideoDisplay::play()
     mAbortThreads = false;
 
     // SoundTouch must be initialized before starting the audio buffer thread
-    mSoundTouch.setSampleRate(sFrameRate);
-    mSoundTouch.setChannels(sStereo);
+    mSoundTouch.setSampleRate(mAudioSampleRate);
+    mSoundTouch.setChannels(mNumberOfAudioChannels);
     mSoundTouch.setTempo(1.0);
     mSoundTouch.setTempoChange(mSpeed - sDefaultSpeed);
     mSoundTouch.setRate(1.0);
@@ -128,7 +126,7 @@ void VideoDisplay::play()
 
     mCurrentAudioChunk.reset();
 
-    PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, 2, paInt16, sFrameRate, paFramesPerBufferUnspecified, portaudio_callback, this );
+    PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get()->getAudioFrameRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
     ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
     err = Pa_StartStream( mAudioOutputStream );
@@ -243,18 +241,18 @@ void VideoDisplay::audioBufferThread()
 {
     while (!mAbortThreads)
 	{
-        model::AudioChunkPtr chunk = mProducer->getNextAudio(sFrameRate,sStereo);
+        model::AudioChunkPtr chunk = mProducer->getNextAudio(mAudioSampleRate,mNumberOfAudioChannels);
 
         if (chunk)
         {
             // In SoundTouch context a sample is the data for both speakers.
             // In AudioChunk it's the data for one speaker.
-            mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / sStereo) ;
+            mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels) ;
             while (!mSoundTouch.isEmpty())
             {
                 int nFramesAvailable = mSoundTouch.numSamples();
                 sample* p = 0;
-                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, sStereo, nFramesAvailable * sStereo, 0);
+                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, 0);
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
                 ASSERT_EQUALS(nFrames,nFramesAvailable);
                 mAudioChunks.push(audioChunk);
@@ -279,8 +277,7 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
         conditionPlaybackStarted.notify_one();
     }
 
-    static const samplecount sSamplesPerStereoFrame = 2;
-    samplecount remainingSamples = frames * sSamplesPerStereoFrame;
+    samplecount remainingSamples = frames * mNumberOfAudioChannels;
     int16_t* out = static_cast<int16_t*>(buffer);
 
     while (remainingSamples > 0)

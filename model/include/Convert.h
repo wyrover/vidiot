@@ -70,6 +70,20 @@ public:
     static int doubleToInt(double x);
     static int factorToDigits(double number, int nDigits);
     static double digitsToFactor(int number, int nDigits);
+
+    /// Convert a number of audio frames (data for all channels)
+    /// to a number of samples (data for one channel)
+    /// \param nFrames Number of audio frames
+    /// \param nChannels Number of audio channels (speakers)
+    /// \return number of required samples
+    static int audioFramesToSamples(int nFrames, int nChannels);
+
+    /// Convert a number of audio frames (data for all channels)
+    /// to a number of bytes required to hold this datasamples (data for one channel)
+    /// \param nFrames Number of audio frames
+    /// \param nChannels Number of audio channels (speakers)
+    /// \return number of required bytes
+    static int audioFramesToBytes(int nFrames, int nChannels);
 };
 } // namespace
 

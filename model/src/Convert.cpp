@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <math.h>
 #include <boost/rational.hpp>
+#include "AudioChunk.h"
 #include "Constants.h"
 #include "UtilLog.h"
 #include "Properties.h"
@@ -152,6 +153,18 @@ double Convert::digitsToFactor(int number, int nDigits)
 {
     double digitfactor = pow(static_cast<float>(10), nDigits);
     return static_cast<double>(number) / digitfactor;
+}
+
+// static
+int Convert::audioFramesToSamples(int nFrames, int nChannels)
+{
+    return nFrames * nChannels;
+}
+
+// static
+int Convert::audioFramesToBytes(int nFrames, int nChannels)
+{
+    return audioFramesToSamples(nFrames, nChannels) * AudioChunk::sBytesPerSample;
 }
 
 } // namespace

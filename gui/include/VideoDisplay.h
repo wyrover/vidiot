@@ -25,11 +25,6 @@ public:
     static const int sMinimumSpeed;
     static const int sMaximumSpeed;
     static const int sDefaultSpeed;
-
-    static const int sStereo;
-    static const int sFrameRate;
-    static const int sChannels;
-    static const int sBytesPerSample;
     static const int sVideoFrameRate;
 
     //////////////////////////////////////////////////////////////////////////
@@ -104,6 +99,9 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // AUDIO
     //////////////////////////////////////////////////////////////////////////
+
+    int mNumberOfAudioChannels; ///< Number of audio channels to use for playback
+    int mAudioSampleRate; ///< Audio frame rate to use for playback
 
     model::FifoAudio mAudioChunks;
     model::AudioChunkPtr mCurrentAudioChunk;

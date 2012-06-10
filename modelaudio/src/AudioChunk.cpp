@@ -4,6 +4,8 @@
 namespace model {
 
 const int AudioChunk::sBytesPerSample = 2;
+const int AudioChunk::sSamplesPerStereoFrame = 2;
+const int AudioChunk::sBytesPerStereoFrame = AudioChunk::sSamplesPerStereoFrame * AudioChunk::sBytesPerSample;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -95,9 +97,9 @@ void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 
 std::ostream& operator<< (std::ostream& os, const AudioChunk& obj)
 {
-    os  << &obj                     << "|" 
-        << obj.mPts                 << "|" 
-        << obj.mNrChannels          << "|" 
+    os  << &obj                     << "|"
+        << obj.mPts                 << "|"
+        << obj.mNrChannels          << "|"
         << obj.mNrSamples           << "|"
         << obj.mNrSkippedSamples    << "|"
         << obj.mNrReadSamples;

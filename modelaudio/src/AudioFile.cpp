@@ -22,7 +22,6 @@ extern "C" {
 namespace model
 {
 static const int sMicroSecondsPerSeconds = 1000 * 1000;
-static const int sBytesPerSample = 2;
 static const int sMaxBufferSize = 100;
 
 static const int sAudioBufferSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
@@ -150,14 +149,13 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     //////////////////////////////////////////////////////////////////////////
     // RESAMPLING
 
-    const unsigned int sSamplesPerStereoFrame = 2;
     int nSamples = targetSize / AudioChunk::sBytesPerSample; // A sample is the data for one speaker
-    int nFrames = nSamples / sSamplesPerStereoFrame;         // A frame  is the data for all speakers
+    int nFrames = nSamples / AudioChunk::sSamplesPerStereoFrame;         // A frame  is the data for all speakers
 
     if (mResampleContext != 0)
     {
         nFrames = audio_resample(mResampleContext, audioResampleBuffer, audioDecodeBuffer, nSamples / getCodec()->channels);
-        nSamples = nFrames * sSamplesPerStereoFrame;
+        nSamples = nFrames * AudioChunk::sSamplesPerStereoFrame;
 
         // Use the resampled data
         targetData = audioResampleBuffer;
@@ -185,7 +183,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 
     pts += static_cast<double>(nSamples) / static_cast<double>(/*nAudioChannels * already done before resampling */audioRate);
 
-    AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, pts);//boost::make_shared<AudioChunk>(audioDecodeBuffer, outputSize / 2, pts);
+    AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, pts);
     VAR_AUDIO(this)(audioChunk);
     return audioChunk;
 }
@@ -217,7 +215,7 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     int result = avcodec_open(getCodec(), audioCodec);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
-    ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16);
+    ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16); // TODO handle more nicely (present dialog 'not supported yet', or solve, add support for other sample formats, and test)
     //AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
     //AV_SAMPLE_FMT_S16,         ///< signed 16 bits
     //AV_SAMPLE_FMT_S32,         ///< signed 32 bits
