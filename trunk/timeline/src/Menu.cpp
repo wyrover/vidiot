@@ -16,6 +16,8 @@
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
+#include "Render.h" // todo remove this or the dialog
+#include "RenderDialog.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -46,6 +48,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
     mMenu.Append(ID_REMOVEMARKERS,  _("Remove all markers"));
     mMenu.AppendSeparator();
+    mMenu.Append(ID_RENDERSEQUENCE, _("Render"));
+    mMenu.AppendSeparator();
     mMenu.Append(ID_CLOSESEQUENCE,  _("Close"));
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
@@ -54,6 +58,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
@@ -75,6 +81,8 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
@@ -242,6 +250,13 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 {
     LOG_INFO;
     getIntervals().clear();
+}
+
+void MenuHandler::onRenderSequence(wxCommandEvent& event)
+{
+    model::render::RenderPtr render = boost::make_shared<model::render::Render>(getSequence());
+    gui::RenderDialog dialog(render);
+    dialog.ShowModal();
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& event)

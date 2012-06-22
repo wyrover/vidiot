@@ -1,5 +1,5 @@
-#ifndef UTIL_LOG_AVCODEC_H
-#define UTIL_LOG_AVCODEC_H
+#ifndef UTIL_INIT_AVCODEC_H
+#define UTIL_INIT_AVCODEC_H
 
 #include "pixfmt.h"
 #include <list>
@@ -15,18 +15,6 @@ struct AVStream;
 struct AVPacket;
 struct AVOutputFormat;
 
-//////////////////////////////////////////////////////////////////////////
-// LOGGING
-//////////////////////////////////////////////////////////////////////////
-
-std::ostream& operator<< (std::ostream& os, const PixelFormat& obj);
-std::ostream& operator<< (std::ostream& os, const AVRational& obj);
-std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj);
-std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj);
-std::ostream& operator<< (std::ostream& os, const AVStream* obj);
-std::ostream& operator<< (std::ostream& os, const AVPacket* obj);
-std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj);
-
 class Avcodec
 {
 public:
@@ -36,7 +24,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     static void init();
-    static void registerOutputCodecs(); ///< Not in init, since this method also logs. And init() is called before logging is initialized properly.
     static void exit();
 
     //////////////////////////////////////////////////////////////////////////
@@ -66,4 +53,4 @@ private:
     static void log(void *ptr, int level, const char * msg, va_list ap);
 };
 
-#endif //UTIL_LOG_AVCODEC_H
+#endif //UTIL_INIT_AVCODEC_H

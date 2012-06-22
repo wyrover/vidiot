@@ -24,3 +24,14 @@ preview-previous.xpm  - was control-stop.png
 preview-home.xpm      - was control-skip-180.png
 preview-end.xpm       - was control-skip.png
 track_resize_xpm      - was arrow-resize-090.png
+
+
+
+
+
+
+
+video.xpm:
+http://findicons.com/icon/259121/video?width=32#
+http://www.carpicon.com/                        
+Lothar Grimme
