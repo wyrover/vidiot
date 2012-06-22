@@ -2,6 +2,7 @@
 #define UTIL_CLONEABLE_H
 
 #include <list>
+#include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include "UtilRTTI.h"
 
@@ -14,6 +15,12 @@ public:
     virtual ~ICloneable() {};
     virtual ICloneable* clone() const = 0;
 };
+
+template <typename T>
+boost::shared_ptr<T> make_cloned_ptr(T& t)
+{
+    return boost::shared_ptr<T>(t.clone());
+}
 
 template <typename T>
 boost::shared_ptr<T> make_cloned(boost::shared_ptr<T> t)

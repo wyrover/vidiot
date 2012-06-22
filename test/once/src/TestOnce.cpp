@@ -1,11 +1,14 @@
 #include "TestOnce.h"
 
+#include <boost/make_shared.hpp>
 #include "Render.h"
+#include "RenderDialog.h"
 #include "Sequence.h"
 #include "HelperWindow.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "HelperApplication.h"
+#include "ids.h"
 
 namespace test {
 
@@ -35,8 +38,12 @@ void TestOnce::testOnce()
     // getTimeline().getDump().dump();
     // PrepareSnapping(true);
     StartTestSuite();
-    model::Render render(getSequence());
-    render.generate();
+    triggerMenu(ID_RENDERSEQUENCE);
+    //model::render::RenderPtr render = boost::make_shared<model::render::Render>(getSequence());
+    //gui::RenderDialog dialog(render);
+    //dialog.ShowModal();
+    //render->generate();
+    pause();
 }
 
 } // namespace

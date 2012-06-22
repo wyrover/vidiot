@@ -1,30 +1,36 @@
 #include "Render.h"
 
-// Include at top, to exclude the intmax macros and use the boost versions
-//#include "stdint.h"
-#define BOOST_HAS_STDINT_H
-
-#undef INTMAX_C
-#undef UINTMAX_C
-#define CONFIG_SWSCALE_ALPHA
+#include "stdint.h"
 extern "C" {
-#include <swscale.h>
+#pragma warning(disable:4244)
 #include <avformat.h>
+#include <swscale.h>
+#pragma warning(default:4244)
 }
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <stdio.h>
 #include "AudioChunk.h"
+#include "AudioCodec.h"
+#include "AudioCodecs.h"
 #include "Convert.h"
+#include "OutputFormat.h"
+#include "OutputFormats.h"
 #include "Properties.h"
 #include "Sequence.h"
 #include "UtilLog.h"
-#include "VideoFrame.h"
+#include "UtilSerializeBoost.h"
+#include "UtilSerializeWxwidgets.h"
+#include "VideoCodec.h"
+#include "VideoCodecs.h"
 #include "VideoCompositionParameters.h"
+#include "VideoFrame.h"
 
-namespace model {
+namespace model { namespace render {
 
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
-static void get_audio_frame(int16_t *samples, int frame_size, int nb_channels, float& t, float& tincr, float& tincr2);
-static void fill_yuv_image(AVFrame *pict, int frame_index, int width, int height);
 
 // only 5 seconds
 #define STREAM_DURATION   5.0
@@ -37,8 +43,20 @@ static int sws_flags = SWS_BICUBIC;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+// static
+void Render::initialize()
+{
+    VideoCodecs::initialize();
+    AudioCodecs::initialize();
+    OutputFormats::initialize();
+}
+
 Render::Render(SequencePtr sequence)
     :   mSequence(sequence)
+    ,   mFileName()
+    ,   mOutputFormat(OutputFormats::getDefault())
+    ,   mVideoCodec(mOutputFormat->getVideoCodec())
+    ,   mAudioCodec(mOutputFormat->getAudioCodec())
 {
     VAR_DEBUG(this);
 }
@@ -75,7 +93,8 @@ void Render::generate()
     int audio_input_frame_size = 0;
     int bytesPerAudioFrame = 0;
 
-    mSequence->moveTo(0);
+    SequencePtr sequence = mSequence.lock();
+    sequence->moveTo(0);
 
     if (format->video_codec != CODEC_ID_NONE)
     {
@@ -165,7 +184,7 @@ void Render::generate()
         picture = alloc_picture(video_codec_context->pix_fmt, video_codec_context->width, video_codec_context->height);
         ASSERT(picture);
 
-        //// if the output format is not RGB24P, then a temporary YUV420P picture is needed too. It is then converted to the required output format
+        //// if the output format is not RGB24P, then a temporary picture is needed too. It is then converted to the required output format
         if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
         {
             tmp_picture = alloc_picture(PIX_FMT_RGB24, video_codec_context->width, video_codec_context->height);
@@ -223,7 +242,7 @@ void Render::generate()
 
     bool done = false;
 
-    AudioChunkPtr currentAudioChunk = mSequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
+    AudioChunkPtr currentAudioChunk = sequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
     while (!done)
     {
         if (audio_stream)
@@ -266,7 +285,7 @@ void Render::generate()
 
                     if (currentAudioChunk->getUnreadSampleCount() == 0)
                     {
-                        currentAudioChunk = mSequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
+                        currentAudioChunk = sequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
                     }
                 }
                 else
@@ -307,7 +326,7 @@ void Render::generate()
             }
             else
             {
-                VideoFramePtr frame = mSequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_codec_context->width,video_codec_context->height)).setDrawBoundingBox(false));
+                VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_codec_context->width,video_codec_context->height)).setDrawBoundingBox(false));
 
                 if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
                 {
@@ -433,14 +452,44 @@ static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+OutputFormatPtr Render::getOutputFormat()
+{
+    return mOutputFormat;
+}
+
+void Render::setOutputFormat(OutputFormatPtr format)
+{
+    mOutputFormat = format;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<( std::ostream& os, const Render& obj )
 {
     os  << &obj           << '|'
-        << obj.mSequence;
+        << obj.mSequence.lock();
     return os;
 }
 
-} //namespace
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+template<class Archive>
+void Render::serialize(Archive & ar, const unsigned int version)
+{
+    ar & mSequence;
+    ar & mFileName;
+    ar & mOutputFormat;
+    ar & mVideoCodec;
+    ar & mAudioCodec;
+}
+template void Render::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void Render::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+
+}} //namespace
