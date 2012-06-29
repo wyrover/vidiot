@@ -21,6 +21,7 @@ extern "C" {
 #include "Properties.h"
 #include "Sequence.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "VideoCodec.h"
@@ -30,10 +31,13 @@ extern "C" {
 
 namespace model { namespace render {
 
+DEFINE_EVENT(EVENT_RENDER_PROGRESS, EventRenderProgress, int);
+DEFINE_EVENT(EVENT_RENDER_ACTIVE, EventRenderActive, bool);
+
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
 
-// only 5 seconds
-#define STREAM_DURATION   5.0
+// only 15 seconds
+#define STREAM_DURATION   15.0
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
 #define STREAM_NB_FRAMES  ((int)(STREAM_DURATION * STREAM_FRAME_RATE))
 #define STREAM_PIX_FMT PIX_FMT_YUV420P /* default pix_fmt */
@@ -51,12 +55,12 @@ void Render::initialize()
     OutputFormats::initialize();
 }
 
-Render::Render(SequencePtr sequence)
-    :   mSequence(sequence)
+Render::Render()
+    :   wxEvtHandler()
     ,   mFileName()
     ,   mOutputFormat(OutputFormats::getDefault())
-    ,   mVideoCodec(mOutputFormat->getVideoCodec())
-    ,   mAudioCodec(mOutputFormat->getAudioCodec())
+    ,   mVideoCodec(VideoCodecs::getDefault())
+    ,   mAudioCodec(AudioCodecs::getDefault())
 {
     VAR_DEBUG(this);
 }
@@ -66,16 +70,24 @@ Render::~Render()
     VAR_DEBUG(this);
 }
 
-void Render::generate()
+void Render::generate(model::SequencePtr sequence)
 {
-    std::string filename("D:\\out.avi");
-    //AVOutputFormat* format = av_guess_format("mpeg", NULL, NULL);
-    AVOutputFormat* format = av_guess_format("vob", NULL, NULL);
+    // todo freeze and unfreeze here, not when opening/closing the dialog....
+    // no, make renderqueue class and freeze when added to queue, unfreeze when no more refs in queue
+    QueueEvent(new EventRenderActive(true));
+    sequence->moveTo(0);
+
+    AVOutputFormat* format = av_guess_format(mOutputFormat->getName().c_str(), 0, 0);
     ASSERT(format);
-    //int result = avformat_alloc_output_context2(AVFormatContext **ctx, AVOutputFormat *oformat, const char *format_name, const char *filename);
+    ASSERT(mAudioCodec->getId() != CODEC_ID_NONE || mVideoCodec->getId() != CODEC_ID_NONE);
+    format->audio_codec = mAudioCodec->getId();
+    format->video_codec = mVideoCodec->getId();
 
     AVFormatContext* context = avformat_alloc_context();
     context->oformat = format;
+    ASSERT(mFileName.IsOk());
+    wxString filename = mFileName.GetFullPath();
+    ASSERT_LESS_THAN_EQUALS(sizeof(filename.c_str()),sizeof(context->filename));
     _snprintf(context->filename, sizeof(context->filename), "%s", filename.c_str());
 
     AVStream* video_stream = 0;
@@ -93,9 +105,6 @@ void Render::generate()
     int audio_input_frame_size = 0;
     int bytesPerAudioFrame = 0;
 
-    SequencePtr sequence = mSequence.lock();
-    sequence->moveTo(0);
-
     if (format->video_codec != CODEC_ID_NONE)
     {
         video_stream = av_new_stream(context, 0);
@@ -104,11 +113,14 @@ void Render::generate()
         AVCodecContext* video_codec = video_stream->codec;
         video_codec->codec_id = format->video_codec;
         video_codec->codec_type = AVMEDIA_TYPE_VIDEO;
-        video_codec->bit_rate = 4000000; // todo configurable
+
+        mVideoCodec->setParameters(video_codec);
         //video_codec->width = 352; // resolution must be a multiple of two
         //video_codec->height = 288;
+        //video_codec->thread_count = 3; // todo
         video_codec->width = Properties::get()->getVideoSize().GetWidth(); // resolution must be a multiple of two
         video_codec->height = Properties::get()->getVideoSize().GetHeight();
+        // todo check the bitrate, see if it's being set
         // todo assert a certain minimum size
         // todo asserts for even numbers
 
@@ -118,17 +130,6 @@ void Render::generate()
         video_codec->time_base.num = Properties::get()->getFrameRate().numerator();
         video_codec->gop_size = 12; /* emit one intra frame every twelve frames at most */
         video_codec->pix_fmt = STREAM_PIX_FMT;
-        if (video_codec->codec_id == CODEC_ID_MPEG2VIDEO)
-        {
-            video_codec->max_b_frames = 2; // just for testing, we also add B frames
-        }
-        if (video_codec->codec_id == CODEC_ID_MPEG1VIDEO)
-        {
-            // Needed to avoid using macroblocks in which some coeffs overflow.
-            // This does not happen with normal video, it just happens here as
-            // the motion of the chroma plane does not match the luma plane.
-            video_codec->mb_decision=2;
-        }
         // Some formats want stream headers to be separate
         if (context->oformat->flags & AVFMT_GLOBALHEADER)
         {
@@ -141,12 +142,17 @@ void Render::generate()
         audio_stream = av_new_stream(context, 1);
         ASSERT(audio_stream);
         audio_codec = audio_stream->codec;
+        // todo set the audiocodec params
         audio_codec->codec_id = format->audio_codec;
         audio_codec->codec_type = AVMEDIA_TYPE_AUDIO;
         audio_codec->sample_fmt = AV_SAMPLE_FMT_S16;
         audio_codec->bit_rate = 64000;
+        mAudioCodec->setParameters(audio_codec);
         audio_codec->sample_rate = Properties::get()->getAudioFrameRate();
         audio_codec->channels = Properties::get()->getAudioNumberOfChannels();
+        mAudioCodec->setParameters(audio_codec);
+
+        // todo this must be handled in 'audiocodec::setParameters...'?
         // some formats want stream headers to be separate
         if (context->oformat->flags & AVFMT_GLOBALHEADER)
         {
@@ -327,6 +333,7 @@ void Render::generate()
             else
             {
                 VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_codec_context->width,video_codec_context->height)).setDrawBoundingBox(false));
+                QueueEvent(new EventRenderProgress(frame->getPts()));
 
                 if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
                 {
@@ -429,6 +436,7 @@ void Render::generate()
         avio_close(context->pb);
     }
     av_free(context);
+    QueueEvent(new EventRenderActive(false));
 }
 
 //You'll need to look at the libavcodec documentation - specifically, at avcodec_encode_video(). I found that the best available documentation is in the ffmpeg header files and the API sample source code that's provided with the ffmpeg source. Specifically, look at libavcodec/api-example.c or even ffmpeg.c.
@@ -455,7 +463,7 @@ static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-OutputFormatPtr Render::getOutputFormat()
+OutputFormatPtr Render::getOutputFormat() const
 {
     return mOutputFormat;
 }
@@ -465,6 +473,36 @@ void Render::setOutputFormat(OutputFormatPtr format)
     mOutputFormat = format;
 }
 
+VideoCodecPtr Render::getVideoCodec() const
+{
+    return mVideoCodec;
+}
+
+void Render::setVideoCodec(VideoCodecPtr codec)
+{
+    mVideoCodec = codec;
+}
+
+AudioCodecPtr Render::getAudioCodec() const
+{
+    return mAudioCodec;
+}
+
+void Render::setAudioCodec(AudioCodecPtr codec)
+{
+    mAudioCodec = codec;
+}
+
+wxFileName Render::getFileName() const
+{
+    return mFileName;
+}
+
+void Render::setFileName(wxFileName filename)
+{
+    mFileName = filename;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -472,7 +510,8 @@ void Render::setOutputFormat(OutputFormatPtr format)
 std::ostream& operator<<( std::ostream& os, const Render& obj )
 {
     os  << &obj           << '|'
-        << obj.mSequence.lock();
+        << obj.mFileName << '|'
+        << obj.mOutputFormat;
     return os;
 }
 
@@ -483,7 +522,7 @@ std::ostream& operator<<( std::ostream& os, const Render& obj )
 template<class Archive>
 void Render::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mSequence;
+    //ar & mSequence; // todo remove this ref. Make renderdialog use 'sequence' as point of entry
     ar & mFileName;
     ar & mOutputFormat;
     ar & mVideoCodec;

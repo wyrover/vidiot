@@ -76,7 +76,7 @@ public:
     /// thumbbnails listen to track height events (lots of administration) it is
     /// more practical to have one loop (in the code that updates the track height)
     /// iterating over all affected clips/thumbnails. Not only does this save
-    //// some administration (each clip registered for track heigth events) also the
+    //// some administration (each clip registered for track height events) also the
     /// redrawing can be made more efficient by using beginTransaction(); For Loop;
     /// endTransaction();
     void invalidateBitmap();

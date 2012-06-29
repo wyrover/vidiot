@@ -13,6 +13,7 @@
 #include "VideoCompositionParameters.h"
 #include "IClip.h"
 #include "NodeEvent.h"
+#include "Render.h"
 #include "SequenceEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
@@ -37,11 +38,13 @@ Sequence::Sequence()
     ,   Node()
     ,   mName()
     ,   mDividerPosition(0)
+    ,   mFrozen(false)
     ,   mVideoTracks()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
     ,   mPosition(0)
+    ,   mRender()
 {
     VAR_DEBUG(this);
 }
@@ -54,11 +57,13 @@ Sequence::Sequence(wxString name)
     ,   Node()
     ,   mName(name)
     ,   mDividerPosition(0)
+    ,   mFrozen(false)
     ,   mVideoTracks()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
     ,   mPosition(0)
+    ,   mRender()
 {
     VAR_DEBUG(this);
 }
@@ -71,13 +76,16 @@ Sequence::Sequence(const Sequence& other)
     ,   Node()
     ,   mName(other.mName)
     ,   mDividerPosition(other.mDividerPosition)
+    ,   mFrozen(other.mFrozen)
     ,   mVideoTracks(other.mVideoTracks)
     ,   mAudioTracks(other.mAudioTracks)
     ,   mVideoTrackMap(other.mVideoTrackMap)
     ,   mAudioTrackMap(other.mVideoTrackMap)
     ,   mPosition(0)
+    ,   mRender()
 {
     VAR_DEBUG(this);
+    ASSERT(!mFrozen); // A frozen sequence should not be cloned
 }
 
 Sequence* Sequence::clone() const
@@ -167,8 +175,20 @@ AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
 // SEQUENCE SPECIFIC
 //////////////////////////////////////////////////////////////////////////
 
+void Sequence::setFrozen(bool frozen)
+{
+    mFrozen = frozen;
+    ProcessEvent(model::EventSequenceFrozen(mFrozen));
+}
+
+bool Sequence::isFrozen()
+{
+    return mFrozen;
+}
+
 void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 {
+    ASSERT(!mFrozen);
     UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
@@ -183,6 +203,7 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 
 void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 {
+    ASSERT(!mFrozen);
     UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
@@ -191,6 +212,7 @@ void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 }
 void Sequence::removeVideoTracks(Tracks tracks)
 {
+    ASSERT(!mFrozen);
     BOOST_FOREACH( TrackPtr track, tracks )
     {
         track->clean();
@@ -203,6 +225,7 @@ void Sequence::removeVideoTracks(Tracks tracks)
 }
 void Sequence::removeAudioTracks(Tracks tracks)
 {
+    ASSERT(!mFrozen);
     BOOST_FOREACH( TrackPtr track, tracks )
     {
         track->clean();
@@ -284,6 +307,21 @@ VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParamete
     return composition;
 }
 
+render::RenderPtr Sequence::getRender()
+{
+    if (!mRender)
+    {
+        mRender = boost::make_shared<model::render::Render>();
+    }
+    return mRender;
+}
+
+void Sequence::setRender(render::RenderPtr render)
+{
+    ASSERT(!mFrozen);
+    mRender = render;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IPROJECTVIEW
 //////////////////////////////////////////////////////////////////////////
@@ -305,6 +343,7 @@ void Sequence::setName(wxString name)
 
 void Sequence::updateTracks()
 {
+    ASSERT(!mFrozen);
     int index = 0;
     mVideoTrackMap.clear();
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
@@ -334,7 +373,8 @@ std::ostream& operator<<( std::ostream& os, const Sequence& obj )
         << obj.mDividerPosition          << '|'
         << obj.mVideoTracks              << '|'
         << obj.mAudioTracks              << '|'
-        << obj.mPosition;
+        << obj.mPosition                 << '|'
+        << obj.mRender;
     return os;
 }
 
@@ -357,6 +397,7 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
     {
         updateTracks();
     }
+    ar & mRender;
 }
 template void Sequence::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Sequence::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

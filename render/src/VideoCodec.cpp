@@ -63,6 +63,19 @@ VideoCodec& VideoCodec::addParameter(ICodecParameter& parameter)
     return *this;
 }
 
+std::list<ICodecParameterPtr> VideoCodec::getParameters()
+{
+    return mParameters;
+}
+
+void VideoCodec::setParameters( AVCodecContext* codec ) const
+{
+    BOOST_FOREACH( ICodecParameterPtr parameter, mParameters )
+    {
+        parameter->set(codec);
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

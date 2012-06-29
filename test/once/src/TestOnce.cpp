@@ -8,6 +8,9 @@
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "HelperApplication.h"
+#include "RenderDialog.h"
+#include "Dialog.h"
+#include "UtilLog.h"
 #include "ids.h"
 
 namespace test {
@@ -39,11 +42,15 @@ void TestOnce::testOnce()
     // PrepareSnapping(true);
     StartTestSuite();
     triggerMenu(ID_RENDERSEQUENCE);
+    waitForIdle();
+    gui::Dialog::get().setSaveFile("D:/out.avi");
+    ClickTopLeft(gui::RenderDialog::get().getFileButton());
+
     //model::render::RenderPtr render = boost::make_shared<model::render::Render>(getSequence());
     //gui::RenderDialog dialog(render);
     //dialog.ShowModal();
     //render->generate();
-    pause();
+    pause(600000);
 }
 
 } // namespace

@@ -14,12 +14,12 @@ namespace model { namespace render {
 DECLAREENUM(AudioCodecParameterType, \
     BitRate);
 
-wxString getHumandReadibleName(AudioCodecParameterType id);
+wxString getHumanReadibleName(AudioCodecParameterType id);
 
 struct AudioCodecParameterBitrate
     :   public CodecParameterInt<AudioCodecParameterBitrate,AudioCodecParameterType,BitRate>
 {
-    void set(AVCodecContext* codec) override {};
+    void set(AVCodecContext* codec) override;
 };
 
 //    /* audio only */

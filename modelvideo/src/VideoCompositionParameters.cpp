@@ -11,7 +11,7 @@ namespace model {
 
 VideoCompositionParameters::VideoCompositionParameters()
     :   mBoundingBox(0,0)
-    ,   mDrawBoundingBox(Config::ReadBool(Config::sPathShowBoundingBox))
+    ,   mDrawBoundingBox(false)
 {
 }
 

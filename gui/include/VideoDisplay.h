@@ -125,6 +125,7 @@ private:
 
     int mWidth;
     int mHeight;
+    bool mDrawBoundingBox;
 
     boost::scoped_ptr<boost::thread> mVideoBufferThreadPtr;
     void videoBufferThread();

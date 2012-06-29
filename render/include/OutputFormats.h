@@ -22,6 +22,7 @@ public:
 
     static std::list<wxString> getNames();
     static OutputFormatPtr getByName(wxString name);
+    static OutputFormatPtr getByExtension(wxString extension);
 
     static OutputFormatPtr getDefault();
 

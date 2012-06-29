@@ -246,7 +246,14 @@ pts Clip::getGenerationProgress() const
 
 void Clip::setGenerationProgress(pts progress)
 {
-    if (mGeneratedPts != progress)
+    // Note: the condition "Config::getShowDebugInfo()" was added to avoid
+    //       generating these events in case a sequence is being rendered.
+    //       If a sequence is rendered, these events generate updates of the
+    //       sequence's timeline's view classes. That, in turn, causes all
+    //       sorts of threading issues. In general: When a sequence is rendered
+    //       and no changes to the sequence (or its tracks/clips/etc.) may be
+    //       made. That includes the 'render progress' event.
+    if (Config::getShowDebugInfo() && mGeneratedPts != progress)
     {
         mGeneratedPts = progress;
         ProcessEvent(DebugEventRenderProgress(mGeneratedPts));

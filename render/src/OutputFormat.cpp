@@ -1,12 +1,14 @@
 #include "OutputFormat.h"
 
-#include <boost/make_shared.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-#include "UtilSerializeWxwidgets.h"
+#include <boost/serialization/list.hpp>
+#include <boost/make_shared.hpp>
 #include "AudioCodec.h"
-#include "VideoCodec.h"
 #include "UtilLog.h"
+#include "UtilLogStl.h"
+#include "UtilSerializeWxwidgets.h"
+#include "VideoCodec.h"
 
 namespace model { namespace render {
 
@@ -17,27 +19,27 @@ namespace model { namespace render {
 OutputFormat::OutputFormat()
     :   mName()
     ,   mLongName()
-    ,   mExtension()
-    ,   mAudioCodec()
-    ,   mVideoCodec()
+    ,   mExtensions()
+    ,   mDefaultAudioCodec(CODEC_ID_NONE)
+    ,   mDefaultVideoCodec(CODEC_ID_NONE)
 {
 }
 
-OutputFormat::OutputFormat(wxString name, wxString longname, wxString extension, AudioCodecPtr audiocodec, VideoCodecPtr videocodec)
+OutputFormat::OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, CodecID defaultaudiocodec, CodecID defaultvideocodec)
     :   mName(name)
     ,   mLongName(longname)
-    ,   mExtension(extension)
-    ,   mAudioCodec(audiocodec)
-    ,   mVideoCodec(videocodec)
+    ,   mExtensions(extensions)
+    ,   mDefaultAudioCodec(defaultaudiocodec)
+    ,   mDefaultVideoCodec(defaultvideocodec)
 {
 }
 
 OutputFormat::OutputFormat(const OutputFormat& other)
     :   mName(other.mName)
     ,   mLongName(other.mLongName)
-    ,   mExtension(other.mExtension)
-    ,   mAudioCodec(other.mAudioCodec ? make_cloned<AudioCodec>(other.mAudioCodec) : AudioCodecPtr())
-    ,   mVideoCodec(other.mVideoCodec ? make_cloned<VideoCodec>(other.mVideoCodec) : VideoCodecPtr())
+    ,   mExtensions(other.mExtensions)
+    ,   mDefaultAudioCodec(other.mDefaultAudioCodec)
+    ,   mDefaultVideoCodec(other.mDefaultVideoCodec)
 {
 }
 
@@ -70,19 +72,19 @@ wxString OutputFormat::getLongName() const
     return mLongName;
 }
 
-wxString OutputFormat::getExtension() const
+std::list<wxString> OutputFormat::getExtensions() const
 {
-    return mExtension;
+    return mExtensions;
 }
 
-AudioCodecPtr OutputFormat::getAudioCodec() const
+CodecID OutputFormat::getDefaultAudioCodec() const
 {
-    return mAudioCodec;
+    return mDefaultAudioCodec;
 }
 
-VideoCodecPtr OutputFormat::getVideoCodec() const
+CodecID OutputFormat::getDefaultVideoCodec() const
 {
-    return mVideoCodec;
+    return mDefaultVideoCodec;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,12 +93,12 @@ VideoCodecPtr OutputFormat::getVideoCodec() const
 
 std::ostream& operator<<( std::ostream& os, const OutputFormat& obj )
 {
-    os  << &obj            << '|'
-        << obj.mName       << '|'
-        << obj.mLongName   << '|'
-        << obj.mExtension  << '|'
-        << obj.mAudioCodec << '|'
-        << obj.mVideoCodec;
+    os  << &obj                   << '|'
+        << obj.mName              << '|'
+        << obj.mLongName          << '|'
+        << obj.mExtensions        << '|'
+        << obj.mDefaultAudioCodec << '|'
+        << obj.mDefaultVideoCodec;
     return os;
 }
 
@@ -109,9 +111,9 @@ void OutputFormat::serialize(Archive & ar, const unsigned int version)
 {
     ar & mName;
     ar & mLongName;
-    ar & mExtension;
-    ar & mAudioCodec;
-    ar & mVideoCodec;
+    ar & mExtensions;
+    ar & mDefaultAudioCodec;
+    ar & mDefaultVideoCodec;
 }
 template void OutputFormat::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void OutputFormat::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

@@ -49,6 +49,11 @@ void Details::onHide()
 // SET THE CURRENTLY FOCUSED ITEM
 //////////////////////////////////////////////////////////////////////////
 
+void Details::showNone()
+{
+    reset();
+}
+
 void Details::onSelectionChanged()
 {
     std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();

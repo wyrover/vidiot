@@ -1,11 +1,13 @@
 #ifndef MODEL_RENDER_H
 #define MODEL_RENDER_H
 
+#include <wx/event.h>
 #include <wx/filename.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
+#include "UtilEvent.h"
 
 namespace model {
 
@@ -14,6 +16,9 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 typedef boost::weak_ptr<Sequence> WeakSequencPtr;
 
 namespace render {
+
+DECLARE_EVENT(EVENT_RENDER_PROGRESS, EventRenderProgress, int);
+DECLARE_EVENT(EVENT_RENDER_ACTIVE, EventRenderActive, bool);
 
 class Render;
 typedef boost::shared_ptr<Render> RenderPtr;
@@ -25,6 +30,7 @@ class OutputFormat;
 typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
 
 class Render
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
 {
 public:
 
@@ -37,22 +43,30 @@ public:
     /// dependency) to other parts (particularly, to avoid integer types troubles).
     static void initialize();
 
-    Render(model::SequencePtr sequence);
+    Render();
 
 	virtual ~Render();
 
-    void generate();
+    void generate(SequencePtr sequence);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    OutputFormatPtr getOutputFormat();
+    OutputFormatPtr getOutputFormat() const;
     void setOutputFormat(OutputFormatPtr format);
+
+    VideoCodecPtr getVideoCodec() const;
+    void setVideoCodec(VideoCodecPtr codec);
+
+    AudioCodecPtr getAudioCodec() const;
+    void setAudioCodec(AudioCodecPtr codec);
+
+    wxFileName getFileName() const;
+    void setFileName(wxFileName filename);
 
 private:
 
-    model::WeakSequencPtr mSequence;
     wxFileName mFileName;
     OutputFormatPtr mOutputFormat;
     VideoCodecPtr mVideoCodec;

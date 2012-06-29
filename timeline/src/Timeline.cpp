@@ -22,6 +22,7 @@
 #include "Scrolling.h"
 #include "Selection.h"
 #include "Sequence.h"
+#include "SequenceEvent.h"
 #include "SequenceView.h"
 #include "State.h"
 #include "Tooltip.h"
@@ -76,8 +77,13 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
+    mSequence->Bind(model::EVENT_SEQUENCE_FROZEN, &Timeline::onSequenceFrozen, this);
+
     // Ensure that for newly opened timelines the initial position is ok
     getSequenceView().resetDividerPosition();
+
+    // Ensure that (re)opening a frozen sequence results in a non-editable timeline
+    freeze();
 }
 
 Timeline::~Timeline()
@@ -85,6 +91,8 @@ Timeline::~Timeline()
     VAR_DEBUG(this);
 
     deinit();
+
+    mSequence->Unbind(model::EVENT_SEQUENCE_FROZEN, &Timeline::onSequenceFrozen, this);
 
     Unbind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
@@ -285,7 +293,16 @@ const Details& Timeline::getDetails() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Timeline::onSequenceFrozen( model::EventSequenceFrozen& event )
+{
+    freeze();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// WX EVENTS
 //////////////////////////////////////////////////////////////////////////
 
 void Timeline::onSize(wxSizeEvent& event)
@@ -334,6 +351,10 @@ void Timeline::onPaint( wxPaintEvent &event )
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
+    // The sequence is locked (for instance, for rendering). This assert is added to detect inadvertent edits to the sequence.
+    // These inadvertent edits not only can cause output problems, but also cause crashes due to multi threading. For instance,
+    // accessing wxConfigBase from two threads.
+    ASSERT(!getSequence()->isFrozen());
     Refresh(false);
     event.Skip();
 }
@@ -393,6 +414,21 @@ void Timeline::resize()
 void Timeline::draw(wxBitmap& bitmap) const
 {
     FATAL;
+}
+
+void Timeline::freeze()
+{
+    if (getSequence()->isFrozen())
+    {
+        getDetails().showNone();
+        getPlayer()->stop();
+        // todo disable the menu for this sequence
+        Disable();
+    }
+    else
+    {
+        Enable();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

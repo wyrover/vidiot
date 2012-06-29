@@ -9,30 +9,12 @@
 #include <boost/shared_ptr.hpp>
 #include <wx/window.h>
 #include "UtilCloneable.h"
+#include "UtilEnumSelector.h"
+#include "ICodecParameter.h"
 
 struct AVCodecContext;
 
 namespace model { namespace render {
-
-struct ICodecParameter;
-typedef boost::shared_ptr<ICodecParameter> ICodecParameterPtr;
-
-struct ICodecParameter
-    :   public ICloneable
-{
-    virtual ICodecParameter* clone() const = 0;
-    virtual wxString getName() const = 0;
-    virtual wxWindow* makeWidget(wxWindow* parent) = 0;
-    virtual void destroyWidget() = 0;
-    virtual void set(AVCodecContext* codec) = 0;
-    virtual void log( std::ostream& os ) const = 0;
-
-    friend std::ostream& operator<<( std::ostream& os, const ICodecParameter& obj )
-    {
-        obj.log(os);
-        return os;
-    }
-};
 
 template <class MOSTDERIVED, class IDTYPE, class TYPE>
 class CodecParameter
@@ -47,9 +29,10 @@ public:
     explicit CodecParameter(IDTYPE id)
         :   mId(id)
         ,   mEnabled(false)
-        ,   mDefault()
-        ,   mMinimum()
-        ,   mMaximum()
+        ,   mDefault(0)
+        ,   mMinimum(std::numeric_limits<int>::max())
+        ,   mMaximum(std::numeric_limits<int>::min())
+        ,   mValue(0)
         ,   mWindow(0)    {
     }
 
@@ -59,6 +42,7 @@ public:
         ,   mDefault(other.mDefault)
         ,   mMinimum(other.mMinimum)
         ,   mMaximum(other.mMaximum)
+        ,   mValue(other.mValue)
         ,   mWindow(0)
     {
     }
@@ -85,7 +69,7 @@ public:
     inline CodecParameter& setDefault(TYPE value)
     {
         mDefault = value;
-        mValue = value;
+        setValue(value);
         return *this;
     }
 
@@ -106,7 +90,7 @@ public:
         return mId;
     }
 
-    bool enabled()
+    inline bool getEnabled() const
     {
         return mEnabled;
     }
@@ -129,6 +113,8 @@ public:
     void setValue(TYPE value)
     {
         mValue = value;
+        ASSERT_LESS_THAN_EQUALS(mValue,mMaximum);
+        ASSERT_MORE_THAN_EQUALS(mValue,mMinimum);
     }
 
     TYPE getValue() const
@@ -138,7 +124,7 @@ public:
 
     wxString getName() const override
     {
-        return getHumandReadibleName(mId);
+        return getHumanReadibleName(mId);
     }
 
 protected:
@@ -210,6 +196,7 @@ struct CodecParameterInt
         spin->SetRange(getMinimum(),getMaximum());
         spin->SetValue(getValue());
         mWindow = spin;
+        mWindow->Enable(getEnabled());
         spin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
         return mWindow;
     }
@@ -222,7 +209,49 @@ struct CodecParameterInt
     void onSpinChanged(wxSpinEvent& event)
     {
         wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(mWindow);
-        setValue(spin->GetValue());
+        int newval = event.GetPosition();
+        setValue(event.GetPosition());
+        event.Skip();
+    }
+};
+
+typedef boost::bimap<int,wxString> MappingType;
+template <typename MOSTDERIVED, typename IDTYPE, IDTYPE ID, MappingType& NAMEMAPPING >
+struct CodecParameterEnum
+    :   public CodecParameter<MOSTDERIVED,IDTYPE,int>
+{
+    CodecParameterEnum()
+        :   CodecParameter(ID)
+    {
+        BOOST_FOREACH( MappingType::left_reference item, NAMEMAPPING.left )
+        {
+            if (item.first < getMinimum()) { setMinimum(item.first); }
+            if (item.first > getMaximum()) { setMaximum(item.first); }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // ICodecParameter
+    //////////////////////////////////////////////////////////////////////////
+
+    wxWindow* makeWidget(wxWindow *parent) override
+    {
+        EnumSelector<int>* selector = new EnumSelector<int>(parent, NAMEMAPPING, getDefault());
+        selector->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
+        mWindow = selector;
+        mWindow->Enable(getEnabled());
+        return mWindow;
+    }
+    void destroyWidget() override
+    {
+        EnumSelector<int>* selector = static_cast<EnumSelector<int>*>(mWindow);
+        selector->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
+    }
+
+    void onChoiceChanged(wxCommandEvent& event)
+    {
+        EnumSelector<int>* selector = static_cast< EnumSelector<int>* >(mWindow);
+        setValue(selector->getValue());
         event.Skip();
     }
 };

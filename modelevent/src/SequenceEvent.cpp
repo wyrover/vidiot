@@ -32,4 +32,6 @@ std::ostream& operator<<( std::ostream& os, const TrackChange& obj )
     return os;
 }
 
+DEFINE_EVENT(EVENT_SEQUENCE_FROZEN,      EventSequenceFrozen,      bool);
+
 } // namespace
