@@ -16,7 +16,7 @@ Worker::Worker()
 ,   mFifo(sMaximumBufferedWork)
 {
     sCurrent = this;
-    //mThread.reset(new boost::thread(boost::bind(&Worker::thread,this)));
+    mThread.reset(new boost::thread(boost::bind(&Worker::thread,this)));
 }
 
 Worker::~Worker()
@@ -37,7 +37,6 @@ Worker& Worker::get()
     ASSERT(sCurrent);
     return *sCurrent;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // NEW WORK

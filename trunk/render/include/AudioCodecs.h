@@ -7,7 +7,9 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
+#include <wx/string.h>
 #include <map>
+#include <boost/bimap.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace model { namespace render {
@@ -23,7 +25,11 @@ class AudioCodecs
 {
 public:
     static void initialize();
-    static void add(AudioCodec codec);
+    static void add(wxString name, AudioCodec codec);
+
+    static boost::bimap<int,wxString> mapToName;
+
+    static AudioCodecPtr getDefault();
 
     /// \return 0 if a codec with the given id was not found
     /// This method finds the given codec in the registered list of codecs

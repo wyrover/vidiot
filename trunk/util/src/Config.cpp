@@ -2,6 +2,7 @@
 
 #include <wx/fileconf.h>
 #include <wx/filename.h>
+#include <wx/thread.h>
 #include "Enums.h"
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
@@ -27,6 +28,9 @@ T readWithoutDefault(wxString path)
 {
     T result = T();
     T dummy = T();
+    // Instead of locking, ensure that wxConfigBase is only accessed from the main thread.
+    // All multi thread access: handle via a local cache.
+    ASSERT(wxThread::IsMain());
     bool found = wxConfigBase::Get()->Read(path, &result, dummy);
     ASSERT(found)(path);
     return result;
@@ -51,6 +55,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill).c_str());
     setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
     setDefault(Config::sPathLastOpened, "");
+    setDefault(Config::sPathDefaultExtension, "avi");
     setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
     setDefault(Config::sPathMarkerBeginAddition, 0);
@@ -117,6 +122,7 @@ const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
 const wxString Config::sPathShowBoundingBox         ("/View/BoundingBox");
 const wxString Config::sPathAutoLoadEnabled         ("/Project/AutoLoad/Enabled");
 const wxString Config::sPathLastOpened              ("/Project/LastOpened");
+const wxString Config::sPathDefaultExtension        ("/File/DefaultExtension");
 const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
 const wxString Config::sPathLogLevelAvcodec         ("/Debug/LogLevelAvcodec");
 const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");

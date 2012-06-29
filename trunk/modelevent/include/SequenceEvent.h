@@ -43,6 +43,8 @@ DECLARE_EVENT(EVENT_REMOVE_VIDEO_TRACK,   EventRemoveVideoTracks,   TrackChange)
 DECLARE_EVENT(EVENT_ADD_AUDIO_TRACK,      EventAddAudioTracks,      TrackChange);
 DECLARE_EVENT(EVENT_REMOVE_AUDIO_TRACK,   EventRemoveAudioTracks,   TrackChange);
 
+DECLARE_EVENT(EVENT_SEQUENCE_FROZEN,      EventSequenceFrozen,      bool);
+
 } // namespace
 
 #endif // MODEL_SEQUENCE_EVENT_H

@@ -57,6 +57,7 @@ public:
     static const wxString sPathShowBoundingBox;
     static const wxString sPathAutoLoadEnabled;
     static const wxString sPathLastOpened;
+    static const wxString sPathDefaultExtension;
     static const wxString sPathLogLevel;
     static const wxString sPathLogLevelAvcodec;
     static const wxString sPathShowDebugInfoOnWidgets;

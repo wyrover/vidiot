@@ -26,6 +26,11 @@ typedef std::list<TrackPtr> Tracks;
 class Sequence;
 typedef boost::shared_ptr<Sequence> SequencePtr;
 
+namespace render {
+    class Render;
+    typedef boost::shared_ptr<Render> RenderPtr;
+}
+
 class Sequence
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
@@ -72,6 +77,9 @@ public:
     // SEQUENCE SPECIFIC
     //////////////////////////////////////////////////////////////////////////
 
+    void setFrozen(bool frozen);
+    bool isFrozen();
+
     void addVideoTracks(Tracks tracks, TrackPtr position = TrackPtr());
     void addAudioTracks(Tracks tracks, TrackPtr position = TrackPtr());
     void removeVideoTracks(Tracks tracks);
@@ -90,6 +98,9 @@ public:
     std::set<IClipPtr> getSelectedClips();
 
     VideoCompositionPtr getVideoComposition(const VideoCompositionParameters& parameters);
+
+    render::RenderPtr getRender();
+    void setRender(render::RenderPtr render);
 
     //////////////////////////////////////////////////////////////////////////
     // NODE
@@ -111,12 +122,14 @@ protected:
 private:
 
     wxString mName;
-    pixel mDividerPosition;
+    bool mFrozen;
     Tracks mVideoTracks;
     Tracks mAudioTracks;
     std::map<int, TrackPtr> mVideoTrackMap;
     std::map<int, TrackPtr> mAudioTrackMap;
+    pixel mDividerPosition;
     pts mPosition;
+    render::RenderPtr mRender;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

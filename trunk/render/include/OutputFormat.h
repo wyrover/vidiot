@@ -1,6 +1,12 @@
 #ifndef RENDER_OUTPUT_FORMAT_H
 #define RENDER_OUTPUT_FORMAT_H
 
+extern "C" {
+#pragma warning(disable:4244)
+#include <avcodec.h>
+#pragma warning(default:4244)
+}
+
 #include <wx/string.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
@@ -10,10 +16,6 @@
 
 namespace model { namespace render {
 
-class AudioCodec;
-typedef boost::shared_ptr<AudioCodec> AudioCodecPtr;
-class VideoCodec;
-typedef boost::shared_ptr<VideoCodec> VideoCodecPtr;
 class OutputFormat;
 typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
 
@@ -40,7 +42,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     OutputFormat();
-    explicit OutputFormat(wxString name, wxString longname, wxString extension, AudioCodecPtr audiocodec, VideoCodecPtr videocodec);
+    explicit OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, CodecID defaultaudiocodec, CodecID defaultvideocodec);
     OutputFormat(const OutputFormat& other);
     virtual ~OutputFormat();
 
@@ -51,9 +53,9 @@ public:
     OutputFormat& setName(wxString name);
     wxString getName() const;
     wxString getLongName() const;
-    wxString getExtension() const;
-    AudioCodecPtr getAudioCodec() const;
-    VideoCodecPtr getVideoCodec() const;
+    std::list<wxString> getExtensions() const;
+    CodecID getDefaultAudioCodec() const;
+    CodecID getDefaultVideoCodec() const;
 
 private:
 
@@ -63,10 +65,10 @@ private:
 
     wxString mName;
     wxString mLongName;
-    wxString mExtension;
+    std::list<wxString> mExtensions;
 
-    AudioCodecPtr mAudioCodec;
-    VideoCodecPtr mVideoCodec;
+    CodecID mDefaultAudioCodec;
+    CodecID mDefaultVideoCodec;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

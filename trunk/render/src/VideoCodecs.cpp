@@ -11,9 +11,14 @@ namespace model { namespace render {
 VideoCodecMap VideoCodecs::sVideoCodecs;
 
 // static
-void VideoCodecs::add(VideoCodec codec)
+boost::bimap<int,wxString> VideoCodecs::mapToName;
+
+// static
+void VideoCodecs::add(wxString name, VideoCodec codec)
 {
     sVideoCodecs[codec.getId()] = boost::make_shared<VideoCodec>(codec);
+    typedef boost::bimap<int, wxString> bimap;
+    mapToName.insert( bimap::value_type(codec.getId(), name) );
 }
 
 // static
@@ -21,31 +26,67 @@ void VideoCodecs::initialize()
 {
     sVideoCodecs.clear();
 
-    add(VideoCodec(CODEC_ID_A64_MULTI)
-        .addParameter(VideoCodecParameterBitrate().enable().setDefault(10000).setMinimum(500).setMaximum(40000))
-        .addParameter(VideoCodecParameterBFrames().enable().setDefault(2).setMinimum(0).setMaximum(100))
+    add(_("No video"),
+        VideoCodec(CODEC_ID_NONE));
+
+    add(_("MPEG 2 video"),
+        VideoCodec(CODEC_ID_MPEG2VIDEO).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterBFrames().enable().setMinimum(0).setMaximum(100).setDefault(0))
         );
 
-    add(VideoCodec(CODEC_ID_MPEG2VIDEO).
-        addParameter(VideoCodecParameterBitrate().enable().setDefault(10000).setMinimum(500).setMaximum(40000))
+    add(_("MPEG 1 video"),
+        VideoCodec(CODEC_ID_MPEG1VIDEO).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000)).
+        addParameter(VideoCodecParameterMacroBlockDecision().enable().setDefault(FF_MB_DECISION_RD)) // Needed to avoid using macroblocks in which some coeffs overflow. This does not happen with normal video, it just happens here as the motion of the chroma plane does not match the luma plane. (todo remove this, this was part of the encoding example that i used, however I now use it to test the enum parameter handling...)
         );
 
-    add(VideoCodec(CODEC_ID_MPEG1VIDEO).
-        addParameter(VideoCodecParameterBitrate().enable().setDefault(10000).setMinimum(500).setMaximum(40000))
+    add(_("DV video"),
+        VideoCodec(CODEC_ID_DVVIDEO).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
         );
 
-    //if (video_codec->codec_id == CODEC_ID_MPEG2VIDEO)
-    //{
-    //    video_codec->max_b_frames = 2; // just for testing, we also add B frames
-    //}
-    //if (video_codec->codec_id == CODEC_ID_MPEG1VIDEO)
-    //{
-    //    // Needed to avoid using macroblocks in which some coeffs overflow.
-    //    // This does not happen with normal video, it just happens here as
-    //    // the motion of the chroma plane does not match the luma plane.
-    //    video_codec->mb_decision=2;
-    //}
+    add(_("H264 video"),
+        VideoCodec(CODEC_ID_H264).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
+        );
 
+    add(_("Motion JPEG"),
+        VideoCodec(CODEC_ID_MJPEG).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
+        );
+
+    add(_("MPEG 4"),
+        VideoCodec(CODEC_ID_MPEG4).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
+        );
+
+    add(_("MPEG 4 version 3"),
+        VideoCodec(CODEC_ID_MSMPEG4V3).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
+        );
+
+    add(_("RAW video"),
+        VideoCodec(CODEC_ID_RAWVIDEO).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
+        );
+
+    add(_("Theora"),
+        VideoCodec(CODEC_ID_THEORA).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
+        );
+
+    add(_("VP8"),
+        VideoCodec(CODEC_ID_VP8).
+        addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000))
+        );
+
+}
+
+// static
+VideoCodecPtr VideoCodecs::getDefault()
+{
+    return find(CODEC_ID_NONE);
 }
 
 // static

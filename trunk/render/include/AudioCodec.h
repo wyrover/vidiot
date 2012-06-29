@@ -43,10 +43,8 @@ public:
 
     CodecID getId() const;
     AudioCodec& addParameter(ICodecParameter& parameter);
-
-    std::list<ICodecParameterPtr> getParameters() { return mParameters; }
-
-    //Audio_codec->max_b_frames = 2; // just for testing, we also add B frames
+    std::list<ICodecParameterPtr> getParameters();
+    void setParameters( AVCodecContext* codec ) const;
 
 private:
 

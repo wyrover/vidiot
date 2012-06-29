@@ -1,14 +1,15 @@
 #include "AudioCodec.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include "AudioCodecParameter.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
-#include "AudioCodecParameter.h"
 
 namespace model { namespace render {
 
@@ -56,6 +57,19 @@ AudioCodec& AudioCodec::addParameter(ICodecParameter& parameter)
 {
     mParameters.push_back(make_cloned_ptr<ICodecParameter>(parameter));
     return *this;
+}
+
+std::list<ICodecParameterPtr> AudioCodec::getParameters()
+{
+    return mParameters;
+}
+
+void AudioCodec::setParameters( AVCodecContext* codec ) const
+{
+    BOOST_FOREACH( ICodecParameterPtr parameter, mParameters )
+    {
+        parameter->set(codec);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

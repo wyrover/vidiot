@@ -16,7 +16,6 @@
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
-#include "Render.h" // todo remove this or the dialog
 #include "RenderDialog.h"
 #include "Selection.h"
 #include "Sequence.h"
@@ -254,9 +253,10 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 
 void MenuHandler::onRenderSequence(wxCommandEvent& event)
 {
-    model::render::RenderPtr render = boost::make_shared<model::render::Render>(getSequence());
-    gui::RenderDialog dialog(render);
+    getSequence()->setFrozen(true);
+    gui::RenderDialog dialog(getSequence());
     dialog.ShowModal();
+    //getSequence()->setFrozen(false);
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& event)

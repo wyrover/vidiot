@@ -131,9 +131,23 @@ void Dialog::setDir(wxString dir)
     mDir = boost::optional<wxString>(dir);
 }
 
-wxString Dialog::getDir( const wxString & message, const wxString & default )
+wxString Dialog::getDir( const wxString & message, const wxString & default, wxWindow* parent )
 {
-    return RunInMainThread<wxString>(mDir, boost::bind(&wxDirSelector, message, default, wxDD_DEFAULT_STYLE, wxDefaultPosition, &Window::get())).getResult();
+    if (!parent) { parent = &Window::get(); }
+    return RunInMainThread<wxString>(mDir, boost::bind(&wxDirSelector, message, default, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent)).getResult();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void Dialog::setSaveFile(wxString file)
+{
+    mSaveFile = boost::optional<wxString>(file);
+}
+
+wxString Dialog::getSaveFile( const wxString& message, const wxString& filetypes, const wxString& defaultpath, const wxString& defaultfilename, const wxString& defaultextension, wxWindow* parent )
+{
+    if (!parent) { parent = &Window::get(); }
+    return RunInMainThread<wxString>(mSaveFile, boost::bind(&wxFileSelector, message, defaultpath, defaultfilename, defaultextension, filetypes, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent, wxDefaultCoord, wxDefaultCoord )).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,8 +157,9 @@ void Dialog::setFiles(std::list<wxString> files)
     mFiles = boost::optional<std::list< wxString > >(files);
 }
 
-wxStrings getFilesList( const wxString& message, const wxString& filetypes )
+wxStrings getFilesList( const wxString& message, const wxString& filetypes, wxWindow* parent )
 {
+    if (!parent) { parent = &Window::get(); }
     wxStrings result;
     wxString wildcards = wxString::Format(filetypes,wxFileSelectorDefaultWildcardStr,wxFileSelectorDefaultWildcardStr);
     wxFileDialog dialog(&gui::Window::get(), message, wxEmptyString, wxEmptyString, wildcards, wxFD_OPEN|wxFD_MULTIPLE);
@@ -160,9 +175,10 @@ wxStrings getFilesList( const wxString& message, const wxString& filetypes )
     return result;
 }
 
-wxStrings Dialog::getFiles( const wxString& message, const wxString& filetypes )
+wxStrings Dialog::getFiles( const wxString& message, const wxString& filetypes, wxWindow* parent )
 {
-    return RunInMainThread<wxStrings>(mFiles, boost::bind(getFilesList, message, filetypes)).getResult();
+    if (!parent) { parent = &Window::get(); }
+    return RunInMainThread<wxStrings>(mFiles, boost::bind(getFilesList, message, filetypes, parent)).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -172,9 +188,10 @@ void Dialog::setText(wxString text)
     mText = boost::optional<wxString>(text);
 }
 
-wxString Dialog::getText( wxString title, wxString message, wxString default )
+wxString Dialog::getText( wxString title, wxString message, wxString default, wxWindow* parent )
 {
-    return RunInMainThread<wxString>(mText, boost::bind(&wxGetTextFromUser, message, title, default, &Window::get(), wxDefaultCoord, wxDefaultCoord, true)).getResult();
+    if (!parent) { parent = &Window::get(); }
+    return RunInMainThread<wxString>(mText, boost::bind(&wxGetTextFromUser, message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true)).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -184,9 +201,10 @@ void Dialog::setConfirmation(int button)
     mButton = boost::optional<int>(button);
 }
 
-int Dialog::getConfirmation( wxString title, wxString message, int buttons )
+int Dialog::getConfirmation( wxString title, wxString message, int buttons, wxWindow* parent )
 {
-    return RunInMainThread<int>(mButton, boost::bind(&wxMessageBox, message, title, buttons, &Window::get(), wxDefaultCoord, wxDefaultCoord)).getResult();
+    if (!parent) { parent = &Window::get(); }
+    return RunInMainThread<int>(mButton, boost::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord)).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////

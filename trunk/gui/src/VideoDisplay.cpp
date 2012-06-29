@@ -6,13 +6,14 @@
 #include <wx/dcbuffer.h>
 #include <boost/make_shared.hpp>
 #include <portaudio.h>
+#include "Config.h"
 #include "Convert.h"
 #include "Layout.h"
 #include "Properties.h"
 #include "Sequence.h"
 #include "UtilLog.h"
-#include "VideoDisplayEvent.h"
 #include "VideoCompositionParameters.h"
+#include "VideoDisplayEvent.h"
 
 namespace gui {
 
@@ -48,6 +49,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
 :   wxControl(parent, wxID_ANY)
 ,	mWidth(200)
 ,	mHeight(100)
+,   mDrawBoundingBox(false)
 ,   mPlaying(false)
 ,	mProducer(producer)
 ,   mVideoFrames(20)
@@ -103,6 +105,9 @@ void VideoDisplay::play()
 
     // Ensure that the to-be-started threads do not immediately stop
     mAbortThreads = false;
+
+    // Re-read every time the playback is restarted
+    mDrawBoundingBox = Config::ReadBool(Config::sPathShowBoundingBox);
 
     // SoundTouch must be initialized before starting the audio buffer thread
     mSoundTouch.setSampleRate(mAudioSampleRate);
@@ -196,7 +201,7 @@ void VideoDisplay::moveTo(pts position)
 
     { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
         boost::mutex::scoped_lock lock(mMutexDraw);
-        mCurrentVideoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+        mCurrentVideoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
         if (mCurrentVideoFrame)
         {
             mCurrentBitmap = mCurrentVideoFrame->getBitmap();

@@ -6,6 +6,7 @@ extern "C" {
 #pragma warning(default:4244)
 };
 
+#include <wx/tokenzr.h>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "UtilLog.h"
@@ -49,13 +50,27 @@ void OutputFormats::initialize()
             videocodec = VideoCodecs::find(format->video_codec);
             if (!videocodec) { unknowncodec = true; }
         }
-        if ((audiocodec || videocodec) && (!unknowncodec))
+        if ((audiocodec && videocodec) && (!unknowncodec))
         {
-            // todo for each extension in list of extensions...
-            add(OutputFormat(wxString(format->name),wxString(format->long_name),wxString(format->extensions),audiocodec,videocodec));
+            wxStringTokenizer tokenizer(format->extensions, ",");
+            std::list<wxString> extensions;
+            while ( tokenizer.HasMoreTokens() )
+            {
+                extensions.push_back(tokenizer.GetNextToken());
+            }
+            if (!extensions.empty())
+            {
+                add(OutputFormat(wxString(format->name),wxString(format->long_name),extensions,format->audio_codec,format->video_codec));
+            }
+
         }
     }
 }
+
+// todo use AVoutputformat->int(* 	query_codec )(enum CodecID id, int std_compliance)
+// Test if the given codec can be stored in this container.
+//1 if the codec is supported, 0 if it is not. A negative number if unknown.
+//
 
     // static
 OutputFormatList OutputFormats::getList()
@@ -82,6 +97,22 @@ OutputFormatPtr OutputFormats::getByName(wxString name)
         if (name.IsSameAs(format->getLongName()))
         {
             return make_cloned<OutputFormat>(format);
+        }
+    }
+    return OutputFormatPtr();
+}
+
+// static
+OutputFormatPtr OutputFormats::getByExtension(wxString extension)
+{
+    BOOST_FOREACH( OutputFormatPtr format, sOutputFormats )
+    {
+        BOOST_FOREACH( wxString formatextension, format->getExtensions() )
+        {
+            if (extension.IsSameAs(formatextension))
+            {
+                return make_cloned<OutputFormat>(format);
+            }
         }
     }
     return OutputFormatPtr();

@@ -16,9 +16,10 @@ DECLAREENUM(VideoCodecParameterType,
     BitRate,
     BitRateTolerance,
     GopSize,
-    BFrames);
+    BFrames,
+    MacroBlockDecision);
 
-wxString getHumandReadibleName(VideoCodecParameterType id);
+wxString getHumanReadibleName(VideoCodecParameterType id);
 
 struct VideoCodecParameterBitrate
     :   public CodecParameterInt<VideoCodecParameterBitrate,VideoCodecParameterType,BitRate>
@@ -35,7 +36,14 @@ struct VideoCodecParameterBitrateTolerance
 struct VideoCodecParameterBFrames
     :   public CodecParameterInt<VideoCodecParameterBFrames,VideoCodecParameterType,BFrames> // todo generalize makewidgetand destroywidget for int derives and the clone also???
 {
-    void set(AVCodecContext* codec) override {};
+    void set(AVCodecContext* codec) override;
+};
+
+extern boost::bimap<int,wxString> MacroBlockDecisionEnumMapping;
+struct VideoCodecParameterMacroBlockDecision
+    :   public CodecParameterEnum<VideoCodecParameterMacroBlockDecision,VideoCodecParameterType,MacroBlockDecision,MacroBlockDecisionEnumMapping>
+{
+    void set(AVCodecContext* codec) override;
 };
 
     //int flags;
