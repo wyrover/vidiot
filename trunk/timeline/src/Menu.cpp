@@ -253,10 +253,8 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 
 void MenuHandler::onRenderSequence(wxCommandEvent& event)
 {
-    getSequence()->setFrozen(true);
     gui::RenderDialog dialog(getSequence());
     dialog.ShowModal();
-    //getSequence()->setFrozen(false);
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& event)

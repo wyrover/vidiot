@@ -50,6 +50,8 @@ public:
     static const wxPen      sPreviewBackgroundPen;
     static const wxBrush    sPreviewBackgroundBrush;
 
+    static const wxColour   sTimelineRenderInProgressColour;
+
     static const wxPen      sTimeScaleDividerPen;
 
     static const wxPen      sCursorPen;
@@ -104,6 +106,8 @@ public:
     static wxFont* sDebugFont;
     static wxFont* sTimeScaleFont;
     static wxFont* sClipDescriptionFont;
+    static wxFont* sRenderInProgressFont;
+
 };
 
 } // namespace

@@ -64,6 +64,7 @@ void Worker::thread()
             w->execute();
             Window::get().setProcessingText(_(""));
         }
+        w.reset(); // Clear, so that unfreezing is done if needed
     }
 }
 
