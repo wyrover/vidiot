@@ -71,6 +71,8 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 {
     VAR_DEBUG(this);
 
+    SetBackgroundColour(Layout::sBackgroundColour);
+
     init();
 
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
@@ -320,6 +322,8 @@ void Timeline::onPaint( wxPaintEvent &event )
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
+    dc.Clear(); // This is required to have the unused area of the widget with the correct bg colour also
+
     if (mTransaction)
     {
         return;
@@ -328,6 +332,11 @@ void Timeline::onPaint( wxPaintEvent &event )
     wxPoint scroll = getScrolling().getOffset();
 
     wxBitmap bitmap = getSequenceView().getBitmap();
+    if (getSequence()->isFrozen())
+    {
+        bitmap = bitmap.ConvertToDisabled(64);
+    }
+
     wxMemoryDC dcBmp(bitmap);
 
     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
@@ -339,6 +348,15 @@ void Timeline::onPaint( wxPaintEvent &event )
         int h = upd.GetH();
         dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
         upd++;
+    }
+
+    if (getSequence()->isFrozen())
+    {
+        wxString progressText(_("Render in progress"));
+        dc.SetTextForeground(Layout::sTimelineRenderInProgressColour);
+        dc.SetFont(*Layout::sRenderInProgressFont);
+        wxSize textSize = dc.GetTextExtent(progressText);
+        dc.DrawText(progressText, (GetSize().GetWidth() - textSize.GetWidth()) / 2, (bitmap.GetHeight() - textSize.GetHeight()) / 2);
     }
 
     getDrag().draw(dc);
@@ -429,6 +447,7 @@ void Timeline::freeze()
     {
         Enable();
     }
+    Refresh(false);
 }
 
 //////////////////////////////////////////////////////////////////////////

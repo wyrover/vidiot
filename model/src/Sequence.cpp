@@ -177,13 +177,19 @@ AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
 
 void Sequence::setFrozen(bool frozen)
 {
-    mFrozen = frozen;
-    ProcessEvent(model::EventSequenceFrozen(mFrozen));
+    bool wasFrozen = isFrozen();
+    mFrozen += (frozen ? +1 : -1);
+    ASSERT_MORE_THAN_EQUALS_ZERO(mFrozen);
+    VAR_DEBUG(frozen)(mFrozen);
+    if (wasFrozen != isFrozen())
+    {
+        ProcessEvent(model::EventSequenceFrozen(isFrozen()));
+    }
 }
 
 bool Sequence::isFrozen()
 {
-    return mFrozen;
+    return mFrozen > 0;
 }
 
 void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)

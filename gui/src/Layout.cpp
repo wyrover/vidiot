@@ -42,6 +42,8 @@ const wxColour	Layout::sPreviewBackgroundColour (*wxBLACK);
 const wxPen     Layout::sPreviewBackgroundPen    (Layout::sPreviewBackgroundColour);
 const wxBrush   Layout::sPreviewBackgroundBrush  (Layout::sPreviewBackgroundColour,wxBRUSHSTYLE_SOLID);
 
+const wxColour  Layout::sTimelineRenderInProgressColour(*wxRED);
+
 const wxPen     Layout::sTimeScaleDividerPen     (*wxBLACK, 1);
 
 const wxPen     Layout::sCursorPen               (*wxRED, 1);
@@ -94,6 +96,7 @@ wxFont*   Layout::sNormalFont           = 0;
 wxFont*   Layout::sDebugFont            = 0;
 wxFont*   Layout::sTimeScaleFont        = 0;
 wxFont*   Layout::sClipDescriptionFont  = 0;
+wxFont*   Layout::sRenderInProgressFont = 0;
 
 void Layout::initializeFonts()
 {
@@ -101,6 +104,9 @@ void Layout::initializeFonts()
     sDebugFont              = const_cast<wxFont*>(wxSMALL_FONT);
     sTimeScaleFont          = const_cast<wxFont*>(wxSMALL_FONT);
     sClipDescriptionFont    = const_cast<wxFont*>(wxSMALL_FONT);
+    sRenderInProgressFont   = const_cast<wxFont*>(wxNORMAL_FONT);
+    sRenderInProgressFont->SetPixelSize(wxSize(60,60));
+    sRenderInProgressFont->MakeBold();
 
     wxBitmap tmp(100,100 ); // tmp, so size not that important.
     wxMemoryDC dc(tmp);

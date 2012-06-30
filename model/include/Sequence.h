@@ -1,15 +1,16 @@
 #ifndef MODEL_SEQUENCE_H
 #define MODEL_SEQUENCE_H
 
+#include <list>
 #include <map>
 #include <set>
-#include <list>
 #include <wx/event.h>
 #include <boost/optional.hpp>
-#include "Node.h"
+#include "FifoWork.h"
 #include "IAudio.h"
 #include "IControl.h"
 #include "IVideo.h"
+#include "Node.h"
 
 namespace model {
 
@@ -122,7 +123,7 @@ protected:
 private:
 
     wxString mName;
-    bool mFrozen;
+    int mFrozen;
     Tracks mVideoTracks;
     Tracks mAudioTracks;
     std::map<int, TrackPtr> mVideoTrackMap;

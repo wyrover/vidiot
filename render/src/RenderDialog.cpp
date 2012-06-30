@@ -32,6 +32,29 @@
 
 namespace gui {
 
+//////////////////////////////////////////////////////////////////////////
+// HELPER CLASS
+//////////////////////////////////////////////////////////////////////////
+
+/// This work class keeps the sequence locked while work is scheduled for
+/// the sequence.
+class RenderSequenceWork : public Work
+{
+public:
+    explicit RenderSequenceWork(model::SequencePtr sequence)
+        :   Work(boost::bind(&model::render::Render::generate,sequence->getRender(),sequence),_("Render sequence"))
+        ,   mSequence(sequence)
+    {
+        mSequence->setFrozen(true);
+    }
+    virtual ~RenderSequenceWork()
+    {
+        mSequence->setFrozen(false);
+    };
+private:
+    model::SequencePtr mSequence;
+};
+
 static RenderDialog* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
@@ -228,8 +251,7 @@ void RenderDialog::onRenderButtonPressed(wxCommandEvent& event)
     {
         mRendering = true;
         enableRenderButton();
-        WorkPtr work = boost::make_shared<Work>(boost::bind(&model::render::Render::generate,getRender(),mSequence),_("Render sequence"));
-        gui::Worker::get().schedule(work);
+        gui::Worker::get().schedule(boost::make_shared<RenderSequenceWork>(mSequence));
     }
     else
     {
