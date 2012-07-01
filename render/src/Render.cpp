@@ -16,6 +16,7 @@ extern "C" {
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
 #include "Convert.h"
+#include "StatusBar.h"
 #include "OutputFormat.h"
 #include "OutputFormats.h"
 #include "Properties.h"
@@ -76,6 +77,11 @@ void Render::generate(model::SequencePtr sequence)
     // no, make renderqueue class and freeze when added to queue, unfreeze when no more refs in queue
     QueueEvent(new EventRenderActive(true));
     sequence->moveTo(0);
+    int length = sequence->getLength();
+    gui::StatusBar::get().showProgressBar(length);
+    wxString ps; ps << _("Rendering sequence ") << sequence->getName() << "(" << 5 << _(" queued)");
+    gui::StatusBar::get().setProcessingText(ps);
+    gui::StatusBar::get().setProcessingDetails();
 
     AVOutputFormat* format = av_guess_format(mOutputFormat->getName().c_str(), 0, 0);
     ASSERT(format);
@@ -333,6 +339,9 @@ void Render::generate(model::SequencePtr sequence)
             else
             {
                 VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_codec_context->width,video_codec_context->height)).setDrawBoundingBox(false));
+                wxString s; s << _("Frame ") << frame->getPts() << _(" out of ") << length;
+                gui::StatusBar::get().setProcessingDetails(s);
+                gui::StatusBar::get().showProgress(frame->getPts()); // todo via event???
                 QueueEvent(new EventRenderProgress(frame->getPts()));
 
                 if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
@@ -436,6 +445,9 @@ void Render::generate(model::SequencePtr sequence)
         avio_close(context->pb);
     }
     av_free(context);
+    gui::StatusBar::get().setProcessingText();
+    gui::StatusBar::get().setProcessingDetails();
+    gui::StatusBar::get().hideProgressBar();
     QueueEvent(new EventRenderActive(false));
 }
 

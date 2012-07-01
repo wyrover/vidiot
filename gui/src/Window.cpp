@@ -3,6 +3,7 @@
 #include <wx/docview.h>
 #include <wx/gdicmn.h>
 #include <wx/msgdlg.h>
+#include <wx/gauge.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/assign/list_of.hpp>
@@ -16,6 +17,7 @@
 #include "Options.h"
 #include "Preview.h"
 #include "Project.h"
+#include "StatusBar.h"
 #include "ProjectEvent.h"
 #include "ProjectView.h"
 #include "TimelinesView.h"
@@ -139,9 +141,7 @@ Window::Window()
 
     menubar->EnableTop(sSequenceMenuIndex,false); // Disable sequence menu
 
-    CreateStatusBar(getNumberOfStatusBars());
-    setDebugText(_(""));
-    setProcessingText(_(""));
+    SetStatusBar(new StatusBar(this));
 
     mUiManager.SetManagedWindow(this);
     mUiManager.InsertPane(mProjectView,     wxAuiPaneInfo().BestSize(wxSize(100,300)).MinSize(wxSize(100,300)).Top().Position(0).CaptionVisible(false));
@@ -282,28 +282,6 @@ void Window::onRenameProject( model::EventRenameProject &event )
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
     event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-int Window::getNumberOfStatusBars() const
-{
-    return (Config::getShowDebugInfo() ? 2 : 1);
-}
-
-void Window::setDebugText(wxString text)
-{
-    if (Config::getShowDebugInfo())
-    {
-        SetStatusText( text, 0 );
-    }
-}
-
-void Window::setProcessingText(wxString text)
-{
-    SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
 }
 
 //////////////////////////////////////////////////////////////////////////

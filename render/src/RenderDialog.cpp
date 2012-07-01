@@ -42,7 +42,7 @@ class RenderSequenceWork : public Work
 {
 public:
     explicit RenderSequenceWork(model::SequencePtr sequence)
-        :   Work(boost::bind(&model::render::Render::generate,sequence->getRender(),sequence),_("Render sequence"))
+        :   Work(boost::bind(&model::render::Render::generate,sequence->getRender(),sequence))
         ,   mSequence(sequence)
     {
         mSequence->setFrozen(true);

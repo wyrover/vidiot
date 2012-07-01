@@ -21,7 +21,7 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoView.h"
 #include "ViewMap.h"
-#include "Window.h"
+#include "StatusBar.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
@@ -125,7 +125,7 @@ void MousePointer::setPosition(wxPoint position)
             left = info.clip->getLeftPts();
             right = info.clip->getRightPts();
         }
-        gui::Window::get().setDebugText( wxString::Format("MOUSE: (%3d,%3d) PTS: [%5d] CLIP: [%5lld,%5lld)", mCurrent.x, mCurrent.y, getZoom().pixelsToPts(mCurrent.x), left, right) );
+        gui::StatusBar::get().setDebugText( wxString::Format("MOUSE: (%3d,%3d) PTS: [%5d] CLIP: [%5lld,%5lld)", mCurrent.x, mCurrent.y, getZoom().pixelsToPts(mCurrent.x), left, right) );
     }
 }
 
