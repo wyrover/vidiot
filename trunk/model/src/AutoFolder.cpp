@@ -142,8 +142,13 @@ boost::optional<wxString> AutoFolder::getLastModified() const
     return mLastModified;
 }
 
+wxString AutoFolder::getSequenceName() const
+{
+    return util::path::toName(mPath);
+}
+
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
@@ -157,4 +162,3 @@ template void AutoFolder::serialize<boost::archive::text_oarchive>(boost::archiv
 template void AutoFolder::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
-

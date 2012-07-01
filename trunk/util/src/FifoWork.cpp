@@ -1,8 +1,7 @@
 #include "FifoWork.h"
 
-Work::Work(Callable work, wxString description)
+Work::Work(Callable work)
 :   mCallable(work)
-,   mDescription(description)
 {
     VAR_DEBUG(this)(*this);
 }
@@ -18,18 +17,13 @@ void Work::execute() const
     mCallable();
 }
 
-wxString Work::getDescription() const
-{
-    return mDescription;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<< (std::ostream& os, const Work& obj)
 {
-    os << obj.mDescription;
+    os << &obj;
     return os;
 }
 
@@ -45,4 +39,3 @@ std::ostream& operator<< (std::ostream& os, const WorkPtr& obj)
     }
     return os;
 }
-

@@ -12,15 +12,13 @@ typedef boost::function< void() > Callable;
 class Work : boost::noncopyable
 {
 public:
-    Work(Callable work, wxString description);
+    Work(Callable work);
     virtual ~Work();
 
     void execute() const;
-    wxString getDescription() const;
 
 private:
     Callable mCallable;
-    wxString mDescription;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

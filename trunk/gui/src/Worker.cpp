@@ -1,6 +1,6 @@
 #include "Worker.h"
 
-#include "Window.h"
+#include "StatusBar.h"
 
 namespace gui {
 
@@ -60,11 +60,12 @@ void Worker::thread()
 
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
-            Window::get().setProcessingText(w->getDescription());
             w->execute();
-            Window::get().setProcessingText(_(""));
+            w.reset(); // Clear, so that unfreezing is done if needed
+            StatusBar::get().setProcessingText();
+            StatusBar::get().setProcessingDetails();
+            StatusBar::get().hideProgressBar();
         }
-        w.reset(); // Clear, so that unfreezing is done if needed
     }
 }
 

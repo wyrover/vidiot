@@ -3,12 +3,15 @@
 #include <wx/fileconf.h>
 #include <wx/filename.h>
 #include <wx/thread.h>
+#include <boost/thread/locks.hpp>
 #include "Enums.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "UtilInitAvcodec.h"
 
 wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);
+boost::mutex Config::sMutex;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -24,13 +27,11 @@ void setDefault(wxString path, T value)
 }
 
 template <class T>
-T readWithoutDefault(wxString path)
+T readWithoutDefault(wxString path, boost::mutex& mutex)
 {
+    boost::mutex::scoped_lock lock(mutex);
     T result = T();
     T dummy = T();
-    // Instead of locking, ensure that wxConfigBase is only accessed from the main thread.
-    // All multi thread access: handle via a local cache.
-    ASSERT(wxThread::IsMain());
     bool found = wxConfigBase::Get()->Read(path, &result, dummy);
     ASSERT(found)(path);
     return result;
@@ -86,25 +87,25 @@ wxString Config::getFileName()
 // static
 bool Config::ReadBool(const wxString& key)
 {
-    return readWithoutDefault<bool>(key);
+    return readWithoutDefault<bool>(key,sMutex);
 }
 
 // static
 long Config::ReadLong(const wxString& key)
 {
-    return readWithoutDefault<long>(key);
+    return readWithoutDefault<long>(key,sMutex);
 }
 
 // static
 double Config::ReadDouble(const wxString& key)
 {
-    return readWithoutDefault<double>(key);
+    return readWithoutDefault<double>(key,sMutex);
 }
 
 // static
 wxString Config::ReadString(const wxString& key)
 {
-    return readWithoutDefault<wxString>(key);
+    return readWithoutDefault<wxString>(key,sMutex);
 }
 
 // static

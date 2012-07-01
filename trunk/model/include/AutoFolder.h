@@ -22,7 +22,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Recovery constructor.
-    AutoFolder();                       
+    AutoFolder();
 
     /// \param path full path to the folder.
     AutoFolder(wxFileName path);
@@ -46,18 +46,20 @@ public:
     /// is not added to the returned list - see File::canBeOpened().
     static IPaths getSupportedFiles( wxFileName path );
 
-    /// Update the autofolder children. The folder is synced with the filesystem. 
+    /// Update the autofolder children. The folder is synced with the filesystem.
     void update();
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////
 
-    /// Returns the full path if the parent node is not an AutoFolder. Returns 
+    /// Returns the full path if the parent node is not an AutoFolder. Returns
     /// the relatve path only if the parent node is an AutoFolder.
     wxString getName() const override;
 
     boost::optional<wxString> getLastModified() const;
+
+    wxString getSequenceName() const override;
 
 private:
 

@@ -80,11 +80,23 @@ model::SequencePtr createSequence( model::FolderPtr folder )
     triggerMenu(getProjectView(),meID_CREATE_SEQUENCE);
     waitForIdle();
 
-    model::NodePtrs nodes = getRoot()->find( folder->getName() );
-    ASSERT_EQUALS(nodes.size(),2); // The sequence and the folder
+    model::NodePtrs nodes;
+    if (folder->getName().IsSameAs(folder->getSequenceName()))
+    {
+        nodes = getRoot()->find( folder->getName() );
+        ASSERT_EQUALS(nodes.size(),2); // The sequence and the folder
+    }
+    else
+    {
+        nodes = getRoot()->find( folder->getName() );
+        ASSERT_EQUALS(nodes.size(),1); // The folder
+        nodes = getRoot()->find( folder->getSequenceName() );
+        ASSERT_EQUALS(nodes.size(),1); // The sequence
+    }
     model::SequencePtr result;
     BOOST_FOREACH( model::NodePtr node, nodes )
     {
+        ASSERT(!result); // This code doesn't work when two sequences are part of the structure
         if (node->isA<model::Sequence>())
         {
             result = boost::static_pointer_cast<model::Sequence>(node);

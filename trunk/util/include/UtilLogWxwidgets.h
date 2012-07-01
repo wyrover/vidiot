@@ -5,6 +5,7 @@
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/region.h>
+#include <wx/confbase.h>
 
 std::ostream& operator<< (std::ostream& os, const wxFileName& obj);
 std::ostream& operator<< (std::ostream& os, const wxPoint& obj);

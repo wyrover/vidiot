@@ -1,14 +1,16 @@
 #include "ProjectViewCreateSequence.h"
-#include "UtilLog.h"
+
+#include <wx/filename.h>
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include "AutoFolder.h"
-#include "Window.h"
-#include "TimeLinesView.h"
 #include "Folder.h"
 #include "Sequence.h"
+#include "TimeLinesView.h"
 #include "TrackCreator.h"
+#include "UtilLog.h"
+#include "Window.h"
 
 namespace command {
 
@@ -25,6 +27,11 @@ ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder)
 {
     VAR_INFO(this)(mParent)(mInputFolder);
     ASSERT(mParent); // Parent folder must exist
+    wxFileName fn(folder->getName());
+    if (!fn.GetDirs().IsEmpty())
+    {
+        mName = fn.GetDirs().Last();
+    }
     mCommandName = _("Create sequence from folder ") + mName;
 }
 
@@ -98,7 +105,7 @@ model::FolderPtr ProjectViewCreateSequence::findFirstNonAutoFolderParent(model::
 
     while (parent->isA<model::AutoFolder>())
     {
-        parent = parent->getParent(); 
+        parent = parent->getParent();
 
     }
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(parent);
