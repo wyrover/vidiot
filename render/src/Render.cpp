@@ -60,10 +60,25 @@ Render::Render()
     :   wxEvtHandler()
     ,   mFileName()
     ,   mOutputFormat(OutputFormats::getDefault())
-    ,   mVideoCodec(VideoCodecs::getDefault())
-    ,   mAudioCodec(AudioCodecs::getDefault())
+    ,   mVideoCodec(VideoCodecs::find(mOutputFormat->getDefaultVideoCodec()))
+    ,   mAudioCodec(AudioCodecs::find(mOutputFormat->getDefaultAudioCodec()))
 {
     VAR_DEBUG(this);
+}
+
+Render::Render(const Render& other)
+    :   wxEvtHandler()
+    ,   mFileName(other.mFileName)
+    ,   mOutputFormat(make_cloned<OutputFormat>(other.mOutputFormat))
+    ,   mVideoCodec(make_cloned<VideoCodec>(other.mVideoCodec))
+    ,   mAudioCodec(make_cloned<AudioCodec>(other.mAudioCodec))
+{
+    VAR_DEBUG(this);
+}
+
+Render* Render::clone() const
+{
+    return new Render(static_cast<const Render&>(*this));
 }
 
 Render::~Render()
@@ -534,7 +549,6 @@ std::ostream& operator<<( std::ostream& os, const Render& obj )
 template<class Archive>
 void Render::serialize(Archive & ar, const unsigned int version)
 {
-    //ar & mSequence; // todo remove this ref. Make renderdialog use 'sequence' as point of entry
     ar & mFileName;
     ar & mOutputFormat;
     ar & mVideoCodec;

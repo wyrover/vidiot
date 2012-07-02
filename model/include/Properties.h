@@ -9,6 +9,11 @@
 
 namespace model {
 
+namespace render {
+    class Render;
+    typedef boost::shared_ptr<Render> RenderPtr;
+}
+
 class Properties;
 typedef boost::shared_ptr<Properties> PropertiesPtr;
 
@@ -34,6 +39,12 @@ public:
     int getAudioNumberOfChannels() const; ///< \return number of audio channels, thus the number of independent speakers
     int getAudioFrameRate() const; ///< \return frame rate used for audio
 
+    /// \return clone of the currently set default render
+    render::RenderPtr getDefaultRender() const;
+
+    /// Sets the default render to be a clone of the given render
+    void setDefaultRender(render::RenderPtr render);
+
 private:
 
     FrameRate mFrameRate;
@@ -41,6 +52,7 @@ private:
     long mVideoHeight;
     int mAudioChannels;
     int mAudioFrameRate;
+    render::RenderPtr mDefaultRender;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

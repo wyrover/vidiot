@@ -2,9 +2,13 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include "UtilSerializeBoost.h"
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 #include "Config.h"
 #include "Project.h"
+#include "Render.h"
+#include "UtilCloneable.h"
+#include "UtilSerializeBoost.h"
 
 namespace model {
 
@@ -17,6 +21,7 @@ Properties::Properties()
 ,   mVideoHeight(Config::ReadLong(Config::sPathDefaultVideoHeight))
 ,   mAudioChannels(sStereo)
 ,   mAudioFrameRate(sAudioFrameRate)
+,   mDefaultRender(boost::make_shared<model::render::Render>())
 {
 }
 
@@ -54,6 +59,16 @@ int Properties::getAudioFrameRate() const
     return mAudioFrameRate;
 }
 
+render::RenderPtr Properties::getDefaultRender() const
+{
+    return make_cloned<render::Render>(mDefaultRender);
+}
+
+void Properties::setDefaultRender(render::RenderPtr render)
+{
+    mDefaultRender = make_cloned<render::Render>(render);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -66,6 +81,7 @@ void Properties::serialize(Archive & ar, const unsigned int version)
     ar & mVideoHeight;
     ar & mAudioChannels;
     ar & mAudioFrameRate;
+    ar & mDefaultRender;
 }
 
 template void Properties::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

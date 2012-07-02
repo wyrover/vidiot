@@ -20,8 +20,10 @@
 #include "Dialog.h"
 #include "OutputFormat.h"
 #include "OutputFormats.h"
+#include "Properties.h"
 #include "Render.h"
 #include "Sequence.h"
+#include "UtilLogWxwidgets.h"
 #include "UtilFifo.h"
 #include "UtilLog.h"
 #include "video.xpm" // todo rename
@@ -77,21 +79,25 @@ RenderDialog::RenderDialog(model::SequencePtr sequence)
         wxPanel* outputbox = new wxPanel(mBook);
         outputbox->SetSizer(new wxFlexGridSizer(3,10,10));
 
-        mFile = new wxTextCtrl(outputbox,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
-        mFile->Bind(wxEVT_COMMAND_TEXT_UPDATED, &RenderDialog::onFileNameEntered, this);
+        mFile = new wxTextCtrl(outputbox,wxID_ANY,getRender()->getFileName().GetFullPath(),wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
+        mFile->Bind(wxEVT_COMMAND_TEXT_UPDATED, &RenderDialog::onFileNameEntered, this); // todo obsolete
 
         mFileButton = new wxButton(outputbox,wxID_ANY,_("Select"));
         mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onFileButtonPressed, this);
 
-        mVideoCodec = new EnumSelector<int>(outputbox, model::render::VideoCodecs::mapToName, CODEC_ID_NONE);
+        mVideoCodec = new EnumSelector<int>(outputbox, model::render::VideoCodecs::mapToName, getRender()->getVideoCodec()->getId());
         mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onVideoCodecChanged, this);
 
-        mAudioCodec = new EnumSelector<int>(outputbox, model::render::AudioCodecs::mapToName, CODEC_ID_NONE);
+        mAudioCodec = new EnumSelector<int>(outputbox, model::render::AudioCodecs::mapToName, getRender()->getAudioCodec()->getId());
         mAudioCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onAudioCodecChanged, this);
 
         mRenderButton = new wxButton(outputbox,wxID_ANY,_("Render"));
         mRenderButton->Disable();
         mRenderButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onRenderButtonPressed, this);
+
+        mSetDefaultButton = new wxButton(outputbox,wxID_ANY,_("Set default"));
+        mSetDefaultButton->Enable();
+        mSetDefaultButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onSetDefaultButtonPressed, this);
 
         mLength = mSequence->getLength();
 
@@ -113,6 +119,10 @@ RenderDialog::RenderDialog(model::SequencePtr sequence)
 
         outputbox->GetSizer()->AddStretchSpacer();
         outputbox->GetSizer()->Add(mRenderButton,wxSizerFlags().Proportion(0));
+        outputbox->GetSizer()->AddStretchSpacer();
+
+        outputbox->GetSizer()->AddStretchSpacer();
+        outputbox->GetSizer()->Add(mSetDefaultButton,wxSizerFlags().Proportion(0));
         outputbox->GetSizer()->AddStretchSpacer();
 
         outputbox->GetSizer()->AddStretchSpacer();
@@ -155,7 +165,6 @@ RenderDialog::RenderDialog(model::SequencePtr sequence)
     mBook->SetPageImage(2,2);
 
     enableCodecInfo();
-    updateOnFileSelection();
     enableRenderButton();
 
     //Fit();
@@ -167,6 +176,7 @@ RenderDialog::~RenderDialog()
     sCurrent = 0;
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onFileButtonPressed, this);
     mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onRenderButtonPressed, this);
+    mSetDefaultButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onSetDefaultButtonPressed, this);
     getRender()->Unbind(model::render::EVENT_RENDER_PROGRESS, &RenderDialog::onRenderProgress, this);
     getRender()->Unbind(model::render::EVENT_RENDER_ACTIVE, &RenderDialog::onRenderActive, this);
     mFile->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &RenderDialog::onFileNameEntered, this);
@@ -239,9 +249,28 @@ void RenderDialog::onFileButtonPressed(wxCommandEvent& event)
 
     if (!selected.IsEmpty())
     {
-        getRender()->setFileName(wxFileName(selected));
+        wxFileName oldName = getRender()->getFileName();
+        wxFileName newName = wxFileName(selected);
+
+        if (newName.IsOk() && newName.HasExt())
+        {
+            getRender()->setFileName(newName);
+            if (!newName.GetExt().IsSameAs(oldName.GetExt()))
+            {
+                // Set default codecs for the chosen file format
+                model::render::OutputFormatPtr format;
+                format =  model::render::OutputFormats::getByExtension(newName.GetExt());
+                ASSERT(format)(newName);
+                wxConfigBase::Get()->Write(Config::sPathDefaultExtension, newName.GetExt());
+                wxConfigBase::Get()->Flush();
+                mFile->ChangeValue(newName.GetFullPath()); // ChangeValue() does not trigger event for text ctrl
+                mVideoCodec->select(format->getDefaultVideoCodec());
+                mAudioCodec->select(format->getDefaultAudioCodec());
+                updateOnCodecChange();
+            }
+        }
     }
-    updateOnFileSelection();
+    enableRenderButton();
     event.Skip();
 }
 
@@ -257,6 +286,12 @@ void RenderDialog::onRenderButtonPressed(wxCommandEvent& event)
     {
         wxMessageBox(_("Select output file first."), _("No file selected"), wxOK | wxCENTRE, this);
     }
+    event.Skip();
+}
+
+void RenderDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
+{
+    model::Properties::get()->setDefaultRender(getRender());
     event.Skip();
 }
 
@@ -277,39 +312,6 @@ wxButton* RenderDialog::getFileButton() const
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
-
-void RenderDialog::updateOnFileSelection()
-{
-    model::render::OutputFormatPtr format;
-    wxFileName filename = getRender()->getFileName();
-    if (filename.IsOk() && filename.HasExt())
-    {
-        format =  model::render::OutputFormats::getByExtension(filename.GetExt());
-    }
-
-    if (format)
-    {
-        wxConfigBase::Get()->Write(Config::sPathDefaultExtension, filename.GetExt());
-        wxConfigBase::Get()->Flush();
-        getRender()->setFileName(filename);
-        mFile->ChangeValue(getRender()->getFileName().GetFullPath()); // ChangeValue() does not trigger event for text ctrl
-        mVideoCodec->select(format->getDefaultVideoCodec());
-        mAudioCodec->select(format->getDefaultAudioCodec());
-        mVideoCodec->Enable();
-        mAudioCodec->Enable();
-    }
-    else
-    {
-        getRender()->setFileName(wxFileName());
-        mFile->ChangeValue(""); // ChangeValue() does not trigger event for text ctrl
-        mVideoCodec->select(CODEC_ID_NONE);
-        mAudioCodec->select(CODEC_ID_NONE);
-        mVideoCodec->Disable();
-        mAudioCodec->Disable();
-    }
-    updateOnCodecChange();
-    enableRenderButton();
-}
 
 void RenderDialog::updateOnCodecChange()
 {

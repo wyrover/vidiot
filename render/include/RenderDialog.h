@@ -52,6 +52,7 @@ public:
     void onAudioCodecChanged(wxCommandEvent& event);
     void onFileButtonPressed(wxCommandEvent& event);
     void onRenderButtonPressed(wxCommandEvent& event);
+    void onSetDefaultButtonPressed(wxCommandEvent& event);
     void onFileNameEntered(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
@@ -76,6 +77,7 @@ private:
     EnumSelector<int>* mVideoCodec;
     EnumSelector<int>* mAudioCodec;
     wxButton* mRenderButton;
+    wxButton* mSetDefaultButton;
     wxStaticText* mProgressText;
     wxGauge* mProgress;
 
@@ -90,7 +92,6 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void updateOnFileSelection();
     void updateOnCodecChange();
     void enableCodecInfo();
     void enableRenderButton();

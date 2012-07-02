@@ -9,10 +9,9 @@
 #include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
-#include "VideoComposition.h"
-#include "VideoCompositionParameters.h"
 #include "IClip.h"
 #include "NodeEvent.h"
+#include "Properties.h"
 #include "Render.h"
 #include "SequenceEvent.h"
 #include "UtilList.h"
@@ -20,6 +19,8 @@
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
+#include "VideoComposition.h"
+#include "VideoCompositionParameters.h"
 #include "VideoCompositionParameters.h"
 #include "VideoTrack.h"
 #include "Window.h"
@@ -317,7 +318,18 @@ render::RenderPtr Sequence::getRender()
 {
     if (!mRender)
     {
-        mRender = boost::make_shared<model::render::Render>();
+        mRender = Properties::get()->getDefaultRender();
+        wxFileName name = mRender->getFileName();
+        if (!!name.GetPath().IsSameAs(""))
+        {
+            name.AssignHomeDir();
+        }
+        name.SetName(getName());
+        if (!name.HasExt())
+        {
+            name.SetExt("avi"); // todo this default must be in config?
+        }
+        mRender->setFileName(name);
     }
     return mRender;
 }
@@ -334,7 +346,7 @@ void Sequence::setRender(render::RenderPtr render)
 
 wxString Sequence::getName() const
 {
-    return mName;
+    return mName; // todo ensure somewhere that no two sequences have the exact same name (anywhere) to avoid problems when rendering?
 };
 
 void Sequence::setName(wxString name)

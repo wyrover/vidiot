@@ -441,6 +441,7 @@ void Timeline::freeze()
         getDetails().showNone();
         getPlayer()->stop();
         // todo disable the menu for this sequence
+        // todo disable the player
         Disable();
     }
     else
