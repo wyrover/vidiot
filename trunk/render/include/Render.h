@@ -7,6 +7,7 @@
 #include <boost/weak_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
+#include "UtilCloneable.h"
 #include "UtilEvent.h"
 
 namespace model {
@@ -31,6 +32,7 @@ typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
 
 class Render
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    ,   public ICloneable
 {
 public:
 
@@ -45,7 +47,11 @@ public:
 
     Render();
 
+    Render(const Render& other);
+
 	virtual ~Render();
+
+    virtual Render* clone() const override;
 
     void generate(SequencePtr sequence);
 
