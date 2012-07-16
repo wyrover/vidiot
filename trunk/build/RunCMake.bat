@@ -40,7 +40,7 @@ set BOOST_ROOT=%BOOST_ROOT:\=/%
 REM === CREATE SOLUTION ====
 REM del /s/q Build 
 set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
-set SOURCE=%VIDIOT_DIR%\vidiot_trunk
+set SOURCE=%VIDIOT_DIR%\Source
 
 %VIDIOT_BUILD_DRIVE%
 cd %VIDIOT_BUILD%\..

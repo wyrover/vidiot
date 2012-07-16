@@ -243,8 +243,8 @@ void Trim::preview()
             videoclip->moveTo(position);
 
             // Fill with black
-            dc.SetBrush(Layout::sPreviewBackgroundBrush);
-            dc.SetPen(Layout::sPreviewBackgroundPen);
+            dc.SetBrush(Layout::get().PreviewBackgroundBrush);
+            dc.SetPen(Layout::get().PreviewBackgroundPen);
             dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
 
             // Draw preview of trim operation

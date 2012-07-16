@@ -266,7 +266,7 @@ wxPoint RightBottom(model::IClipPtr clip)
 wxPoint OnTimescaleAbove(wxPoint position)
 {
     wxPoint result(position);
-    result.y = gui::Layout::sTimeScaleHeight - 5;
+    result.y = gui::Layout::TimeScaleHeight - 5;
     return result;
 }
 
@@ -323,7 +323,7 @@ pixel CursorPosition()
 void PositionCursor(pixel position)
 {
     VAR_DEBUG(position);
-    Move(wxPoint(position, gui::Layout::sVideoPosition - 4));
+    Move(wxPoint(position, gui::Layout::VideoPosition - 4));
     wxUIActionSimulator().MouseClick();
 }
 
@@ -441,7 +441,7 @@ void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
 void ShiftDrag(wxPoint from, wxPoint to)
 {
     wxPoint between(from);
-    between.x += (from.x > to.x) ? -(gui::Layout::sDragThreshold+1) : (gui::Layout::sDragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    between.x += (from.x > to.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
     Drag(from, between, false, true, false);
     ShiftDown();
     Move(to);
@@ -508,13 +508,13 @@ void ToggleInterval(pixel from, pixel to)
     // The interval creation does not start before shift is pressed.
     // Therefore, the initial drag is adjusted by this amount, to ensure that the position
     // where the new interval is started is known.
-    pixel beforeShift = gui::Layout::sDragThreshold + 1;
+    pixel beforeShift = gui::Layout::DragThreshold + 1;
     if (to > from)
     {
         // In case of moving from left to right, then the 'move before shift' must be on the left side
         beforeShift = -1 * beforeShift;
     }
-    static const pixel y = gui::Layout::sTimeScaleHeight - 5;
+    static const pixel y = gui::Layout::TimeScaleHeight - 5;
     ShiftDrag(wxPoint(from + beforeShift, y), wxPoint(to, y));
 }
 

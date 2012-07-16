@@ -137,6 +137,7 @@ void FixtureGui::mainThread()
         }
         wxTheApp->CallOnInit();
         wxTheApp->OnRun();
+        wxTheApp->OnExit();
         mBarrierStopped.wait();
     }
 

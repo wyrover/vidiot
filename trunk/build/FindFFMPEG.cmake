@@ -43,10 +43,6 @@
 	                             ${AVCODEC_LIBRARY_DIRS}
 	                             ${AVUTIL_LIBRARY_DIRS}
 	                             ${AVDEVICE_LIBRARY_DIRS} )
-	   SET( FFMPEG_INCLUDE_PATHS ${AVFORMAT_INCLUDE_DIRS}
-	                             ${AVCODEC_INCLUDE_DIRS}
-	                             ${AVUTIL_INCLUDE_DIRS}
-	                             ${AVDEVICE_INCLUDE_DIRS} )
 	endif( WIN32 )
 
 	# add in swscale if found
@@ -67,19 +63,6 @@
 	SET( INC_SUCCESS 0 )
 	SET( TMP_ TMP-NOTFOUND )
 	SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_PATHS} )
-	FOREACH( INC_ ${FFMPEG_HEADERS} )
-	   FIND_PATH( TMP_ ${INC_}
-	              PATHS ${FFMPEG_INCLUDE_PATHS}
-	              PATH_SUFFIXES ${FFMPEG_PATH_SUFFIXES} )
-	   IF ( TMP_ )
-	      message( "found " ${INC_} " in " ${TMP_} )
-	      MATH( EXPR INC_SUCCESS ${INC_SUCCESS}+1 )
-	      SET( FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR} ${TMP_} )
-	   ELSE ( TMP_ )
-	      message( "Not found: " ${INC_} )
-	   ENDIF ( TMP_ )
-	   SET( TMP_ TMP-NOTFOUND )
-	ENDFOREACH( INC_ )
 
 	# clear out duplicates
 	LIST( REMOVE_DUPLICATES FFMPEG_INCLUDE_DIR )

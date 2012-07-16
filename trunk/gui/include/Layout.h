@@ -9,105 +9,88 @@
 
 namespace gui {
 
+/// Fonts/brushes/pens may not be initialized statically (since wxWidgets is not prepared yet).
+/// (leads to uninitialized wxStockGDI, for example)
 class Layout
 {
 public:
+
+    Layout();
+    virtual ~Layout();
+    static Layout& get();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAWING
     //////////////////////////////////////////////////////////////////////////
 
-    static const pixel sTimeScaleMinutesHeight;
-    static const pixel sTimeScaleSecondHeight;
-    static const pixel sTimeScaleHeight;
-    static const pixel sMinimalGreyAboveVideoTracksHeight;
-    static const pixel sMinimalGreyBelowAudioTracksHeight;
-    static const pixel sTrackDividerHeight;
-    static const pixel sDefaultAudioVideoDividerPosition;
-    static const pixel sAudioVideoDividerHeight;
-    static const pixel sMinTrackHeight;
-    static const pixel sMaxTrackHeight;
-    static const pixel sClipBorderSize;
-    static const pixel sVideoPosition;
-    static       pixel sClipDescriptionBarHeight;
-    static       pixel sTransitionHeight;
-    static const pixel sDragThreshold; ///< Number of pixels to move the mouse before a 'drag start' is detected
+    static const pixel TimeScaleMinutesHeight               = 10;
+    static const pixel TimeScaleSecondHeight                = 5;
+    static const pixel TimeScaleHeight                      = 25;
+    static const pixel MinimalGreyAboveVideoTracksHeight    = 10;
+    static const pixel MinimalGreyBelowAudioTracksHeight    = 10;
+    static const pixel TrackDividerHeight                   = 4;
+    static const pixel DefaultAudioVideoDividerPosition     = 100;
+    static const pixel AudioVideoDividerHeight              = 5;
+    static const pixel MinTrackHeight                       = 10;
+    static const pixel MaxTrackHeight                       = 100;
+    static const pixel ClipBorderSize                       = 2;
+    static const pixel VideoPosition                        = TimeScaleHeight + MinimalGreyAboveVideoTracksHeight;
+    static const pixel DragThreshold                        = 2;
+    static const pixel SnapDistance                         = 50;
+    static const pixel CursorClipEditDistance               = 6;
+    static       pixel ClipDescriptionBarHeight;
+    static       pixel TransitionHeight;
 
     //////////////////////////////////////////////////////////////////////////
     // BRUSHES AND PENS
     //////////////////////////////////////////////////////////////////////////
 
-	static const wxColour	sBackgroundColour;
-    static const wxPen      sBackgroundPen;
-    static const wxBrush    sBackgroundBrush;
-
-    static const wxColour   sDetailsViewHeaderColour;
-
-    static const wxColour   sPreviewBoundingBoxColour;
-    static const wxPen      sPreviewBoundingBoxPen;
-
-    static const wxColour	sPreviewBackgroundColour;
-    static const wxPen      sPreviewBackgroundPen;
-    static const wxBrush    sPreviewBackgroundBrush;
-
-    static const wxColour   sTimelineRenderInProgressColour;
-
-    static const wxPen      sTimeScaleDividerPen;
-
-    static const wxPen      sCursorPen;
-
-    static const wxPen      sDropAreaPen;
-    static const wxBrush    sDropAreaBrush;
-
-    static const wxPen      sTrackDividerPen;
-    static const wxBrush    sTrackDividerBrush;
-
-    static const wxPen      sAudioVideoDividerPen;
-    static const wxBrush    sAudioVideoDividerBrush;
-
-    static const wxPen      sClipPen;
-    static const wxBrush    sClipBrush;
-
-    static const wxColour   sClipDescriptionFGColour;
-    static const wxColour   sClipDescriptionBGColour;
-    static const wxPen      sClipDescriptionPen;
-    static const wxBrush    sClipDescriptionBrush;
-
-    static const wxPen      sSelectedClipPen;
-    static const wxBrush    sSelectedClipBrush;
-
-    static const wxPen      sSnapPen;
-    static const wxBrush    sSnapBrush;
-
-    static const wxColour   sDebugColour;
-    static const wxPen      sDebugPen;
-    static const wxBrush    sDebugBrush;
-
-    static const wxColour   sTransitionColour;
-    static const wxPen      sTransitionPen;
-    static const wxBrush    sTransitionBrush;
-    static const wxBrush    sTransitionBgUnselected;
-    static const wxBrush    sTransitionBgSelected;
-
-    //////////////////////////////////////////////////////////////////////////
-    // SNAP
-    //////////////////////////////////////////////////////////////////////////
-
-    static const pixel      sSnapDistance;
-    static const pixel      sCursorClipEditDistance;
+    const wxColour BackgroundColour;
+    const wxPen BackgroundPen;
+    const wxBrush BackgroundBrush;
+    const wxColour DetailsViewHeaderColour;
+    const wxColour PreviewBoundingBoxColour;
+    const wxPen PreviewBoundingBoxPen;
+    const wxColour PreviewBackgroundColour;
+    const wxPen PreviewBackgroundPen;
+    const wxBrush PreviewBackgroundBrush;
+    const wxColour TimelineRenderInProgressColour;
+    const wxPen TimeScaleDividerPen;
+    const wxPen CursorPen;
+    const wxPen DropAreaPen;
+    const wxBrush DropAreaBrush;
+    const wxPen TrackDividerPen;
+    const wxBrush TrackDividerBrush;
+    const wxPen AudioVideoDividerPen;
+    const wxBrush AudioVideoDividerBrush;
+    const wxPen ClipPen;
+    const wxBrush ClipBrush;
+    const wxColour ClipDescriptionFGColour;
+    const wxColour ClipDescriptionBGColour;
+    const wxPen ClipDescriptionPen;
+    const wxBrush ClipDescriptionBrush;
+    const wxPen SelectedClipPen;
+    const wxBrush SelectedClipBrush;
+    const wxPen SnapPen;
+    const wxBrush SnapBrush;
+    const wxColour DebugColour;
+    const wxPen DebugPen;
+    const wxBrush DebugBrush;
+    const wxColour TransitionColour;
+    const wxPen TransitionPen;
+    const wxBrush TransitionBrush;
+    const wxBrush TransitionBgUnselected;
+    const wxBrush TransitionBgSelected;
 
     //////////////////////////////////////////////////////////////////////////
     // FONTS
     //////////////////////////////////////////////////////////////////////////
 
-    static void initializeFonts();
-
-    static wxFont* sNormalFont;
-    static wxFont* sDebugFont;
-    static wxFont* sTimeScaleFont;
-    static wxFont* sClipDescriptionFont;
-    static wxFont* sRenderInProgressFont;
-
+    const wxFont NormalFont;
+    const wxFont DebugFont;
+    const wxFont TimeScaleFont;
+    const wxFont ClipDescriptionFont;
+    const wxFont RenderInProgressFont;
 };
 
 } // namespace

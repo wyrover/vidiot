@@ -14,7 +14,7 @@
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
 #pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.
 extern "C" {
-#include <avformat.h>
+#include <libavformat/avformat.h>
 };
 
 // NOTE: First value is the default
@@ -140,20 +140,21 @@ std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj)
         }
         os  << "nb_streams="            << obj->nb_streams                  << ','
             << "filename="              << obj->filename                    << ','
-            << "timestamp="             << obj->timestamp                   << ','
+            //<< "timestamp="             << obj->timestamp                   << ','
             << "ctx_flags="             << obj->ctx_flags                   << ','
             << "start_time="            << obj->start_time                  << ','
             << "duration="              << obj->duration                    << ','
-            << "file_size="             << obj->file_size                   << ','
+            //<< "file_size="             << obj->file_size                   << ','
+            // todo check for added members
             << "bit_rate="              << obj->bit_rate                    << ','
             << "data_offset="           << obj->data_offset                 << ','
-            << "mux_rate="              << obj->mux_rate                    << ','
+            //<< "mux_rate="              << obj->mux_rate                    << ','
             << "packet_size="           << obj->packet_size                 << ','
-            << "preload="               << obj->preload                     << ','
+            //<< "preload="               << obj->preload                     << ','
             << "max_delay="             << obj->max_delay                   << ','
-            << "loop_output="           << obj->loop_output                 << ','
+            //<< "loop_output="           << obj->loop_output                 << ','
             << "flags="                 << obj->flags                       << ','
-            << "loop_input="            << obj->loop_input                  << ','
+            //<< "loop_input="            << obj->loop_input                  << ','
             << "probesize="             << obj->probesize                   << ','
             << "max_analyze_duration="  << obj->max_analyze_duration        << ','
             << "video_codec_id="        << obj->video_codec_id              << ','
@@ -184,9 +185,9 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
             << "r_frame_rate="                  << obj->r_frame_rate                    << ','
             << "time_base="                     << obj->time_base                       << ','
             << "pts_wrap_bits="                 << obj->pts_wrap_bits                   << ','
-            << "stream_copy="                   << obj->stream_copy                     << ','
+            //<< "stream_copy="                   << obj->stream_copy                     << ','
             << "discard="                       << obj->discard                         << ','
-            << "quality="                       << obj->quality                         << ','
+            //<< "quality="                       << obj->quality                         << ','
             << "start_time="                    << obj->start_time                      << ','
             << "duration="                      << obj->duration                        << ','
             << "cur_dts="                       << obj->cur_dts                         << ','
@@ -427,7 +428,6 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_G723_1_DEPRECATED:  os << "CODEC_ID_G723_1_DEPRECATED";  break;
     case CODEC_ID_G729_DEPRECATED:    os << "CODEC_ID_G729_DEPRECATED";    break;
 #endif
-    case CODEC_ID_UTVIDEO_DEPRECATED: os << "CODEC_ID_UTVIDEO_DEPRECATED"; break;
     case CODEC_ID_BMV_VIDEO:          os << "CODEC_ID_BMV_VIDEO";          break;
     case CODEC_ID_VBLE:               os << "CODEC_ID_VBLE";               break;
     case CODEC_ID_DXTORY:             os << "CODEC_ID_DXTORY";             break;
@@ -562,8 +562,7 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_QDMC:               os << "CODEC_ID_QDMC";               break;
     case CODEC_ID_CELT:               os << "CODEC_ID_CELT";               break;
 #if LIBAVCODEC_VERSION_MAJOR > 53
-    case CODEC_ID_G723_1_DEPRECATED:  os << "CODEC_ID_G723_1_DEPRECATED";  break;
-    case CODEC_ID_G729_DEPRECATED:    os << "CODEC_ID_G729_DEPRECATED";    break;
+        // todo check for added members
     case CODEC_ID_8SVX_EXP:           os << "CODEC_ID_8SVX_EXP";           break;
     case CODEC_ID_8SVX_FIB:           os << "CODEC_ID_8SVX_FIB";           break;
 #endif

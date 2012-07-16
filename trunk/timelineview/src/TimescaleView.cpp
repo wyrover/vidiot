@@ -33,7 +33,7 @@ TimescaleView::~TimescaleView()
 
 wxSize TimescaleView::requiredSize() const
 {
-    return wxSize(getTimeline().getSequenceView().minimumWidth(), Layout::sTimeScaleHeight);
+    return wxSize(getTimeline().getSequenceView().minimumWidth(), Layout::TimeScaleHeight);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,28 +50,28 @@ void TimescaleView::draw(wxBitmap& bitmap) const
 
     // Draw timescale
     dc.SetBrush(wxNullBrush);
-    dc.SetPen(Layout::sTimeScaleDividerPen);
+    dc.SetPen(Layout::get().TimeScaleDividerPen);
     dc.DrawRectangle(0,0,w,h);
 
-    dc.SetFont(*Layout::sTimeScaleFont);
+    dc.SetFont(Layout::get().TimeScaleFont);
 
     // Draw seconds and minutes lines
     for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += model::Constants::sSecond)
     {
         int position = getZoom().timeToPixels(ms);
         bool isMinute = (ms % model::Constants::sMinute == 0);
-        int height = Layout::sTimeScaleSecondHeight;
+        int height = Layout::TimeScaleSecondHeight;
 
         if (isMinute)
         {
-            height = Layout::sTimeScaleMinutesHeight;
+            height = Layout::TimeScaleMinutesHeight;
         }
 
         dc.DrawLine(position,0,position,height);
 
         if (ms == 0)
         {
-            dc.DrawText( "0", 5, Layout::sTimeScaleMinutesHeight );
+            dc.DrawText( "0", 5, Layout::TimeScaleMinutesHeight );
         }
         else
         {
@@ -80,7 +80,7 @@ void TimescaleView::draw(wxBitmap& bitmap) const
                 wxDateTime t(ms / model::Constants::sHour, (ms % model::Constants::sHour) / model::Constants::sMinute, (ms % model::Constants::sMinute) / model::Constants::sSecond, ms % model::Constants::sSecond);
                 wxString s = t.Format("%H:%M:%S.%l");
                 wxSize ts = dc.GetTextExtent(s);
-                dc.DrawText( s, position - ts.GetX() / 2, Layout::sTimeScaleMinutesHeight );
+                dc.DrawText( s, position - ts.GetX() / 2, Layout::TimeScaleMinutesHeight );
             }
         }
     }

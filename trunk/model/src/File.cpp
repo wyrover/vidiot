@@ -4,7 +4,7 @@
 #undef INTMAX_C
 #undef UINTMAX_C
 extern "C" {
-#include <avformat.h>
+#include <libavformat/avformat.h>
 };
 
 #include <math.h>
@@ -40,7 +40,7 @@ boost::mutex File::sMutexAvcodec;
 //////////////////////////////////////////////////////////////////////////
 
 File::File()
-:	IControl()
+:	IFile()
 ,   Node()
 ,   mPath()
 ,   mName()
@@ -63,7 +63,7 @@ File::File()
 }
 
 File::File(wxFileName path, int buffersize)
-:	IControl()
+:	IFile()
 ,   Node()
 ,   mPath(path)
 ,   mName()
@@ -98,7 +98,7 @@ File::File(wxFileName path, int buffersize)
 }
 
 File::File(const File& other)
-:	IControl()
+:	IFile()
 ,   Node()
 ,   mPath(other.mPath)
 ,   mName(other.mName)
@@ -373,7 +373,7 @@ void File::openFile()
 
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
-        result = av_open_input_file(&mFileContext, mPath.GetLongPath(), 0, 0, 0);
+        result = avformat_open_input(&mFileContext, mPath.GetLongPath(), 0, 0);
     }
     if (result != 0)
     {
@@ -440,7 +440,8 @@ void File::closeFile()
 
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
-        av_close_input_file(mFileContext);
+        avformat_close_input(&mFileContext);
+        ASSERT_ZERO(mFileContext);
         mFileOpen = false;
     }
 }

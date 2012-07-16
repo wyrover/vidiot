@@ -5,13 +5,11 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include "UtilCloneable.h"
 #include "UtilInt.h"
 
 namespace model {
 
 class IControl
-    :   public ICloneable
 {
 public:
 
@@ -20,12 +18,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual ~IControl() {};
-
-    //////////////////////////////////////////////////////////////////////////
-    // ICLONEABLE
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual IControl* clone() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
@@ -42,7 +34,7 @@ public:
 
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
+    void serialize(Archive & ar, const unsigned int version) // todo isnt this completely obsolete???
     {
     }
 };

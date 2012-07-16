@@ -7,8 +7,11 @@
 #include "IVideo.h"
 
 namespace model {
+
 class VideoClip;
 typedef boost::shared_ptr<VideoClip> VideoClipPtr;
+class VideoFile;
+typedef boost::shared_ptr<VideoFile> VideoFilePtr;
 
 class VideoClip
     :   public Clip
@@ -23,11 +26,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     VideoClip();
-
-    VideoClip(IControlPtr clip);
-
+    VideoClip(VideoFilePtr clip);
     virtual VideoClip* clone() const override;
-
     virtual ~VideoClip();
 
     //////////////////////////////////////////////////////////////////////////

@@ -37,7 +37,7 @@ VideoClip::VideoClip()
     VAR_DEBUG(this);
 }
 
-VideoClip::VideoClip(IControlPtr file)
+VideoClip::VideoClip(VideoFilePtr file)
     : Clip(file)
     , mProgress(0)
     , mOpacity(Constants::sMaxOpacity)

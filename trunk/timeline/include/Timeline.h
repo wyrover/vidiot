@@ -174,7 +174,6 @@ private:
 
     void resize();
     void draw(wxBitmap& bitmap) const; ///< @see View::draw()
-    void freeze();
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

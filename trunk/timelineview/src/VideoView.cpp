@@ -60,7 +60,7 @@ wxSize VideoView::requiredSize() const
     int height = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        height += track->getHeight() + Layout::sTrackDividerHeight;
+        height += track->getHeight() + Layout::TrackDividerHeight;
     }
     return wxSize(width,height);
 }
@@ -70,12 +70,12 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
     int top = getSequenceView().getVideoPosition();
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        int bottom = top + track->getHeight() + Layout::sTrackDividerHeight;
+        int bottom = top + track->getHeight() + Layout::TrackDividerHeight;
         if (position.y >= top && position.y < bottom)
         {
             info.track = track;
             info.trackPosition = top;
-            info.onTrackDivider = (position.y - top <= Layout::sTrackDividerHeight);
+            info.onTrackDivider = (position.y - top <= Layout::TrackDividerHeight);
             getViewMap().getView(track)->getPositionInfo(position, info);
             return;
         }
@@ -88,7 +88,7 @@ pixel VideoView::getPosition(model::TrackPtr track) const
     int y = 0;
     BOOST_REVERSE_FOREACH(model::TrackPtr _track, getSequence()->getVideoTracks())
     {
-        y += Layout::sTrackDividerHeight;
+        y += Layout::TrackDividerHeight;
         if (track == _track)
         {
             break;
@@ -134,12 +134,12 @@ void VideoView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
-    dc.SetBrush(Layout::sTrackDividerBrush);
-    dc.SetPen(Layout::sTrackDividerPen);
+    dc.SetBrush(Layout::get().TrackDividerBrush);
+    dc.SetPen(Layout::get().TrackDividerPen);
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks())
     {
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::sTrackDividerHeight);
-        y += Layout::sTrackDividerHeight;
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::TrackDividerHeight);
+        y += Layout::TrackDividerHeight;
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();
     }

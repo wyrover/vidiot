@@ -3,7 +3,7 @@
 
 extern "C" {
 #pragma warning(disable:4244)
-#include <avcodec.h>
+#include <libavcodec/avcodec.h>
 #pragma warning(default:4244)
 }
 

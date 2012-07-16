@@ -1,5 +1,6 @@
 NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
-
+      <VIDIOT_SRC> is the subdir of that dir in which the sources are.
+      
 NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
       a working executable (crashes upon startup). Anyway, this allows for
       checing compatibility with GCC.
@@ -20,11 +21,11 @@ NOTE: The MingW/GCC stuff compiles and links. However it doesn't produce
 * Install CodeMaid plugin
   - Disable remove blank lines after opening brace
   - Disable remove blank lines before closing brace
-* Install <vidiot_trunk>/build/VisualStudioAddin
+* Install <VIDIOT_SRC>/build/VisualStudioAddin
   - Install Microsoft Visual Studio 2010 SP1 SDK from
     http://www.microsoft.com/download/en/details.aspx?id=21835
   - Build VisualStudioAddin
-  - Add <vidiot_trunk>\build\VisualStudioAddin\bin\Release to AddIn paths
+  - Add <VIDIOT_SRC>\build\VisualStudioAddin\bin\Release to AddIn paths
     via Tools->Options->Addin/macro security
 
 =================== CMAKE ===================
@@ -64,13 +65,17 @@ Install ActivePerl via installer
   - coreutils-5.97-MSYS-1.0.11: extract pr.exe
   (Note: ffmpeg binaries not working)
 
-===================== SVN  ===================
+================== VERSION CONTROL  ================
 * Install SVN (tortoise)
+* Install TortoiseHG
+  - Enable the extension Mercurial_keyring (to avoid having to enter the 
+    password more than once) 
 
 =================== VIDIOT ===================
-* Checkout Vidiot into <VIDIOT_DIR>
-  Example (VIDIOT_DIR=D:\Vidiot): D:\Vidiot\vidiot_trunk
+* Checkout Vidiot into <VIDIOT_SRC>
+  Example: VIDIOT_DIR=D:\Vidiot, VIDIOT_SRC=D:\Vidiot\Source
   (Repo: https://vidiot.svn.sourceforge.net/svnroot/vidiot)
+  (New Repo: hg clone https://ericraijmakers@code.google.com/p/vidiot/)
 
 =================== BOOST ===================
 * Download Boost into <VIDIOT_DIR>\boost_1_xx_y
@@ -86,8 +91,8 @@ Install ActivePerl via installer
 * Copy include/wx/msw/setup0.h to setup.h
 * Copy include/wx/msw/setup0.h to include/wx/setup.h
 * Clean <VIDIOT_DIR>\wxwidgets_trunk\lib\vc_lib (particularly, remove all setup.h files)
-* Apply patch to wxUIActionSimulator::MouseMove:
-  (see <vidiot_trunk>/build/patches)
+* Apply patch to wxUIActionSimulator::MouseMove: (NOTE: No longer required!)
+  (see <VIDIOT_SRC>/build/patches)
     int scaledx = std::ceil((float)x * 65535.0 / (displayx-1));
     int scaledy = std::ceil((float)y * 65535.0 / (displayy-1));
 * (MSVC) build solution Release & Debug
@@ -177,7 +182,7 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * Install NSIS
 
 =================== BUILD ===================
-* Run <VIDIOT_DIR>/build/RunCMake.bat
+* Run <VIDIOT_SRC>/build/RunCMake.bat
 
 =================== RUN TESTS ===================
 * Ensure to have set environment variable VIDIOT_DIR

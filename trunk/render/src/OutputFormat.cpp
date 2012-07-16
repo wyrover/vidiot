@@ -47,10 +47,19 @@ OutputFormat::~OutputFormat()
 {
 }
 
-//OutputFormat* OutputFormat::clone() const
-//{
-//    return new OutputFormat(static_cast<const OutputFormat&>(*this));
-//}
+//////////////////////////////////////////////////////////////////////////
+// OPERATORS
+//////////////////////////////////////////////////////////////////////////
+
+bool OutputFormat::operator== (const OutputFormat& other) const
+{
+    return
+        (mName == other.mName) &&
+        (mLongName == other.mLongName) &&
+        (mExtensions == other.mExtensions) &&
+        (mDefaultAudioCodec == other.mDefaultAudioCodec) &&
+        (mDefaultVideoCodec == other.mDefaultVideoCodec);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET

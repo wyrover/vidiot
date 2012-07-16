@@ -13,6 +13,7 @@
 #include "Dialog.h"
 #include "Node.h"
 #include "Config.h"
+#include "Layout.h"
 #include "ids.h"
 #include "Options.h"
 #include "Preview.h"
@@ -67,6 +68,7 @@ Window::Window()
     :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700))
     ,	mDocTemplate(new wxDocTemplate(GetDocumentManager(), _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     ,   mDialog(new Dialog())
+    ,   mLayout(new gui::Layout())
     ,   mWatcher(0)
     ,   mWorker(0)
     ,   mPreview(0)
@@ -235,6 +237,7 @@ Window::~Window()
     delete mWatcher;
     delete mWorker;
     delete mDialog;
+    delete mLayout;
     //NOT: delete mDocTemplate;
 
     sCurrent = 0;

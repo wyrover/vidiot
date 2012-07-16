@@ -82,8 +82,8 @@ void EditDisplay::OnPaint(wxPaintEvent& event)
 {
     wxPaintDC dc(this); // Omit this, and suffer the performance consequences ;-)
 
-    dc.SetPen(Layout::sPreviewBackgroundPen);
-    dc.SetBrush(Layout::sPreviewBackgroundBrush);
+    dc.SetPen(Layout::get().PreviewBackgroundPen);
+    dc.SetBrush(Layout::get().PreviewBackgroundBrush);
     if (mCurrentBitmap)
     {
         if (mCurrentBitmap->GetWidth() < mWidth)

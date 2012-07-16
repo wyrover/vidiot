@@ -15,7 +15,7 @@
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
 #pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.
 extern "C" {
-#include <avformat.h>
+#include <libavformat/avformat.h>
 };
 
 boost::bimap<int, wxString> Avcodec::mapAvcodecLevels = boost::assign::list_of<boost::bimap<int, wxString>::relation >
@@ -42,7 +42,7 @@ void Avcodec::init()
 {
     sFixedBuffer = new char[sMaxLogSize];
     av_register_all();
-    url_set_interrupt_cb(0);
+ // todo find all avio_open2 calls and AVFormatContext objects and set its interrupt_callback to 0   url_set_interrupt_cb(0);
 }
 
 void Avcodec::exit()

@@ -96,12 +96,12 @@ wxSize SequenceView::requiredSize() const
     int height =
         std::max(
         getTimeline().GetClientSize().GetHeight(),        // At least the widget size
-        Layout::sTimeScaleHeight +
-        Layout::sMinimalGreyAboveVideoTracksHeight +
+        Layout::TimeScaleHeight +
+        Layout::MinimalGreyAboveVideoTracksHeight +
         getVideo().getSize().GetHeight() +
-        Layout::sAudioVideoDividerHeight +
+        Layout::AudioVideoDividerHeight +
         getAudio().getSize().GetHeight() +
-        Layout::sMinimalGreyBelowAudioTracksHeight);    // Height of all combined components
+        Layout::MinimalGreyBelowAudioTracksHeight);    // Height of all combined components
     return wxSize(minimumWidth(),height);
 }
 
@@ -123,7 +123,7 @@ void SequenceView::getPositionInfo(wxPoint position, PointerPositionInfo& info )
 
 void SequenceView::setDividerPosition(int position)
 {
-    int minimum = Layout::sVideoPosition + getVideo().getSize().GetHeight();
+    int minimum = Layout::VideoPosition + getVideo().getSize().GetHeight();
     if (position < minimum)
     {
         position = minimum;
@@ -140,7 +140,7 @@ void SequenceView::resetDividerPosition()
 
 int SequenceView::getAudioPosition() const
 {
-    return getSequence()->getDividerPosition() + Layout::sAudioVideoDividerHeight;
+    return getSequence()->getDividerPosition() + Layout::AudioVideoDividerHeight;
 }
 
 int SequenceView::getVideoPosition() const
@@ -174,17 +174,17 @@ void SequenceView::draw(wxBitmap& bitmap) const
     int h = bitmap.GetHeight();
 
     // Set BG
-    dc.SetPen(Layout::sBackgroundPen);
-    dc.SetBrush(Layout::sBackgroundBrush);
+    dc.SetPen(Layout::get().BackgroundPen);
+    dc.SetBrush(Layout::get().BackgroundBrush);
     dc.DrawRectangle(0,0,w,h);
 
     dc.DrawBitmap(getTimescale().getBitmap(), wxPoint(0,0));
 
     dc.DrawBitmap(getVideo().getBitmap(),   wxPoint(0,getVideoPosition()));
 
-    dc.SetBrush(Layout::sAudioVideoDividerBrush);
-    dc.SetPen(Layout::sAudioVideoDividerPen);
-    dc.DrawRectangle(wxPoint(0,getSequence()->getDividerPosition()),wxSize(getSequenceView().getSize().GetWidth(), Layout::sAudioVideoDividerHeight));
+    dc.SetBrush(Layout::get().AudioVideoDividerBrush);
+    dc.SetPen(Layout::get().AudioVideoDividerPen);
+    dc.DrawRectangle(wxPoint(0,getSequence()->getDividerPosition()),wxSize(getSequenceView().getSize().GetWidth(), Layout::get().AudioVideoDividerHeight));
 
     dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
 

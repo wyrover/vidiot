@@ -1,7 +1,7 @@
 #include "VideoCodecParameter.h"
 
 extern "C" {
-#include <avcodec.h>
+#include <libavcodec/avcodec.h>
 };
 
 #include <wx/string.h>

@@ -6,7 +6,7 @@ extern "C" {
 #ifdef _MSC_VER
 #include "stdint.h"
 #endif // _MSC_VER
-#include <avcodec.h>
+#include <libavcodec/avcodec.h>
 };
 
 namespace model {
@@ -45,4 +45,3 @@ int Packet::getSizeInBytes()
 }
 
 } // namespace
-

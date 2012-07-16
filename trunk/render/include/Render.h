@@ -3,10 +3,11 @@
 
 #include <wx/event.h>
 #include <wx/filename.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include "UtilCloneable.h"
 #include "UtilEvent.h"
 
@@ -17,9 +18,6 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 typedef boost::weak_ptr<Sequence> WeakSequencPtr;
 
 namespace render {
-
-DECLARE_EVENT(EVENT_RENDER_PROGRESS, EventRenderProgress, int);
-DECLARE_EVENT(EVENT_RENDER_ACTIVE, EventRenderActive, bool);
 
 class Render;
 typedef boost::shared_ptr<Render> RenderPtr;
@@ -33,6 +31,7 @@ typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
 class Render
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public ICloneable
+    ,   public boost::enable_shared_from_this<Render>
 {
 public:
 
@@ -53,12 +52,12 @@ public:
 
     virtual Render* clone() const override;
 
-    void generate(SequencePtr sequence);
-
     //////////////////////////////////////////////////////////////////////////
-    // GET/SET
+    // OPERATORS
     //////////////////////////////////////////////////////////////////////////
 
+    bool operator== (const Render& other) const;
+    bool operator!= (const Render& other) const;
     OutputFormatPtr getOutputFormat() const;
     void setOutputFormat(OutputFormatPtr format);
 
@@ -70,6 +69,23 @@ public:
 
     wxFileName getFileName() const;
     void setFileName(wxFileName filename);
+
+    ///\ return true if the given filename can be used for rendering
+    bool checkFileName() const;
+
+    /// \return a clone of this object with the filename (last part) removed
+    /// This returned object can be used in comparisons, where the file name
+    /// part is not relevant for the comparison.
+    RenderPtr withFileNameRemoved() const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // RENDERING
+    //////////////////////////////////////////////////////////////////////////
+
+    void generate(SequencePtr sequence);
+
+    static void schedule(SequencePtr sequence);
+    static void scheduleAll();
 
 private:
 

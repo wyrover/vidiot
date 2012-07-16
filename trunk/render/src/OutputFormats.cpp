@@ -2,7 +2,7 @@
 
 extern "C" {
 #pragma warning(disable:4244)
-#include <avformat.h>
+#include <libavformat/avformat.h>
 #pragma warning(default:4244)
 };
 

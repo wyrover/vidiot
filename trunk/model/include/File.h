@@ -7,11 +7,11 @@
 #include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/mutex.hpp>
-#include "Node.h"
-#include "IControl.h"
-#include "IPath.h"
-#include "UtilFrameRate.h"
 #include "FilePacket.h"
+#include "IFile.h"
+#include "IPath.h"
+#include "Node.h"
+#include "UtilFrameRate.h"
 
 struct AVFormatContext;
 struct AVStream;
@@ -25,7 +25,7 @@ typedef boost::shared_ptr<File> FilePtr;
 typedef std::list<FilePtr> Files;
 
 class File
-    :   public IControl
+    :   public IFile
     ,   public Node
     ,   public IPath
 {

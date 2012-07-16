@@ -39,7 +39,6 @@ Sequence::Sequence()
     ,   Node()
     ,   mName()
     ,   mDividerPosition(0)
-    ,   mFrozen(false)
     ,   mVideoTracks()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
@@ -58,7 +57,6 @@ Sequence::Sequence(wxString name)
     ,   Node()
     ,   mName(name)
     ,   mDividerPosition(0)
-    ,   mFrozen(false)
     ,   mVideoTracks()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
@@ -77,16 +75,14 @@ Sequence::Sequence(const Sequence& other)
     ,   Node()
     ,   mName(other.mName)
     ,   mDividerPosition(other.mDividerPosition)
-    ,   mFrozen(other.mFrozen)
-    ,   mVideoTracks(other.mVideoTracks)
-    ,   mAudioTracks(other.mAudioTracks)
-    ,   mVideoTrackMap(other.mVideoTrackMap)
-    ,   mAudioTrackMap(other.mVideoTrackMap)
+    ,   mVideoTracks(make_cloned<Track>(other.mVideoTracks))
+    ,   mAudioTracks(make_cloned<Track>(other.mAudioTracks))
+    ,   mVideoTrackMap() // Duplicate administration left empty!
+    ,   mAudioTrackMap()  // Duplicate administration left empty!
     ,   mPosition(0)
     ,   mRender()
 {
     VAR_DEBUG(this);
-    ASSERT(!mFrozen); // A frozen sequence should not be cloned
 }
 
 Sequence* Sequence::clone() const
@@ -176,26 +172,8 @@ AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
 // SEQUENCE SPECIFIC
 //////////////////////////////////////////////////////////////////////////
 
-void Sequence::setFrozen(bool frozen)
-{
-    bool wasFrozen = isFrozen();
-    mFrozen += (frozen ? +1 : -1);
-    ASSERT_MORE_THAN_EQUALS_ZERO(mFrozen);
-    VAR_DEBUG(frozen)(mFrozen);
-    if (wasFrozen != isFrozen())
-    {
-        ProcessEvent(model::EventSequenceFrozen(isFrozen()));
-    }
-}
-
-bool Sequence::isFrozen()
-{
-    return mFrozen > 0;
-}
-
 void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 {
-    ASSERT(!mFrozen);
     UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
@@ -210,7 +188,6 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 
 void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 {
-    ASSERT(!mFrozen);
     UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
@@ -219,7 +196,6 @@ void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 }
 void Sequence::removeVideoTracks(Tracks tracks)
 {
-    ASSERT(!mFrozen);
     BOOST_FOREACH( TrackPtr track, tracks )
     {
         track->clean();
@@ -232,7 +208,6 @@ void Sequence::removeVideoTracks(Tracks tracks)
 }
 void Sequence::removeAudioTracks(Tracks tracks)
 {
-    ASSERT(!mFrozen);
     BOOST_FOREACH( TrackPtr track, tracks )
     {
         track->clean();
@@ -314,6 +289,10 @@ VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParamete
     return composition;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// RENDERING
+//////////////////////////////////////////////////////////////////////////
+
 render::RenderPtr Sequence::getRender()
 {
     if (!mRender)
@@ -336,7 +315,6 @@ render::RenderPtr Sequence::getRender()
 
 void Sequence::setRender(render::RenderPtr render)
 {
-    ASSERT(!mFrozen);
     mRender = render;
 }
 
@@ -361,7 +339,6 @@ void Sequence::setName(wxString name)
 
 void Sequence::updateTracks()
 {
-    ASSERT(!mFrozen);
     int index = 0;
     mVideoTrackMap.clear();
     BOOST_FOREACH( TrackPtr track, mVideoTracks )

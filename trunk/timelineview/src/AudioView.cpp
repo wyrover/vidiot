@@ -58,7 +58,7 @@ wxSize AudioView::requiredSize() const
     int height = 0;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        height += track->getHeight() + Layout::sTrackDividerHeight;
+        height += track->getHeight() + Layout::TrackDividerHeight;
     }
     return wxSize(width,height);
 }
@@ -68,12 +68,12 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
     int top = getSequenceView().getAudioPosition();
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
-        int bottom = top + track->getHeight() + Layout::sTrackDividerHeight;
+        int bottom = top + track->getHeight() + Layout::TrackDividerHeight;
         if (position.y >= top && position.y < bottom)
         {
             info.track = track;
             info.trackPosition = top;
-            info.onTrackDivider = (bottom - position.y <= Layout::sTrackDividerHeight);
+            info.onTrackDivider = (bottom - position.y <= Layout::TrackDividerHeight);
             getViewMap().getView(track)->getPositionInfo(position, info);
             return;
         }
@@ -91,7 +91,7 @@ pixel AudioView::getPosition(model::TrackPtr track) const
             break;
         }
         y += _track->getHeight();
-        y += Layout::sTrackDividerHeight;
+        y += Layout::TrackDividerHeight;
     }
     return y;
 }
@@ -132,14 +132,14 @@ void AudioView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
-    dc.SetBrush(Layout::sTrackDividerBrush);
-    dc.SetPen(Layout::sTrackDividerPen);
+    dc.SetBrush(Layout::get().TrackDividerBrush);
+    dc.SetPen(Layout::get().TrackDividerPen);
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::sTrackDividerHeight);
-        y += Layout::sTrackDividerHeight;
+        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::TrackDividerHeight);
+        y += Layout::TrackDividerHeight;
     }
 }
 

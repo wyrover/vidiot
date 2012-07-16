@@ -32,7 +32,7 @@ public:
     int getNumberOfStatusBars() const;
     void setDebugText(wxString text = "");
     void setProcessingText(wxString text = "");
-    void setProcessingDetails(wxString text = "");
+    void setQueueText(wxString text = "");
     void showProgressBar(int max);
     void showProgress(int value);
     void hideProgressBar();

@@ -86,7 +86,7 @@ VideoFramePtr VideoComposition::generate()
 
     if (mParameters.getDrawBoundingBox())
     {
-        gc->SetPen(gui::Layout::sPreviewBoundingBoxPen);
+        gc->SetPen(gui::Layout::get().PreviewBoundingBoxPen);
         gc->SetBrush(*wxTRANSPARENT_BRUSH);
         gc->DrawRectangle( 1, 1, requiredOutputSize.GetWidth() - 1, requiredOutputSize.GetHeight() - 1);
     }

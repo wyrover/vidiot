@@ -7,6 +7,8 @@
 #include "IClip.h"
 
 namespace model {
+class IFile;
+typedef boost::shared_ptr<IFile> IFilePtr;
 class Track;
 typedef boost::shared_ptr<Track> TrackPtr;
 typedef boost::weak_ptr<Track> WeakTrackPtr;
@@ -23,12 +25,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Clip();                      ///< Constructor for recovery from disk
-
-    Clip(IControlPtr render);    ///< Constructor for creating new clip from other asset
-
-    virtual Clip* clone() const; ///< Used for making deep copies (clones)
-
+    Clip();                   ///< Constructor for recovery from disk
+    Clip(IFilePtr render);    ///< Constructor for creating new clip from other asset
+    virtual Clip* clone() const override; ///< Used for making deep copies (clones)
     virtual ~Clip();
 
     //////////////////////////////////////////////////////////////////////////
@@ -104,7 +103,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    IControlPtr mRender;    ///< The producer of audiovisual data for this clip
+    IFilePtr mRender;       ///< The producer of audiovisual data for this clip
     WeakTrackPtr mTrack;    ///< Track which holds this clip. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
