@@ -11,7 +11,7 @@ namespace test {
 
 wxString sSuite;
 boost::optional<std::string> sTest(boost::none);
-int sSuiteCount = 1;
+int sSuiteCount = 0;
 ISuite* ISuite::sInstance = 0;
 
 ISuite::ISuite()

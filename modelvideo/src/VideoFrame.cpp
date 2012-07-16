@@ -1,6 +1,6 @@
 #include "VideoFrame.h"
 extern "C" {
-#include <avformat.h>
+#include <libavformat/avformat.h>
 };
 
 #include <boost/make_shared.hpp>

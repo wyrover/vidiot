@@ -7,7 +7,6 @@
 #include "Config.h"
 #include "Dialog.h"
 #include "IEventLoopListener.h"
-#include "Layout.h"
 #include "Render.h"
 #include "UtilInitAvcodec.h"
 #include "UtilInitPortAudio.h"
@@ -88,16 +87,21 @@ void Application::waitForIdle()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+static int idlestart = 0;
+static int idleend = 0;
+
 void Application::triggerIdle(EventIdleTrigger& event)
 {
     boost::mutex::scoped_lock lock(mMutexIdle);
     Unbind(EVENT_IDLE_TRIGGER, &Application::triggerIdle, this);
     Bind(wxEVT_IDLE, &Application::onIdle, this);
+    VAR_DEBUG(idlestart); idlestart++;
     wxWakeUpIdle();
 }
 void Application::onIdle(wxIdleEvent& event)
 {
     mConditionIdle.notify_all();
+    VAR_DEBUG(idleend); idleend++;
     Unbind(wxEVT_IDLE, &Application::onIdle, this);
     event.Skip();
 }
@@ -125,10 +129,6 @@ bool Application::OnInit()
 
     // Requires initialized Avcodec; thus, requires Avcodec::init().
     model::render::Render::initialize();
-
-    // The fonts cannot be initialized similar to pens and brushes
-    // (leads to uninitialized wxStockGDI)
-    Layout::initializeFonts();
 
     // Can only be initialized after the logging has been initialized,
     // because it will log a lot during initialization.
@@ -165,6 +165,7 @@ int Application::OnExit()
 {
     LOG_INFO;
 
+    boost::mutex::scoped_lock lock(mMutexIdle); // Wait until all idle handling done
     PortAudio::exit();
     Avcodec::exit();
 

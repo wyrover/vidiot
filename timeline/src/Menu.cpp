@@ -4,6 +4,7 @@
 #include <set>
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
+#include "AudioClip.h"
 #include "AudioTrack.h"
 #include "Clip.h"
 #include "CreateAudioTrack.h"
@@ -11,11 +12,10 @@
 #include "CreateVideoTrack.h"
 #include "EmptyClip.h"
 #include "ids.h"
-#include "VideoClip.h"
-#include "AudioClip.h"
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
+#include "Render.h"
 #include "RenderDialog.h"
 #include "Selection.h"
 #include "Sequence.h"
@@ -23,6 +23,7 @@
 #include "TimeLinesView.h"
 #include "Track.h"
 #include "UtilLog.h"
+#include "VideoClip.h"
 #include "VideoTrack.h"
 #include "Window.h"
 #include "Zoom.h"
@@ -47,7 +48,9 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
     mMenu.Append(ID_REMOVEMARKERS,  _("Remove all markers"));
     mMenu.AppendSeparator();
-    mMenu.Append(ID_RENDERSEQUENCE, _("Render"));
+    mMenu.Append(ID_RENDERSETTINGS, _("Render settings"));
+    mMenu.Append(ID_RENDERSEQUENCE, _("Render '") + getSequence()->getName() + "'");
+    mMenu.Append(ID_RENDERSEQUENCE, _("Render all modified sequences"));
     mMenu.AppendSeparator();
     mMenu.Append(ID_CLOSESEQUENCE,  _("Close"));
 
@@ -58,7 +61,9 @@ MenuHandler::MenuHandler(Timeline* timeline)
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
 
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,      this, ID_RENDERALL);
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
@@ -81,7 +86,9 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
 
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,      this, ID_RENDERALL);
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
@@ -251,10 +258,28 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
     getIntervals().clear();
 }
 
+void MenuHandler::onRenderSettings(wxCommandEvent& event)
+{
+    gui::RenderDialog(getSequence()).ShowModal(); // todo rename into rendersettingsdialog
+    event.Skip();
+}
+
 void MenuHandler::onRenderSequence(wxCommandEvent& event)
 {
-    gui::RenderDialog dialog(getSequence());
-    dialog.ShowModal();
+    if (!getSequence()->getRender()->checkFileName())
+    {
+        gui::RenderDialog(getSequence()).ShowModal();
+    }
+    else
+    {
+        model::render::Render::schedule(getSequence());
+    }
+    event.Skip();
+}
+
+void MenuHandler::onRenderAll(wxCommandEvent& event)
+{
+    // todo call static method Render::all()?
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& event)

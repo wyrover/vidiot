@@ -1,16 +1,17 @@
 #ifndef MODEL_SEQUENCE_H
 #define MODEL_SEQUENCE_H
 
-#include <list>
-#include <map>
-#include <set>
-#include <wx/event.h>
-#include <boost/optional.hpp>
 #include "FifoWork.h"
 #include "IAudio.h"
 #include "IControl.h"
 #include "IVideo.h"
 #include "Node.h"
+#include "UtilCloneable.h"
+#include <boost/optional.hpp>
+#include <list>
+#include <map>
+#include <set>
+#include <wx/event.h>
 
 namespace model {
 
@@ -37,6 +38,7 @@ class Sequence
     ,   public IControl
     ,   public IVideo
     ,   public IAudio
+    ,   public ICloneable
     ,   public Node
 {
 public:
@@ -49,6 +51,12 @@ public:
 
     Sequence(wxString name);
 
+    /// \return a clone of the sequence, that can be used for rendering
+    /// The sequence is cloned just before the rendering is started. That ensures
+    /// that the sequence can be edited further, while the 'previous version' is
+    /// being rendered. This clone does not need to copy all attributes, since the
+    /// only action done with it is rendering. In fact, only the minimal cloning
+    /// should be done, for performance reasons.
     virtual Sequence* clone() const override;
 
 	virtual ~Sequence();
@@ -78,9 +86,6 @@ public:
     // SEQUENCE SPECIFIC
     //////////////////////////////////////////////////////////////////////////
 
-    void setFrozen(bool frozen);
-    bool isFrozen();
-
     void addVideoTracks(Tracks tracks, TrackPtr position = TrackPtr());
     void addAudioTracks(Tracks tracks, TrackPtr position = TrackPtr());
     void removeVideoTracks(Tracks tracks);
@@ -100,6 +105,10 @@ public:
 
     VideoCompositionPtr getVideoComposition(const VideoCompositionParameters& parameters);
 
+    //////////////////////////////////////////////////////////////////////////
+    // RENDERING
+    //////////////////////////////////////////////////////////////////////////
+
     render::RenderPtr getRender();
     void setRender(render::RenderPtr render);
 
@@ -117,13 +126,17 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// This copy constructor may only be used for making a copy for rendering
+    /// as all duplicate administration (the one kept for performance) is NOT
+    /// duplicated. In fact, that couldn't be duplicated because of the
+    /// shared_from_this() usage (and that can't be called in constructors yet).
+    /// See Track::updateClips() for that shared_from_this() usage.
     /// \see make_cloned
     Sequence(const Sequence& other);
 
 private:
 
     wxString mName;
-    int mFrozen;
     Tracks mVideoTracks;
     Tracks mAudioTracks;
     std::map<int, TrackPtr> mVideoTrackMap;

@@ -3,7 +3,7 @@
 
 extern "C" {
 #pragma warning(disable:4244)
-#include <avcodec.h>
+#include <libavcodec/avcodec.h>
 #pragma warning(default:4244)
 }
 
@@ -37,6 +37,12 @@ public:
     VideoCodec(const VideoCodec& other);
 	virtual ~VideoCodec();
     virtual VideoCodec* clone() const override;
+
+    //////////////////////////////////////////////////////////////////////////
+    // OPERATORS
+    //////////////////////////////////////////////////////////////////////////
+
+    bool operator== (const VideoCodec& other) const;
 
     //////////////////////////////////////////////////////////////////////////
     // PARAMETERS

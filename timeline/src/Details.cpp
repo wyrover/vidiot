@@ -30,7 +30,7 @@ Details::Details(wxWindow* parent, Timeline* timeline)
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
-    mHeader->SetBackgroundColour(Layout::sDetailsViewHeaderColour);
+    mHeader->SetBackgroundColour(Layout::get().DetailsViewHeaderColour);
     sizer->Add(mHeader, wxSizerFlags(0).Center());
     sizer->Add(mDetailsClip, wxSizerFlags(1).Expand().Center() );
     sizer->Hide(mDetailsClip);

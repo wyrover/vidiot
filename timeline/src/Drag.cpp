@@ -367,7 +367,7 @@ wxBitmap Drag::getDragBitmap() //const
     wxPoint position(0,getSequenceView().getVideoPosition());
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
     {
-        position.y += Layout::sTrackDividerHeight;
+        position.y += Layout::TrackDividerHeight;
         model::TrackPtr draggedTrack = trackOnTopOf(track);
         if (draggedTrack)
         {
@@ -385,7 +385,7 @@ wxBitmap Drag::getDragBitmap() //const
         {
             getViewMap().getView(draggedTrack)->drawForDragging(position,track->getHeight(),dc,dcMask);
         }
-        position.y += track->getHeight() + Layout::sTrackDividerHeight;
+        position.y += track->getHeight() + Layout::TrackDividerHeight;
     }
 
     mBitmapOffset.x = std::max(dcMask.MinX(),0);
@@ -412,8 +412,8 @@ void Drag::draw(wxDC& dc) const
         return;
     }
     dc.DrawBitmap(mBitmap, getBitmapPosition(),true);
-    dc.SetPen(Layout::sSnapPen);
-    dc.SetBrush(Layout::sSnapBrush);
+    dc.SetPen(Layout::get().SnapPen);
+    dc.SetBrush(Layout::get().SnapBrush);
     BOOST_FOREACH( pts snap, mSnaps )
     {
         dc.DrawLine(getZoom().ptsToPixels(snap),0,getZoom().ptsToPixels(snap),dc.GetSize().GetHeight());
@@ -636,7 +636,7 @@ void Drag::determineSnapOffset()
     pts ptsmouse = getZoom().pixelsToPts(mPosition.x);
 
     // Find nearest snap match
-    pts minDiff = Layout::sSnapDistance + 1; // To ensure that the first found point will change this value
+    pts minDiff = Layout::SnapDistance + 1; // To ensure that the first found point will change this value
     pts snapPoint = -1;
     pts snapOffset = 0;
     std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
@@ -647,7 +647,7 @@ void Drag::determineSnapOffset()
         pts pts_drag = *itDrag + ptsoffset;
 
         pts diff = abs(pts_drag - pts_timeline);
-        if (diff <= Layout::sSnapDistance)
+        if (diff <= Layout::SnapDistance)
         {
             // This snap point is closer than the currently stored snap point, or it is equally
             // close, but is closer to the mouse pointer.

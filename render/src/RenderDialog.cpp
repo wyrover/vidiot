@@ -26,7 +26,6 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilFifo.h"
 #include "UtilLog.h"
-#include "video.xpm" // todo rename
 #include "VideoCodec.h"
 #include "VideoCodecs.h"
 #include "Window.h"
@@ -34,140 +33,135 @@
 
 namespace gui {
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER CLASS
-//////////////////////////////////////////////////////////////////////////
-
-/// This work class keeps the sequence locked while work is scheduled for
-/// the sequence.
-class RenderSequenceWork : public Work
-{
-public:
-    explicit RenderSequenceWork(model::SequencePtr sequence)
-        :   Work(boost::bind(&model::render::Render::generate,sequence->getRender(),sequence))
-        ,   mSequence(sequence)
-    {
-        mSequence->setFrozen(true);
-    }
-    virtual ~RenderSequenceWork()
-    {
-        mSequence->setFrozen(false);
-    };
-private:
-    model::SequencePtr mSequence;
-};
-
 static RenderDialog* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+void addOption(wxWindow* parent, wxSizer* vSizer, wxString name, wxWindow* option)
+{
+    wxStaticText* wxst = new wxStaticText(parent,wxID_ANY,name);
+    wxst->SetMinSize(wxSize(100,-1));
+    wxBoxSizer* hSizer = new wxBoxSizer(wxHORIZONTAL);
+    hSizer->Add(wxst,wxSizerFlags(1));
+    hSizer->Add(option,wxSizerFlags(2));
+    vSizer->Add(hSizer,wxSizerFlags().Expand());
+};
+
 RenderDialog::RenderDialog(model::SequencePtr sequence)
-    :   wxDialog(&Window::get(),wxID_ANY,_("Render sequence"),wxDefaultPosition,wxSize(600,600),wxDEFAULT_DIALOG_STYLE,wxDialogNameStr )
+    :   wxDialog(&Window::get(),wxID_ANY,_("Render sequence"),wxDefaultPosition,wxSize(600,600),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mSequence(sequence)
-    ,   mBook(new wxListbook(this,wxID_ANY,wxDefaultPosition,wxSize(600,600),wxLB_LEFT))
+    ,   mOriginal(make_cloned<model::render::Render>(sequence->getRender()))
+    ,   mNew(make_cloned<model::render::Render>(sequence->getRender()))
+    ,   mFile(0)
+    ,   mFileButton(0)
+    ,   mVideoCodec(0)
+    ,   mAudioCodec(0)
+    ,   mRenderButton(0)
+    ,   mOkButton(0)
+    ,   mCancelButton(0)
+    ,   mApplyButton(0)
+    ,   mSetDefaultButton(0)
     ,   mRendering(false)
+    ,   mLength(0)
 {
     VAR_DEBUG(this);
     sCurrent = this;
 
-    getRender()->Bind(model::render::EVENT_RENDER_PROGRESS, &RenderDialog::onRenderProgress, this);
-    getRender()->Bind(model::render::EVENT_RENDER_ACTIVE, &RenderDialog::onRenderActive, this);
+    mLength = mSequence->getLength();
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 
+    wxPanel* outputbox = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxBORDER_RAISED);
+    outputbox->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    //////// FORMAT ////////
+
+    wxStaticBox* formatbox = new wxStaticBox(outputbox,wxID_ANY,_("Format"));
+    wxStaticBoxSizer* formatboxsizer = new wxStaticBoxSizer(formatbox, wxVERTICAL);
+
+    wxPanel* fileselect = new wxPanel(formatbox);
+    fileselect->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    mFile = new wxTextCtrl(fileselect,wxID_ANY,mNew->getFileName().GetFullPath(),wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
+    mFileButton = new wxButton(fileselect,wxID_ANY,_("Select"));
+    mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &RenderDialog::onFileButtonPressed, this);
+    fileselect->GetSizer()->Add(mFile,wxSizerFlags(1).Expand());
+    fileselect->GetSizer()->Add(mFileButton,wxSizerFlags(0));
+
+    // todo use (checkFileName(mNew->getFileName())) to get a default ok file name...
+
+    mVideoCodec = new EnumSelector<int>(formatbox, model::render::VideoCodecs::mapToName, mNew->getVideoCodec()->getId());
+    mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onVideoCodecChanged, this);
+
+    mAudioCodec = new EnumSelector<int>(formatbox, model::render::AudioCodecs::mapToName, mNew->getAudioCodec()->getId());
+    mAudioCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onAudioCodecChanged, this);
+
+    addOption(formatbox,formatboxsizer,_("Output file"), fileselect);
+    addOption(formatbox,formatboxsizer,_("Video codec"), mVideoCodec);
+    addOption(formatbox,formatboxsizer,_("Audio codec"), mAudioCodec);
+
+    //////// VIDEO ////////
+
+    wxStaticBoxSizer* mVideoBoxSizer = new wxStaticBoxSizer(wxVERTICAL,outputbox,_("Video settings"));
+    mVideoParameters = new wxScrolledWindow(mVideoBoxSizer->GetStaticBox());
+    mVideoBoxSizer->Add(mVideoParameters,wxSizerFlags(1).Expand());
+
+    //////// AUDIO ////////
+
+    wxStaticBoxSizer* mAudioBoxSizer = new wxStaticBoxSizer(wxVERTICAL,outputbox,_("Audio settings"));
+    mAudioParameters = new wxScrolledWindow(mAudioBoxSizer->GetStaticBox());
+    mAudioBoxSizer->Add(mAudioParameters,wxSizerFlags(1).Expand());
+
+    //////// ACTIONS ////////
+
+    wxStaticBox* actionbox = new wxStaticBox(outputbox,wxID_ANY,_("Actions"));
+    wxStaticBoxSizer* actionboxsizer = new wxStaticBoxSizer(actionbox, wxHORIZONTAL);
+
+    mSetDefaultButton = new wxButton(actionbox,wxID_ANY,_("Set as default"));
+    mSetDefaultButton->Enable();
+    mSetDefaultButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onSetDefaultButtonPressed, this);
+
+    if (*model::Properties::get()->getDefaultRender()->withFileNameRemoved() == *mNew->withFileNameRemoved())
     {
-        wxPanel* outputbox = new wxPanel(mBook);
-        outputbox->SetSizer(new wxFlexGridSizer(3,10,10));
-
-        mFile = new wxTextCtrl(outputbox,wxID_ANY,getRender()->getFileName().GetFullPath(),wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
-        mFile->Bind(wxEVT_COMMAND_TEXT_UPDATED, &RenderDialog::onFileNameEntered, this); // todo obsolete
-
-        mFileButton = new wxButton(outputbox,wxID_ANY,_("Select"));
-        mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onFileButtonPressed, this);
-
-        mVideoCodec = new EnumSelector<int>(outputbox, model::render::VideoCodecs::mapToName, getRender()->getVideoCodec()->getId());
-        mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onVideoCodecChanged, this);
-
-        mAudioCodec = new EnumSelector<int>(outputbox, model::render::AudioCodecs::mapToName, getRender()->getAudioCodec()->getId());
-        mAudioCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onAudioCodecChanged, this);
-
-        mRenderButton = new wxButton(outputbox,wxID_ANY,_("Render"));
-        mRenderButton->Disable();
-        mRenderButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onRenderButtonPressed, this);
-
-        mSetDefaultButton = new wxButton(outputbox,wxID_ANY,_("Set default"));
-        mSetDefaultButton->Enable();
-        mSetDefaultButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onSetDefaultButtonPressed, this);
-
-        mLength = mSequence->getLength();
-
-        mProgress = new wxGauge(outputbox,wxID_ANY,static_cast<int>(mLength)); // todo make pts an int
-
-        mProgressText = new wxStaticText(outputbox,wxID_ANY,"");
-
-        outputbox->GetSizer()->Add(new wxStaticText(outputbox,wxID_ANY,_("Output file")));
-        outputbox->GetSizer()->Add(mFile,wxSizerFlags().Proportion(1).Expand());
-        outputbox->GetSizer()->Add(mFileButton,wxSizerFlags().Proportion(0));
-
-        outputbox->GetSizer()->Add(new wxStaticText(outputbox,wxID_ANY,_("Video codec")));
-        outputbox->GetSizer()->Add(mVideoCodec,wxSizerFlags().Proportion(1).Expand());
-        outputbox->GetSizer()->AddStretchSpacer();
-
-        outputbox->GetSizer()->Add(new wxStaticText(outputbox,wxID_ANY,_("Audio codec")));
-        outputbox->GetSizer()->Add(mAudioCodec,wxSizerFlags().Proportion(1).Expand());
-        outputbox->GetSizer()->AddStretchSpacer();
-
-        outputbox->GetSizer()->AddStretchSpacer();
-        outputbox->GetSizer()->Add(mRenderButton,wxSizerFlags().Proportion(0));
-        outputbox->GetSizer()->AddStretchSpacer();
-
-        outputbox->GetSizer()->AddStretchSpacer();
-        outputbox->GetSizer()->Add(mSetDefaultButton,wxSizerFlags().Proportion(0));
-        outputbox->GetSizer()->AddStretchSpacer();
-
-        outputbox->GetSizer()->AddStretchSpacer();
-        outputbox->GetSizer()->Add(mProgress,wxSizerFlags().Proportion(0));
-        outputbox->GetSizer()->AddStretchSpacer();
-
-        outputbox->GetSizer()->AddStretchSpacer();
-        outputbox->GetSizer()->Add(mProgressText,wxSizerFlags().Proportion(0));
-        outputbox->GetSizer()->AddStretchSpacer();
-
-        mBook->AddPage(outputbox,_("Output"));
-
-        // todo add audio codec selector to audio tab, and add video codec selector to render tab (allows to overrule the defaults?)
-        // todo file selector uses extension from given format...
-    }
-    {
-        mAudio = new wxPanel(mBook);
-        mAudio->SetSizer(new wxBoxSizer(wxVERTICAL));
-        mAudio->GetSizer()->Add(new wxButton(mAudio,wxID_ANY,_("AUDIO BUTTON")));
-        mBook->AddPage(mAudio,_("Audio"));
-    }
-    {
-        mVideo = new wxPanel(mBook);
-        mVideo->SetSizer(new wxBoxSizer(wxVERTICAL));
-        mVideo->GetSizer()->Add(new wxButton(mVideo,wxID_ANY,_("safdsf")));
-        mBook->AddPage(mVideo,_("Video"));
+       // todo finish this
+        mSetDefaultButton->Disable();
     }
 
-    const wxSize imageSize(32, 32);
-    wxBitmap bmpVideo(video_xpm);
-    wxImageList* m_imageList = new wxImageList(imageSize.GetWidth(), imageSize.GetHeight());
-    m_imageList->Add(bmpVideo);
-    m_imageList->Add(wxArtProvider::GetIcon(wxART_INFORMATION, wxART_OTHER, imageSize));
-    m_imageList->Add(wxArtProvider::GetIcon(wxART_QUESTION, wxART_OTHER, imageSize));
-    m_imageList->Add(wxArtProvider::GetIcon(wxART_WARNING, wxART_OTHER, imageSize));
-    m_imageList->Add(wxArtProvider::GetIcon(wxART_ERROR, wxART_OTHER, imageSize));
-    mBook->AssignImageList(m_imageList);
-    mBook->SetPageImage(0,0);
-    mBook->SetPageImage(1,1);
-    mBook->SetPageImage(2,2);
+    actionboxsizer->Add(mSetDefaultButton,wxSizerFlags().Proportion(0));
 
-    enableCodecInfo();
+    // todo update Project (save dialog)
+    //////// BUTTONS ////////
+
+    wxPanel* buttons = new wxPanel(this);
+    buttons->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    mRenderButton = new wxButton(buttons,wxID_ANY,_("OK && Render now"));
+    mOkButton = new wxButton(buttons,wxID_ANY,_("OK"));
+    mCancelButton = new wxButton(buttons,wxID_ANY,_("Cancel"));
+    mApplyButton = new wxButton(buttons,wxID_ANY,_("Apply"));
+
+    mRenderButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onRenderButtonPressed, this);
+    mOkButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onOkButtonPressed, this);
+    mCancelButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onCancelButtonPressed, this);
+    mApplyButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onApplyButtonPressed, this);
+
+    buttons->GetSizer()->Add(mRenderButton);
+    buttons->GetSizer()->Add(mOkButton);
+    buttons->GetSizer()->Add(mCancelButton);
+    buttons->GetSizer()->Add(mApplyButton);
+
+    ////////  ////////
+
+    outputbox->GetSizer()->Add(formatboxsizer,wxSizerFlags(0).Expand());
+    outputbox->GetSizer()->Add(mVideoBoxSizer,wxSizerFlags(1).Expand());
+    outputbox->GetSizer()->Add(mAudioBoxSizer,wxSizerFlags(1).Expand());
+    outputbox->GetSizer()->Add(actionboxsizer,wxSizerFlags(0));
+
+    GetSizer()->Add(outputbox,wxSizerFlags(1).Top().Right().Expand().Border());
+    GetSizer()->Add(buttons,wxSizerFlags(0).Bottom().Right().Border());
+
+    changeAudioCodecInfo(model::render::AudioCodecPtr(), mNew->getAudioCodec());
+    changeVideoCodecInfo(model::render::VideoCodecPtr(), mNew->getVideoCodec());
     enableRenderButton();
-
-    //Fit();
 }
 
 RenderDialog::~RenderDialog()
@@ -176,10 +170,10 @@ RenderDialog::~RenderDialog()
     sCurrent = 0;
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onFileButtonPressed, this);
     mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onRenderButtonPressed, this);
+    mOkButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onOkButtonPressed, this);
+    mCancelButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onCancelButtonPressed, this);
+    mApplyButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onApplyButtonPressed, this);
     mSetDefaultButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onSetDefaultButtonPressed, this);
-    getRender()->Unbind(model::render::EVENT_RENDER_PROGRESS, &RenderDialog::onRenderProgress, this);
-    getRender()->Unbind(model::render::EVENT_RENDER_ACTIVE, &RenderDialog::onRenderActive, this);
-    mFile->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &RenderDialog::onFileNameEntered, this);
     mVideoCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onVideoCodecChanged, this);
     mAudioCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onAudioCodecChanged, this);
 }
@@ -195,34 +189,15 @@ RenderDialog& RenderDialog::get()
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void RenderDialog::onRenderProgress(model::render::EventRenderProgress& event) // todo make this getValue a pts not an int
-{
-    int progress = event.getValue();
-    mProgress->SetValue(event.getValue());
-
-    wxString s; s << "Generating frame " << progress << " out of " << mLength;
-    mProgressText->SetLabelText(s);
-
-    event.Skip();
-}
-
-void RenderDialog::onRenderActive(model::render::EventRenderActive& event)
-{
-    mRendering = event.getValue();
-    mProgress->SetValue(0);
-    enableRenderButton();
-    event.Skip();
-}
-
 void RenderDialog::onVideoCodecChanged(wxCommandEvent& event)
 {
-    updateOnCodecChange();
+    updateVideoCodec();
     event.Skip();
 }
 
 void RenderDialog::onAudioCodecChanged(wxCommandEvent& event)
 {
-    updateOnCodecChange();
+    updateAudioCodec();
     event.Skip();
 }
 
@@ -242,19 +217,19 @@ void RenderDialog::onFileButtonPressed(wxCommandEvent& event)
         filetypes << format->getLongName() << " (" << extensionlist << ")|" << extensionlist;
     }
 
-    wxString defaultpath = getRender()->getFileName().IsOk() ? getRender()->getFileName().GetPath() : wxEmptyString;
-    wxString defaultfile = getRender()->getFileName().IsOk() ? getRender()->getFileName().GetFullName() : wxEmptyString;
-    wxString defaultextension = getRender()->getFileName().IsOk() ? getRender()->getFileName().GetExt() : Config::ReadString(Config::sPathDefaultExtension);
+    wxString defaultpath = mNew->getFileName().IsOk() ? mNew->getFileName().GetPath() : wxEmptyString;
+    wxString defaultfile = mNew->getFileName().IsOk() ? mNew->getFileName().GetFullName() : wxEmptyString;
+    wxString defaultextension = mNew->getFileName().IsOk() ? mNew->getFileName().GetExt() : Config::ReadString(Config::sPathDefaultExtension);
     wxString selected = gui::Dialog::get().getSaveFile(_("Select output file"),filetypes,defaultpath,defaultfile,defaultextension);
 
     if (!selected.IsEmpty())
     {
-        wxFileName oldName = getRender()->getFileName();
+        wxFileName oldName = mNew->getFileName();
         wxFileName newName = wxFileName(selected);
 
         if (newName.IsOk() && newName.HasExt())
         {
-            getRender()->setFileName(newName);
+            mNew->setFileName(newName);
             if (!newName.GetExt().IsSameAs(oldName.GetExt()))
             {
                 // Set default codecs for the chosen file format
@@ -266,8 +241,11 @@ void RenderDialog::onFileButtonPressed(wxCommandEvent& event)
                 mFile->ChangeValue(newName.GetFullPath()); // ChangeValue() does not trigger event for text ctrl
                 mVideoCodec->select(format->getDefaultVideoCodec());
                 mAudioCodec->select(format->getDefaultAudioCodec());
-                updateOnCodecChange();
+                updateVideoCodec();
+                updateAudioCodec();
             }
+
+            mFile->ChangeValue(selected);
         }
     }
     enableRenderButton();
@@ -276,11 +254,15 @@ void RenderDialog::onFileButtonPressed(wxCommandEvent& event)
 
 void RenderDialog::onRenderButtonPressed(wxCommandEvent& event)
 {
-    if (checkFileName(getRender()->getFileName()))
+    if (mNew->checkFileName())
     {
+        onApplyButtonPressed(event);
         mRendering = true;
         enableRenderButton();
-        gui::Worker::get().schedule(boost::make_shared<RenderSequenceWork>(mSequence));
+        model::render::Render::schedule(mSequence);
+        model::render::Render::schedule(mSequence);
+        model::render::Render::schedule(mSequence);
+        Close();
     }
     else
     {
@@ -289,14 +271,39 @@ void RenderDialog::onRenderButtonPressed(wxCommandEvent& event)
     event.Skip();
 }
 
-void RenderDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
+void RenderDialog::onOkButtonPressed(wxCommandEvent& event)
 {
-    model::Properties::get()->setDefaultRender(getRender());
+    onApplyButtonPressed(event);
+    Close();
     event.Skip();
 }
 
-void RenderDialog::onFileNameEntered(wxCommandEvent& event)
+void RenderDialog::onCancelButtonPressed(wxCommandEvent& event)
 {
+    Close();
+    event.Skip();
+}
+
+void RenderDialog::onApplyButtonPressed(wxCommandEvent& event)
+{
+    if (mNew->checkFileName())
+    {
+        mSequence->setRender(make_cloned<model::render::Render>(mNew));
+        mOriginal = make_cloned<model::render::Render>(mNew);
+    }
+    else
+    {
+        // todo disable the two buttons ok and apply if !checkfilename....
+        wxMessageBox(_("Select output file first."), _("No file selected"), wxOK | wxCENTRE, this);
+    }
+    event.Skip();
+}
+
+void RenderDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
+{
+    model::Properties::get()->setDefaultRender(mNew);
+
+    // todo check if mNew == getdefaultrender() and disable the setdefault button if so
     event.Skip();
 }
 
@@ -306,6 +313,7 @@ void RenderDialog::onFileNameEntered(wxCommandEvent& event)
 
 wxButton* RenderDialog::getFileButton() const
 {
+    ASSERT(mFileButton);
     return mFileButton;
 }
 
@@ -313,52 +321,72 @@ wxButton* RenderDialog::getFileButton() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void RenderDialog::updateOnCodecChange()
+void RenderDialog::updateAudioCodec()
 {
-    getRender()->setVideoCodec(model::render::VideoCodecs::find(static_cast<CodecID>(mVideoCodec->getValue())));
-    getRender()->setAudioCodec(model::render::AudioCodecs::find(static_cast<CodecID>(mAudioCodec->getValue())));
-    enableCodecInfo();
+    model::render::AudioCodecPtr old = mNew->getAudioCodec();
+    mNew->setAudioCodec(model::render::AudioCodecs::find(static_cast<CodecID>(mAudioCodec->getValue())));
+    changeAudioCodecInfo(old, mNew->getAudioCodec());
 }
 
-void RenderDialog::enableCodecInfo()
+void RenderDialog::updateVideoCodec()
 {
-    mAudio->DestroyChildren();
-    mVideo->DestroyChildren();
-    if (getRender()->getAudioCodec())
+    model::render::VideoCodecPtr old = mNew->getVideoCodec();
+    mNew->setVideoCodec(model::render::VideoCodecs::find(static_cast<CodecID>(mVideoCodec->getValue())));
+    changeVideoCodecInfo(old, mNew->getVideoCodec());
+}
+
+void RenderDialog::changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCodec, model::render::AudioCodecPtr newAudioCodec)
+{
+    mAudioParameters->Disable();
+    if (oldAudioCodec)
     {
-        mAudio->SetSizer(new wxFlexGridSizer(2));
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, getRender()->getAudioCodec()->getParameters() )
+        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, oldAudioCodec->getParameters() )
         {
-            mAudio->GetSizer()->Add(new wxStaticText(mAudio,wxID_ANY,parameter->getName()),wxSizerFlags().Proportion(1));
-            mAudio->GetSizer()->Add(parameter->makeWidget(mAudio));
+            parameter->destroyWidget();
         }
-        mAudio->Fit();
-        mAudio->Enable();
+         mAudioParameters->DestroyChildren();
     }
-    else
+    if (newAudioCodec)
     {
-        mAudio->Disable();
-    }
-    if (getRender()->getVideoCodec())
-    {
-        mVideo->SetSizer(new wxFlexGridSizer(2));
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, getRender()->getVideoCodec()->getParameters() )
+        wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
+        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getAudioCodec()->getParameters() )
         {
-            mVideo->GetSizer()->Add(new wxStaticText(mVideo,wxID_ANY,parameter->getName()),wxSizerFlags().Proportion(1));
-            mVideo->GetSizer()->Add(parameter->makeWidget(mVideo));
+            addOption(mAudioParameters,vSizer,parameter->getName(),parameter->makeWidget(mAudioParameters));
         }
-        mVideo->Fit();
-        mVideo->Enable();
+        mAudioParameters->SetSizer(vSizer);
+        mAudioParameters->Layout();
+        mAudioParameters->Enable();
+
     }
-    else
+}
+
+void RenderDialog::changeVideoCodecInfo(model::render::VideoCodecPtr oldVideoCodec, model::render::VideoCodecPtr newVideoCodec)
+{
+    mVideoParameters->Disable();
+    if (oldVideoCodec)
     {
-        mVideo->Disable();
+        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, oldVideoCodec->getParameters() )
+        {
+            parameter->destroyWidget();
+        }
+        mVideoParameters->DestroyChildren();
+    }
+    if (newVideoCodec)
+    {
+        wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
+        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getVideoCodec()->getParameters() )
+        {
+            addOption(mVideoParameters,vSizer,parameter->getName(),parameter->makeWidget(mVideoParameters));
+        }
+        mVideoParameters->SetSizer(vSizer);
+        mVideoParameters->Layout();
+        mVideoParameters->Enable();
     }
 }
 
 void RenderDialog::enableRenderButton()
 {
-    if (getRender()->getFileName().IsOk() && !mRendering)
+    if (mNew->getFileName().IsOk() && !mRendering)
     {
         mRenderButton->Enable();
     }
@@ -366,19 +394,6 @@ void RenderDialog::enableRenderButton()
     {
         mRenderButton->Disable();
     }
-}
-
-bool RenderDialog::checkFileName(wxFileName filename) const
-{
-    if (!filename.IsOk()) { return false; }
-    if (filename.IsDir()) { return false; }
-    if (filename.FileExists() && !filename.IsFileWritable()) { return false; }
-    return true;
-}
-
-model::render::RenderPtr RenderDialog::getRender()
-{
-    return mSequence->getRender();
 }
 
 } //namespace

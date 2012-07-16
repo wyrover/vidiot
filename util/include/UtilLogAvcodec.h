@@ -1,7 +1,7 @@
 #ifndef UTIL_LOG_AVCODEC_H
 #define UTIL_LOG_AVCODEC_H
 
-#include "pixfmt.h"
+#include <libavutil/pixfmt.h>
 #include <list>
 #include <ostream>
 #include <stdarg.h> // va_list

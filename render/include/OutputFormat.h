@@ -3,7 +3,7 @@
 
 extern "C" {
 #pragma warning(disable:4244)
-#include <avcodec.h>
+#include <libavcodec/avcodec.h>
 #pragma warning(default:4244)
 }
 
@@ -32,7 +32,7 @@ public:
 };
 
 class OutputFormat
-    //:   public ICloneable
+    //:   public ICloneable // todo make the clonable template globally used
     :   public Cloneable<OutputFormat>
 {
 public:
@@ -45,6 +45,12 @@ public:
     explicit OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, CodecID defaultaudiocodec, CodecID defaultvideocodec);
     OutputFormat(const OutputFormat& other);
     virtual ~OutputFormat();
+
+    //////////////////////////////////////////////////////////////////////////
+    // OPERATORS
+    //////////////////////////////////////////////////////////////////////////
+
+    bool operator== (const OutputFormat& other) const;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

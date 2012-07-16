@@ -35,7 +35,7 @@ Clip::Clip()
     VAR_DEBUG(*this);
 }
 
-Clip::Clip(IControlPtr render)
+Clip::Clip(IFilePtr render)
     :	IClip()
     ,   mRender(render)
     ,   mOffset(0)
@@ -55,7 +55,7 @@ Clip::Clip(IControlPtr render)
 
 Clip::Clip(const Clip& other)
     :	IClip(other)
-    ,   mRender(make_cloned<model::IControl>(other.mRender))
+    ,   mRender(make_cloned<IFile>(other.mRender))
     ,   mOffset(other.mOffset)
     ,   mLength(other.mLength)
     ,   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!

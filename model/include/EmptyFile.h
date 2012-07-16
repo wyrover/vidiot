@@ -1,8 +1,8 @@
 #ifndef MODEL_EMPTY_FILE_H
 #define MODEL_EMPTY_FILE_H
 
-#include "IControl.h"
 #include "IAudio.h"
+#include "IFile.h"
 #include "IVideo.h"
 
 namespace model {
@@ -11,7 +11,7 @@ class EmptyFile;
 typedef boost::shared_ptr<EmptyFile> EmptyFilePtr;
 
 class EmptyFile
-    :   public IControl
+    :   public IFile
     ,   public IAudio
     ,   public IVideo
 {
@@ -23,7 +23,7 @@ public:
 
     EmptyFile();
     EmptyFile(pts length);
-    virtual EmptyFile* clone() const;
+    virtual EmptyFile* clone() const override;
     virtual ~EmptyFile();
 
     //////////////////////////////////////////////////////////////////////////

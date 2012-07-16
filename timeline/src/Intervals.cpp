@@ -234,12 +234,12 @@ pts Intervals::determineSnap(pts position) const
         return position;
     }
 
-    pts snapAdjust = Layout::sSnapDistance + 1;
+    pts snapAdjust = Layout::SnapDistance + 1;
 
     auto adjustSnap = [&snapAdjust,position](pts snappoint)
     {
         pts diff = position - snappoint;
-        if ( (abs(diff)  <= Layout::sSnapDistance) && (abs(diff) < abs(snapAdjust)))
+        if ( (abs(diff)  <= Layout::SnapDistance) && (abs(diff) < abs(snapAdjust)))
         {
             snapAdjust = diff;
         }
@@ -259,7 +259,7 @@ pts Intervals::determineSnap(pts position) const
             adjustSnap(clip->getRightPts()+1); // +1: the interval is seen as [left,right) and in case of snapping, a clip's rightmost pixel should be removed also
         }
     }
-    if (snapAdjust != Layout::sSnapDistance + 1)
+    if (snapAdjust != Layout::SnapDistance + 1)
     {
         return position - snapAdjust;
     }

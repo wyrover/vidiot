@@ -150,9 +150,9 @@ void TrackView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     wxBrush b(*wxWHITE);
-    dc.SetBrush(Layout::sBackgroundBrush);
+    dc.SetBrush(Layout::get().BackgroundBrush);
     dc.SetBrush(b);
-    dc.SetPen(Layout::sBackgroundPen);
+    dc.SetPen(Layout::get().BackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     std::list<bool> tf = boost::assign::list_of(false)(true);
     BOOST_FOREACH( bool transitionValue, tf ) // First, normal clips, second transitions

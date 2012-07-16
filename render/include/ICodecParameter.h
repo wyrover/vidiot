@@ -22,7 +22,13 @@ struct ICodecParameter
     virtual wxWindow* makeWidget(wxWindow* parent) = 0;
     virtual void destroyWidget() = 0;
     virtual void set(AVCodecContext* codec) = 0;
+    virtual bool equals(const ICodecParameter& other) = 0;
     virtual void log( std::ostream& os ) const = 0;
+
+    bool operator==(const ICodecParameter& other)
+    {
+        return equals(other);
+    }
 
     friend std::ostream& operator<<( std::ostream& os, const ICodecParameter& obj )
     {

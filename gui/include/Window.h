@@ -27,6 +27,7 @@ namespace gui {
     }
 
 class Dialog;
+class Layout;
 class Watcher;
 class Worker;
 class TimelinesView;
@@ -141,6 +142,8 @@ private:
 
     Watcher*            mWatcher;
     Worker*             mWorker;
+
+    gui::Layout*        mLayout;
 
     Preview*		    mPreview;
     DetailsView*        mDetailsView;

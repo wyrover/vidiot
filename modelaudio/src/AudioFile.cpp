@@ -4,8 +4,8 @@
 #undef INTMAX_C
 #undef UINTMAX_C
 extern "C" {
-#include <avformat.h>
-#include <avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
 };
 
 #include <math.h>
@@ -230,7 +230,7 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
             av_audio_resample_init(
                 nAudioChannels, getCodec()->channels,
                 audioRate, getCodec()->sample_rate,
-                SAMPLE_FMT_S16, SAMPLE_FMT_S16,
+                AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16,
                 taps, 10, 0, 0.8);
         ASSERT_NONZERO(mResampleContext);
     }

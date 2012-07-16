@@ -5,6 +5,7 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/event.h>
+#include <wx/sizer.h>
 #include <wx/filename.h>
 #include <wx/gauge.h>
 #include <wx/notebook.h>
@@ -20,10 +21,13 @@ namespace model {
     typedef boost::shared_ptr<Sequence> SequencePtr;
 
     namespace render {
-    class EventRenderProgress;
     class EventRenderActive;
     class Render;
     typedef boost::shared_ptr<Render> RenderPtr;
+    class AudioCodec;
+    typedef boost::shared_ptr<AudioCodec> AudioCodecPtr;
+    class VideoCodec;
+    typedef boost::shared_ptr<VideoCodec> VideoCodecPtr;
 }}
 
 namespace gui {
@@ -45,15 +49,14 @@ public:
     // EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onRenderProgress(model::render::EventRenderProgress& event);
-    void onRenderActive(model::render::EventRenderActive& event);
-
     void onVideoCodecChanged(wxCommandEvent& event);
     void onAudioCodecChanged(wxCommandEvent& event);
     void onFileButtonPressed(wxCommandEvent& event);
     void onRenderButtonPressed(wxCommandEvent& event);
+    void onOkButtonPressed(wxCommandEvent& event);
+    void onCancelButtonPressed(wxCommandEvent& event);
+    void onApplyButtonPressed(wxCommandEvent& event);
     void onSetDefaultButtonPressed(wxCommandEvent& event);
-    void onFileNameEntered(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // TESTS
@@ -68,21 +71,21 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
     model::SequencePtr mSequence;
-
-    wxBookCtrlBase* mBook;
+    model::render::RenderPtr mOriginal;
+    model::render::RenderPtr mNew;
 
     wxTextCtrl* mFile;
     wxButton* mFileButton;
-
     EnumSelector<int>* mVideoCodec;
     EnumSelector<int>* mAudioCodec;
-    wxButton* mRenderButton;
-    wxButton* mSetDefaultButton;
-    wxStaticText* mProgressText;
-    wxGauge* mProgress;
+    wxScrolledWindow* mVideoParameters;
+    wxScrolledWindow* mAudioParameters;
 
-    wxPanel* mVideo;
-    wxPanel* mAudio;
+    wxButton* mRenderButton;
+    wxButton* mOkButton;
+    wxButton* mCancelButton;
+    wxButton* mApplyButton;
+    wxButton* mSetDefaultButton;
 
     bool mRendering;
 
@@ -92,13 +95,11 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void updateOnCodecChange();
-    void enableCodecInfo();
+    void updateAudioCodec();
+    void updateVideoCodec();
+    void changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCodec, model::render::AudioCodecPtr newAudioCodec);
+    void changeVideoCodecInfo(model::render::VideoCodecPtr oldVideoCodec, model::render::VideoCodecPtr newVideoCodec);
     void enableRenderButton();
-    bool checkFileName(wxFileName filename) const;
-
-    model::render::RenderPtr getRender();
-
 };
 
 } // namespace

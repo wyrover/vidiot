@@ -58,7 +58,7 @@ ProjectViewDropSource::~ProjectViewDropSource()
     sCurrent = 0;
 }
 
-// static 
+// static
 ProjectViewDropSource& ProjectViewDropSource::current()
 {
     return *sCurrent;
@@ -96,7 +96,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 
         dc.SetPen(*wxBLACK_PEN);
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.SetFont(*Layout::sNormalFont);
+        dc.SetFont(Layout::get().NormalFont);
         dc.SetTextForeground(*wxWHITE);
         //dc->SetTextBackground(*wxBLUE);
 

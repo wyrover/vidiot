@@ -41,9 +41,10 @@ void TestOnce::testOnce()
     // getTimeline().getDump().dump();
     // PrepareSnapping(true);
     StartTestSuite();
-    triggerMenu(ID_RENDERSEQUENCE);
+    triggerMenu(ID_RENDERSETTINGS);
     waitForIdle();
     gui::Dialog::get().setSaveFile("D:/out.avi");
+    pause(666666);
     ClickTopLeft(gui::RenderDialog::get().getFileButton());
 
     //model::render::RenderPtr render = boost::make_shared<model::render::Render>(getSequence());

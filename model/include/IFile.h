@@ -1,15 +1,20 @@
-#ifndef MODEL_I_CONTROL_H
-#define MODEL_I_CONTROL_H
+#ifndef MODEL_I_FILE_H
+#define MODEL_I_FILE_H
 
-#include <wx/string.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include "UtilInt.h"
+#include <boost/shared_ptr.hpp>
+#include "IControl.h"
+#include "UtilCloneable.h"
 
 namespace model {
 
-class IControl
+class IFile;
+typedef boost::shared_ptr<IFile> IFilePtr;
+
+class IFile
+    :   public IControl
+    ,   public ICloneable
 {
 public:
 
@@ -17,16 +22,28 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual ~IControl() {};
+    IFile();
+
+    virtual ~IFile() {};
 
     //////////////////////////////////////////////////////////////////////////
-    // ICONTROL
+    // ICLONEABLE
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength() const = 0;
-    virtual void moveTo(pts position) = 0;
-    virtual wxString getDescription() const = 0; ///< Not called getName() to avoid conflict with Node::getName() for the Sequence class.
-    virtual void clean() = 0;                    ///< Will be called to clean up resources. Used for minimizing required resources for the undo history.
+    virtual IFile* clone() const override = 0;
+
+protected:
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// \note the clone is not automatically part of the track!!!
+    /// \see make_cloned
+    IFile(const IFile& other);
+
+private:
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -34,19 +51,14 @@ public:
 
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version) // todo isnt this completely obsolete???
-    {
-    }
+    void serialize(Archive & ar, const unsigned int version);
 };
-
-typedef boost::shared_ptr<IControl> IControlPtr;
-
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::IControl, 1)
+BOOST_CLASS_VERSION(model::IFile, 1)
 
-#endif // MODEL_I_CONTROL_H
+#endif // MODEL_I_FILE_H

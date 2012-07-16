@@ -91,7 +91,7 @@ void Cursor::moveCursorOnUser(pixel position)
 
 void Cursor::draw(wxDC& dc) const
 {
-    dc.SetPen(Layout::sCursorPen);
+    dc.SetPen(Layout::get().CursorPen);
     dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getSequenceView().getSize().GetHeight()));
 }
 

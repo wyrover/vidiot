@@ -120,7 +120,7 @@ void ClipView::show(wxRect rect)
 wxSize ClipView::requiredSize() const
 {
     int width = getRightPixel() - getLeftPixel();
-    int height = (mClip->isA<model::Transition>()) ? Layout::sTransitionHeight : mClip->getTrack()->getHeight();
+    int height = (mClip->isA<model::Transition>()) ? Layout::TransitionHeight : mClip->getTrack()->getHeight();
     return wxSize(width, height);
 }
 
@@ -144,11 +144,11 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
         pixel dist_top = position.y - info.trackPosition;
         ASSERT_MORE_THAN_EQUALS_ZERO(dist_top);
 
-        if (dist_top <= Layout::sTransitionHeight)
+        if (dist_top <= Layout::TransitionHeight)
         {
             info.logicalclipposition =
-             (dist_begin < Layout::sCursorClipEditDistance)     ? TransitionBegin :
-             (dist_end < Layout::sCursorClipEditDistance)       ? TransitionEnd :
+             (dist_begin < Layout::CursorClipEditDistance)     ? TransitionBegin :
+             (dist_end < Layout::CursorClipEditDistance)       ? TransitionEnd :
              TransitionInterior; // Default
         }
         else // below transition
@@ -160,7 +160,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
             if (dist_cut < 0)
             {
                 ASSERT_MORE_THAN_ZERO(transition->getLeft());
-                if (dist_cut > -Layout::sCursorClipEditDistance)
+                if (dist_cut > -Layout::CursorClipEditDistance)
                 {
                     info.logicalclipposition = TransitionLeftClipEnd;
                 }
@@ -173,7 +173,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
                     pixel dist_left = position.x - inpoint;
                     ASSERT_MORE_THAN_EQUALS_ZERO(dist_left)(inpoint)(position);
 
-                    if (dist_left < Layout::sCursorClipEditDistance)
+                    if (dist_left < Layout::CursorClipEditDistance)
                     {
                         // Logically, the pointer is hovering 'over' the clip left of the transition
                         info.clip = inClip;
@@ -188,7 +188,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
             else if (dist_cut > 0)
             {
                 ASSERT_MORE_THAN_ZERO(transition->getRight());
-                if (dist_cut < Layout::sCursorClipEditDistance)
+                if (dist_cut < Layout::CursorClipEditDistance)
                 {
                     info.logicalclipposition = TransitionRightClipBegin;
                 }
@@ -201,7 +201,7 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
                     pixel dist_right = outpoint - position.x;
                     ASSERT_MORE_THAN_EQUALS_ZERO(dist_right)(outpoint)(position);
 
-                    if (dist_right < Layout::sCursorClipEditDistance)
+                    if (dist_right < Layout::CursorClipEditDistance)
                     {
                         // Logically, the pointer is hovering 'over' the clip right of the transition
                         info.clip = outClip;
@@ -232,11 +232,11 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     {
         model::IClipPtr next = mClip->getNext();
         model::IClipPtr prev = mClip->getPrev();
-        if ((dist_begin < Layout::sCursorClipEditDistance) && (!prev || !prev->isA<model::Transition>()))
+        if ((dist_begin < Layout::CursorClipEditDistance) && (!prev || !prev->isA<model::Transition>()))
         {
             info.logicalclipposition = ClipBegin;
         }
-        else if ((dist_end < Layout::sCursorClipEditDistance) && (!next || !next->isA<model::Transition>()))
+        else if ((dist_end < Layout::CursorClipEditDistance) && (!next || !next->isA<model::Transition>()))
         {
             info.logicalclipposition = ClipEnd;
         }
@@ -279,47 +279,47 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         // For empty clips, the bitmap is empty.
         // Selected clips/transitions that are being dragged should no longer be drawn
         // in the regular tracks as they have become part of 'getDrag()'s bitmap.
-        dc.SetBrush(Layout::sBackgroundBrush);
-        dc.SetPen(Layout::sBackgroundPen);
+        dc.SetBrush(Layout::get().BackgroundBrush);
+        dc.SetPen(Layout::get().BackgroundPen);
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     }
     else if (mClip->isA<model::Transition>())
     {
         if (mClip->getSelected())
         {
-            dc.SetBrush(Layout::sTransitionBgSelected);
+            dc.SetBrush(Layout::get().TransitionBgSelected);
         }
         else
         {
-            dc.SetBrush(Layout::sTransitionBgUnselected);
+            dc.SetBrush(Layout::get().TransitionBgUnselected);
         }
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::sTransitionHeight);
-        dc.SetPen(Layout::sTransitionPen);
-        dc.SetBrush(Layout::sTransitionBrush);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::sTransitionHeight);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::get().TransitionHeight);
+        dc.SetPen(Layout::get().TransitionPen);
+        dc.SetBrush(Layout::get().TransitionBrush);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::get().TransitionHeight);
     }
     else
     {
         if (mClip->getSelected())
         {
-            dc.SetBrush(Layout::sSelectedClipBrush);
-            dc.SetPen(Layout::sSelectedClipPen);
+            dc.SetBrush(Layout::get().SelectedClipBrush);
+            dc.SetPen(Layout::get().SelectedClipPen);
         }
         else
         {
-            dc.SetBrush(Layout::sClipBrush);
-            dc.SetPen(Layout::sClipPen);
+            dc.SetBrush(Layout::get().ClipBrush);
+            dc.SetPen(Layout::get().ClipPen);
         }
         dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
 
         // Text at top of clip
-        dc.SetFont(*Layout::sClipDescriptionFont);
-        dc.SetTextForeground(Layout::sClipDescriptionFGColour);
-        dc.SetTextBackground(Layout::sClipDescriptionBGColour);
-        dc.SetBrush(Layout::sClipDescriptionBrush);
-        dc.SetPen(Layout::sClipDescriptionPen);
+        dc.SetFont(Layout::get().ClipDescriptionFont);
+        dc.SetTextForeground(Layout::get().ClipDescriptionFGColour);
+        dc.SetTextBackground(Layout::get().ClipDescriptionBGColour);
+        dc.SetBrush(Layout::get().ClipDescriptionBrush);
+        dc.SetPen(Layout::get().ClipDescriptionPen);
         //dc.SetLogicalFunction(wxEQUIV);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(), Layout::sClipDescriptionBarHeight);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(), Layout::get().ClipDescriptionBarHeight);
         dc.DrawText(mClip->getDescription(), wxPoint(1,1));
     }
 
@@ -334,8 +334,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     {
         if (!mClip->isA<model::Transition>())
         {
-            dc.SetTextForeground(Layout::sDebugColour);
-            dc.SetFont(*Layout::sDebugFont);
+            dc.SetTextForeground(Layout::get().DebugColour);
+            dc.SetFont(Layout::get().DebugFont);
             dc.DrawText(wxString::Format(wxT("%lld"), mClip->getLength()), wxPoint(5,15));
             wxString sPts;
             sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
@@ -343,7 +343,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         }
         pts progress = mClip->getGenerationProgress();
         pixel pos = getZoom().ptsToPixels(progress);
-        dc.SetPen(Layout::sDebugPen);
+        dc.SetPen(Layout::get().DebugPen);
         dc.DrawLine(wxPoint(pos,0), wxPoint(pos,bitmap.GetHeight()));
     }
 
@@ -351,7 +351,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     wxSize thumbnailSize(0,0);
     if (mClip->isA<model::VideoClip>())
     {
-        dc.DrawBitmap(getViewMap().getThumbnail(mClip)->getBitmap(),wxPoint(Layout::sClipBorderSize, Layout::sClipDescriptionBarHeight));
+        dc.DrawBitmap(getViewMap().getThumbnail(mClip)->getBitmap(),wxPoint(Layout::ClipBorderSize, Layout::get().ClipDescriptionBarHeight));
     }
 }
 

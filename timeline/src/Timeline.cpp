@@ -71,7 +71,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 {
     VAR_DEBUG(this);
 
-    SetBackgroundColour(Layout::sBackgroundColour);
+    SetBackgroundColour(Layout::get().BackgroundColour);
 
     init();
 
@@ -79,13 +79,8 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    mSequence->Bind(model::EVENT_SEQUENCE_FROZEN, &Timeline::onSequenceFrozen, this);
-
     // Ensure that for newly opened timelines the initial position is ok
     getSequenceView().resetDividerPosition();
-
-    // Ensure that (re)opening a frozen sequence results in a non-editable timeline
-    freeze();
 }
 
 Timeline::~Timeline()
@@ -93,8 +88,6 @@ Timeline::~Timeline()
     VAR_DEBUG(this);
 
     deinit();
-
-    mSequence->Unbind(model::EVENT_SEQUENCE_FROZEN, &Timeline::onSequenceFrozen, this);
 
     Unbind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
@@ -295,15 +288,6 @@ const Details& Timeline::getDetails() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::onSequenceFrozen( model::EventSequenceFrozen& event )
-{
-    freeze();
-}
-
-//////////////////////////////////////////////////////////////////////////
 // WX EVENTS
 //////////////////////////////////////////////////////////////////////////
 
@@ -332,10 +316,10 @@ void Timeline::onPaint( wxPaintEvent &event )
     wxPoint scroll = getScrolling().getOffset();
 
     wxBitmap bitmap = getSequenceView().getBitmap();
-    if (getSequence()->isFrozen())
-    {
-        bitmap = bitmap.ConvertToDisabled(64);
-    }
+    //if (getSequence()->isFrozen())
+    //{
+    //    bitmap = bitmap.ConvertToDisabled(64);
+    //}
 
     wxMemoryDC dcBmp(bitmap);
 
@@ -350,14 +334,14 @@ void Timeline::onPaint( wxPaintEvent &event )
         upd++;
     }
 
-    if (getSequence()->isFrozen())
-    {
-        wxString progressText(_("Render in progress"));
-        dc.SetTextForeground(Layout::sTimelineRenderInProgressColour);
-        dc.SetFont(*Layout::sRenderInProgressFont);
-        wxSize textSize = dc.GetTextExtent(progressText);
-        dc.DrawText(progressText, (GetSize().GetWidth() - textSize.GetWidth()) / 2, (bitmap.GetHeight() - textSize.GetHeight()) / 2);
-    }
+    //if (getSequence()->isFrozen())
+    //{
+    //    wxString progressText(_("Render in progress"));
+    //    dc.SetTextForeground(Layout::get().TimelineRenderInProgressColour);
+    //    dc.SetFont(Layout::get().RenderInProgressFont);
+    //    wxSize textSize = dc.GetTextExtent(progressText);
+    //    dc.DrawText(progressText, (GetSize().GetWidth() - textSize.GetWidth()) / 2, (bitmap.GetHeight() - textSize.GetHeight()) / 2);
+    //}
 
     getDrag().draw(dc);
     getCursor().draw(dc);
@@ -369,10 +353,6 @@ void Timeline::onPaint( wxPaintEvent &event )
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
-    // The sequence is locked (for instance, for rendering). This assert is added to detect inadvertent edits to the sequence.
-    // These inadvertent edits not only can cause output problems, but also cause crashes due to multi threading. For instance,
-    // accessing wxConfigBase from two threads.
-    ASSERT(!getSequence()->isFrozen());
     Refresh(false);
     event.Skip();
 }
@@ -432,23 +412,6 @@ void Timeline::resize()
 void Timeline::draw(wxBitmap& bitmap) const
 {
     FATAL;
-}
-
-void Timeline::freeze()
-{
-    if (getSequence()->isFrozen())
-    {
-        getDetails().showNone();
-        getPlayer()->stop();
-        // todo disable the menu for this sequence
-        // todo disable the player
-        Disable();
-    }
-    else
-    {
-        Enable();
-    }
-    Refresh(false);
 }
 
 //////////////////////////////////////////////////////////////////////////

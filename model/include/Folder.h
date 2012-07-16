@@ -18,7 +18,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /** Recovery constructor */
+    /// Recovery constructor
     Folder();
 
     Folder(wxString name);

@@ -495,7 +495,7 @@ void TestTimeline::testDividers()
     {
         StartTest("Move video track divider down and up again.");
         const pixel originalHeight = VideoTrack(0)->getHeight();
-        const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(VideoTrack(0)) - gui::Layout::sTrackDividerHeight;
+        const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(VideoTrack(0)) - gui::Layout::TrackDividerHeight;
         const pixel adjustedDividerPosition = originalDividerPosition + changeY;
         wxPoint original(fixedX, originalDividerPosition + moveToMiddleOfDivider);
         wxPoint adjusted(fixedX, adjustedDividerPosition + moveToMiddleOfDivider);
@@ -688,6 +688,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         DragToTrack(1,VideoClip(0,6),AudioClip(0,6));
         Drag(Center(VideoClip(1,1)),Center(VideoClip(1,1))-wxPoint(8,0));
         Drag(Center(VideoClip(1,3)),Center(VideoClip(1,3))+wxPoint(8,0));
+        ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         DragAlignLeft(Center(VideoClip(1,4)),LeftPixel(VideoClip(0,4))+20);
         ASSERT_VIDEOTRACK1(EmptyClip)                   (VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(       VideoClip      )(EmptyClip);

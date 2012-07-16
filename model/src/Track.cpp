@@ -36,20 +36,13 @@ Track::Track()
 Track::Track(const Track& other)
 :	IControl()
 ,   wxEvtHandler()
-,   mClips()
+,   mClips(make_cloned<IClip>(other.mClips))
 ,   mItClips(mClips.end())
 ,   mHeight(other.mHeight)
 ,   mIndex(0)
 {
     VAR_DEBUG(this);
-    ASSERT(false);// If this is ever used, test the clips in combination with the shared_from_this() in addClips below.
-
-    IClips clonedClips;
-    BOOST_FOREACH(IClipPtr clip, other.mClips)
-    {
-        clonedClips.push_back(make_cloned<IClip>(clip));
-    }
-    addClips(clonedClips,IClipPtr());
+    // NOTE: updateClips() is never called here!
 }
 
 Track* Track::clone() const

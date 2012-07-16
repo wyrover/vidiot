@@ -3,22 +3,27 @@
 #include "stdint.h"
 extern "C" {
 #pragma warning(disable:4244)
-#include <avformat.h>
-#include <swscale.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
 #pragma warning(default:4244)
 }
 
+#include <wx/msgdlg.h>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <stdio.h>
 #include "AudioChunk.h"
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
 #include "Convert.h"
+#include "Folder.h"
 #include "StatusBar.h"
 #include "OutputFormat.h"
 #include "OutputFormats.h"
+#include "Project.h"
 #include "Properties.h"
 #include "Sequence.h"
 #include "UtilLog.h"
@@ -29,11 +34,9 @@ extern "C" {
 #include "VideoCodecs.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
+#include "Worker.h"
 
 namespace model { namespace render {
-
-DEFINE_EVENT(EVENT_RENDER_PROGRESS, EventRenderProgress, int);
-DEFINE_EVENT(EVENT_RENDER_ACTIVE, EventRenderActive, bool);
 
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
 
@@ -86,17 +89,37 @@ Render::~Render()
     VAR_DEBUG(this);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// OPERATORS
+//////////////////////////////////////////////////////////////////////////
+
+bool Render::operator== (const Render& other) const
+{
+    // todo implement this in the dialog class
+    // The file name is stripped from the comparison
+    return
+        (mFileName == mFileName) &&
+        (*mOutputFormat == *other.mOutputFormat) &&
+        (*mVideoCodec == *other.mVideoCodec) &&
+        (*mAudioCodec == *other.mAudioCodec);
+}
+
+bool Render::operator!= (const Render& other) const
+{
+    return (!operator==(other));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// RENDER
+//////////////////////////////////////////////////////////////////////////
+
 void Render::generate(model::SequencePtr sequence)
 {
-    // todo freeze and unfreeze here, not when opening/closing the dialog....
-    // no, make renderqueue class and freeze when added to queue, unfreeze when no more refs in queue
-    QueueEvent(new EventRenderActive(true));
     sequence->moveTo(0);
     int length = sequence->getLength();
     gui::StatusBar::get().showProgressBar(length);
-    wxString ps; ps << _("Rendering sequence ") << sequence->getName() << "(" << 5 << _(" queued)");
+    wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     gui::StatusBar::get().setProcessingText(ps);
-    gui::StatusBar::get().setProcessingDetails();
 
     AVOutputFormat* format = av_guess_format(mOutputFormat->getName().c_str(), 0, 0);
     ASSERT(format);
@@ -181,9 +204,6 @@ void Render::generate(model::SequencePtr sequence)
         }
     }
 
-    // set the output parameters (must be done even if no parameters)
-    int result = av_set_parameters(context, 0);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result); // else Invalid output format parameters
     av_dump_format(context, 0, filename.c_str(), 1);
 
     // now that all the parameters are set, we can open the audio and video codecs and allocate the necessary encode buffers
@@ -258,11 +278,11 @@ void Render::generate(model::SequencePtr sequence)
     // open the output file, if needed
     if (!(format->flags & AVFMT_NOFILE))
     {
-        int result = avio_open(&context->pb, filename.c_str(), URL_WRONLY);
+        int result = avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE);
         ASSERT_MORE_THAN_EQUALS_ZERO(result);
     }
 
-    av_write_header(context);
+    avformat_write_header(context,0);
 
     double audio_pts = 0.0;
     double video_pts = 0.0;
@@ -354,10 +374,9 @@ void Render::generate(model::SequencePtr sequence)
             else
             {
                 VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_codec_context->width,video_codec_context->height)).setDrawBoundingBox(false));
-                wxString s; s << _("Frame ") << frame->getPts() << _(" out of ") << length;
-                gui::StatusBar::get().setProcessingDetails(s);
-                gui::StatusBar::get().showProgress(frame->getPts()); // todo via event???
-                QueueEvent(new EventRenderProgress(frame->getPts()));
+                wxString s; s << _("(frame ") << frame->getPts() << _(" out of ") << length << ")";
+                gui::StatusBar::get().setProcessingText(ps + " " + s);
+                gui::StatusBar::get().showProgress(frame->getPts());
 
                 if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
                 {
@@ -461,9 +480,7 @@ void Render::generate(model::SequencePtr sequence)
     }
     av_free(context);
     gui::StatusBar::get().setProcessingText();
-    gui::StatusBar::get().setProcessingDetails();
     gui::StatusBar::get().hideProgressBar();
-    QueueEvent(new EventRenderActive(false));
 }
 
 //You'll need to look at the libavcodec documentation - specifically, at avcodec_encode_video(). I found that the best available documentation is in the ffmpeg header files and the API sample source code that's provided with the ffmpeg source. Specifically, look at libavcodec/api-example.c or even ffmpeg.c.
@@ -528,6 +545,78 @@ wxFileName Render::getFileName() const
 void Render::setFileName(wxFileName filename)
 {
     mFileName = filename;
+}
+
+bool Render::checkFileName() const
+{
+    if (!mFileName.IsOk()) { return false; }
+    if (mFileName.IsDir()) { return false; }
+    if (!mFileName.HasExt()) { return false; }
+    if (!mFileName.HasName()) { return false; }
+    if (mFileName.FileExists() && !mFileName.IsFileWritable()) { return false; }
+    return true;
+}
+
+RenderPtr Render::withFileNameRemoved() const
+{
+    RenderPtr cloned = RenderPtr(clone());
+    wxFileName filename = cloned->getFileName();
+    filename.ClearExt();
+    filename.SetName("");
+    cloned->setFileName(filename);
+    return cloned;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// RENDERING
+//////////////////////////////////////////////////////////////////////////
+
+// static
+void Render::schedule(SequencePtr sequence)
+{
+    model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
+    gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone)));
+}
+
+typedef std::list<SequencePtr> Sequences;
+void findSequences(FolderPtr node, Sequences& result)
+{
+    BOOST_FOREACH( NodePtr child, node->getChildren() )
+    {
+        if (child->isA<Sequence>())
+        {
+            result.push_back(boost::dynamic_pointer_cast<Sequence>(child));
+        }
+        else if (child->isA<Folder>())
+        {
+            findSequences(boost::dynamic_pointer_cast<Folder>(child),result);
+        }
+    }
+}
+
+// static
+void Render::scheduleAll()
+{
+    Sequences seqs;
+    findSequences(Project::get().getRoot(),seqs);
+
+    bool anError = false;
+    wxString error;
+    error << _("The following sequence(s) have no configured filename and have not been scheduled:");
+    std::list<wxString> errors;
+    BOOST_FOREACH( SequencePtr sequence, seqs )
+    {
+        if (!sequence->getRender()->checkFileName())
+        {
+            error << '\n' << "- " << sequence->getName() << '\n';
+            anError = true;
+        }
+        else
+        {
+            schedule(sequence);
+        }
+    }
+    wxMessageBox(error, _("Not all sequences have been scheduled"),wxOK);
 }
 
 //////////////////////////////////////////////////////////////////////////

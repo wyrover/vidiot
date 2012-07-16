@@ -3,6 +3,7 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace model {
 

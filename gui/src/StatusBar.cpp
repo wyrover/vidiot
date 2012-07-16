@@ -70,7 +70,7 @@ void StatusBar::setProcessingText(wxString text)
     SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
 }
 
-void StatusBar::setProcessingDetails(wxString text)
+void StatusBar::setQueueText(wxString text)
 {
     SetStatusText( text, Config::getShowDebugInfo() ? 2 : 1 );
 }

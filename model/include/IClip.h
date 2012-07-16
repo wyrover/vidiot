@@ -10,6 +10,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "IControl.h"
+#include "UtilCloneable.h"
 #include "UtilInt.h"
 
 namespace model {
@@ -28,6 +29,7 @@ typedef boost::shared_ptr<Transition> TransitionPtr;
 class IClip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
+    ,   public ICloneable
     ,   public boost::enable_shared_from_this<IClip>
 {
 public:
@@ -37,14 +39,13 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     IClip();
-
     virtual ~IClip() {};
 
     //////////////////////////////////////////////////////////////////////////
     // ICLONEABLE
     //////////////////////////////////////////////////////////////////////////
 
-    virtual IClip* clone() const = 0;
+    virtual IClip* clone() const override = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // TRACK
@@ -148,7 +149,6 @@ public:
     virtual pts getGenerationProgress() const = 0;
 
     /// \param delivered value of most recently returned audio/video in getNext*.
-    /// Triggers DebugEventRenderProgress.
     virtual void setGenerationProgress(pts progress) = 0;
 
 protected:

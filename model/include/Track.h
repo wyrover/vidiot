@@ -8,6 +8,7 @@
 #include <boost/weak_ptr.hpp>
 #include "IControl.h"
 #include "UtilLog.h"
+#include "UtilCloneable.h"
 
 namespace model {
 
@@ -25,6 +26,7 @@ class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
     ,   public boost::enable_shared_from_this<Track>
+    ,   public ICloneable
 {
 public:
 
@@ -34,6 +36,12 @@ public:
 
     Track();
 
+    /// \return a clone of the track, that can be used for rendering
+    /// The track is cloned just before the rendering is started. That ensures
+    /// that the sequence can be edited further, while the 'previous version' is
+    /// being rendered. This clone does not need to copy all attributes, since the
+    /// only action done with it is rendering. In fact, only the minimal cloning
+    /// should be done, for performance reasons.
     virtual Track* clone() const override;
 
     virtual ~Track();

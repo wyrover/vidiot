@@ -89,7 +89,7 @@ boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
         diff *= -1;
     }
     int height = mOriginalHeight + diff;
-    if (height >= Layout::sMinTrackHeight && height <= Layout::sMaxTrackHeight)
+    if (height >= Layout::MinTrackHeight && height <= Layout::MaxTrackHeight)
     {
         VAR_DEBUG(height);
         mTrack->setHeight(height);

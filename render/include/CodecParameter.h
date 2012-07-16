@@ -33,7 +33,8 @@ public:
         ,   mMinimum(std::numeric_limits<int>::max())
         ,   mMaximum(std::numeric_limits<int>::min())
         ,   mValue(0)
-        ,   mWindow(0)    {
+        ,   mWindow(0)
+    {
     }
 
     CodecParameter(const CodecParameter& other)
@@ -55,6 +56,22 @@ public:
     {
         return new MOSTDERIVED(static_cast<const MOSTDERIVED&>(*this));
     };
+
+    //////////////////////////////////////////////////////////////////////////
+    // COMPARISON
+    //////////////////////////////////////////////////////////////////////////
+
+    bool equals(const ICodecParameter& other) override
+    {
+        const CodecParameter* pOther = dynamic_cast<const CodecParameter*>(&other);
+        ASSERT(pOther);
+        return
+            (mId == pOther->getId()) &&
+            (mDefault == pOther->mDefault) &&
+            (mMinimum == pOther->mMinimum) &&
+            (mMaximum == pOther->mMaximum) &&
+            (mValue == pOther->mValue);
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // BIT RATE
@@ -202,8 +219,11 @@ struct CodecParameterInt
     }
     void destroyWidget() override
     {
+        ASSERT(mWindow);
         wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(mWindow);
         spin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
+        mWindow->Destroy();
+        mWindow = 0;
     }
 
     void onSpinChanged(wxSpinEvent& event)
@@ -246,6 +266,8 @@ struct CodecParameterEnum
     {
         EnumSelector<int>* selector = static_cast<EnumSelector<int>*>(mWindow);
         selector->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
+        mWindow->Destroy();
+        mWindow = 0;
     }
 
     void onChoiceChanged(wxCommandEvent& event)

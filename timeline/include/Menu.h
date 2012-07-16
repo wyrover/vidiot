@@ -44,7 +44,9 @@ public:
     void onDeleteMarked(wxCommandEvent& event);
     void onDeleteUnmarked(wxCommandEvent& event);
     void onRemoveMarkers(wxCommandEvent& event);
+    void onRenderSettings(wxCommandEvent& event);
     void onRenderSequence(wxCommandEvent& event);
+    void onRenderAll(wxCommandEvent& event);
     void onCloseSequence(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
