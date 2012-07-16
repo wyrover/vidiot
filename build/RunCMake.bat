@@ -14,7 +14,21 @@ exit
 
 REM ==== BEGIN ====
 :BEGIN
-echo %CD%
+
+REM Go the the drive of the 'build' dir
+call:EXTRACTDRIVE %0%
+%DRIVE%
+
+REM CD to the 'build' dir
+cd %~dp0
+
+REM Find the source dir
+pushd ..
+set SOURCE=%CD%
+echo Sources are in %SOURCE%
+popd
+
+
 if NOT DEFINED VIDIOT_DIR goto NOVAR
 call:EXTRACTDRIVE %VIDIOT_DIR%
 %DRIVE%
@@ -40,7 +54,6 @@ set BOOST_ROOT=%BOOST_ROOT:\=/%
 REM === CREATE SOLUTION ====
 REM del /s/q Build 
 set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
-set SOURCE=%VIDIOT_DIR%\Source
 
 %VIDIOT_BUILD_DRIVE%
 cd %VIDIOT_BUILD%\..
