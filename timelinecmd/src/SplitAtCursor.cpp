@@ -1,6 +1,5 @@
 #include "SplitAtCursor.h"
 
-#include <boost/foreach.hpp>
 #include "UtilLog.h"
 #include "Timeline.h"
 #include "Cursor.h"

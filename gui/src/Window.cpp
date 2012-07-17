@@ -1,14 +1,7 @@
 #include "Window.h"
 
 #include <wx/docview.h>
-#include <wx/gdicmn.h>
-#include <wx/msgdlg.h>
-#include <wx/gauge.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp> // todo remove
 #include <boost/serialization/shared_ptr.hpp>
 #include "Dialog.h"
 #include "Node.h"

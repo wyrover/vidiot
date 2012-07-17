@@ -5,18 +5,11 @@
 #include <wx/sizer.h>
 #include <wx/slider.h>
 #include <wx/spinctrl.h>
-#include <boost/shared_ptr.hpp>
 #include "VideoClipEvent.h"
 #include "UtilEnumSelector.h"
 #include "Part.h"
 
 namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-class VideoClip;
-typedef boost::shared_ptr<VideoClip> VideoClipPtr;
-class AudioClip;
-typedef boost::shared_ptr<AudioClip> AudioClipPtr;
 class ChangeVideoClipTransform;
 }
 

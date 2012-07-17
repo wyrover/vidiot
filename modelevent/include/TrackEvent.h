@@ -1,17 +1,6 @@
-#include <list>
-#include <boost/shared_ptr.hpp>
 #include "UtilEvent.h"
 
 namespace model {
-
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-typedef std::list<IClipPtr> IClips;
-struct MoveParameter;
-typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
-typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
 
 struct MoveParameter
 {

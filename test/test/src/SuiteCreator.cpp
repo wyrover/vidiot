@@ -27,7 +27,7 @@ int ISuite::runOnly(const char* file, const char* test)
     sInstance->mTest = std::string(test);
     std::vector<std::string> fileparts;
     boost::split(fileparts, file, boost::is_any_of("\\"));
-    boost::split(fileparts, fileparts.back(), boost::is_any_of("."));
+    boost::split(fileparts, fileparts.back(), boost::is_any_of(".")); // todo different solution than is_any_of
     sInstance->mSuite = fileparts.front();
     return 1;
 };

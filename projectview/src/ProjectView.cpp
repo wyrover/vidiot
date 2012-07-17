@@ -1,16 +1,11 @@
 #include "ProjectView.h"
 
 #include <wx/clipbrd.h>
-#include <wx/dirdlg.h>
-#include <wx/dnd.h>
 #include <wx/headerctrl.h>
 #include <wx/headercol.h>
 #include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/foreach.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "AutoFolder.h"

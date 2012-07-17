@@ -6,9 +6,6 @@ extern "C" {
 #pragma warning(default:4244)
 };
 
-#include <wx/tokenzr.h>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include "UtilLog.h"
 #include "OutputFormat.h"
 #include "VideoCodecs.h"

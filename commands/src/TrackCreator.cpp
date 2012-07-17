@@ -1,8 +1,5 @@
 #include "TrackCreator.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
 #include "Node.h"
 #include "AudioClip.h"
 #include "AudioFile.h"
@@ -17,7 +14,6 @@ namespace command {
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
-
 
 TrackCreator::TrackCreator(model::NodePtrs assets)
 :   mAssets(assets)

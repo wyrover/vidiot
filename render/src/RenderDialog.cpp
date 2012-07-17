@@ -1,18 +1,5 @@
 #include "RenderDialog.h"
 
-#include <wx/artprov.h>
-#include <wx/collpane.h>
-#include <wx/filedlg.h>
-#include <wx/listbook.h>
-#include <wx/msgdlg.h>
-#include <wx/panel.h>
-#include <wx/propgrid/propgrid.h>
-#include <wx/sizer.h>
-#include <wx/statbox.h>
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
-#include <boost/make_shared.hpp>
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
 #include "CodecParameter.h"

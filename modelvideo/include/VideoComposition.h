@@ -1,19 +1,11 @@
 #ifndef VIDEO_FRAME_COMPOSITION_H
 #define VIDEO_FRAME_COMPOSITION_H
 
-#include <wx/gdicmn.h>
-#include <list>
-#include <boost/shared_ptr.hpp>
 #include "VideoCompositionParameters.h"
 
 namespace model {
 
-class VideoFrame;
-typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
-typedef std::list<VideoFramePtr> VideoFrames;
 class VideoCompositionParameters;
-class VideoComposition;
-typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
 
 class VideoComposition
 {

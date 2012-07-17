@@ -1,6 +1,5 @@
 #include "Dump.h"
 
-#include <boost/foreach.hpp>
 #include "AudioClip.h"
 #include "EmptyClip.h"
 #include "IClip.h"

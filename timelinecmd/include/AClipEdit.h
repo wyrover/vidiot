@@ -1,30 +1,8 @@
 #ifndef CLIP_EDIT_H
 #define CLIP_EDIT_H
 
-#include <map>
-#include <list>
-#include <boost/shared_ptr.hpp>
 #include "ATimelineCommand.h"
 #include "UtilInt.h"
-
-namespace model {
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef std::list<TrackPtr> Tracks;
-
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-typedef boost::weak_ptr<IClip> WeakIClipPtr;
-typedef std::list<IClipPtr> IClips;
-
-class Transition;
-typedef boost::shared_ptr<Transition> TransitionPtr;
-typedef std::list<TransitionPtr> Transitions;
-
-struct MoveParameter;
-typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
-typedef std::list<MoveParameterPtr> MoveParameters;
-}
 
 namespace gui { namespace timeline { namespace command {
 typedef std::map<model::IClipPtr, model::IClips> ReplacementMap;

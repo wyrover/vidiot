@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <wx/dcclient.h>
 #include <wx/dcbuffer.h>
-#include <boost/make_shared.hpp>
 #include <portaudio.h>
 #include "Config.h"
 #include "Convert.h"

@@ -1,7 +1,5 @@
 #include "ProjectViewCreateFile.h"
 
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include "File.h"
 #include "Folder.h"
 #include "UtilLog.h"

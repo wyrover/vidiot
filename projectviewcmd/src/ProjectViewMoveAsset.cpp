@@ -1,6 +1,5 @@
 #include "ProjectViewMoveAsset.h"
 
-#include <boost/foreach.hpp>
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
@@ -18,7 +17,7 @@ ProjectViewMoveAsset::ProjectViewMoveAsset(model::NodePtrs nodes, model::NodePtr
     }
     else
     {
-        mCommandName = _("Move assets"); 
+        mCommandName = _("Move assets");
     }
 }
 

@@ -1,9 +1,5 @@
 #include "TimelinesView.h"
 
-#include <wx/sizer.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/foreach.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "Node.h"
 #include "Menu.h"

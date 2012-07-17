@@ -4,20 +4,10 @@
 #include <wx/docview.h>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/access.hpp>
-#include <boost/shared_ptr.hpp>
 #include "RootCommand.h"
 #include "UtilEvent.h"
 
-class Work;
-typedef boost::shared_ptr<Work> WorkPtr;
-
 namespace model {
-
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-class Properties;
-typedef boost::shared_ptr<Properties> PropertiesPtr;
-class Project;
 
 /// \class Project
 /// This class is not managed via shared_ptr's since it's construction/destruction

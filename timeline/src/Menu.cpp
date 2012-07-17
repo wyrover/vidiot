@@ -1,9 +1,5 @@
 #include "Menu.h"
 
-#include <wx/window.h>
-#include <set>
-#include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
 #include "AudioClip.h"
 #include "AudioTrack.h"
 #include "Clip.h"

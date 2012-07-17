@@ -1,16 +1,9 @@
 #ifndef PROJECT_VIEW_NODE_EVENT_H
 #define PROJECT_VIEW_NODE_EVENT_H
 
-#include <list>
-#include <wx/string.h>
-#include <boost/shared_ptr.hpp>
 #include "UtilEvent.h"
 
 namespace model {
-
-class INode;
-typedef boost::shared_ptr<INode> NodePtr;
-typedef std::list<NodePtr> NodePtrs;
 
 class ParentAndChild
 {

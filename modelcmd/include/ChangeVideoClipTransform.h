@@ -1,15 +1,10 @@
 #ifndef CHANGE_VIDEO_CLIP_TRANSFORM_H
 #define CHANGE_VIDEO_CLIP_TRANSFORM_H
 
-#include <wx/gdicmn.h>
-#include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include "RootCommand.h"
 #include "Enums.h"
 
 namespace model {
-class VideoClip;
-typedef boost::shared_ptr<VideoClip> VideoClipPtr;
 
 /// Abstract base for all modifications on the timeline/sequence.
 class ChangeVideoClipTransform

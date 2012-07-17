@@ -1,21 +1,11 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
-#include <wx/gdicmn.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/access.hpp>
 #include "UtilFrameRate.h"
 
 namespace model {
-
-namespace render {
-    class Render;
-    typedef boost::shared_ptr<Render> RenderPtr;
-}
-
-class Properties;
-typedef boost::shared_ptr<Properties> PropertiesPtr;
 
 class Properties
 {

@@ -4,16 +4,9 @@
 #include <iostream>
 #include <wx/panel.h>
 #include <wx/control.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <SoundTouch.h>
 #include "VideoFrame.h"
 #include "AudioChunk.h"
-
-namespace model {
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-}
 
 namespace gui {
 

@@ -1,5 +1,5 @@
-#ifndef POINTERS_H
-#define POINTERS_H
+#ifndef MOUSE_POINTER_H
+#define MOUSE_POINTER_H
 
 #include <wx/gdicmn.h>
 #include <wx/cursor.h>
@@ -68,4 +68,4 @@ private:
 
 }} // namespace
 
-#endif // POINTERS_H
+#endif // MOUSE_POINTER_H

@@ -1,9 +1,6 @@
 #ifndef UTIL_CLONEABLE_H
 #define UTIL_CLONEABLE_H
 
-#include <list>
-#include <boost/foreach.hpp>
-#include <boost/shared_ptr.hpp>
 #include "UtilRTTI.h"
 
 /// Needed for cloning in class hierarchies starting with abstract base classes.

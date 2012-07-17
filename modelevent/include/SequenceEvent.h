@@ -1,15 +1,9 @@
 #ifndef MODEL_SEQUENCE_EVENT_H
 #define MODEL_SEQUENCE_EVENT_H
 
-#include <list>
-#include <boost/shared_ptr.hpp>
 #include "UtilEvent.h"
 
 namespace model {
-
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef std::list<TrackPtr> Tracks;
 
 struct TrackChange
 {

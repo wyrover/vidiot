@@ -1,24 +1,11 @@
 #ifndef MODEL_TRANSITION_H
 #define MODEL_TRANSITION_H
 
-#include <wx/event.h>
-#include <list>
-#include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "IClip.h"
 
 namespace model {
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef boost::shared_ptr<const Track> ConstTrackPtr;
-typedef boost::weak_ptr<Track> WeakTrackPtr;
-typedef std::list<TrackPtr> Tracks;
-class Transition;
-typedef boost::shared_ptr<Transition> TransitionPtr;
-typedef std::list<TransitionPtr> Transitions;
-typedef boost::shared_ptr<const IClip> ConstIClipPtr;
 
 /// Class representing transitions in the timeline. Note that the actual transition
 /// is rendered by taking its adjacent clips, cloning these, and adjusting the clones

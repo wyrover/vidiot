@@ -3,14 +3,10 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/shared_ptr.hpp>
 #include "IControl.h"
 #include "UtilCloneable.h"
 
 namespace model {
-
-class IFile;
-typedef boost::shared_ptr<IFile> IFilePtr;
 
 class IFile
     :   public IControl

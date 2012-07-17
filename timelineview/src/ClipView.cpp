@@ -1,8 +1,5 @@
 #include "ClipView.h"
 
-#include <wx/dcmemory.h>
-#include <wx/pen.h>
-#include <boost/foreach.hpp>
 #include "Config.h"
 #include "Clip.h"
 #include "ClipEvent.h"

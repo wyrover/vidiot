@@ -1,19 +1,11 @@
 #ifndef GUI_PROJECT_VIEW_MODEL_H
 #define GUI_PROJECT_VIEW_MODEL_H
 
-#include <list>
-#include <wx/event.h>
 #include <wx/dataview.h>
-#include <boost/shared_ptr.hpp>
 #include "UtilEvent.h"
 
 namespace model {
 class Project;
-class INode;
-typedef boost::shared_ptr<INode> NodePtr;
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-typedef std::list<NodePtr> NodePtrs;
 class EventOpenProject;
 class EventCloseProject;
 class EventAddNode;
@@ -51,7 +43,7 @@ public:
     int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const override;
 
     //////////////////////////////////////////////////////////////////////////
-    // 
+    //
     //////////////////////////////////////////////////////////////////////////
 
     bool isRoot( model::NodePtr node ) const;

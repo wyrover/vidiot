@@ -1,15 +1,7 @@
 #ifndef THUMBNAIL_VIEW_H
 #define THUMBNAIL_VIEW_H
 
-#include <boost/shared_ptr.hpp>
 #include "View.h"
-
-namespace model{
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-class VideoClip;
-typedef boost::shared_ptr<VideoClip> VideoClipPtr;
-}
 
 namespace gui { namespace timeline {
 

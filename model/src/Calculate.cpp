@@ -1,6 +1,5 @@
 #include "Calculate.h"
 
-#include <boost/foreach.hpp>
 #include "IClip.h"
 
 namespace model { namespace calculate {

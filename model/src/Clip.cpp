@@ -1,9 +1,6 @@
 #include "Clip.h"
 
 #include <wx/tokenzr.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/foreach.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "ClipEvent.h"
 #include "Config.h"

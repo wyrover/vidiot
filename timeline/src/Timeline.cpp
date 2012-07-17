@@ -1,11 +1,6 @@
 #include "Timeline.h"
 
 #include <algorithm>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/foreach.hpp>
-#include <wx/dcclient.h>
-#include <wx/dcmemory.h>
 #include "AudioView.h"
 #include "Constants.h"
 #include "Cursor.h"

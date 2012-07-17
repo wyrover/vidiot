@@ -8,13 +8,7 @@
 #include <wx/slider.h>
 #include <wx/textctrl.h>
 #include <wx/minifram.h>
-#include <boost/shared_ptr.hpp>
 #include "UtilInt.h"
-
-namespace model {
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-}
 
 namespace gui {
 

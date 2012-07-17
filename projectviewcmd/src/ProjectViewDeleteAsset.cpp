@@ -1,6 +1,5 @@
 #include "ProjectViewDeleteAsset.h"
 
-#include <boost/foreach.hpp>
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
@@ -17,7 +16,7 @@ ProjectViewDeleteAsset::ProjectViewDeleteAsset(model::NodePtrs nodes)
     }
     else
     {
-        mCommandName = _("Delete assets"); 
+        mCommandName = _("Delete assets");
     }
 }
 

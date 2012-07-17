@@ -1,20 +1,8 @@
 #include "Dialog.h"
 
-#include <wx/dirdlg.h>
-#include <wx/debugrpt.h>
-#include <wx/filename.h>
-#include <wx/filedlg.h>
-#include <wx/msgdlg.h>
-#include <wx/textdlg.h>
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
-#include <boost/thread/barrier.hpp>
 #include "Config.h"
 #include "UtilLog.h"
 #include "Window.h"
-
-#include <wx/thread.h>
 
 namespace gui {
 

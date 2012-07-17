@@ -1,8 +1,5 @@
 #include "IntervalsView.h"
 
-#include <boost/foreach.hpp>
-#include <wx/dcclient.h>
-#include <wx/dcmemory.h>
 #include "Constants.h"
 #include "Intervals.h"
 #include "Layout.h"

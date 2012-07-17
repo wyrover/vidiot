@@ -1,8 +1,5 @@
 #include "TrimIntervals.h"
 
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <boost/thread.hpp>
 #include "Cursor.h"
 #include "EmptyClip.h"
 #include "IClip.h"

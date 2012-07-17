@@ -2,17 +2,12 @@
 #define MODEL_RENDER_I_CODEC_PARAMETER_H
 
 #include <ostream>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
 #include <wx/window.h>
 #include "UtilCloneable.h"
 
 struct AVCodecContext;
 
 namespace model { namespace render {
-
-struct ICodecParameter;
-typedef boost::shared_ptr<ICodecParameter> ICodecParameterPtr;
 
 struct ICodecParameter
     :   public ICloneable

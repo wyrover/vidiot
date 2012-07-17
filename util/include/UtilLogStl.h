@@ -1,13 +1,6 @@
 #ifndef UTIL_LOG_STL_H
 #define UTIL_LOG_STL_H
 
-#include <list>
-#include <map>
-#include <ostream>
-#include <set>
-#include <vector>
-#include <boost/foreach.hpp>
-
 template <class T>
 std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)
 {
@@ -65,4 +58,3 @@ std::ostream& operator<< (std::ostream& os, const std::pair<T,U>& obj)
 }
 
 #endif //UTIL_LOG_STL_H
-

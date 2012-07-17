@@ -2,10 +2,6 @@
 
 #include <math.h>
 #include <wx/confbase.h>
-#include <wx/dcmemory.h>
-#include <boost/foreach.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include "Config.h"
 #include "Constants.h"
 #include "Convert.h"

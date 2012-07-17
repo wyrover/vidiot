@@ -1,13 +1,8 @@
 #ifndef TIMELINE_COMMAND_H
 #define TIMELINE_COMMAND_H
 
-#include <boost/shared_ptr.hpp>
 #include "RootCommand.h"
 
-namespace model {
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-}
 namespace gui { namespace timeline {
     class Timeline;
 }}

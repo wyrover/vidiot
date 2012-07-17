@@ -1,9 +1,6 @@
 #ifndef VIDEO_FRAME_H
 #define VIDEO_FRAME_H
 
-#include <wx/bitmap.h>
-#include <wx/image.h>
-#include <boost/shared_ptr.hpp>
 #include "UtilFifo.h"
 #include "UtilInt.h"
 #include "UtilFrameRate.h"

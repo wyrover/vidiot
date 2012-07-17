@@ -1,6 +1,5 @@
 #include "ProjectViewCommand.h"
 
-#include <boost/foreach.hpp>
 #include "Node.h"
 #include "UtilLog.h"
 

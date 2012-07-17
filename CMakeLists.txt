@@ -98,6 +98,7 @@ FINDFILES(modelevent)
 FINDFILES(modelvideo)
 FINDFILES(gui)
 FINDFILES(guievent)
+FINDFILES(pch)
 FINDFILES(projectview)
 FINDFILES(projectviewcmd)
 FINDFILES(render)
@@ -120,15 +121,13 @@ IF (MSVC)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP ")
     ENDIF (NOT SINGLE_THREADED)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
+    # Force including Precompiled.h for all cpp files
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FIPrecompiled.h ")
     string(REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
     ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
 ENDIF (MSVC)
 
-# Don't change the order of FFMPEG includes: Both ffmpeg and Vidiot have an include file
-# File.h. Be sure that the vidiot one is found first. That's also the rationale for explicitly
-# including model/include in this list (that's where the correct File.h resides)
 INCLUDE_DIRECTORIES(AFTER
-    model/include
     icons
     cursors
     ctypes
@@ -161,6 +160,7 @@ GROUPFILES(modelevent)
 GROUPFILES(modelvideo)
 GROUPFILES(gui)
 GROUPFILES(guievent)
+GROUPFILES(pch)
 GROUPFILES(projectview)
 GROUPFILES(projectviewcmd)
 GROUPFILES(render)
@@ -179,8 +179,13 @@ SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${ConfigurationFiles} ${BuildFiles} PR
 #### HELP FILES ####
 #add_custom_command(OUTPUT HelpFiles COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)
 
-ADD_LIBRARY(vidiot ${HEADERS_LIST} ${SOURCES_LIST} ${Icons} ${Cursors} ${BuildFiles} ${HelpFiles}) # Add HelpFiles Here to make Vidiot dependent on copying the helpfiles
+ADD_LIBRARY(vidiot ${SOURCES_LIST} ${HEADERS_LIST} ${Icons} ${Cursors} ${BuildFiles} ${HelpFiles}) # Add HelpFiles Here to make Vidiot dependent on copying the helpfiles
 
 ADD_SUBDIRECTORY(main)
 ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(install)
+
+if (MSVC)
+   set_target_properties(vidiot PROPERTIES COMPILE_FLAGS "/YuPrecompiled.h")
+   set_source_files_properties(pch/src/Precompiled.cpp PROPERTIES COMPILE_FLAGS "/YcPrecompiled.h")
+endif(MSVC)

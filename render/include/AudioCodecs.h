@@ -8,16 +8,9 @@ extern "C" {
 }
 
 #include <wx/string.h>
-#include <map>
 #include <boost/bimap.hpp>
-#include <boost/shared_ptr.hpp>
 
 namespace model { namespace render {
-
-struct ICodecParameter;
-typedef boost::shared_ptr<ICodecParameter> ICodecParameterPtr;
-class AudioCodec;
-typedef boost::shared_ptr<AudioCodec> AudioCodecPtr;
 
 typedef std::map<CodecID,AudioCodecPtr> AudioCodecMap;
 

@@ -4,10 +4,7 @@
 #include "UtilEnum.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
 #include <boost/format.hpp>
-#include <map>
 #include <sstream>
 #include <utility>
 #include <wx/intl.h>

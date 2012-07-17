@@ -1,15 +1,8 @@
 #include "AutoFolder.h"
 
-#include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include <wx/dir.h>
-#include <wx/filename.h>
 #include "File.h"
 #include "UtilList.h"
 #include "UtilPath.h"

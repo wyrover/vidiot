@@ -1,8 +1,5 @@
 #include "CreateAudioTrack.h"
 
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include "UtilLog.h"
 #include "AudioTrack.h"
 #include "Timeline.h"
@@ -19,7 +16,7 @@ CreateAudioTrack::CreateAudioTrack(model::SequencePtr sequence)
     ,   mNewTrack()
 {
     VAR_INFO(this);
-    mCommandName = _("Add track"); 
+    mCommandName = _("Add track");
 }
 
 CreateAudioTrack::~CreateAudioTrack()
