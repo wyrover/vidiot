@@ -1,9 +1,7 @@
 #ifndef GUI_PROJECT_VIEW_H
 #define GUI_PROJECT_VIEW_H
 
-#include <set>
 #include <wx/dataview.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>

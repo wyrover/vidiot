@@ -1,12 +1,6 @@
 #ifndef MODEL_I_CLIP_H
 #define MODEL_I_CLIP_H
 
-#include <wx/string.h>
-#include <wx/event.h>
-#include <list>
-#include <boost/shared_ptr.hpp>
-#include <boost/optional.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "IControl.h"
@@ -14,17 +8,6 @@
 #include "UtilInt.h"
 
 namespace model {
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef boost::shared_ptr<const Track> ConstTrackPtr;
-typedef std::list<TrackPtr> Tracks;
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-typedef boost::shared_ptr<const IClip> ConstIClipPtr;
-typedef boost::weak_ptr<IClip> WeakIClipPtr;
-typedef std::list<IClipPtr> IClips;
-class Transition;
-typedef boost::shared_ptr<Transition> TransitionPtr;
 
 class IClip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

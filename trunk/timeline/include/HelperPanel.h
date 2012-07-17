@@ -1,10 +1,8 @@
 #ifndef TIMELINEHELPERPANEL_H
 #define TIMELINEHELPERPANEL_H
 
-#include <map>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <boost/shared_ptr.hpp>
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {

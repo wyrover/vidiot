@@ -1,13 +1,8 @@
 #include "Trim.h"
 
-#include <wx/bitmap.h>
-#include <wx/image.h>
 #include <wx/cmdproc.h>
-#include <wx/dcmemory.h>
 #include <wx/wupdlock.h>
-#include <boost/foreach.hpp>
 #include <boost/limits.hpp>
-#include <boost/make_shared.hpp>
 #include "Clip.h"
 #include "ClipView.h"
 #include "EmptyClip.h"

@@ -1,15 +1,7 @@
 #ifndef MODEL_I_PATH_H
 #define MODEL_I_PATH_H
 
-#include <wx/filename.h>
-#include <list>
-#include <boost/shared_ptr.hpp>
-
 namespace model {
-
-class IPath;
-typedef boost::shared_ptr<IPath> IPathPtr;
-typedef std::list<IPathPtr> IPaths;
 
 /// Interface class for objects that are files/directories on disk
 class IPath

@@ -6,8 +6,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/shared_ptr.hpp>
-#include <wx/window.h>
+#include <wx/window.h> // todo remove, since in pch?
 #include "UtilCloneable.h"
 #include "UtilEnumSelector.h"
 #include "ICodecParameter.h"

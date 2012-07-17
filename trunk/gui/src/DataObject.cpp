@@ -1,6 +1,5 @@
 #include "DataObject.h"
 
-#include <boost/foreach.hpp>
 #include "Node.h"
 #include "UtilLog.h"
 
@@ -16,7 +15,6 @@ DataObject::DataObject()
 {
     SetFormat(mFormat);
 }
-
 
 DataObject::DataObject(model::NodePtrs assets, CallbackOnDestruction callback)
 :   wxDataObjectSimple()

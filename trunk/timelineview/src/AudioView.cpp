@@ -1,7 +1,5 @@
 #include "AudioView.h"
 
-#include <wx/dcmemory.h>
-#include <boost/foreach.hpp>
 #include "Layout.h"
 #include "Track.h"
 #include "TrackView.h"

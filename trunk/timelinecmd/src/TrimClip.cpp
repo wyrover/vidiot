@@ -1,7 +1,5 @@
 #include "TrimClip.h"
 
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
 #include "Cursor.h"
 #include "EmptyClip.h"
 #include "IClip.h"

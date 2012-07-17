@@ -39,7 +39,7 @@ void ClipTypeAsserter::ClipTypeMismatch(const type_info& expectedtype)
     auto convert = [](const type_info& info) -> std::string
     {
         std::vector<std::string> strs;
-        boost::split(strs, std::string(info.name()), boost::is_any_of(":"));
+        boost::split(strs, std::string(info.name()), boost::is_any_of(":")); // todo avoid is_any_of
         return strs.back();
     };
 

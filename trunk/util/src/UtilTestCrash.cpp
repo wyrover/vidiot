@@ -1,15 +1,8 @@
 #include "UtilTestCrash.h"
 
 #include <utility>
-#include <vector>
 #include <istream>
-#include <boost/assign/list_of.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
 #include <boost/archive/archive_exception.hpp>
-#include <boost/thread.hpp>
 #include "UtilLog.h"
 #include "ids.h"
 
@@ -96,7 +89,6 @@ void triggerInvalidParameter()
    char *formatString = 0;
    printf(formatString);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // PURE VIRTUAL CALL

@@ -1,8 +1,6 @@
 #ifndef MODEL_I_CONTROL_H
 #define MODEL_I_CONTROL_H
 
-#include <wx/string.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "UtilInt.h"

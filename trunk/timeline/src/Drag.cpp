@@ -1,12 +1,5 @@
 #include "Drag.h"
 
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
-#include <wx/config.h>
-#include <wx/dnd.h>
-#include <wx/pen.h>
-#include <wx/tooltip.h>
 #include "AudioClip.h"
 #include "AudioFile.h"
 #include "AudioTrack.h"

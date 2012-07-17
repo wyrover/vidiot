@@ -1,4 +1,5 @@
 #include "UtilPath.h"
+#include "precompiled.h"
 
 namespace util { namespace path {
 

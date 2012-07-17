@@ -1,17 +1,5 @@
 #include "DetailsClip.h"
 
-#include <math.h>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
-#include <wx/button.h>
-#include <wx/choice.h>
-#include <wx/dcmemory.h>
-#include <wx/gbsizer.h>
-#include <wx/gdicmn.h>
-#include <wx/sizer.h>
-#include <wx/statbox.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
 #include "AudioClip.h"
 #include "ChangeVideoClipTransform.h"
 #include "CommandProcessor.h"

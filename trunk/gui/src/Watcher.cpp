@@ -1,9 +1,5 @@
 #include "Watcher.h"
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
 #include "AutoFolder.h"
 #include "File.h"
 #include "ProjectEvent.h"
@@ -61,7 +57,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
     wxFileName file(event.GetPath());
     if (file.IsDir())
     {
-        file.RemoveLastDir(); 
+        file.RemoveLastDir();
     }
     else
     {
@@ -102,7 +98,7 @@ void Watcher::onCloseProject( model::EventCloseProject &event )
     gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
     gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
     gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
-    
+
     event.Skip();
 }
 
@@ -233,7 +229,7 @@ std::ostream& operator<<( std::ostream& os, const Watcher& obj )
     return os;
 }
 
-// static 
+// static
 wxString Watcher::GetFSWEventChangeTypeName(int changeType)
 {
     switch (changeType)
@@ -254,7 +250,7 @@ wxString Watcher::GetFSWEventChangeTypeName(int changeType)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

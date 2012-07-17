@@ -3,7 +3,6 @@
 
 #include <wx/notebook.h>
 #include <wx/panel.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>
@@ -12,8 +11,6 @@ namespace model {
     class EventCloseProject;
     class EventRemoveNode;
     class EventRenameNode;
-    class Sequence;
-    typedef boost::shared_ptr<Sequence> SequencePtr;
 }
 
 namespace test {

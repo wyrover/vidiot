@@ -8,11 +8,6 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-#include <wx/msgdlg.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <stdio.h>
 #include "AudioChunk.h"

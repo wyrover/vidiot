@@ -4,7 +4,6 @@
 #include <ostream>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/shared_ptr.hpp>
 #include <wx/window.h>
 #include "CodecParameter.h"
 #include "UtilEnum.h"

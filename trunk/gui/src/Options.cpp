@@ -2,17 +2,7 @@
 
 #include <wx/wfstream.h>
 #include <wx/app.h>
-#include <wx/sizer.h>
-#include <wx/bookctrl.h>
-#include <wx/radiobox.h>
-#include <wx/spinctrl.h>
-#include <wx/config.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/bimap.hpp>
-#include <boost/foreach.hpp>
-#include <boost/filesystem.hpp>
+#include <boost/filesystem.hpp> // todo remove
 #include <boost/filesystem/path.hpp>
 #include "Enums.h"
 #include "UtilLog.h"

@@ -1,6 +1,5 @@
 #include "StateMoveTrackDivider.h"
 
-#include <boost/foreach.hpp>
 #include "AudioClip.h"
 #include "AudioTrack.h"
 #include "ClipView.h"

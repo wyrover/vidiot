@@ -7,17 +7,12 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-#include <wx/string.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "UtilCloneable.h"
 
 namespace model { namespace render {
-
-class OutputFormat;
-typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
 
 // todo idea: make ICloneable template:
 template <typename DERIVED>

@@ -12,23 +12,8 @@
 #include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <boost/shared_ptr.hpp>
 #include "UtilEnumSelector.h"
 #include "UtilInt.h"
-
-namespace model {
-    class Sequence;
-    typedef boost::shared_ptr<Sequence> SequencePtr;
-
-    namespace render {
-    class EventRenderActive;
-    class Render;
-    typedef boost::shared_ptr<Render> RenderPtr;
-    class AudioCodec;
-    typedef boost::shared_ptr<AudioCodec> AudioCodecPtr;
-    class VideoCodec;
-    typedef boost::shared_ptr<VideoCodec> VideoCodecPtr;
-}}
 
 namespace gui {
 

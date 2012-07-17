@@ -1,32 +1,12 @@
 #ifndef MODEL_RENDER_H
 #define MODEL_RENDER_H
 
-#include <wx/event.h>
-#include <wx/filename.h>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 #include "UtilCloneable.h"
 #include "UtilEvent.h"
 
-namespace model {
-
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-typedef boost::weak_ptr<Sequence> WeakSequencPtr;
-
-namespace render {
-
-class Render;
-typedef boost::shared_ptr<Render> RenderPtr;
-class AudioCodec;
-typedef boost::shared_ptr<AudioCodec> AudioCodecPtr;
-class VideoCodec;
-typedef boost::shared_ptr<VideoCodec> VideoCodecPtr;
-class OutputFormat;
-typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
+namespace model { namespace render {
 
 class Render
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

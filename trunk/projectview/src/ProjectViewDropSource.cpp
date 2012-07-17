@@ -1,7 +1,4 @@
 #include "ProjectViewDropSource.h"
-#include <wx/dcclient.h>
-#include <wx/dcmemory.h>
-#include <boost/foreach.hpp>
 #include "ProjectViewModel.h"
 #include "Layout.h"
 #include "Window.h"

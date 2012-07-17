@@ -1,17 +1,13 @@
 #ifndef MODEL_I_VIDEO_H
 #define MODEL_I_VIDEO_H
 
-#include <wx/gdicmn.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/shared_ptr.hpp>
 #include "UtilFrameRate.h"
 
 namespace model {
 
 class VideoCompositionParameters;
-class VideoFrame;
-typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 
 class IVideo
 {

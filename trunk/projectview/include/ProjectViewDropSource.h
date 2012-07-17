@@ -4,14 +4,10 @@
 #include <wx/dnd.h>
 #include <wx/dataview.h>
 #include <wx/frame.h>
-#include <list>
-#include <boost/shared_ptr.hpp>
 
 namespace model {
 class INode;
 typedef INode* NodeId;
-typedef boost::shared_ptr<INode> NodePtr;
-typedef std::list<NodePtr> ProjectViewPtrs;
 }
 
 namespace gui {
@@ -19,7 +15,7 @@ namespace gui {
 class ProjectViewModel;
 class DataObject;
 
-class ProjectViewDropSource 
+class ProjectViewDropSource
     :   public wxDropSource
 {
 public:

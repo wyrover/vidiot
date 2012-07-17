@@ -1,16 +1,7 @@
 #ifndef RENDER_OUTPUT_FORMATS_H
 #define RENDER_OUTPUT_FORMATS_H
 
-#include <wx/string.h>
-#include <list>
-#include <boost/shared_ptr.hpp>
-
 namespace model { namespace render {
-
-class OutputFormat;
-typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
-
-typedef std::list<OutputFormatPtr> OutputFormatList;
 
 class OutputFormats
 {

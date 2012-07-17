@@ -7,20 +7,12 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-#include <list>
-#include <map>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <ostream>
 #include "UtilCloneable.h"
 
 namespace model { namespace render {
-
-struct ICodecParameter;
-typedef boost::shared_ptr<ICodecParameter> ICodecParameterPtr;
-class AudioCodec;
-typedef boost::shared_ptr<AudioCodec> AudioCodecPtr;
 
 class AudioCodec
     :   public ICloneable

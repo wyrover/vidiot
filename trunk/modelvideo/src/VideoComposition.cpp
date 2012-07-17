@@ -1,11 +1,5 @@
 #include "VideoComposition.h"
 
-#include <wx/dcmemory.h>
-#include <wx/dcgraph.h>
-#include <wx/bitmap.h>
-#include <wx/graphics.h>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Layout.h"

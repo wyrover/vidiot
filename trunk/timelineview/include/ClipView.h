@@ -1,12 +1,9 @@
 #ifndef CLIP_VIEW_H
 #define CLIP_VIEW_H
 
-#include <boost/shared_ptr.hpp>
 #include "View.h"
 
 namespace model{
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
 class EventDragClip;
 class EventSelectClip;
 class DebugEventRenderProgress;

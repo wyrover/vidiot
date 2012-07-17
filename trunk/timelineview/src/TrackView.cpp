@@ -1,15 +1,8 @@
 #include "TrackView.h"
 
 #include <algorithm>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include <wx/dcclient.h>
-#include <wx/dcmemory.h>
-#include <wx/pen.h>
 #include "Node.h"
 #include "Clip.h"
 #include "ClipView.h"

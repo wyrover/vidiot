@@ -1,9 +1,5 @@
 #include "DeleteSelectedClips.h"
 
-#include <set>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/assign/list_of.hpp>
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "Track.h"

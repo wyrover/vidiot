@@ -1,9 +1,5 @@
 #include "ProjectViewCreateSequence.h"
 
-#include <wx/filename.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include "AutoFolder.h"
 #include "Folder.h"
 #include "Sequence.h"

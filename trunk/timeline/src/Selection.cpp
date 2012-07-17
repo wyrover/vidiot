@@ -1,7 +1,5 @@
 #include "Selection.h"
 
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include "ClipView.h"
 #include "DeleteSelectedClips.h"
 #include "Details.h"

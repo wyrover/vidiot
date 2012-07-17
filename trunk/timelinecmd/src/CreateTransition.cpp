@@ -1,8 +1,5 @@
 #include "CreateTransition.h"
 
-#include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/assign/list_of.hpp>
 #include "Config.h"
 #include "VideoTransition_CrossFade.h"
 #include "EmptyClip.h"

@@ -1,7 +1,5 @@
 #include "ProjectView.h"
 
-#include <wx/datetime.h>
-#include <boost/foreach.hpp>
 #include "Node.h"
 #include "AutoFolder.h"
 #include "File.h"

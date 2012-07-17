@@ -7,17 +7,9 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-#include <wx/string.h>
-#include <map>
 #include <boost/bimap.hpp>
-#include <boost/shared_ptr.hpp>
 
 namespace model { namespace render {
-
-struct ICodecParameter;
-typedef boost::shared_ptr<ICodecParameter> ICodecParameterPtr;
-class VideoCodec;
-typedef boost::shared_ptr<VideoCodec> VideoCodecPtr;
 
 typedef std::map<CodecID,VideoCodecPtr> VideoCodecMap;
 

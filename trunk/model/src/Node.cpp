@@ -1,8 +1,4 @@
 #include "Node.h"
-#include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include "NodeEvent.h"
@@ -53,8 +49,8 @@ bool Node::hasParent() const
 }
 
 NodePtr Node::getParent() const
-{ 
-    return mParent.lock(); 
+{
+    return mParent.lock();
 }
 
 void Node::setParent(NodePtr parent)
@@ -113,7 +109,6 @@ NodePtrs Node::find(wxString name)
     return result;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
@@ -125,7 +120,7 @@ std::ostream& operator<<( std::ostream& os, const Node& obj )
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
