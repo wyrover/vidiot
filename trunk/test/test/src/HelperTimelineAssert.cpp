@@ -2,7 +2,6 @@
 
 #include "HelperTimeline.h"
 
-#include <boost/algorithm/string.hpp>
 #include "HelperTimelineAssert.h"
 #include "Transition.h"
 #include "UtilLog.h"
@@ -38,9 +37,8 @@ void ClipTypeAsserter::ClipTypeMismatch(const type_info& expectedtype)
     std::string TrackType = mVideo ? "VIDEO" : "AUDIO";
     auto convert = [](const type_info& info) -> std::string
     {
-        std::vector<std::string> strs;
-        boost::split(strs, std::string(info.name()), boost::is_any_of(":")); // todo avoid is_any_of
-        return strs.back();
+        std::string theName = info.name();
+        return theName.substr(theName.find_last_of(':') + 1);
     };
 
     std::string Expected = convert(expectedtype);

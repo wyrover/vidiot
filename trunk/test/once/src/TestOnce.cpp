@@ -6,9 +6,12 @@
 #include "Sequence.h"
 #include "HelperWindow.h"
 #include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
 #include "HelperTimelinesView.h"
+#include "EmptyClip.h"
 #include "HelperApplication.h"
 #include "RenderDialog.h"
+#include "VideoClip.h"
 #include "Dialog.h"
 #include "UtilLog.h"
 #include "ids.h"
@@ -33,7 +36,7 @@ void TestOnce::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY("testTrimming");
+RUNONLY("testOnce");
 
 void TestOnce::testOnce()
 {
@@ -41,6 +44,7 @@ void TestOnce::testOnce()
     // getTimeline().getDump().dump();
     // PrepareSnapping(true);
     StartTestSuite();
+
     triggerMenu(ID_RENDERSETTINGS);
     waitForIdle();
     gui::Dialog::get().setSaveFile("D:/out.avi");
