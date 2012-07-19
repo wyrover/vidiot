@@ -2,7 +2,6 @@
 
 #include "SuiteCreator.h"
 
-#include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
 #include "Window.h"
 #include "UtilLog.h"
@@ -25,10 +24,10 @@ int ISuite::runOnly(const char* file, const char* test)
     ASSERT_ZERO(ISuite::sInstance);
     ISuite::sInstance = new ISuite();
     sInstance->mTest = std::string(test);
-    std::vector<std::string> fileparts;
-    boost::split(fileparts, file, boost::is_any_of("\\"));
-    boost::split(fileparts, fileparts.back(), boost::is_any_of(".")); // todo different solution than is_any_of
-    sInstance->mSuite = fileparts.front();
+    std::string path(file);
+    std::string filename(path.substr(path.find_last_of('\\')+1));
+    std::string filename_noext(filename.substr(0, filename.find_last_of('.')));
+    sInstance->mSuite = filename_noext;
     return 1;
 };
 
@@ -62,9 +61,8 @@ void updateTitle()
 
 void setSuite(const char* suite)
 {
-    std::vector<std::string> strs;
-    boost::split(strs, suite, boost::is_any_of(":"));
-    sSuite = strs.back();
+    std::string suitename(suite);
+    sSuite = suitename.substr(suitename.find_last_of(':')+1);
     sSuite.Replace("test","Test",false);
     sTest.reset();
     updateTitle();
