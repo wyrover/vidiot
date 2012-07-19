@@ -2,9 +2,6 @@
 
 #include <wx/ffile.h>
 #include <wx/filefn.h>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/thread.hpp>
 #include "AutoFolder.h"
 #include "FixtureApplication.h"

@@ -2,8 +2,6 @@
 
 #include <wx/wfstream.h>
 #include <wx/app.h>
-#include <boost/filesystem.hpp> // todo remove
-#include <boost/filesystem/path.hpp>
 #include "Enums.h"
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
