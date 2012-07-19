@@ -1,10 +1,5 @@
 #include "Details.h"
 
-#include <wx/button.h>
-#include <wx/sizer.h>
-
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
 #include "DetailsClip.h"
 #include "IClip.h"
 #include "Layout.h"

@@ -1,10 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <wx/config.h> // This ensures that in other parts of the code only #include "Config.h" is required
-#include <wx/string.h>
-#include <boost/thread/mutex.hpp>
-
 #include "UtilLog.h"
 
 /// This class holds everything related to the persistence of global settings.

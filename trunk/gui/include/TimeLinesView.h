@@ -1,8 +1,6 @@
 #ifndef GUI_SEQUENCE_VIEW_H
 #define GUI_SEQUENCE_VIEW_H
 
-#include <wx/notebook.h>
-#include <wx/panel.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>

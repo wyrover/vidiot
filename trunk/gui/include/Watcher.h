@@ -1,10 +1,8 @@
 #ifndef WATCHER_H
 #define WATCHER_H
 
-#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/path.hpp> // todo unuse boost paths
 #include <boost/serialization/access.hpp>
-#include <list>
-#include <map>
 #include <wx/FSWatcher.h>
 
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }

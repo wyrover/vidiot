@@ -1,7 +1,6 @@
 #ifndef TIMELINE_EVENT_PART_H
 #define TIMELINE_EVENT_PART_H
 
-#include <boost/statechart/event.hpp>
 #include "Part.h"
 #include "Zoom.h"
 #include "Scrolling.h"

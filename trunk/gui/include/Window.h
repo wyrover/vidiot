@@ -1,12 +1,8 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <wx/aui/aui.h>
-#include <wx/menu.h>
-#include <wx/docview.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/scoped_ptr.hpp>
 #include "IView.h"
 #include "HelperPanel.h"
 

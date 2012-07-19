@@ -1,17 +1,6 @@
 #ifndef DATA_OBJECT_H
 #define DATA_OBJECT_H
 
-#include <list>
-#include <wx/dataobj.h>
-#include <boost/noncopyable.hpp>
-#include <boost/function.hpp>
-
-namespace model {
-class INode;
-typedef boost::shared_ptr<INode> NodePtr;
-typedef std::list<NodePtr> NodePtrs;
-}
-
 namespace gui {
 
 class DataObject

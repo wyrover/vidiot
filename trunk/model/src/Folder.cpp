@@ -1,7 +1,5 @@
 #include "Folder.h"
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include "NodeEvent.h"
 #include "Window.h"
 #include "UtilLog.h"

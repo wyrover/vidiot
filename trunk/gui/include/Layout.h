@@ -1,10 +1,6 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
-#include <wx/font.h>
-#include <wx/pen.h>
-#include <wx/brush.h>
-#include <wx/colour.h>
 #include "UtilInt.h"
 
 namespace gui {

@@ -1,8 +1,6 @@
 #ifndef MENU_HANDLER_H
 #define MENU_HANDLER_H
 
-#include <wx/event.h>
-#include <wx/menu.h>
 #include "Part.h"
 
 namespace gui { namespace timeline {

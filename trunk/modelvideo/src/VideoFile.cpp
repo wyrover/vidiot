@@ -9,12 +9,6 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
-#include <math.h>
-#include <algorithm>
-#include <boost/make_shared.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/base_object.hpp>
 #include "Convert.h"
 #include "Node.h"
 #include "Properties.h"

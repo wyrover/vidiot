@@ -1,13 +1,11 @@
 #ifndef CREATE_TRANSITION_H
 #define CREATE_TRANSITION_H
 
-#include <wx/gdicmn.h>
 #include "AClipEdit.h"
-
 
 namespace gui { namespace timeline { namespace command {
 
-class CreateTransition 
+class CreateTransition
     :   public AClipEdit
 {
 public:
@@ -27,7 +25,7 @@ public:
     void initialize() override;
 
     //////////////////////////////////////////////////////////////////////////
-    // 
+    //
     //////////////////////////////////////////////////////////////////////////
 
     /// Determine if a transition is possible

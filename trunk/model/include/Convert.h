@@ -1,7 +1,6 @@
 #ifndef CONVERT_H
 #define CONVERT_H
 
-#include <wx/gdicmn.h>
 #include "UtilInt.h"
 #include "UtilFrameRate.h"
 

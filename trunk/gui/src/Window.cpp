@@ -1,8 +1,7 @@
 #include "Window.h"
 
-#include <wx/docview.h>
 #include <boost/filesystem.hpp> // todo remove
-#include <boost/serialization/shared_ptr.hpp>
+
 #include "Dialog.h"
 #include "Node.h"
 #include "Config.h"

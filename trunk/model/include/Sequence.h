@@ -7,11 +7,6 @@
 #include "IVideo.h"
 #include "Node.h"
 #include "UtilCloneable.h"
-#include <boost/optional.hpp>
-#include <list>
-#include <map>
-#include <set>
-#include <wx/event.h>
 
 namespace model {
 

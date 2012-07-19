@@ -1,7 +1,6 @@
 #ifndef ZOOM_H
 #define ZOOM_H
 
-#include <boost/rational.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "Part.h"
@@ -40,7 +39,7 @@ public:
     int ptsToPixels(int pts) const;
 
 private:
-    
+
     rational mZoom; ///< Number of pixels per frame
 
     //////////////////////////////////////////////////////////////////////////

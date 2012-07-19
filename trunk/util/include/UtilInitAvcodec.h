@@ -2,11 +2,7 @@
 #define UTIL_INIT_AVCODEC_H
 
 #include <libavutil/pixfmt.h>
-#include <list>
-#include <ostream>
 #include <stdarg.h> // va_list
-#include <wx/string.h>
-#include <boost/bimap.hpp>
 
 struct AVRational;
 struct AVCodecContext;

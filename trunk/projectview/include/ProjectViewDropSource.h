@@ -1,10 +1,6 @@
 #ifndef PROJECT_VIEW_DROP_SOURCE_H
 #define PROJECT_VIEW_DROP_SOURCE_H
 
-#include <wx/dnd.h>
-#include <wx/dataview.h>
-#include <wx/frame.h>
-
 namespace model {
 class INode;
 typedef INode* NodeId;

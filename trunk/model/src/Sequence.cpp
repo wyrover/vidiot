@@ -1,8 +1,5 @@
 #include "Sequence.h"
 
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/optional.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
 #include "IClip.h"

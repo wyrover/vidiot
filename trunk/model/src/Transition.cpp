@@ -1,11 +1,5 @@
 #include "Transition.h"
 
-#include <limits.h>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "ClipEvent.h"
 #include "Track.h"
 #include "UtilLog.h"

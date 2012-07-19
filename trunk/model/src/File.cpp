@@ -7,17 +7,9 @@ extern "C" {
 #include <libavformat/avformat.h>
 };
 
-#include <math.h>
-#include <algorithm>
-#include <boost/make_shared.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/optional.hpp>
 #include "AutoFolder.h"
 #include "FilePacket.h"
 #include "Convert.h"

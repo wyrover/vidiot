@@ -3,10 +3,6 @@
 
 #define BOOST_HAS_STDINT_H
 
-#include <list>
-#include <string>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
 #include "UtilLog.h"
 
 template<class ELEMENT>

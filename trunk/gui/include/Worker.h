@@ -1,7 +1,6 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#include <boost/scoped_ptr.hpp>
 #include "FifoWork.h"
 
 namespace gui {

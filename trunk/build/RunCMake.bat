@@ -1,5 +1,7 @@
 goto BEGIN
 
+REM ============================== SUBROUTINES ==============================
+
 :EXTRACTDRIVE
 set DRIVE=%~d1
 goto:eof
@@ -11,8 +13,7 @@ pause
 exit
 
 
-
-REM ==== BEGIN ====
+REM ============================== BEGIN ==============================
 :BEGIN
 
 REM Go the the drive of the 'build' dir
@@ -38,6 +39,17 @@ if NOT DEFINED VIDIOT_BUILD SET VIDIOT_BUILD=%VIDIOT_DIR%\Build
 call:EXTRACTDRIVE %VIDIOT_BUILD%
 SET VIDIOT_BUILD_DRIVE=%DRIVE%
 
+if NOT "%1%"=="REBUILD" goto BUILD
+
+REM ============================== CLEAN ==============================
+:CLEAN
+
+del /s/q/f %VIDIOT_BUILD%\*
+rd /s/q  %VIDIOT_BUILD%
+
+
+REM ============================== BUILD ==============================
+:BUILD
 REM === FIND BOOST ====
 REM o-d: always use newest version
 %DRIVE%

@@ -1,11 +1,6 @@
 #ifndef MODEL_TRACK_H
 #define MODEL_TRACK_H
 
-#include <wx/event.h>
-#include <list>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/weak_ptr.hpp>
 #include "IControl.h"
 #include "UtilLog.h"
 #include "UtilCloneable.h"

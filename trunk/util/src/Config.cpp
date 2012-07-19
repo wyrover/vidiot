@@ -1,9 +1,5 @@
 #include "Config.h"
 
-#include <wx/fileconf.h>
-#include <wx/filename.h>
-#include <wx/thread.h>
-#include <boost/thread/locks.hpp>
 #include "Enums.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"

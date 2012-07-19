@@ -1,11 +1,8 @@
 #ifndef MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
 #define MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
 
-#include <ostream>
-#include <wx/spinctrl.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <wx/window.h>
 #include "CodecParameter.h"
 #include "UtilEnum.h"
 

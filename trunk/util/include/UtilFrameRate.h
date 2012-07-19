@@ -1,10 +1,6 @@
 #ifndef FRAMERATE_H
 #define FRAMERATE_H
 
-#include <vector>
-#include <wx/string.h>
-#include <boost/rational.hpp>
-
 typedef boost::rational<int> FrameRate;
 
 namespace framerate {

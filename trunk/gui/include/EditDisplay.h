@@ -1,7 +1,6 @@
 #ifndef EDIT_DISPLAY_H
 #define EDIT_DISPLAY_H
 
-#include <wx/control.h>
 #include "VideoFrame.h"
 
 namespace gui {
@@ -44,7 +43,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // GUI METHODS
     //////////////////////////////////////////////////////////////////////////
-    
+
     void OnSize(wxSizeEvent& event);
     void OnPaint(wxPaintEvent& event);
     void OnEraseBackground(wxEraseEvent& event);

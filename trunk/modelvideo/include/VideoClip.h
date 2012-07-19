@@ -1,7 +1,6 @@
 #ifndef MODEL_VIDEO_CLIP_H
 #define MODEL_VIDEO_CLIP_H
 
-#include <boost/optional.hpp>
 #include "Clip.h"
 #include "Enums.h"
 #include "IVideo.h"

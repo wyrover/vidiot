@@ -1,7 +1,6 @@
 #ifndef PROJECT_VIEW_CREATE_FILE_H
 #define PROJECT_VIEW_CREATE_FILE_H
 
-#include <wx/filename.h>
 #include "ProjectViewCommand.h"
 
 namespace model {
@@ -13,11 +12,11 @@ typedef std::list<FilePtr> Files;
 }
 namespace command {
 
-class ProjectViewCreateFile 
+class ProjectViewCreateFile
     :   public ProjectViewCommand
 {
 public:
-    /// Add a new 'file' asset for each supplied file on disk 
+    /// Add a new 'file' asset for each supplied file on disk
     /// \param parent node to use for new assets
     /// \param paths list of full paths to files
     ProjectViewCreateFile(model::FolderPtr parent, std::vector<wxFileName> paths);

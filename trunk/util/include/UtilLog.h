@@ -57,10 +57,6 @@
 //      Dr. Dobbs journal, August 01, 2003
 //      http://www.ddj.com/cpp/184403745
 
-#include <sstream>
-#include <wx/string.h>
-#include <boost/optional.hpp>
-#include <boost/noncopyable.hpp>
 #include "UtilEnum.h"
 
 DECLAREENUM(LogLevel, \

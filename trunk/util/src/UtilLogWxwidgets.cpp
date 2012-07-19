@@ -1,5 +1,4 @@
 #include "UtilLogWxwidgets.h"
-#include <string>
 
 std::ostream& operator<< (std::ostream& os, const wxFileName& obj)
 {

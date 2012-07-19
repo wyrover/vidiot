@@ -1,9 +1,6 @@
 #ifndef UTIL_SERIALIZE_WXWIDGETS_H
 #define UTIL_SERIALIZE_WXWIDGETS_H
 
-#include <wx/filename.h>
-#include <wx/region.h>
-#include <wx/string.h>
 #include <boost/serialization/split_free.hpp>
 
 BOOST_SERIALIZATION_SPLIT_FREE(wxString)

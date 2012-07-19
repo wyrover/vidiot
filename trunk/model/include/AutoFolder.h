@@ -1,8 +1,6 @@
 #ifndef AUTO_FOLDER_H
 #define AUTO_FOLDER_H
 
-#include <wx/filename.h>
-#include <boost/optional.hpp>
 #include "Folder.h"
 #include "IPath.h"
 

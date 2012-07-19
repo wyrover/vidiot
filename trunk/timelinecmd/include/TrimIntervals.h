@@ -2,7 +2,6 @@
 #define TRIM_INTERVALS_H
 
 #include "AClipEdit.h"
-#include <boost/icl/interval_set.hpp>
 #include "UtilInt.h"
 
 namespace gui { namespace timeline {

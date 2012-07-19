@@ -1,13 +1,6 @@
 #include "ProjectView.h"
 
-#include <wx/clipbrd.h>
-#include <wx/headerctrl.h>
-#include <wx/headercol.h>
-#include <wx/msgdlg.h>
-#include <wx/stdpaths.h>
-#include <wx/tokenzr.h>
 #include <boost/serialization/set.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "AutoFolder.h"
 #include "DataObject.h"
 #include "Dialog.h"

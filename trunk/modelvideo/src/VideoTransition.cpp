@@ -1,10 +1,5 @@
 #include "VideoTransition.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "UtilInt.h"
 #include "UtilLog.h"
 #include "VideoClip.h"

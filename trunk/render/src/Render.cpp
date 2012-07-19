@@ -8,7 +8,7 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-#include <boost/serialization/shared_ptr.hpp>
+
 #include <stdio.h>
 #include "AudioChunk.h"
 #include "AudioCodec.h"

@@ -1,10 +1,6 @@
 #ifndef DETAILS_CLIP_H
 #define DETAILS_CLIP_H
 
-#include <wx/panel.h>
-#include <wx/sizer.h>
-#include <wx/slider.h>
-#include <wx/spinctrl.h>
 #include "VideoClipEvent.h"
 #include "UtilEnumSelector.h"
 #include "Part.h"

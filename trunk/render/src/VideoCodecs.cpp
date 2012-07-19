@@ -1,6 +1,5 @@
 #include "VideoCodecs.h"
 
-#include <boost/make_shared.hpp>
 #include "UtilLog.h"
 #include "VideoCodec.h"
 #include "VideoCodecParameter.h"

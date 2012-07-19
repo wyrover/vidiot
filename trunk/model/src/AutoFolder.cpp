@@ -1,8 +1,6 @@
 #include "AutoFolder.h"
 
-#include <boost/serialization/base_object.hpp>
 #include <boost/serialization/optional.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "File.h"
 #include "UtilList.h"
 #include "UtilPath.h"

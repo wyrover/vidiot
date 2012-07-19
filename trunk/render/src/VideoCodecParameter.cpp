@@ -4,8 +4,6 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 };
 
-#include <wx/string.h>
-#include <boost/assign/list_of.hpp>
 #include "Config.h"
 
 namespace model { namespace render {

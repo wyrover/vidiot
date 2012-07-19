@@ -1,10 +1,5 @@
 #include "Player.h"
 
-#include <wx/bitmap.h>
-#include <wx/sizer.h>
-#include <wx/slider.h>
-#include <wx/textctrl.h>
-#include <wx/stattext.h>
 #include "UtilLog.h"
 #include "Convert.h"
 #include "VideoDisplay.h"

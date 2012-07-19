@@ -1,10 +1,5 @@
 #include "Track.h"
 
-#include <algorithm>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <wx/intl.h>
 #include "Calculate.h"
 #include "Node.h"
 #include "Clip.h"

@@ -1,11 +1,10 @@
 #ifndef POINTERS_H
 #define POINTERS_H
 
-#include <list>
-#include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-
+#include <list>
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -78,6 +77,7 @@ typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
 typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 typedef boost::weak_ptr<IClip> WeakIClipPtr;
+typedef boost::weak_ptr<INode> WeakNodePtr;
 typedef boost::weak_ptr<Sequence> WeakSequencPtr;
 typedef boost::weak_ptr<Track> WeakTrackPtr;
 typedef std::list<IClipPtr> IClips;
@@ -90,10 +90,10 @@ typedef std::list<VideoFramePtr> VideoFrames;
 namespace render {
 
 class AudioCodec;
-class ICodecParameter;
 class OutputFormat;
 class Render;
 class VideoCodec;
+struct ICodecParameter;
 typedef boost::shared_ptr<AudioCodec> AudioCodecPtr;
 typedef boost::shared_ptr<ICodecParameter> ICodecParameterPtr;
 typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;

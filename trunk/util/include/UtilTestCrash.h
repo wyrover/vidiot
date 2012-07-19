@@ -1,9 +1,6 @@
 #ifndef UTIL_TEST_CRASH_H
 #define UTIL_TEST_CRASH_H
 
-#include <wx/menu.h>
-#include <wx/window.h>
-
 namespace util {
 
 /// Helper class for testing crash handling. This class creates the part of the Test menu responsible
@@ -37,6 +34,6 @@ private:
     void onCrashTest(wxCommandEvent& event);
 };
 
-} // namespace 
+} // namespace
 
 #endif // UTIL_TEST_CRASH_H

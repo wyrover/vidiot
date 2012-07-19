@@ -1,7 +1,6 @@
 #ifndef PROJECT_VIEW_CREATE_SEQUENCE_H
 #define PROJECT_VIEW_CREATE_SEQUENCE_H
 
-#include <boost/filesystem/path.hpp>
 #include "ProjectViewCommand.h"
 
 namespace model {
@@ -13,7 +12,7 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 
 namespace command {
 
-class ProjectViewCreateSequence 
+class ProjectViewCreateSequence
     :   public ProjectViewCommand
 {
 public:
@@ -22,7 +21,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /// Create a new sequence from a folder. Child folders are not 
+    /// Create a new sequence from a folder. Child folders are not
     /// taken into account. The new sequence is created in a parent folder
     /// of the given folder. That parent folder will always be a non-auto
     /// folder (if a parent is an autofolder, its parent is tried, etc.)

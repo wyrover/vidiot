@@ -1,9 +1,6 @@
 #ifndef SELECT_INTERVALS_H
 #define SELECT_INTERVALS_H
 
-#include <map>
-#include <wx/dc.h>
-#include <boost/icl/interval_set.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "Part.h"

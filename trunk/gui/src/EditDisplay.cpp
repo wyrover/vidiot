@@ -1,6 +1,5 @@
 #include "EditDisplay.h"
 
-#include <wx/dcclient.h>
 #include "UtilLog.h"
 #include "Layout.h"
 

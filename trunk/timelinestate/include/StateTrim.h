@@ -1,7 +1,6 @@
 #ifndef STATE_TRIM_H
 #define STATE_TRIM_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 
 namespace gui {

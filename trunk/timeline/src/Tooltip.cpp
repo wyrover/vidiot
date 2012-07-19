@@ -1,6 +1,5 @@
 #include "Tooltip.h"
 
-#include <wx/tooltip.h>
 #include "Timeline.h"
 #include "UtilLog.h"
 

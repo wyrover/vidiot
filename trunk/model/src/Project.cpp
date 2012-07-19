@@ -1,7 +1,5 @@
 #include "Project.h"
 
-#include <fstream>
-#include <boost/serialization/shared_ptr.hpp>
 #include "CommandProcessor.h"
 #include "Dialog.h"
 #include "File.h"

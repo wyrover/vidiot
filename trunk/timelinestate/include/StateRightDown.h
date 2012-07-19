@@ -1,7 +1,6 @@
 #ifndef STATE_RIGHTDOWN_H
 #define STATE_RIGHTDOWN_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -12,7 +11,7 @@ struct EvMotion;
 struct EvLeave;
 struct EvKeyDown;
 
-class StateRightDown 
+class StateRightDown
     :   public TimeLineState< StateRightDown, Machine >
 {
 public:

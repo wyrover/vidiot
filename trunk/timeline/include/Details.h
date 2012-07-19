@@ -1,9 +1,6 @@
 #ifndef DETAILS_H
 #define DETAILS_H
 
-#include <list>
-#include <wx/panel.h>
-#include <wx/stattext.h>
 #include "Part.h"
 
 namespace model {
