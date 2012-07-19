@@ -1,7 +1,5 @@
 #include "Layout.h"
 
-#include <wx/bitmap.h>
-#include <wx/dcmemory.h>
 #include "UtilLog.h"
 
 namespace gui {

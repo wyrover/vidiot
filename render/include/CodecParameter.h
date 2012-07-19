@@ -1,12 +1,8 @@
 #ifndef MODEL_RENDER_CODEC_PARAMETER_H
 #define MODEL_RENDER_CODEC_PARAMETER_H
 
-#include <wx/spinctrl.h>
-#include <ostream>
 #include <boost/serialization/access.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/version.hpp>
-#include <wx/window.h> // todo remove, since in pch?
 #include "UtilCloneable.h"
 #include "UtilEnumSelector.h"
 #include "ICodecParameter.h"

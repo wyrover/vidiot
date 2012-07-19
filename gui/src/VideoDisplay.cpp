@@ -1,9 +1,5 @@
 #include "VideoDisplay.h"
 
-#include <algorithm>
-#include <iomanip>
-#include <wx/dcclient.h>
-#include <wx/dcbuffer.h>
 #include <portaudio.h>
 #include "Config.h"
 #include "Convert.h"

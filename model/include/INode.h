@@ -1,21 +1,14 @@
 #ifndef I_NODE_H
 #define I_NODE_H
 
-#include <list>
-#include <wx/string.h>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/weak_ptr.hpp>
 #include "UtilRTTI.h"
 
 namespace model {
 
 class INode;
 typedef INode* NodeId;
-typedef boost::shared_ptr<INode> NodePtr;
-typedef boost::weak_ptr<INode> WeakNodePtr;
-typedef std::list<NodePtr> NodePtrs;
 
 /// Base class for all model objects that can be made visible in the project view
 class INode

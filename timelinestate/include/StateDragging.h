@@ -1,7 +1,6 @@
 #ifndef STATE_DRAGGING_H
 #define STATE_DRAGGING_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 #include "EventPart.h"
 
@@ -17,7 +16,7 @@ struct EvKeyDown;
 struct EvKeyUp;
 struct EvZoomChanged;
 
-class Dragging 
+class Dragging
     :   public TimeLineState< Dragging, Machine >
 {
 public:

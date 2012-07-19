@@ -1,9 +1,6 @@
 #ifndef SELECTION_H
 #define SELECTION_H
 
-#include <set>
-#include <list>
-#include <wx/event.h>
 #include "Part.h"
 #include "PositionInfo.h"
 

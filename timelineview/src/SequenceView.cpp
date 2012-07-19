@@ -1,8 +1,5 @@
 #include "SequenceView.h"
 
-#include <algorithm>
-#include <wx/dcclient.h>
-#include <wx/dcmemory.h>
 #include "AudioView.h"
 #include "Constants.h"
 #include "Cursor.h"

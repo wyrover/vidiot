@@ -1,10 +1,6 @@
 #include "VideoCodec.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/list.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "VideoCodecParameter.h"

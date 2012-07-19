@@ -8,12 +8,6 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 };
 
-#include <math.h>
-#include <algorithm>
-#include <boost/make_shared.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/base_object.hpp>
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 #include "AudioChunk.h"

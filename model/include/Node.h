@@ -1,9 +1,6 @@
 #ifndef A_PROJECT_VIEW_NODE
 #define A_PROJECT_VIEW_NODE
 
-#include <list>
-#include <wx/string.h>
-#include <boost/weak_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include "INode.h"

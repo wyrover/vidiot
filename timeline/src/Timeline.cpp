@@ -1,6 +1,5 @@
 #include "Timeline.h"
 
-#include <algorithm>
 #include "AudioView.h"
 #include "Constants.h"
 #include "Cursor.h"

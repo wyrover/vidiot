@@ -1,7 +1,6 @@
 #ifndef TRIM_H
 #define TRIM_H
 
-#include <list>
 #include "Part.h"
 #include "PositionInfo.h"
 #include "UtilInt.h"

@@ -2,7 +2,6 @@
 #define UTIL_INT_H
 
 #include <boost/cstdint.hpp>
-#include <boost/icl/interval_set.hpp>
 
 typedef int pixel;
 typedef boost::int64_t pts;

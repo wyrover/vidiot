@@ -1,9 +1,3 @@
-#include <map>
-#include <boost/utility.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/bimap.hpp>
-#include <wx/string.h>
-
 // USAGE:
 //
 // In .h file:

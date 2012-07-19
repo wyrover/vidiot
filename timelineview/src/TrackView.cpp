@@ -1,8 +1,6 @@
 #include "TrackView.h"
 
-#include <algorithm>
 #include <boost/serialization/list.hpp>
-#include <boost/serialization/shared_ptr.hpp>
 #include "Node.h"
 #include "Clip.h"
 #include "ClipView.h"

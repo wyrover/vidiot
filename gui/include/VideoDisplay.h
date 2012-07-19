@@ -1,9 +1,6 @@
 #ifndef GUI_VIDEO_DISPLAY_H
 #define GUI_VIDEO_DISPLAY_H
 
-#include <iostream>
-#include <wx/panel.h>
-#include <wx/control.h>
 #include <SoundTouch.h>
 #include "VideoFrame.h"
 #include "AudioChunk.h"

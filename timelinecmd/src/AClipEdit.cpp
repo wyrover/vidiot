@@ -1,7 +1,5 @@
 #include "AClipEdit.h"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread/thread.hpp>
 #include "Clip.h"
 #include "Config.h"
 #include "VideoTransition_CrossFade.h"

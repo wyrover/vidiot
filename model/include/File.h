@@ -1,13 +1,6 @@
 #ifndef MODEL_FILE_H
 #define MODEL_FILE_H
 
-#include <list>
-#include <wx/datetime.h>
-#include <wx/filename.h>
-#include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread.hpp>
 #include "FilePacket.h"
 #include "IFile.h"
 #include "IPath.h"

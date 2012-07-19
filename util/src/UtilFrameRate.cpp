@@ -1,12 +1,8 @@
 #include "UtilFrameRate.h"
 
-#include <vector>
-#include <boost/tuple/tuple.hpp>
-#include <boost/assign/list_of.hpp>
-
 namespace framerate {
 
-typedef boost::tuple<wxString, FrameRate> FrameRateEntry; 
+typedef boost::tuple<wxString, FrameRate> FrameRateEntry;
 const std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_list_of
 ( wxT("24.97"), s24p )
 ( wxT("25"),    s25p )

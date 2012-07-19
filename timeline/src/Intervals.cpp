@@ -1,7 +1,5 @@
 #include "Intervals.h"
 
-#include <math.h>
-#include <wx/confbase.h>
 #include "Config.h"
 #include "Constants.h"
 #include "Convert.h"

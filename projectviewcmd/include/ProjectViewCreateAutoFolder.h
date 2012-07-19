@@ -1,7 +1,6 @@
 #ifndef PROJECT_VIEW_CREATE_AUTOFOLDER_H
 #define PROJECT_VIEW_CREATE_AUTOFOLDER_H
 
-#include <wx/filename.h>
 #include "ProjectViewCommand.h"
 
 namespace model {
@@ -13,7 +12,7 @@ typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
 
 namespace command {
 
-class ProjectViewCreateAutoFolder 
+class ProjectViewCreateAutoFolder
     :   public ProjectViewCommand
 {
 public:

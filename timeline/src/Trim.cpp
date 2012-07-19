@@ -1,8 +1,6 @@
 #include "Trim.h"
 
-#include <wx/cmdproc.h>
-#include <wx/wupdlock.h>
-#include <boost/limits.hpp>
+#include <wx/wupdlock.h> // todo remove
 #include "Clip.h"
 #include "ClipView.h"
 #include "EmptyClip.h"

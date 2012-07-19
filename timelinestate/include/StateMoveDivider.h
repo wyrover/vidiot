@@ -1,7 +1,6 @@
 #ifndef STATE_MOVE_DIVIDER_H
 #define STATE_MOVE_DIVIDER_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 #include "UtilInt.h"
 

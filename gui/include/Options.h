@@ -1,11 +1,6 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include <wx/propdlg.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/radiobox.h>
-#include <wx/spinctrl.h>
 #include "UtilEnumSelector.h"
 #include "Enums.h"
 

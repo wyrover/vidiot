@@ -1,15 +1,7 @@
 #ifndef VIEW_MAP_H
 #define VIEW_MAP_H
 
-#include <map>
 #include "Part.h"
-
-namespace model {
-    class Track;
-    typedef boost::shared_ptr<Track> TrackPtr;
-    class IClip;
-    typedef boost::shared_ptr<IClip> IClipPtr;
-}
 
 namespace gui { namespace timeline {
 

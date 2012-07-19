@@ -1,8 +1,6 @@
 #ifndef PREVIEW_H
 #define PREVIEW_H
 
-#include <map>
-#include <wx/panel.h>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/split_member.hpp>

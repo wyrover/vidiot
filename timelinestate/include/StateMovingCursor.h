@@ -1,7 +1,6 @@
 #ifndef STATE_MOVING_CURSOR_H
 #define STATE_MOVING_CURSOR_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -65,7 +64,3 @@ private:
 }}} // namespace
 
 #endif // STATE_MOVING_CURSOR_H
-
-
-
-

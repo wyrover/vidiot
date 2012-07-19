@@ -1,16 +1,6 @@
 #include "UtilLog.h"
 
-#include <boost/assign/list_of.hpp>
-#include <boost/format.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <iostream>
 #include <share.h> // _SH_DENYWR
-#include <string>
-#include <wx/datetime.h>
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
-#include <wx/utils.h>
-#include <wx/thread.h>
 #include "UtilFifo.h"
 #include "UtilAssert.h"
 #include "Config.h"

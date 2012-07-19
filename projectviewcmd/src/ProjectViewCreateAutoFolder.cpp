@@ -1,6 +1,5 @@
 #include "ProjectViewCreateAutoFolder.h"
 
-#include <boost/make_shared.hpp>
 #include "AutoFolder.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"

@@ -6,12 +6,9 @@
 #pragma once
 #endif
 
-#include <boost/filesystem/path.hpp>
-#include <boost/icl/interval_set.hpp>
-#include <boost/rational.hpp>
+#include <boost/filesystem/path.hpp> // todo never use boost paths
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/utility.hpp>
-#include <boost/weak_ptr.hpp>
 
 namespace boost { namespace serialization {
 

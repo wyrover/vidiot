@@ -1,9 +1,5 @@
 #include "Properties.h"
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 #include "Config.h"
 #include "Project.h"
 #include "Render.h"

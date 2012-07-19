@@ -1,9 +1,6 @@
 #ifndef ROOT_COMMAND_H
 #define ROOT_COMMAND_H
 
-#include <wx/cmdproc.h>
-#include <wx/intl.h>
-
 namespace command {
 
 class RootCommand : public wxCommand

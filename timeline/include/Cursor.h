@@ -1,7 +1,6 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#include <wx/event.h>
 #include "Part.h"
 #include "UtilInt.h"
 

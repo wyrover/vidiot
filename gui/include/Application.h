@@ -2,8 +2,6 @@
 #define APPLICATION_H
 
 #include <wx/app.h>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/condition_variable.hpp>
 #include "UtilAssert.h"
 #include "UtilEvent.h"
 
@@ -49,14 +47,14 @@ public:
     /// However, it is possible that the idle event is received between these
     /// two statements. This results in a (temporary) hangup of the tests. After
     /// a while another idle event is received (guess), which resolves the hangup.
-    /// To avoid this, first an event is generated. This causes a method to be 
-    /// called on the event loop. When wxWakeUpIdle() is called in that method, 
+    /// To avoid this, first an event is generated. This causes a method to be
+    /// called on the event loop. When wxWakeUpIdle() is called in that method,
     /// the aforementioned interleaving problem cannot occur.
     /// This method is step 2 of the waitForIdle mechanism: handle the
     /// IdleTrigger event and consequently initiate step 3: wxWaitForIdle.
     void triggerIdle(EventIdleTrigger& event);
 
-    /// This method is step 3 of the waitForIdle mechanism: after wxWidgets 
+    /// This method is step 3 of the waitForIdle mechanism: after wxWidgets
     /// signals the Idle event, we know that it was not an already pending
     /// idle event (bec
     void onIdle(wxIdleEvent& event);

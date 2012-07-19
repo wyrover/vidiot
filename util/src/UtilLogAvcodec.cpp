@@ -3,10 +3,6 @@
 #include "Config.h"
 #include "UtilEnum.h"
 #include "UtilLog.h"
-#include <boost/format.hpp>
-#include <sstream>
-#include <utility>
-#include <wx/intl.h>
 
 #pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
 #pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.

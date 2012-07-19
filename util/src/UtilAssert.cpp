@@ -1,7 +1,5 @@
 #include "UtilAssert.h"
 
-#include <wx/debug.h>
-#include <wx/msgout.h> // For NIY
 #include "UtilLog.h"
 
 IAssert* sInstance;

@@ -1,9 +1,5 @@
 #include "Zoom.h"
 
-#include <math.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include "UtilLog.h"
 #include "Convert.h"
 #include "Layout.h"
@@ -95,7 +91,7 @@ int Zoom::ptsToPixels(int pts) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SERIALIZATION 
+// SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 template<class Archive>

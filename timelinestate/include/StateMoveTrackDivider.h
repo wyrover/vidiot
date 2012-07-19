@@ -1,10 +1,9 @@
 #ifndef STATE_MOVE_TRACK_DIVIDER_H
 #define STATE_MOVE_TRACK_DIVIDER_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 
-namespace model { 
+namespace model {
     class Track;
     typedef boost::shared_ptr<Track> TrackPtr;
 }

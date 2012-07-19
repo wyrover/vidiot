@@ -1,9 +1,6 @@
 #ifndef STATUSBAR_H
 #define STATUSBAR_H
 
-#include <wx/statusbr.h>
-#include <wx/gauge.h>
-
 namespace gui {
 
 class StatusBar

@@ -1,8 +1,5 @@
 #include "UtilSerializeWxwidgets.h"
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
 namespace boost { namespace serialization {
 template<class Archive>
 void save(Archive & ar, const wxString & string, const unsigned int version)

@@ -1,7 +1,6 @@
 #ifndef TIMELINE_EVENT_MOUSE_H
 #define TIMELINE_EVENT_MOUSE_H
 
-#include <boost/statechart/event.hpp>
 #include "UtilLogWxwidgets.h"
 
 namespace gui { namespace timeline { namespace state {

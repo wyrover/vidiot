@@ -1,8 +1,5 @@
 #include "IFile.h"
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,6 @@
 #ifndef DRAG_SHIFT_H
 #define DRAG_SHIFT_H
 
-#include <boost/optional.hpp>
 #include "UtilInt.h"
 
 namespace gui { namespace timeline {

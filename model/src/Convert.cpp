@@ -1,9 +1,5 @@
 #include "Convert.h"
 
-#include <iostream>
-#include <iomanip>
-#include <math.h>
-#include <boost/rational.hpp>
 #include "AudioChunk.h"
 #include "Constants.h"
 #include "UtilLog.h"

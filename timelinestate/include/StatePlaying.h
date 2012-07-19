@@ -1,7 +1,6 @@
 #ifndef STATE_PLAYING_H
 #define STATE_PLAYING_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 
 namespace gui { namespace timeline { namespace state {

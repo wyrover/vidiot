@@ -1,17 +1,6 @@
 #ifndef RENDER_DIALOG_H
 #define RENDER_DIALOG_H
 
-#include <wx/bookctrl.h>
-#include <wx/button.h>
-#include <wx/dialog.h>
-#include <wx/event.h>
-#include <wx/sizer.h>
-#include <wx/filename.h>
-#include <wx/gauge.h>
-#include <wx/notebook.h>
-#include <wx/statbox.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
 #include "UtilEnumSelector.h"
 #include "UtilInt.h"
 

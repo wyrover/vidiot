@@ -7,9 +7,6 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-#include <wx/string.h>
-#include <boost/bimap.hpp>
-
 namespace model { namespace render {
 
 typedef std::map<CodecID,AudioCodecPtr> AudioCodecMap;

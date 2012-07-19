@@ -1,8 +1,6 @@
 #ifndef UTIL_SET_H
 #define UTIL_SET_H
 
-#include <list>
-#include <set>
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 

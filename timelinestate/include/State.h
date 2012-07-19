@@ -1,13 +1,10 @@
 #ifndef TIMELINE_STATE_H
 #define TIMELINE_STATE_H
 
-#include <wx/gdicmn.h>
-#include <boost/statechart/state.hpp>
-#include <boost/statechart/state_machine.hpp>
 #include "Part.h"
 
-namespace gui { namespace timeline { 
-    
+namespace gui { namespace timeline {
+
 class ZoomChangeEvent;
 class ScrollChangeEvent;
 
@@ -17,7 +14,7 @@ namespace state {
 // MEMBERS ACESSIBLE BY ALL STATES
 //////////////////////////////////////////////////////////////////////////
 
-/// Using this class as base for all state classes ensures that these 
+/// Using this class as base for all state classes ensures that these
 /// states can access the various timeline parts.
 template < class STATE, class CONTEXT >
 class TimeLineState
@@ -34,8 +31,8 @@ public:
     {
     };
 protected:
-    Timeline& getTimeline() override 
-    { 
+    Timeline& getTimeline() override
+    {
         return outermost_context().getTimeline();
     };
 };

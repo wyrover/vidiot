@@ -1,7 +1,5 @@
 #include "CreateVideoTrack.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/assign/list_of.hpp>
 #include "UtilLog.h"
 #include "Timeline.h"
 #include "Sequence.h"
@@ -14,7 +12,7 @@ CreateVideoTrack::CreateVideoTrack(model::SequencePtr sequence)
 ,   mNewTrack()
 {
     VAR_INFO(this);
-    mCommandName = _("Add track"); 
+    mCommandName = _("Add track");
 }
 
 CreateVideoTrack::~CreateVideoTrack()
@@ -23,7 +21,6 @@ CreateVideoTrack::~CreateVideoTrack()
 //////////////////////////////////////////////////////////////////////////
 // WXWIDGETS DO/UNDO INTERFACE
 //////////////////////////////////////////////////////////////////////////
-
 
 bool CreateVideoTrack::Do()
 {

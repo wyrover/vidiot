@@ -1,9 +1,5 @@
 #include "Application.h"
 
-#include <wx/evtloop.h>
-#include <wx/msgdlg.h>
-#include <boost/exception/all.hpp>
-#include <boost/filesystem/operations.hpp>
 #include "Config.h"
 #include "Dialog.h"
 #include "IEventLoopListener.h"

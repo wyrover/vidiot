@@ -1,6 +1,5 @@
 #include "TimelinesView.h"
 
-#include <boost/serialization/shared_ptr.hpp>
 #include "Node.h"
 #include "Menu.h"
 #include "Preview.h"

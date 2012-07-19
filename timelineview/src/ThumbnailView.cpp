@@ -1,7 +1,5 @@
 #include "ThumbnailView.h"
 
-#include <wx/dcmemory.h>
-#include <wx/pen.h>
 #include "Clip.h"
 #include "ClipView.h"
 #include "Convert.h"

@@ -1,6 +1,5 @@
 #include "Node.h"
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/shared_ptr.hpp>
+
 #include "NodeEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"

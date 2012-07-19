@@ -9,7 +9,6 @@ extern "C" {
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/version.hpp>
-#include <ostream>
 #include "UtilCloneable.h"
 
 namespace model { namespace render {

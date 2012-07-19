@@ -3,7 +3,6 @@ extern "C" {
 #include <libavformat/avformat.h>
 };
 
-#include <boost/make_shared.hpp>
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
 #include "Config.h"

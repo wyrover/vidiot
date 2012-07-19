@@ -1,8 +1,6 @@
 #ifndef TIMELINEHELPERPANEL_H
 #define TIMELINEHELPERPANEL_H
 
-#include <wx/sizer.h>
-#include <wx/panel.h>
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {

@@ -1,6 +1,5 @@
 #include "StateDragging.h"
 
-#include <wx/utils.h>
 #include "Drag.h"
 #include "EventDrag.h"
 #include "EventKey.h"
@@ -27,13 +26,13 @@ namespace gui { namespace timeline { namespace state {
 Dragging::Dragging( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
-    LOG_DEBUG; 
+    LOG_DEBUG;
 
 }
 
 Dragging::~Dragging() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,9 +1,6 @@
 #ifndef DRAG_H
 #define DRAG_H
 
-#include <list>
-#include <wx/bitmap.h>
-#include <wx/dcmemory.h>
 #include "Part.h"
 #include "ExecuteDrop.h"
 #include "Drag_Shift.h"

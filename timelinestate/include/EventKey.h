@@ -1,12 +1,11 @@
 #ifndef TIMELINE_EVENT_KEY_H
 #define TIMELINE_EVENT_KEY_H
 
-#include <boost/statechart/event.hpp>
 #include "UtilLogWxwidgets.h"
 #include "Part.h"
 
 namespace gui { namespace timeline { namespace state {
-    
+
 template< class MostDerived >
 struct EvKey : boost::statechart::event< MostDerived >
 {

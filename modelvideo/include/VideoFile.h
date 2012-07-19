@@ -1,7 +1,6 @@
 #ifndef MODEL_VIDEO_FILE_H
 #define MODEL_VIDEO_FILE_H
 
-#include <wx/gdicmn.h>
 #include "File.h"
 #include "IVideo.h"
 

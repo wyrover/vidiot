@@ -1,8 +1,6 @@
 #ifndef EXECUTE_DROPS_H
 #define EXECUTE_DROPS_H
 
-#include <set>
-#include <list>
 #include "AClipEdit.h"
 #include "Drag_Shift.h"
 

@@ -1,7 +1,5 @@
 #include "MousePointer.h"
 
-#include <wx/image.h>
-#include <wx/bitmap.h>
 #include "AudioView.h"
 #include "Clip.h"
 #include "ClipView.h"

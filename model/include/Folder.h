@@ -1,7 +1,6 @@
 #ifndef FOLDER_H
 #define FOLDER_H
 
-#include <wx/string.h>
 #include "Node.h"
 
 namespace model {

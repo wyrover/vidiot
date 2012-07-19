@@ -1,7 +1,6 @@
 #ifndef STATE_SCROLLING_H
 #define STATE_SCROLLING_H
 
-#include <boost/statechart/custom_reaction.hpp>
 #include "State.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -11,7 +10,7 @@ struct EvMotion;
 struct EvLeave;
 struct EvKeyDown;
 
-class StateScrolling 
+class StateScrolling
     :   public TimeLineState< StateScrolling, Machine >
 {
 public:

@@ -1,9 +1,6 @@
 #ifndef VIEW_H
 #define VIEW_H
 
-#include <wx/bitmap.h>
-#include <wx/event.h>
-#include <wx/gdicmn.h>
 #include "Part.h"
 #include "UtilInt.h"
 

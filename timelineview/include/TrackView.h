@@ -2,12 +2,8 @@
 #define TRACK_VIEW_H
 
 #include "View.h"
-#include <boost/optional.hpp>
-#include <ostream>
 
 namespace model {
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
 class EventAddClips;
 class EventRemoveClips;
 class EventHeightChanged;

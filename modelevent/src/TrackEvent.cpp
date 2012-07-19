@@ -1,6 +1,5 @@
 #include "TrackEvent.h"
 
-#include <boost/make_shared.hpp>
 #include "UtilLogStl.h"
 #include "IClip.h"
 

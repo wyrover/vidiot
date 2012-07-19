@@ -1,7 +1,6 @@
 #ifndef GUI_PROJECT_VIEW_MODEL_H
 #define GUI_PROJECT_VIEW_MODEL_H
 
-#include <wx/dataview.h>
 #include "UtilEvent.h"
 
 namespace model {

@@ -1,7 +1,6 @@
 #ifndef VIEW_UPDATE_H
 #define VIEW_UPDATE_H
 
-#include <wx/region.h>
 #include "UtilEvent.h"
 
 namespace gui { namespace timeline {

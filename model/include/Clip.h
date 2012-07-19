@@ -1,20 +1,9 @@
 #ifndef MODEL_CLIP_H
 #define MODEL_CLIP_H
 
-#include <list>
-#include <boost/optional.hpp>
-#include <boost/weak_ptr.hpp>
 #include "IClip.h"
 
 namespace model {
-class IFile;
-typedef boost::shared_ptr<IFile> IFilePtr;
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef boost::weak_ptr<Track> WeakTrackPtr;
-typedef std::list<TrackPtr> Tracks;
-class Transition;
-typedef boost::shared_ptr<Transition> TransitionPtr;
 
 class Clip
     :   public IClip

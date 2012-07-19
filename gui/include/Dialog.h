@@ -1,11 +1,6 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include <list>
-#include <wx/string.h>
-#include <wx/window.h>
-#include <boost/optional.hpp>
-
 typedef std::list<wxString> wxStrings;
 
 namespace gui {
