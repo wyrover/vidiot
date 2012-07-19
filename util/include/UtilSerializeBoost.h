@@ -6,26 +6,10 @@
 #pragma once
 #endif
 
-#include <boost/filesystem/path.hpp> // todo never use boost paths
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/utility.hpp>
 
 namespace boost { namespace serialization {
-
-template<class Archive>
-void serialize(Archive &ar, boost::filesystem::path &p, const unsigned int version)
-{
-    std::string s;
-    if (Archive::is_saving::value)
-    {
-        s = p.string();
-    }
-    ar & s;
-    if (Archive::is_loading::value)
-    {
-        p = s;
-    }
-}
 
 template<class Archive>
 void serialize(Archive& ar, boost::rational<int>& r, const unsigned int version)

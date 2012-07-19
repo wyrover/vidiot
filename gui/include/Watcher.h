@@ -1,7 +1,6 @@
 #ifndef WATCHER_H
 #define WATCHER_H
 
-#include <boost/filesystem/path.hpp> // todo unuse boost paths
 #include <boost/serialization/access.hpp>
 #include <wx/FSWatcher.h>
 
