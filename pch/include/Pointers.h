@@ -71,7 +71,6 @@ typedef boost::shared_ptr<Track> TrackPtr;
 typedef boost::shared_ptr<Transition> TransitionPtr;
 typedef boost::shared_ptr<VideoClip> VideoClipPtr;
 typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
-typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
 typedef boost::shared_ptr<VideoFile> VideoFilePtr;
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
 typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
@@ -80,6 +79,8 @@ typedef boost::weak_ptr<IClip> WeakIClipPtr;
 typedef boost::weak_ptr<INode> WeakNodePtr;
 typedef boost::weak_ptr<Sequence> WeakSequencPtr;
 typedef boost::weak_ptr<Track> WeakTrackPtr;
+typedef std::list<AudioChunkPtr> AudioChunks;
+typedef std::list<FilePtr> Files;
 typedef std::list<IClipPtr> IClips;
 typedef std::list<IPathPtr> IPaths;
 typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.

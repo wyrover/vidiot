@@ -347,7 +347,7 @@ std::ostream& operator<<( std::ostream& os, const Track& obj )
 template<class Archive>
 void Track::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IControl>(*this);
+    //ar & boost::serialization::base_object<IControl>(*this);//todo remove
     ar & mIndex;
     ar & mClips;
 }

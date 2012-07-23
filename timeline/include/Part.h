@@ -1,13 +1,6 @@
 #ifndef PART_H
 #define PART_H
 
-#include <wx/scrolwin.h>
-
-namespace model {
-    class Sequence;
-    typedef boost::shared_ptr<Sequence> SequencePtr;
-}
-
 namespace gui {
     class Player;
 

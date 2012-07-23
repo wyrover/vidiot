@@ -4,8 +4,6 @@
 #include "View.h"
 
 namespace model {
-    class Track;
-    typedef boost::shared_ptr<Track> TrackPtr;
     class EventAddAudioTracks;
     class EventRemoveAudioTracks;
 }

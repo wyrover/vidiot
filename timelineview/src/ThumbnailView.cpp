@@ -95,7 +95,7 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
         // The if is required to avoid errors during editing operations.
         clone->moveTo(0);
         model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(requiredSize()));
-        model::wxBitmapPtr thumbnail = videoFrame->getBitmap();
+        wxBitmapPtr thumbnail = videoFrame->getBitmap();
         if (thumbnail)
         {
             dc.DrawBitmap(*thumbnail,0,0,false);

@@ -1,9 +1,6 @@
 #ifndef MODEL_I_VIEW_H
 #define MODEL_I_VIEW_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
-
 namespace model {
 
 class IView

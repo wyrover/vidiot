@@ -11,7 +11,7 @@ namespace model { namespace render {
 IMPLEMENTENUM(AudioCodecParameterType);
 
 boost::bimap<AudioCodecParameterType, wxString> AudioCodecParameterTypeConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<AudioCodecParameterType, wxString>::relation >
-    (BitRate, _("Bit rate"));
+    (AudioBitRate, _("Bit rate"));
 
 wxString getHumanReadibleName(AudioCodecParameterType id)
 {

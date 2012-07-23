@@ -61,7 +61,7 @@ ConstIClipPtr IClip::getPrev() const
 template<class Archive>
 void IClip::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IControl>(*this);
+    //ar & boost::serialization::base_object<IControl>(*this);//todo remove
     ar & mNext;
     ar & mPrev;
 }

@@ -1,8 +1,6 @@
 #ifndef MODEL_I_VIDEO_H
 #define MODEL_I_VIDEO_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "UtilFrameRate.h"
 
 namespace model {

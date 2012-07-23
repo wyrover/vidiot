@@ -1,20 +1,18 @@
 #ifndef MODEL_RENDER_AUDIO_CODEC_PARAMETER_H
 #define MODEL_RENDER_AUDIO_CODEC_PARAMETER_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "CodecParameter.h"
 #include "UtilEnum.h"
 
 namespace model { namespace render {
 
 DECLAREENUM(AudioCodecParameterType, \
-    BitRate);
+    AudioBitRate);
 
 wxString getHumanReadibleName(AudioCodecParameterType id);
 
 struct AudioCodecParameterBitrate
-    :   public CodecParameterInt<AudioCodecParameterBitrate,AudioCodecParameterType,BitRate>
+    :   public CodecParameterInt<AudioCodecParameterBitrate,AudioCodecParameterType,AudioBitRate>
 {
     void set(AVCodecContext* codec) override;
 };

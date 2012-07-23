@@ -6,9 +6,6 @@
 
 namespace model {
 
-class AudioTrack;
-typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
-
 class AudioTrack
     :   public Track
     ,   public IAudio

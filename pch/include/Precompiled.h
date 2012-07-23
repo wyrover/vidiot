@@ -23,10 +23,14 @@
 #include <boost/mpl/list.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/rational.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp> // This must be included AFTER including all archives!
 #include <boost/statechart/custom_reaction.hpp>
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/state.hpp>
@@ -50,6 +54,7 @@
 #include <ostream>
 #include <set>
 #include <sstream>
+#include <stdio.h>
 #include <string>
 #include <utility>
 #include <wx/artprov.h>
@@ -109,6 +114,7 @@
 #include <wx/propgrid/propgrid.h>
 #include <wx/radiobox.h>
 #include <wx/region.h>
+#include <wx/scrolwin.h>
 #include <wx/sizer.h>
 #include <wx/slider.h>
 #include <wx/spinctrl.h>

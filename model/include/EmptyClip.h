@@ -7,9 +7,6 @@
 
 namespace model {
 
-class EmptyClip;
-typedef boost::shared_ptr<EmptyClip> EmptyClipPtr;
-
 class EmptyClip
     :   public Clip
     ,   public IAudio

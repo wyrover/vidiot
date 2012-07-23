@@ -8,9 +8,6 @@ struct ReSampleContext;
 
 namespace model {
 
-class AudioFile;
-typedef boost::shared_ptr<AudioFile> AudioFilePtr;
-
 class AudioFile
     :   public File
     ,   public IAudio

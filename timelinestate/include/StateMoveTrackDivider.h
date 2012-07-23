@@ -3,11 +3,6 @@
 
 #include "State.h"
 
-namespace model {
-    class Track;
-    typedef boost::shared_ptr<Track> TrackPtr;
-}
-
 namespace gui { namespace timeline { namespace state {
 
 struct EvLeftDown;

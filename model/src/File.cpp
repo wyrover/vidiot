@@ -509,7 +509,7 @@ std::ostream& operator<<( std::ostream& os, const File& obj )
 template<class Archive>
 void File::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IControl>(*this);
+    ar & boost::serialization::base_object<IFile>(*this);//todo remove
     ar & boost::serialization::base_object<Node>(*this);
     ar & mPath;
     ar & mMaxBufferSize;

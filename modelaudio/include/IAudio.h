@@ -1,9 +1,6 @@
 #ifndef MODEL_I_AUDIO_H
 #define MODEL_I_AUDIO_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
-
 namespace model {
 
 class IAudio

@@ -6,9 +6,6 @@
 
 namespace model {
 
-class VideoTrack;
-typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
-
 class VideoTrack
     :   public Track
     ,   public IVideo

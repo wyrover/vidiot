@@ -1,8 +1,6 @@
 #ifndef TIMELINE_H
 #define TIMELINE_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "View.h"
 
 namespace command {

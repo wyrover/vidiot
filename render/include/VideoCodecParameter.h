@@ -1,8 +1,6 @@
 #ifndef MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
 #define MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "CodecParameter.h"
 #include "UtilEnum.h"
 
@@ -745,5 +743,7 @@ struct VideoCodecParameterMacroBlockDecision
 
 BOOST_CLASS_VERSION(model::render::VideoCodecParameterBitrate, 1)
 BOOST_CLASS_VERSION(model::render::VideoCodecParameterBFrames, 1)
+BOOST_CLASS_VERSION(model::render::VideoCodecParameterBitrateTolerance, 1)
+BOOST_CLASS_VERSION(model::render::VideoCodecParameterMacroBlockDecision, 1)
 
 #endif // MODEL_RENDER_VIDEO_CODEC_PARAMETER_H

@@ -1,8 +1,6 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "IView.h"
 #include "HelperPanel.h"
 
