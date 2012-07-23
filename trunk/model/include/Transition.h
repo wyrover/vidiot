@@ -1,8 +1,6 @@
 #ifndef MODEL_TRANSITION_H
 #define MODEL_TRANSITION_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "IClip.h"
 
 namespace model {

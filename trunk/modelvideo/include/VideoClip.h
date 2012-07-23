@@ -7,11 +7,6 @@
 
 namespace model {
 
-class VideoClip;
-typedef boost::shared_ptr<VideoClip> VideoClipPtr;
-class VideoFile;
-typedef boost::shared_ptr<VideoFile> VideoFilePtr;
-
 class VideoClip
     :   public Clip
     ,   public IVideo
@@ -111,7 +106,6 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-typedef boost::shared_ptr<VideoClip> VideoClipPtr;
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc

@@ -3,13 +3,6 @@
 
 #include "ProjectViewCommand.h"
 
-namespace model {
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-class File;
-typedef boost::shared_ptr<File> FilePtr;
-typedef std::list<FilePtr> Files;
-}
 namespace command {
 
 class ProjectViewCreateFile

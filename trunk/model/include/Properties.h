@@ -1,8 +1,6 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
-#include <boost/serialization/version.hpp>
-#include <boost/serialization/access.hpp>
 #include "UtilFrameRate.h"
 
 namespace model {

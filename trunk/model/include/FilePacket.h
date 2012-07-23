@@ -36,7 +36,6 @@ private:
     AVPacket* mPacket;
 };
 
-typedef boost::shared_ptr<Packet> PacketPtr;
 typedef Fifo<PacketPtr> FifoPacket;
 
 } // namespace

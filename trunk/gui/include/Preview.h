@@ -1,14 +1,6 @@
 #ifndef PREVIEW_H
 #define PREVIEW_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
-#include <boost/serialization/split_member.hpp>
-
-namespace model {
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-}
 namespace gui {
 class Player;
 

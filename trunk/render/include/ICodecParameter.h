@@ -10,6 +10,8 @@ namespace model { namespace render {
 struct ICodecParameter
     :   public ICloneable
 {
+    ICodecParameter() {};
+    virtual ~ICodecParameter() {};
     virtual ICodecParameter* clone() const = 0;
     virtual wxString getName() const = 0;
     virtual wxWindow* makeWidget(wxWindow* parent) = 0;
@@ -28,8 +30,21 @@ struct ICodecParameter
         obj.log(os);
         return os;
     }
+
+    //todo
+    ////////////////////////////////////////////////////////////////////////////
+    //// SERIALIZATION
+    ////////////////////////////////////////////////////////////////////////////
+
+    //friend class boost::serialization::access;
+    //template<class Archive>
+    //void serialize(Archive & ar, const unsigned int version)
+    //{
+    //}
 };
 
 }} // namespace
+
+BOOST_CLASS_VERSION(model::render::ICodecParameter, 1)
 
 #endif // MODEL_RENDER_I_CODEC_PARAMETER_H

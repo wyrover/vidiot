@@ -1,7 +1,5 @@
 #include "Window.h"
 
-#include <boost/filesystem.hpp> // todo remove
-
 #include "Dialog.h"
 #include "Node.h"
 #include "Config.h"

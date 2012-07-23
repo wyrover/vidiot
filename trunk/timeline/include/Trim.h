@@ -5,16 +5,6 @@
 #include "PositionInfo.h"
 #include "UtilInt.h"
 
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-class Transition;
-typedef boost::shared_ptr<Transition> TransitionPtr;
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef std::list<TrackPtr> Tracks;
-}
-
 namespace gui {
     class EditDisplay;
 }

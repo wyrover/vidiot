@@ -12,13 +12,8 @@ namespace model {
 
 typedef boost::uint8_t** DataPointer;
 typedef int* LineSizePointer;
-class VideoFrame;
-typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
-typedef std::list<VideoFramePtr> VideoFrames;
 typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
-typedef boost::shared_ptr<wxBitmap> wxBitmapPtr;
-typedef boost::shared_ptr<wxImage> wxImagePtr;
 
 class VideoFrame
     :   public boost::noncopyable

@@ -242,7 +242,7 @@ void Trim::preview()
 
             // Draw preview of trim operation
             model::VideoFramePtr videoFrame = videoclip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(previewwidth, s.GetHeight())));
-            model::wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
+            wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
             if (trimmedBmp)
             {
                 dc.DrawBitmap(*trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp->GetHeight()) / 2);

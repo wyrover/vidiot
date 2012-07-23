@@ -7,16 +7,6 @@
 
 namespace model {
 
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef boost::shared_ptr<const Track> ConstTrackPtr;
-typedef boost::weak_ptr<Track> WeakTrackPtr;
-typedef std::list<TrackPtr> Tracks;
-class IClip;
-typedef boost::shared_ptr<const IClip> ConstIClipPtr;
-typedef boost::shared_ptr<IClip> IClipPtr;
-typedef std::list<IClipPtr> IClips;
-
 class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl

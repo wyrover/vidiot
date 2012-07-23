@@ -1,10 +1,6 @@
 #ifndef GUI_SEQUENCE_VIEW_H
 #define GUI_SEQUENCE_VIEW_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
-#include <boost/serialization/split_member.hpp>
-
 namespace model {
     class EventCloseProject;
     class EventRemoveNode;

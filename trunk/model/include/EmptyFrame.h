@@ -5,9 +5,6 @@
 
 namespace model {
 
-class EmptyFrame;
-typedef boost::shared_ptr<EmptyFrame> EmptyFramePtr;
-
 class EmptyFrame
     :   public VideoFrame
 {

@@ -7,9 +7,6 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
-
 #include "UtilCloneable.h"
 
 namespace model { namespace render {

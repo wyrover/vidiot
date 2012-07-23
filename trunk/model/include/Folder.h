@@ -5,9 +5,6 @@
 
 namespace model {
 
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-
 class Folder
     :   public Node
 {

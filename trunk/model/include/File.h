@@ -14,10 +14,6 @@ enum AVMediaType;
 
 namespace model {
 
-class File;
-typedef boost::shared_ptr<File> FilePtr;
-typedef std::list<FilePtr> Files;
-
 class File
     :   public IFile
     ,   public Node

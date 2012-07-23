@@ -3,13 +3,6 @@
 
 #include "ProjectViewCommand.h"
 
-namespace model {
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-}
-
 namespace command {
 
 class ProjectViewCreateSequence

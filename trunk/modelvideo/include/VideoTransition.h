@@ -3,7 +3,6 @@
 
 #include "Transition.h"
 #include "IVideo.h"
-#include <boost/serialization/assume_abstract.hpp>
 
 namespace model {
 
@@ -69,8 +68,6 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
-
-typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 
 } // namespace
 

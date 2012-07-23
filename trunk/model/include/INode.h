@@ -1,8 +1,6 @@
 #ifndef I_NODE_H
 #define I_NODE_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "UtilRTTI.h"
 
 namespace model {

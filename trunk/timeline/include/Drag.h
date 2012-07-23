@@ -5,12 +5,6 @@
 #include "ExecuteDrop.h"
 #include "Drag_Shift.h"
 
-namespace model {
-    class Track;
-    typedef boost::shared_ptr<Track> TrackPtr;
-    typedef std::list<TrackPtr> Tracks;
-}
-
 namespace gui { namespace timeline {
 class DummyView;
 

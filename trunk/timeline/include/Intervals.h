@@ -1,15 +1,8 @@
 #ifndef SELECT_INTERVALS_H
 #define SELECT_INTERVALS_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "Part.h"
 #include "UtilInt.h"
-
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-}
 
 namespace gui { namespace timeline {
 

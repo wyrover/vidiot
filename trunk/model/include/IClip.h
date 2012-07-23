@@ -1,8 +1,6 @@
 #ifndef MODEL_I_CLIP_H
 #define MODEL_I_CLIP_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "IControl.h"
 #include "UtilCloneable.h"
 #include "UtilInt.h"

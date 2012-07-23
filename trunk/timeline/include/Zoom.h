@@ -1,8 +1,6 @@
 #ifndef ZOOM_H
 #define ZOOM_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "Part.h"
 #include "UtilEvent.h"
 

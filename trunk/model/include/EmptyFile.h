@@ -7,9 +7,6 @@
 
 namespace model {
 
-class EmptyFile;
-typedef boost::shared_ptr<EmptyFile> EmptyFilePtr;
-
 class EmptyFile
     :   public IFile
     ,   public IAudio

@@ -1,8 +1,6 @@
 #ifndef MODEL_RENDER_H
 #define MODEL_RENDER_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "UtilCloneable.h"
 #include "UtilEvent.h"
 

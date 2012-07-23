@@ -8,8 +8,6 @@ extern "C" {
 #pragma warning(default:4244)
 }
 
-
-#include <stdio.h>
 #include "AudioChunk.h"
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
@@ -36,7 +34,7 @@ namespace model { namespace render {
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
 
 // only 15 seconds
-#define STREAM_DURATION   15.0
+#define STREAM_DURATION   15.0 // todo replace with actual length, make special setting for only rendering 5s for test
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
 #define STREAM_NB_FRAMES  ((int)(STREAM_DURATION * STREAM_FRAME_RATE))
 #define STREAM_PIX_FMT PIX_FMT_YUV420P /* default pix_fmt */

@@ -3,13 +3,6 @@
 
 #include "ProjectViewCommand.h"
 
-namespace model {
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-class AutoFolder;
-typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;
-}
-
 namespace command {
 
 class ProjectViewCreateAutoFolder

@@ -1,8 +1,6 @@
 #ifndef MODEL_RENDER_CODEC_PARAMETER_H
 #define MODEL_RENDER_CODEC_PARAMETER_H
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/version.hpp>
 #include "UtilCloneable.h"
 #include "UtilEnumSelector.h"
 #include "ICodecParameter.h"
@@ -179,6 +177,11 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
+        boost::serialization::void_cast_register<MOSTDERIVED, ICodecParameter>(
+            static_cast<MOSTDERIVED *>(0),
+            static_cast<ICodecParameter *>(0)
+            );
+
         ar & mId;
         ar & mEnabled;
         ar & mDefault;

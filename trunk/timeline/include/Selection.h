@@ -5,15 +5,7 @@
 #include "PositionInfo.h"
 
 namespace model {
-    class IClip;
-    typedef boost::shared_ptr<IClip> IClipPtr;
     class EventRemoveClips;
-    class Track;
-    typedef boost::shared_ptr<Track> TrackPtr;
-    typedef std::list<TrackPtr> Tracks;
-    struct MoveParameter;
-    typedef boost::shared_ptr<MoveParameter> MoveParameterPtr;
-    typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves must be done in a particular order.
 }
 
 namespace gui { namespace timeline {

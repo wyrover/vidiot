@@ -3,12 +3,6 @@
 
 #include "Part.h"
 
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-typedef std::list<IClipPtr> IClips;
-}
-
 namespace gui { namespace timeline {
 
 class DetailsClip;

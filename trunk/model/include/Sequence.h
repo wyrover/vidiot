@@ -10,24 +10,6 @@
 
 namespace model {
 
-class VideoFrame;
-typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
-typedef std::list<VideoFramePtr> VideoFrames;
-class VideoComposition;
-typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-typedef std::list<TrackPtr> Tracks;
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-
-namespace render {
-    class Render;
-    typedef boost::shared_ptr<Render> RenderPtr;
-}
-
 class Sequence
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
