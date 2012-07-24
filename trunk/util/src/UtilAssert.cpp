@@ -21,14 +21,22 @@ IAssert::~IAssert()
 // static
 void IAssert::breakIntoDebugger(const std::string& message)
 {
+    bool isDebuggerRunning = false;
 #if (defined _MSC_VER) || (defined __BORLANDC__)
-    if (wxIsDebuggerRunning())
+    isDebuggerRunning = wxIsDebuggerRunning();
+#endif
+
+    if (isDebuggerRunning)
     {
         Log::exit(); // Ensures that remaining log lines are flushed
+#if (defined _MSC_VER) || (defined __BORLANDC__)
         __asm { int 3 };
-    }
 #elif (defined __GNUC__) && (defined _DEBUG)
-    __asm ("int $0x3");
+        __asm ("int $0x3");
 #endif
-    sInstance->onAssert();
+    }
+    else
+    {
+        sInstance->onAssert();
+    }
 }
