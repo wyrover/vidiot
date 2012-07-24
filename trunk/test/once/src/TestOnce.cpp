@@ -37,7 +37,7 @@ void TestOnce::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-RUNONLY("testOnce");
+RUNONLY(testOnce);
 
 void TestOnce::testOnce()
 {

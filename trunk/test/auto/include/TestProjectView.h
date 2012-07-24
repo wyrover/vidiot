@@ -6,8 +6,8 @@
 
 namespace test {
 
-class ProjectViewTests : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
-    ,   public SuiteCreator<ProjectViewTests>
+class TestProjectView: public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestProjectView>
 {
 public:
     //////////////////////////////////////////////////////////////////////////
