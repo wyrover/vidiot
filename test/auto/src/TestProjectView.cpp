@@ -13,12 +13,12 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewTests::setUp()
+void TestProjectView::setUp()
 {
     mProjectFixture.init();
 }
 
-void ProjectViewTests::tearDown()
+void TestProjectView::tearDown()
 {
     mProjectFixture.destroy();
 }
@@ -27,7 +27,7 @@ void ProjectViewTests::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewTests::testAdditionAndRemoval()
+void TestProjectView::testAdditionAndRemoval()
 {
     StartTestSuite();
 

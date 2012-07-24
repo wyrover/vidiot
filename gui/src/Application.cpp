@@ -96,6 +96,7 @@ void Application::triggerIdle(EventIdleTrigger& event)
 }
 void Application::onIdle(wxIdleEvent& event)
 {
+    boost::mutex::scoped_lock lock(mMutexIdle);
     mConditionIdle.notify_all();
     VAR_DEBUG(idleend); idleend++;
     Unbind(wxEVT_IDLE, &Application::onIdle, this);

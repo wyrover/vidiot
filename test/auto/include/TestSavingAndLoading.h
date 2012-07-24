@@ -1,13 +1,13 @@
-#ifndef TEST_PROJECT_VIEW_H
-#define TEST_PROJECT_VIEW_H
+#ifndef TEST_SAVING_AND_LOADING_H
+#define TEST_SAVING_AND_LOADING_H
 
 #include "FixtureProject.h"
 #include "SuiteCreator.h"
 
 namespace test {
 
-class TestProjectView: public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestProjectView>
+class TestSavingAndLoading : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestSavingAndLoading>
 {
 public:
     //////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testAdditionAndRemoval();
+    void testSaveAndLoad();
 
 private:
 
@@ -36,4 +36,4 @@ private:
 
 using namespace test;
 
-#endif // TEST_PROJECT_VIEW_H
+#endif // TEST_SAVING_AND_LOADING_H

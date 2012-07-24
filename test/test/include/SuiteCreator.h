@@ -68,7 +68,7 @@ void setTest(const char* test);
 /// Also: Only use one Suite in one set of .h/.cpp files and name it the same
 ///       as the file (without .h/.cpp)
 #define RUNONLY(testname) \
-    int i = ISuite::runOnly(__FILE__,testname);
+    int i = ISuite::runOnly(__FILE__,#testname);
 
 } // namespace
 
