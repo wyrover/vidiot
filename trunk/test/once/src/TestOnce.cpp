@@ -46,28 +46,7 @@ void TestOnce::testOnce()
     // PrepareSnapping(true);
     StartTestSuite();
 
-    // todo make into test loadsave
-    StartTest("SetUp");
-    wxFileName dirpath(wxFileName::GetTempDir(), "");
-    dirpath.AppendDir(randomString(20));
-    ASSERT(!wxDirExists(dirpath.GetLongPath()));
-    dirpath.Mkdir();
-    ASSERT(wxDirExists(dirpath.GetLongPath()));
-    dirpath.SetName("LoadSave");
-    dirpath.SetExt("vid");
-    wxString path(dirpath.GetFullPath());
-    StartTest("Save document");
-    gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(path);
-    gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(path);
-    waitForIdle();
-    triggerMenu(wxID_CLOSE);
-    StartTest("Load document");
-    gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT); // wxDOC_SILENT: no dialogs
-    waitForIdle();
-    StartTest("TearDown");
-    triggerMenu(wxID_CLOSE);
-    bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
-    ASSERT(removed);
+    // todo memory leaks bij testauto? Misschien dat daardoor de crashes wel komen?
 
     triggerMenu(ID_RENDERSETTINGS);
     waitForIdle();
