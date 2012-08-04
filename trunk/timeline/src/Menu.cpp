@@ -275,7 +275,7 @@ void MenuHandler::onRenderSequence(wxCommandEvent& event)
 
 void MenuHandler::onRenderAll(wxCommandEvent& event)
 {
-    // todo call static method Render::all()?
+    model::render::Render::scheduleAll();
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& event)

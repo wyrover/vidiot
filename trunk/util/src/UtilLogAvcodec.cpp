@@ -133,21 +133,14 @@ std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj)
         }
         os  << "nb_streams="            << obj->nb_streams                  << ','
             << "filename="              << obj->filename                    << ','
-            //<< "timestamp="             << obj->timestamp                   << ','
             << "ctx_flags="             << obj->ctx_flags                   << ','
             << "start_time="            << obj->start_time                  << ','
             << "duration="              << obj->duration                    << ','
-            //<< "file_size="             << obj->file_size                   << ','
-            // todo check for added members
             << "bit_rate="              << obj->bit_rate                    << ','
             << "data_offset="           << obj->data_offset                 << ','
-            //<< "mux_rate="              << obj->mux_rate                    << ','
             << "packet_size="           << obj->packet_size                 << ','
-            //<< "preload="               << obj->preload                     << ','
             << "max_delay="             << obj->max_delay                   << ','
-            //<< "loop_output="           << obj->loop_output                 << ','
             << "flags="                 << obj->flags                       << ','
-            //<< "loop_input="            << obj->loop_input                  << ','
             << "probesize="             << obj->probesize                   << ','
             << "max_analyze_duration="  << obj->max_analyze_duration        << ','
             << "video_codec_id="        << obj->video_codec_id              << ','
@@ -178,9 +171,7 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
             << "r_frame_rate="                  << obj->r_frame_rate                    << ','
             << "time_base="                     << obj->time_base                       << ','
             << "pts_wrap_bits="                 << obj->pts_wrap_bits                   << ','
-            //<< "stream_copy="                   << obj->stream_copy                     << ','
             << "discard="                       << obj->discard                         << ','
-            //<< "quality="                       << obj->quality                         << ','
             << "start_time="                    << obj->start_time                      << ','
             << "duration="                      << obj->duration                        << ','
             << "cur_dts="                       << obj->cur_dts                         << ','
@@ -355,9 +346,6 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_TIERTEXSEQVIDEO:    os << "CODEC_ID_TIERTEXSEQVIDEO";    break;
     case CODEC_ID_TIFF:               os << "CODEC_ID_TIFF";               break;
     case CODEC_ID_GIF:                os << "CODEC_ID_GIF";                break;
-#if LIBAVCODEC_VERSION_MAJOR == 53
-    case CODEC_ID_FFH264:             os << "CODEC_ID_FFH264";             break;
-#endif
     case CODEC_ID_DXA:                os << "CODEC_ID_DXA";                break;
     case CODEC_ID_DNXHD:              os << "CODEC_ID_DNXHD";              break;
     case CODEC_ID_THP:                os << "CODEC_ID_THP";                break;
@@ -375,10 +363,6 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_INDEO5:             os << "CODEC_ID_INDEO5";             break;
     case CODEC_ID_MIMIC:              os << "CODEC_ID_MIMIC";              break;
     case CODEC_ID_RL2:                os << "CODEC_ID_RL2";                break;
-#if LIBAVCODEC_VERSION_MAJOR == 53
-    case CODEC_ID_8SVX_EXP:           os << "CODEC_ID_8SVX_EXP";           break;
-    case CODEC_ID_8SVX_FIB:           os << "CODEC_ID_8SVX_FIB";           break;
-#endif
     case CODEC_ID_ESCAPE124:          os << "CODEC_ID_ESCAPE124";          break;
     case CODEC_ID_DIRAC:              os << "CODEC_ID_DIRAC";              break;
     case CODEC_ID_BFI:                os << "CODEC_ID_BFI";                break;
@@ -417,10 +401,6 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_DFA:                os << "CODEC_ID_DFA";                break;
     case CODEC_ID_WMV3IMAGE:          os << "CODEC_ID_WMV3IMAGE";          break;
     case CODEC_ID_VC1IMAGE:           os << "CODEC_ID_VC1IMAGE";           break;
-#if LIBAVCODEC_VERSION_MAJOR == 53
-    case CODEC_ID_G723_1_DEPRECATED:  os << "CODEC_ID_G723_1_DEPRECATED";  break;
-    case CODEC_ID_G729_DEPRECATED:    os << "CODEC_ID_G729_DEPRECATED";    break;
-#endif
     case CODEC_ID_BMV_VIDEO:          os << "CODEC_ID_BMV_VIDEO";          break;
     case CODEC_ID_VBLE:               os << "CODEC_ID_VBLE";               break;
     case CODEC_ID_DXTORY:             os << "CODEC_ID_DXTORY";             break;
@@ -509,10 +489,6 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_MACE3:              os << "CODEC_ID_MACE3";              break;
     case CODEC_ID_MACE6:              os << "CODEC_ID_MACE6";              break;
     case CODEC_ID_VMDAUDIO:           os << "CODEC_ID_VMDAUDIO";           break;
-#if LIBAVCODEC_VERSION_MAJOR == 53
-    case CODEC_ID_SONIC:              os << "CODEC_ID_SONIC";              break;
-    case CODEC_ID_SONIC_LS:           os << "CODEC_ID_SONIC_LS";           break;
-#endif
     case CODEC_ID_FLAC:               os << "CODEC_ID_FLAC";               break;
     case CODEC_ID_MP3ADU:             os << "CODEC_ID_MP3ADU";             break;
     case CODEC_ID_MP3ON4:             os << "CODEC_ID_MP3ON4";             break;
@@ -554,11 +530,8 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_AAC_LATM:           os << "CODEC_ID_AAC_LATM";           break;
     case CODEC_ID_QDMC:               os << "CODEC_ID_QDMC";               break;
     case CODEC_ID_CELT:               os << "CODEC_ID_CELT";               break;
-#if LIBAVCODEC_VERSION_MAJOR > 53
-        // todo check for added members
     case CODEC_ID_8SVX_EXP:           os << "CODEC_ID_8SVX_EXP";           break;
     case CODEC_ID_8SVX_FIB:           os << "CODEC_ID_8SVX_FIB";           break;
-#endif
     case CODEC_ID_BMV_AUDIO:          os << "CODEC_ID_BMV_AUDIO";          break;
     case CODEC_ID_G729:               os << "CODEC_ID_G729";               break;
     case CODEC_ID_G723_1:             os << "CODEC_ID_G723_1";             break;
@@ -581,6 +554,7 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_MPEG2TS:            os << "CODEC_ID_MPEG2TS";            break;
     case CODEC_ID_MPEG4SYSTEMS:       os << "CODEC_ID_MPEG4SYSTEMS";       break;
     case CODEC_ID_FFMETADATA:         os << "CODEC_ID_FFMETADATA";         break;
+    default:                          os << static_cast<long>(obj) << "(Unknown CodecID)";
     }
     return os;
 }
