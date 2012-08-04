@@ -6,7 +6,7 @@
 
 namespace gui {
 
-class RenderDialog
+class RenderSettingsDialog
     :   public wxDialog
 {
 public:
@@ -15,9 +15,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit RenderDialog(model::SequencePtr sequence);
-	virtual ~RenderDialog();
-    static RenderDialog& get();
+    explicit RenderSettingsDialog(model::SequencePtr sequence);
+	virtual ~RenderSettingsDialog();
+    static RenderSettingsDialog& get();
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS

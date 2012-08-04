@@ -12,7 +12,7 @@
 #include "MousePointer.h"
 #include "PositionInfo.h"
 #include "Render.h"
-#include "RenderDialog.h"
+#include "RenderSettingsDialog.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -256,7 +256,7 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 
 void MenuHandler::onRenderSettings(wxCommandEvent& event)
 {
-    gui::RenderDialog(getSequence()).ShowModal(); // todo rename into rendersettingsdialog
+    gui::RenderSettingsDialog(getSequence()).ShowModal(); // todo rename into rendersettingsdialog
     event.Skip();
 }
 
@@ -264,7 +264,7 @@ void MenuHandler::onRenderSequence(wxCommandEvent& event)
 {
     if (!getSequence()->getRender()->checkFileName())
     {
-        gui::RenderDialog(getSequence()).ShowModal();
+        gui::RenderSettingsDialog(getSequence()).ShowModal();
     }
     else
     {

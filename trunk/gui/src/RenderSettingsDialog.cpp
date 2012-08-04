@@ -1,4 +1,4 @@
-#include "RenderDialog.h"
+#include "RenderSettingsDialog.h"
 
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
@@ -20,7 +20,7 @@
 
 namespace gui {
 
-static RenderDialog* sCurrent = 0;
+static RenderSettingsDialog* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -36,7 +36,7 @@ void addOption(wxWindow* parent, wxSizer* vSizer, wxString name, wxWindow* optio
     vSizer->Add(hSizer,wxSizerFlags().Expand());
 };
 
-RenderDialog::RenderDialog(model::SequencePtr sequence)
+RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     :   wxDialog(&Window::get(),wxID_ANY,_("Render sequence"),wxDefaultPosition,wxSize(600,600),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mSequence(sequence)
     ,   mOriginal(make_cloned<model::render::Render>(sequence->getRender()))
@@ -71,17 +71,17 @@ RenderDialog::RenderDialog(model::SequencePtr sequence)
     fileselect->SetSizer(new wxBoxSizer(wxHORIZONTAL));
     mFile = new wxTextCtrl(fileselect,wxID_ANY,mNew->getFileName().GetFullPath(),wxDefaultPosition,wxDefaultSize,wxTE_READONLY);
     mFileButton = new wxButton(fileselect,wxID_ANY,_("Select"));
-    mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &RenderDialog::onFileButtonPressed, this);
+    mFileButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &RenderSettingsDialog::onFileButtonPressed, this);
     fileselect->GetSizer()->Add(mFile,wxSizerFlags(1).Expand());
     fileselect->GetSizer()->Add(mFileButton,wxSizerFlags(0));
 
     // todo use (checkFileName(mNew->getFileName())) to get a default ok file name...
 
     mVideoCodec = new EnumSelector<int>(formatbox, model::render::VideoCodecs::mapToName, mNew->getVideoCodec()->getId());
-    mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onVideoCodecChanged, this);
+    mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onVideoCodecChanged, this);
 
     mAudioCodec = new EnumSelector<int>(formatbox, model::render::AudioCodecs::mapToName, mNew->getAudioCodec()->getId());
-    mAudioCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onAudioCodecChanged, this);
+    mAudioCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onAudioCodecChanged, this);
 
     addOption(formatbox,formatboxsizer,_("Output file"), fileselect);
     addOption(formatbox,formatboxsizer,_("Video codec"), mVideoCodec);
@@ -106,7 +106,7 @@ RenderDialog::RenderDialog(model::SequencePtr sequence)
 
     mSetDefaultButton = new wxButton(actionbox,wxID_ANY,_("Set as default"));
     mSetDefaultButton->Enable();
-    mSetDefaultButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onSetDefaultButtonPressed, this);
+    mSetDefaultButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onSetDefaultButtonPressed, this);
 
     if (*model::Properties::get()->getDefaultRender()->withFileNameRemoved() == *mNew->withFileNameRemoved())
     {
@@ -126,10 +126,10 @@ RenderDialog::RenderDialog(model::SequencePtr sequence)
     mCancelButton = new wxButton(buttons,wxID_ANY,_("Cancel"));
     mApplyButton = new wxButton(buttons,wxID_ANY,_("Apply"));
 
-    mRenderButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onRenderButtonPressed, this);
-    mOkButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onOkButtonPressed, this);
-    mCancelButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onCancelButtonPressed, this);
-    mApplyButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onApplyButtonPressed, this);
+    mRenderButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onRenderButtonPressed, this);
+    mOkButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onOkButtonPressed, this);
+    mCancelButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onCancelButtonPressed, this);
+    mApplyButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onApplyButtonPressed, this);
 
     buttons->GetSizer()->Add(mRenderButton);
     buttons->GetSizer()->Add(mOkButton);
@@ -151,22 +151,22 @@ RenderDialog::RenderDialog(model::SequencePtr sequence)
     enableRenderButton();
 }
 
-RenderDialog::~RenderDialog()
+RenderSettingsDialog::~RenderSettingsDialog()
 {
     VAR_DEBUG(this);
     sCurrent = 0;
-    mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onFileButtonPressed, this);
-    mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onRenderButtonPressed, this);
-    mOkButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onOkButtonPressed, this);
-    mCancelButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onCancelButtonPressed, this);
-    mApplyButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onApplyButtonPressed, this);
-    mSetDefaultButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderDialog::onSetDefaultButtonPressed, this);
-    mVideoCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onVideoCodecChanged, this);
-    mAudioCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderDialog::onAudioCodecChanged, this);
+    mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onFileButtonPressed, this);
+    mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onRenderButtonPressed, this);
+    mOkButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onOkButtonPressed, this);
+    mCancelButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onCancelButtonPressed, this);
+    mApplyButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onApplyButtonPressed, this);
+    mSetDefaultButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onSetDefaultButtonPressed, this);
+    mVideoCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onVideoCodecChanged, this);
+    mAudioCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onAudioCodecChanged, this);
 }
 
 // static
-RenderDialog& RenderDialog::get()
+RenderSettingsDialog& RenderSettingsDialog::get()
 {
     ASSERT(sCurrent);
     return *sCurrent;
@@ -176,19 +176,19 @@ RenderDialog& RenderDialog::get()
 // EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void RenderDialog::onVideoCodecChanged(wxCommandEvent& event)
+void RenderSettingsDialog::onVideoCodecChanged(wxCommandEvent& event)
 {
     updateVideoCodec();
     event.Skip();
 }
 
-void RenderDialog::onAudioCodecChanged(wxCommandEvent& event)
+void RenderSettingsDialog::onAudioCodecChanged(wxCommandEvent& event)
 {
     updateAudioCodec();
     event.Skip();
 }
 
-void RenderDialog::onFileButtonPressed(wxCommandEvent& event)
+void RenderSettingsDialog::onFileButtonPressed(wxCommandEvent& event)
 {
     wxString filetypes;
     BOOST_FOREACH( model::render::OutputFormatPtr format, model::render::OutputFormats::getList() )
@@ -239,7 +239,7 @@ void RenderDialog::onFileButtonPressed(wxCommandEvent& event)
     event.Skip();
 }
 
-void RenderDialog::onRenderButtonPressed(wxCommandEvent& event)
+void RenderSettingsDialog::onRenderButtonPressed(wxCommandEvent& event)
 {
     if (mNew->checkFileName())
     {
@@ -258,20 +258,20 @@ void RenderDialog::onRenderButtonPressed(wxCommandEvent& event)
     event.Skip();
 }
 
-void RenderDialog::onOkButtonPressed(wxCommandEvent& event)
+void RenderSettingsDialog::onOkButtonPressed(wxCommandEvent& event)
 {
     onApplyButtonPressed(event);
     Close();
     event.Skip();
 }
 
-void RenderDialog::onCancelButtonPressed(wxCommandEvent& event)
+void RenderSettingsDialog::onCancelButtonPressed(wxCommandEvent& event)
 {
     Close();
     event.Skip();
 }
 
-void RenderDialog::onApplyButtonPressed(wxCommandEvent& event)
+void RenderSettingsDialog::onApplyButtonPressed(wxCommandEvent& event)
 {
     if (mNew->checkFileName())
     {
@@ -286,7 +286,7 @@ void RenderDialog::onApplyButtonPressed(wxCommandEvent& event)
     event.Skip();
 }
 
-void RenderDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
+void RenderSettingsDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
 {
     model::Properties::get()->setDefaultRender(mNew);
 
@@ -298,7 +298,7 @@ void RenderDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
 // TESTS
 //////////////////////////////////////////////////////////////////////////
 
-wxButton* RenderDialog::getFileButton() const
+wxButton* RenderSettingsDialog::getFileButton() const
 {
     ASSERT(mFileButton);
     return mFileButton;
@@ -308,21 +308,21 @@ wxButton* RenderDialog::getFileButton() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void RenderDialog::updateAudioCodec()
+void RenderSettingsDialog::updateAudioCodec()
 {
     model::render::AudioCodecPtr old = mNew->getAudioCodec();
     mNew->setAudioCodec(model::render::AudioCodecs::find(static_cast<CodecID>(mAudioCodec->getValue())));
     changeAudioCodecInfo(old, mNew->getAudioCodec());
 }
 
-void RenderDialog::updateVideoCodec()
+void RenderSettingsDialog::updateVideoCodec()
 {
     model::render::VideoCodecPtr old = mNew->getVideoCodec();
     mNew->setVideoCodec(model::render::VideoCodecs::find(static_cast<CodecID>(mVideoCodec->getValue())));
     changeVideoCodecInfo(old, mNew->getVideoCodec());
 }
 
-void RenderDialog::changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCodec, model::render::AudioCodecPtr newAudioCodec)
+void RenderSettingsDialog::changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCodec, model::render::AudioCodecPtr newAudioCodec)
 {
     mAudioParameters->Disable();
     if (oldAudioCodec)
@@ -347,7 +347,7 @@ void RenderDialog::changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCod
     }
 }
 
-void RenderDialog::changeVideoCodecInfo(model::render::VideoCodecPtr oldVideoCodec, model::render::VideoCodecPtr newVideoCodec)
+void RenderSettingsDialog::changeVideoCodecInfo(model::render::VideoCodecPtr oldVideoCodec, model::render::VideoCodecPtr newVideoCodec)
 {
     mVideoParameters->Disable();
     if (oldVideoCodec)
@@ -371,7 +371,7 @@ void RenderDialog::changeVideoCodecInfo(model::render::VideoCodecPtr oldVideoCod
     }
 }
 
-void RenderDialog::enableRenderButton()
+void RenderSettingsDialog::enableRenderButton()
 {
     if (mNew->getFileName().IsOk() && !mRendering)
     {
