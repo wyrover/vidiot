@@ -1,6 +1,5 @@
 #include "Trim.h"
 
-#include <wx/wupdlock.h> // todo remove
 #include "Clip.h"
 #include "ClipView.h"
 #include "EmptyClip.h"

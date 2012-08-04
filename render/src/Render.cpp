@@ -609,6 +609,7 @@ void Render::scheduleAll()
             schedule(sequence);
         }
     }
+    // todo test this
     wxMessageBox(error, _("Not all sequences have been scheduled"),wxOK);
 }
 

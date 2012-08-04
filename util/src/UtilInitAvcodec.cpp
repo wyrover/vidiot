@@ -35,7 +35,6 @@ void Avcodec::init()
 {
     sFixedBuffer = new char[sMaxLogSize];
     av_register_all();
- // todo find all avio_open2 calls and AVFormatContext objects and set its interrupt_callback to 0   url_set_interrupt_cb(0);
 }
 
 void Avcodec::exit()
