@@ -2,7 +2,7 @@
 
 #include <boost/make_shared.hpp>
 #include "Render.h"
-#include "RenderDialog.h"
+#include "RenderSettingsDialog.h"
 #include "Sequence.h"
 #include "HelperWindow.h"
 #include "HelperTimeline.h"
@@ -10,7 +10,7 @@
 #include "HelperTimelinesView.h"
 #include "EmptyClip.h"
 #include "HelperApplication.h"
-#include "RenderDialog.h"
+#include "RenderSettingsDialog.h"
 #include "VideoClip.h"
 #include "Window.h"
 #include "Dialog.h"
@@ -52,10 +52,10 @@ void TestOnce::testOnce()
     waitForIdle();
     gui::Dialog::get().setSaveFile("D:/out.avi");
     pause(666666);
-    ClickTopLeft(gui::RenderDialog::get().getFileButton());
+    ClickTopLeft(gui::RenderSettingsDialog::get().getFileButton());
 
     //model::render::RenderPtr render = boost::make_shared<model::render::Render>(getSequence());
-    //gui::RenderDialog dialog(render);
+    //gui::RenderSettingsDialog dialog(render);
     //dialog.ShowModal();
     //render->generate();
     pause(600000);
