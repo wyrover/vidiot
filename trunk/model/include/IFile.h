@@ -16,7 +16,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    IFile();
+    IFile() {};
 
     virtual ~IFile() {};
 
@@ -35,7 +35,7 @@ protected:
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \note the clone is not automatically part of the track!!!
     /// \see make_cloned
-    IFile(const IFile& other);
+    IFile(const IFile& other) {};
 
 private:
 
@@ -45,7 +45,7 @@ private:
 
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
+    void serialize(Archive & ar, const unsigned int version) {}
 };
 } // namespace
 
