@@ -88,10 +88,8 @@ Render::~Render()
 
 bool Render::operator== (const Render& other) const
 {
-    // todo implement this in the dialog class
-    // The file name is stripped from the comparison
     return
-        (mFileName == mFileName) &&
+        (mFileName == other.mFileName) &&
         (*mOutputFormat == *other.mOutputFormat) &&
         (*mVideoCodec == *other.mVideoCodec) &&
         (*mAudioCodec == *other.mAudioCodec);
@@ -103,13 +101,130 @@ bool Render::operator!= (const Render& other) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// RENDER
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+OutputFormatPtr Render::getOutputFormat() const
+{
+    return mOutputFormat;
+}
+
+void Render::setOutputFormat(OutputFormatPtr format)
+{
+    mOutputFormat = format;
+}
+
+VideoCodecPtr Render::getVideoCodec() const
+{
+    return mVideoCodec;
+}
+
+void Render::setVideoCodec(VideoCodecPtr codec)
+{
+    mVideoCodec = codec;
+}
+
+AudioCodecPtr Render::getAudioCodec() const
+{
+    return mAudioCodec;
+}
+
+void Render::setAudioCodec(AudioCodecPtr codec)
+{
+    mAudioCodec = codec;
+}
+
+wxFileName Render::getFileName() const
+{
+    return mFileName;
+}
+
+void Render::setFileName(wxFileName filename)
+{
+    mFileName = filename;
+}
+
+bool Render::checkFileName() const
+{
+    if (!mFileName.IsOk()) { return false; }
+    if (mFileName.IsDir()) { return false; }
+    if (!mFileName.HasExt()) { return false; }
+    if (!mFileName.HasName()) { return false; }
+    if (mFileName.FileExists() && !mFileName.IsFileWritable()) { return false; }
+    return true;
+}
+
+RenderPtr Render::withFileNameRemoved() const
+{
+    RenderPtr cloned = RenderPtr(clone());
+    wxFileName filename = cloned->getFileName();
+    filename.ClearExt();
+    filename.SetName("");
+    cloned->setFileName(filename);
+    return cloned;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// SCHEDULING
+//////////////////////////////////////////////////////////////////////////
+
+// static
+void Render::schedule(SequencePtr sequence)
+{
+    model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
+    gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone)));
+}
+
+typedef std::list<SequencePtr> Sequences;
+void findSequences(FolderPtr node, Sequences& result)
+{
+    BOOST_FOREACH( NodePtr child, node->getChildren() )
+    {
+        if (child->isA<Sequence>())
+        {
+            result.push_back(boost::dynamic_pointer_cast<Sequence>(child));
+        }
+        else if (child->isA<Folder>())
+        {
+            findSequences(boost::dynamic_pointer_cast<Folder>(child),result);
+        }
+    }
+}
+
+// static
+void Render::scheduleAll()
+{
+    Sequences seqs;
+    findSequences(Project::get().getRoot(),seqs);
+
+    bool anError = false;
+    wxString error;
+    error << _("The following sequence(s) have no configured filename and have not been scheduled:");
+    std::list<wxString> errors;
+    BOOST_FOREACH( SequencePtr sequence, seqs )
+    {
+        if (!sequence->getRender()->checkFileName())
+        {
+            error << '\n' << "- " << sequence->getName() << '\n';
+            anError = true;
+        }
+        else
+        {
+            schedule(sequence);
+        }
+    }
+    // todo test this
+    wxMessageBox(error, _("Not all sequences have been scheduled"),wxOK);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// RENDERING
 //////////////////////////////////////////////////////////////////////////
 
 void Render::generate(model::SequencePtr sequence)
 {
     sequence->moveTo(0);
-    int length = sequence->getLength();
+    int length = sequence->getLength(); // todo resolve warning
     gui::StatusBar::get().showProgressBar(length);
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     gui::StatusBar::get().setProcessingText(ps);
@@ -167,9 +282,9 @@ void Render::generate(model::SequencePtr sequence)
         video_codec->time_base.num = Properties::get()->getFrameRate().numerator();
         video_codec->gop_size = 12; /* emit one intra frame every twelve frames at most */
         video_codec->pix_fmt = STREAM_PIX_FMT;
-        // Some formats want stream headers to be separate
         if (context->oformat->flags & AVFMT_GLOBALHEADER)
         {
+            // Some formats want stream headers to be separate
             video_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
         }
     }
@@ -179,20 +294,17 @@ void Render::generate(model::SequencePtr sequence)
         audio_stream = av_new_stream(context, 1);
         ASSERT(audio_stream);
         audio_codec = audio_stream->codec;
-        // todo set the audiocodec params
         audio_codec->codec_id = format->audio_codec;
         audio_codec->codec_type = AVMEDIA_TYPE_AUDIO;
         audio_codec->sample_fmt = AV_SAMPLE_FMT_S16;
-        audio_codec->bit_rate = 64000;
         mAudioCodec->setParameters(audio_codec);
         audio_codec->sample_rate = Properties::get()->getAudioFrameRate();
         audio_codec->channels = Properties::get()->getAudioNumberOfChannels();
         mAudioCodec->setParameters(audio_codec);
 
-        // todo this must be handled in 'audiocodec::setParameters...'?
-        // some formats want stream headers to be separate
         if (context->oformat->flags & AVFMT_GLOBALHEADER)
         {
+            // Some formats want stream headers to be separate
             audio_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
         }
     }
@@ -494,123 +606,6 @@ static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
     ASSERT(picture_buf);
     avpicture_fill((AVPicture *)picture, picture_buf, pix_fmt, width, height);
     return picture;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-OutputFormatPtr Render::getOutputFormat() const
-{
-    return mOutputFormat;
-}
-
-void Render::setOutputFormat(OutputFormatPtr format)
-{
-    mOutputFormat = format;
-}
-
-VideoCodecPtr Render::getVideoCodec() const
-{
-    return mVideoCodec;
-}
-
-void Render::setVideoCodec(VideoCodecPtr codec)
-{
-    mVideoCodec = codec;
-}
-
-AudioCodecPtr Render::getAudioCodec() const
-{
-    return mAudioCodec;
-}
-
-void Render::setAudioCodec(AudioCodecPtr codec)
-{
-    mAudioCodec = codec;
-}
-
-wxFileName Render::getFileName() const
-{
-    return mFileName;
-}
-
-void Render::setFileName(wxFileName filename)
-{
-    mFileName = filename;
-}
-
-bool Render::checkFileName() const
-{
-    if (!mFileName.IsOk()) { return false; }
-    if (mFileName.IsDir()) { return false; }
-    if (!mFileName.HasExt()) { return false; }
-    if (!mFileName.HasName()) { return false; }
-    if (mFileName.FileExists() && !mFileName.IsFileWritable()) { return false; }
-    return true;
-}
-
-RenderPtr Render::withFileNameRemoved() const
-{
-    RenderPtr cloned = RenderPtr(clone());
-    wxFileName filename = cloned->getFileName();
-    filename.ClearExt();
-    filename.SetName("");
-    cloned->setFileName(filename);
-    return cloned;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// RENDERING
-//////////////////////////////////////////////////////////////////////////
-
-// static
-void Render::schedule(SequencePtr sequence)
-{
-    model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
-    gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone)));
-}
-
-typedef std::list<SequencePtr> Sequences;
-void findSequences(FolderPtr node, Sequences& result)
-{
-    BOOST_FOREACH( NodePtr child, node->getChildren() )
-    {
-        if (child->isA<Sequence>())
-        {
-            result.push_back(boost::dynamic_pointer_cast<Sequence>(child));
-        }
-        else if (child->isA<Folder>())
-        {
-            findSequences(boost::dynamic_pointer_cast<Folder>(child),result);
-        }
-    }
-}
-
-// static
-void Render::scheduleAll()
-{
-    Sequences seqs;
-    findSequences(Project::get().getRoot(),seqs);
-
-    bool anError = false;
-    wxString error;
-    error << _("The following sequence(s) have no configured filename and have not been scheduled:");
-    std::list<wxString> errors;
-    BOOST_FOREACH( SequencePtr sequence, seqs )
-    {
-        if (!sequence->getRender()->checkFileName())
-        {
-            error << '\n' << "- " << sequence->getName() << '\n';
-            anError = true;
-        }
-        else
-        {
-            schedule(sequence);
-        }
-    }
-    // todo test this
-    wxMessageBox(error, _("Not all sequences have been scheduled"),wxOK);
 }
 
 //////////////////////////////////////////////////////////////////////////

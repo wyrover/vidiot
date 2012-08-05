@@ -101,6 +101,7 @@ typedef boost::shared_ptr<OutputFormat> OutputFormatPtr;
 typedef boost::shared_ptr<Render> RenderPtr;
 typedef boost::shared_ptr<VideoCodec> VideoCodecPtr;
 typedef std::list<OutputFormatPtr> OutputFormatList;
+typedef std::list<ICodecParameterPtr> ICodecParameters;
 
 }}
 

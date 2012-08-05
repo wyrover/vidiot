@@ -39,7 +39,7 @@ public:
 
     CodecID getId() const;
     VideoCodec& addParameter(ICodecParameter& parameter);
-    std::list<ICodecParameterPtr> getParameters();
+    ICodecParameters getParameters();
     void setParameters( AVCodecContext* codec ) const;
 
 private:
@@ -49,7 +49,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     CodecID mId;
-    std::list<ICodecParameterPtr> mParameters;
+    ICodecParameters mParameters;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

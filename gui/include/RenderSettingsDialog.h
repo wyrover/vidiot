@@ -1,6 +1,7 @@
 #ifndef RENDER_DIALOG_H
 #define RENDER_DIALOG_H
 
+#include "ICodecParameter.h"
 #include "UtilEnumSelector.h"
 #include "UtilInt.h"
 
@@ -8,6 +9,7 @@ namespace gui {
 
 class RenderSettingsDialog
     :   public wxDialog
+    ,   public model::render::ICodecParameterChangeListener
 {
 public:
 
@@ -31,6 +33,12 @@ public:
     void onCancelButtonPressed(wxCommandEvent& event);
     void onApplyButtonPressed(wxCommandEvent& event);
     void onSetDefaultButtonPressed(wxCommandEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    //  model::render::ICodecParameterChangeListener interface
+    //////////////////////////////////////////////////////////////////////////
+
+    void onParameterChange() override;
 
     //////////////////////////////////////////////////////////////////////////
     // TESTS
@@ -74,6 +82,8 @@ private:
     void changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCodec, model::render::AudioCodecPtr newAudioCodec);
     void changeVideoCodecInfo(model::render::VideoCodecPtr oldVideoCodec, model::render::VideoCodecPtr newVideoCodec);
     void enableRenderButton();
+    void enableSetDefaultButton();
+    bool checkFilename();
 };
 
 } // namespace

@@ -7,6 +7,11 @@ struct AVCodecContext;
 
 namespace model { namespace render {
 
+struct ICodecParameterChangeListener
+{
+    virtual void onParameterChange() = 0;
+};
+
 struct ICodecParameter
     :   public ICloneable
 {
@@ -14,7 +19,7 @@ struct ICodecParameter
     virtual ~ICodecParameter() {};
     virtual ICodecParameter* clone() const = 0;
     virtual wxString getName() const = 0;
-    virtual wxWindow* makeWidget(wxWindow* parent) = 0;
+    virtual wxWindow* makeWidget(wxWindow* parent, ICodecParameterChangeListener* listener) = 0;
     virtual void destroyWidget() = 0;
     virtual void set(AVCodecContext* codec) = 0;
     virtual bool equals(const ICodecParameter& other) = 0;
@@ -30,17 +35,6 @@ struct ICodecParameter
         obj.log(os);
         return os;
     }
-
-    //todo
-    ////////////////////////////////////////////////////////////////////////////
-    //// SERIALIZATION
-    ////////////////////////////////////////////////////////////////////////////
-
-    //friend class boost::serialization::access;
-    //template<class Archive>
-    //void serialize(Archive & ar, const unsigned int version)
-    //{
-    //}
 };
 
 }} // namespace

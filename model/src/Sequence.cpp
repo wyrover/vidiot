@@ -373,8 +373,6 @@ std::ostream& operator<<( std::ostream& os, const Sequence& obj )
 template<class Archive>
 void Sequence::serialize(Archive & ar, const unsigned int version)
 {
-    //ar & boost::serialization::base_object<IControl>(*this);//todo remove
-    ar & boost::serialization::base_object<IVideo>(*this);
     ar & boost::serialization::base_object<IAudio>(*this);
     ar & boost::serialization::base_object<Node>(*this);
     ar & mName;

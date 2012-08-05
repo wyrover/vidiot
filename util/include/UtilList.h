@@ -91,4 +91,28 @@ private:
     ELEMENTS& mList;
 };
 
+/// STL lists of shared pointers cannot use operator== since that compares the shared_ptrs, not their 'content'.
+/// This comparison invokes operator== of the underlying objects.
+template <typename OBJECT>
+bool equals(const std::list< boost::shared_ptr< OBJECT > >& first, const std::list< boost::shared_ptr< OBJECT > >& second)
+{
+    if (first.size() != second.size()) { return false; }
+    std::list< boost::shared_ptr< OBJECT > >::const_iterator it = first.begin();
+    std::list< boost::shared_ptr< OBJECT > >::const_iterator itOther = second.begin();
+    while ((it != first.end()) && (itOther != second.end()))
+    {
+        if (**it == **itOther)
+        {
+            ++it;
+            ++itOther;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    if ((it != first.end()) || (itOther != second.end())) { return false; }
+    return true;
+}
+
 #endif // UTIL_LIST_H

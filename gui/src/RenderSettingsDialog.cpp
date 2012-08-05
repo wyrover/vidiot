@@ -105,14 +105,7 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     wxStaticBoxSizer* actionboxsizer = new wxStaticBoxSizer(actionbox, wxHORIZONTAL);
 
     mSetDefaultButton = new wxButton(actionbox,wxID_ANY,_("Set as default"));
-    mSetDefaultButton->Enable();
     mSetDefaultButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onSetDefaultButtonPressed, this);
-
-    if (*model::Properties::get()->getDefaultRender()->withFileNameRemoved() == *mNew->withFileNameRemoved())
-    {
-       // todo finish this
-        mSetDefaultButton->Disable();
-    }
 
     actionboxsizer->Add(mSetDefaultButton,wxSizerFlags().Proportion(0));
 
@@ -148,6 +141,8 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
 
     changeAudioCodecInfo(model::render::AudioCodecPtr(), mNew->getAudioCodec());
     changeVideoCodecInfo(model::render::VideoCodecPtr(), mNew->getVideoCodec());
+
+    enableSetDefaultButton();
     enableRenderButton();
 }
 
@@ -241,7 +236,7 @@ void RenderSettingsDialog::onFileButtonPressed(wxCommandEvent& event)
 
 void RenderSettingsDialog::onRenderButtonPressed(wxCommandEvent& event)
 {
-    if (mNew->checkFileName())
+    if (checkFilename())
     {
         onApplyButtonPressed(event);
         mRendering = true;
@@ -250,10 +245,6 @@ void RenderSettingsDialog::onRenderButtonPressed(wxCommandEvent& event)
         model::render::Render::schedule(mSequence);
         model::render::Render::schedule(mSequence);
         Close();
-    }
-    else
-    {
-        wxMessageBox(_("Select output file first."), _("No file selected"), wxOK | wxCENTRE, this);
     }
     event.Skip();
 }
@@ -273,15 +264,10 @@ void RenderSettingsDialog::onCancelButtonPressed(wxCommandEvent& event)
 
 void RenderSettingsDialog::onApplyButtonPressed(wxCommandEvent& event)
 {
-    if (mNew->checkFileName())
+    if (checkFilename())
     {
         mSequence->setRender(make_cloned<model::render::Render>(mNew));
         mOriginal = make_cloned<model::render::Render>(mNew);
-    }
-    else
-    {
-        // todo disable the two buttons ok and apply if !checkfilename....
-        wxMessageBox(_("Select output file first."), _("No file selected"), wxOK | wxCENTRE, this);
     }
     event.Skip();
 }
@@ -289,9 +275,17 @@ void RenderSettingsDialog::onApplyButtonPressed(wxCommandEvent& event)
 void RenderSettingsDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
 {
     model::Properties::get()->setDefaultRender(mNew);
-
-    // todo check if mNew == getdefaultrender() and disable the setdefault button if so
+    enableSetDefaultButton();
     event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//  model::render::ICodecParameterChangeListener interface
+//////////////////////////////////////////////////////////////////////////
+
+void RenderSettingsDialog::onParameterChange()
+{
+    enableSetDefaultButton();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -313,6 +307,7 @@ void RenderSettingsDialog::updateAudioCodec()
     model::render::AudioCodecPtr old = mNew->getAudioCodec();
     mNew->setAudioCodec(model::render::AudioCodecs::find(static_cast<CodecID>(mAudioCodec->getValue())));
     changeAudioCodecInfo(old, mNew->getAudioCodec());
+    enableSetDefaultButton();
 }
 
 void RenderSettingsDialog::updateVideoCodec()
@@ -320,6 +315,7 @@ void RenderSettingsDialog::updateVideoCodec()
     model::render::VideoCodecPtr old = mNew->getVideoCodec();
     mNew->setVideoCodec(model::render::VideoCodecs::find(static_cast<CodecID>(mVideoCodec->getValue())));
     changeVideoCodecInfo(old, mNew->getVideoCodec());
+    enableSetDefaultButton();
 }
 
 void RenderSettingsDialog::changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCodec, model::render::AudioCodecPtr newAudioCodec)
@@ -338,7 +334,7 @@ void RenderSettingsDialog::changeAudioCodecInfo(model::render::AudioCodecPtr old
         wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
         BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getAudioCodec()->getParameters() )
         {
-            addOption(mAudioParameters,vSizer,parameter->getName(),parameter->makeWidget(mAudioParameters));
+            addOption(mAudioParameters,vSizer,parameter->getName(),parameter->makeWidget(mAudioParameters,this));
         }
         mAudioParameters->SetSizer(vSizer);
         mAudioParameters->Layout();
@@ -363,7 +359,7 @@ void RenderSettingsDialog::changeVideoCodecInfo(model::render::VideoCodecPtr old
         wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
         BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getVideoCodec()->getParameters() )
         {
-            addOption(mVideoParameters,vSizer,parameter->getName(),parameter->makeWidget(mVideoParameters));
+            addOption(mVideoParameters,vSizer,parameter->getName(),parameter->makeWidget(mVideoParameters,this));
         }
         mVideoParameters->SetSizer(vSizer);
         mVideoParameters->Layout();
@@ -381,6 +377,25 @@ void RenderSettingsDialog::enableRenderButton()
     {
         mRenderButton->Disable();
     }
+}
+
+void RenderSettingsDialog::enableSetDefaultButton()
+{
+    mSetDefaultButton->Enable();
+    if (*(model::Properties::get()->getDefaultRender()->withFileNameRemoved()) == *(mNew->withFileNameRemoved()))
+    {
+        mSetDefaultButton->Disable();
+    }
+}
+
+bool RenderSettingsDialog::checkFilename()
+{
+    if (!mNew->checkFileName())
+    {
+        wxMessageBox(_("Select output file first."), _("No file selected"), wxOK | wxCENTRE, this);
+        return false;
+    }
+    return true;
 }
 
 } //namespace

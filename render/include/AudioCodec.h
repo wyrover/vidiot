@@ -38,7 +38,7 @@ public:
 
     CodecID getId() const;
     AudioCodec& addParameter(ICodecParameter& parameter);
-    std::list<ICodecParameterPtr> getParameters();
+    ICodecParameters getParameters();
     void setParameters( AVCodecContext* codec ) const;
 
 private:
@@ -48,7 +48,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     CodecID mId;
-    std::list<ICodecParameterPtr> mParameters;
+    ICodecParameters mParameters;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

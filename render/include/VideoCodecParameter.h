@@ -28,7 +28,7 @@ struct VideoCodecParameterBitrateTolerance
 };
 
 struct VideoCodecParameterBFrames
-    :   public CodecParameterInt<VideoCodecParameterBFrames,VideoCodecParameterType,BFrames> // todo generalize makewidgetand destroywidget for int derives and the clone also???
+    :   public CodecParameterInt<VideoCodecParameterBFrames,VideoCodecParameterType,BFrames>
 {
     void set(AVCodecContext* codec) override;
 };
