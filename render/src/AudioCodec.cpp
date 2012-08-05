@@ -79,18 +79,6 @@ void AudioCodec::setParameters( AVCodecContext* codec ) const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-//template <class T> // todo why is this needed?
-//std::ostream& operator<< (std::ostream& os, const std::list<T> obj)
-//{
-//    os << "{";
-//    BOOST_FOREACH( T child, obj )
-//    {
-//        os << child << " ";
-//    }
-//    os << "}";
-//    return os;
-//}
-
 std::ostream& operator<<( std::ostream& os, const AudioCodec& obj )
 {
     os  << &obj    << '|'
