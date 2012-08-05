@@ -37,7 +37,7 @@ void VideoCodecParameterBFrames::set(AVCodecContext* codec)
 };
 
 boost::bimap<int,wxString> MacroBlockDecisionEnumMapping = boost::assign::list_of<boost::bimap<int, wxString>::relation >
-    (FF_MB_DECISION_SIMPLE, _("Simple - use mb_cmp (TODO rename)"))
+    //(FF_MB_DECISION_SIMPLE, _("Simple - use mb_cmp (Not supported yet)"))
     (FF_MB_DECISION_BITS,   _("Least bits"))
     (FF_MB_DECISION_RD,     _("Rate distortion"));
 

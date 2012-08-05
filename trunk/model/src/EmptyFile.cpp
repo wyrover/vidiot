@@ -116,7 +116,6 @@ VideoFramePtr EmptyFile::getNextVideo(const VideoCompositionParameters& paramete
 template<class Archive>
 void EmptyFile::serialize(Archive & ar, const unsigned int version)
 {
-    //ar & boost::serialization::base_object<IControl>(*this);//todo remove
     ar & boost::serialization::base_object<IAudio>(*this);
     ar & boost::serialization::base_object<IVideo>(*this);
     ar & mLength;

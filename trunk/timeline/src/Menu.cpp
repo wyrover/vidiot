@@ -256,7 +256,7 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 
 void MenuHandler::onRenderSettings(wxCommandEvent& event)
 {
-    gui::RenderSettingsDialog(getSequence()).ShowModal(); // todo rename into rendersettingsdialog
+    gui::RenderSettingsDialog(getSequence()).ShowModal();
     event.Skip();
 }
 

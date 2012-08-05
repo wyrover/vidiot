@@ -37,7 +37,7 @@ void VideoCodecs::initialize()
     add(_("MPEG 1 video"),
         VideoCodec(CODEC_ID_MPEG1VIDEO).
         addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000)).
-        addParameter(VideoCodecParameterMacroBlockDecision().enable().setDefault(FF_MB_DECISION_RD)) // Needed to avoid using macroblocks in which some coeffs overflow. This does not happen with normal video, it just happens here as the motion of the chroma plane does not match the luma plane. (todo remove this, this was part of the encoding example that i used, however I now use it to test the enum parameter handling...)
+        addParameter(VideoCodecParameterMacroBlockDecision().enable().setDefault(FF_MB_DECISION_RD)) // Needed to avoid using macroblocks in which some coeffs overflow. This does not happen with normal video, it just happens here as the motion of the chroma plane does not match the luma plane. (this was part of the encoding example used for making the rendering class, now used to test the enum parameter handling...)
         );
 
     add(_("DV video"),

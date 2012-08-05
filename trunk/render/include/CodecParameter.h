@@ -205,8 +205,9 @@ struct CodecParameterInt
     // ICodecParameter
     //////////////////////////////////////////////////////////////////////////
 
-    wxWindow* makeWidget(wxWindow *parent) override
+    wxWindow* makeWidget(wxWindow *parent, ICodecParameterChangeListener* listener) override
     {
+        mChangeListener = listener;
         wxSpinCtrl* spin = new wxSpinCtrl(parent);
         spin->SetRange(getMinimum(),getMaximum());
         spin->SetValue(getValue());
@@ -217,6 +218,7 @@ struct CodecParameterInt
     }
     void destroyWidget() override
     {
+        mChangeListener = 0;
         ASSERT(mWindow);
         wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(mWindow);
         spin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
@@ -227,10 +229,19 @@ struct CodecParameterInt
     void onSpinChanged(wxSpinEvent& event)
     {
         wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(mWindow);
-        int newval = event.GetPosition();
-        setValue(event.GetPosition());
+        int value = spin->GetValue(); // Do not use event.GetPosition(), gives strange results
+        setValue(value);
+        mChangeListener->onParameterChange();
         event.Skip();
     }
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    ICodecParameterChangeListener* mChangeListener;
 };
 
 typedef boost::bimap<int,wxString> MappingType;
@@ -252,8 +263,9 @@ struct CodecParameterEnum
     // ICodecParameter
     //////////////////////////////////////////////////////////////////////////
 
-    wxWindow* makeWidget(wxWindow *parent) override
+    wxWindow* makeWidget(wxWindow *parent, ICodecParameterChangeListener* listener) override
     {
+        mChangeListener = listener;
         EnumSelector<int>* selector = new EnumSelector<int>(parent, NAMEMAPPING, getDefault());
         selector->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
         mWindow = selector;
@@ -262,6 +274,7 @@ struct CodecParameterEnum
     }
     void destroyWidget() override
     {
+        mChangeListener = 0;
         EnumSelector<int>* selector = static_cast<EnumSelector<int>*>(mWindow);
         selector->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
         mWindow->Destroy();
@@ -272,8 +285,17 @@ struct CodecParameterEnum
     {
         EnumSelector<int>* selector = static_cast< EnumSelector<int>* >(mWindow);
         setValue(selector->getValue());
+        mChangeListener->onParameterChange();
         event.Skip();
     }
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    ICodecParameterChangeListener* mChangeListener;
 };
 
 }} // namespace

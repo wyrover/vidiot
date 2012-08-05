@@ -1,8 +1,8 @@
 #include "VideoCodec.h"
 
-#include <boost/serialization/list.hpp>
 #include "UtilLog.h"
 #include "UtilLogStl.h"
+#include "UtilList.h"
 #include "VideoCodecParameter.h"
 
 namespace model { namespace render {
@@ -44,9 +44,7 @@ VideoCodec* VideoCodec::clone() const
 
 bool VideoCodec::operator== (const VideoCodec& other) const
 {
-    return
-        (mId == other.mId) &&
-        (mParameters == other.mParameters);
+    return (mId == other.mId) && equals(mParameters,other.mParameters);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,12 +63,10 @@ VideoCodec& VideoCodec::addParameter(ICodecParameter& parameter)
     ICodecParameterPtr newParam = boost::shared_ptr<ICodecParameter>(clone);
     ASSERT(newParam);
     mParameters.push_back(newParam);
-
-//    mParameters.push_back(make_cloned_ptr<ICodecParameter>(parameter));
     return *this;
 }
 
-std::list<ICodecParameterPtr> VideoCodec::getParameters()
+ICodecParameters VideoCodec::getParameters()
 {
     return mParameters;
 }
@@ -86,18 +82,6 @@ void VideoCodec::setParameters( AVCodecContext* codec ) const
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
-
-//template <class T> // todo why is this needed?
-//std::ostream& operator<< (std::ostream& os, const std::list<T> obj)
-//{
-//    os << "{";
-//    BOOST_FOREACH( T child, obj )
-//    {
-//        os << child << " ";
-//    }
-//    os << "}";
-//    return os;
-//}
 
 std::ostream& operator<<( std::ostream& os, const VideoCodec& obj )
 {

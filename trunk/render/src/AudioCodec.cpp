@@ -1,8 +1,7 @@
 #include "AudioCodec.h"
 
-#include <boost/serialization/list.hpp>
-
 #include "AudioCodecParameter.h"
+#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
@@ -45,9 +44,7 @@ AudioCodec* AudioCodec::clone() const
 
 bool AudioCodec::operator== (const AudioCodec& other) const
 {
-    return
-        (mId == other.mId) &&
-        (mParameters == other.mParameters);
+    return (mId == other.mId) && equals(mParameters,other.mParameters);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,7 +62,7 @@ AudioCodec& AudioCodec::addParameter(ICodecParameter& parameter)
     return *this;
 }
 
-std::list<ICodecParameterPtr> AudioCodec::getParameters()
+ICodecParameters AudioCodec::getParameters()
 {
     return mParameters;
 }
