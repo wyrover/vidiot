@@ -7,12 +7,13 @@
 #include "Dialog.h"
 #include "OutputFormat.h"
 #include "OutputFormats.h"
+#include "Project.h"
 #include "Properties.h"
 #include "Render.h"
 #include "Sequence.h"
-#include "UtilLogWxwidgets.h"
 #include "UtilFifo.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "VideoCodec.h"
 #include "VideoCodecs.h"
 #include "Window.h"
@@ -75,8 +76,6 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     fileselect->GetSizer()->Add(mFile,wxSizerFlags(1).Expand());
     fileselect->GetSizer()->Add(mFileButton,wxSizerFlags(0));
 
-    // todo use (checkFileName(mNew->getFileName())) to get a default ok file name...
-
     mVideoCodec = new EnumSelector<int>(formatbox, model::render::VideoCodecs::mapToName, mNew->getVideoCodec()->getId());
     mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onVideoCodecChanged, this);
 
@@ -109,7 +108,6 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
 
     actionboxsizer->Add(mSetDefaultButton,wxSizerFlags().Proportion(0));
 
-    // todo update Project (save dialog)
     //////// BUTTONS ////////
 
     wxPanel* buttons = new wxPanel(this);
@@ -149,6 +147,12 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
 RenderSettingsDialog::~RenderSettingsDialog()
 {
     VAR_DEBUG(this);
+    if (*mOriginal != *mNew)
+    {
+        // This causes a 'save' dialog when closing.
+        // KP: Change render options, then undo until all items removed. Then close. Save as dialog will not be shown.
+        model::Project::get().Modify(true);
+    }
     sCurrent = 0;
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onFileButtonPressed, this);
     mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onRenderButtonPressed, this);

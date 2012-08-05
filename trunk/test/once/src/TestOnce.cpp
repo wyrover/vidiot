@@ -51,7 +51,7 @@ void TestOnce::testOnce()
     triggerMenu(ID_RENDERSETTINGS);
     waitForIdle();
     gui::Dialog::get().setSaveFile("D:/out.avi");
-    //pause(666666);
+    pause(666666);
     ClickTopLeft(gui::RenderSettingsDialog::get().getFileButton());
 
     //model::render::RenderPtr render = boost::make_shared<model::render::Render>(getSequence());
