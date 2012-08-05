@@ -158,7 +158,7 @@ RenderPtr Render::withFileNameRemoved() const
 {
     RenderPtr cloned = RenderPtr(clone());
     wxFileName filename = cloned->getFileName();
-    filename.ClearExt();
+    // Extension is not cleared (the default extension is stored this way)
     filename.SetName("");
     cloned->setFileName(filename);
     return cloned;
@@ -199,23 +199,34 @@ void Render::scheduleAll()
 
     bool anError = false;
     wxString error;
-    error << _("The following sequence(s) have no configured filename and have not been scheduled:");
+    error << _("The following sequence(s) have not been scheduled:\n");
     std::list<wxString> errors;
+
+    std::list<wxFileName> allFilenames;
+    BOOST_FOREACH( SequencePtr sequence, seqs )
+    {
+        allFilenames.push_back(sequence->getRender()->getFileName());
+    }
+
     BOOST_FOREACH( SequencePtr sequence, seqs )
     {
         if (!sequence->getRender()->checkFileName())
         {
-            error << '\n' << "- " << sequence->getName() << '\n';
+            error << "- " << sequence->getName() << ": Filename is not specified.\n";
             anError = true;
+            continue;
         }
-        else
+        if (std::count(allFilenames.begin(),allFilenames.end(),sequence->getRender()->getFileName()) > 1)
         {
-            schedule(sequence);
+            error << "- " << sequence->getName() << ": Specified filename also used for another sequence.\n";
+            anError = true;
+            continue;
         }
+        schedule(sequence);
     }
     if (anError)
     {
-        wxMessageBox(error, _("Not all sequences have been scheduled"),wxOK);
+        wxMessageBox(error, _("Not all sequences have been scheduled:"),wxOK);
     }
 }
 
