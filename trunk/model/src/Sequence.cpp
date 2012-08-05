@@ -299,7 +299,7 @@ render::RenderPtr Sequence::getRender()
         name.SetName(getName());
         if (!name.HasExt())
         {
-            name.SetExt("avi"); // todo this default must be in config?
+            name.SetExt("avi"); // Default is avi. User can set a new default extension via the RenderSettingsDialog
         }
         mRender->setFileName(name);
     }
@@ -317,7 +317,7 @@ void Sequence::setRender(render::RenderPtr render)
 
 wxString Sequence::getName() const
 {
-    return mName; // todo ensure somewhere that no two sequences have the exact same name (anywhere) to avoid problems when rendering?
+    return mName;
 };
 
 void Sequence::setName(wxString name)
