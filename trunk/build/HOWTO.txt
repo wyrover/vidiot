@@ -73,9 +73,8 @@ Install ActivePerl via installer
 
 =================== VIDIOT ===================
 * Checkout Vidiot into <VIDIOT_SRC>
-  Example: VIDIOT_DIR=D:\Vidiot, VIDIOT_SRC=D:\Vidiot\Source
-  (Repo: https://vidiot.svn.sourceforge.net/svnroot/vidiot)
-  (New Repo: hg clone https://ericraijmakers@code.google.com/p/vidiot/)
+  Example: VIDIOT_DIR=D:\Vidiot, VIDIOT_SRC=D:\Vidiot\vidiot_trunk
+  (Repo: https://svn.code.sf.net/p/vidiot/code/trunk)
 
 =================== BOOST ===================
 * Download Boost into <VIDIOT_DIR>\boost_1_xx_y
