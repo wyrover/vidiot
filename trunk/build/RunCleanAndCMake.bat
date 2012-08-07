@@ -1,5 +1,5 @@
 REM Go the the drive of the 'build' dir
-call:EXTRACTDRIVE %0%
+set DRIVE=%~d0
 %DRIVE%
 REM CD to the 'build' dir
 cd %~dp0
