@@ -108,6 +108,11 @@ void MoveOnScreen(wxPoint position);
 /// \param extraoffset extra offset (some widgets require this)
 void ClickTopLeft(wxWindow* window, wxPoint extraoffset = wxPoint(0,0));
 
+/// Click on the bottom left pixel of a widget to give it the focus.
+/// \param window window that must receive the focus after clicking
+/// \param extraoffset extra offset (some widgets require this)
+void ClickBottomLeft(wxWindow* window, wxPoint extraoffset = wxPoint(0,0));
+
 } // namespace
 
 #endif // HELPER_WINDOW_H

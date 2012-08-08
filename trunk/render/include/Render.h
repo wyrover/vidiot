@@ -44,12 +44,6 @@ public:
     OutputFormatPtr getOutputFormat() const;
     void setOutputFormat(OutputFormatPtr format);
 
-    VideoCodecPtr getVideoCodec() const;
-    void setVideoCodec(VideoCodecPtr codec);
-
-    AudioCodecPtr getAudioCodec() const;
-    void setAudioCodec(AudioCodecPtr codec);
-
     wxFileName getFileName() const;
     void setFileName(wxFileName filename);
 
@@ -82,8 +76,6 @@ private:
 
     wxFileName mFileName;
     OutputFormatPtr mOutputFormat;
-    VideoCodecPtr mVideoCodec;
-    AudioCodecPtr mAudioCodec;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

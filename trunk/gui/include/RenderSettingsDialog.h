@@ -45,6 +45,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     wxButton* getFileButton() const;
+    wxButton* getRenderButton() const;
+    wxButton* getOkButton() const;
+    wxButton* getCancelButton() const;
+    wxButton* getApplyButton() const;
+    wxWindow* getAudioParam(int index) const;
+    wxWindow* getVideoParam(int index) const;
 
 private:
 
@@ -73,6 +79,9 @@ private:
 
     pts mLength;
 
+    std::vector<wxWindow*> mAudioParameterWidgets;
+    std::vector<wxWindow*> mVideoParameterWidgets;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
@@ -83,7 +92,8 @@ private:
     void changeVideoCodecInfo(model::render::VideoCodecPtr oldVideoCodec, model::render::VideoCodecPtr newVideoCodec);
     void enableRenderButton();
     void enableSetDefaultButton();
-    bool checkFilename();
+    bool check();
+    void applyNewRender();
 };
 
 } // namespace

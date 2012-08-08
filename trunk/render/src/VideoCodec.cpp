@@ -1,5 +1,13 @@
 #include "VideoCodec.h"
 
+extern "C" {
+#pragma warning(disable:4244)
+#include <libavformat/avformat.h> // todo move to pch
+#include <libavcodec/avcodec.h>
+#pragma warning(default:4244)
+};
+
+#include "Properties.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilList.h"
@@ -71,12 +79,45 @@ ICodecParameters VideoCodec::getParameters()
     return mParameters;
 }
 
-void VideoCodec::setParameters( AVCodecContext* codec ) const
+AVStream* VideoCodec::addStream(AVFormatContext* context) const
 {
+    AVCodec* encoder = avcodec_find_encoder(mId);
+    AVStream* stream = avformat_new_stream(context, encoder);
+    ASSERT(stream);
+
+    AVCodecContext* video_codec = stream->codec;
+    ASSERT_EQUALS(video_codec->codec_type,AVMEDIA_TYPE_VIDEO);
+    video_codec->codec_id = mId;
     BOOST_FOREACH( ICodecParameterPtr parameter, mParameters )
     {
-        parameter->set(codec);
+        parameter->set(video_codec);
     }
+    video_codec->width = Properties::get()->getVideoSize().GetWidth(); // resolution must be a multiple of two
+    video_codec->height = Properties::get()->getVideoSize().GetHeight();
+    // todo check the bitrate, see if it's being set
+    // todo assert a certain minimum size
+    // todo asserts for even numbers
+
+    // Fundamental unit of time (in seconds) in terms of which frame timestamps are represented.
+    // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
+    video_codec->time_base.den = Properties::get()->getFrameRate().denominator();
+    video_codec->time_base.num = Properties::get()->getFrameRate().numerator();
+    video_codec->gop_size = 12; /* emit one intra frame every twelve frames at most */ // todo make param
+    video_codec->pix_fmt = PIX_FMT_YUV420P; // todo not here????
+    if (context->oformat->flags & AVFMT_GLOBALHEADER)
+    {
+        // Some formats want stream headers to be separate
+        video_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
+    }
+    return stream;
+}
+
+void VideoCodec::open(AVCodecContext* context) const
+{
+    AVCodec* codec = avcodec_find_encoder(context->codec_id);
+    ASSERT(codec);
+    int result = avcodec_open(context, codec);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -85,9 +126,13 @@ void VideoCodec::setParameters( AVCodecContext* codec ) const
 
 std::ostream& operator<<( std::ostream& os, const VideoCodec& obj )
 {
-    os  << &obj    << '|'
-        << obj.mId << '|'
-        << obj.mParameters;
+    os  << "VideoCodec:"
+        << &obj    << '|'
+        << obj.mId << '|';
+    BOOST_FOREACH( ICodecParameterPtr parameter, obj.mParameters )
+    {
+        os << *parameter;
+    }
     return os;
 }
 

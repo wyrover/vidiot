@@ -9,6 +9,9 @@ extern "C" {
 
 #include "UtilCloneable.h"
 
+struct AVStream;
+struct AVFormatContext;
+
 namespace model { namespace render {
 
 class VideoCodec
@@ -40,7 +43,8 @@ public:
     CodecID getId() const;
     VideoCodec& addParameter(ICodecParameter& parameter);
     ICodecParameters getParameters();
-    void setParameters( AVCodecContext* codec ) const;
+    AVStream* addStream(AVFormatContext* context) const; ///< Add a stream to the given libavformat format
+    void open(AVCodecContext* context) const;            ///< Open the codec in libavcodec
 
 private:
 

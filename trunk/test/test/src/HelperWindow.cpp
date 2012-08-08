@@ -172,4 +172,15 @@ void ClickTopLeft(wxWindow* window, wxPoint extraoffset)
     waitForIdle();
 }
 
+void ClickBottomLeft(wxWindow* window, wxPoint extraoffset)
+{
+    wxRect r = window->GetRect();
+    wxPoint p = window->GetScreenPosition();
+    p.y += r.height;
+    MoveOnScreen(p + extraoffset);
+    wxUIActionSimulator().MouseClick();
+    waitForIdle();
+
+}
+
 } // namespace
