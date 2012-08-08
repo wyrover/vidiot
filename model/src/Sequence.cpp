@@ -73,7 +73,7 @@ Sequence::Sequence(const Sequence& other)
     ,   mVideoTrackMap() // Duplicate administration left empty!
     ,   mAudioTrackMap()  // Duplicate administration left empty!
     ,   mPosition(0)
-    ,   mRender()
+    ,   mRender(make_cloned<render::Render>(other.mRender))
 {
     VAR_DEBUG(this);
 }

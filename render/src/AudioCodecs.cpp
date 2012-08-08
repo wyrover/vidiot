@@ -50,7 +50,6 @@ void AudioCodecs::initialize()
 
     //add(AudioCodec(CODEC_ID_PCM_S16BE).
     //addParameter(AudioCodecParameterBitrate().enable().setDefault(10000).setMinimum(500).setMaximum(40000)));
-    // todo check which one of these is supported, little endian or big endian
 
     add(_("PCM 16 bits Little Endian"),
         AudioCodec(CODEC_ID_PCM_S16LE).

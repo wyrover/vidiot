@@ -37,7 +37,6 @@ static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
 #define STREAM_DURATION   15.0 // todo replace with actual length, make special setting for only rendering 5s for test
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
 #define STREAM_NB_FRAMES  ((int)(STREAM_DURATION * STREAM_FRAME_RATE))
-#define STREAM_PIX_FMT PIX_FMT_YUV420P /* default pix_fmt */
 static int sws_flags = SWS_BICUBIC;
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,8 +55,6 @@ Render::Render()
     :   wxEvtHandler()
     ,   mFileName()
     ,   mOutputFormat(OutputFormats::getDefault())
-    ,   mVideoCodec(VideoCodecs::find(mOutputFormat->getDefaultVideoCodec()))
-    ,   mAudioCodec(AudioCodecs::find(mOutputFormat->getDefaultAudioCodec()))
 {
     VAR_DEBUG(this);
 }
@@ -66,8 +63,6 @@ Render::Render(const Render& other)
     :   wxEvtHandler()
     ,   mFileName(other.mFileName)
     ,   mOutputFormat(make_cloned<OutputFormat>(other.mOutputFormat))
-    ,   mVideoCodec(make_cloned<VideoCodec>(other.mVideoCodec))
-    ,   mAudioCodec(make_cloned<AudioCodec>(other.mAudioCodec))
 {
     VAR_DEBUG(this);
 }
@@ -90,9 +85,7 @@ bool Render::operator== (const Render& other) const
 {
     return
         (mFileName == other.mFileName) &&
-        (*mOutputFormat == *other.mOutputFormat) &&
-        (*mVideoCodec == *other.mVideoCodec) &&
-        (*mAudioCodec == *other.mAudioCodec);
+        (*mOutputFormat == *other.mOutputFormat);
 }
 
 bool Render::operator!= (const Render& other) const
@@ -112,26 +105,6 @@ OutputFormatPtr Render::getOutputFormat() const
 void Render::setOutputFormat(OutputFormatPtr format)
 {
     mOutputFormat = format;
-}
-
-VideoCodecPtr Render::getVideoCodec() const
-{
-    return mVideoCodec;
-}
-
-void Render::setVideoCodec(VideoCodecPtr codec)
-{
-    mVideoCodec = codec;
-}
-
-AudioCodecPtr Render::getAudioCodec() const
-{
-    return mAudioCodec;
-}
-
-void Render::setAudioCodec(AudioCodecPtr codec)
-{
-    mAudioCodec = codec;
 }
 
 wxFileName Render::getFileName() const
@@ -242,19 +215,14 @@ void Render::generate(model::SequencePtr sequence)
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     gui::StatusBar::get().setProcessingText(ps);
 
-    AVOutputFormat* format = av_guess_format(mOutputFormat->getName().c_str(), 0, 0);
-    ASSERT(format);
-    ASSERT(mAudioCodec->getId() != CODEC_ID_NONE || mVideoCodec->getId() != CODEC_ID_NONE);
-    format->audio_codec = mAudioCodec->getId();
-    format->video_codec = mVideoCodec->getId();
-
-    AVFormatContext* context = avformat_alloc_context();
-    context->oformat = format;
+    AVFormatContext* context = mOutputFormat->getContext();
     ASSERT(mFileName.IsOk());
     wxString filename = mFileName.GetFullPath();
     ASSERT_LESS_THAN_EQUALS(sizeof(filename.c_str()),sizeof(context->filename));
     _snprintf(context->filename, sizeof(context->filename), "%s", filename.c_str());
 
+    bool storeAudio = mOutputFormat->storeAudio();
+    bool storeVideo = mOutputFormat->storeVideo();
     AVStream* video_stream = 0;
     AVStream* audio_stream = 0;
 
@@ -270,68 +238,21 @@ void Render::generate(model::SequencePtr sequence)
     int audio_input_frame_size = 0;
     int bytesPerAudioFrame = 0;
 
-    if (format->video_codec != CODEC_ID_NONE)
+    if (storeVideo)
     {
-        video_stream = av_new_stream(context, 0);
-        ASSERT(video_stream); // todo proper error handling instead?
-
-        AVCodecContext* video_codec = video_stream->codec;
-        video_codec->codec_id = format->video_codec;
-        video_codec->codec_type = AVMEDIA_TYPE_VIDEO;
-
-        mVideoCodec->setParameters(video_codec);
-        //video_codec->width = 352; // resolution must be a multiple of two
-        //video_codec->height = 288;
-        //video_codec->thread_count = 3; // todo
-        video_codec->width = Properties::get()->getVideoSize().GetWidth(); // resolution must be a multiple of two
-        video_codec->height = Properties::get()->getVideoSize().GetHeight();
-        // todo check the bitrate, see if it's being set
-        // todo assert a certain minimum size
-        // todo asserts for even numbers
-
-        // Fundamental unit of time (in seconds) in terms of which frame timestamps are represented.
-        // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
-        video_codec->time_base.den = Properties::get()->getFrameRate().denominator();
-        video_codec->time_base.num = Properties::get()->getFrameRate().numerator();
-        video_codec->gop_size = 12; /* emit one intra frame every twelve frames at most */
-        video_codec->pix_fmt = STREAM_PIX_FMT;
-        if (context->oformat->flags & AVFMT_GLOBALHEADER)
-        {
-            // Some formats want stream headers to be separate
-            video_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
-        }
+        video_stream = mOutputFormat->getVideoCodec()->addStream(context);
     }
-    if (format->audio_codec != CODEC_ID_NONE)
+    if (storeAudio)
     {
-        AVCodecContext* audio_codec;
-        audio_stream = av_new_stream(context, 1);
-        ASSERT(audio_stream);
-        audio_codec = audio_stream->codec;
-        audio_codec->codec_id = format->audio_codec;
-        audio_codec->codec_type = AVMEDIA_TYPE_AUDIO;
-        audio_codec->sample_fmt = AV_SAMPLE_FMT_S16;
-        mAudioCodec->setParameters(audio_codec);
-        audio_codec->sample_rate = Properties::get()->getAudioFrameRate();
-        audio_codec->channels = Properties::get()->getAudioNumberOfChannels();
-        mAudioCodec->setParameters(audio_codec);
-
-        if (context->oformat->flags & AVFMT_GLOBALHEADER)
-        {
-            // Some formats want stream headers to be separate
-            audio_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
-        }
+        audio_stream = mOutputFormat->getAudioCodec()->addStream(context);
     }
 
     av_dump_format(context, 0, filename.c_str(), 1);
 
     // now that all the parameters are set, we can open the audio and video codecs and allocate the necessary encode buffers
-    if (video_stream)
+    if (storeVideo)
     {
-        AVCodecContext* video_codec_context = video_stream->codec;
-        AVCodec* codec = avcodec_find_encoder(video_codec_context->codec_id);
-        ASSERT(codec);
-
-        int result = avcodec_open(video_codec_context, codec);
+        mOutputFormat->getVideoCodec()->open(video_stream->codec);
 
         video_outbuf = 0;
         if (!(context->oformat->flags & AVFMT_RAWPICTURE))
@@ -346,35 +267,30 @@ void Render::generate(model::SequencePtr sequence)
             video_outbuf = (uint8_t*)av_malloc(video_outbuf_size);
         }
 
-        picture = alloc_picture(video_codec_context->pix_fmt, video_codec_context->width, video_codec_context->height);
+        picture = alloc_picture(video_stream->codec->pix_fmt, video_stream->codec->width, video_stream->codec->height);
         ASSERT(picture);
 
         //// if the output format is not RGB24P, then a temporary picture is needed too. It is then converted to the required output format
-        if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
+        if (video_stream->codec->pix_fmt != PIX_FMT_RGB24)
         {
-            tmp_picture = alloc_picture(PIX_FMT_RGB24, video_codec_context->width, video_codec_context->height);
+            tmp_picture = alloc_picture(PIX_FMT_RGB24, video_stream->codec->width, video_stream->codec->height);
             ASSERT(tmp_picture);
 
         }
     }
 
-    if (audio_stream)
+    if (storeAudio)
     {
-        AVCodecContext *audio_codec_context = audio_stream->codec;
-        AVCodec* audio_codec = avcodec_find_encoder(audio_codec_context->codec_id);
-        ASSERT(audio_codec);
-
-        int result = avcodec_open(audio_codec_context, audio_codec);
-        ASSERT_MORE_THAN_EQUALS_ZERO(result);
+        mOutputFormat->getAudioCodec()->open(audio_stream->codec);
 
         audio_outbuf_size = 10000;
         audio_outbuf = (uint8_t*)av_malloc(audio_outbuf_size);
 
         /* ugly hack for PCM codecs (will be removed ASAP with new PCM support to compute the input frame size in samples */
-        if (audio_codec_context->frame_size <= 1)
+        if (audio_stream->codec->frame_size <= 1)
         {
-            audio_input_frame_size = audio_outbuf_size / audio_codec_context->channels;
-            switch (audio_codec_context->codec_id)
+            audio_input_frame_size = audio_outbuf_size / audio_stream->codec->channels;
+            switch (audio_stream->codec->codec_id)
             {
             case CODEC_ID_PCM_S16LE:
             case CODEC_ID_PCM_S16BE:
@@ -388,17 +304,15 @@ void Render::generate(model::SequencePtr sequence)
         }
         else
         {
-            audio_input_frame_size = audio_codec_context->frame_size;
+            audio_input_frame_size = audio_stream->codec->frame_size;
         }
-        samples = (int16_t*)av_malloc(Convert::audioFramesToBytes(audio_input_frame_size, audio_codec_context->channels));
+        samples = (int16_t*)av_malloc(Convert::audioFramesToBytes(audio_input_frame_size, audio_stream->codec->channels));
     }
 
-    // open the output file, if needed
-    if (!(format->flags & AVFMT_NOFILE))
-    {
-        int result = avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE);
-        ASSERT_MORE_THAN_EQUALS_ZERO(result);
-    }
+    // Open the output file
+    ASSERT(!(context->flags & AVFMT_NOFILE))(context);
+    int result = avio_open(&context->pb, filename.c_str(), AVIO_FLAG_WRITE);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     avformat_write_header(context,0);
 
@@ -428,7 +342,6 @@ void Render::generate(model::SequencePtr sequence)
         if (!video_stream || (video_stream && audio_stream && audio_pts < video_pts))
         {
             // Write audio frame
-            AVCodecContext *audio_codec_context = audio_stream->codec;
             AVPacket pkt;
             av_init_packet(&pkt);
 
@@ -464,10 +377,10 @@ void Render::generate(model::SequencePtr sequence)
                 }
             }
 
-            pkt.size = avcodec_encode_audio(audio_codec_context, audio_outbuf, audio_outbuf_size, samples);
-            if (audio_codec_context->coded_frame && audio_codec_context->coded_frame->pts != AV_NOPTS_VALUE)
+            pkt.size = avcodec_encode_audio(audio_stream->codec, audio_outbuf, audio_outbuf_size, samples);
+            if (audio_stream->codec->coded_frame && audio_stream->codec->coded_frame->pts != AV_NOPTS_VALUE)
             {
-                pkt.pts = av_rescale_q(audio_codec_context->coded_frame->pts, audio_codec_context->time_base, audio_stream->time_base);
+                pkt.pts = av_rescale_q(audio_stream->codec->coded_frame->pts, audio_stream->codec->time_base, audio_stream->time_base);
             }
             pkt.flags |= AV_PKT_FLAG_KEY;
             pkt.stream_index = audio_stream->index;
@@ -482,7 +395,6 @@ void Render::generate(model::SequencePtr sequence)
             // Write video frame
 
             int out_size, ret;
-            AVCodecContext* video_codec_context = video_stream->codec;
             struct SwsContext *img_convert_ctx = 0;
 
             if (frame_count >= STREAM_NB_FRAMES)
@@ -491,27 +403,27 @@ void Render::generate(model::SequencePtr sequence)
             }
             else
             {
-                VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_codec_context->width,video_codec_context->height)).setDrawBoundingBox(false));
+                VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_stream->codec->width,video_stream->codec->height)).setDrawBoundingBox(false));
                 wxString s; s << _("(frame ") << frame->getPts() << _(" out of ") << length << ")";
                 gui::StatusBar::get().setProcessingText(ps + " " + s);
                 gui::StatusBar::get().showProgress(frame->getPts());
 
-                if (video_codec_context->pix_fmt != PIX_FMT_RGB24)
+                if (video_stream->codec->pix_fmt != PIX_FMT_RGB24)
                 {
                     // Convert to desired pixel format
                     if (img_convert_ctx == 0)
                     {
-                        img_convert_ctx = sws_getContext(video_codec_context->width, video_codec_context->height,
+                        img_convert_ctx = sws_getContext(video_stream->codec->width, video_stream->codec->height,
                             PIX_FMT_RGB24,
-                            video_codec_context->width, video_codec_context->height,
-                            video_codec_context->pix_fmt,
+                            video_stream->codec->width, video_stream->codec->height,
+                            video_stream->codec->pix_fmt,
                             sws_flags, 0, 0, 0);
                         ASSERT_NONZERO(img_convert_ctx);
 
                         wxImagePtr image = frame->getImage();
                         memcpy(tmp_picture->data[0],  image->GetData(), image->GetWidth() * image->GetHeight() * 3);
 
-                        sws_scale(img_convert_ctx, tmp_picture->data, tmp_picture->linesize, 0, video_codec_context->height, picture->data, picture->linesize);
+                        sws_scale(img_convert_ctx, tmp_picture->data, tmp_picture->linesize, 0, video_stream->codec->height, picture->data, picture->linesize);
                     }
                 }
             }
@@ -530,18 +442,18 @@ void Render::generate(model::SequencePtr sequence)
             else
             {
                 // encode the image
-                out_size = avcodec_encode_video(video_codec_context, video_outbuf, video_outbuf_size, picture);
+                out_size = avcodec_encode_video(video_stream->codec, video_outbuf, video_outbuf_size, picture);
                 // if zero size, it means the image was buffered
                 if (out_size > 0)
                 {
                     AVPacket pkt;
                     av_init_packet(&pkt);
 
-                    if (video_codec_context->coded_frame->pts != AV_NOPTS_VALUE)
+                    if (video_stream->codec->coded_frame->pts != AV_NOPTS_VALUE)
                     {
-                        pkt.pts= av_rescale_q(video_codec_context->coded_frame->pts, video_codec_context->time_base, video_stream->time_base);
+                        pkt.pts= av_rescale_q(video_stream->codec->coded_frame->pts, video_stream->codec->time_base, video_stream->time_base);
                     }
-                    if(video_codec_context->coded_frame->key_frame)
+                    if(video_stream->codec->coded_frame->key_frame)
                     {
                         pkt.flags |= AV_PKT_FLAG_KEY;
                     }
@@ -592,10 +504,8 @@ void Render::generate(model::SequencePtr sequence)
         av_freep(&context->streams[i]);
     }
 
-    if (!(format->flags & AVFMT_NOFILE))
-    {
-        avio_close(context->pb);
-    }
+    ASSERT(!(context->flags & AVFMT_NOFILE))(context);
+    avio_close(context->pb);
     av_free(context);
     gui::StatusBar::get().setProcessingText();
     gui::StatusBar::get().hideProgressBar();
@@ -629,7 +539,7 @@ std::ostream& operator<<( std::ostream& os, const Render& obj )
 {
     os  << &obj           << '|'
         << obj.mFileName << '|'
-        << obj.mOutputFormat;
+        << *obj.mOutputFormat;
     return os;
 }
 
@@ -642,8 +552,6 @@ void Render::serialize(Archive & ar, const unsigned int version)
 {
     ar & mFileName;
     ar & mOutputFormat;
-    ar & mVideoCodec;
-    ar & mAudioCodec;
 }
 template void Render::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Render::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

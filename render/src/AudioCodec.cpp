@@ -1,6 +1,14 @@
 #include "AudioCodec.h"
 
+extern "C" {
+#pragma warning(disable:4244)
+#include <libavformat/avformat.h> // todo move to pch
+#include <libavcodec/avcodec.h>
+#pragma warning(default:4244)
+};
+
 #include "AudioCodecParameter.h"
+#include "Properties.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -67,12 +75,38 @@ ICodecParameters AudioCodec::getParameters()
     return mParameters;
 }
 
-void AudioCodec::setParameters( AVCodecContext* codec ) const
+AVStream* AudioCodec::addStream(AVFormatContext* context) const
 {
+    AVCodec* encoder = avcodec_find_encoder(mId);
+    AVStream* stream = avformat_new_stream(context, encoder);
+    ASSERT(stream);
+
+    AVCodecContext* audio_codec = stream->codec;
+    ASSERT_EQUALS(audio_codec->codec_type,AVMEDIA_TYPE_AUDIO);
+    audio_codec->codec_id = mId;
+    audio_codec->sample_fmt = AV_SAMPLE_FMT_S16;
     BOOST_FOREACH( ICodecParameterPtr parameter, mParameters )
     {
-        parameter->set(codec);
+        parameter->set(audio_codec);
     }
+    audio_codec->sample_rate = Properties::get()->getAudioFrameRate();
+    audio_codec->channels = Properties::get()->getAudioNumberOfChannels();
+
+    if (context->oformat->flags & AVFMT_GLOBALHEADER)
+    {
+        // Some formats want stream headers to be separate
+        audio_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
+    }
+
+    return stream;
+}
+
+void AudioCodec::open(AVCodecContext* context) const
+{
+    AVCodec* codec = avcodec_find_encoder(context->codec_id);
+    ASSERT(codec);
+    int result = avcodec_open(context, codec);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,9 +115,13 @@ void AudioCodec::setParameters( AVCodecContext* codec ) const
 
 std::ostream& operator<<( std::ostream& os, const AudioCodec& obj )
 {
-    os  << &obj    << '|'
-        << obj.mId << '|'
-        << obj.mParameters;
+    os  << "AudioCodec:"
+        << &obj    << '|'
+        << obj.mId << '|';
+    BOOST_FOREACH( ICodecParameterPtr parameter, obj.mParameters )
+    {
+        os << *parameter;
+    }
     return os;
 }
 

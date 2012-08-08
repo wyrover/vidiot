@@ -9,6 +9,8 @@ extern "C" {
 
 #include "UtilCloneable.h"
 
+struct AVFormatContext;
+
 namespace model { namespace render {
 
 // todo idea: make ICloneable template:
@@ -55,6 +57,18 @@ public:
     CodecID getDefaultAudioCodec() const;
     CodecID getDefaultVideoCodec() const;
 
+    bool storeAudio() const; ///< \return true if audio output is requested
+    bool storeVideo() const; ///< \return true if video output is requested
+
+    VideoCodecPtr getVideoCodec() const;
+    void setVideoCodec(VideoCodecPtr codec);
+
+    AudioCodecPtr getAudioCodec() const;
+    void setAudioCodec(AudioCodecPtr codec);
+
+    int checkCodec(CodecID id) const;       ///< \return Result of avformat_query_codec for the current format and given codec
+    AVFormatContext* getContext() const;    ///< \return AVFormatContext to be used for rendering
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -64,9 +78,11 @@ private:
     wxString mName;
     wxString mLongName;
     std::list<wxString> mExtensions;
-
     CodecID mDefaultAudioCodec;
     CodecID mDefaultVideoCodec;
+
+    VideoCodecPtr mVideoCodec;
+    AudioCodecPtr mAudioCodec;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

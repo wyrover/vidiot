@@ -21,6 +21,8 @@
 
 namespace gui {
 
+wxString sIncompatibleHeader(_("Incompatible codec and file type"));
+
 static RenderSettingsDialog* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,10 +78,10 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     fileselect->GetSizer()->Add(mFile,wxSizerFlags(1).Expand());
     fileselect->GetSizer()->Add(mFileButton,wxSizerFlags(0));
 
-    mVideoCodec = new EnumSelector<int>(formatbox, model::render::VideoCodecs::mapToName, mNew->getVideoCodec()->getId());
+    mVideoCodec = new EnumSelector<int>(formatbox, model::render::VideoCodecs::mapToName, mNew->getOutputFormat()->getVideoCodec()->getId());
     mVideoCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onVideoCodecChanged, this);
 
-    mAudioCodec = new EnumSelector<int>(formatbox, model::render::AudioCodecs::mapToName, mNew->getAudioCodec()->getId());
+    mAudioCodec = new EnumSelector<int>(formatbox, model::render::AudioCodecs::mapToName, mNew->getOutputFormat()->getAudioCodec()->getId());
     mAudioCodec->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onAudioCodecChanged, this);
 
     addOption(formatbox,formatboxsizer,_("Output file"), fileselect);
@@ -137,8 +139,8 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     GetSizer()->Add(outputbox,wxSizerFlags(1).Top().Right().Expand().Border());
     GetSizer()->Add(buttons,wxSizerFlags(0).Bottom().Right().Border());
 
-    changeAudioCodecInfo(model::render::AudioCodecPtr(), mNew->getAudioCodec());
-    changeVideoCodecInfo(model::render::VideoCodecPtr(), mNew->getVideoCodec());
+    changeAudioCodecInfo(model::render::AudioCodecPtr(), mNew->getOutputFormat()->getAudioCodec());
+    changeVideoCodecInfo(model::render::VideoCodecPtr(), mNew->getOutputFormat()->getVideoCodec());
 
     enableSetDefaultButton();
     enableRenderButton();
@@ -240,13 +242,10 @@ void RenderSettingsDialog::onFileButtonPressed(wxCommandEvent& event)
 
 void RenderSettingsDialog::onRenderButtonPressed(wxCommandEvent& event)
 {
-    if (checkFilename())
+    if (check())
     {
-        onApplyButtonPressed(event);
+        applyNewRender();
         mRendering = true;
-        enableRenderButton();
-        model::render::Render::schedule(mSequence);
-        model::render::Render::schedule(mSequence);
         model::render::Render::schedule(mSequence);
         Close();
     }
@@ -255,8 +254,11 @@ void RenderSettingsDialog::onRenderButtonPressed(wxCommandEvent& event)
 
 void RenderSettingsDialog::onOkButtonPressed(wxCommandEvent& event)
 {
-    onApplyButtonPressed(event);
-    Close();
+    if (check())
+    {
+        applyNewRender();
+        Close();
+    }
     event.Skip();
 }
 
@@ -268,10 +270,9 @@ void RenderSettingsDialog::onCancelButtonPressed(wxCommandEvent& event)
 
 void RenderSettingsDialog::onApplyButtonPressed(wxCommandEvent& event)
 {
-    if (checkFilename())
+    if (check())
     {
-        mSequence->setRender(make_cloned<model::render::Render>(mNew));
-        mOriginal = make_cloned<model::render::Render>(mNew);
+        applyNewRender();
     }
     event.Skip();
 }
@@ -302,24 +303,92 @@ wxButton* RenderSettingsDialog::getFileButton() const
     return mFileButton;
 }
 
+wxButton* RenderSettingsDialog::getRenderButton() const
+{
+    return mRenderButton;
+}
+
+wxButton* RenderSettingsDialog::getOkButton() const
+{
+    return mOkButton;
+}
+
+wxButton* RenderSettingsDialog::getCancelButton() const
+{
+    return mCancelButton;
+}
+
+wxButton* RenderSettingsDialog::getApplyButton() const
+{
+    return mApplyButton;
+}
+
+wxWindow* RenderSettingsDialog::getAudioParam(int index) const
+{
+    return mAudioParameterWidgets[index];
+}
+
+wxWindow* RenderSettingsDialog::getVideoParam(int index) const
+{
+    return mVideoParameterWidgets[index];
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
 void RenderSettingsDialog::updateAudioCodec()
 {
-    model::render::AudioCodecPtr old = mNew->getAudioCodec();
-    mNew->setAudioCodec(model::render::AudioCodecs::find(static_cast<CodecID>(mAudioCodec->getValue())));
-    changeAudioCodecInfo(old, mNew->getAudioCodec());
-    enableSetDefaultButton();
+    model::render::AudioCodecPtr old = mNew->getOutputFormat()->getAudioCodec();
+    CodecID newCodecID = static_cast<CodecID>(mAudioCodec->getValue());
+    bool useNewCodecID = true;
+    if (mNew->getOutputFormat()->checkCodec(newCodecID) == 0)
+    {
+        gui::Dialog::get().getConfirmation(sIncompatibleHeader,_("This audio codec can not be stored in the given file type"));
+        useNewCodecID = false;
+    }
+    else if (mNew->getOutputFormat()->checkCodec(newCodecID) < 0)
+    {
+        int result = gui::Dialog::get().getConfirmation(sIncompatibleHeader,_("This audio codec may cause problems with the given file type (cannot determine if this will work properly)."), wxOK | wxCANCEL);
+        useNewCodecID = (result == wxOK);
+    }
+    if (useNewCodecID)
+    {
+        mNew->getOutputFormat()->setAudioCodec(model::render::AudioCodecs::find(static_cast<CodecID>(mAudioCodec->getValue())));
+        changeAudioCodecInfo(old, mNew->getOutputFormat()->getAudioCodec());
+        enableSetDefaultButton();
+    }
+    else
+    {
+        mAudioCodec->select(old->getId());
+    }
 }
 
 void RenderSettingsDialog::updateVideoCodec()
 {
-    model::render::VideoCodecPtr old = mNew->getVideoCodec();
-    mNew->setVideoCodec(model::render::VideoCodecs::find(static_cast<CodecID>(mVideoCodec->getValue())));
-    changeVideoCodecInfo(old, mNew->getVideoCodec());
-    enableSetDefaultButton();
+    model::render::VideoCodecPtr old = mNew->getOutputFormat()->getVideoCodec();
+    CodecID newCodecID = static_cast<CodecID>(mVideoCodec->getValue());
+    bool useNewCodecID = true;
+    if (mNew->getOutputFormat()->checkCodec(newCodecID) == 0)
+    {
+        gui::Dialog::get().getConfirmation(sIncompatibleHeader,_("This video codec can not be stored in the given file type"));
+        useNewCodecID = false;
+    }
+    else if (mNew->getOutputFormat()->checkCodec(newCodecID) < 0)
+    {
+        int result = gui::Dialog::get().getConfirmation(sIncompatibleHeader,_("This video codec may cause problems with the given file type (cannot determine if this will work properly)."), wxOK | wxCANCEL);
+        useNewCodecID = (result == wxOK);
+    }
+    if (useNewCodecID)
+    {
+        mNew->getOutputFormat()->setVideoCodec(model::render::VideoCodecs::find(static_cast<CodecID>(mVideoCodec->getValue())));
+        changeVideoCodecInfo(old, mNew->getOutputFormat()->getVideoCodec());
+        enableSetDefaultButton();
+    }
+    else
+    {
+        mVideoCodec->select(old->getId());
+    }
 }
 
 void RenderSettingsDialog::changeAudioCodecInfo(model::render::AudioCodecPtr oldAudioCodec, model::render::AudioCodecPtr newAudioCodec)
@@ -327,6 +396,7 @@ void RenderSettingsDialog::changeAudioCodecInfo(model::render::AudioCodecPtr old
     mAudioParameters->Disable();
     if (oldAudioCodec)
     {
+        mVideoParameterWidgets.clear();
         BOOST_FOREACH( model::render::ICodecParameterPtr parameter, oldAudioCodec->getParameters() )
         {
             parameter->destroyWidget();
@@ -336,14 +406,15 @@ void RenderSettingsDialog::changeAudioCodecInfo(model::render::AudioCodecPtr old
     if (newAudioCodec)
     {
         wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getAudioCodec()->getParameters() )
+        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getOutputFormat()->getAudioCodec()->getParameters() )
         {
-            addOption(mAudioParameters,vSizer,parameter->getName(),parameter->makeWidget(mAudioParameters,this));
+            wxWindow* window = parameter->makeWidget(mAudioParameters,this);
+            addOption(mAudioParameters,vSizer,parameter->getName(),window);
+            mAudioParameterWidgets.push_back(window);
         }
         mAudioParameters->SetSizer(vSizer);
         mAudioParameters->Layout();
         mAudioParameters->Enable();
-
     }
 }
 
@@ -352,6 +423,7 @@ void RenderSettingsDialog::changeVideoCodecInfo(model::render::VideoCodecPtr old
     mVideoParameters->Disable();
     if (oldVideoCodec)
     {
+        mVideoParameterWidgets.clear();
         BOOST_FOREACH( model::render::ICodecParameterPtr parameter, oldVideoCodec->getParameters() )
         {
             parameter->destroyWidget();
@@ -361,9 +433,11 @@ void RenderSettingsDialog::changeVideoCodecInfo(model::render::VideoCodecPtr old
     if (newVideoCodec)
     {
         wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getVideoCodec()->getParameters() )
+        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getOutputFormat()->getVideoCodec()->getParameters() )
         {
-            addOption(mVideoParameters,vSizer,parameter->getName(),parameter->makeWidget(mVideoParameters,this));
+            wxWindow* window = parameter->makeWidget(mVideoParameters,this);
+            addOption(mVideoParameters,vSizer,parameter->getName(),window);
+            mVideoParameterWidgets.push_back(window);
         }
         mVideoParameters->SetSizer(vSizer);
         mVideoParameters->Layout();
@@ -392,14 +466,27 @@ void RenderSettingsDialog::enableSetDefaultButton()
     }
 }
 
-bool RenderSettingsDialog::checkFilename()
+bool RenderSettingsDialog::check()
 {
     if (!mNew->checkFileName())
     {
-        wxMessageBox(_("Select output file first."), _("No file selected"), wxOK | wxCENTRE, this);
+        gui::Dialog::get().getConfirmation(_("Select output file first."), _("No file selected"));
+        return false;
+    }
+    if (!mNew->getOutputFormat()->storeVideo() && !mNew->getOutputFormat()->storeAudio())
+    {
+        gui::Dialog::get().getConfirmation(_("Nothing to render"),_("Select at least a video or audio codec."));
         return false;
     }
     return true;
+}
+
+void RenderSettingsDialog::applyNewRender()
+{
+    ASSERT(check());
+    mSequence->setRender(make_cloned<model::render::Render>(mNew));
+    mOriginal = make_cloned<model::render::Render>(mNew);
+    ASSERT_EQUALS(*mOriginal,*mNew);
 }
 
 } //namespace
