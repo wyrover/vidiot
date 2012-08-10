@@ -1,16 +1,9 @@
 #include "AudioFile.h"
 
-// Include at top, to exclude the intmax macros and use the boost versions
-#undef INTMAX_C
-#undef UINTMAX_C
-extern "C" {
-#include <libavformat/avformat.h>
-#include <libavcodec/avcodec.h>
-};
-
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 #include "AudioChunk.h"
+#include "Convert.h"
 #include "Node.h"
 
 namespace model
@@ -177,7 +170,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 
     pts += static_cast<double>(nSamples) / static_cast<double>(/*nAudioChannels * already done before resampling */audioRate);
 
-    AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, pts);
+    AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, Convert::doubleToInt(pts));
     VAR_AUDIO(this)(audioChunk);
     return audioChunk;
 }

@@ -1,14 +1,5 @@
 #include "FilePacket.h"
 
-#pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.
-
-extern "C" {
-#ifdef _MSC_VER
-#include "stdint.h"
-#endif // _MSC_VER
-#include <libavcodec/avcodec.h>
-};
-
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////

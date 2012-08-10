@@ -1,11 +1,5 @@
 #include "OutputFormat.h"
 
-extern "C" {
-#pragma warning(disable:4244)
-#include <libavformat/avformat.h>
-#pragma warning(default:4244)
-};
-
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
 #include "UtilLog.h"

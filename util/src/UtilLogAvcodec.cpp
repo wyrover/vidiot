@@ -4,12 +4,6 @@
 #include "UtilEnum.h"
 #include "UtilLog.h"
 
-#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
-#pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.
-extern "C" {
-#include <libavformat/avformat.h>
-};
-
 // NOTE: First value is the default
 const std::list<LevelString> sLogLevels = boost::assign::list_of
     (std::make_pair(_("None")   ,AV_LOG_QUIET))

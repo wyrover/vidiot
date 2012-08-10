@@ -1,12 +1,6 @@
 #ifndef RENDER_VIDEO_CODECS_H
 #define RENDER_VIDEO_CODECS_H
 
-extern "C" {
-#pragma warning(disable:4244)
-#include <libavcodec/avcodec.h>
-#pragma warning(default:4244)
-}
-
 namespace model { namespace render {
 
 typedef std::map<CodecID,VideoCodecPtr> VideoCodecMap;

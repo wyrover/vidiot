@@ -1,8 +1,6 @@
 #ifndef UTIL_LOG_AVCODEC_H
 #define UTIL_LOG_AVCODEC_H
 
-#include <libavutil/pixfmt.h>
-
 struct AVRational;
 struct AVCodecContext;
 struct AVFormatContext;

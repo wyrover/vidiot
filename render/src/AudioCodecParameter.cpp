@@ -1,9 +1,5 @@
 #include "AudioCodecParameter.h"
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-};
-
 #include "Config.h"
 
 namespace model { namespace render {

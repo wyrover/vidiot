@@ -1,7 +1,4 @@
 #include "VideoFrame.h"
-extern "C" {
-#include <libavformat/avformat.h>
-};
 
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"

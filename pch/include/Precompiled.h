@@ -1,6 +1,15 @@
 #ifndef PRECOMPILED_H
 #define PRECOMPILED_H
 
+extern "C" {
+#pragma warning(disable:4244)
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavutil/pixfmt.h>
+#include <libswscale/swscale.h>
+#pragma warning(default:4244)
+};
+
 #include <algorithm>
 #include <boost/archive/archive_exception.hpp>
 #include <boost/archive/text_iarchive.hpp>
