@@ -87,7 +87,6 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
     }
     video_codec->width = Properties::get()->getVideoSize().GetWidth(); // resolution must be a multiple of two
     video_codec->height = Properties::get()->getVideoSize().GetHeight();
-    // todo check the bitrate, see if it's being set
     // todo assert a certain minimum size
     // todo asserts for even numbers
 

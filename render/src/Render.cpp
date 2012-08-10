@@ -202,7 +202,7 @@ void Render::scheduleAll()
 void Render::generate(model::SequencePtr sequence)
 {
     sequence->moveTo(0);
-    int length = sequence->getLength(); // todo resolve warning
+    int length = sequence->getLength();
     gui::StatusBar::get().showProgressBar(length);
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     gui::StatusBar::get().setProcessingText(ps);

@@ -57,12 +57,8 @@ void OutputFormats::initialize()
         }
     }
 }
-// todo use AVoutputformat->int(* 	query_codec )(enum CodecID id, int std_compliance)
-// Test if the given codec can be stored in this container.
-//1 if the codec is supported, 0 if it is not. A negative number if unknown.
-//
 
-    // static
+// static
 OutputFormatList OutputFormats::getList()
 {
     return make_cloned<OutputFormat>(sOutputFormats);
