@@ -50,7 +50,6 @@ void TestSavingAndLoading::testSaveAndLoad()
     triggerMenu(wxID_CLOSE);
     bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
     ASSERT(removed);
-    // Todo test all types of codecs, and parameters...
 }
 
 } // namespace

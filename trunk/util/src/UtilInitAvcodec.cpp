@@ -5,12 +5,6 @@
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 
-#pragma warning ( disable : 4005 ) // Redefinition of INTMAX_C/UINTMAX_C by boost and ffmpeg
-#pragma warning ( disable : 4244 ) // Conversion from int64 to int32 in method that explicitly does so.
-extern "C" {
-#include <libavformat/avformat.h>
-};
-
 boost::bimap<int, wxString> Avcodec::mapAvcodecLevels = boost::assign::list_of<boost::bimap<int, wxString>::relation >
             (AV_LOG_QUIET,     _("None"))
             (AV_LOG_FATAL,     _("Fatal"))

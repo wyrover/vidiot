@@ -1,12 +1,5 @@
 #include "AudioCodec.h"
 
-extern "C" {
-#pragma warning(disable:4244)
-#include <libavformat/avformat.h> // todo move to pch
-#include <libavcodec/avcodec.h>
-#pragma warning(default:4244)
-};
-
 #include "AudioCodecParameter.h"
 #include "Properties.h"
 #include "UtilList.h"

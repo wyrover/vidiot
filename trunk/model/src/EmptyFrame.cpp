@@ -1,7 +1,5 @@
 #include "EmptyFrame.h"
-extern "C" {
-#include <libavformat/avformat.h>
-};
+
 #include "UtilInitAvcodec.h"
 
 namespace model {

@@ -1,12 +1,5 @@
 #include "VideoCodec.h"
 
-extern "C" {
-#pragma warning(disable:4244)
-#include <libavformat/avformat.h> // todo move to pch
-#include <libavcodec/avcodec.h>
-#pragma warning(default:4244)
-};
-
 #include "Properties.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"

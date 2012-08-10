@@ -1,7 +1,6 @@
 #ifndef UTIL_INIT_AVCODEC_H
 #define UTIL_INIT_AVCODEC_H
 
-#include <libavutil/pixfmt.h>
 #include <stdarg.h> // va_list
 
 struct AVRational;

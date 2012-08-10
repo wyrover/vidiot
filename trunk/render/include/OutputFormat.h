@@ -1,15 +1,7 @@
 #ifndef RENDER_OUTPUT_FORMAT_H
 #define RENDER_OUTPUT_FORMAT_H
 
-extern "C" {
-#pragma warning(disable:4244)
-#include <libavcodec/avcodec.h>
-#pragma warning(default:4244)
-}
-
 #include "UtilCloneable.h"
-
-struct AVFormatContext;
 
 namespace model { namespace render {
 

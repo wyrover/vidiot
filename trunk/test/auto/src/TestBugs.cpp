@@ -11,10 +11,12 @@ namespace test {
 
 void TestBugs::setUp()
 {
+    mProjectFixture.init();
 }
 
 void TestBugs::tearDown()
 {
+    mProjectFixture.destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,30 +26,21 @@ void TestBugs::tearDown()
 void TestBugs::testVideoDecodingError()
 {
     StartTestSuite();
-    FixtureProject mProjectFixture;
-    mProjectFixture.init();
     TrimRight(VideoClip(0,3),4);
     TrimRight(VideoClip(0,3),10);
     TrimRight(VideoClip(0,3),15);
     TrimRight(VideoClip(0,3),20);
-    mProjectFixture.destroy();
-
 }
 
 void TestBugs::testHangupAfterResettingDetailsView()
 {
-    FixtureProject mProjectFixture;
-    mProjectFixture.init();
     StartTestSuite();
     Click(VTopQuarterHCenter(VideoClip(0,2)));
     DeselectAllClips();
-    mProjectFixture.destroy();
 }
 
 void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
 {
-    FixtureProject mProjectFixture;
-    mProjectFixture.init();
     StartTestSuite();
     Click(Center(VideoClip(0,3)));
     PositionCursor(HCenter(VideoClip(0,3)));

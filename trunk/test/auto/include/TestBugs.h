@@ -2,6 +2,7 @@
 #define TEST_BUGS_H
 
 #include "SuiteCreator.h"
+#include "FixtureProject.h"
 
 namespace test
 {
@@ -39,7 +40,15 @@ public:
     /// on a clip.
     void testDetailsNotShownAfterMovingTimelineCursor();
 
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    FixtureProject mProjectFixture;
 };
+
 }
 
 using namespace test;

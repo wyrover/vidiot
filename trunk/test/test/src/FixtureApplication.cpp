@@ -52,19 +52,20 @@ bool FixtureGui::tearDownWorld()
 bool FixtureGui::setUp()
 {
     if (ISuite::currentTestIsDisabled()) { return true; } // Test was disabled
-
+    VAR_DEBUG(this);
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for starting the main (application) event loop, not for any dialogs.
     mStartingMainThread = true;
     mBarrierStart.wait();
     mBarrierStarted.wait();
+    VAR_DEBUG(this);
     return true;
 }
 
 bool FixtureGui::tearDown()
 {
     if (ISuite::currentTestIsDisabled()) { return true; } // Test was disabled
-
+    VAR_DEBUG(this);
     wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
     if (doc)
     {
@@ -86,6 +87,7 @@ bool FixtureGui::tearDown()
 
     // Wait until main thread 'OnRun' stopped
     mBarrierStopped.wait();
+    VAR_DEBUG(this);
     return true;
 }
 
@@ -131,6 +133,7 @@ void FixtureGui::mainThread()
     while (true)
     {
         mBarrierStart.wait();
+        VAR_DEBUG(this);
         {
             boost::mutex::scoped_lock lock(mEndMutex);
             if (mEnd) break;
@@ -138,6 +141,7 @@ void FixtureGui::mainThread()
         wxTheApp->CallOnInit();
         wxTheApp->OnRun();
         wxTheApp->OnExit();
+        VAR_DEBUG(this);
         mBarrierStopped.wait();
     }
 

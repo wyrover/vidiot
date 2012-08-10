@@ -1,13 +1,5 @@
 #include "Render.h"
 
-#include "stdint.h"
-extern "C" {
-#pragma warning(disable:4244)
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-#pragma warning(default:4244)
-}
-
 #include "AudioChunk.h"
 #include "AudioCodec.h"
 #include "AudioCodecs.h"

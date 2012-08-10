@@ -1,12 +1,5 @@
 #include "File.h"
 
-// Include at top, to exclude the intmax macros and use the boost versions
-#undef INTMAX_C
-#undef UINTMAX_C
-extern "C" {
-#include <libavformat/avformat.h>
-};
-
 #include <boost/filesystem/operations.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>

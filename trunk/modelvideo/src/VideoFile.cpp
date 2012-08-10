@@ -1,14 +1,5 @@
 #include "VideoFile.h"
 
-// Include at top, to exclude the intmax macros and use the boost versions
-#undef INTMAX_C
-#undef UINTMAX_C
-#define CONFIG_SWSCALE_ALPHA
-extern "C" {
-#include <libswscale/swscale.h>
-#include <libavformat/avformat.h>
-}
-
 #include "Convert.h"
 #include "Node.h"
 #include "Properties.h"
