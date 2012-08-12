@@ -2,15 +2,15 @@
 #define MODEL_I_CLIP_H
 
 #include "IControl.h"
-#include "UtilCloneable.h"
 #include "UtilInt.h"
+#include "UtilRTTI.h"
 
 namespace model {
 
 class IClip
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
-    ,   public ICloneable
+    ,   public IRTTI
     ,   public boost::enable_shared_from_this<IClip>
 {
 public:
@@ -22,11 +22,7 @@ public:
     IClip();
     virtual ~IClip() {};
 
-    //////////////////////////////////////////////////////////////////////////
-    // ICLONEABLE
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual IClip* clone() const override = 0;
+    virtual IClip* clone() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // TRACK

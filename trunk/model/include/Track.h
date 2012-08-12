@@ -11,7 +11,7 @@ class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
     ,   public boost::enable_shared_from_this<Track>
-    ,   public ICloneable
+    ,   public Cloneable<Track>
 {
 public:
 
@@ -21,13 +21,17 @@ public:
 
     Track();
 
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    ///
     /// \return a clone of the track, that can be used for rendering
     /// The track is cloned just before the rendering is started. That ensures
     /// that the sequence can be edited further, while the 'previous version' is
     /// being rendered. This clone does not need to copy all attributes, since the
     /// only action done with it is rendering. In fact, only the minimal cloning
     /// should be done, for performance reasons.
-    virtual Track* clone() const override;
+    ///
+    /// \see make_cloned
+    Track(const Track& other);
 
     virtual ~Track();
 
@@ -79,14 +83,6 @@ public:
     void setIndex(int index);       ///< @param index new index of this track
 
 protected:
-
-    //////////////////////////////////////////////////////////////////////////
-    // COPY CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// \see make_cloned
-    Track(const Track& other);
 
     //////////////////////////////////////////////////////////////////////////
     // ITERATION

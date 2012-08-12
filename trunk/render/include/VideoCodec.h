@@ -6,7 +6,7 @@
 namespace model { namespace render {
 
 class VideoCodec
-    :   public ICloneable
+    :   public Cloneable<VideoCodec>
 {
 public:
 
@@ -19,7 +19,6 @@ public:
     explicit VideoCodec(CodecID id);
     VideoCodec(const VideoCodec& other);
 	virtual ~VideoCodec();
-    virtual VideoCodec* clone() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // OPERATORS

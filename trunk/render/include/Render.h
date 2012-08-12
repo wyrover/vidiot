@@ -8,7 +8,7 @@ namespace model { namespace render {
 
 class Render
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public ICloneable
+    ,   public Cloneable<Render>
     ,   public boost::enable_shared_from_this<Render>
 {
 public:
@@ -27,8 +27,6 @@ public:
     Render(const Render& other);
 
 	virtual ~Render();
-
-    virtual Render* clone() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // OPERATORS

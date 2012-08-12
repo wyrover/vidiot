@@ -36,11 +36,6 @@ Track::Track(const Track& other)
     // NOTE: updateClips() is never called here!
 }
 
-Track* Track::clone() const
-{
-    return new Track(static_cast<const Track&>(*this));
-}
-
 Track::~Track()
 {
     VAR_DEBUG(this);

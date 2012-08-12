@@ -5,12 +5,15 @@
 
 /// Needed for cloning in class hierarchies starting with abstract base classes.
 /// Use the method make_cloned to make copies of objects
-class ICloneable
-    :   public IRTTI
+template <typename MOSTDERIVED>
+struct Cloneable 
+    : public IRTTI
 {
-public:
-    virtual ~ICloneable() {};
-    virtual ICloneable* clone() const = 0;
+    virtual MOSTDERIVED* clone() const
+    {
+        return new MOSTDERIVED(static_cast<const MOSTDERIVED&>(*this));
+    }
+    virtual ~Cloneable() {}
 };
 
 template <typename T>

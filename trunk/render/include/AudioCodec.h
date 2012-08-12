@@ -6,7 +6,7 @@
 namespace model { namespace render {
 
 class AudioCodec
-    :   public ICloneable
+    :   public Cloneable<AudioCodec>
 {
 public:
 
@@ -18,7 +18,6 @@ public:
     explicit AudioCodec(CodecID id);
     AudioCodec(const AudioCodec& other);
 	virtual ~AudioCodec();
-    virtual AudioCodec* clone() const;
 
     //////////////////////////////////////////////////////////////////////////
     // OPERATORS
