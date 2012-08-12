@@ -59,11 +59,6 @@ Render::Render(const Render& other)
     VAR_DEBUG(this);
 }
 
-Render* Render::clone() const
-{
-    return new Render(static_cast<const Render&>(*this));
-}
-
 Render::~Render()
 {
     VAR_DEBUG(this);

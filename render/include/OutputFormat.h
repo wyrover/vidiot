@@ -5,20 +5,7 @@
 
 namespace model { namespace render {
 
-// todo idea: make ICloneable template:
-template <typename DERIVED>
-class Cloneable //: public ICloneable
-{
-public:
-    virtual DERIVED* clone() const
-    {
-        return new DERIVED(static_cast<const DERIVED&>(*this));
-    }
-    virtual ~Cloneable() {}
-};
-
 class OutputFormat
-    //:   public ICloneable // todo make the clonable template globally used
     :   public Cloneable<OutputFormat>
 {
 public:

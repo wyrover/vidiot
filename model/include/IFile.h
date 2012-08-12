@@ -2,13 +2,11 @@
 #define MODEL_I_FILE_H
 
 #include "IControl.h"
-#include "UtilCloneable.h"
 
 namespace model {
 
 class IFile
     :   public IControl
-    ,   public ICloneable
 {
 public:
 
@@ -20,11 +18,7 @@ public:
 
     virtual ~IFile() {};
 
-    //////////////////////////////////////////////////////////////////////////
-    // ICLONEABLE
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual IFile* clone() const override = 0;
+    virtual IFile* clone() const = 0;
 
 protected:
 

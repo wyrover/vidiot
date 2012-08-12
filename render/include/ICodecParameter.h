@@ -1,8 +1,6 @@
 #ifndef MODEL_RENDER_I_CODEC_PARAMETER_H
 #define MODEL_RENDER_I_CODEC_PARAMETER_H
 
-#include "UtilCloneable.h"
-
 struct AVCodecContext;
 
 namespace model { namespace render {
@@ -13,7 +11,6 @@ struct ICodecParameterChangeListener
 };
 
 struct ICodecParameter
-    :   public ICloneable
 {
     ICodecParameter() {};
     virtual ~ICodecParameter() {};

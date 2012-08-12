@@ -78,11 +78,6 @@ Sequence::Sequence(const Sequence& other)
     VAR_DEBUG(this);
 }
 
-Sequence* Sequence::clone() const
-{
-    return new Sequence(static_cast<const Sequence&>(*this));
-}
-
 Sequence::~Sequence()
 {
     VAR_DEBUG(this);
