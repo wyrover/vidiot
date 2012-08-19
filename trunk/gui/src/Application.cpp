@@ -10,8 +10,6 @@
 #include "UtilLogWxwidgets.h"
 #include "Window.h"
 
-/// \TODO GCC Fix auto-import warning, see http://gnuwin32.sourceforge.net/compile.html (auto import)
-
 namespace gui {
 
 wxIMPLEMENT_APP_NO_MAIN(Application);

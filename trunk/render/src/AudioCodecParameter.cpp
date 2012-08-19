@@ -19,6 +19,4 @@ void AudioCodecParameterBitrate::set(AVCodecContext* codec)
     codec->bit_rate = getValue();
 };
 
-// todo register types for all of the params.
-
 }} //namespace

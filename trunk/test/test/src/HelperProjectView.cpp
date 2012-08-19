@@ -13,6 +13,7 @@
 #include "Timeline.h"
 #include "Sequence.h"
 #include "Dialog.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 

@@ -2,6 +2,7 @@
 
 #include "File.h"
 #include "Folder.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilLogStl.h"

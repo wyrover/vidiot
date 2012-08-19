@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "Sequence.h"
 #include "UtilEnumSelector.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"

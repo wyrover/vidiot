@@ -1,10 +1,11 @@
 #include "AudioFile.h"
 
-#include "UtilLog.h"
-#include "UtilInitAvcodec.h"
 #include "AudioChunk.h"
 #include "Convert.h"
 #include "Node.h"
+
+#include "UtilInitAvcodec.h"
+#include "UtilLog.h"
 
 namespace model
 {
@@ -165,7 +166,7 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     else
     {
         // To be implemented locally: 'make up' pts.
-        NIY;
+        NIY(_("Not supported: Audio data without pts info"));
     }
 
     pts += static_cast<double>(nSamples) / static_cast<double>(/*nAudioChannels * already done before resampling */audioRate);
@@ -202,12 +203,19 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     int result = avcodec_open(getCodec(), audioCodec);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
-    ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16); // TODO handle more nicely (present dialog 'not supported yet', or solve, add support for other sample formats, and test)
-    //AV_SAMPLE_FMT_U8,          ///< unsigned 8 bits
-    //AV_SAMPLE_FMT_S16,         ///< signed 16 bits
-    //AV_SAMPLE_FMT_S32,         ///< signed 32 bits
-    //AV_SAMPLE_FMT_FLT,         ///< float
-    //AV_SAMPLE_FMT_DBL,         ///< double
+    if (getCodec()->sample_fmt != AV_SAMPLE_FMT_S16)
+    {
+        switch (getCodec()->sample_fmt)
+        {
+        case AV_SAMPLE_FMT_U8:  NIY("Unsigned 8 bits audio is not yet supported!"); break;
+        case AV_SAMPLE_FMT_S16: NIY("Signed 16 bits audio is not yet supported!");  break;
+        case AV_SAMPLE_FMT_S32: NIY("Signed 32 bits audio is not yet supported!");  break;
+        case AV_SAMPLE_FMT_FLT: NIY("Floating point audio is not yet supported!");  break;
+        case AV_SAMPLE_FMT_DBL: NIY("Double type audio is not yet supported!");     break;
+        default:                NIY("Unsupported audio type!");                     break;
+        }
+    }
+    ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16);
 
     if ((nAudioChannels != getCodec()->channels) || (audioRate != getCodec()->sample_rate))
     {

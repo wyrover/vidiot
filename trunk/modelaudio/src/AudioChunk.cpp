@@ -1,4 +1,5 @@
 #include "AudioChunk.h"
+
 #include "UtilLog.h"
 
 namespace model {

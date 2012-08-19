@@ -1,9 +1,10 @@
 #include "VideoFrame.h"
 
-#include "UtilInitAvcodec.h"
-#include "UtilLogWxwidgets.h"
 #include "Config.h"
 #include "Constants.h"
+
+#include "UtilInitAvcodec.h"
+#include "UtilLogWxwidgets.h"
 
 namespace model {
 

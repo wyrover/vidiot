@@ -3,10 +3,11 @@
 #include "Convert.h"
 #include "Node.h"
 #include "Properties.h"
+
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
-#include "VideoFrame.h"
 #include "VideoCompositionParameters.h"
+#include "VideoFrame.h"
 
 namespace model {
 
@@ -159,7 +160,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             }
             else
             {
-                NIY;
+                NIY(_("Not supported: Video data without pts info"));
             }
 
             // If there is no previous frame stored as a member, then this is the scenario of the
@@ -181,7 +182,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         ASSERT_MORE_THAN_EQUALS_ZERO(pFrame->repeat_pict);
         if (pFrame->repeat_pict > 0)
         {
-            NIY; // TO BE TESTED: FILES USING 'REPEAT'
+            NIY(_("Video frame repeating is not supported yet"));
         }
 
         static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always

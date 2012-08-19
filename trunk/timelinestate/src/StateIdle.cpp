@@ -26,6 +26,7 @@
 #include "Timeline.h"
 #include "Tooltip.h"
 #include "Track.h"
+
 #include "UtilLog.h"
 #include "ViewMap.h"
 #include "Zoom.h"

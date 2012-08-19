@@ -1,17 +1,18 @@
 #include "Player.h"
 
-#include "UtilLog.h"
-#include "Convert.h"
-#include "VideoDisplay.h"
-#include "EditDisplay.h"
-#include "preview-home.xpm"
-#include "preview-end.xpm"
-#include "preview-next.xpm"
-#include "preview-play.xpm"
-#include "preview-pause.xpm"
-#include "preview-previous.xpm"
 #include "Constants.h"
+#include "Convert.h"
 #include "Cursor.h"
+#include "EditDisplay.h"
+#include "preview-end.xpm"
+#include "preview-home.xpm"
+#include "preview-next.xpm"
+#include "preview-pause.xpm"
+#include "preview-play.xpm"
+#include "preview-previous.xpm"
+
+#include "UtilLog.h"
+#include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
 
 namespace gui {

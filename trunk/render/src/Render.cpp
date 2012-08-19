@@ -13,6 +13,7 @@
 #include "Project.h"
 #include "Properties.h"
 #include "Sequence.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"

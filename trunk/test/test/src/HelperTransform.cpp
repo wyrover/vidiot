@@ -1,12 +1,13 @@
 #include "HelperTransform.h"
 
-#include "HelperWindow.h"
-#include "UtilLog.h"
-#include "Timeline.h"
+#include "Details.h"
+#include "DetailsClip.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
-#include "DetailsClip.h"
-#include "Details.h"
+#include "HelperWindow.h"
+#include "Timeline.h"
+
+#include "UtilLog.h"
 
 namespace test {
 

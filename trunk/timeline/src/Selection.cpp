@@ -9,6 +9,7 @@
 #include "Track.h"
 #include "TrackView.h"
 #include "Transition.h"
+
 #include "UtilLog.h"
 #include "ViewMap.h"
 

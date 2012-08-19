@@ -2,6 +2,7 @@
 #define MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
 
 #include "CodecParameter.h"
+
 #include "UtilEnum.h"
 
 namespace model { namespace render {
@@ -46,8 +47,6 @@ struct VideoCodecParameterGopSize
     void set(AVCodecContext* codec) override;
 };
 
-    //int flags;
-
 //        /**
 //     * Motion estimation algorithm used for video coding.
 //     * 1 (zero), 2 (full), 3 (log), 4 (phods), 5 (epzs), 6 (x1), 7 (hex),
@@ -66,13 +65,6 @@ struct VideoCodecParameterGopSize
 //     * - decoding: Set by libavcodec.
 //     */
 //    AVRational time_base;
-//
-//        /**
-//     * the number of pictures in a group of pictures, or 0 for intra_only
-//     * - encoding: Set by user.
-//     * - decoding: unused
-//     */
-//    int gop_size;
 //
 //    /* - encoding parameters */
 //    float qcompress;  ///< amount of qscale change between easy & hard scenes (0.0-1.0)

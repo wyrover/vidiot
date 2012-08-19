@@ -2,6 +2,7 @@
 
 #include "Player.h"
 #include "Timeline.h"
+
 #include "UtilLog.h"
 
 namespace gui {

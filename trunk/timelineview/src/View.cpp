@@ -1,6 +1,7 @@
 #include "View.h"
 
 #include "Timeline.h"
+
 #include "UtilLog.h"
 #include "ViewUpdateEvent.h"
 #include "Zoom.h"

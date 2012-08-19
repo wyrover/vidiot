@@ -4,6 +4,7 @@
 #include "EmptyFrame.h"
 #include "Layout.h"
 #include "Properties.h"
+
 #include "UtilList.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
