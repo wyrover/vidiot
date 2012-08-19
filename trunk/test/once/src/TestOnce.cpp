@@ -2,6 +2,7 @@
 
 #include <boost/make_shared.hpp>
 #include "HelperConfig.h"
+#include "Worker.h"
 #include "Render.h"
 #include "RenderSettingsDialog.h"
 #include "Sequence.h"
@@ -53,21 +54,6 @@ void TestOnce::testOnce()
     StartTestSuite();
 
     // todo memory leaks bij testauto? Misschien dat daardoor de crashes wel komen?
-    ConfigOverrule<long> overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
-
-    waitForIdle();
-    {
-        StartTest("If cancel is pressed, nothing is changed.");
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        triggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile("D:/out.avi");
-        ClickTopLeft(gui::RenderSettingsDialog::get().getFileButton());
-        waitForIdle();
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-    }
 
     //todo test render->generate();
     pause(600000);

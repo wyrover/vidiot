@@ -218,6 +218,10 @@ Window::~Window()
 
     mUiManager.UnInit();
 
+    wxStatusBar* sb = GetStatusBar();
+    SetStatusBar(0);
+    sb->wxWindowBase::Destroy();
+
     delete mTestCrash; // Unbind the crash method
     setSequenceMenu(0); // Ensure destruction of sequenceMenu
     delete mProjectView;    // First, delete the referring windows.
