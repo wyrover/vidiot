@@ -15,17 +15,20 @@ StatusBar::StatusBar(wxWindow *parent)
     :   wxStatusBar(parent,wxID_ANY,wxSTB_DEFAULT_STYLE)
 {
     SetFieldsCount(getNumberOfStatusBars());
-    setDebugText(_(""));
-    setProcessingText(_(""));
+    setDebugText("");
+    setProcessingText("");
+    setQueueText("");
     mProgress = new wxGauge(this,wxID_ANY,100);
     hideProgressBar();
     Bind(wxEVT_SIZE, &StatusBar::onSize, this);
     sCurrent = this;
+    Worker::get().Bind(EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
 }
 
 StatusBar::~StatusBar()
 {
     sCurrent = 0;
+    Worker::get().Unbind(EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
     Unbind(wxEVT_SIZE, &StatusBar::onSize, this);
 }
 
@@ -46,6 +49,24 @@ void StatusBar::onSize(wxSizeEvent& event)
     bool ok = GetFieldRect(Config::getShowDebugInfo() ? 3 : 2,bb);
     mProgress->SetPosition(bb.GetPosition());
     mProgress->SetSize(bb.GetSize());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// WORKER EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void StatusBar::onWorkerQueueSize(WorkerQueueSizeEvent& event)
+{
+    wxString queuetext("");
+    if (event.getValue() == 1)
+    {
+        queuetext = _("1 item queued");
+    }
+    else if (event.getValue() > 1)
+    {
+        queuetext = wxString::Format("%d %s", event.getValue(), _("items queued"));
+    }
+    setQueueText(queuetext);
 }
 
 //////////////////////////////////////////////////////////////////////////

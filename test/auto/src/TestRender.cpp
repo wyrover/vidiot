@@ -1,6 +1,8 @@
 #include "TestRender.h"
 
+#include "HelperConfig.h"
 #include "HelperTimelinesView.h"
+#include "HelperApplication.h"
 #include "HelperWindow.h"
 #include "ids.h"
 #include "Dialog.h"
@@ -8,6 +10,7 @@
 #include "RenderSettingsDialog.h"
 #include "Sequence.h"
 #include "UtilLog.h"
+#include "Worker.h"
 
 namespace test {
 
@@ -91,6 +94,33 @@ void TestRender::testChangeRenderSettings()
         ClickTopLeft(gui::RenderSettingsDialog::get().getOkButton());
         model::render::RenderPtr current = getCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
+    }
+}
+
+void TestRender::testRendering()
+{
+    StartTestSuite();
+    ConfigOverrule<long> overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
+    // Create directory for holding the output file
+    wxFileName path(wxFileName::GetTempDir(), "");
+    path.AppendDir(randomString(20));
+    ASSERT(!wxDirExists(path.GetLongPath()));
+    path.Mkdir();
+    ASSERT(wxDirExists(path.GetLongPath()));
+    path.SetFullName("out.avi");
+    {
+        StartTest("Render");
+        model::render::RenderPtr original = getCurrentRenderSettings();
+        triggerMenu(ID_RENDERSETTINGS);
+        gui::Dialog::get().setSaveFile(path.GetFullPath());
+        ClickTopLeft(gui::RenderSettingsDialog::get().getFileButton());
+        waitForIdle();
+        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
+        gui::Worker::get().waitUntilWorkExecuted();
     }
 }
 

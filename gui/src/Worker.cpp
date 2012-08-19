@@ -1,8 +1,9 @@
 #include "Worker.h"
 
-#include "StatusBar.h"
-
 namespace gui {
+
+DEFINE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, long);
+DEFINE_EVENT(EVENT_WORKER_EXECUTED_WORK, WorkerExecutedWorkEvent, long);
 
 static const unsigned int sMaximumBufferedWork = 1000;
 static Worker* sCurrent = 0;
@@ -12,7 +13,8 @@ static Worker* sCurrent = 0;
 //////////////////////////////////////////////////////////////////////////
 
 Worker::Worker()
-:   mEnabled(true)
+:   wxEvtHandler()
+,   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
 {
     sCurrent = this;
@@ -45,7 +47,17 @@ Worker& Worker::get()
 void Worker::schedule(WorkPtr work)
 {
     mFifo.push(work);
-    updateQueueText();
+    QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// WAITING UNTIL WORK EXECUTED
+//////////////////////////////////////////////////////////////////////////
+
+void Worker::waitUntilWorkExecuted()
+{
+    boost::mutex::scoped_lock lock(mMutex);
+    mCondition.wait(lock);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,35 +70,15 @@ void Worker::thread()
     while (mEnabled)
     {
         w = mFifo.pop();
-        updateQueueText();
+        QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
 
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
             w->execute();
             w.reset(); // Clear, so that unfreezing is done if needed
-            StatusBar::get().setProcessingText();
-            StatusBar::get().hideProgressBar();
+            boost::mutex::scoped_lock lock(mMutex);
+            mCondition.notify_all();
         }
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void Worker::updateQueueText()
-{
-    if (mFifo.getSize() == 0)
-    {
-        StatusBar::get().setQueueText("");
-    }
-    else if (mFifo.getSize() == 1)
-    {
-        StatusBar::get().setQueueText(_("1 item queued"));
-    }
-    else
-    {
-        StatusBar::get().setQueueText(wxString::Format("%d %s", mFifo.getSize(), _("items queued")));
     }
 }
 

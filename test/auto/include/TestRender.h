@@ -24,6 +24,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testChangeRenderSettings();
+    void testRendering();
 
 private:
 
