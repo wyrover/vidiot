@@ -31,7 +31,7 @@ static RenderSettingsDialog* sCurrent = 0;
 
 void addOption(wxWindow* parent, wxSizer* vSizer, wxString name, wxWindow* option)
 {
-    wxStaticText* wxst = new wxStaticText(parent,wxID_ANY,name);
+    wxStaticText* wxst = new wxStaticText(parent,wxID_ANY,name,wxDefaultPosition,wxDefaultSize,wxST_ELLIPSIZE_MIDDLE);
     wxst->SetMinSize(wxSize(100,-1));
     wxBoxSizer* hSizer = new wxBoxSizer(wxHORIZONTAL);
     hSizer->Add(wxst,wxSizerFlags(1));

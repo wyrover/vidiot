@@ -8,7 +8,7 @@ IMPLEMENTENUM(VideoCodecParameterType);
 
 boost::bimap<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<VideoCodecParameterType, wxString>::relation >
     (BitRate, _("Bit rate"))
-    (GopSize, _("Gop size (max frame distance between 2 I frames)"))
+    (GopSize, _("Gop size (max frame distance between 2 I-frames)"))
     (BFrames, _("B Frames"))
     (MacroBlockDecision, _("Macro block decision"));
 
