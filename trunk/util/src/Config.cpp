@@ -22,17 +22,6 @@ void setDefault(wxString path, T value)
     }
 }
 
-template <class T>
-T readWithoutDefault(wxString path, boost::mutex& mutex)
-{
-    boost::mutex::scoped_lock lock(mutex);
-    T result = T();
-    T dummy = T();
-    bool found = wxConfigBase::Get()->Read(path, &result, dummy);
-    ASSERT(found)(path);
-    return result;
-}
-
 // static
 void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestMode)
 {
@@ -62,6 +51,8 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathSnapCursor, true);
     setDefault(Config::sPathShowBoundingBox, true);
     setDefault(Config::sPathStrip, "scene'2010");
+    setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
+
     wxConfigBase::Get()->Flush();
 
     // Read cached values here
@@ -83,25 +74,25 @@ wxString Config::getFileName()
 // static
 bool Config::ReadBool(const wxString& key)
 {
-    return readWithoutDefault<bool>(key,sMutex);
+    return readWithoutDefault<bool>(key);
 }
 
 // static
 long Config::ReadLong(const wxString& key)
 {
-    return readWithoutDefault<long>(key,sMutex);
+    return readWithoutDefault<long>(key);
 }
 
 // static
 double Config::ReadDouble(const wxString& key)
 {
-    return readWithoutDefault<double>(key,sMutex);
+    return readWithoutDefault<double>(key);
 }
 
 // static
 wxString Config::ReadString(const wxString& key)
 {
-    return readWithoutDefault<wxString>(key,sMutex);
+    return readWithoutDefault<wxString>(key);
 }
 
 // static
@@ -124,6 +115,7 @@ const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
 const wxString Config::sPathLogLevelAvcodec         ("/Debug/LogLevelAvcodec");
 const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
 const wxString Config::sPathTest                    ("/Debug/Test");
+const wxString Config::sPathDebugMaxRenderLength    ("/Debug/MaxRenderLength");
 const wxString Config::sPathDefaultFrameRate        ("/Video/DefaultFrameRate");
 const wxString Config::sPathDefaultVideoWidth       ("/Video/DefaultWidth");
 const wxString Config::sPathDefaultVideoHeight      ("/Video/DefaultHeight");

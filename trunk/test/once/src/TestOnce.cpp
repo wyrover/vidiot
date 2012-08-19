@@ -1,6 +1,7 @@
 #include "TestOnce.h"
 
 #include <boost/make_shared.hpp>
+#include "HelperConfig.h"
 #include "Render.h"
 #include "RenderSettingsDialog.h"
 #include "Sequence.h"
@@ -52,6 +53,7 @@ void TestOnce::testOnce()
     StartTestSuite();
 
     // todo memory leaks bij testauto? Misschien dat daardoor de crashes wel komen?
+    ConfigOverrule<long> overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
 
     waitForIdle();
     {
