@@ -40,6 +40,12 @@ struct VideoCodecParameterMacroBlockDecision
     void set(AVCodecContext* codec) override;
 };
 
+struct VideoCodecParameterGopSize
+    :   public CodecParameterInt<VideoCodecParameterGopSize,VideoCodecParameterType,GopSize>
+{
+    void set(AVCodecContext* codec) override;
+};
+
     //int flags;
 
 //        /**

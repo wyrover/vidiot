@@ -8,7 +8,7 @@ IMPLEMENTENUM(VideoCodecParameterType);
 
 boost::bimap<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<VideoCodecParameterType, wxString>::relation >
     (BitRate, _("Bit rate"))
-    (GopSize, _("Gop size"))
+    (GopSize, _("Gop size (max frame distance between 2 I frames)"))
     (BFrames, _("B Frames"))
     (MacroBlockDecision, _("Macro block decision"));
 
@@ -40,6 +40,11 @@ boost::bimap<int,wxString> MacroBlockDecisionEnumMapping = boost::assign::list_o
 void VideoCodecParameterMacroBlockDecision::set(AVCodecContext* codec)
 {
     codec->mb_decision = getValue();
+};
+
+void VideoCodecParameterGopSize::set(AVCodecContext* codec)
+{
+    codec->gop_size = getValue();
 };
 
 // todo register types for all of the params.
