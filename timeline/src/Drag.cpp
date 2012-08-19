@@ -25,11 +25,12 @@
 #include "TrackCreator.h"
 #include "TrackView.h"
 #include "Transition.h"
+
 #include "UtilInt.h"
 #include "UtilList.h"
-#include "UtilSet.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilSet.h"
 #include "VideoClip.h"
 #include "VideoFile.h"
 #include "VideoTrack.h"

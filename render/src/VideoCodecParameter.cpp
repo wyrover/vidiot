@@ -47,6 +47,4 @@ void VideoCodecParameterGopSize::set(AVCodecContext* codec)
     codec->gop_size = getValue();
 };
 
-// todo register types for all of the params.
-
 }} //namespace

@@ -1,10 +1,11 @@
 #include "EmptyFile.h"
 
-#include "UtilLog.h"
 #include "Convert.h"
-#include "Properties.h"
 #include "EmptyChunk.h"
 #include "EmptyFrame.h"
+#include "Properties.h"
+
+#include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 
 namespace model {

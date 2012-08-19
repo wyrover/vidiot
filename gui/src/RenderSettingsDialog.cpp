@@ -12,6 +12,7 @@
 #include "Render.h"
 #include "Sequence.h"
 #include "UtilFifo.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoCodec.h"

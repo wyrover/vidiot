@@ -2,9 +2,10 @@
 
 #include "ClipEvent.h"
 #include "Track.h"
+
+#include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
-#include "UtilCloneable.h"
 
 namespace model {
 //////////////////////////////////////////////////////////////////////////

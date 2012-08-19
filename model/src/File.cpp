@@ -3,18 +3,19 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include "AudioFile.h"
 #include "AutoFolder.h"
-#include "FilePacket.h"
 #include "Convert.h"
 #include "Dialog.h"
-#include "UtilLog.h"
+#include "FilePacket.h"
+
 #include "UtilInitAvcodec.h"
+#include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "VideoFile.h"
-#include "AudioFile.h"
 
 namespace model {
 

@@ -12,6 +12,7 @@
 #include "ProjectEvent.h"
 #include "ProjectView.h"
 #include "TimelinesView.h"
+
 #include "UtilTestCrash.h"
 #include "UtilLog.h"
 #include "Watcher.h"
@@ -328,12 +329,12 @@ void Window::onOptions(wxCommandEvent& event)
 
 void Window::onHelp(wxCommandEvent& event)
 {
-    NIY;
+    wxMessageBox(_("No help yet..."), _("Help"), wxOK | wxICON_INFORMATION, this);
 }
 
 void Window::onAbout(wxCommandEvent& event)
 {
-    wxMessageBox(_("Vidiot 0.1"), _T("About"), wxOK | wxICON_INFORMATION, this);
+    wxMessageBox(_("Vidiot 0.1"), _("About"), wxOK | wxICON_INFORMATION, this);
 
     event.Skip();
 }

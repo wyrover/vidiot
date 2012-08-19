@@ -1,6 +1,7 @@
 #include "Scrolling.h"
 
 #include "Timeline.h"
+
 #include "UtilLog.h"
 #include "Zoom.h"
 
@@ -21,7 +22,7 @@ Scrolling::Scrolling(Timeline* timeline)
     getTimeline().SetScrollRate( 1, 1 );
     getTimeline().EnableScrolling(true,true);
 }
-    
+
 Scrolling::~Scrolling()
 {
     VAR_DEBUG(this);
@@ -64,6 +65,5 @@ wxPoint Scrolling::getVirtualPosition(wxPoint position) const
     getTimeline().CalcUnscrolledPosition(position.x,position.y,&p.x,&p.y);
     return p;
 }
-
 
 }} // namespace

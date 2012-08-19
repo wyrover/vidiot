@@ -15,6 +15,7 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "TrackView.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoView.h"

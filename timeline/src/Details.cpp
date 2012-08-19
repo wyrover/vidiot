@@ -4,6 +4,7 @@
 #include "IClip.h"
 #include "Layout.h"
 #include "Sequence.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"

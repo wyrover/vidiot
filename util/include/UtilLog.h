@@ -93,10 +93,6 @@ DECLAREENUM(LogLevel, \
 #define VAR_WARNING VAR_X(LogWarning)
 #define VAR_ERROR   VAR_X(LogError)
 
-#define ASSERT(expr)    if ((expr)) ; else  LogVar(#expr,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
-#define FATAL                               LogVar("FATAL", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
-#define NIY                                 LogVar("NIY",   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
-
 #define ASSERT_EQUALS(value1,value2)                ASSERT(value1 == value2)(value1)(value2)
 #define ASSERT_DIFFERS(value1,value2)               ASSERT(value1 != value2)(value1)(value2)
 #define ASSERT_MORE_THAN(value1,value2)             ASSERT(value1 >  value2)(value1)(value2)
@@ -114,6 +110,10 @@ DECLAREENUM(LogLevel, \
 #define ASSERT_MORE_THAN_EQUALS_ZERO(value)         ASSERT(value >= 0)(value)
 #define ASSERT_LESS_THAN_ZERO(value)                ASSERT(value <  0)(value)
 #define ASSERT_LESS_THAN_EQUALS_ZERO(value)         ASSERT(value <= 0)(value)
+
+#define ASSERT(expr)    if ((expr)) ; else  LogVar(#expr,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define FATAL                               LogVar("FATAL", __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
+#define NIY(expr)                           LogVar(expr,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 
 ////////////////////////////////////////////////////////////////////////////////
 // LOG CLASS

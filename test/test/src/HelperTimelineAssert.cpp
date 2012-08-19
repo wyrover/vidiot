@@ -4,6 +4,7 @@
 
 #include "HelperTimelineAssert.h"
 #include "Transition.h"
+
 #include "UtilLog.h"
 #include "VideoClip.h"
 

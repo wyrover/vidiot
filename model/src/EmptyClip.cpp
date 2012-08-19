@@ -1,11 +1,12 @@
 #include "EmptyClip.h"
 
-#include "Calculate.h"
-#include "UtilLog.h"
-#include "EmptyFile.h"
 #include "AudioChunk.h"
-#include "VideoFrame.h"
+#include "Calculate.h"
+#include "EmptyFile.h"
 #include "Transition.h"
+
+#include "UtilLog.h"
+#include "VideoFrame.h"
 
 namespace model {
 

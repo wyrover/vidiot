@@ -1,7 +1,8 @@
 #include "UtilTestCrash.h"
 
-#include "UtilLog.h"
 #include "ids.h"
+
+#include "UtilLog.h"
 
 namespace util {
 

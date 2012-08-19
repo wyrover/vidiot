@@ -7,6 +7,7 @@
 #include "Properties.h"
 #include "Transition.h"
 #include "UtilCloneable.h"
+
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"

@@ -2,6 +2,7 @@
 
 #include <pa_debugprint.h>
 #include <portaudio.h>
+
 #include "UtilLog.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,4 +36,3 @@ void PortAudio::log(const char * log)
     }
     LOG_DEBUG << s;
 }
-

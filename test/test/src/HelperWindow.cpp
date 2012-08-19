@@ -3,6 +3,7 @@
 #include <wx/uiaction.h>
 #include "HelperApplication.h"
 #include "Project.h"
+
 #include "UtilLogWxwidgets.h"
 #include "Window.h"
 

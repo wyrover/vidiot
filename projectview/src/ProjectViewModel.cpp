@@ -17,6 +17,7 @@
 #include "NodeEvent.h"
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
+
 #include "UtilLog.h"
 #include "Window.h"
 

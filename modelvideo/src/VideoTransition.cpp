@@ -3,8 +3,8 @@
 #include "UtilInt.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
-#include "VideoFrame.h"
 #include "VideoCompositionParameters.h"
+#include "VideoFrame.h"
 
 namespace model {
 

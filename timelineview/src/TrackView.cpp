@@ -13,6 +13,7 @@
 #include "TrackEvent.h"
 #include "Transition.h"
 #include "UtilLogWxwidgets.h"
+
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "ViewMap.h"

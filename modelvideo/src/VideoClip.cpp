@@ -5,12 +5,13 @@
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
+
 #include "UtilLog.h"
-#include "VideoFile.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
-#include "VideoCompositionParameters.h"
 #include "VideoClipEvent.h"
+#include "VideoCompositionParameters.h"
+#include "VideoFile.h"
 
 namespace model {
 

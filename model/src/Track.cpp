@@ -1,12 +1,13 @@
 #include "Track.h"
 
 #include "Calculate.h"
-#include "Node.h"
 #include "Clip.h"
 #include "Constants.h"
 #include "EmptyClip.h"
+#include "Node.h"
 #include "TrackEvent.h"
 #include "Transition.h"
+
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"

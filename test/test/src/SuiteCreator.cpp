@@ -4,6 +4,7 @@
 
 #include <boost/optional.hpp>
 #include "Window.h"
+
 #include "UtilLog.h"
 
 namespace test {

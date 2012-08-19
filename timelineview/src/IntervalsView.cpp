@@ -7,6 +7,7 @@
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Zoom.h"
+
 #include "UtilLog.h"
 
 namespace gui { namespace timeline {

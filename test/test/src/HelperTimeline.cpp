@@ -23,6 +23,7 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
+
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"

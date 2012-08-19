@@ -13,6 +13,7 @@
 #include "Timeline.h"
 #include "Transition.h"
 #include "TrimClip.h"
+
 #include "VideoClip.h"
 #include "Zoom.h"
 

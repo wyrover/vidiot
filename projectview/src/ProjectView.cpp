@@ -1,6 +1,5 @@
 #include "ProjectView.h"
 
-#include <boost/serialization/set.hpp>
 #include "AutoFolder.h"
 #include "DataObject.h"
 #include "Dialog.h"
@@ -21,6 +20,7 @@
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
 #include "TimeLinesView.h"
+
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "Window.h"

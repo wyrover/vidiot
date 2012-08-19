@@ -1,9 +1,9 @@
 #include "UtilLog.h"
 
-#include <share.h> // _SH_DENYWR
-#include "UtilFifo.h"
-#include "UtilAssert.h"
 #include "Config.h"
+#include "UtilAssert.h"
+#include "UtilFifo.h"
+#include <share.h> // _SH_DENYWR
 
 IMPLEMENTENUM(LogLevel);
 

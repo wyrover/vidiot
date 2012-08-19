@@ -1,6 +1,7 @@
 #include "ProjectViewCommand.h"
 
 #include "Node.h"
+
 #include "UtilLog.h"
 
 namespace command {

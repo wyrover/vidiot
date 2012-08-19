@@ -1,6 +1,7 @@
 #include "VideoCodec.h"
 
 #include "Properties.h"
+
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilList.h"

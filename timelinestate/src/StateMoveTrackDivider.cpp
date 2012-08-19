@@ -14,6 +14,7 @@
 #include "ThumbnailView.h"
 #include "Tooltip.h"
 #include "Track.h"
+
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "ViewMap.h"
