@@ -43,6 +43,17 @@ public:
         return Enum_fromConfig(result,TYPE());
     }
 
+    template <class T>
+    static T readWithoutDefault(wxString path)
+    {
+        boost::mutex::scoped_lock lock(sMutex);
+        T result = T();
+        T dummy = T();
+        bool found = wxConfigBase::Get()->Read(path, &result, dummy);
+        ASSERT(found)(path);
+        return result;
+    }
+
     // Specific getters for dedicated attributes are only cached for performance
     static bool getShowDebugInfo();
 
@@ -60,6 +71,7 @@ public:
     static const wxString sPathLogLevelAvcodec;
     static const wxString sPathShowDebugInfoOnWidgets;
     static const wxString sPathTest;
+    static const wxString sPathDebugMaxRenderLength;
     static const wxString sPathDefaultFrameRate;
     static const wxString sPathDefaultVideoWidth;
     static const wxString sPathDefaultVideoHeight;

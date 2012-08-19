@@ -3,6 +3,8 @@
 #include "AudioChunk.h"
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
+#include "Config.h"
+#include "Constants.h"
 #include "Convert.h"
 #include "Folder.h"
 #include "StatusBar.h"
@@ -25,10 +27,6 @@ namespace model { namespace render {
 
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
 
-// only 15 seconds
-#define STREAM_DURATION   15.0 // todo replace with actual length, make special setting for only rendering 5s for test
-#define STREAM_FRAME_RATE 25 /* 25 images/s */
-#define STREAM_NB_FRAMES  ((int)(STREAM_DURATION * STREAM_FRAME_RATE))
 static int sws_flags = SWS_BICUBIC;
 
 //////////////////////////////////////////////////////////////////////////
@@ -308,6 +306,15 @@ void Render::generate(model::SequencePtr sequence)
 
     bool done = false;
 
+    long lengthInMilliseconds = Convert::ptsToTime(length);
+    pts lengthInVideoFrames = length;
+    long maxNumberOfFrames = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond);
+    if ((maxNumberOfFrames > 0) && (lengthInVideoFrames > maxNumberOfFrames))
+    {
+        lengthInVideoFrames = maxNumberOfFrames;
+    }
+    long lengthInSeconds = Convert::ptsToTime(lengthInVideoFrames) / Constants::sSecond;
+
     AudioChunkPtr currentAudioChunk = sequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
     while (!done)
     {
@@ -320,7 +327,7 @@ void Render::generate(model::SequencePtr sequence)
             video_pts = (double)video_stream->pts.val * video_stream->time_base.num / video_stream->time_base.den;
         }
 
-        if ((!audio_stream || audio_pts >= STREAM_DURATION) && (!video_stream || video_pts >= STREAM_DURATION))
+        if ((!audio_stream || audio_pts >= lengthInSeconds) && (!video_stream || video_pts >= lengthInSeconds))
         {
             break;
         }
@@ -384,7 +391,7 @@ void Render::generate(model::SequencePtr sequence)
             int out_size, ret;
             struct SwsContext *img_convert_ctx = 0;
 
-            if (frame_count >= STREAM_NB_FRAMES)
+            if (frame_count >= lengthInVideoFrames)
             {
                 // no more frame to compress. The codec has a latency of a few frames if using B frames, so we get the last frames by passing the same picture again
             }
