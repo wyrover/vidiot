@@ -35,20 +35,6 @@ void TestManual::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-template <class ITEMTYPE>
-void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
-{
-    ClickTopLeft(widget);
-    Type(WXK_HOME);
-    for (int step = 0; step < widget->getIndex(value); ++step)
-    {
-        Type(WXK_DOWN);
-    }
-    Type(WXK_RETURN);
-    ASSERT_EQUALS(widget->getValue(),value);
-    waitForIdle();
-}
-
 void TestManual::testManual()
 {
     StartTest("Manual...");
