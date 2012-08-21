@@ -287,6 +287,7 @@ const Details& Timeline::getDetails() const
 
 void Timeline::onSize(wxSizeEvent& event)
 {
+    getSequenceView().invalidateBitmap(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
     resize();
 }
 
@@ -300,12 +301,12 @@ void Timeline::onPaint( wxPaintEvent &event )
     wxPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
-    dc.Clear(); // This is required to have the unused area of the widget with the correct bg colour also
-
     if (mTransaction)
     {
         return;
     }
+
+    //dc.Clear(); // This is required to have the unused area of the widget with the correct bg colour also
 
     wxPoint scroll = getScrolling().getOffset();
 
@@ -325,6 +326,12 @@ void Timeline::onPaint( wxPaintEvent &event )
         int w = upd.GetW();
         int h = upd.GetH();
         dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
+
+        //if (y + h > bitmap.GetHeight())
+        //{
+        //    dc.SetBrush(Layout::get().BackgroundBrush);
+        //    //dc.DrawRectangle(0,y + h + 1, dc.GetSize().GetWidth(), dc.GetSize().GetHeight() - y -h);
+        //}
         upd++;
     }
 
@@ -397,7 +404,7 @@ void Timeline::refreshLines(pixel from, pixel length)
 void Timeline::resize()
 {
     SetVirtualSize(getSequenceView().getSize());
-    Refresh();
+    Refresh(false);
     // NOT: Update(); RATIONALE: This will cause too much updates when
     //                           adding/removing/changing/replacing clips
     //                           which causes flickering.
