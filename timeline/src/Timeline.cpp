@@ -306,8 +306,6 @@ void Timeline::onPaint( wxPaintEvent &event )
         return;
     }
 
-    //dc.Clear(); // This is required to have the unused area of the widget with the correct bg colour also
-
     wxPoint scroll = getScrolling().getOffset();
 
     wxBitmap bitmap = getSequenceView().getBitmap();
@@ -326,12 +324,6 @@ void Timeline::onPaint( wxPaintEvent &event )
         int w = upd.GetW();
         int h = upd.GetH();
         dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
-
-        //if (y + h > bitmap.GetHeight())
-        //{
-        //    dc.SetBrush(Layout::get().BackgroundBrush);
-        //    //dc.DrawRectangle(0,y + h + 1, dc.GetSize().GetWidth(), dc.GetSize().GetHeight() - y -h);
-        //}
         upd++;
     }
 
@@ -345,6 +337,7 @@ void Timeline::onPaint( wxPaintEvent &event )
     //}
 
     getDrag().draw(dc);
+    getTrim().draw(dc);
     getCursor().draw(dc);
 }
 
