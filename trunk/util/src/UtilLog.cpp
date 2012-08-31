@@ -5,6 +5,10 @@
 #include "UtilFifo.h"
 #include <share.h> // _SH_DENYWR
 
+// todo check if log file can be written
+// test scenario: start release version of testmanual, via CTRL-F5, then close (hangs...is another todo)
+// then startup the debug version again...
+
 IMPLEMENTENUM(LogLevel);
 
 boost::bimap<LogLevel, wxString> LogLevelConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<LogLevel, wxString>::relation >
@@ -160,6 +164,7 @@ void Log::exit()
 std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
 {
     static const char* levelstring[] = {"NONE", "ERROR", "WARNING", "INFO", "DEBUG", "VIDEO", "AUDIO", "DETAIL", "ASSERT"};
+    // todo replace boost::format (performance)
     os << boost::format("%s% 8s t@%04x %s(%d) %s ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % levelstring[level] % wxThread::GetCurrentId() % p_szFileName % p_lLine % p_szFunction;
     return os;
 }
