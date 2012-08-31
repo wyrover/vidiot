@@ -35,7 +35,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    boost::shared_ptr<wxBitmap> mCurrentBitmap;
+    wxBitmapPtr mCurrentBitmap;
 
     int mWidth;
     int mHeight;
