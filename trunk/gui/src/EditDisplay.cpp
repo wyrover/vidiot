@@ -37,11 +37,12 @@ EditDisplay::~EditDisplay()
 // SHOW AN EDIT ACTION
 //////////////////////////////////////////////////////////////////////////
 
-void EditDisplay::show(boost::shared_ptr<wxBitmap> bitmap)
+void EditDisplay::show(wxBitmapPtr bitmap)
 {
+    ASSERT(wxThread::IsMain()); // Access to mCurrentBitmap is not threadsafe.
     mCurrentBitmap = bitmap;
     Refresh(false);
-    Update(); // Immediate feedback, do not wait until next onPaint
+    Update();
 }
 
 //////////////////////////////////////////////////////////////////////////
