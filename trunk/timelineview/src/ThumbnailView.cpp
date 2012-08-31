@@ -94,7 +94,6 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     if (clone->getLength() > 0)
     {
         // The if is required to avoid errors during editing operations.
-        clone->moveTo(0);
         model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(requiredSize()));
         wxBitmapPtr thumbnail = videoFrame->getBitmap();
         if (thumbnail)
