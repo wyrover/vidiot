@@ -419,7 +419,7 @@ void VideoDisplay::OnSize(wxSizeEvent& event)
 
 void VideoDisplay::OnPaint(wxPaintEvent& event)
 {
-    boost::shared_ptr<wxBitmap> bitmap;
+    wxBitmapPtr bitmap;
     wxPoint position;
     {
         boost::mutex::scoped_lock lock(mMutexDraw);
