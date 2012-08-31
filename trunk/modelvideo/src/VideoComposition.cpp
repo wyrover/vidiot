@@ -2,7 +2,6 @@
 
 #include "Convert.h"
 #include "EmptyFrame.h"
-#include "Layout.h"
 #include "Properties.h"
 
 #include "UtilList.h"
@@ -81,8 +80,11 @@ VideoFramePtr VideoComposition::generate()
 
     if (mParameters.getDrawBoundingBox())
     {
-        gc->SetPen(gui::Layout::get().PreviewBoundingBoxPen);
-        gc->SetBrush(*wxTRANSPARENT_BRUSH);
+        wxColour PreviewBoundingBoxColour(255,255,255);
+        wxPen PreviewBoundingBoxPen(PreviewBoundingBoxColour, 2);
+        wxBrush brush(PreviewBoundingBoxColour, wxBRUSHSTYLE_TRANSPARENT);
+        gc->SetPen(PreviewBoundingBoxPen);  // todo this pen is created in another thread. Not allowed....
+        gc->SetBrush(brush); // todo create new brush...
         gc->DrawRectangle( 1, 1, requiredOutputSize.GetWidth() - 1, requiredOutputSize.GetHeight() - 1);
     }
 
