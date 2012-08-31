@@ -45,13 +45,8 @@ public:
         conditionNotFull.notify_all();
     }
 
-    /**
-    * Get the front ELEMENT and remove it.
-    * Waits until such a packet is available.
-    * When the returned ptr goes out of scope,
-    * the packet is deleted also (thus, returns
-    * the last reference to the packet).
-    */
+    /// Get the front ELEMENT and remove it. Blocks until a element is available.
+    /// \return found element
     ELEMENT pop()
     {
         boost::mutex::scoped_lock lock(mMutex);
@@ -60,33 +55,31 @@ public:
         {
             conditionNotEmpty.wait(lock);
         }
-        ELEMENT frame = items.front();
+        ELEMENT e = items.front();
         items.pop_front();
         --mSize;
         ASSERT_MORE_THAN_EQUALS_ZERO(mSize);
         conditionNotFull.notify_all();
-        return frame;
+        return e;
     }
 
-    /**
-    * Inserts a copy of this packet in the list.
-    * @return new size of queue
-    */
-    long push(ELEMENT frame)
+    /// Inserts an object in the list.
+    /// If list is full, blocks until list is no longer full.
+    void push(ELEMENT e)
     {
         {
             boost::mutex::scoped_lock lock(mMutex);
 
             while (items.size() == mMaxSize)
             {
+                VAR_WARNING(this);
                 conditionNotFull.wait(lock);
             }
-            items.push_back(frame);
+            items.push_back(e);
             ++mSize;
             ASSERT_MORE_THAN_ZERO(mSize);
         }
         conditionNotEmpty.notify_all();
-        return mSize;
     }
 
 private:
