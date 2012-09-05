@@ -15,7 +15,6 @@
 #include "Transition.h"
 #include "TrimClip.h"
 #include "UtilCloneable.h"
-
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
@@ -30,9 +29,11 @@ namespace gui { namespace timeline {
 
 Trim::Trim(Timeline* timeline)
     :   Part(timeline)
+    ,   mActive(true)
     ,   mStartPosition(0,0)
     ,   mFixedPixel(0)
     ,   mCommand(0)
+    ,   mDc()
 {
     VAR_DEBUG(this);
 }
@@ -51,6 +52,7 @@ void Trim::start()
     LOG_DEBUG;
 
     // Reset first
+    mActive = true;
     mStartPosition = wxPoint(0,0);
     mFixedPixel = 0;
 
@@ -66,6 +68,7 @@ void Trim::start()
 
     model::IClipPtr originalClip;
     model::IClipPtr adjacentClip;
+    bool isBeginTrim = true;
     switch (mPosition)
     {
     case ClipBegin:
@@ -87,6 +90,7 @@ void Trim::start()
         {
             adjacentClip->moveTo(0);
         }
+        isBeginTrim = false;
         break;
     case TransitionRightClipBegin:
         ASSERT(transition);
@@ -115,6 +119,7 @@ void Trim::start()
             adjacentClip->adjustBegin(-transition->getRight());
             adjacentClip->moveTo(0);
         }
+        isBeginTrim = false;
         break;
     case TransitionBegin:
         ASSERT(transition);
@@ -125,6 +130,7 @@ void Trim::start()
         ASSERT(transition);
         originalClip = info.clip;
         transition.reset();
+        isBeginTrim = false;
         break;
     case ClipInterior:
     case TransitionLeftClipInterior:
@@ -136,25 +142,78 @@ void Trim::start()
     ASSERT(originalClip);
 
     mFixedPixel = getScrolling().ptsToPixel(mFixedPts); // See remark above.
-    if (adjacentClip && adjacentClip->isA<model::VideoClip>())
+    if (adjacentClip && (adjacentClip->isA<model::IVideo>()))
     {
-        model::VideoClipPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::VideoClip>(adjacentClip);
+        // This applies to both VideoClip and EmptyClip
+        model::IVideoPtr adjacentvideoclip = boost::dynamic_pointer_cast<model::IVideo>(adjacentClip);
         model::VideoFramePtr adjacentFrame = adjacentvideoclip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(getPlayer()->getVideoSize().GetWidth() / 2,  getPlayer()->getVideoSize().GetHeight())));
         mAdjacentBitmap = adjacentFrame->getBitmap();
     }
 
+    // Prepare for previewing
+    mPreviewVideoClip = boost::dynamic_pointer_cast<model::VideoClip>(make_cloned<model::IClip>(originalClip));
+    if (mPreviewVideoClip)
+    {
+        wxSize playerSize = getPlayer()->getVideoSize();
+
+        model::TransitionPtr inTransition = originalClip->getInTransition();
+        model::TransitionPtr outTransition = originalClip->getOutTransition();
+
+        pts originalOffset = mPreviewVideoClip->getOffset();
+        pts originalLength = mPreviewVideoClip->getLength();
+        if (isBeginTrim)
+        {
+            mStartPositionPreview = originalOffset; // Left begin point
+            if (inTransition)
+            {
+                mStartPositionPreview -= inTransition->getRight(); // Since the trim starts on the position where the two transitioned clips 'touched'
+            }
+        }
+        else
+        {
+            mStartPositionPreview = originalOffset + originalLength - 1; // -1 required since end is 'one too far
+            if (outTransition)
+            {
+                mStartPositionPreview += outTransition->getLeft(); // Since the trim starts on the position where the two transitioned clips 'touched'
+            }
+        }
+        mPreviewVideoClip->maximize();
+
+        mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
+        mDc.SetPen(Layout::get().PreviewBackgroundPen);
+        mBitmapSingle = boost::make_shared<wxBitmap>(playerSize);
+        mDc.SelectObject(*mBitmapSingle);
+        mDc.DrawRectangle(wxPoint(0,0),mDc.GetSize());
+        if (mAdjacentBitmap)
+        {
+            mBitmapSideBySide = boost::make_shared<wxBitmap>(playerSize);
+            mDc.SelectObject(*mBitmapSideBySide);
+            int xAdjacent = (isBeginTrim ? 0 : playerSize.GetWidth() / 2);
+            mDc.DrawBitmap(*mAdjacentBitmap, xAdjacent, (playerSize.GetHeight() - mAdjacentBitmap->GetHeight()) / 2);
+        }
+        mDc.SelectObject(wxNullBitmap);
+    }
+
     mCommand = new command::TrimClip(getSequence(), originalClip, transition, mPosition);
     mCommand->update(0);
+
     preview();
 }
 
 void Trim::update(wxPoint position)
 {
+    VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
     pts diff = getZoom().pixelsToPts(position.x - mStartPosition.x);
     mCommand->update(diff);
     preview();
+
+    //wxPoint pos(mCommand->getShiftStart(),0);
+    //wxSize s(wxSize(mCommand->getDiff(),getTimeline().GetSize().GetHeight()));
+    //getTimeline().RefreshRect(wxRect(pos,s), false);
+
+    // todo bug: shift drag at begin of clip, clip is preceded by empty clip -> preview still shows another clip??
 
     getTimeline().endTransaction();
     getTimeline().Update();
@@ -164,7 +223,7 @@ void Trim::update(wxPoint position)
         // Ensure that the rightmost pts is kept at the same position when shift dragging
 
         // this caused one of the automated test scenarios to fail (the scroll change causes an error in the trim code)
-   //     getScrolling().align(mFixedPts - diff, mFixedPixel);// TODO improve: the feedback looks crappy and sometimes the alignment is incorrect
+        //getScrolling().align(mFixedPts - diff, mFixedPixel);// TODO improve: the feedback looks crappy and sometimes the alignment is incorrect
         // idea: do not change scrolling but just shift the bitmap a bit during the edit operation.
         // do the scroll adjust at the end of the edit operation?
     }
@@ -172,6 +231,9 @@ void Trim::update(wxPoint position)
 
 void Trim::abort()
 {
+    // todo rename into end...or stop. This is always called when exiting statetrim
+    VAR_DEBUG(this);
+    mActive = false;
     if (mCommand)
     {
         delete mCommand;
@@ -182,6 +244,8 @@ void Trim::abort()
 
 void Trim::stop()
 {
+    // todo rename in submit...
+    VAR_DEBUG(this);
     if (mCommand->getDiff() != 0)
     {
         // Only submit the command if there's an actual diff to be applied
@@ -192,72 +256,85 @@ void Trim::stop()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// DRAW
+//////////////////////////////////////////////////////////////////////////
+
+void Trim::draw(wxDC& dc) const
+{
+    return;
+    if (!mActive)
+    {
+        return;
+    }
+
+    if (!wxGetMouseState().ShiftDown())
+    {
+        return;
+    }
+
+    dc.SetPen(Layout::get().SnapPen);
+    dc.SetBrush(Layout::get().SelectedClipBrush);
+    wxPoint pos(getZoom().ptsToPixels(mCommand->getShiftStart()),0);
+    wxSize s(wxSize(getZoom().ptsToPixels(mCommand->getDiff()),dc.GetSize().GetHeight()));
+    dc.DrawRectangle(pos,s);
+}
+
+//////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
 void Trim::preview()
 {
-    if (mCommand->getClip()->isA<model::Transition>()) { return; } // No preview for transition trim
-    model::IClipPtr updatedClip = make_cloned<model::IClip>(mCommand->getClip());
+    if (!mPreviewVideoClip) { return; }
 
-    if (updatedClip->isA<model::VideoClip>())
+    pts diff = mCommand->getDiff();
+    pts position(mStartPositionPreview + diff);
+    wxSize playerSize = getPlayer()->getVideoSize();
+    bool isBeginTrim = mCommand->isBeginTrim();
+    bool drawSideBySide = wxGetMouseState().ShiftDown() && mAdjacentBitmap;
+
+    bool completelyTrimmedAway = false;
+    ASSERT_LESS_THAN_EQUALS(mStartPositionPreview + diff,mPreviewVideoClip->getLength());
+    if (position == mPreviewVideoClip->getLength())
     {
-        if (mCommand->isBeginTrim())
-        {
-            updatedClip->adjustBegin(mCommand->getDiff());
-        }
-        else
-        {
-            updatedClip->adjustEnd(mCommand->getDiff());
-        }
-
-        if (updatedClip->getLength() > 0)
-        {
-            model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(updatedClip);
-            wxSize s = getPlayer()->getVideoSize();
-            bool drawadjacentclip = wxGetMouseState().ShiftDown() && mAdjacentBitmap;
-            int previewwidth = (drawadjacentclip ? s.GetWidth() / 2 : s.GetWidth());
-            int previewxpos = 0;
-            boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
-            wxMemoryDC dc(*bmp);
-
-            pts position(0);
-            if (mCommand->isBeginTrim())
-            {
-                position = 0;
-                previewxpos = s.GetWidth() - previewwidth; // This works for both with and without an adjacent clip
-            }
-            else
-            {
-                position = videoclip->getLength() - 1;
-                previewxpos = 0;
-            }
-            VAR_DEBUG(position);
-            videoclip->moveTo(position);
-
-            // Fill with black
-            dc.SetBrush(Layout::get().PreviewBackgroundBrush);
-            dc.SetPen(Layout::get().PreviewBackgroundPen);
-            dc.DrawRectangle(wxPoint(0,0),dc.GetSize());
-
-            // Draw preview of trim operation
-            model::VideoFramePtr videoFrame = videoclip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(previewwidth, s.GetHeight())));
-            wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
-            if (trimmedBmp)
-            {
-                dc.DrawBitmap(*trimmedBmp, previewxpos, (s.GetHeight() - trimmedBmp->GetHeight()) / 2);
-            }
-
-            // Draw adjacent clip if present. Is only relevant when holding shift
-            if (drawadjacentclip)
-            {
-                int xAdjacent = (mCommand->isBeginTrim() ? 0 : s.GetWidth() / 2);
-                dc.DrawBitmap(*mAdjacentBitmap, xAdjacent, (s.GetHeight() - mAdjacentBitmap->GetHeight()) / 2);
-            }
-            dc.SelectObject(wxNullBitmap);
-            getPlayer()->show(bmp);
-        }
+        ASSERT(isBeginTrim);
+        completelyTrimmedAway = true; // Clip has been trimmed away completely. From the beginning.
     }
+    ASSERT_MORE_THAN_EQUALS(position,-1);
+    if (position == -1)
+    {
+        ASSERT(!isBeginTrim);
+        completelyTrimmedAway = true; // Clip has been trimmed away completely. From the end.
+    }
+
+    pixel w = playerSize.GetWidth();
+    pixel h = playerSize.GetHeight();
+    wxBitmapPtr bitmap = mBitmapSingle;
+    if (drawSideBySide)
+    {
+        w = w / 2;
+        bitmap = mBitmapSideBySide;
+    }
+    int x = isBeginTrim ? playerSize.GetWidth() - w : 0;
+
+    mDc.SelectObject(*bitmap);
+    if (completelyTrimmedAway)
+    {
+        mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
+        mDc.SetPen(Layout::get().PreviewBackgroundPen);
+        mDc.DrawRectangle(x, 0, w, h);
+    }
+    else
+    {
+        mPreviewVideoClip->moveTo(position);
+        model::VideoFramePtr videoFrame = mPreviewVideoClip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(w, h)));
+        ASSERT(videoFrame); // A frame must be possible, due to the 'completelyTrimmedAway' check above.
+        wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
+        ASSERT(trimmedBmp);
+        mDc.DrawBitmap(*trimmedBmp, x, (h - trimmedBmp->GetHeight()) / 2);
+    }
+    mDc.SelectObject(wxNullBitmap);
+    getPlayer()->show(bitmap);
 }
 
 }} // namespace

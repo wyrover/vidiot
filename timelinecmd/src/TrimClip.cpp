@@ -32,6 +32,7 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mMinShiftOtherTrackContent(0)
     ,   mMaxShiftOtherTrackContent(0)
     ,   mSubmitted(false)
+    ,   mShiftStart(0)
 {
     VAR_INFO(this)(mClip)(mTransition)(mPosition);
     wxString cliptype = mOriginalClip->isA<model::Transition>() ? _("transition") : _("clip");
@@ -136,6 +137,11 @@ bool TrimClip::isBeginTrim() const
 pts TrimClip::getDiff() const
 {
     return mTrim;
+}
+
+pts TrimClip::getShiftStart() const
+{
+    return mShiftStart;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -376,6 +382,20 @@ void TrimClip::applyTrim()
     {
         if (mShift)
         {
+            if (isBeginTrim())
+            {
+                mShiftStart = mClip->getLeftPts();
+            }
+            else
+            {
+                mShiftStart = mClip->getRightPts();
+            }
+        }
+        if (mShift/* && false*/) // todo the false to not do this...
+        {
+            // todo for new design: do this shift only AFTER the actual submission is 'ok'
+            // Furthermore, use all tracks, avoid the exclude mechanism
+
             // Move clips in other tracks (that's the 'shift') - and only in other tracks
             // The clips in the same track as mClip and linked are shifted automatically
             // because of the enlargement/reduction of these two clips.

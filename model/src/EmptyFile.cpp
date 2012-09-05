@@ -83,7 +83,7 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
 {
     ASSERT_LESS_THAN_EQUALS(mAudioPosition,mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mAudioPosition++;
-    if (mAudioPosition >= mLength)
+    if (mAudioPosition > mLength)
     {
         return AudioChunkPtr();
     }
@@ -102,7 +102,7 @@ VideoFramePtr EmptyFile::getNextVideo(const VideoCompositionParameters& paramete
 {
     ASSERT_LESS_THAN_EQUALS(mVideoPosition,mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mVideoPosition++;
-    if (mVideoPosition >= mLength)
+    if (mVideoPosition > mLength)
     {
         return VideoFramePtr();
     }

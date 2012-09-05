@@ -507,6 +507,7 @@ void TestTimeline::testDividers()
     }
 }
 
+//RUNONLY(testTrimming)
 void TestTimeline::testTrimming()
 {
     StartTestSuite();

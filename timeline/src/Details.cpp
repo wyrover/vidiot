@@ -52,6 +52,7 @@ void Details::showNone()
 
 void Details::onSelectionChanged()
 {
+    //return; //todo temp: during trimming class Trim should provide the input. Using a clip here causes constant updates during trimming (due to revert()->update() cycles)
     std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
     if (selection.size() == 1)
     {

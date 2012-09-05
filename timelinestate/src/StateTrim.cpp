@@ -19,6 +19,7 @@ const wxString sTooltip = _(
 
 StateTrim::StateTrim( my_context ctx ) // entry
     :   TimeLineState( ctx )
+    ,   mShiftDown(wxGetMouseState().ShiftDown())
 {
     getTrim().start();
 }
@@ -56,15 +57,20 @@ boost::statechart::result StateTrim::react( const EvLeave& evt )
 boost::statechart::result StateTrim::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
-    getTrim().update(evt.mWxEvent.GetPosition());
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_F1:
         getTooltip().show(sTooltip);
         break;
     case WXK_ESCAPE:
-        getTrim().abort();
         return transit<Idle>();
+    case WXK_SHIFT:
+        if (!mShiftDown) // Avoid quirky feedback: when shift dragging, every motion event is followed by a key event. Updating on those key events causes flickering.
+        {
+            mShiftDown = true;
+            getTrim().update(evt.mWxEvent.GetPosition());
+            break;
+        }
     }
     return forward_event();
 }
@@ -72,7 +78,16 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
 boost::statechart::result StateTrim::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
-    getTrim().update(evt.mWxEvent.GetPosition());
+    switch (evt.mWxEvent.GetKeyCode())
+    {
+    case WXK_SHIFT:
+        if (mShiftDown) // Avoid quirky feedback: when shift dragging, every motion event is followed by a key event. Updating on those key events causes flickering.
+        {
+            mShiftDown = false;
+            getTrim().update(evt.mWxEvent.GetPosition());
+            break;
+        }
+    }
     return forward_event();
 }
 

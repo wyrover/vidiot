@@ -72,7 +72,6 @@ public:
 
             while (items.size() == mMaxSize)
             {
-                VAR_WARNING(this);
                 conditionNotFull.wait(lock);
             }
             items.push_back(e);

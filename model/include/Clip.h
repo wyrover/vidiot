@@ -40,6 +40,8 @@ public:
     void setLink(IClipPtr link) override;
     IClipPtr getLink() const override;
 
+    pts getOffset() const;
+
     pts getMinAdjustBegin() const override;
     pts getMaxAdjustBegin() const override;
     void adjustBegin(pts adjustment) override;
@@ -63,16 +65,13 @@ public:
     void invalidateLastSetPosition() override;
     boost::optional<pts> getLastSetPosition() const override;
 
+    //////////////////////////////////////////////////////////////////////////
+    // FOR PREVIEWING
+    //////////////////////////////////////////////////////////////////////////
+
+    void maximize();
+
 protected:
-
-    //////////////////////////////////////////////////////////////////////////
-    // COPY CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Copy constructor. Use make_cloned for making deep copies of objects.
-    /// \note the clone is not automatically part of the track!!!
-    /// \see make_cloned
-    Clip(const Clip& other);
 
     //////////////////////////////////////////////////////////////////////////
     // ACCESS RENDERING OBJECT
@@ -85,6 +84,15 @@ protected:
     {
         return boost::static_pointer_cast<GENERATOR>(mRender);
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    // COPY CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// \note the clone is not automatically part of the track!!!
+    /// \see make_cloned
+    Clip(const Clip& other);
 
 private:
 

@@ -155,6 +155,11 @@ IClipPtr Clip::getLink() const
     return mLink.lock();
 }
 
+pts Clip::getOffset() const
+{
+    return mOffset;
+}
+
 pts Clip::getMinAdjustBegin() const
 {
     ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
@@ -264,6 +269,17 @@ void Clip::invalidateLastSetPosition()
 boost::optional<pts> Clip::getLastSetPosition() const
 {
     return mLastSetPosition;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// FOR PREVIEWING
+//////////////////////////////////////////////////////////////////////////
+
+void Clip::maximize()
+{
+    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
+    mOffset = 0;
+    mLength = mRender->getLength();
 }
 
 //////////////////////////////////////////////////////////////////////////

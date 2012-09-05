@@ -14,6 +14,9 @@ DECLAREENUM(VideoCodecParameterType,
     BFrames,
     MacroBlockDecision);
 
+template < class Archive >
+void registerVideoCodecParameterTypesForSerializaton(Archive& ar);
+
 wxString getHumanReadibleName(VideoCodecParameterType id);
 
 struct VideoCodecParameterBitrate
