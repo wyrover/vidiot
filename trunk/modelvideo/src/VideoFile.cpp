@@ -224,7 +224,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
 wxSize VideoFile::getSize()
 {
-    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
+    // todo updated this
+    openFile();
+//    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
     return wxSize(getCodec()->width, getCodec()->height);
 }
 

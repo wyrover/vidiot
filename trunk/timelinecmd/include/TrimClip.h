@@ -50,6 +50,8 @@ public:
 
     pts getDiff() const;
 
+    pts getShiftStart() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -66,13 +68,11 @@ private:
     bool mLinkIsPartOfTransition;           ///< True if mLink is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
     pts mTrim;
     bool mShift;
-
-    pts mMinShiftOtherTrackContent; ///< Minimum allowed shift (to the left) of 'other' tracks
-    pts mMaxShiftOtherTrackContent; ///< Maximum allowed shift (to the right) of 'other' tracks
-
-    MouseOnClipPosition mPosition;  ///< The logical mouse position where the trim was started
-
-    bool mSubmitted;                ///< True if the command has actually been submitted, false if it's only used during the edit process which is aborted
+    pts mMinShiftOtherTrackContent;         ///< Minimum allowed shift (to the left) of 'other' tracks
+    pts mMaxShiftOtherTrackContent;         ///< Maximum allowed shift (to the right) of 'other' tracks
+    MouseOnClipPosition mPosition;          ///< The logical mouse position where the trim was started
+    pts mShiftStart;                        ///< Position at which the shift will start
+    bool mSubmitted;                        ///< True if the command has actually been submitted, false if it's only used during the edit process which is aborted
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -41,14 +41,9 @@ void registerClasses(Archive& ar)
     ar.template register_type<Folder>();
     ar.template register_type<Properties>();
     ar.template register_type<render::AudioCodec>();
-    ar.template register_type<render::AudioCodecParameterBitrate>();
     ar.template register_type<render::OutputFormat>();
     ar.template register_type<render::Render>();
     ar.template register_type<render::VideoCodec>();
-    ar.template register_type<render::VideoCodecParameterBFrames>();
-    ar.template register_type<render::VideoCodecParameterBitrate>();
-    ar.template register_type<render::VideoCodecParameterBitrateTolerance>();
-    ar.template register_type<render::VideoCodecParameterMacroBlockDecision>();
     ar.template register_type<Sequence>();
     ar.template register_type<Track>();
     ar.template register_type<Transition>();
@@ -56,6 +51,8 @@ void registerClasses(Archive& ar)
     ar.template register_type<VideoClip>();
     ar.template register_type<VideoFile>();
     ar.template register_type<VideoTrack>();
+    render::registerVideoCodecParameterTypesForSerializaton(ar);
+    render::registerAudioCodecParameterTypesForSerializaton(ar);
 }
 
 template void registerClasses<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);

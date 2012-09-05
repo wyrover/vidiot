@@ -5,7 +5,7 @@
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
-
+#include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"

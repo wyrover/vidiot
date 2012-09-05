@@ -113,7 +113,7 @@ void Track::addClips(IClips clips, IClipPtr position)
 
     updateClips();
 
-    moveTo(0); // Required since the iteration has become invalid.
+    mItClips == mClips.end(); // Required since the iteration has become invalid.
 
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
@@ -140,7 +140,7 @@ void Track::removeClips(IClips clips)
 
     updateClips();
 
-    moveTo(0); // Required since the iteration has become invalid.
+    mItClips == mClips.end(); // Required since the iteration has become invalid.
 
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).

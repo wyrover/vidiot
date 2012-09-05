@@ -9,6 +9,9 @@ namespace model { namespace render {
 DECLAREENUM(AudioCodecParameterType, \
     AudioBitRate);
 
+template < class Archive >
+void registerAudioCodecParameterTypesForSerializaton(Archive& ar);
+
 wxString getHumanReadibleName(AudioCodecParameterType id);
 
 struct AudioCodecParameterBitrate
