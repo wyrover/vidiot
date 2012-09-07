@@ -209,12 +209,6 @@ void Trim::update(wxPoint position)
     mCommand->update(diff);
     preview();
 
-    //wxPoint pos(mCommand->getShiftStart(),0);
-    //wxSize s(wxSize(mCommand->getDiff(),getTimeline().GetSize().GetHeight()));
-    //getTimeline().RefreshRect(wxRect(pos,s), false);
-
-    // todo bug: shift drag at begin of clip, clip is preceded by empty clip -> preview still shows another clip??
-
     getTimeline().endTransaction();
     getTimeline().Update();
 
@@ -229,9 +223,8 @@ void Trim::update(wxPoint position)
     }
 }
 
-void Trim::abort()
+void Trim::stop()
 {
-    // todo rename into end...or stop. This is always called when exiting statetrim
     VAR_DEBUG(this);
     mActive = false;
     if (mCommand)
@@ -242,9 +235,8 @@ void Trim::abort()
     }
 }
 
-void Trim::stop()
+void Trim::submit()
 {
-    // todo rename in submit...
     VAR_DEBUG(this);
     if (mCommand->getDiff() != 0)
     {

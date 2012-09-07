@@ -139,7 +139,6 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    public://todo updated
     void openFile();
     void closeFile();
 

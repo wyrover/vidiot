@@ -26,7 +26,7 @@ StateTrim::StateTrim( my_context ctx ) // entry
 
 StateTrim::~StateTrim() // exit
 {
-    getTrim().abort();
+    getTrim().stop();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
     getTrim().update(evt.mWxEvent.GetPosition());
-    getTrim().stop();
+    getTrim().submit();
     return transit<Idle>();
 }
 
