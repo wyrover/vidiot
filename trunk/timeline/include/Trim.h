@@ -49,12 +49,11 @@ public:
     void update(wxPoint position);
 
     /// Abort a pending trim operation. If changes were made, undo them.
-    void abort();
-
-    /// Stop any pending trim operation. Do not undo the change that was done.
-    /// Instead, ensure that the operation becomes undoable via the submit of
-    /// the command.
     void stop();
+
+    /// Submit any pending trim operation. Do not undo the change that was done.
+    /// Instead, ensure that the operation becomes undoable.
+    void submit();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW
