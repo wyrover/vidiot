@@ -36,7 +36,6 @@ StateTrim::~StateTrim() // exit
 boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
-    getTrim().update(evt.mWxEvent.GetPosition());
     getTrim().submit();
     return transit<Idle>();
 }

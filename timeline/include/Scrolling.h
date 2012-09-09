@@ -9,7 +9,7 @@ namespace gui { namespace timeline {
 
 DECLARE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts); // Holds the new x position
 
-/// Virtual position:  position in the virtual area. That is, the entire area 
+/// Virtual position:  position in the virtual area. That is, the entire area
 ///                    that is accessible when using the scrollbars.
 /// Physical position: position in coordinates of the viewable area.
 class Scrolling
@@ -40,6 +40,7 @@ public:
 
     /// \param position position in the sequence
     /// \return physical position on the scroll window canvas
+    /// \note this conversion includes the required computations for taking zooming into account
     pixel ptsToPixel(pts position) const;
 
     /// \return physical position

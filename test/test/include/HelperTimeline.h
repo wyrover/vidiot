@@ -64,30 +64,89 @@ model::IClipPtr AudioClip(int trackindex = 0, int clipindex = 0);
 int getNonEmptyClipsCount();     ///< \return number of non-empty clips (both audio and video) in given timeline
 int getSelectedClipsCount(); ///< \return number of selected clips (both audio and video) in given timeline
 
-pixel VCenter(model::TrackPtr track);          ///< \return vertical center pixel of given track
+/// \return vertical center pixel of given track within the sequence view
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel VCenter(model::TrackPtr track);
 
-pixel LeftPixel(model::IClipPtr clip);               ///< \return left x position of given clip. Note: Returns the leftmost pixel value in the timeline that corresponds to the given clip.
-pixel RightPixel(model::IClipPtr clip);              ///< \return right x position of given clip. Note: Returns the rightmost pixel value in the timeline that corresponds to the given clip.
-pixel TopPixel(model::IClipPtr clip);                ///< \return top y position of given clip
-pixel BottomPixel(model::IClipPtr clip);             ///< \return bottom y position of given clip
+/// \return left x position of given clip within the sequence view. Note: Returns the leftmost pixel value in the timeline that corresponds to the given clip.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel LeftPixel(model::IClipPtr clip);
 
-pixel VCenter(model::IClipPtr clip);                 ///< \return vertical center position of given clip
-pixel VTopQuarter(model::IClipPtr clip);             ///< \return y position at one quarter from the top
-pixel VBottomQuarter(model::IClipPtr clip);          ///< \return y position at one quarter from the bottom
-pixel HCenter(model::IClipPtr clip);                 ///< \return horizontal center position of given clip
-wxPoint Center(model::IClipPtr clip);                ///< \return center (pixel) position of a clip
-wxPoint VTopQuarterHCenter(model::IClipPtr clip);    ///< \return pixel at one quarter from the top (centered horizontally)
-wxPoint VTopQuarterLeft(model::IClipPtr clip);       ///< \return pixel at one quarter from the top, left edge
-wxPoint VTopQuarterRight(model::IClipPtr clip);      ///< \return pixel at one quarter from the top, right edge
-wxPoint VBottomQuarterHCenter(model::IClipPtr clip); ///< \return pixel at one quarter from the bottom (centered horizontally)
-wxPoint LeftVBottomQuarter(model::IClipPtr clip);    ///< \return pixel at one quarter from the bottom (horizontally left)
-wxPoint RightVBottomQuarter(model::IClipPtr clip);   ///< \return pixel at one quarter from the bottom (horizontally right)
-wxPoint LeftCenter(model::IClipPtr clip);            ///< \return left center position (centered vertically)
-wxPoint RightCenter(model::IClipPtr clip);           ///< \return right center position (centered vertically)
-wxPoint LeftBottom(model::IClipPtr clip);            ///< \return left bottom position
-wxPoint RightBottom(model::IClipPtr clip);           ///< \return right bottom position
+/// \return right x position of given clip within the sequence view. Note: Returns the rightmost pixel value in the timeline that corresponds to the given clip.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel RightPixel(model::IClipPtr clip);
 
-wxPoint OnTimescaleAbove(wxPoint position);          ///< \return position adjusted such that the y-position is on the time scale above the clips
+/// \return top y position of given clip within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel TopPixel(model::IClipPtr clip);
+
+/// \return bottom y position of given clip within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel BottomPixel(model::IClipPtr clip);
+
+/// \return vertical center position of given clip within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel VCenter(model::IClipPtr clip);
+
+/// \return y position at one quarter from the top within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel VTopQuarter(model::IClipPtr clip);
+
+/// \return y position at one quarter from the bottom within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel VBottomQuarter(model::IClipPtr clip);
+
+/// \return horizontal center position of given clip within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel HCenter(model::IClipPtr clip);
+
+/// \return center (pixel) position of a clip within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint Center(model::IClipPtr clip);
+
+/// \return pixel at one quarter from the top (centered horizontally) within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint VTopQuarterHCenter(model::IClipPtr clip);
+
+/// \return pixel at one quarter from the top, left edge within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint VTopQuarterLeft(model::IClipPtr clip);
+
+/// \return pixel at one quarter from the top, right edge within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint VTopQuarterRight(model::IClipPtr clip);
+
+/// \return pixel at one quarter from the bottom (centered horizontally) within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint VBottomQuarterHCenter(model::IClipPtr clip);
+
+/// \return pixel at one quarter from the bottom (horizontally left) within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint LeftVBottomQuarter(model::IClipPtr clip);
+
+/// \return pixel at one quarter from the bottom (horizontally right) within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint RightVBottomQuarter(model::IClipPtr clip);
+
+/// \return left center position (centered vertically) within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint LeftCenter(model::IClipPtr clip);
+
+/// \return right center position (centered vertically) within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint RightCenter(model::IClipPtr clip);
+
+/// \return left bottom position within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint LeftBottom(model::IClipPtr clip);
+
+/// \return right bottom position within the sequence view.
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+wxPoint RightBottom(model::IClipPtr clip);
+
+/// \return position adjusted such that the y-position is on the time scale above the clips within the sequence view.
+/// \note This does NOT take into account scrolling.
+wxPoint OnTimescaleAbove(wxPoint position);
 
 class DraggedClips {};                               ///< Syntactic sugar to be able to use the same syntax (as used for determinig clip positions) for determining the position of the current drag object
 

@@ -195,9 +195,7 @@ void Trim::start()
     }
 
     mCommand = new command::TrimClip(getSequence(), originalClip, transition, mPosition);
-    mCommand->update(0);
-
-    preview();
+    update(mStartPosition);
 }
 
 void Trim::update(wxPoint position)
@@ -205,22 +203,23 @@ void Trim::update(wxPoint position)
     VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
-    pts diff = getZoom().pixelsToPts(position.x - mStartPosition.x);
-    mCommand->update(diff);
+    mCommand->update(getZoom().pixelsToPts(position.x - mStartPosition.x));
     preview();
-
-    getTimeline().endTransaction();
-    getTimeline().Update();
 
     if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
     {
         // Ensure that the rightmost pts is kept at the same position when shift dragging
-
-        // this caused one of the automated test scenarios to fail (the scroll change causes an error in the trim code)
-        //getScrolling().align(mFixedPts - diff, mFixedPixel);// TODO improve: the feedback looks crappy and sometimes the alignment is incorrect
-        // idea: do not change scrolling but just shift the bitmap a bit during the edit operation.
-        // do the scroll adjust at the end of the edit operation?
+        getTimeline().setShift(getZoom().ptsToPixels(mCommand->getDiff()));
     }
+    else
+    {
+        // This is required for the case in which a user shift-trims (timeline shift is changed),
+        // and then releases shift. The release of shift implies shift must be reset.
+        getTimeline().setShift(0);
+    }
+
+    getTimeline().endTransaction();
+    getTimeline().Update();
 }
 
 void Trim::stop()
@@ -231,8 +230,10 @@ void Trim::stop()
     {
         delete mCommand;
         mCommand = 0;
-        getTimeline().Update();
     }
+    getTimeline().setShift(0);
+    getTimeline().Refresh(false);
+    getTimeline().Update();
 }
 
 void Trim::submit()
@@ -242,33 +243,15 @@ void Trim::submit()
     {
         // Only submit the command if there's an actual diff to be applied
         mCommand->submit();
+        //todo het flikkert nog steeds!
+        if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
+        {
+            // todo proberen of scroll alignment altijd kan, en slechts bij uitzondering (wanneer getscrolling().align() een negatieve scroll tot gevolg heeft, dit doen.
+            // todo handle case if the alignment cannot be done with scrolling alignment, then make animation of removing the shift.
+            getScrolling().align(mFixedPts,mFixedPixel + getZoom().ptsToPixels(mCommand->getDiff()));
+        }
         mCommand = 0; // To ensure that any following 'abort' (see StateTrim) will not cause a revert
-        LOG_DEBUG;
     }
-}
-
-//////////////////////////////////////////////////////////////////////////
-// DRAW
-//////////////////////////////////////////////////////////////////////////
-
-void Trim::draw(wxDC& dc) const
-{
-    return;
-    if (!mActive)
-    {
-        return;
-    }
-
-    if (!wxGetMouseState().ShiftDown())
-    {
-        return;
-    }
-
-    dc.SetPen(Layout::get().SnapPen);
-    dc.SetBrush(Layout::get().SelectedClipBrush);
-    wxPoint pos(getZoom().ptsToPixels(mCommand->getShiftStart()),0);
-    wxSize s(wxSize(getZoom().ptsToPixels(mCommand->getDiff()),dc.GetSize().GetHeight()));
-    dc.DrawRectangle(pos,s);
 }
 
 //////////////////////////////////////////////////////////////////////////

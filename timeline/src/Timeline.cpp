@@ -45,6 +45,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
 ,   mDetails(Window::get().getDetailsView().openTimeline(this))
 ,   mTransaction(false)
+,   mShift(0)
 //////////////////////////////////////////////////////////////////////////
 ,   mZoom(new Zoom(this))
 ,   mViewMap(new ViewMap(this))
@@ -315,11 +316,19 @@ void Timeline::onPaint( wxPaintEvent &event )
     //}
 
     wxMemoryDC dcBmp(bitmap);
+    dc.SetLogicalOrigin(-mShift,0); // todo test with mshift < 0
+
+    if (mShift > 0)
+    {
+        dc.SetPen(Layout::get().BackgroundPen);
+        dc.SetBrush(Layout::get().BackgroundBrush);
+        dc.DrawRectangle(-mShift,0,mShift,dc.GetSize().GetHeight());
+    }
 
     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
     while (upd)
     {
-        int x = scroll.x + upd.GetX();
+        int x = scroll.x + upd.GetX() - mShift;
         int y = scroll.y + upd.GetY();
         int w = upd.GetW();
         int h = upd.GetH();
@@ -337,7 +346,6 @@ void Timeline::onPaint( wxPaintEvent &event )
     //}
 
     getDrag().draw(dc);
-    getTrim().draw(dc);
     getCursor().draw(dc);
 }
 
@@ -382,12 +390,18 @@ wxSize Timeline::requiredSize() const
 void Timeline::refreshPts(pts position)
 {
     pixel pixpos = getZoom().ptsToPixels(position) - getScrolling().getOffset().x;
-    getTimeline().RefreshRect(wxRect(pixpos,0,1,getSequenceView().getSize().GetHeight()), false);
+    RefreshRect(wxRect(pixpos,0,1,getSequenceView().getSize().GetHeight()), false);
 }
 
 void Timeline::refreshLines(pixel from, pixel length)
 {
-    getTimeline().RefreshRect(wxRect(0,from,getSequenceView().getSize().GetWidth(),length), false);
+    RefreshRect(wxRect(0,from,getSequenceView().getSize().GetWidth(),length), false);
+}
+
+void Timeline::setShift(pixel shift)
+{
+    mShift = shift;
+    Refresh(false);
 }
 
 //////////////////////////////////////////////////////////////////////////
