@@ -589,14 +589,14 @@ void TestTimeline::testTrimmingWithOtherTracks()
     PrepareSnapping(false);
     {
         StartTest("Trim: EndTrim: Enlarge the last clip in a track (there is no empty clip after it anymore)");
-         TrimRight(VideoClip(0,3),-40,false);
-         pts length = VideoClip(0,3)->getLength();
-         DragAlignLeft(Center(VideoClip(0,3)),RightPixel(VideoClip(0,7)));
-         TrimRight(VideoClip(0,7),20,false);
-         ASSERT_MORE_THAN(VideoClip(0,7)->getLength(), length);
-         Undo();
-         Undo();
-         Undo();
+        TrimRight(VideoClip(0,3),-40,false);
+        pts length = VideoClip(0,3)->getLength();
+        DragAlignLeft(Center(VideoClip(0,3)),RightPixel(VideoClip(0,7)));
+        TrimRight(VideoClip(0,7),20,false);
+        ASSERT_MORE_THAN(VideoClip(0,7)->getLength(), length);
+        Undo();
+        Undo();
+        Undo();
     }
     {
         StartTest("ShiftTrim: BeginTrim: Shorten: with an empty other track.");

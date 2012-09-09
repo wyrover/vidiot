@@ -17,13 +17,13 @@
 #include "Layout.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
+#include "Scrolling.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
@@ -330,7 +330,7 @@ void PositionCursor(pixel position)
 
 void Move(wxPoint position)
 {
-    MoveWithinWidget(position,getTimeline().GetScreenPosition());
+    MoveWithinWidget(position,getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset());
 }
 
 void Click(wxPoint position)

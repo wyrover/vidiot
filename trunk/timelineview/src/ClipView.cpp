@@ -112,7 +112,7 @@ void ClipView::show(wxRect rect)
     mRect.x = rect.x;
     mRect.y = 4;
     mRect.height = getSize().GetHeight() - 8;
-    invalidateBitmap();;
+    invalidateBitmap();
 }
 
 wxSize ClipView::requiredSize() const
