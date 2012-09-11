@@ -42,16 +42,28 @@ wxPoint Scrolling::getOffset() const
     return wxPoint(scrollX * ppuX, scrollY * ppuY);
 }
 
-void Scrolling::align(pts position, pixel physicalPosition)
+pixel Scrolling::align(pts position, pixel physicalPosition)
 {
     pixel diff = ptsToPixel(position) - physicalPosition;
+    pixel remaining = 0;
     if (diff != 0)
     {
-        int x;
+        int xOld;
         int y;
-        getTimeline().GetViewStart(&x,&y);
-        getTimeline().Scroll(x + diff, -1);
+        getTimeline().GetViewStart(&xOld,&y);
+        int xNew = xOld + diff;
+        if (xNew < 0)
+        {
+            remaining = xNew; // return the remaining 'to be scrolled'
+            xNew = 0; // Scroll as far as possible
+        }
+        if (xNew != xOld)
+        {
+            getTimeline().Scroll(xNew, -1);
+        }
+
     }
+    return remaining;
 }
 
 pixel Scrolling::ptsToPixel(pts position) const
