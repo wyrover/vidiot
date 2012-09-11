@@ -2,6 +2,7 @@
 
 #include "Clip.h"
 #include "ClipView.h"
+#include "Convert.h"
 #include "EmptyClip.h"
 #include "Layout.h"
 #include "MousePointer.h"
@@ -228,12 +229,14 @@ void Trim::stop()
     mActive = false;
     if (mCommand)
     {
+        // The command has not yet been submitted
         delete mCommand;
         mCommand = 0;
+        getTimeline().setShift(0);
+        getTimeline().Refresh(false);
+        getTimeline().Update();
     }
-    getTimeline().setShift(0);
-    getTimeline().Refresh(false);
-    getTimeline().Update();
+    // else: handled via submit()
 }
 
 void Trim::submit()
@@ -241,16 +244,44 @@ void Trim::submit()
     VAR_DEBUG(this);
     if (mCommand->getDiff() != 0)
     {
+        bool shiftBeginTrim = wxGetMouseState().ShiftDown() && mCommand->isBeginTrim();
+        pts diff = mCommand->getDiff();
+
         // Only submit the command if there's an actual diff to be applied
         mCommand->submit();
-        //todo het flikkert nog steeds!
-        if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
+        // Reset mCommand, such that all 'reverting' is not done in Trim::stop().
+        // For instance, setShift(0) would be called while the animation is being shown, resulting in flicker.
+        mCommand = 0;
+
+        if (shiftBeginTrim)
         {
-            // todo proberen of scroll alignment altijd kan, en slechts bij uitzondering (wanneer getscrolling().align() een negatieve scroll tot gevolg heeft, dit doen.
-            // todo handle case if the alignment cannot be done with scrolling alignment, then make animation of removing the shift.
-            getScrolling().align(mFixedPts,mFixedPixel + getZoom().ptsToPixels(mCommand->getDiff()));
+            // First, try changing the scrollbar such that the fixed pixel stays at the same position
+            pixel remaining = getScrolling().align(mFixedPts,mFixedPixel + getZoom().ptsToPixels(diff));
+
+            // If scrolling could completely align the pts value with the given pixel (typically happens
+            // when trimming at the begin of the timeline), show an animation of the sequence moving to the
+            // beginning of the timeline.
+            if (remaining < 0)
+            {
+                static const int SleepTimePerStep = 25;
+                static const int AnimationDurationInMs = 250;
+                static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
+                for (int step = NumberOfSteps; step >= 0; --step)
+                {
+                    int newShift = -1 * model::Convert::doubleToInt(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps) * static_cast<double>(step));
+                    getTimeline().setShift(newShift);
+                    getTimeline().Refresh(false);
+                    getTimeline().Update();
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
+                }
+            }
+            else
+            {
+                getTimeline().setShift(0);
+                getTimeline().Refresh(false);
+                getTimeline().Update();
+            }
         }
-        mCommand = 0; // To ensure that any following 'abort' (see StateTrim) will not cause a revert
     }
 }
 

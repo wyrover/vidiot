@@ -36,7 +36,8 @@ public:
     /// is directly under the physical position.
     /// \param position position in the sequence
     /// \param unscrolledPixel physical position to align to
-    void align(pts position, pixel physicalPosition);
+    /// \return if the scroll was moved to the beginning, and that still wasn't enough for the alignment, the difference (the amount that remains to be scrolled) is returned
+    pixel align(pts position, pixel physicalPosition);
 
     /// \param position position in the sequence
     /// \return physical position on the scroll window canvas
