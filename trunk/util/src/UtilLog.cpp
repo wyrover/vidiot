@@ -5,10 +5,6 @@
 #include "UtilFifo.h"
 #include <share.h> // _SH_DENYWR
 
-// todo check if log file can be written
-// test scenario: start release version of testmanual, via CTRL-F5, then close (hangs...is another todo)
-// then startup the debug version again...
-
 IMPLEMENTENUM(LogLevel);
 
 boost::bimap<LogLevel, wxString> LogLevelConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<LogLevel, wxString>::relation >
@@ -46,6 +42,7 @@ public:
         if (!mFile)
         {
             // If file open fails, mFile == 0. Then, nothing will be logged.
+            // Scenario to test this: First run release version of testmanual. Close application window, but not the dos box. Then run debug version. File is already in use.
             mEnabled = false;
         }
         else
