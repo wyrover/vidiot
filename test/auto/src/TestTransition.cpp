@@ -412,7 +412,7 @@ void TestTransition::testAdjacentTransitions()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),cliplength);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
-        ASSERT_EQUALS(VideoClip(0,3)->getLength(),length); // todo this failed once
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
         Undo();
     }
     {

@@ -53,9 +53,6 @@ void TestOnce::testOnce()
     // PrepareSnapping(true);
     StartTestSuite();
 
-    // todo memory leaks bij testauto? Misschien dat daardoor de crashes wel komen?
-
-    //todo test render->generate();
     pause(600000);
 }
 
