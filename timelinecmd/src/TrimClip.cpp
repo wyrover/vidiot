@@ -391,11 +391,8 @@ void TrimClip::applyTrim()
                 mShiftStart = mClip->getRightPts();
             }
         }
-        if (mShift/* && false*/) // todo the false to not do this...
+        if (mShift)
         {
-            // todo for new design: do this shift only AFTER the actual submission is 'ok'
-            // Furthermore, use all tracks, avoid the exclude mechanism
-
             // Move clips in other tracks (that's the 'shift') - and only in other tracks
             // The clips in the same track as mClip and linked are shifted automatically
             // because of the enlargement/reduction of these two clips.

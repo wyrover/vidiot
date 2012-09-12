@@ -38,7 +38,7 @@ class LogWriter : boost::noncopyable
 {
 public:
     LogWriter()
-        :   mEnabled(true)
+        :   mEnabled(false)
         ,   mFifo(sMaximumBufferedLoglines)
         ,   mFile(0)
     {
@@ -50,6 +50,7 @@ public:
         }
         else
         {
+            mEnabled = true;
             mThread.reset(new boost::thread(boost::bind(&LogWriter::thread,this)));
         }
     }
@@ -75,6 +76,10 @@ public:
         {
             mFifo.push(logLine);
         }
+    }
+    bool isEnabled() const
+    {
+        return mEnabled;
     }
 private:
     void thread()
@@ -133,6 +138,11 @@ std::string Log::getFileName()
     return sFilename;
 }
 
+bool Log::isEnabled()
+{
+    return sWriter->isEnabled();
+}
+
 void Log::init(const wxString& testApplicationName, const wxString& applicationName)
 {
     // File name initialization:
@@ -163,15 +173,33 @@ void Log::exit()
 
 std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
 {
-    static const char* levelstring[] = {"NONE", "ERROR", "WARNING", "INFO", "DEBUG", "VIDEO", "AUDIO", "DETAIL", "ASSERT"};
-    // todo replace boost::format (performance)
-    os << boost::format("%s% 8s t@%04x %s(%d) %s ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % levelstring[level] % wxThread::GetCurrentId() % p_szFileName % p_lLine % p_szFunction;
+    // NOTE: Ensure the same width for the strings below.
+    static const char* levelstring[] =
+    {
+        "NONE    ",
+        "ERROR   ",
+        "WARNING ",
+        "INFO    ",
+        "DEBUG   ",
+        "VIDEO   ",
+        "AUDIO   ",
+        "DETAIL  ",
+        "ASSERT  "
+    };
+    get(levelstring[level])
+        << p_szFileName
+        << '(' << std::dec << p_lLine  << ") "
+        << p_szFunction
+        << ' ';
     return os;
 }
 
 std::ostringstream& Log::get(std::string category)
 {
-    os << boost::format("%s% 8s t@%04x ") % wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l") % category % wxThread::GetCurrentId();
+    os << wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l ")
+        << category
+        << "t@" << std::setw(4) << std::setfill('0') << std::hex <<  wxThread::GetCurrentId()
+        << ' ';
     return os;
 }
 

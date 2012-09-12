@@ -316,7 +316,7 @@ void Timeline::onPaint( wxPaintEvent &event )
     //}
 
     wxMemoryDC dcBmp(bitmap);
-    dc.SetLogicalOrigin(-mShift,0); // todo test with mshift < 0
+    dc.SetLogicalOrigin(-mShift,0);
 
     if (mShift > 0)
     {

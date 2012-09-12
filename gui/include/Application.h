@@ -1,7 +1,6 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <wx/app.h>
 #include "UtilAssert.h"
 #include "UtilEvent.h"
 
