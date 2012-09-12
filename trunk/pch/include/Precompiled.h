@@ -58,7 +58,6 @@ extern "C" {
 #include <iostream>
 #include <istream>
 #include <limits.h>
-#include <list>
 #include <map>
 #include <math.h>
 #include <ostream>
@@ -67,9 +66,9 @@ extern "C" {
 #include <stdio.h>
 #include <string>
 #include <utility>
+#include <wx/app.h>
 #include <wx/artprov.h>
 #include <wx/aui/aui.h>
-#include <wx/bitmap.h>
 #include <wx/bookctrl.h>
 #include <wx/brush.h>
 #include <wx/button.h>
@@ -82,6 +81,7 @@ extern "C" {
 #include <wx/confbase.h>
 #include <wx/config.h> // This ensures that in other parts of the code only #include "Config.h" is required
 #include <wx/control.h>
+#include <wx/cursor.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
 #include <wx/datetime.h>
@@ -92,6 +92,7 @@ extern "C" {
 #include <wx/dcmemory.h>
 #include <wx/debug.h>
 #include <wx/debugrpt.h>
+#include <wx/defs.h>
 #include <wx/dialog.h>
 #include <wx/dir.h>
 #include <wx/dirdlg.h>
@@ -105,6 +106,7 @@ extern "C" {
 #include <wx/filename.h>
 #include <wx/font.h>
 #include <wx/frame.h>
+#include <wx/FSWatcher.h>
 #include <wx/gauge.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>

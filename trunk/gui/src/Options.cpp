@@ -1,9 +1,6 @@
 #include "Options.h"
 
-#include <wx/wfstream.h>
-#include <wx/app.h>
 #include "Enums.h"
-
 #include "UtilLog.h"
 #include "UtilInitAvcodec.h"
 #include "UtilFrameRate.h"

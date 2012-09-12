@@ -1,8 +1,6 @@
 #ifndef WATCHER_H
 #define WATCHER_H
 
-#include <wx/FSWatcher.h>
-
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
 
 namespace model {

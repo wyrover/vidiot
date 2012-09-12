@@ -12,7 +12,6 @@
 #include "ProjectEvent.h"
 #include "ProjectView.h"
 #include "TimelinesView.h"
-
 #include "UtilTestCrash.h"
 #include "UtilLog.h"
 #include "Watcher.h"
@@ -178,6 +177,14 @@ Window::Window()
         Move(screenSize.GetWidth() - winSize.GetWidth(),0);
     }
     Show();
+
+    if (!Log::isEnabled())
+    {
+        if (wxNO == Dialog::get().getConfirmation( _("Log file error"), _("Could not open the log file for writing. Continue running?"), wxYES | wxNO))
+        {
+            wxExit();
+        }
+    }
 }
 
 void Window::init()
