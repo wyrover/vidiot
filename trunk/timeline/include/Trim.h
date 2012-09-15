@@ -3,7 +3,6 @@
 
 #include "Part.h"
 #include "PositionInfo.h"
-#include "UtilEvent.h"
 #include "UtilInt.h"
 
 namespace gui {
@@ -21,35 +20,6 @@ struct EvKeyDown;
 namespace command {
     class TrimClip;
 }
-
-/// This class holds info for updating the trimming details view
-struct TrimEvent
-{
-    bool active;
-    pts oldLength;
-    pts newLength;
-    wxString description;
-
-    TrimEvent(bool _active, pts _oldLength = 0, pts _newLength = 0, wxString _description = "")
-        :   active(_active)
-        ,   oldLength(_oldLength)
-        ,   newLength(_newLength)
-        ,   description(_description)
-    {
-    }
-        //////////////////////////////////////////////////////////////////////////
-    // LOGGING
-    //////////////////////////////////////////////////////////////////////////
-
-    friend std::ostream& operator<<( std::ostream& os, const TrimEvent& obj )
-    {
-        os << obj.active << '|' << obj.oldLength << '|' << obj.newLength << '|' << obj.description;
-        return os;
-    }
-
-};
-
-DECLARE_EVENT(EVENT_TRIM_UPDATE, EventTrimUpdate, TrimEvent);
 
 /// Class responsible for any previewing during the edit operation. This includes
 /// changing the timeline contents (via the command) and the preview in the player
