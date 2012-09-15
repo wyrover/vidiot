@@ -2,6 +2,7 @@
 
 #include "IClip.h"
 #include "Trim.h"
+#include "TrimEvent.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 
@@ -59,11 +60,11 @@ DetailsTrim::~DetailsTrim()
 
 void DetailsTrim::onTrimChanged( timeline::EventTrimUpdate& event )
 {
-    mOldLength->SetValue(event.getValue().oldLength);
-    mNewLength->SetValue(event.getValue().newLength);
-    if (event.getValue().active)
+    mOldLength->SetValue(event.getValue().getOldLength());
+    mNewLength->SetValue(event.getValue().getNewLength());
+    if (event.getValue().getActive())
     {
-        requestShow(true, event.getValue().description);
+        requestShow(true, event.getValue().getDescription());
     }
     else
     {
@@ -75,6 +76,7 @@ void DetailsTrim::onTrimChanged( timeline::EventTrimUpdate& event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+// todo move this stuff to base class
 void DetailsTrim::addbox(const wxString& name)
 {
     ASSERT(mTopSizer);

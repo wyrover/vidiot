@@ -3,15 +3,12 @@
 
 #include "Part.h"
 #include "PositionInfo.h"
-#include "UtilEvent.h"
 
 namespace model {
     class EventRemoveClips;
 }
 
 namespace gui { namespace timeline {
-
-DECLARE_EVENT(EVENT_SELECTION_UPDATE, EventSelectionUpdate, int);
 
 class Selection
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.

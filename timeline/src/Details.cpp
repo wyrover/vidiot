@@ -20,9 +20,15 @@ namespace gui { namespace timeline {
 Details::Details(wxWindow* parent, Timeline* timeline)
     :   wxPanel(parent)
     ,   Part(timeline)
-    ,   mDetails(boost::assign::list_of(static_cast<IDetails*>(new DetailsTrim(this,*timeline)))(static_cast<IDetails*>(new DetailsClip(this,*timeline))))
+    ,   mDetails()
 {
     LOG_INFO;
+
+    // The order in this list is the order of priority in case two panels want to be shown
+    mDetails = boost::assign::list_of
+        (static_cast<IDetails*>(new DetailsTrim(this,*timeline)))
+        (static_cast<IDetails*>(new DetailsClip(this,*timeline)));
+
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
     mHeader->SetBackgroundColour(Layout::get().DetailsViewHeaderColour);

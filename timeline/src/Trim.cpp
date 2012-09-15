@@ -16,6 +16,7 @@
 #include "Track.h"
 #include "Transition.h"
 #include "TrimClip.h"
+#include "TrimEvent.h"
 #include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
@@ -25,8 +26,6 @@
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
-
-DEFINE_EVENT(EVENT_TRIM_UPDATE, EventTrimUpdate, TrimEvent);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

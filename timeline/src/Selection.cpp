@@ -3,6 +3,7 @@
 #include "ClipView.h"
 #include "DeleteSelectedClips.h"
 #include "EmptyClip.h"
+#include "SelectionEvent.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "Track.h"
@@ -12,8 +13,6 @@
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
-
-DEFINE_EVENT(EVENT_SELECTION_UPDATE, EventSelectionUpdate, int);
 
 Selection::Selection(Timeline* timeline)
 :   wxEvtHandler()

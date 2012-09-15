@@ -10,6 +10,7 @@
 #include "Layout.h"
 #include "Player.h"
 #include "Selection.h"
+#include "SelectionEvent.h"
 #include "Sequence.h"
 #include "UtilEnumSelector.h"
 #include "UtilLog.h"
