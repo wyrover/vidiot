@@ -95,7 +95,6 @@ private:
     {
         if (player)
         {
-            player->onHide();
             GetSizer()->Hide(player);
         }
     }

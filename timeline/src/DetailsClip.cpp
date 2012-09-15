@@ -9,9 +9,9 @@
 #include "IClip.h"
 #include "Layout.h"
 #include "Player.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "UtilEnumSelector.h"
-
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
@@ -44,9 +44,8 @@ const double sScalingIncrement = 0.01;
 const int sPositionPageSize = 10;
 const int sOpacityPageSize = 10;
 
-DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
-    :   wxPanel(parent)
-    ,   Part(&timeline)
+DetailsClip::DetailsClip(Details* parent, Timeline& timeline)
+    :   IDetails(parent,timeline)
     ,   mClip()
     ,   mVideoClip()
     ,   mAudioClip()
@@ -130,7 +129,6 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     positionypanel->SetSizer(positionysizer);
     addoption(_("Y position"), positionypanel);
 
-    Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
@@ -149,13 +147,15 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     mTopSizer->AddStretchSpacer();
     SetSizerAndFit(mTopSizer);
+
+    getSelection().Bind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
     VAR_INFO(GetSize());
 }
 
 DetailsClip::~DetailsClip()
 {
+    getSelection().Unbind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
     setClip(model::IClipPtr()); // Ensures Unbind if needed for clip events
-    Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
     mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
@@ -268,15 +268,6 @@ void DetailsClip::setClip(model::IClipPtr clip)
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
-
-void DetailsClip::onShow(wxShowEvent& event)
-{
-    if (!event.IsShown())
-    {
-        setClip(model::IClipPtr());
-    }
-    event.Skip();
-}
 
 void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
@@ -422,6 +413,40 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
     mPositionXSlider->SetRange(mPositionXSlider->GetMin(),event.getValue().x);
     mPositionYSlider->SetRange(mPositionYSlider->GetMax(), event.getValue().y);
     event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// SELECTION EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void DetailsClip::onSelectionChanged( timeline::EventSelectionUpdate& event )
+{
+    std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
+    model::IClipPtr selectedclip;
+    if (selection.size() == 1)
+    {
+        selectedclip = *selection.begin();
+    }
+    else if (selection.size() == 2)
+    {
+        model::IClipPtr a = *selection.begin();
+        model::IClipPtr b = *(++(selection.begin()));
+        if (a->getLink() == b)
+        {
+            ASSERT_EQUALS(b->getLink(),a);
+            selectedclip = (a->isA<model::VideoClip>()) ? a : b; // Always use the videoclip (avoid problems in automated test as a result of timing differences - sometimes the videoclip is focused first, sometimes the audio clip)
+        }
+    }
+    if (selectedclip)
+    {
+        setClip(selectedclip);
+        requestShow(true, selectedclip->getDescription());
+    }
+    else
+    {
+        setClip(model::IClipPtr());
+        requestShow(false);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
