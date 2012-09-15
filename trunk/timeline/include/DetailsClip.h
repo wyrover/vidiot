@@ -3,6 +3,7 @@
 
 #include "VideoClipEvent.h"
 #include "UtilEnumSelector.h"
+#include "Details.h"
 #include "Part.h"
 
 namespace model {
@@ -11,9 +12,10 @@ class ChangeVideoClipTransform;
 
 namespace gui { namespace timeline {
 
+class EventSelectionUpdate;
+
 class DetailsClip
-:   public wxPanel
-,   public Part
+:   public IDetails
 {
 public:
 
@@ -21,7 +23,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    DetailsClip(wxWindow* parent, Timeline& timeline);
+    DetailsClip(Details* parent, Timeline& timeline);
     virtual ~DetailsClip();
 
     //////////////////////////////////////////////////////////////////////////
@@ -35,7 +37,6 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onShow(wxShowEvent& event);
     void onOpacitySliderChanged(wxCommandEvent& event);
     void onOpacitySpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
@@ -59,6 +60,12 @@ public:
     void onPositionChanged(model::EventChangeVideoClipPosition& event);
     void onMinPositionChanged(model::EventChangeVideoClipMinPosition& event);
     void onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // SELECTION EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onSelectionChanged( timeline::EventSelectionUpdate& event );
 
     //////////////////////////////////////////////////////////////////////////
     // TEST

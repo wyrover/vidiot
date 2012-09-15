@@ -5,7 +5,7 @@
 
 namespace gui { namespace timeline {
 
-class DetailsClip;
+class IDetails;
 
 class Details
     :   public wxPanel
@@ -20,14 +20,7 @@ public:
     Details(wxWindow* parent, Timeline* timeline);
     virtual ~Details();
 
-    void onHide();
-
-    //////////////////////////////////////////////////////////////////////////
-    // SET THE CURRENTLY FOCUSED ITEM
-    //////////////////////////////////////////////////////////////////////////
-
-    void showNone();
-    void onSelectionChanged();
+    void update();
 
     //////////////////////////////////////////////////////////////////////////
     // TEST
@@ -43,17 +36,44 @@ private:
 
     wxStaticText* mHeader;
     wxWindow* mCurrent;
-    DetailsClip* mDetailsClip;
+    std::list<IDetails*> mDetails;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void focus(model::IClipPtr clip);
-    void focus(model::IClips clips);
+};
 
-    void reset(wxString title = "", wxWindow* details = 0);
-
+class IDetails
+:   public wxPanel
+,   public Part
+{
+public:
+    explicit IDetails(Details* parent, Timeline& timeline)
+        :   wxPanel(parent)
+        ,   Part(&timeline)
+        ,   mShow(false)
+        ,   mTitle("")
+    {
+    }
+    bool requestsToBeShown() const
+    {
+        return mShow;
+    }
+    wxString getTitle() const
+    {
+        return mTitle;
+    }
+protected:
+    void requestShow(bool show, wxString title = "")
+    {
+        mShow = show;
+        mTitle = title;
+        static_cast<Details*>(GetParent())->update();
+    }
+private:
+    bool mShow;
+    wxString mTitle;
 };
 
 }} // namespace

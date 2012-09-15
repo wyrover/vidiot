@@ -2,18 +2,18 @@
 
 #include "ClipView.h"
 #include "DeleteSelectedClips.h"
-#include "Details.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "TrackView.h"
 #include "Transition.h"
-
 #include "UtilLog.h"
 #include "ViewMap.h"
 
 namespace gui { namespace timeline {
+
+DEFINE_EVENT(EVENT_SELECTION_UPDATE, EventSelectionUpdate, int);
 
 Selection::Selection(Timeline* timeline)
 :   wxEvtHandler()
@@ -162,7 +162,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
         setPreviouslyClicked(model::IClipPtr()); // reset
     }
 
-    getDetails().onSelectionChanged();
+    QueueEvent(new EventSelectionUpdate(0));
 }
 
 void Selection::updateOnRightClick(model::IClipPtr clip)
@@ -197,14 +197,14 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
         setPreviouslyClicked(model::IClipPtr()); // reset
     }
 
-    getDetails().onSelectionChanged();
+    QueueEvent(new EventSelectionUpdate(0));
 }
 
 void Selection::deleteClips()
 {
     setPreviouslyClicked(model::IClipPtr()); // reset
     (new command::DeleteSelectedClips(getSequence()))->submit();
-    getDetails().onSelectionChanged();
+    QueueEvent(new EventSelectionUpdate(0));
 }
 
 void Selection::unselectAll()
@@ -217,7 +217,7 @@ void Selection::unselectAll()
         }
     }
     setPreviouslyClicked(model::IClipPtr()); // reset
-    getDetails().onSelectionChanged();
+    QueueEvent(new EventSelectionUpdate(0));
 }
 
 //////////////////////////////////////////////////////////////////////////

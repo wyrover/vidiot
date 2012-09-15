@@ -162,7 +162,7 @@ private:
     Dump* mDump;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts
-    Details* mDetails;
+    Details* mDetails; // Must be after all other Parts (since it uses these during the initialization)
 
     //////////////////////////////////////////////////////////////////////////
     // CHILDREN -> Must be AFTER PARTS

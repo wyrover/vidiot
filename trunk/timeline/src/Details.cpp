@@ -1,10 +1,11 @@
 #include "Details.h"
 
 #include "DetailsClip.h"
+#include "DetailsTrim.h"
 #include "IClip.h"
 #include "Layout.h"
 #include "Sequence.h"
-
+#include "Trim.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
@@ -19,61 +20,24 @@ namespace gui { namespace timeline {
 Details::Details(wxWindow* parent, Timeline* timeline)
     :   wxPanel(parent)
     ,   Part(timeline)
-    ,   mCurrent(0)
-    ,   mDetailsClip(new DetailsClip(this,*timeline))
+    ,   mDetails(boost::assign::list_of(static_cast<IDetails*>(new DetailsTrim(this,*timeline)))(static_cast<IDetails*>(new DetailsClip(this,*timeline))))
 {
     LOG_INFO;
-
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
     mHeader->SetBackgroundColour(Layout::get().DetailsViewHeaderColour);
     sizer->Add(mHeader, wxSizerFlags(0).Center());
-    sizer->Add(mDetailsClip, wxSizerFlags(1).Expand().Center() );
-    sizer->Hide(mDetailsClip);
+    BOOST_FOREACH( IDetails* details, mDetails )
+    {
+        sizer->Add(details, wxSizerFlags(1).Expand().Center() );
+    }
     SetSizer(sizer);
+    update();
 }
 
 Details::~Details()
 {
-}
-
-void Details::onHide()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////
-// SET THE CURRENTLY FOCUSED ITEM
-//////////////////////////////////////////////////////////////////////////
-
-void Details::showNone()
-{
-    reset();
-}
-
-void Details::onSelectionChanged()
-{
-    //return; //todo temp: during trimming class Trim should provide the input. Using a clip here causes constant updates during trimming (due to revert()->update() cycles)
-    std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
-    if (selection.size() == 1)
-    {
-        focus(*selection.begin());
-    }
-    else if (selection.size() == 2)
-    {
-        model::IClipPtr a = *selection.begin();
-        model::IClipPtr b = *(++(selection.begin()));
-        if (a->getLink() == b)
-        {
-            ASSERT_EQUALS(b->getLink(),a);
-            model::IClipPtr focused = (a->isA<model::VideoClip>()) ? a : b; // Always use the videoclip (avoid problems in automated test as a result of timing differences - sometimes the videoclip is focused first, sometimes the audio clip)
-            focus(focused);
-        }
-    }
-    else
-    {
-        // Reset details view
-        reset();
-    }
+    mDetails.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -89,43 +53,29 @@ wxWindow* Details::getCurrent() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Details::focus(model::IClipPtr clip)
+void Details::update()
 {
-    VAR_INFO(GetSize());
-    if (mDetailsClip->getClip() != clip)
+    bool shown = false;
+    BOOST_FOREACH(IDetails* details, mDetails)
     {
-        mDetailsClip->setClip(clip);
-        reset(clip->getDescription(), mDetailsClip);
-    }
-    VAR_INFO(GetSize());
-}
-
-void Details::focus(model::IClips clips)
-{
-}
-
-void Details::reset(wxString title, wxWindow* details)
-{
-    VAR_INFO(GetSize());
-
-    mHeader->SetLabel(title);
-
-    if (mCurrent != details)
-    {
-        if (mCurrent)
+        if (details->requestsToBeShown() && !shown)
         {
-            GetSizer()->Hide(mCurrent);
-        }
-        mCurrent = details;
-        if (details)
-        {
+            mCurrent = details;
+            mHeader->SetLabel(details->getTitle());
             GetSizer()->Show(details);
+            shown = true;
         }
-        gui::Window::get().triggerLayout();
+        else
+        {
+            GetSizer()->Hide(details);
+        }
     }
-
-    //Fit();
-
+    if (!shown)
+    {
+        mCurrent = 0;
+        mHeader->SetLabel("");
+    }
+    gui::Window::get().triggerLayout();
 }
 
 }} // namespace

@@ -43,7 +43,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
 ,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
-,   mDetails(Window::get().getDetailsView().openTimeline(this))
 ,   mTransaction(false)
 ,   mShift(0)
 //////////////////////////////////////////////////////////////////////////
@@ -60,6 +59,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mDump(new Dump(this))
 ,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
+,   mDetails(Window::get().getDetailsView().openTimeline(this))
 //////////////////////////////////////////////////////////////////////////
 ,   mSequenceView(new SequenceView(this))
 //////////////////////////////////////////////////////////////////////////
@@ -89,6 +89,7 @@ Timeline::~Timeline()
     Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
     delete mSequenceView;   mSequenceView = 0;
+    Window::get().getDetailsView().closeTimeline(this);
 
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;   mStateMachine = 0;
@@ -103,7 +104,6 @@ Timeline::~Timeline()
     delete mViewMap;        mViewMap = 0;
     delete mZoom;           mZoom = 0;
 
-    Window::get().getDetailsView().closeTimeline(this);
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
 }
