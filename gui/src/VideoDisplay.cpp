@@ -60,8 +60,8 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
 ,   mStartTime(0)
 ,   mStartPts(0)
 ,   mCurrentTime(0)
-,   mNumberOfAudioChannels(model::Properties::get()->getAudioNumberOfChannels())
-,   mAudioSampleRate(model::Properties::get()->getAudioFrameRate())
+,   mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
+,   mAudioSampleRate(model::Properties::get().getAudioFrameRate())
 {
     VAR_DEBUG(this);
 
@@ -127,7 +127,7 @@ void VideoDisplay::play()
 
     mCurrentAudioChunk.reset();
 
-    PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get()->getAudioFrameRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
+    PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get().getAudioFrameRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
     ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
     err = Pa_StartStream( mAudioOutputStream );

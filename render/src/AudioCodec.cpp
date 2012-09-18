@@ -78,8 +78,8 @@ AVStream* AudioCodec::addStream(AVFormatContext* context) const
     {
         parameter->set(audio_codec);
     }
-    audio_codec->sample_rate = Properties::get()->getAudioFrameRate();
-    audio_codec->channels = Properties::get()->getAudioNumberOfChannels();
+    audio_codec->sample_rate = Properties::get().getAudioFrameRate();
+    audio_codec->channels = Properties::get().getAudioNumberOfChannels();
 
     if (context->oformat->flags & AVFMT_GLOBALHEADER)
     {

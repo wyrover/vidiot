@@ -2,23 +2,25 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
-#include "FixtureApplication.h"
-#include "HelperApplication.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
 #include "Constants.h"
-#include "HelperWindow.h"
 #include "Convert.h"
-#include "Layout.h"
-#include "HelperModel.h"
 #include "Details.h"
 #include "DetailsClip.h"
-#include "VideoClip.h"
-#include "ProjectViewCreateSequence.h"
+#include "FixtureApplication.h"
+#include "HelperApplication.h"
+#include "HelperModel.h"
+#include "HelperTestSuite.h"
+#include "HelperTimeline.h"
+#include "HelperTimelinesView.h"
 #include "HelperWindow.h"
+#include "HelperWindow.h"
+#include "Layout.h"
+#include "ProjectViewCreateSequence.h"
 #include "UtilLogWxwidgets.h"
+#include "VideoClip.h"
 
 namespace test {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

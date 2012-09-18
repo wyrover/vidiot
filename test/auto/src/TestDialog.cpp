@@ -6,6 +6,7 @@
 #include <boost/thread/barrier.hpp>
 #include "Dialog.h"
 #include "HelperApplication.h"
+#include "HelperTestSuite.h"
 #include "HelperWindow.h"
 #include "ids.h"
 #include "Window.h"

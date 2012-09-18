@@ -19,16 +19,23 @@ Properties::Properties()
 ,   mAudioFrameRate(sAudioFrameRate)
 ,   mDefaultRender(boost::make_shared<model::render::Render>())
 {
+    VAR_DEBUG(this);
+}
+
+Properties::Properties(FrameRate fr)
+:   mFrameRate(fr)
+,   mVideoWidth(0)
+,   mVideoHeight(0)
+,   mAudioChannels(sStereo)
+,   mAudioFrameRate(sAudioFrameRate)
+,   mDefaultRender()
+{
+    VAR_DEBUG(this);
 }
 
 Properties::~Properties()
 {
-}
-
-// static
-PropertiesPtr Properties::get()
-{
-    return Project::get().getProperties();
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

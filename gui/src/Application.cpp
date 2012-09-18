@@ -33,7 +33,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     SetAppName(mEventLoopListener ? sTestApplicationName : "Vidiot");
     SetVendorName("Eric Raijmakers");
 
-    // Logging initialization/termination is node made part of wxWidgets Init/Run/Exit
+    // Logging initialization/termination is not made part of wxWidgets Init/Run/Exit
     // mechanism. Logging must be terminated as late as possible to avoid methods
     // that log during shutdown to crash the shutdown process.
     //

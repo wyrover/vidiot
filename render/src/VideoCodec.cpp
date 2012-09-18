@@ -81,13 +81,13 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
     {
         parameter->set(video_codec);
     }
-    video_codec->width = Properties::get()->getVideoSize().GetWidth(); // resolution must be a multiple of two
-    video_codec->height = Properties::get()->getVideoSize().GetHeight();
+    video_codec->width = Properties::get().getVideoSize().GetWidth(); // resolution must be a multiple of two
+    video_codec->height = Properties::get().getVideoSize().GetHeight();
 
     // Fundamental unit of time (in seconds) in terms of which frame timestamps are represented.
     // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
-    video_codec->time_base.den = Properties::get()->getFrameRate().denominator();
-    video_codec->time_base.num = Properties::get()->getFrameRate().numerator();
+    video_codec->time_base.den = Properties::get().getFrameRate().denominator();
+    video_codec->time_base.num = Properties::get().getFrameRate().numerator();
     video_codec->pix_fmt = PIX_FMT_YUV420P;
     if (context->oformat->flags & AVFMT_GLOBALHEADER)
     {

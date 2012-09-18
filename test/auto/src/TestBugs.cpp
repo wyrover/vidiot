@@ -3,9 +3,11 @@
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
 #include "FixtureProject.h"
-#include "HelperTimeline.h"
-#include "HelperDetails.h"
 #include "HelperApplication.h"
+#include "HelperDetails.h"
+#include "HelperTestSuite.h"
+#include "HelperTimeline.h"
+#include "UtilLog.h"
 
 namespace test {
 

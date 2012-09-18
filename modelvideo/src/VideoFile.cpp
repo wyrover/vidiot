@@ -251,9 +251,9 @@ void VideoFile::startDecodingVideo()
     FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
     int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
 
-    if (videoFrameRate != Properties::get()->getFrameRate())
+    if (videoFrameRate != Properties::get().getFrameRate())
     {
-        LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get()->getFrameRate();
+        LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get().getFrameRate();
     }
 
     VAR_DEBUG(this)(getCodec());

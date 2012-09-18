@@ -50,7 +50,7 @@ wxSize ThumbnailView::requiredSize() const
     wxSize boundingBox = wxSize(
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetWidth()  - 2 * Layout::ClipBorderSize,
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetHeight() - Layout::ClipBorderSize - Layout::ClipDescriptionBarHeight);
-    wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get()->getVideoSize(), boundingBox);
+    wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
     return scaledSize;
 }
 

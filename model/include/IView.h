@@ -1,6 +1,7 @@
 #ifndef MODEL_I_VIEW_H
 #define MODEL_I_VIEW_H
 
+
 namespace model {
 
 class IView
@@ -13,7 +14,7 @@ public:
 
     virtual ~IView() {};
 
-    static IView& get();
+    static IView& getView();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS

@@ -208,9 +208,8 @@ void Trim::update(wxPoint position)
     getTimeline().beginTransaction();
 
     mCommand->update(getZoom().pixelsToPts(position.x - mStartPosition.x));
+    //QueueEvent(new EventTrimUpdate(TrimEvent(true, mOriginalClip->getLength(),mCommand->getClip()->getLength(), mOriginalClip->getDescription())));
     preview();
-
-    QueueEvent(new EventTrimUpdate(TrimEvent(true, mOriginalClip->getLength(),mCommand->getClip()->getLength(), mOriginalClip->getDescription())));
 
     if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
     {

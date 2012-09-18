@@ -14,16 +14,22 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit TrimEvent(bool active, pts oldLength = 0, pts newLength = 0, wxString description = "");
+    explicit TrimEvent(
+        bool active = false,
+        model::IClipPtr clip = model::IClipPtr(),
+        model::IClipPtr link = model::IClipPtr(),
+        model::IClipPtr cliptrimmed = model::IClipPtr(),
+        model::IClipPtr linktrimmed = model::IClipPtr());
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     bool getActive() const;
-    pts getOldLength() const;
-    pts getNewLength() const;
-    wxString getDescription() const;
+    model::IClipPtr getClip() const;
+    model::IClipPtr getClipTrimmed() const;
+    model::IClipPtr getLink() const;
+    model::IClipPtr getLinkTrimmed() const;
 
 private:
 
@@ -32,9 +38,10 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mActive;
-    pts mOldLength;
-    pts mNewLength;
-    wxString mDescription;
+    model::IClipPtr mClip;
+    model::IClipPtr mLink;
+    model::IClipPtr mClipTrimmed;
+    model::IClipPtr mLinkTrimmed;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

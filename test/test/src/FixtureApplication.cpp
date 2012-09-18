@@ -1,9 +1,9 @@
 #include "FixtureApplication.h"
 
 #include "Application.h"
+#include "HelperTestSuite.h"
 #include "UtilLog.h"
 #include "Window.h"
-#include "SuiteCreator.h"
 
 namespace test {
 
@@ -14,7 +14,7 @@ FixtureGui sInstance;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-FixtureGui::FixtureGui()
+FixtureGui::FixtureGui() // todo rename file into FixtureGui
     :   mEnd(false)
     ,   mStartingMainThread(false)
     ,   mBarrierStart(2)
@@ -51,7 +51,7 @@ bool FixtureGui::tearDownWorld()
 
 bool FixtureGui::setUp()
 {
-    if (ISuite::currentTestIsDisabled()) { return true; } // Test was disabled
+    if (!HelperTestSuite::get().currentTestRequiresGui()) { return true; } // Test was disabled or does not require gui
     VAR_DEBUG(this);
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for starting the main (application) event loop, not for any dialogs.
@@ -64,7 +64,7 @@ bool FixtureGui::setUp()
 
 bool FixtureGui::tearDown()
 {
-    if (ISuite::currentTestIsDisabled()) { return true; } // Test was disabled
+    if (!HelperTestSuite::get().currentTestRequiresGui()) { return true; } // Test was disabled or does not require gui
     VAR_DEBUG(this);
     wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
     if (doc)

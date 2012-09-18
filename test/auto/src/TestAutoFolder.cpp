@@ -6,8 +6,9 @@
 #include "AutoFolder.h"
 #include "FixtureApplication.h"
 #include "HelperApplication.h"
-#include "HelperWindow.h"
 #include "HelperProjectView.h"
+#include "HelperTestSuite.h"
+#include "HelperWindow.h"
 #include "UtilLogWxwidgets.h"
 
 namespace test {

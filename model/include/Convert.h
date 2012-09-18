@@ -14,6 +14,11 @@ public:
     static int ptsToMicroseconds(pts position); ///< @return time duration in microseconds.
     static pts microsecondsToPts(int us);       ///< @param us time duration in microseconds
 
+    /// Convert a pts value to a human readible string in the form HH:MM:SS.ms
+    /// If the time is less than an hour (or less then a minute) then no hours (or minutes)
+    /// indicators are shown.
+    static wxString ptsToHumanReadibleString(pts duration);
+
     /// Convert a pts value to a number of audio frames. One audio frame is one
     /// element for one speaker. One sample is the data for all involved speakers.
     /// \param audioRate The rate (samples per second )at which audio will be played (44100/48000/etc.)

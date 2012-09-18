@@ -1,13 +1,19 @@
 #ifndef DETAILS_CLIP_H
 #define DETAILS_CLIP_H
 
-#include "VideoClipEvent.h"
+#include "DetailsPanel.h"
 #include "UtilEnumSelector.h"
-#include "Details.h"
-#include "Part.h"
+#include "Enums.h"
 
 namespace model {
-class ChangeVideoClipTransform;
+    class ChangeVideoClipTransform;
+    class EventChangeVideoClipOpacity;
+    class EventChangeVideoClipScaling;
+    class EventChangeVideoClipScalingDigits;
+    class EventChangeVideoClipAlignment;
+    class EventChangeVideoClipPosition;
+    class EventChangeVideoClipMinPosition;
+    class EventChangeVideoClipMaxPosition;
 }
 
 namespace gui { namespace timeline {
@@ -15,7 +21,7 @@ namespace gui { namespace timeline {
 class EventSelectionUpdate;
 
 class DetailsClip
-:   public IDetails
+:   public DetailsPanel
 {
 public:
 
@@ -23,7 +29,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    DetailsClip(Details* parent, Timeline& timeline);
+    DetailsClip(wxWindow* parent, Timeline& timeline);
     virtual ~DetailsClip();
 
     //////////////////////////////////////////////////////////////////////////
@@ -92,9 +98,6 @@ private:
     model::VideoClipPtr mVideoClip;
     model::AudioClipPtr mAudioClip;
 
-    wxBoxSizer*         mTopSizer;  ///< sizer for panel
-    wxBoxSizer*         mBoxSizer;  ///< sizer for current box
-
     wxSpinCtrl* mOpacitySpin;
     wxSlider* mOpacitySlider;
 
@@ -117,8 +120,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     void makeCommand();
-    void addbox(const wxString& name);
-    void addoption(const wxString& name, wxWindow* widget);
     void preview();
 
     /// When a slider or spin control is changed for one of the position values, then update

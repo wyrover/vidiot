@@ -2,6 +2,7 @@
 
 #include "AutoFolder.h"
 #include "HelperProjectView.h"
+#include "HelperTestSuite.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "IClip.h"
@@ -10,8 +11,6 @@
 #include "SuiteCreator.h"
 #include "Track.h"
 #include "UtilLog.h"
-#include <boost/foreach.hpp>
-#include <wx/utils.h>
 
 namespace test {
 
@@ -29,7 +28,7 @@ FixtureProject::~FixtureProject()
 
 void FixtureProject::init()
 {
-    if (ISuite::currentTestIsDisabled()) { return; } // Test was disabled
+    if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
 
     wxString sVidiotDir;
     bool found = wxGetEnv( _T("VIDIOT_DIR"), &sVidiotDir);
@@ -65,7 +64,7 @@ void FixtureProject::init()
 
 void FixtureProject::destroy()
 {
-    if (ISuite::currentTestIsDisabled()) { return; } // Test was disabled
+    if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
 
     // Must be done here, since the deletion of files causes logging.
     // Logging is stopped (unavailable) after tearDown since application window is closed.
