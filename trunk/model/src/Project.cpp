@@ -12,8 +12,6 @@
 
 namespace model {
 
-    // todo apply singleinstance for all ::get() methods
-
 IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
 Project::Project()

@@ -17,16 +17,12 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-static Watcher* sCurrent = 0;
-
 Watcher::Watcher()
     :   mFileMap()
     ,   mWatcher(0)
     ,   mRestartRequired(false)
 {
     VAR_DEBUG(this);
-    sCurrent = this;
-
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &Watcher::onOpenProject,           this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &Watcher::onCloseProject,          this);
 }
@@ -39,13 +35,6 @@ Watcher::~Watcher()
     gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,  &Watcher::onCloseProject,           this);
 
     stop();
-
-    sCurrent = 0;
-}
-
-Watcher* Watcher::current()
-{
-    return sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////

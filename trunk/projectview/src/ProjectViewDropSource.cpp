@@ -8,8 +8,6 @@
 
 namespace gui {
 
-ProjectViewDropSource* sCurrent = 0;
-
 struct wxBitmapCanvas
     :   public wxWindow
 {
@@ -42,7 +40,6 @@ ProjectViewDropSource::ProjectViewDropSource(wxDataViewCtrl& ctrl, ProjectViewMo
     ,   mHint(0)
     ,   mFeedback(true)
 {
-    sCurrent = this;
 }
 
 ProjectViewDropSource::~ProjectViewDropSource()
@@ -52,13 +49,6 @@ ProjectViewDropSource::~ProjectViewDropSource()
         delete mHint;
         mHint = 0;
     }
-    sCurrent = 0;
-}
-
-// static
-ProjectViewDropSource& ProjectViewDropSource::current()
-{
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////

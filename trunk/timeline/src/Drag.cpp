@@ -64,7 +64,7 @@ public:
     };
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def)
     {
-        ProjectViewDropSource::current().setFeedback(false);
+        ProjectViewDropSource::get().setFeedback(false);
         getStateMachine().process_event(state::EvDragEnter(x,y));
         return wxDragNone;
     }
@@ -80,7 +80,7 @@ public:
     }
     void OnLeave()
     {
-        ProjectViewDropSource::current().setFeedback(true);
+        ProjectViewDropSource::get().setFeedback(true);
         getStateMachine().process_event(state::EvDragEnd(0,0));
     }
 };
@@ -145,7 +145,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 
     if (!mIsInsideDrag)
     {
-        ::command::TrackCreator c(ProjectViewDropSource::current().getData().getAssets());
+        ::command::TrackCreator c(ProjectViewDropSource::get().getData().getAssets());
         mVideo.setTempTrack(c.getVideoTrack());
         mAudio.setTempTrack(c.getAudioTrack());
         mDraggedTrack = mVideo.getTempTrack();

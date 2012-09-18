@@ -1,6 +1,8 @@
 #ifndef PROJECT_VIEW_DROP_SOURCE_H
 #define PROJECT_VIEW_DROP_SOURCE_H
 
+#include "UtilSingleInstance.h"
+
 namespace model {
 class INode;
 typedef INode* NodeId;
@@ -13,6 +15,7 @@ class DataObject;
 
 class ProjectViewDropSource
     :   public wxDropSource
+    ,   public SingleInstance<ProjectViewDropSource>
 {
 public:
 
@@ -22,8 +25,6 @@ public:
 
     ProjectViewDropSource(wxDataViewCtrl& ctrl, ProjectViewModel& model);
     ~ProjectViewDropSource();
-
-    static ProjectViewDropSource& current();
 
     //////////////////////////////////////////////////////////////////////////
     // FROM WXDROPSOURCE
