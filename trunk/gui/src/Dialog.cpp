@@ -86,8 +86,6 @@ private:
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-static Dialog* sCurrent = 0;
-
 Dialog::Dialog()
     :   mDir(boost::none)
     ,   mFiles(boost::none)
@@ -95,19 +93,10 @@ Dialog::Dialog()
     ,   mButton(boost::none)
     ,   mDebugReportGenerated(false)
 {
-    sCurrent = this;
 }
 
 Dialog::~Dialog()
 {
-    sCurrent = 0;
-}
-
-// static
-Dialog& Dialog::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////

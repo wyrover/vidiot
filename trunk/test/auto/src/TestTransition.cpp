@@ -9,6 +9,7 @@
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
+#include "HelperTestSuite.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelinesView.h"

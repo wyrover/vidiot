@@ -2,10 +2,12 @@
 #define PROPERTIES_H
 
 #include "UtilFrameRate.h"
+#include "UtilSingleInstance.h"
 
 namespace model {
 
 class Properties
+    :   public SingleInstance<Properties>
 {
 public:
 
@@ -14,8 +16,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Properties();
+
+    /// Constructor used for tests.
+    /// This constructor allows specifying the values used.
+    Properties(FrameRate fr);
+
     ~Properties();
-    static PropertiesPtr get();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

@@ -8,13 +8,21 @@ DEFINE_EVENT(EVENT_TRIM_UPDATE, EventTrimUpdate, TrimEvent);
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimEvent::TrimEvent(bool active, pts oldLength, pts newLength, wxString description)
+TrimEvent::TrimEvent(
+        bool active,
+        model::IClipPtr clip,
+        model::IClipPtr link,
+        model::IClipPtr cliptrimmed,
+        model::IClipPtr linktrimmed)
     :   mActive(active)
-    ,   mOldLength(oldLength)
-    ,   mNewLength(newLength)
-    ,   mDescription(description)
+    ,   mClip(clip)
+    ,   mLink(link)
+    ,   mClipTrimmed(cliptrimmed)
+    ,   mLinkTrimmed(linktrimmed)
 {
 }
+
+// todo copy constructor
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
@@ -25,19 +33,24 @@ bool TrimEvent::getActive() const
     return mActive;
 }
 
-pts TrimEvent::getOldLength() const
+model::IClipPtr TrimEvent::getClip() const
 {
-    return mOldLength;
+    return mClip;
 }
 
-pts TrimEvent::getNewLength() const
+model::IClipPtr TrimEvent::getClipTrimmed() const
 {
-    return mNewLength;
+    return mClipTrimmed;
 }
 
-wxString TrimEvent::getDescription() const
+model::IClipPtr TrimEvent::getLink() const
 {
-    return mDescription;
+    return mLink;
+}
+
+model::IClipPtr TrimEvent::getLinkTrimmed() const
+{
+    return mLinkTrimmed;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -46,7 +59,7 @@ wxString TrimEvent::getDescription() const
 
 std::ostream& operator<<( std::ostream& os, const TrimEvent& obj )
 {
-    os << obj.mActive << '|' << obj.mOldLength << '|' << obj.mNewLength << '|' << obj.mDescription;
+    os << obj.mActive << '|' << obj.mClip<< '|' << obj.mClipTrimmed << '|' << obj.mLink << '|' << obj.mLinkTrimmed;
     return os;
 }
 

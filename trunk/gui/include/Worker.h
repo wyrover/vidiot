@@ -3,6 +3,7 @@
 
 #include "FifoWork.h"
 #include "UtilEvent.h"
+#include "UtilSingleInstance.h"
 
 namespace gui {
 
@@ -14,6 +15,7 @@ DECLARE_EVENT(EVENT_WORKER_EXECUTED_WORK, WorkerExecutedWorkEvent, long);
 class Worker
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public boost::noncopyable
+    ,   public SingleInstance<Worker>
 {
 public:
 
@@ -24,8 +26,6 @@ public:
     Worker();
 
     ~Worker();
-
-    static Worker& get();
 
     //////////////////////////////////////////////////////////////////////////
     // NEW WORK

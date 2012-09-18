@@ -1,6 +1,8 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
+#include "UtilSingleInstance.h"
+
 typedef std::list<wxString> wxStrings;
 
 namespace gui {
@@ -16,6 +18,7 @@ namespace gui {
 /// thread other than the main wxWidgets thread does not work (wxWidgets limitation). Creating dialogs via this class ensures
 /// that the dialog is created on the main thread, and the calling thread is blocked until the dialog has been dismissed.
 class Dialog
+    :   public SingleInstance<Dialog>
 {
 public:
 
@@ -25,8 +28,6 @@ public:
 
     explicit Dialog();
     virtual ~Dialog();
-
-    static Dialog& get();
 
     //////////////////////////////////////////////////////////////////////////
     // DIALOG METHODS

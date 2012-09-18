@@ -285,7 +285,7 @@ render::RenderPtr Sequence::getRender()
 {
     if (!mRender)
     {
-        mRender = Properties::get()->getDefaultRender();
+        mRender = Properties::get().getDefaultRender();
         wxFileName name = mRender->getFileName();
         if (!!name.GetPath().IsSameAs(""))
         {

@@ -4,8 +4,9 @@
 #include "AutoFolder.h"
 #include "File.h"
 #include "FixtureApplication.h"
-#include "HelperWindow.h"
 #include "HelperProjectView.h"
+#include "HelperTestSuite.h"
+#include "HelperWindow.h"
 #include "Sequence.h"
 
 namespace test {

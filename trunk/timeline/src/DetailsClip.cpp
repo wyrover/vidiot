@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
+#include "DetailsPanel.h"
 #include "IClip.h"
 #include "Layout.h"
 #include "Player.h"
@@ -45,13 +46,11 @@ const double sScalingIncrement = 0.01;
 const int sPositionPageSize = 10;
 const int sOpacityPageSize = 10;
 
-DetailsClip::DetailsClip(Details* parent, Timeline& timeline)
-    :   IDetails(parent,timeline)
+DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
+    :   DetailsPanel(parent,timeline)
     ,   mClip()
     ,   mVideoClip()
     ,   mAudioClip()
-    ,   mTopSizer(0)
-    ,   mBoxSizer(0)
     ,   mOpacitySlider(0)
     ,   mOpacitySpin(0)
     ,   mSelectScaling(0)
@@ -67,8 +66,6 @@ DetailsClip::DetailsClip(Details* parent, Timeline& timeline)
     LOG_INFO;
 
     VAR_INFO(GetSize());
-
-    mTopSizer = new wxBoxSizer(wxVERTICAL);
 
     addbox(_("Duration")); // todo handle resizing for clips with a different audio/video length
 
@@ -146,8 +143,8 @@ DetailsClip::DetailsClip(Details* parent, Timeline& timeline)
 
     setClip(model::IClipPtr()); // Ensures disabling all controls
 
-    mTopSizer->AddStretchSpacer();
-    SetSizerAndFit(mTopSizer);
+    GetSizer()->AddStretchSpacer();
+    Fit();
 
     getSelection().Bind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
     VAR_INFO(GetSize());
@@ -519,23 +516,6 @@ void DetailsClip::makeCommand()
         mCommand->submit();
     }
     ASSERT_NONZERO(mCommand);
-}
-
-void DetailsClip::addbox(const wxString& name)
-{
-    ASSERT(mTopSizer);
-    mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, name), wxVERTICAL );
-    mTopSizer->Add(mBoxSizer, 0, wxGROW|wxALIGN_CENTRE|wxALL, 0 );
-}
-
-void DetailsClip::addoption(const wxString& name, wxWindow* widget)
-{
-    ASSERT(mBoxSizer);
-    wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
-    mBoxSizer->Add(hSizer, 0, wxGROW|wxLEFT|wxALL, 2);
-    hSizer->Add(new wxStaticText(this, wxID_ANY, name), 0, wxALL|wxALIGN_TOP, 0);
-    hSizer->Add(5, 5, 1, wxALL, 0);
-    hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP);
 }
 
 void DetailsClip::preview()

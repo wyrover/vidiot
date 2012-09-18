@@ -6,6 +6,7 @@
 #include "HelperApplication.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
+#include "HelperTestSuite.h"
 #include "Constants.h"
 #include "HelperWindow.h"
 #include "Convert.h"
@@ -17,6 +18,7 @@
 #include "UtilLogWxwidgets.h"
 
 namespace test {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

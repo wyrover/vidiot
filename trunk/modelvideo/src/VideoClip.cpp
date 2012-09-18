@@ -100,7 +100,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
     {
         // Scale the clip's size and region of interest to the bounding box
         // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
-        wxSize outputsize = Properties::get()->getVideoSize();
+        wxSize outputsize = Properties::get().getVideoSize();
 
         double scaleToBoundingBox(0);
         wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
@@ -125,7 +125,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
             }
 
             wxSize inputsize = getInputSize();
-            wxSize outputsize = Properties::get()->getVideoSize();
+            wxSize outputsize = Properties::get().getVideoSize();
             wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
             wxRect roi(wxPoint(0,0),scaledsize);
 
@@ -239,7 +239,7 @@ wxPoint VideoClip::getMinPosition()
 
 wxPoint VideoClip::getMaxPosition()
 {
-    wxSize outputsize = Properties::get()->getVideoSize();
+    wxSize outputsize = Properties::get().getVideoSize();
     return wxPoint(outputsize.x,outputsize.y);
 }
 
@@ -322,7 +322,7 @@ void VideoClip::setPosition(wxPoint position)
 void VideoClip::updateAutomatedScaling()
 {
     wxSize inputsize = getInputSize();
-    wxSize outputsize = Properties::get()->getVideoSize();
+    wxSize outputsize = Properties::get().getVideoSize();
 
     switch (mScaling)
     {
@@ -359,7 +359,7 @@ void VideoClip::updateAutomatedPositioning()
 {
     wxSize inputsize = getInputSize();
     wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
-    wxSize outputsize = Properties::get()->getVideoSize();
+    wxSize outputsize = Properties::get().getVideoSize();
     switch (mAlignment)
     {
     case VideoAlignmentCenter:

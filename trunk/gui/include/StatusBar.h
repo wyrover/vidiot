@@ -2,11 +2,13 @@
 #define STATUSBAR_H
 
 #include "Worker.h"
+#include "UtilSingleInstance.h"
 
 namespace gui {
 
 class StatusBar
-    : public wxStatusBar
+    :   public wxStatusBar
+    ,   public SingleInstance<StatusBar>
 {
 public:
 
@@ -16,7 +18,6 @@ public:
 
     StatusBar(wxWindow *parent);
     virtual ~StatusBar();
-    static StatusBar& get();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS

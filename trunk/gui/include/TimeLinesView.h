@@ -1,5 +1,7 @@
-#ifndef GUI_SEQUENCE_VIEW_H
-#define GUI_SEQUENCE_VIEW_H
+#ifndef TIMELINES_VIEW_H
+#define TIMELINES_VIEW_H
+
+#include "UtilSingleInstance.h"
 
 namespace model {
     class EventCloseProject;
@@ -21,6 +23,7 @@ namespace timeline {
 
 class TimelinesView
 :   public wxPanel
+,   public SingleInstance<TimelinesView>
 {
 public:
 
@@ -30,8 +33,6 @@ public:
 
     TimelinesView(Window *parent);
 	virtual ~TimelinesView();
-
-    static TimelinesView& get();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -94,4 +95,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::TimelinesView, 1)
 
-#endif // GUI_SEQUENCE_VIEW_H
+#endif // TIMELINES_VIEW_H

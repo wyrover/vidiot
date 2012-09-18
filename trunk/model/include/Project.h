@@ -1,8 +1,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "RootCommand.h"
-#include "UtilEvent.h"
+#include "UtilSingleInstance.h"
 
 namespace model {
 
@@ -15,6 +14,7 @@ namespace model {
 /// \image html Project.png
 class Project
     :   public wxDocument
+    ,   public SingleInstance<Project>
 {
 public:
 
@@ -24,10 +24,6 @@ public:
 
     Project();
     ~Project();
-
-    /// Get the get project. Used to avoid having to pass this object
-    /// (or the Properties of it) throughout the entire code.
-    static Project& get();
 
     //////////////////////////////////////////////////////////////////////////
     // OVERRIDES - wxDocument
@@ -60,7 +56,7 @@ public:
     // CHANGE COMMANDS
     //////////////////////////////////////////////////////////////////////////
 
-    void Submit(command::RootCommand* c);
+    void Submit(wxCommand* c);
 
     //////////////////////////////////////////////////////////////////////////
     // ACCESSORS

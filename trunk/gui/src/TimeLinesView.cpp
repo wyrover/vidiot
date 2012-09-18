@@ -23,8 +23,6 @@ TimelinesView::TimelinesView(Window *parent)
 :	wxPanel(parent)
 ,   mNotebook(this,wxID_ANY)
 {
-    sCurrent = this;
-
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add( &mNotebook, 1, wxGROW );
     SetSizerAndFit(sizer);
@@ -41,14 +39,6 @@ TimelinesView::~TimelinesView()
     gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,            &TimelinesView::onProjectAssetRemoved,       this);
     gui::Window::get().Unbind(model::EVENT_RENAME_NODE,            &TimelinesView::onProjectAssetRenamed,       this);
     mNotebook.Unbind(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,   &TimelinesView::onPageChanged,               this);
-    sCurrent = 0;
-}
-
-// static
-TimelinesView& TimelinesView::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////

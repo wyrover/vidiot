@@ -6,7 +6,6 @@ DEFINE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, long);
 DEFINE_EVENT(EVENT_WORKER_EXECUTED_WORK, WorkerExecutedWorkEvent, long);
 
 static const unsigned int sMaximumBufferedWork = 1000;
-static Worker* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -17,7 +16,6 @@ Worker::Worker()
 ,   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
 {
-    sCurrent = this;
     mThread.reset(new boost::thread(boost::bind(&Worker::thread,this)));
 }
 
@@ -30,14 +28,6 @@ Worker::~Worker()
     {
         mThread->join();
     }
-    sCurrent = 0;
-}
-
-// static
-Worker& Worker::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,7 @@
 #include "HelperApplication.h"
 #include "HelperDetails.h"
 #include "HelperModel.h"
+#include "HelperTestSuite.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "HelperTransform.h"

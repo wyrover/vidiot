@@ -3,6 +3,7 @@
 
 #include "IView.h"
 #include "HelperPanel.h"
+#include "UtilSingleInstance.h"
 
 namespace util {
     class TestCrash;
@@ -33,6 +34,7 @@ typedef timeline::HelperPanel<timeline::Details> DetailsView;
 class Window
     :   public wxDocParentFrame
     ,   public model::IView
+    ,   public SingleInstance<Window>
 {
 public:
 
@@ -45,8 +47,6 @@ public:
     Window();
     void init();
     ~Window();
-
-    static Window& get();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS

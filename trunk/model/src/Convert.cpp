@@ -17,13 +17,13 @@ int toInt(rational r)
 // static
 pts Convert::timeToPts(int time)
 {
-    return toInt(rational(time) / rational(Constants::sSecond) / Properties::get()->getFrameRate());
+    return toInt(rational(time) / rational(Constants::sSecond) / Properties::get().getFrameRate());
 }
 
 // static
 int Convert::ptsToTime(pts position)
 {
-    return toInt(rational(position) * rational(Constants::sSecond) * Properties::get()->getFrameRate());
+    return toInt(rational(position) * rational(Constants::sSecond) * Properties::get().getFrameRate());
 }
 
 // static
@@ -36,6 +36,28 @@ int Convert::ptsToMicroseconds(pts position)
 pts Convert::microsecondsToPts(int us)
 {
     return timeToPts(toInt(rational(us) / rational(Constants::sMicroseconds)));
+}
+
+// static
+wxString Convert::ptsToHumanReadibleString(pts duration)
+{
+    std::ostringstream o;
+    int ms = ptsToTime(duration);
+
+    div_t divhours   = div(ms,              Constants::sHour);
+    div_t divminutes = div(divhours.rem,    Constants::sMinute);
+    div_t divseconds = div(divminutes.rem,  Constants::sSecond);
+
+    if (divhours.quot > 0)
+    {
+        o << std::setw(2) << std::setfill('0') << divhours.quot << ':';
+    }
+    if (divminutes.quot > 0)
+    {
+        o << std::setw(2) << std::setfill('0') << divminutes.quot << ':';
+    }
+    o << std::setw(2) << std::setfill('0') << divseconds.quot << '.' << std::setw(3) << std::setfill('0') << divseconds.rem;
+    return o.str();
 }
 
 // static
@@ -68,13 +90,13 @@ pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrat
 //static
 pts Convert::toProjectFrameRate(pts inputposition, FrameRate inputrate)
 {
-    return convertFrameRate(inputposition, inputrate, Properties::get()->getFrameRate());
+    return convertFrameRate(inputposition, inputrate, Properties::get().getFrameRate());
 }
 
 //static
 pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
 {
-    return convertFrameRate(outputposition, Properties::get()->getFrameRate(), inputrate);
+    return convertFrameRate(outputposition, Properties::get().getFrameRate(), inputrate);
 }
 
 // static

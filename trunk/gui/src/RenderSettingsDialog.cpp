@@ -24,8 +24,6 @@ namespace gui {
 
 wxString sIncompatibleHeader(_("Incompatible codec and file type"));
 
-static RenderSettingsDialog* sCurrent = 0;
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -58,7 +56,6 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     ,   mLength(0)
 {
     VAR_DEBUG(this);
-    sCurrent = this;
 
     mLength = mSequence->getLength();
     SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -156,7 +153,6 @@ RenderSettingsDialog::~RenderSettingsDialog()
         // KP: Change render options, then undo until all items removed. Then close. Save as dialog will not be shown.
         model::Project::get().Modify(true);
     }
-    sCurrent = 0;
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onFileButtonPressed, this);
     mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onRenderButtonPressed, this);
     mOkButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onOkButtonPressed, this);
@@ -165,13 +161,6 @@ RenderSettingsDialog::~RenderSettingsDialog()
     mSetDefaultButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onSetDefaultButtonPressed, this);
     mVideoCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onVideoCodecChanged, this);
     mAudioCodec->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &RenderSettingsDialog::onAudioCodecChanged, this);
-}
-
-// static
-RenderSettingsDialog& RenderSettingsDialog::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -280,7 +269,7 @@ void RenderSettingsDialog::onApplyButtonPressed(wxCommandEvent& event)
 
 void RenderSettingsDialog::onSetDefaultButtonPressed(wxCommandEvent& event)
 {
-    model::Properties::get()->setDefaultRender(mNew);
+    model::Properties::get().setDefaultRender(mNew);
     enableSetDefaultButton();
     event.Skip();
 }
@@ -461,7 +450,7 @@ void RenderSettingsDialog::enableRenderButton()
 void RenderSettingsDialog::enableSetDefaultButton()
 {
     mSetDefaultButton->Enable();
-    if (*(model::Properties::get()->getDefaultRender()->withFileNameRemoved()) == *(mNew->withFileNameRemoved()))
+    if (*(model::Properties::get().getDefaultRender()->withFileNameRemoved()) == *(mNew->withFileNameRemoved()))
     {
         mSetDefaultButton->Disable();
     }

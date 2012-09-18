@@ -51,7 +51,6 @@ IMPLEMENT_DYNAMIC_CLASS(ViewHelper, wxView);
 
 const int sStatusProcessing = 8;
 int Window::sSequenceMenuIndex = 0;
-static Window* sCurrent = 0;
 static const wxString sTitle(_("Vidiot"));
 
 Window::Window()
@@ -70,8 +69,6 @@ Window::Window()
     ,   menusequence(0)
     ,   mTestCrash(new util::TestCrash(this))
 {
-    sCurrent = this;
-
     // Construction not done in constructor list due to dependency on sCurrent
     mWorker         = new Worker();
     mWatcher        = new Watcher();
@@ -241,15 +238,6 @@ Window::~Window()
     delete mDialog;
     delete mLayout;
     //NOT: delete mDocTemplate;
-
-    sCurrent = 0;
-}
-
-// static
-Window& Window::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -417,9 +405,9 @@ template void Window::serialize<boost::archive::text_iarchive>(boost::archive::t
 
 namespace model {
     // static
-    IView& IView::get()
+    IView& IView::getView()
     {
-        return *gui::sCurrent;
+        return gui::Window::get();
     }
 
     template<class Archive>

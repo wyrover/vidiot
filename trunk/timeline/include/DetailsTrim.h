@@ -1,15 +1,14 @@
 #ifndef DETAILS_TRIM_H
 #define DETAILS_TRIM_H
 
-#include "Part.h"
-#include "Details.h"
+#include "DetailsPanel.h"
 
 namespace gui { namespace timeline {
 
 class EventTrimUpdate;
 
 class DetailsTrim
-:   public IDetails
+:   public DetailsPanel
 {
 public:
 
@@ -17,7 +16,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    DetailsTrim(Details* parent, Timeline& timeline);
+    DetailsTrim(wxWindow* parent, Timeline& timeline);
     virtual ~DetailsTrim();
 
     //////////////////////////////////////////////////////////////////////////
@@ -32,19 +31,8 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxBoxSizer*         mTopSizer;  ///< sizer for panel
-    wxBoxSizer*         mBoxSizer;  ///< sizer for current box
-
-    wxSpinCtrl*         mOldLength;
-    wxSpinCtrl*         mNewLength;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void addbox(const wxString& name);
-    void addoption(const wxString& name, wxWindow* widget);
-
+    wxStaticText*       mVideo;
+    wxStaticText*       mAudio;
 };
 
 }} // namespace

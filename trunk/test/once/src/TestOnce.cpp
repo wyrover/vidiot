@@ -7,6 +7,7 @@
 #include "RenderSettingsDialog.h"
 #include "Sequence.h"
 #include "HelperWindow.h"
+#include "HelperTestSuite.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelinesView.h"

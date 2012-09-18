@@ -12,30 +12,25 @@
 
 namespace model {
 
-IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
+    // todo apply singleinstance for all ::get() methods
 
-static Project* sCurrent = 0;
+IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
 Project::Project()
 :   wxDocument()
-,   mRoot(boost::make_shared<Folder>("Root"))
-,   mProperties(boost::make_shared<Properties>())
+// Do no initialize members with actual data here.
+// For loading that is done via serialize - Initializing here for loading is useless (overwritten by serialize) and causes crashes (mProperties instantiated twice)
+// For new documents initializing is done via OnNewDocument
+,   mRoot(boost::make_shared<Folder>("Root")) // Exception: Initialized here since it is used on OnChangeFilename which is called before any other method when creating a new project.
+,   mProperties()
 {
     VAR_DEBUG(this);
-    sCurrent = this;
     ASSERT(!IsModified());
 }
 
 Project::~Project()
 {
     VAR_DEBUG(this);
-    sCurrent = 0;
-}
-
-Project& Project::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,7 +52,7 @@ bool Project::OnCloseDocument()
     // AFTER the destruction of this object which leads to crashes.
 
     EventCloseProject closeEvent(this); // Do not 'inline' in the next line like IView::get().ProcessModelEvent(EventCloseProject(this)); Doesn't compile in g++
-    IView::get().ProcessModelEvent(closeEvent);
+    IView::getView().ProcessModelEvent(closeEvent);
     return wxDocument::OnCloseDocument();
 }
 
@@ -66,7 +61,8 @@ bool Project::OnNewDocument()
     bool opened = wxDocument::OnNewDocument();
     if (opened)
     {
-        IView::get().ProcessModelEvent(EventOpenProject(this));
+        mProperties = boost::make_shared<Properties>();
+        IView::getView().ProcessModelEvent(EventOpenProject(this));
     }
     return opened;
 }
@@ -89,7 +85,7 @@ wxCommandProcessor* Project::OnCreateCommandProcessor()
 void Project::OnChangeFilename(bool notifyViews)
 {
     mRoot->setName(GetUserReadableName());
-    IView::get().ProcessModelEvent(EventRenameProject(this));
+    IView::getView().ProcessModelEvent(EventRenameProject(this));
     wxDocument::OnChangeFilename(notifyViews);
 }
 
@@ -109,7 +105,7 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
         boost::archive::text_oarchive ar(ostream);
         registerClasses(ar);
         ar & *this;
-        ar & IView::get();
+        ar & IView::getView();
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -133,8 +129,8 @@ std::istream& Project::LoadObject(std::istream& istream)
         boost::archive::text_iarchive ar(istream);
         registerClasses(ar);
         ar & *this;
-        ar & IView::get();
-        IView::get().ProcessModelEvent(EventOpenProject(this));
+        ar & IView::getView();
+        IView::getView().ProcessModelEvent(EventOpenProject(this));
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -176,7 +172,7 @@ bool Project::DoOpenDocument(const wxString& file)
 // CHANGE COMMANDS
 //////////////////////////////////////////////////////////////////////////
 
-void Project::Submit(command::RootCommand* c)
+void Project::Submit(wxCommand* c)
 {
     Modify(true);
     GetCommandProcessor()->Submit(c);

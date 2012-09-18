@@ -9,8 +9,6 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-static StatusBar* sCurrent = 0;
-
 StatusBar::StatusBar(wxWindow *parent)
     :   wxStatusBar(parent,wxID_ANY,wxSTB_DEFAULT_STYLE)
 {
@@ -21,22 +19,13 @@ StatusBar::StatusBar(wxWindow *parent)
     mProgress = new wxGauge(this,wxID_ANY,100);
     hideProgressBar();
     Bind(wxEVT_SIZE, &StatusBar::onSize, this);
-    sCurrent = this;
     Worker::get().Bind(EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
 }
 
 StatusBar::~StatusBar()
 {
-    sCurrent = 0;
     Worker::get().Unbind(EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
     Unbind(wxEVT_SIZE, &StatusBar::onSize, this);
-}
-
-// static
-StatusBar& StatusBar::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -19,21 +19,20 @@ namespace gui { namespace timeline {
 
 Details::Details(wxWindow* parent, Timeline* timeline)
     :   wxPanel(parent)
-    ,   Part(timeline)
     ,   mDetails()
 {
     LOG_INFO;
 
     // The order in this list is the order of priority in case two panels want to be shown
     mDetails = boost::assign::list_of
-        (static_cast<IDetails*>(new DetailsTrim(this,*timeline)))
-        (static_cast<IDetails*>(new DetailsClip(this,*timeline)));
+        (static_cast<DetailsPanel*>(new DetailsTrim(this,*timeline)))
+        (static_cast<DetailsPanel*>(new DetailsClip(this,*timeline)));
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
     mHeader->SetBackgroundColour(Layout::get().DetailsViewHeaderColour);
     sizer->Add(mHeader, wxSizerFlags(0).Center());
-    BOOST_FOREACH( IDetails* details, mDetails )
+    BOOST_FOREACH( DetailsPanel* details, mDetails )
     {
         sizer->Add(details, wxSizerFlags(1).Expand().Center() );
     }
@@ -62,7 +61,7 @@ wxWindow* Details::getCurrent() const
 void Details::update()
 {
     bool shown = false;
-    BOOST_FOREACH(IDetails* details, mDetails)
+    BOOST_FOREACH(DetailsPanel* details, mDetails)
     {
         if (details->requestsToBeShown() && !shown)
         {

@@ -58,7 +58,7 @@ VideoFramePtr VideoComposition::generate()
         return EmptyFramePtr();
     }
 
-    wxSize outputsize = Properties::get()->getVideoSize();
+    wxSize outputsize = Properties::get().getVideoSize();
     double scaleToBoundingBox(0);
     wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, mParameters.getBoundingBox(), scaleToBoundingBox);
     ASSERT_NONZERO(scaleToBoundingBox);

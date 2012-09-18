@@ -4,12 +4,14 @@
 #include "ICodecParameter.h"
 #include "UtilEnumSelector.h"
 #include "UtilInt.h"
+#include "UtilSingleInstance.h"
 
 namespace gui {
 
 class RenderSettingsDialog
     :   public wxDialog
     ,   public model::render::ICodecParameterChangeListener
+    ,   public SingleInstance<RenderSettingsDialog>
 {
 public:
 
@@ -19,7 +21,6 @@ public:
 
     explicit RenderSettingsDialog(model::SequencePtr sequence);
 	virtual ~RenderSettingsDialog();
-    static RenderSettingsDialog& get();
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS

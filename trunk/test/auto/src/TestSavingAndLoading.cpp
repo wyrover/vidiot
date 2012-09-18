@@ -2,6 +2,7 @@
 
 #include "FixtureApplication.h"
 #include "HelperApplication.h"
+#include "HelperTestSuite.h"
 #include "HelperWindow.h"
 #include "Sequence.h"
 #include "Window.h"
@@ -44,7 +45,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     waitForIdle();
     triggerMenu(wxID_CLOSE);
     StartTest("Load document");
-    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoid the open dialog.
+    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();
     StartTest("TearDown");
     triggerMenu(wxID_CLOSE);
