@@ -24,10 +24,6 @@ public:
     Watcher();
     virtual ~Watcher();
 
-    /// Get the current project's watcher. Used to avoid having a dependency to
-    /// the Project class throughout the code.
-    static Watcher* current();
-
 protected:
 
     //////////////////////////////////////////////////////////////////////////

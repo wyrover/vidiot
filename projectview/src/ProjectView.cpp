@@ -20,14 +20,11 @@
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
 #include "TimeLinesView.h"
-
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "Window.h"
 
 namespace gui {
-
-static ProjectView* sCurrent = 0;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -44,8 +41,6 @@ ProjectView::ProjectView(wxWindow* parent)
     ,   mDragStart(0,0)
 {
     LOG_INFO;
-
-    sCurrent = this;
 
     mCtrl.EnableDropTarget( DataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
@@ -108,14 +103,6 @@ ProjectView::~ProjectView()
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,       &ProjectView::onCollapsed,       this);
 
     mCtrl.GetMainWindow()->Unbind(wxEVT_MOTION,         &ProjectView::onMotion,          this);
-
-    sCurrent = 0;
-}
-
-ProjectView& ProjectView::get()
-{
-    ASSERT(sCurrent);
-    return *sCurrent;
 }
 
 //////////////////////////////////////////////////////////////////////////

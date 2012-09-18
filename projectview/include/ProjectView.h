@@ -3,6 +3,7 @@
 
 #include "ProjectViewModel.h"
 #include "ProjectViewDropSource.h"
+#include "UtilSingleInstance.h"
 
 namespace test {
     class ProjectViewTests;
@@ -14,6 +15,7 @@ class TimelinesView;
 
 class ProjectView
 :   public wxPanel
+,   public SingleInstance<ProjectView>
 {
 public:
 
@@ -23,7 +25,6 @@ public:
 
     ProjectView(wxWindow* parent);
     virtual ~ProjectView();
-    static ProjectView& get();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
