@@ -31,6 +31,11 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxSizer*            mTransitionOption;
+    wxSizer*            mVideoOption;
+    wxSizer*            mAudioOption;
+
+    wxStaticText*       mTransition;
     wxStaticText*       mVideo;
     wxStaticText*       mAudio;
 };
