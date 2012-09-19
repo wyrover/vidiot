@@ -22,7 +22,14 @@ TrimEvent::TrimEvent(
 {
 }
 
-// todo copy constructor
+TrimEvent::TrimEvent(const TrimEvent& other)
+    :   mActive(other.mActive)
+    ,   mClip(other.mClip)
+    ,   mLink(other.mLink)
+    ,   mClipTrimmed(other.mClipTrimmed)
+    ,   mLinkTrimmed(other.mLinkTrimmed)
+{
+}
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET

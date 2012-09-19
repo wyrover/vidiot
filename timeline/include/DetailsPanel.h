@@ -32,7 +32,7 @@ protected:
 
     void requestShow(bool show, wxString title = "");
     void addbox(const wxString& name);
-    void addoption(const wxString& name, wxWindow* widget);
+    wxSizer* addoption(const wxString& name, wxWindow* widget);
 
 private:
 

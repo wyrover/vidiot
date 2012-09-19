@@ -53,7 +53,7 @@ void DetailsPanel::addbox(const wxString& name)
     mTopSizer->Add(mBoxSizer, 0, wxGROW|wxALIGN_CENTRE|wxALL, 0 );
 }
 
-void DetailsPanel::addoption(const wxString& name, wxWindow* widget)
+wxSizer* DetailsPanel::addoption(const wxString& name, wxWindow* widget)
 {
     ASSERT(mBoxSizer);
     wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -61,6 +61,7 @@ void DetailsPanel::addoption(const wxString& name, wxWindow* widget)
     hSizer->Add(new wxStaticText(this, wxID_ANY, name), 0, wxALL|wxALIGN_TOP, 0);
     hSizer->Add(5, 5, 1, wxALL, 0);
     hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP);
+    return hSizer;
 }
 
 }} // namespace

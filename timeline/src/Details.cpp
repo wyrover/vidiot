@@ -65,8 +65,15 @@ void Details::update()
     {
         if (details->requestsToBeShown() && !shown)
         {
+            if (mHeader->GetLabel() != details->getTitle())
+            {
+                mHeader->SetLabel(details->getTitle());
+            }
+            if (mCurrent == details)
+            {
+                return; // Do not change a thing. Avoid flicker.
+            }
             mCurrent = details;
-            mHeader->SetLabel(details->getTitle());
             GetSizer()->Show(details);
             shown = true;
         }
