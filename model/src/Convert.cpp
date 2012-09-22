@@ -39,10 +39,9 @@ pts Convert::microsecondsToPts(int us)
 }
 
 // static
-wxString Convert::ptsToHumanReadibleString(pts duration)
+wxString Convert::msToHumanReadibleString(int ms)
 {
     std::ostringstream o;
-    int ms = ptsToTime(duration);
 
     div_t divhours   = div(ms,              Constants::sHour);
     div_t divminutes = div(divhours.rem,    Constants::sMinute);
@@ -58,6 +57,12 @@ wxString Convert::ptsToHumanReadibleString(pts duration)
     }
     o << std::setw(2) << std::setfill('0') << divseconds.quot << '.' << std::setw(3) << std::setfill('0') << divseconds.rem;
     return o.str();
+}
+
+// static
+wxString Convert::ptsToHumanReadibleString(pts duration)
+{
+    return msToHumanReadibleString(ptsToTime(duration));
 }
 
 // static

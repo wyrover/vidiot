@@ -6,7 +6,7 @@
 #include "Convert.h"
 #include "Details.h"
 #include "DetailsClip.h"
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 #include "HelperApplication.h"
 #include "HelperModel.h"
 #include "HelperTestSuite.h"
@@ -20,7 +20,6 @@
 #include "VideoClip.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -45,5 +44,4 @@ void TestComposition::testBlend()
     StartTestSuite();
     StartTest("Iasdfdsaf.");
 }
-
 } // namespace

@@ -1,10 +1,16 @@
 #ifndef TRIM_EVENT_H
 #define TRIM_EVENT_H
 
+#include "UtilEnum.h"
 #include "UtilEvent.h"
 #include "UtilInt.h"
 
 namespace gui { namespace timeline {
+
+DECLAREENUM(OperationState, \
+    OperationStateStart, \
+    OperationStateUpdate, \
+    OperationStateStop);
 
 class TrimEvent
 {
@@ -15,7 +21,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     explicit TrimEvent(
-        bool active = false,
+        OperationState state,
         model::IClipPtr clip = model::IClipPtr(),
         model::IClipPtr link = model::IClipPtr(),
         model::IClipPtr cliptrimmed = model::IClipPtr(),
@@ -27,7 +33,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    bool getActive() const;
+    OperationState getState() const;
     model::IClipPtr getClip() const;
     model::IClipPtr getClipTrimmed() const;
     model::IClipPtr getLink() const;
@@ -39,7 +45,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mActive;
+    OperationState mState;
     model::IClipPtr mClip;
     model::IClipPtr mLink;
     model::IClipPtr mClipTrimmed;

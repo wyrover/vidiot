@@ -149,6 +149,7 @@ private:
     // PART -> Must be AFTER MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    Trim* mTrim;
     Zoom* mZoom;
     ViewMap* mViewMap;
     Intervals* mIntervals;
@@ -158,7 +159,6 @@ private:
     Cursor* mCursor;  // Must be AFTER mPlayer
     Drag* mDrag;
     Tooltip* mTooltip;
-    Trim* mTrim;
     Dump* mDump;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
     MenuHandler* mMenuHandler; // Init as last since it depends on other parts

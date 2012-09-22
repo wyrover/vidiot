@@ -2,7 +2,7 @@
 
 #include <wx/uiaction.h>
 #include <boost/foreach.hpp>
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 #include "HelperApplication.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"

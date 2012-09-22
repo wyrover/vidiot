@@ -3,7 +3,7 @@
 #include <boost/assign/list_of.hpp>
 #include "AutoFolder.h"
 #include "File.h"
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 #include "HelperProjectView.h"
 #include "HelperTestSuite.h"
 #include "HelperWindow.h"

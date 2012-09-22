@@ -395,7 +395,7 @@ wxBitmap Drag::getDragBitmap() //const
 
     VAR_DEBUG(mBitmapOffset)(size_x)(size_y);
     ASSERT_MORE_THAN_ZERO(size_x);
-    ASSERT_MORE_THAN_ZERO(size_y);
+    ASSERT_MORE_THAN_ZERO(size_y); // todo crash in test manual: alt select third clip then start dragging!
     return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
 }
 

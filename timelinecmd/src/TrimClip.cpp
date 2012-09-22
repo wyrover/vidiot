@@ -61,6 +61,8 @@ TrimClip::~TrimClip()
 
 void TrimClip::update(pts diff)
 {
+    mClipClone.reset();
+    mLinkClone.reset();
     Revert();
 
     if (mOriginalClip->isA<model::Transition>())
@@ -85,7 +87,7 @@ void TrimClip::update(pts diff)
     if (mTrim == 0)
     {
         Revert(); // Undo any changes
-        getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(true, mOriginalClip, mOriginalLink, mOriginalClip, mOriginalLink)));
+        getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mOriginalClip, mOriginalLink, mOriginalClip, mOriginalLink)));
         return; // Nothing is changed (this avoids having to check 'if (trim == 0)' throughout applyTrim().
     }
 
@@ -365,7 +367,7 @@ void TrimClip::applyTrim()
     model::IClips replacelink = mLink ? makeTrimmedClone(mLink,mLinkIsPartOfTransition) : model::IClips();
     mClipClone = (replaceclip.size() > 0) ? replaceclip.front() : model::IClipPtr();
     mLinkClone = (replacelink.size() > 0) ? replacelink.front() : model::IClipPtr();
-    getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(true, mOriginalClip, mOriginalLink, mClipClone, mLinkClone)));
+    getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mOriginalClip, mOriginalLink, mClipClone, mLinkClone)));
 
     // Now adjust other clips to ensure that the rest of the track(s) are positioned correctly.
     // That means enlarging/reducing empty space in front of/after the clip(s) being changed

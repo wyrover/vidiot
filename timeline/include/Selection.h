@@ -10,6 +10,8 @@ namespace model {
 
 namespace gui { namespace timeline {
 
+class EventTrimUpdate;
+
 class Selection
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public Part
@@ -43,6 +45,12 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::IClipPtr mPreviouslyClicked;      ///< Clip which was previously (de)selected.
+
+    //////////////////////////////////////////////////////////////////////////
+    // TRIM EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onTrimChanged( timeline::EventTrimUpdate& event );
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -1,7 +1,7 @@
 #include "TestTimelinesView.h"
 
 #include "ids.h"
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 #include "HelperWindow.h"
 #include "HelperProjectView.h"
 #include "HelperTestSuite.h"
@@ -12,7 +12,6 @@
 #include "UtilList.h"
 
 namespace test {
-
 void TestTimelinesView::testSequenceMenu()
 {
     StartTestSuite();
@@ -34,5 +33,4 @@ void TestTimelinesView::testSequenceMenu()
     triggerMenu(ID_CLOSESEQUENCE);
     ASSERT_ZERO(getSequenceMenu()->GetMenuItemCount()); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
 }
-
 } // namespace

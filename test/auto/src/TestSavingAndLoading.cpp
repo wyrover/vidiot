@@ -1,6 +1,6 @@
 #include "TestSavingAndLoading.h"
 
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 #include "HelperApplication.h"
 #include "HelperTestSuite.h"
 #include "HelperWindow.h"
@@ -52,5 +52,4 @@ void TestSavingAndLoading::testSaveAndLoad()
     bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
     ASSERT(removed);
 }
-
 } // namespace
