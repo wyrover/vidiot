@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "PositionInfo.h"
 #include "Scrolling.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "Tooltip.h"
@@ -199,6 +200,7 @@ void Trim::start()
     }
 
     mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
+    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStart, mOriginalClip, mOriginalClip->getLink())));
     update(mStartPosition);
 }
 
@@ -208,7 +210,6 @@ void Trim::update(wxPoint position)
     getTimeline().beginTransaction();
 
     mCommand->update(getZoom().pixelsToPts(position.x - mStartPosition.x));
-    //QueueEvent(new EventTrimUpdate(TrimEvent(true, mOriginalClip->getLength(),mCommand->getClip()->getLength(), mOriginalClip->getDescription())));
     preview();
 
     if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
@@ -231,7 +232,7 @@ void Trim::stop()
 {
     VAR_DEBUG(this);
     mActive = false;
-    QueueEvent(new EventTrimUpdate(TrimEvent(false)));
+    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop)));
 
     if (mCommand)
     {
@@ -248,7 +249,7 @@ void Trim::stop()
 void Trim::submit()
 {
     VAR_DEBUG(this);
-    if (mCommand->getDiff() != 0)
+    if (mCommand->getDiff() != 0) // todoo snapto for trimming
     {
         bool shiftBeginTrim = wxGetMouseState().ShiftDown() && mCommand->isBeginTrim();
         pts diff = mCommand->getDiff();

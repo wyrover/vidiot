@@ -64,8 +64,8 @@ private:
     model::TransitionPtr mLinkTransition;   ///< The (optional) transition before or after mOriginalLink, or the transition which IS mClip
     model::IClipPtr mClip;                  ///< Same as mOriginalClip or its replacement in case a transition was unapplied
     model::IClipPtr mLink;                  ///< Same as mOriginalLink or its replacement in case a transition was unapplied
-    model::IClipPtr mClipClone;             ///< Clip that replaces the original clip after the trim
-    model::IClipPtr mLinkClone;             ///< Clip that replaces the original link after the trim
+    model::IClipPtr mClipClone;             ///< Clip that replaces the original clip after the trim. Maybe be '0' if the clip was fully trimmed away.
+    model::IClipPtr mLinkClone;             ///< Clip that replaces the original link after the trim. Maybe be '0' if the clip was fully trimmed away.
     bool mClipIsPartOfTransition;           ///< True if mClip is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
     bool mLinkIsPartOfTransition;           ///< True if mLink is part of a transition (either before or after it). Used to avoid deleting the clip completely (which is prohibited, since a part of the clip must remain for the transition).
     pts mTrim;
@@ -75,6 +75,7 @@ private:
     MouseOnClipPosition mPosition;          ///< The logical mouse position where the trim was started
     pts mShiftStart;                        ///< Position at which the shift will start
     bool mSubmitted;                        ///< True if the command has actually been submitted, false if it's only used during the edit process which is aborted
+    model::IClipPtr mReplacementClip;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

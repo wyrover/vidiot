@@ -4,7 +4,7 @@
 #include <wx/filefn.h>
 #include <boost/thread.hpp>
 #include "AutoFolder.h"
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 #include "HelperApplication.h"
 #include "HelperProjectView.h"
 #include "HelperTestSuite.h"

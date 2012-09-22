@@ -31,8 +31,6 @@ DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
     mAudioOption = addoption(_("Audio size"),mAudio);
     mTransitionOption = addoption(_("Transition size"),mTransition);
 
-    // todo add 'adjust' info
-    // todo handle if (event->getclip->isa<transition>()
     addbox(_("Notes"));
     wxStaticText* statictext = new wxStaticText(this, wxID_ANY, _("Press SHIFT to remove blank areas during the trimming"));
     addoption(_("Shift"), statictext);
@@ -55,6 +53,7 @@ DetailsTrim::~DetailsTrim()
 
 void DetailsTrim::onTrimChanged( timeline::EventTrimUpdate& event )
 {
+    event.Skip();
     auto showLength = [] (model::IClipPtr clipold, model::IClipPtr clipnew, wxStaticText* textbox)
     {
         if (!clipold) { return; }
@@ -64,51 +63,65 @@ void DetailsTrim::onTrimChanged( timeline::EventTrimUpdate& event )
         textbox->SetLabel(s);
     };
 
-    if (event.getValue().getActive())
+    switch (event.getValue().getState())
     {
-        TrimEvent& update = event.getValue();
-
-        if (update.getClip()->isA<model::Transition>())
+    case OperationStateStart:
         {
-            mTransitionOption->Show(true);
-            mVideoOption->Show(false);
-            mAudioOption->Show(false);
-            model::IClipPtr transition = update.getClip();
-            model::IClipPtr transitiontrimmed = update.getClipTrimmed();
-            showLength(transition,transitiontrimmed,mTransition);
+            requestShow(true, _("Resizing ") + event.getValue().getClip()->getDescription());
+            Fit();
+            break;
         }
-        else
+    case OperationStateStop:
         {
-            mTransitionOption->Show(false);
-            mVideoOption->Show(true);
-            mAudioOption->Show(true);
-            model::IClipPtr videoclip;
-            model::IClipPtr audioclip;
-            model::IClipPtr videocliptrimmed;
-            model::IClipPtr audiocliptrimmed;
-            if (update.getClip()->isA<model::VideoClip>())
+            requestShow(false);
+            break;
+        }
+    case OperationStateUpdate:
+        {
+            TrimEvent& update = event.getValue();
+
+            if (update.getClip()->isA<model::Transition>())
             {
-                videoclip = update.getClip();
-                videocliptrimmed = update.getClipTrimmed();
-                audioclip = update.getLink();
-                audiocliptrimmed = update.getLinkTrimmed();
+                mTransitionOption->Show(true);
+                mVideoOption->Show(false);
+                mAudioOption->Show(false);
+                model::IClipPtr transition = update.getClip();
+                model::IClipPtr transitiontrimmed = update.getClipTrimmed();
+                showLength(transition,transitiontrimmed,mTransition);
             }
             else
             {
-                audioclip = update.getClip();
-                audiocliptrimmed = update.getClipTrimmed();
-                videoclip = update.getLink();
-                videocliptrimmed = update.getLinkTrimmed();
+                mTransitionOption->Show(false);
+                mVideoOption->Show(true);
+                mAudioOption->Show(true);
+                model::IClipPtr videoclip;
+                model::IClipPtr audioclip;
+                model::IClipPtr videocliptrimmed;
+                model::IClipPtr audiocliptrimmed;
+                if (update.getClip()->isA<model::VideoClip>())
+                {
+                    videoclip = update.getClip();
+                    videocliptrimmed = update.getClipTrimmed();
+                    audioclip = update.getLink();
+                    audiocliptrimmed = update.getLinkTrimmed();
+                }
+                else
+                {
+                    audioclip = update.getClip();
+                    audiocliptrimmed = update.getClipTrimmed();
+                    videoclip = update.getLink();
+                    videocliptrimmed = update.getLinkTrimmed();
+                }
+                showLength(videoclip,videocliptrimmed,mVideo);
+                showLength(audioclip,audiocliptrimmed,mAudio);
             }
-            showLength(videoclip,videocliptrimmed,mVideo);
-            showLength(audioclip,audiocliptrimmed,mAudio);
+            break;
         }
-        Fit();
-        requestShow(true, _("Resizing ") + event.getValue().getClip()->getDescription());
-    }
-    else
-    {
-        requestShow(false);
+    default:
+        {
+            FATAL("Unknown OperationState");
+            break;
+        }
     }
 }
 

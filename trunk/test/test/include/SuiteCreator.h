@@ -2,10 +2,9 @@
 #define TEST_SUITE_CREATOR_H
 
 #include <cxxtest/TestSuite.h>
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 
 namespace test {
-
 template <typename TESTS>
 class SuiteCreator
 {
@@ -23,7 +22,6 @@ public:
         delete suite;
     };
 };
-
 } // namespace
 
 #endif // TEST_SUITE_CREATOR_H

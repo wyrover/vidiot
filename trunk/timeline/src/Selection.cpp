@@ -9,6 +9,8 @@
 #include "Track.h"
 #include "TrackView.h"
 #include "Transition.h"
+#include "Trim.h"
+#include "TrimEvent.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
 
@@ -20,11 +22,13 @@ Selection::Selection(Timeline* timeline)
 ,   mPreviouslyClicked()
 {
     VAR_DEBUG(this);
+    getTrim().Bind(EVENT_TRIM_UPDATE, &Selection::onTrimChanged, this);
 }
 
 Selection::~Selection()
 {
     VAR_DEBUG(this);
+    getTrim().Unbind(EVENT_TRIM_UPDATE, &Selection::onTrimChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -201,6 +205,7 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
 
 void Selection::deleteClips()
 {
+    LOG_DEBUG;
     setPreviouslyClicked(model::IClipPtr()); // reset
     (new command::DeleteSelectedClips(getSequence()))->submit();
     QueueEvent(new EventSelectionUpdate(0));
@@ -208,6 +213,7 @@ void Selection::deleteClips()
 
 void Selection::unselectAll()
 {
+    LOG_DEBUG;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
         BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
@@ -217,6 +223,43 @@ void Selection::unselectAll()
     }
     setPreviouslyClicked(model::IClipPtr()); // reset
     QueueEvent(new EventSelectionUpdate(0));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TRIM EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Selection::onTrimChanged( timeline::EventTrimUpdate& event )
+{
+    VAR_DEBUG(event);
+    switch (event.getValue().getState())
+    {
+    case OperationStateStart:
+        {
+            unselectAll(); // todo idea: when rendering, add option for rendering each clip to xxx_n.avi. For easy cutting of clips.
+            QueueEvent(new EventSelectionUpdate(0));
+            break;
+        }
+    case OperationStateUpdate:
+        {
+            // NOTE: This even can occur DURING the trimming. Then, the new clips (getClipTrimmed and getLinkTrimmed) are not yet linked.
+            if (event.getValue().getClipTrimmed())
+            {
+                event.getValue().getClipTrimmed()->setSelected(true);
+            }
+            if (event.getValue().getLinkTrimmed())
+            {
+                event.getValue().getLinkTrimmed()->setSelected(true);
+            }
+            QueueEvent(new EventSelectionUpdate(0));
+        }
+    case OperationStateStop:
+        {
+            break;
+        }
+    default: FATAL("Unknown OperationState");
+    }
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

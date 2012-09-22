@@ -6,7 +6,7 @@
 #include "Convert.h"
 #include "Details.h"
 #include "DetailsClip.h"
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 #include "HelperApplication.h"
 #include "HelperDetails.h"
 #include "HelperModel.h"
@@ -22,7 +22,6 @@
 #include "VideoClip.h"
 
 namespace test {
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -182,5 +181,4 @@ void TestTransform::testTransformViaDetailsView()
         ASSERT_EQUALS(CursorPosition(),pos); // Now the cursor is not moved: same frame is previewed
     }
 }
-
 } // namespace

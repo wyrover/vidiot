@@ -17,7 +17,6 @@ namespace model {
 }
 
 namespace gui { namespace timeline {
-
 class EventSelectionUpdate;
 
 class DetailsClip
@@ -43,6 +42,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onLengthButtonPressed(wxCommandEvent& event);
     void onOpacitySliderChanged(wxCommandEvent& event);
     void onOpacitySpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
@@ -98,6 +98,8 @@ private:
     model::VideoClipPtr mVideoClip;
     model::AudioClipPtr mAudioClip;
 
+    std::list<wxToggleButton*> mLengthButtons;
+
     wxSpinCtrl* mOpacitySpin;
     wxSlider* mOpacitySlider;
 
@@ -126,8 +128,8 @@ private:
     /// the alignment choice accordingly.
     void updateAlignment(bool horizontalchange);
 
+    void updateLengthButtons();
 };
-
 }} // namespace
 
 #endif // DETAILS_CLIP_H

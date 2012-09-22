@@ -1,4 +1,4 @@
-#include "FixtureApplication.h"
+#include "FixtureGui.h"
 
 #include "Application.h"
 #include "HelperTestSuite.h"
@@ -6,7 +6,6 @@
 #include "Window.h"
 
 namespace test {
-
 //static
 FixtureGui sInstance;
 
@@ -147,5 +146,4 @@ void FixtureGui::mainThread()
 
     wxEntryCleanup();
 }
-
 } // namespace

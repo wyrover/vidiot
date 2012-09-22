@@ -1,7 +1,9 @@
 #include "TrimEvent.h"
+#include "Config.h"
 
 namespace gui { namespace timeline {
 
+IMPLEMENTENUM(OperationState);
 DEFINE_EVENT(EVENT_TRIM_UPDATE, EventTrimUpdate, TrimEvent);
 
 //////////////////////////////////////////////////////////////////////////
@@ -9,12 +11,12 @@ DEFINE_EVENT(EVENT_TRIM_UPDATE, EventTrimUpdate, TrimEvent);
 //////////////////////////////////////////////////////////////////////////
 
 TrimEvent::TrimEvent(
-        bool active,
+        OperationState state,
         model::IClipPtr clip,
         model::IClipPtr link,
         model::IClipPtr cliptrimmed,
         model::IClipPtr linktrimmed)
-    :   mActive(active)
+    :   mState(state)
     ,   mClip(clip)
     ,   mLink(link)
     ,   mClipTrimmed(cliptrimmed)
@@ -23,7 +25,7 @@ TrimEvent::TrimEvent(
 }
 
 TrimEvent::TrimEvent(const TrimEvent& other)
-    :   mActive(other.mActive)
+    :   mState(other.mState)
     ,   mClip(other.mClip)
     ,   mLink(other.mLink)
     ,   mClipTrimmed(other.mClipTrimmed)
@@ -35,9 +37,9 @@ TrimEvent::TrimEvent(const TrimEvent& other)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-bool TrimEvent::getActive() const
+OperationState TrimEvent::getState() const
 {
-    return mActive;
+    return mState;
 }
 
 model::IClipPtr TrimEvent::getClip() const
@@ -66,7 +68,7 @@ model::IClipPtr TrimEvent::getLinkTrimmed() const
 
 std::ostream& operator<<( std::ostream& os, const TrimEvent& obj )
 {
-    os << obj.mActive << '|' << obj.mClip<< '|' << obj.mClipTrimmed << '|' << obj.mLink << '|' << obj.mLinkTrimmed;
+    os << obj.mState << '|' << obj.mClip<< '|' << obj.mClipTrimmed << '|' << obj.mLink << '|' << obj.mLinkTrimmed;
     return os;
 }
 

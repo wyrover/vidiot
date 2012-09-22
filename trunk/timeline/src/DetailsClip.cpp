@@ -23,7 +23,6 @@
 #include "VideoCompositionParameters.h"
 
 namespace gui { namespace timeline {
-
 template <class TARGET>
 boost::shared_ptr<TARGET> getTypedClip(model::IClipPtr clip)
 {
@@ -68,6 +67,30 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     VAR_INFO(GetSize());
 
     addbox(_("Duration")); // todo handle resizing for clips with a different audio/video length
+
+    auto times = [] (int ms) -> wxString
+    {
+        ASSERT_LESS_THAN(ms, 60 * model::Constants::sSecond);
+        std::ostringstream o;
+        div_t divseconds = div(ms, model::Constants::sSecond);
+        o << divseconds.quot << '.' << std::setw(3) << std::setfill('0') << divseconds.rem;
+        std::string oo = o.str();
+        return oo.substr(0,oo.size() - 2);
+    };
+
+    std::list<int> defaultLengths = boost::assign::list_of(500)(1000)(1500)(2000)(2500)(3000);
+    wxPanel* lengthbuttonspanel = new wxPanel(this);
+    lengthbuttonspanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    BOOST_FOREACH( int length, defaultLengths )
+    {
+        // Use the integer as id
+        wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, length, times(length), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        lengthbuttonspanel->GetSizer()->Add(button,wxSizerFlags(1));
+        button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
+        mLengthButtons.push_back(button);
+    }
+    updateLengthButtons();
+    addoption(_("Fixed lengths (s)"),lengthbuttonspanel);
 
     addbox(_("Video"));
 
@@ -152,6 +175,10 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
 DetailsClip::~DetailsClip()
 {
+    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+    {
+        button->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
+    }
     getSelection().Unbind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
     setClip(model::IClipPtr()); // Ensures Unbind if needed for clip events
     mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
@@ -211,9 +238,11 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
     if (mClip)
     {
+        // todo when trimming a clip and then ending the trim, updateLengthButtons should be triggered again. However, no event occurs...
+        updateLengthButtons();
+
         mVideoClip = getTypedClip<model::VideoClip>(clip);
         mAudioClip = getTypedClip<model::AudioClip>(clip);
-
         if (mVideoClip)
         {
             wxSize originalSize = mVideoClip->getInputSize();
@@ -266,6 +295,12 @@ void DetailsClip::setClip(model::IClipPtr clip)
 //////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
+
+void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
+{
+    updateLengthButtons();
+//    todo
+}
 
 void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
@@ -571,6 +606,36 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         return mSelectAlignment->getValue();
     };
     mCommand->setAlignment(getAlignment());
+}
+
+void DetailsClip::updateLengthButtons()
+{
+    pts max = 0;
+    if (mClip)
+    {
+        max = mClip->getLength() + mClip->getMaxAdjustEnd();
+    }
+    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+    {
+        pts l = model::Convert::timeToPts(button->GetId());
+        if (l > max)
+        {
+            button->SetValue(false);
+            button->Disable();
+        }
+        else
+        {
+            button->Enable();
+            if (mClip && mClip->getLength() == l )
+            {
+                button->SetValue(true);
+            }
+            else
+            {
+                button->SetValue(false);
+            }
+        }
+    }
 }
 
 }} // namespace
