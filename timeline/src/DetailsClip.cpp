@@ -238,7 +238,6 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
     if (mClip)
     {
-        // todo when trimming a clip and then ending the trim, updateLengthButtons should be triggered again. However, no event occurs...
         updateLengthButtons();
 
         mVideoClip = getTypedClip<model::VideoClip>(clip);
@@ -305,7 +304,6 @@ void DetailsClip::onShow(wxShowEvent& event)
 void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 {
     updateLengthButtons();
-//    todo
     event.Skip();
 }
 
