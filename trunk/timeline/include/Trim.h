@@ -65,8 +65,6 @@ private:
     bool mActive;                   ///< True if a trim is currently being done
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
 
-    model::IClipPtr mOriginalClip;
-
     command::TrimClip* mCommand;    ///< The command that executes the Trim operation
 
     pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.

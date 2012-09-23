@@ -19,9 +19,7 @@ namespace gui { namespace timeline {
 DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
     :   DetailsPanel(parent,timeline)
 {
-    LOG_INFO;
-
-    VAR_INFO(GetSize());
+    VAR_DEBUG(this);
 
     addbox(_("Resizing"));
     mVideo = new wxStaticText(this, wxID_ANY, "");

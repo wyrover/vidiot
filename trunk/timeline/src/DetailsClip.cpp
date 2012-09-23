@@ -62,11 +62,9 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mPositionYSlider(0)
     ,   mCommand(0)
 {
-    LOG_INFO;
+    VAR_DEBUG(this);
 
-    VAR_INFO(GetSize());
-
-    addbox(_("Duration")); // todo handle resizing for clips with a different audio/video length
+    addbox(_("Duration"));
 
     auto times = [] (int ms) -> wxString
     {
@@ -150,6 +148,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     positionypanel->SetSizer(positionysizer);
     addoption(_("Y position"), positionypanel);
 
+    Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
@@ -191,6 +190,7 @@ DetailsClip::~DetailsClip()
     mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
     mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+    Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -296,10 +296,17 @@ void DetailsClip::setClip(model::IClipPtr clip)
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+void DetailsClip::onShow(wxShowEvent& event)
+{
+    updateLengthButtons();
+    event.Skip();
+}
+
 void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 {
     updateLengthButtons();
 //    todo
+    event.Skip();
 }
 
 void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
@@ -454,8 +461,10 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
 
 void DetailsClip::onSelectionChanged( timeline::EventSelectionUpdate& event )
 {
+    VAR_DEBUG(this);
     std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
     model::IClipPtr selectedclip;
+    VAR_DEBUG(selection.size());
     if (selection.size() == 1)
     {
         selectedclip = *selection.begin();

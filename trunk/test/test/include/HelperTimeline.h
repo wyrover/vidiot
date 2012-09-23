@@ -166,8 +166,10 @@ pixel CursorPosition();                              ///< \return cursor positio
 void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
 void Move(wxPoint position);                                            ///< Move the mouse to the given position within the timeline
 void Click(wxPoint position);                                           ///< Move the mouse to the given position and (left) click there
-void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true);   ///< Trim the given clip on the left side
-void TrimRight(model::IClipPtr clip, pixel length, bool shift = true);  ///< Trim the given clip on the right side
+void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);   ///< Trim the given clip on the left side
+void TrimRight(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);  ///< Trim the given clip on the right side
+void BeginTrim(wxPoint from, bool shift);
+void EndTrim(bool shift = true);
 
 /// Zoom in the given amount of times by zooming in the given amount of times.
 /// When going out of scope, will reset to the default zoom level by zooming out an equal amount of times.

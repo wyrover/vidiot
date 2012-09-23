@@ -41,6 +41,7 @@ wxString DetailsPanel::getTitle() const
 
 void DetailsPanel::requestShow(bool show, wxString title)
 {
+    VAR_DEBUG(this)(show)(title);
     mShow = show;
     mTitle = title;
     static_cast<Details*>(GetParent())->update();

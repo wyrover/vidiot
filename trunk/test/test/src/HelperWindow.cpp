@@ -144,6 +144,16 @@ void TypeN(int count, int keycode, int modifiers)
     for (int i = 0; i < count; ++i) { Type(keycode,modifiers); }
 }
 
+void MoveRight(pixel length)
+{
+    MoveOnScreen(wxGetMouseState().GetPosition() + wxPoint(length,0));
+}
+
+void MoveLeft(pixel length)
+{
+    MoveOnScreen(wxGetMouseState().GetPosition() + wxPoint(-length,0));
+}
+
 void MoveWithinWidget(wxPoint position, wxPoint origin)
 {
 	VAR_DEBUG(position)(origin);

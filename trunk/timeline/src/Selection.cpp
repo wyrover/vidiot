@@ -232,29 +232,38 @@ void Selection::unselectAll()
 void Selection::onTrimChanged( timeline::EventTrimUpdate& event )
 {
     VAR_DEBUG(event);
-    switch (event.getValue().getState())
+    TrimEvent e = event.getValue();
+    auto tryselect = [](model::IClipPtr clip) -> bool
+    {
+        if (clip)
+        {
+            clip->setSelected(true);
+            return true;
+        }
+        return false;
+    };
+
+    switch (e.getState())
     {
     case OperationStateStart:
         {
-            unselectAll(); // todo idea: when rendering, add option for rendering each clip to xxx_n.avi. For easy cutting of clips.
-            QueueEvent(new EventSelectionUpdate(0));
+            unselectAll(); // This already triggers an update event
+            // todo idea: when rendering, add option for rendering each clip to xxx_n.avi. For easy cutting of clips.
             break;
         }
     case OperationStateUpdate:
         {
             // NOTE: This even can occur DURING the trimming. Then, the new clips (getClipTrimmed and getLinkTrimmed) are not yet linked.
-            if (event.getValue().getClipTrimmed())
-            {
-                event.getValue().getClipTrimmed()->setSelected(true);
-            }
-            if (event.getValue().getLinkTrimmed())
-            {
-                event.getValue().getLinkTrimmed()->setSelected(true);
-            }
+            tryselect(e.getClipTrimmed());
+            tryselect(e.getLinkTrimmed());
             QueueEvent(new EventSelectionUpdate(0));
+            break;
         }
     case OperationStateStop:
         {
+            tryselect(e.getClipTrimmed()) || tryselect(e.getClip()); // Select replacement clip, or the original clip if there was no replacement (abort)
+            tryselect(e.getLinkTrimmed()) || tryselect(e.getLink());
+            QueueEvent(new EventSelectionUpdate(0));
             break;
         }
     default: FATAL("Unknown OperationState");

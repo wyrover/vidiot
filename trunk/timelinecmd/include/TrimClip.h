@@ -44,7 +44,12 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr getClip() const;
+    model::IClipPtr getOriginalClip() const;
+    model::IClipPtr getOriginalLink() const;
+    model::IClipPtr getNewClip() const;
+    model::IClipPtr getNewLink() const; // todo consistent naming ... (mClone)
+
+    model::IClipPtr getClip() const; // todo wordt deze wel gebruikt, extern??
 
     bool isBeginTrim() const;
 
@@ -74,7 +79,6 @@ private:
     pts mMaxShiftOtherTrackContent;         ///< Maximum allowed shift (to the right) of 'other' tracks
     MouseOnClipPosition mPosition;          ///< The logical mouse position where the trim was started
     pts mShiftStart;                        ///< Position at which the shift will start
-    bool mSubmitted;                        ///< True if the command has actually been submitted, false if it's only used during the edit process which is aborted
     model::IClipPtr mReplacementClip;
 
     //////////////////////////////////////////////////////////////////////////

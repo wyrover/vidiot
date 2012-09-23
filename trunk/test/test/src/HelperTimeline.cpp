@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 #include <wx/mousestate.h>
 #include <wx/uiaction.h>
+#include <wx/utils.h>
 #include "AudioClip.h"
 #include "AudioTrack.h"
 #include "AudioView.h"
@@ -342,35 +343,41 @@ void Click(wxPoint position)
     ASSERT_EQUALS(getTimeline().getMousePointer().getLeftDownPosition(), position);
 }
 
-void TrimLeft(model::IClipPtr clip, pixel length, bool shift)
+void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
 {
     VAR_DEBUG(clip)(length)(shift);
     wxPoint from = LeftCenter(clip);
     wxPoint to = from;
     to.x += length;
-    Move(from);
-    if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
-    wxUIActionSimulator().MouseDown();
-    waitForIdle();
+    BeginTrim(from,shift);
     Move(to);
     waitForIdle();
-    wxUIActionSimulator().MouseUp();
-    if (shift) wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+    if (endtrim) { EndTrim(shift); }
     waitForIdle();
 }
 
-void TrimRight(model::IClipPtr clip, pixel length, bool shift)
+void TrimRight(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
 {
     VAR_DEBUG(clip)(length)(shift);
     wxPoint from = RightCenter(clip);
     wxPoint to = from;
     to.x += length;
-    Move(from);
-    if (shift) wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
-    wxUIActionSimulator().MouseDown();
+    BeginTrim(from,shift);
     Move(to);
+    if (endtrim) { EndTrim(shift); }
+}
+
+void BeginTrim(wxPoint from, bool shift)
+{
+    Move(from);
+    if (shift) { ShiftDown(); }
+    wxUIActionSimulator().MouseDown();
+}
+
+void EndTrim(bool shift)
+{
     wxUIActionSimulator().MouseUp();
-    if (shift) wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+    if (shift) { ShiftUp(); }
     waitForIdle();
 }
 

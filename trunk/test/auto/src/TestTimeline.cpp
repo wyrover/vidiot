@@ -7,6 +7,9 @@
 #include "Config.h"
 #include "CreateTransition.h"
 #include "DeleteSelectedClips.h"
+#include "Details.h"
+#include "DetailsClip.h"
+#include "DetailsTrim.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
@@ -508,16 +511,16 @@ void TestTimeline::testDividers()
     }
 }
 
-//RUNONLY(testTrimming)
+//RUNONLY(testTrimming);
 void TestTimeline::testTrimming()
 {
     StartTestSuite();
     Zoom Level(2);
+    DeleteClip(VideoClip(0,3));
+    DeleteClip(VideoClip(0,1));
+    ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
     {
-        DeleteClip(VideoClip(0,3));
-        DeleteClip(VideoClip(0,1));
-        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
-        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
         StartTest("Trim: Without Shift: Reduce clip size left.");
         TrimLeft(VideoClip(0,2),20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
@@ -548,6 +551,8 @@ void TestTimeline::testTrimming()
         ASSERT_EQUALS(AudioClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfAudioClip(0,4));
         Undo();
         Undo();
+    }
+    {
         StartTest("Trim: Without Shift: Reduce clip size right.");
         TrimRight(VideoClip(0,2),-20,false);
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
@@ -578,6 +583,38 @@ void TestTimeline::testTrimming()
         ASSERT_EQUALS(AudioClip(0,4)->getLeftPts(),mProjectFixture.OriginalPtsOfAudioClip(0,4));
         Undo();
         Undo();
+    }
+    Undo();
+    Undo();
+    {
+        StartTest("Trim: Left: During the trim, the Trim detailspanel is visible.");
+        wxString description = VideoClip(0,3)->getDescription();
+        BeginTrim(LeftCenter(VideoClip(0,3)), false);
+        MoveRight(10);
+        gui::timeline::DetailsTrim* detailstrim = dynamic_cast<gui::timeline::DetailsTrim*>(getTimeline().getDetails().getCurrent());
+        ASSERT_NONZERO(detailstrim);
+        StartTest("Trim: After the trim is done, the Clip detailspanel is visible.");
+        EndTrim(false);
+        gui::timeline::DetailsClip* detailsclip = dynamic_cast<gui::timeline::DetailsClip*>(getTimeline().getDetails().getCurrent());
+        ASSERT_NONZERO(detailsclip);
+        ASSERT_EQUALS(detailsclip->getClip()->getDescription(),description);
+        Undo();
+    }
+    {
+        StartTest("Trim: Right: During the trim, the Trim detailspanel is visible.");
+        wxString description = VideoClip(0,3)->getDescription();
+        BeginTrim(RightCenter(VideoClip(0,3)), false);
+        MoveLeft(10);
+        gui::timeline::DetailsTrim* detailstrim = dynamic_cast<gui::timeline::DetailsTrim*>(getTimeline().getDetails().getCurrent());
+        ASSERT_NONZERO(detailstrim);
+        StartTest("Trim: After pressing escape, the Clip detailspanel is visible.");
+        Type(WXK_ESCAPE);
+        waitForIdle();
+        gui::timeline::DetailsClip* detailsclip = dynamic_cast<gui::timeline::DetailsClip*>(getTimeline().getDetails().getCurrent());
+        ASSERT_NONZERO(detailsclip);
+        ASSERT_EQUALS(detailsclip->getClip()->getDescription(),description);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        wxUIActionSimulator().MouseUp();
     }
 }
 
