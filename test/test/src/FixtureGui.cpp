@@ -13,7 +13,7 @@ FixtureGui sInstance;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-FixtureGui::FixtureGui() // todo rename file into FixtureGui
+FixtureGui::FixtureGui()
     :   mEnd(false)
     ,   mStartingMainThread(false)
     ,   mBarrierStart(2)

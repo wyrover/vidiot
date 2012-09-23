@@ -54,6 +54,12 @@ public:
     /// the command is executed.
     virtual void initialize() = 0;
 
+    /// \return true if the edit has been initialized
+    /// When this method returns true the edit has been initialized. That means
+    /// that all 'standard' activities (like, replacing link mappings) have been
+    /// executed.
+    bool isInitialized();
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////

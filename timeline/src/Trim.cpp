@@ -35,7 +35,6 @@ namespace gui { namespace timeline {
 Trim::Trim(Timeline* timeline)
     :   Part(timeline)
     ,   mActive(false)
-    ,   mOriginalClip()
     ,   mStartPosition(0,0)
     ,   mFixedPixel(0)
     ,   mCommand(0)
@@ -72,6 +71,7 @@ void Trim::start()
     // Start position is the physical position of the mouse within the timeline
     getTimeline().CalcScrolledPosition(virtualMousePosition.x,virtualMousePosition.y,&mStartPosition.x,&mStartPosition.y);
 
+    model::IClipPtr mOriginalClip;
     model::IClipPtr adjacentClip;
     bool isBeginTrim = true;
     switch (mPosition)
@@ -210,6 +210,7 @@ void Trim::update(wxPoint position)
     getTimeline().beginTransaction();
 
     mCommand->update(getZoom().pixelsToPts(position.x - mStartPosition.x));
+    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mCommand->getOriginalClip(), mCommand->getOriginalLink(), mCommand->getNewClip(), mCommand->getNewLink())));
     preview();
 
     if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
@@ -232,18 +233,23 @@ void Trim::stop()
 {
     VAR_DEBUG(this);
     mActive = false;
-    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop)));
 
-    if (mCommand)
+    // Store before destroying mCommand
+    model::IClipPtr originalclip = mCommand->getOriginalClip();
+    model::IClipPtr originallink = mCommand->getOriginalLink();
+    model::IClipPtr newclip = mCommand->getNewClip();
+    model::IClipPtr newlink = mCommand->getNewLink();
+    if (mCommand && !mCommand->isInitialized())
     {
-        // The command has not yet been submitted
-        delete mCommand;
-        mCommand = 0;
+        // The command has not yet been submitted. Undo all changes and feedback.
+        delete mCommand; // Undo
         getTimeline().setShift(0);
         getTimeline().Refresh(false);
         getTimeline().Update();
     }
-    // else: handled via submit()
+    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop,originalclip,originallink,newclip,newlink)));
+    mCommand = 0;
+
 }
 
 void Trim::submit()
@@ -255,10 +261,8 @@ void Trim::submit()
         pts diff = mCommand->getDiff();
 
         // Only submit the command if there's an actual diff to be applied
+        // This call causes mCommand->isInitialized() to return true. See 'stop()'
         mCommand->submit();
-        // Reset mCommand, such that all 'reverting' is not done in Trim::stop().
-        // For instance, setShift(0) would be called while the animation is being shown, resulting in flicker.
-        mCommand = 0;
 
         if (shiftBeginTrim)
         {

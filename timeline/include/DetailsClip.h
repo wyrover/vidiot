@@ -42,6 +42,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onShow(wxShowEvent& event);
     void onLengthButtonPressed(wxCommandEvent& event);
     void onOpacitySliderChanged(wxCommandEvent& event);
     void onOpacitySpinChanged(wxSpinEvent& event);

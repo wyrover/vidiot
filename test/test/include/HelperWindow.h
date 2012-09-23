@@ -6,6 +6,7 @@
 #include <wx/menu.h>
 #include <wx/window.h>
 #include <boost/shared_ptr.hpp>
+#include "UtilInt.h"
 #include "UtilLog.h"
 
 namespace model {
@@ -93,6 +94,14 @@ void ShiftUp();         ///< Release Shift
 
 void Type(int keycode, int modifiers = wxMOD_NONE);
 void TypeN(int count, int keycode, int modifiers = wxMOD_NONE);
+
+/// Move the mouse to the right, the given number of pixels
+/// \param length number of pixels the mouse is moved to the right
+void MoveRight(pixel length);
+
+/// Move the mouse to the left, the given number of pixels
+/// \param length number of pixels the mouse is moved to the left
+void MoveLeft(pixel length);
 
 /// Move the mouse to the given position
 /// \param origin Use the origin to specify within which widget the position is offset (default: within the timeline)

@@ -7,8 +7,6 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-#include "Trim.h"
-#include "TrimEvent.h"
 #include "UtilLog.h"
 #include "Zoom.h"
 
@@ -32,7 +30,6 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mShift(false)
     ,   mMinShiftOtherTrackContent(0)
     ,   mMaxShiftOtherTrackContent(0)
-    ,   mSubmitted(false)
     ,   mShiftStart(0)
 {
     VAR_INFO(this)(mClip)(mTransition)(mPosition);
@@ -53,7 +50,7 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
 
 TrimClip::~TrimClip()
 {
-    if (!mSubmitted)
+    if (!isInitialized())
     {
         Revert();
     }
@@ -86,8 +83,9 @@ void TrimClip::update(pts diff)
     // mClip, in turn, is used for preview().
     if (mTrim == 0)
     {
+        mClipClone = mOriginalClip;
+        mLinkClone = mOriginalLink;
         Revert(); // Undo any changes
-        getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mOriginalClip, mOriginalLink, mOriginalClip, mOriginalLink)));
         return; // Nothing is changed (this avoids having to check 'if (trim == 0)' throughout applyTrim().
     }
 
@@ -100,13 +98,34 @@ void TrimClip::update(pts diff)
 
 void TrimClip::initialize()
 {
-    // Does nothing, since that's already done in prepare.
-    mSubmitted = true;
+    // Does nothing, since that's already done during the trimming.
+    // This method is called from AClipEdit::Do() which DOES do stuff, like
+    // replacing linkage.
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
+
+model::IClipPtr TrimClip::getOriginalClip() const
+{
+    return mOriginalClip;
+}
+
+model::IClipPtr TrimClip::getOriginalLink() const
+{
+    return mOriginalLink;
+}
+
+model::IClipPtr TrimClip::getNewClip() const
+{
+    return mClipClone;
+}
+
+model::IClipPtr TrimClip::getNewLink() const
+{
+    return mLinkClone;
+}
 
 model::IClipPtr TrimClip::getClip() const
 {
@@ -367,7 +386,6 @@ void TrimClip::applyTrim()
     model::IClips replacelink = mLink ? makeTrimmedClone(mLink,mLinkIsPartOfTransition) : model::IClips();
     mClipClone = (replaceclip.size() > 0) ? replaceclip.front() : model::IClipPtr();
     mLinkClone = (replacelink.size() > 0) ? replacelink.front() : model::IClipPtr();
-    getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mOriginalClip, mOriginalLink, mClipClone, mLinkClone)));
 
     // Now adjust other clips to ensure that the rest of the track(s) are positioned correctly.
     // That means enlarging/reducing empty space in front of/after the clip(s) being changed

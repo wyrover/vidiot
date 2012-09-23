@@ -94,7 +94,6 @@ Timeline::~Timeline()
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;   mStateMachine = 0;
     delete mDump;           mDump = 0;
-    delete mTrim;           mTrim = 0;
     delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
@@ -103,6 +102,7 @@ Timeline::~Timeline()
     delete mIntervals;      mIntervals = 0;
     delete mViewMap;        mViewMap = 0;
     delete mZoom;           mZoom = 0;
+    delete mTrim;           mTrim = 0;
 
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
