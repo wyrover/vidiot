@@ -58,8 +58,8 @@ TrimClip::~TrimClip()
 
 void TrimClip::update(pts diff)
 {
-    mClipClone.reset();
-    mLinkClone.reset();
+    mNewClip.reset();
+    mNewLink.reset();
     Revert();
 
     if (mOriginalClip->isA<model::Transition>())
@@ -83,8 +83,8 @@ void TrimClip::update(pts diff)
     // mClip, in turn, is used for preview().
     if (mTrim == 0)
     {
-        mClipClone = mOriginalClip;
-        mLinkClone = mOriginalLink;
+        mNewClip = mOriginalClip;
+        mNewLink = mOriginalLink;
         Revert(); // Undo any changes
         return; // Nothing is changed (this avoids having to check 'if (trim == 0)' throughout applyTrim().
     }
@@ -119,17 +119,12 @@ model::IClipPtr TrimClip::getOriginalLink() const
 
 model::IClipPtr TrimClip::getNewClip() const
 {
-    return mClipClone;
+    return mNewClip;
 }
 
 model::IClipPtr TrimClip::getNewLink() const
 {
-    return mLinkClone;
-}
-
-model::IClipPtr TrimClip::getClip() const
-{
-    return mClip;
+    return mNewLink;
 }
 
 bool TrimClip::isBeginTrim() const
@@ -384,8 +379,8 @@ void TrimClip::applyTrim()
 
     model::IClips replaceclip = makeTrimmedClone(mClip,mClipIsPartOfTransition);
     model::IClips replacelink = mLink ? makeTrimmedClone(mLink,mLinkIsPartOfTransition) : model::IClips();
-    mClipClone = (replaceclip.size() > 0) ? replaceclip.front() : model::IClipPtr();
-    mLinkClone = (replacelink.size() > 0) ? replacelink.front() : model::IClipPtr();
+    mNewClip = (replaceclip.size() > 0) ? replaceclip.front() : model::IClipPtr();
+    mNewLink = (replacelink.size() > 0) ? replacelink.front() : model::IClipPtr();
 
     // Now adjust other clips to ensure that the rest of the track(s) are positioned correctly.
     // That means enlarging/reducing empty space in front of/after the clip(s) being changed
