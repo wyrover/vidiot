@@ -60,6 +60,7 @@ private:
     void storeVariablesBeforeTrimming();
     void storeVariablesBeforeMakingTransition();
     void storeVariablesAfterMakingTransition();
+
 };
 
 struct MakeInOutTransitionAfterClip : public MakeTransitionAfterClip

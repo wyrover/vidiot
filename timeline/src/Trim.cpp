@@ -2,7 +2,9 @@
 
 #include "Clip.h"
 #include "ClipView.h"
+#include "Config.h"
 #include "Convert.h"
+#include "Cursor.h"
 #include "Details.h"
 #include "EmptyClip.h"
 #include "Layout.h"
@@ -20,6 +22,7 @@
 #include "TrimEvent.h"
 #include "UtilCloneable.h"
 #include "UtilLog.h"
+#include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
@@ -36,6 +39,7 @@ Trim::Trim(Timeline* timeline)
     :   Part(timeline)
     ,   mActive(false)
     ,   mStartPosition(0,0)
+    ,   mStartPts(0)
     ,   mFixedPixel(0)
     ,   mCommand(0)
     ,   mDc()
@@ -59,7 +63,9 @@ void Trim::start()
     // Reset first
     mActive = true;
     mStartPosition = wxPoint(0,0);
+    mStartPts = 0;
     mFixedPixel = 0;
+    mSnapPoints.clear();
 
     // Determine if pointer was at begin or at end of clip
     wxPoint virtualMousePosition = getMousePointer().getLeftDownPosition();
@@ -80,6 +86,7 @@ void Trim::start()
         ASSERT(!transition);
         mOriginalClip = info.clip;
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        mStartPts = mOriginalClip->getLeftPts();
         adjacentClip = mOriginalClip->getPrev();
         if (adjacentClip)
         {
@@ -90,6 +97,7 @@ void Trim::start()
         ASSERT(!transition);
         mOriginalClip = info.clip;
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        mStartPts = mOriginalClip->getRightPts();
         adjacentClip = mOriginalClip->getNext();
         if (adjacentClip)
         {
@@ -102,6 +110,7 @@ void Trim::start()
         ASSERT_MORE_THAN_ZERO(transition->getRight());
         mOriginalClip = info.clip->getNext();
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        mStartPts = mOriginalClip->getLeftPts();
         if (transition->getLeft() > 0)
         {
             adjacentClip = make_cloned<model::IClip>(transition->getPrev());
@@ -116,6 +125,7 @@ void Trim::start()
         ASSERT_MORE_THAN_ZERO(transition->getLeft());
         mOriginalClip = info.clip->getPrev();
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
+        mStartPts = mOriginalClip->getRightPts();
         if (transition->getRight() > 0)
         {
             adjacentClip = make_cloned<model::IClip>(transition->getNext());
@@ -129,11 +139,13 @@ void Trim::start()
     case TransitionBegin:
         ASSERT(transition);
         mOriginalClip = info.clip;
+        mStartPts = mOriginalClip->getLeftPts();
         transition.reset();
         break;
     case TransitionEnd:
         ASSERT(transition);
         mOriginalClip = info.clip;
+        mStartPts = mOriginalClip->getRightPts();
         transition.reset();
         isBeginTrim = false;
         break;
@@ -201,6 +213,7 @@ void Trim::start()
 
     mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
     QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStart, mOriginalClip, mOriginalClip->getLink())));
+    determinePossibleSnapPoints(mOriginalClip);
     update(mStartPosition);
 }
 
@@ -209,7 +222,7 @@ void Trim::update(wxPoint position)
     VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
-    mCommand->update(getZoom().pixelsToPts(position.x - mStartPosition.x));
+    mCommand->update(determineTrimDiff(position));
     QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mCommand->getOriginalClip(), mCommand->getOriginalLink(), mCommand->getNewClip(), mCommand->getNewLink())));
     preview();
 
@@ -296,9 +309,143 @@ void Trim::submit()
     }
 }
 
+void Trim::draw(wxDC& dc) const
+{
+    if (!mActive)
+    {
+        return;
+    }
+    dc.SetPen(Layout::get().SnapPen);
+    dc.SetBrush(Layout::get().SnapBrush);
+
+    //BOOST_FOREACH( pts snappoint, mSnapPoints )
+    //{
+    //    bool snap = false;
+    //    if (mCommand->isBeginTrim())
+    //    {
+    //        if (mCommand->getNewClip() &&
+    //            mCommand->getNewClip()->getLeftPts() == snappoint)
+    //        {
+    //            snap = true;
+    //        }
+    //        else if (mCommand->getNewLink() &&
+    //            mCommand->getNewLink()->getLeftPts() == snappoint)
+    //        {
+    //            snap = true;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        if (mCommand->getNewClip() &&
+    //            mCommand->getNewClip()->getRightPts() == snappoint)
+    //        {
+    //            snap = true;
+    //        }
+    //        else if (mCommand->getNewLink() &&
+    //            mCommand->getNewLink()->getRightPts() == snappoint)
+    //        {
+    //            snap = true;
+    //        }
+    //    }
+    //    if (snap)
+    //    {
+    //        dc.DrawLine(getZoom().ptsToPixels(snappoint),0,getZoom().ptsToPixels(snappoint),dc.GetSize().GetHeight());
+
+    //    }
+    //}
+    if (mSnap)
+    {
+            dc.DrawLine(getZoom().ptsToPixels(*mSnap),0,getZoom().ptsToPixels(*mSnap),dc.GetSize().GetHeight());
+        // todo dit laat alleen een lijn zien als er via snapping op een 'matching' plek is uitgekomen.
+        // echter, als het door andere redenen (drag zes clips verder) ook matched, mag er ook een lijn
+
+        // dus over all punten itereren en matchen met
+        // mCommand->getNewClip()->getleftpts of right pts depending on which trim en mCommand->getNewLink()
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+pts Trim::determineTrimDiff(wxPoint position)
+{
+    pts result = getZoom().pixelsToPts(position.x - mStartPosition.x); // The pts difference as indicated by the mouse
+    if (mSnap)
+    {
+        getTimeline().refreshPts(*mSnap);
+        mSnap.reset();
+    }
+    pts ptsmouse = getZoom().pixelsToPts(position.x);
+    pts minimumsnap = Layout::SnapDistance + 1; // To ensure that the first snap will update this
+    std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
+    while ( itTimeline != mSnapPoints.end() )
+    {
+        pts pts_timeline = *itTimeline;
+        pts diff = ptsmouse - pts_timeline;
+        if ((abs(diff) <= Layout::SnapDistance) && (abs(diff) < abs(minimumsnap)))
+        {
+            minimumsnap = diff;
+            result = pts_timeline - mStartPts;
+            mSnap.reset(pts_timeline);
+        }
+        ++itTimeline;
+    }
+    if (mSnap)
+    {
+        getTimeline().refreshPts(*mSnap);
+    }
+    return result;
+}
+
+void Trim::determinePossibleSnapPoints(model::IClipPtr originalclip)
+{
+    pts min = 0; // Use these to limit the number of snap points (performance)
+    pts max = 0;
+    if (mCommand->isBeginTrim())
+    {
+        min = originalclip->getLeftPts() + originalclip->getMinAdjustBegin();
+        max = originalclip->getLeftPts() + originalclip->getMaxAdjustBegin();
+    }
+    else
+    {
+        min = originalclip->getRightPts() + originalclip->getMinAdjustEnd();
+        max = originalclip->getRightPts() + originalclip->getMaxAdjustEnd();
+    }
+    mSnapPoints.clear();
+    auto addIfOk = [this,min,max](pts number)
+    {
+        if (number >= min && number <= max)
+        {
+            mSnapPoints.push_back(number);
+        }
+    };
+    if (Config::ReadBool(Config::sPathSnapClips))
+    {
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        {
+            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+            {
+                if (clip == originalclip) { continue; } // Do not snap to the current clip's bounds
+                if (clip == originalclip->getLink()) { continue; } // Do not snap to the current clip's link's bounds
+                if (clip->isA<model::EmptyClip>()) { continue; } // Do not snap to empty clips
+                pts left = clip->getLeftPts();
+                pts right = clip->getRightPts();
+                if (left > max) { break; } // Do not evaluate anymore (performance)
+                if (right < min) { continue; } // Do not evaluate (performance)
+                addIfOk(left);
+                addIfOk(right);
+            }
+        }
+    }
+    if (Config::ReadBool(Config::sPathSnapCursor))
+    {
+        mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
+    }
+    mSnapPoints.sort();
+    mSnapPoints.unique();
+    VAR_DEBUG(originalclip)(min)(max)(mSnapPoints);
+}
 
 void Trim::preview()
 {

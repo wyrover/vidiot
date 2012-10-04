@@ -248,7 +248,6 @@ void Selection::onTrimChanged( timeline::EventTrimUpdate& event )
     case OperationStateStart:
         {
             unselectAll(); // This already triggers an update event
-            // todo idea: when rendering, add option for rendering each clip to xxx_n.avi. For easy cutting of clips.
             break;
         }
     case OperationStateUpdate:

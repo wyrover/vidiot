@@ -692,7 +692,6 @@ void Drag::determineSnapOffset()
 void Drag::determinePossibleSnapPoints()
 {
     mSnapPoints.clear();
-
     if (Config::ReadBool(Config::sPathSnapClips))
     {
         BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
@@ -711,9 +710,9 @@ void Drag::determinePossibleSnapPoints()
     {
         mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
     }
-
     mSnapPoints.sort();
     mSnapPoints.unique();
+    VAR_DEBUG(mSnapPoints);
 }
 
 void Drag::determinePossibleDragPoints()

@@ -346,6 +346,7 @@ void Timeline::onPaint( wxPaintEvent &event )
     //}
 
     getDrag().draw(dc);
+    getTrim().draw(dc);
     getCursor().draw(dc);
 }
 

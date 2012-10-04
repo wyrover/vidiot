@@ -292,20 +292,17 @@ void Window::onExit(wxCommandEvent &)
 
 void Window::onSnapClips(wxCommandEvent& event)
 {
-    wxConfigBase::Get()->Write(Config::sPathSnapClips, event.IsChecked());
-    wxConfigBase::Get()->Flush();
+    Config::WriteBool(Config::sPathSnapClips, event.IsChecked());
 }
 
 void Window::onSnapCursor(wxCommandEvent& event)
 {
-    wxConfigBase::Get()->Write(Config::sPathSnapCursor, event.IsChecked());
-    wxConfigBase::Get()->Flush();
+    Config::WriteBool(Config::sPathSnapCursor, event.IsChecked());
 }
 
 void Window::onShowBoundingBox(wxCommandEvent& event)
 {
-    wxConfigBase::Get()->Write(Config::sPathShowBoundingBox, event.IsChecked());
-    wxConfigBase::Get()->Flush();
+    Config::WriteBool(Config::sPathShowBoundingBox, event.IsChecked());
 }
 
 //////////////////////////////////////////////////////////////////////////

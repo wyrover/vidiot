@@ -2,9 +2,11 @@
 
 #include "Config.h"
 #include "CreateTransition.h"
+#include "HelperConfig.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
+#include "ids.h"
 #include "Layout.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
@@ -13,7 +15,6 @@
 #include "Timeline.h"
 #include "Transition.h"
 #include "TrimClip.h"
-
 #include "VideoClip.h"
 #include "Zoom.h"
 
@@ -113,6 +114,9 @@ void MakeTransitionAfterClip::storeVariablesAfterMakingTransition()
 MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip)
     : MakeTransitionAfterClip(afterclip)
 {
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+
     // Reduce size of clips to be able to create transition
     TrimLeft(VideoClip(0,clipNumberBeforeTransition + 1),30,true);
     TrimRight(VideoClip(0,clipNumberBeforeTransition),-30,true);
@@ -126,6 +130,7 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip)
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition / 2);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition / 2);
 }
+
 MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 {
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
@@ -139,6 +144,9 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip)
     : MakeTransitionAfterClip(afterclip)
 {
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+
     // Reduce size of clips to be able to create transition
     TrimRight(VideoClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(VideoClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(VideoClip(0,clipNumberBeforeTransition));
@@ -163,6 +171,9 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
 MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip)
     : MakeTransitionAfterClip(afterclip)
 {
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
+
     // Reduce size of clips to be able to create transition
     TrimLeft(VideoClip(0,clipNumberBeforeTransition + 1),30,true);
     ASSERT_ZERO(VideoClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(VideoClip(0,clipNumberBeforeTransition));

@@ -253,6 +253,12 @@ void DeselectAllClips();
 /// \param clip clip to be deleted from the timeline
 void DeleteClip(model::IClipPtr clip);
 
+/// Enable or disable the snapping behaviour for certain edit operations (like trim and drag)
+/// /note Both snap to clips and snap to cursor is disabled.
+/// /note All clips are deselected also.
+/// \param enable true if snapping is disabled, false if snapping is disabled
+void PrepareSnapping(bool enable);
+
 } // namespace
 
 #endif // HELPER_TIMELINE_H

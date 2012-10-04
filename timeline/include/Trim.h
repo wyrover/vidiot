@@ -56,6 +56,8 @@ public:
     /// Instead, ensure that the operation becomes undoable.
     void submit();
 
+    void draw(wxDC& dc) const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -64,11 +66,15 @@ private:
 
     bool mActive;                   ///< True if a trim is currently being done
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
+    pts mStartPts;                  ///< Position (in pts values) when the trimming was started
 
     command::TrimClip* mCommand;    ///< The command that executes the Trim operation
 
     pts mFixedPts;                  ///< Pts value (in the track) that must be kept at a fixed pixel position. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
     pixel mFixedPixel;              ///< Pixel value (physical) that mFixedPts must be aligned with. Used for keeping the left/right position of the clip fixed as much as possible when shift trimming.
+
+    std::list<pts> mSnapPoints;     ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of trim.
+    boost::optional<pts> mSnap;     ///< Current snapping position (that is, where the trim position 'touches' the pts position of another clip)
 
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
     model::VideoClipPtr mPreviewVideoClip;
@@ -81,8 +87,9 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    pts determineTrimDiff(wxPoint position); ///< \return the trim diff to be applied, including (optional) snapping to clips or to the cursor.
+    void determinePossibleSnapPoints(model::IClipPtr originalclip);
     void preview();
-    void previewThread();
 };
 
 }} // namespace

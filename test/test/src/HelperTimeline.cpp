@@ -15,6 +15,7 @@
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "IClip.h"
+#include "ids.h"
 #include "Layout.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
@@ -469,11 +470,11 @@ void DragAlign(wxPoint from, pixel position, bool shift, bool left)
     {
         ShiftDown();
     }
-	// Now drag until the left position of the drag is aligned with position
-	pixel alignposition = left ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips());
+    // Now drag until the left position of the drag is aligned with position
+    pixel alignposition = left ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips());
     to.x += (position - alignposition);
-	Move(to);
-	wxUIActionSimulator().MouseUp();
+    Move(to);
+    wxUIActionSimulator().MouseUp();
     if (shift)
     {
         ShiftUp();
@@ -483,7 +484,7 @@ void DragAlign(wxPoint from, pixel position, bool shift, bool left)
 
 void DragAlignLeft(wxPoint from, pixel position)
 {
-	DragAlign(from,position,false,true);
+    DragAlign(from,position,false,true);
 }
 
 void ShiftDragAlignLeft(wxPoint from, pixel position)
@@ -493,12 +494,12 @@ void ShiftDragAlignLeft(wxPoint from, pixel position)
 
 void DragAlignRight(wxPoint from, pixel position)
 {
-	DragAlign(from,position,false,false);
+    DragAlign(from,position,false,false);
 }
 
 void ShiftDragAlignRight(wxPoint from, pixel position)
 {
-	DragAlign(from,position,true,false);
+    DragAlign(from,position,true,false);
 }
 
 void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip)
@@ -562,5 +563,12 @@ void DeleteClip(model::IClipPtr clip)
     Click(Center(clip));
     Type(WXK_DELETE);
 }
+
+void PrepareSnapping(bool enable)
+{
+    checkMenu(ID_SNAP_CLIPS, enable);
+    checkMenu(ID_SNAP_CURSOR, enable);
+    DeselectAllClips();
+};
 
 } // namespace

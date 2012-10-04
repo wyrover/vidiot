@@ -105,20 +105,20 @@ Options::~Options()
 {
     if (GetReturnCode() == GetAffirmativeId())
     {
-        wxConfigBase::Get()->Write( Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
-        wxConfigBase::Get()->Write( Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
-        wxConfigBase::Get()->Write( Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
-        wxConfigBase::Get()->Write( Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
-        wxConfigBase::Get()->Write( Config::sPathDefaultFrameRate,          framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
-        wxConfigBase::Get()->Write( Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
-        wxConfigBase::Get()->Write( Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
-        wxConfigBase::Get()->Write( Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
-        wxConfigBase::Get()->Write( Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
-        wxConfigBase::Get()->Write( Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
-        wxConfigBase::Get()->Write( Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
-        wxConfigBase::Get()->Write( Config::sPathStrip,                     mStrip->GetValue());
-
-        wxConfigBase::Get()->Flush();
+        Config::holdWriteToDisk();
+        Config::WriteBool( Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
+        Config::WriteString( Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
+        Config::WriteString( Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
+        Config::WriteBool( Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
+        Config::WriteString( Config::sPathDefaultFrameRate,          framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
+        Config::WriteLong( Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
+        Config::WriteLong( Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
+        Config::WriteString( Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
+        Config::WriteString( Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
+        Config::WriteLong( Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
+        Config::WriteLong( Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
+        Config::WriteString( Config::sPathStrip,                     mStrip->GetValue());
+        Config::releaseWriteToDisk();
 
         // Use new values
         Log::setReportingLevel(LogLevelConverter::readConfigValue(Config::sPathLogLevel));

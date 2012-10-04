@@ -1,5 +1,7 @@
 #include "Config.h"
 
+#include <wx/confbase.h> // All config handling must be done via this file, for thread safety
+#include <wx/config.h> // All config handling must be done via this file, for thread safety
 #include "Enums.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
@@ -8,6 +10,7 @@
 wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);
 boost::mutex Config::sMutex;
+bool Config::sHold(false);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -71,34 +74,122 @@ wxString Config::getFileName()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+template <class T>
+T readWithoutDefault(wxString path)
+{
+    T result = T();
+    T dummy = T();
+    bool found = wxConfigBase::Get()->Read(path, &result, dummy);
+    ASSERT(found)(path);
+    return result;
+}
+
 // static
 bool Config::ReadBool(const wxString& key)
 {
+    boost::mutex::scoped_lock lock(sMutex);
     return readWithoutDefault<bool>(key);
 }
 
 // static
 long Config::ReadLong(const wxString& key)
 {
+    boost::mutex::scoped_lock lock(sMutex);
     return readWithoutDefault<long>(key);
 }
 
 // static
 double Config::ReadDouble(const wxString& key)
 {
+    boost::mutex::scoped_lock lock(sMutex);
     return readWithoutDefault<double>(key);
 }
 
 // static
 wxString Config::ReadString(const wxString& key)
 {
+    boost::mutex::scoped_lock lock(sMutex);
     return readWithoutDefault<wxString>(key);
+}
+
+// static
+void Config::WriteBool(const wxString& key, bool value)
+{
+    boost::mutex::scoped_lock lock(sMutex);
+    bool result = wxConfigBase::Get()->Write(key, value);
+    ASSERT(result);
+    if (!sHold)
+    {
+        result = wxConfigBase::Get()->Flush();
+        ASSERT(result);
+    }
+}
+
+// static
+void Config::WriteLong(const wxString& key, long value)
+{
+    boost::mutex::scoped_lock lock(sMutex);
+    bool result = wxConfigBase::Get()->Write(key, value);
+    ASSERT(result);
+    if (!sHold)
+    {
+        result = wxConfigBase::Get()->Flush();
+        ASSERT(result);
+    }
+}
+
+// static
+void Config::WriteDouble(const wxString& key, double value)
+{
+    boost::mutex::scoped_lock lock(sMutex);
+    bool result = wxConfigBase::Get()->Write(key, value);
+    ASSERT(result);
+    if (!sHold)
+    {
+        result = wxConfigBase::Get()->Flush();
+        ASSERT(result);
+    }
+}
+
+// static
+void Config::WriteString(const wxString& key, wxString value)
+{
+    boost::mutex::scoped_lock lock(sMutex);
+    bool result = wxConfigBase::Get()->Write(key, value);
+    ASSERT(result);
+    if (!sHold)
+    {
+        result = wxConfigBase::Get()->Flush();
+        ASSERT(result);
+    }
 }
 
 // static
 bool Config::getShowDebugInfo()
 {
     return sShowDebugInfo;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// DISK ACCESS
+//////////////////////////////////////////////////////////////////////////
+
+// static
+void Config::holdWriteToDisk()
+{
+    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(!sHold);
+    sHold = true;
+}
+
+// static
+void Config::releaseWriteToDisk()
+{
+    boost::mutex::scoped_lock lock(sMutex);
+    ASSERT(sHold);
+    sHold = false;
+    bool result = wxConfigBase::Get()->Flush();
+    ASSERT(result);
 }
 
 //////////////////////////////////////////////////////////////////////////

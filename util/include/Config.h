@@ -36,26 +36,24 @@ public:
     template <class TYPE>
     static TYPE     ReadEnum  (const wxString& key)
     {
-        wxString result;
-        wxString dummy;
-        bool found = wxConfigBase::Get()->Read(key, &result, dummy);
-        ASSERT(found)(key);
+        wxString result = ReadString(key);
         return Enum_fromConfig(result,TYPE());
     }
 
-    template <class T>
-    static T readWithoutDefault(wxString path)
-    {
-        boost::mutex::scoped_lock lock(sMutex);
-        T result = T();
-        T dummy = T();
-        bool found = wxConfigBase::Get()->Read(path, &result, dummy);
-        ASSERT(found)(path);
-        return result;
-    }
+    static void WriteBool(const wxString& key, bool value);
+    static void WriteLong(const wxString& key, long value);
+    static void WriteDouble(const wxString& key, double value);
+    static void WriteString(const wxString& key, wxString value);
 
     // Specific getters for dedicated attributes are only cached for performance
     static bool getShowDebugInfo();
+
+    //////////////////////////////////////////////////////////////////////////
+    // DISK ACCESS
+    //////////////////////////////////////////////////////////////////////////
+
+    static void holdWriteToDisk();
+    static void releaseWriteToDisk();
 
     //////////////////////////////////////////////////////////////////////////
     // CONFIG PATHS
@@ -91,6 +89,8 @@ private:
     static wxString sFileName;
     static bool sShowDebugInfo;
     static boost::mutex sMutex;
+
+    static bool sHold;
 };
 
 #endif // CONFIG_H
