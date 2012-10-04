@@ -175,6 +175,11 @@ void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *fu
     wxString Condition(condition);
     wxString Message(message);
     VAR_ERROR(File)(Line)(Function)(Condition)(Message);
+
+    if (wxIsDebuggerRunning())
+    {
+        FATAL(Message);
+    }
     Dialog::get().getDebugReport(true, wxThread::IsMain());
 }
 

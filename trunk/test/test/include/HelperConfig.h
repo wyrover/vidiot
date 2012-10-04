@@ -5,25 +5,26 @@
 
 namespace test {
 
-template <class TYPE>
-class ConfigOverrule
+class ConfigOverruleBool
 {
 public:
-    ConfigOverrule(wxString path, TYPE temporaryvalue)
-        :   mPath(path)
-        ,   mOriginalValue(Config::readWithoutDefault<TYPE>(path))
-        ,   mTemporaryValue(temporaryvalue)
-    {
-        wxConfigBase::Get()->Write(mPath,mTemporaryValue);
-    }
-    virtual ~ConfigOverrule()
-    {
-        wxConfigBase::Get()->Write(mPath,mOriginalValue);
-    }
+    ConfigOverruleBool(wxString path, bool temporaryvalue);
+    virtual ~ConfigOverruleBool();
 private:
     wxString mPath;
-    TYPE mOriginalValue;
-    TYPE mTemporaryValue;
+    bool mOriginalValue;
+    bool mTemporaryValue;
+};
+
+class ConfigOverruleLong
+{
+public:
+    ConfigOverruleLong(wxString path, bool temporaryvalue);
+    virtual ~ConfigOverruleLong();
+private:
+    wxString mPath;
+    long mOriginalValue;
+    long mTemporaryValue;
 };
 
 } // namespace

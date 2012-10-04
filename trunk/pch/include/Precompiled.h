@@ -78,8 +78,6 @@ extern "C" {
 #include <wx/cmdproc.h>
 #include <wx/collpane.h>
 #include <wx/colour.h>
-#include <wx/confbase.h>
-#include <wx/config.h> // This ensures that in other parts of the code only #include "Config.h" is required
 #include <wx/control.h>
 #include <wx/cursor.h>
 #include <wx/dataobj.h>

@@ -39,13 +39,6 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-auto PrepareSnapping = [](bool enableSnapping)
-{
-    checkMenu(ID_SNAP_CLIPS, enableSnapping);
-    checkMenu(ID_SNAP_CURSOR, enableSnapping);
-    DeselectAllClips();
-};
-
 void TestTransition::setUp()
 {
     mProjectFixture.init();
@@ -301,10 +294,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         Drag(to,from,false,false,true);
         Undo();
     }
-
-    //  Turn on snapping again
-    checkMenu(ID_SNAP_CLIPS, true);
-    checkMenu(ID_SNAP_CURSOR, true);
+    PrepareSnapping(true);
 }
 
 void TestTransition::testDragAndDropOfClipsUnderTransition()
@@ -312,7 +302,6 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
     StartTestSuite();
     Zoom level(4);
     {
-        PrepareSnapping(true);
         // Test - for an in-out-transition- that dragging when clicking on TransitionLeftClipInterior
         // starts a drag and drop operation, not with the transition but the clip left of the transition.
         MakeInOutTransitionAfterClip preparation(1);
@@ -360,7 +349,6 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
         // The transition in this case is dragged along with the clip, since the only clip related to the
         // transition is the clip being dragged.
         MakeOutTransitionAfterClip preparation(1);
-
         ASSERT_EQUALS(VideoClip(0,1)->getLength() + VideoClip(0,2)->getLength(),AudioClip(0,1)->getLength()); // Transition is unapplied which causes the audio and video to have the same lengths again
         ShiftDragAlignLeft(TransitionLeftClipInterior(VideoClip(0,2)),LeftPixel(VideoClip(0,4)));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
@@ -373,10 +361,12 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
     }
 }
 
+//RUNONLY(testAdjacentTransitions);
 void TestTransition::testAdjacentTransitions()
 {
     StartTestSuite();
     Zoom level(3);
+    PrepareSnapping(true);
     {
         StartTest("Reduce size of second and third clip to be able to create transitions");
         TrimRight(VideoClip(0,1),-30,false);
@@ -432,9 +422,11 @@ void TestTransition::testAdjacentTransitions()
     }
 }
 
+//RUNONLY(testPlaybackAndScrubbing);
 void TestTransition::testPlaybackAndScrubbing()
 {
     StartTestSuite();
+    PrepareSnapping(false);
     Zoom level(1); // Zoom in once to avoid clicking in the middle of a clip which is then seen (logically) as clip end due to the zooming
     {
         MakeInOutTransitionAfterClip preparation(1);
@@ -508,14 +500,14 @@ void TestTransition::testPlaybackAndScrubbing()
     }
 }
 
+//RUNONLY(testTrimmingClipsInTransition);
 void TestTransition::testTrimmingClipsInTransition()
 {
     StartTestSuite();
-
+    PrepareSnapping(false);
     Zoom level(4);
 
     {
-        PrepareSnapping(true);
         MakeInOutTransitionAfterClip preparation(1);
 
         StartTest("InOutTransition: Without shift: TransitionLeftClipEnd: reduce clip size.");
@@ -565,7 +557,6 @@ void TestTransition::testTrimmingClipsInTransition()
         Undo();
     }
     {
-        PrepareSnapping(true);
         MakeOutTransitionAfterClip preparation(1);
 
         StartTest("OutTransition: Without shift: TransitionLeftClipEnd: reducing clip size");
@@ -629,16 +620,15 @@ void TestTransition::testTrimmingClipsInTransition()
         // NOT: Undo();
     }
     {
-        PrepareSnapping(true);
         MakeInOutTransitionAfterClip preparation(1);
 
-        //StartTest("InOutTransition: Without shift: TransitionRightClipBegin: reduce clip size.");
-        //Trim(TransitionRightClipBegin(VideoClip(0,2)),Center(VideoClip(0,3)));
-        //ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
-        //ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
-        //ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
-        //ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-        //Undo();
+        StartTest("InOutTransition: Without shift: TransitionRightClipBegin: reduce clip size.");
+        Trim(TransitionRightClipBegin(VideoClip(0,2)),Center(VideoClip(0,3)));
+        ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
+        ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
+        ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        Undo();
         StartTest("InOutTransition: Without shift: TransitionRightClipBegin: Verify upper resize bound (which must be such that the entire clip can be trimmed away, since the transition is unapplied).");
         Trim(TransitionRightClipBegin(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
@@ -680,7 +670,6 @@ void TestTransition::testTrimmingClipsInTransition()
         Undo();
     }
     {
-        PrepareSnapping(true);
         MakeInTransitionAfterClip preparation(1);
 
         StartTest("InTransition: Without shift: TransitionRightClipBegin: reduce clip size.");
@@ -750,6 +739,7 @@ void TestTransition::testTrimmingClipsInTransition()
 void TestTransition::testTrimmingLinkedClips()
 {
     StartTestSuite();
+    PrepareSnapping(false);
     Zoom Level(4);
     {
         MakeInOutTransitionAfterClip preparation(1);
@@ -832,9 +822,11 @@ void TestTransition::testTrimmingLinkedClips()
     }
 }
 
+//RUNONLY(testTrimmingTransition);
 void TestTransition::testTrimmingTransition()
 {
     StartTestSuite();
+    PrepareSnapping(false);
     {
         Zoom Level(4);
         {

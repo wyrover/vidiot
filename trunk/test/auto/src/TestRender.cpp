@@ -101,7 +101,7 @@ void TestRender::testChangeRenderSettings()
 void TestRender::testRendering()
 {
     StartTestSuite();
-    ConfigOverrule<long> overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
+    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
     // Create directory for holding the output file
     wxFileName path(wxFileName::GetTempDir(), "");
     path.AppendDir(randomString(20));

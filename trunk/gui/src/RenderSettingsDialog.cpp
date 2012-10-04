@@ -214,8 +214,7 @@ void RenderSettingsDialog::onFileButtonPressed(wxCommandEvent& event)
                 model::render::OutputFormatPtr format;
                 format =  model::render::OutputFormats::getByExtension(newName.GetExt());
                 ASSERT(format)(newName);
-                wxConfigBase::Get()->Write(Config::sPathDefaultExtension, newName.GetExt());
-                wxConfigBase::Get()->Flush();
+                Config::WriteString(Config::sPathDefaultExtension, newName.GetExt());
                 mFile->ChangeValue(newName.GetFullPath()); // ChangeValue() does not trigger event for text ctrl
                 mVideoCodec->select(format->getDefaultVideoCodec());
                 mAudioCodec->select(format->getDefaultAudioCodec());

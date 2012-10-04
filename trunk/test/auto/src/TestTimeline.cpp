@@ -43,13 +43,6 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-auto PrepareSnapping = [](bool enableSnapping)
-{
-    checkMenu(ID_SNAP_CLIPS, enableSnapping);
-    checkMenu(ID_SNAP_CURSOR, enableSnapping);
-    DeselectAllClips();
-};
-
 void TestTimeline::setUp()
 {
     mProjectFixture.init();
@@ -64,9 +57,11 @@ void TestTimeline::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
+//RUNONLY(testSelection);
 void TestTimeline::testSelection()
 {
     StartTestSuite();
+    PrepareSnapping(false);
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
         StartTest("Start application, make sequence, shift click clip five. All first five clips selected!");
@@ -515,6 +510,8 @@ void TestTimeline::testDividers()
 void TestTimeline::testTrimming()
 {
     StartTestSuite();
+    // todo make trimming test that uses snapping also
+    PrepareSnapping(false);
     Zoom Level(2);
     DeleteClip(VideoClip(0,3));
     DeleteClip(VideoClip(0,1));
