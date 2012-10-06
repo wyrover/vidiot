@@ -268,7 +268,7 @@ void Trim::stop()
 void Trim::submit()
 {
     VAR_DEBUG(this);
-    if (mCommand->getDiff() != 0) // todoo snapto for trimming
+    if (mCommand->getDiff() != 0)
     {
         bool shiftBeginTrim = wxGetMouseState().ShiftDown() && mCommand->isBeginTrim();
         pts diff = mCommand->getDiff();
@@ -318,49 +318,9 @@ void Trim::draw(wxDC& dc) const
     dc.SetPen(Layout::get().SnapPen);
     dc.SetBrush(Layout::get().SnapBrush);
 
-    //BOOST_FOREACH( pts snappoint, mSnapPoints )
-    //{
-    //    bool snap = false;
-    //    if (mCommand->isBeginTrim())
-    //    {
-    //        if (mCommand->getNewClip() &&
-    //            mCommand->getNewClip()->getLeftPts() == snappoint)
-    //        {
-    //            snap = true;
-    //        }
-    //        else if (mCommand->getNewLink() &&
-    //            mCommand->getNewLink()->getLeftPts() == snappoint)
-    //        {
-    //            snap = true;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if (mCommand->getNewClip() &&
-    //            mCommand->getNewClip()->getRightPts() == snappoint)
-    //        {
-    //            snap = true;
-    //        }
-    //        else if (mCommand->getNewLink() &&
-    //            mCommand->getNewLink()->getRightPts() == snappoint)
-    //        {
-    //            snap = true;
-    //        }
-    //    }
-    //    if (snap)
-    //    {
-    //        dc.DrawLine(getZoom().ptsToPixels(snappoint),0,getZoom().ptsToPixels(snappoint),dc.GetSize().GetHeight());
-
-    //    }
-    //}
     if (mSnap)
     {
-            dc.DrawLine(getZoom().ptsToPixels(*mSnap),0,getZoom().ptsToPixels(*mSnap),dc.GetSize().GetHeight());
-        // todo dit laat alleen een lijn zien als er via snapping op een 'matching' plek is uitgekomen.
-        // echter, als het door andere redenen (drag zes clips verder) ook matched, mag er ook een lijn
-
-        // dus over all punten itereren en matchen met
-        // mCommand->getNewClip()->getleftpts of right pts depending on which trim en mCommand->getNewLink()
+        dc.DrawLine(getZoom().ptsToPixels(*mSnap),0,getZoom().ptsToPixels(*mSnap),dc.GetSize().GetHeight());
     }
 }
 

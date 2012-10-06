@@ -68,15 +68,6 @@ void AClipEdit::Revert()
     mInitialized = false;
 }
 
-void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
-{
-    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
-    model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
-    mParams.push_back(move);
-    mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
-    doMove(move);
-}
-
 void AClipEdit::split(model::TrackPtr track, pts position)
 {
     model::IClipPtr clip = track->getClip(position);
@@ -469,6 +460,15 @@ bool AClipEdit::Undo()
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
+{
+    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
+    model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
+    mParams.push_back(move);
+    mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
+    doMove(move);
+}
 
 void AClipEdit::doMove(model::MoveParameterPtr move)
 {

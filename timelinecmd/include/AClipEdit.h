@@ -71,17 +71,6 @@ protected:
     /// before the command is actually submitted.
     void Revert();
 
-    /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
-    /// The new Move is executed immediately. This method is also used to add new clips,
-    /// by using the defaults for the remove* parameters.
-    void newMove(
-        model::TrackPtr addTrack,
-        model::IClipPtr addPosition,
-        model::IClips addClips,
-        model::TrackPtr removeTrack = model::TrackPtr(),
-        model::IClipPtr removePosition = model::IClipPtr(),
-        model::IClips removeClips = model::IClips());
-
     /// Split the clip at the given (track) position. If there already is a cut at the given
     /// position, then nothing is changed. When the clip is replaced by (two) other clips, then
     /// In the ReplacementMap (if != 0) the mapping clip->(first,second) is added.
@@ -221,6 +210,17 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
+
+    /// Add a new Move to the list of moves. Add an inverted Move the list of Undo Moves.
+    /// The new Move is executed immediately. This method is also used to add new clips,
+    /// by using the defaults for the remove* parameters.
+    void newMove(
+        model::TrackPtr addTrack,
+        model::IClipPtr addPosition,
+        model::IClips addClips,
+        model::TrackPtr removeTrack = model::TrackPtr(),
+        model::IClipPtr removePosition = model::IClipPtr(),
+        model::IClips removeClips = model::IClips());
 
     /// Execute a move.
     void doMove(model::MoveParameterPtr move);
