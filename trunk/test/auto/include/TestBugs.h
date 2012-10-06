@@ -40,6 +40,13 @@ public:
     /// on a clip.
     void testDetailsNotShownAfterMovingTimelineCursor();
 
+    /// A bug in the linking algorithm was exposed by an assert triggered when trimming after
+    /// dropping a clip on the beginning of a linked clip. The linking algorithm caused clip A
+    /// to be first replaced with clips B and C. Then, clip B was simply removed from the track,
+    /// instead of being replaced with an empty list. That caused (in the end) the clip originally
+    /// linked to A not being linked to C.
+    void testLinkingErrorWhenDroppingOverBeginOfLinkedClip();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

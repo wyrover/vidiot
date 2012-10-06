@@ -24,7 +24,7 @@ std::ostream& operator<<( std::ostream& os, const ExecuteDrop::Drop& obj )
     return os;
 }
 
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -219,13 +219,22 @@ void ExecuteDrop::initialize()
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
             drop.clips.push_front(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()));
-            addClips(drop.clips, drop.track);
+        }
+        else if (drop.position == drop.track->getLength())
+        {
+            // Drop is exactly at end of track. Nothing needs to be removed. Nothing needs to be added.
         }
         else
         {
-            // Simply 'reposition' the clips. No linked clips updating is relevant.
-            newMove(drop.track, remove.second, drop.clips, drop.track, remove.second, remove.first);
+            // Drop 'within' track.
+            // Remove the clips that are 'under' the drop. Note that link replacing is required here. Consider the scenario in which
+            // a audio-only clip is dropped onto the beginning of a audio clip that is linked to a video clip. First, the 'dropped upon' audio clip
+            // is split into two parts (thus, the replacements of that clip are two clips, called 'left' and 'right'). Then, 'left' is removed again.
+            // During link replacing the original audio clip must be linked to 'right'. That requires a replacement mapping of 'left' to '' (empty list).
+            removeClips(remove.first);
         }
+        // Finally, insert the dropped clips. No linked clips updating is relevant since these clips keep their links.
+        addClips(drop.clips, drop.track, remove.second);
     }
 }
 
