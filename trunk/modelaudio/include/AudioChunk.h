@@ -53,6 +53,13 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    /// Try to put the given number of samples into the given data area.
+    /// \pre dst must be able to hold requested number of samples
+    /// \param dst area to hold the samples
+    /// \param requested number of samples to be copied
+    /// \return actually stored number of samples (is less than requested if there were no more available samples)
+    samplecount extract(int16_t* dst, samplecount requested);
+
     /// Indicates that a number of samples has been consumed by the process
     /// that reads chunks.
     /// \param samples number of samples that has been read

@@ -5,6 +5,10 @@
 
 namespace test {
 
+//////////////////////////////////////////////////////////////////////////
+// TEMPORARY OVERRULES
+//////////////////////////////////////////////////////////////////////////
+
 ConfigOverruleBool::ConfigOverruleBool(wxString path, bool temporaryvalue)
     :   mPath(path)
     ,   mOriginalValue(Config::ReadBool(path))
@@ -20,7 +24,7 @@ ConfigOverruleBool::~ConfigOverruleBool()
     waitForIdle();
 }
 
-ConfigOverruleLong::ConfigOverruleLong(wxString path, bool temporaryvalue)
+ConfigOverruleLong::ConfigOverruleLong(wxString path, long temporaryvalue)
     :   mPath(path)
     ,   mOriginalValue(Config::ReadLong(path))
     ,   mTemporaryValue(temporaryvalue)

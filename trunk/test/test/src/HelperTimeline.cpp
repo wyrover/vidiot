@@ -564,11 +564,4 @@ void DeleteClip(model::IClipPtr clip)
     Type(WXK_DELETE);
 }
 
-void PrepareSnapping(bool enable)
-{
-    checkMenu(ID_SNAP_CLIPS, enable);
-    checkMenu(ID_SNAP_CURSOR, enable);
-    DeselectAllClips();
-};
-
 } // namespace

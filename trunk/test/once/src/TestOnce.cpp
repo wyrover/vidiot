@@ -51,7 +51,7 @@ void TestOnce::testOnce()
 {
     // BREAK();
     // getTimeline().getDump().dump();
-    // PrepareSnapping(true);
+    // ConfigFixture.SnapToAll(true);
     StartTestSuite();
 
     pause(600000);

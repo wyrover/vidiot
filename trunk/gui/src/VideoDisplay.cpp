@@ -74,7 +74,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
     Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::OnEraseBackground,    this);
     Bind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
 
-	LOG_INFO;
+    LOG_INFO;
 }
 
 VideoDisplay::~VideoDisplay()
@@ -241,7 +241,7 @@ bool VideoDisplay::isPlaying() const
 void VideoDisplay::audioBufferThread()
 {
     while (!mAbortThreads)
-	{
+    {
         model::AudioChunkPtr chunk = mProducer->getNextAudio(mAudioSampleRate,mNumberOfAudioChannels);
 
         if (chunk)
@@ -263,7 +263,7 @@ void VideoDisplay::audioBufferThread()
         {
             mAudioChunks.push(chunk); // Signal end
         }
-	}
+    }
 }
 
 bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double playtime)
@@ -310,11 +310,7 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
             }
         }
 
-        samplecount nSamples = min(remainingSamples, mCurrentAudioChunk->getUnreadSampleCount());
-
-        memcpy(out,mCurrentAudioChunk->getUnreadSamples(),nSamples * model::AudioChunk::sBytesPerSample);
-        mCurrentAudioChunk->read(nSamples);
-
+        samplecount nSamples = mCurrentAudioChunk->extract(out,remainingSamples);
         ASSERT_MORE_THAN_EQUALS(remainingSamples,nSamples);
         remainingSamples -= nSamples;
         out += nSamples;
@@ -328,12 +324,12 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
 
 void VideoDisplay::videoBufferThread()
 {
-	LOG_INFO;
+    LOG_INFO;
     while (!mAbortThreads)
-	{
+    {
         model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
         mVideoFrames.push(videoFrame);
-	}
+    }
 }
 
 void VideoDisplay::videoDisplayThread()

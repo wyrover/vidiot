@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <boost/optional.hpp>
+#include "FixtureConfig.h"
 
 namespace test {
 
@@ -26,6 +27,9 @@ namespace test {
 ///
 /// Dump the timeline contents:
 /// getTimeline().getDump().dump();
+///
+/// Change the configuration: For tests with GUI must be done via the object
+/// FixtureConfig ConfigFixture;
 
 class HelperTestSuite
 {
@@ -94,7 +98,9 @@ private:
 #define StartTestSuite() \
     if (!HelperTestSuite::get().currentTestIsEnabled()) return; \
     HelperTestSuite::get().setSuite(__FUNCTION__); \
-    LOG_WARNING << "Suite start: " << __FUNCTION__;
+    LOG_WARNING << "Suite start: " << __FUNCTION__; \
+    FixtureConfig ConfigFixture; \
+    if (HelperTestSuite::get().currentTestRequiresGui()) ConfigFixture.SetDefaults();
 
 #define StartTest(expr) HelperTestSuite::get().setTest(expr); LOG_WARNING << "Test: " << expr
 
@@ -105,9 +111,7 @@ private:
 
 /// Place in same file as the test case which must be ran without GUI
 /// Also: Only use one Suite in one set of .h/.cpp files and name it the same as the file (without .h/.cpp)
-//#define UNIQUEVARNAME 0
 #define RUNWITHOUTGUI(testname) int j ## __COUNTER__ = HelperTestSuite::get().runWithoutGui(__FILE__,#testname)
-//; UNIQUEVARNAME = UNIQUEVARNAME ## j
 
 } // namespace
 

@@ -4,6 +4,7 @@
 #include <boost/foreach.hpp>
 #include "FixtureProject.h"
 #include "HelperApplication.h"
+#include "HelperConfig.h"
 #include "HelperDetails.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
