@@ -2,9 +2,9 @@
 
 #include "HelperTestSuite.h"
 #include <cxxtest/TestSuite.h>
-#include "Window.h"
 #include "UtilList.h"
 #include "UtilLog.h"
+#include "Window.h"
 
 namespace test {
 
@@ -12,9 +12,25 @@ namespace test {
 // LOCAL HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+/// Convert a filename to a class name. Any slashes (path prefixes) are stripped, as well
+/// as a file extension. If path does not contain slashes or an extension (dot), then
+/// that's ok as well.
+std::string convertToClassname(std::string path)
+{
+    size_t lastSlash = path.find_last_of('\\');
+    size_t beginPositionForStrippingPath = (lastSlash == std::string::npos) ? 0 : lastSlash + 1; // NOTE: npos equals -1 already, but this seems better maintainable.
+    std::string filename(path.substr(beginPositionForStrippingPath));
+    size_t lastDot = filename.find_last_of('.');
+    if (lastDot == std::string::npos)
+    {
+        return filename;
+    }
+    return filename.substr(0, lastDot);
+}
+
 std::string makeFullTestName(std::string file, std::string test)
 {
-    return file + "-" + test;
+    return convertToClassname(file) + "-" + test;
 }
 
 std::string currentCxxTest()
@@ -67,16 +83,14 @@ bool HelperTestSuite::currentTestRequiresGui()
 
 int HelperTestSuite::runOnly(const char* file, const char* test)
 {
-    std::string path(file);
-    std::string filename(path.substr(path.find_last_of('\\')+1));
-    std::string filename_noext(filename.substr(0, filename.find_last_of('.')));
-    mRunOnlySuite = makeFullTestName(filename_noext,test);
+    ASSERT_ZERO( mRunOnlySuite.compare("")); // Only one test may be 'run only' at a time
+    mRunOnlySuite = makeFullTestName(file,test);
     return 1;
 };
 
 int HelperTestSuite::runWithoutGui(const char* file, const char* test)
 {
-    mSuitesWithoutGui.push_back(std::string(file) + "-" + test);
+    mSuitesWithoutGui.push_back(makeFullTestName(file,test));
     return 1;
 }
 

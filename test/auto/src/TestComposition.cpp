@@ -41,7 +41,7 @@ void TestComposition::tearDown()
 //RUNONLY("testBlend");
 void TestComposition::testBlend()
 {
-    StartTestSuite();
+    StartTestSuite();//todo
     StartTest("Iasdfdsaf.");
 }
 } // namespace

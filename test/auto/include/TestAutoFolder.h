@@ -7,7 +7,7 @@
 namespace test
 {
 
-class TestAutoFolder : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error 
+class TestAutoFolder : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
     ,   public SuiteCreator<TestAutoFolder>
 {
 public:

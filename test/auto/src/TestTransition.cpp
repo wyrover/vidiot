@@ -149,7 +149,6 @@ void TestTransition::testDragAndDropOfOtherClips()
     {
         // Shift drag without snapping enabled,
         // transition and its adjacent clips are shifted backwards
-        PrepareSnapping(false);
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,3)));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -161,7 +160,6 @@ void TestTransition::testDragAndDropOfOtherClips()
         // transition) clip after transition is shifted backwards ->
         // transition is removed because the two 'transitioned clips
         // are separated'. (clip in front of transition remains intact)
-        PrepareSnapping(false);
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,4)));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
@@ -169,11 +167,11 @@ void TestTransition::testDragAndDropOfOtherClips()
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
     }
+    ConfigFixture.SnapToClips(true);
     {
         // Shift drag with snapping enabled. The drop is done such that
         // the left position of the drop is aligned with the left
         // position of the clip left of the transitions
-        PrepareSnapping(true);
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,6)),preparation.leftPositionOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
@@ -187,7 +185,6 @@ void TestTransition::testDragAndDropOfOtherClips()
         // position of the drop is aligned with the left position of
         // the transition. This causes the clip left of the transition
         // to be shifted back.
-        PrepareSnapping(true);
         pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,5)),preparation.leftPositionOfTransitionAfterTransitionApplied);
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
@@ -202,7 +199,6 @@ void TestTransition::testDragAndDropOfOtherClips()
         // of the drop is aligned with the center position of the transition.
         // This causes the clip right of the transition to be shifted back, and the transition
         // to be removed.
-        PrepareSnapping(true);
         pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,5)),preparation.touchPositionOfTransition);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
@@ -218,7 +214,6 @@ void TestTransition::testDragAndDropOfOtherClips()
         // with the left position of the clip after the transition.
         // This causes the clip right of the transition to be shifted back, and the transition
         // to be removed.
-        PrepareSnapping(true);
         pts lengthOfDraggedClip = VideoClip(0,5)->getLength();
         ShiftDragAlignLeft(Center(VideoClip(0,5)),LeftPixel(VideoClip(0,3)));
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
@@ -229,10 +224,10 @@ void TestTransition::testDragAndDropOfOtherClips()
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
     }
+    ConfigFixture.SnapToClips(false);
     {
         // Drag a small clip on top of the clip left of the transition. This left clip
         // is made shorter, but the transition remains.
-        PrepareSnapping(false);
         pixel right = RightPixel(VideoClip(0,1));
         right -= 20; // Ensure that 'a bit' of the clip left of the transition remains, causing the transition to remain also
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
@@ -247,7 +242,6 @@ void TestTransition::testDragAndDropOfOtherClips()
     {
         // Drag a small clip on top of the clip right of the transition. This right clip
         // is made shorter, but the transition remains.
-        PrepareSnapping(false);
         pixel left = LeftPixel(VideoClip(0,3));
         left += 20; // Ensure that 'a bit' of the clip right of the transition remains, causing the transition to remain also
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
@@ -294,7 +288,6 @@ void TestTransition::testDragAndDropOfOtherClips()
         Drag(to,from,false,false,true);
         Undo();
     }
-    PrepareSnapping(true);
 }
 
 void TestTransition::testDragAndDropOfClipsUnderTransition()
@@ -366,7 +359,7 @@ void TestTransition::testAdjacentTransitions()
 {
     StartTestSuite();
     Zoom level(3);
-    PrepareSnapping(true);
+    ConfigFixture.SnapToClips(true);
     {
         StartTest("Reduce size of second and third clip to be able to create transitions");
         TrimRight(VideoClip(0,1),-30,false);
@@ -426,7 +419,6 @@ void TestTransition::testAdjacentTransitions()
 void TestTransition::testPlaybackAndScrubbing()
 {
     StartTestSuite();
-    PrepareSnapping(false);
     Zoom level(1); // Zoom in once to avoid clicking in the middle of a clip which is then seen (logically) as clip end due to the zooming
     {
         MakeInOutTransitionAfterClip preparation(1);
@@ -504,7 +496,6 @@ void TestTransition::testPlaybackAndScrubbing()
 void TestTransition::testTrimmingClipsInTransition()
 {
     StartTestSuite();
-    PrepareSnapping(false);
     Zoom level(4);
 
     {
@@ -739,7 +730,6 @@ void TestTransition::testTrimmingClipsInTransition()
 void TestTransition::testTrimmingLinkedClips()
 {
     StartTestSuite();
-    PrepareSnapping(false);
     Zoom Level(4);
     {
         MakeInOutTransitionAfterClip preparation(1);
@@ -826,7 +816,6 @@ void TestTransition::testTrimmingLinkedClips()
 void TestTransition::testTrimmingTransition()
 {
     StartTestSuite();
-    PrepareSnapping(false);
     {
         Zoom Level(4);
         {

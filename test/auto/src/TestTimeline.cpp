@@ -61,7 +61,6 @@ void TestTimeline::tearDown()
 void TestTimeline::testSelection()
 {
     StartTestSuite();
-    PrepareSnapping(false);
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
         StartTest("Start application, make sequence, shift click clip five. All first five clips selected!");
@@ -256,6 +255,7 @@ void TestTimeline::testDeletion()
     }
 };
 
+//RUNONLY(testDnd);
 void TestTimeline::testDnd()
 {
     StartTestSuite();
@@ -267,9 +267,9 @@ void TestTimeline::testDnd()
     Type('=');  // Zoom in
     {
         StartTest("Move one clip around.");
-        PrepareSnapping(true);
+        ConfigFixture.SnapToCursor(true);
         pts length = VideoClip(0,3)->getLength();
-        DragAlignLeft(Center(VideoClip(0,3)),1); // Move to a bit after the beginning of timeline
+        DragAlignLeft(Center(VideoClip(0,3)),1); // Move to a bit after the beginning of timeline, snaps to the cursor
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
         Undo();
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
@@ -281,7 +281,7 @@ void TestTimeline::testDnd()
     }
     {
         StartTest("Drop a clip with snapping enabled does not affect the clip to the right of the snapping point.");
-        PrepareSnapping(true);
+        ConfigFixture.SnapToClips(true);
         pts lengthOfClipRightOfTheDrop = VideoClip(0,2)->getLength();
         pts lengthOfDroppedClip = VideoClip(0,3)->getLength();
         DragAlignRight(Center(VideoClip(0,3)),RightPixel(VideoClip(0,1)));
@@ -302,7 +302,6 @@ void TestTimeline::testDnd()
     }
     {
         StartTest("Move one clip partially on top of its original location (caused a recursion error in AClipEdit, for expanding the replacement map).");
-        PrepareSnapping(true);
         pts length = VideoClip(0,3)->getLength();
         Drag(Center(VideoClip(0,3)), Center(VideoClip(0,3)) + wxPoint(20,0)); // Move the clip only a bit to the right
         ASSERT(VideoClip(0,3)->isA<model::EmptyClip>());
@@ -322,10 +321,11 @@ void TestTimeline::testDnd()
     }
 }
 
+//RUNONLY(testUndo);
 void TestTimeline::testUndo()
 {
     StartTestSuite();
-
+    ConfigFixture.SnapToClips(true);
     pts length = VideoClip(0,3)->getLength();
     Drag(Center(VideoClip(0,3)),wxPoint(2,Center(VideoClip(0,3)).y));
     ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
@@ -426,8 +426,8 @@ void TestTimeline::testAbortDrag()
 void TestTimeline::testIntervals()
 {
     StartTestSuite();
+    ConfigFixture.SnapToClips(true);
     Zoom Level(2);
-    PrepareSnapping(true);
 
     StartTest("Make an interval from left to right and click 'delete all marked intervals'");
     ToggleInterval(HCenter(VideoClip(0,1)), HCenter(VideoClip(0,2)));
@@ -511,7 +511,6 @@ void TestTimeline::testTrimming()
 {
     StartTestSuite();
     // todo make trimming test that uses snapping also
-    PrepareSnapping(false);
     Zoom Level(2);
     DeleteClip(VideoClip(0,3));
     DeleteClip(VideoClip(0,1));
@@ -621,7 +620,6 @@ void TestTimeline::testTrimmingWithOtherTracks()
     Zoom level(2);
     triggerMenu(ID_ADDVIDEOTRACK);
     triggerMenu(ID_ADDAUDIOTRACK);
-    PrepareSnapping(false);
     {
         StartTest("Trim: EndTrim: Enlarge the last clip in a track (there is no empty clip after it anymore)");
         TrimRight(VideoClip(0,3),-40,false);

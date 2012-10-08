@@ -5,6 +5,10 @@
 
 namespace test {
 
+/// Creating an overrule object temporarily overrules the (bool) value of a Config setting.
+/// When the object is created, the temporary value is set.
+/// When the object is destroyed, the original value is reset.
+/// \note Changing config settings is done by accessing the application's Config object directly, not via UI actions.
 class ConfigOverruleBool
 {
 public:
@@ -16,10 +20,14 @@ private:
     bool mTemporaryValue;
 };
 
+/// Creating an overrule object temporarily overrules the (Long) value of a Config setting.
+/// When the object is created, the temporary value is set.
+/// When the object is destroyed, the original value is reset.
+/// \note Changing config settings is done by accessing the application's Config object directly, not via UI actions.
 class ConfigOverruleLong
 {
 public:
-    ConfigOverruleLong(wxString path, bool temporaryvalue);
+    ConfigOverruleLong(wxString path, long temporaryvalue);
     virtual ~ConfigOverruleLong();
 private:
     wxString mPath;

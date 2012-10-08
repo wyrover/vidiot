@@ -348,11 +348,8 @@ void Render::generate(model::SequencePtr sequence)
                 if (currentAudioChunk)
                 {
                     // Previous chunk not used completely
-                    //samplecount remainingSamples = audio_input_frame_size - written;
                     samplecount nSamples = min(remainingSamples, currentAudioChunk->getUnreadSampleCount());
-
-                    memcpy(q,currentAudioChunk->getUnreadSamples(), nSamples * 2); // todo add this to the audiochunk class and then reuse in videodisplay also? // the 2  here is for bytespersample
-                    currentAudioChunk->read(nSamples);                                                              // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^alsothis^^^^^^^^^^^^^^^^
+                    currentAudioChunk->extract(q,nSamples);
                     q += nSamples;
                     remainingSamples -= nSamples;
 
