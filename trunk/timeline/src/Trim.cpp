@@ -336,7 +336,7 @@ pts Trim::determineTrimDiff(wxPoint position)
         getTimeline().refreshPts(*mSnap);
         mSnap.reset();
     }
-    pts ptsmouse = getZoom().pixelsToPts(position.x);
+    pts ptsmouse = getZoom().pixelsToPts(position.x + getScrolling().getOffset().x);
     pts minimumsnap = Layout::SnapDistance + 1; // To ensure that the first snap will update this
     std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
     while ( itTimeline != mSnapPoints.end() )
