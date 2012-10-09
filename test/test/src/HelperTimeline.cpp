@@ -504,11 +504,21 @@ void ShiftDragAlignRight(wxPoint from, pixel position)
 
 void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip)
 {
-    Drag(Center(videoclip),wxPoint(HCenter(videoclip),VCenter(VideoTrack(newtrackindex))),false,true,false);
-    ControlDown();
-    Move(Center(audioclip));
-    ControlUp();
-    Drag(Center(audioclip),wxPoint(HCenter(audioclip),VCenter(AudioTrack(newtrackindex))),false,false,true);
+    if (videoclip)
+    {
+        bool mouseup = audioclip ? false : true;
+        Drag(Center(videoclip),wxPoint(HCenter(videoclip),VCenter(VideoTrack(newtrackindex))),false,true,mouseup);
+    }
+    if (videoclip && audioclip)
+    {
+        ControlDown();
+        Move(Center(audioclip));
+        ControlUp();
+    }
+    if (audioclip)
+    {
+        Drag(Center(audioclip),wxPoint(HCenter(audioclip),VCenter(AudioTrack(newtrackindex))),false,false,true);
+    }
 }
 
 void ToggleInterval(pixel from, pixel to)

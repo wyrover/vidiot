@@ -266,7 +266,7 @@ void TestTimeline::testDnd()
     ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
     Type('=');  // Zoom in
     {
-        StartTest("Move one clip around.");
+        StartTest("Dragging: Move one clip around.");
         ConfigFixture.SnapToCursor(true);
         pts length = VideoClip(0,3)->getLength();
         DragAlignLeft(Center(VideoClip(0,3)),1); // Move to a bit after the beginning of timeline, snaps to the cursor
@@ -280,7 +280,7 @@ void TestTimeline::testDnd()
         ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
     }
     {
-        StartTest("Drop a clip with snapping enabled does not affect the clip to the right of the snapping point.");
+        StartTest("Dragging: Drop a clip with snapping enabled does not affect the clip to the right of the snapping point.");
         ConfigFixture.SnapToClips(true);
         pts lengthOfClipRightOfTheDrop = VideoClip(0,2)->getLength();
         pts lengthOfDroppedClip = VideoClip(0,3)->getLength();
@@ -301,15 +301,15 @@ void TestTimeline::testDnd()
         Undo();
     }
     {
-        StartTest("Move one clip partially on top of its original location (caused a recursion error in AClipEdit, for expanding the replacement map).");
+        StartTest("Dragging: Move one clip partially on top of its original location (caused a recursion error in AClipEdit, for expanding the replacement map).");
         pts length = VideoClip(0,3)->getLength();
         Drag(Center(VideoClip(0,3)), Center(VideoClip(0,3)) + wxPoint(20,0)); // Move the clip only a bit to the right
         ASSERT(VideoClip(0,3)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),length );
         Undo();
     }
-        {
-        StartTest("Move a clip beyond the track length.");
+    {
+        StartTest("Dragging: Move a clip beyond the track length.");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
         Drag(Center(VideoClip(0,1)), wxPoint(RightPixel(VideoClip(0,6)) + VideoClip(0,1)->getLength(), VCenter(VideoClip(0,1)))); // + + VideoClip(0,1)->getLength(): Ensure that it's dropped after a bit of empty space
@@ -318,6 +318,34 @@ void TestTimeline::testDnd()
         ASSERT_EQUALS(VideoClip(0,8)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
         ASSERT_EQUALS(VideoClip(0,8)->getLink(),AudioClip(0,8));
         ASSERT_EQUALS(AudioClip(0,8)->getLink(),VideoClip(0,8));
+        Undo();
+    }
+    {
+        StartTest("Dragging: With Scrolling Offset: If dragged not close enough to a clip boundary, no snapping is applied.");
+        getTimeline().Scroll(80,0);
+        ConfigFixture.SnapToClips(true).SnapToCursor(false);
+        DeselectAllClips();
+        DragAlignLeft(Center(VideoClip(0,1)), LeftPixel(VideoClip(0,4)) + 25);
+        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        Undo();
+    }
+    {
+        StartTest("Dragging: With Scrolling Offset: If dragged close enough to a clip boundary, snapping is applied.");
+        getTimeline().Scroll(80,0);
+        ConfigFixture.SnapToClips(true).SnapToCursor(false);
+        DeselectAllClips();
+        DragAlignLeft(Center(VideoClip(0,1)), LeftPixel(VideoClip(0,4)) + 5);
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        Undo();
+    }
+    {
+        StartTest("Dragging: With Scrolling Offset: If dragged close enough to a clip boundary, but snapping is disabled, no snapping is applied.");
+        getTimeline().Scroll(80,0);
+        ConfigFixture.SnapToClips(false).SnapToCursor(false);
+        DeselectAllClips();
+        DragAlignLeft(Center(VideoClip(0,1)), LeftPixel(VideoClip(0,4)) + 5);
+        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        Undo();
     }
 }
 
@@ -510,7 +538,6 @@ void TestTimeline::testDividers()
 void TestTimeline::testTrimming()
 {
     StartTestSuite();
-    // todo make trimming test that uses snapping also
     Zoom Level(2);
     DeleteClip(VideoClip(0,3));
     DeleteClip(VideoClip(0,1));
@@ -614,6 +641,7 @@ void TestTimeline::testTrimming()
     }
 }
 
+//RUNONLY(testTrimmingWithOtherTracks);
 void TestTimeline::testTrimmingWithOtherTracks()
 {
     StartTestSuite();
@@ -685,7 +713,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         pts diff = VideoClip(0,4)->getRightPts() - VideoTrack(1)->getLength();
         pts track0len = VideoTrack(0)->getLength();
         TrimRight(VideoClip(0,4),-400);
-        ASSERT_EQUALS(VideoClip(0,4)->getRightPts(),VideoTrack(1)->getLength());
+        ASSERT_EQUALS(VideoClip(0,4)->getRightPts(),VideoTrack(1)->getLength()); // todo often crash on netbook
         ASSERT_EQUALS(VideoTrack(0)->getLength(),track0len - diff);
         Undo(); // Undo the trim
     }
@@ -712,8 +740,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     }
     {
         StartTest("Ensure that there's a clip in another track before AND after AND 'inbetween' the clip under test (preparation).");
-        Undo();
-        Undo();
+        Undo(2);
         DragToTrack(1,VideoClip(0,5),AudioClip(0,5));
         TrimRight(VideoClip(0,6),-40);
     }
@@ -762,6 +789,27 @@ void TestTimeline::testTrimmingWithOtherTracks()
         StartTest("ShiftTrim: EndTrim: Enlarge: other track space imposes NO trim restriction.");
         TrimRight(VideoClip(0,4),200);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), previouslength + maxend);
+        Undo();
+    }
+    {
+        StartTest("Trim: Snap to clip.");
+        Undo(12); // Undo until only the add track has been done
+        // NOTE: At this point the scrolling has been changed. Trimming and snapping with a scroll offset is thus also tested.
+        ConfigFixture.SnapToClips(true).SnapToCursor(false);
+        TrimLeft(VideoClip(0,4),40,false);
+        Drag(Center(VideoClip(0,6)),wxPoint(HCenter(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1))));
+        //pause();
+        ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,5));
+        ASSERT_EQUALS(VideoClip(1,1)->getLink(),AudioClip(0,4));
+        TrimLeft(VideoClip(0,5),10,false,false);
+        Move(wxPoint(RightPixel(VideoClip(1,1))-26,VCenter(VideoClip(0,5))));
+        EndTrim(false);
+        ASSERT_DIFFERS(VideoClip(0,5)->getLeftPts(),VideoClip(1,1)->getRightPts());
+        Undo();
+        TrimLeft(VideoClip(0,5),10,false,false);
+        Move(wxPoint(RightPixel(VideoClip(1,1))-6,VCenter(VideoClip(0,5))));
+        EndTrim(false);
+        ASSERT_EQUALS(VideoClip(0,5)->getLeftPts(),VideoClip(1,1)->getRightPts());
         Undo();
     }
 }
