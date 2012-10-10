@@ -24,6 +24,7 @@
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilList.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
 #include "VideoCompositionParameters.h"
@@ -373,30 +374,13 @@ void Trim::determinePossibleSnapPoints(model::IClipPtr originalclip)
         max = originalclip->getRightPts() + originalclip->getMaxAdjustEnd();
     }
     mSnapPoints.clear();
-    auto addIfOk = [this,min,max](pts number)
-    {
-        if (number >= min && number <= max)
-        {
-            mSnapPoints.push_back(number);
-        }
-    };
     if (Config::ReadBool(Config::sPathSnapClips))
     {
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-        {
-            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
-            {
-                if (clip == originalclip) { continue; } // Do not snap to the current clip's bounds
-                if (clip == originalclip->getLink()) { continue; } // Do not snap to the current clip's link's bounds
-                if (clip->isA<model::EmptyClip>()) { continue; } // Do not snap to empty clips
-                pts left = clip->getLeftPts();
-                pts right = clip->getRightPts();
-                if (left > max) { break; } // Do not evaluate anymore (performance)
-                if (right < min) { continue; } // Do not evaluate (performance)
-                addIfOk(left);
-                addIfOk(right);
-            }
-        }
+        std::set<model::IClipPtr> exclude = boost::assign::list_of(originalclip)(originalclip->getLink());
+        std::list<pts> all;
+        UtilList<pts>(all).addElements(getSequence()->getCuts(exclude));
+        // Copy everything between [min,max), discard everything else
+        mSnapPoints.splice(mSnapPoints.begin(),all,std::lower_bound(all.begin(),all.end(), min), std::upper_bound(all.begin(),all.end(),max));
     }
     if (Config::ReadBool(Config::sPathSnapCursor))
     {

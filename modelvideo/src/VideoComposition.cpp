@@ -3,7 +3,6 @@
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
-
 #include "UtilList.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
@@ -80,11 +79,8 @@ VideoFramePtr VideoComposition::generate()
 
     if (mParameters.getDrawBoundingBox())
     {
-        wxColour PreviewBoundingBoxColour(255,255,255);
-        wxPen PreviewBoundingBoxPen(PreviewBoundingBoxColour, 2);
-        wxBrush brush(PreviewBoundingBoxColour, wxBRUSHSTYLE_TRANSPARENT);
-        gc->SetPen(PreviewBoundingBoxPen);  // todo this pen is created in another thread. Not allowed....
-        gc->SetBrush(brush); // todo create new brush...
+        gc->SetPen(wxPen(wxColour(255,255,255), 2));
+        gc->SetBrush(wxBrush(wxColour(255,255,255), wxBRUSHSTYLE_TRANSPARENT));
         gc->DrawRectangle( 1, 1, requiredOutputSize.GetWidth() - 1, requiredOutputSize.GetHeight() - 1);
     }
 

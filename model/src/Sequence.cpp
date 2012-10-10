@@ -12,6 +12,7 @@
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeWxwidgets.h"
+#include "UtilSet.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
 #include "VideoCompositionParameters.h"
@@ -275,6 +276,18 @@ VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParamete
         composition->add(boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(parameters));
     }
     return composition;
+}
+
+std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
+{
+    // PERF: cache this?
+    std::set<pts> result;
+    BOOST_FOREACH( TrackPtr track, getTracks() )
+    {
+        UtilSet<pts>(result).addElements(track->getCuts(exclude));
+    }
+    VAR_DEBUG(result);
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

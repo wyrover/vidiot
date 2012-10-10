@@ -7,10 +7,10 @@
 #include "Node.h"
 #include "TrackEvent.h"
 #include "Transition.h"
-
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
+#include "UtilSet.h"
 
 namespace model {
 
@@ -269,6 +269,19 @@ int Track::getIndex() const
 void Track::setIndex(int index)
 {
     mIndex = index;
+}
+
+std::set<pts> Track::getCuts(const std::set<IClipPtr>& exclude)
+{
+    std::set<pts> result;
+    BOOST_FOREACH( IClipPtr clip, getClips() )
+    {
+        if (exclude.find(clip) == exclude.end())
+        {
+            UtilSet<pts>(result).addElements(clip->getCuts(exclude));
+        }
+    }
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

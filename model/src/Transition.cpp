@@ -252,6 +252,15 @@ boost::optional<pts> Transition::getLastSetPosition() const
     return mLastSetPosition;
 }
 
+std::set<pts> Transition::getCuts(const std::set<IClipPtr>& exclude) const
+{
+    std::set<pts> result;
+    result.insert(getLeftPts());
+    result.insert(getTouchPosition());
+    result.insert(getRightPts());
+    return result;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
