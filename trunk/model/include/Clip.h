@@ -65,6 +65,8 @@ public:
     void invalidateLastSetPosition() override;
     boost::optional<pts> getLastSetPosition() const override;
 
+    virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
+
     //////////////////////////////////////////////////////////////////////////
     // FOR PREVIEWING
     //////////////////////////////////////////////////////////////////////////

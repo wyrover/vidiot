@@ -76,11 +76,13 @@ public:
     // GET & SET
     //////////////////////////////////////////////////////////////////////////
 
-    int getHeight() const;          ///< @return height of this track in the timeline view
-    void setHeight(int height);     ///< @param new height of this track in the timeline view
+    int getHeight() const;          ///< \return height of this track in the timeline view
+    void setHeight(int height);     ///< \param new height of this track in the timeline view
 
-    int getIndex() const;           ///< @return index of this track in the list of video/audio tracks
-    void setIndex(int index);       ///< @param index new index of this track
+    int getIndex() const;           ///< \return index of this track in the list of video/audio tracks
+    void setIndex(int index);       ///< \param index new index of this track
+
+    std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()); ///\return list of all cuts in the track
 
 protected:
 

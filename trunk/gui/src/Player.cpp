@@ -41,7 +41,7 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
 ,   mSpeedSliderFrame(0)
 ,   mSpeedSlider(0)
 {
-	VAR_DEBUG(this);
+    VAR_DEBUG(this);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -251,7 +251,7 @@ void Player::onSpeed(wxCommandEvent& event)
     pos.x += (buttonSize.GetWidth() - frameSize.GetWidth())/2;
     pos.y -= frameSize.GetHeight();
 
-    mSpeedSliderFrame->SetBackgroundColour(mSpeedButton->GetBackgroundColour());//wxColour(128,128,0));
+    mSpeedSliderFrame->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
     mSpeedSlider->SetBackgroundColour(mSpeedButton->GetBackgroundColour());
 
     mSpeedSlider->SetThumbLength(5);

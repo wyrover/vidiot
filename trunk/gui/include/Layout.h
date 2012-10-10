@@ -45,8 +45,6 @@ public:
     const wxPen BackgroundPen;
     const wxBrush BackgroundBrush;
     const wxColour DetailsViewHeaderColour;
-    const wxColour PreviewBoundingBoxColour;
-    const wxPen PreviewBoundingBoxPen;
     const wxColour PreviewBackgroundColour;
     const wxPen PreviewBackgroundPen;
     const wxBrush PreviewBackgroundBrush;

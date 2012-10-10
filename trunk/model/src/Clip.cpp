@@ -271,6 +271,14 @@ boost::optional<pts> Clip::getLastSetPosition() const
     return mLastSetPosition;
 }
 
+std::set<pts> Clip::getCuts(const std::set<IClipPtr>& exclude) const
+{
+    std::set<pts> result;
+    result.insert(getLeftPts());
+    result.insert(getRightPts());
+    return result;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // FOR PREVIEWING
 //////////////////////////////////////////////////////////////////////////

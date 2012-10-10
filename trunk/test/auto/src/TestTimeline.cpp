@@ -713,7 +713,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         pts diff = VideoClip(0,4)->getRightPts() - VideoTrack(1)->getLength();
         pts track0len = VideoTrack(0)->getLength();
         TrimRight(VideoClip(0,4),-400);
-        ASSERT_EQUALS(VideoClip(0,4)->getRightPts(),VideoTrack(1)->getLength()); // todo often crash on netbook
+        ASSERT_EQUALS(VideoClip(0,4)->getRightPts(),VideoTrack(1)->getLength());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),track0len - diff);
         Undo(); // Undo the trim
     }

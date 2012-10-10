@@ -99,6 +99,15 @@ void EmptyClip::setLink(IClipPtr link)
     ASSERT(!link)(link);
 }
 
+std::set<pts> EmptyClip::getCuts(const std::set<IClipPtr>& exclude) const
+{
+    // EmptyClips are always adjacent to 'regular' clips. Thus, there is no need
+    // to add the cuts for the empty clips also.to excluded clips.
+    // Furthermore, an EmptyClip can be adjacent to an excluded clip. Therefore, the
+    // EmptyClip should not cause the cuts of the adjacent excluded clips to be added.
+    return std::set<pts>();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////

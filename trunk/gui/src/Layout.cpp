@@ -14,12 +14,10 @@ Layout::Layout()
 //////////////////////////////////////////////////////////////////////////
 // BRUSHES AND PENS
 //////////////////////////////////////////////////////////////////////////
-: BackgroundColour		         (212,208,200)
+: BackgroundColour		        (212,208,200)
 , BackgroundPen                 (BackgroundColour)
 , BackgroundBrush               (BackgroundColour,wxBRUSHSTYLE_SOLID)
 , DetailsViewHeaderColour       (wxColour(192,192,192))
-, PreviewBoundingBoxColour      (*wxWHITE)
-, PreviewBoundingBoxPen         (PreviewBoundingBoxColour, 2)
 , PreviewBackgroundColour       (*wxBLACK)
 , PreviewBackgroundPen          (PreviewBackgroundColour)
 , PreviewBackgroundBrush        (PreviewBackgroundColour,wxBRUSHSTYLE_SOLID)
@@ -77,6 +75,7 @@ Layout::~Layout()
 Layout& Layout::get()
 {
     ASSERT(sCurrent);
+    ASSERT(wxThread::IsMain()); // To avoid threading issues with GDI objects
     return *sCurrent;
 }
 

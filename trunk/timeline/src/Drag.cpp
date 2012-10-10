@@ -694,17 +694,7 @@ void Drag::determinePossibleSnapPoints()
     mSnapPoints.clear();
     if (Config::ReadBool(Config::sPathSnapClips))
     {
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-        {
-            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
-            {
-                if (!contains(clip))
-                {
-                    mSnapPoints.push_back(clip->getLeftPts());
-                    mSnapPoints.push_back(clip->getRightPts());
-                }
-            }
-        }
+        UtilList<pts>(mSnapPoints).addElements(getSequence()->getCuts(mCommand->getDrags()));
     }
     if (Config::ReadBool(Config::sPathSnapCursor))
     {
