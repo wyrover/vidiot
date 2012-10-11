@@ -707,6 +707,8 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("Move the clip in the other track slightly over the begin of the tested clip (preparation).");
         Drag(Center(VideoClip(0,4)),RightCenter(VideoClip(0,3)));
+        ASSERT_MORE_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getLeftPts());
+        ASSERT_LESS_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getRightPts());
     }
     {
         StartTest("ShiftTrim: EndTrim: Shorten: with another track that is shorter than the trim position (this imposes a lower bound on the shift).");
@@ -729,6 +731,8 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("Move the clip in the other track over the end of the tested clip (preparation).");
         Drag(Center(VideoClip(1,1)),wxPoint(RightPixel(VideoClip(0,4)),VCenter(VideoTrack(1))));
+        ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
+        ASSERT_EQUALS(VideoTrack(1)->getClips().size(),2);
     }
     {
         StartTest("ShiftTrim: EndTrim: Shorten: with another track that has a clip on the trim position (no trim possible).");
@@ -747,9 +751,14 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("ShiftTrim: Put clips in other tracks 'around' trim points but not exactly ON the trim point so that trimming is possible (Preparation).");
         DragToTrack(1,VideoClip(0,6),AudioClip(0,6));
-        Drag(Center(VideoClip(1,1)),Center(VideoClip(1,1))-wxPoint(8,0));
-        Drag(Center(VideoClip(1,3)),Center(VideoClip(1,3))+wxPoint(8,0));
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        Drag(Center(VideoClip(1,1)),Center(VideoClip(1,1))-wxPoint(8,0));
+        ASSERT(VideoClip(1,0)->isA<model::EmptyClip>());
+        ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        Drag(Center(VideoClip(1,3)),Center(VideoClip(1,3))+wxPoint(8,0));
+        ASSERT(VideoClip(1,0)->isA<model::EmptyClip>());
+        ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        //todo pause();
         DragAlignLeft(Center(VideoClip(1,4)),LeftPixel(VideoClip(0,4))+20);
         ASSERT_VIDEOTRACK1(EmptyClip)                   (VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(       VideoClip      )(EmptyClip);
