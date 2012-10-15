@@ -31,7 +31,7 @@ wxString sIncompatibleHeader(_("Incompatible codec and file type"));
 void addOption(wxWindow* parent, wxSizer* vSizer, wxString name, wxWindow* option)
 {
     wxStaticText* wxst = new wxStaticText(parent,wxID_ANY,name,wxDefaultPosition,wxDefaultSize,wxST_ELLIPSIZE_MIDDLE);
-    wxst->SetMinSize(wxSize(200,-1));
+    wxst->SetMinSize(wxSize(120,-1));
     wxst->SetSize(wxSize(120,-1));
     wxBoxSizer* hSizer = new wxBoxSizer(wxHORIZONTAL);
     hSizer->Add(wxst,wxSizerFlags(1));
@@ -105,6 +105,7 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     wxStaticBoxSizer* optionsboxsizer = new wxStaticBoxSizer(optionsbox, wxHORIZONTAL);
 
     mRenderSeparation = new wxCheckBox(optionsbox, wxID_ANY, "");
+    mRenderSeparation->SetValue(mNew->getSeparateAtCuts());
     mRenderSeparation->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &RenderSettingsDialog::onRenderSeparationChanged, this);
 
     addOption(optionsbox,optionsboxsizer,_("Render separation between cuts"), mRenderSeparation);

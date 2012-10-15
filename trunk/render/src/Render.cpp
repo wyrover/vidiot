@@ -56,6 +56,9 @@ Render::Render(const Render& other)
     :   wxEvtHandler()
     ,   mFileName(other.mFileName)
     ,   mOutputFormat(make_cloned<OutputFormat>(other.mOutputFormat))
+    ,   mSeparateAtCuts(other.mSeparateAtCuts)
+    ,   mStart(other.mStart)
+    ,   mEnd(other.mEnd)
 {
     VAR_DEBUG(this);
 }
@@ -267,6 +270,28 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
     if (storeVideo)
     {
         video_stream = mOutputFormat->getVideoCodec()->addStream(context);
+        AVCodecContext* video = video_stream->codec;
+        if (Config::Exists(Config::sPathOverruleFourCC))
+        {
+            wxString sFourCC = Config::ReadString(Config::sPathOverruleFourCC);
+            wxCharBuffer chars = sFourCC.mb_str();
+            int fourcc = 0;
+            switch (chars.length())
+            {
+            case 4:
+                fourcc += chars[static_cast<size_t>(3)] << 24;
+            case 3:
+                fourcc += chars[static_cast<size_t>(2)] << 16;
+            case 2:
+                fourcc += chars[static_cast<size_t>(1)] << 8;
+            case 1:
+                fourcc += chars[static_cast<size_t>(0)];
+                break;
+            default:
+                FATAL("FourCC length must be 1, 2, 3, or 4.");
+            }
+            video_stream->codec->codec_tag = fourcc;
+        }
     }
     if (storeAudio)
     {

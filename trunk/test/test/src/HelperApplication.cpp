@@ -27,9 +27,10 @@ RandomTempDir::RandomTempDir()
     : mFileName(wxFileName::GetTempDir(), "")
 {
     mFileName.AppendDir(randomString(20));
-    ASSERT(!wxDirExists(mFileName.GetLongPath()));
+    mFullPath = mFileName.GetLongPath();
+    ASSERT(!wxDirExists(mFullPath));
     mFileName.Mkdir();
-    ASSERT(wxDirExists(mFileName.GetLongPath()));
+    ASSERT(wxDirExists(mFullPath));
 }
 
 RandomTempDir::~RandomTempDir()
