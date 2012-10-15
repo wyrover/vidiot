@@ -51,25 +51,7 @@ void TestManual::testManual()
 {
     StartTestSuite();
     StartTest("Manual...");
-    RandomTempDir tempdir;
-    {
-        StartTest("Render each part of the sequence separately.");
-        ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        triggerMenu(ID_RENDERSETTINGS);
-        wxFileName fn(tempdir.getFileName().GetLongPath(), "out" ,"avi");
-        gui::Dialog::get().setSaveFile(fn.GetLongPath());
-        ClickTopLeft(gui::RenderSettingsDialog::get().getFileButton());
-        ClickTopLeft(gui::RenderSettingsDialog::get().getRenderSeparationCheckBox(),wxPoint(4,4));
-        ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
-        gui::Worker::get().waitUntilQueueEmpty();
-        for (int i = 1; i <= NumberOfVideoClipsInTrack(); ++i)
-        {
-            wxFileName f(tempdir.getFileName().GetLongPath(), wxString::Format("out_%d",i), "avi");
-            ASSERT(f.Exists());
-        }
-    }
-    pause(60000 * 60); // One hour should be enough...
+//    pause(60000 * 60); // One hour should be enough...
 }
 
 } // namespace

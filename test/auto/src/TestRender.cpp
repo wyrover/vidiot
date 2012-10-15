@@ -1,12 +1,13 @@
 #include "TestRender.h"
 
-#include "HelperConfig.h"
-#include "HelperTimelinesView.h"
+#include "Dialog.h"
 #include "HelperApplication.h"
+#include "HelperConfig.h"
 #include "HelperTestSuite.h"
+#include "HelperTimeline.h"
+#include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "ids.h"
-#include "Dialog.h"
 #include "Render.h"
 #include "RenderSettingsDialog.h"
 #include "Sequence.h"
@@ -93,19 +94,15 @@ void TestRender::testChangeRenderSettings()
     }
 }
 
+//RUNONLY(testRendering);
 void TestRender::testRendering()
 {
     StartTestSuite();
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
-    // Create directory for holding the output file
-    wxFileName path(wxFileName::GetTempDir(), "");
-    path.AppendDir(randomString(20));
-    ASSERT(!wxDirExists(path.GetLongPath()));
-    path.Mkdir();
-    ASSERT(wxDirExists(path.GetLongPath()));
-    path.SetFullName("out.avi");
+    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
     {
         StartTest("Render");
+        RandomTempDir tempdir;
+        wxFileName path(tempdir.getFileName().GetLongPath(), "out", "avi");
         model::render::RenderPtr original = getCurrentRenderSettings();
         triggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile(path.GetFullPath());
@@ -117,7 +114,26 @@ void TestRender::testRendering()
         ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
         ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
         gui::Worker::get().waitUntilQueueEmpty();
+        ASSERT(path.Exists());
     }
+    {
+        StartTest("Render each part of the sequence separately.");
+        RandomTempDir tempdir;
+        model::render::RenderPtr original = getCurrentRenderSettings();
+        triggerMenu(ID_RENDERSETTINGS);
+        wxFileName fn(tempdir.getFileName().GetLongPath(), "out" ,"avi");
+        gui::Dialog::get().setSaveFile(fn.GetLongPath());
+        ClickTopLeft(gui::RenderSettingsDialog::get().getFileButton());
+        ClickTopLeft(gui::RenderSettingsDialog::get().getRenderSeparationCheckBox(),wxPoint(4,4));
+        ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
+        gui::Worker::get().waitUntilQueueEmpty();
+        for (int i = 1; i <= NumberOfVideoClipsInTrack(); ++i)
+        {
+            wxFileName f(tempdir.getFileName().GetLongPath(), wxString::Format("out_%d",i), "avi");
+            ASSERT(f.Exists());
+        }
+    }
+    // todo move test files into archive
 }
 
 } // namespace

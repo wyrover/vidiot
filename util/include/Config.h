@@ -28,6 +28,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    static bool     Exists(const wxString& key);
+
     static bool     ReadBool  (const wxString& key);
     static long     ReadLong  (const wxString& key);
     static double   ReadDouble(const wxString& key);
@@ -75,6 +77,7 @@ public:
     static const wxString sPathDefaultVideoHeight;
     static const wxString sPathDefaultVideoScaling;
     static const wxString sPathDefaultVideoAlignment;
+    static const wxString sPathOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
     static const wxString sPathMarkerBeginAddition;
     static const wxString sPathMarkerEndAddition;
     static const wxString sPathStrip;

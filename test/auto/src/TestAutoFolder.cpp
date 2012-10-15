@@ -42,8 +42,7 @@ void TestAutoFolder::testWatch()
     ASSERT_EQUALS(countProjectView(),nDefaultItems + 1); // Added Autofolder
 
     // Add supported but not valid file on disk
-    wxFileName filepath(dirpath);
-    filepath.SetFullName("invalid.avi");
+    wxFileName filepath(tempdir.getFileName().GetLongPath(),"invalid","avi");
     wxFFile aviFile1( filepath.GetLongPath(), "w" );
     aviFile1.Write( "Dummy Contents", wxFile::read_write );
     aviFile1.Close();
@@ -56,7 +55,7 @@ void TestAutoFolder::testWatch()
 
     // Wait until file addition seen. Loop is required to wait until the Watcher has seen the valid file
     waitForIdle();
-    while ( model::AutoFolder::getSupportedFiles( dirpath ).size() < 1 )
+    while ( model::AutoFolder::getSupportedFiles( tempdir.getFileName() ).size() < 1 )
     {
         pause(10);
     }

@@ -47,11 +47,7 @@ void Worker::schedule(WorkPtr work)
 void Worker::waitUntilQueueEmpty()
 {
     boost::mutex::scoped_lock lock(mMutex);
-    mCondition.wait(lock); // Ensure that the wait does not return before the first item is scheduled (and finished)
-    while (mFifo.getSize() > 0)
-    {
-        mCondition.wait(lock);
-    }
+    mCondition.wait(lock);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,7 +67,10 @@ void Worker::thread()
             w->execute();
             w.reset(); // Clear, so that unfreezing is done if needed
             boost::mutex::scoped_lock lock(mMutex);
-            mCondition.notify_all();
+            if (mFifo.getSize() == 0)
+            {
+                mCondition.notify_all();
+            }
         }
     }
 }

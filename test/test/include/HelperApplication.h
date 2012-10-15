@@ -19,6 +19,7 @@ public:
     virtual ~RandomTempDir();
     wxFileName getFileName() const;
 private:
+    wxString mFullPath; ///< Usefull when debugging (with wxFileName  it's not easy to extract the full path)
     wxFileName mFileName;
 };
 

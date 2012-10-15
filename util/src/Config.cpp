@@ -84,6 +84,12 @@ T readWithoutDefault(wxString path)
     return result;
 }
 
+//static
+bool Config::Exists(const wxString& key)
+{
+    return wxConfigBase::Get()->Exists(key);
+}
+
 // static
 bool Config::ReadBool(const wxString& key)
 {
@@ -212,6 +218,7 @@ const wxString Config::sPathDefaultVideoWidth       ("/Video/DefaultWidth");
 const wxString Config::sPathDefaultVideoHeight      ("/Video/DefaultHeight");
 const wxString Config::sPathDefaultVideoScaling     ("/Video/DefaultVideoScaling");
 const wxString Config::sPathDefaultVideoAlignment   ("/Video/DefaultVideoAlignment");
+const wxString Config::sPathOverruleFourCC          ("/Video/FourCC");
 const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
 const wxString Config::sPathStrip                   ("/Timeline/Strip");
