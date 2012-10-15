@@ -3,6 +3,7 @@
 
 #include "UtilCloneable.h"
 #include "UtilEvent.h"
+#include "UtilInt.h"
 
 namespace model { namespace render {
 
@@ -45,6 +46,9 @@ public:
     wxFileName getFileName() const;
     void setFileName(wxFileName filename);
 
+    bool getSeparateAtCuts() const;
+    void setSeparateAtCuts(bool separate);
+
     ///\ return true if the given filename can be used for rendering
     bool checkFileName() const;
 
@@ -64,7 +68,7 @@ public:
     // RENDERING
     //////////////////////////////////////////////////////////////////////////
 
-    void generate(SequencePtr sequence);
+    void generate(SequencePtr sequence, pts from, pts to);
 
 private:
 
@@ -74,6 +78,9 @@ private:
 
     wxFileName mFileName;
     OutputFormatPtr mOutputFormat;
+    bool mSeparateAtCuts;
+    pts mStart;
+    pts mEnd;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

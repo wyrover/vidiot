@@ -37,7 +37,9 @@ public:
     // WAITING UNTIL WORK EXECUTED
     //////////////////////////////////////////////////////////////////////////
 
-    void waitUntilWorkExecuted(); ///< Wait until one work item has been executed
+    /// Wait until one or more work items have been executed and the queue
+    /// becomes empty again.
+    void waitUntilQueueEmpty();
 
 private:
 

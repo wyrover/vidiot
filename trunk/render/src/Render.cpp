@@ -13,7 +13,6 @@
 #include "Project.h"
 #include "Properties.h"
 #include "Sequence.h"
-
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
@@ -46,6 +45,9 @@ Render::Render()
     :   wxEvtHandler()
     ,   mFileName()
     ,   mOutputFormat(OutputFormats::getDefault())
+    ,   mSeparateAtCuts(false)
+    ,   mStart(0)
+    ,   mEnd(0)
 {
     VAR_DEBUG(this);
 }
@@ -103,6 +105,16 @@ void Render::setFileName(wxFileName filename)
     mFileName = filename;
 }
 
+bool Render::getSeparateAtCuts() const
+{
+    return mSeparateAtCuts;
+}
+
+void Render::setSeparateAtCuts(bool separate)
+{
+    mSeparateAtCuts = separate;
+}
+
 bool Render::checkFileName() const
 {
     if (!mFileName.IsOk()) { return false; }
@@ -130,8 +142,32 @@ RenderPtr Render::withFileNameRemoved() const
 // static
 void Render::schedule(SequencePtr sequence)
 {
-    model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
-    gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone)));
+    if (!sequence->getRender()->getSeparateAtCuts())
+    {
+        model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
+        gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone,0,clone->getLength())));
+    }
+    else
+    {
+        std::set<pts> cuts = sequence->getCuts();
+        if (cuts.size() < 2) { return; }
+        std::set<pts>::iterator it = cuts.begin();
+        pts start = *it;
+        ++it;
+        int c = 1;
+        while (it != cuts.end() )
+        {
+            pts end = *it;
+            model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
+            wxFileName fn = clone->getRender()->getFileName();
+            fn.SetName(fn.GetName() + wxString::Format("_%d",c));
+            clone->getRender()->setFileName(fn);
+            gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone,start,end)));
+            ++it;
+            ++c;
+            start = end;
+        }
+    }
 }
 
 typedef std::list<SequencePtr> Sequences;
@@ -193,10 +229,14 @@ void Render::scheduleAll()
 // RENDERING
 //////////////////////////////////////////////////////////////////////////
 
-void Render::generate(model::SequencePtr sequence)
+void Render::generate(model::SequencePtr sequence, pts from, pts to)
 {
-    sequence->moveTo(0);
-    int length = sequence->getLength();
+    ASSERT_MORE_THAN_EQUALS_ZERO(from);
+    ASSERT_MORE_THAN_ZERO(to);
+    ASSERT_LESS_THAN_EQUALS(from,sequence->getLength());
+    ASSERT_LESS_THAN_EQUALS(to,sequence->getLength());
+    sequence->moveTo(from);
+    int length = to - from;
     gui::StatusBar::get().showProgressBar(length);
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
     gui::StatusBar::get().setProcessingText(ps);
@@ -396,9 +436,10 @@ void Render::generate(model::SequencePtr sequence)
             else
             {
                 VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_stream->codec->width,video_stream->codec->height)).setDrawBoundingBox(false));
-                wxString s; s << _("(frame ") << frame->getPts() << _(" out of ") << length << ")";
+                pts progress = frame->getPts() - from;
+                wxString s; s << _("(frame ") << progress << _(" out of ") << length << ")";
                 gui::StatusBar::get().setProcessingText(ps + " " + s);
-                gui::StatusBar::get().showProgress(frame->getPts());
+                gui::StatusBar::get().showProgress(progress);
 
                 if (video_stream->codec->pix_fmt != PIX_FMT_RGB24)
                 {
@@ -529,9 +570,10 @@ static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
 
 std::ostream& operator<<( std::ostream& os, const Render& obj )
 {
-    os  << &obj           << '|'
-        << obj.mFileName << '|'
-        << *obj.mOutputFormat;
+    os  << &obj               << '|'
+        << obj.mFileName      << '|'
+        << *obj.mOutputFormat << '|'
+        << obj.mSeparateAtCuts;
     return os;
 }
 
@@ -544,7 +586,9 @@ void Render::serialize(Archive & ar, const unsigned int version)
 {
     ar & mFileName;
     ar & mOutputFormat;
+    ar & mSeparateAtCuts;
 }
+
 template void Render::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Render::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
