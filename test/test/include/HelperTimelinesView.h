@@ -17,6 +17,9 @@ namespace test {
 /// \return Currently active seqence (the sequence for which the timeline is the active notebook page)
 model::SequencePtr getSequence();
 
+/// \return Clone of Render associated with the currently opened sequence
+model::render::RenderPtr getCurrentRenderSettings();
+
 /// Return the opened timeline for a sequence
 /// \param sequence if this equals 0 then the active timeline is returned
 gui::timeline::Timeline& getTimeline(model::SequencePtr sequence = model::SequencePtr());

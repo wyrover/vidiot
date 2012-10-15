@@ -33,11 +33,6 @@ void TestRender::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-model::render::RenderPtr getCurrentRenderSettings()
-{
-    return make_cloned<model::render::Render>(getSequence()->getRender());
-}
-
 void TestRender::testChangeRenderSettings()
 {
     StartTestSuite();
@@ -121,7 +116,7 @@ void TestRender::testRendering()
         ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
         ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
         ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
-        gui::Worker::get().waitUntilWorkExecuted();
+        gui::Worker::get().waitUntilQueueEmpty();
     }
 }
 

@@ -31,10 +31,11 @@ wxString sIncompatibleHeader(_("Incompatible codec and file type"));
 void addOption(wxWindow* parent, wxSizer* vSizer, wxString name, wxWindow* option)
 {
     wxStaticText* wxst = new wxStaticText(parent,wxID_ANY,name,wxDefaultPosition,wxDefaultSize,wxST_ELLIPSIZE_MIDDLE);
-    wxst->SetMinSize(wxSize(100,-1));
+    wxst->SetMinSize(wxSize(200,-1));
+    wxst->SetSize(wxSize(120,-1));
     wxBoxSizer* hSizer = new wxBoxSizer(wxHORIZONTAL);
     hSizer->Add(wxst,wxSizerFlags(1));
-    hSizer->Add(option,wxSizerFlags(2));
+    hSizer->Add(option,wxSizerFlags(2).Right());
     vSizer->Add(hSizer,wxSizerFlags().Expand());
 };
 
@@ -98,6 +99,16 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     mAudioParameters = new wxScrolledWindow(mAudioBoxSizer->GetStaticBox());
     mAudioBoxSizer->Add(mAudioParameters,wxSizerFlags(1).Expand());
 
+    //////// OPTIONS ////////
+
+    wxStaticBox* optionsbox = new wxStaticBox(outputbox,wxID_ANY,_("Options"));
+    wxStaticBoxSizer* optionsboxsizer = new wxStaticBoxSizer(optionsbox, wxHORIZONTAL);
+
+    mRenderSeparation = new wxCheckBox(optionsbox, wxID_ANY, "");
+    mRenderSeparation->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &RenderSettingsDialog::onRenderSeparationChanged, this);
+
+    addOption(optionsbox,optionsboxsizer,_("Render separation between cuts"), mRenderSeparation);
+
     //////// ACTIONS ////////
 
     wxStaticBox* actionbox = new wxStaticBox(outputbox,wxID_ANY,_("Actions"));
@@ -132,6 +143,7 @@ RenderSettingsDialog::RenderSettingsDialog(model::SequencePtr sequence)
     outputbox->GetSizer()->Add(formatboxsizer,wxSizerFlags(0).Expand());
     outputbox->GetSizer()->Add(mVideoBoxSizer,wxSizerFlags(1).Expand());
     outputbox->GetSizer()->Add(mAudioBoxSizer,wxSizerFlags(1).Expand());
+    outputbox->GetSizer()->Add(optionsboxsizer,wxSizerFlags(0).Expand());
     outputbox->GetSizer()->Add(actionboxsizer,wxSizerFlags(0));
 
     GetSizer()->Add(outputbox,wxSizerFlags(1).Top().Right().Expand().Border());
@@ -153,6 +165,7 @@ RenderSettingsDialog::~RenderSettingsDialog()
         // KP: Change render options, then undo until all items removed. Then close. Save as dialog will not be shown.
         model::Project::get().Modify(true);
     }
+    mRenderSeparation->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &RenderSettingsDialog::onRenderSeparationChanged, this);
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onFileButtonPressed, this);
     mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onRenderButtonPressed, this);
     mOkButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & RenderSettingsDialog::onOkButtonPressed, this);
@@ -229,6 +242,12 @@ void RenderSettingsDialog::onFileButtonPressed(wxCommandEvent& event)
     event.Skip();
 }
 
+void RenderSettingsDialog::onRenderSeparationChanged(wxCommandEvent& event)
+{
+    mNew->setSeparateAtCuts(mRenderSeparation->GetValue());
+    event.Skip();
+}
+
 void RenderSettingsDialog::onRenderButtonPressed(wxCommandEvent& event)
 {
     if (check())
@@ -290,6 +309,11 @@ wxButton* RenderSettingsDialog::getFileButton() const
 {
     ASSERT(mFileButton);
     return mFileButton;
+}
+
+wxCheckBox* RenderSettingsDialog::getRenderSeparationCheckBox() const
+{
+    return mRenderSeparation;
 }
 
 wxButton* RenderSettingsDialog::getRenderButton() const

@@ -40,11 +40,6 @@ void TestOnce::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-model::render::RenderPtr getCurrentRenderSettings()
-{
-    return make_cloned<model::render::Render>(getSequence()->getRender());
-}
-
 RUNONLY(testOnce);
 
 void TestOnce::testOnce()

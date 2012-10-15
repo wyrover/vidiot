@@ -12,6 +12,16 @@ void waitForIdle();
 /// Generate a random string using alphanumeric characters of size length
 wxString randomString(int length = 8);
 
+class RandomTempDir
+{
+public:
+    RandomTempDir();
+    virtual ~RandomTempDir();
+    wxFileName getFileName() const;
+private:
+    wxFileName mFileName;
+};
+
 /// Delay the test for 60 seconds to allow using the GUI (debugging)
 void pause(int ms = 60000);
 

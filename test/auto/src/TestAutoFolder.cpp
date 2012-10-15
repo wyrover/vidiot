@@ -36,15 +36,9 @@ void TestAutoFolder::testWatch()
 
     int nDefaultItems = countProjectView();
 
-    // Make dir on disk
-    wxFileName dirpath(wxFileName::GetTempDir(), "");
-    dirpath.AppendDir(randomString(20));
-    ASSERT(!wxDirExists(dirpath.GetLongPath()));
-    dirpath.Mkdir();
-    ASSERT(wxDirExists(dirpath.GetLongPath()));
-
     // Add autofolder to project view
-    model::FolderPtr autofolder1 = addAutoFolder( dirpath );
+    RandomTempDir tempdir;
+    model::FolderPtr autofolder1 = addAutoFolder( tempdir.getFileName() );
     ASSERT_EQUALS(countProjectView(),nDefaultItems + 1); // Added Autofolder
 
     // Add supported but not valid file on disk
@@ -70,7 +64,6 @@ void TestAutoFolder::testWatch()
 
     // Clean up
     remove( autofolder1 );
-    bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
-    ASSERT(removed);
 }
+
 } // namespace

@@ -44,10 +44,14 @@ void Worker::schedule(WorkPtr work)
 // WAITING UNTIL WORK EXECUTED
 //////////////////////////////////////////////////////////////////////////
 
-void Worker::waitUntilWorkExecuted()
+void Worker::waitUntilQueueEmpty()
 {
     boost::mutex::scoped_lock lock(mMutex);
-    mCondition.wait(lock);
+    mCondition.wait(lock); // Ensure that the wait does not return before the first item is scheduled (and finished)
+    while (mFifo.getSize() > 0)
+    {
+        mCondition.wait(lock);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

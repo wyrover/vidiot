@@ -29,6 +29,7 @@ public:
     void onVideoCodecChanged(wxCommandEvent& event);
     void onAudioCodecChanged(wxCommandEvent& event);
     void onFileButtonPressed(wxCommandEvent& event);
+    void onRenderSeparationChanged(wxCommandEvent& event);
     void onRenderButtonPressed(wxCommandEvent& event);
     void onOkButtonPressed(wxCommandEvent& event);
     void onCancelButtonPressed(wxCommandEvent& event);
@@ -46,6 +47,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     wxButton* getFileButton() const;
+    wxCheckBox* getRenderSeparationCheckBox() const;
     wxButton* getRenderButton() const;
     wxButton* getOkButton() const;
     wxButton* getCancelButton() const;
@@ -69,6 +71,8 @@ private:
     EnumSelector<int>* mAudioCodec;
     wxScrolledWindow* mVideoParameters;
     wxScrolledWindow* mAudioParameters;
+
+    wxCheckBox* mRenderSeparation;
 
     wxButton* mRenderButton;
     wxButton* mOkButton;
