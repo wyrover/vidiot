@@ -46,6 +46,7 @@ wxFileName RandomTempDir::getFileName() const
 
 void pause(int ms)
 {
+    VAR_WARNING(ms);
     boost::this_thread::sleep(boost::posix_time::milliseconds(ms));
 }
 

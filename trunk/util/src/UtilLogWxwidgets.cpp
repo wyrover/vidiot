@@ -8,7 +8,7 @@ std::ostream& operator<< (std::ostream& os, const wxFileName& obj)
 
 std::ostream& operator<< (std::ostream& os, const wxPoint& obj)
 {
-    os << '(' << obj.x << ',' << obj.y << ')';
+    os << '(' << std::setfill(' ') << std::setw(6) << obj.x << ',' << std::setw(6) << obj.y << ')';
     return os;
 }
 

@@ -6,6 +6,7 @@
 #include "Config.h"
 #include "CreateTransition.h"
 #include "DeleteSelectedClips.h"
+#include "Dump.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
@@ -25,6 +26,7 @@
 #include "Track.h"
 #include "Transition.h"
 #include "Trim.h"
+#include "TrimClip.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
@@ -138,6 +140,7 @@ void TestTransition::testSelectionAndDeletion()
     }
 }
 
+//RUNONLY(testDragAndDropOfOtherClips);
 void TestTransition::testDragAndDropOfOtherClips()
 {
     StartTestSuite();
@@ -150,7 +153,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // Shift drag without snapping enabled,
         // transition and its adjacent clips are shifted backwards
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,3)));
-        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip); // todo failure with rdp
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
@@ -169,11 +172,19 @@ void TestTransition::testDragAndDropOfOtherClips()
     }
     ConfigFixture.SnapToClips(true);
     {
-        // Shift drag with snapping enabled. The drop is done such that
-        // the left position of the drop is aligned with the left
-        // position of the clip left of the transitions
+        // Shift drag with snapping enabled. The mouse drag is done such that the left position of the drop is aligned with the left
+        // position of the clip left of the transitions. At that point, a difference of a couple of pixels can already change to which
+        // cuts the snapping is done.
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
+        StartTest("Snap to right edge of 02.avi (unwanted, probably, since it creates a tiny empty space between the first two clips)");
         ShiftDragAlignLeft(Center(VideoClip(0,6)),preparation.leftPositionOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfDraggedClip);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        Undo();
+        StartTest("Snap to right edge of 00.avi == left edge of 01.avi");
+        ShiftDragAlignLeft(Center(VideoClip(0,6)),preparation.leftPositionOfClipBeforeTransitionAfterTransitionApplied - 4); // Mouse must be moved a bit further to snap to the left edge
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
@@ -226,32 +237,33 @@ void TestTransition::testDragAndDropOfOtherClips()
     }
     ConfigFixture.SnapToClips(false);
     {
-        // Drag a small clip on top of the clip left of the transition. This left clip
-        // is made shorter, but the transition remains.
-        pixel right = RightPixel(VideoClip(0,1));
-        right -= 20; // Ensure that 'a bit' of the clip left of the transition remains, causing the transition to remain also
+        TrimRight(VideoClip(0,6),-100); // Make the dragged clip small enough for the subsequent two tests
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
-        DragAlignRight(Center(VideoClip(0,6)),right);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
-        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfTransition);
-        ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-        Undo();
-    }
-    {
-        // Drag a small clip on top of the clip right of the transition. This right clip
-        // is made shorter, but the transition remains.
-        pixel left = LeftPixel(VideoClip(0,3));
-        left += 20; // Ensure that 'a bit' of the clip right of the transition remains, causing the transition to remain also
-        pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
-        DragAlignLeft(Center(VideoClip(0,6)),left);
-        ASSERT_EQUALS(VideoClip(0,4)->getLength(),lengthOfDraggedClip);
-        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-        ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-        Undo();
+        {
+            // Drag a small clip on top of the clip left of the transition. This left clip is made shorter, but the transition remains.
+            pixel right = RightPixel(VideoClip(0,1));
+            right -= 20; // Ensure that 'a bit' of the clip left of the transition remains, causing the transition to remain also
+            DragAlignRight(Center(VideoClip(0,6)),right);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
+            ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfTransition);
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+            Undo();
+        }
+        {
+            // Drag a small clip on top of the clip right of the transition. This right clip is made shorter, but the transition remains.
+            pixel left = LeftPixel(VideoClip(0,3));
+            left += 20; // Ensure that 'a bit' of the clip right of the transition remains, causing the transition to remain also
+            DragAlignLeft(Center(VideoClip(0,6)),left);
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(),lengthOfDraggedClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+            ASSERT_LESS_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+            Undo();
+        }
+        Undo(); // TrimRight(VideoClip(0,6),-100)
     }
     {
         // Move the leftmost of the two clips adjacent to the transition: the transition must be removed
@@ -405,8 +417,8 @@ void TestTransition::testAdjacentTransitions()
         // The clips to the right of the removed transition must remain unaffected.
         pts cliplength = VideoClip(0,4)->getLength();
         pts transitionlength = VideoClip(0,3)->getLength();
-        pts length = VideoClip(0,8)->getLength();
-        DragAlignRight(Center(VideoClip(0,8)) + wxPoint(5,0),RightPixel(VideoClip(0,2)));
+        pts length = VideoClip(0,6)->getLength();
+        DragAlignRight(Center(VideoClip(0,6)) + wxPoint(5,0),RightPixel(VideoClip(0,2)));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),transitionlength);
@@ -549,8 +561,8 @@ void TestTransition::testTrimmingClipsInTransition()
     }
     {
         MakeOutTransitionAfterClip preparation(1);
-
         StartTest("OutTransition: Without shift: TransitionLeftClipEnd: reducing clip size");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         Trim(TransitionLeftClipEnd(VideoClip(0,2)),Center(VideoClip(0,1)));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip)(VideoClip);
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -563,6 +575,7 @@ void TestTransition::testTrimmingClipsInTransition()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         StartTest("OutTransition: Without shift: TransitionLeftClipEnd: enlarge clip size (is not possible).");
         Trim(TransitionLeftClipEnd(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -576,6 +589,10 @@ void TestTransition::testTrimmingClipsInTransition()
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfTransition);
         StartTest("OutTransition: Without shift: ClipEnd: enlarge clip size (verify that transition keeps being positioned alongside the clip.)");
         TrimRight(VideoClip(0,2),20,false);
+        if (!VideoClip(0,3)->isA<model::VideoClip>())
+        {
+            DumpSequenceAndWait();
+        }
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), preparation.lengthOfTransition);
@@ -816,242 +833,242 @@ void TestTransition::testTrimmingLinkedClips()
 void TestTransition::testTrimmingTransition()
 {
     StartTestSuite();
+    Zoom Level(4);
     {
-        Zoom Level(4);
-        {
-            MakeInOutTransitionAfterClip preparation(1);
-            pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
-            pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
-            StartTest("InOutTransition: Trim left: Reduce size.");
-            wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(20,0);
-            Trim(VTopQuarterLeft(VideoClip(0,2)),aBitToTheRight);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_MORE_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            Undo();
-            StartTest("InOutTransition: Trim left: Reduce size and verify upper resize bound.");
-            Trim(VTopQuarterLeft(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
-            ASSERT_ZERO(VideoTransition(0,2)->getLeft());
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            Undo();
-            StartTest("InOutTransition: Trim left: Enlarge size and verify lower resize bound (bound imposed by the available extra data in the clip right of the transition).");
-            Trim(VTopQuarterLeft(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getLength());
-            ASSERT_ZERO(VideoClip(0,2)->getMinAdjustBegin());
-            ASSERT_MORE_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            Undo();
-            StartTest("InOutTransition: Trim left: Enlarge size and verify lower resize bound (bound imposed by the length of the clip left of the transition).");
-            Trim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1)) + wxPoint(-10,0));
-            ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)            (AudioClip)(AudioClip);
-            Trim(VTopQuarterLeft(VideoClip(0,3)),LeftCenter(VideoClip(0,0)));
-            ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_ZERO(VideoClip(0,2)->getLength());
-            ASSERT_ZERO(VideoClip(0,3)->getMinAdjustBegin());
-            ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            Undo();
-            Undo();
-            StartTest("InOutTransition: Trim right: Reduce size.");
-            wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(20,0);
-            Trim(VTopQuarterRight(VideoClip(0,2)),aBitToTheLeft);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            Undo();
-            StartTest("InOutTransition: Trim right: Reduce size and verify lower resize bound.");
-            Trim(VTopQuarterRight(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_ZERO(VideoTransition(0,2)->getRight());
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-            Undo();
-            StartTest("InOutTransition: Trim right: Enlarge size and verify upper resize bound (bound imposed by the available extra data in the clip left of the transition).");
-            Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,3)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_ZERO(VideoClip(0,2)->getMaxAdjustEnd());
-            ASSERT_MORE_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_MORE_THAN_ZERO(VideoClip(0,3)->getLength());
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            Undo();
-            StartTest("InOutTransition: Trim right: Enlarge size and verify upper resize bound (bound imposed by the length of the clip right of the transition).");
-            Trim(RightCenter(VideoClip(0,3)), LeftCenter(VideoClip(0,3)) + wxPoint(10,0));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(EmptyClip)(AudioClip);
-            Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(EmptyClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_ZERO(VideoClip(0,2)->getMaxAdjustEnd());
-            ASSERT_ZERO(VideoClip(0,3)->getLength());
-            ASSERT_MORE_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            Undo();
-            Undo();
-        }
-        {
-            MakeInTransitionAfterClip preparation(1);
-            pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
-            pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
-            StartTest("InTransition: Trim left: Reduce size (impossible).");
-            wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(20,0);
-            Trim(VTopQuarterLeft(VideoClip(0,2)),aBitToTheRight);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            StartTest("InTransition: Trim left: Enlarge size (impossible).");
-            Trim(VTopQuarterLeft(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            StartTest("InTransition: Trim right: Reduce size.");
-            wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(10,0);
-            Trim(VTopQuarterRight(VideoClip(0,2)),aBitToTheLeft);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            Undo();
-            StartTest("InTransition: Trim right: Reduce size and verify lower resize bound.");
-            Trim(VTopQuarterRight(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-            Undo();
-            StartTest("InTransition: Trim right: Enlarge size and verify upper resize bound (bound imposed by the length of the clip right of the transition).");
-            Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_ZERO(VideoClip(0,2)->getMaxAdjustEnd());
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
-            ASSERT_ZERO(VideoClip(0,3)->getLength());
-            Undo();
-        }
-        {
-            MakeOutTransitionAfterClip preparation(1);
-            pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
-            pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
-            StartTest("OutTransition: Trim left: Reduce size.");
-            wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(10,0);
-            Trim(VTopQuarterLeft(VideoClip(0,2)),aBitToTheRight);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_MORE_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
-            ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
-            Undo();
-            StartTest("OutTransition: Trim left: Reduce size and verify upper resize bound.");
-            Trim(VTopQuarterLeft(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            Undo();
-            StartTest("OutTransition: Trim left: Enlarge size and verify lower resize bound (bound imposed by the length of the clip left of the transition).");
-            Trim(VTopQuarterLeft(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_ZERO(VideoClip(0,1)->getLength());
-            ASSERT_ZERO(VideoClip(0,2)->getMinAdjustBegin());
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            Undo();
-            StartTest("OutTransition: Trim right: Reduce size (impossible).");
-            wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(20,0);
-            Trim(VTopQuarterRight(VideoClip(0,2)),aBitToTheLeft);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-            StartTest("OutTransition: Trim right: Enlarge size (impossible).");
-            Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,3)));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
-            ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-            ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
-            ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
-        }
+        MakeInOutTransitionAfterClip preparation(1);
+        pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
+        pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
+        StartTest("InOutTransition: Trim left: Reduce size.");
+        wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(20,0);
+        Trim(VTopQuarterLeft(VideoClip(0,2)),aBitToTheRight);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_MORE_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InOutTransition: Trim left: Reduce size and verify upper resize bound.");
+        Trim(VTopQuarterLeft(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
+        ASSERT_ZERO(VideoTransition(0,2)->getLeft());
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        Undo();
+        StartTest("InOutTransition: Trim left: Enlarge size and verify lower resize bound (bound imposed by the available extra data in the clip right of the transition).");
+        Trim(VTopQuarterLeft(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_MORE_THAN_ZERO(VideoClip(0,1)->getLength());
+        ASSERT_ZERO(VideoClip(0,2)->getMinAdjustBegin());
+        ASSERT_MORE_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InOutTransition: Trim left: Enlarge size and verify lower resize bound (bound imposed by the length of the clip left of the transition).");
+        Trim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1)) + wxPoint(-10,0));
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)            (AudioClip)(AudioClip);
+        Trim(VTopQuarterLeft(VideoClip(0,3)),LeftCenter(VideoClip(0,0)));
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_ZERO(VideoClip(0,2)->getLength());
+        ASSERT_ZERO(VideoClip(0,3)->getMinAdjustBegin());
+        ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        Undo();
+        Undo();
+        StartTest("InOutTransition: Trim right: Reduce size.");
+        wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(20,0);
+        Trim(VTopQuarterRight(VideoClip(0,2)),aBitToTheLeft);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InOutTransition: Trim right: Reduce size and verify lower resize bound.");
+        Trim(VTopQuarterRight(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_ZERO(VideoTransition(0,2)->getRight());
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        Undo();
+        StartTest("InOutTransition: Trim right: Enlarge size and verify upper resize bound (bound imposed by the available extra data in the clip left of the transition).");
+        Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,3)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_ZERO(VideoClip(0,2)->getMaxAdjustEnd());
+        ASSERT_MORE_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_MORE_THAN_ZERO(VideoClip(0,3)->getLength());
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InOutTransition: Trim right: Enlarge size and verify upper resize bound (bound imposed by the length of the clip right of the transition).");
+        Trim(RightCenter(VideoClip(0,3)), LeftCenter(VideoClip(0,3)) + wxPoint(10,0));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(EmptyClip)(AudioClip);
+        Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_ZERO(VideoClip(0,2)->getMaxAdjustEnd());
+        ASSERT_ZERO(VideoClip(0,3)->getLength());
+        ASSERT_MORE_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        Undo();
+        Undo();
     }
     {
-        // Found bugs during development (once a bug with zoom level 3 and once with level 5)
-        Zoom level(3);
-        {
-            StartTest("InTransition: Try enlarging the transition on the left side (known crash in ClipView for finding the correct position)");
-            MakeInTransitionAfterClip preparation(1);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-            DeleteClip(VideoClip(0,1));
-            ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
-            TrimLeft(VideoClip(0,2),20);
-            Trim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
-            Undo(2);
-        }
-        {
-            StartTest("OutTransition: Try enlarging the transition on the right side (known crash in ClipView for finding the correct position)");
-            MakeOutTransitionAfterClip preparation(1);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-            DeleteClip(VideoClip(0,3));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
-            TrimRight(VideoClip(0,2),-20);
-            Trim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
-            Undo(2);
-        }
-        Zoom levelplus2(2); // +2
-        {
-            StartTest("InTransition: Try enlarging the transition on the left side (known crash in Transition::getMinAdjustBegin)");
-            MakeInTransitionAfterClip preparation(1);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-            DeleteClip(VideoClip(0,1));
-            ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
-            TrimLeft(VideoClip(0,2),20);
-            Trim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
-            Undo(2);
-        }
-        {
-            StartTest("OutTransition: Try enlarging the transition on the right side (known crash in Transition::getMaxAdjustEnd)");
-            MakeOutTransitionAfterClip preparation(1);
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
-            DeleteClip(VideoClip(0,3));
-            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
-            TrimRight(VideoClip(0,2),-20);
-            Trim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
-            Undo(2);
-        }
+        MakeInTransitionAfterClip preparation(1);
+        pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
+        pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
+        StartTest("InTransition: Trim left: Reduce size (impossible).");
+        wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(20,0);
+        Trim(VTopQuarterLeft(VideoClip(0,2)),aBitToTheRight);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        StartTest("InTransition: Trim left: Enlarge size (impossible).");
+        Trim(VTopQuarterLeft(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        StartTest("InTransition: Trim right: Reduce size.");
+        wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(10,0);
+        Trim(VTopQuarterRight(VideoClip(0,2)),aBitToTheLeft);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_MORE_THAN(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        Undo();
+        StartTest("InTransition: Trim right: Reduce size and verify lower resize bound.");
+        Trim(VTopQuarterRight(VideoClip(0,2)),LeftCenter(VideoClip(0,1)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        Undo();
+        StartTest("InTransition: Trim right: Enlarge size and verify upper resize bound (bound imposed by the length of the clip right of the transition).");
+        Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_ZERO(VideoClip(0,2)->getMaxAdjustEnd());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
+        ASSERT_ZERO(VideoClip(0,3)->getLength());
+        Undo();
+    }
+    {
+        MakeOutTransitionAfterClip preparation(1);
+        pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
+        pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
+        StartTest("OutTransition: Trim left: Reduce size.");
+        wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(10,0);
+        Trim(VTopQuarterLeft(VideoClip(0,2)),aBitToTheRight);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_MORE_THAN(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_LESS_THAN(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
+        Undo();
+        StartTest("OutTransition: Trim left: Reduce size and verify upper resize bound.");
+        Trim(VTopQuarterLeft(VideoClip(0,2)),RightCenter(VideoClip(0,4)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        Undo();
+        StartTest("OutTransition: Trim left: Enlarge size and verify lower resize bound (bound imposed by the length of the clip left of the transition).");
+        Trim(VTopQuarterLeft(VideoClip(0,2)),LeftCenter(VideoClip(0,0)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_ZERO(VideoClip(0,1)->getLength());
+        ASSERT_ZERO(VideoClip(0,2)->getMinAdjustBegin());
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        Undo();
+        StartTest("OutTransition: Trim right: Reduce size (impossible).");
+        wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(20,0);
+        Trim(VTopQuarterRight(VideoClip(0,2)),aBitToTheLeft);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+        StartTest("OutTransition: Trim right: Enlarge size (impossible).");
+        Trim(VTopQuarterRight(VideoClip(0,2)),RightCenter(VideoClip(0,3)));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(),preparation.lengthOfTransition);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
+    }
+    // Found bugs during development (once a bug with zoom level 3 and once with level 5)
+    Zoom level(3);
+    {
+        StartTest("InTransition: Try enlarging the transition on the left side (known crash in ClipView for finding the correct position)");
+        MakeInTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        DeleteClip(VideoClip(0,1));
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
+        TrimLeft(VideoClip(0,2),20);
+        Trim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
+        Undo(2);
+    }
+    {
+        StartTest("OutTransition: Try enlarging the transition on the right side (known crash in ClipView for finding the correct position)");
+        MakeOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        DeleteClip(VideoClip(0,3));
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
+        TrimRight(VideoClip(0,2),-20);
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+        Trim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
+        Undo();
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
+        Undo();
+    }
+    Zoom levelplus2(2); // +2
+    {
+        StartTest("InTransition: Try enlarging the transition on the left side (known crash in Transition::getMinAdjustBegin)");
+        MakeInTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        DeleteClip(VideoClip(0,1));
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(Transition)(VideoClip);
+        TrimLeft(VideoClip(0,2),20);
+        Trim(VTopQuarterLeft(VideoClip(0,2)),Center(VideoClip(0,1)));
+        Undo(2);
+    }
+    {
+        StartTest("OutTransition: Try enlarging the transition on the right side (known crash in Transition::getMaxAdjustEnd)");
+        MakeOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        DeleteClip(VideoClip(0,3));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(EmptyClip);
+        TrimRight(VideoClip(0,2),-20);
+        Trim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
+        Undo(2);
     }
 }
 

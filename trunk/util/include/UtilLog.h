@@ -142,6 +142,7 @@ public:
     static void setReportingLevel(LogLevel level);
     static std::string getFileName();
     static bool isEnabled(); ///< \return true if log file has been opened
+    static void flush(); ///< flush the logging. NOTE: Only use for testing!
 
     /// Log info in a separate line, preceded with meta data.
     std::ostringstream& get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);

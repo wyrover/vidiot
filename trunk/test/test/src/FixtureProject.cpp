@@ -31,9 +31,16 @@ void FixtureProject::init()
     if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
 
     wxString sVidiotDir;
-    bool found = wxGetEnv( _T("VIDIOT_DIR"), &sVidiotDir);
-    ASSERT(found);
-    TestFilesPath = wxFileName(sVidiotDir + "\\test", "");
+
+#ifndef SOURCE_ROOT
+#error "SOURCE_ROOT is not defined!"
+#endif
+
+    TestFilesPath = wxFileName(SOURCE_ROOT,"");
+    TestFilesPath.AppendDir("test");
+    TestFilesPath.AppendDir("input");
+    ASSERT(TestFilesPath.IsDir());
+    ASSERT(TestFilesPath.DirExists());
 
     mRoot = createProject();
     ASSERT(mRoot);
@@ -59,7 +66,6 @@ void FixtureProject::init()
     // with zooming in via keyboard commands. For that purpose, timeline must
     // have the current focus.
     Click(wxPoint(2,2));
-
 }
 
 void FixtureProject::destroy()

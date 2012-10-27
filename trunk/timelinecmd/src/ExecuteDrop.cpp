@@ -2,6 +2,7 @@
 
 #include "Calculate.h"
 #include "Clip.h"
+#include "Logging.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -134,7 +135,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
         }
     }
 
-    VAR_DEBUG(mDrags);
+    VAR_INFO(mDrags);
 }
 
 void ExecuteDrop::onDrop(const Drops& drops, Shift shift)
@@ -164,12 +165,12 @@ void ExecuteDrop::initialize()
 {
     VAR_INFO(this);
 
-    LOG_DEBUG << "STEP 1: Replace all drags with EmptyClips";
+    LOG_INFO << "STEP 1: Replace all drags with EmptyClips";
     BOOST_FOREACH( model::IClipPtr clip, mDrags )
     {
         // If ever this mechanism (replace clip by clip) is replaced, take into account that the
         // clips in mDrags are not 'in timeline order' in the set.
-        VAR_DEBUG(clip);
+        VAR_INFO(clip);
 
         // Note that specifically no 'link replacement' is done. Keeping links intact is done
         // with the 'drops', not the 'drags'. Note that clips typically are part of both mDrags
@@ -180,7 +181,7 @@ void ExecuteDrop::initialize()
 
     if (mShift)
     {
-        LOG_DEBUG << "STEP 2: Apply shift";
+        LOG_INFO << "STEP 2: Apply shift";
         BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(mShift->mPosition);
@@ -189,23 +190,29 @@ void ExecuteDrop::initialize()
     }
     else
     {
-        LOG_DEBUG << "STEP 2: Apply shift (none)";
+        LOG_INFO << "STEP 2: Apply shift (none)";
     }
 
-    LOG_DEBUG << "STEP 3: Execute the drops";
+    LOG_INFO << "STEP 3: Execute the drops";
     BOOST_FOREACH( Drop drop, mDrops )
     {
         ASSERT_MORE_THAN_EQUALS_ZERO(drop.position);
         ASSERT(drop.track);
         ASSERT_NONZERO(drop.clips.size());
-        VAR_DEBUG(drop.position)(drop.track)(drop.clips);
+        VAR_INFO(drop.position)(drop.track)(drop.clips);
+        LOG_INFO << "Dropping:" << DUMP(drop.track) << DUMP(drop.clips);
 
         // Determine size and end pts of dropped clips
         pts droppedSize = model::calculate::combinedLength(drop.clips);
         pts dropEndPosition = drop.position + droppedSize;
 
+        LOG_INFO << "STEP 3a: Splitting at beginning of drop position";
+
         // Ensure that the track has cuts at the begin and the end of the dropped clips
         split(drop.track, drop.position);
+
+        LOG_INFO << "STEP 3b: Splitting at end of drop position";
+
         split(drop.track, dropEndPosition);
 
         // Determine the clips to be replaced.
@@ -216,24 +223,29 @@ void ExecuteDrop::initialize()
 
         if (drop.position > drop.track->getLength())
         {
+            LOG_INFO << "Step 3c: Drop is beyond track length. Adding empty clip before dropped clip,";
             // Drop is beyond track length. Add an empty clip to have it a at the desired position (instead of directly after last clip).
             ASSERT(!remove.second)(remove.second); // The position of the drop should be a null ptr, since the drop is at the end of the track
             drop.clips.push_front(boost::make_shared<model::EmptyClip>(drop.position - drop.track->getLength()));
         }
         else if (drop.position == drop.track->getLength())
         {
+            LOG_INFO << "Step 3c: Drop is exactly at end of track. No extra action required.";
             // Drop is exactly at end of track. Nothing needs to be removed. Nothing needs to be added.
         }
         else
         {
-            // Drop 'within' track.
+            LOG_INFO << "Step 3c: Drop inside track. Removing required clips to make room.";
+            // Drop 'inside' track.
             // Remove the clips that are 'under' the drop. Note that link replacing is required here. Consider the scenario in which
             // a audio-only clip is dropped onto the beginning of a audio clip that is linked to a video clip. First, the 'dropped upon' audio clip
             // is split into two parts (thus, the replacements of that clip are two clips, called 'left' and 'right'). Then, 'left' is removed again.
             // During link replacing the original audio clip must be linked to 'right'. That requires a replacement mapping of 'left' to '' (empty list).
             removeClips(remove.first);
         }
-        // Finally, insert the dropped clips. No linked clips updating is relevant since these clips keep their links.
+
+        // Finally, insert the dropped clips.
+        LOG_INFO << "STEP 3d: Dropping the clips";
         addClips(drop.clips, drop.track, remove.second);
     }
 }

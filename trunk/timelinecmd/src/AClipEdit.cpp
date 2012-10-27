@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "VideoTransition_CrossFade.h"
 #include "Cursor.h"
+#include "Logging.h"
 #include "Dump.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
@@ -16,6 +17,10 @@
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilSet.h"
+#include "VideoClip.h"
+#include "AudioClip.h"
+#include "EmptyClip.h"
+#include "VideoTransition.h"
 
 namespace gui { namespace timeline { namespace command {
 
@@ -463,7 +468,21 @@ bool AClipEdit::Undo()
 
 void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
 {
-    VAR_DEBUG(addTrack)(addPosition)(addClips)(removeTrack)(removePosition)(removeClips);
+    if (addClips.size() > 0)
+    {
+        if (removeClips.size() > 0)
+        {
+            LOG_DEBUG << DUMP(removeClips) << DUMP(removeTrack) << DUMP(removePosition) << DUMP(addClips) << DUMP(addTrack) << DUMP(addPosition);
+        }
+        else
+        {
+            LOG_DEBUG << DUMP(addClips) << DUMP(addTrack) << DUMP(addPosition);
+        }
+    }
+    else
+    {
+        LOG_DEBUG << DUMP(removeClips) << DUMP(removeTrack) << DUMP(removePosition);
+    }
     model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(addTrack, addPosition, addClips, removeTrack, removePosition, removeClips);
     mParams.push_back(move);
     mParamsUndo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
@@ -484,6 +503,7 @@ void AClipEdit::doMove(model::MoveParameterPtr move)
 
 void AClipEdit::avoidDanglingLinks()
 {
+    LOG_DEBUG;
     BOOST_FOREACH( auto link, mReplacements )
     {
         model::IClipPtr original = link.first;
@@ -502,6 +522,7 @@ void AClipEdit::avoidDanglingLinks()
 
 void AClipEdit::expandReplacements()
 {
+    LOG_DEBUG;
     std::set<model::IClipPtr> allReplacements;
     BOOST_FOREACH( auto entry, mReplacements )
     {
@@ -630,6 +651,7 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
 {
     auto replace = [this](model::TrackPtr track, model::IClips& clips, pts length)
     {
+        if (clips.size() == 1 && length > 0) { return; } // Do not replace 1 empty clip (no merging required), except if this one clip has a length of 0 (then this clip may be removed)
         model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
         model::IClips replacement;
         if (length > 0)

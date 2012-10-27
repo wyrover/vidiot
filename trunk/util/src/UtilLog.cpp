@@ -4,6 +4,7 @@
 #include "UtilAssert.h"
 #include "UtilFifo.h"
 #include <share.h> // _SH_DENYWR
+#include <time.h>
 
 IMPLEMENTENUM(LogLevel);
 
@@ -47,8 +48,12 @@ public:
         }
         else
         {
-            mEnabled = true;
-            mThread.reset(new boost::thread(boost::bind(&LogWriter::thread,this)));
+            int result = setvbuf ( mFile , 0 , _IOFBF , 102400 );
+            if (result == 0)
+            {
+                mEnabled = true;
+                mThread.reset(new boost::thread(boost::bind(&LogWriter::thread,this)));
+            }
         }
     }
     ~LogWriter()
@@ -74,6 +79,13 @@ public:
             mFifo.push(logLine);
         }
     }
+    void flush()
+    {
+        if (mFile)
+        {
+            fflush(mFile);
+        }
+    }
     bool isEnabled() const
     {
         return mEnabled;
@@ -82,11 +94,16 @@ private:
     void thread()
     {
         std::string s;
+        time_t previous = time(0);
         while (mEnabled)
         {
             s = mFifo.pop();
-            fprintf(mFile, "%s", s.c_str());
-            fflush(mFile);
+            fwrite(s.c_str(), 1, s.length(), mFile);
+            //if (time(0) - previous > 1) // 1s
+            {
+                previous = time(0);
+                fflush(mFile);
+            }
         }
         // Log the remaining lines. This is useful for the
         // case of a failed assertion. breakIntoDebugger()
@@ -100,8 +117,8 @@ private:
         {
             s = mFifo.pop();
             fprintf(mFile, "%s", s.c_str());
-            fflush(mFile);
         }
+        fflush(mFile);
     }
 
     bool mEnabled;
@@ -138,6 +155,11 @@ std::string Log::getFileName()
 bool Log::isEnabled()
 {
     return sWriter->isEnabled();
+}
+
+void Log::flush()
+{
+    sWriter->flush();
 }
 
 void Log::init(const wxString& testApplicationName, const wxString& applicationName)

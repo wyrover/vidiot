@@ -58,10 +58,7 @@ void Undo(int steps)
     LOG_DEBUG;
     while (steps > 0)
     {
-        wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
-        wxUIActionSimulator().Char('z');
-        wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-        waitForIdle();
+        triggerMenu(wxID_UNDO);
         logHistory();
         steps--;
     }
@@ -72,10 +69,7 @@ void Redo(int steps)
     LOG_DEBUG;
     while (steps > 0)
     {
-        wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
-        wxUIActionSimulator().Char('y');
-        wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-        waitForIdle();
+        triggerMenu(wxID_REDO);
         logHistory();
         steps--;
     }
@@ -109,6 +103,18 @@ void logHistory()
     VAR_DEBUG(current);
 };
 
+void LeftDown()
+{
+    wxUIActionSimulator().MouseDown();
+    waitForIdle();
+}
+
+void LeftUp()
+{
+    wxUIActionSimulator().MouseUp();
+    waitForIdle();
+}
+
 void ControlDown()
 {
     wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
@@ -135,7 +141,7 @@ void ShiftUp()
 
 void Type(int keycode, int modifiers)
 {
-    wxUIActionSimulator().Char(keycode);
+    wxUIActionSimulator().Char(keycode,modifiers);
     waitForIdle();
 }
 
@@ -156,24 +162,25 @@ void MoveLeft(pixel length)
 
 void MoveWithinWidget(wxPoint position, wxPoint origin)
 {
-	VAR_DEBUG(position)(origin);
-	wxPoint absoluteposition = origin + position;
+    VAR_DEBUG(position)(origin);
+    wxPoint absoluteposition = origin + position;
     MoveOnScreen(absoluteposition);
 }
 
 void MoveOnScreen(wxPoint position)
 {
-	VAR_DEBUG(position);
+    VAR_DEBUG(position);
     int count = 0;
-	while (wxGetMouseState().GetPosition() != position)
-	{
-		// Loop is required since sometimes the move fails the first time.
-		// Particularly seen when working through remote desktop/using touchpad.
-		wxUIActionSimulator().MouseMove(position);
-		waitForIdle();
+    while (wxGetMouseState().GetPosition() != position)
+    {
+        // Loop is required since sometimes the move fails the first time.
+        // Particularly seen when working through remote desktop/using touchpad.
+        wxUIActionSimulator().MouseMove(position);
+        waitForIdle();
         if (++count > 3) break;
-	}
-	ASSERT_EQUALS(wxGetMouseState().GetPosition(), position);
+    }
+    waitForIdle();
+    ASSERT_EQUALS(wxGetMouseState().GetPosition(), position);
 }
 
 void ClickTopLeft(wxWindow* window, wxPoint extraoffset)
