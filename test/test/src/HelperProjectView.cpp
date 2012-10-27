@@ -167,8 +167,7 @@ void DragFromProjectViewToTimeline(wxPoint from, wxPoint to)
     FATAL("Does not work yet.");
     VAR_DEBUG(from)(to);
     MoveProjectView(from)   ;
-    wxUIActionSimulator().MouseDown();
-    waitForIdle();
+    LeftDown();
     wxPoint fromAbs = from + getProjectView().GetScreenPosition();
     wxPoint toAbs = to + getTimeline().GetScreenPosition();
     MoveProjectView(from + wxPoint(10,0)); // Start drag
@@ -180,7 +179,7 @@ void DragFromProjectViewToTimeline(wxPoint from, wxPoint to)
         //waitForIdle();
     }
     //    pause();
-    wxUIActionSimulator().MouseUp();
+    LeftUp();
     waitForIdle();
 }
 

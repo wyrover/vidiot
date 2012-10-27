@@ -12,6 +12,7 @@
 #include "EventDrag.h"
 #include "File.h"
 #include "Layout.h"
+#include "Logging.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
 #include "ProjectView.h"
@@ -25,7 +26,6 @@
 #include "TrackCreator.h"
 #include "TrackView.h"
 #include "Transition.h"
-
 #include "UtilInt.h"
 #include "UtilList.h"
 #include "UtilLogStl.h"
@@ -273,7 +273,9 @@ void Drag::drop()
     command::ExecuteDrop::Drops drops;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
-        drops.splice(drops.end(), getDrops(track));
+        command::ExecuteDrop::Drops adddrops = getDrops(track);
+        VAR_INFO(track)(adddrops);
+        drops.splice(drops.end(), adddrops);
     }
 
     mCommand->onDrop(drops, mShift);
@@ -778,8 +780,10 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
 {
     command::ExecuteDrop::Drops drops;
     model::TrackPtr draggedTrack = trackOnTopOf(track);
+    VAR_DEBUG(track)(draggedTrack);
     if (draggedTrack)
     {
+        LOG_DEBUG << DUMP(track) << DUMP(draggedTrack);
         pts position = 0;
         command::ExecuteDrop::Drop pi;
         pi.position = -1;

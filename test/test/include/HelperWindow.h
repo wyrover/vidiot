@@ -86,6 +86,9 @@ void BREAK();
 /// Log the command history
 void logHistory();
 
+void LeftDown();        ///< Press down left mouse button
+void LeftUp();          ///< Release left mouse button
+
 void ControlDown();     ///< Press down CTRL
 void ControlUp();       ///< Release CTRL
 

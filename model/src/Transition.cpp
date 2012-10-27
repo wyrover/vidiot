@@ -261,6 +261,11 @@ std::set<pts> Transition::getCuts(const std::set<IClipPtr>& exclude) const
     return result;
 }
 
+int Transition::getIndex() const
+{
+    return mIndex;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // TRANSITION
 //////////////////////////////////////////////////////////////////////////
@@ -312,7 +317,7 @@ model::IClipPtr Transition::makeRightClip() const
 
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
-    // Keep order same as Clip and EmptyClip for 'DumpSequence' method
+    // Keep order same as Clip and EmptyClip for 'dump' method
     os << &obj << '|' << obj.mTrack.lock() << '|'  << std::setw(8) << ' ' << '|' << std::setw(6) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << std::setw(6) << obj.mFramesLeft << '|' << std::setw(6) << obj.mFramesRight << '|' << obj.mSelected;
     return os;
 }

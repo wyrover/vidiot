@@ -36,12 +36,8 @@ void TestProjectView::testAdditionAndRemoval()
 
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
-    wxString sFile( "scene'20100102 12.32.48.avi" ); // Should be a file also in the autofolder
-
-    wxString sVidiotDir;
-    bool found = wxGetEnv( _T("VIDIOT_DIR"), &sVidiotDir);
-    ASSERT(found);
-    wxFileName filepath = wxFileName( sVidiotDir + "\\test", sFile );
+    wxString sFile( "05.avi" );
+    wxFileName filepath(mProjectFixture.TestFilesPath.GetFullPath(), sFile);
 
     model::FolderPtr folder1 = addFolder( sFolder1 );
     model::SequencePtr sequence1 = addSequence( sSequence1, folder1 );

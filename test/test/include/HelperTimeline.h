@@ -253,6 +253,11 @@ void DeselectAllClips();
 /// \param clip clip to be deleted from the timeline
 void DeleteClip(model::IClipPtr clip);
 
+/// Dump the current sequence.
+/// Then wait forever. That allows undoing/redoing/further tampering for analysis.
+void DumpSequenceAndWait();
+
+
 } // namespace
 
 #endif // HELPER_TIMELINE_H

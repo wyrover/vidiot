@@ -72,7 +72,7 @@ Machine::~Machine()
 
 void Machine::onMotion(wxMouseEvent& event)
 {
-    LOG_DEBUG;
+    VAR_DEBUG(event.GetPosition());
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setPosition(virtualPosition);
     process_event(EvMotion(event, virtualPosition));
@@ -80,97 +80,97 @@ void Machine::onMotion(wxMouseEvent& event)
 }
 
 void Machine::onLeftDown(wxMouseEvent& event)
-{ 
-    LOG_DEBUG;
+{
+    VAR_DEBUG(event.GetPosition());
     getTimeline().SetFocus();
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setLeftDownPosition(virtualPosition);
-    process_event(EvLeftDown(event, virtualPosition)); 
-    event.Skip(); 
+    process_event(EvLeftDown(event, virtualPosition));
+    event.Skip();
 }
 
 void Machine::onLeftUp(wxMouseEvent& event)
-{ 
-    LOG_DEBUG;
+{
+    VAR_DEBUG(event.GetPosition());
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
-    process_event(EvLeftUp(event, virtualPosition)); 
-    event.Skip(); 
+    process_event(EvLeftUp(event, virtualPosition));
+    event.Skip();
 }
 
 void Machine::onLeftDouble(wxMouseEvent& event)
-{ 
-    LOG_DEBUG;
+{
+    VAR_DEBUG(event.GetPosition());
     // This event is generated when a second mouse press is done faster after the first release
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setLeftDownPosition(virtualPosition);
-    process_event(EvLeftDouble(event, virtualPosition)); 
-    event.Skip(); 
+    process_event(EvLeftDouble(event, virtualPosition));
+    event.Skip();
 }
 
-void Machine::onMiddleDown(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
-    process_event(EvMiddleDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
+void Machine::onMiddleDown(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
+    process_event(EvMiddleDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
 }
 
-void Machine::onMiddleUp(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
-    process_event(EvMiddleUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
+void Machine::onMiddleUp(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
+    process_event(EvMiddleUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
 }
 
-void Machine::onMiddleDouble(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
-    process_event(EvMiddleDouble(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
+void Machine::onMiddleDouble(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
+    process_event(EvMiddleDouble(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
 }
 
-void Machine::onRightDown(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
+void Machine::onRightDown(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
     getTimeline().SetFocus();
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setRightDownPosition(virtualPosition);
-    process_event(EvRightDown(event, virtualPosition)); 
-    event.Skip(); 
+    process_event(EvRightDown(event, virtualPosition));
+    event.Skip();
 }
 
-void Machine::onRightUp(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
-    process_event(EvRightUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
+void Machine::onRightUp(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
+    process_event(EvRightUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
 }
 
-void Machine::onRightDouble(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
+void Machine::onRightDouble(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setRightDownPosition(virtualPosition);
-    process_event(EvRightDouble(event, virtualPosition)); 
-    event.Skip(); 
+    process_event(EvRightDouble(event, virtualPosition));
+    event.Skip();
 }
 
-void Machine::onEnter(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
-    process_event(EvEnter(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
+void Machine::onEnter(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
+    process_event(EvEnter(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
 }
 
-void Machine::onLeave(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
-    process_event(EvLeave(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
+void Machine::onLeave(wxMouseEvent& event)
+{
+    VAR_INFO(event.GetPosition());
+    process_event(EvLeave(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
 }
 
-void Machine::onWheel(wxMouseEvent& event)  
-{ 
-    LOG_DEBUG;
+void Machine::onWheel(wxMouseEvent& event)
+{
+    VAR_DEBUG(event.GetPosition());
 
     // Zooming/Scrolling can be done in any state
     int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
@@ -193,29 +193,29 @@ void Machine::onWheel(wxMouseEvent& event)
         event.Skip();
     }
 
-    process_event(EvWheel(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
+    process_event(EvWheel(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
 }
 
-void Machine::onKeyDown(wxKeyEvent&   event) 
-{ 
-    LOG_DEBUG;
-    process_event(EvKeyDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
-}  
-
-void Machine::onKeyUp(wxKeyEvent&   event)  
-{ 
-    LOG_DEBUG;
-    process_event(EvKeyUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition()))); 
-    event.Skip(); 
+void Machine::onKeyDown(wxKeyEvent& event)
+{
+    VAR_DEBUG(event.GetPosition())(event);
+    process_event(EvKeyDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
 }
 
-void Machine::onCaptureLost(wxMouseCaptureLostEvent& event) 
+void Machine::onKeyUp(wxKeyEvent& event)
+{
+    VAR_DEBUG(event.GetPosition())(event);
+    process_event(EvKeyUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    event.Skip();
+}
+
+void Machine::onCaptureLost(wxMouseCaptureLostEvent& event)
 {
     LOG_DEBUG;
 };
 
-void Machine::onCaptureChanged(wxMouseCaptureChangedEvent& event) 
+void Machine::onCaptureChanged(wxMouseCaptureChangedEvent& event)
 {
     LOG_DEBUG;
 };

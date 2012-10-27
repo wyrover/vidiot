@@ -133,7 +133,6 @@ void TestRender::testRendering()
             ASSERT(f.Exists());
         }
     }
-    // todo move test files into archive
 }
 
 } // namespace

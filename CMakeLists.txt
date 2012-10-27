@@ -126,6 +126,7 @@ IF (MSVC)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FIPrecompiled.h ")
     string(REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
     ADD_DEFINITIONS (/D _CRT_SECURE_NO_WARNINGS)
+    ADD_DEFINITIONS (/D SOURCE_ROOT="\\\"${CMAKE_CURRENT_SOURCE_DIR}\\\"") # Used to fix the path to the input files (part of sources) in the code, via the preprocessor.
 ENDIF (MSVC)
 
 INCLUDE_DIRECTORIES(AFTER

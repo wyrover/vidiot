@@ -401,7 +401,7 @@ double VideoClip::getScalingFactor() const
 
 std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 {
-    os << static_cast<const Clip&>(obj) << '|' << obj.mProgress << '|' << obj.mOpacity << '|' << obj.mScaling << '|' << obj.mScalingDigits << '|' << obj.mAlignment << '|' << obj.mPosition;
+    os << static_cast<const Clip&>(obj) << '|' << std::setw(4) << obj.mProgress << '|' << std::setw(2) << std::hex << obj.mOpacity << '|' << obj.mScaling << '|' << std::dec << std::setw(4) << obj.mScalingDigits << '|' << obj.mAlignment << '|' << obj.mPosition;
     return os;
 }
 

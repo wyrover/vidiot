@@ -325,8 +325,8 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         DeselectAllClips();
-        DragAlignLeft(Center(VideoClip(0,1)), LeftPixel(VideoClip(0,4)) + 25);
-        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        DragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 25);
+        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
     }
     {
@@ -334,8 +334,8 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         DeselectAllClips();
-        DragAlignLeft(Center(VideoClip(0,1)), LeftPixel(VideoClip(0,4)) + 5);
-        ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        DragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
     }
     {
@@ -343,8 +343,8 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(false).SnapToCursor(false);
         DeselectAllClips();
-        DragAlignLeft(Center(VideoClip(0,1)), LeftPixel(VideoClip(0,4)) + 5);
-        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        DragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
+        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
     }
 }
@@ -441,7 +441,7 @@ void TestTimeline::testAbortDrag()
         ShiftDown();
         Move(Center(VideoClip(0,3)));
         Type(WXK_ESCAPE); // Abort the drop
-        wxUIActionSimulator().MouseUp();
+        LeftUp();
         ShiftUp();
 
         ASSERT_MORE_THAN_EQUALS(getTimeline().getZoom().pixelsToPts(LeftCenter(VideoClip(0,1)).x),VideoClip(0,1)->getLeftPts());
@@ -632,12 +632,11 @@ void TestTimeline::testTrimming()
         ASSERT_NONZERO(detailstrim);
         StartTest("Trim: After pressing escape, the Clip detailspanel is visible.");
         Type(WXK_ESCAPE);
-        waitForIdle();
         gui::timeline::DetailsClip* detailsclip = dynamic_cast<gui::timeline::DetailsClip*>(getTimeline().getDetails().getCurrent());
         ASSERT_NONZERO(detailsclip);
         ASSERT_EQUALS(detailsclip->getClip()->getDescription(),description);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
-        wxUIActionSimulator().MouseUp();
+        LeftUp();
     }
 }
 
@@ -652,12 +651,11 @@ void TestTimeline::testTrimmingWithOtherTracks()
         StartTest("Trim: EndTrim: Enlarge the last clip in a track (there is no empty clip after it anymore)");
         TrimRight(VideoClip(0,3),-40,false);
         pts length = VideoClip(0,3)->getLength();
+        ASSERT(VideoClip(0,3)->isA<model::VideoClip>());
         DragAlignLeft(Center(VideoClip(0,3)),RightPixel(VideoClip(0,7)));
         TrimRight(VideoClip(0,7),20,false);
         ASSERT_MORE_THAN(VideoClip(0,7)->getLength(), length);
-        Undo();
-        Undo();
-        Undo();
+        Undo(3);
     }
     {
         StartTest("ShiftTrim: BeginTrim: Shorten: with an empty other track.");
@@ -703,18 +701,30 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_MORE_THAN_ZERO(VideoClip(0,4)->getMaxAdjustBegin());
         ASSERT_LESS_THAN_ZERO(VideoClip(0,4)->getMinAdjustEnd());
         ASSERT_MORE_THAN_ZERO(VideoClip(0,4)->getMaxAdjustEnd());
+        ASSERT_LESS_THAN(VideoTrack(1)->getLength(),VideoTrack(0)->getLength());
+        ASSERT_LESS_THAN(AudioTrack(1)->getLength(),AudioTrack(0)->getLength());
+        ASSERT_EQUALS(VideoClip(1,1)->getLeftPts(),VideoClip(0,3)->getLeftPts());
+        ASSERT_EQUALS(AudioClip(1,1)->getLeftPts(),AudioClip(0,3)->getLeftPts());
+        ASSERT_EQUALS(VideoClip(1,1)->getRightPts(),VideoClip(0,4)->getLeftPts());
+        ASSERT_EQUALS(AudioClip(1,1)->getRightPts(),AudioClip(0,4)->getLeftPts());
     }
     {
-        StartTest("Move the clip in the other track slightly over the begin of the tested clip (preparation).");
-        Drag(Center(VideoClip(0,4)),RightCenter(VideoClip(0,3)));
+        StartTest("Move the 'to be tested' clip's left point inbetween the clip in the other track (preparation).");
+        ASSERT(!wxGetMouseState().ShiftDown());
+        DragAlignLeft(Center(VideoClip(0,4)),HCenter(VideoClip(0,3)));
+        ASSERT_LESS_THAN(VideoTrack(1)->getLength(),VideoTrack(0)->getLength());
+        ASSERT_LESS_THAN(AudioTrack(1)->getLength(),AudioTrack(0)->getLength());
+        ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_MORE_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getLeftPts());
-        ASSERT_LESS_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getRightPts());
+        ASSERT_LESS_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getRightPts()); // todo crash with rdp
     }
     {
         StartTest("ShiftTrim: EndTrim: Shorten: with another track that is shorter than the trim position (this imposes a lower bound on the shift).");
         pts diff = VideoClip(0,4)->getRightPts() - VideoTrack(1)->getLength();
         pts track0len = VideoTrack(0)->getLength();
-        TrimRight(VideoClip(0,4),-400);
+        TrimRight(VideoClip(0,4),-200);
+        ASSERT_LESS_THAN(VideoTrack(1)->getLength(),VideoTrack(0)->getLength());
+        ASSERT_LESS_THAN(AudioTrack(1)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,4)->getRightPts(),VideoTrack(1)->getLength());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),track0len - diff);
         Undo(); // Undo the trim
@@ -730,7 +740,9 @@ void TestTimeline::testTrimmingWithOtherTracks()
     }
     {
         StartTest("Move the clip in the other track over the end of the tested clip (preparation).");
+        ASSERT(!wxGetMouseState().ShiftDown());
         Drag(Center(VideoClip(1,1)),wxPoint(RightPixel(VideoClip(0,4)),VCenter(VideoTrack(1))));
+        ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
         ASSERT_EQUALS(VideoTrack(1)->getClips().size(),2);
     }
@@ -750,15 +762,29 @@ void TestTimeline::testTrimmingWithOtherTracks()
     }
     {
         StartTest("ShiftTrim: Put clips in other tracks 'around' trim points but not exactly ON the trim point so that trimming is possible (Preparation).");
+        ASSERT(!wxGetMouseState().ShiftDown());
+        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip)(EmptyClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(1,3)->getRightPts(),VideoClip(0,6)->getLeftPts());
+        ASSERT_EQUALS(AudioClip(1,3)->getRightPts(),AudioClip(0,6)->getLeftPts());
         DragToTrack(1,VideoClip(0,6),AudioClip(0,6));
-        ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT(!wxGetMouseState().ShiftDown());
+        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(EmptyClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(EmptyClip);
+        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(1,1)->getLeftPts(),VideoClip(0,3)->getLeftPts());
+        ASSERT_EQUALS(AudioClip(1,1)->getLeftPts(),AudioClip(0,3)->getLeftPts());
+        ASSERT_EQUALS(VideoClip(1,3)->getLeftPts(),VideoClip(0,5)->getLeftPts());
+        ASSERT_EQUALS(AudioClip(1,3)->getLeftPts(),AudioClip(0,5)->getLeftPts());
         Drag(Center(VideoClip(1,1)),Center(VideoClip(1,1))-wxPoint(8,0));
-        ASSERT(VideoClip(1,0)->isA<model::EmptyClip>());
+        ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
         Drag(Center(VideoClip(1,3)),Center(VideoClip(1,3))+wxPoint(8,0));
-        ASSERT(VideoClip(1,0)->isA<model::EmptyClip>());
+        ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
-        //todo pause();
         DragAlignLeft(Center(VideoClip(1,4)),LeftPixel(VideoClip(0,4))+20);
         ASSERT_VIDEOTRACK1(EmptyClip)                   (VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(       VideoClip      )(EmptyClip);
@@ -802,7 +828,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     }
     {
         StartTest("Trim: Snap to clip.");
-        Undo(12); // Undo until only the add track has been done
+        Undo(11); // Undo until only the add track has been done
         // NOTE: At this point the scrolling has been changed. Trimming and snapping with a scroll offset is thus also tested.
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         TrimLeft(VideoClip(0,4),40,false);
@@ -819,8 +845,26 @@ void TestTimeline::testTrimmingWithOtherTracks()
         Move(wxPoint(RightPixel(VideoClip(1,1))-6,VCenter(VideoClip(0,5))));
         EndTrim(false);
         ASSERT_EQUALS(VideoClip(0,5)->getLeftPts(),VideoClip(1,1)->getRightPts());
-        Undo();
+        Undo(3);
     }
+    //{
+    //    StartTest("Known bug at one point: Clip removed when using CTRL to change drag point.");
+    //    DragToTrack(1,VideoClip(0,3),AudioClip(0,3));
+    //    ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
+    //    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+    //    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+    //    ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
+    //    wxPoint inbetween(HCenter(VideoClip(0,4)),VCenter(VideoTrack(1)));
+    //    Drag(Center(VideoClip(1,1)), inbetween, false, true, false); // todo replace such booleans with named params
+    //    Drag(Center(VideoClip(0,4)), Center(VideoClip(0,5)), true, false, false);
+    //    Drag(Center(VideoClip(0,5)), inbetween, false, false, true);
+    //    ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
+    //    ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
+    //    Undo(2);
+    //    // todo move to test dnd
+    //}
+    // todo similar test for audio!
+
 }
 
 } // namespace

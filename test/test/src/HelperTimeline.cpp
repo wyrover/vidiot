@@ -17,6 +17,7 @@
 #include "IClip.h"
 #include "ids.h"
 #include "Layout.h"
+#include "Logging.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
 #include "Scrolling.h"
@@ -332,7 +333,9 @@ void PositionCursor(pixel position)
 
 void Move(wxPoint position)
 {
+    //VAR_INFO(position);
     MoveWithinWidget(position,getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset());
+    ASSERT_EQUALS(getTimeline().getMousePointer().getPosition(), position);//todo - getTimeline().getScrolling().getOffset())(position)(getTimeline().getScrolling().getOffset());
 }
 
 void Click(wxPoint position)
@@ -372,14 +375,13 @@ void BeginTrim(wxPoint from, bool shift)
 {
     Move(from);
     if (shift) { ShiftDown(); }
-    wxUIActionSimulator().MouseDown();
+    LeftDown();
 }
 
 void EndTrim(bool shift)
 {
-    wxUIActionSimulator().MouseUp();
+    LeftUp();
     if (shift) { ShiftUp(); }
-    waitForIdle();
 }
 
 Zoom::Zoom(int level)
@@ -402,12 +404,10 @@ Zoom::~Zoom()
 void Trim(wxPoint from, wxPoint to, bool shift)
 {
     Move(from);
-    wxUIActionSimulator().MouseDown();
+    LeftDown();
     if (shift) { ShiftDown(); }
-    waitForIdle();
     Move(to);
-    wxUIActionSimulator().MouseUp();
-    waitForIdle();
+    LeftUp();
     if (shift) { ShiftUp(); }
 }
 
@@ -419,32 +419,17 @@ void ShiftTrim(wxPoint from, wxPoint to)
 void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
 {
     VAR_DEBUG(from)(to)(ctrl);
-    if (ctrl)
-    {
-        ControlDown();
-    }
+    if (ctrl) { ControlDown(); }
     Move(from);
-    if (mousedown)
-    {
-        wxUIActionSimulator().MouseDown();
-        waitForIdle();
-    }
-    if (ctrl)
-    {
-        ControlUp();
-        waitForIdle();
-    }
+    if (mousedown) { LeftDown(); }
+    if (ctrl) { ControlUp(); }
     static const int DRAGSTEPS = 10; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
     for (int i = DRAGSTEPS; i > 0; --i)
     {
         wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i);
         Move(p);
     }
-    if (mouseup)
-    {
-        wxUIActionSimulator().MouseUp();
-        waitForIdle();
-    }
+    if (mouseup) { LeftUp(); }
 }
 
 void ShiftDrag(wxPoint from, wxPoint to)
@@ -454,10 +439,8 @@ void ShiftDrag(wxPoint from, wxPoint to)
     Drag(from, between, false, true, false);
     ShiftDown();
     Move(to);
-    waitForIdle();
-    wxUIActionSimulator().MouseUp();
+    LeftUp();
     ShiftUp();
-    waitForIdle();
 }
 
 void DragAlign(wxPoint from, pixel position, bool shift, bool left)
@@ -466,20 +449,13 @@ void DragAlign(wxPoint from, pixel position, bool shift, bool left)
     wxPoint to(from);
     to.x += (from.x > position) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
     Drag(from, to, false, true, false);
-    if (shift)
-    {
-        ShiftDown();
-    }
+    if (shift) { ShiftDown(); }
     // Now drag until the left position of the drag is aligned with position
     pixel alignposition = left ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips());
     to.x += (position - alignposition);
     Move(to);
-    wxUIActionSimulator().MouseUp();
-    if (shift)
-    {
-        ShiftUp();
-    }
-    waitForIdle();
+    LeftUp();
+    if (shift) { ShiftUp(); }
 }
 
 void DragAlignLeft(wxPoint from, pixel position)
@@ -572,6 +548,13 @@ void DeleteClip(model::IClipPtr clip)
 {
     Click(Center(clip));
     Type(WXK_DELETE);
+}
+
+void DumpSequenceAndWait()
+{
+    LOG_ERROR << DUMP(getSequence());
+    Log::flush();
+    pause(999999999);
 }
 
 } // namespace

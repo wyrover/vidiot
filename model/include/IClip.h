@@ -53,6 +53,9 @@ public:
     /// \return previous clip in track. IClipPtr() if there is none.
     ConstIClipPtr getPrev() const;
 
+    /// \return the index of this clip in the track. -1 if the clip is not part of a track
+    virtual int getIndex() const = 0;
+
     //////////////////////////////////////////////////////////////////////////
     // LINK
     //////////////////////////////////////////////////////////////////////////
