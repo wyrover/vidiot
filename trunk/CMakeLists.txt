@@ -92,7 +92,7 @@ MACRO(FINDFILES dir)
     SET(INCLUDE_LIST ${INCLUDE_LIST} ${PROJECT_SOURCE_DIR}/${dir}/include)
 ENDMACRO(FINDFILES)
 
-SET( VIDIOTPROJECTGROUPS model modelcmd modelaudio modelempty modelevent modelvideo gui guievent pch projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util )
+SET( VIDIOTPROJECTGROUPS model modelcmd modelaudio modelempty modelevent modelproject modelvideo gui guievent pch projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util )
 FOREACH( FOLDER  ${VIDIOTPROJECTGROUPS} )
     FINDFILES(${FOLDER})
 ENDFOREACH(FOLDER)
