@@ -4,7 +4,8 @@
 #include "HelperTestSuite.h"
 #include "UtilLog.h"
 #include "Window.h"
-
+#include <cxxtest/TestSuite.h>
+#include <time.h>
 namespace test {
 //static
 FixtureGui sInstance;
@@ -19,6 +20,7 @@ FixtureGui::FixtureGui()
     ,   mBarrierStart(2)
     ,   mBarrierStarted(2)
     ,   mBarrierStopped(2)
+    ,   mStartTime(0)
 {
 }
 
@@ -28,6 +30,7 @@ FixtureGui::~FixtureGui()
 
 bool FixtureGui::setUpWorld()
 {
+    mStartTime = time(0);
     mThread.reset(new boost::thread(boost::bind(&FixtureGui::mainThread,this)));
     return true;
 }
@@ -45,6 +48,11 @@ bool FixtureGui::tearDownWorld()
     {
         mThread->join();
     }
+    long runningtime = time(0) - mStartTime;
+    std::ostringstream o;
+    o << "Total running time: " << runningtime << " seconds (" << (runningtime/60) << "m" << (runningtime%60) << ")";
+    TS_TRACE(o.str().c_str());
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     return true;
 }
 

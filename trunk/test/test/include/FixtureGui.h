@@ -10,10 +10,10 @@ namespace test {
 
 /// Fixture for the complete GUI. The complete application is started, with the
 /// main thread running in a separate thread so that tests can be ran from the main
-/// application thread. This fixture also ensures that test execution waits 
+/// application thread. This fixture also ensures that test execution waits
 /// until that event loop is running properly (the wxWidgets part). The implementation
 /// also ensures that a new window is used for each new test.
-class FixtureGui 
+class FixtureGui
     :   public CxxTest::GlobalFixture
     ,   public IEventLoopListener
 {
@@ -34,8 +34,8 @@ public:
     virtual bool setUp();       ///< Called before each test. Starts the window.
     virtual bool tearDown();    ///< Called after each test. Closes the window.
 
-    /// No behaviour but the inclusion of this method in any test suite ensures 
-    /// that the test fixture (which is a global object) is not discarded during 
+    /// No behaviour but the inclusion of this method in any test suite ensures
+    /// that the test fixture (which is a global object) is not discarded during
     /// compilation (linking?) due to not being referenced anywhere.
     static void start();
 
@@ -67,6 +67,8 @@ private:
 
     bool mEnd;
     bool mStartingMainThread;
+
+    long mStartTime;
 };
 
 } // namespace

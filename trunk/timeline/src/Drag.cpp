@@ -457,7 +457,7 @@ void Drag::DragInfo::reset()
         if (track->isA<model::VideoTrack>() == mIsVideo)
         {
             mMinOffset = std::min(mMinOffset, track->getIndex() * -1);
-            mMaxOffset = std::max(mMaxOffset, nTracks() - track->getIndex());
+            mMaxOffset = std::max(mMaxOffset, nTracks() - track->getIndex() - 1); // -1: nTracks is 1-based, getIndex() is 0-based
         }
     }
 }

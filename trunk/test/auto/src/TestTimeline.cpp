@@ -349,6 +349,45 @@ void TestTimeline::testDnd()
     }
 }
 
+//RUNONLY(testDndMultipleTracks);
+void TestTimeline::testDndMultipleTracks()
+{
+    StartTestSuite();
+    Zoom level(2);
+    triggerMenu(ID_ADDVIDEOTRACK);
+    triggerMenu(ID_ADDAUDIOTRACK);
+    {
+        StartTest("Known bug at one point: Clip removed when using CTRL to change drag point.");
+        DragToTrack(1,VideoClip(0,3),AudioClip(0,3));
+        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
+        wxPoint inbetween(HCenter(VideoClip(0,4)),VCenter(VideoTrack(1)));
+        Drag(Center(VideoClip(1,1)), inbetween, false, true, false); // todo replace such booleans with named params
+        Drag(Center(VideoClip(0,4)), Center(VideoClip(0,5)), true, false, false);
+        Drag(Center(VideoClip(0,5)), inbetween, false, false, true);
+        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
+        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
+        Undo(2);
+    }
+    {
+        StartTest("Known bug at one point: Clip removed when using CTRL to change drag point.");
+        DragToTrack(1,VideoClip(0,3),AudioClip(0,3));
+        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
+        wxPoint inbetween(HCenter(AudioClip(0,4)),VCenter(AudioTrack(1)));
+        Drag(Center(AudioClip(1,1)), inbetween, false, true, false);
+        Drag(Center(AudioClip(0,4)), Center(AudioClip(0,5)), true, false, false);
+        Drag(Center(AudioClip(0,5)), inbetween, false, false, true);
+        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
+        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip); // Bug occurred here: AudioClip was moved to track2 (which did not exist)
+        Undo(2);
+    }
+}
+
 //RUNONLY(testUndo);
 void TestTimeline::testUndo()
 {
@@ -716,7 +755,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_LESS_THAN(AudioTrack(1)->getLength(),AudioTrack(0)->getLength());
         ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_MORE_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getLeftPts());
-        ASSERT_LESS_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getRightPts()); // todo crash with rdp
+        ASSERT_LESS_THAN(VideoClip(0,4)->getLeftPts(),VideoClip(1,1)->getRightPts());
     }
     {
         StartTest("ShiftTrim: EndTrim: Shorten: with another track that is shorter than the trim position (this imposes a lower bound on the shift).");
@@ -847,24 +886,6 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_EQUALS(VideoClip(0,5)->getLeftPts(),VideoClip(1,1)->getRightPts());
         Undo(3);
     }
-    //{
-    //    StartTest("Known bug at one point: Clip removed when using CTRL to change drag point.");
-    //    DragToTrack(1,VideoClip(0,3),AudioClip(0,3));
-    //    ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
-    //    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
-    //    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
-    //    ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
-    //    wxPoint inbetween(HCenter(VideoClip(0,4)),VCenter(VideoTrack(1)));
-    //    Drag(Center(VideoClip(1,1)), inbetween, false, true, false); // todo replace such booleans with named params
-    //    Drag(Center(VideoClip(0,4)), Center(VideoClip(0,5)), true, false, false);
-    //    Drag(Center(VideoClip(0,5)), inbetween, false, false, true);
-    //    ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
-    //    ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
-    //    Undo(2);
-    //    // todo move to test dnd
-    //}
-    // todo similar test for audio!
-
 }
 
 } // namespace

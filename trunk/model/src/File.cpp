@@ -298,7 +298,7 @@ void File::flush()
 
 AVCodecContext* File::getCodec()
 {
-	openFile();
+    openFile();
     ASSERT(mFileContext->streams[mStreamIndex]);
     return mFileContext->streams[mStreamIndex]->codec;
 }
