@@ -180,6 +180,14 @@ void MoveOnScreen(wxPoint position)
         if (++count > 3) break;
     }
     waitForIdle();
+    if (wxGetMouseState().GetPosition() != position)
+    {
+        // When connecting via RDP (Windows remote desktop) the assert below sometimes fails,
+        // even if the loop above was exited with a correct mouse position. Try to move to the
+        // correct position at least once.
+        wxUIActionSimulator().MouseMove(position);
+        waitForIdle();
+    }
     ASSERT_EQUALS(wxGetMouseState().GetPosition(), position);
 }
 

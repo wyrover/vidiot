@@ -153,7 +153,7 @@ void TestTransition::testDragAndDropOfOtherClips()
         // Shift drag without snapping enabled,
         // transition and its adjacent clips are shifted backwards
         ShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,3)));
-        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip); // todo failure with rdp
+        ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();

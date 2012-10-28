@@ -43,6 +43,10 @@ public:
 
     void testDnd();
 
+    /// Test drag and drop scenarios specific to having multiple tracks in the
+    /// timeline.
+    void testDndMultipleTracks();
+
     /// The undo scenario at end was difficult to fix. It was caused by using Timeline as a
     /// identifying member for AClipEdit commands. Since the undo included undo'ing the creation
     /// of the timeline, the timeline was no longer a good identifier. Therefore, these commands

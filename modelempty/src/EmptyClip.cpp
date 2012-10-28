@@ -14,7 +14,7 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyClip::EmptyClip() // todo make folders for 'empty'
+EmptyClip::EmptyClip()
     :	Clip()
 {
     VAR_DEBUG(this);
