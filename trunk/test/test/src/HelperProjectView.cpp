@@ -176,9 +176,7 @@ void DragFromProjectViewToTimeline(wxPoint from, wxPoint to)
     {
         wxPoint p(fromAbs.x + (toAbs.x - fromAbs.x) / i, fromAbs.y + (toAbs.y - fromAbs.y) / i);
         MoveOnScreen(p);
-        //waitForIdle();
     }
-    //    pause();
     LeftUp();
     waitForIdle();
 }

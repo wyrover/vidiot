@@ -61,7 +61,7 @@ private:
     {
         while (mContinue)
         {
-            pause(50);
+            pause(10);
             wxUIActionSimulator().Char(WXK_ESCAPE);
         }
         mBarrierStop.wait();

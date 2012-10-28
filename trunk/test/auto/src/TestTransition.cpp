@@ -395,7 +395,7 @@ void TestTransition::testAdjacentTransitions()
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT(VideoClip(0,3)->isA<model::Transition>());
         Scrub(LeftPixel(VideoTransition(0,2)) - 5, RightPixel(VideoTransition(0,3)) + 5);
-        Play(LeftPixel(VideoTransition(0,2)) - 2, 1500); // -2: Also take some frames from the left clip
+        Play(LeftPixel(VideoTransition(0,2)) - 2, 500); // -2: Also take some frames from the left clip
     }
     {
         StartTest("Drag a clip just on top of the right transition.");
@@ -452,7 +452,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
-        Play(LeftPixel(VideoTransition(0,5)) - 2, 1000); // -2: Also take some frames from the left clip
+        Play(LeftPixel(VideoTransition(0,5)) - 2, 500); // -2: Also take some frames from the left clip
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
         Undo();
     }
@@ -475,7 +475,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
-        Play(LeftPixel(VideoTransition(0,5)) - 2, 1500); // -2: Also take some frames from the left clip
+        Play(LeftPixel(VideoTransition(0,5)) - 2, 500); // -2: Also take some frames from the left clip
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
         Undo(); // Undo until the two trimmed clips are present
     }
@@ -498,7 +498,7 @@ void TestTransition::testPlaybackAndScrubbing()
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,6)) - 5, RightPixel(VideoTransition(0,6)) + 5);
-        Play(LeftPixel(VideoTransition(0,6)) - 2, 1000); // -1: Also take some frames from the left clip
+        Play(LeftPixel(VideoTransition(0,6)) - 2, 500); // -1: Also take some frames from the left clip
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
         Undo(); // Undo until the two trimmed clips are present
     }

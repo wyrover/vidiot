@@ -526,9 +526,9 @@ void Play(pixel from, int ms)
     PositionCursor(from);
     // NOTE: Don't use waitForIdle() when the video is playing!!!
     //       When the video is playing, the system does not become Idle (playback events).
-    wxUIActionSimulator().Char(' ');
+    Type(' ');
     pause(ms);
-    wxUIActionSimulator().Char(' ');
+    Type(' ');
     waitForIdle();
 }
 
