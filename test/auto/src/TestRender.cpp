@@ -118,6 +118,13 @@ void TestRender::testRendering()
     }
     {
         StartTest("Render each part of the sequence separately.");
+        Click(Center(VideoClip(0,2)));
+        ControlDown();
+        Click(Center(VideoClip(0,4))); // Exclude clip 3 deliberately: include empty clips in the rendering
+        Click(Center(VideoClip(0,5)));
+        Click(Center(VideoClip(0,6)));
+        ControlUp();
+        Type(WXK_DELETE);
         RandomTempDir tempdir;
         model::render::RenderPtr original = getCurrentRenderSettings();
         triggerMenu(ID_RENDERSETTINGS);
@@ -127,7 +134,7 @@ void TestRender::testRendering()
         ClickTopLeft(gui::RenderSettingsDialog::get().getRenderSeparationCheckBox(),wxPoint(4,4));
         ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
         gui::Worker::get().waitUntilQueueEmpty();
-        for (int i = 1; i <= NumberOfVideoClipsInTrack(); ++i)
+        for (int i = 1; i <= 3; ++i)
         {
             wxFileName f(tempdir.getFileName().GetLongPath(), wxString::Format("out_%d",i), "avi");
             ASSERT(f.Exists());
