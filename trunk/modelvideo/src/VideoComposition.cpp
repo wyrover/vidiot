@@ -52,12 +52,12 @@ void VideoComposition::replace(VideoFramePtr oldFrame, VideoFramePtr newFrame)
 
 VideoFramePtr VideoComposition::generate()
 {
+    wxSize outputsize = Properties::get().getVideoSize();
     if (mFrames.empty())
     {
-        return EmptyFramePtr();
+        return boost::make_shared<EmptyFrame>(outputsize,0);
     }
 
-    wxSize outputsize = Properties::get().getVideoSize();
     double scaleToBoundingBox(0);
     wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, mParameters.getBoundingBox(), scaleToBoundingBox);
     ASSERT_NONZERO(scaleToBoundingBox);
