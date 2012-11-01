@@ -11,7 +11,6 @@ namespace gui {
         class Details;
         class Divider;
         class Drag;
-        class Dump;
         class Intervals;
         class MenuHandler;
         class MousePointer;
@@ -86,9 +85,6 @@ public:
 
     Trim& getTrim();
     const Trim& getTrim() const;
-
-    Dump& getDump();
-    const Dump& getDump() const;
 
     state::Machine& getStateMachine();
     const state::Machine& getStateMachine() const;

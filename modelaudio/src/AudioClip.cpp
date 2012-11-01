@@ -56,6 +56,21 @@ void AudioClip::clean()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// ICLIP
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& AudioClip::dump(std::ostream& os) const
+{
+    os << *this;
+    return os;
+}
+
+char* AudioClip::getType() const
+{
+    return "Audio";
+}
+
+//////////////////////////////////////////////////////////////////////////
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
@@ -113,7 +128,7 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
 
 std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
 {
-    os << static_cast<const Clip&>(obj) << '|' << obj.mProgress;
+    os << static_cast<const Clip&>(obj) << '|' << std::setw(4) << obj.mProgress;
     return os;
 }
 

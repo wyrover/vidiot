@@ -162,16 +162,6 @@ const Trim& Part::getTrim() const
     return getTimeline().getTrim();
 }
 
-Dump& Part::getDump()
-{
-    return getTimeline().getDump();
-}
-
-const Dump& Part::getDump() const
-{
-    return getTimeline().getDump();
-}
-
 state::Machine& Part::getStateMachine()
 {
     return getTimeline().getStateMachine();

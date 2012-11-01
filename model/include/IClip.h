@@ -53,9 +53,6 @@ public:
     /// \return previous clip in track. IClipPtr() if there is none.
     ConstIClipPtr getPrev() const;
 
-    /// \return the index of this clip in the track. -1 if the clip is not part of a track
-    virtual int getIndex() const = 0;
-
     //////////////////////////////////////////////////////////////////////////
     // LINK
     //////////////////////////////////////////////////////////////////////////
@@ -134,6 +131,13 @@ public:
     /// \return list of all cuts for the clip
     /// \param exclude list of clips for which the cuts should not be added
     virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const = 0;
+
+    /// Dump the contents of the clip into the stream. Used for generating logging.
+    /// \return the stream again
+    virtual std::ostream& dump(std::ostream& os) const = 0;
+
+    /// \return a five character long string representation of the clip type, for logging.
+    virtual char* getType() const = 0;
 
 protected:
 

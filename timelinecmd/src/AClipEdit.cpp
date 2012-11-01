@@ -5,7 +5,6 @@
 #include "VideoTransition_CrossFade.h"
 #include "Cursor.h"
 #include "Logging.h"
-#include "Dump.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -13,7 +12,6 @@
 #include "TrackEvent.h"
 #include "Transition.h"
 #include "UtilList.h"
-
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilSet.h"
@@ -630,7 +628,7 @@ void AClipEdit::replaceLinks()
                 {
                     if (clip != clip->getLink()->getLink())
                     {
-                        getTimeline().getDump().dump();
+                        LOG_ERROR << dump(getSequence());
                     }
                     ASSERT_EQUALS(clip, clip->getLink()->getLink());
                 }

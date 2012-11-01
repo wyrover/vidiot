@@ -112,8 +112,6 @@ Window::Window()
     wxMenu* menuhelp = new wxMenu();
     menuhelp->Append(wxID_HELP, _("Help"));
     menuhelp->AppendSeparator();
-    menuhelp->Append(wxID_INFO, _("Dump"));
-    menuhelp->AppendSeparator();
     menuhelp->Append(wxID_ABOUT, _("&About..."));
 
     menubar = new wxMenuBar();

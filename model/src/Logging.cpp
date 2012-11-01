@@ -11,9 +11,11 @@
 
 namespace model {
 
+const int TAB_WIDTH = 2;
+
 std::ostream& dump(std::ostream& os, SequencePtr sequence, int depth)
 {
-    wxString tab(' ', depth * 4);
+    wxString tab(' ', depth * TAB_WIDTH);
     os << std::endl << "Sequence:";
     if (!sequence)
     {
@@ -26,7 +28,7 @@ std::ostream& dump(std::ostream& os, SequencePtr sequence, int depth)
         model::Tracks videotracks = sequence->getVideoTracks();
         videotracks.reverse(); // Same order as in GUI
         dump(os, videotracks, depth + 1);
-        os << tab << std::endl << "AUDIO:" << std::endl;
+        os << tab << std::endl << "AUDIO:";
         dump(os, sequence->getAudioTracks(), depth + 1);
     }
     return os;
@@ -34,20 +36,15 @@ std::ostream& dump(std::ostream& os, SequencePtr sequence, int depth)
 
 std::ostream& dump(std::ostream& os, TrackPtr track, int depth)
 {
-    wxString tab(' ', depth * 4);
+    wxString tab(' ', depth * TAB_WIDTH);
     os << std::endl << tab;
     if (!track)
     {
         os << "0-TrackPtr";
     }
-    else if (track->isA<VideoTrack>())
+    else
     {
-        os << "VideoTrack " << track->getIndex() << ": " << (*track);
-        dump(os, track->getClips(), depth + 1);
-    }
-    else if (track->isA<AudioTrack>())
-    {
-        os << "AudioTrack " << track->getIndex() << ": " << (*track);
+        os << (track->isA<VideoTrack>() ? "VideoTrack "  : "AudioTrack ") << track->getIndex() << ": " << (*track);
         dump(os, track->getClips(), depth + 1);
     }
     return os;
@@ -55,7 +52,7 @@ std::ostream& dump(std::ostream& os, TrackPtr track, int depth)
 
 std::ostream& dump(std::ostream& os, IClipPtr clip, int depth)
 {
-    wxString tab(' ', depth * 4);
+    wxString tab(' ', depth * TAB_WIDTH);
     os << std::endl << tab;
     if (!clip)
     {
@@ -63,27 +60,7 @@ std::ostream& dump(std::ostream& os, IClipPtr clip, int depth)
     }
     else
     {
-        os << std::setfill('0') << std::setw(2) << clip->getIndex() << ' ';
-        if (clip->isA<VideoTransition>())
-        {
-            os << "VideoTransition: " << *(boost::dynamic_pointer_cast<model::VideoTransition>(clip));
-        }
-        else if (clip->isA<model::EmptyClip>())
-        {
-            os << "EmptyClip:       " << *(boost::dynamic_pointer_cast<model::EmptyClip>(clip));
-        }
-        else if (clip->isA<model::VideoClip>()) // todo this must be via inherit+overload
-        {
-            os << "VideoClip:       " << *(boost::dynamic_pointer_cast<model::VideoClip>(clip));
-        }
-        else if (clip->isA<model::AudioClip>()) // todo this must be via inherit+overload
-        {
-            os << "AudioClip:       " << *(boost::dynamic_pointer_cast<model::AudioClip>(clip));
-        }
-        else
-        {
-            FATAL("Clip type unknown.");
-        }
+        clip->dump(os);
     }
     return os;
 }
