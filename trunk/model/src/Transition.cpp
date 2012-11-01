@@ -261,9 +261,15 @@ std::set<pts> Transition::getCuts(const std::set<IClipPtr>& exclude) const
     return result;
 }
 
-int Transition::getIndex() const
+std::ostream& Transition::dump(std::ostream& os) const
 {
-    return mIndex;
+    os << *this;
+    return os;
+}
+
+char* Transition::getType() const
+{
+    return "Trans";
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -317,8 +323,16 @@ model::IClipPtr Transition::makeRightClip() const
 
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
-    // Keep order same as Clip and EmptyClip for 'dump' method
-    os << &obj << '|' << obj.mTrack.lock() << '|'  << std::setw(8) << ' ' << '|' << std::setw(6) << obj.mIndex << '|' << std::setw(6) << obj.mLeftPtsInTrack << '|' << std::setw(6) << obj.mFramesLeft << '|' << std::setw(6) << obj.mFramesRight << '|' << obj.mSelected;
+    // Keep order same as Clip for 'dump' method
+    os  << std::setfill(' ') << std::setw(3) << obj.mIndex << '|'
+        << obj.getType() << '|'
+        << &obj << '|'
+        << obj.mTrack.lock() << '|'
+        << "        |" // link
+        << std::setw(6) << obj.mLeftPtsInTrack << '|'
+        << std::setw(6) << obj.mFramesLeft << '|'
+        << std::setw(6) << obj.mFramesRight << '|'
+        << obj.mSelected;
     return os;
 }
 

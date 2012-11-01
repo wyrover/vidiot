@@ -65,6 +65,8 @@ public:
 
     virtual void setLink(IClipPtr link) override;
     virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
+    virtual std::ostream& dump(std::ostream& os) const override;
+    virtual char* getType() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
@@ -89,6 +91,12 @@ protected:
     explicit EmptyClip(const EmptyClip& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const EmptyClip& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

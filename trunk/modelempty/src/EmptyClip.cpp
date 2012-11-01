@@ -108,6 +108,17 @@ std::set<pts> EmptyClip::getCuts(const std::set<IClipPtr>& exclude) const
     return std::set<pts>();
 }
 
+std::ostream& EmptyClip::dump(std::ostream& os) const
+{
+    os << *this;
+    return os;
+}
+
+char* EmptyClip::getType() const
+{
+    return "Empty";
+}
+
 //////////////////////////////////////////////////////////////////////////
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
@@ -136,6 +147,16 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
         setGenerationProgress(videoFrame->getPts());
     }
     return videoFrame;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& os, const EmptyClip& obj )
+{
+    os << static_cast<const Clip&>(obj);
+    return os;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -45,8 +45,9 @@ RUNONLY(testOnce);
 void TestOnce::testOnce()
 {
     // BREAK();
-    // getTimeline().getDump().dump();
     // ConfigFixture.SnapToAll(true);
+    // LOG_ERROR << dump(getSequence());
+
     StartTestSuite();
 
     pause(600000);

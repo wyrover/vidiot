@@ -5,7 +5,6 @@
 #include "Cursor.h"
 #include "Details.h"
 #include "Drag.h"
-#include "Dump.h"
 #include "Intervals.h"
 #include "Layout.h"
 #include "Menu.h"
@@ -56,7 +55,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mCursor(new Cursor(this))
 ,   mDrag(new Drag(this))
 ,   mTooltip(new Tooltip(this))
-,   mDump(new Dump(this))
 ,   mStateMachine(new state::Machine(*this))
 ,   mMenuHandler(new MenuHandler(this))
 ,   mDetails(Window::get().getDetailsView().openTimeline(this))
@@ -93,7 +91,6 @@ Timeline::~Timeline()
 
     delete mMenuHandler;    mMenuHandler = 0;
     delete mStateMachine;   mStateMachine = 0;
-    delete mDump;           mDump = 0;
     delete mTooltip;        mTooltip = 0;
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
@@ -250,16 +247,6 @@ state::Machine& Timeline::getStateMachine()
 const state::Machine& Timeline::getStateMachine() const
 {
     return *mStateMachine;
-}
-
-Dump& Timeline::getDump()
-{
-    return *mDump;
-}
-
-const Dump& Timeline::getDump() const
-{
-    return *mDump;
 }
 
 model::SequencePtr Timeline::getSequence()

@@ -26,7 +26,8 @@ namespace test {
 /// BREAK();
 ///
 /// Dump the timeline contents:
-/// getTimeline().getDump().dump();
+/// #include "Logging.h"
+/// LOG_ERROR << dump(getSequence());
 ///
 /// Change the configuration: For tests with GUI must be done via the object
 /// FixtureConfig ConfigFixture;

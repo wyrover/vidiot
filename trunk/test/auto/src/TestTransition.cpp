@@ -6,7 +6,6 @@
 #include "Config.h"
 #include "CreateTransition.h"
 #include "DeleteSelectedClips.h"
-#include "Dump.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
@@ -148,7 +147,6 @@ void TestTransition::testDragAndDropOfOtherClips()
     MakeInOutTransitionAfterClip preparation(1);
     ASSERT_EQUALS(VideoClip(0,1)->getLink(),AudioClip(0,1));
     ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,2));
-
     {
         // Shift drag without snapping enabled,
         // transition and its adjacent clips are shifted backwards

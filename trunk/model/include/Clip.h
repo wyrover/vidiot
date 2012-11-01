@@ -67,7 +67,8 @@ public:
 
     virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
-    int getIndex() const override;
+    virtual std::ostream& dump(std::ostream& os) const override;
+    virtual char* getType() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // FOR PREVIEWING
