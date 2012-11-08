@@ -62,7 +62,7 @@ void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
     StartTestSuite();
     triggerMenu(ID_ADDVIDEOTRACK);
     TrimLeft(VideoClip(0,4),40,false);
-    Drag(Center(VideoClip(0,6)),wxPoint(HCenter(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1))));
+    Drag(Center(VideoClip(0,6)),wxPoint(RightPixel(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1))));
     ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,6));
     TrimLeft(VideoClip(0,5),10,false); // This caused an assert, because there was a problem with this clip (video(0,5)) link.
 }
