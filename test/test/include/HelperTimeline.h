@@ -201,6 +201,11 @@ void ShiftTrim(wxPoint from, wxPoint to);
 /// \param mouseup if true, then the mouse button is released after the mouse has reached position 'to'
 void Drag(wxPoint from, wxPoint to, bool ctrl = false, bool mousedown = true, bool mouseup = true);
 
+/// Press ctrl, move to 'from', then start dragging, release ctrl, and then drop on point 'to'
+/// \param from starting position to move to initially
+/// \param to final position to drag to
+void CtrlDrag(wxPoint from, wxPoint to, bool mouseup = true);
+
 /// Do a shift drag and drop between the two points (press, move a bit, hold shift, move to 'to', release mouse and shift).
 /// \param from starting position to move to initially
 /// \param to final position to drag to
@@ -256,7 +261,6 @@ void DeleteClip(model::IClipPtr clip);
 /// Dump the current sequence.
 /// Then wait forever. That allows undoing/redoing/further tampering for analysis.
 void DumpSequenceAndWait();
-
 
 } // namespace
 

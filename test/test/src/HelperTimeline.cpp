@@ -1,6 +1,7 @@
 #include "HelperTimeline.h"
 
 #include <boost/foreach.hpp>
+#include <ostream>
 #include <wx/mousestate.h>
 #include <wx/uiaction.h>
 #include <wx/utils.h>
@@ -415,46 +416,175 @@ void ShiftTrim(wxPoint from, wxPoint to)
     Trim(from,to,true);
 }
 
-void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup)
+struct DragParams
 {
-    VAR_DEBUG(from)(to)(ctrl);
-    if (ctrl) { ControlDown(); }
-    Move(from);
-    if (mousedown) { LeftDown(); }
-    if (ctrl) { ControlUp(); }
-    static const int DRAGSTEPS = 10; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
-    for (int i = DRAGSTEPS; i > 0; --i)
+    DragParams()
+        :   mHoldShiftWhileDragging(false)
+        ,   mHoldCtrlBeforeDragStarts(false)
+        ,   mMouseDown(true)
+        ,   mMouseUp(true)
+    {}
+    DragParams(const DragParams& other)
+        :   mHoldShiftWhileDragging(other.mHoldShiftWhileDragging)
+        ,   mHoldCtrlBeforeDragStarts(other.mHoldCtrlBeforeDragStarts)
+        ,   mMouseDown(other.mMouseDown)
+        ,   mMouseUp(other.mMouseUp)
+    {}
+
+    DragParams& HoldShiftWhileDragging() { mHoldShiftWhileDragging = true; return *this; }
+    DragParams& HoldCtrlBeforeDragStarts() { mHoldCtrlBeforeDragStarts = true; return *this; }
+    DragParams& DontPressMouse() { mMouseDown = false; return *this; }
+    DragParams& DontReleaseMouse() { mMouseUp = false; return *this; }
+    DragParams& AlignLeft(pixel position) { mAlignLeft.reset(position); return *this; }
+    DragParams& AlignRight(pixel position) { mAlignRight.reset(position); return *this; }
+
+    bool mHoldShiftWhileDragging;
+    bool mHoldCtrlBeforeDragStarts;
+    bool mMouseDown; // todo if mouse already pressed dont do mouse down? OR: USE getTimeline().getDrag().isActive()
+    bool mMouseUp;
+    boost::optional<pixel> mAlignLeft;
+    boost::optional<pixel> mAlignRight;
+
+    friend std::ostream& operator<<( std::ostream& os, const DragParams& obj )
     {
-        wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i);
+#define VERBOSE(param) #param << '=' << param
+        os << std::boolalpha << VERBOSE(obj.mHoldShiftWhileDragging) << VERBOSE(obj.mHoldCtrlBeforeDragStarts) << VERBOSE(obj.mMouseDown) << VERBOSE(obj.mMouseUp);
+        return os;
+    };
+};
+
+DragParams HoldShiftWhileDragging()   { return DragParams().HoldShiftWhileDragging(); }
+DragParams HoldCtrlBeforeDragStarts() { return DragParams().HoldCtrlBeforeDragStarts(); }
+DragParams DontPressMouse()           { return DragParams().DontPressMouse(); }
+DragParams DontReleaseMouse()         { return DragParams().DontReleaseMouse(); }
+DragParams AlignLeft(pixel position)  { return DragParams().AlignLeft(position); }
+DragParams AlignRight(pixel position) { return DragParams().AlignRight(position); }
+
+void DragHelper(wxPoint from, wxPoint to, const DragParams& params = DragParams()) // todo make this method only in this cpp and add a DragSettings class?
+{
+    VAR_DEBUG(from)(to)(params);
+    //ASSERT(!getTimeline().getDrag().isActive());
+    ASSERT(from != to || params.mAlignLeft || params.mAlignRight); // todo replace with making from and (especially) to optional!
+    ASSERT(!params.mHoldShiftWhileDragging || !params.mHoldCtrlBeforeDragStarts); // Can't handle both in one action (at least, never tested this)
+    ASSERT(!params.mAlignLeft || !params.mAlignRight); // Can't align boths sides
+
+    static const int DRAGSTEPS = 10; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
+
+    // Press down mouse button
+    if (params.mHoldCtrlBeforeDragStarts) { ControlDown(); }
+    Move(from);
+    if (params.mMouseDown) { LeftDown(); }
+    if (params.mHoldCtrlBeforeDragStarts) { ControlUp(); }
+
+    // Drag a bit until the drag is started
+    wxPoint between(from);
+    if (from.x != to.x || params.mAlignLeft || params.mAlignRight)
+    {
+        // Only in case the actually requested drag and drop operation includes a motion in x-direction, the x-direction
+        // may be used here. Otherwise, this initial drag will cause 'snapping' to zoomed pts values (for instance, if the zoom
+        // is such that 1 pixel equals 5 pts positions). In case of y-only drag and drops it is important to never move the
+        // mouse in x-direction.
+        between.x += (from.x > to.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    }
+    else
+    {
+        between.y += (from.y > to.y) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    }
+    //for (int i = DRAGSTEPS / 2; i > 0; --i) // todo reduce amount of steps
+    //{
+    //    wxPoint p(from.x + (between.x - from.x) / i, from.y + (between.y - from.y) / i);
+    //    Move(p);
+    //}todo check if this works
+    Move(between);
+    ASSERT(getTimeline().getDrag().isActive());
+
+    // todo make dragfrom and dragto param objects
+    if (params.mAlignLeft || params.mAlignRight)
+    {
+        bool left = params.mAlignLeft;
+        pixel alignposition = params.mAlignLeft ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips()); // Requires active drag
+        pixel position = params.mAlignLeft ? *params.mAlignLeft : *params.mAlignRight;
+        to = between;
+        to.x += (position - alignposition);
+    }
+
+    // Drop onto the required position
+    if (params.mHoldShiftWhileDragging) { ShiftDown(); }
+
+    for (int i = DRAGSTEPS / 2; i > 0; --i) // todo reduce amount of steps
+    {
+        wxPoint p(between.x + (to.x - between.x) / i, between.y + (to.y - between.y) / i);
         Move(p);
     }
-    if (mouseup) { LeftUp(); }
+    if (params.mMouseUp)
+    {
+        LeftUp();
+        ASSERT(!getTimeline().getDrag().isActive());
+    }
+    if (params.mHoldShiftWhileDragging) { ShiftUp(); }
+}
+
+void Drag(wxPoint from, wxPoint to, bool ctrl, bool mousedown, bool mouseup) // todo make this method only in this cpp and add a DragSettings class?
+{
+    DragParams params;
+    if (ctrl) { params.HoldCtrlBeforeDragStarts(); }
+    if (!mousedown) { params.DontPressMouse(); }
+    if (!mouseup) { params.DontReleaseMouse(); }
+        DragHelper(from,to,params);
+    //VAR_DEBUG(from)(to)(ctrl);
+    //if (ctrl) { ControlDown(); }
+    //Move(from);
+    //if (mousedown) { LeftDown(); }
+    //if (ctrl) { ControlUp(); }
+    //static const int DRAGSTEPS = 10; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
+    //for (int i = DRAGSTEPS; i > 0; --i)
+    //{
+    //    wxPoint p(from.x + (to.x - from.x) / i, from.y + (to.y - from.y) / i);
+    //    Move(p);
+    //}
+    //if (mouseup) { LeftUp(); }
+}
+
+void CtrlDrag(wxPoint from, wxPoint to, bool mouseup)
+{
+   //todo DragHelper(from,to,HoldCtrlBeforeDragStarts());
+    Drag(from, to, true, true, mouseup);
 }
 
 void ShiftDrag(wxPoint from, wxPoint to)
 {
-    wxPoint between(from);
-    between.x += (from.x > to.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
-    Drag(from, between, false, true, false);
-    ShiftDown();
-    Move(to);
-    LeftUp();
-    ShiftUp();
+    DragHelper(from,to,HoldShiftWhileDragging());
+    //wxPoint between(from);
+    //between.x += (from.x > to.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    //Drag(from, between, false, true, false);
+    //ShiftDown();
+    //Move(to);
+    //LeftUp();
+    //ShiftUp();
 }
 
 void DragAlign(wxPoint from, pixel position, bool shift, bool left)
 {
     ASSERT_DIFFERS(from.x, position);
+
+//    pixel alignposition = left ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips());
     wxPoint to(from);
-    to.x += (from.x > position) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
-    Drag(from, to, false, true, false);
-    if (shift) { ShiftDown(); }
-    // Now drag until the left position of the drag is aligned with position
-    pixel alignposition = left ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips());
-    to.x += (position - alignposition);
-    Move(to);
-    LeftUp();
-    if (shift) { ShiftUp(); }
+//    to.x += (position - alignposition);
+    DragParams params;
+    if (shift) { params.HoldShiftWhileDragging(); }
+    if (left) { params.AlignLeft(position); } else { params.AlignRight(position); }
+    DragHelper(from,from,params);
+
+    //wxPoint to(from);
+    //to.x += (from.x > position) ? -3 : 3; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    //Drag(from, to, false, true, false);
+    //if (shift) { ShiftDown(); }
+    //// Now drag until the left position of the drag is aligned with position
+    //pixel alignposition = left ? LeftPixel(DraggedClips()) : RightPixel(DraggedClips());
+    //to.x += (position - alignposition);
+    //Move(to);
+    //LeftUp();
+    //if (shift) { ShiftUp(); }
 }
 
 void DragAlignLeft(wxPoint from, pixel position)
@@ -509,7 +639,18 @@ void ToggleInterval(pixel from, pixel to)
         beforeShift = -1 * beforeShift;
     }
     static const pixel y = gui::Layout::TimeScaleHeight - 5;
-    ShiftDrag(wxPoint(from + beforeShift, y), wxPoint(to, y));
+
+    wxPoint fromPoint(from + beforeShift, y);
+    wxPoint toPoint(to,y);
+    wxPoint betweenPoint(fromPoint);
+    betweenPoint.x += (fromPoint.x > toPoint.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
+    Move(fromPoint);
+    LeftDown();
+    Move(betweenPoint);
+    ShiftDown();
+    Move(toPoint);
+    LeftUp();
+    ShiftUp();
 }
 
 void Scrub(pixel from, pixel to)

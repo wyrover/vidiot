@@ -443,7 +443,7 @@ void TestTransition::testPlaybackAndScrubbing()
         StartTest("Move clips around InOutTransition: the transition must be moved also.");
         DeselectAllClips();
         Click(Center(VideoClip(0,1)));
-        Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
+        CtrlDrag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getRight());
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getLeft());
@@ -466,7 +466,7 @@ void TestTransition::testPlaybackAndScrubbing()
         Undo();
         StartTest("Move clip related to InTransition: the transition must be moved also.");
         DeselectAllClips();
-        Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)), true);
+        CtrlDrag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition);
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getRight());
         ASSERT_ZERO(VideoTransition(0,5)->getLeft());
@@ -489,7 +489,7 @@ void TestTransition::testPlaybackAndScrubbing()
         Undo();
         StartTest("Move clip related to OutTransition: the transition must be moved also.");
         DeselectAllClips();
-        Drag(Center(VideoClip(0,1)), Center(VideoClip(0,5)), true);
+        CtrlDrag(Center(VideoClip(0,1)), Center(VideoClip(0,5)));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
         ASSERT_ZERO(VideoTransition(0,6)->getRight());
         ASSERT_MORE_THAN_ZERO(VideoTransition(0,6)->getLeft());

@@ -10,6 +10,7 @@
 #include "Details.h"
 #include "DetailsClip.h"
 #include "DetailsTrim.h"
+#include "Drag.h"
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
@@ -365,7 +366,9 @@ void TestTimeline::testDndMultipleTracks()
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(VideoClip(0,4)),VCenter(VideoTrack(1)));
         Drag(Center(VideoClip(1,1)), inbetween, false, true, false); // todo replace such booleans with named params
-        Drag(Center(VideoClip(0,4)), Center(VideoClip(0,5)), true, false, false);
+
+        CtrlDrag(Center(VideoClip(0,4)), Center(VideoClip(0,5)), false);
+        ASSERT(getTimeline().getDrag().isActive());
         Drag(Center(VideoClip(0,5)), inbetween, false, false, true);
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
@@ -380,7 +383,7 @@ void TestTimeline::testDndMultipleTracks()
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(AudioClip(0,4)),VCenter(AudioTrack(1)));
         Drag(Center(AudioClip(1,1)), inbetween, false, true, false);
-        Drag(Center(AudioClip(0,4)), Center(AudioClip(0,5)), true, false, false);
+        CtrlDrag(Center(AudioClip(0,4)), Center(AudioClip(0,5)), false);
         Drag(Center(AudioClip(0,5)), inbetween, false, false, true);
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip); // Bug occurred here: AudioClip was moved to track2 (which did not exist)
@@ -490,6 +493,7 @@ void TestTimeline::testAbortDrag()
     }
 }
 
+//RUNONLY(testIntervals);
 void TestTimeline::testIntervals()
 {
     StartTestSuite();
@@ -527,22 +531,32 @@ void TestTimeline::testIntervals()
     Undo();
 }
 
+//RUNONLY(testDividers);
 void TestTimeline::testDividers()
 {
     StartTestSuite();
-    const pixel fixedX = 100; // Fixed x position on timeline
     const pixel changeY = 20; // Number of pixels to move the divider
+    const pixel fixedX = 100; // Fixed x position on timeline
     const pixel moveToMiddleOfDivider = 2; // Click somewhere in the middle of a divider
+
+    auto DragDivider = [fixedX,moveToMiddleOfDivider](pixel from, pixel to)
+    {
+        wxPoint original(fixedX, from + moveToMiddleOfDivider);
+        wxPoint adjusted(fixedX, to + moveToMiddleOfDivider);
+        Move(original);
+        LeftDown();
+        Move(adjusted);
+        LeftUp();
+    };
+
     {
         StartTest("Move the audio/video divider down and up again.");
         const pixel originalDividerPosition = getSequence()->getDividerPosition();
         const pixel adjustedDividerPosition = originalDividerPosition + changeY;
-        wxPoint original(fixedX, originalDividerPosition + moveToMiddleOfDivider);
-        wxPoint adjusted(fixedX, adjustedDividerPosition + moveToMiddleOfDivider);
-        Drag(original, adjusted);
+        DragDivider(originalDividerPosition,adjustedDividerPosition);
         Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
         ASSERT_EQUALS(getSequence()->getDividerPosition(), adjustedDividerPosition);
-        Drag(adjusted, original);
+        DragDivider(adjustedDividerPosition,originalDividerPosition);
         ASSERT_EQUALS(getSequence()->getDividerPosition(), originalDividerPosition);
     }
     {
@@ -550,12 +564,10 @@ void TestTimeline::testDividers()
         const pixel originalHeight = AudioTrack(0)->getHeight();
         const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(AudioTrack(0)) + AudioTrack(0)->getHeight();
         const pixel adjustedDividerPosition = originalDividerPosition - changeY;
-        wxPoint original(fixedX, originalDividerPosition + moveToMiddleOfDivider);
-        wxPoint adjusted(fixedX, adjustedDividerPosition + moveToMiddleOfDivider);
-        Drag(original, adjusted);
+        DragDivider(originalDividerPosition, adjustedDividerPosition);
         Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
         ASSERT_EQUALS(AudioTrack(0)->getHeight(), originalHeight - changeY);
-        Drag(adjusted, original);
+        DragDivider(adjustedDividerPosition, originalDividerPosition);
         ASSERT_EQUALS(AudioTrack(0)->getHeight(), originalHeight);
     }
     {
@@ -563,12 +575,10 @@ void TestTimeline::testDividers()
         const pixel originalHeight = VideoTrack(0)->getHeight();
         const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(VideoTrack(0)) - gui::Layout::TrackDividerHeight;
         const pixel adjustedDividerPosition = originalDividerPosition + changeY;
-        wxPoint original(fixedX, originalDividerPosition + moveToMiddleOfDivider);
-        wxPoint adjusted(fixedX, adjustedDividerPosition + moveToMiddleOfDivider);
-        Drag(original, adjusted);
+        DragDivider(originalDividerPosition, adjustedDividerPosition);
         Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
         ASSERT_EQUALS(VideoTrack(0)->getHeight(), originalHeight - changeY);
-        Drag(adjusted, original);
+        DragDivider(adjustedDividerPosition, originalDividerPosition);
         ASSERT_EQUALS(VideoTrack(0)->getHeight(), originalHeight);
     }
 }
