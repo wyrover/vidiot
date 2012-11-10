@@ -193,57 +193,6 @@ void Trim(wxPoint from, wxPoint to, bool shift = false);
 /// Do a shift trim
 void ShiftTrim(wxPoint from, wxPoint to);
 
-/// Do a drag and drop between the two points (press, move, release).
-/// \param from starting position to move to initially
-/// \param to final position to drag to
-/// \param ctrl if true, then ctrl is pressed at the beginning of the drag and released directly after moving 'a bit'
-/// \param mousedown if true, then the mouse button is pressed just after moving to 'from' and before initiating the drag
-/// \param mouseup if true, then the mouse button is released after the mouse has reached position 'to'
-void Drag(wxPoint from, wxPoint to, bool ctrl = false, bool mousedown = true, bool mouseup = true);
-
-/// Press ctrl, move to 'from', then start dragging, release ctrl, and then drop on point 'to'
-/// \param from starting position to move to initially
-/// \param to final position to drag to
-void CtrlDrag(wxPoint from, wxPoint to, bool mouseup = true);
-
-/// Do a shift drag and drop between the two points (press, move a bit, hold shift, move to 'to', release mouse and shift).
-/// \param from starting position to move to initially
-/// \param to final position to drag to
-void ShiftDrag(wxPoint from, wxPoint to);
-
-/// Do a drag from the current position until the left position of the dragged object is exactly on top of 'position'
-/// \param position point to which the left position of the drag must be aligned
-/// \param from starting position of the drag operation (the mouse will be pressed here)
-/// Shift is not pressed during the drag operation.
-/// \note
-/// The current LeftPixel(DraggedClips()) may be slightly different than the requested position.
-/// When snapping is enabled, the snapping algorithm may cause a difference. If snapping is not
-/// enabled, the current zoom factor may cause differences. In fact, when snapping is not enabled
-/// not all pts values may be possible to 'drop on', since there's no matching pixel value. For
-/// instance when zoomed with a factor 5 (each pixel corresponds to 5 pts values), then only the
-/// pts values 1, and 5 are possible.
-void DragAlignLeft(wxPoint from, pixel position);
-
-/// \see DragAlignLeft
-/// Do a drag from the current position until the left position of the dragged object is exactly on top of 'align'
-/// Shift is pressed during the drag operation causing a shift-drag (insert clips instead of overwrite)
-void ShiftDragAlignLeft(wxPoint from, pixel position);
-
-/// Similar to DragAlignLeft with the exception that the right position of the dragged object is aligned to the given position.
-/// \see DragAlignLeft
-void DragAlignRight(wxPoint from, pixel position);
-
-/// Similar to ShiftDragAlignLeft with the exception that the right position of the dragged object is aligned to the given position.
-/// \see ShiftDragAlignLeft
-void ShiftDragAlignRight(wxPoint from, pixel position);
-
-/// Drag videoclip to VideoTrack(newtrackindex) and
-/// Drag audioclip to AudioTrack(newtrackindex)
-/// \param videoclip video clip to be moved to the video track with index newtrackindex
-/// \param audioclip audio clip to be moved to the audio track with index newtrackindex
-/// \param newtrackindex new track of clip
-void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip);
-
 void ToggleInterval(pixel from, pixel to);
 
 void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)

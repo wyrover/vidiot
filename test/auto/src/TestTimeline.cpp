@@ -14,6 +14,7 @@
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
+#include "HelperDrag.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
@@ -270,7 +271,7 @@ void TestTimeline::testDnd()
         StartTest("Dragging: Move one clip around.");
         ConfigFixture.SnapToCursor(true);
         pts length = VideoClip(0,3)->getLength();
-        DragAlignLeft(Center(VideoClip(0,3)),1); // Move to a bit after the beginning of timeline, snaps to the cursor
+        Drag(From(Center(VideoClip(0,3))).AlignLeft(1)); // Move to a bit after the beginning of timeline, snaps to the cursor
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),length);
         Undo();
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),length );
@@ -285,7 +286,7 @@ void TestTimeline::testDnd()
         ConfigFixture.SnapToClips(true);
         pts lengthOfClipRightOfTheDrop = VideoClip(0,2)->getLength();
         pts lengthOfDroppedClip = VideoClip(0,3)->getLength();
-        DragAlignRight(Center(VideoClip(0,3)),RightPixel(VideoClip(0,1)));
+        Drag(From(Center(VideoClip(0,3))).AlignRight(RightPixel(VideoClip(0,1))));
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfClipRightOfTheDrop);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDroppedClip);
         Undo();
@@ -296,7 +297,7 @@ void TestTimeline::testDnd()
         //             mouse pointer is positioned to the right of the center position of the dragged clip, snapping
         //             will first be done on the clip's right edge. The '-2' was added to the target position to
         //             test that the snapping causes an actual extra movement on the drop position.
-        DragAlignRight(Center(VideoClip(0,3)) + wxPoint(5,0),LeftPixel(VideoClip(0,2)) - 2);
+        Drag(From(Center(VideoClip(0,3)) + wxPoint(5,0)).AlignRight(LeftPixel(VideoClip(0,2)) - 2));
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfClipRightOfTheDrop);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDroppedClip);
         Undo();
@@ -304,7 +305,7 @@ void TestTimeline::testDnd()
     {
         StartTest("Dragging: Move one clip partially on top of its original location (caused a recursion error in AClipEdit, for expanding the replacement map).");
         pts length = VideoClip(0,3)->getLength();
-        Drag(Center(VideoClip(0,3)), Center(VideoClip(0,3)) + wxPoint(20,0)); // Move the clip only a bit to the right
+        Drag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,3)) + wxPoint(20,0))); // Move the clip only a bit to the right
         ASSERT(VideoClip(0,3)->isA<model::EmptyClip>());
         ASSERT_EQUALS(VideoClip(0,4)->getLength(),length );
         Undo();
@@ -313,7 +314,7 @@ void TestTimeline::testDnd()
         StartTest("Dragging: Move a clip beyond the track length.");
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
-        Drag(Center(VideoClip(0,1)), wxPoint(RightPixel(VideoClip(0,6)) + VideoClip(0,1)->getLength(), VCenter(VideoClip(0,1)))); // + + VideoClip(0,1)->getLength(): Ensure that it's dropped after a bit of empty space
+        Drag(From(Center(VideoClip(0,1))).To(wxPoint(RightPixel(VideoClip(0,6)) + VideoClip(0,1)->getLength(), VCenter(VideoClip(0,1))))); // + + VideoClip(0,1)->getLength(): Ensure that it's dropped after a bit of empty space
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(EmptyClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,8)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
@@ -326,7 +327,7 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         DeselectAllClips();
-        DragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 25);
+        Drag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 25));
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
     }
@@ -335,7 +336,8 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         DeselectAllClips();
-        DragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
+        //todoDragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
+        Drag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 5));
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
     }
@@ -344,7 +346,8 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(false).SnapToCursor(false);
         DeselectAllClips();
-        DragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
+        //todoDragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
+        Drag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 5));
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
     }
@@ -365,11 +368,12 @@ void TestTimeline::testDndMultipleTracks()
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(VideoClip(0,4)),VCenter(VideoTrack(1)));
-        Drag(Center(VideoClip(1,1)), inbetween, false, true, false); // todo replace such booleans with named params
-
-        CtrlDrag(Center(VideoClip(0,4)), Center(VideoClip(0,5)), false);
+        Drag(From(Center(VideoClip(1,1))).To(inbetween).DontReleaseMouse());
+        ControlDown();
+        Drag(From(Center(VideoClip(0,4))).To(Center(VideoClip(0,5))).DontReleaseMouse());
         ASSERT(getTimeline().getDrag().isActive());
-        Drag(Center(VideoClip(0,5)), inbetween, false, false, true);
+        ControlUp();
+        Drag(From(Center(VideoClip(0,5))).To(inbetween));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         Undo(2);
@@ -382,9 +386,11 @@ void TestTimeline::testDndMultipleTracks()
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(AudioClip(0,4)),VCenter(AudioTrack(1)));
-        Drag(Center(AudioClip(1,1)), inbetween, false, true, false);
-        CtrlDrag(Center(AudioClip(0,4)), Center(AudioClip(0,5)), false);
-        Drag(Center(AudioClip(0,5)), inbetween, false, false, true);
+        Drag(From(Center(AudioClip(1,1))).To(inbetween).DontReleaseMouse());
+        ControlDown();
+        Drag(From(Center(AudioClip(0,4))).To(Center(AudioClip(0,5))).DontReleaseMouse());
+        ControlUp();
+        Drag(From(Center(AudioClip(0,5))).To(inbetween));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip); // Bug occurred here: AudioClip was moved to track2 (which did not exist)
         Undo(2);
@@ -397,7 +403,7 @@ void TestTimeline::testUndo()
     StartTestSuite();
     ConfigFixture.SnapToClips(true);
     pts length = VideoClip(0,3)->getLength();
-    Drag(Center(VideoClip(0,3)),wxPoint(2,Center(VideoClip(0,3)).y));
+    Drag(From(Center(VideoClip(0,3))).To(wxPoint(2,Center(VideoClip(0,3)).y)));
     ASSERT_EQUALS(VideoClip(0,0)->getLength(),length);
     Undo();
     ASSERT_EQUALS(VideoClip(0,3)->getLength(),length);
@@ -408,7 +414,7 @@ void TestTimeline::testUndo()
 
     // Move clip 2: the transition must be removed
     DeselectAllClips();
-    Drag(Center(VideoClip(0,1)), Center(VideoClip(0,4)));
+    Drag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,4))));
     ASSERT(VideoClip(0,1)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
     Undo();
@@ -418,7 +424,7 @@ void TestTimeline::testUndo()
     // Move clip 3: the transition must be removed and the fourth clip becomes the third one (clip+transition removed)
     model::IClipPtr afterclip = VideoClip(0,4);
     DeselectAllClips();
-    Drag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
+    Drag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
     ASSERT_EQUALS(afterclip,VideoClip(0,3));
     ASSERT(VideoClip(0,2)->isA<model::EmptyClip>());
     ASSERT(!VideoClip(0,2)->isA<model::Transition>());
@@ -479,7 +485,7 @@ void TestTimeline::testAbortDrag()
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
 
         DeselectAllClips();
-        Drag(Center(VideoClip(0,5)), Center(VideoClip(0,4)), false, true, false);
+        Drag(From(Center(VideoClip(0,5))).To(Center(VideoClip(0,4))).DontReleaseMouse());
         ShiftDown();
         Move(Center(VideoClip(0,3)));
         Type(WXK_ESCAPE); // Abort the drop
@@ -701,7 +707,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         TrimRight(VideoClip(0,3),-40,false);
         pts length = VideoClip(0,3)->getLength();
         ASSERT(VideoClip(0,3)->isA<model::VideoClip>());
-        DragAlignLeft(Center(VideoClip(0,3)),RightPixel(VideoClip(0,7)));
+        Drag(From(Center(VideoClip(0,3))).AlignLeft(RightPixel(VideoClip(0,7))));
         TrimRight(VideoClip(0,7),20,false);
         ASSERT_MORE_THAN(VideoClip(0,7)->getLength(), length);
         Undo(3);
@@ -760,7 +766,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("Move the 'to be tested' clip's left point inbetween the clip in the other track (preparation).");
         ASSERT(!wxGetMouseState().ShiftDown());
-        DragAlignLeft(Center(VideoClip(0,4)),HCenter(VideoClip(0,3)));
+        Drag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,3))));
         ASSERT_LESS_THAN(VideoTrack(1)->getLength(),VideoTrack(0)->getLength());
         ASSERT_LESS_THAN(AudioTrack(1)->getLength(),AudioTrack(0)->getLength());
         ASSERT(!wxGetMouseState().ShiftDown());
@@ -790,7 +796,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
     {
         StartTest("Move the clip in the other track over the end of the tested clip (preparation).");
         ASSERT(!wxGetMouseState().ShiftDown());
-        Drag(Center(VideoClip(1,1)),wxPoint(RightPixel(VideoClip(0,4)),VCenter(VideoTrack(1))));
+        Drag(From(Center(VideoClip(1,1))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(VideoTrack(1)))));
         ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip);
         ASSERT_EQUALS(VideoTrack(1)->getClips().size(),2);
@@ -828,13 +834,13 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ASSERT_EQUALS(AudioClip(1,1)->getLeftPts(),AudioClip(0,3)->getLeftPts());
         ASSERT_EQUALS(VideoClip(1,3)->getLeftPts(),VideoClip(0,5)->getLeftPts());
         ASSERT_EQUALS(AudioClip(1,3)->getLeftPts(),AudioClip(0,5)->getLeftPts());
-        Drag(Center(VideoClip(1,1)),Center(VideoClip(1,1))-wxPoint(8,0));
+        Drag(From(Center(VideoClip(1,1))).To(Center(VideoClip(1,1))-wxPoint(8,0)));
         ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
-        Drag(Center(VideoClip(1,3)),Center(VideoClip(1,3))+wxPoint(8,0));
+        Drag(From(Center(VideoClip(1,3))).To(Center(VideoClip(1,3))+wxPoint(8,0)));
         ASSERT(!wxGetMouseState().ShiftDown());
         ASSERT_VIDEOTRACK1(EmptyClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
-        DragAlignLeft(Center(VideoClip(1,4)),LeftPixel(VideoClip(0,4))+20);
+        Drag(From(Center(VideoClip(1,4))).AlignLeft(LeftPixel(VideoClip(0,4))+20));
         ASSERT_VIDEOTRACK1(EmptyClip)                   (VideoClip)(EmptyClip)(VideoClip)(EmptyClip)(VideoClip);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(       VideoClip      )(EmptyClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(       AudioClip      )(EmptyClip);
@@ -881,7 +887,7 @@ void TestTimeline::testTrimmingWithOtherTracks()
         // NOTE: At this point the scrolling has been changed. Trimming and snapping with a scroll offset is thus also tested.
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         TrimLeft(VideoClip(0,4),40,false);
-        Drag(Center(VideoClip(0,6)),wxPoint(HCenter(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1))));
+        Drag(From(Center(VideoClip(0,6))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
         //pause();
         ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,5));
         ASSERT_EQUALS(VideoClip(1,1)->getLink(),AudioClip(0,4));
