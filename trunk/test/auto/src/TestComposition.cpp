@@ -9,6 +9,7 @@
 #include "FixtureGui.h"
 #include "HelperApplication.h"
 #include "HelperDetails.h"
+#include "HelperDrag.h"
 #include "HelperModel.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
@@ -46,7 +47,7 @@ void TestComposition::testBlend()
     StartTestSuite();
     triggerMenu(ID_ADDVIDEOTRACK);
     DragToTrack(1,VideoClip(0,3),model::IClipPtr());
-    Drag(Center(VideoClip(1,1)),wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1))));
+    Drag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
     ClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
     TypeN(3,WXK_PAGEUP);
     waitForIdle();
