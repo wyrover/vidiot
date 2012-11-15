@@ -101,10 +101,12 @@ char* VideoClip::getType() const
 
 VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& parameters)
 {
+    bool enforceKeyFrame = false;
     if (getLastSetPosition())
     {
         mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateLastSetPosition();
+        enforceKeyFrame = true; // Every first frame of a clip is forced to be a key frame
     }
 
     unsigned int length = getLength();
@@ -195,6 +197,11 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         }
     }
 
+    if (videoFrame)
+    {
+        // Note: for some clips, due to framerate resampling, the first and second frames might be the exact same frame. However, only for the first one the keyframe flag is desired
+        videoFrame->setForceKeyFrame(enforceKeyFrame);
+    }
     VAR_VIDEO(videoFrame);
     setGenerationProgress(mProgress);
     return videoFrame;

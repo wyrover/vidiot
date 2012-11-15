@@ -453,6 +453,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
 
             int out_size, ret;
             struct SwsContext *img_convert_ctx = 0;
+            bool forceKeyFrame = false;
 
             if (frame_count >= lengthInVideoFrames)
             {
@@ -461,6 +462,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
             else
             {
                 VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(video_stream->codec->width,video_stream->codec->height)).setDrawBoundingBox(false));
+                forceKeyFrame = frame->getForceKeyFrame();
                 pts progress = frame->getPts() - from;
                 wxString s; s << _("(frame ") << progress << _(" out of ") << length << ")";
                 gui::StatusBar::get().setProcessingText(ps + " " + s);
@@ -500,6 +502,17 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
             else
             {
                 // encode the image
+                if (forceKeyFrame)
+                {
+                    picture->key_frame = 1;
+                    picture->pict_type =  AV_PICTURE_TYPE_I;
+                }
+                else
+                {
+                    picture->key_frame = 0;
+                    picture->pict_type =  AV_PICTURE_TYPE_NONE;
+                }
+
                 out_size = avcodec_encode_video(video_stream->codec, video_outbuf, video_outbuf_size, picture);
                 // if zero size, it means the image was buffered
                 if (out_size > 0)
@@ -568,14 +581,6 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
     gui::StatusBar::get().setProcessingText();
     gui::StatusBar::get().hideProgressBar();
 }
-
-//You'll need to look at the libavcodec documentation - specifically, at avcodec_encode_video(). I found that the best available documentation is in the ffmpeg header files and the API sample source code that's provided with the ffmpeg source. Specifically, look at libavcodec/api-example.c or even ffmpeg.c.
-//
-// todo set i frames for each first (and last?) frame of a clip boundary..
-//To force an I frame, you'll need to set the pict_type member of the picture you're encoding to 1: 1 is an I frame, 2 is a P frame, and I don't remember what's the code for a B frame off the top of my head... Also, the key_frame member needs to be set to 1.
-//You'll need to be careful how you allocate the frame objects that the API calls require. api-example.c is your best bet as far as that goes, in my opinion. Look for the function video_encode_example() - it's concise and illustrates all the important things you need to worry about - pay special attention to the second call to avcodec_encode_video() that passes a NULL picture argument - it's required to get the last frames of video since MPEG video is encoded out of sequence and you may end up with a delay of a few frames.
-//
-//Btw, the values for the pict_type member of the picture are AV_PICTURE_TYPE_I, AV_PICTURE_TYPE_P, AV_PICTURE_TYPE_B, and so o
 
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
 {

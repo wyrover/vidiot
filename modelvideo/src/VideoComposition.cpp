@@ -65,8 +65,15 @@ VideoFramePtr VideoComposition::generate()
     wxImagePtr compositeImage(boost::make_shared<wxImage>(requiredOutputSize));
     wxGraphicsContext* gc = wxGraphicsContext::Create(*compositeImage);
 
+    bool keyFrame = false;
+
     BOOST_FOREACH( VideoFramePtr frame, mFrames )
     {
+        // PERF: if only one frame without changes then use that frame?
+        if (frame->getForceKeyFrame())
+        {
+            keyFrame = true;
+        }
         wxImagePtr image = frame->getImage();
         if (image) // image may be '0' due to clipping/moving
         {
@@ -86,6 +93,7 @@ VideoFramePtr VideoComposition::generate()
 
     delete gc;
     VideoFramePtr result = boost::make_shared<VideoFrame>(compositeImage,0);
+    result->setForceKeyFrame(keyFrame);
     return result;
 }
 

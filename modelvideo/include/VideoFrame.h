@@ -59,6 +59,8 @@ public:
     wxRect getRegionOfInterest() const;
     int getOpacity() const;
     void setOpacity(int opacity);
+    void setForceKeyFrame(bool force);
+    bool getForceKeyFrame() const;
 
     /// Return an image, using the frame's data clipped to the region of interest
     /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
@@ -98,6 +100,7 @@ protected:
     int mOpacity;
     boost::uint8_t *mBuffer;
     int mBufferSize;
+    bool mForceKeyFrame;
 
 private:
 
