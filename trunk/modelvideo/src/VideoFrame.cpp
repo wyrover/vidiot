@@ -24,6 +24,7 @@ VideoFrame::VideoFrame(wxSize size, pts position, int repeat)
     , mRepeat(repeat)
     , mOpacity(Constants::sMaxOpacity)
     , mBufferSize(0)
+    , mForceKeyFrame(false)
 {
     PixelFormat format = PIX_FMT_RGB24;
     mBufferSize = avpicture_get_size(format, mSize.GetWidth(), mSize.GetHeight());
@@ -47,6 +48,7 @@ VideoFrame::VideoFrame(wxSize size, pts position, int repeat)
     , mRepeat(1)
     , mOpacity(Constants::sMaxOpacity)
     , mBufferSize(0)
+    , mForceKeyFrame(false)
     {
     }
 
@@ -62,6 +64,7 @@ VideoFrame::VideoFrame(wxSize size, pts position, int repeat)
     , mRepeat(1)
     , mOpacity(Constants::sMaxOpacity)
     , mBufferSize(0)
+    , mForceKeyFrame(false)
     {
     }
 
@@ -77,6 +80,7 @@ VideoFrame::VideoFrame(wxSize size, pts position)
     , mRepeat(1)
     , mOpacity(Constants::sMaxOpacity)
     , mBufferSize(0)
+    , mForceKeyFrame(false)
 {
 }
 
@@ -130,6 +134,16 @@ int VideoFrame::getOpacity() const
 void VideoFrame::setOpacity(int opacity)
 {
     mOpacity = opacity;
+}
+
+void VideoFrame::setForceKeyFrame(bool force)
+{
+    mForceKeyFrame = force;
+}
+
+bool VideoFrame::getForceKeyFrame() const
+{
+    return mForceKeyFrame;
 }
 
 void VideoFrame::setRegionOfInterest(wxRect regionOfInterest)
@@ -203,7 +217,8 @@ std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
         << obj.mSize                << '|'
         << obj.mPosition            << '|'
         << obj.mOpacity             << '|'
-        << obj.mRegionOfInterest;
+        << obj.mRegionOfInterest    << '|'
+        << obj.mForceKeyFrame;
     return os;
 }
 
