@@ -336,7 +336,6 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         DeselectAllClips();
-        //todoDragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
         Drag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 5));
         ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();
@@ -346,7 +345,6 @@ void TestTimeline::testDnd()
         getTimeline().Scroll(80,0);
         ConfigFixture.SnapToClips(false).SnapToCursor(false);
         DeselectAllClips();
-        //todoDragAlignLeft(Center(VideoClip(0,2)), LeftPixel(VideoClip(0,4)) + 5);
         Drag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,4)) + 5));
         ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
         Undo();

@@ -1,14 +1,14 @@
-#ifndef MODEL_VIDEO_TRANSITION_H
-#define MODEL_VIDEO_TRANSITION_H
+#ifndef MODEL_AUDIO_TRANSITION_H
+#define MODEL_AUDIO_TRANSITION_H
 
 #include "Transition.h"
-#include "IVideo.h"
+#include "IAudio.h"
 
 namespace model {
 
-class VideoTransition
+class AudioTransition
     :   public Transition
-    ,   public IVideo
+    ,   public IAudio
 {
 public:
 
@@ -16,15 +16,15 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoTransition();
+    AudioTransition();
 
-    virtual ~VideoTransition();
+    virtual ~AudioTransition();
 
+   //////////////////////////////////////////////////////////////////////////
+    // IAUDIO
     //////////////////////////////////////////////////////////////////////////
-    // IVIDEO
-    //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
+    virtual AudioChunkPtr getNextAudio(const AudioCompositionParameters& parameters) override;
 
 protected:
 
@@ -34,13 +34,16 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoTransition(const VideoTransition& other);
+    AudioTransition(const AudioTransition& other);
 
     //////////////////////////////////////////////////////////////////////////
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters) = 0;
+    samplecount getTotalSamples(const AudioCompositionParameters& parameters) const;
+
+    virtual void reset() = 0; ///< Reset any data that is cached.
+    virtual AudioChunkPtr getAudio(samplecount position, IClipPtr leftClip, IClipPtr rightClip, const AudioCompositionParameters& parameters) = 0;
 
 private:
 
@@ -48,7 +51,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress;          ///< Last rendered position
+    samplecount mProgress;  ///< Last rendered position in frames
     IClipPtr mLeftClip;     ///< Clip generating 'left' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getPrev'
     IClipPtr mRightClip;    ///< Clip generating 'right' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getNext'
 
@@ -56,7 +59,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoTransition& obj );
+    friend std::ostream& operator<<( std::ostream& os, const AudioTransition& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -73,6 +76,6 @@ private:
 #include  <boost/preprocessor/slot/counter.hpp>
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::VideoTransition, 1);
+BOOST_CLASS_VERSION(model::AudioTransition, 1);
 
-#endif // MODEL_VIDEO_TRANSITION_H
+#endif // MODEL_AUDIO_TRANSITION_H

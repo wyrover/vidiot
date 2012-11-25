@@ -239,7 +239,7 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
     }
 }
 
-model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength )
+model::IClipPtr AClipEdit::addTransition( model::IClipPtr leftClip, model::IClipPtr rightClip, model::TransitionPtr transition )
 {
     model::TrackPtr track;
     model::IClipPtr position;
@@ -249,6 +249,9 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
     ASSERT( !rightClip || !rightClip->isA<model::Transition>() );
     ASSERT( !rightClip || !rightClip->isA<model::EmptyClip>() );
     ASSERT( !rightClip || !leftClip || ((leftClip->getNext() == rightClip) && (rightClip->getPrev() ==  leftClip)) );
+
+    pts leftLength = transition->getLeft();
+    pts rightLength = transition->getRight();
 
     if (leftLength > 0)
     {
@@ -288,7 +291,6 @@ model::IClipPtr AClipEdit::makeTransition( model::IClipPtr leftClip, pts leftLen
     }
     ASSERT(track);
     ASSERT(position);
-    model::IClipPtr transition = boost::make_shared<model::video::transition::CrossFade>(leftLength, rightLength);
     addClip(transition, track, position);
     return transition;
 }

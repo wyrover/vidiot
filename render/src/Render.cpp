@@ -3,16 +3,17 @@
 #include "AudioChunk.h"
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
+#include "AudioCompositionParameters.h"
 #include "Config.h"
 #include "Constants.h"
 #include "Convert.h"
 #include "Folder.h"
-#include "StatusBar.h"
 #include "OutputFormat.h"
 #include "OutputFormats.h"
 #include "Project.h"
 #include "Properties.h"
 #include "Sequence.h"
+#include "StatusBar.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"
@@ -381,7 +382,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
     }
     long lengthInSeconds = Convert::ptsToTime(lengthInVideoFrames) / Constants::sSecond;
 
-    AudioChunkPtr currentAudioChunk = sequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
+    AudioChunkPtr currentAudioChunk = sequence->getNextAudio(AudioCompositionParameters().setSampleRate(audio_stream->codec->sample_rate).setNrChannels(audio_stream->codec->channels));
     while (!done)
     {
         if (audio_stream)
@@ -420,7 +421,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
 
                     if (currentAudioChunk->getUnreadSampleCount() == 0)
                     {
-                        currentAudioChunk = sequence->getNextAudio(audio_stream->codec->sample_rate,audio_stream->codec->channels);
+                        currentAudioChunk = sequence->getNextAudio(AudioCompositionParameters().setSampleRate(audio_stream->codec->sample_rate).setNrChannels(audio_stream->codec->channels));
                     }
                 }
                 else

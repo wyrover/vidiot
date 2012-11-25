@@ -66,7 +66,7 @@ wxString Convert::ptsToHumanReadibleString(pts duration)
 }
 
 // static
-int Convert::ptsToFrames(int audioRate, int nAudioChannels, pts position)
+int Convert::ptsToSamples(int audioRate, int nAudioChannels, pts position)
 {
     boost::int64_t nFrames =
         static_cast<boost::int64_t>(audioRate * nAudioChannels) *
@@ -77,7 +77,7 @@ int Convert::ptsToFrames(int audioRate, int nAudioChannels, pts position)
 }
 
 // static
-pts Convert::framesToPts(int audioRate, int nAudioChannels, int nFrames)
+pts Convert::samplesToPts(int audioRate, int nAudioChannels, int nFrames)
 {
     boost::int64_t time =
         static_cast<boost::int64_t>(nFrames) *
@@ -85,6 +85,19 @@ pts Convert::framesToPts(int audioRate, int nAudioChannels, int nFrames)
         static_cast<boost::int64_t>(audioRate * nAudioChannels);
     ASSERT_MORE_THAN_EQUALS_ZERO(time);
     return model::Convert::timeToPts(time);
+}
+
+// static
+int Convert::samplesToFrames(int nChannels, int nSamples)
+{
+    ASSERT_ZERO(nSamples % nChannels);
+    return nSamples / nChannels;
+}
+
+// static
+int Convert::framesToSamples(int nChannels, int nFrames)
+{
+    return nFrames * nChannels;
 }
 
 pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrate)

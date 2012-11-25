@@ -62,6 +62,32 @@ Options::Options(wxWindow* win)
         addoption(_("Default video scaling"), mDefaultVideoAlignment);
     }
     {
+        addtab(_("Audio"));
+
+        addbox(_("New projects"));
+
+         wxArrayString sampleRateChoices;
+         sampleRateChoices.Add("22050");
+         sampleRateChoices.Add("44100");
+         sampleRateChoices.Add("48000");
+         wxIntegerValidator<int> sampleRateValidator;
+         sampleRateValidator.SetMin(1000);
+         sampleRateValidator.SetMax(1000);
+         long initial = Config::ReadLong(Config::sPathDefaultAudioSampleRate);
+         mDefaultAudioSampleRate = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
+         addoption(_("Default audio sample rate"), mDefaultAudioSampleRate);
+
+         wxIntegerValidator<int> channelValidator;
+         channelValidator.SetMin(1);
+         channelValidator.SetMax(2);
+         wxArrayString channelChoices;
+         channelChoices.Add("1");
+         channelChoices.Add("2");
+         initial = Config::ReadLong(Config::sPathDefaultAudioChannels);
+         mDefaultAudioNumberOfChannels = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
+         addoption(_("Default number of audio channels"), mDefaultAudioNumberOfChannels);
+    }
+    {
         addtab(_("Timeline"));
 
         addbox(_("Marking selection"));
@@ -105,6 +131,8 @@ Options::~Options()
 {
     if (GetReturnCode() == GetAffirmativeId())
     {
+        long value(0);
+        bool ok(false);
         Config::holdWriteToDisk();
         Config::WriteBool( Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
         Config::WriteString( Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
@@ -115,6 +143,10 @@ Options::~Options()
         Config::WriteLong( Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
         Config::WriteString( Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
         Config::WriteString( Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
+        ok = mDefaultAudioSampleRate->GetValue().ToLong(&value); ASSERT(ok);
+        Config::WriteLong( Config::sPathDefaultAudioSampleRate, value);
+        ok = mDefaultAudioNumberOfChannels->GetValue().ToLong(&value); ASSERT(ok);
+        Config::WriteLong( Config::sPathDefaultAudioChannels, value);
         Config::WriteLong( Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
         Config::WriteLong( Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
         Config::WriteString( Config::sPathStrip,                     mStrip->GetValue());

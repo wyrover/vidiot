@@ -48,7 +48,12 @@ public: \
     typedef boost::bimap<ENUMNAME,wxString> ENUMNAME ## Map; \
     static ENUMNAME ## Map mapToHumanReadibleString; \
     std::string toString( ENUMNAME value ) const { return mMap.left.find(value)->second; }; \
-    ENUMNAME fromString( std::string value ) const { return mMap.right.find(value)->second; }; \
+    ENUMNAME fromString( std::string value ) const \
+    {\
+        boost::bimap<ENUMNAME,std::string>::right_const_iterator it = mMap.right.find(value); \
+        if (it == mMap.right.end()) { return ENUMNAME ## _MAX; } \
+        return mMap.right.find(value)->second; \
+    }; \
     static ENUMNAME readConfigValue(wxString path); \
 private: \
     boost::bimap<ENUMNAME,std::string> mMap; \

@@ -19,12 +19,6 @@ CrossFade::CrossFade()
     VAR_DEBUG(this);
 }
 
-CrossFade::CrossFade(pts nFramesLeft, pts nFramesRight)
-    :   VideoTransition(nFramesLeft, nFramesRight)
-{
-    VAR_DEBUG(this);
-}
-
 CrossFade::CrossFade(const CrossFade& other)
     :   VideoTransition(other)
 {

@@ -22,16 +22,6 @@ VideoTransition::VideoTransition()
     VAR_DEBUG(this);
 }
 
-VideoTransition::VideoTransition(pts nFramesLeft, pts nFramesRight)
-    :   Transition(nFramesLeft, nFramesRight)
-    ,   IVideo()
-    ,   mProgress(-1)
-    ,   mLeftClip()
-    ,   mRightClip()
-{
-    VAR_DEBUG(this);
-}
-
 VideoTransition::VideoTransition(const VideoTransition& other)
     :   Transition(other)
     ,   IVideo()

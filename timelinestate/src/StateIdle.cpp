@@ -21,12 +21,14 @@
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
 #include "StateRightDown.h"
+#include "AudioTransition_CrossFade.h"
+#include "VideoTransition_CrossFade.h"
 #include "StateScrolling.h"
 #include "StateTrim.h"
 #include "Timeline.h"
+#include "VideoTrack.h"
 #include "Tooltip.h"
 #include "Track.h"
-
 #include "UtilLog.h"
 #include "ViewMap.h"
 #include "Zoom.h"
@@ -130,7 +132,9 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         wxChar c = evt.mWxEvent.GetUnicodeKey();
         switch (evt.mWxEvent.GetUnicodeKey())
         {
+        case 's':   (new command::SplitAtCursor(getSequence()))->submit(); break;
         case 'S':   (new command::SplitAtCursor(getSequence()))->submit(); break;
+        case 'c':   addTransition(); break;
         case 'C':   addTransition(); break;
         case '-':   getZoom().change( evt.mWxEvent.ControlDown() ? -1000 : -1); break;
         case '=':   getZoom().change( evt.mWxEvent.ControlDown() ?  1000 :  1); break;
@@ -146,6 +150,10 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case WXK_F1:        getTooltip().show(sTooltip);                    break;
         case 'c': addTransition(); break;
         case 'C': addTransition(); break;
+        case 's':   (new command::SplitAtCursor(getSequence()))->submit(); break;
+        case 'S':   (new command::SplitAtCursor(getSequence()))->submit(); break;
+        case '-':   getZoom().change( evt.mWxEvent.ControlDown() ? -1000 : -1); break;
+        case '=':   getZoom().change( evt.mWxEvent.ControlDown() ?  1000 :  1); break;
         }
     }
     return forward_event();
@@ -219,15 +227,33 @@ boost::statechart::result Idle::leftDown()
 
 void Idle::addTransition()
 {
-   command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getPosition());
-   if (cmd->isPossible())
-   {
-       cmd->submit();
-   }
-   else
-   {
-       delete cmd;
-   }
+    PointerPositionInfo info = getTimeline().getMousePointer().getInfo(getMousePointer().getPosition());
+    if (info.clip) // todo cannot add fade out to last clip of sequence due to such checks, see also CreateTransition itselves
+    {
+        ASSERT(info.track);
+        bool video = info.track->isA<model::VideoTrack>();
+
+        model::TransitionPtr transition;
+        if (video)
+        {
+            transition = boost::make_shared<model::video::transition::CrossFade>();
+        }
+        else
+        {
+            // todo make the selection more generic??
+            transition = boost::make_shared<model::audio::transition::CrossFade>();
+        }
+
+        command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getPosition(), transition);
+        if (cmd->isPossible())
+        {
+            cmd->submit();
+        }
+        else
+        {
+            delete cmd;
+        }
+    }
 }
 
 }}} // namespace

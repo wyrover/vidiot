@@ -14,8 +14,8 @@ namespace model {
 
 Transition::Transition()
     :   IClip()
-    ,   mFramesLeft(0)
-    ,   mFramesRight(0)
+    ,   mFramesLeft(-1)
+    ,   mFramesRight(-1)
     ,   mLastSetPosition(boost::none)
     ,   mGeneratedPts(0)
     ,   mTrack()
@@ -27,19 +27,11 @@ Transition::Transition()
     VAR_DEBUG(this);
 }
 
-Transition::Transition(pts nFramesLeft, pts nFramesRight)
-    :   IClip()
-    ,   mFramesLeft(nFramesLeft)
-    ,   mFramesRight(nFramesRight)
-    ,   mLastSetPosition(boost::none)
-    ,   mGeneratedPts(0)
-    ,   mTrack()
-    ,   mIndex(0)
-    ,   mLeftPtsInTrack(0)
-    ,   mSelected(false)
-    ,   mDragged(false)
+void Transition::init(pts nFramesLeft, pts nFramesRight)
 {
-    VAR_DEBUG(this);
+    mFramesLeft = nFramesLeft;
+    mFramesRight = nFramesRight;
+    VAR_DEBUG(this)(nFramesLeft)(nFramesRight);
 }
 
 Transition::Transition(const Transition& other)

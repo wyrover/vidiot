@@ -52,10 +52,27 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onAddInTransition(wxCommandEvent& event);
+    void onAddOutTransition(wxCommandEvent& event);
+    void onAddInOutTransition(wxCommandEvent& event);
+    void onAddInFade(wxCommandEvent& event);
+    void onAddOutFade(wxCommandEvent& event);
+    void onAddInOutFade(wxCommandEvent& event);
+    void onRemoveEmpty(wxCommandEvent& event);
 
 private:
 
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     wxMenu mMenu;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void createTransition(model::TransitionPtr transition);
+
 };
 
 }} // namespace

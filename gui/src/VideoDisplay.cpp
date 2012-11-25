@@ -1,12 +1,12 @@
 #include "VideoDisplay.h"
 
 #include <portaudio.h>
+#include "AudioCompositionParameters.h"
 #include "Config.h"
 #include "Convert.h"
 #include "Layout.h"
 #include "Properties.h"
 #include "Sequence.h"
-
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 #include "VideoDisplayEvent.h"
@@ -242,7 +242,7 @@ void VideoDisplay::audioBufferThread()
 {
     while (!mAbortThreads)
     {
-        model::AudioChunkPtr chunk = mProducer->getNextAudio(mAudioSampleRate,mNumberOfAudioChannels);
+        model::AudioChunkPtr chunk = mProducer->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
 
         if (chunk)
         {

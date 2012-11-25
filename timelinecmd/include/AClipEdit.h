@@ -135,13 +135,11 @@ protected:
     /// \param exclude list of tracks that are not to be changed
     void shiftTracks(model::Tracks tracks, pts start, pts amount);
 
-    /// Make a new transition replacing the two given clips with two new clips
-    /// with a transition in between.
+    /// Add a new transition replacing the two given clips with two new clips with the transition in between.
+    /// The length of the new clips adjacent to the transition is such that they're shortened with the length of the transition.
     /// \param leftClip clip to the left of the transition. May be 0 in case only right clip applies.
-    /// \param leftLength length to the left of the cut between the clips to be used for the transition
     /// \param rightClip clip to the right of the transition. May be 0 in case only left clip applies.
-    /// \param rightLength length to the right of the cut between the clips to be used for the transition
-    model::IClipPtr makeTransition( model::IClipPtr leftClip, pts leftLength, model::IClipPtr rightClip, pts rightLength );
+    model::IClipPtr addTransition( model::IClipPtr leftClip, model::IClipPtr rightClip, model::TransitionPtr transition );
 
     /// Remove transition. That means remove the transition AND any clip (part) it was
     /// covering, leaving white space as a result.

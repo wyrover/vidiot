@@ -20,11 +20,11 @@ public:
 
     AudioFile();
 
-	AudioFile(wxFileName path);
+    AudioFile(wxFileName path);
 
     virtual AudioFile* clone() const override;
 
-	virtual ~AudioFile();
+    virtual ~AudioFile();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
@@ -36,7 +36,7 @@ public:
     // IAUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) override;
+    virtual AudioChunkPtr getNextAudio(const AudioCompositionParameters& parameters) override;
 
 protected:
 
@@ -68,7 +68,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void startDecodingAudio(int audioRate, int nAudioChannels);
+    void startDecodingAudio(const AudioCompositionParameters& parameters);
     void stopDecodingAudio();
 
     //////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 #include "CreateTransition.h"
 
+#include "AudioTransition_CrossFade.h"
 #include "Config.h"
-#include "VideoTransition_CrossFade.h"
 #include "EmptyClip.h"
 #include "IClip.h"
 #include "MousePointer.h"
@@ -9,22 +9,24 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
-
 #include "UtilLog.h"
 #include "UtilLogStl.h"
+#include "VideoClip.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoTransition.h"
+#include "VideoTransition_CrossFade.h"
 
 namespace gui { namespace timeline { namespace command {
 
-CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position)
+CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position, model::TransitionPtr transition)
 :   AClipEdit(sequence)
+,   mTransition(transition)
 ,   mLeft()
 ,   mRight()
 ,   mLeftSize(0)
 ,   mRightSize(0)
 {
-    VAR_INFO(this)(position);
+    VAR_INFO(this)(position)(*transition);
     mCommandName = _("Create transition");
 
     pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
@@ -94,7 +96,8 @@ void CreateTransition::initialize()
     VAR_INFO(this);
     ASSERT(isPossible());
 
-    makeTransition(mLeft,mLeftSize,mRight,mRightSize);
+    mTransition->init(mLeftSize,mRightSize);
+    addTransition(mLeft,mRight,mTransition);
 }
 
 bool CreateTransition::isPossible()

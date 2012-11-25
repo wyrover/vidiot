@@ -67,7 +67,7 @@ public:
     // IAUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) override;
+    virtual AudioChunkPtr getNextAudio(const AudioCompositionParameters& parameters) override;
 
     //////////////////////////////////////////////////////////////////////////
     // SEQUENCE SPECIFIC

@@ -1,11 +1,12 @@
 #include "AudioClip.h"
 
-#include "UtilLog.h"
-#include "Node.h"
+#include "AudioCompositionParameters.h"
 #include "AudioFile.h"
 #include "Constants.h"
 #include "Convert.h"
 #include "EmptyChunk.h"
+#include "Node.h"
+#include "UtilLog.h"
 
 namespace model {
 
@@ -74,29 +75,29 @@ char* AudioClip::getType() const
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
+AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& parameters)
 {
     if (getLastSetPosition())
     {
-        mProgress = Convert::ptsToFrames(audioRate, nAudioChannels, *getLastSetPosition()); // Reinitialize mProgress to the last value set in ::moveTo
+        mProgress = parameters.ptsToSamples(*getLastSetPosition()); // Reinitialize mProgress to the last value set in ::moveTo
         invalidateLastSetPosition();
     }
 
-    int lengthInFrames = Convert::ptsToFrames(audioRate, nAudioChannels, getLength());
+    int lengthInSamples = parameters.ptsToSamples(getLength());
 
     AudioChunkPtr audioChunk;
 
-    int remainingFrames = lengthInFrames - mProgress;
+    int remainingSamples = lengthInSamples - mProgress;
 
-    if (remainingFrames > 0)
+    if (remainingSamples > 0)
     {
-        audioChunk = getDataGenerator<AudioFile>()->getNextAudio(audioRate, nAudioChannels);
+        audioChunk = getDataGenerator<AudioFile>()->getNextAudio(parameters);
         if (audioChunk)
         {
-            if (mProgress + audioChunk->getUnreadSampleCount() > lengthInFrames)
+            if (mProgress + audioChunk->getUnreadSampleCount() > lengthInSamples)
             {
-                audioChunk->setAdjustedLength(lengthInFrames - mProgress);
-                mProgress = lengthInFrames;
+                audioChunk->setAdjustedLength(lengthInSamples - mProgress);
+                mProgress = lengthInSamples;
             }
             else
             {
@@ -110,15 +111,15 @@ AudioChunkPtr AudioClip::getNextAudio(int audioRate, int nAudioChannels)
             // for which the video data is longer than the audio data. Instead of clipping the
             // extra video part, silence is added here (the user can make the clip shorter if
             // required - thus removing the extra video, but that's a user decision to be made).
-            LOG_WARNING << *this << ": (" << getDescription() << ") Adding " << remainingFrames << " frames to make audio length equal to video length";
-            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, remainingFrames, getLength()));
-            mProgress = lengthInFrames;
+            LOG_WARNING << *this << ": (" << getDescription() << ") Adding " << remainingSamples << " samples to make audio length equal to video length";
+            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), remainingSamples, getLength()));
+            mProgress = lengthInSamples;
         }
     }
-    VAR_DEBUG(*this)(mProgress)(lengthInFrames);
+    VAR_DEBUG(*this)(mProgress)(lengthInSamples);
 
     VAR_AUDIO(audioChunk);
-    setGenerationProgress(Convert::framesToPts(audioRate,nAudioChannels,mProgress));
+    setGenerationProgress(parameters.samplesToPts(mProgress));
     return audioChunk;
 }
 

@@ -25,21 +25,30 @@ public:
     /// indicators are shown.
     static wxString ptsToHumanReadibleString(pts duration);
 
-    /// Convert a pts value to a number of audio frames. One audio frame is one
-    /// element for one speaker. One sample is the data for all involved speakers.
+    /// Convert a pts value to a number of audio samples. One audio sample is one
+    /// element for one speaker.
     /// \param audioRate The rate (samples per second )at which audio will be played (44100/48000/etc.)
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param position pts value to be converted
-    /// \return number of frames required for this number of pts
-    static int ptsToFrames(int audioRate, int nAudioChannels, pts position);
+    /// \return number of samples required for this number of pts
+    static int ptsToSamples(int audioRate, int nAudioChannels, pts position);
 
-    /// Convert a number of frames to an approximate pts value.
-    /// \see ptsToFrames
-    /// \param audioRate The rate (samples per second )at which audio will be played (44100/48000/etc.)
+    /// Convert a number of samples to an approximate pts value.
+    /// \see ptsToSamples
+    /// \param audioRate The rate (samples per second) at which audio will be played (44100/48000/etc.)
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param position pts value to be converted
-    /// \return number of frames required for this number of pts
-    static pts framesToPts(int audioRate, int nAudioChannels, int nFrames);
+    /// \return number of samples required for this number of pts
+    static pts samplesToPts(int audioRate, int nAudioChannels, int nFrames);
+
+    /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
+    /// \return number of frames stored in given number of samples
+    /// \pre nSamples must contain a discrete number of frames (thus nSamples % nChannels == 0)
+    static int samplesToFrames(int nChannels, int nSamples);
+
+    /// Convert a number of frames to the required number of samples
+    /// \return number of samples stored in given number of frames
+    static int framesToSamples(int nChannels, int nFrames);
 
     /// Determine which timestamp in the project's timebase relates to
     /// a rendered frame timestamp (given an input frame rate)
@@ -81,15 +90,13 @@ public:
     static int factorToDigits(double number, int nDigits);
     static double digitsToFactor(int number, int nDigits);
 
-    /// Convert a number of audio frames (data for all channels)
-    /// to a number of samples (data for one channel)
+    /// Convert a number of audio frames (data for all channels) to a number of samples (data for one channel)
     /// \param nFrames Number of audio frames
     /// \param nChannels Number of audio channels (speakers)
     /// \return number of required samples
     static int audioFramesToSamples(int nFrames, int nChannels);
 
-    /// Convert a number of audio frames (data for all channels)
-    /// to a number of bytes required to hold this datasamples (data for one channel)
+    /// Convert a number of audio frames (data for all channels) to a number of bytes required to store this
     /// \param nFrames Number of audio frames
     /// \param nChannels Number of audio channels (speakers)
     /// \return number of required bytes

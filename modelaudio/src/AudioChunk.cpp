@@ -5,8 +5,6 @@
 namespace model {
 
 const int AudioChunk::sBytesPerSample = 2;
-const int AudioChunk::sSamplesPerStereoFrame = 2;
-const int AudioChunk::sBytesPerStereoFrame = AudioChunk::sSamplesPerStereoFrame * AudioChunk::sBytesPerSample;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

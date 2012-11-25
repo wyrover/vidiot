@@ -123,9 +123,9 @@ char* EmptyClip::getType() const
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunkPtr EmptyClip::getNextAudio(int audioRate, int nAudioChannels)
+AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    AudioChunkPtr audioChunk = getDataGenerator<EmptyFile>()->getNextAudio(audioRate, nAudioChannels);
+    AudioChunkPtr audioChunk = getDataGenerator<EmptyFile>()->getNextAudio(parameters);
     VAR_AUDIO(audioChunk);
     if (audioChunk)
     {

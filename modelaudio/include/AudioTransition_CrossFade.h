@@ -1,14 +1,14 @@
-#ifndef MODEL_VIDEO_TRANSITION_H
-#define MODEL_VIDEO_TRANSITION_H
+#ifndef AUDIO_TRANSITION_CROSSFADE_H
+#define AUDIO_TRANSITION_CROSSFADE_H
 
-#include "Transition.h"
-#include "IVideo.h"
+#include "AudioTransition.h"
 
-namespace model {
+namespace model { namespace audio { namespace transition {
 
-class VideoTransition
-    :   public Transition
-    ,   public IVideo
+struct Cache;
+
+class CrossFade
+    :   public AudioTransition
 {
 public:
 
@@ -16,15 +16,16 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoTransition();
-
-    virtual ~VideoTransition();
+    CrossFade();
+    virtual CrossFade* clone() const;
+    virtual ~CrossFade();
 
     //////////////////////////////////////////////////////////////////////////
-    // IVIDEO
+    // AUDIOTRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
+    virtual void reset();
+    virtual AudioChunkPtr getAudio(samplecount position, IClipPtr leftClip, IClipPtr rightClip, const AudioCompositionParameters& parameters) override;
 
 protected:
 
@@ -34,13 +35,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoTransition(const VideoTransition& other);
-
-    //////////////////////////////////////////////////////////////////////////
-    // IMPLEMENTATION OF TRANSITION
-    //////////////////////////////////////////////////////////////////////////
-
-    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters) = 0;
+    CrossFade(const CrossFade& other);
 
 private:
 
@@ -48,15 +43,13 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress;          ///< Last rendered position
-    IClipPtr mLeftClip;     ///< Clip generating 'left' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getPrev'
-    IClipPtr mRightClip;    ///< Clip generating 'right' side. NOTE: Only used for generating frames, not for querying. That should be done by inspecting 'IClip::getNext'
+    boost::shared_ptr<Cache> mCache;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoTransition& obj );
+    friend std::ostream& operator<<( std::ostream& os, const CrossFade& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -67,12 +60,12 @@ private:
     void serialize(Archive & ar, const unsigned int version);
 };
 
-} // namespace
+}}} // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
 #include  <boost/preprocessor/slot/counter.hpp>
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::VideoTransition, 1);
+BOOST_CLASS_VERSION(model::audio::transition::CrossFade, 1)
 
-#endif // MODEL_VIDEO_TRANSITION_H
+#endif // AUDIO_TRANSITION_CROSSFADE_H
