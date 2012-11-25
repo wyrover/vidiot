@@ -57,6 +57,8 @@ public:
     /// Test the trimming of the transition itselves
     void testTrimmingTransition();
 
+    void testAudioTransitions();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

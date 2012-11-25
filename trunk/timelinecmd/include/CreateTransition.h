@@ -14,7 +14,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CreateTransition(model::SequencePtr sequence, wxPoint position);
+    CreateTransition(model::SequencePtr sequence, wxPoint position, model::TransitionPtr transition);
 
     ~CreateTransition();
 
@@ -36,6 +36,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
+
+    model::TransitionPtr mTransition;
 
     model::IClipPtr mLeft;
     model::IClipPtr mRight;

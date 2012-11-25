@@ -8,15 +8,12 @@
 
 namespace model {
 
-const int sStereo = 2;
-const int sAudioFrameRate = 44100;
-
 Properties::Properties()
 :   mFrameRate(framerate::fromString(Config::ReadString(Config::sPathDefaultFrameRate)))
 ,   mVideoWidth(Config::ReadLong(Config::sPathDefaultVideoWidth))
 ,   mVideoHeight(Config::ReadLong(Config::sPathDefaultVideoHeight))
-,   mAudioChannels(sStereo)
-,   mAudioFrameRate(sAudioFrameRate)
+,   mAudioChannels(Config::ReadLong(Config::sPathDefaultAudioChannels))
+,   mAudioFrameRate(Config::ReadLong(Config::sPathDefaultAudioSampleRate))
 ,   mDefaultRender(boost::make_shared<model::render::Render>())
 {
     VAR_DEBUG(this);
@@ -24,10 +21,10 @@ Properties::Properties()
 
 Properties::Properties(FrameRate fr)
 :   mFrameRate(fr)
-,   mVideoWidth(0)
-,   mVideoHeight(0)
-,   mAudioChannels(sStereo)
-,   mAudioFrameRate(sAudioFrameRate)
+,   mVideoWidth(100)
+,   mVideoHeight(100)
+,   mAudioChannels(1)
+,   mAudioFrameRate(44100)
 ,   mDefaultRender()
 {
     VAR_DEBUG(this);

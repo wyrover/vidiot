@@ -45,13 +45,13 @@ void AudioTrack::clean()
 // PLAYBACK
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunkPtr AudioTrack::getNextAudio(int audioRate, int nAudioChannels)
+AudioChunkPtr AudioTrack::getNextAudio(const AudioCompositionParameters& parameters)
 {
     AudioChunkPtr audioChunk;
 
     while (!audioChunk && !iterate_atEnd())
     {
-        audioChunk = boost::dynamic_pointer_cast<IAudio>(iterate_get())->getNextAudio(audioRate, nAudioChannels);
+        audioChunk = boost::dynamic_pointer_cast<IAudio>(iterate_get())->getNextAudio(parameters);
         if (!audioChunk)
         {
             iterate_next();

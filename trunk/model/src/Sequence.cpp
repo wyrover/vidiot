@@ -150,9 +150,9 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunkPtr Sequence::getNextAudio(int audioRate, int nAudioChannels)
+AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    AudioChunkPtr audioChunk = boost::dynamic_pointer_cast<IAudio>(*mAudioTracks.begin())->getNextAudio(audioRate, nAudioChannels);
+    AudioChunkPtr audioChunk = boost::dynamic_pointer_cast<IAudio>(*mAudioTracks.begin())->getNextAudio(parameters);
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }

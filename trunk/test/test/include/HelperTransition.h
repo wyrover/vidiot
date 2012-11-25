@@ -22,7 +22,7 @@ wxPoint TransitionRightClipBegin(model::IClipPtr clip);
 /// the transition.
 struct MakeTransitionAfterClip
 {
-    explicit MakeTransitionAfterClip(int afterclip);
+    explicit MakeTransitionAfterClip(int afterclip, bool audio);
     virtual ~MakeTransitionAfterClip();
 
     pts clipNumberBeforeTransition;
@@ -55,29 +55,33 @@ protected:
     /// must be made and then pressing 'c'.
     void makeTransition();
 
+    model::IClipPtr GetClip(int track, int clip) const;
+
 private:
 
     void storeVariablesBeforeTrimming();
     void storeVariablesBeforeMakingTransition();
     void storeVariablesAfterMakingTransition();
 
+    bool mAudio;
+
 };
 
 struct MakeInOutTransitionAfterClip : public MakeTransitionAfterClip
 {
-    MakeInOutTransitionAfterClip(int afterclip);
+    MakeInOutTransitionAfterClip(int afterclip, bool audio = false);
     ~MakeInOutTransitionAfterClip();
 };
 
 struct MakeInTransitionAfterClip : public MakeTransitionAfterClip // tod rename to make in before clip...
 {
-    MakeInTransitionAfterClip(int afterclip);
+    MakeInTransitionAfterClip(int afterclip, bool audio = false);
     ~MakeInTransitionAfterClip();
 };
 
 struct MakeOutTransitionAfterClip : public MakeTransitionAfterClip
 {
-    MakeOutTransitionAfterClip(int afterclip);
+    MakeOutTransitionAfterClip(int afterclip, bool audio = false);
     ~MakeOutTransitionAfterClip();
 };
 

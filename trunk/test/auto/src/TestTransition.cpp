@@ -151,7 +151,6 @@ void TestTransition::testDragAndDropOfOtherClips()
     {
         // Shift drag without snapping enabled,
         // transition and its adjacent clips are shifted backwards
-        //todoShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,3)));
         Drag(From(Center(VideoClip(0,6))).To(Center(VideoClip(0,3))).HoldShiftWhileDragging());
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
@@ -163,7 +162,6 @@ void TestTransition::testDragAndDropOfOtherClips()
         // transition) clip after transition is shifted backwards ->
         // transition is removed because the two 'transitioned clips
         // are separated'. (clip in front of transition remains intact)
-        //todoShiftDrag(Center(VideoClip(0,6)),Center(VideoClip(0,4)));
         Drag(From(Center(VideoClip(0,6))).To(Center(VideoClip(0,4))).HoldShiftWhileDragging());
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip);
         ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK();
@@ -1069,6 +1067,36 @@ void TestTransition::testTrimmingTransition()
         Trim(VTopQuarterRight(VideoClip(0,2)),Center(VideoClip(0,4)));
         Undo(2);
     }
+}
+
+//RUNONLY(testAudioTransitions);
+void TestTransition::testAudioTransitions()
+{
+    StartTestSuite();
+    Zoom level(3);
+    {
+        MakeInOutTransitionAfterClip preparation(1,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
+        Play(HCenter(AudioClip(0,2)), 250);
+    }
+    {
+        MakeInTransitionAfterClip preparation(1,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
+        Play(HCenter(AudioClip(0,2)), 250);
+    }
+    {
+        MakeOutTransitionAfterClip preparation(1,true);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
+        Play(HCenter(AudioClip(0,2)), 250);
+    }
+
+    // todo make audio transition at position where already video transition is present
 }
 
 } // namespace

@@ -4,7 +4,7 @@
 #include "EmptyChunk.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
-
+#include "AudioCompositionParameters.h"
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 
@@ -79,7 +79,7 @@ void EmptyFile::clean()
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
+AudioChunkPtr EmptyFile::getNextAudio(const AudioCompositionParameters& parameters)
 {
     ASSERT_LESS_THAN_EQUALS(mAudioPosition,mLength); // Maybe adjustLength() was not directly followed by moveTo()?
     mAudioPosition++;
@@ -88,10 +88,7 @@ AudioChunkPtr EmptyFile::getNextAudio(int audioRate, int nAudioChannels)
         return AudioChunkPtr();
     }
 
-    // Number of samples for 1 pts
-    int nSamples = Convert::ptsToFrames(audioRate,nAudioChannels,1);
-
-    return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(nAudioChannels, nSamples, mAudioPosition));
+    return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(1), mAudioPosition));
 }
 
 //////////////////////////////////////////////////////////////////////////

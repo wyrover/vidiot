@@ -78,9 +78,11 @@ extern "C" {
 #include <wx/cmdproc.h>
 #include <wx/collpane.h>
 #include <wx/colour.h>
+#include <wx/combobox.h>
 #include <wx/control.h>
 #include <wx/cursor.h>
 #include <wx/dataobj.h>
+#include <wx/dataview.h>
 #include <wx/dataview.h>
 #include <wx/datetime.h>
 #include <wx/dc.h>
@@ -140,8 +142,8 @@ extern "C" {
 #include <wx/tokenzr.h>
 #include <wx/tooltip.h>
 #include <wx/utils.h>
+#include <wx/valnum.h>
 #include <wx/window.h>
-#include <wx/dataview.h>
 
 #include "Pointers.h"
 

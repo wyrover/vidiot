@@ -10,7 +10,9 @@
 #include "HelperTimelinesView.h"
 #include "Layout.h"
 #include "Logging.h"
+#include "ids.h"
 #include "Sequence.h"
+#include "HelperWindow.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 
@@ -40,6 +42,8 @@ void TestManual::testManual()
     StartTest("Manual...");
     LOG_ERROR << dump(getSequence());
     gui::Dialog::get().setSaveFile("D:/input.avi");
+           triggerMenu(ID_OPTIONS);
+        waitForIdle();
     pause(60000 * 60); // One hour should be enough...
 }
 

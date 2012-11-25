@@ -18,8 +18,6 @@ public:
 
     VideoTransition();
 
-    VideoTransition(pts nFramesLeft, pts nFramesRight);
-
     virtual ~VideoTransition();
 
     //////////////////////////////////////////////////////////////////////////

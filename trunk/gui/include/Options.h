@@ -32,6 +32,9 @@ private:
     EnumSelector<model::VideoScaling>* mDefaultVideoScaling;
     EnumSelector<model::VideoAlignment>* mDefaultVideoAlignment;
 
+    wxComboBox*             mDefaultAudioSampleRate;
+    wxComboBox*             mDefaultAudioNumberOfChannels;
+
     wxSpinCtrlDouble*       mMarkerBeginAddition;
     wxSpinCtrlDouble*       mMarkerEndAddition;
     wxTextCtrl*             mStrip;

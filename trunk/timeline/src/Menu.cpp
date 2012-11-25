@@ -18,7 +18,8 @@
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "Track.h"
-
+#include "VideoTransition_CrossFade.h"
+#include "AudioTransition_CrossFade.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
@@ -65,7 +66,13 @@ MenuHandler::MenuHandler(Timeline* timeline)
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
     // Popup menu items
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,    this, meID_ADD_INTRANSITION);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,       this, meID_ADD_INTRANSITION);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutTransition,      this, meID_ADD_OUTTRANSITION);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutTransition,    this, meID_ADD_INOUTTRANSITION);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInFade,             this, meID_ADD_INFADE);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutFade,            this, meID_ADD_OUTFADE);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutFade,          this, meID_ADD_INOUTFADE);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onRemoveEmpty,           this, meID_REMOVE_EMPTY);
 
     updateItems();
 
@@ -89,7 +96,13 @@ MenuHandler::~MenuHandler()
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
 
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,   this, meID_ADD_INTRANSITION);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,    this, meID_ADD_INTRANSITION);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutTransition,    this, meID_ADD_OUTTRANSITION);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutTransition,    this, meID_ADD_INOUTTRANSITION);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInFade,    this, meID_ADD_INFADE);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutFade,    this, meID_ADD_OUTFADE);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutFade,    this, meID_ADD_INOUTFADE);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onRemoveEmpty,    this, meID_REMOVE_EMPTY);
 
     Window::get().setSequenceMenu(0); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
 }
@@ -195,7 +208,7 @@ void MenuHandler::Popup(wxPoint position)
     MenuOption addInTransition(meID_ADD_INTRANSITION,   _("Add &in transition"),    clickedOnVideoClip, clickedOnVideoClip);
     MenuOption addOutTransition(meID_ADD_OUTTRANSITION, _("Add &out transition"),   clickedOnVideoClip, clickedOnVideoClip);
 
-    MenuOption addInFade(meID_ADD_INFADE,   _("Add fade &in"),    clickedOnAudioClip, clickedOnAudioClip);
+    MenuOption addInFade(meID_ADD_INFADE,   _("Add fade &in"),    clickedOnAudioClip, clickedOnAudioClip); // todo finish the popup menu handling
     MenuOption addOutFade(meID_ADD_OUTFADE, _("Add fade &out"),   clickedOnAudioClip, clickedOnAudioClip);
 
     MenuOption removeEmptySpace(meID_REMOVE_EMPTY, _("&Remove empty space"),   clickedOnEmptyClip, clickedOnEmptyClip);
@@ -293,7 +306,52 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
 void MenuHandler::onAddInTransition(wxCommandEvent& event)
 {
     LOG_INFO;
-    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getRightDownPosition());
+    createTransition(boost::make_shared<model::video::transition::CrossFade>());
+}
+
+void MenuHandler::onAddOutTransition(wxCommandEvent& event)
+{
+    LOG_INFO; // todo make transitionfactory.... avoiding having to include all types of transitions everywhere
+    createTransition(boost::make_shared<model::video::transition::CrossFade>()); // todo this does not work, sometimes makes inouttransition, not in-only transition
+}
+
+void MenuHandler::onAddInOutTransition(wxCommandEvent& event)
+{
+    LOG_INFO;
+    createTransition(boost::make_shared<model::video::transition::CrossFade>());
+}
+
+void MenuHandler::onAddInFade(wxCommandEvent& event)
+{
+    LOG_INFO;
+    createTransition(boost::make_shared<model::audio::transition::CrossFade>());
+}
+
+void MenuHandler::onAddOutFade(wxCommandEvent& event)
+{
+    LOG_INFO;
+    createTransition(boost::make_shared<model::audio::transition::CrossFade>());
+}
+
+void MenuHandler::onAddInOutFade(wxCommandEvent& event)
+{
+    LOG_INFO;
+    createTransition(boost::make_shared<model::audio::transition::CrossFade>());
+}
+
+void MenuHandler::onRemoveEmpty(wxCommandEvent& event)
+{
+    LOG_INFO;
+    // todo
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void MenuHandler::createTransition(model::TransitionPtr transition)
+{
+    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getRightDownPosition(), transition);
     if (cmd->isPossible())
     {
         cmd->submit();

@@ -21,11 +21,12 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ///< Constructor for recovery from disk
+    /// Constructor for recovery from disk and for creating a new transition
+    /// Serialize will be called after construction for recovery from disk.
+    /// Init must be called for new transitions.
     Transition();
 
-      ///< Constructor for creating new transition
-    Transition(pts nFramesLeft, pts nFramesRight);
+    void init(pts nFramesLeft, pts nFramesRight);
 
     ///< Used for making deep copies (clones)
     virtual Transition* clone() const override;

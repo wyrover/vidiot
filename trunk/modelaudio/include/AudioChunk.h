@@ -21,8 +21,6 @@ class AudioChunk
 public:
 
     static const int sBytesPerSample;
-    static const int sSamplesPerStereoFrame;
-    static const int sBytesPerStereoFrame;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION

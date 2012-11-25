@@ -41,7 +41,7 @@ public:
     {
     }
 
-	virtual ~CodecParameter()
+    virtual ~CodecParameter()
     {
     }
 

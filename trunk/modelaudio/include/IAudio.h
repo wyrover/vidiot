@@ -3,6 +3,8 @@
 
 namespace model {
 
+class AudioCompositionParameters;
+
 class IAudio
 {
 public:
@@ -17,7 +19,7 @@ public:
     // IAUDIO
     //////////////////////////////////////////////////////////////////////////
 
-    virtual AudioChunkPtr getNextAudio(int audioRate, int nAudioChannels) = 0;
+    virtual AudioChunkPtr getNextAudio(const AudioCompositionParameters& parameters) = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

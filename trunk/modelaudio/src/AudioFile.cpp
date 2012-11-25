@@ -1,9 +1,8 @@
 #include "AudioFile.h"
 
 #include "AudioChunk.h"
+#include "AudioCompositionParameters.h"
 #include "Convert.h"
-#include "Node.h"
-
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 
@@ -88,9 +87,9 @@ void AudioFile::clean()
 // IAUDIO
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
+AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    startDecodingAudio(audioRate,nAudioChannels);
+    startDecodingAudio(parameters);
 
     PacketPtr audioPacket = getNextPacket();
     if (!audioPacket)
@@ -106,19 +105,19 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
     uint8_t* sourceData = audioPacket->getPacket()->data;
     int16_t* targetData = audioDecodeBuffer;
     int sourceSize = audioPacket->getPacket()->size;
-    int targetSize = 0;
+    int targetSizeInBytes = 0;
     ASSERT_MORE_THAN_ZERO(sourceSize);
 
     while (sourceSize > 0)
     {
-        int decodeSize = sAudioBufferSizeInBytes - targetSize; // Needed for avcodec_decode_audio2(): Initially this must be set to the maximum to be decoded bytes
+        int decodeSizeInBytes = sAudioBufferSizeInBytes - targetSizeInBytes; // Needed for avcodec_decode_audio2(): Initially this must be set to the maximum to be decoded bytes
         AVPacket packet;
         packet.data = sourceData;
         packet.size = sourceSize;
-        int usedSourceBytes = avcodec_decode_audio3(getCodec(), targetData, &decodeSize, &packet);
+        int usedSourceBytes = avcodec_decode_audio3(getCodec(), targetData, &decodeSizeInBytes, &packet);
         ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
 
-        if (decodeSize <= 0)
+        if (decodeSizeInBytes <= 0)
         {
             // if error, skip frame
             LOG_WARNING << "Frame skipped";
@@ -129,21 +128,21 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
         sourceData += usedSourceBytes;
         sourceSize -= usedSourceBytes;
 
-        ASSERT_ZERO(decodeSize % 2)(decodeSize);
-        targetSize += decodeSize;
-        targetData += decodeSize / AudioChunk::sBytesPerSample;
+        ASSERT_ZERO(decodeSizeInBytes % 2)(decodeSizeInBytes);
+        targetSizeInBytes += decodeSizeInBytes;
+        targetData += decodeSizeInBytes / AudioChunk::sBytesPerSample;
     }
 
     //////////////////////////////////////////////////////////////////////////
     // RESAMPLING
 
-    int nSamples = targetSize / AudioChunk::sBytesPerSample; // A sample is the data for one speaker
-    int nFrames = nSamples / AudioChunk::sSamplesPerStereoFrame;         // A frame  is the data for all speakers
+    int nSamples = targetSizeInBytes / AudioChunk::sBytesPerSample; // A sample is the data for one speaker
+    int nFrames = Convert::samplesToFrames(getCodec()->channels, nSamples);
 
     if (mResampleContext != 0)
     {
-        nFrames = audio_resample(mResampleContext, audioResampleBuffer, audioDecodeBuffer, nSamples / getCodec()->channels);
-        nSamples = nFrames * AudioChunk::sSamplesPerStereoFrame;
+        nFrames = audio_resample(mResampleContext, audioResampleBuffer, audioDecodeBuffer, nSamples);
+        nSamples = parameters.framesToSamples(nFrames);
 
         // Use the resampled data
         targetData = audioResampleBuffer;
@@ -169,9 +168,10 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
         NIY(_("Not supported: Audio data without pts info"));
     }
 
-    pts += static_cast<double>(nSamples) / static_cast<double>(/*nAudioChannels * already done before resampling */audioRate);
+    // todo make generic method for determining audio pts values. For transition this will result in wrong numbers
+    pts += static_cast<double>(nSamples) / static_cast<double>(parameters.getSampleRate()); // nAudioChannels already done before resampling
 
-    AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, nAudioChannels, nSamples, Convert::doubleToInt(pts));
+    AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, parameters.getNrChannels(), nSamples, Convert::doubleToInt(pts));
     VAR_AUDIO(this)(audioChunk);
     return audioChunk;
 }
@@ -180,7 +180,8 @@ AudioChunkPtr AudioFile::getNextAudio(int audioRate, int nAudioChannels)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
+void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
+    //int audioRate, int nAudioChannels)
 {
     if (mDecodingAudio) return;
 
@@ -217,14 +218,14 @@ void AudioFile::startDecodingAudio(int audioRate, int nAudioChannels)
     }
     ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16);
 
-    if ((nAudioChannels != getCodec()->channels) || (audioRate != getCodec()->sample_rate))
+    if ((parameters.getNrChannels() != getCodec()->channels) || (parameters.getSampleRate() != getCodec()->sample_rate))
     {
-        LOG_INFO << "Resampling initialized";
+        VAR_INFO(parameters.getNrChannels())(getCodec()->channels)(parameters.getSampleRate())(getCodec()->sample_rate);
         static const int taps = 16;
         mResampleContext =
             av_audio_resample_init(
-                nAudioChannels, getCodec()->channels,
-                audioRate, getCodec()->sample_rate,
+                parameters.getNrChannels(), getCodec()->channels,
+                parameters.getSampleRate(), getCodec()->sample_rate,
                 AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16,
                 taps, 10, 0, 0.8);
         ASSERT_NONZERO(mResampleContext);
