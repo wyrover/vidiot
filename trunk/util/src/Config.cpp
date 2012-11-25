@@ -25,6 +25,38 @@ void setDefault(wxString path, T value)
     }
 }
 
+void checkLong(wxString path, long lowerbound, long upperbound)
+{
+    // Check if it's actually a long
+    long value(0);
+    if (!wxConfigBase::Get()->Read(path, "").ToLong(&value))
+    {
+        wxConfigBase::Get()->DeleteEntry(path);
+    }
+    else
+    {
+        bool found = wxConfigBase::Get()->Read(path, &value, 0);
+        ASSERT(found);
+        if (value < lowerbound || value > upperbound)
+        {
+            wxConfigBase::Get()->DeleteEntry(path);
+        }
+    }
+}
+
+void checkBool(wxString path)
+{
+    checkLong(path,0,1);
+}
+
+#define checkEnum(path, ENUMNAME) \
+{\
+    wxString s = wxConfigBase::Get()->Read(path, ""); \
+    ENUMNAME dummy = ENUMNAME ## _MAX; \
+    ENUMNAME e = Enum_fromConfig(s, dummy); \
+    if (e == ENUMNAME ## _MAX) { wxConfigBase::Get()->DeleteEntry(path); } \
+}
+
 // static
 void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestMode)
 {
@@ -35,6 +67,25 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
     wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
 
+    // Check values, delete from config if incorrect
+    checkBool(Config::sPathAutoLoadEnabled);
+    checkLong(Config::sPathDefaultTransitionLength, 4, 10000);
+    checkLong(Config::sPathDefaultFrameRate, 4, 10000);
+    checkLong(Config::sPathDefaultVideoWidth, 10, 10000);
+    checkLong(Config::sPathDefaultVideoHeight, 10, 10000);
+    checkEnum(Config::sPathDefaultVideoScaling, model::VideoScaling);
+    checkEnum(Config::sPathDefaultVideoAlignment, model::VideoAlignment);
+    checkLong(Config::sPathDefaultAudioSampleRate, 100, 100000);
+    checkLong(Config::sPathDefaultAudioChannels, 1, 2);
+    checkEnum(Config::sPathLogLevel, LogLevel);
+    checkLong(Config::sPathMarkerBeginAddition, 0, 10000);
+    checkLong(Config::sPathMarkerEndAddition, 0, 10000);
+    checkBool(Config::sPathShowDebugInfoOnWidgets);
+    checkBool(Config::sPathSnapClips);
+    checkBool(Config::sPathSnapCursor);
+    checkBool(Config::sPathShowBoundingBox);
+    checkLong(Config::sPathDebugMaxRenderLength, 0, 1000000);
+
     // Set all defaults here
     setDefault(Config::sPathAutoLoadEnabled, false);
     setDefault(Config::sPathDefaultTransitionLength, 24);
@@ -43,6 +94,8 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathDefaultVideoHeight, 576);
     setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill).c_str());
     setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
+    setDefault(Config::sPathDefaultAudioSampleRate, 44100);
+    setDefault(Config::sPathDefaultAudioChannels, 2);
     setDefault(Config::sPathLastOpened, "");
     setDefault(Config::sPathDefaultExtension, "avi");
     setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
@@ -219,6 +272,8 @@ const wxString Config::sPathDefaultVideoHeight      ("/Video/DefaultHeight");
 const wxString Config::sPathDefaultVideoScaling     ("/Video/DefaultVideoScaling");
 const wxString Config::sPathDefaultVideoAlignment   ("/Video/DefaultVideoAlignment");
 const wxString Config::sPathOverruleFourCC          ("/Video/FourCC");
+const wxString Config::sPathDefaultAudioSampleRate  ("/Audio/DefaultSampleRate");
+const wxString Config::sPathDefaultAudioChannels    ("/Audio/DefaultNumberOfChannels");
 const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
 const wxString Config::sPathStrip                   ("/Timeline/Strip");

@@ -78,6 +78,8 @@ public:
     static const wxString sPathDefaultVideoScaling;
     static const wxString sPathDefaultVideoAlignment;
     static const wxString sPathOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
+    static const wxString sPathDefaultAudioSampleRate;
+    static const wxString sPathDefaultAudioChannels;
     static const wxString sPathMarkerBeginAddition;
     static const wxString sPathMarkerEndAddition;
     static const wxString sPathStrip;
