@@ -1095,8 +1095,14 @@ void TestTransition::testAudioTransitions()
         Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
         Play(HCenter(AudioClip(0,2)), 250);
     }
-
-    // todo make audio transition at position where already video transition is present
+    {
+        MakeInOutTransitionAfterClip preparationAudio(1,true);
+        MakeInOutTransitionAfterClip preparationVideo(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(Transition)(AudioClip);
+        Scrub(LeftPixel(AudioClip(0,2)) - 5,RightPixel(AudioClip(0,2)) + 5);
+        Play(HCenter(AudioClip(0,2)), 250);
+    }
 }
 
 } // namespace
