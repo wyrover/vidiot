@@ -397,7 +397,7 @@ wxBitmap Drag::getDragBitmap() //const
 
     VAR_DEBUG(mBitmapOffset)(size_x)(size_y);
     ASSERT_MORE_THAN_ZERO(size_x);
-    ASSERT_MORE_THAN_ZERO(size_y);
+    ASSERT_MORE_THAN_ZERO(size_y); // todo crash when adding .mov file, then dragging this after the end of the timeline!!!
     return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
 }
 
