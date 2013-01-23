@@ -6,7 +6,7 @@
 #include "HelperApplication.h"
 #include "HelperConfig.h"
 #include "HelperDetails.h"
-#include "HelperDrag.h"
+#include "HelperTimelineDrag.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"

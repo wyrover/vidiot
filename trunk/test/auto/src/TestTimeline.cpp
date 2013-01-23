@@ -1,7 +1,5 @@
 #include "TestTimeline.h"
 
-#include <wx/uiaction.h>
-#include <boost/foreach.hpp>
 #include "AudioClip.h"
 #include "AudioTrack.h"
 #include "Config.h"
@@ -14,10 +12,10 @@
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
-#include "HelperDrag.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
+#include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
 #include "HelperTransition.h"
 #include "HelperWindow.h"
@@ -38,6 +36,8 @@
 #include "VideoTrack.h"
 #include "VideoTransition.h"
 #include "Zoom.h"
+#include <boost/foreach.hpp>
+#include <wx/uiaction.h>
 
 namespace test {
 
