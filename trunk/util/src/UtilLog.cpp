@@ -190,6 +190,11 @@ void Log::exit()
     sWriter = 0;
 }
 
+#ifdef _DEBUG
+static int lastline;
+static std::string lastfile;
+#endif // _DEBUG
+
 std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
 {
     // NOTE: Ensure the same width for the strings below.
@@ -205,6 +210,13 @@ std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_
         "DETAIL  ",
         "ASSERT  "
     };
+#ifdef _DEBUG
+    // This is done for detecting crashes upon shutdown. Often there's a crash because log lines are made AFTER the logging has been closed.
+    // That results in out-of-stack-space errors, wxMBConv::FromWChar<->wxMBConv::WC2MB recursively (for converting the log time stamp, see the 'get' method).
+    // Where the log line was made can be seen by inspecting these two variables.
+    lastline = p_lLine;
+    lastfile = p_szFileName;
+#endif // _DEBUG
     get(levelstring[level])
         << p_szFileName
         << '(' << std::dec << p_lLine  << ") "
@@ -215,7 +227,7 @@ std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_
 
 std::ostringstream& Log::get(std::string category)
 {
-    os << wxDateTime::UNow().Format("%d-%m-%Y %H:%M:%S.%l ")
+    os << wxDateTime::UNow().Format(wxT("%d-%m-%Y %H:%M:%S.%l "))
         << category
         << "t@" << std::setw(4) << std::setfill('0') << std::hex <<  wxThread::GetCurrentId()
         << ' ';
