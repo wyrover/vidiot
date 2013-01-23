@@ -41,9 +41,9 @@ void TestManual::testManual()
     StartTestSuite();
     StartTest("Manual...");
     LOG_ERROR << dump(getSequence());
-    gui::Dialog::get().setSaveFile("D:/input.avi");
-           triggerMenu(ID_OPTIONS);
-        waitForIdle();
+    //gui::Dialog::get().setSaveFile("D:/input.avi");
+    //       triggerMenu(ID_OPTIONS);
+    //    waitForIdle();
     pause(60000 * 60); // One hour should be enough...
 }
 
