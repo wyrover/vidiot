@@ -131,6 +131,8 @@ void File::abort()
 
 pts File::getLength() const
 {
+    ASSERT_MORE_THAN_ZERO(mNumberOfFrames);
+
     return mNumberOfFrames;
 }
 
@@ -199,9 +201,13 @@ wxString File::getName() const
 
 bool File::isSupportedFileType()
 {
-    if (mPath.GetExt().IsSameAs("avi"))
+    std::list<wxString> supportedFileTypes = boost::assign::list_of("avi")("mov"); // Use lowercase
+    BOOST_FOREACH( wxString filetype, supportedFileTypes )
     {
-        return true;
+        if (mPath.GetExt().Lower().IsSameAs(filetype))
+        {
+            return true;
+        }
     }
     return false;
 }
