@@ -542,7 +542,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                 }
             }
 
-            ASSERT_ZERO(ret);
+            ASSERT_ZERO(ret); // todo crash here: testmanual -> New sequence -> Add file (mp4 file: MVI_0512.MOV) -> Render settings -> ok -> render (h264 I think)
             frame_count++;
         }
     }

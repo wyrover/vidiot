@@ -24,6 +24,7 @@ AudioFile::AudioFile()
     ,   mDecodingAudio(false)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
+    ,   audioCombineBuffer(0)
 {
     VAR_DEBUG(*this);
 }
@@ -34,6 +35,7 @@ AudioFile::AudioFile(wxFileName path)
     ,   mDecodingAudio(false)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
+    ,   audioCombineBuffer(0)
 {
     VAR_DEBUG(*this);
 }
@@ -44,6 +46,7 @@ AudioFile::AudioFile(const AudioFile& other)
     ,   mDecodingAudio(false)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
+    ,   audioCombineBuffer(0)
 {
     VAR_DEBUG(*this);
 }
@@ -61,8 +64,11 @@ AudioFile::~AudioFile()
 
     delete[] audioDecodeBuffer;
     delete[] audioResampleBuffer;
+    delete[] audioCombineBuffer;
+
     audioDecodeBuffer = 0;
     audioResampleBuffer = 0;
+    audioCombineBuffer = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,8 +83,11 @@ void AudioFile::clean()
 
     delete[] audioDecodeBuffer;
     delete[] audioResampleBuffer;
+    delete[] audioCombineBuffer;
+
     audioDecodeBuffer = 0;
     audioResampleBuffer = 0;
+    audioCombineBuffer = 0;
 
     File::clean();
 }
@@ -108,13 +117,15 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     int targetSizeInBytes = 0;
     ASSERT_MORE_THAN_ZERO(sourceSize);
 
+    AVCodecContext* codec = getCodec();
+
     while (sourceSize > 0)
     {
         int decodeSizeInBytes = sAudioBufferSizeInBytes - targetSizeInBytes; // Needed for avcodec_decode_audio2(): Initially this must be set to the maximum to be decoded bytes
         AVPacket packet;
         packet.data = sourceData;
         packet.size = sourceSize;
-        int usedSourceBytes = avcodec_decode_audio3(getCodec(), targetData, &decodeSizeInBytes, &packet);
+        int usedSourceBytes = avcodec_decode_audio3(codec, targetData, &decodeSizeInBytes, &packet);
         ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
 
         if (decodeSizeInBytes <= 0)
@@ -130,22 +141,60 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
         ASSERT_ZERO(decodeSizeInBytes % 2)(decodeSizeInBytes);
         targetSizeInBytes += decodeSizeInBytes;
-        targetData += decodeSizeInBytes / AudioChunk::sBytesPerSample;
+        targetData += decodeSizeInBytes / AudioChunk::sBytesPerSample; // av_get_bytes_per_sample(codec->sample_fmt) ??
     }
+    ASSERT_ZERO(sourceSize);
 
     //////////////////////////////////////////////////////////////////////////
     // RESAMPLING
 
     int nSamples = targetSizeInBytes / AudioChunk::sBytesPerSample; // A sample is the data for one speaker
-    int nFrames = Convert::samplesToFrames(getCodec()->channels, nSamples);
+
+    typedef boost::rational<int> rational;
+    auto convertOutputSampleCountToInputSampleCount = [parameters,codec](int output) -> int
+    {
+        return
+            Convert::toInt(rational(output) *
+            rational(codec->channels) / rational(parameters.getNrChannels()) *
+            rational(codec->sample_rate) / rational(parameters.getSampleRate()));
+    };
 
     if (mResampleContext != 0)
     {
-        nFrames = audio_resample(mResampleContext, audioResampleBuffer, audioDecodeBuffer, nSamples);
-        nSamples = parameters.framesToSamples(nFrames);
+        int nRemainingInputSamples = nSamples;
+        nSamples = 0;
 
-        // Use the resampled data
-        targetData = audioResampleBuffer;
+        // Note: Sometimes audio_resample does not resample the entire buffer in one pass. Here the extra required passes are done, and the data is copied into audioCombineBuffer.
+        // todo all this memcpy-ing canbe removed by pre-allocating the returned audiochunk and then storing the data in there?
+
+        sample* input = audioDecodeBuffer;
+        sample* output = audioCombineBuffer;
+
+        while (nRemainingInputSamples > 0)
+        {
+            int nInputFrames = nRemainingInputSamples / codec->channels;
+            int nOutputFrames = audio_resample(mResampleContext, audioResampleBuffer, input, nInputFrames);
+            int nNewOutputSamples = nOutputFrames * parameters.getNrChannels();
+            int nUsedInputSamples = convertOutputSampleCountToInputSampleCount(nNewOutputSamples);
+            VAR_DEBUG(nInputFrames)(nOutputFrames)(nNewOutputSamples)(nUsedInputSamples);
+            if (nUsedInputSamples == 0)
+            {
+                break;
+            }
+
+            memcpy(output,audioResampleBuffer,nNewOutputSamples * AudioChunk::sBytesPerSample);
+
+            nSamples += nNewOutputSamples;
+            nRemainingInputSamples -= nUsedInputSamples;
+            input += nUsedInputSamples;
+            output += nNewOutputSamples;
+            ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingInputSamples)(nUsedInputSamples);
+        }
+
+        targetData = audioCombineBuffer;
+
+        VAR_DEBUG(nSamples);
+        // todo crash if create new sequence (without tracks) and then drag and drop clip on it...
     }
     else
     {
@@ -191,6 +240,7 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     {
         audioDecodeBuffer   = new sample[sAudioBufferSize];
         audioResampleBuffer = new sample[sAudioBufferSize];
+        audioCombineBuffer  = new sample[sAudioBufferSize];
     }
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
@@ -198,15 +248,17 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
 
     boost::mutex::scoped_lock lock(sMutexAvcodec);
 
-    AVCodec* audioCodec = avcodec_find_decoder(getCodec()->codec_id);
+    AVCodecContext* codec = getCodec();
+
+    AVCodec* audioCodec = avcodec_find_decoder(codec->codec_id);
     ASSERT_NONZERO(audioCodec);
 
-    int result = avcodec_open(getCodec(), audioCodec);
+    int result = avcodec_open(codec, audioCodec);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
-    if (getCodec()->sample_fmt != AV_SAMPLE_FMT_S16)
+    if (codec->sample_fmt != AV_SAMPLE_FMT_S16)
     {
-        switch (getCodec()->sample_fmt)
+        switch (codec->sample_fmt)
         {
         case AV_SAMPLE_FMT_U8:  NIY("Unsigned 8 bits audio is not yet supported!"); break;
         case AV_SAMPLE_FMT_S16: NIY("Signed 16 bits audio is not yet supported!");  break;
@@ -216,22 +268,39 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
         default:                NIY("Unsupported audio type!");                     break;
         }
     }
-    ASSERT_EQUALS(getCodec()->sample_fmt,AV_SAMPLE_FMT_S16);
+    ASSERT_EQUALS(codec->sample_fmt,AV_SAMPLE_FMT_S16);
 
-    if ((parameters.getNrChannels() != getCodec()->channels) || (parameters.getSampleRate() != getCodec()->sample_rate))
+//    I'd recommend to resample using audio filters. It can convert between
+//number of channels, sample format, sample rate.
+//See doc/examples/filtering_audio.c
+//Filterchain string "aresample" should do that.
+  //todo always
+    if ((parameters.getNrChannels() != codec->channels) || (parameters.getSampleRate() != codec->sample_rate))
     {
-        VAR_INFO(parameters.getNrChannels())(getCodec()->channels)(parameters.getSampleRate())(getCodec()->sample_rate);
+        VAR_INFO(parameters.getNrChannels())(codec->channels)(parameters.getSampleRate())(codec->sample_rate);
         static const int taps = 16;
         mResampleContext =
             av_audio_resample_init(
-                parameters.getNrChannels(), getCodec()->channels,
-                parameters.getSampleRate(), getCodec()->sample_rate,
-                AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16,
+                parameters.getNrChannels(), codec->channels,
+                parameters.getSampleRate(), codec->sample_rate,
+                AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16,// 0,0,0,0);
                 taps, 10, 0, 0.8);
+
+        ///**
+// * Initialize an audio resampler.
+// * Note, if either rate is not an integer then simply scale both rates up so they are.
+// * @param filter_length length of each FIR filter in the filterbank relative to the cutoff freq
+// * @param log2_phase_count log2 of the number of entries in the polyphase filterbank
+// * @param linear If 1 then the used FIR filter will be linearly interpolated
+//                 between the 2 closest, if 0 the closest will be used
+// * @param cutoff cutoff frequency, 1.0 corresponds to half the output sampling rate
+// */
+//struct AVResampleContext *av_resample_init(int out_rate, int in_rate, int filter_length, int log2_phase_count, int linear, double cutoff);
+
         ASSERT_NONZERO(mResampleContext);
     }
 
-    VAR_DEBUG(this)(getCodec());
+     VAR_DEBUG(this)(getCodec());
 }
 
 void AudioFile::stopDecodingAudio()

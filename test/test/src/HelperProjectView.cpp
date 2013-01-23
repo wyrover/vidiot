@@ -13,7 +13,6 @@
 #include "Timeline.h"
 #include "Sequence.h"
 #include "Dialog.h"
-
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 
@@ -22,6 +21,11 @@ namespace test {
 gui::ProjectView& getProjectView()
 {
     return gui::ProjectView::get();
+}
+
+wxPoint ProjectViewPosition()
+{
+    return getProjectView().GetScreenPosition();
 }
 
 model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
@@ -162,23 +166,49 @@ void MoveProjectView(wxPoint position)
     MoveWithinWidget(position, getProjectView().GetScreenPosition());
 }
 
-void DragFromProjectViewToTimeline(wxPoint from, wxPoint to)
+wxPoint Center( model::NodePtr node )
 {
-    FATAL("Does not work yet.");
-    VAR_DEBUG(from)(to);
-    MoveProjectView(from)   ;
+    return ProjectViewPosition() + findNode( node );
+}
+
+void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
+{
+    wxPoint position = Center(node);
+
+    ASSERT(!wxGetMouseState().LeftDown());
+    MoveOnScreen(position);
     LeftDown();
-    wxPoint fromAbs = from + getProjectView().GetScreenPosition();
-    wxPoint toAbs = to + getTimeline().GetScreenPosition();
-    MoveProjectView(from + wxPoint(10,0)); // Start drag
-    static const int DRAGSTEPS = 5; // Use a higher number to see the drag in small steps. NOTE: Too small number causes drop in wrong position!
-    for (int i = DRAGSTEPS; i > 0; --i)
+
+    // Note 1: Need at least three consecutive drag events before the ProjectView decides that we're actually dragging. See ProjectView::onMotion.
+    // Note 2: When DND is active (DoDragStart has been called) event handling is blocked. Therefore, waitForIdle does not work below, until the drop is done (or the drag is aborted).
+    int count = 0;
+    while (!gui::ProjectViewDropSource::get().isDragActive() && count++ < 100)
     {
-        wxPoint p(fromAbs.x + (toAbs.x - fromAbs.x) / i, fromAbs.y + (toAbs.y - fromAbs.y) / i);
-        MoveOnScreen(p);
+        position.x += 1;
+        wxUIActionSimulator().MouseMove(position);
+        pause(10);
     }
-    LeftUp();
-    waitForIdle();
+    ASSERT_LESS_THAN(count,100);
+
+    // Drop onto target point
+//    wxPoint positionInTimeline = wxPoint(3, VCenter(VideoTrack(0)));
+//    wxPoint position = getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + positionInTimeline; // todo use gettimelineposition
+    count = 0;
+    while (wxGetMouseState().GetPosition() != to && count++ < 3)
+    {
+        // Loop is required since sometimes the move fails the first time.
+        // Particularly seen when working through remote desktop/using touchpad.
+        wxUIActionSimulator().MouseMove(to);
+        pause(100); // Do not use waitforidle: does not work during drag and drop
+    }
+    ASSERT_LESS_THAN(count,3);
+
+    wxUIActionSimulator().MouseUp();
+    while (gui::ProjectViewDropSource::get().isDragActive())
+    {
+        pause(50); // Can't use waitForIdle: event handling is blocked during DnD
+    }
+    waitForIdle(); // Can be used again when the DND is done.
 }
 
 } // namespace

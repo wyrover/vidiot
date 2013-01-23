@@ -24,6 +24,9 @@ namespace test {
 /// \return the project view
 gui::ProjectView& getProjectView();
 
+/// \return the position of the project view on screen
+wxPoint ProjectViewPosition();
+
 /// Create a new autofolder to the given path in a given parent folder or in the root (default)
 /// \return new autofolder
 model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent = getRoot() );
@@ -57,10 +60,13 @@ int countProjectView();
 /// \param node node to be found
 wxPoint findNode( model::NodePtr node );
 
+/// \return center position of given node, in screen coordinates
+wxPoint Center(model::NodePtr node);
+
 /// Perform a drag and drop operation from project view to the timeline
 /// \param from position within project view
 /// \param to position within timeline
-void DragFromProjectViewToTimeline(wxPoint from, wxPoint to);
+void DragFromProjectViewToTimeline(model::NodePtr node, wxPoint to);
 
 } // namespace
 

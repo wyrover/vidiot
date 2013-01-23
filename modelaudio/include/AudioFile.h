@@ -55,7 +55,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mDecodingAudio;
-    ReSampleContext*    mResampleContext;
+    ReSampleContext* mResampleContext;
 
     // Do not use the method below for allocating the buffer. That will cause
     // SEGV when compiled with GCC (MingW).
@@ -63,6 +63,7 @@ private:
     //int16_t audioResampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
     sample* audioDecodeBuffer;
     sample* audioResampleBuffer;
+    sample* audioCombineBuffer;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

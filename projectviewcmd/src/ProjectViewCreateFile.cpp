@@ -44,7 +44,7 @@ bool ProjectViewCreateFile::Do()
     }
     BOOST_FOREACH(model::FilePtr child, mChildren)
     {
-        mParent->addChild(boost::static_pointer_cast<model::Node>(child));//
+        mParent->addChild(boost::static_pointer_cast<model::Node>(child));
     }
     return true;
 }
