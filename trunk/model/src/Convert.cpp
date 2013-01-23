@@ -2,14 +2,14 @@
 
 #include "AudioChunk.h"
 #include "Constants.h"
-
 #include "UtilLog.h"
 #include "Properties.h"
 
 namespace model {
 typedef boost::rational<int> rational;
 
-int toInt(rational r)
+// static
+int Convert::toInt(boost::rational<int> r)
 {
     return static_cast<int>(floor(boost::rational_cast<double>(r)));
 }
@@ -102,7 +102,7 @@ int Convert::framesToSamples(int nChannels, int nFrames)
 
 pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrate)
 {
-    return toInt(rational(inputposition) * inputrate / outputrate );
+    return Convert::toInt(rational(inputposition) * inputrate / outputrate );
 }
 
 //static
