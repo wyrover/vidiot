@@ -9,7 +9,7 @@
 #include "FixtureGui.h"
 #include "HelperApplication.h"
 #include "HelperDetails.h"
-#include "HelperDrag.h"
+#include "HelperTimelineDrag.h"
 #include "HelperModel.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
