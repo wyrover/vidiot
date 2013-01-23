@@ -45,6 +45,12 @@ public:
     DataObject& getData();       ///< \return the current associated data object
     void setFeedback(bool enabled); ///< Enable/disable showing feedback. Used to avoid flicker
 
+    //////////////////////////////////////////////////////////////////////////
+    // TEST
+    //////////////////////////////////////////////////////////////////////////
+
+    bool isDragActive() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -55,6 +61,7 @@ private:
     ProjectViewModel& mModel;
     wxFrame *mHint;
     bool mFeedback;             ///< true if feedback must be shown while drawing
+    bool mActive;               ///< true if a drag operation has been started and not yet aborted
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
