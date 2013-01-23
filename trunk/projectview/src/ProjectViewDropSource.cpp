@@ -39,6 +39,7 @@ ProjectViewDropSource::ProjectViewDropSource(wxDataViewCtrl& ctrl, ProjectViewMo
     ,   mModel(model)
     ,   mHint(0)
     ,   mFeedback(true)
+    ,   mActive(false)
 {
 }
 
@@ -58,6 +59,7 @@ ProjectViewDropSource::~ProjectViewDropSource()
 bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 {
     VAR_DEBUG(this)(wxGetMouseState().ControlDown())(wxGetMouseState().ShiftDown());
+    mActive = true;
     if (!mFeedback) return wxDropSource::GiveFeedback(effect);
 
     wxPoint pos = wxGetMousePosition();
@@ -116,6 +118,7 @@ void ProjectViewDropSource::startDrag(DataObject& data)
 {
     SetData(data);
     DoDragDrop(wxDrag_DefaultMove);
+    mActive = false;
     if (mHint)
     {
         delete mHint;
@@ -148,6 +151,15 @@ void ProjectViewDropSource::setFeedback(bool enabled)
     }
 
 }
+
+    //////////////////////////////////////////////////////////////////////////
+    // TEST
+    //////////////////////////////////////////////////////////////////////////
+
+    bool ProjectViewDropSource::isDragActive() const
+    {
+        return mActive;
+    }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
