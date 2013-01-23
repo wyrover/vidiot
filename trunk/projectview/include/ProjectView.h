@@ -48,6 +48,7 @@ public:
     // FIND NODES
     //////////////////////////////////////////////////////////////////////////
 
+    /// \return center position (within the ProjectView) of the given node.
     wxPoint find( model::NodePtr node );
 
 private:

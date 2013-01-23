@@ -30,6 +30,8 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+static int HeaderHeight = 0;
+
 ProjectView::ProjectView(wxWindow* parent)
     :   wxPanel(parent)
     ,   mProject(0)
@@ -77,6 +79,15 @@ ProjectView::ProjectView(wxWindow* parent)
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &ProjectView::onCollapsed,       this);
 
     mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,           &ProjectView::onMotion,          this);
+
+    // Rancid, but working... Determine the height of the (well, 'a') header
+    // Code specifically put here: Originally it was included in the 'findNode' method (where it is used).
+    // However, that method is often run in a different (non GUI) thread, causing problems.
+    wxDialog win(0,-1,"Dummy");
+    wxHeaderCtrlSimple s(&win);
+    wxHeaderColumnSimple col("Title");
+    s.AppendColumn(col);
+    HeaderHeight = s.GetSize().GetHeight();
 }
 
 ProjectView::~ProjectView()
@@ -190,21 +201,11 @@ wxPoint ProjectView::find( model::NodePtr node )
 {
     wxPoint result;
     wxDataViewItem item =  wxDataViewItem( node->id() );
-    static int HeaderHeight = 0;
-    wxPoint headerAdjust(0,HeaderHeight);
 
-    if (HeaderHeight == 0)
-    {
-        // Rancid, but working... Determine the height of the (well, 'a') header
-        wxDialog win(0,-1,"Bla");
-        wxHeaderCtrlSimple s(&win);
-        wxHeaderColumnSimple col("Title");
-        s.AppendColumn(col);
-        HeaderHeight = s.GetSize().GetHeight();
-    }
+    wxPoint headerAdjust(0,HeaderHeight);
     wxRect rect = mCtrl.GetItemRect(item, 0);
 
-    return wxPoint(40, rect.GetY() + rect.GetHeight() / 2) + headerAdjust;
+    return wxPoint(rect.GetX() + rect.GetWidth() / 2, rect.GetY() + rect.GetHeight() / 2) + headerAdjust;
     //for (int i = 0; i < mCtrl.GetSize().GetHeight(); ++i)
     //{
     //    wxDataViewItem wxItem;
@@ -400,7 +401,9 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& event)
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), wxFileName(s,"")));
+        wxFileName path(s,"");
+        path.Normalize();
+        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), path));
     }
 }
 
@@ -425,11 +428,13 @@ void ProjectView::onNewFile(wxCommandEvent& event)
         {
             return;
         }
-        list.push_back(wxFileName(path));
+        wxFileName file(path);
+        file.Normalize();
+        list.push_back(file);
     }
     if (list.size() > 0 )
     {
-        mProject->Submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
+        mProject->Submit(new command::ProjectViewCreateFile(getSelectedContainer(), list)); // todo make File::test or something alike and only add correct files. Do for autofolder also.
     }
 }
 

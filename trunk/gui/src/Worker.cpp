@@ -16,6 +16,7 @@ Worker::Worker()
 ,   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
 {
+    // todo don't start thread if there's no work yet. Easier debugging
     mThread.reset(new boost::thread(boost::bind(&Worker::thread,this)));
 }
 
