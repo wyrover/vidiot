@@ -30,8 +30,6 @@ void FixtureProject::init()
 {
     if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
 
-    wxString sVidiotDir;
-
 #ifndef SOURCE_ROOT
 #error "SOURCE_ROOT is not defined!"
 #endif
