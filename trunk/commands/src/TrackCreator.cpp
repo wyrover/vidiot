@@ -29,31 +29,35 @@ TrackCreator::TrackCreator(model::NodePtrs assets)
             model::IClipPtr videoClip;
             model::IClipPtr audioClip;
 
-            pts length = file->getLength();
+            if (file->canBeOpened())
+            {
 
-            if (file->hasVideo())
-            {
-                model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-                videoClip = boost::make_shared<model::VideoClip>(videoFile);
-            }
-            else
-            {
-                videoClip = boost::make_shared<model::EmptyClip>(length);
-            }
-            if (file->hasAudio())
-            {
-                model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-                audioClip = boost::make_shared<model::AudioClip>(audioFile);
-            }
-            else
-            {
-                audioClip = boost::make_shared<model::EmptyClip>(length);
-            }
+                pts length = file->getLength();
 
-            videoClip->setLink(audioClip);
-            audioClip->setLink(videoClip);
-            mVideo->addClips(boost::assign::list_of(videoClip));
-            mAudio->addClips(boost::assign::list_of(audioClip));
+                if (file->hasVideo())
+                {
+                    model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
+                    videoClip = boost::make_shared<model::VideoClip>(videoFile);
+                }
+                else
+                {
+                    videoClip = boost::make_shared<model::EmptyClip>(length);
+                }
+                if (file->hasAudio())
+                {
+                    model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
+                    audioClip = boost::make_shared<model::AudioClip>(audioFile);
+                }
+                else
+                {
+                    audioClip = boost::make_shared<model::EmptyClip>(length);
+                }
+
+                videoClip->setLink(audioClip);
+                audioClip->setLink(videoClip);
+                mVideo->addClips(boost::assign::list_of(videoClip));
+                mAudio->addClips(boost::assign::list_of(audioClip));
+            }
         }
     }
 }

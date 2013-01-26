@@ -197,8 +197,10 @@ PropertiesPtr Project::getProperties() const
 template<class Archive>
 void Project::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mRoot;
+    // Since the properties can be used by other objects, they must be read first.
+    // An example is the framerate, which is used by 'Convert' which, in turn, is used in openFile() to determine the length of a stream in the file.
     ar & mProperties;
+    ar & mRoot;
 }
 template void Project::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Project::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

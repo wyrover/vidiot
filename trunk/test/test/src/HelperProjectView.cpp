@@ -191,8 +191,6 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     ASSERT_LESS_THAN(count,100);
 
     // Drop onto target point
-//    wxPoint positionInTimeline = wxPoint(3, VCenter(VideoTrack(0)));
-//    wxPoint position = getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + positionInTimeline; // todo use gettimelineposition
     count = 0;
     while (wxGetMouseState().GetPosition() != to && count++ < 3)
     {

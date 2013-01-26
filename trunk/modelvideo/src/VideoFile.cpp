@@ -274,6 +274,11 @@ void VideoFile::stopDecodingVideo()
 // FROM FILE
 //////////////////////////////////////////////////////////////////////////
 
+bool VideoFile::useStream(AVMediaType type) const
+{
+    return (type == AVMEDIA_TYPE_VIDEO);
+}
+
 void VideoFile::flush()
 {
     if (mDecodingVideo)

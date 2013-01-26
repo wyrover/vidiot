@@ -240,7 +240,6 @@ void Idle::addTransition()
         }
         else
         {
-            // todo make the selection more generic??
             transition = boost::make_shared<model::audio::transition::CrossFade>();
         }
 

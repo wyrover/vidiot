@@ -3,7 +3,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include "AudioFile.h"
+//#include "AudioFile.h"
 #include "AutoFolder.h"
 #include "Convert.h"
 #include "Dialog.h"
@@ -15,11 +15,15 @@
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
-#include "VideoFile.h"
+//#include "VideoFile.h"
 
 namespace model {
 
 boost::mutex File::sMutexAvcodec;
+
+// static
+const int File::STREAMINDEX_UNDEFINED = -1;
+const int File::LENGTH_UNDEFINED = -1;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -35,10 +39,10 @@ File::File()
 ,   mEOF(false)
 ,   mPackets(1)
 ,   mMaxBufferSize(0)
-,   mStreamIndex(-1)
+,   mStreamIndex(STREAMINDEX_UNDEFINED)
 ,   mBufferPacketsThreadPtr()
 ,   mFileOpen(false)
-,   mNumberOfFrames(0)
+,   mNumberOfFrames(LENGTH_UNDEFINED)
 ,   mTwoInARow(0)
 ,   mLastModified(boost::none)
 ,   mHasVideo(false)
@@ -58,10 +62,10 @@ File::File(wxFileName path, int buffersize)
 ,   mEOF(false)
 ,   mPackets(1)
 ,   mMaxBufferSize(buffersize)
-,   mStreamIndex(-1)
+,   mStreamIndex(STREAMINDEX_UNDEFINED)
 ,   mBufferPacketsThreadPtr()
 ,   mFileOpen(false)
-,   mNumberOfFrames(0)
+,   mNumberOfFrames(LENGTH_UNDEFINED)
 ,   mTwoInARow(0)
 ,   mLastModified(boost::none)
 ,   mHasVideo(false)
@@ -69,18 +73,14 @@ File::File(wxFileName path, int buffersize)
 ,   mCanBeOpened(false)
 {
     VAR_DEBUG(this);
-    if (isSupportedFileType())
-    {
-        // These two lines are required to correctly read the length
-        // (and/or any other meta data) from the file.
-        // This can only be done for supported formats, since avcodec
-        // can only read the lengths from those.
-        //
-        // Note that the opening of a file sets mCanBeOpened
-        // to the correct value.
-        openFile();
-        closeFile();
-    }
+    // These two lines are required to correctly read the length
+    // (and/or any other meta data) from the file.
+    // This can only be done for supported formats, since avcodec
+    // can only read the lengths from those.
+    //
+    // Note that the opening of a file sets mCanBeOpened to the correct value.
+    openFile();
+    closeFile();
 }
 
 File::File(const File& other)
@@ -93,7 +93,7 @@ File::File(const File& other)
 ,   mEOF(false)
 ,   mPackets(1)
 ,   mMaxBufferSize(other.mMaxBufferSize)
-,   mStreamIndex(-1)
+,   mStreamIndex(STREAMINDEX_UNDEFINED)
 ,   mBufferPacketsThreadPtr()
 ,   mFileOpen(false)
 ,   mNumberOfFrames(other.mNumberOfFrames)
@@ -199,19 +199,6 @@ wxString File::getName() const
     return mPath.GetLongPath();
 };
 
-bool File::isSupportedFileType()
-{
-    std::list<wxString> supportedFileTypes = boost::assign::list_of("avi")("mov"); // Use lowercase
-    BOOST_FOREACH( wxString filetype, supportedFileTypes )
-    {
-        if (mPath.GetExt().Lower().IsSameAs(filetype))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool File::canBeOpened()
 {
     return mCanBeOpened;
@@ -219,14 +206,21 @@ bool File::canBeOpened()
 
 bool File::hasVideo()
 {
-    openFile();
     return mHasVideo;
 }
 
 bool File::hasAudio()
 {
-    openFile();
     return mHasAudio;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// STREAMS INTERFACE TO SUBCLASSES
+//////////////////////////////////////////////////////////////////////////
+
+bool File::useStream(AVMediaType type) const
+{
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -362,34 +356,41 @@ void File::openFile()
     VAR_DEBUG(this);
 
     int result = 0;
+    wxString path = mPath.GetLongPath();
 
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
-        result = avformat_open_input(&mFileContext, mPath.GetLongPath(), 0, 0);
+        result = avformat_open_input(&mFileContext, path, 0, 0);
     }
     if (result != 0)
     {
         // Some error occured when opening the file.
-        VAR_WARNING(mPath)(Avcodec::getErrorMessage(result));
+        VAR_WARNING(path)(result)(Avcodec::getErrorMessage(result));
         return;
     }
-
     {
         boost::mutex::scoped_lock lock(sMutexAvcodec);
-        result = av_find_stream_info(mFileContext);
-    }
-    if (result < 0)
-    {
-        // Some error occured when opening the file.
-        VAR_WARNING(Avcodec::getErrorMessage(result));
-        return;
+        result = avformat_find_stream_info(mFileContext,0);
+        if (result < 0) // Some error occured when reading stream info. Close the file again.
+        {
+            VAR_WARNING(path)(result)(Avcodec::getErrorMessage(result));
+            avformat_close_input(&mFileContext); // Requires the lock also
+            ASSERT_ZERO(mFileContext);
+            return;
+        }
     }
 
-    mNumberOfFrames = -1;
+    mNumberOfFrames = LENGTH_UNDEFINED;
+    mStreamIndex = STREAMINDEX_UNDEFINED;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
     {
         AVStream* stream = mFileContext->streams[i];
         VAR_DEBUG(stream);
+
+        if ((mStreamIndex == STREAMINDEX_UNDEFINED) && useStream(stream->codec->codec_type))
+        {
+            mStreamIndex = i;
+        }
 
         if (stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
         {
@@ -399,26 +400,28 @@ void File::openFile()
             FrameRate videoFrameRate = FrameRate(stream->codec->time_base.num, stream->codec->time_base.den);
             mNumberOfFrames = Convert::toProjectFrameRate(stream->duration, videoFrameRate);
             VAR_DEBUG(mNumberOfFrames);
-
-            if (isA<VideoFile>())
-            {
-                mStreamIndex = i;
-            }
         }
         else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
         {
             mHasAudio = true;
 
-            if (isA<AudioFile>())
+            if (mNumberOfFrames == LENGTH_UNDEFINED)
             {
-                mStreamIndex = i;
+                // For files without video, determine the number of 'virtual video frames'.
+                mNumberOfFrames = Convert::microsecondsToPts(stream->duration);
             }
+
         }
     }
-    if (mNumberOfFrames == -1)
+
+    if ((!mHasVideo && !mHasAudio) || (mNumberOfFrames <= 0)) // <= 0: Some files have streams, but with all lengths == 0 (once happened when indexing by mistake ffprobe.exe)
     {
-        // For files without video, determine the number of 'virtual video frames'.
-        mNumberOfFrames = Convert::microsecondsToPts(mFileContext->streams[mStreamIndex]->duration);
+        LOG_WARNING << "No correct stream found";
+        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        avformat_close_input(&mFileContext);
+        ASSERT_ZERO(mFileContext);
+        mNumberOfFrames = LENGTH_UNDEFINED;
+        return;
     }
     VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
     mFileOpen = true;
@@ -516,6 +519,14 @@ void File::serialize(Archive & ar, const unsigned int version)
     ar & boost::serialization::base_object<Node>(*this);
     ar & mPath;
     ar & mMaxBufferSize;
+
+    if (Archive::is_loading::value)
+    {
+        openFile();
+        closeFile();
+        // todo handle cases where canBeOpened has become false at this point. File removed/changed.... Maybe replace file with a placeholder?
+        // todo improve performance by using lastmodified times of folders/files and then using 'stored' values?
+    }
 }
 
 template void File::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

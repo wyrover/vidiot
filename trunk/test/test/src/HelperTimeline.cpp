@@ -334,7 +334,7 @@ void PositionCursor(pixel position)
 
 void Move(wxPoint position)
 {
-    MoveWithinWidget(position,getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()); // todo use gettimelineposition
+    MoveWithinWidget(position,TimelinePosition() - getTimeline().getScrolling().getOffset());
     ASSERT_EQUALS(getTimeline().getMousePointer().getPosition(), position);
 }
 

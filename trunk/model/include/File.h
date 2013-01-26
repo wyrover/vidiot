@@ -57,7 +57,6 @@ public:
 
     wxDateTime getLastModified() const;
 
-    bool isSupportedFileType(); ///< \return true if this file is of a known format
     bool canBeOpened();         ///< \return true if this file can be opened properly
 
     bool hasVideo();
@@ -85,6 +84,17 @@ protected:
     /// - avcodec_open
     /// - avcodec_close
     static boost::mutex sMutexAvcodec;
+
+    //////////////////////////////////////////////////////////////////////////
+    // STREAMS INTERFACE TO SUBCLASSES
+    //////////////////////////////////////////////////////////////////////////
+
+    static const int STREAMINDEX_UNDEFINED;
+    static const int LENGTH_UNDEFINED;
+
+    /// \return true if the given stream is applicable to this object.
+    /// Per default returns false in the base implementation
+    virtual bool useStream(AVMediaType type) const;
 
     //////////////////////////////////////////////////////////////////////////
     // PACKETS INTERFACE TO SUBCLASSES

@@ -311,7 +311,7 @@ void MenuHandler::onAddInTransition(wxCommandEvent& event)
 
 void MenuHandler::onAddOutTransition(wxCommandEvent& event)
 {
-    LOG_INFO; // todo make transitionfactory.... avoiding having to include all types of transitions everywhere
+    LOG_INFO; // todo make transitionfactory.... avoiding having to include all types of transitions everywhere. See also Idle::addTransition
     createTransition(boost::make_shared<model::video::transition::CrossFade>()); // todo this does not work, sometimes makes inouttransition, not in-only transition
 }
 

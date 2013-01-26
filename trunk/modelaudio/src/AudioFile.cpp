@@ -270,11 +270,6 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     }
     ASSERT_EQUALS(codec->sample_fmt,AV_SAMPLE_FMT_S16);
 
-//    I'd recommend to resample using audio filters. It can convert between
-//number of channels, sample format, sample rate.
-//See doc/examples/filtering_audio.c
-//Filterchain string "aresample" should do that.
-  //todo always
     if ((parameters.getNrChannels() != codec->channels) || (parameters.getSampleRate() != codec->sample_rate))
     {
         VAR_INFO(parameters.getNrChannels())(codec->channels)(parameters.getSampleRate())(codec->sample_rate);
@@ -285,18 +280,6 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
                 parameters.getSampleRate(), codec->sample_rate,
                 AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16,// 0,0,0,0);
                 taps, 10, 0, 0.8);
-
-        ///**
-// * Initialize an audio resampler.
-// * Note, if either rate is not an integer then simply scale both rates up so they are.
-// * @param filter_length length of each FIR filter in the filterbank relative to the cutoff freq
-// * @param log2_phase_count log2 of the number of entries in the polyphase filterbank
-// * @param linear If 1 then the used FIR filter will be linearly interpolated
-//                 between the 2 closest, if 0 the closest will be used
-// * @param cutoff cutoff frequency, 1.0 corresponds to half the output sampling rate
-// */
-//struct AVResampleContext *av_resample_init(int out_rate, int in_rate, int filter_length, int log2_phase_count, int linear, double cutoff);
-
         ASSERT_NONZERO(mResampleContext);
     }
 
@@ -325,6 +308,11 @@ void AudioFile::stopDecodingAudio()
 //////////////////////////////////////////////////////////////////////////
 // FROM FILE
 //////////////////////////////////////////////////////////////////////////
+
+bool AudioFile::useStream(AVMediaType type) const
+{
+    return (type == AVMEDIA_TYPE_AUDIO);
+}
 
 void AudioFile::flush()
 {

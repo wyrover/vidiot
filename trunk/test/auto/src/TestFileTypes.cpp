@@ -69,8 +69,7 @@ void TestFileTypes::tearDown()
 
 //RUNONLY(testFileTypes);
 void TestFileTypes::testFileTypes()
-{    // todo add mp4 file: does not work due to test file types!!! dat moet robuuster!!!
-
+{
     StartTestSuite();
 
     wxString sFolder1( "Folder1" );

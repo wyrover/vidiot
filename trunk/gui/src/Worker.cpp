@@ -16,13 +16,11 @@ Worker::Worker()
 ,   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
 {
-    // todo don't start thread if there's no work yet. Easier debugging
-    mThread.reset(new boost::thread(boost::bind(&Worker::thread,this)));
 }
 
 Worker::~Worker()
 {
-	mEnabled = false;
+    mEnabled = false;
     mFifo.flush();
     mFifo.push(WorkPtr());
     if (mThread)
@@ -39,6 +37,11 @@ void Worker::schedule(WorkPtr work)
 {
     mFifo.push(work);
     QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
+    boost::mutex::scoped_lock lock(mMutex);
+    if (!mThread)
+    {
+        mThread.reset(new boost::thread(boost::bind(&Worker::thread,this))); // Only start this extra thread if there's actual work. Easier debugging.
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +74,8 @@ void Worker::thread()
             if (mFifo.getSize() == 0)
             {
                 mCondition.notify_all();
+                mThread.reset();
+                return;
             }
         }
     }
