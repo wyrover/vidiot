@@ -13,6 +13,7 @@
 #include "Drag.h"
 #include "EmptyClip.h"
 #include "HelperApplication.h"
+#include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "IClip.h"
@@ -37,11 +38,6 @@
 #include "Zoom.h"
 
 namespace test {
-
-wxPoint TimelinePosition()
-{
-    return getTimeline().GetScreenPosition();
-}
 
 int NumberOfVideoClipsInTrack(int trackindex)
 {

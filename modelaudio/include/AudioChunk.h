@@ -26,7 +26,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /// Initialize, allocate, and fill the data.
+    /// Initialize, allocate, and (optionally) fill the data.
     /// \param buffer if non-null data from this buffer is copied into the newly allocated space.
     /// \param position approximate pts value of this chunk (note: use for debugging only)
     AudioChunk(sample* buffer, int nChannels, samplecount nSamples, pts position);
