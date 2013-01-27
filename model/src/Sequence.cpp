@@ -59,6 +59,9 @@ Sequence::Sequence(wxString name)
     ,   mRender()
 {
     VAR_DEBUG(this);
+    mVideoTracks.push_back(boost::make_shared<VideoTrack>());
+    mAudioTracks.push_back(boost::make_shared<AudioTrack>());
+    updateTracks();
 }
 
 Sequence::Sequence(const Sequence& other)
@@ -71,8 +74,8 @@ Sequence::Sequence(const Sequence& other)
     ,   mDividerPosition(other.mDividerPosition)
     ,   mVideoTracks(make_cloned<Track>(other.mVideoTracks))
     ,   mAudioTracks(make_cloned<Track>(other.mAudioTracks))
-    ,   mVideoTrackMap() // Duplicate administration left empty!
-    ,   mAudioTrackMap()  // Duplicate administration left empty!
+    ,   mVideoTrackMap() // Duplicate administration left empty! (This constructor should only be used for cloning directly before rendering)
+    ,   mAudioTrackMap()  // Duplicate administration left empty! (...and for rendering the duplicate administration is not required)
     ,   mPosition(0)
     ,   mRender(make_cloned<render::Render>(other.mRender))
 {
@@ -356,6 +359,9 @@ void Sequence::updateTracks()
         mAudioTrackMap[index] = track;
         ++index;
     }
+
+    ASSERT(!mVideoTracks.empty()); // Avoid problems with sequences that have no tracks. Example:
+    ASSERT(!mAudioTracks.empty()); // Drag from projectview to a sequence without tracks: crash in drag handling.
 }
 
 //////////////////////////////////////////////////////////////////////////

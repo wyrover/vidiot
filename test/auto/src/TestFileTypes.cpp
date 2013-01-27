@@ -50,8 +50,6 @@ void TestFileTypes::setUp()
 
     wxString sSequence( "Sequence" );
     mSequence = addSequence( sSequence, mRoot );
-    triggerMenu(ID_ADDVIDEOTRACK);
-    triggerMenu(ID_ADDAUDIOTRACK);
 
     InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
 }

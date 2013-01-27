@@ -10,6 +10,9 @@
 
 namespace model {
 
+/// Sequences must always have one or more video tracks and one or more audio tracks.
+/// That is done to have to check (for instance in timeline::Drag.cpp) whether there
+/// are such tracks available in the sequence.
 class Sequence
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
