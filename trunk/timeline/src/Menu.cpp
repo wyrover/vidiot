@@ -20,6 +20,7 @@
 #include "Track.h"
 #include "VideoTransition_CrossFade.h"
 #include "AudioTransition_CrossFade.h"
+#include "RemoveEmptyTracks.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
@@ -41,6 +42,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
 
     mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"));
     mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"));
+    mMenu.Append(ID_REMOVE_EMPTY_TRACKS,  _("Remove empty video and audio tracks"));
     mMenu.AppendSeparator();
     mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions from sequence"));
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
@@ -52,8 +54,9 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.AppendSeparator();
     mMenu.Append(ID_CLOSESEQUENCE,  _("Close"));
 
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,  this, ID_ADDAUDIOTRACK);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,      this, ID_ADDVIDEOTRACK);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,      this, ID_ADDAUDIOTRACK);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,  this, ID_REMOVE_EMPTY_TRACKS);
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
@@ -83,8 +86,9 @@ MenuHandler::~MenuHandler()
 {
     VAR_DEBUG(this);
 
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,  this, ID_ADDVIDEOTRACK);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,  this, ID_ADDAUDIOTRACK);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,      this, ID_ADDVIDEOTRACK);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,      this, ID_ADDAUDIOTRACK);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,  this, ID_REMOVE_EMPTY_TRACKS);
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
@@ -248,6 +252,12 @@ void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
 {
     LOG_INFO;
     (new command::CreateAudioTrack(getSequence()))->submit();
+}
+
+void MenuHandler::onRemoveEmptyTracks(wxCommandEvent& event)
+{
+    LOG_INFO;
+    (new command::RemoveEmptyTracks(getSequence()))->submit();
 }
 
 void MenuHandler::onDeleteMarked(wxCommandEvent& event)

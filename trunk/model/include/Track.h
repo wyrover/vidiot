@@ -48,6 +48,8 @@ public:
     // CLIPS
     //////////////////////////////////////////////////////////////////////////
 
+    bool isEmpty() const;
+
     virtual void removeClips(IClips clips);
     virtual void addClips(IClips clips, IClipPtr position = IClipPtr());
 

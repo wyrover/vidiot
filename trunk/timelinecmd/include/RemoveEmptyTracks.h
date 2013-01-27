@@ -1,0 +1,49 @@
+#ifndef REMOVE_EMPTY_TRACKS_H
+#define REMOVE_EMPTY_TRACKS_H
+
+#include "ATimelineCommand.h"
+#include "SequenceEvent.h"
+
+namespace gui { namespace timeline { namespace command {
+
+class RemoveEmptyTracks
+    :   public ATimelineCommand
+{
+public:
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    explicit RemoveEmptyTracks (model::SequencePtr sequence);
+    ~RemoveEmptyTracks ();
+
+    //////////////////////////////////////////////////////////////////////////
+    // EVENTS FROM SEQUENCE
+    //////////////////////////////////////////////////////////////////////////
+
+    void onVideoTracksRemoved( model::EventRemoveVideoTracks& event );
+    void onAudioTracksRemoved( model::EventRemoveAudioTracks& event );
+
+    //////////////////////////////////////////////////////////////////////////
+    // WXWIDGETS DO/UNDO INTERFACE
+    //////////////////////////////////////////////////////////////////////////
+
+    bool Do() override;
+    bool Undo() override;
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    bool mInitialized;
+    std::list< model::TrackChange > mVideoUndo;
+    std::list< model::TrackChange > mAudioUndo;
+
+};
+
+}}} // namespace
+
+#endif // REMOVE_EMPTY_TRACKS_H

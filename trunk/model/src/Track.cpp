@@ -105,6 +105,18 @@ void Track::clean()
 // HANDLING CLIPS
 //////////////////////////////////////////////////////////////////////////
 
+bool Track::isEmpty() const
+{
+    BOOST_FOREACH( IClipPtr mClip, mClips )
+    {
+        if (!mClip->isA<EmptyClip>())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void Track::addClips(IClips clips, IClipPtr position)
 {
     VAR_DEBUG(*this)(position)(clips);

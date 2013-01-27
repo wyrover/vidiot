@@ -9,7 +9,7 @@ struct TrackChange
 {
     Tracks addedTracks;
 
-    /// The moved tracks must be inserted before this clip.
+    /// The moved tracks must be inserted before this track.
     /// If this is an uninitialized pointer, then the tracks need
     /// to be inserted at the end.
     TrackPtr addPosition;
@@ -29,7 +29,14 @@ struct TrackChange
     /// are added to the end.
     TrackChange(Tracks _addedTracks, TrackPtr _addPosition = TrackPtr(), Tracks _removedTracks = Tracks(), TrackPtr _removePosition = TrackPtr());
 
+    /// Copy constructor
+    TrackChange(const TrackChange& other);
+
     friend std::ostream& operator<<( std::ostream& os, const TrackChange& obj );
+
+    /// \return new object that is the inverse of this object.
+    /// This means that all additions and removals are interchanged.
+    TrackChange make_inverted();
 };
 
 DECLARE_EVENT(EVENT_ADD_VIDEO_TRACK,      EventAddVideoTracks,      TrackChange);

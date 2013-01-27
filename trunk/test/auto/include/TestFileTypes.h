@@ -41,12 +41,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxFileName TestFilesPath;               ///< Contains the path to the test files
-    model::IPaths InputFiles;               ///< Contains the filenames of the input files in the test directory
-
-    model::FolderPtr mRoot;
-    model::SequencePtr mSequence;
-
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////

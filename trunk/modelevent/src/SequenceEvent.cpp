@@ -26,10 +26,23 @@ TrackChange::TrackChange(Tracks _addedTracks, TrackPtr _addPosition, Tracks _rem
 {
 }
 
+TrackChange::TrackChange(const TrackChange& other)
+:   addedTracks(other.addedTracks)
+,   addPosition(other.addPosition)
+,   removedTracks(other.removedTracks)
+,   removePosition(other.removePosition)
+{
+}
+
 std::ostream& operator<<( std::ostream& os, const TrackChange& obj )
 {
     os << &obj << '|' << obj.addedTracks << '|' << obj.addPosition << '|' << obj.removedTracks << '|' << obj.removePosition;
     return os;
+}
+
+TrackChange TrackChange::make_inverted()
+{
+    return TrackChange(removedTracks,removePosition,addedTracks,addPosition);
 }
 
 } // namespace
