@@ -188,13 +188,15 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             nRemainingInputSamples -= nUsedInputSamples;
             input += nUsedInputSamples;
             output += nNewOutputSamples;
-            ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingInputSamples)(nUsedInputSamples);
+            // NOT: ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingInputSamples)(nUsedInputSamples);
+            // RATIONALE: Sometimes audio_resample returns a slightly higher number of output frames then to be expected
+            //            by the given amount of input frames (maybe caused by audio_resample mechanism 'caching' some of
+            //            them in a previous call?).
         }
 
         targetData = audioCombineBuffer;
 
         VAR_DEBUG(nSamples);
-        // todo crash if create new sequence (without tracks) and then drag and drop clip on it...
     }
     else
     {

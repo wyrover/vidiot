@@ -6,6 +6,7 @@
 #include "AutoFolder.h"
 #include "File.h"
 #include "FixtureGui.h"
+#include "HelperConfig.h"
 #include "HelperApplication.h"
 #include "HelperProjectView.h"
 #include "HelperTestSuite.h"
@@ -33,45 +34,73 @@ namespace test {
 
 void TestFileTypes::setUp()
 {
-    if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // Test was disabled
-
 #ifndef SOURCE_ROOT
 #error "SOURCE_ROOT is not defined!"
 #endif
-
-    TestFilesPath = wxFileName(SOURCE_ROOT,"");
-    TestFilesPath.AppendDir("test");
-    TestFilesPath.AppendDir("filetypes");
-    ASSERT(TestFilesPath.IsDir());
-    ASSERT(TestFilesPath.DirExists());
-
-    mRoot = createProject();
-    ASSERT(mRoot);
-
-    wxString sSequence( "Sequence" );
-    mSequence = addSequence( sSequence, mRoot );
-
-    InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
 }
 
 void TestFileTypes::tearDown()
 {
-    InputFiles.clear();
-    mRoot.reset();
-    mSequence.reset();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testFileTypes);
-void TestFileTypes::testFileTypes()
+//RUNONLY(testFileTypes_1_44100);
+void TestFileTypes::testFileTypes_1_44100()
 {
     StartTestSuite();
+    ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 1);
+    ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 44100);
+    executeTest();
+}
 
+void TestFileTypes::testFileTypes_2_44100()
+{
+    StartTestSuite();
+    ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 2);
+    ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 44100);
+    executeTest();
+}
+
+void TestFileTypes::testFileTypes_1_48000()
+{
+    StartTestSuite();
+    ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 1);
+    ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 48000);
+    executeTest();
+}
+
+void TestFileTypes::testFileTypes_2_48000()
+{
+    StartTestSuite();
+    ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 2);
+    ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 48000);
+    executeTest();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void TestFileTypes::executeTest()
+{
+    // Create the project (must be done after ConfigOverrule* code)
+    mRoot = createProject();
+    ASSERT(mRoot);
+    wxString sSequence( "Sequence" );
+    mSequence = addSequence( sSequence, mRoot );
     wxString sFolder1( "Folder1" );
     model::FolderPtr folder1 = addFolder( sFolder1 );
+
+    // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
+    TestFilesPath = wxFileName(SOURCE_ROOT,"");
+    TestFilesPath.AppendDir("test");
+    TestFilesPath.AppendDir("filetypes");
+    ASSERT(TestFilesPath.IsDir());
+    ASSERT(TestFilesPath.DirExists());
+    InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
 
     BOOST_FOREACH( model::IPathPtr path, InputFiles )
     {
@@ -84,10 +113,14 @@ void TestFileTypes::testFileTypes()
         ASSERT_EQUALS(VideoTrack(0)->getLength(),VideoClip(0,0)->getLength());
         ASSERT_AUDIOTRACK0(AudioClip);
         ASSERT_EQUALS(AudioTrack(0)->getLength(),AudioClip(0,0)->getLength());
-        Play(HCenter(VideoClip(0,0)), 2000);
+        Play(HCenter(VideoClip(0,0)), 1000);
         Undo(2);
     }
+
+    InputFiles.clear();
+    mRoot.reset();
+    mSequence.reset();
+// todo no longer members!
 }
 
-// todo make test for '2 44100 stereo' '2 48000 stereo' '2 44100 mono' and '2 48000 mono'
 } // namespace
