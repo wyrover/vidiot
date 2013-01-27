@@ -59,6 +59,14 @@ public:
     /// \return 1 (required to avoid being optimized out of executable)
     int runWithoutGui(const char* file, const char* test);
 
+    /// \return true if all tests are being run.
+    /// \see runOnly
+    bool allTestsAreRunning();
+
+    /// \return true if the current test (as indicated by CxxTest) runs as the only test.
+    /// \see runOnly
+    bool currentTestRunsStandAlone();
+
     /// \return true if the current test (as indicated by CxxTest) may be ran.
     /// A test is ran if
     /// - no test has been configured as 'runonly', OR

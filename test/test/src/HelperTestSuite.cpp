@@ -67,11 +67,19 @@ HelperTestSuite::HelperTestSuite()
 // TEST CONFIGURATION
 //////////////////////////////////////////////////////////////////////////
 
+bool HelperTestSuite::allTestsAreRunning()
+{
+    return mRunOnlySuite.compare("") == 0;
+}
+
+bool HelperTestSuite::currentTestRunsStandAlone()
+{
+    return mRunOnlySuite.compare(currentCxxTest()) == 0;
+}
+
 bool HelperTestSuite::currentTestIsEnabled()
 {
-    return
-        mRunOnlySuite.compare("") == 0 ||
-        mRunOnlySuite.compare(currentCxxTest()) == 0;
+    return allTestsAreRunning() || currentTestRunsStandAlone();
 }
 
 bool HelperTestSuite::currentTestRequiresGui()

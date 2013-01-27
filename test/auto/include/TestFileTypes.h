@@ -30,7 +30,10 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testFileTypes();
+    void testFileTypes_1_44100();
+    void testFileTypes_2_44100();
+    void testFileTypes_1_48000();
+    void testFileTypes_2_48000();
 
 private:
 
@@ -43,6 +46,12 @@ private:
 
     model::FolderPtr mRoot;
     model::SequencePtr mSequence;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void executeTest();
 };
 
 } // namespace
