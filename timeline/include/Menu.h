@@ -39,6 +39,7 @@ public:
 
     void onAddVideoTrack(wxCommandEvent& event);
     void onAddAudioTrack(wxCommandEvent& event);
+    void onRemoveEmptyTracks(wxCommandEvent& event);
     void onDeleteMarked(wxCommandEvent& event);
     void onDeleteUnmarked(wxCommandEvent& event);
     void onRemoveMarkers(wxCommandEvent& event);

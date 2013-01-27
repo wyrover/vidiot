@@ -87,20 +87,20 @@ void TestFileTypes::testFileTypes_2_48000()
 void TestFileTypes::executeTest()
 {
     // Create the project (must be done after ConfigOverrule* code)
-    mRoot = createProject();
+    model::FolderPtr mRoot = createProject();
     ASSERT(mRoot);
     wxString sSequence( "Sequence" );
-    mSequence = addSequence( sSequence, mRoot );
+    model::SequencePtr mSequence = addSequence( sSequence, mRoot );
     wxString sFolder1( "Folder1" );
     model::FolderPtr folder1 = addFolder( sFolder1 );
 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
-    TestFilesPath = wxFileName(SOURCE_ROOT,"");
+    wxFileName TestFilesPath = wxFileName(SOURCE_ROOT,"");
     TestFilesPath.AppendDir("test");
     TestFilesPath.AppendDir("filetypes");
     ASSERT(TestFilesPath.IsDir());
     ASSERT(TestFilesPath.DirExists());
-    InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
+    model::IPaths InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
 
     BOOST_FOREACH( model::IPathPtr path, InputFiles )
     {
@@ -120,7 +120,6 @@ void TestFileTypes::executeTest()
     InputFiles.clear();
     mRoot.reset();
     mSequence.reset();
-// todo no longer members!
 }
 
 } // namespace

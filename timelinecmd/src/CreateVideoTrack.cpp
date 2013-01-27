@@ -7,7 +7,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-CreateVideoTrack::CreateVideoTrack(model::SequencePtr sequence) // todo make remove video and audio track...
+CreateVideoTrack::CreateVideoTrack(model::SequencePtr sequence)
 :   ATimelineCommand(sequence)
 ,   mNewTrack()
 {
