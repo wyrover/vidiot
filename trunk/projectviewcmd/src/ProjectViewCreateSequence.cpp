@@ -63,8 +63,12 @@ bool ProjectViewCreateSequence::Do()
         if (mInputFolder)
         {
             TrackCreator c(mInputFolder->getChildren());
+            model::Tracks vt = mSequence->getVideoTracks();
+            model::Tracks at = mSequence->getAudioTracks();
             mSequence->addVideoTracks(boost::assign::list_of(c.getVideoTrack()));
             mSequence->addAudioTracks(boost::assign::list_of(c.getAudioTrack()));
+            mSequence->removeVideoTracks(vt);
+            mSequence->removeAudioTracks(at);
         }
     }
 
