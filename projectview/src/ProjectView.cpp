@@ -296,7 +296,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
 
     wxMenu addMenu;
     addMenu.Append( meID_NEW_AUTOFOLDER, _("&Auto Folder") );
-    addMenu.Append( meID_NEW_FILE,       _("Fi&le") );
+    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s)") );
 
     wxMenu menu;
     menu.Append( wxID_CUT,   _("Cu&t\tCTRL-x") );
@@ -434,7 +434,7 @@ void ProjectView::onNewFile(wxCommandEvent& event)
     }
     if (list.size() > 0 )
     {
-        mProject->Submit(new command::ProjectViewCreateFile(getSelectedContainer(), list)); // todo make File::test or something alike and only add correct files. Do for autofolder also.
+        mProject->Submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
     }
 }
 

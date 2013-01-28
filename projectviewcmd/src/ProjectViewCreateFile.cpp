@@ -17,14 +17,7 @@ ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vecto
 {
     VAR_INFO(this)(mParent)(mPaths);
     ASSERT_MORE_THAN_ZERO(paths.size());
-    if (paths.size() == 1)
-    {
-        mCommandName = _("Add file")        + _(" \"")   + paths[0].GetFullName()  + _("\"");
-    }
-    else
-    {
-        mCommandName = _("Add files");
-    }
+    mCommandName = _("Add files");
 }
 
 ProjectViewCreateFile::~ProjectViewCreateFile()
@@ -39,7 +32,14 @@ bool ProjectViewCreateFile::Do()
         BOOST_FOREACH( wxFileName path, mPaths )
         {
             model::FilePtr file = boost::make_shared<model::File>(path);
-            mChildren.push_back(file);
+            if (file->canBeOpened())
+            {
+                mChildren.push_back(file);
+            }
+        }
+        if (mChildren.size() == 1)
+        {
+            mCommandName = _("Add file")        + _(" \"")   + mChildren.front()->getDescription()  + _("\"");
         }
     }
     BOOST_FOREACH(model::FilePtr child, mChildren)
