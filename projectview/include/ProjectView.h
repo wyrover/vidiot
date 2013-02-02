@@ -1,6 +1,7 @@
 #ifndef GUI_PROJECT_VIEW_H
 #define GUI_PROJECT_VIEW_H
 
+#include "ProjectViewCtrl.h"
 #include "ProjectViewModel.h"
 #include "ProjectViewDropSource.h"
 #include "UtilSingleInstance.h"
@@ -81,7 +82,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::Project* mProject;
-    wxDataViewCtrl mCtrl;
+    ProjectViewCtrl mCtrl;
     ProjectViewModel* mModel;
     ProjectViewDropSource mDropSource;
     std::set<model::FolderPtr> mOpenFolders;

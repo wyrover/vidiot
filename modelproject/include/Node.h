@@ -26,7 +26,11 @@ public:
     void setParent(NodePtr parent) override;
 
     NodePtr addChild(NodePtr newChild) override;
+    NodePtrs addChildren(NodePtrs children) override;
+
     NodePtr removeChild(NodePtr child) override;
+    NodePtrs removeChildren(NodePtrs children) override;
+
     NodePtrs getChildren() const override;
 
     NodePtrs find(wxString name) override;

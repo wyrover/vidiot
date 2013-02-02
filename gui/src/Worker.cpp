@@ -3,7 +3,7 @@
 namespace gui {
 
 DEFINE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, long);
-DEFINE_EVENT(EVENT_WORKER_EXECUTED_WORK, WorkerExecutedWorkEvent, long);
+DEFINE_EVENT(EVENT_WORKER_EXECUTED_WORK, WorkerExecutedWorkEvent, WorkPtr);
 
 static const unsigned int sMaximumBufferedWork = 1000;
 
@@ -69,6 +69,7 @@ void Worker::thread()
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
             w->execute();
+            QueueEvent(new WorkerExecutedWorkEvent(w));
             w.reset(); // Clear, so that unfreezing is done if needed
             boost::mutex::scoped_lock lock(mMutex);
             if (mFifo.getSize() == 0)

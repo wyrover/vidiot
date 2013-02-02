@@ -1,43 +1,62 @@
 #include "NodeEvent.h"
 
+#include "INode.h"
+#include "UtilLog.h"
+#include "UtilLogStl.h"
+#include "UtilLogBoost.h"
+
 namespace model {
 
-DEFINE_EVENT(EVENT_ADD_NODE,       EventAddNode,      ParentAndChild);
-DEFINE_EVENT(EVENT_REMOVE_NODE,    EventRemoveNode,   ParentAndChild);
+DEFINE_EVENT(EVENT_ADD_NODE,       EventAddNode,      ParentAndChildren);
+DEFINE_EVENT(EVENT_ADD_NODES,      EventAddNodes,     ParentAndChildren);
+DEFINE_EVENT(EVENT_REMOVE_NODE,    EventRemoveNode,   ParentAndChildren);
+DEFINE_EVENT(EVENT_REMOVE_NODES,   EventRemoveNodes,  ParentAndChildren);
 DEFINE_EVENT(EVENT_RENAME_NODE,    EventRenameNode,   NodeWithNewName);
-
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ParentAndChild::ParentAndChild( NodePtr parent, NodePtr child )
+ParentAndChildren::ParentAndChildren( NodePtr parent, NodePtrs children )
     :  mParent(parent)
-    ,  mChild(child) 
+    ,  mChildren(children)
 {
+}
+
+ParentAndChildren::ParentAndChildren( NodePtr parent, NodePtr child )
+    :  mParent(parent)
+    ,  mChildren()
+{
+    mChildren.push_back(child);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-NodePtr ParentAndChild::getParent() const
+NodePtr ParentAndChildren::getParent() const
 {
     return mParent;
 }
 
-NodePtr ParentAndChild::getChild() const
+NodePtrs ParentAndChildren::getChildren() const
 {
-    return mChild;
+    return mChildren;
+}
+
+NodePtr ParentAndChildren::getChild() const
+{
+    ASSERT_EQUALS(mChildren.size(),1);
+    return mChildren.front();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ParentAndChild& obj )
+std::ostream& operator<<( std::ostream& os, const ParentAndChildren& obj )
 {
-    os << &obj << '|' << obj.mParent << '|' << obj.mChild;
+    os << &obj << '|' << obj.mParent << '|' << obj.mChildren;
     return os;
 }
 

@@ -51,6 +51,12 @@ model::Files addFiles( std::list<wxFileName> name, model::FolderPtr parent = get
 /// \node node to be removed
 void remove( model::NodePtr node );
 
+/// \return list of supported files in the given directory. Folders are returned also.
+/// \param path absolute path which is searched for files.
+/// Furthermore, note that files are opened with avcodec. If that returns an error, the file
+/// is not added to the returned list - see File::canBeOpened().
+model::IPaths getSupportedFiles( wxFileName path );
+
 /// Count the number of nodes currently visible in the project view.
 /// This is implemented by selecting all nodes, and counting the selection size.
 /// Thus, as a side effect changes the selection of the project view.

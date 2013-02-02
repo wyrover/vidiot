@@ -55,7 +55,7 @@ public:
     /// the filename only if the parent node is an AutoFolder.
     wxString getName() const override;
 
-    wxDateTime getLastModified() const;
+    time_t getLastModified() const;
 
     bool canBeOpened();         ///< \return true if this file can be opened properly
 
@@ -140,7 +140,7 @@ private:
     int mTwoInARow;
     boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
     wxFileName mPath;
-    mutable boost::optional<wxDateTime> mLastModified;
+    time_t mLastModified;
     bool mHasVideo;
     bool mHasAudio;
     bool mCanBeOpened;

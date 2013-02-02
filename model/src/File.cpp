@@ -44,7 +44,7 @@ File::File()
 ,   mFileOpen(false)
 ,   mNumberOfFrames(LENGTH_UNDEFINED)
 ,   mTwoInARow(0)
-,   mLastModified(boost::none)
+,   mLastModified(0)
 ,   mHasVideo(false)
 ,   mHasAudio(false)
 ,   mCanBeOpened(false)
@@ -67,7 +67,7 @@ File::File(wxFileName path, int buffersize)
 ,   mFileOpen(false)
 ,   mNumberOfFrames(LENGTH_UNDEFINED)
 ,   mTwoInARow(0)
-,   mLastModified(boost::none)
+,   mLastModified(mPath.GetModificationTime().GetTicks())
 ,   mHasVideo(false)
 ,   mHasAudio(false)
 ,   mCanBeOpened(false)
@@ -181,13 +181,9 @@ wxFileName File::getPath() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-wxDateTime File::getLastModified() const
+time_t File::getLastModified() const
 {
-    if (!mLastModified)
-    {
-        mLastModified = boost::optional<wxDateTime>(mPath.GetModificationTime());
-    }
-    return *mLastModified;
+    return mLastModified;
 }
 
 wxString File::getName() const
@@ -518,15 +514,9 @@ void File::serialize(Archive & ar, const unsigned int version)
         );
     ar & boost::serialization::base_object<Node>(*this);
     ar & mPath;
+    ar & mLastModified;
     ar & mMaxBufferSize;
-
-    if (Archive::is_loading::value)
-    {
-        openFile();
-        closeFile();
-        // todo handle cases where canBeOpened has become false at this point. File removed/changed.... Maybe replace file with a placeholder?
-        // todo improve performance by using lastmodified times of folders/files and then using 'stored' values?
-    }
+    ar & mCanBeOpened;
 }
 
 template void File::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

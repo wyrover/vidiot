@@ -1,6 +1,7 @@
 #include "FixtureProject.h"
 
 #include "AutoFolder.h"
+#include "HelperApplication.h"
 #include "HelperProjectView.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
@@ -11,6 +12,7 @@
 #include "SuiteCreator.h"
 #include "Track.h"
 #include "UtilLog.h"
+#include "Worker.h"
 
 namespace test {
 
@@ -42,13 +44,15 @@ void FixtureProject::init()
 
     mRoot = createProject();
     ASSERT(mRoot);
+    InputFiles = getSupportedFiles(TestFilesPath);
+
     mAutoFolder = addAutoFolder( TestFilesPath );
+    gui::Worker::get().waitUntilQueueEmpty(); // If this hangs, then the autofolder updating probably has been completely done before this wait was started
     ASSERT_EQUALS(mAutoFolder->getParent(),mRoot);
+    ASSERT_EQUALS(mAutoFolder->getChildren().size(), InputFiles.size());
     mSequence = createSequence( mAutoFolder );
 
     ASSERT_EQUALS(mSequence->getParent(),mRoot);
-
-    InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
 
     BOOST_FOREACH( model::IClipPtr clip, mSequence->getVideoTrack(0)->getClips() )
     {

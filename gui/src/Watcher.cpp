@@ -64,7 +64,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
         {
             if (node->isA<model::AutoFolder>())
             {
-                boost::static_pointer_cast<model::AutoFolder>(node)->update();
+                boost::static_pointer_cast<model::AutoFolder>(node)->update(false);
             }
         }
     }
@@ -77,6 +77,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
 void Watcher::onOpenProject( model::EventOpenProject &event )
 {
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
     gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
     gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &Watcher::onProjectAssetRenamed,  this);
 
@@ -86,6 +87,7 @@ void Watcher::onOpenProject( model::EventOpenProject &event )
 void Watcher::onCloseProject( model::EventCloseProject &event )
 {
     gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
     gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
     gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
 
@@ -112,6 +114,16 @@ void Watcher::onProjectAssetAdded( model::EventAddNode &event )
 {
     model::NodePtr node = event.getValue().getChild();
     watch( node, getFileName(node) );
+    restart();
+    event.Skip();
+}
+
+void Watcher::onProjectAssetsAdded( model::EventAddNodes &event )
+{
+    BOOST_FOREACH( model::NodePtr node, event.getValue().getChildren() )
+    {
+        watch( node, getFileName(node) );
+    }
     restart();
     event.Skip();
 }

@@ -45,7 +45,11 @@ public:
     virtual void setParent(NodePtr parent) = 0;
 
     virtual NodePtr addChild(NodePtr newChild) = 0;
+    virtual NodePtrs addChildren(NodePtrs children) = 0;
+
     virtual NodePtr removeChild(NodePtr child) = 0;
+    virtual NodePtrs removeChildren(NodePtrs children) = 0;
+
     virtual NodePtrs getChildren() const = 0;
 
     /// Find all descendants with the given name, throughout

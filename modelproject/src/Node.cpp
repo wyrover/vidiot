@@ -64,8 +64,20 @@ NodePtr Node::addChild(NodePtr newChild)
     newChild->setParent(shared_from_this());
     // Do not use ProcessEvent: this will cause problems with auto-updating autofolders upon
     // first expansion.
-    gui::Window::get().GetEventHandler()->QueueEvent(new model::EventAddNode(ParentAndChild(shared_from_this(),newChild)));
+    gui::Window::get().GetEventHandler()->QueueEvent(new model::EventAddNode(ParentAndChildren(shared_from_this(),newChild)));
     return newChild;
+}
+
+NodePtrs Node::addChildren(NodePtrs children)
+{
+    UtilList<NodePtr>(mChildren).addElements(children, NodePtr());
+    BOOST_FOREACH( NodePtr child, children )
+    {
+        child->setParent(shared_from_this());
+    }
+    // Do not use ProcessEvent: see addChild
+    gui::Window::get().QueueModelEvent(new model::EventAddNodes(ParentAndChildren(shared_from_this(),children)));
+    return children;
 }
 
 NodePtr Node::removeChild(NodePtr child)
@@ -79,10 +91,17 @@ NodePtr Node::removeChild(NodePtr child)
     ASSERT(it != mChildren.end());
     NodePtr p = *it;
     // Do not use ProcessEvent: see addChild
-    gui::Window::get().QueueModelEvent(new model::EventRemoveNode(ParentAndChild(shared_from_this(),child)));
+    gui::Window::get().QueueModelEvent(new model::EventRemoveNode(ParentAndChildren(shared_from_this(),child)));
     mChildren.erase(it);
     child->setParent(NodePtr());
     return p;
+}
+
+NodePtrs Node::removeChildren(NodePtrs children)
+{
+    NIY(_("Not implemented: Removing list of nodes"));
+    gui::Window::get().QueueModelEvent(new model::EventRemoveNodes(ParentAndChildren(shared_from_this(),children)));
+    return children;
 }
 
 NodePtrs Node::getChildren() const

@@ -83,7 +83,6 @@ extern "C" {
 #include <wx/cursor.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
-#include <wx/dataview.h>
 #include <wx/datetime.h>
 #include <wx/dc.h>
 #include <wx/dcbuffer.h>

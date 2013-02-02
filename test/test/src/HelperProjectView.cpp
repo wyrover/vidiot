@@ -146,6 +146,25 @@ void remove( model::NodePtr node )
     waitForIdle();
 }
 
+model::IPaths getSupportedFiles( wxFileName directory )
+{
+    ASSERT(directory.IsDir() && directory.IsAbsolute())(directory);
+    model::IPaths result;
+    wxDir dir( directory.GetLongPath() );
+    ASSERT(dir.IsOpened());
+    wxString path;
+    for (bool cont = dir.GetFirst(&path,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&path))
+    {
+        wxFileName filename(directory.GetLongPath(), path);
+        model::FilePtr file = boost::make_shared<model::File>(filename);
+        if (file->canBeOpened())
+        {
+            result.push_back(file);
+        }
+    }
+    return result;
+}
+
 int countProjectView()
 {
     waitForIdle();

@@ -7,6 +7,7 @@ namespace model {
     class EventOpenProject;
     class EventCloseProject;
     class EventAddNode;
+    class EventAddNodes;
     class EventRemoveNode;
     class EventRenameNode;
 }
@@ -57,6 +58,7 @@ private:
     void onOpenProject( model::EventOpenProject &event );
     void onCloseProject( model::EventCloseProject &event );
     void onProjectAssetAdded( model::EventAddNode &event );
+    void onProjectAssetsAdded( model::EventAddNodes &event );
     void onProjectAssetRemoved( model::EventRemoveNode &event );
     void onProjectAssetRenamed( model::EventRenameNode &event );
 
