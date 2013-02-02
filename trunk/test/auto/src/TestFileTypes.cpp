@@ -100,7 +100,7 @@ void TestFileTypes::executeTest()
     TestFilesPath.AppendDir("filetypes");
     ASSERT(TestFilesPath.IsDir());
     ASSERT(TestFilesPath.DirExists());
-    model::IPaths InputFiles = model::AutoFolder::getSupportedFiles(TestFilesPath);
+    model::IPaths InputFiles = getSupportedFiles(TestFilesPath);
 
     BOOST_FOREACH( model::IPathPtr path, InputFiles )
     {

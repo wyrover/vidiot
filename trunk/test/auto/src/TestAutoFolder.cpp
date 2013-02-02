@@ -55,7 +55,7 @@ void TestAutoFolder::testWatch()
 
     // Wait until file addition seen. Loop is required to wait until the Watcher has seen the valid file
     waitForIdle();
-    while ( model::AutoFolder::getSupportedFiles( tempdir.getFileName() ).size() < 1 )
+    while ( getSupportedFiles( tempdir.getFileName() ).size() < 1 )
     {
         pause(10);
     }

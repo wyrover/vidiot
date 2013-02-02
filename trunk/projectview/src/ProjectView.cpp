@@ -35,7 +35,7 @@ static int HeaderHeight = 0;
 ProjectView::ProjectView(wxWindow* parent)
     :   wxPanel(parent)
     ,   mProject(0)
-    ,   mCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_MULTIPLE | wxDV_ROW_LINES | wxDV_HORIZ_RULES | wxDV_VERT_RULES)
+    ,   mCtrl(this)
     ,   mModel(new ProjectViewModel(mCtrl))
     ,   mDropSource(mCtrl, *mModel)
     ,   mOpenFolders()
@@ -45,8 +45,8 @@ ProjectView::ProjectView(wxWindow* parent)
     LOG_INFO;
 
     mCtrl.EnableDropTarget( DataObject::sFormat );
-    wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
-    wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
+    wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   /*wxDATAVIEW_COL_SORTABLE | */wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
+    wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  /*wxDATAVIEW_COL_SORTABLE |*/ wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
 
     mCtrl.AssociateModel( mModel );
     mModel->DecRef();

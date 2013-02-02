@@ -1,16 +1,121 @@
 #include "AutoFolder.h"
 
-#include <boost/serialization/optional.hpp>
 #include "File.h"
-
+#include "StatusBar.h"
+#include "UtilLog.h"
 #include "UtilList.h"
+#include "UtilLogStl.h"
+#include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
-#include "UtilLogWxwidgets.h"
-#include "UtilLogStl.h"
+#include "Worker.h"
 
 namespace model {
+
+//////////////////////////////////////////////////////////////////////////
+// WORK OBJECT FOR INDEXING A FOLDER
+//////////////////////////////////////////////////////////////////////////
+
+struct IndexAutoFolderWork
+    : public Work
+{
+    explicit IndexAutoFolderWork(AutoFolderPtr folder, bool recurse = true)
+        : Work(boost::bind(&IndexAutoFolderWork::indexFiles,this))
+        , mFolder(folder)
+        , mRecurse(recurse)
+    {
+    }
+
+    void indexFiles()
+    {
+        wxFileName path = mFolder->getPath();
+        ASSERT(path.IsDir() && path.IsAbsolute())(path);
+        wxString pathname =
+            path.GetDirCount() >= 1 ? path.GetDirs().Last() + "/" :
+            path.HasVolume() ? path.GetVolume() :
+            "";
+        gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + "'");
+
+        // Fill 'allcurrententries' with current list of children.
+        std::list<wxString> allcurrententries;
+        BOOST_FOREACH( NodePtr child, mFolder->getChildren() )
+        {
+            allcurrententries.push_back(child->getName());
+        }
+        NodePtrs newnodes;
+        wxDir dir( path.GetLongPath() );
+        ASSERT(dir.IsOpened());
+        wxString nodename;
+
+        wxArrayString allfiles;
+        size_t count = wxDir::GetAllFiles(path.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
+        gui::StatusBar::get().showProgressBar(count);
+        int progress = 0;
+        // Find all subfolders
+        for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_DIRS); cont; cont = dir.GetNext(&nodename))
+        {
+            if (UtilList<wxString>(allcurrententries).hasElement(nodename)) // Existing element. Do not remove
+            {
+                UtilList<wxString>(allcurrententries).removeElements(boost::assign::list_of(nodename));
+            }
+            else // New element. Add
+            {
+                wxFileName filename(path.GetLongPath(), "");
+                filename.AppendDir(nodename);
+                ASSERT(filename.IsDir());
+                AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
+                newnodes.push_back(folder);
+                if (mRecurse)
+                {
+                    folder->update(true);
+                }
+            }
+            gui::StatusBar::get().showProgress(++progress);
+        }
+
+        // Find all files
+        for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
+        {
+            if (UtilList<wxString>(allcurrententries).hasElement(nodename)) // Existing element. Do not remove
+            {
+                UtilList<wxString>(allcurrententries).removeElements(boost::assign::list_of(nodename));
+            }
+            else // New element. Add
+            {
+                wxFileName filename(path.GetLongPath(), nodename);
+                gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + nodename + "'");
+                model::FilePtr file = boost::make_shared<model::File>(filename);
+                if (file->canBeOpened())
+                {
+                    newnodes.push_back(file);
+                }
+            }
+            gui::StatusBar::get().showProgress(++progress);
+        }
+
+        mFolder->addChildren(newnodes); // Add all at once, for better performance (less UI updates)
+
+         // Remove all other elements (these have been removed).
+        BOOST_FOREACH( wxString name, allcurrententries )
+        {
+            BOOST_FOREACH( NodePtr child, mFolder->getChildren() )
+            {
+                if (!child->getName().IsSameAs(name))
+                {
+                    mFolder->removeChild(child);
+                    break;
+                }
+            }
+        }
+
+        gui::StatusBar::get().hideProgressBar();
+        gui::StatusBar::get().setProcessingText("");
+    }
+
+    AutoFolderPtr mFolder;
+    bool mRecurse; ///< If true, recurse into subdirs
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -19,6 +124,7 @@ namespace model {
 AutoFolder::AutoFolder()
 :   Folder()
 ,   mPath()
+,   mLastModified(0)
 {
     VAR_DEBUG(this);
 }
@@ -26,6 +132,7 @@ AutoFolder::AutoFolder()
 AutoFolder::AutoFolder(wxFileName path)
 :   Folder(util::path::toName(path))
 ,   mPath(util::path::normalize(path))
+,   mLastModified(mPath.GetModificationTime().GetTicks())
 {
     ASSERT(path.IsDir())(path);
     VAR_DEBUG(this);
@@ -49,71 +156,10 @@ wxFileName AutoFolder::getPath() const
 // STRUCTURE
 //////////////////////////////////////////////////////////////////////////
 
-// static
-IPaths AutoFolder::getSupportedFiles( wxFileName directory )
+void AutoFolder::update(bool recurse)
 {
-    ASSERT(directory.IsDir() && directory.IsAbsolute())(directory);
-    IPaths result;
-    wxDir dir( directory.GetLongPath() );
-    ASSERT(dir.IsOpened());
-    wxString path;
-    for (bool cont = dir.GetFirst(&path); cont; cont = dir.GetNext(&path))
-    {
-        wxFileName filename(directory.GetLongPath(), path);
-        if (filename.IsDir())
-        {
-            AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
-            result.push_back(folder);
-        }
-        else
-        {
-            model::FilePtr file = boost::make_shared<model::File>(filename);
-            if (file->canBeOpened())
-            {
-                result.push_back(file);
-            }
-        }
-    }
-    return result;
-}
-
-void AutoFolder::update()
-{
-    // Fill 'allnames' with current list of children.
-    std::list<wxString> allnames;
-    BOOST_FOREACH( NodePtr child, getChildren() )
-    {
-        allnames.push_back(child->getName());
-    }
-
-    // Add nodes if required. Update 'allnames' if file name still present.
-    BOOST_FOREACH( IPathPtr node, getSupportedFiles(mPath) )
-    {
-        wxString nodename = util::path::toName(node->getPath());
-        if (UtilList<wxString>(allnames).hasElement(nodename))
-        {
-            // Existing element. Do not remove.
-            UtilList<wxString>(allnames).removeElements(boost::assign::list_of(nodename));
-        }
-        else
-        {
-            // New element. Add.
-            addChild(boost::dynamic_pointer_cast<Node>(node));
-        }
-    }
-
-    // Remove all other elements (these have been removed).
-    BOOST_FOREACH( wxString name, allnames )
-    {
-        BOOST_FOREACH( NodePtr child, getChildren() )
-        {
-            if (!child->getName().IsSameAs(name))
-            {
-                removeChild(child);
-                break;
-            }
-        }
-    }
+    gui::Worker::get().schedule(boost::shared_ptr<Work>(new IndexAutoFolderWork(boost::dynamic_pointer_cast<AutoFolder>(shared_from_this()), recurse)));
+    return;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -129,7 +175,7 @@ wxString AutoFolder::getName() const
     return mPath.GetFullPath();
 }
 
-boost::optional<wxString> AutoFolder::getLastModified() const
+time_t AutoFolder::getLastModified() const
 {
     return mLastModified;
 }

@@ -5,7 +5,7 @@
 
 namespace model {
 
-class ParentAndChild
+class ParentAndChildren
 {
 public:
 
@@ -13,14 +13,16 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ParentAndChild(NodePtr parent, NodePtr child);
+    ParentAndChildren(NodePtr parent, NodePtrs children);
+    ParentAndChildren(NodePtr parent, NodePtr child);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     NodePtr getParent() const;
-    NodePtr getChild() const;
+    NodePtrs getChildren() const;
+    NodePtr getChild() const; ///< May only be called for the events that indicate that 1 and only one child has been changed
 
 private:
 
@@ -29,18 +31,20 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     NodePtr mParent;
-    NodePtr mChild;
+    NodePtrs mChildren;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ParentAndChild& obj );
+    friend std::ostream& operator<<( std::ostream& os, const ParentAndChildren& obj );
 
 };
 
-DECLARE_EVENT(EVENT_ADD_NODE,      EventAddNode,      ParentAndChild);
-DECLARE_EVENT(EVENT_REMOVE_NODE,   EventRemoveNode,   ParentAndChild);
+DECLARE_EVENT(EVENT_ADD_NODE,      EventAddNode,      ParentAndChildren);
+DECLARE_EVENT(EVENT_ADD_NODES,     EventAddNodes,     ParentAndChildren);
+DECLARE_EVENT(EVENT_REMOVE_NODE,   EventRemoveNode,   ParentAndChildren);
+DECLARE_EVENT(EVENT_REMOVE_NODES,  EventRemoveNodes,  ParentAndChildren);
 
 class NodeWithNewName
 {

@@ -1,6 +1,5 @@
 #include "ProjectView.h"
 
-#include "Node.h"
 #include "AutoFolder.h"
 #include "File.h"
 #include "film.xpm"
@@ -9,16 +8,17 @@
 #include "folder-horizontal-open.xpm"
 #include "folder-horizontal-plus.xpm"
 #include "folder-horizontal-plus-open.xpm"
+#include "INode.h"
+#include "NodeEvent.h"
 #include "Project.h"
 #include "ProjectEvent.h"
 #include "ProjectViewAddAsset.h"
 #include "ProjectViewDeleteAsset.h"
 #include "ProjectViewMoveAsset.h"
-#include "NodeEvent.h"
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
-
 #include "UtilLog.h"
+#include "UtilLogStl.h"
 #include "Window.h"
 
 namespace gui {
@@ -77,7 +77,7 @@ wxDataViewItem ProjectViewModel::GetParent( const wxDataViewItem &wxItem ) const
         if (!p->hasParent())
         {
             // Root asset has the invisible root as parent
-            ASSERT_EQUALS(p,model::Project::get().getRoot());
+            // NOT: ASSERT_EQUALS(p,model::Project::get().getRoot()): This can also happen by first adding a large autofolder and then deleting it while indexing (thus, by adding nodes to a parent that has been removed already).
             return wxDataViewItem(0);
         }
         else
@@ -186,7 +186,11 @@ bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem 
 
 bool ProjectViewModel::HasDefaultCompare() const
 {
-    return true;
+    if (mHoldSorting)
+    {
+        return false;
+    }
+    return wxDataViewModel::HasDefaultCompare();
 }
 
 int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const
@@ -269,6 +273,12 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
         }
     }
     return result;
+}
+
+void ProjectViewModel::Resort()
+{
+    VAR_ERROR(this);
+    wxDataViewModel::Resort();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -358,6 +368,11 @@ wxIcon ProjectViewModel::getIcon(model::NodePtr node) const
     return icon;
 }
 
+bool ProjectViewModel::holdSorting() const
+{
+    return mHoldSorting;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -369,6 +384,7 @@ void ProjectViewModel::onOpenProject( model::EventOpenProject &event )
     Cleared();
 
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
+    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &ProjectViewModel::onProjectAssetsAdded,    this);
     gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &ProjectViewModel::onProjectAssetRemoved,   this);
     gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &ProjectViewModel::onProjectAssetRenamed,   this);
 
@@ -382,6 +398,7 @@ void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
     Cleared();
 
     gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &ProjectViewModel::onProjectAssetAdded,      this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &ProjectViewModel::onProjectAssetsAdded,     this);
     gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &ProjectViewModel::onProjectAssetRemoved,    this);
     gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &ProjectViewModel::onProjectAssetRenamed,    this);
 
@@ -394,6 +411,28 @@ void ProjectViewModel::onProjectAssetAdded( model::EventAddNode &event )
     model::NodePtr child = event.getValue().getChild();
     VAR_DEBUG(parent)(child);
     ItemAdded(wxDataViewItem(parent->id()),wxDataViewItem(child->id()));
+
+    mView.Expand(wxDataViewItem(parent->id()));
+
+    event.Skip();
+}
+
+void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
+{
+    model::NodePtr parent = event.getValue().getParent();
+    model::NodePtrs children = event.getValue().getChildren();
+    VAR_DEBUG(parent)(children);
+
+    holdSorting(true);
+
+    wxDataViewItemArray items;
+    BOOST_FOREACH( model::NodePtr node, children )
+    {
+        items.Add(wxDataViewItem(node->id()));
+    }
+    ItemsAdded(wxDataViewItem(parent->id()),items);
+
+    holdSorting(false);
 
     mView.Expand(wxDataViewItem(parent->id()));
 
@@ -415,6 +454,47 @@ void ProjectViewModel::onProjectAssetRenamed( model::EventRenameNode &event )
     VAR_DEBUG(event.getValue().getNode());
     ItemChanged(wxDataViewItem(event.getValue().getNode()->id()));
     event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// SORTING
+//////////////////////////////////////////////////////////////////////////
+
+void ProjectViewModel::holdSorting(bool hold)
+{
+    mHoldSorting = hold;
+    if (!hold)
+    {
+        Resort();
+    }
+
+    // The hold/resume mechanism works, based on the following wxWidgets code (in datavgen.cpp).
+    // If ever performance issues are encountered when adding large lists of files
+    // to the project view, that code might have been changed.
+    //
+    // See also http://trac.wxwidgets.org/ticket/14073
+    //
+    //    void SortPrepare()
+    //    {
+    //        g_model = GetModel();
+    //        wxDataViewColumn* col = GetOwner()->GetSortingColumn();
+    //        if( !col )
+    //        {
+    //            if (g_model->HasDefaultCompare())
+    //                g_column = -1;
+    //            else
+    //                g_column = -2;
+    //
+    //
+    //    void InsertChild(wxDataViewTreeNode *node, unsigned index)
+    //    {
+    //        if ( !m_branchData )
+    //            m_branchData = new BranchNodeData;
+    //        m_branchData->children.Insert(node, index);
+    //        if (g_column >= -1)
+    //            m_branchData->children.Sort( &wxGenericTreeModelNodeCmp );
+    //}
+
 }
 
 DEFINE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);

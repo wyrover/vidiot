@@ -34,14 +34,9 @@ public:
     // STRUCTURE
     //////////////////////////////////////////////////////////////////////////
 
-    /// \return list of supported files in the given directory. Folders are returned also.
-    /// \param path absolute path which is searched for files.
-    /// Furthermore, note that files are opened with avcodec. If that returns an error, the file
-    /// is not added to the returned list - see File::canBeOpened().
-    static IPaths getSupportedFiles( wxFileName path );
-
     /// Update the autofolder children. The folder is synced with the filesystem.
-    void update();
+    /// \param recurse if true, subfolders are recursed and indexed also.
+    void update(bool recurse = true);
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES
@@ -51,7 +46,7 @@ public:
     /// the relatve path only if the parent node is an AutoFolder.
     wxString getName() const override;
 
-    boost::optional<wxString> getLastModified() const;
+    time_t getLastModified() const;
 
     wxString getSequenceName() const override;
 
@@ -62,7 +57,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxFileName mPath;
-    boost::optional<wxString> mLastModified;
+    time_t mLastModified;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -71,6 +66,7 @@ private:
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
+
 };
 
 } // namespace
