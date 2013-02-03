@@ -24,7 +24,6 @@ AudioFile::AudioFile()
     ,   mDecodingAudio(false)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
-    ,   audioCombineBuffer(0)
 {
     VAR_DEBUG(*this);
 }
@@ -35,7 +34,6 @@ AudioFile::AudioFile(wxFileName path)
     ,   mDecodingAudio(false)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
-    ,   audioCombineBuffer(0)
 {
     VAR_DEBUG(*this);
 }
@@ -46,7 +44,6 @@ AudioFile::AudioFile(const AudioFile& other)
     ,   mDecodingAudio(false)
     ,   audioDecodeBuffer(0)
     ,   audioResampleBuffer(0)
-    ,   audioCombineBuffer(0)
 {
     VAR_DEBUG(*this);
 }
@@ -64,11 +61,9 @@ AudioFile::~AudioFile()
 
     delete[] audioDecodeBuffer;
     delete[] audioResampleBuffer;
-    delete[] audioCombineBuffer;
 
     audioDecodeBuffer = 0;
     audioResampleBuffer = 0;
-    audioCombineBuffer = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,11 +78,9 @@ void AudioFile::clean()
 
     delete[] audioDecodeBuffer;
     delete[] audioResampleBuffer;
-    delete[] audioCombineBuffer;
 
     audioDecodeBuffer = 0;
     audioResampleBuffer = 0;
-    audioCombineBuffer = 0;
 
     File::clean();
 }
@@ -106,6 +99,25 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         // End of file reached. Signal this with null ptr.
         return AudioChunkPtr();
     }
+
+    auto determinePts = [this,audioPacket,parameters] (int nSamples) -> pts
+    {
+        double pts = 0;
+        if (audioPacket->getPacket()->pts != AV_NOPTS_VALUE)
+        {
+            pts = av_q2d(getCodec()->time_base) * audioPacket->getPacket()->pts;
+        }
+        else
+        {
+            // To be implemented locally: 'make up' pts.
+            NIY(_("Not supported: Audio data without pts info"));
+        }
+
+        // Note: if the code below is ever included, beware that the pts value for audioChunk is set BEFORE knowing the actual amount of returned samples,
+        //       particularly in case resampling is involved.
+        // pts += static_cast<double>(nSamples) / static_cast<double>(parameters.getNrChannels()) / static_cast<double>(parameters.getSampleRate()); Use the original pts value, which indicates the beginning pts value
+        return Convert::doubleToInt(pts);
+    };
 
     //////////////////////////////////////////////////////////////////////////
     // DECODING
@@ -148,81 +160,81 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     //////////////////////////////////////////////////////////////////////////
     // RESAMPLING
 
-    int nSamples = targetSizeInBytes / AudioChunk::sBytesPerSample; // A sample is the data for one speaker
+    int nDecodedSamples = targetSizeInBytes / AudioChunk::sBytesPerSample; // A sample is the data for one speaker
+    ASSERT_MORE_THAN_ZERO(nDecodedSamples);
 
-    typedef boost::rational<int> rational;
-    auto convertOutputSampleCountToInputSampleCount = [parameters,codec](int output) -> int
+    AudioChunkPtr audioChunk;
+
+    if (mResampleContext == 0)
     {
-        return
-            Convert::toInt(rational(output) *
-            rational(codec->channels) / rational(parameters.getNrChannels()) *
-            rational(codec->sample_rate) / rational(parameters.getSampleRate()));
-    };
-
-    if (mResampleContext != 0)
+        // Use the plain decoded data without resampling.
+        targetData = audioDecodeBuffer;
+        audioChunk = boost::make_shared<AudioChunk>(targetData, parameters.getNrChannels(), nDecodedSamples, determinePts(nDecodedSamples));
+    }
+    else
     {
-        int nRemainingInputSamples = nSamples;
-        nSamples = 0;
+        // Resample
+        typedef boost::rational<int> rational;
+        auto convertOutputSampleCountToInputSampleCount = [parameters,codec](int output) -> int
+        {
+            return
+                Convert::toInt(rational(output) *
+                rational(codec->channels) / rational(parameters.getNrChannels()) *
+                rational(codec->sample_rate) / rational(parameters.getSampleRate()));
+        };
+        auto convertInputSampleCountToOutputSampleCount = [parameters,codec](int input) -> int
+        {
+            return
+                Convert::toInt(rational(input) *
+                rational(parameters.getNrChannels()) / rational(codec->channels) *
+                rational(parameters.getSampleRate()) / rational(codec->sample_rate));
+        };
 
-        // Note: Sometimes audio_resample does not resample the entire buffer in one pass. Here the extra required passes are done, and the data is copied into audioCombineBuffer.
-        // todo all this memcpy-ing canbe removed by pre-allocating the returned audiochunk and then storing the data in there?
+        int nRemainingInputSamples = nDecodedSamples;
+        // The +10 is to compensate for (rounding?) errors I saw. Note that audio_resample sometimes requires multiple passes (which might explain those differences).
+        // Choosing this number too low will caue ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples) to fail.
+        int nExpectedOutputSamples = convertInputSampleCountToOutputSampleCount(nDecodedSamples) + 10;
+        int nRemainingOutputSamples = nExpectedOutputSamples;
+        int nResampledSamples = 0;
+
+        // Note: Sometimes audio_resample does not resample the entire buffer in one pass.
+        // Here the extra required passes are done, and the data is copied into the pre-allocated audioChunk.
+        // THe audioChunk is pre-allocated to avoid one extra memcpy (from resampled data into the chunk).
 
         sample* input = audioDecodeBuffer;
-        sample* output = audioCombineBuffer;
+
+        audioChunk = boost::make_shared<AudioChunk>(static_cast<sample*>(0), parameters.getNrChannels(), nExpectedOutputSamples, determinePts(nExpectedOutputSamples));
+        sample* resampled = audioChunk->getBuffer();
 
         while (nRemainingInputSamples > 0)
         {
             int nInputFrames = nRemainingInputSamples / codec->channels;
-            int nOutputFrames = audio_resample(mResampleContext, audioResampleBuffer, input, nInputFrames);
+            int nOutputFrames = audio_resample(mResampleContext, resampled, input, nInputFrames);
             int nNewOutputSamples = nOutputFrames * parameters.getNrChannels();
             int nUsedInputSamples = convertOutputSampleCountToInputSampleCount(nNewOutputSamples);
-            VAR_DEBUG(nInputFrames)(nOutputFrames)(nNewOutputSamples)(nUsedInputSamples);
+            VAR_DEBUG(nInputFrames)(nOutputFrames)(nRemainingOutputSamples)(nNewOutputSamples)(nUsedInputSamples);
             if (nUsedInputSamples == 0)
             {
                 break;
             }
 
-            memcpy(output,audioResampleBuffer,nNewOutputSamples * AudioChunk::sBytesPerSample);
-
-            nSamples += nNewOutputSamples;
+            nRemainingOutputSamples -= nNewOutputSamples;
+            ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples);
+            nResampledSamples += nNewOutputSamples;
             nRemainingInputSamples -= nUsedInputSamples;
             input += nUsedInputSamples;
-            output += nNewOutputSamples;
+            resampled += nNewOutputSamples;
             // NOT: ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingInputSamples)(nUsedInputSamples);
-            // RATIONALE: Sometimes audio_resample returns a slightly higher number of output frames then to be expected
-            //            by the given amount of input frames (maybe caused by audio_resample mechanism 'caching' some of
-            //            them in a previous call?).
+            // WHY: Sometimes audio_resample returns a slightly higher number of output frames then to be expected
+            //      by the given amount of input frames (maybe caused by audio_resample mechanism 'caching' some of them in a previous call?).
         }
 
-        targetData = audioCombineBuffer;
+        // More data was allocated (to compensate for differences between the number of output samples 'calculated' and the number that avcodec actually produced).
+        audioChunk->setAdjustedLength(nResampledSamples);
 
-        VAR_DEBUG(nSamples);
-    }
-    else
-    {
-        // Use the plain decoded data without resampling.
-        targetData = audioDecodeBuffer;
-    }
-    ASSERT_MORE_THAN_ZERO(nSamples);
-
-    //////////////////////////////////////////////////////////////////////////
-    // PTS
-
-    double pts = 0;
-    if (audioPacket->getPacket()->pts != AV_NOPTS_VALUE)
-    {
-        pts = av_q2d(getCodec()->time_base) * audioPacket->getPacket()->pts;
-    }
-    else
-    {
-        // To be implemented locally: 'make up' pts.
-        NIY(_("Not supported: Audio data without pts info"));
+        VAR_DEBUG(nResampledSamples);
     }
 
-    // todo make generic method for determining audio pts values. For transition this will result in wrong numbers
-    pts += static_cast<double>(nSamples) / static_cast<double>(parameters.getSampleRate()); // nAudioChannels already done before resampling
-
-    AudioChunkPtr audioChunk = boost::make_shared<AudioChunk>(targetData, parameters.getNrChannels(), nSamples, Convert::doubleToInt(pts));
     VAR_AUDIO(this)(audioChunk);
     return audioChunk;
 }
@@ -232,7 +244,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 //////////////////////////////////////////////////////////////////////////
 
 void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
-    //int audioRate, int nAudioChannels)
 {
     if (mDecodingAudio) return;
 
@@ -242,7 +253,6 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     {
         audioDecodeBuffer   = new sample[sAudioBufferSize];
         audioResampleBuffer = new sample[sAudioBufferSize];
-        audioCombineBuffer  = new sample[sAudioBufferSize];
     }
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
