@@ -52,6 +52,12 @@ pts AudioChunk::getPts() const
     return mPts;
 }
 
+void AudioChunk::setPts(pts position)
+{
+    VAR_DEBUG(position);
+    mPts = position;
+}
+
 unsigned int AudioChunk::getNumberOfChannels() const
 {
     return mNrChannels;
