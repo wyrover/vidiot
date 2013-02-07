@@ -27,7 +27,7 @@ public:
 
     Render(const Render& other);
 
-	virtual ~Render();
+    virtual ~Render();
 
     //////////////////////////////////////////////////////////////////////////
     // OPERATORS

@@ -140,6 +140,7 @@ void TestRender::testRendering()
             ASSERT(f.Exists());
         }
     }
+    // todo test rendering different codecs. Include h264/mp3
 }
 
 } // namespace

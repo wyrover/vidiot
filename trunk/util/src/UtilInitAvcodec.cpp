@@ -72,15 +72,6 @@ void Avcodec::configureLog()
     av_log_set_callback(Avcodec::log);
 }
 
-std::string Avcodec::getErrorMessage(int errorcode)
-{
-    static const int errbuf_size = 256;
-    char errbuf[errbuf_size];
-    int errorDecodeResult = av_strerror(errorcode, errbuf, errbuf_size);
-    VAR_ERROR(errorDecodeResult);
-    return str( boost::format("'%1%'") % errbuf );
-}
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -108,5 +99,5 @@ void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
     {
         o << "";
     }
-    Log().get("AVCODEC") << o.str() << " [" << sFixedBuffer << "]";
+    Log().get("AVC    ") << o.str() << " [" << sFixedBuffer << "]";
 }

@@ -60,6 +60,7 @@ void Worker::waitUntilQueueEmpty()
 
 void Worker::thread()
 {
+    VAR_INFO(this);
     WorkPtr w;
     while (mEnabled)
     {

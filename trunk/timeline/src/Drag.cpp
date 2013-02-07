@@ -398,7 +398,7 @@ wxBitmap Drag::getDragBitmap() //const
     VAR_DEBUG(mBitmapOffset)(size_x)(size_y);
     ASSERT_MORE_THAN_ZERO(size_x);
     ASSERT_MORE_THAN_ZERO(size_y);
-    return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
+    return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y)); // todo other crash: drag sequence into sequence (itselves!)
 }
 
 void Drag::draw(wxDC& dc) const

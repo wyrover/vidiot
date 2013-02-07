@@ -18,7 +18,7 @@ public:
 
     explicit VideoCodec(CodecID id);
     VideoCodec(const VideoCodec& other);
-	virtual ~VideoCodec();
+    virtual ~VideoCodec();
 
     //////////////////////////////////////////////////////////////////////////
     // OPERATORS
