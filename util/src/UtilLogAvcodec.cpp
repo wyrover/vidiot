@@ -552,3 +552,15 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     }
     return os;
 }
+
+std::string avcodecErrorString(int errorcode)
+{
+    char buffer[AV_ERROR_MAX_STRING_SIZE];
+    int errorDecodeResult = av_strerror(errorcode, buffer, AV_ERROR_MAX_STRING_SIZE);
+    VAR_ERROR(errorDecodeResult);
+    if (errorDecodeResult != 0)
+    {
+        return std::string("Avcodec error code not found");
+    }
+    return str( boost::format("'%1%'") % buffer );
+}

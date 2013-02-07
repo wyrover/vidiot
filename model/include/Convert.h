@@ -103,6 +103,11 @@ public:
     /// \param nChannels Number of audio channels (speakers)
     /// \return number of required bytes
     static int audioFramesToBytes(int nFrames, int nChannels);
+
+    /// Convert a number of audio samples (data for one speaker) to a number of bytes required to store this
+    /// \param nSamples Number of audio samples
+    /// \return number of required bytes
+    static int audioSamplesToBytes(int nSamples);
 };
 } // namespace
 

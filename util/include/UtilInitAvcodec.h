@@ -29,7 +29,6 @@ public:
     static std::list<wxString> getLogLevels();
     static boost::bimap<int, wxString> mapAvcodecLevels;
     static void configureLog();
-    static std::string getErrorMessage(int errorcode);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

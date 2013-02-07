@@ -3,19 +3,16 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-//#include "AudioFile.h"
 #include "AutoFolder.h"
 #include "Convert.h"
 #include "Dialog.h"
 #include "FilePacket.h"
-
-#include "UtilInitAvcodec.h"
+#include "UtilLogAvcodec.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
-//#include "VideoFile.h"
 
 namespace model {
 
@@ -361,7 +358,7 @@ void File::openFile()
     if (result != 0)
     {
         // Some error occured when opening the file.
-        VAR_WARNING(path)(result)(Avcodec::getErrorMessage(result));
+        VAR_WARNING(path)(result)(avcodecErrorString(result));
         return;
     }
     {
@@ -369,7 +366,7 @@ void File::openFile()
         result = avformat_find_stream_info(mFileContext,0);
         if (result < 0) // Some error occured when reading stream info. Close the file again.
         {
-            VAR_WARNING(path)(result)(Avcodec::getErrorMessage(result));
+            VAR_WARNING(path)(result)(avcodecErrorString(result));
             avformat_close_input(&mFileContext); // Requires the lock also
             ASSERT_ZERO(mFileContext);
             return;

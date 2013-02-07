@@ -201,7 +201,13 @@ int Convert::audioFramesToSamples(int nFrames, int nChannels)
 // static
 int Convert::audioFramesToBytes(int nFrames, int nChannels)
 {
-    return audioFramesToSamples(nFrames, nChannels) * AudioChunk::sBytesPerSample;
+    return audioSamplesToBytes(audioFramesToSamples(nFrames, nChannels));
+}
+
+// static
+int Convert::audioSamplesToBytes(int nSamples)
+{
+    return nSamples * AudioChunk::sBytesPerSample;
 }
 
 } // namespace

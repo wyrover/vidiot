@@ -23,4 +23,6 @@ std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj);
 typedef std::pair<wxString, int> LevelString;
 extern const std::list<LevelString> sLogLevels;
 
+std::string avcodecErrorString(int errorcode);
+
 #endif //UTIL_LOG_AVCODEC_H
