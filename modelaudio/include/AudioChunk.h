@@ -57,7 +57,7 @@ public:
     /// \param dst area to hold the samples
     /// \param requested number of samples to be copied
     /// \return actually stored number of samples (is less than requested if there were no more available samples)
-    samplecount extract(int16_t* dst, samplecount requested);
+    samplecount extract(uint16_t* dst, samplecount requested);
 
     /// Indicates that a number of samples has been consumed by the process
     /// that reads chunks.

@@ -67,7 +67,7 @@ unsigned int AudioChunk::getNumberOfChannels() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-samplecount AudioChunk::extract(int16_t* dst, samplecount requested)
+samplecount AudioChunk::extract(uint16_t* dst, samplecount requested)
 {
     samplecount actual = min(getUnreadSampleCount(),requested);
     memcpy(dst,getUnreadSamples(), actual * sBytesPerSample);
