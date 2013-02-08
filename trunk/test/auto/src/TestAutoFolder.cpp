@@ -59,6 +59,7 @@ void TestAutoFolder::testWatch()
     {
         pause(10);
     }
+    waitForIdle();
     ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added AutoFolder and the valid File
 
     // Clean up

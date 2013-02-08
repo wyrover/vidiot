@@ -279,7 +279,7 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
     }
 
     samplecount remainingSamples = frames * mNumberOfAudioChannels;
-    int16_t* out = static_cast<int16_t*>(buffer);
+    uint16_t* out = static_cast<uint16_t*>(buffer);
 
     while (remainingSamples > 0)
     {
