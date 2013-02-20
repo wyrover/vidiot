@@ -58,8 +58,8 @@ private:
 
     bool mDecodingVideo;
     pts mPosition;                  ///< Current position of this clip (set via 'moveTo' or changed via 'getNext')
-    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext
-    pts mDeliveredFrameInputPts;    ///< Input pts (thus, before framerate change) of mDeliveredFrame
+    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext.
+    pts mDeliveredFrameInputPts;    ///< The input pts (in the input stream) of the most recently delivered frame.
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
