@@ -65,7 +65,7 @@ void Zoom::change(int steps)
     }
 }
 
-int toInt(rational r)
+int toInt(rational r) // todo make one method for floor-ing a rational<int>, see also Convert
 {
     return static_cast<int>(floor(boost::rational_cast<double>(r)));
 }
