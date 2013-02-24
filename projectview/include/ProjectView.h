@@ -46,11 +46,15 @@ public:
     model::NodePtrs getSelection() const;
 
     //////////////////////////////////////////////////////////////////////////
-    // FIND NODES
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     /// \return center position (within the ProjectView) of the given node.
     wxPoint find( model::NodePtr node );
+
+    int getHeaderHeight() const;
+
+    void selectColumnHeader();
 
 private:
 
@@ -88,6 +92,7 @@ private:
     std::set<model::FolderPtr> mOpenFolders;
     int mDragCount;                                 ///< Used for determining start of dragging
     wxPoint mDragStart;                             ///< Holds start of dragging point
+    int mHeaderHeight;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

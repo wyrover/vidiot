@@ -4,15 +4,6 @@
 #include "UtilEnum.h"
 #include "UtilLog.h"
 
-// NOTE: First value is the default
-const std::list<LevelString> sLogLevels = boost::assign::list_of
-    (std::make_pair(_("None")   ,AV_LOG_QUIET))
-    (std::make_pair(_("Fatal")  ,AV_LOG_FATAL))
-    (std::make_pair(_("Error")  ,AV_LOG_ERROR))
-    (std::make_pair(_("Warning"),AV_LOG_WARNING))
-    (std::make_pair(_("Info")   ,AV_LOG_INFO))
-    (std::make_pair(_("Verbose"),AV_LOG_VERBOSE));
-
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

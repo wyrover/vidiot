@@ -18,7 +18,7 @@ void TestConvert::testTimeConversions()
     StartTestSuite();
 
     {
-        model::Properties properties(framerate::s25p);
+        model::Properties properties(FrameRate::s25p);
         ASSERT_EQUALS(model::Convert::ptsToHumanReadibleString(0),"00.000");
         ASSERT_EQUALS(model::Convert::ptsToHumanReadibleString(25),"01.000");
         ASSERT_EQUALS(model::Convert::ptsToHumanReadibleString(50),"02.000");

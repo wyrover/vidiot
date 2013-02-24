@@ -2,40 +2,34 @@
 
 #include "AudioChunk.h"
 #include "Constants.h"
-#include "UtilLog.h"
 #include "Properties.h"
+#include "UtilFrameRate.h"
+#include "UtilLog.h"
 
 namespace model {
-typedef boost::rational<int> rational;
-
-// static
-int Convert::toInt(boost::rational<int> r)
-{
-    return static_cast<int>(floor(boost::rational_cast<double>(r)));
-}
 
 // static
 pts Convert::timeToPts(int time)
 {
-    return toInt(rational(time) / rational(Constants::sSecond) / Properties::get().getFrameRate());
+    return floor(rational(time) / rational(Constants::sSecond) * Properties::get().getFrameRate());
 }
 
 // static
 int Convert::ptsToTime(pts position)
 {
-    return toInt(rational(position) * rational(Constants::sSecond) * Properties::get().getFrameRate());
+    return floor(rational(position) * rational(Constants::sSecond) / Properties::get().getFrameRate());
 }
 
 // static
 int Convert::ptsToMicroseconds(pts position)
 {
-    return toInt(rational(ptsToTime(position)) * rational(Constants::sMicroseconds));
+    return floor(rational(ptsToTime(position)) * rational(Constants::sMicroseconds));
 }
 
 // static
 pts Convert::microsecondsToPts(int us)
 {
-    return timeToPts(toInt(rational(us) / rational(Constants::sMicroseconds)));
+    return timeToPts(floor(rational(us) / rational(Constants::sMicroseconds)));
 }
 
 // static
@@ -102,7 +96,7 @@ int Convert::framesToSamples(int nChannels, int nFrames)
 
 pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrate)
 {
-    return Convert::toInt(rational(inputposition) * inputrate / outputrate );
+    return floor(rational(inputposition) / inputrate * outputrate );
 }
 
 //static

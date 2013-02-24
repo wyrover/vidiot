@@ -1,22 +1,19 @@
 #include "File.h"
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include "AutoFolder.h"
+#include "Constants.h"
 #include "Convert.h"
 #include "Dialog.h"
 #include "FilePacket.h"
-#include "UtilLogAvcodec.h"
+#include "UtilInitAvcodec.h"
 #include "UtilLog.h"
+#include "UtilLogAvcodec.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 
 namespace model {
-
-boost::mutex File::sMutexAvcodec;
 
 // static
 const int File::STREAMINDEX_UNDEFINED = -1;
@@ -141,7 +138,7 @@ void File::moveTo(pts position)
     stopReadingPackets();
 
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
-    ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext);
+    ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext)(position);
     VAR_DEBUG(timestamp)(mFileContext->duration);
     int result = av_seek_frame(mFileContext, -1, timestamp, AVSEEK_FLAG_ANY);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
@@ -216,6 +213,16 @@ bool File::useStream(AVMediaType type) const
     return false;
 }
 
+AVStream* File::getStream()
+{
+    openFile();
+    if (mFileContext && mStreamIndex != STREAMINDEX_UNDEFINED)
+    {
+        return mFileContext->streams[mStreamIndex];
+    }
+    return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // PACKETS INTERFACE TO SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -235,7 +242,7 @@ void File::startReadingPackets()
 
     VAR_DEBUG(this);
 
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     mReadingPackets = true;
     mBufferPacketsThreadPtr.reset(new boost::thread(boost::bind(&File::bufferPacketsThread,this)));
@@ -248,7 +255,7 @@ void File::stopReadingPackets()
     VAR_DEBUG(this)(mReadingPackets)(mEOF);
     if (!mReadingPackets && !mEOF) return; // !mEOF is needed since we still want the buffers to be cleared, in the case that bufferPacketsThread has already delivered the last packet
 
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     // Avoid new packets to be retrieved from the file in bufferPacketsThread.
     mReadingPackets = false;
@@ -352,7 +359,7 @@ void File::openFile()
     wxString path = mPath.GetLongPath();
 
     {
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
         result = avformat_open_input(&mFileContext, path, 0, 0);
     }
     if (result != 0)
@@ -362,7 +369,7 @@ void File::openFile()
         return;
     }
     {
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
         result = avformat_find_stream_info(mFileContext,0);
         if (result < 0) // Some error occured when reading stream info. Close the file again.
         {
@@ -389,10 +396,23 @@ void File::openFile()
         {
             mHasVideo = true;
 
-            // If there is video in the file, then the number of video frames is used for the duration.
-            FrameRate videoFrameRate = FrameRate(stream->codec->time_base.num, stream->codec->time_base.den);
-            mNumberOfFrames = Convert::toProjectFrameRate(stream->duration, videoFrameRate);
-            VAR_DEBUG(mNumberOfFrames);
+            if ( (stream->duration != AV_NOPTS_VALUE) && (stream->duration != 0))
+            {
+                int durationMs = floor(boost::rational<int>(Constants::sSecond,1) * boost::rational<int>(stream->duration,1) * boost::rational<int>(stream->time_base.num,stream->time_base.den));
+                mNumberOfFrames = Convert::timeToPts(durationMs);
+            }
+            else
+            {
+                if ( (stream->nb_frames != AV_NOPTS_VALUE) && (stream->nb_frames != 0))
+                {
+                    mNumberOfFrames = stream->nb_frames;
+                }
+                else
+                {
+                    mNumberOfFrames = 0;
+                }
+            }
+            VAR_WARNING(stream)(mNumberOfFrames);
         }
         else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
         {
@@ -401,20 +421,27 @@ void File::openFile()
             if (mNumberOfFrames == LENGTH_UNDEFINED)
             {
                 // For files without video, determine the number of 'virtual video frames'.
-                mNumberOfFrames = Convert::microsecondsToPts(stream->duration);
+                mNumberOfFrames = Convert::microsecondsToPts(stream->duration); // todo test audio only files
             }
-
         }
     }
 
     if ((!mHasVideo && !mHasAudio) || (mNumberOfFrames <= 0)) // <= 0: Some files have streams, but with all lengths == 0 (once happened when indexing by mistake ffprobe.exe)
     {
         LOG_WARNING << "No correct stream found";
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
         avformat_close_input(&mFileContext);
         ASSERT_ZERO(mFileContext);
         mNumberOfFrames = LENGTH_UNDEFINED;
         return;
+    }
+    if (mStreamIndex != STREAMINDEX_UNDEFINED)
+    {
+        AVStream* stream = mFileContext->streams[mStreamIndex];
+        ASSERT_NONZERO(stream);
+        AVCodecContext* codec = stream->codec;
+        ASSERT_NONZERO(codec);
+        VAR_WARNING(stream)(codec); // todo check VAR_WARNINGS in file and in videocodec
     }
     VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
     mFileOpen = true;
@@ -427,7 +454,7 @@ void File::closeFile()
     if (!mFileOpen) return;
 
     {
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
         avformat_close_input(&mFileContext);
         ASSERT_ZERO(mFileContext);
         mFileOpen = false;

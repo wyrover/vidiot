@@ -312,6 +312,11 @@ wxButton* RenderSettingsDialog::getFileButton() const
     return mFileButton;
 }
 
+EnumSelector<int>* RenderSettingsDialog::getVideoCodecButton() const
+{
+    return mVideoCodec;
+}
+
 wxCheckBox* RenderSettingsDialog::getRenderSeparationCheckBox() const
 {
     return mRenderSeparation;

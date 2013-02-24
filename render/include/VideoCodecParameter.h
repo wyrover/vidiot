@@ -19,6 +19,8 @@ void registerVideoCodecParameterTypesForSerializaton(Archive& ar);
 
 wxString getHumanReadibleName(VideoCodecParameterType id);
 
+// NOTE: If a parameter seems to be 'filled in' on the wrong AVCodecContext struct member, check for typos in the first parameter to the template instantiations below.
+
 struct VideoCodecParameterBitrate
     :   public CodecParameterInt<VideoCodecParameterBitrate,VideoCodecParameterType,BitRate>
 {
@@ -26,7 +28,7 @@ struct VideoCodecParameterBitrate
 };
 
 struct VideoCodecParameterBitrateTolerance
-    :   public CodecParameterInt<VideoCodecParameterBitrate,VideoCodecParameterType,BitRateTolerance>
+    :   public CodecParameterInt<VideoCodecParameterBitrateTolerance,VideoCodecParameterType,BitRateTolerance>
 {
     void set(AVCodecContext* codec) override;
 };

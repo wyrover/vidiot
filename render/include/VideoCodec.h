@@ -34,7 +34,7 @@ public:
     VideoCodec& addParameter(ICodecParameter& parameter);
     ICodecParameters getParameters();
     AVStream* addStream(AVFormatContext* context) const; ///< Add a stream to the given libavformat format
-    void open(AVCodecContext* context) const;            ///< Open the codec in libavcodec
+    bool open(AVCodecContext* context) const;            ///< Open the codec in libavcodec
 
 private:
 

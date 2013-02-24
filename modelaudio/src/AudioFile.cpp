@@ -178,14 +178,14 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         auto convertOutputSampleCountToInputSampleCount = [parameters,codec](int output) -> int
         {
             return
-                Convert::toInt(rational(output) *
+                floor(rational(output) *
                 rational(codec->channels) / rational(parameters.getNrChannels()) *
                 rational(codec->sample_rate) / rational(parameters.getSampleRate()));
         };
         auto convertInputSampleCountToOutputSampleCount = [parameters,codec](int input) -> int
         {
             return
-                Convert::toInt(rational(input) *
+                floor(rational(input) *
                 rational(parameters.getNrChannels()) / rational(codec->channels) *
                 rational(parameters.getSampleRate()) / rational(codec->sample_rate));
         };
@@ -258,7 +258,7 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
     mDecodingAudio = true;
 
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     AVCodecContext* codec = getCodec();
 
@@ -303,7 +303,7 @@ void AudioFile::stopDecodingAudio()
     VAR_DEBUG(this);
     if (mDecodingAudio)
     {
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
         if (mResampleContext != 0)
         {

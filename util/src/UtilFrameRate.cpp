@@ -1,14 +1,48 @@
 #include "UtilFrameRate.h"
+#include "UtilSerializeBoost.h"
 
-namespace framerate {
+const FrameRate FrameRate::s24p = FrameRate(24 * 1000, 1001);
+const FrameRate FrameRate::s25p = FrameRate(       25, 1);
+const FrameRate FrameRate::s30p = FrameRate(30 * 1000, 1001);
 
 typedef boost::tuple<wxString, FrameRate> FrameRateEntry;
 const std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_list_of
-( wxT("24.97"), s24p )
-( wxT("25"),    s25p )
-( wxT("29.97"), s30p );
+    ( wxT("23.97"), FrameRate::s24p )
+    ( wxT("25"),    FrameRate::s25p )
+    ( wxT("29.97"), FrameRate::s30p );
 
-std::vector<FrameRate> getSupported()
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+FrameRate::FrameRate(int num, int den)
+    :   boost::rational<int>(num,den)
+    {
+}
+FrameRate::FrameRate(AVRational avr)
+    :   boost::rational<int>(avr.num,avr.den)
+{
+}
+
+FrameRate::FrameRate(wxString framerate)
+    :   boost::rational<int>(FrameRate::s25p) // Default value. TODO should be default from config!
+{
+    for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
+    {
+        if (framerate.IsSameAs(boost::get<0>(sPossibleFrameRates[i])))
+        {
+            assign(boost::get<1>(sPossibleFrameRates[i]).numerator(), boost::get<1>(sPossibleFrameRates[i]).denominator());
+            break;
+        }
+    };
+};
+
+//////////////////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////////////////
+
+// static
+std::vector<FrameRate> FrameRate::getSupported()
 {
     std::vector<FrameRate> result;
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
@@ -18,31 +52,37 @@ std::vector<FrameRate> getSupported()
     return result;
 }
 
-wxString toString(FrameRate framerate)
+wxString FrameRate::toString() const
 {
-    wxString result;
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
-        if (framerate == boost::get<1>(sPossibleFrameRates[i]))
+        if (*this == boost::get<1>(sPossibleFrameRates[i]))
         {
-            result = boost::get<0>(sPossibleFrameRates[i]);
+            return boost::get<0>(sPossibleFrameRates[i]);
         }
     };
+    wxString result; result << numerator() << "/" << denominator();
     return result;
 }
 
-FrameRate fromString(wxString framerate)
-{
-    FrameRate result = framerate::s25p;
-    for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
-    {
-        if (framerate.IsSameAs(boost::get<0>(sPossibleFrameRates[i])))
-        {
-            result = boost::get<1>(sPossibleFrameRates[i]);
-            break;
-        }
-    };
-    return result;
-};
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
 
-} // namespace
+std::ostream& operator<<( std::ostream& os, const FrameRate& obj )
+{
+    os << std::setw(8) << obj.numerator() << std::setw(8) << obj.denominator();
+    return os;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+template<class Archive>
+void FrameRate::serialize(Archive & ar, const unsigned int version)
+{
+    ar & boost::serialization::base_object< boost::rational<int> >(*this);
+}
+template void FrameRate::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
+template void FrameRate::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

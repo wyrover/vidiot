@@ -1,8 +1,9 @@
 #include "AudioCodec.h"
 
 #include "AudioCodecParameter.h"
+#include "Dialog.h"
 #include "Properties.h"
-
+#include "UtilInitAvcodec.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -55,7 +56,11 @@ CodecID AudioCodec::getId() const
 
 AudioCodec& AudioCodec::addParameter(ICodecParameter& parameter)
 {
-    mParameters.push_back(make_cloned_ptr<ICodecParameter>(parameter));
+    ICodecParameter* clone = static_cast<ICodecParameter*>(parameter.clone());
+    ASSERT(clone);
+    ICodecParameterPtr newParam = boost::shared_ptr<ICodecParameter>(clone);
+    ASSERT(newParam);
+    mParameters.push_back(newParam);
     return *this;
 }
 
@@ -90,12 +95,18 @@ AVStream* AudioCodec::addStream(AVFormatContext* context) const
     return stream;
 }
 
-void AudioCodec::open(AVCodecContext* context) const
+bool AudioCodec::open(AVCodecContext* context) const
 {
     AVCodec* codec = avcodec_find_encoder(context->codec_id);
     ASSERT(codec);
-    int result = avcodec_open(context, codec);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
+    int result = avcodec_open(context, codec); // todo use open2
+    if (result < 0)
+    {
+        // Now do the checks that ffmpeg does when opening the codec to give proper feedback
+        gui::Dialog::get().getConfirmation( _("Error in audio codec"), _("There was an error when opening the audio codec.\nRendering will be aborted.\nDetailed information:\n") + Avcodec::getMostRecentLogLine());
+    }
+    return result >= 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

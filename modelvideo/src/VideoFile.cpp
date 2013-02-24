@@ -1,9 +1,13 @@
 #include "VideoFile.h"
 
+extern "C"
+{
+#include <libavutil/opt.h> // todo
+}
+#include "Constants.h"
 #include "Convert.h"
 #include "Node.h"
 #include "Properties.h"
-
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
@@ -64,11 +68,23 @@ VideoFile::~VideoFile()
 
 void VideoFile::moveTo(pts position)
 {
-    mDeliveredFrameInputPts = 0;
     mDeliveredFrame.reset();
+    mDeliveredFrameInputPts = 0;
     mPosition = position;
-    File::moveTo(position); // NOTE: This uses the pts in 'project' timebase units
 
+    AVCodecContext* codec = getCodec();
+    pts positionBefore = position;
+    VAR_WARNING(codec->has_b_frames)(codec->gop_size);
+    switch (codec->codec_id)
+    {
+    case CODEC_ID_MPEG4:
+        case CODEC_ID_H264:
+            positionBefore -= 20; // Move back a bit to ensure that the resulting position <= required position, sometimes the stream is positioned on a keyframe AFTER the required frame
+            break;
+    }
+
+    VAR_WARNING(mPosition)(positionBefore);
+    File::moveTo(positionBefore); // NOTE: This uses the pts in 'project' timebase units
 }
 
 void VideoFile::clean()
@@ -77,8 +93,8 @@ void VideoFile::clean()
 
     stopDecodingVideo();
 
-    mDeliveredFrameInputPts = 0;
     mDeliveredFrame.reset();
+    mDeliveredFrameInputPts = 0;
     mPosition = 0;
 
     File::clean();
@@ -91,96 +107,162 @@ void VideoFile::clean()
 VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
     startDecodingVideo();
+    VAR_WARNING(this)(mPosition);
+
+    AVPacket nullPacket;
+    nullPacket.data = 0;
+    nullPacket.size = 0;
+
+    auto div = [this](boost::rational<int> num, boost::rational<int> divisor) -> int
+    {
+        return boost::rational_cast<int>(num / divisor);
+    };
+
+    auto modulo = [this,div](boost::rational<int> num, boost::rational<int> divisor) -> boost::rational<int>
+    {
+        num -= divisor * div(num,divisor);
+        return num;
+//        return boost::rational_cast<int>(num);
+    };
+
+    auto projectPositionToTimeInS = [this](pts position) -> boost::rational<int>
+    {
+        return boost::rational<int>(position) / Properties::get().getFrameRate();
+    };
+
+    auto timeToNearestInputFramesPts = [this, modulo](boost::rational<int> time) -> std::pair<int,int>
+    {
+        FrameRate fr = FrameRate(getStream()->r_frame_rate); // 24000/1001
+        FrameRate timebase = FrameRate(getStream()->time_base); // 1/240000
+        boost::rational<int> ticksPerFrame = 1 / (fr * timebase);
+
+        boost::rational<int> firstFrame = time * fr;// * timebase;
+        boost::rational<int> requiredStreamPts = firstFrame * ticksPerFrame;
+
+        boost::rational<int> first = requiredStreamPts - modulo(requiredStreamPts,ticksPerFrame);
+        boost::rational<int> second = first + ticksPerFrame;
+        //int firstFrameDivInt = boost::rational_cast<int>(firstFrameDiv);
+
+        //int firstFrameTicks = boost::rational_cast<int>(firstFrame * ticksPerFrame);
+        //int secondFramePts = boost::rational_cast<int>(firstFrame + ticksPerFrame);
+
+        //int wholeTicks = boost::rational_cast<int>(firstFrame * ticksPerFrame);
+
+        //boost::rational<int> firstFrameDiv = firstFrame - modulo(firstFrame,ticksPerFrame);
+        //int firstFrameDivInt = boost::rational_cast<int>(firstFrameDiv);
+
+        VAR_WARNING(time)(fr)(timebase)(first)(second)(firstFrame)(requiredStreamPts)(ticksPerFrame);
+        return std::make_pair(boost::rational_cast<int>(first),boost::rational_cast<int>(second));
+    };
 
     // 'Resample' the frame timebase
     // Determine which pts value is required. This is required to first determine
     // if the previously returned frame should be returned again
     // \todo instead of duplicating frames, nicely take the two input frames 'around' the
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
-    FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
-    int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
+    std::pair<int,int> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
+    pts requiredInputPts = requiredInputFrames.first;//convertToFilePosition(mPosition); todo ensure that requiredINputPts % strea->time_base == 0!
 
-    ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(mDeliveredFrameInputPts)(requiredInputPts);
+    VAR_WARNING(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
+    ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts);
 
-    if (!mDeliveredFrame || mDeliveredFrameInputPts != requiredInputPts)
+    // todo what if mDeliveredFrame had a different set of VideoCompositionParameters?
+
+    if (!mDeliveredFrame || requiredInputPts > mDeliveredFrameInputPts)
     {
         // Decode new frame
-        VAR_DEBUG(mDeliveredFrameInputPts)(requiredInputPts);
-
+        bool firstPacket = true;
         int frameFinished = 0;
         AVFrame* pFrame = avcodec_alloc_frame();
         ASSERT_NONZERO(pFrame);
 
-        boost::optional<pts> ptsOfFirstPacket = boost::none;
-
         while (!frameFinished )
         {
+            AVPacket* nextToBeDecodedPacket = 0;
             PacketPtr packet = getNextPacket();
-            if (!packet)
+            if (packet)
+            {
+                nextToBeDecodedPacket = packet->getPacket();
+
+                // From http://dranger.com/ffmpeg/tutorial05.html:
+                // When we get a packet from av_read_frame(), it will contain the PTS and DTS values for the information inside that packet.
+                // But what we really want is the PTS of our newly decoded raw frame, so we know when to display it. However, the frame we
+                // get from avcodec_decode_video() gives us an AVFrame, which doesn't contain a useful PTS value.
+                // (Warning: AVFrame does contain a pts variable, but this will not always contain what we want when we get a frame.)
+                // However, ffmpeg reorders the packets so that the DTS of the packet being processed by avcodec_decode_video() will always
+                // be the same as the PTS of the frame it returns. But, another warning: we won't always get this information, either.
+                //
+                // Not to worry, because there's another way to find out the PTS of a frame, and we can have our program reorder the packets
+                // by itself. We save the PTS of the first packet of a frame: this will be the PTS of the finished frame. So when the stream
+                // doesn't give us a DTS, we just use this saved PTS.
+                // Of course, even then, we might not get a proper pts. We'll deal with that later.
+                if (firstPacket)
+                {
+                    // Store this to at least have one value. If the ->dts value indicates a proper position that will be used instead.
+                    mDeliveredFrameInputPts = nextToBeDecodedPacket->pts; // Note: ->pts is expressed in time_base - of the stream - units
+                    firstPacket = false;
+                    VAR_WARNING(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
+                }
+            }
+            else if (getCodec()->codec->capabilities & CODEC_CAP_DELAY)
+            {
+                nextToBeDecodedPacket = &nullPacket; // feed with 0 frames to extract the cached frames
+            }
+
+            bool endOfFile = true;
+            if (nextToBeDecodedPacket)
+            {
+                int len1 = avcodec_decode_video2(getCodec(), pFrame, &frameFinished, nextToBeDecodedPacket);
+                ASSERT_MORE_THAN_EQUALS_ZERO(len1);
+                if (len1 > 0)
+                {
+                    endOfFile = false;
+                    mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pFrame);
+                    VAR_WARNING(mDeliveredFrameInputPts);
+                }
+                // else: For codecs with CODEC_CAP_DELAY, (len1 == 0) indicates end of the decoding
+            }
+
+            if (endOfFile)
             {
                 // End of file reached. Signal this with null ptr.
+                av_free(pFrame);
                 mDeliveredFrame.reset();
                 mDeliveredFrameInputPts = 0;
                 static const std::string status("End of file");
-                VAR_VIDEO(this)(status)(mPosition)(mDeliveredFrame)(requiredInputPts)(mDeliveredFrameInputPts);
+                VAR_WARNING(status);
+                VAR_VIDEO(this)(status)(mPosition)(requiredInputPts);
                 return mDeliveredFrame;
             }
 
-            // From http://dranger.com/ffmpeg/tutorial05.html:
-            // When we get a packet from av_read_frame(), it will contain the PTS and DTS values for the information inside that packet.
-            // But what we really want is the PTS of our newly decoded raw frame, so we know when to display it. However, the frame we
-            // get from avcodec_decode_video() gives us an AVFrame, which doesn't contain a useful PTS value.
-            // (Warning: AVFrame does contain a pts variable, but this will not always contain what we want when we get a frame.)
-            // However, ffmpeg reorders the packets so that the DTS of the packet being processed by avcodec_decode_video() will always
-            // be the same as the PTS of the frame it returns. But, another warning: we won't always get this information, either.
-            //
-            // Not to worry, because there's another way to find out the PTS of a frame, and we can have our program reorder the packets
-            // by itself. We save the PTS of the first packet of a frame: this will be the PTS of the finished frame. So when the stream
-            // doesn't give us a DTS, we just use this saved PTS.
-            // Of course, even then, we might not get a proper pts. We'll deal with that later.
-            if (!ptsOfFirstPacket)
+            // If !mDeliveredFrame: first getNextVideo after object creation, or directly after a move.
+            if (frameFinished && mDeliveredFrameInputPts < requiredInputPts) // todo find both these frames and then 'middel'
             {
-                ptsOfFirstPacket = static_cast<boost::optional<pts> >(packet->getPacket()->pts);
-            }
-
-            VAR_DEBUG(packet->getPacket());
-
-            // \todo decoders that hold multiple frames in one packet
-            int len1 = avcodec_decode_video2(getCodec(), pFrame, &frameFinished, packet->getPacket());
-
-            if (packet->getPacket()->dts != AV_NOPTS_VALUE)
-            {
-                // First, try to use dts of last decoded input packet (see  text above)
-                mDeliveredFrameInputPts = static_cast<double>(packet->getPacket()->dts);
-            }
-            else if (*ptsOfFirstPacket != AV_NOPTS_VALUE)
-            {
-                // Fallback, use pts of the first decoded packet for this frame
-                mDeliveredFrameInputPts = static_cast<double>(*ptsOfFirstPacket);
-            }
-            else
-            {
-                NIY(_("Not supported: Video data without pts info"));
-            }
-
-            // If there is no previous frame stored as a member, then this is the scenario of the
-            // first getNextVideo directly after creating this file object, or directly after a move.
-            // In both these cases: return the first available frame. Ignore pts mismatches.
-            if (frameFinished && mDeliveredFrame && (mDeliveredFrameInputPts != requiredInputPts))
-            {
+                VAR_WARNING(requiredInputPts)(mDeliveredFrameInputPts);
                 // A whole frame was decoded, but it does not have the correct pts value. Get another.
                 frameFinished = 0;
             }
 
-            // If there is no previous frame stored as a member,
-            // use the get frame's position as starting point.
-            if (!mDeliveredFrame)
-            {
-                mPosition = Convert::toProjectFrameRate(mDeliveredFrameInputPts, videoFrameRate);
-            }
+            // todo isn't this a better solution?
+            //if (frameFinished && mDeliveredFrameInputPts > requiredInputPts)
+            //{
+            //    // Apparently, the most recent moveTo put the avcodec 'pointer' beyond the required frame. Move back and try again
+            //    VAR_WARNING(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
+            //    frameFinished = 0;
+            //}
+
+//            todoo perf options:
+//            >
+//> #define HAVE_CMOV 1
+//> #define HAVE_EBP_AVAILABLE 1
+//> #define HAVE_FAST_CLZ 0
+//> #define HAVE_FAST_CMOV 1
+//> #define HAVE_ISATTY 0
+//> #define HAVE_MEMALIGN 1
+
         }
         ASSERT_MORE_THAN_EQUALS_ZERO(pFrame->repeat_pict);
-        if (pFrame->repeat_pict > 0)
+        if (pFrame->repeat_pict > 0) // todo use codec->repeat_pict
         {
             NIY(_("Video frame repeating is not supported yet"));
         }
@@ -213,7 +295,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     ASSERT(mDeliveredFrame);
     mPosition += mDeliveredFrame->getRepeat();
 
-    VAR_VIDEO(this)(mPosition)(mDeliveredFrame)(requiredInputPts)(mDeliveredFrameInputPts);
+    VAR_WARNING(this)(mPosition)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
 
     return mDeliveredFrame;
 }
@@ -238,7 +320,7 @@ void VideoFile::startDecodingVideo()
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
     mDecodingVideo = true;
 
-    boost::mutex::scoped_lock lock(sMutexAvcodec);
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     //mStream->codec->lowres = 2; For decoding only a 1/4 image
 
@@ -248,13 +330,18 @@ void VideoFile::startDecodingVideo()
     int result = avcodec_open(getCodec(), videoCodec);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
-    FrameRate videoFrameRate = FrameRate(getCodec()->time_base.num, getCodec()->time_base.den);
-    int requiredInputPts = Convert::fromProjectFrameRate(mPosition, videoFrameRate);
-
+    FrameRate videoFrameRate = FrameRate(getStream()->r_frame_rate);
     if (videoFrameRate != Properties::get().getFrameRate())
     {
         LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get().getFrameRate();
     }
+
+    // todo add 'target type' to videoparameters and then optimize for  uality vs speed
+    // For previewing:
+     //av_opt_set((void*)getCodec()->priv_data, "profile", "baseline", 0);
+     //av_opt_set((void*)getCodec()->priv_data, "preset", "medium", 0);
+     //av_opt_set((void*)getCodec()->priv_data, "tune", "zerolatency,fastdecode", 0);
+     //av_opt_set((void*)getCodec()->priv_data, "x264opts", "rc-lookahead=0", 0);
 
     VAR_DEBUG(this)(getCodec());
 }
@@ -264,7 +351,7 @@ void VideoFile::stopDecodingVideo()
     VAR_DEBUG(this);
     if (mDecodingVideo)
     {
-        boost::mutex::scoped_lock lock(sMutexAvcodec);
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
         avcodec_close(getCodec());
     }
     mDecodingVideo = false;
@@ -293,7 +380,7 @@ void VideoFile::flush()
 
 std::ostream& operator<<( std::ostream& os, const VideoFile& obj )
 {
-    os << static_cast<const File&>(obj) << '|' << obj.mDecodingVideo << '|' << obj.mPosition << '|' << obj.mDeliveredFrameInputPts;
+    os << static_cast<const File&>(obj) << '|' << obj.mDecodingVideo << '|' << obj.mPosition << '|';
     return os;
 }
 

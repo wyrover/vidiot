@@ -1,10 +1,11 @@
 #include "VideoCodec.h"
 
+#include "Dialog.h"
 #include "Properties.h"
-
+#include "UtilInitAvcodec.h"
+#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
-#include "UtilList.h"
 #include "VideoCodecParameter.h"
 
 namespace model { namespace render {
@@ -86,23 +87,31 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
 
     // Fundamental unit of time (in seconds) in terms of which frame timestamps are represented.
     // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
-    video_codec->time_base.den = Properties::get().getFrameRate().denominator();
-    video_codec->time_base.num = Properties::get().getFrameRate().numerator();
+    video_codec->time_base.den = Properties::get().getFrameRate().numerator();
+    video_codec->time_base.num = Properties::get().getFrameRate().denominator();
     video_codec->pix_fmt = PIX_FMT_YUV420P;
     if (context->oformat->flags & AVFMT_GLOBALHEADER)
     {
         // Some formats want stream headers to be separate
         video_codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
     }
+
     return stream;
 }
 
-void VideoCodec::open(AVCodecContext* context) const
+bool VideoCodec::open(AVCodecContext* context) const
 {
     AVCodec* codec = avcodec_find_encoder(context->codec_id);
     ASSERT(codec);
-    int result = avcodec_open(context, codec);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
+    int result = avcodec_open(context, codec); // todo use open2
+
+    if (result < 0)
+    {
+        // Now do the checks that ffmpeg does when opening the codec to give proper feedback
+        gui::Dialog::get().getConfirmation( _("Error in video codec"), _("There was an error when opening the video codec.\nRendering will be aborted.\nDetailed information:\n") + Avcodec::getMostRecentLogLine());
+    }
+    return result >= 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

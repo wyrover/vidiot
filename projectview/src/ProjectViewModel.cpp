@@ -36,6 +36,7 @@ ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 ,   mIconFolder(folder_horizontal_xpm)
 ,   mIconFolderOpen(folder_horizontal_open_xpm)
 ,	mIconVideo(film_xpm)
+,   mHoldSorting(false)
 {
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::onOpenProject,           this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::onCloseProject,          this);
@@ -432,9 +433,9 @@ void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
     }
     ItemsAdded(wxDataViewItem(parent->id()),items);
 
-    holdSorting(false);
-
     mView.Expand(wxDataViewItem(parent->id()));
+
+    holdSorting(false);
 
     event.Skip();
 }

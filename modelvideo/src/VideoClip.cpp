@@ -109,7 +109,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         enforceKeyFrame = true; // Every first frame of a clip is forced to be a key frame
     }
 
-    unsigned int length = getLength();
+    int length = getLength();
 
     VideoFramePtr videoFrame;
 
@@ -444,4 +444,5 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
 }
 template void VideoClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void VideoClip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+
 } //namespace
