@@ -4,7 +4,7 @@
 #include <boost/cstdint.hpp>
 
 typedef int pixel;
-typedef boost::int64_t pts;
+typedef int pts;
 typedef int samplecount;
 typedef boost::int16_t sample;
 
@@ -20,5 +20,9 @@ typedef boost::icl::interval_set<pts> PtsIntervals;
 typedef boost::icl::interval_set<pixel> PixelIntervals;
 typedef boost::icl::discrete_interval<pts> PtsInterval;
 typedef boost::icl::discrete_interval<pixel> PixelInterval;
+
+typedef boost::rational<int> rational;
+
+int floor(boost::rational<int> r);
 
 #endif //UTIL_INT_H

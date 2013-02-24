@@ -86,7 +86,7 @@ void TimelinesView::onProjectAssetRenamed( model::EventRenameNode &event )
 
 void TimelinesView::onPageChanged(wxNotebookEvent& event)
 {
-    static_cast<timeline::Timeline*>(mNotebook.GetPage(event.GetSelection()))->activate();
+    updateActivation();
     event.Skip();
 }
 
@@ -106,6 +106,7 @@ void TimelinesView::Open( model::SequencePtr sequence )
         mNotebook.AddPage(timeline,sequence->getName(),false);
     }
     mNotebook.SetSelection(findPage(sequence).first); // Don't reuse f, since the current active timeline might just have been added above.
+    updateActivation();
 }
 
 void TimelinesView::Close( model::SequencePtr sequence )
@@ -123,10 +124,7 @@ void TimelinesView::Close( model::SequencePtr sequence )
         // Close open sequence
         mNotebook.DeletePage(mNotebook.GetSelection());
     }
-    if (mNotebook.GetPageCount() > 0)
-    {
-        static_cast<timeline::Timeline*>(mNotebook.GetPage(mNotebook.GetSelection()))->activate();
-    }
+    updateActivation();
 }
 
 timeline::Timeline& TimelinesView::getTimeline( model::SequencePtr sequence )
@@ -158,6 +156,23 @@ std::pair<size_t,timeline::Timeline*> TimelinesView::findPage(model::SequencePtr
     }
 
     return std::make_pair<size_t,timeline::Timeline*>(0,0);
+}
+
+void TimelinesView::updateActivation()
+{
+    if (mNotebook.GetPageCount() > 0)
+    {
+        size_t page = 0;
+        while (page < mNotebook.GetPageCount())
+        {
+            if (page != mNotebook.GetSelection())
+            {
+                static_cast<timeline::Timeline*>(mNotebook.GetPage(page))->activate(false);
+            }
+            ++page;
+        }
+        static_cast<timeline::Timeline*>(mNotebook.GetPage(mNotebook.GetSelection()))->activate(true);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

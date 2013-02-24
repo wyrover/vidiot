@@ -94,7 +94,8 @@ VideoDisplay::~VideoDisplay()
 
 void VideoDisplay::play()
 {
-    ASSERT(!mPlaying);
+    VAR_WARNING(this);
+    ASSERT(!mPlaying); // todo this assert went of when first hitting space and then pressing the play button when the video didnt start soon enough
     VAR_DEBUG(this);
     //(mPlaying);
     //if (mPlaying) return;
@@ -328,6 +329,7 @@ void VideoDisplay::videoBufferThread()
     while (!mAbortThreads)
     {
         model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+        VAR_WARNING(videoFrame);
         mVideoFrames.push(videoFrame);
     }
 }
@@ -354,7 +356,8 @@ void VideoDisplay::videoDisplayThread()
         // SCHEDULE NEXT REFRESH
         //////////////////////////////////////////////////////////////////////////
 
-        mCurrentTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream)) - mStartTime;
+        int paTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream));
+        mCurrentTime = paTime - mStartTime;
         int nextFrameTime = model::Convert::ptsToTime(videoFrame->getPts() - mStartPts);
         int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime);
         int sleepTime = nextFrameTimeAdaptedForPlaybackSpeed - mCurrentTime;
@@ -366,7 +369,7 @@ void VideoDisplay::videoDisplayThread()
         if (sleepTime < 20 || sleepTime > 1000)
         {
             // Skip the picture
-            VAR_WARNING(sleepTime)(videoFrame->getPts());
+            VAR_WARNING(paTime)(mCurrentTime)(mStartTime)(mStartPts)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(videoFrame->getPts());
             continue;
         }
         else

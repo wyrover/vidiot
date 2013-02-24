@@ -20,6 +20,7 @@ template void registerAudioCodecParameterTypesForSerializaton<boost::archive::te
 
 wxString getHumanReadibleName(AudioCodecParameterType id)
 {
+    ASSERT(AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id) != AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.end())(id);
     return (AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id))->second;
 }
 

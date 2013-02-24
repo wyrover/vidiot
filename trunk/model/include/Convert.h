@@ -5,11 +5,10 @@
 #include "UtilFrameRate.h"
 
 namespace model {
+
 class Convert
 {
 public:
-
-    static int toInt(boost::rational<int> r);
 
     static pts timeToPts(int time);             ///< @param time time duration in milliseconds
     static int ptsToTime(pts position);         ///< @return time duration in milliseconds

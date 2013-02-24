@@ -30,8 +30,6 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-static int HeaderHeight = 0;
-
 ProjectView::ProjectView(wxWindow* parent)
     :   wxPanel(parent)
     ,   mProject(0)
@@ -41,12 +39,13 @@ ProjectView::ProjectView(wxWindow* parent)
     ,   mOpenFolders()
     ,   mDragCount(0)
     ,   mDragStart(0,0)
+    ,   mHeaderHeight(0)
 {
     LOG_INFO;
 
     mCtrl.EnableDropTarget( DataObject::sFormat );
-    wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   /*wxDATAVIEW_COL_SORTABLE | */wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
-    wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  /*wxDATAVIEW_COL_SORTABLE |*/ wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
+    wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
+    wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
 
     mCtrl.AssociateModel( mModel );
     mModel->DecRef();
@@ -87,7 +86,7 @@ ProjectView::ProjectView(wxWindow* parent)
     wxHeaderCtrlSimple s(&win);
     wxHeaderColumnSimple col("Title");
     s.AppendColumn(col);
-    HeaderHeight = s.GetSize().GetHeight();
+    mHeaderHeight = s.GetSize().GetHeight();
 }
 
 ProjectView::~ProjectView()
@@ -194,7 +193,7 @@ model::NodePtrs ProjectView::getSelection() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-// FIND NODES
+// GET/SET
 //////////////////////////////////////////////////////////////////////////
 
 wxPoint ProjectView::find( model::NodePtr node )
@@ -202,7 +201,7 @@ wxPoint ProjectView::find( model::NodePtr node )
     wxPoint result;
     wxDataViewItem item =  wxDataViewItem( node->id() );
 
-    wxPoint headerAdjust(0,HeaderHeight);
+    wxPoint headerAdjust(0,mHeaderHeight);
     wxRect rect = mCtrl.GetItemRect(item, 0);
 
     return wxPoint(rect.GetX() + rect.GetWidth() / 2, rect.GetY() + rect.GetHeight() / 2) + headerAdjust;
@@ -224,6 +223,11 @@ wxPoint ProjectView::find( model::NodePtr node )
     //}
     //FATAL;
     //return wxPoint(0,0);
+}
+
+int ProjectView::getHeaderHeight() const
+{
+    return mHeaderHeight;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -73,19 +73,6 @@ protected:
     File(const File& other);
 
     //////////////////////////////////////////////////////////////////////////
-    // AVCODEC
-    //////////////////////////////////////////////////////////////////////////
-
-    /// This mutex is needed to ensure that several non-thread-safe avcodec
-    /// methods are never executed in parallel:
-    /// - av_open_input_file
-    /// - av_close_input_file
-    /// - av_find_stream_info
-    /// - avcodec_open
-    /// - avcodec_close
-    static boost::mutex sMutexAvcodec;
-
-    //////////////////////////////////////////////////////////////////////////
     // STREAMS INTERFACE TO SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
 
@@ -96,11 +83,18 @@ protected:
     /// Per default returns false in the base implementation
     virtual bool useStream(AVMediaType type) const;
 
+    /// \return the stream used by this file
+    /// \return 0 if file could not be opened (or is empty), or if no matching stream could be found.
+    /// File is opened if it was not yet opened
+    AVStream* getStream();
+
     //////////////////////////////////////////////////////////////////////////
     // PACKETS INTERFACE TO SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
 
+    /// File is opened if it was not yet opened
     void startReadingPackets();
+
     void stopReadingPackets();
 
     /// This method is called when the reading/decoding process must be restarted.

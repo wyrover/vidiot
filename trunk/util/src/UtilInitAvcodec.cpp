@@ -20,6 +20,7 @@ boost::bimap<int, wxString> Avcodec::mapAvcodecLevels = boost::assign::list_of<b
 const int Avcodec::sMaxLogSize = 500;
 char* Avcodec::sFixedBuffer = 0;
 int Avcodec::sLevel = AV_LOG_FATAL;
+wxString Avcodec::sMostRecentLogLine(_("Increase the avcodec logging level in the .ini file to get detailed information."));
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -38,20 +39,27 @@ void Avcodec::exit()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// LOCKING
+//////////////////////////////////////////////////////////////////////////
+
+boost::mutex Avcodec::sMutex;
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 //static
 wxString Avcodec::getDefaultLogLevel()
 {
-    return (*sLogLevels.begin()).first;
+    return mapAvcodecLevels.left.find(AV_LOG_ERROR)->second;
 }
 
 //static
 std::list<wxString> Avcodec::getLogLevels()
 {
     std::list<wxString> result;
-    BOOST_FOREACH( auto value, sLogLevels )
+
+    BOOST_FOREACH( auto value, mapAvcodecLevels.right )
     {
         result.push_back(value.first);
     }
@@ -60,7 +68,7 @@ std::list<wxString> Avcodec::getLogLevels()
 
 void Avcodec::configureLog()
 {
-    BOOST_FOREACH( auto value, sLogLevels )
+    BOOST_FOREACH( auto value, mapAvcodecLevels.right )
     {
         if (value.first.IsSameAs(Config::ReadString(Config::sPathLogLevelAvcodec)))
         {
@@ -70,6 +78,11 @@ void Avcodec::configureLog()
     }
     av_log_set_level(sLevel); // Only required for default avcodec log method
     av_log_set_callback(Avcodec::log);
+}
+
+wxString Avcodec::getMostRecentLogLine()
+{
+    return sMostRecentLogLine;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,18 +99,17 @@ void Avcodec::log(void *ptr, int level, const char * msg, va_list ap)
         sFixedBuffer[len-1] = '.';
     }
 
-    std::ostringstream o;
+    std::ostringstream osComponent;
     if (ptr)
     {
-        o   << "["
+        osComponent
+            << "["
             << (*(AVClass**)ptr)->item_name(ptr)
             << ";"
             << (*(AVClass**)ptr)->class_name
             << "]";
     }
-    else
-    {
-        o << "";
-    }
-    Log().get("AVC    ") << o.str() << " [" << sFixedBuffer << "]";
+
+    sMostRecentLogLine = sFixedBuffer;
+    Log().get("AVC    ") << osComponent.str() << " [" << sFixedBuffer << "]";
 }

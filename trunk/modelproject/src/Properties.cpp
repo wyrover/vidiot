@@ -9,7 +9,7 @@
 namespace model {
 
 Properties::Properties()
-:   mFrameRate(framerate::fromString(Config::ReadString(Config::sPathDefaultFrameRate)))
+:   mFrameRate(Config::ReadString(Config::sPathDefaultFrameRate))
 ,   mVideoWidth(Config::ReadLong(Config::sPathDefaultVideoWidth))
 ,   mVideoHeight(Config::ReadLong(Config::sPathDefaultVideoHeight))
 ,   mAudioChannels(Config::ReadLong(Config::sPathDefaultAudioChannels))

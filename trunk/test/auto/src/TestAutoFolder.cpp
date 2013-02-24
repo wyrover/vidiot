@@ -1,8 +1,5 @@
 #include "TestAutoFolder.h"
 
-#include <wx/ffile.h>
-#include <wx/filefn.h>
-#include <boost/thread.hpp>
 #include "AutoFolder.h"
 #include "FixtureGui.h"
 #include "HelperApplication.h"
@@ -10,6 +7,10 @@
 #include "HelperTestSuite.h"
 #include "HelperWindow.h"
 #include "UtilLogWxwidgets.h"
+#include "Worker.h"
+#include <boost/thread.hpp>
+#include <wx/ffile.h>
+#include <wx/filefn.h>
 
 namespace test {
 //////////////////////////////////////////////////////////////////////////
@@ -54,12 +55,13 @@ void TestAutoFolder::testWatch()
     ASSERT(copyok);
 
     // Wait until file addition seen. Loop is required to wait until the Watcher has seen the valid file
-    waitForIdle();
-    while ( getSupportedFiles( tempdir.getFileName() ).size() < 1 )
-    {
-        pause(10);
-    }
-    waitForIdle();
+    //waitForIdle();
+    //while ( getSupportedFiles( tempdir.getFileName() ).size() < 1 )
+    //{
+    //    pause(10);
+    //}
+    gui::Worker::get().waitUntilQueueEmpty(); // This assumes that this wait is started before the worker actually does the work. Racer.
+//    waitForIdle();
     ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added AutoFolder and the valid File
 
     // Clean up

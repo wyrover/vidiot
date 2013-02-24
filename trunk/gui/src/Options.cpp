@@ -34,9 +34,9 @@ Options::Options(wxWindow* win)
         wxArrayString choices;
         unsigned int selection = 0;
         wxString currentFrameRate = Config::ReadString(Config::sPathDefaultFrameRate);
-        BOOST_FOREACH( FrameRate fr, framerate::getSupported() )
+        BOOST_FOREACH( FrameRate fr, FrameRate::getSupported() )
         {
-            wxString frs = framerate::toString(fr);
+            wxString frs = fr.toString();
             choices.Add(frs);
             if (currentFrameRate.IsSameAs(frs))
             {
@@ -138,7 +138,7 @@ Options::~Options()
         Config::WriteString( Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
         Config::WriteString( Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
         Config::WriteBool( Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
-        Config::WriteString( Config::sPathDefaultFrameRate,          framerate::toString(framerate::getSupported()[mFrameRate->GetSelection()]));
+        Config::WriteString( Config::sPathDefaultFrameRate,          (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
         Config::WriteLong( Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
         Config::WriteLong( Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
         Config::WriteString( Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());

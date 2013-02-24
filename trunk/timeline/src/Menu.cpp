@@ -94,6 +94,7 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
 
+    // todo add all these events to the timeline, not the window: only get the event once, for the current timeline
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,      this, ID_RENDERALL);
@@ -246,60 +247,74 @@ void MenuHandler::onAddVideoTrack(wxCommandEvent& event)
 {
     LOG_INFO;
     (new command::CreateVideoTrack(getSequence()))->submit();
+    event.Skip();
 }
 
 void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
 {
     LOG_INFO;
     (new command::CreateAudioTrack(getSequence()))->submit();
+    event.Skip();
 }
 
 void MenuHandler::onRemoveEmptyTracks(wxCommandEvent& event)
 {
     LOG_INFO;
     (new command::RemoveEmptyTracks(getSequence()))->submit();
+    event.Skip();
 }
 
 void MenuHandler::onDeleteMarked(wxCommandEvent& event)
 {
     LOG_INFO;
     getIntervals().deleteMarked();
+    event.Skip();
 }
 
 void MenuHandler::onDeleteUnmarked(wxCommandEvent& event)
 {
     LOG_INFO;
     getIntervals().deleteUnmarked();
+    event.Skip();
 }
 
 void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 {
     LOG_INFO;
     getIntervals().clear();
+    event.Skip();
 }
 
 void MenuHandler::onRenderSettings(wxCommandEvent& event)
 {
-    gui::RenderSettingsDialog(getSequence()).ShowModal();
+    if (getTimeline().active())
+    {
+        gui::RenderSettingsDialog(getSequence()).ShowModal();
+    }
     event.Skip();
 }
 
 void MenuHandler::onRenderSequence(wxCommandEvent& event)
 {
-    if (!getSequence()->getRender()->checkFileName())
+    if (getTimeline().active())
     {
-        gui::RenderSettingsDialog(getSequence()).ShowModal();
+        if (!getSequence()->getRender()->checkFileName())
+        {
+            gui::RenderSettingsDialog(getSequence()).ShowModal();
+        }
+        else
+        {
+            model::render::Render::schedule(getSequence());
+        }
     }
-    else
-    {
-        model::render::Render::schedule(getSequence());
-    }
+    // todo better solutino for this is active handling
     event.Skip();
 }
 
 void MenuHandler::onRenderAll(wxCommandEvent& event)
 {
     model::render::Render::scheduleAll();
+    event.Skip();
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& event)
@@ -307,6 +322,7 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
     LOG_INFO;
     TimelinesView& tv = Window::get().getTimeLines();
     tv.Close();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -317,42 +333,49 @@ void MenuHandler::onAddInTransition(wxCommandEvent& event)
 {
     LOG_INFO;
     createTransition(boost::make_shared<model::video::transition::CrossFade>());
+    event.Skip();
 }
 
 void MenuHandler::onAddOutTransition(wxCommandEvent& event)
 {
     LOG_INFO; // todo make transitionfactory.... avoiding having to include all types of transitions everywhere. See also Idle::addTransition
     createTransition(boost::make_shared<model::video::transition::CrossFade>()); // todo this does not work, sometimes makes inouttransition, not in-only transition
+    event.Skip();
 }
 
 void MenuHandler::onAddInOutTransition(wxCommandEvent& event)
 {
     LOG_INFO;
     createTransition(boost::make_shared<model::video::transition::CrossFade>());
+    event.Skip();
 }
 
 void MenuHandler::onAddInFade(wxCommandEvent& event)
 {
     LOG_INFO;
     createTransition(boost::make_shared<model::audio::transition::CrossFade>());
+    event.Skip();
 }
 
 void MenuHandler::onAddOutFade(wxCommandEvent& event)
 {
     LOG_INFO;
     createTransition(boost::make_shared<model::audio::transition::CrossFade>());
+    event.Skip();
 }
 
 void MenuHandler::onAddInOutFade(wxCommandEvent& event)
 {
     LOG_INFO;
     createTransition(boost::make_shared<model::audio::transition::CrossFade>());
+    event.Skip();
 }
 
 void MenuHandler::onRemoveEmpty(wxCommandEvent& event)
 {
     LOG_INFO;
     // todo
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

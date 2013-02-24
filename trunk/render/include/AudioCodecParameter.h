@@ -14,6 +14,8 @@ void registerAudioCodecParameterTypesForSerializaton(Archive& ar);
 
 wxString getHumanReadibleName(AudioCodecParameterType id);
 
+// NOTE: If a parameter seems to be 'filled in' on the wrong AVCodecContext struct member, check for typos in the first parameter to the template instantiations below.
+
 struct AudioCodecParameterBitrate
     :   public CodecParameterInt<AudioCodecParameterBitrate,AudioCodecParameterType,AudioBitRate>
 {

@@ -44,6 +44,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
 ,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
 ,   mTransaction(false)
 ,   mShift(0)
+,   mActive(false)
 //////////////////////////////////////////////////////////////////////////
 ,   mTrim(new Trim(this))
 ,   mZoom(new Zoom(this))
@@ -353,11 +354,20 @@ void Timeline::onZoomChanged( ZoomChangeEvent& event )
     event.Skip();
 }
 
-void Timeline::activate()
+void Timeline::activate(bool active)
 {
-    Window::get().getPreview().selectTimeline(this);
-    Window::get().getDetailsView().selectTimeline(this);
-    getMenuHandler().activate();
+    mActive = active;// todo need better solution, particularly for menu handlers
+    if (active)
+    {
+        Window::get().getPreview().selectTimeline(this);
+        Window::get().getDetailsView().selectTimeline(this);
+        getMenuHandler().activate();
+    }
+}
+
+bool Timeline::active() const
+{
+    return mActive;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -88,7 +88,9 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void activate(); ///< To be called when the timeline becomes the active one
+    void activate(bool active); ///< To be called when the timeline becomes the active one
+
+    bool active() const;
 
     Player* getPlayer() const;
 
@@ -138,6 +140,8 @@ private:
 
     model::SequencePtr mSequence;
     Player* mPlayer;
+
+    bool mActive;
 
     bool mTransaction;
 

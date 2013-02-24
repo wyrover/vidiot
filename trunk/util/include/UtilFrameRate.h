@@ -1,20 +1,48 @@
 #ifndef FRAMERATE_H
 #define FRAMERATE_H
 
-typedef boost::rational<int> FrameRate;
+#include "libavutil/rational.h"
+#include "UtilInt.h"
 
-namespace framerate {
+class FrameRate
+    : public boost::rational<int>
+{
+public:
 
-const FrameRate s24p = FrameRate(1000, 24 * 1001);
-const FrameRate s25p = FrameRate(   1, 25);
-const FrameRate s30p = FrameRate(1000, 30 * 1001);
+    static const FrameRate s24p;
+    static const FrameRate s25p;
+    static const FrameRate s30p;
 
-std::vector<FrameRate> getSupported();
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION
+    //////////////////////////////////////////////////////////////////////////
 
-wxString toString(FrameRate framerate);
+    explicit FrameRate(int num, int den);
+    FrameRate(AVRational avr);
+    FrameRate(wxString framerate);
 
-FrameRate fromString(wxString framerate);
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////
 
-} // namespace
+    static std::vector<FrameRate> getSupported();
+
+    wxString toString() const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const FrameRate& obj );
+
+    //////////////////////////////////////////////////////////////////////////
+    // SERIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
+
+};
 
 #endif // FRAMERATE_H

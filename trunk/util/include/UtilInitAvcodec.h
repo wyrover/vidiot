@@ -22,6 +22,19 @@ public:
     static void exit();
 
     //////////////////////////////////////////////////////////////////////////
+    // LOCKING
+    //////////////////////////////////////////////////////////////////////////
+
+    /// This mutex is needed to ensure that several non-thread-safe avcodec
+    /// methods are never executed in parallel:
+    /// - av_open_input_file
+    /// - av_close_input_file
+    /// - av_find_stream_info
+    /// - avcodec_open
+    /// - avcodec_close
+    static boost::mutex sMutex;
+
+    //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +42,7 @@ public:
     static std::list<wxString> getLogLevels();
     static boost::bimap<int, wxString> mapAvcodecLevels;
     static void configureLog();
+    static wxString getMostRecentLogLine();
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
@@ -37,6 +51,7 @@ public:
     static const int sMaxLogSize;
     static char* sFixedBuffer;
     static int sLevel;
+    static wxString sMostRecentLogLine;
 
 private:
 

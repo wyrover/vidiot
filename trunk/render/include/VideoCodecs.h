@@ -14,6 +14,7 @@ public:
     static boost::bimap<int,wxString> mapToName;
 
     static VideoCodecPtr getDefault();
+    static std::list<CodecID> all();
 
     /// \return 0 if a codec with the given id was not found
     /// This method finds the given codec in the registered list of codecs
