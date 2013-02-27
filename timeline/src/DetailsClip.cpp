@@ -109,12 +109,14 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     wxPanel* scalingpanel = new wxPanel(this);
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
-    mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, model::VideoClip::sScalingOriginalSize, model::Constants::sMinScaling, model::Constants::sMaxScaling);
+    mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, 1 * model::Constants::scalingPrecisionFactor, model::Constants::sMinScaling, model::Constants::sMaxScaling);
     mScalingSlider->SetPageSize(model::Constants::scalingPageSize);
     mScalingSpin = new wxSpinCtrlDouble(scalingpanel);
     mScalingSpin->SetDigits(model::Constants::scalingPrecision);
-    mScalingSpin->SetValue(model::Convert::digitsToFactor(model::VideoClip::sScalingOriginalSize, model::Constants::scalingPrecision));
-    mScalingSpin->SetRange(model::Convert::digitsToFactor(model::Constants::sMinScaling, model::Constants::scalingPrecision), model::Convert::digitsToFactor(model::Constants::sMaxScaling, model::Constants::scalingPrecision));
+    mScalingSpin->SetValue(1); // No scaling
+    mScalingSpin->SetRange(
+        static_cast<double>(model::Constants::sMinScaling) / static_cast<double>(model::Constants::scalingPrecisionFactor),
+        static_cast<double>(model::Constants::sMaxScaling) / static_cast<double>(model::Constants::scalingPrecisionFactor));
     mScalingSpin->SetIncrement(sScalingIncrement);
     scalingsizer->Add(mScalingSlider);
     scalingsizer->Add(mScalingSpin);
@@ -222,7 +224,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
@@ -245,7 +247,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
         if (mVideoClip)
         {
             wxSize originalSize = mVideoClip->getInputSize();
-            int factor = mVideoClip->getScalingDigits();
+            boost::rational< int > factor = mVideoClip->getScalingFactor();
             wxPoint position = mVideoClip->getPosition();
             wxPoint maxpos = mVideoClip->getMaxPosition();
             wxPoint minpos = mVideoClip->getMinPosition();
@@ -256,8 +258,9 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mOpacitySpin->SetValue(opacity);
 
             mSelectScaling->select(mVideoClip->getScaling());
-            mScalingSlider->SetValue(factor);
-            mScalingSpin->SetValue(model::Convert::digitsToFactor(factor, model::Constants::scalingPrecision));
+            double sliderFactor = boost::rational_cast<double>(factor);
+            mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::scalingPrecisionFactor));
+            mScalingSpin->SetValue(sliderFactor);
 
             mSelectAlignment->select(mVideoClip->getAlignment());
             mPositionXSlider->SetRange(minpos.x,maxpos.x);
@@ -271,7 +274,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGDIGITS, &DetailsClip::onScalingDigitsChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
@@ -335,16 +338,18 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
     makeCommand();
-    mCommand->setScaling(model::VideoScalingCustom, boost::optional<int>(mScalingSlider->GetValue()));
+    boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::scalingPrecisionFactor);
+    mCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
 
 void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 {
     VAR_INFO(event.GetValue());
-    int value = model::Convert::factorToDigits(event.GetValue(), model::Constants::scalingPrecision);
+    int spinFactor = floor(event.GetValue() * model::Constants::scalingPrecisionFactor);
     makeCommand();
-    mCommand->setScaling(model::VideoScalingCustom, boost::optional<int>(value));
+    boost::rational<int> r(floor(event.GetValue() * model::Constants::scalingPrecisionFactor), model::Constants::scalingPrecisionFactor);
+    mCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
 
@@ -410,10 +415,10 @@ void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
     event.Skip();
 }
 
-void DetailsClip::onScalingDigitsChanged(model::EventChangeVideoClipScalingDigits& event)
+void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event)
 {
-    mScalingSpin->SetValue(model::Convert::digitsToFactor(event.getValue(),model::Constants::scalingPrecision));
-    mScalingSlider->SetValue(event.getValue());
+    mScalingSpin->SetValue(boost::rational_cast<double>(event.getValue()));
+    mScalingSlider->SetValue(floor(event.getValue() * model::Constants::scalingPrecisionFactor));
     preview();
     event.Skip();
 }

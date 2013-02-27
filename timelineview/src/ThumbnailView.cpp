@@ -51,6 +51,8 @@ wxSize ThumbnailView::requiredSize() const
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetWidth()  - 2 * Layout::ClipBorderSize,
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetHeight() - Layout::ClipBorderSize - Layout::ClipDescriptionBarHeight);
     wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
+    scaledSize.x = std::max(model::VideoFrame::sMinimumSize, scaledSize.x); // Ensure minimum width of 10 pixels
+    scaledSize.y = std::max(model::VideoFrame::sMinimumSize, scaledSize.y); // Ensure minimum height of 10 pixels
     return scaledSize;
 }
 

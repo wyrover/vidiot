@@ -17,12 +17,12 @@ ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip
     ,   mVideoClip(videoclip)
     ,   mOldOpacity(mVideoClip->getOpacity())
     ,   mOldScaling(mVideoClip->getScaling())
-    ,   moldScalingDigits(mVideoClip->getScalingDigits())
+    ,   mOldScalingFactor(mVideoClip->getScalingFactor())
     ,   mOldAlignment(mVideoClip->getAlignment())
     ,   mOldPosition(mVideoClip->getPosition())
     ,   mNewOpacity(boost::none)
     ,   mNewScaling(boost::none)
-    ,   mNewScalingDigits(boost::none)
+    ,   mNewScalingFactor(boost::none)
     ,   mNewPosition(boost::none)
 {
 }
@@ -37,11 +37,11 @@ void ChangeVideoClipTransform::setOpacity(int opacity)
     mVideoClip->setOpacity(opacity);
 }
 
-void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<int> scalingdigits)
+void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor)
 {
     mNewScaling = boost::optional<VideoScaling>(scaling);
-    mNewScalingDigits = scalingdigits;
-    mVideoClip->setScaling(*mNewScaling, mNewScalingDigits);
+    mNewScalingFactor = factor;
+    mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
 }
 
 void ChangeVideoClipTransform::setAlignment(VideoAlignment alignment)
@@ -74,7 +74,7 @@ bool ChangeVideoClipTransform::Do()
         }
         if (mNewScaling)
         {
-            mVideoClip->setScaling(*mNewScaling, mNewScalingDigits);
+            mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
         }
         if (mNewAlignment)
         {
@@ -98,7 +98,7 @@ bool ChangeVideoClipTransform::Undo()
     }
     if (mNewScaling)
     {
-        mVideoClip->setScaling(mOldScaling, boost::optional<int>(moldScalingDigits));
+        mVideoClip->setScaling(mOldScaling, boost::optional< boost::rational< int > >(mOldScalingFactor));
     }
     if (mNewAlignment)
     {
@@ -131,12 +131,12 @@ std::ostream& operator<<( std::ostream& os, const ChangeVideoClipTransform& obj 
         << obj.mVideoClip        << '|'
         << obj.mOldOpacity       << '|'
         << obj.mOldScaling       << '|'
-        << obj.moldScalingDigits << '|'
+        << obj.mOldScalingFactor << '|'
         << obj.mOldAlignment     << '|'
         << obj.mOldPosition      << '|'
         << obj.mNewOpacity       << '|'
         << obj.mNewScaling       << '|'
-        << obj.mNewScalingDigits << '|'
+        << obj.mNewScalingFactor << '|'
         << obj.mNewPosition;
     return os;
 }

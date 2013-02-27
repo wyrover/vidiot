@@ -65,18 +65,19 @@ public:
     /// \return the related to be decoded frame number
     static pts fromProjectFrameRate(pts outputposition, FrameRate inputrate);
 
-    static int      scale(int input,        double factor);
-    static wxSize   scale(wxSize input,     double factor);
-    static wxPoint  scale(wxPoint input,    double factor);
-    static wxRect   scale(wxRect input,     double factor);
+    static int      scale(int input,        boost::rational<int> factor);
+    static wxSize   scale(wxSize input,     boost::rational<int> factor);
+    static wxPoint  scale(wxPoint input,    boost::rational<int> factor);
+    static wxRect   scale(wxRect input,     boost::rational<int> factor);
 
     /// Convert an input size to a size fitting entirely in a given bounding
     /// box. Width and height ratio is repected.
     /// \param input input size
     /// \param boundingbox output size is constrained to this bounding box
+    /// \param fill if true, then tries to fill the bounding box as much as possible (possibly clipping information). If false, then the entire frame is 'fit' inside the bounding box (possibly with black bands).
     /// \param[out] scaling used scaling by the algorithm
     /// \return maximum size fitting in bounding box with given width/height ratio
-    static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox, double& scaling);
+    static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::rational<int>& scaling, bool fill = false);
     static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox);
 
     /// Convert an input size to the maximal size fitting in a given bounding box,
@@ -85,11 +86,11 @@ public:
     /// \param boundingbox output size is constrained to this bounding box in one direction, the other direction is equal or larger than the bounding box
     /// \param[out] scaling used scaling by the algorithm
     /// \return maximum size fitting in bounding box with given width/height ratio
-    static wxSize fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, double& scaling);
+    static wxSize fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, boost::rational<int>& scaling);
 
     static int doubleToInt(double x);
-    static int factorToDigits(double number, int nDigits);
-    static double digitsToFactor(int number, int nDigits);
+    static int factorToDigits(boost::rational<int> number, int nDigits);
+    static boost::rational<int> digitsToFactor(int number, int nDigits);
 
     /// Convert a number of audio frames (data for all channels) to a number of samples (data for one channel)
     /// \param nFrames Number of audio frames

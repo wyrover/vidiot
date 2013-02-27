@@ -9,7 +9,7 @@ namespace model {
     class ChangeVideoClipTransform;
     class EventChangeVideoClipOpacity;
     class EventChangeVideoClipScaling;
-    class EventChangeVideoClipScalingDigits;
+    class EventChangeVideoClipScalingFactor;
     class EventChangeVideoClipAlignment;
     class EventChangeVideoClipPosition;
     class EventChangeVideoClipMinPosition;
@@ -62,7 +62,7 @@ public:
 
     void onOpacityChanged(model::EventChangeVideoClipOpacity& event);
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
-    void onScalingDigitsChanged(model::EventChangeVideoClipScalingDigits& event);
+    void onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event);
     void onAlignmentChanged(model::EventChangeVideoClipAlignment& event);
     void onPositionChanged(model::EventChangeVideoClipPosition& event);
     void onMinPositionChanged(model::EventChangeVideoClipMinPosition& event);

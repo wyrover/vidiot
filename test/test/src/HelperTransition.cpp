@@ -65,6 +65,7 @@ wxPoint TransitionRightClipBegin(model::IClipPtr clip)
 
 MakeTransitionAfterClip::MakeTransitionAfterClip(int afterclip, bool audio)
     : clipNumberBeforeTransition(afterclip)
+    , clipNumberAfterTransition(afterclip+1)
     , mAudio(audio)
 {
     storeVariablesBeforeTrimming();
@@ -77,8 +78,8 @@ MakeTransitionAfterClip::~MakeTransitionAfterClip()
 void MakeTransitionAfterClip::makeTransition()
 {
     storeVariablesBeforeMakingTransition();
-    PositionCursor(LeftPixel(GetClip(0,clipNumberBeforeTransition + 1)));
-    Move(LeftCenter(GetClip(0,clipNumberBeforeTransition + 1)));
+    PositionCursor(LeftPixel(GetClip(0,clipNumberAfterTransition)));
+    Move(LeftCenter(GetClip(0,clipNumberAfterTransition)));
     Type('c');
     storeVariablesAfterMakingTransition();
 }
@@ -96,28 +97,28 @@ model::IClipPtr MakeTransitionAfterClip::GetClip(int track, int clip) const
 void MakeTransitionAfterClip::storeVariablesBeforeTrimming()
 {
     leftPositionOfClipBeforeTransitionOriginal = LeftPixel(GetClip(0,clipNumberBeforeTransition));
-    leftPositionOfClipAfterTransitionOriginal  = LeftPixel(GetClip(0,clipNumberBeforeTransition + 1));
+    leftPositionOfClipAfterTransitionOriginal  = LeftPixel(GetClip(0,clipNumberAfterTransition));
     lengthOfClipBeforeTransitionOriginal = GetClip(0,clipNumberBeforeTransition)->getLength();
-    lengthOfClipAfterTransitionOriginal  = GetClip(0,clipNumberBeforeTransition + 1)->getLength();
+    lengthOfClipAfterTransitionOriginal  = GetClip(0,clipNumberAfterTransition)->getLength();
 }
 
 void MakeTransitionAfterClip::storeVariablesBeforeMakingTransition()
 {
     leftPositionOfClipBeforeTransitionBeforeApplyingTransition  = LeftPixel(GetClip(0,clipNumberBeforeTransition));
-    leftPositionOfClipAfterTransitionBeforeApplyingTransition   = LeftPixel(GetClip(0,clipNumberBeforeTransition + 1));
+    leftPositionOfClipAfterTransitionBeforeApplyingTransition   = LeftPixel(GetClip(0,clipNumberAfterTransition));
     lengthOfFirstClip                                           = GetClip(0,0)->getLength(); // This is a fixed index, since really the first clip's length is used
     lengthOfClipBeforeTransitionBeforeTransitionApplied         = GetClip(0,clipNumberBeforeTransition)->getLength();
-    lengthOfClipAfterTransitionBeforeTransitionApplied          = GetClip(0,clipNumberBeforeTransition + 1)->getLength();
+    lengthOfClipAfterTransitionBeforeTransitionApplied          = GetClip(0,clipNumberAfterTransition)->getLength();
 }
 
 void MakeTransitionAfterClip::storeVariablesAfterMakingTransition()
 {
     leftPositionOfClipBeforeTransitionAfterTransitionApplied = LeftPixel(GetClip(0,clipNumberBeforeTransition));
-    leftPositionOfTransitionAfterTransitionApplied           = LeftPixel(GetClip(0,clipNumberBeforeTransition + 1));
-    leftPositionOfClipAfterTransitionAfterTransitionApplied  = LeftPixel(GetClip(0,clipNumberBeforeTransition + 2));
+    leftPositionOfTransitionAfterTransitionApplied           = LeftPixel(GetClip(0,clipNumberAfterTransition));
+    leftPositionOfClipAfterTransitionAfterTransitionApplied  = LeftPixel(GetClip(0,clipNumberAfterTransition + 1));
     lengthOfClipBeforeTransitionAfterTransitionApplied       = GetClip(0,clipNumberBeforeTransition)->getLength();
-    lengthOfClipAfterTransitionAfterTransitionApplied        = GetClip(0,clipNumberBeforeTransition + 2)->getLength();
-    model::TransitionPtr transition                          = boost::dynamic_pointer_cast<model::Transition>(GetClip(0,clipNumberBeforeTransition + 1));
+    lengthOfClipAfterTransitionAfterTransitionApplied        = GetClip(0,clipNumberAfterTransition + 1)->getLength();
+    model::TransitionPtr transition                          = boost::dynamic_pointer_cast<model::Transition>(GetClip(0,clipNumberAfterTransition));
     ASSERT(transition);
     touchPositionOfTransition                                = getTimeline().getZoom().ptsToPixels(transition->getTouchPosition());
     lengthOfTransition                                       = transition->getLength();
@@ -130,14 +131,14 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool a
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
 
     // Reduce size of clips to be able to create transition
-    TrimLeft(GetClip(0,clipNumberBeforeTransition + 1),30,true);
+    TrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
     TrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
-    ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberBeforeTransition + 1)->getMinAdjustBegin())(GetClip(0,clipNumberBeforeTransition + 1));
+    ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
 
     makeTransition();
 
-    ASSERT(GetClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(GetClip(0,clipNumberBeforeTransition + 1));
+    ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
     ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength));
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition / 2);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition / 2);
@@ -162,11 +163,11 @@ MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
     // Reduce size of clips to be able to create transition
     TrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
-    ASSERT_ZERO(GetClip(0,clipNumberBeforeTransition + 1)->getMinAdjustBegin())(GetClip(0,clipNumberBeforeTransition + 1));
+    ASSERT_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
 
     makeTransition();
 
-    ASSERT(GetClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(GetClip(0,clipNumberBeforeTransition + 1));
+    ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
     ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength) / 2);
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied - lengthOfTransition);
@@ -187,13 +188,13 @@ MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip, bool audio
     ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,false);
 
     // Reduce size of clips to be able to create transition
-    TrimLeft(GetClip(0,clipNumberBeforeTransition + 1),30,true);
+    TrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
     ASSERT_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
-    ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberBeforeTransition + 1)->getMinAdjustBegin())(GetClip(0,clipNumberBeforeTransition + 1));
+    ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
 
     makeTransition();
 
-    ASSERT(GetClip(0,clipNumberBeforeTransition + 1)->isA<model::Transition>())(GetClip(0,clipNumberBeforeTransition + 1));
+    ASSERT(GetClip(0,clipNumberAfterTransition)->isA<model::Transition>())(GetClip(0,clipNumberAfterTransition));
     ASSERT_EQUALS(lengthOfTransition, Config::ReadLong(Config::sPathDefaultTransitionLength) / 2);
     ASSERT_EQUALS(lengthOfClipBeforeTransitionAfterTransitionApplied, lengthOfClipBeforeTransitionBeforeTransitionApplied - lengthOfTransition);
     ASSERT_EQUALS(lengthOfClipAfterTransitionAfterTransitionApplied, lengthOfClipAfterTransitionBeforeTransitionApplied);

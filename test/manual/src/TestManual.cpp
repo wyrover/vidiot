@@ -68,8 +68,6 @@ void TestManual::testManual()
 
     DragFromProjectViewToTimeline( files1.front(),  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(3, VCenter(VideoTrack(0))) );
 
-    // todo crash if region > movie size
-
     pause(60000 * 60); // One hour should be enough...
 }
 
