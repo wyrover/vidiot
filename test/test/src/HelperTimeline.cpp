@@ -123,6 +123,16 @@ pixel VCenter(model::TrackPtr track)
     return top + track->getHeight() / 2;
 }
 
+pixel RightPixel(model::TrackPtr track)
+{
+    int nClips = track->getClips().size();
+    if (nClips > 0)
+    {
+        return RightPixel(track->getClipByIndex(nClips - 1));
+    }
+    return 0;
+}
+
 pixel LeftPixel(model::IClipPtr clip)
 {
     wxPoint p( getTimeline().getViewMap().getView(clip)->getLeftPixel(), VCenter(clip) );

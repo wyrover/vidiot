@@ -290,7 +290,7 @@ model::IClipPtr AClipEdit::addTransition( model::IClipPtr leftClip, model::IClip
         VAR_DEBUG(updatedRight);
     }
     ASSERT(track);
-    ASSERT(position);
+    // NOT: ASSERT(position) - Transition may be added after last clip in track
     addClip(transition, track, position);
     return transition;
 }

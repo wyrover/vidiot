@@ -1105,4 +1105,28 @@ void TestTransition::testAudioTransitions()
     }
 }
 
+//RUNONLY(testCreateTransitionAfterLastClip);
+void TestTransition::testCreateTransitionAfterLastClip()
+{
+    StartTestSuite();
+    Zoom level(1); // Zoom in once to avoid clicking in the middle of a clip which is then seen (logically) as clip end due to the zooming
+    TrimRight(VideoClip(0,2), 20);
+    {
+        StartTest("Create transition after last video clip in track (NOTE: clip is NOT followed by EmptyClip).");
+        Drag(From(Center(VideoClip(0,2))).To(wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0)))));
+        Move(wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0))));
+        Type('c');
+        ASSERT(VideoClip(0,8)->isA<model::Transition>());
+        Undo(2);
+    }
+    {
+        StartTest("Create transition after last audio clip in track (NOTE: clip is NOT followed by EmptyClip).");
+        Drag(From(Center(AudioClip(0,2))).To(wxPoint(RightPixel(AudioTrack(0)), VCenter(AudioTrack(0)))));
+        Move(wxPoint(RightPixel(AudioTrack(0)), VCenter(AudioTrack(0))));
+        Type('c');
+        ASSERT(AudioClip(0,8)->isA<model::Transition>());
+        Undo(2);
+    }
+}
+
 } // namespace

@@ -25,7 +25,7 @@ FrameRate::FrameRate(AVRational avr)
 }
 
 FrameRate::FrameRate(wxString framerate)
-    :   boost::rational<int>(FrameRate::s25p) // Default value. TODO should be default from config!
+    :   boost::rational<int>(FrameRate::s25p) // Default value. Only used if the given framerate is unknown.
 {
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {

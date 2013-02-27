@@ -228,7 +228,7 @@ boost::statechart::result Idle::leftDown()
 void Idle::addTransition()
 {
     PointerPositionInfo info = getTimeline().getMousePointer().getInfo(getMousePointer().getPosition());
-    if (info.clip) // todo cannot add fade out to last clip of sequence due to such checks, see also CreateTransition itselves
+    if (info.clip)
     {
         ASSERT(info.track);
         bool video = info.track->isA<model::VideoTrack>();

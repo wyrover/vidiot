@@ -68,6 +68,10 @@ int getSelectedClipsCount(); ///< \return number of selected clips (both audio a
 /// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
 pixel VCenter(model::TrackPtr track);
 
+/// \return rightmost pixel of given Track within the sequence view
+/// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
+pixel RightPixel(model::TrackPtr track);
+
 /// \return left x position of given clip within the sequence view. Note: Returns the leftmost pixel value in the timeline that corresponds to the given clip.
 /// \note This does take into account zooming (which is part of the sequence view), but does NOT take into account scrolling.
 pixel LeftPixel(model::IClipPtr clip);
