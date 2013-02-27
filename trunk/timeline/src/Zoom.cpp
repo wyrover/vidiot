@@ -1,5 +1,6 @@
 #include "Zoom.h"
 
+#include "UtilInt.h"
 #include "UtilLog.h"
 #include "Convert.h"
 #include "Layout.h"
@@ -65,29 +66,24 @@ void Zoom::change(int steps)
     }
 }
 
-int toInt(rational r) // todo make one method for floor-ing a rational<int>, see also Convert
-{
-    return static_cast<int>(floor(boost::rational_cast<double>(r)));
-}
-
 int Zoom::timeToPixels(int time) const
 {
-    return toInt(ptsToPixels(model::Convert::timeToPts(time)));
+    return ptsToPixels(model::Convert::timeToPts(time));
 }
 
 int Zoom::pixelsToTime(int pixels) const
 {
-    return toInt(model::Convert::ptsToTime(pixelsToPts(pixels)));
+    return model::Convert::ptsToTime(pixelsToPts(pixels));
 }
 
 int Zoom::pixelsToPts(int pixels) const
 {
-    return toInt(rational(pixels) / rational(mZoom));
+    return floor(rational(pixels) / rational(mZoom));
 }
 
 int Zoom::ptsToPixels(int pts) const
 {
-    return toInt(rational(pts) * rational(mZoom));
+    return floor(rational(pts) * rational(mZoom));
 }
 
 //////////////////////////////////////////////////////////////////////////
