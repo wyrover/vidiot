@@ -59,6 +59,8 @@ public:
 
     void testAudioTransitions();
 
+    void testCreateTransitionAfterLastClip();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

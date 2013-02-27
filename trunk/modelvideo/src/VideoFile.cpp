@@ -74,7 +74,6 @@ void VideoFile::moveTo(pts position)
 
     AVCodecContext* codec = getCodec();
     pts positionBefore = position;
-    VAR_WARNING(codec->has_b_frames)(codec->gop_size);
     switch (codec->codec_id)
     {
     case CODEC_ID_MPEG4:
@@ -83,7 +82,7 @@ void VideoFile::moveTo(pts position)
             break;
     }
 
-    VAR_WARNING(mPosition)(positionBefore);
+    VAR_INFO(mPosition)(positionBefore);
     File::moveTo(positionBefore); // NOTE: This uses the pts in 'project' timebase units
 }
 
@@ -107,7 +106,6 @@ void VideoFile::clean()
 VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
     startDecodingVideo();
-    VAR_WARNING(this)(mPosition);
 
     AVPacket nullPacket;
     nullPacket.data = 0;
@@ -122,7 +120,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     {
         num -= divisor * div(num,divisor);
         return num;
-//        return boost::rational_cast<int>(num);
     };
 
     auto projectPositionToTimeInS = [this](pts position) -> boost::rational<int>
@@ -141,17 +138,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
         boost::rational<int> first = requiredStreamPts - modulo(requiredStreamPts,ticksPerFrame);
         boost::rational<int> second = first + ticksPerFrame;
-        //int firstFrameDivInt = boost::rational_cast<int>(firstFrameDiv);
 
-        //int firstFrameTicks = boost::rational_cast<int>(firstFrame * ticksPerFrame);
-        //int secondFramePts = boost::rational_cast<int>(firstFrame + ticksPerFrame);
-
-        //int wholeTicks = boost::rational_cast<int>(firstFrame * ticksPerFrame);
-
-        //boost::rational<int> firstFrameDiv = firstFrame - modulo(firstFrame,ticksPerFrame);
-        //int firstFrameDivInt = boost::rational_cast<int>(firstFrameDiv);
-
-        VAR_WARNING(time)(fr)(timebase)(first)(second)(firstFrame)(requiredStreamPts)(ticksPerFrame);
         return std::make_pair(boost::rational_cast<int>(first),boost::rational_cast<int>(second));
     };
 
@@ -163,7 +150,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     std::pair<int,int> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
     pts requiredInputPts = requiredInputFrames.first;//convertToFilePosition(mPosition); todo ensure that requiredINputPts % strea->time_base == 0!
 
-    VAR_WARNING(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
+    VAR_DEBUG(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
     ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts);
 
     // todo what if mDeliveredFrame had a different set of VideoCompositionParameters?
@@ -201,7 +188,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     // Store this to at least have one value. If the ->dts value indicates a proper position that will be used instead.
                     mDeliveredFrameInputPts = nextToBeDecodedPacket->pts; // Note: ->pts is expressed in time_base - of the stream - units
                     firstPacket = false;
-                    VAR_WARNING(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
+                    VAR_DEBUG(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
                 }
             }
             else if (getCodec()->codec->capabilities & CODEC_CAP_DELAY)
@@ -218,7 +205,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 {
                     endOfFile = false;
                     mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pFrame);
-                    VAR_WARNING(mDeliveredFrameInputPts);
+                    VAR_DEBUG(mDeliveredFrameInputPts);
                 }
                 // else: For codecs with CODEC_CAP_DELAY, (len1 == 0) indicates end of the decoding
             }
@@ -230,7 +217,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 mDeliveredFrame.reset();
                 mDeliveredFrameInputPts = 0;
                 static const std::string status("End of file");
-                VAR_WARNING(status);
+                VAR_DEBUG(status);
                 VAR_VIDEO(this)(status)(mPosition)(requiredInputPts);
                 return mDeliveredFrame;
             }
@@ -238,18 +225,10 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             // If !mDeliveredFrame: first getNextVideo after object creation, or directly after a move.
             if (frameFinished && mDeliveredFrameInputPts < requiredInputPts) // todo find both these frames and then 'middel'
             {
-                VAR_WARNING(requiredInputPts)(mDeliveredFrameInputPts);
+                VAR_DEBUG(requiredInputPts)(mDeliveredFrameInputPts);
                 // A whole frame was decoded, but it does not have the correct pts value. Get another.
                 frameFinished = 0;
             }
-
-            // todo isn't this a better solution?
-            //if (frameFinished && mDeliveredFrameInputPts > requiredInputPts)
-            //{
-            //    // Apparently, the most recent moveTo put the avcodec 'pointer' beyond the required frame. Move back and try again
-            //    VAR_WARNING(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
-            //    frameFinished = 0;
-            //}
 
 //            todoo perf options:
 //            >
@@ -295,7 +274,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     ASSERT(mDeliveredFrame);
     mPosition += mDeliveredFrame->getRepeat();
 
-    VAR_WARNING(this)(mPosition)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
+    VAR_DEBUG(this)(mPosition)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
 
     return mDeliveredFrame;
 }
