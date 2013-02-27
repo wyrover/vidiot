@@ -5,6 +5,7 @@ extern "C" {
 #pragma warning(disable:4244)
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavutil/opt.h>
 #include <libavutil/pixfmt.h>
 #include <libswscale/swscale.h>
 #pragma warning(default:4244)

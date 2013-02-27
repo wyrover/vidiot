@@ -94,7 +94,6 @@ VideoDisplay::~VideoDisplay()
 
 void VideoDisplay::play()
 {
-    VAR_WARNING(this);
     ASSERT(!mPlaying); // todo this assert went of when first hitting space and then pressing the play button when the video didnt start soon enough
     VAR_DEBUG(this);
     //(mPlaying);
@@ -195,6 +194,9 @@ void VideoDisplay::moveTo(pts position)
     // otherwise the Track::moveTo() can interfere with Track::getNext...() when
     // changing the iterator.
     mProducer->moveTo(position);
+
+    // Re-read every time the playback is restarted. The value used when 'playing' must be the same as the value used here.
+    mDrawBoundingBox = Config::ReadBool(Config::sPathShowBoundingBox);
 
     { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
         boost::mutex::scoped_lock lock(mMutexDraw);
@@ -328,8 +330,7 @@ void VideoDisplay::videoBufferThread()
     LOG_INFO;
     while (!mAbortThreads)
     {
-        model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
-        VAR_WARNING(videoFrame);
+        model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
         mVideoFrames.push(videoFrame);
     }
 }

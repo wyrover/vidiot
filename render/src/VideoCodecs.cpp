@@ -63,7 +63,6 @@ void VideoCodecs::initialize()
     add(_("MPEG 4"),
         VideoCodec(CODEC_ID_MPEG4).
         addParameter(VideoCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(4000000)).
-        //addParameter(VideoCodecParameterBitrateTolerance().enable().setMinimum(500).setMaximum(400000000).setDefault(30000)). // todo bitrate tolerance seems to depend on bitrate. If too low: codec open fails? Default bt value: AV_CODEC_DEFAULT_BITRATE*20 = 200,000 * 20 = 4,000,000
         addParameter(VideoCodecParameterGopSize().enable().setMinimum(0).setMaximum(100).setDefault(12))
         );
 

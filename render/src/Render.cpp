@@ -516,8 +516,6 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                     }
                     // else Packet possibly buffered inside codec
                 }
-
-                // todo rendernig MVI_0512.mov gives black ideo
             }
         }
 

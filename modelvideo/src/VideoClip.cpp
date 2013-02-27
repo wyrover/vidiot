@@ -126,7 +126,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         wxSize inputsize = generator->getSize();
         wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
-
         // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
         //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
         //            For this reason, when the videoplayer is resized, playback is stopped.
@@ -354,7 +353,7 @@ void VideoClip::updateAutomatedScaling()
     case VideoScalingFitToFill:
         {
             boost::rational<int> scalingfactor;
-            Convert::fillBoundingBoxWithMinimalLoss(inputsize, outputsize, mScalingFactor);
+            Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor, true); // The true ensures that the bounding box is filled
             break;
         }
     case VideoScalingFitAll:

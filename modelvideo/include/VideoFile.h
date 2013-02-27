@@ -60,6 +60,7 @@ private:
     pts mPosition;                  ///< Current position of this clip (set via 'moveTo' or changed via 'getNext')
     VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext.
     pts mDeliveredFrameInputPts;    ///< The input pts (in the input stream) of the most recently delivered frame.
+    boost::shared_ptr<VideoCompositionParameters> mDeliveredFrameParameters; ///< The parameters with which the delivered frame was made
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

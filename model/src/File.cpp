@@ -365,7 +365,7 @@ void File::openFile()
     if (result != 0)
     {
         // Some error occured when opening the file.
-        VAR_WARNING(path)(result)(avcodecErrorString(result));
+        VAR_DEBUG(path)(result)(avcodecErrorString(result));
         return;
     }
     {
@@ -373,7 +373,7 @@ void File::openFile()
         result = avformat_find_stream_info(mFileContext,0);
         if (result < 0) // Some error occured when reading stream info. Close the file again.
         {
-            VAR_WARNING(path)(result)(avcodecErrorString(result));
+            VAR_DEBUG(path)(result)(avcodecErrorString(result));
             avformat_close_input(&mFileContext); // Requires the lock also
             ASSERT_ZERO(mFileContext);
             return;
@@ -412,7 +412,7 @@ void File::openFile()
                     mNumberOfFrames = 0;
                 }
             }
-            VAR_WARNING(stream)(mNumberOfFrames);
+            VAR_DEBUG(stream)(mNumberOfFrames);
         }
         else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
         {
@@ -441,7 +441,7 @@ void File::openFile()
         ASSERT_NONZERO(stream);
         AVCodecContext* codec = stream->codec;
         ASSERT_NONZERO(codec);
-        VAR_WARNING(stream)(codec); // todo check VAR_WARNINGS in file and in videocodec
+        VAR_DEBUG(stream)(codec);
     }
     VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
     mFileOpen = true;

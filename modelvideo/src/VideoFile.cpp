@@ -1,9 +1,5 @@
 #include "VideoFile.h"
 
-extern "C"
-{
-#include <libavutil/opt.h> // todo
-}
 #include "Constants.h"
 #include "Convert.h"
 #include "Node.h"
@@ -27,6 +23,7 @@ VideoFile::VideoFile()
 ,   mPosition(0)
 ,   mDeliveredFrame()
 ,   mDeliveredFrameInputPts(0)
+,   mDeliveredFrameParameters()
 {
     VAR_DEBUG(*this);
 }
@@ -37,6 +34,7 @@ VideoFile::VideoFile(wxFileName path)
 ,   mPosition(0)
 ,   mDeliveredFrame()
 ,   mDeliveredFrameInputPts(0)
+,   mDeliveredFrameParameters()
 {
     VAR_DEBUG(*this);
 }
@@ -47,6 +45,7 @@ VideoFile::VideoFile(const VideoFile& other)
 ,   mPosition(0)
 ,   mDeliveredFrame()
 ,   mDeliveredFrameInputPts(0)
+,   mDeliveredFrameParameters()
 {
     VAR_DEBUG(*this);
 }
@@ -70,6 +69,8 @@ void VideoFile::moveTo(pts position)
 {
     mDeliveredFrame.reset();
     mDeliveredFrameInputPts = 0;
+    mDeliveredFrameParameters.reset();
+
     mPosition = position;
 
     AVCodecContext* codec = getCodec();
@@ -152,8 +153,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
     VAR_DEBUG(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
     ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts);
-
-    // todo what if mDeliveredFrame had a different set of VideoCompositionParameters?
+    ASSERT(!mDeliveredFrameParameters || *mDeliveredFrameParameters == parameters)(*mDeliveredFrameParameters)(parameters); // Ensure that mDeliveredFrame had the same set of VideoCompositionParameters
 
     if (!mDeliveredFrame || requiredInputPts > mDeliveredFrameInputPts)
     {
@@ -205,7 +205,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 {
                     endOfFile = false;
                     mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pFrame);
-                    VAR_DEBUG(mDeliveredFrameInputPts);
+                    mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
+                    VAR_ERROR(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
                 }
                 // else: For codecs with CODEC_CAP_DELAY, (len1 == 0) indicates end of the decoding
             }
@@ -223,7 +224,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             }
 
             // If !mDeliveredFrame: first getNextVideo after object creation, or directly after a move.
-            if (frameFinished && mDeliveredFrameInputPts < requiredInputPts) // todo find both these frames and then 'middel'
+            if (frameFinished && mDeliveredFrameInputPts < requiredInputPts)
             {
                 VAR_DEBUG(requiredInputPts)(mDeliveredFrameInputPts);
                 // A whole frame was decoded, but it does not have the correct pts value. Get another.
@@ -241,7 +242,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
         }
         ASSERT_MORE_THAN_EQUALS_ZERO(pFrame->repeat_pict);
-        if (pFrame->repeat_pict > 0) // todo use codec->repeat_pict
+        if (pFrame->repeat_pict > 0)
         {
             NIY(_("Video frame repeating is not supported yet"));
         }
