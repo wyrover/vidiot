@@ -120,6 +120,8 @@ private:
     bool mSelected;                         ///< True if this clip is currently selected
     bool mDragged;                          ///< True if this clip is currently dragged
 
+    mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////

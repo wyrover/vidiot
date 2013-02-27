@@ -27,6 +27,7 @@ Clip::Clip()
     ,   mSelected(false)
     ,   mDragged(false)
     ,   mGeneratedPts(0)
+    ,   mDescription("")
 {
     VAR_DEBUG(*this);
 }
@@ -44,6 +45,7 @@ Clip::Clip(IFilePtr render)
     ,   mSelected(false)
     ,   mDragged(false)
     ,   mGeneratedPts(0)
+    ,   mDescription("")
 {
     mLength = mRender->getLength() - mOffset;
     VAR_DEBUG(*this);
@@ -62,6 +64,7 @@ Clip::Clip(const Clip& other)
     ,   mSelected(other.mSelected)
     ,   mDragged(false)             // Clone is not automatically also dragged!!!
     ,   mGeneratedPts(0)
+    ,   mDescription(other.mDescription)
 {
     VAR_DEBUG(*this)(other);
 }
@@ -96,7 +99,11 @@ void Clip::moveTo(pts position)
 
 wxString Clip::getDescription() const
 {
-    wxString s = mRender->getDescription();
+    if (!mDescription.IsSameAs(""))
+    {
+        return mDescription;
+    }
+    mDescription = mRender->getDescription();
     wxString strip = Config::ReadString(Config::sPathStrip);
 
     wxStringTokenizer t(strip, "|"); // PERF cache for performance
@@ -105,10 +112,10 @@ wxString Clip::getDescription() const
         wxString token = t.GetNextToken();
         if (!token.IsEmpty())
         {
-            s.Replace(token,_T(""),false);
+            mDescription.Replace(token,_T(""),false);
         }
     }
-    return s;
+    return mDescription;
 }
 
 void Clip::clean()
