@@ -408,8 +408,13 @@ void VideoDisplay::OnSize(wxSizeEvent& event)
         mHeight = h;
         VAR_INFO(mWidth)(mHeight);
 
-        if (!mPlaying && mCurrentVideoFrame)
+        if (mCurrentVideoFrame)
         {
+            // Note: this is also done when playback of video has started.
+            // This is done to avoid problems when resizing while playing
+            // (problem: videocomposition parameters change between frames,
+            // but the caching mechanisms inside the video classes cause a
+            // previous frame to be used again - wrong size).
             moveTo(mCurrentVideoFrame->getPts());
         }
     }
