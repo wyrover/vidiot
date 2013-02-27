@@ -28,6 +28,10 @@ VideoCompositionParameters::VideoCompositionParameters(const VideoCompositionPar
 VideoCompositionParameters& VideoCompositionParameters::setBoundingBox(wxSize boundingBox)
 {
     mBoundingBox = boundingBox;
+    ASSERT_MORE_THAN_ZERO(mBoundingBox.GetWidth());
+    ASSERT_MORE_THAN_ZERO(mBoundingBox.GetHeight());
+    ASSERT_MORE_THAN_EQUALS_ZERO(mBoundingBox.GetX());
+    ASSERT_MORE_THAN_EQUALS_ZERO(mBoundingBox.GetY());
     return *this;
 }
 

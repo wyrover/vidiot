@@ -25,18 +25,19 @@ void ASSERT_DETAILSCLIP(model::IClipPtr clip)
     ASSERT_EQUALS(DetailsClipView()->getClip(),clip);
 }
 
-void ASSERT_CLIPPROPERTIES(model::IClipPtr clip, model::VideoScaling scaling, int scalingdigits, model::VideoAlignment alignment, wxPoint position)
+void ASSERT_CLIPPROPERTIES(model::IClipPtr clip, model::VideoScaling scaling, boost::rational<int> scalingfactor, model::VideoAlignment alignment, wxPoint position)
 {
     model::VideoClipPtr videoclip = getVideoClip(clip);
     ASSERT_DETAILSCLIP(clip);
-    ASSERT_EQUALS(DetailsClipView()->getScalingSlider()->GetValue(),scalingdigits);
-    ASSERT_EQUALS(model::Convert::factorToDigits(DetailsClipView()->getScalingSpin()->GetValue(),model::Constants::scalingPrecision),scalingdigits);
+    int scalingdigits = boost::rational_cast<int>(scalingfactor * model::Constants::scalingPrecisionFactor);
+    ASSERT_EQUALS(DetailsClipView()->getScalingSlider()->GetValue(), scalingdigits );
+    ASSERT_EQUALS(floor(DetailsClipView()->getScalingSpin()->GetValue() * model::Constants::scalingPrecisionFactor), scalingdigits);
     ASSERT_EQUALS(DetailsClipView()->getPositionXSlider()->GetValue(),position.x);
     ASSERT_EQUALS(DetailsClipView()->getPositionXSpin()->GetValue(),position.x);
     ASSERT_EQUALS(DetailsClipView()->getPositionYSlider()->GetValue(),position.y);
     ASSERT_EQUALS(DetailsClipView()->getPositionYSpin()->GetValue(),position.y);
     ASSERT_EQUALS(videoclip->getScaling(),scaling);
-    ASSERT_EQUALS(videoclip->getScalingDigits(),scalingdigits);
+    ASSERT_EQUALS(videoclip->getScalingFactor(),scalingfactor);
     ASSERT_EQUALS(videoclip->getAlignment(),alignment);
     ASSERT_EQUALS(videoclip->getPosition(),position);
 };

@@ -25,7 +25,8 @@ struct MakeTransitionAfterClip
     explicit MakeTransitionAfterClip(int afterclip, bool audio);
     virtual ~MakeTransitionAfterClip();
 
-    pts clipNumberBeforeTransition;
+    int clipNumberBeforeTransition;
+    int clipNumberAfterTransition;
 
     // Before trimming the clips to make room for the transition
     pts leftPositionOfClipBeforeTransitionOriginal;

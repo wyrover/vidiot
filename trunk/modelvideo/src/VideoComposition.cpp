@@ -58,7 +58,7 @@ VideoFramePtr VideoComposition::generate()
         return boost::make_shared<EmptyFrame>(outputsize,0);
     }
 
-    double scaleToBoundingBox(0);
+    boost::rational<int> scaleToBoundingBox(0);
     wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, mParameters.getBoundingBox(), scaleToBoundingBox);
     ASSERT_NONZERO(scaleToBoundingBox);
 

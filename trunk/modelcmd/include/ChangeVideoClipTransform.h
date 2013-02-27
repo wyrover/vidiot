@@ -20,7 +20,7 @@ public:
     virtual ~ChangeVideoClipTransform();
 
     void setOpacity(int opacity);
-    void setScaling(VideoScaling scaling, boost::optional<int> scalingdigits = boost::none);
+    void setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor = boost::none);
     void setAlignment(VideoAlignment alignment);
     void setPosition(wxPoint position);
 
@@ -50,14 +50,14 @@ private:
     int mOldOpacity;
 
     VideoScaling mOldScaling;
-    int moldScalingDigits;
+    boost::rational< int > mOldScalingFactor;
 
     VideoAlignment mOldAlignment;
     wxPoint mOldPosition;
 
     boost::optional<int> mNewOpacity;
     boost::optional<VideoScaling> mNewScaling;
-    boost::optional<int> mNewScalingDigits;
+    boost::optional< boost::rational< int > > mNewScalingFactor;
     boost::optional<VideoAlignment> mNewAlignment;
     boost::optional<wxPoint> mNewPosition;
 

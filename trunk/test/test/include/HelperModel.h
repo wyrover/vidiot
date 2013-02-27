@@ -19,7 +19,7 @@ model::VideoClipPtr getVideoClip(model::IClipPtr clip);
 
 /// \return the current scaling factor for the given (video) clip
 /// \pre clip is a video clip
-int getScalingDigits(model::IClipPtr clip);
+boost::rational<int> getScalingFactor(model::IClipPtr clip);
 
 /// \return the current scaling type for the given (video) clip
 /// \pre clip is a video clip

@@ -112,78 +112,74 @@ pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
 }
 
 // static
-int Convert::scale(int input, double factor)
+int Convert::scale(int input, boost::rational<int> factor)
 {
-    return static_cast<int>(floor(factor * input));
+    return floor(factor * boost::rational<int>(input));
 }
 
 // static
-wxSize Convert::scale(wxSize input, double factor)
+wxSize Convert::scale(wxSize input, boost::rational<int> factor)
 {
     return wxSize(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxPoint Convert::scale(wxPoint input, double factor)
+wxPoint Convert::scale(wxPoint input, boost::rational<int> factor)
 {
     return wxPoint(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxRect Convert::scale(wxRect input, double factor)
+wxRect Convert::scale(wxRect input, boost::rational<int> factor)
 {
     return wxRect(scale(input.GetPosition(),factor),scale(input.GetSize(),factor));
 }
 
 // static
-wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox, double& scaling)
+wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::rational<int>& scaling, bool fill)
 {
-    static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
-    double w = std::max(sMinimumSize, boundingbox.GetWidth());
-    double h = std::max(sMinimumSize, boundingbox.GetHeight());
-    double scalingW = w / static_cast<double>(input.GetWidth());
-    double scalingH = h / static_cast<double>(input.GetHeight());
-    scaling  = std::min(scalingW, scalingH);
+    boost::rational<int> bbWidth(boundingbox.GetWidth());
+    boost::rational<int> inWidth(input.GetWidth());
+    boost::rational<int> scWidth = bbWidth / inWidth;
+    double dScalingWidth = boost::rational_cast<double>(scWidth); // todo remove
+
+    boost::rational<int> bbHeight(boundingbox.GetHeight());
+    boost::rational<int> inHeight(input.GetHeight());
+    boost::rational<int> scHeight = bbHeight / inHeight;
+    double dScalingHeight = boost::rational_cast<double>(scHeight); // todo remove
+
+    ASSERT_LESS_THAN_EQUALS(scWidth  * boost::rational<int>(input.GetWidth()),   boost::rational<int>(boundingbox.GetWidth()));
+    ASSERT_LESS_THAN_EQUALS(scHeight * boost::rational<int>(input.GetHeight()), boost::rational<int>(boundingbox.GetHeight()));
+
+    if (fill)
+    {
+        scaling = std::max(scWidth, scHeight);
+    }
+    else
+    {
+        scaling = std::min(scWidth, scHeight);
+    }
+
     return scale(input,scaling);
 }
 
 // static
 wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox)
 {
-    double dummy;
+    boost::rational<int> dummy;
     return sizeInBoundingBox(input,boundingbox,dummy);
 }
 
 // static
-wxSize Convert::fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, double& scaling)
+wxSize Convert::fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, boost::rational<int>& scaling)
 {
-    static const int sMinimumSize = 10; // Used to avoid crashes in sws_scale (too small bitmaps)
-    double w = std::max(sMinimumSize, boundingbox.GetWidth());
-    double h = std::max(sMinimumSize, boundingbox.GetHeight());
-    double scalingW = w / static_cast<double>(input.GetWidth());
-    double scalingH = h / static_cast<double>(input.GetHeight());
-    scaling  = std::max(scalingW, scalingH);
-    return scale(input,scaling);
+    return sizeInBoundingBox(input, boundingbox, scaling, true); // todo remove duplicate methods?
 }
 
 // static
 int Convert::doubleToInt(double x)
 {
     return (x >= 0.0) ? static_cast<int>(std::floor(x + 0.5)) : static_cast<int>(std::ceil(x - 0.5));
-}
-
-// static
-int Convert::factorToDigits(double number, int nDigits)
-{
-    double digitfactor = pow(static_cast<float>(10),nDigits);
-    return doubleToInt(number * digitfactor);
-}
-
-// static
-double Convert::digitsToFactor(int number, int nDigits)
-{
-    double digitfactor = pow(static_cast<float>(10), nDigits);
-    return static_cast<double>(number) / digitfactor;
 }
 
 // static

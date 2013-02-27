@@ -8,14 +8,13 @@
 #include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "VideoClipEvent.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFile.h"
 
 namespace model {
-
-const int VideoClip::sScalingOriginalSize = Convert::factorToDigits(1,Constants::scalingPrecision);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -26,7 +25,7 @@ VideoClip::VideoClip()
     , mProgress(0)
     , mOpacity(Constants::sMaxOpacity)
     , mScaling()
-    , mScalingDigits(sScalingOriginalSize)
+    , mScalingFactor(1)
     , mAlignment()
     , mPosition(0,0)
 {
@@ -38,7 +37,7 @@ VideoClip::VideoClip(VideoFilePtr file)
     , mProgress(0)
     , mOpacity(Constants::sMaxOpacity)
     , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathDefaultVideoScaling))
-    , mScalingDigits(sScalingOriginalSize)
+    , mScalingFactor(1)
     , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathDefaultVideoAlignment))
     , mPosition(0,0)
 {
@@ -52,7 +51,7 @@ VideoClip::VideoClip(const VideoClip& other)
     , mProgress(0)
     , mOpacity(other.mOpacity)
     , mScaling(other.mScaling)
-    , mScalingDigits(other.mScalingDigits)
+    , mScalingFactor(other.mScalingFactor)
     , mAlignment(other.mAlignment)
     , mPosition(other.mPosition)
 {
@@ -119,14 +118,18 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         // Determine scaling for 'fitting' a clip with size 'projectSize' in a bounding box of size 'size'
         wxSize outputsize = Properties::get().getVideoSize();
 
-        double scaleToBoundingBox(0);
+        boost::rational<int> scaleToBoundingBox(0);
         wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, parameters.getBoundingBox(), scaleToBoundingBox);
         ASSERT_NONZERO(scaleToBoundingBox);
         VideoFilePtr generator = getDataGenerator<VideoFile>();
-        double videoscaling = getScalingFactor() * scaleToBoundingBox;
+        boost::rational<int> videoscaling = getScalingFactor() * scaleToBoundingBox;
         wxSize inputsize = generator->getSize();
         wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
+
+        // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
+        //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
+        //            For this reason, when the videoplayer is resized, playback is stopped.
         videoFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
         if (videoFrame)
         {
@@ -237,9 +240,9 @@ VideoScaling VideoClip::getScaling() const
     return mScaling;
 }
 
-int VideoClip::getScalingDigits() const
+boost::rational<int> VideoClip::getScalingFactor() const
 {
-    return mScalingDigits;
+    return mScalingFactor;
 }
 
 VideoAlignment VideoClip::getAlignment() const
@@ -265,10 +268,10 @@ wxPoint VideoClip::getMaxPosition()
     return wxPoint(outputsize.x,outputsize.y);
 }
 
-void VideoClip::setScaling(VideoScaling scaling, boost::optional<int> factor)
+void VideoClip::setScaling(VideoScaling scaling, boost::optional<boost::rational< int > > factor)
 {
     VideoScaling oldScaling = mScaling;
-    int oldScalingDigits = mScalingDigits;
+    boost::rational<int> oldScalingFactor = mScalingFactor;
     wxPoint oldPosition = mPosition;
     wxPoint oldMinPosition = getMinPosition();
     wxPoint oldMaxPosition = getMaxPosition();
@@ -276,7 +279,7 @@ void VideoClip::setScaling(VideoScaling scaling, boost::optional<int> factor)
     mScaling = scaling;
     if (factor)
     {
-        mScalingDigits = *factor;
+        mScalingFactor = *factor;
     }
 
     updateAutomatedScaling();
@@ -286,9 +289,9 @@ void VideoClip::setScaling(VideoScaling scaling, boost::optional<int> factor)
     {
         ProcessEvent(EventChangeVideoClipScaling(mScaling));
     }
-    if (mScalingDigits != oldScalingDigits)
+    if (mScalingFactor != oldScalingFactor)
     {
-        ProcessEvent(EventChangeVideoClipScalingDigits(mScalingDigits));
+        ProcessEvent(EventChangeVideoClipScalingFactor(mScalingFactor));
     }
     if (getMinPosition() != oldMinPosition)
     {
@@ -350,21 +353,19 @@ void VideoClip::updateAutomatedScaling()
     {
     case VideoScalingFitToFill:
         {
-            double scalingfactor;
-            Convert::fillBoundingBoxWithMinimalLoss(inputsize, outputsize, scalingfactor);
-            mScalingDigits = Convert::factorToDigits(scalingfactor,Constants::scalingPrecision);
+            boost::rational<int> scalingfactor;
+            Convert::fillBoundingBoxWithMinimalLoss(inputsize, outputsize, mScalingFactor);
             break;
         }
     case VideoScalingFitAll:
         {
-            double scalingfactor;
-            Convert::sizeInBoundingBox(inputsize, outputsize, scalingfactor);
-            mScalingDigits = Convert::factorToDigits(scalingfactor,Constants::scalingPrecision);
+            boost::rational<int> scalingfactor;
+            Convert::sizeInBoundingBox(inputsize, outputsize, mScalingFactor);
             break;
         }
     case VideoScalingNone:
         {
-            mScalingDigits = sScalingOriginalSize;
+            mScalingFactor = 1;
             break;
         }
     case VideoScalingCustom:
@@ -373,8 +374,8 @@ void VideoClip::updateAutomatedScaling()
         break;
     }
 
-    ASSERT_LESS_THAN_EQUALS(mScalingDigits,Constants::sMaxScaling);
-    ASSERT_MORE_THAN_ZERO(mScalingDigits);
+    ASSERT_LESS_THAN_EQUALS(mScalingFactor,Constants::sMaxScaling);
+    ASSERT_MORE_THAN_ZERO(mScalingFactor);
 }
 
 void VideoClip::updateAutomatedPositioning()
@@ -412,18 +413,13 @@ void VideoClip::updateAutomatedPositioning()
     if (mPosition.y > getMaxPosition().y) { mPosition.y = getMaxPosition().y; } // then changing the scaling.
 }
 
-double VideoClip::getScalingFactor() const
-{
-    return Convert::digitsToFactor(mScalingDigits,Constants::scalingPrecision);
-}
-
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 {
-    os << static_cast<const Clip&>(obj) << '|' << std::setw(4) << obj.mProgress << '|' << std::setw(2) << std::hex << obj.mOpacity << '|' << obj.mScaling << '|' << std::dec << std::setw(4) << obj.mScalingDigits << '|' << obj.mAlignment << '|' << obj.mPosition;
+    os << static_cast<const Clip&>(obj) << '|' << std::setw(4) << obj.mProgress << '|' << std::setw(2) << std::hex << obj.mOpacity << '|' << obj.mScaling << '|' << obj.mScalingFactor << '|' << obj.mAlignment << '|' << obj.mPosition;
     return os;
 }
 
@@ -438,7 +434,7 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
     ar & boost::serialization::base_object<IVideo>(*this);
     ar & mOpacity;
     ar & mScaling;
-    ar & mScalingDigits;
+    ar & mScalingFactor;
     ar & mAlignment;
     ar & mPosition;
 }

@@ -13,8 +13,6 @@ class VideoClip
 {
 public:
 
-    static const int sScalingOriginalSize;
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -53,14 +51,14 @@ public:
     void setOpacity(int opacity);
 
     VideoScaling getScaling() const;
-    int getScalingDigits() const;
+    boost::rational<int> getScalingFactor() const;
     VideoAlignment getAlignment() const;
     wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
     wxPoint getMinPosition();
     wxPoint getMaxPosition();
 
-    void setScaling(VideoScaling scaling, boost::optional<int> factor = boost::none);
+    void setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor = boost::none);
     void setAlignment(VideoAlignment alignment);
     void setPosition(wxPoint position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
@@ -85,7 +83,7 @@ private:
     int mOpacity;
 
     VideoScaling mScaling;
-    int mScalingDigits;     ///< mScalingDigits / Constants::scalingPrecisionFactor is the actual scaling to be applied. Stored as an int to avoid rounding errors with doubles (leads to small diffs which cause test asserts to fail).
+    boost::rational<int> mScalingFactor; ///< Constants::scalingPrecisionFactor as denominator. Avoid rounding errors with doubles (leads to small diffs which cause test asserts to fail).
 
     VideoAlignment mAlignment;
     wxPoint mPosition;
@@ -96,7 +94,6 @@ private:
 
     void updateAutomatedScaling();
     void updateAutomatedPositioning();
-    double getScalingFactor() const;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
