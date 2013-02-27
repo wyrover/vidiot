@@ -41,7 +41,7 @@ void VideoCodecParameterBitrate::set(AVCodecContext* codec)
 
 void VideoCodecParameterBitrateTolerance::set(AVCodecContext* codec)
 {
-    codec->bit_rate_tolerance = getValue();// todo ensure that avctx->bit_rate * av_q2d(avctx->time_base) >         avctx->bit_rate_tolerance) {
+    codec->bit_rate_tolerance = getValue(); // Must ensure that avctx->bit_rate * av_q2d(avctx->time_base) > avctx->bit_rate_tolerance)
 };
 
 void VideoCodecParameterBFrames::set(AVCodecContext* codec)

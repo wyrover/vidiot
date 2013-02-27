@@ -141,12 +141,10 @@ wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::ratio
     boost::rational<int> bbWidth(boundingbox.GetWidth());
     boost::rational<int> inWidth(input.GetWidth());
     boost::rational<int> scWidth = bbWidth / inWidth;
-    double dScalingWidth = boost::rational_cast<double>(scWidth); // todo remove
 
     boost::rational<int> bbHeight(boundingbox.GetHeight());
     boost::rational<int> inHeight(input.GetHeight());
     boost::rational<int> scHeight = bbHeight / inHeight;
-    double dScalingHeight = boost::rational_cast<double>(scHeight); // todo remove
 
     ASSERT_LESS_THAN_EQUALS(scWidth  * boost::rational<int>(input.GetWidth()),   boost::rational<int>(boundingbox.GetWidth()));
     ASSERT_LESS_THAN_EQUALS(scHeight * boost::rational<int>(input.GetHeight()), boost::rational<int>(boundingbox.GetHeight()));
@@ -168,12 +166,6 @@ wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox)
 {
     boost::rational<int> dummy;
     return sizeInBoundingBox(input,boundingbox,dummy);
-}
-
-// static
-wxSize Convert::fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, boost::rational<int>& scaling)
-{
-    return sizeInBoundingBox(input, boundingbox, scaling, true); // todo remove duplicate methods?
 }
 
 // static

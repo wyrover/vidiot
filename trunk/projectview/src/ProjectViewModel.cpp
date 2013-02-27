@@ -278,7 +278,6 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
 
 void ProjectViewModel::Resort()
 {
-    VAR_ERROR(this);
     wxDataViewModel::Resort();
 }
 

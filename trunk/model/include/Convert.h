@@ -80,14 +80,6 @@ public:
     static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::rational<int>& scaling, bool fill = false);
     static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox);
 
-    /// Convert an input size to the maximal size fitting in a given bounding box,
-    /// such that one of the axis is equal in size to the corresponding bounding box size.
-    /// \param input input size
-    /// \param boundingbox output size is constrained to this bounding box in one direction, the other direction is equal or larger than the bounding box
-    /// \param[out] scaling used scaling by the algorithm
-    /// \return maximum size fitting in bounding box with given width/height ratio
-    static wxSize fillBoundingBoxWithMinimalLoss(wxSize input, wxSize boundingbox, boost::rational<int>& scaling);
-
     static int doubleToInt(double x);
     static int factorToDigits(boost::rational<int> number, int nDigits);
     static boost::rational<int> digitsToFactor(int number, int nDigits);
