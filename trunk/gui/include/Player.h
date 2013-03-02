@@ -26,6 +26,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void play();
+    void play_pause();
     void stop();
     void moveTo(pts position);
 
