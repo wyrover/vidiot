@@ -2,7 +2,6 @@
 
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
-
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilSerializeWxwidgets.h"
@@ -19,10 +18,10 @@ OutputFormat::OutputFormat()
     :   mName()
     ,   mLongName()
     ,   mExtensions()
-    ,   mDefaultAudioCodec(CODEC_ID_NONE)
-    ,   mDefaultVideoCodec(CODEC_ID_NONE)
-    ,   mAudioCodec(AudioCodecs::find(CODEC_ID_NONE))
-    ,   mVideoCodec(VideoCodecs::find(CODEC_ID_NONE))
+    ,   mDefaultAudioCodec(AudioCodecs::getDefault()->getId())
+    ,   mDefaultVideoCodec(VideoCodecs::getDefault()->getId())
+    ,   mAudioCodec(AudioCodecs::getDefault())
+    ,   mVideoCodec(VideoCodecs::getDefault())
 {
 }
 

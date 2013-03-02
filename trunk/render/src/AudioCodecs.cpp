@@ -25,8 +25,8 @@ void AudioCodecs::initialize()
 {
     sAudioCodecs.clear();
 
-    add(_("No audio"),
-        AudioCodec(CODEC_ID_NONE));
+    //add(_("No audio"),
+    //    AudioCodec(CODEC_ID_NONE));
 
     add(_("MP2"),
         AudioCodec(CODEC_ID_MP2).
@@ -63,7 +63,7 @@ void AudioCodecs::initialize()
 // static
 AudioCodecPtr AudioCodecs::getDefault()
 {
-    return find(CODEC_ID_NONE);
+    return find(CODEC_ID_MP3);
 }
 
 // static

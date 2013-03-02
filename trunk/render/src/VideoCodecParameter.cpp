@@ -6,7 +6,7 @@ namespace model { namespace render {
 
 IMPLEMENTENUM(VideoCodecParameterType);
 
-// todo check mpegvideo_enc.c for all parameters and their bounds and dependencies...
+// Check mpegvideo_enc.c for all parameters and their bounds and dependencies...
 
 boost::bimap<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<VideoCodecParameterType, wxString>::relation >
     (BitRate, _("Bit rate"))

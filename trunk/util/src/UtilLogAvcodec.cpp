@@ -65,6 +65,62 @@ std::ostream& operator<< (std::ostream& os, const PixelFormat& obj)
     return os;
 };
 
+std::ostream& operator<< (std::ostream& os, const AVCodec* obj)
+{
+    if (obj)
+    {
+        os  << '{'
+            << "name="           << obj->name         << ','
+            << "long_name="      << obj->long_name    << ','
+            << "type="           << obj->type         << ','
+            << "id="             << obj->id           << ','
+            << "max_lowres="     << (unsigned int)obj->max_lowres   << ','
+            << "capabilities="   << obj->capabilities;
+        std::list< std::string > caps;
+        if (obj->capabilities & CODEC_CAP_DELAY)               { caps.push_back("CODEC_CAP_DELAY");  }
+        if (obj->capabilities & CODEC_CAP_SMALL_LAST_FRAME)    { caps.push_back("CODEC_CAP_SMALL_LAST_FRAME");  }
+        if (obj->capabilities & CODEC_CAP_SUBFRAMES)           { caps.push_back("CODEC_CAP_SUBFRAMES");  }
+        if (obj->capabilities & CODEC_CAP_CHANNEL_CONF)        { caps.push_back("CODEC_CAP_CHANNEL_CONF");  }
+        if (obj->capabilities & CODEC_CAP_FRAME_THREADS)       { caps.push_back("CODEC_CAP_FRAME_THREADS");  }
+        if (obj->capabilities & CODEC_CAP_SLICE_THREADS)       { caps.push_back("CODEC_CAP_SLICE_THREADS");  }
+        if (obj->capabilities & CODEC_CAP_AUTO_THREADS)        { caps.push_back("CODEC_CAP_AUTO_THREADS");  }
+        if (obj->capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE) { caps.push_back("CODEC_CAP_VARIABLE_FRAME_SIZE");  }
+        if (obj->capabilities & CODEC_CAP_INTRA_ONLY)          { caps.push_back("CODEC_CAP_INTRA_ONLY");  }
+        if (obj->capabilities & CODEC_CAP_LOSSLESS)            { caps.push_back("CODEC_CAP_LOSSLESS");  }
+        if (caps.size() > 0)
+        {
+            os << '(';
+            bool first = true;
+            BOOST_FOREACH( std::string c, caps )
+            {
+                os << (!first ? "," : "") << c;
+                first = false;
+            }
+            os << ')';
+        }
+        os << ",pix_fmts=";
+        if (!obj->pix_fmts)
+        {
+            os << '0';
+        }
+        else
+        {
+            os << '[';
+            const PixelFormat* f = obj->pix_fmts;
+            bool first = true;
+            os << (!first?",":"") << *f;
+            ++f;
+            os << ']';
+        }
+        os << '}';
+    }
+    else
+    {
+        os << '0';
+    }
+    return os;
+}
+
 std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
 {
     if (obj)
@@ -87,7 +143,8 @@ std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
             << "coded_height="              << obj->coded_height            << ','
             << "request_channel_layout="    << obj->request_channel_layout  << ','
             << "hwaccel="                   << obj->hwaccel                 << ','
-            << "ticks_per_frame="           << obj->ticks_per_frame
+            << "ticks_per_frame="           << obj->ticks_per_frame         << ','
+            << "codec="                     << obj->codec
             << '}';
     }
     else
@@ -201,8 +258,6 @@ std::ostream& operator<< (std::ostream& os, const AVPacket* obj)
     }
     return os;
 }
-
-std::ostream& operator<< (std::ostream& os, const CodecID& obj);
 
 std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj)
 {

@@ -1,6 +1,7 @@
 #include "AudioCodec.h"
 
 #include "AudioCodecParameter.h"
+#include "AudioCodecs.h"
 #include "Dialog.h"
 #include "Properties.h"
 #include "UtilInitAvcodec.h"
@@ -15,7 +16,7 @@ namespace model { namespace render {
 //////////////////////////////////////////////////////////////////////////
 
 AudioCodec::AudioCodec()
-    :   mId(CODEC_ID_NONE)
+    :   mId(AudioCodecs::getDefault()->getId())
     ,   mParameters()
 {
 }
