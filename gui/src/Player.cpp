@@ -146,6 +146,18 @@ void Player::play()
     mDisplay->play();
 }
 
+void Player::play_pause()
+{
+    if (mDisplay->isPlaying())
+    {
+        stop();
+    }
+    else
+    {
+        play();
+    }
+}
+
 void Player::stop()
 {
     LOG_INFO;
@@ -216,7 +228,7 @@ void Player::onPause(wxCommandEvent& event)
 void Player::onPlay(wxCommandEvent& event)
 {
     LOG_INFO;
-    play();
+    play_pause();
 }
 
 void Player::onNext(wxCommandEvent& event)

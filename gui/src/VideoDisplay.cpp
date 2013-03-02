@@ -94,10 +94,8 @@ VideoDisplay::~VideoDisplay()
 
 void VideoDisplay::play()
 {
-    ASSERT(!mPlaying); // todo this assert went of when first hitting space and then pressing the play button when the video didnt start soon enough
+    ASSERT(!mPlaying);
     VAR_DEBUG(this);
-    //(mPlaying);
-    //if (mPlaying) return;
 
     // Ensure that the to-be-started threads do not immediately stop
     mAbortThreads = false;
