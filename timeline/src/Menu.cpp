@@ -307,7 +307,6 @@ void MenuHandler::onRenderSequence(wxCommandEvent& event)
             model::render::Render::schedule(getSequence());
         }
     }
-    // todo better solutino for this is active handling
     event.Skip();
 }
 

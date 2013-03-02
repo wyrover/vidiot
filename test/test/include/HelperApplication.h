@@ -15,12 +15,13 @@ wxString randomString(int length = 8);
 class RandomTempDir
 {
 public:
-    RandomTempDir();
+    explicit RandomTempDir(bool cleanup = true);
     virtual ~RandomTempDir();
     wxFileName getFileName() const;
 private:
     wxString mFullPath; ///< Usefull when debugging (with wxFileName  it's not easy to extract the full path)
     wxFileName mFileName;
+    bool mCleanup;
 };
 
 /// Delay the test for 60 seconds to allow using the GUI (debugging)

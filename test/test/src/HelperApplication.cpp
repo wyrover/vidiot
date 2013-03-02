@@ -23,8 +23,9 @@ wxString randomString(int length)
     return result;
 }
 
-RandomTempDir::RandomTempDir()
+RandomTempDir::RandomTempDir(bool cleanup)
     : mFileName(wxFileName::GetTempDir(), "")
+    , mCleanup(cleanup)
 {
     mFileName.AppendDir(randomString(20));
     mFullPath = mFileName.GetLongPath();
@@ -35,8 +36,11 @@ RandomTempDir::RandomTempDir()
 
 RandomTempDir::~RandomTempDir()
 {
-    bool removed = wxFileName::Rmdir( mFileName.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
-    ASSERT(removed);
+    if (mCleanup)
+    {
+        bool removed = wxFileName::Rmdir( mFileName.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
+        ASSERT(removed);
+    }
 }
 
 wxFileName RandomTempDir::getFileName() const

@@ -5,7 +5,9 @@
 #include "UtilInitAvcodec.h"
 #include "UtilList.h"
 #include "UtilLog.h"
+#include "UtilLogAvcodec.h"
 #include "UtilLogStl.h"
+#include "VideoCodecs.h"
 #include "VideoCodecParameter.h"
 
 namespace model { namespace render {
@@ -15,7 +17,7 @@ namespace model { namespace render {
 //////////////////////////////////////////////////////////////////////////
 
 VideoCodec::VideoCodec()
-    :   mId(CODEC_ID_NONE)
+    :   mId(VideoCodecs::getDefault()->getId())
     ,   mParameters()
 {
 }
@@ -89,7 +91,12 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
     // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
     video_codec->time_base.den = Properties::get().getFrameRate().numerator();
     video_codec->time_base.num = Properties::get().getFrameRate().denominator();
-    video_codec->pix_fmt = PIX_FMT_YUV420P;
+
+    ASSERT(encoder->pix_fmts);
+    const PixelFormat* f = encoder->pix_fmts;
+    VAR_DEBUG(*f);
+    video_codec->pix_fmt = *f; // Use first pixel format
+
     if (context->oformat->flags & AVFMT_GLOBALHEADER)
     {
         // Some formats want stream headers to be separate
@@ -108,6 +115,7 @@ bool VideoCodec::open(AVCodecContext* context) const
 
     if (result < 0)
     {
+        VAR_ERROR(codec)(context);
         // Now do the checks that ffmpeg does when opening the codec to give proper feedback
         gui::Dialog::get().getConfirmation( _("Error in video codec"), _("There was an error when opening the video codec.\nRendering will be aborted.\nDetailed information:\n") + Avcodec::getMostRecentLogLine());
     }

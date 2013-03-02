@@ -149,7 +149,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // \todo instead of duplicating frames, nicely take the two input frames 'around' the
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
     std::pair<int,int> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
-    pts requiredInputPts = requiredInputFrames.first;//convertToFilePosition(mPosition); todo ensure that requiredINputPts % strea->time_base == 0!
+    pts requiredInputPts = requiredInputFrames.first; // todo ensure that requiredInputPts % stream->time_base == 0!
 
     VAR_DEBUG(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
     ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts);
@@ -206,7 +206,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     endOfFile = false;
                     mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pFrame);
                     mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
-                    VAR_ERROR(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
+                    VAR_DEBUG(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
                 }
                 // else: For codecs with CODEC_CAP_DELAY, (len1 == 0) indicates end of the decoding
             }

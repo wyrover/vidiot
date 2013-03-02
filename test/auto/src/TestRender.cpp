@@ -13,6 +13,7 @@
 #include "RenderSettingsDialog.h"
 #include "Sequence.h"
 #include "UtilLog.h"
+#include "UtilLogAvcodec.h"
 #include "VideoCodecs.h"
 #include "Worker.h"
 
@@ -142,31 +143,28 @@ void TestRender::testRendering()
             ASSERT(f.Exists());
         }
     }
-    // todo test rendering different codecs. Include h264/mp3
 }
 
 //RUNONLY(testRenderingCodecs);
 void TestRender::testRenderingCodecs()
 {
-    return; // todo finalize this: note that no video does not seem to work...
     StartTestSuite();
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
 
     BOOST_FOREACH( CodecID id, model::render::VideoCodecs::all() )
     {
-        StartTest("Render");
-        RandomTempDir tempdir;
-        wxFileName path(tempdir.getFileName().GetLongPath(), "out", "avi");
+        RandomTempDir tempdir(false);
+        std::ostringstream osCodec; osCodec << id;
+        wxFileName path(tempdir.getFileName().GetLongPath(), osCodec.str(), "avi");
+        std::ostringstream os; os << "Render " << osCodec.str() << " into " << path.GetLongPath();
+        StartTest(os.str().c_str());
         model::render::RenderPtr original = getCurrentRenderSettings();
         triggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile(path.GetFullPath());
         ClickTopLeft(gui::RenderSettingsDialog::get().getFileButton());
         gui::RenderSettingsDialog::get().getVideoCodecButton()->select(id);
-        waitForIdle();pause();
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        ClickTopLeft(gui::RenderSettingsDialog::get().getVideoCodecButton()); Type(WXK_RETURN); // Required to trigger an event from the enum selector
+        waitForIdle();
         ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
         gui::Worker::get().waitUntilQueueEmpty();
         ASSERT(path.Exists());
