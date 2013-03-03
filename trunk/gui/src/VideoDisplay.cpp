@@ -365,10 +365,11 @@ void VideoDisplay::videoDisplayThread()
         // DISPLAY NEW FRAME
         //////////////////////////////////////////////////////////////////////////
 
-        if (sleepTime < 20 || sleepTime > 1000)
+        if (sleepTime < 0 || sleepTime > 1000)
         {
             // Skip the picture
-            VAR_WARNING(paTime)(mCurrentTime)(mStartTime)(mStartPts)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(videoFrame->getPts());
+            VAR_WARNING(paTime)(mStartTime)(mCurrentTime)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(mStartPts)(videoFrame->getPts());
+            boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
             continue;
         }
         else

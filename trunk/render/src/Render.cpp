@@ -355,6 +355,9 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
         audioOpened = true;
     }
 
+    VideoCompositionParameters videoparameters = VideoCompositionParameters().setBoundingBox(wxSize(videoCodec->width,videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
+    AudioCompositionParameters audioparameters = AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
+
     if (ok)
     {
         // Write the actual data into the file
@@ -379,7 +382,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
         }
         long lengthInSeconds = Convert::ptsToTime(lengthInVideoFrames) / Constants::sSecond;
 
-        AudioChunkPtr currentAudioChunk = sequence->getNextAudio(AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels));
+        AudioChunkPtr currentAudioChunk = sequence->getNextAudio(audioparameters);
 
         double audioTime = storeAudio ? 0.0 : std::numeric_limits<double>::max();
         double videoTime = storeVideo ? 0.0 : std::numeric_limits<double>::max();
@@ -412,7 +415,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
 
                         if (currentAudioChunk->getUnreadSampleCount() == 0)
                         {
-                            currentAudioChunk = sequence->getNextAudio(AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels));
+                            currentAudioChunk = sequence->getNextAudio(audioparameters);
                         }
                     }
                     else // Generate silence to fill last input packet
@@ -452,7 +455,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                 AVFrame* toBeEncodedPicture = 0;
                 if (!videoEnd)
                 {
-                    VideoFramePtr frame = sequence->getNextVideo(VideoCompositionParameters().setBoundingBox(wxSize(videoCodec->width,videoCodec->height)).setDrawBoundingBox(false));
+                    VideoFramePtr frame = sequence->getNextVideo(videoparameters);
                     if (!frame)
                     {
                         videoEnd = true;

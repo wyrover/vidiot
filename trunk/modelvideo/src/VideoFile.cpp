@@ -106,7 +106,7 @@ void VideoFile::clean()
 
 VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
-    startDecodingVideo();
+    startDecodingVideo(parameters);
 
     AVPacket nullPacket;
     nullPacket.data = 0;
@@ -149,7 +149,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // \todo instead of duplicating frames, nicely take the two input frames 'around' the
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
     std::pair<int,int> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
-    pts requiredInputPts = requiredInputFrames.first; // todo ensure that requiredInputPts % stream->time_base == 0!
+    pts requiredInputPts = requiredInputFrames.first;
 
     VAR_DEBUG(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
     ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts);
@@ -231,15 +231,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                 frameFinished = 0;
             }
 
-//            todoo perf options:
-//            >
-//> #define HAVE_CMOV 1
-//> #define HAVE_EBP_AVAILABLE 1
-//> #define HAVE_FAST_CLZ 0
-//> #define HAVE_FAST_CMOV 1
-//> #define HAVE_ISATTY 0
-//> #define HAVE_MEMALIGN 1
-
         }
         ASSERT_MORE_THAN_EQUALS_ZERO(pFrame->repeat_pict);
         if (pFrame->repeat_pict > 0)
@@ -276,7 +267,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     mPosition += mDeliveredFrame->getRepeat();
 
     VAR_DEBUG(this)(mPosition)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
-
     return mDeliveredFrame;
 }
 
@@ -293,7 +283,7 @@ wxSize VideoFile::getSize()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void VideoFile::startDecodingVideo()
+void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 {
     if (mDecodingVideo) return;
 
@@ -302,26 +292,30 @@ void VideoFile::startDecodingVideo()
 
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
-    //mStream->codec->lowres = 2; For decoding only a 1/4 image
-
     AVCodec *videoCodec = avcodec_find_decoder(getCodec()->codec_id);
     ASSERT_NONZERO(videoCodec);
 
     int result = avcodec_open(getCodec(), videoCodec);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
+    if (!parameters.getOptimizeForQuality())
+    {
+        switch(getCodec()->codec_id)
+        {
+        case CODEC_ID_H264:
+            av_opt_set((void*)getCodec()->priv_data, "profile", "baseline", 0);
+            av_opt_set((void*)getCodec()->priv_data, "preset", "ultrafast", 0);
+            av_opt_set((void*)getCodec()->priv_data, "tune", "zerolatency,fastdecode", 0);
+            av_opt_set((void*)getCodec()->priv_data, "x264opts", "rc-lookahead=0", 0);
+            break;
+        }
+    }
+
     FrameRate videoFrameRate = FrameRate(getStream()->r_frame_rate);
     if (videoFrameRate != Properties::get().getFrameRate())
     {
         LOG_DEBUG << "Frame rate conversion required from " << videoFrameRate << " to " << Properties::get().getFrameRate();
     }
-
-    // todo add 'target type' to videoparameters and then optimize for  uality vs speed
-    // For previewing:
-     //av_opt_set((void*)getCodec()->priv_data, "profile", "baseline", 0);
-     //av_opt_set((void*)getCodec()->priv_data, "preset", "medium", 0);
-     //av_opt_set((void*)getCodec()->priv_data, "tune", "zerolatency,fastdecode", 0);
-     //av_opt_set((void*)getCodec()->priv_data, "x264opts", "rc-lookahead=0", 0);
 
     VAR_DEBUG(this)(getCodec());
 }
