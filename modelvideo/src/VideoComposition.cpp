@@ -58,6 +58,13 @@ VideoFramePtr VideoComposition::generate()
         return boost::make_shared<EmptyFrame>(outputsize,0);
     }
 
+    if (mFrames.size() == 1)
+    {
+        // Performance optimization: if only one frame is rendered, return that frame
+        // TODO draw bounding box elsewhere? Because it's not being drawn here.
+        return mFrames.front();
+    }
+
     boost::rational<int> scaleToBoundingBox(0);
     wxSize requiredOutputSize = Convert::sizeInBoundingBox(outputsize, mParameters.getBoundingBox(), scaleToBoundingBox);
     ASSERT_NONZERO(scaleToBoundingBox);

@@ -32,6 +32,9 @@ public:
     VideoCompositionParameters& setDrawBoundingBox(bool draw);
     bool getDrawBoundingBox() const;
 
+    VideoCompositionParameters& setOptimizeForQuality();
+    bool getOptimizeForQuality() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -40,6 +43,7 @@ private:
 
     wxSize mBoundingBox;
     bool mDrawBoundingBox;
+    bool mOptimizeForQuality;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

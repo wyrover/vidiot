@@ -12,12 +12,14 @@ namespace model {
 VideoCompositionParameters::VideoCompositionParameters()
     :   mBoundingBox(0,0)
     ,   mDrawBoundingBox(false)
+    ,   mOptimizeForQuality(false)
 {
 }
 
 VideoCompositionParameters::VideoCompositionParameters(const VideoCompositionParameters& other)
     :   mBoundingBox(other.mBoundingBox)
     ,   mDrawBoundingBox(other.mDrawBoundingBox)
+    ,   mOptimizeForQuality(other.mOptimizeForQuality)
 {
 }
 
@@ -29,7 +31,8 @@ bool VideoCompositionParameters::operator==( const VideoCompositionParameters& o
 {
     return
         (mBoundingBox == other.mBoundingBox) &&
-        (mDrawBoundingBox == other.mDrawBoundingBox);
+        (mDrawBoundingBox == other.mDrawBoundingBox) &&
+        (mOptimizeForQuality == other.mOptimizeForQuality);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,13 +65,24 @@ bool VideoCompositionParameters::getDrawBoundingBox() const
     return mDrawBoundingBox;
 }
 
+VideoCompositionParameters& VideoCompositionParameters::setOptimizeForQuality()
+{
+    mOptimizeForQuality = true;
+    return *this;
+}
+
+bool VideoCompositionParameters::getOptimizeForQuality() const
+{
+    return mOptimizeForQuality;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<( std::ostream& os, const VideoCompositionParameters& obj )
 {
-    os << &obj << '|' << obj.mBoundingBox << '|' << obj.mDrawBoundingBox;
+    os << &obj << '|' << obj.mBoundingBox << '|' << obj.mDrawBoundingBox << '|' << obj.mOptimizeForQuality;
     return os;
 }
 
