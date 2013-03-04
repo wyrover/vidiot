@@ -295,7 +295,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
     AVCodec *videoCodec = avcodec_find_decoder(getCodec()->codec_id);
     ASSERT_NONZERO(videoCodec);
 
-    int result = avcodec_open(getCodec(), videoCodec);
+    int result = avcodec_open2(getCodec(), videoCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     if (!parameters.getOptimizeForQuality())

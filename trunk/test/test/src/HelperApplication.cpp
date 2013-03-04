@@ -27,11 +27,11 @@ RandomTempDir::RandomTempDir(bool cleanup)
     : mFileName(wxFileName::GetTempDir(), "")
     , mCleanup(cleanup)
 {
-    mFileName.AppendDir(randomString(20));
+    mFileName.AppendDir(randomString(20) + wxDateTime::UNow().Format(wxT("%d%m%Y_%H%M%S_%l")));
     mFullPath = mFileName.GetLongPath();
-    ASSERT(!wxDirExists(mFullPath));
+    ASSERT(!wxDirExists(mFullPath))(mFullPath);
     mFileName.Mkdir();
-    ASSERT(wxDirExists(mFullPath));
+    ASSERT(wxDirExists(mFullPath))(mFullPath);
 }
 
 RandomTempDir::~RandomTempDir()
