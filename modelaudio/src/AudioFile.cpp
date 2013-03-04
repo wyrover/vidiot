@@ -265,7 +265,7 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     AVCodec* audioCodec = avcodec_find_decoder(codec->codec_id);
     ASSERT_NONZERO(audioCodec);
 
-    int result = avcodec_open(codec, audioCodec);
+    int result = avcodec_open2(codec, audioCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     if (codec->sample_fmt != AV_SAMPLE_FMT_S16)

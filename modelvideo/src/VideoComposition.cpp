@@ -62,6 +62,10 @@ VideoFramePtr VideoComposition::generate()
     {
         // Performance optimization: if only one frame is rendered, return that frame
         // TODO draw bounding box elsewhere? Because it's not being drawn here.
+        // todo make mechanism for determining performance optimizations:
+        // - if only one frame, and that frame has no specific param (like opacity), then ok (currently, that'll go wrong, opacity is not applied)
+        // - if multiple frames, but the top frame obscures all then just return top frame
+        // -etc.
         return mFrames.front();
     }
 

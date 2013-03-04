@@ -101,7 +101,7 @@ bool AudioCodec::open(AVCodecContext* context) const
     AVCodec* codec = avcodec_find_encoder(context->codec_id);
     ASSERT(codec);
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
-    int result = avcodec_open(context, codec); // todo use open2
+    int result = avcodec_open2(context, codec, 0);
     if (result < 0)
     {
         // Now do the checks that ffmpeg does when opening the codec to give proper feedback
