@@ -90,8 +90,6 @@ public:
 
     void activate(bool active); ///< To be called when the timeline becomes the active one
 
-    bool active() const;
-
     Player* getPlayer() const;
 
     wxSize requiredSize() const;  ///< \see View::requiredSize()
@@ -140,8 +138,6 @@ private:
 
     model::SequencePtr mSequence;
     Player* mPlayer;
-
-    bool mActive;
 
     bool mTransaction;
 

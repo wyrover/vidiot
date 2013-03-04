@@ -37,6 +37,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
 :   wxEvtHandler()
 ,   Part(timeline)
 ,   mMenu()
+,   mActive(true)
 {
     VAR_DEBUG(this);
 
@@ -94,7 +95,6 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
 
-    // todo add all these events to the timeline, not the window: only get the event once, for the current timeline
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,      this, ID_RENDERALL);
@@ -234,9 +234,14 @@ void MenuHandler::Popup(wxPoint position)
     getTimeline().PopupMenu(&menu);
 }
 
-void MenuHandler::activate()
+void MenuHandler::activate(bool active)
 {
-    Window::get().setSequenceMenu(getMenu());
+    VAR_ERROR(active);
+    mActive = active;
+    if (mActive)
+    {
+        Window::get().setSequenceMenu(getMenu());
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -245,49 +250,67 @@ void MenuHandler::activate()
 
 void MenuHandler::onAddVideoTrack(wxCommandEvent& event)
 {
-    LOG_INFO;
-    (new command::CreateVideoTrack(getSequence()))->submit();
+    if (mActive)
+    {
+        LOG_INFO;
+        (new command::CreateVideoTrack(getSequence()))->submit();
+    }
     event.Skip();
 }
 
 void MenuHandler::onAddAudioTrack(wxCommandEvent& event)
 {
-    LOG_INFO;
-    (new command::CreateAudioTrack(getSequence()))->submit();
+    if (mActive)
+    {
+        LOG_INFO;
+        (new command::CreateAudioTrack(getSequence()))->submit();
+    }
     event.Skip();
 }
 
 void MenuHandler::onRemoveEmptyTracks(wxCommandEvent& event)
 {
-    LOG_INFO;
-    (new command::RemoveEmptyTracks(getSequence()))->submit();
+    if (mActive)
+    {
+        LOG_INFO;
+        (new command::RemoveEmptyTracks(getSequence()))->submit();
+    }
     event.Skip();
 }
 
 void MenuHandler::onDeleteMarked(wxCommandEvent& event)
 {
-    LOG_INFO;
-    getIntervals().deleteMarked();
+    if (mActive)
+    {
+        LOG_INFO;
+        getIntervals().deleteMarked();
+    }
     event.Skip();
 }
 
 void MenuHandler::onDeleteUnmarked(wxCommandEvent& event)
 {
-    LOG_INFO;
-    getIntervals().deleteUnmarked();
+    if (mActive)
+    {
+        LOG_INFO;
+        getIntervals().deleteUnmarked();
+    }
     event.Skip();
 }
 
 void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
 {
-    LOG_INFO;
-    getIntervals().clear();
+    if (mActive)
+    {
+        LOG_INFO;
+        getIntervals().clear();
+    }
     event.Skip();
 }
 
 void MenuHandler::onRenderSettings(wxCommandEvent& event)
 {
-    if (getTimeline().active())
+    if (mActive)
     {
         gui::RenderSettingsDialog(getSequence()).ShowModal();
     }
@@ -296,7 +319,7 @@ void MenuHandler::onRenderSettings(wxCommandEvent& event)
 
 void MenuHandler::onRenderSequence(wxCommandEvent& event)
 {
-    if (getTimeline().active())
+    if (mActive)
     {
         if (!getSequence()->getRender()->checkFileName())
         {
@@ -312,16 +335,24 @@ void MenuHandler::onRenderSequence(wxCommandEvent& event)
 
 void MenuHandler::onRenderAll(wxCommandEvent& event)
 {
+    // Done, regardless of the active timeline
     model::render::Render::scheduleAll();
     event.Skip();
 }
 
 void MenuHandler::onCloseSequence(wxCommandEvent& event)
 {
-    LOG_INFO;
-    TimelinesView& tv = Window::get().getTimeLines();
-    tv.Close();
-    event.Skip();
+    if (mActive)
+    {
+        LOG_INFO;
+        TimelinesView& tv = Window::get().getTimeLines();
+        tv.Close();
+        // NOT: event.Skip(); - Causes crash, since the originating menu has been removed.
+    }
+    else
+    {
+        event.Skip();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -53,6 +53,7 @@ public:
     DropTarget(Timeline* timeline)
         :   Part(timeline)
         ,   wxDropTarget(new DataObject())
+        ,   mOk(false)
     {
     }
     ~DropTarget()
@@ -64,14 +65,32 @@ public:
     };
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def)
     {
-        ProjectViewDropSource::get().setFeedback(false);
-        getStateMachine().process_event(state::EvDragEnter(x,y));
+        model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
+        mOk = true;
+        BOOST_FOREACH( model::NodePtr node, nodes )
+        {
+            if (!node->isA<model::File>())
+            {
+                mOk = false;
+                break;
+            }
+        }
+        if (mOk)
+        {
+            ProjectViewDropSource::get().setFeedback(false);
+            getStateMachine().process_event(state::EvDragEnter(x,y));
+            return wxDragMove;
+        }
         return wxDragNone;
     }
     wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
     {
-        getStateMachine().process_event(state::EvDragMove(x,y));
-        return wxDragMove;
+        if (mOk)
+        {
+            getStateMachine().process_event(state::EvDragMove(x,y));
+            return wxDragMove;
+        }
+        return wxDragNone;
     }
     bool OnDrop (wxCoord x, wxCoord y)
     {
@@ -83,6 +102,7 @@ public:
         ProjectViewDropSource::get().setFeedback(true);
         getStateMachine().process_event(state::EvDragEnd(0,0));
     }
+    bool mOk;
 };
 
 /// Dummy class to be able to create views for tracks and clips in case of adding them from the project view.
@@ -398,7 +418,7 @@ wxBitmap Drag::getDragBitmap() //const
     VAR_DEBUG(mBitmapOffset)(size_x)(size_y);
     ASSERT_MORE_THAN_ZERO(size_x);
     ASSERT_MORE_THAN_ZERO(size_y);
-    return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y)); // todo other crash: drag sequence into sequence (itselves!)
+    return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
 }
 
 void Drag::draw(wxDC& dc) const
