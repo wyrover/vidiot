@@ -490,10 +490,15 @@ void DeleteClip(model::IClipPtr clip)
     Type(WXK_DELETE);
 }
 
-void DumpSequenceAndWait()
+void DumpSequence()
 {
     LOG_ERROR << DUMP(getSequence());
     Log::flush();
+}
+
+void DumpSequenceAndWait()
+{
+    DumpSequence();
     pause(999999999);
 }
 

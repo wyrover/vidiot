@@ -15,7 +15,6 @@
 #include "Timeline.h"
 #include "Track.h"
 #include "TrimIntervals.h"
-
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
 #include "Zoom.h"
@@ -251,7 +250,7 @@ pts Intervals::determineSnap(pts position) const
         else
         {
             adjustSnap(clip->getLeftPts());
-            adjustSnap(clip->getRightPts()+1); // +1: the interval is seen as [left,right) and in case of snapping, a clip's rightmost pixel should be removed also
+            adjustSnap(clip->getRightPts());
         }
     }
     if (snapAdjust != Layout::SnapDistance + 1)

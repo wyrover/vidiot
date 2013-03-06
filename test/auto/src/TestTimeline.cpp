@@ -257,6 +257,51 @@ void TestTimeline::testDeletion()
     }
 };
 
+//RUNONLY(testRemoveEmpty); // todo test with shifted tracks // todo make TestIntervals
+void TestTimeline::testRemoveEmpty()
+{
+    StartTestSuite();
+    {
+        StartTest("Remove all empty space between all clips.");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        Click(Center(VideoClip(0,0)));
+        ControlDown();
+        Click(Center(VideoClip(0,2)));
+        Click(Center(VideoClip(0,3)));
+        Click(Center(VideoClip(0,6)));
+        ControlUp();
+        Type(WXK_DELETE);
+        ASSERT_VIDEOTRACK0(EmptyClip)(VideoClip)(     EmptyClip      )(VideoClip)(VideoClip)(EmptyClip);
+        ASSERT_AUDIOTRACK0(EmptyClip)(AudioClip)(     EmptyClip      )(AudioClip)(AudioClip)(EmptyClip);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2) + mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,4));
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,5));
+        ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,6));
+        ASSERT_EQUALS(AudioClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,0));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,2) + mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,5));
+        ASSERT_EQUALS(AudioClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,6));
+       /* DumpSequence();
+       pause(6000000);*/ triggerMenu(meID_REMOVE_EMPTY);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 3);
+        ASSERT_EQUALS(AudioTrack(0)->getClips().size(), 3);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,4));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,5));
+        ASSERT_EQUALS(AudioClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,4));
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,5));
+        Undo();
+    }
+}
+
 //RUNONLY(testDnd);
 void TestTimeline::testDnd()
 {
@@ -497,7 +542,7 @@ void TestTimeline::testAbortDrag()
     }
 }
 
-//RUNONLY(testIntervals);
+//RUNONLY(testIntervals); // todo test delete unmarked (pixel perfect?)
 void TestTimeline::testIntervals()
 {
     StartTestSuite();
@@ -519,8 +564,8 @@ void TestTimeline::testIntervals()
     ToggleInterval(HCenter(VideoClip(0,2)), HCenter(VideoClip(0,1)));
     triggerMenu(ID_DELETEMARKED);
     ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0));
-    ASSERT_EQUALS(VideoClip(0,1)->getLength(), video1Adjustedlength);
-    ASSERT_EQUALS(VideoClip(0,2)->getLength(), video2Adjustedlength);
+    ASSERT_EQUALS(VideoClip(0,1)->getLength(), video1Adjustedlength); // Verify there's no difference between selecting right-to-left and left-to-right
+    ASSERT_EQUALS(VideoClip(0,2)->getLength(), video2Adjustedlength); // Verify there's no difference between selecting right-to-left and left-to-right
     ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
     Undo();
     Undo();

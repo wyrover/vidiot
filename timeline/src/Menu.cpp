@@ -21,6 +21,7 @@
 #include "VideoTransition_CrossFade.h"
 #include "AudioTransition_CrossFade.h"
 #include "RemoveEmptyTracks.h"
+#include "RemoveAllEmptyRegions.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
@@ -49,6 +50,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
     mMenu.Append(ID_REMOVEMARKERS,  _("Remove all markers"));
     mMenu.AppendSeparator();
+    mMenu.Append(meID_REMOVE_EMPTY,  _("Remove empty regions"));
+    mMenu.AppendSeparator();
     mMenu.Append(ID_RENDERSETTINGS, _("Render settings"));
     mMenu.Append(ID_RENDERSEQUENCE, _("Render '") + getSequence()->getName() + "'");
     mMenu.Append(ID_RENDERSEQUENCE, _("Render all modified sequences"));
@@ -62,6 +65,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveAllEmpty,  this, meID_REMOVE_EMPTY);
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
@@ -94,6 +99,8 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveAllEmpty,  this, meID_REMOVE_EMPTY);
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
@@ -308,6 +315,16 @@ void MenuHandler::onRemoveMarkers(wxCommandEvent& event)
     event.Skip();
 }
 
+void MenuHandler::onRemoveAllEmpty(wxCommandEvent& event)
+{
+    if (mActive)
+    {
+        LOG_INFO;
+        (new command::RemoveAllEmptyRegions(getSequence()))->submit();
+    }
+    event.Skip();
+}
+
 void MenuHandler::onRenderSettings(wxCommandEvent& event)
 {
     if (mActive)
@@ -403,9 +420,12 @@ void MenuHandler::onAddInOutFade(wxCommandEvent& event)
 
 void MenuHandler::onRemoveEmpty(wxCommandEvent& event)
 {
-    LOG_INFO;
-    // todo
-    event.Skip();
+    if (mActive)
+    {
+        LOG_INFO;
+        // todo next: make emptyclip selectable, then allow delete??(new command::RemoveEmptyTracks(getSequence()))->submit();
+    }
+    event.Skip();    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

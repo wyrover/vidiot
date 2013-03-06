@@ -41,13 +41,13 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr producer)
+VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 :   wxControl(parent, wxID_ANY)
 ,	mWidth(200)
 ,	mHeight(100)
 ,   mDrawBoundingBox(false)
 ,   mPlaying(false)
-,	mProducer(producer)
+,	mSequence(sequence)
 ,   mVideoFrames(20)
 ,   mAudioChunks(1000)
 ,   mAbortThreads(false)
@@ -191,14 +191,14 @@ void VideoDisplay::moveTo(pts position)
     // This must be done AFTER stopping all player threads, since - for instance -
     // otherwise the Track::moveTo() can interfere with Track::getNext...() when
     // changing the iterator.
-    mProducer->moveTo(position);
+    mSequence->moveTo(position);
 
     // Re-read every time the playback is restarted. The value used when 'playing' must be the same as the value used here.
     mDrawBoundingBox = Config::ReadBool(Config::sPathShowBoundingBox);
 
     { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
         boost::mutex::scoped_lock lock(mMutexDraw);
-        mCurrentVideoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
+        mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
         if (mCurrentVideoFrame)
         {
             mCurrentBitmap = mCurrentVideoFrame->getBitmap();
@@ -235,6 +235,11 @@ bool VideoDisplay::isPlaying() const
     return mPlaying;
 }
 
+model::SequencePtr VideoDisplay::getSequence() const
+{
+    return mSequence;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // AUDIO METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -243,7 +248,7 @@ void VideoDisplay::audioBufferThread()
 {
     while (!mAbortThreads)
     {
-        model::AudioChunkPtr chunk = mProducer->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
+        model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
 
         if (chunk)
         {
@@ -328,7 +333,7 @@ void VideoDisplay::videoBufferThread()
     LOG_INFO;
     while (!mAbortThreads)
     {
-        model::VideoFramePtr videoFrame = mProducer->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
+        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
         mVideoFrames.push(videoFrame);
     }
 }

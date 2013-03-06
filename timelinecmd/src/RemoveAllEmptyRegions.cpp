@@ -1,18 +1,11 @@
-#include "TrimIntervals.h"
+#include "RemoveAllEmptyRegions.h"
 
-#include "Cursor.h"
-#include "EmptyClip.h"
-#include "IClip.h"
-#include "Intervals.h"
-#include "Application.h"
-#include "Sequence.h"
-#include "Timeline.h"
-#include "Timeline.h"
-#include "Track.h"
-#include "Transition.h"
 #include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-#include "Zoom.h"
+#include "AudioTrack.h"
+#include "Timeline.h"
+#include "Sequence.h"
+#include "EmptyClip.h"
+#include "SequenceEvent.h"
 
 namespace gui { namespace timeline { namespace command {
 
@@ -20,25 +13,34 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimIntervals::TrimIntervals(model::SequencePtr sequence, PtsIntervals intervals, bool deleteMarked)
+RemoveAllEmptyRegions::RemoveAllEmptyRegions(model::SequencePtr sequence)
     :   AClipEdit(sequence)
-    ,   mIntervals(getTimeline().getIntervals().get())
-    ,   mRemoved(getTimeline().getIntervals().get())
-    ,   mDeleteMarked(deleteMarked)
 {
-    VAR_INFO(this)(mIntervals)(mDeleteMarked);
-    mCommandName = mDeleteMarked ? _("Remove marked area") : _("Remove unmarked area");
+    VAR_INFO(this);
+    mCommandName = _("Remove all empty regions");
 
-    if (!mDeleteMarked)
+    auto makeInterval = [] (pts a, pts b) -> PtsInterval
     {
-        PtsIntervals unmarked;
-        unmarked += PtsInterval(0,getSequence()->getLength());
-        unmarked -= mIntervals;
-        mRemoved = unmarked;
+        VAR_DEBUG(a)(b);
+        return PtsInterval(std::min(a,b),std::max(a,b));
+    };
+
+    mRemoved.clear();
+    mRemoved.insert(makeInterval(0,getSequence()->getLength()));
+    BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (!clip->isA<model::EmptyClip>())
+            {
+                mRemoved -= makeInterval(clip->getLeftPts(), clip->getRightPts());
+            }
+        }
     }
+    VAR_INFO(mRemoved);
 }
 
-TrimIntervals::~TrimIntervals()
+RemoveAllEmptyRegions::~RemoveAllEmptyRegions()
 {
 }
 
@@ -46,38 +48,27 @@ TrimIntervals::~TrimIntervals()
 // ACLIPEDIT INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
-void TrimIntervals::initialize()
+void RemoveAllEmptyRegions::initialize()
 {
     showAnimation();
 
     getTimeline().beginTransaction();
     Revert();
 
-    getTimeline().getIntervals().removeAll();
     std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved(mRemoved);
     BOOST_FOREACH( model::IClips remove, removedInAllTracks )
     {
         removeClips(remove);
     }
     getTimeline().endTransaction();
-}
 
-void TrimIntervals::doExtra()
-{
-    LOG_INFO;
-    getTimeline().getIntervals().removeAll();
-}
-
-void TrimIntervals::undoExtra()
-{
-    getTimeline().getIntervals().set(mIntervals);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TrimIntervals::showAnimation()
+void RemoveAllEmptyRegions::showAnimation()
 {
     std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved(mRemoved);
 
@@ -97,9 +88,10 @@ void TrimIntervals::showAnimation()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const TrimIntervals& obj )
+std::ostream& operator<<( std::ostream& os, const RemoveAllEmptyRegions& obj )
 {
-    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mDeleteMarked << '|' << obj.mIntervals << '|' << obj.mRemoved;
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mRemoved;;
     return os;
 }
+
 }}} // namespace
