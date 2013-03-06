@@ -54,7 +54,7 @@ void TrimIntervals::initialize()
     Revert();
 
     getTimeline().getIntervals().removeAll();
-    std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved();
+    std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved(mRemoved);
     BOOST_FOREACH( model::IClips remove, removedInAllTracks )
     {
         removeClips(remove);
@@ -77,39 +77,9 @@ void TrimIntervals::undoExtra()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-std::set< model::IClips > TrimIntervals::splitTracksAndFindClipsToBeRemoved()
-{
-    std::set< model::IClips > result;
-    BOOST_FOREACH( PtsInterval interval, mRemoved )
-    {
-        pts first = interval.lower();
-        pts last = interval.upper() - 1;
-        ASSERT_LESS_THAN(first,last);
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-        {
-            split(track, first);
-            split(track, last);
-            model::IClips removedInTrack;
-            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
-            {
-                if (clip->getLeftPts() >= last)
-                {
-                    break;
-                }
-                if (clip->getLeftPts() >= first)
-                {
-                    removedInTrack.push_back(clip);
-                }
-            }
-            result.insert(removedInTrack);
-        }
-    }
-    return result;
-}
-
 void TrimIntervals::showAnimation()
 {
-    std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved();
+    std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved(mRemoved);
 
     model::IClips mEmpties;
     BOOST_FOREACH( model::IClips remove, removedInAllTracks )

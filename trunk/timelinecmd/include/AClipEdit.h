@@ -176,6 +176,10 @@ protected:
     /// - redo the trim operation, but now without animation
     void animatedTrimEmpty(model::IClips emptyareas);
 
+    /// Split all tracks at the interval's begin and end positions.
+    /// \return lists of adjacent clips between interval begin and end positions (for all intervals)
+    std::set< model::IClips > splitTracksAndFindClipsToBeRemoved(PtsIntervals removed);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

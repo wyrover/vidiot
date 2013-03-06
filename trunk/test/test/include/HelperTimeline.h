@@ -212,6 +212,9 @@ void DeselectAllClips();
 void DeleteClip(model::IClipPtr clip);
 
 /// Dump the current sequence.
+void DumpSequence();
+
+/// Dump the current sequence.
 /// Then wait forever. That allows undoing/redoing/further tampering for analysis.
 void DumpSequenceAndWait();
 

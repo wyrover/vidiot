@@ -10,7 +10,7 @@
 #include "preview-pause.xpm"
 #include "preview-play.xpm"
 #include "preview-previous.xpm"
-
+#include "Sequence.h"
 #include "UtilLog.h"
 #include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
@@ -206,6 +206,11 @@ void Player::onPlaybackPosition(PlaybackPositionEvent& event)
 
     // NOT: event.Skip(); - Only the player handles this event. Forwards it if necessary. This event is only needed to detach from the video display thread.
     GetEventHandler()->QueueEvent(new PlaybackPositionEvent(event)); // Event must be sent by the player. Other components don't see the videodisplay.
+
+    if (mDisplay->isPlaying() && (mPosition > mDisplay->getSequence()->getLength()))
+    {
+        stop(); // Stop at end of sequence
+    }
 }
 
 void Player::onHome(wxCommandEvent& event)

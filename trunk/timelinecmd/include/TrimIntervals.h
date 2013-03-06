@@ -47,10 +47,6 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    /// Split the tracks at the interval's begin and end positions.
-    /// \return lists of adjacent clips between interval begin and end positions (for all intervals)
-    std::set< model::IClips > splitTracksAndFindClipsToBeRemoved();
-
     /// Show an animated preview of the actual edit operation
     void showAnimation();
 

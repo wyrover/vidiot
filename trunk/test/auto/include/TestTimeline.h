@@ -41,6 +41,9 @@ public:
 
     void testDeletion();
 
+    /// Test removing empty space between clips
+    void testRemoveEmpty();
+
     void testDnd();
 
     /// Test drag and drop scenarios specific to having multiple tracks in the

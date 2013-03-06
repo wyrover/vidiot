@@ -21,7 +21,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    VideoDisplay(wxWindow *parent, model::SequencePtr producer);
+    VideoDisplay(wxWindow *parent, model::SequencePtr sequence);
     virtual ~VideoDisplay();
 
     //////////////////////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@ public:
     void setSpeed(int speed);
     int getSpeed() const;
     bool isPlaying() const;
+    model::SequencePtr getSequence() const;
 
     //////////////////////////////////////////////////////////////////////////
     // AUDIO
@@ -56,7 +57,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     /// The Renderer responsible for producing video and audio data.
-    model::SequencePtr mProducer;
+    model::SequencePtr mSequence;
 
     /// Current playing speed
     int mSpeed;

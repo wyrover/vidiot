@@ -403,6 +403,36 @@ void AClipEdit::animatedTrimEmpty(model::IClips emptyareas)
     }
 }
 
+std::set< model::IClips > AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsIntervals removed)
+{
+    std::set< model::IClips > result;
+    BOOST_FOREACH( PtsInterval interval, removed )
+    {
+        pts first = interval.lower();
+        pts last = interval.upper();// - 1;
+        ASSERT_LESS_THAN(first,last);
+        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        {
+            split(track, first);
+            split(track, last);
+            model::IClips removedInTrack;
+            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+            {
+                if (clip->getLeftPts() >= last)
+                {
+                    break;
+                }
+                if (clip->getLeftPts() >= first)
+                {
+                    removedInTrack.push_back(clip);
+                }
+            }
+            result.insert(removedInTrack);
+        }
+    }
+    return result;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // WXWIDGETS DO/UNDO INTERFACE
 //////////////////////////////////////////////////////////////////////////
