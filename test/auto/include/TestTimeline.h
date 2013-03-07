@@ -41,9 +41,6 @@ public:
 
     void testDeletion();
 
-    /// Test removing empty space between clips
-    void testRemoveEmpty();
-
     void testDnd();
 
     /// Test drag and drop scenarios specific to having multiple tracks in the
@@ -67,9 +64,6 @@ public:
     /// The error caused LeftPixel() to return not the left most pixel of a clip,
     /// but the rightmost pixel of the previous clip.
     void testAbortDrag();
-
-    /// Test generation of intervals via toggling
-    void testIntervals();
 
     /// Test moving up and down
     /// - audio/video divider
