@@ -599,6 +599,26 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     return os;
 }
 
+std::ostream& operator<< (std::ostream& os, const AVSampleFormat& obj)
+{
+    switch (obj)
+    {
+    case AV_SAMPLE_FMT_NONE: os << "AV_SAMPLE_FMT_NONE"; break;
+    case AV_SAMPLE_FMT_U8:   os << "AV_SAMPLE_FMT_U8";   break;
+    case AV_SAMPLE_FMT_S16:  os << "AV_SAMPLE_FMT_S16";  break;
+    case AV_SAMPLE_FMT_S32:  os << "AV_SAMPLE_FMT_S32";  break;
+    case AV_SAMPLE_FMT_FLT:  os << "AV_SAMPLE_FMT_FLT";  break;
+    case AV_SAMPLE_FMT_DBL:  os << "AV_SAMPLE_FMT_DBL";  break;
+    case AV_SAMPLE_FMT_U8P:  os << "AV_SAMPLE_FMT_U8P";  break;
+    case AV_SAMPLE_FMT_S16P: os << "AV_SAMPLE_FMT_S16P"; break;
+    case AV_SAMPLE_FMT_S32P: os << "AV_SAMPLE_FMT_S32P"; break;
+    case AV_SAMPLE_FMT_FLTP: os << "AV_SAMPLE_FMT_FLTP"; break;
+    case AV_SAMPLE_FMT_DBLP: os << "AV_SAMPLE_FMT_DBLP"; break;
+    default:                 os << static_cast<long>(obj) << "(Unknown AVSampleFormat)";
+    }
+    return os;
+};
+
 std::string avcodecErrorString(int errorcode)
 {
     char buffer[AV_ERROR_MAX_STRING_SIZE];
