@@ -22,6 +22,7 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj);
 std::ostream& operator<< (std::ostream& os, const AVPacket* obj);
 std::ostream& operator<< (std::ostream& os, const CodecID& obj);
 std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj);
+std::ostream& operator<< (std::ostream& os, const AVSampleFormat& obj);
 
 typedef std::pair<wxString, int> LevelString;
 
