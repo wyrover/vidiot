@@ -52,9 +52,11 @@ TrackCreator::TrackCreator(model::NodePtrs assets)
                 {
                     audioClip = boost::make_shared<model::EmptyClip>(length);
                 }
-
-                videoClip->setLink(audioClip);
-                audioClip->setLink(videoClip);
+                if (file->hasVideo() && file->hasAudio())
+                {
+                    videoClip->setLink(audioClip);
+                    audioClip->setLink(videoClip);
+                }
                 mVideo->addClips(boost::assign::list_of(videoClip));
                 mAudio->addClips(boost::assign::list_of(audioClip));
             }
