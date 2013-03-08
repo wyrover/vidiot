@@ -243,7 +243,6 @@ void MenuHandler::Popup(wxPoint position)
 
 void MenuHandler::activate(bool active)
 {
-    VAR_ERROR(active);
     mActive = active;
     if (mActive)
     {

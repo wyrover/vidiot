@@ -355,7 +355,7 @@ void Timeline::onZoomChanged( ZoomChangeEvent& event )
 
 void Timeline::activate(bool active)
 {
-    VAR_ERROR(this)(active);
+    VAR_INFO(this)(active);
     getMenuHandler().activate(active);
     if (active)
     {
