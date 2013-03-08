@@ -10,10 +10,11 @@ class Convert
 {
 public:
 
-    static pts timeToPts(int time);             ///< @param time time duration in milliseconds
-    static int ptsToTime(pts position);         ///< @return time duration in milliseconds
-    static int ptsToMicroseconds(pts position); ///< @return time duration in microseconds.
-    static pts microsecondsToPts(int us);       ///< @param us time duration in microseconds
+    static pts timeToPts(int time);                             ///< @param time time duration in milliseconds
+    static pts rationaltimeToPts(boost::rational<int> time);    ///< @param time time duration in milliseconds
+    static int ptsToTime(pts position);                         ///< @return time duration in milliseconds
+    static int ptsToMicroseconds(pts position);                 ///< @return time duration in microseconds.
+    static pts microsecondsToPts(int us);                       ///< @param us time duration in microseconds
 
     /// Convert a time in ms to a human readible string in the form HH:MM:SS.ms
     /// If the time is less than an hour (or less then a minute) then no hours (or minutes)

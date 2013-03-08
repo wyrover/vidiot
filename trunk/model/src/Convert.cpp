@@ -9,9 +9,15 @@
 namespace model {
 
 // static
-pts Convert::timeToPts(int time)
+pts Convert::timeToPts(int time) // todo obsolete?
 {
-    return floor(rational(time) / rational(Constants::sSecond) * Properties::get().getFrameRate());
+    return rationaltimeToPts(rational(time));
+}
+
+// static
+pts Convert::rationaltimeToPts(boost::rational<int> time)
+{
+    return floor(time / rational(Constants::sSecond) * Properties::get().getFrameRate());
 }
 
 // static
