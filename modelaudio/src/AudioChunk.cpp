@@ -99,7 +99,7 @@ samplecount AudioChunk::getUnreadSampleCount() const
 
 void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 {
-    ASSERT_LESS_THAN(adjustedLength,mNrSamples);
+    ASSERT_LESS_THAN_EQUALS(adjustedLength,mNrSamples);
     mNrSkippedSamples = mNrSamples - adjustedLength;
 }
 
