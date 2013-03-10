@@ -19,19 +19,4 @@ ProjectViewCtrl::~ProjectViewCtrl()
 {
 }
 
-//////////////////////////////////////////////////////////////////////////
-// OVERRIDES
-//////////////////////////////////////////////////////////////////////////
-
-wxDataViewColumn* ProjectViewCtrl::GetSortingColumn() const
-{
-    const ProjectViewModel* model = dynamic_cast<const ProjectViewModel*>(GetModel());
-    ASSERT(model);
-    if (model->holdSorting())
-    {
-        return 0;
-    }
-    return wxDataViewCtrl::GetSortingColumn();
-}
-
 } // namespace
