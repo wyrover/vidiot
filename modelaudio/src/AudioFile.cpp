@@ -5,14 +5,14 @@
 #include "Convert.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
+#include "UtilLogAvcodec.h"
 
 namespace model
 {
 static const int sMicroSecondsPerSeconds = 1000 * 1000;
 static const int sMaxBufferSize = 100;
 
-static const int sAudioBufferSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-static const int sAudioBufferSizeInBytes = sAudioBufferSize * 2;
+static const int sAudioBufferSizeInBytes = AVCODEC_MAX_AUDIO_FRAME_SIZE;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -131,13 +131,16 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
     AVCodecContext* codec = getCodec();
 
+    int nBytesPerSample = av_get_bytes_per_sample(codec->sample_fmt);
+    ASSERT_NONZERO(nBytesPerSample);
+
     while (sourceSize > 0)
     {
         int decodeSizeInBytes = sAudioBufferSizeInBytes - targetSizeInBytes; // Needed for avcodec_decode_audio2(): Initially this must be set to the maximum to be decoded bytes
         AVPacket packet;
         packet.data = sourceData;
         packet.size = sourceSize;
-        int usedSourceBytes = avcodec_decode_audio3(codec, targetData, &decodeSizeInBytes, &packet);
+        int usedSourceBytes = avcodec_decode_audio3(codec, targetData, &decodeSizeInBytes, &packet); // todo use avcodec_decode_audio4
         ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
 
         if (decodeSizeInBytes <= 0)
@@ -151,16 +154,16 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         sourceData += usedSourceBytes;
         sourceSize -= usedSourceBytes;
 
-        ASSERT_ZERO(decodeSizeInBytes % 2)(decodeSizeInBytes);
+        ASSERT_ZERO(decodeSizeInBytes % nBytesPerSample)(decodeSizeInBytes);
         targetSizeInBytes += decodeSizeInBytes;
-        targetData += decodeSizeInBytes / AudioChunk::sBytesPerSample; // av_get_bytes_per_sample(codec->sample_fmt) ??
+        targetData += decodeSizeInBytes / nBytesPerSample;
     }
     ASSERT_ZERO(sourceSize);
 
     //////////////////////////////////////////////////////////////////////////
     // RESAMPLING
 
-    int nDecodedSamples = targetSizeInBytes / AudioChunk::sBytesPerSample; // A sample is the data for one speaker
+    int nDecodedSamples = targetSizeInBytes / nBytesPerSample; // A sample is the data for one speaker
     ASSERT_MORE_THAN_ZERO(nDecodedSamples);
 
     AudioChunkPtr audioChunk;
@@ -191,15 +194,20 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         };
 
         int nRemainingInputSamples = nDecodedSamples;
-        // The +10 is to compensate for (rounding?) errors I saw. Note that audio_resample sometimes requires multiple passes (which might explain those differences).
-        // Choosing this number too low will caue ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples) to fail.
-        int nExpectedOutputSamples = convertInputSampleCountToOutputSampleCount(nDecodedSamples) + 10;
+        // The +16 is to compensate for (rounding?) errors I saw. Note that audio_resample sometimes requires multiple passes (which might explain those differences).
+        // Choosing this number too low can cause 
+        // - ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples) to fail.
+        // - Heap corruption errors
+        // The number 16 originates from ffmpeg/libavresample/resample.c, where the output length
+        // of the resampling is determined by
+        //     int lenout= 2 * s->output_channels * nb_samples * s->ratio + 16;
+        int nExpectedOutputSamples = convertInputSampleCountToOutputSampleCount(nDecodedSamples) + 16;
         int nRemainingOutputSamples = nExpectedOutputSamples;
         int nResampledSamples = 0;
 
         // Note: Sometimes audio_resample does not resample the entire buffer in one pass.
         // Here the extra required passes are done, and the data is copied into the pre-allocated audioChunk.
-        // THe audioChunk is pre-allocated to avoid one extra memcpy (from resampled data into the chunk).
+        // The audioChunk is pre-allocated to avoid one extra memcpy (from resampled data into the chunk).
 
         sample* input = audioDecodeBuffer;
 
@@ -218,6 +226,12 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
                 break;
             }
 
+            if (nNewOutputSamples > nRemainingOutputSamples)
+            {
+                // Sometimes more samples than required are generated. Particularly happens when resampling from
+                // lowframerate-fewchannels to highframerate-lotsofchannels.
+                nNewOutputSamples = nRemainingOutputSamples;
+            }
             nRemainingOutputSamples -= nNewOutputSamples;
             ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples);
             nResampledSamples += nNewOutputSamples;
@@ -228,7 +242,6 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             // WHY: Sometimes audio_resample returns a slightly higher number of output frames then to be expected
             //      by the given amount of input frames (maybe caused by audio_resample mechanism 'caching' some of them in a previous call?).
         }
-
         // More data was allocated (to compensate for differences between the number of output samples 'calculated' and the number that avcodec actually produced).
         audioChunk->setAdjustedLength(nResampledSamples);
 
@@ -251,8 +264,8 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     // on GCC in combination with make_shared.
     if (!audioDecodeBuffer)
     {
-        audioDecodeBuffer   = new sample[sAudioBufferSize];
-        audioResampleBuffer = new sample[sAudioBufferSize];
+        audioDecodeBuffer   = new sample[sAudioBufferSizeInBytes];
+        audioResampleBuffer = new sample[sAudioBufferSizeInBytes];
     }
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
@@ -268,29 +281,21 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
     int result = avcodec_open2(codec, audioCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
-    if (codec->sample_fmt != AV_SAMPLE_FMT_S16)
-    {
-        switch (codec->sample_fmt)
-        {
-        case AV_SAMPLE_FMT_U8:  NIY("Unsigned 8 bits audio is not yet supported!"); break;
-        case AV_SAMPLE_FMT_S16: NIY("Signed 16 bits audio is not yet supported!");  break;
-        case AV_SAMPLE_FMT_S32: NIY("Signed 32 bits audio is not yet supported!");  break;
-        case AV_SAMPLE_FMT_FLT: NIY("Floating point audio is not yet supported!");  break;
-        case AV_SAMPLE_FMT_DBL: NIY("Double type audio is not yet supported!");     break;
-        default:                NIY("Unsupported audio type!");                     break;
-        }
-    }
-    ASSERT_EQUALS(codec->sample_fmt,AV_SAMPLE_FMT_S16);
+    int nBytesPerSample = av_get_bytes_per_sample(codec->sample_fmt);
+    ASSERT_NONZERO(nBytesPerSample);
 
-    if ((parameters.getNrChannels() != codec->channels) || (parameters.getSampleRate() != codec->sample_rate))
+    if ((parameters.getNrChannels() != codec->channels) ||
+        (parameters.getSampleRate() != codec->sample_rate) ||
+        (codec->sample_fmt !=AV_SAMPLE_FMT_S16) ||
+        (nBytesPerSample != AudioChunk::sBytesPerSample))
     {
-        VAR_INFO(parameters.getNrChannels())(codec->channels)(parameters.getSampleRate())(codec->sample_rate);
+        VAR_INFO(codec->sample_fmt)(parameters.getNrChannels())(codec->channels)(parameters.getSampleRate())(codec->sample_rate);
         static const int taps = 16;
         mResampleContext =
             av_audio_resample_init(
                 parameters.getNrChannels(), codec->channels,
                 parameters.getSampleRate(), codec->sample_rate,
-                AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16,// 0,0,0,0);
+                AV_SAMPLE_FMT_S16, codec->sample_fmt,
                 taps, 10, 0, 0.8);
         ASSERT_NONZERO(mResampleContext);
     }

@@ -18,7 +18,7 @@ AudioChunk::AudioChunk(sample* buffer, int nChannels, samplecount nSamples, pts 
 ,   mNrSkippedSamples(0)
 ,   mPts(position)
 {
-    mBuffer = static_cast<sample*>(malloc(mNrSamples * sBytesPerSample));
+    mBuffer = new sample[mNrSamples];
     if (buffer)
     {
         memcpy(mBuffer, buffer, mNrSamples * sBytesPerSample);
@@ -39,7 +39,8 @@ AudioChunk::~AudioChunk()
 {
     if (mBuffer)
     {
-        free(mBuffer);
+        delete[] mBuffer;
+        mBuffer = 0;
     }
 }
 

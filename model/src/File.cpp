@@ -380,6 +380,61 @@ void File::openFile()
         }
     }
 
+    auto getStreamLength = [this](AVStream* stream) -> pts
+    {
+        return Convert::rationaltimeToPts(boost::rational<int>(Constants::sSecond,1) * boost::rational<int>(stream->duration,1) * boost::rational<int>(stream->time_base.num,stream->time_base.den));
+    };
+
+    auto isAudioSupported = [this,path](AVStream* stream) -> bool
+    {
+        if (stream->codec->codec_type != AVMEDIA_TYPE_AUDIO)
+        {
+            return false;
+        }
+        VAR_WARNING(stream->codec->sample_fmt)(stream->codec->channels)(stream->codec->sample_rate);
+        if ((stream->codec->channels < 0) ||  (stream->codec->channels > 2))
+        {
+            LOG_WARNING << "Unsupported audio file '" << path << "'. Number of channels is " << stream->codec->channels << ".";
+            return false;
+        }
+        switch (stream->codec->sample_fmt)
+        {
+            // Supported/tested sample formats
+        case AV_SAMPLE_FMT_U8:
+        case AV_SAMPLE_FMT_S16:
+        case AV_SAMPLE_FMT_S32:
+        case AV_SAMPLE_FMT_FLT:
+        case AV_SAMPLE_FMT_DBL:
+            break;
+            // Unsupported/untested sample formats
+        case AV_SAMPLE_FMT_NONE:
+        case AV_SAMPLE_FMT_U8P:
+        case AV_SAMPLE_FMT_S16P:
+        case AV_SAMPLE_FMT_S32P:
+        case AV_SAMPLE_FMT_FLTP:
+        case AV_SAMPLE_FMT_DBLP:
+            LOG_WARNING << "Unsupported audio file '" << path << "'. Sample format is " << stream->codec->sample_fmt << ".";
+            return false;
+        }
+
+        if (av_get_bytes_per_sample(stream->codec->sample_fmt) == 0)
+        {
+            LOG_WARNING << "Unsupported audio file '" << path << "'. Number of bytes per sample is unknown.";
+            return false;
+        }
+
+        return true;
+    };
+
+    auto isVideoSupported = [this,path](AVStream* stream) -> bool
+    {
+        if (stream->codec->codec_type != AVMEDIA_TYPE_VIDEO)
+        {
+            return false;
+        }
+        return true;
+    };
+
     mNumberOfFrames = LENGTH_UNDEFINED;
     mStreamIndex = STREAMINDEX_UNDEFINED;
     for (unsigned int i=0; i < mFileContext->nb_streams; ++i)
@@ -387,19 +442,13 @@ void File::openFile()
         AVStream* stream = mFileContext->streams[i];
         VAR_DEBUG(stream);
 
-        if ((mStreamIndex == STREAMINDEX_UNDEFINED) && useStream(stream->codec->codec_type))
-        {
-            mStreamIndex = i;
-        }
-
-        if (stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        if (isVideoSupported(stream))
         {
             mHasVideo = true;
 
             if ( (stream->duration != AV_NOPTS_VALUE) && (stream->duration != 0))
             {
-                int durationMs = floor(boost::rational<int>(Constants::sSecond,1) * boost::rational<int>(stream->duration,1) * boost::rational<int>(stream->time_base.num,stream->time_base.den));
-                mNumberOfFrames = Convert::timeToPts(durationMs);
+                mNumberOfFrames = getStreamLength(stream);
             }
             else
             {
@@ -414,15 +463,24 @@ void File::openFile()
             }
             VAR_DEBUG(stream)(mNumberOfFrames);
         }
-        else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+        else if (isAudioSupported(stream))
         {
             mHasAudio = true;
 
             if (mNumberOfFrames == LENGTH_UNDEFINED)
             {
                 // For files without video, determine the number of 'virtual video frames'.
-                mNumberOfFrames = Convert::microsecondsToPts(stream->duration); // todo test audio only files
+                mNumberOfFrames = getStreamLength(stream);
             }
+        }
+        else
+        {
+            continue; // To ensure that this stream is not used in case the video/audio contents is not supported
+        }
+
+        if ((mStreamIndex == STREAMINDEX_UNDEFINED) && useStream(stream->codec->codec_type))
+        {
+            mStreamIndex = i;
         }
     }
 
