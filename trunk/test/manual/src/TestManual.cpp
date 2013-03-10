@@ -49,6 +49,7 @@ void TestManual::testManual()
     StartTestSuite();
     StartTest("Manual...");
     LOG_ERROR << dump(getSequence());
+    pause(60 * 500000);
 
     ClickTopLeft(&getProjectView(), wxPoint(10,getProjectView().getHeaderHeight() / 2));
     waitForIdle();

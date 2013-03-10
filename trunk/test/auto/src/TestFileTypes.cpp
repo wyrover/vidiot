@@ -4,8 +4,9 @@
 #include <boost/foreach.hpp>
 #include <wx/uiaction.h>
 #include "AutoFolder.h"
+#include "EmptyClip.h"
 #include "File.h"
-#include "FixtureGui.h"
+#include "FixtureGui.h" // todo make pch for test auto also
 #include "HelperConfig.h"
 #include "HelperApplication.h"
 #include "HelperProjectView.h"
@@ -89,11 +90,17 @@ void TestFileTypes::testFileTypes_2_48000()
 
 void TestFileTypes::executeTest()
 {
+    // Wav files from: http://www-mmsp.ece.mcgill.ca/documents/AudioFormats/WAVE/Samples.html
+
     // Create the project (must be done after ConfigOverrule* code)
     model::FolderPtr mRoot = createProject();
     ASSERT(mRoot);
     wxString sSequence( "Sequence" );
     model::SequencePtr mSequence = addSequence( sSequence, mRoot );
+
+    Click(wxPoint(2,2)); // Click in the timeline to give it the focus.
+    Zoom level(4);
+
     wxString sFolder1( "Folder1" );
     model::FolderPtr folder1 = addFolder( sFolder1 );
 
@@ -105,17 +112,40 @@ void TestFileTypes::executeTest()
     ASSERT(TestFilesPath.DirExists());
     model::IPaths InputFiles = getSupportedFiles(TestFilesPath);
 
+    // todo test video only file
+    // todo test very small/large sample sizes for audio (f->nSamplesPerSec < 4000 || f->nSamplesPerSec > 256000)
     BOOST_FOREACH( model::IPathPtr path, InputFiles )
     {
         StartTest(path->getPath().GetFullName());
         model::Files files1 = addFiles( boost::assign::list_of(path->getPath().GetFullPath()), folder1 );
 
-        DragFromProjectViewToTimeline( files1.front(),  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(3, VCenter(VideoTrack(0))) );
-
-        ASSERT_VIDEOTRACK0(VideoClip);
+        model::FilePtr file = files1.front();
+        if (file->hasVideo())
+        {
+            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(3, VCenter(VideoTrack(0))) );
+        }
+        else
+        {
+            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(3, VCenter(AudioTrack(0))) );
+        }
+        if (file->hasVideo())
+        {
+            ASSERT_VIDEOTRACK0(VideoClip);
+        }
+        else
+        {
+            ASSERT_VIDEOTRACK0(EmptyClip);
+        }
+        if (file->hasAudio())
+        {
+            ASSERT_AUDIOTRACK0(AudioClip);
+        }
+        else
+        {
+            ASSERT_AUDIOTRACK0(EmptyClip);
+        }
         ASSERT_EQUALS(VideoTrack(0)->getLength(),VideoClip(0,0)->getLength());
-        ASSERT_AUDIOTRACK0(AudioClip);
-        ASSERT_EQUALS(AudioTrack(0)->getLength(),AudioClip(0,0)->getLength());
+        ASSERT_EQUALS(AudioTrack(0)->getLength(),AudioClip(0,0)->getLength());// todo pause();
         Play(HCenter(VideoClip(0,0)), 1000);
         Undo(2);
     }
