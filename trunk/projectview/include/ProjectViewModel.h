@@ -39,7 +39,6 @@ public:
     wxString GetColumnType(unsigned int col) const override;
     void GetValue( wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) const override;
     bool SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) override;
-    bool HasDefaultCompare() const override;
     int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const override;
     void Resort() override;
 
@@ -55,7 +54,6 @@ public:
     bool isDescendantOf( model::NodePtr node, model::NodePtr ascendant ) const;
     bool canBeRenamed( model::NodePtr node ) const;
     wxIcon getIcon( model::NodePtr node ) const;
-    bool holdSorting() const;
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
@@ -84,13 +82,6 @@ private:
     wxIcon mIconFolderOpen;
     wxIcon mIconVideo;
 
-    //////////////////////////////////////////////////////////////////////////
-    // SORTING
-    //////////////////////////////////////////////////////////////////////////
-
-    void holdSorting(bool hold);
-
-    bool mHoldSorting; ///< Used to temporarily stop the sorting, which can cause performance issues
 };
 
 /// This event is used to signal opening of certain folders after loading

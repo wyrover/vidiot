@@ -36,7 +36,6 @@ ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 ,   mIconFolder(folder_horizontal_xpm)
 ,   mIconFolderOpen(folder_horizontal_open_xpm)
 ,	mIconVideo(film_xpm)
-,   mHoldSorting(false)
 {
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectViewModel::onOpenProject,           this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectViewModel::onCloseProject,          this);
@@ -183,15 +182,6 @@ bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem 
         return true;
     }
     return false;
-}
-
-bool ProjectViewModel::HasDefaultCompare() const
-{
-    if (mHoldSorting)
-    {
-        return false;
-    }
-    return wxDataViewModel::HasDefaultCompare();
 }
 
 int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const
@@ -368,11 +358,6 @@ wxIcon ProjectViewModel::getIcon(model::NodePtr node) const
     return icon;
 }
 
-bool ProjectViewModel::holdSorting() const
-{
-    return mHoldSorting;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -423,7 +408,7 @@ void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
     model::NodePtrs children = event.getValue().getChildren();
     VAR_DEBUG(parent)(children);
 
-    holdSorting(true);
+    mView.Freeze();
 
     wxDataViewItemArray items;
     BOOST_FOREACH( model::NodePtr node, children )
@@ -434,7 +419,7 @@ void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
 
     mView.Expand(wxDataViewItem(parent->id()));
 
-    holdSorting(false);
+    mView.Thaw();
 
     event.Skip();
 }
@@ -454,47 +439,6 @@ void ProjectViewModel::onProjectAssetRenamed( model::EventRenameNode &event )
     VAR_DEBUG(event.getValue().getNode());
     ItemChanged(wxDataViewItem(event.getValue().getNode()->id()));
     event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// SORTING
-//////////////////////////////////////////////////////////////////////////
-
-void ProjectViewModel::holdSorting(bool hold)
-{
-    mHoldSorting = hold;
-    if (!hold)
-    {
-        Resort();
-    }
-
-    // The hold/resume mechanism works, based on the following wxWidgets code (in datavgen.cpp).
-    // If ever performance issues are encountered when adding large lists of files
-    // to the project view, that code might have been changed.
-    //
-    // See also http://trac.wxwidgets.org/ticket/14073
-    //
-    //    void SortPrepare()
-    //    {
-    //        g_model = GetModel();
-    //        wxDataViewColumn* col = GetOwner()->GetSortingColumn();
-    //        if( !col )
-    //        {
-    //            if (g_model->HasDefaultCompare())
-    //                g_column = -1;
-    //            else
-    //                g_column = -2;
-    //
-    //
-    //    void InsertChild(wxDataViewTreeNode *node, unsigned index)
-    //    {
-    //        if ( !m_branchData )
-    //            m_branchData = new BranchNodeData;
-    //        m_branchData->children.Insert(node, index);
-    //        if (g_column >= -1)
-    //            m_branchData->children.Sort( &wxGenericTreeModelNodeCmp );
-    //}
-
 }
 
 DEFINE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, model::FolderPtr);
