@@ -423,6 +423,12 @@ void File::openFile()
             return false;
         }
 
+        if (stream->codec->sample_rate < 4000 || stream->codec->sample_rate > 256000)
+        {
+            LOG_WARNING << "Unsupported audio file '" << path << "'. Sample rate (" << stream->codec->sample_rate << ") too big.";
+            return false;
+        }
+
         return true;
     };
 
