@@ -1,40 +1,5 @@
 #include "TestTransition.h"
 
-#include "AudioClip.h"
-#include "AudioTrack.h"
-#include "Config.h"
-#include "CreateTransition.h"
-#include "DeleteSelectedClips.h"
-#include "EmptyClip.h"
-#include "ExecuteDrop.h"
-#include "HelperApplication.h"
-#include "HelperTestSuite.h"
-#include "HelperTimeline.h"
-#include "HelperTimelineAssert.h"
-#include "HelperTimelineDrag.h"
-#include "HelperTimelinesView.h"
-#include "HelperTransition.h"
-#include "HelperWindow.h"
-#include "IClip.h"
-#include "ids.h"
-#include "ProjectViewCreateAutoFolder.h"
-#include "ProjectViewCreateSequence.h"
-#include "Selection.h"
-#include "Sequence.h"
-#include "Timeline.h"
-#include "Track.h"
-#include "Transition.h"
-#include "Trim.h"
-#include "TrimClip.h"
-#include "UtilLogWxwidgets.h"
-#include "VideoClip.h"
-#include "VideoTrack.h"
-#include "VideoTransition.h"
-#include "Zoom.h"
-#include <boost/foreach.hpp>
-#include <cxxtest/TestTracker.h>
-#include <wx/msgdlg.h>
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

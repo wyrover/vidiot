@@ -1,13 +1,7 @@
 #include "TestSavingAndLoading.h"
 
-#include "FixtureGui.h"
-#include "HelperApplication.h"
-#include "HelperTestSuite.h"
-#include "HelperWindow.h"
-#include "Sequence.h"
-#include "Window.h"
-
 namespace test {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

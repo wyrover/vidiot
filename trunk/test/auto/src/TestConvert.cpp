@@ -1,10 +1,5 @@
 #include "TestConvert.h"
 
-#include "Convert.h"
-#include "HelperTestSuite.h"
-#include "Properties.h"
-#include "UtilLog.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,21 +1,5 @@
 #include "TestBugs.h"
 
-#include <wx/uiaction.h>
-#include <boost/foreach.hpp>
-#include "FixtureProject.h"
-#include "HelperApplication.h"
-#include "HelperConfig.h"
-#include "HelperDetails.h"
-#include "HelperTimelineDrag.h"
-#include "HelperTestSuite.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "IClip.h"
-#include "Sequence.h"
-#include "ids.h"
-#include "UtilLog.h"
-
 namespace test {
 
 void TestBugs::setUp()

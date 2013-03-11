@@ -1,27 +1,7 @@
 #include "TestTransform.h"
 
-#include <wx/uiaction.h>
-#include <boost/foreach.hpp>
-#include "Constants.h"
-#include "Convert.h"
-#include "Details.h"
-#include "DetailsClip.h"
-#include "FixtureGui.h"
-#include "HelperApplication.h"
-#include "HelperDetails.h"
-#include "HelperModel.h"
-#include "HelperTestSuite.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "HelperTransform.h"
-#include "HelperWindow.h"
-#include "HelperWindow.h"
-#include "Layout.h"
-#include "ProjectViewCreateSequence.h"
-#include "UtilLogWxwidgets.h"
-#include "VideoClip.h"
-
 namespace test {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

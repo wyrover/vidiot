@@ -6,6 +6,7 @@
 #include "Window.h"
 #include <cxxtest/TestSuite.h>
 #include <time.h>
+
 namespace test {
 //static
 FixtureGui sInstance;
