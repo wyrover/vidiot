@@ -1,22 +1,5 @@
 #include "TestRender.h"
 
-#include <boost/foreach.hpp>
-#include "Dialog.h"
-#include "HelperApplication.h"
-#include "HelperConfig.h"
-#include "HelperTestSuite.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "ids.h"
-#include "Render.h"
-#include "RenderSettingsDialog.h"
-#include "Sequence.h"
-#include "UtilLog.h"
-#include "UtilLogAvcodec.h"
-#include "VideoCodecs.h"
-#include "Worker.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

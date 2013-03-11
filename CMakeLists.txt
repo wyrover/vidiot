@@ -126,6 +126,7 @@ INCLUDE_DIRECTORIES(AFTER
     ${INCLUDE_LIST}
     ${SOUNDTOUCH_INCLUDE_DIR}
     test/test/include
+    test/pch/include
 )
 
 LINK_DIRECTORIES(

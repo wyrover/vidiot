@@ -1,18 +1,7 @@
 #include "TestAutoFolder.h"
 
-#include "AutoFolder.h"
-#include "FixtureGui.h"
-#include "HelperApplication.h"
-#include "HelperProjectView.h"
-#include "HelperTestSuite.h"
-#include "HelperWindow.h"
-#include "UtilLogWxwidgets.h"
-#include "Worker.h"
-#include <boost/thread.hpp>
-#include <wx/ffile.h>
-#include <wx/filefn.h>
-
 namespace test {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////

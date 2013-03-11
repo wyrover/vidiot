@@ -1,17 +1,7 @@
 #include "TestTimelinesView.h"
 
-#include "ids.h"
-#include "FixtureGui.h"
-#include "HelperWindow.h"
-#include "HelperProjectView.h"
-#include "HelperTestSuite.h"
-#include "HelperTimelinesView.h"
-#include "Menu.h"
-#include "Timeline.h"
-#include "TimeLinesView.h"
-#include "UtilList.h"
-
 namespace test {
+
 void TestTimelinesView::testSequenceMenu()
 {
     StartTestSuite();
