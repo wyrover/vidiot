@@ -75,7 +75,7 @@ void TestFileTypes::testFileTypes_1_48000()
     executeTest();
 }
 
-//RUNONLY(testFileTypes_2_48000);
+RUNONLY(testFileTypes_2_48000);
 void TestFileTypes::testFileTypes_2_48000()
 {
     StartTestSuite();
@@ -113,7 +113,6 @@ void TestFileTypes::executeTest()
     model::IPaths InputFiles = getSupportedFiles(TestFilesPath);
 
     // todo test video only file
-    // todo test very small/large sample sizes for audio (f->nSamplesPerSec < 4000 || f->nSamplesPerSec > 256000)
     BOOST_FOREACH( model::IPathPtr path, InputFiles )
     {
         StartTest(path->getPath().GetFullName());

@@ -136,20 +136,26 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
     while (sourceSize > 0)
     {
-        int decodeSizeInBytes = sAudioBufferSizeInBytes - targetSizeInBytes; // Needed for avcodec_decode_audio2(): Initially this must be set to the maximum to be decoded bytes
         AVPacket packet;
         packet.data = sourceData;
         packet.size = sourceSize;
-        int usedSourceBytes = avcodec_decode_audio3(codec, targetData, &decodeSizeInBytes, &packet); // todo use avcodec_decode_audio4
+
+        AVFrame frame = { { 0 } };
+        int got_frame = 0;
+        int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet);
         ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
 
-        if (decodeSizeInBytes <= 0)
+        if (!got_frame)
         {
             // if error, skip frame
             LOG_WARNING << "Frame skipped";
             sourceSize = 0;
             break;
         }
+
+        int plane_size(0);
+        int decodeSizeInBytes = av_samples_get_buffer_size(&plane_size, codec->channels, frame.nb_samples, codec->sample_fmt, 1);
+        memcpy(targetData, frame.extended_data[0], plane_size);
 
         sourceData += usedSourceBytes;
         sourceSize -= usedSourceBytes;
@@ -171,8 +177,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     if (mResampleContext == 0)
     {
         // Use the plain decoded data without resampling.
-        targetData = audioDecodeBuffer;
-        audioChunk = boost::make_shared<AudioChunk>(targetData, parameters.getNrChannels(), nDecodedSamples, determinePts(nDecodedSamples));
+        audioChunk = boost::make_shared<AudioChunk>(audioDecodeBuffer, parameters.getNrChannels(), nDecodedSamples, determinePts(nDecodedSamples));
     }
     else
     {
@@ -195,7 +200,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
         int nRemainingInputSamples = nDecodedSamples;
         // The +16 is to compensate for (rounding?) errors I saw. Note that audio_resample sometimes requires multiple passes (which might explain those differences).
-        // Choosing this number too low can cause 
+        // Choosing this number too low can cause
         // - ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples) to fail.
         // - Heap corruption errors
         // The number 16 originates from ffmpeg/libavresample/resample.c, where the output length
