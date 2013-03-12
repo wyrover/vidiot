@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
+#include "EmptyClip.h"
 #include "IClip.h"
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
@@ -209,12 +210,35 @@ PtsIntervals Intervals::getIntervalsForDrawing() const
 
 void Intervals::deleteMarked()
 {
-    (new command::TrimIntervals(getSequence(), mIntervals, true))->submit();
+     VAR_INFO(mIntervals);
+    (new command::TrimIntervals(getSequence(), mIntervals,  _("Remove marked regions")))->submit();
 }
 
 void Intervals::deleteUnmarked()
 {
-    (new command::TrimIntervals(getSequence(), mIntervals, false))->submit();
+    PtsIntervals unmarked;
+    unmarked += PtsInterval(0,getSequence()->getLength());
+    unmarked -= mIntervals;
+    VAR_INFO(unmarked);
+    (new command::TrimIntervals(getSequence(), unmarked, _("Remove unmarked regions")))->submit();
+}
+
+void Intervals::deleteEmpty()
+{
+    PtsIntervals empty;
+    empty.insert(makeInterval(0,getSequence()->getLength()));
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (!clip->isA<model::EmptyClip>())
+            {
+                empty -= makeInterval(clip->getLeftPts(), clip->getRightPts());
+            }
+        }
+    }
+    VAR_INFO(empty);
+    (new command::TrimIntervals(getSequence(), empty, _("Remove empty regions")))->submit();
 }
 
 //////////////////////////////////////////////////////////////////////////

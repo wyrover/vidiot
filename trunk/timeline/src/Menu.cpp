@@ -21,7 +21,6 @@
 #include "VideoTransition_CrossFade.h"
 #include "AudioTransition_CrossFade.h"
 #include "RemoveEmptyTracks.h"
-#include "RemoveAllEmptyRegions.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
@@ -319,7 +318,7 @@ void MenuHandler::onRemoveAllEmpty(wxCommandEvent& event)
     if (mActive)
     {
         LOG_INFO;
-        (new command::RemoveAllEmptyRegions(getSequence()))->submit();
+        getIntervals().deleteEmpty();
     }
     event.Skip();
 }

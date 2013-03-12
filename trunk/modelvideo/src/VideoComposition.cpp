@@ -1,5 +1,6 @@
 #include "VideoComposition.h"
 
+#include "Constants.h"
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
@@ -60,13 +61,12 @@ VideoFramePtr VideoComposition::generate()
 
     if (mFrames.size() == 1)
     {
-        // Performance optimization: if only one frame is rendered, return that frame
-        // TODO draw bounding box elsewhere? Because it's not being drawn here.
-        // todo make mechanism for determining performance optimizations:
-        // - if only one frame, and that frame has no specific param (like opacity), then ok (currently, that'll go wrong, opacity is not applied)
-        // - if multiple frames, but the top frame obscures all then just return top frame
-        // -etc.
-        return mFrames.front();
+        VideoFramePtr front = mFrames.front();
+        if (front->getOpacity() == Constants::sMaxOpacity && front->getPosition() == wxPoint(0,0))
+        {
+            // Performance optimization: if only one frame is rendered, return that frame, but only if the frame requires no 'processing'.
+            return front;
+        }
     }
 
     boost::rational<int> scaleToBoundingBox(0);
@@ -88,9 +88,12 @@ VideoFramePtr VideoComposition::generate()
         wxImagePtr image = frame->getImage();
         if (image) // image may be '0' due to clipping/moving
         {
-            image->InitAlpha();
-            unsigned char* alpha = image->GetAlpha();
-            memset(alpha,frame->getOpacity(),image->GetWidth() * image->GetHeight());
+            if (frame->getOpacity()  != 255)
+            {
+                image->InitAlpha();
+                unsigned char* alpha = image->GetAlpha();
+                memset(alpha,frame->getOpacity(),image->GetWidth() * image->GetHeight());
+            }
             gc->DrawBitmap(gc->GetRenderer()->CreateBitmapFromImage(*image),frame->getPosition().x,frame->getPosition().y,image->GetWidth(),image->GetHeight());
         }
     }

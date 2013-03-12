@@ -1,18 +1,8 @@
 #include "TrimIntervals.h"
 
-#include "Cursor.h"
-#include "EmptyClip.h"
-#include "IClip.h"
 #include "Intervals.h"
-#include "Application.h"
-#include "Sequence.h"
 #include "Timeline.h"
-#include "Timeline.h"
-#include "Track.h"
-#include "Transition.h"
 #include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-#include "Zoom.h"
 
 namespace gui { namespace timeline { namespace command {
 
@@ -20,22 +10,13 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimIntervals::TrimIntervals(model::SequencePtr sequence, PtsIntervals intervals, bool deleteMarked)
+TrimIntervals::TrimIntervals(model::SequencePtr sequence, PtsIntervals remove, wxString name)
     :   AClipEdit(sequence)
     ,   mIntervals(getTimeline().getIntervals().get())
-    ,   mRemoved(getTimeline().getIntervals().get())
-    ,   mDeleteMarked(deleteMarked)
+    ,   mRemoved(remove)
 {
-    VAR_INFO(this)(mIntervals)(mDeleteMarked);
-    mCommandName = mDeleteMarked ? _("Remove marked area") : _("Remove unmarked area");
-
-    if (!mDeleteMarked)
-    {
-        PtsIntervals unmarked;
-        unmarked += PtsInterval(0,getSequence()->getLength());
-        unmarked -= mIntervals;
-        mRemoved = unmarked;
-    }
+    VAR_INFO(this)(mIntervals)(name);
+    mCommandName = name;
 }
 
 TrimIntervals::~TrimIntervals()
@@ -99,7 +80,7 @@ void TrimIntervals::showAnimation()
 
 std::ostream& operator<<( std::ostream& os, const TrimIntervals& obj )
 {
-    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mDeleteMarked << '|' << obj.mIntervals << '|' << obj.mRemoved;
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mIntervals << '|' << obj.mRemoved;
     return os;
 }
 }}} // namespace
