@@ -54,6 +54,8 @@ public:
     void deleteMarked();
     void deleteUnmarked();
 
+    void deleteEmpty();
+
 private:
 
     IntervalsView* mView;

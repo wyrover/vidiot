@@ -9,7 +9,7 @@
 namespace model {
 
 // static
-pts Convert::timeToPts(int time) // todo obsolete?
+pts Convert::timeToPts(int time)
 {
     return rationaltimeToPts(rational(time));
 }

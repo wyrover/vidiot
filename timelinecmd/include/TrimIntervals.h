@@ -18,9 +18,10 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Remove marked intervals from timeline
-    /// \param intervals list of intervals to be removed
-    /// \param deleteMarked true if the marked intervals must be removed, false if all unmarked areas must be removed
-    TrimIntervals(model::SequencePtr sequence, PtsIntervals intervals, bool deleteMarked = true);
+    /// \param sequence sequence from which regions must be removed
+    /// \param remove list of intervals to be removed
+    /// \param name name of command (for undo/redo menu entries)
+    TrimIntervals(model::SequencePtr sequence, PtsIntervals remove, wxString name);
 
     ~TrimIntervals();
 
@@ -41,7 +42,6 @@ private:
 
     PtsIntervals mIntervals;    ///< Intervals as marked in the sequence before the command was created
     PtsIntervals mRemoved;      ///< Intervals to be removed from the sequence (maybe all 'non-marked' areas)
-    bool mDeleteMarked;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
