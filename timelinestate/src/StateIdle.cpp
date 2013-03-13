@@ -171,7 +171,7 @@ boost::statechart::result Idle::react( const EvDragEnter& evt)
 
 boost::statechart::result Idle::start()
 {
-    getPlayer()->play();
+    getPlayer()->play(); // todo transition to playing must also be done when the play button is pressed (for shift-region handling)
     return transit<Playing>();
 }
 
