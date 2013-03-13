@@ -68,10 +68,10 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
     wxBoxSizer* mButtonsPanelSizer = new wxBoxSizer(wxHORIZONTAL);
 
     mHomeButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-    mPreviousButton = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo implement
+    mPreviousButton = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     mPlayButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-    mNextButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo implement
-    mEndButton      = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo implement
+    mNextButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mEndButton      = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     mSpeedButton    = new wxToggleButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     updateSpeedButton();
 
@@ -214,6 +214,14 @@ void Player::onHome(wxCommandEvent& event)
 void Player::onPrevious(wxCommandEvent& event)
 {
     LOG_INFO;
+    std::set<pts> cuts = mDisplay->getSequence()->getCuts(); // std::set is stored in ordered fashion
+    pts newposition = mPosition;
+    BOOST_FOREACH( pts cut, cuts )
+    {
+        if (cut >= mPosition) { break; }
+        newposition = cut;
+    }
+    mDisplay->moveTo(newposition);
 }
 
 void Player::onPlay(wxCommandEvent& event)
@@ -225,11 +233,21 @@ void Player::onPlay(wxCommandEvent& event)
 void Player::onNext(wxCommandEvent& event)
 {
     LOG_INFO;
+    std::set<pts> cuts = mDisplay->getSequence()->getCuts(); // std::set is stored in ordered fashion
+    pts newposition = mPosition;
+    BOOST_FOREACH( pts cut, cuts )
+    {
+        if (cut <= mPosition) { continue; }
+        newposition = cut;
+        break;
+    }
+    mDisplay->moveTo(newposition);
 }
 
 void Player::onEnd(wxCommandEvent& event)
 {
     LOG_INFO;
+    mDisplay->moveTo(mDisplay->getSequence()->getLength());
 }
 
 void Player::onSpeed(wxCommandEvent& event)
