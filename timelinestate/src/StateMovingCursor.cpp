@@ -4,6 +4,7 @@
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
+#include "EventPart.h"
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "StateIdle.h"
@@ -22,7 +23,7 @@ MovingCursor::MovingCursor( my_context ctx ) // entry
 :   TimeLineState( ctx )
 ,   mToggling(false)
 {
-    LOG_DEBUG; 
+    LOG_DEBUG;
 
     getCursor().moveCursorOnUser(getMousePointer().getLeftDownPosition().x);
     if (wxGetMouseState().ShiftDown())
@@ -32,8 +33,8 @@ MovingCursor::MovingCursor( my_context ctx ) // entry
 }
 
 MovingCursor::~MovingCursor() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,7 +65,7 @@ boost::statechart::result MovingCursor::react( const EvLeftUp& evt )
 boost::statechart::result MovingCursor::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getCursor().moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection' 
+    getCursor().moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection'
     return forward_event();
 }
 

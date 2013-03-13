@@ -6,6 +6,7 @@
 namespace gui {
 
 DECLARE_EVENT(EVENT_PLAYBACK_POSITION, PlaybackPositionEvent, long);
+DECLARE_EVENT(EVENT_PLAYBACK_ACTIVE, PlaybackActiveEvent, bool);
 
 } // namespace
 

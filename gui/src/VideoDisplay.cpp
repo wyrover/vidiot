@@ -132,6 +132,7 @@ void VideoDisplay::play()
     ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 
     mPlaying = true;
+    GetEventHandler()->QueueEvent(new PlaybackActiveEvent(true));
 
     LOG_DEBUG;
 }
@@ -177,6 +178,7 @@ void VideoDisplay::stop()
         mAudioChunks.flush();
 
         mPlaying = false;
+        GetEventHandler()->QueueEvent(new PlaybackActiveEvent(false));
 
         LOG_DEBUG << "Playback stopped";
     }

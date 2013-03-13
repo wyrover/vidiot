@@ -11,6 +11,7 @@ struct EvRightDown;
 struct EvMotion;
 struct EvKeyDown;
 struct EvDragEnter;
+struct EvPlaybackChanged;
 
 class Idle
     :   public TimeLineState< Idle, Machine >
@@ -31,7 +32,8 @@ public:
         boost::statechart::custom_reaction< EvRightDown >,
         boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvKeyDown >,
-        boost::statechart::custom_reaction< EvDragEnter >
+        boost::statechart::custom_reaction< EvDragEnter >,
+        boost::statechart::custom_reaction< EvPlaybackChanged >
     > reactions;
 
     //////////////////////////////////////////////////////////////////////////
@@ -44,6 +46,7 @@ public:
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvKeyDown& evt);
     boost::statechart::result react( const EvDragEnter& evt);
+    boost::statechart::result react( const EvPlaybackChanged& evt);
 
 private:
 

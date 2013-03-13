@@ -4,6 +4,7 @@
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
+#include "EventPart.h"
 #include "Menu.h"
 #include "MousePointer.h"
 #include "Scrolling.h"
@@ -26,12 +27,12 @@ namespace gui { namespace timeline { namespace state {
 StateScrolling::StateScrolling( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
-    LOG_DEBUG; 
+    LOG_DEBUG;
 }
 
 StateScrolling::~StateScrolling() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 
 //////////////////////////////////////////////////////////////////////////
