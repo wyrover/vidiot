@@ -7,8 +7,7 @@
 #include "preview-end.xpm"
 #include "preview-home.xpm"
 #include "preview-next.xpm"
-#include "preview-pause.xpm"
-#include "preview-play.xpm"
+#include "preview-pauseplay.xpm"
 #include "preview-previous.xpm"
 #include "Sequence.h"
 #include "UtilLog.h"
@@ -17,12 +16,11 @@
 
 namespace gui {
 
-wxBitmap bmpHome    (preview_home_xpm);
-wxBitmap bmpEnd     (preview_end_xpm);
-wxBitmap bmpNext    (preview_next_xpm);
-wxBitmap bmpPlay    (preview_play_xpm);
-wxBitmap bmpPrevious(preview_previous_xpm);
-wxBitmap bmpPause   (preview_pause_xpm);
+wxBitmap bmpHome      (preview_home_xpm);
+wxBitmap bmpEnd       (preview_end_xpm);
+wxBitmap bmpNext      (preview_next_xpm);
+wxBitmap bmpPrevious  (preview_previous_xpm);
+wxBitmap bmpPausePlay (preview_pauseplay_xpm);
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -33,7 +31,6 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
 ,   mPosition(0)
 ,   mHomeButton(0)
 ,   mPreviousButton(0)
-,   mPauseButton(0)
 ,   mPlayButton(0)
 ,   mNextButton(0)
 ,   mEndButton(0)
@@ -70,9 +67,8 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
     wxPanel* mButtonsPanel = new wxPanel(this);
     wxBoxSizer* mButtonsPanelSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    mHomeButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo implement
+    mHomeButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     mPreviousButton = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo implement
-    mPauseButton    = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo combine with play
     mPlayButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     mNextButton     = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo implement
     mEndButton      = new wxButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT); // todo implement
@@ -81,14 +77,12 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
 
     mHomeButton    ->SetBitmap(bmpHome,        wxTOP);
     mPreviousButton->SetBitmap(bmpPrevious,    wxTOP);
-    mPauseButton   ->SetBitmap(bmpPause,       wxTOP);
-    mPlayButton    ->SetBitmap(bmpPlay,        wxTOP);
+    mPlayButton    ->SetBitmap(bmpPausePlay,   wxTOP);
     mNextButton    ->SetBitmap(bmpNext,        wxTOP);
     mEndButton     ->SetBitmap(bmpEnd,         wxTOP);
 
     mHomeButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
     mPreviousButton ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
-    mPauseButton    ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPause,    this);
     mPlayButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPlay,     this);
     mNextButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onNext,     this);
     mEndButton      ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
@@ -96,7 +90,6 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
 
     mButtonsPanelSizer->Add(mHomeButton,        wxSizerFlags(1).Expand().Bottom().Center());
     mButtonsPanelSizer->Add(mPreviousButton,    wxSizerFlags(1).Expand().Bottom().Center());
-    mButtonsPanelSizer->Add(mPauseButton,       wxSizerFlags(1).Expand().Bottom().Center());
     mButtonsPanelSizer->Add(mPlayButton,        wxSizerFlags(1).Expand().Bottom().Center());
     mButtonsPanelSizer->Add(mNextButton,        wxSizerFlags(1).Expand().Bottom().Center());
     mButtonsPanelSizer->Add(mEndButton,         wxSizerFlags(1).Expand().Bottom().Center());
@@ -121,7 +114,6 @@ Player::~Player()
 
     mHomeButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
     mPreviousButton ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
-    mPauseButton    ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPause,    this);
     mPlayButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPlay,     this);
     mNextButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onNext,     this);
     mEndButton      ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onEnd,      this);
@@ -196,7 +188,7 @@ wxSize Player::getVideoSize() const
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Player::onPlaybackPosition(PlaybackPositionEvent& event)
+void Player::onPlaybackPosition(PlaybackPositionEvent& event) // make playbackstart/stop event for letting the timeline know
 {
     mPosition = event.getValue();//getPts();
     int time = model::Convert::ptsToTime(mPosition);
@@ -222,12 +214,6 @@ void Player::onHome(wxCommandEvent& event)
 void Player::onPrevious(wxCommandEvent& event)
 {
     LOG_INFO;
-}
-
-void Player::onPause(wxCommandEvent& event)
-{
-    LOG_INFO;
-    stop();
 }
 
 void Player::onPlay(wxCommandEvent& event)

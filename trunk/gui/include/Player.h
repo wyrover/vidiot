@@ -41,7 +41,6 @@ public:
     void onPlaybackPosition(PlaybackPositionEvent& event);
     void onHome(wxCommandEvent& event);
     void onPrevious(wxCommandEvent& event);
-    void onPause(wxCommandEvent& event);
     void onPlay(wxCommandEvent& event);
     void onNext(wxCommandEvent& event);
     void onEnd(wxCommandEvent& event);
@@ -64,7 +63,6 @@ private:
 
     wxButton* mHomeButton;
     wxButton* mPreviousButton;
-    wxButton* mPauseButton;
     wxButton* mPlayButton;
     wxButton* mNextButton;
     wxButton* mEndButton;
