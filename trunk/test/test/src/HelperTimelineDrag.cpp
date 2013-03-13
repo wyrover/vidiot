@@ -36,6 +36,18 @@ namespace test {
     DragParams& DragParams::DontReleaseMouse()         { mMouseUp = false;                 return *this; }
     DragParams& DragParams::AlignLeft(pixel position)  { mAlignLeft.reset(position);       return *this; }
     DragParams& DragParams::AlignRight(pixel position) { mAlignRight.reset(position);      return *this; }
+    DragParams& DragParams::MoveLeft(pixel position)
+    {
+        ASSERT(mFrom && !mTo);
+        mTo.reset(*mFrom + wxPoint(-position,0));
+        return *this;
+    }
+    DragParams& DragParams::MoveRight(pixel position)
+    {
+        ASSERT(mFrom && !mTo);
+        mTo.reset(*mFrom + wxPoint(position,0));
+        return *this;
+    };
 
     boost::optional<wxPoint> mFrom;
     boost::optional<wxPoint> mTo;

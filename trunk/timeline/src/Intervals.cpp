@@ -226,19 +226,20 @@ void Intervals::deleteUnmarked()
 void Intervals::deleteEmpty()
 {
     PtsIntervals empty;
-    empty.insert(makeInterval(0,getSequence()->getLength()));
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
-    {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
-        {
-            if (!clip->isA<model::EmptyClip>())
-            {
-                empty -= makeInterval(clip->getLeftPts(), clip->getRightPts());
-            }
-        }
-    }
+    empty += PtsInterval(0,getSequence()->getLength());
+    removeRegionUsedByClips(getSequence(),empty);
     VAR_INFO(empty);
     (new command::TrimIntervals(getSequence(), empty, _("Remove empty regions")))->submit();
+}
+
+void Intervals::deleteEmptyClip(model::IClipPtr clip)
+{
+    ASSERT(clip->isA<model::EmptyClip>());
+    PtsIntervals empty;
+    empty += PtsInterval(clip->getLeftPts(), clip->getRightPts());
+    removeRegionUsedByClips(getSequence(),empty);
+    VAR_INFO(empty);
+    (new command::TrimIntervals(getSequence(), empty, _("Remove empty region")))->submit();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -282,6 +283,20 @@ pts Intervals::determineSnap(pts position) const
         return position - snapAdjust;
     }
     return position;
+}
+
+void Intervals::removeRegionUsedByClips(model::SequencePtr sequence, PtsIntervals& intervals)
+{
+    BOOST_FOREACH( model::TrackPtr track, sequence->getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (!clip->isA<model::EmptyClip>())
+            {
+                intervals -= PtsInterval(clip->getLeftPts(), clip->getRightPts());
+            }
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -35,6 +35,7 @@ enum
     meID_ADD_INFADE,
     meID_ADD_INOUTFADE,
     meID_ADD_OUTFADE,
+    meID_REMOVE_ALL_EMPTY,
     meID_REMOVE_EMPTY,
     // Entries that can be dynamically generated
     meID_DYNAMIC_MENU_ENTRIES,

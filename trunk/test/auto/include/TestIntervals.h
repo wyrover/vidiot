@@ -49,6 +49,9 @@ public:
     /// Test removing empty space between clips, with multiple tracks, and with not precisely positioned clips
     void testRemoveEmptyIntervalsWithOffset();
 
+    /// Test removing one empty area
+    void testRemoveOneEmptyInterval();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

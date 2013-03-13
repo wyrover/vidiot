@@ -31,6 +31,12 @@ struct DragParams
 
     DragParams& DontReleaseMouse();
 
+    /// Do a drag to the left by the given amount of pixels
+    DragParams& MoveLeft(pixel position);
+
+    /// Do a drag to the left by the given amount of pixels
+    DragParams& MoveRight(pixel position);
+
     /// Do a drag from the current position until the left  position of the dragged object is exactly on top of 'position'
     /// \param position point to which the left position of the drag must be aligned
     /// \note
