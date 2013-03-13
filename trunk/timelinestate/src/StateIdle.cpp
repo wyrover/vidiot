@@ -7,6 +7,7 @@
 #include "EmptyClip.h"
 #include "EventDrag.h"
 #include "EventKey.h"
+#include "EventPart.h"
 #include "EventMouse.h"
 #include "MousePointer.h"
 #include "Player.h"
@@ -165,14 +166,23 @@ boost::statechart::result Idle::react( const EvDragEnter& evt)
     return transit<Dragging>();
 }
 
+boost::statechart::result Idle::react( const EvPlaybackChanged& evt)
+{
+    if (evt.mActive)
+    {
+        return transit<Playing>();
+    }
+    return discard_event();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
 boost::statechart::result Idle::start()
 {
-    getPlayer()->play(); // todo transition to playing must also be done when the play button is pressed (for shift-region handling)
-    return transit<Playing>();
+    getPlayer()->play();
+    return discard_event();
 }
 
 boost::statechart::result Idle::leftDown()

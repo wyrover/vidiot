@@ -3,6 +3,7 @@
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
+#include "EventPart.h"
 #include "Intervals.h"
 #include "Player.h"
 #include "StateIdle.h"
@@ -11,7 +12,7 @@
 
 namespace gui { namespace timeline { namespace state {
 
-    const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
+const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -21,12 +22,12 @@ Playing::Playing( my_context ctx ) // entry
 :   TimeLineState( ctx )
 ,   mMakingNewSelection(false)
 {
-    LOG_DEBUG; 
+    LOG_DEBUG;
 }
 
 Playing::~Playing() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,16 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
     return forward_event();
 }
 
+boost::statechart::result Playing::react( const EvPlaybackChanged& evt)
+{
+    VAR_DEBUG(evt);
+    if (!evt.mActive)
+    {
+        return transit< Idle >();
+    }
+    return discard_event();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -77,7 +88,7 @@ boost::statechart::result Playing::stop()
 {
     triggerEnd();
     getPlayer()->stop();
-    return transit<Idle>();
+    return discard_event();
 }
 
 void Playing::triggerBegin()

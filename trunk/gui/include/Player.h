@@ -7,6 +7,7 @@ namespace gui {
 
 class VideoDisplay;
 class EditDisplay;
+class PlaybackActiveEvent;
 class PlaybackPositionEvent;
 
 class Player
@@ -18,7 +19,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    Player(wxWindow *parent, model::SequencePtr sequence);
+    Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus);
     virtual ~Player();
 
     //////////////////////////////////////////////////////////////////////////
@@ -38,6 +39,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onPlaybackActive(PlaybackActiveEvent& event);
     void onPlaybackPosition(PlaybackPositionEvent& event);
     void onHome(wxCommandEvent& event);
     void onPrevious(wxCommandEvent& event);
@@ -52,6 +54,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxWindow* mFocus;
     VideoDisplay* mDisplay;
     EditDisplay* mEdit;
     wxTextCtrl* mStatus;

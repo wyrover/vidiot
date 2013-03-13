@@ -25,8 +25,39 @@ std::ostream& operator<< (std::ostream& os, const EvPart< MostDerived, ORIGINALE
     return os;
 }
 
-struct EvZoomChanged    : EvPart<EvZoomChanged,     timeline::ZoomChangeEvent>      {    EvZoomChanged(timeline::ZoomChangeEvent& event)        : EvPart<EvZoomChanged, timeline::ZoomChangeEvent>(event) {} };
-struct EvScrollChanged  : EvPart<EvScrollChanged,   timeline::ScrollChangeEvent>    {    EvScrollChanged(timeline::ScrollChangeEvent& event)    : EvPart<EvScrollChanged, timeline::ScrollChangeEvent>(event) {} };
+struct EvZoomChanged
+    : EvPart<EvZoomChanged, timeline::ZoomChangeEvent>
+{
+    EvZoomChanged(timeline::ZoomChangeEvent& event)
+        : EvPart<EvZoomChanged
+        , timeline::ZoomChangeEvent>(event)
+    {}
+};
+
+struct EvScrollChanged
+    : EvPart<EvScrollChanged, timeline::ScrollChangeEvent>
+{
+    EvScrollChanged(timeline::ScrollChangeEvent& event)
+        : EvPart<EvScrollChanged
+        , timeline::ScrollChangeEvent>(event)
+    {}
+};
+
+struct EvPlaybackChanged
+    : boost::statechart::event< EvPlaybackChanged >
+{
+    EvPlaybackChanged(bool active)
+        : mActive(active)
+    {}
+    bool mActive;
+
+    friend std::ostream& operator<< (std::ostream& os, const EvPlaybackChanged& obj)
+    {
+        os  << typeid(obj).name() << '|' // This typeid is required to distinguish the various 'react' methods
+            << obj.mActive;
+        return os;
+    }
+};
 
 }}} // namespace
 

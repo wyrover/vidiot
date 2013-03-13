@@ -26,8 +26,9 @@ wxBitmap bmpPausePlay (preview_pauseplay_xpm);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Player::Player(wxWindow *parent, model::SequencePtr sequence)
+Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 :   wxPanel(parent, wxID_ANY)
+,   mFocus(focus)
 ,   mPosition(0)
 ,   mHomeButton(0)
 ,   mPreviousButton(0)
@@ -43,6 +44,7 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence)
     //////////////////////////////////////////////////////////////////////////
 
     mDisplay = new VideoDisplay(this, sequence);
+    mDisplay->Bind(EVENT_PLAYBACK_ACTIVE, &Player::onPlaybackActive, this);
     mDisplay->Bind(EVENT_PLAYBACK_POSITION, &Player::onPlaybackPosition, this);
     mDisplay->setSpeed(VideoDisplay::sDefaultSpeed);
 
@@ -121,6 +123,7 @@ Player::~Player()
 
     ASSERT(mDisplay);
     ASSERT(mEdit);
+    mDisplay->Unbind(EVENT_PLAYBACK_ACTIVE, &Player::onPlaybackActive, this);
     mDisplay->Unbind(EVENT_PLAYBACK_POSITION, &Player::onPlaybackPosition, this);
 }
 
@@ -188,6 +191,12 @@ wxSize Player::getVideoSize() const
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+void Player::onPlaybackActive(PlaybackActiveEvent& event)
+{
+    // NOT: event.Skip(); - Only the player handles this event.
+    GetEventHandler()->QueueEvent(new PlaybackActiveEvent(event)); // Event must be sent by the player. Other components don't see the videodisplay.
+}
+
 void Player::onPlaybackPosition(PlaybackPositionEvent& event) // make playbackstart/stop event for letting the timeline know
 {
     mPosition = event.getValue();//getPts();
@@ -209,6 +218,7 @@ void Player::onHome(wxCommandEvent& event)
 {
     LOG_INFO;
     mDisplay->moveTo(0);
+    mFocus->SetFocus();
 }
 
 void Player::onPrevious(wxCommandEvent& event)
@@ -222,12 +232,14 @@ void Player::onPrevious(wxCommandEvent& event)
         newposition = cut;
     }
     mDisplay->moveTo(newposition);
+    mFocus->SetFocus();
 }
 
 void Player::onPlay(wxCommandEvent& event)
 {
     LOG_INFO;
     play_pause();
+    mFocus->SetFocus();
 }
 
 void Player::onNext(wxCommandEvent& event)
@@ -242,12 +254,14 @@ void Player::onNext(wxCommandEvent& event)
         break;
     }
     mDisplay->moveTo(newposition);
+    mFocus->SetFocus();
 }
 
 void Player::onEnd(wxCommandEvent& event)
 {
     LOG_INFO;
     mDisplay->moveTo(mDisplay->getSequence()->getLength());
+    mFocus->SetFocus();
 }
 
 void Player::onSpeed(wxCommandEvent& event)
@@ -319,6 +333,8 @@ void Player::onSpeedSliderFocusKill(wxFocusEvent& event)
     Bind(wxEVT_IDLE, &Player::onIdleAfterCloseSpeedSliderFrame, this);
 }
 
+    //TODO BUG use player buttons then use shift for making regions: sometimes when the playback is stopped, the region making is not stopped
+
 void Player::onLeftDown(wxMouseEvent& event)
 {
     // NOT: event.Skip();
@@ -342,6 +358,7 @@ void Player::onIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
 {
     mSpeedButton->SetValue(false);
     Unbind(wxEVT_IDLE, &Player::onIdleAfterCloseSpeedSliderFrame, this);
+    mFocus->SetFocus();
     event.Skip();
 }
 

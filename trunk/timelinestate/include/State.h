@@ -3,6 +3,8 @@
 
 #include "Part.h"
 
+namespace gui { class PlaybackActiveEvent; }
+
 namespace gui { namespace timeline {
 
 class ZoomChangeEvent;
@@ -51,6 +53,8 @@ public:
     Machine(Timeline& tl);
     ~Machine();
 
+    void unconsumed_event( const boost::statechart::event_base & evt );
+
 private:
 
     void onMotion           (wxMouseEvent& event);
@@ -73,6 +77,9 @@ private:
 
     void onZoomChanged      (timeline::ZoomChangeEvent& event );
     void onScrollChanged    (timeline::ScrollChangeEvent& event);
+
+    void onPlaybackActive(PlaybackActiveEvent& event);
+
 };
 
 }}} // namespace

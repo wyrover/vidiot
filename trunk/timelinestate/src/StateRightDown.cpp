@@ -3,6 +3,7 @@
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
+#include "EventPart.h"
 #include "Menu.h"
 #include "StateIdle.h"
 #include "StateScrolling.h"
@@ -24,12 +25,12 @@ namespace gui { namespace timeline { namespace state {
 StateRightDown::StateRightDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
-    LOG_DEBUG; 
+    LOG_DEBUG;
 }
 
 StateRightDown::~StateRightDown() // exit
-{ 
-    LOG_DEBUG; 
+{
+    LOG_DEBUG;
 }
 
 //////////////////////////////////////////////////////////////////////////

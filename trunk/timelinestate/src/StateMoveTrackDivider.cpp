@@ -5,6 +5,7 @@
 #include "ClipView.h"
 #include "EventDrag.h"
 #include "EventKey.h"
+#include "EventPart.h"
 #include "EventMouse.h"
 #include "Layout.h"
 #include "MousePointer.h"

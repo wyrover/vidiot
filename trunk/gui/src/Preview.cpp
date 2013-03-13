@@ -33,7 +33,7 @@ Preview::~Preview()
 Player* Preview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
 {
     ASSERT_MAP_CONTAINS_NOT(mPlayers,timeline);
-    Player* newplayer = new Player(this,sequence);
+    Player* newplayer = new Player(this,sequence, timeline);
     mPlayers[timeline] = newplayer;
     GetSizer()->Add(newplayer,wxSizerFlags(1).Expand());
     selectTimeline(timeline);

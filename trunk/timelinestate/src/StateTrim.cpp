@@ -3,6 +3,7 @@
 #include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
+#include "EventPart.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
 #include "UtilLog.h"
