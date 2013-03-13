@@ -89,6 +89,10 @@ void logHistory();
 void LeftDown();        ///< Press down left mouse button
 void LeftUp();          ///< Release left mouse button
 
+/// Press and release right mouse button
+/// \param wait if true then a wait for idle is done
+void ClickRight(bool wait = true);
+
 void ControlDown();     ///< Press down CTRL
 void ControlUp();       ///< Release CTRL
 

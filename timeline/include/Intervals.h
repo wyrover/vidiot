@@ -55,6 +55,7 @@ public:
     void deleteUnmarked();
 
     void deleteEmpty();
+    void deleteEmptyClip(model::IClipPtr empty);
 
 private:
 
@@ -75,6 +76,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pts determineSnap(pts position) const;
+    void removeRegionUsedByClips(model::SequencePtr sequence, PtsIntervals& intervals);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

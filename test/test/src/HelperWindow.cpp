@@ -115,6 +115,13 @@ void LeftUp()
     waitForIdle();
 }
 
+void ClickRight(bool wait)
+{
+    wxUIActionSimulator().MouseDown(wxMOUSE_BTN_RIGHT);
+    wxUIActionSimulator().MouseUp(wxMOUSE_BTN_RIGHT);
+    if (wait) { waitForIdle(); }
+}
+
 void ControlDown()
 {
     wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
