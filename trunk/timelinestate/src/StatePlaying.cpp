@@ -38,7 +38,18 @@ boost::statechart::result Playing::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
     post_event(evt); // Handle this event again in the Idle state
-    return stop();
+    getPlayer()->stop();
+    triggerEnd();
+    return transit< Idle >();
+}
+
+boost::statechart::result Playing::react( const EvRightDown& evt )
+{
+    VAR_DEBUG(evt);
+    post_event(evt); // Handle this event again in the Idle state
+    getPlayer()->stop();
+    triggerEnd();
+    return transit< Idle >();
 }
 
 boost::statechart::result Playing::react( const EvKeyDown& evt)
@@ -47,7 +58,8 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     switch (evt.mWxEvent.GetKeyCode())
     {
     case WXK_SPACE:
-        return stop();
+        getPlayer()->stop();
+        break;
     case WXK_SHIFT:
         triggerBegin();
         break;
@@ -75,6 +87,7 @@ boost::statechart::result Playing::react( const EvPlaybackChanged& evt)
     VAR_DEBUG(evt);
     if (!evt.mActive)
     {
+        triggerEnd();
         return transit< Idle >();
     }
     return discard_event();
@@ -83,13 +96,6 @@ boost::statechart::result Playing::react( const EvPlaybackChanged& evt)
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
-
-boost::statechart::result Playing::stop()
-{
-    triggerEnd();
-    getPlayer()->stop();
-    return discard_event();
-}
 
 void Playing::triggerBegin()
 {

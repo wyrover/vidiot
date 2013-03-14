@@ -6,6 +6,7 @@
 namespace gui { namespace timeline { namespace state {
 
 struct EvLeftDown;
+struct EvRightDown;
 struct EvKeyDown;
 struct EvKeyUp;
 struct EvPlaybackChanged;
@@ -25,6 +26,7 @@ public:
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,
+        boost::statechart::custom_reaction< EvRightDown >,
         boost::statechart::custom_reaction< EvKeyDown >,
         boost::statechart::custom_reaction< EvKeyUp >,
         boost::statechart::custom_reaction< EvPlaybackChanged >
@@ -35,6 +37,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     boost::statechart::result react( const EvLeftDown& evt );
+    boost::statechart::result react( const EvRightDown& evt );
     boost::statechart::result react( const EvKeyDown& evt);
     boost::statechart::result react( const EvKeyUp& evt);
     boost::statechart::result react( const EvPlaybackChanged& evt);
@@ -44,8 +47,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
-
-    boost::statechart::result stop();
 
     void triggerBegin();
     void triggerEnd();

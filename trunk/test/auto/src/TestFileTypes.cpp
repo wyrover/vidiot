@@ -48,7 +48,7 @@ void TestFileTypes::testFileTypes_1_48000()
     executeTest();
 }
 
-//RUNONLY(testFileTypes_2_48000);
+RUNONLY(testFileTypes_2_48000);
 void TestFileTypes::testFileTypes_2_48000()
 {
     StartTestSuite();
@@ -64,6 +64,7 @@ void TestFileTypes::testFileTypes_2_48000()
 void TestFileTypes::executeTest()
 {
     // Wav files from: http://www-mmsp.ece.mcgill.ca/documents/AudioFormats/WAVE/Samples.html
+    // Some files from http://samples.mplayerhq.hu/
 
     // Create the project (must be done after ConfigOverrule* code)
     model::FolderPtr mRoot = createProject();
@@ -85,7 +86,6 @@ void TestFileTypes::executeTest()
     ASSERT(TestFilesPath.DirExists());
     model::IPaths InputFiles = getSupportedFiles(TestFilesPath);
 
-    // todo test video only file
     BOOST_FOREACH( model::IPathPtr path, InputFiles )
     {
         StartTest(path->getPath().GetFullName());
