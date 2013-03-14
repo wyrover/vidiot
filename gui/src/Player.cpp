@@ -333,8 +333,6 @@ void Player::onSpeedSliderFocusKill(wxFocusEvent& event)
     Bind(wxEVT_IDLE, &Player::onIdleAfterCloseSpeedSliderFrame, this);
 }
 
-    //TODO BUG use player buttons then use shift for making regions: sometimes when the playback is stopped, the region making is not stopped
-
 void Player::onLeftDown(wxMouseEvent& event)
 {
     // NOT: event.Skip();
