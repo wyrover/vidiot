@@ -1,9 +1,6 @@
 #ifndef TEST_CONVERT_H
 #define TEST_CONVERT_H
 
-#include "FixtureProject.h"
-#include "SuiteCreator.h"
-
 namespace test
 {
 

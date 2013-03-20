@@ -15,7 +15,7 @@ struct EvMotion;
 struct EvKeyUp;
 struct EvKeyDown;
 
-class StateTrim
+struct StateTrim
     :   public TimeLineState< StateTrim, Machine >
 {
 public:

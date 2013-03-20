@@ -155,7 +155,7 @@ void Watcher::watch( model::NodePtr node, wxFileName path )
         {
             // First file for this path
             mFileMap[path] = boost::assign::list_of(node);
-            mRestartRequired = true;
+            mRestartRequired = true; // todo avoid requiring the restart
         }
         else if (!UtilList<model::NodePtr>(it->second).hasElement(node))
         {

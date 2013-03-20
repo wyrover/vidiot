@@ -2,7 +2,9 @@
 
 #include "AudioClip.h"
 #include "AudioTrack.h"
+#include "AudioTransition_CrossFade.h"
 #include "Clip.h"
+#include "Combiner.h"
 #include "CreateAudioTrack.h"
 #include "CreateTransition.h"
 #include "CreateVideoTrack.h"
@@ -11,6 +13,7 @@
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "PositionInfo.h"
+#include "RemoveEmptyTracks.h"
 #include "Render.h"
 #include "RenderSettingsDialog.h"
 #include "Selection.h"
@@ -18,16 +21,26 @@
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "Track.h"
-#include "VideoTransition_CrossFade.h"
-#include "AudioTransition_CrossFade.h"
-#include "RemoveEmptyTracks.h"
+#include "TrimClip.h"
+#include "Config.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
+#include "VideoTransition_CrossFade.h"
 #include "Window.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
+
+enum
+{
+    ID_TRIGGER_POPUP_MENU = wxID_HIGHEST + 1,
+    ID_ADD_INTRANSITION,
+    ID_ADD_INOUTTRANSITION,
+    ID_ADD_OUTTRANSITION,
+    ID_ADD_OUTINTRANSITION,
+    ID_REMOVE_EMPTY,
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -38,6 +51,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     ,   Part(timeline)
     ,   mMenu()
     ,   mActive(true)
+    ,   mPopup(false)
 {
     VAR_DEBUG(this);
 
@@ -49,7 +63,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
     mMenu.Append(ID_REMOVEMARKERS,  _("Remove all markers"));
     mMenu.AppendSeparator();
-    mMenu.Append(meID_REMOVE_ALL_EMPTY,  _("Remove empty regions"));
+    mMenu.Append(ID_DELETEEMPTY,  _("Remove empty regions"));
     mMenu.AppendSeparator();
     mMenu.Append(ID_RENDERSETTINGS, _("Render settings"));
     mMenu.Append(ID_RENDERSEQUENCE, _("Render '") + getSequence()->getName() + "'");
@@ -57,31 +71,23 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.AppendSeparator();
     mMenu.Append(ID_CLOSESEQUENCE,  _("Close"));
 
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,      this, ID_ADDVIDEOTRACK);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,      this, ID_ADDAUDIOTRACK);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,  this, ID_REMOVE_EMPTY_TRACKS);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,         this, ID_ADDVIDEOTRACK);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
 
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,          this, ID_DELETEMARKED);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked,        this, ID_DELETEUNMARKED);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,         this, ID_REMOVEMARKERS);
 
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmpty,     this, meID_REMOVE_EMPTY);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveAllEmpty,  this, meID_REMOVE_ALL_EMPTY);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveAllEmpty,        this, ID_DELETEEMPTY);
 
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,      this, ID_RENDERALL);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings,        this, ID_RENDERSETTINGS);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence,        this, ID_RENDERSEQUENCE);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,             this, ID_RENDERALL);
 
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,         this, ID_CLOSESEQUENCE);
 
-    // Popup menu items
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,       this, meID_ADD_INTRANSITION);
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutTransition,      this, meID_ADD_OUTTRANSITION);
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutTransition,    this, meID_ADD_INOUTTRANSITION);
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInFade,             this, meID_ADD_INFADE);
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutFade,            this, meID_ADD_OUTFADE);
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutFade,          this, meID_ADD_INOUTFADE);
-    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onRemoveEmpty,           this, meID_REMOVE_ALL_EMPTY);
+    getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onTriggerPopupMenu,      this, ID_TRIGGER_POPUP_MENU);
 
     updateItems();
 
@@ -92,30 +98,23 @@ MenuHandler::~MenuHandler()
 {
     VAR_DEBUG(this);
 
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,      this, ID_ADDVIDEOTRACK);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,      this, ID_ADDAUDIOTRACK);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,  this, ID_REMOVE_EMPTY_TRACKS);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,         this, ID_ADDVIDEOTRACK);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
 
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,   this, ID_DELETEMARKED);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked, this, ID_DELETEUNMARKED);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,  this, ID_REMOVEMARKERS);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,          this, ID_DELETEMARKED);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked,        this, ID_DELETEUNMARKED);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveMarkers,         this, ID_REMOVEMARKERS);
 
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmpty,     this, meID_REMOVE_EMPTY);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveAllEmpty,  this, meID_REMOVE_ALL_EMPTY);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveAllEmpty,        this, ID_DELETEEMPTY);
 
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings, this, ID_RENDERSETTINGS);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence, this, ID_RENDERSEQUENCE);
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,      this, ID_RENDERALL);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSettings,        this, ID_RENDERSETTINGS);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderSequence,        this, ID_RENDERSEQUENCE);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRenderAll,             this, ID_RENDERALL);
 
-    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,  this, ID_CLOSESEQUENCE);
+    Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onCloseSequence,         this, ID_CLOSESEQUENCE);
 
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInTransition,    this, meID_ADD_INTRANSITION);
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutTransition,    this, meID_ADD_OUTTRANSITION);
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutTransition,    this, meID_ADD_INOUTTRANSITION);
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInFade,    this, meID_ADD_INFADE);
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddOutFade,    this, meID_ADD_OUTFADE);
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onAddInOutFade,    this, meID_ADD_INOUTFADE);
-    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,   &MenuHandler::onRemoveEmpty,    this, meID_REMOVE_ALL_EMPTY);
+    getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onTriggerPopupMenu,      this, ID_TRIGGER_POPUP_MENU);
 
     Window::get().setSequenceMenu(0); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
 }
@@ -138,7 +137,18 @@ void MenuHandler::updateItems()
 
 void MenuHandler::Popup(wxPoint position)
 {
-    PointerPositionInfo info = getMousePointer().getInfo(position);
+    // This is decoupled via an event, to ensure that this method returns immediately.
+    // Otherwise, the state chart handling is blocked for a while (duration of popup) causing crashes in boost statechart.
+    getTimeline().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,ID_TRIGGER_POPUP_MENU));
+}
+
+void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
+{
+    ASSERT(mActive);
+    LOG_INFO;
+
+    mPopupPosition = getMousePointer().getRightDownPosition();
+    PointerPositionInfo info = getMousePointer().getInfo(mPopupPosition);
 
     // Mechanism:
     // Default menu options are hidden and enabled.
@@ -179,10 +189,41 @@ void MenuHandler::Popup(wxPoint position)
         selectedSingleClip = true;
     }
 
-    //(info.clip && info.clip->getTrack()->isA<model::VideoTrack>()
     bool clickedOnVideoClip = (info.clip && info.clip->isA<model::VideoClip>());
     bool clickedOnAudioClip = (info.clip && info.clip->isA<model::AudioClip>());
     bool clickedOnEmptyClip = (info.clip && info.clip->isA<model::EmptyClip>());
+
+    bool clickedOnMediaClip = clickedOnVideoClip || clickedOnAudioClip;
+    bool hasPrevClip = false;
+    bool hasNextClip = false;
+
+    bool hasPrevTransition = false;
+    bool hasNextTransition = false;
+    if (info.clip)
+    {
+        model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(info.clip->getPrev());
+        if (prevTransition && prevTransition->getRight() > 0)
+        {
+            hasPrevTransition = true;
+        }
+
+        model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(info.clip->getNext());
+        if (nextTransition && nextTransition->getLeft() > 0)
+        {
+            hasNextTransition = true;
+        }
+    }
+
+    if (clickedOnVideoClip)
+    {
+        hasPrevClip = info.clip->getPrev() && info.clip->getPrev()->isA<model::VideoClip>();
+        hasNextClip = info.clip->getNext() && info.clip->getNext()->isA<model::VideoClip>();
+    }
+    else if (clickedOnAudioClip)
+    {
+        hasPrevClip = info.clip->getPrev() && info.clip->getPrev()->isA<model::AudioClip>();
+        hasNextClip = info.clip->getNext() && info.clip->getNext()->isA<model::AudioClip>();
+    }
 
     bool enableRemoveEmpty = true;
 
@@ -218,28 +259,43 @@ void MenuHandler::Popup(wxPoint position)
 
     wxMenu menu;
 
-    MenuOption addInTransition(meID_ADD_INTRANSITION,   _("Add &in transition"),    clickedOnVideoClip, clickedOnVideoClip);
-    MenuOption addOutTransition(meID_ADD_OUTTRANSITION, _("Add &out transition"),   clickedOnVideoClip, clickedOnVideoClip);
+    MenuOption addInTransition   (ID_ADD_INTRANSITION,    _("Fade &in"),                  clickedOnMediaClip, !hasPrevTransition);
+    MenuOption addOutTransition  (ID_ADD_OUTTRANSITION,   _("Fade &out"),                 clickedOnMediaClip, !hasNextTransition);
+    MenuOption addInOutTransition(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"), clickedOnMediaClip, hasPrevClip);
+    MenuOption addOutInTransition(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),       clickedOnMediaClip, hasNextClip);
 
-    MenuOption addInFade(meID_ADD_INFADE,   _("Add fade &in"),    clickedOnAudioClip, clickedOnAudioClip); // todo finish the popup menu handling
-    MenuOption addOutFade(meID_ADD_OUTFADE, _("Add fade &out"),   clickedOnAudioClip, clickedOnAudioClip);
-
-    MenuOption removeEmptySpace(meID_REMOVE_EMPTY, _("Remove &empty space"),   clickedOnEmptyClip, clickedOnEmptyClip);
+    MenuOption removeEmptySpace(ID_REMOVE_EMPTY, _("Remove &empty space"),   clickedOnEmptyClip, clickedOnEmptyClip);
 
     addInTransition.add(menu);
     addOutTransition.add(menu);
-    addInFade.add(menu);
-    addOutFade.add(menu);
+    addInOutTransition.add(menu);
+    addOutInTransition.add(menu);
     removeEmptySpace.add(menu);
-    menu.AppendSeparator();
 
-    //menu.AppendSeparator();
-    //pAddMenu = menu.AppendSubMenu(&addMenu,_("&Add"));
-    //menu.AppendSeparator();
-    //pCreateMenu = menu.AppendSubMenu(&createMenu,_("&New"));
-    //menu.UpdateUI(&getWindow());
-
-    getTimeline().PopupMenu(&menu);
+    if (menu.GetMenuItemCount() > 0)
+    {
+        mPopup = true;
+        int result = getTimeline().GetPopupMenuSelectionFromUser(menu);
+        mPopup = false;
+        switch (result)
+        {
+        case ID_ADD_INTRANSITION:
+            createTransition(model::TransitionTypeIn);
+            break;
+        case ID_ADD_OUTTRANSITION:
+            createTransition(model::TransitionTypeOut);
+            break;
+        case ID_ADD_INOUTTRANSITION:
+            createTransition(model::TransitionTypeInOut);
+            break;
+        case ID_ADD_OUTINTRANSITION:
+            createTransition(model::TransitionTypeOutIn);
+            break;
+        case ID_REMOVE_EMPTY:
+            getIntervals().deleteEmptyClip(info.clip);
+            break;
+        }
+    }
 }
 
 void MenuHandler::activate(bool active)
@@ -249,6 +305,11 @@ void MenuHandler::activate(bool active)
     {
         Window::get().setSequenceMenu(getMenu());
     }
+}
+
+bool MenuHandler::isPopupShown() const
+{
+    return mPopup;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -373,96 +434,79 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// POPUP MENU
-//////////////////////////////////////////////////////////////////////////
-
-void MenuHandler::onAddInTransition(wxCommandEvent& event)
-{
-    if (mActive)
-    {
-        LOG_INFO;
-        createTransition(boost::make_shared<model::video::transition::CrossFade>());
-    }
-    event.Skip();
-}
-
-void MenuHandler::onAddOutTransition(wxCommandEvent& event)
-{
-    if (mActive)
-    {
-        LOG_INFO; // todo make transitionfactory.... avoiding having to include all types of transitions everywhere. See also Idle::addTransition
-        createTransition(boost::make_shared<model::video::transition::CrossFade>()); // todo this does not work, sometimes makes inouttransition, not in-only transition
-    }
-    event.Skip();
-}
-
-void MenuHandler::onAddInOutTransition(wxCommandEvent& event)
-{
-    if (mActive)
-    {
-        LOG_INFO;
-        createTransition(boost::make_shared<model::video::transition::CrossFade>());
-    }
-    event.Skip();
-}
-
-void MenuHandler::onAddInFade(wxCommandEvent& event)
-{
-    if (mActive)
-    {
-        LOG_INFO;
-        createTransition(boost::make_shared<model::audio::transition::CrossFade>());
-    }
-    event.Skip();
-}
-
-void MenuHandler::onAddOutFade(wxCommandEvent& event)
-{
-    if (mActive)
-    {
-        LOG_INFO;
-        createTransition(boost::make_shared<model::audio::transition::CrossFade>());
-    }
-    event.Skip();
-}
-
-void MenuHandler::onAddInOutFade(wxCommandEvent& event)
-{
-    if (mActive)
-    {
-        LOG_INFO;
-        createTransition(boost::make_shared<model::audio::transition::CrossFade>());
-    }
-    event.Skip();
-}
-
-void MenuHandler::onRemoveEmpty(wxCommandEvent& event)
-{
-    if (mActive)
-    {
-        LOG_INFO;
-        PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getRightDownPosition());
-        ASSERT(info.clip && info.clip->isA<model::EmptyClip>());
-        getIntervals().deleteEmptyClip(info.clip);
-
-        // todo next: make emptyclip selectable, then allow delete??(new command::RemoveEmptyTracks(getSequence()))->submit();
-    }
-    event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void MenuHandler::createTransition(model::TransitionPtr transition)
+void MenuHandler::createTransition(model::TransitionType type)
 {
-    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getRightDownPosition(), transition);
+    VAR_INFO(type);
+    PointerPositionInfo info = getMousePointer().getInfo(mPopupPosition);
+    ASSERT(info.clip);
+    model::TransitionPtr transition;
+    if (info.clip->isA<model::VideoClip>())
+    {
+        transition = boost::make_shared<model::video::transition::CrossFade>();
+    }
+    else
+    {
+        transition = boost::make_shared<model::audio::transition::CrossFade>();
+    }
+
+    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.clip, transition, type);
+
     if (cmd->isPossible())
     {
         cmd->submit();
     }
     else
     {
+        pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
+
+        if (type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)
+        {
+            // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
+            pts trimLeftClip = defaultSize / 2 - cmd->getLeftSize();
+            pts trimRightClip = defaultSize / 2 - cmd->getRightSize();
+
+            ::command::Combiner* combiner = new ::command::Combiner();
+
+            model::IClipPtr leftClip = cmd->getLeftClip();
+            ASSERT(leftClip);
+            model::IClipPtr rightClip = leftClip->getNext();
+            ASSERT(rightClip);
+            model::IClipPtr prevClip = leftClip->getPrev(); // Temporarily stored to retrieve the (new) trimmed clips again. NOTE: This may be 0 if leftClip is the first clip of the track!!!
+
+            if (trimLeftClip > 0)
+            {
+                command::TrimClip* trimLeftCommand = new command::TrimClip(getSequence(), leftClip, model::TransitionPtr(), ClipEnd);
+                trimLeftCommand->update(-trimLeftClip,true);
+                combiner->add(trimLeftCommand);
+                leftClip = prevClip ? prevClip->getNext() : info.track->getClips().front();
+            }
+
+            if (trimRightClip > 0)
+            {
+                command::TrimClip* trimRightCommand = new command::TrimClip(getSequence(), rightClip, model::TransitionPtr(), ClipBegin);
+                trimRightCommand->update(trimRightClip,true);
+                combiner->add(trimRightCommand);
+                rightClip = leftClip->getNext();
+            }
+
+            model::IClipPtr clip = (type == model::TransitionTypeOutIn) ? leftClip : rightClip;
+            command::CreateTransition* newcmd = new command::CreateTransition(getSequence(), clip, transition, type);
+            combiner->add(newcmd);
+
+            if (newcmd->isPossible())
+            {
+                combiner->submit();
+            }
+            else
+            {
+                delete combiner;
+            }
+            // todo make transitionfactory.... avoiding having to include all types of transitions everywhere. See also Idle::addTransition
+
+        }
         delete cmd;
     }
 }

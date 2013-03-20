@@ -1,9 +1,6 @@
 #ifndef TEST_AUTO_FOLDER_H
 #define TEST_AUTO_FOLDER_H
 
-#include "FixtureProject.h"
-#include "SuiteCreator.h"
-
 namespace test
 {
 

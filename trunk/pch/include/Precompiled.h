@@ -1,6 +1,9 @@
 #ifndef PRECOMPILED_H
 #define PRECOMPILED_H
 
+// Required for ensuring that boost asserts are handled via UtilLog
+#define BOOST_ENABLE_ASSERT_HANDLER
+
 extern "C" {
 #pragma warning(disable:4244)
 #include <libavcodec/avcodec.h>

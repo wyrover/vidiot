@@ -7,6 +7,7 @@
 #include "EventPart.h"
 #include "Menu.h"
 #include "MousePointer.h"
+#include "PositionInfo.h"
 #include "Scrolling.h"
 #include "StateIdle.h"
 #include "Timeline.h"
@@ -42,6 +43,17 @@ StateScrolling::~StateScrolling() // exit
 boost::statechart::result StateScrolling::react( const EvRightUp& evt )
 {
     VAR_DEBUG(evt);
+    // This code is triggered in at least two scenarios:
+    // - Right click a clip (popup menu is shown), then right click another clip.
+    //   The second right click is immediately followed by a motion event causing the transition to this state.
+    // - Sometimes a right down event is followed by a motion event (within that clip) due to slight mouse movement.
+    //   Still, the user wants the popup.
+    PointerPositionInfo infoDown = getMousePointer().getInfo(getMousePointer().getRightDownPosition());
+    PointerPositionInfo infoUp = getMousePointer().getInfo(evt.mPosition);
+    if (infoDown.clip == infoUp.clip)
+    {
+        getMenuHandler().Popup(getMousePointer().getRightDownPosition());
+    }
     return transit<Idle>();
 }
 

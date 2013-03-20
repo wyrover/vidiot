@@ -40,7 +40,6 @@ public:
     void GetValue( wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) const override;
     bool SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col ) override;
     int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const override;
-    void Resort() override;
 
     //////////////////////////////////////////////////////////////////////////
     //

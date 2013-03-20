@@ -19,7 +19,7 @@ public:
 
     /// Add elements to the list
     /// \param added elements to be added
-    /// \param position elements are added AFTER the given element. If this equals a null ptr, then the elements are added at the end.
+    /// \param position elements are added BEFORE the given element. If this equals a null ptr, then the elements are added at the beginning.
     void addElements(ELEMENTS added, ELEMENT position)
     {
         ELEMENTS::iterator itPosition = find(mList.begin(), mList.end(), position);

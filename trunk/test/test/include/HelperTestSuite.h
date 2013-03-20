@@ -107,7 +107,7 @@ private:
 #define StartTestSuite() \
     if (!HelperTestSuite::get().currentTestIsEnabled()) return; \
     HelperTestSuite::get().setSuite(__FUNCTION__); \
-    LOG_WARNING << "Suite start: " << __FUNCTION__; \
+    LOG_ERROR << "Suite start: " << __FUNCTION__; \
     FixtureConfig ConfigFixture; \
     if (HelperTestSuite::get().currentTestRequiresGui()) ConfigFixture.SetDefaults();
 

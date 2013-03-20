@@ -1,9 +1,6 @@
 #ifndef TEST_ONCE_H
 #define TEST_ONCE_H
 
-#include "FixtureProject.h"
-#include "SuiteCreator.h"
-
 namespace test
 {
 

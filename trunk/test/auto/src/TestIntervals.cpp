@@ -130,7 +130,7 @@ void TestIntervals::testRemoveEmptyIntervals()
         ASSERT_EQUALS(AudioClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,4));
         ASSERT_EQUALS(AudioClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,5));
         ASSERT_EQUALS(AudioClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,6));
-        triggerMenu(meID_REMOVE_ALL_EMPTY);
+        triggerMenu(ID_DELETEEMPTY);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoTrack(0)->getClips().size(), 3);
@@ -184,52 +184,12 @@ void TestIntervals::testRemoveEmptyIntervalsWithOffset()
         pts gapRight = AudioClip(0,6)->getLength();
         pts expectedLength = VideoTrack(0)->getLength() - gapLeft - gapRight;
 
-        triggerMenu(meID_REMOVE_ALL_EMPTY);
+        triggerMenu(ID_DELETEEMPTY);
 
         ASSERT_EQUALS(VideoTrack(0)->getLength(), expectedLength);
         ASSERT_EQUALS(AudioTrack(0)->getLength(), expectedLength);
         ASSERT_EQUALS(VideoTrack(1)->getLength(), VideoClip(0,4)->getLeftPts());
         Undo(6);
-    }
-}
-
-//RUNONLY(testRemoveOneEmptyInterval);
-void TestIntervals::testRemoveOneEmptyInterval()
-{
-    StartTestSuite();
-    Zoom level(2);
-    ConfigFixture.SnapToClips(false);
-    triggerMenu(ID_ADDVIDEOTRACK);
-    triggerMenu(ID_ADDAUDIOTRACK);
-
-    {
-        StartTest("Remove empty intervals when clips are partially overlapping with the empty area");
-
-        DragToTrack(1, VideoClip(0,3), AudioClip(0,3));
-        ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip           )(VideoClip);
-        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip           )(AudioClip);
-        ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
-
-        Drag(From(Center(VideoClip(1,1))).MoveRight(50));
-        Move(Center(VideoClip(0,3)));
-        ASSERT_VIDEOTRACK1(EmptyClip)                           (VideoClip);
-        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip           )(VideoClip);
-        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip)(AudioClip           )(AudioClip);
-        ASSERT_AUDIOTRACK1(EmptyClip)                           (AudioClip);
-
-        pts gap = VideoClip(1,1)->getLeftPts() - VideoClip(0,3)->getLeftPts();
-        pts len1 = VideoTrack(1)->getLength();
-        pts len0 = VideoTrack(0)->getLength();
-
-        ClickRight(false);
-        Type('e'); // Key of popup menu entry that is bound to 'remove _e_mpty action
-        ASSERT_EQUALS(VideoTrack(1)->getLength(), len1 - gap);
-        ASSERT_EQUALS(VideoTrack(0)->getLength(), len0 - gap);
-        ASSERT_EQUALS(AudioTrack(0)->getLength(), len0 - gap);
-        ASSERT_EQUALS(AudioTrack(1)->getLength(), len1 - gap);
-
-        Undo(5);
     }
 }
 

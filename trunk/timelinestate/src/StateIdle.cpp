@@ -1,5 +1,6 @@
 #include "StateIdle.h"
 
+#include "AudioTransition_CrossFade.h"
 #include "Clip.h"
 #include "ClipView.h"
 #include "CreateTransition.h"
@@ -7,8 +8,9 @@
 #include "EmptyClip.h"
 #include "EventDrag.h"
 #include "EventKey.h"
-#include "EventPart.h"
 #include "EventMouse.h"
+#include "EventPart.h"
+#include "Menu.h"
 #include "MousePointer.h"
 #include "Player.h"
 #include "PositionInfo.h"
@@ -22,15 +24,14 @@
 #include "StateMovingCursor.h"
 #include "StatePlaying.h"
 #include "StateRightDown.h"
-#include "AudioTransition_CrossFade.h"
-#include "VideoTransition_CrossFade.h"
 #include "StateScrolling.h"
 #include "StateTrim.h"
 #include "Timeline.h"
-#include "VideoTrack.h"
 #include "Tooltip.h"
 #include "Track.h"
 #include "UtilLog.h"
+#include "VideoTrack.h"
+#include "VideoTransition_CrossFade.h"
 #include "ViewMap.h"
 #include "Zoom.h"
 
@@ -240,20 +241,29 @@ void Idle::addTransition()
     PointerPositionInfo info = getTimeline().getMousePointer().getInfo(getMousePointer().getPosition());
     if (info.clip)
     {
-        ASSERT(info.track);
-        bool video = info.track->isA<model::VideoTrack>();
-
-        model::TransitionPtr transition;
-        if (video)
+        // todo combine the code below with the creation code for transitions in menu.cpp
+        model::TransitionType type;
+        switch (info.logicalclipposition)
         {
+        case ClipBegin: type = model::TransitionTypeInOut; break;
+        case ClipEnd:   type = model::TransitionTypeOutIn; break;
+        default:        return; // Do nothing: No transition is created.
+        }
+
+        ASSERT(info.track);
+        model::TransitionPtr transition;
+        if (info.track->isA<model::VideoTrack>())
+        {
+            // todo define a tostring for each transistion. default video transition specified in config
             transition = boost::make_shared<model::video::transition::CrossFade>();
         }
         else
         {
+            // todo define a tostring for each transistion. default audio transition specified in config
             transition = boost::make_shared<model::audio::transition::CrossFade>();
         }
 
-        command::CreateTransition* cmd = new command::CreateTransition(getSequence(), getMousePointer().getPosition(), transition);
+        command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.clip, transition, type);
         if (cmd->isPossible())
         {
             cmd->submit();

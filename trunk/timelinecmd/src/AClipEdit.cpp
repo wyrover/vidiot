@@ -40,6 +40,65 @@ AClipEdit::~AClipEdit()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// WXWIDGETS DO/UNDO INTERFACE
+//////////////////////////////////////////////////////////////////////////
+
+bool AClipEdit::Do()
+{
+    VAR_INFO(*this)(mInitialized);
+
+    doExtra();
+
+    if (!mInitialized)
+    {
+        initialize();
+
+        mergeConsecutiveEmptyClips();
+
+        avoidDanglingLinks();
+
+        expandReplacements();
+
+        replaceLinks();
+
+        mInitialized = true;
+
+        // The following are no longer required (avoid extra memory use):
+        mReplacements.clear();
+        mExpandedReplacements.clear();
+    }
+    else
+    {
+        ASSERT_NONZERO(mParams.size());
+        BOOST_FOREACH( model::MoveParameterPtr move, mParams )
+        {
+            doMove(move);
+        }
+    }
+
+    getTimeline().modelChanged();
+
+    return true;
+}
+
+bool AClipEdit::Undo()
+{
+    VAR_INFO(*this)(mParamsUndo.size());
+    //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
+
+    BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
+    {
+        doMove(move);
+    }
+
+    undoExtra();
+
+    getTimeline().modelChanged();
+
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // ACLIPEDIT INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
@@ -431,65 +490,6 @@ std::set< model::IClips > AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsInter
         }
     }
     return result;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// WXWIDGETS DO/UNDO INTERFACE
-//////////////////////////////////////////////////////////////////////////
-
-bool AClipEdit::Do()
-{
-    VAR_INFO(*this)(mInitialized);
-
-    doExtra();
-
-    if (!mInitialized)
-    {
-        initialize();
-
-        mergeConsecutiveEmptyClips();
-
-        avoidDanglingLinks();
-
-        expandReplacements();
-
-        replaceLinks();
-
-        mInitialized = true;
-
-        // The following are no longer required (avoid extra memory use):
-        mReplacements.clear();
-        mExpandedReplacements.clear();
-    }
-    else
-    {
-        ASSERT_NONZERO(mParams.size());
-        BOOST_FOREACH( model::MoveParameterPtr move, mParams )
-        {
-            doMove(move);
-        }
-    }
-
-    getTimeline().modelChanged();
-
-    return true;
-}
-
-bool AClipEdit::Undo()
-{
-    VAR_INFO(*this)(mParamsUndo.size());
-    //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
-
-    BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
-    {
-        doMove(move);
-    }
-
-    undoExtra();
-
-    getTimeline().modelChanged();
-
-    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

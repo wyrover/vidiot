@@ -2,6 +2,7 @@
 #define CREATE_TRANSITION_H
 
 #include "AClipEdit.h"
+#include "Enums.h"
 
 namespace gui { namespace timeline { namespace command {
 
@@ -14,7 +15,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CreateTransition(model::SequencePtr sequence, wxPoint position, model::TransitionPtr transition);
+    CreateTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, model::TransitionType type);
 
     ~CreateTransition();
 
@@ -25,11 +26,17 @@ public:
     void initialize() override;
 
     //////////////////////////////////////////////////////////////////////////
-    //
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     /// Determine if a transition is possible
     bool isPossible();
+
+    model::IClipPtr getLeftClip() const;
+    model::IClipPtr getRightClip() const;
+
+    pts getLeftSize() const;
+    pts getRightSize() const;
 
 private:
 

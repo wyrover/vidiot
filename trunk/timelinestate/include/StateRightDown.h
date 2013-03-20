@@ -11,11 +11,9 @@ struct EvMotion;
 struct EvLeave;
 struct EvKeyDown;
 
-class StateRightDown
+struct StateRightDown
     :   public TimeLineState< StateRightDown, Machine >
 {
-public:
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
@@ -41,14 +39,6 @@ public:
     boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvLeave& evt );
     boost::statechart::result react( const EvKeyDown& evt );
-
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    bool mPopup;    ///< true if a popup menu is currently being shown.
 };
 
 }}} // namespace

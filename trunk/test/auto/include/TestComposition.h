@@ -1,9 +1,6 @@
 #ifndef TEST_BLEND_H
 #define TEST_BLEND_H
 
-#include "FixtureProject.h"
-#include "SuiteCreator.h"
-
 namespace test
 {
 

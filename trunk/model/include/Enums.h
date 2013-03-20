@@ -21,6 +21,12 @@ DECLAREENUM(VideoAlignment, \
             VideoAlignmentCenterVertical, \
             VideoAlignmentCustom);
 
+DECLAREENUM(TransitionType, \
+            TransitionTypeIn, \
+            TransitionTypeOut, \
+            TransitionTypeInOut, \
+            TransitionTypeOutIn);
+
 }
 
 #endif // ENUMS_H
