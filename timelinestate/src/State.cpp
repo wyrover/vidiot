@@ -78,7 +78,15 @@ Machine::~Machine()
 
 void Machine::unconsumed_event( const boost::statechart::event_base & evt )
 {
-    VAR_DEBUG(evt.dynamic_type());
+    LOG_DEBUG << "[state=" << typeid( *state_begin() ).name() << "][event=" << typeid( evt ).name() << "]";
+    boost::statechart::state_machine< Machine, Idle >::unconsumed_event(evt);
+}
+
+void  Machine::process_event(const boost::statechart::event_base & evt )
+{
+    static int pos = std::string("struct gui::timeline::state::").size();
+    boost::statechart::state_machine< Machine, Idle >::process_event(evt);
+    LOG_INFO <<  "[event=" << std::string(typeid( evt ).name()).substr(pos) << "][newstate=" << (state_begin() == state_end() ? "???" : std::string(typeid( *state_begin() ).name()).substr(pos)) << "]";
 }
 
 void Machine::onMotion(wxMouseEvent& event)

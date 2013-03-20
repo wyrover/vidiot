@@ -5,6 +5,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Menu.h"
+#include "MousePointer.h"
 #include "StateIdle.h"
 #include "StateScrolling.h"
 #include "Timeline.h"
@@ -46,12 +47,9 @@ boost::statechart::result StateRightDown::react( const EvRightDown& evt )
 boost::statechart::result StateRightDown::react( const EvRightUp& evt )
 {
     VAR_DEBUG(evt);
-    mPopup = true;
-    getMenuHandler().Popup(evt.mWxEvent.GetPosition());
-    mPopup = false;
+    getMenuHandler().Popup(getMousePointer().getRightDownPosition());
     return transit<Idle>();
 }
-
 boost::statechart::result StateRightDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
@@ -61,7 +59,6 @@ boost::statechart::result StateRightDown::react( const EvMotion& evt )
 boost::statechart::result StateRightDown::react( const EvLeave& evt )
 {
     VAR_DEBUG(evt);
-    if (mPopup) return discard_event();
     return transit<Idle>();
 }
 

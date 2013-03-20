@@ -43,7 +43,7 @@ protected:
 // MACHINE
 //////////////////////////////////////////////////////////////////////////
 
-class Idle;
+struct Idle;
 
 class Machine
     :   public boost::statechart::state_machine< Machine, Idle >
@@ -54,6 +54,7 @@ public:
     ~Machine();
 
     void unconsumed_event( const boost::statechart::event_base & evt );
+    void  process_event(const boost::statechart::event_base & evt );
 
 private:
 

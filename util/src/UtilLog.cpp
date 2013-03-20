@@ -6,6 +6,18 @@
 #include <share.h> // _SH_DENYWR
 #include <time.h>
 
+namespace boost
+{
+    void assertion_failed(char const * expr, char const * function, char const * file, long line)
+    {
+        LogVar(expr, file, line, function);
+    };
+    void assertion_failed_msg(char const * expr, char const * msg, char const * function, char const * file, long line)
+    {
+        LogVar(expr, file, line, function);
+    }
+}
+
 IMPLEMENTENUM(LogLevel);
 
 boost::bimap<LogLevel, wxString> LogLevelConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<LogLevel, wxString>::relation >

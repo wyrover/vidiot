@@ -1,9 +1,6 @@
 #ifndef TEST_TRANSITION_H
 #define TEST_TRANSITION_H
 
-#include "FixtureProject.h"
-#include "SuiteCreator.h"
-
 namespace test
 {
 class TestTransition : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

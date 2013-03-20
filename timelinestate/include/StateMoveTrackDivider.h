@@ -11,11 +11,9 @@ struct EvMotion;
 struct EvLeave;
 struct EvKeyDown;
 
-class MoveTrackDivider
+struct MoveTrackDivider
     :   public TimeLineState< MoveTrackDivider, Machine >
 {
-public:
-
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////

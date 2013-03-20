@@ -5,7 +5,6 @@
 #include "EmptyClip.h"
 #include "IClip.h"
 #include "MousePointer.h"
-#include "PositionInfo.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
@@ -18,7 +17,11 @@
 
 namespace gui { namespace timeline { namespace command {
 
-CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position, model::TransitionPtr transition)
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+CreateTransition::CreateTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, model::TransitionType type)
 :   AClipEdit(sequence)
 ,   mTransition(transition)
 ,   mLeft()
@@ -26,49 +29,34 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, wxPoint position
 ,   mLeftSize(0)
 ,   mRightSize(0)
 {
-    VAR_INFO(this)(position)(*transition);
+    VAR_INFO(this)(clip)(*transition);
     mCommandName = _("Create transition");
 
     pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
 
-    PointerPositionInfo info = getTimeline().getMousePointer().getInfo(position);
-    if (info.clip && !info.clip->isA<model::EmptyClip>() && !info.clip->isA<model::Transition>())
+    switch (type)
     {
-        switch (info.logicalclipposition)
-        {
-        case ClipBegin:
-            mLeft = info.clip->getPrev();
-            mRight = info.clip;
-            break;
-        case ClipInterior:
-            break;
-        case ClipEnd:
-            mLeft = info.clip;
-            mRight = info.clip->getNext();
-            break;
-        default:
-            FATAL("Unexpected logical clip position.");
-        }
+    case model::TransitionTypeIn:                               mRight = clip;              break;
+    case model::TransitionTypeOut:   mLeft = clip;                                          break;
+    case model::TransitionTypeInOut: mLeft = clip->getPrev();   mRight = clip;              break;
+    case model::TransitionTypeOutIn: mLeft = clip;              mRight = clip->getNext();   break;
+    default:
+        FATAL("Unexpected transition type.");
     }
 
-    if  (mLeft)
+    if  (mLeft && (mLeft->isA<model::EmptyClip>() || mLeft->isA<model::Transition>()))
     {
-        if (mLeft->isA<model::EmptyClip>() || mLeft->isA<model::Transition>())
-        {
-            mLeft.reset();
-        }
+        mLeft.reset();
     }
-    if  (mRight)
+    if  (mRight && (mRight->isA<model::EmptyClip>() || mRight->isA<model::Transition>()))
     {
-        if (mRight->isA<model::EmptyClip>() || mRight->isA<model::Transition>())
-        {
-            mRight.reset();
-        }
+        mRight.reset();
     }
 
+    ASSERT(mLeft || mRight);
     if (mLeft)
     {
-        mLeftSize = defaultSize / 2; // Default length
+        mLeftSize = defaultSize / 2; // Default length // todo do we want to use the defaultSize if the transition is a fade in or fade out?
         mLeftSize = std::min( mLeftSize, -1 * mLeft->getMinAdjustEnd() ); // -1 * : getMinAdjustEnd() <= 0
         if (mRight)
         {
@@ -91,6 +79,10 @@ CreateTransition::~CreateTransition()
 {
 }
 
+//////////////////////////////////////////////////////////////////////////
+// ACLIPEDIT INTERFACE
+//////////////////////////////////////////////////////////////////////////
+
 void CreateTransition::initialize()
 {
     VAR_INFO(this);
@@ -100,9 +92,33 @@ void CreateTransition::initialize()
     addTransition(mLeft,mRight,mTransition);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
 bool CreateTransition::isPossible()
 {
     return mLeftSize != 0 || mRightSize != 0;
+}
+
+model::IClipPtr CreateTransition::getLeftClip() const
+{
+    return mLeft;
+}
+
+model::IClipPtr CreateTransition::getRightClip() const
+{
+    return mRight;
+}
+
+pts CreateTransition::getLeftSize() const
+{
+    return mLeftSize;
+}
+
+pts CreateTransition::getRightSize() const
+{
+    return mRightSize;
 }
 
 //////////////////////////////////////////////////////////////////////////

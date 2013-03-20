@@ -1,9 +1,6 @@
 #ifndef TEST_BUGS_H
 #define TEST_BUGS_H
 
-#include "SuiteCreator.h"
-#include "FixtureProject.h"
-
 namespace test
 {
 

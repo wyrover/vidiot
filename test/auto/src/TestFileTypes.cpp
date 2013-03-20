@@ -48,7 +48,7 @@ void TestFileTypes::testFileTypes_1_48000()
     executeTest();
 }
 
-RUNONLY(testFileTypes_2_48000);
+//RUNONLY(testFileTypes_2_48000);
 void TestFileTypes::testFileTypes_2_48000()
 {
     StartTestSuite();

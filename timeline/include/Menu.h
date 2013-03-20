@@ -2,6 +2,7 @@
 #define MENU_HANDLER_H
 
 #include "Part.h"
+#include "Enums.h"
 
 namespace gui { namespace timeline {
 
@@ -29,9 +30,12 @@ public:
 
     void updateItems();
 
+    void onTriggerPopupMenu(wxCommandEvent& event);
     void Popup(wxPoint position);
 
     void activate(bool active);
+
+    bool isPopupShown() const;
 
     //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU
@@ -49,18 +53,6 @@ public:
     void onRenderAll(wxCommandEvent& event);
     void onCloseSequence(wxCommandEvent& event);
 
-    //////////////////////////////////////////////////////////////////////////
-    // POPUP MENU
-    //////////////////////////////////////////////////////////////////////////
-
-    void onAddInTransition(wxCommandEvent& event);
-    void onAddOutTransition(wxCommandEvent& event);
-    void onAddInOutTransition(wxCommandEvent& event);
-    void onAddInFade(wxCommandEvent& event);
-    void onAddOutFade(wxCommandEvent& event);
-    void onAddInOutFade(wxCommandEvent& event);
-    void onRemoveEmpty(wxCommandEvent& event);
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -69,12 +61,14 @@ private:
 
     wxMenu mMenu;
     bool mActive;
+    wxPoint mPopupPosition;
+    bool mPopup;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void createTransition(model::TransitionPtr transition);
+    void createTransition(model::TransitionType type);
 
 };
 

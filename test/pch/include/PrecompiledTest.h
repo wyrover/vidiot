@@ -78,14 +78,17 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/barrier.hpp>
 #include <cxxtest/TestSuite.h>
 #include <cxxtest/TestTracker.h>
+#include <list>
 #include <ostream>
 #include <time.h>
 #include <wx/ffile.h>
 #include <wx/filefn.h>
+#include <wx/filename.h>
 #include <wx/mousestate.h>
 #include <wx/msgdlg.h>
 #include <wx/uiaction.h>

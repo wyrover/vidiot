@@ -56,23 +56,16 @@ TrimClip::~TrimClip()
     }
 }
 
-void TrimClip::update(pts diff)
+void TrimClip::update(pts diff, bool shift)
 {
     mNewClip.reset();
     mNewLink.reset();
     Revert();
 
-    if (mOriginalClip->isA<model::Transition>())
-    {
-        // When trimming a transition, shift does nothing.
-        // Reset here to avoid having to deal with that (if-then-else)
-        // later on.
-        mShift = false;
-    }
-    else
-    {
-        mShift = wxGetMouseState().ShiftDown();
-    }
+    mShift =
+        shift ? true :                                    // Some trim operations are not directly user triggered but a result of - for instance - making room for a transition.
+        mOriginalClip->isA<model::Transition>() ? false : // When trimming a transition, shift does nothing. Reset here to avoid having to deal with that (if-then-else) later on.
+        mShift = wxGetMouseState().ShiftDown();           // Default: shift trim when shift key is down.
     VAR_INFO(this)(mShift)(diff);
 
     removeTransition();

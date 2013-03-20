@@ -103,22 +103,39 @@ void logHistory()
     VAR_DEBUG(current);
 };
 
-void LeftDown()
+void LeftDown(bool wait)
 {
     wxUIActionSimulator().MouseDown();
-    waitForIdle();
+    if (wait) { waitForIdle(); }
 }
 
-void LeftUp()
+void LeftUp(bool wait)
 {
     wxUIActionSimulator().MouseUp();
-    waitForIdle();
+    if (wait) { waitForIdle(); }
+}
+
+void RightDown(bool wait)
+{
+    wxUIActionSimulator().MouseDown(wxMOUSE_BTN_RIGHT);
+    if (wait) { waitForIdle(); }
+}
+
+void RightUp(bool wait)
+{
+    wxUIActionSimulator().MouseUp(wxMOUSE_BTN_RIGHT);
+    if (wait) { waitForIdle(); }
+}
+
+void ClickLeft(bool wait)
+{
+    wxUIActionSimulator().MouseClick(wxMOUSE_BTN_LEFT);
+    if (wait) { waitForIdle(); }
 }
 
 void ClickRight(bool wait)
 {
-    wxUIActionSimulator().MouseDown(wxMOUSE_BTN_RIGHT);
-    wxUIActionSimulator().MouseUp(wxMOUSE_BTN_RIGHT);
+    wxUIActionSimulator().MouseClick(wxMOUSE_BTN_RIGHT);
     if (wait) { waitForIdle(); }
 }
 

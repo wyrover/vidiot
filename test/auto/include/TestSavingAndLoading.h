@@ -1,9 +1,6 @@
 #ifndef TEST_SAVING_AND_LOADING_H
 #define TEST_SAVING_AND_LOADING_H
 
-#include "FixtureProject.h"
-#include "SuiteCreator.h"
-
 namespace test {
 
 class TestSavingAndLoading : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

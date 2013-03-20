@@ -30,7 +30,8 @@ public:
 
     /// To be called when the mouse is moved
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
-    void update(pts diff);
+    /// \param shift if true, then a shift trim is enforced.
+    void update(pts diff, bool shift = false);
 
     ~TrimClip();
 

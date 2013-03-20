@@ -86,8 +86,25 @@ void BREAK();
 /// Log the command history
 void logHistory();
 
-void LeftDown();        ///< Press down left mouse button
-void LeftUp();          ///< Release left mouse button
+/// Press down left mouse button
+/// \param wait if true then a wait for idle is done
+void LeftDown(bool wait = true);
+
+/// Release left mouse button
+/// \param wait if true then a wait for idle is done
+void LeftUp(bool wait = true);
+
+/// Press down left mouse button
+/// \param wait if true then a wait for idle is done
+void RightDown(bool wait = true);
+
+/// Release left mouse button
+/// \param wait if true then a wait for idle is done
+void RightUp(bool wait = true);
+
+/// Press and release left mouse button
+/// \param wait if true then a wait for idle is done
+void ClickLeft(bool wait = true);
 
 /// Press and release right mouse button
 /// \param wait if true then a wait for idle is done

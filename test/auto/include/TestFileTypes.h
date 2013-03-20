@@ -1,8 +1,6 @@
 #ifndef TEST_FILE_TYPES_H
 #define TEST_FILE_TYPES_H
 
-#include "SuiteCreator.h"
-
 namespace model {
 class IPath;
 typedef boost::shared_ptr<IPath> IPathPtr;
