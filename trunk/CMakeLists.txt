@@ -48,7 +48,9 @@ SET(Boost_DEBUG TRUE)
 SET(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.45 REQUIRED COMPONENTS date_time thread filesystem serialization system)
 # Find all dlls matching 'release' and 'threading-multi'
-foreach(BOOSTLIB date_time thread filesystem serialization system)
+# Note: For some boost libraries, there is no dependency for building (above), but these dlls 
+#       are still required (due to dependencies) when installing into C:\Program Files.
+foreach(BOOSTLIB chrono date_time thread filesystem serialization system)
     FILE( GLOB_RECURSE BOOST_INSTALL_NEW $ENV{BOOST_ROOT}/bin.v2/libs/${BOOSTLIB}/*.dll )
     foreach( DLLNAME ${BOOST_INSTALL_NEW} )
         if((${DLLNAME} MATCHES "release") AND (${DLLNAME} MATCHES "threading-multi"))
@@ -100,7 +102,7 @@ ENDFOREACH(FOLDER)
 FILE(GLOB Icons             ${PROJECT_SOURCE_DIR}/icons/*?.???)
 FILE(GLOB Cursors           ${PROJECT_SOURCE_DIR}/cursors/*?.???)
 FILE(GLOB BuildFiles        ${PROJECT_SOURCE_DIR}/build/??*.*)
-FILE(GLOB HelpFiles         ${PROJECT_SOURCE_DIR}/help/??*.*)
+FILE(GLOB HtmlFiles         ${PROJECT_SOURCE_DIR}/html/?*.*)
 
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
 IF (MSVC)
@@ -149,13 +151,10 @@ ENDFOREACH(FOLDER)
 SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
 SOURCE_GROUP("cursors"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/cursors/*.*)
 SOURCE_GROUP("build" FILES ${BuildFiles} ${CmakeModulesFiles})
-SOURCE_GROUP("help" FILES ${HelpFiles})
+SOURCE_GROUP("html" FILES ${HtmlFiles})
 SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${ConfigurationFiles} ${BuildFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 
-#### HELP FILES ####
-#add_custom_command(OUTPUT HelpFiles COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/help ${PROJECT_BINARY_DIR}/help)
-
-ADD_LIBRARY(vidiot ${SOURCES_LIST} ${HEADERS_LIST} ${Icons} ${Cursors} ${BuildFiles} ${HelpFiles}) # Add HelpFiles Here to make Vidiot dependent on copying the helpfiles
+ADD_LIBRARY(vidiot ${SOURCES_LIST} ${HEADERS_LIST} ${Icons} ${Cursors} ${BuildFiles})
 
 ADD_SUBDIRECTORY(main)
 ADD_SUBDIRECTORY(test)

@@ -16,5 +16,12 @@ macro(AddCxxTest TestProjectName)
         WORKING_DIRECTORY ${TESTDIR})
         # --error-printer --runner=ParenPrinter --gui=Win32Gui 
     add_executable(${TestProjectName} ${TestRunner} ${ARGN})
-#    add_test(${TestProjectName} ${TestRunnerCommand})
+
+    # Copy html files to output folder
+    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${CMAKE_CURRENT_BINARY_DIR}/Debug/html)
+    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${CMAKE_CURRENT_BINARY_DIR}/Release/html)
+    # Copy icons to output folder
+    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Debug/icons)
+    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Release/icons)
+
 endmacro(AddCxxTest)

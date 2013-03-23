@@ -28,6 +28,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    static wxString getExeDir();
+
     static bool     Exists(const wxString& key);
 
     static bool     ReadBool  (const wxString& key);
