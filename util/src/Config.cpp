@@ -136,6 +136,18 @@ wxString Config::getFileName()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+// static
+wxString Config::getExeDir()
+{
+    wxString exepath;
+    wxFileName::SplitPath(wxStandardPaths::Get().GetExecutablePath(),&exepath,0,0);
+    wxFileName dir = wxFileName(exepath,"");
+    ASSERT(!dir.HasExt());
+    ASSERT(!dir.HasName());
+    wxString configdir = wxFileName::GetCwd();
+    return dir.GetFullPath();
+}
+
 template <class T>
 T readWithoutDefault(wxString path)
 {
