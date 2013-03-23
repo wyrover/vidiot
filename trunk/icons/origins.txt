@@ -26,6 +26,8 @@ preview-end.xpm       - was control-skip.png
 track_resize_xpm      - was arrow-resize-090.png
 
 
+move*.png:
+http://findicons.com/icon/131792/movie?width=16
 
 
 
