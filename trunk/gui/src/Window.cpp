@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include "AboutDialog.h"
 #include "Dialog.h"
 #include "Node.h"
 #include "Config.h"
@@ -16,6 +17,7 @@
 #include "UtilLog.h"
 #include "Watcher.h"
 #include "Worker.h"
+#include <wx/iconbndl.h> //todo
 
 namespace gui {
 
@@ -76,6 +78,12 @@ Window::Window()
     mDetailsView    = new DetailsView(this);
     mTimelinesView  = new TimelinesView(this);
     mProjectView    = new ProjectView(this);
+
+    ::wxInitAllImageHandlers();
+    wxIconBundle icons;
+    //todo set icon for options dialog  (or set it to no icon)
+    icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
+    SetIcons(icons);
 
     wxMenu* menufile = new wxMenu();
     menufile->Append(wxID_NEW);
@@ -324,7 +332,9 @@ void Window::onHelp(wxCommandEvent& event)
 
 void Window::onAbout(wxCommandEvent& event)
 {
-    wxMessageBox(_("Vidiot 0.1"), _("About"), wxOK | wxICON_INFORMATION, this);
+    AboutDialog* dialog = new AboutDialog();
+    dialog->ShowModal();
+    //wxMessageBox(_("Vidiot 0.1"), _("About"), wxOK | wxICON_INFORMATION, this);
 
     event.Skip();
 }
