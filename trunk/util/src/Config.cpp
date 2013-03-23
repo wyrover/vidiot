@@ -60,10 +60,19 @@ void checkBool(wxString path)
 // static
 void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestMode)
 {
+    wxString configdir = wxFileName::GetCwd();
+
+    if (configdir.Contains("Program Files"))
+    {
+        // When running from "Program Files", store this file elsewhere to avoid being unable to write.
+        configdir = wxStandardPaths::Get().GetUserConfigDir(); // Store in "C:\Users\<username>\AppData\Roaming\vidiot.ini"
+    }
+
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
     // This method ensures that the .ini file is created in the current working directory
     // which enables having multiple executables with multiple settings.
-    sFileName = wxFileName(wxFileName::GetCwd(), applicationName + ".ini").GetFullPath();
+    sFileName = wxFileName(configdir, applicationName + ".ini").GetFullPath();
+
     wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
     wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
 
