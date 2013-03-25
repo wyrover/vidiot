@@ -1,6 +1,8 @@
 #ifndef ABOUT_DIALOG_H
 #define ABOUT_DIALOG_H
 
+#include <wx/html/htmlwin.h>
+
 namespace gui {
 
 class AboutDialog
@@ -14,6 +16,11 @@ public:
 
     explicit AboutDialog();
     virtual ~AboutDialog();
+
+    void onBack(wxCommandEvent &event);
+
+    wxHtmlWindow* mHtml;
+    wxButton* mBack;
 };
 
 } // namespace
