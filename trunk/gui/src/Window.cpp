@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <wx/iconbndl.h>
 #include "AboutDialog.h"
 #include "Dialog.h"
 #include "Node.h"
@@ -17,7 +18,6 @@
 #include "UtilLog.h"
 #include "Watcher.h"
 #include "Worker.h"
-#include <wx/iconbndl.h> //todo
 
 namespace gui {
 
@@ -71,6 +71,8 @@ Window::Window()
     ,   menusequence(0)
     ,   mTestCrash(new util::TestCrash(this))
 {
+    ::wxInitAllImageHandlers();
+
     // Construction not done in constructor list due to dependency on sCurrent
     mWorker         = new Worker();
     mWatcher        = new Watcher();
@@ -79,9 +81,7 @@ Window::Window()
     mTimelinesView  = new TimelinesView(this);
     mProjectView    = new ProjectView(this);
 
-    ::wxInitAllImageHandlers();
     wxIconBundle icons;
-    //todo set icon for options dialog  (or set it to no icon)
     icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
     SetIcons(icons);
 

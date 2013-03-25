@@ -17,6 +17,10 @@ Options::Options(wxWindow* win)
     ,   mTopSizer(0)
     ,   mBoxSizer(0)
 {
+    wxIconBundle icons;
+    icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
+    SetIcons(icons);
+
     {
         addtab(_("General"));
 
