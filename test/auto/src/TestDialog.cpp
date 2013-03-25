@@ -62,6 +62,7 @@ private:
     boost::scoped_ptr<boost::thread> mThread;
 };
 
+RUNONLY(testEscape);
 void TestDialog::testEscape()
 {
     StartTestSuite();
@@ -77,17 +78,22 @@ void TestDialog::testEscape()
     }
     {
         Escape e;
-        wxString result = gui::Dialog::get().getDir("message","defualt");
+        wxString result = gui::Dialog::get().getDir("message","default");
         ASSERT_EQUALS(result,"");
     }
     {
         Escape e;
-        wxString result = gui::Dialog::get().getText("title", "message","defualt");
+        wxString result = gui::Dialog::get().getText("title", "message","default");
         ASSERT_EQUALS(result,"");
     }
     {
         Escape e;
         triggerMenu(ID_OPTIONS);
+        waitForIdle();
+    }
+    {
+        Escape e;
+        triggerMenu(wxID_ABOUT);
         waitForIdle();
     }
 }

@@ -26,15 +26,13 @@ AboutDialog::AboutDialog()
     mHtml = new wxHtmlWindow(this);
     mHtml->LoadPage(wxFileName(dir, "main.html").GetFullPath());
 
-    // todo test for testauto+manual (cmake stuff)
-
     ////////  ////////
 
     GetSizer()->Add(mHtml, wxSizerFlags(1).Expand());
 
     ////////  ////////
 
-    wxSizer* buttons = CreateButtonSizer(wxOK); // todo back button and remove tabs... make normal bg color (not white)
+    wxSizer* buttons = CreateButtonSizer(wxOK);
     ASSERT_NONZERO(buttons);
     mBack = new wxButton(this,wxID_ANY,_("Back"));
     buttons->Add(mBack);
