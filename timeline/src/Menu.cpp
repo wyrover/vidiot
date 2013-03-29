@@ -2,9 +2,10 @@
 
 #include "AudioClip.h"
 #include "AudioTrack.h"
-#include "AudioTransition_CrossFade.h"
+#include "AudioTransitionFactory.h"
 #include "Clip.h"
 #include "Combiner.h"
+#include "Config.h"
 #include "CreateAudioTrack.h"
 #include "CreateTransition.h"
 #include "CreateVideoTrack.h"
@@ -21,12 +22,12 @@
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "Track.h"
+#include "Transition.h"
 #include "TrimClip.h"
-#include "Config.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
-#include "VideoTransition_CrossFade.h"
+#include "VideoTransitionFactory.h"
 #include "Window.h"
 #include "Zoom.h"
 
@@ -442,15 +443,7 @@ void MenuHandler::createTransition(model::TransitionType type)
     VAR_INFO(type);
     PointerPositionInfo info = getMousePointer().getInfo(mPopupPosition);
     ASSERT(info.clip);
-    model::TransitionPtr transition;
-    if (info.clip->isA<model::VideoClip>())
-    {
-        transition = boost::make_shared<model::video::transition::CrossFade>();
-    }
-    else
-    {
-        transition = boost::make_shared<model::audio::transition::CrossFade>();
-    }
+    model::TransitionPtr transition = info.clip->isA<model::VideoClip>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
 
     command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.clip, transition, type);
 
@@ -504,8 +497,6 @@ void MenuHandler::createTransition(model::TransitionType type)
             {
                 delete combiner;
             }
-            // todo make transitionfactory.... avoiding having to include all types of transitions everywhere. See also Idle::addTransition
-
         }
         delete cmd;
     }

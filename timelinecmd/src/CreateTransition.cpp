@@ -1,6 +1,5 @@
 #include "CreateTransition.h"
 
-#include "AudioTransition_CrossFade.h"
 #include "Config.h"
 #include "EmptyClip.h"
 #include "IClip.h"
@@ -13,7 +12,6 @@
 #include "VideoClip.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoTransition.h"
-#include "VideoTransition_CrossFade.h"
 
 namespace gui { namespace timeline { namespace command {
 

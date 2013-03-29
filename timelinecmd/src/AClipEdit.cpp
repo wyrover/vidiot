@@ -2,7 +2,6 @@
 
 #include "Clip.h"
 #include "Config.h"
-#include "VideoTransition_CrossFade.h"
 #include "Cursor.h"
 #include "Logging.h"
 #include "EmptyClip.h"

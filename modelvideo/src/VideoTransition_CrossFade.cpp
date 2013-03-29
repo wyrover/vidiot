@@ -1,13 +1,17 @@
 #include "VideoTransition_CrossFade.h"
 
+#include "TransitionFactory.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
-#include "VideoFrame.h"
 #include "VideoComposition.h"
 #include "VideoCompositionParameters.h"
+#include "VideoFrame.h"
 
 namespace model { namespace video { namespace transition {
+
+//int __dummy__ = TransitionFactory::registerVideo<CrossFade>();
+//TransitionFactory::RegisterVideo<CrossFade> r;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

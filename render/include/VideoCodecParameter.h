@@ -15,7 +15,7 @@ DECLAREENUM(VideoCodecParameterType,
     MacroBlockDecision);
 
 template < class Archive >
-void registerVideoCodecParameterTypesForSerializaton(Archive& ar);
+void registerVideoCodecParameterTypesForSerialization(Archive& ar);
 
 wxString getHumanReadibleName(VideoCodecParameterType id);
 
