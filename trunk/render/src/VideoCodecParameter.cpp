@@ -16,7 +16,7 @@ boost::bimap<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter
     (MacroBlockDecision, _("Macro block decision"));
 
 template < class Archive >
-void registerVideoCodecParameterTypesForSerializaton(Archive& ar)
+void registerVideoCodecParameterTypesForSerialization(Archive& ar)
 {
     ar.template register_type<render::VideoCodecParameterBFrames>();
     ar.template register_type<render::VideoCodecParameterBitrate>();
@@ -25,8 +25,8 @@ void registerVideoCodecParameterTypesForSerializaton(Archive& ar)
     ar.template register_type<render::VideoCodecParameterGopSize>();
 }
 
-template void registerVideoCodecParameterTypesForSerializaton<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);
-template void registerVideoCodecParameterTypesForSerializaton<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar);
+template void registerVideoCodecParameterTypesForSerialization<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);
+template void registerVideoCodecParameterTypesForSerialization<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar);
 
 wxString getHumanReadibleName(VideoCodecParameterType id)
 {

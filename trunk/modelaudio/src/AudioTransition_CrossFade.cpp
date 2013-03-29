@@ -1,12 +1,15 @@
 #include "AudioTransition_CrossFade.h"
 
-#include "UtilLog.h"
-#include "AudioClip.h"
 #include "AudioChunk.h"
-#include "Convert.h"
+#include "AudioClip.h"
 #include "AudioCompositionParameters.h"
+#include "Convert.h"
+#include "TransitionFactory.h"
+#include "UtilLog.h"
 
 namespace model { namespace audio { namespace transition {
+
+//TransitionFactory::RegisterAudio<::model::audio::transition::CrossFade> r;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

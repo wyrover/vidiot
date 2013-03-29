@@ -29,8 +29,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testFileTypes_1_44100();
-    void testFileTypes_2_44100();
-    void testFileTypes_1_48000();
     void testFileTypes_2_48000();
 
 private:
