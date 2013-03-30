@@ -275,7 +275,7 @@ const Details& Timeline::getDetails() const
 
 void Timeline::onSize(wxSizeEvent& event)
 {
-    getSequenceView().invalidateBitmap(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
+    getSequenceView().canvasResized(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
     resize();
 }
 
@@ -343,6 +343,7 @@ void Timeline::onPaint( wxPaintEvent &event )
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
+    resize();
     Refresh(false);
     event.Skip();
 }
@@ -402,8 +403,13 @@ void Timeline::setShift(pixel shift)
 
 void Timeline::resize()
 {
-    SetVirtualSize(getSequenceView().getSize());
-    Refresh(false);
+    wxSize oldSize = GetVirtualSize();
+    wxSize newSize = getSequenceView().getSize();
+    if (oldSize != newSize)
+    {
+        SetVirtualSize(newSize);
+        Refresh(false);
+    }
     // NOT: Update(); RATIONALE: This will cause too much updates when
     //                           adding/removing/changing/replacing clips
     //                           which causes flickering.

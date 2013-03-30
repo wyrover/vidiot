@@ -22,6 +22,10 @@ namespace test {
 /// RUNWITHOUTGUI(testConversions);
 /// Same notes as for RUNONLY apply.
 ///
+/// Run only the tests AFTER (and including) one specific test:
+/// RUNFROM(testTrimming);
+/// Same notes as for RUNONLY apply.
+///
 /// Break execution and give the focus back to the tests afterwards:
 /// BREAK();
 ///
@@ -46,6 +50,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // TEST CONFIGURATION
     //////////////////////////////////////////////////////////////////////////
+
+    /// Configure the test identified by file and name to be the first test that is ran.
+    /// \param file name of file in which the test resides (NOTE: path and extensions will be stripped in this method to extract the class name)
+    /// \param test name of the method that is executed
+    /// \return 1 (required to avoid being optimized out of executable)
+    int runFrom(const char* file, const char* test);
 
     /// Configure the test identified by file and name to be the only test that is ran.
     /// \param file name of file in which the test resides (NOTE: path and extensions will be stripped in this method to extract the class name)
@@ -78,6 +88,10 @@ public:
     /// \see runWithoutGui
     bool currentTestRequiresGui();
 
+    /// Ran before each test
+    /// \return false if the test must NOT run (used in the macro below)
+    bool startTestSuite(const char* suite);
+
     /// Store the current test suite name. Used for logging and updating the window title.
     void setSuite(const char* suite);
 
@@ -92,6 +106,7 @@ private:
 
     static HelperTestSuite* sInstance;
     std::string mRunOnlySuite;
+    std::string mRunFromSuite;
     std::list<std::string> mSuitesWithoutGui;
     wxString mCurrentSuiteName;
     boost::optional<std::string> mCurrentTestName;
@@ -105,13 +120,21 @@ private:
 };
 
 #define StartTestSuite() \
-    if (!HelperTestSuite::get().currentTestIsEnabled()) return; \
-    HelperTestSuite::get().setSuite(__FUNCTION__); \
-    LOG_ERROR << "Suite start: " << __FUNCTION__; \
+    if (!HelperTestSuite::get().startTestSuite(__FUNCTION__)) return; \
     FixtureConfig ConfigFixture; \
     if (HelperTestSuite::get().currentTestRequiresGui()) ConfigFixture.SetDefaults();
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ // todo make ConfigFixture * and move this code to startTestSuite
+
 #define StartTest(expr) HelperTestSuite::get().setTest(expr); LOG_WARNING << "Test: " << expr
+
+/// Place in same file as the test case which must be the first test case that is ran.
+/// All test cases before this test case are skipped. The mentioned test case and all test
+/// cases after that are executed.
+/// Also: Only use one Suite in one set of .h/.cpp files and name it the same as the file (without .h/.cpp)
+/// This may only be called ONCE.
+#define RUNFROM(testname) int i = HelperTestSuite::get().runFrom(__FILE__,#testname)
 
 /// Place in same file as the test case which must be ran in exclusive mode
 /// Also: Only use one Suite in one set of .h/.cpp files and name it the same as the file (without .h/.cpp)

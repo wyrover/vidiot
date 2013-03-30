@@ -149,6 +149,7 @@ void TestPopupMenu::testRemoveOneEmptyInterval()
     }
 }
 
+//RUNFROM(testAdvancedRightClickScenarios);
 //RUNONLY(testAdvancedRightClickScenarios);
 void TestPopupMenu::testAdvancedRightClickScenarios()
 {
@@ -176,6 +177,7 @@ void TestPopupMenu::testAdvancedRightClickScenarios()
     }
     {
         StartTest("Open popup menu then start a scrolling via right mouse down");
+        Drag(From(Center(VideoClip(0,4))).To(wxPoint(getTimeline().GetRect().GetRight() - 10, VCenter(VideoTrack(0))))); // extend the track to enable scrolling
         Move(Center(VideoClip(0,4)));
         ClickRight(false); // The menu is shown (started from state rightdown)
         pause(100);
@@ -184,10 +186,10 @@ void TestPopupMenu::testAdvancedRightClickScenarios()
         ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
         wxUIActionSimulator().MouseMove(wxGetMouseState().GetPosition() - wxPoint(50,0));
         RightDown();
-        pause(100);
+        waitForIdle();
         ASSERT(!getTimeline().getMenuHandler().isPopupShown());
         wxUIActionSimulator().MouseMove(wxGetMouseState().GetPosition() - wxPoint(150,0));
-        pause(100);
+        waitForIdle();
         ASSERT_EQUALS(getTimeline().getScrolling().getOffset().x, 150);
         ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
         RightUp(false);

@@ -2,6 +2,7 @@
 
 #include "AudioView.h"
 #include "Constants.h"
+#include "Convert.h"
 #include "Cursor.h"
 #include "Drag.h"
 #include "Intervals.h"
@@ -78,14 +79,23 @@ const AudioView& SequenceView::getAudio() const
     return *mAudioView;
 }
 
+void SequenceView::canvasResized()
+{
+    invalidateBitmap();
+    mTimescaleView->invalidateBitmap();
+    // todo check if intervalsview still goes ok on resizing/scrolling
+
+}
+
 pixel SequenceView::minimumWidth() const
 {
+    pts length =
+        getSequence()->getLength() +
+        model::Convert::timeToPts(10 * model::Constants::sSecond); // Add 10 extra seconds
     return
         std::max(
-        std::max(
-        getTimeline().GetClientSize().GetWidth(),                       // At least the widget size
-        getZoom().timeToPixels(5 * model::Constants::sMinute)),         // Minimum width of 5 minutes
-        getZoom().ptsToPixels(getSequence()->getLength()));             // At least enough to hold all clips
+        getTimeline().GetClientSize().GetWidth(),   // At least the widget size
+        getZoom().ptsToPixels(length));             // At least enough to hold all clips
 }
 
 wxSize SequenceView::requiredSize() const
@@ -181,7 +191,7 @@ void SequenceView::draw(wxBitmap& bitmap) const
 
     dc.SetBrush(Layout::get().AudioVideoDividerBrush);
     dc.SetPen(Layout::get().AudioVideoDividerPen);
-    dc.DrawRectangle(wxPoint(0,getSequence()->getDividerPosition()),wxSize(getSequenceView().getSize().GetWidth(), Layout::get().AudioVideoDividerHeight));
+    dc.DrawRectangle(wxPoint(0,getSequence()->getDividerPosition()),wxSize(getSize().GetWidth(), Layout::get().AudioVideoDividerHeight));
 
     dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
 
