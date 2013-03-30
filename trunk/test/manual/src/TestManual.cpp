@@ -44,30 +44,18 @@ void TestManual::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
+// todo audiovideodivider is always as wide as the canvas, not the entire timeline
+// todo drag and drop from project view at end of scrolled timeline goes wrong!
+// todo make it possible to zoom out further, but keep the current original zoom
+// todo scrolling with a large sequence beyond the end of the sequence: no updating.
+// todo change divider colors
+// todo do not auto open indexed auto folders?
+// todo crash with installed version: Create new project, open autofolder 2010, create sequence januari, scroll around, quit and save: access violation.
 void TestManual::testManual()
 {
     StartTestSuite();
     StartTest("Manual...");
     LOG_ERROR << dump(getSequence());
-    pause(60 * 500000);
-
-    ClickTopLeft(&getProjectView(), wxPoint(10,getProjectView().getHeaderHeight() / 2));
-    waitForIdle();
-
-    wxString sSequence( "00BlankSequence" );
-    model::SequencePtr mSequence = addSequence( sSequence,  mProjectFixture.mRoot);
-    wxString sFolder1( "00BlankFolder" );
-    model::FolderPtr folder1 = addFolder( sFolder1 );
-
-    wxFileName filepath = wxFileName(SOURCE_ROOT,"");
-    filepath.AppendDir("test");
-    filepath.SetName("MVI_0512");
-    filepath.SetExt("mov");
-    ASSERT(filepath.Exists());
-
-    model::Files files1 = addFiles( boost::assign::list_of(filepath.GetFullPath()), folder1 );
-
-    DragFromProjectViewToTimeline( files1.front(),  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(3, VCenter(VideoTrack(0))) );
 
     pause(60000 * 60); // One hour should be enough...
 }

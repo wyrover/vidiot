@@ -56,6 +56,7 @@ HelperTestSuite& HelperTestSuite::get()
 
 HelperTestSuite::HelperTestSuite()
     : mRunOnlySuite("")
+    , mRunFromSuite("")
     , mSuitesWithoutGui()
     , mCurrentSuiteName()
     , mCurrentTestName(boost::none)
@@ -79,6 +80,18 @@ bool HelperTestSuite::currentTestRunsStandAlone()
 
 bool HelperTestSuite::currentTestIsEnabled()
 {
+    if (mRunFromSuite.compare("") != 0)
+    {
+        if (mRunFromSuite.compare(currentCxxTest()) == 0)
+        {
+            // This is the first test that must run. Reset the var to enable subsequent tests to be ran.
+            mRunFromSuite = "";
+        }
+        else
+        {
+            return false;
+        }
+    }
     return allTestsAreRunning() || currentTestRunsStandAlone();
 }
 
@@ -89,9 +102,18 @@ bool HelperTestSuite::currentTestRequiresGui()
         !UtilList<std::string>(mSuitesWithoutGui).hasElement(currentCxxTest());
 }
 
+int HelperTestSuite::runFrom(const char* file, const char* test)
+{
+    ASSERT_ZERO( mRunFromSuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
+    ASSERT_ZERO( mRunOnlySuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
+    mRunFromSuite = makeFullTestName(file,test);
+    return 1;
+};
+
 int HelperTestSuite::runOnly(const char* file, const char* test)
 {
-    ASSERT_ZERO( mRunOnlySuite.compare("")); // Only one test may be 'run only' at a time
+    ASSERT_ZERO( mRunFromSuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
+    ASSERT_ZERO( mRunOnlySuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
     mRunOnlySuite = makeFullTestName(file,test);
     return 1;
 };
@@ -102,9 +124,17 @@ int HelperTestSuite::runWithoutGui(const char* file, const char* test)
     return 1;
 }
 
-void HelperTestSuite::setSuite(const char* suite)
+bool HelperTestSuite::startTestSuite(const char* suite)
 {
     mSuiteCount++;
+    if (!currentTestIsEnabled()) return false;
+    setSuite(suite); // todo setSuite superfluous now...
+    LOG_ERROR << "Suite start: " << suite;
+    return true;
+}
+
+void HelperTestSuite::setSuite(const char* suite)
+{
     std::string suitename(suite);
     mCurrentSuiteName = suitename.substr(suitename.find_last_of(':')+1);
     mCurrentSuiteName.Replace("test","Test",false);

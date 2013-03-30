@@ -38,6 +38,8 @@ public:
     AudioView& getAudio();
     const AudioView& getAudio() const;
 
+    void canvasResized(); ///< Must be called when the widget is resized
+
     pixel minimumWidth() const; ///< Required to avoid infinite recursion in SequenceView::requiredSize() and Video/AudioView::getSize()
     wxSize requiredSize() const override;  ///< @see View::requiredSize()
 
