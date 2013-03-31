@@ -1,5 +1,6 @@
 #include "SequenceView.h"
 
+#include "AudioTrack.h"
 #include "AudioView.h"
 #include "Constants.h"
 #include "Convert.h"
@@ -8,16 +9,16 @@
 #include "Intervals.h"
 #include "IntervalsView.h"
 #include "Layout.h"
+#include "ModelEvent.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
+#include "SequenceEvent.h"
 #include "Timeline.h"
 #include "TimescaleView.h"
 #include "UtilLog.h"
 #include "VideoTrack.h"
-#include "AudioTrack.h"
 #include "VideoView.h"
 #include "Zoom.h"
-#include "SequenceEvent.h"
 
 namespace gui { namespace timeline {
 
@@ -33,16 +34,30 @@ SequenceView::SequenceView(View* parent)
 ,   mIntervalsView(new IntervalsView(this))
 {
     VAR_DEBUG(this);
+
+    getSequence()->Bind(model::EVENT_LENGTH_CHANGED, &SequenceView::onSequenceLengthChanged, this);
 }
 
 SequenceView::~SequenceView()
 {
     VAR_DEBUG(this);
 
+    getSequence()->Unbind(model::EVENT_LENGTH_CHANGED, &SequenceView::onSequenceLengthChanged, this);
+
     delete mIntervalsView;  mIntervalsView = 0;
     delete mAudioView;      mAudioView = 0;
     delete mVideoView;      mVideoView = 0;
     delete mTimescaleView;  mTimescaleView = 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void SequenceView::onSequenceLengthChanged(model::EventLengthChanged& event)
+{
+    canvasResized();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,9 +97,9 @@ const AudioView& SequenceView::getAudio() const
 void SequenceView::canvasResized()
 {
     invalidateBitmap();
-    mTimescaleView->invalidateBitmap();
-    // todo check if intervalsview still goes ok on resizing/scrolling
-
+    mTimescaleView->canvasResized();
+    mAudioView->canvasResized();
+    mVideoView->canvasResized();
 }
 
 pixel SequenceView::minimumWidth() const
@@ -189,9 +204,7 @@ void SequenceView::draw(wxBitmap& bitmap) const
 
     dc.DrawBitmap(getVideo().getBitmap(),   wxPoint(0,getVideoPosition()));
 
-    dc.SetBrush(Layout::get().AudioVideoDividerBrush);
-    dc.SetPen(Layout::get().AudioVideoDividerPen);
-    dc.DrawRectangle(wxPoint(0,getSequence()->getDividerPosition()),wxSize(getSize().GetWidth(), Layout::get().AudioVideoDividerHeight));
+    drawDivider(dc, getSequence()->getDividerPosition(), Layout::AudioVideoDividerHeight);
 
     dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
 

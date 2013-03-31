@@ -29,9 +29,14 @@ TimescaleView::~TimescaleView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+void TimescaleView::canvasResized()
+{
+    invalidateBitmap();
+}
+
 wxSize TimescaleView::requiredSize() const
 {
-    return wxSize(getTimeline().getSequenceView().minimumWidth(), Layout::TimeScaleHeight);
+    return wxSize(getParent().getSize().GetWidth(), Layout::TimeScaleHeight);
 }
 
 //////////////////////////////////////////////////////////////////////////

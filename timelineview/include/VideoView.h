@@ -32,6 +32,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    void canvasResized(); ///< Must be called when the widget is resized
+
     wxSize requiredSize() const override;  ///< @see View::requiredSize()
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;

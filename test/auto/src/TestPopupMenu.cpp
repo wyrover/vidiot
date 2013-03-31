@@ -177,7 +177,12 @@ void TestPopupMenu::testAdvancedRightClickScenarios()
     }
     {
         StartTest("Open popup menu then start a scrolling via right mouse down");
+        pixel length = getTimeline().getSequenceView().getSize().GetWidth();
         Drag(From(Center(VideoClip(0,4))).To(wxPoint(getTimeline().GetRect().GetRight() - 10, VCenter(VideoTrack(0))))); // extend the track to enable scrolling
+        ASSERT_MORE_THAN(getTimeline().getSequenceView().getSize().GetWidth(),length);
+        ASSERT_MORE_THAN(getTimeline().getSequenceView().getVideo().getSize().GetWidth(),length);
+        ASSERT_MORE_THAN(getTimeline().getSequenceView().getAudio().getSize().GetWidth(),length);
+        ASSERT_MORE_THAN(getTimeline().getSequenceView().getTimescale().getSize().GetWidth(),length);
         Move(Center(VideoClip(0,4)));
         ClickRight(false); // The menu is shown (started from state rightdown)
         pause(100);

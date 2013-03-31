@@ -19,21 +19,21 @@ public:
     // DRAWING
     //////////////////////////////////////////////////////////////////////////
 
-    static const pixel TimeScaleMinutesHeight               = 10;
-    static const pixel TimeScaleSecondHeight                = 5;
-    static const pixel TimeScaleHeight                      = 25;
-    static const pixel MinimalGreyAboveVideoTracksHeight    = 10;
-    static const pixel MinimalGreyBelowAudioTracksHeight    = 10;
-    static const pixel TrackDividerHeight                   = 4;
-    static const pixel DefaultAudioVideoDividerPosition     = 100;
-    static const pixel AudioVideoDividerHeight              = 5;
-    static const pixel MinTrackHeight                       = 10;
-    static const pixel MaxTrackHeight                       = 100;
-    static const pixel ClipBorderSize                       = 2;
-    static const pixel VideoPosition                        = TimeScaleHeight + MinimalGreyAboveVideoTracksHeight;
-    static const pixel DragThreshold                        = 2;
-    static const pixel SnapDistance                         = 50;
-    static const pixel CursorClipEditDistance               = 6;
+    static const pixel TimeScaleMinutesHeight;
+    static const pixel TimeScaleSecondHeight;
+    static const pixel TimeScaleHeight;
+    static const pixel MinimalGreyAboveVideoTracksHeight;
+    static const pixel MinimalGreyBelowAudioTracksHeight;
+    static const pixel TrackDividerHeight;
+    static const pixel DefaultAudioVideoDividerPosition;
+    static const pixel AudioVideoDividerHeight;
+    static const pixel MinTrackHeight;
+    static const pixel MaxTrackHeight;
+    static const pixel ClipBorderSize;
+    static const pixel VideoPosition;
+    static const pixel DragThreshold;
+    static const pixel SnapDistance;
+    static const pixel CursorClipEditDistance;
     static       pixel ClipDescriptionBarHeight;
     static       pixel TransitionHeight;
 
@@ -53,10 +53,9 @@ public:
     const wxPen CursorPen;
     const wxPen DropAreaPen;
     const wxBrush DropAreaBrush;
-    const wxPen TrackDividerPen;
-    const wxBrush TrackDividerBrush;
-    const wxPen AudioVideoDividerPen;
-    const wxBrush AudioVideoDividerBrush;
+    const wxPen DividerPen;
+    const wxBrush DividerBrush;
+    const wxColour ClipBorderColour;
     const wxPen ClipPen;
     const wxBrush ClipBrush;
     const wxColour ClipDescriptionFGColour;

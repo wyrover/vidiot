@@ -1,6 +1,5 @@
 #include "Window.h"
 
-#include <wx/iconbndl.h>
 #include "AboutDialog.h"
 #include "Config.h"
 #include "Dialog.h"

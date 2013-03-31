@@ -44,6 +44,7 @@ extern "C" {
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <boost/serialization/utility.hpp>
 #include <boost/serialization/version.hpp> // This must be included AFTER including all archives!
 #include <boost/statechart/custom_reaction.hpp>
 #include <boost/statechart/event.hpp>
@@ -115,7 +116,9 @@ extern "C" {
 #include <wx/gdicmn.h>
 #include <wx/graphics.h>
 #include <wx/headercol.h>
+#include <wx/html/htmlwin.h>
 #include <wx/headerctrl.h>
+#include <wx/iconbndl.h>
 #include <wx/intl.h>
 #include <wx/listbook.h>
 #include <wx/menu.h>

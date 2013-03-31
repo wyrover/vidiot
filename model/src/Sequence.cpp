@@ -3,6 +3,7 @@
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
 #include "IClip.h"
+#include "ModelEvent.h"
 #include "NodeEvent.h"
 #include "Properties.h"
 #include "Render.h"
@@ -166,8 +167,14 @@ AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameter
 
 void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 {
+    BOOST_FOREACH( model::TrackPtr track, tracks )
+    {
+         track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+    }
+
     UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
     updateTracks();
+
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
     // Example: Create sequence from autofolder.
@@ -180,8 +187,14 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 
 void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 {
+    BOOST_FOREACH( model::TrackPtr track, tracks )
+    {
+         track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+    }
+
     UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
     updateTracks();
+
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
     ProcessEvent(model::EventAddAudioTracks(TrackChange(tracks, position)));
@@ -191,6 +204,7 @@ void Sequence::removeVideoTracks(Tracks tracks)
     BOOST_FOREACH( TrackPtr track, tracks )
     {
         track->clean();
+        track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
     TrackPtr position = UtilList<TrackPtr>(mVideoTracks).removeElements(tracks);
     updateTracks();
@@ -203,6 +217,7 @@ void Sequence::removeAudioTracks(Tracks tracks)
     BOOST_FOREACH( TrackPtr track, tracks )
     {
         track->clean();
+        track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
     TrackPtr position = UtilList<TrackPtr>(mAudioTracks).removeElements(tracks);
     updateTracks();
@@ -293,6 +308,12 @@ std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
     return result;
 }
 
+void Sequence::onTrackLengthChanged(EventLengthChanged& event)
+{
+    updateLength();
+    event.Skip();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // RENDERING
 //////////////////////////////////////////////////////////////////////////
@@ -352,7 +373,7 @@ void Sequence::updateTracks()
         ++index;
     }
     index = 0;
-    mAudioTrackMap.clear();
+    mAudioTrackMap.clear(); // todo to cache
     BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
         track->setIndex(index);
@@ -362,6 +383,23 @@ void Sequence::updateTracks()
 
     ASSERT(!mVideoTracks.empty()); // Avoid problems with sequences that have no tracks. Example:
     ASSERT(!mAudioTracks.empty()); // Drag from projectview to a sequence without tracks: crash in drag handling.
+
+    updateLength();
+}
+
+void Sequence::updateLength()
+{
+    pts maxlength = 0;
+    BOOST_FOREACH( TrackPtr track, getTracks() )
+    {
+        maxlength = std::max(track->getLength(), maxlength);
+    }
+
+    if (maxlength != mCache.length)
+    {
+        ProcessEvent(EventLengthChanged(maxlength)); // Handled immediately
+        mCache.length = maxlength;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

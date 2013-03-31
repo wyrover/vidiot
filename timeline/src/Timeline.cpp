@@ -37,7 +37,7 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
-:   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL|wxSUNKEN_BORDER)
+:   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL)
 ,   View(this) // Has itself as parent...
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)

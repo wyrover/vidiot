@@ -1,6 +1,5 @@
 #include "TrackView.h"
 
-#include <boost/serialization/list.hpp>
 #include "Node.h"
 #include "Clip.h"
 #include "ClipView.h"
@@ -13,7 +12,6 @@
 #include "TrackEvent.h"
 #include "Transition.h"
 #include "UtilLogWxwidgets.h"
-
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "ViewMap.h"
@@ -102,6 +100,11 @@ void TrackView::onHeightChanged( model::EventHeightChanged& event )
 // DRAWING EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+void TrackView::canvasResized()
+{
+    invalidateBitmap();
+}
+
 wxSize TrackView::requiredSize() const
 {
     return wxSize(getParent().getSize().GetWidth(),mTrack->getHeight());
@@ -141,9 +144,7 @@ void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) con
 void TrackView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
-    wxBrush b(*wxWHITE);
     dc.SetBrush(Layout::get().BackgroundBrush);
-    dc.SetBrush(b);
     dc.SetPen(Layout::get().BackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     std::list<bool> tf = boost::assign::list_of(false)(true);

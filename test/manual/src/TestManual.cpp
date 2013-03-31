@@ -44,11 +44,9 @@ void TestManual::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-// todo audiovideodivider is always as wide as the canvas, not the entire timeline
 // todo drag and drop from project view at end of scrolled timeline goes wrong!
 // todo make it possible to zoom out further, but keep the current original zoom
 // todo scrolling with a large sequence beyond the end of the sequence: no updating.
-// todo change divider colors
 // todo do not auto open indexed auto folders?
 // todo crash with installed version: Create new project, open autofolder 2010, create sequence januari, scroll around, quit and save: access violation.
 void TestManual::testManual()
