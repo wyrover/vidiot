@@ -10,6 +10,8 @@
 
 namespace model {
 
+class EventLengthChanged;
+
 /// Sequences must always have one or more video tracks and one or more audio tracks.
 /// That is done to have to check (for instance in timeline::Drag.cpp) whether there
 /// are such tracks available in the sequence.
@@ -99,6 +101,8 @@ public:
     /// Each begin and end of a clip is returned as a clip. Note that this includes the begin and end of each transition, but not (yet) the cut 'under' the transition.
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>());
 
+    void onTrackLengthChanged(EventLengthChanged& event);
+
     //////////////////////////////////////////////////////////////////////////
     // RENDERING
     //////////////////////////////////////////////////////////////////////////
@@ -124,12 +128,28 @@ private:
     pts mPosition;
     render::RenderPtr mRender;
 
+    /// Some variables are only required for better performance.
+    /// These contain 'duplicate/redundant' information.
+    struct Cache
+    {
+        Cache()
+            : length(0)
+        {
+        }
+        pts length;
+    };
+    Cache mCache;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     /// Update the various tracks upon insertion/removal etc.
     void updateTracks();
+
+    /// Update the cached length of the sequence.
+    /// Send an event if the length was changed.
+    void updateLength();
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

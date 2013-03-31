@@ -5,6 +5,28 @@
 namespace gui {
 
 //////////////////////////////////////////////////////////////////////////
+// DRAWING
+//////////////////////////////////////////////////////////////////////////
+
+const pixel Layout::TimeScaleMinutesHeight               = 10;
+const pixel Layout::TimeScaleSecondHeight                = 5;
+const pixel Layout::TimeScaleHeight                      = 25;
+const pixel Layout::MinimalGreyAboveVideoTracksHeight    = 10;
+const pixel Layout::MinimalGreyBelowAudioTracksHeight    = 10;
+const pixel Layout::TrackDividerHeight                   = 4;
+const pixel Layout::DefaultAudioVideoDividerPosition     = 100;
+const pixel Layout::AudioVideoDividerHeight              = 6;
+const pixel Layout::MinTrackHeight                       = 10;
+const pixel Layout::MaxTrackHeight                       = 100;
+const pixel Layout::ClipBorderSize                       = 2;
+const pixel Layout::VideoPosition                        = TimeScaleHeight + MinimalGreyAboveVideoTracksHeight;
+const pixel Layout::DragThreshold                        = 2;
+const pixel Layout::SnapDistance                         = 50;
+const pixel Layout::CursorClipEditDistance               = 6;
+      pixel Layout::ClipDescriptionBarHeight             = 5; // Default value.
+      pixel Layout::TransitionHeight                     = 8; // Default value
+
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -26,17 +48,16 @@ Layout::Layout()
 , CursorPen                     (*wxRED, 1)
 , DropAreaPen                   (*wxYELLOW, 1)
 , DropAreaBrush                 (*wxYELLOW_BRUSH)
-, TrackDividerPen               (*wxGREEN, 1)
-, TrackDividerBrush             (*wxGREEN,wxBRUSHSTYLE_SOLID)
-, AudioVideoDividerPen          (*wxBLUE, 1)
-, AudioVideoDividerBrush        (wxColour(10,20,30),wxBRUSHSTYLE_CROSSDIAG_HATCH)
-, ClipPen                       (*wxBLACK, ClipBorderSize)
-, ClipBrush                     (wxColour(123,123,123),wxBRUSHSTYLE_SOLID)
+, DividerPen                    (wxColour(64,64,64),1)
+, DividerBrush                  (wxColour(132,132,132),wxBRUSHSTYLE_SOLID)
+, ClipBorderColour              (32,32,32)
+, ClipPen                       (ClipBorderColour, ClipBorderSize)
+, ClipBrush                     (wxColour(160,160,160),wxBRUSHSTYLE_SOLID)
 , ClipDescriptionFGColour       (*wxWHITE)
-, ClipDescriptionBGColour       (wxColour(0,0,0))
+, ClipDescriptionBGColour       (ClipBorderColour)
 , ClipDescriptionPen            (ClipDescriptionBGColour,1)
 , ClipDescriptionBrush          (ClipDescriptionBGColour,wxBRUSHSTYLE_SOLID)
-, SelectedClipPen               (*wxBLACK,ClipBorderSize)
+, SelectedClipPen               (ClipBorderColour,ClipBorderSize)
 , SelectedClipBrush             (wxColour(80,80,80),wxBRUSHSTYLE_SOLID)
 , SnapPen                       (*wxMEDIUM_GREY_PEN)
 , SnapBrush                     (*wxMEDIUM_GREY_BRUSH)
@@ -78,8 +99,5 @@ Layout& Layout::get()
     ASSERT(wxThread::IsMain()); // To avoid threading issues with GDI objects
     return *sCurrent;
 }
-
-pixel Layout::ClipDescriptionBarHeight             = 5; // Default value.
-pixel Layout::TransitionHeight                     = 8; // Default value
 
 } // namespace

@@ -21,6 +21,8 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
+    void canvasResized(); ///< Must be called when the widget is resized
+
     wxSize requiredSize() const override;  ///< @see View::requiredSize()
 
 private:

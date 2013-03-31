@@ -1,8 +1,6 @@
 #ifndef ABOUT_DIALOG_H
 #define ABOUT_DIALOG_H
 
-#include <wx/html/htmlwin.h>
-
 namespace gui {
 
 class AboutDialog

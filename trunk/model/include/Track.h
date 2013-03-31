@@ -109,6 +109,18 @@ private:
     int mHeight;    ///< Height of this track when viewed in a timeline
     int mIndex;     ///< Index in the list of video/audio tracks
 
+    /// Some variables are only required for better performance.
+    /// These contain 'duplicate/redundant' information.
+    struct Cache
+    {
+        Cache()
+            : length(0)
+        {
+        }
+        pts length;
+    };
+    Cache mCache;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////

@@ -51,6 +51,15 @@ VideoView::~VideoView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+void VideoView::canvasResized()
+{
+    invalidateBitmap();
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    {
+        getViewMap().getView(track)->canvasResized();
+    }
+}
+
 wxSize VideoView::requiredSize() const
 {
     int width = getSequenceView().minimumWidth();
@@ -131,11 +140,9 @@ void VideoView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
-    dc.SetBrush(Layout::get().TrackDividerBrush);
-    dc.SetPen(Layout::get().TrackDividerPen);
     BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks())
     {
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::TrackDividerHeight);
+        drawDivider(dc, y, Layout::TrackDividerHeight);
         y += Layout::TrackDividerHeight;
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();

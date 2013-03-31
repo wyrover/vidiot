@@ -4,7 +4,7 @@
 #include "View.h"
 
 namespace model {
-    class EventAddVideoTracks;
+    class EventLengthChanged;
 }
 
 namespace gui { namespace timeline {
@@ -24,6 +24,12 @@ public:
 
     SequenceView(View* parent);
     virtual ~SequenceView();
+
+    //////////////////////////////////////////////////////////////////////////
+    // MODEL EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+     void onSequenceLengthChanged(model::EventLengthChanged& event);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

@@ -1,7 +1,7 @@
 #include "View.h"
 
+#include "Layout.h"
 #include "Timeline.h"
-
 #include "UtilLog.h"
 #include "ViewUpdateEvent.h"
 #include "Zoom.h"
@@ -118,6 +118,15 @@ void View::invalidateBitmap()
     VAR_DEBUG(this);
     mBitmapValid = false;
     mEvtHandler.ProcessEvent(ViewUpdateEvent(ViewUpdate(*this,wxRegion())));
+}
+
+void View::drawDivider(wxDC& dc, pixel yPosition, pixel height) const
+{
+    wxRect rect(0, yPosition, dc.GetSize().GetWidth(), height);
+    dc.SetPen(Layout::get().DividerPen);
+    dc.SetBrush(Layout::get().DividerBrush);
+        //*wxLIGHT_GREY_BRUSH);
+    dc.DrawRectangle(rect);
 }
 
 }} // namespace

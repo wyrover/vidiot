@@ -1,6 +1,5 @@
 #include "ProjectViewCreateFolder.h"
 
-#include <boost/make_shared.hpp>
 #include "UtilLog.h"
 
 namespace command {
@@ -12,7 +11,7 @@ ProjectViewCreateFolder::ProjectViewCreateFolder(model::FolderPtr parent, wxStri
 ,   mName(name)
 {
     VAR_INFO(this)(mParent)(name);
-    mCommandName = _("Add folder \"") + mName + _("\""); 
+    mCommandName = _("Add folder \"") + mName + _("\"");
 }
 
 ProjectViewCreateFolder::~ProjectViewCreateFolder()

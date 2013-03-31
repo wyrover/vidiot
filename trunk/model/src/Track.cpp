@@ -4,6 +4,7 @@
 #include "Clip.h"
 #include "Constants.h"
 #include "EmptyClip.h"
+#include "ModelEvent.h"
 #include "Node.h"
 #include "TrackEvent.h"
 #include "Transition.h"
@@ -347,6 +348,11 @@ void Track::updateClips()
         position += clip->getLength();
         index++;
         prev = clip;
+    }
+    if (mCache.length != position)
+    {
+        ProcessEvent(EventLengthChanged(position)); // Handled immediately
+        mCache.length = position;
     }
     mItClips = mClips.end(); // Must be reset, since it has become invalid
 }

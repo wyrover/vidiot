@@ -82,6 +82,8 @@ protected:
 
     virtual void draw(wxBitmap& bitmap) const = 0;  ///< Is called whenever the bitmap is 'invalidated' and a new bitmap is required.
 
+    void drawDivider(wxDC& dc, pixel yPosition, pixel height) const; ///< Helper for drawing a divider
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

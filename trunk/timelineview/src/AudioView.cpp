@@ -50,6 +50,15 @@ AudioView::~AudioView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+void AudioView::canvasResized()
+{
+    invalidateBitmap();
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    {
+        getViewMap().getView(track)->canvasResized();
+    }
+}
+
 wxSize AudioView::requiredSize() const
 {
     int width = getSequenceView().minimumWidth();
@@ -130,14 +139,14 @@ void AudioView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
-    dc.SetBrush(Layout::get().TrackDividerBrush);
-    dc.SetPen(Layout::get().TrackDividerPen);
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
     {
         dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
         y += track->getHeight();
-        dc.DrawRectangle(0, y, dc.GetSize().GetWidth(), Layout::TrackDividerHeight);
+
+        drawDivider(dc, y, Layout::TrackDividerHeight);
         y += Layout::TrackDividerHeight;
+
     }
 }
 
