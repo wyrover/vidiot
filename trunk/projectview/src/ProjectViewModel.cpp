@@ -412,7 +412,7 @@ void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
     }
     ItemsAdded(wxDataViewItem(parent->id()),items);
 
-    mView.Expand(wxDataViewItem(parent->id()));
+    // NOT: mView.Expand(wxDataViewItem(parent->id())); // This would automatically open folders when items are inserted.
 
     mView.Thaw();
 
