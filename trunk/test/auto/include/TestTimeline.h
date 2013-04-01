@@ -70,6 +70,9 @@ public:
     /// Tests (shift)trimming restrictions imposed by clips in 'other' tracks
     void testTrimmingWithOtherTracks();
 
+    /// Tests running with debug info enabled.
+    void testShowDebugInfo();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

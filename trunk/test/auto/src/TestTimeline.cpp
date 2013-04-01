@@ -825,4 +825,17 @@ void TestTimeline::testTrimmingWithOtherTracks()
     }
 }
 
+//RUNONLY(testShowDebugInfo);
+void TestTimeline::testShowDebugInfo()
+{
+    StartTestSuite();
+    model::SequencePtr sequence = getSequence();
+    Config::setShowDebugInfo(true);
+    triggerMenu(ID_CLOSESEQUENCE);
+    MoveOnScreen(Center(sequence));
+    wxUIActionSimulator().MouseDblClick();
+    pause(500);
+    Config::setShowDebugInfo(false);
+}
+
 } // namespace

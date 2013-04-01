@@ -23,6 +23,13 @@ public:
     Zoom(Timeline* timeline);
     virtual ~Zoom();
 
+    //////////////////////////////////////////////////////////////////////////
+    // ZOOM
+    //////////////////////////////////////////////////////////////////////////
+
+    // Return current zoom level
+    rational getCurrent() const;
+
     /// Change the current zoom level
     /// \param steps number of steps to change (>0 zoom in, <0 zoom out)
     void change(int steps);
