@@ -20,6 +20,7 @@ void TestAutoFolder::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
+//RUNONLY(testWatch);
 void TestAutoFolder::testWatch()
 {
     StartTestSuite();
@@ -51,6 +52,14 @@ void TestAutoFolder::testWatch()
     //}
     gui::Worker::get().waitUntilQueueEmpty(); // This assumes that this wait is started before the worker actually does the work. Racer.
 //    waitForIdle();
+
+    model::NodePtrs nodes = mProjectFixture.mRoot->find(autofolder1->getName());
+    ASSERT_MORE_THAN_ZERO(nodes.size());
+    MoveOnScreen(Center(nodes.front()));
+    wxUIActionSimulator().MouseClick(); // Select the auto folder
+    waitForIdle();
+    Type(WXK_RIGHT); // Open the auto folder
+
     ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added AutoFolder and the valid File
 
     // Clean up

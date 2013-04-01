@@ -54,7 +54,7 @@ CreateTransition::CreateTransition(model::SequencePtr sequence, model::IClipPtr 
     ASSERT(mLeft || mRight);
     if (mLeft)
     {
-        mLeftSize = defaultSize / 2; // Default length // todo do we want to use the defaultSize if the transition is a fade in or fade out?
+        mLeftSize = defaultSize / 2; // Default length
         mLeftSize = std::min( mLeftSize, -1 * mLeft->getMinAdjustEnd() ); // -1 * : getMinAdjustEnd() <= 0
         if (mRight)
         {
