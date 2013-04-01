@@ -51,6 +51,7 @@ public:
 
     // Specific getters for dedicated attributes are only cached for performance
     static bool getShowDebugInfo();
+    static void setShowDebugInfo(bool show); ///< For testing only
 
     //////////////////////////////////////////////////////////////////////////
     // DISK ACCESS

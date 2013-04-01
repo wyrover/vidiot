@@ -13,6 +13,12 @@ DEFINE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
 static rational sDefaultZoom(1,5);
 typedef std::list<rational> zoomlist;
 static zoomlist sZooms = boost::assign::list_of
+(rational(1,120))
+(rational(1,60))
+(rational(1,45))
+(rational(1,30))
+(rational(1,20))
+(rational(1,15))
 (rational(1,10))
 (rational(1,9))
 (rational(1,8))
@@ -39,6 +45,15 @@ Zoom::Zoom(Timeline* timeline)
 Zoom::~Zoom()
 {
     VAR_DEBUG(this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// ZOOM
+//////////////////////////////////////////////////////////////////////////
+
+rational Zoom::getCurrent() const
+{
+    return mZoom;
 }
 
 void Zoom::change(int steps)

@@ -124,7 +124,7 @@ void MousePointer::setPosition(wxPoint position)
             left = info.clip->getLeftPts();
             right = info.clip->getRightPts();
         }
-        gui::StatusBar::get().setDebugText( wxString::Format("MOUSE: (%3d,%3d) PTS: [%5d] CLIP: [%5lld,%5lld)", mCurrent.x, mCurrent.y, getZoom().pixelsToPts(mCurrent.x), left, right) );
+        gui::StatusBar::get().setDebugText( wxString::Format("POS:(%3d,%3d) PTS:[%5d] CLIP:[%5ld,%5ld)", mCurrent.x, mCurrent.y, getZoom().pixelsToPts(mCurrent.x), left, right) ); // todo make one test just starting with debug info enabled...
     }
 }
 
