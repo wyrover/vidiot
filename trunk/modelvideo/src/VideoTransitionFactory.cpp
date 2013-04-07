@@ -15,13 +15,6 @@ VideoTransitionFactory::VideoTransitionFactory()
     add(boost::make_shared<model::video::transition::CrossFade>());
 }
 
-// static
-VideoTransitionFactory& VideoTransitionFactory::get()
-{
-    static VideoTransitionFactory factory;
-    return factory;
-}
-
 template < class Archive >
 void VideoTransitionFactory::registerTypesForSerialization(Archive& ar)
 {

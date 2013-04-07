@@ -10,9 +10,15 @@ namespace util {
 }
 
 namespace model {
-class EventOpenProject;
-class EventCloseProject;
-class EventRenameProject;
+    namespace audio {
+        class AudioTransitionFactory;
+    }
+    class EventOpenProject;
+    class EventCloseProject;
+    class EventRenameProject;
+    namespace video {
+        class VideoTransitionFactory;
+    }
 }
 
 namespace gui {
@@ -151,6 +157,9 @@ private:
     util::TestCrash*    mTestCrash;
 
     wxAuiManager        mUiManager;
+
+    model::audio::AudioTransitionFactory* mAudioTransitionFactory;
+    model::video::VideoTransitionFactory* mVideoTransitionFactory;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

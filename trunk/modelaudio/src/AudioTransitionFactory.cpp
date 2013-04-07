@@ -15,13 +15,6 @@ AudioTransitionFactory::AudioTransitionFactory()
     add(boost::make_shared<model::audio::transition::CrossFade>());
 }
 
-// static
-AudioTransitionFactory& AudioTransitionFactory::get()
-{
-    static AudioTransitionFactory factory;
-    return factory;
-}
-
 template < class Archive >
 void AudioTransitionFactory::registerTypesForSerialization(Archive& ar)
 {

@@ -5,7 +5,7 @@ SOURCE_GROUP("exe" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/main/src/.* FILES CM
 
 # icons.rc is required to embed the icon file in the executable
 ADD_EXECUTABLE(main WIN32 src/main.cpp ${installfiles} ../icons/icons.rc)
-
+SET_TARGET_PROPERTIES(main PROPERTIES OUTPUT_NAME Vidiot)
 TARGET_LINK_LIBRARIES(main vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
 
 COPY_MSVC_PROJECT_USER_FILE(main)

@@ -79,6 +79,8 @@ public:
         mThread.reset();
         if (mFile != 0)
         {
+            static std::string sDone(" CLOSE");
+            fwrite(sDone.c_str(), 1, sDone.length(), mFile);
             fclose(mFile);
             mFile = 0;
         }
