@@ -2,15 +2,16 @@
 #define MODEL_VIDEO_TRANSITION_FACTORY_H
 
 #include "TransitionFactory.h"
+#include "UtilSingleInstance.h"
 
 namespace model { namespace video {
 
-class VideoTransitionFactory : public TransitionFactory
+class VideoTransitionFactory
+    : public TransitionFactory
+    , public SingleInstance<VideoTransitionFactory>
 {
 public:
     VideoTransitionFactory();
-
-    static VideoTransitionFactory& get();
 
     template < class Archive >
     void registerTypesForSerialization(Archive& ar);

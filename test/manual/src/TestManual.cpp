@@ -44,8 +44,6 @@ void TestManual::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-// todo do not auto open indexed auto folders?
-// todo crash with installed version: Create new project, open autofolder 2010, create sequence januari, scroll around, quit and save: access violation.
 void TestManual::testManual()
 {
     StartTestSuite();

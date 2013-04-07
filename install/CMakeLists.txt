@@ -6,17 +6,17 @@ SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${APPNAME})
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${APPNAME})
 SET(CPACK_PACKAGE_VENDOR "Eric Raijmakers")
 SET(CPACK_GENERATOR "NSIS")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Readme.txt") # todo
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt") # todo
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Readme.txt")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
 SET(CPACK_PACKAGE_VERSION_MAJOR "0")
 SET(CPACK_PACKAGE_VERSION_MINOR "1")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CPACK_PACKAGE_EXECUTABLES main;vidiot)
+SET(CPACK_PACKAGE_EXECUTABLES Vidiot;Vidiot)
 IF(WIN32 AND NOT UNIX)
   # There is a bug in NSI that does not handle full unix paths properly. Make
   # sure there is at least one set of four (4) backlasshes.
   # NOTE: movie_all.ico generated via http://iconverticons.com/online/
-  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\main.exe") # Icon used in windows control panel (add/remove programs)
+  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\Vidiot.exe") # Icon used in windows control panel (add/remove programs)
   SET(CPACK_NSIS_DISPLAY_NAME "${APPNAME}")
   SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
   SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")

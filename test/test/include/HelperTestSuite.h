@@ -92,9 +92,6 @@ public:
     /// \return false if the test must NOT run (used in the macro below)
     bool startTestSuite(const char* suite);
 
-    /// Store the current test suite name. Used for logging and updating the window title.
-    void setSuite(const char* suite);
-
     /// Store the current test name. Used for logging and updating the window title.
     void setTest(const char* test);
 
@@ -123,9 +120,6 @@ private:
     if (!HelperTestSuite::get().startTestSuite(__FUNCTION__)) return; \
     FixtureConfig ConfigFixture; \
     if (HelperTestSuite::get().currentTestRequiresGui()) ConfigFixture.SetDefaults();
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- // todo make ConfigFixture * and move this code to startTestSuite
 
 #define StartTest(expr) HelperTestSuite::get().setTest(expr); LOG_WARNING << "Test: " << expr
 

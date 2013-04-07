@@ -1,6 +1,7 @@
 #include "Window.h"
 
 #include "AboutDialog.h"
+#include "AudioTransitionFactory.h"
 #include "Config.h"
 #include "Dialog.h"
 #include "ids.h"
@@ -15,6 +16,7 @@
 #include "TimelinesView.h"
 #include "UtilLog.h"
 #include "UtilTestCrash.h"
+#include "VideoTransitionFactory.h"
 #include "Watcher.h"
 #include "Worker.h"
 
@@ -69,6 +71,8 @@ Window::Window()
     ,   menuedit(0)
     ,   menusequence(0)
     ,   mTestCrash(new util::TestCrash(this))
+    ,   mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
+    ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
 {
     ::wxInitAllImageHandlers();
 
@@ -231,6 +235,9 @@ Window::~Window()
     wxStatusBar* sb = GetStatusBar();
     SetStatusBar(0);
     sb->wxWindowBase::Destroy();
+
+    delete mAudioTransitionFactory;
+    delete mVideoTransitionFactory;
 
     delete mTestCrash; // Unbind the crash method
     setSequenceMenu(0); // Ensure destruction of sequenceMenu

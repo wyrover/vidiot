@@ -128,18 +128,13 @@ bool HelperTestSuite::startTestSuite(const char* suite)
 {
     mSuiteCount++;
     if (!currentTestIsEnabled()) return false;
-    setSuite(suite); // todo setSuite superfluous now...
-    LOG_ERROR << "Suite start: " << suite;
-    return true;
-}
-
-void HelperTestSuite::setSuite(const char* suite)
-{
     std::string suitename(suite);
     mCurrentSuiteName = suitename.substr(suitename.find_last_of(':')+1);
     mCurrentSuiteName.Replace("test","Test",false);
     mCurrentTestName.reset();
+    LOG_ERROR << "Suite start: " << suite;
     updateTitle();
+    return true;
 }
 
 void HelperTestSuite::setTest(const char* test)
