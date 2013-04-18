@@ -10,7 +10,7 @@ TARGET_LINK_LIBRARIES(main vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FF
 
 COPY_MSVC_PROJECT_USER_FILE(main)
 
-INSTALL(TARGETS main COMPONENT Vidiot DESTINATION bin)
+INSTALL(TARGETS main COMPONENT Vidiot DESTINATION .)
 
 # Copy html files to output folder
 add_custom_command(TARGET main DEPENDS ${HtmlFiles} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${CMAKE_CURRENT_BINARY_DIR}/Debug/html)

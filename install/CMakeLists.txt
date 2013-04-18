@@ -11,12 +11,13 @@ SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
 SET(CPACK_PACKAGE_VERSION_MAJOR "0")
 SET(CPACK_PACKAGE_VERSION_MINOR "1")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CPACK_PACKAGE_EXECUTABLES Vidiot;Vidiot)
+SET(CPACK_PACKAGE_EXECUTABLES "" "") # See http://public.kitware.com/Bug/view.php?id=7828
+SET(CPACK_NSIS_MENU_LINKS "${APPNAME}.exe" "${APPNAME}")
 IF(WIN32 AND NOT UNIX)
   # There is a bug in NSI that does not handle full unix paths properly. Make
   # sure there is at least one set of four (4) backlasshes.
   # NOTE: movie_all.ico generated via http://iconverticons.com/online/
-  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\Vidiot.exe") # Icon used in windows control panel (add/remove programs)
+  SET(CPACK_NSIS_INSTALLED_ICON_NAME "${APPNAME}.exe") # Icon used in windows control panel (add/remove programs)
   SET(CPACK_NSIS_DISPLAY_NAME "${APPNAME}")
   SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
   SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\sourceforge.net\\\\projects\\\\vidiot")
@@ -26,15 +27,15 @@ IF(WIN32 AND NOT UNIX)
   set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie_all.ico") #  Required for icon on installer AND uninstaller
   set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie_all.ico")  #  Required for icon on installer AND uninstaller
 
-  install(FILES ${FFMPEG_INSTALL} COMPONENT Vidiot DESTINATION bin)
-  install(FILES ${PORTAUDIO_INSTALL} COMPONENT Vidiot DESTINATION bin)
-  install(FILES ${SOUNDTOUCH_INSTALL} COMPONENT Vidiot DESTINATION bin)
-  install(FILES ${BOOST_INSTALL} COMPONENT Vidiot DESTINATION bin)
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/html/ COMPONENT Vidiot DESTINATION bin/html)
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/icons/ COMPONENT Vidiot DESTINATION bin/icons)
+  install(FILES ${FFMPEG_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
+  install(FILES ${PORTAUDIO_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
+  install(FILES ${SOUNDTOUCH_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
+  install(FILES ${BOOST_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/html/ COMPONENT ${APPNAME} DESTINATION html)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/icons/ COMPONENT ${APPNAME} DESTINATION icons)
 
 ELSE(WIN32 AND NOT UNIX)
-  SET(CPACK_STRIP_FILES "bin/Vidiot")
+  SET(CPACK_STRIP_FILES "${APPNAME}")
   SET(CPACK_SOURCE_STRIP_FILES "")
 ENDIF(WIN32 AND NOT UNIX)
 
