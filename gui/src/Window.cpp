@@ -118,10 +118,12 @@ Window::Window()
     menusequence = new wxMenu();
 
     wxMenu* menutools = new wxMenu();
-    menutools->Append(ID_OPTIONS, _("&Options"));
+    menutools->Append(wxID_PREFERENCES, _("&Options"));
 
     wxMenu* menuhelp = new wxMenu();
     menuhelp->Append(wxID_HELP, _("Help"));
+    menuhelp->AppendSeparator();
+    menuhelp->Append(ID_OPENLOGFILE, _("Open log file"));
     menuhelp->AppendSeparator();
     menuhelp->Append(wxID_ABOUT, _("&About..."));
 
@@ -169,8 +171,9 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onLog,              this, ID_OPENLOGFILE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, wxID_PREFERENCES);
 
     GetDocumentManager()->SetMaxDocsOpen(1);
     GetDocumentManager()->FileHistoryUseMenu(menufile);
@@ -226,9 +229,11 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
+
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onHelp,             this, wxID_HELP);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onLog,              this, ID_OPENLOGFILE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, ID_OPTIONS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, wxID_PREFERENCES);
 
     mUiManager.UnInit();
 
@@ -336,12 +341,22 @@ void Window::onHelp(wxCommandEvent& event)
     wxMessageBox(_("No help yet..."), _("Help"), wxOK | wxICON_INFORMATION, this);
 }
 
+void Window::onLog(wxCommandEvent& event)
+{
+
+    if (!wxLaunchDefaultApplication(Log::getFileName()))
+    {
+        wxString msg;
+        msg << "Failed to open log file '" << Log::getFileName() << "'.";
+        Dialog::get().getConfirmation("Failed to open file", msg);
+    }
+    event.Skip();
+}
+
 void Window::onAbout(wxCommandEvent& event)
 {
     AboutDialog* dialog = new AboutDialog();
     dialog->ShowModal();
-    //wxMessageBox(_("Vidiot 0.1"), _("About"), wxOK | wxICON_INFORMATION, this);
-
     event.Skip();
 }
 

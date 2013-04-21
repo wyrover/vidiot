@@ -21,8 +21,8 @@ enum
     ID_RENDERSETTINGS,
     ID_RENDERALL,
     ID_CLOSESEQUENCE,
-    // Options menu
-    ID_OPTIONS,
+    // Help menu
+    ID_OPENLOGFILE,
     // Project view popup menu
     meID_NEW_FOLDER,
     meID_NEW_AUTOFOLDER,
