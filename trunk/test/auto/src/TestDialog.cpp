@@ -88,7 +88,7 @@ void TestDialog::testEscape()
     }
     {
         Escape e;
-        triggerMenu(ID_OPTIONS);
+        triggerMenu(wxID_PREFERENCES);
         waitForIdle();
     }
     {
