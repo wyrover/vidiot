@@ -179,6 +179,7 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 
 =================== INSTALLER ===================
 * Install NSIS
+* Copy build/FileAssoc.nsh into "C:\Program Files (x86)\NSIS\Include"
 
 =================== BUILD ===================
 * Run <VIDIOT_SRC>/build/RunCMake.bat
