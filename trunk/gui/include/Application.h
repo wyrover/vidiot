@@ -10,6 +10,8 @@ struct IEventLoopListener;
 
 namespace gui {
 
+class CommandLine;
+
 DECLARE_EVENT(EVENT_IDLE_TRIGGER, EventIdleTrigger, bool);
 
 class Application
@@ -71,6 +73,9 @@ public:
     void OnUnhandledException() override;
     void OnFatalException() override;
 
+    virtual void OnInitCmdLine (wxCmdLineParser &parser) override;
+    virtual bool OnCmdLineParsed (wxCmdLineParser &parser) override;
+
     //////////////////////////////////////////////////////////////////////////
     // IASSERT
     //////////////////////////////////////////////////////////////////////////
@@ -86,6 +91,7 @@ private:
     test::IEventLoopListener* mEventLoopListener;
     boost::condition_variable mConditionIdle;
     boost::mutex mMutexIdle;
+    boost::shared_ptr<CommandLine> mCommandLine;
 };
 
 } // namespace

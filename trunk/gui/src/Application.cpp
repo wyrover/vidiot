@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include <wx/cmdline.h>// todo includes only used once: not precompiled
+#include "CommandLine.h"
 #include "Config.h"
 #include "Dialog.h"
 #include "IEventLoopListener.h"
@@ -16,6 +18,28 @@ wxIMPLEMENT_APP_NO_MAIN(Application);
 
 DEFINE_EVENT(EVENT_IDLE_TRIGGER,  EventIdleTrigger, bool);
 
+struct wxLogImpl : public wxLog
+{
+    virtual void DoLog(wxLogLevel level, const wxChar *msg, time_t timestamp) override
+    {
+        wxString wxMsg(msg);
+        wxString wxLvl("wxLOG_LvlUnknown");
+        switch (level)
+        {
+        case wxLOG_FatalError:    wxLvl = "wxLOG_FatalError"; break;
+        case wxLOG_Error:         wxLvl = "wxLOG_Error"; break;
+        case wxLOG_Warning:       wxLvl = "wxLOG_Warning"; break;
+        case wxLOG_Message:       wxLvl = "wxLOG_Message"; break;
+        case wxLOG_Status:        wxLvl = "wxLOG_Status"; break;
+        case wxLOG_Info:          wxLvl = "wxLOG_Info"; break;
+        case wxLOG_Debug:         wxLvl = "wxLOG_Debug"; break;
+        case wxLOG_Trace:         wxLvl = "wxLOG_Trace"; break;
+        }
+
+        Log().get("WX     ") << wxLvl << ' ' << wxMsg;
+    }
+};
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -26,6 +50,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     :   wxApp()
     ,   IAssert()
     ,   mEventLoopListener(eventLoopListener)
+    ,   mCommandLine(boost::make_shared<CommandLine>())
 {
     // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
     wxHandleFatalExceptions(false);
@@ -113,6 +138,8 @@ bool Application::OnInit()
     {
         return false;
     }
+
+    wxLog::SetActiveTarget(new wxLogImpl()); // Instantiated here. This ensures that wxWidgets messages are included in the log file and do not pop up new windows.
 
     // Done before options initialization since after initializing the options,
     // the avcodec logging is initialized, which requires that avcodec is initialized.
@@ -235,6 +262,29 @@ void Application::OnFatalException()
 {
     LOG_ERROR;
     Dialog::get().getDebugReport();
+}
+
+void Application::OnInitCmdLine (wxCmdLineParser &parser)
+{
+    static const wxCmdLineEntryDesc cmdLineDesc[] =
+    {
+        { wxCMD_LINE_SWITCH, "h", "help", "show help" },
+        { wxCMD_LINE_SWITCH, "v", "verbose", "be verbose" }, // Required for running debug (apparently for logging)
+        { wxCMD_LINE_OPTION, "e", "edit", "edit given file" },
+        //{ wxCMD_LINE_PARAM, NULL, NULL, "input file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE },
+        { wxCMD_LINE_NONE }
+    };
+    parser.SetDesc(cmdLineDesc);
+}
+
+bool Application::OnCmdLineParsed (wxCmdLineParser &parser)
+{
+    wxString filename;
+    if (parser.Found("e", &filename))
+    {
+        CommandLine::get().EditFile = boost::optional<wxString>(filename);
+    }
+    return wxApp::OnCmdLineParsed(parser);
 }
 
 //////////////////////////////////////////////////////////////////////////

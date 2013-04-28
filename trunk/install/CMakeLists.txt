@@ -1,5 +1,6 @@
 INCLUDE(InstallRequiredSystemLibraries)
 
+
 # http://www.vtk.org/Wiki/CMake:CPackPackageGenerators#NSIS_Generator_Specifics_settings
 SET(APPNAME Vidiot)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${APPNAME})
@@ -26,6 +27,15 @@ IF(WIN32 AND NOT UNIX)
   set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie150x57.bmp") # Icon in the header of the installer: Use 150x57 pixels, 32 bit A8R8G8B8, Do not write color space info (GIMP)
   set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie_all.ico") #  Required for icon on installer AND uninstaller
   set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\icons\\\\movie_all.ico")  #  Required for icon on installer AND uninstaller
+
+   set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!include FileAssoc.nsh
+      !insertmacro APP_ASSOCIATE 'vid' 'vidiot.projectfile' 'Vidiot project file' '$INSTDIR\\\\Vidiot.exe,0' 'Open with Vidiot' '$INSTDIR\\\\Vidiot.exe /e \\\"%1\\\"'
+      System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'"
+   )
+
+   set (CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "!insertmacro APP_UNASSOCIATE 'vid' 'vidiot.projectfile'
+       System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'"
+   )
 
   install(FILES ${FFMPEG_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
   install(FILES ${PORTAUDIO_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
