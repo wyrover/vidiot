@@ -158,13 +158,13 @@ bool Project::DoOpenDocument(const wxString& file)
     std::ifstream store(file.mb_str(), wxSTD ios::binary);
     if ( !store )
     {
-        gui::Dialog::get().getConfirmation(_("Open Failed"),_("The file could not be opened."));
+        gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not open: " + file));
         return false;
     }
     LoadObject(store);
     if ( !store )
     {
-        gui::Dialog::get().getConfirmation(_("Open Failed"),_("The file contents could not be read."));
+        gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file));
         return false;
     }
     return true;

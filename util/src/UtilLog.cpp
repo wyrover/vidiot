@@ -178,21 +178,19 @@ void Log::flush()
 
 void Log::init(const wxString& testApplicationName, const wxString& applicationName)
 {
-    // File name initialization:
-    // - Normally, <Temp>/ApplicationName_ProcessId.log is used.
-    // - For module test, <Cwd>/Application::sTestApplicationName.log is used.
-    wxString logFileName(applicationName);
-    if (applicationName.IsSameAs(testApplicationName))
+    wxFileName logFile(wxStandardPaths::Get().GetExecutablePath());
+    logFile.SetExt("log"); // Default, log in same dir as executable
+
+    if (logFile.GetFullPath().Contains("Program Files"))
     {
-        logFileName << ".log"; // For test, log file with fixed name in same dir as config file.
-        logFileName = wxFileName(wxFileName::GetCwd(),logFileName).GetFullPath(); // Must be full path for debug report
+        // When running from "Program Files" (installed version), store this file elsewhere to avoid being unable to write.
+        logFile.SetPath(wxStandardPaths::Get().GetTempDir()); // Store in TEMP
+
+        wxString nameWithProcessId; nameWithProcessId << logFile.GetName() << '_' << wxGetProcessId();
+        logFile.SetName(nameWithProcessId);
     }
-    else
-    {
-        logFileName << "_" << wxGetProcessId() << ".log";
-        logFileName = wxFileName(wxStandardPaths::Get().GetTempDir(),logFileName).GetFullPath();	// Default in TEMP
-    }
-    sFilename = std::string(logFileName);
+
+    sFilename = std::string(logFile.GetFullPath());
 
     // Start the logger
     sWriter = new LogWriter();

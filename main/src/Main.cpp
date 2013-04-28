@@ -12,7 +12,7 @@
         /// causes repeated exceptions.
 bool exceptionShown = false;
 
-LONG __stdcall ExceptionFilter( EXCEPTION_POINTERS* exception ) 
+LONG __stdcall ExceptionFilter( EXCEPTION_POINTERS* exception )
 {
     if (exceptionShown) return EXCEPTION_CONTINUE_EXECUTION;
     exceptionShown = true;
@@ -40,16 +40,16 @@ void PureVirtualCallHandler(void)
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
 }
 
-extern "C" int WINAPI WinMain(HINSTANCE hInstance,                      
-                              HINSTANCE hPrevInstance,                  
-                              wxCmdLineArgType lpCmdLine,     
-                              int nCmdShow)                             
-{                           
+extern "C" int WINAPI WinMain(HINSTANCE hInstance,
+                              HINSTANCE hPrevInstance,
+                              wxCmdLineArgType lpCmdLine,
+                              int nCmdShow)
+{
     //wxDISABLE_DEBUG_SUPPORT();
     //wxDISABLE_ASSERTS_IN_RELEASE_BUILD();
     wxDISABLE_DEBUG_LOGGING_IN_RELEASE_BUILD();
 
- 	SetUnhandledExceptionFilter(ExceptionFilter); 
+ 	SetUnhandledExceptionFilter(ExceptionFilter);
     _CrtSetReportMode(_CRT_ASSERT, 0); // Disable CRT message box
     _set_invalid_parameter_handler(InvalidParameterHandler);
     _set_purecall_handler(PureVirtualCallHandler);
@@ -59,9 +59,11 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
     main = new gui::Application();
     wxApp::SetInstance(main);
     wxEntryStart(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
-    wxTheApp->OnInit();
-    wxTheApp->OnRun();
-    wxTheApp->OnExit();
+    if (wxTheApp->OnInit())
+    {
+        wxTheApp->OnRun();
+        wxTheApp->OnExit();
+    }
     wxEntryCleanup();
     return 0;
-}                                                                       
+}

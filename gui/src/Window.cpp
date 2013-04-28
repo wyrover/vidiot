@@ -2,6 +2,7 @@
 
 #include "AboutDialog.h"
 #include "AudioTransitionFactory.h"
+#include "CommandLine.h"
 #include "Config.h"
 #include "Dialog.h"
 #include "ids.h"
@@ -198,12 +199,19 @@ Window::Window()
 
 void Window::init()
 {
-    if (Config::ReadBool(Config::sPathAutoLoadEnabled))
+    if (CommandLine::get().EditFile)
     {
-        wxFileHistory* history = GetDocumentManager()->GetFileHistory();
-        if (history->GetCount() > 0)
+        GetDocumentManager()->CreateDocument(*CommandLine::get().EditFile);
+    }
+    else
+    {
+        if (Config::ReadBool(Config::sPathAutoLoadEnabled))
         {
-            GetDocumentManager()->CreateDocument(history->GetHistoryFile(0), wxDOC_SILENT);
+            wxFileHistory* history = GetDocumentManager()->GetFileHistory();
+            if (history->GetCount() > 0)
+            {
+                GetDocumentManager()->CreateDocument(history->GetHistoryFile(0), wxDOC_SILENT);
+            }
         }
     }
 }
