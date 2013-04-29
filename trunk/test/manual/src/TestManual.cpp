@@ -54,6 +54,7 @@ void TestManual::testManual()
 
     // todo bug: installed version performs bad for playback of sequence (stutte%ring).
     // todo bug: made sequence 2010/01 jan. At a certain zoom change, the end clips were wrong. Playback was ok. UPDATE: this happens when maximizing the window!!!
+    // todo bug: when zooming in: keep cursor position
 }
 
 } // namespace

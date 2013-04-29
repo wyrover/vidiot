@@ -372,11 +372,15 @@ void VideoDisplay::videoDisplayThread()
         // DISPLAY NEW FRAME
         //////////////////////////////////////////////////////////////////////////
 
-        if (sleepTime < 0 || sleepTime > 1000)
+        if (sleepTime < 0)
         {
             // Skip the picture
             VAR_WARNING(paTime)(mStartTime)(mCurrentTime)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(mStartPts)(videoFrame->getPts());
-            boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
+
+            // Originally the if statement read: (sleepTime < 0|| sleepTime > 1000), and the following sleep was done:
+            // boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
+            // However, sleeping with a negative value caused stuttering playback. Hence this statement was removed.
+            // Don't know why the if > 1000 was ever added though (that was probably the reason for adding the sleep).
             continue;
         }
         else
