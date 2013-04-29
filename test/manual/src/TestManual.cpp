@@ -52,13 +52,6 @@ void TestManual::testManual()
 
     pause(60000 * 60); // One hour should be enough...
 
-    // todo crash: Select vairous clips after playback. Crash:
-    //21-04-2013 11:06:27.125 WARNING t@1200 C:\Vidiot\vidiot_trunk\gui\src\VideoDisplay.cpp(378) gui::VideoDisplay::videoDisplayThread [paTime=6709207][mStartTime=6675565][mCurrentTime=33642][sleepTime=-2][nextFrameTime=33640][nextFrameTimeAdaptedForPlaybackSpeed=33640][mStartPts=31455][videoFrame->getPts()=32296]
-    //21-04-2013 11:06:41.626 ASSERT  t@03ac C:\Vidiot\vidiot_trunk\model\src\File.cpp(128) model::File::getLength [ASSERT:mNumberOfFrames > 0][mNumberOfFrames=-1]
-    //21-04-2013 11:06:41.626 ERROR   t@03ac C:\Vidiot\vidiot_trunk\gui\src\Application.cpp(246) gui::Application::onAssert
-    //21-04-2013 11:06:41.627 ERROR   t@03ac C:\Vidiot\vidiot_trunk\gui\src\Dialog.cpp(230) gui::Dialog::getDebugReport [doexit=1]
-    //21-04-2013 11:06:41.627 ERROR   t@03ac C:\Vidiot\vidiot_trunk\gui\src\Dialog.cpp(191) gui::generateDebugReport [doexit=1]
-
     // todo bug: installed version performs bad for playback of sequence (stutte%ring).
     // todo bug: made sequence 2010/01 jan. At a certain zoom change, the end clips were wrong. Playback was ok. UPDATE: this happens when maximizing the window!!!
 }

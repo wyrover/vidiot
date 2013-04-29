@@ -605,6 +605,12 @@ void File::serialize(Archive & ar, const unsigned int version)
     ar & mLastModified;
     ar & mMaxBufferSize;
     ar & mCanBeOpened;
+    if (Archive::is_loading::value)
+    {
+        // PERF: Cache each file once
+        openFile();
+        closeFile();
+    }
 }
 
 template void File::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

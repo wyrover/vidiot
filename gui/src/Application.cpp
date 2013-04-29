@@ -1,6 +1,6 @@
 #include "Application.h"
 
-#include <wx/cmdline.h>// todo includes only used once: not precompiled
+#include <wx/cmdline.h>
 #include "CommandLine.h"
 #include "Config.h"
 #include "Dialog.h"
