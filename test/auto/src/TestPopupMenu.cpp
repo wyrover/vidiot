@@ -158,7 +158,6 @@ void TestPopupMenu::testAdvancedRightClickScenarios()
     ConfigFixture.SnapToClips(false);
     triggerMenu(ID_ADDVIDEOTRACK);
     triggerMenu(ID_ADDAUDIOTRACK);
-
     // NOTE: Avoid the use of waitForIdle while the popup menu is being shown.
     //       Popup menu blocks the idle events causing long delays...
     {

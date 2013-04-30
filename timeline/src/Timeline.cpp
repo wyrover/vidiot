@@ -36,7 +36,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
+Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTransacted)
 :   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL)
 ,   View(this) // Has itself as parent...
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +71,11 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence)
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
+
+    if (beginTransacted)
+    {
+        beginTransaction();
+    }
 
     // Ensure that for newly opened timelines the initial position is ok
     getSequenceView().resetDividerPosition();
@@ -343,7 +348,7 @@ void Timeline::onPaint( wxPaintEvent &event )
 
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
-    resize();
+    // NOT: resize(); // Adding this will cause lots of unneeded 'getSize()' calls
     Refresh(false);
     event.Skip();
 }
@@ -397,23 +402,23 @@ void Timeline::setShift(pixel shift)
     Refresh(false);
 }
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
 void Timeline::resize()
 {
     wxSize oldSize = GetVirtualSize();
+    getSequenceView().invalidateBitmap(); // Otherwise, the call to getSize() below will just return the current size...
     wxSize newSize = getSequenceView().getSize();
     if (oldSize != newSize)
     {
         SetVirtualSize(newSize);
-        Refresh(false);
     }
     // NOT: Update(); RATIONALE: This will cause too much updates when
     //                           adding/removing/changing/replacing clips
     //                           which causes flickering.
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
 
 void Timeline::draw(wxBitmap& bitmap) const
 {

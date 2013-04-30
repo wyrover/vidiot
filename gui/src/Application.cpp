@@ -36,7 +36,7 @@ struct wxLogImpl : public wxLog
         case wxLOG_Trace:         wxLvl = "wxLOG_Trace"; break;
         }
 
-        Log().get("WX     ") << wxLvl << ' ' << wxMsg;
+        Log().get("WX      ") << wxLvl << ' ' << wxMsg;
     }
 };
 

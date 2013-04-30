@@ -152,10 +152,9 @@ void TrackView::draw(wxBitmap& bitmap) const
     {
         BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
         {
-            ClipView* view = getViewMap().getView(modelclip);
-            wxBitmap bitmap = view->getBitmap();
             if (modelclip->isA<model::Transition>() == transitionValue)
             {
+                ClipView* view = getViewMap().getView(modelclip);
                 pts left = view->getLeftPts();
                 wxPoint position(getZoom().ptsToPixels(left),0);
                 Shift shift = getDrag().getShift();
@@ -163,7 +162,7 @@ void TrackView::draw(wxBitmap& bitmap) const
                 {
                     position.x += getZoom().ptsToPixels(shift->mLength);
                 }
-                dc.DrawBitmap(bitmap,position);
+                dc.DrawBitmap(view->getBitmap(),position);
             }
         }
     }

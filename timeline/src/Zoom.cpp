@@ -1,5 +1,6 @@
 #include "Zoom.h"
 
+#include "Cursor.h"
 #include "UtilInt.h"
 #include "UtilLog.h"
 #include "Convert.h"
@@ -59,6 +60,7 @@ rational Zoom::getCurrent() const
 void Zoom::change(int steps)
 {
     rational oldzoom = mZoom;
+    pts cursorPosition = getCursor().getLogicalPosition();
     zoomlist::iterator it = find(sZooms.begin(), sZooms.end(), mZoom);
     while (steps > 0)
     {
@@ -78,6 +80,7 @@ void Zoom::change(int steps)
     {
         VAR_INFO(mZoom);
         QueueEvent(new ZoomChangeEvent(mZoom));
+        getCursor().setLogicalPosition(cursorPosition);
     }
 }
 
