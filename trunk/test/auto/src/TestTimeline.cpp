@@ -219,6 +219,7 @@ void TestTimeline::testDeletion()
 };
 
 //RUNONLY(testDnd);
+//RUNFROM(testDnd);
 void TestTimeline::testDnd()
 {
     StartTestSuite();
@@ -616,7 +617,7 @@ void TestTimeline::testTrimming()
     }
 }
 
-//RUNONLY(testTrimmingWithOtherTracks);
+//RUNFROM(testTrimmingWithOtherTracks);
 void TestTimeline::testTrimmingWithOtherTracks()
 {
     StartTestSuite();

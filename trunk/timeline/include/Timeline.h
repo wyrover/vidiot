@@ -23,7 +23,11 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    Timeline(wxWindow *parent, model::SequencePtr sequence);
+    /// Create a new timeline
+    /// \param parent containing window (timelinesview)
+    /// \param sequence sequence to be shown
+    /// \param beginTransacted if true, begins in 'transaction' mode (no screen updates generated yet).
+    Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTransacted = false);
     virtual ~Timeline();
 
     //////////////////////////////////////////////////////////////////////////
@@ -105,6 +109,10 @@ public:
 
     void setShift(pixel shift);
 
+    /// To be called whenever the widget contents is resized. This ensures proper virtual
+    /// size of the scrolled areas and proper enabling/disabling of scrollbars.
+    void resize();
+
     //////////////////////////////////////////////////////////////////////////
     // TRANSACTION
     //////////////////////////////////////////////////////////////////////////
@@ -171,7 +179,6 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void resize();
     void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 
     //////////////////////////////////////////////////////////////////////////

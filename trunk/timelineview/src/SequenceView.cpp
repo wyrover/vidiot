@@ -96,6 +96,7 @@ const AudioView& SequenceView::getAudio() const
 
 void SequenceView::canvasResized()
 {
+    getTimeline().resize(); // Note that this also triggers enabling/disabling of scrollbars if required
     invalidateBitmap();
     mTimescaleView->canvasResized();
     mAudioView->canvasResized();

@@ -105,7 +105,7 @@ void TestTransition::testSelectionAndDeletion()
     }
 }
 
-//RUNONLY(testDragAndDropOfOtherClips);
+//RUNFROM(testDragAndDropOfOtherClips);
 void TestTransition::testDragAndDropOfOtherClips()
 {
     StartTestSuite();
@@ -263,6 +263,7 @@ void TestTransition::testDragAndDropOfOtherClips()
     }
 }
 
+//RUNFROM(testDragAndDropOfClipsUnderTransition);
 void TestTransition::testDragAndDropOfClipsUnderTransition()
 {
     StartTestSuite();

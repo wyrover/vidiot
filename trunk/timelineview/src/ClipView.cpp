@@ -267,8 +267,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
 
     int w = bitmap.GetWidth();
     int h = bitmap.GetHeight();
-        int r = getRightPixel();
-        int l = getLeftPixel();
+    int r = getRightPixel();
+    int l = getLeftPixel();
 
     if (mClip->isA<model::EmptyClip>() ||
         (!drawDraggedClips && getDrag().contains(mClip)) ||
