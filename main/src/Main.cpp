@@ -2,6 +2,7 @@
 
 #include "UtilLog.h"
 #include "UtilLogWindows.h"
+#include "UtilStackWalker.h"
 #include "Dialog.h"
 
 #include <windows.h>
@@ -17,6 +18,7 @@ LONG __stdcall ExceptionFilter( EXCEPTION_POINTERS* exception )
     if (exceptionShown) return EXCEPTION_CONTINUE_EXECUTION;
     exceptionShown = true;
     VAR_ERROR(*exception);
+    LOG_STACKTRACE;
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
     return EXCEPTION_CONTINUE_EXECUTION;
 }
@@ -29,6 +31,7 @@ void InvalidParameterHandler(const wchar_t* expression_, const wchar_t* function
     wxString function(function_);
     wxString file(file_);
     VAR_ERROR(file)(line)(function)(expression)(reserved); // If all strings are empty in the logging: that is due to the absence of debug info in the build (release build without debug info?)
+    LOG_STACKTRACE;
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
 }
 
@@ -37,6 +40,7 @@ void PureVirtualCallHandler(void)
     if (exceptionShown) return;
     exceptionShown = true;
     LOG_ERROR;
+    LOG_STACKTRACE;
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
 }
 
