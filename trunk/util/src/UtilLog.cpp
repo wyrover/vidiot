@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "UtilAssert.h"
 #include "UtilFifo.h"
+#include "UtilStackWalker.h"
 #include <share.h> // _SH_DENYWR
 #include <time.h>
 
@@ -256,8 +257,9 @@ LogVar::~LogVar()
     {
         // NOTE: In this case, the debug break may cause the log line not to be written to file.
         //       Not an issue, since this is for developers only.
-        Log().get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str() ;
         std::cout << std::endl << std::endl << *mAssert << std::endl << std::endl << osVars.str();
+        Log().get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str();
+        LOG_STACKTRACE;
         IAssert::breakIntoDebugger(*mAssert);
     }
     else

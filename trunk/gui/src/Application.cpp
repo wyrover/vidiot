@@ -10,6 +10,7 @@
 #include "UtilInitPortAudio.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilStackWalker.h"
 #include "Window.h"
 
 namespace gui {
@@ -197,6 +198,7 @@ int Application::OnExit()
 void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *function, const wxChar *condition, const wxChar *message)
 {
     LOG_ERROR;
+    LOG_STACKTRACE;
     wxString File(file);
     wxString Function(function);
     wxString Condition(condition);
@@ -213,6 +215,7 @@ void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *fu
 bool Application::OnExceptionInMainLoop()
 {
     LOG_ERROR;
+    LOG_STACKTRACE;
     try
     {
         throw;
@@ -236,6 +239,7 @@ bool Application::OnExceptionInMainLoop()
 void Application::OnUnhandledException()
 {
     LOG_ERROR;
+    LOG_STACKTRACE;
     try
     {
         throw;
@@ -261,6 +265,7 @@ void Application::OnUnhandledException()
 void Application::OnFatalException()
 {
     LOG_ERROR;
+    LOG_STACKTRACE;
     Dialog::get().getDebugReport();
 }
 
@@ -294,6 +299,7 @@ bool Application::OnCmdLineParsed (wxCmdLineParser &parser)
 void Application::onAssert()
 {
     LOG_ERROR;
+    LOG_STACKTRACE;
     Dialog::get().getDebugReport();
 }
 
