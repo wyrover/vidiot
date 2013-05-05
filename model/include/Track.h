@@ -130,6 +130,11 @@ private:
     /// - Updates the clip's track pointer to this track
     void updateClips();
 
+    /// Updates the cached track length. Sends an event if the length has changed.
+    /// May cause new accesses to the model. Thus, ensure that the model contents
+    /// (and any changes thereof) have been signaled to the view classes.
+    void updateLength();
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////

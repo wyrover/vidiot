@@ -126,8 +126,6 @@ void Track::addClips(IClips clips, IClipPtr position)
 
     updateClips();
 
-    mItClips == mClips.end(); // Required since the iteration has become invalid.
-
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
     // Example:
@@ -135,6 +133,10 @@ void Track::addClips(IClips clips, IClipPtr position)
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
     ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, TrackPtr(), IClipPtr(), IClips()))); // Must be handled immediately
+
+    // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
+    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    updateLength();
 }
 
 void Track::removeClips(IClips clips)
@@ -153,8 +155,6 @@ void Track::removeClips(IClips clips)
 
     updateClips();
 
-    mItClips == mClips.end(); // Required since the iteration has become invalid.
-
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline).
     // Example:
@@ -162,6 +162,10 @@ void Track::removeClips(IClips clips)
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
     ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), shared_from_this(), position, clips))); // Must be handled immediately
+
+    // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
+    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    updateLength();
 }
 
 const IClips& Track::getClips()
@@ -187,29 +191,6 @@ IClipPtr Track::getClip(pts position)
     }
     return IClipPtr();
 }
-
-//IClips Track::getClips(pts start, pts end)
-//{
-//    IClips result;
-//    pts left = 0;
-//    pts right = left;
-//    BOOST_FOREACH( IClipPtr clip, mClips )
-//    {
-//        pts length = clip->getLength();
-//        right += length;
-//        if ((left <= start && right > start) || // First clip contains pts 'start'
-//            (!result.empty()))                  // Start pts already found, keep adding until the break below.
-//        {
-//            result.push_back(clip);
-//        }
-//        left += length;
-//        if (left >= end) // Subsequent clip is after end
-//        {
-//            break;
-//        }
-//    }
-//    return result;
-//}
 
 IClipPtr Track::getClipByIndex(int index)
 {
@@ -349,12 +330,17 @@ void Track::updateClips()
         index++;
         prev = clip;
     }
-    if (mCache.length != position)
-    {
-        ProcessEvent(EventLengthChanged(position)); // Handled immediately
-        mCache.length = position;
-    }
     mItClips = mClips.end(); // Must be reset, since it has become invalid
+}
+
+void Track::updateLength()
+{
+    pts length = calculate::combinedLength(mClips);
+    if (mCache.length != length)
+    {
+        ProcessEvent(EventLengthChanged(length)); // Handled immediately
+        mCache.length = length;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
