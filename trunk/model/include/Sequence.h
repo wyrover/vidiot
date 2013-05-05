@@ -147,8 +147,9 @@ private:
     /// Update the various tracks upon insertion/removal etc.
     void updateTracks();
 
-    /// Update the cached length of the sequence.
-    /// Send an event if the length was changed.
+    /// Updates the cached sequence length. Sends an event if the length has changed.
+    /// May cause new accesses to the model. Thus, ensure that the model contents
+    /// (and any changes thereof) have been signaled to the view classes.
     void updateLength();
 
     //////////////////////////////////////////////////////////////////////////

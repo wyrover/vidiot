@@ -173,6 +173,7 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
     }
 
     UtilList<TrackPtr>(mVideoTracks).addElements(tracks,position);
+
     updateTracks();
 
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
@@ -183,6 +184,10 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
     // 3. Sequence is opened and initial tracks are 'added' as views
     // 4. At some later point, the queued events result in 'double' views for the added tracks.
     ProcessEvent(model::EventAddVideoTracks(TrackChange(tracks, position)));
+
+    // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
+    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    updateLength();
 }
 
 void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
@@ -193,12 +198,18 @@ void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
     }
 
     UtilList<TrackPtr>(mAudioTracks).addElements(tracks,position);
+
     updateTracks();
 
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
     ProcessEvent(model::EventAddAudioTracks(TrackChange(tracks, position)));
+
+    // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
+    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    updateLength();
 }
+
 void Sequence::removeVideoTracks(Tracks tracks)
 {
     BOOST_FOREACH( TrackPtr track, tracks )
@@ -207,11 +218,17 @@ void Sequence::removeVideoTracks(Tracks tracks)
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
     TrackPtr position = UtilList<TrackPtr>(mVideoTracks).removeElements(tracks);
+
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
     ProcessEvent(model::EventRemoveVideoTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
+
+    // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
+    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    updateLength();
 }
+
 void Sequence::removeAudioTracks(Tracks tracks)
 {
     BOOST_FOREACH( TrackPtr track, tracks )
@@ -220,10 +237,15 @@ void Sequence::removeAudioTracks(Tracks tracks)
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
     TrackPtr position = UtilList<TrackPtr>(mAudioTracks).removeElements(tracks);
+
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
     ProcessEvent(model::EventRemoveAudioTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
+
+    // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
+    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    updateLength();
 }
 
 Tracks Sequence::getVideoTracks()
@@ -383,8 +405,6 @@ void Sequence::updateTracks()
 
     ASSERT(!mVideoTracks.empty()); // Avoid problems with sequences that have no tracks. Example:
     ASSERT(!mAudioTracks.empty()); // Drag from projectview to a sequence without tracks: crash in drag handling.
-
-    updateLength();
 }
 
 void Sequence::updateLength()
