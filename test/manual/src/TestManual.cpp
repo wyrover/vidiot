@@ -52,7 +52,6 @@ void TestManual::testManual()
 
     // todo make 3 video tracks. put 3 clips in one 'combiner'. Bottommost frame was shown when scrubbing, and when playback after shown while scrubbing.
     // howvever when scrubbing to the empty clip just before that bottommost clip, and then playback, bottommost clip not shown!!!
-
     pause(60000 * 60); // One hour should be enough...
 }
 
