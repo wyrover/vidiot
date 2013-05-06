@@ -32,7 +32,7 @@ void ASSERT_CLIPPROPERTIES(model::IClipPtr clip, model::VideoScaling scaling, bo
     int scalingdigits = boost::rational_cast<int>(scalingfactor * model::Constants::scalingPrecisionFactor);
     ASSERT_EQUALS(DetailsClipView()->getScalingSlider()->GetValue(), scalingdigits );
     ASSERT_EQUALS(floor(DetailsClipView()->getScalingSpin()->GetValue() * model::Constants::scalingPrecisionFactor), scalingdigits);
-    ASSERT_EQUALS(DetailsClipView()->getPositionXSlider()->GetValue(),position.x);
+    ASSERT_EQUALS(DetailsClipView()->getPositionXSlider()->GetValue(),position.x)(DetailsClipView()->getPositionYSlider()->GetValue());
     ASSERT_EQUALS(DetailsClipView()->getPositionXSpin()->GetValue(),position.x);
     ASSERT_EQUALS(DetailsClipView()->getPositionYSlider()->GetValue(),position.y);
     ASSERT_EQUALS(DetailsClipView()->getPositionYSpin()->GetValue(),position.y);

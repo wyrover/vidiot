@@ -126,77 +126,89 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         wxSize inputsize = generator->getSize();
         wxSize requiredVideoSize = Convert::scale(inputsize, videoscaling);
 
-        // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
-        //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
-        //            For this reason, when the videoplayer is resized, playback is stopped.
-        videoFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
-        if (videoFrame)
+        bool isEmpty = (requiredVideoSize.GetWidth() == 0) || (requiredVideoSize.GetHeight() == 0);
+
+        if (isEmpty)
         {
-            ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());
-            if (mProgress + videoFrame->getRepeat() > length)
-            {
-                videoFrame->setRepeat(length - mProgress);
-                mProgress = length;
-            }
-            else
-            {
-                mProgress += videoFrame->getRepeat();
-            }
-
-            wxSize inputsize = getInputSize();
-            wxSize outputsize = Properties::get().getVideoSize();
-            wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
-            wxRect roi(wxPoint(0,0),scaledsize);
-
-            auto determineroi = [](pixel area, pixel data, pixel& data_pos, pixel& roi_pos, pixel& roi_size)
-            {
-                roi_pos = 0;
-                roi_size = data;
-
-                if (data_pos < 0)
-                {
-                    // clip to the left/top
-                    ASSERT_MORE_THAN_EQUALS(data_pos, -1 * data);
-                    roi_pos += -1 * data_pos;
-                    roi_size -= -1 * data_pos;
-                    data_pos = 0;
-                }
-                else
-                {
-                    // clip to the right/bottom
-                    ASSERT_LESS_THAN_EQUALS(data_pos,area);
-                    if (data_pos + data > area)
-                    {
-                        roi_size = area - data_pos;
-                    }
-                }
-                roi_size = std::min(roi_size,area);
-                ASSERT_MORE_THAN_EQUALS_ZERO(roi_pos);
-                ASSERT_MORE_THAN_EQUALS_ZERO(roi_size);
-
-            };
-
-            wxPoint position(mPosition);
-            determineroi(outputsize.x,scaledsize.x,position.x,roi.x,roi.width);
-            determineroi(outputsize.y,scaledsize.y,position.y,roi.y,roi.height);
-            videoFrame->setRegionOfInterest(Convert::scale(roi, scaleToBoundingBox));
-            videoFrame->setPosition(Convert::scale(position, scaleToBoundingBox));
-            videoFrame->setOpacity(mOpacity);
+            VAR_WARNING(isEmpty)(requiredVideoSize);
+            videoFrame = boost::make_shared<EmptyFrame>(requiredVideoSize,mProgress);
+            mProgress += 1;
         }
         else
         {
-            // See AudioClip::getNextAudio
-            // The clip has not provided enough video data yet (for the pts length of the clip)
-            // but there is no more video data. This can typically happen by using a avi file
-            // for which the audio data is longer than the video data. Instead of clipping the
-            // extra audio part, empty video is added here (the user can make the clip shorter if
-            // required - thus removing the extra audio, but that's a user decision to be made).
-            LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
+            // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
+            //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
+            //            For this reason, when the videoplayer is resized, playback is stopped.
+            videoFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
+            if (videoFrame)
+            {
+                ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());
+                if (mProgress + videoFrame->getRepeat() > length)
+                {
+                    videoFrame->setRepeat(length - mProgress);
+                    mProgress = length;
+                }
+                else
+                {
+                    mProgress += videoFrame->getRepeat();
+                }
 
-            videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox(), mProgress));
+                wxSize inputsize = getInputSize();
+                wxSize outputsize = Properties::get().getVideoSize();
+                wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
+                wxRect roi(wxPoint(0,0),scaledsize);
 
-            mProgress += 1;
+                auto determineroi = [](pixel area, pixel data, pixel& data_pos, pixel& roi_pos, pixel& roi_size)
+                {
+                    roi_pos = 0;
+                    roi_size = data;
+
+                    if (data_pos < 0)
+                    {
+                        // clip to the left/top
+                        ASSERT_MORE_THAN_EQUALS(data_pos, -1 * data);
+                        roi_pos += -1 * data_pos;
+                        roi_size -= -1 * data_pos;
+                        data_pos = 0;
+                    }
+                    else
+                    {
+                        // clip to the right/bottom
+                        ASSERT_LESS_THAN_EQUALS(data_pos,area);
+                        if (data_pos + data > area)
+                        {
+                            roi_size = area - data_pos;
+                        }
+                    }
+                    roi_size = std::min(roi_size,area);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(roi_pos);
+                    ASSERT_MORE_THAN_EQUALS_ZERO(roi_size);
+
+                };
+
+                wxPoint position(mPosition);
+                determineroi(outputsize.x,scaledsize.x,position.x,roi.x,roi.width);
+                determineroi(outputsize.y,scaledsize.y,position.y,roi.y,roi.height);
+                videoFrame->setRegionOfInterest(Convert::scale(roi, scaleToBoundingBox));
+                videoFrame->setPosition(Convert::scale(position, scaleToBoundingBox));
+                videoFrame->setOpacity(mOpacity);
+            }
+            else
+            {
+                // See AudioClip::getNextAudio
+                // The clip has not provided enough video data yet (for the pts length of the clip)
+                // but there is no more video data. This can typically happen by using a avi file
+                // for which the audio data is longer than the video data. Instead of clipping the
+                // extra audio part, empty video is added here (the user can make the clip shorter if
+                // required - thus removing the extra audio, but that's a user decision to be made).
+                LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
+
+                videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox(), mProgress));
+
+                mProgress += 1;
+            }
         }
+
     }
 
     if (videoFrame)
@@ -373,8 +385,8 @@ void VideoClip::updateAutomatedScaling()
         break;
     }
 
-    ASSERT_LESS_THAN_EQUALS(mScalingFactor,Constants::sMaxScaling);
-    ASSERT_MORE_THAN_ZERO(mScalingFactor);
+    ASSERT_LESS_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sMaxScaling,model::Constants::scalingPrecisionFactor));
+    ASSERT_MORE_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sMinScaling,model::Constants::scalingPrecisionFactor));
 }
 
 void VideoClip::updateAutomatedPositioning()

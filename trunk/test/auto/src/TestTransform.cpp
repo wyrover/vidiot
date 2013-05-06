@@ -162,4 +162,34 @@ void TestTransform::testTransformViaDetailsView()
         ASSERT_EQUALS(CursorPosition(),pos); // Now the cursor is not moved: same frame is previewed
     }
 }
+
+//RUNONLY(testTransformViaDetailsView_Boundaries);
+void TestTransform::testTransformViaDetailsView_Boundaries()
+{
+    StartTestSuite();
+
+    {
+        StartTest("Scaling: Minimum scaling factor.");
+        Click(Center(VideoClip(0,5)));
+        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ClickTopLeft(DetailsClipView()->getScalingSpin(),wxPoint(2,2)); // Give focus
+        TypeN(7,WXK_DELETE); // Remove all characters
+        Type('0'); // 0 will be replaced with 'min' value
+        Type(WXK_TAB);
+        ASSERT_CLIPPROPERTIES(VideoClip(0,5),model::VideoScalingCustom,boost::rational<int>(model::Constants::sMinScaling,model::Constants::scalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(360,288)); // The scaling spin buttons increment with 0.01, not 0.0001
+        Undo();
+    }
+    {
+        StartTest("Scaling: Maximum scaling factor.");
+        Click(Center(VideoClip(0,5)));
+        ASSERT_DETAILSCLIP(VideoClip(0,5));
+        ClickTopLeft(DetailsClipView()->getScalingSpin(),wxPoint(2,2)); // Give focus
+        TypeN(7,WXK_DELETE); // Remove all characters
+        TypeN(10,'9'); // 999999999 will be replaced with 'max' value
+        Type(WXK_TAB);
+        ASSERT_CLIPPROPERTIES(VideoClip(0,5),model::VideoScalingCustom,boost::rational<int>(model::Constants::sMaxScaling,model::Constants::scalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-6040,-3312)); // The scaling spin buttons increment with 0.01, not 0.0001
+        Undo();
+    }
+}
+
 } // namespace

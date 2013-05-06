@@ -22,6 +22,8 @@ public:
 
     void testTransformViaDetailsView();
 
+    void testTransformViaDetailsView_Boundaries();
+
 private:
 
     FixtureProject mProjectFixture;
