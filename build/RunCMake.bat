@@ -83,6 +83,7 @@ if EXIST "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat" cal
 cd %BUILD_DIR%\MSVC
 set OUTTYPE="Visual Studio 9 2008"
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
+if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
 cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
 cmake -LAH  %SOURCE% > CMakeVariables.txt
 pause
