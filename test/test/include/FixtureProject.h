@@ -27,7 +27,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    FixtureProject();
+    FixtureProject(bool focusTimeline = true);
     virtual ~FixtureProject();
 
     /// Create objects here. During construction the application fixture is
@@ -43,6 +43,7 @@ public:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    bool mFocusTimeline;                    ///< True if the timeline must be focused
     wxFileName TestFilesPath;               ///< Contains the path to the test files
     model::IPaths InputFiles;               ///< Contains the filenames of the input files in the test directory
 

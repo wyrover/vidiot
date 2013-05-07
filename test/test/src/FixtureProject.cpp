@@ -20,7 +20,8 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-FixtureProject::FixtureProject()
+FixtureProject::FixtureProject(bool focusTimeline)
+    : mFocusTimeline(focusTimeline)
 {
 }
 
@@ -64,10 +65,14 @@ void FixtureProject::init()
         mOriginalLengthOfAudioClip.push_back(clip->getLength());
         mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());
     }
-    // Click in the timeline to give it the focus. A lot of test cases start
-    // with zooming in via keyboard commands. For that purpose, timeline must
-    // have the current focus.
-    Click(wxPoint(2,2));
+
+    if (mFocusTimeline)
+    {
+        // Click in the timeline to give it the focus. A lot of test cases start
+        // with zooming in via keyboard commands. For that purpose, timeline must
+        // have the current focus.
+        Click(wxPoint(2,2));
+    }
 }
 
 void FixtureProject::destroy()
