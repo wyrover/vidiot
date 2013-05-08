@@ -1,13 +1,12 @@
 #include "TimelinesView.h"
 
+//#include "Menu.h"
 #include "Node.h"
-#include "Menu.h"
-#include "Preview.h"
-#include "ProjectEvent.h"
 #include "NodeEvent.h"
+//#include "Preview.h"
+#include "ProjectEvent.h"
 #include "Sequence.h"
 #include "Timeline.h"
-
 #include "UtilLog.h"
 #include "Window.h"
 
@@ -135,6 +134,7 @@ timeline::Timeline& TimelinesView::getTimeline( model::SequencePtr sequence )
         ASSERT(f.second);
         return *(f.second);
     }
+    ASSERT_NONZERO(mNotebook.GetPageCount());
     return static_cast<timeline::Timeline&>(*mNotebook.GetPage(0));
 }
 

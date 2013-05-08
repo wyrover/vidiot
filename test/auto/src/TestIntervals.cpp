@@ -1,5 +1,16 @@
 #include "TestIntervals.h"
 
+#include "AudioClip.h"
+#include "AudioTrack.h"
+#include "EmptyClip.h"
+#include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
+#include "HelperTimelineDrag.h"
+#include "HelperWindow.h"
+#include "ids.h"
+#include "VideoClip.h"
+#include "VideoTrack.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

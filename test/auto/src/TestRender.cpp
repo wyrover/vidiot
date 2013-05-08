@@ -1,5 +1,18 @@
 #include "TestRender.h"
 
+#include "Config.h"
+#include "Dialog.h"
+#include "HelperApplication.h"
+#include "HelperConfig.h"
+#include "HelperTimeline.h"
+#include "HelperTimelinesView.h"
+#include "HelperWindow.h"
+#include "ids.h"
+#include "Render.h"
+#include "RenderSettingsDialog.h"
+#include "VideoCodecs.h"
+#include "Worker.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

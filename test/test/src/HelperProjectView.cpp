@@ -185,14 +185,14 @@ void MoveProjectView(wxPoint position)
     MoveWithinWidget(position, getProjectView().GetScreenPosition());
 }
 
-wxPoint Center( model::NodePtr node )
+wxPoint CenterInProjectView( model::NodePtr node )
 {
     return ProjectViewPosition() + findNode( node );
 }
 
 void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
 {
-    wxPoint position = Center(node);
+    wxPoint position = CenterInProjectView(node);
 
     ASSERT(!wxGetMouseState().LeftDown());
     MoveOnScreen(position);

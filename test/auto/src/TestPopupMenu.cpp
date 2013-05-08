@@ -1,5 +1,25 @@
 #include "TestPopupMenu.h"
-#include <wx/popupwin.h>
+
+#include "AudioClip.h"
+#include "AudioTrack.h"
+#include "AudioView.h"
+#include "Config.h"
+#include "EmptyClip.h"
+#include "HelperApplication.h"
+#include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
+#include "HelperTimelineDrag.h"
+#include "HelperTimelinesView.h"
+#include "HelperWindow.h"
+#include "ids.h"
+#include "Menu.h"
+#include "Scrolling.h"
+#include "SequenceView.h"
+#include "TimescaleView.h"
+#include "Transition.h"
+#include "VideoClip.h"
+#include "VideoTrack.h"
+#include "VideoView.h"
 
 namespace test {
 

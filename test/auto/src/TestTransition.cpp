@@ -1,5 +1,23 @@
 #include "TestTransition.h"
 
+#include "AudioClip.h"
+#include "AudioTrack.h"
+#include "CreateTransition.h"
+#include "DeleteSelectedClips.h"
+#include "EmptyClip.h"
+#include "ExecuteDrop.h"
+#include "HelperApplication.h"
+#include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
+#include "HelperTimelineDrag.h"
+#include "HelperTransition.h"
+#include "HelperWindow.h"
+#include "IClip.h"
+#include "TrimClip.h"
+#include "VideoClip.h"
+#include "VideoTrack.h"
+#include "VideoTransition.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

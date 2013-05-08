@@ -1,5 +1,13 @@
 #include "TestAutoFolder.h"
 
+#include <wx/ffile.h>
+#include "FixtureProject.h"
+#include "Folder.h"
+#include "HelperApplication.h"
+#include "HelperProjectView.h"
+#include "IPath.h"
+#include "Worker.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,7 +63,7 @@ void TestAutoFolder::testWatch()
 
     model::NodePtrs nodes = mProjectFixture.mRoot->find(autofolder1->getName());
     ASSERT_MORE_THAN_ZERO(nodes.size());
-    MoveOnScreen(Center(nodes.front()));
+    MoveOnScreen(CenterInProjectView(nodes.front()));
     wxUIActionSimulator().MouseClick(); // Select the auto folder
     waitForIdle();
     Type(WXK_RIGHT); // Open the auto folder

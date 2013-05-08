@@ -1,5 +1,36 @@
 #include "TestTimeline.h"
 
+#include "AudioClip.h"
+#include "AudioTrack.h"
+#include "Config.h"
+#include "CreateTransition.h"
+#include "Details.h"
+#include "DetailsClip.h"
+#include "DetailsTrim.h"
+#include "Drag.h"
+#include "EmptyClip.h"
+#include "ExecuteDrop.h"
+#include "HelperApplication.h"
+#include "HelperProjectView.h"
+#include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
+#include "HelperTimelineDrag.h"
+#include "HelperTimelinesView.h"
+#include "HelperTransition.h"
+#include "HelperWindow.h"
+#include "IClip.h"
+#include "ids.h"
+#include "Layout.h"
+#include "ProjectViewCreateAutoFolder.h"
+#include "ProjectViewCreateSequence.h"
+#include "Sequence.h"
+#include "SequenceView.h"
+#include "Transition.h"
+#include "TrimClip.h"
+#include "VideoClip.h"
+#include "VideoTrack.h"
+#include "Zoom.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////
@@ -833,7 +864,7 @@ void TestTimeline::testShowDebugInfo()
     model::SequencePtr sequence = getSequence();
     Config::setShowDebugInfo(true);
     triggerMenu(ID_CLOSESEQUENCE);
-    MoveOnScreen(Center(sequence));
+    MoveOnScreen(CenterInProjectView(sequence)); // In the project view
     wxUIActionSimulator().MouseDblClick();
     pause(500);
     Config::setShowDebugInfo(false);

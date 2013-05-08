@@ -1,5 +1,10 @@
 #include "TestDialog.h"
 
+#include "Window.h"
+#include "HelperApplication.h"
+#include "HelperWindow.h"
+#include "Dialog.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

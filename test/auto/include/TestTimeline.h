@@ -1,18 +1,6 @@
 #ifndef TEST_TIMELINE_H
 #define TEST_TIMELINE_H
 
-//namespace model {
-//class Sequence;
-//typedef boost::shared_ptr<Sequence> SequencePtr;
-//class IPath;
-//typedef boost::shared_ptr<IPath> IPathPtr;
-//typedef std::list<IPathPtr> IPaths;
-//}
-//
-//namespace gui { namespace timeline {
-//class Timeline;
-//}}
-
 namespace test
 {
 class TestTimeline : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

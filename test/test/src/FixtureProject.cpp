@@ -5,11 +5,8 @@
 #include "HelperProjectView.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
 #include "IClip.h"
-#include "Project.h"
 #include "Sequence.h"
-#include "SuiteCreator.h"
 #include "Track.h"
 #include "UtilLog.h"
 #include "Worker.h"
@@ -68,6 +65,8 @@ void FixtureProject::init()
 
     if (mFocusTimeline)
     {
+        waitForIdle();
+
         // Click in the timeline to give it the focus. A lot of test cases start
         // with zooming in via keyboard commands. For that purpose, timeline must
         // have the current focus.
