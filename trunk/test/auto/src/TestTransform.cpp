@@ -1,5 +1,18 @@
 #include "TestTransform.h"
 
+#include "Constants.h"
+#include "DetailsClip.h"
+#include "HelperApplication.h"
+#include "HelperDetails.h"
+#include "HelperModel.h"
+#include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
+#include "HelperTransform.h"
+#include "HelperWindow.h"
+#include "ProjectViewCreateSequence.h"
+#include "UtilLogWxwidgets.h"
+#include "VideoClip.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////
@@ -163,7 +176,7 @@ void TestTransform::testTransformViaDetailsView()
     }
 }
 
-//RUNONLY(testTransformViaDetailsView_Boundaries);
+RUNFROM(testTransformViaDetailsView_Boundaries);
 void TestTransform::testTransformViaDetailsView_Boundaries()
 {
     StartTestSuite();
@@ -174,6 +187,7 @@ void TestTransform::testTransformViaDetailsView_Boundaries()
         ASSERT_DETAILSCLIP(VideoClip(0,5));
         ClickTopLeft(DetailsClipView()->getScalingSpin(),wxPoint(2,2)); // Give focus
         TypeN(7,WXK_DELETE); // Remove all characters
+        pause();
         Type('0'); // 0 will be replaced with 'min' value
         Type(WXK_TAB);
         ASSERT_CLIPPROPERTIES(VideoClip(0,5),model::VideoScalingCustom,boost::rational<int>(model::Constants::sMinScaling,model::Constants::scalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(360,288)); // The scaling spin buttons increment with 0.01, not 0.0001

@@ -1,5 +1,13 @@
 #include "TestScrolling.h"
 
+#include "HelperTimeline.h"
+#include "HelperTimelineDrag.h"
+#include "HelperTimelinesView.h"
+#include "SequenceView.h"
+#include "Timeline.h"
+#include "UtilLogWxwidgets.h"
+#include "VideoTrack.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

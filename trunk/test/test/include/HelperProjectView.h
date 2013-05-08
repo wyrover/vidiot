@@ -67,7 +67,7 @@ int countProjectView();
 wxPoint findNode( model::NodePtr node );
 
 /// \return center position of given node, in screen coordinates
-wxPoint Center(model::NodePtr node);
+wxPoint CenterInProjectView(model::NodePtr node);
 
 /// Perform a drag and drop operation from project view to the timeline
 /// \param from position within project view

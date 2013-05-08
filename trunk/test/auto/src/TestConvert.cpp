@@ -1,5 +1,9 @@
 #include "TestConvert.h"
 
+#include "Convert.h"
+#include "Properties.h"
+#include "UtilFrameRate.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

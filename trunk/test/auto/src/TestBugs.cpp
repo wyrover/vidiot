@@ -1,5 +1,14 @@
 #include "TestBugs.h"
 
+#include "HelperDetails.h"
+#include "HelperTimeline.h"
+#include "HelperTimelineDrag.h"
+#include "HelperTimelinesView.h"
+#include "HelperWindow.h"
+#include "IClip.h"
+#include "Sequence.h"
+#include "ids.h"
+
 namespace test {
 
 void TestBugs::setUp()

@@ -1,5 +1,11 @@
 #include "TestSavingAndLoading.h"
 
+#include "HelperApplication.h"
+#include "HelperTimeline.h"
+#include "HelperWindow.h"
+#include "Project.h"
+#include "Window.h"
+
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,12 @@
 #include "TestTimelinesView.h"
 
+#include "HelperProjectView.h"
+#include "HelperTimelinesView.h"
+#include "HelperWindow.h"
+#include "ids.h"
+#include "Menu.h"
+#include "Timeline.h"
+
 namespace test {
 
 void TestTimelinesView::testSequenceMenu()
