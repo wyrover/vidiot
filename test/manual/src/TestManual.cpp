@@ -30,6 +30,11 @@ namespace test {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+TestManual::TestManual()
+    :   mProjectFixture(false) // Set to true if the timeline must be focused initially
+{
+}
+
 void TestManual::setUp()
 {
     mProjectFixture.init();
@@ -53,7 +58,12 @@ void TestManual::testManual()
     // todo make 3 video tracks. put 3 clips in one 'combiner'. Bottommost frame was shown when scrubbing, and when playback after shown while scrubbing.
     // howvever when scrubbing to the empty clip just before that bottommost clip, and then playback, bottommost clip not shown!!!
 
+    // todo verdeling bij audio clip details: grow sliders much more
     // todo test on machine without msvc, since two ms dlls are installed in bin/
+
+    // todo no audio in rendered file...
+
+    // todo make details drag to show hints during dragging (see trim...)
     pause(60000 * 60); // One hour should be enough...
 }
 
