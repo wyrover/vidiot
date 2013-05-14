@@ -71,16 +71,19 @@ pts Cursor::getLogicalPosition() const
 
 void Cursor::setLogicalPosition(pts position)
 {
+    VAR_DEBUG(position);
     setPosition(getZoom().ptsToPixels(position));
 }
 
 void Cursor::moveCursorOnPlayback(pts position)
 {
+    VAR_DEBUG(position);
     setLogicalPosition(position);
 }
 
 void Cursor::moveCursorOnUser(pixel position)
 {
+    VAR_DEBUG(position);
     setPosition(position);
     getPlayer()->moveTo(getZoom().pixelsToPts(position));
 }

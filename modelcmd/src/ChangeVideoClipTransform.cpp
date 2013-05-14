@@ -25,6 +25,7 @@ ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip
     ,   mNewScalingFactor(boost::none)
     ,   mNewPosition(boost::none)
 {
+    mCommandName = _("Adjust properties for ") + videoclip->getDescription();    
 }
 
 ChangeVideoClipTransform::~ChangeVideoClipTransform()

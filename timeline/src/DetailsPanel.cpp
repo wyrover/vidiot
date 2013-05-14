@@ -2,6 +2,7 @@
 
 #include "Details.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h" //todo remove
 
 namespace gui { namespace timeline {
 
@@ -19,6 +20,10 @@ DetailsPanel::DetailsPanel(wxWindow* parent, Timeline& timeline)
 {
     mTopSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mTopSizer);
+}
+
+DetailsPanel::~DetailsPanel()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,19 +55,22 @@ void DetailsPanel::requestShow(bool show, wxString title)
 void DetailsPanel::addbox(const wxString& name)
 {
     ASSERT(mTopSizer);
-    mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, name), wxVERTICAL );
-    mTopSizer->Add(mBoxSizer, 0, wxGROW|wxALIGN_CENTRE|wxALL, 0 );
+    wxStaticBoxSizer* staticBoxSizer = new wxStaticBoxSizer(wxVERTICAL, this, name);
+    mBoxSizer = new wxFlexGridSizer(2,0,0);
+    ((wxFlexGridSizer*)mBoxSizer)->AddGrowableCol(1);
+    staticBoxSizer->Add(mBoxSizer, wxSizerFlags(0).Expand() );
+    mTopSizer->Add(staticBoxSizer, wxSizerFlags(0).Expand() );
+    mTopSizer->Layout();
 }
 
 wxSizer* DetailsPanel::addoption(const wxString& name, wxWindow* widget)
 {
     ASSERT(mBoxSizer);
-    wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
-    mBoxSizer->Add(hSizer, 0, wxGROW|wxLEFT|wxALL, 2);
-    hSizer->Add(new wxStaticText(this, wxID_ANY, name), 0, wxALL|wxALIGN_TOP, 0);
-    hSizer->Add(5, 5, 1, wxALL, 0);
-    hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP);
-    return hSizer;
+    wxSizer* hSizer = mBoxSizer;
+    mBoxSizer->Add(new wxStaticText(this, wxID_ANY, name, wxDefaultPosition, wxSize(100,-1)), wxSizerFlags(0).Top().Left());//, 0, wxALL|wxALIGN_TOP, 0);
+    mBoxSizer->Add(widget, wxSizerFlags(1).Expand());//, wxALIGN_TOP);//, wxEXPAND | wxRIGHT | wxALIGN_TOP);
+    VAR_ERROR(mBoxSizer->GetSize());
+    return mBoxSizer;// todo remove this current use will not work anyway...
 }
 
 }} // namespace

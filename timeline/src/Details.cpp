@@ -18,7 +18,7 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 Details::Details(wxWindow* parent, Timeline* timeline)
-    :   wxPanel(parent)
+    :   wxPanel(parent,wxID_ANY,wxDefaultPosition, wxSize(2000,-1))
     ,   mDetails()
 {
     LOG_INFO;
@@ -34,7 +34,7 @@ Details::Details(wxWindow* parent, Timeline* timeline)
     sizer->Add(mHeader, wxSizerFlags(0).Center());
     BOOST_FOREACH( DetailsPanel* details, mDetails )
     {
-        sizer->Add(details, wxSizerFlags(1).Expand().Center() );
+        sizer->Add(details, wxSizerFlags(1).Expand() );
     }
     SetSizer(sizer);
     update();

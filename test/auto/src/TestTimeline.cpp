@@ -250,7 +250,7 @@ void TestTimeline::testDeletion()
 };
 
 //RUNONLY(testDnd);
-//RUNFROM(testDnd);
+//RUNFROM(testDnd);// todo make more practical solution for runonly/runfrom that read the params from a (ini!) file?
 void TestTimeline::testDnd()
 {
     StartTestSuite();

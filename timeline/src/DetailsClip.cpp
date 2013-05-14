@@ -2,6 +2,7 @@
 
 #include "AudioClip.h"
 #include "ChangeVideoClipTransform.h"
+#include "Combiner.h"
 #include "CommandProcessor.h"
 #include "Constants.h"
 #include "Convert.h"
@@ -13,8 +14,12 @@
 #include "Selection.h"
 #include "SelectionEvent.h"
 #include "Sequence.h"
+#include "Transition.h"
+#include "Trim.h"
+#include "TrimClip.h"
 #include "UtilEnumSelector.h"
 #include "UtilLog.h"
+#include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
 #include "VideoClipEvent.h"
@@ -60,7 +65,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mPositionXSlider(0)
     ,   mPositionYSpin(0)
     ,   mPositionYSlider(0)
-    ,   mCommand(0)
+    ,   mTransformCommand(0)
+    ,   mMinimumLengthWhenBeginTrimming(0)
+    ,   mMaximumLengthWhenBeginTrimming(0)
+    ,   mMinimumLengthWhenEndTrimming(0)
+    ,   mMaximumLengthWhenEndTrimming(0)
 {
     VAR_DEBUG(this);
 
@@ -83,8 +92,9 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     {
         // Use the integer as id
         wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, length, times(length), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        button->SetToolTip(_("Change the length of the clip to this length. Hold shift when pressing to avoid introducing a black area."));
         lengthbuttonspanel->GetSizer()->Add(button,wxSizerFlags(1));
-        button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
+        button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
         mLengthButtons.push_back(button);
     }
     updateLengthButtons();
@@ -99,8 +109,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mOpacitySpin = new wxSpinCtrl(opacitypanel);
     mOpacitySpin->SetRange(model::Constants::sMinOpacity, model::Constants::sMaxOpacity);
     mOpacitySpin->SetValue(model::Constants::sMaxOpacity);
-    opacitysizer->Add(mOpacitySlider);
-    opacitysizer->Add(mOpacitySpin);
+    opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
+    opacitysizer->Add(mOpacitySpin, wxSizerFlags(0).Right());
     opacitypanel->SetSizer(opacitysizer);
     addoption(_("Opacity"), opacitypanel);
 
@@ -118,8 +128,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         static_cast<double>(model::Constants::sMinScaling) / static_cast<double>(model::Constants::scalingPrecisionFactor),
         static_cast<double>(model::Constants::sMaxScaling) / static_cast<double>(model::Constants::scalingPrecisionFactor));
     mScalingSpin->SetIncrement(sScalingIncrement);
-    scalingsizer->Add(mScalingSlider);
-    scalingsizer->Add(mScalingSpin);
+    scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
+    scalingsizer->Add(mScalingSpin, wxSizerFlags(0).Right());
     scalingpanel->SetSizer(scalingsizer);
     addoption(_("Factor"), scalingpanel);
 
@@ -133,8 +143,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionXSpin = new wxSpinCtrl(positionxpanel);
     mPositionXSpin->SetRange(0,1);
     mPositionXSpin->SetValue(0);
-    positionxsizer->Add(mPositionXSlider);
-    positionxsizer->Add(mPositionXSpin);
+    positionxsizer->Add(mPositionXSlider, wxSizerFlags(1).Expand());
+    positionxsizer->Add(mPositionXSpin, wxSizerFlags(0).Right());
     positionxpanel->SetSizer(positionxsizer);
     addoption(_("X position"), positionxpanel);
 
@@ -145,12 +155,11 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionYSpin = new wxSpinCtrl(positionypanel);
     mPositionYSpin->SetRange(0,1);
     mPositionYSpin->SetValue(0);
-    positionysizer->Add(mPositionYSlider);
-    positionysizer->Add(mPositionYSpin);
+    positionysizer->Add(mPositionYSlider, wxSizerFlags(1).Expand());
+    positionysizer->Add(mPositionYSpin, wxSizerFlags(0).Right());
     positionypanel->SetSizer(positionysizer);
     addoption(_("Y position"), positionypanel);
 
-    Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
@@ -162,13 +171,24 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
 
-    addbox(_("Audio"));
-    addoption(_("test"), new wxButton(this,wxID_ANY,_("label")));
+    Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
+
+    // This very small button was an experiment to make 'hidable' panels for duration/video/etc.
+    //addbox(_("Audio"));
+    //wxPanel* p = new wxPanel();
+    //wxBoxSizer* b = new wxBoxSizer(wxVERTICAL);
+    //wxButton* ff = new wxButton(this,wxID_ANY,_("label"),wxDefaultPosition,wxDefaultSize, wxBORDER_RAISED| wxBU_EXACTFIT/* | wxBU_TOP*/);
+    //wxFont font = ff->GetFont();
+    //int i = font.GetPointSize();
+    //font.Scale(0.9f);
+    //font.Bold();
+    //ff->SetFont(font);
+    //ff->SetSize(-1,16);
+    //b->Add(ff,wxSizerFlags(0).Top());
+    //p->SetSizerAndFit(b);
+    //addoption(_("test"), p);
 
     setClip(model::IClipPtr()); // Ensures disabling all controls
-
-    GetSizer()->AddStretchSpacer();
-    Fit();
 
     getSelection().Bind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
     VAR_INFO(GetSize());
@@ -178,10 +198,11 @@ DetailsClip::~DetailsClip()
 {
     BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
     {
-        button->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
+        button->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
     }
     getSelection().Unbind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
     setClip(model::IClipPtr()); // Ensures Unbind if needed for clip events
+
     mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
@@ -192,6 +213,7 @@ DetailsClip::~DetailsClip()
     mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
     mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+
     Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
 }
 
@@ -211,17 +233,6 @@ void DetailsClip::setClip(model::IClipPtr clip)
     {
         if (mVideoClip)
         {
-            mOpacitySlider->Disable();
-            mOpacitySpin->Disable();
-            mSelectScaling->Disable();
-            mScalingSlider->Disable();
-            mScalingSpin->Disable();
-            mSelectAlignment->Disable();
-            mPositionXSlider->Disable();
-            mPositionXSpin->Disable();
-            mPositionYSlider->Disable();
-            mPositionYSpin->Disable();
-
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
@@ -229,69 +240,83 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
-            mVideoClip.reset();
         }
+        mVideoClip.reset();
         mAudioClip.reset();
         mClip.reset();
     }
 
     mClip = clip;
-    mCommand = 0; // Ensures that a new command is generated for future edits
+
+    mTransformCommand = 0; // Ensures that a new command is generated for future edits
 
     if (mClip)
     {
-        updateLengthButtons();
-
-        mVideoClip = getTypedClip<model::VideoClip>(clip);
-        mAudioClip = getTypedClip<model::AudioClip>(clip);
-        if (mVideoClip)
+        if (mClip->isA<model::Transition>())
         {
-            wxSize originalSize = mVideoClip->getInputSize();
-            boost::rational< int > factor = mVideoClip->getScalingFactor();
-            wxPoint position = mVideoClip->getPosition();
-            wxPoint maxpos = mVideoClip->getMaxPosition();
-            wxPoint minpos = mVideoClip->getMinPosition();
-            int opacity = mVideoClip->getOpacity();
-            const double sScalingIncrement = 0.01;
+            mClip.reset();
+        }
+        else
+        {
+            determineClipSizeBounds();
+            updateLengthButtons();
 
-            mOpacitySlider->SetValue(opacity);
-            mOpacitySpin->SetValue(opacity);
+            mVideoClip = getTypedClip<model::VideoClip>(clip);
+            mAudioClip = getTypedClip<model::AudioClip>(clip);
+            if (mVideoClip)
+            {
+                wxSize originalSize = mVideoClip->getInputSize();
+                boost::rational< int > factor = mVideoClip->getScalingFactor();
+                wxPoint position = mVideoClip->getPosition();
+                wxPoint maxpos = mVideoClip->getMaxPosition();
+                wxPoint minpos = mVideoClip->getMinPosition();
+                int opacity = mVideoClip->getOpacity();
+                const double sScalingIncrement = 0.01;
 
-            mSelectScaling->select(mVideoClip->getScaling());
-            double sliderFactor = boost::rational_cast<double>(factor);
-            mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::scalingPrecisionFactor));
-            mScalingSpin->SetValue(sliderFactor);
+                mOpacitySlider->SetValue(opacity);
+                mOpacitySpin->SetValue(opacity);
 
-            mSelectAlignment->select(mVideoClip->getAlignment());
-            mPositionXSlider->SetRange(minpos.x,maxpos.x);
-            mPositionXSlider->SetValue(position.x);
-            mPositionXSpin->SetRange(minpos.x, maxpos.x);
-            mPositionXSpin->SetValue(position.x);
-            mPositionYSlider->SetRange(minpos.y,maxpos.y);
-            mPositionYSlider->SetValue(position.y);
-            mPositionYSpin->SetRange(minpos.y, maxpos.y);
-            mPositionYSpin->SetValue(position.y);
+                mSelectScaling->select(mVideoClip->getScaling());
+                double sliderFactor = boost::rational_cast<double>(factor);
+                mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::scalingPrecisionFactor));
+                mScalingSpin->SetValue(sliderFactor);
 
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+                mSelectAlignment->select(mVideoClip->getAlignment());
+                mPositionXSlider->SetRange(minpos.x,maxpos.x);
+                mPositionXSlider->SetValue(position.x);
+                mPositionXSpin->SetRange(minpos.x, maxpos.x);
+                mPositionXSpin->SetValue(position.x);
+                mPositionYSlider->SetRange(minpos.y,maxpos.y);
+                mPositionYSlider->SetValue(position.y);
+                mPositionYSpin->SetRange(minpos.y, maxpos.y);
+                mPositionYSpin->SetValue(position.y);
 
-            mOpacitySlider->Enable();
-            mOpacitySpin->Enable();
-            mSelectScaling->Enable();
-            mScalingSlider->Enable();
-            mScalingSpin->Enable();
-            mSelectAlignment->Enable();
-            mPositionXSlider->Enable();
-            mPositionXSpin->Enable();
-            mPositionYSlider->Enable();
-            mPositionYSpin->Enable();
+                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
+                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+            }
         }
     }
+
+    // Note: disabling a control and then enabling it again can cause extra events (value changed).
+    // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
+    mOpacitySlider->Enable(mVideoClip); // todo add test case that checks if the last command is indeed a trim command if the length is changed
+    mOpacitySpin->Enable(mVideoClip);
+    mSelectScaling->Enable(mVideoClip);
+    mScalingSlider->Enable(mVideoClip);
+    mScalingSpin->Enable(mVideoClip);;
+    mSelectAlignment->Enable(mVideoClip);
+    mPositionXSlider->Enable(mVideoClip);
+    mPositionXSpin->Enable(mVideoClip);
+    mPositionYSlider->Enable(mVideoClip);
+    mPositionYSpin->Enable(mVideoClip);
+    Layout();
+
+    // todo bug: change length of a lot of clips. Then select nothing. Undo a lot. The clips are all selected!!!
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -306,40 +331,53 @@ void DetailsClip::onShow(wxShowEvent& event)
 
 void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 {
-    updateLengthButtons();
+    wxToggleButton* button = dynamic_cast<wxToggleButton*>(event.GetEventObject());
+    pts newLength = model::Convert::timeToPts(button->GetId());
+    VAR_INFO(newLength);
+    ASSERT(mTrimAtEnd.find(newLength) != mTrimAtEnd.end())(mTrimAtEnd)(newLength);
+    pts currentLength = mClip->getLength();
+    pts trim = newLength - currentLength;
+    if (mTrimAtEnd[newLength])
+    {
+        trim = -1 * trim;
+    }
+    ::gui::timeline::command::TrimClip* command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? ClipEnd : ClipBegin);
+    command->update(trim, true);
+    command->submit();
+    //NOT: updateLengthButtons(); -- this is automatically done in the Selection class upon receiving EventTrimUpdate
     event.Skip();
 }
 
 void DetailsClip::onOpacitySliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mOpacitySlider->GetValue());
-    makeCommand();
-    mCommand->setOpacity(mOpacitySlider->GetValue());
+    makeTransformCommand();
+    mTransformCommand->setOpacity(mOpacitySlider->GetValue());
     event.Skip();
 }
 
 void DetailsClip::onOpacitySpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(event.GetValue());
-    makeCommand();
-    mCommand->setOpacity(event.GetValue());
+    makeTransformCommand();
+    mTransformCommand->setOpacity(event.GetValue());
     event.Skip();
 }
 
 void DetailsClip::onScalingChoiceChanged(wxCommandEvent& event)
 {
     LOG_INFO;
-    makeCommand();
-    mCommand->setScaling(mSelectScaling->getValue(), boost::none);
+    makeTransformCommand();
+    mTransformCommand->setScaling(mSelectScaling->getValue(), boost::none);
     event.Skip();
 }
 
 void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
-    makeCommand();
+    makeTransformCommand();
     boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::scalingPrecisionFactor);
-    mCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    mTransformCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
 
@@ -347,53 +385,54 @@ void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 {
     VAR_INFO(event.GetValue());
     int spinFactor = floor(event.GetValue() * model::Constants::scalingPrecisionFactor);
-    makeCommand();
+    makeTransformCommand();
     boost::rational<int> r(floor(event.GetValue() * model::Constants::scalingPrecisionFactor), model::Constants::scalingPrecisionFactor);
-    mCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    mTransformCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
 
 void DetailsClip::onAlignmentChoiceChanged(wxCommandEvent& event)
 {
     LOG_INFO;
-    makeCommand();
-    mCommand->setAlignment(mSelectAlignment->getValue());
+    makeTransformCommand();
+    mTransformCommand->setAlignment(mSelectAlignment->getValue());
     event.Skip();
 }
 
 void DetailsClip::onPositionXSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionXSlider->GetValue());
-    makeCommand();
+    makeTransformCommand();
     updateAlignment(true);
-    mCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
 }
 
 void DetailsClip::onPositionXSpinChanged(wxSpinEvent& event)
 {
+
     VAR_INFO(event.GetValue());
-    makeCommand();
+    makeTransformCommand();
     updateAlignment(true);
-    mCommand->setPosition(wxPoint(event.GetValue(), mPositionYSlider->GetValue()));
+    mTransformCommand->setPosition(wxPoint(event.GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
 }
 
 void DetailsClip::onPositionYSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mPositionYSlider->GetValue());
-    makeCommand();
+    makeTransformCommand();
     updateAlignment(false);
-    mCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
+    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), mPositionYSlider->GetValue()));
     event.Skip();
 }
 
 void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
 {
     VAR_INFO(event.GetValue());
-    makeCommand();
+    makeTransformCommand();
     updateAlignment(false);
-    mCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), event.GetValue()));
+    mTransformCommand->setPosition(wxPoint(mPositionXSlider->GetValue(), event.GetValue()));
     event.Skip();
 }
 
@@ -551,18 +590,20 @@ wxSpinCtrl* DetailsClip::getPositionYSpin() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsClip::makeCommand()
+void DetailsClip::makeTransformCommand()
 {
-    if (!mCommand || mCommand != model::CommandProcessor::get().GetCurrentCommand())
+    if (!mTransformCommand || mTransformCommand != model::CommandProcessor::get().GetCurrentCommand())
     {
-        // - No command has been submitted yet, OR
-        // - A command was submitted, but another command was executed afterwards, OR
-        // - The command was undone again.
-        // Insert a new command into the Undo chain.
-        mCommand = new model::ChangeVideoClipTransform(mVideoClip);
-        mCommand->submit();
+        // - No transform command has been submitted yet, OR
+        // - A transform command was submitted, but
+        //   * another command was executed afterwards, OR
+        //   * the transform command was undone again.
+        // Insert a new transform command into the Undo chain.
+        ASSERT(mVideoClip);
+        mTransformCommand = new model::ChangeVideoClipTransform(mVideoClip);
+        mTransformCommand->submit();
     }
-    ASSERT_NONZERO(mCommand);
+    ASSERT_NONZERO(mTransformCommand);
 }
 
 void DetailsClip::preview()
@@ -575,6 +616,7 @@ void DetailsClip::preview()
     {
         // The cursor is not positioned under the clip being adjusted. Move the cursor to the middle frame of that clip
         position = mVideoClip->getLeftPts() + mVideoClip->getLength() / 2; // Show the middle frame of the clip
+        VAR_ERROR(position);
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
 
@@ -617,35 +659,62 @@ void DetailsClip::updateAlignment(bool horizontalchange)
         }
         return mSelectAlignment->getValue();
     };
-    mCommand->setAlignment(getAlignment());
+    mTransformCommand->setAlignment(getAlignment());
+}
+
+void DetailsClip::determineClipSizeBounds()
+{
+    ASSERT(mClip);
+
+    command::TrimClip::TrimLimits limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipBegin, true);
+    command::TrimClip::TrimLimits limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipEnd, true);
+
+    // Note that in the code below only one trim operation (either begin OR end) is used for determining the possible new lengths.
+    // Reason for this limitation is the fact that all boundaries computation is done taking only one trim operation into account.
+    // Particularly, dealing with both a begin and end trim simultaneously make the calculation for the boundaries imposed by
+    // 'clips in other track' very difficult.
+    mMinimumLengthWhenBeginTrimming = mClip->getLength() + -1 * limitsBeginTrim.WithShift.Max;
+    mMaximumLengthWhenBeginTrimming = mClip->getLength() + -1 * limitsBeginTrim.WithShift.Min;
+    mMinimumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.WithShift.Min;
+    mMaximumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.WithShift.Max;
+    VAR_DEBUG(mMinimumLengthWhenBeginTrimming)(mMaximumLengthWhenBeginTrimming)(mMinimumLengthWhenEndTrimming)(mMaximumLengthWhenEndTrimming);
+
+    // For each possible length, store if it should be achieved by trimming at the beginning or at the end (the default)
+    mTrimAtEnd.clear();
+    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+    {
+        pts length = model::Convert::timeToPts(button->GetId());
+        mTrimAtEnd[length] = (length >= mMinimumLengthWhenEndTrimming && length <= mMaximumLengthWhenEndTrimming);
+    }
+
 }
 
 void DetailsClip::updateLengthButtons()
 {
-    pts max = 0;
-    if (mClip)
+    if (!mClip)
     {
-        max = mClip->getLength() + mClip->getMaxAdjustEnd();
-    }
-    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
-    {
-        pts l = model::Convert::timeToPts(button->GetId());
-        if (l > max)
+        BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
         {
             button->SetValue(false);
             button->Disable();
         }
-        else
+        return;
+    }
+
+    pts minimumClipLength = std::min(mMinimumLengthWhenBeginTrimming, mMinimumLengthWhenEndTrimming);
+    pts maximumClipLength = std::max(mMaximumLengthWhenBeginTrimming, mMaximumLengthWhenEndTrimming);
+    ASSERT_MORE_THAN_EQUALS(mClip->getLength(), minimumClipLength);
+    ASSERT_LESS_THAN_EQUALS(mClip->getLength(), maximumClipLength);
+
+    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+    {
+        pts length = model::Convert::timeToPts(button->GetId());
+        button->SetValue(mClip && mClip->getLength() == length);
+        button->Disable();
+
+        if (length >= minimumClipLength && length <= maximumClipLength)
         {
             button->Enable();
-            if (mClip && mClip->getLength() == l )
-            {
-                button->SetValue(true);
-            }
-            else
-            {
-                button->SetValue(false);
-            }
         }
     }
 }

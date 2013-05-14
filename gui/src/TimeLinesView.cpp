@@ -204,7 +204,7 @@ void TimelinesView::load(Archive & ar, const unsigned int version)
     {
         model::SequencePtr sequence;
         ar & sequence;
-        timeline::Timeline* timeline = new timeline::Timeline(&mNotebook, sequence, true);
+        timeline::Timeline* timeline = new timeline::Timeline(&mNotebook, sequence, true); // true ==> beginTransaction()
         ar & *timeline;
         timeline->endTransaction(); // Only AFTER deserialization, screen updates may be done. Otherwise, for instance, the wrong zoom may be used.
         mNotebook.AddPage(timeline,sequence->getName(),false);

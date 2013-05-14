@@ -1089,7 +1089,7 @@ void TestTransition::testAudioTransitions()
     }
 }
 
-//RUNONLY(testCreateTransitionAfterLastClip);
+RUNFROM(testCreateTransitionAfterLastClip);
 void TestTransition::testCreateTransitionAfterLastClip()
 {
     StartTestSuite();

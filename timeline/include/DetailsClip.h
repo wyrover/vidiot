@@ -2,8 +2,9 @@
 #define DETAILS_CLIP_H
 
 #include "DetailsPanel.h"
-#include "UtilEnumSelector.h"
 #include "Enums.h"
+#include "UtilEnumSelector.h"
+#include "UtilInt.h"
 
 namespace model {
     class ChangeVideoClipTransform;
@@ -17,7 +18,11 @@ namespace model {
 }
 
 namespace gui { namespace timeline {
-class EventSelectionUpdate;
+    class EventSelectionUpdate;
+
+namespace command {
+    class TrimClip;
+}
 
 class DetailsClip
 :   public DetailsPanel
@@ -95,11 +100,12 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr     mClip;
+    model::IClipPtr     mClip;      ///< The clip for which the details view is shown. 0 in case a transition is selected
     model::VideoClipPtr mVideoClip;
     model::AudioClipPtr mAudioClip;
 
     std::list<wxToggleButton*> mLengthButtons;
+    std::map<pts, bool> mTrimAtEnd; ///< True indicates at end
 
     wxSpinCtrl* mOpacitySpin;
     wxSlider* mOpacitySlider;
@@ -116,18 +122,26 @@ private:
     wxSpinCtrl* mPositionYSpin;
     wxSlider* mPositionYSlider;
 
-    model::ChangeVideoClipTransform* mCommand;
+    model::ChangeVideoClipTransform* mTransformCommand;
+
+    pts mMinimumLengthWhenBeginTrimming;
+    pts mMaximumLengthWhenBeginTrimming;
+    pts mMinimumLengthWhenEndTrimming;
+    pts mMaximumLengthWhenEndTrimming;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void makeCommand();
+    void makeTransformCommand();
+
     void preview();
 
     /// When a slider or spin control is changed for one of the position values, then update
     /// the alignment choice accordingly.
     void updateAlignment(bool horizontalchange);
+
+    void determineClipSizeBounds();
 
     void updateLengthButtons();
 };
