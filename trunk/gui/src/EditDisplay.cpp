@@ -22,7 +22,7 @@ EditDisplay::EditDisplay(wxWindow *parent)
     Bind(wxEVT_ERASE_BACKGROUND,    &EditDisplay::OnEraseBackground,    this);
     Bind(wxEVT_SIZE,                &EditDisplay::OnSize,               this);
 
-	LOG_INFO;
+    LOG_INFO;
 }
 
 EditDisplay::~EditDisplay()

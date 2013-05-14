@@ -9,8 +9,6 @@
 
 namespace model { namespace audio { namespace transition {
 
-//TransitionFactory::RegisterAudio<::model::audio::transition::CrossFade> r;
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -52,7 +50,23 @@ struct Cache
 
     friend std::ostream& operator<<( std::ostream& os, const Cache& obj )
     {
-        os << obj.mLastRenderedFrame << '|' << *(obj.mLeftChunk) << '|' << *(obj.mRightChunk);
+        os << obj.mLastRenderedFrame << '|';
+        if (obj.mLeftChunk)
+        {
+            os << *(obj.mLeftChunk);
+        }
+        else
+        {
+            os << '0';
+        }
+        if (obj.mRightChunk)
+        {
+            os << *(obj.mRightChunk);
+        }
+        else
+        {
+            os << '0';
+        }
         return os;
     }
 };
@@ -128,7 +142,15 @@ AudioChunkPtr CrossFade::getAudio(samplecount position, IClipPtr leftClip, IClip
 
 std::ostream& operator<<( std::ostream& os, const CrossFade& obj )
 {
-    os << static_cast<const AudioTransition&>(obj) << '|' << *(obj.mCache);
+    os << static_cast<const AudioTransition&>(obj) << '|';
+    if (obj.mCache)
+    {
+        os << *(obj.mCache);
+    }
+    else
+    {
+        os <<'0';
+    }
     return os;
 }
 

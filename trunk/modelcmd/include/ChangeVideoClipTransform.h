@@ -6,7 +6,6 @@
 
 namespace model {
 
-/// Abstract base for all modifications on the timeline/sequence.
 class ChangeVideoClipTransform
     :   public ::command::RootCommand
 {

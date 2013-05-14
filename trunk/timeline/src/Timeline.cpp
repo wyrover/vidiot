@@ -282,6 +282,8 @@ void Timeline::onSize(wxSizeEvent& event)
 {
     getSequenceView().canvasResized(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
     resize();
+
+    event.Skip();
 }
 
 void Timeline::onEraseBackground(wxEraseEvent& event)

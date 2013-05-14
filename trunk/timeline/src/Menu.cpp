@@ -472,7 +472,7 @@ void MenuHandler::createTransition(model::TransitionType type)
             if (trimLeftClip > 0)
             {
                 command::TrimClip* trimLeftCommand = new command::TrimClip(getSequence(), leftClip, model::TransitionPtr(), ClipEnd);
-                trimLeftCommand->update(-trimLeftClip,true);
+                trimLeftCommand->update(-trimLeftClip, true);
                 combiner->add(trimLeftCommand);
                 leftClip = prevClip ? prevClip->getNext() : info.track->getClips().front();
             }
@@ -480,7 +480,7 @@ void MenuHandler::createTransition(model::TransitionType type)
             if (trimRightClip > 0)
             {
                 command::TrimClip* trimRightCommand = new command::TrimClip(getSequence(), rightClip, model::TransitionPtr(), ClipBegin);
-                trimRightCommand->update(trimRightClip,true);
+                trimRightCommand->update(trimRightClip, true);
                 combiner->add(trimRightCommand);
                 rightClip = leftClip->getNext();
             }

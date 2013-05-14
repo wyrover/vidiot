@@ -34,7 +34,7 @@ DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
     addoption(_("Shift"), statictext);
 
     GetSizer()->AddStretchSpacer();
-    Fit();
+    //Fit();
 
     getTrim().Bind(EVENT_TRIM_UPDATE, &DetailsTrim::onTrimChanged, this);
     VAR_INFO(GetSize());

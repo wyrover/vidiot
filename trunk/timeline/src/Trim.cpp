@@ -19,7 +19,6 @@
 #include "Track.h"
 #include "Transition.h"
 #include "TrimClip.h"
-#include "TrimEvent.h"
 #include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -73,7 +72,7 @@ void Trim::start()
     PointerPositionInfo info = getMousePointer().getInfo(virtualMousePosition);
     ASSERT(info.clip && !info.clip->isA<model::EmptyClip>())(info);
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(info.clip);
-    MouseOnClipPosition mPosition = info.logicalclipposition;
+    mPosition = info.logicalclipposition;
 
     // Start position is the physical position of the mouse within the timeline
     getTimeline().CalcScrolledPosition(virtualMousePosition.x,virtualMousePosition.y,&mStartPosition.x,&mStartPosition.y);
@@ -213,7 +212,6 @@ void Trim::start()
     }
 
     mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
-    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStart, mOriginalClip, mOriginalClip->getLink())));
     determinePossibleSnapPoints(mOriginalClip);
     update(mStartPosition);
 }
@@ -223,8 +221,7 @@ void Trim::update(wxPoint position)
     VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
-    mCommand->update(determineTrimDiff(position));
-    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mCommand->getOriginalClip(), mCommand->getOriginalLink(), mCommand->getNewClip(), mCommand->getNewLink())));
+    mCommand->update(determineTrimDiff(position), false);
     preview();
 
     if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
@@ -261,7 +258,6 @@ void Trim::stop()
         getTimeline().Refresh(false);
         getTimeline().Update();
     }
-    QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop,originalclip,originallink,newclip,newlink)));
     mCommand = 0;
 
 }

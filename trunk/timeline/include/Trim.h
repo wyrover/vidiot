@@ -66,6 +66,7 @@ private:
 
     bool mActive;                   ///< True if a trim is currently being done
     wxPoint mStartPosition;         ///< Mouse position (in unscrolled coordinates) when the trimming was started
+    MouseOnClipPosition mPosition;  ///< Logical positin where the trimming was started
     pts mStartPts;                  ///< Position (in pts values) when the trimming was started
 
     command::TrimClip* mCommand;    ///< The command that executes the Trim operation

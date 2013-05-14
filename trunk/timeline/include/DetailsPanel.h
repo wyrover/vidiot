@@ -16,6 +16,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     DetailsPanel(wxWindow* parent, Timeline& timeline);
+    ~DetailsPanel();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -44,7 +45,7 @@ private:
     wxString mTitle;
 
     wxBoxSizer*         mTopSizer;  ///< sizer for panel
-    wxBoxSizer*         mBoxSizer;  ///< sizer for current box
+    wxSizer*         mBoxSizer;  ///< sizer for current box
 
 };
 
