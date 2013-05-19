@@ -3,6 +3,7 @@
 #include "Cursor.h"
 #include "EmptyClip.h"
 #include "IClip.h"
+#include "Keyboard.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -68,9 +69,9 @@ void TrimClip::update(pts diff, bool shift)
     }
 
     mShift =
-        shift ? true :                                    // Some trim operations are not directly user triggered but a result of - for instance - making room for a transition.
-        mOriginalClip->isA<model::Transition>() ? false : // When trimming a transition, shift does nothing. Reset here to avoid having to deal with that (if-then-else) later on.
-        mShift = wxGetMouseState().ShiftDown();           // Default: shift trim when shift key is down.
+        shift ? true :                                       // Some trim operations are not directly user triggered but a result of - for instance - making room for a transition.
+        mOriginalClip->isA<model::Transition>() ? false :    // When trimming a transition, shift does nothing. Reset here to avoid having to deal with that (if-then-else) later on.
+        mShift = getTimeline().getKeyboard().getShiftDown(); // Default: shift trim when shift key is down.
     VAR_INFO(this)(mShift)(diff);
 
     removeTransition();

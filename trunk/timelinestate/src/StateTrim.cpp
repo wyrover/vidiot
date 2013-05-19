@@ -4,6 +4,7 @@
 #include "EventKey.h"
 #include "EventMouse.h"
 #include "EventPart.h"
+#include "Keyboard.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
 #include "UtilLog.h"
@@ -20,7 +21,7 @@ const wxString sTooltip = _(
 
 StateTrim::StateTrim( my_context ctx ) // entry
     :   TimeLineState( ctx )
-    ,   mShiftDown(wxGetMouseState().ShiftDown())
+    ,   mShiftDown(getKeyboard().getShiftDown())
 {
     getTrim().start();
 }

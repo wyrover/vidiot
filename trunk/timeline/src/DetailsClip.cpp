@@ -228,7 +228,7 @@ model::IClipPtr DetailsClip::getClip() const
 
 void DetailsClip::setClip(model::IClipPtr clip)
 {
-    VAR_ERROR(clip);
+    VAR_DEBUG(clip);
     if (mClip == clip) return; // Avoid useless updating
     if (mClip)
     {
@@ -330,8 +330,8 @@ void DetailsClip::onShow(wxShowEvent& event)
 
 void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 {
-    LOG_ERROR;
-    handleLengthButtonPressed(dynamic_cast<wxToggleButton*>(event.GetEventObject()));
+    wxToggleButton* button = dynamic_cast<wxToggleButton*>(event.GetEventObject());
+    handleLengthButtonPressed(button);
     event.Skip();
 }
 

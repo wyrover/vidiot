@@ -1,21 +1,22 @@
 #include "DeleteSelectedClips.h"
 
-#include "UtilLog.h"
-#include "UtilLogStl.h"
-#include "Track.h"
 #include "Clip.h"
+#include "EmptyClip.h"
+#include "Keyboard.h"
 #include "Selection.h"
 #include "Sequence.h"
-#include "Transition.h"
 #include "Timeline.h"
-#include "EmptyClip.h"
+#include "Track.h"
+#include "Transition.h"
+#include "UtilLog.h"
+#include "UtilLogStl.h"
 #include "UtilSet.h"
 
 namespace gui { namespace timeline { namespace command {
 
 DeleteSelectedClips::DeleteSelectedClips(model::SequencePtr sequence)
     :   AClipEdit(sequence)
-    ,   mShift(wxGetMouseState().ShiftDown())
+    ,   mShift(getTimeline().getKeyboard().getShiftDown())
 {
     VAR_INFO(this)(mShift);
     mCommandName = _("Delete selected clips");
