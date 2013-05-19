@@ -4,6 +4,7 @@
 #include "EventKey.h"
 #include "EventMouse.h"
 #include "EventPart.h"
+#include "Keyboard.h"
 #include "MousePointer.h"
 #include "Player.h"
 #include "Scrolling.h"
@@ -92,6 +93,7 @@ void  Machine::process_event(const boost::statechart::event_base & evt )
 void Machine::onMotion(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setPosition(virtualPosition);
     process_event(EvMotion(event, virtualPosition));
@@ -101,6 +103,7 @@ void Machine::onMotion(wxMouseEvent& event)
 void Machine::onLeftDown(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     getTimeline().SetFocus();
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setLeftDownPosition(virtualPosition);
@@ -111,6 +114,7 @@ void Machine::onLeftDown(wxMouseEvent& event)
 void Machine::onLeftUp(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     process_event(EvLeftUp(event, virtualPosition));
     event.Skip();
@@ -119,6 +123,7 @@ void Machine::onLeftUp(wxMouseEvent& event)
 void Machine::onLeftDouble(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     // This event is generated when a second mouse press is done faster after the first release
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setLeftDownPosition(virtualPosition);
@@ -129,6 +134,7 @@ void Machine::onLeftDouble(wxMouseEvent& event)
 void Machine::onMiddleDown(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     process_event(EvMiddleDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
@@ -136,6 +142,7 @@ void Machine::onMiddleDown(wxMouseEvent& event)
 void Machine::onMiddleUp(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     process_event(EvMiddleUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
@@ -143,6 +150,7 @@ void Machine::onMiddleUp(wxMouseEvent& event)
 void Machine::onMiddleDouble(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     process_event(EvMiddleDouble(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
@@ -150,6 +158,7 @@ void Machine::onMiddleDouble(wxMouseEvent& event)
 void Machine::onRightDown(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     getTimeline().SetFocus();
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setRightDownPosition(virtualPosition);
@@ -160,6 +169,7 @@ void Machine::onRightDown(wxMouseEvent& event)
 void Machine::onRightUp(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     process_event(EvRightUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
@@ -167,6 +177,7 @@ void Machine::onRightUp(wxMouseEvent& event)
 void Machine::onRightDouble(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     wxPoint virtualPosition = getTimeline().getScrolling().getVirtualPosition(event.GetPosition());
     getMousePointer().setRightDownPosition(virtualPosition);
     process_event(EvRightDouble(event, virtualPosition));
@@ -176,6 +187,7 @@ void Machine::onRightDouble(wxMouseEvent& event)
 void Machine::onEnter(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
     process_event(EvEnter(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
@@ -183,6 +195,7 @@ void Machine::onEnter(wxMouseEvent& event)
 void Machine::onLeave(wxMouseEvent& event)
 {
     VAR_INFO(event.GetPosition());
+    getKeyboard().update(event);
     process_event(EvLeave(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
@@ -190,6 +203,7 @@ void Machine::onLeave(wxMouseEvent& event)
 void Machine::onWheel(wxMouseEvent& event)
 {
     VAR_DEBUG(event.GetPosition());
+    getKeyboard().update(event);
 
     // Zooming/Scrolling can be done in any state
     int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
@@ -218,6 +232,7 @@ void Machine::onWheel(wxMouseEvent& event)
 void Machine::onKeyDown(wxKeyEvent& event)
 {
     VAR_DEBUG(event.GetPosition())(event);
+    getKeyboard().update(event);
     process_event(EvKeyDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
@@ -225,6 +240,7 @@ void Machine::onKeyDown(wxKeyEvent& event)
 void Machine::onKeyUp(wxKeyEvent& event)
 {
     VAR_DEBUG(event.GetPosition())(event);
+    getKeyboard().update(event);
     process_event(EvKeyUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
