@@ -12,6 +12,7 @@ namespace gui {
         class Divider;
         class Drag;
         class Intervals;
+        class Keyboard;
         class MenuHandler;
         class MousePointer;
         class Scrolling;
@@ -58,6 +59,9 @@ public:
 
     Intervals& getIntervals();
     const Intervals& getIntervals() const;
+
+    Keyboard& getKeyboard();
+    const Keyboard& getKeyboard() const;
 
     Selection& getSelection();
     const Selection& getSelection() const;
