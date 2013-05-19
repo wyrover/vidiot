@@ -2,7 +2,6 @@
 
 #include "Details.h"
 #include "UtilLog.h"
-#include "UtilLogWxwidgets.h" //todo remove
 
 namespace gui { namespace timeline {
 
@@ -68,8 +67,7 @@ wxSizer* DetailsPanel::addoption(const wxString& name, wxWindow* widget)
     ASSERT(mBoxSizer);
     wxSizer* hSizer = mBoxSizer;
     mBoxSizer->Add(new wxStaticText(this, wxID_ANY, name, wxDefaultPosition, wxSize(100,-1)), wxSizerFlags(0).Top().Left());//, 0, wxALL|wxALIGN_TOP, 0);
-    mBoxSizer->Add(widget, wxSizerFlags(1).Expand());//, wxALIGN_TOP);//, wxEXPAND | wxRIGHT | wxALIGN_TOP);
-    VAR_ERROR(mBoxSizer->GetSize());
+    mBoxSizer->Add(widget, wxSizerFlags(1).Expand());
     return mBoxSizer;// todo remove this current use will not work anyway...
 }
 

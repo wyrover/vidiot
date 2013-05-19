@@ -3,16 +3,17 @@
 #include "Cursor.h"
 #include "EmptyClip.h"
 #include "IClip.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "TrimEvent.h"
 #include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace command {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -36,8 +37,6 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
 {
     VAR_INFO(this)(mClip)(mTransition);
     mCommandName = _("Adjust length");
-
-    getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStart, mOriginalClip, mOriginalLink)));
 }
 
 TrimClip::~TrimClip()
@@ -45,7 +44,7 @@ TrimClip::~TrimClip()
     if (!isInitialized())
     {
         Revert();
-        getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop, mOriginalClip, mOriginalLink, mNewClip, mNewLink)));
+        getTimeline().getSelection().change(boost::assign::list_of(mOriginalClip)(mOriginalLink));
     }
 }
 
@@ -76,7 +75,11 @@ void TrimClip::update(pts diff, bool shift)
 
     removeTransition();
 
-    determineTrim(diff);
+    TrimLimit limits = determineBoundaries(getSequence(), mClip, mLink, mPosition, mShift);
+
+    mTrim = diff;
+    if (mTrim < limits.Min) { mTrim = limits.Min; }
+    if (mTrim > limits.Max) { mTrim = limits.Max; }
 
     // This statement is deliberately after removeTransition, since that methods initializes mClip
     // mClip, in turn, is used for preview().
@@ -91,7 +94,7 @@ void TrimClip::update(pts diff, bool shift)
         applyTrim();
     }
 
-    getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateUpdate, mOriginalClip, mOriginalLink, mNewClip, mNewLink))); // todo replace this event stuff with a direct interface on selection class
+    getTimeline().getSelection().change(boost::assign::list_of(mNewClip)(mNewLink));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,7 +103,17 @@ void TrimClip::update(pts diff, bool shift)
 
 void TrimClip::initialize()
 {
-    getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop, mOriginalClip, mOriginalLink, mNewClip, mNewLink)));
+    // todo replace with nothing getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop, mOriginalClip, mOriginalLink, mNewClip, mNewLink)));
+}
+
+void TrimClip::doExtraAfter()
+{
+    getTimeline().getSelection().change(boost::assign::list_of(mNewClip)(mNewLink));
+}
+
+void TrimClip::undoExtraAfter()
+{
+    getTimeline().getSelection().change(boost::assign::list_of(mOriginalClip)(mOriginalLink));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -166,131 +179,124 @@ pts TrimClip::getShiftStart() const
 }
 
 // static
-TrimClip::TrimLimits TrimClip::determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift) // todo add shift as param and then make the datatypes simpler
+TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift)
 {
     ASSERT(clip && clip->getTrack());
-    ASSERT(!link || link->getTrack()); // todo this failed when doing adjustlength, manualtrim, adjustlength, maybe with some undoing in between
+    ASSERT_IMPLIES(link,link->getTrack()); // todo this failed when doing adjustlength, manualtrim, adjustlength, maybe with some undoing in between
 
-    TrimLimits result;
+    TrimLimit result;
 
     auto lowerlimit = [](TrimLimit& scenario, pts limit) { if (scenario.Min < limit) { scenario.Min = limit; } };
     auto upperlimit = [](TrimLimit& scenario, pts limit) { if (scenario.Max > limit) { scenario.Max = limit; } };
 
-    ///////////////////////////////////////////////////////////////////////
     // Boundaries imposed by the lengths/offset of the clip (and it's link):
-
     if (isBeginTrim(position))
     {
-        ///////////////////////////////////////////////////////////////////////
         // Boundaries at begin of clip:
-        lowerlimit(result.WithoutShift, clip->getMinAdjustBegin());        // Clip cannot be extended further than the '0'th frame of the underlying video provider.
-        upperlimit(result.WithoutShift, clip->getMaxAdjustBegin());        // Clip cannot be trimmed further than the original number of frames
+        lowerlimit(result, clip->getMinAdjustBegin());        // Clip cannot be extended further than the '0'th frame of the underlying video provider.
+        upperlimit(result, clip->getMaxAdjustBegin());        // Clip cannot be trimmed further than the original number of frames
         if (link)
         {
-            lowerlimit(result.WithoutShift, link->getMinAdjustBegin());    // Link cannot be extended further than the '0'th frame of the underlying video provider.
-            upperlimit(result.WithoutShift, link->getMaxAdjustBegin());    // Clip cannot be trimmed further than the original number of frames in the linked clip
+            lowerlimit(result, link->getMinAdjustBegin());    // Link cannot be extended further than the '0'th frame of the underlying video provider.
+            upperlimit(result, link->getMaxAdjustBegin());    // Clip cannot be trimmed further than the original number of frames in the linked clip
         }
     }
     else
     {
-        ///////////////////////////////////////////////////////////////////////
         // Boundaries at end of clip:
-        lowerlimit(result.WithoutShift, clip->getMinAdjustEnd());          // Clip cannot be trimmed further than the original number of frames
-        upperlimit(result.WithoutShift, clip->getMaxAdjustEnd());          // Clip cannot be extended further than the last frame of the underlying video provider.
+        lowerlimit(result, clip->getMinAdjustEnd());          // Clip cannot be trimmed further than the original number of frames
+        upperlimit(result, clip->getMaxAdjustEnd());          // Clip cannot be extended further than the last frame of the underlying video provider.
         if (link)
         {
-            lowerlimit(result.WithoutShift, link->getMinAdjustEnd());      // Clip cannot be trimmed further than the original number of frames in the linked clip
-            upperlimit(result.WithoutShift, link->getMaxAdjustEnd());      // Link cannot be extended further than the '0'th frame of the underlying video provider.
+            lowerlimit(result, link->getMinAdjustEnd());      // Clip cannot be trimmed further than the original number of frames in the linked clip
+            upperlimit(result, link->getMaxAdjustEnd());      // Link cannot be extended further than the '0'th frame of the underlying video provider.
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    // 'clip induced' boundaries also apply when shift trimming:
-    lowerlimit(result.WithShift, result.WithoutShift.Min);
-    upperlimit(result.WithShift, result.WithoutShift.Max);
-
-    ///////////////////////////////////////////////////////////////////////
-    // When not shift trimming the extended clip must be able to fit within the empty area before/after the clip:
-    switch (position)
+    if (!shift)
     {
-    case ClipBegin:
-        lowerlimit(result.WithoutShift, clip->getTrack()->getLeftEmptyArea(clip));                 // When not shift trimming: extended clip must fit into the available empty area in front of the clip
-        if (link) { lowerlimit(result.WithoutShift, link->getTrack()->getLeftEmptyArea(link)); }   // When not shift trimming: extended link must fit into the available empty area in front of the link
-        break;
-    case ClipEnd:
-        upperlimit(result.WithoutShift, clip->getTrack()->getRightEmptyArea(clip));                // When not shift trimming: extended clip must fit into the available empty area in front of the clip
-        if (link) { upperlimit(result.WithoutShift, link->getTrack()->getRightEmptyArea(link)); }  // When not shift trimming: extended link must fit into the available empty area in front of the link
-        break;
-    case TransitionRightClipBegin:
-        lowerlimit(result.WithoutShift, clip->getTrack()->getLeftEmptyArea(clip->getPrev()));      // When not shift trimming: extended clip must fit into the available empty area in front of the clip. For in-out transitions this will always be 0...
-        if (link) { lowerlimit(result.WithoutShift, link->getTrack()->getLeftEmptyArea(link)); }   // When not shift trimming: extended link must fit into the available empty area in front of the link
-        break;
-    case TransitionLeftClipEnd:
-        upperlimit(result.WithoutShift, clip->getTrack()->getRightEmptyArea(clip->getNext()));     // When not shift trimming: extended clip must fit into the available empty area in front of the transition. For in-out transitions this will always be 0...
-        if (link) { upperlimit(result.WithoutShift, link->getTrack()->getRightEmptyArea(link)); }  // When not shift trimming: extended link must fit into the available empty area in front of the link
-        break;
-    case TransitionBegin:
-    case TransitionEnd:
-        // There is no empty area involved. There is either a clip left and/or right of the transition. If one of these is not present (in-only, or out-only transition) then the clip
-        // itselves cannot be enlarged on 'the other side'.
-        break;
-    case ClipInterior:
-    case TransitionLeftClipInterior:
-    case TransitionInterior:
-    case TransitionRightClipInterior:
-    default:
-        FATAL("Illegal clip position");
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    // When shift trimming the contents in other tracks must be able to be shifted accordingly
-    pts minShiftOtherTrackContent = (std::numeric_limits<pts>::min)();
-    pts maxShiftOtherTrackContent = (std::numeric_limits<pts>::max)();
-    pts shiftFrom = (isBeginTrim(position)) ? clip->getLeftPts() : clip->getRightPts();
-    BOOST_FOREACH( model::TrackPtr track, sequence->getTracks() )
-    {
-        if (clip->getTrack() == track) continue;
-        if (link && link->getTrack() == track) continue;
-        model::IClipPtr clipInOtherTrack = track->getClip(shiftFrom);
-
-        if (!clipInOtherTrack)
+        // When not shift trimming the extended clip must be able to fit within the empty area before/after the clip:
+        switch (position)
         {
-            // There is no clip at the given position (beyond track length) then the only restriction is the length of the track.
-            if (isBeginTrim(position))
-            {
-                // No change to mMaxShiftOtherTrackContent
-            }
-            else
-            {
-                minShiftOtherTrackContent = std::max<pts>(minShiftOtherTrackContent, track->getLength() - shiftFrom);
-            }
+        case ClipBegin:
+            lowerlimit(result, clip->getTrack()->getLeftEmptyArea(clip));                 // When not shift trimming: extended clip must fit into the available empty area in front of the clip
+            if (link) { lowerlimit(result, link->getTrack()->getLeftEmptyArea(link)); }   // When not shift trimming: extended link must fit into the available empty area in front of the link
+            break;
+        case ClipEnd:
+            upperlimit(result, clip->getTrack()->getRightEmptyArea(clip));                // When not shift trimming: extended clip must fit into the available empty area in front of the clip
+            if (link) { upperlimit(result, link->getTrack()->getRightEmptyArea(link)); }  // When not shift trimming: extended link must fit into the available empty area in front of the link
+            break;
+        case TransitionRightClipBegin:
+            lowerlimit(result, clip->getTrack()->getLeftEmptyArea(clip->getPrev()));      // When not shift trimming: extended clip must fit into the available empty area in front of the clip. For in-out transitions this will always be 0...
+            if (link) { lowerlimit(result, link->getTrack()->getLeftEmptyArea(link)); }   // When not shift trimming: extended link must fit into the available empty area in front of the link
+            break;
+        case TransitionLeftClipEnd:
+            upperlimit(result, clip->getTrack()->getRightEmptyArea(clip->getNext()));     // When not shift trimming: extended clip must fit into the available empty area in front of the transition. For in-out transitions this will always be 0...
+            if (link) { upperlimit(result, link->getTrack()->getRightEmptyArea(link)); }  // When not shift trimming: extended link must fit into the available empty area in front of the link
+            break;
+        case TransitionBegin:
+        case TransitionEnd:
+            // There is no empty area involved. There is either a clip left and/or right of the transition. If one of these is not present (in-only, or out-only transition) then the clip
+            // itselves cannot be enlarged on 'the other side'.
+            break;
+        case ClipInterior:
+        case TransitionLeftClipInterior:
+        case TransitionInterior:
+        case TransitionRightClipInterior:
+        default:
+            FATAL("Illegal clip position");
         }
-        else
+    }
+    else // (shift)
+    {
+        // When shift trimming the contents in other tracks must be able to be shifted accordingly
+        pts minShiftOtherTrackContent = (std::numeric_limits<pts>::min)();
+        pts maxShiftOtherTrackContent = (std::numeric_limits<pts>::max)();
+        pts shiftFrom = (isBeginTrim(position)) ? clip->getLeftPts() : clip->getRightPts();
+        BOOST_FOREACH( model::TrackPtr track, sequence->getTracks() )
         {
-            if (!clipInOtherTrack->isA<model::EmptyClip>())
+            if (clip->getTrack() == track) continue;
+            if (link && link->getTrack() == track) continue;
+            model::IClipPtr clipInOtherTrack = track->getClip(shiftFrom);
+
+            if (!clipInOtherTrack)
             {
-                // No shift allowed if there's a track that has 'filled space' at the shift position
-                minShiftOtherTrackContent = 0;
-                maxShiftOtherTrackContent = 0;
-            }
-            else
-            {
+                // There is no clip at the given position (beyond track length) then the only restriction is the length of the track.
                 if (isBeginTrim(position))
                 {
-                    maxShiftOtherTrackContent = std::min<pts>(maxShiftOtherTrackContent, clipInOtherTrack->getRightPts() - shiftFrom);
+                    // No change to mMaxShiftOtherTrackContent
                 }
                 else
                 {
-                    minShiftOtherTrackContent = std::max<pts>(minShiftOtherTrackContent, clipInOtherTrack->getLeftPts() - shiftFrom);
+                    minShiftOtherTrackContent = std::max<pts>(minShiftOtherTrackContent, track->getLength() - shiftFrom);
+                }
+            }
+            else
+            {
+                if (!clipInOtherTrack->isA<model::EmptyClip>())
+                {
+                    // No shift allowed if there's a track that has 'filled space' at the shift position
+                    minShiftOtherTrackContent = 0;
+                    maxShiftOtherTrackContent = 0;
+                }
+                else
+                {
+                    if (isBeginTrim(position))
+                    {
+                        maxShiftOtherTrackContent = std::min<pts>(maxShiftOtherTrackContent, clipInOtherTrack->getRightPts() - shiftFrom);
+                    }
+                    else
+                    {
+                        minShiftOtherTrackContent = std::max<pts>(minShiftOtherTrackContent, clipInOtherTrack->getLeftPts() - shiftFrom);
+                    }
                 }
             }
         }
+
+        lowerlimit(result, minShiftOtherTrackContent);        // When shift trimming: the contents in other tracks must be able to be shifted accordingly
+        upperlimit(result, maxShiftOtherTrackContent);        // When shift trimming: the contents in other tracks must be able to be shifted accordingly
     }
 
-    lowerlimit(result.WithShift, minShiftOtherTrackContent);        // When shift trimming: the contents in other tracks must be able to be shifted accordingly
-    upperlimit(result.WithShift, maxShiftOtherTrackContent);        // When shift trimming: the contents in other tracks must be able to be shifted accordingly
-
-    ///////////////////////////////////////////////////////////////////////
     return result;
 }
 
@@ -362,21 +368,10 @@ void TrimClip::determineTrim(pts mousediff) // todo remove: place the remaining 
 {
     mTrim = mousediff;
 
-    TrimLimits limits = determineBoundaries(getSequence(), mClip, mLink, mPosition, mShift);
+    TrimLimit limits = determineBoundaries(getSequence(), mClip, mLink, mPosition, mShift);
 
-    auto lowerlimit2 = [this](TrimLimit limit) { if (mTrim < limit.Min) { mTrim = limit.Min; } };
-    auto upperlimit2 = [this](TrimLimit limit) { if (mTrim > limit.Max) { mTrim = limit.Max; } };
-
-    if (mShift)
-    {
-        lowerlimit2(limits.WithShift);
-        upperlimit2(limits.WithShift);
-    }
-    else
-    {
-        lowerlimit2(limits.WithoutShift);
-        upperlimit2(limits.WithoutShift);
-    }
+    if (mTrim < limits.Min) { mTrim = limits.Min; }
+    if (mTrim > limits.Max) { mTrim = limits.Max; }
 
     VAR_INFO(this)(mTrim);
 }

@@ -112,12 +112,12 @@ void DeleteSelectedClips::initialize()
     getTimeline().endTransaction();
 }
 
-void DeleteSelectedClips::doExtra()
+void DeleteSelectedClips::doExtraBefore()
 {
     storeSelection();
 }
 
-void DeleteSelectedClips::undoExtra()
+void DeleteSelectedClips::undoExtraAfter()
 {
     restoreSelection();
 }

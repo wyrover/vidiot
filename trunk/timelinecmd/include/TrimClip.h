@@ -42,6 +42,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void initialize() override;
+    void doExtraAfter() override;
+    void undoExtraAfter() override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -52,9 +54,9 @@ public:
     model::IClipPtr getNewClip() const;
     model::IClipPtr getNewLink() const;
 
-    static bool isBeginTrim(MouseOnClipPosition position); // todo make obsolete
+    static bool isBeginTrim(MouseOnClipPosition position);
 
-    bool isBeginTrim() const; // todo make obsolete
+    bool isBeginTrim() const;
 
     pts getDiff() const;
 
@@ -70,11 +72,6 @@ public:
         pts Min;
         pts Max;
     };
-    struct TrimLimits
-    {
-        TrimLimit WithShift;
-        TrimLimit WithoutShift;
-    };
 
     /// Determine boundaries (restrictions) on trimming when trimming the given clips
     /// \param sequence for this sequence the boundaries must be determined
@@ -82,10 +79,11 @@ public:
     /// \param link clip that is linked (or going to be linked) to the given clip
     /// \param position logical position (in the clip) where the trim is applied
     /// \param shift if true then determine the boundaries for a shift trim operation
+    /// \return minimum and maximum allowed trim values
     /// \pre clip must be part of a track
     /// \pre link == 0 OR link must be part of a track
     /// \note that link must be specified specifically, since in certain scenario's (trimming via the timeline, in case transition removal is involved) the clip has already been replaced (and is not yet coupled to a link).
-    static TrimLimits determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift);
+    static TrimLimit determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift);
 
 private:
 

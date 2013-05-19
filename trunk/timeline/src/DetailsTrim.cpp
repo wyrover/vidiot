@@ -4,7 +4,6 @@
 #include "IClip.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "TrimEvent.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
@@ -36,22 +35,20 @@ DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
     GetSizer()->AddStretchSpacer();
     //Fit();
 
-    getTrim().Bind(EVENT_TRIM_UPDATE, &DetailsTrim::onTrimChanged, this);
     VAR_INFO(GetSize());
 }
 
 DetailsTrim::~DetailsTrim()
 {
-    getTrim().Unbind(EVENT_TRIM_UPDATE, &DetailsTrim::onTrimChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
-// TRIM EVENTS
+// TRIM UPDATES
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsTrim::onTrimChanged( timeline::EventTrimUpdate& event )
+void DetailsTrim::show( model::IClipPtr src, model::IClipPtr trg, model::IClipPtr srcLink, model::IClipPtr trgLink  )
 {
-    event.Skip();
+    ASSERT_NONZERO(src);
     auto showLength = [] (model::IClipPtr clipold, model::IClipPtr clipnew, wxStaticText* textbox)
     {
         if (!clipold) { return; }
@@ -61,66 +58,40 @@ void DetailsTrim::onTrimChanged( timeline::EventTrimUpdate& event )
         textbox->SetLabel(s);
     };
 
-    switch (event.getValue().getState())
+    if (!requestsToBeShown())
     {
-    case OperationStateStart:
-        {
-            requestShow(true, _("Resizing ") + event.getValue().getClip()->getDescription());
-            Fit();
-            break;
-        }
-    case OperationStateStop:
-        {
-            requestShow(false);
-            break;
-        }
-    case OperationStateUpdate:
-        {
-            TrimEvent& update = event.getValue();
+        requestShow(true, _("Resizing ") + src->getDescription());
+        Fit();
+    }
 
-            if (update.getClip()->isA<model::Transition>())
-            {
-                mTransitionOption->Show(true);
-                mVideoOption->Show(false);
-                mAudioOption->Show(false);
-                model::IClipPtr transition = update.getClip();
-                model::IClipPtr transitiontrimmed = update.getClipTrimmed();
-                showLength(transition,transitiontrimmed,mTransition);
-            }
-            else
-            {
-                mTransitionOption->Show(false);
-                mVideoOption->Show(true);
-                mAudioOption->Show(true);
-                model::IClipPtr videoclip;
-                model::IClipPtr audioclip;
-                model::IClipPtr videocliptrimmed;
-                model::IClipPtr audiocliptrimmed;
-                if (update.getClip()->isA<model::VideoClip>())
-                {
-                    videoclip = update.getClip();
-                    videocliptrimmed = update.getClipTrimmed();
-                    audioclip = update.getLink();
-                    audiocliptrimmed = update.getLinkTrimmed();
-                }
-                else
-                {
-                    audioclip = update.getClip();
-                    audiocliptrimmed = update.getClipTrimmed();
-                    videoclip = update.getLink();
-                    videocliptrimmed = update.getLinkTrimmed();
-                }
-                showLength(videoclip,videocliptrimmed,mVideo);
-                showLength(audioclip,audiocliptrimmed,mAudio);
-            }
-            break;
-        }
-    default:
+    bool isTransition = src->isA<model::Transition>();
+    bool isVideo = src->isA<model::VideoClip>();
+
+    mTransitionOption->Show(isTransition);
+    mVideoOption->Show(!isTransition);
+    mAudioOption->Show(!isTransition);
+    if (src->isA<model::Transition>())
+    {
+        showLength(src,trg,mTransition);
+    }
+    else
+    {
+        if (isVideo)
         {
-            FATAL("Unknown OperationState");
-            break;
+            showLength(src,trg,mVideo);
+            showLength(srcLink,trgLink,mAudio);
+        }
+        else
+        {
+            showLength(srcLink,trgLink,mVideo);
+            showLength(src,trg,mAudio);
         }
     }
+}
+
+void DetailsTrim::hide()
+{
+    requestShow(false);
 }
 
 }} // namespace

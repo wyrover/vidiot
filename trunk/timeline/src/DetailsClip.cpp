@@ -228,6 +228,7 @@ model::IClipPtr DetailsClip::getClip() const
 
 void DetailsClip::setClip(model::IClipPtr clip)
 {
+    VAR_ERROR(clip);
     if (mClip == clip) return; // Avoid useless updating
     if (mClip)
     {
@@ -304,7 +305,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
-    mOpacitySlider->Enable(mVideoClip); // todo add test case that checks if the last command is indeed a trim command if the length is changed
+    mOpacitySlider->Enable(mVideoClip);
     mOpacitySpin->Enable(mVideoClip);
     mSelectScaling->Enable(mVideoClip);
     mScalingSlider->Enable(mVideoClip);
@@ -331,20 +332,8 @@ void DetailsClip::onShow(wxShowEvent& event)
 
 void DetailsClip::onLengthButtonPressed(wxCommandEvent& event)
 {
-    wxToggleButton* button = dynamic_cast<wxToggleButton*>(event.GetEventObject());
-    pts newLength = model::Convert::timeToPts(button->GetId());
-    VAR_INFO(newLength);
-    ASSERT(mTrimAtEnd.find(newLength) != mTrimAtEnd.end())(mTrimAtEnd)(newLength);
-    pts currentLength = mClip->getLength();
-    pts trim = newLength - currentLength;
-    if (mTrimAtEnd[newLength])
-    {
-        trim = -1 * trim;
-    }
-    ::gui::timeline::command::TrimClip* command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? ClipEnd : ClipBegin);
-    command->update(trim, true);
-    command->submit();
-    //NOT: updateLengthButtons(); -- this is automatically done in the Selection class upon receiving EventTrimUpdate
+    LOG_ERROR;
+    handleLengthButtonPressed(dynamic_cast<wxToggleButton*>(event.GetEventObject()));
     event.Skip();
 }
 
@@ -436,6 +425,30 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
     event.Skip();
 }
 
+void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
+{
+    ASSERT_NONZERO(button);
+    ASSERT(wxThread::IsMain());
+    pts newLength = model::Convert::timeToPts(button->GetId());
+    VAR_INFO(newLength);
+    ASSERT(mTrimAtEnd.find(newLength) != mTrimAtEnd.end())(mTrimAtEnd)(newLength);
+    pts currentLength = mClip->getLength();
+    pts trim = newLength - currentLength;
+    if (!mTrimAtEnd[newLength])
+    {
+        trim = -1 * trim;
+    }
+    ::gui::timeline::command::TrimClip* command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? ClipEnd : ClipBegin);
+    command->update(trim, true);
+    command->submit();
+    // It might be possible that a new length selection button has already been pressed
+    // and it's button event is already queued. When that event is handled this new clip
+    // must be used.
+    setClip(command->getNewClip());
+    //NOT: updateLengthButtons(); -- this is automatically done after selecting a new clip
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -503,6 +516,7 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
 
 void DetailsClip::onSelectionChanged( timeline::EventSelectionUpdate& event )
 {
+    VAR_ERROR(event);
     VAR_DEBUG(this);
     std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
     model::IClipPtr selectedclip;
@@ -536,6 +550,11 @@ void DetailsClip::onSelectionChanged( timeline::EventSelectionUpdate& event )
 //////////////////////////////////////////////////////////////////////////
 // TEST
 //////////////////////////////////////////////////////////////////////////
+
+std::list<wxToggleButton*> DetailsClip::getLengthButtons() const
+{
+    return mLengthButtons;
+}
 
 wxSlider* DetailsClip::getOpacitySlider() const
 {
@@ -666,17 +685,17 @@ void DetailsClip::determineClipSizeBounds()
 {
     ASSERT(mClip);
 
-    command::TrimClip::TrimLimits limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipBegin, true);
-    command::TrimClip::TrimLimits limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipEnd, true);
+    command::TrimClip::TrimLimit limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipBegin, true);
+    command::TrimClip::TrimLimit limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipEnd, true);
 
     // Note that in the code below only one trim operation (either begin OR end) is used for determining the possible new lengths.
     // Reason for this limitation is the fact that all boundaries computation is done taking only one trim operation into account.
     // Particularly, dealing with both a begin and end trim simultaneously make the calculation for the boundaries imposed by
     // 'clips in other track' very difficult.
-    mMinimumLengthWhenBeginTrimming = mClip->getLength() + -1 * limitsBeginTrim.WithShift.Max;
-    mMaximumLengthWhenBeginTrimming = mClip->getLength() + -1 * limitsBeginTrim.WithShift.Min;
-    mMinimumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.WithShift.Min;
-    mMaximumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.WithShift.Max;
+    mMinimumLengthWhenBeginTrimming = mClip->getLength() + -1 * limitsBeginTrim.Max;
+    mMaximumLengthWhenBeginTrimming = mClip->getLength() + -1 * limitsBeginTrim.Min;
+    mMinimumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.Min;
+    mMaximumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.Max;
     VAR_DEBUG(mMinimumLengthWhenBeginTrimming)(mMaximumLengthWhenBeginTrimming)(mMinimumLengthWhenEndTrimming)(mMaximumLengthWhenEndTrimming);
 
     // For each possible length, store if it should be achieved by trimming at the beginning or at the end (the default)
