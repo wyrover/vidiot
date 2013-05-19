@@ -316,8 +316,6 @@ void DetailsClip::setClip(model::IClipPtr clip)
     mPositionYSlider->Enable(mVideoClip);
     mPositionYSpin->Enable(mVideoClip);
     Layout();
-
-    // todo bug: change length of a lot of clips. Then select nothing. Undo a lot. The clips are all selected!!!
 }
 
 //////////////////////////////////////////////////////////////////////////

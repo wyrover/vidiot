@@ -103,7 +103,7 @@ void TrimClip::update(pts diff, bool shift)
 
 void TrimClip::initialize()
 {
-    // todo replace with nothing getTimeline().getTrim().QueueEvent(new EventTrimUpdate(TrimEvent(OperationStateStop, mOriginalClip, mOriginalLink, mNewClip, mNewLink)));
+    // Already done in 'update'. This is called afterwards when the command is submitted.
 }
 
 void TrimClip::doExtraAfter()
@@ -182,7 +182,7 @@ pts TrimClip::getShiftStart() const
 TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift)
 {
     ASSERT(clip && clip->getTrack());
-    ASSERT_IMPLIES(link,link->getTrack()); // todo this failed when doing adjustlength, manualtrim, adjustlength, maybe with some undoing in between
+    ASSERT_IMPLIES(link,link->getTrack());
 
     TrimLimit result;
 
@@ -362,18 +362,6 @@ void TrimClip::adjust(model::IClipPtr clip, pts begin, pts end)
         clone->adjustEnd(end);
     }
     replaceClip(clip, boost::assign::list_of(clone));
-}
-
-void TrimClip::determineTrim(pts mousediff) // todo remove: place the remaining algo (after using 'determineBoundaries' into the 'update' method
-{
-    mTrim = mousediff;
-
-    TrimLimit limits = determineBoundaries(getSequence(), mClip, mLink, mPosition, mShift);
-
-    if (mTrim < limits.Min) { mTrim = limits.Min; }
-    if (mTrim > limits.Max) { mTrim = limits.Max; }
-
-    VAR_INFO(this)(mTrim);
 }
 
 void TrimClip::applyTrim()
