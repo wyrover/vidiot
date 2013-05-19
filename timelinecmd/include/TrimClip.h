@@ -115,10 +115,6 @@ private:
     // one the possible unapplication of transitions. That is already done here.
     void removeTransition();
 
-    // Determine mDiff which is the actual trim to be applied
-    /// \param mousediff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right) given the mouse motion, but not taking into account any boundaries
-    void determineTrim(pts mousediff);
-
     // Apply the actual trim to mClip and mLink
     void applyTrim();
 
