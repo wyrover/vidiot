@@ -44,6 +44,8 @@ public:
     const ViewMap& getViewMap() const;
     Intervals& getIntervals();
     const Intervals& getIntervals() const;
+    Keyboard& getKeyboard();
+    const Keyboard& getKeyboard() const;
     MousePointer& getMousepointer();
     const MousePointer& getMousepointer() const;
     Scrolling& getScrolling();
@@ -159,6 +161,7 @@ private:
     Zoom* mZoom;
     ViewMap* mViewMap;
     Intervals* mIntervals;
+    Keyboard* mKeyboard;
     MousePointer* mMousePointer;
     Scrolling* mScroll;
     Selection* mSelection;

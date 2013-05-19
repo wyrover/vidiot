@@ -72,6 +72,16 @@ const Intervals& Part::getIntervals() const
     return getTimeline().getIntervals();
 }
 
+Keyboard& Part::getKeyboard()
+{
+    return getTimeline().getKeyboard();
+}
+
+const Keyboard& Part::getKeyboard() const
+{
+    return getTimeline().getKeyboard();
+}
+
 Selection& Part::getSelection()
 {
     return getTimeline().getSelection();
