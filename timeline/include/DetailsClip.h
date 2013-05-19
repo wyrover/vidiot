@@ -61,6 +61,9 @@ public:
     void onPositionYSliderChanged(wxCommandEvent& event);
     void onPositionYSpinChanged(wxSpinEvent& event);
 
+    // Separated for testability: receiving the user action and handling it.
+    void handleLengthButtonPressed(wxToggleButton* button);
+
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
@@ -83,6 +86,7 @@ public:
     // TEST
     //////////////////////////////////////////////////////////////////////////
 
+    std::list<wxToggleButton*> getLengthButtons() const;
     wxSlider* getOpacitySlider() const;
     wxSpinCtrl* getOpacitySpin() const;
     EnumSelector<model::VideoScaling>* getScalingSelector() const;

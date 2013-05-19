@@ -31,8 +31,8 @@ public:
 
     void initialize() override;
 
-    void doExtra() override;
-    void undoExtra() override;
+    void doExtraBefore() override;
+    void undoExtraAfter() override;
 
 private:
 

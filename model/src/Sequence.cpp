@@ -395,7 +395,7 @@ void Sequence::updateTracks()
         ++index;
     }
     index = 0;
-    mAudioTrackMap.clear(); // todo to cache
+    mAudioTrackMap.clear(); // PERF: to cache
     BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
         track->setIndex(index);

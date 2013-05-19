@@ -46,7 +46,7 @@ bool AClipEdit::Do()
 {
     VAR_INFO(*this)(mInitialized);
 
-    doExtra();
+    doExtraBefore();
 
     if (!mInitialized)
     {
@@ -75,6 +75,8 @@ bool AClipEdit::Do()
         }
     }
 
+    doExtraAfter();
+
     if (!mParams.empty())
     {
         // Only if actual changes were done, this call ensures resetting of all 'iteration' variables.
@@ -102,12 +104,14 @@ bool AClipEdit::Undo()
     VAR_INFO(*this)(mParamsUndo.size());
     //NOT: ASSERT_NONZERO(mParamsUndo.size()); - Due to the use in 'Revert()'
 
+    undoExtraBefore();
+
     BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
     {
         doMove(move);
     }
 
-    undoExtra();
+    undoExtraAfter();
 
     if (!mParamsUndo.empty())
     {
@@ -121,11 +125,19 @@ bool AClipEdit::Undo()
 // ACLIPEDIT INTERFACE
 //////////////////////////////////////////////////////////////////////////
 
-void AClipEdit::doExtra()
+void AClipEdit::doExtraBefore()
 {
 }
 
-void AClipEdit::undoExtra()
+void AClipEdit::doExtraAfter()
+{
+}
+
+void AClipEdit::undoExtraBefore()
+{
+}
+
+void AClipEdit::undoExtraAfter()
 {
 }
 

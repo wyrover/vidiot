@@ -21,6 +21,25 @@ public:
     void update();
 
     //////////////////////////////////////////////////////////////////////////
+    // GET A CERTAIN DETAILS TYPE
+    //////////////////////////////////////////////////////////////////////////
+
+    template <typename DETAILS>
+    DETAILS* get()
+    {
+        BOOST_FOREACH(DetailsPanel* details, mDetails)
+        {
+            DETAILS* result = dynamic_cast<DETAILS*>(details);
+            if (result)
+            {
+                return result;
+            }
+        }
+        FATAL("Not found");
+        return 0;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
     // TEST
     //////////////////////////////////////////////////////////////////////////
 

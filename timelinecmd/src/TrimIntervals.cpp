@@ -43,13 +43,13 @@ void TrimIntervals::initialize()
     getTimeline().endTransaction();
 }
 
-void TrimIntervals::doExtra()
+void TrimIntervals::doExtraBefore()
 {
     LOG_INFO;
     getTimeline().getIntervals().removeAll();
 }
 
-void TrimIntervals::undoExtra()
+void TrimIntervals::undoExtraAfter()
 {
     getTimeline().getIntervals().set(mIntervals);
 }

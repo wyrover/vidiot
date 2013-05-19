@@ -6,6 +6,7 @@
 #include "Convert.h"
 #include "Cursor.h"
 #include "Details.h"
+#include "DetailsTrim.h"
 #include "EmptyClip.h"
 #include "Layout.h"
 #include "MousePointer.h"
@@ -222,6 +223,7 @@ void Trim::update(wxPoint position)
     getTimeline().beginTransaction();
 
     mCommand->update(determineTrimDiff(position), false);
+    getTimeline().getDetails().get<DetailsTrim>()->show( mCommand->getOriginalClip(), mCommand->getNewClip(), mCommand->getOriginalLink(), mCommand->getNewLink());
     preview();
 
     if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
@@ -244,6 +246,7 @@ void Trim::stop()
 {
     VAR_DEBUG(this);
     mActive = false;
+    getTimeline().getDetails().get<DetailsTrim>()->hide();
 
     // Store before destroying mCommand
     model::IClipPtr originalclip = mCommand->getOriginalClip();

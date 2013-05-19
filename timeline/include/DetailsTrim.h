@@ -20,10 +20,11 @@ public:
     virtual ~DetailsTrim();
 
     //////////////////////////////////////////////////////////////////////////
-    // TRIM EVENTS
+    // TRIM UPDATES
     //////////////////////////////////////////////////////////////////////////
 
-    void onTrimChanged( timeline::EventTrimUpdate& event );
+    void show(model::IClipPtr src, model::IClipPtr trg, model::IClipPtr srcLink, model::IClipPtr trgLink);
+    void hide();
 
 private:
 

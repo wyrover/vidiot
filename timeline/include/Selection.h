@@ -10,8 +10,6 @@ namespace model {
 
 namespace gui { namespace timeline {
 
-class EventTrimUpdate;
-
 class Selection
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public Part
@@ -38,6 +36,11 @@ public:
     /// Unselect all clips
     void unselectAll();
 
+    /// Change the selection into the given list of clips.
+    /// List may contain 0-ptrs, these are ignored.
+    /// Any other selection is cleared.
+    void change(model::IClips selection);
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -45,12 +48,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::IClipPtr mPreviouslyClicked;      ///< Clip which was previously (de)selected.
-
-    //////////////////////////////////////////////////////////////////////////
-    // TRIM EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onTrimChanged( timeline::EventTrimUpdate& event );
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

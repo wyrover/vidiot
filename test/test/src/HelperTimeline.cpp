@@ -357,7 +357,7 @@ void Click(wxPoint position)
     ASSERT_EQUALS(getTimeline().getMousePointer().getLeftDownPosition(), position);
 }
 
-void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
+void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim) // todo make interface similar to helpertimeline drag
 {
     VAR_DEBUG(clip)(length)(shift);
     wxPoint from = LeftCenter(clip);

@@ -38,23 +38,53 @@ public:
     /// are not related to adding/removing/replacing/changing clips when doing
     /// a certain timeline operation.
     ///
-    /// Note: be careful when implementing this method for a command which uses
-    ///       Revert(), for instance after showing an animation. Initialize()
-    ///       (which calls doExtra) is only called after submitting a command.
-    ///       However, Revert() calls Undo() which calls undoExtra(). That can
-    ///       cause issues.
-    virtual void doExtra();
-
-    /// This method can be used by derived commands to undo extra actions that
-    /// are not related to adding/removing/replacing/changing clips when undoing
-    /// a certain timeline operation.
+    /// This method is executed before the model changes are made.
     ///
     /// Note: be careful when implementing this method for a command which uses
     ///       Revert(), for instance after showing an animation. Initialize()
     ///       (which calls doExtra) is only called after submitting a command.
     ///       However, Revert() calls Undo() which calls undoExtra(). That can
     ///       cause issues.
-    virtual void undoExtra();
+    virtual void doExtraBefore();
+
+    /// This method can be used by derived commands to do extra actions that
+    /// are not related to adding/removing/replacing/changing clips when doing
+    /// a certain timeline operation.
+    ///
+    /// This method is executed after the model changes are made.
+    ///
+    /// Note: be careful when implementing this method for a command which uses
+    ///       Revert(), for instance after showing an animation. Initialize()
+    ///       (which calls doExtra) is only called after submitting a command.
+    ///       However, Revert() calls Undo() which calls undoExtra(). That can
+    ///       cause issues.
+    virtual void doExtraAfter();
+
+    /// This method can be used by derived commands to undo extra actions that
+    /// are not related to adding/removing/replacing/changing clips when undoing
+    /// a certain timeline operation.
+    ///
+    /// This method is executed before the model changes are made.
+    ///
+    /// Note: be careful when implementing this method for a command which uses
+    ///       Revert(), for instance after showing an animation. Initialize()
+    ///       (which calls doExtra) is only called after submitting a command.
+    ///       However, Revert() calls Undo() which calls undoExtra(). That can
+    ///       cause issues.
+    virtual void undoExtraBefore();
+
+    /// This method can be used by derived commands to undo extra actions that
+    /// are not related to adding/removing/replacing/changing clips when undoing
+    /// a certain timeline operation.
+    ///
+    /// This method is executed after the model changes are made.
+    ///
+    /// Note: be careful when implementing this method for a command which uses
+    ///       Revert(), for instance after showing an animation. Initialize()
+    ///       (which calls doExtra) is only called after submitting a command.
+    ///       However, Revert() calls Undo() which calls undoExtra(). That can
+    ///       cause issues.
+    virtual void undoExtraAfter();
 
     /// To be implemented by abstract base class specialization
     /// It's this method that is called to create move objects, the first time

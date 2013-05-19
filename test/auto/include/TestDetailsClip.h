@@ -4,8 +4,8 @@
 namespace test
 {
 
-class TestTransform : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestTransform>
+class TestDetailsClip : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestDetailsClip>
 {
 public:
 
@@ -20,9 +20,11 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testTransformViaDetailsView();
+    void testChangeLength();
 
-    void testTransformViaDetailsView_Boundaries();
+    void testTransform();
+
+    void testTransform_Boundaries();
 
 private:
 

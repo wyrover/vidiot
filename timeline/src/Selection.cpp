@@ -10,7 +10,6 @@
 #include "TrackView.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "TrimEvent.h"
 #include "UtilLog.h"
 #include "ViewMap.h"
 
@@ -22,13 +21,11 @@ Selection::Selection(Timeline* timeline)
 ,   mPreviouslyClicked()
 {
     VAR_DEBUG(this);
-    getTrim().Bind(EVENT_TRIM_UPDATE, &Selection::onTrimChanged, this);
 }
 
 Selection::~Selection()
 {
     VAR_DEBUG(this);
-    getTrim().Unbind(EVENT_TRIM_UPDATE, &Selection::onTrimChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -225,49 +222,17 @@ void Selection::unselectAll()
     QueueEvent(new EventSelectionUpdate(0));
 }
 
-//////////////////////////////////////////////////////////////////////////
-// TRIM EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Selection::onTrimChanged( timeline::EventTrimUpdate& event )
+void Selection::change(model::IClips selection)
 {
-    VAR_DEBUG(event);
-    TrimEvent e = event.getValue();
-    auto tryselect = [](model::IClipPtr clip) -> bool
+    unselectAll();
+    BOOST_FOREACH( model::IClipPtr clip, selection )
     {
         if (clip)
         {
-            clip->setSelected(true);
-            return true;
+            selectClip(clip,true);
         }
-        return false;
-    };
-
-    switch (e.getState())
-    {
-    case OperationStateStart:
-        {
-            unselectAll(); // This already triggers an update event
-            break;
-        }
-    case OperationStateUpdate:
-        {
-            // NOTE: This even can occur DURING the trimming. Then, the new clips (getClipTrimmed and getLinkTrimmed) are not yet linked.
-            tryselect(e.getClipTrimmed());
-            tryselect(e.getLinkTrimmed());
-            QueueEvent(new EventSelectionUpdate(0));
-            break;
-        }
-    case OperationStateStop:
-        {
-            tryselect(e.getClipTrimmed()) || tryselect(e.getClip()); // Select replacement clip, or the original clip if there was no replacement (abort)
-            tryselect(e.getLinkTrimmed()) || tryselect(e.getLink());
-            QueueEvent(new EventSelectionUpdate(0));
-            break;
-        }
-    default: FATAL("Unknown OperationState");
     }
-    event.Skip();
+    // NOT: QueueEvent(new EventSelectionUpdate(0)); // unselectAll() already queues an event.
 }
 
 //////////////////////////////////////////////////////////////////////////

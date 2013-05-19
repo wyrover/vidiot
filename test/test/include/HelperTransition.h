@@ -88,4 +88,4 @@ struct MakeOutTransitionAfterClip : public MakeTransitionAfterClip
 
 } // namespace
 
-#endif // HELPER_TIMELINE_H
+#endif // HELPER_TRANSITION_H
