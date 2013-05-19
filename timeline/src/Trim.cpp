@@ -8,6 +8,7 @@
 #include "Details.h"
 #include "DetailsTrim.h"
 #include "EmptyClip.h"
+#include "Keyboard.h"
 #include "Layout.h"
 #include "MousePointer.h"
 #include "Player.h"
@@ -226,7 +227,7 @@ void Trim::update(wxPoint position)
     getTimeline().getDetails().get<DetailsTrim>()->show( mCommand->getOriginalClip(), mCommand->getNewClip(), mCommand->getOriginalLink(), mCommand->getNewLink());
     preview();
 
-    if (wxGetMouseState().ShiftDown() && mCommand->isBeginTrim())
+    if (getKeyboard().getShiftDown() && mCommand->isBeginTrim())
     {
         // Ensure that the rightmost pts is kept at the same position when shift dragging
         getTimeline().setShift(getZoom().ptsToPixels(mCommand->getDiff()));
@@ -270,7 +271,7 @@ void Trim::submit()
     VAR_DEBUG(this);
     if (mCommand->getDiff() != 0)
     {
-        bool shiftBeginTrim = wxGetMouseState().ShiftDown() && mCommand->isBeginTrim();
+        bool shiftBeginTrim = getKeyboard().getShiftDown() && mCommand->isBeginTrim();
         pts diff = mCommand->getDiff();
 
         // Only submit the command if there's an actual diff to be applied
@@ -398,7 +399,7 @@ void Trim::preview()
     pts position(mStartPositionPreview + diff);
     wxSize playerSize = getPlayer()->getVideoSize();
     bool isBeginTrim = mCommand->isBeginTrim();
-    bool drawSideBySide = wxGetMouseState().ShiftDown() && mAdjacentBitmap;
+    bool drawSideBySide = getKeyboard().getShiftDown() && mAdjacentBitmap;
 
     bool completelyTrimmedAway = false;
     ASSERT_LESS_THAN_EQUALS(mStartPositionPreview + diff,mPreviewVideoClip->getLength());

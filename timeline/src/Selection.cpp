@@ -3,6 +3,7 @@
 #include "ClipView.h"
 #include "DeleteSelectedClips.h"
 #include "EmptyClip.h"
+#include "Keyboard.h"
 #include "SelectionEvent.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -34,10 +35,9 @@ Selection::~Selection()
 
 void Selection::updateOnLeftClick(const PointerPositionInfo& info)
 {
-    bool ctrlPressed = wxGetMouseState().ControlDown();
-    bool shiftPressed = wxGetMouseState().ShiftDown();
-    bool altPressed = wxGetMouseState().AltDown();
-
+    bool ctrlPressed = getKeyboard().getCtrlDown();
+    bool shiftPressed = getKeyboard().getShiftDown();
+    bool altPressed = getKeyboard().getAltDown();
     VAR_DEBUG(info)(ctrlPressed)(shiftPressed)(altPressed);
 
     // Must be determined before deselecting all clips.
@@ -167,10 +167,9 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
 
 void Selection::updateOnRightClick(model::IClipPtr clip)
 {
-    bool ctrlPressed = wxGetMouseState().ControlDown();
-    bool shiftPressed = wxGetMouseState().ShiftDown();
-    bool altPressed = wxGetMouseState().AltDown();
-
+    bool ctrlPressed = getKeyboard().getCtrlDown();
+    bool shiftPressed = getKeyboard().getShiftDown();
+    bool altPressed = getKeyboard().getAltDown();
     VAR_DEBUG(clip)(ctrlPressed)(shiftPressed)(altPressed);
 
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();

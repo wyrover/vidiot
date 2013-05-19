@@ -1053,7 +1053,7 @@ void TestTransition::testTrimmingTransition()
     }
 }
 
-//RUNONLY(testAudioTransitions);
+//RUNFROM(testAudioTransitions);
 void TestTransition::testAudioTransitions()
 {
     StartTestSuite();

@@ -11,6 +11,7 @@
 #include "EmptyClip.h"
 #include "EventDrag.h"
 #include "File.h"
+#include "Keyboard.h"
 #include "Layout.h"
 #include "Logging.h"
 #include "MousePointer.h"
@@ -218,7 +219,7 @@ void Drag::move(wxPoint position)
 
     PointerPositionInfo info = getMousePointer().getInfo(position);
 
-    if (wxGetMouseState().ControlDown())
+    if (getKeyboard().getCtrlDown())
     {
         // As long as CTRL is down, the dragged image stays the same, but the hotspot is moved
         mHotspot -=  mPosition - position;
@@ -744,7 +745,7 @@ void Drag::determinePossibleDragPoints()
 void Drag::determineShift()
 {
     Shift shift = boost::none;
-    if (wxGetMouseState().ShiftDown())
+    if (getKeyboard().getShiftDown())
     {
         pts origPos = getDragPtsPosition();
         pts origLen = getDragPtsSize();

@@ -5,6 +5,7 @@
 #include "EventKey.h"
 #include "EventMouse.h"
 #include "EventPart.h"
+#include "Keyboard.h"
 #include "Intervals.h"
 #include "MousePointer.h"
 #include "StateIdle.h"
@@ -26,7 +27,7 @@ MovingCursor::MovingCursor( my_context ctx ) // entry
     LOG_DEBUG;
 
     getCursor().moveCursorOnUser(getMousePointer().getLeftDownPosition().x);
-    if (wxGetMouseState().ShiftDown())
+    if (getKeyboard().getShiftDown())
     {
         triggerToggleStart();
     }
