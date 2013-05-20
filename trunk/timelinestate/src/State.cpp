@@ -233,7 +233,7 @@ void Machine::onKeyDown(wxKeyEvent& event)
 {
     VAR_DEBUG(event.GetPosition())(event);
     getKeyboard().update(event);
-    process_event(EvKeyDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    process_event(EvKeyDown(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
 
@@ -241,7 +241,7 @@ void Machine::onKeyUp(wxKeyEvent& event)
 {
     VAR_DEBUG(event.GetPosition())(event);
     getKeyboard().update(event);
-    process_event(EvKeyUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    process_event(EvKeyUp(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
 

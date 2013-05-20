@@ -514,7 +514,6 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
 
 void DetailsClip::onSelectionChanged( timeline::EventSelectionUpdate& event )
 {
-    VAR_ERROR(event);
     VAR_DEBUG(this);
     std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();
     model::IClipPtr selectedclip;

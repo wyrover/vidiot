@@ -331,7 +331,7 @@ void Trim::draw(wxDC& dc) const
 
 pts Trim::determineTrimDiff(wxPoint position)
 {
-    pts result = getZoom().pixelsToPts(position.x - mStartPosition.x); // The pts difference as indicated by the mouse
+    pts result = getZoom().pixelsToPts(position.x - mStartPosition.x); // The pts difference as indicated by the mouse // todo test if this works with scrolling???
     if (mSnap)
     {
         getTimeline().refreshPts(*mSnap);

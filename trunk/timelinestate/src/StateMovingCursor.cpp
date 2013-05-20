@@ -46,7 +46,7 @@ boost::statechart::result MovingCursor::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
     getCursor().moveCursorOnUser(evt.mPosition.x);
-    if (evt.mWxEvent.ShiftDown())
+    if (getKeyboard().getShiftDown())
     {
         triggerToggleStart();
     }
@@ -56,7 +56,7 @@ boost::statechart::result MovingCursor::react( const EvLeftDown& evt )
 boost::statechart::result MovingCursor::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
-    if (evt.mWxEvent.ShiftDown())
+    if (getKeyboard().getShiftDown())
     {
         triggerToggleEnd();
     }
@@ -73,7 +73,7 @@ boost::statechart::result MovingCursor::react( const EvMotion& evt )
 boost::statechart::result MovingCursor::react( const EvLeave& evt)
 {
     VAR_DEBUG(evt);
-    if (evt.mWxEvent.ShiftDown())
+    if (getKeyboard().getShiftDown())
     {
         triggerToggleEnd();
     }
@@ -83,7 +83,7 @@ boost::statechart::result MovingCursor::react( const EvLeave& evt)
 boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
-    switch (evt.mWxEvent.GetKeyCode())
+    switch (evt.getKeyCode())
     {
     case WXK_SHIFT:
         triggerToggleStart();
@@ -98,7 +98,7 @@ boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
 boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
-    switch (evt.mWxEvent.GetKeyCode())
+    switch (evt.getKeyCode())
     {
     case WXK_SHIFT:
         triggerToggleEnd();

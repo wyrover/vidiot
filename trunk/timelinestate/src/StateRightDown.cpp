@@ -66,7 +66,7 @@ boost::statechart::result StateRightDown::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);
 
-    switch (evt.mWxEvent.GetKeyCode())
+    switch (evt.getKeyCode())
     {
     case WXK_F1:
         getTooltip().show(sTooltip);
