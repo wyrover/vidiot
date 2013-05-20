@@ -26,11 +26,11 @@ std::ostream& operator<< (std::ostream& os, const wxMouseEvent& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
+std::ostream& operator<< (std::ostream& os, const wxKeyCode& obj)
 {
     std::string key;
 #define LOGKEY(code) case code: key = #code; break
-    switch (obj.GetKeyCode())
+    switch (obj)
     {
         LOGKEY(WXK_BACK);
         LOGKEY(WXK_TAB);
@@ -155,14 +155,9 @@ std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
         LOGKEY(WXK_SPECIAL19);
         LOGKEY(WXK_SPECIAL20);
         default:
-            key = obj.GetKeyCode();
+            key = obj;
     }
-
-    os  << key << ','
-        << obj.GetX() << ','
-        << obj.GetY() << ','
-        << static_cast<const wxKeyboardState&>(obj);
-
+    os  << key;
     return os;
 }
 

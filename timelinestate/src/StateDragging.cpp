@@ -96,16 +96,16 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);
 
-    if ( evt.mWxEvent.GetUnicodeKey() != WXK_NONE )
+    if ( evt.hasUnicodeKey() )
     {
     }
     else
     {
-        switch (evt.mWxEvent.GetKeyCode())
+        switch (evt.getKeyCode())
         {
         case WXK_CONTROL:
         case WXK_SHIFT:
-            getDrag().move(evt.mPosition);
+            getDrag().move(evt.getPosition());
             break;
         case WXK_F1:
             getTooltip().show(sTooltip);
@@ -122,9 +122,9 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
 {
     VAR_DEBUG(evt);
 
-    if ( evt.mWxEvent.GetUnicodeKey() != WXK_NONE )
+    if ( evt.hasUnicodeKey() )
     {
-        switch (evt.mWxEvent.GetUnicodeKey())
+        switch (evt.getUnicodeKey())
         {
         case 'm':
             break;
@@ -132,11 +132,11 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
     }
     else
     {
-        switch (evt.mWxEvent.GetKeyCode())
+        switch (evt.getKeyCode())
         {
         case WXK_CONTROL:
         case WXK_SHIFT:
-            getDrag().move(evt.mPosition);
+            getDrag().move(evt.getPosition());
             break;
         }
     }

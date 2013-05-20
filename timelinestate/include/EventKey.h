@@ -1,34 +1,45 @@
 #ifndef TIMELINE_EVENT_KEY_H
 #define TIMELINE_EVENT_KEY_H
 
-#include "UtilLogWxwidgets.h"
-#include "Part.h"
-
 namespace gui { namespace timeline { namespace state {
 
-template< class MostDerived >
-struct EvKey : boost::statechart::event< MostDerived >
+struct EvKey
 {
-    EvKey(wxKeyEvent& wxevt, wxPoint pos)
-        :   mPosition(pos)
-        ,   mWxEvent(wxevt)
-    {
-    };
+    EvKey(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position);
+
+    bool getCtrlDown() const;
+    bool getShiftDown() const;
+    bool getAltDown() const;
+    bool hasUnicodeKey() const;
+    wxChar getUnicodeKey() const;
+    int getKeyCode() const;
+    wxPoint getPosition() const;
+
+private:
+
+    const bool mCtrlDown;
+    const bool mShiftDown;
+    const bool mAltDown;
+    const wxKeyCode mKeyCode;
+    const wxChar mUnicodeKey;
     const wxPoint mPosition;
-    const wxKeyEvent& mWxEvent;
+
+    friend std::ostream& operator<< (std::ostream& os, const EvKey& obj);
 };
 
-template< class MostDerived >
-std::ostream& operator<< (std::ostream& os, const EvKey< MostDerived >& obj)
+struct EvKeyDown
+    : public EvKey
+    , public boost::statechart::event< EvKeyDown >
 {
-    os  << typeid(obj).name()   << '|' // This typeid is required to distinguish the various 'react' methods
-        << obj.mPosition        << '|'
-        << obj.mWxEvent;
-    return os;
-}
+    EvKeyDown(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position);
+};
 
-struct EvKeyDown : EvKey<EvKeyDown> { EvKeyDown (wxKeyEvent& wxevt, wxPoint pos) : EvKey<EvKeyDown> (wxevt, pos) {} };
-struct EvKeyUp   : EvKey<EvKeyUp>   { EvKeyUp   (wxKeyEvent& wxevt, wxPoint pos) : EvKey<EvKeyUp>   (wxevt, pos) {} };
+struct EvKeyUp
+    : public EvKey
+    , public boost::statechart::event< EvKeyUp >
+{
+    EvKeyUp(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position);
+};
 
 }}} // namespace
 

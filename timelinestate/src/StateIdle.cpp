@@ -11,6 +11,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Menu.h"
+#include "Keyboard.h"
 #include "MousePointer.h"
 #include "Player.h"
 #include "PositionInfo.h"
@@ -113,10 +114,10 @@ boost::statechart::result Idle::react( const EvMotion& evt )
                 {
                 case TransitionBegin:
                 case TransitionRightClipBegin: // FALLTHROUGH
-                case ClipBegin:      image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
+                case ClipBegin:      image = getKeyboard().getShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
                 case TransitionEnd:
                 case TransitionLeftClipEnd: // FALLTHROUGH
-                case ClipEnd:        image = evt.mWxEvent.ShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+                case ClipEnd:        image = getKeyboard().getShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
                 }
             }
         }
@@ -129,23 +130,23 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 boost::statechart::result Idle::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
-    if ( evt.mWxEvent.GetUnicodeKey() != WXK_NONE )
+    if ( evt.hasUnicodeKey() )
     {
-        wxChar c = evt.mWxEvent.GetUnicodeKey();
-        switch (evt.mWxEvent.GetUnicodeKey())
+        wxChar c = evt.getUnicodeKey();
+        switch (evt.getUnicodeKey())
         {
         case 's':   (new command::SplitAtCursor(getSequence()))->submit(); break;
         case 'S':   (new command::SplitAtCursor(getSequence()))->submit(); break;
         case 'c':   addTransition(); break;
         case 'C':   addTransition(); break;
-        case '-':   getZoom().change( evt.mWxEvent.ControlDown() ? -1000 : -1); break;
-        case '=':   getZoom().change( evt.mWxEvent.ControlDown() ?  1000 :  1); break;
+        case '-':   getZoom().change( evt.getCtrlDown() ? -1000 : -1); break;
+        case '=':   getZoom().change( evt.getCtrlDown() ?  1000 :  1); break;
         case ' ':     return start();                                 break;
         }
     }
     else
     {
-        switch (evt.mWxEvent.GetKeyCode())
+        switch (evt.getKeyCode())
         {
         case WXK_SPACE:     return start();                                 break;
         case WXK_DELETE:    getSelection().deleteClips();                   break;
@@ -154,8 +155,8 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         case 'C': addTransition(); break;
         case 's':   (new command::SplitAtCursor(getSequence()))->submit(); break;
         case 'S':   (new command::SplitAtCursor(getSequence()))->submit(); break;
-        case '-':   getZoom().change( evt.mWxEvent.ControlDown() ? -1000 : -1); break;
-        case '=':   getZoom().change( evt.mWxEvent.ControlDown() ?  1000 :  1); break;
+        case '-':   getZoom().change( evt.getCtrlDown() ? -1000 : -1); break;
+        case '=':   getZoom().change( evt.getCtrlDown() ?  1000 :  1); break;
         }
     }
     return forward_event();

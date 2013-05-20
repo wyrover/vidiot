@@ -73,7 +73,6 @@ public:
             ASSERT_MAP_CONTAINS(mPanels,timeline);
             mCurrent = mPanels[timeline];
             GetSizer()->Show(mCurrent);
-            VAR_ERROR(GetSize())(mCurrent->GetSize());;
             GetSizer()->SetDimension(wxPoint(0,0),GetSize());
             mCurrent->Layout();
         }

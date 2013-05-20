@@ -31,7 +31,6 @@ void TransitionFactory::add(TransitionPtr transition)
 
 TransitionPtr TransitionFactory::getDefault()
 {
-    VAR_ERROR(*this);
     ASSERT_NONZERO(mTransitions.size());
     return make_cloned<Transition>(mTransitions.front());
 }
