@@ -46,7 +46,7 @@ boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 boost::statechart::result StateTrim::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getTrim().update(getMouse().getPhysicalPosition());
+    getTrim().update();
     return forward_event();
 }
 
@@ -70,7 +70,7 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
         if (!mShiftDown) // Avoid quirky feedback: when shift dragging, every motion event is followed by a key event. Updating on those key events causes flickering.
         {
             mShiftDown = true;
-            getTrim().update(evt.getPosition());
+            getTrim().update();
             break;
         }
     }
@@ -86,7 +86,7 @@ boost::statechart::result StateTrim::react( const EvKeyUp& evt)
         if (mShiftDown) // Avoid quirky feedback: when shift dragging, every motion event is followed by a key event. Updating on those key events causes flickering.
         {
             mShiftDown = false;
-            getTrim().update(evt.getPosition());
+            getTrim().update();
             break;
         }
     }

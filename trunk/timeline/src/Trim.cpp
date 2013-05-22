@@ -64,7 +64,7 @@ void Trim::start()
 
     // Reset first
     mActive = true;
-    mStartPosition = wxPoint(0,0);
+    mStartPosition = getMouse().getPhysicalPosition(); // Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
     mStartPts = 0;
     mFixedPixel = 0;
     mSnapPoints.clear();
@@ -75,9 +75,6 @@ void Trim::start()
     ASSERT(info.clip && !info.clip->isA<model::EmptyClip>())(info);
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(info.clip);
     mPosition = info.logicalclipposition;
-
-    // Start position is the physical position of the mouse within the timeline
-    getTimeline().CalcScrolledPosition(virtualMousePosition.x,virtualMousePosition.y,&mStartPosition.x,&mStartPosition.y);
 
     model::IClipPtr mOriginalClip;
     model::IClipPtr adjacentClip;
@@ -215,15 +212,15 @@ void Trim::start()
 
     mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
     determinePossibleSnapPoints(mOriginalClip);
-    update(mStartPosition);
+    update();
 }
 
-void Trim::update(wxPoint position)
+void Trim::update()
 {
     VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
-    mCommand->update(determineTrimDiff(position), false);
+    mCommand->update(determineTrimDiff(getMouse().getPhysicalPosition()), false); // Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
     getTimeline().getDetails().get<DetailsTrim>()->show( mCommand->getOriginalClip(), mCommand->getNewClip(), mCommand->getOriginalLink(), mCommand->getNewLink());
     preview();
 
