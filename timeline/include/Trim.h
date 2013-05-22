@@ -46,8 +46,7 @@ public:
 
     /// Do an update of the trim operation. Must be called upon relevant
     /// mouse/keyboard changes.
-    /// \position mouse position on screen. Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
-    void update(wxPoint position);
+    void update();
 
     /// Abort a pending trim operation. If changes were made, undo them.
     void stop();
