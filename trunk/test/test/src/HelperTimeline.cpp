@@ -19,7 +19,7 @@
 #include "ids.h"
 #include "Layout.h"
 #include "Logging.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "PositionInfo.h"
 #include "Scrolling.h"
 #include "Selection.h"
@@ -136,7 +136,7 @@ pixel RightPixel(model::TrackPtr track)
 pixel LeftPixel(model::IClipPtr clip)
 {
     wxPoint p( getTimeline().getViewMap().getView(clip)->getLeftPixel(), VCenter(clip) );
-    gui::timeline::PointerPositionInfo info =  getTimeline().getMousepointer().getInfo(p);
+    gui::timeline::PointerPositionInfo info =  getTimeline().getMouse().getInfo(p);
     while (info.clip != clip)
     {
         // This special handling is required to adjust for rounding errors in case of zooming.
@@ -145,7 +145,7 @@ pixel LeftPixel(model::IClipPtr clip)
         // this clip - to ensure that lookups at the returned pixel value correspond with the
         // given clip and not its left neighbour.
         p.x++;
-        info = getTimeline().getMousepointer().getInfo(p);
+        info = getTimeline().getMouse().getInfo(p);
     }
     ASSERT(info.clip == clip);
     return p.x;
@@ -154,7 +154,7 @@ pixel LeftPixel(model::IClipPtr clip)
 pixel RightPixel(model::IClipPtr clip)
 {
     wxPoint p( getTimeline().getViewMap().getView(clip)->getRightPixel(), VCenter(clip) );
-    gui::timeline::PointerPositionInfo info =  getTimeline().getMousepointer().getInfo(p);
+    gui::timeline::PointerPositionInfo info =  getTimeline().getMouse().getInfo(p);
     while (info.clip != clip)
     {
         // This special handling is required to adjust for rounding errors in case of zooming.
@@ -163,7 +163,7 @@ pixel RightPixel(model::IClipPtr clip)
         // this clip - to ensure that lookups at the returned pixel value correspond with the
         // given clip and not its right neighbour.
         p.x--;
-        info = getTimeline().getMousepointer().getInfo(p);
+        info = getTimeline().getMouse().getInfo(p);
     }
     ASSERT(info.clip == clip);
     return p.x;
@@ -345,7 +345,7 @@ void PositionCursor(pixel position)
 void Move(wxPoint position)
 {
     MoveWithinWidget(position,TimelinePosition() - getTimeline().getScrolling().getOffset());
-    ASSERT_EQUALS(getTimeline().getMousePointer().getVirtualPosition(), position);
+    ASSERT_EQUALS(getTimeline().getMouse().getVirtualPosition(), position);
 }
 
 void Click(wxPoint position)
@@ -354,7 +354,7 @@ void Click(wxPoint position)
     VAR_DEBUG(position);
     wxUIActionSimulator().MouseClick();
     waitForIdle();
-//  todo  ASSERT_EQUALS(getTimeline().getMousePointer().getLeftDownPosition(), position);
+//  todo  ASSERT_EQUALS(getTimeline().getMouse().getLeftDownPosition(), position);
 }
 
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim) // todo make interface similar to helpertimeline drag
@@ -477,7 +477,7 @@ void Play(pixel from, int ms)
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 {
-    return getTimeline().getMousepointer().getInfo(position).logicalclipposition;
+    return getTimeline().getMouse().getInfo(position).logicalclipposition;
 }
 
 void DeselectAllClips()

@@ -17,7 +17,7 @@ DECLAREENUM(MousePointerImage, \
             PointerTrimShiftEnd, \
             PointerTrackResize);
 
-class MousePointer
+class Mouse
     :   public Part
 {
 public:
@@ -26,8 +26,8 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    MousePointer(Timeline* timeline);
-    virtual ~MousePointer();
+    Mouse(Timeline* timeline);
+    virtual ~Mouse();
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS

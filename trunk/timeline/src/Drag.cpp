@@ -14,7 +14,7 @@
 #include "Keyboard.h"
 #include "Layout.h"
 #include "Logging.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "PositionInfo.h"
 #include "ProjectView.h"
 #include "Scrolling.h"
@@ -66,7 +66,7 @@ public:
     };
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def)
     {
-        getMousePointer().dragMove(wxPoint(x,y));
+        getMouse().dragMove(wxPoint(x,y));
         model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
         mOk = true;
         BOOST_FOREACH( model::NodePtr node, nodes )
@@ -87,7 +87,7 @@ public:
     }
     wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
     {
-        getMousePointer().dragMove(wxPoint(x,y));
+        getMouse().dragMove(wxPoint(x,y));
         if (mOk)
         {
             getStateMachine().process_event(state::EvDragMove());
@@ -97,7 +97,7 @@ public:
     }
     bool OnDrop (wxCoord x, wxCoord y)
     {
-        getMousePointer().dragMove(wxPoint(x,y));
+        getMouse().dragMove(wxPoint(x,y));
         getStateMachine().process_event(state::EvDragDrop());
         return true;
     }
@@ -154,7 +154,7 @@ Drag::~Drag()
 
 void Drag::start(wxPoint hotspot, bool isInsideDrag)
 {
-    PointerPositionInfo info = getMousePointer().getInfo(hotspot);
+    PointerPositionInfo info = getMouse().getInfo(hotspot);
 
     reset();
     mActive = true;
@@ -220,7 +220,7 @@ void Drag::move(wxPoint position)
         position.x = mHotspot.x - mBitmapOffset.x; // Can't move 'beyond 0'
     }
 
-    PointerPositionInfo info = getMousePointer().getInfo(position);
+    PointerPositionInfo info = getMouse().getInfo(position);
 
     if (getKeyboard().getCtrlDown())
     {

@@ -12,7 +12,7 @@
 #include "EventPart.h"
 #include "Menu.h"
 #include "Keyboard.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "Player.h"
 #include "PositionInfo.h"
 #include "Selection.h"
@@ -74,7 +74,7 @@ boost::statechart::result Idle::react( const EvLeftDouble& evt )
 boost::statechart::result Idle::react( const EvRightDown& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getVirtualPosition());
+    PointerPositionInfo info = getMouse().getInfo(getMouse().getVirtualPosition());
 
     if (info.onAudioVideoDivider)
     {
@@ -94,7 +94,7 @@ boost::statechart::result Idle::react( const EvRightDown& evt )
 boost::statechart::result Idle::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info =  getMousePointer().getInfo(getMousePointer().getVirtualPosition());
+    PointerPositionInfo info =  getMouse().getInfo(getMouse().getVirtualPosition());
     MousePointerImage image = PointerNormal;
     if (info.onAudioVideoDivider)
     {
@@ -123,7 +123,7 @@ boost::statechart::result Idle::react( const EvMotion& evt )
         }
 
     }
-    getMousePointer().set(image);
+    getMouse().set(image);
     return forward_event();
 }
 
@@ -164,7 +164,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
 
 boost::statechart::result Idle::react( const EvDragEnter& evt)
 {
-    getDrag().start(getMousePointer().getVirtualPosition(), false);
+    getDrag().start(getMouse().getVirtualPosition(), false);
     return transit<Dragging>();
 }
 
@@ -189,7 +189,7 @@ boost::statechart::result Idle::start()
 
 boost::statechart::result Idle::leftDown()
 {
-    PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getLeftDownPosition());
+    PointerPositionInfo info = getMouse().getInfo(getMouse().getLeftDownPosition());
 
     if (info.onAudioVideoDivider)
     {
@@ -239,7 +239,7 @@ boost::statechart::result Idle::leftDown()
 
 void Idle::addTransition()
 {
-    PointerPositionInfo info = getTimeline().getMousePointer().getInfo(getMousePointer().getVirtualPosition());
+    PointerPositionInfo info = getTimeline().getMouse().getInfo(getMouse().getVirtualPosition());
     if (info.clip)
     {
         model::TransitionType type;

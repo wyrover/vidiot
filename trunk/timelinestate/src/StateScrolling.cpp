@@ -6,7 +6,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Menu.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "PositionInfo.h"
 #include "Scrolling.h"
 #include "StateIdle.h"
@@ -48,11 +48,11 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
     //   The second right click is immediately followed by a motion event causing the transition to this state.
     // - Sometimes a right down event is followed by a motion event (within that clip) due to slight mouse movement.
     //   Still, the user wants the popup.
-    PointerPositionInfo infoDown = getMousePointer().getInfo(getMousePointer().getRightDownPosition());
-    PointerPositionInfo infoUp = getMousePointer().getInfo(getMousePointer().getVirtualPosition());
+    PointerPositionInfo infoDown = getMouse().getInfo(getMouse().getRightDownPosition());
+    PointerPositionInfo infoUp = getMouse().getInfo(getMouse().getVirtualPosition());
     if (infoDown.clip == infoUp.clip)
     {
-        getMenuHandler().Popup(getMousePointer().getRightDownPosition());
+        getMenuHandler().Popup(getMouse().getRightDownPosition());
     }
     return transit<Idle>();
 }
@@ -60,7 +60,7 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
 boost::statechart::result StateScrolling::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getScrolling().align(getZoom().pixelsToPts(getMousePointer().getRightDownPosition().x), getMousePointer().getPhysicalPosition().x);
+    getScrolling().align(getZoom().pixelsToPts(getMouse().getRightDownPosition().x), getMouse().getPhysicalPosition().x);
     return forward_event();
 }
 

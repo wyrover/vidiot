@@ -5,7 +5,7 @@
 #include "EventKey.h"
 #include "EventMouse.h"
 #include "EventPart.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "StateIdle.h"
 #include "Timeline.h"
 #include "Tooltip.h"
@@ -63,7 +63,7 @@ boost::statechart::result Dragging::react( const EvMotion& evt )
 {
     // See also EvDragMove
     VAR_DEBUG(evt);
-    getDrag().move(getMousePointer().getVirtualPosition());
+    getDrag().move(getMouse().getVirtualPosition());
     return forward_event();
 }
 
@@ -72,7 +72,7 @@ boost::statechart::result Dragging::react( const EvDragMove& evt )
     // See also EvMotion
     // No mouse events are generated during drag&drop, only these Drag&Drop events.
     VAR_DEBUG(evt);
-    getDrag().move(getMousePointer().getVirtualPosition());
+    getDrag().move(getMouse().getVirtualPosition());
     return forward_event();
 }
 
@@ -106,7 +106,7 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
         {
         case WXK_CONTROL:
         case WXK_SHIFT:
-            getDrag().move(getMousePointer().getVirtualPosition());
+            getDrag().move(getMouse().getVirtualPosition());
             break;
         case WXK_F1:
             getTooltip().show(sTooltip);
@@ -137,7 +137,7 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
         {
         case WXK_CONTROL:
         case WXK_SHIFT:
-            getDrag().move(getMousePointer().getVirtualPosition());
+            getDrag().move(getMouse().getVirtualPosition());
             break;
         }
     }
