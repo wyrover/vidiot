@@ -220,7 +220,7 @@ void Trim::update()
     VAR_DEBUG(this);
     getTimeline().beginTransaction();
 
-    mCommand->update(determineTrimDiff(getMouse().getPhysicalPosition()), false); // Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
+    mCommand->update(determineTrimDiff(),false);
     getTimeline().getDetails().get<DetailsTrim>()->show( mCommand->getOriginalClip(), mCommand->getNewClip(), mCommand->getOriginalLink(), mCommand->getNewLink());
     preview();
 
@@ -326,9 +326,10 @@ void Trim::draw(wxDC& dc) const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-pts Trim::determineTrimDiff(wxPoint position)
+pts Trim::determineTrimDiff()
 {
-    pts result = getZoom().pixelsToPts(position.x - mStartPosition.x); // The pts difference as indicated by the mouse // todo test if this works with scrolling???
+    wxPoint position = getMouse().getPhysicalPosition(); // Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
+    pts result = getZoom().pixelsToPts(position.x - mStartPosition.x);
     if (mSnap)
     {
         getTimeline().refreshPts(*mSnap);

@@ -87,7 +87,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    pts determineTrimDiff(wxPoint position); ///< \return the trim diff to be applied, including (optional) snapping to clips or to the cursor.
+    pts determineTrimDiff(); ///< \return the trim diff to be applied, including (optional) snapping to clips or to the cursor.
     void determinePossibleSnapPoints(model::IClipPtr originalclip);
     void preview();
 };
