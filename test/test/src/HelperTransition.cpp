@@ -10,7 +10,7 @@
 #include "HelperWindow.h"
 #include "ids.h"
 #include "Layout.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "PositionInfo.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
@@ -27,7 +27,7 @@ void ASSERT_LOGICALCLIPPOSITION(wxPoint position, gui::timeline::MouseOnClipPosi
     // This assert is done to detect some 'clicking' problems as soon as possible. With some zoom
     // values, using Transition* methods actually return a previous or next clip (typically happens
     // when not zoomed in enough).
-    gui::timeline::PointerPositionInfo info = getTimeline().getMousePointer().getInfo(position);
+    gui::timeline::PointerPositionInfo info = getTimeline().getMouse().getInfo(position);
     ASSERT_EQUALS(expected, info.logicalclipposition);
 }
 

@@ -12,7 +12,7 @@
 #include "EmptyClip.h"
 #include "ids.h"
 #include "Intervals.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "PositionInfo.h"
 #include "RemoveEmptyTracks.h"
 #include "Render.h"
@@ -148,8 +148,8 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     ASSERT(mActive);
     LOG_INFO;
 
-    mPopupPosition = getMousePointer().getRightDownPosition();
-    PointerPositionInfo info = getMousePointer().getInfo(mPopupPosition);
+    mPopupPosition = getMouse().getRightDownPosition();
+    PointerPositionInfo info = getMouse().getInfo(mPopupPosition);
 
     // Mechanism:
     // Default menu options are hidden and enabled.
@@ -441,7 +441,7 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
 void MenuHandler::createTransition(model::TransitionType type)
 {
     VAR_INFO(type);
-    PointerPositionInfo info = getMousePointer().getInfo(mPopupPosition);
+    PointerPositionInfo info = getMouse().getInfo(mPopupPosition);
     ASSERT(info.clip);
     model::TransitionPtr transition = info.clip->isA<model::VideoClip>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
 

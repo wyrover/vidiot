@@ -8,7 +8,7 @@
 #include "EventPart.h"
 #include "EventMouse.h"
 #include "Layout.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "PositionInfo.h"
 #include "SequenceView.h"
 #include "StateIdle.h"
@@ -36,9 +36,9 @@ MoveTrackDivider::MoveTrackDivider( my_context ctx ) // entry
 {
     LOG_DEBUG;
 
-    mStartPosition = getMousePointer().getLeftDownPosition();
+    mStartPosition = getMouse().getLeftDownPosition();
 
-    PointerPositionInfo info = getMousePointer().getInfo(mStartPosition);
+    PointerPositionInfo info = getMouse().getInfo(mStartPosition);
     ASSERT(info.onTrackDivider);
 
     mTrack = info.track;
@@ -83,7 +83,7 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
 boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    int diff = mStartPosition.y - getMousePointer().getVirtualPosition().y; // todo use physical pos?
+    int diff = mStartPosition.y - getMouse().getVirtualPosition().y; // todo use physical pos?
     if (mTrack->isA<model::AudioTrack>())
     {
         // Reverse for audio tracks (these are dragged at the bottom, video tracks are dragged at the top)

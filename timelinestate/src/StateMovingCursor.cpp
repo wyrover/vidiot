@@ -7,7 +7,7 @@
 #include "EventPart.h"
 #include "Keyboard.h"
 #include "Intervals.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
 #include "UtilLog.h"
@@ -26,7 +26,7 @@ MovingCursor::MovingCursor( my_context ctx ) // entry
 {
     LOG_DEBUG;
 
-    getCursor().moveCursorOnUser(getMousePointer().getLeftDownPosition().x);
+    getCursor().moveCursorOnUser(getMouse().getLeftDownPosition().x);
     if (getKeyboard().getShiftDown())
     {
         triggerToggleStart();
@@ -45,7 +45,7 @@ MovingCursor::~MovingCursor() // exit
 boost::statechart::result MovingCursor::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    getCursor().moveCursorOnUser(getMousePointer().getVirtualPosition().x);
+    getCursor().moveCursorOnUser(getMouse().getVirtualPosition().x);
     if (getKeyboard().getShiftDown())
     {
         triggerToggleStart();
@@ -66,7 +66,7 @@ boost::statechart::result MovingCursor::react( const EvLeftUp& evt )
 boost::statechart::result MovingCursor::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getCursor().moveCursorOnUser(getMousePointer().getVirtualPosition().x); // Will also update the 'running selection'
+    getCursor().moveCursorOnUser(getMouse().getVirtualPosition().x); // Will also update the 'running selection'
     return forward_event();
 }
 

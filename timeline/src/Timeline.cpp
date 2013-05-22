@@ -9,7 +9,7 @@
 #include "Keyboard.h"
 #include "Layout.h"
 #include "Menu.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "Options.h"
 #include "Player.h"
 #include "Preview.h"
@@ -51,7 +51,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
 ,   mViewMap(new ViewMap(this))
 ,   mIntervals(new Intervals(this))
 ,   mKeyboard(new Keyboard(this))
-,   mMousePointer(new MousePointer(this))
+,   mMouse(new Mouse(this))
 ,   mScroll(new Scrolling(this))
 ,   mSelection(new Selection(this))
 ,   mCursor(new Cursor(this))
@@ -102,7 +102,7 @@ Timeline::~Timeline()
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
     delete mSelection;      mSelection = 0;
-    delete mMousePointer;   mMousePointer = 0;
+    delete mMouse;   mMouse = 0;
     delete mIntervals;      mIntervals = 0;
     delete mKeyboard;       mKeyboard = 0;
     delete mViewMap;        mViewMap = 0;
@@ -177,14 +177,14 @@ const Keyboard& Timeline::getKeyboard() const
     return *mKeyboard;
 }
 
-MousePointer& Timeline::getMousepointer()
+Mouse& Timeline::getMouse()
 {
-    return *mMousePointer;
+    return *mMouse;
 }
 
-const MousePointer& Timeline::getMousepointer() const
+const Mouse& Timeline::getMouse() const
 {
-    return *mMousePointer;
+    return *mMouse;
 }
 
 Scrolling& Timeline::getScrolling()

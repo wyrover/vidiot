@@ -5,7 +5,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Keyboard.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "Player.h"
 #include "Scrolling.h"
 #include "StateIdle.h"
@@ -93,7 +93,7 @@ void  Machine::process_event(const boost::statechart::event_base & evt )
 void Machine::onMotion(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvMotion());
     event.Skip();
 }
@@ -101,8 +101,8 @@ void Machine::onMotion(wxMouseEvent& event)
 void Machine::onLeftDown(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
-    getMousePointer().leftDown();
+    getMouse().update(event);
+    getMouse().leftDown();
     getTimeline().SetFocus();
     process_event(EvLeftDown());
     event.Skip();
@@ -111,7 +111,7 @@ void Machine::onLeftDown(wxMouseEvent& event)
 void Machine::onLeftUp(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvLeftUp());
     event.Skip();
 }
@@ -119,8 +119,8 @@ void Machine::onLeftUp(wxMouseEvent& event)
 void Machine::onLeftDouble(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
-    getMousePointer().leftDown();
+    getMouse().update(event);
+    getMouse().leftDown();
     process_event(EvLeftDouble());
     event.Skip();
 }
@@ -128,7 +128,7 @@ void Machine::onLeftDouble(wxMouseEvent& event)
 void Machine::onMiddleDown(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvMiddleDown());
     event.Skip();
 }
@@ -136,7 +136,7 @@ void Machine::onMiddleDown(wxMouseEvent& event)
 void Machine::onMiddleUp(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvMiddleUp());
     event.Skip();
 }
@@ -144,7 +144,7 @@ void Machine::onMiddleUp(wxMouseEvent& event)
 void Machine::onMiddleDouble(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvMiddleDouble());
     event.Skip();
 }
@@ -152,8 +152,8 @@ void Machine::onMiddleDouble(wxMouseEvent& event)
 void Machine::onRightDown(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
-    getMousePointer().rightDown();
+    getMouse().update(event);
+    getMouse().rightDown();
     getTimeline().SetFocus();
     process_event(EvRightDown());
     event.Skip();
@@ -162,7 +162,7 @@ void Machine::onRightDown(wxMouseEvent& event)
 void Machine::onRightUp(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvRightUp());
     event.Skip();
 }
@@ -170,8 +170,8 @@ void Machine::onRightUp(wxMouseEvent& event)
 void Machine::onRightDouble(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
-    getMousePointer().rightDown();
+    getMouse().update(event);
+    getMouse().rightDown();
     process_event(EvRightDouble());
     event.Skip();
 }
@@ -179,7 +179,7 @@ void Machine::onRightDouble(wxMouseEvent& event)
 void Machine::onEnter(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvEnter());
     event.Skip();
 }
@@ -187,7 +187,7 @@ void Machine::onEnter(wxMouseEvent& event)
 void Machine::onLeave(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
     process_event(EvLeave());
     event.Skip();
 }
@@ -195,9 +195,9 @@ void Machine::onLeave(wxMouseEvent& event)
 void Machine::onWheel(wxMouseEvent& event)
 {
     getKeyboard().update(event);
-    getMousePointer().update(event);
+    getMouse().update(event);
 
-    // Zooming/Scrolling can be done in any state // todo check: won't this cause problems for the stored virtual position in MousePointer class???
+    // Zooming/Scrolling can be done in any state // todo check: won't this cause problems for the stored virtual position in Mouse class???
     int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
     if (event.ControlDown())
     {

@@ -5,7 +5,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Sequence.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "SequenceView.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
@@ -22,7 +22,7 @@ namespace gui { namespace timeline { namespace state {
 MoveDivider::MoveDivider( my_context ctx ) // entry
 :   TimeLineState( ctx )
 ,   mOriginalPosition(getSequence()->getDividerPosition())
-,   mStartPosition(getMousePointer().getLeftDownPosition())
+,   mStartPosition(getMouse().getLeftDownPosition())
 {
     LOG_DEBUG;
 }
@@ -45,7 +45,7 @@ boost::statechart::result MoveDivider::react( const EvLeftUp& evt )
 boost::statechart::result MoveDivider::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    pixel position = mOriginalPosition + (getMousePointer().getVirtualPosition().y - mStartPosition.y); // todo should be physical?
+    pixel position = mOriginalPosition + (getMouse().getVirtualPosition().y - mStartPosition.y); // todo should be physical?
     getSequenceView().setDividerPosition(position);
     return forward_event();
 }

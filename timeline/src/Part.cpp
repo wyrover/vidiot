@@ -92,14 +92,14 @@ const Selection& Part::getSelection() const
     return getTimeline().getSelection();
 }
 
-MousePointer& Part::getMousePointer()
+Mouse& Part::getMouse()
 {
-    return getTimeline().getMousepointer();
+    return getTimeline().getMouse();
 }
 
-const MousePointer& Part::getMousePointer() const
+const Mouse& Part::getMouse() const
 {
-    return getTimeline().getMousepointer();
+    return getTimeline().getMouse();
 }
 
 Scrolling& Part::getScrolling()

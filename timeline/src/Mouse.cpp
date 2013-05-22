@@ -1,4 +1,4 @@
-#include "MousePointer.h"
+#include "Mouse.h"
 
 #include "AudioView.h"
 #include "Clip.h"
@@ -31,7 +31,7 @@ IMPLEMENTENUM(MousePointerImage);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-MousePointer::MousePointer(Timeline* timeline) // todo rename to Mouse
+Mouse::Mouse(Timeline* timeline)
 :   Part(timeline)
 ,   mPhysicalPosition(-1,-1)
 ,   mVirtualPosition(-1,-1)
@@ -80,7 +80,7 @@ MousePointer::MousePointer(Timeline* timeline) // todo rename to Mouse
     set(PointerNormal);
 }
 
-MousePointer::~MousePointer()
+Mouse::~Mouse()
 {
     VAR_DEBUG(this);
 }
@@ -89,7 +89,7 @@ MousePointer::~MousePointer()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void MousePointer::update(const wxMouseState& state)
+void Mouse::update(const wxMouseState& state)
 {
     mPhysicalPosition = state.GetPosition();
     mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
@@ -109,19 +109,19 @@ void MousePointer::update(const wxMouseState& state)
     }
 }
 
-void MousePointer::leftDown()
+void Mouse::leftDown()
 {
     LOG_DEBUG;
     mLeft = mVirtualPosition;
 }
 
-void MousePointer::rightDown()
+void Mouse::rightDown()
 {
     LOG_DEBUG;
     mRight = mVirtualPosition;
 }
 
-void MousePointer::dragMove(wxPoint position)
+void Mouse::dragMove(wxPoint position)
 {
     mPhysicalPosition = position;
     mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
@@ -132,7 +132,7 @@ void MousePointer::dragMove(wxPoint position)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void MousePointer::set(MousePointerImage image)
+void Mouse::set(MousePointerImage image)
 {
     switch (image)
     {
@@ -147,29 +147,29 @@ void MousePointer::set(MousePointerImage image)
     }
 }
 
-PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
+PointerPositionInfo Mouse::getInfo(wxPoint pointerposition)
 {
     PointerPositionInfo info;
     getSequenceView().getPositionInfo(pointerposition, info);
     return info;
 }
 
-wxPoint MousePointer::getPhysicalPosition() const
+wxPoint Mouse::getPhysicalPosition() const
 {
     return mPhysicalPosition;
 }
 
-wxPoint MousePointer::getVirtualPosition() const
+wxPoint Mouse::getVirtualPosition() const
 {
     return mVirtualPosition;
 }
 
-wxPoint MousePointer::getLeftDownPosition() const
+wxPoint Mouse::getLeftDownPosition() const
 {
     return mLeft;
 }
 
-wxPoint MousePointer::getRightDownPosition() const
+wxPoint Mouse::getRightDownPosition() const
 {
     return mRight;
 }

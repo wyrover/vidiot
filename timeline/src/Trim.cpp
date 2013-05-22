@@ -10,7 +10,7 @@
 #include "EmptyClip.h"
 #include "Keyboard.h"
 #include "Layout.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "Player.h"
 #include "PositionInfo.h"
 #include "Scrolling.h"
@@ -70,8 +70,8 @@ void Trim::start()
     mSnapPoints.clear();
 
     // Determine if pointer was at begin or at end of clip
-    wxPoint virtualMousePosition = getMousePointer().getLeftDownPosition();
-    PointerPositionInfo info = getMousePointer().getInfo(virtualMousePosition);
+    wxPoint virtualMousePosition = getMouse().getLeftDownPosition();
+    PointerPositionInfo info = getMouse().getInfo(virtualMousePosition);
     ASSERT(info.clip && !info.clip->isA<model::EmptyClip>())(info);
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(info.clip);
     mPosition = info.logicalclipposition;

@@ -6,7 +6,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Layout.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "StateDragging.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
@@ -24,7 +24,7 @@ const wxString sTooltip = _(
 
 StateLeftDown::StateLeftDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
-    ,   mStartPosition(getMousePointer().getLeftDownPosition())
+    ,   mStartPosition(getMouse().getLeftDownPosition())
 {
     LOG_DEBUG;
 }
@@ -53,10 +53,10 @@ boost::statechart::result StateLeftDown::react( const EvLeftUp& evt )
 boost::statechart::result StateLeftDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    wxPoint diff = mStartPosition - getMousePointer().getVirtualPosition();
+    wxPoint diff = mStartPosition - getMouse().getVirtualPosition();
     if ((abs(diff.x) > Layout::DragThreshold) || (abs(diff.y) > Layout::DragThreshold))
     {
-        getDrag().start(getMousePointer().getVirtualPosition(), true);
+        getDrag().start(getMouse().getVirtualPosition(), true);
         return transit<Dragging>();
     }
     return forward_event();

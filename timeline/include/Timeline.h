@@ -46,8 +46,8 @@ public:
     const Intervals& getIntervals() const;
     Keyboard& getKeyboard();
     const Keyboard& getKeyboard() const;
-    MousePointer& getMousepointer();
-    const MousePointer& getMousepointer() const;
+    Mouse& getMouse();
+    const Mouse& getMouse() const;
     Scrolling& getScrolling();
     const Scrolling& getScrolling() const;
     Selection& getSelection();
@@ -162,7 +162,7 @@ private:
     ViewMap* mViewMap;
     Intervals* mIntervals;
     Keyboard* mKeyboard;
-    MousePointer* mMousePointer;
+    Mouse* mMouse;
     Scrolling* mScroll;
     Selection* mSelection;
     Cursor* mCursor;  // Must be AFTER mPlayer

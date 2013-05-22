@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "EmptyClip.h"
 #include "IClip.h"
-#include "MousePointer.h"
+#include "Mouse.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
