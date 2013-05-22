@@ -72,11 +72,13 @@ std::ostream& operator<< (std::ostream& os, const EvKey& obj)
 EvKeyDown::EvKeyDown(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position)
     : EvKey(controldown, shiftdown, altdown, unicodekey, keycode, position)
 {
+    VAR_INFO(*this);
 }
 
 EvKeyUp::EvKeyUp(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position)
     : EvKey(controldown, shiftdown, altdown, unicodekey, keycode, position)
 {
+    VAR_INFO(*this);
 }
 
 }}} // namespace

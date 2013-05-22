@@ -53,10 +53,10 @@ boost::statechart::result StateLeftDown::react( const EvLeftUp& evt )
 boost::statechart::result StateLeftDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    wxPoint diff = mStartPosition - evt.mPosition;
+    wxPoint diff = mStartPosition - getMousePointer().getVirtualPosition();
     if ((abs(diff.x) > Layout::DragThreshold) || (abs(diff.y) > Layout::DragThreshold))
     {
-        getDrag().start(evt.mPosition, true);
+        getDrag().start(getMousePointer().getVirtualPosition(), true);
         return transit<Dragging>();
     }
     return forward_event();

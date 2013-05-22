@@ -45,7 +45,7 @@ MovingCursor::~MovingCursor() // exit
 boost::statechart::result MovingCursor::react( const EvLeftDown& evt )
 {
     VAR_DEBUG(evt);
-    getCursor().moveCursorOnUser(evt.mPosition.x);
+    getCursor().moveCursorOnUser(getMousePointer().getVirtualPosition().x);
     if (getKeyboard().getShiftDown())
     {
         triggerToggleStart();
@@ -66,7 +66,7 @@ boost::statechart::result MovingCursor::react( const EvLeftUp& evt )
 boost::statechart::result MovingCursor::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getCursor().moveCursorOnUser(evt.mPosition.x); // Will also update the 'running selection'
+    getCursor().moveCursorOnUser(getMousePointer().getVirtualPosition().x); // Will also update the 'running selection'
     return forward_event();
 }
 
