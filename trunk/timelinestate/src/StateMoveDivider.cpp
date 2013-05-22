@@ -45,7 +45,7 @@ boost::statechart::result MoveDivider::react( const EvLeftUp& evt )
 boost::statechart::result MoveDivider::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    pixel position = mOriginalPosition + (evt.mPosition.y - mStartPosition.y);
+    pixel position = mOriginalPosition + (getMousePointer().getVirtualPosition().y - mStartPosition.y); // todo should be physical?
     getSequenceView().setDividerPosition(position);
     return forward_event();
 }

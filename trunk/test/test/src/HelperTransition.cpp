@@ -1,5 +1,7 @@
 #include "HelperTransition.h"
 
+#include "HelperApplication.h"
+
 #include "Config.h"
 #include "CreateTransition.h"
 #include "HelperConfig.h"
@@ -132,9 +134,9 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool a
 
     // Reduce size of clips to be able to create transition
     TrimLeft(GetClip(0,clipNumberAfterTransition),30,true);
+    ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
     TrimRight(GetClip(0,clipNumberBeforeTransition),-30,true);
     ASSERT_MORE_THAN_ZERO(GetClip(0,clipNumberBeforeTransition)->getMaxAdjustEnd())(GetClip(0,clipNumberBeforeTransition));
-    ASSERT_LESS_THAN_ZERO(GetClip(0,clipNumberAfterTransition)->getMinAdjustBegin())(GetClip(0,clipNumberAfterTransition));
 
     makeTransition();
 

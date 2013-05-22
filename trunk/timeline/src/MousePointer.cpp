@@ -10,12 +10,12 @@
 #include "cursor_trim_begin.xpm"
 #include "cursor_trim_end.xpm"
 #include "PositionInfo.h"
+#include "Scrolling.h"
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "TrackView.h"
-
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoView.h"
@@ -31,9 +31,10 @@ IMPLEMENTENUM(MousePointerImage);
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-MousePointer::MousePointer(Timeline* timeline)
+MousePointer::MousePointer(Timeline* timeline) // todo rename to Mouse
 :   Part(timeline)
-,   mCurrent(-1,-1)
+,   mPhysicalPosition(-1,-1)
+,   mVirtualPosition(-1,-1)
 ,   mLeft(-1,-1)
 ,   mRight(-1,-1)
 {
@@ -85,6 +86,49 @@ MousePointer::~MousePointer()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GUI EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void MousePointer::update(const wxMouseState& state)
+{
+    mPhysicalPosition = state.GetPosition();
+    mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
+    VAR_DEBUG(mPhysicalPosition)(mVirtualPosition);
+
+    if (Config::getShowDebugInfo())
+    {
+        PointerPositionInfo info = getInfo(mVirtualPosition);
+        pts left = 0;
+        pts right = 0;
+        if (info.clip)
+        {
+            left = info.clip->getLeftPts();
+            right = info.clip->getRightPts();
+        }
+        gui::StatusBar::get().setDebugText( wxString::Format("POS:(%3d,%3d) PTS:[%5d] CLIP:[%5ld,%5ld)", mVirtualPosition.x, mVirtualPosition.y, getZoom().pixelsToPts(mVirtualPosition.x), left, right) );
+    }
+}
+
+void MousePointer::leftDown()
+{
+    LOG_DEBUG;
+    mLeft = mVirtualPosition;
+}
+
+void MousePointer::rightDown()
+{
+    LOG_DEBUG;
+    mRight = mVirtualPosition;
+}
+
+void MousePointer::dragMove(wxPoint position)
+{
+    mPhysicalPosition = position;
+    mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
+    VAR_DEBUG(mPhysicalPosition)(mVirtualPosition);
+}
+
+//////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
@@ -110,44 +154,19 @@ PointerPositionInfo MousePointer::getInfo(wxPoint pointerposition)
     return info;
 }
 
-void MousePointer::setPosition(wxPoint position)
+wxPoint MousePointer::getPhysicalPosition() const
 {
-    VAR_DEBUG(mCurrent)(position);
-    mCurrent = position;
-    if (Config::getShowDebugInfo())
-    {
-        PointerPositionInfo info = getInfo(position);
-        pts left = 0;
-        pts right = 0;
-        if (info.clip)
-        {
-            left = info.clip->getLeftPts();
-            right = info.clip->getRightPts();
-        }
-        gui::StatusBar::get().setDebugText( wxString::Format("POS:(%3d,%3d) PTS:[%5d] CLIP:[%5ld,%5ld)", mCurrent.x, mCurrent.y, getZoom().pixelsToPts(mCurrent.x), left, right) );
-    }
+    return mPhysicalPosition;
 }
 
-wxPoint MousePointer::getPosition() const
+wxPoint MousePointer::getVirtualPosition() const
 {
-    return mCurrent;
-}
-
-void MousePointer::setLeftDownPosition(wxPoint position)
-{
-    VAR_DEBUG(mLeft)(position);
-    mLeft = position;
+    return mVirtualPosition;
 }
 
 wxPoint MousePointer::getLeftDownPosition() const
 {
     return mLeft;
-}
-
-void MousePointer::setRightDownPosition(wxPoint position)
-{
-    VAR_DEBUG(mRight)(position);
-    mRight = position;
 }
 
 wxPoint MousePointer::getRightDownPosition() const

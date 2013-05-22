@@ -49,7 +49,7 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
     // - Sometimes a right down event is followed by a motion event (within that clip) due to slight mouse movement.
     //   Still, the user wants the popup.
     PointerPositionInfo infoDown = getMousePointer().getInfo(getMousePointer().getRightDownPosition());
-    PointerPositionInfo infoUp = getMousePointer().getInfo(evt.mPosition);
+    PointerPositionInfo infoUp = getMousePointer().getInfo(getMousePointer().getVirtualPosition());
     if (infoDown.clip == infoUp.clip)
     {
         getMenuHandler().Popup(getMousePointer().getRightDownPosition());
@@ -60,7 +60,7 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
 boost::statechart::result StateScrolling::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getScrolling().align(getZoom().pixelsToPts(getMousePointer().getRightDownPosition().x), evt.mWxEvent.GetPosition().x);
+    getScrolling().align(getZoom().pixelsToPts(getMousePointer().getRightDownPosition().x), getMousePointer().getPhysicalPosition().x);
     return forward_event();
 }
 

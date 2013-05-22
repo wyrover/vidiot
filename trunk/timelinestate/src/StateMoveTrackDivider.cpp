@@ -83,7 +83,7 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
 boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    int diff = mStartPosition.y - evt.mPosition.y;
+    int diff = mStartPosition.y - getMousePointer().getVirtualPosition().y; // todo use physical pos?
     if (mTrack->isA<model::AudioTrack>())
     {
         // Reverse for audio tracks (these are dragged at the bottom, video tracks are dragged at the top)

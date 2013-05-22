@@ -5,6 +5,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Keyboard.h"
+#include "MousePointer.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
 #include "UtilLog.h"
@@ -45,7 +46,7 @@ boost::statechart::result StateTrim::react( const EvLeftUp& evt )
 boost::statechart::result StateTrim::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    getTrim().update(evt.mWxEvent.GetPosition());
+    getTrim().update(getMousePointer().getPhysicalPosition());
     return forward_event();
 }
 

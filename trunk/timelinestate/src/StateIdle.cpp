@@ -74,7 +74,7 @@ boost::statechart::result Idle::react( const EvLeftDouble& evt )
 boost::statechart::result Idle::react( const EvRightDown& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info = getMousePointer().getInfo(evt.mPosition);
+    PointerPositionInfo info = getMousePointer().getInfo(getMousePointer().getVirtualPosition());
 
     if (info.onAudioVideoDivider)
     {
@@ -94,7 +94,7 @@ boost::statechart::result Idle::react( const EvRightDown& evt )
 boost::statechart::result Idle::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info =  getMousePointer().getInfo(evt.mPosition);
+    PointerPositionInfo info =  getMousePointer().getInfo(getMousePointer().getVirtualPosition());
     MousePointerImage image = PointerNormal;
     if (info.onAudioVideoDivider)
     {
@@ -164,7 +164,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
 
 boost::statechart::result Idle::react( const EvDragEnter& evt)
 {
-    getDrag().start(evt.mPosition, false);
+    getDrag().start(getMousePointer().getVirtualPosition(), false);
     return transit<Dragging>();
 }
 
@@ -239,7 +239,7 @@ boost::statechart::result Idle::leftDown()
 
 void Idle::addTransition()
 {
-    PointerPositionInfo info = getTimeline().getMousePointer().getInfo(getMousePointer().getPosition());
+    PointerPositionInfo info = getTimeline().getMousePointer().getInfo(getMousePointer().getVirtualPosition());
     if (info.clip)
     {
         model::TransitionType type;

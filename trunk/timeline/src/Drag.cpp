@@ -66,6 +66,7 @@ public:
     };
     wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def)
     {
+        getMousePointer().dragMove(wxPoint(x,y));
         model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
         mOk = true;
         BOOST_FOREACH( model::NodePtr node, nodes )
@@ -79,29 +80,31 @@ public:
         if (mOk)
         {
             ProjectViewDropSource::get().setFeedback(false);
-            getStateMachine().process_event(state::EvDragEnter(x,y));
+            getStateMachine().process_event(state::EvDragEnter());
             return wxDragMove;
         }
         return wxDragNone;
     }
     wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
     {
+        getMousePointer().dragMove(wxPoint(x,y));
         if (mOk)
         {
-            getStateMachine().process_event(state::EvDragMove(x,y));
+            getStateMachine().process_event(state::EvDragMove());
             return wxDragMove;
         }
         return wxDragNone;
     }
     bool OnDrop (wxCoord x, wxCoord y)
     {
-        getStateMachine().process_event(state::EvDragDrop(x,y));
+        getMousePointer().dragMove(wxPoint(x,y));
+        getStateMachine().process_event(state::EvDragDrop());
         return true;
     }
     void OnLeave()
     {
         ProjectViewDropSource::get().setFeedback(true);
-        getStateMachine().process_event(state::EvDragEnd(0,0));
+        getStateMachine().process_event(state::EvDragEnd());
     }
     bool mOk;
 };

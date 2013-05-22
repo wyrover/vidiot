@@ -30,23 +30,25 @@ public:
     virtual ~MousePointer();
 
     //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void update(const wxMouseState& state);
+    void leftDown();
+    void rightDown();
+
+    void dragMove(wxPoint position);
+
+    //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
     void set(MousePointerImage image);
 
-    /**
-    * Return info on the given position.
-    **/
-    PointerPositionInfo getInfo(wxPoint pointerposition);
-
-    void setPosition(wxPoint position);  ///< \param position current mouse pointer position.
-    wxPoint getPosition() const;    ///< \return current mouse pointer position.
-
-    void setLeftDownPosition(wxPoint position);  ///< \param position last (most recent) position at which a 'left down' event was received.
+    PointerPositionInfo getInfo(wxPoint pointerposition); /// \return info on the given position.
+    wxPoint getPhysicalPosition() const;     ///< \return current physical (unscrolled) positionm of mouse pointer
+    wxPoint getVirtualPosition() const;     ///< \return current virtual (includes scrolling offset) position of mouse pointer
     wxPoint getLeftDownPosition() const;    ///< \return last (most recent) position at which a 'left down' event was received.
-
-    void setRightDownPosition(wxPoint position); ///< \param position last (most recent) position at which a 'right down' event was received.
     wxPoint getRightDownPosition() const;   ///< \return last (most recent) position at which a 'right down' event was received.
 
 private:
@@ -59,9 +61,10 @@ private:
     wxCursor mCursorTrimShiftEnd;
     wxCursor mCursorTrackResize;
 
-    wxPoint mCurrent;
-    wxPoint mLeft;
-    wxPoint mRight;
+    wxPoint mPhysicalPosition;
+    wxPoint mVirtualPosition;
+    wxPoint mLeft; ///< Holds the most recent position at which the left button was pressed.
+    wxPoint mRight; ///< Holds the most recent position at which the left button was pressed.
 };
 
 }} // namespace
