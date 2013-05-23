@@ -32,8 +32,17 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     void requestShow(bool show, wxString title = "");
-    void addbox(const wxString& name);
-    wxSizer* addoption(const wxString& name, wxWindow* widget);
+
+    void addBox(const wxString& name);
+
+    void showBox(const wxString& name, bool show = true);
+
+    void addOption(const wxString& name, wxWindow* widget);
+
+    /// Show/hide an option and its title
+    /// \param widget option that must be shown/hidden
+    /// \param show if true then show, otherwise hide
+    void showOption(wxWindow* widget, bool show = true);
 
 private:
 
@@ -44,8 +53,13 @@ private:
     bool mShow;
     wxString mTitle;
 
-    wxBoxSizer*         mTopSizer;  ///< sizer for panel
+    wxBoxSizer*      mTopSizer;  ///< sizer for panel
     wxSizer*         mBoxSizer;  ///< sizer for current box
+
+    std::map<wxString, wxSizer*> mBoxes;
+
+    std::map<wxWindow*, wxSizer*> mMapWindowToSizer;
+    std::map<wxWindow*, wxStaticText*> mMapWindowToTitle;
 
 };
 

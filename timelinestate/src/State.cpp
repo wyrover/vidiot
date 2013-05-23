@@ -211,7 +211,7 @@ void Machine::onWheel(wxMouseEvent& event)
     getKeyboard().update(event);
     getMouse().update(event);
 
-    // Zooming/Scrolling can be done in any state // todo check: won't this cause problems for the stored virtual position in Mouse class???
+    // Zooming/Scrolling can be done in any state
     int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
     if (event.ControlDown())
     {

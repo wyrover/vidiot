@@ -73,7 +73,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 {
     VAR_DEBUG(this);
 
-    addbox(_("Duration"));
+    addBox(_("Duration"));
 
     auto times = [] (int ms) -> wxString
     {
@@ -98,9 +98,9 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         mLengthButtons.push_back(button);
     }
     updateLengthButtons();
-    addoption(_("Fixed lengths (s)"),lengthbuttonspanel);
+    addOption(_("Fixed lengths (s)"),lengthbuttonspanel);
 
-    addbox(_("Video"));
+    addBox(_("Video"));
 
     wxPanel* opacitypanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
@@ -112,10 +112,10 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0).Right());
     opacitypanel->SetSizer(opacitysizer);
-    addoption(_("Opacity"), opacitypanel);
+    addOption(_("Opacity"), opacitypanel);
 
     mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingNone);
-    addoption(_("Scaling"), mSelectScaling);
+    addOption(_("Scaling"), mSelectScaling);
 
     wxPanel* scalingpanel = new wxPanel(this);
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -131,10 +131,10 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
     scalingsizer->Add(mScalingSpin, wxSizerFlags(0).Right());
     scalingpanel->SetSizer(scalingsizer);
-    addoption(_("Factor"), scalingpanel);
+    addOption(_("Factor"), scalingpanel);
 
     mSelectAlignment = new EnumSelector<model::VideoAlignment>(this, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentCustom);
-    addoption(_("Alignment"), mSelectAlignment);
+    addOption(_("Alignment"), mSelectAlignment);
 
     wxPanel* positionxpanel = new wxPanel(this);
     wxBoxSizer* positionxsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -146,7 +146,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     positionxsizer->Add(mPositionXSlider, wxSizerFlags(1).Expand());
     positionxsizer->Add(mPositionXSpin, wxSizerFlags(0).Right());
     positionxpanel->SetSizer(positionxsizer);
-    addoption(_("X position"), positionxpanel);
+    addOption(_("X position"), positionxpanel);
 
     wxPanel* positionypanel = new wxPanel(this);
     wxBoxSizer* positionysizer = new wxBoxSizer(wxHORIZONTAL);
@@ -158,7 +158,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     positionysizer->Add(mPositionYSlider, wxSizerFlags(1).Expand());
     positionysizer->Add(mPositionYSpin, wxSizerFlags(0).Right());
     positionypanel->SetSizer(positionysizer);
-    addoption(_("Y position"), positionypanel);
+    addOption(_("Y position"), positionypanel);
 
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
