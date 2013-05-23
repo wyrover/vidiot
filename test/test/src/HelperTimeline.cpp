@@ -354,7 +354,7 @@ void Click(wxPoint position)
     VAR_DEBUG(position);
     wxUIActionSimulator().MouseClick();
     waitForIdle();
-//  todo  ASSERT_EQUALS(getTimeline().getMouse().getLeftDownPosition(), position);
+    ASSERT_EQUALS(getTimeline().getMouse().getLeftDownPosition(), position);
 }
 
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim) // todo make interface similar to helpertimeline drag
