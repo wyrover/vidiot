@@ -15,25 +15,28 @@ namespace gui { namespace timeline {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+static wxString sNotes(_("Notes"));
+
 DetailsTrim::DetailsTrim(wxWindow* parent, Timeline& timeline)
     :   DetailsPanel(parent,timeline)
 {
     VAR_DEBUG(this);
 
-    addbox(_("Resizing"));
+    addBox(_("Resizing"));
     mVideo = new wxStaticText(this, wxID_ANY, "");
     mAudio = new wxStaticText(this, wxID_ANY, "");
     mTransition = new wxStaticText(this, wxID_ANY, "");
-    mVideoOption = addoption(_("Video size"),mVideo);
-    mAudioOption = addoption(_("Audio size"),mAudio);
-    mTransitionOption = addoption(_("Transition size"),mTransition);
+    addOption(_("Video size"),mVideo);
+    addOption(_("Audio size"),mAudio);
+    addOption(_("Transition size"),mTransition);
 
-    addbox(_("Notes"));
-    wxStaticText* statictext = new wxStaticText(this, wxID_ANY, _("Press SHIFT to remove blank areas during the trimming"));
-    addoption(_("Shift"), statictext);
+    addBox(sNotes);
+    mNote = new wxStaticText(this, wxID_ANY, _("Press SHIFT to remove blank areas during the trimming"));
+    addOption(_("Shift"), mNote);
 
     GetSizer()->AddStretchSpacer();
-    //Fit();
+
+    Fit();
 
     VAR_INFO(GetSize());
 }
@@ -67,9 +70,10 @@ void DetailsTrim::show( model::IClipPtr src, model::IClipPtr trg, model::IClipPt
     bool isTransition = src->isA<model::Transition>();
     bool isVideo = src->isA<model::VideoClip>();
 
-    mTransitionOption->Show(isTransition);
-    mVideoOption->Show(!isTransition);
-    mAudioOption->Show(!isTransition);
+    showOption(mTransition,isTransition);
+    showOption(mVideo,!isTransition);
+    showOption(mAudio,!isTransition);
+    showBox(sNotes,!isTransition);
     if (src->isA<model::Transition>())
     {
         showLength(src,trg,mTransition);
@@ -87,6 +91,7 @@ void DetailsTrim::show( model::IClipPtr src, model::IClipPtr trg, model::IClipPt
             showLength(src,trg,mAudio);
         }
     }
+    Fit();
 }
 
 void DetailsTrim::hide()
