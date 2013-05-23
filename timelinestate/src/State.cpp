@@ -11,6 +11,7 @@
 #include "StateIdle.h"
 #include "Timeline.h"
 #include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
 #include "VideoDisplayEvent.h"
 #include "Zoom.h"
 
@@ -92,6 +93,7 @@ void  Machine::process_event(const boost::statechart::event_base & evt )
 
 void Machine::onMotion(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvMotion());
@@ -100,6 +102,7 @@ void Machine::onMotion(wxMouseEvent& event)
 
 void Machine::onLeftDown(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     getMouse().leftDown();
@@ -110,6 +113,7 @@ void Machine::onLeftDown(wxMouseEvent& event)
 
 void Machine::onLeftUp(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvLeftUp());
@@ -118,6 +122,7 @@ void Machine::onLeftUp(wxMouseEvent& event)
 
 void Machine::onLeftDouble(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     getMouse().leftDown();
@@ -127,6 +132,7 @@ void Machine::onLeftDouble(wxMouseEvent& event)
 
 void Machine::onMiddleDown(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvMiddleDown());
@@ -135,6 +141,7 @@ void Machine::onMiddleDown(wxMouseEvent& event)
 
 void Machine::onMiddleUp(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvMiddleUp());
@@ -143,6 +150,7 @@ void Machine::onMiddleUp(wxMouseEvent& event)
 
 void Machine::onMiddleDouble(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvMiddleDouble());
@@ -151,6 +159,7 @@ void Machine::onMiddleDouble(wxMouseEvent& event)
 
 void Machine::onRightDown(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     getMouse().rightDown();
@@ -161,6 +170,7 @@ void Machine::onRightDown(wxMouseEvent& event)
 
 void Machine::onRightUp(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvRightUp());
@@ -169,6 +179,7 @@ void Machine::onRightUp(wxMouseEvent& event)
 
 void Machine::onRightDouble(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     getMouse().rightDown();
@@ -178,6 +189,7 @@ void Machine::onRightDouble(wxMouseEvent& event)
 
 void Machine::onEnter(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvEnter());
@@ -186,6 +198,7 @@ void Machine::onEnter(wxMouseEvent& event)
 
 void Machine::onLeave(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvLeave());
@@ -194,6 +207,7 @@ void Machine::onLeave(wxMouseEvent& event)
 
 void Machine::onWheel(wxMouseEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
 
@@ -223,13 +237,15 @@ void Machine::onWheel(wxMouseEvent& event)
 
 void Machine::onKeyDown(wxKeyEvent& event)
 {
-    getKeyboard().update(event); // todo improve logging of events: params
+    VAR_DEBUG(event);
+    getKeyboard().update(event);
     process_event(EvKeyDown(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();
 }
 
 void Machine::onKeyUp(wxKeyEvent& event)
 {
+    VAR_DEBUG(event);
     getKeyboard().update(event);
     process_event(EvKeyUp(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
     event.Skip();

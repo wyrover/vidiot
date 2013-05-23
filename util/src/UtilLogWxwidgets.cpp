@@ -18,10 +18,20 @@ std::ostream& operator<< (std::ostream& os, const wxSize& obj)
     return os;
 }
 
+std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
+{
+    os  << obj.GetX() << '|'
+        << obj.GetY() << '|'
+        << obj.GetKeyCode() << '|'
+        << obj.GetUnicodeKey() << '|'
+        << static_cast<const wxKeyboardState&>(obj);
+    return os;
+}
+
 std::ostream& operator<< (std::ostream& os, const wxMouseEvent& obj)
 {
-    os  << obj.GetX() << ','
-        << obj.GetY() << ','
+    os  << obj.GetX() << '|'
+        << obj.GetY() << '|'
         << static_cast<const wxKeyboardState&>(obj);
     return os;
 }
