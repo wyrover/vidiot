@@ -30,15 +30,12 @@ namespace gui { namespace timeline { namespace state {
 
 MoveTrackDivider::MoveTrackDivider( my_context ctx ) // entry
 :   TimeLineState( ctx )
-,   mStartPosition(0,0)
 ,   mOriginalHeight(0)
 ,   mTrack()
 {
     LOG_DEBUG;
 
-    mStartPosition = getMouse().getLeftDownPosition();
-
-    PointerPositionInfo info = getMouse().getInfo(mStartPosition);
+    PointerPositionInfo info = getMouse().getInfo(getMouse().getLeftDownPosition());
     ASSERT(info.onTrackDivider);
 
     mTrack = info.track;
@@ -83,7 +80,7 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
 boost::statechart::result MoveTrackDivider::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    int diff = mStartPosition.y - getMouse().getVirtualPosition().y; // todo use physical pos?
+    int diff = getMouse().getLeftDownPosition().y - getMouse().getVirtualPosition().y;
     if (mTrack->isA<model::AudioTrack>())
     {
         // Reverse for audio tracks (these are dragged at the bottom, video tracks are dragged at the top)

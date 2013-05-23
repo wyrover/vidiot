@@ -22,7 +22,6 @@ namespace gui { namespace timeline { namespace state {
 MoveDivider::MoveDivider( my_context ctx ) // entry
 :   TimeLineState( ctx )
 ,   mOriginalPosition(getSequence()->getDividerPosition())
-,   mStartPosition(getMouse().getLeftDownPosition())
 {
     LOG_DEBUG;
 }
@@ -45,8 +44,7 @@ boost::statechart::result MoveDivider::react( const EvLeftUp& evt )
 boost::statechart::result MoveDivider::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    pixel position = mOriginalPosition + (getMouse().getVirtualPosition().y - mStartPosition.y); // todo should be physical?
-    getSequenceView().setDividerPosition(position);
+    getSequenceView().setDividerPosition(mOriginalPosition + (getMouse().getVirtualPosition().y - getMouse().getLeftDownPosition().y));
     return forward_event();
 }
 

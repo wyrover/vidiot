@@ -46,7 +46,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxPoint mStartPosition; ///< Original pointer position when starting the resize
     int mOriginalHeight;    ///< Original height of the track
     model::TrackPtr mTrack; ///< The track which is resized
 
