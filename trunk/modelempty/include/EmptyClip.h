@@ -7,6 +7,8 @@
 
 namespace model {
 
+/// Class can not be used to simultaneously deliver audio AND video.
+/// Make separate clips if both empty audio and video are required.
 class EmptyClip
     :   public Clip
     ,   public IAudio
@@ -30,7 +32,7 @@ public:
     /// \param length size of the clip
     /// \param extraBegin extra size of the contained EmptyFile at the beginning (the truncated part at the beginning)
     /// \param extraEnd extra size of the contained EmptyFile at the end (the truncated part at the end)
-    EmptyClip(pts length, pts extraBegin = 0, pts extraEnd = 0);
+    EmptyClip(pts length); // todo test this change (removal of extra*) and update docs if correct
 
     virtual EmptyClip* clone() const override;
 
@@ -54,19 +56,26 @@ public:
     static EmptyClipPtr replace(model::IClips clips);
 
     //////////////////////////////////////////////////////////////////////////
-    // ICONTROL
+    // CLIP
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void clean() override;
+    pts getLength() const override;
+    void moveTo(pts position) override;
 
-    //////////////////////////////////////////////////////////////////////////
-    // ICLIP
-    //////////////////////////////////////////////////////////////////////////
+    void setLink(IClipPtr link) override;
 
-    virtual void setLink(IClipPtr link) override;
-    virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
-    virtual std::ostream& dump(std::ostream& os) const override;
-    virtual char* getType() const override;
+    pts getMinAdjustBegin() const override;
+    pts getMaxAdjustBegin() const override;
+    void adjustBegin(pts adjustment) override;
+
+    pts getMinAdjustEnd() const override;
+    pts getMaxAdjustEnd() const override;
+    void adjustEnd(pts adjustment) override;
+
+    std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
+
+    std::ostream& dump(std::ostream& os) const override;
+    char* getType() const override;
 
     //////////////////////////////////////////////////////////////////////////
     // IAUDIO
@@ -91,6 +100,13 @@ protected:
     explicit EmptyClip(const EmptyClip& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    pts mLength; ///< Length of empty clip
+    pts mProgress; ///< Current render position in pts units (delivered video frames/audio chunks count)
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

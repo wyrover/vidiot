@@ -1,12 +1,12 @@
 #include "TestComposition.h"
 
-#include "HelperTimeline.h"
+#include "DetailsClip.h"
 #include "HelperApplication.h"
 #include "HelperDetails.h"
-#include "HelperWindow.h"
-#include "DetailsClip.h"
-#include "ids.h"
+#include "HelperTimeline.h"
 #include "HelperTimelineDrag.h"
+#include "HelperWindow.h"
+#include "ids.h"
 
 namespace test {
 

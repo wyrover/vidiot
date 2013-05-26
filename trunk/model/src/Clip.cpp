@@ -5,7 +5,6 @@
 #include "File.h"
 #include "Track.h"
 #include "Transition.h"
-
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
 
@@ -132,7 +131,7 @@ void Clip::clean()
 
 void Clip::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
 {
-    mIndex = index;
+    mIndex = index; // todo this is duplicated into clip, transition and now emptyclip -> move all this to IClip
     mTrack = track;
     mLeftPtsInTrack = trackPosition;
 }
@@ -149,7 +148,7 @@ pts Clip::getLeftPts() const
 
 pts Clip::getRightPts() const
 {
-    return mLeftPtsInTrack + mLength;
+    return mLeftPtsInTrack + getLength(); // todo move to IClip class also???
 }
 
 void Clip::setLink(IClipPtr link)
@@ -160,11 +159,6 @@ void Clip::setLink(IClipPtr link)
 IClipPtr Clip::getLink() const
 {
     return mLink.lock();
-}
-
-pts Clip::getOffset() const
-{
-    return mOffset;
 }
 
 pts Clip::getMinAdjustBegin() const
@@ -261,7 +255,7 @@ void Clip::setGenerationProgress(pts progress)
     //       sorts of threading issues. In general: When a sequence is rendered
     //       and no changes to the sequence (or its tracks/clips/etc.) may be
     //       made. That includes the 'render progress' event.
-    if (Config::getShowDebugInfo() && mGeneratedPts != progress)
+    if (Config::getShowDebugInfo() && mGeneratedPts != progress) // todo isnt this obsolete, since for rendering a clone is made? or do via thread::ismain?
     {
         mGeneratedPts = progress;
         ProcessEvent(DebugEventRenderProgress(mGeneratedPts));
@@ -295,6 +289,15 @@ std::ostream& Clip::dump(std::ostream& os) const
 char* Clip::getType() const
 {
     return "Clip ";
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GET/SET
+//////////////////////////////////////////////////////////////////////////
+
+pts Clip::getOffset() const
+{
+    return mOffset;
 }
 
 //////////////////////////////////////////////////////////////////////////
