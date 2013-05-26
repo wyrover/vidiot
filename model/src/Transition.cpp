@@ -86,35 +86,35 @@ void Transition::clean()
 // ICLIP
 //////////////////////////////////////////////////////////////////////////
 
-void Transition::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
+void Transition::setTrack(TrackPtr track, pts trackPosition, unsigned int index) // todo move all this to a base class
 {
     mIndex = index;
     mTrack = track;
     mLeftPtsInTrack = trackPosition;
 }
 
-TrackPtr Transition::getTrack()
+TrackPtr Transition::getTrack()// todo move all this to a base class
 {
     return mTrack.lock();
 }
 
-pts Transition::getLeftPts() const
+pts Transition::getLeftPts() const// todo move all this to a base class
 {
     return mLeftPtsInTrack;
 }
 
-pts Transition::getRightPts() const
+pts Transition::getRightPts() const// todo move all this to a base class
 {
     return mLeftPtsInTrack + mFramesLeft + mFramesRight;
 }
 
-void Transition::setLink(IClipPtr link)
+void Transition::setLink(IClipPtr link)// todo move all this to a base class
 {
     // Transitions may never be linked to anything
     ASSERT(!link)(link);
 }
 
-IClipPtr Transition::getLink() const
+IClipPtr Transition::getLink() const// todo move all this to a base class
 {
     return IClipPtr(); // Transition never has a link
 }

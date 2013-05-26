@@ -23,10 +23,10 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    pts getLength() const override;
-    void moveTo(pts position) override;
-    wxString getDescription() const override;
-    void clean() override;
+    virtual pts getLength() const override;
+    virtual void moveTo(pts position) override;
+    virtual wxString getDescription() const override;
+    virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP
@@ -37,18 +37,16 @@ public:
     pts getLeftPts() const override;
     pts getRightPts() const override;
 
-    void setLink(IClipPtr link) override;
+    virtual void setLink(IClipPtr link) override;
     IClipPtr getLink() const override;
 
-    pts getOffset() const;
+    virtual pts getMinAdjustBegin() const override;
+    virtual pts getMaxAdjustBegin() const override;
+    virtual void adjustBegin(pts adjustment) override;
 
-    pts getMinAdjustBegin() const override;
-    pts getMaxAdjustBegin() const override;
-    void adjustBegin(pts adjustment) override;
-
-    pts getMinAdjustEnd() const override;
-    pts getMaxAdjustEnd() const override;
-    void adjustEnd(pts adjustment) override;
+    virtual pts getMinAdjustEnd() const override;
+    virtual pts getMaxAdjustEnd() const override;
+    virtual void adjustEnd(pts adjustment) override;
 
     TransitionPtr getInTransition() const override;
     TransitionPtr getOutTransition() const override;
@@ -69,6 +67,12 @@ public:
 
     virtual std::ostream& dump(std::ostream& os) const override;
     virtual char* getType() const override;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
+
+    pts getOffset() const;
 
     //////////////////////////////////////////////////////////////////////////
     // FOR PREVIEWING

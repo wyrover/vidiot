@@ -44,6 +44,12 @@ public:
     /// linked to A not being linked to C.
     void testLinkingErrorWhenDroppingOverBeginOfLinkedClip();
 
+    /// Get next for EmptyClips kept on returning empty frames, too often. This was first seen
+    /// when making a composition in which the clips in the second/third track were shown too
+    /// late because of the bug.
+    /// The playback in this test should first show one frame, then two smaller frames on top of it.
+    void testErrorInGetNextHandlingForEmptyClips();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
