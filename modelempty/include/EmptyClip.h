@@ -22,17 +22,9 @@ public:
 
     EmptyClip();
 
-    /// Create a new empty clip. The two 'extra*' parameters are used to make
-    /// the contained EmptyFile larger at the beginning/end than the clip itselves.
-    /// This is used for EmptyClips that replace clips which are adjacent to
-    /// a transition in a track. The extra area used in the transition is also
-    /// replaced with extra area in the empty clip. As a result, when replacing
-    /// clips with empty clips, the adjacent transitions do not have to be
-    /// changed.
+    /// Create a new empty clip.
     /// \param length size of the clip
-    /// \param extraBegin extra size of the contained EmptyFile at the beginning (the truncated part at the beginning)
-    /// \param extraEnd extra size of the contained EmptyFile at the end (the truncated part at the end)
-    EmptyClip(pts length); // todo test this change (removal of extra*) and update docs if correct
+    EmptyClip(pts length);
 
     virtual EmptyClip* clone() const override;
 
