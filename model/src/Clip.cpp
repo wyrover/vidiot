@@ -14,8 +14,9 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 Clip::Clip()
-    :	IClip()
-    ,   mTrack()
+    :   mTrack()
+    ,   mPrev()
+    ,   mNext()
     ,   mIndex(0)
     ,   mLeftPtsInTrack(0)
     ,   mLink()
@@ -29,8 +30,9 @@ Clip::Clip()
 }
 
 Clip::Clip(const Clip& other)
-    :	IClip(other)
-    ,   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
+    :   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
+    ,   mPrev()                     // Clone is not automatically part of same track!!!
+    ,   mNext()                     // Clone is not automatically part of same track!!!
     ,   mIndex(0)                   // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
     ,   mLink()                     // Clone is not automatically linked to same clip, since it will typically be used in ClipEdit derived classes, using link mapping for maintaining the links
@@ -78,6 +80,41 @@ void Clip::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
 TrackPtr Clip::getTrack()
 {
     return mTrack.lock();
+}
+
+bool Clip::hasTrack() const
+{
+    return const_cast<Clip*>(this)->getTrack();
+}
+
+void Clip::setNext(IClipPtr next)
+{
+    mNext = next;
+}
+
+void Clip::setPrev(IClipPtr prev)
+{
+    mPrev = prev;
+}
+
+IClipPtr Clip::getNext()
+{
+    return mNext.lock();
+}
+
+IClipPtr Clip::getPrev()
+{
+    return mPrev.lock();
+}
+
+ConstIClipPtr Clip::getNext() const
+{
+    return mNext.lock();
+}
+
+ConstIClipPtr Clip::getPrev() const
+{
+    return mPrev.lock();
 }
 
 pts Clip::getLeftPts() const
@@ -217,9 +254,11 @@ std::ostream& operator<<( std::ostream& os, const Clip& obj )
 template<class Archive>
 void Clip::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IClip>(*this);
+    boost::serialization::void_cast_register<Clip, IClip>(static_cast<Clip *>(0), static_cast<IClip *>(0));
     ar & mLink;
     ar & mTrack;
+    ar & mNext;
+    ar & mPrev;
     ar & mLeftPtsInTrack;
     ar & mIndex;
     // NOT: mSelected. After loading, nothing is selected.

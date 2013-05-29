@@ -30,6 +30,15 @@ public:
 
     void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
     TrackPtr getTrack() override;
+    bool hasTrack() const override;
+
+    void setNext(IClipPtr next) override; // todo make part of 'settrack (or set'cache)
+    void setPrev(IClipPtr prev) override;
+    IClipPtr getNext() override;
+    IClipPtr getPrev() override;
+    ConstIClipPtr getNext() const override;
+    ConstIClipPtr getPrev() const override;
+
     pts getLeftPts() const override;
     pts getRightPts() const override;
 
@@ -84,6 +93,9 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     WeakTrackPtr mTrack;    ///< Track which holds this clip. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
+    WeakIClipPtr mNext;
+    WeakIClipPtr mPrev;
+
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 
