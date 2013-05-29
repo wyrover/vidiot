@@ -19,8 +19,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    IClip();
-    virtual ~IClip() {};
+    IClip() {};
 
     virtual IClip* clone() const = 0;
 
@@ -30,7 +29,7 @@ public:
 
     /// \return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
     virtual TrackPtr getTrack() = 0;
-    bool hasTrack() const;
+    virtual bool hasTrack() const = 0;
 
     /// \return pts (in containing track) of begin point of clip.
     /// The frame at this position is the first frame of this clip.
@@ -43,16 +42,16 @@ public:
     virtual pts getRightPts() const = 0;
 
     /// \return next clip in track. IClipPtr() if there is none.
-    IClipPtr getNext();
+    virtual IClipPtr getNext() = 0;
 
     /// \return previous clip in track. IClipPtr() if there is none.
-    IClipPtr getPrev();
+    virtual IClipPtr getPrev() = 0;
 
     /// \return next clip in track. IClipPtr() if there is none.
-    ConstIClipPtr getNext() const;
+    virtual ConstIClipPtr getNext() const = 0;
 
     /// \return previous clip in track. IClipPtr() if there is none.
-    ConstIClipPtr getPrev() const;
+    virtual ConstIClipPtr getPrev() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // LINK
@@ -177,26 +176,11 @@ private:
     /// (thus using the defaults), this information is 'reset'.
     virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) = 0;
 
-    void setNext(IClipPtr next);
-    void setPrev(IClipPtr prev);
+    virtual void setNext(IClipPtr next) = 0;
+    virtual void setPrev(IClipPtr prev) = 0;
 
-    WeakIClipPtr mNext;
-    WeakIClipPtr mPrev;
-
-    //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
 };
-} // namespace
 
-// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
-//#include  <boost/preprocessor/slot/counter.hpp>
-//#include BOOST____PP_UPDATE_COUNTER()
-//#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::IClip, 1)
+} // namespace
 
 #endif // MODEL_I_CLIP_H
