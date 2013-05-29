@@ -2,7 +2,6 @@
 
 #include "AudioChunk.h"
 #include "Calculate.h"
-#include "EmptyFile.h"
 #include "Transition.h"
 #include "EmptyChunk.h"
 #include "EmptyFrame.h"

@@ -9,7 +9,6 @@
 #include "AutoFolder.h"
 #include "Clip.h"
 #include "EmptyClip.h"
-#include "EmptyFile.h"
 #include "File.h"
 #include "Folder.h"
 #include "OutputFormat.h"
@@ -35,10 +34,7 @@ void registerClasses(Archive& ar)
     ar.template register_type<AudioFile>();
     ar.template register_type<AudioTrack>();
     ar.template register_type<AutoFolder>();
-//todo?    ar.template register_type<Clip>();
-    //todo?ar.template register_type<ClipInterval>();
     ar.template register_type<EmptyClip>();
-    ar.template register_type<EmptyFile>();
     ar.template register_type<File>();
     ar.template register_type<Folder>();
     ar.template register_type<Properties>();
