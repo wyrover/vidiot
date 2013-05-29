@@ -13,16 +13,9 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 Transition::Transition()
-    :   IClip()
+    :   Clip()
     ,   mFramesLeft(-1)
     ,   mFramesRight(-1)
-    ,   mLastSetPosition(boost::none)
-    ,   mGeneratedPts(0)
-    ,   mTrack()
-    ,   mIndex(0)
-    ,   mLeftPtsInTrack(0)
-    ,   mSelected(false)
-    ,   mDragged(false)
 {
     VAR_DEBUG(this);
 }
@@ -35,16 +28,9 @@ void Transition::init(pts nFramesLeft, pts nFramesRight)
 }
 
 Transition::Transition(const Transition& other)
-    :   IClip()
+    :   Clip(other)
     ,   mFramesLeft(other.mFramesLeft)
     ,   mFramesRight(other.mFramesRight)
-    ,   mLastSetPosition(boost::none)
-    ,   mGeneratedPts(0)
-    ,   mTrack()            // Clone is not automatically part of same track!!!
-    ,   mIndex(0)           // Clone is not automatically part of same track!!!
-    ,   mLeftPtsInTrack(0)  // Clone is not automatically part of same track!!!
-    ,   mSelected(other.mSelected)
-    ,   mDragged(false)
 {
     VAR_DEBUG(*this);
 }
@@ -70,58 +56,21 @@ pts Transition::getLength() const
 
 void Transition::moveTo(pts position)
 {
-    mLastSetPosition.reset(position);
-}
-
-wxString Transition::getDescription() const
-{
-    return "";
-}
-
-void Transition::clean()
-{
+    setLastSetPosition(position);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // ICLIP
 //////////////////////////////////////////////////////////////////////////
 
-void Transition::setTrack(TrackPtr track, pts trackPosition, unsigned int index) // todo move all this to a base class
+void Transition::setLink(IClipPtr link)
 {
-    mIndex = index;
-    mTrack = track;
-    mLeftPtsInTrack = trackPosition;
-}
-
-TrackPtr Transition::getTrack()// todo move all this to a base class
-{
-    return mTrack.lock();
-}
-
-pts Transition::getLeftPts() const// todo move all this to a base class
-{
-    return mLeftPtsInTrack;
-}
-
-pts Transition::getRightPts() const// todo move all this to a base class
-{
-    return mLeftPtsInTrack + mFramesLeft + mFramesRight;
-}
-
-void Transition::setLink(IClipPtr link)// todo move all this to a base class
-{
-    // Transitions may never be linked to anything
-    ASSERT(!link)(link);
-}
-
-IClipPtr Transition::getLink() const// todo move all this to a base class
-{
-    return IClipPtr(); // Transition never has a link
+     ASSERT(!link)(link); // Transitions may never be linked to anything
 }
 
 pts Transition::getMinAdjustBegin() const
 {
-    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
+    ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     pts result = std::numeric_limits<pts>().min();
     if (getLeft() > 0)
     {
@@ -142,7 +91,7 @@ pts Transition::getMinAdjustBegin() const
 
 pts Transition::getMaxAdjustBegin() const
 {
-    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
+    ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     return getLeft();
 }
 
@@ -155,13 +104,13 @@ void Transition::adjustBegin(pts adjustment)
 
 pts Transition::getMinAdjustEnd() const
 {
-    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
+    ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     return -getRight();
 }
 
 pts Transition::getMaxAdjustEnd() const
 {
-    ASSERT(mTrack.lock()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
+    ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     pts result = std::numeric_limits<pts>().max();
     if (getRight() > 0)
     {
@@ -186,62 +135,6 @@ void Transition::adjustEnd(pts adjustment)
     VAR_DEBUG(*this)(adjustment);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mFramesRight += adjustment;
-}
-
-TransitionPtr Transition::getInTransition() const
-{
-    return TransitionPtr();
-}
-
-TransitionPtr Transition::getOutTransition() const
-{
-    return TransitionPtr();
-}
-
-bool Transition::getSelected() const
-{
-    return mSelected;
-}
-
-void Transition::setSelected(bool selected)
-{
-    mSelected = selected;
-    ProcessEvent(EventSelectClip(selected));
-}
-
-bool Transition::getDragged() const
-{
-    return mDragged;
-}
-
-void Transition::setDragged(bool dragged)
-{
-    mDragged = dragged;
-    ProcessEvent(EventDragClip(dragged));
-}
-
-pts Transition::getGenerationProgress() const
-{
-    return mGeneratedPts;
-}
-
-void Transition::setGenerationProgress(pts progress)
-{
-    if (mGeneratedPts != progress)
-    {
-        mGeneratedPts = progress;
-        ProcessEvent(DebugEventRenderProgress(mGeneratedPts));
-    }
-}
-
-void Transition::invalidateLastSetPosition()
-{
-    mLastSetPosition = boost::none;
-}
-
-boost::optional<pts> Transition::getLastSetPosition() const
-{
-    return mLastSetPosition;
 }
 
 std::set<pts> Transition::getCuts(const std::set<IClipPtr>& exclude) const
@@ -316,15 +209,9 @@ model::IClipPtr Transition::makeRightClip() const
 std::ostream& operator<<( std::ostream& os, const Transition& obj )
 {
     // Keep order same as Clip for 'dump' method
-    os  << std::setfill(' ') << std::setw(3) << obj.mIndex << '|'
-        << obj.getType() << '|'
-        << &obj << '|'
-        << obj.mTrack.lock() << '|'
-        << "        |" // link
-        << std::setw(6) << obj.mLeftPtsInTrack << '|'
-        << std::setw(6) << obj.mFramesLeft << '|'
-        << std::setw(6) << obj.mFramesRight << '|'
-        << obj.mSelected;
+    os << static_cast<const Clip&>(obj) << '|'
+       << std::setw(6) << obj.mFramesLeft << '|'
+       << std::setw(6) << obj.mFramesRight;
     return os;
 }
 
@@ -335,12 +222,9 @@ std::ostream& operator<<( std::ostream& os, const Transition& obj )
 template<class Archive>
 void Transition::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IClip>(*this);
+    ar & boost::serialization::base_object<Clip>(*this);
     ar & mFramesLeft;
     ar & mFramesRight;
-    ar & mTrack;
-    ar & mLeftPtsInTrack;
-    ar & mIndex;
     // NOT: mSelected. After loading, nothing is selected.
 }
 template void Transition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

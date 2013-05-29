@@ -1,7 +1,7 @@
 #ifndef MODEL_TRANSITION_H
 #define MODEL_TRANSITION_H
 
-#include "IClip.h"
+#include "Clip.h"
 
 namespace model {
 
@@ -13,7 +13,7 @@ namespace model {
 /// way that they 'make room' for the transition. A clips offset is increased and/or
 /// its length is reduced.
 class Transition
-    :   public IClip
+    :   public Clip
 {
 public:
 
@@ -39,21 +39,12 @@ public:
 
     pts getLength() const override;
     void moveTo(pts position) override;
-    wxString getDescription() const override;
-    void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
-    TrackPtr getTrack() override;
-
-    pts getLeftPts() const override;
-    pts getRightPts() const override;
-
     void setLink(IClipPtr link) override;
-    IClipPtr getLink() const override;
 
     pts getMinAdjustBegin() const override;
     pts getMaxAdjustBegin() const override;
@@ -62,21 +53,6 @@ public:
     pts getMinAdjustEnd() const override;
     pts getMaxAdjustEnd() const override;
     void adjustEnd(pts adjustment) override;
-
-    TransitionPtr getInTransition() const override;
-    TransitionPtr getOutTransition() const override;
-
-    bool getSelected() const override;
-    void setSelected(bool selected) override;
-
-    bool getDragged() const override;
-    void setDragged(bool dragged) override;
-
-    pts getGenerationProgress() const override;
-    void setGenerationProgress(pts progress) override;
-
-    void invalidateLastSetPosition() override;
-    boost::optional<pts> getLastSetPosition() const override;
 
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
@@ -128,15 +104,6 @@ private:
 
     pts mFramesLeft;    ///< Number of frames to the left of the cut between the two clips
     pts mFramesRight;   ///< Number of frames to the right of the cut between the two clips
-
-    boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.
-    pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
-
-    WeakTrackPtr mTrack;    ///< Track which holds this transition. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
-    pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
-    unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
-    bool mSelected;         ///< True if this clip is currently selected
-    bool mDragged;          ///< True if this clip is currently dragged
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
