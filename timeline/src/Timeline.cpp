@@ -26,7 +26,6 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoView.h"
 #include "ViewMap.h"
-#include "ViewMap.h"
 #include "ViewUpdateEvent.h"
 #include "Window.h"
 #include "Zoom.h"
