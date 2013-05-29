@@ -15,21 +15,21 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 AudioClip::AudioClip()
-    :	Clip()
+    :	ClipInterval()
     ,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
 
 AudioClip::AudioClip(AudioFilePtr file)
-    :	Clip(file)
+    :	ClipInterval(file)
     ,   mProgress(0)
 {
     VAR_DEBUG(this);
 }
 
 AudioClip::AudioClip(const AudioClip& other)
-    :   Clip(other)
+    :   ClipInterval(other)
     ,   mProgress(0)
 {
     VAR_DEBUG(this);
@@ -53,7 +53,7 @@ void AudioClip::clean()
 {
     VAR_DEBUG(this);
     mProgress = 0;
-    Clip::clean();
+    ClipInterval::clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
 std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
 {
-    os << static_cast<const Clip&>(obj) << '|' << std::setw(4) << obj.mProgress;
+    os << static_cast<const ClipInterval&>(obj) << '|' << std::setw(4) << obj.mProgress;
     return os;
 }
 
@@ -140,7 +140,7 @@ std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
 template<class Archive>
 void AudioClip::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<Clip>(*this);
+    ar & boost::serialization::base_object<ClipInterval>(*this);
     ar & boost::serialization::base_object<IAudio>(*this);
 }
 template void AudioClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

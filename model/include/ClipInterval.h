@@ -1,12 +1,14 @@
-#ifndef MODEL_CLIP_H
-#define MODEL_CLIP_H
+#ifndef MODEL_CLIP_INTERVAL_H
+#define MODEL_CLIP_INTERVAL_H
 
-#include "IClip.h"
+#include "Clip.h"
 
 namespace model {
 
-class Clip
-    :   public IClip
+/// Class responsible for handling clips that are (parts of) multimedia clips that have a fixed length.
+/// Those clips are audio/video files (but not images), and sequences.
+class ClipInterval
+    :   public Clip
 {
 public:
 
@@ -14,13 +16,16 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Clip();                   ///< Constructor for recovery from disk
-    virtual ~Clip();
+    ClipInterval();                   ///< Constructor for recovery from disk
+    ClipInterval(IFilePtr render);    ///< Constructor for creating new clip from other asset
+    virtual ~ClipInterval();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
+    virtual pts getLength() const override;
+    virtual void moveTo(pts position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
@@ -28,31 +33,20 @@ public:
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
-    TrackPtr getTrack() override;
-    pts getLeftPts() const override;
-    pts getRightPts() const override;
+    virtual pts getMinAdjustBegin() const override;
+    virtual pts getMaxAdjustBegin() const override;
+    virtual void adjustBegin(pts adjustment) override;
 
-    virtual void setLink(IClipPtr link) override;
-    IClipPtr getLink() const override;
+    virtual pts getMinAdjustEnd() const override;
+    virtual pts getMaxAdjustEnd() const override;
+    virtual void adjustEnd(pts adjustment) override;
 
-    TransitionPtr getInTransition() const override;
-    TransitionPtr getOutTransition() const override;
+    //////////////////////////////////////////////////////////////////////////
+    // FOR PREVIEWING
+    //////////////////////////////////////////////////////////////////////////
 
-    bool getSelected() const override;
-    void setSelected(bool selected) override;
-
-    bool getDragged() const override;
-    void setDragged(bool dragged) override;
-
-    pts getGenerationProgress() const override;
-    void setGenerationProgress(pts progress) override;
-
-    void invalidateLastSetPosition() override;
-    boost::optional<pts> getLastSetPosition() const override;
-    void setLastSetPosition(pts position); // todo rename all these to NewStartPosition
-
-    virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
+    pts getOffset();
+    void maximize();
 
 protected:
 
@@ -75,7 +69,7 @@ protected:
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \note the clone is not automatically part of the track!!!
     /// \see make_cloned
-    Clip(const Clip& other);
+    ClipInterval(const ClipInterval& other);
 
 private:
 
@@ -83,17 +77,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    WeakTrackPtr mTrack;    ///< Track which holds this clip. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
-    unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
-    WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
+    IFilePtr mRender;       ///< The producer of audiovisual data for this clip
 
-    pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
-
-    boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.
-    pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
-
-    bool mSelected;                         ///< True if this clip is currently selected
-    bool mDragged;                          ///< True if this clip is currently dragged
+    pts mOffset;            ///< Offset inside the original media file (start point)
+    pts mLength;            ///< Length of the clip
 
     mutable wxString mDescription;  ///< Stored for performance (cached) and for easier debugging.
 
@@ -101,7 +88,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const Clip& obj );
+    friend std::ostream& operator<<( std::ostream& os, const ClipInterval& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -111,12 +98,13 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
+
 } // namespace
 
 // Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::Clip, 1)
+BOOST_CLASS_VERSION(model::ClipInterval, 1)
 
-#endif // MODEL_CLIP_H
+#endif // MODEL_CLIP_INTERVAL_H
