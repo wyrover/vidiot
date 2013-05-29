@@ -1,14 +1,14 @@
 #ifndef MODEL_VIDEO_CLIP_H
 #define MODEL_VIDEO_CLIP_H
 
-#include "Clip.h"
+#include "ClipInterval.h"
 #include "Enums.h"
 #include "IVideo.h"
 
 namespace model {
 
 class VideoClip
-    :   public Clip
+    :   public ClipInterval
     ,   public IVideo
 {
 public:

@@ -30,7 +30,7 @@ EmptyClip::EmptyClip()
 }
 
 EmptyClip::EmptyClip(pts length)
-    :	Clip(boost::make_shared<EmptyFile>())
+    :	Clip()
     ,   mLength(length)
     ,   mProgress(0)
 {

@@ -15,16 +15,12 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Clip();                   ///< Constructor for recovery from disk
-    Clip(IFilePtr render);    ///< Constructor for creating new clip from other asset
-    virtual Clip* clone() const override; ///< Used for making deep copies (clones)
     virtual ~Clip();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual pts getLength() const override;
-    virtual void moveTo(pts position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
@@ -40,14 +36,6 @@ public:
     virtual void setLink(IClipPtr link) override;
     IClipPtr getLink() const override;
 
-    virtual pts getMinAdjustBegin() const override;
-    virtual pts getMaxAdjustBegin() const override;
-    virtual void adjustBegin(pts adjustment) override;
-
-    virtual pts getMinAdjustEnd() const override;
-    virtual pts getMaxAdjustEnd() const override;
-    virtual void adjustEnd(pts adjustment) override;
-
     TransitionPtr getInTransition() const override;
     TransitionPtr getOutTransition() const override;
 
@@ -62,23 +50,9 @@ public:
 
     void invalidateLastSetPosition() override;
     boost::optional<pts> getLastSetPosition() const override;
+    void setLastSetPosition(pts position); // todo rename all these to NewStartPosition
 
     virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
-
-    virtual std::ostream& dump(std::ostream& os) const override;
-    virtual char* getType() const override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // GET/SET
-    //////////////////////////////////////////////////////////////////////////
-
-    pts getOffset() const;
-
-    //////////////////////////////////////////////////////////////////////////
-    // FOR PREVIEWING
-    //////////////////////////////////////////////////////////////////////////
-
-    void maximize();
 
 protected:
 
@@ -109,13 +83,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    IFilePtr mRender;       ///< The producer of audiovisual data for this clip
     WeakTrackPtr mTrack;    ///< Track which holds this clip. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
     WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 
-    pts mOffset;            ///< Offset inside the original media file (start point)
-    pts mLength;            ///< Length of the clip
     pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
 
     boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.

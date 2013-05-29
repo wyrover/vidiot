@@ -15,9 +15,6 @@ namespace model {
 
 Clip::Clip()
     :	IClip()
-    ,   mRender()
-    ,   mOffset(0)
-    ,   mLength(-1)
     ,   mTrack()
     ,   mIndex(0)
     ,   mLeftPtsInTrack(0)
@@ -28,33 +25,11 @@ Clip::Clip()
     ,   mGeneratedPts(0)
     ,   mDescription("")
 {
-    VAR_DEBUG(*this);
-}
-
-Clip::Clip(IFilePtr render)
-    :	IClip()
-    ,   mRender(render)
-    ,   mOffset(0)
-    ,   mLength(-1)
-    ,   mTrack()
-    ,   mIndex(0)
-    ,   mLeftPtsInTrack(0)
-    ,   mLink()
-    ,   mLastSetPosition(boost::none)
-    ,   mSelected(false)
-    ,   mDragged(false)
-    ,   mGeneratedPts(0)
-    ,   mDescription("")
-{
-    mLength = mRender->getLength() - mOffset;
     VAR_DEBUG(*this);
 }
 
 Clip::Clip(const Clip& other)
     :	IClip(other)
-    ,   mRender(make_cloned<IFile>(other.mRender))
-    ,   mOffset(other.mOffset)
-    ,   mLength(other.mLength)
     ,   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
     ,   mIndex(0)                   // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
@@ -68,11 +43,6 @@ Clip::Clip(const Clip& other)
     VAR_DEBUG(*this)(other);
 }
 
-Clip* Clip::clone() const
-{
-    return new Clip(static_cast<const Clip&>(*this));
-}
-
 Clip::~Clip()
 {
     VAR_DEBUG(*this);
@@ -82,39 +52,9 @@ Clip::~Clip()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-pts Clip::getLength() const
-{
-    return mLength;
-}
-
-void Clip::moveTo(pts position)
-{
-    VAR_DEBUG(*this)(position);
-    ASSERT_LESS_THAN(position,mLength);
-    mLastSetPosition.reset(position);
-    setGenerationProgress(0);
-    mRender->moveTo(mOffset + position);
-}
-
 wxString Clip::getDescription() const
 {
-    if (!mDescription.IsSameAs(""))
-    {
-        return mDescription;
-    }
-    mDescription = mRender->getDescription();
-    wxString strip = Config::ReadString(Config::sPathStrip);
-
-    wxStringTokenizer t(strip, "|"); // PERF cache for performance
-    while (t.HasMoreTokens())
-    {
-        wxString token = t.GetNextToken();
-        if (!token.IsEmpty())
-        {
-            mDescription.Replace(token,_T(""),false);
-        }
-    }
-    return mDescription;
+    return "";
 }
 
 void Clip::clean()
@@ -122,7 +62,6 @@ void Clip::clean()
     VAR_DEBUG(this);
     mLastSetPosition = boost::none;
     mGeneratedPts = 0;
-    mRender->clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -159,61 +98,6 @@ void Clip::setLink(IClipPtr link)
 IClipPtr Clip::getLink() const
 {
     return mLink.lock();
-}
-
-pts Clip::getMinAdjustBegin() const
-{
-    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
-    TransitionPtr inTransition = getInTransition();
-    pts reservedForInTransition = inTransition ? inTransition->getLength() : 0; // Do not use right part only. The left part (if present) is also using frames from this clip!
-    pts minAdjustBegin = -mOffset + reservedForInTransition;
-    ASSERT_LESS_THAN_EQUALS_ZERO(minAdjustBegin)(mOffset)(reservedForInTransition);
-    return minAdjustBegin;
-}
-
-pts Clip::getMaxAdjustBegin() const
-{
-    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
-    TransitionPtr outTransition = getOutTransition();
-    pts maxAdjustBegin = mLength; // NOT: - reservedForOutTransition; The 'reserved' part is already incorporated in mLength when a possible out transition was created
-    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustBegin)(mLength);
-    return maxAdjustBegin;
-}
-
-void Clip::adjustBegin(pts adjustment)
-{
-    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
-    mOffset += adjustment;
-    mLength -= adjustment;
-    ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset);
-    VAR_DEBUG(*this)(adjustment);
-}
-
-pts Clip::getMinAdjustEnd() const
-{
-    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
-    TransitionPtr inTransition = getInTransition();
-    pts minAdjustEnd = -mLength; // NOT: + reservedForInTransition; The 'reserved' part is already incorporated in mOffset when a possible in transition was created
-    ASSERT_LESS_THAN_EQUALS_ZERO(minAdjustEnd)(mLength);
-    return minAdjustEnd;
-}
-
-pts Clip::getMaxAdjustEnd() const
-{
-    ASSERT(mTrack.lock()); // Do not call when not part of a track: the algorithm doesn't work then (for instance, with clones)
-    TransitionPtr outTransition = getOutTransition();
-    pts reservedForOutTransition = outTransition ? outTransition->getLength() : 0; // Do not use left part only. The right part (if present) is also using frames from this clip!
-    pts maxAdjustEnd =  mRender->getLength() - mLength - mOffset - reservedForOutTransition;
-    ASSERT_MORE_THAN_EQUALS_ZERO(maxAdjustEnd)(mRender->getLength())(mLength)(mOffset)(reservedForOutTransition);
-    return maxAdjustEnd;
-}
-
-void Clip::adjustEnd(pts adjustment)
-{
-    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
-    mLength += adjustment;
-    ASSERT_LESS_THAN_EQUALS(mLength,mRender->getLength() - mOffset);
-    VAR_DEBUG(*this)(adjustment);
 }
 
 bool Clip::getSelected() const
@@ -272,43 +156,17 @@ boost::optional<pts> Clip::getLastSetPosition() const
     return mLastSetPosition;
 }
 
+void Clip::setLastSetPosition(pts position)
+{
+    mLastSetPosition.reset(position);
+}
+
 std::set<pts> Clip::getCuts(const std::set<IClipPtr>& exclude) const
 {
     std::set<pts> result;
     result.insert(getLeftPts());
     result.insert(getRightPts());
     return result;
-}
-
-std::ostream& Clip::dump(std::ostream& os) const
-{
-    os << *this;
-    return os;
-}
-
-char* Clip::getType() const
-{
-    return "Clip ";
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-pts Clip::getOffset() const
-{
-    return mOffset;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// FOR PREVIEWING
-//////////////////////////////////////////////////////////////////////////
-
-void Clip::maximize()
-{
-    ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
-    mOffset = 0;
-    mLength = mRender->getLength();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -347,9 +205,7 @@ std::ostream& operator<<( std::ostream& os, const Clip& obj )
         << &obj << '|'
         << obj.mTrack.lock() << '|'
         << obj.mLink.lock() << '|'
-        << std::setw(6) << obj.mOffset << '|'
         << std::setw(6) << obj.mLeftPtsInTrack << '|'
-        << std::setw(6) << obj.mLength << '|'
         << obj.mSelected;
     return os;
 }
@@ -362,9 +218,6 @@ template<class Archive>
 void Clip::serialize(Archive & ar, const unsigned int version)
 {
     ar & boost::serialization::base_object<IClip>(*this);
-    ar & mRender;
-    ar & mOffset;
-    ar & mLength;
     ar & mLink;
     ar & mTrack;
     ar & mLeftPtsInTrack;

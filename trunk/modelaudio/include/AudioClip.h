@@ -1,18 +1,13 @@
 #ifndef MODEL_AUDIO_CLIP_H
 #define MODEL_AUDIO_CLIP_H
 
-#include "Clip.h"
+#include "ClipInterval.h"
 #include "IAudio.h"
 
 namespace model {
 
-class AudioFile;
-typedef boost::shared_ptr<AudioFile> AudioFilePtr;
-class AudioClip;
-typedef boost::shared_ptr<AudioClip> AudioClipPtr;
-
 class AudioClip
-    :   public Clip
+    :   public ClipInterval
     ,   public IAudio
 {
 public:

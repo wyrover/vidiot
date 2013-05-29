@@ -21,7 +21,7 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 VideoClip::VideoClip()
-    : Clip()
+    : ClipInterval()
     , mProgress(0)
     , mOpacity(Constants::sMaxOpacity)
     , mScaling()
@@ -33,7 +33,7 @@ VideoClip::VideoClip()
 }
 
 VideoClip::VideoClip(VideoFilePtr file)
-    : Clip(file)
+    : ClipInterval(file)
     , mProgress(0)
     , mOpacity(Constants::sMaxOpacity)
     , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathDefaultVideoScaling))
@@ -47,7 +47,7 @@ VideoClip::VideoClip(VideoFilePtr file)
 }
 
 VideoClip::VideoClip(const VideoClip& other)
-    : Clip(other)
+    : ClipInterval(other)
     , mProgress(0)
     , mOpacity(other.mOpacity)
     , mScaling(other.mScaling)
@@ -76,7 +76,7 @@ void VideoClip::clean()
 {
     VAR_DEBUG(this);
     mProgress = 0;
-    Clip::clean();
+    ClipInterval::clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -430,7 +430,7 @@ void VideoClip::updateAutomatedPositioning()
 
 std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 {
-    os << static_cast<const Clip&>(obj) << '|' << std::setw(4) << obj.mProgress << '|' << std::setw(2) << std::hex << obj.mOpacity <<  std::dec << '|' << obj.mScaling << '|' << obj.mScalingFactor << '|' << obj.mAlignment << '|' << obj.mPosition;
+    os << static_cast<const ClipInterval&>(obj) << '|' << std::setw(4) << obj.mProgress << '|' << std::setw(2) << std::hex << obj.mOpacity <<  std::dec << '|' << obj.mScaling << '|' << obj.mScalingFactor << '|' << obj.mAlignment << '|' << obj.mPosition;
     return os;
 }
 
@@ -441,7 +441,7 @@ std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 template<class Archive>
 void VideoClip::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<Clip>(*this);
+    ar & boost::serialization::base_object<ClipInterval>(*this);
     ar & boost::serialization::base_object<IVideo>(*this);
     ar & mOpacity;
     ar & mScaling;

@@ -35,7 +35,8 @@ void registerClasses(Archive& ar)
     ar.template register_type<AudioFile>();
     ar.template register_type<AudioTrack>();
     ar.template register_type<AutoFolder>();
-    ar.template register_type<Clip>();
+//todo?    ar.template register_type<Clip>();
+    //todo?ar.template register_type<ClipInterval>();
     ar.template register_type<EmptyClip>();
     ar.template register_type<EmptyFile>();
     ar.template register_type<File>();

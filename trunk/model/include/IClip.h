@@ -30,6 +30,7 @@ public:
 
     /// \return the track in which this clip is contained. A null ptr is returned if the clip is not in a track.
     virtual TrackPtr getTrack() = 0;
+    bool hasTrack() const;
 
     /// \return pts (in containing track) of begin point of clip.
     /// The frame at this position is the first frame of this clip.

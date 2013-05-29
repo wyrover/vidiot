@@ -24,6 +24,11 @@ IClip::IClip(const IClip& other)
 // TRACK
 //////////////////////////////////////////////////////////////////////////
 
+bool IClip::hasTrack() const
+{
+    return const_cast<IClip*>(this)->getTrack();
+}
+
 void IClip::setNext(IClipPtr next)
 {
     mNext = next;
