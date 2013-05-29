@@ -129,7 +129,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 
 std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
 {
-    os << static_cast<const ClipInterval&>(obj) << '|' << std::setw(4) << obj.mProgress;
+    os << static_cast<const ClipInterval&>(obj) << '|' << std::setw(8) << obj.mProgress;
     return os;
 }
 
