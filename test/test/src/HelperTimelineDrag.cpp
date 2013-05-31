@@ -60,7 +60,7 @@ namespace test {
     std::ostream& operator<<( std::ostream& os, const DragParams& obj )
     {
 #define VERBOSE(param) #param << '=' << param
-        os << VERBOSE(obj.mFrom) << VERBOSE(obj.mTo) << std::boolalpha << VERBOSE(obj.mHoldShiftWhileDragging) << VERBOSE(obj.mHoldCtrlBeforeDragStarts) << VERBOSE(obj.mMouseUp);
+        //os << VERBOSE(obj.mFrom) << VERBOSE(obj.mTo) << std::boolalpha << VERBOSE(obj.mHoldShiftWhileDragging) << VERBOSE(obj.mHoldCtrlBeforeDragStarts) << VERBOSE(obj.mMouseUp);
         return os;
     };
 
