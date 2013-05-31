@@ -57,6 +57,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mToggling;
+
+    static const wxString sTooltip;
 };
 
 }}} // namespace

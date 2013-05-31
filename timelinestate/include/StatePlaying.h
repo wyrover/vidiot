@@ -54,6 +54,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mMakingNewSelection;
+
+    static const wxString sTooltip;
 };
 
 }}} // namespace

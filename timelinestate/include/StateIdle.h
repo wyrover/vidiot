@@ -57,6 +57,8 @@ private:
     boost::statechart::result leftDown();
 
     void addTransition();
+
+    static const wxString sTooltip;
 };
 
 }}} // namespace

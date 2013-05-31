@@ -12,7 +12,9 @@
 
 namespace gui { namespace timeline { namespace state {
 
-const wxString sTooltip = _("Move the cursor to 'scrub' over the timeline and see the frames back in the preview.");
+const wxString Playing::sTooltip = _(
+    "Move the cursor to 'scrub' over the timeline and see the frames back in the preview.\n"
+    );
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
