@@ -50,6 +50,7 @@ private:
 
     bool mShiftDown;
 
+    static const wxString sTooltip;
 };
 
 }}} // namespace

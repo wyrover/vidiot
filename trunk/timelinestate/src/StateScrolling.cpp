@@ -17,8 +17,8 @@
 
 namespace gui { namespace timeline { namespace state {
 
-    const wxString sTooltip = _(
-        "Drag mouse left/right to move the view\n" \
+const wxString StateScrolling::sTooltip = _(
+    "Drag mouse left/right to move the view\n"
         );
 
 //////////////////////////////////////////////////////////////////////////

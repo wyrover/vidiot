@@ -47,6 +47,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
      wxPoint mStartPosition;
+
+     static const wxString sTooltip;
 };
 
 }}} // namespace

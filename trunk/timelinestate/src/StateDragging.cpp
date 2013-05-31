@@ -13,12 +13,12 @@
 
 namespace gui { namespace timeline { namespace state {
 
-    const wxString sTooltip = _(
-        "Move the clips by dragging them around.\n" \
-        "Release Left Mouse Button to 'drop'.\n\n" \
-        "CTRL:  Hold and move to Change 'grab point'\n" \
-        "SHIFT: Shift original clips to make room for moved clips" \
-        );
+const wxString Dragging::sTooltip = _(
+    "Move the clips by dragging them around.\n" \
+    "Release Left Mouse Button to 'drop'.\n\n" \
+    "CTRL:  Hold and move to Change 'grab point'\n" \
+    "SHIFT: Shift original clips to make room for moved clips" \
+    );
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
