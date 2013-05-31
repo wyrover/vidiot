@@ -5,14 +5,23 @@
 
 namespace test {
 
-std::ostream& operator<<( std::ostream& os, const Function& obj )
+struct FunctionContainer
 {
-    os << typeid(obj).name();
-    return os;
-}
+    FunctionContainer(Function function)
+        : f(function)
+    {}
 
-DECLARE_EVENT(EVENT_RUNINMAINTHREAD, EventRunInMainThread, Function);
-DEFINE_EVENT(EVENT_RUNINMAINTHREAD,  EventRunInMainThread, Function);
+    Function f;
+
+    friend std::ostream& operator<<( std::ostream& os, const FunctionContainer& obj )
+    {
+        os << typeid(obj.f).name();
+        return os;
+    }
+};
+
+DECLARE_EVENT(EVENT_RUNINMAINTHREAD, EventRunInMainThread, FunctionContainer);
+DEFINE_EVENT(EVENT_RUNINMAINTHREAD,  EventRunInMainThread, FunctionContainer);
 
 struct RunInMainThreadHelper
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
@@ -22,7 +31,7 @@ struct RunInMainThreadHelper
     {
         ASSERT(!wxThread::IsMain());
         Bind( EVENT_RUNINMAINTHREAD, &RunInMainThreadHelper::onThreadEvent, this );
-        QueueEvent(new EventRunInMainThread(method));
+        QueueEvent(new EventRunInMainThread(FunctionContainer(method)));
         mBarrier.wait();
     }
 
@@ -33,7 +42,7 @@ struct RunInMainThreadHelper
 
     void onThreadEvent(EventRunInMainThread& event)
     {
-        event.getValue()();
+        event.getValue().f();
         mBarrier.wait();
     }
 
