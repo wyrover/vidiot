@@ -18,7 +18,9 @@ macro(AddTests TestProjectName)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FIPrecompiledTest.h ")
     endif (${TestProjectName} STREQUAL "testauto")
 
-    AddCxxTest(${TestProjectName} ${pch_include} ${pch_src} ${TestHeaders} ${TestSources})
+    ENABLE_UNITY_BUILD(${TestProjectName} TestSources TEST_AUTO_UNITY_CPP_FILES)
+
+    AddCxxTest(${TestProjectName} ${pch_include} ${TEST_AUTO_UNITY_CPP_FILES} ${pch_src} ${TestHeaders} ${TestSources})
 
     if (${TestProjectName} STREQUAL "testauto")
         if (MSVC)
