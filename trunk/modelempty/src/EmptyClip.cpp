@@ -18,8 +18,6 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-// todo remove emptyfile and remove inheritance of emptyclip to clip...
-
 EmptyClip::EmptyClip()
     :	Clip()
     ,   mLength(0)
@@ -74,7 +72,7 @@ EmptyClipPtr EmptyClip::replace(model::IClips clips)
     // Ensure that for regions the 'extra' space for transitions is added.
     // Basically the 'extra' space at the beginning of the first clip and the extra
     // space at the ending of the last clip must be added to the region.
-    return boost::make_shared<model::EmptyClip>(length);//todo test , -1 * clips.front()->getMinAdjustBegin(), clips.back()->getMaxAdjustEnd());
+    return boost::make_shared<model::EmptyClip>(length);
 }
 
 //////////////////////////////////////////////////////////////////////////
