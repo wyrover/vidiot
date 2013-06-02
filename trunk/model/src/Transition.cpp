@@ -56,7 +56,7 @@ pts Transition::getLength() const
 
 void Transition::moveTo(pts position)
 {
-    setLastSetPosition(position);
+    setNewStartPosition(position);
 }
 
 //////////////////////////////////////////////////////////////////////////

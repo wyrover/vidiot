@@ -63,7 +63,7 @@ void ClipInterval::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
-    setLastSetPosition(position);
+    setNewStartPosition(position);
     setGenerationProgress(0);
     mRender->moveTo(mOffset + position);
 }
@@ -92,7 +92,7 @@ wxString ClipInterval::getDescription() const
 void ClipInterval::clean()
 {
     VAR_DEBUG(this);
-    invalidateLastSetPosition();
+    invalidateNewStartPosition();
     setGenerationProgress(0);
     mRender->clean();
 }

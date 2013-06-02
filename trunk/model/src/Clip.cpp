@@ -17,10 +17,10 @@ Clip::Clip()
     :   mTrack()
     ,   mPrev()
     ,   mNext()
-    ,   mIndex(0)
     ,   mLeftPtsInTrack(0)
+    ,   mIndex(0)
     ,   mLink()
-    ,   mLastSetPosition(boost::none)
+    ,   mNewStartPosition(boost::none)
     ,   mSelected(false)
     ,   mDragged(false)
     ,   mGeneratedPts(0)
@@ -33,10 +33,10 @@ Clip::Clip(const Clip& other)
     :   mTrack(model::TrackPtr())   // Clone is not automatically part of same track!!!
     ,   mPrev()                     // Clone is not automatically part of same track!!!
     ,   mNext()                     // Clone is not automatically part of same track!!!
-    ,   mIndex(0)                   // Clone is not automatically part of same track!!!
     ,   mLeftPtsInTrack(0)          // Clone is not automatically part of same track!!!
+    ,   mIndex(0)                   // Clone is not automatically part of same track!!!
     ,   mLink()                     // Clone is not automatically linked to same clip, since it will typically be used in ClipEdit derived classes, using link mapping for maintaining the links
-    ,   mLastSetPosition(boost::none)
+    ,   mNewStartPosition(boost::none)
     ,   mSelected(other.mSelected)
     ,   mDragged(false)             // Clone is not automatically also dragged!!!
     ,   mGeneratedPts(0)
@@ -62,7 +62,7 @@ wxString Clip::getDescription() const
 void Clip::clean()
 {
     VAR_DEBUG(this);
-    mLastSetPosition = boost::none;
+    mNewStartPosition = boost::none;
     mGeneratedPts = 0;
 }
 
@@ -70,11 +70,18 @@ void Clip::clean()
 // ICLIP
 //////////////////////////////////////////////////////////////////////////
 
-void Clip::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
+void Clip::setTrackInfo(
+    TrackPtr track,
+    IClipPtr prev,
+    IClipPtr next,
+    pts trackPosition,
+    unsigned int index)
 {
-    mIndex = index;
     mTrack = track;
+    mPrev = prev;
+    mNext = next;
     mLeftPtsInTrack = trackPosition;
+    mIndex = index;
 }
 
 TrackPtr Clip::getTrack()
@@ -85,16 +92,6 @@ TrackPtr Clip::getTrack()
 bool Clip::hasTrack() const
 {
     return const_cast<Clip*>(this)->getTrack();
-}
-
-void Clip::setNext(IClipPtr next)
-{
-    mNext = next;
-}
-
-void Clip::setPrev(IClipPtr prev)
-{
-    mPrev = prev;
 }
 
 IClipPtr Clip::getNext()
@@ -183,19 +180,19 @@ void Clip::setGenerationProgress(pts progress)
     }
 }
 
-void Clip::invalidateLastSetPosition()
+void Clip::invalidateNewStartPosition()
 {
-    mLastSetPosition = boost::none;
+    mNewStartPosition = boost::none;
 }
 
-boost::optional<pts> Clip::getLastSetPosition() const
+boost::optional<pts> Clip::getNewStartPosition() const
 {
-    return mLastSetPosition;
+    return mNewStartPosition;
 }
 
-void Clip::setLastSetPosition(pts position)
+void Clip::setNewStartPosition(pts position)
 {
-    mLastSetPosition.reset(position);
+    mNewStartPosition.reset(position);
 }
 
 std::set<pts> Clip::getCuts(const std::set<IClipPtr>& exclude) const

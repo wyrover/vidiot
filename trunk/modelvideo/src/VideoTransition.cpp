@@ -43,10 +43,10 @@ VideoTransition::~VideoTransition()
 
 VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& parameters)
 {
-    if (getLastSetPosition())
+    if (getNewStartPosition())
     {
-        mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
-        invalidateLastSetPosition();
+        mProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        invalidateNewStartPosition();
 
         // Note: When creating a transition, the left and right clip are adjusted (shortened) to
         // accomodate for the addition of the transition. Therefore, the computations below take these

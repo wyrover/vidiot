@@ -12,11 +12,6 @@ namespace test {
 std::list<std::string> SuitesWithoutGui = boost::assign::list_of
      ("TestConvert::testTimeConversions");
 
-// todo test
-// runfrom test x
-// runonly test x
-// runto test x, restart, should run from test x
-
 //////////////////////////////////////////////////////////////////////////
 // LOCAL HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
