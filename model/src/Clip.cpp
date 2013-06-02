@@ -72,7 +72,7 @@ void Clip::clean()
 
 void Clip::setTrack(TrackPtr track, pts trackPosition, unsigned int index)
 {
-    mIndex = index; // todo this is duplicated into clip, transition and now emptyclip -> move all this to IClip
+    mIndex = index;
     mTrack = track;
     mLeftPtsInTrack = trackPosition;
 }
@@ -124,7 +124,7 @@ pts Clip::getLeftPts() const
 
 pts Clip::getRightPts() const
 {
-    return mLeftPtsInTrack + getLength(); // todo move to IClip class also???
+    return mLeftPtsInTrack + getLength();
 }
 
 void Clip::setLink(IClipPtr link)
