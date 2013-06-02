@@ -1,9 +1,11 @@
 #include "FixtureGui.h"
 
 #include "Application.h"
+#include "Config.h"
 #include "HelperTestSuite.h"
 #include "UtilLog.h"
 #include "Window.h"
+#include "HelperThread.h"
 #include <cxxtest/TestSuite.h>
 #include <time.h>
 
@@ -18,10 +20,12 @@ FixtureGui sInstance;
 FixtureGui::FixtureGui()
     :   mEnd(false)
     ,   mStartingMainThread(false)
+    ,   mBarrierConfigRead(2)
     ,   mBarrierStart(2)
     ,   mBarrierStarted(2)
     ,   mBarrierStopped(2)
     ,   mStartTime(0)
+    ,   mHelperTestSuite(new HelperTestSuite())
 {
 }
 
@@ -33,12 +37,13 @@ bool FixtureGui::setUpWorld()
 {
     mStartTime = time(0);
     mThread.reset(new boost::thread(boost::bind(&FixtureGui::mainThread,this)));
+    mBarrierConfigRead.wait(); // When setUpWorld returns, the config must have been be read. Otherwise, setUp() below will use wrong config data.
     return true;
 }
 
 bool FixtureGui::tearDownWorld()
 {
-    ASSERT(!mEnd);//
+    ASSERT(!mEnd);
     {
         boost::mutex::scoped_lock lock(mEndMutex);
         mEnd = true;
@@ -56,10 +61,9 @@ bool FixtureGui::tearDownWorld()
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     return true;
 }
-
 bool FixtureGui::setUp()
 {
-    if (!HelperTestSuite::get().currentTestRequiresGui()) { return true; } // Test was disabled or does not require gui
+    if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
     VAR_DEBUG(this);
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for starting the main (application) event loop, not for any dialogs.
@@ -72,13 +76,14 @@ bool FixtureGui::setUp()
 
 bool FixtureGui::tearDown()
 {
-    if (!HelperTestSuite::get().currentTestRequiresGui()) { return true; } // Test was disabled or does not require gui
+    if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
     VAR_DEBUG(this);
     wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
     if (doc)
     {
         doc->Modify(false); // Avoid "Save yes/no/Cancel" dialog
     }
+    mHelperTestSuite->testSuiteDone();
 
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for (re)starting the main (application) event loop, not for any dialogs.
@@ -137,6 +142,9 @@ void FixtureGui::mainThread()
     int argc = 1;
     char* argv = _strdup(gui::Application::sTestApplicationName);
     wxEntryStart(argc, &argv);
+
+    HelperTestSuite::get().readConfig();
+    mBarrierConfigRead.wait();
 
     while (true)
     {

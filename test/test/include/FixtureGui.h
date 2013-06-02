@@ -8,6 +8,8 @@
 
 namespace test {
 
+class HelperTestSuite;
+
 /// Fixture for the complete GUI. The complete application is started, with the
 /// main thread running in a separate thread so that tests can be ran from the main
 /// application thread. This fixture also ensures that test execution waits
@@ -59,16 +61,19 @@ private:
 
     boost::scoped_ptr<boost::thread> mThread;
 
+    boost::barrier mBarrierConfigRead;
     boost::barrier mBarrierStart;
     boost::barrier mBarrierStarted;
     boost::barrier mBarrierStopped;
 
-	boost::mutex mEndMutex;
+    boost::mutex mEndMutex;
 
     bool mEnd;
     bool mStartingMainThread;
 
     long mStartTime;
+
+    boost::shared_ptr<HelperTestSuite> mHelperTestSuite;
 };
 
 } // namespace
