@@ -1,9 +1,8 @@
 #include "Application.h"
-
+#include "Dialog.h"
 #include "UtilLog.h"
 #include "UtilLogWindows.h"
 #include "UtilStackWalker.h"
-#include "Dialog.h"
 
 #include <windows.h>
 
