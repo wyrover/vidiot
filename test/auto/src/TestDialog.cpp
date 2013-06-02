@@ -67,7 +67,6 @@ private:
     boost::scoped_ptr<boost::thread> mThread;
 };
 
-//RUNONLY(testEscape);
 void TestDialog::testEscape()
 {
     StartTestSuite();

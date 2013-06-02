@@ -42,7 +42,6 @@ void TestDetailsClip::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testChangeLength);
 void TestDetailsClip::testChangeLength()
 {
     StartTestSuite();

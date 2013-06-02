@@ -10,8 +10,6 @@ namespace test {
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-RUNWITHOUTGUI(testTimeConversions);
-//RUNONLY(testTimeConversions);
 void TestConvert::testTimeConversions()
 {
     StartTestSuite();

@@ -28,7 +28,6 @@ void TestComposition::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testBlend);
 void TestComposition::testBlend()
 {
     StartTestSuite();

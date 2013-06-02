@@ -31,7 +31,6 @@ void TestIntervals::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testRemoveSelectedIntervals);
 void TestIntervals::testRemoveSelectedIntervals()
 {
     StartTestSuite();
@@ -69,7 +68,6 @@ void TestIntervals::testRemoveSelectedIntervals()
     Undo();
 }
 
-//RUNONLY(testRemoveUnselectedIntervals);
 void TestIntervals::testRemoveUnselectedIntervals()
 {
     StartTestSuite();
@@ -112,7 +110,6 @@ void TestIntervals::testRemoveUnselectedIntervals()
     Undo();
 }
 
-//RUNONLY(testRemoveEmptyIntervals);
 void TestIntervals::testRemoveEmptyIntervals()
 {
     StartTestSuite();
@@ -156,7 +153,6 @@ void TestIntervals::testRemoveEmptyIntervals()
     }
 }
 
-//RUNONLY(testRemoveEmptyIntervalsWithOffset);
 void TestIntervals::testRemoveEmptyIntervalsWithOffset()
 {
     StartTestSuite();

@@ -93,7 +93,6 @@ void TestRender::testChangeRenderSettings()
     }
 }
 
-//RUNONLY(testRendering);
 void TestRender::testRendering()
 {
     StartTestSuite();
@@ -141,7 +140,6 @@ void TestRender::testRendering()
     }
 }
 
-//RUNONLY(testRenderingCodecs);
 void TestRender::testRenderingCodecs()
 {
     StartTestSuite();

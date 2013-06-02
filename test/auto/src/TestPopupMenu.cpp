@@ -41,7 +41,6 @@ void TestPopupMenu::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testAddTransitions);
 void TestPopupMenu::testAddTransitions()
 {
     StartTestSuite();
@@ -129,7 +128,6 @@ void TestPopupMenu::testAddTransitions()
     }
 }
 
-//RUNONLY(testRemoveOneEmptyInterval);
 void TestPopupMenu::testRemoveOneEmptyInterval()
 {
     StartTestSuite();
@@ -169,8 +167,6 @@ void TestPopupMenu::testRemoveOneEmptyInterval()
     }
 }
 
-//RUNFROM(testAdvancedRightClickScenarios);
-//RUNONLY(testAdvancedRightClickScenarios);
 void TestPopupMenu::testAdvancedRightClickScenarios()
 {
     StartTestSuite();
