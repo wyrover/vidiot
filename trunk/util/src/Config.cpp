@@ -7,7 +7,6 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilInitAvcodec.h"
 
-wxString Config::sFileName("");
 bool Config::sShowDebugInfo(false);
 boost::mutex Config::sMutex;
 bool Config::sHold(false);
@@ -60,19 +59,10 @@ void checkBool(wxString path)
 // static
 void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestMode)
 {
-    wxFileName configFile(wxStandardPaths::Get().GetExecutablePath()); // Using the executable's file name enables using multiple .ini files with multiple settings.
-    configFile.SetExt("ini");
-
-    if (configFile.GetFullPath().Contains("Program Files"))
-    {
-        // When running from "Program Files" (installed version), store this file elsewhere to avoid being unable to write.
-        configFile.SetPath(wxStandardPaths::Get().GetUserConfigDir()); // Store in "C:\Users\<username>\AppData\Roaming\<executablename>.ini"
-    }
-
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
-    sFileName = configFile.GetFullPath();
-    VAR_ERROR(sFileName);
-    wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, sFileName));
+    wxString ConfigFile(getFileName());
+    VAR_ERROR(ConfigFile);
+    wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, ConfigFile));
     wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
 
     // Check values, delete from config if incorrect
@@ -96,26 +86,29 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
 
     // Set all defaults here
     setDefault(Config::sPathAutoLoadEnabled, false);
-    setDefault(Config::sPathDefaultTransitionLength, 24);
+    setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
+    setDefault(Config::sPathDefaultAudioChannels, 2);
+    setDefault(Config::sPathDefaultAudioSampleRate, 44100);
+    setDefault(Config::sPathDefaultExtension, "avi");
     setDefault(Config::sPathDefaultFrameRate, "25");
-    setDefault(Config::sPathDefaultVideoWidth, 720);
+    setDefault(Config::sPathDefaultTransitionLength, 24);
+    setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
     setDefault(Config::sPathDefaultVideoHeight, 576);
     setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill).c_str());
-    setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
-    setDefault(Config::sPathDefaultAudioSampleRate, 44100);
-    setDefault(Config::sPathDefaultAudioChannels, 2);
+    setDefault(Config::sPathDefaultVideoWidth, 720);
     setDefault(Config::sPathLastOpened, "");
-    setDefault(Config::sPathDefaultExtension, "avi");
     setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
     setDefault(Config::sPathMarkerBeginAddition, 0);
     setDefault(Config::sPathMarkerEndAddition, 0);
+    setDefault(Config::sPathShowBoundingBox, true);
     setDefault(Config::sPathShowDebugInfoOnWidgets, false);
     setDefault(Config::sPathSnapClips, true);
     setDefault(Config::sPathSnapCursor, true);
-    setDefault(Config::sPathShowBoundingBox, true);
     setDefault(Config::sPathStrip, "scene'2010");
-    setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
+    setDefault(Config::sPathTestRunCurrent, "");
+    setDefault(Config::sPathTestRunFrom, "");
+    setDefault(Config::sPathTestRunOnly, "");
 
     wxConfigBase::Get()->Flush();
 
@@ -126,9 +119,19 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     Avcodec::configureLog();
 }
 
+// static
 wxString Config::getFileName()
 {
-    return sFileName;
+    wxFileName configFile(wxStandardPaths::Get().GetExecutablePath()); // Using the executable's file name enables using multiple .ini files with multiple settings.
+    configFile.SetExt("ini");
+
+    if (configFile.GetFullPath().Contains("Program Files"))
+    {
+        // When running from "Program Files" (installed version), store this file elsewhere to avoid being unable to write.
+        configFile.SetPath(wxStandardPaths::Get().GetUserConfigDir()); // Store in "C:\Users\<username>\AppData\Roaming\<executablename>.ini"
+    }
+
+    return configFile.GetFullPath();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -281,26 +284,29 @@ void Config::releaseWriteToDisk()
 // CONFIG PATHS
 //////////////////////////////////////////////////////////////////////////
 
-const wxString Config::sPathSnapClips               ("/View/SnapClips");
-const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
-const wxString Config::sPathShowBoundingBox         ("/View/BoundingBox");
 const wxString Config::sPathAutoLoadEnabled         ("/Project/AutoLoad/Enabled");
-const wxString Config::sPathLastOpened              ("/Project/LastOpened");
-const wxString Config::sPathDefaultExtension        ("/File/DefaultExtension");
-const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
-const wxString Config::sPathLogLevelAvcodec         ("/Debug/LogLevelAvcodec");
-const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
-const wxString Config::sPathTest                    ("/Debug/Test");
 const wxString Config::sPathDebugMaxRenderLength    ("/Debug/MaxRenderLength");
+const wxString Config::sPathDefaultAudioChannels    ("/Audio/DefaultNumberOfChannels");
+const wxString Config::sPathDefaultAudioSampleRate  ("/Audio/DefaultSampleRate");
+const wxString Config::sPathDefaultExtension        ("/File/DefaultExtension");
 const wxString Config::sPathDefaultFrameRate        ("/Video/DefaultFrameRate");
-const wxString Config::sPathDefaultVideoWidth       ("/Video/DefaultWidth");
+const wxString Config::sPathDefaultTransitionLength ("/Timeline/DefaultTransitionLength");
+const wxString Config::sPathDefaultVideoAlignment   ("/Video/DefaultVideoAlignment");
 const wxString Config::sPathDefaultVideoHeight      ("/Video/DefaultHeight");
 const wxString Config::sPathDefaultVideoScaling     ("/Video/DefaultVideoScaling");
-const wxString Config::sPathDefaultVideoAlignment   ("/Video/DefaultVideoAlignment");
-const wxString Config::sPathOverruleFourCC          ("/Video/FourCC");
-const wxString Config::sPathDefaultAudioSampleRate  ("/Audio/DefaultSampleRate");
-const wxString Config::sPathDefaultAudioChannels    ("/Audio/DefaultNumberOfChannels");
+const wxString Config::sPathDefaultVideoWidth       ("/Video/DefaultWidth");
+const wxString Config::sPathLastOpened              ("/Project/LastOpened");
+const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
+const wxString Config::sPathLogLevelAvcodec         ("/Debug/LogLevelAvcodec");
 const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
+const wxString Config::sPathOverruleFourCC          ("/Video/FourCC");
+const wxString Config::sPathShowBoundingBox         ("/View/BoundingBox");
+const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
+const wxString Config::sPathSnapClips               ("/View/SnapClips");
+const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
 const wxString Config::sPathStrip                   ("/Timeline/Strip");
-const wxString Config::sPathDefaultTransitionLength ("/Timeline/DefaultTransitionLength");
+const wxString Config::sPathTest                    ("/Test/CxxTestMode");
+const wxString Config::sPathTestRunOnly             ("/Test/RunOnly");
+const wxString Config::sPathTestRunFrom             ("/Test/RunFrom");
+const wxString Config::sPathTestRunCurrent          ("/Test/RunCurrent");

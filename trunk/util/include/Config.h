@@ -64,29 +64,32 @@ public:
     // CONFIG PATHS
     //////////////////////////////////////////////////////////////////////////
 
-    static const wxString sPathSnapClips;
-    static const wxString sPathSnapCursor;
-    static const wxString sPathShowBoundingBox;
     static const wxString sPathAutoLoadEnabled;
-    static const wxString sPathLastOpened;
-    static const wxString sPathDefaultExtension;
-    static const wxString sPathLogLevel;
-    static const wxString sPathLogLevelAvcodec;
-    static const wxString sPathShowDebugInfoOnWidgets;
-    static const wxString sPathTest;
     static const wxString sPathDebugMaxRenderLength;
+    static const wxString sPathDefaultAudioChannels;
+    static const wxString sPathDefaultAudioSampleRate;
+    static const wxString sPathDefaultExtension;
     static const wxString sPathDefaultFrameRate;
-    static const wxString sPathDefaultVideoWidth;
+    static const wxString sPathDefaultTransitionLength;
+    static const wxString sPathDefaultVideoAlignment;
     static const wxString sPathDefaultVideoHeight;
     static const wxString sPathDefaultVideoScaling;
-    static const wxString sPathDefaultVideoAlignment;
-    static const wxString sPathOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
-    static const wxString sPathDefaultAudioSampleRate;
-    static const wxString sPathDefaultAudioChannels;
+    static const wxString sPathDefaultVideoWidth;
+    static const wxString sPathLastOpened;
+    static const wxString sPathLogLevel;
+    static const wxString sPathLogLevelAvcodec;
     static const wxString sPathMarkerBeginAddition;
     static const wxString sPathMarkerEndAddition;
+    static const wxString sPathOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
+    static const wxString sPathShowBoundingBox;
+    static const wxString sPathShowDebugInfoOnWidgets;
+    static const wxString sPathSnapClips;
+    static const wxString sPathSnapCursor;
     static const wxString sPathStrip;
-    static const wxString sPathDefaultTransitionLength;
+    static const wxString sPathTest;
+    static const wxString sPathTestRunOnly;
+    static const wxString sPathTestRunFrom;
+    static const wxString sPathTestRunCurrent;
 
 private:
 
@@ -94,7 +97,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    static wxString sFileName;
     static bool sShowDebugInfo;
     static boost::mutex sMutex;
 
