@@ -1,12 +1,21 @@
 #pragma warning(disable:4996)
 
 #include "HelperTestSuite.h"
+#include "HelperThread.h"
 #include <cxxtest/TestSuite.h>
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "Window.h"
 
 namespace test {
+
+std::list<std::string> SuitesWithoutGui = boost::assign::list_of
+     ("TestConvert::testTimeConversions");
+
+// todo test
+// runfrom test x
+// runonly test x
+// runto test x, restart, should run from test x
 
 //////////////////////////////////////////////////////////////////////////
 // LOCAL HELPER METHODS
@@ -30,10 +39,11 @@ std::string convertToClassname(std::string path)
 
 std::string makeFullTestName(std::string file, std::string test)
 {
-    return convertToClassname(file) + "-" + test;
+    return convertToClassname(file) + "::" + test;
 }
 
-std::string currentCxxTest()
+// static
+std::string HelperTestSuite::currentCxxTest()
 {
     return makeFullTestName( CxxTest::TestTracker::tracker().test().suiteName(), CxxTest::TestTracker::tracker().test().testName() );
 }
@@ -42,99 +52,79 @@ std::string currentCxxTest()
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-HelperTestSuite* HelperTestSuite::sInstance = 0;
-
-// static
-HelperTestSuite& HelperTestSuite::get()
+HelperTestSuite::HelperTestSuite()
+    : mCurrentTestName(boost::none)
+    , mSuiteCount(0)
+    , mRunOnly("")
+    , mRunFrom("")
+    , mRunCurrent("")
+    , mFoundRunFromTest(false)
 {
-    if (!sInstance)
-    {
-        sInstance = new HelperTestSuite();
-    }
-    return *sInstance;
 }
 
-HelperTestSuite::HelperTestSuite()
-    : mRunOnlySuite("")
-    , mRunFromSuite("")
-    , mSuitesWithoutGui()
-    , mCurrentSuiteName()
-    , mCurrentTestName(boost::none)
-    , mSuiteCount(0)
+void HelperTestSuite::readConfig()
 {
+    wxConfigBase::Set(new wxFileConfig(wxEmptyString, wxEmptyString, Config::getFileName()));
+    wxString current;
+    wxConfigBase::Get()->Read(Config::sPathTestRunOnly, &mRunOnly, "");
+    wxConfigBase::Get()->Read(Config::sPathTestRunFrom, &mRunFrom, "");
+    wxConfigBase::Get()->Read(Config::sPathTestRunCurrent, &current, "");
+    wxConfigBase::Set(0);
+
+    if (mRunFrom.IsSameAs(""))
+    {
+        mRunFrom = current; // If the previous run didn't succeed, continue at last started test.
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 // TEST CONFIGURATION
 //////////////////////////////////////////////////////////////////////////
 
-bool HelperTestSuite::allTestsAreRunning()
-{
-    return mRunOnlySuite.compare("") == 0;
-}
-
-bool HelperTestSuite::currentTestRunsStandAlone()
-{
-    return mRunOnlySuite.compare(currentCxxTest()) == 0;
-}
-
 bool HelperTestSuite::currentTestIsEnabled()
 {
-    if (mRunFromSuite.compare("") != 0)
+    wxString current = currentCxxTest();
+    if (!mRunOnly.IsSameAs(""))
     {
-        if (mRunFromSuite.compare(currentCxxTest()) == 0)
-        {
-            // This is the first test that must run. Reset the var to enable subsequent tests to be ran.
-            mRunFromSuite = "";
-        }
-        else
-        {
-            return false;
-        }
+        return current.IsSameAs(mRunOnly);
     }
-    return allTestsAreRunning() || currentTestRunsStandAlone();
+
+    if (!mRunFrom.IsSameAs(""))
+    {
+        mFoundRunFromTest = mFoundRunFromTest || current.IsSameAs(mRunFrom);
+        return mFoundRunFromTest;
+    }
+
+    return true;
 }
 
-bool HelperTestSuite::currentTestRequiresGui()
+bool HelperTestSuite::currentTestRequiresWindow()
 {
     return
         currentTestIsEnabled() &&
-        !UtilList<std::string>(mSuitesWithoutGui).hasElement(currentCxxTest());
-}
-
-int HelperTestSuite::runFrom(const char* file, const char* test)
-{
-    ASSERT_ZERO( mRunFromSuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
-    ASSERT_ZERO( mRunOnlySuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
-    mRunFromSuite = makeFullTestName(file,test);
-    return 1;
-};
-
-int HelperTestSuite::runOnly(const char* file, const char* test)
-{
-    ASSERT_ZERO( mRunFromSuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
-    ASSERT_ZERO( mRunOnlySuite.compare("")); // Only one test may be 'run only' or 'run from' at a time
-    mRunOnlySuite = makeFullTestName(file,test);
-    return 1;
-};
-
-int HelperTestSuite::runWithoutGui(const char* file, const char* test)
-{
-    mSuitesWithoutGui.push_back(makeFullTestName(file,test));
-    return 1;
+        !UtilList<std::string>(SuitesWithoutGui).hasElement(currentCxxTest());
 }
 
 bool HelperTestSuite::startTestSuite(const char* suite)
 {
     mSuiteCount++;
     if (!currentTestIsEnabled()) return false;
-    std::string suitename(suite);
-    mCurrentSuiteName = suitename.substr(suitename.find_last_of(':')+1);
-    mCurrentSuiteName.Replace("test","Test",false);
     mCurrentTestName.reset();
-    LOG_ERROR << "Suite start: " << suite;
-    updateTitle();
+    LOG_ERROR << "Suite start: " << currentCxxTest();
+    if (currentTestRequiresWindow())
+    {
+        updateTitle();
+        RunInMainThread([this] { Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); }); // Set
+    }
     return true;
+}
+
+void HelperTestSuite::testSuiteDone()
+{
+    if (mSuiteCount == CxxTest::TestTracker::tracker( ).world().numTotalTests())
+    {
+        RunInMainThread([this] { Config::WriteString( Config::sPathTestRunCurrent, "" ); }); // Reset
+    }
 }
 
 void HelperTestSuite::setTest(const char* test)
@@ -149,9 +139,9 @@ void HelperTestSuite::setTest(const char* test)
 
 void HelperTestSuite::updateTitle()
 {
-    if (!currentTestRequiresGui()) { return; }
+    if (!currentTestRequiresWindow()) { return; }
     wxString s;
-    s << mSuiteCount << ": " << mCurrentSuiteName;
+    s << mSuiteCount << ": " << currentCxxTest();
     if (mCurrentTestName)
     {
         s << ": " << *mCurrentTestName;
