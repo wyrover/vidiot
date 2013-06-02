@@ -28,7 +28,6 @@ void TestAutoFolder::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testWatch);
 void TestAutoFolder::testWatch()
 {
     StartTestSuite();
