@@ -28,12 +28,9 @@ public:
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) override;
     TrackPtr getTrack() override;
     bool hasTrack() const override;
 
-    void setNext(IClipPtr next) override; // todo make part of 'settrack (or set'cache)
-    void setPrev(IClipPtr prev) override;
     IClipPtr getNext() override;
     IClipPtr getPrev() override;
     ConstIClipPtr getNext() const override;
@@ -57,10 +54,9 @@ public:
     pts getGenerationProgress() const override;
     void setGenerationProgress(pts progress) override;
 
-    void invalidateLastSetPosition() override;
-    boost::optional<pts> getLastSetPosition() const override;
-    void setLastSetPosition(pts position); // todo rename all these to NewStartPosition
-
+    void invalidateNewStartPosition() override;
+    boost::optional<pts> getNewStartPosition() const override;
+    void setNewStartPosition(pts position);
     virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
 protected:
@@ -89,19 +85,30 @@ protected:
 private:
 
     //////////////////////////////////////////////////////////////////////////
+    // SET TRACK INFORMATION
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class Track;
+    void setTrackInfo(
+        TrackPtr track = TrackPtr(),
+        IClipPtr prev = IClipPtr(),
+        IClipPtr next = IClipPtr(),
+        pts trackPosition = 0,
+        unsigned int index = 0);
+
+    //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    WeakTrackPtr mTrack;    ///< Track which holds this clip. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
-    WeakIClipPtr mNext;
-    WeakIClipPtr mPrev;
-
+    WeakTrackPtr mTrack;    ///< Track which holds this clip. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
+    WeakIClipPtr mPrev;     ///< Previous clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
+    WeakIClipPtr mNext;     ///< Next clip in the track. 0 if current clip is not part of a track. Stored as weak_ptr to avoid cyclic dependencies (leading to memory leaks).
+    pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
     unsigned int mIndex;    ///< Index of this clip in the track (for debugging)
+
     WeakIClipPtr mLink;     ///< Clip that this clip is linked with. Stored as weak_ptr to avoid circular dependency between two linked clips which causes memory leaks.
 
-    pts mLeftPtsInTrack;    ///< Position inside the track. 0 if not in a track.
-
-    boost::optional<pts> mLastSetPosition;  ///< The most recent position as specified in 'moveTo()'.
+    boost::optional<pts> mNewStartPosition;  ///< The most recent position as specified in 'moveTo()'.
     pts mGeneratedPts;                      ///< (approximate) pts value of last video/audio returned with getNext*
 
     bool mSelected;                         ///< True if this clip is currently selected

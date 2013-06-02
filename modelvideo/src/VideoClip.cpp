@@ -101,10 +101,10 @@ char* VideoClip::getType() const
 VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& parameters)
 {
     bool enforceKeyFrame = false;
-    if (getLastSetPosition())
+    if (getNewStartPosition())
     {
-        mProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
-        invalidateLastSetPosition();
+        mProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        invalidateNewStartPosition();
         enforceKeyFrame = true; // Every first frame of a clip is forced to be a key frame
     }
 

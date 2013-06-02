@@ -146,9 +146,7 @@ void Track::removeClips(IClips clips)
     BOOST_FOREACH( IClipPtr clip, clips )
     {
         clip->clean();
-        clip->setTrack(TrackPtr(), 0);
-        clip->setPrev(IClipPtr());
-        clip->setNext(IClipPtr());
+        boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(); // reset
     }
 
     IClipPtr position = UtilList<IClipPtr>(mClips).removeElements(clips);
@@ -310,26 +308,25 @@ void Track::iterate_next()
 
 void Track::updateClips()
 {
-    pts position = 0;
-    int index = 0;
     // NOTE: any information updated here must also be serialized in the clip,
     //       since this method is not called during (de)serialization, since
     //       the shared_from_this() handling causes problems then.
-    IClipPtr next;
-    IClipPtr prev;
-    BOOST_FOREACH( IClipPtr clip, mClips )
+    pts position = 0;
+    int index = 0;
+    IClipPtr prev; // First clip has no previous clip
+    IClips::iterator it = mClips.begin();
+
+    while (it != mClips.end())
     {
-        if (prev)
-        {
-            prev->setNext(clip);
-        }
-        clip->setTrack(shared_from_this(), position, index);
-        clip->setPrev(prev);
-        clip->setNext(IClipPtr()); // Will be overwritten for next clip, if any
+        IClipPtr clip = *it; // Extract current clip
+        IClipPtr next = (++it != mClips.end()) ? *it : IClipPtr(); // Increment iterator first
+
+        boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(shared_from_this(), prev, next, position, index);
         position += clip->getLength();
         index++;
         prev = clip;
     }
+
     mItClips = mClips.end(); // Must be reset, since it has become invalid
 }
 

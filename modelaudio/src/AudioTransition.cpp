@@ -44,10 +44,10 @@ AudioTransition::~AudioTransition()
 
  AudioChunkPtr AudioTransition::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    if (getLastSetPosition())
+    if (getNewStartPosition())
     {
-        pts ptsProgress = *getLastSetPosition(); // Reinitialize mProgress to the last value set in ::moveTo
-        invalidateLastSetPosition();
+        pts ptsProgress = *getNewStartPosition(); // Reinitialize mProgress to the last value set in ::moveTo
+        invalidateNewStartPosition();
 
         // Note: When creating a transition, the left and right clip are adjusted (shortened) to
         // accomodate for the addition of the transition. Therefore, the computations below take these

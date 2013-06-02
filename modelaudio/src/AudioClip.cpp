@@ -77,10 +77,10 @@ char* AudioClip::getType() const
 
 AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    if (getLastSetPosition())
+    if (getNewStartPosition())
     {
-        mProgress = parameters.ptsToSamples(*getLastSetPosition()); // Reinitialize mProgress to the last value set in ::moveTo
-        invalidateLastSetPosition();
+        mProgress = parameters.ptsToSamples(*getNewStartPosition()); // Reinitialize mProgress to the last value set in ::moveTo
+        invalidateNewStartPosition();
     }
 
     int lengthInSamples = parameters.ptsToSamples(getLength());

@@ -154,31 +154,14 @@ protected:
     // CURRENT POSITION HANDLING
     //////////////////////////////////////////////////////////////////////////
 
-    /// This method resets mLastSetPosition. This must be called whenever there
+    /// This method resets mNewStartPosition. This must be called whenever there
     /// is new playback progress.
-    virtual void invalidateLastSetPosition() = 0;
+    virtual void invalidateNewStartPosition() = 0;
 
     /// Return the most recent position as specified in moveTo(). This is
     /// uninitialized when there was playback progress after the moveTo.
-    /// \see invalidateLastSetPosition
-    virtual boost::optional<pts> getLastSetPosition() const = 0;
-
-private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // LIST LINKING
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class Track;
-
-    /// Set the track which contains this clip. Also sets the leftmost pts
-    /// of the clip inside the track. When called without parameters
-    /// (thus using the defaults), this information is 'reset'.
-    virtual void setTrack(TrackPtr track = TrackPtr(), pts trackPosition = 0, unsigned int index = 0) = 0;
-
-    virtual void setNext(IClipPtr next) = 0;
-    virtual void setPrev(IClipPtr prev) = 0;
-
+    /// \see invalidateNewStartPosition
+    virtual boost::optional<pts> getNewStartPosition() const = 0;
 };
 
 } // namespace
