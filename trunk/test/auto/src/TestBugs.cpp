@@ -51,7 +51,6 @@ void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
     ASSERT_DETAILSCLIP(VideoClip(0,3));
 }
 
-//RUNFROM(testLinkingErrorWhenDroppingOverBeginOfLinkedClip);
 void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
 {
     StartTestSuite();

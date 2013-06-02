@@ -40,7 +40,6 @@ void TestFileTypes::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testFileTypes_1_44100);
 void TestFileTypes::testFileTypes_1_44100()
 {
     StartTestSuite();
@@ -49,7 +48,6 @@ void TestFileTypes::testFileTypes_1_44100()
     executeTest();
 }
 
-//RUNONLY(testFileTypes_2_48000);
 void TestFileTypes::testFileTypes_2_48000()
 {
     StartTestSuite();

@@ -28,7 +28,6 @@ void TestScrolling::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testShowScrollbarWhenAddingClipAtEnd);
 void TestScrolling::testShowScrollbarWhenAddingClipAtEnd()
 {
     StartTestSuite();

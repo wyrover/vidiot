@@ -38,7 +38,6 @@ void TestTransition::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testSelectionAndDeletion);
 void TestTransition::testSelectionAndDeletion()
 {
     StartTestSuite();
@@ -124,7 +123,6 @@ void TestTransition::testSelectionAndDeletion()
     }
 }
 
-//RUNFROM(testDragAndDropOfOtherClips);
 void TestTransition::testDragAndDropOfOtherClips()
 {
     StartTestSuite();
@@ -282,7 +280,6 @@ void TestTransition::testDragAndDropOfOtherClips()
     }
 }
 
-//RUNFROM(testDragAndDropOfClipsUnderTransition);
 void TestTransition::testDragAndDropOfClipsUnderTransition()
 {
     StartTestSuite();
@@ -347,7 +344,6 @@ void TestTransition::testDragAndDropOfClipsUnderTransition()
     }
 }
 
-//RUNONLY(testAdjacentTransitions);
 void TestTransition::testAdjacentTransitions()
 {
     StartTestSuite();
@@ -408,7 +404,6 @@ void TestTransition::testAdjacentTransitions()
     }
 }
 
-//RUNONLY(testPlaybackAndScrubbing);
 void TestTransition::testPlaybackAndScrubbing()
 {
     StartTestSuite();
@@ -486,7 +481,6 @@ void TestTransition::testPlaybackAndScrubbing()
     }
 }
 
-//RUNONLY(testTrimmingClipsInTransition);
 void TestTransition::testTrimmingClipsInTransition()
 {
     StartTestSuite();
@@ -811,7 +805,6 @@ void TestTransition::testTrimmingLinkedClips()
     }
 }
 
-//RUNONLY(testTrimmingTransition);
 void TestTransition::testTrimmingTransition()
 {
     StartTestSuite();
@@ -1054,7 +1047,6 @@ void TestTransition::testTrimmingTransition()
     }
 }
 
-//RUNFROM(testAudioTransitions);
 void TestTransition::testAudioTransitions()
 {
     StartTestSuite();
@@ -1090,7 +1082,6 @@ void TestTransition::testAudioTransitions()
     }
 }
 
-//RUNFROM(testCreateTransitionAfterLastClip);
 void TestTransition::testCreateTransitionAfterLastClip()
 {
     StartTestSuite();

@@ -51,7 +51,6 @@ void TestTimeline::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testSelection);
 void TestTimeline::testSelection()
 {
     StartTestSuite();
@@ -249,8 +248,6 @@ void TestTimeline::testDeletion()
     }
 };
 
-//RUNONLY(testDnd);
-//RUNFROM(testDnd);// todo make more practical solution for runonly/runfrom that read the params from a (ini!) file?
 void TestTimeline::testDnd()
 {
     StartTestSuite();
@@ -344,7 +341,6 @@ void TestTimeline::testDnd()
     }
 }
 
-//RUNONLY(testDndMultipleTracks);
 void TestTimeline::testDndMultipleTracks()
 {
     StartTestSuite();
@@ -388,7 +384,6 @@ void TestTimeline::testDndMultipleTracks()
     }
 }
 
-//RUNONLY(testUndo);
 void TestTimeline::testUndo()
 {
     StartTestSuite();
@@ -490,7 +485,6 @@ void TestTimeline::testAbortDrag()
     }
 }
 
-//RUNONLY(testDividers);
 void TestTimeline::testDividers()
 {
     StartTestSuite();
@@ -542,7 +536,6 @@ void TestTimeline::testDividers()
     }
 }
 
-//RUNONLY(testTrimming);
 void TestTimeline::testTrimming()
 {
     StartTestSuite();
@@ -648,7 +641,6 @@ void TestTimeline::testTrimming()
     }
 }
 
-//RUNFROM(testTrimmingWithOtherTracks);
 void TestTimeline::testTrimmingWithOtherTracks()
 {
     StartTestSuite();
@@ -857,7 +849,6 @@ void TestTimeline::testTrimmingWithOtherTracks()
     }
 }
 
-//RUNONLY(testShowDebugInfo);
 void TestTimeline::testShowDebugInfo()
 {
     StartTestSuite();

@@ -26,7 +26,6 @@ void TestSavingAndLoading::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-//RUNONLY(testSaveAndLoad);
 void TestSavingAndLoading::testSaveAndLoad()
 {
     StartTestSuite();
