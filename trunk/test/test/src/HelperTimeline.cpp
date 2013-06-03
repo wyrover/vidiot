@@ -483,7 +483,7 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 void DeselectAllClips()
 {
     LOG_DEBUG;
-    getTimeline().getSelection().unselectAll();
+    RunInMainThread([] { getTimeline().getSelection().unselectAll(); });
 };
 
 void DeleteClip(model::IClipPtr clip)
