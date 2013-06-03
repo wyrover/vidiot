@@ -144,6 +144,7 @@ void Clip::setSelected(bool selected)
     if (mSelected != selected)
     {
         mSelected = selected;
+        ASSERT(wxThread::IsMain()); // ProcessEvent in another thread (for instance, the rendering thread) causes threading issues: View classes in timeline may only be updated from the GUI thread.
         ProcessEvent(EventSelectClip(selected));
     }
 }
@@ -166,14 +167,14 @@ pts Clip::getGenerationProgress() const
 
 void Clip::setGenerationProgress(pts progress)
 {
-    // Note: the condition "Config::getShowDebugInfo()" was added to avoid
+    // Note: the condition "wxThread::IsMain()" was added to avoid
     //       generating these events in case a sequence is being rendered.
     //       If a sequence is rendered, these events generate updates of the
     //       sequence's timeline's view classes. That, in turn, causes all
     //       sorts of threading issues. In general: When a sequence is rendered
-    //       and no changes to the sequence (or its tracks/clips/etc.) may be
+    //       no changes to the sequence (or its tracks/clips/etc.) may be
     //       made. That includes the 'render progress' event.
-    if (Config::getShowDebugInfo() && mGeneratedPts != progress) // todo isnt this obsolete, since for rendering a clone is made? or do via thread::ismain?
+    if (wxThread::IsMain() && mGeneratedPts != progress)
     {
         mGeneratedPts = progress;
         ProcessEvent(DebugEventRenderProgress(mGeneratedPts));
