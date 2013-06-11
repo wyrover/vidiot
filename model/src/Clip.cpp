@@ -9,7 +9,8 @@
 #include "UtilSerializeBoost.h"
 
 namespace model {
-//////////////////////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +27,7 @@ Clip::Clip()
     ,   mGeneratedPts(0)
     ,   mDescription("")
 {
-    VAR_DEBUG(*this);
+    // NOT: VAR_DEBUG(*this); -- Uses virtual methods that only have an implementation in derived classes (which are not yet initialized)
 }
 
 Clip::Clip(const Clip& other)
@@ -42,12 +43,12 @@ Clip::Clip(const Clip& other)
     ,   mGeneratedPts(0)
     ,   mDescription(other.mDescription)
 {
-    VAR_DEBUG(*this)(other);
+    // NOT: VAR_DEBUG(*this)(other); -- Uses virtual methods that only have an implementation in derived classes (which are not yet initialized)
 }
 
 Clip::~Clip()
 {
-    VAR_DEBUG(*this);
+    // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 //////////////////////////////////////////////////////////////////////////
