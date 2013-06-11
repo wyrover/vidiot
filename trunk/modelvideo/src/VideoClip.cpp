@@ -29,7 +29,7 @@ VideoClip::VideoClip()
     , mAlignment()
     , mPosition(0,0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 VideoClip::VideoClip(VideoFilePtr file)
@@ -41,7 +41,7 @@ VideoClip::VideoClip(VideoFilePtr file)
     , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathDefaultVideoAlignment))
     , mPosition(0,0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
     updateAutomatedScaling();
     updateAutomatedPositioning();
 }
@@ -55,7 +55,7 @@ VideoClip::VideoClip(const VideoClip& other)
     , mAlignment(other.mAlignment)
     , mPosition(other.mPosition)
 {
-    VAR_DEBUG(*this);
+    VAR_DEBUG(*this)(other);
 }
 
 VideoClip* VideoClip::clone() const
