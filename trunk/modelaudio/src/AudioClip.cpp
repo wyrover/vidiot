@@ -18,21 +18,21 @@ AudioClip::AudioClip()
     :	ClipInterval()
     ,   mProgress(0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 AudioClip::AudioClip(AudioFilePtr file)
     :	ClipInterval(file)
     ,   mProgress(0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 AudioClip::AudioClip(const AudioClip& other)
     :   ClipInterval(other)
     ,   mProgress(0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this)(other);
 }
 
 AudioClip* AudioClip::clone() const

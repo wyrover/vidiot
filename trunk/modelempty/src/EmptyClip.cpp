@@ -23,7 +23,7 @@ EmptyClip::EmptyClip()
     ,   mLength(0)
     ,   mProgress(0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 EmptyClip::EmptyClip(pts length)
@@ -31,7 +31,7 @@ EmptyClip::EmptyClip(pts length)
     ,   mLength(length)
     ,   mProgress(0)
 {
-    VAR_DEBUG(this)(length);
+    VAR_DEBUG(*this)(length);
 }
 
 EmptyClip::EmptyClip(const EmptyClip& other)
@@ -39,7 +39,7 @@ EmptyClip::EmptyClip(const EmptyClip& other)
     ,   mLength(other.mLength)
     ,   mProgress(0)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this)(other);
 }
 
 EmptyClip* EmptyClip::clone() const
