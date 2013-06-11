@@ -21,7 +21,7 @@ ClipInterval::ClipInterval()
     ,   mLength(-1)
     ,   mDescription("")
 {
-    VAR_DEBUG(*this);
+    // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 ClipInterval::ClipInterval(IFilePtr render)
@@ -32,7 +32,7 @@ ClipInterval::ClipInterval(IFilePtr render)
     ,   mDescription("")
 {
     mLength = mRender->getLength() - mOffset;
-    VAR_DEBUG(*this);
+    // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 ClipInterval::ClipInterval(const ClipInterval& other)
@@ -42,12 +42,12 @@ ClipInterval::ClipInterval(const ClipInterval& other)
     ,   mLength(other.mLength)
     ,   mDescription(other.mDescription)
 {
-    VAR_DEBUG(*this)(other);
+    // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 ClipInterval::~ClipInterval()
 {
-    VAR_DEBUG(*this);
+    // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
 //////////////////////////////////////////////////////////////////////////
