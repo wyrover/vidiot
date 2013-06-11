@@ -17,7 +17,7 @@ Transition::Transition()
     ,   mFramesLeft(-1)
     ,   mFramesRight(-1)
 {
-    VAR_DEBUG(this);
+    VAR_DEBUG(*this);
 }
 
 void Transition::init(pts nFramesLeft, pts nFramesRight)
@@ -32,7 +32,7 @@ Transition::Transition(const Transition& other)
     ,   mFramesLeft(other.mFramesLeft)
     ,   mFramesRight(other.mFramesRight)
 {
-    VAR_DEBUG(*this);
+    VAR_DEBUG(*this)(other);
 }
 
 Transition* Transition::clone() const
