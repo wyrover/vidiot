@@ -94,6 +94,9 @@ Install ActivePerl via installer
   (see <VIDIOT_SRC>/build/patches)
     int scaledx = std::ceil((float)x * 65535.0 / (displayx-1));
     int scaledy = std::ceil((float)y * 65535.0 / (displayy-1));
+* Apply patch to wxFSWatcher
+  (see <VIDIOT_SRC>/build/patches)
+  http://trac.wxwidgets.org/ticket/13294
 * (MSVC) build solution Release & Debug
 * (GCC)
   - cd <wxWidgets>\build\msw
