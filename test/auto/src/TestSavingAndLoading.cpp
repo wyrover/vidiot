@@ -1,6 +1,7 @@
 #include "TestSavingAndLoading.h"
 
 #include "HelperApplication.h"
+#include "HelperFileSystem.h"
 #include "HelperTimeline.h"
 #include "HelperWindow.h"
 #include "Project.h"
@@ -30,11 +31,8 @@ void TestSavingAndLoading::testSaveAndLoad()
 {
     StartTestSuite();
     StartTest("SetUp");
-    wxFileName dirpath(wxFileName::GetTempDir(), "");
-    dirpath.AppendDir(randomString(20));
-    ASSERT(!wxDirExists(dirpath.GetLongPath()));
-    dirpath.Mkdir();
-    ASSERT(wxDirExists(dirpath.GetLongPath()));
+    RandomTempDirPtr tempDir = RandomTempDir::generate();
+    wxFileName dirpath = tempDir->getFileName();
     dirpath.SetName("LoadSave");
     dirpath.SetExt("vid");
     wxString path(dirpath.GetFullPath());
@@ -52,8 +50,6 @@ void TestSavingAndLoading::testSaveAndLoad()
     model::Project::get().Modify(false); // Avoid 'save?' dialog
     StartTest("TearDown");
     triggerMenu(wxID_CLOSE);
-    bool removed = wxFileName::Rmdir( dirpath.GetLongPath(), wxPATH_RMDIR_RECURSIVE );
-    ASSERT(removed);
 }
 
 } // namespace

@@ -1,19 +1,23 @@
-#ifndef FIFO_WORK_H
-#define FIFO_WORK_H
-
-#include "UtilFifo.h"
+#ifndef WORK_H
+#define WORK_H
 
 typedef boost::function< void() > Callable;
 
-class Work : boost::noncopyable
+namespace worker {
+
+class Work
+    : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    , boost::noncopyable
+    , public boost::enable_shared_from_this<Work>
 {
 public:
-    Work(Callable work);
+    explicit Work(Callable work);
     virtual ~Work();
 
-    void execute() const;
+    void execute();
 
 private:
+
     Callable mCallable;
 
     //////////////////////////////////////////////////////////////////////////
@@ -24,7 +28,8 @@ private:
 
 };
 
-typedef Fifo<WorkPtr> FifoWork;
 std::ostream& operator<< (std::ostream& os, const WorkPtr& obj);
 
-#endif // FIFO_WORK_H
+} // namespace
+
+#endif // WORK_H

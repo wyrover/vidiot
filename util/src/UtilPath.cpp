@@ -2,6 +2,13 @@
 
 namespace util { namespace path {
 
+wxFileName normalize( wxFileName filename )
+{
+    bool normalizeResult = filename.Normalize();
+    ASSERT(normalizeResult)(filename);
+    return filename;
+}
+
 wxString toName( wxFileName filename )
 {
     wxString result;
@@ -14,7 +21,7 @@ wxString toName( wxFileName filename )
         }
         else
         {
-            result = filename.GetVolume();
+            result = filename.GetVolume() + wxFileName::GetVolumeSeparator();
         }
     }
     else
@@ -24,10 +31,14 @@ wxString toName( wxFileName filename )
     return result;
 }
 
-wxFileName normalize( wxFileName filename )
+wxString toPath( wxFileName filename )
 {
-    // GetLongPath needed to remove ~x for short windows paths
-    return wxFileName(filename.GetLongPath(),"");
+    wxString result = normalize(filename).GetFullPath();
+    if ( wxEndsWithPathSeparator(result) )
+    {
+        result.erase(result.length() - 1);
+    }
+    return result;
 }
 
 }} // namespace

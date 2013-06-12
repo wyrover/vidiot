@@ -99,7 +99,20 @@ NodePtr Node::removeChild(NodePtr child)
 
 NodePtrs Node::removeChildren(NodePtrs children)
 {
-    NIY(_("Not implemented: Removing list of nodes"));
+    // Can't use UtilList::removeElements since these children may be 'out of order'
+    BOOST_FOREACH( NodePtr child, children )
+    {
+        NodePtrs::iterator it;
+        for (it = mChildren.begin(); it != mChildren.end(); ++it)
+        {
+            if (*it == child) break;
+        }
+        ASSERT(it != mChildren.end());
+        mChildren.erase(it);
+        child->setParent(NodePtr());
+    }
+
+    // Do not use ProcessEvent: see addChild
     gui::Window::get().QueueModelEvent(new model::EventRemoveNodes(ParentAndChildren(shared_from_this(),children)));
     return children;
 }
@@ -111,6 +124,16 @@ NodePtrs Node::getChildren() const
 
 void Node::setName(wxString name)
 {
+}
+
+int Node::count() const
+{
+    int result = 1; // 'this'
+    BOOST_FOREACH( NodePtr child, mChildren )
+    {
+        result += child->count();
+    }
+    return result;
 }
 
 NodePtrs Node::find(wxString name)
@@ -126,6 +149,28 @@ NodePtrs Node::find(wxString name)
         UtilList<NodePtr>(result).addElements(child->find(name), NodePtr());
     }
     return result;
+}
+
+NodePtrs Node::findPath(wxString path)
+{
+    NodePtrs result;
+    BOOST_FOREACH( NodePtr child, mChildren )
+    {
+        UtilList<NodePtr>(result).addElements(child->findPath(path), NodePtr());
+    }
+    return result;
+}
+
+bool Node::mustBeWatched(wxString path)
+{
+    BOOST_FOREACH( NodePtr child, mChildren )
+    {
+        if (child->mustBeWatched(path))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

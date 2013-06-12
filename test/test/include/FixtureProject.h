@@ -44,7 +44,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     bool mFocusTimeline;                    ///< True if the timeline must be focused
-    wxFileName TestFilesPath;               ///< Contains the path to the test files
     model::IPaths InputFiles;               ///< Contains the filenames of the input files in the test directory
 
     model::FolderPtr mRoot;

@@ -78,7 +78,7 @@ Window::Window()
     ::wxInitAllImageHandlers();
 
     // Construction not done in constructor list due to dependency on sCurrent
-    mWorker         = new Worker();
+    mWorker         = new worker::Worker();
     mWatcher        = new Watcher();
     mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
     mDetailsView    = new DetailsView(this);

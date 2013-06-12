@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+  <!-- add to the newticket page -->
+  <!-- headers and footers -->
+
+
+  
+
+  <head>
+    <title>
+      Attachment – wxWidgets
+    </title>
+        <link rel="search" href="/search" />
+        <link rel="help" href="/wiki/TracGuide" />
+        <link rel="alternate" href="/raw-attachment/ticket/13294/wxfswatcher.patch" type="text/x-diff; charset=iso-8859-15" title="Original Format" />
+        <link rel="up" href="/ticket/13294" title="Ticket #13294" />
+        <link rel="start" href="/wiki" />
+        <link rel="stylesheet" href="/chrome/common/css/trac.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/diff.css" type="text/css" /><link rel="stylesheet" href="/chrome/breadcrumbs/css/breadcrumbs.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/code.css" type="text/css" /><link rel="stylesheet" href="/chrome/tracwysiwyg/wysiwyg.css" type="text/css" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      <link type="application/opensearchdescription+xml" rel="search" href="/search/opensearch" title="Search wxWidgets" />
+    <script type="text/javascript" src="/chrome/common/js/jquery.js"></script><script type="text/javascript" src="/chrome/common/js/trac.js"></script><script type="text/javascript" src="/chrome/common/js/search.js"></script><script type="text/javascript" src="/chrome/common/js/diff.js"></script><script type="text/javascript" src="/chrome/tracwysiwyg/wysiwyg.js"></script><script type="text/javascript" src="/chrome/tracwysiwyg/wysiwyg-load.js"></script>
+    <!--[if lt IE 7]>
+    <script type="text/javascript" src="/chrome/common/js/ie_pre7_hacks.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/chrome/site/style.css" />
+  </head>
+  <body>
+    <div id="siteheader">
+    </div>
+    <div id="banner">
+      <div id="header">
+        <a id="logo" href="http://trac.wxWidgets.org/"><img src="/chrome/site/logo9.jpg" alt="wxWidgets Trac" height="64" width="300" /></a>
+      </div>
+      <form id="search" action="/search" method="get">
+        <div>
+          <label for="proj-search">Search:</label>
+          <input type="text" id="proj-search" name="q" size="18" value="" />
+          <input type="submit" value="Search" />
+        </div>
+      </form>
+      <div id="metanav" class="nav">
+    <ul>
+      <li class="first"><a href="/login">Login</a></li><li><a href="/prefs">Preferences</a></li><li><a href="/wiki/TracGuide">Help/Guide</a></li><li><a href="/about">About Trac</a></li><li class="last"><a href="/register">Register</a></li>
+    </ul><ul class="nav" id="breadcrumbs"><lh>Breadcrumbs:</lh><li><a href="/ticket/13295" title="#13295">#13295</a></li><li><a href="/ticket/13294" title="#13294">#13294</a></li><li><a href="/ticket/11920" title="#11920">#11920</a></li><li><a href="/ticket/11919" title="#11919">#11919</a></li><li><a href="/ticket/12754" title="#12754">#12754</a></li><li><a href="/ticket/12753" title="#12753">#12753</a></li></ul>
+  </div>
+    </div>
+    <div id="mainnav" class="nav">
+    <ul>
+      <li class="first"><a href="/wiki">Wiki</a></li><li><a href="/timeline">Timeline</a></li><li><a href="/roadmap">Roadmap</a></li><li><a href="/browser">Browse Source</a></li><li><a href="/report">View Tickets</a></li><li><a href="/search">Search</a></li><li class="last"><a href="/tags">Tags</a></li>
+    </ul>
+  </div>
+    <div id="main">
+      <div id="ctxtnav" class="nav">
+        <h2>Context Navigation</h2>
+          <ul>
+              <li class="last first"><a href="/ticket/13294">Back to Ticket #13294</a></li>
+          </ul>
+        <hr />
+      </div>
+    <div id="content" class="attachment">
+        <h1><a href="/ticket/13294">Ticket #13294</a>: wxfswatcher.patch</h1>
+        <table id="info" summary="Description">
+          <tbody>
+            <tr>
+              <th scope="col">
+                File wxfswatcher.patch, <span title="2031 bytes">2.0 KB</span>
+                (added by Eric Raijmakers,  <a class="timeline" href="/timeline?from=2013-03-21T13%3A30%3A24-0700&amp;precision=second" title="2013-03-21T13:30:24-0700 in Timeline">2 months</a> ago)
+              </th>
+            </tr>
+            <tr>
+              <td class="message searchable">
+                <p>
+Patch that will prevent the error and send a file system watcher event (error, path to removed file) instead
+</p>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="preview" class="searchable">
+    <div class="diff">
+  <ul class="entries">
+      <li class="entry">
+        <h2>
+          <a>include/wx/msw/private/fswatcher.h</a>
+        </h2>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File include/wx/msw/private/fswatcher.h (revision 73687)">
+                  </th>
+                  <th title="File include/wx/msw/private/fswatcher.h (working copy)">
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>215</th><th>215</th><td class="l"><span>&nbsp; &nbsp; // This function can block forever in it's wait for completion status.</span> </td>
+                  </tr><tr>
+                          <th>216</th><th>216</th><td class="l"><span>&nbsp; &nbsp; // Use PostEmptyStatus() to wake it up (and end the worker thread)</span> </td>
+                  </tr><tr>
+                          <th>217</th><th>217</th><td class="l"><span>&nbsp; &nbsp; bool GetStatus(unsigned long* count, wxFSWatchEntryMSW** watch,</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>218</th><th> </th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;OVERLAPPED** overlapped<del></del>)</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>218</th><td class="r"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;OVERLAPPED** overlapped<ins>, bool&amp; rootDeleted</ins>)</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>219</th><th>219</th><td class="l"><span>&nbsp; &nbsp; {</span> </td>
+                  </tr><tr>
+                          <th>220</th><th>220</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );</span> </td>
+                  </tr><tr>
+                          <th>221</th><th>221</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; wxCHECK_MSG( count != NULL, false, "Null out parameter 'count'");</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L227">…</a></th>
+                  <th><a href="#L227">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>227</th><th>227</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; overlapped, INFINITE);</span> </td>
+                  </tr><tr>
+                          <th>228</th><th>228</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; if (!ret)</span> </td>
+                  </tr><tr>
+                          <th>229</th><th>229</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; {</span> </td>
+                  </tr>
+            </tbody><tbody class="add">
+                  <tr class="first">
+                          <th> </th><th>230</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (!wxFileName::DirExists((*watch)-&gt;GetPath()))</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>231</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>232</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rootDeleted = true;</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>233</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return true;</ins> </td>
+                  </tr><tr class="last">
+                          <th> </th><th>234</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</ins> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>230</th><th>235</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; wxLogSysError(_("Unable to dequeue completion packet"));</span> </td>
+                  </tr><tr>
+                          <th>231</th><th>236</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; }</span> </td>
+                  </tr><tr>
+                          <th>232</th><th>237</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; return ret != 0;</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>src/msw/fswatcher.cpp</a>
+        </h2>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File src/msw/fswatcher.cpp (revision 73687)">
+                  </th>
+                  <th title="File src/msw/fswatcher.cpp (working copy)">
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>225</th><th>225</th><td class="l"><span>&nbsp; &nbsp; unsigned long count = 0;</span> </td>
+                  </tr><tr>
+                          <th>226</th><th>226</th><td class="l"><span>&nbsp; &nbsp; wxFSWatchEntryMSW* watch = NULL;</span> </td>
+                  </tr><tr>
+                          <th>227</th><th>227</th><td class="l"><span>&nbsp; &nbsp; OVERLAPPED* overlapped = NULL;</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>228</th><th> </th><td class="l"><span>&nbsp; &nbsp; if (!m_iocp-&gt;GetStatus(&amp;count, &amp;watch, &amp;overlapped))</span> </td>
+                      </tr>
+                      <tr>
+                        <th> </th><th>228</th><td class="r"><span>&nbsp; &nbsp; bool rootDeleted = false;</span> </td>
+                      </tr><tr class="last">
+                        <th> </th><th>229</th><td class="r"><span>&nbsp; &nbsp; if (!m_iocp-&gt;GetStatus(&amp;count, &amp;watch, &amp;overlapped, rootDeleted))</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>229</th><th>230</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; return true; // error was logged already, we don't want to exit</span> </td>
+                  </tr><tr>
+                          <th>230</th><th>231</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="add">
+                  <tr class="first">
+                          <th> </th><th>232</th><td class="r"><ins>&nbsp; &nbsp; if (rootDeleted)</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>233</th><td class="r"><ins>&nbsp; &nbsp; {</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>234</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; // A 'root' watch was removed. Signal this.</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>235</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; wxFileSystemWatcherEvent event(wxFSW_EVENT_ERROR, watch-&gt;GetPath(), watch-&gt;GetPath(), wxID_ANY);</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>236</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; SendEvent(event);</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>237</th><td class="r"><ins>&nbsp; &nbsp; &nbsp; &nbsp; return true;</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>238</th><td class="r"><ins>&nbsp; &nbsp; }</ins> </td>
+                  </tr><tr class="last">
+                          <th> </th><th>239</th><td class="r"><ins></ins> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>231</th><th>240</th><td class="l"><span>&nbsp; &nbsp; // this is our exit condition, so we return false</span> </td>
+                  </tr><tr>
+                          <th>232</th><th>241</th><td class="l"><span>&nbsp; &nbsp; if (!count &amp;&amp; !watch &amp;&amp; !overlapped)</span> </td>
+                  </tr><tr>
+                          <th>233</th><th>242</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; return false;</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+  </ul>
+</div>
+        </div>
+    </div>
+    <div id="altlinks">
+      <h3>Download in other formats:</h3>
+      <ul>
+        <li class="last first">
+          <a rel="nofollow" href="/raw-attachment/ticket/13294/wxfswatcher.patch">Original Format</a>
+        </li>
+      </ul>
+    </div>
+    </div>
+    <div id="footer" lang="en" xml:lang="en"><hr />
+      <a id="tracpowered" href="http://trac.edgewall.org/"><img src="/chrome/common/trac_logo_mini.png" height="30" width="107" alt="Trac Powered" /></a>
+      <p class="left">
+        Powered by <a href="/about"><strong>Trac 0.11.5</strong></a><br />
+        By <a href="http://www.edgewall.org/">Edgewall Software</a>.
+      </p>
+      <p class="right"><a href="http://wxWidgets.org/">http://wxWidgets.org</a><br /><a href="http://wxPython.org/">http://wxPython.org</a></p>
+    </div>
+    <div id="sitefooter">
+    </div>
+  </body>
+</html>

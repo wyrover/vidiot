@@ -1,8 +1,11 @@
 #ifndef STATUSBAR_H
 #define STATUSBAR_H
 
-#include "Worker.h"
 #include "UtilSingleInstance.h"
+
+namespace worker {
+    class WorkerQueueSizeEvent;
+}
 
 namespace gui {
 
@@ -29,7 +32,7 @@ public:
     // WORKER EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onWorkerQueueSize(WorkerQueueSizeEvent& event);
+    void onWorkerQueueSize(worker::WorkerQueueSizeEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

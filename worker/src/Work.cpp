@@ -1,9 +1,14 @@
-#include "FifoWork.h"
+#include "Work.h"
+
+#include "UtilLog.h"
+#include "WorkEvent.h"
+
+namespace worker {
 
 Work::Work(Callable work)
 :   mCallable(work)
 {
-    VAR_DEBUG(this)(*this);
+    VAR_DEBUG(*this);
 }
 
 Work::~Work()
@@ -11,10 +16,11 @@ Work::~Work()
     VAR_DEBUG(this);
 }
 
-void Work::execute() const
+void Work::execute()
 {
     VAR_DEBUG(this);
     mCallable();
+    QueueEvent(new WorkDoneEvent(shared_from_this()));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -39,3 +45,5 @@ std::ostream& operator<< (std::ostream& os, const WorkPtr& obj)
     }
     return os;
 }
+
+} // namespace

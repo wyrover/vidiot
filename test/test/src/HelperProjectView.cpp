@@ -1,20 +1,23 @@
 #include "HelperProjectView.h"
 
-#include <wx/uiaction.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
 #include "AutoFolder.h"
+#include "Dialog.h"
 #include "File.h"
 #include "HelperApplication.h"
+#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "ids.h"
+#include "NodeEvent.h"
 #include "ProjectView.h"
-#include "Timeline.h"
 #include "Sequence.h"
-#include "Dialog.h"
+#include "Timeline.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
+#include <boost/assign/list_of.hpp>
+#include <boost/foreach.hpp>
+#include <wx/uiaction.h>
 
 namespace test {
 
@@ -33,11 +36,10 @@ model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
     waitForIdle();
     getProjectView().select(boost::assign::list_of(parent));
     waitForIdle();
-    gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path
+    gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
     triggerMenu(gui::ProjectView::get(),meID_NEW_AUTOFOLDER);
-    waitForIdle();
 
-    model::NodePtrs nodes = getRoot()->find( path.GetLongPath() ); // Converted to long path in vidiot
+    model::NodePtrs nodes = getRoot()->find( util::path::toPath(path) ); // Converted to full path without trailing slash
     ASSERT_EQUALS(nodes.size(),1);
     model::NodePtr node = nodes.front();
     ASSERT(node->isA<model::AutoFolder>())(node);
@@ -226,6 +228,82 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
         pause(50); // Can't use waitForIdle: event handling is blocked during DnD
     }
     waitForIdle(); // Can be used again when the DND is done.
+}
+
+FolderHelper::FolderHelper(model::FolderPtr folder)
+    :   mFolder(folder)
+{
+}
+
+FolderHelper::~FolderHelper()
+{
+    remove( mFolder );
+}
+
+WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
+    :   mNode(node)
+    ,   mCount(count)
+    ,   mCountSeen(false)
+{
+    RunInMainThread([this]
+    {
+         gui::Window::get().Bind(model::EVENT_ADD_NODE,     &WaitForChildCount::onNodeAdded,     this);
+         gui::Window::get().Bind(model::EVENT_ADD_NODES,    &WaitForChildCount::onNodesAdded,    this);
+         gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &WaitForChildCount::onNodeRemoved,   this);
+         gui::Window::get().Bind(model::EVENT_REMOVE_NODES, &WaitForChildCount::onNodesRemoved,  this);
+         mCountSeen = (mNode->count() == mCount);
+    });
+    boost::mutex::scoped_lock lock(mMutex);
+    while (!mCountSeen)
+    {
+        mCondition.wait(lock);
+    }
+}
+
+WaitForChildCount::~WaitForChildCount()
+{
+    RunInMainThread([this]
+    {
+        gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &WaitForChildCount::onNodeAdded,      this);
+        gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &WaitForChildCount::onNodesAdded,     this);
+        gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &WaitForChildCount::onNodeRemoved,    this);
+        gui::Window::get().Unbind(model::EVENT_REMOVE_NODES,   &WaitForChildCount::onNodesRemoved,   this);
+    });
+}
+
+void WaitForChildCount::onNodeAdded( model::EventAddNode &event )
+{
+    event.Skip();
+    check();
+}
+
+void  WaitForChildCount::onNodesAdded( model::EventAddNodes &event )
+{
+    event.Skip();
+    check();
+}
+
+void WaitForChildCount::onNodeRemoved( model::EventRemoveNode &event )
+{
+    event.Skip();
+    check();
+}
+
+void  WaitForChildCount::onNodesRemoved( model::EventRemoveNodes &event )
+{
+    event.Skip();
+    check();
+}
+
+void WaitForChildCount::check()
+{
+    ASSERT(wxThread::IsMain());
+    if (mNode->count() == mCount)
+    {
+        boost::mutex::scoped_lock lock(mMutex);
+        mCountSeen = true;
+        mCondition.notify_all();
+    }
 }
 
 } // namespace

@@ -33,7 +33,12 @@ public:
 
     NodePtrs getChildren() const override;
 
+    int count() const override;
+
     NodePtrs find(wxString name) override;
+
+    virtual NodePtrs findPath(wxString path) override;
+    virtual bool mustBeWatched(wxString path) override;
 
     virtual void setName(wxString name) override;
 

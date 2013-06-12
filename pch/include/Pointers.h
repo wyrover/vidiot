@@ -9,8 +9,6 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 
-class Work;
-typedef boost::shared_ptr<Work> WorkPtr;
 typedef boost::shared_ptr<wxBitmap> wxBitmapPtr;
 typedef boost::shared_ptr<wxImage> wxImagePtr;
 
@@ -113,6 +111,13 @@ namespace command {
 
 typedef std::pair<model::NodePtr ,model::NodePtr>  ParentAndChildPair;
 typedef std::vector<ParentAndChildPair> ParentAndChildPairs;
+
+}
+
+namespace worker {
+
+class Work;
+typedef boost::shared_ptr<Work> WorkPtr;
 
 }
 

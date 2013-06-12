@@ -1,14 +1,13 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#include "FifoWork.h"
-#include "UtilEvent.h"
 #include "UtilSingleInstance.h"
+#include "UtilFifo.h"
+#include "Work.h"
 
-namespace gui {
+namespace worker {
 
-DECLARE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, long);
-DECLARE_EVENT(EVENT_WORKER_EXECUTED_WORK, WorkerExecutedWorkEvent, WorkPtr);
+typedef Fifo<WorkPtr> FifoWork;
 
 /// This class is responsible for running lengthy tasks in the
 /// background.
@@ -34,22 +33,24 @@ public:
     void schedule(WorkPtr work);
 
     //////////////////////////////////////////////////////////////////////////
-    // WAITING UNTIL WORK EXECUTED
+    // WAIT FOR WORK ITEMS EXECUTED
     //////////////////////////////////////////////////////////////////////////
 
-    /// Wait until one or more work items have been executed and the queue
-    /// becomes empty again.
-    void waitUntilQueueEmpty();
+    void setExpectedWork(int expected);
+    void waitForExecutionCount();
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
 
     bool mEnabled;
     boost::scoped_ptr<boost::thread> mThread;
     FifoWork mFifo;
 
-    //////////////////////////////////////////////////////////////////////////
-    // WAITING UNTIL WORK EXECUTED
-    //////////////////////////////////////////////////////////////////////////
+    int mExecuted;
+    int mExecutedLimit;
 
     boost::mutex mMutex;
     boost::condition_variable mCondition;

@@ -101,6 +101,7 @@ void Application::waitForIdle()
     // This caused problems, particularly with the Play() method of the HelperTimeline class.
     // Playback would continue indefinitely...
     mConditionIdle.timed_wait(lock, boost::posix_time::milliseconds(maxWaitTime));
+    LOG_DEBUG << "WAIT_DONE";
 }
 
 //////////////////////////////////////////////////////////////////////////

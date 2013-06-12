@@ -5,7 +5,6 @@
 #include "Sequence.h"
 #include "TimeLinesView.h"
 #include "TrackCreator.h"
-
 #include "UtilLog.h"
 #include "Window.h"
 
@@ -24,10 +23,13 @@ ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder)
 {
     VAR_INFO(this)(mParent)(mInputFolder);
     ASSERT(mParent); // Parent folder must exist
-    wxFileName fn(folder->getName());
-    if (!fn.GetDirs().IsEmpty())
+
+    if (folder->isA<model::AutoFolder>())
     {
-        mName = fn.GetDirs().Last();
+        // getName for an autofolder sometimes returns a full path instead of just
+        // 'the last path part'. This happens particularly when the auto folder is the
+        // topmost autofolder in the hierarchy.
+        mName = util::path::toName(boost::dynamic_pointer_cast<model::AutoFolder>(folder)->getPath());
     }
     mCommandName = _("Create sequence from folder ") + mName;
 }

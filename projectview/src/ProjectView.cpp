@@ -82,11 +82,13 @@ ProjectView::ProjectView(wxWindow* parent)
     // Rancid, but working... Determine the height of the (well, 'a') header
     // Code specifically put here: Originally it was included in the 'findNode' method (where it is used).
     // However, that method is often run in a different (non GUI) thread, causing problems.
-    wxDialog win(0,-1,"Dummy");
-    wxHeaderCtrlSimple s(&win);
+    //wxDialog* win = new wxDialog(this,-1,"Dummy");
+    wxHeaderCtrlSimple* s = new wxHeaderCtrlSimple(this);
     wxHeaderColumnSimple col("Title");
-    s.AppendColumn(col);
-    mHeaderHeight = s.GetSize().GetHeight();
+    s->AppendColumn(col);
+    mHeaderHeight = s->GetSize().GetHeight();
+    s->Destroy();
+
 }
 
 ProjectView::~ProjectView()

@@ -149,7 +149,7 @@ void Render::schedule(SequencePtr sequence)
     if (!sequence->getRender()->getSeparateAtCuts())
     {
         model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
-        gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone,0,clone->getLength())));
+        worker::Worker::get().schedule(boost::make_shared<worker::Work>(boost::bind(&Render::generate,clone->getRender(),clone,0,clone->getLength())));
     }
     else
     {
@@ -166,7 +166,7 @@ void Render::schedule(SequencePtr sequence)
             wxFileName fn = clone->getRender()->getFileName();
             fn.SetName(fn.GetName() + wxString::Format("_%d",c));
             clone->getRender()->setFileName(fn);
-            gui::Worker::get().schedule(boost::make_shared<Work>(boost::bind(&Render::generate,clone->getRender(),clone,start,end)));
+            worker::Worker::get().schedule(boost::make_shared<worker::Work>(boost::bind(&Render::generate,clone->getRender(),clone,start,end)));
             ++it;
             ++c;
             start = end;

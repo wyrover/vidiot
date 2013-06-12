@@ -120,6 +120,33 @@ void File::abort()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// INODE
+//////////////////////////////////////////////////////////////////////////
+
+NodePtrs File::findPath(wxString path)
+{
+    NodePtrs result;
+    wxFileName fn = mPath;
+    fn.SetFullName(""); // We're interested in the folder (see Watcher.cpp, where only folders are watched)
+    if (fn.GetFullPath().IsSameAs(path))
+    {
+        result.push_back(shared_from_this());
+    }
+    return result;
+}
+
+bool File::mustBeWatched(wxString path)
+{
+    wxString myPath = mPath.GetFullPath();
+    if (myPath.StartsWith(path))
+    {
+        // Yes, is parent folder of this file
+        return true;
+    }
+    return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 

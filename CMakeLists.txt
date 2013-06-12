@@ -111,7 +111,7 @@ FUNCTION(ENABLE_UNITY_BUILD FOLDER FILES OUTPUT_FILES)
     SOURCE_GROUP("unity" FILES ${OUTPUT_FILES_LOCAL} )
 ENDFUNCTION(ENABLE_UNITY_BUILD)
 
-SET( VIDIOTPROJECTGROUPS model modelcmd modelaudio modelempty modelevent modelproject modelvideo gui guievent pch projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util )
+SET( VIDIOTPROJECTGROUPS model modelcmd modelaudio modelempty modelevent modelproject modelvideo gui guievent pch projectview projectviewcmd render timeline timelinecmd timelineevent timelinestate timelineview commands util worker)
 FOREACH( FOLDER  ${VIDIOTPROJECTGROUPS} )
     FINDFILES(${FOLDER})
     IF ( NOT FOLDER STREQUAL "pch" )

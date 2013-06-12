@@ -34,7 +34,7 @@ void TestProjectView::testAdditionAndRemoval()
     wxString sFolder1( "Folder1" );
     wxString sSequence1( "Sequence1" );
     wxString sFile( "05.avi" );
-    wxFileName filepath(mProjectFixture.TestFilesPath.GetFullPath(), sFile);
+    wxFileName filepath(getTestFilesPath().GetFullPath(), sFile);
 
     model::FolderPtr folder1 = addFolder( sFolder1 );
     model::SequencePtr sequence1 = addSequence( sSequence1, folder1 );
@@ -53,4 +53,5 @@ void TestProjectView::testAdditionAndRemoval()
     remove( folder1 ); // Also removes sequence1 which is contained in folder1
     ASSERT_EQUALS(countProjectView(), nDefaultItems); // Added: None
 }
+
 } // namespace
