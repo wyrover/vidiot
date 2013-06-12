@@ -4,7 +4,13 @@
 #include "Folder.h"
 #include "IPath.h"
 
+namespace worker {
+    class WorkDoneEvent;
+}
+
 namespace model {
+
+struct IndexAutoFolderWork;
 
 class AutoFolder
     :   public Folder
@@ -25,6 +31,13 @@ public:
     virtual ~AutoFolder();
 
     //////////////////////////////////////////////////////////////////////////
+    // INODE
+    //////////////////////////////////////////////////////////////////////////
+
+    NodePtrs findPath(wxString path) override;
+    bool mustBeWatched(wxString path) override;
+
+    //////////////////////////////////////////////////////////////////////////
     // IPATH
     //////////////////////////////////////////////////////////////////////////
 
@@ -35,8 +48,10 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Update the autofolder children. The folder is synced with the filesystem.
-    /// \param recurse if true, subfolders are recursed and indexed also.
-    void update(bool recurse = true);
+    void update();
+
+    /// Called when the updating is done
+    void onWorkDone(worker::WorkDoneEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES
@@ -58,6 +73,8 @@ private:
 
     wxFileName mPath;
     time_t mLastModified;
+    boost::shared_ptr<IndexAutoFolderWork> mCurrentUpdate;
+    bool mUpdateAgain; ///< True if an update event was received while an update was already scheduled. To avoid a new file being found twice, no two updates are scheduled simultaneously.
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -1,9 +1,8 @@
 #include "Worker.h"
 
-namespace gui {
+#include "WorkerEvent.h"
 
-DEFINE_EVENT(EVENT_WORKER_QUEUE_SIZE, WorkerQueueSizeEvent, long);
-DEFINE_EVENT(EVENT_WORKER_EXECUTED_WORK, WorkerExecutedWorkEvent, WorkPtr);
+namespace worker {
 
 static const unsigned int sMaximumBufferedWork = 1000;
 
@@ -15,6 +14,8 @@ Worker::Worker()
 :   wxEvtHandler()
 ,   mEnabled(true)
 ,   mFifo(sMaximumBufferedWork)
+,   mExecuted(0)
+,   mExecutedLimit(0)
 {
 }
 
@@ -45,13 +46,23 @@ void Worker::schedule(WorkPtr work)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// WAITING UNTIL WORK EXECUTED
+// WAIT FOR WORK ITEMS EXECUTED
 //////////////////////////////////////////////////////////////////////////
 
-void Worker::waitUntilQueueEmpty()
+void Worker::setExpectedWork(int expected)
 {
     boost::mutex::scoped_lock lock(mMutex);
-    mCondition.wait(lock);
+    mExecutedLimit = mExecuted + expected;
+}
+
+void Worker::waitForExecutionCount()
+{
+    boost::mutex::scoped_lock lock(mMutex);
+    ASSERT_LESS_THAN_EQUALS(mExecuted,mExecutedLimit);
+    while (mExecuted < mExecutedLimit)
+    {
+        mCondition.wait(lock);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,14 +81,19 @@ void Worker::thread()
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
             w->execute();
-            QueueEvent(new WorkerExecutedWorkEvent(w));
             w.reset(); // Clear, so that unfreezing is done if needed
-            boost::mutex::scoped_lock lock(mMutex);
-            if (mFifo.getSize() == 0)
             {
-                mCondition.notify_all();
-                mThread.reset();
-                return;
+                boost::mutex::scoped_lock lock(mMutex);
+                mExecuted++;
+                if (mExecuted == mExecutedLimit)
+                {
+                    mCondition.notify_all();
+                }
+                if (mFifo.getSize() == 0)
+                {
+                    mThread.reset();
+                    return;
+                }
             }
         }
     }

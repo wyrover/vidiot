@@ -10,6 +10,7 @@
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
 #include "Worker.h"
+#include "WorkEvent.h"
 
 namespace model {
 
@@ -18,58 +19,59 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 struct IndexAutoFolderWork
-    : public Work
+    : public worker::Work
 {
-    explicit IndexAutoFolderWork(AutoFolderPtr folder, bool recurse = true)
-        : Work(boost::bind(&IndexAutoFolderWork::indexFiles,this))
+    // Here, all access to folder must be done, not in the worker thread.
+    // Rationale: all access to model objects must be done in the main thread!
+    explicit IndexAutoFolderWork(AutoFolderPtr folder)
+        : worker::Work(boost::bind(&IndexAutoFolderWork::indexFiles,this))
         , mFolder(folder)
-        , mRecurse(recurse)
+        , mPath(folder->getPath())
     {
+        ASSERT(mPath.IsDir() && mPath.IsAbsolute())(mPath);
+        BOOST_FOREACH( NodePtr child, mFolder->getChildren() )
+        {
+            mRemove.push_back(child->getName());
+        }
     }
 
     void indexFiles()
     {
-        wxFileName path = mFolder->getPath();
-        ASSERT(path.IsDir() && path.IsAbsolute())(path);
+        wxDir dir( mPath.GetLongPath() );
+        if (!dir.IsOpened())
+        {
+            // This is ran in a separate thread.
+            // Maybe the folder has already been removed from disk, and the autofolder
+            // node has already been removed.
+            return;
+        }
         wxString pathname =
-            path.GetDirCount() >= 1 ? path.GetDirs().Last() + "/" :
-            path.HasVolume() ? path.GetVolume() :
+            mPath.GetDirCount() >= 1 ? mPath.GetDirs().Last() + "/" :
+            mPath.HasVolume() ? mPath.GetVolume() :
             "";
         gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + "'");
 
-        // Fill 'allcurrententries' with current list of children.
-        std::list<wxString> allcurrententries;
-        BOOST_FOREACH( NodePtr child, mFolder->getChildren() )
-        {
-            allcurrententries.push_back(child->getName());
-        }
-        NodePtrs newnodes;
-        wxDir dir( path.GetLongPath() );
         ASSERT(dir.IsOpened());
         wxString nodename;
 
         wxArrayString allfiles;
-        size_t count = wxDir::GetAllFiles(path.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
+        size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
         gui::StatusBar::get().showProgressBar(count);
         int progress = 0;
         // Find all subfolders
         for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_DIRS); cont; cont = dir.GetNext(&nodename))
         {
-            if (UtilList<wxString>(allcurrententries).hasElement(nodename)) // Existing element. Do not remove
+            if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
             {
-                UtilList<wxString>(allcurrententries).removeElements(boost::assign::list_of(nodename));
+                UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
             }
             else // New element. Add
             {
-                wxFileName filename(path.GetLongPath(), "");
+                wxFileName filename(mPath.GetLongPath(), "");
                 filename.AppendDir(nodename);
                 ASSERT(filename.IsDir());
                 AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
-                newnodes.push_back(folder);
-                if (mRecurse)
-                {
-                    folder->update(true);
-                }
+                mAdd.push_back(folder);
             }
             gui::StatusBar::get().showProgress(++progress);
         }
@@ -77,44 +79,32 @@ struct IndexAutoFolderWork
         // Find all files
         for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
         {
-            if (UtilList<wxString>(allcurrententries).hasElement(nodename)) // Existing element. Do not remove
+            if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
             {
-                UtilList<wxString>(allcurrententries).removeElements(boost::assign::list_of(nodename));
+                UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
             }
             else // New element. Add
             {
-                wxFileName filename(path.GetLongPath(), nodename);
+                wxFileName filename(mPath.GetLongPath(), nodename);
                 gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + nodename + "'");
                 model::FilePtr file = boost::make_shared<model::File>(filename);
                 if (file->canBeOpened())
                 {
-                    newnodes.push_back(file);
+                    mAdd.push_back(file);
                 }
             }
             gui::StatusBar::get().showProgress(++progress);
-        }
-
-        mFolder->addChildren(newnodes); // Add all at once, for better performance (less UI updates)
-
-         // Remove all other elements (these have been removed).
-        BOOST_FOREACH( wxString name, allcurrententries )
-        {
-            BOOST_FOREACH( NodePtr child, mFolder->getChildren() )
-            {
-                if (!child->getName().IsSameAs(name))
-                {
-                    mFolder->removeChild(child);
-                    break;
-                }
-            }
         }
 
         gui::StatusBar::get().hideProgressBar();
         gui::StatusBar::get().setProcessingText("");
     }
 
-    AutoFolderPtr mFolder;
-    bool mRecurse; ///< If true, recurse into subdirs
+    AutoFolderPtr mFolder;               ///< Folder to be indexed
+    wxFileName mPath;                    ///< Path to the folder to be indexed
+    std::list<wxString> mCurrentEntries; ///< All entries known when the work was scheduled
+    NodePtrs mAdd;                       ///< When done, holds the list of nodes that must be added
+    std::list<wxString> mRemove;         ///< All entries to be removed when indexing is done
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -125,6 +115,8 @@ AutoFolder::AutoFolder()
 :   Folder()
 ,   mPath()
 ,   mLastModified(0)
+,   mCurrentUpdate()
+,   mUpdateAgain(false)
 {
     VAR_DEBUG(this);
 }
@@ -144,6 +136,32 @@ AutoFolder::~AutoFolder()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// INODE
+//////////////////////////////////////////////////////////////////////////
+
+NodePtrs AutoFolder::findPath(wxString path)
+{
+    NodePtrs result = Node::findPath(path); // Traverse the tree
+    wxString myPath = mPath.GetFullPath();
+    if (myPath.IsSameAs(path))
+    {
+        result.push_back(shared_from_this());
+    }
+    return result;
+}
+
+bool AutoFolder::mustBeWatched(wxString path)
+{
+    wxString myPath = mPath.GetFullPath();
+    if (myPath.StartsWith(path))
+    {
+        // Yes, is parent folder of this folder
+        return true;
+    }
+    return Node::mustBeWatched(path); // Maybe for any of the children?
+}
+
+//////////////////////////////////////////////////////////////////////////
 // IPATH
 //////////////////////////////////////////////////////////////////////////
 
@@ -156,10 +174,63 @@ wxFileName AutoFolder::getPath() const
 // STRUCTURE
 //////////////////////////////////////////////////////////////////////////
 
-void AutoFolder::update(bool recurse)
+void AutoFolder::update()
 {
-    gui::Worker::get().schedule(boost::shared_ptr<Work>(new IndexAutoFolderWork(boost::dynamic_pointer_cast<AutoFolder>(shared_from_this()), recurse)));
+    ASSERT(wxThread::IsMain());
+    if (mCurrentUpdate)
+    {
+        mUpdateAgain = true; // When mCurrentUpdate is finished, another will be scheduled.
+    }
+    else
+    {
+        mCurrentUpdate = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(shared_from_this()));
+        mCurrentUpdate->Bind(worker::EVENT_WORK_DONE, &AutoFolder::onWorkDone, this); // todo when unbind?
+        worker::Worker::get().schedule(mCurrentUpdate);
+    }
     return;
+}
+
+void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
+{
+    ASSERT(wxThread::IsMain());
+    boost::shared_ptr<IndexAutoFolderWork> work = boost::dynamic_pointer_cast<IndexAutoFolderWork>(event.getValue());
+    ASSERT_EQUALS(mCurrentUpdate,work)(mCurrentUpdate)(work);
+    ASSERT(work);
+    mCurrentUpdate.reset();
+    if (!work->mAdd.empty())
+    {
+        addChildren(work->mAdd); // Add all at once, for better performance (less UI updates)
+        BOOST_FOREACH( NodePtr node, work->mAdd )
+        {
+            AutoFolderPtr autoFolder = boost::dynamic_pointer_cast<AutoFolder>(node);
+            if (autoFolder)
+            {
+                autoFolder->update();
+            }
+        }
+    }
+
+    if (!work->mRemove.empty())
+    {
+        model::NodePtrs nodes;
+        BOOST_FOREACH( wxString name, work->mRemove )
+        {
+            BOOST_FOREACH( NodePtr child, getChildren() )
+            {
+                if (child->getName().IsSameAs(name))
+                {
+                    nodes.push_back(child);
+                    break;
+                }
+            }
+        }
+        removeChildren(nodes);// All at once, for better performance (less UI updates)
+    }
+    if (mUpdateAgain)
+    {
+        mUpdateAgain = false;
+        update();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -172,7 +243,8 @@ wxString AutoFolder::getName() const
     {
         return util::path::toName(mPath);
     }
-    return mPath.GetFullPath();
+    return util::path::toPath(mPath);
+
 }
 
 time_t AutoFolder::getLastModified() const

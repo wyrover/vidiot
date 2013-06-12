@@ -17,6 +17,11 @@ typedef boost::shared_ptr<Sequence> SequencePtr;
 class File;
 typedef boost::shared_ptr<File> FilePtr;
 typedef std::list<FilePtr> Files;
+
+class EventAddNode;
+class EventAddNodes;
+class EventRemoveNode;
+class EventRemoveNodes;
 }
 
 namespace test {
@@ -73,6 +78,40 @@ wxPoint CenterInProjectView(model::NodePtr node);
 /// \param from position within project view
 /// \param to position within timeline
 void DragFromProjectViewToTimeline(model::NodePtr node, wxPoint to);
+
+/// Deletes the folder when going out of scope.
+struct FolderHelper
+{
+    FolderHelper(model::FolderPtr folder);
+    ~FolderHelper();
+
+    model::FolderPtr mFolder;
+};
+
+/// Delays execution of the module test until a given node has signaled (via an event)
+/// that it has the given number of children.
+struct WaitForChildCount
+{
+    WaitForChildCount(model::NodePtr, int count);
+    virtual ~WaitForChildCount();
+
+    void onNodeAdded( model::EventAddNode &event );
+    void onNodesAdded( model::EventAddNodes &event );
+    void onNodeRemoved( model::EventRemoveNode &event );
+    void onNodesRemoved( model::EventRemoveNodes &event );
+
+private:
+
+    void check();
+
+    model::NodePtr mNode;
+    int mCount;
+
+    bool mCountSeen;
+
+    boost::mutex mMutex;
+    boost::condition_variable mCondition;
+};
 
 } // namespace
 

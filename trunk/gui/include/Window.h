@@ -21,6 +21,10 @@ namespace model {
     }
 }
 
+namespace worker {
+    class Worker;
+}
+
 namespace gui {
 
     namespace timeline {
@@ -142,7 +146,7 @@ private:
     Dialog*             mDialog;
 
     Watcher*            mWatcher;
-    Worker*             mWorker;
+    worker::Worker*     mWorker;
 
     gui::Layout*        mLayout;
 

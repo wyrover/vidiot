@@ -2,6 +2,7 @@
 
 #include "AutoFolder.h"
 #include "HelperApplication.h"
+#include "HelperFileSystem.h"
 #include "HelperProjectView.h"
 #include "HelperTestSuite.h"
 #include "HelperTimeline.h"
@@ -9,7 +10,6 @@
 #include "Sequence.h"
 #include "Track.h"
 #include "UtilLog.h"
-#include "Worker.h"
 
 namespace test {
 
@@ -34,18 +34,12 @@ void FixtureProject::init()
 #error "SOURCE_ROOT is not defined!"
 #endif
 
-    TestFilesPath = wxFileName(SOURCE_ROOT,"");
-    TestFilesPath.AppendDir("test");
-    TestFilesPath.AppendDir("input");
-    ASSERT(TestFilesPath.IsDir());
-    ASSERT(TestFilesPath.DirExists());
-
     mRoot = createProject();
     ASSERT(mRoot);
-    InputFiles = getSupportedFiles(TestFilesPath);
+    InputFiles = getListOfInputFiles();
 
-    mAutoFolder = addAutoFolder( TestFilesPath );
-    gui::Worker::get().waitUntilQueueEmpty(); // If this hangs, then the autofolder updating probably has been completely done before this wait was started
+    mAutoFolder = addAutoFolder( getTestFilesPath() );
+    WaitForChildCount(mRoot, InputFiles.size() + 2); // +2: Root + autofolder
     ASSERT_EQUALS(mAutoFolder->getParent(),mRoot);
     ASSERT_EQUALS(mAutoFolder->getChildren().size(), InputFiles.size());
     mSequence = createSequence( mAutoFolder );

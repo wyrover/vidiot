@@ -429,6 +429,28 @@ void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveNode &event )
     event.Skip();
 }
 
+void ProjectViewModel::onProjectAssetsRemoved( model::EventRemoveNodes &event )
+{
+    model::NodePtr parent = event.getValue().getParent();
+    model::NodePtrs children = event.getValue().getChildren();
+    VAR_DEBUG(parent)(children);
+
+    mView.Freeze();
+
+    wxDataViewItemArray items;
+    BOOST_FOREACH( model::NodePtr node, children )
+    {
+        items.Add(wxDataViewItem(node->id()));
+    }
+    ItemsDeleted(wxDataViewItem(parent->id()),items);
+
+    // NOT: mView.Expand(wxDataViewItem(parent->id())); // This would automatically open folders when items are removed.
+
+    mView.Thaw();
+
+    event.Skip();
+}
+
 void ProjectViewModel::onProjectAssetRenamed( model::EventRenameNode &event )
 {
     VAR_DEBUG(event.getValue().getNode());

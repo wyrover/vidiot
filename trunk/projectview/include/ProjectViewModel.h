@@ -10,6 +10,7 @@ class EventCloseProject;
 class EventAddNode;
 class EventAddNodes;
 class EventRemoveNode;
+class EventRemoveNodes;
 class EventRenameNode;
 }
 
@@ -63,6 +64,7 @@ public:
     void onProjectAssetAdded( model::EventAddNode &event );
     void onProjectAssetsAdded( model::EventAddNodes &event );
     void onProjectAssetRemoved( model::EventRemoveNode &event );
+    void onProjectAssetsRemoved( model::EventRemoveNodes &event );
     void onProjectAssetRenamed( model::EventRenameNode &event );
 
 private:

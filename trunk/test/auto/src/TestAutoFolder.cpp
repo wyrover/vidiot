@@ -5,72 +5,49 @@
 #include "Folder.h"
 #include "HelperApplication.h"
 #include "HelperProjectView.h"
+#include "HelperFileSystem.h"
 #include "IPath.h"
-#include "Worker.h"
 
 namespace test {
-
-//////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-void TestAutoFolder::setUp()
-{
-    mProjectFixture.init();
-}
-
-void TestAutoFolder::tearDown()
-{
-    mProjectFixture.destroy();
-}
 
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestAutoFolder::testWatch()
+void TestAutoFolder::testAddAutoFolder()
 {
     StartTestSuite();
 
-    int nDefaultItems = countProjectView();
+    model::FolderPtr root = createProject();
+    ASSERT(root);
+    model::IPaths InputFiles = getListOfInputFiles();
 
-    // Add autofolder to project view
-    RandomTempDir tempdir;
-    model::FolderPtr autofolder1 = addAutoFolder( tempdir.getFileName() );
-    ASSERT_EQUALS(countProjectView(),nDefaultItems + 1); // Added Autofolder
+    {
+        StartTest("Add empty autofolder to project view");
+        RandomTempDir tempdir;
+        model::FolderPtr autofolder1 = addAutoFolder( tempdir.getFileName() );
+        WaitForChildCount(root, 2);
+        remove( autofolder1 );
+    }
+    {
+        StartTest("Add autofolder with one supported and one unsupported file to project view");
+        RandomTempDir tempdir;
 
-    // Add supported but not valid file on disk
-    wxFileName filepath(tempdir.getFileName().GetLongPath(),"invalid","avi");
-    wxFFile aviFile1( filepath.GetLongPath(), "w" );
-    aviFile1.Write( "Dummy Contents", wxFile::read_write );
-    aviFile1.Close();
+        wxFileName filepath(tempdir.getFileName().GetLongPath(),"invalid","avi");
+        wxFFile aviFile1( filepath.GetLongPath(), "w" );
+        aviFile1.Write( "Dummy Contents", wxFile::read_write );
+        aviFile1.Close();
 
-    // Add supported and valid file on disk
-    wxString aviFileName = mProjectFixture.InputFiles.front()->getPath().GetLongPath();
-    filepath.SetFullName("valid.avi");
-    bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );
-    ASSERT(copyok);
+        wxString aviFileName = InputFiles.front()->getPath().GetLongPath();
+        wxFileName filepath2(tempdir.getFileName().GetLongPath(),"valid","avi");
+        bool copyok = wxCopyFile( aviFileName, filepath2.GetLongPath(), false );
+        ASSERT(copyok);
 
-    // Wait until file addition seen. Loop is required to wait until the Watcher has seen the valid file
-    //waitForIdle();
-    //while ( getSupportedFiles( tempdir.getFileName() ).size() < 1 )
-    //{
-    //    pause(10);
-    //}
-    gui::Worker::get().waitUntilQueueEmpty(); // This assumes that this wait is started before the worker actually does the work. Racer.
-//    waitForIdle();
-
-    model::NodePtrs nodes = mProjectFixture.mRoot->find(autofolder1->getName());
-    ASSERT_MORE_THAN_ZERO(nodes.size());
-    MoveOnScreen(CenterInProjectView(nodes.front()));
-    wxUIActionSimulator().MouseClick(); // Select the auto folder
-    waitForIdle();
-    Type(WXK_RIGHT); // Open the auto folder
-
-    ASSERT_EQUALS(countProjectView(), nDefaultItems + 2); // Added AutoFolder and the valid File
-
-    // Clean up
-    remove( autofolder1 );
+        model::FolderPtr autofolder1 = addAutoFolder( tempdir.getFileName() );
+        WaitForChildCount(root, 3);
+        remove( autofolder1 );
+    }
+    // todo in logging:  wxLOG_Error Can't monitor non-existent directory "...\Temp\Vidiot\5JFF5_01_12062013_224136_239\" for changes.
 }
 
 } // namespace

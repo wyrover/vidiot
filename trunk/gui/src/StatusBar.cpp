@@ -2,6 +2,7 @@
 
 #include "UtilLog.h"
 #include "Config.h"
+#include "WorkerEvent.h"
 
 namespace gui {
 
@@ -19,12 +20,12 @@ StatusBar::StatusBar(wxWindow *parent)
     mProgress = new wxGauge(this,wxID_ANY,100);
     hideProgressBar();
     Bind(wxEVT_SIZE, &StatusBar::onSize, this);
-    Worker::get().Bind(EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
+    worker::Worker::get().Bind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
 }
 
 StatusBar::~StatusBar()
 {
-    Worker::get().Unbind(EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
+    worker::Worker::get().Unbind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
     Unbind(wxEVT_SIZE, &StatusBar::onSize, this);
 }
 
@@ -44,7 +45,7 @@ void StatusBar::onSize(wxSizeEvent& event)
 // WORKER EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void StatusBar::onWorkerQueueSize(WorkerQueueSizeEvent& event)
+void StatusBar::onWorkerQueueSize(worker::WorkerQueueSizeEvent& event)
 {
     wxString queuetext("");
     if (event.getValue() == 1)

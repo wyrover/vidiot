@@ -52,9 +52,24 @@ public:
 
     virtual NodePtrs getChildren() const = 0;
 
+    /// Count the total number of items in the entire tree.
+    /// The root node is included in the count.
+    /// \return total count of all nodes in the tree, including this
+    virtual int count() const = 0;
+
     /// Find all descendants with the given name, throughout
     /// the hierarchy.
     virtual NodePtrs find(wxString name) = 0;
+
+    /// Find all descendants with the given path (on disk), throughout
+    /// the hierarchy. Only returns nodes that are of type IPath.
+    /// \param path fully expanded path
+    virtual NodePtrs findPath(wxString path) = 0;
+
+    /// \return true if the given path must be watched
+    /// A folder (on disk) must be watched, one or more files in this folder
+    /// (on disk) are present in the project tree.
+    virtual bool mustBeWatched(wxString path) = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES
