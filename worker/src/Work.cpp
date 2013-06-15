@@ -21,6 +21,7 @@ void Work::execute()
     VAR_DEBUG(this);
     mCallable();
     QueueEvent(new WorkDoneEvent(shared_from_this()));
+    VAR_DEBUG(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

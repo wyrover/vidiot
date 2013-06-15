@@ -252,11 +252,17 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
          gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &WaitForChildCount::onNodeRemoved,   this);
          gui::Window::get().Bind(model::EVENT_REMOVE_NODES, &WaitForChildCount::onNodesRemoved,  this);
          mCountSeen = (mNode->count() == mCount);
+         VAR_INFO(mCountSeen);
     });
+    VAR_INFO(count);
     boost::mutex::scoped_lock lock(mMutex);
     while (!mCountSeen)
     {
-        mCondition.wait(lock);
+        boost::system_time timeout = boost::get_system_time() + boost::posix_time::milliseconds(5000);
+        if (!mCondition.timed_wait(lock,timeout))
+        {
+            FATAL("Timeout");
+        }
     }
 }
 
@@ -298,6 +304,7 @@ void  WaitForChildCount::onNodesRemoved( model::EventRemoveNodes &event )
 void WaitForChildCount::check()
 {
     ASSERT(wxThread::IsMain());
+    VAR_DEBUG(mNode->count());
     if (mNode->count() == mCount)
     {
         boost::mutex::scoped_lock lock(mMutex);

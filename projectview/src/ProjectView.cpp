@@ -301,8 +301,8 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     createMenu.Append( meID_NEW_SEQUENCE,   _("&Sequence") );
 
     wxMenu addMenu;
-    addMenu.Append( meID_NEW_AUTOFOLDER, _("&Auto Folder") );
-    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s)") );
+    addMenu.Append( meID_NEW_AUTOFOLDER, _("&Folder on disk") );
+    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s) on disk") );
 
     wxMenu menu;
     menu.Append( wxID_CUT,   _("Cu&t\tCTRL-x") );
@@ -403,7 +403,7 @@ void ProjectView::onNewFolder(wxCommandEvent& event)
 
 void ProjectView::onNewAutoFolder(wxCommandEvent& event)
 {
-    wxString s = gui::Dialog::get().getDir( _("Select folder to automatically index"),wxStandardPaths::Get().GetDocumentsDir() );
+    wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {

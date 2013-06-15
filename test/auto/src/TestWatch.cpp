@@ -57,6 +57,7 @@ void TestWatch::testRemoveWatchedSubFolder()
         ASSERT_EQUALS(mRoot->find(util::path::toName(mSubDirName)).size(),1); // Subdir name is relative to parent
         ASSERT_EQUALS(mRoot->find(util::path::toName(mSubSubDirName)).size(),0); // Subsubdir is not present anymore
     }
+    ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched
     {
         StartTest("Remove autofolder/mSubDir");
         FolderHelper rootFolder(setup());
@@ -68,8 +69,8 @@ void TestWatch::testRemoveWatchedSubFolder()
         ASSERT_EQUALS(mRoot->find(util::path::toPath(mTempDirName)).size(),1); // Full path for topmost autofolder
         ASSERT_EQUALS(mRoot->find(util::path::toName(mSubDirName)).size(),0); // Subdir is not present anymore
         ASSERT_EQUALS(mRoot->find(util::path::toName(mSubSubDirName)).size(),0); // Subsubdir is not present anymore
-        // todo fix wx error: see debug logging (for failed to create tooltip)
     }
+    ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched
     {
         StartTest("Add supported and valid file on disk");
         FolderHelper rootFolder(setup());
@@ -91,6 +92,7 @@ void TestWatch::testRemoveWatchedSubFolder()
         ASSERT(removeok);
         WaitForChildCount(mRoot, 4);
     }
+    ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched
     {
         StartTest("Add supported but not valid file on disk");
         FolderHelper rootFolder(setup());
@@ -107,11 +109,56 @@ void TestWatch::testRemoveWatchedSubFolder()
         ASSERT(copyok);
         WaitForChildCount(mRoot, 5); // Only one of the two files is added
     }
+    ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched
+    {
+        StartTest("Remove autofolder root dir");
+        setup();
+        gui::Dialog::get().setConfirmation();
+        mTempDir.reset();
+        WaitForChildCount(mRoot, 1);
 
+        ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0);
+        ASSERT_EQUALS(mRoot->find(util::path::toPath(mTempDirName)).size(),0); // Full path for topmost autofolder
+        ASSERT_EQUALS(mRoot->find(util::path::toPath(mSubDirName)).size(),0); // Subdir name is relative to parent
+        ASSERT_EQUALS(mRoot->find(util::path::toName(mSubDirName)).size(),0); // Subdir name is relative to parent
+        ASSERT_EQUALS(mRoot->find(util::path::toName(mSubSubDirName)).size(),0); // Subsubdir is not present anymore
+    }
+    ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched
+    {
+        model::FolderPtr folder1 = addFolder( "TestFolder" );
+        WaitForChildCount(mRoot, 2);
+
+        StartTest("Add two files to a non-auto folder");
+        RandomTempDirPtr tempDir = RandomTempDir::generate();
+        wxFileName filepath1_input(getTestFilesPath().GetFullPath(), "01.avi");
+        wxFileName filepath2_input(getTestFilesPath().GetFullPath(), "03.avi");
+        wxFileName filepath1(tempDir->getFileName().GetLongPath(), "01.avi");
+        wxFileName filepath2(tempDir->getFileName().GetLongPath(), "03.avi");
+        bool copyok = wxCopyFile( filepath1_input.GetLongPath(), filepath1.GetLongPath(), false );
+        ASSERT(copyok);
+        copyok = wxCopyFile( filepath2_input.GetLongPath(), filepath2.GetLongPath(), false );
+        ASSERT(copyok);
+
+        model::Files files1 = addFiles( boost::assign::list_of(filepath1)(filepath2), folder1 );
+        WaitForChildCount(mRoot, 4);
+        ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),1);
+
+        StartTest("Remove one file (on disk) that is child of a non-auto folder - one other file remains");
+        gui::Dialog::get().setConfirmation();
+        bool removeok = wxRemoveFile(filepath1.GetFullPath());
+        ASSERT(removeok);
+        WaitForChildCount(mRoot, 3);
+        ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),1);
+
+        StartTest("Remove last file (on disk) that is child of a non-auto folder - no other file remains");
+        gui::Dialog::get().setConfirmation();
+        removeok = wxRemoveFile(filepath2.GetFullPath());
+        ASSERT(removeok);
+        WaitForChildCount(mRoot, 2);
+        ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched anymore
+    }
     ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),0); // Nothing is being watched
     mRoot.reset();
-
-    // todo test remove root watched dir and test
 }
 
 } // namespace

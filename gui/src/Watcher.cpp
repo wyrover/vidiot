@@ -8,6 +8,7 @@
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
 #include "Window.h"
 
 namespace gui {
@@ -43,7 +44,16 @@ Watcher::~Watcher()
 
 int Watcher::getWatchedPathsCount() const
 {
-    return mWatcher ? mWatcher->GetWatchedPathsCount() : 0;
+    if (!mWatcher)
+    {
+        ASSERT_ZERO(mWatches.size());
+        return 0;
+    }
+
+    wxArrayString paths;
+    int nPath = mWatcher->GetWatchedPaths (&paths);
+    for ( int i = 0; i < nPath; ++i ) { VAR_DEBUG(paths[i]); }
+    return nPath;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,8 +66,8 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
     VAR_INFO(GetFSWEventChangeTypeName(event.GetChangeType()))(event.GetPath())(event.GetNewPath());
     event.Skip();
 
-    boost::optional<wxString> autoFolderPath = boost::none;// = event.GetPath().GetFullPath();
-    boost::optional<wxString> filePath = boost::none; // For files that are not part of an autofolder tree
+    boost::optional<wxString> autoFolderPath = boost::none;
+    boost::optional<wxString> filePath = boost::none;
 
     switch (event.GetChangeType())
     {
@@ -66,6 +76,8 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
     case wxFSW_EVENT_CREATE:
         // Events can be ignored: A Modify event (of the parent folder) will occur afterwards.
         break;
+    case wxFSW_EVENT_ERROR:
+        // Triggered if root watch is deleted from disk
     case wxFSW_EVENT_DELETE:
         // Events can not be ignored: For deletion of a (sub)folder only a delete event is sent.
     case wxFSW_EVENT_MODIFY:
@@ -73,63 +85,40 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
         // - First, a create event is given (at that point the file is not filled with valid avi data yet, so open file may fail).
         // - Second, modify events are given while the file contents is updated.
         {
+            // Check which autofolders need updating
             wxFileName dir(event.GetPath());
             dir.SetFullName("");
-            wxString fp = dir.GetFullPath();
-            model::NodePtrs nodes = model::Project::get().getRoot()->findPath(dir.GetFullPath());
-            BOOST_FOREACH( model::NodePtr node, nodes )
+            BOOST_FOREACH( model::NodePtr node,  model::Project::get().getRoot()->findPath(dir.GetFullPath()) )
             {
-                model::AutoFolderPtr autoFolder = boost::static_pointer_cast<model::AutoFolder>(node);
-                if (autoFolder)
+                if (node->isA<model::AutoFolder>())
                 {
-                    autoFolder->update();
-                }
-                else
-                {
-                    // Todo for files not in an autofolder tree also an update is required!
+                    boost::dynamic_pointer_cast<model::AutoFolder>(node)->update();
                 }
             }
+            // Check if there are files that have been removed, but are not part of an auto folder hierarchy
+            BOOST_FOREACH( model::NodePtr node, model::Project::get().getRoot()->findPath(event.GetPath().GetFullPath()) )
+            {
+                model::NodePtr parent = node->getParent();
+                ASSERT(parent);
+                if (parent->isA<model::AutoFolder>())
+                {
+                    // Already updated via autofolder indexing above.
+                    continue;
+                }
+                parent->removeChild(node);
+                model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(node);
+                ASSERT(path);
+                gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(path->getPath()) + _(" has been removed from disk. File is removed from project also."));
+           }
             break;
         }
     case wxFSW_EVENT_ACCESS:
         break;
     case wxFSW_EVENT_WARNING:
         break;
-    case wxFSW_EVENT_ERROR:
-        {
-        // A watched root was removed
-        model::NodePtrs nodes = model::Project::get().getRoot()->findPath(event.GetPath().GetFullPath());
-        VAR_ERROR(nodes);
-        BOOST_FOREACH( model::NodePtr node, nodes )
-        {
-            model::NodePtr parent = node->getParent();
-            ASSERT(parent);
-            parent->removeChild(node);
-        }
-        stop(); // Restart fs watcher
-        start();
-        return; // Don't update any folders
-        }
     case wxFSW_EVENT_ATTRIB:
         break;
     }
-
-    // todo use node->mustBeWatched(path);
-
-    //model::NodePtrs nodes = model::Project::get().getRoot()->findPath(watchedPath);
-    //VAR_ERROR(nodes);
-
-    //BOOST_FOREACH( model::NodePtr node, nodes )
-    //{
-    //    if (node->isA<model::AutoFolder>())
-    //    {
-    //        boost::static_pointer_cast<model::AutoFolder>(node)->update(false);
-    //    }
-    //    else if (node->getParent() && node->getParent()->isA<model::AutoFolder>())
-    //    {
-    //        boost::static_pointer_cast<model::AutoFolder>(node->getParent())->update(false);
-    //    }
-    //}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,7 +193,7 @@ boost::optional<wxString> requiredWatchPath( model::NodePtr node )
 
     ASSERT(node->isA<model::AutoFolder>() || node->isA<model::File>());
 
-    wxString toBeWatched = (node->isA<model::AutoFolder>()) ? pathOnDisk->getPath().GetFullPath() : pathOnDisk->getPath().GetPath();
+    wxString toBeWatched = node->isA<model::AutoFolder>() ? pathOnDisk->getPath().GetFullPath() : pathOnDisk->getPath().GetPath();
 
     return boost::optional<wxString>(toBeWatched);
 }
@@ -248,7 +237,14 @@ void Watcher::watch( model::NodePtr node )
     }
 
     // Start watching the new folder
-    mWatcher->AddTree(wxFileName(toBeWatched,""));
+    VAR_DEBUG(mWatches);
+    bool ok = mWatcher->AddTree(wxFileName(toBeWatched,""));
+    if (!ok)
+    {
+        VAR_WARNING(toBeWatched);
+        stop();
+        start();
+    }
 }
 
 void Watcher::unwatch( model::NodePtr node )
@@ -256,18 +252,25 @@ void Watcher::unwatch( model::NodePtr node )
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
     if (!requiresWatch) { return; }
 
-    boost::optional<wxString> toBeRemoved = boost::none;
-    BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
+    wxString obsoleteWatch = *requiresWatch;
+
+    // Sometimes, the given folder is not watched, because one of its parents is
+    if (mWatches.count(obsoleteWatch) == 0) { return; }
+
+    ASSERT_EQUALS(mWatches.count(obsoleteWatch),1);
+    ASSERT_EQUALS(mWatches[obsoleteWatch].count(node),1);
+
+    mWatches[obsoleteWatch].erase(node);
+
+    if (mWatches[obsoleteWatch].empty())
     {
-        if (kv.second.count(node) == 1)
+        mWatches.erase(obsoleteWatch);
+        bool ok = mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
+        if (!ok)
         {
-            kv.second.erase(node);
-            if (kv.second.empty())
-            {
-                toBeRemoved = boost::optional<wxString>(kv.first);
-                // Last node for which this folder was watched. Folder should no longer be watched.
-                mWatcher->RemoveTree(wxFileName(*toBeRemoved,""));
-            }
+            VAR_WARNING(obsoleteWatch);
+            stop();
+            start();
         }
     }
 }
@@ -289,6 +292,7 @@ void Watcher::start()
     mWatcher->Bind(wxEVT_FSWATCHER, &Watcher::onChange, this);
     BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
     {
+        VAR_DEBUG(kv.first);
         mWatcher->AddTree(kv.first);
     }
 }
@@ -320,25 +324,8 @@ wxString Watcher::GetFSWEventChangeTypeName(int changeType)
 
     // todo:
     // - use wxFSW_EVENT_WARNING see http://trac.wxwidgets.org/ticket/12847
-    // - use addtree for adding auto folders (recursively)
-    // - use fix for http://trac.wxwidgets.org/ticket/13294 (use the event error to restart)
 
     return "INVALID_TYPE";
 }
-
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void Watcher::serialize(Archive & ar, const unsigned int version)
-{
-    //if (Archive::is_loading::value)
-    //{
-    //    start();
-    //}
-}
-template void Watcher::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Watcher::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace

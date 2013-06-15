@@ -1,7 +1,6 @@
 #ifndef MODEL_SEQUENCE_H
 #define MODEL_SEQUENCE_H
 
-#include "FifoWork.h"
 #include "IAudio.h"
 #include "IControl.h"
 #include "IVideo.h"

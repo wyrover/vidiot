@@ -94,7 +94,8 @@ void TestManual::testManual()
     //Undo(9);
 
     // todo verdeling bij audio clip details: grow sliders much more
-    // todo test on machine without msvc, since two ms dlls are installed in bin/
+    // todo test on machine without msvc, since two ms dlls are installed in bin/msvcp100.dll and bin/msvcr100.dll
+    //  -- i checked, and these can indeed not be found. should be copied to bin/.. (did so manually and it worked)
 
     // todo no audio in rendered file...
 
