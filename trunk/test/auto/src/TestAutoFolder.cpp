@@ -47,7 +47,6 @@ void TestAutoFolder::testAddAutoFolder()
         WaitForChildCount(root, 3);
         remove( autofolder1 );
     }
-    // todo in logging:  wxLOG_Error Can't monitor non-existent directory "...\Temp\Vidiot\5JFF5_01_12062013_224136_239\" for changes.
 }
 
 } // namespace

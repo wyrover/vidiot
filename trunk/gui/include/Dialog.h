@@ -82,7 +82,7 @@ public:
     /// Set a fixed outcome for the next message dialog.
     /// \param button fixed button value (wxYES, wxNO, wxCANCEL, wxOK or wxHELP) to be returned by next getConfirmation();
     /// \post sButton
-    void setConfirmation(int button);
+    void setConfirmation(int button = wxOK);
 
     /// Show a message dialog requiring a button press to be dismissed
     /// \post !mButton

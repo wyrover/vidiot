@@ -27,12 +27,16 @@ struct RunInMainThreadHelper
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
 {
     RunInMainThreadHelper(Function method)
-        :   mBarrier(2)
+        :   mDone(false)
     {
         ASSERT(!wxThread::IsMain());
         Bind( EVENT_RUNINMAINTHREAD, &RunInMainThreadHelper::onThreadEvent, this );
         QueueEvent(new EventRunInMainThread(FunctionContainer(method)));
-        mBarrier.wait();
+        boost::mutex::scoped_lock lock(mMutex);
+        while (!mDone)
+        {
+            mCondition.wait(lock);
+        }
     }
 
     ~RunInMainThreadHelper()
@@ -43,10 +47,14 @@ struct RunInMainThreadHelper
     void onThreadEvent(EventRunInMainThread& event)
     {
         event.getValue().f();
-        mBarrier.wait();
+        boost::mutex::scoped_lock lock(mMutex);
+        mDone = true;
+        mCondition.notify_all();
     }
 
-    boost::barrier mBarrier;
+    boost::condition_variable mCondition;
+    boost::mutex mMutex;
+    bool mDone;
 };
 
 void RunInMainThread(Function f)

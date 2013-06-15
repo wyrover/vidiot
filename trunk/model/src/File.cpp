@@ -61,7 +61,7 @@ File::File(wxFileName path, int buffersize)
 ,   mFileOpen(false)
 ,   mNumberOfFrames(LENGTH_UNDEFINED)
 ,   mTwoInARow(0)
-,   mLastModified(mPath.GetModificationTime().GetTicks())
+,   mLastModified(mPath.GetModificationTime().GetTicks()) // todo got crash here:  wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime")); todo: check the isvalid for getmod time. file was already removed from disk, i guess
 ,   mHasVideo(false)
 ,   mHasAudio(false)
 ,   mCanBeOpened(false)
@@ -126,9 +126,8 @@ void File::abort()
 NodePtrs File::findPath(wxString path)
 {
     NodePtrs result;
-    wxFileName fn = mPath;
-    fn.SetFullName(""); // We're interested in the folder (see Watcher.cpp, where only folders are watched)
-    if (fn.GetFullPath().IsSameAs(path))
+    wxString filePath = util::path::toPath(mPath);
+    if (path.IsSameAs(filePath)) // todo risky
     {
         result.push_back(shared_from_this());
     }

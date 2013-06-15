@@ -431,7 +431,6 @@ void Window::serialize(Archive & ar, const unsigned int version)
 {
     ar & *mProjectView;
     ar & *mTimelinesView;
-    ar & *mWatcher;
 }
 template void Window::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Window::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

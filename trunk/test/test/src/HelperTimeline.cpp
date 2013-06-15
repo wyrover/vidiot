@@ -483,7 +483,7 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 void DeselectAllClips()
 {
     LOG_DEBUG;
-    RunInMainThread([] { getTimeline().getSelection().unselectAll(); }); // todo got crash here (caused by heap corruption resulting in assert in boost thread / lock code?
+    RunInMainThread([] { getTimeline().getSelection().unselectAll(); });
 };
 
 void DeleteClip(model::IClipPtr clip)

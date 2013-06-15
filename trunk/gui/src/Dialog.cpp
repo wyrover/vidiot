@@ -97,6 +97,12 @@ Dialog::Dialog()
 
 Dialog::~Dialog()
 {
+    // Asserts to ensure that no dialogs are missing
+    ASSERT(!mDir);
+    ASSERT(!mSaveFile);
+    ASSERT(!mFiles);
+    ASSERT(!mText);
+    ASSERT(!mButton);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,6 +111,7 @@ Dialog::~Dialog()
 
 void Dialog::setDir(wxString dir)
 {
+    ASSERT(!mDir);
     mDir = boost::optional<wxString>(dir);
 }
 
@@ -118,6 +125,7 @@ wxString Dialog::getDir( const wxString & message, const wxString & default, wxW
 
 void Dialog::setSaveFile(wxString file)
 {
+    ASSERT(!mSaveFile);
     mSaveFile = boost::optional<wxString>(file);
 }
 
@@ -131,6 +139,7 @@ wxString Dialog::getSaveFile( const wxString& message, const wxString& filetypes
 
 void Dialog::setFiles(std::list<wxString> files)
 {
+    ASSERT(!mFiles);
     mFiles = boost::optional<std::list< wxString > >(files);
 }
 
@@ -162,6 +171,7 @@ wxStrings Dialog::getFiles( const wxString& message, const wxString& filetypes, 
 
 void Dialog::setText(wxString text)
 {
+    ASSERT(!mText);
     mText = boost::optional<wxString>(text);
 }
 
@@ -175,6 +185,7 @@ wxString Dialog::getText( wxString title, wxString message, wxString default, wx
 
 void Dialog::setConfirmation(int button)
 {
+    ASSERT(!mButton);
     mButton = boost::optional<int>(button);
 }
 

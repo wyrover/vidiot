@@ -96,14 +96,6 @@ private:
 
     static wxString GetFSWEventChangeTypeName(int changeType);
     friend std::ostream& operator<<( std::ostream& os, const Watcher& obj );
-
-    //////////////////////////////////////////////////////////////////////////
-    // SERIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
 };
 
 } // namespace

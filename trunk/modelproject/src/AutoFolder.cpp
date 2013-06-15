@@ -1,5 +1,6 @@
 #include "AutoFolder.h"
 
+#include "Dialog.h"
 #include "File.h"
 #include "StatusBar.h"
 #include "UtilLog.h"
@@ -38,69 +39,78 @@ struct IndexAutoFolderWork
     void indexFiles()
     {
         wxDir dir( mPath.GetLongPath() );
-        if (!dir.IsOpened())
+        mDirExists = dir.IsOpened();
+
+        VAR_DEBUG(mPath.GetLongPath())(mDirExists);
+
+        if (mDirExists)
+        {
+            wxString pathname =
+                mPath.GetDirCount() >= 1 ? mPath.GetDirs().Last() + "/" :
+                mPath.HasVolume() ? mPath.GetVolume() :
+                "";
+            gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + "'");
+
+            ASSERT(dir.IsOpened());
+            wxString nodename;
+
+            wxArrayString allfiles;
+            size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
+            gui::StatusBar::get().showProgressBar(count);
+            int progress = 0;
+
+            // Find all subfolders
+            for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_DIRS); cont; cont = dir.GetNext(&nodename))
+            {
+                if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
+                {
+                    UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
+                }
+                else // New element. Add
+                {
+                    wxFileName filename(mPath.GetLongPath(), "");
+                    filename.AppendDir(nodename);
+                    ASSERT(filename.IsDir());
+                    AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
+                    mAdd.push_back(folder);
+                }
+                gui::StatusBar::get().showProgress(++progress);
+            }
+
+            // Find all files
+            for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
+            {
+                if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
+                {
+                    UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
+                }
+                else // New element. Add
+                {
+                    wxFileName filename(mPath.GetLongPath(), nodename);
+                    gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + nodename + "'");
+                    model::FilePtr file = boost::make_shared<model::File>(filename);
+                    if (file->canBeOpened())
+                    {
+                        mAdd.push_back(file);
+                    }
+                }
+                gui::StatusBar::get().showProgress(++progress);
+            }
+
+            gui::StatusBar::get().hideProgressBar();
+            gui::StatusBar::get().setProcessingText("");
+        }
+        else
         {
             // This is ran in a separate thread.
-            // Maybe the folder has already been removed from disk, and the autofolder
-            // node has already been removed.
-            return;
+            // - Maybe the folder has already been removed from disk, and the autofolder node has already been removed.
+            // - Maybe the update is caused by deleting an entire folder hierarchy
+            // Note that mRemove already contains all current nodes, these can be removed.
         }
-        wxString pathname =
-            mPath.GetDirCount() >= 1 ? mPath.GetDirs().Last() + "/" :
-            mPath.HasVolume() ? mPath.GetVolume() :
-            "";
-        gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + "'");
-
-        ASSERT(dir.IsOpened());
-        wxString nodename;
-
-        wxArrayString allfiles;
-        size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
-        gui::StatusBar::get().showProgressBar(count);
-        int progress = 0;
-        // Find all subfolders
-        for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_DIRS); cont; cont = dir.GetNext(&nodename))
-        {
-            if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
-            {
-                UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
-            }
-            else // New element. Add
-            {
-                wxFileName filename(mPath.GetLongPath(), "");
-                filename.AppendDir(nodename);
-                ASSERT(filename.IsDir());
-                AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
-                mAdd.push_back(folder);
-            }
-            gui::StatusBar::get().showProgress(++progress);
-        }
-
-        // Find all files
-        for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
-        {
-            if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
-            {
-                UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
-            }
-            else // New element. Add
-            {
-                wxFileName filename(mPath.GetLongPath(), nodename);
-                gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + nodename + "'");
-                model::FilePtr file = boost::make_shared<model::File>(filename);
-                if (file->canBeOpened())
-                {
-                    mAdd.push_back(file);
-                }
-            }
-            gui::StatusBar::get().showProgress(++progress);
-        }
-
-        gui::StatusBar::get().hideProgressBar();
-        gui::StatusBar::get().setProcessingText("");
     }
 
     AutoFolderPtr mFolder;               ///< Folder to be indexed
+    bool mDirExists;                     ///< true if the dir could be opened, false if not (then, assume that it was removed)
     wxFileName mPath;                    ///< Path to the folder to be indexed
     std::list<wxString> mCurrentEntries; ///< All entries known when the work was scheduled
     NodePtrs mAdd;                       ///< When done, holds the list of nodes that must be added
@@ -112,22 +122,22 @@ struct IndexAutoFolderWork
 //////////////////////////////////////////////////////////////////////////
 
 AutoFolder::AutoFolder()
-:   Folder()
-,   mPath()
-,   mLastModified(0)
-,   mCurrentUpdate()
-,   mUpdateAgain(false)
+    :   Folder()
+    ,   mPath()
+    ,   mLastModified(0)
+    ,   mCurrentUpdate()
+    ,   mUpdateAgain(false)
 {
     VAR_DEBUG(this);
 }
 
 AutoFolder::AutoFolder(wxFileName path)
-:   Folder(util::path::toName(path))
-,   mPath(util::path::normalize(path))
-,   mLastModified(mPath.GetModificationTime().GetTicks())
+    :   Folder(util::path::toName(path))
+    ,   mPath(util::path::normalize(path))
+    ,   mLastModified(mPath.GetModificationTime().GetTicks())
 {
     ASSERT(path.IsDir())(path);
-    VAR_DEBUG(this);
+    VAR_DEBUG(this)(path);
 }
 
 AutoFolder::~AutoFolder()
@@ -177,12 +187,21 @@ wxFileName AutoFolder::getPath() const
 void AutoFolder::update()
 {
     ASSERT(wxThread::IsMain());
+
+    if (getParent() && getParent()->isA<AutoFolder>())
+    {
+        // Update parent also. Required for scenarios in which entire folder structures are removed. By updating
+        // 'from the top' nothing is missed.
+        boost::dynamic_pointer_cast<AutoFolder>(getParent())->update();
+    }
     if (mCurrentUpdate)
     {
         mUpdateAgain = true; // When mCurrentUpdate is finished, another will be scheduled.
+        VAR_DEBUG(mPath)(mUpdateAgain);
     }
     else
     {
+        VAR_DEBUG(mPath);
         mCurrentUpdate = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(shared_from_this()));
         mCurrentUpdate->Bind(worker::EVENT_WORK_DONE, &AutoFolder::onWorkDone, this); // todo when unbind?
         worker::Worker::get().schedule(mCurrentUpdate);
@@ -226,11 +245,30 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
         }
         removeChildren(nodes);// All at once, for better performance (less UI updates)
     }
-    if (mUpdateAgain)
+    if (!work->mDirExists)
     {
-        mUpdateAgain = false;
-        update();
+        // Directory was removed. Remove the node also.
+        if (!hasParent())
+        {
+            // Node was already removed from parent (maybe parent dir deleted also?)
+        }
+        else
+        {
+            if (!getParent()->isA<AutoFolder>())
+            {
+                gui::Dialog::get().getConfirmation(_("Folder removed"), _("The folder ") + util::path::toName(getPath()) + _(" has been removed from disk. Folder is removed from project also."));
+            }
+            getParent()->removeChild(shared_from_this());
+        }
     }
+    else
+    {
+        if (mUpdateAgain)
+        {
+            update();
+        }
+    }
+    mUpdateAgain = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
