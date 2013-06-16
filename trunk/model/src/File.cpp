@@ -126,8 +126,7 @@ void File::abort()
 NodePtrs File::findPath(wxString path)
 {
     NodePtrs result;
-    wxString filePath = util::path::toPath(mPath);
-    if (path.IsSameAs(filePath)) // todo risky
+    if (util::path::equals(mPath,path))
     {
         result.push_back(shared_from_this());
     }
@@ -136,8 +135,7 @@ NodePtrs File::findPath(wxString path)
 
 bool File::mustBeWatched(wxString path)
 {
-    wxString myPath = mPath.GetFullPath();
-    if (myPath.StartsWith(path))
+    if (util::path::isParentOf(path,mPath))
     {
         // Yes, is parent folder of this file
         return true;

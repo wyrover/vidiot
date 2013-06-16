@@ -18,6 +18,16 @@ wxString toName( wxFileName filename );
 /// Convert a wxFileName to a full path. This ends without a trailing slash.
 wxString toPath( wxFileName filename );
 
+bool equals( wxFileName f1, wxFileName f2 ); ///< \return true if the two paths indicate the same file/folder on disk
+bool equals( wxString f1,   wxFileName f2 ); ///< \return true if the two paths indicate the same file/folder on disk
+bool equals( wxFileName f1, wxString f2 );   ///< \return true if the two paths indicate the same file/folder on disk
+bool equals( wxString f1,   wxString f2 );   ///< \return true if the two paths indicate the same file/folder on disk
+
+bool isParentOf( wxFileName parent, wxFileName child ); ///< \return true if parent is a parent path (folder) of child. Note: returns false if both point to the same dir.
+bool isParentOf( wxString parent,   wxFileName child ); ///< \return true if parent is a parent path (folder) of child. Note: returns false if both point to the same dir.
+bool isParentOf( wxFileName parent, wxString child );   ///< \return true if parent is a parent path (folder) of child. Note: returns false if both point to the same dir.
+bool isParentOf( wxString parent,   wxString child );   ///< \return true if parent is a parent path (folder) of child. Note: returns false if both point to the same dir.
+
 }} // namespace
 
 #endif //UTIL_PATH_H
