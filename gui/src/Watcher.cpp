@@ -207,7 +207,9 @@ void Watcher::watch( model::NodePtr node )
     BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
     {
         wxString alreadyWatchedPath = kv.first;
-        if (toBeWatched.StartsWith(alreadyWatchedPath))
+        bool isWatched = util::path::equals(alreadyWatchedPath, toBeWatched);
+        bool isParentWatched = util::path::isParentOf(alreadyWatchedPath, toBeWatched );
+        if (isWatched ||  isParentWatched)
         {
             mWatches[alreadyWatchedPath].insert(node); // This folder, or one of its parents is already watched. As long as this node is present, don't remove that watch
             return;
@@ -221,7 +223,7 @@ void Watcher::watch( model::NodePtr node )
     std::list<wxString> watchesToBeRemoved;
     BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
     {
-        if (kv.first.StartsWith(toBeWatched))
+        if (util::path::isParentOf(toBeWatched, kv.first ))
         {
             // This is a child dir watch. All nodes in that watch are now covered by the parent folder watch.
             watchesToBeRemoved.push_back(kv.first);

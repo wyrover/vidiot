@@ -10,7 +10,7 @@
 namespace test {
 
 std::list<std::string> SuitesWithoutGui = boost::assign::list_of
-     ("TestConvert::testTimeConversions");
+     ("TestConvert::testTimeConversions")("TestUtilPath::testEquals");
 
 //////////////////////////////////////////////////////////////////////////
 // LOCAL HELPER METHODS

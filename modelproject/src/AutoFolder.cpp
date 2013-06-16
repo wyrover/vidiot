@@ -152,8 +152,7 @@ AutoFolder::~AutoFolder()
 NodePtrs AutoFolder::findPath(wxString path)
 {
     NodePtrs result = Node::findPath(path); // Traverse the tree
-    wxString myPath = mPath.GetFullPath();
-    if (myPath.IsSameAs(path))
+    if (util::path::equals(mPath,path))
     {
         result.push_back(shared_from_this());
     }
@@ -162,8 +161,7 @@ NodePtrs AutoFolder::findPath(wxString path)
 
 bool AutoFolder::mustBeWatched(wxString path)
 {
-    wxString myPath = mPath.GetFullPath();
-    if (myPath.StartsWith(path))
+    if (util::path::isParentOf(path,mPath))
     {
         // Yes, is parent folder of this folder
         return true;
