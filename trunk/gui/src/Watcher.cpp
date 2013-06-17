@@ -76,6 +76,8 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
     case wxFSW_EVENT_CREATE:
         // Events can be ignored: A Modify event (of the parent folder) will occur afterwards.
         break;
+    case wxFSW_EVENT_WARNING:
+        // Triggered by errors in the wxFileSystemWatcher caused by ReadDirectoryChangesW() buffer overflow
     case wxFSW_EVENT_ERROR:
         // Triggered if root watch is deleted from disk
     case wxFSW_EVENT_DELETE:
@@ -110,11 +112,9 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
                 ASSERT(path);
                 gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(path->getPath()) + _(" has been removed from disk. File is removed from project also."));
            }
-            break;
+            break; // todo add a method to IPath : such that these objects handle the rescanning themselves
         }
     case wxFSW_EVENT_ACCESS:
-        break;
-    case wxFSW_EVENT_WARNING:
         break;
     case wxFSW_EVENT_ATTRIB:
         break;
@@ -323,9 +323,6 @@ wxString Watcher::GetFSWEventChangeTypeName(int changeType)
     case wxFSW_EVENT_ERROR:   return "ERROR";
     case wxFSW_EVENT_ATTRIB:  return "ATTRIB";
     }
-
-    // todo:
-    // - use wxFSW_EVENT_WARNING see http://trac.wxwidgets.org/ticket/12847
 
     return "INVALID_TYPE";
 }

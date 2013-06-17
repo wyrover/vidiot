@@ -58,7 +58,7 @@ public:
     /// Find the clip which provides the frame at the given pts.
     /// If pts is 'on a cut' then the clip AFTER the cut is returned.
     /// If there is no clip at this pts then an empty Ptr is returned.
-    IClipPtr getClip(pts position);
+    IClipPtr getClip(pts position) const;
 
     ///// Find the clips which provide the frames for the pts region [start, end).
     ///// Also partially overlapping clips are returned.
@@ -85,6 +85,8 @@ public:
     void setIndex(int index);       ///< \param index new index of this track
 
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()); ///\return list of all cuts in the track
+
+    bool isEmptyAt( pts position ) const; ///< \return true if the track holds only emptyness at the given position
 
 protected:
 

@@ -106,7 +106,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
     mOpacitySlider = new wxSlider(opacitypanel, wxID_ANY, model::Constants::sMaxOpacity, model::Constants::sMinOpacity, model::Constants::sMaxOpacity );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
-    mOpacitySpin = new wxSpinCtrl(opacitypanel);
+    mOpacitySpin = new wxSpinCtrl(opacitypanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
     mOpacitySpin->SetRange(model::Constants::sMinOpacity, model::Constants::sMaxOpacity);
     mOpacitySpin->SetValue(model::Constants::sMaxOpacity);
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
@@ -121,7 +121,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
     mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, 1 * model::Constants::scalingPrecisionFactor, model::Constants::sMinScaling, model::Constants::sMaxScaling);
     mScalingSlider->SetPageSize(model::Constants::scalingPageSize);
-    mScalingSpin = new wxSpinCtrlDouble(scalingpanel);
+    mScalingSpin = new wxSpinCtrlDouble(scalingpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
     mScalingSpin->SetDigits(model::Constants::scalingPrecision);
     mScalingSpin->SetValue(1); // No scaling
     mScalingSpin->SetRange(
@@ -140,7 +140,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* positionxsizer = new wxBoxSizer(wxHORIZONTAL);
     mPositionXSlider = new wxSlider(positionxpanel, wxID_ANY, 0, 0, 1);
     mPositionXSlider->SetPageSize(sPositionPageSize);
-    mPositionXSpin = new wxSpinCtrl(positionxpanel);
+    mPositionXSpin = new wxSpinCtrl(positionxpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
     mPositionXSpin->SetRange(0,1);
     mPositionXSpin->SetValue(0);
     positionxsizer->Add(mPositionXSlider, wxSizerFlags(1).Expand());
@@ -152,7 +152,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* positionysizer = new wxBoxSizer(wxHORIZONTAL);
     mPositionYSlider = new wxSlider(positionypanel, wxID_ANY, 0, 0, 1);
     mPositionYSlider->SetPageSize(sPositionPageSize);
-    mPositionYSpin = new wxSpinCtrl(positionypanel);
+    mPositionYSpin = new wxSpinCtrl(positionypanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
     mPositionYSpin->SetRange(0,1);
     mPositionYSpin->SetValue(0);
     positionysizer->Add(mPositionYSlider, wxSizerFlags(1).Expand());
