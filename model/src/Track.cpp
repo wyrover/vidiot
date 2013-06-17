@@ -171,7 +171,7 @@ const IClips& Track::getClips()
     return mClips;
 }
 
-IClipPtr Track::getClip(pts position)
+IClipPtr Track::getClip(pts position) const
 {
     pts left = 0;
     pts right = left;
@@ -274,6 +274,11 @@ std::set<pts> Track::getCuts(const std::set<IClipPtr>& exclude)
         }
     }
     return result;
+}
+
+bool Track::isEmptyAt( pts position ) const
+{
+    return getClip(position)->isA<model::EmptyClip>();
 }
 
 //////////////////////////////////////////////////////////////////////////

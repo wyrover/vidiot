@@ -162,13 +162,18 @@ void Render::schedule(SequencePtr sequence)
         while (it != cuts.end() )
         {
             pts end = *it;
-            model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
-            wxFileName fn = clone->getRender()->getFileName();
-            fn.SetName(fn.GetName() + wxString::Format("_%d",c));
-            clone->getRender()->setFileName(fn);
-            worker::Worker::get().schedule(boost::make_shared<worker::Work>(boost::bind(&Render::generate,clone->getRender(),clone,start,end)));
+
+            if (!sequence->isEmptyAt(start))
+            {
+                model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
+                wxFileName fn = clone->getRender()->getFileName();
+                fn.SetName(fn.GetName() + wxString::Format("_%d",c));
+                clone->getRender()->setFileName(fn);
+                worker::Worker::get().schedule(boost::make_shared<worker::Work>(boost::bind(&Render::generate,clone->getRender(),clone,start,end)));
+                ++c;
+            }
+            // else: If there's only empty space at this interval's begin point: do not render the empty space and skip to the next interval.
             ++it;
-            ++c;
             start = end;
         }
     }

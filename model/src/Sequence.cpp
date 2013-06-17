@@ -321,6 +321,7 @@ VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParamete
 std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
 {
     // PERF: cache this?
+    LOG_ERROR << dump(boost::dynamic_pointer_cast<Sequence>(shared_from_this()));
     std::set<pts> result;
     BOOST_FOREACH( TrackPtr track, getTracks() )
     {
@@ -328,6 +329,19 @@ std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
     }
     VAR_DEBUG(result);
     return result;
+}
+
+bool Sequence::isEmptyAt( pts position ) const
+{
+    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    {
+        if (!track->isEmptyAt(position)) { return false; }
+    }
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    {
+        if (!track->isEmptyAt(position)) { return false; }
+    }
+    return true;
 }
 
 void Sequence::onTrackLengthChanged(EventLengthChanged& event)

@@ -118,10 +118,10 @@ void TestRender::testRendering()
     }
     {
         StartTest("Render each part of the sequence separately.");
-        ExpectExecutedWork expectation(4);
+        ExpectExecutedWork expectation(3);
         Click(Center(VideoClip(0,2)));
         ControlDown();
-        Click(Center(VideoClip(0,4))); // Exclude clip 3 deliberately: include empty clips in the rendering
+        Click(Center(VideoClip(0,4))); // Exclude clip 3 deliberately: include empty clips in the list of intervals
         Click(Center(VideoClip(0,5)));
         Click(Center(VideoClip(0,6)));
         ControlUp();
@@ -139,7 +139,7 @@ void TestRender::testRendering()
         {
             wxFileName f(tempdir.getFileName().GetLongPath(), wxString::Format("out_%d",i), "avi");
             ASSERT_IMPLIES(i <= 3, f.Exists());
-            // ASSERT_IMPLIES(i == 4, !f.Exists()); todo enable this and fix (why are four clips rendered? one of 'em is black!)
+            ASSERT_IMPLIES(i == 4, !f.Exists());
         }
     }
 }

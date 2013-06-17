@@ -201,7 +201,7 @@ void AutoFolder::update()
     {
         VAR_DEBUG(mPath);
         mCurrentUpdate = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(shared_from_this()));
-        mCurrentUpdate->Bind(worker::EVENT_WORK_DONE, &AutoFolder::onWorkDone, this); // todo when unbind?
+        mCurrentUpdate->Bind(worker::EVENT_WORK_DONE, &AutoFolder::onWorkDone, this); // No unbind: work object is destroyed when done
         worker::Worker::get().schedule(mCurrentUpdate);
     }
     return;

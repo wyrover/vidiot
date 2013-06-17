@@ -93,13 +93,10 @@ void TestManual::testManual()
     //Play(LeftPixel(VideoClip(2,1)) - 3,2500); // Start before the clip, in the empty area. Due to a bug in 'getNext' handling for empty clips the clips after the empty area were not shown, or too late.
     //Undo(9);
 
-    // todo verdeling bij audio clip details: grow sliders much more
     // todo test on machine without msvc, since two ms dlls are installed in bin/msvcp100.dll and bin/msvcr100.dll
     //  -- i checked, and these can indeed not be found. should be copied to bin/.. (did so manually and it worked)
 
     // todo no audio in rendered file...
-
-    // todo make details drag to show hints during dragging (see trim...)
 
     // todo at end of clip edit, remove any empty clips which are the last clips of the track
     pause(60000 * 60); // One hour should be enough...

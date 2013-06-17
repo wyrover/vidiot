@@ -61,20 +61,33 @@ File::File(wxFileName path, int buffersize)
 ,   mFileOpen(false)
 ,   mNumberOfFrames(LENGTH_UNDEFINED)
 ,   mTwoInARow(0)
-,   mLastModified(mPath.GetModificationTime().GetTicks()) // todo got crash here:  wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime")); todo: check the isvalid for getmod time. file was already removed from disk, i guess
+,   mLastModified(mPath.GetModificationTime().GetTicks())
 ,   mHasVideo(false)
 ,   mHasAudio(false)
 ,   mCanBeOpened(false)
 {
     VAR_DEBUG(this);
-    // These two lines are required to correctly read the length
-    // (and/or any other meta data) from the file.
-    // This can only be done for supported formats, since avcodec
-    // can only read the lengths from those.
-    //
-    // Note that the opening of a file sets mCanBeOpened to the correct value.
-    openFile();
-    closeFile();
+
+    if (mPath.Exists())
+    {
+        wxDateTime dt = mPath.GetModificationTime();
+        if (dt.IsValid())
+        {
+            mLastModified = dt.GetTicks();
+
+            // These two lines are required to correctly read the length
+            // (and/or any other meta data) from the file.
+            // This can only be done for supported formats, since avcodec
+            // can only read the lengths from those.
+            //
+            // Note that the opening of a file sets mCanBeOpened to the correct value.
+            // By these two if statements for files no longer on disk, mCanBeOpened
+            // remains false.
+            openFile();
+            closeFile();
+        }
+    }
+
 }
 
 File::File(const File& other)
