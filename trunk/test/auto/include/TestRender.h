@@ -22,6 +22,7 @@ public:
 
     void testChangeRenderSettings();
     void testRendering();
+    void testRenderingSplit();
     void testRenderingCodecs();
 
 private:

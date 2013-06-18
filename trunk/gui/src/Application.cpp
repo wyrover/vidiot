@@ -56,6 +56,8 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
     wxHandleFatalExceptions(false);
 
+    ::wxInitAllImageHandlers();
+
     SetAppName(mEventLoopListener ? sTestApplicationName : "Vidiot");
     SetVendorName("Eric Raijmakers");
 

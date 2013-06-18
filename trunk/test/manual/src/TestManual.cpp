@@ -96,8 +96,6 @@ void TestManual::testManual()
     // todo test on machine without msvc, since two ms dlls are installed in bin/msvcp100.dll and bin/msvcr100.dll
     //  -- i checked, and these can indeed not be found. should be copied to bin/.. (did so manually and it worked)
 
-    // todo no audio in rendered file...
-
     // todo at end of clip edit, remove any empty clips which are the last clips of the track
     pause(60000 * 60); // One hour should be enough...
 }

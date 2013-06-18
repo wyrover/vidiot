@@ -409,7 +409,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
             pts numberOfWrittenOutputVideoFrames = 0;
 
             pts lengthInVideoFrames = length;
-            long maxNumberOfFrames = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond);
+            long maxNumberOfFrames = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond); // todo buffer config value (is called in wrong thread here)
             if ((maxNumberOfFrames > 0) && (lengthInVideoFrames > maxNumberOfFrames))
             {
                 lengthInVideoFrames = maxNumberOfFrames;
@@ -462,7 +462,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                     frame.data[0] = (uint8_t*)samples;
                     frame.linesize[0] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
                     frame.nb_samples = audioCodec->frame_size;
-                    frame.pts = numberOfReadInputAudioFrames * (audioEncodeRequiredInputSize / audioCodec->channels);
+                    frame.pts = AV_NOPTS_VALUE; // NOT: numberOfReadInputAudioFrames * audioCodec->frame_size; - causes silence...
                     AVPacket* audioPacket = new AVPacket();
                     audioPacket->data = 0;
                     audioPacket->size = 0;
@@ -471,7 +471,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                     // CODEC_CAP_DELAY (see declaration  of avcodec_encode_audio2) is not used: extra silence is added at the end?
                     int result = avcodec_encode_audio2(audioCodec, audioPacket, &frame, &gotPacket); // if gotPacket == 0, then packet is destructed
                     ASSERT_ZERO(result)(avcodecErrorString(result));
-                    numberOfReadInputAudioFrames++;
+                    numberOfReadInputAudioFrames++; // todo rename to numberOfEncodedInputAudioFrames
 
                     if (gotPacket)
                     {

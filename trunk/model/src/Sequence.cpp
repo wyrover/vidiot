@@ -321,7 +321,6 @@ VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParamete
 std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
 {
     // PERF: cache this?
-    LOG_ERROR << dump(boost::dynamic_pointer_cast<Sequence>(shared_from_this()));
     std::set<pts> result;
     BOOST_FOREACH( TrackPtr track, getTracks() )
     {
