@@ -97,12 +97,11 @@ void TestRender::testChangeRenderSettings()
 void TestRender::testRendering()
 {
     StartTestSuite();
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
     {
         StartTest("Render");
-        RandomTempDir tempdir;
+        ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
         ExpectExecutedWork expectation(1);
-        wxFileName path(tempdir.getFileName().GetLongPath(), "out", "avi");
+        wxFileName path(wxFileName::GetTempDir(), "out", "avi");
         model::render::RenderPtr original = getCurrentRenderSettings();
         triggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile(path.GetFullPath());
@@ -113,9 +112,22 @@ void TestRender::testRendering()
         ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
         ClickBottomLeft(gui::RenderSettingsDialog::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
         ClickTopLeft(gui::RenderSettingsDialog::get().getRenderButton());
+        triggerMenu(ID_CLOSESEQUENCE);
         expectation.wait();
         ASSERT(path.Exists());
+
+        model::FolderPtr folder1 = addFolder( "RenderingPlaybackTest" );
+        model::Files files1 = addFiles( boost::assign::list_of(path), folder1 );
+        model::SequencePtr sequence1 = createSequence( folder1 );
+        Zoom level(4);
+        Play(50, 2000);
     }
+}
+
+void TestRender::testRenderingSplit()
+{
+    StartTestSuite();
+    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
     {
         StartTest("Render each part of the sequence separately.");
         ExpectExecutedWork expectation(3);

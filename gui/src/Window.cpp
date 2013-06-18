@@ -75,8 +75,6 @@ Window::Window()
     ,   mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
     ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
 {
-    ::wxInitAllImageHandlers();
-
     // Construction not done in constructor list due to dependency on sCurrent
     mWorker         = new worker::Worker();
     mWatcher        = new Watcher();
