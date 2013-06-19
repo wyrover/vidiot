@@ -49,8 +49,10 @@ Render::Render()
     ,   mSeparateAtCuts(false)
     ,   mStart(0)
     ,   mEnd(0)
+    ,   mMaxLength(Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond))
 {
     VAR_DEBUG(this);
+
 }
 
 Render::Render(const Render& other)
@@ -60,6 +62,7 @@ Render::Render(const Render& other)
     ,   mSeparateAtCuts(other.mSeparateAtCuts)
     ,   mStart(other.mStart)
     ,   mEnd(other.mEnd)
+    ,   mMaxLength(Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond)) // Re-read: most render objects are created by cloning. FOr tests, initial Render object contains default value (0).
 {
     VAR_DEBUG(this);
 }
@@ -403,16 +406,15 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
 
             avformat_write_header(context,0);
 
-            pts numberOfReadInputAudioFrames = 0;
+            pts numberOfEncodecInputAudioFrames = 0;
             pts numberOfWrittenOutputAudioFrames = 0;
             pts numberOfReadInputVideoFrames = 0;
             pts numberOfWrittenOutputVideoFrames = 0;
 
             pts lengthInVideoFrames = length;
-            long maxNumberOfFrames = Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond); // todo buffer config value (is called in wrong thread here)
-            if ((maxNumberOfFrames > 0) && (lengthInVideoFrames > maxNumberOfFrames))
+            if ((mMaxLength > 0) && (lengthInVideoFrames > mMaxLength))
             {
-                lengthInVideoFrames = maxNumberOfFrames;
+                lengthInVideoFrames = mMaxLength;
             }
             long lengthInSeconds = Convert::ptsToTime(lengthInVideoFrames) / Constants::sSecond;
 
@@ -462,7 +464,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                     frame.data[0] = (uint8_t*)samples;
                     frame.linesize[0] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
                     frame.nb_samples = audioCodec->frame_size;
-                    frame.pts = AV_NOPTS_VALUE; // NOT: numberOfReadInputAudioFrames * audioCodec->frame_size; - causes silence...
+                    frame.pts = AV_NOPTS_VALUE; // NOT: numberOfEncodecInputAudioFrames * audioCodec->frame_size; - causes silence...
                     AVPacket* audioPacket = new AVPacket();
                     audioPacket->data = 0;
                     audioPacket->size = 0;
@@ -471,7 +473,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                     // CODEC_CAP_DELAY (see declaration  of avcodec_encode_audio2) is not used: extra silence is added at the end?
                     int result = avcodec_encode_audio2(audioCodec, audioPacket, &frame, &gotPacket); // if gotPacket == 0, then packet is destructed
                     ASSERT_ZERO(result)(avcodecErrorString(result));
-                    numberOfReadInputAudioFrames++; // todo rename to numberOfEncodedInputAudioFrames
+                    numberOfEncodecInputAudioFrames++;
 
                     if (gotPacket)
                     {
