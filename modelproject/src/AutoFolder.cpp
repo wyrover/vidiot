@@ -178,11 +178,7 @@ wxFileName AutoFolder::getPath() const
     return mPath;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// STRUCTURE
-//////////////////////////////////////////////////////////////////////////
-
-void AutoFolder::update()
+void AutoFolder::check()
 {
     ASSERT(wxThread::IsMain());
 
@@ -190,7 +186,7 @@ void AutoFolder::update()
     {
         // Update parent also. Required for scenarios in which entire folder structures are removed. By updating
         // 'from the top' nothing is missed.
-        boost::dynamic_pointer_cast<AutoFolder>(getParent())->update();
+        boost::dynamic_pointer_cast<AutoFolder>(getParent())->check();
     }
     if (mCurrentUpdate)
     {
@@ -222,7 +218,7 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
             AutoFolderPtr autoFolder = boost::dynamic_pointer_cast<AutoFolder>(node);
             if (autoFolder)
             {
-                autoFolder->update();
+                autoFolder->check();
             }
         }
     }
@@ -263,7 +259,7 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
     {
         if (mUpdateAgain)
         {
-            update();
+            check();
         }
     }
     mUpdateAgain = false;

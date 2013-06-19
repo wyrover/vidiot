@@ -208,6 +208,29 @@ wxFileName File::getPath() const
     return mPath;
 }
 
+void File::check()
+{
+    model::NodePtr parent = getParent();
+    if (parent)
+    {
+        if (parent->isA<model::AutoFolder>())
+        {
+            // updated via autofolder indexing
+            boost::dynamic_pointer_cast<AutoFolder>(parent)->check();
+        }
+        else
+        {
+            gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
+            parent->removeChild(shared_from_this());
+        }
+    }
+    else
+    {
+    // todo if file is not present then it should provide empty/default video frames + audio chunks + thumbnail
+    // todo update dialog text: not all removed files will be part of the project view
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////

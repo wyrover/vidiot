@@ -20,6 +20,10 @@ public:
 
     /// \return absolute path to the object on disk.
     virtual wxFileName getPath() const = 0;
+
+    /// Is called when the object should do a check for consistency.
+    /// i.e. Is the file/folder on disk still present?
+    virtual void check() = 0;
 };
 
 } // namespace

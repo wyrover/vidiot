@@ -87,32 +87,14 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
         // - First, a create event is given (at that point the file is not filled with valid avi data yet, so open file may fail).
         // - Second, modify events are given while the file contents is updated.
         {
-            // Check which autofolders need updating
-            wxFileName dir(event.GetPath());
-            dir.SetFullName("");
-            BOOST_FOREACH( model::NodePtr node,  model::Project::get().getRoot()->findPath(dir.GetFullPath()) )
+            wxFileName changedPath = event.GetPath();
+            BOOST_FOREACH( model::NodePtr node, model::Project::get().getRoot()->findPath(changedPath.GetFullPath()) )
             {
-                if (node->isA<model::AutoFolder>())
-                {
-                    boost::dynamic_pointer_cast<model::AutoFolder>(node)->update();
-                }
-            }
-            // Check if there are files that have been removed, but are not part of an auto folder hierarchy
-            BOOST_FOREACH( model::NodePtr node, model::Project::get().getRoot()->findPath(event.GetPath().GetFullPath()) )
-            {
-                model::NodePtr parent = node->getParent();
-                ASSERT(parent);
-                if (parent->isA<model::AutoFolder>())
-                {
-                    // Already updated via autofolder indexing above.
-                    continue;
-                }
-                parent->removeChild(node);
                 model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(node);
                 ASSERT(path);
-                gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(path->getPath()) + _(" has been removed from disk. File is removed from project also."));
-           }
-            break; // todo add a method to IPath : such that these objects handle the rescanning themselves
+                path->check();
+            }
+            break;
         }
     case wxFSW_EVENT_ACCESS:
         break;
