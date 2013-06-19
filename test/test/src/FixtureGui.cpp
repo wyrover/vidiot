@@ -64,7 +64,7 @@ bool FixtureGui::tearDownWorld()
 bool FixtureGui::setUp()
 {
     if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
-    VAR_DEBUG(this)(HelperTestSuite::currentCxxTest());
+    VAR_WARNING(this)(HelperTestSuite::currentCxxTest());
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should
     // only be done for starting the main (application) event loop, not for any dialogs.
     mStartingMainThread = true;
@@ -77,7 +77,7 @@ bool FixtureGui::setUp()
 bool FixtureGui::tearDown()
 {
     if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
-    VAR_DEBUG(this)(HelperTestSuite::currentCxxTest());
+    VAR_WARNING(this)(HelperTestSuite::currentCxxTest());
     wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
     if (doc)
     {

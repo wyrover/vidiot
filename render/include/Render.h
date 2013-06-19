@@ -81,6 +81,7 @@ private:
     bool mSeparateAtCuts;
     pts mStart;
     pts mEnd;
+    pts mMaxLength;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
