@@ -166,6 +166,29 @@ bool File::mustBeWatched(wxString path)
     return false;
 }
 
+void File::check()
+{
+    model::NodePtr parent = getParent();
+    if (parent)
+    {
+        if (parent->isA<model::AutoFolder>())
+        {
+            // updated via autofolder indexing
+            boost::dynamic_pointer_cast<AutoFolder>(parent)->check();
+        }
+        else
+        {
+            gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
+            parent->removeChild(shared_from_this());
+        }
+    }
+    else
+    {
+        // File is not part of the project view. For exception handling during playback, the file
+        // will return empty video/audio data instead of showing a dialog.
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
@@ -218,29 +241,6 @@ void File::clean()
 wxFileName File::getPath() const
 {
     return mPath;
-}
-
-void File::check()
-{
-    model::NodePtr parent = getParent();
-    if (parent)
-    {
-        if (parent->isA<model::AutoFolder>())
-        {
-            // updated via autofolder indexing
-            boost::dynamic_pointer_cast<AutoFolder>(parent)->check();
-        }
-        else
-        {
-            gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
-            parent->removeChild(shared_from_this());
-        }
-    }
-    else
-    {
-        // File is not part of the project view. For exception handling during playback, the file
-        // will return empty video/audio data instead of showing a dialog.
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////

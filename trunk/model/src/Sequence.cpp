@@ -379,7 +379,7 @@ void Sequence::setRender(render::RenderPtr render)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// IPROJECTVIEW
+// INODE
 //////////////////////////////////////////////////////////////////////////
 
 wxString Sequence::getName() const
@@ -391,6 +391,11 @@ void Sequence::setName(wxString name)
 {
     mName = name;
     gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(shared_from_this(),mName)));
+}
+
+void Sequence::check()
+{
+    // Nothing is checked: If files are missing, they'll return 'error' frames/chunks.
 }
 
 //////////////////////////////////////////////////////////////////////////

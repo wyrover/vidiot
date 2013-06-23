@@ -112,11 +112,12 @@ public:
     void setRender(render::RenderPtr render);
 
     //////////////////////////////////////////////////////////////////////////
-    // NODE
+    // INODE
     //////////////////////////////////////////////////////////////////////////
 
-    wxString        getName() const override;
-    void            setName(wxString name) override;
+    wxString    getName() const override;
+    void        setName(wxString name) override;
+    void        check() override;
 
 private:
 
