@@ -109,8 +109,12 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     if (currentTestRequiresWindow())
     {
         updateTitle();
+        waitForIdle();
+        LOG_ERROR;
         RunInMainThread([this] { Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); }); // Set
+        LOG_ERROR;
     }
+        LOG_ERROR;
     return true;
 }
 

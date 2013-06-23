@@ -10,13 +10,32 @@ class TestWatch: public CxxTest::TestSuite // Must be on same line as class defi
 {
 public:
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+    void setUp();
+    void tearDown();
+
     //////////////////////////////////////////////////////////////////////////
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
+    void testRemoveWatchedSubSubFolder();
     void testRemoveWatchedSubFolder();
+    void testRemovedWatchedFolder();
+    void testAddAndRemoveFileToWatchedAutoFolder();
+    void testAddAndRemoveFileToWatchedNonAutoFolder();
+    void testRemoveProjectViewFolderContainingFileOnDisk();
+
+    void testRemovedFileInSequence();
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     model::FolderPtr mRoot;
     RandomTempDirPtr mTempDir;
     RandomTempDirPtr mSubDir;
@@ -24,6 +43,14 @@ private:
     wxFileName mTempDirName;
     wxFileName mSubDirName;
     wxFileName mSubSubDirName;
+    model::IPaths mInputFiles;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    model::FolderPtr setup();
+    void ASSERT_WATCHED_PATHS_COUNT(int n);
 };
 
 } // namespace
