@@ -28,8 +28,6 @@ public:
     void testAddAndRemoveFileToWatchedNonAutoFolder();
     void testRemoveProjectViewFolderContainingFileOnDisk();
 
-    void testRemovedFileInSequence();
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -50,7 +48,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     model::FolderPtr setup();
-    void ASSERT_WATCHED_PATHS_COUNT(int n);
 };
 
 } // namespace

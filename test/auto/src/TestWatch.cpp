@@ -5,6 +5,7 @@
 #include "Folder.h"
 #include "HelperApplication.h"
 #include "HelperProjectView.h"
+#include "HelperWatcher.h"
 #include "Sequence.h"
 #include "UtilPath.h"
 #include "Watcher.h"
@@ -207,41 +208,6 @@ void TestWatch::testRemoveProjectViewFolderContainingFileOnDisk()
     ASSERT_WATCHED_PATHS_COUNT(0); // Watch for the file must be removed
 }
 
-void TestWatch::testRemovedFileInSequence() // todo make TestExceptionHandling::testRemovedFileInSequence
-{
-    StartTestSuite();
-    mRoot = createProject();
-    ASSERT(mRoot);
-    model::IPaths InputFiles = getListOfInputFiles();
-
-    StartTest("Add file to a non-auto folder");
-    RandomTempDirPtr tempDir = RandomTempDir::generate();
-    wxFileName filepath1(tempDir->getFileName().GetLongPath(), "removedfile.avi");
-    bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath1.GetLongPath(), false );
-    ASSERT(copyok);
-
-    ASSERT_WATCHED_PATHS_COUNT(0);
-    model::FolderPtr folder1 = addFolder( "TestFolder" );
-    WaitForChildCount(mRoot, 2);
-    model::Files files1 = addFiles( boost::assign::list_of(filepath1), folder1 );
-    WaitForChildCount(mRoot, 3);
-    ASSERT_WATCHED_PATHS_COUNT(1);
-    model::SequencePtr sequence = createSequence(folder1);
-    WaitForChildCount(mRoot, 4);
-    remove(folder1);
-    ASSERT_WATCHED_PATHS_COUNT(0);
-    triggerMenu(ID_CLOSESEQUENCE);
-
-    tempDir.reset(); // Deletes the file (still used in the sequence) from disk
-
-    // Open the sequence again (file missing from disk)
-    getProjectView().select(boost::assign::list_of(folder1));
-    getProjectView().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_OPEN));
-    waitForIdle();
-
-    Play(10, 500);
-}
-
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -265,11 +231,6 @@ model::FolderPtr TestWatch::setup()
     ASSERT_EQUALS(mRoot->find(util::path::toName(mSubSubDirName)).size(),1); // Subdir name is relative to parent
     ASSERT_WATCHED_PATHS_COUNT(1); // Only the topmost autofolder is being watched
     return autofolder;
-}
-
-void TestWatch::ASSERT_WATCHED_PATHS_COUNT(int n)
-{
-    RunInMainThread([n] { ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),n); });
 }
 
 } // namespace
