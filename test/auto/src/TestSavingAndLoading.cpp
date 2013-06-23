@@ -2,6 +2,7 @@
 
 #include "HelperApplication.h"
 #include "HelperFileSystem.h"
+#include "HelperProject.h"
 #include "HelperTimeline.h"
 #include "HelperWindow.h"
 #include "Project.h"
@@ -31,16 +32,9 @@ void TestSavingAndLoading::testSaveAndLoad()
 {
     StartTestSuite();
     StartTest("SetUp");
-    RandomTempDirPtr tempDir = RandomTempDir::generate();
-    wxFileName dirpath = tempDir->getFileName();
-    dirpath.SetName("LoadSave");
-    dirpath.SetExt("vid");
-    wxString path(dirpath.GetFullPath());
-    StartTest("Save document");
-    gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(path);
-    gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(path);
-    waitForIdle();
-    triggerMenu(wxID_CLOSE);
+
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
+
     StartTest("Load document");
     triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();
