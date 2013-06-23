@@ -169,15 +169,6 @@ bool AutoFolder::mustBeWatched(wxString path)
     return Node::mustBeWatched(path); // Maybe for any of the children?
 }
 
-//////////////////////////////////////////////////////////////////////////
-// IPATH
-//////////////////////////////////////////////////////////////////////////
-
-wxFileName AutoFolder::getPath() const
-{
-    return mPath;
-}
-
 void AutoFolder::check()
 {
     ASSERT(wxThread::IsMain());
@@ -201,6 +192,15 @@ void AutoFolder::check()
         worker::Worker::get().schedule(mCurrentUpdate);
     }
     return;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// IPATH
+//////////////////////////////////////////////////////////////////////////
+
+wxFileName AutoFolder::getPath() const
+{
+    return mPath;
 }
 
 void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)

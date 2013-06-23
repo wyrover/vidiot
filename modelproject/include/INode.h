@@ -71,6 +71,10 @@ public:
     /// (on disk) are present in the project tree.
     virtual bool mustBeWatched(wxString path) = 0;
 
+    /// Is called when the object should do a check for consistency.
+    /// i.e. Is the file/folder on disk still present?
+    virtual void check() = 0;
+
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////

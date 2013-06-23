@@ -85,9 +85,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
                 // Existing file: update
                 BOOST_FOREACH( model::NodePtr node, nodes )
                 {
-                    model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(node);
-                    ASSERT(path);
-                    path->check();
+                    node->check();
                 }
             }
             else
@@ -96,9 +94,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
                 model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetFullPath());
                 BOOST_FOREACH( model::NodePtr node, nodes )
                 {
-                    model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(node);
-                    ASSERT(path);
-                    path->check();
+                    node->check();
                 }
             }
             break;

@@ -36,13 +36,13 @@ public:
 
     NodePtrs findPath(wxString path) override;
     bool mustBeWatched(wxString path) override;
+    void check() override; ///< Update the autofolder children. The folder is synced with the filesystem.
 
     //////////////////////////////////////////////////////////////////////////
     // IPATH
     //////////////////////////////////////////////////////////////////////////
 
     wxFileName getPath() const override;
-    void check() override; ///< Update the autofolder children. The folder is synced with the filesystem.
 
     /// Called when the updating is done
     void onWorkDone(worker::WorkDoneEvent& event);
