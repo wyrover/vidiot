@@ -16,6 +16,11 @@ public:
 
     void testRemovedFileInSequence();
 
+    void testRemovedFileInSequenceBeforeOpening();
+
+    void testRemovedFileInProjectViewBeforeOpening();
+
+    void testRemovedFolderInProjectViewBeforeOpening();
 };
 
 } // namespace

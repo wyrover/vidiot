@@ -250,9 +250,9 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
         {
             if (!getParent()->isA<AutoFolder>())
             {
+                getParent()->removeChild(shared_from_this()); // Do not execute after the dialog (crash can occur then - since the node is removed by another update)
                 gui::Dialog::get().getConfirmation(_("Folder removed"), _("The folder ") + util::path::toName(getPath()) + _(" has been removed from disk. Folder is removed from project also."));
             }
-            getParent()->removeChild(shared_from_this());
         }
     }
     else

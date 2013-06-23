@@ -15,6 +15,7 @@ typedef boost::shared_ptr<Folder> FolderPtr;
 }
 
 namespace test {
+
 /// Trigger the menu given. That menu should be in the main menu bar.
 /// \param id menu identifier
 void triggerMenu(int id);
