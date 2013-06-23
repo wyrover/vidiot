@@ -100,6 +100,10 @@ protected:
     // PACKETS INTERFACE TO SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
 
+    /// Indicates if the file could not be opened. If so, then the file is
+    /// probably missing or could not be opened for another reason.
+    bool fileOpenFailed() const;
+
     /// File is opened if it was not yet opened
     void startReadingPackets();
 
@@ -130,22 +134,30 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     boost::mutex sMutexStop; ///< This mutex is needed to ensure that any pending getNextPacket() - which is executed in an external thread - is finished when stopping.
-    wxString mName;
-    AVFormatContext* mFileContext;
-    int mStreamIndex;
-    bool mFileOpen;
-    bool mReadingPackets;
-    bool mEOF;
-    int mMaxBufferSize;
-    FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
-    pts mNumberOfFrames;
-    int mTwoInARow;
-    boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
+
+    // Attributes
     wxFileName mPath;
+    wxString mName;
+    pts mNumberOfFrames;
     time_t mLastModified;
     bool mHasVideo;
     bool mHasAudio;
-    bool mCanBeOpened;
+
+    // Status of opening
+    bool mFileOpened;       ///< True if the file open has been done. Note: The file open may have failed.
+    bool mFileOpenFailed;   ///< True if the file has been opened, but failed.
+    bool mReadingPackets;
+    bool mEOF;
+
+    // AVCodec access
+    AVFormatContext* mFileContext;
+    int mStreamIndex;
+
+    // Buffering
+    int mMaxBufferSize;
+    FifoPacket mPackets; ///< Holds retrieved packets until extracted with getNextPacket()
+    int mTwoInARow;
+    boost::scoped_ptr<boost::thread> mBufferPacketsThreadPtr;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

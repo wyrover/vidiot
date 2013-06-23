@@ -230,16 +230,6 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     waitForIdle(); // Can be used again when the DND is done.
 }
 
-FolderHelper::FolderHelper(model::FolderPtr folder)
-    :   mFolder(folder)
-{
-}
-
-FolderHelper::~FolderHelper()
-{
-    remove( mFolder );
-}
-
 WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
     :   mNode(node)
     ,   mCount(count)

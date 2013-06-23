@@ -189,7 +189,6 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
     setGenerationProgress(mProgress);
     mProgress++;
     VAR_VIDEO(videoFrame);
-    VAR_ERROR(getLength())(videoFrame);
     return videoFrame;
 }
 

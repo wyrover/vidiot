@@ -110,6 +110,8 @@ Timeline::~Timeline()
 
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
+
+    mSequence->clean();
 }
 
 //////////////////////////////////////////////////////////////////////////

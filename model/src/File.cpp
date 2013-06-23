@@ -24,47 +24,55 @@ const int File::LENGTH_UNDEFINED = -1;
 //////////////////////////////////////////////////////////////////////////
 
 File::File()
-:	IFile()
-,   Node()
-,   mPath()
-,   mName()
-,	mFileContext(0)
-,   mReadingPackets(false)
-,   mEOF(false)
-,   mPackets(1)
-,   mMaxBufferSize(0)
-,   mStreamIndex(STREAMINDEX_UNDEFINED)
-,   mBufferPacketsThreadPtr()
-,   mFileOpen(false)
-,   mNumberOfFrames(LENGTH_UNDEFINED)
-,   mTwoInARow(0)
-,   mLastModified(0)
-,   mHasVideo(false)
-,   mHasAudio(false)
-,   mCanBeOpened(false)
+    :	IFile()
+    ,   Node()
+    // Attributes
+    ,   mPath()
+    ,   mName()
+    ,   mNumberOfFrames(LENGTH_UNDEFINED)
+    ,   mLastModified(0)
+    ,   mHasVideo(false)
+    ,   mHasAudio(false)
+    // Status of opening
+    ,   mFileOpened(false)
+    ,   mFileOpenFailed(false)
+    ,   mReadingPackets(false)
+    ,   mEOF(false)
+    // AVCodec access
+    ,	mFileContext(0)
+    ,   mStreamIndex(STREAMINDEX_UNDEFINED)
+    // Buffering
+    ,   mMaxBufferSize(0)
+    ,   mPackets(1)
+    ,   mBufferPacketsThreadPtr()
+    ,   mTwoInARow(0)
 {
     VAR_DEBUG(this);
 }
 
 File::File(wxFileName path, int buffersize)
-:	IFile()
-,   Node()
-,   mPath(path)
-,   mName()
-,	mFileContext(0)
-,   mReadingPackets(false)
-,   mEOF(false)
-,   mPackets(1)
-,   mMaxBufferSize(buffersize)
-,   mStreamIndex(STREAMINDEX_UNDEFINED)
-,   mBufferPacketsThreadPtr()
-,   mFileOpen(false)
-,   mNumberOfFrames(LENGTH_UNDEFINED)
-,   mTwoInARow(0)
-,   mLastModified(mPath.GetModificationTime().GetTicks())
-,   mHasVideo(false)
-,   mHasAudio(false)
-,   mCanBeOpened(false)
+    :	IFile()
+    ,   Node()
+    // Attributes
+    ,   mPath(path)
+    ,   mName()
+    ,   mNumberOfFrames(LENGTH_UNDEFINED)
+    ,   mLastModified(mPath.GetModificationTime().GetTicks())
+    ,   mHasVideo(false)
+    ,   mHasAudio(false)
+    // Status of opening
+    ,   mFileOpened(false)
+    ,   mFileOpenFailed(false)
+    ,   mReadingPackets(false)
+    ,   mEOF(false)
+    // AVCodec access
+    ,	mFileContext(0)
+    ,   mStreamIndex(STREAMINDEX_UNDEFINED)
+    // Buffering
+    ,   mMaxBufferSize(buffersize)
+    ,   mPackets(1)
+    ,   mBufferPacketsThreadPtr()
+    ,   mTwoInARow(0)
 {
     VAR_DEBUG(this);
 
@@ -80,9 +88,7 @@ File::File(wxFileName path, int buffersize)
             // This can only be done for supported formats, since avcodec
             // can only read the lengths from those.
             //
-            // Note that the opening of a file sets mCanBeOpened to the correct value.
-            // By these two if statements for files no longer on disk, mCanBeOpened
-            // remains false.
+            // Note that the opening of a file sets mFileOpenFailed to the correct value.
             openFile();
             closeFile();
         }
@@ -91,24 +97,28 @@ File::File(wxFileName path, int buffersize)
 }
 
 File::File(const File& other)
-:	IFile()
-,   Node()
-,   mPath(other.mPath)
-,   mName(other.mName)
-,	mFileContext(0)
-,   mReadingPackets(false)
-,   mEOF(false)
-,   mPackets(1)
-,   mMaxBufferSize(other.mMaxBufferSize)
-,   mStreamIndex(STREAMINDEX_UNDEFINED)
-,   mBufferPacketsThreadPtr()
-,   mFileOpen(false)
-,   mNumberOfFrames(other.mNumberOfFrames)
-,   mTwoInARow(0)
-,   mLastModified(other.mLastModified)
-,   mHasVideo(other.mHasVideo)
-,   mHasAudio(other.mHasAudio)
-,   mCanBeOpened(other.mCanBeOpened)
+    :	IFile()
+    ,   Node()
+    // Attributes
+    ,   mPath(other.mPath)
+    ,   mName(other.mName)
+    ,   mNumberOfFrames(other.mNumberOfFrames)
+    ,   mLastModified(other.mLastModified)
+    ,   mHasVideo(other.mHasVideo)
+    ,   mHasAudio(other.mHasAudio)
+    // Status of opening
+    ,   mFileOpened(false)
+    ,   mFileOpenFailed(false)
+    ,   mReadingPackets(false)
+    ,   mEOF(false)
+    // AVCodec access
+    ,	mFileContext(0)
+    ,   mStreamIndex(STREAMINDEX_UNDEFINED)
+    // Buffering
+    ,   mMaxBufferSize(other.mMaxBufferSize)
+    ,   mPackets(1)
+    ,   mBufferPacketsThreadPtr()
+    ,   mTwoInARow(0)
 {
     VAR_DEBUG(this);
 }
@@ -172,6 +182,8 @@ void File::moveTo(pts position)
     VAR_DEBUG(this)(position);
     openFile(); // Needed for avcodec calls below
 
+    if (fileOpenFailed()) { return; } // File probably closed
+
     stopReadingPackets();
 
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
@@ -226,8 +238,8 @@ void File::check()
     }
     else
     {
-    // todo if file is not present then it should provide empty/default video frames + audio chunks + thumbnail
-    // todo update dialog text: not all removed files will be part of the project view
+        // File is not part of the project view. For exception handling during playback, the file
+        // will return empty video/audio data instead of showing a dialog.
     }
 }
 
@@ -251,7 +263,7 @@ wxString File::getName() const
 
 bool File::canBeOpened()
 {
-    return mCanBeOpened;
+    return !mFileOpenFailed;
 }
 
 bool File::hasVideo()
@@ -276,7 +288,7 @@ bool File::useStream(AVMediaType type) const
 AVStream* File::getStream()
 {
     openFile();
-    if (mFileContext && mStreamIndex != STREAMINDEX_UNDEFINED)
+    if (!fileOpenFailed() && mFileContext && mStreamIndex != STREAMINDEX_UNDEFINED)
     {
         return mFileContext->streams[mStreamIndex];
     }
@@ -286,6 +298,11 @@ AVStream* File::getStream()
 //////////////////////////////////////////////////////////////////////////
 // PACKETS INTERFACE TO SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
+
+bool File::fileOpenFailed() const
+{
+    return mFileOpenFailed;
+}
 
 void File::startReadingPackets()
 {
@@ -298,6 +315,8 @@ void File::startReadingPackets()
     if (getEOF()) return;
 
     openFile();
+    if (fileOpenFailed()) { return; } // File probably closed
+
     if (mReadingPackets) return;
 
     VAR_DEBUG(this);
@@ -359,6 +378,8 @@ void File::flush()
 AVCodecContext* File::getCodec()
 {
     openFile();
+    if (fileOpenFailed()) { return 0; } // File probably closed
+
     ASSERT(mFileContext->streams[mStreamIndex]);
     return mFileContext->streams[mStreamIndex]->codec;
 }
@@ -411,9 +432,11 @@ bool File::getEOF() const
 
 void File::openFile()
 {
-    if (mFileOpen) return;
-
+    if (mFileOpened) return;
+    mFileOpened = true;
     VAR_DEBUG(this);
+
+    mFileOpenFailed = true; // Is reset after the open succeeds
 
     int result = 0;
     wxString path = mPath.GetLongPath();
@@ -568,21 +591,19 @@ void File::openFile()
         VAR_DEBUG(stream)(codec);
     }
     VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
-    mFileOpen = true;
-    mCanBeOpened = true;
+    mFileOpenFailed = false;
 }
 
 void File::closeFile()
 {
     VAR_DEBUG(this);
-    if (!mFileOpen) return;
+    if (!mFileOpened) { return; }
+    if (fileOpenFailed()) { return; }
 
-    {
-        boost::mutex::scoped_lock lock(Avcodec::sMutex);
-        avformat_close_input(&mFileContext);
-        ASSERT_ZERO(mFileContext);
-        mFileOpen = false;
-    }
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
+    avformat_close_input(&mFileContext);
+    ASSERT_ZERO(mFileContext);
+    mFileOpened = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -645,7 +666,20 @@ void File::bufferPacketsThread()
 
 std::ostream& operator<<( std::ostream& os, const File& obj )
 {
-    os << &obj << '|' << obj.mPath << '|' << obj.mFileOpen << '|' << obj.mReadingPackets << '|' << obj.mEOF << '|' << obj.mMaxBufferSize << '|' << obj.mNumberOfFrames << '|' << obj.mTwoInARow << '|' << obj.mLastModified;
+    os  << &obj << '|'
+        << obj.mPath << '|'
+        << obj.mName << '|'
+        << obj.mNumberOfFrames << '|'
+        << obj.mLastModified << '|'
+        << obj.mHasVideo << '|'
+        << obj.mHasAudio << '|'
+        << obj.mFileOpened << '|'
+        << obj.mFileOpenFailed << '|'
+        << obj.mReadingPackets << '|'
+        << obj.mEOF << '|'
+        << obj.mStreamIndex << '|'
+        << obj.mMaxBufferSize << '|'
+        << obj.mTwoInARow;
     return os;
 }
 
@@ -664,7 +698,6 @@ void File::serialize(Archive & ar, const unsigned int version)
     ar & mPath;
     ar & mLastModified;
     ar & mMaxBufferSize;
-    ar & mCanBeOpened;
     if (Archive::is_loading::value)
     {
         // PERF: Cache each file once

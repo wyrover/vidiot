@@ -129,6 +129,7 @@ std::istream& Project::LoadObject(std::istream& istream)
         ar & *this;
         ar & IView::getView();
         // todo consistency check here
+        // for this purpose: move check method from ipath to inode
         // - schedule autofolder updates
         // - check all File nodes in the tree
         // - check all File objects in sequences (openFile() + closeFile() to recheck canBeOpened);

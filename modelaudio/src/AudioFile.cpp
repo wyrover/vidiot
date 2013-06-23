@@ -3,6 +3,7 @@
 #include "AudioChunk.h"
 #include "AudioCompositionParameters.h"
 #include "Convert.h"
+#include "EmptyChunk.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
@@ -92,6 +93,12 @@ void AudioFile::clean()
 AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& parameters)
 {
     startDecodingAudio(parameters);
+
+    if (fileOpenFailed())
+    {
+        // If file could not be read (for whatever reason) return emtpy audio.
+        return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(1), 0));
+    }
 
     PacketPtr audioPacket = getNextPacket();
     if (!audioPacket)
@@ -265,6 +272,12 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
 {
     if (mDecodingAudio) return;
 
+    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
+
+    if (fileOpenFailed()) { return; } // File could not be opened (deleted?)
+
+    mDecodingAudio = true;
+
     // Allocated upon first use. See also the remark in the header file
     // on GCC in combination with make_shared.
     if (!audioDecodeBuffer)
@@ -272,9 +285,6 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
         audioDecodeBuffer   = new sample[sAudioBufferSizeInBytes];
         audioResampleBuffer = new sample[sAudioBufferSizeInBytes];
     }
-
-    startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
-    mDecodingAudio = true;
 
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
 

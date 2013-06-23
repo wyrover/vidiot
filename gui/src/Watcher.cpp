@@ -44,16 +44,7 @@ Watcher::~Watcher()
 
 int Watcher::getWatchedPathsCount() const
 {
-    if (!mWatcher)
-    {
-        ASSERT_ZERO(mWatches.size());
-        return 0;
-    }
-
-    wxArrayString paths;
-    int nPath = mWatcher->GetWatchedPaths (&paths);
-    for ( int i = 0; i < nPath; ++i ) { VAR_DEBUG(paths[i]); }
-    return nPath;
+    return mWatches.size();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,11 +79,27 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
         // - Second, modify events are given while the file contents is updated.
         {
             wxFileName changedPath = event.GetPath();
-            BOOST_FOREACH( model::NodePtr node, model::Project::get().getRoot()->findPath(changedPath.GetFullPath()) )
+            model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetFullPath());
+            if (!nodes.empty())
             {
-                model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(node);
-                ASSERT(path);
-                path->check();
+                // Existing file: update
+                BOOST_FOREACH( model::NodePtr node, nodes )
+                {
+                    model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(node);
+                    ASSERT(path);
+                    path->check();
+                }
+            }
+            else
+            {
+                changedPath.SetFullName(""); // Take the folder (this is probably a file that has just been created)
+                model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetFullPath());
+                BOOST_FOREACH( model::NodePtr node, nodes )
+                {
+                    model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(node);
+                    ASSERT(path);
+                    path->check();
+                }
             }
             break;
         }
@@ -123,6 +130,9 @@ void Watcher::onCloseProject( model::EventCloseProject &event )
     gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
     gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
     gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
+
+    mWatches.clear();
+    stop();
 
     event.Skip();
 }
@@ -175,15 +185,29 @@ boost::optional<wxString> requiredWatchPath( model::NodePtr node )
 
     ASSERT(node->isA<model::AutoFolder>() || node->isA<model::File>());
 
-    wxString toBeWatched = node->isA<model::AutoFolder>() ? pathOnDisk->getPath().GetFullPath() : pathOnDisk->getPath().GetPath();
+    wxFileName path = pathOnDisk->getPath();
+    VAR_DEBUG(path);
+    if (!node->isA<model::AutoFolder>())
+    {
+        path.SetFullName(""); // Remove filename and use the folder
+    }
 
-    return boost::optional<wxString>(toBeWatched);
+    return boost::optional<wxString>(util::path::toPath(path));
 }
 
 void Watcher::watch( model::NodePtr node )
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
-    if (!requiresWatch) { return; }
+    if (!requiresWatch)
+    {
+        // The node itselves does not need watching, but maybe it's children do.
+        // Can happen for a (non auto) folder containing AutoFolders/Files
+        BOOST_FOREACH( model::NodePtr child, node->getChildren() )
+        {
+            watch(child);
+        }
+        return;
+    }
     wxString toBeWatched = *requiresWatch;
 
     BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
@@ -222,19 +246,34 @@ void Watcher::watch( model::NodePtr node )
 
     // Start watching the new folder
     VAR_DEBUG(mWatches);
-    bool ok = mWatcher->AddTree(wxFileName(toBeWatched,""));
+    if (!mWatcher)
+    {
+        start();
+    }
+    bool ok = mWatcher->AddTree(wxFileName(toBeWatched + "/",""));
     if (!ok)
     {
         VAR_WARNING(toBeWatched);
         stop();
         start();
     }
+    ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), (int)mWatches.size()); // Note that sometimes both 'folder' and 'folder/' are added.
+    VAR_DEBUG(*this);
 }
 
 void Watcher::unwatch( model::NodePtr node )
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
-    if (!requiresWatch) { return; }
+    if (!requiresWatch)
+    {
+        // The node itselves does not need watching, but maybe it's children do.
+        // Can happen for a (non auto) folder containing AutoFolders/Files
+        BOOST_FOREACH( model::NodePtr child, node->getChildren() )
+        {
+            unwatch(child);
+        }
+        return;
+    }
 
     wxString obsoleteWatch = *requiresWatch;
 
@@ -249,14 +288,26 @@ void Watcher::unwatch( model::NodePtr node )
     if (mWatches[obsoleteWatch].empty())
     {
         mWatches.erase(obsoleteWatch);
-        bool ok = mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
-        if (!ok)
+        if (mWatcher)
         {
-            VAR_WARNING(obsoleteWatch);
-            stop();
-            start();
+            bool ok = mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
+            if (!ok)
+            {
+                VAR_WARNING(obsoleteWatch);
+                stop();
+                start();
+            }
+            else
+            {
+                ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), (int)mWatches.size()); // Note that sometimes both 'folder' and 'folder/' are added.
+                if (mWatches.empty())
+                {
+                    stop();
+                }
+            }
         }
     }
+    VAR_DEBUG(*this);
 }
 
 void Watcher::stop()
@@ -274,9 +325,9 @@ void Watcher::start()
     ASSERT(!mWatcher);
     mWatcher = new wxFileSystemWatcher();
     mWatcher->Bind(wxEVT_FSWATCHER, &Watcher::onChange, this);
+    VAR_DEBUG(*this);
     BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
     {
-        VAR_DEBUG(kv.first);
         mWatcher->AddTree(kv.first);
     }
 }
@@ -287,7 +338,7 @@ void Watcher::start()
 
 std::ostream& operator<<( std::ostream& os, const Watcher& obj )
 {
-    os << &obj;
+    os << &obj << '|' << obj.mWatches;
     return os;
 }
 

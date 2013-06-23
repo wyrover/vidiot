@@ -68,6 +68,7 @@ ProjectView::ProjectView(wxWindow* parent)
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,         this, meID_NEW_SEQUENCE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFile,             this, meID_NEW_FILE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCreateSequence,      this, meID_CREATE_SEQUENCE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onOpen,                this, wxID_OPEN);
 
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &ProjectView::onStartEditing,    this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &ProjectView::onContextMenu,     this);
@@ -105,6 +106,7 @@ ProjectView::~ProjectView()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,       this, meID_NEW_SEQUENCE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFile,           this, meID_NEW_FILE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCreateSequence,    this, meID_CREATE_SEQUENCE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onOpen,              this, wxID_OPEN);
 
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,   &ProjectView::onStartEditing,    this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,    &ProjectView::onContextMenu,     this);
@@ -248,6 +250,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
 
     bool showNew = true;
     bool showCreateSequence = false;
+    bool showOpenSequence = false;
 
     bool enableUpdateAutoFolder = true;
 
@@ -255,6 +258,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     bool enableDelete = true;
     bool enablePaste = (nSelected == 1);
     bool enableCreateSequence = (nSelected == 1);
+    bool enableOpen = (nSelected == 1);
 
     BOOST_FOREACH( wxDataViewItem item, sel )
     {
@@ -263,6 +267,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
         bool isRoot = (!node->hasParent());
         bool isFolder = (boost::dynamic_pointer_cast<model::Folder>(node));
         bool isAutoFolder = (boost::dynamic_pointer_cast<model::AutoFolder>(node));
+        bool isSequence = (boost::dynamic_pointer_cast<model::Sequence>(node));
 
         if (isRoot)
         {
@@ -281,6 +286,10 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
         {
             showNew = true;
             showCreateSequence = true;
+        }
+        else if (isSequence)
+        {
+            showOpenSequence = true;
         }
         else
         {
@@ -314,12 +323,17 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     menu.AppendSeparator();
     menu.Append( wxID_DELETE,_("&Delete\tDEL") );
     menu.Enable( wxID_DELETE, enableDelete );
+    menu.AppendSeparator();
 
     if (showCreateSequence)
     {
-        menu.AppendSeparator();
         menu.Append(meID_CREATE_SEQUENCE, _("&Make sequence"));
         menu.Enable(meID_CREATE_SEQUENCE, enableCreateSequence);
+    }
+    if (showOpenSequence)
+    {
+        menu.Append( wxID_OPEN,_("&Open sequence\to") );
+        menu.Enable( wxID_OPEN, enableOpen );
     }
 
     wxMenuItem* pAddMenu = 0;
@@ -448,6 +462,17 @@ void ProjectView::onCreateSequence(wxCommandEvent& event)
 {
     command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
     mProject->Submit(cmd);
+}
+
+void ProjectView::onOpen(wxCommandEvent& event)
+{
+    BOOST_FOREACH( model::NodePtr node, getSelection() )
+    {
+        if (node->isA<model::Sequence>())
+        {
+            gui::Window::get().getTimeLines().Open(boost::dynamic_pointer_cast<model::Sequence>(node));
+        }
+    }
 }
 
 void ProjectView::onMotion(wxMouseEvent& event)

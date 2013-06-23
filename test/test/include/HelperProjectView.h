@@ -79,15 +79,6 @@ wxPoint CenterInProjectView(model::NodePtr node);
 /// \param to position within timeline
 void DragFromProjectViewToTimeline(model::NodePtr node, wxPoint to);
 
-/// Deletes the folder when going out of scope.
-struct FolderHelper
-{
-    FolderHelper(model::FolderPtr folder);
-    ~FolderHelper();
-
-    model::FolderPtr mFolder;
-};
-
 /// Delays execution of the module test until a given node has signaled (via an event)
 /// that it has the given number of children.
 struct WaitForChildCount
