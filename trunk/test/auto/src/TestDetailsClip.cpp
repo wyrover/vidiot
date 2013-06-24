@@ -13,6 +13,7 @@
 #include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
+#include "HelperTimelineTrim.h"
 #include "HelperTransform.h"
 #include "HelperWindow.h"
 #include "ProjectViewCreateSequence.h"

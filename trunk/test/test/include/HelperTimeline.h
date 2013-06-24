@@ -170,10 +170,6 @@ pixel CursorPosition();                              ///< \return cursor positio
 void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
 void Move(wxPoint position);                                            ///< Move the mouse to the given position within the timeline
 void Click(wxPoint position);                                           ///< Move the mouse to the given position and (left) click there
-void TrimLeft(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);   ///< Trim the given clip on the left side
-void TrimRight(model::IClipPtr clip, pixel length, bool shift = true, bool endtrim = true);  ///< Trim the given clip on the right side
-void BeginTrim(wxPoint from, bool shift);
-void EndTrim(bool shift = true);
 
 /// Zoom in the given amount of times by zooming in the given amount of times.
 /// When going out of scope, will reset to the default zoom level by zooming out an equal amount of times.
@@ -184,18 +180,6 @@ struct Zoom
 private:
     int mLevel;
 };
-
-/// Do a trim between the two points (press, move, release). This basically does the same as 'Drag' but faster. The Drag
-/// method does the move in several (10) steps. This method simply moves to the begin point, presses the mouse, moves
-/// to the end point (without intermediate points) and releases the button.
-/// \param from starting position to move to initially
-/// \param to final position to drag to
-/// \param shift hold down shift after pressing the mouse button
-void Trim(wxPoint from, wxPoint to, bool shift = false);
-
-/// \see Trim
-/// Do a shift trim
-void ShiftTrim(wxPoint from, wxPoint to);
 
 void ToggleInterval(pixel from, pixel to);
 

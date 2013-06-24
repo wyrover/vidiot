@@ -10,6 +10,7 @@
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
+#include "HelperTimelineTrim.h"
 #include "HelperTransition.h"
 #include "HelperWindow.h"
 #include "IClip.h"

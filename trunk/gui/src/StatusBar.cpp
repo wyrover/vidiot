@@ -11,7 +11,7 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 StatusBar::StatusBar(wxWindow *parent)
-    :   wxStatusBar(parent,wxID_ANY,wxSTB_DEFAULT_STYLE)
+    :   wxStatusBar(parent,wxID_ANY,wxSTB_DEFAULT_STYLE|wxSTB_ELLIPSIZE_MIDDLE)
 {
     SetFieldsCount(getNumberOfStatusBars());
     setDebugText("");
@@ -83,6 +83,7 @@ void StatusBar::setProcessingText(wxString text)
 
 void StatusBar::setQueueText(wxString text)
 {
+    // todo run in main thread only
     SetStatusText( text, Config::getShowDebugInfo() ? 2 : 1 );
 }
 

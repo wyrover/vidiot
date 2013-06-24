@@ -4,6 +4,7 @@
 #include "HelperFileSystem.h"
 #include "HelperProject.h"
 #include "HelperTimeline.h"
+#include "HelperTimelineTrim.h"
 #include "HelperWindow.h"
 #include "Project.h"
 #include "Window.h"
