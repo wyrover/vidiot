@@ -357,45 +357,6 @@ void Click(wxPoint position)
     ASSERT_EQUALS(getTimeline().getMouse().getLeftDownPosition(), position);
 }
 
-void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim) // todo make interface similar to helpertimeline drag
-{
-    VAR_DEBUG(clip)(length)(shift);
-    wxPoint from = LeftCenter(clip);
-    wxPoint to = from;
-    to.x += length;
-    BeginTrim(from,shift);
-    Move(to);
-    waitForIdle();
-    if (endtrim) { EndTrim(shift); }
-    waitForIdle();
-}
-
-void TrimRight(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
-{
-    VAR_DEBUG(clip)(length)(shift);
-    wxPoint from = RightCenter(clip);
-    wxPoint to = from;
-    to.x += length;
-    BeginTrim(from,shift);
-    Move(to);
-    waitForIdle();
-    if (endtrim) { EndTrim(shift); }
-    waitForIdle();
-}
-
-void BeginTrim(wxPoint from, bool shift)
-{
-    Move(from);
-    if (shift) { ShiftDown(); }
-    LeftDown();
-}
-
-void EndTrim(bool shift)
-{
-    LeftUp();
-    if (shift) { ShiftUp(); }
-}
-
 Zoom::Zoom(int level)
     : mLevel(level)
 {
@@ -411,21 +372,6 @@ Zoom::~Zoom()
     {
         Type('-');
     }
-}
-
-void Trim(wxPoint from, wxPoint to, bool shift)
-{
-    Move(from);
-    LeftDown();
-    if (shift) { ShiftDown(); }
-    Move(to);
-    LeftUp();
-    if (shift) { ShiftUp(); }
-}
-
-void ShiftTrim(wxPoint from, wxPoint to)
-{
-    Trim(from,to,true);
 }
 
 void ToggleInterval(pixel from, pixel to)

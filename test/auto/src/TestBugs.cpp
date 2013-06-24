@@ -3,6 +3,7 @@
 #include "HelperDetails.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineDrag.h"
+#include "HelperTimelineTrim.h"
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "DetailsClip.h"

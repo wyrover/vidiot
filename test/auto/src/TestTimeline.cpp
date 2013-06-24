@@ -15,6 +15,7 @@
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
+#include "HelperTimelineTrim.h"
 #include "HelperTimelinesView.h"
 #include "HelperTransition.h"
 #include "HelperWindow.h"
