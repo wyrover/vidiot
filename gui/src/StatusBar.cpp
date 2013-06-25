@@ -78,12 +78,12 @@ void StatusBar::setDebugText(wxString text)
 
 void StatusBar::setProcessingText(wxString text)
 {
+    // todo ensure that setstatustext only called in main thread
     SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
 }
 
 void StatusBar::setQueueText(wxString text)
 {
-    // todo run in main thread only
     SetStatusText( text, Config::getShowDebugInfo() ? 2 : 1 );
 }
 

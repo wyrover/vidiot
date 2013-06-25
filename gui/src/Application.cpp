@@ -162,11 +162,8 @@ bool Application::OnInit()
 
     LOG_INFO;
 
-    LOG_ERROR;
     SetTopWindow(new Window());
-    LOG_ERROR;
     dynamic_cast<Window*>(GetTopWindow())->init();
-    LOG_ERROR;
 
     return true;
 }

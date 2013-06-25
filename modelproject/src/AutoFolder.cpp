@@ -49,7 +49,6 @@ struct IndexAutoFolderWork
                 mPath.GetDirCount() >= 1 ? mPath.GetDirs().Last() + "/" :
                 mPath.HasVolume() ? mPath.GetVolume() :
                 "";
-            // todo ensure that setProcessingtext is always called from main thred
             gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + "'");
 
             ASSERT(dir.IsOpened());
