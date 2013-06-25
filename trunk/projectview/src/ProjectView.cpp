@@ -43,12 +43,12 @@ ProjectView::ProjectView(wxWindow* parent)
 {
     LOG_INFO;
 
+    mCtrl.AssociateModel( mModel );
+    mModel->DecRef();
+
     mCtrl.EnableDropTarget( DataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
     wxDataViewColumn* dateColumn = mCtrl.AppendTextColumn("Modified",   1, wxDATAVIEW_CELL_INERT,       -1, wxALIGN_RIGHT,  wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
-
-    mCtrl.AssociateModel( mModel );
-    mModel->DecRef();
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add( &mCtrl, 1, wxGROW );
@@ -79,16 +79,6 @@ ProjectView::ProjectView(wxWindow* parent)
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,         &ProjectView::onCollapsed,       this);
 
     mCtrl.GetMainWindow()->Bind(wxEVT_MOTION,           &ProjectView::onMotion,          this);
-
-    // Rancid, but working... Determine the height of the (well, 'a') header
-    // Code specifically put here: Originally it was included in the 'findNode' method (where it is used).
-    // However, that method is often run in a different (non GUI) thread, causing problems.
-    //wxDialog* win = new wxDialog(this,-1,"Dummy");
-    wxHeaderCtrlSimple* s = new wxHeaderCtrlSimple(this);
-    wxHeaderColumnSimple col("Title");
-    s->AppendColumn(col);
-    mHeaderHeight = s->GetSize().GetHeight();
-    s->Destroy();
 
 }
 
@@ -129,6 +119,21 @@ void ProjectView::onOpenProject( model::EventOpenProject &event )
     GetSizer()->Show(&mCtrl);
     GetSizer()->Layout();
     gui::Window::get().Bind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::onAutoOpenFolder, this);
+
+    // Rancid, but working... Determine the height of the (well, 'a') header
+    // Code specifically put here: Originally it was included in the 'findNode' method (where it is used).
+    // However, that method is often run in a different (non GUI) thread, causing problems.
+    //
+    // Then, i put the code in the constructor. However, that caused (sometimes) issues when the first
+    // Idle event was received by the wxdataviewctrl.
+    //
+    //wxDialog* win = new wxDialog(this,-1,"Dummy");
+    wxHeaderCtrlSimple* s = new wxHeaderCtrlSimple(this);
+    wxHeaderColumnSimple col("Title");
+    s->AppendColumn(col);
+    mHeaderHeight = s->GetSize().GetHeight();
+    s->Destroy();
+
     event.Skip();
 }
 
@@ -227,11 +232,6 @@ wxPoint ProjectView::find( model::NodePtr node )
     //}
     //FATAL;
     //return wxPoint(0,0);
-}
-
-int ProjectView::getHeaderHeight() const
-{
-    return mHeaderHeight;
 }
 
 //////////////////////////////////////////////////////////////////////////

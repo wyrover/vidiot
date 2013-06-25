@@ -2,85 +2,10 @@
 
 #include "Config.h"
 #include "UtilLog.h"
+#include "UtilThread.h"
 #include "Window.h"
 
 namespace gui {
-
-/// Schedule a method to be run in the main wxWidgets thread.
-/// This is implemented by submitting an event. In the handler
-/// of the event (which is called in the main wxWidgets thread)
-/// the given method is called.
-/// Usage:
-/// RETURNTYPE x = RunInMainThread(this, boost::bind(&Dialog::theMethod, this, x1, x2, ...)).getResult()
-/// \pre !wxThread::IsMain()
-template <class RETURNTYPE>
-class RunInMainThread
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-{
-public:
-
-    typedef boost::function<RETURNTYPE()> Method;
-
-    /// For methods with a preset
-    RunInMainThread(boost::optional< RETURNTYPE >& preset, Method method)
-        :   mMethod(method)
-        ,   mBarrier(2)
-    {
-        if (preset)
-        {
-            mResult = *preset;
-            preset.reset();
-        }
-        else
-        {
-            showDialog();
-        }
-    }
-
-    /// For methods without a preset (show dialog always)
-    RunInMainThread(Method method)
-        :   mMethod(method)
-        ,   mBarrier(2)
-    {
-        showDialog();
-    }
-
-    void showDialog()
-    {
-        if (wxThread::IsMain())
-        {
-            mResult = mMethod();
-        }
-        else
-        {
-            Bind( wxEVT_THREAD, &RunInMainThread::onThreadEvent, this );
-            QueueEvent(new wxThreadEvent());
-            mBarrier.wait();
-        }
-    }
-
-    ~RunInMainThread()
-    {
-        Unbind( wxEVT_THREAD, &RunInMainThread::onThreadEvent, this );
-    }
-
-    void onThreadEvent(wxThreadEvent& event)
-    {
-        mResult = mMethod();
-        mBarrier.wait();
-    }
-
-    RETURNTYPE getResult() const
-    {
-        return mResult;
-    }
-
-private:
-
-    RETURNTYPE mResult;
-    Method mMethod;
-    boost::barrier mBarrier; ///< Used to join the thread instigating the dialog and the dialog closing (in the main thread)
-};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -117,8 +42,14 @@ void Dialog::setDir(wxString dir)
 
 wxString Dialog::getDir( const wxString & message, const wxString & default, wxWindow* parent )
 {
+    if (mDir)
+    {
+        wxString result = *mDir;
+        mDir.reset();
+        return result;
+    }
     if (!parent) { parent = &Window::get(); }
-    return RunInMainThread<wxString>(mDir, boost::bind(&wxDirSelector, message, default, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent)).getResult();
+    return util::thread::RunInMainThread<wxString>(boost::bind(&wxDirSelector, message, default, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent)).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,8 +62,14 @@ void Dialog::setSaveFile(wxString file)
 
 wxString Dialog::getSaveFile( const wxString& message, const wxString& filetypes, const wxString& defaultpath, const wxString& defaultfilename, const wxString& defaultextension, wxWindow* parent )
 {
+    if (mSaveFile)
+    {
+        wxString result = *mSaveFile;
+        mSaveFile.reset();
+        return result;
+    }
     if (!parent) { parent = &Window::get(); }
-    return RunInMainThread<wxString>(mSaveFile, boost::bind(&wxFileSelector, message, defaultpath, defaultfilename, defaultextension, filetypes, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent, wxDefaultCoord, wxDefaultCoord )).getResult();
+    return util::thread::RunInMainThread<wxString>(boost::bind(&wxFileSelector, message, defaultpath, defaultfilename, defaultextension, filetypes, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent, wxDefaultCoord, wxDefaultCoord )).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -163,8 +100,14 @@ wxStrings getFilesList( const wxString& message, const wxString& filetypes, wxWi
 
 wxStrings Dialog::getFiles( const wxString& message, const wxString& filetypes, wxWindow* parent )
 {
+    if (mFiles)
+    {
+        wxStrings result = *mFiles;
+        mFiles.reset();
+        return result;
+    }
     if (!parent) { parent = &Window::get(); }
-    return RunInMainThread<wxStrings>(mFiles, boost::bind(getFilesList, message, filetypes, parent)).getResult();
+    return util::thread::RunInMainThread<wxStrings>(boost::bind(getFilesList, message, filetypes, parent)).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -177,8 +120,14 @@ void Dialog::setText(wxString text)
 
 wxString Dialog::getText( wxString title, wxString message, wxString default, wxWindow* parent )
 {
+    if (mText)
+    {
+        wxString result = *mText;
+        mText.reset();
+        return result;
+    }
     if (!parent) { parent = &Window::get(); }
-    return RunInMainThread<wxString>(mText, boost::bind(&wxGetTextFromUser, message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true)).getResult();
+    return util::thread::RunInMainThread<wxString>(boost::bind(&wxGetTextFromUser, message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true)).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -191,8 +140,14 @@ void Dialog::setConfirmation(int button)
 
 int Dialog::getConfirmation( wxString title, wxString message, int buttons, wxWindow* parent )
 {
+    if (mButton)
+    {
+        int result = *mButton;
+        mButton.reset();
+        return result;
+    }
     if (!parent) { parent = &Window::get(); }
-    return RunInMainThread<int>(mButton, boost::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord)).getResult();
+    return util::thread::RunInMainThread<int>(boost::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord)).getResult();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -242,7 +197,7 @@ void Dialog::getDebugReport(bool doexit, bool addcontext)
     if (!mDebugReportGenerated)
     {
        mDebugReportGenerated = true;
-       RunInMainThread<int>(boost::bind(&generateDebugReport, doexit, addcontext));
+       util::thread::RunInMainThread<int>(boost::bind(&generateDebugReport, doexit, addcontext));
     }
 }
 

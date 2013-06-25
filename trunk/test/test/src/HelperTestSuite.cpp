@@ -105,16 +105,13 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     mSuiteCount++;
     if (!currentTestIsEnabled()) return false;
     mCurrentTestName.reset();
-    LOG_ERROR << "Suite start: " << currentCxxTest();
+    VAR_ERROR(currentCxxTest());
     if (currentTestRequiresWindow())
     {
         updateTitle();
         waitForIdle();
-        LOG_ERROR;
         RunInMainThread([this] { Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); }); // Set
-        LOG_ERROR;
     }
-        LOG_ERROR;
     return true;
 }
 

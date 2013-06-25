@@ -52,8 +52,6 @@ public:
     /// \return center position (within the ProjectView) of the given node.
     wxPoint find( model::NodePtr node );
 
-    int getHeaderHeight() const;
-
     void selectColumnHeader();
 
 private:
