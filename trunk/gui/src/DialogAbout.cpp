@@ -1,4 +1,4 @@
-#include "AboutDialog.h"
+#include "DialogAbout.h"
 
 #include "Config.h"
 #include "UtilLog.h"
@@ -11,7 +11,7 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AboutDialog::AboutDialog()
+DialogAbout::DialogAbout()
     :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About"),wxDefaultPosition,wxSize(400,400),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mBack(0)
 {
@@ -38,17 +38,17 @@ AboutDialog::AboutDialog()
     buttons->Add(mBack);
     GetSizer()->Add(buttons);
 
-    mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AboutDialog::onBack, this);
+    mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
 }
 
-AboutDialog::~AboutDialog()
+DialogAbout::~DialogAbout()
 {
 
     VAR_DEBUG(this);
-    mBack->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AboutDialog::onBack, this);
+    mBack->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
 }
 
-void AboutDialog::onBack(wxCommandEvent &event)
+void DialogAbout::onBack(wxCommandEvent &event)
 {
     mHtml->HistoryBack();
     event.Skip();

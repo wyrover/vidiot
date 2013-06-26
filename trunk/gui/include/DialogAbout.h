@@ -1,9 +1,9 @@
-#ifndef ABOUT_DIALOG_H
-#define ABOUT_DIALOG_H
+#ifndef DIALOG_ABOUT_H
+#define DIALOG_ABOUT_H
 
 namespace gui {
 
-class AboutDialog
+class DialogAbout
     :   public wxDialog
 {
 public:
@@ -12,8 +12,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit AboutDialog();
-    virtual ~AboutDialog();
+    explicit DialogAbout();
+    virtual ~DialogAbout();
 
     void onBack(wxCommandEvent &event);
 
@@ -23,4 +23,4 @@ public:
 
 } // namespace
 
-#endif // ABOUT_DIALOG_H
+#endif // DIALOG_ABOUT_H

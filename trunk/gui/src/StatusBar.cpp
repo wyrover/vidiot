@@ -78,7 +78,6 @@ void StatusBar::setDebugText(wxString text)
 
 void StatusBar::setProcessingText(wxString text)
 {
-    // todo ensure that setstatustext only called in main thread
     SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
 }
 
