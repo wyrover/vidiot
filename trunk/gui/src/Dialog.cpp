@@ -49,7 +49,7 @@ wxString Dialog::getDir( const wxString & message, const wxString & default, wxW
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainThread<wxString>(boost::bind(&wxDirSelector, message, default, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent)).getResult();
+    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxDirSelector, message, default, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ wxString Dialog::getSaveFile( const wxString& message, const wxString& filetypes
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainThread<wxString>(boost::bind(&wxFileSelector, message, defaultpath, defaultfilename, defaultextension, filetypes, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent, wxDefaultCoord, wxDefaultCoord )).getResult();
+    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxFileSelector, message, defaultpath, defaultfilename, defaultextension, filetypes, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent, wxDefaultCoord, wxDefaultCoord ));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ wxStrings Dialog::getFiles( const wxString& message, const wxString& filetypes, 
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainThread<wxStrings>(boost::bind(getFilesList, message, filetypes, parent)).getResult();
+    return util::thread::RunInMainReturning<wxStrings>(boost::bind(getFilesList, message, filetypes, parent));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ wxString Dialog::getText( wxString title, wxString message, wxString default, wx
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainThread<wxString>(boost::bind(&wxGetTextFromUser, message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true)).getResult();
+    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxGetTextFromUser, message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ int Dialog::getConfirmation( wxString title, wxString message, int buttons, wxWi
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainThread<int>(boost::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord)).getResult();
+    return util::thread::RunInMainReturning<int>(boost::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ void Dialog::getDebugReport(bool doexit, bool addcontext)
     if (!mDebugReportGenerated)
     {
        mDebugReportGenerated = true;
-       util::thread::RunInMainThread<int>(boost::bind(&generateDebugReport, doexit, addcontext));
+       util::thread::RunInMain(boost::bind(&generateDebugReport, doexit, addcontext));
     }
 }
 

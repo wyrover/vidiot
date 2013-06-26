@@ -5,7 +5,6 @@
 #include "HelperTestSuite.h"
 #include "UtilLog.h"
 #include "Window.h"
-#include "HelperThread.h"
 #include <cxxtest/TestSuite.h>
 #include <time.h>
 

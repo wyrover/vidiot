@@ -66,6 +66,14 @@ private:
     bool mDone;
 };
 
+void RunInMain(boost::function<void()> method);
+
+template <typename RETURNTYPE>
+RETURNTYPE RunInMainReturning(boost::function<RETURNTYPE()> method)
+{
+    return RunInMainThread<RETURNTYPE>(method).getResult();
+}
+
 }} // namespace
 
 #endif // UTIL_THREAD_H

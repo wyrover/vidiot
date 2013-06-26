@@ -6,22 +6,22 @@
 #include "DetailsClip.h"
 #include "HelperApplication.h"
 #include "HelperDetails.h"
-#include "HelperTimelineDrag.h"
-#include "HelperTimelinesView.h"
 #include "HelperModel.h"
-#include "ids.h"
-#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
+#include "HelperTimelineDrag.h"
+#include "HelperTimelinesView.h"
 #include "HelperTimelineTrim.h"
 #include "HelperTransform.h"
 #include "HelperWindow.h"
+#include "ids.h"
 #include "ProjectViewCreateSequence.h"
-#include "TrimClip.h"
 #include "Timeline.h"
-#include "Zoom.h"
+#include "TrimClip.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilThread.h"
 #include "VideoClip.h"
+#include "Zoom.h"
 
 namespace test {
 
@@ -66,7 +66,7 @@ void TestDetailsClip::testChangeLength()
         o << "LengthButton: " << (enlarge?"Enlarge":"Reduce") << " clip length (on " << (begin?"left":"right") << " side) to " << getLength(button);
         StartTest(o.str().c_str());
         waitForIdle();
-        RunInMainThread(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+        util::thread::RunInMain(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         waitForIdle();
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();

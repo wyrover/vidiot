@@ -29,6 +29,7 @@
 #include "Track.h"
 #include "Transition.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilThread.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
 #include "VideoTransition.h"
@@ -429,7 +430,7 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 void DeselectAllClips()
 {
     LOG_DEBUG;
-    RunInMainThread([] { getTimeline().getSelection().unselectAll(); });
+    util::thread::RunInMain([] { getTimeline().getSelection().unselectAll(); });
 };
 
 void DeleteClip(model::IClipPtr clip)
