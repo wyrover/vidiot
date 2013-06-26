@@ -1,5 +1,5 @@
-#ifndef RENDER_DIALOG_H
-#define RENDER_DIALOG_H
+#ifndef DIALOG_RENDER_SETTINGS_H
+#define DIALOG_RENDER_SETTINGS_H
 
 #include "ICodecParameter.h"
 #include "UtilEnumSelector.h"
@@ -8,10 +8,10 @@
 
 namespace gui {
 
-class RenderSettingsDialog
+class DialogRenderSettings
     :   public wxDialog
     ,   public model::render::ICodecParameterChangeListener
-    ,   public SingleInstance<RenderSettingsDialog>
+    ,   public SingleInstance<DialogRenderSettings>
 {
 public:
 
@@ -19,8 +19,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit RenderSettingsDialog(model::SequencePtr sequence);
-    virtual ~RenderSettingsDialog();
+    explicit DialogRenderSettings(model::SequencePtr sequence);
+    virtual ~DialogRenderSettings();
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS
@@ -104,4 +104,4 @@ private:
 
 } // namespace
 
-#endif // RENDER_DIALOG_H
+#endif // DIALOG_RENDER_SETTINGS_H

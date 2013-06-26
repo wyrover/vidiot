@@ -10,7 +10,6 @@
 #include "Layout.h"
 #include "Menu.h"
 #include "Mouse.h"
-#include "Options.h"
 #include "Player.h"
 #include "Preview.h"
 #include "Scrolling.h"

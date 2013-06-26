@@ -9,6 +9,7 @@
 #include "CreateAudioTrack.h"
 #include "CreateTransition.h"
 #include "CreateVideoTrack.h"
+#include "DialogRenderSettings.h"
 #include "EmptyClip.h"
 #include "ids.h"
 #include "Intervals.h"
@@ -16,7 +17,6 @@
 #include "PositionInfo.h"
 #include "RemoveEmptyTracks.h"
 #include "Render.h"
-#include "RenderSettingsDialog.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
@@ -391,7 +391,7 @@ void MenuHandler::onRenderSettings(wxCommandEvent& event)
 {
     if (mActive)
     {
-        gui::RenderSettingsDialog(getSequence()).ShowModal();
+        gui::DialogRenderSettings(getSequence()).ShowModal();
     }
     event.Skip();
 }
@@ -402,7 +402,7 @@ void MenuHandler::onRenderSequence(wxCommandEvent& event)
     {
         if (!getSequence()->getRender()->checkFileName())
         {
-            gui::RenderSettingsDialog(getSequence()).ShowModal();
+            gui::DialogRenderSettings(getSequence()).ShowModal();
         }
         else
         {
