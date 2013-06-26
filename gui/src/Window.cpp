@@ -1,10 +1,11 @@
 #include "Window.h"
 
-#include "AboutDialog.h"
 #include "AudioTransitionFactory.h"
 #include "CommandLine.h"
 #include "Config.h"
 #include "Dialog.h"
+#include "DialogAbout.h"
+#include "DialogHelp.h"
 #include "ids.h"
 #include "Layout.h"
 #include "Node.h"
@@ -344,7 +345,9 @@ void Window::onOptions(wxCommandEvent& event)
 
 void Window::onHelp(wxCommandEvent& event)
 {
-    wxMessageBox(_("No help yet..."), _("Help"), wxOK | wxICON_INFORMATION, this);
+    DialogHelp* dialog = new DialogHelp();
+    dialog->ShowModal();
+    event.Skip();
 }
 
 void Window::onLog(wxCommandEvent& event)
@@ -361,7 +364,7 @@ void Window::onLog(wxCommandEvent& event)
 
 void Window::onAbout(wxCommandEvent& event)
 {
-    AboutDialog* dialog = new AboutDialog();
+    DialogAbout* dialog = new DialogAbout();
     dialog->ShowModal();
     event.Skip();
 }

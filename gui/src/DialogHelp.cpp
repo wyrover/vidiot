@@ -1,4 +1,4 @@
-#include "DialogAbout.h"
+#include "DialogHelp.h"
 
 #include "Config.h"
 #include "UtilLog.h"
@@ -11,15 +11,15 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-DialogAbout::DialogAbout()
-    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About"),wxDefaultPosition,wxSize(400,400),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
+DialogHelp::DialogHelp()
+    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: Help"),wxDefaultPosition,wxSize(400,400),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mBack(0)
 {
     VAR_DEBUG(this);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    wxString dir = wxFileName(Config::getExeDir() + "\\html\\about\\","").GetFullPath();
+    wxString dir = wxFileName(Config::getExeDir() + "\\html\\help\\","").GetFullPath();
 
     ////////  ////////
 
@@ -38,17 +38,17 @@ DialogAbout::DialogAbout()
     buttons->Add(mBack);
     GetSizer()->Add(buttons);
 
-    mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
+    mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogHelp::onBack, this);
 }
 
-DialogAbout::~DialogAbout()
+DialogHelp::~DialogHelp()
 {
 
     VAR_DEBUG(this);
-    mBack->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogAbout::onBack, this);
+    mBack->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DialogHelp::onBack, this);
 }
 
-void DialogAbout::onBack(wxCommandEvent &event)
+void DialogHelp::onBack(wxCommandEvent &event)
 {
     mHtml->HistoryBack();
     event.Skip();

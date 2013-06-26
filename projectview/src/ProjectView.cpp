@@ -310,8 +310,8 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     createMenu.Append( meID_NEW_SEQUENCE,   _("&Sequence") );
 
     wxMenu addMenu;
-    addMenu.Append( meID_NEW_AUTOFOLDER, _("&Folder on disk") );
-    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s) on disk") );
+    addMenu.Append( meID_NEW_AUTOFOLDER, _("&Folder from disk") );
+    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s) from disk") );
 
     wxMenu menu;
     menu.Append( wxID_CUT,   _("Cu&t\tCTRL-x") );
