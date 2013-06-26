@@ -6,10 +6,10 @@
 #include "Dialog.h"
 #include "DialogAbout.h"
 #include "DialogHelp.h"
+#include "DialogOptions.h"
 #include "ids.h"
 #include "Layout.h"
 #include "Node.h"
-#include "Options.h"
 #include "Preview.h"
 #include "Project.h"
 #include "ProjectEvent.h"
@@ -335,7 +335,7 @@ void Window::onShowBoundingBox(wxCommandEvent& event)
 
 void Window::onOptions(wxCommandEvent& event)
 {
-    Options w(this);
+    DialogOptions w(this);
     w.ShowModal();
 }
 

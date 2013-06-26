@@ -1,4 +1,4 @@
-#include "Options.h"
+#include "DialogOptions.h"
 
 #include "Enums.h"
 #include "UtilLog.h"
@@ -11,7 +11,7 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Options::Options(wxWindow* win)
+DialogOptions::DialogOptions(wxWindow* win)
     :   wxPropertySheetDialog(win, wxID_ANY, _("Preferences"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
     ,   mPanel(0)
     ,   mTopSizer(0)
@@ -131,7 +131,7 @@ Options::Options(wxWindow* win)
 
 }
 
-Options::~Options()
+DialogOptions::~DialogOptions()
 {
     if (GetReturnCode() == GetAffirmativeId())
     {
@@ -165,7 +165,7 @@ Options::~Options()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Options::addtab(const wxString& name)
+void DialogOptions::addtab(const wxString& name)
 {
     mPanel = new wxPanel(GetBookCtrl(), wxID_ANY);
     GetBookCtrl()->AddPage(mPanel, name, true);
@@ -174,7 +174,7 @@ void Options::addtab(const wxString& name)
     mBoxSizer = 0;
 }
 
-void Options::addbox(const wxString& name)
+void DialogOptions::addbox(const wxString& name)
 {
     ASSERT(mPanel);
     ASSERT(mTopSizer);
@@ -182,7 +182,7 @@ void Options::addbox(const wxString& name)
     mTopSizer->Add(mBoxSizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
 }
 
-void Options::addoption(const wxString& name, wxWindow* widget)
+void DialogOptions::addoption(const wxString& name, wxWindow* widget)
 {
     ASSERT(mBoxSizer);
     wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );

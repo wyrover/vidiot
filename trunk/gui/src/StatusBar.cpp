@@ -1,7 +1,8 @@
 #include "StatusBar.h"
 
-#include "UtilLog.h"
 #include "Config.h"
+#include "UtilLog.h"
+#include "Worker.h"
 #include "WorkerEvent.h"
 
 namespace gui {

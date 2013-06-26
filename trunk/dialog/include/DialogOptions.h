@@ -1,12 +1,12 @@
-#ifndef OPTIONS_H
-#define OPTIONS_H
+#ifndef DIALOG_OPTIONS_H
+#define DIALOG_OPTIONS_H
 
 #include "UtilEnumSelector.h"
 #include "Enums.h"
 
 namespace gui {
 
-class Options
+class DialogOptions
     :   public wxPropertySheetDialog
 {
 public:
@@ -15,8 +15,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Options(wxWindow* parent);
-    ~Options();
+    DialogOptions(wxWindow* parent);
+    ~DialogOptions();
 
 private:
 
@@ -59,4 +59,4 @@ private:
 
 } // namespace
 
-#endif // OPTIONS_H
+#endif // DIALOG_OPTIONS_H

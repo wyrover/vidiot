@@ -2,6 +2,7 @@
 
 #include "AutoFolder.h"
 #include "File.h"
+#include "Project.h"
 #include "ProjectEvent.h"
 #include "NodeEvent.h"
 #include "UtilList.h"
