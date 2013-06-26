@@ -4,7 +4,6 @@
 #include "Dialog.h"
 #include "File.h"
 #include "HelperApplication.h"
-#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "ids.h"
@@ -15,6 +14,7 @@
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
+#include "UtilThread.h"
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #include <wx/uiaction.h>
@@ -235,7 +235,7 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
     ,   mCount(count)
     ,   mCountSeen(false)
 {
-    RunInMainThread([this]
+    util::thread::RunInMain([this]
     {
          gui::Window::get().Bind(model::EVENT_ADD_NODE,     &WaitForChildCount::onNodeAdded,     this);
          gui::Window::get().Bind(model::EVENT_ADD_NODES,    &WaitForChildCount::onNodesAdded,    this);
@@ -258,7 +258,7 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
 
 WaitForChildCount::~WaitForChildCount()
 {
-    RunInMainThread([this]
+    util::thread::RunInMain([this]
     {
         gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &WaitForChildCount::onNodeAdded,      this);
         gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &WaitForChildCount::onNodesAdded,     this);

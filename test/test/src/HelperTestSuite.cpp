@@ -1,10 +1,10 @@
 #pragma warning(disable:4996)
 
 #include "HelperTestSuite.h"
-#include "HelperThread.h"
 #include <cxxtest/TestSuite.h>
 #include "UtilList.h"
 #include "UtilLog.h"
+#include "UtilThread.h"
 #include "Window.h"
 
 namespace test {
@@ -110,7 +110,7 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     {
         updateTitle();
         waitForIdle();
-        RunInMainThread([this] { Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); }); // Set
+        util::thread::RunInMain([this] { Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); }); // Set
     }
     return true;
 }
@@ -119,7 +119,7 @@ void HelperTestSuite::testSuiteDone()
 {
     if (mSuiteCount == CxxTest::TestTracker::tracker( ).world().numTotalTests())
     {
-        RunInMainThread([this] { Config::WriteString( Config::sPathTestRunCurrent, "" ); }); // Reset
+        util::thread::RunInMain([this] { Config::WriteString( Config::sPathTestRunCurrent, "" ); }); // Reset
     }
 }
 
