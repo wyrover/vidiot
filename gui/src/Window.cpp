@@ -307,6 +307,7 @@ void Window::onRenameProject( model::EventRenameProject &event )
 
 void Window::onExit(wxCommandEvent &)
 {
+    mWorker->abort();
     Close();
 }
 

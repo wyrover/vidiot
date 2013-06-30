@@ -197,7 +197,7 @@ void Dialog::getDebugReport(bool doexit, bool addcontext)
     if (!mDebugReportGenerated)
     {
        mDebugReportGenerated = true;
-       util::thread::RunInMain(boost::bind(&generateDebugReport, doexit, addcontext));
+       util::thread::RunInMainAndWait([doexit, addcontext] { generateDebugReport(doexit, addcontext); });
     }
 }
 

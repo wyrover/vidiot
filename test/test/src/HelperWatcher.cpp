@@ -8,7 +8,10 @@ namespace test {
 
 void ASSERT_WATCHED_PATHS_COUNT(int n)
 {
-    util::thread::RunInMain([n] { ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),n); });
+    util::thread::RunInMainAndWait([n] 
+    { 
+        ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),n); 
+    });
 }
 
 } // namespace

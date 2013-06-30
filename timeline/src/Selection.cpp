@@ -35,6 +35,7 @@ Selection::~Selection()
 
 void Selection::updateOnLeftClick(const PointerPositionInfo& info)
 {
+    ASSERT(wxThread::IsMain());
     bool ctrlPressed = getKeyboard().getCtrlDown();
     bool shiftPressed = getKeyboard().getShiftDown();
     bool altPressed = getKeyboard().getAltDown();
@@ -167,6 +168,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
 
 void Selection::updateOnRightClick(model::IClipPtr clip)
 {
+    ASSERT(wxThread::IsMain());
     bool ctrlPressed = getKeyboard().getCtrlDown();
     bool shiftPressed = getKeyboard().getShiftDown();
     bool altPressed = getKeyboard().getAltDown();
@@ -201,6 +203,7 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
 
 void Selection::deleteClips()
 {
+    ASSERT(wxThread::IsMain());
     LOG_DEBUG;
     setPreviouslyClicked(model::IClipPtr()); // reset
     (new command::DeleteSelectedClips(getSequence()))->submit();
@@ -209,6 +212,7 @@ void Selection::deleteClips()
 
 void Selection::unselectAll()
 {
+    ASSERT(wxThread::IsMain());
     LOG_DEBUG;
     BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
     {
@@ -223,6 +227,7 @@ void Selection::unselectAll()
 
 void Selection::change(model::IClips selection)
 {
+    ASSERT(wxThread::IsMain());
     unselectAll();
     BOOST_FOREACH( model::IClipPtr clip, selection )
     {

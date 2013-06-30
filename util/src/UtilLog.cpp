@@ -4,6 +4,7 @@
 #include "UtilAssert.h"
 #include "UtilFifo.h"
 #include "UtilStackWalker.h"
+#include "UtilThread.h"
 #include <share.h> // _SH_DENYWR
 #include <time.h>
 
@@ -108,6 +109,7 @@ public:
 private:
     void thread()
     {
+        util::thread::setCurrentThreadName("Log");
         std::string s;
         time_t previous = time(0);
         while (mEnabled)

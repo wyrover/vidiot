@@ -3,19 +3,22 @@
 
 namespace util { namespace thread {
 
-/// Schedule a method to be ran in the main wxWidgets thread.
-/// This is implemented by submitting an event. In the handler
-/// of the event (which is called in the main wxWidgets thread)
-/// the given method is called.
+template <typename RETURNTYPE>
+RETURNTYPE RunInMainReturning(boost::function<RETURNTYPE()> method)
+{
+    return RunInMainThreadWithResult<RETURNTYPE>(method).getResult();
+}
+
+void RunInMainAndWait(boost::function<void()> method);
+void RunInMainAndDontWait(boost::function<void()> method);
+
 template <class RETURNTYPE>
-class RunInMainThread
+class RunInMainThreadWithResult
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
 {
 public:
 
-    typedef boost::function<RETURNTYPE()> Method;
-
-    RunInMainThread(Method method)
+    RunInMainThreadWithResult(boost::function<RETURNTYPE()> method)
         :   mMethod(method)
         ,   mDone(false)
     {
@@ -25,7 +28,7 @@ public:
         }
         else
         {
-            Bind( wxEVT_THREAD, &RunInMainThread::onThreadEvent, this );
+            Bind( wxEVT_THREAD, &RunInMainThreadWithResult::onThreadEvent, this );
             QueueEvent(new wxThreadEvent());
             boost::mutex::scoped_lock lock(mMutex);
             while (!mDone)
@@ -35,11 +38,11 @@ public:
         }
     }
 
-    ~RunInMainThread()
+    ~RunInMainThreadWithResult()
     {
         if (mDone)
         {
-            Unbind( wxEVT_THREAD, &RunInMainThread::onThreadEvent, this );
+            Unbind( wxEVT_THREAD, &RunInMainThreadWithResult::onThreadEvent, this );
         }
     }
 
@@ -59,20 +62,15 @@ public:
 private:
 
     RETURNTYPE mResult;
-    Method mMethod;
+    boost::function<RETURNTYPE()> mMethod;
+    bool mWait;
 
     boost::condition_variable mCondition;
     boost::mutex mMutex;
     bool mDone;
 };
 
-void RunInMain(boost::function<void()> method);
-
-template <typename RETURNTYPE>
-RETURNTYPE RunInMainReturning(boost::function<RETURNTYPE()> method)
-{
-    return RunInMainThread<RETURNTYPE>(method).getResult();
-}
+void setCurrentThreadName(const char* name);
 
 }} // namespace
 

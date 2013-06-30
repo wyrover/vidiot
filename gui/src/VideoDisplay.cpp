@@ -1,6 +1,5 @@
 #include "VideoDisplay.h"
 
-#include <portaudio.h>
 #include "AudioCompositionParameters.h"
 #include "Config.h"
 #include "Convert.h"
@@ -8,8 +7,10 @@
 #include "Properties.h"
 #include "Sequence.h"
 #include "UtilLog.h"
+#include "UtilThread.h"
 #include "VideoCompositionParameters.h"
 #include "VideoDisplayEvent.h"
+#include <portaudio.h>
 
 namespace gui {
 
@@ -248,6 +249,7 @@ model::SequencePtr VideoDisplay::getSequence() const
 
 void VideoDisplay::audioBufferThread()
 {
+    util::thread::setCurrentThreadName("AudioBufferThread");
     while (!mAbortThreads)
     {
         model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
@@ -332,6 +334,7 @@ bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double pla
 
 void VideoDisplay::videoBufferThread()
 {
+    util::thread::setCurrentThreadName("VideoBufferThread");
     LOG_INFO;
     while (!mAbortThreads)
     {
@@ -342,6 +345,7 @@ void VideoDisplay::videoBufferThread()
 
 void VideoDisplay::videoDisplayThread()
 {
+    util::thread::setCurrentThreadName("VideoDisplayThread");
     boost::unique_lock<boost::mutex> lock(mMutexPlaybackStarted);
     while (mStartTime == 0)
     {

@@ -24,11 +24,38 @@
 #include "VideoCodecs.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
+#include "Work.h"
 #include "Worker.h"
 
 namespace model { namespace render {
 
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
+
+//////////////////////////////////////////////////////////////////////////
+// RENDERING
+//////////////////////////////////////////////////////////////////////////
+
+class RenderWork : public worker::Work
+{
+public:
+    RenderWork(model::SequencePtr sequence, pts from, pts to)
+    :   worker::Work(boost::bind(&RenderWork::generate,this))
+    ,   mSequence(sequence)
+    ,   mFrom(from)
+    ,   mTo(to)
+    ,   mMaxLength(Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond))
+    {
+    }
+
+    void generate();
+
+private:
+
+    model::SequencePtr mSequence;
+    pts mFrom;
+    pts mTo;
+    pts mMaxLength;
+};
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -49,7 +76,6 @@ Render::Render()
     ,   mSeparateAtCuts(false)
     ,   mStart(0)
     ,   mEnd(0)
-    ,   mMaxLength(Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond))
 {
     VAR_DEBUG(this);
 
@@ -62,7 +88,6 @@ Render::Render(const Render& other)
     ,   mSeparateAtCuts(other.mSeparateAtCuts)
     ,   mStart(other.mStart)
     ,   mEnd(other.mEnd)
-    ,   mMaxLength(Convert::timeToPts(Config::ReadLong(Config::sPathDebugMaxRenderLength) *  Constants::sSecond)) // Re-read: most render objects are created by cloning. FOr tests, initial Render object contains default value (0).
 {
     VAR_DEBUG(this);
 }
@@ -152,7 +177,7 @@ void Render::schedule(SequencePtr sequence)
     if (!sequence->getRender()->getSeparateAtCuts())
     {
         model::SequencePtr clone = make_cloned<model::Sequence>(sequence);
-        worker::Worker::get().schedule(boost::make_shared<worker::Work>(boost::bind(&Render::generate,clone->getRender(),clone,0,clone->getLength())));
+        worker::Worker::get().schedule(boost::make_shared<RenderWork>(clone,0,clone->getLength()));
     }
     else
     {
@@ -172,7 +197,7 @@ void Render::schedule(SequencePtr sequence)
                 wxFileName fn = clone->getRender()->getFileName();
                 fn.SetName(fn.GetName() + wxString::Format("_%d",c));
                 clone->getRender()->setFileName(fn);
-                worker::Worker::get().schedule(boost::make_shared<worker::Work>(boost::bind(&Render::generate,clone->getRender(),clone,start,end)));
+                worker::Worker::get().schedule(boost::make_shared<RenderWork>(clone,start,end));
                 ++c;
             }
             // else: If there's only empty space at this interval's begin point: do not render the empty space and skip to the next interval.
@@ -241,8 +266,14 @@ void Render::scheduleAll()
 // RENDERING
 //////////////////////////////////////////////////////////////////////////
 
-void Render::generate(model::SequencePtr sequence, pts from, pts to)
+void RenderWork::generate()
 {
+    setThreadName("RenderWork::generate");
+    model::SequencePtr sequence = mSequence;
+    pts from = mFrom;
+    pts to = mTo;
+    RenderPtr mRender = sequence->getRender();
+
     VAR_INFO(sequence)(from)(to);
     ASSERT_MORE_THAN_EQUALS_ZERO(from);
     ASSERT_MORE_THAN_ZERO(to);
@@ -250,19 +281,20 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
     ASSERT_LESS_THAN_EQUALS(to,sequence->getLength());
     sequence->moveTo(from);
     int length = to - from;
-    gui::StatusBar::get().showProgressBar(length);
+    showProgressBar(length);
     wxString ps; ps << _("Rendering sequence '") << sequence->getName() << "'";
-    gui::StatusBar::get().setProcessingText(ps);
+    showProgressText(ps);
 
-    AVFormatContext* context = mOutputFormat->getContext();
-    ASSERT(mFileName.IsOk());
+    OutputFormatPtr outputformat = mRender->getOutputFormat();
+    AVFormatContext* context = outputformat->getContext();
+    ASSERT(mRender->getFileName().IsOk());
     ASSERT_NONZERO(context);
-    wxString filename = mFileName.GetFullPath();
+    wxString filename = mRender->getFileName().GetFullPath();
     ASSERT_LESS_THAN_EQUALS(sizeof(filename.c_str()),sizeof(context->filename));
     _snprintf(context->filename, sizeof(context->filename), "%s", filename.c_str());
 
-    bool storeAudio = mOutputFormat->storeAudio();
-    bool storeVideo = mOutputFormat->storeVideo();
+    bool storeAudio = outputformat->storeAudio();
+    bool storeVideo = outputformat->storeVideo();
     ASSERT(storeAudio || storeVideo)(storeAudio)(storeVideo);
 
     bool fileOpened = false;
@@ -291,7 +323,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
 
     if (ok && storeVideo)
     {
-        videoStream = mOutputFormat->getVideoCodec()->addStream(context);
+        videoStream = outputformat->getVideoCodec()->addStream(context);
         videoCodec = videoStream->codec;
         if (Config::Exists(Config::sPathOverruleFourCC))
         {
@@ -312,7 +344,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
     }
     if (ok && storeAudio)
     {
-        audioStream = mOutputFormat->getAudioCodec()->addStream(context);
+        audioStream = outputformat->getAudioCodec()->addStream(context);
         audioCodec = audioStream->codec;
         VAR_INFO(audioCodec);
     }
@@ -322,7 +354,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
     // now that all the parameters are set, we can open the audio and video codecs and allocate the necessary encode buffers
     if (ok && storeVideo)
     {
-        ok = mOutputFormat->getVideoCodec()->open(videoCodec);
+        ok = outputformat->getVideoCodec()->open(videoCodec);
 
         if (ok)
         {
@@ -349,7 +381,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
 
     if (ok && storeAudio)
     {
-        ok = mOutputFormat->getAudioCodec()->open(audioCodec);
+        ok = outputformat->getAudioCodec()->open(audioCodec);
 
         if (ok)
         {
@@ -423,7 +455,7 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
             double audioTime = storeAudio ? 0.0 : std::numeric_limits<double>::max();
             double videoTime = storeVideo ? 0.0 : std::numeric_limits<double>::max();
 
-            while (true)  // write interleaved audio and video frames
+            while (!isAborted())  // write interleaved audio and video frames
             {
                 if (storeAudio) { audioTime = (double)audioStream->pts.val * (double)audioStream->time_base.num / (double)audioStream->time_base.den; }
                 if (storeVideo) { videoTime = (double)videoStream->pts.val * (double)videoStream->time_base.num / (double)videoStream->time_base.den; }
@@ -511,8 +543,8 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
                             }
                             pts progress = frame->getPts() - from;
                             wxString s; s << _("(frame ") << progress << _(" out of ") << length << ")";
-                            gui::StatusBar::get().setProcessingText(ps + " " + s);
-                            gui::StatusBar::get().showProgress(progress);
+                            showProgressText(ps + " " + s);
+                            showProgress(progress);
                             wxImagePtr image = frame->getImage();
 
                             if (colorSpaceConversionContext == 0)
@@ -607,9 +639,6 @@ void Render::generate(model::SequencePtr sequence, pts from, pts to)
     }
 
     av_free(context);
-
-    gui::StatusBar::get().setProcessingText();
-    gui::StatusBar::get().hideProgressBar();
 }
 
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)

@@ -110,7 +110,10 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     {
         updateTitle();
         waitForIdle();
-        util::thread::RunInMain([this] { Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); }); // Set
+        util::thread::RunInMainAndWait([this] 
+        {
+           Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); // Set
+        });
     }
     return true;
 }
@@ -119,7 +122,10 @@ void HelperTestSuite::testSuiteDone()
 {
     if (mSuiteCount == CxxTest::TestTracker::tracker( ).world().numTotalTests())
     {
-        util::thread::RunInMain([this] { Config::WriteString( Config::sPathTestRunCurrent, "" ); }); // Reset
+        util::thread::RunInMainAndWait([this] 
+        {
+            Config::WriteString( Config::sPathTestRunCurrent, "" ); // Reset
+        });
     }
 }
 
