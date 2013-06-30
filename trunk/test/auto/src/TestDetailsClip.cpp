@@ -66,7 +66,7 @@ void TestDetailsClip::testChangeLength()
         o << "LengthButton: " << (enlarge?"Enlarge":"Reduce") << " clip length (on " << (begin?"left":"right") << " side) to " << getLength(button);
         StartTest(o.str().c_str());
         waitForIdle();
-        util::thread::RunInMain(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+        util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         waitForIdle();
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();

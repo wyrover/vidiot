@@ -99,6 +99,7 @@ void Intervals::set(PtsIntervals intervals)
 
 void Intervals::removeAll()
 {
+    ASSERT(wxThread::IsMain());
     LOG_INFO;
     BOOST_FOREACH( PtsInterval i, mIntervals )
     {

@@ -45,7 +45,10 @@ void TestExceptions::testRemovedFileInSequence()
     tempDir.reset(); // Deletes the file (still used in the sequence) from disk
 
     // Open the sequence again (file missing from disk)
-    getProjectView().select(boost::assign::list_of(folder1));
+    util::thread::RunInMainAndWait([folder1]
+    {
+        getProjectView().select(boost::assign::list_of(folder1));
+    });
     getProjectView().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_OPEN));
     waitForIdle();
 

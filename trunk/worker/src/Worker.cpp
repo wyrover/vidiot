@@ -1,5 +1,6 @@
 #include "Worker.h"
 
+#include "UtilThread.h"
 #include "WorkerEvent.h"
 
 namespace worker {
@@ -19,15 +20,27 @@ Worker::Worker()
 {
 }
 
-Worker::~Worker()
+void Worker::abort()
 {
     mEnabled = false;
+    {
+        boost::mutex::scoped_lock lock(mMutex);
+        if (mCurrent)
+        {
+            mCurrent->abort();
+            mCurrent.reset();
+        }
+    }
     mFifo.flush();
     mFifo.push(WorkPtr());
     if (mThread)
     {
         mThread->join();
     }
+}
+
+Worker::~Worker()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -72,16 +85,24 @@ void Worker::waitForExecutionCount()
 void Worker::thread()
 {
     VAR_INFO(this);
-    WorkPtr w;
+    util::thread::setCurrentThreadName("Worker");
     while (mEnabled)
     {
-        w = mFifo.pop();
+        WorkPtr w = mFifo.pop();
+        {
+            boost::mutex::scoped_lock lock(mMutex);
+            mCurrent = w;
+        }
         QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
-
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
             w->execute();
-            w.reset(); // Clear, so that unfreezing is done if needed
+            util::thread::setCurrentThreadName("Worker");
+            {
+                boost::mutex::scoped_lock lock(mMutex);
+                w.reset(); // Clear, so that unfreezing is done if needed
+                mCurrent.reset();
+            }
             {
                 boost::mutex::scoped_lock lock(mMutex);
                 mExecuted++;

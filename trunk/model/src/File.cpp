@@ -12,6 +12,7 @@
 #include "UtilPath.h"
 #include "UtilSerializeBoost.h"
 #include "UtilSerializeWxwidgets.h"
+#include "UtilThread.h"
 
 namespace model {
 
@@ -57,7 +58,7 @@ File::File(wxFileName path, int buffersize)
     ,   mPath(path)
     ,   mName()
     ,   mNumberOfFrames(LENGTH_UNDEFINED)
-    ,   mLastModified(mPath.GetModificationTime().GetTicks())
+    ,   mLastModified(0)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
     // Status of opening
@@ -612,6 +613,7 @@ void File::closeFile()
 
 void File::bufferPacketsThread()
 {
+    util::thread::setCurrentThreadName("BufferPackets");
     VAR_DEBUG(this);
 
     AVPacket pkt1;

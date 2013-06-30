@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "HelperTestSuite.h"
 #include "UtilLog.h"
+#include "UtilThread.h"
 #include "Window.h"
 #include <cxxtest/TestSuite.h>
 #include <time.h>
@@ -34,6 +35,7 @@ FixtureGui::~FixtureGui()
 
 bool FixtureGui::setUpWorld()
 {
+    util::thread::setCurrentThreadName("Test");
     mStartTime = time(0);
     mThread.reset(new boost::thread(boost::bind(&FixtureGui::mainThread,this)));
     mBarrierConfigRead.wait(); // When setUpWorld returns, the config must have been be read. Otherwise, setUp() below will use wrong config data.
@@ -135,6 +137,7 @@ void FixtureGui::onEventLoopEnter()
 
 void FixtureGui::mainThread()
 {
+    util::thread::setCurrentThreadName("Main");
     wxApp::SetInstance(new gui::Application(this));
     int argc = 1;
     char* argv = _strdup(gui::Application::sTestApplicationName);

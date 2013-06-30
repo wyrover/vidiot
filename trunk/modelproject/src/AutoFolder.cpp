@@ -38,6 +38,7 @@ struct IndexAutoFolderWork
 
     void indexFiles()
     {
+        setThreadName("IndexFiles");
         wxDir dir( mPath.GetLongPath() );
         mDirExists = dir.IsOpened();
 
@@ -49,19 +50,20 @@ struct IndexAutoFolderWork
                 mPath.GetDirCount() >= 1 ? mPath.GetDirs().Last() + "/" :
                 mPath.HasVolume() ? mPath.GetVolume() :
                 "";
-            gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + "'");
+            showProgressText(_("Updating '") + pathname + "'");
 
             ASSERT(dir.IsOpened());
             wxString nodename;
 
             wxArrayString allfiles;
             size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
-            gui::StatusBar::get().showProgressBar(count);
+            showProgressBar(count);
             int progress = 0;
 
             // Find all subfolders
             for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_DIRS); cont; cont = dir.GetNext(&nodename))
             {
+                if (isAborted()) { return; }
                 if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
                 {
                     UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
@@ -74,12 +76,13 @@ struct IndexAutoFolderWork
                     AutoFolderPtr folder = boost::make_shared<AutoFolder>(filename);
                     mAdd.push_back(folder);
                 }
-                gui::StatusBar::get().showProgress(++progress);
+                showProgress(++progress);
             }
 
             // Find all files
             for (bool cont = dir.GetFirst(&nodename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&nodename))
             {
+                if (isAborted()) { return; }
                 if (UtilList<wxString>(mRemove).hasElement(nodename)) // Existing element. Do not remove
                 {
                     UtilList<wxString>(mRemove).removeElements(boost::assign::list_of(nodename));
@@ -87,18 +90,15 @@ struct IndexAutoFolderWork
                 else // New element. Add
                 {
                     wxFileName filename(mPath.GetLongPath(), nodename);
-                    gui::StatusBar::get().setProcessingText(_("Updating '") + pathname + nodename + "'");
+                    showProgressText(_("Updating '") + pathname + nodename + "'");
                     model::FilePtr file = boost::make_shared<model::File>(filename);
                     if (file->canBeOpened())
                     {
                         mAdd.push_back(file);
                     }
                 }
-                gui::StatusBar::get().showProgress(++progress);
+                showProgress(++progress);
             }
-
-            gui::StatusBar::get().hideProgressBar();
-            gui::StatusBar::get().setProcessingText("");
         }
         else
         {
@@ -135,6 +135,8 @@ AutoFolder::AutoFolder(wxFileName path)
     :   Folder(util::path::toName(path))
     ,   mPath(util::path::normalize(path))
     ,   mLastModified(mPath.GetModificationTime().GetTicks())
+    ,   mCurrentUpdate()
+    ,   mUpdateAgain(false)
 {
     ASSERT(path.IsDir())(path);
     VAR_DEBUG(this)(path);

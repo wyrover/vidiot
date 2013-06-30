@@ -66,40 +66,47 @@ void StatusBar::onWorkerQueueSize(worker::WorkerQueueSizeEvent& event)
 
 int StatusBar::getNumberOfStatusBars() const
 {
+    ASSERT(wxThread::IsMain());
     return (Config::getShowDebugInfo() ? 4 : 3);
 }
 
 void StatusBar::setDebugText(wxString text)
 {
+    ASSERT(wxThread::IsMain());
     if (Config::getShowDebugInfo())
     {
         SetStatusText( text, 0 );
     }
 }
 
-void StatusBar::setProcessingText(wxString text)
-{
-    SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
-}
-
 void StatusBar::setQueueText(wxString text)
 {
+    ASSERT(wxThread::IsMain());
     SetStatusText( text, Config::getShowDebugInfo() ? 2 : 1 );
+}
+
+void StatusBar::setProcessingText(wxString text)
+{
+    ASSERT(wxThread::IsMain());
+    SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
 }
 
 void StatusBar::showProgressBar(int max)
 {
+    ASSERT(wxThread::IsMain());
     mProgress->SetRange(max);
     mProgress->Show();
 }
 
 void StatusBar::showProgress(int value)
 {
+    ASSERT(wxThread::IsMain());
     mProgress->SetValue(value);
 }
 
 void StatusBar::hideProgressBar()
 {
+    ASSERT(wxThread::IsMain());
     mProgress->Hide();
 }
 

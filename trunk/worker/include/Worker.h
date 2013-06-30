@@ -23,7 +23,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Worker();
-
+    void abort();
     ~Worker();
 
     //////////////////////////////////////////////////////////////////////////
@@ -48,6 +48,7 @@ private:
     bool mEnabled;
     boost::scoped_ptr<boost::thread> mThread;
     FifoWork mFifo;
+    WorkPtr mCurrent;
 
     int mExecuted;
     int mExecutedLimit;

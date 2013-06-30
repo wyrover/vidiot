@@ -57,9 +57,9 @@ void FixtureProject::init()
         mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());
     }
 
+    waitForIdle();
     if (mFocusTimeline)
     {
-        waitForIdle();
 
         // Click in the timeline to give it the focus. A lot of test cases start
         // with zooming in via keyboard commands. For that purpose, timeline must

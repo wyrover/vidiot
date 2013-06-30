@@ -1,9 +1,9 @@
 #ifndef WORK_H
 #define WORK_H
 
-typedef boost::function< void() > Callable;
-
 namespace worker {
+
+typedef boost::function< void() > Callable;
 
 class Work
     : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
@@ -16,9 +16,22 @@ public:
 
     void execute();
 
+    void abort();
+
+protected:
+
+    bool isAborted() const;
+
+    void showProgressText(wxString text);
+    void showProgressBar(int max);
+    void showProgress(int value);
+
+    void setThreadName(std::string name);
+
 private:
 
     Callable mCallable;
+    bool mAbort;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -162,6 +162,7 @@ void ProjectView::onAutoOpenFolder( EventAutoFolderOpen& event )
 
 void ProjectView::select( model::NodePtrs nodes)
 {
+    ASSERT(wxThread::IsMain());
     mCtrl.UnselectAll();
     BOOST_FOREACH( model::NodePtr node, nodes )
     {
@@ -172,6 +173,7 @@ void ProjectView::select( model::NodePtrs nodes)
 
 void ProjectView::selectAll()
 {
+    ASSERT(wxThread::IsMain());
     mCtrl.SelectAll();
 }
 
