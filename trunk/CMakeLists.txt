@@ -119,10 +119,8 @@ FOREACH( FOLDER  ${VIDIOTPROJECTGROUPS} )
     ENDIF()
 ENDFOREACH(FOLDER)
 # Below, ??*.* instead of *.* is used to avoid adding .svn files
-FILE(GLOB Icons             ${PROJECT_SOURCE_DIR}/icons/*?.???)
 FILE(GLOB Cursors           ${PROJECT_SOURCE_DIR}/cursors/*?.???)
 FILE(GLOB BuildFiles        ${PROJECT_SOURCE_DIR}/build/??*.*)
-FILE(GLOB_RECURSE HtmlFiles ${PROJECT_SOURCE_DIR}/html/*.*)
 
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
 IF (MSVC)
@@ -169,19 +167,19 @@ ENDMACRO(GROUPFILES)
 FOREACH( FOLDER  ${VIDIOTPROJECTGROUPS} )
     GROUPFILES(${FOLDER})
 ENDFOREACH(FOLDER)
-SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
+#SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
 SOURCE_GROUP("cursors"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/cursors/*.*)
 SOURCE_GROUP("build" FILES ${BuildFiles} ${CmakeModulesFiles})
-SOURCE_GROUP("html\\about" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/html/about/.*)
-SOURCE_GROUP("html\\help" REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/html/help/.*)
 SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${BuildFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
 
 
-ADD_LIBRARY(vidiot ${UNITY_CPP_FILES} ${SOURCES_LIST} ${HEADERS_LIST} ${Icons} ${Cursors} ${HtmlFiles} ${BuildFiles})
+ADD_LIBRARY(vidiot ${UNITY_CPP_FILES} ${SOURCES_LIST} ${HEADERS_LIST} ${Icons} ${Cursors} ${BuildFiles})
 
 ADD_SUBDIRECTORY(main)
 ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(install)
+ADD_SUBDIRECTORY(html) # Must be after the other dirs, since it uses the other targets
+ADD_SUBDIRECTORY(icons) # Must be after the other dirs, since it uses the other targets
 
 if (MSVC)
    set_target_properties(vidiot PROPERTIES COMPILE_FLAGS "/YuPrecompiled.h")

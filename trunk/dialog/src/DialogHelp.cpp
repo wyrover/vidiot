@@ -24,7 +24,7 @@ DialogHelp::DialogHelp()
     ////////  ////////
 
     mHtml = new wxHtmlWindow(this);
-    mHtml->LoadPage(wxFileName(dir, "main.html").GetFullPath());
+    mHtml->LoadPage(wxFileName(dir, "index.html").GetFullPath());
 
     ////////  ////////
 
