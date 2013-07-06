@@ -61,7 +61,6 @@ void TestManual::testManual()
     // todo make help text
     // todo make audio composition
     // todo scale clip (reduce size), then put this clip in track2, then fade in this clip above another clip -> the black is also 'faded in', whereas it should have been 'empty'!
-    // todo bug: trim to the edge of empty clip uses non inited preview data)
     // todo at end of clip edit, remove any empty clips which are the last clips of the track
     pause(60000 * 60); // One hour should be enough...
 
