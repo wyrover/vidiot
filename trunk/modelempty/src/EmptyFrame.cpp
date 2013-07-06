@@ -30,6 +30,7 @@ DataPointer EmptyFrame::getData()
         PixelFormat format = PIX_FMT_RGB24;
         mBufferSize = avpicture_get_size(format, getSize().GetWidth(), getSize().GetHeight());
         mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
+        memset(mBuffer,0,mBufferSize);
 
         mFrame = avcodec_alloc_frame();
 

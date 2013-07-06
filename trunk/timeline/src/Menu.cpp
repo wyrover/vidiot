@@ -19,6 +19,7 @@
 #include "Render.h"
 #include "Selection.h"
 #include "Sequence.h"
+#include "SplitAtCursor.h"
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "Track.h"
@@ -60,6 +61,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"),  _("Add a new audio track to the sequence."));
     mMenu.Append(ID_REMOVE_EMPTY_TRACKS,  _("Remove empty tracks"), _("Remove all empty audio and video tracks in this sequence."));
     mMenu.AppendSeparator();
+    mMenu.Append(ID_SPLIT_AT_CURSOR,   _("Split at cursor\tS"), _("Split clips at the current cursor position."));
+    mMenu.AppendSeparator();
     mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions"), _("Delete all marked regions from sequence."));
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions"), _("Delete all unmarked regions from sequence."));
     mMenu.Append(ID_REMOVEMARKERS,  _("Remove markers"), _("Rmove all markers from the sequence."));
@@ -75,6 +78,8 @@ MenuHandler::MenuHandler(Timeline* timeline)
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,         this, ID_ADDVIDEOTRACK);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
+
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onSplitAtCursor,         this, ID_SPLIT_AT_CURSOR);
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,          this, ID_DELETEMARKED);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked,        this, ID_DELETEUNMARKED);
@@ -102,6 +107,8 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,         this, ID_ADDVIDEOTRACK);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
+
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onSplitAtCursor,         this, ID_SPLIT_AT_CURSOR);
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,          this, ID_DELETEMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked,        this, ID_DELETEUNMARKED);
@@ -344,6 +351,16 @@ void MenuHandler::onRemoveEmptyTracks(wxCommandEvent& event)
     {
         LOG_INFO;
         (new command::RemoveEmptyTracks(getSequence()))->submit();
+    }
+    event.Skip();
+}
+
+void MenuHandler::onSplitAtCursor(wxCommandEvent& event)
+{
+    if (mActive)
+    {
+        LOG_INFO;
+        (new command::SplitAtCursor(getSequence()))->submit();
     }
     event.Skip();
 }
