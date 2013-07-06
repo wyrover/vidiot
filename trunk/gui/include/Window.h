@@ -38,6 +38,7 @@ class Worker;
 class TimelinesView;
 class Preview;
 class ProjectView;
+class Help;
 
 typedef timeline::HelperPanel<timeline::Details> DetailsView;
 
@@ -75,6 +76,15 @@ public:
     void onRenameProject( model::EventRenameProject &event );
 
     //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onMove(wxMoveEvent& event);
+    void onSize(wxSizeEvent& event);
+    void onMaximize(wxMaximizeEvent& event);
+    void onClose(wxCloseEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
     // FILE MENU
     //////////////////////////////////////////////////////////////////////////
 
@@ -99,11 +109,24 @@ public:
     void onOptions(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
+    // WORKSPACE MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void onShowCaptions(wxCommandEvent& event);
+    void onWorkspaceSave(wxCommandEvent& event);
+    void onWorkspaceLoad(wxCommandEvent& event);
+    void onWorkspaceDelete(wxCommandEvent& event);
+    void onWorkspaceDeleteAll(wxCommandEvent& event);
+    void onWorkspaceDefault(wxCommandEvent& event);
+    void onWorkspaceFullscreen(wxCommandEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
     // HELP MENU
     //////////////////////////////////////////////////////////////////////////
 
     void onHelp(wxCommandEvent& event);
     void onLog(wxCommandEvent& event);
+    void onConfig(wxCommandEvent& event);
     void onAbout(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
@@ -154,17 +177,26 @@ private:
     DetailsView*        mDetailsView;
     TimelinesView*      mTimelinesView;
     ProjectView*	    mProjectView;
+    Help*               mHelp;
 
     wxMenuBar*          menubar;        // For enabling/disabling menus
     wxMenu*             menuedit;       // For associating with do/undo
     wxMenu*             menusequence;   // For determining cleanup of the sequence menu's
-
+    wxMenu*             mMenuWorkspace;
     util::TestCrash*    mTestCrash;
 
     wxAuiManager        mUiManager;
 
     model::audio::AudioTransitionFactory* mAudioTransitionFactory;
     model::video::VideoTransitionFactory* mVideoTransitionFactory;
+
+    wxString            mDefaultPerspective;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void updateWorkspaceMenu();
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

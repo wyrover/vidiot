@@ -87,6 +87,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     // Set all defaults here
     setDefault(Config::sPathAutoLoadEnabled, false);
     setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
+    setDefault(Config::sPathDebugShowCrashMenu, false);
     setDefault(Config::sPathDefaultAudioChannels, 2);
     setDefault(Config::sPathDefaultAudioSampleRate, 44100);
     setDefault(Config::sPathDefaultExtension, "avi");
@@ -109,6 +110,12 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathTestRunCurrent, "");
     setDefault(Config::sPathTestRunFrom, "");
     setDefault(Config::sPathTestRunOnly, "");
+    setDefault(Config::sPathWindowMaximized, false);
+    setDefault(Config::sPathWindowW, -1);
+    setDefault(Config::sPathWindowH, -1);
+    setDefault(Config::sPathWindowX, -1);
+    setDefault(Config::sPathWindowY, -1);
+    setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
 
     wxConfigBase::Get()->Flush();
 
@@ -259,6 +266,65 @@ void Config::setShowDebugInfo(bool show)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// WORKSPACE PERSPECTIVES
+//////////////////////////////////////////////////////////////////////////
+
+Config::Perspectives Config::WorkspacePerspectives::get()
+{
+    Config::Perspectives result;
+    for (int i = 1; i < 100; ++i) // More than 100 not supported
+    {
+        wxString pathName = sPathWorkspacePerspectiveName + wxString::Format("%d",i);
+        wxString pathSaved = sPathWorkspacePerspectiveSaved + wxString::Format("%d",i);
+        if (!Exists(pathName) || !Exists(pathSaved))
+        {
+            break;
+        }
+        result[ReadString(pathName)] = ReadString(pathSaved); // Also avoids duplicates
+    }
+    return result;
+}
+
+void Config::WorkspacePerspectives::add(wxString name, wxString perspective)
+{
+    Config::Perspectives perspectives = get();
+    perspectives[name] = perspective;
+    save(perspectives);
+}
+
+void Config::WorkspacePerspectives::remove(wxString name)
+{
+    Config::Perspectives perspectives = get();
+    perspectives.erase(name);
+    save(perspectives);
+}
+
+void Config::WorkspacePerspectives::removeAll()
+{
+    for (int i = 1; i < 100; ++i) // More than 100 not supported
+    {
+        wxConfigBase::Get()->DeleteEntry(sPathWorkspacePerspectiveName + wxString::Format("%d",i));
+        wxConfigBase::Get()->DeleteEntry(sPathWorkspacePerspectiveSaved + wxString::Format("%d",i));
+    }
+    wxConfigBase::Get()->Flush();
+}
+
+void Config::WorkspacePerspectives::save(Perspectives perspectives)
+{
+    removeAll();
+    int i = 1;
+    BOOST_FOREACH( Config::Perspectives::value_type name_perspective, perspectives )
+    {
+        wxString pathName = sPathWorkspacePerspectiveName + wxString::Format("%d",i);
+        wxString pathSaved = sPathWorkspacePerspectiveSaved + wxString::Format("%d",i);
+        WriteString(pathName, name_perspective.first);
+        WriteString(pathSaved, name_perspective.second);
+        ++i;
+    }
+    wxConfigBase::Get()->Flush();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // DISK ACCESS
 //////////////////////////////////////////////////////////////////////////
 
@@ -284,29 +350,38 @@ void Config::releaseWriteToDisk()
 // CONFIG PATHS
 //////////////////////////////////////////////////////////////////////////
 
-const wxString Config::sPathAutoLoadEnabled         ("/Project/AutoLoad/Enabled");
-const wxString Config::sPathDebugMaxRenderLength    ("/Debug/MaxRenderLength");
-const wxString Config::sPathDefaultAudioChannels    ("/Audio/DefaultNumberOfChannels");
-const wxString Config::sPathDefaultAudioSampleRate  ("/Audio/DefaultSampleRate");
-const wxString Config::sPathDefaultExtension        ("/File/DefaultExtension");
-const wxString Config::sPathDefaultFrameRate        ("/Video/DefaultFrameRate");
-const wxString Config::sPathDefaultTransitionLength ("/Timeline/DefaultTransitionLength");
-const wxString Config::sPathDefaultVideoAlignment   ("/Video/DefaultVideoAlignment");
-const wxString Config::sPathDefaultVideoHeight      ("/Video/DefaultHeight");
-const wxString Config::sPathDefaultVideoScaling     ("/Video/DefaultVideoScaling");
-const wxString Config::sPathDefaultVideoWidth       ("/Video/DefaultWidth");
-const wxString Config::sPathLastOpened              ("/Project/LastOpened");
-const wxString Config::sPathLogLevel                ("/Debug/LogLevel");
-const wxString Config::sPathLogLevelAvcodec         ("/Debug/LogLevelAvcodec");
-const wxString Config::sPathMarkerBeginAddition     ("/Timeline/MarkerBeginAddition");
-const wxString Config::sPathMarkerEndAddition       ("/Timeline/MarkerEndAddition");
-const wxString Config::sPathOverruleFourCC          ("/Video/FourCC");
-const wxString Config::sPathShowBoundingBox         ("/View/BoundingBox");
-const wxString Config::sPathShowDebugInfoOnWidgets  ("/Debug/Show");
-const wxString Config::sPathSnapClips               ("/View/SnapClips");
-const wxString Config::sPathSnapCursor              ("/View/SnapCursor");
-const wxString Config::sPathStrip                   ("/Timeline/Strip");
-const wxString Config::sPathTest                    ("/Test/CxxTestMode");
-const wxString Config::sPathTestRunOnly             ("/Test/RunOnly");
-const wxString Config::sPathTestRunFrom             ("/Test/RunFrom");
-const wxString Config::sPathTestRunCurrent          ("/Test/RunCurrent");
+const wxString Config::sPathAutoLoadEnabled             ("/Project/AutoLoad/Enabled");
+const wxString Config::sPathDebugMaxRenderLength        ("/Debug/MaxRenderLength");
+const wxString Config::sPathDebugShowCrashMenu          ("/Debug/ShowCrashMenu");
+const wxString Config::sPathDefaultAudioChannels        ("/Audio/DefaultNumberOfChannels");
+const wxString Config::sPathDefaultAudioSampleRate      ("/Audio/DefaultSampleRate");
+const wxString Config::sPathDefaultExtension            ("/File/DefaultExtension");
+const wxString Config::sPathDefaultFrameRate            ("/Video/DefaultFrameRate");
+const wxString Config::sPathDefaultTransitionLength     ("/Timeline/DefaultTransitionLength");
+const wxString Config::sPathDefaultVideoAlignment       ("/Video/DefaultVideoAlignment");
+const wxString Config::sPathDefaultVideoHeight          ("/Video/DefaultHeight");
+const wxString Config::sPathDefaultVideoScaling         ("/Video/DefaultVideoScaling");
+const wxString Config::sPathDefaultVideoWidth           ("/Video/DefaultWidth");
+const wxString Config::sPathLastOpened                  ("/Project/LastOpened");
+const wxString Config::sPathLogLevel                    ("/Debug/LogLevel");
+const wxString Config::sPathLogLevelAvcodec             ("/Debug/LogLevelAvcodec");
+const wxString Config::sPathMarkerBeginAddition         ("/Timeline/MarkerBeginAddition");
+const wxString Config::sPathMarkerEndAddition           ("/Timeline/MarkerEndAddition");
+const wxString Config::sPathOverruleFourCC              ("/Video/FourCC");
+const wxString Config::sPathShowBoundingBox             ("/View/BoundingBox");
+const wxString Config::sPathShowDebugInfoOnWidgets      ("/Debug/Show");
+const wxString Config::sPathSnapClips                   ("/View/SnapClips");
+const wxString Config::sPathSnapCursor                  ("/View/SnapCursor");
+const wxString Config::sPathStrip                       ("/Timeline/Strip");
+const wxString Config::sPathTest                        ("/Test/CxxTestMode");
+const wxString Config::sPathTestRunOnly                 ("/Test/RunOnly");
+const wxString Config::sPathTestRunFrom                 ("/Test/RunFrom");
+const wxString Config::sPathTestRunCurrent              ("/Test/RunCurrent");
+const wxString Config::sPathWindowMaximized             ("/Workspace/Maximized");
+const wxString Config::sPathWindowW                     ("/Workspace/W");
+const wxString Config::sPathWindowH                     ("/Workspace/H");
+const wxString Config::sPathWindowX                     ("/Workspace/X");
+const wxString Config::sPathWindowY                     ("/Workspace/Y");
+const wxString Config::sPathWorkspacePerspectiveName    ("/Workspace/PerspectiveName");
+const wxString Config::sPathWorkspacePerspectiveSaved   ("/Workspace/PerspectiveSaved");
+const wxString Config::sPathWorkspacePerspectiveCurrent ("/Workspace/PerspectiveCurrent");

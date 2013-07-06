@@ -308,12 +308,12 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     }
 
     wxMenu createMenu;
-    createMenu.Append( meID_NEW_FOLDER,     _("&Folder") );
-    createMenu.Append( meID_NEW_SEQUENCE,   _("&Sequence") );
+    createMenu.Append( meID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
+    createMenu.Append( meID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) sequence") );
 
     wxMenu addMenu;
-    addMenu.Append( meID_NEW_AUTOFOLDER, _("&Folder from disk") );
-    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s) from disk") );
+    addMenu.Append( meID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
+    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s) from disk"), _("Select a file on disk to be added to the project.") );
 
     wxMenu menu;
     menu.Append( wxID_CUT,   _("Cu&t\tCTRL-x") );
@@ -329,7 +329,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
 
     if (showCreateSequence)
     {
-        menu.Append(meID_CREATE_SEQUENCE, _("&Make sequence"));
+        menu.Append(meID_CREATE_SEQUENCE, _("&Make sequence"), ("Create a new sequence containing all the clips in the folder") );
         menu.Enable(meID_CREATE_SEQUENCE, enableCreateSequence);
     }
     if (showOpenSequence)

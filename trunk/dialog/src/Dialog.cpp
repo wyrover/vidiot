@@ -4,6 +4,7 @@
 #include "UtilLog.h"
 #include "UtilThread.h"
 #include "Window.h"
+#include <wx/choicdlg.h>
 
 namespace gui {
 
@@ -128,6 +129,39 @@ wxString Dialog::getText( wxString title, wxString message, wxString default, wx
     }
     if (!parent) { parent = &Window::get(); }
     return util::thread::RunInMainReturning<wxString>(boost::bind(&wxGetTextFromUser, message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true));
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void Dialog::setComboText(wxString text)
+{
+    ASSERT(!mComboText);
+    mComboText = boost::optional<wxString>(text);
+}
+
+wxString Dialog::getComboText( wxString title, wxString message, std::list<wxString> entries, wxString default, wxWindow* parent )
+{
+    if (mComboText)
+    {
+        wxString result = *mText;
+        mText.reset();
+        return result;
+    }
+    if (!parent) { parent = &Window::get(); }
+    wxArrayString choices;
+    int initial = 0;
+    int i = 0;
+    BOOST_FOREACH( wxString entry, entries )
+    {
+        ASSERT(!entry.IsEmpty()); // Empty string is returned upon Cancel
+        choices.Add(entry);
+        if (entry.IsSameAs(default))
+        {
+            initial = i;
+        }
+        ++i;
+    }
+    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxGetSingleChoice, message, title, choices, initial, parent));
 }
 
 //////////////////////////////////////////////////////////////////////////
