@@ -54,6 +54,21 @@ public:
     static void setShowDebugInfo(bool show); ///< For testing only
 
     //////////////////////////////////////////////////////////////////////////
+    // WORKSPACE PERSPECTIVES
+    //////////////////////////////////////////////////////////////////////////
+
+    typedef std::map<wxString,wxString> Perspectives;
+
+    struct WorkspacePerspectives
+    {
+        static Perspectives get();
+        static void add(wxString name, wxString perspective);
+        static void remove(wxString name);
+        static void removeAll();
+        static void save(Perspectives perspectives);
+    };
+
+    //////////////////////////////////////////////////////////////////////////
     // DISK ACCESS
     //////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +81,7 @@ public:
 
     static const wxString sPathAutoLoadEnabled;
     static const wxString sPathDebugMaxRenderLength;
+    static const wxString sPathDebugShowCrashMenu;
     static const wxString sPathDefaultAudioChannels;
     static const wxString sPathDefaultAudioSampleRate;
     static const wxString sPathDefaultExtension;
@@ -87,9 +103,17 @@ public:
     static const wxString sPathSnapCursor;
     static const wxString sPathStrip;
     static const wxString sPathTest;
-    static const wxString sPathTestRunOnly;
-    static const wxString sPathTestRunFrom;
     static const wxString sPathTestRunCurrent;
+    static const wxString sPathTestRunFrom;
+    static const wxString sPathTestRunOnly;
+    static const wxString sPathWindowH;
+    static const wxString sPathWindowMaximized;
+    static const wxString sPathWindowW;
+    static const wxString sPathWindowX;
+    static const wxString sPathWindowY;
+    static const wxString sPathWorkspacePerspectiveName;
+    static const wxString sPathWorkspacePerspectiveSaved;
+    static const wxString sPathWorkspacePerspectiveCurrent;
 
 private:
 

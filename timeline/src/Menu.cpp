@@ -56,21 +56,21 @@ MenuHandler::MenuHandler(Timeline* timeline)
 {
     VAR_DEBUG(this);
 
-    mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"));
-    mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"));
-    mMenu.Append(ID_REMOVE_EMPTY_TRACKS,  _("Remove empty video and audio tracks"));
+    mMenu.Append(ID_ADDVIDEOTRACK,  _("Add video track"),  _("Add a new video track to the sequence."));
+    mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"),  _("Add a new audio track to the sequence."));
+    mMenu.Append(ID_REMOVE_EMPTY_TRACKS,  _("Remove empty tracks"), _("Remove all empty audio and video tracks in this sequence."));
     mMenu.AppendSeparator();
-    mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions from sequence"));
-    mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions from sequence"));
-    mMenu.Append(ID_REMOVEMARKERS,  _("Remove all markers"));
+    mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions"), _("Delete all marked regions from sequence."));
+    mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions"), _("Delete all unmarked regions from sequence."));
+    mMenu.Append(ID_REMOVEMARKERS,  _("Remove markers"), _("Rmove all markers from the sequence."));
     mMenu.AppendSeparator();
-    mMenu.Append(ID_DELETEEMPTY,  _("Remove empty regions"));
+    mMenu.Append(ID_DELETEEMPTY,  _("Remove empty"), _("Remove all empty areas from the sequence."));
     mMenu.AppendSeparator();
-    mMenu.Append(ID_RENDERSETTINGS, _("Render settings"));
-    mMenu.Append(ID_RENDERSEQUENCE, _("Render '") + getSequence()->getName() + "'");
-    mMenu.Append(ID_RENDERSEQUENCE, _("Render all modified sequences"));
+    mMenu.Append(ID_RENDERSETTINGS, _("Render settings"), ("Open the dialog containing the settings for generating a movie file from the sequence."));
+    mMenu.Append(ID_RENDERSEQUENCE, _("Render '") + getSequence()->getName() + "'", _("Generate movie file from sequence."));
+    mMenu.Append(ID_RENDERSEQUENCE, _("Render all modified sequences"), _("Generate movie files for all sequences in the project."));
     mMenu.AppendSeparator();
-    mMenu.Append(ID_CLOSESEQUENCE,  _("Close"));
+    mMenu.Append(ID_CLOSESEQUENCE,  _("Close"), _("Close the sequence. Will not remove sequence from project."));
 
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,         this, ID_ADDVIDEOTRACK);
     Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
@@ -276,6 +276,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     if (menu.GetMenuItemCount() > 0)
     {
         mPopup = true;
+
         int result = getTimeline().GetPopupMenuSelectionFromUser(menu);
         mPopup = false;
         switch (result)

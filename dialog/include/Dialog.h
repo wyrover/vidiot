@@ -79,6 +79,18 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
 
+    /// Set a fixed outcome for the next combo box selection for testing.
+    /// \param text fixed text which will be returned for the next getComboText() call
+    /// \post sComboText
+    void setComboText(wxString text);
+
+    /// Open a text dialog. If before this call setComboText() was called, the text
+    /// given in setComboText() is returned and that text is reset.
+    /// \post !mComboText
+    wxString getComboText( wxString title, wxString message, std::list<wxString> entries, wxString default = "", wxWindow* parent = 0 );
+
+    //////////////////////////////////////////////////////////////////////////
+
     /// Set a fixed outcome for the next message dialog.
     /// \param button fixed button value (wxYES, wxNO, wxCANCEL, wxOK or wxHELP) to be returned by next getConfirmation();
     /// \post sButton
@@ -112,6 +124,7 @@ private:
     boost::optional<wxString> mSaveFile;
     boost::optional<wxStrings> mFiles;
     boost::optional<wxString> mText;
+    boost::optional<wxString> mComboText;
     boost::optional<int> mButton;
 
     /// Only one report is generated. After that application should end.
