@@ -1,5 +1,7 @@
 #include "Sequence.h"
 
+#include "AudioComposition.h"
+#include "AudioCompositionParameters.h"
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
 #include "IClip.h"
@@ -15,7 +17,6 @@
 #include "UtilSerializeWxwidgets.h"
 #include "UtilSet.h"
 #include "VideoComposition.h"
-#include "VideoCompositionParameters.h"
 #include "VideoCompositionParameters.h"
 #include "VideoTrack.h"
 #include "Window.h"
@@ -148,7 +149,7 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
     if (videoFrame)
     {
         videoFrame->setPts(mPosition);
-        mPosition++;
+        mPosition++; // todo make mVideoPosition and then same mechanism for audio also?
     }
     VAR_VIDEO(videoFrame);
     return videoFrame;
@@ -160,8 +161,8 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
 
 AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    AudioChunkPtr audioChunk = boost::dynamic_pointer_cast<IAudio>(*mAudioTracks.begin())->getNextAudio(parameters);
-    VAR_AUDIO(audioChunk);
+    AudioChunkPtr audioChunk = getAudioComposition(parameters)->generate();
+    VAR_VIDEO(audioChunk);
     return audioChunk;
 }
 
@@ -318,6 +319,16 @@ VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParamete
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
         composition->add(boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(parameters));
+    }
+    return composition;
+}
+
+AudioCompositionPtr Sequence::getAudioComposition(const AudioCompositionParameters& parameters)
+{
+    AudioCompositionPtr composition(boost::make_shared<AudioComposition>(parameters));
+    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    {
+        composition->add(boost::dynamic_pointer_cast<IAudio>(track)->getNextAudio(parameters));
     }
     return composition;
 }
