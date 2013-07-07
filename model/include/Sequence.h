@@ -96,6 +96,8 @@ public:
 
     VideoCompositionPtr getVideoComposition(const VideoCompositionParameters& parameters);
 
+    AudioCompositionPtr getAudioComposition(const AudioCompositionParameters& parameters);
+
     ///\return list of all cuts in the sequence
     /// Each begin and end of a clip is returned as a clip. Note that this includes the begin and end of each transition, but not (yet) the cut 'under' the transition.
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>());

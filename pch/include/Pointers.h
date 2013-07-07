@@ -16,6 +16,7 @@ namespace model {
 
 class AudioChunk;
 class AudioClip;
+class AudioComposition;
 class AudioFile;
 class AudioTrack;
 class AutoFolder;
@@ -39,7 +40,6 @@ class Track;
 class Transition;
 class VideoClip;
 class VideoComposition;
-class VideoComposition;
 class VideoFile;
 class VideoFrame;
 class VideoTrack;
@@ -47,6 +47,7 @@ class VideoTransition;
 struct MoveParameter;
 typedef boost::shared_ptr<AudioChunk> AudioChunkPtr;
 typedef boost::shared_ptr<AudioClip> AudioClipPtr;
+typedef boost::shared_ptr<AudioComposition> AudioCompositionPtr;
 typedef boost::shared_ptr<AudioFile> AudioFilePtr;
 typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
 typedef boost::shared_ptr<AutoFolder> AutoFolderPtr;

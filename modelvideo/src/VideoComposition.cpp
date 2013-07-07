@@ -80,7 +80,6 @@ VideoFramePtr VideoComposition::generate()
 
     BOOST_FOREACH( VideoFramePtr frame, mFrames )
     {
-        // PERF: if only one frame without changes then use that frame?
         if (frame->getForceKeyFrame())
         {
             keyFrame = true;
