@@ -7,6 +7,7 @@
 #include "HelperConfig.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
+#include "HelperTransition.h"
 #include "HelperWindow.h"
 #include "HelperWorker.h"
 #include "ids.h"
@@ -180,6 +181,27 @@ void TestRender::testRenderingCodecs()
         expectation.wait();
         ASSERT(path.Exists());
     }
+}
+
+void TestRender::testRenderingTransition()
+{
+    StartTestSuite();
+    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
+
+    TrimLeft(VideoClip(0),60);
+    MakeInOutTransitionAfterClip preparation(0);
+
+    triggerMenu(ID_RENDERSETTINGS);
+    RandomTempDir tempdir;
+    wxFileName path(tempdir.getFileName().GetFullPath(), "out", "avi");
+    gui::Dialog::get().setSaveFile(path.GetFullPath());
+    ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+    waitForIdle();
+
+    ExpectExecutedWork expectation(1);
+    ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
+    expectation.wait();
+    ASSERT(path.Exists());
 }
 
 } // namespace
