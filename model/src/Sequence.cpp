@@ -81,6 +81,10 @@ Sequence::Sequence(const Sequence& other)
     ,   mRender(make_cloned<render::Render>(other.mRender))
 {
     VAR_DEBUG(this);
+    BOOST_FOREACH( model::TrackPtr track, getTracks() )
+    {
+        track->updateClips(); // todo see todo temp hack in Track.h
+    }
 }
 
 Sequence::~Sequence()

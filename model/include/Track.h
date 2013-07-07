@@ -127,6 +127,14 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    // todo temp hack:
+    // required for solving the following bug: during rendering of a sequence with
+    // transitions, the transition's getNextVideo/Audio uses getPrev/getNext which is
+    // considered 'redundant' and thus is should not be required for a cloned sequence.
+    // The default (non redundant) structures must be adapter such that the getnext/getprev
+    // calls of the transitions being rendered can be done.
+    friend class Sequence;
+
     /// Updates the clips after insertion/removal etc.
     /// - Updates the pts'es for all clips in this track
     /// - Updates the clip's track pointer to this track

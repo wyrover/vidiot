@@ -25,6 +25,11 @@ public:
     void testRenderingSplit();
     void testRenderingCodecs();
 
+    /// This was a bug once. Caused by the clone not having the proper clip
+    /// administration (getPrev/getNext failed when the transition started
+    /// generating frames/chunks).
+    void testRenderingTransition();
+
 private:
 
     FixtureProject mProjectFixture;

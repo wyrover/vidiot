@@ -7,7 +7,6 @@
 #include "ModelEvent.h"
 #include "Node.h"
 #include "TrackEvent.h"
-#include "Transition.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -35,7 +34,6 @@ Track::Track(const Track& other)
 ,   mIndex(0)
 {
     VAR_DEBUG(this);
-    // NOTE: updateClips() is never called here!
 }
 
 Track::~Track()
