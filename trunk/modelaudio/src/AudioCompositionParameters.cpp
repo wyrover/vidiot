@@ -47,6 +47,11 @@ int AudioCompositionParameters::getNrChannels() const
     return mNrChannels;
 }
 
+samplecount AudioCompositionParameters::getChunkSize() const
+{
+    return ptsToSamples(1);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CONVERSION HELPERS
 //////////////////////////////////////////////////////////////////////////
