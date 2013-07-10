@@ -225,7 +225,7 @@ void Config::WriteLong(const wxString& key, long value)
         result = wxConfigBase::Get()->Flush();
         ASSERT(result);
     }
-
+}
 
     // todo got crash when moving. Config::writelong failed in the window::onmove:
 //    08-07-2013 22:45:21.059 ERROR   t@0ad0 D:/Vidiot/vidiot_trunk/util/src/Config.cpp(64) Config::init [ConfigFile=D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vidiot.ini]
@@ -234,7 +234,7 @@ void Config::WriteLong(const wxString& key, long value)
 //08-07-2013 22:45:29.374 WX      t@0ad0 wxLOG_Error can't commit changes to file 'D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vidiot.ini' (error 5: access is denied.)
 //08-07-2013 22:45:29.374 WX      t@0ad0 wxLOG_Error Failed to update user configuration file.
 //08-07-2013 22:45:29.374 ASSERT  t@0ad0 D:/Vidiot/vidiot_trunk/util/src/Config.cpp(226) Config::WriteLong [ASSERT:result]
-//08-07-2013 22:45:32.213 STACK   t@0ad0 
+//08-07-2013 22:45:32.213 STACK   t@0ad0
 //  0 0108D98D      445  d:\vidiot\vidiot_trunk\util\src\utillog.cpp(264): LogVar::~LogVar
 //  1 01090DA6      246  d:\vidiot\vidiot_trunk\util\src\config.cpp(228): Config::WriteLong
 //  2 010E23D5       69  d:\vidiot\vidiot_trunk\gui\src\window.cpp(452): gui::Window::onMove
@@ -256,8 +256,8 @@ void Config::WriteLong(const wxString& key, long value)
 // 18 7708C5E7      719  gapfnScSendMessage
 // 19 7707B0CC      466  GetMenuItemInfoW
 // 20 77085138      187  DefWindowProcW
-// 21 741F1E60        0  
-// 22 741F1F20        0  
+// 21 741F1E60        0
+// 22 741F1F20        0
 // 23 77085FC3      510  SetPropW
 // 24 01373E8F       95  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2278): wxWindow::MSWDefWindowProc
 // 25 0136E71A       58  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(3620): wxWindow::MSWWindowProc
@@ -272,8 +272,8 @@ void Config::WriteLong(const wxString& key, long value)
 // 34 77085138      187  DefWindowProcW
 // 35 741F5EEF     2021  Ordinal45
 // 36 7420D128      322  SetWindowThemeAttribute
-// 37 741F1E09        0  
-// 38 741F1F20        0  
+// 37 741F1E09        0
+// 38 741F1F20        0
 // 39 77085FC3      510  SetPropW
 // 40 01373E8F       95  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2278): wxWindow::MSWDefWindowProc
 // 41 0136E71A       58  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(3620): wxWindow::MSWWindowProc
@@ -288,8 +288,8 @@ void Config::WriteLong(const wxString& key, long value)
 // 50 77085138      187  DefWindowProcW
 // 51 741F5EEF     2021  Ordinal45
 // 52 7420D175      399  SetWindowThemeAttribute
-// 53 741F1E09        0  
-// 54 741F1F20        0  
+// 53 741F1E09        0
+// 54 741F1F20        0
 // 55 77085FC3      510  SetPropW
 // 56 01373E8F       95  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2278): wxWindow::MSWDefWindowProc
 // 57 0136E71A       58  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(3620): wxWindow::MSWWindowProc
@@ -316,8 +316,6 @@ void Config::WriteLong(const wxString& key, long value)
 // 78 773B374E      194  RtlInitializeExceptionChain
 //
 //END CLOSE
-
-
 
 // static
 void Config::WriteDouble(const wxString& key, double value)
