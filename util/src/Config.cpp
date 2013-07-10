@@ -225,7 +225,99 @@ void Config::WriteLong(const wxString& key, long value)
         result = wxConfigBase::Get()->Flush();
         ASSERT(result);
     }
-}
+
+
+    // todo got crash when moving. Config::writelong failed in the window::onmove:
+//    08-07-2013 22:45:21.059 ERROR   t@0ad0 D:/Vidiot/vidiot_trunk/util/src/Config.cpp(64) Config::init [ConfigFile=D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vidiot.ini]
+//08-07-2013 22:45:29.358 WX      t@0ad0 wxLOG_Error Failed to copy the file 'D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vid3F1.tmp' to 'D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vidiot.ini' (error 5: access is denied.)
+//08-07-2013 22:45:29.374 WX      t@0ad0 wxLOG_Error File 'D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vid3F1.tmp' couldn't be renamed 'D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vidiot.ini' (error 5: access is denied.)
+//08-07-2013 22:45:29.374 WX      t@0ad0 wxLOG_Error can't commit changes to file 'D:\Vidiot\Build\MSVC\main\RelWithDebInfo\Vidiot.ini' (error 5: access is denied.)
+//08-07-2013 22:45:29.374 WX      t@0ad0 wxLOG_Error Failed to update user configuration file.
+//08-07-2013 22:45:29.374 ASSERT  t@0ad0 D:/Vidiot/vidiot_trunk/util/src/Config.cpp(226) Config::WriteLong [ASSERT:result]
+//08-07-2013 22:45:32.213 STACK   t@0ad0 
+//  0 0108D98D      445  d:\vidiot\vidiot_trunk\util\src\utillog.cpp(264): LogVar::~LogVar
+//  1 01090DA6      246  d:\vidiot\vidiot_trunk\util\src\config.cpp(228): Config::WriteLong
+//  2 010E23D5       69  d:\vidiot\vidiot_trunk\gui\src\window.cpp(452): gui::Window::onMove
+//  3 014E0F00       16  d:\vidiot\wxwidgets_trunk\src\common\appbase.cpp(602): wxAppConsoleBase::HandleEvent
+//  4 014E0F3D       45  d:\vidiot\wxwidgets_trunk\src\common\appbase.cpp(613): wxAppConsoleBase::CallEventHandler
+//  5 014F467B      139  d:\vidiot\wxwidgets_trunk\src\common\event.cpp(1744): wxEvtHandler::SearchDynamicEventTable
+//  6 014F50E3       35  d:\vidiot\wxwidgets_trunk\src\common\event.cpp(1578): wxEvtHandler::TryHereOnly
+//  7 014F5289       89  d:\vidiot\wxwidgets_trunk\src\common\event.cpp(1484): wxEvtHandler::ProcessEvent
+//  8 014F43DF       79  d:\vidiot\wxwidgets_trunk\src\common\event.cpp(1547): wxEvtHandler::DoTryChain
+//  9 014F5314      228  d:\vidiot\wxwidgets_trunk\src\common\event.cpp(1488): wxEvtHandler::ProcessEvent
+// 10 014F448B       59  d:\vidiot\wxwidgets_trunk\src\common\event.cpp(1640): wxEvtHandler::SafelyProcessEvent
+// 11 01374BAF      111  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(5079): wxWindow::HandleMove
+// 12 0137B8FE      238  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2758): wxWindow::MSWHandleMessage
+// 13 0136E704       36  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(3614): wxWindow::MSWWindowProc
+// 14 0138C390      288  d:\vidiot\wxwidgets_trunk\src\msw\toplevel.cpp(467): wxTopLevelWindowMSW::MSWWindowProc
+// 15 013DFDAA      106  d:\vidiot\wxwidgets_trunk\src\msw\frame.cpp(884): wxFrame::MSWWindowProc
+// 16 01376E0F      143  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2703): wxWndProc
+// 17 7708C4E7      463  gapfnScSendMessage
+// 18 7708C5E7      719  gapfnScSendMessage
+// 19 7707B0CC      466  GetMenuItemInfoW
+// 20 77085138      187  DefWindowProcW
+// 21 741F1E60        0  
+// 22 741F1F20        0  
+// 23 77085FC3      510  SetPropW
+// 24 01373E8F       95  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2278): wxWindow::MSWDefWindowProc
+// 25 0136E71A       58  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(3620): wxWindow::MSWWindowProc
+// 26 0138C390      288  d:\vidiot\wxwidgets_trunk\src\msw\toplevel.cpp(467): wxTopLevelWindowMSW::MSWWindowProc
+// 27 013DFDAA      106  d:\vidiot\wxwidgets_trunk\src\msw\frame.cpp(884): wxFrame::MSWWindowProc
+// 28 01376E0F      143  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2703): wxWndProc
+// 29 7708C4E7      463  gapfnScSendMessage
+// 30 77085F9F      474  SetPropW
+// 31 77084F0E      253  GetScrollBarInfo
+// 32 7707FE58      205  GetSystemMenu
+// 33 77396FCE       46  KiUserCallbackDispatcher
+// 34 77085138      187  DefWindowProcW
+// 35 741F5EEF     2021  Ordinal45
+// 36 7420D128      322  SetWindowThemeAttribute
+// 37 741F1E09        0  
+// 38 741F1F20        0  
+// 39 77085FC3      510  SetPropW
+// 40 01373E8F       95  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2278): wxWindow::MSWDefWindowProc
+// 41 0136E71A       58  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(3620): wxWindow::MSWWindowProc
+// 42 0138C390      288  d:\vidiot\wxwidgets_trunk\src\msw\toplevel.cpp(467): wxTopLevelWindowMSW::MSWWindowProc
+// 43 013DFDAA      106  d:\vidiot\wxwidgets_trunk\src\msw\frame.cpp(884): wxFrame::MSWWindowProc
+// 44 01376E0F      143  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2703): wxWndProc
+// 45 7708C4E7      463  gapfnScSendMessage
+// 46 77085F9F      474  SetPropW
+// 47 77084F0E      253  GetScrollBarInfo
+// 48 77084F7D      364  GetScrollBarInfo
+// 49 77396FCE       46  KiUserCallbackDispatcher
+// 50 77085138      187  DefWindowProcW
+// 51 741F5EEF     2021  Ordinal45
+// 52 7420D175      399  SetWindowThemeAttribute
+// 53 741F1E09        0  
+// 54 741F1F20        0  
+// 55 77085FC3      510  SetPropW
+// 56 01373E8F       95  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2278): wxWindow::MSWDefWindowProc
+// 57 0136E71A       58  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(3620): wxWindow::MSWWindowProc
+// 58 0138C390      288  d:\vidiot\wxwidgets_trunk\src\msw\toplevel.cpp(467): wxTopLevelWindowMSW::MSWWindowProc
+// 59 013DFDAA      106  d:\vidiot\wxwidgets_trunk\src\msw\frame.cpp(884): wxFrame::MSWWindowProc
+// 60 01376E0F      143  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2703): wxWndProc
+// 61 7708C4E7      463  gapfnScSendMessage
+// 62 7708C5E7      719  gapfnScSendMessage
+// 63 7708CC19     2305  gapfnScSendMessage
+// 64 7708CC70       15  DispatchMessageW
+// 65 770841EB      231  IsDialogMessageW
+// 66 01374011      289  d:\vidiot\wxwidgets_trunk\src\msw\window.cpp(2487): wxWindow::MSWProcessMessage
+// 67 0143494D      285  d:\vidiot\wxwidgets_trunk\src\msw\evtloop.cpp(149): wxGUIEventLoop::PreProcessMessage
+// 68 014341CF       15  d:\vidiot\wxwidgets_trunk\src\msw\evtloop.cpp(167): wxGUIEventLoop::ProcessMessage
+// 69 01434687      439  d:\vidiot\wxwidgets_trunk\src\msw\evtloop.cpp(233): wxGUIEventLoop::Dispatch
+// 70 015638FD      109  d:\vidiot\wxwidgets_trunk\src\common\evtloopcmn.cpp(203): wxEventLoopManual::DoRun
+// 71 01563A83      131  d:\vidiot\wxwidgets_trunk\src\common\evtloopcmn.cpp(79): wxEventLoopBase::Run
+// 72 014E3F39      105  d:\vidiot\wxwidgets_trunk\src\common\appbase.cpp(324): wxAppConsoleBase::MainLoop
+// 73 010D9197      119  d:\vidiot\vidiot_trunk\gui\src\application.cpp(177): gui::Application::OnRun
+// 74 010496B8      184  d:\vidiot\vidiot_trunk\main\src\main.cpp(68): WinMain
+// 75 0168AC5A      336  f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c(547): __tmainCRTStartup
+// 76 7598ED6C       18  BaseThreadInitThunk
+// 77 773B377B      239  RtlInitializeExceptionChain
+// 78 773B374E      194  RtlInitializeExceptionChain
+//
+//END CLOSE
+
+
 
 // static
 void Config::WriteDouble(const wxString& key, double value)
