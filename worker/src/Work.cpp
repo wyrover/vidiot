@@ -74,7 +74,7 @@ void Work::showProgress(int value)
     {
         util::thread::RunInMainAndDontWait([value]
         {
-            gui::StatusBar::get().showProgressBar(value);
+            gui::StatusBar::get().showProgress(value);
         });
     }
 }

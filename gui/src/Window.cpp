@@ -167,7 +167,7 @@ Window::Window()
     mUiManager.InsertPane(mHelp,
         wxAuiPaneInfo().
         Name("Help").
-        BestSize(wxSize(300,600)).
+        BestSize(wxSize(400,600)).
         MinSize(wxSize(100,100)).
         Layer(2).
         Right().
@@ -198,6 +198,8 @@ Window::Window()
         Top().
         Position(1).
         Resizable().
+        MaximizeButton().
+        MinimizeButton().
         CaptionVisible(true).
         Caption(_("Details"))
         );
@@ -209,6 +211,8 @@ Window::Window()
         Layer(1).
         Top().
         Position(2).
+        MaximizeButton().
+        MinimizeButton().
         MaximizeButton().
         MinimizeButton().
         CaptionVisible(true).
@@ -241,7 +245,7 @@ Window::Window()
 
     Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,     this);
     Bind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,    this);
-    Bind(model::EVENT_RENAME_PROJECT,   &Window::onRenameProject,   this); // todo progress bar does not show progress during update autofolder
+    Bind(model::EVENT_RENAME_PROJECT,   &Window::onRenameProject,   this);
 
     Bind(wxEVT_MOVE,                    &Window::onMove,                this);
     Bind(wxEVT_SIZE,                    &Window::onSize,                this);

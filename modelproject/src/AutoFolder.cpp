@@ -56,7 +56,7 @@ struct IndexAutoFolderWork
             wxString nodename;
 
             wxArrayString allfiles;
-            size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES);
+            size_t count = wxDir::GetAllFiles(mPath.GetLongPath(), &allfiles, wxEmptyString, wxDIR_FILES | wxDIR_DIRS);
             showProgressBar(count);
             int progress = 0;
 

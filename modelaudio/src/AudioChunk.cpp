@@ -35,6 +35,17 @@ AudioChunk::AudioChunk(int nChannels, samplecount nSamples, pts position)
 {
 }
 
+AudioChunk::AudioChunk(int nChannels, samplecount nSamples)
+:   mBuffer(0)
+,   mNrChannels(nChannels)
+,   mNrSamples(nSamples)
+,   mNrReadSamples(0)
+,   mNrSkippedSamples(0)
+,   mPts(0)
+{
+    mBuffer = static_cast<sample*>(calloc( mNrSamples, sBytesPerSample ));
+}
+
 AudioChunk::~AudioChunk()
 {
     if (mBuffer)

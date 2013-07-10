@@ -55,4 +55,13 @@ void TestComposition::testBlend()
     Undo(6);
 }
 
+void TestComposition::testAudioComposition()
+{
+    StartTestSuite();
+    triggerMenu(ID_ADDAUDIOTRACK);
+    DragToTrack(1,model::IClipPtr(),AudioClip(0,3));
+    Drag(From(Center(AudioClip(1,1))).To(wxPoint(HCenter(AudioClip(0,4)),VCenter(AudioClip(1,1)))));
+    Play(HCenter(AudioClip(1,1)),1500);
+}
+
 } // namespace

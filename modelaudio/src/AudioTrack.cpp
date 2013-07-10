@@ -61,6 +61,7 @@ AudioChunkPtr AudioTrack::getNextAudio(const AudioCompositionParameters& paramet
             }
         }
     }
+
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }
