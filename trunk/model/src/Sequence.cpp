@@ -39,7 +39,8 @@ Sequence::Sequence()
     ,   mAudioTracks()
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
-    ,   mPosition(0)
+    ,   mVideoPosition(0)
+    ,   mAudioPosition(0)
     ,   mRender()
 {
     VAR_DEBUG(this);
@@ -57,7 +58,8 @@ Sequence::Sequence(wxString name)
     ,   mAudioTracks()
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
-    ,   mPosition(0)
+    ,   mVideoPosition(0)
+    ,   mAudioPosition(0)
     ,   mRender()
 {
     VAR_DEBUG(this);
@@ -78,7 +80,8 @@ Sequence::Sequence(const Sequence& other)
     ,   mAudioTracks(make_cloned<Track>(other.mAudioTracks))
     ,   mVideoTrackMap() // Duplicate administration left empty! (This constructor should only be used for cloning directly before rendering)
     ,   mAudioTrackMap()  // Duplicate administration left empty! (...and for rendering the duplicate administration is not required)
-    ,   mPosition(0)
+    ,   mVideoPosition(0)
+    ,   mAudioPosition(0)
     ,   mRender(make_cloned<render::Render>(other.mRender))
 {
     VAR_DEBUG(this);
@@ -114,7 +117,8 @@ pts Sequence::getLength() const
 void Sequence::moveTo(pts position)
 {
     VAR_DEBUG(position);
-    mPosition = position;
+    mVideoPosition = position;
+    mAudioPosition = position;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
         track->moveTo(position);
@@ -148,8 +152,8 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
     VideoFramePtr videoFrame = getVideoComposition(parameters)->generate();
     if (videoFrame)
     {
-        videoFrame->setPts(mPosition);
-        mPosition++; // todo make mVideoPosition and then same mechanism for audio also?
+        videoFrame->setPts(mVideoPosition);
+        mVideoPosition++;
     }
     VAR_VIDEO(videoFrame);
     return videoFrame;
@@ -162,6 +166,12 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
 AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameters)
 {
     AudioChunkPtr audioChunk = getAudioComposition(parameters)->generate();
+    if (audioChunk)
+    {
+        ASSERT_EQUALS(audioChunk->getUnreadSampleCount(), parameters.getChunkSize());
+        audioChunk->setPts(mAudioPosition);
+        mAudioPosition++;
+    }
     VAR_VIDEO(audioChunk);
     return audioChunk;
 }
@@ -466,7 +476,8 @@ std::ostream& operator<<( std::ostream& os, const Sequence& obj )
         << obj.mDividerPosition          << '|'
         << obj.mVideoTracks              << '|'
         << obj.mAudioTracks              << '|'
-        << obj.mPosition                 << '|'
+        << obj.mVideoPosition            << '|'
+        << obj.mAudioPosition            << '|'
         << obj.mRender;
     return os;
 }

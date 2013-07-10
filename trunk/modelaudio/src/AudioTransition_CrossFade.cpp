@@ -125,7 +125,7 @@ AudioChunkPtr CrossFade::getAudio(samplecount position, IClipPtr leftClip, IClip
         sample left = dataLeft ? dataLeft[i] : 0;
         sample right = dataRight ? dataRight[i] : 0;
         dataResult[i] = left * factorLeft + right * factorRight;
-        // todo increment position here?
+        position++;
     }
 
     if (mCache->mLeftChunk) { mCache->mLeftChunk->read(nSamples); }

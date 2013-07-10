@@ -24,7 +24,7 @@ Help::Help(wxWindow* parent)
     ////////  ////////
 
     mHtml = new wxHtmlWindow(this);
-    mHtml->LoadPage(wxFileName(dir, "index.html").GetFullPath()); // todo remove this class
+    mHtml->LoadPage(wxFileName(dir, "index.html").GetFullPath());
 
     ////////  ////////
 
@@ -39,31 +39,6 @@ Help::Help(wxWindow* parent)
     GetSizer()->Add(buttons);
 
     mBack->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Help::onBack, this);
-
-    //// Position dialog alongside the main window
-    //wxSize mainWindowSize = Window::get().GetSize();
-    //wxPoint mainWindowPosition = Window::get().GetPosition();
-    //wxSize helpWindowSize = GetSize();
-
-    //int screenWidth, screenHeight;
-    //wxDisplaySize(&screenWidth,&screenHeight);
-
-    //if (mainWindowPosition.x + mainWindowSize.GetWidth() + helpWindowSize.x > screenWidth)
-    //{
-    //    // Won't fit if we just position the dialog alongside.
-
-    //    if (mainWindowSize.GetWidth() + helpWindowSize.x > screenWidth)
-    //    {
-    //        // Main window must be resized, otherwise it'll never fit
-    //        Window::get().SetSize(screenWidth - helpWindowSize.x,  mainWindowSize.y);
-    //    }
-
-    //    // Now reposition both windows if required
-    //    else
-    //    {
-    //        // Just moving the main window a bit will do the trick
-    //    }
-    //}
 }
 
 Help::~Help()

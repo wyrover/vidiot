@@ -129,7 +129,8 @@ private:
     std::map<int, TrackPtr> mVideoTrackMap;
     std::map<int, TrackPtr> mAudioTrackMap;
     pixel mDividerPosition;
-    pts mPosition;
+    pts mVideoPosition;
+    pts mAudioPosition;
     render::RenderPtr mRender;
 
     /// Some variables are only required for better performance.

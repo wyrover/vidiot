@@ -38,6 +38,9 @@ public:
     /// \param position approximate pts value of this chunk (note: use for debugging only)
     AudioChunk(int nChannels, samplecount nSamples, pts position);
 
+    /// Initialize and allocate, filled with 0.
+    AudioChunk(int nChannels, samplecount nSamples);
+
     virtual ~AudioChunk();
 
     //////////////////////////////////////////////////////////////////////////

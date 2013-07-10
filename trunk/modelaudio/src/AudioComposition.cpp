@@ -52,9 +52,11 @@ void AudioComposition::replace(AudioChunkPtr oldChunk, AudioChunkPtr newChunk)
 
 AudioChunkPtr AudioComposition::generate()
 {
+    int chunkSize = mParameters.getChunkSize();
+
     if (mChunks.empty())
     {
-        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1), 0);
+        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), chunkSize, 0);
     }
 
     if (mChunks.size() == 1)
@@ -62,18 +64,38 @@ AudioChunkPtr AudioComposition::generate()
         AudioChunkPtr front = mChunks.front();
         if (true)
         {
+            ASSERT_EQUALS(front->getUnreadSampleCount(), chunkSize);
             // Performance optimization: if only one chunk is rendered, return that chunk, but only if the chunk requires no 'processing'.
             return front;
         }
     }
+    VAR_DEBUG(chunkSize);
+    AudioChunkPtr result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize); // Fills with 0
 
-    return mChunks.front();
-    //BOOST_FOREACH( AudioChunkPtr chunk, mChunks )
-    //{
-    //}
+    BOOST_FOREACH(AudioChunkPtr inputChunk, mChunks)
+    {
+        ASSERT_EQUALS(inputChunk->getUnreadSampleCount(), mParameters.ptsToSamples(1));
+        sample max = std::numeric_limits<sample>::max();
+        sample* inputSample = inputChunk->getBuffer();
+        sample* resultingSample = result->getBuffer();
+        for (int nSample = 0; nSample < chunkSize; ++nSample)
+        {
+            if (*inputSample > max - *resultingSample)
+            {
+                // Overflow
+                *resultingSample = max;
+            }
+            else
+            {
+                *resultingSample += *inputSample;
+            }
 
-    //AudioChunkPtr result = boost::make_shared<AudioChunk>(compositeImage,0);
-    //return result;
+            inputSample++;
+            resultingSample++;
+        }
+    }
+
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
