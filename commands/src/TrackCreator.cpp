@@ -1,5 +1,6 @@
 #include "TrackCreator.h"
 
+#include "ClipCreator.h"
 #include "Node.h"
 #include "AudioClip.h"
 #include "AudioFile.h"
@@ -23,43 +24,11 @@ TrackCreator::TrackCreator(model::NodePtrs assets)
     BOOST_FOREACH( model::NodePtr asset, mAssets )
     {
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
-        if (file)
+        if (file && file->canBeOpened())
         {
-            VAR_DEBUG(file);
-            model::IClipPtr videoClip;
-            model::IClipPtr audioClip;
-
-            if (file->canBeOpened())
-            {
-
-                pts length = file->getLength();
-
-                if (file->hasVideo())
-                {
-                    model::VideoFilePtr videoFile = boost::make_shared<model::VideoFile>(file->getPath());
-                    videoClip = boost::make_shared<model::VideoClip>(videoFile);
-                }
-                else
-                {
-                    videoClip = boost::make_shared<model::EmptyClip>(length);
-                }
-                if (file->hasAudio())
-                {
-                    model::AudioFilePtr audioFile = boost::make_shared<model::AudioFile>(file->getPath());
-                    audioClip = boost::make_shared<model::AudioClip>(audioFile);
-                }
-                else
-                {
-                    audioClip = boost::make_shared<model::EmptyClip>(length);
-                }
-                if (file->hasVideo() && file->hasAudio())
-                {
-                    videoClip->setLink(audioClip);
-                    audioClip->setLink(videoClip);
-                }
-                mVideo->addClips(boost::assign::list_of(videoClip));
-                mAudio->addClips(boost::assign::list_of(audioClip));
-            }
+            std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = ClipCreator::makeClips(file);
+            mVideo->addClips(boost::assign::list_of(videoClip_audioClip.first));
+            mAudio->addClips(boost::assign::list_of(videoClip_audioClip.second));
         }
     }
 }

@@ -56,6 +56,15 @@ void checkBool(wxString path)
     if (e == ENUMNAME ## _MAX) { wxConfigBase::Get()->DeleteEntry(path); } \
 }
 
+void checkEnumFromMap(wxString path, boost::bimap<int, wxString> bimap)
+{
+    wxString s = wxConfigBase::Get()->Read(path, "");
+    if (bimap.right.find(s) == bimap.right.end())
+    {
+        wxConfigBase::Get()->DeleteEntry(path);
+    }
+}
+
 // static
 void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestMode)
 {
@@ -76,6 +85,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     checkLong(Config::sPathDefaultAudioSampleRate, 100, 100000);
     checkLong(Config::sPathDefaultAudioChannels, 1, 2);
     checkEnum(Config::sPathLogLevel, LogLevel);
+    checkEnumFromMap(Config::sPathLogLevelAvcodec, Avcodec::mapAvcodecLevels);
     checkLong(Config::sPathMarkerBeginAddition, 0, 10000);
     checkLong(Config::sPathMarkerEndAddition, 0, 10000);
     checkBool(Config::sPathShowDebugInfoOnWidgets);

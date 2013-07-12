@@ -214,7 +214,7 @@ void File::moveTo(pts position)
     ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext)(position);
     VAR_DEBUG(timestamp)(mFileContext->duration);
     int result = av_seek_frame(mFileContext, -1, timestamp, AVSEEK_FLAG_ANY);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result)); // todo log *this upon errors for easier analysis
 
     ASSERT_ZERO(mPackets.getSize());
     mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
