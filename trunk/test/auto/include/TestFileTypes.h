@@ -30,6 +30,7 @@ public:
 
     void testFileTypes_1_44100();
     void testFileTypes_2_48000();
+    void testFileTypes_StillImage();
 
 private:
 
@@ -41,7 +42,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void executeTest();
+    void executeTest(wxString filetypesDir);
 };
 
 } // namespace

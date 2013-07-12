@@ -3,6 +3,7 @@
 #include "AutoFolder.h"
 #include "DataObject.h"
 #include "Dialog.h"
+#include "File.h"
 #include "Folder.h"
 #include "ids.h"
 #include "Layout.h"
@@ -450,9 +451,13 @@ void ProjectView::onNewFile(wxCommandEvent& event)
         {
             return;
         }
-        wxFileName file(path);
-        file.Normalize();
-        list.push_back(file);
+        wxFileName filename(path);
+        filename.Normalize();
+        model::FilePtr file = boost::make_shared<model::File>(filename);
+        if (file->canBeOpened())
+        {
+            list.push_back(filename);
+        }
     }
     if (list.size() > 0 )
     {

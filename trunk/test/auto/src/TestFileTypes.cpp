@@ -45,7 +45,7 @@ void TestFileTypes::testFileTypes_1_44100()
     StartTestSuite();
     ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 1);
     ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 44100);
-    executeTest();
+    executeTest("filetypes");
 }
 
 void TestFileTypes::testFileTypes_2_48000()
@@ -53,14 +53,20 @@ void TestFileTypes::testFileTypes_2_48000()
     StartTestSuite();
     ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 2);
     ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 48000);
-    executeTest();
+    executeTest("filetypes");
+}
+
+void TestFileTypes::testFileTypes_StillImage()
+{
+    StartTestSuite();
+//todo    //executeTest("filetypes_image");
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TestFileTypes::executeTest()
+void TestFileTypes::executeTest(wxString filetypesDir)
 {
     // Wav files from: http://www-mmsp.ece.mcgill.ca/documents/AudioFormats/WAVE/Samples.html
     // Some files from http://samples.mplayerhq.hu/
@@ -80,7 +86,7 @@ void TestFileTypes::executeTest()
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
     wxFileName TestFilesPath = wxFileName(SOURCE_ROOT,"");
     TestFilesPath.AppendDir("test");
-    TestFilesPath.AppendDir("filetypes");
+    TestFilesPath.AppendDir(filetypesDir);
     ASSERT(TestFilesPath.IsDir());
     ASSERT(TestFilesPath.DirExists());
     model::IPaths InputFiles = getSupportedFiles(TestFilesPath);
@@ -91,13 +97,14 @@ void TestFileTypes::executeTest()
         model::Files files1 = addFiles( boost::assign::list_of(path->getPath().GetFullPath()), folder1 );
 
         model::FilePtr file = files1.front();
+        //pause();
         if (file->hasVideo())
         {
-            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(3, VCenter(VideoTrack(0))) );
+            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(0, VCenter(VideoTrack(0))) );
         }
         else
         {
-            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(3, VCenter(AudioTrack(0))) );
+            DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(0, VCenter(AudioTrack(0))) );
         }
         if (file->hasVideo())
         {
