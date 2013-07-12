@@ -11,6 +11,8 @@
 #include "EmptyClip.h"
 #include "File.h"
 #include "Folder.h"
+#include "ImageClip.h"
+#include "ImageFile.h"
 #include "OutputFormat.h"
 #include "Properties.h"
 #include "Render.h"
@@ -37,6 +39,8 @@ void registerClasses(Archive& ar)
     ar.template register_type<EmptyClip>();
     ar.template register_type<File>();
     ar.template register_type<Folder>();
+    ar.template register_type<ImageClip>();
+    ar.template register_type<ImageFile>();
     ar.template register_type<Properties>();
     ar.template register_type<render::AudioCodec>();
     ar.template register_type<render::OutputFormat>();
