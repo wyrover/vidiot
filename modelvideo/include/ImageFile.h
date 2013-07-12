@@ -1,14 +1,12 @@
-#ifndef MODEL_VIDEO_FILE_H
-#define MODEL_VIDEO_FILE_H
+#ifndef MODEL_IMAGE_FILE_H
+#define MODEL_IMAGE_FILE_H
 
-#include "File.h"
-#include "IVideo.h"
+#include "VideoFile.h"
 
 namespace model {
 
-class VideoFile
-    :   public File
-    ,   public IVideo
+class ImageFile
+    :   public VideoFile
 {
 public:
 
@@ -16,10 +14,10 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFile();
-    VideoFile(wxFileName path);
-    virtual VideoFile* clone() const override;
-    virtual ~VideoFile();
+    ImageFile();
+    ImageFile(wxFileName path);
+    virtual ImageFile* clone() const override;
+    virtual ~ImageFile();
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL
@@ -48,7 +46,7 @@ protected:
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
-    VideoFile(const VideoFile& other);
+    ImageFile(const ImageFile& other);
 
 private:
 
@@ -56,31 +54,15 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mDecodingVideo;
-    pts mPosition;                  ///< Current position of this clip (set via 'moveTo' or changed via 'getNext')
-    VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext.
-    pts mDeliveredFrameInputPts;    ///< The input pts (in the input stream) of the most recently delivered frame.
-    boost::shared_ptr<VideoCompositionParameters> mDeliveredFrameParameters; ///< The parameters with which the delivered frame was made
-
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
-
-    void startDecodingVideo(const VideoCompositionParameters& parameters);
-    void stopDecodingVideo();
-
-    //////////////////////////////////////////////////////////////////////////
-    // FROM FILE
-    //////////////////////////////////////////////////////////////////////////
-
-    bool useStream(AVMediaType type) const override;
-    void flush() override;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoFile& obj );
+    friend std::ostream& operator<<( std::ostream& os, const ImageFile& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -97,6 +79,6 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::VideoFile, 1)
+BOOST_CLASS_VERSION(model::ImageFile, 1)
 
-#endif // MODEL_VIDEO_FILE_H
+#endif // MODEL_IMAGE_FILE_H

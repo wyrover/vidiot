@@ -4,6 +4,8 @@
 #include "AudioFile.h"
 #include "AudioTrack.h"
 #include "EmptyClip.h"
+#include "ImageClip.h"
+#include "ImageFile.h"
 #include "VideoClip.h"
 #include "VideoFile.h"
 #include "VideoTrack.h"
@@ -29,8 +31,7 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
     {
         if (length == 1)
         {
-
-            // todo if length == 1 then make a still image file....
+            videoClip = boost::make_shared<model::ImageClip>(boost::make_shared<model::ImageFile>(file->getPath()));
         }
         else
         {
