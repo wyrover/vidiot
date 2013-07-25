@@ -86,6 +86,7 @@ public:
     static const wxString sPathDefaultAudioSampleRate;
     static const wxString sPathDefaultExtension;
     static const wxString sPathDefaultFrameRate;
+    static const wxString sPathDefaultStillImageLength;
     static const wxString sPathDefaultTransitionLength;
     static const wxString sPathDefaultVideoAlignment;
     static const wxString sPathDefaultVideoHeight;

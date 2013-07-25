@@ -427,14 +427,14 @@ void RenderWork::generate()
         ok = result >= 0;
         if (!ok)
         {
-            VAR_ERROR(filename)(result)(avcodecErrorString(result));
+            VAR_ERROR(filename)(result)(avcodecErrorString(result))(*this);
             sErrorMessage << "Failed to open file '" << filename << "' for writing.";
         }
         else
         {
             fileOpened = true;
 
-            ASSERT_MORE_THAN_EQUALS_ZERO(result)(filename)(avcodecErrorString(result));
+            ASSERT_MORE_THAN_EQUALS_ZERO(result)(filename)(avcodecErrorString(result))(*this);
 
             avformat_write_header(context,0);
 
@@ -504,7 +504,7 @@ void RenderWork::generate()
 
                     // CODEC_CAP_DELAY (see declaration  of avcodec_encode_audio2) is not used: extra silence is added at the end?
                     int result = avcodec_encode_audio2(audioCodec, audioPacket, &frame, &gotPacket); // if gotPacket == 0, then packet is destructed
-                    ASSERT_ZERO(result)(avcodecErrorString(result));
+                    ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
                     numberOfEncodecInputAudioFrames++;
 
                     if (gotPacket)
@@ -512,7 +512,7 @@ void RenderWork::generate()
                         audioPacket->flags |= AV_PKT_FLAG_KEY;
                         audioPacket->stream_index = audioStream->index;
                         int result = av_interleaved_write_frame(context, audioPacket); // av_interleaved_write_frame: transfers ownership of packet
-                        ASSERT_ZERO(result)(avcodecErrorString(result));
+                        ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
                         numberOfWrittenOutputAudioFrames++;
                     }
                     // else Packet possibly buffered inside codec
@@ -573,7 +573,7 @@ void RenderWork::generate()
                         videoPacket->size = sizeof(AVPicture);
                         videoPacket->pts = numberOfWrittenOutputVideoFrames;
                         int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
-                        ASSERT_ZERO(result)(avcodecErrorString(result));
+                        ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
                         numberOfWrittenOutputVideoFrames++;
                     }
                     else
@@ -585,11 +585,11 @@ void RenderWork::generate()
                         videoPacket->size = 0;
                         VAR_DEBUG(numberOfReadInputVideoFrames)(numberOfWrittenOutputVideoFrames)(videoCodec);
                         result = avcodec_encode_video2(videoCodec, videoPacket, toBeEncodedPicture, &gotPacket);  // if gotPacket == 0, then packet is destructed
-                        ASSERT_ZERO(result)(avcodecErrorString(result));
+                        ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
                         if (gotPacket)
                         {
                             int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
-                            ASSERT_ZERO(result)(avcodecErrorString(result));
+                            ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
                             numberOfWrittenOutputVideoFrames++;
                         }
                         // else Packet possibly buffered inside codec
@@ -598,7 +598,7 @@ void RenderWork::generate()
             }
 
             int ret = av_write_trailer(context);
-            ASSERT_ZERO(ret)(avcodecErrorString(ret));
+            ASSERT_ZERO(ret)(avcodecErrorString(ret))(*this);
         }
     }
 

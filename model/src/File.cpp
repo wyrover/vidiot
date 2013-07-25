@@ -214,7 +214,7 @@ void File::moveTo(pts position)
     ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext)(position);
     VAR_DEBUG(timestamp)(mFileContext->duration);
     int result = av_seek_frame(mFileContext, -1, timestamp, AVSEEK_FLAG_ANY);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result)); // todo log *this upon errors for easier analysis
+    ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
 
     ASSERT_ZERO(mPackets.getSize());
     mPackets.resize(1); // Ensures that only one packet is buffered (used for thumbnail generation).
@@ -449,7 +449,7 @@ void File::openFile()
     if (result != 0)
     {
         // Some error occured when opening the file.
-        VAR_DEBUG(path)(result)(avcodecErrorString(result));
+        VAR_DEBUG(path)(result)(avcodecErrorString(result))(*this);
         return;
     }
     {
@@ -457,7 +457,7 @@ void File::openFile()
         result = avformat_find_stream_info(mFileContext,0);
         if (result < 0) // Some error occured when reading stream info. Close the file again.
         {
-            VAR_DEBUG(path)(result)(avcodecErrorString(result));
+            VAR_DEBUG(path)(result)(avcodecErrorString(result))(*this);
             avformat_close_input(&mFileContext); // Requires the lock also
             ASSERT_ZERO(mFileContext);
             return;

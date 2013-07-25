@@ -10,11 +10,38 @@ class Convert
 {
 public:
 
-    static pts timeToPts(int time);                             ///< @param time time duration in milliseconds
-    static pts rationaltimeToPts(boost::rational<int> time);    ///< @param time time duration in milliseconds
-    static int ptsToTime(pts position);                         ///< @return time duration in milliseconds
-    static int ptsToMicroseconds(pts position);                 ///< @return time duration in microseconds.
-    static pts microsecondsToPts(int us);                       ///< @param us time duration in microseconds
+    /// \return number of frames to be used for the given time span
+    /// \param time time duration in milliseconds
+    /// Uses current project's frame rate for the conversion
+    static pts timeToPts(int time);
+
+    /// \return number of frames to be used for the given time span
+    /// \param time time duration in milliseconds
+    /// Uses current project's frame rate for the conversion
+    static pts rationaltimeToPts(boost::rational<int> time);
+
+    /// \return number of frames to be used for the given time span
+    /// \param time time duration in milliseconds
+    /// \param framerate Frame rate (fps) to be used for the conversion
+    static pts timeToPts(int time, FrameRate framerate);
+
+    /// \return number of frames to be used for the given time span
+    /// \param time time duration in milliseconds
+    /// \param framerate Frame rate (fps) to be used for the conversion
+    static pts rationaltimeToPts(boost::rational<int> time, FrameRate framerate);
+
+    /// \return time duration in milliseconds
+    /// Uses current project's frame rate for the conversion
+    static int ptsToTime(pts position);
+
+    /// \return time duration in microseconds.
+    /// Uses current project's frame rate for the conversion
+    static int ptsToMicroseconds(pts position);
+
+    /// \return number of frames to be used for the given time span
+    /// \param us time duration in microseconds
+    /// Uses current project's frame rate for the conversion
+    static pts microsecondsToPts(int us);
 
     /// Convert a time in ms to a human readible string in the form HH:MM:SS.ms
     /// If the time is less than an hour (or less then a minute) then no hours (or minutes)

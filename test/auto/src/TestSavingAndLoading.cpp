@@ -36,6 +36,10 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
+    // todo make projectview menu option 'add to end of sequence' first. then for the filetypes tests no longer drag and drop is
+    // required (then, make separate test for that).
+    // todo add still image
+
     StartTest("Load document");
     triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();

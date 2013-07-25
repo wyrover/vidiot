@@ -76,6 +76,8 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
 
     // Check values, delete from config if incorrect
     checkBool(Config::sPathAutoLoadEnabled);
+
+    checkLong(Config::sPathDefaultStillImageLength, 1, 10000);
     checkLong(Config::sPathDefaultTransitionLength, 4, 10000);
     checkLong(Config::sPathDefaultFrameRate, 4, 10000);
     checkLong(Config::sPathDefaultVideoWidth, 10, 10000);
@@ -102,6 +104,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathDefaultAudioSampleRate, 44100);
     setDefault(Config::sPathDefaultExtension, "avi");
     setDefault(Config::sPathDefaultFrameRate, "25");
+    setDefault(Config::sPathDefaultStillImageLength, 150);
     setDefault(Config::sPathDefaultTransitionLength, 24);
     setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
     setDefault(Config::sPathDefaultVideoHeight, 576);
@@ -457,6 +460,7 @@ const wxString Config::sPathDefaultAudioChannels        ("/Audio/DefaultNumberOf
 const wxString Config::sPathDefaultAudioSampleRate      ("/Audio/DefaultSampleRate");
 const wxString Config::sPathDefaultExtension            ("/File/DefaultExtension");
 const wxString Config::sPathDefaultFrameRate            ("/Video/DefaultFrameRate");
+const wxString Config::sPathDefaultStillImageLength     ("/Timeline/DefaultStillImageLength");
 const wxString Config::sPathDefaultTransitionLength     ("/Timeline/DefaultTransitionLength");
 const wxString Config::sPathDefaultVideoAlignment       ("/Video/DefaultVideoAlignment");
 const wxString Config::sPathDefaultVideoHeight          ("/Video/DefaultHeight");

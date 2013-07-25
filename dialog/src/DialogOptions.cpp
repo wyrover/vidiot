@@ -1,12 +1,16 @@
 #include "DialogOptions.h"
 
-#include "Enums.h"
-#include "UtilLog.h"
-#include "UtilInitAvcodec.h"
-#include "UtilFrameRate.h"
 #include "Config.h"
+#include "Constants.h"
+#include "Convert.h"
+#include "Enums.h"
+#include "Properties.h"
+#include "UtilFrameRate.h"
+#include "UtilInitAvcodec.h"
+#include "UtilLog.h"
 
 namespace gui {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -64,6 +68,45 @@ DialogOptions::DialogOptions(wxWindow* win)
 
         mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(Config::sPathDefaultVideoAlignment));
         addoption(_("Default video scaling"), mDefaultVideoAlignment);
+    }
+    {
+        addtab(_("Images"));
+
+        addbox(_("Size"));
+
+         wxIntegerValidator<int> lengthValidator;
+         lengthValidator.SetMin(1);
+         lengthValidator.SetMax(10000);
+         long initial = Config::ReadLong(Config::sPathDefaultStillImageLength);
+
+         FrameRate framerate = FrameRate::s25p; // Default
+         if (Window::get().GetDocumentManager()->GetCurrentDocument() != 0)
+         {
+             // Only if a project is opened use that project's frame rate
+             framerate = model::Properties::get().getFrameRate();
+         }
+         std::list<pts> values = boost::assign::list_of
+             (1)
+             (12)
+             (1  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
+             (2  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
+             (3  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
+             (4  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
+             (5  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
+             (6  * model::Convert::timeToPts(model::Constants::sSecond, framerate))
+             (10 * model::Convert::timeToPts(model::Constants::sSecond, framerate))
+             (1  * model::Convert::timeToPts(model::Constants::sMinute, framerate))
+             (initial);
+         values.sort();
+         values.unique();
+
+         wxArrayString choices;
+         BOOST_FOREACH( pts value, values )
+         {
+            choices.Add(wxString::Format("%d", value ));
+         }
+         mDefaultStillImageLength = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, choices, 0, lengthValidator);
+         addoption(_("Default length of still images (in frames)"), mDefaultStillImageLength);
     }
     {
         addtab(_("Audio"));
@@ -133,27 +176,33 @@ DialogOptions::DialogOptions(wxWindow* win)
 
 DialogOptions::~DialogOptions()
 {
-    if (GetReturnCode() == GetAffirmativeId())
+    auto toLong = [](wxString comboBoxValue) -> long
     {
         long value(0);
         bool ok(false);
+        ok = comboBoxValue.ToLong(&value);
+        ASSERT(ok);
+        return value;
+    };
+
+    if (GetReturnCode() == GetAffirmativeId())
+    {
         Config::holdWriteToDisk();
-        Config::WriteBool( Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
-        Config::WriteString( Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
-        Config::WriteString( Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
-        Config::WriteBool( Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
-        Config::WriteString( Config::sPathDefaultFrameRate,          (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
-        Config::WriteLong( Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
-        Config::WriteLong( Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
-        Config::WriteString( Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
-        Config::WriteString( Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
-        ok = mDefaultAudioSampleRate->GetValue().ToLong(&value); ASSERT(ok);
-        Config::WriteLong( Config::sPathDefaultAudioSampleRate, value);
-        ok = mDefaultAudioNumberOfChannels->GetValue().ToLong(&value); ASSERT(ok);
-        Config::WriteLong( Config::sPathDefaultAudioChannels, value);
-        Config::WriteLong( Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
-        Config::WriteLong( Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
-        Config::WriteString( Config::sPathStrip,                     mStrip->GetValue());
+        Config::WriteBool(      Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
+        Config::WriteString(    Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
+        Config::WriteString(    Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
+        Config::WriteBool(      Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
+        Config::WriteString(    Config::sPathDefaultFrameRate,          (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
+        Config::WriteLong(      Config::sPathDefaultVideoWidth,         mDefaultVideoWidth->GetValue());
+        Config::WriteLong(      Config::sPathDefaultVideoHeight,        mDefaultVideoHeight->GetValue());
+        Config::WriteString(    Config::sPathDefaultVideoScaling,       model::VideoScaling_toString(mDefaultVideoScaling->getValue()).c_str());
+        Config::WriteString(    Config::sPathDefaultVideoAlignment,     model::VideoAlignment_toString(mDefaultVideoAlignment->getValue()).c_str());
+        Config::WriteLong(      Config::sPathDefaultAudioSampleRate,    toLong(mDefaultAudioSampleRate->GetValue()));
+        Config::WriteLong(      Config::sPathDefaultAudioChannels,      toLong(mDefaultAudioNumberOfChannels->GetValue()));
+        Config::WriteLong(      Config::sPathMarkerBeginAddition,       mMarkerBeginAddition->GetValue());
+        Config::WriteLong(      Config::sPathMarkerEndAddition,         mMarkerEndAddition->GetValue());
+        Config::WriteLong(      Config::sPathDefaultStillImageLength,   toLong(mDefaultStillImageLength->GetValue()));
+        Config::WriteString(    Config::sPathStrip,                     mStrip->GetValue());
         Config::releaseWriteToDisk();
 
         // Use new values

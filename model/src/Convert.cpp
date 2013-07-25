@@ -17,7 +17,19 @@ pts Convert::timeToPts(int time)
 // static
 pts Convert::rationaltimeToPts(boost::rational<int> time)
 {
-    return floor(time / rational(Constants::sSecond) * Properties::get().getFrameRate());
+    return rationaltimeToPts(time, Properties::get().getFrameRate());
+}
+
+// static
+pts Convert::timeToPts(int time, FrameRate framerate)
+{
+    return rationaltimeToPts(rational(time), framerate);
+}
+
+// static
+pts Convert::rationaltimeToPts(boost::rational<int> time, FrameRate framerate )
+{
+    return floor(time / rational(Constants::sSecond) * framerate );
 }
 
 // static

@@ -1,5 +1,7 @@
 #include "ImageFile.h"
 
+#include "Constants.h"
+#include "Convert.h"
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
@@ -12,18 +14,24 @@ namespace model {
 
 ImageFile::ImageFile()
 :	VideoFile()
+,   mInputFrame()
+,   mOutputFrame()
 {
     VAR_DEBUG(*this);
 }
 
 ImageFile::ImageFile(wxFileName path)
 :	VideoFile(path)
+,   mInputFrame()
+,   mOutputFrame()
 {
     VAR_DEBUG(*this);
 }
 
 ImageFile::ImageFile(const ImageFile& other)
 :   VideoFile(other)
+,   mInputFrame()
+,   mOutputFrame()
 {
     VAR_DEBUG(*this);
 }
@@ -42,15 +50,23 @@ ImageFile::~ImageFile()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
+pts ImageFile::getLength() const
+{
+    return Convert::timeToPts(Constants::sHour * 8); // 8 Hours...
+}
+
 void ImageFile::moveTo(pts position)
 {
-    // NOT: VideoFile::moveTo(position); - will cause crash in avcodec
+    // NOT: VideoFile::moveTo(position) NOR File::moveTo(position); - will cause crash in avcodec
 }
 
 void ImageFile::clean()
 {
     VAR_DEBUG(this);
+    mInputFrame.reset();
+    mOutputFrame.reset();
     VideoFile::clean();
+    // todo test that getting a new image after this still works
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,13 +75,23 @@ void ImageFile::clean()
 
 VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& parameters)
 {
-    // todo
-    return VideoFile::getNextVideo(parameters); // todo idee: bij aanmaken het ene frame meteen ophalen met de originele grootte en dan cachen?
-}
+    if (!mInputFrame)
+    {
+        mInputFrame = VideoFile::getNextVideo(VideoCompositionParameters().setBoundingBox(getSize()));
+        ASSERT(mInputFrame);
+    }
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
+    if (!mOutputFrame || parameters.getBoundingBox() != mOutputFrame->getSize())
+    {
+        wxImagePtr image = mInputFrame->getImage();
+        wxImagePtr outputImage = boost::make_shared<wxImage>(image->GetSize());
+        int dataSize = image->GetWidth() * image->GetHeight( ) * 3; // todo update when adding alpha channel support
+        memcpy(outputImage->GetData(), image->GetData(), dataSize);
+        outputImage->Rescale(parameters.getBoundingBox().x, parameters.getBoundingBox().y, wxIMAGE_QUALITY_HIGH);
+        mOutputFrame = boost::make_shared<VideoFrame>(outputImage, 0);
+    }
+    return mOutputFrame;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING

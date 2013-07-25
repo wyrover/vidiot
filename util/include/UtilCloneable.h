@@ -6,7 +6,7 @@
 /// Needed for cloning in class hierarchies starting with abstract base classes.
 /// Use the method make_cloned to make copies of objects
 template <typename MOSTDERIVED>
-struct Cloneable 
+struct Cloneable
     : public IRTTI
 {
     virtual MOSTDERIVED* clone() const
@@ -14,7 +14,7 @@ struct Cloneable
         return new MOSTDERIVED(static_cast<const MOSTDERIVED&>(*this));
     }
     virtual ~Cloneable() {}
-};
+}; // todo this base class is obsolete
 
 template <typename T>
 boost::shared_ptr<T> make_cloned_ptr(T& t)
