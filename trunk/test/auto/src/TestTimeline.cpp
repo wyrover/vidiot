@@ -863,3 +863,5 @@ void TestTimeline::testShowDebugInfo()
 }
 
 } // namespace
+
+// todo make TestStillImage and there test trimming still images

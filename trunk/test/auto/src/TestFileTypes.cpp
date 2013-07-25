@@ -59,8 +59,10 @@ void TestFileTypes::testFileTypes_2_48000()
 void TestFileTypes::testFileTypes_StillImage()
 {
     StartTestSuite();
-//todo    //executeTest("filetypes_image");
+    executeTest("filetypes_image");
 }
+
+// todo make testFileTypes_Special and move some tests there to avoid duplicate exeuction (for instance for the clip without audio data)
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS

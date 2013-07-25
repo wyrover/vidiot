@@ -1,5 +1,7 @@
 #include "ImageClip.h"
 
+#include "Config.h"
+#include "ImageFile.h"
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 
@@ -19,60 +21,26 @@ ImageClip::ImageClip(VideoFilePtr file)
     : VideoClip(file)
 {
     VAR_DEBUG(*this);
-}
+    ASSERT(file->isA<ImageFile>())(file);
+    ASSERT_DIFFERS(file->getLength(),1);
 
-ImageClip::ImageClip(const ImageClip& other)
-    : VideoClip(other)
-{
-    VAR_DEBUG(*this)(other);
-}
+    pts length = getLength();
+    pts half = length / 2;
+    pts remainingLength = Config::ReadLong(Config::sPathDefaultStillImageLength);
 
-ImageClip* ImageClip::clone() const
-{
-    return new ImageClip(static_cast<const ImageClip&>(*this));
+    // Move right edge to the left such that the clip can be extended if required
+    adjustEnd( - half );
+
+    // Move left edge to the right sich that the clip can be extended if required. The -remainingLength ensures that the resulting clip has the correct resulting size
+    adjustBegin(half - remainingLength);
+
+    ASSERT_EQUALS(getLength(),remainingLength);
 }
 
 ImageClip::~ImageClip()
 {
     VAR_DEBUG(this);
 }
-
-//////////////////////////////////////////////////////////////////////////
-// ICONTROL
-//////////////////////////////////////////////////////////////////////////
-
-void ImageClip::clean()
-{
-    VAR_DEBUG(this);
-    VideoClip::clean();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// ICLIP
-//////////////////////////////////////////////////////////////////////////
-
-std::ostream& ImageClip::dump(std::ostream& os) const
-{
-    os << *this; // todo
-    return os;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// IVIDEO
-//////////////////////////////////////////////////////////////////////////
-
-VideoFramePtr ImageClip::getNextVideo(const VideoCompositionParameters& parameters)
-{
-    return VideoClip::getNextVideo(parameters); // todo
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
