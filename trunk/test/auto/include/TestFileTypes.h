@@ -28,9 +28,10 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testFileTypes_1_44100();
-    void testFileTypes_2_48000();
-    void testFileTypes_StillImage();
+    void testFileTypes_audio_1_44100();
+    void testFileTypes_audio_2_48000();
+    void testFileTypes_image();
+    void testFileTypes_video();
 
 private:
 
