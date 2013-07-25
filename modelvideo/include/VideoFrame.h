@@ -34,10 +34,6 @@ public:
     /// compositing).
     VideoFrame(wxImagePtr image, pts position);
 
-    /// Initialization of a frame based on a generated wxBitmap (for instance, for
-    /// compositing).
-    VideoFrame(wxBitmapPtr image, pts position);
-
     /// Initialization without allocation. Used for empty frames. Then, allocation only
     /// needed when the data is needed for playback. During 'track combining' empty
     /// frames can be ignored. This avoids needless allocation.
@@ -91,7 +87,6 @@ protected:
     //////////////////////////////////////////////////////////////////////////
 
     AVFrame* mFrame;
-    wxBitmapPtr mBitmap;
     wxImagePtr mImage;
     int mRepeat;
     double mTimeStamp;
