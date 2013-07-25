@@ -14,7 +14,7 @@ struct Cloneable
         return new MOSTDERIVED(static_cast<const MOSTDERIVED&>(*this));
     }
     virtual ~Cloneable() {}
-}; // todo this base class is obsolete
+};
 
 template <typename T>
 boost::shared_ptr<T> make_cloned_ptr(T& t)

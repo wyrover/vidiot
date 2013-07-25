@@ -40,29 +40,33 @@ void TestFileTypes::tearDown()
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
 
-void TestFileTypes::testFileTypes_1_44100()
+void TestFileTypes::testFileTypes_audio_1_44100()
 {
     StartTestSuite();
     ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 1);
     ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 44100);
-    executeTest("filetypes");
+    executeTest("filetypes_audio");
 }
 
-void TestFileTypes::testFileTypes_2_48000()
+void TestFileTypes::testFileTypes_audio_2_48000()
 {
     StartTestSuite();
     ConfigOverruleLong overruleChannels(Config::sPathDefaultAudioChannels, 2);
     ConfigOverruleLong overruleSampleRate(Config::sPathDefaultAudioSampleRate, 48000);
-    executeTest("filetypes");
+    executeTest("filetypes_audio");
 }
 
-void TestFileTypes::testFileTypes_StillImage()
+void TestFileTypes::testFileTypes_image()
 {
     StartTestSuite();
     executeTest("filetypes_image");
 }
 
-// todo make testFileTypes_Special and move some tests there to avoid duplicate exeuction (for instance for the clip without audio data)
+void TestFileTypes::testFileTypes_video()
+{
+    StartTestSuite();
+    executeTest("filetypes_video");
+}
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS

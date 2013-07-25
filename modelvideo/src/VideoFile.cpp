@@ -50,8 +50,6 @@ VideoFile::VideoFile(const VideoFile& other)
     VAR_DEBUG(*this);
 }
 
-// todo crash when importing jpg file then dragging onto timeline. todo test wav also.
-
 VideoFile* VideoFile::clone() const
 {
     return new VideoFile(static_cast<const VideoFile&>(*this));
