@@ -103,7 +103,6 @@ void TestFileTypes::executeTest(wxString filetypesDir)
         model::Files files1 = addFiles( boost::assign::list_of(path->getPath().GetFullPath()), folder1 );
 
         model::FilePtr file = files1.front();
-        //pause();
         if (file->hasVideo())
         {
             DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(0, VCenter(VideoTrack(0))) );

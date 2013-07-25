@@ -70,6 +70,7 @@ private:
     void onNewSequence(wxCommandEvent& event);
     void onNewFile(wxCommandEvent& event);
     void onCreateSequence(wxCommandEvent& event);
+    void onAddToEndOfSequence(wxCommandEvent& event);
     void onOpen(wxCommandEvent& event);
     void onStartEditing( wxDataViewEvent &event );
     void onMotion(wxMouseEvent& event);

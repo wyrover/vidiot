@@ -76,25 +76,7 @@ File::File(wxFileName path, int buffersize)
     ,   mTwoInARow(0)
 {
     VAR_DEBUG(this);
-
-    if (mPath.Exists())
-    {
-        wxDateTime dt = mPath.GetModificationTime();
-        if (dt.IsValid())
-        {
-            mLastModified = dt.GetTicks();
-
-            // These two lines are required to correctly read the length
-            // (and/or any other meta data) from the file.
-            // This can only be done for supported formats, since avcodec
-            // can only read the lengths from those.
-            //
-            // Note that the opening of a file sets mFileOpenFailed to the correct value.
-            openFile();
-            closeFile();
-        }
-    }
-
+    testOpeningAndExtractMetaData();
 }
 
 File::File(const File& other)
@@ -179,8 +161,12 @@ void File::check()
         }
         else
         {
-            gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
-            parent->removeChild(shared_from_this());
+            testOpeningAndExtractMetaData();
+            if (!canBeOpened())
+            {
+                gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
+                parent->removeChild(shared_from_this());
+            }
         }
     }
     else
@@ -605,6 +591,28 @@ void File::closeFile()
     avformat_close_input(&mFileContext);
     ASSERT_ZERO(mFileContext);
     mFileOpened = false;
+}
+
+void File::testOpeningAndExtractMetaData()
+{
+    mFileOpenFailed = true;
+    if (mPath.Exists())
+    {
+        wxDateTime dt = mPath.GetModificationTime();
+        if (dt.IsValid())
+        {
+            mLastModified = dt.GetTicks();
+
+            // These two lines are required to correctly read the length
+            // (and/or any other meta data) from the file.
+            // This can only be done for supported formats, since avcodec
+            // can only read the lengths from those.
+            //
+            // Note that the opening of a file sets mFileOpenFailed to the correct value.
+            openFile();
+            closeFile();
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

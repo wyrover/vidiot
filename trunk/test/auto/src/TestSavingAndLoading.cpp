@@ -34,11 +34,23 @@ void TestSavingAndLoading::testSaveAndLoad()
     StartTestSuite();
     StartTest("SetUp");
 
-    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
+    wxString sFolder1( "Folder1" );
+    model::FolderPtr folder1 = addFolder( sFolder1 );
+    wxFileName TestFilesPath = wxFileName(SOURCE_ROOT,"");
+    TestFilesPath.AppendDir("test");
+    TestFilesPath.AppendDir("filetypes_image");
+    ASSERT(TestFilesPath.IsDir());
+    ASSERT(TestFilesPath.DirExists());
+    TestFilesPath.SetFullName("Laney -6th best amp.jpg");
+    model::Files files1 = addFiles( boost::assign::list_of(TestFilesPath.GetFullPath()), folder1 );
+    model::FilePtr imageFile = files1.front();
 
-    // todo make projectview menu option 'add to end of sequence' first. then for the filetypes tests no longer drag and drop is
-    // required (then, make separate test for that).
-    // todo add still image
+    DragFromProjectViewToTimeline( imageFile,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(HCenter(VideoClip(0,4)), VCenter(VideoTrack(0))) );
+
+    Click(Center(VideoClip(0,6)));
+    Type(WXK_DELETE);
+
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
     StartTest("Load document");
     triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
