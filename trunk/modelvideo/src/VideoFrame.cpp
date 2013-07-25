@@ -79,7 +79,7 @@ VideoFrame::~VideoFrame()
     }
 }
 
-// todo add support for rotating images in video composition
+// todo add support for rotating images in video composition. Needs better alpha channel support
 
 //////////////////////////////////////////////////////////////////////////
 // META DATA
