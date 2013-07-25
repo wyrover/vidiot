@@ -863,5 +863,3 @@ void TestTimeline::testShowDebugInfo()
 }
 
 } // namespace
-
-// todo make TestStillImage and there test trimming still images and test undo/redo with an image and then scrub on top of it

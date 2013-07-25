@@ -66,7 +66,6 @@ void ImageFile::clean()
     mInputFrame.reset();
     mOutputFrame.reset();
     VideoFile::clean();
-    // todo test that getting a new image after this still works
 }
 
 //////////////////////////////////////////////////////////////////////////
