@@ -6,6 +6,7 @@
 #include "Dialog.h"
 #include "IEventLoopListener.h"
 #include "Render.h"
+#include "SubversionRevision.h"
 #include "UtilInitAvcodec.h"
 #include "UtilInitPortAudio.h"
 #include "UtilLog.h"
@@ -67,6 +68,8 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     //
     // Typical example of that: logging the type of crash when generating a debugreport.
     Log::init(sTestApplicationName, GetAppName());
+
+    LOG_ERROR << "Revision: " << SubversionRevision;
 }
 
 Application::~Application()
