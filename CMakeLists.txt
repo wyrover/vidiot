@@ -176,7 +176,7 @@ SET_SOURCE_FILES_PROPERTIES(${CmakeFiles} ${BuildFiles} PROPERTIES HEADER_FILE_O
 ADD_LIBRARY(vidiot ${UNITY_CPP_FILES} ${SOURCES_LIST} ${HEADERS_LIST} ${Icons} ${Cursors} ${BuildFiles})
 
 # A custom target that is always built to ensure that the current revision is available in SubversionRevision.h
-add_custom_target(svnrevision ALL SOURCES ${CMAKE_CURRENT_BINARY_DIR}/SubversionRevision.h)
+add_custom_target(svnrevision ALL)
 add_custom_command(TARGET svnrevision COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -P ${CMAKE_CURRENT_SOURCE_DIR}/build/GetSubversionRevision.cmake)
 #set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/SubversionRevision.h PROPERTIES GENERATED TRUE HEADER_FILE_ONLY TRUE) 
 add_dependencies(vidiot svnrevision)
