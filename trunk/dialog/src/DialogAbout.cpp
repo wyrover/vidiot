@@ -4,6 +4,7 @@
 #include "UtilLog.h"
 #include "Window.h"
 #include "UtilLogWxwidgets.h"
+#include "SubversionRevision.h"
 
 namespace gui {
 
@@ -12,7 +13,7 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 DialogAbout::DialogAbout()
-    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About"),wxDefaultPosition,wxSize(400,400),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
+    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + _(" (Revision: ") + wxString::Format("%d", SubversionRevision) + _(")"),wxDefaultPosition,wxSize(400,400),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mBack(0)
 {
     VAR_DEBUG(this);

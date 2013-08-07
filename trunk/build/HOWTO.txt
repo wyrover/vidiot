@@ -66,10 +66,9 @@ Install ActivePerl via installer
   (Note: ffmpeg binaries not working)
 
 ================== VERSION CONTROL  ================
-* Install SVN (tortoise)
-* Install TortoiseHG
-  - Enable the extension Mercurial_keyring (to avoid having to enter the 
-    password more than once) 
+* Install SVN (tortoise) from 
+  http://tortoisesvn.net/downloads.html
+  NOTE: Also install the command line tools!
 
 =================== VIDIOT ===================
 * Checkout Vidiot into <VIDIOT_SRC>
