@@ -32,7 +32,7 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 ProjectView::ProjectView(wxWindow* parent)
-    :   wxPanel(parent)
+    :   wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxBORDER_STATIC)
     ,   mProject(0)
     ,   mCtrl(this)
     ,   mModel(new ProjectViewModel(mCtrl))
@@ -80,7 +80,6 @@ ProjectView::ProjectView(wxWindow* parent)
     sizer->Hide(&mCtrl);
     sizer->Layout();
     SetSizerAndFit(sizer);
-
 }
 
 ProjectView::~ProjectView()

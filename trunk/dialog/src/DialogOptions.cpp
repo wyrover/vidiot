@@ -67,7 +67,7 @@ DialogOptions::DialogOptions(wxWindow* win)
         addoption(_("Default video scaling"), mDefaultVideoScaling);
 
         mDefaultVideoAlignment = new EnumSelector<model::VideoAlignment>(mPanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentConverter::readConfigValue(Config::sPathDefaultVideoAlignment));
-        addoption(_("Default video scaling"), mDefaultVideoAlignment);
+        addoption(_("Default video alignment"), mDefaultVideoAlignment);
     }
     {
         addtab(_("Images"));

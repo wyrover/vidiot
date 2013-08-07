@@ -137,6 +137,8 @@ public:
     Preview&         getPreview();
     DetailsView&     getDetailsView();
 
+    wxAuiManager&    getUiManager();
+
     /// This must be called whenever a new (sub)widget has been added. This
     /// ensures proper layout.
     void triggerLayout();

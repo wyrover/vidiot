@@ -1,58 +1,35 @@
 <html>
 <head>
-<title>Vidiot</title>
+<title>Preview</title>
 </head>
 <body style="font-family: arial; font-size:8pt">
-<table cellspacing=0 cellpadding=0 border=0 width=100>
-<tr>
-<td><h1>Vidiot</h1></td>
-<td valign=top rowspan=4><img align=left valign=top src=movie48.png></td>
-</tr>
-<tr><td>&copy; 2010-2013 Eric Raijmakers</td><td></td></tr>
-<tr><td><u>https://sourceforge.net/projects/vidiot</u></td><td></td></tr>
-<tr><td><a href="license.html">License details</a></td><td></td></tr>
-</table>
+
+<h1>Preview</h1>
+
+The preview window shows a preview of the timeline video.
+When not playing back video it shows the frame at the timeline's cursor position.
+
+<h2>Play/Pause <img src="preview-pauseplay.png"></h2>
+
+Press the play/pause button to start/stop playback of the sequence. Playback starts from the current <a href="timeline.html#cursor">cursor</a> position.
+
+Pressing the space bar also starts/stops playback.
+
+<h2>Change timeline cursor position</h2>
+
+<img src="preview-home.png">Move to the begin of sequence<br>
+<img src="preview-previous.png">Move to the previous cut in the sequence<br>
+<img src="preview-next.png">Move to the next cut in the sequence<br>
+<img src="preview-end.png">Move to the end of sequence<br>
+
+<h2>Change playback speed</h2>
+
+The playback speed can be adjusted. Press the rightmost button in the preview window to change the playback speed.
+Particularly, this can be applied when using <a href="timeline.html#region">region marking</a> to make an initial selection of
+what video to keep/remove.
+
 <p>
-Libraries used for creating this version of Vidiot:
-<table border=0 celpadding=0 cellspacing=0 frame=border valign=top align=left valign=top align=left valign=top style="{ border-width: 1px; border-style: solid; border-color: black}">
 
-<tr align=left valign=top>
-<th align=left valign=top>Library</th>
-<th align=left valign=top>Version</th>
-<th align=left valign=top>&nbsp;</th>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>wxWidgets</td>
-<td align=left valign=top>Trunk</td>
-<td align=left valign=top><a href=wxwidgets.html>License</a></td></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>Boost</td>
-<td align=left valign=top>1.53</td>
-<td align=left valign=top><a href=boost.html>License</a></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>ffmpeg</td>
-<td align=left valign=top>git-3233ad4</td>
-<td align=left valign=top><a href=ffmpeg.html>License</a></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>Portaudio</td>
-<td align=left valign=top>19</td>
-<td align=left valign=top><a href="portaudio.html">License</a></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>Soundtouch</td>
-<td align=left valign=top>1.7.1</td>
-<td align=left valign=top><a href="soundtouch.html">License</a></td>
-</tr>
-</table>
-<p>
-Icons have been made by various people, see <a href="icons.html">here</a>.
+Note that audio pitch is maintained regardless of the playback speed.
 </body>
 </html>
