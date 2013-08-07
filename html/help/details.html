@@ -1,58 +1,40 @@
 <html>
 <head>
-<title>Vidiot</title>
+<title>Details</title>
 </head>
 <body style="font-family: arial; font-size:8pt">
-<table cellspacing=0 cellpadding=0 border=0 width=100>
-<tr>
-<td><h1>Vidiot</h1></td>
-<td valign=top rowspan=4><img align=left valign=top src=movie48.png></td>
-</tr>
-<tr><td>&copy; 2010-2013 Eric Raijmakers</td><td></td></tr>
-<tr><td><u>https://sourceforge.net/projects/vidiot</u></td><td></td></tr>
-<tr><td><a href="license.html">License details</a></td><td></td></tr>
-</table>
-<p>
-Libraries used for creating this version of Vidiot:
-<table border=0 celpadding=0 cellspacing=0 frame=border valign=top align=left valign=top align=left valign=top style="{ border-width: 1px; border-style: solid; border-color: black}">
 
-<tr align=left valign=top>
-<th align=left valign=top>Library</th>
-<th align=left valign=top>Version</th>
-<th align=left valign=top>&nbsp;</th>
-</tr>
+<h1>Details</h1>
 
-<tr valign=top>
-<td align=left valign=top>wxWidgets</td>
-<td align=left valign=top>Trunk</td>
-<td align=left valign=top><a href=wxwidgets.html>License</a></td></td>
-</tr>
+When a clip is selected in the timeline, the details view gives options to edit the clip.
+When a edit operation is in progress (currently: only trimming) the details view gives information on that operation.
 
-<tr valign=top>
-<td align=left valign=top>Boost</td>
-<td align=left valign=top>1.53</td>
-<td align=left valign=top><a href=boost.html>License</a></td>
-</tr>
+<h2>Clip details</h2>
 
-<tr valign=top>
-<td align=left valign=top>ffmpeg</td>
-<td align=left valign=top>git-3233ad4</td>
-<td align=left valign=top><a href=ffmpeg.html>License</a></td>
-</tr>
+In the clip details view, the following can be edited:
+<ul>
+<li>The length of the clip can be changed to one of the predefined lengths.
+<li>The opacity of the clip can be changed. For sequences with multiple tracks this means that clips in 'lower' tracks become visible when reducing a clip's opacity.
+<li>The scaling options can be changed. Use any of the predefined scaling methods, or choose 'custom' to set the scaling factor yourselves.
+    <ul>
+    <li>Fit all<br>Scale the clip such that it fit completely within the resulting video. Black bars may be added.
+    <li>Fit to fill<br>Scale the clip such that it fills the resulting video as much as possible, with the least video being cut off.
+    <li>original size<br>Keep the clip's original size.
+    <li>Custom<br>Set the scaling factor yourselves. This method is automatically selected when adjusting the scaling slider.
+    </ul>
+<li>The alignment options can be changed. Use any of the predefined alignment methods, or choose 'custom' to set the video position yourselves.
+    <ul>
+    <li>Centered<br>The clip is centered on the output video.
+    <li>Centered horizontally<br>The clip is centered on the output video, but only horizontally.
+    <li>Centered vertically<br>The clip is centered on the output video, but only vertically.
+    <li>Custom<br>Set the X and Y position yourselves.
+    </ul>
+</ul>
+    
 
-<tr valign=top>
-<td align=left valign=top>Portaudio</td>
-<td align=left valign=top>19</td>
-<td align=left valign=top><a href="portaudio.html">License</a></td>
-</tr>
+<h2>Trim details</h2>
 
-<tr valign=top>
-<td align=left valign=top>Soundtouch</td>
-<td align=left valign=top>1.7.1</td>
-<td align=left valign=top><a href="soundtouch.html">License</a></td>
-</tr>
-</table>
-<p>
-Icons have been made by various people, see <a href="icons.html">here</a>.
+During trimming, the details view shows both the original and the resulting length (as a result of trimming) of the selected clip.
+
 </body>
 </html>

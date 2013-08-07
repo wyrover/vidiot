@@ -1,58 +1,90 @@
 <html>
-<head>
-<title>Vidiot</title>
-</head>
 <body style="font-family: arial; font-size:8pt">
-<table cellspacing=0 cellpadding=0 border=0 width=100>
-<tr>
-<td><h1>Vidiot</h1></td>
-<td valign=top rowspan=4><img align=left valign=top src=movie48.png></td>
-</tr>
-<tr><td>&copy; 2010-2013 Eric Raijmakers</td><td></td></tr>
-<tr><td><u>https://sourceforge.net/projects/vidiot</u></td><td></td></tr>
-<tr><td><a href="license.html">License details</a></td><td></td></tr>
-</table>
+
+<h1>Timeline</h1>
+
+The timeline is where the actual video editing is done.
+
+<h2>Zooming</h2>
+
+Zooming in and out can be done by use of the mouse wheel.
+
+Furthermore, the '-' and '=' keys can be used to zoom out/in.
+Hold CTRL when pressing the buttons to go to the minimal/maximal zoom levels.
+
+<h2><a name="cursor">Cursor</a></h2>
+
+The vertical red line is the 'cursor'. It indicates what frame is currently shown in the <a href="preview.html">Preview</a>.
+If keyboard actions are used for modifying the sequence, this cursor position indicates where/what to edit.
+The cursor is positioned by moving the mouse somewhere in the timeline, but not over any clips and or dividers,
+and then pressing the left mouse button.
+
+<h2><a name="region">Region marking</a></h2>
+
+For making a first selecting for what material (not to) use, region marking can be used.
 <p>
-Libraries used for creating this version of Vidiot:
-<table border=0 celpadding=0 cellspacing=0 frame=border valign=top align=left valign=top align=left valign=top style="{ border-width: 1px; border-style: solid; border-color: black}">
-
-<tr align=left valign=top>
-<th align=left valign=top>Library</th>
-<th align=left valign=top>Version</th>
-<th align=left valign=top>&nbsp;</th>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>wxWidgets</td>
-<td align=left valign=top>Trunk</td>
-<td align=left valign=top><a href=wxwidgets.html>License</a></td></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>Boost</td>
-<td align=left valign=top>1.53</td>
-<td align=left valign=top><a href=boost.html>License</a></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>ffmpeg</td>
-<td align=left valign=top>git-3233ad4</td>
-<td align=left valign=top><a href=ffmpeg.html>License</a></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>Portaudio</td>
-<td align=left valign=top>19</td>
-<td align=left valign=top><a href="portaudio.html">License</a></td>
-</tr>
-
-<tr valign=top>
-<td align=left valign=top>Soundtouch</td>
-<td align=left valign=top>1.7.1</td>
-<td align=left valign=top><a href="soundtouch.html">License</a></td>
-</tr>
-</table>
+Regions can be marked in two ways:
+<ul>
+<li>While playback is active, pressing down shift starts a region. The region is extended up to the cursor position until shift is released.
+<li>While playback is not active, regions can be added/removed by shift dragging the cursor (press mouse to move cursor and then hold shift while moving the mouse).
+</ul>
 <p>
-Icons have been made by various people, see <a href="icons.html">here</a>.
+Note that, when marking regions during playback, the begin/end positions of the regions can be slightly different from the positions at which shift was pressed/released.
+The reason for this behaviour is that after seeing interesting video data, the user will always press the shift button 'too late'. To accomodate for this, the begin position is put a bit earlier.
+This behaviour can be changed via the <a href="options.html">options</a> dialog.
+
+<h2>Drag and drop</h2>
+
+Clips can be dragged and dropped 'around' the timeline.<br>
+New clips can be dragged in from the project view as well.
+
+<h2>Selecting clips</h2>
+
+Clips are selected by clicking on them. If a video (audio) clip has a related audio (video) clip, that clip is selected as well.
+<p>
+Control: select multiple clips, one after the other.<br>
+Shift: select all clips 'in between' two clips.<br>
+Alt: select from a clip until the end.
+
+<h2>Cut at cursor position</h2>
+
+Press the "s" key to make a cut (accross all video and audio tracks) on the position of the cursor.
+
+<h2>Trimming clips and transitions</h2>
+
+Clips are trimmed (shortened/enlarged) by moving the mouse pointer of a cut between clips,
+pressing the left mouse button and then adjusting by moving the mouse pointer.
+<p>
+Transitions are trimmed similarly, by moving the mouse pointer on their begin/end positions.
+<p>
+Quite often it is desirable to shorten a clip by trimming it, without leaving empty space after the trim.
+If that is required, hold shift while trimming. All other clips are moved accordingly.
+<p>
+This method also works when enlarging a clip: If there's no room in front of the clip, but you still want
+to enlarge it, hold shift when trimming and see what happens.
+<p>
+Note that during the trimming operation a preview of the trim is show in the preview window.
+It shows the two frames to the left and right of the resulting cut.
+
+<h2>Snapping</h2>
+
+For drag and drop operations, the two snap options (View &rarr; Snap to cursor, and View &rarr; Snap to clips) can be enabled.
+If they are, than drag and drop operations are adjusted such that the closest distance between any of the cuts between the dragged
+clips and any of the cuts in the sequence will 'snap' together. I guess it's better to just try this then to try and understand that
+last sentence....
+<p>
+Snapping currently does not work for trimming.
+
+<h2>Creating transitions</h2>
+
+Creating transitions can be done in two ways:
+<ul>
+<li>Richt click on any clip and select the required transition from the popup menu.
+<li>Move the mouse pointer to a cut between clips and press 'c'. This creates a crossfade if there are two adjacent clips. This creates a fade in/fade out in case there is one clip alongside some empty space. Note that this also works for audio clips.
+</ul>
+
+<h2>Adding tracks</h2>
+
+New tracks can be added by selecting Sequence &rarr; New video track and/or Sequence &rarr; New audio track.
 </body>
 </html>

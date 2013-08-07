@@ -554,7 +554,6 @@ wxString selectWorkspace(wxString text)
         entries.push_back(name_perspective.first);
     }
     wxString result = Dialog::get().getComboText(_("Select workspace"),text, entries);
-    ASSERT_MAP_CONTAINS(perspectives,result);
     return result;
 }
 
@@ -564,6 +563,7 @@ void Window::onWorkspaceLoad(wxCommandEvent& event)
     if (!name.IsEmpty())
     {
         Config::Perspectives perspectives = Config::WorkspacePerspectives::get();
+        ASSERT_MAP_CONTAINS(perspectives,name);
         bool success = mUiManager.LoadPerspective(perspectives[name]);
         mUiManager.Update();
         if (!success)
@@ -579,6 +579,8 @@ void Window::onWorkspaceDelete(wxCommandEvent& event)
     wxString name = selectWorkspace(_("Select workspace to be removed."));
     if (!name.IsEmpty())
     {
+        Config::Perspectives perspectives = Config::WorkspacePerspectives::get();
+        ASSERT_MAP_CONTAINS(perspectives,name);
         Config::WorkspacePerspectives::remove(name);
         updateWorkspaceMenu();
     }
@@ -676,6 +678,11 @@ Preview& Window::getPreview()
 DetailsView& Window::getDetailsView()
 {
     return *mDetailsView;
+}
+
+wxAuiManager& Window::getUiManager()
+{
+    return mUiManager;
 }
 
 void Window::triggerLayout()

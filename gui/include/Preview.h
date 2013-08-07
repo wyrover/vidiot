@@ -1,6 +1,8 @@
 #ifndef PREVIEW_H
 #define PREVIEW_H
 
+#include "UtilSingleInstance.h"
+
 namespace gui {
 class Player;
 
@@ -10,6 +12,7 @@ namespace timeline {
 
 class Preview
     :   public wxPanel
+    ,   public SingleInstance<Preview>
 {
 public:
 
