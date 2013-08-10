@@ -189,3 +189,11 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 =================== RUN TESTS ===================
 * Ensure to have set environment variable VIDIOT_DIR
 * Copy test files into <VIDIOT_DIR>/test
+
+=================== MAKE RELEASE ===================
+* SVN update 'vidiot_trunk'
+  This is required to get the correct svn information in the about box
+* RunCleanAndCmake.bat
+* Build solution: RelWithDebInfo configuration
+* Build PACKAGE
+* Installer is now ready
