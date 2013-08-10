@@ -5,6 +5,7 @@
 include(FindSubversion)
 # extract working copy information for SOURCE_DIR into MY_XXX variables
 Subversion_WC_INFO(${SOURCE_DIR} MY)
+message( "Current revision:  ${MY_WC_REVISION}" )
 # write a file with the SVNVERSION define
 file(WRITE SubversionRevision.h.txt "#define SubversionRevision ${MY_WC_REVISION}\n")
 # copy the file to the final header only if the version changes
