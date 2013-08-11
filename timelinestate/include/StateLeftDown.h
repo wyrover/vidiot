@@ -65,6 +65,8 @@ private:
 
      wxPoint mStartPosition;
 
+     bool mSelectionEmpty;
+
      static const wxString sTooltip;
 };
 

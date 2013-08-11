@@ -218,6 +218,22 @@ void Selection::updateOnRightClick(model::IClipPtr clip)
     QueueEvent(new EventSelectionUpdate(0));
 }
 
+bool Selection::isEmpty() const
+{
+    LOG_DEBUG;
+    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    {
+        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        {
+            if (clip->getSelected())
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 void Selection::deleteClips()
 {
     ASSERT(wxThread::IsMain());

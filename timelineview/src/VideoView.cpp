@@ -68,6 +68,11 @@ VideoView::~VideoView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
+// todo changing a track divider does not cause a 'save' of the project to be required. In fact, shouldn't this be made part of the workspace settings?
+// todo progress bar when initially opening a project.
+// todo store the track divider height!
+// todo handle home+end+right+left(1 verder) + ctrlright+left (next cut...)
+
 void VideoView::canvasResized()
 {
     invalidateBitmap();

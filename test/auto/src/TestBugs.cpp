@@ -17,16 +17,17 @@
 
 #include "TestBugs.h"
 
+#include "DetailsClip.h"
 #include "HelperDetails.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineDrag.h"
-#include "HelperTimelineTrim.h"
 #include "HelperTimelinesView.h"
+#include "HelperTimelineTrim.h"
 #include "HelperWindow.h"
-#include "DetailsClip.h"
 #include "IClip.h"
-#include "Sequence.h"
 #include "ids.h"
+#include "ProjectViewCreateSequence.h"
+#include "Sequence.h"
 
 namespace test {
 
@@ -112,6 +113,21 @@ void TestBugs::testErrorInGetNextHandlingForEmptyClips()
     Play(LeftPixel(VideoClip(2,1)) - 3,2500); // Start before the clip, in the empty area. Due to a bug in 'getNext' handling for empty clips the clips after the empty area were not shown, or too late.
 
     Undo(9);
+}
+
+void TestBugs::testDraggingWithoutSelection()
+{
+    StartTestSuite();
+
+    Click(Center(VideoClip(0,1))); // Select the clip
+    ControlDown();
+    LeftDown(); // Deselects the clip already
+    Move(Center(VideoClip(0,3))); // Starts the drag without anything being selected: ASSERT at the time of the bug. Now the drag should be simply omitted.
+
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+
+    ControlUp();
+    LeftUp();
 }
 
 } // namespace
