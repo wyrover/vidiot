@@ -383,6 +383,7 @@ void ProjectViewModel::onOpenProject( model::EventOpenProject &event )
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
     gui::Window::get().Bind(model::EVENT_ADD_NODES,    &ProjectViewModel::onProjectAssetsAdded,    this);
     gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &ProjectViewModel::onProjectAssetRemoved,   this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_NODES, &ProjectViewModel::onProjectAssetsRemoved,  this);
     gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &ProjectViewModel::onProjectAssetRenamed,   this);
 
     event.Skip();
@@ -397,6 +398,7 @@ void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
     gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &ProjectViewModel::onProjectAssetAdded,      this);
     gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &ProjectViewModel::onProjectAssetsAdded,     this);
     gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &ProjectViewModel::onProjectAssetRemoved,    this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_NODES,   &ProjectViewModel::onProjectAssetsRemoved,   this);
     gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &ProjectViewModel::onProjectAssetRenamed,    this);
 
     event.Skip();

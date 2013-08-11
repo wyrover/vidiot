@@ -126,6 +126,10 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
     {
         FATAL(e.what());
     }
+    catch (boost::exception &e)
+    {
+        FATAL(boost::diagnostic_information(e));
+    }
     catch (std::exception& e)
     {
         FATAL(e.what());
@@ -153,6 +157,10 @@ std::istream& Project::LoadObject(std::istream& istream)
         VAR_ERROR(e.what());
         istream.setstate(std::ios_base::failbit);
     }
+    catch (boost::exception &e)
+    {
+        VAR_ERROR(boost::diagnostic_information(e));
+    }
     catch (std::exception& e)
     {
         VAR_ERROR(e.what());
@@ -163,7 +171,7 @@ std::istream& Project::LoadObject(std::istream& istream)
         LOG_ERROR;
         istream.setstate(std::ios_base::failbit);
     }
-
+    // NOT: FATAL("Could not load");
     return istream;
 }
 
@@ -173,15 +181,24 @@ bool Project::DoOpenDocument(const wxString& file)
     if ( !store )
     {
         gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not open: " + file));
-        return false;
     }
-    LoadObject(store);
-    if ( !store )
+    else
     {
-        gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file));
-        return false;
+        LoadObject(store);
+        if ( !store )
+        {
+            gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file));
+        }
+        else
+        {
+            return true;
+        }
     }
-    return true;
+
+    // Reset these two, to avoid 'leftovers' from the failed load
+    mRoot = boost::make_shared<Folder>("Root");
+    mProperties.reset();
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
