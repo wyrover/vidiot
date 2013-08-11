@@ -160,6 +160,7 @@ std::istream& Project::LoadObject(std::istream& istream)
     catch (boost::exception &e)
     {
         VAR_ERROR(boost::diagnostic_information(e));
+        istream.setstate(std::ios_base::failbit);
     }
     catch (std::exception& e)
     {
