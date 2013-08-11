@@ -67,6 +67,11 @@ public:
     /// The playback in this test should first show one frame, then two smaller frames on top of it.
     void testErrorInGetNextHandlingForEmptyClips();
 
+    /// It's sometimes possible to start a drag operation without having something selected. Particular
+    /// example: select something, then unselect by pressing the mouse, but not releasing it, then
+    /// immediately start dragging.
+    void testDraggingWithoutSelection();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

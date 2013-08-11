@@ -43,6 +43,7 @@ const wxString StateLeftDown::sTooltip = _(
 StateLeftDown::StateLeftDown( my_context ctx ) // entry
     :   TimeLineState( ctx )
     ,   mStartPosition(getMouse().getLeftDownPosition())
+    ,   mSelectionEmpty(getSelection().isEmpty()) // Cached for performance
 {
     LOG_DEBUG;
 }
@@ -74,8 +75,12 @@ boost::statechart::result StateLeftDown::react( const EvMotion& evt )
     wxPoint diff = mStartPosition - getMouse().getVirtualPosition();
     if ((abs(diff.x) > Layout::DragThreshold) || (abs(diff.y) > Layout::DragThreshold))
     {
-        getDrag().start(getMouse().getVirtualPosition(), true);
-        return transit<Dragging>();
+        if (!mSelectionEmpty)
+        {
+            // If no clip is selecting then starting a drag has no use.
+            getDrag().start(getMouse().getVirtualPosition(), true);
+            return transit<Dragging>();
+        }
     }
     return forward_event();
 }

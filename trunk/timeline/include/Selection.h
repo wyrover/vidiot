@@ -47,6 +47,9 @@ public:
     void updateOnLeftClick(const PointerPositionInfo& info);
     void updateOnRightClick(model::IClipPtr clip);
 
+    /// \return true if no clip is selected
+    bool isEmpty() const;
+
     /// Deletes all selected clips.
     void deleteClips();
 
