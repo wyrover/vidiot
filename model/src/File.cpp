@@ -579,7 +579,7 @@ void File::openFile()
 
     if ((!mHasVideo && !mHasAudio) || (mNumberOfFrames <= 0)) // <= 0: Some files have streams, but with all lengths == 0 (once happened when indexing by mistake ffprobe.exe)
     {
-        LOG_WARNING << "No correct stream found";
+        LOG_WARNING << "No correct stream found " << '(' << (*this) << ')';
         boost::mutex::scoped_lock lock(Avcodec::sMutex);
         avformat_close_input(&mFileContext);
         ASSERT_ZERO(mFileContext);
