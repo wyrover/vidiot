@@ -36,22 +36,16 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    INode() {};
-    virtual ~INode() {};
+    INode();
+    virtual ~INode();
 
     //////////////////////////////////////////////////////////////////////////
     // IDS
     //////////////////////////////////////////////////////////////////////////
 
-    virtual NodeId id()
-    {
-        return static_cast<NodeId>(this);
-    }
+    NodeId id();
 
-    static NodePtr Ptr(NodeId id)
-    {
-        return id->shared_from_this();
-    }
+    static NodePtr Ptr(NodeId id);
 
     //////////////////////////////////////////////////////////////////////////
     // STRUCTURE
@@ -113,11 +107,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const INode& obj )
-    {
-        os << &obj << '|' << obj.getName() << '|' << obj.getParent() << '|' << obj.getChildren().size();
-        return os;
-    }
+    friend std::ostream& operator<<( std::ostream& os, const INode& obj );
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
@@ -125,9 +115,7 @@ private:
 
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-    };
+    void serialize(Archive & ar, const unsigned int version);
 };
 
 } // namespace
