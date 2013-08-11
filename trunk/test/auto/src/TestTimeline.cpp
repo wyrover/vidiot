@@ -498,7 +498,13 @@ void TestTimeline::testAbortDrag()
 
         ASSERT_MORE_THAN_EQUALS(getTimeline().getZoom().pixelsToPts(LeftCenter(VideoClip(0,1)).x),VideoClip(0,1)->getLeftPts());
 
-        Undo();
+        for (int clipnum = 0; clipnum < mProjectFixture.InputFiles.size(); clipnum++)
+        {
+            ASSERT_EQUALS(VideoClip(0,clipnum)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,clipnum));
+            ASSERT_EQUALS(AudioClip(0,clipnum)->getLength(),mProjectFixture.OriginalLengthOfAudioClip(0,clipnum));
+        }
+
+        // NOT: Undo(); -- Drag was aborted so nothing was changed
         Type('=');  // Zoom in and test again
     }
 }

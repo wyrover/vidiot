@@ -149,18 +149,21 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 boost::statechart::result Idle::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
+    // todo make generic method for handling this messy code: only one switch should be required! - also see statedrag.cpp
     if ( evt.hasUnicodeKey() )
     {
         wxChar c = evt.getUnicodeKey();
         switch (evt.getUnicodeKey())
         {
+        case WXK_SPACE:     return start();                                 break;
+        case WXK_DELETE:    getSelection().deleteClips();                   break;
+        case WXK_F1:        getTooltip().show(sTooltip);                    break;
         case 's':   (new command::SplitAtCursor(getSequence()))->submit(); break;
         case 'S':   (new command::SplitAtCursor(getSequence()))->submit(); break;
         case 'c':   addTransition(); break;
         case 'C':   addTransition(); break;
         case '-':   getZoom().change( evt.getCtrlDown() ? -1000 : -1); break;
         case '=':   getZoom().change( evt.getCtrlDown() ?  1000 :  1); break;
-        case ' ':     return start();                                 break;
         }
     }
     else
