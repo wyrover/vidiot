@@ -71,6 +71,11 @@ void Track::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
 
+    if (!iterate_atEnd())
+    {
+        iterate_get()->clean(); // Reset any running threads (particularly, bufferPacketsThread)
+    }
+
     // mItClips may become mClips.end() signaling that this is beyond the last clip
 
     mItClips = mClips.begin();
@@ -317,6 +322,8 @@ void Track::iterate_next()
     mItClips++;
     while (!iterate_atEnd() && iterate_get()->getLength() == 0)
     {
+        iterate_get()->clean(); // Reset any running threads (particularly, bufferPacketsThread)
+
         // Step over clips with length 0. These are only used as part of a transition.
         mItClips++;
     }
