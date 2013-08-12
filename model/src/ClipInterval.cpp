@@ -112,6 +112,7 @@ void ClipInterval::clean()
     invalidateNewStartPosition();
     setGenerationProgress(0);
     mRender->clean();
+    Clip::clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
