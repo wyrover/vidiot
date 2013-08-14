@@ -151,7 +151,7 @@ NodePtrs File::findPath(wxString path)
     NodePtrs result;
     if (util::path::equals(mPath,path))
     {
-        result.push_back(shared_from_this());
+        result.push_back(self());
     }
     return result;
 }
@@ -182,7 +182,7 @@ void File::check()
             if (!canBeOpened())
             {
                 gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
-                parent->removeChild(shared_from_this());
+                parent->removeChild(self());
             }
         }
     }

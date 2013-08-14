@@ -21,13 +21,14 @@
 #include "IControl.h"
 #include "UtilLog.h"
 #include "UtilCloneable.h"
+#include "UtilSelf.h"
 
 namespace model {
 
 class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
-    ,   public boost::enable_shared_from_this<Track>
+    ,   public Self<Track>
     ,   public Cloneable<Track>
 {
 public:

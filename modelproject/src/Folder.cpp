@@ -71,7 +71,7 @@ void Folder::setName(wxString name)
     if (name != mName)
     {
         mName = name;
-        gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(shared_from_this(),mName)));
+        gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(self(),mName)));
     }
 }
 

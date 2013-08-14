@@ -432,7 +432,7 @@ wxString Sequence::getName() const
 void Sequence::setName(wxString name)
 {
     mName = name;
-    gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(shared_from_this(),mName)));
+    gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(self(),mName)));
 }
 
 void Sequence::check()

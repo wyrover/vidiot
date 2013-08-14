@@ -152,7 +152,7 @@ void Track::addClips(IClips clips, IClipPtr position)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    ProcessEvent(EventAddClips(MoveParameter(shared_from_this(), position, clips, TrackPtr(), IClipPtr(), IClips()))); // Must be handled immediately
+    ProcessEvent(EventAddClips(MoveParameter(self(), position, clips, TrackPtr(), IClipPtr(), IClips()))); // Must be handled immediately
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
@@ -179,7 +179,7 @@ void Track::removeClips(IClips clips)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), shared_from_this(), position, clips))); // Must be handled immediately
+    ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), self(), position, clips))); // Must be handled immediately
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
@@ -348,7 +348,7 @@ void Track::updateClips()
         IClipPtr clip = *it; // Extract current clip
         IClipPtr next = (++it != mClips.end()) ? *it : IClipPtr(); // Increment iterator first
 
-        boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(shared_from_this(), prev, next, position, index);
+        boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(self(), prev, next, position, index);
         position += clip->getLength();
         index++;
         prev = clip;
