@@ -396,7 +396,7 @@ void VideoDisplay::videoDisplayThread()
         if (sleepTime < 0)
         {
             // Skip the picture
-            VAR_WARNING(paTime)(mStartTime)(mCurrentTime)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(mStartPts)(videoFrame->getPts());
+            VAR_WARNING(mVideoFrames.getSize())(paTime)(mStartTime)(mCurrentTime)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(mStartPts)(videoFrame->getPts());
 
             // Originally the if statement read: (sleepTime < 0|| sleepTime > 1000), and the following sleep was done:
             // boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
@@ -407,6 +407,7 @@ void VideoDisplay::videoDisplayThread()
         else
         {
             boost::mutex::scoped_lock lock(mMutexDraw);
+            ASSERT_DIFFERS(mCurrentVideoFrame->getPts(), videoFrame->getPts()); // Otherwise, all the computations on 'playback time' can behave irratic.
             mCurrentVideoFrame = videoFrame;
             mCurrentBitmap = videoFrame->getBitmap();
             mCurrentBitmapPosition = videoFrame->getPosition();

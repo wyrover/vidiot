@@ -18,9 +18,10 @@
 #ifndef VIDEO_FRAME_H
 #define VIDEO_FRAME_H
 
+#include "UtilCloneable.h"
 #include "UtilFifo.h"
-#include "UtilInt.h"
 #include "UtilFrameRate.h"
+#include "UtilInt.h"
 #include "UtilRTTI.h"
 
 struct AVFrame;
@@ -33,8 +34,7 @@ typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
 class VideoFrame
-    :   public boost::noncopyable
-    ,   public IRTTI
+    :   public Cloneable<VideoFrame>
 {
 public:
 
@@ -44,17 +44,20 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /// Initialization AND allocation.
-    VideoFrame(wxSize size, pts position, int repeat);
+    /// Initialization AND (optional) allocation.
+    /// \param allocate if true, then allocate the buffer for decoding with avcodec
+    /// Initialization without allocation is used for empty frames. Then, allocation
+    /// is only needed when the data is needed for playback. During 'track combining'
+    /// empty frames can be ignored. This avoids needless allocation.
+    VideoFrame(wxSize size, pts position, bool allocate = false);
 
     /// Initialization of a frame based on a generated wxImage (for instance, for
     /// compositing).
     VideoFrame(wxImagePtr image, pts position);
 
-    /// Initialization without allocation. Used for empty frames. Then, allocation only
-    /// needed when the data is needed for playback. During 'track combining' empty
-    /// frames can be ignored. This avoids needless allocation.
-    VideoFrame(wxSize size, pts position);
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// \see make_cloned
+    VideoFrame(const VideoFrame& other);
 
     virtual ~VideoFrame();
 
@@ -62,8 +65,6 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    int getRepeat() const;      ///< \return the number of times this frame should be displayed
-    void setRepeat(int repeat); ///< \param new number of times to show this frame (used at end of clips)
     pts getPts() const;
     void setPts(pts position);
 
@@ -105,7 +106,6 @@ protected:
 
     AVFrame* mFrame;
     wxImagePtr mImage;
-    int mRepeat;
     double mTimeStamp;
     wxSize mSize;
     wxPoint mPosition;

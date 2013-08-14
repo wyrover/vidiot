@@ -149,7 +149,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         {
             VAR_WARNING(isEmpty)(requiredVideoSize);
             videoFrame = boost::make_shared<EmptyFrame>(requiredVideoSize,mProgress);
-            mProgress += 1;
         }
         else
         {
@@ -159,17 +158,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
             videoFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
             if (videoFrame)
             {
-                ASSERT_MORE_THAN_ZERO(videoFrame->getRepeat());
-                if (mProgress + videoFrame->getRepeat() > length)
-                {
-                    videoFrame->setRepeat(length - mProgress);
-                    mProgress = length;
-                }
-                else
-                {
-                    mProgress += videoFrame->getRepeat();
-                }
-
                 wxSize inputsize = getInputSize();
                 wxSize outputsize = Properties::get().getVideoSize();
                 wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
@@ -221,11 +209,10 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                 LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
 
                 videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox(), mProgress));
-
-                mProgress += 1;
             }
         }
 
+        mProgress++;
     }
 
     if (videoFrame)

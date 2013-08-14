@@ -99,14 +99,16 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
 
     if (!mOutputFrame || parameters.getBoundingBox() != mOutputFrame->getSize())
     {
-        wxImagePtr image = mInputFrame->getImage();
-        wxImagePtr outputImage = boost::make_shared<wxImage>(image->GetSize());
-        int dataSize = image->GetWidth() * image->GetHeight( ) * 3; // todo update when adding alpha channel support
-        memcpy(outputImage->GetData(), image->GetData(), dataSize);
+        wxImagePtr outputImage = boost::make_shared<wxImage>(mInputFrame->getImage()->Copy());
         outputImage->Rescale(parameters.getBoundingBox().x, parameters.getBoundingBox().y, wxIMAGE_QUALITY_HIGH);
         mOutputFrame = boost::make_shared<VideoFrame>(outputImage, 0);
     }
-    return mOutputFrame;
+    // Frame must be cloned, frame repeating is not supported. If a frame is to be output multiple
+    // times, avoid pts calculation problems by making multiple unique frames.
+    //
+    // Furthermore, note that the returned frame may have already been queued somewhere (VideoDisplay, for example).
+    // Changing the frame and returning that once more might thus change that previous frame also!
+    return make_cloned<VideoFrame>(mOutputFrame); // todo is it possible to clone without duplicating the image? Same for VideoFile
 }
 
 //////////////////////////////////////////////////////////////////////////
