@@ -43,16 +43,7 @@ NodeId INode::id()
 //static
 NodePtr INode::Ptr(NodeId id)
 {
-    NodePtr result;
-    try
-    {
-        result = id->shared_from_this(); // todo everywhere where shared_from_this is used, make sure that exceptions are caught for having the best stack trace
-    }
-    catch (boost::exception &e)
-    {
-        FATAL(boost::diagnostic_information(e));
-    }
-    return result;
+    return id->self();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -48,7 +48,7 @@ void Work::execute()
             gui::StatusBar::get().setProcessingText("");
         });
     }
-    QueueEvent(new WorkDoneEvent(shared_from_this()));
+    QueueEvent(new WorkDoneEvent(self()));
     VAR_DEBUG(this);
 }
 

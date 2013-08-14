@@ -18,6 +18,8 @@
 #ifndef WORK_H
 #define WORK_H
 
+#include "UtilSelf.h"
+
 namespace worker {
 
 typedef boost::function< void() > Callable;
@@ -25,7 +27,7 @@ typedef boost::function< void() > Callable;
 class Work
     : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     , boost::noncopyable
-    , public boost::enable_shared_from_this<Work>
+    , public Self<Work>
 {
 public:
     explicit Work(Callable work);

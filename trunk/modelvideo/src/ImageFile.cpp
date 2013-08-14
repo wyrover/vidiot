@@ -108,7 +108,7 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
     //
     // Furthermore, note that the returned frame may have already been queued somewhere (VideoDisplay, for example).
     // Changing the frame and returning that once more might thus change that previous frame also!
-    return make_cloned<VideoFrame>(mOutputFrame); // todo is it possible to clone without duplicating the image? Same for VideoFile
+    return make_cloned<VideoFrame>(mOutputFrame);
 }
 
 //////////////////////////////////////////////////////////////////////////

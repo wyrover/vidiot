@@ -18,6 +18,7 @@
 #include "UtilThread.h"
 
 #include "UtilEvent.h"
+#include "UtilSelf.h"
 
 namespace util { namespace thread {
 
@@ -28,7 +29,7 @@ DEFINE_EVENT(EVENT_RUN_IN_MAIN_THREAD,  EventRunInMainThread, RunInMainThreadPtr
 
 class RunInMainThread
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public boost::enable_shared_from_this<RunInMainThread>
+    ,   public Self<RunInMainThread>
 {
 public:
 
@@ -48,7 +49,7 @@ public:
         else
         {
             Bind( EVENT_RUN_IN_MAIN_THREAD, &RunInMainThread::onThreadEvent, this );
-            QueueEvent(new EventRunInMainThread(shared_from_this()));
+            QueueEvent(new EventRunInMainThread(self()));
             if (mWait)
             {
                 boost::mutex::scoped_lock lock(mMutex);

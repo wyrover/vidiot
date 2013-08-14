@@ -19,6 +19,7 @@
 #define I_NODE_H
 
 #include "UtilRTTI.h"
+#include "UtilSelf.h"
 
 namespace model {
 
@@ -27,7 +28,7 @@ typedef INode* NodeId;
 
 /// Base class for all model objects that can be made visible in the project view
 class INode
-    :   public boost::enable_shared_from_this<INode>
+    :   public Self<INode>
     ,   public IRTTI
 {
 public:

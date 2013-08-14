@@ -173,7 +173,7 @@ NodePtrs AutoFolder::findPath(wxString path)
     NodePtrs result = Node::findPath(path); // Traverse the tree
     if (util::path::equals(mPath,path))
     {
-        result.push_back(shared_from_this());
+        result.push_back(self());
     }
     return result;
 }
@@ -206,7 +206,7 @@ void AutoFolder::check()
     else
     {
         VAR_DEBUG(mPath);
-        mCurrentUpdate = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(shared_from_this()));
+        mCurrentUpdate = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(self()));
         mCurrentUpdate->Bind(worker::EVENT_WORK_DONE, &AutoFolder::onWorkDone, this); // No unbind: work object is destroyed when done
         worker::Worker::get().schedule(mCurrentUpdate);
     }
@@ -269,7 +269,7 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
         {
             if (!getParent()->isA<AutoFolder>())
             {
-                getParent()->removeChild(shared_from_this()); // Do not execute after the dialog (crash can occur then - since the node is removed by another update)
+                getParent()->removeChild(self()); // Do not execute after the dialog (crash can occur then - since the node is removed by another update)
                 gui::Dialog::get().getConfirmation(_("Folder removed"), _("The folder ") + util::path::toName(getPath()) + _(" has been removed from disk. Folder is removed from project also."));
             }
         }
