@@ -111,7 +111,7 @@ cd %SOURCE%
 
 cd %BUILD_DIR%\MSVC
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
-REM for %%i in (Vidiot*.exe) do start "" /b "%%i"
+for %%i in (Vidiot*.exe) do start "" /b "%%i"
 
 :END
 set ENDTIME=%TIME%
