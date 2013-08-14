@@ -19,7 +19,6 @@
 
 #include "Config.h"
 #include "Constants.h"
-
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
 
@@ -31,7 +30,7 @@ const pixel VideoFrame::sMinimumSize = 10; // To avoid errors in sws_scale all f
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(wxSize size, pts position, int repeat)
+VideoFrame::VideoFrame(wxSize size, pts position, bool allocate)
     : mFrame(0)
     , mImage()
     , mBuffer(0)
@@ -39,19 +38,21 @@ VideoFrame::VideoFrame(wxSize size, pts position, int repeat)
     , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),size)
     , mPts(position)
-    , mRepeat(repeat)
     , mOpacity(Constants::sMaxOpacity)
     , mBufferSize(0)
     , mForceKeyFrame(false)
 {
-    PixelFormat format = PIX_FMT_RGB24;
-    mBufferSize = avpicture_get_size(format, mSize.GetWidth(), mSize.GetHeight());
-    mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
+    if (allocate)
+    {
+        PixelFormat format = PIX_FMT_RGB24;
+        mBufferSize = avpicture_get_size(format, mSize.GetWidth(), mSize.GetHeight());
+        mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
 
-    mFrame = avcodec_alloc_frame();
+        mFrame = avcodec_alloc_frame();
 
-    // Assign appropriate parts of buffer to image planes in mFrame
-    avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, mSize.GetWidth(), mSize.GetHeight());
+        // Assign appropriate parts of buffer to image planes in mFrame
+        avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, mSize.GetWidth(), mSize.GetHeight());
+    }
 }
 
 VideoFrame::VideoFrame(wxImagePtr image, pts position)
@@ -62,26 +63,32 @@ VideoFrame::VideoFrame(wxImagePtr image, pts position)
     , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),image->GetSize())
     , mPts(position)
-    , mRepeat(1)
     , mOpacity(Constants::sMaxOpacity)
     , mBufferSize(0)
     , mForceKeyFrame(false)
 {
 }
 
-VideoFrame::VideoFrame(wxSize size, pts position)
+VideoFrame::VideoFrame(const VideoFrame& other)
     : mFrame(0)
     , mImage()
     , mBuffer(0)
-    , mSize(size)
+    , mSize(other.mSize)
     , mPosition(0,0)
-    , mRegionOfInterest(wxPoint(0,0),size)
-    , mPts(position)
-    , mRepeat(1)
-    , mOpacity(Constants::sMaxOpacity)
+    , mRegionOfInterest(other.mRegionOfInterest)
+    , mPts(0)
+    , mOpacity(other.mOpacity)
     , mBufferSize(0)
     , mForceKeyFrame(false)
 {
+    if (other.mImage)
+    {
+        mImage  = boost::make_shared<wxImage>(const_cast<VideoFrame&>(other).mImage->Copy());
+    }
+    else
+    {
+        mImage  = boost::make_shared<wxImage>(wxImage(mSize, const_cast<VideoFrame&>(other).getData()[0], true).Copy());
+    }
 }
 
 VideoFrame::~VideoFrame()
@@ -101,17 +108,6 @@ VideoFrame::~VideoFrame()
 //////////////////////////////////////////////////////////////////////////
 // META DATA
 //////////////////////////////////////////////////////////////////////////
-
-int VideoFrame::getRepeat() const
-{
-    return mRepeat;
-
-}
-
-void VideoFrame::setRepeat(int repeat)
-{
-    mRepeat = repeat;
-}
 
 wxSize VideoFrame::getSize() const
 {
@@ -192,7 +188,7 @@ wxImagePtr VideoFrame::getImage()
     {
         mImage = boost::make_shared<wxImage>(mSize, getData()[0], true);
     }
-    return boost::make_shared<wxImage>(mImage->GetSubImage(mRegionOfInterest));
+    return boost::make_shared<wxImage>(mImage->GetSubImage(mRegionOfInterest)); // todo strange: getsubimage does not return pointer!
 }
 
 wxBitmapPtr VideoFrame::getBitmap()
@@ -213,7 +209,6 @@ std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
 {
     os  << &obj                     << '|'
         << obj.mPts                 << '|'
-        << obj.mRepeat              << '|'
         << obj.mSize                << '|'
         << obj.mPosition            << '|'
         << obj.mOpacity             << '|'

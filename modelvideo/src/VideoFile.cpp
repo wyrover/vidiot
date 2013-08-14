@@ -272,14 +272,14 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         ASSERT_MORE_THAN_EQUALS_ZERO(pFrame->repeat_pict);
         if (pFrame->repeat_pict > 0)
         {
-            NIY(_("Video frame repeating is not supported yet"));
+            NIY(_("Input video frame repeating is not supported yet"));
         }
 
         static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
         wxSize size(parameters.getBoundingBox());
         size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
         size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
-        mDeliveredFrame = boost::make_shared<VideoFrame>(size, mPosition, pFrame->repeat_pict + 1);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(size, mPosition, true);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(
@@ -298,10 +298,17 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     else
     {
         LOG_DEBUG << "Same frame again";
+
+        // VideoFrame must be cloned, frame repeating is not supported. If a frame is to be output multiple
+        // times, avoid pts calculation problems by making multiple unique frames.
+        //
+        // Furthermore, note that mDeliveredFrame may have already been queued somewhere (VideoDisplay, for example).
+        // Changing mDeliveredFrame and returning that once more might thus change that previous frame also!
+        mDeliveredFrame = make_cloned<VideoFrame>(mDeliveredFrame);
     }
 
     ASSERT(mDeliveredFrame);
-    mPosition += mDeliveredFrame->getRepeat();
+    mPosition++;
 
     VAR_DEBUG(this)(mPosition)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
     return mDeliveredFrame;
