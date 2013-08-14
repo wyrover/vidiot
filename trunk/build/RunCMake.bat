@@ -1,3 +1,5 @@
+set STARTTIME=%TIME%
+
 goto BEGIN
 
 REM ============================== SUBROUTINES ==============================
@@ -39,7 +41,9 @@ if NOT DEFINED VIDIOT_BUILD SET VIDIOT_BUILD=%VIDIOT_DIR%\Build
 call:EXTRACTDRIVE %VIDIOT_BUILD%
 SET VIDIOT_BUILD_DRIVE=%DRIVE%
 
-if NOT "%1%"=="REBUILD" goto BUILD
+if "%1%"=="REBUILD" goto CLEAN
+if "%1%"=="DELIVER" goto CLEAN
+goto BUILD
 
 REM ============================== CLEAN ==============================
 :CLEAN
@@ -86,8 +90,9 @@ if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual 
 if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
 cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
 cmake -LAH  %SOURCE% > CMakeVariables.txt
-pause
-exit
+
+if "%1%"=="DELIVER" goto DELIVER
+goto END
 
 cd %BUILD_DIR%\GCCD
 cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
@@ -95,3 +100,37 @@ cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev 
 cd %BUILD_DIR%\GCCR
 cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
 
+
+
+REM ============================== DELIVER ==============================
+:DELIVER
+
+REM Call svn Update to ensure that the about box and the logging show the proper revision
+cd %SOURCE%
+"C:\Program Files\TortoiseSVN\bin\svn.exe" update
+
+cd %BUILD_DIR%\MSVC
+"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
+REM for %%i in (Vidiot*.exe) do start "" /b "%%i"
+
+:END
+set ENDTIME=%TIME%
+
+@echo off
+echo STARTTIME: %STARTTIME%
+echo ENDTIME: %ENDTIME%
+set /A STARTTIME=(1%STARTTIME:~0,2%-100)*360000 + (1%STARTTIME:~3,2%-100)*6000 + (1%STARTTIME:~6,2%-100)*100 + (1%STARTTIME:~9,2%-100)
+set /A ENDTIME=(1%ENDTIME:~0,2%-100)*360000 + (1%ENDTIME:~3,2%-100)*6000 + (1%ENDTIME:~6,2%-100)*100 + (1%ENDTIME:~9,2%-100)
+set /A DURATION=%ENDTIME%-%STARTTIME%
+set /A DURATIONH=%DURATION% / 360000
+set /A DURATIONM=(%DURATION% - %DURATIONH%*360000) / 6000
+set /A DURATIONS=(%DURATION% - %DURATIONH%*360000 - %DURATIONM%*6000) / 100
+set /A DURATIONHS=(%DURATION% - %DURATIONH%*360000 - %DURATIONM%*6000 - %DURATIONS%*100)
+if %DURATIONH% LSS 10 set DURATIONH=0%DURATIONH%
+if %DURATIONM% LSS 10 set DURATIONM=0%DURATIONM%
+if %DURATIONS% LSS 10 set DURATIONS=0%DURATIONS%
+if %DURATIONHS% LSS 10 set DURATIONHS=0%DURATIONHS%
+echo DURATION: %DURATIONH%:%DURATIONM%:%DURATIONS%.%DURATIONHS%
+
+pause
+exit
