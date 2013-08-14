@@ -75,7 +75,6 @@ void TestManual::testManual()
     StartTest("Manual...");
     LOG_ERROR << dump(getSequence());
 
-    // todo make help text
     // todo scale clip (reduce size), then put this clip in track2, then fade in this clip above another clip -> the black is also 'faded in', whereas it should have been 'empty'!
     // todo at end of clip edit, remove any empty clips which are the last clips of the track
     pause(60000 * 60); // One hour should be enough...

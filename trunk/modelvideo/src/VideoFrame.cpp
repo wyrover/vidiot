@@ -188,7 +188,7 @@ wxImagePtr VideoFrame::getImage()
     {
         mImage = boost::make_shared<wxImage>(mSize, getData()[0], true);
     }
-    return boost::make_shared<wxImage>(mImage->GetSubImage(mRegionOfInterest)); // todo strange: getsubimage does not return pointer!
+    return boost::make_shared<wxImage>(mImage->GetSubImage(mRegionOfInterest));
 }
 
 wxBitmapPtr VideoFrame::getBitmap()
