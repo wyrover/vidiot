@@ -23,6 +23,7 @@
 #include "EmptyClip.h"
 #include "ModelEvent.h"
 #include "Node.h"
+#include "Project.h"
 #include "TrackEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
@@ -269,8 +270,12 @@ int Track::getHeight() const
 
 void Track::setHeight(int height)
 {
-    mHeight = height;
-    ProcessEvent(model::EventHeightChanged(height));
+    if (mHeight != height)
+    {
+        mHeight = height;
+        model::Project::get().Modify(true);
+        ProcessEvent(model::EventHeightChanged(height));
+    }
 }
 
 int Track::getIndex() const
@@ -386,6 +391,7 @@ void Track::serialize(Archive & ar, const unsigned int version)
 {
     ar & mIndex;
     ar & mClips;
+    ar & mHeight;
 }
 template void Track::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Track::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
