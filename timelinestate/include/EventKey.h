@@ -37,7 +37,7 @@ private:
     const bool mCtrlDown;
     const bool mShiftDown;
     const bool mAltDown;
-    const wxKeyCode mKeyCode;
+    const int mKeyCode;
     const wxChar mUnicodeKey;
     const wxPoint mPosition;
 

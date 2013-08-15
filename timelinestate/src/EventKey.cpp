@@ -33,7 +33,7 @@ EvKey::EvKey(
     ,   mShiftDown(shiftdown)
     ,   mAltDown(altdown)
     ,   mUnicodeKey(unicodekey)
-    ,   mKeyCode(static_cast<wxKeyCode>(keycode))
+    ,   mKeyCode(keycode)
     ,   mPosition(position)
 {
 };
