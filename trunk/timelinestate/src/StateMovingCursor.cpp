@@ -104,12 +104,8 @@ boost::statechart::result MovingCursor::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SHIFT:
-        triggerToggleStart();
-        break;
-    case WXK_F1:
-        getTooltip().show(sTooltip);
-        break;
+    case WXK_SHIFT:     triggerToggleStart();        break;
+    case WXK_F1:        getTooltip().show(sTooltip); break;
     }
     return forward_event();
 }
@@ -119,9 +115,7 @@ boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SHIFT:
-        triggerToggleEnd();
-        break;
+    case WXK_SHIFT:     triggerToggleEnd(); break;
     }
     return forward_event();
 }

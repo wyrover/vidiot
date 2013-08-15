@@ -76,15 +76,9 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SPACE:
-        getPlayer()->stop();
-        break;
-    case WXK_SHIFT:
-        triggerBegin();
-        break;
-    case WXK_F1:
-        getTooltip().show(sTooltip);
-        break;
+    case WXK_SPACE:     getPlayer()->stop();        break;
+    case WXK_SHIFT:     triggerBegin();             break;
+    case WXK_F1:        getTooltip().show(sTooltip);break;
     }
     return forward_event();
 }
@@ -94,9 +88,7 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SHIFT:
-        triggerEnd();
-        break;
+    case WXK_SHIFT:     triggerEnd(); break;
     }
     return forward_event();
 }
