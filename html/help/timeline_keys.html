@@ -1,16 +1,83 @@
-<html><title>TimelineKbd</title><body>
-<h1>Actions in the timeline</h1>
-<LI>Click on clip - (de)select clip</L1>
-<L1>Alt-click on clip - (de)select clips until the end</L1>
-<L1>Shift-click on clip - range (de)selection</L1>
-<L1>Ctrl-select - modify selection.</L1>
-<LI>Delete - Delete clips and replace by emptyness</LI>
-<LI>Ctrl & Mouse wheel - Zoom (also works during drag operations!)</LI>
-<LI>Shift & Mouse whee - Shift (also works during drag operations!)</LI>
-<II>Ctrl while dragging - Replace drag point (useful to make snapping better: the snap point closest to the mouse is considered first. Useful to move over between audio/video track movement also.)</LI>
-<LI>Shift while dragging - Make room for dragged clips by moving non-dragged clips to the back.</LI>
-<LI>= - Zoom in</LI>
-<LI>- - Zoom out</LI>
-<LI>Ctrl & = - Zoom in max</LI>
-<LI>Ctrl & - - Zoom out max</LI>
-</body></html>
+<html>
+<body style="font-family: arial; font-size:8pt">
+
+<h1>Key/mouse bindings</h1>
+
+<table border=1 cellspacing=2 cellpadding=0>
+<tr>
+<th align=left>Type</th>
+<th align=left>Action</th>
+<th align=left>Description</th>
+</tr>
+
+<tr>
+<td valign=top rowspan=4>Selection</td>
+<td valign=top>Left click on clip</td>
+<td valign=top>(de)Select clip</td>
+</tr>
+<tr>
+<td valign=top>Alt + left click on clip</td>
+<td valign=top>(de)Select clips until the end</td>
+</tr>
+<tr>
+<td valign=top>Shift + left click on clip</td>
+<td valign=top>(de)Select range of clips</td>
+</tr>
+<tr>
+<td valign=top>Control + left click on clip</td>
+<td valign=top>Modify selection</td>
+</tr>
+
+<tr>
+<td rowspan=1>Deletion</td>
+<td valign=top>Delete</td>
+<td valign=top>Delete selected clips.</td>
+</tr>
+
+<tr>
+<td valign=top rowspan=5>Zooming</td>
+<td valign=top>Control + Mouse wheel</td>
+<td valign=top>Zoom in/out (also works during drag operations).</td>
+</tr>
+<tr>
+<td valign=top>=</td>
+<td valign=top>Zoom in</td>
+</tr>
+<tr>
+<td valign=top>-</td>
+<td valign=top>Zoom out</td>
+</tr>
+<tr>
+<td valign=top>Control + =</td>
+<td valign=top>Zoom in maximally</td>
+</tr>
+<tr>
+<td valign=top>Control + -</td>
+<td valign=top>Zoom out maximally</td>
+</tr>
+
+<tr>
+<td valign=top>Scrolling</td>
+<td valign=top>Shift + Mouse wheel</td>
+<td valign=top>Adjust scrolling position (also works during drag operations).</td>
+</tr>
+
+<tr>
+<td rowspan=2>Dragging</td>
+<td valign=top>Control</td>
+<td valign=top>Change the drag 'hotspot'. Can be used to first correctly position the dragged videoclip onto the correct track, then hold control while moving to the (linked) audio clip. Then the audio clip can be positioned on the desired track.</td>
+</tr>
+<tr>
+<td valign=top>Shift</td>
+<td valign=top>Hold shift to make room for dragged clips by moving non-dragged clips to the back.</td>
+</tr>
+
+<tr>
+<td rowspan=1>Trimming</td>
+<td valign=top>Shift</td>
+<td valign=top>Hold shift to make room for extending the clip, or to avoid introducing empty space when reducing the clip size.</td>
+</tr>
+
+<table>
+</body>
+</html>

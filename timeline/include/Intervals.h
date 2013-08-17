@@ -58,7 +58,7 @@ public:
     void endToggle();
     bool toggleIsAddition() const;
 
-    void update(pixel newCursorPosition); ///< To be called when the cursor is moved.
+    void update(pts newCursorPosition); ///< To be called when the cursor is moved.
     void change(PtsInterval interval, bool add); ///< To be called for the undo/redo mechanism.
     void clear(); ///< Clear all marked intervals.
 
