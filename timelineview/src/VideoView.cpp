@@ -69,7 +69,6 @@ VideoView::~VideoView()
 //////////////////////////////////////////////////////////////////////////
 
 // todo progress bar when initially opening a project.
-// todo handle home+end+right+left(1 verder) + ctrlright+left (next cut...)
 
 void VideoView::canvasResized()
 {
