@@ -42,14 +42,19 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    pixel getPosition() const;
-    void setPosition(pixel position);
-
+    /// \return position new position in sequence where cursor must is positioned
     pts getLogicalPosition() const;
+
+    /// Move cursor AND update player position
+    /// \param position new position in sequence where cursor must be positioned
     void setLogicalPosition(pts position);
 
-    void moveCursorOnUser(pixel position);
-    void moveCursorOnPlayback(pts position);
+    void prevClip();
+    void nextClip();
+    void prevCut();
+    void nextCut();
+    void home();
+    void end();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW
@@ -66,6 +71,15 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     void onPlaybackPosition(PlaybackPositionEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    /// Move cursor but don't update player
+    /// \param position new position in sequence where cursor must be positioned
+    void moveTo(pts position);
+
 };
 
 }} // namespace

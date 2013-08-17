@@ -48,7 +48,7 @@ SplitAtCursor::~SplitAtCursor()
 void SplitAtCursor::initialize()
 {
     VAR_INFO(this);
-    pts position = getTimeline().getZoom().pixelsToPts(getTimeline().getCursor().getPosition());
+    pts position = getTimeline().getCursor().getLogicalPosition();
     splittrack(getTimeline().getSequence()->getVideoTracks(), position);
     splittrack(getTimeline().getSequence()->getAudioTracks(), position);
 }

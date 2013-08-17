@@ -257,7 +257,7 @@ void Machine::onKeyDown(wxKeyEvent& event)
     VAR_DEBUG(event);
     getKeyboard().update(event);
     process_event(EvKeyDown(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
-    event.Skip();
+    // NOT: event.Skip(); -- Don't want the left/down keys to propagate further, since that causes scrolling by wxScrolledWindow
 }
 
 void Machine::onKeyUp(wxKeyEvent& event)
@@ -265,7 +265,7 @@ void Machine::onKeyUp(wxKeyEvent& event)
     VAR_DEBUG(event);
     getKeyboard().update(event);
     process_event(EvKeyUp(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
-    event.Skip();
+    // NOT: event.Skip(); -- Don't want the left/down keys to propagate further, since that causes scrolling by wxScrolledWindow
 }
 
 void Machine::onCaptureLost(wxMouseCaptureLostEvent& event)

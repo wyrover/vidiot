@@ -127,7 +127,7 @@ void Intervals::removeAll()
 
 void Intervals::addBeginMarker()
 {
-    pts cursor = determineSnap(getZoom().pixelsToPts(getCursor().getPosition()));
+    pts cursor = determineSnap(getCursor().getLogicalPosition());
     mNewIntervalActive = true;
     mNewIntervalBegin = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerBeginAddition) * model::Constants::sSecond);
     mNewIntervalEnd = cursor + model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition)   * model::Constants::sSecond);
@@ -144,7 +144,7 @@ void Intervals::addEndMarker()
 
 void Intervals::startToggle()
 {
-    mToggleBegin = determineSnap(getZoom().pixelsToPts(getCursor().getPosition()));
+    mToggleBegin = determineSnap(getCursor().getLogicalPosition());
     mToggleEnd = mToggleBegin;
     mToggleActive = true;
 }
@@ -164,9 +164,9 @@ bool Intervals::toggleIsAddition() const
     return overlap.empty();
 }
 
-void Intervals::update(pixel newCursorPosition)
+void Intervals::update(pts newCursorPosition)
 {
-    pts cursor = determineSnap(getZoom().pixelsToPts(newCursorPosition));
+    pts cursor = determineSnap(newCursorPosition);
     if (mNewIntervalActive)
     {
         mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition) * model::Constants::sSecond);

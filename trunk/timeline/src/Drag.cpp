@@ -741,7 +741,7 @@ void Drag::determinePossibleSnapPoints()
     }
     if (Config::ReadBool(Config::sPathSnapCursor))
     {
-        mSnapPoints.push_back(getZoom().pixelsToPts(getCursor().getPosition()));
+        mSnapPoints.push_back(getCursor().getLogicalPosition());
     }
     mSnapPoints.sort();
     mSnapPoints.unique();

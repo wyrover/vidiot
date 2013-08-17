@@ -21,6 +21,7 @@
 #include "Layout.h"
 #include "Player.h"
 #include "Scrolling.h"
+#include "Sequence.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "UtilLog.h"
@@ -54,55 +55,67 @@ Cursor::~Cursor()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-pixel Cursor::getPosition() const
-{
-    return mCursorPosition;
-}
-
-void Cursor::setPosition(pixel position)
-{
-    if (position != mCursorPosition)
-    {
-        VAR_DEBUG(mCursorPosition)(position);
-
-        long oldPos = mCursorPosition;
-        mCursorPosition = position;
-
-        wxPoint scroll = getScrolling().getOffset();
-
-        // Refresh the old and new cursor position areas
-        long cursorOnClientArea = mCursorPosition - scroll.x;
-        long oldposOnClientArea = oldPos - scroll.x;
-        getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().getSize().GetHeight()),false);
-        getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().getSize().GetHeight()),true);
-        getTimeline().Update(); // Use this for better feedback when dragging cursor..
-
-        getIntervals().update(mCursorPosition);
-    }
-}
-
 pts Cursor::getLogicalPosition() const
 {
-    return getZoom().pixelsToPts(mCursorPosition);
+    return mCursorPosition;
 }
 
 void Cursor::setLogicalPosition(pts position)
 {
     VAR_DEBUG(position);
-    setPosition(getZoom().ptsToPixels(position));
+    if (position >= 0 && position <= getZoom().pixelsToPts(getSequenceView().getSize().x)) // avoid out of bounds
+    {
+        moveTo(position);
+        getPlayer()->moveTo(mCursorPosition);
+    }
 }
 
-void Cursor::moveCursorOnPlayback(pts position)
+void Cursor::prevClip()
 {
-    VAR_DEBUG(position);
-    setLogicalPosition(position);
+    setLogicalPosition(getLogicalPosition() - 1);
 }
 
-void Cursor::moveCursorOnUser(pixel position)
+void Cursor::nextClip()
 {
-    VAR_DEBUG(position);
-    setPosition(position);
-    getPlayer()->moveTo(getZoom().pixelsToPts(position));
+    setLogicalPosition(getLogicalPosition() + 1);
+}
+
+void Cursor::prevCut()
+{
+    std::set<pts> cuts = getSequence()->getCuts(); // std::set is stored in ordered fashion
+    pts current = getLogicalPosition();
+    BOOST_REVERSE_FOREACH( pts position, getSequence()->getCuts() )
+    {
+        if (position < current)
+        {
+            setLogicalPosition(position);
+            return;
+        }
+    }
+}
+
+void Cursor::nextCut()
+{
+    std::set<pts> cuts = getSequence()->getCuts(); // std::set is stored in ordered fashion
+    pts current = getLogicalPosition();
+    BOOST_FOREACH( pts position, getSequence()->getCuts() )
+    {
+        if (position > current)
+        {
+            setLogicalPosition(position);
+            return;
+        }
+    }
+}
+
+void Cursor::home()
+{
+    setLogicalPosition(0);
+}
+
+void Cursor::end()
+{
+    setLogicalPosition(getSequence()->getLength());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -112,7 +125,8 @@ void Cursor::moveCursorOnUser(pixel position)
 void Cursor::draw(wxDC& dc) const
 {
     dc.SetPen(Layout::get().CursorPen);
-    dc.DrawLine(wxPoint(mCursorPosition,0),wxPoint(mCursorPosition,getSequenceView().getSize().GetHeight()));
+    pixel pos = getZoom().ptsToPixels(mCursorPosition);
+    dc.DrawLine(wxPoint(pos,0),wxPoint(pos,getSequenceView().getSize().GetHeight()));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -121,8 +135,35 @@ void Cursor::draw(wxDC& dc) const
 
 void Cursor::onPlaybackPosition(PlaybackPositionEvent& event)
 {
-    moveCursorOnPlayback(event.getValue());
+    moveTo(event.getValue());
     event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void Cursor::moveTo(pts position)
+{
+    if (position != mCursorPosition)
+    {
+        VAR_DEBUG(mCursorPosition)(position);
+
+        long oldPixelPos = getZoom().ptsToPixels(mCursorPosition);
+        long newPixelPos = getZoom().ptsToPixels(position);
+        mCursorPosition = position;
+
+        wxPoint scroll = getScrolling().getOffset();
+
+        // Refresh the old and new cursor position areas
+        long cursorOnClientArea = newPixelPos - scroll.x;
+        long oldposOnClientArea = oldPixelPos - scroll.x;
+        getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().getSize().GetHeight()),false);
+        getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().getSize().GetHeight()),true);
+        getTimeline().Update(); // Use this for better feedback when dragging cursor..
+
+        getIntervals().update(mCursorPosition);
+    }
 }
 
 }} // namespace

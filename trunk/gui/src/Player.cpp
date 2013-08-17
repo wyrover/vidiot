@@ -27,6 +27,8 @@
 #include "preview-pauseplay.xpm"
 #include "preview-previous.xpm"
 #include "Sequence.h"
+#include "Timeline.h"
+#include "TimeLinesView.h"
 #include "UtilLog.h"
 #include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
@@ -234,21 +236,14 @@ void Player::onPlaybackPosition(PlaybackPositionEvent& event) // make playbackst
 void Player::onHome(wxCommandEvent& event)
 {
     LOG_INFO;
-    mDisplay->moveTo(0);
+    TimelinesView::get().getTimeline(mDisplay->getSequence()).getCursor().home();
     mFocus->SetFocus();
 }
 
 void Player::onPrevious(wxCommandEvent& event)
 {
     LOG_INFO;
-    std::set<pts> cuts = mDisplay->getSequence()->getCuts(); // std::set is stored in ordered fashion
-    pts newposition = mPosition;
-    BOOST_FOREACH( pts cut, cuts )
-    {
-        if (cut >= mPosition) { break; }
-        newposition = cut;
-    }
-    mDisplay->moveTo(newposition);
+    TimelinesView::get().getTimeline(mDisplay->getSequence()).getCursor().prevCut();
     mFocus->SetFocus();
 }
 
@@ -262,22 +257,14 @@ void Player::onPlay(wxCommandEvent& event)
 void Player::onNext(wxCommandEvent& event)
 {
     LOG_INFO;
-    std::set<pts> cuts = mDisplay->getSequence()->getCuts(); // std::set is stored in ordered fashion
-    pts newposition = mPosition;
-    BOOST_FOREACH( pts cut, cuts )
-    {
-        if (cut <= mPosition) { continue; }
-        newposition = cut;
-        break;
-    }
-    mDisplay->moveTo(newposition);
+    TimelinesView::get().getTimeline(mDisplay->getSequence()).getCursor().nextCut();
     mFocus->SetFocus();
 }
 
 void Player::onEnd(wxCommandEvent& event)
 {
     LOG_INFO;
-    mDisplay->moveTo(mDisplay->getSequence()->getLength());
+    TimelinesView::get().getTimeline(mDisplay->getSequence()).getCursor().end();
     mFocus->SetFocus();
 }
 

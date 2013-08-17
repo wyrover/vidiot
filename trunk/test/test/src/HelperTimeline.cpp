@@ -350,7 +350,7 @@ wxPoint RightCenter(DraggedClips drag)
 
 pixel CursorPosition()
 {
-    return getTimeline().getCursor().getPosition();
+    return getTimeline().getScrolling().ptsToPixel(getTimeline().getCursor().getLogicalPosition());
 }
 
 void PositionCursor(pixel position)
@@ -447,9 +447,9 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 void DeselectAllClips()
 {
     LOG_DEBUG;
-    util::thread::RunInMainAndWait([] 
-    { 
-        getTimeline().getSelection().unselectAll(); 
+    util::thread::RunInMainAndWait([]
+    {
+        getTimeline().getSelection().unselectAll();
     });
 };
 
