@@ -153,16 +153,19 @@ void Cursor::moveTo(pts position)
         long newPixelPos = getZoom().ptsToPixels(position);
         mCursorPosition = position;
 
-        wxPoint scroll = getScrolling().getOffset();
+        if (oldPixelPos != newPixelPos)
+        {
+            wxPoint scroll = getScrolling().getOffset();
 
-        // Refresh the old and new cursor position areas
-        long cursorOnClientArea = newPixelPos - scroll.x;
-        long oldposOnClientArea = oldPixelPos - scroll.x;
-        getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().getSize().GetHeight()),false);
-        getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().getSize().GetHeight()),true);
-        getTimeline().Update(); // Use this for better feedback when dragging cursor..
+            // Refresh the old and new cursor position areas
+            long cursorOnClientArea = newPixelPos - scroll.x;
+            long oldposOnClientArea = oldPixelPos - scroll.x;
+            getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().getSize().GetHeight()),false);
+            getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().getSize().GetHeight()),true);
+            getTimeline().Update(); // Use this for better feedback when dragging cursor..
 
-        getIntervals().update(mCursorPosition);
+            getIntervals().update(mCursorPosition);
+        }
     }
 }
 
