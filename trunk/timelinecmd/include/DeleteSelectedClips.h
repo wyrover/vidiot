@@ -33,7 +33,7 @@ public:
 
     explicit DeleteSelectedClips(model::SequencePtr sequence);
 
-    ~DeleteSelectedClips();
+    virtual ~DeleteSelectedClips();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE

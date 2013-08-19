@@ -35,7 +35,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Drag(Timeline* timeline);
-    ~Drag();
+    virtual ~Drag();
 
     //////////////////////////////////////////////////////////////////////////
     // START/STOP
@@ -125,7 +125,7 @@ private:
         /// Default constructor
         DragInfo(Timeline* timeline, bool isVideo);
 
-        ~DragInfo();
+        virtual ~DragInfo();
 
         /// Reset all offsets when a new drag operation is started
         void reset();

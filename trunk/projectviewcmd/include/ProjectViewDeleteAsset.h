@@ -27,7 +27,7 @@ class ProjectViewDeleteAsset : public ProjectViewCommand
 {
 public:
     ProjectViewDeleteAsset(model::NodePtrs nodes);
-    ~ProjectViewDeleteAsset();
+    virtual ~ProjectViewDeleteAsset();
     bool Do() override;
     bool Undo() override;
 private:

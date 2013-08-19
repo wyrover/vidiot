@@ -42,7 +42,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Application(test::IEventLoopListener* eventLoopListener = 0);
-    ~Application();
+    virtual ~Application();
 
     static const wxString sTestApplicationName; ///< Fixed string used to determine if application is running in module test
 

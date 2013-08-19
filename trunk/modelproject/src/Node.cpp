@@ -207,18 +207,25 @@ std::ostream& operator<<( std::ostream& os, const Node& obj )
 template<class Archive>
 void Node::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<INode>(*this);
-    if (Archive::is_loading::value)
+    try
     {
-        NodePtr parent;
-        ar & parent;
-        setParent(parent);
+        ar & boost::serialization::base_object<INode>(*this);
+        if (Archive::is_loading::value)
+        {
+            NodePtr parent;
+            ar & parent;
+            setParent(parent);
+        }
+        else
+        {
+            ar & mParent.lock();
+        }
+        ar & mChildren;
     }
-    else
-    {
-        ar & mParent.lock();
-    }
-    ar & mChildren;
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void Node::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Node::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

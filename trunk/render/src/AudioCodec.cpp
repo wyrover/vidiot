@@ -150,8 +150,15 @@ std::ostream& operator<<( std::ostream& os, const AudioCodec& obj )
 template<class Archive>
 void AudioCodec::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mId;
-    ar & mParameters;
+    try
+    {
+        ar & mId;
+        ar & mParameters;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void AudioCodec::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void AudioCodec::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

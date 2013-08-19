@@ -37,7 +37,7 @@ struct MoveTrackDivider
 
     MoveTrackDivider( my_context ctx );
 
-    ~MoveTrackDivider();
+    virtual ~MoveTrackDivider();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,

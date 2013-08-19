@@ -39,7 +39,7 @@ struct Idle
 
     Idle( my_context ctx );
 
-    ~Idle();
+    virtual ~Idle();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,

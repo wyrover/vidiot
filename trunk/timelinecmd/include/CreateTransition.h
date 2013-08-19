@@ -34,7 +34,7 @@ public:
 
     CreateTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, model::TransitionType type);
 
-    ~CreateTransition();
+    virtual ~CreateTransition();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE

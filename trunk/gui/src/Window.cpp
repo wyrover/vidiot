@@ -756,8 +756,15 @@ void Window::updateWorkspaceMenu()
 template<class Archive>
 void Window::serialize(Archive & ar, const unsigned int version)
 {
-    ar & *mProjectView;
-    ar & *mTimelinesView;
+    try
+    {
+        ar & *mProjectView;
+        ar & *mTimelinesView;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void Window::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Window::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
@@ -773,7 +780,14 @@ namespace model {
     template<class Archive>
     void IView::serialize(Archive & ar, const unsigned int version)
     {
-        ar & static_cast<gui::Window&>(*this);
+        try
+        {
+            ar & static_cast<gui::Window&>(*this);
+        }
+        catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+        catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+        catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+        catch (...)                                  { LOG_ERROR;                                   throw; }
     }
     template void IView::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
     template void IView::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

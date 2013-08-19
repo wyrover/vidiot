@@ -42,7 +42,7 @@ struct Dragging
 
     Dragging( my_context ctx );
 
-    ~Dragging();
+    virtual ~Dragging();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftUp >,

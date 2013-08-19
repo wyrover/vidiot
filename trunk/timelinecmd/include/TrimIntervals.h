@@ -40,7 +40,7 @@ public:
     /// \param name name of command (for undo/redo menu entries)
     TrimIntervals(model::SequencePtr sequence, PtsIntervals remove, wxString name);
 
-    ~TrimIntervals();
+    virtual ~TrimIntervals();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE

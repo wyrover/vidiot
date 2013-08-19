@@ -37,7 +37,7 @@ struct StateLeftDown
 
     StateLeftDown( my_context ctx );
 
-    ~StateLeftDown();
+    virtual ~StateLeftDown();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,

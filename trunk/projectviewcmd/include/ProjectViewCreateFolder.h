@@ -28,7 +28,7 @@ class ProjectViewCreateFolder : public ProjectViewCommand
 public:
     /** Create a new folder in another folder. */
     ProjectViewCreateFolder(model::FolderPtr parent, wxString name);
-    ~ProjectViewCreateFolder();
+    virtual ~ProjectViewCreateFolder();
     bool Do() override;
     bool Undo() override;
 private:

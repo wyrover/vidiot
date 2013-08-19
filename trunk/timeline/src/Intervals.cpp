@@ -324,7 +324,14 @@ void Intervals::removeRegionUsedByClips(model::SequencePtr sequence, PtsInterval
 template<class Archive>
 void Intervals::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mIntervals;
+    try
+    {
+        ar & mIntervals;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
 template void Intervals::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

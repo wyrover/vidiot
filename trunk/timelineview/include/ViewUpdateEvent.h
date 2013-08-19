@@ -28,7 +28,7 @@ class ViewUpdate
 {
 public:
     ViewUpdate(View& view, wxRegion area);
-    ~ViewUpdate();
+    virtual ~ViewUpdate();
     ViewUpdate(const ViewUpdate& other);
     View& getView();
     wxRegion getArea();

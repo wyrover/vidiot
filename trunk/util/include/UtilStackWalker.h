@@ -28,7 +28,7 @@ struct StackWalker
     //////////////////////////////////////////////////////////////////////////
 
     StackWalker();
-    virtual~StackWalker();
+    virtual ~StackWalker();
 
     std::string show();
 

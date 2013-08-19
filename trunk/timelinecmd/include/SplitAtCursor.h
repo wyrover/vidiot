@@ -22,7 +22,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-class SplitAtCursor 
+class SplitAtCursor
     :   public AClipEdit
 {
 public:
@@ -33,7 +33,7 @@ public:
 
     SplitAtCursor(model::SequencePtr sequence);
 
-    ~SplitAtCursor();
+    virtual ~SplitAtCursor();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE

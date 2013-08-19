@@ -38,7 +38,7 @@ struct MovingCursor
 
     MovingCursor( my_context ctx );
 
-    ~MovingCursor();
+    virtual ~MovingCursor();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,

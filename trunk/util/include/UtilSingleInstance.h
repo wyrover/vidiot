@@ -31,7 +31,7 @@ public:
         ASSERT_ZERO(sInstance);
         sInstance = this;
     }
-    ~SingleInstance()
+    virtual ~SingleInstance()
     {
         ASSERT_NONZERO(sInstance);
         sInstance = 0;

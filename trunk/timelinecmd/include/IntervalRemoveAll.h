@@ -36,7 +36,7 @@ public:
 
     IntervalRemoveAll(model::SequencePtr sequence);
 
-    ~IntervalRemoveAll();
+    virtual ~IntervalRemoveAll();
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE

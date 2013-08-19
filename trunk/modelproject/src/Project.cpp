@@ -33,7 +33,7 @@ IMPLEMENT_DYNAMIC_CLASS(Project, wxDocument)
 
 Project::Project()
 :   wxDocument()
-// Do no initialize members with actual data here.
+// Do not initialize members with actual data here.
 // For loading that is done via serialize - Initializing here for loading is useless (overwritten by serialize) and causes crashes (mProperties instantiated twice)
 // For new documents initializing is done via OnNewDocument
 ,   mRoot(boost::make_shared<Folder>("Root")) // Exception: Initialized here since it is used on OnChangeFilename which is called before any other method when creating a new project.
@@ -188,7 +188,12 @@ bool Project::DoOpenDocument(const wxString& file)
         LoadObject(store);
         if ( !store )
         {
-            gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file));
+            // The bug is in 'mProperties' having a use count of '2' at this point:
+            // Memory leak of Properties. Causes crash when opening a new project.
+            // ASSERT(mProperties.unique());
+            LOG_ERROR;
+            gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file + ". \nVidiot must be restarted ((known bug that opening a project after this will fail)"));
+            gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
         }
         else
         {
@@ -196,9 +201,6 @@ bool Project::DoOpenDocument(const wxString& file)
         }
     }
 
-    // Reset these two, to avoid 'leftovers' from the failed load
-    mRoot = boost::make_shared<Folder>("Root");
-    mProperties.reset();
     return false;
 }
 
@@ -221,11 +223,6 @@ FolderPtr Project::getRoot() const
     return mRoot;
 }
 
-PropertiesPtr Project::getProperties() const
-{
-    return mProperties;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -233,10 +230,17 @@ PropertiesPtr Project::getProperties() const
 template<class Archive>
 void Project::serialize(Archive & ar, const unsigned int version)
 {
-    // Since the properties can be used by other objects, they must be read first.
-    // An example is the framerate, which is used by 'Convert' which, in turn, is used in openFile() to determine the length of a stream in the file.
-    ar & mProperties;
-    ar & mRoot;
+    try
+    {
+        // Since the properties can be used by other objects, they must be read first.
+        // An example is the framerate, which is used by 'Convert' which, in turn, is used in openFile() to determine the length of a stream in the file.
+        ar & mProperties;
+        ar & mRoot;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void Project::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Project::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

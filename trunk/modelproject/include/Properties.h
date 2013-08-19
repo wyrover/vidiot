@@ -38,7 +38,7 @@ public:
     /// This constructor allows specifying the values used.
     Properties(FrameRate fr);
 
-    ~Properties();
+    virtual ~Properties();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

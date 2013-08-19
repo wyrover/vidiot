@@ -717,20 +717,27 @@ std::ostream& operator<<( std::ostream& os, const File& obj )
 template<class Archive>
 void File::serialize(Archive & ar, const unsigned int version)
 {
-    boost::serialization::void_cast_register<File, IFile>(
-        static_cast<File*>(0),
-        static_cast<IFile*>(0)
-        );
-    ar & boost::serialization::base_object<Node>(*this);
-    ar & mPath;
-    ar & mLastModified;
-    ar & mMaxBufferSize;
-    if (Archive::is_loading::value)
+    try
     {
-        // PERF: Cache each file once
-        openFile();
-        closeFile();
+        boost::serialization::void_cast_register<File, IFile>(
+            static_cast<File*>(0),
+            static_cast<IFile*>(0)
+            );
+        ar & boost::serialization::base_object<Node>(*this);
+        ar & mPath;
+        ar & mLastModified;
+        ar & mMaxBufferSize;
+        if (Archive::is_loading::value)
+        {
+            // PERF: Cache each file once
+            openFile();
+            closeFile();
+        }
     }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
 template void File::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

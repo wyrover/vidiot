@@ -45,7 +45,7 @@ public:
     /// \name name of new sequence
     ProjectViewCreateSequence(model::FolderPtr folder, wxString name);
 
-    ~ProjectViewCreateSequence();
+    virtual ~ProjectViewCreateSequence();
 
     //////////////////////////////////////////////////////////////////////////
     // WXCOMMAND

@@ -31,7 +31,7 @@ public:
 
     explicit TrackCreator(model::NodePtrs assets);
 
-    ~TrackCreator();
+    virtual ~TrackCreator();
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

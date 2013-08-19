@@ -734,20 +734,23 @@ void DetailsClip::updateLengthButtons()
         return;
     }
 
-    pts minimumClipLength = std::min(mMinimumLengthWhenBeginTrimming, mMinimumLengthWhenEndTrimming);
-    pts maximumClipLength = std::max(mMaximumLengthWhenBeginTrimming, mMaximumLengthWhenEndTrimming);
-    ASSERT_MORE_THAN_EQUALS(mClip->getLength(), minimumClipLength);
-    ASSERT_LESS_THAN_EQUALS(mClip->getLength(), maximumClipLength);
-
-    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+    if (!mClip->isA<model::EmptyClip>())
     {
-        pts length = model::Convert::timeToPts(button->GetId());
-        button->SetValue(mClip && mClip->getLength() == length);
-        button->Disable();
+        pts minimumClipLength = std::min(mMinimumLengthWhenBeginTrimming, mMinimumLengthWhenEndTrimming);
+        pts maximumClipLength = std::max(mMaximumLengthWhenBeginTrimming, mMaximumLengthWhenEndTrimming);
+        ASSERT_MORE_THAN_EQUALS(mClip->getLength(), minimumClipLength);
+        ASSERT_LESS_THAN_EQUALS(mClip->getLength(), maximumClipLength);
 
-        if (length >= minimumClipLength && length <= maximumClipLength)
+        BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
         {
-            button->Enable();
+            pts length = model::Convert::timeToPts(button->GetId());
+            button->SetValue(mClip && mClip->getLength() == length);
+            button->Disable();
+
+            if (length >= minimumClipLength && length <= maximumClipLength)
+            {
+                button->Enable();
+            }
         }
     }
 }

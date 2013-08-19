@@ -389,9 +389,16 @@ std::ostream& operator<<( std::ostream& os, const Track& obj )
 template<class Archive>
 void Track::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mIndex;
-    ar & mClips;
-    ar & mHeight;
+    try
+    {
+        ar & mIndex;
+        ar & mClips;
+        ar & mHeight;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void Track::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Track::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

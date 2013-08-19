@@ -52,7 +52,7 @@ public:
     /// \note The position may be changed between differnet updates. Not required for 'normal' (mouse operated) trimming operations, but required for changing a clip's length from the 'clip details' view.
     void update(pts diff, bool shift);
 
-    ~TrimClip();
+    virtual ~TrimClip();
 
     //////////////////////////////////////////////////////////////////////////
     // ACLIPEDIT INTERFACE

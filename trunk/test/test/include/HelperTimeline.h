@@ -193,7 +193,7 @@ void Click(wxPoint position);                                           ///< Mov
 struct Zoom
 {
     explicit Zoom(int level);
-    ~Zoom();
+    virtual ~Zoom();
 private:
     int mLevel;
 };

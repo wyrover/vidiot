@@ -88,19 +88,19 @@ private:
 struct MakeInOutTransitionAfterClip : public MakeTransitionAfterClip
 {
     MakeInOutTransitionAfterClip(int afterclip, bool audio = false);
-    ~MakeInOutTransitionAfterClip();
+    virtual ~MakeInOutTransitionAfterClip();
 };
 
 struct MakeInTransitionAfterClip : public MakeTransitionAfterClip // tod rename to make in before clip...
 {
     MakeInTransitionAfterClip(int afterclip, bool audio = false);
-    ~MakeInTransitionAfterClip();
+    virtual ~MakeInTransitionAfterClip();
 };
 
 struct MakeOutTransitionAfterClip : public MakeTransitionAfterClip
 {
     MakeOutTransitionAfterClip(int afterclip, bool audio = false);
-    ~MakeOutTransitionAfterClip();
+    virtual ~MakeOutTransitionAfterClip();
 };
 
 } // namespace

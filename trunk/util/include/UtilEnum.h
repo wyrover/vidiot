@@ -60,7 +60,7 @@ public: \
         ++c; \
         } \
     }; \
-    ~ENUMNAME ## Converter() {}; \
+    virtual ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
     typedef boost::bimap<ENUMNAME,wxString> ENUMNAME ## Map; \
     static ENUMNAME ## Map mapToHumanReadibleString; \
@@ -91,9 +91,9 @@ public: \
     { \
     std::string names = #VALUE1 "," #OTHERVALUES ; \
     ENUMNAME values[] = { VALUE1, OTHERVALUES, ENUMNAME ## _MAX }; \
-	    boost::char_separator<char> sep(","); \
+        boost::char_separator<char> sep(","); \
         boost::tokenizer<boost::char_separator<char> > tokens(names, sep); \
-	    boost::tokenizer<boost::char_separator<char> >::iterator it = tokens.begin(); \
+        boost::tokenizer<boost::char_separator<char> >::iterator it = tokens.begin(); \
         int c = 0; \
         while (it != tokens.end()) \
         { \
@@ -104,7 +104,7 @@ public: \
             ++c; \
         } \
     }; \
-    ~ENUMNAME ## Converter() {}; \
+    virtual ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
     std::string toString( ENUMNAME value ) const { return mMap.left.find(value)->second; }; \
     ENUMNAME fromString( std::string value ) const { return mMap.right.find(value)->second; }; \

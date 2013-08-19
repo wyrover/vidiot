@@ -506,17 +506,24 @@ std::ostream& operator<<( std::ostream& os, const Sequence& obj )
 template<class Archive>
 void Sequence::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<IAudio>(*this);
-    ar & boost::serialization::base_object<Node>(*this);
-    ar & mName;
-    ar & mDividerPosition;
-    ar & mVideoTracks;
-    ar & mAudioTracks;
-    if (Archive::is_loading::value)
+    try
     {
-        updateTracks();
+        ar & boost::serialization::base_object<IAudio>(*this);
+        ar & boost::serialization::base_object<Node>(*this);
+        ar & mName;
+        ar & mDividerPosition;
+        ar & mVideoTracks;
+        ar & mAudioTracks;
+        if (Archive::is_loading::value)
+        {
+            updateTracks();
+        }
+        ar & mRender;
     }
-    ar & mRender;
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void Sequence::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Sequence::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
