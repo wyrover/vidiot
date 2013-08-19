@@ -27,11 +27,11 @@ class ProjectViewAddAsset : public ProjectViewCommand
 {
 public:
     /**
-    * Add an existing asset which was removed/copied 
+    * Add an existing asset which was removed/copied
     */
     ProjectViewAddAsset(model::NodePtr parent, model::NodePtrs nodes);
 
-    ~ProjectViewAddAsset();
+    virtual ~ProjectViewAddAsset();
     bool Do() override;
     bool Undo() override;
 private:

@@ -28,7 +28,7 @@ class ProjectViewCommand
 public:
 
     ProjectViewCommand();
-    ~ProjectViewCommand();
+    virtual ~ProjectViewCommand();
 
 protected:
 

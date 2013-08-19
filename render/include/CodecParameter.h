@@ -194,17 +194,24 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
-        boost::serialization::void_cast_register<MOSTDERIVED, ICodecParameter>(
-            static_cast<MOSTDERIVED *>(0),
-            static_cast<ICodecParameter *>(0)
-            );
+        try
+        {
+            boost::serialization::void_cast_register<MOSTDERIVED, ICodecParameter>(
+                static_cast<MOSTDERIVED *>(0),
+                static_cast<ICodecParameter *>(0)
+                );
 
-        ar & mId;
-        ar & mEnabled;
-        ar & mDefault;
-        ar & mMinimum;
-        ar & mMaximum;
-        ar & mValue;
+            ar & mId;
+            ar & mEnabled;
+            ar & mDefault;
+            ar & mMinimum;
+            ar & mMaximum;
+            ar & mValue;
+        }
+        catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+        catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+        catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+        catch (...)                                  { LOG_ERROR;                                   throw; }
     }
 
 };

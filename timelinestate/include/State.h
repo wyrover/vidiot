@@ -46,7 +46,7 @@ public:
         ,   Part()
     {
     };
-    ~TimeLineState()
+    virtual ~TimeLineState()
     {
     };
 protected:
@@ -68,7 +68,7 @@ class Machine
 {
 public:
     Machine(Timeline& tl);
-    ~Machine();
+    virtual ~Machine();
 
     void unconsumed_event( const boost::statechart::event_base & evt );
     void  process_event(const boost::statechart::event_base & evt );

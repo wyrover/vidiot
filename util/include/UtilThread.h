@@ -55,7 +55,7 @@ public:
         }
     }
 
-    ~RunInMainThreadWithResult()
+    virtual ~RunInMainThreadWithResult()
     {
         if (mDone)
         {

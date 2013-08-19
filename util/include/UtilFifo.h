@@ -32,7 +32,7 @@ public:
     {
     }
 
-    ~Fifo()
+    virtual ~Fifo()
     {
     }
 

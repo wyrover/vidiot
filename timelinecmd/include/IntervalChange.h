@@ -37,7 +37,7 @@ public:
     /// \param add true if interval must be added, false if interval must be removed
     IntervalChange(model::SequencePtr sequence, PtsInterval interval, bool add);
 
-    ~IntervalChange();
+    virtual ~IntervalChange();
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE

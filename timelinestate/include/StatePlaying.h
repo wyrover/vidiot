@@ -37,7 +37,7 @@ struct Playing
 
     Playing( my_context ctx );
 
-    ~Playing();
+    virtual ~Playing();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,

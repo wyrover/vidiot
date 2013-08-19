@@ -51,7 +51,7 @@ struct ClipTypeAsserter
     {
     }
 
-    ~ClipTypeAsserter();
+    virtual ~ClipTypeAsserter();
 
     template<class type>
     ClipTypeAsserter& AssertClipType()

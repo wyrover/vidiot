@@ -270,14 +270,21 @@ std::ostream& operator<<( std::ostream& os, const Clip& obj )
 template<class Archive>
 void Clip::serialize(Archive & ar, const unsigned int version)
 {
-    boost::serialization::void_cast_register<Clip, IClip>(static_cast<Clip *>(0), static_cast<IClip *>(0));
-    ar & mLink;
-    ar & mTrack;
-    ar & mNext;
-    ar & mPrev;
-    ar & mLeftPtsInTrack;
-    ar & mIndex;
-    // NOT: mSelected. After loading, nothing is selected.
+    try
+    {
+        boost::serialization::void_cast_register<Clip, IClip>(static_cast<Clip *>(0), static_cast<IClip *>(0));
+        ar & mLink;
+        ar & mTrack;
+        ar & mNext;
+        ar & mPrev;
+        ar & mLeftPtsInTrack;
+        ar & mIndex;
+        // NOT: mSelected. After loading, nothing is selected.
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Clip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

@@ -28,63 +28,84 @@ namespace boost { namespace serialization {
 template<class Archive>
 void serialize(Archive& ar, boost::rational<int>& r, const unsigned int version)
 {
-    int n = 0;
-    int d = 0;
-
-    if (Archive::is_saving::value)
+    try
     {
-        n = r.numerator();
-        d = r.denominator();
-    }
+        int n = 0;
+        int d = 0;
 
-    ar & n & d;
+        if (Archive::is_saving::value)
+        {
+            n = r.numerator();
+            d = r.denominator();
+        }
 
-    if (Archive::is_loading::value)
-    {
-        r.assign(n,d);
+        ar & n & d;
+
+        if (Archive::is_loading::value)
+        {
+            r.assign(n,d);
+        }
     }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
 template<class Archive, class TYPE>
 void serialize(Archive &ar, boost::weak_ptr<TYPE>& p, const unsigned int version)
 {
-    if (Archive::is_loading::value)
+    try
     {
-        boost::shared_ptr<TYPE> shared;
-        ar & shared;
-        p = shared;
+        if (Archive::is_loading::value)
+        {
+            boost::shared_ptr<TYPE> shared;
+            ar & shared;
+            p = shared;
+        }
+        else
+        {
+            ar & p.lock();
+        }
     }
-    else
-    {
-        ar & p.lock();
-    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
 template<class Archive, class TYPE>
 void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned int version)
 {
-    typedef std::pair<TYPE,TYPE> Pair;
-    typedef boost::icl::discrete_interval<TYPE> AnInterval;
-    if (Archive::is_loading::value)
+    try
     {
-        std::list< Pair > list;
-        ar & list;
-        while (!list.empty())
+        typedef std::pair<TYPE,TYPE> Pair;
+        typedef boost::icl::discrete_interval<TYPE> AnInterval;
+        if (Archive::is_loading::value)
         {
-            Pair a = list.front();
-            list.pop_front();
-            set += AnInterval(a.first,a.second);
+            std::list< Pair > list;
+            ar & list;
+            while (!list.empty())
+            {
+                Pair a = list.front();
+                list.pop_front();
+                set += AnInterval(a.first,a.second);
+            }
+        }
+        else
+        {
+            std::list< Pair > list;
+            BOOST_FOREACH( AnInterval interval, set )
+            {
+                list.push_back(std::pair<TYPE,TYPE>(interval.lower(),interval.upper()));
+            }
+            ar & list;
         }
     }
-    else
-    {
-        std::list< Pair > list;
-        BOOST_FOREACH( AnInterval interval, set )
-        {
-            list.push_back(std::pair<TYPE,TYPE>(interval.lower(),interval.upper()));
-        }
-        ar & list;
-    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
 }} // namespace

@@ -37,7 +37,7 @@ struct StateRightDown
 
     StateRightDown( my_context ctx );
 
-    ~StateRightDown();
+    virtual ~StateRightDown();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvRightDown >,

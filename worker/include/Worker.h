@@ -41,7 +41,7 @@ public:
 
     Worker();
     void abort();
-    ~Worker();
+    virtual ~Worker();
 
     //////////////////////////////////////////////////////////////////////////
     // NEW WORK

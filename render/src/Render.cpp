@@ -690,9 +690,16 @@ std::ostream& operator<<( std::ostream& os, const Render& obj )
 template<class Archive>
 void Render::serialize(Archive & ar, const unsigned int version)
 {
-    ar & mFileName;
-    ar & mOutputFormat;
-    ar & mSeparateAtCuts;
+    try
+    {
+        ar & mFileName;
+        ar & mOutputFormat;
+        ar & mSeparateAtCuts;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
 template void Render::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);

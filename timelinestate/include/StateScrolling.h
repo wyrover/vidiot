@@ -36,7 +36,7 @@ struct StateScrolling
 
     StateScrolling( my_context ctx );
 
-    ~StateScrolling();
+    virtual ~StateScrolling();
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvRightUp >,

@@ -128,7 +128,14 @@ std::ostream& operator<<( std::ostream& os, const ImageFile& obj )
 template<class Archive>
 void ImageFile::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<VideoFile>(*this);
+    try
+    {
+        ar & boost::serialization::base_object<VideoFile>(*this);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void ImageFile::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void ImageFile::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

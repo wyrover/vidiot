@@ -217,7 +217,7 @@ struct LogVar
     {
     }
 
-    ~LogVar();  ///< Upon destruction of this object, the actual logging is executed.
+    virtual ~LogVar();  ///< Upon destruction of this object, the actual logging is executed.
 
     /// Append one variable to the list of logged variables.
     template<class type>

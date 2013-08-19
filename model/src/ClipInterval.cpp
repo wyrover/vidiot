@@ -210,10 +210,17 @@ std::ostream& operator<<( std::ostream& os, const ClipInterval& obj )
 template<class Archive>
 void ClipInterval::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<Clip>(*this);
-    ar & mRender;
-    ar & mOffset;
-    ar & mLength;
+    try
+    {
+        ar & boost::serialization::base_object<Clip>(*this);
+        ar & mRender;
+        ar & mOffset;
+        ar & mLength;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void ClipInterval::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void ClipInterval::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

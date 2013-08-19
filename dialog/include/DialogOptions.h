@@ -33,7 +33,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     DialogOptions(wxWindow* parent);
-    ~DialogOptions();
+    virtual ~DialogOptions();
 
 private:
 

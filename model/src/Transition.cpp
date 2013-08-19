@@ -239,10 +239,17 @@ std::ostream& operator<<( std::ostream& os, const Transition& obj )
 template<class Archive>
 void Transition::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<Clip>(*this);
-    ar & mFramesLeft;
-    ar & mFramesRight;
-    // NOT: mSelected. After loading, nothing is selected.
+    try
+    {
+        ar & boost::serialization::base_object<Clip>(*this);
+        ar & mFramesLeft;
+        ar & mFramesRight;
+        // NOT: mSelected. After loading, nothing is selected.
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void Transition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void Transition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

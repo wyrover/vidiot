@@ -445,13 +445,20 @@ std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 template<class Archive>
 void VideoClip::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<ClipInterval>(*this);
-    ar & boost::serialization::base_object<IVideo>(*this);
-    ar & mOpacity;
-    ar & mScaling;
-    ar & mScalingFactor;
-    ar & mAlignment;
-    ar & mPosition;
+    try
+    {
+        ar & boost::serialization::base_object<ClipInterval>(*this);
+        ar & boost::serialization::base_object<IVideo>(*this);
+        ar & mOpacity;
+        ar & mScaling;
+        ar & mScalingFactor;
+        ar & mAlignment;
+        ar & mPosition;
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void VideoClip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void VideoClip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);

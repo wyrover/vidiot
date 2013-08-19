@@ -27,7 +27,7 @@ class ProjectViewRenameAsset : public ProjectViewCommand
 {
 public:
     ProjectViewRenameAsset(model::NodePtr node, wxString assetName);
-    ~ProjectViewRenameAsset();
+    virtual ~ProjectViewRenameAsset();
     bool Do() override;
     bool Undo() override;
 private:

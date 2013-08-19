@@ -74,7 +74,7 @@ public:
 
     Window();
     void init();
-    ~Window();
+    virtual ~Window();
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS

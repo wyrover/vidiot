@@ -36,7 +36,7 @@ public:
 
     DataObject();
     DataObject(model::NodePtrs assets, CallbackOnDestruction callback = 0);
-    ~DataObject();
+    virtual ~DataObject();
 
     static const wxString sFormat;
 

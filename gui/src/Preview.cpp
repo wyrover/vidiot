@@ -115,16 +115,4 @@ void Preview::hide(Player* player)
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-// SERIALIZATION
-//////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void Preview::serialize(Archive & ar, const unsigned int version)
-{
-}
-
-template void Preview::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Preview::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
-
 } // namespace

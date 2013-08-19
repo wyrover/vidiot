@@ -179,7 +179,14 @@ std::ostream& operator<<( std::ostream& os, const CrossFade& obj )
 template<class Archive>
 void CrossFade::serialize(Archive & ar, const unsigned int version)
 {
-    ar & boost::serialization::base_object<AudioTransition>(*this);
+    try
+    {
+        ar & boost::serialization::base_object<AudioTransition>(*this);
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 template void CrossFade::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
 template void CrossFade::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
