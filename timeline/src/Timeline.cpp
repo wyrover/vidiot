@@ -45,7 +45,7 @@
 #include "ViewUpdateEvent.h"
 #include "Window.h"
 #include "Zoom.h"
-// todo add test case with very long, fully zoomed in timeline, then playback, for testing performance.
+
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////

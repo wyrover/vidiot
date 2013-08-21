@@ -130,4 +130,12 @@ void TestBugs::testDraggingWithoutSelection()
     LeftUp();
 }
 
+void TestBugs::testPlaybackLongTimeline()
+{
+    StartTestSuite();
+
+     // todo implement after I found some way to easily make a very large sequence
+     // Note: one or two large still images does not work
+}
+
 } // namespace
