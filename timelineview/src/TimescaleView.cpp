@@ -63,6 +63,23 @@ wxSize TimescaleView::requiredSize() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+struct TicksAndNumbers
+{
+    TicksAndNumbers(int tickStep, int numberStep)
+        : TickStep(tickStep)
+        , NumberStep(numberStep)
+    {
+    }
+    int TickStep;
+    int NumberStep;
+
+    friend std::ostream& operator<<( std::ostream& os, const TicksAndNumbers& obj )
+    {
+        os << obj.TickStep << '|' << obj.NumberStep;
+        return os;
+    }
+};
+
 void TimescaleView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
@@ -73,43 +90,30 @@ void TimescaleView::draw(wxBitmap& bitmap) const
 
     // Determine what to show
     rational zoom = getZoom().getCurrent();
-    bool showHours = getZoom().pixelsToTime(w) >= model::Constants::sHour;
-    wxString sHours = showHours ? "%H:" : "";
-    wxString sMilliseconds = (zoom > rational(1,30)) ? ".%l" : "";
-    wxString minutesFormat = sHours + "%M:%S" + sMilliseconds;
+    wxString minutesFormat = "%M:%S";
+    wxString hoursFormat = "%H:%M:%S";
 
-    int tickStep = 60 * model::Constants::sSecond; // One tick per minute
-    int numberStep = model::Constants::sMinute; // Show a number for each minute
-    if (zoom <= rational(1,120))
-    {
-        tickStep = model::Constants::sMinute;       // One tick per 1 minute
-        numberStep = 5 * model::Constants::sMinute; // Show a number for each 5th minute
-    }
-    else if (zoom <= rational(1,60))
-    {
-        tickStep = model::Constants::sMinute;       // One tick per 1 minute
-        numberStep = 2 * model::Constants::sMinute; // Show a number for each 2nd minute
-    }
-    else if (zoom <= rational(1,30))
-    {
-        tickStep = 10 * model::Constants::sSecond; // One tick per 20 seconds
-    }
-    else if (zoom <= rational(1,20))
-    {
-        tickStep = 5 * model::Constants::sSecond; // One tick per 10 seconds
-    }
-    else if (zoom <= rational(1,15))
-    {
-        tickStep = 5 * model::Constants::sSecond; // One tick per 5 seconds
-    }
-    else if (zoom <= rational(1,8))
-    {
-        tickStep = 2 * model::Constants::sSecond; // One tick per 2 seconds
-    }
-    else
-    {
-        tickStep = model::Constants::sSecond; // One tick per second
-    }
+    static std::map< rational, TicksAndNumbers> zoomToSteps =  // NOTE: Match with map used in Zoom!!!
+        boost::assign::map_list_of      // Time between ticks          Time between shown times
+        (rational(1,120), TicksAndNumbers( 60 * model::Constants::sSecond,  5 * model::Constants::sMinute ))
+        (rational(1,60),  TicksAndNumbers( 20 * model::Constants::sSecond,  2 * model::Constants::sMinute ))
+        (rational(1,45),  TicksAndNumbers( 10 * model::Constants::sSecond,  2 * model::Constants::sMinute ))
+        (rational(1,30),  TicksAndNumbers( 10 * model::Constants::sSecond,  1 * model::Constants::sMinute ))
+        (rational(1,20),  TicksAndNumbers(  5 * model::Constants::sSecond, 30 * model::Constants::sSecond ))
+        (rational(1,15),  TicksAndNumbers(  5 * model::Constants::sSecond, 30 * model::Constants::sSecond ))
+        (rational(1,10),  TicksAndNumbers(  2 * model::Constants::sSecond, 20 * model::Constants::sSecond ))
+        (rational(1,9),   TicksAndNumbers(  2 * model::Constants::sSecond, 20 * model::Constants::sSecond ))
+        (rational(1,8),   TicksAndNumbers(  2 * model::Constants::sSecond, 20 * model::Constants::sSecond ))
+        (rational(1,7),   TicksAndNumbers(  2 * model::Constants::sSecond, 20 * model::Constants::sSecond ))
+        (rational(1,6),   TicksAndNumbers(  2 * model::Constants::sSecond, 20 * model::Constants::sSecond ))
+        (rational(1,5),   TicksAndNumbers(  2 * model::Constants::sSecond, 10 * model::Constants::sSecond ))
+        (rational(1,4),   TicksAndNumbers(      model::Constants::sSecond, 10 * model::Constants::sSecond ))
+        (rational(1,3),   TicksAndNumbers(      model::Constants::sSecond, 10  * model::Constants::sSecond ))
+        (rational(1,2),   TicksAndNumbers(      model::Constants::sSecond,  5 * model::Constants::sSecond ))
+        (rational(1,1),   TicksAndNumbers(      model::Constants::sSecond,  5 * model::Constants::sSecond ));
+
+    ASSERT(zoomToSteps.find(zoom) != zoomToSteps.end())(zoom)(zoomToSteps);
+    TicksAndNumbers steps = zoomToSteps.find(zoom)->second;
 
     // Draw timescale
     dc.SetBrush(wxNullBrush);
@@ -119,10 +123,10 @@ void TimescaleView::draw(wxBitmap& bitmap) const
     // Draw seconds and minutes lines
     dc.SetFont(Layout::get().TimeScaleFont);
     dc.SetTextForeground(Layout::get().TimeScaleFontColour);
-    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += tickStep)
+    for (int ms = 0; getZoom().timeToPixels(ms) <= w; ms += steps.TickStep)
     {
         int position = getZoom().timeToPixels(ms);
-        bool showTime = (ms % numberStep == 0);
+        bool showTime = (ms % steps.NumberStep == 0);
 
         dc.DrawLine(position,0,position, showTime ? Layout::TimeScaleMinutesHeight : Layout::TimeScaleSecondHeight);
 
@@ -134,8 +138,15 @@ void TimescaleView::draw(wxBitmap& bitmap) const
         {
             if (showTime)
             {
-                wxDateTime t(ms / model::Constants::sHour, (ms % model::Constants::sHour) / model::Constants::sMinute, (ms % model::Constants::sMinute) / model::Constants::sSecond, ms % model::Constants::sSecond);
-                wxString s = t.Format(minutesFormat);
+                unsigned short hours = ms / model::Constants::sHour ;
+                wxDateTime t(hours, (ms % model::Constants::sHour) / model::Constants::sMinute, (ms % model::Constants::sMinute) / model::Constants::sSecond, ms % model::Constants::sSecond);
+                wxString format = hoursFormat;
+                if (hours == 0)
+                {
+                    // Don't show hours for the first hours
+                    format = minutesFormat;
+                }
+                wxString s = t.Format(ms / model::Constants::sHour == 0 ? minutesFormat : hoursFormat);
                 wxSize ts = dc.GetTextExtent(s);
                 dc.DrawText( s, position - ts.GetX() / 2, Layout::TimeScaleMinutesHeight );
             }

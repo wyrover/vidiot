@@ -31,7 +31,7 @@ DEFINE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
 
 static rational sDefaultZoom(1,5);
 typedef std::list<rational> zoomlist;
-static zoomlist sZooms = boost::assign::list_of
+static zoomlist sZooms = boost::assign::list_of // NOTE: Match with map used in TimescaleView!!!
 (rational(1,120))
 (rational(1,60))
 (rational(1,45))
