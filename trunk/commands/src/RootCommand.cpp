@@ -17,7 +17,7 @@
 
 #include "RootCommand.h"
 
-#include "Project.h"
+#include "ProjectModification.h"
 
 namespace command {
 
@@ -41,7 +41,7 @@ RootCommand::~RootCommand()
 
 void RootCommand::submit()
 {
-    model::Project::get().Submit(this);
+    model::ProjectModification::submit(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

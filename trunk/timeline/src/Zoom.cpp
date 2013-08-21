@@ -17,11 +17,12 @@
 
 #include "Zoom.h"
 
+#include "Convert.h"
 #include "Cursor.h"
+#include "Layout.h"
+#include "ProjectModification.h"
 #include "UtilInt.h"
 #include "UtilLog.h"
-#include "Convert.h"
-#include "Layout.h"
 #include "UtilSerializeBoost.h"
 
 namespace gui { namespace timeline {
@@ -97,6 +98,7 @@ void Zoom::change(int steps)
     {
         VAR_INFO(mZoom);
         QueueEvent(new ZoomChangeEvent(mZoom));
+        model::ProjectModification::trigger();
         getCursor().setLogicalPosition(cursorPosition);
     }
 }

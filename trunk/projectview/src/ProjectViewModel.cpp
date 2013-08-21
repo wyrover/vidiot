@@ -29,6 +29,7 @@
 #include "NodeEvent.h"
 #include "Project.h"
 #include "ProjectEvent.h"
+#include "ProjectModification.h"
 #include "ProjectViewAddAsset.h"
 #include "ProjectViewDeleteAsset.h"
 #include "ProjectViewMoveAsset.h"
@@ -195,7 +196,7 @@ bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem 
     {
         wxDataViewIconText icontext;
         icontext << variant;
-        mProject->Submit(new command::ProjectViewRenameAsset(node, icontext.GetText()));
+        model::ProjectModification::submit(new command::ProjectViewRenameAsset(node, icontext.GetText()));
         return true;
     }
     return false;
