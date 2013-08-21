@@ -397,7 +397,7 @@ void ClipView::onClipSelected( model::EventSelectClip& event )
 
 void ClipView::onGenerationProgress( model::DebugEventRenderProgress& event )
 {
-    if (Config::getShowDebugInfo())
+//    if (Config::getShowDebugInfo())
     {
         // Without the surrounding 'if', every cursor action in the Timeline causes an update of the entire view!
         // That's every cursor move, but also every change in frame playback!

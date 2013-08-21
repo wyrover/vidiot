@@ -72,6 +72,13 @@ public:
     /// immediately start dragging.
     void testDraggingWithoutSelection();
 
+    /// Due to excessive repainting the timeline playback caused a 'sorta' hangup: playback continued
+    /// (audio kept on playing) but the GUI remained locked.
+    /// Caused by ClipView constantly triggering a 'invalidateBitmap' because of debug information
+    /// being updated (particularly, the rendering progress feedback was updated continuously).
+    /// This happened particularly with a long timeline, fully zoomed in.
+    void testPlaybackLongTimeline();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
