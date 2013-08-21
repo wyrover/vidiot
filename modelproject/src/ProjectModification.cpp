@@ -15,42 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "RootCommand.h"
-
 #include "ProjectModification.h"
 
-namespace command {
+#include "Project.h"
 
-//////////////////////////////////////////////////////////////////////////
-// INITIALIZATION
-//////////////////////////////////////////////////////////////////////////
+namespace model {
 
-RootCommand::RootCommand()
-    :   wxCommand(true)
-    ,   mCommandName(_("Unnamed command"))
+// static
+void ProjectModification::trigger()
 {
-}
-
-RootCommand::~RootCommand()
-{
+    Project::get().Modify(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
-// SUBMIT
+// CHANGE COMMANDS
 //////////////////////////////////////////////////////////////////////////
 
-void RootCommand::submit()
+// static
+void ProjectModification::submit(wxCommand* c)
 {
-    model::ProjectModification::submit(this);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GET/SET
-//////////////////////////////////////////////////////////////////////////
-
-wxString RootCommand::GetName() const
-{
-    return mCommandName;
+    trigger();
+    Project::get().GetCommandProcessor()->Submit(c);
 }
 
 } // namespace

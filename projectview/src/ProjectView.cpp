@@ -25,8 +25,8 @@
 #include "ids.h"
 #include "Layout.h"
 #include "Node.h"
-#include "Project.h"
 #include "ProjectEvent.h"
+#include "ProjectModification.h"
 #include "ProjectViewAddAsset.h"
 #include "ProjectViewCreateAutoFolder.h"
 #include "ProjectViewCreateFile.h"
@@ -381,7 +381,7 @@ void ProjectView::onCut(wxCommandEvent& event)
     {
         wxTheClipboard->SetData(new DataObject(getSelection()));
         wxTheClipboard->Close();
-        mProject->Submit(new command::ProjectViewDeleteAsset(getSelection()));
+        model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
     }
 }
 
@@ -412,7 +412,7 @@ void ProjectView::onPaste(wxCommandEvent& event)
                         return;
                     }
                 }
-                mProject->Submit(new command::ProjectViewAddAsset(getSelectedContainer(),data.getAssets()));
+                model::ProjectModification::submit(new command::ProjectViewAddAsset(getSelectedContainer(),data.getAssets()));
             }
         }
         wxTheClipboard->Close();
@@ -421,7 +421,8 @@ void ProjectView::onPaste(wxCommandEvent& event)
 
 void ProjectView::onDelete(wxCommandEvent& event)
 {
-    mProject->Submit(new command::ProjectViewDeleteAsset(getSelection()));
+
+    model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
 }
 
 void ProjectView::onNewFolder(wxCommandEvent& event)
@@ -430,7 +431,7 @@ void ProjectView::onNewFolder(wxCommandEvent& event)
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
+        model::ProjectModification::submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
     }
 }
 
@@ -442,7 +443,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& event)
     {
         wxFileName path(s,"");
         path.Normalize();
-        mProject->Submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), path));
+        model::ProjectModification::submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), path));
     }
 }
 
@@ -452,7 +453,7 @@ void ProjectView::onNewSequence(wxCommandEvent& event)
     if ((s.CompareTo(_T("")) != 0) &&
         (!FindConflictingName(getSelectedContainer(), s)))
     {
-        mProject->Submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
+        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
     }
 }
 
@@ -477,14 +478,13 @@ void ProjectView::onNewFile(wxCommandEvent& event)
     }
     if (list.size() > 0 )
     {
-        mProject->Submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
+        model::ProjectModification::submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
     }
 }
 
 void ProjectView::onCreateSequence(wxCommandEvent& event)
 {
-    command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
-    mProject->Submit(cmd);
+    model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer()));
 }
 
 void ProjectView::onOpen(wxCommandEvent& event)
@@ -599,7 +599,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
     }
     if (o.getAssets().size() > 0)
     {
-        mProject->Submit(new command::ProjectViewMoveAsset(o.getAssets(),p));
+        model::ProjectModification::submit(new command::ProjectViewMoveAsset(o.getAssets(),p));
     }
 }
 

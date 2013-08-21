@@ -23,7 +23,7 @@
 #include "EmptyClip.h"
 #include "ModelEvent.h"
 #include "Node.h"
-#include "Project.h"
+#include "ProjectModification.h"
 #include "TrackEvent.h"
 #include "UtilList.h"
 #include "UtilLog.h"
@@ -273,7 +273,7 @@ void Track::setHeight(int height)
     if (mHeight != height)
     {
         mHeight = height;
-        model::Project::get().Modify(true);
+        model::ProjectModification::trigger();
         ProcessEvent(model::EventHeightChanged(height));
     }
 }

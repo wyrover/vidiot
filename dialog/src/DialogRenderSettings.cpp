@@ -24,12 +24,11 @@
 #include "Dialog.h"
 #include "OutputFormat.h"
 #include "OutputFormats.h"
-#include "Project.h"
+#include "ProjectModification.h"
 #include "Properties.h"
 #include "Render.h"
 #include "Sequence.h"
 #include "UtilFifo.h"
-
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoCodec.h"
@@ -181,7 +180,7 @@ DialogRenderSettings::~DialogRenderSettings()
     {
         // This causes a 'save' dialog when closing.
         // KP: Change render options, then undo until all items removed. Then close. Save as dialog will not be shown.
-        model::Project::get().Modify(true);
+        model::ProjectModification::trigger();
     }
     mRenderSeparation->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &DialogRenderSettings::onRenderSeparationChanged, this);
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onFileButtonPressed, this);

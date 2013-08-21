@@ -45,7 +45,7 @@
 #include "ViewUpdateEvent.h"
 #include "Window.h"
 #include "Zoom.h"
-
+// todo add test case with very long, fully zoomed in timeline, then playback, for testing performance.
 namespace gui { namespace timeline {
 
 //////////////////////////////////////////////////////////////////////////
@@ -333,14 +333,9 @@ void Timeline::onPaint( wxPaintEvent &event )
 
     wxPoint scroll = getScrolling().getOffset();
 
-    wxBitmap bitmap = getSequenceView().getBitmap();
-    //if (getSequence()->isFrozen())
-    //{
-    //    bitmap = bitmap.ConvertToDisabled(64);
-    //}
-
-    wxMemoryDC dcBmp(bitmap);
-    dc.SetLogicalOrigin(-mShift,0);
+    wxMemoryDC dcBmp;
+    dcBmp.SelectObjectAsSource(getSequenceView().getBitmap());
+    dcBmp.SetLogicalOrigin(-mShift,0);
 
     if (mShift > 0)
     {
@@ -360,15 +355,6 @@ void Timeline::onPaint( wxPaintEvent &event )
         upd++;
     }
 
-    //if (getSequence()->isFrozen())
-    //{
-    //    wxString progressText(_("Render in progress"));
-    //    dc.SetTextForeground(Layout::get().TimelineRenderInProgressColour);
-    //    dc.SetFont(Layout::get().RenderInProgressFont);
-    //    wxSize textSize = dc.GetTextExtent(progressText);
-    //    dc.DrawText(progressText, (GetSize().GetWidth() - textSize.GetWidth()) / 2, (bitmap.GetHeight() - textSize.GetHeight()) / 2);
-    //}
-
     getDrag().draw(dc);
     getTrim().draw(dc);
     getCursor().draw(dc);
@@ -381,6 +367,7 @@ void Timeline::onPaint( wxPaintEvent &event )
 void Timeline::onViewUpdated( ViewUpdateEvent& event )
 {
     // NOT: resize(); // Adding this will cause lots of unneeded 'getSize()' calls
+
     Refresh(false);
     event.Skip();
 }

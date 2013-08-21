@@ -57,7 +57,6 @@ public:
     bool OnCreate(const wxString& path, long flags) override;
     wxCommandProcessor* OnCreateCommandProcessor() override;
     void OnChangeFilename(bool notifyViews) override;
-    virtual void Modify(bool modify) override;
 
     //////////////////////////////////////////////////////////////////////////
     // LOAD/SAVE - wxDocument
@@ -68,12 +67,6 @@ public:
 
     /// Overridden to change the error dialogs.
     bool DoOpenDocument(const wxString& file) override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // CHANGE COMMANDS
-    //////////////////////////////////////////////////////////////////////////
-
-    void Submit(wxCommand* c);
 
     //////////////////////////////////////////////////////////////////////////
     // ACCESSORS
