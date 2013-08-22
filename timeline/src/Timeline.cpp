@@ -85,6 +85,8 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
 
     init();
 
+    getZoom().Bind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, this);
+
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
@@ -101,6 +103,8 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
 Timeline::~Timeline()
 {
     VAR_DEBUG(this);
+
+    getZoom().Unbind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, this);
 
     deinit();
 

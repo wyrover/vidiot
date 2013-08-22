@@ -28,6 +28,7 @@ class DebugEventRenderProgress;
 
 namespace gui { namespace timeline {
     struct PointerPositionInfo;
+    class ZoomChangeEvent;
 
 class ClipView
     :   public View
@@ -58,6 +59,12 @@ public:
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
     void show(wxRect rect); ///< tmp for showing intersect with selected regions
+
+    //////////////////////////////////////////////////////////////////////////
+    // EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onZoomChanged( ZoomChangeEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW

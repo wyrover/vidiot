@@ -24,11 +24,9 @@ namespace command {
     class RootCommand;
 }
 
-namespace model {
-    class EventSequenceFrozen;
-}
-
 namespace gui { namespace timeline {
+
+    class ZoomChangeEvent;
 
 class Timeline
 :   public wxScrolledWindow
@@ -85,12 +83,6 @@ public:
     const model::SequencePtr getSequence() const;
     Details& getDetails();
     const Details& getDetails() const;
-
-    //////////////////////////////////////////////////////////////////////////
-    // MODEL EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onSequenceFrozen( model::EventSequenceFrozen& event );
 
     //////////////////////////////////////////////////////////////////////////
     // WX EVENTS
