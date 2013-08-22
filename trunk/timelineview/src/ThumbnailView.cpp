@@ -113,7 +113,7 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     if (clone->getLength() > 0)
     {
         // The if is required to avoid errors during editing operations.
-        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(requiredSize()));
+        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(requiredSize())); // todo this probably always gets the first frame from the file, not of the clip!
         wxBitmapPtr thumbnail = videoFrame->getBitmap();
         if (thumbnail)
         {

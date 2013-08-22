@@ -38,11 +38,14 @@ TimescaleView::TimescaleView(View* parent)
 :   View(parent)
 {
     VAR_DEBUG(this);
+    getZoom().Bind(ZOOM_CHANGE_EVENT, &TimescaleView::onZoomChanged, this);
+
 }
 
 TimescaleView::~TimescaleView()
 {
     VAR_DEBUG(this);
+    getZoom().Unbind(ZOOM_CHANGE_EVENT, &TimescaleView::onZoomChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,6 +60,16 @@ void TimescaleView::canvasResized()
 wxSize TimescaleView::requiredSize() const
 {
     return wxSize(getParent().getSize().GetWidth(), Layout::TimeScaleHeight);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void TimescaleView::onZoomChanged( ZoomChangeEvent& event )
+{
+    invalidateBitmap();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

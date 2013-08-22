@@ -22,6 +22,8 @@
 
 namespace gui { namespace timeline {
 
+class ZoomChangeEvent;
+
 class TimescaleView
     :   public View
 {
@@ -41,6 +43,12 @@ public:
     void canvasResized(); ///< Must be called when the widget is resized
 
     wxSize requiredSize() const override;  ///< @see View::requiredSize()
+
+    //////////////////////////////////////////////////////////////////////////
+    // EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onZoomChanged( ZoomChangeEvent& event );
 
 private:
 

@@ -59,6 +59,8 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
     mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
 
+    getZoom().Bind(ZOOM_CHANGE_EVENT, &ClipView::onZoomChanged, this);
+
     // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as
     //            part of edit operations, that will severely impact performance.
 }
@@ -66,6 +68,8 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
 ClipView::~ClipView()
 {
     VAR_DEBUG(this);
+
+    getZoom().Unbind(ZOOM_CHANGE_EVENT, &ClipView::onZoomChanged, this);
 
     mClip->Unbind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,         this);
     mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
@@ -258,6 +262,16 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
             info.logicalclipposition = ClipInterior;
         }
     }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void ClipView::onZoomChanged( ZoomChangeEvent& event )
+{
+    invalidateBitmap();
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////

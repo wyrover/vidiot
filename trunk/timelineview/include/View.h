@@ -24,7 +24,6 @@
 namespace gui { namespace timeline {
 
 class ViewUpdateEvent;
-class ZoomChangeEvent;
 
 class View
     :   public Part
@@ -72,7 +71,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void onChildViewUpdated( ViewUpdateEvent& event );
-    void onZoomChanged( ZoomChangeEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // BITMAP
