@@ -68,8 +68,6 @@ VideoView::~VideoView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-// todo progress bar when initially opening a project.
-
 void VideoView::canvasResized()
 {
     invalidateBitmap();
