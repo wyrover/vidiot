@@ -61,6 +61,9 @@ public:
     /// \return the created sequence AFTER it is created.
     model::SequencePtr getSequence() const;
 
+    wxString getName() const;
+    model::FolderPtr getParent() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

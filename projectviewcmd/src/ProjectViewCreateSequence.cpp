@@ -114,6 +114,16 @@ model::SequencePtr ProjectViewCreateSequence::getSequence() const
     return mSequence;
 }
 
+wxString ProjectViewCreateSequence::getName() const
+{
+    return mName;
+}
+
+model::FolderPtr ProjectViewCreateSequence::getParent() const
+{
+    return mParent;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
