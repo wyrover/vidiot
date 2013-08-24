@@ -44,7 +44,17 @@
 
 namespace gui {
 
-//////////////////////////////////////////////////////////////////////////
+// This method only to be used here. Enum too.
+enum NodeType
+{
+    NODETYPE_ANY,
+    NODETYPE_FILE,
+    NODETYPE_FOLDER,
+    NODETYPE_SEQUENCE
+};
+bool findConflictingName(wxWindow* window, model::FolderPtr parent, wxString name, NodeType type );
+
+    //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
@@ -407,7 +417,7 @@ void ProjectView::onPaste(wxCommandEvent& event)
             {
                 BOOST_FOREACH( model::NodePtr node, data.getAssets() )
                 {
-                    if (FindConflictingName( getSelectedContainer(), node->getName() ))
+                    if (findConflictingName( this, getSelectedContainer(), node->getName(), NODETYPE_ANY ))
                     {
                         return;
                     }
@@ -429,7 +439,7 @@ void ProjectView::onNewFolder(wxCommandEvent& event)
 {
     wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!FindConflictingName(getSelectedContainer(), s)))
+        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
     {
         model::ProjectModification::submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
     }
@@ -439,7 +449,7 @@ void ProjectView::onNewAutoFolder(wxCommandEvent& event)
 {
     wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!FindConflictingName(getSelectedContainer(), s)))
+        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
     {
         wxFileName path(s,"");
         path.Normalize();
@@ -451,7 +461,7 @@ void ProjectView::onNewSequence(wxCommandEvent& event)
 {
     wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!FindConflictingName(getSelectedContainer(), s)))
+        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_SEQUENCE)))
     {
         model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
     }
@@ -464,7 +474,7 @@ void ProjectView::onNewFile(wxCommandEvent& event)
     std::vector<wxFileName> list;
     BOOST_FOREACH( wxString path, files )
     {
-        if (FindConflictingName(getSelectedContainer(),path))
+        if (findConflictingName(this, getSelectedContainer(),path, NODETYPE_FILE))
         {
             return;
         }
@@ -484,7 +494,15 @@ void ProjectView::onNewFile(wxCommandEvent& event)
 
 void ProjectView::onCreateSequence(wxCommandEvent& event)
 {
-    model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer()));
+    command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
+    if (!findConflictingName(this, cmd->getParent(), cmd->getName(), NODETYPE_SEQUENCE))
+    {
+        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer()));
+    }
+    else
+    {
+        delete cmd;
+    }
 }
 
 void ProjectView::onOpen(wxCommandEvent& event)
@@ -591,7 +609,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
     bool conflictingChildExists = false;
     BOOST_FOREACH( model::NodePtr node, o.getAssets())
     {
-        if (FindConflictingName(folder, node->getName()))
+        if (findConflictingName(this, folder, node->getName(), NODETYPE_ANY))
         {
             event.Veto();
             return;
@@ -645,16 +663,37 @@ void ProjectView::onStartEditing( wxDataViewEvent &event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-bool ProjectView::FindConflictingName(model::FolderPtr parent, wxString name )
+bool findConflictingName(wxWindow* window, model::FolderPtr parent, wxString name, NodeType type )
 {
     BOOST_FOREACH( model::NodePtr child, parent->getChildren() )
     {
         if (child->getName().IsSameAs(name))
         {
-            wxMessageDialog dialog(this, _("Name '" + name + "' already exists"), _("Duplicate exists"), wxCENTER | wxOK | wxICON_ERROR);
-            dialog.ShowModal();
-            return true;
-
+            bool isSameType = true;
+            wxString prefix = _("Name");
+            switch (type)
+            {
+            case NODETYPE_FILE:
+                isSameType = (child->isA<model::File>());
+                prefix = _("A file with name");
+                break;
+            case NODETYPE_FOLDER:
+                isSameType = (child->isA<model::Folder>());
+                prefix = _("A folder with name");
+                break;
+            case NODETYPE_SEQUENCE:
+                isSameType = (child->isA<model::Sequence>());
+                prefix = _("A sequence with name");
+                break;
+            default:
+                break;
+            }
+            if (isSameType)
+            {
+                wxMessageDialog dialog(window, prefix + _(" '") + name + _("' already exists"), _("Duplicate exists"), wxCENTER | wxOK | wxICON_ERROR);
+                dialog.ShowModal();
+                return true;
+            }
         }
     }
     return false;
