@@ -179,6 +179,10 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
   libSoundTouch.la
 * removed in soundtouch the if statement for #ifdef _GCC that includes some config.h file
 
+=================== SAXON ==================
+* Saxon is used for creating a revision history from the svn xml output
+* https://sourceforge.net/projects/saxon/files/Saxon-HE/9.4/SaxonHE9-4-0-9N-setup.exe/download
+
 =================== INSTALLER ===================
 * Install NSIS
 * Copy build/FileAssoc.nsh into "C:\Program Files (x86)\NSIS\Include"

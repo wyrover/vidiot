@@ -41,15 +41,41 @@ if NOT DEFINED VIDIOT_BUILD SET VIDIOT_BUILD=%VIDIOT_DIR%\Build
 call:EXTRACTDRIVE %VIDIOT_BUILD%
 SET VIDIOT_BUILD_DRIVE=%DRIVE%
 
-if "%1%"=="REBUILD" goto CLEAN
-if "%1%"=="DELIVER" goto CLEAN
-goto BUILD
+
+
 
 REM ============================== CLEAN ==============================
 :CLEAN
+if "%1%"=="" goto PREPARE
 
 del /s/q/f %VIDIOT_BUILD%\*
 rd /s/q  %VIDIOT_BUILD%
+
+
+
+REM ============================== PREPARE ==============================
+:PREPARE
+
+set BUILD_DIR=%VIDIOT_BUILD%
+cd Build
+if NOT EXIST MSVC mkdir MSVC
+if NOT EXIST GCCD mkdir GCCD
+if NOT EXIST GCCR mkdir GCCR
+
+
+
+
+REM ======================= UPDATE VERSION INFO ========================
+if NOT "%1%"=="DELIVER" goto BUILD
+
+REM Call svn Update to ensure that the about box and the logging show the proper revision
+cd %SOURCE%
+"C:\Program Files\TortoiseSVN\bin\svn.exe" update
+
+REM Generate revision log file
+call %VIDIOT_DIR%\vidiot_trunk\build\make_revision_log.bat
+
+
 
 
 REM ============================== BUILD ==============================
@@ -66,7 +92,6 @@ set BOOST_ROOT=%VIDIOT_DIR%\%BOOSTDIR%
 set BOOST_ROOT=%BOOST_ROOT:\=/%
 
 
-
 REM === CREATE SOLUTION ====
 REM del /s/q Build 
 set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
@@ -74,11 +99,6 @@ set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
 %VIDIOT_BUILD_DRIVE%
 cd %VIDIOT_BUILD%\..
 if NOT EXIST Build mkdir Build
-set BUILD_DIR=%VIDIOT_BUILD%
-cd Build
-if NOT EXIST MSVC mkdir MSVC
-if NOT EXIST GCCD mkdir GCCD
-if NOT EXIST GCCR mkdir GCCR
 
 REM add --trace to a cmake line for more logging 
 
@@ -91,23 +111,17 @@ if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studi
 cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
 cmake -LAH  %SOURCE% > CMakeVariables.txt
 
-if "%1%"=="DELIVER" goto DELIVER
-goto END
+REM cd %BUILD_DIR%\GCCD
+REM cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
-cd %BUILD_DIR%\GCCD
-cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
-
-cd %BUILD_DIR%\GCCR
-cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
+REM cd %BUILD_DIR%\GCCR
+REM cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
 
 
 
 REM ============================== DELIVER ==============================
 :DELIVER
-
-REM Call svn Update to ensure that the about box and the logging show the proper revision
-cd %SOURCE%
-"C:\Program Files\TortoiseSVN\bin\svn.exe" update
+if NOT "%1%"=="DELIVER" goto END
 
 cd %BUILD_DIR%\MSVC
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
