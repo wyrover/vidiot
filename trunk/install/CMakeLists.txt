@@ -60,6 +60,13 @@ IF(WIN32 AND NOT UNIX)
        System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'"
    )
 
+  # This file is only generated when the build batch script is called with "DELIVER" 
+  # (generation of revision log takes some time). In all other cases, generate empty file.
+  if(NOT EXISTS "${CMAKE_BINARY_DIR}/revisionlog.txt")
+      file(WRITE ${CMAKE_BINARY_DIR}/revisionlog.txt "\n")
+  endif()
+  install(FILES ${CMAKE_BINARY_DIR}/revisionlog.txt COMPONENT ${APPNAME} DESTINATION .)
+
   install(FILES ${FFMPEG_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
   install(FILES ${PORTAUDIO_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
   install(FILES ${SOUNDTOUCH_INSTALL} COMPONENT ${APPNAME} DESTINATION .)
