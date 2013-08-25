@@ -363,7 +363,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         {
             dc.SetTextForeground(Layout::get().DebugColour);
             dc.SetFont(Layout::get().DebugFont);
-            dc.DrawText(wxString::Format(wxT("%ld"), mClip->getLength()), wxPoint(5,15));
+            dc.DrawText(wxString::Format("%" PRId64, mClip->getLength()), wxPoint(5,15));
             wxString sPts;
             sPts << '[' << mClip->getLeftPts() << ',' << mClip->getRightPts() << ')';
             dc.DrawText(sPts, wxPoint(5,25));

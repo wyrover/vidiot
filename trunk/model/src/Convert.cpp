@@ -95,36 +95,36 @@ wxString Convert::ptsToHumanReadibleString(pts duration)
 }
 
 // static
-int Convert::ptsToSamples(int audioRate, int nAudioChannels, pts position)
+samplecount Convert::ptsToSamples(int audioRate, int nAudioChannels, pts position)
 {
-    boost::int64_t nFrames =
-        static_cast<boost::int64_t>(audioRate * nAudioChannels) *
-        static_cast<boost::int64_t>(model::Convert::ptsToTime(position)) /
-        static_cast<boost::int64_t>(Constants::sSecond);
+    int64_t nFrames =
+        static_cast<int64_t>(audioRate * nAudioChannels) *
+        static_cast<int64_t>(model::Convert::ptsToTime(position)) /
+        static_cast<int64_t>(Constants::sSecond);
     ASSERT_MORE_THAN_EQUALS_ZERO(nFrames);
     return nFrames;
 }
 
 // static
-pts Convert::samplesToPts(int audioRate, int nAudioChannels, int nFrames)
+pts Convert::samplesToPts(int audioRate, int nAudioChannels, samplecount nFrames)
 {
-    boost::int64_t time =
-        static_cast<boost::int64_t>(nFrames) *
-        static_cast<boost::int64_t>(Constants::sSecond) /
-        static_cast<boost::int64_t>(audioRate * nAudioChannels);
+    int64_t time =
+        static_cast<int64_t>(nFrames) *
+        static_cast<int64_t>(Constants::sSecond) /
+        static_cast<int64_t>(audioRate * nAudioChannels);
     ASSERT_MORE_THAN_EQUALS_ZERO(time);
     return model::Convert::timeToPts(time);
 }
 
 // static
-int Convert::samplesToFrames(int nChannels, int nSamples)
+samplecount Convert::samplesToFrames(int nChannels, samplecount nSamples)
 {
     ASSERT_ZERO(nSamples % nChannels);
     return nSamples / nChannels;
 }
 
 // static
-int Convert::framesToSamples(int nChannels, int nFrames)
+samplecount Convert::framesToSamples(int nChannels, samplecount nFrames)
 {
     return nFrames * nChannels;
 }
@@ -210,19 +210,19 @@ int Convert::doubleToInt(double x)
 }
 
 // static
-int Convert::audioFramesToSamples(int nFrames, int nChannels)
+samplecount Convert::audioFramesToSamples(samplecount nFrames, int nChannels)
 {
     return nFrames * nChannels;
 }
 
 // static
-int Convert::audioFramesToBytes(int nFrames, int nChannels)
+samplecount Convert::audioFramesToBytes(samplecount nFrames, int nChannels)
 {
     return audioSamplesToBytes(audioFramesToSamples(nFrames, nChannels));
 }
 
 // static
-int Convert::audioSamplesToBytes(int nSamples)
+samplecount Convert::audioSamplesToBytes(samplecount nSamples)
 {
     return nSamples * AudioChunk::sBytesPerSample;
 }

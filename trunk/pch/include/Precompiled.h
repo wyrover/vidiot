@@ -168,6 +168,8 @@ extern "C" {
 #include <wx/valnum.h>
 #include <wx/window.h>
 
+#include "inttypes.h"
+
 #include "Pointers.h"
 
 #endif // PRECOMPILED_H

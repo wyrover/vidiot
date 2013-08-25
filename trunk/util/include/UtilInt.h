@@ -18,12 +18,10 @@
 #ifndef UTIL_INT_H
 #define UTIL_INT_H
 
-#include <boost/cstdint.hpp>
-
 typedef int pixel;
-typedef int pts;
-typedef int samplecount;
-typedef boost::int16_t sample;
+typedef int64_t pts;
+typedef int64_t samplecount;
+typedef int16_t sample;
 
 samplecount min(samplecount first, samplecount second);
 
