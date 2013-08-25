@@ -16,6 +16,6 @@ exit
 goto:end
 
 :foundsaxon
-"%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\make_revision_log.xslt -o:"%VIDIOT_DIR%\Build\MSVC\revisionlog.txt"
+"%SAXON_PATH%\Transform.exe" -s:%XML_SOURCE% -xsl:%VIDIOT_DIR%\vidiot_trunk\build\make_revision_log.xslt -o:"%VIDIOT_DIR%\Build\MSVC\VersionHistory.txt"
 
 :end
