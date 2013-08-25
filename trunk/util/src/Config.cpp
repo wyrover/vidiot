@@ -20,9 +20,10 @@
 #include <wx/confbase.h> // All config handling must be done via this file, for thread safety
 #include <wx/config.h> // All config handling must be done via this file, for thread safety
 #include "Enums.h"
+#include "UtilFrameRate.h"
+#include "UtilInitAvcodec.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
-#include "UtilInitAvcodec.h"
 
 bool Config::sShowDebugInfo(false);
 boost::mutex Config::sMutex;
@@ -93,10 +94,8 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
 
     // Check values, delete from config if incorrect
     checkBool(Config::sPathAutoLoadEnabled);
-
     checkLong(Config::sPathDefaultStillImageLength, 1, 10000);
     checkLong(Config::sPathDefaultTransitionLength, 4, 10000);
-    checkLong(Config::sPathDefaultFrameRate, 4, 10000);
     checkLong(Config::sPathDefaultVideoWidth, 10, 10000);
     checkLong(Config::sPathDefaultVideoHeight, 10, 10000);
     checkEnum(Config::sPathDefaultVideoScaling, model::VideoScaling);
@@ -120,7 +119,6 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathDefaultAudioChannels, 2);
     setDefault(Config::sPathDefaultAudioSampleRate, 44100);
     setDefault(Config::sPathDefaultExtension, "avi");
-    setDefault(Config::sPathDefaultFrameRate, "25");
     setDefault(Config::sPathDefaultStillImageLength, 150);
     setDefault(Config::sPathDefaultTransitionLength, 24);
     setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
@@ -146,6 +144,14 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathWindowX, -1);
     setDefault(Config::sPathWindowY, -1);
     setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
+
+    // Special cases checking and default handling
+    wxString frameRate = wxConfigBase::Get()->Read(Config::sPathDefaultFrameRate, "");
+    FrameRate fr(frameRate);
+    if (!fr.toString().IsSameAs(frameRate))
+    {
+        WriteString(Config::sPathDefaultFrameRate, fr.toString());
+    }
 
     wxConfigBase::Get()->Flush();
 
