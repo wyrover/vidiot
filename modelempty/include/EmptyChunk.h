@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyChunk(int nChannels, unsigned int nSamples, pts position);
+    EmptyChunk(int nChannels, samplecount nSamples, pts position);
 
     virtual ~EmptyChunk();
 

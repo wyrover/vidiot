@@ -94,7 +94,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxIntegerValidator<int> lengthValidator;
          lengthValidator.SetMin(1);
          lengthValidator.SetMax(10000);
-         long initial = Config::ReadLong(Config::sPathDefaultStillImageLength);
+         pts initial = Config::ReadLong(Config::sPathDefaultStillImageLength);
 
          FrameRate framerate = FrameRate::s25p; // Default
          if (Window::get().GetDocumentManager()->GetCurrentDocument() != 0)
@@ -120,9 +120,9 @@ DialogOptions::DialogOptions(wxWindow* win)
          wxArrayString choices;
          BOOST_FOREACH( pts value, values )
          {
-            choices.Add(wxString::Format("%d", value ));
+             choices.Add(wxString::Format("%" PRId64, value ));
          }
-         mDefaultStillImageLength = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, choices, 0, lengthValidator);
+         mDefaultStillImageLength = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%" PRId64, initial),  wxDefaultPosition, wxDefaultSize, choices, 0, lengthValidator);
          addoption(_("Default length of still images (in frames)"), mDefaultStillImageLength);
     }
     {

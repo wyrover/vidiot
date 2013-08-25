@@ -23,7 +23,7 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyChunk::EmptyChunk(int nChannels, unsigned int nSamples, pts position)
+EmptyChunk::EmptyChunk(int nChannels, samplecount nSamples, pts position)
 :   AudioChunk(nChannels,nSamples,position)
 ,   mInitialized(false)
 {

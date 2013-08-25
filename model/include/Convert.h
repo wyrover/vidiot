@@ -77,7 +77,7 @@ public:
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param position pts value to be converted
     /// \return number of samples required for this number of pts
-    static int ptsToSamples(int audioRate, int nAudioChannels, pts position);
+    static samplecount ptsToSamples(int audioRate, int nAudioChannels, pts position);
 
     /// Convert a number of samples to an approximate pts value.
     /// \see ptsToSamples
@@ -85,16 +85,16 @@ public:
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param position pts value to be converted
     /// \return number of samples required for this number of pts
-    static pts samplesToPts(int audioRate, int nAudioChannels, int nFrames);
+    static pts samplesToPts(int audioRate, int nAudioChannels, samplecount nFrames);
 
     /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
     /// \return number of frames stored in given number of samples
     /// \pre nSamples must contain a discrete number of frames (thus nSamples % nChannels == 0)
-    static int samplesToFrames(int nChannels, int nSamples);
+    static samplecount samplesToFrames(int nChannels, samplecount nSamples);
 
     /// Convert a number of frames to the required number of samples
     /// \return number of samples stored in given number of frames
-    static int framesToSamples(int nChannels, int nFrames);
+    static samplecount framesToSamples(int nChannels, samplecount nFrames);
 
     /// Determine which timestamp in the project's timebase relates to
     /// a rendered frame timestamp (given an input frame rate)
@@ -133,18 +133,18 @@ public:
     /// \param nFrames Number of audio frames
     /// \param nChannels Number of audio channels (speakers)
     /// \return number of required samples
-    static int audioFramesToSamples(int nFrames, int nChannels);
+    static samplecount audioFramesToSamples(samplecount nFrames, int nChannels);
 
     /// Convert a number of audio frames (data for all channels) to a number of bytes required to store this
     /// \param nFrames Number of audio frames
     /// \param nChannels Number of audio channels (speakers)
     /// \return number of required bytes
-    static int audioFramesToBytes(int nFrames, int nChannels);
+    static samplecount audioFramesToBytes(samplecount nFrames, int nChannels);
 
     /// Convert a number of audio samples (data for one speaker) to a number of bytes required to store this
     /// \param nSamples Number of audio samples
     /// \return number of required bytes
-    static int audioSamplesToBytes(int nSamples);
+    static samplecount audioSamplesToBytes(samplecount nSamples);
 };
 } // namespace
 
