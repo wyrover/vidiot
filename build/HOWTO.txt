@@ -195,9 +195,18 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * Copy test files into <VIDIOT_DIR>/test
 
 =================== MAKE RELEASE ===================
-* SVN update 'vidiot_trunk'
-  This is required to get the correct svn information in the about box
-* RunCleanAndCmake.bat
-* Build solution: RelWithDebInfo configuration
-* Build PACKAGE
-* Installer is now ready
+* Update version number
+  - In install/CMakeLists.txt update version number
+    (commit, remember revision number)
+  - In make_revision_log.xslt, add line for 
+    version and "revision number + 1"
+  - Commit make_revision_log.xslt
+* RunCleanAndMakePackage.bat
+  - Runs 'svn update'
+    (for correct svn information in the about box)
+  - Updates BUILDDIR/VersionHistory.txt
+  - Builds installer (RelWithDebInfo)
+  - Run installer and test to verify
+* Upload
+  - Installer
+  - VersionHistory.txt
