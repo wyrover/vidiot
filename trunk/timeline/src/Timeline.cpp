@@ -339,7 +339,8 @@ void Timeline::onPaint( wxPaintEvent &event )
 
     wxMemoryDC dcBmp;
     dcBmp.SelectObjectAsSource(getSequenceView().getBitmap());
-    dcBmp.SetLogicalOrigin(-mShift,0);
+
+    dc.SetLogicalOrigin(-mShift,0);
 
     if (mShift > 0)
     {
