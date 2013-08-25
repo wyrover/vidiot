@@ -378,7 +378,16 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     wxSize thumbnailSize(0,0);
     if (mClip->isA<model::VideoClip>())
     {
-        dc.DrawBitmap(getViewMap().getThumbnail(mClip)->getBitmap(),wxPoint(Layout::ClipBorderSize, Layout::get().ClipDescriptionBarHeight));
+        bool drawThumbnail = true;
+        if (drawNotDraggedClips && mClip->getDragged())
+        {
+            // For clips being dragged do not show the thumbnail in the timeline anymore.
+            drawThumbnail = false;
+        }
+        if (drawThumbnail)
+        {
+            dc.DrawBitmap(getViewMap().getThumbnail(mClip)->getBitmap(),wxPoint(Layout::ClipBorderSize, Layout::get().ClipDescriptionBarHeight));
+        }
     }
 }
 
