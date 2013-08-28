@@ -55,6 +55,10 @@ public:
 
     AudioCompositionParameters getParameters() const;
 
+    /// Performance optimization for the '1 track only' case.
+    /// \return true if there was only input chunk and that frame was returned
+    bool wasInputChunkReturnedAsOutput() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -63,6 +67,7 @@ private:
 
     AudioCompositionParameters mParameters;
     AudioChunks mChunks;
+    bool mInputChunkReturnedAsOutput;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

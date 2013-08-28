@@ -34,6 +34,7 @@ namespace model {
 AudioComposition::AudioComposition(const AudioCompositionParameters& parameters)
     :   mChunks()
     ,   mParameters(parameters)
+    ,   mInputChunkReturnedAsOutput(false)
 {
     VAR_DEBUG(this);
 }
@@ -41,6 +42,7 @@ AudioComposition::AudioComposition(const AudioCompositionParameters& parameters)
 AudioComposition::AudioComposition(const AudioComposition& other)
     :   mChunks(other.mChunks)
     ,   mParameters(other.mParameters)
+    ,   mInputChunkReturnedAsOutput(false)
 {
 }
 
@@ -80,6 +82,7 @@ AudioChunkPtr AudioComposition::generate()
         if (true)
         {
             // Performance optimization: if only one chunk is rendered, return that chunk, but only if the chunk requires no 'processing'.
+            mInputChunkReturnedAsOutput = true;
             return front;
         }
     }
@@ -104,7 +107,7 @@ AudioChunkPtr AudioComposition::generate()
             if (!inputChunk->isA<EmptyChunk>())
             {
                 sample max = std::numeric_limits<sample>::max();
-                sample* inputSample = inputChunk->getBuffer();
+                sample* inputSample = inputChunk->getUnreadSamples(); // NOT: getBuffer()
                 sample* resultingSample = result->getBuffer();
                 for (int nSample = 0; nSample < chunkSize; ++nSample)
                 {
@@ -138,13 +141,18 @@ AudioCompositionParameters AudioComposition::getParameters() const
     return mParameters;
 }
 
+bool AudioComposition::wasInputChunkReturnedAsOutput() const
+{
+    return mInputChunkReturnedAsOutput;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<( std::ostream& os, const AudioComposition& obj )
 {
-    os << &obj << '|' << obj.mChunks;
+    os << &obj << '|' << obj.mChunks << '|' << obj.mInputChunkReturnedAsOutput;
     return os;
 }
 

@@ -164,7 +164,8 @@ void Sequence::clean()
 
 VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameters)
 {
-    VideoFramePtr videoFrame = getVideoComposition(parameters)->generate();
+    VideoCompositionPtr composition = getVideoComposition(parameters);
+    VideoFramePtr videoFrame = composition->generate();
     if (videoFrame)
     {
         videoFrame->setPts(mVideoPosition);
@@ -180,7 +181,17 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
 
 AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    AudioChunkPtr audioChunk = getAudioComposition(parameters)->generate();
+    AudioCompositionPtr composition = getAudioComposition(parameters);
+    AudioChunkPtr audioChunk = composition->generate();
+    if (composition->wasInputChunkReturnedAsOutput());
+    {
+        // The chunk was forwarded immediately to the 'consumer'.
+        // (Performance optimization for the '1 track only' case).
+        // However, no changes in number of read samples were made yet
+        // (since that's to be done by the consumer).
+        // Therefore, ensure that a 'getNextAudio' call is done.
+        mCache.cachedAudio.clear();
+    }
     VAR_VIDEO(audioChunk);
     return audioChunk;
 }
@@ -347,7 +358,6 @@ AudioCompositionPtr Sequence::getAudioComposition(const AudioCompositionParamete
     AudioCompositionPtr composition(boost::make_shared<AudioComposition>(parameters));
     BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
-        bool getnext = false;
         std::map< TrackPtr, AudioChunkPtr >::iterator it = mCache.cachedAudio.find(track);
         if (it != mCache.cachedAudio.end())
         {
@@ -370,9 +380,10 @@ AudioCompositionPtr Sequence::getAudioComposition(const AudioCompositionParamete
 
         if (mCache.cachedAudio[ track ])
         {
-			// Only add non 0 ptrs (if at end of track, then skip) 
+            // Only add non 0 ptrs (if at end of track, then skip)
             composition->add(mCache.cachedAudio[ track ]);
         }
+
     }
     return composition;
 }
