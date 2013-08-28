@@ -98,7 +98,7 @@ AudioChunkPtr AudioComposition::generate()
     ASSERT_DIFFERS(chunkSize, std::numeric_limits<samplecount>::max());
 
     VAR_DEBUG(chunkSize);
-    AudioChunkPtr result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize, true); // Fills with 0
+    AudioChunkPtr result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize, true, true); // Fills with 0
 
     BOOST_FOREACH(AudioChunkPtr inputChunk, mChunks)
     {
