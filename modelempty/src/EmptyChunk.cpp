@@ -42,7 +42,6 @@ sample* EmptyChunk::getUnreadSamples()
 {
     if (!mInitialized)
     {
-        // todo malloc here and delete[] in destructor of audiochunk
         mBuffer = static_cast<sample*>(calloc(mNrSamples, AudioChunk::sBytesPerSample));
         mInitialized = true;
     }

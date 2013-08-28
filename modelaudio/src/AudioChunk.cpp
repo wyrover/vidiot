@@ -59,7 +59,7 @@ AudioChunk::~AudioChunk()
 {
     if (mBuffer)
     {
-        delete[] mBuffer;
+        free(mBuffer);
         mBuffer = 0;
     }
 }
