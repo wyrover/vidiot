@@ -92,7 +92,6 @@ AudioTransition::~AudioTransition()
     if (mProgress < getTotalSamples(parameters))
     {
         chunk = getAudio(mProgress, mLeftClip, mRightClip, parameters);
-        chunk->setPts(Convert::samplesToPts(parameters.getSampleRate(), parameters.getNrChannels(), mProgress));
         mProgress += chunk->getUnreadSampleCount();
     }
     VAR_AUDIO(chunk);

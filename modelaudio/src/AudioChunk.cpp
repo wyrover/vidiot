@@ -27,13 +27,12 @@ const int AudioChunk::sBytesPerSample = 2;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunk::AudioChunk(sample* buffer, int nChannels, samplecount nSamples, pts position)
+AudioChunk::AudioChunk(sample* buffer, int nChannels, samplecount nSamples)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
 ,   mNrReadSamples(0)
 ,   mNrSkippedSamples(0)
-,   mPts(position)
 {
     mBuffer = new sample[mNrSamples];
     if (buffer)
@@ -42,25 +41,18 @@ AudioChunk::AudioChunk(sample* buffer, int nChannels, samplecount nSamples, pts 
     }
 }
 
-AudioChunk::AudioChunk(int nChannels, samplecount nSamples, pts position)
+AudioChunk::AudioChunk(int nChannels, samplecount nSamples, bool allocate)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
 ,   mNrReadSamples(0)
 ,   mNrSkippedSamples(0)
-,   mPts(position)
 {
-}
-
-AudioChunk::AudioChunk(int nChannels, samplecount nSamples)
-:   mBuffer(0)
-,   mNrChannels(nChannels)
-,   mNrSamples(nSamples)
-,   mNrReadSamples(0)
-,   mNrSkippedSamples(0)
-,   mPts(0)
-{
-    mBuffer = static_cast<sample*>(calloc( mNrSamples, sBytesPerSample ));
+    // todo calloc here and delete[] in destructor???
+    if (allocate)
+    {
+        mBuffer = static_cast<sample*>(calloc( mNrSamples, sBytesPerSample ));
+    }
 }
 
 AudioChunk::~AudioChunk()
@@ -75,17 +67,6 @@ AudioChunk::~AudioChunk()
 //////////////////////////////////////////////////////////////////////////
 // META DATA
 //////////////////////////////////////////////////////////////////////////
-
-pts AudioChunk::getPts() const
-{
-    return mPts;
-}
-
-void AudioChunk::setPts(pts position)
-{
-    VAR_DEBUG(position);
-    mPts = position;
-}
 
 unsigned int AudioChunk::getNumberOfChannels() const
 {
@@ -107,6 +88,7 @@ samplecount AudioChunk::extract(uint16_t* dst, samplecount requested)
 void AudioChunk::read(samplecount samples)
 {
     mNrReadSamples += samples;
+    ASSERT_LESS_THAN_EQUALS(mNrReadSamples, mNrSamples);
 }
 
 sample* AudioChunk::getBuffer()
@@ -123,7 +105,9 @@ sample* AudioChunk::getUnreadSamples()
 
 samplecount AudioChunk::getUnreadSampleCount() const
 {
-    return mNrSamples - mNrSkippedSamples - mNrReadSamples;
+    samplecount result = mNrSamples - mNrSkippedSamples - mNrReadSamples;
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    return result;
 }
 
 void AudioChunk::setAdjustedLength(samplecount adjustedLength)
@@ -139,7 +123,6 @@ void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 std::ostream& operator<< (std::ostream& os, const AudioChunk& obj)
 {
     os  << &obj                     << "|"
-        << obj.mPts                 << "|"
         << obj.mNrChannels          << "|"
         << obj.mNrSamples           << "|"
         << obj.mNrSkippedSamples    << "|"

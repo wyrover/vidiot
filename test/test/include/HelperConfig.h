@@ -52,6 +52,21 @@ private:
     long mTemporaryValue;
 };
 
+/// Creating an overrule object temporarily overrules the (string) value of a Config setting.
+/// When the object is created, the temporary value is set.
+/// When the object is destroyed, the original value is reset.
+/// \note Changing config settings is done by accessing the application's Config object directly, not via UI actions.
+class ConfigOverruleString
+{
+public:
+    ConfigOverruleString(wxString path, wxString temporaryvalue);
+    virtual ~ConfigOverruleString();
+private:
+    wxString mPath;
+    wxString mOriginalValue;
+    wxString mTemporaryValue;
+};
+
 } // namespace
 
 #endif // HELPER_CONFIG_H

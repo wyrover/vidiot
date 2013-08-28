@@ -48,7 +48,9 @@ public:
     void testFileTypes_audio_1_44100();
     void testFileTypes_audio_2_48000();
     void testFileTypes_image();
-    void testFileTypes_video();
+    void testFileTypes_video_s24p();
+    void testFileTypes_video_s25p();
+    void testFileTypes_video_s29p();
 
 private:
 

@@ -46,17 +46,14 @@ public:
     /// Initialize, allocate, and (optionally) fill the data.
     /// \param buffer if non-null data from this buffer is copied into the newly allocated space.
     /// \param position approximate pts value of this chunk (note: use for debugging only)
-    AudioChunk(sample* buffer, int nChannels, samplecount nSamples, pts position);
+    AudioChunk(sample* buffer, int nChannels, samplecount nSamples);
 
-    /// Initialize but do not allocate yet. Used for empty chunks. Then,
-    /// allocation only is needed when the data is needed for playback.
+    /// Initialize and (optionally) allocate. Not allocating is for empty chunks.
+    /// Then, allocation only is needed when the data is needed for playback.
     /// During 'track combining' empty chunks can be ignored.
     /// This avoids needless allocation.
-    /// \param position approximate pts value of this chunk (note: use for debugging only)
-    AudioChunk(int nChannels, samplecount nSamples, pts position);
-
-    /// Initialize and allocate, filled with 0.
-    AudioChunk(int nChannels, samplecount nSamples);
+    /// \param allocate if true then allocate required buffer and fills with 0.
+    AudioChunk(int nChannels, samplecount nSamples, bool allocate);
 
     virtual ~AudioChunk();
 
@@ -64,8 +61,6 @@ public:
     // META DATA
     //////////////////////////////////////////////////////////////////////////
 
-    pts getPts() const;
-    void setPts(pts position);
     unsigned int getNumberOfChannels() const;
 
     //////////////////////////////////////////////////////////////////////////
@@ -107,7 +102,6 @@ protected:
     samplecount mNrReadSamples;     ///< Number of samples that has been marked as read using read()
     samplecount mNrSamples;         ///< Total number of samples allocated in memory
     samplecount mNrSkippedSamples;  ///< Set if the length of the chunk is truncated after decoding (for stopping at right pts)
-    pts mPts;                       ///< Approximate pts value of this chunk (for debugging)
 
 private:
 

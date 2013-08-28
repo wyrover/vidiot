@@ -83,9 +83,9 @@ public:
     /// \see ptsToSamples
     /// \param audioRate The rate (samples per second) at which audio will be played (44100/48000/etc.)
     /// \param nAudioChannels Number of audio channels (speakers)
-    /// \param position pts value to be converted
+    /// \param nSamples Number of samples to be converted
     /// \return number of samples required for this number of pts
-    static pts samplesToPts(int audioRate, int nAudioChannels, samplecount nFrames);
+    static pts samplesToPts(int audioRate, int nAudioChannels, samplecount nSamples);
 
     /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
     /// \return number of frames stored in given number of samples

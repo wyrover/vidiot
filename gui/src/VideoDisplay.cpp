@@ -280,7 +280,7 @@ void VideoDisplay::audioBufferThread()
             {
                 int nFramesAvailable = mSoundTouch.numSamples();
                 sample* p = 0;
-                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, 0);
+                model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(p, mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels);
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
                 ASSERT_EQUALS(nFrames,nFramesAvailable);
                 mAudioChunks.push(audioChunk);

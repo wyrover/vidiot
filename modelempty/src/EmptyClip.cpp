@@ -177,15 +177,17 @@ char* EmptyClip::getType() const
 
 AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    if (mProgress > getLength())
+    pts remainder = getLength()- mProgress;
+    if (remainder > 0)
     {
         return AudioChunkPtr();
     }
 
-    AudioChunkPtr audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(1), 0));
-    audioChunk->setPts(mProgress);
-    setGenerationProgress(mProgress);
-    mProgress++;
+    AudioChunkPtr audioChunk =
+        boost::static_pointer_cast<AudioChunk>(
+        boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(remainder)));
+    setGenerationProgress(getLength());
+    mProgress = getLength() + 1;
     VAR_AUDIO(audioChunk);
     return audioChunk;
 }

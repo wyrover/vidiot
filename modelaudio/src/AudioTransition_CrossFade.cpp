@@ -129,7 +129,7 @@ AudioChunkPtr CrossFade::getAudio(samplecount position, IClipPtr leftClip, IClip
     ASSERT_MORE_THAN_ZERO(nSamples);
     ASSERT_ZERO(nSamples % parameters.getNrChannels()); // Ensure that the data for all speakers is there... If this assert ever fails: maybe there's file formats in which the data for a frame is 'truncated'?
     sample* p = 0;
-    model::AudioChunkPtr result = boost::make_shared<model::AudioChunk>(p, parameters.getNrChannels(), nSamples, 0);
+    model::AudioChunkPtr result = boost::make_shared<model::AudioChunk>(p, parameters.getNrChannels(), nSamples);
 
     samplecount total = getTotalSamples(parameters);
     sample* dataLeft = mCache->mLeftChunk ? mCache->mLeftChunk->getUnreadSamples() : 0;

@@ -22,7 +22,7 @@ samplecount min(samplecount first, samplecount second)
     return first < second ? first : second;
 }
 
-int floor(boost::rational<int> r)
+int floor(rational r)
 {
     return static_cast<int>(floor(boost::rational_cast<double>(r)));
 }

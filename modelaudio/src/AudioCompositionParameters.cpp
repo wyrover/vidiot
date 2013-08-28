@@ -64,23 +64,18 @@ int AudioCompositionParameters::getNrChannels() const
     return mNrChannels;
 }
 
-samplecount AudioCompositionParameters::getChunkSize() const
-{
-    return ptsToSamples(1);
-}
-
 //////////////////////////////////////////////////////////////////////////
 // CONVERSION HELPERS
 //////////////////////////////////////////////////////////////////////////
 
 int AudioCompositionParameters::ptsToSamples(pts position) const
 {
-    return Convert::ptsToSamples(position, mSampleRate, mNrChannels);
+    return Convert::ptsToSamples(mSampleRate, mNrChannels, position);
 }
 
-pts AudioCompositionParameters::samplesToPts(int nFrames) const
+pts AudioCompositionParameters::samplesToPts(int nSamples) const
 {
-    return Convert::samplesToPts(nFrames, mSampleRate, mNrChannels);
+    return Convert::samplesToPts(mSampleRate, mNrChannels, nSamples);
 }
 
 int AudioCompositionParameters::samplesToFrames(int nSamples) const
