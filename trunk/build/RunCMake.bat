@@ -50,6 +50,7 @@ if "%1%"=="" goto PREPARE
 
 del /s/q/f %VIDIOT_BUILD%\*
 rd /s/q  %VIDIOT_BUILD%
+mkdir %VIDIOT_BUILD%
 
 
 
@@ -57,7 +58,8 @@ REM ============================== PREPARE ==============================
 :PREPARE
 
 set BUILD_DIR=%VIDIOT_BUILD%
-cd Build
+%VIDIOT_BUILD_DRIVE%
+cd %BUILD_DIR%
 if NOT EXIST MSVC mkdir MSVC
 if NOT EXIST GCCD mkdir GCCD
 if NOT EXIST GCCR mkdir GCCR
@@ -147,4 +149,10 @@ if %DURATIONHS% LSS 10 set DURATIONHS=0%DURATIONHS%
 echo DURATION: %DURATIONH%:%DURATIONM%:%DURATIONS%.%DURATIONHS%
 
 pause
+exit
+
+
+
+:NOVAR
+echo "Define VIDIOT_DIR first"
 exit
