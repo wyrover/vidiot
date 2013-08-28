@@ -38,6 +38,6 @@ typedef boost::icl::discrete_interval<pixel> PixelInterval;
 
 typedef boost::rational<int> rational;
 
-int floor(boost::rational<int> r);
+int floor(rational r);
 
 #endif //UTIL_INT_H

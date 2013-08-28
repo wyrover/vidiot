@@ -106,10 +106,10 @@ samplecount Convert::ptsToSamples(int audioRate, int nAudioChannels, pts positio
 }
 
 // static
-pts Convert::samplesToPts(int audioRate, int nAudioChannels, samplecount nFrames)
+pts Convert::samplesToPts(int audioRate, int nAudioChannels, samplecount nSamples)
 {
     int64_t time =
-        static_cast<int64_t>(nFrames) *
+        static_cast<int64_t>(nSamples) *
         static_cast<int64_t>(Constants::sSecond) /
         static_cast<int64_t>(audioRate * nAudioChannels);
     ASSERT_MORE_THAN_EQUALS_ZERO(time);

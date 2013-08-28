@@ -129,7 +129,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
             // extra video part, silence is added here (the user can make the clip shorter if
             // required - thus removing the extra video, but that's a user decision to be made).
             LOG_WARNING << *this << ": (" << getDescription() << ") Adding " << remainingSamples << " samples to make audio length equal to video length";
-            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), remainingSamples, getLength()));
+            audioChunk = boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), remainingSamples));
             mProgress = lengthInSamples;
         }
     }

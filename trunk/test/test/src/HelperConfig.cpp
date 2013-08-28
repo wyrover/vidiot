@@ -56,4 +56,19 @@ ConfigOverruleLong::~ConfigOverruleLong()
     waitForIdle();
 }
 
+ConfigOverruleString::ConfigOverruleString(wxString path, wxString temporaryvalue)
+    :   mPath(path)
+    ,   mOriginalValue(Config::ReadString(path))
+    ,   mTemporaryValue(temporaryvalue)
+{
+    Config::WriteString(mPath,mTemporaryValue);
+    waitForIdle();
+}
+
+ConfigOverruleString::~ConfigOverruleString()
+{
+    Config::WriteString(mPath,mOriginalValue);
+    waitForIdle();
+}
+
 } // namespace

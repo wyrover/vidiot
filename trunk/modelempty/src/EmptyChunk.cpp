@@ -23,8 +23,8 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyChunk::EmptyChunk(int nChannels, samplecount nSamples, pts position)
-:   AudioChunk(nChannels,nSamples,position)
+EmptyChunk::EmptyChunk(int nChannels, samplecount nSamples)
+:   AudioChunk(nChannels,nSamples,false)
 ,   mInitialized(false)
 {
 }
@@ -42,6 +42,7 @@ sample* EmptyChunk::getUnreadSamples()
 {
     if (!mInitialized)
     {
+        // todo malloc here and delete[] in destructor of audiochunk
         mBuffer = static_cast<sample*>(malloc(mNrSamples * AudioChunk::sBytesPerSample));
         memset(mBuffer, 0, mNrSamples * sBytesPerSample);
         mInitialized = true;

@@ -32,6 +32,7 @@
 #include "IPath.h"
 #include "Scrolling.h"
 #include "Timeline.h"
+#include "UtilFrameRate.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
 #include <boost/assign/list_of.hpp>
@@ -79,9 +80,24 @@ void TestFileTypes::testFileTypes_image()
     executeTest("filetypes_image");
 }
 
-void TestFileTypes::testFileTypes_video()
+void TestFileTypes::testFileTypes_video_s24p()
 {
     StartTestSuite();
+    ConfigOverruleString overruleFrameRate(Config::sPathDefaultFrameRate, FrameRate::s24p.toString());
+    executeTest("filetypes_video");
+}
+
+void TestFileTypes::testFileTypes_video_s25p()
+{
+    StartTestSuite();
+    ConfigOverruleString overruleFrameRate(Config::sPathDefaultFrameRate, FrameRate::s25p.toString());
+    executeTest("filetypes_video");
+}
+
+void TestFileTypes::testFileTypes_video_s29p()
+{
+    StartTestSuite();
+    ConfigOverruleString overruleFrameRate(Config::sPathDefaultFrameRate, FrameRate::s30p.toString());
     executeTest("filetypes_video");
 }
 

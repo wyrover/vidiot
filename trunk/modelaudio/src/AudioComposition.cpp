@@ -69,11 +69,9 @@ void AudioComposition::replace(AudioChunkPtr oldChunk, AudioChunkPtr newChunk)
 
 AudioChunkPtr AudioComposition::generate()
 {
-    int chunkSize = mParameters.getChunkSize();
-
     if (mChunks.empty())
     {
-        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), chunkSize, 0);
+        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1));
     }
 
     if (mChunks.size() == 1)
@@ -81,34 +79,50 @@ AudioChunkPtr AudioComposition::generate()
         AudioChunkPtr front = mChunks.front();
         if (true)
         {
-            ASSERT_EQUALS(front->getUnreadSampleCount(), chunkSize);
             // Performance optimization: if only one chunk is rendered, return that chunk, but only if the chunk requires no 'processing'.
             return front;
         }
     }
+
+    samplecount chunkSize = std::numeric_limits<samplecount>::max();
+    BOOST_FOREACH( AudioChunkPtr inputChunk, mChunks )
+    {
+        if (chunkSize > inputChunk->getUnreadSampleCount() )
+        {
+            chunkSize = inputChunk->getUnreadSampleCount();
+        }
+    }
+    ASSERT_DIFFERS(chunkSize, std::numeric_limits<samplecount>::max());
+
     VAR_DEBUG(chunkSize);
-    AudioChunkPtr result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize); // Fills with 0
+    AudioChunkPtr result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize, true); // Fills with 0
 
     BOOST_FOREACH(AudioChunkPtr inputChunk, mChunks)
     {
-        ASSERT_EQUALS(inputChunk->getUnreadSampleCount(), mParameters.ptsToSamples(1));
-        sample max = std::numeric_limits<sample>::max();
-        sample* inputSample = inputChunk->getBuffer();
-        sample* resultingSample = result->getBuffer();
-        for (int nSample = 0; nSample < chunkSize; ++nSample)
+        if (inputChunk)
         {
-            if (*inputSample > max - *resultingSample)
+            if (!inputChunk->isA<EmptyChunk>())
             {
-                // Overflow
-                *resultingSample = max;
-            }
-            else
-            {
-                *resultingSample += *inputSample;
-            }
+                sample max = std::numeric_limits<sample>::max();
+                sample* inputSample = inputChunk->getBuffer();
+                sample* resultingSample = result->getBuffer();
+                for (int nSample = 0; nSample < chunkSize; ++nSample)
+                {
+                    if (*inputSample > max - *resultingSample)
+                    {
+                        // Overflow
+                        *resultingSample = max;
+                    }
+                    else
+                    {
+                        *resultingSample += *inputSample;
+                    }
 
-            inputSample++;
-            resultingSample++;
+                    inputSample++;
+                    resultingSample++;
+                }
+            }
+            inputChunk->read(chunkSize);
         }
     }
 

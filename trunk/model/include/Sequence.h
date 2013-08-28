@@ -147,7 +147,6 @@ private:
     std::map<int, TrackPtr> mAudioTrackMap;
     pixel mDividerPosition;
     pts mVideoPosition;
-    pts mAudioPosition;
     render::RenderPtr mRender;
 
     /// Some variables are only required for better performance.
@@ -156,9 +155,11 @@ private:
     {
         Cache()
             : length(0)
+            , cachedAudio()
         {
         }
         pts length;
+        std::map< TrackPtr, AudioChunkPtr > cachedAudio;
     };
     Cache mCache;
 

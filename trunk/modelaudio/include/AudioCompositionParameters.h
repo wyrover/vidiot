@@ -44,8 +44,6 @@ public:
     AudioCompositionParameters& setNrChannels(int nChannels);
     int getNrChannels() const;
 
-    samplecount getChunkSize() const;
-
     //////////////////////////////////////////////////////////////////////////
     // CONVERSION HELPERS
     //////////////////////////////////////////////////////////////////////////
@@ -56,7 +54,7 @@ public:
 
     /// Convert a number of samples to an approximate pts value, given this set of parameters.
     /// \return number of samples required for this number of pts
-    pts samplesToPts(int nFrames) const;
+    pts samplesToPts(int nSamples) const;
 
     /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
     /// \return number of frames stored in given number of samples

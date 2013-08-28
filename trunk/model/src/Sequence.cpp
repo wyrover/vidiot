@@ -57,7 +57,6 @@ Sequence::Sequence()
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
     ,   mVideoPosition(0)
-    ,   mAudioPosition(0)
     ,   mRender()
 {
     VAR_DEBUG(this);
@@ -76,7 +75,6 @@ Sequence::Sequence(wxString name)
     ,   mVideoTrackMap()
     ,   mAudioTrackMap()
     ,   mVideoPosition(0)
-    ,   mAudioPosition(0)
     ,   mRender()
 {
     VAR_DEBUG(this);
@@ -98,7 +96,6 @@ Sequence::Sequence(const Sequence& other)
     ,   mVideoTrackMap() // Duplicate administration left empty! (This constructor should only be used for cloning directly before rendering)
     ,   mAudioTrackMap()  // Duplicate administration left empty! (...and for rendering the duplicate administration is not required)
     ,   mVideoPosition(0)
-    ,   mAudioPosition(0)
     ,   mRender(make_cloned<render::Render>(other.mRender))
 {
     VAR_DEBUG(this);
@@ -135,7 +132,6 @@ void Sequence::moveTo(pts position)
 {
     VAR_DEBUG(position);
     mVideoPosition = position;
-    mAudioPosition = position;
     BOOST_FOREACH( TrackPtr track, mVideoTracks )
     {
         track->moveTo(position);
@@ -144,6 +140,7 @@ void Sequence::moveTo(pts position)
     {
         track->moveTo(position);
     }
+    mCache.cachedAudio.clear();
 }
 
 wxString Sequence::getDescription() const
@@ -158,6 +155,7 @@ void Sequence::clean()
     {
         track->clean();
     }
+    mCache.cachedAudio.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,12 +181,6 @@ VideoFramePtr Sequence::getNextVideo(const VideoCompositionParameters& parameter
 AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameters)
 {
     AudioChunkPtr audioChunk = getAudioComposition(parameters)->generate();
-    if (audioChunk)
-    {
-        ASSERT_EQUALS(audioChunk->getUnreadSampleCount(), parameters.getChunkSize());
-        audioChunk->setPts(mAudioPosition);
-        mAudioPosition++;
-    }
     VAR_VIDEO(audioChunk);
     return audioChunk;
 }
@@ -355,7 +347,32 @@ AudioCompositionPtr Sequence::getAudioComposition(const AudioCompositionParamete
     AudioCompositionPtr composition(boost::make_shared<AudioComposition>(parameters));
     BOOST_FOREACH( TrackPtr track, mAudioTracks )
     {
-        composition->add(boost::dynamic_pointer_cast<IAudio>(track)->getNextAudio(parameters));
+        bool getnext = false;
+        std::map< TrackPtr, AudioChunkPtr >::iterator it = mCache.cachedAudio.find(track);
+        if (it != mCache.cachedAudio.end())
+        {
+            if (it->second)
+            {
+                if (it->second->getUnreadSampleCount() == 0)
+                {
+                    mCache.cachedAudio.erase(it); // chunk used completely; get next chunk
+                }
+                // else: cached chunk not completely used yet; use current chunk
+            }
+            // else: end of track reached; keep using this chunk
+        }
+        // else: no cached chunk yet; get first chunk
+
+        if (mCache.cachedAudio.find(track) == mCache.cachedAudio.end())
+        {
+            mCache.cachedAudio[ track ] = boost::dynamic_pointer_cast<IAudio>(track)->getNextAudio(parameters);
+        }
+
+        if (mCache.cachedAudio[ track ])
+        {
+			// Only add non 0 ptrs (if at end of track, then skip) 
+            composition->add(mCache.cachedAudio[ track ]);
+        }
     }
     return composition;
 }
@@ -494,7 +511,6 @@ std::ostream& operator<<( std::ostream& os, const Sequence& obj )
         << obj.mVideoTracks              << '|'
         << obj.mAudioTracks              << '|'
         << obj.mVideoPosition            << '|'
-        << obj.mAudioPosition            << '|'
         << obj.mRender;
     return os;
 }

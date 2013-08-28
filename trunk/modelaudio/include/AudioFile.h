@@ -47,7 +47,6 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void moveTo(pts position) override;
     virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
@@ -81,8 +80,6 @@ private:
     //int16_t audioResampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
     sample* audioDecodeBuffer;
     sample* audioResampleBuffer;
-
-    AudioChunkPtr mPendingChunk;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
