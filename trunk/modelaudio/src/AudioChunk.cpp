@@ -27,31 +27,31 @@ const int AudioChunk::sBytesPerSample = 2;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunk::AudioChunk(sample* buffer, int nChannels, samplecount nSamples)
+AudioChunk::AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool zero, sample* buffer)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
 ,   mNrReadSamples(0)
 ,   mNrSkippedSamples(0)
 {
-    mBuffer = new sample[mNrSamples];
-    if (buffer)
-    {
-        memcpy(mBuffer, buffer, mNrSamples * sBytesPerSample);
-    }
-}
+    ASSERT_IMPLIES(zero,        allocate && buffer == 0);
+    ASSERT_IMPLIES(buffer != 0, allocate && !zero);
 
-AudioChunk::AudioChunk(int nChannels, samplecount nSamples, bool allocate)
-:   mBuffer(0)
-,   mNrChannels(nChannels)
-,   mNrSamples(nSamples)
-,   mNrReadSamples(0)
-,   mNrSkippedSamples(0)
-{
-    // todo calloc here and delete[] in destructor???
     if (allocate)
     {
-        mBuffer = static_cast<sample*>(calloc( mNrSamples, sBytesPerSample ));
+        if (zero)
+        {
+            mBuffer = static_cast<sample*>(calloc( mNrSamples, sBytesPerSample ));
+        }
+        else
+        {
+            mBuffer = static_cast<sample*>(malloc( mNrSamples * sBytesPerSample ));
+        }
+        ASSERT_NONZERO(mBuffer);
+        if (buffer)
+        {
+            memcpy(mBuffer, buffer, mNrSamples * sBytesPerSample);
+        }
     }
 }
 

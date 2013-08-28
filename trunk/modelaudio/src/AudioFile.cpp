@@ -201,7 +201,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     if (mResampleContext == 0)
     {
         // Use the plain decoded data without resampling.
-        audioChunk = boost::make_shared<AudioChunk>(audioDecodeBuffer, parameters.getNrChannels(), nDecodedSamples);
+        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nDecodedSamples, true, false, audioDecodeBuffer);
     }
     else
     {
@@ -240,7 +240,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
         sample* input = audioDecodeBuffer;
 
-        audioChunk = boost::make_shared<AudioChunk>(static_cast<sample*>(0), parameters.getNrChannels(), nExpectedOutputSamples);
+        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nExpectedOutputSamples, true, false);
         sample* resampled = audioChunk->getBuffer();
 
         while (nRemainingInputSamples > 0)

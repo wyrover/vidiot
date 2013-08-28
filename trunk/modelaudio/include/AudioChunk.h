@@ -44,16 +44,14 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Initialize, allocate, and (optionally) fill the data.
-    /// \param buffer if non-null data from this buffer is copied into the newly allocated space.
-    /// \param position approximate pts value of this chunk (note: use for debugging only)
-    AudioChunk(sample* buffer, int nChannels, samplecount nSamples);
-
-    /// Initialize and (optionally) allocate. Not allocating is for empty chunks.
-    /// Then, allocation only is needed when the data is needed for playback.
-    /// During 'track combining' empty chunks can be ignored.
-    /// This avoids needless allocation.
-    /// \param allocate if true then allocate required buffer and fills with 0.
-    AudioChunk(int nChannels, samplecount nSamples, bool allocate);
+    /// \param nChannels number of audio channels
+    /// \param nSamples number of samples
+    /// \param allocate if true then allocate required buffer
+    /// \param zero if true, fill allocated buffer 0
+    /// \param buffer if non-null data from this buffer is copied into the newly allocated space
+    /// \pre zero   ==> allocate && !buffer
+    /// \pre buffer ==> allocate && !zero
+    AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool zero, sample* buffer = 0);
 
     virtual ~AudioChunk();
 
