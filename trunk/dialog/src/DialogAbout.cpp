@@ -18,10 +18,11 @@
 #include "DialogAbout.h"
 
 #include "Config.h"
-#include "UtilLog.h"
-#include "Window.h"
-#include "UtilLogWxwidgets.h"
 #include "SubversionRevision.h"
+#include "UtilLog.h"
+#include "UtilLogWxwidgets.h"
+#include "VidiotVersion.h"
+#include "Window.h"
 
 namespace gui {
 
@@ -30,7 +31,7 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 DialogAbout::DialogAbout()
-    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + _(" (Revision: ") + wxString::Format("%d", SubversionRevision) + _(")"),wxDefaultPosition,wxSize(500,500),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
+    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + wxString::Format(wxT(" (%s - %d)"), VidiotVersion, SubversionRevision),wxDefaultPosition,wxSize(500,500),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mBack(0)
 {
     VAR_DEBUG(this);
