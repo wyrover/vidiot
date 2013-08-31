@@ -75,7 +75,7 @@ cd %SOURCE%
 "C:\Program Files\TortoiseSVN\bin\svn.exe" update
 
 REM Generate revision log file
-call %VIDIOT_DIR%\vidiot_trunk\build\make_revision_log.bat
+call %VIDIOT_DIR%\vidiot_trunk\build\make_readme.bat
 
 
 

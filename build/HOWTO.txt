@@ -198,9 +198,8 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * Update version number
   - In install/CMakeLists.txt update version number
     (commit, remember revision number)
-  - In make_revision_log.xslt, add line for 
-    version and "revision number + 1"
-  - Commit make_revision_log.xslt
+  - In make_readme.xslt, add line for version and "revision number + 1"
+  - Commit make_readme.xslt
 * RunCleanAndMakePackage.bat
   - Runs 'svn update'
     (for correct svn information in the about box)
