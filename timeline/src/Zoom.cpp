@@ -113,14 +113,14 @@ int Zoom::pixelsToTime(int pixels) const
     return model::Convert::ptsToTime(pixelsToPts(pixels));
 }
 
-int Zoom::pixelsToPts(int pixels) const
+pts Zoom::pixelsToPts(int pixels) const
 {
     return floor(rational(pixels) / rational(mZoom));
 }
 
-int Zoom::ptsToPixels(int pts) const
+int Zoom::ptsToPixels(pts position) const
 {
-    return floor(rational(pts) * rational(mZoom));
+    return floor(rational(position) * rational(mZoom));
 }
 
 //////////////////////////////////////////////////////////////////////////

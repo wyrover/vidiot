@@ -122,7 +122,7 @@ void Mouse::update(const wxMouseState& state)
             left = info.clip->getLeftPts();
             right = info.clip->getRightPts();
         }
-        gui::StatusBar::get().setDebugText( wxString::Format("POS:(%3d,%3d) PTS:[%5" PRId64 "] CLIP:[%5ld,%5ld)", mVirtualPosition.x, mVirtualPosition.y, getZoom().pixelsToPts(mVirtualPosition.x), left, right) );
+        gui::StatusBar::get().setDebugText( wxString::Format("POS:(%3d,%3d) PTS:[%5" PRId64 "] CLIP:[%5" PRId64 ",%5" PRId64 ")", mVirtualPosition.x, mVirtualPosition.y, getZoom().pixelsToPts(mVirtualPosition.x), left, right) );
     }
 }
 

@@ -79,6 +79,11 @@ public:
     /// This happened particularly with a long timeline, fully zoomed in.
     void testPlaybackLongTimeline();
 
+    /// Due to a integer calculation bug, playback of an empty clip resulting in the clip AFTER
+    /// the empty clip being played almost immediately. This was caused by getNextAudio returning
+    /// '0' (thus, end of clip) immediately, after which the next clip was played.
+    void testPlaybackEmptyClip();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

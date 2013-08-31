@@ -358,6 +358,7 @@ void PositionCursor(pixel position)
     VAR_DEBUG(position);
     Move(wxPoint(position, gui::Layout::VideoPosition - 4));
     wxUIActionSimulator().MouseClick();
+    waitForIdle();
 }
 
 void Move(wxPoint position)
