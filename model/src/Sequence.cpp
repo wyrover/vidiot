@@ -183,7 +183,7 @@ AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameter
 {
     AudioCompositionPtr composition = getAudioComposition(parameters);
     AudioChunkPtr audioChunk = composition->generate();
-    if (composition->wasInputChunkReturnedAsOutput());
+    if (composition->wasInputChunkReturnedAsOutput())
     {
         // The chunk was forwarded immediately to the 'consumer'.
         // (Performance optimization for the '1 track only' case).
