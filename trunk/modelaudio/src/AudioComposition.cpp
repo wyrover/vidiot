@@ -57,7 +57,7 @@ AudioComposition::~AudioComposition()
 
 void AudioComposition::add(AudioChunkPtr chunk)
 {
-    if (chunk && !chunk->isA<EmptyChunk>())
+    if (chunk)
     {
         // Skip empty chunks.
         mChunks.push_back(chunk);

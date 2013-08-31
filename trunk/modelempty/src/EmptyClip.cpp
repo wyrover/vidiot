@@ -106,7 +106,6 @@ void EmptyClip::moveTo(pts position)
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
     mProgress = position;
-    setGenerationProgress(0);
 }
 
 void EmptyClip::setLink(IClipPtr link)
@@ -177,16 +176,13 @@ char* EmptyClip::getType() const
 
 AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    pts remainder = getLength()- mProgress;
-    if (remainder > 0)
+    if (mProgress > getLength())
     {
         return AudioChunkPtr();
     }
-
     AudioChunkPtr audioChunk =
         boost::static_pointer_cast<AudioChunk>(
-        boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(remainder)));
-    setGenerationProgress(getLength());
+        boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(getLength() - mProgress)));
     mProgress = getLength() + 1;
     VAR_AUDIO(audioChunk);
     return audioChunk;

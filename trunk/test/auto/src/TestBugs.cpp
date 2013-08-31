@@ -17,7 +17,11 @@
 
 #include "TestBugs.h"
 
+#include "AudioChunk.h"
+#include "AudioClip.h"
+#include "AudioCompositionParameters.h"
 #include "DetailsClip.h"
+#include "EmptyClip.h"
 #include "HelperDetails.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineDrag.h"
@@ -28,6 +32,9 @@
 #include "ids.h"
 #include "ProjectViewCreateSequence.h"
 #include "Sequence.h"
+#include "VideoClip.h"
+#include "VideoCompositionParameters.h"
+#include "VideoFrame.h"
 
 namespace test {
 
@@ -136,6 +143,21 @@ void TestBugs::testPlaybackLongTimeline()
 
      // todo implement after I found some way to easily make a very large sequence
      // Note: one or two large still images does not work
+}
+
+void TestBugs::testPlaybackEmptyClip()
+{
+    StartTestSuite();
+
+    Click(Center(VideoClip(0,3)));
+    Type(WXK_DELETE);
+    PositionCursor(HCenter(VideoClip(0,3)));
+    model::VideoFramePtr frame = boost::dynamic_pointer_cast<model::EmptyClip>(VideoClip(0,3))->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(100,100)));
+    ASSERT_NONZERO(frame);
+    model::AudioChunkPtr chunk = boost::dynamic_pointer_cast<model::EmptyClip>(AudioClip(0,3))->getNextAudio(model::AudioCompositionParameters());
+    ASSERT_NONZERO(chunk);
+    // Note: do not pause() or press space at this point. The getNexts above 'mess up' the administration (audioclip is already at end, but the cursor position is not)
+    Play(RightPixel(VideoClip(0,3)) - 3,2000);
 }
 
 } // namespace

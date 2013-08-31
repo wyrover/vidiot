@@ -20,10 +20,9 @@
 
 #include "Part.h"
 #include "UtilEvent.h"
+#include "UtilInt.h"
 
 namespace gui { namespace timeline {
-
-typedef boost::rational<int> rational;
 
 DECLARE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
 
@@ -57,8 +56,8 @@ public:
 
     int timeToPixels(int time) const;       ///< @param time time duration in milliseconds
     int pixelsToTime(int pixels) const;     ///< @return time duration in milliseconds
-    int pixelsToPts(int pixels) const;
-    int ptsToPixels(int pts) const;
+    pts pixelsToPts(int pixels) const;
+    int ptsToPixels(pts position) const;
 
 private:
 
