@@ -166,8 +166,9 @@ public:
 
     /// Change the sequence menu. This is used by a timeline to set the menu to
     /// the timeline's menu.
-    /// \param menu 0 to indicate that the default disabled menu should be shown
-    void setSequenceMenu(wxMenu* menu);
+    /// \param menu 0 to indicate that there is not open sequence (menu is disabled)
+    /// \param enabled if menu != 0, indicates if the menu is enabled or not.
+    void setSequenceMenu(wxMenu* menu, bool enabled);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -198,9 +199,9 @@ private:
     ProjectView*	    mProjectView;
     Help*               mHelp;
 
-    wxMenuBar*          menubar;        // For enabling/disabling menus
-    wxMenu*             menuedit;       // For associating with do/undo
-    wxMenu*             menusequence;   // For determining cleanup of the sequence menu's
+    wxMenuBar*          mMenuBar;        // For enabling/disabling menus
+    wxMenu*             mMenuEdit;       // For associating with do/undo
+    wxMenu*             mMenuSequence;   // For determining cleanup of the sequence menu's
     wxMenu*             mMenuWorkspace;
     util::TestCrash*    mTestCrash;
 

@@ -44,6 +44,7 @@
 #include "TrimClip.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
+#include "VideoDisplayEvent.h"
 #include "VideoTrack.h"
 #include "VideoTransitionFactory.h"
 #include "Window.h"
@@ -112,9 +113,11 @@ MenuHandler::MenuHandler(Timeline* timeline)
 
     getTimeline().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onTriggerPopupMenu,      this, ID_TRIGGER_POPUP_MENU);
 
+    getPlayer()->Bind(EVENT_PLAYBACK_ACTIVE,           &MenuHandler::onPlaybackActive,        this);
+
     updateItems();
 
-    Window::get().setSequenceMenu(getMenu());
+    Window::get().setSequenceMenu(getMenu(), true);
 }
 
 MenuHandler::~MenuHandler()
@@ -125,7 +128,7 @@ MenuHandler::~MenuHandler()
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
 
-    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onSplitAtCursor,         this, ID_SPLIT_AT_CURSOR);
+    Window::get().Bind(wxEVT_COMMAND_MENU_SELECTED,      &MenuHandler::onSplitAtCursor,         this, ID_SPLIT_AT_CURSOR);
 
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteMarked,          this, ID_DELETEMARKED);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onDeleteUnmarked,        this, ID_DELETEUNMARKED);
@@ -141,7 +144,25 @@ MenuHandler::~MenuHandler()
 
     getTimeline().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onTriggerPopupMenu,      this, ID_TRIGGER_POPUP_MENU);
 
-    Window::get().setSequenceMenu(0); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
+    getPlayer()->Unbind(EVENT_PLAYBACK_ACTIVE,           &MenuHandler::onPlaybackActive,        this);
+
+    Window::get().setSequenceMenu(0, false); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
+}
+
+//////////////////////////////////////////////////////////////////////////
+// NON MENU EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void MenuHandler::onPlaybackActive(PlaybackActiveEvent& event)
+{
+    LOG_DEBUG;
+    // Disable the menu if the playback is active.
+    // Note that enabling the menu options can cause problems:
+    // For instance, pressing 's' will call ' MenuHandler::onSplitAtCursor'
+    // which causes a change to the sequence while playback is still active!
+    Window::get().setSequenceMenu(getMenu(), !event.getValue());
+    // todo make a more robust mechanism in the timeline that discards events, given the current state (maybe all actions should be done via the state machine...)
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -329,7 +350,7 @@ void MenuHandler::activate(bool active)
     mActive = active;
     if (mActive)
     {
-        Window::get().setSequenceMenu(getMenu());
+        Window::get().setSequenceMenu(getMenu(),true);
     }
 }
 
@@ -426,7 +447,7 @@ void MenuHandler::onRenderSettings(wxCommandEvent& event)
 {
     if (mActive)
     {
-        gui::DialogRenderSettings(getSequence()).ShowModal();
+        DialogRenderSettings(getSequence()).ShowModal();
     }
     event.Skip();
 }
@@ -437,7 +458,7 @@ void MenuHandler::onRenderSequence(wxCommandEvent& event)
     {
         if (!getSequence()->getRender()->checkFileName())
         {
-            gui::DialogRenderSettings(getSequence()).ShowModal();
+            DialogRenderSettings(getSequence()).ShowModal();
         }
         else
         {

@@ -86,9 +86,9 @@ Window::Window()
     ,   mDetailsView(0)
     ,   mTimelinesView(0)
     ,   mProjectView(0)
-    ,   menubar(0)
-    ,   menuedit(0)
-    ,   menusequence(0)
+    ,   mMenuBar(0)
+    ,   mMenuEdit(0)
+    ,   mMenuSequence(0)
     ,   mTestCrash(new util::TestCrash(this))
     ,   mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
     ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
@@ -116,13 +116,13 @@ Window::Window()
     menufile->AppendSeparator();
     menufile->Append(wxID_EXIT, _("E&xit"), _("Select exit to end the application."));
 
-    menuedit = new wxMenu();
-    menuedit->Append(wxID_UNDO);
-    menuedit->Append(wxID_REDO);
-    menuedit->AppendSeparator();
-    menuedit->Append(wxID_CUT);
-    menuedit->Append(wxID_COPY);
-    menuedit->Append(wxID_PASTE);
+    mMenuEdit = new wxMenu();
+    mMenuEdit->Append(wxID_UNDO);
+    mMenuEdit->Append(wxID_REDO);
+    mMenuEdit->AppendSeparator();
+    mMenuEdit->Append(wxID_CUT);
+    mMenuEdit->Append(wxID_COPY);
+    mMenuEdit->Append(wxID_PASTE);
 
     wxMenu* menuview = new wxMenu();
     menuview->AppendCheckItem(ID_SNAP_CLIPS, _("Snap to clips"), _("Check this item to ensure that operations in the timeline 'snap' to adjacent clip boundaries."));
@@ -133,7 +133,7 @@ Window::Window()
     menuview->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"), _("Show the bounding box of the generated video in the preview window."));
     menuview->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathShowBoundingBox));
 
-    menusequence = new wxMenu();
+    mMenuSequence = new wxMenu();
 
     wxMenu* menutools = new wxMenu();
     menutools->Append(wxID_PREFERENCES, _("&Options"), _("Open the options dialog."));
@@ -160,23 +160,23 @@ Window::Window()
     menuhelp->AppendSeparator();
     menuhelp->Append(wxID_ABOUT, _("&About..."), _("Show the about dialog."));
 
-    menubar = new wxMenuBar();
-    menubar->Append(menufile,     _("&File"));
-    menubar->Append(menuedit,     _("&Edit"));
-    menubar->Append(menuview,     _("&View"));
-    menubar->Append(menusequence, _("&Sequence"));
+    mMenuBar = new wxMenuBar();
+    mMenuBar->Append(menufile,     _("&File"));
+    mMenuBar->Append(mMenuEdit,     _("&Edit"));
+    mMenuBar->Append(menuview,     _("&View"));
+    mMenuBar->Append(mMenuSequence, _("&Sequence"));
     sSequenceMenuIndex = 3;
-    menubar->Append(menutools,    _("&Tools"));
-    menubar->Append(mMenuWorkspace,_("&Workspace"));
+    mMenuBar->Append(menutools,    _("&Tools"));
+    mMenuBar->Append(mMenuWorkspace,_("&Workspace"));
     if (Config::ReadBool(Config::sPathDebugShowCrashMenu))
     {
-        menubar->Append(mTestCrash->getMenu(),     _("&Crash"));
+        mMenuBar->Append(mTestCrash->getMenu(),     _("&Crash"));
     }
-    menubar->Append(menuhelp,     _("&Help"));
+    mMenuBar->Append(menuhelp,     _("&Help"));
 
-    SetMenuBar( menubar );
+    SetMenuBar( mMenuBar );
 
-    menubar->EnableTop(sSequenceMenuIndex,false); // Disable sequence menu
+    mMenuBar->EnableTop(sSequenceMenuIndex,false); // Disable sequence menu
 
     SetStatusBar(new StatusBar(this));
 
@@ -410,7 +410,7 @@ Window::~Window()
     delete mVideoTransitionFactory;
 
     delete mTestCrash; // Unbind the crash method
-    setSequenceMenu(0); // Ensure destruction of sequenceMenu
+    setSequenceMenu(0,false); // Ensure destruction of sequenceMenu
     delete mProjectView;    // First, delete the referring windows.
     delete mTimelinesView;  // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
     delete mPreview;        // the timeline view in turn 'knows/uses' the preview (specifically, the player).
@@ -438,7 +438,7 @@ void Window::QueueModelEvent( wxEvent* event )
 
 void Window::onOpenProject( model::EventOpenProject &event )
 {
-    GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(menuedit); // Set menu for do/undo
+    GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(mMenuEdit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
@@ -711,21 +711,21 @@ void Window::triggerLayout()
 // ENABLING/DISABLING MENUS
 //////////////////////////////////////////////////////////////////////////
 
-void Window::setSequenceMenu(wxMenu* menu)
+void Window::setSequenceMenu(wxMenu* menu, bool enabled)
 {
     wxMenu* previous = 0;
-    bool enable = true;
+    bool enable = enabled;
     if (menu == 0)
     {
-        menu = menusequence;
+        menu = mMenuSequence;
         enable = false;
     }
-    if (menubar->GetMenu(sSequenceMenuIndex) != menu)
+    if (mMenuBar->GetMenu(sSequenceMenuIndex) != menu)
     {
         // Only in case of changes. Otherwise wxWidgets asserts.
-        previous = menubar->Replace(sSequenceMenuIndex, menu, _("&Sequence"));
-        menubar->EnableTop(sSequenceMenuIndex,enable);
+        previous = mMenuBar->Replace(sSequenceMenuIndex, menu, _("&Sequence"));
     }
+    mMenuBar->EnableTop(sSequenceMenuIndex,enable);
 }
 
 //////////////////////////////////////////////////////////////////////////
