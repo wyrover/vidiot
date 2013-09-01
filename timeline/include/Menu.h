@@ -21,7 +21,11 @@
 #include "Part.h"
 #include "Enums.h"
 
-namespace gui { namespace timeline {
+namespace gui {
+
+    class PlaybackActiveEvent;
+
+    namespace timeline {
 
 /// Class responsible for all interfacing to/from the sequence menu.
 /// This includes updating the menu given the state of the timeline, and
@@ -38,6 +42,12 @@ public:
 
     MenuHandler(Timeline* timeline);
     virtual ~MenuHandler();
+
+    void onPlaybackActive(PlaybackActiveEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // NON MENU EVENTS
+    //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // MENU INTERFACE
