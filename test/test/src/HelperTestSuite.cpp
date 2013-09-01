@@ -27,7 +27,9 @@
 namespace test {
 
 std::list<std::string> SuitesWithoutGui = boost::assign::list_of
-     ("TestConvert::testTimeConversions")("TestUtilPath::testEquals");
+    ("TestConvert::testTimeConversions")
+    ("TestConvert::testIntegerConversions")
+    ("TestUtilPath::testEquals");
 
 //////////////////////////////////////////////////////////////////////////
 // LOCAL HELPER METHODS
@@ -127,7 +129,7 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     {
         updateTitle();
         waitForIdle();
-        util::thread::RunInMainAndWait([this] 
+        util::thread::RunInMainAndWait([this]
         {
            Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); // Set
         });
@@ -139,7 +141,7 @@ void HelperTestSuite::testSuiteDone()
 {
     if (mSuiteCount == CxxTest::TestTracker::tracker( ).world().numTotalTests())
     {
-        util::thread::RunInMainAndWait([this] 
+        util::thread::RunInMainAndWait([this]
         {
             Config::WriteString( Config::sPathTestRunCurrent, "" ); // Reset
         });

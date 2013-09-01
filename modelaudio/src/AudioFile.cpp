@@ -113,7 +113,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 
     if (fileOpenFailed())
     {
-        // If file could not be read (for whatever reason) return emtpy audio.
+        // If file could not be read (for whatever reason) return empty audio.
         return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(1)));
     }
 
@@ -210,16 +210,18 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         auto convertOutputSampleCountToInputSampleCount = [parameters,codec](int output) -> int
         {
             return
+                removeRemainder(codec->channels,
                 floor(rational(output) *
                 rational(codec->channels) / rational(parameters.getNrChannels()) *
-                rational(codec->sample_rate) / rational(parameters.getSampleRate()));
+                rational(codec->sample_rate) / rational(parameters.getSampleRate())));
         };
         auto convertInputSampleCountToOutputSampleCount = [parameters,codec](int input) -> int
         {
             return
+                removeRemainder(parameters.getNrChannels(),
                 floor(rational(input) *
                 rational(parameters.getNrChannels()) / rational(codec->channels) *
-                rational(parameters.getSampleRate()) / rational(codec->sample_rate));
+                rational(parameters.getSampleRate()) / rational(codec->sample_rate)));
         };
 
         int nRemainingInputSamples = nDecodedSamples;
@@ -231,6 +233,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         // of the resampling is determined by
         //     int lenout= 2 * s->output_channels * nb_samples * s->ratio + 16;
         int nExpectedOutputSamples = convertInputSampleCountToOutputSampleCount(nDecodedSamples) + 16;
+        ASSERT_ZERO(nExpectedOutputSamples % parameters.getNrChannels());
         int nRemainingOutputSamples = nExpectedOutputSamples;
         int nResampledSamples = 0;
 
@@ -249,6 +252,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
             int nOutputFrames = audio_resample(mResampleContext, resampled, input, nInputFrames);
             int nNewOutputSamples = nOutputFrames * parameters.getNrChannels();
             int nUsedInputSamples = convertOutputSampleCountToInputSampleCount(nNewOutputSamples);
+            ASSERT_ZERO(nUsedInputSamples %codec->channels);
             VAR_DEBUG(nInputFrames)(nOutputFrames)(nRemainingOutputSamples)(nNewOutputSamples)(nUsedInputSamples);
             if (nUsedInputSamples == 0)
             {

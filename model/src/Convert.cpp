@@ -98,9 +98,10 @@ wxString Convert::ptsToHumanReadibleString(pts duration)
 samplecount Convert::ptsToSamples(int audioRate, int nAudioChannels, pts position)
 {
     int64_t nFrames =
+        removeRemainder(nAudioChannels, // Ensure that the returned value is never aligned such that the data for one or more speakers is missing
         static_cast<int64_t>(audioRate * nAudioChannels) *
         static_cast<int64_t>(model::Convert::ptsToTime(position)) /
-        static_cast<int64_t>(Constants::sSecond);
+        static_cast<int64_t>(Constants::sSecond));
     ASSERT_MORE_THAN_EQUALS_ZERO(nFrames);
     return nFrames;
 }

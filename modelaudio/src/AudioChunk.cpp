@@ -36,6 +36,7 @@ AudioChunk::AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool 
 {
     ASSERT_IMPLIES(zero,        allocate && buffer == 0);
     ASSERT_IMPLIES(buffer != 0, allocate && !zero);
+    ASSERT_ZERO(nSamples % nChannels)(nSamples)(nChannels);
 
     if (allocate)
     {
@@ -114,6 +115,8 @@ void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 {
     ASSERT_LESS_THAN_EQUALS(adjustedLength,mNrSamples);
     mNrSkippedSamples = mNrSamples - adjustedLength;
+    samplecount total = mNrSamples - mNrSkippedSamples - mNrReadSamples;
+    ASSERT_ZERO(total % mNrChannels)(mNrSamples)(mNrSkippedSamples)(mNrReadSamples)(mNrChannels);
 }
 
 //////////////////////////////////////////////////////////////////////////
