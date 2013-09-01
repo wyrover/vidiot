@@ -23,6 +23,7 @@
 #include "Details.h"
 #include "Drag.h"
 #include "Intervals.h"
+#include "IntervalsView.h"
 #include "Keyboard.h"
 #include "Layout.h"
 #include "Menu.h"
@@ -77,11 +78,13 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
 ,   mDetails(Window::get().getDetailsView().openTimeline(this))
 //////////////////////////////////////////////////////////////////////////
 ,   mSequenceView(new SequenceView(this))
+,   mIntervalsView(new IntervalsView(this))
 //////////////////////////////////////////////////////////////////////////
 {
     VAR_DEBUG(this);
 
     SetBackgroundColour(Layout::get().BackgroundColour);
+    SetBackgroundStyle(wxBG_STYLE_PAINT); // For the buffered DC in onPaint()
 
     init();
 
@@ -112,6 +115,7 @@ Timeline::~Timeline()
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
+    delete mIntervalsView;  mIntervalsView = 0;
     delete mSequenceView;   mSequenceView = 0;
     Window::get().getDetailsView().closeTimeline(this);
 
@@ -327,7 +331,7 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
 
 void Timeline::onPaint( wxPaintEvent &event )
 {
-    wxPaintDC dc( this );
+    wxAutoBufferedPaintDC dc( this );
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
 
     if (mTransaction)
@@ -360,6 +364,7 @@ void Timeline::onPaint( wxPaintEvent &event )
         upd++;
     }
 
+    getIntervals().getView().draw(dc);
     getDrag().draw(dc);
     getTrim().draw(dc);
     getCursor().draw(dc);

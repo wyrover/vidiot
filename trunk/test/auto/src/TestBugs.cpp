@@ -24,6 +24,7 @@
 #include "EmptyClip.h"
 #include "HelperDetails.h"
 #include "HelperTimeline.h"
+#include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
 #include "HelperTimelineTrim.h"
@@ -158,6 +159,25 @@ void TestBugs::testPlaybackEmptyClip()
     ASSERT_NONZERO(chunk);
     // Note: do not pause() or press space at this point. The getNexts above 'mess up' the administration (audioclip is already at end, but the cursor position is not)
     Play(RightPixel(VideoClip(0,3)) - 3,2000);
+}
+
+void TestBugs::testPlaybackDoesNotStopAfterPressingShift()
+{
+    // todo after I found some way to easily make a very large sequence...
+    StartTestSuite();
+    Zoom level(6);
+    PositionCursor(HCenter(VideoClip(0,2)));
+    Type(WXK_SPACE); // Start playback
+    pause(1000);
+    ShiftDown();
+    pause(1000);
+    ShiftUp();
+    pause(1000);
+    Type(WXK_SPACE); // Stop playback
+    Click(Center(VideoClip(0,2)));
+    Type(WXK_DELETE);
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip); // If playback doesn't stop the delete is ignored... thus, this actually checks that playback was stopped
+
 }
 
 } // namespace
