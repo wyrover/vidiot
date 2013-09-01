@@ -84,6 +84,10 @@ public:
     /// '0' (thus, end of clip) immediately, after which the next clip was played.
     void testPlaybackEmptyClip();
 
+    /// When the sequence was playing, pressing shift (start interval) caused playback to continue
+    /// indefinitely.
+    void testPlaybackDoesNotStopAfterPressingShift();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

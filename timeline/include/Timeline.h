@@ -27,6 +27,7 @@ namespace command {
 namespace gui { namespace timeline {
 
     class ZoomChangeEvent;
+    class IntervalsView;
 
 class Timeline
 :   public wxScrolledWindow
@@ -186,6 +187,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     SequenceView* mSequenceView;
+    IntervalsView* mIntervalsView;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

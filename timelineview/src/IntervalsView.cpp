@@ -63,10 +63,6 @@ void IntervalsView::draw(wxDC& dc) const
 {
     PtsIntervals intervals = getIntervals().getIntervalsForDrawing();
 
-    wxBitmap bmp(2,2);
-    wxMemoryDC dcM(bmp);
-    dcM.SelectObject(wxNullBitmap);
-
     dc.SetPen(*wxGREY_PEN);
     wxBrush b(*wxLIGHT_GREY,wxBRUSHSTYLE_CROSSDIAG_HATCH);
     dc.SetBrush(b);
@@ -80,8 +76,6 @@ void IntervalsView::draw(wxDC& dc) const
 void IntervalsView::refreshInterval(PtsInterval interval)
 {
     wxRect r(makeRect(interval));
-
-    invalidateBitmap();
 
     // Adjust for scrolling
     r.x -= getScrolling().getOffset().x;

@@ -61,7 +61,6 @@ SequenceView::~SequenceView()
 
     getSequence()->Unbind(model::EVENT_LENGTH_CHANGED, &SequenceView::onSequenceLengthChanged, this);
 
-    delete mIntervalsView;  mIntervalsView = 0;
     delete mAudioView;      mAudioView = 0;
     delete mVideoView;      mVideoView = 0;
     delete mTimescaleView;  mTimescaleView = 0;
@@ -225,8 +224,6 @@ void SequenceView::draw(wxBitmap& bitmap) const
     drawDivider(dc, getSequence()->getDividerPosition(), Layout::AudioVideoDividerHeight);
 
     dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
-
-    getIntervals().getView().draw(dc);
 }
 
 }} // namespace

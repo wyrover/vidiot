@@ -73,7 +73,7 @@ boost::statechart::result Playing::react( const EvRightDown& evt )
 
 boost::statechart::result Playing::react( const EvKeyDown& evt)
 {
-    VAR_DEBUG(evt);
+     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
     case WXK_SPACE:     getPlayer()->stop();        break;

@@ -28,7 +28,6 @@ namespace gui { namespace timeline {
 
 struct PointerPositionInfo;
 class TimescaleView;
-class IntervalsView;
 
 class SequenceView
     :   public View
@@ -86,7 +85,6 @@ private:
     TimescaleView* mTimescaleView;
     VideoView*  mVideoView;
     AudioView*  mAudioView;
-    IntervalsView* mIntervalsView;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
