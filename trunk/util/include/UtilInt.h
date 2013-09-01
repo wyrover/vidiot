@@ -40,4 +40,11 @@ typedef boost::rational<int> rational;
 
 int floor(rational r);
 
+template <typename TYPE1, typename TYPE2>
+TYPE1 removeRemainder(TYPE2 divisor, TYPE1 value)
+{
+    TYPE1 remainder = value % divisor;
+    return value - remainder;
+}
+
 #endif //UTIL_INT_H

@@ -48,4 +48,14 @@ void TestConvert::testTimeConversions()
     }
 }
 
+void TestConvert::testIntegerConversions()
+{
+     StartTestSuite();
+
+     ASSERT_ZERO(removeRemainder(36500,2) % 2);
+     ASSERT_ZERO(removeRemainder(36501,2) % 2);
+     ASSERT_ZERO(removeRemainder(36502,2) % 2);
+     ASSERT_ZERO(removeRemainder(36503,2) % 2);
+}
+
 } // namespace

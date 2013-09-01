@@ -180,9 +180,17 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
     {
         return AudioChunkPtr();
     }
+
     AudioChunkPtr audioChunk =
         boost::static_pointer_cast<AudioChunk>(
         boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(getLength() - mProgress)));
+    samplecount partialFrame = audioChunk->getUnreadSampleCount() % parameters.getNrChannels();
+    if (partialFrame > 0)
+    {
+        // There are some samples for which not all the data for all speakers is available. Truncate.
+        // Can be caused by rounding differences (ptsToSamples).
+        audioChunk->setAdjustedLength(audioChunk->getUnreadSampleCount() - partialFrame);
+    }
     mProgress = getLength() + 1;
     VAR_AUDIO(audioChunk);
     return audioChunk;

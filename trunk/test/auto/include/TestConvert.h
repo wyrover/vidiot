@@ -31,6 +31,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testTimeConversions();
+    void testIntegerConversions();
 };
 
 }
