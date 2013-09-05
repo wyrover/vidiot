@@ -117,6 +117,7 @@ Application::~Application()
 
 void Application::waitForIdle()
 {
+    ASSERT(!wxThread::IsMain());
     // Original implementation:
     //    wxWakeUpIdle();
     //    mCondition.wait(lock);

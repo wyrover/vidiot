@@ -31,6 +31,7 @@ static const unsigned int sMaximumBufferedWork = 1000;
 Worker::Worker()
 :   wxEvtHandler()
 ,   mEnabled(true)
+,   mRunning(false)
 ,   mFifo(sMaximumBufferedWork)
 ,   mExecuted(0)
 ,   mExecutedLimit(0)
@@ -39,17 +40,28 @@ Worker::Worker()
 
 void Worker::abort()
 {
-    mEnabled = false;
     {
         boost::mutex::scoped_lock lock(mMutex);
+        mEnabled = false;
         if (mCurrent)
         {
             mCurrent->abort();
             mCurrent.reset();
         }
+        if (mRunning)
+        {
+            mFifo.flush();
+            mFifo.push(WorkPtr()); // Unblock any pending 'pop'
+        }
     }
-    mFifo.flush();
-    mFifo.push(WorkPtr());
+    for (int i = 0; i < 100; ++i)
+    {
+        wxThread::This()->Sleep(100);
+        {
+            boost::mutex::scoped_lock lock(mMutex);
+            if (!mRunning) { break; }
+        }
+    }
     if (mThread)
     {
         mThread->join();
@@ -66,6 +78,13 @@ Worker::~Worker()
 
 void Worker::schedule(WorkPtr work)
 {
+    {
+        boost::mutex::scoped_lock lock(mMutex);
+        if (!mEnabled)
+        {
+            return;
+        }
+    }
     mFifo.push(work);
     QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
     boost::mutex::scoped_lock lock(mMutex);
@@ -101,6 +120,10 @@ void Worker::waitForExecutionCount()
 
 void Worker::thread()
 {
+    {
+        boost::mutex::scoped_lock lock(mMutex);
+        mRunning = true;
+    }
     VAR_INFO(this);
     util::thread::setCurrentThreadName("Worker");
     while (mEnabled)
@@ -130,10 +153,15 @@ void Worker::thread()
                 if (mFifo.getSize() == 0)
                 {
                     mThread.reset();
+                    mRunning = false;
                     return;
                 }
             }
         }
+    }
+    {
+        boost::mutex::scoped_lock lock(mMutex);
+        mRunning = false;
     }
 }
 

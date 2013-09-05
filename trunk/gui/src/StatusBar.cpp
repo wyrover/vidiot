@@ -24,17 +24,35 @@
 
 namespace gui {
 
+const int sInfo = 0;
+const int sProcessing = 1;
+const int sQueue = 2;
+const int sProgress = 3;
+const int sDebug = 4;
+
+struct Timer : public wxTimer
+{
+    explicit Timer(StatusBar* owner)
+        : wxTimer()
+        , mOwner(owner)
+    {
+    }
+    void Notify()
+    {
+        mOwner->SetStatusText("",sInfo);
+    }
+    StatusBar* mOwner;
+};
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 StatusBar::StatusBar(wxWindow *parent)
     :   wxStatusBar(parent,wxID_ANY,wxSTB_DEFAULT_STYLE|wxSTB_ELLIPSIZE_MIDDLE)
+    ,   mInfoTimer(new Timer(this))
 {
     SetFieldsCount(getNumberOfStatusBars());
-    setDebugText("");
-    setProcessingText("");
-    setQueueText("");
     mProgress = new wxGauge(this,wxID_ANY,100);
     hideProgressBar();
     Bind(wxEVT_SIZE, &StatusBar::onSize, this);
@@ -43,6 +61,7 @@ StatusBar::StatusBar(wxWindow *parent)
 
 StatusBar::~StatusBar()
 {
+    delete mInfoTimer;
     worker::Worker::get().Unbind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
     Unbind(wxEVT_SIZE, &StatusBar::onSize, this);
 }
@@ -54,7 +73,7 @@ StatusBar::~StatusBar()
 void StatusBar::onSize(wxSizeEvent& event)
 {
     wxRect bb;
-    bool ok = GetFieldRect(Config::getShowDebugInfo() ? 3 : 2,bb);
+    bool ok = GetFieldRect(sProgress,bb);
     mProgress->SetPosition(bb.GetPosition());
     mProgress->SetSize(bb.GetSize());
 }
@@ -84,7 +103,7 @@ void StatusBar::onWorkerQueueSize(worker::WorkerQueueSizeEvent& event)
 int StatusBar::getNumberOfStatusBars() const
 {
     ASSERT(wxThread::IsMain());
-    return (Config::getShowDebugInfo() ? 4 : 3);
+    return (Config::getShowDebugInfo() ? 5 : 4);
 }
 
 void StatusBar::setDebugText(wxString text)
@@ -92,20 +111,42 @@ void StatusBar::setDebugText(wxString text)
     ASSERT(wxThread::IsMain());
     if (Config::getShowDebugInfo())
     {
-        SetStatusText( text, 0 );
+        SetStatusText( text, sDebug );
     }
+}
+
+void StatusBar::pushInfoText(wxString text)
+{
+    ASSERT(wxThread::IsMain());
+    ASSERT(!text.IsSameAs(""));
+    PushStatusText( text, sInfo );
+}
+
+void StatusBar::popInfoText()
+{
+    PopStatusText(sInfo);
+}
+
+void StatusBar::timedInfoText(wxString text)
+{
+    pushInfoText(text);
+    mInfoTimer->StartOnce(5000);
 }
 
 void StatusBar::setQueueText(wxString text)
 {
     ASSERT(wxThread::IsMain());
-    SetStatusText( text, Config::getShowDebugInfo() ? 2 : 1 );
+    SetStatusText( text, sQueue );
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
 
 void StatusBar::setProcessingText(wxString text)
 {
     ASSERT(wxThread::IsMain());
-    SetStatusText( text, Config::getShowDebugInfo() ? 1 : 0 );
+    SetStatusText( text, sProcessing );
 }
 
 void StatusBar::showProgressBar(int max)
