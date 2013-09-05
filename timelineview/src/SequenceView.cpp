@@ -48,7 +48,6 @@ SequenceView::SequenceView(View* parent)
 ,   mTimescaleView(new TimescaleView(this))
 ,   mVideoView(new VideoView(this))
 ,   mAudioView(new AudioView(this))
-,   mIntervalsView(new IntervalsView(this))
 {
     VAR_DEBUG(this);
 

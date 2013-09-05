@@ -156,7 +156,7 @@ void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
     StartTest("Load document");
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
     triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    waitForIdle();//pause();
+    waitForIdle();
 }
 
 } // namespace

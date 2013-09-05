@@ -40,7 +40,10 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     Worker();
+
+    /// Abort any pending work and avoid new work being scheduled
     void abort();
+
     virtual ~Worker();
 
     //////////////////////////////////////////////////////////////////////////
@@ -63,6 +66,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mEnabled;
+    bool mRunning;
     boost::scoped_ptr<boost::thread> mThread;
     FifoWork mFifo;
     WorkPtr mCurrent;

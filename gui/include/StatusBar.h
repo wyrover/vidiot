@@ -27,6 +27,8 @@ namespace worker {
 
 namespace gui {
 
+struct Timer;
+
 class StatusBar
     :   public wxStatusBar
     ,   public SingleInstance<StatusBar>
@@ -57,23 +59,34 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     int getNumberOfStatusBars() const;
+
     void setDebugText(wxString text = "");
+
+    void pushInfoText(wxString text);
+    void popInfoText();
+    void timedInfoText(wxString text);
+
     void setQueueText(wxString text = "");
 
 private:
 
     friend class worker::Work; // Done to avoid calling gui objects from the worker thread
 
-    void setProcessingText(wxString text = "");
-    void showProgressBar(int max);
-    void showProgress(int value);
-    void hideProgressBar();
-
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
     wxGauge* mProgress;
+    Timer* mInfoTimer;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void setProcessingText(wxString text = "");
+    void showProgressBar(int max);
+    void showProgress(int value);
+    void hideProgressBar();
 
 };
 

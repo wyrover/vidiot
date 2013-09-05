@@ -25,6 +25,7 @@
 #include "ProjectEvent.h"
 #include "Properties.h"
 #include "Serialization.h"
+#include "StatusBar.h"
 #include "UtilLog.h"
 
 namespace model {
@@ -110,6 +111,7 @@ void Project::OnChangeFilename(bool notifyViews)
 
 std::ostream& Project::SaveObject(std::ostream& ostream)
 {
+    gui::StatusBar::get().pushInfoText(_("Saving ") + mRoot->getName() + _(" ..."));
     try
     {
         boost::archive::text_oarchive ar(ostream);
@@ -133,6 +135,8 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
     {
         FATAL;
     }
+    gui::StatusBar::get().popInfoText();
+    gui::StatusBar::get().timedInfoText(mRoot->getName() + _(" saved successfully."));
     return ostream;
 }
 
