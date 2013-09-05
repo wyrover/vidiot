@@ -488,7 +488,7 @@ void AClipEdit::animatedTrimEmpty(model::IClips emptyareas)
     model::IClips mEmpties = emptyareas;
     model::IClips newempties;
     static const int SleepTimePerStep = 25;
-    static const int AnimationDurationInMs = 250;
+    static const int AnimationDurationInMs = 150;
     static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
     for (int step = NumberOfSteps - 1; step >= 0; --step)
     {

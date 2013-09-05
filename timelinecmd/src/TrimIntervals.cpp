@@ -86,7 +86,7 @@ void TrimIntervals::showAnimation()
     }
 
     wxSafeYield(); // Show update progress, but do not allow user input
-    boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
     animatedTrimEmpty(mEmpties);
 }
