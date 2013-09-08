@@ -35,6 +35,8 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
+    void testScrollbarRepositioningAfterChangingZoom();
+
     void testShowScrollbarWhenAddingClipAtEnd();
 
 private:

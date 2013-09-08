@@ -17,8 +17,8 @@
 
 #include "Scrolling.h"
 
+#include "Cursor.h"
 #include "Timeline.h"
-
 #include "UtilLog.h"
 #include "Zoom.h"
 
@@ -33,16 +33,33 @@ DEFINE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts);
 Scrolling::Scrolling(Timeline* timeline)
 :   wxEvtHandler()
 ,   Part(timeline)
+,   mCenterPts(0)
 {
     VAR_DEBUG(this);
 
     getTimeline().SetScrollRate( 1, 1 );
     getTimeline().EnableScrolling(true,true);
+
+    getZoom().Bind(ZOOM_CHANGE_EVENT, &Scrolling::onZoomChanged, this);
+
 }
 
 Scrolling::~Scrolling()
 {
     VAR_DEBUG(this);
+
+    getZoom().Unbind(ZOOM_CHANGE_EVENT, &Scrolling::onZoomChanged, this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GUI EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Scrolling::onZoomChanged( ZoomChangeEvent& event )
+{
+    wxSize size = getTimeline().GetClientSize();
+    align(mCenterPts, size.x / 2);
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,6 +110,27 @@ wxPoint Scrolling::getVirtualPosition(wxPoint position) const
     wxPoint p;
     getTimeline().CalcUnscrolledPosition(position.x,position.y,&p.x,&p.y);
     return p;
+}
+
+void Scrolling::storeCenterPts()
+{
+    mCenterPts = getCenterPts();
+}
+
+pts Scrolling::getCenterPts() const
+{
+    wxPoint position = getTimeline().GetViewStart();
+    wxSize size = getTimeline().GetClientSize();
+    if (position.x != 0)
+    {
+        // Store the pts value that is visible in the center of the timeline
+        // After the zoom has been changed, this can be used to reposition
+        // the scrollbars such that the same pts value is in the center of
+        // the timeline.
+        return getZoom().pixelsToPts( position.x + size.x / 2 );
+    }
+    // When no scrolling has been applied, the view remains 'the beginning of the timeline'
+    return 0;
 }
 
 }} // namespace

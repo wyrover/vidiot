@@ -35,7 +35,7 @@
 namespace gui { namespace timeline { namespace state {
 
 //////////////////////////////////////////////////////////////////////////
-// MACHINE
+// INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 Machine::Machine(Timeline& tl)
@@ -95,6 +95,10 @@ Machine::~Machine()
     getPlayer()->Unbind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// BOOST STATECHART OVERRIDES
+//////////////////////////////////////////////////////////////////////////
+
 void Machine::unconsumed_event( const boost::statechart::event_base & evt )
 {
     LOG_DEBUG << "[state=" << typeid( *state_begin() ).name() << "][event=" << typeid( evt ).name() << "]";
@@ -106,6 +110,32 @@ void  Machine::process_event(const boost::statechart::event_base & evt )
     static int pos = std::string("struct gui::timeline::state::").size();
     boost::statechart::state_machine< Machine, Idle >::process_event(evt);
     LOG_INFO <<  "[event=" << std::string(typeid( evt ).name()).substr(pos) << "][newstate=" << (state_begin() == state_end() ? "???" : std::string(typeid( *state_begin() ).name()).substr(pos)) << "]";
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HANDLING EVENTS - PUBLIC FOR REUSE IN TEST CODE
+//////////////////////////////////////////////////////////////////////////
+
+bool Machine::processWheelEvent(int nSteps)
+{
+    VAR_INFO(nSteps);
+    bool processed = false;
+    // Zooming/Scrolling can be done in any state
+    if (getKeyboard().getCtrlDown())
+    {
+        getZoom().change(nSteps);
+        processed = true;
+    }
+    else if (getKeyboard().getShiftDown())
+    {
+        int x;
+        int y;
+        getTimeline().GetViewStart(&x,&y);
+        static const int sHorizontalScrollfactor = 100;
+        getTimeline().Scroll(x - nSteps * sHorizontalScrollfactor,y);
+        processed = true;
+    }
+    return processed;
 }
 
 void Machine::onMotion(wxMouseEvent& event)
@@ -225,30 +255,17 @@ void Machine::onLeave(wxMouseEvent& event)
 void Machine::onWheel(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
-    getMouse().update(event);
+    //getKeyboard().update(event); -- todo only take the relevant info from relevant events: typically, the getmouse update only requires move events, the keyboard update only requires down and key up events
+    //getMouse().update(event);
 
     // Zooming/Scrolling can be done in any state
     int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
-    if (event.ControlDown())
-    {
-        getZoom().change(nSteps);
-    }
-    else if (event.ShiftDown())
-    {
-        int x;
-        int y;
-        getTimeline().GetViewStart(&x,&y);
-        static const int sHorizontalScrollfactor = 100;
-        getTimeline().Scroll(x - nSteps * sHorizontalScrollfactor,y);
-    }
-    else
+    if (!processWheelEvent(nSteps))
     {
         // Only when this event is 'unhandled' here, the original scrolling
         // behaviour should be done.
         event.Skip();
     }
-
     process_event(EvWheel());
 }
 

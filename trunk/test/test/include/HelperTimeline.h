@@ -182,6 +182,10 @@ wxPoint Center(DraggedClips drag);                   ///< \return center (pixel)
 wxPoint LeftCenter(DraggedClips drag);               ///< \return left center position (centered vertically) (absolute position in the timeline, not relative to the drag offset)
 wxPoint RightCenter(DraggedClips drag);              ///< \return right center position (centered vertically) (absolute position in the timeline, not relative to the drag offset)
 
+/// Trigger a wheel event on the timeline
+/// \nSteps number of wheel steps to trigger (+1 up, -1 down)
+void TimelineTriggerWheel(int nSteps);
+
 pixel CursorPosition();                              ///< \return cursor position
 
 void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position

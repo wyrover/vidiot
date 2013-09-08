@@ -24,6 +24,8 @@
 
 namespace gui { namespace timeline {
 
+class ZoomChangeEvent;
+
 DECLARE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts); // Holds the new x position
 
 /// Virtual position:  position in the virtual area. That is, the entire area
@@ -41,6 +43,12 @@ public:
 
     Scrolling(Timeline* timeline);
     virtual ~Scrolling();
+
+    //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onZoomChanged( ZoomChangeEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -65,6 +73,22 @@ public:
     /// \param position virtual position
     wxPoint getVirtualPosition(wxPoint position) const;
 
+    /// Store the current center pts position. This position is used when the
+    /// zoom is updated, to ensure that approximately the same area is viewed
+    /// after the zoom.
+    void storeCenterPts();
+
+    /// \return the pts shown at the center of the timeline
+    /// \note if the scrollbar is at its left most position, then '0' is returned.
+    pts getCenterPts() const;
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    pts mCenterPts;
 };
 
 }} // namespace
