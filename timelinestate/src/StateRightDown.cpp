@@ -70,6 +70,10 @@ boost::statechart::result StateRightDown::react( const EvRightUp& evt )
 boost::statechart::result StateRightDown::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
+    // Post the event again such that it is received in the scrolling state
+    // Otherwise, the first move event does not result in a visible scroll action,
+    // but only in the transitionm to the scrolling state.
+    post_event(evt);
     return transit<StateScrolling>();
 }
 

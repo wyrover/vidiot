@@ -42,6 +42,7 @@
 #include "Selection.h"
 #include "Sequence.h"
 #include "SequenceView.h"
+#include "State.h"
 #include "Timeline.h"
 #include "Track.h"
 #include "Transition.h"
@@ -346,6 +347,12 @@ wxPoint LeftCenter(DraggedClips drag)
 wxPoint RightCenter(DraggedClips drag)
 {
     return wxPoint( RightPixel(drag), VCenter(drag) );
+}
+
+void TimelineTriggerWheel(int nSteps)
+{
+    getTimeline().getStateMachine().processWheelEvent(nSteps);
+    waitForIdle();
 }
 
 pixel CursorPosition()

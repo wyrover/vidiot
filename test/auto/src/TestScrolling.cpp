@@ -20,6 +20,8 @@
 #include "HelperTimeline.h"
 #include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
+#include "Layout.h"
+#include "Scrolling.h"
 #include "SequenceView.h"
 #include "Timeline.h"
 #include "UtilLogWxwidgets.h"
@@ -44,6 +46,49 @@ void TestScrolling::tearDown()
 //////////////////////////////////////////////////////////////////////////
 // TEST CASES
 //////////////////////////////////////////////////////////////////////////
+
+void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
+{
+    StartTestSuite();
+    Zoom Level(6); // Maximum
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+
+    StartTest("Scroll using right down scrolling.");
+    pixel from = LeftPixel(VideoClip(0,4));
+    pixel to = HCenter(VideoClip(0,1));
+    Move(wxPoint(from, gui::Layout::TimeScaleHeight));
+    RightDown();
+    Move(wxPoint(to, gui::Layout::TimeScaleHeight));
+    RightUp();
+    ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
+    ASSERT_EQUALS(getTimeline().getScrolling().getOffset().x, from - to);
+
+    pts center = getTimeline().getScrolling().getCenterPts();
+
+    StartTest("Center pts position is kept aligned when zooming out via the keyboard.");
+    Type('-');
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
+    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
+
+    StartTest("Center pts position is kept aligned when zooming in via the keyboard.");
+    Type('=');
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
+
+    StartTest("Center pts position is kept aligned when zooming in via the wheel.");
+    ControlDown();
+    TimelineTriggerWheel(-1);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
+    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
+
+    StartTest("Center pts position is kept aligned when zooming out via the wheel.");
+    ControlDown();
+    TimelineTriggerWheel(1);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
+}
 
 void TestScrolling::testShowScrollbarWhenAddingClipAtEnd()
 {

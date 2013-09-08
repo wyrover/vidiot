@@ -21,6 +21,7 @@
 #include "Cursor.h"
 #include "Layout.h"
 #include "ProjectModification.h"
+#include "Scrolling.h"
 #include "UtilInt.h"
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
@@ -77,6 +78,7 @@ rational Zoom::getCurrent() const
 
 void Zoom::change(int steps)
 {
+    getScrolling().storeCenterPts();
     rational oldzoom = mZoom;
     pts cursorPosition = getCursor().getLogicalPosition();
     zoomlist::iterator it = find(sZooms.begin(), sZooms.end(), mZoom);

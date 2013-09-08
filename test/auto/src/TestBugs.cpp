@@ -165,7 +165,7 @@ void TestBugs::testPlaybackDoesNotStopAfterPressingShift()
 {
     // todo after I found some way to easily make a very large sequence...
     StartTestSuite();
-    Zoom level(6);
+    Zoom level(2); // todo use zoom level(6)
     PositionCursor(HCenter(VideoClip(0,2)));
     Type(WXK_SPACE); // Start playback
     pause(1000);
