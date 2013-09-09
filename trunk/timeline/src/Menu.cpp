@@ -60,6 +60,7 @@ enum
     ID_ADD_OUTTRANSITION,
     ID_ADD_OUTINTRANSITION,
     ID_REMOVE_EMPTY,
+    ID_DELETE_CLIPS,
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -203,28 +204,29 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
     std::set<model::IClipPtr> selectedClips = getSequence()->getSelectedClips();
 
-    struct MenuOption
+    wxMenu menu;
+
+    auto add = [&menu](int id, wxString text, bool show, bool enable, bool separate)
     {
-        explicit MenuOption(int _id, wxString _text, bool _show = false, bool _enable = true)
-            : id(_id)
-            , show(_show)
-            , enable(_enable)
-            , text(_text)
-        {}
-        int id;
-        bool show;
-        bool enable;
-        wxString text;
-        void add(wxMenu& menu)
+        if (show)
         {
-            if (show)
+            if (separate)
             {
-                menu.Append( id, text );
-                menu.Enable( id, enable );
+                menu.AppendSeparator();
             }
+            menu.Append( id, text );
+            menu.Enable( id, enable );
         }
     };
 
+    bool selectedEmptyClip = false;
+    bool selectedMediaClip = false;
+    BOOST_FOREACH( model::IClipPtr clip, selectedClips )
+    {
+        if (clip->isA<model::EmptyClip>()) { selectedEmptyClip = true; }
+        if (clip->isA<model::VideoClip>()) { selectedMediaClip = true; }
+        if (clip->isA<model::AudioClip>()) { selectedMediaClip = true; }
+    }
     bool selectedSingleClip = false;
     if ((selectedClips.size() == 1) && (!info.clip->getLink()))
     {
@@ -303,20 +305,12 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         }
     }
 
-    wxMenu menu;
-
-    MenuOption addInTransition   (ID_ADD_INTRANSITION,    _("Fade &in"),                  clickedOnMediaClip, !hasPrevTransition);
-    MenuOption addOutTransition  (ID_ADD_OUTTRANSITION,   _("Fade &out"),                 clickedOnMediaClip, !hasNextTransition);
-    MenuOption addInOutTransition(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"), clickedOnMediaClip, hasPrevClip);
-    MenuOption addOutInTransition(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),       clickedOnMediaClip, hasNextClip);
-
-    MenuOption removeEmptySpace(ID_REMOVE_EMPTY, _("Remove &empty space"),   clickedOnEmptyClip, clickedOnEmptyClip);
-
-    addInTransition.add(menu);
-    addOutTransition.add(menu);
-    addInOutTransition.add(menu);
-    addOutInTransition.add(menu);
-    removeEmptySpace.add(menu);
+    add(ID_ADD_INTRANSITION,    _("Fade &in"),                  clickedOnMediaClip, !hasPrevTransition, false);
+    add(ID_ADD_OUTTRANSITION,   _("Fade &out"),                 clickedOnMediaClip, !hasNextTransition, false);
+    add(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"), clickedOnMediaClip, hasPrevClip,        false);
+    add(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),       clickedOnMediaClip, hasNextClip,        false);
+    add(ID_REMOVE_EMPTY,        _("Remove &empty space"),       clickedOnEmptyClip, clickedOnEmptyClip, true);
+    add(ID_DELETE_CLIPS,        _("Delete"),                    selectedMediaClip,  !selectedEmptyClip, true);
 
     if (menu.GetMenuItemCount() > 0)
     {
@@ -340,6 +334,9 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             break;
         case ID_REMOVE_EMPTY:
             getIntervals().deleteEmptyClip(info.clip);
+            break;
+        case ID_DELETE_CLIPS:
+            getSelection().deleteClips();
             break;
         }
     }
@@ -439,6 +436,16 @@ void MenuHandler::onRemoveAllEmpty(wxCommandEvent& event)
     {
         LOG_INFO;
         getIntervals().deleteEmpty();
+    }
+    event.Skip();
+}
+
+void MenuHandler::onDeleteSelectedClips(wxCommandEvent& event)
+{
+    if (mActive)
+    {
+        LOG_INFO;
+        getSelection().deleteClips();
     }
     event.Skip();
 }
