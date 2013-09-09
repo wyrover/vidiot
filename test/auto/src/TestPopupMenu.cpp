@@ -145,6 +145,17 @@ void TestPopupMenu::testAddTransitions()
     }
 }
 
+void TestPopupMenu::testDelete()
+{
+    StartTestSuite();
+    Move(Center(VideoClip(0,2)));
+    ClickRight(false);
+    Type('d');
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip);
+
+}
+
 void TestPopupMenu::testRemoveOneEmptyInterval()
 {
     StartTestSuite();

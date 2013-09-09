@@ -39,6 +39,9 @@ public:
     /// Test adding transitions via the popup menu.
     void testAddTransitions();
 
+    /// Test deleting a clip via the popup menu
+    void testDelete();
+
     /// Test removing one empty area via the popup menu.
     void testRemoveOneEmptyInterval();
 
