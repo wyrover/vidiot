@@ -125,6 +125,7 @@ private:
     model::VideoClipPtr mVideoClip;
     model::AudioClipPtr mAudioClip;
 
+    wxStaticText* mCurrentLength;
     std::list<wxToggleButton*> mLengthButtons;
     std::map<pts, bool> mTrimAtEnd; ///< True indicates at end
 
@@ -165,6 +166,9 @@ private:
     void determineClipSizeBounds();
 
     void updateLengthButtons();
+
+    /// \return time to be displayed.
+    wxString convertTime(int ms) const;
 };
 }} // namespace
 

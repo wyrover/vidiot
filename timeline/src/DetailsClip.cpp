@@ -72,6 +72,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mClip()
     ,   mVideoClip()
     ,   mAudioClip()
+    ,   mCurrentLength()
     ,   mOpacitySlider(0)
     ,   mOpacitySpin(0)
     ,   mSelectScaling(0)
@@ -92,15 +93,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     addBox(_("Duration"));
 
-    auto times = [] (int ms) -> wxString
-    {
-        ASSERT_LESS_THAN(ms, 60 * model::Constants::sSecond);
-        std::ostringstream o;
-        div_t divseconds = div(ms, model::Constants::sSecond);
-        o << divseconds.quot << '.' << std::setw(3) << std::setfill('0') << divseconds.rem;
-        std::string oo = o.str();
-        return oo.substr(0,oo.size() - 2);
-    };
+    mCurrentLength = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT | wxST_NO_AUTORESIZE);
+    addOption(_("Current length"), mCurrentLength);
 
     std::list<int> defaultLengths = boost::assign::list_of(500)(1000)(1500)(2000)(2500)(3000);
     wxPanel* lengthbuttonspanel = new wxPanel(this);
@@ -108,7 +102,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     BOOST_FOREACH( int length, defaultLengths )
     {
         // Use the integer as id
-        wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, length, times(length), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, length, convertTime(length), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
         button->SetToolTip(_("Change the length of the clip to this length. Hold shift when pressing to avoid introducing a black area."));
         lengthbuttonspanel->GetSizer()->Add(button,wxSizerFlags(1));
         button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
@@ -279,10 +273,13 @@ void DetailsClip::setClip(model::IClipPtr clip)
             determineClipSizeBounds();
             updateLengthButtons();
 
+            mCurrentLength->SetLabel(convertTime(model::Convert::ptsToTime(mClip->getLength())) + _(" seconds"));
+
             mVideoClip = getTypedClip<model::VideoClip>(clip);
             mAudioClip = getTypedClip<model::AudioClip>(clip);
             if (mVideoClip)
             {
+
                 wxSize originalSize = mVideoClip->getInputSize();
                 boost::rational< int > factor = mVideoClip->getScalingFactor();
                 wxPoint position = mVideoClip->getPosition();
@@ -753,6 +750,16 @@ void DetailsClip::updateLengthButtons()
             }
         }
     }
+}
+
+wxString DetailsClip::convertTime(int ms) const
+{
+    ASSERT_LESS_THAN(ms, 60 * model::Constants::sSecond);
+    std::ostringstream o;
+    div_t divseconds = div(ms, model::Constants::sSecond);
+    o << divseconds.quot << '.' << std::setw(3) << std::setfill('0') << divseconds.rem;
+    std::string oo = o.str();
+    return oo.substr(0,oo.size() - 2);
 }
 
 }} // namespace
