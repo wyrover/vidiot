@@ -543,6 +543,14 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
         ar & mAudioTracks;
         if (Archive::is_loading::value)
         {
+            BOOST_FOREACH( TrackPtr track, mVideoTracks )
+            {
+                track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+            }
+            BOOST_FOREACH( TrackPtr track, mAudioTracks )
+            {
+                track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
+            }
             updateTracks();
         }
         ar & mRender;

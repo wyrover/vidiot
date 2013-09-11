@@ -72,9 +72,20 @@ void TestSavingAndLoading::testSaveAndLoad()
     StartTest("Load document");
     triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();
-    StartTest("Trim clip");
-    TrimLeft(VideoClip(0,1),20); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
+
+    StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
+    TrimLeft(VideoClip(0,1),20);
     Undo();
+
+    StartTest("Enlarge sequence"); // Known bug at some point: enlarging the sequence did not cause an update of the timeline virtual size due to missing event binding
+    Zoom level(2); // Zoom in twice
+    wxSize paneSize = getTimeline().GetVirtualSize();
+    wxSize size = getTimeline().getSequenceView().getSize();
+    Drag(From(Center(AudioClip(0,7))).To(wxPoint(size.x - 2, VCenter(AudioTrack(0)))));
+    wxSize newSize = getTimeline().getSequenceView().getSize();
+    ASSERT_DIFFERS(getTimeline().getSequenceView().getSize(), size);
+    ASSERT_DIFFERS(getTimeline().GetVirtualSize(), paneSize);
+
     model::Project::get().Modify(false); // Avoid 'save?' dialog
     StartTest("TearDown");
     triggerMenu(wxID_CLOSE);
