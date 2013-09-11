@@ -156,7 +156,7 @@ void Track::addClips(IClips clips, IClipPtr position)
     ProcessEvent(EventAddClips(MoveParameter(self(), position, clips, TrackPtr(), IClipPtr(), IClips()))); // Must be handled immediately
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
-    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    // which cause accesses to the model. By that time, all views must know the proper list of clips.
     updateLength();
 }
 
@@ -183,7 +183,7 @@ void Track::removeClips(IClips clips)
     ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), self(), position, clips))); // Must be handled immediately
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
-    // which cause accesses to the model. By that time, all views must know the proper list of tracks.
+    // which cause accesses to the model. By that time, all views must know the proper list of clips.
     updateLength();
 }
 
