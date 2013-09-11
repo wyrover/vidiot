@@ -39,6 +39,8 @@ public:
 
     void testShowScrollbarWhenAddingClipAtEnd();
 
+    void testUpdateScrollingIfCursorIsMovedOutsideVisibleRegion();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

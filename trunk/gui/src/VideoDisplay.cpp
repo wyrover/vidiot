@@ -479,11 +479,16 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
 void VideoDisplay::showNewVideoFrame()
 {
     Refresh(false);
-    if (mCurrentVideoFrame)
+    if (mCurrentVideoFrame && mPlaying)
     {
         // If there is no displayed video frame, do not change the timeline's cursor
         // position. An example of this is the case where the cursor is positioned
         // beyond the end of the sequence.
+        //
+        // Furthermore, when not playing, do not generate events. Otherwise, any cursor
+        // move in the timeline (home/end/prevclip/nextclip) will cause such an event.
+        // In turn, that might cause a change of the scrolling in Cursor::onPlaybackPosition
+        // which is not desired for 'user initiated moves'.
         GetEventHandler()->QueueEvent(new PlaybackPositionEvent(mCurrentVideoFrame->getPts()));
     }
 }

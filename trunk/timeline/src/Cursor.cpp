@@ -30,14 +30,16 @@
 
 namespace gui { namespace timeline {
 
+const int Cursor::EDGE_OFFSET = 20;
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
 Cursor::Cursor(Timeline* timeline)
-:   wxEvtHandler()
-,   Part(timeline)
-,   mCursorPosition(0)
+    :   wxEvtHandler()
+    ,   Part(timeline)
+    ,   mCursorPosition(0)
 {
     VAR_DEBUG(this);
 
@@ -70,14 +72,16 @@ void Cursor::setLogicalPosition(pts position)
     }
 }
 
-void Cursor::prevClip()
+void Cursor::prevFrame()
 {
     setLogicalPosition(getLogicalPosition() - 1);
+    ensureCursorVisible();
 }
 
-void Cursor::nextClip()
+void Cursor::nextFrame()
 {
     setLogicalPosition(getLogicalPosition() + 1);
+    ensureCursorVisible();
 }
 
 void Cursor::prevCut()
@@ -89,6 +93,7 @@ void Cursor::prevCut()
         if (position < current)
         {
             setLogicalPosition(position);
+            ensureCursorVisible();
             return;
         }
     }
@@ -103,6 +108,7 @@ void Cursor::nextCut()
         if (position > current)
         {
             setLogicalPosition(position);
+            ensureCursorVisible();
             return;
         }
     }
@@ -111,11 +117,13 @@ void Cursor::nextCut()
 void Cursor::home()
 {
     setLogicalPosition(0);
+    ensureCursorVisible();
 }
 
 void Cursor::end()
 {
     setLogicalPosition(getSequence()->getLength());
+    ensureCursorVisible();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -136,6 +144,19 @@ void Cursor::draw(wxDC& dc) const
 void Cursor::onPlaybackPosition(PlaybackPositionEvent& event)
 {
     moveTo(event.getValue());
+
+    // Ensure that the scrolling is adjusted if playback moves the cursor beyond the visible region.
+    // Note: specifically located here since a slightly different adjustment mechanism is used for user actions.
+    wxPoint scroll = getScrolling().getOffset();
+    wxSize size = getTimeline().GetClientSize();
+
+    // Right side
+    pts lastVisibleFrame = getZoom().pixelsToPts(scroll.x + size.x - EDGE_OFFSET);
+    if (lastVisibleFrame < mCursorPosition)
+    {
+        getScrolling().align(mCursorPosition, size.x - EDGE_OFFSET);
+    }
+
     event.Skip();
 }
 
@@ -156,6 +177,7 @@ void Cursor::moveTo(pts position)
         if (oldPixelPos != newPixelPos)
         {
             wxPoint scroll = getScrolling().getOffset();
+            wxSize size = getTimeline().GetClientSize();
 
             // Refresh the old and new cursor position areas
             long cursorOnClientArea = newPixelPos - scroll.x;
@@ -167,6 +189,29 @@ void Cursor::moveTo(pts position)
             getIntervals().update(mCursorPosition);
         }
     }
+}
+
+void Cursor::ensureCursorVisible()
+{
+    // Ensure that the scrolling is adjusted if the cursor is moved outside the visible region by a user action
+    // Note: the mechanism for adjusting the cursor during playback is specifically located elsewhere since
+    //       a slightly different adjustment mechanism is used then.
+    wxPoint scroll = getScrolling().getOffset();
+    wxSize size = getTimeline().GetClientSize();
+
+    // Left side
+    pts firstVisibleFrame = getZoom().pixelsToPts(scroll.x);
+    if (firstVisibleFrame > mCursorPosition)
+    {
+        getScrolling().align(mCursorPosition, EDGE_OFFSET);
+    }
+    // Right side
+    pts lastVisibleFrame = getZoom().pixelsToPts(scroll.x + size.x);
+    if (lastVisibleFrame < mCursorPosition)
+    {
+        getScrolling().align(mCursorPosition, size.x - EDGE_OFFSET);
+    }
+
 }
 
 }} // namespace

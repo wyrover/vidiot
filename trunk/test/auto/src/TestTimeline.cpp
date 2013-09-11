@@ -857,7 +857,6 @@ void TestTimeline::testTrimmingWithOtherTracks()
         ConfigFixture.SnapToClips(true).SnapToCursor(false);
         TrimLeft(VideoClip(0,4),40,false);
         Drag(From(Center(VideoClip(0,6))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
-        //pause();
         ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,5));
         ASSERT_EQUALS(VideoClip(1,1)->getLink(),AudioClip(0,4));
         TrimLeft(VideoClip(0,5),10,false,false);

@@ -166,10 +166,8 @@ private:
     void determineClipSizeBounds();
 
     void updateLengthButtons();
-
-    /// \return time to be displayed.
-    wxString convertTime(int ms) const;
 };
+
 }} // namespace
 
 #endif // DETAILS_CLIP_H

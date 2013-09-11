@@ -152,19 +152,19 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SPACE:     return start();                                                     break;
-    case WXK_DELETE:    getSelection().deleteClips();                                       break;
-    case WXK_F1:        getTooltip().show(sTooltip);                                        break;
-    case 'c':           addTransition();                                                    break;
-    case 'C':           addTransition();                                                    break;
-    case 's':           (new command::SplitAtCursor(getSequence()))->submit();              break;
-    case 'S':           (new command::SplitAtCursor(getSequence()))->submit();              break;
-    case '-':           getZoom().change( evt.getCtrlDown() ? -1000 : -1);                  break;
-    case '=':           getZoom().change( evt.getCtrlDown() ?  1000 :  1);                  break;
-    case WXK_LEFT:      evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevClip(); break;
-    case WXK_RIGHT:     evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextClip(); break;
-    case WXK_HOME:      getCursor().home();                                                 break;
-    case WXK_END:       getCursor().end();                                                  break;
+    case WXK_SPACE:     return start();                                                      break;
+    case WXK_DELETE:    getSelection().deleteClips();                                        break;
+    case WXK_F1:        getTooltip().show(sTooltip);                                         break;
+    case 'c':           addTransition();                                                     break;
+    case 'C':           addTransition();                                                     break;
+    case 's':           (new command::SplitAtCursor(getSequence()))->submit();               break;
+    case 'S':           (new command::SplitAtCursor(getSequence()))->submit();               break;
+    case '-':           getZoom().change( evt.getCtrlDown() ? -1000 : -1);                   break;
+    case '=':           getZoom().change( evt.getCtrlDown() ?  1000 :  1);                   break;
+    case WXK_LEFT:      evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame(); break;
+    case WXK_RIGHT:     evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame(); break;
+    case WXK_HOME:      getCursor().home();                                                  break;
+    case WXK_END:       getCursor().end();                                                   break;
     }
     return forward_event();
 }
