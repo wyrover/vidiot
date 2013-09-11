@@ -17,6 +17,7 @@
 
 #include "TestScrolling.h"
 
+#include "Cursor.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
@@ -98,6 +99,68 @@ void TestScrolling::testShowScrollbarWhenAddingClipAtEnd()
     pixel length = getTimeline().getSequenceView().getSize().GetWidth();
     Drag(From(Center(VideoClip(0,4))).To(wxPoint(getTimeline().GetRect().GetRight() - 10, VCenter(VideoTrack(0))))); // extend the track to enable scrolling
     ASSERT_DIFFERS(getTimeline().GetClientSize(),getTimeline().GetVirtualSize()); // Scrollbars: Check that the scrolled area != physical area of widget
+}
+
+void TestScrolling::testUpdateScrollingIfCursorIsMovedOutsideVisibleRegion()
+{
+    auto ASSERT_SCROLLING_POSITION = [](pixel positionInVisibleArea, pts expected)
+    {
+        wxSize s = getTimeline().GetClientSize();
+        wxPoint p = getTimeline().getScrolling().getOffset();
+        if (positionInVisibleArea >= 0)
+        {
+            ASSERT_EQUALS(getTimeline().getZoom().pixelsToPts(p.x + positionInVisibleArea), expected);
+        }
+        else
+        {
+            ASSERT_EQUALS(getTimeline().getZoom().pixelsToPts(p.x + s.x + positionInVisibleArea), expected);
+        }
+    };
+    StartTestSuite();
+    Zoom level(6);
+    StartTest("Move cursor to end of timeline.");
+    Type(WXK_END);
+    ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, getSequence()->getLength());
+    ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), getSequence()->getLength());
+    StartTest("Cursor not moved when not holding CTRL.");
+    Type(WXK_LEFT);
+    StartTest("Move cursor to previous cut.");
+    ControlDown();
+    Type(WXK_LEFT);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,6)->getLeftPts());
+    ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, getSequence()->getLength()); // Not changed
+    ControlDown();
+    Type(WXK_LEFT);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,5)->getLeftPts());
+    ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, getSequence()->getLength()); // Not changed
+    StartTest("Move cursor to previous cut and beyond the timeline visible area begin.");
+    ControlDown();
+    Type(WXK_LEFT);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,4)->getLeftPts());
+    ASSERT_SCROLLING_POSITION(gui::timeline::Cursor::EDGE_OFFSET, VideoClip(0,4)->getLeftPts());
+    StartTest("Cursor not moved when not holding CTRL.");
+    Type(WXK_RIGHT);
+    StartTest("Move cursor to next cut.");
+    ControlDown();
+    Type(WXK_RIGHT);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,5)->getLeftPts());
+    ASSERT_SCROLLING_POSITION(gui::timeline::Cursor::EDGE_OFFSET, VideoClip(0,4)->getLeftPts()); // Not changed
+    StartTest("Move cursor to next cut and beyond the timeline visible area end.");
+    ControlDown();
+    Type(WXK_RIGHT);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,6)->getLeftPts());
+    ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, VideoClip(0,6)->getLeftPts());
+    StartTest("Move cursor to begin of timeline.");
+    ControlDown();
+    Type(WXK_HOME);
+    ControlUp();
+    ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), 0);
+    ASSERT_SCROLLING_POSITION(0, 0);
 }
 
 } // namespace

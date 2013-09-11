@@ -31,6 +31,8 @@ class Cursor
 {
 public:
 
+    static const int EDGE_OFFSET;
+
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
@@ -49,8 +51,10 @@ public:
     /// \param position new position in sequence where cursor must be positioned
     void setLogicalPosition(pts position);
 
-    void prevClip();
-    void nextClip();
+    void setLogicalPositionAndKeepVisible(pts position);
+
+    void prevFrame();
+    void nextFrame();
     void prevCut();
     void nextCut();
     void home();
@@ -80,6 +84,7 @@ private:
     /// \param position new position in sequence where cursor must be positioned
     void moveTo(pts position);
 
+    void ensureCursorVisible();
 };
 
 }} // namespace
