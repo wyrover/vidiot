@@ -1,2 +1,0 @@
-uiaction.path:
-Apply in <wxwidgets_trunk>\src\msw
