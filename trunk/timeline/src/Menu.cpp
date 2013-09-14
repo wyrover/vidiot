@@ -61,6 +61,7 @@ enum
     ID_ADD_OUTINTRANSITION,
     ID_REMOVE_EMPTY,
     ID_DELETE_CLIPS,
+    ID_DELETE_TRIM_CLIPS,
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -227,15 +228,6 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         if (clip->isA<model::VideoClip>()) { selectedMediaClip = true; }
         if (clip->isA<model::AudioClip>()) { selectedMediaClip = true; }
     }
-    bool selectedSingleClip = false;
-    if ((selectedClips.size() == 1) && (!info.clip->getLink()))
-    {
-        selectedSingleClip = true;
-    }
-    if ((selectedClips.size() == 2) && (info.clip->getLink() && info.clip->getLink()->getSelected()))
-    {
-        selectedSingleClip = true;
-    }
 
     bool clickedOnVideoClip = (info.clip && info.clip->isA<model::VideoClip>());
     bool clickedOnAudioClip = (info.clip && info.clip->isA<model::AudioClip>());
@@ -305,12 +297,13 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         }
     }
 
-    add(ID_ADD_INTRANSITION,    _("Fade &in"),                  clickedOnMediaClip, !hasPrevTransition, false);
-    add(ID_ADD_OUTTRANSITION,   _("Fade &out"),                 clickedOnMediaClip, !hasNextTransition, false);
-    add(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"), clickedOnMediaClip, hasPrevClip,        false);
-    add(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),       clickedOnMediaClip, hasNextClip,        false);
-    add(ID_REMOVE_EMPTY,        _("Remove &empty space"),       clickedOnEmptyClip, clickedOnEmptyClip, true);
-    add(ID_DELETE_CLIPS,        _("Delete"),                    selectedMediaClip,  !selectedEmptyClip, true);
+    add(ID_ADD_INTRANSITION,    _("Fade &in"),                   clickedOnMediaClip, !hasPrevTransition, false);
+    add(ID_ADD_OUTTRANSITION,   _("Fade &out"),                  clickedOnMediaClip, !hasNextTransition, false);
+    add(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"),  clickedOnMediaClip, hasPrevClip,        false);
+    add(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),        clickedOnMediaClip, hasNextClip,        false);
+    add(ID_REMOVE_EMPTY,        _("Remove &empty space"),        clickedOnEmptyClip, clickedOnEmptyClip, true);
+    add(ID_DELETE_CLIPS,        _("&Delete\tDel"),                selectedMediaClip,  !selectedEmptyClip, true);
+    add(ID_DELETE_TRIM_CLIPS,   _("Delete and &Trim\tShift+Del"), selectedMediaClip,  !selectedEmptyClip, false);
 
     if (menu.GetMenuItemCount() > 0)
     {
@@ -337,6 +330,9 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             break;
         case ID_DELETE_CLIPS:
             getSelection().deleteClips();
+            break;
+        case ID_DELETE_TRIM_CLIPS:
+            getSelection().deleteClips(true);
             break;
         }
     }

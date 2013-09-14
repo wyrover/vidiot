@@ -148,12 +148,27 @@ void TestPopupMenu::testAddTransitions()
 void TestPopupMenu::testDelete()
 {
     StartTestSuite();
-    Move(Center(VideoClip(0,2)));
-    ClickRight(false);
-    Type('d');
-    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
-    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip);
-
+    {
+        StartTest("Delete without shift");
+        Move(Center(VideoClip(0,2)));
+        ClickRight(false);
+        Type('d');
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip);
+        Undo();
+        Click(Center(VideoClip(0,0)));
+    }
+    {
+        StartTest("Delete with shift");
+        Move(Center(VideoClip(0,2)));
+        ClickRight(false);
+        Type('t');
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        Undo();
+    }
 }
 
 void TestPopupMenu::testRemoveOneEmptyInterval()
