@@ -57,13 +57,15 @@ mkdir %VIDIOT_BUILD%
 REM ============================== PREPARE ==============================
 :PREPARE
 
-set BUILD_DIR=%VIDIOT_BUILD%
 %VIDIOT_BUILD_DRIVE%
-cd %BUILD_DIR%
+cd %VIDIOT_DIR%
+if NOT EXIST Build mkdir Build
+
+cd %VIDIOT_BUILD%
 if NOT EXIST MSVC mkdir MSVC
 if NOT EXIST GCCD mkdir GCCD
 if NOT EXIST GCCR mkdir GCCR
-
+        
 
 
 
@@ -76,7 +78,7 @@ cd %SOURCE%
 
 REM Generate revision log file
 call %VIDIOT_DIR%\vidiot_trunk\build\make_readme.bat
-
+           
 
 
 
@@ -84,7 +86,7 @@ REM ============================== BUILD ==============================
 :BUILD
 REM === FIND BOOST ====
 REM o-d: always use newest version
-%DRIVE%
+%VIDIOT_BUILD_DRIVE%
 cd %VIDIOT_DIR%
 dir boost* /b /o-d > %TEMP%\boostdir.txt
 set /p BOOSTDIR=<%TEMP%\boostdir.txt
@@ -93,30 +95,24 @@ set FOUND_BOOST_VERSION="%BOOSTVERSION:_=.%"
 set BOOST_ROOT=%VIDIOT_DIR%\%BOOSTDIR%
 set BOOST_ROOT=%BOOST_ROOT:\=/%
 
-
 REM === CREATE SOLUTION ====
-REM del /s/q Build 
 set wxWidgets_ROOT_DIR=%VIDIOT_DIR%\wxwidgets_trunk
-
-%VIDIOT_BUILD_DRIVE%
-cd %VIDIOT_BUILD%\..
-if NOT EXIST Build mkdir Build
 
 REM add --trace to a cmake line for more logging 
 
 if EXIST "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat" call "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
 
-cd %BUILD_DIR%\MSVC
+cd %VIDIOT_BUILD%\MSVC
 set OUTTYPE="Visual Studio 9 2008"
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
 if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
 cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
 cmake -LAH  %SOURCE% > CMakeVariables.txt
 
-REM cd %BUILD_DIR%\GCCD
+REM cd %VIDIOT_BUILD%\GCCD
 REM cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
-REM cd %BUILD_DIR%\GCCR
+REM cd %VIDIOT_BUILD%\GCCR
 REM cmake -G "CodeBlocks - MinGW Makefiles" -DCMAKE_BUILD_TYPE:STRING="RELEASE" -Wdev --debug-output %SOURCE%
 
 
@@ -125,7 +121,7 @@ REM ============================== DELIVER ==============================
 :DELIVER
 if NOT "%1%"=="DELIVER" goto END
 
-cd %BUILD_DIR%\MSVC
+cd %VIDIOT_BUILD%\MSVC
 "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
 for %%i in (Vidiot*.exe) do start "" /b "%%i"
 
