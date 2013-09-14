@@ -31,9 +31,9 @@
 
 namespace gui { namespace timeline { namespace command {
 
-DeleteSelectedClips::DeleteSelectedClips(model::SequencePtr sequence)
+DeleteSelectedClips::DeleteSelectedClips(model::SequencePtr sequence, bool shift)
     :   AClipEdit(sequence)
-    ,   mShift(getTimeline().getKeyboard().getShiftDown())
+    ,   mShift(shift || getTimeline().getKeyboard().getShiftDown())
 {
     VAR_INFO(this)(mShift);
     mCommandName = _("Delete selected clips");

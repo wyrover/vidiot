@@ -51,7 +51,7 @@ public:
     bool isEmpty() const;
 
     /// Deletes all selected clips.
-    void deleteClips();
+    void deleteClips(bool shift = false);
 
     /// Unselect all clips
     void unselectAll();
