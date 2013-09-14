@@ -1,0 +1,18 @@
+Index: dcbufcmn.cpp
+===================================================================
+--- dcbufcmn.cpp	(revision 74804)
++++ dcbufcmn.cpp	(working copy)
+@@ -157,9 +157,11 @@
+         height = wxMin(height, heightDC);
+     }
+ 
++    wxPoint p = m_dc->GetLogicalOrigin();
++    SetLogicalOrigin(p.x,p.y);
+     m_dc->Blit(0, 0, width, height, this, -x, -y);
+     m_dc = NULL;
+ 
+     if ( m_style & wxBUFFER_USES_SHARED_BUFFER )
+         wxSharedDCBufferManager::ReleaseBuffer(m_buffer);
+-}
++}
+\ No newline at end of file
