@@ -89,10 +89,8 @@ Install ActivePerl via installer
 * Copy include/wx/msw/setup0.h to setup.h
 * Copy include/wx/msw/setup0.h to include/wx/setup.h
 * Clean <VIDIOT_DIR>\wxwidgets_trunk\lib\vc_lib (particularly, remove all setup.h files)
-* Apply patch to wxUIActionSimulator::MouseMove: (NOTE: No longer required!)
-  (see <VIDIOT_SRC>/build/patches)
-    int scaledx = std::ceil((float)x * 65535.0 / (displayx-1));
-    int scaledy = std::ceil((float)y * 65535.0 / (displayy-1));
+* Apply dcbufcmn.cpp.patch patch to wxBufferedPaintDC 
+  http://trac.wxwidgets.org/ticket/15497
 * Apply patch to wxFSWatcher
   (see <VIDIOT_SRC>/build/patches)
   http://trac.wxwidgets.org/ticket/13294
@@ -128,7 +126,7 @@ Install ActivePerl via installer
 
 =================== PORTAUDIO ===================
 * Create folder <VIDIOT_DIR>\portaudio_trunk
-* checkout https://www.portaudio.com/repos/portaudio/trunk into that dir
+* checkout https://subversion.assembla.com/svn/portaudio/trunk into that dir
 * Install MS DirectX SDK
 * (MSVC)
   - Open portaudio_trunk\build\msvc\portaudio.sln (convert if needed)
