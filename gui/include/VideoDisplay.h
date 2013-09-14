@@ -144,9 +144,6 @@ private:
     /// safeguards access to the currently shown bitmap (mCurrentBitmap).
     boost::mutex mMutexDraw;
 
-    /// Helper method. Triggers a position event and updates the bitmap.
-    void showNewVideoFrame();
-
     //////////////////////////////////////////////////////////////////////////
     // GUI METHODS
     //////////////////////////////////////////////////////////////////////////

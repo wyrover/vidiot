@@ -7,7 +7,7 @@
             <xsl:sort select="position()" data-type="number" order="descending" />
             <xsl:if test="@revision>1220">
                 <xsl:choose>
-                    <xsl:when test="@revision=1266"><xsl:text>&#xa;&#xa;Release 0.1.3 (revision </xsl:text><xsl:value-of select="@revision"/><xsl:text>)</xsl:text></xsl:when>
+                    <xsl:when test="@revision=1267"><xsl:text>&#xa;&#xa;Release 0.1.3 (revision </xsl:text><xsl:value-of select="@revision"/><xsl:text>)</xsl:text></xsl:when>
                     <xsl:when test="@revision=1246"><xsl:text>&#xa;&#xa;Release 0.1.2 (revision </xsl:text><xsl:value-of select="@revision"/><xsl:text>)</xsl:text></xsl:when>
                     <xsl:when test="@revision=1235"><xsl:text>&#xa;&#xa;Release 0.1.1 (revision </xsl:text><xsl:value-of select="@revision"/><xsl:text>)</xsl:text></xsl:when>
                     <xsl:when test="@revision=1223"><xsl:text>&#xa;&#xa;Release 0.1.0 (revision </xsl:text><xsl:value-of select="@revision"/><xsl:text>)&#xa;* Initial version</xsl:text></xsl:when>
