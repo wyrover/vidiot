@@ -229,7 +229,7 @@ void VideoDisplay::moveTo(pts position)
             mCurrentBitmap.reset();
         }
 
-        showNewVideoFrame();
+        Refresh(false); // Update the shown bitmap
     }
     Update(); // For immediate feedback when moving the cursor quickly over the timeline
 }
@@ -406,12 +406,27 @@ void VideoDisplay::videoDisplayThread()
         }
         else
         {
-            boost::mutex::scoped_lock lock(mMutexDraw);
-            ASSERT_DIFFERS(mCurrentVideoFrame->getPts(), videoFrame->getPts()); // Otherwise, all the computations on 'playback time' can behave irratic.
-            mCurrentVideoFrame = videoFrame;
-            mCurrentBitmap = videoFrame->getBitmap();
-            mCurrentBitmapPosition = videoFrame->getPosition();
-            showNewVideoFrame();
+            pts position = videoFrame->getPts();
+            wxBitmapPtr videoBitmap = videoFrame->getBitmap();
+            {
+                boost::mutex::scoped_lock lock(mMutexDraw);
+                ASSERT_DIFFERS(mCurrentVideoFrame->getPts(), position); // Otherwise, all the computations on 'playback time' can behave irratic.
+                mCurrentVideoFrame = videoFrame;
+                mCurrentBitmap = videoBitmap;
+                mCurrentBitmapPosition = videoFrame->getPosition();
+            }
+            // Note:
+            // If there is no displayed video frame, do not change the timeline's cursor
+            // position. An example of this is the case where the cursor is positioned
+            // beyond the end of the sequence.
+            //
+            // Furthermore, when not playing, do not generate events. Otherwise, any cursor
+            // move in the timeline (home/end/prevclip/nextclip) will cause such an event.
+            // In turn, that might cause a change of the scrolling in Cursor::onPlaybackPosition
+            // which is not desired for 'user initiated moves'.
+            GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
+
+            Refresh(false);
             boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
         }
 
@@ -473,23 +488,6 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
     if (bitmap)
     {
         dc.DrawBitmap(*bitmap,position);
-    }
-}
-
-void VideoDisplay::showNewVideoFrame()
-{
-    Refresh(false);
-    if (mCurrentVideoFrame && mPlaying)
-    {
-        // If there is no displayed video frame, do not change the timeline's cursor
-        // position. An example of this is the case where the cursor is positioned
-        // beyond the end of the sequence.
-        //
-        // Furthermore, when not playing, do not generate events. Otherwise, any cursor
-        // move in the timeline (home/end/prevclip/nextclip) will cause such an event.
-        // In turn, that might cause a change of the scrolling in Cursor::onPlaybackPosition
-        // which is not desired for 'user initiated moves'.
-        GetEventHandler()->QueueEvent(new PlaybackPositionEvent(mCurrentVideoFrame->getPts()));
     }
 }
 
