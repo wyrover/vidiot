@@ -27,6 +27,7 @@
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
+#include "HelperTransition.h"
 #include "HelperWindow.h"
 #include "ids.h"
 #include "Menu.h"
@@ -260,6 +261,295 @@ void TestPopupMenu::testAdvancedRightClickScenarios()
         ASSERT(getTimeline().getMenuHandler().isPopupShown());
         wxUIActionSimulator().MouseMove(wxGetMouseState().GetPosition() - wxPoint(20,0));
         wxUIActionSimulator().MouseClick();
+    }
+}
+
+void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
+{
+    StartTestSuite();
+    Zoom level(6);
+
+    pts lengthOfCrossFade =  Config::ReadLong(Config::sPathDefaultTransitionLength);
+    pts lengthOfFade = lengthOfCrossFade / 2;
+
+    {
+        MakeInOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthOfCrossFade);
+
+        Move(TransitionLeftClipInterior(VideoClip(0,2)));
+        {
+            StartTest("InOutTransition: TransitionLeftClipInterior: Fade in.");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT( wxEventLoopBase::GetActive()->IsMain());
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("InOutTransition: TransitionLeftClipInterior: Fade out (ignored).");
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
+        {
+            StartTest("InOutTransition: TransitionLeftClipInterior: Fade from previous.");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+        {
+            StartTest("InOutTransition: TransitionLeftClipInterior: Fade to next (ignored).");
+            ClickRight(); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
+        Move(TransitionLeftClipEnd(VideoClip(0,2)));
+        {
+            StartTest("InOutTransition: TransitionLeftClipEnd: Fade in.");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("InOutTransition: TransitionLeftClipEnd: Fade out (ignored).");
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
+        {
+            StartTest("InOutTransition: TransitionLeftClipEnd: Fade from previous.");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+        {
+            StartTest("InOutTransition: TransitionLeftClipEnd: Fade to next (ignored).");
+            ClickRight(false); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
+        Move(TransitionRightClipInterior(VideoClip(0,2)));
+        {
+            StartTest("InOutTransition: TransitionRightClipInterior: Fade in (ignored).");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InOutTransition: TransitionRightClipInterior: Fade out.");
+            pause(500);
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("InOutTransition: TransitionRightClipInterior: Fade from previous (ignored).");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InOutTransition: TransitionRightClipInterior: Fade to next.");
+            ClickRight(false); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+        Move(TransitionRightClipBegin(VideoClip(0,2)));
+        {
+            StartTest("InOutTransition: TransitionRightClipBegin: Fade in (ignored).");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InOutTransition: TransitionRightClipBegin: Fade out.");
+            pause(500);
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("InOutTransition: TransitionRightClipBegin: Fade from previous (ignored).");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InOutTransition: TransitionRightClipBegin: Fade to next.");
+            ClickRight(false); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+    }
+    {
+        MakeInTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthOfFade);
+
+        Move(TransitionRightClipInterior(VideoClip(0,2)));
+        {
+            StartTest("InTransition: TransitionRightClipInterior: Fade in (ignored).");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InTransition: TransitionRightClipInterior: Fade out.");
+            pause(500);
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("InTransition: TransitionRightClipInterior: Fade from previous (ignored).");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InTransition: TransitionRightClipInterior: Fade to next.");
+            ClickRight(false); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+        Move(TransitionRightClipBegin(VideoClip(0,2)));
+        {
+            StartTest("InTransition: TransitionRightClipBegin: Fade in (ignored).");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InTransition: TransitionRightClipBegin: Fade out.");
+            pause(500);
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("InTransition: TransitionRightClipBegin: Fade from previous (ignored).");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        }
+        {
+            StartTest("InTransition: TransitionRightClipBegin: Fade to next.");
+            ClickRight(false); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+    }
+    {
+        MakeOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthOfFade);
+
+        Move(TransitionLeftClipInterior(VideoClip(0,2)));
+        {
+            StartTest("OutTransition: TransitionLeftClipInterior: Fade in.");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT( wxEventLoopBase::GetActive()->IsMain());
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("OutTransition: TransitionLeftClipInterior: Fade out (ignored).");
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
+        {
+            StartTest("OutTransition: TransitionLeftClipInterior: Fade from previous.");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+        {
+            StartTest("OutTransition: TransitionLeftClipInterior: Fade to next (ignored).");
+            ClickRight(); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
+        Move(TransitionLeftClipEnd(VideoClip(0,2)));
+        {
+            StartTest("OutTransition: TransitionLeftClipEnd: Fade in.");
+            ClickRight(false); // Show menu
+            Type('i'); // Fade &in
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfFade);
+            Undo();
+        }
+        {
+            StartTest("OutTransition: TransitionLeftClipEnd: Fade out (ignored).");
+            ClickRight(false); // Show menu
+            Type('o'); // Fade &out
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
+        {
+            StartTest("OutTransition: TransitionLeftClipEnd: Fade from previous.");
+            ClickRight(false); // Show menu
+            Type('p'); // Cross-fade from &previous
+            ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthOfCrossFade);
+            Undo();
+        }
+        {
+            StartTest("OutTransition: TransitionLeftClipEnd: Fade to next (ignored).");
+            ClickRight(false); // Show menu
+            Type('n'); // Cross-fade to &next
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip);
+        }
     }
 }
 

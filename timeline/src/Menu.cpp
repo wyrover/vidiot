@@ -195,18 +195,12 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     ASSERT(mActive);
     LOG_INFO;
 
-    mPopupPosition = getMouse().getRightDownPosition();
-    PointerPositionInfo info = getMouse().getInfo(mPopupPosition);
-
     // Mechanism:
     // Default menu options are hidden and enabled.
     // If an item is selected for which a menu option makes sense, then the option is shown.
     // If an item is selected for which a menu option does not make sense, then the option is disabled.
 
-    std::set<model::IClipPtr> selectedClips = getSequence()->getSelectedClips();
-
     wxMenu menu;
-
     auto add = [&menu](int id, wxString text, bool show, bool enable, bool separate)
     {
         if (show)
@@ -222,88 +216,71 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
     bool selectedEmptyClip = false;
     bool selectedMediaClip = false;
-    BOOST_FOREACH( model::IClipPtr clip, selectedClips )
+    BOOST_FOREACH( model::IClipPtr selectedClip, getSequence()->getSelectedClips() )
     {
-        if (clip->isA<model::EmptyClip>()) { selectedEmptyClip = true; }
-        if (clip->isA<model::VideoClip>()) { selectedMediaClip = true; }
-        if (clip->isA<model::AudioClip>()) { selectedMediaClip = true; }
+        if (selectedClip->isA<model::EmptyClip>()) { selectedEmptyClip = true; }
+        if (selectedClip->isA<model::VideoClip>()) { selectedMediaClip = true; }
+        if (selectedClip->isA<model::AudioClip>()) { selectedMediaClip = true; }
     }
 
-    bool clickedOnVideoClip = (info.clip && info.clip->isA<model::VideoClip>());
-    bool clickedOnAudioClip = (info.clip && info.clip->isA<model::AudioClip>());
-    bool clickedOnEmptyClip = (info.clip && info.clip->isA<model::EmptyClip>());
+    mPopupPosition = getMouse().getRightDownPosition();
+    PointerPositionInfo info = getMouse().getInfo(mPopupPosition);
 
+    model::IClipPtr clickedClip = info.getLogicalClip();
+    bool clickedOnVideoClip = (clickedClip && clickedClip->isA<model::VideoClip>());
+    bool clickedOnAudioClip = (clickedClip && clickedClip->isA<model::AudioClip>());
+    bool clickedOnEmptyClip = (clickedClip && clickedClip->isA<model::EmptyClip>());
     bool clickedOnMediaClip = clickedOnVideoClip || clickedOnAudioClip;
-    bool hasPrevClip = false;
-    bool hasNextClip = false;
 
-    bool hasPrevTransition = false;
-    bool hasNextTransition = false;
-    if (info.clip)
+    bool canFadeIn = true;
+    bool canFadeOut = true;
+    bool canFadeToNext = true;
+    bool canFadeFromPrevious = true;
+
+    if (clickedClip)
     {
-        model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(info.clip->getPrev());
+        // Check if there's already a transition, disabling the transition menu options
+        model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clickedClip->getPrev());
         if (prevTransition && prevTransition->getRight() > 0)
         {
-            hasPrevTransition = true;
+            canFadeIn = false;
+            canFadeFromPrevious = false;
         }
-
-        model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(info.clip->getNext());
+        model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clickedClip->getNext());
         if (nextTransition && nextTransition->getLeft() > 0)
         {
-            hasNextTransition = true;
+            canFadeOut = false;
+            canFadeToNext = false;
         }
-    }
 
-    if (clickedOnVideoClip)
-    {
-        hasPrevClip = info.clip->getPrev() && info.clip->getPrev()->isA<model::VideoClip>();
-        hasNextClip = info.clip->getNext() && info.clip->getNext()->isA<model::VideoClip>();
-    }
-    else if (clickedOnAudioClip)
-    {
-        hasPrevClip = info.clip->getPrev() && info.clip->getPrev()->isA<model::AudioClip>();
-        hasNextClip = info.clip->getNext() && info.clip->getNext()->isA<model::AudioClip>();
-    }
-
-    bool enableRemoveEmpty = true;
-
-    if (info.onAudioVideoDivider)
-    {
-    }
-    else if (info.onTrackDivider)
-    {
-    }
-    else
-    {
-        if (info.clip)
+        // Check if the clicked clip has room for making a crossfade
+        if (clickedClip->getMaxAdjustBegin() <= 0)
         {
-            switch (info.logicalclipposition)
-            {
-            case TransitionBegin:
-            case TransitionLeftClipEnd:
-            case TransitionInterior:
-            case TransitionRightClipBegin:
-            case TransitionEnd:
-                break;
-            case ClipBegin:
-                break;
-            case ClipInterior:
-                break;
-            case ClipEnd:
-                break;
-            default:
-                FATAL("Unexpected logical clip position.");
-            }
+            canFadeFromPrevious = false;
+        }
+        if (clickedClip->getMinAdjustEnd() >= 0)
+        {
+            canFadeToNext = false;
+        }
+
+        // Check if the adjacent clip has room for making a crossfade
+        if (!clickedClip->getPrev() || clickedClip->getPrev()->getMinAdjustEnd() >= 0)
+        {
+            canFadeFromPrevious = false;
+        }
+        if (!clickedClip->getNext() || clickedClip->getNext()->getMaxAdjustBegin() <= 0)
+        {
+            canFadeToNext = false;
         }
     }
 
-    add(ID_ADD_INTRANSITION,    _("Fade &in"),                   clickedOnMediaClip, !hasPrevTransition, false);
-    add(ID_ADD_OUTTRANSITION,   _("Fade &out"),                  clickedOnMediaClip, !hasNextTransition, false);
-    add(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"),  clickedOnMediaClip, hasPrevClip,        false);
-    add(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),        clickedOnMediaClip, hasNextClip,        false);
-    add(ID_REMOVE_EMPTY,        _("Remove &empty space"),        clickedOnEmptyClip, clickedOnEmptyClip, true);
-    add(ID_DELETE_CLIPS,        _("&Delete\tDel"),                selectedMediaClip,  !selectedEmptyClip, true);
-    add(ID_DELETE_TRIM_CLIPS,   _("Delete and &Trim\tShift+Del"), selectedMediaClip,  !selectedEmptyClip, false);
+    add(ID_ADD_INTRANSITION,    _("Fade &in"),                              clickedOnMediaClip, canFadeIn,              false);
+    add(ID_ADD_OUTTRANSITION,   _("Fade &out"),                             clickedOnMediaClip, canFadeOut,             false);
+    add(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"),             clickedOnMediaClip, canFadeFromPrevious,    false);
+    add(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),                   clickedOnMediaClip, canFadeToNext,          false);
+    add(ID_REMOVE_EMPTY,        _("Remove &empty space"),                   clickedOnEmptyClip, clickedOnEmptyClip,     true);
+    add(ID_DELETE_CLIPS,        _("&Delete selected\tDel"),                 selectedMediaClip,  !selectedEmptyClip,     true);
+    add(ID_DELETE_TRIM_CLIPS,   _("Delete and &Trim selected\tShift+Del"),  selectedMediaClip,  !selectedEmptyClip,     false);
 
     if (menu.GetMenuItemCount() > 0)
     {
@@ -504,7 +481,7 @@ void MenuHandler::createTransition(model::TransitionType type)
     ASSERT(info.clip);
     model::TransitionPtr transition = info.clip->isA<model::VideoClip>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
 
-    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.clip, transition, type);
+    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.getLogicalClip(), transition, type);
 
     if (cmd->isPossible())
     {

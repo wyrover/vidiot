@@ -51,6 +51,8 @@ public:
     /// the total sequence length is increase.
     void testAdvancedRightClickScenarios();
 
+    void testOpenPopupMenuWhenClickingOnTransition();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
