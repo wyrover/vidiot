@@ -19,12 +19,12 @@
 
 #include "ClipEvent.h"
 #include "Track.h"
-
 #include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilSerializeBoost.h"
 
 namespace model {
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -74,6 +74,11 @@ pts Transition::getLength() const
 void Transition::moveTo(pts position)
 {
     setNewStartPosition(position);
+}
+
+void Transition::clean()
+{
+    Clip::clean();
 }
 
 //////////////////////////////////////////////////////////////////////////

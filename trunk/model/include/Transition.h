@@ -56,6 +56,7 @@ public:
 
     pts getLength() const override;
     void moveTo(pts position) override;
+    void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP

@@ -328,7 +328,14 @@ void File::startReadingPackets()
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     mReadingPackets = true;
-    mBufferPacketsThreadPtr.reset(new boost::thread(boost::bind(&File::bufferPacketsThread,this)));
+    try
+    {
+        mBufferPacketsThreadPtr.reset(new boost::thread(boost::bind(&File::bufferPacketsThread,this)));
+    }
+    catch (boost::exception &e)
+    {
+        FATAL(boost::diagnostic_information(e));
+    }
 
     VAR_DEBUG(this);
 }
