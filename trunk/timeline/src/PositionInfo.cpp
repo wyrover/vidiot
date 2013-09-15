@@ -42,6 +42,44 @@ PointerPositionInfo::~PointerPositionInfo()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// CLIP
+//////////////////////////////////////////////////////////////////////////
+
+model::IClipPtr PointerPositionInfo::getLogicalClip()
+{
+    model::IClipPtr result = clip;
+    if (clip)
+    {
+        switch (logicalclipposition)
+        {
+        case ClipBegin:
+            break;
+        case ClipInterior:
+            break;
+        case ClipEnd:
+            break;
+        case TransitionBegin:
+            break;
+        case TransitionLeftClipInterior:
+        case TransitionLeftClipEnd:
+            result = clip->getPrev();
+            break;
+        case TransitionInterior:
+            break;
+        case TransitionRightClipBegin:
+        case TransitionRightClipInterior:
+            result = clip->getNext();
+            break;
+        case TransitionEnd:
+            break;
+        default:
+            FATAL("Unexpected logical clip position.");
+        }
+    }
+    return result;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
