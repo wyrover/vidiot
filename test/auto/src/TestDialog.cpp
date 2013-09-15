@@ -65,7 +65,14 @@ private:
         VAR_INFO(event.GetActive());
         if (!event.GetActive() || !mThread)
         {
-            mThread.reset(new boost::thread(boost::bind(&Escape::mainThread,this)));
+            try
+            {
+                mThread.reset(new boost::thread(boost::bind(&Escape::mainThread,this)));
+            }
+            catch (boost::exception &e)
+            {
+                FATAL(boost::diagnostic_information(e));
+            }
         }
     }
 

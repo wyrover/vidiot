@@ -54,7 +54,15 @@ bool FixtureGui::setUpWorld()
 {
     util::thread::setCurrentThreadName("Test");
     mStartTime = time(0);
-    mThread.reset(new boost::thread(boost::bind(&FixtureGui::mainThread,this)));
+    try
+    {
+        mThread.reset(new boost::thread(boost::bind(&FixtureGui::mainThread,this)));
+    }
+    catch (boost::exception &e)
+    {
+        FATAL(boost::diagnostic_information(e));
+    }
+
     mBarrierConfigRead.wait(); // When setUpWorld returns, the config must have been be read. Otherwise, setUp() below will use wrong config data.
     return true;
 }

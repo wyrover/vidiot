@@ -134,12 +134,26 @@ void VideoDisplay::play()
     mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);      // Optimize for speech
 
     // Start buffering ASAP
-    mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::audioBufferThread,this)));
-    mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoBufferThread,this)));
+    try
+    {
+        mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::audioBufferThread,this)));
+        mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoBufferThread,this)));
+    }
+    catch (boost::exception &e)
+    {
+        FATAL(boost::diagnostic_information(e));
+    }
 
     mStartTime = 0;     // This blocks displaying of video until signaled by the audio thread
     mCurrentTime = 0;   // Updates the displayed time
-    mVideoDisplayThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoDisplayThread,this)));
+    try
+    {
+        mVideoDisplayThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoDisplayThread,this)));
+    }
+    catch (boost::exception &e)
+    {
+        FATAL(boost::diagnostic_information(e));
+    }
 
     mCurrentAudioChunk.reset();
 

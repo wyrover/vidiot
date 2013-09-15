@@ -164,6 +164,7 @@ void TestBugs::testPlaybackEmptyClip()
 void TestBugs::testPlaybackDoesNotStopAfterPressingShift()
 {
     // todo after I found some way to easily make a very large sequence...
+    // todo then also make a test case holding: lots of transitions, then do (for each transition) move to center frame, do one get next, then moveto next transition (to trigger *Transition::clean() omission bug...)
     StartTestSuite();
     Zoom level(2); // todo use zoom level(6)
     PositionCursor(HCenter(VideoClip(0,2)));
