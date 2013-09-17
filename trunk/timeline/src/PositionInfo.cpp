@@ -45,7 +45,7 @@ PointerPositionInfo::~PointerPositionInfo()
 // CLIP
 //////////////////////////////////////////////////////////////////////////
 
-model::IClipPtr PointerPositionInfo::getLogicalClip()
+model::IClipPtr PointerPositionInfo::getLogicalClip() const
 {
     model::IClipPtr result = clip;
     if (clip)

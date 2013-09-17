@@ -94,21 +94,13 @@ boost::statechart::result Idle::react( const EvLeftDouble& evt )
 boost::statechart::result Idle::react( const EvRightDown& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info = getMouse().getInfo(getMouse().getVirtualPosition());
+    return rightDown();
+}
 
-    if (info.onAudioVideoDivider)
-    {
-        // Keep selection intact
-    }
-    else if (info.onTrackDivider)
-    {
-        // Keep selection intact
-    }
-    else
-    {
-        getSelection().updateOnRightClick(info.clip);
-    }
-    return transit<StateRightDown>();
+boost::statechart::result Idle::react( const EvRightDouble& evt )
+{
+    VAR_DEBUG(evt);
+    return rightDown();
 }
 
 boost::statechart::result Idle::react( const EvMotion& evt )
@@ -242,6 +234,25 @@ boost::statechart::result Idle::leftDown()
     }
 
     return forward_event();
+}
+
+boost::statechart::result Idle::rightDown()
+{
+    PointerPositionInfo info = getMouse().getInfo(getMouse().getVirtualPosition());
+
+    if (info.onAudioVideoDivider)
+    {
+        // Keep selection intact
+    }
+    else if (info.onTrackDivider)
+    {
+        // Keep selection intact
+    }
+    else
+    {
+        getSelection().updateOnRightClick(info);
+    }
+    return transit<StateRightDown>();
 }
 
 void Idle::addTransition()

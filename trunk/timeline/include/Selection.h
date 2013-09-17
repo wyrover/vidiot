@@ -45,7 +45,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void updateOnLeftClick(const PointerPositionInfo& info);
-    void updateOnRightClick(model::IClipPtr clip);
+    void updateOnRightClick(const PointerPositionInfo& info);
 
     /// \return true if no clip is selected
     bool isEmpty() const;
