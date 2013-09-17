@@ -45,11 +45,13 @@ public:
     /// Test removing one empty area via the popup menu.
     void testRemoveOneEmptyInterval();
 
-    /// Test the special handling for multiple right mouse clicks, and
-    /// for starting the scrolling immediately from when a popup menu is shown.
-    /// Also tests that the various timeline view parts are extended when
-    /// the total sequence length is increase.
-    void testAdvancedRightClickScenarios();
+    /// Test the handling for multiple right mouse clicks
+    void testOpenPopupMenuTwice();
+
+    /// Test the handling for starting the scrolling immediately from
+    /// when a popup menu is shown. Also tests that the various timeline
+    /// view parts are extended when the total sequence length is increase.
+    void testRightClickScrollingAfterOpeningPopupMenu();
 
     void testOpenPopupMenuWhenClickingOnTransition();
 

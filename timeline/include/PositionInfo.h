@@ -97,7 +97,7 @@ struct PointerPositionInfo
     /// the clip that the user sees as being clicked upon. Particularly, when clicking
     /// on TransitionLeftClip* and TransitionRightClip*, not the transition clip is
     /// returned but the (respectively) previous or next clip.
-    model::IClipPtr getLogicalClip();
+    model::IClipPtr getLogicalClip() const;
 };
 
 //////////////////////////////////////////////////////////////////////////

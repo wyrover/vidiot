@@ -75,31 +75,8 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     }
 
     // Determine the 'logically clicked' clip and track
-    model::IClipPtr clip = info.clip;
+    model::IClipPtr clip = info.getLogicalClip();
     model::TrackPtr track = info.track;
-    if (clip && clip->isA<model::Transition>())
-    {
-        switch (info.logicalclipposition)
-        {
-        case TransitionLeftClipInterior:
-        case TransitionLeftClipEnd:
-            clip = info.clip->getPrev();
-            ASSERT(clip);
-            break;
-        case TransitionRightClipBegin:
-        case TransitionRightClipInterior:
-            clip = info.clip->getNext();
-            ASSERT(clip);
-            break;
-        case TransitionBegin:
-        case TransitionInterior:
-        case TransitionEnd:
-            // Transition is actually clicked
-            break;
-        default:
-            FATAL("Unexpected logical clip position.");
-        }
-    }
 
     bool currentClickedClipIsSelected = clip ? clip->getSelected() : false;
 
@@ -183,12 +160,15 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     QueueEvent(new EventSelectionUpdate(0));
 }
 
-void Selection::updateOnRightClick(model::IClipPtr clip)
+void Selection::updateOnRightClick(const PointerPositionInfo& info)
 {
     ASSERT(wxThread::IsMain());
     bool ctrlPressed = getKeyboard().getCtrlDown();
     bool shiftPressed = getKeyboard().getShiftDown();
     bool altPressed = getKeyboard().getAltDown();
+
+    model::IClipPtr clip = info.getLogicalClip();
+
     VAR_DEBUG(clip)(ctrlPressed)(shiftPressed)(altPressed);
 
     model::TrackPtr track = clip ? clip->getTrack() : model::TrackPtr();

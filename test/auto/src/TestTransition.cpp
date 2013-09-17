@@ -24,6 +24,7 @@
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
+#include "HelperPopupMenu.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
@@ -139,6 +140,69 @@ void TestTransition::testSelectionAndDeletion()
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),mProjectFixture.OriginalLengthOfVideoClip(0,3));
         Undo();
     }
+    {
+        DeselectAllClips();
+        MakeInOutTransitionAfterClip preparation(1);
+        StartTest("InOutTransition: Right Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
+        OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+        StartTest("InOutTransition: Right Clicking on TransitionRightClipInterior selects the clip right of the transition.");
+        OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+        StartTest("InOutTransition: Right Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
+        OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+        StartTest("InOutTransition: Right Clicking on TransitionRightClipBegin selects the clip right of the transition.");
+        OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+    }
+    {
+        DeselectAllClips();
+        MakeOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        StartTest("OutTransition: Right Clicking on TransitionLeftClipInterior selects the clip left of the transition.");
+        OpenPopupMenuAt(TransitionLeftClipInterior(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+        StartTest("OutTransition: Right Clicking on TransitionLeftClipEnd selects the clip left of the transition.");
+        OpenPopupMenuAt(TransitionLeftClipEnd(VideoClip(0,2)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(!VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+    }
+    {
+        DeselectAllClips();
+        MakeInTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        StartTest("InTransition: Right Clicking on TransitionRightClipInterior selects the clip right of the transition.");
+        OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+        StartTest("InTransition: Right Clicking on TransitionRightClipBegin selects the clip right of the transition.");
+        OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2))); // todo use both leftdown AND leftdouble events for these tests when making the events explicit!
+        ASSERT(!VideoClip(0,1)->getSelected());
+        ASSERT(!VideoClip(0,2)->getSelected());
+        ASSERT(VideoClip(0,3)->getSelected());
+        ClosePopupMenu();
+    }
+
 }
 
 void TestTransition::testDragAndDropOfOtherClips()
