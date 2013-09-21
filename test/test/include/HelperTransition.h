@@ -70,8 +70,10 @@ struct MakeTransitionAfterClip
 protected:
 
     /// Makes a transition by moving the mouse to the position where it
-    /// must be made and then pressing 'c'.
+    /// must be made and then pressing the corresponding key.
     void makeTransition();
+
+    virtual void moveMouseAndCreateTransition(int clipNumber) = 0;
 
     model::IClipPtr GetClip(int track, int clip) const;
 
@@ -89,18 +91,21 @@ struct MakeInOutTransitionAfterClip : public MakeTransitionAfterClip
 {
     MakeInOutTransitionAfterClip(int afterclip, bool audio = false);
     virtual ~MakeInOutTransitionAfterClip();
+    virtual void moveMouseAndCreateTransition(int clipNumber) override;
 };
 
 struct MakeInTransitionAfterClip : public MakeTransitionAfterClip // tod rename to make in before clip...
 {
     MakeInTransitionAfterClip(int afterclip, bool audio = false);
     virtual ~MakeInTransitionAfterClip();
+    virtual void moveMouseAndCreateTransition(int clipNumber) override;
 };
 
 struct MakeOutTransitionAfterClip : public MakeTransitionAfterClip
 {
     MakeOutTransitionAfterClip(int afterclip, bool audio = false);
     virtual ~MakeOutTransitionAfterClip();
+    virtual void moveMouseAndCreateTransition(int clipNumber) override;
 };
 
 } // namespace

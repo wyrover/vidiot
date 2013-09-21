@@ -80,6 +80,7 @@ void ClipInterval::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
+    ASSERT_MORE_THAN_EQUALS_ZERO(position);
     setNewStartPosition(position);
     setGenerationProgress(0);
     mRender->moveTo(mOffset + position);

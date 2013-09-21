@@ -63,6 +63,8 @@ private:
 
     model::TransitionPtr mTransition;
 
+    model::TransitionType mType;
+
     model::IClipPtr mLeft;
     model::IClipPtr mRight;
 

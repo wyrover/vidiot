@@ -196,7 +196,7 @@ void TestTransition::testSelectionAndDeletion()
         ASSERT(VideoClip(0,3)->getSelected());
         ClosePopupMenu();
         StartTest("InTransition: Right Clicking on TransitionRightClipBegin selects the clip right of the transition.");
-        OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2))); // todo use both leftdown AND leftdouble events for these tests when making the events explicit!
+        OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());
@@ -442,12 +442,11 @@ void TestTransition::testAdjacentTransitions()
         ASSERT_LESS_THAN_ZERO(VideoClip(0,3)->getMinAdjustBegin())(VideoClip(0,2));
         // Make transitions between clips 2 and 3
         Move(RightCenter(VideoClip(0,1)));
-        Type('c');
+        Type('o');
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT(VideoClip(0,3)->isA<model::EmptyClip>());
-        waitForIdle();
         Move(LeftCenter(VideoClip(0,4)));
-        Type('c');
+        Type('i');
         ASSERT(VideoClip(0,4)->isA<model::Transition>());
         ASSERT(!VideoClip(0,5)->isA<model::EmptyClip>());
         Drag(From(Center(VideoClip(0,5))).AlignLeft(RightPixel(VideoClip(0,2))));
@@ -1173,7 +1172,7 @@ void TestTransition::testCreateTransitionAfterLastClip()
         StartTest("Create transition after last video clip in track (NOTE: clip is NOT followed by EmptyClip).");
         Drag(From(Center(VideoClip(0,2))).To(wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0)))));
         Move(wxPoint(RightPixel(VideoTrack(0)), VCenter(VideoTrack(0))));
-        Type('c');
+        Type('o');
         ASSERT(VideoClip(0,8)->isA<model::Transition>());
         Undo(2);
     }
@@ -1181,7 +1180,7 @@ void TestTransition::testCreateTransitionAfterLastClip()
         StartTest("Create transition after last audio clip in track (NOTE: clip is NOT followed by EmptyClip).");
         Drag(From(Center(AudioClip(0,2))).To(wxPoint(RightPixel(AudioTrack(0)), VCenter(AudioTrack(0)))));
         Move(wxPoint(RightPixel(AudioTrack(0)), VCenter(AudioTrack(0))));
-        Type('c');
+        Type('o');
         ASSERT(AudioClip(0,8)->isA<model::Transition>());
         Undo(2);
     }

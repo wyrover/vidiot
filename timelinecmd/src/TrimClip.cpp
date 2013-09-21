@@ -55,6 +55,7 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
 {
     VAR_INFO(this)(mClip)(mTransition);
     mCommandName = _("Adjust length");
+    ASSERT(!mOriginalClip->isA<model::EmptyClip>());
 }
 
 TrimClip::~TrimClip()
@@ -99,7 +100,7 @@ void TrimClip::update(pts diff, bool shift)
     if (mTrim < limits.Min) { mTrim = limits.Min; }
     if (mTrim > limits.Max) { mTrim = limits.Max; }
 
-    // This statement is deliberately after removeTransition, since that methods initializes mClip
+    // This statement is deliberately after removeTransition, since that method initializes mClip.
     // mClip, in turn, is used for preview().
     if (mTrim == 0)
     {

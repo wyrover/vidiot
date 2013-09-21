@@ -98,8 +98,7 @@ void MakeTransitionAfterClip::makeTransition()
 {
     storeVariablesBeforeMakingTransition();
     PositionCursor(LeftPixel(GetClip(0,clipNumberAfterTransition)));
-    Move(LeftCenter(GetClip(0,clipNumberAfterTransition)));
-    Type('c');
+    moveMouseAndCreateTransition(clipNumberAfterTransition);
     storeVariablesAfterMakingTransition();
 }
 
@@ -173,6 +172,12 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
     Undo(); // Undo TrimLeft
 }
 
+void MakeInOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
+{
+    Move(LeftCenter(GetClip(0,clipNumber)));
+    Type('c');
+}
+
 MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
     : MakeTransitionAfterClip(afterclip, audio)
 {
@@ -200,6 +205,12 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
     Undo(); // Undo TrimRight
 }
 
+void MakeInTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
+{
+    Move(LeftCenter(GetClip(0,clipNumberAfterTransition)));
+    Type('i');
+}
+
 MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip, bool audio)
     : MakeTransitionAfterClip(afterclip, audio)
 {
@@ -225,6 +236,12 @@ MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
     Undo(); // Undo create transition
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
     Undo(); // Undo TrimLeft
+}
+
+void MakeOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
+{
+    Move(LeftCenter(GetClip(0,clipNumber - 1)));
+    Type('o');
 }
 
 } // namespace
