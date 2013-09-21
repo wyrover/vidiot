@@ -100,23 +100,39 @@ void Trim::start()
     {
     case ClipBegin:
         ASSERT(!transition);
+        ASSERT(!info.clip->isA<model::Transition>());
         mOriginalClip = info.clip;
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         mStartPts = mOriginalClip->getLeftPts();
         adjacentClip = mOriginalClip->getPrev();
         if (adjacentClip)
         {
+            if (adjacentClip->getLength() == 0)
+            {
+                // Clip is part of a transition, and is 'fully covered' by this transition. Use the transition for the adjacent frame.
+                adjacentClip = adjacentClip->getPrev();
+                ASSERT(adjacentClip);
+                ASSERT(adjacentClip->isA<model::Transition>())(adjacentClip);
+            }
             adjacentClip->moveTo(adjacentClip->getLength() - 1);
         }
         break;
     case ClipEnd:
         ASSERT(!transition);
+        ASSERT(!info.clip->isA<model::Transition>());
         mOriginalClip = info.clip;
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         mStartPts = mOriginalClip->getRightPts();
         adjacentClip = mOriginalClip->getNext();
         if (adjacentClip)
         {
+            if (adjacentClip->getLength() == 0)
+            {
+                // Clip is part of a transition, and is 'fully covered' by this transition. Use the transition for the adjacent frame.
+                adjacentClip = adjacentClip->getNext();
+                ASSERT(adjacentClip);
+                ASSERT(adjacentClip->isA<model::Transition>())(adjacentClip);
+            }
             adjacentClip->moveTo(0);
         }
         isBeginTrim = false;

@@ -88,6 +88,13 @@ public:
     /// indefinitely.
     void testPlaybackDoesNotStopAfterPressingShift();
 
+    /// A clip can have length 0 if it is used for a transition, and is fully 'obscured' by the
+    /// transition (thus, it only provides frames to the transition, and provides no frames to the
+    /// track itselves). In the trimming code, an 'adjacent' clip is determined for the preview
+    /// operation. In the particular case that a 0 length clip is the adjacent clip, the transition
+    /// must be used for obtaining the 'previewed adjacent frame'.
+    void testTrimmingClipAdjacentToZeroLengthClipUsedForTransition();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
