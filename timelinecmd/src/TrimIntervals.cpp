@@ -46,17 +46,7 @@ TrimIntervals::~TrimIntervals()
 
 void TrimIntervals::initialize()
 {
-    showAnimation();
-
-    getTimeline().beginTransaction();
-    Revert();
-
-    getTimeline().getIntervals().removeAll();
-    std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved(mRemoved);
-    BOOST_FOREACH( model::IClips remove, removedInAllTracks )
-    {
-        removeClips(remove);
-    }
+    animatedDeleteAndTrim(splitTracksAndFindClipsToBeRemoved(mRemoved));
     getTimeline().endTransaction();
 }
 
@@ -69,26 +59,6 @@ void TrimIntervals::doExtraBefore()
 void TrimIntervals::undoExtraAfter()
 {
     getTimeline().getIntervals().set(mIntervals);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void TrimIntervals::showAnimation()
-{
-    std::set< model::IClips > removedInAllTracks = splitTracksAndFindClipsToBeRemoved(mRemoved);
-
-    model::IClips mEmpties;
-    BOOST_FOREACH( model::IClips remove, removedInAllTracks )
-    {
-        mEmpties.push_back(replaceWithEmpty(remove));
-    }
-
-    wxSafeYield(); // Show update progress, but do not allow user input
-    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-
-    animatedTrimEmpty(mEmpties);
 }
 
 //////////////////////////////////////////////////////////////////////////

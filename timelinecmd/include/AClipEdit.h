@@ -221,18 +221,18 @@ protected:
     /// shifted over the empty areas). Note that this is used to animate the edit operation, and
     /// results in a large undo history (each empty clip is replaced by a smaller empty clip, which
     /// in turn is replaced with a smaller empty clip, etc).
+    /// \post Timeline transaction is started
     ///
     /// \param emptyareas list of empty clips to be trimmed away (does not need to be a list of consecutive clips in one track)
     ///
     /// In general, use this operation to show the animation in the following way:
-    /// - animatedTrimEmpty
-    /// - undo
-    /// - redo the trim operation, but now without animation
-    void animatedTrimEmpty(model::IClips emptyareas);
+    /// - animatedTrimEmpty()
+    /// - timeline::endTransaction()
+    void animatedDeleteAndTrim(model::IClips clipsToBeRemoved);
 
     /// Split all tracks at the interval's begin and end positions.
     /// \return lists of adjacent clips between interval begin and end positions (for all intervals)
-    std::set< model::IClips > splitTracksAndFindClipsToBeRemoved(PtsIntervals removed);
+    model::IClips splitTracksAndFindClipsToBeRemoved(PtsIntervals removed);
 
 private:
 

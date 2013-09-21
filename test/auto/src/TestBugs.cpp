@@ -20,6 +20,7 @@
 #include "AudioChunk.h"
 #include "AudioClip.h"
 #include "AudioCompositionParameters.h"
+#include "AudioTrack.h"
 #include "DetailsClip.h"
 #include "EmptyClip.h"
 #include "HelperDetails.h"
@@ -29,6 +30,7 @@
 #include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
 #include "HelperTimelineTrim.h"
+#include "HelperTransition.h"
 #include "HelperWindow.h"
 #include "IClip.h"
 #include "ids.h"
@@ -37,6 +39,7 @@
 #include "VideoClip.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
+#include "VideoTrack.h"
 
 namespace test {
 
@@ -205,6 +208,20 @@ void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
         ShiftTrim(LeftCenter(VideoClip(0,2)), Center(VideoClip(0,2))); // Caused crash in trim handling due to 'adjacent clip' having length 0
         Undo(3);
     }
+}
+
+void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
+{
+    StartTestSuite();
+    Zoom level(6);
+    MakeInOutTransitionAfterClip t1(1);
+    MakeInOutTransitionAfterClip t2(0);
+    OpenPopupMenuAt(Center(VideoClip(0,2)));
+    Type('t');
+    ASSERT_EQUALS(VideoClip(0,1)->getLeftPts(), AudioClip(0,1)->getLeftPts());
+    ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
+    ASSERT_EQUALS(VideoClip(0,4)->getRightPts(), AudioClip(0,4)->getRightPts());
+    Undo();
 }
 
 } // namespace
