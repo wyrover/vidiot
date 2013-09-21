@@ -17,11 +17,13 @@
 
 #include "AClipEdit.h"
 
+#include "AudioClip.h"
 #include "Clip.h"
 #include "Config.h"
 #include "Cursor.h"
-#include "Logging.h"
 #include "EmptyClip.h"
+#include "EmptyClip.h"
+#include "Logging.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "Track.h"
@@ -32,8 +34,6 @@
 #include "UtilLogStl.h"
 #include "UtilSet.h"
 #include "VideoClip.h"
-#include "AudioClip.h"
-#include "EmptyClip.h"
 #include "VideoTransition.h"
 
 namespace gui { namespace timeline { namespace command {
@@ -480,11 +480,26 @@ model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
     return empty;
 }
 
-void AClipEdit::animatedTrimEmpty(model::IClips emptyareas)
+void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved) // todo all other uses?
 {
-    model::MoveParameters cachedParams = mParams;
-    model::MoveParameters cachedParamsUndo = mParamsUndo;
+    model::MoveParameters undo;
 
+    // Replace clips with empty area
+    model::IClips emptyareas;
+    BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+    {
+        model::TrackPtr track = clip->getTrack();
+        ASSERT(track);
+
+        model::IClipPtr empty = boost::make_shared<model::EmptyClip>(clip->getLength());
+        emptyareas.push_back(empty);
+
+        model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(track, clip->getNext(), boost::assign::list_of(empty), track,  clip->getNext(),  boost::assign::list_of(clip));
+        undo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
+        doMove(move);
+    }
+
+    // Now show the animation (gradually decrease the size of the empty areas)
     model::IClips mEmpties = emptyareas;
     model::IClips newempties;
     static const int SleepTimePerStep = 25;
@@ -494,25 +509,42 @@ void AClipEdit::animatedTrimEmpty(model::IClips emptyareas)
     {
         BOOST_FOREACH( model::IClipPtr old, mEmpties )
         {
+            model::TrackPtr track = old->getTrack();
+            ASSERT(track);
+
             boost::rational<pts> oldFactor(step+1,NumberOfSteps);
             boost::rational<pts> newFactor(step,NumberOfSteps);
             boost::rational<pts> newlenrational( boost::rational<pts>(old->getLength(),1) / oldFactor * newFactor );
             pts newlen = static_cast<pts>(floor(boost::rational_cast<double>(newlenrational)));
             VAR_INFO(step)(old->getLength())(newlen)(newlenrational);
             model::IClipPtr empty = model::EmptyClipPtr(new model::EmptyClip(newlen));
-            newempties.push_back(empty);
-            replaceClip(old,boost::assign::list_of(empty));
+
+            model::MoveParameterPtr move = boost::make_shared<model::MoveParameter>(track, old->getNext(), boost::assign::list_of(empty), track,  old->getNext(),  boost::assign::list_of(old));
+            undo.push_front(move->make_inverted()); // push_front: Must be executed in reverse order
+            doMove(move);
         }
         mEmpties = newempties;
         newempties.clear();
         boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
         wxSafeYield(); // Show update progress, but do not allow user input
     }
+
+    getTimeline().beginTransaction();
+    // Undo all the (temporary) changes for the animation
+    BOOST_FOREACH( model::MoveParameterPtr move, undo )
+    {
+        doMove(move);
+    }
+    // Do the actual change
+    BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+    {
+        removeClip(clip);
+    }
 }
 
-std::set< model::IClips > AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsIntervals removed)
+model::IClips AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsIntervals removed)
 {
-    std::set< model::IClips > result;
+    model::IClips result;
     BOOST_FOREACH( PtsInterval interval, removed )
     {
         pts first = interval.lower();
@@ -534,7 +566,7 @@ std::set< model::IClips > AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsInter
                     removedInTrack.push_back(clip);
                 }
             }
-            result.insert(removedInTrack);
+            UtilList<model::IClipPtr>(result).addElements(removedInTrack, model::IClipPtr());
         }
     }
     return result;

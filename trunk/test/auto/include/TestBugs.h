@@ -95,6 +95,10 @@ public:
     /// must be used for obtaining the 'previewed adjacent frame'.
     void testTrimmingClipAdjacentToZeroLengthClipUsedForTransition();
 
+    /// Create two crossfades 'around' a video clip. Rightclick on the clip. Select delete and trim.
+    /// Both the transitions AND the clip are deleted. That causes the audio and video tracks to become misaligned.
+    void testDeleteClipInbetweenTransitionsCausesTimelineMessUp();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

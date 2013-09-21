@@ -49,11 +49,8 @@ DeleteSelectedClips::~DeleteSelectedClips()
 
 void DeleteSelectedClips::initialize()
 {
-    LOG_DEBUG << "STEP 1: Determine the clips to be removed, the transitions to be removed, and the transitions to be unapplied";
-    std::set<model::TransitionPtr> transitionsToBeRemoved;
+    LOG_DEBUG << "STEP 1: Determine which transitions must be unapplied.";
     std::set<model::TransitionPtr> transitionsToBeUnapplied;
-    std::set<model::IClipPtr> clipsToBeRemoved;
-
     BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
     {
         BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
@@ -67,65 +64,55 @@ void DeleteSelectedClips::initialize()
                 }
                 else
                 {
-                    auto add = [&transitionsToBeRemoved] (model::TransitionPtr transition)
+                    if (clip->getInTransition())
                     {
-                        if (transition)
-                        {
-                            transitionsToBeRemoved.insert(transition);
-                        }
-                    };
-                    add(clip->getInTransition());
-                    add(clip->getOutTransition());
-                    clipsToBeRemoved.insert(clip);
+                        transitionsToBeUnapplied.insert(clip->getInTransition());
+                    }
+                    if (clip->getOutTransition())
+                    {
+                        transitionsToBeUnapplied.insert(clip->getOutTransition());
+                    }
                 }
             }
         }
     }
 
-    // Remove/unapply transitions. Is done in separate steps to simplify the various possible options (transitions with and without left and right clips)
-    // and to avoid problems with removing the left clip first, without the transition or removing the transition before the right clip
-    BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeRemoved )
+    LOG_DEBUG << "STEP 2: Unapply transitions.";
+    BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
     {
-        // Transitions that are deleted (one of their clips is deleted also) do not have to be unapplied.
-        transitionsToBeUnapplied.erase(transition); // If it is part of the set it is erased. Nothing is changed if it's not part of the set.
-        clipsToBeRemoved.insert(boost::static_pointer_cast<model::IClip>(transition));
+        unapplyTransition(transition);
     }
 
+    LOG_DEBUG << "STEP 3: Determine the clips to be removed.";
+    std::list<model::IClipPtr> clipsToBeRemoved;
+    {
+        BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+        {
+            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+            {
+                if (clip->getSelected())
+                {
+                    ASSERT(!clip->isA<model::Transition>()); // Should have been unapplied already
+                    ASSERT(!clip->getInTransition()); // Should have been unapplied already
+                    ASSERT(!clip->getOutTransition()); // Should have been unapplied already
+                    clipsToBeRemoved.push_back(clip);
+                }
+            }
+        }
+    }
+
+    LOG_DEBUG << "STEP 4: Delete clips.";
     if (mShift)
     {
-        LOG_DEBUG << "STEP 2a: Show animation.";
-        // Animate the shifting of clips onto the empty space
-        model::IClips emptyareas;
-        BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
-        {
-            model::IClipPtr emptyness = boost::make_shared<model::EmptyClip>(clip->getLength());
-            emptyareas.push_back(emptyness);
-            replaceClip(clip,boost::assign::list_of(emptyness));
-        }
-        animatedTrimEmpty(emptyareas);
-
-        getTimeline().beginTransaction();
-        Revert();
-        LOG_DEBUG << "STEP 2b: Make the actual change.";
-        BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
-        {
-            removeClip(clip);
-        }
+        animatedDeleteAndTrim(clipsToBeRemoved);
     }
     else
     {
-        LOG_DEBUG << "STEP 2: Make the actual change.";
         getTimeline().beginTransaction();
         BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
         {
             replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
         }
-    }
-
-    LOG_DEBUG << "STEP 3: Unapply deleted transitions (for which no adjacent clip was selected).";
-    BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
-    {
-        unapplyTransition(transition);
     }
     getTimeline().endTransaction();
 }
