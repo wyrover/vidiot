@@ -351,7 +351,8 @@ void Trim::draw(wxDC& dc) const
 
     if (mSnap)
     {
-        dc.DrawLine(getZoom().ptsToPixels(*mSnap),0,getZoom().ptsToPixels(*mSnap),dc.GetSize().GetHeight());
+        pixel pos = getZoom().ptsToPixels(*mSnap) - getTimeline().getShift();
+        dc.DrawLine(pos,0,pos,dc.GetSize().GetHeight());
     }
 }
 

@@ -453,7 +453,8 @@ void Drag::draw(wxDC& dc) const
     dc.SetBrush(Layout::get().SnapBrush);
     BOOST_FOREACH( pts snap, mSnaps )
     {
-        dc.DrawLine(getZoom().ptsToPixels(snap),0,getZoom().ptsToPixels(snap),dc.GetSize().GetHeight());
+        pixel pos = getZoom().ptsToPixels(snap) - getTimeline().getShift();
+        dc.DrawLine(pos,0,pos,dc.GetSize().GetHeight());
     }
 }
 

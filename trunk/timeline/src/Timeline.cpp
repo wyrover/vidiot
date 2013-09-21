@@ -431,6 +431,11 @@ void Timeline::setShift(pixel shift)
     Refresh(false);
 }
 
+pixel Timeline::getShift() const
+{
+    return mShift;
+}
+
 void Timeline::resize()
 {
     wxSize oldSize = GetVirtualSize();

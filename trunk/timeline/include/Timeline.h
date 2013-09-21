@@ -121,6 +121,8 @@ public:
 
     void setShift(pixel shift);
 
+    pixel getShift() const;
+
     /// To be called whenever the widget contents is resized. This ensures proper virtual
     /// size of the scrolled areas and proper enabling/disabling of scrollbars.
     void resize();
