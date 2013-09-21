@@ -23,6 +23,7 @@
 #include "DetailsClip.h"
 #include "EmptyClip.h"
 #include "HelperDetails.h"
+#include "HelperPopupMenu.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
@@ -178,7 +179,32 @@ void TestBugs::testPlaybackDoesNotStopAfterPressingShift()
     Click(Center(VideoClip(0,2)));
     Type(WXK_DELETE);
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip); // If playback doesn't stop the delete is ignored... thus, this actually checks that playback was stopped
+}
 
+void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
+{
+    StartTestSuite();
+    Zoom level(6);
+    {
+        StartTest("Clip to the right of the trim has length 0.");
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('o'); // fade &out
+        ShiftTrim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1))  + wxPoint(10,0)); // Create a clip with length 0
+        ASSERT_ZERO(VideoClip(0,1)->getLength());
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
+        ShiftTrim(RightCenter(VideoClip(0,0)), Center(VideoClip(0,0))); // Caused crash in trim handling due to 'adjacent clip' having length 0
+        Undo(3);
+    }
+    {
+        StartTest("Clip to the left of the trim has length 0.");
+        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        Type('i'); // fade &in
+        ShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(-10,0)); // Create a clip with length 0
+        ASSERT_ZERO(VideoClip(0,1)->getLength());
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip);
+        ShiftTrim(LeftCenter(VideoClip(0,2)), Center(VideoClip(0,2))); // Caused crash in trim handling due to 'adjacent clip' having length 0
+        Undo(3);
+    }
 }
 
 } // namespace
