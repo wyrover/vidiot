@@ -18,6 +18,7 @@
 #ifndef STATE_IDLE_H
 #define STATE_IDLE_H
 
+#include "Enums.h"
 #include "State.h"
 
 namespace gui { namespace timeline { namespace state {
@@ -77,7 +78,7 @@ private:
     boost::statechart::result leftDown();
     boost::statechart::result rightDown();
 
-    void addTransition();
+    void addTransition(model::TransitionType type);
 
     static const wxString sTooltip;
 };

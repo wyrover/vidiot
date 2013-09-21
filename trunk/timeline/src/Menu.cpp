@@ -37,6 +37,7 @@
 #include "Selection.h"
 #include "Sequence.h"
 #include "SplitAtCursor.h"
+#include "StatusBar.h"
 #include "Timeline.h"
 #include "TimeLinesView.h"
 #include "Track.h"
@@ -481,11 +482,14 @@ void MenuHandler::createTransition(model::TransitionType type)
     ASSERT(info.clip);
     model::TransitionPtr transition = info.clip->isA<model::VideoClip>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
 
-    command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.getLogicalClip(), transition, type);
+    command::TrimClip* trimLeftCommand = 0;
+    command::TrimClip* trimRightCommand = 0;
+    command::CreateTransition* createTransitionCommand = new command::CreateTransition(getSequence(), info.getLogicalClip(), transition, type);
 
-    if (cmd->isPossible())
+    if (createTransitionCommand->isPossible())
     {
-        cmd->submit();
+        createTransitionCommand->submit();
+        createTransitionCommand = 0;
     }
     else
     {
@@ -494,48 +498,97 @@ void MenuHandler::createTransition(model::TransitionType type)
         if (type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)
         {
             // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
-            pts trimLeftClip = defaultSize / 2 - cmd->getLeftSize();
-            pts trimRightClip = defaultSize / 2 - cmd->getRightSize();
-
-            ::command::Combiner* combiner = new ::command::Combiner();
-
-            model::IClipPtr leftClip = cmd->getLeftClip();
+            model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
             ASSERT(leftClip);
-            model::IClipPtr rightClip = leftClip->getNext();
-            ASSERT(rightClip);
             model::IClipPtr prevClip = leftClip->getPrev(); // Temporarily stored to retrieve the (new) trimmed clips again. NOTE: This may be 0 if leftClip is the first clip of the track!!!
 
-            if (trimLeftClip > 0)
+            pts extraNeededLeft = leftClip->getMaxAdjustEnd() - (defaultSize / 2);
+            if (extraNeededLeft < 0)
             {
-                command::TrimClip* trimLeftCommand = new command::TrimClip(getSequence(), leftClip, model::TransitionPtr(), ClipEnd);
-                trimLeftCommand->update(-trimLeftClip, true);
-                combiner->add(trimLeftCommand);
-                leftClip = prevClip ? prevClip->getNext() : info.track->getClips().front();
+                trimLeftCommand = new command::TrimClip(getSequence(), leftClip, model::TransitionPtr(), ClipEnd);
+                trimLeftCommand->update(extraNeededLeft, true);
             }
 
-            if (trimRightClip > 0)
+            leftClip = prevClip ? prevClip->getNext() : info.track->getClips().front(); // Left clip is changed by the trim left command
+            model::IClipPtr rightClip = leftClip->getNext();
+
+            pts extraNeededRight = rightClip->getMinAdjustBegin() + (defaultSize / 2);
+            if (extraNeededRight > 0)
             {
-                command::TrimClip* trimRightCommand = new command::TrimClip(getSequence(), rightClip, model::TransitionPtr(), ClipBegin);
-                trimRightCommand->update(trimRightClip, true);
-                combiner->add(trimRightCommand);
-                rightClip = leftClip->getNext();
+                trimRightCommand = new command::TrimClip(getSequence(), rightClip, model::TransitionPtr(), ClipBegin);
+                trimRightCommand->update(extraNeededRight, true);
             }
 
-            model::IClipPtr clip = (type == model::TransitionTypeOutIn) ? leftClip : rightClip;
-            command::CreateTransition* newcmd = new command::CreateTransition(getSequence(), clip, transition, type);
-            combiner->add(newcmd);
+            delete createTransitionCommand;
+            createTransitionCommand = new command::CreateTransition(getSequence(), leftClip, transition, model::TransitionTypeOutIn);
 
-            if (newcmd->isPossible())
+            if (createTransitionCommand->isPossible())
             {
+                ::command::Combiner* combiner = new ::command::Combiner();
+                if (trimLeftCommand)
+                {
+                    combiner->add(trimLeftCommand);
+                }
+                if (trimRightCommand)
+                {
+                    combiner->add(trimRightCommand);
+                }
+                combiner->add(createTransitionCommand);
                 combiner->submit();
-            }
-            else
-            {
-                delete combiner;
+
+                trimLeftCommand = 0; // Ownership transferred to Combiner
+                trimRightCommand = 0; // Ownership transferred to Combiner
+                createTransitionCommand = 0; // Ownership transferred to Combiner
             }
         }
-        delete cmd;
+        delete trimLeftCommand; // Triggers a revert also
+        delete trimRightCommand; // Triggers a revert also
+        if (createTransitionCommand) // If the command was not submitted, then that was because 'isPossible()' never returned true.
+        {
+            gui::StatusBar::get().timedInfoText(_("Unable to make room for adding the transition."));
+        }
+        delete createTransitionCommand;
     }
 }
+
+        //    command::TrimClip* trimLeftCommand = new command::TrimClip(getSequence(), leftClip, model::TransitionPtr(), ClipEnd);
+        //    trimLeftCommand->update(-1 * (defaultSize / 2), true); // Try to use defaultTransitionSize / 2 // todo heb ik niet het dubbele nodig?
+        //    if (!trimLeftCommand || trimLeftCommand->getDiff() != 0) // Any trim greater than 0 will do
+        //    {
+        //        leftClip = prevClip ? prevClip->getNext() : info.track->getClips().front(); // Changed by the command
+
+        //        command::TrimClip* trimRightCommand = new command::TrimClip(getSequence(), leftClip->getNext(), model::TransitionPtr(), ClipBegin);
+        //        trimRightCommand->update(defaultSize / 2, true); // Try to use defaultTransitionSize / 2// todo heb ik niet het dubbele nodig?
+        //        if (!trimRightCommand || trimRightCommand->getDiff() != 0) // Any trim greater than 0 will do
+        //        {
+        //            command::CreateTransition* newcmd = new command::CreateTransition(getSequence(), leftClip, transition, model::TransitionTypeOutIn);
+
+        //            if (newcmd->isPossible())
+        //            {
+        //                ::command::Combiner* combiner = new ::command::Combiner();
+        //                combiner->add(trimLeftCommand);
+        //                trimLeftCommand = 0; // Ownership transferred to Combiner
+        //                combiner->add(trimRightCommand);
+        //                trimRightCommand = 0; // Ownership transferred to Combiner
+        //                combiner->add(newcmd);
+        //                combiner->submit();
+        //                showMessage = false;
+        //            }
+        //        }
+        //    }
+        //    if (trimLeftCommand)
+        //    {
+        //        delete trimLeftCommand; // Triggers a revert also
+        //    }
+        //    if (trimRightCommand)
+        //    {
+        //        delete trimRightCommand; // Triggers a revert also
+        //    }
+        //}
+        //delete cmd;
+        //if (showMessage)
+        //{
+        //    gui::StatusBar::get().timedInfoText(_("Unable to make room for adding the transition."));
+        //}
 
 }} // namespace

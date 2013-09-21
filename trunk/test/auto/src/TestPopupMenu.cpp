@@ -63,7 +63,7 @@ void TestPopupMenu::tearDown()
 void TestPopupMenu::testAddTransitions()
 {
     StartTestSuite();
-    Zoom level(2);
+    Zoom level(6);
     ConfigFixture.SnapToClips(false);
     pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
     {
@@ -87,7 +87,7 @@ void TestPopupMenu::testAddTransitions()
         Undo();
     }
     {
-        StartTest("Add crossfade to next clip");
+        StartTest("Add crossfade from previous clip");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
         Type('p'); // Cross-fade from &previous
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
@@ -135,6 +135,150 @@ void TestPopupMenu::testAddTransitions()
         ASSERT_EQUALS(VideoClip(0,2)->getLeftPts(), AudioClip(0,0)->getRightPts());
         ASSERT_EQUALS(VideoClip(0,3)->getRightPts(), AudioClip(0,1)->getRightPts());
         Undo(2);
+    }
+
+    {
+        StartTest("Left clip has 'hidden extension', right not: Add crossfade to next clip."); // bug once
+        ShiftTrim(RightCenter(VideoClip(0,0)),Center(VideoClip(0,0))); // Make left clip 'extendable' on its right side
+        pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
+        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        Type('n'); // Cross-fade to &next
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip - defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength);
+        Undo(2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+    }
+    {
+        StartTest("Left clip has 'hidden extension', right not: Add crossfade from previous clip."); // bug once
+        ShiftTrim(RightCenter(VideoClip(0,0)),Center(VideoClip(0,0))); // Make left clip 'extendable' on its right side
+        pts OriginalLengthOfLeftClip = VideoClip(0,0)->getLength();
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('p'); // Cross-fade from &previous
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip - defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1) - defaultTransitionLength);
+        Undo(2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+    }
+
+    {
+        StartTest("Right clip has 'hidden extension', left not: Add crossfade to next clip."); // bug once
+        ShiftTrim(LeftCenter(VideoClip(0,1)),Center(VideoClip(0,1))); // Make right clip 'extendable' on its left side
+        pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
+        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        Type('n'); // Cross-fade to &next
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip - defaultTransitionLength / 2);
+        Undo(2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+    }
+    {
+        StartTest("Right clip has 'hidden extension', left not: Add crossfade from previous clip."); // bug once
+        ShiftTrim(LeftCenter(VideoClip(0,1)),Center(VideoClip(0,1))); // Make right clip 'extendable' on its left side
+        pts OriginalLengthOfRightClip = VideoClip(0,1)->getLength();
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('p'); // Cross-fade from &previous
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0) - defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), OriginalLengthOfRightClip - defaultTransitionLength / 2);
+        Undo(2);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,0)); // To check that the additional trimming is undone also
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,2));
+    }
+
+    {
+        StartTest("Left clip is not extendible, right is: Add crossfade to next clip."); // bug once
+        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        Type('i'); // fade &in
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
+        ShiftTrim(RightCenter(VideoClip(0,1)), Center(VideoClip(0,0)));
+        ASSERT_ZERO(VideoClip(0,1)->getLength());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('n');
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip); // No transition added
+        Undo(2);
+    }
+    {
+        StartTest("Left clip is not extendible, right is: Add crossfade from previous clip."); // bug once
+        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        Type('i'); // fade &in
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
+        ShiftTrim(RightCenter(VideoClip(0,1)), Center(VideoClip(0,0)));
+        ASSERT_ZERO(VideoClip(0,1)->getLength());
+        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        Type('p');
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(VideoClip); // No transition added
+        Undo(2);
+    }
+    {
+        StartTest("Right clip is not extendible, left is: Add crossfade to next clip."); // bug once
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('o'); // fade &out
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
+        ShiftTrim(LeftCenter(VideoClip(0,1)), Center(VideoClip(0,2)));
+        ASSERT_ZERO(VideoClip(0,1)->getLength());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('n');
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        Undo(2);
+    }
+    {
+        StartTest("Right clip is not extendible, left is: Add crossfade from previous clip."); // bug once
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('o'); // fade &out
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), defaultTransitionLength / 2);
+        ShiftTrim(LeftCenter(VideoClip(0,1)), Center(VideoClip(0,2)));
+        ASSERT_ZERO(VideoClip(0,1)->getLength());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('n');
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        Undo(2);
+    }
+    {
+        StartTest("Both clips not extendible: Add crossfade to next clip."); // bug once
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('o'); // fade &out
+        ShiftTrim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1)) + wxPoint(10,0));
+        OpenPopupMenuAt(Center(VideoClip(0,0)));
+        Type('i'); // fade &in
+        ShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) - wxPoint(10,0));
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition);
+        ASSERT_EQUALS(VideoClip(0,0)->getLength(), defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), 0);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), 0);
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(), defaultTransitionLength / 2);
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('n');
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition)(VideoClip); // No transition added
+        StartTest("Both clips not extendible: Add crossfade from previous clip."); // bug once
+        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        Type('p');
+        ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip)(Transition)(VideoClip); // No transition added
     }
 }
 
@@ -347,7 +491,6 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
             OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             Type('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
             Undo();
         }
@@ -376,7 +519,6 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
             OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             Type('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
             Undo();
         }
@@ -412,7 +554,6 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
             OpenPopupMenuAt(TransitionRightClipInterior(VideoClip(0,2)));
             Type('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
             Undo();
         }
@@ -441,7 +582,6 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
             OpenPopupMenuAt(TransitionRightClipBegin(VideoClip(0,2)));
             Type('o'); // Fade &out
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(Transition);
-            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip); // todo remove
             ASSERT_EQUALS(VideoClip(0,4)->getLength(), lengthOfFade);
             Undo();
         }

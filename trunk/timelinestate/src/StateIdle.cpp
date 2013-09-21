@@ -147,8 +147,12 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     case WXK_SPACE:     return start();                                                      break;
     case WXK_DELETE:    getSelection().deleteClips();                                        break;
     case WXK_F1:        getTooltip().show(sTooltip);                                         break;
-    case 'c':           addTransition();                                                     break;
-    case 'C':           addTransition();                                                     break;
+    case 'c':           addTransition(model::TransitionTypeInOut);                           break;
+    case 'C':           addTransition(model::TransitionTypeInOut);                           break;
+    case 'i':           addTransition(model::TransitionTypeIn);                              break;
+    case 'I':           addTransition(model::TransitionTypeIn);                              break;
+    case 'o':           addTransition(model::TransitionTypeOut);                             break;
+    case 'O':           addTransition(model::TransitionTypeOut);                             break;
     case 's':           (new command::SplitAtCursor(getSequence()))->submit();               break;
     case 'S':           (new command::SplitAtCursor(getSequence()))->submit();               break;
     case '-':           getZoom().change( evt.getCtrlDown() ? -1000 : -1);                   break;
@@ -255,17 +259,16 @@ boost::statechart::result Idle::rightDown()
     return transit<StateRightDown>();
 }
 
-void Idle::addTransition()
+void Idle::addTransition(model::TransitionType type)
 {
     PointerPositionInfo info = getTimeline().getMouse().getInfo(getMouse().getVirtualPosition());
     if (info.clip)
     {
-        model::TransitionType type;
-        switch (info.logicalclipposition)
+        if (type == model::TransitionTypeInOut && info.logicalclipposition == ClipEnd)
         {
-        case ClipBegin: type = model::TransitionTypeInOut; break;
-        case ClipEnd:   type = model::TransitionTypeOutIn; break;
-        default:        return; // Do nothing: No transition is created.
+            // The parameter value TransitionTypeInOut indicates 'a crossfade'. Use the correct crossfade
+            // (which begin and end clips to use) based on the logical clip position.
+            type = type = model::TransitionTypeOutIn;
         }
 
         ASSERT(info.track);

@@ -39,6 +39,7 @@ namespace gui { namespace timeline { namespace command {
 CreateTransition::CreateTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, model::TransitionType type)
 :   AClipEdit(sequence)
 ,   mTransition(transition)
+,   mType(type)
 ,   mLeft()
 ,   mRight()
 ,   mLeftSize(0)
@@ -113,7 +114,16 @@ void CreateTransition::initialize()
 
 bool CreateTransition::isPossible()
 {
-    return mLeftSize != 0 || mRightSize != 0;
+    switch (mType)
+    {
+    case model::TransitionTypeIn:    return mRightSize != 0;
+    case model::TransitionTypeOut:   return mLeftSize != 0;
+    case model::TransitionTypeInOut: // FALLTHROUGH
+    case model::TransitionTypeOutIn: return mLeftSize != 0 && mRightSize != 0;
+    default:
+        FATAL("Unexpected transition type.");
+    }
+    return false;
 }
 
 model::IClipPtr CreateTransition::getLeftClip() const
