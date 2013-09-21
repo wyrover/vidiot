@@ -133,7 +133,7 @@ void Cursor::end()
 void Cursor::draw(wxDC& dc) const
 {
     dc.SetPen(Layout::get().CursorPen);
-    pixel pos = getZoom().ptsToPixels(mCursorPosition);
+    pixel pos = getZoom().ptsToPixels(mCursorPosition) - getTimeline().getShift();
     dc.DrawLine(wxPoint(pos,0),wxPoint(pos,getSequenceView().getSize().GetHeight()));
 }
 
