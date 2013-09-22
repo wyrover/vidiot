@@ -93,7 +93,7 @@ void Drag(const DragParams& params)
 {
     VAR_DEBUG(params);
     ASSERT(!params.mHoldShiftWhileDragging || !params.mHoldCtrlBeforeDragStarts); // Can't handle both in one action (at least, never tested this)
-    ASSERT(!params.mAlignLeft || !params.mAlignRight); // Can't align boths sides
+    ASSERT(!params.mAlignLeft || !params.mAlignRight); // Can't align both sides
     ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts,!wxGetMouseState().LeftDown()); // Holding CTRL can only be done for the first (mouse down) action in a sequence of drag related actions
     ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts,!wxGetMouseState().ControlDown());
     ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts, !getTimeline().getDrag().isActive());
