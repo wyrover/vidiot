@@ -72,6 +72,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mClip()
     ,   mVideoClip()
     ,   mAudioClip()
+    ,   mTransition()
     ,   mCurrentLength()
     ,   mOpacitySlider(0)
     ,   mOpacitySpin(0)
@@ -268,56 +269,54 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
     if (mClip)
     {
-        if (mClip->isA<model::Transition>())
+        mTransition = getTypedClip<model::Transition>(clip);
+        mVideoClip = getTypedClip<model::VideoClip>(clip);
+        mAudioClip = getTypedClip<model::AudioClip>(clip);
+
+        if (mTransition || mVideoClip || mAudioClip)
         {
-            mClip.reset();
-        }
-        else
-        {
+            // For audio and video clips and for transitions, the length can be edited.
             determineClipSizeBounds();
             updateLengthButtons();
-
             mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(mClip->getLength()) + _(" seconds"));
+        }
 
-            mVideoClip = getTypedClip<model::VideoClip>(clip);
-            mAudioClip = getTypedClip<model::AudioClip>(clip);
-            if (mVideoClip)
-            {
+        if (mVideoClip)
+        {
 
-                wxSize originalSize = mVideoClip->getInputSize();
-                boost::rational< int > factor = mVideoClip->getScalingFactor();
-                wxPoint position = mVideoClip->getPosition();
-                wxPoint maxpos = mVideoClip->getMaxPosition();
-                wxPoint minpos = mVideoClip->getMinPosition();
-                int opacity = mVideoClip->getOpacity();
-                const double sScalingIncrement = 0.01;
+            wxSize originalSize = mVideoClip->getInputSize();
+            boost::rational< int > factor = mVideoClip->getScalingFactor();
+            wxPoint position = mVideoClip->getPosition();
+            wxPoint maxpos = mVideoClip->getMaxPosition();
+            wxPoint minpos = mVideoClip->getMinPosition();
+            int opacity = mVideoClip->getOpacity();
+            const double sScalingIncrement = 0.01;
 
-                mOpacitySlider->SetValue(opacity);
-                mOpacitySpin->SetValue(opacity);
+            mOpacitySlider->SetValue(opacity);
+            mOpacitySpin->SetValue(opacity);
 
-                mSelectScaling->select(mVideoClip->getScaling());
-                double sliderFactor = boost::rational_cast<double>(factor);
-                mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::scalingPrecisionFactor));
-                mScalingSpin->SetValue(sliderFactor);
+            mSelectScaling->select(mVideoClip->getScaling());
+            double sliderFactor = boost::rational_cast<double>(factor);
+            mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::scalingPrecisionFactor));
+            mScalingSpin->SetValue(sliderFactor);
 
-                mSelectAlignment->select(mVideoClip->getAlignment());
-                mPositionXSlider->SetRange(minpos.x,maxpos.x);
-                mPositionXSlider->SetValue(position.x);
-                mPositionXSpin->SetRange(minpos.x, maxpos.x);
-                mPositionXSpin->SetValue(position.x);
-                mPositionYSlider->SetRange(minpos.y,maxpos.y);
-                mPositionYSlider->SetValue(position.y);
-                mPositionYSpin->SetRange(minpos.y, maxpos.y);
-                mPositionYSpin->SetValue(position.y);
+            mSelectAlignment->select(mVideoClip->getAlignment());
+            mPositionXSlider->SetRange(minpos.x,maxpos.x);
+            mPositionXSlider->SetValue(position.x);
+            mPositionXSpin->SetRange(minpos.x, maxpos.x);
+            mPositionXSpin->SetValue(position.x);
+            mPositionYSlider->SetRange(minpos.y,maxpos.y);
+            mPositionYSlider->SetValue(position.y);
+            mPositionYSpin->SetRange(minpos.y, maxpos.y);
+            mPositionYSpin->SetValue(position.y);
 
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
-                mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
-            }
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
         }
     }
 
@@ -454,8 +453,17 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     {
         trim = -1 * trim;
     }
-    ::gui::timeline::command::TrimClip* command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? ClipEnd : ClipBegin);
-    command->update(trim, true);
+    ::gui::timeline::command::TrimClip* command = 0;
+    if (mClip->isA<model::Transition>())
+    {
+        command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? TransitionEnd : TransitionBegin);
+        command->update(trim, false);
+    }
+    else
+    {
+        command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? ClipEnd : ClipBegin);
+        command->update(trim, true);
+    }
     command->submit();
     // It might be possible that a new length selection button has already been pressed
     // and it's button event is already queued. When that event is handled this new clip
@@ -700,8 +708,18 @@ void DetailsClip::determineClipSizeBounds()
 {
     ASSERT(mClip);
 
-    command::TrimClip::TrimLimit limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipBegin, true);
-    command::TrimClip::TrimLimit limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipEnd, true);
+    command::TrimClip::TrimLimit limitsBeginTrim;
+    command::TrimClip::TrimLimit limitsEndTrim;
+    if (mTransition)
+    {
+        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mTransition, model::IClipPtr(), TransitionBegin, false);
+        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mTransition, model::IClipPtr(), TransitionEnd, false);
+    }
+    else
+    {
+        limitsBeginTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipBegin, true);
+        limitsEndTrim = command::TrimClip::determineBoundaries(getSequence(), mClip, mClip->getLink(), ClipEnd, true);
+    }
 
     // Note that in the code below only one trim operation (either begin OR end) is used for determining the possible new lengths.
     // Reason for this limitation is the fact that all boundaries computation is done taking only one trim operation into account.
@@ -720,7 +738,6 @@ void DetailsClip::determineClipSizeBounds()
         pts length = model::Convert::timeToPts(button->GetId());
         mTrimAtEnd[length] = (length >= mMinimumLengthWhenEndTrimming && length <= mMaximumLengthWhenEndTrimming);
     }
-
 }
 
 void DetailsClip::updateLengthButtons()

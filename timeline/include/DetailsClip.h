@@ -121,9 +121,10 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::IClipPtr     mClip;      ///< The clip for which the details view is shown. 0 in case a transition is selected
-    model::VideoClipPtr mVideoClip;
-    model::AudioClipPtr mAudioClip;
+    model::IClipPtr      mClip;      ///< The clip for which the details view is shown. 0 in case a transition is selected
+    model::VideoClipPtr  mVideoClip;
+    model::AudioClipPtr  mAudioClip;
+    model::TransitionPtr mTransition;
 
     wxStaticText* mCurrentLength;
     std::list<wxToggleButton*> mLengthButtons;

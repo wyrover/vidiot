@@ -39,6 +39,8 @@ public:
 
     void testChangeLength();
 
+    void testChangeLengthOfTransition();
+
     void testTransform();
 
     void testTransform_Boundaries();
