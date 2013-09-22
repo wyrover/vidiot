@@ -50,6 +50,8 @@ public:
     /// as a result of zooming).
     void show();
 
+    void toggleSnapping(); ///< Temporarily disable/enable snap-to-whatever
+
     /// Move the drag image to the given position.
     /// \param position move the mouse pointer to this position
     void move(wxPoint position);
@@ -80,6 +82,8 @@ public:
     /// \return the current shift to be applied
     Shift getShift() const;
 
+    pts getSnapOffset() const;
+
     //////////////////////////////////////////////////////////////////////////
     // DRAW
     //////////////////////////////////////////////////////////////////////////
@@ -106,6 +110,7 @@ private:
     pts mSnapOffset;                            ///< Resulting offset caused by 'snapping to' a clip
     std::list<pts> mSnaps;                      ///< List of current snapping positions (that is, where one of the dragged clips 'touches' the pts position of another clip)
     Shift mShift;                               ///< Uninitialized if no shift active. When initialized holds info on the current shift.
+    bool mSnappingEnabled;                      ///< Used to overrule snapping during a drag operation.
 
     //////////////////////////////////////////////////////////////////////////
     // DRAGINFO

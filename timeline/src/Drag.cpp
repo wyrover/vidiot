@@ -155,6 +155,7 @@ Drag::Drag(Timeline* timeline)
     ,   mVideo(timeline, true)
     ,   mAudio(timeline, false)
     ,   mShift(boost::none)
+    ,   mSnappingEnabled(false)
 {
     VAR_DEBUG(this);
     getTimeline().SetDropTarget(new DropTarget(timeline)); // Drop target is deleted by wxWidgets
@@ -175,6 +176,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
 
     reset();
     mActive = true;
+    mSnappingEnabled = true;
     mIsInsideDrag = isInsideDrag;
     mHotspot = hotspot;
     mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
@@ -222,6 +224,12 @@ void Drag::show()
     mHotspot.x = getZoom().ptsToPixels(mHotspotPts);
     mBitmap = getDragBitmap();
     move(mHotspot);
+}
+
+void Drag::toggleSnapping()
+{
+    mSnappingEnabled = !mSnappingEnabled;
+    move(getMouse().getVirtualPosition());
 }
 
 void Drag::move(wxPoint position)
@@ -275,11 +283,13 @@ void Drag::move(wxPoint position)
 
     mDropTrack = info.track;
     mPosition = position;
-    redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
 
     // Snapping determination
     std::list<pts> prevsnaps = mSnaps;
     determineSnapOffset();
+
+    // Determine which regions of the timeline to update
+    redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
     BOOST_FOREACH( pts snap, prevsnaps )
     {
         if (!UtilList<pts>(mSnaps).hasElement(snap))
@@ -372,6 +382,11 @@ wxPoint Drag::getBitmapPosition() const
 Shift Drag::getShift() const
 {
     return mShift;
+}
+
+pts Drag::getSnapOffset() const
+{
+    return mSnapOffset;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -674,36 +689,40 @@ void Drag::determineSnapOffset()
     pts ptsmouse = getZoom().pixelsToPts(mPosition.x);
 
     // Find nearest snap match
-    pts minDiff = Layout::SnapDistance + 1; // To ensure that the first found point will change this value
-    pts snapPoint = -1;
     pts snapOffset = 0;
-    std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
-    std::list<pts>::const_iterator itDrag = mDragPoints.begin();
-    while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
-    {
-        pts pts_timeline = *itTimeline;
-        pts pts_drag = *itDrag + ptsoffset;
+    pts snapPoint = -1;
 
-        pts diff = abs(pts_drag - pts_timeline);
-        if (diff <= Layout::SnapDistance)
+    if (mSnappingEnabled)
+    {
+        pts minDiff = Layout::SnapDistance + 1; // To ensure that the first found point will change this value
+        std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
+        std::list<pts>::const_iterator itDrag = mDragPoints.begin();
+        while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
         {
-            // This snap point is closer than the currently stored snap point, or it is equally
-            // close, but is closer to the mouse pointer.
-            if ((diff < minDiff) ||
-                ((diff == minDiff) && (abs(pts_drag - ptsmouse) < abs(snapPoint - ptsmouse))))
+            pts pts_timeline = *itTimeline;
+            pts pts_drag = *itDrag + ptsoffset;
+
+            pts diff = abs(pts_drag - pts_timeline);
+            if (diff <= Layout::SnapDistance)
             {
-                minDiff = diff;
-                snapPoint = pts_timeline;
-                snapOffset = pts_timeline - pts_drag;
+                // This snap point is closer than the currently stored snap point, or it is equally
+                // close, but is closer to the mouse pointer.
+                if ((diff < minDiff) ||
+                    ((diff == minDiff) && (abs(pts_drag - ptsmouse) < abs(snapPoint - ptsmouse))))
+                {
+                    minDiff = diff;
+                    snapPoint = pts_timeline;
+                    snapOffset = pts_timeline - pts_drag;
+                }
             }
-        }
-        if (pts_timeline <= pts_drag)
-        {
-            ++itTimeline;
-        }
-        if (pts_timeline >= pts_drag)
-        {
-            ++itDrag;
+            if (pts_timeline <= pts_drag)
+            {
+                ++itTimeline;
+            }
+            if (pts_timeline >= pts_drag)
+            {
+                ++itDrag;
+            }
         }
     }
 
@@ -712,8 +731,8 @@ void Drag::determineSnapOffset()
 
     // Now determine all 'snaps' (positions where dragged cuts and timeline cuts are aligned)
     mSnaps.clear();
-    itTimeline = mSnapPoints.begin();
-    itDrag = mDragPoints.begin();
+    std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
+    std::list<pts>::const_iterator itDrag = mDragPoints.begin();
     while ( itTimeline != mSnapPoints.end() && itDrag != mDragPoints.end() )
     {
         pts pts_timeline = *itTimeline;
@@ -736,11 +755,11 @@ void Drag::determineSnapOffset()
 void Drag::determinePossibleSnapPoints()
 {
     mSnapPoints.clear();
-    if (Config::ReadBool(Config::sPathSnapClips))
+    if (mSnappingEnabled && Config::ReadBool(Config::sPathSnapClips))
     {
         UtilList<pts>(mSnapPoints).addElements(getSequence()->getCuts(mCommand->getDrags()));
     }
-    if (Config::ReadBool(Config::sPathSnapCursor))
+    if (mSnappingEnabled && Config::ReadBool(Config::sPathSnapCursor))
     {
         mSnapPoints.push_back(getCursor().getLogicalPosition());
     }

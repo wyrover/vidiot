@@ -88,6 +88,8 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
             getTrim().update();
         }
         break;
+    case 'd':
+    case 'D':           getTrim().toggleSnapping();  break;
     }
     return forward_event();
 }

@@ -120,6 +120,8 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
     case WXK_SHIFT:     getDrag().move(getMouse().getVirtualPosition()); break;
     case WXK_F1:        getTooltip().show(sTooltip);                     break;
     case WXK_ESCAPE:    getDrag().stop(); return transit<Idle>();        break;
+    case 'd':
+    case 'D':           getDrag().toggleSnapping();                      break;
     }
     return forward_event();
 }

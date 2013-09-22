@@ -62,6 +62,7 @@ Trim::Trim(Timeline* timeline)
     ,   mFixedPixel(0)
     ,   mCommand(0)
     ,   mDc()
+    ,   mSnappingEnabled(true)
 {
     VAR_DEBUG(this);
 }
@@ -81,6 +82,7 @@ void Trim::start()
 
     // Reset first
     mActive = true;
+    mSnappingEnabled = true;
     mStartPosition = getMouse().getPhysicalPosition(); // Do not replace with virtual position since the virtual canvas is changed because of shift trimming and keeping one clip edge aligned.
     mStartPts = 0;
     mFixedPixel = 0;
@@ -273,6 +275,12 @@ void Trim::update()
     getTimeline().Update();
 }
 
+void Trim::toggleSnapping()
+{
+    mSnappingEnabled = !mSnappingEnabled;
+    update();
+}
+
 void Trim::stop()
 {
     VAR_DEBUG(this);
@@ -369,24 +377,27 @@ pts Trim::determineTrimDiff()
         getTimeline().refreshPts(*mSnap);
         mSnap.reset();
     }
-    pts ptsmouse = getZoom().pixelsToPts(position.x + getScrolling().getOffset().x);
-    pts minimumsnap = Layout::SnapDistance + 1; // To ensure that the first snap will update this
-    std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
-    while ( itTimeline != mSnapPoints.end() )
+    if (mSnappingEnabled)
     {
-        pts pts_timeline = *itTimeline;
-        pts diff = ptsmouse - pts_timeline;
-        if ((abs(diff) <= Layout::SnapDistance) && (abs(diff) < abs(minimumsnap)))
+        pts ptsmouse = getZoom().pixelsToPts(position.x + getScrolling().getOffset().x);
+        pts minimumsnap = Layout::SnapDistance + 1; // To ensure that the first snap will update this
+        std::list<pts>::const_iterator itTimeline = mSnapPoints.begin();
+        while ( itTimeline != mSnapPoints.end() )
         {
-            minimumsnap = diff;
-            result = pts_timeline - mStartPts;
-            mSnap.reset(pts_timeline);
+            pts pts_timeline = *itTimeline;
+            pts diff = ptsmouse - pts_timeline;
+            if ((abs(diff) <= Layout::SnapDistance) && (abs(diff) < abs(minimumsnap)))
+            {
+                minimumsnap = diff;
+                result = pts_timeline - mStartPts;
+                mSnap.reset(pts_timeline);
+            }
+            ++itTimeline;
         }
-        ++itTimeline;
-    }
-    if (mSnap)
-    {
-        getTimeline().refreshPts(*mSnap);
+        if (mSnap)
+        {
+            getTimeline().refreshPts(*mSnap);
+        }
     }
     return result;
 }
