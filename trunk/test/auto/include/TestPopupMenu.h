@@ -55,6 +55,8 @@ public:
 
     void testOpenPopupMenuWhenClickingOnTransition();
 
+    void testUnlinkingAudioAndVideoClips();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

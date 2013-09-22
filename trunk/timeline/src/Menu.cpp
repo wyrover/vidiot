@@ -43,6 +43,7 @@
 #include "Track.h"
 #include "Transition.h"
 #include "TrimClip.h"
+#include "UnlinkClips.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoDisplayEvent.h"
@@ -63,6 +64,7 @@ enum
     ID_REMOVE_EMPTY,
     ID_DELETE_CLIPS,
     ID_DELETE_TRIM_CLIPS,
+    ID_UNLINK_CLIPS,
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -217,7 +219,8 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
     bool selectedEmptyClip = false;
     bool selectedMediaClip = false;
-    BOOST_FOREACH( model::IClipPtr selectedClip, getSequence()->getSelectedClips() )
+    std::set< model::IClipPtr > selection = getSequence()->getSelectedClips();
+    BOOST_FOREACH( model::IClipPtr selectedClip, selection )
     {
         if (selectedClip->isA<model::EmptyClip>()) { selectedEmptyClip = true; }
         if (selectedClip->isA<model::VideoClip>()) { selectedMediaClip = true; }
@@ -275,6 +278,22 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         }
     }
 
+    bool enableUnlink = false;
+    model::IClips unlink;
+    if (selection.size() == 2)
+    {
+        std::set< model::IClipPtr >::iterator it = selection.begin();
+        model::IClipPtr clip1 = *it++;
+        model::IClipPtr clip2 = *it;
+        if (clip1->getLink() == clip2)
+        {
+            ASSERT_EQUALS(clip1,clip2->getLink());
+            unlink.push_back(clip1);
+            unlink.push_back(clip2);
+            enableUnlink = true;
+        }
+    }
+
     add(ID_ADD_INTRANSITION,    _("Fade &in"),                              clickedOnMediaClip, canFadeIn,              false);
     add(ID_ADD_OUTTRANSITION,   _("Fade &out"),                             clickedOnMediaClip, canFadeOut,             false);
     add(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"),             clickedOnMediaClip, canFadeFromPrevious,    false);
@@ -282,6 +301,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     add(ID_REMOVE_EMPTY,        _("Remove &empty space"),                   clickedOnEmptyClip, clickedOnEmptyClip,     true);
     add(ID_DELETE_CLIPS,        _("&Delete selected\tDel"),                 selectedMediaClip,  !selectedEmptyClip,     true);
     add(ID_DELETE_TRIM_CLIPS,   _("Delete and &Trim selected\tShift+Del"),  selectedMediaClip,  !selectedEmptyClip,     false);
+    add(ID_UNLINK_CLIPS,        _("&Unlink audio and video clips"),         selectedMediaClip,  enableUnlink,           true);
 
     if (menu.GetMenuItemCount() > 0)
     {
@@ -311,6 +331,9 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             break;
         case ID_DELETE_TRIM_CLIPS:
             getSelection().deleteClips(true);
+            break;
+        case ID_UNLINK_CLIPS:
+            (new command::UnlinkClips(getSequence(),unlink))->submit();
             break;
         }
     }
