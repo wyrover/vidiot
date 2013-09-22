@@ -224,4 +224,70 @@ void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
     Undo();
 }
 
+void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
+{
+    StartTestSuite();
+    Zoom level(6);
+    {
+        MakeInOutTransitionAfterClip preparation(1,true);
+        {
+            StartTest("AudioTransition: Drop a clip with its left edge exactly on the middle of a transition");
+            Drag(From(Center(AudioClip(0,4))).AlignLeft(HCenter(AudioClip(0,2))));
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
+            ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+            ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+            Undo();
+        }
+        {
+            StartTest("AudioTransition: Drop a clip with its left edge inside the right half of a transition");
+            Drag(From(Center(AudioClip(0,4))).AlignLeft(HCenter(AudioClip(0,2)) + 5));
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
+            ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+            ASSERT_EQUALS(AudioClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+            Undo();
+        }
+        {
+            StartTest("AudioTransition: Drop a clip with its right edge inside the left half of a transition");
+            Drag(From(Center(AudioClip(0,4))).AlignRight(HCenter(AudioClip(0,2)) - 5));
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+            ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+            Undo();
+        }
+    }
+    {
+        MakeInOutTransitionAfterClip preparation(1);
+        {
+            StartTest("VideoTransition: Drop a clip with its left edge exactly on the middle of a transition");
+            Drag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,2))));
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
+            ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+            ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+            Undo();
+        }
+        {
+            StartTest("VideoTransition: Drop a clip with its left edge inside the right half of a transition");
+            Drag(From(Center(VideoClip(0,4))).AlignLeft(HCenter(VideoClip(0,2)) + 5));
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
+            ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+            ASSERT_EQUALS(AudioClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+            Undo();
+        }
+        {
+            StartTest("VideoTransition: Drop a clip with its right edge inside the left half of a transition");
+            Drag(From(Center(VideoClip(0,4))).AlignRight(HCenter(VideoClip(0,2)) - 5));
+            ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(EmptyClip);
+            ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip)(EmptyClip);
+            ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+            ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+            Undo();
+        }
+    }
+}
+
 } // namespace

@@ -411,6 +411,21 @@ void AClipEdit::removeTransition( model::TransitionPtr transition )
 
 model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition, bool replacelinkedclipsalso )
 {
+    auto cloneLinkIfRequired = [this,replacelinkedclipsalso](model::IClipPtr link)
+    {
+        if (replacelinkedclipsalso && link && link->getTrack())
+        {
+            // If
+            // - the scenario requires links to be replaced also (to avoid duplicate link relations when replacing only one of the linked clips), AND
+            // - there is a link to the split clip, AND
+            // - that clip is not replaced yet,
+            // Ensure that that link is replaced with a clone.
+            //
+            // Note that the link may already have been removed from its track, if an operation was done that
+            // applies to multiple tracks (typical example: split all tracks at certain pts position)
+            replaceClip(link, boost::assign::list_of(make_cloned(link)));
+        }
+    };
     model::IClips replacements;
     if (transition->getLeft() > 0)
     {
@@ -431,10 +446,7 @@ model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition, boo
         replaceClip(prev,boost::assign::list_of(replacement));
         replacements.push_back(replacement);
 
-        if (replacelinkedclipsalso && prev->getLink())
-        {
-            replaceClip(prev->getLink(), boost::assign::list_of(make_cloned(prev->getLink())));
-        }
+        cloneLinkIfRequired(prev->getLink());
     }
     if (transition->getRight() > 0)
     {
@@ -455,10 +467,7 @@ model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition, boo
         replaceClip(next,boost::assign::list_of(replacement));
         replacements.push_back(replacement);
 
-        if (replacelinkedclipsalso && next->getLink())
-        {
-            replaceClip(next->getLink(), boost::assign::list_of(make_cloned(next->getLink())));
-        }
+        cloneLinkIfRequired(next->getLink());
     }
     removeClip(transition);
     return replacements;

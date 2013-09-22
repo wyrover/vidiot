@@ -99,6 +99,12 @@ public:
     /// Both the transitions AND the clip are deleted. That causes the audio and video tracks to become misaligned.
     void testDeleteClipInbetweenTransitionsCausesTimelineMessUp();
 
+    /// Due to operations in multiple tracks, the first operation removed some of the clips that were
+    /// required for the operations in the second track. Since these clips had already been removed
+    /// a crash occurred (check that replacing a clip in AClipEdit is only allowed if a clip is still
+    /// part of a track).
+    void testCrashWhenDroppingPartiallyOverATransition();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
