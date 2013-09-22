@@ -674,4 +674,34 @@ void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()
     }
 }
 
+void TestPopupMenu::testUnlinkingAudioAndVideoClips()
+{
+    StartTestSuite();
+    Zoom level(6);
+    {
+        StartTest("Unlink video from audio");
+        ASSERT_EQUALS(VideoClip(0,1)->getLink(), AudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,1)->getLink(), VideoClip(0,1));
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('u'); // &unlink
+        ASSERT_ZERO(VideoClip(0,1)->getLink());
+        ASSERT_ZERO(AudioClip(0,1)->getLink());
+        Undo();
+        ASSERT_EQUALS(VideoClip(0,1)->getLink(), AudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,1)->getLink(), VideoClip(0,1));
+    }
+    {
+        StartTest("Unlink audio from video");
+        ASSERT_EQUALS(VideoClip(0,1)->getLink(), AudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,1)->getLink(), VideoClip(0,1));
+        OpenPopupMenuAt(Center(AudioClip(0,1)));
+        Type('u'); // &unlink
+        ASSERT_ZERO(VideoClip(0,1)->getLink());
+        ASSERT_ZERO(AudioClip(0,1)->getLink());
+        Undo();
+        ASSERT_EQUALS(VideoClip(0,1)->getLink(), AudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,1)->getLink(), VideoClip(0,1));
+    }
+}
+
 } // namespace

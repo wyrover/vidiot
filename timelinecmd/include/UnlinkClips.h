@@ -15,13 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_POPUPMENU_H
-#define TEST_POPUPMENU_H
+#ifndef UNLINK_CLIPS_H
+#define UNLINK_CLIPS_H
 
-namespace test
-{
-class TestPopupMenu : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestPopupMenu>
+#include "AClipEdit.h"
+
+namespace gui { namespace timeline { namespace command {
+
+class UnlinkClips
+    :   public AClipEdit
 {
 public:
 
@@ -29,33 +31,21 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void setUp();       ///< Called before each test.
-    virtual void tearDown();    ///< Called after each test.
+    explicit UnlinkClips(model::SequencePtr sequence, model::IClips clips);
+
+    virtual ~UnlinkClips();
 
     //////////////////////////////////////////////////////////////////////////
-    // TEST CASES
+    // ACLIPEDIT INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    /// Test adding transitions via the popup menu.
-    void testAddTransitions();
+    void initialize() override;
 
-    /// Test deleting a clip via the popup menu
-    void testDelete();
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
 
-    /// Test removing one empty area via the popup menu.
-    void testRemoveOneEmptyInterval();
-
-    /// Test the handling for multiple right mouse clicks
-    void testOpenPopupMenuTwice();
-
-    /// Test the handling for starting the scrolling immediately from
-    /// when a popup menu is shown. Also tests that the various timeline
-    /// view parts are extended when the total sequence length is increase.
-    void testRightClickScrollingAfterOpeningPopupMenu();
-
-    void testOpenPopupMenuWhenClickingOnTransition();
-
-    void testUnlinkingAudioAndVideoClips();
+    friend std::ostream& operator<<( std::ostream& os, const UnlinkClips& obj );
 
 private:
 
@@ -63,9 +53,9 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    FixtureProject mProjectFixture;
+    model::IClips mClips; ///< List of clips to be unlinked
 };
-}
-using namespace test;
 
-#endif // TEST_POPUPMENU_H
+}}} // namespace
+
+#endif // UNLINK_CLIPS_H
