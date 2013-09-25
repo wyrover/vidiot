@@ -124,6 +124,18 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
 
+    /// Set a fixed outcome for the next string selection for testing.
+    /// \param selection fixed list of selected strings which will be returned for the next getStringsSelection() call
+    void setStringsSelection(std::list<wxString> stringsSelection);
+
+    /// Open a files selection dialog. If before this call setFiles() was called, the files given in
+    /// setFiles() are returned and that list is reset.
+    /// In case the dialog is aborted or no file is selected for another reason, an empty list is returned.
+    /// \post !sFiles
+    std::list<wxString> getStringsSelection( wxString title, wxString message, std::list<wxString> options, wxWindow* parent = 0 );
+
+    //////////////////////////////////////////////////////////////////////////
+
     /// Show a debug report. In some scenarios adding a context/dump
     /// leads to hangups (particularly, wxWidgets assert in a separate
     /// thread), so that behaviour can be disabled via the addcontext flag.
@@ -143,6 +155,7 @@ private:
     boost::optional<wxString> mText;
     boost::optional<wxString> mComboText;
     boost::optional<int> mButton;
+    boost::optional<std::list<wxString>> mStringsSelection;
 
     /// Only one report is generated. After that application should end.
     /// Handling more errors after the initial fatal one serves no purpose

@@ -49,6 +49,7 @@ public:
     NodePtrs removeChildren(NodePtrs children) override;
 
     NodePtrs getChildren() const override;
+    NodePtrs getAllDescendants() const override;
 
     int count() const override;
 

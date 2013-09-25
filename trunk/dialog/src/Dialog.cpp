@@ -34,6 +34,7 @@ Dialog::Dialog()
     ,   mFiles(boost::none)
     ,   mText(boost::none)
     ,   mButton(boost::none)
+    ,   mStringsSelection(boost::none)
     ,   mDebugReportGenerated(false)
 {
 }
@@ -199,6 +200,51 @@ int Dialog::getConfirmation( wxString title, wxString message, int buttons, wxWi
     }
     if (!parent) { parent = &Window::get(); }
     return util::thread::RunInMainReturning<int>(boost::bind(&wxMessageBox, message, title, buttons, parent, wxDefaultCoord, wxDefaultCoord));
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void Dialog::setStringsSelection(std::list<wxString> stringsSelection)
+{
+    ASSERT(!mStringsSelection);
+    mStringsSelection.reset(stringsSelection);
+}
+
+std::list<wxString> Dialog::getStringsSelection( wxString title, wxString message, std::list<wxString> options, wxWindow* parent )
+{
+    if (mStringsSelection)
+    {
+        std::list<wxString> result = * mStringsSelection;
+        mStringsSelection.reset();
+        return result;
+    }
+    if (!parent) { parent = &Window::get(); }
+
+    wxArrayInt selected;
+    wxArrayString choices;
+    int i = 0;
+    BOOST_FOREACH( wxString selection, options )
+    {
+        choices.Add(selection);
+        selected.Add(i);
+        ++i;
+    }
+
+    int ok = util::thread::RunInMainReturning<int>([&selected,message,title,choices,parent]() -> int
+    {
+        return wxGetSelectedChoices(selected, message, title, choices, parent);
+    });//boost::bind(&wxGetSelectedChoices, selected, message, title, choices, parent));
+
+    std::list<wxString> result;
+    if (ok != -1) // -1 == cancel
+    {
+        BOOST_FOREACH( int selection, selected )
+        {
+            result.push_back(choices.Item(selection));
+        }
+    }
+
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////

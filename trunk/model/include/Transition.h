@@ -77,6 +77,8 @@ public:
     virtual std::ostream& dump(std::ostream& os) const override;
     virtual char* getType() const override;
 
+    FilePtr getFile() const override;
+
     //////////////////////////////////////////////////////////////////////////
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
@@ -145,4 +147,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Transition, 1)
 
-#endif // MODEL_TRANSITION_H
+#endif // MODEL_TRANSITION_H````
