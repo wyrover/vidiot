@@ -139,6 +139,17 @@ NodePtrs Node::getChildren() const
     return mChildren;
 }
 
+NodePtrs Node::getAllDescendants() const
+{
+    NodePtrs result;
+    UtilList<NodePtr>(result).addElements(mChildren, NodePtr());
+    BOOST_FOREACH( NodePtr child, mChildren )
+    {
+        UtilList<NodePtr>(result).addElements(child->getAllDescendants(), NodePtr());
+    }
+    return result;
+}
+
 void Node::setName(wxString name)
 {
 }

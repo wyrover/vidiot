@@ -33,6 +33,7 @@
 #include "ProjectViewCreateFolder.h"
 #include "ProjectViewCreateSequence.h"
 #include "ProjectViewDeleteAsset.h"
+#include "ProjectViewDeleteUnusedFiles.h"
 #include "ProjectViewDropSource.h"
 #include "ProjectViewMoveAsset.h"
 #include "ProjectViewRenameAsset.h"
@@ -40,6 +41,8 @@
 #include "TimeLinesView.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilPath.h"
+#include "UtilRecycle.h"
 #include "Window.h"
 
 namespace gui {
@@ -85,6 +88,7 @@ ProjectView::ProjectView(wxWindow* parent)
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCopy,                this, wxID_COPY);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onPaste,               this, wxID_PASTE);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDelete,              this, wxID_DELETE);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDeleteUnused,        this, meID_DELETE_UNUSED);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFolder,           this, meID_NEW_FOLDER);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewAutoFolder,       this, meID_NEW_AUTOFOLDER);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,         this, meID_NEW_SEQUENCE);
@@ -118,6 +122,7 @@ ProjectView::~ProjectView()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCopy,              this, wxID_COPY);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onPaste,             this, wxID_PASTE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDelete,            this, wxID_DELETE);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDeleteUnused,      this, meID_DELETE_UNUSED);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFolder,         this, meID_NEW_FOLDER);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewAutoFolder,     this, meID_NEW_AUTOFOLDER);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,       this, meID_NEW_SEQUENCE);
@@ -280,6 +285,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     bool showNew = true;
     bool showCreateSequence = false;
     bool showOpenSequence = false;
+    bool showDeleteUnused = false;
 
     bool enableUpdateAutoFolder = true;
 
@@ -288,6 +294,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     bool enablePaste = (nSelected == 1);
     bool enableCreateSequence = (nSelected == 1);
     bool enableOpen = (nSelected == 1);
+    bool enableDeleteUnused = (nSelected == 1);
 
     BOOST_FOREACH( wxDataViewItem item, sel )
     {
@@ -310,6 +317,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
             enablePaste = false;
             enableNew = false;
             showCreateSequence = true;
+            showDeleteUnused = true;
         }
         else if (isFolder)
         {
@@ -352,6 +360,11 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     menu.AppendSeparator();
     menu.Append( wxID_DELETE,_("&Delete\tDEL") );
     menu.Enable( wxID_DELETE, enableDelete );
+    if (showDeleteUnused )
+    {
+        menu.Append( meID_DELETE_UNUSED, _("Delete unused files on disk") );
+        menu.Enable( meID_DELETE_UNUSED, enableDeleteUnused );
+    }
     menu.AppendSeparator();
 
     if (showCreateSequence)
@@ -376,7 +389,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
         pCreateMenu = menu.AppendSubMenu(&createMenu,_("&New"));
     }
 
-    PopupMenu(&menu);
+    PopupMenu(&menu); // todo use same mechanism as for timeline popup menu. That keeps the popup ids locally here.
     if (showNew && enableNew)
     {
         menu.Remove(pCreateMenu);   // To avoid deletion via menu structure AND via going out of scope.
@@ -433,6 +446,14 @@ void ProjectView::onDelete(wxCommandEvent& event)
 {
 
     model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
+}
+
+void ProjectView::onDeleteUnused(wxCommandEvent& event)
+{
+    model::AutoFolderPtr folder = boost::dynamic_pointer_cast<model::AutoFolder>(getSelectedContainer());
+    ASSERT(folder);
+
+    command::ProjectViewDeleteUnusedFiles(folder).recycleFiles();
 }
 
 void ProjectView::onNewFolder(wxCommandEvent& event)

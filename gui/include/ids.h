@@ -56,6 +56,7 @@ enum
     meID_NEW_SEQUENCE,
     meID_NEW_FILE,
     meID_CREATE_SEQUENCE,
+    meID_DELETE_UNUSED,
     // Entries that can be dynamically generated
     meID_DYNAMIC_MENU_ENTRIES,
     meID_VIDEOTRANSITIONS_BEGIN = meID_DYNAMIC_MENU_ENTRIES + 1000,

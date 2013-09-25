@@ -47,34 +47,34 @@ void AudioCodecs::initialize()
 
     add(_("MP2"),
         AudioCodec(CODEC_ID_MP2).
-        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(64000)));
+        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
     add(_("MP3"),
         AudioCodec(CODEC_ID_MP3).
-        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(64000)));
+        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
     add(_("AAC"),
         AudioCodec(CODEC_ID_AAC).
-        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(64000)));
+        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
     add(_("AMR NB"),
         AudioCodec(CODEC_ID_AMR_NB).
-        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(64000)));
+        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
     add(_("FLAC"),
         AudioCodec(CODEC_ID_FLAC).
-        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(64000)));
+        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
     //add(AudioCodec(CODEC_ID_PCM_S16BE).
     //addParameter(AudioCodecParameterBitrate().enable().setDefault(10000).setMinimum(500).setMaximum(40000)));
 
     add(_("PCM 16 bits Little Endian"),
         AudioCodec(CODEC_ID_PCM_S16LE).
-        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(64000)));
+        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 
     add(_("Vorbis"),
         AudioCodec(CODEC_ID_VORBIS).
-        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(64000)));
+        addParameter(AudioCodecParameterBitrate().enable().setMinimum(500).setMaximum(4000000).setDefault(320000)));
 }
 
 // static

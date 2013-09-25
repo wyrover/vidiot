@@ -63,6 +63,7 @@ public:
     virtual NodePtrs removeChildren(NodePtrs children) = 0;
 
     virtual NodePtrs getChildren() const = 0;
+    virtual NodePtrs getAllDescendants() const = 0;
 
     /// Count the total number of items in the entire tree.
     /// The root node is included in the count.

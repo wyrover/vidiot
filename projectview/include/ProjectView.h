@@ -82,6 +82,7 @@ private:
     void onCopy(wxCommandEvent& event);
     void onPaste(wxCommandEvent& event);
     void onDelete(wxCommandEvent& event);
+    void onDeleteUnused(wxCommandEvent& event);
     void onNewFolder(wxCommandEvent& event);
     void onNewAutoFolder(wxCommandEvent& event);
     void onNewSequence(wxCommandEvent& event);

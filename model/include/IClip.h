@@ -156,6 +156,14 @@ public:
     /// \return a five character long string representation of the clip type, for logging.
     virtual char* getType() const = 0;
 
+    //////////////////////////////////////////////////////////////////////////
+    // ACCESS DATA GENERATOR
+    //////////////////////////////////////////////////////////////////////////
+
+    /// \return the file that provides the actual data
+    /// Returns 0 if there is no such file (for instance, empty clip/transition)
+    virtual FilePtr getFile() const = 0;
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
