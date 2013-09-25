@@ -176,12 +176,6 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 DialogRenderSettings::~DialogRenderSettings()
 {
     VAR_DEBUG(this);
-    if (*mOriginal != *mNew)
-    {
-        // This causes a 'save' dialog when closing.
-        // KP: Change render options, then undo until all items removed. Then close. Save as dialog will not be shown.
-        model::ProjectModification::trigger();
-    }
     mRenderSeparation->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &DialogRenderSettings::onRenderSeparationChanged, this);
     mFileButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onFileButtonPressed, this);
     mRenderButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onRenderButtonPressed, this);
@@ -521,6 +515,7 @@ void DialogRenderSettings::applyNewRender()
     ASSERT(check());
     mSequence->setRender(make_cloned<model::render::Render>(mNew));
     mOriginal = make_cloned<model::render::Render>(mNew);
+    model::ProjectModification::trigger();
     ASSERT_EQUALS(*mOriginal,*mNew);
 }
 
