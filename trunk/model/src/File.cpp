@@ -35,7 +35,12 @@ namespace model {
 
 // static
 const int File::STREAMINDEX_UNDEFINED = -1;
-const int File::LENGTH_UNDEFINED = -1;
+// Set to maxint deliberately. In some exceptional cases (file removed from disk),
+// this value may actually be used in certain computations. To avoid asserts use
+// a 'not too small' value. What typically can go wrong is Transition::make*Clip()
+// which uses adjustBegin/End to create the clip. With a too small length for an
+// unavailable file, crashes occur.
+const int File::LENGTH_UNDEFINED = std::numeric_limits<int>::max();
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -549,12 +554,14 @@ void File::openFile()
             if ( (stream->duration != AV_NOPTS_VALUE) && (stream->duration != 0))
             {
                 mNumberOfFrames = getStreamLength(stream);
+                ASSERT_MORE_THAN_EQUALS_ZERO(mNumberOfFrames);
             }
             else
             {
                 if ( (stream->nb_frames != AV_NOPTS_VALUE) && (stream->nb_frames != 0))
                 {
                     mNumberOfFrames = stream->nb_frames;
+                    ASSERT_MORE_THAN_EQUALS_ZERO(mNumberOfFrames);
                 }
                 else
                 {
@@ -571,6 +578,7 @@ void File::openFile()
             {
                 // For files without video, determine the number of 'virtual video frames'.
                 mNumberOfFrames = getStreamLength(stream);
+                ASSERT_MORE_THAN_EQUALS_ZERO(mNumberOfFrames);
             }
         }
         else

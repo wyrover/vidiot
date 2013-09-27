@@ -24,6 +24,8 @@ namespace test {
 
 std::pair<RandomTempDirPtr, wxFileName> SaveProjectAndClose();
 
+void CloseDocumentAndAvoidSaveDialog();
+
 } // namespace
 
 #endif // HELPER_PROJECT_H

@@ -35,6 +35,8 @@ public:
 
     void testRemovedFileInSequenceBeforeOpening();
 
+    void testRemovedFileUsedForTransitionsBeforeOpening();
+
     void testRemovedFileInProjectViewBeforeOpening();
 
     void testRemovedFolderInProjectViewBeforeOpening();

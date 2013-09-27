@@ -38,4 +38,14 @@ std::pair<RandomTempDirPtr, wxFileName> SaveProjectAndClose()
     return std::make_pair(tempDirProject, filename);
 }
 
+void CloseDocumentAndAvoidSaveDialog()
+{
+    wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
+    if (doc)
+    {
+        doc->Modify(false); // Avoid "Save yes/no/Cancel" dialog
+    }
+    triggerMenu(wxID_CLOSE);
+}
+
 } // namespace
