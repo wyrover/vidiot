@@ -42,6 +42,8 @@ struct MakeTransitionAfterClip
     explicit MakeTransitionAfterClip(int afterclip, bool audio);
     virtual ~MakeTransitionAfterClip();
 
+    void dontUndo();
+
     int clipNumberBeforeTransition;
     int clipNumberAfterTransition;
 
@@ -76,6 +78,8 @@ protected:
     virtual void moveMouseAndCreateTransition(int clipNumber) = 0;
 
     model::IClipPtr GetClip(int track, int clip) const;
+
+    bool mUndo;
 
 private:
 

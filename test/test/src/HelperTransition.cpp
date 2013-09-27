@@ -86,12 +86,18 @@ MakeTransitionAfterClip::MakeTransitionAfterClip(int afterclip, bool audio)
     : clipNumberBeforeTransition(afterclip)
     , clipNumberAfterTransition(afterclip+1)
     , mAudio(audio)
+    , mUndo(true)
 {
     storeVariablesBeforeTrimming();
 }
 
 MakeTransitionAfterClip::~MakeTransitionAfterClip()
 {
+}
+
+void MakeTransitionAfterClip::dontUndo()
+{
+    mUndo = false;
 }
 
 void MakeTransitionAfterClip::makeTransition()
@@ -164,12 +170,15 @@ MakeInOutTransitionAfterClip::MakeInOutTransitionAfterClip(int afterclip, bool a
 
 MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 {
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    Undo(); // Undo create transition
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Undo(); // Undo TrimRight
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Undo(); // Undo TrimLeft
+    if (mUndo)
+    {
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+        Undo(); // Undo create transition
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+        Undo(); // Undo TrimRight
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+        Undo(); // Undo TrimLeft
+    }
 }
 
 void MakeInOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
@@ -199,10 +208,13 @@ MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
 
 MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
 {
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    Undo(); // Undo create transition
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Undo(); // Undo TrimRight
+    if (mUndo)
+    {
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+        Undo(); // Undo create transition
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+        Undo(); // Undo TrimRight
+    }
 }
 
 void MakeInTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
@@ -232,10 +244,13 @@ MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip, bool audio
 
 MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
 {
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
-    Undo(); // Undo create transition
-    ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-    Undo(); // Undo TrimLeft
+    if (mUndo)
+    {
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
+        Undo(); // Undo create transition
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+        Undo(); // Undo TrimLeft
+    }
 }
 
 void MakeOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)

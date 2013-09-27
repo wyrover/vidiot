@@ -20,8 +20,10 @@
 #include "File.h"
 #include "Folder.h"
 #include "HelperApplication.h"
+#include "HelperFileSystem.h"
 #include "HelperProject.h"
 #include "HelperProjectView.h"
+#include "HelperTransition.h"
 #include "HelperWatcher.h"
 #include "Sequence.h"
 #include "UtilPath.h"
@@ -105,6 +107,53 @@ void TestExceptions::testRemovedFileInSequenceBeforeOpening()
     waitForIdle();
 
     Play(10, 500);
+}
+
+void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
+{
+    StartTestSuite();
+
+    model::FolderPtr root = createProject();
+    ASSERT(root);
+    ASSERT_WATCHED_PATHS_COUNT(0);
+
+    StartTest("Create document with transitions");
+    model::IPaths InputFiles = getListOfInputFiles();
+    RandomTempDirPtr tempDir = RandomTempDir::generate();
+    std::list<wxFileName> fileNames;
+    BOOST_FOREACH( model::IPathPtr path, getListOfInputFiles() )
+    {
+        wxFileName filepath(tempDir->getFileName().GetLongPath(), path->getPath().GetFullName());
+        bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath.GetLongPath(), false );
+        ASSERT(copyok);
+
+        fileNames.push_back(filepath);
+    }
+    model::FolderPtr folder = addAutoFolder( tempDir->getFileName() );
+    WaitForChildCount(root, 2 + InputFiles.size());
+    ASSERT_WATCHED_PATHS_COUNT(1);
+    model::SequencePtr sequence = createSequence(folder);
+    WaitForChildCount(root, 3 + InputFiles.size());
+
+    Zoom level(6);
+    MakeInOutTransitionAfterClip t2(1); t2.dontUndo();
+    MakeInOutTransitionAfterClip t1(0); t1.dontUndo();
+
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
+
+    std::list<wxFileName>::iterator it = fileNames.begin();
+    ++it; // Need second file
+    wxRemoveFile(it->GetLongPath());
+    fileNames.erase(it);
+
+    StartTest("Load document");
+    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    waitForIdle();
+
+    Scrub(HCenter(VideoClip(0,1)),RightPixel(VideoClip(0,1)) + 5);
+    Scrub(-5 + LeftPixel(VideoClip(0,3)),HCenter(VideoClip(0,3)));
+
+    CloseDocumentAndAvoidSaveDialog(); // Avoid files being in use when deleted
 }
 
 void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
