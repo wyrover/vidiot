@@ -233,7 +233,7 @@ std::list<wxString> Dialog::getStringsSelection( wxString title, wxString messag
     int ok = util::thread::RunInMainReturning<int>([&selected,message,title,choices,parent]() -> int
     {
         return wxGetSelectedChoices(selected, message, title, choices, parent);
-    });//boost::bind(&wxGetSelectedChoices, selected, message, title, choices, parent));
+    });
 
     std::list<wxString> result;
     if (ok != -1) // -1 == cancel
