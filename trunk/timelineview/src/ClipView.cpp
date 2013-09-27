@@ -395,7 +395,7 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 {
     if (getDrag().contains(mClip))
     {
-        wxBitmap b(getSize());
+        wxBitmap b(getSize().x,height);
         draw(b, true, false);
         dc.DrawBitmap(b,position);
         dcMask.DrawRectangle(position,b.GetSize());
