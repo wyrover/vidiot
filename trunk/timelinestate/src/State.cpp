@@ -255,8 +255,6 @@ void Machine::onLeave(wxMouseEvent& event)
 void Machine::onWheel(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    //getKeyboard().update(event); -- todo only take the relevant info from relevant events: typically, the getmouse update only requires move events, the keyboard update only requires down and key up events
-    //getMouse().update(event);
 
     // Zooming/Scrolling can be done in any state
     int nSteps = event.GetWheelRotation() / event.GetWheelDelta();
