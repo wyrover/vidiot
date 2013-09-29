@@ -324,7 +324,7 @@ IClipPtr Track::iterate_get()
 void Track::iterate_next()
 {
     ASSERT(!iterate_atEnd());
-    iterate_get()->clean(); // Reset any running threads (particularly, bufferPacketsThread) // todo test rendering a completely empty timeline???
+    iterate_get()->clean(); // Reset any running threads (particularly, bufferPacketsThread)
     mItClips++;
     while (!iterate_atEnd() && iterate_get()->getLength() == 0) // Step over clips with length 0. These are only used as part of a transition.
     {
