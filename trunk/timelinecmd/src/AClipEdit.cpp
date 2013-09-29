@@ -489,7 +489,7 @@ model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
     return empty;
 }
 
-void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved) // todo all other uses?
+void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
 {
     model::MoveParameters undo;
 
