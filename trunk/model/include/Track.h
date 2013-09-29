@@ -148,8 +148,8 @@ private:
     // todo temp hack:
     // required for solving the following bug: during rendering of a sequence with
     // transitions, the transition's getNextVideo/Audio uses getPrev/getNext which is
-    // considered 'redundant' and thus is should not be required for a cloned sequence.
-    // The default (non redundant) structures must be adapter such that the getnext/getprev
+    // considered 'redundant' and thus should not be required for a cloned sequence.
+    // The default (non redundant) structures must be adapted such that the getnext/getprev
     // calls of the transitions being rendered can be done.
     friend class Sequence;
 
