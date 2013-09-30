@@ -59,9 +59,6 @@ enum
     meID_DELETE_UNUSED,
     // Entries that can be dynamically generated
     meID_DYNAMIC_MENU_ENTRIES,
-    meID_VIDEOTRANSITIONS_BEGIN = meID_DYNAMIC_MENU_ENTRIES + 1000,
-    meID_AUDIOTRANSITIONS_BEGIN = meID_VIDEOTRANSITIONS_BEGIN + 1000,    // 1000 video transitions
-    meID_DYNAMIC_MENU_ENTRIES_END = meID_AUDIOTRANSITIONS_BEGIN + 1000,  // 1000 audio transitions
     // Should always be the last value!!!
     meID_LAST
 };

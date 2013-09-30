@@ -75,6 +75,8 @@ public:
 
     void testCreateTransitionAfterLastClip();
 
+    void testVideoTransitionTypes();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
