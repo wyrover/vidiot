@@ -24,7 +24,7 @@
 #include "Combiner.h"
 #include "Config.h"
 #include "CreateAudioTrack.h"
-#include "CreateTransition.h"
+#include "CreateTransitionHelper.h"
 #include "CreateVideoTrack.h"
 #include "DialogRenderSettings.h"
 #include "EmptyClip.h"
@@ -65,6 +65,7 @@ enum
     ID_DELETE_CLIPS,
     ID_DELETE_TRIM_CLIPS,
     ID_UNLINK_CLIPS,
+    ID_POPUP_END
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,7 +205,12 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     // If an item is selected for which a menu option does not make sense, then the option is disabled.
 
     wxMenu menu;
-    auto add = [&menu](int id, wxString text, bool show, bool enable, bool separate)
+    wxMenu* menuFadeIn = new wxMenu; // On heap, destroyed when toplevel menu destroyed
+    wxMenu* menuFadeOut = new wxMenu;
+    wxMenu* menuFadeInOut = new wxMenu;
+    wxMenu* menuFadeOutIn = new wxMenu;
+
+    auto add = [&menu](wxMenu& menu, int id, wxString text, bool show, bool enable, bool separate)
     {
         if (show)
         {
@@ -294,34 +300,77 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
         }
     }
 
-    add(ID_ADD_INTRANSITION,    _("Fade &in"),                              clickedOnMediaClip, canFadeIn,              false);
-    add(ID_ADD_OUTTRANSITION,   _("Fade &out"),                             clickedOnMediaClip, canFadeOut,             false);
-    add(ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"),             clickedOnMediaClip, canFadeFromPrevious,    false);
-    add(ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),                   clickedOnMediaClip, canFadeToNext,          false);
-    add(ID_REMOVE_EMPTY,        _("Remove &empty space"),                   clickedOnEmptyClip, clickedOnEmptyClip,     true);
-    add(ID_DELETE_CLIPS,        _("&Delete selected\tDel"),                 selectedMediaClip,  !selectedEmptyClip,     true);
-    add(ID_DELETE_TRIM_CLIPS,   _("Delete and &Trim selected\tShift+Del"),  selectedMediaClip,  !selectedEmptyClip,     false);
-    add(ID_UNLINK_CLIPS,        _("&Unlink audio and video clips"),         selectedMediaClip,  enableUnlink,           true);
+    if (clickedOnAudioClip || clickedOnVideoClip)
+    {
+        add(menu, ID_ADD_INTRANSITION,    _("Fade &in"),                              clickedOnMediaClip, canFadeIn,              false);
+        add(menu, ID_ADD_OUTTRANSITION,   _("Fade &out"),                             clickedOnMediaClip, canFadeOut,             false);
+        add(menu, ID_ADD_INOUTTRANSITION, _("Cross-fade from &previous"),             clickedOnMediaClip, canFadeFromPrevious,    false);
+        add(menu, ID_ADD_OUTINTRANSITION, _("Cross-fade to &next"),                   clickedOnMediaClip, canFadeToNext,          false);
+    }
+    std::map<int, model::TransitionType> mapMenuItemToTransitionType;
+    std::map<int, model::TransitionPtr> mapMenuItemToTransition;
+    if (clickedOnVideoClip) // For audio clips there is only the crossfade
+    {
+        int id = ID_POPUP_END;
+
+        BOOST_FOREACH( auto t, model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+        {
+            add(*menuFadeIn, id, t.first.second,  clickedOnMediaClip, canFadeIn, false);
+            mapMenuItemToTransitionType[id] = model::TransitionTypeIn;
+            mapMenuItemToTransition[id] = t.second;
+            id++;
+
+            add(*menuFadeOut,   id, t.first.second,  clickedOnMediaClip, canFadeOut, false);
+            mapMenuItemToTransitionType[id] = model::TransitionTypeOut;
+            mapMenuItemToTransition[id] = t.second;
+            id++;
+
+            add(*menuFadeInOut, id, t.first.second,  clickedOnMediaClip, canFadeFromPrevious, false);
+            mapMenuItemToTransitionType[id] = model::TransitionTypeInOut;
+            mapMenuItemToTransition[id] = t.second;
+            id++;
+
+            add(*menuFadeOutIn, id, t.first.second,  clickedOnMediaClip, canFadeToNext, false);
+            mapMenuItemToTransitionType[id] = model::TransitionTypeOutIn;
+            mapMenuItemToTransition[id] = t.second;
+            id++;
+        }
+        menu.AppendSeparator();
+        menu.AppendSubMenu(menuFadeIn,     _("More fade in"),              _("Show fade in transitions"));
+        menu.AppendSubMenu(menuFadeOut,    _("More fade out"),             _("Show fade out transitions"));
+        menu.AppendSubMenu(menuFadeInOut,  _("More fade from previous"),   _("Show fade from previous transitions"));
+        menu.AppendSubMenu(menuFadeOutIn,  _("More fade to next"),         _("Show fade to next transitions"));
+    }
+
+    add(menu, ID_REMOVE_EMPTY,        _("Remove &empty space"),                   clickedOnEmptyClip, clickedOnEmptyClip,     true);
+    add(menu, ID_DELETE_CLIPS,        _("&Delete selected\tDel"),                 selectedMediaClip,  !selectedEmptyClip,     true);
+    add(menu, ID_DELETE_TRIM_CLIPS,   _("Delete and &Trim selected\tShift+Del"),  selectedMediaClip,  !selectedEmptyClip,     false);
+    add(menu, ID_UNLINK_CLIPS,        _("&Unlink audio and video clips"),         selectedMediaClip,  enableUnlink,           true);
 
     if (menu.GetMenuItemCount() > 0)
     {
         mPopup = true;
 
+        model::TransitionPtr defaultTransition = clickedOnVideoClip ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
+        ASSERT(info.clip);
+
         int result = getTimeline().GetPopupMenuSelectionFromUser(menu);
         mPopup = false;
         switch (result)
         {
+        case wxID_NONE:
+            break;
         case ID_ADD_INTRANSITION:
-            createTransition(model::TransitionTypeIn);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeIn, defaultTransition );
             break;
         case ID_ADD_OUTTRANSITION:
-            createTransition(model::TransitionTypeOut);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeOut, defaultTransition );
             break;
         case ID_ADD_INOUTTRANSITION:
-            createTransition(model::TransitionTypeInOut);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeInOut, defaultTransition);
             break;
         case ID_ADD_OUTINTRANSITION:
-            createTransition(model::TransitionTypeOutIn);
+            command::createTransition(getSequence(), info.getLogicalClip(), model::TransitionTypeOutIn, defaultTransition);
             break;
         case ID_REMOVE_EMPTY:
             getIntervals().deleteEmptyClip(info.clip);
@@ -334,6 +383,13 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
             break;
         case ID_UNLINK_CLIPS:
             (new command::UnlinkClips(getSequence(),unlink))->submit();
+            break;
+        default:
+            ASSERT(clickedOnVideoClip);
+            ASSERT_MORE_THAN_EQUALS(result, ID_POPUP_END); // Selected one of the video transitions
+            ASSERT_MAP_CONTAINS(mapMenuItemToTransitionType,result);
+            ASSERT_MAP_CONTAINS(mapMenuItemToTransition,result);
+            command::createTransition(getSequence(), info.getLogicalClip(), mapMenuItemToTransitionType[result], mapMenuItemToTransition[result] );
             break;
         }
     }
@@ -493,125 +549,5 @@ void MenuHandler::onCloseSequence(wxCommandEvent& event)
         event.Skip();
     }
 }
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void MenuHandler::createTransition(model::TransitionType type)
-{
-    VAR_INFO(type);
-    PointerPositionInfo info = getMouse().getInfo(mPopupPosition);
-    ASSERT(info.clip);
-    model::TransitionPtr transition = info.clip->isA<model::VideoClip>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
-
-    command::TrimClip* trimLeftCommand = 0;
-    command::TrimClip* trimRightCommand = 0;
-    command::CreateTransition* createTransitionCommand = new command::CreateTransition(getSequence(), info.getLogicalClip(), transition, type);
-
-    if (createTransitionCommand->isPossible())
-    {
-        createTransitionCommand->submit();
-        createTransitionCommand = 0;
-    }
-    else
-    {
-        pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
-
-        if (type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)
-        {
-            // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
-            model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
-            ASSERT(leftClip);
-            model::IClipPtr prevClip = leftClip->getPrev(); // Temporarily stored to retrieve the (new) trimmed clips again. NOTE: This may be 0 if leftClip is the first clip of the track!!!
-
-            pts extraNeededLeft = leftClip->getMaxAdjustEnd() - (defaultSize / 2);
-            if (extraNeededLeft < 0)
-            {
-                trimLeftCommand = new command::TrimClip(getSequence(), leftClip, model::TransitionPtr(), ClipEnd);
-                trimLeftCommand->update(extraNeededLeft, true);
-            }
-
-            leftClip = prevClip ? prevClip->getNext() : info.track->getClips().front(); // Left clip is changed by the trim left command
-            model::IClipPtr rightClip = leftClip->getNext();
-
-            pts extraNeededRight = rightClip->getMinAdjustBegin() + (defaultSize / 2);
-            if (extraNeededRight > 0)
-            {
-                trimRightCommand = new command::TrimClip(getSequence(), rightClip, model::TransitionPtr(), ClipBegin);
-                trimRightCommand->update(extraNeededRight, true);
-            }
-
-            delete createTransitionCommand;
-            createTransitionCommand = new command::CreateTransition(getSequence(), leftClip, transition, model::TransitionTypeOutIn);
-
-            if (createTransitionCommand->isPossible())
-            {
-                ::command::Combiner* combiner = new ::command::Combiner();
-                if (trimLeftCommand)
-                {
-                    combiner->add(trimLeftCommand);
-                }
-                if (trimRightCommand)
-                {
-                    combiner->add(trimRightCommand);
-                }
-                combiner->add(createTransitionCommand);
-                combiner->submit();
-
-                trimLeftCommand = 0; // Ownership transferred to Combiner
-                trimRightCommand = 0; // Ownership transferred to Combiner
-                createTransitionCommand = 0; // Ownership transferred to Combiner
-            }
-        }
-        delete trimLeftCommand; // Triggers a revert also
-        delete trimRightCommand; // Triggers a revert also
-        if (createTransitionCommand) // If the command was not submitted, then that was because 'isPossible()' never returned true.
-        {
-            gui::StatusBar::get().timedInfoText(_("Unable to make room for adding the transition."));
-        }
-        delete createTransitionCommand;
-    }
-}
-
-        //    command::TrimClip* trimLeftCommand = new command::TrimClip(getSequence(), leftClip, model::TransitionPtr(), ClipEnd);
-        //    trimLeftCommand->update(-1 * (defaultSize / 2), true); // Try to use defaultTransitionSize / 2 // todo heb ik niet het dubbele nodig?
-        //    if (!trimLeftCommand || trimLeftCommand->getDiff() != 0) // Any trim greater than 0 will do
-        //    {
-        //        leftClip = prevClip ? prevClip->getNext() : info.track->getClips().front(); // Changed by the command
-
-        //        command::TrimClip* trimRightCommand = new command::TrimClip(getSequence(), leftClip->getNext(), model::TransitionPtr(), ClipBegin);
-        //        trimRightCommand->update(defaultSize / 2, true); // Try to use defaultTransitionSize / 2// todo heb ik niet het dubbele nodig?
-        //        if (!trimRightCommand || trimRightCommand->getDiff() != 0) // Any trim greater than 0 will do
-        //        {
-        //            command::CreateTransition* newcmd = new command::CreateTransition(getSequence(), leftClip, transition, model::TransitionTypeOutIn);
-
-        //            if (newcmd->isPossible())
-        //            {
-        //                ::command::Combiner* combiner = new ::command::Combiner();
-        //                combiner->add(trimLeftCommand);
-        //                trimLeftCommand = 0; // Ownership transferred to Combiner
-        //                combiner->add(trimRightCommand);
-        //                trimRightCommand = 0; // Ownership transferred to Combiner
-        //                combiner->add(newcmd);
-        //                combiner->submit();
-        //                showMessage = false;
-        //            }
-        //        }
-        //    }
-        //    if (trimLeftCommand)
-        //    {
-        //        delete trimLeftCommand; // Triggers a revert also
-        //    }
-        //    if (trimRightCommand)
-        //    {
-        //        delete trimRightCommand; // Triggers a revert also
-        //    }
-        //}
-        //delete cmd;
-        //if (showMessage)
-        //{
-        //    gui::StatusBar::get().timedInfoText(_("Unable to make room for adding the transition."));
-        //}
 
 }} // namespace

@@ -15,15 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MODEL_TRANSITION_FACTORY_H
-#define MODEL_TRANSITION_FACTORY_H
+#ifndef TRANSITION_BANDS_H
+#define TRANSITION_BANDS_H
 
-namespace model {
+#include "VideoTransition.h"
 
-typedef std::pair< wxString, wxString > TransitionDescription; ///< first: name, second: group
-typedef std::map< TransitionDescription, TransitionPtr > TransitionMap;
+namespace model { namespace video { namespace transition {
 
-class TransitionFactory
+class Bands
+    :   public VideoTransition
 {
 public:
 
@@ -31,43 +31,49 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    TransitionFactory(std::string type);
-
-    virtual ~TransitionFactory();
+    Bands();
+    virtual Bands* clone() const;
+    virtual ~Bands();
 
     //////////////////////////////////////////////////////////////////////////
-    // TRANSITIONS
+    // VIDEOTRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    TransitionMap getAllPossibleTransitions() const;
-    TransitionPtr getDefault();
+    VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters);
 
 protected:
 
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION
+    // COPY CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////
 
-    void add(TransitionDescription description, TransitionPtr transition);
-    void setDefault(TransitionPtr transition);
+    /// Copy constructor. Use make_cloned for making deep copies of objects.
+    /// \see make_cloned
+    Bands(const Bands& other);
 
 private:
-
-    //////////////////////////////////////////////////////////////////////////
-    // MEMBERS
-    //////////////////////////////////////////////////////////////////////////
-
-    std::string mType;
-    TransitionMap mTransitions;
-    TransitionPtr mDefault;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const TransitionFactory& obj );
+    friend std::ostream& operator<<( std::ostream& os, const Bands& obj );
+
+    //////////////////////////////////////////////////////////////////////////
+    // SERIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 
-} // namespace
+}}} // namespace
 
-#endif // MODEL_TRANSITION_FACTORY_H
+// Workaround needed to prevent compile-time errors (mpl_assertion_in_line...) with gcc
+#include  <boost/preprocessor/slot/counter.hpp>
+#include BOOST_PP_UPDATE_COUNTER()
+#line BOOST_PP_COUNTER
+BOOST_CLASS_VERSION(model::video::transition::Bands, 1)
+
+#endif // TRANSITION_BANDS_H

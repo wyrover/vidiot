@@ -23,19 +23,23 @@
 #include "UtilLogStl.h"
 #include "VideoTransition.h"
 #include "VideoTransition_CrossFade.h"
+#include "VideoTransition_Bands.h"
 
 namespace model { namespace video {
 
 VideoTransitionFactory::VideoTransitionFactory()
     : TransitionFactory("Video")
 {
-    add(boost::make_shared<model::video::transition::CrossFade>());
+    setDefault(boost::make_shared<model::video::transition::CrossFade>());
+    add(std::make_pair("Cross fade", "Fade"), boost::make_shared<model::video::transition::CrossFade>());
+    add(std::make_pair("Cross fade", "Bands"), boost::make_shared<model::video::transition::Bands>());
 }
 
 template < class Archive >
 void VideoTransitionFactory::registerTypesForSerialization(Archive& ar)
 {
     ar.template register_type<model::video::transition::CrossFade>();
+    ar.template register_type<model::video::transition::Bands>();
 }
 
 template void VideoTransitionFactory::registerTypesForSerialization<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);

@@ -30,6 +30,7 @@ namespace model {
 
 TransitionFactory::TransitionFactory(std::string type)
     :   mType(type)
+    ,   mDefault()
 {
 }
 
@@ -41,15 +42,30 @@ TransitionFactory::~TransitionFactory()
 // TRANSITIONS
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionFactory::add(TransitionPtr transition)
+TransitionMap TransitionFactory::getAllPossibleTransitions() const
 {
-    mTransitions.push_back(transition);
+    return mTransitions;
 }
 
 TransitionPtr TransitionFactory::getDefault()
 {
-    ASSERT_NONZERO(mTransitions.size());
-    return make_cloned<Transition>(mTransitions.front());
+    ASSERT_NONZERO(mDefault);
+    return mDefault;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+void TransitionFactory::add(TransitionDescription description, TransitionPtr transition)
+{
+    ASSERT(mTransitions.find(description) == mTransitions.end())(transition)(mTransitions);
+    mTransitions[description] = transition;
+}
+
+void TransitionFactory::setDefault(TransitionPtr transition)
+{
+    mDefault = transition;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,7 +74,7 @@ TransitionPtr TransitionFactory::getDefault()
 
 std::ostream& operator<<( std::ostream& os, const TransitionFactory& obj )
 {
-    os << obj.mType << '|' << obj.mTransitions;
+    os << obj.mType << '|' << obj.mDefault << '|' << obj.mTransitions;
     return os;
 }
 
