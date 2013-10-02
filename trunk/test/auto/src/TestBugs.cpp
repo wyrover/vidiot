@@ -21,10 +21,12 @@
 #include "AudioClip.h"
 #include "AudioCompositionParameters.h"
 #include "AudioTrack.h"
+#include "Config.h"
 #include "DetailsClip.h"
 #include "EmptyClip.h"
 #include "HelperDetails.h"
 #include "HelperPopupMenu.h"
+#include "HelperSequence.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
@@ -36,10 +38,12 @@
 #include "ids.h"
 #include "ProjectViewCreateSequence.h"
 #include "Sequence.h"
+#include "UtilThread.h"
 #include "VideoClip.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
 #include "VideoTrack.h"
+#include "Window.h"
 
 namespace test {
 
@@ -142,12 +146,44 @@ void TestBugs::testDraggingWithoutSelection()
     LeftUp();
 }
 
-void TestBugs::testPlaybackLongTimeline()
+void TestBugs::testBugsWithLongTimeline()
 {
     StartTestSuite();
+    model::SequencePtr sequence = getSequence();
+    Config::setShowDebugInfo(true);
+    triggerMenu(ID_CLOSESEQUENCE);
 
-     // todo implement after I found some way to easily make a very large sequence
-     // Note: one or two large still images does not work
+    extendSequenceWithRepeatedClips(sequence, mProjectFixture.InputFiles, 30);
+
+    openTimelineForSequence(sequence);
+    Zoom level(6);
+    Type(WXK_END); // Move scrollbars to end
+
+    // Workaround for Windows 7 bug: http://trac.wxwidgets.org/ticket/14329 / http://trac.wxwidgets.org/ticket/14313
+    gui::Window::get().SetSize(gui::Window::get().GetSize());
+
+    {
+        StartTest("Bug: Audio playback continued, video playback stopped");
+        Play(HCenter(VideoClip(0,-1)), 2000);
+    }
+    {
+        StartTest("Bug: Playback did not stop after pressing shift");
+        PositionCursor(HCenter(VideoClip(0,-2)));
+        // NOTE: Don't use waitForIdle() when the video is playing!!!
+        //       When the video is playing, the system does not become Idle (playback events).
+        Type(' ');
+        pause(1000);
+        wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
+        pause(1000);
+        wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+        pause(1000);
+        Type(' ');
+        waitForIdle();
+        Click(Center(VideoClip(0,-2)));
+        Type(WXK_DELETE);
+        ASSERT(VideoClip(0,-2)->isA<model::EmptyClip>());
+    }
+    Config::setShowDebugInfo(false);
 }
 
 void TestBugs::testPlaybackEmptyClip()
@@ -163,25 +199,6 @@ void TestBugs::testPlaybackEmptyClip()
     ASSERT_NONZERO(chunk);
     // Note: do not pause() or press space at this point. The getNexts above 'mess up' the administration (audioclip is already at end, but the cursor position is not)
     Play(RightPixel(VideoClip(0,3)) - 3,2000);
-}
-
-void TestBugs::testPlaybackDoesNotStopAfterPressingShift()
-{
-    // todo after I found some way to easily make a very large sequence...
-    // todo then also make a test case holding: lots of transitions, then do (for each transition) move to center frame, do one get next, then moveto next transition (to trigger *Transition::clean() omission bug...)
-    StartTestSuite();
-    Zoom level(6);
-    PositionCursor(HCenter(VideoClip(0,2)));
-    Type(WXK_SPACE); // Start playback
-    pause(1000);
-    ShiftDown();
-    pause(1000);
-    ShiftUp();
-    pause(1000);
-    Type(WXK_SPACE); // Stop playback
-    Click(Center(VideoClip(0,2)));
-    Type(WXK_DELETE);
-    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip); // If playback doesn't stop the delete is ignored... thus, this actually checks that playback was stopped
 }
 
 void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()

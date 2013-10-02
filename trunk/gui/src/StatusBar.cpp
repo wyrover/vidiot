@@ -109,7 +109,7 @@ int StatusBar::getNumberOfStatusBars() const
 void StatusBar::setDebugText(wxString text)
 {
     ASSERT(wxThread::IsMain());
-    if (Config::getShowDebugInfo())
+    if (GetFieldsCount() == sDebug + 1)
     {
         SetStatusText( text, sDebug );
     }
