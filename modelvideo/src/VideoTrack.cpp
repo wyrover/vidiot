@@ -29,14 +29,12 @@ namespace model {
 
 VideoTrack::VideoTrack()
 :	Track()
-,   mPts(0)
 {
     VAR_DEBUG(this);
 }
 
 VideoTrack::VideoTrack(const VideoTrack& other)
 :   Track(other)
-,   mPts(0)
 {
     VAR_DEBUG(this);
 }
@@ -58,19 +56,12 @@ VideoTrack::~VideoTrack()
 void VideoTrack::clean()
 {
     VAR_DEBUG(this);
-    mPts = 0;
     Track::clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // PLAYBACK
 //////////////////////////////////////////////////////////////////////////
-
-void VideoTrack::moveTo(pts position)
-{
-    Track::moveTo(position);
-    mPts = position;
-}
 
 VideoFramePtr VideoTrack::getNextVideo(const VideoCompositionParameters& parameters)
 {
@@ -87,10 +78,6 @@ VideoFramePtr VideoTrack::getNextVideo(const VideoCompositionParameters& paramet
                 iterate_get()->moveTo(0);
             }
         }
-    }
-    if (videoFrame)
-    {
-        videoFrame->setPts(mPts++);
     }
     VAR_VIDEO(videoFrame);
     return videoFrame;

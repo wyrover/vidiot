@@ -148,7 +148,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         if (isEmpty)
         {
             VAR_WARNING(isEmpty)(requiredVideoSize);
-            videoFrame = boost::make_shared<EmptyFrame>(requiredVideoSize,mProgress);
+            videoFrame = boost::make_shared<EmptyFrame>(requiredVideoSize);
         }
         else
         {
@@ -208,7 +208,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                 // required - thus removing the extra audio, but that's a user decision to be made).
                 LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
 
-                videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox(), mProgress));
+                videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox()));
             }
         }
 

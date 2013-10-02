@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyFrame(wxSize size, pts position);
+    EmptyFrame(wxSize size);
 
     virtual ~EmptyFrame();
 

@@ -142,7 +142,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         gc->DrawText(error_message1, 20, 20);
         gc->DrawText(error_message2, 20, 20 + h );
         delete gc;
-        return boost::make_shared<VideoFrame>(compositeImage,0);
+        return boost::make_shared<VideoFrame>(compositeImage);
     }
 
     AVPacket nullPacket;
@@ -279,7 +279,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         wxSize size(parameters.getBoundingBox());
         size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
         size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
-        mDeliveredFrame = boost::make_shared<VideoFrame>(size, mPosition, true);
+        mDeliveredFrame = boost::make_shared<VideoFrame>(size, true);
 
         // Resample the frame size
         SwsContext* ctx = sws_getContext(
