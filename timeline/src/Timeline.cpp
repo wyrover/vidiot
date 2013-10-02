@@ -329,7 +329,7 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
     // NOT: event.Skip(); // The official way of doing it
 }
 
-void Timeline::onPaint( wxPaintEvent &event ) //todo use wxscrolled::ondraw
+void Timeline::onPaint( wxPaintEvent &event )
 {
     wxAutoBufferedPaintDC dc( this ); // See: http://trac.wxwidgets.org/ticket/15497
     DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
