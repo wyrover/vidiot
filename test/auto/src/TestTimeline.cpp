@@ -878,9 +878,7 @@ void TestTimeline::testShowDebugInfo()
     model::SequencePtr sequence = getSequence();
     Config::setShowDebugInfo(true);
     triggerMenu(ID_CLOSESEQUENCE);
-    MoveOnScreen(CenterInProjectView(sequence)); // In the project view
-    wxUIActionSimulator().MouseDblClick();
-    pause(500);
+    openTimelineForSequence(sequence);
     Config::setShowDebugInfo(false);
 }
 

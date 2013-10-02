@@ -268,6 +268,16 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     waitForIdle(); // Can be used again when the DND is done.
 }
 
+void openTimelineForSequence(model::SequencePtr sequence)
+{
+    util::thread::RunInMainAndWait([sequence]
+    {
+        gui::ProjectView::get().select(boost::assign::list_of(boost::dynamic_pointer_cast<model::Node>(sequence)));
+    });
+    gui::ProjectView::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_OPEN));
+    waitForIdle();
+}
+
 WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
     :   mNode(node)
     ,   mCount(count)

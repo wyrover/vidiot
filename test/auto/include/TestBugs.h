@@ -72,21 +72,24 @@ public:
     /// immediately start dragging.
     void testDraggingWithoutSelection();
 
+    /// All tests with a long timeline are combined, to avoid reopening the large timeline more than once.
+    ///
+    /// Bug 1:
     /// Due to excessive repainting the timeline playback caused a 'sorta' hangup: playback continued
     /// (audio kept on playing) but the GUI remained locked.
     /// Caused by ClipView constantly triggering a 'invalidateBitmap' because of debug information
     /// being updated (particularly, the rendering progress feedback was updated continuously).
     /// This happened particularly with a long timeline, fully zoomed in.
-    void testPlaybackLongTimeline();
+    ///
+    /// Bug 2:
+    /// When the sequence was playing, pressing shift (start interval) caused playback to continue
+    /// indefinitely.
+    void testBugsWithLongTimeline();
 
     /// Due to a integer calculation bug, playback of an empty clip resulting in the clip AFTER
     /// the empty clip being played almost immediately. This was caused by getNextAudio returning
     /// '0' (thus, end of clip) immediately, after which the next clip was played.
     void testPlaybackEmptyClip();
-
-    /// When the sequence was playing, pressing shift (start interval) caused playback to continue
-    /// indefinitely.
-    void testPlaybackDoesNotStopAfterPressingShift();
 
     /// A clip can have length 0 if it is used for a transition, and is fully 'obscured' by the
     /// transition (thus, it only provides frames to the transition, and provides no frames to the
