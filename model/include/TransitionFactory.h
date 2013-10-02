@@ -21,6 +21,7 @@
 namespace model {
 
 typedef std::pair< wxString, wxString > TransitionDescription; ///< first: name, second: group
+typedef std::list< TransitionDescription > TransitionDescriptions;
 typedef std::map< TransitionDescription, TransitionPtr > TransitionMap;
 
 class TransitionFactory
@@ -39,8 +40,9 @@ public:
     // TRANSITIONS
     //////////////////////////////////////////////////////////////////////////
 
-    TransitionMap getAllPossibleTransitions() const;
+    TransitionDescriptions getAllPossibleTransitions() const;
     TransitionPtr getDefault();
+    TransitionPtr getTransition(TransitionDescription description) const;
 
 protected:
 

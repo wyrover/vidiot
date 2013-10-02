@@ -97,6 +97,7 @@ public:
 
     /// Create two crossfades 'around' a video clip. Rightclick on the clip. Select delete and trim.
     /// Both the transitions AND the clip are deleted. That causes the audio and video tracks to become misaligned.
+    /// Note: This also tests explicitly adding a transition (type) twice in the same sequence (bug once)
     void testDeleteClipInbetweenTransitionsCausesTimelineMessUp();
 
     /// Due to operations in multiple tracks, the first operation removed some of the clips that were
