@@ -57,8 +57,6 @@ enum
     meID_NEW_FILE,
     meID_CREATE_SEQUENCE,
     meID_DELETE_UNUSED,
-    // Entries that can be dynamically generated
-    meID_DYNAMIC_MENU_ENTRIES,
     // Should always be the last value!!!
     meID_LAST
 };

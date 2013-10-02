@@ -38,6 +38,9 @@ namespace gui { namespace timeline { namespace command {
 void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionType type, model::TransitionPtr transition)
 {
     VAR_INFO(type);
+    ASSERT(sequence);
+    ASSERT(clip);
+    ASSERT(transition);
 
     command::TrimClip* trimLeftCommand = 0;
     command::TrimClip* trimRightCommand = 0;
@@ -55,6 +58,7 @@ void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::
         if (type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)
         {
             // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
+            model::TrackPtr track = clip->getTrack();
             model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
             ASSERT(leftClip);
             model::IClipPtr prevClip = leftClip->getPrev(); // Temporarily stored to retrieve the (new) trimmed clips again. NOTE: This may be 0 if leftClip is the first clip of the track!!!
@@ -66,7 +70,7 @@ void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::
                 trimLeftCommand->update(extraNeededLeft, true);
             }
 
-            leftClip = prevClip ? prevClip->getNext() : clip->getTrack()->getClips().front(); // Left clip is changed by the trim left command
+            leftClip = prevClip ? prevClip->getNext() : track->getClips().front(); // Left clip is changed by the trim left command
             model::IClipPtr rightClip = leftClip->getNext();
 
             pts extraNeededRight = rightClip->getMinAdjustBegin() + (defaultSize / 2);

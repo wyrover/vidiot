@@ -42,15 +42,26 @@ TransitionFactory::~TransitionFactory()
 // TRANSITIONS
 //////////////////////////////////////////////////////////////////////////
 
-TransitionMap TransitionFactory::getAllPossibleTransitions() const
+TransitionDescriptions TransitionFactory::getAllPossibleTransitions() const
 {
-    return mTransitions;
+    TransitionDescriptions result;
+    BOOST_FOREACH( auto kvp, mTransitions )
+    {
+        result.push_back(kvp.first);
+    }
+    return result;
 }
 
 TransitionPtr TransitionFactory::getDefault()
 {
     ASSERT_NONZERO(mDefault);
-    return mDefault;
+    return make_cloned<Transition>(mDefault);
+}
+
+TransitionPtr TransitionFactory::getTransition(TransitionDescription description) const
+{
+    ASSERT_MAP_CONTAINS(mTransitions,description);
+    return make_cloned<Transition>(mTransitions.find(description)->second);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,7 +70,7 @@ TransitionPtr TransitionFactory::getDefault()
 
 void TransitionFactory::add(TransitionDescription description, TransitionPtr transition)
 {
-    ASSERT(mTransitions.find(description) == mTransitions.end())(transition)(mTransitions);
+    ASSERT_MAP_CONTAINS_NOT(mTransitions,description);
     mTransitions[description] = transition;
 }
 
