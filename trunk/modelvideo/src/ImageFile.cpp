@@ -101,7 +101,7 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
     {
         wxImagePtr outputImage = boost::make_shared<wxImage>(mInputFrame->getImage()->Copy());
         outputImage->Rescale(parameters.getBoundingBox().x, parameters.getBoundingBox().y, wxIMAGE_QUALITY_HIGH);
-        mOutputFrame = boost::make_shared<VideoFrame>(outputImage, 0);
+        mOutputFrame = boost::make_shared<VideoFrame>(outputImage);
     }
     // Frame must be cloned, frame repeating is not supported. If a frame is to be output multiple
     // times, avoid pts calculation problems by making multiple unique frames.

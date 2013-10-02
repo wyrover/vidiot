@@ -25,8 +25,8 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyFrame::EmptyFrame(wxSize size, pts position)
-:   VideoFrame(size, position)
+EmptyFrame::EmptyFrame(wxSize size)
+:   VideoFrame(size)
 ,   mInitialized(false)
 {
 }

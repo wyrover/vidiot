@@ -49,8 +49,6 @@ public:
     // PLAYBACK
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void moveTo(pts position) override;
-
     virtual VideoFramePtr getNextVideo(const VideoCompositionParameters& parameters) override;
 
 protected:
@@ -64,8 +62,6 @@ protected:
     VideoTrack(const VideoTrack& other);
 
 private:
-
-    pts mPts;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

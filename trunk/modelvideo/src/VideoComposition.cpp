@@ -73,7 +73,7 @@ VideoFramePtr VideoComposition::generate()
     wxSize outputsize = Properties::get().getVideoSize();
     if (mFrames.empty())
     {
-        return boost::make_shared<EmptyFrame>(outputsize,0);
+        return boost::make_shared<EmptyFrame>(outputsize);
     }
 
     if (mFrames.size() == 1)
@@ -122,7 +122,7 @@ VideoFramePtr VideoComposition::generate()
     }
 
     delete gc;
-    VideoFramePtr result = boost::make_shared<VideoFrame>(compositeImage,0);
+    VideoFramePtr result = boost::make_shared<VideoFrame>(compositeImage);
     result->setForceKeyFrame(keyFrame);
     return result;
 }

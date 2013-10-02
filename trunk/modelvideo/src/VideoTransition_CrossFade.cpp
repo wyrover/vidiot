@@ -88,7 +88,7 @@ VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr righ
     return composition.generate();
 
     // Old code temporarily kept for reference:
-    //VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(parameters.getBoundingBox(), 1, 1);
+    //VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(parameters.getBoundingBox(), 1);
 
     //unsigned char* leftData   = leftFrame  ? leftFrame  ->getData()[0] : 0;
     //unsigned char* rightData  = rightFrame ? rightFrame ->getData()[0] : 0;

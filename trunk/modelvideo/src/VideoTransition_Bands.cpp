@@ -88,7 +88,7 @@ VideoFramePtr Bands::getVideo(pts position, IClipPtr leftClip, IClipPtr rightCli
         }
     }
 
-    VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(parameters.getBoundingBox(), 1, true); // todo is the pts param ever diff than 1?
+    VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(parameters.getBoundingBox(), true);
 
     unsigned char* leftData   = leftFrame  ? leftFrame  ->getData()[0] : 0;
     unsigned char* rightData  = rightFrame ? rightFrame ->getData()[0] : 0;

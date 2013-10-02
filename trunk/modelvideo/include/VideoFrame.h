@@ -49,11 +49,11 @@ public:
     /// Initialization without allocation is used for empty frames. Then, allocation
     /// is only needed when the data is needed for playback. During 'track combining'
     /// empty frames can be ignored. This avoids needless allocation.
-    VideoFrame(wxSize size, pts position, bool allocate = false);
+    explicit VideoFrame(wxSize size, bool allocate = false);
 
     /// Initialization of a frame based on a generated wxImage (for instance, for
     /// compositing).
-    VideoFrame(wxImagePtr image, pts position);
+    explicit VideoFrame(wxImagePtr image);
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
