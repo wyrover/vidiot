@@ -313,24 +313,24 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     {
         int id = ID_POPUP_END;
 
-        BOOST_FOREACH( auto t, model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+        BOOST_FOREACH( model::TransitionDescription t, model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
         {
-            add(*menuFadeIn, id, t.first,  clickedOnMediaClip, canFadeIn, false);
+            add(*menuFadeIn, id, t.second,  clickedOnMediaClip, canFadeIn, false);
             mapMenuItemToTransitionType[id] = model::TransitionTypeIn;
             mapMenuItemToTransitionDescription[id] = t;
             id++;
 
-            add(*menuFadeOut,   id, t.first,  clickedOnMediaClip, canFadeOut, false);
+            add(*menuFadeOut, id, t.second,  clickedOnMediaClip, canFadeOut, false);
             mapMenuItemToTransitionType[id] = model::TransitionTypeOut;
             mapMenuItemToTransitionDescription[id] = t;
             id++;
 
-            add(*menuFadeInOut, id, t.first,  clickedOnMediaClip, canFadeFromPrevious, false);
+            add(*menuFadeInOut, id, t.second,  clickedOnMediaClip, canFadeFromPrevious, false);
             mapMenuItemToTransitionType[id] = model::TransitionTypeInOut;
             mapMenuItemToTransitionDescription[id] = t;
             id++;
 
-            add(*menuFadeOutIn, id, t.first,  clickedOnMediaClip, canFadeToNext, false);
+            add(*menuFadeOutIn, id, t.second,  clickedOnMediaClip, canFadeToNext, false);
             mapMenuItemToTransitionType[id] = model::TransitionTypeOutIn;
             mapMenuItemToTransitionDescription[id] = t;
             id++;
