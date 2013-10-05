@@ -56,5 +56,6 @@ public:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::IAudio, 1)
+BOOST_CLASS_EXPORT_KEY(model::IAudio)
 
 #endif // MODEL_I_AUDIO_H

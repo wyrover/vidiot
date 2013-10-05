@@ -82,9 +82,9 @@ void triggerBoostException()
 {
     std::string s = "a125";
     std::istringstream is (s,std::istringstream::in);
-    boost::archive::text_iarchive ar(is);
+    boost::archive::xml_iarchive ar(is);
     int i;
-    ar & i;
+    ar & BOOST_SERIALIZATION_NVP(i);
 }
 
 //////////////////////////////////////////////////////////////////////////

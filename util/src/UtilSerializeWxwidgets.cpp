@@ -18,13 +18,16 @@
 #include "UtilSerializeWxwidgets.h"
 
 namespace boost { namespace serialization {
+
+const std::string sString("string");
+
 template<class Archive>
 void save(Archive & ar, const wxString & string, const unsigned int version)
 {
     try
     {
         std::string s = string.ToStdString();
-        ar & s;
+        ar & boost::serialization::make_nvp(sString.c_str(),s);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -38,7 +41,7 @@ void load(Archive & ar, wxString & string, const unsigned int version)
     try
     {
         std::string s;
-        ar & s;
+        ar & boost::serialization::make_nvp(sString.c_str(),s);
         wxString input(wxSafeConvertMB2WX(s.c_str()));
         string = input;
     }
@@ -48,15 +51,17 @@ void load(Archive & ar, wxString & string, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const wxString & string, const unsigned int version);
-template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxString & string, const unsigned int version);
+template void save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const wxString & string, const unsigned int version);
+template void load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar,       wxString & string, const unsigned int version);
+
+const std::string sFileName("filename");
 
 template<class Archive>
 void save(Archive & ar, const wxFileName& filename, const unsigned int version)
 {
     try
     {
-        ar & filename.GetLongPath();
+        ar & boost::serialization::make_nvp(sFileName.c_str(),filename.GetLongPath());
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -70,7 +75,7 @@ void load(Archive & ar, wxFileName& filename, const unsigned int version)
     try
     {
         wxString longpath;
-        ar & longpath;
+        ar & boost::serialization::make_nvp(sFileName.c_str(),longpath);
         filename.Assign(longpath);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
@@ -79,16 +84,16 @@ void load(Archive & ar, wxFileName& filename, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const wxFileName& filename, const unsigned int version);
-template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxFileName& filename, const unsigned int version);
+template void save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const wxFileName& filename, const unsigned int version);
+template void load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar,       wxFileName& filename, const unsigned int version);
 
 template<class Archive>
 void serialize(Archive & ar, wxPoint & r, const unsigned int version)
 {
     try
     {
-        ar & r.x;
-        ar & r.y;
+        ar & boost::serialization::make_nvp("x",r.x);
+        ar & boost::serialization::make_nvp("y",r.y);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -96,16 +101,16 @@ void serialize(Archive & ar, wxPoint & r, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, wxPoint & r, const unsigned int version);
-template void serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, wxPoint & r, const unsigned int version);
+template void serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, wxPoint & r, const unsigned int version);
+template void serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, wxPoint & r, const unsigned int version);
 
 template<class Archive>
 void serialize(Archive & ar, wxSize & r, const unsigned int version)
 {
     try
     {
-        ar & r.x;
-        ar & r.y;
+        ar & boost::serialization::make_nvp("x",r.x);
+        ar & boost::serialization::make_nvp("y",r.y);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -113,18 +118,18 @@ void serialize(Archive & ar, wxSize & r, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, wxSize & r, const unsigned int version);
-template void serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, wxSize & r, const unsigned int version);
+template void serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, wxSize & r, const unsigned int version);
+template void serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, wxSize & r, const unsigned int version);
 
 template<class Archive>
 void serialize(Archive & ar, wxRect & r, const unsigned int version)
 {
     try
     {
-        ar & r.x;
-        ar & r.y;
-        ar & r.width;
-        ar & r.height;
+        ar & boost::serialization::make_nvp("x",r.x);
+        ar & boost::serialization::make_nvp("y",r.y);
+        ar & boost::serialization::make_nvp("width",r.width);
+        ar & boost::serialization::make_nvp("height",r.height);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -132,8 +137,11 @@ void serialize(Archive & ar, wxRect & r, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, wxRect & r, const unsigned int version);
-template void serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, wxRect & r, const unsigned int version);
+template void serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, wxRect & r, const unsigned int version);
+template void serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, wxRect & r, const unsigned int version);
+
+const std::string sNumberOfRegions("numberOfRegions");
+const std::string sRect("rect");
 
 template<class Archive>
 void save(Archive & ar, const wxRegion & region, const unsigned int version)
@@ -147,12 +155,12 @@ void save(Archive & ar, const wxRegion & region, const unsigned int version)
             n++;
             it++;
         }
-        ar & n;
+        ar & boost::serialization::make_nvp(sNumberOfRegions.c_str(),n);
         it.Reset();
         while (it)
         {
             wxRect rect = it.GetRect(); // Needed for GCC
-            ar & rect;
+            ar & boost::serialization::make_nvp(sRect.c_str(),rect);
             it++;
         }
     }
@@ -168,11 +176,11 @@ void load(Archive & ar, wxRegion & region, const unsigned int version)
     try
     {
         int n = 0;
-        ar & n;
+        ar & boost::serialization::make_nvp(sNumberOfRegions.c_str(),n);
         wxRect r;
         while (n > 0)
         {
-            ar & r;
+            ar & boost::serialization::make_nvp(sRect.c_str(),r);
             region.Union(r);
             n--;
         }
@@ -183,6 +191,7 @@ void load(Archive & ar, wxRegion & region, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const wxRegion & region, const unsigned int version);
-template void load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar,       wxRegion & region, const unsigned int version);
+template void save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const wxRegion & region, const unsigned int version);
+template void load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar,       wxRegion & region, const unsigned int version);
+
 }} // namespace boost::serialization

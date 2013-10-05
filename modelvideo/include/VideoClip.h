@@ -134,5 +134,6 @@ private:
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
 BOOST_CLASS_VERSION(model::VideoClip, 1)
+BOOST_CLASS_EXPORT_KEY(model::VideoClip)
 
 #endif // MODEL_VIDEO_CLIP_H

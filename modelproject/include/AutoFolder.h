@@ -104,5 +104,6 @@ private:
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
 BOOST_CLASS_VERSION(model::AutoFolder, 1)
+BOOST_CLASS_EXPORT_KEY(model::AutoFolder)
 
 #endif // AUTO_FOLDER_H

@@ -95,12 +95,12 @@ void Properties::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & mFrameRate;
-        ar & mVideoWidth;
-        ar & mVideoHeight;
-        ar & mAudioChannels;
-        ar & mAudioFrameRate;
-        ar & mDefaultRender;
+        ar & BOOST_SERIALIZATION_NVP(mFrameRate);
+        ar & BOOST_SERIALIZATION_NVP(mVideoWidth);
+        ar & BOOST_SERIALIZATION_NVP(mVideoHeight);
+        ar & BOOST_SERIALIZATION_NVP(mAudioChannels);
+        ar & BOOST_SERIALIZATION_NVP(mAudioFrameRate);
+        ar & BOOST_SERIALIZATION_NVP(mDefaultRender);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -108,6 +108,9 @@ void Properties::serialize(Archive & ar, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void Properties::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Properties::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Properties::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Properties::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
 } //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::Properties)

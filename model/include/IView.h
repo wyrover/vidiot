@@ -18,7 +18,6 @@
 #ifndef MODEL_I_VIEW_H
 #define MODEL_I_VIEW_H
 
-
 namespace model {
 
 class IView
@@ -63,5 +62,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::IView, 1)
+BOOST_CLASS_EXPORT_KEY(model::IView)
 
 #endif // MODEL_I_VIEW_H

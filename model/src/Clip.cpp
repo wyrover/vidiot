@@ -273,12 +273,12 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     try
     {
         boost::serialization::void_cast_register<Clip, IClip>(static_cast<Clip *>(0), static_cast<IClip *>(0));
-        ar & mLink;
-        ar & mTrack;
-        ar & mNext;
-        ar & mPrev;
-        ar & mLeftPtsInTrack;
-        ar & mIndex;
+        ar & BOOST_SERIALIZATION_NVP(mLink);
+        ar & BOOST_SERIALIZATION_NVP(mTrack);
+        ar & BOOST_SERIALIZATION_NVP(mNext);
+        ar & BOOST_SERIALIZATION_NVP(mPrev);
+        ar & BOOST_SERIALIZATION_NVP(mLeftPtsInTrack);
+        ar & BOOST_SERIALIZATION_NVP(mIndex);
         // NOT: mSelected. After loading, nothing is selected.
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
@@ -286,6 +286,9 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void Clip::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Clip::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Clip::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Clip::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
 } //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::Clip)

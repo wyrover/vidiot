@@ -35,14 +35,4 @@ VideoTransitionFactory::VideoTransitionFactory()
     add(std::make_pair("Cross fade", "Bands"), boost::make_shared<model::video::transition::Bands>());
 }
 
-template < class Archive >
-void VideoTransitionFactory::registerTypesForSerialization(Archive& ar)
-{
-    ar.template register_type<model::video::transition::CrossFade>();
-    ar.template register_type<model::video::transition::Bands>();
-}
-
-template void VideoTransitionFactory::registerTypesForSerialization<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);
-template void VideoTransitionFactory::registerTypesForSerialization<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar);
-
 }} //namespace

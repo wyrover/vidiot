@@ -65,5 +65,6 @@ private:
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
 BOOST_CLASS_VERSION(model::ImageClip, 1)
+BOOST_CLASS_EXPORT_KEY(model::ImageClip)
 
 #endif // MODEL_IMAGE_CLIP_H

@@ -33,13 +33,4 @@ AudioTransitionFactory::AudioTransitionFactory()
     add(std::make_pair("Cross fade", "Fade"), boost::make_shared<model::audio::transition::CrossFade>());
 }
 
-template < class Archive >
-void AudioTransitionFactory::registerTypesForSerialization(Archive& ar)
-{
-    ar.template register_type<model::audio::transition::CrossFade>();
-}
-
-template void AudioTransitionFactory::registerTypesForSerialization<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);
-template void AudioTransitionFactory::registerTypesForSerialization<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar);
-
 }} //namespace

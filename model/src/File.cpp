@@ -738,10 +738,10 @@ void File::serialize(Archive & ar, const unsigned int version)
             static_cast<File*>(0),
             static_cast<IFile*>(0)
             );
-        ar & boost::serialization::base_object<Node>(*this);
-        ar & mPath;
-        ar & mLastModified;
-        ar & mMaxBufferSize;
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Node);
+        ar & BOOST_SERIALIZATION_NVP(mPath);
+        ar & BOOST_SERIALIZATION_NVP(mLastModified);
+        ar & BOOST_SERIALIZATION_NVP(mMaxBufferSize);
         if (Archive::is_loading::value)
         {
             // PERF: Cache each file once
@@ -755,7 +755,9 @@ void File::serialize(Archive & ar, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
 
-template void File::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void File::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void File::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void File::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::File)
