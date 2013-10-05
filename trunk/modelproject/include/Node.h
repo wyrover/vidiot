@@ -97,5 +97,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Node, 1)
+BOOST_CLASS_EXPORT_KEY(model::Node)
 
 #endif // A_PROJECT_VIEW_NODE

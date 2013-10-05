@@ -198,20 +198,22 @@ void OutputFormat::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & mName;
-        ar & mLongName;
-        ar & mExtensions;
-        ar & mDefaultAudioCodec;
-        ar & mDefaultVideoCodec;
-        ar & mAudioCodec;
-        ar & mVideoCodec;
+        ar & BOOST_SERIALIZATION_NVP(mName);
+        ar & BOOST_SERIALIZATION_NVP(mLongName);
+        ar & BOOST_SERIALIZATION_NVP(mExtensions);
+        ar & BOOST_SERIALIZATION_NVP(mDefaultAudioCodec);
+        ar & BOOST_SERIALIZATION_NVP(mDefaultVideoCodec);
+        ar & BOOST_SERIALIZATION_NVP(mAudioCodec);
+        ar & BOOST_SERIALIZATION_NVP(mVideoCodec);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void OutputFormat::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void OutputFormat::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void OutputFormat::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void OutputFormat::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 }} //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::render::OutputFormat)

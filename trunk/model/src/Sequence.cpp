@@ -535,12 +535,12 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & boost::serialization::base_object<IAudio>(*this);
-        ar & boost::serialization::base_object<Node>(*this);
-        ar & mName;
-        ar & mDividerPosition;
-        ar & mVideoTracks;
-        ar & mAudioTracks;
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IAudio);
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Node);
+        ar & BOOST_SERIALIZATION_NVP(mName);
+        ar & BOOST_SERIALIZATION_NVP(mDividerPosition);
+        ar & BOOST_SERIALIZATION_NVP(mVideoTracks);
+        ar & BOOST_SERIALIZATION_NVP(mAudioTracks);
         if (Archive::is_loading::value)
         {
             BOOST_FOREACH( TrackPtr track, mVideoTracks )
@@ -553,14 +553,16 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
             }
             updateTracks();
         }
-        ar & mRender;
+        ar & BOOST_SERIALIZATION_NVP(mRender);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void Sequence::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Sequence::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Sequence::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Sequence::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::Sequence)

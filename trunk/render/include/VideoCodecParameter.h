@@ -31,9 +31,6 @@ DECLAREENUM(VideoCodecParameterType,
     BFrames,
     MacroBlockDecision);
 
-template < class Archive >
-void registerVideoCodecParameterTypesForSerialization(Archive& ar);
-
 wxString getHumanReadibleName(VideoCodecParameterType id);
 
 // NOTE: If a parameter seems to be 'filled in' on the wrong AVCodecContext struct member, check for typos in the first parameter to the template instantiations below.
@@ -763,7 +760,14 @@ struct VideoCodecParameterGopSize
 
 BOOST_CLASS_VERSION(model::render::VideoCodecParameterBitrate, 1)
 BOOST_CLASS_VERSION(model::render::VideoCodecParameterBFrames, 1)
+BOOST_CLASS_VERSION(model::render::VideoCodecParameterGopSize, 1)
 BOOST_CLASS_VERSION(model::render::VideoCodecParameterBitrateTolerance, 1)
 BOOST_CLASS_VERSION(model::render::VideoCodecParameterMacroBlockDecision, 1)
+
+BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterBitrate)
+BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterBFrames)
+BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterGopSize)
+BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterBitrateTolerance)
+BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterMacroBlockDecision)
 
 #endif // MODEL_RENDER_VIDEO_CODEC_PARAMETER_H

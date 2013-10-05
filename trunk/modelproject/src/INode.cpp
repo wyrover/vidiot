@@ -65,7 +65,9 @@ void INode::serialize(Archive & ar, const unsigned int version)
 {
 }
 
-template void INode::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void INode::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void INode::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void INode::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::INode)

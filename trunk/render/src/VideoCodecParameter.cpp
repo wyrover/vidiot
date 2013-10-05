@@ -32,19 +32,6 @@ boost::bimap<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter
     (BFrames, _("B Frames"))
     (MacroBlockDecision, _("Macro block decision"));
 
-template < class Archive >
-void registerVideoCodecParameterTypesForSerialization(Archive& ar)
-{
-    ar.template register_type<render::VideoCodecParameterBFrames>();
-    ar.template register_type<render::VideoCodecParameterBitrate>();
-    ar.template register_type<render::VideoCodecParameterBitrateTolerance>();
-    ar.template register_type<render::VideoCodecParameterMacroBlockDecision>();
-    ar.template register_type<render::VideoCodecParameterGopSize>();
-}
-
-template void registerVideoCodecParameterTypesForSerialization<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar);
-template void registerVideoCodecParameterTypesForSerialization<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar);
-
 wxString getHumanReadibleName(VideoCodecParameterType id)
 {
     ASSERT(VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id) != VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.end())(id);
@@ -82,3 +69,9 @@ void VideoCodecParameterGopSize::set(AVCodecContext* codec)
 };
 
 }} //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::render::VideoCodecParameterBitrate)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::render::VideoCodecParameterBFrames)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::render::VideoCodecParameterGopSize)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::render::VideoCodecParameterBitrateTolerance)
+BOOST_CLASS_EXPORT_IMPLEMENT(model::render::VideoCodecParameterMacroBlockDecision)

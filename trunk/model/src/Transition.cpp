@@ -251,9 +251,9 @@ void Transition::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & boost::serialization::base_object<Clip>(*this);
-        ar & mFramesLeft;
-        ar & mFramesRight;
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Clip);
+        ar & BOOST_SERIALIZATION_NVP(mFramesLeft);
+        ar & BOOST_SERIALIZATION_NVP(mFramesRight);
         // NOT: mSelected. After loading, nothing is selected.
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
@@ -261,6 +261,9 @@ void Transition::serialize(Archive & ar, const unsigned int version)
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void Transition::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Transition::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Transition::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Transition::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
+
 } //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::Transition)

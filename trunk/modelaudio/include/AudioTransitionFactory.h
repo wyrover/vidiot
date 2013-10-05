@@ -30,9 +30,6 @@ class AudioTransitionFactory
 public:
 
     AudioTransitionFactory();
-
-    template < class Archive >
-    void registerTypesForSerialization(Archive& ar);
 };
 
 }} // namespace

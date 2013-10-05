@@ -24,7 +24,6 @@
 #include "IView.h"
 #include "ProjectEvent.h"
 #include "Properties.h"
-#include "Serialization.h"
 #include "StatusBar.h"
 #include "UtilLog.h"
 
@@ -109,15 +108,17 @@ void Project::OnChangeFilename(bool notifyViews)
 // LOAD/SAVE
 //////////////////////////////////////////////////////////////////////////
 
+const std::string sProject("project");
+const std::string sView("view");
+
 std::ostream& Project::SaveObject(std::ostream& ostream)
 {
     gui::StatusBar::get().pushInfoText(_("Saving ") + mRoot->getName() + _(" ..."));
     try
     {
-        boost::archive::text_oarchive ar(ostream);
-        registerClasses(ar);
-        ar & *this;
-        ar & IView::getView();
+        boost::archive::xml_oarchive ar(ostream);
+        ar & boost::serialization::make_nvp(sProject.c_str(),*this);
+        ar & boost::serialization::make_nvp(sView.c_str(),IView::getView());
     }
     catch (boost::archive::archive_exception& e)
     {
@@ -144,10 +145,9 @@ std::istream& Project::LoadObject(std::istream& istream)
 {
     try
     {
-        boost::archive::text_iarchive ar(istream);
-        registerClasses(ar);
-        ar & *this;
-        ar & IView::getView();
+        boost::archive::xml_iarchive ar(istream);
+        ar & boost::serialization::make_nvp(sProject.c_str(),*this);
+        ar & boost::serialization::make_nvp(sView.c_str(),IView::getView());
         IView::getView().ProcessModelEvent(EventOpenProject(this));
         mRoot->check();
     }
@@ -223,15 +223,17 @@ void Project::serialize(Archive & ar, const unsigned int version)
     {
         // Since the properties can be used by other objects, they must be read first.
         // An example is the framerate, which is used by 'Convert' which, in turn, is used in openFile() to determine the length of a stream in the file.
-        ar & mProperties;
-        ar & mRoot;
+        ar & BOOST_SERIALIZATION_NVP(mProperties);
+        ar & BOOST_SERIALIZATION_NVP(mRoot);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
     catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
     catch (...)                                  { LOG_ERROR;                                   throw; }
 }
-template void Project::serialize<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion);
-template void Project::serialize<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void Project::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Project::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } //namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT(model::Project)

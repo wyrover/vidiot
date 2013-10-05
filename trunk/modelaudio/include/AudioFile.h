@@ -117,5 +117,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::AudioFile, 1)
+BOOST_CLASS_EXPORT_KEY(model::AudioFile)
 
 #endif // MODEL_AUDIO_FILE_H

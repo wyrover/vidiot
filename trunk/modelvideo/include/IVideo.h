@@ -58,5 +58,6 @@ public:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::IVideo, 1)
+BOOST_CLASS_EXPORT_KEY(model::IVideo)
 
 #endif // MODEL_I_VIDEO_H

@@ -29,9 +29,6 @@ class VideoTransitionFactory
 {
 public:
     VideoTransitionFactory();
-
-    template < class Archive >
-    void registerTypesForSerialization(Archive& ar);
 };
 
 }} // namespace

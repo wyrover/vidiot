@@ -213,5 +213,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::File, 1)
+BOOST_CLASS_EXPORT_KEY(model::File)
 
 #endif // MODEL_FILE_H

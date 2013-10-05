@@ -38,7 +38,6 @@ public:
 
     explicit CodecParameter(IDTYPE id)
         :   mId(id)
-        ,   mEnabled(false)
         ,   mDefault(0)
         ,   mMinimum(std::numeric_limits<int>::max())
         ,   mMaximum(std::numeric_limits<int>::min())
@@ -49,7 +48,6 @@ public:
 
     CodecParameter(const CodecParameter& other)
         :   mId(other.mId)
-        ,   mEnabled(other.mEnabled)
         ,   mDefault(other.mDefault)
         ,   mMinimum(other.mMinimum)
         ,   mMaximum(other.mMaximum)
@@ -87,12 +85,6 @@ public:
     // BIT RATE
     //////////////////////////////////////////////////////////////////////////
 
-    inline CodecParameter& enable()
-    {
-        mEnabled = true;
-        return *this;
-    }
-
     inline CodecParameter& setDefault(TYPE value)
     {
         mDefault = value;
@@ -115,11 +107,6 @@ public:
     inline IDTYPE getId() const
     {
         return mId;
-    }
-
-    inline bool getEnabled() const
-    {
-        return mEnabled;
     }
 
     TYPE getDefault() const
@@ -165,7 +152,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     IDTYPE mId;
-    bool mEnabled;
     TYPE  mDefault;
     TYPE  mMinimum;
     TYPE  mMaximum;
@@ -182,7 +168,7 @@ private:
 
     friend std::ostream& operator<<( std::ostream& os, const CodecParameter& obj )
     {
-        os << &obj << '|' << obj.mId << '|' << obj.mEnabled << '|' << obj.mDefault << '|' << obj.mMinimum << '|' << obj.mMaximum << '|' << obj.mValue;
+        os << &obj << '|' << obj.mId << '|' << obj.mDefault << '|' << obj.mMinimum << '|' << obj.mMaximum << '|' << obj.mValue;
         return os;
     }
 
@@ -201,12 +187,11 @@ private:
                 static_cast<ICodecParameter *>(0)
                 );
 
-            ar & mId;
-            ar & mEnabled;
-            ar & mDefault;
-            ar & mMinimum;
-            ar & mMaximum;
-            ar & mValue;
+            ar & BOOST_SERIALIZATION_NVP(mId);
+            ar & BOOST_SERIALIZATION_NVP(mDefault);
+            ar & BOOST_SERIALIZATION_NVP(mMinimum);
+            ar & BOOST_SERIALIZATION_NVP(mMaximum);
+            ar & BOOST_SERIALIZATION_NVP(mValue);
         }
         catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
         catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
@@ -236,7 +221,7 @@ struct CodecParameterInt
         spin->SetRange(getMinimum(),getMaximum());
         spin->SetValue(getValue());
         mWindow = spin;
-        mWindow->Enable(getEnabled());
+        mWindow->Enable(true);
         spin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
         return mWindow;
     }
@@ -293,7 +278,7 @@ struct CodecParameterEnum
         EnumSelector<int>* selector = new EnumSelector<int>(parent, NAMEMAPPING, getDefault());
         selector->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
         mWindow = selector;
-        mWindow->Enable(getEnabled());
+        mWindow->Enable(true);
         return mWindow;
     }
     void destroyWidget() override

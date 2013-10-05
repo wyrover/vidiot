@@ -33,8 +33,8 @@ extern "C" {
 
 #include <algorithm>
 #include <boost/archive/archive_exception.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 #include <boost/assert.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/bimap.hpp>
@@ -56,7 +56,9 @@ extern "C" {
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/export.hpp>
 #include <boost/serialization/list.hpp>
+#include <boost/serialization/nvp.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/shared_ptr.hpp>

@@ -101,5 +101,6 @@ private:
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Project, 1)
+BOOST_CLASS_EXPORT_KEY(model::Project)
 
 #endif // PROJECT_H

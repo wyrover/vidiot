@@ -192,33 +192,42 @@ void TimelinesView::updateActivation()
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+const std::string sSequence("sequence");
+const std::string sCount("notebookCount");
+const std::string sSelected("selectedPage");
+const std::string sTimeline("timeline");
+
 template<class Archive>
 void TimelinesView::save(Archive & ar, const unsigned int version) const
 {
-    unsigned int n = mNotebook.GetPageCount();
-    ar & n;
+    unsigned int notebookCount = mNotebook.GetPageCount();
     unsigned int selectedPage = mNotebook.GetSelection();
-    ar & selectedPage;
-    for (unsigned int page = 0; page < n; ++page)
+
+    ar & boost::serialization::make_nvp(sCount.c_str(),notebookCount);
+    ar & boost::serialization::make_nvp(sSelected.c_str(), selectedPage);
+
+    for (unsigned int page = 0; page < notebookCount; ++page)
     {
         timeline::Timeline* timeline = static_cast<timeline::Timeline*>(mNotebook.GetPage(page));
-        ar & timeline->getSequence();
-        ar & *timeline;
+        ar & boost::serialization::make_nvp(sSequence.c_str(),timeline->getSequence());
+        ar & boost::serialization::make_nvp(sTimeline.c_str(),*timeline);
     }
 }
 template<class Archive>
 void TimelinesView::load(Archive & ar, const unsigned int version)
 {
-    unsigned int n;
-    ar & n;
+    unsigned int notebookCount;
     unsigned int selectedPage = wxNOT_FOUND;
-    ar & selectedPage;
-    for (unsigned int page = 0; page < n; ++page)
+
+    ar & boost::serialization::make_nvp(sCount.c_str(),notebookCount);
+    ar & boost::serialization::make_nvp(sSelected.c_str(), selectedPage);
+
+    for (unsigned int page = 0; page < notebookCount; ++page)
     {
         model::SequencePtr sequence;
-        ar & sequence;
+        ar & boost::serialization::make_nvp(sSequence.c_str(),sequence);
         timeline::Timeline* timeline = new timeline::Timeline(&mNotebook, sequence, true); // true ==> beginTransaction()
-        ar & *timeline;
+        ar & boost::serialization::make_nvp(sTimeline.c_str(),*timeline);
         timeline->endTransaction(); // Only AFTER deserialization, screen updates may be done. Otherwise, for instance, the wrong zoom may be used.
         mNotebook.AddPage(timeline,sequence->getName(),false);
     }
@@ -228,7 +237,7 @@ void TimelinesView::load(Archive & ar, const unsigned int version)
         mNotebook.SetSelection(selectedPage);
     }
 }
-template void TimelinesView::save<boost::archive::text_oarchive>(boost::archive::text_oarchive& ar, const unsigned int archiveVersion) const;
-template void TimelinesView::load<boost::archive::text_iarchive>(boost::archive::text_iarchive& ar, const unsigned int archiveVersion);
+template void TimelinesView::save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion) const;
+template void TimelinesView::load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 } // namespace
