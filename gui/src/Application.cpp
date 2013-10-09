@@ -34,7 +34,6 @@
 
 #include "Application.h"
 
-#include <wx/cmdline.h>
 #include "CommandLine.h"
 #include "Config.h"
 #include "Dialog.h"
@@ -46,7 +45,9 @@
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilStackWalker.h"
+#include "VidiotVersion.h"
 #include "Window.h"
+#include <wx/cmdline.h>
 
 namespace gui {
 
@@ -342,6 +343,22 @@ void Application::onAssert()
     LOG_ERROR;
     LOG_STACKTRACE;
     Dialog::get().getDebugReport();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// VERSION INFORMATION
+//////////////////////////////////////////////////////////////////////////
+
+// static
+wxString Application::getVersion()
+{
+    return VidiotVersion;
+}
+
+// static
+int Application::getRevision()
+{
+    return SubversionRevision;
 }
 
 } // namespace

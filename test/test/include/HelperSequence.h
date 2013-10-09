@@ -34,6 +34,8 @@ namespace test {
 
 void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat );
 
+void extendSequenceWithStillImage( model::SequencePtr sequence );
+
 } // namespace
 
 #endif // HELPER_SEQUENCE_H

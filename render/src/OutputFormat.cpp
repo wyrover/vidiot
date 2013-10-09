@@ -35,37 +35,50 @@ OutputFormat::OutputFormat()
     :   mName()
     ,   mLongName()
     ,   mExtensions()
+    ,   mFormat(new AVOutputFormat())
     ,   mDefaultAudioCodec(AudioCodecs::getDefault()->getId())
     ,   mDefaultVideoCodec(VideoCodecs::getDefault()->getId())
     ,   mAudioCodec(AudioCodecs::getDefault())
     ,   mVideoCodec(VideoCodecs::getDefault())
 {
+    ASSERT(mFormat); // mFormat initialized by boost serialization
 }
 
 OutputFormat::OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, CodecID defaultaudiocodec, CodecID defaultvideocodec)
     :   mName(name)
     ,   mLongName(longname)
     ,   mExtensions(extensions)
+    ,   mFormat(new AVOutputFormat())
     ,   mDefaultAudioCodec(defaultaudiocodec)
     ,   mDefaultVideoCodec(defaultvideocodec)
     ,   mAudioCodec(AudioCodecs::find(defaultaudiocodec))
     ,   mVideoCodec(VideoCodecs::find(defaultvideocodec))
 {
+    VAR_INFO(name)(longname)(extensions)(defaultaudiocodec)(defaultvideocodec);
+    ASSERT(mFormat);
+    AVOutputFormat* format = av_guess_format(mName.c_str(), 0, 0);
+    memcpy(mFormat, format, sizeof(AVOutputFormat));
+    mFormat->next = 0;
 }
 
 OutputFormat::OutputFormat(const OutputFormat& other)
     :   mName(other.mName)
     ,   mLongName(other.mLongName)
     ,   mExtensions(other.mExtensions)
+    ,   mFormat(new AVOutputFormat())
     ,   mDefaultAudioCodec(other.mDefaultAudioCodec)
     ,   mDefaultVideoCodec(other.mDefaultVideoCodec)
     ,   mAudioCodec(make_cloned<AudioCodec>(other.getAudioCodec()))
     ,   mVideoCodec(make_cloned<VideoCodec>(other.getVideoCodec()))
 {
+    ASSERT(mFormat);
+    memcpy(mFormat, other.mFormat, sizeof(AVOutputFormat));
+    mFormat->next = 0;
 }
 
 OutputFormat::~OutputFormat()
 {
+    delete mFormat;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,22 +164,20 @@ void OutputFormat::setAudioCodec(AudioCodecPtr codec)
 
 AVFormatContext* OutputFormat::getContext() const
 {
-    AVOutputFormat* format = av_guess_format(mName.c_str(), 0, 0);
-    ASSERT(format);
+    ASSERT(mFormat);
     ASSERT(mAudioCodec->getId() != CODEC_ID_NONE || mVideoCodec->getId() != CODEC_ID_NONE);
-    format->audio_codec = mAudioCodec->getId();
-    format->video_codec = mVideoCodec->getId();
+    mFormat->audio_codec = mAudioCodec->getId();
+    mFormat->video_codec = mVideoCodec->getId();
     AVFormatContext* context = avformat_alloc_context();
-    context->oformat = format;
+    context->oformat = mFormat;
     return context;
 }
 
 int OutputFormat::checkCodec(CodecID id) const
 {
     if (id == CODEC_ID_NONE) { return 1; }
-    AVOutputFormat* format = av_guess_format(mName.c_str(), 0, 0);
-    ASSERT(format);
-    int supported = avformat_query_codec(format,id,FF_COMPLIANCE_NORMAL);
+    ASSERT(mFormat);
+    int supported = avformat_query_codec(mFormat,id,FF_COMPLIANCE_NORMAL);
     VAR_DEBUG(mName)(id)(supported);
     return supported;
 }
@@ -205,6 +216,14 @@ void OutputFormat::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(mDefaultVideoCodec);
         ar & BOOST_SERIALIZATION_NVP(mAudioCodec);
         ar & BOOST_SERIALIZATION_NVP(mVideoCodec);
+
+        if (Archive::is_loading::value)
+        {
+            ASSERT(mFormat);
+            AVOutputFormat* format = av_guess_format(mName.c_str(), 0, 0);
+            memcpy(mFormat, format, sizeof(AVOutputFormat));
+            mFormat->next = 0;
+        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

@@ -17,6 +17,7 @@
 
 #include "HelperProjectView.h"
 
+#include "Application.h"
 #include "UtilThread.h"
 
 namespace test {
@@ -25,7 +26,7 @@ std::pair<RandomTempDirPtr, wxFileName> SaveProjectAndClose()
 {
     RandomTempDirPtr tempDirProject = RandomTempDir::generate();
     wxFileName filename = tempDirProject->getFileName();
-    filename.SetName("LoadSave");
+    filename.SetName(wxString::Format(wxT("%s_%d"), gui::Application::getVersion(), gui::Application::getRevision()));
     filename.SetExt("vid");
     util::thread::RunInMainAndWait([filename]()
     {

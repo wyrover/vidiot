@@ -15,12 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperModel.h"
+#include "HelperDetails.h"
 
 #include "Constants.h"
 #include "Convert.h"
 #include "Details.h"
 #include "DetailsClip.h"
+#include "HelperModel.h"
 #include "HelperTimelinesView.h"
 #include "Timeline.h"
 #include "UtilLog.h"

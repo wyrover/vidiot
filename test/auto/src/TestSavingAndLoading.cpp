@@ -17,6 +17,8 @@
 
 #include "TestSavingAndLoading.h"
 
+#include "CreateTransitionHelper.h"
+#include "FixtureProject.h"
 #include "HelperApplication.h"
 #include "HelperFileSystem.h"
 #include "HelperProject.h"
@@ -24,9 +26,12 @@
 #include "HelperTimelineTrim.h"
 #include "HelperWindow.h"
 #include "Project.h"
+#include "VideoTransitionFactory.h"
 #include "Window.h"
 
 namespace test {
+
+const wxString sCurrent("current.vid");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -34,12 +39,10 @@ namespace test {
 
 void TestSavingAndLoading::setUp()
 {
-    mProjectFixture.init();
 }
 
 void TestSavingAndLoading::tearDown()
 {
-    mProjectFixture.destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,46 +52,135 @@ void TestSavingAndLoading::tearDown()
 void TestSavingAndLoading::testSaveAndLoad()
 {
     StartTestSuite();
-    StartTest("SetUp");
 
-    wxString sFolder1( "Folder1" );
-    model::FolderPtr folder1 = addFolder( sFolder1 );
-    wxFileName TestFilesPath = wxFileName(SOURCE_ROOT,"");
-    TestFilesPath.AppendDir("test");
-    TestFilesPath.AppendDir("filetypes_image");
-    ASSERT(TestFilesPath.IsDir());
-    ASSERT(TestFilesPath.DirExists());
-    TestFilesPath.SetFullName("Laney -6th best amp.jpg");
-    model::Files files1 = addFiles( boost::assign::list_of(TestFilesPath.GetFullPath()), folder1 );
-    model::FilePtr imageFile = files1.front();
+    StartTest("Create saved document");
 
-    DragFromProjectViewToTimeline( imageFile,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(HCenter(VideoClip(0,4)), VCenter(VideoTrack(0))) );
+    FixtureProject mProjectFixture(true);
+    mProjectFixture.init();
 
-    Click(Center(VideoClip(0,6)));
+    StartTest("Add non auto folder to project view");
+    model::FolderPtr folder1 = addFolder( "folder" );
+
+    StartTest("Add still image to project view");
+    addFiles( boost::assign::list_of(getStillImagePath()), folder1 );
+
+    StartTest("Add video clips to sequence");
+    extendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 1);
+
+    StartTest("Add still image to sequence");
+    extendSequenceWithStillImage(getSequence()); // Ensure that there is a still image in the timeline
+
+    // Ensure each transition type is saved once
+    int number = 3;
+    BOOST_FOREACH( model::TransitionDescription t, model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+    {
+        StartTest("Add transition (" + t.first + "," + t.second + ") to sequence");
+        util::thread::RunInMainAndWait([t,number]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
+        number += 2; // +2 because the transition was added inbetween
+    }
+
+    StartTest("Add intervals to timeline");
+    ToggleInterval(HCenter(VideoClip(0,0)), RightPixel(VideoClip(0,2)) - 10);
+    ToggleInterval(HCenter(VideoClip(0,1)), HCenter(VideoClip(0,2)));
+
+    // todo all codecs and parameters
+
+    StartTest("Add empty clip to timeline");
+    Click(Center(VideoClip(0,1)));
     Type(WXK_DELETE);
+
+    //////////////////////////////////////////////////////////////////////////
 
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName = SaveProjectAndClose();
 
+    //////////////////////////////////////////////////////////////////////////
+
+    {
+        StartTest("Compare generated document with reference document");
+        wxFileName referenceDirName(getTestPath());
+        referenceDirName.AppendDir("saved_projects");
+        wxFileName referenceFileName(referenceDirName);
+        referenceFileName.SetFullName(sCurrent);
+        if (!getFileContents(tempDir_fileName.second).IsSameAs(getFileContents(referenceFileName)))
+        {
+            wxFileName newCurrentFileName(referenceDirName);
+            newCurrentFileName.SetFullName(tempDir_fileName.second.GetName() + "_new.vid");
+            bool ok = wxCopyFile(tempDir_fileName.second.GetFullPath(), newCurrentFileName.GetFullPath());
+            util::thread::RunInMainAndWait([referenceDirName]()
+            {
+                wxString cmd;
+                cmd << "explorer " << referenceDirName.GetFullPath();
+                ::wxExecute( cmd, wxEXEC_ASYNC, NULL);
+            });
+            ASSERT(ok);
+            FATAL("File contents are not equal");
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+
+    checkDocument(tempDir_fileName.second.GetFullPath());
+}
+
+void TestSavingAndLoading::testLoadOldVersions()
+{
+    StartTestSuite();
+
+    wxFileName referenceDirName(getTestPath());
+    referenceDirName.AppendDir("saved_projects");
+    wxDir dir( referenceDirName.GetLongPath() );
+    wxString filename;
+    for (bool cont = dir.GetFirst(&filename,wxEmptyString,wxDIR_FILES); cont; cont = dir.GetNext(&filename))
+    {
+        if (!filename.IsSameAs(sCurrent))
+        {
+            wxFileName vidFileName(referenceDirName);
+            vidFileName.SetFullName(filename);
+            checkDocument(vidFileName.GetFullPath());
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void TestSavingAndLoading::checkDocument(wxString path)
+{
     StartTest("Load document");
-    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
-    waitForIdle();
-
-    StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
-    TrimLeft(VideoClip(0,1),20);
-    Undo();
-
-    StartTest("Enlarge sequence"); // Known bug at some point: enlarging the sequence did not cause an update of the timeline virtual size due to missing event binding
-    Zoom level(2); // Zoom in twice
-    wxSize paneSize = getTimeline().GetVirtualSize();
-    wxSize size = getTimeline().getSequenceView().getSize();
-    Drag(From(Center(AudioClip(0,7))).To(wxPoint(size.x - 2, VCenter(AudioTrack(0)))));
-    wxSize newSize = getTimeline().getSequenceView().getSize();
-    ASSERT_DIFFERS(getTimeline().getSequenceView().getSize(), size);
-    ASSERT_DIFFERS(getTimeline().GetVirtualSize(), paneSize);
-
-    model::Project::get().Modify(false); // Avoid 'save?' dialog
-    StartTest("TearDown");
-    triggerMenu(wxID_CLOSE);
+    util::thread::RunInMainAndWait([path]()
+    {
+        gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT);
+    });
+    {
+        StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
+        TrimLeft(VideoClip(0,1),20);
+        Undo();
+    }
+    {
+        StartTest("Enlarge sequence"); // Known bug at some point: enlarging the sequence did not cause an update of the timeline virtual size due to missing event binding
+        wxSize paneSize = getTimeline().GetVirtualSize();
+        wxSize size = getTimeline().getSequenceView().getSize();
+        extendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 1);
+        ASSERT_DIFFERS(getTimeline().getSequenceView().getSize(), size);
+        ASSERT_DIFFERS(getTimeline().GetVirtualSize(), paneSize);
+    }
+    {
+        StartTest("Scrub");
+        Scrub(HCenter(VideoClip(0,3)),HCenter(VideoClip(0,3)) + 20);
+    }
+    {
+        StartTest("Open render settings"); // Known bug at some point: loading the project went ok, but when opening the render dialog a crash occurred.
+        WaitForTimelineToLoseFocus w;
+        triggerMenu(ID_RENDERSETTINGS);
+        w.wait();
+        wxUIActionSimulator().Char(WXK_ESCAPE);
+    }
+    {
+        StartTest("Close");
+        model::Project::get().Modify(false); // Avoid 'save?' dialog
+        triggerMenu(wxID_CLOSE);
+    }
 }
 
 } // namespace

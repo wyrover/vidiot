@@ -19,32 +19,57 @@
 
 #include "ClipCreator.h"
 #include "File.h"
+#include "HelperFileSystem.h"
 #include "Sequence.h"
 #include "Track.h"
+#include "UtilThread.h"
 #include <boost/foreach.hpp>
 
 namespace test {
 
 void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat )
 {
-    model::TrackPtr videoTrack = sequence->getVideoTrack(0);
-    model::TrackPtr audioTrack = sequence->getAudioTrack(0);
-    ASSERT(sequence);
-    ASSERT(videoTrack);
-    ASSERT(audioTrack);
-
-    for (int i = 0; i < nRepeat; ++i)
+    util::thread::RunInMainAndWait([sequence,files,nRepeat]()
     {
-        BOOST_FOREACH( model::IPathPtr path, files )
+        model::TrackPtr videoTrack = sequence->getVideoTrack(0);
+        model::TrackPtr audioTrack = sequence->getAudioTrack(0);
+        ASSERT(sequence);
+        ASSERT(videoTrack);
+        ASSERT(audioTrack);
+
+        for (int i = 0; i < nRepeat; ++i)
         {
-            model::FilePtr file = boost::make_shared<model::File>(path->getPath());
-            ASSERT(file);
-            ASSERT(file->canBeOpened());
-            std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
-            videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first));
-            audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second));
+            BOOST_FOREACH( model::IPathPtr path, files )
+            {
+                model::FilePtr file = boost::make_shared<model::File>(path->getPath());
+                ASSERT(file);
+                ASSERT(file->canBeOpened());
+                std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
+                videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first));
+                audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second));
+            }
         }
-    }
+    });
+}
+
+void extendSequenceWithStillImage( model::SequencePtr sequence )
+{
+    util::thread::RunInMainAndWait([sequence]()
+    {
+        model::TrackPtr videoTrack = sequence->getVideoTrack(0);
+        model::TrackPtr audioTrack = sequence->getAudioTrack(0);
+        ASSERT(sequence);
+        ASSERT(videoTrack);
+        ASSERT(audioTrack);
+
+        model::FilePtr file = boost::make_shared<model::File>(getStillImagePath());
+        ASSERT(file);
+        ASSERT(file->canBeOpened());
+
+        std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = command::ClipCreator::makeClips(file);
+        videoTrack->addClips(boost::assign::list_of(videoClip_audioClip.first));
+        audioTrack->addClips(boost::assign::list_of(videoClip_audioClip.second));
+    });
 }
 
 } // namespace

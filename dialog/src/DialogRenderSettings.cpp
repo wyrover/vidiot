@@ -142,7 +142,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
     buttons->SetSizer(new wxBoxSizer(wxHORIZONTAL));
     mRenderButton = new wxButton(buttons,wxID_ANY,_("OK && Render now"));
     mOkButton = new wxButton(buttons,wxID_ANY,_("OK"));
-    mCancelButton = new wxButton(buttons,wxID_ANY,_("Cancel"));
+    mCancelButton = new wxButton(buttons,wxID_CANCEL,_("Cancel")); // Using wxID_CANCEL ensures that pressing ESC also closes the dialog
     mApplyButton = new wxButton(buttons,wxID_ANY,_("Apply"));
 
     mRenderButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, & DialogRenderSettings::onRenderButtonPressed, this);

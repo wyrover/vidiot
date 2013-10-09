@@ -47,6 +47,10 @@ private:
     static int sDirCount;
 };
 
+/// Get the path to the topmost test folder
+/// \return path to vidiot/trunk dir
+wxFileName getTestPath();
+
 /// Get the path to the folder containing the test input files
 /// \return path to input files
 wxFileName getTestFilesPath();
@@ -54,6 +58,14 @@ wxFileName getTestFilesPath();
 /// Get the input files in the test input folder
 /// \return list of paths to input files
 model::IPaths getListOfInputFiles();
+
+/// \return path to a still image
+wxFileName getStillImagePath();
+
+/// Get the contents of the given path
+/// \param path path to file on disk
+/// \return contents of given file
+wxString getFileContents(wxFileName path);
 
 } // namespace
 

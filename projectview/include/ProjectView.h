@@ -107,7 +107,7 @@ private:
     ProjectViewCtrl mCtrl;
     ProjectViewModel* mModel;
     ProjectViewDropSource mDropSource;
-    std::set<model::FolderPtr> mOpenFolders;
+    std::list<model::FolderPtr> mOpenFolders;
     int mDragCount;                                 ///< Used for determining start of dragging
     wxPoint mDragStart;                             ///< Holds start of dragging point
     int mHeaderHeight;
