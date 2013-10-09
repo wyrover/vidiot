@@ -94,10 +94,16 @@ wxFileName RandomTempDir::getFileName() const
     return mFileName;
 }
 
-wxFileName getTestFilesPath()
+wxFileName getTestPath()
 {
     wxFileName result = wxFileName(SOURCE_ROOT,"");
     result.AppendDir("test");
+    return result;
+}
+
+wxFileName getTestFilesPath()
+{
+    wxFileName result(getTestPath());
     result.AppendDir("input");
     ASSERT(result.IsDir());
     ASSERT(result.DirExists());
@@ -107,6 +113,27 @@ wxFileName getTestFilesPath()
 model::IPaths getListOfInputFiles()
 {
     return getSupportedFiles(getTestFilesPath());
+}
+
+wxFileName getStillImagePath()
+{
+    wxFileName result = wxFileName(SOURCE_ROOT,"");
+    result.AppendDir("test");
+    result.AppendDir("filetypes_image");
+    ASSERT(result.IsDir());
+    ASSERT(result.DirExists());
+    result.SetFullName("Laney -6th best amp.jpg");
+    return result;
+}
+
+wxString getFileContents(wxFileName path)
+{
+    ASSERT(path.Exists());
+    wxFile file(path.GetFullPath());
+    ASSERT(file.IsOpened());
+    wxString contents;
+    file.ReadAll(&contents);
+    return contents;
 }
 
 } // namespace

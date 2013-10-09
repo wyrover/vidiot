@@ -223,6 +223,23 @@ void DumpSequence();
 /// Then wait forever. That allows undoing/redoing/further tampering for analysis.
 void DumpSequenceAndWait();
 
+//////////////////////////////////////////////////////////////////////////
+// WAITFORTIMELINETOLOSEFOCUS
+//////////////////////////////////////////////////////////////////////////
+
+class WaitForTimelineToLoseFocus
+{
+public:
+    WaitForTimelineToLoseFocus();
+    ~WaitForTimelineToLoseFocus();
+    void wait();
+private:
+    void onLeave(wxMouseEvent& event);
+    bool mFound;
+    boost::condition_variable mCondition;
+    boost::mutex mMutex;
+};
+
 } // namespace
 
 #endif // HELPER_TIMELINE_H

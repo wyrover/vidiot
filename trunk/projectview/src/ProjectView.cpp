@@ -39,6 +39,7 @@
 #include "ProjectViewRenameAsset.h"
 #include "Sequence.h"
 #include "TimeLinesView.h"
+#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilPath.h"
@@ -182,7 +183,7 @@ void ProjectView::onCloseProject( model::EventCloseProject &event )
 
 void ProjectView::onAutoOpenFolder( EventAutoFolderOpen& event )
 {
-    if (mOpenFolders.count(event.getValue()) == 1)
+    if (UtilList<model::FolderPtr>(mOpenFolders).hasElement(event.getValue()))
     {
         mCtrl.Expand(wxDataViewItem(event.getValue()->id()));
     }
@@ -659,7 +660,10 @@ void ProjectView::onExpanded( wxDataViewEvent &event )
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
-    mOpenFolders.insert(folder);
+    if(!UtilList<model::FolderPtr>(mOpenFolders).hasElement(folder))
+    {
+        mOpenFolders.push_back(folder);
+    }
 }
 
 void ProjectView::onCollapsed( wxDataViewEvent &event )
@@ -667,7 +671,8 @@ void ProjectView::onCollapsed( wxDataViewEvent &event )
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
     ASSERT(folder);
-    mOpenFolders.erase(folder);
+    ASSERT(UtilList<model::FolderPtr>(mOpenFolders).hasElement(folder));
+    UtilList<model::FolderPtr>(mOpenFolders).removeElements(boost::assign::list_of(folder));
 }
 
 void ProjectView::onStartEditing( wxDataViewEvent &event )

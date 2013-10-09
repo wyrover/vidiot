@@ -479,4 +479,36 @@ void DumpSequenceAndWait()
     pause(999999999);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// WAITFORTIMELINETOLOSEFOCUS
+//////////////////////////////////////////////////////////////////////////
+
+WaitForTimelineToLoseFocus::WaitForTimelineToLoseFocus()
+    :   mFound(false)
+{
+    getTimeline().Bind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
+}
+
+WaitForTimelineToLoseFocus::~WaitForTimelineToLoseFocus()
+{
+    getTimeline().Unbind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
+}
+
+void WaitForTimelineToLoseFocus::wait()
+{
+    boost::mutex::scoped_lock lock(mMutex);
+    if (!mFound)
+    {
+        mCondition.wait(lock);
+    }
+}
+
+void WaitForTimelineToLoseFocus::onLeave(wxMouseEvent& event)
+{
+    boost::mutex::scoped_lock lock(mMutex);
+    mFound = true;
+    mCondition.notify_all();
+    event.Skip();
+}
+
 } // namespace

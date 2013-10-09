@@ -74,6 +74,7 @@ private:
     wxString mName;
     wxString mLongName;
     std::list<wxString> mExtensions;
+    AVOutputFormat* mFormat; ///< Cloned variant of the associated ffmpeg output format. Cloned to avoid messing up ffmpeg internal adminstration when changing its video_codec/audio_codec
     CodecID mDefaultAudioCodec;
     CodecID mDefaultVideoCodec;
 

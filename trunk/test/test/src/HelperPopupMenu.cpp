@@ -19,47 +19,15 @@
 
 #include <boost/thread.hpp>
 #include <wx/uiaction.h>
+#include "HelperTimeline.h"
 #include "HelperWindow.h"
 
 namespace test {
 
-class WaitForPopup
-{
-public:
-    WaitForPopup()
-        :   mFound(false)
-    {
-        getTimeline().Bind(wxEVT_LEAVE_WINDOW, &WaitForPopup::onLeave, this);
-    }
-    ~WaitForPopup()
-    {
-        getTimeline().Unbind(wxEVT_LEAVE_WINDOW, &WaitForPopup::onLeave, this);
-    }
-    void onLeave(wxMouseEvent& event)
-    {
-        boost::mutex::scoped_lock lock(mMutex);
-        mFound = true;
-        mCondition.notify_all();
-        event.Skip();
-    }
-    void wait()
-    {
-        boost::mutex::scoped_lock lock(mMutex);
-        if (!mFound)
-        {
-            mCondition.wait(lock);
-        }
-    }
-private:
-    bool mFound;
-    boost::condition_variable mCondition;
-    boost::mutex mMutex;
-};
-
 void OpenPopupMenuAt(wxPoint position)
 {
     Move(position);
-    WaitForPopup w;
+    WaitForTimelineToLoseFocus w;
     wxUIActionSimulator().MouseClick(wxMOUSE_BTN_RIGHT);
     w.wait();
 }
