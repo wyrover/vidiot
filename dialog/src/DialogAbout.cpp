@@ -17,11 +17,10 @@
 
 #include "DialogAbout.h"
 
+#include "Application.h"
 #include "Config.h"
-#include "SubversionRevision.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
-#include "VidiotVersion.h"
 #include "Window.h"
 
 namespace gui {
@@ -31,7 +30,7 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 DialogAbout::DialogAbout()
-    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + wxString::Format(wxT(" (%s - %d)"), VidiotVersion, SubversionRevision),wxDefaultPosition,wxSize(500,500),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
+    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + wxString::Format(wxT(" (%s - %d)"), Application::getVersion(), Application::getRevision()),wxDefaultPosition,wxSize(500,500),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr ) // todo get info from Application
     ,   mBack(0)
 {
     VAR_DEBUG(this);

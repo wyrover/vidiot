@@ -148,6 +148,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     AVPacket nullPacket;
     nullPacket.data = 0;
     nullPacket.size = 0;
+    //nullPacket.buf = 0; // for new version of avcodec
+    //ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
 
     auto div = [this](boost::rational<int> num, boost::rational<int> divisor) -> int
     {
@@ -192,12 +194,14 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts);
     ASSERT(!mDeliveredFrameParameters || *mDeliveredFrameParameters == parameters)(*mDeliveredFrameParameters)(parameters); // Ensure that mDeliveredFrame had the same set of VideoCompositionParameters
 
+    AVCodecContext* codec = getCodec();
+
     if (!mDeliveredFrame || requiredInputPts > mDeliveredFrameInputPts)
     {
         // Decode new frame
         bool firstPacket = true;
         int frameFinished = 0;
-        AVFrame* pFrame = avcodec_alloc_frame();
+        AVFrame* pFrame = avcodec_alloc_frame(); // for new version of avcodec : av_frame_alloc();
         ASSERT_NONZERO(pFrame);
 
         while (!frameFinished )
@@ -238,6 +242,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             {
                 int len1 = avcodec_decode_video2(getCodec(), pFrame, &frameFinished, nextToBeDecodedPacket);
                 ASSERT_MORE_THAN_EQUALS_ZERO(len1);
+                
                 if (len1 > 0)
                 {
                     endOfFile = false;

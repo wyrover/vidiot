@@ -30,7 +30,7 @@ namespace model
 static const int sMicroSecondsPerSeconds = 1000 * 1000;
 static const int sMaxBufferSize = 100;
 
-static const int sAudioBufferSizeInBytes = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+static const int sAudioBufferSizeInBytes = 192000;
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION

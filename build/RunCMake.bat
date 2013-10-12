@@ -106,6 +106,8 @@ cd %VIDIOT_BUILD%\MSVC
 set OUTTYPE="Visual Studio 9 2008"
 if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
 if EXIST "%ProgramFiles%\Microsoft Visual Studio 10.0" set OUTTYPE="Visual Studio 10"
+if EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio 11.0" set OUTTYPE="Visual Studio 11"
+if EXIST "%ProgramFiles%\Microsoft Visual Studio 11.0" set OUTTYPE="Visual Studio 11"
 cmake -G %OUTTYPE% -Wdev --debug-output %SOURCE%
 cmake -LAH  %SOURCE% > CMakeVariables.txt
 
@@ -122,7 +124,7 @@ REM ============================== DELIVER ==============================
 if NOT "%1%"=="DELIVER" goto END
 
 cd %VIDIOT_BUILD%\MSVC
-"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
+"C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\devenv" Vidiot.sln /Build RelWithDebInfo /project PACKAGE 
 for %%i in (Vidiot*.exe) do start "" /b "%%i"
 
 :END

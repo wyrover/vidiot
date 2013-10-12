@@ -88,7 +88,7 @@ wxString FrameRate::toString() const
 
 std::ostream& operator<<( std::ostream& os, const FrameRate& obj )
 {
-    os << std::setw(8) << obj.numerator() << std::setw(8) << obj.denominator();
+    os << obj.numerator() << '/' << obj.denominator();
     return os;
 }
 

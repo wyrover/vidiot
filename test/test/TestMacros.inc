@@ -24,7 +24,7 @@ macro(AddTests TestProjectName)
 
     if (${TestProjectName} STREQUAL "testauto")
         if (MSVC)
-            set_target_properties(${TestProjectName} PROPERTIES COMPILE_FLAGS "/YuPrecompiledTest.h")
+            set_target_properties(${TestProjectName} PROPERTIES COMPILE_FLAGS "/YuPrecompiledTest.h -Zm176")
             set_source_files_properties(${TESTDIR}/../pch/src/PrecompiledTest.cpp PROPERTIES COMPILE_FLAGS "/YcPrecompiledTest.h")
         endif(MSVC)
         SOURCE_GROUP("pch\\include" REGULAR_EXPRESSION ../pch/include/.*)
