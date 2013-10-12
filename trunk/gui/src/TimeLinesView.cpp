@@ -163,7 +163,7 @@ std::pair<size_t,timeline::Timeline*> TimelinesView::findPage(model::SequencePtr
         timeline::Timeline* timeline = static_cast<timeline::Timeline*>(mNotebook.GetPage(page));
         if (timeline->getSequence() == sequence)
         {
-            return std::make_pair<size_t,timeline::Timeline*>(page,timeline);
+            return std::make_pair(page,timeline);
         }
         ++page;
     }

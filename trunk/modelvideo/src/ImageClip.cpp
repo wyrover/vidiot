@@ -49,7 +49,7 @@ ImageClip::ImageClip(VideoFilePtr file)
     adjustEnd( - half );
 
     // Move left edge to the right sich that the clip can be extended if required. The -remainingLength ensures that the resulting clip has the correct resulting size
-    adjustBegin(half - remainingLength);
+    adjustBegin(getLength() - remainingLength); // do not replace 'getLength()' with 'half' here (try doing the computation with 'length' an odd number...)
 
     ASSERT_EQUALS(getLength(),remainingLength);
 }

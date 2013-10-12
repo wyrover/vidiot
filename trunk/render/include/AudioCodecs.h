@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef RENDER_Audio_CODECS_H
-#define RENDER_Audio_CODECS_H
+#ifndef RENDER_AUDIO_CODECS_H
+#define RENDER_AUDIO_CODECS_H
 
 namespace model { namespace render {
 
@@ -41,4 +41,4 @@ private:
 
 }} // namespace
 
-#endif // RENDER_Audio_CODECS_H
+#endif // RENDER_AUDIO_CODECS_H

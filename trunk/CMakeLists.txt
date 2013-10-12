@@ -24,8 +24,6 @@ SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${VIDIOT_DIR} )
 SET(CMAKE_PREFIX_PATH  ${CMAKE_PREFIX_PATH}  ${VIDIOT_DIR} )
 SET(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/build )
 
-# Needed for Makefiles/Code::Blocks
-#SET( CMAKE_BUILD_TYPE DEBUG )
 
 # Fill this variable with extra dll paths required for running the application
 # in a debugging context. The variable is used to set MSVC debugging paths.
@@ -55,7 +53,6 @@ ADD_DLL_PATH($ENV{FFMPEGDIR}/bin)
 
 #### WXWIDGETS ####
 SET( WX_USE_REL_AND_DBG TRUE )
-#SET( wxWidgets_CONFIGURATION mswu ) # or mswud or mswd
 FIND_PACKAGE(wxWidgets REQUIRED core base aui adv xml html qa)
 
 #### BOOST ####
@@ -63,23 +60,23 @@ SET(Boost_ADDITIONAL_VERSIONS ENV{FOUND_BOOST_VERSION})
 SET(Boost_DEBUG TRUE)
 #SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost 1.45 REQUIRED COMPONENTS date_time thread filesystem serialization system)
-# Find all dlls matching 'release' and 'threading-multi'
+FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS date_time thread filesystem serialization system)
+# Find all dlls matching 'release' (== not gd) and 'threading-multi' (== mt)
 # Note: For some boost libraries, there is no dependency for building (above), but these dlls 
 #       are still required (due to dependencies) when installing into C:\Program Files.
-foreach(BOOSTLIB chrono date_time thread filesystem serialization system)
-    FILE( GLOB_RECURSE BOOST_INSTALL_NEW $ENV{BOOST_ROOT}/bin.v2/libs/${BOOSTLIB}/*.dll )
+foreach(BOOSTLIB chrono date_time thread serialization system)
+    FILE( GLOB_RECURSE BOOST_INSTALL_NEW $ENV{BOOST_ROOT}/stage/lib/*.dll )
     foreach( DLLNAME ${BOOST_INSTALL_NEW} )
-        if((${DLLNAME} MATCHES "release") AND (${DLLNAME} MATCHES "threading-multi"))
+        if((${DLLNAME} MATCHES ${BOOSTLIB}) AND (${DLLNAME} MATCHES "-mt-") AND (NOT ${DLLNAME} MATCHES "-gd-") ) 
             SET( BOOST_INSTALL ${BOOST_INSTALL} ${DLLNAME} )
-        endif((${DLLNAME} MATCHES "release") AND (${DLLNAME} MATCHES "threading-multi"))
+        endif()
     endforeach(DLLNAME)
 endforeach(BOOSTLIB)
 ADD_DLL_PATH($ENV{BOOST_ROOT}/stage/lib)
 
 #### PORTAUDIO ####
 SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include ${VIDIOT_DIR}/portaudio_trunk/src/common)
-SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_trunk/build/msvc/Win32/Release)
+SET(PORTAUDIO_LIBRARY_DIR ${VIDIOT_DIR}/portaudio_build/Release)
 SET(PORTAUDIO_LIBRARIES   portaudio_x86.dll)
 SET(PORTAUDIO_INSTALL ${PORTAUDIO_LIBRARY_DIR}/portaudio_x86.dll)
 ADD_DLL_PATH(${PORTAUDIO_LIBRARY_DIR})
@@ -146,6 +143,7 @@ IF (MSVC)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP ")
     ENDIF (NOT SINGLE_THREADED)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
+    SET(CMAKE_EXE_LINKER_FLAGS "/SAFESEH:NO") # Required for avcodec
     # Force including Precompiled.h for all cpp files
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FIPrecompiled.h ")
     string(REPLACE "/ZI" "/Zi" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # This ensures that in log lines not the full path is shown
@@ -205,6 +203,6 @@ ADD_SUBDIRECTORY(html) # Must be after the other dirs, since it uses the other t
 ADD_SUBDIRECTORY(icons) # Must be after the other dirs, since it uses the other targets
 
 if (MSVC)
-   set_target_properties(vidiot PROPERTIES COMPILE_FLAGS "/YuPrecompiled.h")
+   set_target_properties(vidiot PROPERTIES COMPILE_FLAGS "/YuPrecompiled.h -Zm140")
    set_source_files_properties(pch/src/Precompiled.cpp PROPERTIES COMPILE_FLAGS "/YcPrecompiled.h")
 endif(MSVC)

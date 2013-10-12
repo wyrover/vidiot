@@ -41,7 +41,7 @@ ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::NodePtrs 
     ParentAndChildPairs pairs;
     BOOST_FOREACH( model::NodePtr child, prunedlist )
     {
-        pairs.push_back(std::make_pair<model::NodePtr,model::NodePtr>(child->getParent(),child));
+        pairs.push_back(std::make_pair(child->getParent(),child));
     }
     return pairs;
 }

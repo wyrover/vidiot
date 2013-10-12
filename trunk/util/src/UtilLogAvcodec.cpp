@@ -593,7 +593,6 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_G729:               os << "CODEC_ID_G729";               break;
     case CODEC_ID_G723_1:             os << "CODEC_ID_G723_1";             break;
     case CODEC_ID_FFWAVESYNTH:        os << "CODEC_ID_FFWAVESYNTH";        break;
-    case CODEC_ID_8SVX_RAW:           os << "CODEC_ID_8SVX_RAW";           break;
     case CODEC_ID_DVD_SUBTITLE:       os << "CODEC_ID_DVD_SUBTITLE";       break;
     case CODEC_ID_DVB_SUBTITLE:       os << "CODEC_ID_DVB_SUBTITLE";       break;
     case CODEC_ID_TEXT:               os << "CODEC_ID_TEXT";               break;
@@ -611,7 +610,7 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_MPEG2TS:            os << "CODEC_ID_MPEG2TS";            break;
     case CODEC_ID_MPEG4SYSTEMS:       os << "CODEC_ID_MPEG4SYSTEMS";       break;
     case CODEC_ID_FFMETADATA:         os << "CODEC_ID_FFMETADATA";         break;
-    default:                          os << static_cast<long>(obj) << "(Unknown CodecID)";
+    default:                          os << "Unknown CodecID (" << static_cast<long>(obj) << ")";
     }
     return os;
 }
@@ -631,7 +630,7 @@ std::ostream& operator<< (std::ostream& os, const AVSampleFormat& obj)
     case AV_SAMPLE_FMT_S32P: os << "AV_SAMPLE_FMT_S32P"; break;
     case AV_SAMPLE_FMT_FLTP: os << "AV_SAMPLE_FMT_FLTP"; break;
     case AV_SAMPLE_FMT_DBLP: os << "AV_SAMPLE_FMT_DBLP"; break;
-    default:                 os << static_cast<long>(obj) << "(Unknown AVSampleFormat)";
+    default:                 os << "Unknown AVSampleFormat (" << static_cast<long>(obj) << ")";
     }
     return os;
 };

@@ -481,6 +481,13 @@ void File::openFile()
 
     auto getStreamLength = [this](AVStream* stream) -> pts
     {
+        if (stream->duration == 1)
+        {
+            // Stil image: disregard the timebase, since rounding errors 
+            // (timebase of file different than project time base)
+            // may result in the outcome '0'.
+            return 1;
+        }
         return Convert::rationaltimeToPts(boost::rational<int>(Constants::sSecond,1) * boost::rational<int>(stream->duration,1) * boost::rational<int>(stream->time_base.num,stream->time_base.den));
     };
 
@@ -504,14 +511,14 @@ void File::openFile()
         case AV_SAMPLE_FMT_S32:
         case AV_SAMPLE_FMT_FLT:
         case AV_SAMPLE_FMT_DBL:
-            break;
             // Unsupported/untested sample formats
-        case AV_SAMPLE_FMT_NONE:
         case AV_SAMPLE_FMT_U8P:
         case AV_SAMPLE_FMT_S16P:
         case AV_SAMPLE_FMT_S32P:
         case AV_SAMPLE_FMT_FLTP:
         case AV_SAMPLE_FMT_DBLP:
+            break;
+        case AV_SAMPLE_FMT_NONE:
             LOG_WARNING << "Unsupported audio file '" << path << "'. Sample format is " << stream->codec->sample_fmt << ".";
             return false;
         }

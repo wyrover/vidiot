@@ -43,7 +43,6 @@ extern "C" {
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/exception/all.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/function.hpp>
