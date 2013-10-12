@@ -60,12 +60,9 @@ Install ActivePerl via installer
   (to provide support for wxwidgets 3.0 version)
 
 =================== FFMPEG ===================
-* Download from http://ffmpeg.zeranoe.com/builds/:
-  - 32-bit Builds (Shared)
-  - 32-bit Builds (Dev)
-* Extract into
-  <VIDIOT_DIR>\ffmpeg-precomiled
-  (bin/doc/lib/include/licenses etc. are direct subdirs of ffmpeg-precompiled)
+* Nothing required: ffmpeg is part of the source tree.
+  To upgrade, from http://ffmpeg.zeranoe.com/builds/
+  Download 2-bit Builds (Shared and Dev) into <SRC>/ffmpeg
 
 =================== PORTAUDIO ===================
 * Create folder <VIDIOT_DIR>\portaudio_trunk
