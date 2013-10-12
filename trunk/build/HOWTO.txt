@@ -54,7 +54,7 @@ Install ActivePerl via installer
   (without this patch, the 'shift' handling in Timeline::onPaint becomes awkward - use shift begin trim 'to the right' to see the effect of omitting it.)
 * Apply patch to wxFSWatcher
   (see <VIDIOT_SRC>/build/patches)
-  http://trac.wxwidgets.org/ticket/13294          TODO OBSOLETE?
+  http://trac.wxwidgets.org/ticket/13294
 * (MSVC) build solution Release & Debug
 * Copy build/__FindwxWidgets.cmake to C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\FindwxWidgets.cmake
   (to provide support for wxwidgets 3.0 version)

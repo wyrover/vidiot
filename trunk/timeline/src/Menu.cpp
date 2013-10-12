@@ -167,7 +167,6 @@ void MenuHandler::onPlaybackActive(PlaybackActiveEvent& event)
     // For instance, pressing 's' will call ' MenuHandler::onSplitAtCursor'
     // which causes a change to the sequence while playback is still active!
     Window::get().setSequenceMenu(getMenu(), !event.getValue());
-    // todo make a more robust mechanism in the timeline that discards events, given the current state (maybe all actions should be done via the state machine...)
     event.Skip();
 }
 
