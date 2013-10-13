@@ -89,6 +89,7 @@ public:
     // WX EVENTS
     //////////////////////////////////////////////////////////////////////////
 
+    void onIdle(wxIdleEvent& event);
     void onSize(wxSizeEvent& event);
     void onEraseBackground(wxEraseEvent& event);
     void onPaint( wxPaintEvent &event );

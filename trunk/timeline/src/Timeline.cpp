@@ -93,6 +93,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Bind(wxEVT_SIZE,                &Timeline::onSize,               this);
+    Bind(wxEVT_IDLE,                &Timeline::onIdle,               this);
 
     if (beginTransacted)
     {
@@ -316,6 +317,15 @@ const Details& Timeline::getDetails() const
 // WX EVENTS
 //////////////////////////////////////////////////////////////////////////
 
+void Timeline::onIdle(wxIdleEvent& event)
+{
+    // First idle after startup indicates 'init done'
+    Unbind(wxEVT_IDLE,                &Timeline::onIdle,               this);
+
+    getScrolling().alignCenterPts();
+    event.Skip();
+}
+
 void Timeline::onSize(wxSizeEvent& event)
 {
     getSequenceView().canvasResized(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
@@ -497,6 +507,8 @@ void Timeline::serialize(Archive & ar, const unsigned int version)
     {
         ar & boost::serialization::make_nvp("zoom",*mZoom);
         ar & boost::serialization::make_nvp("intervals",*mIntervals);
+        ar & boost::serialization::make_nvp("scrolling",*mScroll); // Must be done before cursor (since cursor uses the scroll position)
+        ar & boost::serialization::make_nvp("cursor",*mCursor);
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
