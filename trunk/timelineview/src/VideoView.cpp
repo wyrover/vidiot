@@ -91,7 +91,8 @@ wxSize VideoView::requiredSize() const
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
     int top = getSequenceView().getVideoPosition();
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
+    for ( model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
     {
         int bottom = top + track->getHeight() + Layout::TrackDividerHeight;
         if (position.y >= top && position.y < bottom)
@@ -109,7 +110,8 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
 pixel VideoView::getPosition(model::TrackPtr track) const
 {
     int y = 0;
-    BOOST_REVERSE_FOREACH(model::TrackPtr _track, getSequence()->getVideoTracks())
+   model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
+   for (model::TrackPtr _track : boost::adaptors::reverse( videoTracks ) )
     {
         y += Layout::TrackDividerHeight;
         if (track == _track)
@@ -157,7 +159,8 @@ void VideoView::draw(wxBitmap& bitmap) const
 {
     wxMemoryDC dc(bitmap);
     int y = 0;
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks())
+   model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
+   for (model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
     {
         drawDivider(dc, y, Layout::TrackDividerHeight);
         y += Layout::TrackDividerHeight;

@@ -43,7 +43,7 @@ extern "C" {
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/exception/all.hpp>
-#include <boost/foreach.hpp>
+#include <boost/foreach.hpp> // todo obsolete
 #include <boost/format.hpp>
 #include <boost/function.hpp>
 #include <boost/icl/interval_set.hpp>
@@ -51,6 +51,7 @@ extern "C" {
 #include <boost/make_shared.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/range/adaptor/reversed.hpp>
 #include <boost/rational.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/assume_abstract.hpp>

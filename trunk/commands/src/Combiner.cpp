@@ -52,7 +52,7 @@ bool Combiner::Do()
 
 bool Combiner::Undo()
 {
-    BOOST_REVERSE_FOREACH( wxCommand* command, mCommands )
+    for( wxCommand* command : boost::adaptors::reverse( mCommands ) )
     {
         command->Undo();
     }

@@ -101,7 +101,8 @@ void TestDetailsClip::testChangeLength()
 
     {
         // Test reducing the length on the right side (the default side)
-        BOOST_REVERSE_FOREACH( wxToggleButton* button,  DetailsClipView()->getLengthButtons() )
+        std::list<wxToggleButton*> buttons = DetailsClipView()->getLengthButtons(); // Can't use reverse on temporary inside for loop
+        for ( wxToggleButton* button : boost::adaptors::reverse( buttons ) )
         {
             pressLengthButton(button,false,false);
         }
