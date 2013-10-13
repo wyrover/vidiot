@@ -17,6 +17,7 @@
 
 #include "Mouse.h"
 
+#include <wx/cursor.h>
 #include "AudioView.h"
 #include "Clip.h"
 #include "ClipView.h"

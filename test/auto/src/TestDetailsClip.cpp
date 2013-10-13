@@ -23,6 +23,7 @@
 #include "Convert.h"
 #include "DetailsClip.h"
 #include "HelperApplication.h"
+#include "HelperConfig.h"
 #include "HelperDetails.h"
 #include "HelperModel.h"
 #include "HelperTimeline.h"
@@ -49,6 +50,8 @@ namespace test {
 
 void TestDetailsClip::setUp()
 {
+    ConfigOverruleLong overruleDefaultVideoWidth(Config::sPathDefaultVideoWidth, 720);
+    ConfigOverruleLong overruleDefaultVideoHeight(Config::sPathDefaultVideoHeight, 576);
     mProjectFixture.init();
 }
 

@@ -122,9 +122,9 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathDefaultStillImageLength, 150);
     setDefault(Config::sPathDefaultTransitionLength, 24);
     setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
-    setDefault(Config::sPathDefaultVideoHeight, 576);
+    setDefault(Config::sPathDefaultVideoHeight, 720);
     setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill).c_str());
-    setDefault(Config::sPathDefaultVideoWidth, 720);
+    setDefault(Config::sPathDefaultVideoWidth, 1280);
     setDefault(Config::sPathLastOpened, "");
     setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());

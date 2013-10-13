@@ -22,6 +22,11 @@
 #include "UtilThread.h"
 #include "Window.h"
 #include <wx/choicdlg.h>
+#include <wx/debugrpt.h>
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
+#include <wx/msgdlg.h>
+#include <wx/textdlg.h>
 
 namespace gui {
 

@@ -20,6 +20,8 @@
 
 #include "UtilInt.h"
 
+class wxMiniFrame;
+
 namespace gui {
 
 class VideoDisplay;

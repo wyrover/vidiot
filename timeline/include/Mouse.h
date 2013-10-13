@@ -22,6 +22,8 @@
 #include "Part.h"
 #include "UtilInt.h"
 
+class wxCursor;
+
 namespace gui { namespace timeline {
     struct PointerPositionInfo;
 
