@@ -1193,7 +1193,7 @@ void TestTransition::testVideoTransitionTypes()
 {
     StartTestSuite();
     Zoom level(6);
-    BOOST_FOREACH( model::TransitionDescription t, model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+    for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
     {
         {
             StartTest("FadeIn: " + t.first);

@@ -96,7 +96,7 @@ VideoCodecPtr VideoCodecs::getDefault()
 std::list<CodecID> VideoCodecs::all()
 {
     std::list<CodecID> result;
-    BOOST_FOREACH( VideoCodecMap::value_type entry, sVideoCodecs )
+    for ( VideoCodecMap::value_type entry : sVideoCodecs )
     {
         result.push_back(entry.first);
     }

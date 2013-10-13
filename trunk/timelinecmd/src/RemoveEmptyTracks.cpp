@@ -67,7 +67,7 @@ bool RemoveEmptyTracks::Do()
     getSequence()->Bind(model::EVENT_REMOVE_AUDIO_TRACK,    &RemoveEmptyTracks::onAudioTracksRemoved,  this);
 
     model::Tracks videoTracks = getSequence()->getVideoTracks();
-    BOOST_FOREACH( model::TrackPtr track, videoTracks )
+    for ( model::TrackPtr track : videoTracks )
     {
         if (track->isEmpty() && getSequence()->getVideoTracks().size() > 1) // Always one track must remain
         {
@@ -75,7 +75,7 @@ bool RemoveEmptyTracks::Do()
         }
     }
     model::Tracks audioTracks = getSequence()->getAudioTracks();
-    BOOST_FOREACH( model::TrackPtr track, audioTracks )
+    for ( model::TrackPtr track : audioTracks )
     {
         if (track->isEmpty() && getSequence()->getAudioTracks().size() > 1) // Always one track must remain
         {
@@ -89,11 +89,11 @@ bool RemoveEmptyTracks::Do()
 
 bool RemoveEmptyTracks::Undo()
 {
-    BOOST_FOREACH( model::TrackChange change, mVideoUndo )
+    for ( model::TrackChange change : mVideoUndo )
     {
         getSequence()->addVideoTracks(change.addedTracks,change.addPosition);
     }
-    BOOST_FOREACH( model::TrackChange change, mAudioUndo )
+    for ( model::TrackChange change : mAudioUndo )
     {
         getSequence()->addAudioTracks(change.addedTracks,change.addPosition);
     }

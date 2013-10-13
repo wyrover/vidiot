@@ -51,9 +51,9 @@ void DeleteSelectedClips::initialize()
 {
     LOG_DEBUG << "STEP 1: Determine which transitions must be unapplied.";
     std::set<model::TransitionPtr> transitionsToBeUnapplied;
-    BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+    for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             if (clip->getSelected())
             {
@@ -78,7 +78,7 @@ void DeleteSelectedClips::initialize()
     }
 
     LOG_DEBUG << "STEP 2: Unapply transitions.";
-    BOOST_FOREACH( model::TransitionPtr transition, transitionsToBeUnapplied )
+    for ( model::TransitionPtr transition : transitionsToBeUnapplied )
     {
         unapplyTransition(transition);
     }
@@ -86,9 +86,9 @@ void DeleteSelectedClips::initialize()
     LOG_DEBUG << "STEP 3: Determine the clips to be removed.";
     std::list<model::IClipPtr> clipsToBeRemoved;
     {
-        BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+        for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
         {
-            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+            for ( model::IClipPtr clip : track->getClips() )
             {
                 if (clip->getSelected())
                 {
@@ -109,7 +109,7 @@ void DeleteSelectedClips::initialize()
     else
     {
         getTimeline().beginTransaction();
-        BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+        for ( model::IClipPtr clip : clipsToBeRemoved )
         {
             replaceClip(clip,boost::assign::list_of(boost::make_shared<model::EmptyClip>(clip->getLength())));
         }
@@ -133,9 +133,9 @@ void DeleteSelectedClips::undoExtraAfter()
 
 void DeleteSelectedClips::storeSelection()
 {
-    BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+    for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             if (clip->getSelected())
             {
@@ -148,7 +148,7 @@ void DeleteSelectedClips::storeSelection()
 void DeleteSelectedClips::restoreSelection()
 {
     getTimeline().getSelection().unselectAll();
-    BOOST_FOREACH( model::IClipPtr clip, mSelected )
+    for ( model::IClipPtr clip : mSelected )
     {
         clip->setSelected(true);
     }

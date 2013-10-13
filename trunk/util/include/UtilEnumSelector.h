@@ -31,7 +31,7 @@ public:
         ,   mMapping(mapping)
     {
         int index = 0;
-        BOOST_FOREACH( Mapping::left_reference entry, mMapping.left )
+        for ( Mapping::left_reference entry : mMapping.left )
         {
             Append(entry.second);
             mSelectionToItem[index] = entry.first;

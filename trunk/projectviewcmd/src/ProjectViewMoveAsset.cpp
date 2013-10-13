@@ -45,7 +45,7 @@ ProjectViewMoveAsset::~ProjectViewMoveAsset()
 bool ProjectViewMoveAsset::Do()
 {
     VAR_INFO(this);
-    BOOST_FOREACH( ParentAndChildPair p, mPairs )
+    for ( ParentAndChildPair p : mPairs )
     {
         // Ignore nodes that are moved to their original
         // parent.
@@ -61,7 +61,7 @@ bool ProjectViewMoveAsset::Do()
 bool ProjectViewMoveAsset::Undo()
 {
     VAR_INFO(this);
-    BOOST_FOREACH( ParentAndChildPair p, mPairs )
+    for ( ParentAndChildPair p : mPairs )
     {
         mNewParent->removeChild(p.second);
         p.first->addChild(p.second);

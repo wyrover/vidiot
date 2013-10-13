@@ -206,11 +206,11 @@ void DialogRenderSettings::onAudioCodecChanged(wxCommandEvent& event)
 void DialogRenderSettings::onFileButtonPressed(wxCommandEvent& event)
 {
     wxString filetypes;
-    BOOST_FOREACH( model::render::OutputFormatPtr format, model::render::OutputFormats::getList() )
+    for ( model::render::OutputFormatPtr format : model::render::OutputFormats::getList() )
     {
         ASSERT(!format->getExtensions().empty());
         wxString extensionlist;
-        BOOST_FOREACH( wxString extension, format->getExtensions() )
+        for ( wxString extension : format->getExtensions() )
         {
             if (!extensionlist.IsEmpty()) { extensionlist << ';'; } // Add ; after each extension except the first
             extensionlist << "*." << extension;
@@ -426,7 +426,7 @@ void DialogRenderSettings::changeAudioCodecInfo(model::render::AudioCodecPtr old
     if (oldAudioCodec)
     {
         mVideoParameterWidgets.clear();
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, oldAudioCodec->getParameters() )
+        for ( model::render::ICodecParameterPtr parameter : oldAudioCodec->getParameters() )
         {
             parameter->destroyWidget();
         }
@@ -435,7 +435,7 @@ void DialogRenderSettings::changeAudioCodecInfo(model::render::AudioCodecPtr old
     if (newAudioCodec)
     {
         wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getOutputFormat()->getAudioCodec()->getParameters() )
+        for ( model::render::ICodecParameterPtr parameter : mNew->getOutputFormat()->getAudioCodec()->getParameters() )
         {
             wxWindow* window = parameter->makeWidget(mAudioParameters,this);
             addOption(mAudioParameters,vSizer,parameter->getName(),window);
@@ -453,7 +453,7 @@ void DialogRenderSettings::changeVideoCodecInfo(model::render::VideoCodecPtr old
     if (oldVideoCodec)
     {
         mVideoParameterWidgets.clear();
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, oldVideoCodec->getParameters() )
+        for ( model::render::ICodecParameterPtr parameter : oldVideoCodec->getParameters() )
         {
             parameter->destroyWidget();
         }
@@ -462,7 +462,7 @@ void DialogRenderSettings::changeVideoCodecInfo(model::render::VideoCodecPtr old
     if (newVideoCodec)
     {
         wxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
-        BOOST_FOREACH( model::render::ICodecParameterPtr parameter, mNew->getOutputFormat()->getVideoCodec()->getParameters() )
+        for ( model::render::ICodecParameterPtr parameter : mNew->getOutputFormat()->getVideoCodec()->getParameters() )
         {
             wxWindow* window = parameter->makeWidget(mVideoParameters,this);
             addOption(mVideoParameters,vSizer,parameter->getName(),window);

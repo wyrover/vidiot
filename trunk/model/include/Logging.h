@@ -24,7 +24,7 @@ template <class OBJ>
 std::ostream& dump(std::ostream& os, std::list< boost::shared_ptr< OBJ > > list, int depth = 0 )
 {
     typedef boost::shared_ptr< OBJ > OBJPtr;
-    BOOST_FOREACH( OBJPtr obj, list )
+    for ( OBJPtr obj : list )
     {
         dump(os,obj, depth);
     }

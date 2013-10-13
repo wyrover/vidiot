@@ -80,7 +80,7 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftDown& evt )
 boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
-    BOOST_FOREACH( model::IClipPtr clip, mTrack->getClips() )
+    for ( model::IClipPtr clip : mTrack->getClips() )
     {
         if (clip->isA<model::VideoClip>())
         {

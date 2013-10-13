@@ -49,7 +49,7 @@ Details::Details(wxWindow* parent, Timeline* timeline)
     mHeader = new wxStaticText(this,wxID_ANY,"", wxDefaultPosition, wxSize(2000,-1), wxBORDER_THEME | wxST_ELLIPSIZE_MIDDLE | wxALIGN_CENTRE);
     mHeader->SetBackgroundColour(Layout::get().DetailsViewHeaderColour);
     sizer->Add(mHeader, wxSizerFlags(0).Center());
-    BOOST_FOREACH( DetailsPanel* details, mDetails )
+    for ( DetailsPanel* details : mDetails )
     {
         sizer->Add(details, wxSizerFlags(1).Expand() );
     }
@@ -78,7 +78,7 @@ wxWindow* Details::getCurrent() const
 void Details::update()
 {
     bool shown = false;
-    BOOST_FOREACH(DetailsPanel* details, mDetails)
+    for (DetailsPanel* details : mDetails)
     {
         if (details->requestsToBeShown() && !shown)
         {

@@ -83,7 +83,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
     // Deselect all clips first, but only if control is not pressed.
     if (!ctrlPressed)
     {
-        BOOST_FOREACH( model::IClipPtr c, getSequence()->getSelectedClips() )
+        for ( model::IClipPtr c : getSequence()->getSelectedClips() )
         {
             c->setSelected(false);
         }
@@ -96,7 +96,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
         {
             // Select until the end
             model::IClipPtr firstclip;
-            BOOST_FOREACH( model::IClipPtr c, track->getClips() )
+            for ( model::IClipPtr c : track->getClips() )
             {
                 if (c == clip)
                 {
@@ -120,7 +120,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
             model::IClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(track->getClips().begin());
 
             model::IClipPtr firstclip;
-            BOOST_FOREACH( model::IClipPtr c, track->getClips() )
+            for ( model::IClipPtr c : track->getClips() )
             {
                 if (!firstclip)
                 {
@@ -179,7 +179,7 @@ void Selection::updateOnRightClick(const PointerPositionInfo& info)
     // Deselect clips first, in certain cases
     if (!ctrlPressed && (!clip || !clip->getSelected()))
     {
-        BOOST_FOREACH( model::IClipPtr c, getSequence()->getSelectedClips() )
+        for ( model::IClipPtr c : getSequence()->getSelectedClips() )
         {
             c->setSelected(false);
         }
@@ -201,9 +201,9 @@ void Selection::updateOnRightClick(const PointerPositionInfo& info)
 bool Selection::isEmpty() const
 {
     LOG_DEBUG;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    for ( model::TrackPtr track : getSequence()->getTracks() )
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             if (clip->getSelected())
             {
@@ -227,9 +227,9 @@ void Selection::unselectAll()
 {
     ASSERT(wxThread::IsMain());
     LOG_DEBUG;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    for ( model::TrackPtr track : getSequence()->getTracks() )
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             selectClip(clip,false);
         }
@@ -242,7 +242,7 @@ void Selection::change(model::IClips selection)
 {
     ASSERT(wxThread::IsMain());
     unselectAll();
-    BOOST_FOREACH( model::IClipPtr clip, selection )
+    for ( model::IClipPtr clip : selection )
     {
         if (clip)
         {

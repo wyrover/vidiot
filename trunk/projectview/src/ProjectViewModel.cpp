@@ -123,7 +123,7 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
     }
 
     model::NodePtr parent = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
-    BOOST_FOREACH( model::NodePtr child, parent->getChildren() )
+    for ( model::NodePtr child : parent->getChildren() )
     {
         wxItemArray.Add(wxDataViewItem(child->id()));
 
@@ -426,7 +426,7 @@ void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
     mView.Freeze();
 
     wxDataViewItemArray items;
-    BOOST_FOREACH( model::NodePtr node, children )
+    for ( model::NodePtr node : children )
     {
         items.Add(wxDataViewItem(node->id()));
     }
@@ -458,7 +458,7 @@ void ProjectViewModel::onProjectAssetsRemoved( model::EventRemoveNodes &event )
     mView.Freeze();
 
     wxDataViewItemArray items;
-    BOOST_FOREACH( model::NodePtr node, children )
+    for ( model::NodePtr node : children )
     {
         items.Add(wxDataViewItem(node->id()));
     }

@@ -109,7 +109,7 @@ wxStrings getFilesList( const wxString& message, const wxString& filetypes, wxWi
     {
         wxArrayString paths;
         dialog.GetPaths(paths);
-        BOOST_FOREACH( wxString path, paths )
+        for ( wxString path : paths )
         {
             result.push_back(path);
         }
@@ -169,7 +169,7 @@ wxString Dialog::getComboText( wxString title, wxString message, std::list<wxStr
     wxArrayString choices;
     int initial = 0;
     int i = 0;
-    BOOST_FOREACH( wxString entry, entries )
+    for ( wxString entry : entries )
     {
         ASSERT(!entry.IsEmpty()); // Empty string is returned upon Cancel
         choices.Add(entry);
@@ -223,7 +223,7 @@ std::list<wxString> Dialog::getStringsSelection( wxString title, wxString messag
     wxArrayInt selected;
     wxArrayString choices;
     int i = 0;
-    BOOST_FOREACH( wxString selection, options )
+    for ( wxString selection : options )
     {
         choices.Add(selection);
         selected.Add(i);
@@ -238,7 +238,7 @@ std::list<wxString> Dialog::getStringsSelection( wxString title, wxString messag
     std::list<wxString> result;
     if (ok != -1) // -1 == cancel
     {
-        BOOST_FOREACH( int selection, selected )
+        for ( int selection : selected )
         {
             result.push_back(choices.Item(selection));
         }

@@ -116,7 +116,7 @@ wxString Track::getDescription() const
 void Track::clean()
 {
     VAR_DEBUG(this);
-    BOOST_FOREACH(IClipPtr clip, mClips)
+    for (IClipPtr clip : mClips)
     {
         clip->clean();
     }
@@ -129,7 +129,7 @@ void Track::clean()
 
 bool Track::isEmpty() const
 {
-    BOOST_FOREACH( IClipPtr mClip, mClips )
+    for ( IClipPtr mClip : mClips )
     {
         if (!mClip->isA<EmptyClip>())
         {
@@ -164,7 +164,7 @@ void Track::removeClips(IClips clips)
 {
     VAR_DEBUG(*this)(clips);
 
-    BOOST_FOREACH( IClipPtr clip, clips )
+    for ( IClipPtr clip : clips )
     {
         clip->clean();
         boost::dynamic_pointer_cast<Clip>(clip)->setTrackInfo(); // reset
@@ -197,7 +197,7 @@ IClipPtr Track::getClip(pts position) const
     pts left = 0;
     pts right = left;
     IClipPtr found;
-    BOOST_FOREACH( IClipPtr clip, mClips )
+    for ( IClipPtr clip : mClips )
     {
         pts length = clip->getLength();
         right += length;
@@ -291,7 +291,7 @@ void Track::setIndex(int index)
 std::set<pts> Track::getCuts(const std::set<IClipPtr>& exclude)
 {
     std::set<pts> result;
-    BOOST_FOREACH( IClipPtr clip, getClips() )
+    for ( IClipPtr clip : getClips() )
     {
         if (exclude.find(clip) == exclude.end())
         {

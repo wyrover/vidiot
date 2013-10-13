@@ -102,11 +102,11 @@ void TestDetailsClip::testChangeLength()
     {
         // Test reducing the length on the right side (the default side)
         std::list<wxToggleButton*> buttons = DetailsClipView()->getLengthButtons(); // Can't use reverse on temporary inside for loop
-        for ( wxToggleButton* button : boost::adaptors::reverse( buttons ) )
+        for ( wxToggleButton* button : boost::adaptors::reverse(buttons) )
         {
             pressLengthButton(button,false,false);
         }
-        BOOST_FOREACH( wxToggleButton* button,  DetailsClipView()->getLengthButtons() )
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             pressLengthButton(button,true,false);
         }
@@ -122,11 +122,11 @@ void TestDetailsClip::testChangeLength()
         triggerMenu(ID_ADDVIDEOTRACK);
         DragToTrack(1,VideoClip(0,5),AudioClip(0,5));
 
-        BOOST_FOREACH( wxToggleButton* button, DetailsClipView()->getLengthButtons() )
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             Drag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,3)) - getTimeline().getZoom().ptsToPixels(getLength(button) -1)));
             Click(Center(VideoClip(0,3)));
-            BOOST_FOREACH( wxToggleButton* otherButton, DetailsClipView()->getLengthButtons() )
+            for ( wxToggleButton* otherButton : DetailsClipView()->getLengthButtons() )
             {
                 ASSERT_IMPLIES(getLength(otherButton) >= getLength(button), otherButton->IsEnabled())(getLength(otherButton))(getLength(button));
                 ASSERT_IMPLIES(getLength(otherButton) <  getLength(button),!otherButton->IsEnabled())(getLength(otherButton))(getLength(button));
@@ -136,11 +136,11 @@ void TestDetailsClip::testChangeLength()
         }
         TrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 5)); // Smaller length than the 'smallest' button
         Click(Center(VideoClip(0,3))); // Exclusively select clip 4, since the shift trim above selects multiple clips
-        BOOST_FOREACH( wxToggleButton* button, DetailsClipView()->getLengthButtons() )
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             ASSERT(button->IsEnabled());
         }
-        BOOST_FOREACH( wxToggleButton* button, DetailsClipView()->getLengthButtons() )
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             pressLengthButton(button,true,true);
             Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
@@ -182,7 +182,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
             ASSERT_DETAILSCLIP(VideoClip(0,2));
             ASSERT(VideoClip(0,2)->isA<model::Transition>());
             ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-            BOOST_FOREACH( wxToggleButton* button, DetailsClipView()->getLengthButtons() )
+            for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
             {
                 ASSERT(button->IsEnabled());
                 pressLengthButton(button);
@@ -198,7 +198,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-        BOOST_FOREACH( wxToggleButton* button, DetailsClipView()->getLengthButtons() )
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             ASSERT(button->IsEnabled());
             pressLengthButton(button);
@@ -212,7 +212,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-        BOOST_FOREACH( wxToggleButton* button, DetailsClipView()->getLengthButtons() )
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             ASSERT(button->IsEnabled());
             pressLengthButton(button);

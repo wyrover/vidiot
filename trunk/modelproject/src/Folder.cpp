@@ -51,7 +51,7 @@ Folder::~Folder()
 
 void Folder::check()
 {
-    BOOST_FOREACH( model::NodePtr node, getChildren() )
+    for ( model::NodePtr node : getChildren() )
     {
         node->check();
     }

@@ -38,7 +38,7 @@ TrackCreator::TrackCreator(model::NodePtrs assets)
 ,   mVideo(boost::make_shared<model::VideoTrack>())
 ,   mAudio(boost::make_shared<model::AudioTrack>())
 {
-    BOOST_FOREACH( model::NodePtr asset, mAssets )
+    for ( model::NodePtr asset : mAssets )
     {
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
         if (file && file->canBeOpened())

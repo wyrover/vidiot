@@ -47,7 +47,7 @@ struct IndexAutoFolderWork
         , mPath(folder->getPath())
     {
         ASSERT(mPath.IsDir() && mPath.IsAbsolute())(mPath);
-        BOOST_FOREACH( NodePtr child, mFolder->getChildren() )
+        for ( NodePtr child : mFolder->getChildren() )
         {
             mRemove.push_back(child->getName());
         }
@@ -232,7 +232,7 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
     if (!work->mAdd.empty())
     {
         addChildren(work->mAdd); // Add all at once, for better performance (less UI updates)
-        BOOST_FOREACH( NodePtr node, work->mAdd )
+        for ( NodePtr node : work->mAdd )
         {
             AutoFolderPtr autoFolder = boost::dynamic_pointer_cast<AutoFolder>(node);
             if (autoFolder)
@@ -245,9 +245,9 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
     if (!work->mRemove.empty())
     {
         model::NodePtrs nodes;
-        BOOST_FOREACH( wxString name, work->mRemove )
+        for ( wxString name : work->mRemove )
         {
-            BOOST_FOREACH( NodePtr child, getChildren() )
+            for ( NodePtr child : getChildren() )
             {
                 if (child->getName().IsSameAs(name))
                 {

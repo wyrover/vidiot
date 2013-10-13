@@ -121,7 +121,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
     model::IPaths InputFiles = getListOfInputFiles();
     RandomTempDirPtr tempDir = RandomTempDir::generate();
     std::list<wxFileName> fileNames;
-    BOOST_FOREACH( model::IPathPtr path, getListOfInputFiles() )
+    for ( model::IPathPtr path : getListOfInputFiles() )
     {
         wxFileName filepath(tempDir->getFileName().GetLongPath(), path->getPath().GetFullName());
         bool copyok = wxCopyFile( InputFiles.front()->getPath().GetLongPath(), filepath.GetLongPath(), false );

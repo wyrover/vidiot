@@ -179,7 +179,7 @@ void TestRender::testRenderingCodecs()
     StartTestSuite();
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
 
-    BOOST_FOREACH( CodecID id, model::render::VideoCodecs::all() )
+    for ( CodecID id : model::render::VideoCodecs::all() )
     {
         RandomTempDir tempdir(false);
         ExpectExecutedWork expectation(1);

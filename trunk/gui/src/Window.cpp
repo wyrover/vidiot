@@ -566,7 +566,7 @@ wxString selectWorkspace(wxString text)
 {
     Config::Perspectives perspectives = Config::WorkspacePerspectives::get();
     std::list<wxString> entries;
-    BOOST_FOREACH( Config::Perspectives::value_type name_perspective, perspectives )
+    for ( Config::Perspectives::value_type name_perspective : perspectives )
     {
         entries.push_back(name_perspective.first);
     }

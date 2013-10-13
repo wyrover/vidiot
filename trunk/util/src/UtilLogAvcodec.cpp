@@ -108,7 +108,7 @@ std::ostream& operator<< (std::ostream& os, const AVCodec* obj)
         {
             os << '(';
             bool first = true;
-            BOOST_FOREACH( std::string c, caps )
+            for ( std::string c : caps )
             {
                 os << (!first ? "," : "") << c;
                 first = false;

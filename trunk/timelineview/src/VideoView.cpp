@@ -42,7 +42,7 @@ VideoView::VideoView(View* parent)
     // invalidateBitmaps calls: Bad performance and crashes
     // (view of second item added is not initialized when processing
     // the invalidateBitmap events for the first added item)
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
         new TrackView(track,this);
     }
@@ -58,7 +58,7 @@ VideoView::~VideoView()
     getSequence()->Unbind(model::EVENT_ADD_VIDEO_TRACK,       &VideoView::onVideoTracksAdded,    this);
     getSequence()->Unbind(model::EVENT_REMOVE_VIDEO_TRACK,    &VideoView::onVideoTracksRemoved,  this);
 
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
         delete getViewMap().getView(track);
     }
@@ -71,7 +71,7 @@ VideoView::~VideoView()
 void VideoView::canvasResized()
 {
     invalidateBitmap();
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
         getViewMap().getView(track)->canvasResized();
     }
@@ -81,7 +81,7 @@ wxSize VideoView::requiredSize() const
 {
     int width = getSequenceView().minimumWidth();
     int height = 0;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
         height += track->getHeight() + Layout::TrackDividerHeight;
     }
@@ -129,7 +129,7 @@ pixel VideoView::getPosition(model::TrackPtr track) const
 
 void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
 {
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().addedTracks )
+    for ( model::TrackPtr track : event.getValue().addedTracks )
     {
         new TrackView(track,this);
     }
@@ -143,7 +143,7 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
 
 void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
 {
-    BOOST_FOREACH( model::TrackPtr track, event.getValue().removedTracks )
+    for ( model::TrackPtr track : event.getValue().removedTracks )
     {
         delete getViewMap().getView(track);
     }

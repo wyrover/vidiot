@@ -86,7 +86,7 @@ void TestTimeline::testSelection()
         StartTest("CTRL clicking all clips one by one");
         DeselectAllClips();
         ControlDown();
-        BOOST_FOREACH(model::IClipPtr clip, clips)
+        for (model::IClipPtr clip : clips)
         {
             Click(Center(clip));
         }

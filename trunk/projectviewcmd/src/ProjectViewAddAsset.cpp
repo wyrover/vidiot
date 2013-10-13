@@ -37,7 +37,7 @@ ProjectViewAddAsset::~ProjectViewAddAsset()
 bool ProjectViewAddAsset::Do()
 {
     VAR_INFO(this);
-    BOOST_FOREACH(model::NodePtr child, mChildren)
+    for (model::NodePtr child : mChildren)
     {
         mParent->addChild(child);
     }
@@ -47,7 +47,7 @@ bool ProjectViewAddAsset::Do()
 bool ProjectViewAddAsset::Undo()
 {
     VAR_INFO(this);
-    BOOST_FOREACH(model::NodePtr child, mChildren)
+    for (model::NodePtr child : mChildren)
     {
         mParent->removeChild(child);
     }

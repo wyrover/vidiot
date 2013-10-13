@@ -227,7 +227,7 @@ void Render::schedule(SequencePtr sequence)
 typedef std::list<SequencePtr> Sequences;
 void findSequences(FolderPtr node, Sequences& result)
 {
-    BOOST_FOREACH( NodePtr child, node->getChildren() )
+    for ( NodePtr child : node->getChildren() )
     {
         if (child->isA<Sequence>())
         {
@@ -252,12 +252,12 @@ void Render::scheduleAll()
     std::list<wxString> errors;
 
     std::list<wxFileName> allFilenames;
-    BOOST_FOREACH( SequencePtr sequence, seqs )
+    for ( SequencePtr sequence : seqs )
     {
         allFilenames.push_back(sequence->getRender()->getFileName());
     }
 
-    BOOST_FOREACH( SequencePtr sequence, seqs )
+    for ( SequencePtr sequence : seqs )
     {
         if (!sequence->getRender()->checkFileName())
         {

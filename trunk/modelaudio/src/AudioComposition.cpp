@@ -88,7 +88,7 @@ AudioChunkPtr AudioComposition::generate()
     }
 
     samplecount chunkSize = std::numeric_limits<samplecount>::max();
-    BOOST_FOREACH( AudioChunkPtr inputChunk, mChunks )
+    for ( AudioChunkPtr inputChunk : mChunks )
     {
         if (chunkSize > inputChunk->getUnreadSampleCount() )
         {
@@ -100,7 +100,7 @@ AudioChunkPtr AudioComposition::generate()
     VAR_DEBUG(chunkSize);
     AudioChunkPtr result = boost::make_shared<AudioChunk>(mParameters.getNrChannels(), chunkSize, true, true); // Fills with 0
 
-    BOOST_FOREACH(AudioChunkPtr inputChunk, mChunks)
+    for (AudioChunkPtr inputChunk : mChunks)
     {
         if (inputChunk)
         {

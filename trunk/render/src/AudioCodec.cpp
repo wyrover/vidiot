@@ -97,7 +97,7 @@ AVStream* AudioCodec::addStream(AVFormatContext* context) const
     ASSERT_EQUALS(audio_codec->codec_type,AVMEDIA_TYPE_AUDIO);
     audio_codec->codec_id = mId;
     audio_codec->sample_fmt = AV_SAMPLE_FMT_S16;
-    BOOST_FOREACH( ICodecParameterPtr parameter, mParameters )
+    for ( ICodecParameterPtr parameter : mParameters )
     {
         parameter->set(audio_codec);
     }
@@ -136,7 +136,7 @@ std::ostream& operator<<( std::ostream& os, const AudioCodec& obj )
     os  << "AudioCodec:"
         << &obj    << '|'
         << obj.mId << '|';
-    BOOST_FOREACH( ICodecParameterPtr parameter, obj.mParameters )
+    for ( ICodecParameterPtr parameter : obj.mParameters )
     {
         os << *parameter;
     }

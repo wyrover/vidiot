@@ -59,7 +59,7 @@ DialogOptions::DialogOptions(wxWindow* win)
         wxArrayString choices;
         unsigned int selection = 0;
         wxString currentFrameRate = Config::ReadString(Config::sPathDefaultFrameRate);
-        BOOST_FOREACH( FrameRate fr, FrameRate::getSupported() )
+        for ( FrameRate fr : FrameRate::getSupported() )
         {
             wxString frs = fr.toString();
             choices.Add(frs);
@@ -118,7 +118,7 @@ DialogOptions::DialogOptions(wxWindow* win)
          values.unique();
 
          wxArrayString choices;
-         BOOST_FOREACH( pts value, values )
+         for ( pts value : values )
          {
              choices.Add(wxString::Format("%" PRId64, value ));
          }

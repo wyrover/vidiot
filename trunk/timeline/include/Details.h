@@ -44,7 +44,7 @@ public:
     template <typename DETAILS>
     DETAILS* get()
     {
-        BOOST_FOREACH(DetailsPanel* details, mDetails)
+        for (DetailsPanel* details : mDetails)
         {
             DETAILS* result = dynamic_cast<DETAILS*>(details);
             if (result)

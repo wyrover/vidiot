@@ -108,7 +108,7 @@ void Intervals::set(PtsIntervals intervals)
     mIntervals = intervals;
     VAR_INFO(mIntervals);
     getMenuHandler().updateItems();
-    BOOST_FOREACH( PtsInterval i, refresh )
+    for ( PtsInterval i : refresh )
     {
         getView().refreshInterval( i );
     }
@@ -118,7 +118,7 @@ void Intervals::removeAll()
 {
     ASSERT(wxThread::IsMain());
     LOG_INFO;
-    BOOST_FOREACH( PtsInterval i, mIntervals )
+    for ( PtsInterval i : mIntervals )
     {
         getView().refreshInterval( i );
     }
@@ -282,7 +282,7 @@ pts Intervals::determineSnap(pts position) const
         }
     };
 
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    for ( model::TrackPtr track : getSequence()->getTracks() )
     {
         model::IClipPtr clip = track->getClip(position);
         if (!clip)
@@ -305,9 +305,9 @@ pts Intervals::determineSnap(pts position) const
 
 void Intervals::removeRegionUsedByClips(model::SequencePtr sequence, PtsIntervals& intervals)
 {
-    BOOST_FOREACH( model::TrackPtr track, sequence->getTracks() )
+    for ( model::TrackPtr track : sequence->getTracks() )
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             if (!clip->isA<model::EmptyClip>())
             {

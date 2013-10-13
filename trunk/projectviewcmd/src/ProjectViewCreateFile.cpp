@@ -46,7 +46,7 @@ bool ProjectViewCreateFile::Do()
     VAR_INFO(this);
     if (mChildren.size() == 0)
     {
-        BOOST_FOREACH( wxFileName path, mPaths )
+        for ( wxFileName path : mPaths )
         {
             model::FilePtr file = boost::make_shared<model::File>(path);
             if (file->canBeOpened())
@@ -59,7 +59,7 @@ bool ProjectViewCreateFile::Do()
             mCommandName = _("Add file")        + _(" \"")   + mChildren.front()->getDescription()  + _("\"");
         }
     }
-    BOOST_FOREACH(model::FilePtr child, mChildren)
+    for (model::FilePtr child : mChildren)
     {
         mParent->addChild(boost::static_pointer_cast<model::Node>(child));
     }
@@ -69,7 +69,7 @@ bool ProjectViewCreateFile::Do()
 bool ProjectViewCreateFile::Undo()
 {
     VAR_INFO(this);
-    BOOST_FOREACH(model::FilePtr child, mChildren)
+    for (model::FilePtr child : mChildren)
     {
         mParent->removeChild(boost::static_pointer_cast<model::Node>(child));
     }

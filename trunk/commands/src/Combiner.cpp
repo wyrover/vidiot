@@ -43,7 +43,7 @@ Combiner::~Combiner()
 
 bool Combiner::Do()
 {
-    BOOST_FOREACH( wxCommand* command, mCommands )
+    for ( wxCommand* command : mCommands )
     {
         command->Do();
     }

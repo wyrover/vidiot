@@ -52,7 +52,7 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
     // invalidateBitmaps calls: Bad performance and crashes
     // (view of second item added is not initialized when processing
     // the invalidateBitmap events for the first added item)
-    BOOST_FOREACH( model::IClipPtr clip, mTrack->getClips() )
+    for ( model::IClipPtr clip : mTrack->getClips() )
     {
         new ClipView(clip,this);
     }
@@ -72,7 +72,7 @@ TrackView::~TrackView()
 
     getViewMap().unregisterView(mTrack);
 
-    BOOST_FOREACH( model::IClipPtr clip, mTrack->getClips() )
+    for ( model::IClipPtr clip : mTrack->getClips() )
     {
         delete getViewMap().getView(clip);
     }
@@ -89,7 +89,7 @@ model::TrackPtr TrackView::getTrack() const
 
 void TrackView::onClipsAdded( model::EventAddClips& event )
 {
-    BOOST_FOREACH( model::IClipPtr clip, event.getValue().addClips )
+    for ( model::IClipPtr clip : event.getValue().addClips )
     {
         new ClipView(clip,this);
     }
@@ -99,7 +99,7 @@ void TrackView::onClipsAdded( model::EventAddClips& event )
 
 void TrackView::onClipsRemoved( model::EventRemoveClips& event )
 {
-    BOOST_FOREACH( model::IClipPtr clip, event.getValue().removeClips )
+    for ( model::IClipPtr clip : event.getValue().removeClips )
     {
         delete getViewMap().getView(clip);
     }
@@ -165,9 +165,9 @@ void TrackView::draw(wxBitmap& bitmap) const
     dc.SetPen(Layout::get().BackgroundPen);
     dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
     std::list<bool> tf = boost::assign::list_of(false)(true);
-    BOOST_FOREACH( bool transitionValue, tf ) // First, normal clips, second transitions
+    for ( bool transitionValue : tf ) // First, normal clips, second transitions
     {
-        BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
+        for ( model::IClipPtr modelclip : mTrack->getClips() )
         {
             if (modelclip->isA<model::Transition>() == transitionValue)
             {
@@ -188,9 +188,9 @@ void TrackView::draw(wxBitmap& bitmap) const
 void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
 {
     std::list<bool> tf = boost::assign::list_of(false)(true);
-    BOOST_FOREACH( bool transitionValue, tf ) // First, normal clips, second transitions
+    for ( bool transitionValue : tf ) // First, normal clips, second transitions
     {
-        BOOST_FOREACH( model::IClipPtr modelclip, mTrack->getClips() )
+        for ( model::IClipPtr modelclip : mTrack->getClips() )
         {
             if (modelclip->isA<model::Transition>() == transitionValue)
             {

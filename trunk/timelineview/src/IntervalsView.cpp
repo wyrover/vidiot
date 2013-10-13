@@ -67,7 +67,7 @@ void IntervalsView::draw(wxDC& dc) const
     wxBrush b(*wxLIGHT_GREY,wxBRUSHSTYLE_CROSSDIAG_HATCH);
     dc.SetBrush(b);
 
-    BOOST_FOREACH( PtsInterval i, intervals )
+    for ( PtsInterval i : intervals )
     {
         dc.DrawRectangle(makeRect(i));
     }
