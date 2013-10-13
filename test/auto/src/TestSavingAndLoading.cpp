@@ -24,10 +24,15 @@
 #include "HelperProject.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineTrim.h"
+#include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "Project.h"
+#include "Scrolling.h"
+#include "Sequence.h"
+#include "Timeline.h"
 #include "VideoTransitionFactory.h"
 #include "Window.h"
+#include "Zoom.h"
 
 namespace test {
 
@@ -65,7 +70,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     addFiles( boost::assign::list_of(getStillImagePath()), folder1 );
 
     StartTest("Add video clips to sequence");
-    extendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 1);
+    extendSequenceWithRepeatedClips(getSequence(), getListOfInputFiles(), 2);
 
     StartTest("Add still image to sequence");
     extendSequenceWithStillImage(getSequence()); // Ensure that there is a still image in the timeline
@@ -88,6 +93,18 @@ void TestSavingAndLoading::testSaveAndLoad()
     StartTest("Add empty clip to timeline");
     Click(Center(VideoClip(0,1)));
     Type(WXK_DELETE);
+
+    StartTest("Zoom");
+    TypeN(4,'='); // Zoom in until factor is 1:1
+
+    StartTest("Scroll");
+    util::thread::RunInMainAndWait([]()
+    {
+        getTimeline().getScrolling().align(getSequence()->getLength() / 2, getTimeline().GetSize().x / 2);
+    });
+
+    StartTest("Move cursor position");
+    PositionCursor(getTimeline().getZoom().ptsToPixels(getSequence()->getLength() / 2));
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -151,6 +168,24 @@ void TestSavingAndLoading::checkDocument(wxString path)
     util::thread::RunInMainAndWait([path]()
     {
         gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT);
+    });
+
+    // Checks on loaded document
+    waitForIdle();
+    {
+        StartTest("Cursor position");
+        ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), getSequence()->getLength() / 2);
+    }
+    {
+        StartTest("Scroll offset");
+        ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), getSequence()->getLength() / 2);
+    }
+
+    // Actions on loaded document
+    util::thread::RunInMainAndWait([]()
+    {
+        // First move to the left so that all the move actions succeed
+        getTimeline().getScrolling().align(0,0);
     });
     {
         StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)

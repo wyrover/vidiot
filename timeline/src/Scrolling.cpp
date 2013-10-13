@@ -57,8 +57,7 @@ Scrolling::~Scrolling()
 
 void Scrolling::onZoomChanged( ZoomChangeEvent& event )
 {
-    wxSize size = getTimeline().GetClientSize();
-    align(mCenterPts, size.x / 2);
+    alignCenterPts();
     event.Skip();
 }
 
@@ -132,5 +131,42 @@ pts Scrolling::getCenterPts() const
     // When no scrolling has been applied, the view remains 'the beginning of the timeline'
     return 0;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void Scrolling::alignCenterPts()
+{
+    wxSize size = getTimeline().GetClientSize();
+    align(mCenterPts, size.x / 2);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// SERIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+template<class Archive>
+void Scrolling::serialize(Archive & ar, const unsigned int version)
+{
+    try
+    {
+        if (Archive::is_saving::value)
+        {
+            storeCenterPts();
+        }
+        ar & BOOST_SERIALIZATION_NVP(mCenterPts);
+        if (Archive::is_loading::value)
+        {
+            alignCenterPts();
+        }
+    }
+    catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+    catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+    catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+    catch (...)                                  { LOG_ERROR;                                   throw; }
+}
+template void Scrolling::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
+template void Scrolling::serialize<boost::archive::xml_iarchive>(boost::archive::xml_iarchive& ar, const unsigned int archiveVersion);
 
 }} // namespace

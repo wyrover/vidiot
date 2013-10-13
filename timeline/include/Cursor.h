@@ -68,7 +68,7 @@ public:
 
 private:
 
-    pixel mCursorPosition;
+    pts mCursorPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS
@@ -85,6 +85,14 @@ private:
     void moveTo(pts position);
 
     void ensureCursorVisible();
+
+    //////////////////////////////////////////////////////////////////////////
+    // SERIALIZATION
+    //////////////////////////////////////////////////////////////////////////
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 
 }} // namespace
