@@ -30,7 +30,7 @@ namespace gui {
 //////////////////////////////////////////////////////////////////////////
 
 DialogAbout::DialogAbout()
-    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + wxString::Format(wxT(" (%s - %d)"), Application::getVersion(), Application::getRevision()),wxDefaultPosition,wxSize(500,500),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr ) // todo get info from Application
+    :   wxDialog(&Window::get(),wxID_ANY,_("Vidiot: About") + wxString::Format(wxT(" (%s - %d)"), Application::getVersion(), Application::getRevision()),wxDefaultPosition,wxSize(500,500),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER,wxDialogNameStr )
     ,   mBack(0)
 {
     VAR_DEBUG(this);
