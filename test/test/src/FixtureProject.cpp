@@ -63,12 +63,12 @@ void FixtureProject::init()
 
     ASSERT_EQUALS(mSequence->getParent(),mRoot);
 
-    BOOST_FOREACH( model::IClipPtr clip, mSequence->getVideoTrack(0)->getClips() )
+    for ( model::IClipPtr clip : mSequence->getVideoTrack(0)->getClips() )
     {
         mOriginalLengthOfVideoClip.push_back(clip->getLength());
         mOriginalPtsOfVideoClip.push_back(clip->getLeftPts());
     }
-    BOOST_FOREACH( model::IClipPtr clip, mSequence->getAudioTrack(0)->getClips() )
+    for ( model::IClipPtr clip : mSequence->getAudioTrack(0)->getClips() )
     {
         mOriginalLengthOfAudioClip.push_back(clip->getLength());
         mOriginalPtsOfAudioClip.push_back(clip->getLeftPts());

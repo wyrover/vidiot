@@ -45,7 +45,7 @@ TransitionFactory::~TransitionFactory()
 TransitionDescriptions TransitionFactory::getAllPossibleTransitions() const
 {
     TransitionDescriptions result;
-    BOOST_FOREACH( auto kvp, mTransitions )
+    for ( auto kvp : mTransitions )
     {
         result.push_back(kvp.first);
     }

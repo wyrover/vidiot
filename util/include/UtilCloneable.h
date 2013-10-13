@@ -49,7 +49,7 @@ template <typename T>
 std::list< boost::shared_ptr<T> > make_cloned(std::list< boost::shared_ptr<T> > elements)
 {
     std::list< boost::shared_ptr<T> > result;
-    BOOST_FOREACH( boost::shared_ptr<T> element, elements )
+    for ( boost::shared_ptr<T> element : elements )
     {
         result.push_back(make_cloned<T>(element));
     }

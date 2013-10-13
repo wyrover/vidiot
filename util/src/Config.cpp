@@ -349,7 +349,7 @@ void Config::WorkspacePerspectives::save(Perspectives perspectives)
 {
     removeAll();
     int i = 1;
-    BOOST_FOREACH( Config::Perspectives::value_type name_perspective, perspectives )
+    for ( Config::Perspectives::value_type name_perspective : perspectives )
     {
         wxString pathName = sPathWorkspacePerspectiveName + wxString::Format("%d",i);
         wxString pathSaved = sPathWorkspacePerspectiveSaved + wxString::Format("%d",i);

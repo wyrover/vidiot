@@ -88,7 +88,7 @@ NodePtr Node::addChild(NodePtr newChild)
 NodePtrs Node::addChildren(NodePtrs children)
 {
     UtilList<NodePtr>(mChildren).addElements(children, NodePtr());
-    BOOST_FOREACH( NodePtr child, children )
+    for ( NodePtr child : children )
     {
         child->setParent(self());
     }
@@ -117,7 +117,7 @@ NodePtr Node::removeChild(NodePtr child)
 NodePtrs Node::removeChildren(NodePtrs children)
 {
     // Can't use UtilList::removeElements since these children may be 'out of order'
-    BOOST_FOREACH( NodePtr child, children )
+    for ( NodePtr child : children )
     {
         NodePtrs::iterator it;
         for (it = mChildren.begin(); it != mChildren.end(); ++it)
@@ -143,7 +143,7 @@ NodePtrs Node::getAllDescendants() const
 {
     NodePtrs result;
     UtilList<NodePtr>(result).addElements(mChildren, NodePtr());
-    BOOST_FOREACH( NodePtr child, mChildren )
+    for ( NodePtr child : mChildren )
     {
         UtilList<NodePtr>(result).addElements(child->getAllDescendants(), NodePtr());
     }
@@ -157,7 +157,7 @@ void Node::setName(wxString name)
 int Node::count() const
 {
     int result = 1; // 'this'
-    BOOST_FOREACH( NodePtr child, mChildren )
+    for ( NodePtr child : mChildren )
     {
         result += child->count();
     }
@@ -172,7 +172,7 @@ NodePtrs Node::find(wxString name)
     {
         result.push_back(self());
     }
-    BOOST_FOREACH( NodePtr child, mChildren )
+    for ( NodePtr child : mChildren )
     {
         UtilList<NodePtr>(result).addElements(child->find(name), NodePtr());
     }
@@ -182,7 +182,7 @@ NodePtrs Node::find(wxString name)
 NodePtrs Node::findPath(wxString path)
 {
     NodePtrs result;
-    BOOST_FOREACH( NodePtr child, mChildren )
+    for ( NodePtr child : mChildren )
     {
         UtilList<NodePtr>(result).addElements(child->findPath(path), NodePtr());
     }
@@ -191,7 +191,7 @@ NodePtrs Node::findPath(wxString path)
 
 bool Node::mustBeWatched(wxString path)
 {
-    BOOST_FOREACH( NodePtr child, mChildren )
+    for ( NodePtr child : mChildren )
     {
         if (child->mustBeWatched(path))
         {

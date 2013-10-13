@@ -101,7 +101,7 @@ void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned 
         else
         {
             std::list< Pair > list;
-            BOOST_FOREACH( AnInterval interval, set )
+            for ( AnInterval interval : set )
             {
                 list.push_back(std::pair<TYPE,TYPE>(interval.lower(),interval.upper()));
             }

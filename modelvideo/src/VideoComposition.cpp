@@ -95,7 +95,7 @@ VideoFramePtr VideoComposition::generate()
 
     bool keyFrame = false;
 
-    BOOST_FOREACH( VideoFramePtr frame, mFrames )
+    for ( VideoFramePtr frame : mFrames )
     {
         if (frame->getForceKeyFrame())
         {

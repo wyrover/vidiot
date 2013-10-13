@@ -197,7 +197,7 @@ void ProjectView::select( model::NodePtrs nodes)
 {
     ASSERT(wxThread::IsMain());
     mCtrl.UnselectAll();
-    BOOST_FOREACH( model::NodePtr node, nodes )
+    for ( model::NodePtr node : nodes )
     {
         VAR_DEBUG(node->id());
         mCtrl.Select( wxDataViewItem( node->id() ) );
@@ -227,7 +227,7 @@ model::NodePtrs ProjectView::getSelection() const
     wxDataViewItemArray selection;
     mCtrl.GetSelections(selection);
 
-    BOOST_FOREACH(wxDataViewItem wxItem, selection)
+    for (wxDataViewItem wxItem : selection)
     {
         model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
         ASSERT_NONZERO(node);
@@ -297,7 +297,7 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     bool enableOpen = (nSelected == 1);
     bool enableDeleteUnused = (nSelected == 1);
 
-    BOOST_FOREACH( wxDataViewItem item, sel )
+    for ( wxDataViewItem item : sel )
     {
         model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(item.GetID()));
 
@@ -429,7 +429,7 @@ void ProjectView::onPaste(wxCommandEvent& event)
             wxTheClipboard->GetData( data );
             if (data.getAssets().size() > 0)
             {
-                BOOST_FOREACH( model::NodePtr node, data.getAssets() )
+                for ( model::NodePtr node : data.getAssets() )
                 {
                     if (findConflictingName( this, getSelectedContainer(), node->getName(), NODETYPE_ANY ))
                     {
@@ -494,7 +494,7 @@ void ProjectView::onNewFile(wxCommandEvent& event)
     wxString filetypes = _("Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
     wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add"), filetypes );
     std::vector<wxFileName> list;
-    BOOST_FOREACH( wxString path, files )
+    for ( wxString path : files )
     {
         if (findConflictingName(this, getSelectedContainer(),path, NODETYPE_FILE))
         {
@@ -529,7 +529,7 @@ void ProjectView::onCreateSequence(wxCommandEvent& event)
 
 void ProjectView::onOpen(wxCommandEvent& event)
 {
-    BOOST_FOREACH( model::NodePtr node, getSelection() )
+    for ( model::NodePtr node : getSelection() )
     {
         if (node->isA<model::Sequence>())
         {
@@ -596,7 +596,7 @@ void ProjectView::onDropPossible( wxDataViewEvent &event )
     }
 
     // Cannot drop a node into itselves, or one of its children
-    BOOST_FOREACH( model::NodePtr node, mDropSource.getData().getAssets())
+    for ( model::NodePtr node : mDropSource.getData().getAssets())
     {
         if (p == node || mModel->isDescendantOf(p, node))
         {
@@ -629,7 +629,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
     ASSERT(folder);
 
     bool conflictingChildExists = false;
-    BOOST_FOREACH( model::NodePtr node, o.getAssets())
+    for ( model::NodePtr node : o.getAssets())
     {
         if (findConflictingName(this, folder, node->getName(), NODETYPE_ANY))
         {
@@ -691,7 +691,7 @@ void ProjectView::onStartEditing( wxDataViewEvent &event )
 
 bool findConflictingName(wxWindow* window, model::FolderPtr parent, wxString name, NodeType type )
 {
-    BOOST_FOREACH( model::NodePtr child, parent->getChildren() )
+    for ( model::NodePtr child : parent->getChildren() )
     {
         if (child->getName().IsSameAs(name))
         {

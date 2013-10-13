@@ -57,7 +57,7 @@ DataObject::~DataObject()
 bool DataObject::GetDataHere(void *buf) const
 {
     unsigned int i = 0;
-    BOOST_FOREACH( model::NodePtr asset, mAssets )
+    for ( model::NodePtr asset : mAssets )
     {
         static_cast<model::NodeId*>(buf)[i] = asset->id();
         i++;

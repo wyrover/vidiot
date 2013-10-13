@@ -212,7 +212,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
 DetailsClip::~DetailsClip()
 {
-    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+    for ( wxToggleButton* button : mLengthButtons )
     {
         button->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
     }
@@ -733,7 +733,7 @@ void DetailsClip::determineClipSizeBounds()
 
     // For each possible length, store if it should be achieved by trimming at the beginning or at the end (the default)
     mTrimAtEnd.clear();
-    BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+    for ( wxToggleButton* button : mLengthButtons )
     {
         pts length = model::Convert::timeToPts(button->GetId());
         mTrimAtEnd[length] = (length >= mMinimumLengthWhenEndTrimming && length <= mMaximumLengthWhenEndTrimming);
@@ -744,7 +744,7 @@ void DetailsClip::updateLengthButtons()
 {
     if (!mClip)
     {
-        BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+        for ( wxToggleButton* button : mLengthButtons )
         {
             button->SetValue(false);
             button->Disable();
@@ -759,7 +759,7 @@ void DetailsClip::updateLengthButtons()
         ASSERT_MORE_THAN_EQUALS(mClip->getLength(), minimumClipLength);
         ASSERT_LESS_THAN_EQUALS(mClip->getLength(), maximumClipLength);
 
-        BOOST_FOREACH( wxToggleButton* button, mLengthButtons )
+        for ( wxToggleButton* button : mLengthButtons )
         {
             pts length = model::Convert::timeToPts(button->GetId());
             button->SetValue(mClip && mClip->getLength() == length);

@@ -39,7 +39,7 @@ void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
 
         for (int i = 0; i < nRepeat; ++i)
         {
-            BOOST_FOREACH( model::IPathPtr path, files )
+            for ( model::IPathPtr path : files )
             {
                 model::FilePtr file = boost::make_shared<model::File>(path->getPath());
                 ASSERT(file);

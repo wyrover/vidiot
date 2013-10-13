@@ -22,7 +22,7 @@ template <class T>
 std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)
 {
     os << "{";
-    BOOST_FOREACH( T child, obj )
+    for ( T child : obj )
     {
         os << child << " ";
     }
@@ -34,7 +34,7 @@ template <class T>
 std::ostream& operator<< (std::ostream& os, const std::vector<T>& obj)
 {
     os << "{";
-    BOOST_FOREACH( T child, obj )
+    for ( T child : obj )
     {
         os << child << " ";
     }
@@ -46,7 +46,7 @@ template <class T>
 std::ostream& operator<< (std::ostream& os, const std::set<T>& obj)
 {
     os << "{";
-    BOOST_FOREACH( T child, obj )
+    for ( T child : obj )
     {
         os << child << " ";
     }
@@ -59,7 +59,7 @@ std::ostream& operator<< (std::ostream& os, const std::map<T,U>& obj)
 {
     typedef std::map<T,U> MAPTYPE;
     os << "{";
-    BOOST_FOREACH( MAPTYPE::value_type val, obj )
+    for ( MAPTYPE::value_type val : obj )
     {
         os << '(' << val.first << ',' << val.second << ")";
     }

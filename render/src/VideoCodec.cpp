@@ -97,7 +97,7 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
     AVCodecContext* video_codec = stream->codec;
     ASSERT_EQUALS(video_codec->codec_type,AVMEDIA_TYPE_VIDEO);
     video_codec->codec_id = mId;
-    BOOST_FOREACH( ICodecParameterPtr parameter, mParameters )
+    for ( ICodecParameterPtr parameter : mParameters )
     {
         parameter->set(video_codec);
     }
@@ -148,7 +148,7 @@ std::ostream& operator<<( std::ostream& os, const VideoCodec& obj )
     os  << "VideoCodec:"
         << &obj    << '|'
         << obj.mId << '|';
-    BOOST_FOREACH( ICodecParameterPtr parameter, obj.mParameters )
+    for ( ICodecParameterPtr parameter : obj.mParameters )
     {
         os << *parameter;
     }

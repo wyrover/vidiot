@@ -225,7 +225,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     bool selectedEmptyClip = false;
     bool selectedMediaClip = false;
     std::set< model::IClipPtr > selection = getSequence()->getSelectedClips();
-    BOOST_FOREACH( model::IClipPtr selectedClip, selection )
+    for ( model::IClipPtr selectedClip : selection )
     {
         if (selectedClip->isA<model::EmptyClip>()) { selectedEmptyClip = true; }
         if (selectedClip->isA<model::VideoClip>()) { selectedMediaClip = true; }
@@ -312,7 +312,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     {
         int id = ID_POPUP_END;
 
-        BOOST_FOREACH( model::TransitionDescription t, model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+        for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
         {
             add(*menuFadeIn, id, t.second,  clickedOnMediaClip, canFadeIn, false);
             mapMenuItemToTransitionType[id] = model::TransitionTypeIn;

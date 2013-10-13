@@ -77,7 +77,7 @@ void TestSavingAndLoading::testSaveAndLoad()
 
     // Ensure each transition type is saved once
     int number = 3;
-    BOOST_FOREACH( model::TransitionDescription t, model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
+    for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
     {
         StartTest("Add transition (" + t.first + "," + t.second + ") to sequence");
         util::thread::RunInMainAndWait([t,number]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });

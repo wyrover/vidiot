@@ -103,7 +103,7 @@ void Cursor::nextCut()
 {
     std::set<pts> cuts = getSequence()->getCuts(); // std::set is stored in ordered fashion
     pts current = getLogicalPosition();
-    BOOST_FOREACH( pts position, getSequence()->getCuts() )
+    for ( pts position : getSequence()->getCuts() )
     {
         if (position > current)
         {

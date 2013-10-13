@@ -45,7 +45,7 @@ ProjectViewDeleteUnusedFiles::ProjectViewDeleteUnusedFiles(model::AutoFolderPtr 
     mCommandName = _("Delete unused files from folder " + folder->getName());
     ASSERT(folder);
 
-    BOOST_FOREACH( model::NodePtr child, folder->getAllDescendants() )
+    for ( model::NodePtr child : folder->getAllDescendants() )
     {
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(child);
         if (file && !findInProject(file))
@@ -54,7 +54,7 @@ ProjectViewDeleteUnusedFiles::ProjectViewDeleteUnusedFiles(model::AutoFolderPtr 
         }
     }
 
-    BOOST_FOREACH( model::FilePtr file, mFiles )
+    for ( model::FilePtr file : mFiles )
     {
         wxULongLong fileSize = file->getPath().GetSize();
         if (fileSize != wxInvalidSize)
@@ -100,7 +100,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
     }
 
     std::list<wxString> fileNames;
-    BOOST_FOREACH( model::FilePtr file, mFiles )
+    for ( model::FilePtr file : mFiles )
     {
         fileNames.push_back(util::path::normalize(file->getPath()).GetFullPath());
     }
@@ -111,7 +111,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
         fileNames);
 
     wxString message;
-    BOOST_FOREACH( wxString file, deleted )
+    for ( wxString file : deleted )
     {
         bool ok = util::path::recycle(file);
 
@@ -148,14 +148,14 @@ bool ProjectViewDeleteUnusedFiles::findInProject(model::FilePtr file)
 {
     model::NodePtr root = model::Project::get().getRoot();
     wxString path = util::path::normalize(file->getPath()).GetFullPath();
-    BOOST_FOREACH( model::NodePtr node, root->getAllDescendants() )
+    for ( model::NodePtr node : root->getAllDescendants() )
     {
         model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(node);
         if (sequence)
         {
-            BOOST_FOREACH( model::TrackPtr track, sequence->getTracks() )
+            for ( model::TrackPtr track : sequence->getTracks() )
             {
-                BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+                for ( model::IClipPtr clip : track->getClips() )
                 {
                     if (clip->isA<model::ClipInterval>())
                     {

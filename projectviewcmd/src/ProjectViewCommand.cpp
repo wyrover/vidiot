@@ -39,7 +39,7 @@ ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::NodePtrs 
 
     model::NodePtrs prunedlist = ProjectViewCommand::prune(children);
     ParentAndChildPairs pairs;
-    BOOST_FOREACH( model::NodePtr child, prunedlist )
+    for ( model::NodePtr child : prunedlist )
     {
         pairs.push_back(std::make_pair(child->getParent(),child));
     }
@@ -70,10 +70,10 @@ model::NodePtrs ProjectViewCommand::prune(model::NodePtrs children)
     ASSERT_MORE_THAN_ZERO(children.size());
 
     model::NodePtrs newlist;
-    BOOST_FOREACH( model::NodePtr child, children )
+    for ( model::NodePtr child : children )
     {
         bool ascendantFound = false;
-        BOOST_FOREACH( model::NodePtr possibleParent, children )
+        for ( model::NodePtr possibleParent : children )
         {
             if (isDescendantOf(child,possibleParent))
             {

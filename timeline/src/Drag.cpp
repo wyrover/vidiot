@@ -86,7 +86,7 @@ public:
         getMouse().dragMove(wxPoint(x,y));
         model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
         mOk = true;
-        BOOST_FOREACH( model::NodePtr node, nodes )
+        for ( model::NodePtr node : nodes )
         {
             if (!node->isA<model::File>())
             {
@@ -290,14 +290,14 @@ void Drag::move(wxPoint position)
 
     // Determine which regions of the timeline to update
     redrawRegion.Union(wxRect(mBitmapOffset + mPosition + getSnapPixels() - mHotspot - scroll, mBitmap.GetSize())); // Redraw the new area (moved 'into' this area)
-    BOOST_FOREACH( pts snap, prevsnaps )
+    for ( pts snap : prevsnaps )
     {
         if (!UtilList<pts>(mSnaps).hasElement(snap))
         {
             getTimeline().refreshPts(snap);
         }
     }
-    BOOST_FOREACH( pts snap, mSnaps )
+    for ( pts snap : mSnaps )
     {
         if (!UtilList<pts>(prevsnaps).hasElement(snap))
         {
@@ -322,7 +322,7 @@ void Drag::drop()
 {
     VAR_DEBUG(*this);
     command::ExecuteDrop::Drops drops;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    for ( model::TrackPtr track : getSequence()->getTracks() )
     {
         command::ExecuteDrop::Drops adddrops = getDrops(track);
         VAR_INFO(track)(adddrops);
@@ -339,7 +339,7 @@ void Drag::stop()
     VAR_DEBUG(*this);
     mActive = false;            // Ensure that moved clips are not blanked out anymore. See ClipView::draw().
     mShift = boost::none;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    for ( model::TrackPtr track : getSequence()->getTracks() )
     {
         getViewMap().getView(track)->onShiftChanged();
     }
@@ -431,7 +431,7 @@ wxBitmap Drag::getDragBitmap() //const
 
     // Draw audio tracks
     position.y = getSequenceView().getAudioPosition();
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getAudioTracks() )
+    for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
         model::TrackPtr draggedTrack = trackOnTopOf(track);
         if (draggedTrack)
@@ -467,7 +467,7 @@ void Drag::draw(wxDC& dc) const
     dc.DrawBitmap(mBitmap, getBitmapPosition(),true);
     dc.SetPen(Layout::get().SnapPen);
     dc.SetBrush(Layout::get().SnapBrush);
-    BOOST_FOREACH( pts snap, mSnaps )
+    for ( pts snap : mSnaps )
     {
         pixel pos = getZoom().ptsToPixels(snap) - getTimeline().getShift();
         dc.DrawLine(pos,0,pos,dc.GetSize().GetHeight());
@@ -509,7 +509,7 @@ void Drag::DragInfo::reset()
 
     // Determine boundaries for 'inside' drags
     std::set<model::TrackPtr> selectedTracks;
-    BOOST_FOREACH( model::IClipPtr clip, getSequence()->getSelectedClips() )
+    for ( model::IClipPtr clip : getSequence()->getSelectedClips() )
     {
         model::TrackPtr track = clip->getTrack();
         if (track->isA<model::VideoTrack>() == mIsVideo)
@@ -773,7 +773,7 @@ void Drag::determinePossibleDragPoints()
 {
     mDragPoints.clear();
 
-    BOOST_FOREACH( model::IClipPtr clip, mCommand->getDrags() )
+    for ( model::IClipPtr clip : mCommand->getDrags() )
     {
         mDragPoints.push_back(clip->getLeftPts());
         mDragPoints.push_back(clip->getRightPts());
@@ -794,7 +794,7 @@ void Drag::determineShift()
         pts pos = getDragPtsPosition();
         pts len = getDragPtsSize();
 
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        for ( model::TrackPtr track : getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(origPos);
 
@@ -831,7 +831,7 @@ void Drag::determineShift()
     {
         mShift = shift;
         VAR_DEBUG(shift);
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        for ( model::TrackPtr track : getSequence()->getTracks() )
         {
             getViewMap().getView(track)->onShiftChanged();
         }
@@ -852,7 +852,7 @@ command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
         pi.track = track;
         bool inregion = false;
 
-        BOOST_FOREACH( model::IClipPtr clip, draggedTrack->getClips() )
+        for ( model::IClipPtr clip : draggedTrack->getClips() )
         {
             if (!inregion && contains(clip))
             {

@@ -178,7 +178,7 @@ TestCrash::TestCrash(wxWindow* window)
     ,   mMenu(new wxMenu())
 {
     int id = FirstId;
-    BOOST_FOREACH( CrashInfo crash, crashes )
+    for ( CrashInfo crash : crashes )
     {
         mMenu->Append(id, crash.first);
         mWindow->Bind(wxEVT_COMMAND_MENU_SELECTED, &TestCrash::onCrashTest, this, id);

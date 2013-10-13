@@ -59,7 +59,7 @@ void SplitAtCursor::initialize()
 
 void SplitAtCursor::splittrack(model::Tracks tracks, pts position)
 {
-    BOOST_FOREACH( model::TrackPtr track, tracks )
+    for ( model::TrackPtr track : tracks )
     {
         split(track, position);
     }

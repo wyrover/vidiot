@@ -116,9 +116,9 @@ model::IClipPtr AudioClip(int trackindex, int clipindex)
 int getNonEmptyClipsCount()
 {
     int result = 0;
-    BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+    for ( model::TrackPtr track : getSequence()->getTracks() )
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             if (!clip->isA<model::EmptyClip>())
             {

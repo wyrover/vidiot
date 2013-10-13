@@ -99,7 +99,7 @@ Sequence::Sequence(const Sequence& other)
     ,   mRender(make_cloned<render::Render>(other.mRender))
 {
     VAR_DEBUG(this);
-    BOOST_FOREACH( model::TrackPtr track, getTracks() )
+    for ( model::TrackPtr track : getTracks() )
     {
         track->updateClips(); // todo see todo temp hack in Track.h
     }
@@ -117,11 +117,11 @@ Sequence::~Sequence()
 pts Sequence::getLength() const
 {
     pts nFrames = 0;
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    for ( TrackPtr track : mVideoTracks )
     {
         nFrames = std::max<pts>(nFrames, track->getLength());
     }
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    for ( TrackPtr track : mAudioTracks )
     {
         nFrames = std::max<pts>(nFrames, track->getLength());
     }
@@ -132,11 +132,11 @@ void Sequence::moveTo(pts position)
 {
     VAR_DEBUG(position);
     mVideoPosition = position;
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    for ( TrackPtr track : mVideoTracks )
     {
         track->moveTo(position);
     }
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    for ( TrackPtr track : mAudioTracks )
     {
         track->moveTo(position);
     }
@@ -151,7 +151,7 @@ wxString Sequence::getDescription() const
 void Sequence::clean()
 {
     VAR_DEBUG(this);
-    BOOST_FOREACH( TrackPtr track, getTracks() )
+    for ( TrackPtr track : getTracks() )
     {
         track->clean();
     }
@@ -202,7 +202,7 @@ AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameter
 
 void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 {
-    BOOST_FOREACH( model::TrackPtr track, tracks )
+    for ( model::TrackPtr track : tracks )
     {
          track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
@@ -227,7 +227,7 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
 
 void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 {
-    BOOST_FOREACH( model::TrackPtr track, tracks )
+    for ( model::TrackPtr track : tracks )
     {
          track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
     }
@@ -247,7 +247,7 @@ void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
 
 void Sequence::removeVideoTracks(Tracks tracks)
 {
-    BOOST_FOREACH( TrackPtr track, tracks )
+    for ( TrackPtr track : tracks )
     {
         track->clean();
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
@@ -266,7 +266,7 @@ void Sequence::removeVideoTracks(Tracks tracks)
 
 void Sequence::removeAudioTracks(Tracks tracks)
 {
-    BOOST_FOREACH( TrackPtr track, tracks )
+    for ( TrackPtr track : tracks )
     {
         track->clean();
         track->Unbind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
@@ -296,11 +296,11 @@ Tracks Sequence::getAudioTracks()
 Tracks Sequence::getTracks()
 {
     Tracks tracks;
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    for ( TrackPtr track : mVideoTracks )
     {
         tracks.push_back(track);
     }
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    for ( TrackPtr track : mAudioTracks )
     {
         tracks.push_back(track);
     }
@@ -330,9 +330,9 @@ void Sequence::setDividerPosition(pixel position)
 std::set<model::IClipPtr> Sequence::getSelectedClips()
 {
     std::set<model::IClipPtr> selectedclips;
-    BOOST_FOREACH( model::TrackPtr track, getTracks() )
+    for ( model::TrackPtr track : getTracks() )
     {
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             if (clip->getSelected())
             {
@@ -346,7 +346,7 @@ std::set<model::IClipPtr> Sequence::getSelectedClips()
 VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParameters& parameters)
 {
     VideoCompositionPtr composition(boost::make_shared<VideoComposition>(parameters));
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    for ( TrackPtr track : mVideoTracks )
     {
         composition->add(boost::dynamic_pointer_cast<IVideo>(track)->getNextVideo(parameters));
     }
@@ -356,7 +356,7 @@ VideoCompositionPtr Sequence::getVideoComposition(const VideoCompositionParamete
 AudioCompositionPtr Sequence::getAudioComposition(const AudioCompositionParameters& parameters)
 {
     AudioCompositionPtr composition(boost::make_shared<AudioComposition>(parameters));
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    for ( TrackPtr track : mAudioTracks )
     {
         std::map< TrackPtr, AudioChunkPtr >::iterator it = mCache.cachedAudio.find(track);
         if (it != mCache.cachedAudio.end())
@@ -392,7 +392,7 @@ std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
 {
     // PERF: cache this?
     std::set<pts> result;
-    BOOST_FOREACH( TrackPtr track, getTracks() )
+    for ( TrackPtr track : getTracks() )
     {
         UtilSet<pts>(result).addElements(track->getCuts(exclude));
     }
@@ -402,11 +402,11 @@ std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
 
 bool Sequence::isEmptyAt( pts position ) const
 {
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    for ( TrackPtr track : mVideoTracks )
     {
         if (!track->isEmptyAt(position)) { return false; }
     }
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    for ( TrackPtr track : mAudioTracks )
     {
         if (!track->isEmptyAt(position)) { return false; }
     }
@@ -476,7 +476,7 @@ void Sequence::updateTracks()
 {
     int index = 0;
     mVideoTrackMap.clear();
-    BOOST_FOREACH( TrackPtr track, mVideoTracks )
+    for ( TrackPtr track : mVideoTracks )
     {
         track->setIndex(index);
         mVideoTrackMap[index] = track;
@@ -484,7 +484,7 @@ void Sequence::updateTracks()
     }
     index = 0;
     mAudioTrackMap.clear(); // PERF: to cache
-    BOOST_FOREACH( TrackPtr track, mAudioTracks )
+    for ( TrackPtr track : mAudioTracks )
     {
         track->setIndex(index);
         mAudioTrackMap[index] = track;
@@ -498,7 +498,7 @@ void Sequence::updateTracks()
 void Sequence::updateLength()
 {
     pts maxlength = 0;
-    BOOST_FOREACH( TrackPtr track, getTracks() )
+    for ( TrackPtr track : getTracks() )
     {
         maxlength = std::max(track->getLength(), maxlength);
     }
@@ -543,11 +543,11 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(mAudioTracks);
         if (Archive::is_loading::value)
         {
-            BOOST_FOREACH( TrackPtr track, mVideoTracks )
+            for ( TrackPtr track : mVideoTracks )
             {
                 track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
             }
-            BOOST_FOREACH( TrackPtr track, mAudioTracks )
+            for ( TrackPtr track : mAudioTracks )
             {
                 track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
             }

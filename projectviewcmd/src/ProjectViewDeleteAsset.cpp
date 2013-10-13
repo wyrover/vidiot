@@ -44,7 +44,7 @@ ProjectViewDeleteAsset::~ProjectViewDeleteAsset()
 bool ProjectViewDeleteAsset::Do()
 {
     VAR_INFO(this);
-    BOOST_FOREACH( ParentAndChildPair p, mPairs )
+    for ( ParentAndChildPair p : mPairs )
     {
         p.first->removeChild(p.second);
     }
@@ -54,7 +54,7 @@ bool ProjectViewDeleteAsset::Do()
 bool ProjectViewDeleteAsset::Undo()
 {
     VAR_INFO(this);
-    BOOST_FOREACH( ParentAndChildPair p, mPairs )
+    for ( ParentAndChildPair p : mPairs )
     {
         p.first->addChild(p.second);
     }

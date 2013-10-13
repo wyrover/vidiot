@@ -87,7 +87,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
 
         int width = 0;
         int height = 0;
-        BOOST_FOREACH( model::NodePtr asset, assets )
+        for ( model::NodePtr asset : assets )
         {
             wxRect rect(mCtrl.GetItemRect(wxDataViewItem(asset->id()), mCtrl.GetColumn(0)));
             if (rect.width > width)
@@ -107,7 +107,7 @@ bool ProjectViewDropSource::GiveFeedback(wxDragResult effect)
         //dc->SetTextBackground(*wxBLUE);
 
         int y = 0;
-        BOOST_FOREACH( model::NodePtr asset, assets )
+        for ( model::NodePtr asset : assets )
         {
             wxRect itemRect(mCtrl.GetItemRect(wxDataViewItem(asset->id()), mCtrl.GetColumn(0)));
             drawAsset(&dc, wxRect(0,y,width,itemRect.GetHeight()), asset);

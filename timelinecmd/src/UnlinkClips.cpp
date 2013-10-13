@@ -43,7 +43,7 @@ UnlinkClips::~UnlinkClips()
 
 void UnlinkClips::initialize()
 {
-    BOOST_FOREACH( model::IClipPtr clip, mClips )
+    for ( model::IClipPtr clip : mClips )
     {
         // Replace clip with unlinked close.
         // The 'false' ensures that the link is not restored in 'AClipEdit::replaceLinks'

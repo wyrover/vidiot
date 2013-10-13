@@ -130,7 +130,7 @@ void TestFileTypes::executeTest(wxString filetypesDir)
     ASSERT(TestFilesPath.DirExists());
     model::IPaths InputFiles = getSupportedFiles(TestFilesPath);
 
-    BOOST_FOREACH( model::IPathPtr path, InputFiles )
+    for ( model::IPathPtr path : InputFiles )
     {
         StartTest(path->getPath().GetFullName());
         model::Files files1 = addFiles( boost::assign::list_of(path->getPath().GetFullPath()), folder1 );

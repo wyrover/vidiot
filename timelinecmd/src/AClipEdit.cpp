@@ -86,7 +86,7 @@ bool AClipEdit::Do()
     else
     {
         ASSERT_NONZERO(mParams.size());
-        BOOST_FOREACH( model::MoveParameterPtr move, mParams )
+        for ( model::MoveParameterPtr move : mParams )
         {
             doMove(move);
         }
@@ -123,7 +123,7 @@ bool AClipEdit::Undo()
 
     undoExtraBefore();
 
-    BOOST_FOREACH( model::MoveParameterPtr move, mParamsUndo )
+    for ( model::MoveParameterPtr move : mParamsUndo )
     {
         doMove(move);
     }
@@ -256,7 +256,7 @@ void AClipEdit::removeClips(model::IClips originals)
     ASSERT(track);
     model::IClipPtr position = originals.back()->getNext();
 
-    BOOST_FOREACH( model::IClipPtr original, originals )
+    for ( model::IClipPtr original : originals )
     {
         ASSERT_MAP_CONTAINS_NOT((mReplacements),original);
         mReplacements[ original ] = model::IClips();
@@ -302,7 +302,7 @@ void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
     if (amount == 0) return;
     model::Tracks videoTracks = getTimeline().getSequence()->getVideoTracks();
     model::Tracks audioTracks = getTimeline().getSequence()->getAudioTracks();
-    BOOST_FOREACH( model::TrackPtr track, exclude )
+    for ( model::TrackPtr track : exclude )
     {
         model::Tracks::iterator itVideo = find(videoTracks.begin(), videoTracks.end(), track);
         if (itVideo != videoTracks.end()) videoTracks.erase(itVideo);
@@ -316,7 +316,7 @@ void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
 void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
 {
     ASSERT_NONZERO(amount);
-    BOOST_FOREACH( model::TrackPtr track, tracks )
+    for ( model::TrackPtr track : tracks )
     {
         if (amount > 0)
         {
@@ -495,7 +495,7 @@ void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
 
     // Replace clips with empty area
     model::IClips emptyareas;
-    BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+    for ( model::IClipPtr clip : clipsToBeRemoved )
     {
         model::TrackPtr track = clip->getTrack();
         ASSERT(track);
@@ -516,7 +516,7 @@ void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
     static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
     for (int step = NumberOfSteps - 1; step >= 0; --step)
     {
-        BOOST_FOREACH( model::IClipPtr old, mEmpties )
+        for ( model::IClipPtr old : mEmpties )
         {
             model::TrackPtr track = old->getTrack();
             ASSERT(track);
@@ -540,12 +540,12 @@ void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
 
     getTimeline().beginTransaction();
     // Undo all the (temporary) changes for the animation
-    BOOST_FOREACH( model::MoveParameterPtr move, undo )
+    for ( model::MoveParameterPtr move : undo )
     {
         doMove(move);
     }
     // Do the actual change
-    BOOST_FOREACH( model::IClipPtr clip, clipsToBeRemoved )
+    for ( model::IClipPtr clip : clipsToBeRemoved )
     {
         removeClip(clip);
     }
@@ -554,17 +554,17 @@ void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
 model::IClips AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsIntervals removed)
 {
     model::IClips result;
-    BOOST_FOREACH( PtsInterval interval, removed )
+    for ( PtsInterval interval : removed )
     {
         pts first = interval.lower();
         pts last = interval.upper();// - 1;
         ASSERT_LESS_THAN(first,last);
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        for ( model::TrackPtr track : getSequence()->getTracks() )
         {
             split(track, first);
             split(track, last);
             model::IClips removedInTrack;
-            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+            for ( model::IClipPtr clip : track->getClips() )
             {
                 if (clip->getLeftPts() >= last)
                 {
@@ -623,7 +623,7 @@ void AClipEdit::doMove(model::MoveParameterPtr move)
 void AClipEdit::avoidDanglingLinks()
 {
     LOG_DEBUG;
-    BOOST_FOREACH( auto link, mReplacements )
+    for ( auto link : mReplacements )
     {
         model::IClipPtr original = link.first;
         model::IClipPtr originallink = original->getLink();
@@ -643,11 +643,11 @@ void AClipEdit::expandReplacements()
 {
     LOG_DEBUG;
     std::set<model::IClipPtr> allReplacements;
-    BOOST_FOREACH( auto entry, mReplacements )
+    for ( auto entry : mReplacements )
     {
         allReplacements.insert(entry.second.begin(),entry.second.end());
     }
-    BOOST_FOREACH( auto entry, mReplacements )
+    for ( auto entry : mReplacements )
     {
         if (allReplacements.find(entry.first) == allReplacements.end())
         {
@@ -662,7 +662,7 @@ void AClipEdit::expandReplacements()
 model::IClips AClipEdit::expandReplacements(model::IClips original)
 {
     model::IClips result;
-    BOOST_FOREACH( model::IClipPtr clip, original )
+    for ( model::IClipPtr clip : original )
     {
         if (mReplacements.find(clip) == mReplacements.end())
         {
@@ -682,7 +682,7 @@ model::IClips AClipEdit::expandReplacements(model::IClips original)
 void AClipEdit::replaceLinks()
 {
     LOG_DEBUG;
-    BOOST_FOREACH( ReplacementMap::value_type link, mExpandedReplacements )
+    for ( ReplacementMap::value_type link : mExpandedReplacements )
     {
         model::IClipPtr clip1 = link.first;
         model::IClips new1 = link.second;
@@ -741,9 +741,9 @@ void AClipEdit::replaceLinks()
     if (Config::ReadBool(Config::sPathTest))
     {
         // Only in test mode: verify all links.
-        BOOST_FOREACH( model::TrackPtr track, getSequence()->getTracks() )
+        for ( model::TrackPtr track : getSequence()->getTracks() )
         {
-            BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+            for ( model::IClipPtr clip : track->getClips() )
             {
                 if (clip->getLink())
                 {
@@ -786,13 +786,13 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
         newMove(track, position, replacement, track, position, clips);
     };
 
-    BOOST_FOREACH( model::TrackPtr track, tracks )
+    for ( model::TrackPtr track : tracks )
     {
         pts length = 0;
         bool inregion = false;
         model::IClips removed;
 
-        BOOST_FOREACH( model::IClipPtr clip, track->getClips() )
+        for ( model::IClipPtr clip : track->getClips() )
         {
             if (clip->isA<model::EmptyClip>())
             {

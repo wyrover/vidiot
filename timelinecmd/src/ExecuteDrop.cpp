@@ -74,7 +74,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
         // - all transitions that are selected, AND
         // - all transitions for which at least one of the adjacent (relevant) clips is selected.
         std::set<model::TransitionPtr> allTransitions;
-        BOOST_FOREACH( model::IClipPtr clip, drags )
+        for ( model::IClipPtr clip : drags )
         {
             model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
             if (transition)
@@ -102,7 +102,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
         // - immediate feedback
         // - no hassle later on with having to take into account that the timeline changes because of this
         std::set<model::TransitionPtr> unapplied;
-        BOOST_FOREACH( model::TransitionPtr transition, allTransitions )
+        for ( model::TransitionPtr transition : allTransitions )
         {
             if (transition->getLeft() > 0 && transition->getRight() > 0)
             {
@@ -113,7 +113,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
                 }
             }
         }
-        BOOST_FOREACH( model::TransitionPtr transition, unapplied )
+        for ( model::TransitionPtr transition : unapplied )
         {
             // Since no new clips are made for dropping the clips (they're simply removed, keeping the undo
             // history small, by avoiding cloning constantly), clips that are linked to the clips replaced by
@@ -132,7 +132,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
         // Since the sequence was (possibly) changed, the initial lists consists of all clips that are
         // selected after applying those changes.
         UtilSet<model::IClipPtr>(mDrags).addElements(getSequence()->getSelectedClips());
-        BOOST_FOREACH( model::TransitionPtr transition, allTransitions )
+        for ( model::TransitionPtr transition : allTransitions )
         {
             // The transition is known to be 'impacted'. Therefore, it is already selected, or one of it's
             // adjacent clips is selected.
@@ -146,7 +146,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
 
             UtilSet<model::IClipPtr>(mDrags).addElement(transition); // This insertion is not 'in order'. If the transition already was part, then the use of std::set ensures that it's only present once.
         }
-        BOOST_FOREACH( model::IClipPtr clip, getDrags() )
+        for ( model::IClipPtr clip : getDrags() )
         {
             clip->setDragged(true);
         }
@@ -160,7 +160,7 @@ void ExecuteDrop::onDrop(const Drops& drops, Shift shift)
     VAR_INFO(this)(drops)(shift);
     mDrops = drops;
     mShift = shift;
-    BOOST_FOREACH( model::IClipPtr clip, getDrags() )
+    for ( model::IClipPtr clip : getDrags() )
     {
         clip->setDragged(false);
     }
@@ -168,7 +168,7 @@ void ExecuteDrop::onDrop(const Drops& drops, Shift shift)
 
 void ExecuteDrop::onAbort()
 {
-    BOOST_FOREACH( model::IClipPtr clip, getDrags() )
+    for ( model::IClipPtr clip : getDrags() )
     {
         clip->setDragged(false);
     }
@@ -183,7 +183,7 @@ void ExecuteDrop::initialize()
     VAR_INFO(this);
 
     LOG_INFO << "STEP 1: Replace all drags with EmptyClips";
-    BOOST_FOREACH( model::IClipPtr clip, mDrags )
+    for ( model::IClipPtr clip : mDrags )
     {
         // If ever this mechanism (replace clip by clip) is replaced, take into account that the
         // clips in mDrags are not 'in timeline order' in the set.
@@ -199,7 +199,7 @@ void ExecuteDrop::initialize()
     if (mShift)
     {
         LOG_INFO << "STEP 2: Apply shift";
-        BOOST_FOREACH( model::TrackPtr track, getTimeline().getSequence()->getTracks() )
+        for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
         {
             model::IClipPtr clip = track->getClip(mShift->mPosition);
             addClip(boost::make_shared<model::EmptyClip>(mShift->mLength), track, clip );
@@ -211,7 +211,7 @@ void ExecuteDrop::initialize()
     }
 
     LOG_INFO << "STEP 3: Execute the drops";
-    BOOST_FOREACH( Drop drop, mDrops )
+    for ( Drop drop : mDrops )
     {
         ASSERT_MORE_THAN_EQUALS_ZERO(drop.position);
         ASSERT(drop.track);

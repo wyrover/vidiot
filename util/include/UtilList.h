@@ -98,7 +98,7 @@ public:
     /// \param set the set of elements to be added
     void addElements(std::set<ELEMENT> set)
     {
-        BOOST_FOREACH( ELEMENT element, set )
+        for ( ELEMENT element : set )
         {
             mList.push_back(element);
         }

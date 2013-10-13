@@ -86,7 +86,7 @@ OutputFormatList OutputFormats::getList()
 std::list<wxString> OutputFormats::getNames()
 {
     std::list<wxString> result;
-    BOOST_FOREACH( OutputFormatPtr format, sOutputFormats )
+    for ( OutputFormatPtr format : sOutputFormats )
     {
         result.push_back(format->getLongName());
     }
@@ -96,7 +96,7 @@ std::list<wxString> OutputFormats::getNames()
 // static
 OutputFormatPtr OutputFormats::getByName(wxString name)
 {
-    BOOST_FOREACH( OutputFormatPtr format, sOutputFormats )
+    for ( OutputFormatPtr format : sOutputFormats )
     {
         if (name.IsSameAs(format->getLongName()))
         {
@@ -109,9 +109,9 @@ OutputFormatPtr OutputFormats::getByName(wxString name)
 // static
 OutputFormatPtr OutputFormats::getByExtension(wxString extension)
 {
-    BOOST_FOREACH( OutputFormatPtr format, sOutputFormats )
+    for ( OutputFormatPtr format : sOutputFormats )
     {
-        BOOST_FOREACH( wxString formatextension, format->getExtensions() )
+        for ( wxString formatextension : format->getExtensions() )
         {
             if (extension.IsSameAs(formatextension))
             {

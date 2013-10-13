@@ -261,7 +261,7 @@ struct CodecParameterEnum
     CodecParameterEnum()
         :   CodecParameter(ID)
     {
-        BOOST_FOREACH( MappingType::left_reference item, NAMEMAPPING.left )
+        for ( MappingType::left_reference item : NAMEMAPPING.left )
         {
             if (item.first < getMinimum()) { setMinimum(item.first); }
             if (item.first > getMaximum()) { setMaximum(item.first); }

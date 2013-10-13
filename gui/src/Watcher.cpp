@@ -101,7 +101,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
             if (!nodes.empty())
             {
                 // Existing file: update
-                BOOST_FOREACH( model::NodePtr node, nodes )
+                for ( model::NodePtr node : nodes )
                 {
                     node->check();
                 }
@@ -110,7 +110,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
             {
                 changedPath.SetFullName(""); // Take the folder (this is probably a file that has just been created)
                 model::NodePtrs nodes = model::Project::get().getRoot()->findPath(changedPath.GetFullPath());
-                BOOST_FOREACH( model::NodePtr node, nodes )
+                for ( model::NodePtr node : nodes )
                 {
                     node->check();
                 }
@@ -159,7 +159,7 @@ void Watcher::onProjectAssetAdded( model::EventAddNode &event )
 
 void Watcher::onProjectAssetsAdded( model::EventAddNodes &event )
 {
-    BOOST_FOREACH( model::NodePtr node, event.getValue().getChildren() )
+    for ( model::NodePtr node : event.getValue().getChildren() )
     {
         watch( node );
     }
@@ -174,7 +174,7 @@ void Watcher::onProjectAssetRemoved( model::EventRemoveNode &event )
 
 void Watcher::onProjectAssetsRemoved( model::EventRemoveNodes &event )
 {
-    BOOST_FOREACH( model::NodePtr node, event.getValue().getChildren() )
+    for ( model::NodePtr node : event.getValue().getChildren() )
     {
         unwatch( node );
     }
@@ -216,7 +216,7 @@ void Watcher::watch( model::NodePtr node )
     {
         // The node itselves does not need watching, but maybe it's children do.
         // Can happen for a (non auto) folder containing AutoFolders/Files
-        BOOST_FOREACH( model::NodePtr child, node->getChildren() )
+        for ( model::NodePtr child : node->getChildren() )
         {
             watch(child);
         }
@@ -224,7 +224,7 @@ void Watcher::watch( model::NodePtr node )
     }
     wxString toBeWatched = *requiresWatch;
 
-    BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
+    for ( MapFolderToNodes::value_type kv : mWatches )
     {
         wxString alreadyWatchedPath = kv.first;
         bool isWatched = util::path::equals(alreadyWatchedPath, toBeWatched);
@@ -241,7 +241,7 @@ void Watcher::watch( model::NodePtr node )
     // Check if a child folder of the new folder was already watched. If so, that watch is replaced by the new parent dir watch.
     NodeSet nodesToBeTransferred;
     std::list<wxString> watchesToBeRemoved;
-    BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
+    for ( MapFolderToNodes::value_type kv : mWatches )
     {
         if (util::path::isParentOf(toBeWatched, kv.first ))
         {
@@ -252,7 +252,7 @@ void Watcher::watch( model::NodePtr node )
     }
     mWatches[toBeWatched] = boost::assign::list_of(node);
     mWatches[toBeWatched].insert(nodesToBeTransferred.begin(),nodesToBeTransferred.end());
-    BOOST_FOREACH( wxString obsoleteWatch, watchesToBeRemoved )
+    for ( wxString obsoleteWatch : watchesToBeRemoved )
     {
         mWatches.erase(obsoleteWatch);
         mWatcher->RemoveTree(wxFileName(obsoleteWatch,""));
@@ -282,7 +282,7 @@ void Watcher::unwatch( model::NodePtr node )
     {
         // The node itselves does not need watching, but maybe it's children do.
         // Can happen for a (non auto) folder containing AutoFolders/Files
-        BOOST_FOREACH( model::NodePtr child, node->getChildren() )
+        for ( model::NodePtr child : node->getChildren() )
         {
             unwatch(child);
         }
@@ -340,7 +340,7 @@ void Watcher::start()
     mWatcher = new wxFileSystemWatcher();
     mWatcher->Bind(wxEVT_FSWATCHER, &Watcher::onChange, this);
     VAR_DEBUG(*this);
-    BOOST_FOREACH( MapFolderToNodes::value_type kv, mWatches )
+    for ( MapFolderToNodes::value_type kv : mWatches )
     {
         mWatcher->AddTree(kv.first);
     }

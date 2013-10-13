@@ -76,7 +76,7 @@ std::list<wxString> Avcodec::getLogLevels()
 {
     std::list<wxString> result;
 
-    BOOST_FOREACH( auto value, mapAvcodecLevels.right )
+    for ( auto value : mapAvcodecLevels.right )
     {
         result.push_back(value.first);
     }
@@ -85,7 +85,7 @@ std::list<wxString> Avcodec::getLogLevels()
 
 void Avcodec::configureLog()
 {
-    BOOST_FOREACH( auto value, mapAvcodecLevels.right )
+    for ( auto value : mapAvcodecLevels.right )
     {
         if (value.first.IsSameAs(Config::ReadString(Config::sPathLogLevelAvcodec)))
         {

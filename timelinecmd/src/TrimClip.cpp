@@ -272,7 +272,7 @@ TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, m
         pts minShiftOtherTrackContent = (std::numeric_limits<pts>::min)();
         pts maxShiftOtherTrackContent = (std::numeric_limits<pts>::max)();
         pts shiftFrom = (isBeginTrim(position)) ? clip->getLeftPts() : clip->getRightPts();
-        BOOST_FOREACH( model::TrackPtr track, sequence->getTracks() )
+        for ( model::TrackPtr track : sequence->getTracks() )
         {
             if (clip->getTrack() == track) continue;
             if (link && link->getTrack() == track) continue;
