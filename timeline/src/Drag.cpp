@@ -417,7 +417,8 @@ wxBitmap Drag::getDragBitmap() //const
 
     // Draw video tracks
     wxPoint position(0,getSequenceView().getVideoPosition());
-    BOOST_REVERSE_FOREACH( model::TrackPtr track, getSequence()->getVideoTracks() )
+    model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
+    for ( model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
     {
         position.y += Layout::TrackDividerHeight;
         model::TrackPtr draggedTrack = trackOnTopOf(track);

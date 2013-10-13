@@ -88,7 +88,7 @@ void Cursor::prevCut()
 {
     std::set<pts> cuts = getSequence()->getCuts(); // std::set is stored in ordered fashion
     pts current = getLogicalPosition();
-    BOOST_REVERSE_FOREACH( pts position, getSequence()->getCuts() )
+    for ( pts position : boost::adaptors::reverse( cuts ) )
     {
         if (position < current)
         {
