@@ -716,8 +716,7 @@ bool findConflictingName(wxWindow* window, model::FolderPtr parent, wxString nam
             }
             if (isSameType)
             {
-                wxMessageDialog dialog(window, prefix + _(" '") + name + _("' already exists"), _("Duplicate exists"), wxCENTER | wxOK | wxICON_ERROR);
-                dialog.ShowModal();
+                gui::Dialog::get().getConfirmation(_("Duplicate exists"), prefix + _(" '") + name + _("' already exists"));
                 return true;
             }
         }

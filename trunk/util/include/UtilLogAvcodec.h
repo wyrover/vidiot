@@ -43,6 +43,6 @@ std::ostream& operator<< (std::ostream& os, const AVSampleFormat& obj);
 
 typedef std::pair<wxString, int> LevelString;
 
-std::string avcodecErrorString(int errorcode);
+wxString avcodecErrorString(int errorcode);
 
 #endif //UTIL_LOG_AVCODEC_H

@@ -275,7 +275,7 @@ void Render::scheduleAll()
     }
     if (anError)
     {
-        wxMessageBox(error, _("Not all sequences have been scheduled:"),wxOK);
+        gui::Dialog::get().getConfirmation(_("Not all sequences have been scheduled:"), error);
     }
 }
 

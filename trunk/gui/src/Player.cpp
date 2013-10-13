@@ -32,6 +32,7 @@
 #include "UtilLog.h"
 #include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
+#include <wx/minifram.h>
 
 namespace gui {
 

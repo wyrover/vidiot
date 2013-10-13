@@ -21,6 +21,12 @@
 // Required for ensuring that boost asserts are handled via UtilLog
 #define BOOST_ENABLE_ASSERT_HANDLER
 
+// Mechanism:
+// If more than one unity file depends on a ffmpeg/boost/wx header - place here
+// If all files depending on the header are part of the same 'unity' (thus, same folder)
+// then add to these (cpp) files themselves. Note: if it is a header file that includes
+// the ffmpeg/boost/wx header, be aware that the header file is also included elsewhere.
+
 extern "C" {
 #pragma warning(disable:4244)
 #include <libavcodec/avcodec.h>
@@ -43,7 +49,6 @@ extern "C" {
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/exception/all.hpp>
-#include <boost/format.hpp>
 #include <boost/function.hpp>
 #include <boost/icl/interval_set.hpp>
 #include <boost/limits.hpp>
@@ -90,7 +95,6 @@ extern "C" {
 #include <string>
 #include <utility>
 #include <wx/app.h>
-#include <wx/artprov.h>
 #include <wx/aui/aui.h>
 #include <wx/bookctrl.h>
 #include <wx/brush.h>
@@ -99,11 +103,9 @@ extern "C" {
 #include <wx/choice.h>
 #include <wx/clipbrd.h>
 #include <wx/cmdproc.h>
-#include <wx/collpane.h>
 #include <wx/colour.h>
 #include <wx/combobox.h>
 #include <wx/control.h>
-#include <wx/cursor.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
 #include <wx/datetime.h>
@@ -113,18 +115,14 @@ extern "C" {
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/debug.h>
-#include <wx/debugrpt.h>
 #include <wx/defs.h>
 #include <wx/dialog.h>
 #include <wx/dir.h>
-#include <wx/dirdlg.h>
-#include <wx/dnd.h>
 #include <wx/dnd.h>
 #include <wx/docview.h>
 #include <wx/event.h>
 #include <wx/evtloop.h>
 #include <wx/fileconf.h>
-#include <wx/filedlg.h>
 #include <wx/filename.h>
 #include <wx/font.h>
 #include <wx/frame.h>
@@ -138,16 +136,11 @@ extern "C" {
 #include <wx/headerctrl.h>
 #include <wx/iconbndl.h>
 #include <wx/intl.h>
-#include <wx/listbook.h>
 #include <wx/menu.h>
-#include <wx/minifram.h>
-#include <wx/msgdlg.h>
-#include <wx/msgout.h> // For NIY
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/pen.h>
 #include <wx/propdlg.h>
-#include <wx/propgrid/propgrid.h>
 #include <wx/radiobox.h>
 #include <wx/region.h>
 #include <wx/scrolwin.h>
@@ -160,7 +153,6 @@ extern "C" {
 #include <wx/stdpaths.h>
 #include <wx/string.h>
 #include <wx/textctrl.h>
-#include <wx/textdlg.h>
 #include <wx/tglbtn.h>
 #include <wx/thread.h>
 #include <wx/tokenzr.h>
