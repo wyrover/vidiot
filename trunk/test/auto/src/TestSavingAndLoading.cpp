@@ -137,6 +137,8 @@ void TestSavingAndLoading::testSaveAndLoad()
     //////////////////////////////////////////////////////////////////////////
 
     checkDocument(tempDir_fileName.second.GetFullPath());
+
+    mProjectFixture.destroy();
 }
 
 void TestSavingAndLoading::testLoadOldVersions()
@@ -156,6 +158,39 @@ void TestSavingAndLoading::testLoadOldVersions()
             checkDocument(vidFileName.GetFullPath());
         }
     }
+}
+
+void TestSavingAndLoading::testBackupBeforeSave()
+{
+    StartTestSuite();
+
+    FixtureProject mProjectFixture(true);
+    mProjectFixture.init();
+
+    StartTest("Create temp dir and existing file");
+    RandomTempDirPtr tempDirProject = RandomTempDir::generate();
+    wxFileName existingFile = generateSaveFileName(tempDirProject->getFileName());
+    DirAndFile tempDir_fileName = SaveProject(tempDirProject);
+    wxString ExpectedContents = getFileContents (existingFile);
+
+    auto ASSERT_FILE_CREATED = [ExpectedContents](wxFileName prefix, int count)
+    {
+        wxFileName filename = model::Project::createBackupFileName(prefix,count);
+        ASSERT(wxFile::Exists(filename.GetFullPath()));
+        ASSERT(getFileContents(filename).IsSameAs(ExpectedContents));
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+
+    StartTest("Save again multiple times and check that backup files are generated");
+    for (int count = 1; count < 20; ++count)
+    {
+        tempDir_fileName = SaveProject(tempDirProject);
+        ASSERT_FILE_CREATED(existingFile,count);
+    }
+    triggerMenu(wxID_CLOSE);
+    waitForIdle();
+    mProjectFixture.destroy();
 }
 
 //////////////////////////////////////////////////////////////////////////

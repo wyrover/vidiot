@@ -10,8 +10,8 @@
 					<denominator>1</denominator>
 				</rational>
 			</mFrameRate>
-			<mVideoWidth>720</mVideoWidth>
-			<mVideoHeight>576</mVideoHeight>
+			<mVideoWidth>1280</mVideoWidth>
+			<mVideoHeight>720</mVideoHeight>
 			<mAudioChannels>2</mAudioChannels>
 			<mAudioFrameRate>44100</mAudioFrameRate>
 			<mDefaultRender class_id="5" tracking_level="0" version="1">
@@ -795,13 +795,13 @@
 																																																																																																																																																																																																																																					<mOpacity>255</mOpacity>
 																																																																																																																																																																																																																																					<mScaling>1</mScaling>
 																																																																																																																																																																																																																																					<mScalingFactor>
-																																																																																																																																																																																																																																						<numerator>360</numerator>
+																																																																																																																																																																																																																																						<numerator>640</numerator>
 																																																																																																																																																																																																																																						<denominator>307</denominator>
 																																																																																																																																																																																																																																					</mScalingFactor>
 																																																																																																																																																																																																																																					<mAlignment>0</mAlignment>
 																																																																																																																																																																																																																																					<mPosition class_id="53" tracking_level="0" version="0">
 																																																																																																																																																																																																																																						<x>0</x>
-																																																																																																																																																																																																																																						<y>-124</y>
+																																																																																																																																																																																																																																						<y>-372</y>
 																																																																																																																																																																																																																																					</mPosition>
 																																																																																																																																																																																																																																				</VideoClip>
 																																																																																																																																																																																																																																			</px>
@@ -846,12 +846,12 @@
 																																																																																																																																																																																																																															<mOpacity>255</mOpacity>
 																																																																																																																																																																																																																															<mScaling>1</mScaling>
 																																																																																																																																																																																																																															<mScalingFactor>
-																																																																																																																																																																																																																																<numerator>4</numerator>
-																																																																																																																																																																																																																																<denominator>5</denominator>
+																																																																																																																																																																																																																																<numerator>1</numerator>
+																																																																																																																																																																																																																																<denominator>1</denominator>
 																																																																																																																																																																																																																															</mScalingFactor>
 																																																																																																																																																																																																																															<mAlignment>0</mAlignment>
 																																																																																																																																																																																																																															<mPosition>
-																																																																																																																																																																																																																																<x>-152</x>
+																																																																																																																																																																																																																																<x>0</x>
 																																																																																																																																																																																																																																<y>0</y>
 																																																																																																																																																																																																																															</mPosition>
 																																																																																																																																																																																																																														</px>
@@ -1022,12 +1022,12 @@
 																																																																																																																																																																																																																<mOpacity>255</mOpacity>
 																																																																																																																																																																																																																<mScaling>1</mScaling>
 																																																																																																																																																																																																																<mScalingFactor>
-																																																																																																																																																																																																																	<numerator>4</numerator>
-																																																																																																																																																																																																																	<denominator>5</denominator>
+																																																																																																																																																																																																																	<numerator>1</numerator>
+																																																																																																																																																																																																																	<denominator>1</denominator>
 																																																																																																																																																																																																																</mScalingFactor>
 																																																																																																																																																																																																																<mAlignment>0</mAlignment>
 																																																																																																																																																																																																																<mPosition>
-																																																																																																																																																																																																																	<x>-152</x>
+																																																																																																																																																																																																																	<x>0</x>
 																																																																																																																																																																																																																	<y>0</y>
 																																																																																																																																																																																																																</mPosition>
 																																																																																																																																																																																																															</px>
@@ -1072,12 +1072,12 @@
 																																																																																																																																																																																																											<mOpacity>255</mOpacity>
 																																																																																																																																																																																																											<mScaling>1</mScaling>
 																																																																																																																																																																																																											<mScalingFactor>
-																																																																																																																																																																																																												<numerator>4</numerator>
-																																																																																																																																																																																																												<denominator>5</denominator>
+																																																																																																																																																																																																												<numerator>1</numerator>
+																																																																																																																																																																																																												<denominator>1</denominator>
 																																																																																																																																																																																																											</mScalingFactor>
 																																																																																																																																																																																																											<mAlignment>0</mAlignment>
 																																																																																																																																																																																																											<mPosition>
-																																																																																																																																																																																																												<x>-152</x>
+																																																																																																																																																																																																												<x>0</x>
 																																																																																																																																																																																																												<y>0</y>
 																																																																																																																																																																																																											</mPosition>
 																																																																																																																																																																																																										</px>
@@ -1220,12 +1220,12 @@
 																																																																																																																																																																																												<mOpacity>255</mOpacity>
 																																																																																																																																																																																												<mScaling>1</mScaling>
 																																																																																																																																																																																												<mScalingFactor>
-																																																																																																																																																																																													<numerator>4</numerator>
-																																																																																																																																																																																													<denominator>5</denominator>
+																																																																																																																																																																																													<numerator>1</numerator>
+																																																																																																																																																																																													<denominator>1</denominator>
 																																																																																																																																																																																												</mScalingFactor>
 																																																																																																																																																																																												<mAlignment>0</mAlignment>
 																																																																																																																																																																																												<mPosition>
-																																																																																																																																																																																													<x>-152</x>
+																																																																																																																																																																																													<x>0</x>
 																																																																																																																																																																																													<y>0</y>
 																																																																																																																																																																																												</mPosition>
 																																																																																																																																																																																											</px>
@@ -1270,12 +1270,12 @@
 																																																																																																																																																																																							<mOpacity>255</mOpacity>
 																																																																																																																																																																																							<mScaling>1</mScaling>
 																																																																																																																																																																																							<mScalingFactor>
-																																																																																																																																																																																								<numerator>4</numerator>
-																																																																																																																																																																																								<denominator>5</denominator>
+																																																																																																																																																																																								<numerator>1</numerator>
+																																																																																																																																																																																								<denominator>1</denominator>
 																																																																																																																																																																																							</mScalingFactor>
 																																																																																																																																																																																							<mAlignment>0</mAlignment>
 																																																																																																																																																																																							<mPosition>
-																																																																																																																																																																																								<x>-152</x>
+																																																																																																																																																																																								<x>0</x>
 																																																																																																																																																																																								<y>0</y>
 																																																																																																																																																																																							</mPosition>
 																																																																																																																																																																																						</px>
@@ -1418,12 +1418,12 @@
 																																																																																																																																																																								<mOpacity>255</mOpacity>
 																																																																																																																																																																								<mScaling>1</mScaling>
 																																																																																																																																																																								<mScalingFactor>
-																																																																																																																																																																									<numerator>4</numerator>
-																																																																																																																																																																									<denominator>5</denominator>
+																																																																																																																																																																									<numerator>1</numerator>
+																																																																																																																																																																									<denominator>1</denominator>
 																																																																																																																																																																								</mScalingFactor>
 																																																																																																																																																																								<mAlignment>0</mAlignment>
 																																																																																																																																																																								<mPosition>
-																																																																																																																																																																									<x>-152</x>
+																																																																																																																																																																									<x>0</x>
 																																																																																																																																																																									<y>0</y>
 																																																																																																																																																																								</mPosition>
 																																																																																																																																																																							</px>
@@ -1468,12 +1468,12 @@
 																																																																																																																																																																			<mOpacity>255</mOpacity>
 																																																																																																																																																																			<mScaling>1</mScaling>
 																																																																																																																																																																			<mScalingFactor>
-																																																																																																																																																																				<numerator>4</numerator>
-																																																																																																																																																																				<denominator>5</denominator>
+																																																																																																																																																																				<numerator>1</numerator>
+																																																																																																																																																																				<denominator>1</denominator>
 																																																																																																																																																																			</mScalingFactor>
 																																																																																																																																																																			<mAlignment>0</mAlignment>
 																																																																																																																																																																			<mPosition>
-																																																																																																																																																																				<x>-152</x>
+																																																																																																																																																																				<x>0</x>
 																																																																																																																																																																				<y>0</y>
 																																																																																																																																																																			</mPosition>
 																																																																																																																																																																		</px>
@@ -1616,12 +1616,12 @@
 																																																																																																																																																				<mOpacity>255</mOpacity>
 																																																																																																																																																				<mScaling>1</mScaling>
 																																																																																																																																																				<mScalingFactor>
-																																																																																																																																																					<numerator>4</numerator>
-																																																																																																																																																					<denominator>5</denominator>
+																																																																																																																																																					<numerator>1</numerator>
+																																																																																																																																																					<denominator>1</denominator>
 																																																																																																																																																				</mScalingFactor>
 																																																																																																																																																				<mAlignment>0</mAlignment>
 																																																																																																																																																				<mPosition>
-																																																																																																																																																					<x>-152</x>
+																																																																																																																																																					<x>0</x>
 																																																																																																																																																					<y>0</y>
 																																																																																																																																																				</mPosition>
 																																																																																																																																																			</px>
@@ -1666,12 +1666,12 @@
 																																																																																																																																															<mOpacity>255</mOpacity>
 																																																																																																																																															<mScaling>1</mScaling>
 																																																																																																																																															<mScalingFactor>
-																																																																																																																																																<numerator>4</numerator>
-																																																																																																																																																<denominator>5</denominator>
+																																																																																																																																																<numerator>1</numerator>
+																																																																																																																																																<denominator>1</denominator>
 																																																																																																																																															</mScalingFactor>
 																																																																																																																																															<mAlignment>0</mAlignment>
 																																																																																																																																															<mPosition>
-																																																																																																																																																<x>-152</x>
+																																																																																																																																																<x>0</x>
 																																																																																																																																																<y>0</y>
 																																																																																																																																															</mPosition>
 																																																																																																																																														</px>
@@ -1814,12 +1814,12 @@
 																																																																																																																																<mOpacity>255</mOpacity>
 																																																																																																																																<mScaling>1</mScaling>
 																																																																																																																																<mScalingFactor>
-																																																																																																																																	<numerator>4</numerator>
-																																																																																																																																	<denominator>5</denominator>
+																																																																																																																																	<numerator>1</numerator>
+																																																																																																																																	<denominator>1</denominator>
 																																																																																																																																</mScalingFactor>
 																																																																																																																																<mAlignment>0</mAlignment>
 																																																																																																																																<mPosition>
-																																																																																																																																	<x>-152</x>
+																																																																																																																																	<x>0</x>
 																																																																																																																																	<y>0</y>
 																																																																																																																																</mPosition>
 																																																																																																																															</px>
@@ -1864,12 +1864,12 @@
 																																																																																																																											<mOpacity>255</mOpacity>
 																																																																																																																											<mScaling>1</mScaling>
 																																																																																																																											<mScalingFactor>
-																																																																																																																												<numerator>4</numerator>
-																																																																																																																												<denominator>5</denominator>
+																																																																																																																												<numerator>1</numerator>
+																																																																																																																												<denominator>1</denominator>
 																																																																																																																											</mScalingFactor>
 																																																																																																																											<mAlignment>0</mAlignment>
 																																																																																																																											<mPosition>
-																																																																																																																												<x>-152</x>
+																																																																																																																												<x>0</x>
 																																																																																																																												<y>0</y>
 																																																																																																																											</mPosition>
 																																																																																																																										</px>
@@ -2012,12 +2012,12 @@
 																																																																																																												<mOpacity>255</mOpacity>
 																																																																																																												<mScaling>1</mScaling>
 																																																																																																												<mScalingFactor>
-																																																																																																													<numerator>4</numerator>
-																																																																																																													<denominator>5</denominator>
+																																																																																																													<numerator>1</numerator>
+																																																																																																													<denominator>1</denominator>
 																																																																																																												</mScalingFactor>
 																																																																																																												<mAlignment>0</mAlignment>
 																																																																																																												<mPosition>
-																																																																																																													<x>-152</x>
+																																																																																																													<x>0</x>
 																																																																																																													<y>0</y>
 																																																																																																												</mPosition>
 																																																																																																											</px>
@@ -2062,12 +2062,12 @@
 																																																																																																							<mOpacity>255</mOpacity>
 																																																																																																							<mScaling>1</mScaling>
 																																																																																																							<mScalingFactor>
-																																																																																																								<numerator>4</numerator>
-																																																																																																								<denominator>5</denominator>
+																																																																																																								<numerator>1</numerator>
+																																																																																																								<denominator>1</denominator>
 																																																																																																							</mScalingFactor>
 																																																																																																							<mAlignment>0</mAlignment>
 																																																																																																							<mPosition>
-																																																																																																								<x>-152</x>
+																																																																																																								<x>0</x>
 																																																																																																								<y>0</y>
 																																																																																																							</mPosition>
 																																																																																																						</px>
@@ -2210,12 +2210,12 @@
 																																																																																								<mOpacity>255</mOpacity>
 																																																																																								<mScaling>1</mScaling>
 																																																																																								<mScalingFactor>
-																																																																																									<numerator>4</numerator>
-																																																																																									<denominator>5</denominator>
+																																																																																									<numerator>1</numerator>
+																																																																																									<denominator>1</denominator>
 																																																																																								</mScalingFactor>
 																																																																																								<mAlignment>0</mAlignment>
 																																																																																								<mPosition>
-																																																																																									<x>-152</x>
+																																																																																									<x>0</x>
 																																																																																									<y>0</y>
 																																																																																								</mPosition>
 																																																																																							</px>
@@ -2260,12 +2260,12 @@
 																																																																																			<mOpacity>255</mOpacity>
 																																																																																			<mScaling>1</mScaling>
 																																																																																			<mScalingFactor>
-																																																																																				<numerator>4</numerator>
-																																																																																				<denominator>5</denominator>
+																																																																																				<numerator>1</numerator>
+																																																																																				<denominator>1</denominator>
 																																																																																			</mScalingFactor>
 																																																																																			<mAlignment>0</mAlignment>
 																																																																																			<mPosition>
-																																																																																				<x>-152</x>
+																																																																																				<x>0</x>
 																																																																																				<y>0</y>
 																																																																																			</mPosition>
 																																																																																		</px>
@@ -2408,12 +2408,12 @@
 																																																																				<mOpacity>255</mOpacity>
 																																																																				<mScaling>1</mScaling>
 																																																																				<mScalingFactor>
-																																																																					<numerator>4</numerator>
-																																																																					<denominator>5</denominator>
+																																																																					<numerator>1</numerator>
+																																																																					<denominator>1</denominator>
 																																																																				</mScalingFactor>
 																																																																				<mAlignment>0</mAlignment>
 																																																																				<mPosition>
-																																																																					<x>-152</x>
+																																																																					<x>0</x>
 																																																																					<y>0</y>
 																																																																				</mPosition>
 																																																																			</px>
@@ -2490,12 +2490,12 @@
 																																																															<mOpacity>255</mOpacity>
 																																																															<mScaling>1</mScaling>
 																																																															<mScalingFactor>
-																																																																<numerator>4</numerator>
-																																																																<denominator>5</denominator>
+																																																																<numerator>1</numerator>
+																																																																<denominator>1</denominator>
 																																																															</mScalingFactor>
 																																																															<mAlignment>0</mAlignment>
 																																																															<mPosition>
-																																																																<x>-152</x>
+																																																																<x>0</x>
 																																																																<y>0</y>
 																																																															</mPosition>
 																																																														</px>
@@ -2638,12 +2638,12 @@
 																																																<mOpacity>255</mOpacity>
 																																																<mScaling>1</mScaling>
 																																																<mScalingFactor>
-																																																	<numerator>4</numerator>
-																																																	<denominator>5</denominator>
+																																																	<numerator>1</numerator>
+																																																	<denominator>1</denominator>
 																																																</mScalingFactor>
 																																																<mAlignment>0</mAlignment>
 																																																<mPosition>
-																																																	<x>-152</x>
+																																																	<x>0</x>
 																																																	<y>0</y>
 																																																</mPosition>
 																																															</px>
@@ -2732,12 +2732,12 @@
 																																					<mOpacity>255</mOpacity>
 																																					<mScaling>1</mScaling>
 																																					<mScalingFactor>
-																																						<numerator>4</numerator>
-																																						<denominator>5</denominator>
+																																						<numerator>1</numerator>
+																																						<denominator>1</denominator>
 																																					</mScalingFactor>
 																																					<mAlignment>0</mAlignment>
 																																					<mPosition>
-																																						<x>-152</x>
+																																						<x>0</x>
 																																						<y>0</y>
 																																					</mPosition>
 																																				</px>
@@ -2965,12 +2965,12 @@
 														<mOpacity>255</mOpacity>
 														<mScaling>1</mScaling>
 														<mScalingFactor>
-															<numerator>4</numerator>
-															<denominator>5</denominator>
+															<numerator>1</numerator>
+															<denominator>1</denominator>
 														</mScalingFactor>
 														<mAlignment>0</mAlignment>
 														<mPosition>
-															<x>-152</x>
+															<x>0</x>
 															<y>0</y>
 														</mPosition>
 													</px>
