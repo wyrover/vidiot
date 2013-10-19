@@ -18,6 +18,7 @@
 #include "Project.h"
 
 #include "CommandProcessor.h"
+#include "Config.h"
 #include "Dialog.h"
 #include "File.h"
 #include "Folder.h"
@@ -114,30 +115,40 @@ const std::string sView("view");
 std::ostream& Project::SaveObject(std::ostream& ostream)
 {
     gui::StatusBar::get().pushInfoText(_("Saving ") + mRoot->getName() + _(" ..."));
+    bool ok = false;
     try
     {
         boost::archive::xml_oarchive ar(ostream);
         ar & boost::serialization::make_nvp(sProject.c_str(),*this);
         ar & boost::serialization::make_nvp(sView.c_str(),IView::getView());
+        ok = true;
     }
     catch (boost::archive::archive_exception& e)
     {
-        FATAL(e.what());
+        VAR_ERROR(e.what());
     }
     catch (boost::exception &e)
     {
-        FATAL(boost::diagnostic_information(e));
+        VAR_ERROR(boost::diagnostic_information(e));
     }
     catch (std::exception& e)
     {
-        FATAL(e.what());
+        VAR_ERROR(e.what());
     }
     catch (...)
     {
-        FATAL;
+        LOG_ERROR;
     }
     gui::StatusBar::get().popInfoText();
-    gui::StatusBar::get().timedInfoText(mRoot->getName() + _(" saved successfully."));
+    if (ok)
+    {
+        gui::StatusBar::get().timedInfoText(mRoot->getName() + _(" saved successfully."));
+    }
+    else
+    {
+        ostream.setstate(std::ios_base::failbit);
+        gui::Dialog::get().getConfirmation(_("Save failed"), _("Vidiot was unable to save ") + mRoot->getName());
+    }
     return ostream;
 }
 
@@ -175,6 +186,53 @@ std::istream& Project::LoadObject(std::istream& istream)
     return istream;
 }
 
+// static
+wxFileName Project::createBackupFileName(wxFileName input, int count)
+{
+    wxString name = input.GetName();
+    name.Append(wxString::Format("_%d", count));
+    input.SetName(name);
+    return input;
+}
+
+bool Project::DoSaveDocument(const wxString& file)
+{
+    wxFileName saveFileName(file);
+    if (saveFileName.Exists() &&
+        Config::ReadBool(Config::sPathBackupBeforeSaveEnabled))
+    {
+        bool backupCreated = false;
+        for (int counter = 1; counter < std::numeric_limits<int>::max(); counter++)
+        {
+            wxFileName backup = createBackupFileName(saveFileName, counter);
+            if (!backup.Exists())
+            {
+                backupCreated = wxCopyFile(saveFileName.GetFullPath(), backup.GetFullPath(),false);
+                break;
+            }
+        }
+        if (!backupCreated &&
+            wxNO == gui::Dialog::get().getConfirmation(_("Backup failed"),_("Could not create a backup file of the existing save.\n Do you still want to overwrite " + file + "?"), wxYES | wxNO ))
+        {
+            return true;
+        }
+    }
+
+    std::ofstream store(file.mb_str(), wxSTD ios::binary);
+    if ( !store )
+    {
+        gui::Dialog::get().getConfirmation(_("Save Failed"),_("Could not open save file: " + file));
+    }
+    else
+    {
+        if (!SaveObject(store))
+        {
+            gui::Dialog::get().getConfirmation(_("Save Failed"),_("Could not save: " + file));
+        }
+    }
+    return true;
+}
+
 bool Project::DoOpenDocument(const wxString& file)
 {
     std::ifstream store(file.mb_str(), wxSTD ios::binary);
@@ -184,15 +242,14 @@ bool Project::DoOpenDocument(const wxString& file)
     }
     else
     {
-        LoadObject(store);
-        if ( !store )
+        if ( !LoadObject(store) )
         {
             // The bug is in 'mProperties' having a use count of '2' at this point:
             // Memory leak of Properties. Causes crash when opening a new project.
             // ASSERT(mProperties.unique());
             LOG_ERROR;
             gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file + ". \nVidiot must be restarted ((known bug that opening a project after this will fail)"));
-            gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
+            //gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
         }
         else
         {

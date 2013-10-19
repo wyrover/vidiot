@@ -97,6 +97,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     static const wxString sPathAutoLoadEnabled;
+    static const wxString sPathBackupBeforeSaveEnabled;
     static const wxString sPathDebugMaxRenderLength;
     static const wxString sPathDebugShowCrashMenu;
     static const wxString sPathDefaultAudioChannels;

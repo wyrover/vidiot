@@ -22,7 +22,13 @@
 
 namespace test {
 
-std::pair<RandomTempDirPtr, wxFileName> SaveProjectAndClose();
+typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
+
+DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir = boost::none);
+
+DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir = boost::none);
+
+wxFileName generateSaveFileName(wxFileName dir);
 
 void CloseDocumentAndAvoidSaveDialog();
 

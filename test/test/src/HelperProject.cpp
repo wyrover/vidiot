@@ -15,28 +15,41 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperProjectView.h"
+#include "HelperProject.h"
 
 #include "Application.h"
 #include "UtilThread.h"
 
 namespace test {
 
-std::pair<RandomTempDirPtr, wxFileName> SaveProjectAndClose()
+DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir)
 {
-    RandomTempDirPtr tempDirProject = RandomTempDir::generate();
-    wxFileName filename = tempDirProject->getFileName();
-    filename.SetName(wxString::Format(wxT("%s_%d"), gui::Application::getVersion(), gui::Application::getRevision()));
-    filename.SetExt("vid");
+    DirAndFile tempDir_fileName = SaveProject(tempDir);
+    triggerMenu(wxID_CLOSE);
+    waitForIdle();
+    return tempDir_fileName;
+}
+
+DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir)
+{
+    RandomTempDirPtr tempDirProject = tempDir ? *tempDir : RandomTempDir::generate();
+    wxFileName filename = generateSaveFileName(tempDirProject->getFileName());
     util::thread::RunInMainAndWait([filename]()
     {
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetFullPath());
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(filename.GetFullPath());
     });
     waitForIdle();
-    triggerMenu(wxID_CLOSE);
-    waitForIdle();
     return std::make_pair(tempDirProject, filename);
+}
+
+wxFileName generateSaveFileName(wxFileName dir)
+{
+    ASSERT(dir.IsDir());
+    wxFileName result(dir);
+    result.SetName(wxString::Format(wxT("%s_%d"), gui::Application::getVersion(), gui::Application::getRevision()));
+    result.SetExt("vid");
+    return result;
 }
 
 void CloseDocumentAndAvoidSaveDialog()

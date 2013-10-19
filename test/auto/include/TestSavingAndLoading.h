@@ -39,6 +39,8 @@ public:
 
     void testLoadOldVersions();
 
+    void testBackupBeforeSave();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

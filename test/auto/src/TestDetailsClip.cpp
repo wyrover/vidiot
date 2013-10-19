@@ -50,6 +50,7 @@ namespace test {
 
 void TestDetailsClip::setUp()
 {
+    if (!HelperTestSuite::get().currentTestIsEnabled()) { return; } // todo more general solution for not executing setup/teardown
     ConfigOverruleLong overruleDefaultVideoWidth(Config::sPathDefaultVideoWidth, 720);
     ConfigOverruleLong overruleDefaultVideoHeight(Config::sPathDefaultVideoHeight, 576);
     mProjectFixture.init();

@@ -94,6 +94,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
 
     // Check values, delete from config if incorrect
     checkBool(Config::sPathAutoLoadEnabled);
+    checkBool(Config::sPathBackupBeforeSaveEnabled);
     checkLong(Config::sPathDefaultStillImageLength, 1, 10000);
     checkLong(Config::sPathDefaultTransitionLength, 4, 10000);
     checkLong(Config::sPathDefaultVideoWidth, 10, 10000);
@@ -114,6 +115,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
 
     // Set all defaults here
     setDefault(Config::sPathAutoLoadEnabled, false);
+    setDefault(Config::sPathBackupBeforeSaveEnabled, true);
     setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
     setDefault(Config::sPathDebugShowCrashMenu, false);
     setDefault(Config::sPathDefaultAudioChannels, 2);
@@ -386,7 +388,8 @@ void Config::releaseWriteToDisk()
 // CONFIG PATHS
 //////////////////////////////////////////////////////////////////////////
 
-const wxString Config::sPathAutoLoadEnabled             ("/Project/AutoLoad/Enabled");
+const wxString Config::sPathAutoLoadEnabled             ("/Project/AutoLoadEnabled");
+const wxString Config::sPathBackupBeforeSaveEnabled     ("/Project/BackupBeforeSaveEnabled");
 const wxString Config::sPathDebugMaxRenderLength        ("/Debug/MaxRenderLength");
 const wxString Config::sPathDebugShowCrashMenu          ("/Debug/ShowCrashMenu");
 const wxString Config::sPathDefaultAudioChannels        ("/Audio/DefaultNumberOfChannels");

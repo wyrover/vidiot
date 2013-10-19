@@ -50,6 +50,12 @@ DialogOptions::DialogOptions(wxWindow* win)
         mLoadLast = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
         mLoadLast->SetValue(Config::ReadBool(Config::sPathAutoLoadEnabled));
         addoption(_("Load last project on startup"), mLoadLast);
+
+        addbox(_("Save"));
+
+        mBackupBeforeSave = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
+        mBackupBeforeSave->SetValue(Config::ReadBool(Config::sPathBackupBeforeSaveEnabled));
+        addoption(_("Make backup of existing save file when overwriting"), mBackupBeforeSave);
     }
     {
         addtab(_("Video"));
@@ -206,6 +212,7 @@ DialogOptions::~DialogOptions()
     {
         Config::holdWriteToDisk();
         Config::WriteBool(      Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
+        Config::WriteBool(      Config::sPathBackupBeforeSaveEnabled,   mBackupBeforeSave->IsChecked());
         Config::WriteString(    Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
         Config::WriteString(    Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
         Config::WriteBool(      Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
