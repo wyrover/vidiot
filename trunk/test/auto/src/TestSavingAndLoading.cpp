@@ -183,10 +183,18 @@ void TestSavingAndLoading::testBackupBeforeSave()
     //////////////////////////////////////////////////////////////////////////
 
     StartTest("Save again multiple times and check that backup files are generated");
-    for (int count = 1; count < 20; ++count)
+    std::vector<bool> isPresent = std::vector<bool>(false,20); // Indicates which files should be present/not
+    for (int count = 0; count < 60; ++count)
     {
+        ASSERT(!model::Project::createBackupFileName(existingFile,count).Exists());
         tempDir_fileName = SaveProject(tempDirProject);
+        ASSERT(model::Project::createBackupFileName(existingFile,count).Exists());
         ASSERT_FILE_CREATED(existingFile,count);
+
+        for (int j = 0; j < count - Config::ReadLong(Config::sPathBackupBeforeSaveMaximum); ++j)
+        {
+            ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists());
+        }
     }
     triggerMenu(wxID_CLOSE);
     waitForIdle();

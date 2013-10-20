@@ -27,6 +27,7 @@
 #include "Properties.h"
 #include "StatusBar.h"
 #include "UtilLog.h"
+#include "UtilRecycle.h"
 
 namespace model {
 
@@ -201,23 +202,52 @@ bool Project::DoSaveDocument(const wxString& file)
     if (saveFileName.Exists() &&
         Config::ReadBool(Config::sPathBackupBeforeSaveEnabled))
     {
-        bool backupCreated = false;
-        for (int counter = 1; counter < std::numeric_limits<int>::max(); counter++)
+        // Find all existing backup files
+        wxArrayString existingBackupFiles;
+        wxString pattern; pattern << saveFileName.GetName() << "_*" << saveFileName.GetExt();
+        size_t nExistingBackupFiles = wxDir::GetAllFiles(saveFileName.GetPath(), &existingBackupFiles, pattern, wxDIR_FILES | wxDIR_NO_FOLLOW);
+
+        // Find the one with the highest and the one with the lowest number
+        long nextFreeNumber = 0;
+        long lowestNumber = std::numeric_limits<long>::max();
+        for (wxString file : existingBackupFiles)
         {
-            wxFileName backup = createBackupFileName(saveFileName, counter);
-            if (!backup.Exists())
+            wxFileName fileName(file);
+            wxString stripped = fileName.GetName();
+            if (stripped.Replace(saveFileName.GetName() + "_","") == 1) // else: no vidiot generated save file
             {
-                backupCreated = wxCopyFile(saveFileName.GetFullPath(), backup.GetFullPath(),false);
-                break;
+                long number = 0;
+                if (stripped.ToLong(&number)) // else: no vidiot generated save file
+                {
+                    nextFreeNumber = std::max(nextFreeNumber,number + 1);
+                    lowestNumber = std::min(lowestNumber,number);
+                }
             }
         }
-        if (!backupCreated &&
-            wxNO == gui::Dialog::get().getConfirmation(_("Backup failed"),_("Could not create a backup file of the existing save.\n Do you still want to overwrite " + file + "?"), wxYES | wxNO ))
+
+        // Create the new backup file
+        wxFileName backup = createBackupFileName(saveFileName, nextFreeNumber);
+        ASSERT(!backup.Exists());
+        if (!wxCopyFile(saveFileName.GetFullPath(), backup.GetFullPath(),false) &&
+            wxNO == gui::Dialog::get().getConfirmation(_("Backup failed"),_("Could not create backup file " + backup.GetFullName() + " of the existing save.\n Do you still want to overwrite " + file + "?"), wxYES | wxNO ))
         {
             return true;
         }
+
+        // If configured, remove a backup file to ensure that the number of backups will not exceed the maximum
+        // Note: if for some reason the number of backups exceeds the maximum then still only one is deleted (no goldplating...).
+        int maximumNumberOfFiles = Config::ReadLong(Config::sPathBackupBeforeSaveMaximum);
+        if (maximumNumberOfFiles > 0 && nExistingBackupFiles >= maximumNumberOfFiles)
+        {
+            wxFileName backup = createBackupFileName(saveFileName, lowestNumber);
+            if (!backup.Exists() || !util::path::recycle(backup.GetFullPath()))
+            {
+                VAR_ERROR(backup.Exists())(backup.GetFullPath());
+            }
+        }
     }
 
+    // Do the actual save
     std::ofstream store(file.mb_str(), wxSTD ios::binary);
     if ( !store )
     {

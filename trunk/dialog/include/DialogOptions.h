@@ -43,6 +43,7 @@ private:
 
     wxCheckBox*             mLoadLast;
     wxCheckBox*             mBackupBeforeSave;
+    wxSpinCtrl*             mBackupBeforeSaveMaximum;
 
     wxRadioBox*             mFrameRate;
     wxSpinCtrl*             mDefaultVideoWidth;

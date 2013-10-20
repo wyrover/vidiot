@@ -56,6 +56,10 @@ DialogOptions::DialogOptions(wxWindow* win)
         mBackupBeforeSave = new wxCheckBox(mPanel, wxID_ANY, _T(""), wxDefaultPosition, wxDefaultSize);
         mBackupBeforeSave->SetValue(Config::ReadBool(Config::sPathBackupBeforeSaveEnabled));
         addoption(_("Make backup of existing save file when overwriting"), mBackupBeforeSave);
+
+        long maximum = Config::ReadLong(Config::sPathBackupBeforeSaveMaximum);
+        mBackupBeforeSaveMaximum = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", maximum), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 0, 10000, maximum);
+        addoption(_("Maximum number of generated save files (0 - infinite)"), mBackupBeforeSaveMaximum);
     }
     {
         addtab(_("Video"));
@@ -213,6 +217,7 @@ DialogOptions::~DialogOptions()
         Config::holdWriteToDisk();
         Config::WriteBool(      Config::sPathAutoLoadEnabled,           mLoadLast->IsChecked());
         Config::WriteBool(      Config::sPathBackupBeforeSaveEnabled,   mBackupBeforeSave->IsChecked());
+        Config::WriteLong(      Config::sPathBackupBeforeSaveMaximum,   mBackupBeforeSaveMaximum->GetValue());
         Config::WriteString(    Config::sPathLogLevel,                  LogLevel_toString(mSelectLogLevel->getValue()).c_str());
         Config::WriteString(    Config::sPathLogLevelAvcodec,           Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
         Config::WriteBool(      Config::sPathShowDebugInfoOnWidgets,    mShowDebugInfoOnWidgets->IsChecked());
