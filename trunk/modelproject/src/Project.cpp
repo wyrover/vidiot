@@ -148,7 +148,6 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
     else
     {
         ostream.setstate(std::ios_base::failbit);
-        gui::Dialog::get().getConfirmation(_("Save failed"), _("Vidiot was unable to save ") + mRoot->getName());
     }
     return ostream;
 }
@@ -205,7 +204,7 @@ bool Project::DoSaveDocument(const wxString& file)
         // Find all existing backup files
         wxArrayString existingBackupFiles;
         wxString pattern; pattern << saveFileName.GetName() << "_*" << saveFileName.GetExt();
-        size_t nExistingBackupFiles = wxDir::GetAllFiles(saveFileName.GetPath(), &existingBackupFiles, pattern, wxDIR_FILES | wxDIR_NO_FOLLOW);
+        long nExistingBackupFiles = wxDir::GetAllFiles(saveFileName.GetPath(), &existingBackupFiles, pattern, wxDIR_FILES | wxDIR_NO_FOLLOW);
 
         // Find the one with the highest and the one with the lowest number
         long nextFreeNumber = 0;

@@ -32,6 +32,7 @@ struct ICodecParameter
     ICodecParameter() {};
     virtual ~ICodecParameter() {};
     virtual ICodecParameter* clone() const = 0;
+    virtual void onCloned() {};
     virtual wxString getName() const = 0;
     virtual wxWindow* makeWidget(wxWindow* parent, ICodecParameterChangeListener* listener) = 0;
     virtual void destroyWidget() = 0;

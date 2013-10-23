@@ -18,12 +18,9 @@
 #ifndef RENDER_OUTPUT_FORMAT_H
 #define RENDER_OUTPUT_FORMAT_H
 
-#include "UtilCloneable.h"
-
 namespace model { namespace render {
 
 class OutputFormat
-    :   public Cloneable<OutputFormat>
 {
 public:
 
@@ -32,8 +29,15 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     OutputFormat();
+
     explicit OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, CodecID defaultaudiocodec, CodecID defaultvideocodec);
+
     OutputFormat(const OutputFormat& other);
+
+    virtual OutputFormat* clone() const;
+
+    virtual void onCloned();
+
     virtual ~OutputFormat();
 
     //////////////////////////////////////////////////////////////////////////

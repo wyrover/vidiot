@@ -332,6 +332,7 @@ void Trim::submit()
                 for (int step = NumberOfSteps; step >= 0; --step)
                 {
                     int newShift = -1 * model::Convert::doubleToInt(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps) * static_cast<double>(step));
+                    // todo getTimeline().getCursor().setLogicalPosition(getTimeline().getCursor().getLogicalPosition() - diff);
                     getTimeline().setShift(newShift);
                     getTimeline().Refresh(false);
                     getTimeline().Update();

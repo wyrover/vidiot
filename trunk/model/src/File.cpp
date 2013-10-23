@@ -133,6 +133,10 @@ File* File::clone() const
     return new File(static_cast<const File&>(*this));
 }
 
+void File::onCloned()
+{
+}
+
 File::~File()
 {
     VAR_DEBUG(this);
@@ -483,7 +487,7 @@ void File::openFile()
     {
         if (stream->duration == 1)
         {
-            // Stil image: disregard the timebase, since rounding errors 
+            // Stil image: disregard the timebase, since rounding errors
             // (timebase of file different than project time base)
             // may result in the outcome '0'.
             return 1;

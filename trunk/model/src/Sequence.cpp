@@ -22,11 +22,13 @@
 #include "AudioTrack.h"
 #include "EmptyFrame.h"
 #include "IClip.h"
+#include "Logging.h"
 #include "ModelEvent.h"
 #include "NodeEvent.h"
 #include "Properties.h"
 #include "Render.h"
 #include "SequenceEvent.h"
+#include "UtilCloneable.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -60,6 +62,8 @@ Sequence::Sequence()
     ,   mRender()
 {
     VAR_DEBUG(this);
+    // Serialization will fill in the members
+    // and call updateTracks()
 }
 
 Sequence::Sequence(wxString name)
@@ -99,10 +103,16 @@ Sequence::Sequence(const Sequence& other)
     ,   mRender(make_cloned<render::Render>(other.mRender))
 {
     VAR_DEBUG(this);
-    for ( model::TrackPtr track : getTracks() )
-    {
-        track->updateClips(); // todo see todo temp hack in Track.h
-    }
+    updateTracks();
+}
+
+Sequence* Sequence::clone() const
+{
+    return new Sequence(static_cast<const Sequence&>(*this));
+}
+
+void Sequence::onCloned()
+{
 }
 
 Sequence::~Sequence()
@@ -552,6 +562,9 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
                 track->Bind(model::EVENT_LENGTH_CHANGED, &Sequence::onTrackLengthChanged, this);
             }
             updateTracks();
+            updateLength();
+
+            LOG_ERROR << dump(boost::dynamic_pointer_cast<Sequence>(shared_from_this()));
         }
         ar & BOOST_SERIALIZATION_NVP(mRender);
     }

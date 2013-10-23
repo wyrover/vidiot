@@ -20,6 +20,7 @@
 #include "Dialog.h"
 #include "Properties.h"
 #include "UtilInitAvcodec.h"
+#include "UtilCloneable.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
@@ -48,6 +49,15 @@ VideoCodec::VideoCodec(CodecID id)
 VideoCodec::VideoCodec(const VideoCodec& other)
     :   mId(other.mId)
     ,   mParameters(make_cloned<ICodecParameter>(other.mParameters))
+{
+}
+
+VideoCodec* VideoCodec::clone() const
+{
+    return new VideoCodec(static_cast<const VideoCodec&>(*this));
+}
+
+void VideoCodec::onCloned()
 {
 }
 

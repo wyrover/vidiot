@@ -94,7 +94,7 @@ public:
     /// If there is no 'in' clip for this transition (out-only transition) then
     /// returns '0'.
     /// \return a clone of the clip to be used for rendering transition data
-    model::IClipPtr makeLeftClip() const;
+    model::IClipPtr makeLeftClip();
 
     /// Make the 'out' clip that is to be used for rendering data
     /// This takes the previous clip in the track, clones it, and adjust the
@@ -103,7 +103,7 @@ public:
     /// If there is no 'out' clip for this transition (in-only transition) then
     /// returns '0'.
     /// \return a clone of the clip to be used for rendering transition data
-    model::IClipPtr makeRightClip() const;
+    model::IClipPtr makeRightClip();
 
 protected:
 

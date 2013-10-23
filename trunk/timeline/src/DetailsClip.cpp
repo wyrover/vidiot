@@ -34,6 +34,7 @@
 #include "Transition.h"
 #include "Trim.h"
 #include "TrimClip.h"
+#include "UtilCloneable.h"
 #include "UtilEnumSelector.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -95,7 +96,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     addBox(_("Duration"));
 
     mCurrentLength = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT | wxST_NO_AUTORESIZE);
-    addOption(_("Current length"), mCurrentLength); // todo only shows length for selected clip not for the link.
+    addOption(_("Current length"), mCurrentLength);
 
     std::list<int> defaultLengths = boost::assign::list_of(500)  (1000) (1500) (2000) (2500) (3000);
     std::list<wxString> labels    = boost::assign::list_of("0.5")("1.0")("1.5")("2.0")("2.5")("3.0");

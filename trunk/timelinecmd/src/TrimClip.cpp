@@ -27,6 +27,7 @@
 #include "Track.h"
 #include "Transition.h"
 #include "Trim.h"
+#include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "Zoom.h"
 
@@ -52,6 +53,8 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mShift(false)
     ,   mPosition(position)
     ,   mShiftStart(0)
+    ,   mCursorPositionBefore(0)
+    ,   mCursorPositionAfter(0)
 {
     VAR_INFO(this)(mClip)(mTransition);
     mCommandName = _("Adjust length");
@@ -73,6 +76,9 @@ void TrimClip::update(pts diff, bool shift)
     mNewClip.reset();
     mNewLink.reset();
     Revert();
+
+    mCursorPositionBefore = getTimeline().getCursor().getLogicalPosition();
+    mCursorPositionAfter = mCursorPositionBefore;
 
     mCommandName =
         _("Adjust ") +
@@ -111,6 +117,11 @@ void TrimClip::update(pts diff, bool shift)
     else
     {
         applyTrim();
+        if (mShift)
+        {
+            // Ensure that the cursor position is kept on the same logical position after trimming.
+            // todo mCursorPositionAfter = mCursorPositionBefore - mTrim;
+        }
     }
 
     getTimeline().getSelection().change(boost::assign::list_of(mNewClip)(mNewLink));
@@ -128,11 +139,19 @@ void TrimClip::initialize()
 void TrimClip::doExtraAfter()
 {
     getTimeline().getSelection().change(boost::assign::list_of(mNewClip)(mNewLink));
+    if (mCursorPositionBefore != mCursorPositionAfter)
+    {
+        getTimeline().getCursor().setLogicalPosition(mCursorPositionAfter);
+    }
 }
 
 void TrimClip::undoExtraAfter()
 {
     getTimeline().getSelection().change(boost::assign::list_of(mOriginalClip)(mOriginalLink));
+    if (mCursorPositionBefore != mCursorPositionAfter)
+    {
+        getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

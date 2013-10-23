@@ -43,8 +43,13 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     File();
+
     File(wxFileName path, int buffersize = 1);
-    virtual File* clone() const override;
+
+    virtual File* clone() const;
+
+    virtual void onCloned() override;
+
     virtual ~File();
 
     void abort();

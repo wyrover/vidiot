@@ -19,6 +19,7 @@
 
 #include "AudioCodec.h"
 #include "AudioCodecs.h"
+#include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilSerializeWxwidgets.h"
@@ -74,6 +75,15 @@ OutputFormat::OutputFormat(const OutputFormat& other)
     ASSERT(mFormat);
     memcpy(mFormat, other.mFormat, sizeof(AVOutputFormat));
     mFormat->next = 0;
+}
+
+OutputFormat* OutputFormat::clone() const
+{
+    return new OutputFormat(static_cast<const OutputFormat&>(*this));
+}
+
+void OutputFormat::onCloned()
+{
 }
 
 OutputFormat::~OutputFormat()

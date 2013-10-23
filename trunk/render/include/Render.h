@@ -18,7 +18,6 @@
 #ifndef MODEL_RENDER_H
 #define MODEL_RENDER_H
 
-#include "UtilCloneable.h"
 #include "UtilEvent.h"
 #include "UtilInt.h"
 
@@ -26,7 +25,6 @@ namespace model { namespace render {
 
 class Render
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public Cloneable<Render>
     ,   public boost::enable_shared_from_this<Render>
 {
 public:
@@ -43,6 +41,10 @@ public:
     Render();
 
     Render(const Render& other);
+
+    virtual Render* clone() const;
+
+    virtual void onCloned();
 
     virtual ~Render();
 

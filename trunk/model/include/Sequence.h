@@ -22,7 +22,7 @@
 #include "IControl.h"
 #include "IVideo.h"
 #include "Node.h"
-#include "UtilCloneable.h"
+#include "UtilSerializeSharedFromThis.h"
 
 namespace model {
 
@@ -36,7 +36,6 @@ class Sequence
     ,   public IControl
     ,   public IVideo
     ,   public IAudio
-    ,   public Cloneable<Sequence>
     ,   public Node
 {
 public:
@@ -66,6 +65,10 @@ public:
     ///
     /// \see make_cloned
     Sequence(const Sequence& other);
+
+    virtual Sequence* clone() const;
+
+    virtual void onCloned();
 
     virtual ~Sequence();
 
@@ -198,5 +201,6 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::Sequence, 1)
 BOOST_CLASS_EXPORT_KEY(model::Sequence)
+ENABLE_SHARED_FROM_THIS_DURING_DESERIALIZATION(model::Sequence)
 
 #endif // MODEL_SEQUENCE_H
