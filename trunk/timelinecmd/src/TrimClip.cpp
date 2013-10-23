@@ -27,7 +27,7 @@
 #include "Track.h"
 #include "Transition.h"
 #include "Trim.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 #include "UtilLog.h"
 #include "Zoom.h"
 

@@ -28,7 +28,7 @@
 #include "Properties.h"
 #include "Render.h"
 #include "Sequence.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 #include "UtilFifo.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"

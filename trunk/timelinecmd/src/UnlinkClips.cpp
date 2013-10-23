@@ -21,7 +21,7 @@
 #include "Sequence.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 
 namespace gui { namespace timeline { namespace command {
 

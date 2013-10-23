@@ -22,7 +22,7 @@
 #include "Convert.h"
 #include "EmptyFrame.h"
 #include "Properties.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilSerializeBoost.h"

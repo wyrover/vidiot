@@ -38,7 +38,7 @@
 #include "Track.h"
 #include "Transition.h"
 #include "TrimClip.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 #include "UtilLogWxwidgets.h"

@@ -32,7 +32,7 @@
 #include "Properties.h"
 #include "Sequence.h"
 #include "StatusBar.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "UtilLogWxwidgets.h"
