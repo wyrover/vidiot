@@ -68,6 +68,10 @@ Clip::~Clip()
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
+void Clip::onCloned()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
@@ -274,11 +278,6 @@ void Clip::serialize(Archive & ar, const unsigned int version)
     {
         boost::serialization::void_cast_register<Clip, IClip>(static_cast<Clip *>(0), static_cast<IClip *>(0));
         ar & BOOST_SERIALIZATION_NVP(mLink);
-        ar & BOOST_SERIALIZATION_NVP(mTrack);
-        ar & BOOST_SERIALIZATION_NVP(mNext);
-        ar & BOOST_SERIALIZATION_NVP(mPrev);
-        ar & BOOST_SERIALIZATION_NVP(mLeftPtsInTrack);
-        ar & BOOST_SERIALIZATION_NVP(mIndex);
         // NOT: mSelected. After loading, nothing is selected.
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }

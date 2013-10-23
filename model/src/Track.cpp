@@ -25,6 +25,7 @@
 #include "Node.h"
 #include "ProjectModification.h"
 #include "TrackEvent.h"
+#include "UtilCloneable.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
@@ -52,6 +53,16 @@ Track::Track(const Track& other)
 ,   mIndex(0)
 {
     VAR_DEBUG(this);
+}
+
+Track* Track::clone() const
+{
+    return new Track(static_cast<const Track&>(*this));
+}
+
+void Track::onCloned()
+{
+    updateClips();
 }
 
 Track::~Track()
@@ -399,7 +410,8 @@ void Track::serialize(Archive & ar, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
     if (Archive::is_loading::value)
     {
-        mItClips = mClips.begin();
+        updateClips();
+      //  mItClips = mClips.begin(); // Set afterwards, since updateclips resets that
     }
 }
 template void Track::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);

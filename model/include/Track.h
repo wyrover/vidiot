@@ -20,8 +20,8 @@
 
 #include "IControl.h"
 #include "UtilLog.h"
-#include "UtilCloneable.h"
 #include "UtilSelf.h"
+#include "UtilRTTI.h"
 
 namespace model {
 
@@ -29,7 +29,7 @@ class Track
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public IControl
     ,   public Self<Track>
-    ,   public Cloneable<Track>
+    ,   public IRTTI
 {
 public:
 
@@ -50,6 +50,10 @@ public:
     ///
     /// \see make_cloned
     Track(const Track& other);
+
+    virtual Track* clone() const;
+
+    virtual void onCloned();
 
     virtual ~Track();
 
@@ -145,14 +149,6 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    // todo temp hack:
-    // required for solving the following bug: during rendering of a sequence with
-    // transitions, the transition's getNextVideo/Audio uses getPrev/getNext which is
-    // considered 'redundant' and thus should not be required for a cloned sequence.
-    // The default (non redundant) structures must be adapted such that the getnext/getprev
-    // calls of the transitions being rendered can be done.
-    friend class Sequence;
-
     /// Updates the clips after insertion/removal etc.
     /// - Updates the pts'es for all clips in this track
     /// - Updates the clip's track pointer to this track
@@ -174,6 +170,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
+
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };

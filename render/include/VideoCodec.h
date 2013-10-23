@@ -18,12 +18,9 @@
 #ifndef RENDER_VIDEO_CODEC_H
 #define RENDER_VIDEO_CODEC_H
 
-#include "UtilCloneable.h"
-
 namespace model { namespace render {
 
 class VideoCodec
-    :   public Cloneable<VideoCodec>
 {
 public:
 
@@ -34,7 +31,13 @@ public:
     VideoCodec();
 
     explicit VideoCodec(CodecID id);
+
     VideoCodec(const VideoCodec& other);
+
+    virtual VideoCodec* clone() const;
+
+    virtual void onCloned();
+
     virtual ~VideoCodec();
 
     //////////////////////////////////////////////////////////////////////////

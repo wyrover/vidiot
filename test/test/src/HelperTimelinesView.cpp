@@ -21,6 +21,7 @@
 #include "Sequence.h"
 #include "Timeline.h"
 #include "TimeLinesView.h"
+#include "UtilCloneable.h"
 
 namespace test {
 

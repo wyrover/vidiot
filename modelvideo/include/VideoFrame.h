@@ -18,7 +18,6 @@
 #ifndef VIDEO_FRAME_H
 #define VIDEO_FRAME_H
 
-#include "UtilCloneable.h"
 #include "UtilFifo.h"
 #include "UtilFrameRate.h"
 #include "UtilInt.h"
@@ -34,7 +33,7 @@ typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
 class VideoFrame
-    :   public Cloneable<VideoFrame>
+    :   public IRTTI
 {
 public:
 
@@ -58,6 +57,10 @@ public:
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
     VideoFrame(const VideoFrame& other);
+
+    virtual VideoFrame* clone() const;
+
+    virtual void onCloned();
 
     virtual ~VideoFrame();
 

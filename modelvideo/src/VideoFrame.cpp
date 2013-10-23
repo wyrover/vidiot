@@ -91,6 +91,15 @@ VideoFrame::VideoFrame(const VideoFrame& other)
     }
 }
 
+VideoFrame* VideoFrame::clone() const
+{
+    return new VideoFrame(static_cast<const VideoFrame&>(*this));
+}
+
+void VideoFrame::onCloned()
+{
+}
+
 VideoFrame::~VideoFrame()
 {
     if (mBuffer)
@@ -102,8 +111,6 @@ VideoFrame::~VideoFrame()
         av_free(mFrame);
     }
 }
-
-// todo add support for rotating images in video composition. Needs better alpha channel support
 
 //////////////////////////////////////////////////////////////////////////
 // META DATA

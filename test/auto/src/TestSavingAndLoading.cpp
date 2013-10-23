@@ -183,7 +183,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
     //////////////////////////////////////////////////////////////////////////
 
     StartTest("Save again multiple times and check that backup files are generated");
-    std::vector<bool> isPresent = std::vector<bool>(false,20); // Indicates which files should be present/not
+    std::vector<bool> isPresent = std::vector<bool>(20, false); // Indicates which files should be present/not
     for (int count = 0; count < 60; ++count)
     {
         ASSERT(!model::Project::createBackupFileName(existingFile,count).Exists());

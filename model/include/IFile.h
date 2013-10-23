@@ -36,6 +36,7 @@ public:
     virtual ~IFile() {};
 
     virtual IFile* clone() const = 0;
+    virtual void onCloned() = 0;
 
 protected:
 

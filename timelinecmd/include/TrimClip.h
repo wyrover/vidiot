@@ -123,6 +123,8 @@ private:
     MouseOnClipPosition mPosition;          ///< Logical position where the trim is done
     pts mShiftStart;                        ///< Position at which the shift will start
     model::IClipPtr mReplacementClip;
+    pts mCursorPositionBefore;              ///< Position of the cursor before the trim is applied
+    pts mCursorPositionAfter;               ///< Position of the cursor after the trim is applied
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

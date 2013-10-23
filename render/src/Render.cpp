@@ -32,6 +32,7 @@
 #include "Properties.h"
 #include "Sequence.h"
 #include "StatusBar.h"
+#include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "UtilLogAvcodec.h"
 #include "UtilLogWxwidgets.h"
@@ -107,6 +108,15 @@ Render::Render(const Render& other)
     ,   mEnd(other.mEnd)
 {
     VAR_DEBUG(this);
+}
+
+Render* Render::clone() const
+{
+    return new Render(static_cast<const Render&>(*this));
+}
+
+void Render::onCloned()
+{
 }
 
 Render::~Render()

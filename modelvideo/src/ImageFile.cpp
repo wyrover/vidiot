@@ -19,6 +19,7 @@
 
 #include "Constants.h"
 #include "Convert.h"
+#include "UtilCloneable.h"
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"

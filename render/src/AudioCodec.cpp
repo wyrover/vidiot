@@ -21,6 +21,7 @@
 #include "AudioCodecs.h"
 #include "Dialog.h"
 #include "Properties.h"
+#include "UtilCloneable.h"
 #include "UtilInitAvcodec.h"
 #include "UtilList.h"
 #include "UtilLog.h"
@@ -47,6 +48,15 @@ AudioCodec::AudioCodec(CodecID id)
 AudioCodec::AudioCodec(const AudioCodec& other)
     :   mId(other.mId)
     ,   mParameters(make_cloned<ICodecParameter>(other.mParameters))
+{
+}
+
+AudioCodec* AudioCodec::clone() const
+{
+    return new AudioCodec(static_cast<const AudioCodec&>(*this));
+}
+
+void AudioCodec::onCloned()
 {
 }
 

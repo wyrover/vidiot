@@ -29,6 +29,7 @@
 #include "Track.h"
 #include "TrackEvent.h"
 #include "Transition.h"
+#include "UtilCloneable.h"
 #include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"

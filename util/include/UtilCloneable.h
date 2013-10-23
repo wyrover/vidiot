@@ -20,29 +20,12 @@
 
 #include "UtilRTTI.h"
 
-/// Needed for cloning in class hierarchies starting with abstract base classes.
-/// Use the method make_cloned to make copies of objects
-template <typename MOSTDERIVED>
-struct Cloneable
-    : public IRTTI
-{
-    virtual MOSTDERIVED* clone() const
-    {
-        return new MOSTDERIVED(static_cast<const MOSTDERIVED&>(*this));
-    }
-    virtual ~Cloneable() {}
-};
-
-template <typename T>
-boost::shared_ptr<T> make_cloned_ptr(T& t)
-{
-    return boost::shared_ptr<T>(t.clone());
-}
-
 template <typename T>
 boost::shared_ptr<T> make_cloned(boost::shared_ptr<T> t)
 {
-    return boost::shared_ptr<T>(t->clone());
+    boost::shared_ptr<T> clone = boost::shared_ptr<T>(t->clone());
+    clone->onCloned();
+    return clone;
 }
 
 template <typename T>
@@ -55,5 +38,7 @@ std::list< boost::shared_ptr<T> > make_cloned(std::list< boost::shared_ptr<T> > 
     }
     return result;
 }
+
+// todo rename into UtilClone
 
 #endif // UTIL_CLONEABLE_H

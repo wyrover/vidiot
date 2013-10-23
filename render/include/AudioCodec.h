@@ -18,12 +18,9 @@
 #ifndef RENDER_AUDIO_CODEC_H
 #define RENDER_AUDIO_CODEC_H
 
-#include "UtilCloneable.h"
-
 namespace model { namespace render {
 
 class AudioCodec
-    :   public Cloneable<AudioCodec>
 {
 public:
 
@@ -32,8 +29,15 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     AudioCodec();
+
     explicit AudioCodec(CodecID id);
+
     AudioCodec(const AudioCodec& other);
+
+    virtual AudioCodec* clone() const;
+
+    virtual void onCloned();
+
     virtual ~AudioCodec();
 
     //////////////////////////////////////////////////////////////////////////

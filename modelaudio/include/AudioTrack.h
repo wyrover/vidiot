@@ -20,6 +20,7 @@
 
 #include "Track.h"
 #include "IAudio.h"
+#include "UtilSerializeSharedFromThis.h"
 
 namespace model {
 
@@ -68,6 +69,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     friend class boost::serialization::access;
+
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);
 };
@@ -80,5 +82,6 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(model::AudioTrack, 1)
 BOOST_CLASS_EXPORT_KEY(model::AudioTrack)
+ENABLE_SHARED_FROM_THIS_DURING_DESERIALIZATION(model::AudioTrack)
 
 #endif // MODEL_AUDIO_TRACK_H

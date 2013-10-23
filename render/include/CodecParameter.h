@@ -18,7 +18,6 @@
 #ifndef MODEL_RENDER_CODEC_PARAMETER_H
 #define MODEL_RENDER_CODEC_PARAMETER_H
 
-#include "UtilCloneable.h"
 #include "UtilEnumSelector.h"
 #include "ICodecParameter.h"
 

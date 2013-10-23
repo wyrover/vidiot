@@ -64,8 +64,6 @@ VideoFramePtr Bands::getVideo(pts position, IClipPtr leftClip, IClipPtr rightCli
 
     pts steps = getLength();
 
-    // todo make mechanism for changing parameters of transitions (left-to-right vs right-to-left, etc, but also number of bands)
-    // todo make 'Details' view for transitions (allows changing parameters and changing transition type)
     int nBands = 10;
 
     float factorLeft = ((float)getLength() - (float)position) / (float)getLength();

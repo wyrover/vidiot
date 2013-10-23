@@ -39,6 +39,7 @@ public:
     IClip() {};
 
     virtual IClip* clone() const = 0;
+    virtual void onCloned() = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // TRACK
