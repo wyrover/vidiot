@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UTIL_CLONEABLE_H
-#define UTIL_CLONEABLE_H
+#ifndef UTIL_CLONE_H
+#define UTIL_CLONE_H
 
 #include "UtilRTTI.h"
 
@@ -39,6 +39,4 @@ std::list< boost::shared_ptr<T> > make_cloned(std::list< boost::shared_ptr<T> > 
     return result;
 }
 
-// todo rename into UtilClone
-
-#endif // UTIL_CLONEABLE_H
+#endif // UTIL_CLONE_H

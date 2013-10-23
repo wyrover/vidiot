@@ -18,7 +18,7 @@
 #include "TransitionFactory.h"
 
 #include "Transition.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 

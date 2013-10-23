@@ -34,7 +34,7 @@
 #include "Transition.h"
 #include "Trim.h"
 #include "TrimClip.h"
-#include "UtilCloneable.h"
+#include "UtilClone.h"
 #include "UtilEnumSelector.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
