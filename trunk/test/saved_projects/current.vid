@@ -294,7 +294,7 @@
 								<item_version>1</item_version>
 								<item class_id="32" tracking_level="0" version="1">
 									<px class_id="34" class_name="model::VideoTrack" tracking_level="1" version="1" object_id="_20">
-										<Track class_id="33" tracking_level="1" version="1" object_id="_21">
+										<Track class_id="33" tracking_level="1" version="2" object_id="_21">
 											<mIndex>0</mIndex>
 											<mClips class_id="35" tracking_level="0" version="0">
 												<count>24</count>
@@ -302,7 +302,7 @@
 												<item class_id="36" tracking_level="0" version="1">
 													<px class_id="37" class_name="model::VideoClip" tracking_level="1" version="1" object_id="_22">
 														<ClipInterval class_id="38" tracking_level="0" version="1">
-															<Clip class_id="39" tracking_level="0" version="1">
+															<Clip class_id="39" tracking_level="0" version="2">
 																<mLink class_id="40" tracking_level="0" version="0">
 																	<ptr>
 																		<px class_id="41" class_name="model::AudioClip" tracking_level="1" version="1" object_id="_23">
