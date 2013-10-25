@@ -410,8 +410,14 @@ void Track::serialize(Archive & ar, const unsigned int version)
     catch (...)                                  { LOG_ERROR;                                   throw; }
     if (Archive::is_loading::value)
     {
-        updateClips();
-      //  mItClips = mClips.begin(); // Set afterwards, since updateclips resets that
+        if (version > 1)
+        {
+            updateClips();
+        }
+        else
+        {
+            mItClips = mClips.begin(); // Set afterwards, since updateclips resets that
+        }
     }
 }
 template void Track::serialize<boost::archive::xml_oarchive>(boost::archive::xml_oarchive& ar, const unsigned int archiveVersion);
