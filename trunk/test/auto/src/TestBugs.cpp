@@ -26,6 +26,7 @@
 #include "EmptyClip.h"
 #include "HelperDetails.h"
 #include "HelperPopupMenu.h"
+#include "HelperProject.h"
 #include "HelperSequence.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
@@ -183,6 +184,19 @@ void TestBugs::testBugsWithLongTimeline()
         Type(WXK_DELETE);
         ASSERT(VideoClip(0,-2)->isA<model::EmptyClip>());
     }
+    std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName;
+    {
+        StartTest("Bug: StackOverflow when saving");
+        tempDir_fileName = SaveProjectAndClose();
+    }
+    {
+        StartTest("Bug: StackOverflow when loading");
+        util::thread::RunInMainAndWait([tempDir_fileName]()
+        {
+            gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(),wxDOC_SILENT);
+        });
+    }
+    triggerMenu(wxID_CLOSE);
     Config::setShowDebugInfo(false);
 }
 
