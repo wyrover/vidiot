@@ -88,10 +88,8 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
     return 0;
 }
 
-
-
+// todo use AppVerifier
 // todo http://randomascii.wordpress.com/2012/07/05/when-even-crashing-doesnt-work/
-
 
     //void EnableCrashingOnCrashes()
     //{
