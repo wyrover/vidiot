@@ -38,7 +38,7 @@ Project::Project()
 // Do not initialize members with actual data here.
 // For loading that is done via serialize - Initializing here for loading is useless (overwritten by serialize) and causes crashes (mProperties instantiated twice)
 // For new documents initializing is done via OnNewDocument
-,   mRoot(boost::make_shared<Folder>("Root")) // Exception: Initialized here since it is used on OnChangeFilename which is called before any other method when creating a new project.
+,   mRoot(Folder::makeRoot()) // Exception: Initialized here since it is used on OnChangeFilename which is called before any other method when creating a new project.
 ,   mProperties()
 {
     VAR_DEBUG(this);
@@ -101,8 +101,8 @@ wxCommandProcessor* Project::OnCreateCommandProcessor()
 
 void Project::OnChangeFilename(bool notifyViews)
 {
-    mRoot->setName(GetUserReadableName());
     IView::getView().ProcessModelEvent(EventRenameProject(this));
+    gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(mRoot,mRoot->getName())));
     wxDocument::OnChangeFilename(notifyViews);
 }
 
@@ -115,7 +115,7 @@ const std::string sView("view");
 
 std::ostream& Project::SaveObject(std::ostream& ostream)
 {
-    gui::StatusBar::get().pushInfoText(_("Saving ") + mRoot->getName() + _(" ..."));
+    gui::StatusBar::get().pushInfoText(_("Saving ") + getName() + _(" ..."));
     bool ok = false;
     try
     {
@@ -143,7 +143,7 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
     gui::StatusBar::get().popInfoText();
     if (ok)
     {
-        gui::StatusBar::get().timedInfoText(mRoot->getName() + _(" saved successfully."));
+        gui::StatusBar::get().timedInfoText(getName() + _(" saved successfully."));
     }
     else
     {
@@ -296,6 +296,11 @@ bool Project::DoOpenDocument(const wxString& file)
 FolderPtr Project::getRoot() const
 {
     return mRoot;
+}
+
+wxString Project::getName() const
+{
+    return GetUserReadableName();
 }
 
 //////////////////////////////////////////////////////////////////////////

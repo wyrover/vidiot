@@ -443,11 +443,13 @@ void Window::onOpenProject( model::EventOpenProject &event )
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
+    updateTitle();
     event.Skip();
 }
 
 void Window::onCloseProject( model::EventCloseProject &event )
 {
+    updateTitle();
     event.Skip();
 }
 
@@ -456,6 +458,7 @@ void Window::onRenameProject( model::EventRenameProject &event )
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
+    updateTitle();
     event.Skip();
 }
 
@@ -747,6 +750,18 @@ void Window::updateWorkspaceMenu()
     mMenuWorkspace->Enable(ID_WORKSPACE_LOAD, enable);
     mMenuWorkspace->Enable(ID_WORKSPACE_DELETE, enable);
     mMenuWorkspace->Enable(ID_WORKSPACE_DELETEALL, enable);
+}
+
+void Window::updateTitle()
+{
+    if (GetDocumentManager()->GetCurrentDocument() != 0)
+    {
+        SetTitle(model::Project::get().getRoot()->getName() + " - " + sTitle);
+    }
+    else
+    {
+        SetTitle(sTitle);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
