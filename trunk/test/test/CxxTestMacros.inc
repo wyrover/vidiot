@@ -1,4 +1,4 @@
-set( CxxTestDir "${VIDIOT_DIR}/cxxtest-3.10.1" )
+set( CxxTestDir "${PROJECT_SOURCE_DIR}/build/cxxtest-3.10.1" )
 set( CxxTestGen "${CxxTestDir}/cxxtestgen.pl" )
 
 INCLUDE_DIRECTORIES(AFTER

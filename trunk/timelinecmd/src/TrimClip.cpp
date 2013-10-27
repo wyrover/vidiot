@@ -219,7 +219,7 @@ pts TrimClip::getShiftStart() const
 // static
 TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift)
 {
-    ASSERT(clip && clip->getTrack());
+    ASSERT(clip && clip->getTrack())(clip);
     ASSERT_IMPLIES(link,link->getTrack());
 
     TrimLimit result;
