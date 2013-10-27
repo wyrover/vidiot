@@ -135,6 +135,9 @@ ENDFOREACH(FOLDER)
 # Below, ??*.* instead of *.* is used to avoid adding .svn files
 FILE(GLOB Cursors           ${PROJECT_SOURCE_DIR}/cursors/*?.???)
 FILE(GLOB BuildFiles        ${PROJECT_SOURCE_DIR}/build/??*.*)
+list(REMOVE_ITEM BuildFiles "${PROJECT_SOURCE_DIR}/build/cxxtest-3.10.1") # Remove cxxtest from the visual studio solution
+
+
 
 #### COMPILE, INCLUDE, AND LINK SETTINGS ####
 IF (MSVC)
