@@ -25,6 +25,7 @@
 #include "Logging.h"
 #include "ModelEvent.h"
 #include "NodeEvent.h"
+#include "ProjectModification.h"
 #include "Properties.h"
 #include "Render.h"
 #include "SequenceEvent.h"
@@ -334,7 +335,11 @@ pixel Sequence::getDividerPosition() const
 
 void Sequence::setDividerPosition(pixel position)
 {
-    mDividerPosition = position;
+    if (mDividerPosition != position)
+    {
+        mDividerPosition = position;
+        model::ProjectModification::trigger();
+    }
 }
 
 std::set<model::IClipPtr> Sequence::getSelectedClips()
@@ -564,7 +569,7 @@ void Sequence::serialize(Archive & ar, const unsigned int version)
             updateTracks();
             updateLength();
 
-            LOG_ERROR << dump(boost::dynamic_pointer_cast<Sequence>(shared_from_this()));
+            LOG_INFO << dump(boost::dynamic_pointer_cast<Sequence>(shared_from_this()));
         }
         ar & BOOST_SERIALIZATION_NVP(mRender);
     }
