@@ -117,11 +117,6 @@ void TrimClip::update(pts diff, bool shift)
     else
     {
         applyTrim();
-        if (mShift)
-        {
-            // Ensure that the cursor position is kept on the same logical position after trimming.
-            // todo mCursorPositionAfter = mCursorPositionBefore - mTrim;
-        }
     }
 
     getTimeline().getSelection().change(boost::assign::list_of(mNewClip)(mNewLink));
