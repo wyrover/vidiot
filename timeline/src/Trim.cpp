@@ -87,6 +87,7 @@ void Trim::start()
     mStartPts = 0;
     mFixedPixel = 0;
     mSnapPoints.clear();
+    mCursorPositionBefore = getCursor().getLogicalPosition();
 
     // Determine if pointer was at begin or at end of clip
     wxPoint virtualMousePosition = getMouse().getLeftDownPosition();
@@ -301,12 +302,12 @@ void Trim::stop()
         getTimeline().Update();
     }
     mCommand = 0;
-
 }
 
 void Trim::submit()
 {
     VAR_DEBUG(this);
+    mActive = false; // Ensure snaps are no longer shown (typical case: shfit begin trim with snap to cursor)
     if (mCommand->getDiff() != 0)
     {
         bool shiftBeginTrim = getKeyboard().getShiftDown() && mCommand->isBeginTrim();
@@ -321,7 +322,17 @@ void Trim::submit()
             // First, try changing the scrollbar such that the fixed pixel stays at the same position
             pixel remaining = getScrolling().align(mFixedPts,mFixedPixel + getZoom().ptsToPixels(diff));
 
-            // If scrolling could completely align the pts value with the given pixel (typically happens
+            // When the sequence before the cursor position is 'shortened', without adaptation, the cursor
+            // seems to be moved after the trim is done. Although technically, the cursor is kept in the
+            // same position (absolute value) it ends up on a different logical place (since the
+            // sequence has become shorter). Move the cursor, to ensure that it remains in the same
+            // position logically.
+            //
+            // For this reason, just before updating the timeline the cursor is repositioned such that
+            // it 'seems' to stick in the same place. This is done both during the animation AND at the
+            // end, for cases without animation.
+
+            // If scrolling could NOT completely align the pts value with the given pixel (typically happens
             // when trimming at the begin of the timeline), show an animation of the sequence moving to the
             // beginning of the timeline.
             if (remaining < 0)
@@ -332,19 +343,18 @@ void Trim::submit()
                 for (int step = NumberOfSteps; step >= 0; --step)
                 {
                     int newShift = -1 * model::Convert::doubleToInt(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps) * static_cast<double>(step));
-                    // todo getTimeline().getCursor().setLogicalPosition(getTimeline().getCursor().getLogicalPosition() - diff);
                     getTimeline().setShift(newShift);
                     getTimeline().Refresh(false);
+                    pts cursorDiff = getTimeline().getZoom().pixelsToPts(newShift);
+                    getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore - diff + cursorDiff);
                     getTimeline().Update();
                     boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
                 }
             }
-            else
-            {
-                getTimeline().setShift(0);
-                getTimeline().Refresh(false);
-                getTimeline().Update();
-            }
+            getTimeline().setShift(0);
+            getTimeline().Refresh(false);
+            getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore - diff);
+            getTimeline().Update();
         }
     }
 }
