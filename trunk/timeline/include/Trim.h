@@ -96,6 +96,8 @@ private:
     std::list<pts> mSnapPoints;     ///< Sorted list containing all possible 'snap to' points (pts values). Filled upon start of trim.
     boost::optional<pts> mSnap;     ///< Current snapping position (that is, where the trim position 'touches' the pts position of another clip)
 
+    pts mCursorPositionBefore;      ///< Cursor position before the trim is started.
+
     boost::shared_ptr<wxBitmap> mAdjacentBitmap;
     model::VideoClipPtr mPreviewVideoClip;
     wxMemoryDC mDc;
