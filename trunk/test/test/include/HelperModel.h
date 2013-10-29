@@ -50,6 +50,11 @@ model::VideoAlignment getAlignment(model::IClipPtr clip);
 /// \pre clip is a video clip
 wxPoint getPosition(model::IClipPtr clip);
 
+/// Unlink the clip from it's link (and vice versa)
+/// \pre clip->getLink()
+/// \post !clip->getLink() && !originalLink->getLink()
+void unlink(model::IClipPtr clip);
+
 } // namespace
 
 #endif // HELPER_MODEL_H

@@ -85,9 +85,12 @@ void DeleteSelectedClips::initialize()
 
     LOG_DEBUG << "STEP 3: Determine the clips to be removed.";
     std::list<model::IClipPtr> clipsToBeRemoved;
+    PtsIntervals deletionRegion; // Region covered by the deleted clips
+    std::map<model::TrackPtr, PtsIntervals> deletionRegionTrack;
     {
         for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
         {
+            deletionRegionTrack[track] = PtsIntervals();
             for ( model::IClipPtr clip : track->getClips() )
             {
                 if (clip->getSelected())
@@ -96,13 +99,77 @@ void DeleteSelectedClips::initialize()
                     ASSERT(!clip->getInTransition()); // Should have been unapplied already
                     ASSERT(!clip->getOutTransition()); // Should have been unapplied already
                     clipsToBeRemoved.push_back(clip);
+                    deletionRegion += PtsInterval(clip->getLeftPts(), clip->getRightPts());
+                    deletionRegionTrack[track] += PtsInterval(clip->getLeftPts(), clip->getRightPts());
                 }
             }
         }
     }
 
-    LOG_DEBUG << "STEP 4: Delete clips.";
-    if (mShift)
+    LOG_DEBUG << "STEP 4: For shift trimming determine if all tracks can/will be shifted properly.";
+    bool doShift = mShift;
+    if (doShift)
+    {
+        std::map<model::IClipPtr, PtsInterval> emptyClipsToBeSplit;
+        for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
+        {
+            if (!doShift) { break; }
+
+            if (deletionRegionTrack[track] != deletionRegion)
+            {
+                ASSERT(boost::icl::contains(deletionRegion, deletionRegionTrack[track]))(track)(deletionRegion)(deletionRegionTrack[track]);
+
+                // If, and only if, the part of the track that is not being deleted consists of empty
+                // clips (and nothing but empty clips), then it can be trimmed away nicely.
+
+                PtsIntervals remainingRegionInTrack = deletionRegion;
+                remainingRegionInTrack -= deletionRegionTrack[track];
+
+                for ( PtsInterval interval : remainingRegionInTrack )
+                {
+                   model::IClipPtr clip = track->getClip(interval.lower());
+                   if (clip->isA<model::EmptyClip>() &&
+                       clip->getLeftPts() <= interval.lower() &&
+                       clip->getRightPts() >= interval.upper())
+                   {
+                       ASSERT_MAP_CONTAINS_NOT(emptyClipsToBeSplit, clip);
+                       emptyClipsToBeSplit[clip] = interval;
+                   }
+                   else
+                   {
+                       doShift = false;
+                       break;
+                   }
+                }
+            }
+        }
+
+        if (doShift)
+        {
+            // Shifting is still possible. Now split empty clips where needed,
+            // and add the resulting empty clips to the list of clips to be removed.
+            for ( std::map<model::IClipPtr, PtsInterval>::value_type clipAndInterval : emptyClipsToBeSplit )
+            {
+                model::IClipPtr clip = clipAndInterval.first;
+                ASSERT(clip->isA<model::EmptyClip>())(clip);
+                PtsInterval interval = clipAndInterval.second;
+                model::TrackPtr track = clip->getTrack();
+                split(track, interval.lower());
+                split(track, interval.upper());
+                model::IClipPtr toBeRemoved = track->getClip(interval.lower());
+                ASSERT_EQUALS(toBeRemoved->getLeftPts(), interval.lower());
+                ASSERT_EQUALS(toBeRemoved->getRightPts(), interval.upper());
+                clipsToBeRemoved.push_back(toBeRemoved);
+            }
+        }
+        else
+        {
+            gui::StatusBar::get().timedInfoText(_("Could not shift clips. Part of the region is still in use."));
+        }
+    }
+
+    LOG_DEBUG << "STEP 5: Delete clips.";
+    if (doShift)
     {
         animatedDeleteAndTrim(clipsToBeRemoved);
     }

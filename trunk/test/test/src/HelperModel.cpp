@@ -18,6 +18,7 @@
 #include "HelperModel.h"
 
 #include "UtilLog.h"
+#include "UnlinkClips.h"
 #include "VideoClip.h"
 
 namespace test {
@@ -47,6 +48,17 @@ model::VideoAlignment getAlignment(model::IClipPtr clip)
 wxPoint getPosition(model::IClipPtr clip)
 {
     return getVideoClip(clip)->getPosition();
+}
+
+void unlink(model::IClipPtr clip)
+{
+    model::SequencePtr sequence = getSequence();
+    ASSERT_NONZERO(clip->getLink());
+    ASSERT_NONZERO(clip->getLink()->getLink());
+    util::thread::RunInMainAndWait([sequence,clip]()
+    {
+        (new gui::timeline::command::UnlinkClips(getSequence(),boost::assign::list_of(clip)(clip->getLink())))->submit();
+    });
 }
 
 } // namespace

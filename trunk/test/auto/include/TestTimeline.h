@@ -40,6 +40,8 @@ public:
 
     void testDeletion();
 
+    void testDeletionWithUnlinkedClips();
+
     void testDnd();
 
     /// Test drag and drop scenarios specific to having multiple tracks in the
