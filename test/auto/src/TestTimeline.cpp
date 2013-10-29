@@ -263,8 +263,84 @@ void TestTimeline::testDeletion()
     }
     {
         StartTest("When deleting a clip, an in-only, and a out-only transition must be deleted also.");
+        // todo
     }
 };
+
+void TestTimeline::testDeletionWithUnlinkedClips()
+{
+    StartTestSuite();
+    {
+        StartTest("AudioClip: When deleting with shift, all tracks must be shifted, even if no clips are selected in them.");
+        DeselectAllClips();
+        unlink(VideoClip(0,2));
+        Click(Center(VideoClip(0,2)));
+        Type(WXK_DELETE);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        Click(Center(AudioClip(0,2)));
+        Type(WXK_DELETE, wxMOD_SHIFT);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        Undo(3);
+    }
+    {
+        StartTest("VideoClip: When deleting with shift, all tracks must be shifted, even if no clips are selected in them.");
+        DeselectAllClips();
+        unlink(AudioClip(0,2));
+        Click(Center(AudioClip(0,2)));
+        Type(WXK_DELETE);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
+        Click(Center(VideoClip(0,2)));
+        Type(WXK_DELETE, wxMOD_SHIFT);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,2)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        Undo(3);
+    }
+    {
+        StartTest("AudioClip: When deleting with shift, and another track has a non selected clip in the to-be-shifted region, do not shift.");
+        DeselectAllClips();
+        unlink(VideoClip(0,2));
+        Click(Center(VideoClip(0,2)));
+        TrimLeft(VideoClip(0,2), 20, false);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        Click(Center(AudioClip(0,2)));
+        Type(WXK_DELETE, wxMOD_SHIFT);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_DIFFERS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_EQUALS(AudioClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        Undo(3);
+    }
+    {
+        StartTest("VideoClip: When deleting with shift, and another track has a non selected clip in the to-be-shifted region, do not shift.");
+        DeselectAllClips();
+        unlink(AudioClip(0,2));
+        Click(Center(AudioClip(0,2)));
+        TrimLeft(AudioClip(0,2), 20, false);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        Click(Center(VideoClip(0,2)));
+        Type(WXK_DELETE, wxMOD_SHIFT);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,1));
+        ASSERT_DIFFERS(AudioClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        ASSERT_EQUALS(AudioClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfAudioClip(0,3));
+        Undo(3);
+    }
+}
 
 void TestTimeline::testDnd()
 {

@@ -119,8 +119,8 @@ DECLAREENUM(LogLevel, \
 #define ASSERT_IMPLIES(value1,value2)               if ((!(value1) || value2)) ; else  LogVar(#value1 ## " ==> " #value2,   __FILE__, __LINE__,__FUNCTION__).LOGVAR_A
 #define ASSERT_CONTAINS(container,value)            ASSERT(find(container.begin(),container.end(),value) != container.end())(container)(value)
 #define ASSERT_CONTAINS_NOT(container,value)        ASSERT(find(container.begin(),container.end(),value) == container.end())(container)(value)
-#define ASSERT_MAP_CONTAINS(container,value)        ASSERT(container.find(value) != container.end())(#container)(value)
-#define ASSERT_MAP_CONTAINS_NOT(container,value)    ASSERT(container.find(value) == container.end())(#container)(value)
+#define ASSERT_MAP_CONTAINS(map,key)                ASSERT(map.find(key) != map.end())(#map)(key)
+#define ASSERT_MAP_CONTAINS_NOT(map,key)            ASSERT(map.find(key) == map.end())(#map)(key)
 
 #define ASSERT_ZERO(value)                          ASSERT(value == 0)(value)
 #define ASSERT_NONZERO(value)                       ASSERT(value != 0)(value)
