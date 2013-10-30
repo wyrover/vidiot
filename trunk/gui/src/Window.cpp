@@ -269,13 +269,6 @@ Window::Window()
     Bind(wxEVT_MAXIMIZE,                &Window::onMaximize,            this);
     Bind(wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     GetDocumentManager(), wxID_CLOSE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,	GetDocumentManager(), wxID_CLOSE_ALL);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       GetDocumentManager(), wxID_NEW);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      GetDocumentManager(), wxID_OPEN);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    GetDocumentManager(), wxID_REVERT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      GetDocumentManager(), wxID_SAVE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    GetDocumentManager(), wxID_SAVEAS);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
@@ -369,13 +362,6 @@ Window::~Window()
     Unbind(wxEVT_MAXIMIZE,                &Window::onMaximize,            this);
     Unbind(wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
 
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileClose,     GetDocumentManager(), wxID_CLOSE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileCloseAll,  GetDocumentManager(), wxID_CLOSE_ALL);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileNew,       GetDocumentManager(), wxID_NEW);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileOpen,      GetDocumentManager(), wxID_OPEN);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileRevert,    GetDocumentManager(), wxID_REVERT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSave,      GetDocumentManager(), wxID_SAVE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnFileSaveAs,    GetDocumentManager(), wxID_SAVEAS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
@@ -444,12 +430,14 @@ void Window::onOpenProject( model::EventOpenProject &event )
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
     updateTitle();
+    mWorker->start();
     event.Skip();
 }
 
 void Window::onCloseProject( model::EventCloseProject &event )
 {
     updateTitle();
+    mWorker->abort();
     event.Skip();
 }
 
