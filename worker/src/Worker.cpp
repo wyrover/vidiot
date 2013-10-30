@@ -17,6 +17,7 @@
 
 #include "Worker.h"
 
+#include "StatusBar.h"
 #include "UtilThread.h"
 #include "WorkerEvent.h"
 
@@ -36,6 +37,11 @@ Worker::Worker()
 ,   mExecuted(0)
 ,   mExecutedLimit(0)
 {
+}
+
+void Worker::start()
+{
+    mEnabled = true;
 }
 
 void Worker::abort()
@@ -65,7 +71,12 @@ void Worker::abort()
     if (mThread)
     {
         mThread->join();
+        mThread.reset();
     }
+    QueueEvent(new WorkerQueueSizeEvent(0));
+    gui::StatusBar::get().setProcessingText("");
+    gui::StatusBar::get().hideProgressBar();
+    mFifo.flush();
 }
 
 Worker::~Worker()

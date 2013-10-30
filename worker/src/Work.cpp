@@ -40,14 +40,14 @@ void Work::execute()
 {
     VAR_DEBUG(this);
     mCallable();
-    if (!mAbort)
+    util::thread::RunInMainAndDontWait([]
     {
-        util::thread::RunInMainAndDontWait([]
-        {
-            gui::StatusBar::get().hideProgressBar();
-            gui::StatusBar::get().setProcessingText("");
-        });
-    }
+        // Note that - in the code of mCallable - showProgressText can be called.
+        // That method schedules an event that causes the progress bar update.
+        // Therefore, here another event is scheduled that resets the text afterwards.
+        gui::StatusBar::get().hideProgressBar();
+        gui::StatusBar::get().setProcessingText("");
+    });
     QueueEvent(new WorkDoneEvent(self()));
     VAR_DEBUG(this);
 }

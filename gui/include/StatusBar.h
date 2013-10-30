@@ -21,8 +21,9 @@
 #include "UtilSingleInstance.h"
 
 namespace worker {
-    class WorkerQueueSizeEvent;
     class Work;
+    class Worker;
+    class WorkerQueueSizeEvent;
 }
 
 namespace gui {
@@ -71,6 +72,7 @@ public:
 private:
 
     friend class worker::Work; // Done to avoid calling gui objects from the worker thread
+    friend class worker::Worker;
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

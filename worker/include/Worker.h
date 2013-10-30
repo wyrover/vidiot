@@ -41,6 +41,8 @@ public:
 
     Worker();
 
+    void start();
+
     /// Abort any pending work and avoid new work being scheduled
     void abort();
 
