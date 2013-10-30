@@ -115,7 +115,6 @@ const std::string sView("view");
 
 std::ostream& Project::SaveObject(std::ostream& ostream)
 {
-    gui::StatusBar::get().pushInfoText(_("Saving ") + getName() + _(" ..."));
     bool ok = false;
     try
     {
@@ -140,12 +139,7 @@ std::ostream& Project::SaveObject(std::ostream& ostream)
     {
         LOG_ERROR;
     }
-    gui::StatusBar::get().popInfoText();
-    if (ok)
-    {
-        gui::StatusBar::get().timedInfoText(getName() + _(" saved successfully."));
-    }
-    else
+    if (!ok)
     {
         ostream.setstate(std::ios_base::failbit);
     }
@@ -198,6 +192,7 @@ wxFileName Project::createBackupFileName(wxFileName input, int count)
 bool Project::DoSaveDocument(const wxString& file)
 {
     wxFileName saveFileName(file);
+    gui::StatusBar::get().pushInfoText(_("Saving ") + saveFileName.GetFullName() + _(" ..."));
     if (saveFileName.Exists() &&
         Config::ReadBool(Config::sPathBackupBeforeSaveEnabled))
     {
@@ -250,13 +245,20 @@ bool Project::DoSaveDocument(const wxString& file)
     std::ofstream store(file.mb_str(), wxSTD ios::binary);
     if ( !store )
     {
+        gui::StatusBar::get().popInfoText();
         gui::Dialog::get().getConfirmation(_("Save Failed"),_("Could not open save file: " + file));
     }
     else
     {
         if (!SaveObject(store))
         {
+            gui::StatusBar::get().popInfoText();
             gui::Dialog::get().getConfirmation(_("Save Failed"),_("Could not save: " + file));
+        }
+        else
+        {
+            gui::StatusBar::get().popInfoText();
+            gui::StatusBar::get().timedInfoText(saveFileName.GetFullName() + _(" saved successfully."));
         }
     }
     return true;
@@ -278,6 +280,8 @@ bool Project::DoOpenDocument(const wxString& file)
             // ASSERT(mProperties.unique());
             LOG_ERROR;
             gui::Dialog::get().getConfirmation(_("Open Failed"),_("Could not read the contents of: " + file + ". \nVidiot must be restarted ((known bug that opening a project after this will fail)"));
+            Config::WriteBool(Config::sPathAutoLoadEnabled, false); // Ensure that upon next startup not immediately a file is opened, possibly failing again.
+            wxConfigBase::Get()->Flush();
             gui::Window::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_EXIT));
         }
         else
