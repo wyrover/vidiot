@@ -93,6 +93,8 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
 
     // Check values, delete from config if incorrect
+    checkLong(Config::sPathMakeSequenceEmptyClipLength, 0, 100000);
+    checkLong(Config::sPathMakeSequencePrefixLength, 1, 100);
     checkBool(Config::sPathAutoLoadEnabled);
     checkBool(Config::sPathBackupBeforeSaveEnabled);
     checkLong(Config::sPathBackupBeforeSaveMaximum, 0, 10000);
@@ -115,6 +117,8 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     checkLong(Config::sPathDebugMaxRenderLength, 0, 1000000);
 
     // Set all defaults here
+    setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
+    setDefault(Config::sPathMakeSequencePrefixLength, 14);
     setDefault(Config::sPathAutoLoadEnabled, false);
     setDefault(Config::sPathBackupBeforeSaveEnabled, true);
     setDefault(Config::sPathBackupBeforeSaveMaximum, 10);
@@ -408,6 +412,8 @@ const wxString Config::sPathDefaultVideoWidth           ("/Video/DefaultWidth");
 const wxString Config::sPathLastOpened                  ("/Project/LastOpened");
 const wxString Config::sPathLogLevel                    ("/Debug/LogLevel");
 const wxString Config::sPathLogLevelAvcodec             ("/Debug/LogLevelAvcodec");
+const wxString Config::sPathMakeSequenceEmptyClipLength ("/MakeSequence/EmptyLength");
+const wxString Config::sPathMakeSequencePrefixLength    ("/MakeSequence/PrefixLength");
 const wxString Config::sPathMarkerBeginAddition         ("/Timeline/MarkerBeginAddition");
 const wxString Config::sPathMarkerEndAddition           ("/Timeline/MarkerEndAddition");
 const wxString Config::sPathOverruleFourCC              ("/Video/FourCC");

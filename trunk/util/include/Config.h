@@ -114,6 +114,8 @@ public:
     static const wxString sPathLastOpened;
     static const wxString sPathLogLevel;
     static const wxString sPathLogLevelAvcodec;
+    static const wxString sPathMakeSequenceEmptyClipLength;
+    static const wxString sPathMakeSequencePrefixLength;
     static const wxString sPathMarkerBeginAddition;
     static const wxString sPathMarkerEndAddition;
     static const wxString sPathOverruleFourCC; ///< Used to overrule the FourCC for encoding MPEG4 formy Car DVD player (only swallows MPEG4 labeled with XVID)
@@ -131,9 +133,9 @@ public:
     static const wxString sPathWindowW;
     static const wxString sPathWindowX;
     static const wxString sPathWindowY;
+    static const wxString sPathWorkspacePerspectiveCurrent;
     static const wxString sPathWorkspacePerspectiveName;
     static const wxString sPathWorkspacePerspectiveSaved;
-    static const wxString sPathWorkspacePerspectiveCurrent;
 
 private:
 

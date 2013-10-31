@@ -11,13 +11,23 @@
 </tr>
 
 <tr>
-<td valign=top>General</td>
+<td valign=top>Load/Save</td>
 <td valign=top>Load last project on startup</td>
 <td valign=top>When checked, after startup the most recently edited project is automatically opened.</td>
 </tr>
 
 <tr>
-<td rowspan=5>Video</td>
+<td valign=top rowspan="2">Project view</td>
+<td valign=top>Length of empty division </td>
+<td valign=top>If non-zero, gaps are introduced when creating a filled sequence. This setting indicates the length of these gaps.</td>
+</tr>
+<tr>
+<td valign=top>Length of name (prefix) to be matched</td>
+<td valign=top>Amount of characters checked to detect name differences. If the first 'prefix' characters of the file name are equal then no gap is introduced. Else, a gap is inserted between the clips.</td>
+</tr>
+
+<tr>
+<td valign=top rowspan=5>Video</td>
 <td valign=top>Framerate for new projects</td>
 <td valign=top>Output framerate (fps) to be used for projects. It is not possible to change this after creation of the project.</td>
 </tr>
@@ -45,7 +55,7 @@
 </tr>
 
 <tr>
-<td rowspan=2>Audio</td>
+<td valign=top rowspan=2>Audio</td>
 <td valign=top>Default audio sample rate</td>
 <td valign=top>Output audio sample rate of new projects. It is not possible to change this after creation of the project.</td>
 </tr>
@@ -55,7 +65,7 @@
 </tr>
 
 <tr>
-<td rowspan=3>Timeline</td>
+<td valign=top rowspan=3>Timeline</td>
 <td valign=top>Begin marker expansion/contraction (s)</td>
 <td valign=top>When starting a new <a href="timeline.html#region">region</a>, the begin position can be slightly offset to the position at which shift was pressed. use this value to adjust that offset. Can be negative to move to the left, or positive to move to the right.</td>
 </tr>

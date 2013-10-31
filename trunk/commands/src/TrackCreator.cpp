@@ -18,6 +18,7 @@
 #include "TrackCreator.h"
 
 #include "ClipCreator.h"
+#include "Config.h"
 #include "Node.h"
 #include "AudioClip.h"
 #include "AudioFile.h"
@@ -38,14 +39,32 @@ TrackCreator::TrackCreator(model::NodePtrs assets)
 ,   mVideo(boost::make_shared<model::VideoTrack>())
 ,   mAudio(boost::make_shared<model::AudioTrack>())
 {
+    wxString previousPrefix("");
+    int prefixLength = Config::ReadLong(Config::sPathMakeSequencePrefixLength);
+    int emptyLength = Config::ReadLong(Config::sPathMakeSequenceEmptyClipLength);
+
     for ( model::NodePtr asset : mAssets )
     {
         model::FilePtr file = boost::dynamic_pointer_cast<model::File>(asset);
         if (file && file->canBeOpened())
         {
+            if (emptyLength > 0)
+            {
+                wxString newPrefix(file->getName().Left(prefixLength));
+                if (!previousPrefix.IsEmpty() &&
+                    !previousPrefix.IsSameAs(newPrefix))
+                {
+                    mVideo->addClips(boost::assign::list_of(boost::make_shared<model::EmptyClip>(emptyLength)));
+                    mAudio->addClips(boost::assign::list_of(boost::make_shared<model::EmptyClip>(emptyLength)));
+                }
+            }
+
             std::pair<model::IClipPtr,model::IClipPtr> videoClip_audioClip = ClipCreator::makeClips(file);
+
             mVideo->addClips(boost::assign::list_of(videoClip_audioClip.first));
             mAudio->addClips(boost::assign::list_of(videoClip_audioClip.second));
+
+            previousPrefix = file->getName().Left(prefixLength);
         }
     }
 }
