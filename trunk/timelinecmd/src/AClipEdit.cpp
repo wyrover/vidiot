@@ -78,6 +78,8 @@ bool AClipEdit::Do()
 
         replaceLinks();
 
+        // todo at end of clip edit, remove any empty clips which are the last clips of the track
+
         mInitialized = true;
 
         // The following are no longer required (avoid extra memory use):

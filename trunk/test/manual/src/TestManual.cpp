@@ -75,7 +75,6 @@ void TestManual::testManual()
     StartTest("Manual...");
     LOG_ERROR << dump(getSequence());
 
-    // todo at end of clip edit, remove any empty clips which are the last clips of the track
     pause(60000 * 60); // One hour should be enough...
 }
 
