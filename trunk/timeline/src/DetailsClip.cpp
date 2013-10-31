@@ -279,7 +279,16 @@ void DetailsClip::setClip(model::IClipPtr clip)
             // For audio and video clips and for transitions, the length can be edited.
             determineClipSizeBounds();
             updateLengthButtons();
-            mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(mClip->getLength()) + _(" seconds"));
+
+            model::IClipPtr link = mClip->getLink();
+            if (link && link->getLength() != mClip->getLength())
+            {
+                mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(mClip->getLength()) + "/" + model::Convert::ptsToHumanReadibleString(link->getLength()));
+            }
+            else
+            {
+                mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(mClip->getLength()));
+            }
         }
 
         if (mVideoClip)
@@ -743,7 +752,8 @@ void DetailsClip::determineClipSizeBounds()
 
 void DetailsClip::updateLengthButtons()
 {
-    if (!mClip)
+    if (!mClip ||
+        mClip->getLink() && mClip->getLink()->getLength() != mClip->getLength())
     {
         for ( wxToggleButton* button : mLengthButtons )
         {
