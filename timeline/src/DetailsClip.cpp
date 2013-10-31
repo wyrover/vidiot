@@ -480,6 +480,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     // must be used.
     setClip(command->getNewClip());
     //NOT: updateLengthButtons(); -- this is automatically done after selecting a new clip
+    getTimeline().SetFocus();
 
 }
 
