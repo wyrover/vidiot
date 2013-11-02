@@ -252,6 +252,11 @@ void Selection::change(model::IClips selection)
     // NOT: QueueEvent(new EventSelectionUpdate(0)); // unselectAll() already queues an event.
 }
 
+void Selection::updateOnEdit()
+{
+    ProcessEvent(EventSelectionUpdate(0));
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////

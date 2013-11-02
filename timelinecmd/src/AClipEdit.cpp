@@ -24,6 +24,7 @@
 #include "EmptyClip.h"
 #include "EmptyClip.h"
 #include "Logging.h"
+#include "Selection.h"
 #include "Sequence.h"
 #include "Timeline.h"
 #include "Track.h"
@@ -78,7 +79,7 @@ bool AClipEdit::Do()
 
         replaceLinks();
 
-        // todo at end of clip edit, remove any empty clips which are the last clips of the track
+        removeEmptyClipsAtEndOfTracks();
 
         mInitialized = true;
 
@@ -96,6 +97,8 @@ bool AClipEdit::Do()
     }
 
     doExtraAfter();
+
+    getTimeline().getSelection().updateOnEdit();
 
     if (!mParams.empty())
     {
@@ -132,6 +135,8 @@ bool AClipEdit::Undo()
     }
 
     undoExtraAfter();
+
+    getTimeline().getSelection().updateOnEdit();
 
     if (!mParamsUndo.empty())
     {
@@ -178,6 +183,7 @@ void AClipEdit::Revert()
     mParamsUndo.clear();
     mReplacements.clear();
     mExpandedReplacements.clear();
+    getTimeline().getSelection().updateOnEdit();
     mInitialized = false;
 }
 
@@ -817,6 +823,23 @@ void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
         if (inregion)
         {
             replace(track,removed,length);
+        }
+    }
+}
+
+void AClipEdit::removeEmptyClipsAtEndOfTracks()
+{
+    for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
+    {
+        model::IClips clips = track->getClips();
+        if (!clips.empty())
+        {
+            model::IClips::iterator it = clips.end();
+            --it;
+            if ((*it)->isA<model::EmptyClip>())
+            {
+                removeClip(*it);
+            }
         }
     }
 }

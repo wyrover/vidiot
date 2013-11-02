@@ -142,27 +142,35 @@ void TestFileTypes::executeTest(wxString filetypesDir)
         }
         else
         {
+            ASSERT(file->hasAudio());
             DragFromProjectViewToTimeline( file,  getTimeline().GetScreenPosition() - getTimeline().getScrolling().getOffset()  + wxPoint(0, VCenter(AudioTrack(0))) );
         }
         if (file->hasVideo())
         {
             ASSERT_VIDEOTRACK0(VideoClip);
+            ASSERT_EQUALS(VideoTrack(0)->getLength(),VideoClip(0,0)->getLength());
         }
         else
         {
-            ASSERT_VIDEOTRACK0(EmptyClip);
+            ASSERT_ZERO(VideoTrack(0)->getLength());
         }
         if (file->hasAudio())
         {
             ASSERT_AUDIOTRACK0(AudioClip);
+            ASSERT_EQUALS(AudioTrack(0)->getLength(),AudioClip(0,0)->getLength());
         }
         else
         {
-            ASSERT_AUDIOTRACK0(EmptyClip);
+            ASSERT_ZERO(AudioTrack(0)->getLength());
         }
-        ASSERT_EQUALS(VideoTrack(0)->getLength(),VideoClip(0,0)->getLength());
-        ASSERT_EQUALS(AudioTrack(0)->getLength(),AudioClip(0,0)->getLength());
-        Play(HCenter(VideoClip(0,0)), 1000);
+        if (file->hasVideo())
+        {
+            Play(HCenter(VideoClip(0,0)), 1000);
+        }
+        else
+        {
+            Play(HCenter(AudioClip(0,0)), 1000);
+        }
         Undo(2);
     }
 

@@ -61,6 +61,11 @@ public:
     /// Any other selection is cleared.
     void change(model::IClips selection);
 
+
+    /// Whenever the sequence is changed (by a replacement of clips) then the
+    /// list of selected clips must be updated accordingly.
+    void updateOnEdit();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

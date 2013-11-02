@@ -26,6 +26,7 @@
 #include "HelperConfig.h"
 #include "HelperDetails.h"
 #include "HelperModel.h"
+#include "HelperPopupMenu.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
@@ -222,6 +223,65 @@ void TestDetailsClip::testChangeLengthOfTransition()
             pressLengthButton(button);
             Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
         }
+    }
+}
+
+void TestDetailsClip::testChangeLengthAfterCreatingTransition()
+{
+    StartTestSuite();
+    Zoom level(2);
+
+    auto ASSERT_LENGTH_BUTTONS_DISABLED = []
+    {
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+        {
+            ASSERT(!button->IsEnabled());
+        }
+    };
+
+    {
+        StartTest("Select clip, then create InTransition: Length buttons disabled.");
+        Click(Center(VideoClip(0,1)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('i');
+        ASSERT_DETAILSCLIP(VideoClip(0,2));
+        ASSERT_LENGTH_BUTTONS_DISABLED();
+        Undo();
+        ASSERT(VideoClip(0,1)->getSelected());
+    }
+    {
+        StartTest("Select clip, then create InTransition: Length buttons disabled.");
+        Click(Center(VideoClip(0,1)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('o');
+        ASSERT_DETAILSCLIP(VideoClip(0,1));
+        ASSERT_LENGTH_BUTTONS_DISABLED();
+        Undo();
+        ASSERT(VideoClip(0,1)->getSelected());
+    }
+    {
+        StartTest("Select clip, then create InTransition: Length buttons disabled.");
+        Click(Center(VideoClip(0,1)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('p');
+        ASSERT_DETAILSCLIP(VideoClip(0,2));
+        ASSERT_LENGTH_BUTTONS_DISABLED();
+        Undo();
+        ASSERT(VideoClip(0,1)->getSelected());
+    }
+    {
+        StartTest("Select clip, then create InTransition: Length buttons disabled.");
+        Click(Center(VideoClip(0,1)));
+        ASSERT(VideoClip(0,1)->getSelected());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('n');
+        ASSERT_DETAILSCLIP(VideoClip(0,1));
+        ASSERT_LENGTH_BUTTONS_DISABLED();
+        Undo();
+        ASSERT(VideoClip(0,1)->getSelected());
     }
 }
 
