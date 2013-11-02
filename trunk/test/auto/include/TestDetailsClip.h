@@ -41,6 +41,14 @@ public:
 
     void testChangeLengthOfTransition();
 
+    /// After selecting a clip, then creating a fade in to the clip, and then immediately pressing
+    /// one of the length buttons still available caused a crash when applying the trim. This was
+    /// caused by the fact that the clip (as seen in the DetailsClip class) was no longer part of
+    /// the track because of the create transition (particularly, because a trim was executed on
+    /// the clip to make room for the transition). In fact, the details view showed the wrong clip
+    /// at that point (it still showed info on the 'pre-create-transition' clip).
+    void testChangeLengthAfterCreatingTransition();
+
     void testTransform();
 
     void testTransform_Boundaries();

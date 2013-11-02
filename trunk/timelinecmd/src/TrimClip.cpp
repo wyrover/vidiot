@@ -66,7 +66,6 @@ TrimClip::~TrimClip()
     if (!isInitialized())
     {
         Revert();
-        getTimeline().getSelection().change(boost::assign::list_of(mOriginalClip)(mOriginalLink));
     }
 }
 
@@ -117,9 +116,8 @@ void TrimClip::update(pts diff, bool shift)
     else
     {
         applyTrim();
+		    getTimeline().getSelection().updateOnEdit(); // Selected clip is changed when applying the trim
     }
-
-    getTimeline().getSelection().change(boost::assign::list_of(mNewClip)(mNewLink));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,7 +131,6 @@ void TrimClip::initialize()
 
 void TrimClip::doExtraAfter()
 {
-    getTimeline().getSelection().change(boost::assign::list_of(mNewClip)(mNewLink));
     if (mCursorPositionBefore != mCursorPositionAfter)
     {
         getTimeline().getCursor().setLogicalPosition(mCursorPositionAfter);
@@ -142,7 +139,6 @@ void TrimClip::doExtraAfter()
 
 void TrimClip::undoExtraAfter()
 {
-    getTimeline().getSelection().change(boost::assign::list_of(mOriginalClip)(mOriginalLink));
     if (mCursorPositionBefore != mCursorPositionAfter)
     {
         getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore);

@@ -214,11 +214,7 @@ void DeleteSelectedClips::storeSelection()
 
 void DeleteSelectedClips::restoreSelection()
 {
-    getTimeline().getSelection().unselectAll();
-    for ( model::IClipPtr clip : mSelected )
-    {
-        clip->setSelected(true);
-    }
+    getTimeline().getSelection().change(mSelected);
 }
 
 //////////////////////////////////////////////////////////////////////////

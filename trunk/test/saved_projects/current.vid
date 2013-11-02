@@ -2180,7 +2180,7 @@
 											<Track object_id="_154">
 												<mIndex>0</mIndex>
 												<mClips>
-													<count>22</count>
+													<count>21</count>
 													<item_version>1</item_version>
 													<item>
 														<px class_id_reference="42" object_id_reference="_24"></px>
@@ -2256,20 +2256,6 @@
 													<item>
 														<px class_id_reference="42" object_id_reference="_143"></px>
 													</item>
-													<item>
-														<px class_id_reference="48" object_id="_156">
-															<Clip>
-																<mLink>
-																	<ptr>
-																		<px class_id="-1"></px>
-																	</ptr>
-																</mLink>
-															</Clip>
-															<IAudio></IAudio>
-															<IVideo></IVideo>
-															<mLength>1</mLength>
-														</px>
-													</item>
 												</mClips>
 												<mHeight>50</mHeight>
 											</Track>
@@ -2283,7 +2269,7 @@
 							</px>
 						</item>
 						<item>
-							<px class_id_reference="22" object_id="_157">
+							<px class_id_reference="22" object_id="_156">
 								<Node>
 									<INode></INode>
 									<parent>
@@ -2293,11 +2279,11 @@
 										<count>1</count>
 										<item_version>1</item_version>
 										<item>
-											<px class_id_reference="29" object_id="_158">
+											<px class_id_reference="29" object_id="_157">
 												<Node>
 													<INode></INode>
 													<parent>
-														<px class_id_reference="22" object_id_reference="_157"></px>
+														<px class_id_reference="22" object_id_reference="_156"></px>
 													</parent>
 													<mChildren>
 														<count>0</count>
@@ -2339,7 +2325,7 @@
 					<px class_id_reference="23" object_id_reference="_9"></px>
 				</item>
 				<item>
-					<px class_id_reference="22" object_id_reference="_157"></px>
+					<px class_id_reference="22" object_id_reference="_156"></px>
 				</item>
 			</mOpenFolders>
 		</projectview>

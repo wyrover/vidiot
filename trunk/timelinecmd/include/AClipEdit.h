@@ -323,6 +323,12 @@ private:
     /// \param tracks list of track (audio/video) to be updated
     void mergeConsecutiveEmptyClips(model::Tracks tracks);
 
+    /// If there's an empty clip at the end of the track it has no purpose other than
+    /// enlarging the scrolled area. Thus, remove these last empty clips. That'll
+    /// potentially avoid adding a lot of unwanted black video at the end, after
+    /// rendering.
+    void removeEmptyClipsAtEndOfTracks();
+
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
