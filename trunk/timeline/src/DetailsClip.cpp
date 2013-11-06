@@ -67,6 +67,9 @@ boost::shared_ptr<TARGET> getTypedClip(model::IClipPtr clip)
 const double sScalingIncrement = 0.01;
 const int sPositionPageSize = 10;
 const int sOpacityPageSize = 10;
+const wxString sVideo(_("Video"));
+const wxString sAudio(_("Audio"));
+const wxString sTransition(_("Transition"));
 
 DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     :   DetailsPanel(parent,timeline)
@@ -117,7 +120,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     updateLengthButtons();
     addOption(_("Fixed lengths (s)"),lengthbuttonspanel);
 
-    addBox(_("Video"));
+    addBox(sVideo);
 
     wxPanel* opacitypanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
@@ -187,6 +190,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
     mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+
+    addBox(sTransition);
 
     Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
 
@@ -290,6 +295,9 @@ void DetailsClip::setClip(model::IClipPtr clip)
                 mCurrentLength->SetLabel(model::Convert::ptsToHumanReadibleString(mClip->getLength()));
             }
         }
+
+        showBox(sVideo, mVideoClip);
+        showBox(sTransition, mTransition);
 
         if (mVideoClip)
         {

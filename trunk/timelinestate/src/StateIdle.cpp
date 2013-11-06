@@ -36,6 +36,7 @@
 #include "Selection.h"
 #include "Sequence.h"
 #include "SplitAtCursor.h"
+#include "SplitAtCursorAndTrim.h"
 #include "StateDragging.h"
 #include "StateLeftDown.h"
 #include "StateMoveDivider.h"
@@ -144,23 +145,27 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SPACE:     return start();                                                      break;
-    case WXK_DELETE:    getSelection().deleteClips();                                        break;
-    case WXK_F1:        getTooltip().show(sTooltip);                                         break;
-    case 'c':           addTransition(model::TransitionTypeInOut);                           break;
-    case 'C':           addTransition(model::TransitionTypeInOut);                           break;
-    case 'i':           addTransition(model::TransitionTypeIn);                              break;
-    case 'I':           addTransition(model::TransitionTypeIn);                              break;
-    case 'o':           addTransition(model::TransitionTypeOut);                             break;
-    case 'O':           addTransition(model::TransitionTypeOut);                             break;
-    case 's':           (new command::SplitAtCursor(getSequence()))->submit();               break;
-    case 'S':           (new command::SplitAtCursor(getSequence()))->submit();               break;
-    case '-':           getZoom().change( evt.getCtrlDown() ? -1000 : -1);                   break;
-    case '=':           getZoom().change( evt.getCtrlDown() ?  1000 :  1);                   break;
-    case WXK_LEFT:      evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame(); break;
-    case WXK_RIGHT:     evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame(); break;
-    case WXK_HOME:      getCursor().home();                                                  break;
-    case WXK_END:       getCursor().end();                                                   break;
+    case WXK_SPACE:     return start();                                                          break;
+    case WXK_DELETE:    getSelection().deleteClips();                                            break;
+    case WXK_F1:        getTooltip().show(sTooltip);                                             break;
+    case 'b':
+    case 'B':           (new command::SplitAtCursorAndTrim(getSequence(), true))->submitIfPossible(); break;
+    case 'e':
+    case 'E':           (new command::SplitAtCursorAndTrim(getSequence(), false))->submitIfPossible(); break;
+    case 'c':
+    case 'C':           addTransition(model::TransitionTypeInOut);                               break;
+    case 'i':
+    case 'I':           addTransition(model::TransitionTypeIn);                                  break;
+    case 'o':
+    case 'O':           addTransition(model::TransitionTypeOut);                                 break;
+    case 's':
+    case 'S':           (new command::SplitAtCursor(getSequence()))->submit();                   break;
+    case '-':           getZoom().change( evt.getCtrlDown() ? -1000 : -1);                       break;
+    case '=':           getZoom().change( evt.getCtrlDown() ?  1000 :  1);                       break;
+    case WXK_LEFT:      evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();     break;
+    case WXK_RIGHT:     evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame();     break;
+    case WXK_HOME:      getCursor().home();                                                      break;
+    case WXK_END:       getCursor().end();                                                       break;
     }
     return forward_event();
 }

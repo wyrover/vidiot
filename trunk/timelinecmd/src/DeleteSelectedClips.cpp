@@ -195,35 +195,12 @@ void DeleteSelectedClips::undoExtraAfter()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void DeleteSelectedClips::storeSelection()
-{
-    for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
-    {
-        for ( model::IClipPtr clip : track->getClips() )
-        {
-            if (clip->getSelected())
-            {
-                mSelected.push_back(clip);
-            }
-        }
-    }
-}
-
-void DeleteSelectedClips::restoreSelection()
-{
-    getTimeline().getSelection().change(mSelected);
-}
-
-//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<( std::ostream& os, const DeleteSelectedClips& obj )
 {
-    os << static_cast<const AClipEdit&>(obj);
+    os << static_cast<const AClipEdit&>(obj) << '|' << obj.mShift;
     return os;
 }
 

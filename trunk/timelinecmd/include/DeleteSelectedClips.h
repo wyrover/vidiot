@@ -56,18 +56,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mShift;             ///< True if the empty area left over after deletion should be trimmed
-    model::IClips mSelected; ///< List of clips that was selected before the edit operation was done
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Store the list of currently selected clips
-    void storeSelection();
-
-    /// Restore the list of selected clips as was saved before applying the edit
-    void restoreSelection();
-
 };
 
 }}} // namespace

@@ -234,6 +234,15 @@ protected:
     /// \return lists of adjacent clips between interval begin and end positions (for all intervals)
     model::IClips splitTracksAndFindClipsToBeRemoved(PtsIntervals removed);
 
+    /// Store the current selection for restoring later
+    /// \see restoreSelection
+    /// \post mSelection
+    void storeSelection();
+
+    /// Restore a previously store selection
+    /// \pre mSelection
+    void restoreSelection();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -243,6 +252,8 @@ private:
     bool mInitialized;                      ///< True if Do has been executed at least once.
     model::MoveParameters mParams;          ///< Holds the actions to make the 'forward' (Do) change
     model::MoveParameters mParamsUndo;      ///< Holds the actions to make the 'reverse' (Undo) change
+
+    boost::optional< model::IClips > mSelected; ///< Store selection
 
     /// Holds all replacements that were done for this command.
     /// Used to keep updated clip link information correct.
