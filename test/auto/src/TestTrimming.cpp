@@ -84,4 +84,40 @@ void TestTrimming::testSnapping()
 
 }
 
+void TestTrimming::testKeyboardTrimming()
+{
+    StartTestSuite();
+    Zoom level(3);
+    {
+        StartTest("Begin trim");
+        PositionCursor(HCenter(VideoClip(0,2)));
+        pts newlength = VideoClip(0,2)->getRightPts() - getTimeline().getCursor().getLogicalPosition();
+        Type('b');
+        ASSERT(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT(VideoClip(0,2)->getLength(), newlength);
+        ASSERT(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,2)->getLeftPts());
+        Undo();
+    }
+    {
+        StartTest("End trim");
+        PositionCursor(HCenter(VideoClip(0,2)));
+        pts newlength = getTimeline().getCursor().getLogicalPosition() - VideoClip(0,2)->getLeftPts();
+        Type('e');
+        ASSERT(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        ASSERT(VideoClip(0,2)->getLength(), newlength);
+        ASSERT(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+        ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,2)->getRightPts());
+        Undo();
+    }
+    {
+        StartTest("No change when cursor is on cut");
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+        PositionCursor(LeftPixel(VideoClip(0,2)));
+        Type('b');
+        Type('e');
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+    }
+}
+
 } // namespace

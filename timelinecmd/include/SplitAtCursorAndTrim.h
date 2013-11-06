@@ -15,15 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DELETE_SELECTED_CLIPS_H
-#define DELETE_SELECTED_CLIPS_H
+#ifndef SPLIT_AT_CURSOR_AND_TRIM_H
+#define SPLIT_AT_CURSOR_AND_TRIM_H
 
-#include "AClipEdit.h"
+#include "Combiner.h"
 
 namespace gui { namespace timeline { namespace command {
 
-class DeleteSelectedClips
-    :   public AClipEdit
+class SplitAtCursorAndTrim
+    :   public ::command::Combiner
 {
 public:
 
@@ -31,23 +31,11 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit DeleteSelectedClips(model::SequencePtr sequence, bool shift = false);
+    SplitAtCursorAndTrim(model::SequencePtr sequence, bool backwards);
 
-    virtual ~DeleteSelectedClips();
+    virtual ~SplitAtCursorAndTrim();
 
-    //////////////////////////////////////////////////////////////////////////
-    // ACLIPEDIT INTERFACE
-    //////////////////////////////////////////////////////////////////////////
-
-    void initialize() override;
-    void doExtraBefore() override;
-    void undoExtraAfter() override;
-
-    //////////////////////////////////////////////////////////////////////////
-    // LOGGING
-    //////////////////////////////////////////////////////////////////////////
-
-    friend std::ostream& operator<<( std::ostream& os, const DeleteSelectedClips& obj );
+    void submitIfPossible();
 
 private:
 
@@ -55,9 +43,12 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    bool mShift;             ///< True if the empty area left over after deletion should be trimmed
+    model::SequencePtr mSequence;
+    pts mPosition;
+    bool mBackwards;
+
 };
 
 }}} // namespace
 
-#endif // DELETE_SELECTED_CLIPS_H
+#endif // SPLIT_AT_CURSOR_AND_TRIM_H

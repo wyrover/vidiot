@@ -590,6 +590,28 @@ model::IClips AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsIntervals removed
     return result;
 }
 
+void AClipEdit::storeSelection()
+{
+    model::IClips selected;
+    for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
+    {
+        for ( model::IClipPtr clip : track->getClips() )
+        {
+            if (clip->getSelected())
+            {
+                selected.push_back(clip);
+            }
+        }
+    }
+    mSelected.reset(selected);
+}
+
+void AClipEdit::restoreSelection()
+{
+    ASSERT(mSelected);
+    getTimeline().getSelection().change(*mSelected);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
