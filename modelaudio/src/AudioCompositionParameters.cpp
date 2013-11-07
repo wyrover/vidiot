@@ -68,22 +68,22 @@ int AudioCompositionParameters::getNrChannels() const
 // CONVERSION HELPERS
 //////////////////////////////////////////////////////////////////////////
 
-int AudioCompositionParameters::ptsToSamples(pts position) const
+samplecount AudioCompositionParameters::ptsToSamples(pts position) const
 {
     return Convert::ptsToSamples(mSampleRate, mNrChannels, position);
 }
 
-pts AudioCompositionParameters::samplesToPts(int nSamples) const
+pts AudioCompositionParameters::samplesToPts(samplecount nSamples) const
 {
     return Convert::samplesToPts(mSampleRate, mNrChannels, nSamples);
 }
 
-int AudioCompositionParameters::samplesToFrames(int nSamples) const
+int AudioCompositionParameters::samplesToFrames(samplecount nSamples) const
 {
     return Convert::samplesToFrames(mNrChannels, nSamples);
 }
 
-int AudioCompositionParameters::framesToSamples(int nFrames) const
+samplecount AudioCompositionParameters::framesToSamples(int nFrames) const
 {
     return Convert::framesToSamples(mNrChannels, nFrames);
 }

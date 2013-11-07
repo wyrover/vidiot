@@ -39,6 +39,7 @@ EmptyClip::EmptyClip()
     :	Clip()
     ,   mLength(0)
     ,   mProgress(0)
+    ,   mSampleProgress(0)
 {
     VAR_DEBUG(*this);
 }
@@ -47,6 +48,7 @@ EmptyClip::EmptyClip(pts length)
     :	Clip()
     ,   mLength(length)
     ,   mProgress(0)
+    ,   mSampleProgress(0)
 {
     VAR_DEBUG(*this)(length);
 }
@@ -55,6 +57,7 @@ EmptyClip::EmptyClip(const EmptyClip& other)
     :   Clip(other)
     ,   mLength(other.mLength)
     ,   mProgress(0)
+    ,   mSampleProgress(0)
 {
     VAR_DEBUG(*this)(other);
 }
@@ -106,6 +109,7 @@ void EmptyClip::moveTo(pts position)
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
     mProgress = position;
+    mSampleProgress = -1;
 }
 
 void EmptyClip::setLink(IClipPtr link)
@@ -186,18 +190,32 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
         return AudioChunkPtr();
     }
 
-    AudioChunkPtr audioChunk =
-        boost::static_pointer_cast<AudioChunk>(
-        boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(getLength() - mProgress)));
-    samplecount partialFrame = audioChunk->getUnreadSampleCount() % parameters.getNrChannels();
+    if (mSampleProgress == -1)
+    {
+        // Initialize after move
+        mSampleProgress = parameters.ptsToSamples(mProgress);
+    }
+
+    // todo why does Vidiot generate so much page faults?
+
+    samplecount totalSamples = parameters.ptsToSamples(mLength);
+    samplecount returnedSamples = std::min(totalSamples - mSampleProgress, parameters.ptsToSamples(1));
+
+    samplecount partialFrame = returnedSamples % parameters.getNrChannels();
     if (partialFrame > 0)
     {
         // There are some samples for which not all the data for all speakers is available. Truncate.
         // Can be caused by rounding differences (ptsToSamples).
-        audioChunk->setAdjustedLength(audioChunk->getUnreadSampleCount() - partialFrame);
+        returnedSamples--;
     }
-    mProgress = getLength() + 1;
-    VAR_AUDIO(audioChunk);
+
+    AudioChunkPtr audioChunk =
+        boost::static_pointer_cast<AudioChunk>(
+        boost::make_shared<EmptyChunk>(parameters.getNrChannels(), returnedSamples));
+    mProgress += 1;
+    mSampleProgress += returnedSamples;
+
+    VAR_AUDIO(audioChunk)(mProgress)(mSampleProgress);
     return audioChunk;
 }
 

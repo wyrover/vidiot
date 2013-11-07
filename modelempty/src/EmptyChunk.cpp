@@ -42,6 +42,7 @@ sample* EmptyChunk::getUnreadSamples()
 {
     if (!mInitialized)
     {
+        VAR_ERROR(mNrSamples);
         mBuffer = static_cast<sample*>(calloc(mNrSamples, AudioChunk::sBytesPerSample));
         mInitialized = true;
     }

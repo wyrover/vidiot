@@ -154,6 +154,7 @@ Player::~Player()
 void Player::play()
 {
     LOG_INFO;
+    ASSERT(wxThread::IsMain());
     if (GetSizer()->IsShown(mEdit))
     {
         endEdit();
@@ -176,6 +177,7 @@ void Player::play_pause()
 void Player::stop()
 {
     LOG_INFO;
+    ASSERT(wxThread::IsMain());
     mDisplay->moveTo(mPosition);
 }
 
