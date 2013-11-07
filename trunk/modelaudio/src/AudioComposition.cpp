@@ -73,7 +73,7 @@ AudioChunkPtr AudioComposition::generate()
 {
     if (mChunks.empty())
     {
-        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1));
+        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1)); // todo what if ptsToSamples gives samples for incorrect no of channges (see emptyclip.cpp)
     }
 
     if (mChunks.size() == 1)

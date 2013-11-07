@@ -50,20 +50,20 @@ public:
 
     /// Convert a pts value to a number of audio samples, given this set of parameters.
     /// \param position pts value to be converted
-    int ptsToSamples(pts position) const;
+    samplecount ptsToSamples(pts position) const;
 
     /// Convert a number of samples to an approximate pts value, given this set of parameters.
     /// \return number of samples required for this number of pts
-    pts samplesToPts(int nSamples) const;
+    pts samplesToPts(samplecount nSamples) const;
 
     /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
     /// \return number of frames stored in given number of samples
     /// \pre nSamples must contain a discrete number of frames (thus nSamples % nChannels == 0)
-    int samplesToFrames(int nSamples) const;
+    int samplesToFrames(samplecount nSamples) const;
 
     /// Convert a number of frames to the required number of samples
     /// \return number of samples stored in given number of frames
-    int framesToSamples(int nFrames) const;
+    samplecount framesToSamples(int nFrames) const;
 
 private:
 

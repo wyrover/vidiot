@@ -351,8 +351,10 @@ wxPoint RightCenter(DraggedClips drag)
 
 void TimelineTriggerWheel(int nSteps)
 {
-    getTimeline().getStateMachine().processWheelEvent(nSteps);
-    waitForIdle();
+    util::thread::RunInMainAndWait([nSteps]
+    {
+        getTimeline().getStateMachine().processWheelEvent(nSteps);
+    });
 }
 
 pixel CursorPosition()

@@ -113,6 +113,10 @@ VideoDisplay::~VideoDisplay()
 void VideoDisplay::play()
 {
     ASSERT(!mPlaying);
+    ASSERT(wxThread::IsMain());
+    ASSERT(!mVideoBufferThreadPtr);
+    ASSERT(!mAudioBufferThreadPtr);
+    ASSERT(!mVideoDisplayThreadPtr);
     VAR_DEBUG(this);
 
     // Ensure that the to-be-started threads do not immediately stop
@@ -172,6 +176,7 @@ void VideoDisplay::play()
 void VideoDisplay::stop()
 {
     VAR_DEBUG(this);
+    ASSERT(wxThread::IsMain());
 
     mAbortThreads = true; // Stop getting new video/audio data
 
@@ -209,6 +214,10 @@ void VideoDisplay::stop()
         mVideoFrames.flush();
         mAudioChunks.flush();
 
+        mVideoBufferThreadPtr.reset();
+        mAudioBufferThreadPtr.reset();
+        mVideoDisplayThreadPtr.reset();
+
         mPlaying = false;
         GetEventHandler()->QueueEvent(new PlaybackActiveEvent(false));
 
@@ -219,6 +228,7 @@ void VideoDisplay::stop()
 void VideoDisplay::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
+    ASSERT(wxThread::IsMain());
 
     stop(); // Stop playback
 
@@ -250,6 +260,7 @@ void VideoDisplay::moveTo(pts position)
 
 void VideoDisplay::setSpeed(int speed)
 {
+    ASSERT(wxThread::IsMain());
     bool wasPlaying = mPlaying;
     mSpeed = speed;
     moveTo(mCurrentVideoFrame?mCurrentVideoFrame->getPts():0);
@@ -309,6 +320,7 @@ void VideoDisplay::audioBufferThread()
 
 bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double playtime)
 {
+    LOG_ERROR;
     if (mStartTime == 0)
     {
         {

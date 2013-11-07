@@ -42,10 +42,12 @@ AudioChunk::AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool 
     {
         if (zero)
         {
+            VAR_ERROR(mNrSamples);
             mBuffer = static_cast<sample*>(calloc( mNrSamples, sBytesPerSample ));
         }
         else
         {
+            VAR_ERROR(mNrSamples);
             mBuffer = static_cast<sample*>(malloc( mNrSamples * sBytesPerSample ));
         }
         ASSERT_NONZERO(mBuffer);
