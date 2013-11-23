@@ -320,7 +320,6 @@ void VideoDisplay::audioBufferThread()
 
 bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double playtime)
 {
-    LOG_ERROR;
     if (mStartTime == 0)
     {
         {
