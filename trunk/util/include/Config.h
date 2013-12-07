@@ -101,6 +101,7 @@ public:
     static const wxString sPathBackupBeforeSaveMaximum;
     static const wxString sPathDebugMaxRenderLength;
     static const wxString sPathDebugShowCrashMenu;
+    static const wxString sPathDebugIncludeScreenShot;
     static const wxString sPathDefaultAudioChannels;
     static const wxString sPathDefaultAudioSampleRate;
     static const wxString sPathDefaultExtension;
