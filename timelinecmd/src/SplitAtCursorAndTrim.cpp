@@ -100,7 +100,7 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(model::SequencePtr sequence, bool bac
     add(new SplitAtCursor(sequence));
     add(new SelectClipsBesidesCursor(sequence, mBackwards));
     add(new DeleteSelectedClips(sequence, true));
-    setName( _("Split at cursor position and remove beginning of clips") );
+    setName( _("Split at cursor position and remove ") + (backwards ? _("begin") : _("end")) + " of clip");
 }
 
 SplitAtCursorAndTrim::~SplitAtCursorAndTrim()
