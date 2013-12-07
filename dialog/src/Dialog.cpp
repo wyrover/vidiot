@@ -22,6 +22,7 @@
 #include "UtilThread.h"
 #include "Window.h"
 #include <wx/choicdlg.h>
+#include <wx/dcscreen.h>
 #include <wx/debugrpt.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
@@ -254,7 +255,7 @@ std::list<wxString> Dialog::getStringsSelection( wxString title, wxString messag
 
 //////////////////////////////////////////////////////////////////////////
 
-int generateDebugReport(bool doexit, bool addcontext)
+int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect screenRect)
 {
     VAR_ERROR(doexit);
     if (doexit && wxCANCEL == wxMessageBox("A fatal error was encountered. Press OK to generate debug report. Press Cancel to terminate.", "Error", wxOK | wxCANCEL, &Window::get()))
@@ -265,6 +266,30 @@ int generateDebugReport(bool doexit, bool addcontext)
 
     wxDebugReportCompress report;
 
+    // todo clean old log files (store in ini?)
+
+    if (screenShot)
+    {
+        // Screen shot added first. This to reduce the changes of the report taking a long time and the
+        // user then moving focus to another window.
+
+        // Ensure that 'fatal error encountered' dialog is gone.
+        boost::this_thread::sleep(boost::posix_time::milliseconds(250));
+
+        wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir()); // Store in TEMP
+        wxString nameWithProcessId; nameWithProcessId << "vidiot_screenshot_" << wxGetProcessId();
+        screenShotFile.SetName(nameWithProcessId);
+        screenShotFile.SetExt("png"); // Default, log in same dir as executable
+        wxScreenDC screen;
+        wxMemoryDC memory;
+        wxBitmap screenshot(screenRect.width, screenRect.height);
+        memory.SelectObject (screenshot);
+        memory.Blit (0, 0, screenRect.width, screenRect.height, &screen, screenRect.x, screenRect.y);
+        memory.SelectObject (wxNullBitmap);
+        screenshot.SaveFile (screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG); 
+        report.AddFile(screenShotFile.GetFullPath(), wxT("Screen shot"));
+    }
+
     if (addcontext)
     {
         report.AddCurrentContext();
@@ -273,13 +298,14 @@ int generateDebugReport(bool doexit, bool addcontext)
 
     if (wxFileName(Config::getFileName()).FileExists())
     {
-        report.AddFile(Config::getFileName(), wxT("options file"));
+        report.AddFile(Config::getFileName(), wxT("Options file"));
     }
 
     if (wxFileName(Log::getFileName()).FileExists())
     {
-        report.AddFile(Log::getFileName(), wxT("text log file"));
+        report.AddFile(Log::getFileName(), wxT("Log file"));
     }
+
 
     if ( wxDebugReportPreviewStd().Show(report) )
     {
@@ -293,13 +319,19 @@ int generateDebugReport(bool doexit, bool addcontext)
     return 0;
 }
 
+// static
+wxRect Dialog::sScreenRect;
+
+// static
+bool Dialog::sIncludeScreenshot;
+
 void Dialog::getDebugReport(bool doexit, bool addcontext)
 {
     VAR_ERROR(doexit);
     if (!mDebugReportGenerated)
     {
        mDebugReportGenerated = true;
-       util::thread::RunInMainAndWait([doexit, addcontext] { generateDebugReport(doexit, addcontext); });
+       util::thread::RunInMainAndWait([doexit, addcontext] { generateDebugReport(doexit, addcontext, Dialog::sIncludeScreenshot, Dialog::sScreenRect); });
     }
 }
 
