@@ -331,6 +331,7 @@ private:
     void mergeConsecutiveEmptyClips();
 
     /// Merge any consecutive empty clips into one clip for the contiguous region.
+    /// Remove any empty clips of length 0
     /// \param tracks list of track (audio/video) to be updated
     void mergeConsecutiveEmptyClips(model::Tracks tracks);
 

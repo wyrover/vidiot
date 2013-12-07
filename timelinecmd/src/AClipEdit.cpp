@@ -544,7 +544,7 @@ void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
         mEmpties = newempties;
         newempties.clear();
         boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
-        wxSafeYield(); // Show update progress, but do not allow user input
+        wxSafeYield(0,true); // Show update progress, but do not allow user input. 'true' is needed because sometimes it's called recursively (particular, in case of bad performance)
     }
 
     getTimeline().beginTransaction();
