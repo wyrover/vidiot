@@ -277,7 +277,7 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect sc
         // Ensure that 'fatal error encountered' dialog is gone.
         boost::this_thread::sleep(boost::posix_time::milliseconds(250));
 
-        wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir().GetFullPath(),""); // Store in TEMP // todo is now stored one too high?
+        wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir().GetFullPath(),""); // Store in TEMP
         wxString nameWithProcessId; nameWithProcessId << "vidiot_screenshot_" << wxGetProcessId();
         screenShotFile.SetName(nameWithProcessId);
         screenShotFile.SetExt("png");
