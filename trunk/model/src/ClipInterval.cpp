@@ -207,7 +207,7 @@ FilePtr ClipInterval::getFile() const
 
 std::ostream& operator<<( std::ostream& os, const ClipInterval& obj )
 {
-    // Keep order same as Transition for 'dump' method
+    // Keep order same as Transition and EmptyClip for 'dump' method
     os  << static_cast<const Clip&>(obj) << '|'
         << std::setw(6) << obj.mOffset << '|'
         << std::setw(6) << obj.mLength;
