@@ -119,6 +119,11 @@ bool AClipEdit::Do()
         getTimeline().modelChanged();
     }
 
+    if (Config::ReadBool(Config::sPathDebugLogSequenceOnEdit))
+    {
+        LOG_INFO << model::dump(getSequence(),1);
+    }
+
     return true;
 }
 
@@ -141,6 +146,11 @@ bool AClipEdit::Undo()
     if (!mParamsUndo.empty())
     {
         getTimeline().modelChanged();
+    }
+
+    if (Config::ReadBool(Config::sPathDebugLogSequenceOnEdit))
+    {
+        LOG_INFO << model::dump(getSequence(),1);
     }
 
     return true;
