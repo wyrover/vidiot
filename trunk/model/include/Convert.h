@@ -73,6 +73,7 @@ public:
 
     /// Convert a pts value to a number of audio samples. One audio sample is one
     /// element for one speaker.
+    /// \note rounding is done such that always data for ALL speakers is available
     /// \param audioRate The rate (samples per second )at which audio will be played (44100/48000/etc.)
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param position pts value to be converted
