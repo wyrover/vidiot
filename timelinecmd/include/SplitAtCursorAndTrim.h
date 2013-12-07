@@ -35,7 +35,7 @@ public:
 
     virtual ~SplitAtCursorAndTrim();
 
-    void submitIfPossible();
+    bool isPossible() override;
 
 private:
 

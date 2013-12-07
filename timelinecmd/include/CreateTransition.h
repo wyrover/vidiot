@@ -46,8 +46,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    /// Determine if a transition is possible
-    bool isPossible();
+    bool isPossible() override;
 
     model::IClipPtr getLeftClip() const;
     model::IClipPtr getRightClip() const;
