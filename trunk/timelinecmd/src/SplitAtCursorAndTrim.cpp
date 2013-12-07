@@ -107,7 +107,7 @@ SplitAtCursorAndTrim::~SplitAtCursorAndTrim()
 {
 }
 
-void SplitAtCursorAndTrim::submitIfPossible() // todo make generic mechanism for this (with a virtual isPossible())
+bool SplitAtCursorAndTrim::isPossible()
 {
     bool foundSplittableClip = false;
     for ( model::TrackPtr track : mSequence->getTracks() )
@@ -117,7 +117,7 @@ void SplitAtCursorAndTrim::submitIfPossible() // todo make generic mechanism for
             (clipAtCursorPosition->getRightPts() == mPosition))
         {
             gui::StatusBar::get().timedInfoText(_("Can't trim: cut at cursor position."));
-            return;
+            return false;
         }
 
         model::IClipPtr clipToBeSplit = mBackwards ? track->getClip(mPosition - 1) : clipAtCursorPosition;
@@ -128,17 +128,17 @@ void SplitAtCursorAndTrim::submitIfPossible() // todo make generic mechanism for
             if (clip->isA<model::Transition>())
             {
                 gui::StatusBar::get().timedInfoText(_("Can't trim: transition."));
-                return;
+                return false;
             }
             else if (mBackwards && clip->getInTransition())
             {
                 gui::StatusBar::get().timedInfoText(_("Can't trim: transition at begin."));
-                return;
+                return false;
             }
             else if (!mBackwards && clip->getOutTransition())
             {
                 gui::StatusBar::get().timedInfoText(_("Can't trim: transition at end."));
-                return;
+                return false;
             }
             if (clip->isA<model::VideoClip>() || clip->isA<model::AudioClip>())
             {
@@ -149,9 +149,9 @@ void SplitAtCursorAndTrim::submitIfPossible() // todo make generic mechanism for
     if (!foundSplittableClip)
     {
         gui::StatusBar::get().timedInfoText(_("Nothing to be trimmed."));
-        return;
+        return false;
     }
-    submit();
+    return true;
 }
 
 }}} // namespace

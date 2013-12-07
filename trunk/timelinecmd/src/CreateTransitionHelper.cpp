@@ -46,12 +46,8 @@ void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::
     command::TrimClip* trimRightCommand = 0;
     command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, clip, transition, type);
 
-    if (createTransitionCommand->isPossible())
-    {
-        createTransitionCommand->submit();
-        createTransitionCommand = 0;
-    }
-    else
+    bool done = createTransitionCommand->submitIfPossible();
+    if (!done)
     {
         pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
 

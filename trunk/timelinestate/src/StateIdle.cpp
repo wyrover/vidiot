@@ -279,11 +279,8 @@ void Idle::addTransition(model::TransitionType type)
         ASSERT(info.track);
         model::TransitionPtr transition = info.track->isA<model::VideoTrack>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
         command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.clip, transition, type);
-        if (cmd->isPossible())
-        {
-            cmd->submit();
-        }
-        else
+        bool submitted = cmd->submitIfPossible();
+        if (!submitted)
         {
             delete cmd;
         }
