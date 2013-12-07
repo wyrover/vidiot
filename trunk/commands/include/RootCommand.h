@@ -37,6 +37,17 @@ public:
 
     void submit();
 
+    /// \return true if the command may be submit.
+    /// To be overridden in derived classes such that they can indicate whether
+    /// submitting is possible or not. If not, then submitIfPossible will not submit.
+    /// Default implementation always returns true.
+    virtual bool isPossible();
+
+    /// if 'isPossible()' returns true, the command is submit onto the model.
+    /// \return true if the command was submit
+    bool submitIfPossible();
+
+
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
