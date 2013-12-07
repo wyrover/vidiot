@@ -17,7 +17,6 @@
 
 #include "UtilLog.h"
 
-#include "Config.h"
 #include "UtilAssert.h"
 #include "UtilFifo.h"
 #include "UtilStackWalker.h"
