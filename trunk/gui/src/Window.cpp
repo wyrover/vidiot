@@ -172,6 +172,7 @@ Window::Window()
     {
         mMenuBar->Append(mTestCrash->getMenu(),     _("&Crash"));
     }
+
     mMenuBar->Append(menuhelp,     _("&Help"));
 
     SetMenuBar( mMenuBar );
@@ -462,6 +463,8 @@ void Window::onMove(wxMoveEvent& event)
         Config::WriteBool(Config::sPathWindowMaximized,false);
         Config::WriteLong(Config::sPathWindowX,p.x); // Don't use event.GetPosition since that results in a slightly
         Config::WriteLong(Config::sPathWindowY,p.y); // moved window upon the next startup.
+        Dialog::sScreenRect = GetScreenRect();
+        Dialog::sIncludeScreenshot = Config::ReadBool(Config::sPathDebugIncludeScreenShot);
     }
     event.Skip();
 }
@@ -473,6 +476,8 @@ void Window::onSize(wxSizeEvent& event)
         Config::WriteBool(Config::sPathWindowMaximized,false);
         Config::WriteLong(Config::sPathWindowW,event.GetSize().GetWidth());
         Config::WriteLong(Config::sPathWindowH,event.GetSize().GetHeight());
+        Dialog::sScreenRect = GetScreenRect();
+        Dialog::sIncludeScreenshot = Config::ReadBool(Config::sPathDebugIncludeScreenShot);
     }
     event.Skip();
 }

@@ -143,6 +143,9 @@ public:
     /// \param addcontext if true, then add context and dump
     void getDebugReport(bool doexit = true, bool addcontext = true);
 
+    static bool sIncludeScreenshot; ///< Cached, since lookup (of the config setting) might fail when crashing
+    static wxRect sScreenRect;      ///< Cached, since accessing the window object might fail when crashing
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
