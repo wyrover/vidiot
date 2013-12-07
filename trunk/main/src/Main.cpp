@@ -60,6 +60,28 @@ void PureVirtualCallHandler(void)
     gui::Dialog::get().getDebugReport(); // Execution is aborted in getDebugReport(). May run in other thread.
 }
 
+// Thanks to:
+// http://randomascii.wordpress.com/2012/07/05/when-even-crashing-doesnt-work/
+void EnableCrashingOnCrashes()
+{
+    typedef BOOL (WINAPI *tGetPolicy)(LPDWORD lpFlags);
+    typedef BOOL (WINAPI *tSetPolicy)(DWORD dwFlags);
+    const DWORD EXCEPTION_SWALLOWING = 0x01;
+
+    HMODULE kernel32 = ::LoadLibraryA("kernel32.dll");
+    tGetPolicy pGetPolicy = (tGetPolicy)GetProcAddress(kernel32, "GetProcessUserModeExceptionPolicy");
+    tSetPolicy pSetPolicy = (tSetPolicy)GetProcAddress(kernel32, "SetProcessUserModeExceptionPolicy");
+    if (pGetPolicy && pSetPolicy)
+    {
+        DWORD dwFlags;
+        if (pGetPolicy(&dwFlags))
+        {
+            // Turn off the filter
+            pSetPolicy(dwFlags & ~EXCEPTION_SWALLOWING);
+        }
+    }
+}
+
 extern "C" int WINAPI WinMain(HINSTANCE hInstance,
                               HINSTANCE hPrevInstance,
                               wxCmdLineArgType lpCmdLine,
@@ -73,6 +95,7 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
     _CrtSetReportMode(_CRT_ASSERT, 0); // Disable CRT message box
     _set_invalid_parameter_handler(InvalidParameterHandler);
     _set_purecall_handler(PureVirtualCallHandler);
+    EnableCrashingOnCrashes();
 
     gui::Application* main;
 
@@ -88,27 +111,3 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
     return 0;
 }
 
-// todo use AppVerifier
-// todo http://randomascii.wordpress.com/2012/07/05/when-even-crashing-doesnt-work/
-
-    //void EnableCrashingOnCrashes()
-    //{
-    //    typedef BOOL (WINAPI *tGetPolicy)(LPDWORD lpFlags);
-    //    typedef BOOL (WINAPI *tSetPolicy)(DWORD dwFlags);
-    //    const DWORD EXCEPTION_SWALLOWING = 0×1;
-
-    //    HMODULE kernel32 = LoadLibraryA(“kernel32.dll”);
-    //    tGetPolicy pGetPolicy = (tGetPolicy)GetProcAddress(kernel32,
-    //                “GetProcessUserModeExceptionPolicy”);
-    //    tSetPolicy pSetPolicy = (tSetPolicy)GetProcAddress(kernel32,
-    //                “SetProcessUserModeExceptionPolicy”);
-    //    if (pGetPolicy && pSetPolicy)
-    //    {
-    //        DWORD dwFlags;
-    //        if (pGetPolicy(&dwFlags))
-    //        {
-    //            // Turn off the filter
-    //            pSetPolicy(dwFlags & ~EXCEPTION_SWALLOWING);
-    //        }
-    //    }
-    //}
