@@ -117,16 +117,16 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     checkLong(Config::sPathDebugMaxRenderLength, 0, 1000000);
     checkBool(Config::sPathDebugShowCrashMenu);
     checkBool(Config::sPathDebugIncludeScreenShot);
+    checkBool(Config::sPathDebugLogSequenceOnEdit);
 
     // Set all defaults here
-    setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
-    setDefault(Config::sPathMakeSequencePrefixLength, 14);
     setDefault(Config::sPathAutoLoadEnabled, false);
     setDefault(Config::sPathBackupBeforeSaveEnabled, true);
     setDefault(Config::sPathBackupBeforeSaveMaximum, 10);
+    setDefault(Config::sPathDebugIncludeScreenShot, true);
+    setDefault(Config::sPathDebugLogSequenceOnEdit, false);
     setDefault(Config::sPathDebugMaxRenderLength, 0); // Per default, render all
     setDefault(Config::sPathDebugShowCrashMenu, false);
-    setDefault(Config::sPathDebugIncludeScreenShot, true);
     setDefault(Config::sPathDefaultAudioChannels, 2);
     setDefault(Config::sPathDefaultAudioSampleRate, 44100);
     setDefault(Config::sPathDefaultExtension, "avi");
@@ -139,6 +139,8 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathLastOpened, "");
     setDefault(Config::sPathLogLevel, LogLevel_toString(LogWarning).c_str());
     setDefault(Config::sPathLogLevelAvcodec, Avcodec::getDefaultLogLevel());
+    setDefault(Config::sPathMakeSequenceEmptyClipLength, 0);
+    setDefault(Config::sPathMakeSequencePrefixLength, 14);
     setDefault(Config::sPathMarkerBeginAddition, 0);
     setDefault(Config::sPathMarkerEndAddition, 0);
     setDefault(Config::sPathShowBoundingBox, true);
@@ -149,9 +151,9 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     setDefault(Config::sPathTestRunCurrent, "");
     setDefault(Config::sPathTestRunFrom, "");
     setDefault(Config::sPathTestRunOnly, "");
+    setDefault(Config::sPathWindowH, -1);
     setDefault(Config::sPathWindowMaximized, false);
     setDefault(Config::sPathWindowW, -1);
-    setDefault(Config::sPathWindowH, -1);
     setDefault(Config::sPathWindowX, -1);
     setDefault(Config::sPathWindowY, -1);
     setDefault(Config::sPathWorkspacePerspectiveCurrent,"");
@@ -400,9 +402,10 @@ void Config::releaseWriteToDisk()
 const wxString Config::sPathAutoLoadEnabled             ("/Project/AutoLoadEnabled");
 const wxString Config::sPathBackupBeforeSaveEnabled     ("/Project/BackupBeforeSaveEnabled");
 const wxString Config::sPathBackupBeforeSaveMaximum     ("/Project/BackupBeforeSaveMaximumFileCount");
+const wxString Config::sPathDebugIncludeScreenShot      ("/Debug/Screenshot");
+const wxString Config::sPathDebugLogSequenceOnEdit      ("/Debug/LogSequenceOnEdit");
 const wxString Config::sPathDebugMaxRenderLength        ("/Debug/MaxRenderLength");
 const wxString Config::sPathDebugShowCrashMenu          ("/Debug/ShowCrashMenu");
-const wxString Config::sPathDebugIncludeScreenShot      ("/Debug/Screenshot");
 const wxString Config::sPathDefaultAudioChannels        ("/Audio/DefaultNumberOfChannels");
 const wxString Config::sPathDefaultAudioSampleRate      ("/Audio/DefaultSampleRate");
 const wxString Config::sPathDefaultExtension            ("/File/DefaultExtension");
