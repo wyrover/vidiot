@@ -67,6 +67,7 @@ private:
     EnumSelector<int>*      mSelectLogLevelAvcodec;
     wxChoice*               mLogLevelAvcodec;
     wxCheckBox*             mShowDebugInfoOnWidgets;
+    wxCheckBox*             mLogSequenceOnEdit;
 
     wxPanel*                mPanel;     ///< tab:The topmost widget
     wxBoxSizer*             mTopSizer;  ///< tab:Sizer for panel

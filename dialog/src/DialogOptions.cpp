@@ -205,6 +205,10 @@ DialogOptions::DialogOptions(wxWindow* win)
         mShowDebugInfoOnWidgets = new wxCheckBox(mPanel, wxID_ANY, _T(""));
         mShowDebugInfoOnWidgets->SetValue(Config::ReadBool(Config::sPathShowDebugInfoOnWidgets)); // Do not read cached value, but the last set value
         addoption(_("Show debug info on widgets (requires restart)"), mShowDebugInfoOnWidgets);
+
+        mLogSequenceOnEdit = new wxCheckBox(mPanel, wxID_ANY, _T(""));
+        mLogSequenceOnEdit->SetValue(Config::ReadBool(Config::sPathDebugLogSequenceOnEdit));
+        addoption(_("Log the current sequence after each edit operation"), mLogSequenceOnEdit);
     }
 
     SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
@@ -236,6 +240,7 @@ DialogOptions::~DialogOptions()
         Config::WriteString(    Config::sPathLogLevel,                    LogLevel_toString(mSelectLogLevel->getValue()).c_str());
         Config::WriteString(    Config::sPathLogLevelAvcodec,             Avcodec::mapAvcodecLevels.left.at(mSelectLogLevelAvcodec->getValue()));
         Config::WriteBool(      Config::sPathShowDebugInfoOnWidgets,      mShowDebugInfoOnWidgets->IsChecked());
+        Config::WriteBool(      Config::sPathDebugLogSequenceOnEdit,      mLogSequenceOnEdit->IsChecked());
         Config::WriteString(    Config::sPathDefaultFrameRate,            (FrameRate::getSupported()[mFrameRate->GetSelection()]).toString());
         Config::WriteLong(      Config::sPathDefaultVideoWidth,           mDefaultVideoWidth->GetValue());
         Config::WriteLong(      Config::sPathDefaultVideoHeight,          mDefaultVideoHeight->GetValue());
