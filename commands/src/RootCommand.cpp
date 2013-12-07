@@ -44,6 +44,21 @@ void RootCommand::submit()
     model::ProjectModification::submit(this);
 }
 
+bool RootCommand::isPossible()
+{
+    return true;
+}
+
+bool RootCommand::submitIfPossible()
+{
+    if (isPossible())
+    {
+        submit();
+        return true;
+    }
+    return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
