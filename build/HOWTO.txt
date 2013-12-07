@@ -21,6 +21,12 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   - Build VisualStudioAddin
   - Add <VIDIOT_SRC>\build\VisualStudioAddin\bin\Release to AddIn paths
     via Tools->Options->Addin/macro security
+* Access violations check:
+  - gflags is part of WinDDK or available from 
+    http://rxwen.blogspot.ca/2010/04/standalone-windbg-v6120002633.html
+  - enable: gflags /p /enable Vidiot.exe /full
+  - disable: gflags /p /disable Vidiot.exe
+  - Or: use AppVerifier
 
 =================== CMAKE ===================
 Install cmake into c:\Program Files
