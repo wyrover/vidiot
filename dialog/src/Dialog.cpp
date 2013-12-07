@@ -41,6 +41,7 @@ Dialog::Dialog()
     ,   mText(boost::none)
     ,   mButton(boost::none)
     ,   mStringsSelection(boost::none)
+    ,   mIncludeScreenshot(Config::ReadBool(Config::sPathDebugIncludeScreenShot))
     ,   mDebugReportGenerated(false)
 {
 }
@@ -276,10 +277,10 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect sc
         // Ensure that 'fatal error encountered' dialog is gone.
         boost::this_thread::sleep(boost::posix_time::milliseconds(250));
 
-        wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir()); // Store in TEMP
+        wxFileName screenShotFile(wxStandardPaths::Get().GetTempDir().GetFullPath(),""); // Store in TEMP // todo is now stored one too high?
         wxString nameWithProcessId; nameWithProcessId << "vidiot_screenshot_" << wxGetProcessId();
         screenShotFile.SetName(nameWithProcessId);
-        screenShotFile.SetExt("png"); // Default, log in same dir as executable
+        screenShotFile.SetExt("png");
         wxScreenDC screen;
         wxMemoryDC memory;
         wxBitmap screenshot(screenRect.width, screenRect.height);
@@ -319,19 +320,13 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect sc
     return 0;
 }
 
-// static
-wxRect Dialog::sScreenRect;
-
-// static
-bool Dialog::sIncludeScreenshot;
-
 void Dialog::getDebugReport(bool doexit, bool addcontext)
 {
     VAR_ERROR(doexit);
     if (!mDebugReportGenerated)
     {
        mDebugReportGenerated = true;
-       util::thread::RunInMainAndWait([doexit, addcontext] { generateDebugReport(doexit, addcontext, Dialog::sIncludeScreenshot, Dialog::sScreenRect); });
+       util::thread::RunInMainAndWait([this, doexit, addcontext] { generateDebugReport(doexit, addcontext, mIncludeScreenshot, mScreenRect); });
     }
 }
 

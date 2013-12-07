@@ -143,8 +143,7 @@ public:
     /// \param addcontext if true, then add context and dump
     void getDebugReport(bool doexit = true, bool addcontext = true);
 
-    static bool sIncludeScreenshot; ///< Cached, since lookup (of the config setting) might fail when crashing
-    static wxRect sScreenRect;      ///< Cached, since accessing the window object might fail when crashing
+    wxRect mScreenRect; ///< Cached, since accessing the window object might fail when crashing
 
 private:
 
@@ -159,6 +158,9 @@ private:
     boost::optional<wxString> mComboText;
     boost::optional<int> mButton;
     boost::optional<std::list<wxString>> mStringsSelection;
+
+    /// Cached, since lookup (of the config setting) might fail when crashing
+    bool mIncludeScreenshot;
 
     /// Only one report is generated. After that application should end.
     /// Handling more errors after the initial fatal one serves no purpose
