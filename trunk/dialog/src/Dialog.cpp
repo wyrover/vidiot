@@ -267,8 +267,6 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect sc
 
     wxDebugReportCompress report;
 
-    // todo clean old log files (store in ini?)
-
     if (screenShot)
     {
         // Screen shot added first. This to reduce the changes of the report taking a long time and the
