@@ -176,6 +176,10 @@ void AClipEdit::undoExtraAfter()
 {
 }
 
+void AClipEdit::initialize()
+{
+}
+
 bool AClipEdit::isInitialized()
 {
     return mInitialized;

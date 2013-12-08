@@ -116,7 +116,7 @@ void TrimClip::update(pts diff, bool shift)
     else
     {
         applyTrim();
-		    getTimeline().getSelection().updateOnEdit(); // Selected clip is changed when applying the trim
+        getTimeline().getSelection().updateOnEdit(); // Selected clip is changed when applying the trim
     }
 }
 

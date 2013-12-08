@@ -46,6 +46,7 @@ private:
     model::SequencePtr mSequence;
     pts mPosition;
     bool mBackwards;
+    bool mPossible;
 
 };
 

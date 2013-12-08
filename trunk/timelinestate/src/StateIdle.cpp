@@ -149,9 +149,9 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     case WXK_DELETE:    getSelection().deleteClips();                                            break;
     case WXK_F1:        getTooltip().show(sTooltip);                                             break;
     case 'b':
-    case 'B':           (new command::SplitAtCursorAndTrim(getSequence(), true))->submitIfPossible(); break;
+    case 'B':           (new command::SplitAtCursorAndTrim(getSequence(), true))->submitIfPossible(); break; // todo memory leak if not submitted! Make static method that does the delete also if not submit
     case 'e':
-    case 'E':           (new command::SplitAtCursorAndTrim(getSequence(), false))->submitIfPossible(); break;
+    case 'E':           (new command::SplitAtCursorAndTrim(getSequence(), false))->submitIfPossible(); break; // todo memory leak if not submitted! see ProjectModification::
     case 'c':
     case 'C':           addTransition(model::TransitionTypeInOut);                               break;
     case 'i':
@@ -159,7 +159,7 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     case 'o':
     case 'O':           addTransition(model::TransitionTypeOut);                                 break;
     case 's':
-    case 'S':           (new command::SplitAtCursor(getSequence()))->submit();                   break;
+    case 'S':           (new command::SplitAtCursor(getSequence()))->submit();                   break;// todo memory leak if not submitted!
     case '-':           getZoom().change( evt.getCtrlDown() ? -1000 : -1);                       break;
     case '=':           getZoom().change( evt.getCtrlDown() ?  1000 :  1);                       break;
     case WXK_LEFT:      evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();     break;
