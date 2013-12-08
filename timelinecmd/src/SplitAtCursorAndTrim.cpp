@@ -17,72 +17,76 @@
 
 #include "SplitAtCursorAndTrim.h"
 
-#include "UtilLog.h"
-#include "Timeline.h"
-#include "Logging.h"
 #include "Cursor.h"
-#include "Track.h"
+#include "Logging.h"
 #include "Sequence.h"
+#include "Timeline.h"
 #include "TimelinesView.h"
+#include "Track.h"
+#include "TrimClip.h"
+#include "UtilLog.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline { namespace command {
 
-struct SelectClipsBesidesCursor
+struct MoveCursor
     :   public AClipEdit
 {
-    //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION
-    //////////////////////////////////////////////////////////////////////////
-
-    SelectClipsBesidesCursor(model::SequencePtr sequence, bool backwards)
+    MoveCursor(model::SequencePtr sequence, pts position)
         :   AClipEdit(sequence)
-        ,   mBackwards(backwards)
-    {
-    }
-
-    virtual ~SelectClipsBesidesCursor()
-    {
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // ACLIPEDIT INTERFACE
-    //////////////////////////////////////////////////////////////////////////
-
-    void initialize() override
-    {
-    }
+        ,   mOldPosition(getTimeline().getCursor().getLogicalPosition())
+        ,   mNewPosition(position)
+    {}
 
     void doExtraBefore()
     {
-        storeSelection();
-        pts selectAtPosition = getTimeline().getCursor().getLogicalPosition();
-        if (mBackwards)
-        {
-            selectAtPosition--; // Select left of the cut
-        }
-        model::IClips selected;
-        for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
-        {
-            model::IClipPtr clip = track->getClip(selectAtPosition);
-            if (clip)
-            {
-                if (clip->isA<model::VideoClip>() || clip->isA<model::AudioClip>())
-                {
-                    selected.push_back(clip);
-                }
-            }
-        }
-        getTimeline().getSelection().change(selected);
-        getTimeline().getCursor().setLogicalPosition(selected.front()->getLeftPts());
+        getTimeline().getCursor().setLogicalPosition(mNewPosition);
     }
 
     void undoExtraAfter()
     {
-        restoreSelection();
+        getTimeline().getCursor().setLogicalPosition(mOldPosition);
     }
 
-    bool mBackwards;
+private:
+    pts mOldPosition;
+    pts mNewPosition;
+};
+
+struct BeginTransaction
+    :   public AClipEdit
+{
+    BeginTransaction(model::SequencePtr sequence)
+        :   AClipEdit(sequence)
+    {}
+
+    void doExtraBefore()
+    {
+        getTimeline().beginTransaction();
+    }
+
+    void undoExtraAfter()
+    {
+        getTimeline().endTransaction();
+    }
+};
+
+struct EndTransaction
+    :   public AClipEdit
+{
+    EndTransaction(model::SequencePtr sequence)
+        :   AClipEdit(sequence)
+    {}
+
+    void doExtraBefore()
+    {
+        getTimeline().endTransaction();
+    }
+
+    void undoExtraAfter()
+    {
+        getTimeline().beginTransaction();
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,12 +98,88 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(model::SequencePtr sequence, bool bac
     ,   mSequence(sequence)
     ,   mBackwards(backwards)
     ,   mPosition(gui::TimelinesView::get().getTimeline(sequence).getCursor().getLogicalPosition())
+    ,   mPossible(false)
 {
     VAR_INFO(this)(mPosition)(mBackwards);
-    // todo only if there's only one or two clips and they both are regular clips with the same begin point...
-    add(new SplitAtCursor(sequence));
-    add(new SelectClipsBesidesCursor(sequence, mBackwards));
-    add(new DeleteSelectedClips(sequence, true));
+
+    int nVideo = 0;
+    int nAudio = 0;
+    int nTransition = 0;
+    model::IClipPtr videoClip;
+    model::IClipPtr audioClip;
+
+    //////////////////////////////////////////////////////////////////////////
+
+    std::set<pts> cuts = mSequence->getCuts();
+    if (cuts.find(mPosition) != cuts.end())
+    {
+        gui::StatusBar::get().timedInfoText(_("Can't trim: cut at cursor position."));
+    }
+    else
+    {
+        for ( model::TrackPtr track : mSequence->getTracks() )
+        {
+            model::IClipPtr clip = mBackwards ? track->getClip(mPosition - 1) : track->getClip(mPosition);
+            if (clip)
+            {
+                if (clip->isA<model::VideoClip>())
+                {
+                    videoClip = clip;
+                    nVideo++;
+                }
+                else if (clip->isA<model::AudioClip>())
+                {
+                    audioClip = clip;
+                    nAudio++;
+                }
+                else if (clip->isA<model::Transition>())
+                {
+                    nTransition++;
+                }
+            }
+        }
+        if (nVideo == 0 && nAudio == 0)
+        {
+            gui::StatusBar::get().timedInfoText(_("Nothing to be trimmed."));
+        }
+        else if (nTransition > 0)
+        {
+            gui::StatusBar::get().timedInfoText(_("Can't trim: transition."));
+        }
+        else if (nVideo > 1 || nAudio > 1)
+        {
+            gui::StatusBar::get().timedInfoText(_("Can't trim: too many clips at cursor position."));
+        }
+        else
+        {
+            model::IClipPtr clip = videoClip ? videoClip : audioClip;
+            ASSERT_NONZERO(clip);
+            command::TrimClip* cmd = new command::TrimClip(sequence, clip, model::TransitionPtr(), mBackwards ? ClipBegin : ClipEnd);
+
+            pts left = clip->getLeftPts(); // Clip will be changed by the trim below, thus store here
+            pts right = clip->getRightPts(); // Clip will be changed by the trim below, thus store here
+
+            pts trim = mBackwards ? mPosition - left : mPosition - right;
+            cmd->update(trim,true);
+            if (cmd->getDiff() != 0)
+            {
+                mPossible = true;
+                add(new BeginTransaction(sequence));
+                add(cmd);
+                if (mBackwards)
+                {
+                    add(new MoveCursor(sequence, left));
+                }
+                add(new EndTransaction(sequence)); // Added to avoid temporarily showing the wrong frame between the Trim::update() and the submission of the MoveCursor command.
+            }
+            else
+            {
+                gui::StatusBar::get().timedInfoText(_("Can't trim: position of clips prevents proper shifting"));
+                delete cmd;
+            }
+        }
+    }
+
     setName( _("Split at cursor position and remove ") + (backwards ? _("begin") : _("end")) + " of clip");
 }
 
@@ -109,49 +189,7 @@ SplitAtCursorAndTrim::~SplitAtCursorAndTrim()
 
 bool SplitAtCursorAndTrim::isPossible()
 {
-    bool foundSplittableClip = false;
-    for ( model::TrackPtr track : mSequence->getTracks() )
-    {
-        model::IClipPtr clipAtCursorPosition = track->getClip(mPosition);
-        if ((clipAtCursorPosition->getLeftPts() == mPosition) ||
-            (clipAtCursorPosition->getRightPts() == mPosition))
-        {
-            gui::StatusBar::get().timedInfoText(_("Can't trim: cut at cursor position."));
-            return false;
-        }
-
-        model::IClipPtr clipToBeSplit = mBackwards ? track->getClip(mPosition - 1) : clipAtCursorPosition;
-
-        model::IClipPtr clip = mBackwards ? track->getClip(mPosition - 1) : track->getClip(mPosition);
-        if (clip)
-        {
-            if (clip->isA<model::Transition>())
-            {
-                gui::StatusBar::get().timedInfoText(_("Can't trim: transition."));
-                return false;
-            }
-            else if (mBackwards && clip->getInTransition())
-            {
-                gui::StatusBar::get().timedInfoText(_("Can't trim: transition at begin."));
-                return false;
-            }
-            else if (!mBackwards && clip->getOutTransition())
-            {
-                gui::StatusBar::get().timedInfoText(_("Can't trim: transition at end."));
-                return false;
-            }
-            if (clip->isA<model::VideoClip>() || clip->isA<model::AudioClip>())
-            {
-                foundSplittableClip = true;
-            }
-        }
-    }
-    if (!foundSplittableClip)
-    {
-        gui::StatusBar::get().timedInfoText(_("Nothing to be trimmed."));
-        return false;
-    }
-    return true;
+    return mPossible;
 }
 
 }}} // namespace

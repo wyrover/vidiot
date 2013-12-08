@@ -103,10 +103,10 @@ public:
     ///       cause issues.
     virtual void undoExtraAfter();
 
-    /// To be implemented by abstract base class specialization
+    /// To be implemented by derived classes.
     /// It's this method that is called to create move objects, the first time
     /// the command is executed.
-    virtual void initialize() = 0;
+    virtual void initialize();
 
     /// \return true if the edit has been initialized
     /// When this method returns true the edit has been initialized. That means

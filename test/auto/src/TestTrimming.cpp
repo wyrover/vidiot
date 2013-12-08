@@ -21,6 +21,7 @@
 #include "AudioTrack.h"
 #include "CreateTransition.h"
 #include "Cursor.h"
+#include "ExecuteDrop.h"
 #include "HelperApplication.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"
@@ -88,8 +89,10 @@ void TestTrimming::testKeyboardTrimming()
 {
     StartTestSuite();
     Zoom level(3);
+    
+    auto TestBeginTrimSucceeds = [this](wxString title)
     {
-        StartTest("Begin trim");
+        StartTest(title);
         PositionCursor(HCenter(VideoClip(0,2)));
         pts newlength = VideoClip(0,2)->getRightPts() - getTimeline().getCursor().getLogicalPosition();
         Type('b');
@@ -98,9 +101,11 @@ void TestTrimming::testKeyboardTrimming()
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
         ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,2)->getLeftPts());
         Undo();
-    }
+    };
+
+    auto TestEndTrimSucceeds = [this](wxString title)
     {
-        StartTest("End trim");
+        StartTest(title);
         PositionCursor(HCenter(VideoClip(0,2)));
         pts newlength = getTimeline().getCursor().getLogicalPosition() - VideoClip(0,2)->getLeftPts();
         Type('e');
@@ -109,7 +114,28 @@ void TestTrimming::testKeyboardTrimming()
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
         ASSERT_EQUALS(getTimeline().getCursor().getLogicalPosition(), VideoClip(0,2)->getRightPts());
         Undo();
-    }
+    };
+
+    auto TestBeginTrimImpossible = [this](wxString title)
+    {
+        StartTest(title);
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+        PositionCursor(HCenter(VideoClip(0,2)));
+        Type('b');
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+    };
+
+    auto TestEndTrimImpossible = [this](wxString title)
+    {
+        StartTest(title);
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+        PositionCursor(HCenter(VideoClip(0,2)));
+        Type('e');
+        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
+    };
+
+    TestBeginTrimSucceeds("Without other tracks: Begin trim");
+    TestEndTrimSucceeds("Without other tracks: End trim");
     {
         StartTest("No change when cursor is on cut");
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
@@ -118,6 +144,32 @@ void TestTrimming::testKeyboardTrimming()
         Type('e');
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
+    
+    triggerMenu(ID_ADDVIDEOTRACK);
+    triggerMenu(ID_ADDAUDIOTRACK);
+    TrimRight(VideoClip(0,4), - 250); // Make smaller for easier positioning
+    
+    TestBeginTrimSucceeds("With other track without clips: Begin trim");
+    TestEndTrimSucceeds("With other track without clips: End trim");
+    
+    DragToTrack(1,VideoClip(0,4),AudioClip(0,4));
+    TestBeginTrimSucceeds("With other track with empty clip: Begin trim");
+    TestEndTrimSucceeds("With other track with empty clip: End trim");
+
+    Drag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,2)), VCenter(VideoTrack(1)))));
+    TestBeginTrimImpossible("With other track with fully obscuring non-empty clip: Begin trim");
+    TestEndTrimImpossible("With other track with fully obscuring non-empty clip: End trim");
+    Undo();
+
+    Drag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,2)) - 20));
+    TestBeginTrimSucceeds("With other track with partially right obscuring non-empty clip: Begin trim");
+    TestEndTrimImpossible("With other track with partially right obscuring non-empty clip: End trim (no change)");
+    Undo();
+    
+    Drag(From(RightCenter(VideoClip(1,1)) + wxPoint(-20,0)).AlignRight(LeftPixel(VideoClip(0,2)) + 20));
+    TestBeginTrimImpossible("With other track with partially left obscuring non-empty clip: Begin trim");
+    TestEndTrimSucceeds("With other track with partially left obscuring non-empty clip: End trim (no change)");
+    Undo();
 }
 
 } // namespace
