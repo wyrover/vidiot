@@ -33,6 +33,7 @@
 #include "Mouse.h"
 #include "Player.h"
 #include "PositionInfo.h"
+#include "ProjectModification.h"
 #include "Selection.h"
 #include "Sequence.h"
 #include "SplitAtCursor.h"
@@ -145,27 +146,57 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SPACE:     return start();                                                          break;
-    case WXK_DELETE:    getSelection().deleteClips();                                            break;
-    case WXK_F1:        getTooltip().show(sTooltip);                                             break;
+    case WXK_SPACE:     
+        return start();                                                          
+        break;
+    case WXK_DELETE:    
+        getSelection().deleteClips();                                            
+        break;
+    case WXK_F1:
+        getTooltip().show(sTooltip);                                                                            
+        break;
     case 'b':
-    case 'B':           (new command::SplitAtCursorAndTrim(getSequence(), true))->submitIfPossible(); break; // todo memory leak if not submitted! Make static method that does the delete also if not submit
+    case 'B':           
+        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), true));   
+        break;
     case 'e':
-    case 'E':           (new command::SplitAtCursorAndTrim(getSequence(), false))->submitIfPossible(); break; // todo memory leak if not submitted! see ProjectModification::
+    case 'E':           
+        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), false));  
+        break;
     case 'c':
-    case 'C':           addTransition(model::TransitionTypeInOut);                               break;
+    case 'C':           
+        addTransition(model::TransitionTypeInOut);                                                              
+        break;
     case 'i':
-    case 'I':           addTransition(model::TransitionTypeIn);                                  break;
+    case 'I':           
+        addTransition(model::TransitionTypeIn);                                                                 
+        break;
     case 'o':
-    case 'O':           addTransition(model::TransitionTypeOut);                                 break;
+    case 'O':           
+        addTransition(model::TransitionTypeOut);                                 
+        break;
     case 's':
-    case 'S':           (new command::SplitAtCursor(getSequence()))->submit();                   break;// todo memory leak if not submitted!
-    case '-':           getZoom().change( evt.getCtrlDown() ? -1000 : -1);                       break;
-    case '=':           getZoom().change( evt.getCtrlDown() ?  1000 :  1);                       break;
-    case WXK_LEFT:      evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();     break;
-    case WXK_RIGHT:     evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame();     break;
-    case WXK_HOME:      getCursor().home();                                                      break;
-    case WXK_END:       getCursor().end();                                                       break;
+    case 'S':           
+        model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));                
+        break;
+    case '-':           
+        getZoom().change( evt.getCtrlDown() ? -1000 : -1);                       
+        break;
+    case '=':           
+        getZoom().change( evt.getCtrlDown() ?  1000 :  1);                       
+        break;
+    case WXK_LEFT:      
+        evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();     
+        break;
+    case WXK_RIGHT:     
+        evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame();     
+        break;
+    case WXK_HOME:      
+        getCursor().home();                                                      
+        break;
+    case WXK_END:       
+        getCursor().end();                                                       
+        break;
     }
     return forward_event();
 }
@@ -278,12 +309,7 @@ void Idle::addTransition(model::TransitionType type)
 
         ASSERT(info.track);
         model::TransitionPtr transition = info.track->isA<model::VideoTrack>() ? model::video::VideoTransitionFactory::get().getDefault() : model::audio::AudioTransitionFactory::get().getDefault();
-        command::CreateTransition* cmd = new command::CreateTransition(getSequence(), info.clip, transition, type);
-        bool submitted = cmd->submitIfPossible();
-        if (!submitted)
-        {
-            delete cmd;
-        }
+        model::ProjectModification::submitIfPossible(new command::CreateTransition(getSequence(), info.clip, transition, type));
     }
 }
 
