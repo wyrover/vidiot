@@ -18,6 +18,7 @@
 #include "ProjectModification.h"
 
 #include "Project.h"
+#include "RootCommand.h"
 
 namespace model {
 
@@ -32,10 +33,22 @@ void ProjectModification::trigger()
 //////////////////////////////////////////////////////////////////////////
 
 // static
-void ProjectModification::submit(wxCommand* c)
+void ProjectModification::submit(command::RootCommand* c)
 {
     trigger();
     Project::get().GetCommandProcessor()->Submit(c);
+}
+
+// static 
+bool ProjectModification::submitIfPossible(command::RootCommand* c)
+{
+    if (c->isPossible())
+    {
+        submit(c);
+        return true;
+    }
+    delete c;
+    return false;
 }
 
 } // namespace
