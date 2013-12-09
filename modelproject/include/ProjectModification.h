@@ -18,6 +18,10 @@
 #ifndef PROJECT_MODIFICATION_H
 #define PROJECT_MODIFICATION_H
 
+namespace command {
+    class RootCommand;
+}
+
 namespace model {
 
 /// Trigger a modification of the project. Made into a separate interface
@@ -33,7 +37,15 @@ struct ProjectModification
     /// That includes triggering the modified status of the project.
     /// \see trigger()
     /// \param comand
-    static void submit(wxCommand* c);
+    static void submit(command::RootCommand* c);
+
+    /// Submit a change to the project, but only if the change isPossible.
+    /// That includes triggering the modified status of the project.
+    /// \note if the command is not possible, it is deleted
+    /// \see trigger()
+    /// \param comand
+    /// \return true if the command was submit
+    static bool submitIfPossible(command::RootCommand* c);
 };
 
 } // namespace
