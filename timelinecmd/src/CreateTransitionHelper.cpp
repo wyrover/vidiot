@@ -22,6 +22,7 @@
 #include "EmptyClip.h"
 #include "IClip.h"
 #include "Mouse.h"
+#include "ProjectModification.h"
 #include "StatusBar.h"
 #include "Timeline.h"
 #include "Track.h"
@@ -42,22 +43,21 @@ void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::
     ASSERT(clip);
     ASSERT(transition);
 
-    command::TrimClip* trimLeftCommand = 0;
-    command::TrimClip* trimRightCommand = 0;
     command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, clip, transition, type);
-
-    bool done = createTransitionCommand->submitIfPossible();
-    if (!done)
+    model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
+    if (!model::ProjectModification::submitIfPossible(createTransitionCommand))
     {
+        ASSERT(leftClip);
         pts defaultSize = Config::ReadLong(Config::sPathDefaultTransitionLength);
 
         if (type == model::TransitionTypeInOut || type == model::TransitionTypeOutIn)
         {
             // Ensure that the transition can be made by shortening the clips, if required (and, if possible)
             model::TrackPtr track = clip->getTrack();
-            model::IClipPtr leftClip = createTransitionCommand->getLeftClip();
-            ASSERT(leftClip);
             model::IClipPtr prevClip = leftClip->getPrev(); // Temporarily stored to retrieve the (new) trimmed clips again. NOTE: This may be 0 if leftClip is the first clip of the track!!!
+
+            command::TrimClip* trimLeftCommand = 0;
+            command::TrimClip* trimRightCommand = 0;
 
             pts extraNeededLeft = leftClip->getMaxAdjustEnd() - (defaultSize / 2);
             if (extraNeededLeft < 0)
@@ -76,8 +76,7 @@ void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::
                 trimRightCommand->update(extraNeededRight, true);
             }
 
-            delete createTransitionCommand;
-            createTransitionCommand = new command::CreateTransition(sequence, leftClip, transition, model::TransitionTypeOutIn);
+            command::CreateTransition* createTransitionCommand = new command::CreateTransition(sequence, leftClip, transition, model::TransitionTypeOutIn);
 
             if (createTransitionCommand->isPossible())
             {
@@ -97,14 +96,14 @@ void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::
                 trimRightCommand = 0; // Ownership transferred to Combiner
                 createTransitionCommand = 0; // Ownership transferred to Combiner
             }
+            delete trimLeftCommand; // Triggers a revert also
+            delete trimRightCommand; // Triggers a revert also
+            if (createTransitionCommand) // If the command was not submitted, then that was because 'isPossible()' never returned true.
+            {
+                gui::StatusBar::get().timedInfoText(_("Unable to make room for adding the transition."));
+            }
+            delete createTransitionCommand;
         }
-        delete trimLeftCommand; // Triggers a revert also
-        delete trimRightCommand; // Triggers a revert also
-        if (createTransitionCommand) // If the command was not submitted, then that was because 'isPossible()' never returned true.
-        {
-            gui::StatusBar::get().timedInfoText(_("Unable to make room for adding the transition."));
-        }
-        delete createTransitionCommand;
     }
 }
 
