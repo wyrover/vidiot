@@ -185,8 +185,10 @@ FilePtr EmptyClip::getFile() const
 
 AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    if (mProgress > getLength())
+    VAR_DEBUG(*this); // todo remove when crash not found
+    if (mProgress >= getLength())
     {
+        LOG_DEBUG; // todo remove when crash not found
         return AudioChunkPtr();
     }
 
@@ -215,6 +217,7 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
     mProgress += 1;
     mSampleProgress += returnedSamples;
 
+    VAR_DEBUG(*this); // todo remove when crash not found
     VAR_AUDIO(audioChunk)(mProgress)(mSampleProgress);
     return audioChunk;
 }
@@ -225,7 +228,7 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
 
 VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& parameters)
 {
-    if (mProgress > getLength())
+    if (mProgress >= getLength())
     {
         return VideoFramePtr();
     }
@@ -243,7 +246,10 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
 
 std::ostream& operator<<( std::ostream& os, const EmptyClip& obj )
 {
-    os << static_cast<const Clip&>(obj);
+    // Keep order same as Transition and ClipInterval for 'dump' method
+    os  << static_cast<const Clip&>(obj) << '|'
+        << std::setw(6) << ' ' << '|'
+        << std::setw(6) << obj.mLength;
     return os;
 }
 
