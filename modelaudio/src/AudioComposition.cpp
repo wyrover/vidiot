@@ -64,21 +64,18 @@ void AudioComposition::add(AudioChunkPtr chunk)
     }
 }
 
-void AudioComposition::replace(AudioChunkPtr oldChunk, AudioChunkPtr newChunk)
-{
-    UtilList<model::AudioChunkPtr>(mChunks).replace(oldChunk,newChunk);
-}
-
 AudioChunkPtr AudioComposition::generate()
 {
     if (mChunks.empty())
     {
-        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1)); // todo what if ptsToSamples gives samples for incorrect no of channges (see emptyclip.cpp)
+        LOG_DEBUG; // todo remove when crash not found
+        return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1));
     }
 
     if (mChunks.size() == 1)
     {
         AudioChunkPtr front = mChunks.front();
+        VAR_DEBUG(front); // todo remove when crash not found
         if (true)
         {
             // Performance optimization: if only one chunk is rendered, return that chunk, but only if the chunk requires no 'processing'.
@@ -87,6 +84,7 @@ AudioChunkPtr AudioComposition::generate()
         }
     }
 
+    LOG_DEBUG; // todo remove when crash not found
     samplecount chunkSize = std::numeric_limits<samplecount>::max();
     for ( AudioChunkPtr inputChunk : mChunks )
     {
@@ -129,6 +127,7 @@ AudioChunkPtr AudioComposition::generate()
         }
     }
 
+    LOG_DEBUG; // todo remove when crash not found
     return result;
 }
 
