@@ -292,6 +292,7 @@ model::SequencePtr VideoDisplay::getSequence() const
 void VideoDisplay::audioBufferThread()
 {
     util::thread::setCurrentThreadName("AudioBufferThread");
+    LOG_INFO; // todo remove when crash not found
     while (!mAbortThreads)
     {
         model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
@@ -300,13 +301,17 @@ void VideoDisplay::audioBufferThread()
         {
             // In SoundTouch context a sample is the data for both speakers.
             // In AudioChunk it's the data for one speaker.
+            VAR_DEBUG(*chunk); // todo remove when crash not found
             mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels) ;
+            VAR_DEBUG(chunk); // todo remove when crash not found
             while (!mSoundTouch.isEmpty())
             {
                 int nFramesAvailable = mSoundTouch.numSamples();
                 sample* p = 0;
                 model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, true, false);
+                VAR_DEBUG(*audioChunk); // todo remove when crash not found
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
+                VAR_DEBUG(audioChunk); // todo remove when crash not found
                 ASSERT_EQUALS(nFrames,nFramesAvailable);
                 mAudioChunks.push(audioChunk);
             }
@@ -388,6 +393,7 @@ void VideoDisplay::videoBufferThread()
 void VideoDisplay::videoDisplayThread()
 {
     util::thread::setCurrentThreadName("VideoDisplayThread");
+    LOG_INFO;
     boost::unique_lock<boost::mutex> lock(mMutexPlaybackStarted);
     while (mStartTime == 0)
     {
