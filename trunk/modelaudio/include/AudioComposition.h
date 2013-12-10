@@ -41,7 +41,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void add(AudioChunkPtr chunk);
-    void replace(AudioChunkPtr oldChunk, AudioChunkPtr newChunk);
 
     /// Render the composition
     /// \return composition of all input chunks.
