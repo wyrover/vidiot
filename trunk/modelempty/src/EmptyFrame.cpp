@@ -17,8 +17,6 @@
 
 #include "EmptyFrame.h"
 
-#include "UtilInitAvcodec.h"
-
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,7 +25,6 @@ namespace model {
 
 EmptyFrame::EmptyFrame(wxSize size)
 :   VideoFrame(size)
-,   mInitialized(false)
 {
 }
 
@@ -40,22 +37,13 @@ EmptyFrame::~EmptyFrame()
 // DATA ACCESS
 //////////////////////////////////////////////////////////////////////////
 
-DataPointer EmptyFrame::getData()
+wxImagePtr EmptyFrame::getImage() 
 {
-    if (!mInitialized)
+    if (!mImage)
     {
-        PixelFormat format = PIX_FMT_RGB24;
-        mBufferSize = avpicture_get_size(format, getSize().GetWidth(), getSize().GetHeight());
-        mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
-        memset(mBuffer,0,mBufferSize);
-
-        mFrame = avcodec_alloc_frame();
-
-        // Assign appropriate parts of buffer to image planes in mFrame
-        avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format,getSize().GetWidth(), getSize().GetHeight());
-        mInitialized = true;
+        mImage = boost::make_shared<wxImage>(getSize(), true);
     }
-    return VideoFrame::getData();
+    return VideoFrame::getImage();
 }
 
 } // namespace

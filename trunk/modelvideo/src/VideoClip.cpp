@@ -434,7 +434,13 @@ void VideoClip::updateAutomatedPositioning()
 
 std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 {
-    os << static_cast<const ClipInterval&>(obj) << '|' << std::setw(4) << obj.mProgress << '|' << std::setw(2) << std::hex << obj.mOpacity <<  std::dec << '|' << obj.mScaling << '|' << obj.mScalingFactor << '|' << obj.mAlignment << '|' << obj.mPosition;
+    os  << static_cast<const ClipInterval&>(obj) << '|' 
+        << std::setw(4) << obj.mProgress << '|' 
+        << std::setw(2) << std::hex << obj.mOpacity << std::dec << '|' 
+        << obj.mScaling << '|' 
+        << obj.mScalingFactor << '|' 
+        << obj.mAlignment << '|' 
+        << obj.mPosition;
     return os;
 }
 
