@@ -60,10 +60,10 @@ protected:
 // MACHINE
 //////////////////////////////////////////////////////////////////////////
 
-struct Idle;
+struct Starting;
 
 class Machine
-    :   public boost::statechart::state_machine< Machine, Idle >
+    :   public boost::statechart::state_machine< Machine, Starting >
     ,   public Part
 {
 public:
@@ -74,6 +74,8 @@ public:
 
     Machine(Timeline& tl);
     virtual ~Machine();
+
+    void start();
 
     //////////////////////////////////////////////////////////////////////////
     // BOOST STATECHART OVERRIDES

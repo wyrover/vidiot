@@ -22,6 +22,7 @@
 #include "EventMouse.h"
 #include "EventPart.h"
 #include "Intervals.h"
+#include "Mouse.h"
 #include "Player.h"
 #include "StateIdle.h"
 #include "Tooltip.h"
@@ -42,6 +43,7 @@ Playing::Playing( my_context ctx ) // entry
 ,   mMakingNewSelection(false)
 {
     LOG_DEBUG;
+    getMouse().set(PointerNormal);
 }
 
 Playing::~Playing() // exit

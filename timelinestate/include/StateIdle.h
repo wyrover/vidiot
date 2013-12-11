@@ -73,6 +73,8 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    void updateMouseCursor();
+
     boost::statechart::result start();
 
     boost::statechart::result leftDown();

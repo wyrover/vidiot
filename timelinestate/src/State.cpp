@@ -95,6 +95,20 @@ Machine::~Machine()
     getPlayer()->Unbind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
 }
 
+struct EvStart : boost::statechart::event< EvStart > {};
+
+struct Starting
+    :   public boost::statechart::simple_state<Starting, Machine>
+{
+    typedef boost::statechart::transition< EvStart, Idle > reactions;
+};
+
+void Machine::start()
+{
+    process_event(EvStart());
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // BOOST STATECHART OVERRIDES
 //////////////////////////////////////////////////////////////////////////
@@ -102,13 +116,13 @@ Machine::~Machine()
 void Machine::unconsumed_event( const boost::statechart::event_base & evt )
 {
     LOG_DEBUG << "[state=" << typeid( *state_begin() ).name() << "][event=" << typeid( evt ).name() << "]";
-    boost::statechart::state_machine< Machine, Idle >::unconsumed_event(evt);
+    boost::statechart::state_machine< Machine, Starting >::unconsumed_event(evt);
 }
 
 void  Machine::process_event(const boost::statechart::event_base & evt )
 {
     static int pos = std::string("struct gui::timeline::state::").size();
-    boost::statechart::state_machine< Machine, Idle >::process_event(evt);
+    boost::statechart::state_machine< Machine, Starting >::process_event(evt);
     LOG_INFO <<  "[event=" << std::string(typeid( evt ).name()).substr(pos) << "][newstate=" << (state_begin() == state_end() ? "???" : std::string(typeid( *state_begin() ).name()).substr(pos)) << "]";
 }
 
