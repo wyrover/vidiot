@@ -30,64 +30,40 @@ const pixel VideoFrame::sMinimumSize = 10; // To avoid errors in sws_scale all f
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(wxSize size, bool allocate)
-    : mFrame(0)
-    , mImage()
-    , mBuffer(0)
+VideoFrame::VideoFrame(wxSize size)
+    : mImage()
     , mSize(size)
     , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),size)
     , mPts(0)
     , mOpacity(Constants::sMaxOpacity)
-    , mBufferSize(0)
     , mForceKeyFrame(false)
 {
-    if (allocate)
-    {
-        PixelFormat format = PIX_FMT_RGB24;
-        mBufferSize = avpicture_get_size(format, mSize.GetWidth(), mSize.GetHeight());
-        mBuffer = static_cast<boost::uint8_t*>(av_malloc(mBufferSize * sizeof(uint8_t)));
-
-        mFrame = avcodec_alloc_frame();
-
-        // Assign appropriate parts of buffer to image planes in mFrame
-        avpicture_fill(reinterpret_cast<AVPicture*>(mFrame), mBuffer, format, mSize.GetWidth(), mSize.GetHeight());
-    }
 }
 
 VideoFrame::VideoFrame(wxImagePtr image)
-    : mFrame(0)
-    , mImage(image)
-    , mBuffer(0)
+    : mImage(image)
     , mSize(image->GetSize())
     , mPosition(0,0)
     , mRegionOfInterest(wxPoint(0,0),image->GetSize())
     , mPts(0)
     , mOpacity(Constants::sMaxOpacity)
-    , mBufferSize(0)
     , mForceKeyFrame(false)
 {
 }
 
 VideoFrame::VideoFrame(const VideoFrame& other)
-    : mFrame(0)
-    , mImage()
-    , mBuffer(0)
+    : mImage()
     , mSize(other.mSize)
     , mPosition(0,0)
     , mRegionOfInterest(other.mRegionOfInterest)
     , mPts(other.mPts)
     , mOpacity(other.mOpacity)
-    , mBufferSize(0)
     , mForceKeyFrame(false)
 {
     if (other.mImage)
     {
-        mImage  = boost::make_shared<wxImage>(const_cast<VideoFrame&>(other).mImage->Copy());
-    }
-    else
-    {
-        mImage  = boost::make_shared<wxImage>(wxImage(mSize, const_cast<VideoFrame&>(other).getData()[0], true).Copy());
+        mImage = boost::make_shared<wxImage>(const_cast<VideoFrame&>(other).mImage->Copy());
     }
 }
 
@@ -102,14 +78,6 @@ void VideoFrame::onCloned()
 
 VideoFrame::~VideoFrame()
 {
-    if (mBuffer)
-    {
-        av_free(mBuffer);
-    }
-    if (mFrame)
-    {
-        av_free(mFrame);
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,17 +151,11 @@ wxImagePtr VideoFrame::getImage()
     {
         return wxImagePtr();
     }
-    if (mImage)
+    ASSERT(mImage);
+    if ((mRegionOfInterest.GetPosition() == wxPoint(0,0) &&
+        (mRegionOfInterest.GetSize() == mImage->GetSize())))
     {
-        if ((mRegionOfInterest.GetPosition() == wxPoint(0,0) &&
-            (mRegionOfInterest.GetSize() == mImage->GetSize())))
-        {
-            return mImage;
-        }
-    }
-    else
-    {
-        mImage = boost::make_shared<wxImage>(mSize, getData()[0], true);
+        return mImage;
     }
     return boost::make_shared<wxImage>(mImage->GetSubImage(mRegionOfInterest));
 }
@@ -235,19 +197,6 @@ std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj)
         os << "0";
     }
     return os;
-}
-//////////////////////////////////////////////////////////////////////////
-// DATA ACCESS
-//////////////////////////////////////////////////////////////////////////
-
-DataPointer VideoFrame::getData()
-{
-    return mFrame->data;
-}
-
-LineSizePointer VideoFrame::getLineSizes() const
-{
-    return mFrame->linesize;
 }
 
 } // namespace

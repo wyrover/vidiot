@@ -106,7 +106,10 @@ VideoFramePtr VideoComposition::generate()
         {
             if (frame->getOpacity()  != 255)
             {
-                image->InitAlpha();
+                if (!image->HasAlpha())
+                {
+                    image->InitAlpha();
+                }
                 unsigned char* alpha = image->GetAlpha();
                 memset(alpha,frame->getOpacity(),image->GetWidth() * image->GetHeight());
             }

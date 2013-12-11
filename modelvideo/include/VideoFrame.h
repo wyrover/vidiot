@@ -43,12 +43,10 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    /// Initialization AND (optional) allocation.
-    /// \param allocate if true, then allocate the buffer for decoding with avcodec
     /// Initialization without allocation is used for empty frames. Then, allocation
     /// is only needed when the data is needed for playback. During 'track combining'
     /// empty frames can be ignored. This avoids needless allocation.
-    explicit VideoFrame(wxSize size, bool allocate = false);
+    explicit VideoFrame(wxSize size);
 
     /// Initialization of a frame based on a generated wxImage (for instance, for
     /// compositing).
@@ -85,21 +83,12 @@ public:
     /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
     /// \pre !mBitmap
     /// \return this frame as a wxImage
-    wxImagePtr getImage();
+    virtual wxImagePtr getImage();
 
     /// Return a bitmap, using the frame's data clipped to the region of interest
     /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
     /// \return this frame as a wxBitmap
     wxBitmapPtr getBitmap();
-
-    //////////////////////////////////////////////////////////////////////////
-    // DATA ACCESS
-    //////////////////////////////////////////////////////////////////////////
-
-    /// Virtual and not const due to override in EmptyFrame
-    virtual DataPointer getData();
-
-    LineSizePointer getLineSizes() const;
 
 protected:
 
@@ -107,7 +96,6 @@ protected:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    AVFrame* mFrame;
     wxImagePtr mImage;
     double mTimeStamp;
     wxSize mSize;
@@ -115,8 +103,6 @@ protected:
     wxRect mRegionOfInterest;
     pts mPts;
     int mOpacity;
-    boost::uint8_t *mBuffer;
-    int mBufferSize;
     bool mForceKeyFrame;
 
 private:

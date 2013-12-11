@@ -40,12 +40,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// Override from VideoFrame. When this method is called for the first time,
-    /// the zeroed buffer is generated.
-    DataPointer getData() override;
-
-private:
-
-    bool mInitialized;
+    /// the image is generated.
+    wxImagePtr getImage() override;
 };
 
 } // namespace

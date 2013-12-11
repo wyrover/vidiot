@@ -201,8 +201,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         // Decode new frame
         bool firstPacket = true;
         int frameFinished = 0;
-        AVFrame* pFrame = avcodec_alloc_frame(); // for new version of avcodec : av_frame_alloc();
-        ASSERT_NONZERO(pFrame);
+        AVFrame* pDecodedFrame = avcodec_alloc_frame(); // for new version of avcodec : av_frame_alloc();
+        ASSERT_NONZERO(pDecodedFrame);
 
         while (!frameFinished )
         {
@@ -240,13 +240,13 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             bool endOfFile = true;
             if (nextToBeDecodedPacket)
             {
-                int len1 = avcodec_decode_video2(getCodec(), pFrame, &frameFinished, nextToBeDecodedPacket);
+                int len1 = avcodec_decode_video2(getCodec(), pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
                 ASSERT_MORE_THAN_EQUALS_ZERO(len1);
                 
                 if (len1 > 0)
                 {
                     endOfFile = false;
-                    mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pFrame);
+                    mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pDecodedFrame);
                     mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
                     VAR_DEBUG(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
                 }
@@ -256,7 +256,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             if (endOfFile)
             {
                 // End of file reached. Signal this with null ptr.
-                av_free(pFrame);
+                av_free(pDecodedFrame);
                 mDeliveredFrame.reset();
                 mDeliveredFrameInputPts = 0;
                 static const std::string status("End of file");
@@ -274,8 +274,8 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             }
 
         }
-        ASSERT_MORE_THAN_EQUALS_ZERO(pFrame->repeat_pict);
-        if (pFrame->repeat_pict > 0)
+        ASSERT_MORE_THAN_EQUALS_ZERO(pDecodedFrame->repeat_pict);
+        if (pDecodedFrame->repeat_pict > 0)
         {
             NIY(_("Input video frame repeating is not supported yet"));
         }
@@ -284,9 +284,15 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         wxSize size(parameters.getBoundingBox());
         size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
         size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
-        mDeliveredFrame = boost::make_shared<VideoFrame>(size, true);
 
-        // Resample the frame size
+        // Create temp data holder for the frame conversion
+        AVFrame* pScaledFrame = avcodec_alloc_frame();
+        int bufferSize = avpicture_get_size(PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+        boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
+        // Assign appropriate parts of buffer to image planes in pScaledFrame
+        avpicture_fill(reinterpret_cast<AVPicture*>(pScaledFrame), buffer, PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+
+        // Resample the frame (includes format conversion)
         SwsContext* ctx = sws_getContext(
             getCodec()->width,
             getCodec()->height,
@@ -295,10 +301,14 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             size.GetHeight(),
             PIX_FMT_RGB24,
             SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
-        sws_scale(ctx,pFrame->data,pFrame->linesize,0,getCodec()->height,mDeliveredFrame->getData(),mDeliveredFrame->getLineSizes());
+        sws_scale(ctx,pDecodedFrame->data,pDecodedFrame->linesize,0,getCodec()->height,pScaledFrame->data,pScaledFrame->linesize);
         sws_freeContext(ctx);
 
-        av_free(pFrame);
+         mDeliveredFrame = boost::make_shared<VideoFrame>(boost::make_shared<wxImage>(wxImage(size, pScaledFrame->data[0], true).Copy()));
+
+         av_free(buffer);
+         av_free(pDecodedFrame);
+         av_free(pScaledFrame);
     }
     else
     {

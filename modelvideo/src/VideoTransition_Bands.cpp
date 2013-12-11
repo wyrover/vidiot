@@ -86,15 +86,15 @@ VideoFramePtr Bands::getVideo(pts position, IClipPtr leftClip, IClipPtr rightCli
         }
     }
 
-    VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(parameters.getBoundingBox(), true);
+    VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(boost::make_shared<wxImage>(parameters.getBoundingBox(), true));
 
-    unsigned char* leftData   = leftFrame  ? leftFrame  ->getData()[0] : 0;
-    unsigned char* rightData  = rightFrame ? rightFrame ->getData()[0] : 0;
-    unsigned char* targetData =              targetFrame->getData()[0];
+    unsigned char* leftData   = leftFrame  ? leftFrame  ->getImage()->GetData() : 0;
+    unsigned char* rightData  = rightFrame ? rightFrame ->getImage()->GetData() : 0;
+    unsigned char* targetData =              targetFrame->getImage()->GetData();
 
-    int leftBytesPerLine   = leftFrame  ? leftFrame  ->getLineSizes()[0] : 0;
-    int rightBytesPerLine  = rightFrame ? rightFrame ->getLineSizes()[0] : 0;
-    int targetBytesPerLine =              targetFrame->getLineSizes()[0];
+    int leftBytesPerLine   = leftFrame  ? leftFrame  ->getImage()->GetSize().GetWidth() * 3 : 0;
+    int rightBytesPerLine  = rightFrame ? rightFrame ->getImage()->GetSize().GetWidth() * 3 : 0;
+    int targetBytesPerLine =              targetFrame->getImage()->GetSize().GetWidth() * 3;
 
     VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
 
