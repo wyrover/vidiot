@@ -86,6 +86,7 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
     SetBackgroundColour(Layout::get().BackgroundColour);
     SetBackgroundStyle(wxBG_STYLE_PAINT); // For the buffered DC in onPaint()
 
+    mStateMachine->start();
     init();
 
     getZoom().Bind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, this);

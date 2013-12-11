@@ -73,6 +73,7 @@ extern "C" {
 #include <boost/statechart/event.hpp>
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
+#include <boost/statechart/transition.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/barrier.hpp>
 #include <boost/thread/condition_variable.hpp>

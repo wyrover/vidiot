@@ -70,6 +70,7 @@ Idle::Idle( my_context ctx ) // entry
     :   TimeLineState( ctx )
 {
     LOG_DEBUG;
+    updateMouseCursor();
 }
 
 Idle::~Idle() // exit
@@ -108,36 +109,7 @@ boost::statechart::result Idle::react( const EvRightDouble& evt )
 boost::statechart::result Idle::react( const EvMotion& evt )
 {
     VAR_DEBUG(evt);
-    PointerPositionInfo info =  getMouse().getInfo(getMouse().getVirtualPosition());
-    MousePointerImage image = PointerNormal;
-    if (info.onAudioVideoDivider)
-    {
-        image = PointerTrackResize;
-    }
-    else
-    {
-        if (info.onTrackDivider)
-        {
-            image = PointerTrackResize;
-        }
-        else
-        {
-            if (info.clip)
-            {
-                switch (info.logicalclipposition)
-                {
-                case TransitionBegin:
-                case TransitionRightClipBegin: // FALLTHROUGH
-                case ClipBegin:      image = getKeyboard().getShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
-                case TransitionEnd:
-                case TransitionLeftClipEnd: // FALLTHROUGH
-                case ClipEnd:        image = getKeyboard().getShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
-                }
-            }
-        }
-
-    }
-    getMouse().set(image);
+    updateMouseCursor();
     return forward_event();
 }
 
@@ -219,6 +191,40 @@ boost::statechart::result Idle::react( const EvPlaybackChanged& evt)
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+void Idle::updateMouseCursor()
+{
+    PointerPositionInfo info =  getMouse().getInfo(getMouse().getVirtualPosition());
+    MousePointerImage image = PointerNormal;
+    if (info.onAudioVideoDivider)
+    {
+        image = PointerTrackResize;
+    }
+    else
+    {
+        if (info.onTrackDivider)
+        {
+            image = PointerTrackResize;
+        }
+        else
+        {
+            if (info.clip)
+            {
+                switch (info.logicalclipposition)
+                {
+                case TransitionBegin:
+                case TransitionRightClipBegin: // FALLTHROUGH
+                case ClipBegin:      image = getKeyboard().getShiftDown() ? PointerTrimShiftBegin : PointerTrimBegin;    break;
+                case TransitionEnd:
+                case TransitionLeftClipEnd: // FALLTHROUGH
+                case ClipEnd:        image = getKeyboard().getShiftDown() ? PointerTrimShiftEnd : PointerTrimEnd;    break;
+                }
+            }
+        }
+
+    }
+    getMouse().set(image);
+}
 
 boost::statechart::result Idle::start()
 {
