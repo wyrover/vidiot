@@ -48,6 +48,16 @@
 
 namespace gui {
 
+enum
+{
+    ID_NEW_FOLDER = wxID_HIGHEST + 1,
+    ID_NEW_AUTOFOLDER,
+    ID_NEW_SEQUENCE,
+    ID_NEW_FILE,
+    ID_CREATE_SEQUENCE,
+    ID_DELETE_UNUSED,
+};
+
 // This method only to be used here. Enum too.
 enum NodeType
 {
@@ -85,18 +95,6 @@ ProjectView::ProjectView(wxWindow* parent)
     gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &ProjectView::onOpenProject,             this);
     gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &ProjectView::onCloseProject,            this);
 
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCut,                 this, wxID_CUT);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCopy,                this, wxID_COPY);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onPaste,               this, wxID_PASTE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDelete,              this, wxID_DELETE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDeleteUnused,        this, meID_DELETE_UNUSED);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFolder,           this, meID_NEW_FOLDER);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewAutoFolder,       this, meID_NEW_AUTOFOLDER);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,         this, meID_NEW_SEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFile,             this, meID_NEW_FILE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCreateSequence,      this, meID_CREATE_SEQUENCE);
-    Bind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onOpen,                this, wxID_OPEN);
-
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,     &ProjectView::onStartEditing,    this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,      &ProjectView::onContextMenu,     this);
     Bind(wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE,     &ProjectView::onDropPossible,    this);
@@ -118,18 +116,6 @@ ProjectView::~ProjectView()
 {
     gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,       &ProjectView::onOpenProject,             this);
     gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,      &ProjectView::onCloseProject,            this);
-
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCut,               this, wxID_CUT);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCopy,              this, wxID_COPY);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onPaste,             this, wxID_PASTE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDelete,            this, wxID_DELETE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onDeleteUnused,      this, meID_DELETE_UNUSED);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFolder,         this, meID_NEW_FOLDER);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewAutoFolder,     this, meID_NEW_AUTOFOLDER);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewSequence,       this, meID_NEW_SEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onNewFile,           this, meID_NEW_FILE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onCreateSequence,    this, meID_CREATE_SEQUENCE);
-    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &ProjectView::onOpen,              this, wxID_OPEN);
 
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING,   &ProjectView::onStartEditing,    this);
     Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,    &ProjectView::onContextMenu,     this);
@@ -270,6 +256,149 @@ wxPoint ProjectView::find( model::NodePtr node )
 }
 
 //////////////////////////////////////////////////////////////////////////
+// POPUP MENU
+//////////////////////////////////////////////////////////////////////////
+
+void ProjectView::onCut()
+{
+    ASSERT_MORE_THAN_ZERO(getSelection().size());
+    if (wxTheClipboard->Open())
+    {
+        wxTheClipboard->SetData(new DataObject(getSelection()));
+        wxTheClipboard->Close();
+        model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
+    }
+}
+
+void ProjectView::onCopy()
+{
+    ASSERT_MORE_THAN_ZERO(getSelection().size());
+    if (wxTheClipboard->Open())
+    {
+        wxTheClipboard->SetData(new DataObject(getSelection()));
+        wxTheClipboard->Close();
+    }
+}
+
+void ProjectView::onPaste()
+{
+    if (wxTheClipboard->Open())
+    {
+        if (wxTheClipboard->IsSupported( DataObject::sFormat ))
+        {
+            DataObject data;
+            wxTheClipboard->GetData( data );
+            if (data.getAssets().size() > 0)
+            {
+                for ( model::NodePtr node : data.getAssets() )
+                {
+                    if (findConflictingName( this, getSelectedContainer(), node->getName(), NODETYPE_ANY ))
+                    {
+                        return;
+                    }
+                }
+                model::ProjectModification::submit(new command::ProjectViewAddAsset(getSelectedContainer(),data.getAssets()));
+            }
+        }
+        wxTheClipboard->Close();
+    }
+}
+
+void ProjectView::onDelete()
+{
+    model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
+}
+
+void ProjectView::onDeleteUnused()
+{
+    model::AutoFolderPtr folder = boost::dynamic_pointer_cast<model::AutoFolder>(getSelectedContainer());
+    ASSERT(folder);
+
+    command::ProjectViewDeleteUnusedFiles(folder).recycleFiles();
+}
+
+void ProjectView::onNewFolder()
+{
+    wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
+    if ((s.CompareTo(_T("")) != 0) &&
+        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
+    {
+        model::ProjectModification::submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
+    }
+}
+
+void ProjectView::onNewAutoFolder()
+{
+    wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
+    if ((s.CompareTo(_T("")) != 0) &&
+        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
+    {
+        wxFileName path(s,"");
+        path.Normalize();
+        model::ProjectModification::submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), path));
+    }
+}
+
+void ProjectView::onNewSequence()
+{
+    wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
+    if ((s.CompareTo(_T("")) != 0) &&
+        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_SEQUENCE)))
+    {
+        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
+    }
+}
+
+void ProjectView::onNewFile()
+{
+    wxString filetypes = _("Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
+    wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add"), filetypes );
+    std::vector<wxFileName> list;
+    for ( wxString path : files )
+    {
+        if (findConflictingName(this, getSelectedContainer(),path, NODETYPE_FILE))
+        {
+            return;
+        }
+        wxFileName filename(path);
+        filename.Normalize();
+        model::FilePtr file = boost::make_shared<model::File>(filename);
+        if (file->canBeOpened())
+        {
+            list.push_back(filename);
+        }
+    }
+    if (list.size() > 0 )
+    {
+        model::ProjectModification::submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
+    }
+}
+
+void ProjectView::onCreateSequence()
+{
+    command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
+    if (!findConflictingName(this, cmd->getParent(), cmd->getName(), NODETYPE_SEQUENCE))
+    {
+        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer()));
+    }
+    else
+    {
+        delete cmd;
+    }
+}
+
+void ProjectView::onOpen()
+{
+    for ( model::NodePtr node : getSelection() )
+    {
+        if (node->isA<model::Sequence>())
+        {
+            gui::Window::get().getTimeLines().Open(boost::dynamic_pointer_cast<model::Sequence>(node));
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
@@ -343,15 +472,15 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
         }
     }
 
-    wxMenu createMenu;
-    createMenu.Append( meID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
-    createMenu.Append( meID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) sequence") );
-
-    wxMenu addMenu;
-    addMenu.Append( meID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
-    addMenu.Append( meID_NEW_FILE,       _("Fi&le(s) from disk"), _("Select a file on disk to be added to the project.") );
-
     wxMenu menu;
+    wxMenu* createMenu = new wxMenu();;
+    createMenu->Append( ID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
+    createMenu->Append( ID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) sequence") );
+
+    wxMenu* addMenu = new wxMenu();
+    addMenu->Append( ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
+    addMenu->Append( ID_NEW_FILE,       _("Fi&le(s) from disk"), _("Select a file on disk to be added to the project.") );
+
     menu.Append( wxID_CUT,   _("Cu&t\tCTRL-x") );
     menu.Enable( wxID_CUT, enableDelete );
     menu.Append( wxID_COPY,  _("Cop&y\tCTRL-c") );
@@ -363,15 +492,15 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     menu.Enable( wxID_DELETE, enableDelete );
     if (showDeleteUnused )
     {
-        menu.Append( meID_DELETE_UNUSED, _("Delete unused files on disk") );
-        menu.Enable( meID_DELETE_UNUSED, enableDeleteUnused );
+        menu.Append( ID_DELETE_UNUSED, _("Delete unused files on disk") );
+        menu.Enable( ID_DELETE_UNUSED, enableDeleteUnused );
     }
     menu.AppendSeparator();
 
     if (showCreateSequence)
     {
-        menu.Append(meID_CREATE_SEQUENCE, _("&Make sequence"), ("Create a new sequence containing all the clips in the folder") );
-        menu.Enable(meID_CREATE_SEQUENCE, enableCreateSequence);
+        menu.Append(ID_CREATE_SEQUENCE, _("&Make sequence"), ("Create a new sequence containing all the clips in the folder") );
+        menu.Enable(ID_CREATE_SEQUENCE, enableCreateSequence);
     }
     if (showOpenSequence)
     {
@@ -385,156 +514,26 @@ void ProjectView::onContextMenu( wxDataViewEvent &event )
     if (showNew && enableNew)
     {
         menu.AppendSeparator();
-        pAddMenu = menu.AppendSubMenu(&addMenu,_("&Add"));
+        pAddMenu = menu.AppendSubMenu(addMenu,_("&Add"));
         menu.AppendSeparator();
-        pCreateMenu = menu.AppendSubMenu(&createMenu,_("&New"));
+        pCreateMenu = menu.AppendSubMenu(createMenu,_("&New"));
     }
 
-    PopupMenu(&menu); // todo use same mechanism as for timeline popup menu. That keeps the popup ids locally here.
-    if (showNew && enableNew)
+    int result = GetPopupMenuSelectionFromUser(menu);
+    switch (result)
     {
-        menu.Remove(pCreateMenu);   // To avoid deletion via menu structure AND via going out of scope.
-        menu.Remove(pAddMenu);      // To avoid deletion via menu structure AND via going out of scope.
-    }
-}
-
-void ProjectView::onCut(wxCommandEvent& event)
-{
-    ASSERT_MORE_THAN_ZERO(getSelection().size());
-    if (wxTheClipboard->Open())
-    {
-        wxTheClipboard->SetData(new DataObject(getSelection()));
-        wxTheClipboard->Close();
-        model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
-    }
-}
-
-void ProjectView::onCopy(wxCommandEvent& event)
-{
-    ASSERT_MORE_THAN_ZERO(getSelection().size());
-    if (wxTheClipboard->Open())
-    {
-        wxTheClipboard->SetData(new DataObject(getSelection()));
-        wxTheClipboard->Close();
-    }
-}
-
-void ProjectView::onPaste(wxCommandEvent& event)
-{
-    if (wxTheClipboard->Open())
-    {
-        if (wxTheClipboard->IsSupported( DataObject::sFormat ))
-        {
-            DataObject data;
-            wxTheClipboard->GetData( data );
-            if (data.getAssets().size() > 0)
-            {
-                for ( model::NodePtr node : data.getAssets() )
-                {
-                    if (findConflictingName( this, getSelectedContainer(), node->getName(), NODETYPE_ANY ))
-                    {
-                        return;
-                    }
-                }
-                model::ProjectModification::submit(new command::ProjectViewAddAsset(getSelectedContainer(),data.getAssets()));
-            }
-        }
-        wxTheClipboard->Close();
-    }
-}
-
-void ProjectView::onDelete(wxCommandEvent& event)
-{
-
-    model::ProjectModification::submit(new command::ProjectViewDeleteAsset(getSelection()));
-}
-
-void ProjectView::onDeleteUnused(wxCommandEvent& event)
-{
-    model::AutoFolderPtr folder = boost::dynamic_pointer_cast<model::AutoFolder>(getSelectedContainer());
-    ASSERT(folder);
-
-    command::ProjectViewDeleteUnusedFiles(folder).recycleFiles();
-}
-
-void ProjectView::onNewFolder(wxCommandEvent& event)
-{
-    wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
-    if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
-    {
-        model::ProjectModification::submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
-    }
-}
-
-void ProjectView::onNewAutoFolder(wxCommandEvent& event)
-{
-    wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
-    if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
-    {
-        wxFileName path(s,"");
-        path.Normalize();
-        model::ProjectModification::submit(new command::ProjectViewCreateAutoFolder(getSelectedContainer(), path));
-    }
-}
-
-void ProjectView::onNewSequence(wxCommandEvent& event)
-{
-    wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
-    if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_SEQUENCE)))
-    {
-        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
-    }
-}
-
-void ProjectView::onNewFile(wxCommandEvent& event)
-{
-    wxString filetypes = _("Movie clips (*.avi;*.mov;*.mp4)|*.avi;*.mov;*.mp4|Images (*.gif;*.jpg)|*.gif;*.jpg|Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (%s)|%s");
-    wxStrings files = gui::Dialog::get().getFiles( _("Select file(s) to add"), filetypes );
-    std::vector<wxFileName> list;
-    for ( wxString path : files )
-    {
-        if (findConflictingName(this, getSelectedContainer(),path, NODETYPE_FILE))
-        {
-            return;
-        }
-        wxFileName filename(path);
-        filename.Normalize();
-        model::FilePtr file = boost::make_shared<model::File>(filename);
-        if (file->canBeOpened())
-        {
-            list.push_back(filename);
-        }
-    }
-    if (list.size() > 0 )
-    {
-        model::ProjectModification::submit(new command::ProjectViewCreateFile(getSelectedContainer(), list));
-    }
-}
-
-void ProjectView::onCreateSequence(wxCommandEvent& event)
-{
-    command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
-    if (!findConflictingName(this, cmd->getParent(), cmd->getName(), NODETYPE_SEQUENCE))
-    {
-        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer()));
-    }
-    else
-    {
-        delete cmd;
-    }
-}
-
-void ProjectView::onOpen(wxCommandEvent& event)
-{
-    for ( model::NodePtr node : getSelection() )
-    {
-        if (node->isA<model::Sequence>())
-        {
-            gui::Window::get().getTimeLines().Open(boost::dynamic_pointer_cast<model::Sequence>(node));
-        }
+    case wxID_NONE:                                     break;
+    case wxID_CUT:              onCut();                break;
+    case wxID_COPY:             onCopy();               break;
+    case wxID_PASTE:            onPaste();              break;
+    case wxID_DELETE:           onDelete();             break;
+    case ID_DELETE_UNUSED:      onDeleteUnused();       break;
+    case ID_NEW_FOLDER:         onNewFolder();          break;
+    case ID_NEW_AUTOFOLDER:     onNewAutoFolder();      break;
+    case ID_NEW_SEQUENCE:       onNewSequence();        break;
+    case ID_NEW_FILE:           onNewFile();            break;
+    case ID_CREATE_SEQUENCE:    onCreateSequence();     break;
+    case wxID_OPEN:             onOpen();               break;
     }
 }
 

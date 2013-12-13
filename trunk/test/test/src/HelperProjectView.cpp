@@ -50,14 +50,14 @@ wxPoint ProjectViewPosition()
 
 model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
 {
+    gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
     waitForIdle();
     util::thread::RunInMainAndWait([parent]
     {
         getProjectView().select(boost::assign::list_of(parent));
+        getProjectView().onNewAutoFolder();
     });
     waitForIdle();
-    gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
-    triggerMenu(gui::ProjectView::get(),meID_NEW_AUTOFOLDER);
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), util::path::toPath(path))); // Converted to full path without trailing slash
     ASSERT_EQUALS(nodes.size(),1);
@@ -69,13 +69,17 @@ model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
 
 model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
 {
+    gui::Dialog::get().setText( name );
     waitForIdle();
     util::thread::RunInMainAndWait([parent]
     {
         getProjectView().select(boost::assign::list_of(parent));
     });
-    gui::Dialog::get().setText( name );
-    triggerMenu(gui::ProjectView::get(),meID_NEW_FOLDER);
+    waitForIdle();
+    util::thread::RunInMainAndWait([] 
+    {
+        getProjectView().onNewFolder();
+    });
     waitForIdle();
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
@@ -88,13 +92,17 @@ model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
 
 model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
 {
+    gui::Dialog::get().setText( name );
     waitForIdle();
     util::thread::RunInMainAndWait([parent]
     {
         getProjectView().select(boost::assign::list_of(parent));
     });
-    gui::Dialog::get().setText( name );
-    triggerMenu(gui::ProjectView::get(),meID_NEW_SEQUENCE);
+    waitForIdle();
+    util::thread::RunInMainAndWait([parent]
+    {
+        getProjectView().onNewSequence();
+    });
     waitForIdle();
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
@@ -113,7 +121,10 @@ model::SequencePtr createSequence( model::FolderPtr folder )
         getProjectView().select(boost::assign::list_of(folder));
     });
     waitForIdle();
-    triggerMenu(getProjectView(),meID_CREATE_SEQUENCE);
+    util::thread::RunInMainAndWait([]
+    {
+        getProjectView().onCreateSequence();
+    });
     waitForIdle();
 
     model::NodePtrs nodes;
@@ -156,7 +167,10 @@ model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
         shortpaths.push_back( path.GetShortPath() ); // Add with short path
     }
     gui::Dialog::get().setFiles( shortpaths );
-    triggerMenu(gui::ProjectView::get(),meID_NEW_FILE);
+    util::thread::RunInMainAndWait([]
+    {
+        getProjectView().onNewFile();
+    });
     waitForIdle();
 
     model::Files result;
@@ -179,7 +193,10 @@ void remove( model::NodePtr node )
         getProjectView().select(boost::assign::list_of(node));
     });
     waitForIdle();
-    triggerMenu(gui::ProjectView::get(),wxID_DELETE);
+    util::thread::RunInMainAndWait([]
+    {
+        getProjectView().onDelete();
+    });
     waitForIdle();
 }
 
@@ -274,7 +291,11 @@ void openTimelineForSequence(model::SequencePtr sequence)
     {
         gui::ProjectView::get().select(boost::assign::list_of(boost::dynamic_pointer_cast<model::Node>(sequence)));
     });
-    gui::ProjectView::get().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_OPEN));
+    waitForIdle(); // todo make test::RunInMainAndWait that always does waitForIdle...
+    util::thread::RunInMainAndWait([]
+    {
+        getProjectView().onOpen();
+    });
     waitForIdle();
 }
 

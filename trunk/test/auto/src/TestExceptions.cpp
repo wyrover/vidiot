@@ -68,7 +68,11 @@ void TestExceptions::testRemovedFileInSequence()
     {
         getProjectView().select(boost::assign::list_of(folder1));
     });
-    getProjectView().GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_OPEN));
+    waitForIdle();
+    util::thread::RunInMainAndWait([]
+    {
+        getProjectView().onOpen();
+    });
     waitForIdle();
 
     Play(10, 500);
