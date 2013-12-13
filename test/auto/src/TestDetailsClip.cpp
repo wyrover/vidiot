@@ -32,6 +32,7 @@
 #include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
 #include "HelperTimelineTrim.h"
+#include "HelperThread.h"
 #include "HelperTransform.h"
 #include "HelperWindow.h"
 #include "ids.h"
@@ -89,8 +90,7 @@ void TestDetailsClip::testChangeLength()
         o << "LengthButton: " << (enlarge?"Enlarge":"Reduce") << " clip length (on " << (begin?"left":"right") << " side) to " << getLength(button);
         StartTest(o.str().c_str());
         waitForIdle();
-        util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
-        waitForIdle();
+        RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
         ASSERT_IMPLIES( enlarge, VideoClip(0,3)->getLength() >= oldLength)(VideoClip(0,3)->getLength())(oldLength);
@@ -169,8 +169,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
         o << "LengthButton: Enlarge transition to " << getLength(button);
         StartTest(o.str().c_str());
         waitForIdle();
-        util::thread::RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
-        waitForIdle();
+        RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),getLength(button));

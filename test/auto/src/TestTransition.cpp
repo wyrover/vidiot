@@ -25,6 +25,7 @@
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
 #include "HelperPopupMenu.h"
+#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
@@ -1197,28 +1198,28 @@ void TestTransition::testVideoTransitionTypes()
     {
         {
             StartTest("FadeIn: " + t.first);
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
+            RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
             Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
             Undo();
         }
         {
             StartTest("FadeOut: " + t.first);
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeOut, model::video::VideoTransitionFactory::get().getTransition(t)); });
+            RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeOut, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
             Undo();
         }
         {
             StartTest("FadeInOut: " + t.first);
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeInOut, model::video::VideoTransitionFactory::get().getTransition(t)); });
+            RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeInOut, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
             Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
             Undo();
         }
         {
             StartTest("FadeOutIn: " + t.first);
-            util::thread::RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeOutIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
+            RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeOutIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
             Undo();

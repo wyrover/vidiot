@@ -30,6 +30,7 @@
 #include "Drag.h"
 #include "EmptyClip.h"
 #include "HelperApplication.h"
+#include "HelperThread.h"
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
 #include "IClip.h"
@@ -47,7 +48,6 @@
 #include "Track.h"
 #include "Transition.h"
 #include "UtilLogWxwidgets.h"
-#include "UtilThread.h"
 #include "VideoClip.h"
 #include "VideoTrack.h"
 #include "VideoTransition.h"
@@ -351,7 +351,7 @@ wxPoint RightCenter(DraggedClips drag)
 
 void TimelineTriggerWheel(int nSteps)
 {
-    util::thread::RunInMainAndWait([nSteps]
+    RunInMainAndWait([nSteps]
     {
         getTimeline().getStateMachine().processWheelEvent(nSteps);
     });
@@ -457,7 +457,7 @@ gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 void DeselectAllClips()
 {
     LOG_DEBUG;
-    util::thread::RunInMainAndWait([]
+    RunInMainAndWait([]
     {
         getTimeline().getSelection().unselectAll();
     });

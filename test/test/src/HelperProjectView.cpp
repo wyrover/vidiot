@@ -21,6 +21,7 @@
 #include "Dialog.h"
 #include "File.h"
 #include "HelperApplication.h"
+#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelinesView.h"
 #include "ids.h"
@@ -52,12 +53,11 @@ model::FolderPtr addAutoFolder( wxFileName path, model::FolderPtr parent )
 {
     gui::Dialog::get().setDir( path.GetShortPath() ); // Add with short path to check that normalizing works
     waitForIdle();
-    util::thread::RunInMainAndWait([parent]
+    RunInMainAndWait([parent]
     {
         getProjectView().select(boost::assign::list_of(parent));
         getProjectView().onNewAutoFolder();
     });
-    waitForIdle();
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), util::path::toPath(path))); // Converted to full path without trailing slash
     ASSERT_EQUALS(nodes.size(),1);
@@ -71,16 +71,14 @@ model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
 {
     gui::Dialog::get().setText( name );
     waitForIdle();
-    util::thread::RunInMainAndWait([parent]
+    RunInMainAndWait([parent]
     {
         getProjectView().select(boost::assign::list_of(parent));
     });
-    waitForIdle();
-    util::thread::RunInMainAndWait([] 
+    RunInMainAndWait([] 
     {
         getProjectView().onNewFolder();
     });
-    waitForIdle();
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
     ASSERT_EQUALS(nodes.size(),1);
@@ -94,16 +92,14 @@ model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
 {
     gui::Dialog::get().setText( name );
     waitForIdle();
-    util::thread::RunInMainAndWait([parent]
+    RunInMainAndWait([parent]
     {
         getProjectView().select(boost::assign::list_of(parent));
     });
-    waitForIdle();
-    util::thread::RunInMainAndWait([parent]
+    RunInMainAndWait([parent]
     {
         getProjectView().onNewSequence();
     });
-    waitForIdle();
 
     model::NodePtrs nodes = util::thread::RunInMainReturning<model::NodePtrs>(boost::bind(&model::Node::find, getRoot(), name));
     ASSERT_EQUALS(nodes.size(),1);
@@ -116,16 +112,14 @@ model::SequencePtr addSequence( wxString name, model::FolderPtr parent )
 model::SequencePtr createSequence( model::FolderPtr folder )
 {
     waitForIdle();
-    util::thread::RunInMainAndWait([folder]
+    RunInMainAndWait([folder]
     {
         getProjectView().select(boost::assign::list_of(folder));
     });
-    waitForIdle();
-    util::thread::RunInMainAndWait([]
+    RunInMainAndWait([]
     {
         getProjectView().onCreateSequence();
     });
-    waitForIdle();
 
     model::NodePtrs nodes;
     if (folder->getName().IsSameAs(folder->getSequenceName()))
@@ -156,7 +150,7 @@ model::SequencePtr createSequence( model::FolderPtr folder )
 model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
 {
     waitForIdle();
-    util::thread::RunInMainAndWait([parent]
+    RunInMainAndWait([parent]
     {
         getProjectView().select(boost::assign::list_of(parent));
     });
@@ -167,11 +161,10 @@ model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
         shortpaths.push_back( path.GetShortPath() ); // Add with short path
     }
     gui::Dialog::get().setFiles( shortpaths );
-    util::thread::RunInMainAndWait([]
+    RunInMainAndWait([]
     {
         getProjectView().onNewFile();
     });
-    waitForIdle();
 
     model::Files result;
     for ( wxFileName path : paths )
@@ -188,16 +181,14 @@ model::Files addFiles( std::list<wxFileName> paths, model::FolderPtr parent )
 void remove( model::NodePtr node )
 {
     waitForIdle();
-    util::thread::RunInMainAndWait([node]
+    RunInMainAndWait([node]
     {
         getProjectView().select(boost::assign::list_of(node));
     });
-    waitForIdle();
-    util::thread::RunInMainAndWait([]
+    RunInMainAndWait([]
     {
         getProjectView().onDelete();
     });
-    waitForIdle();
 }
 
 model::IPaths getSupportedFiles( wxFileName directory )
@@ -222,7 +213,7 @@ model::IPaths getSupportedFiles( wxFileName directory )
 int countProjectView()
 {
     waitForIdle();
-    util::thread::RunInMainAndWait([]
+    RunInMainAndWait([]
     {
         getProjectView().selectAll();
     });
@@ -287,16 +278,14 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
 
 void openTimelineForSequence(model::SequencePtr sequence)
 {
-    util::thread::RunInMainAndWait([sequence]
+    RunInMainAndWait([sequence]
     {
         gui::ProjectView::get().select(boost::assign::list_of(boost::dynamic_pointer_cast<model::Node>(sequence)));
     });
-    waitForIdle(); // todo make test::RunInMainAndWait that always does waitForIdle...
-    util::thread::RunInMainAndWait([]
+    RunInMainAndWait([]
     {
         getProjectView().onOpen();
     });
-    waitForIdle();
 }
 
 WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
@@ -304,7 +293,7 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
     ,   mCount(count)
     ,   mCountSeen(false)
 {
-    util::thread::RunInMainAndWait([this]
+    RunInMainAndWait([this]
     {
         gui::Window::get().Bind(model::EVENT_ADD_NODE,     &WaitForChildCount::onNodeAdded,     this);
         gui::Window::get().Bind(model::EVENT_ADD_NODES,    &WaitForChildCount::onNodesAdded,    this);
@@ -327,7 +316,7 @@ WaitForChildCount::WaitForChildCount(model::NodePtr node, int count)
 
 WaitForChildCount::~WaitForChildCount()
 {
-    util::thread::RunInMainAndWait([this]
+    RunInMainAndWait([this]
     {
         gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &WaitForChildCount::onNodeAdded,      this);
         gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &WaitForChildCount::onNodesAdded,     this);

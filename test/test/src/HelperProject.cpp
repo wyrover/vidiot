@@ -18,7 +18,7 @@
 #include "HelperProject.h"
 
 #include "Application.h"
-#include "UtilThread.h"
+#include "HelperThread.h"
 
 namespace test {
 
@@ -34,12 +34,11 @@ DirAndFile SaveProject(boost::optional<RandomTempDirPtr> tempDir)
 {
     RandomTempDirPtr tempDirProject = tempDir ? *tempDir : RandomTempDir::generate();
     wxFileName filename = generateSaveFileName(tempDirProject->getFileName());
-    util::thread::RunInMainAndWait([filename]()
+    RunInMainAndWait([filename]()
     {
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->SetFilename(filename.GetFullPath());
         gui::Window::get().GetDocumentManager()->GetCurrentDocument()->OnSaveDocument(filename.GetFullPath());
     });
-    waitForIdle();
     return std::make_pair(tempDirProject, filename);
 }
 

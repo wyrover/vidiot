@@ -20,16 +20,16 @@
 #include "ClipCreator.h"
 #include "File.h"
 #include "HelperFileSystem.h"
+#include "HelperThread.h"
 #include "Sequence.h"
 #include "Track.h"
-#include "UtilThread.h"
 #include <boost/foreach.hpp>
 
 namespace test {
 
 void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat )
 {
-    util::thread::RunInMainAndWait([sequence,files,nRepeat]()
+    RunInMainAndWait([sequence,files,nRepeat]()
     {
         model::TrackPtr videoTrack = sequence->getVideoTrack(0);
         model::TrackPtr audioTrack = sequence->getAudioTrack(0);
@@ -54,7 +54,7 @@ void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths
 
 void extendSequenceWithStillImage( model::SequencePtr sequence )
 {
-    util::thread::RunInMainAndWait([sequence]()
+    RunInMainAndWait([sequence]()
     {
         model::TrackPtr videoTrack = sequence->getVideoTrack(0);
         model::TrackPtr audioTrack = sequence->getAudioTrack(0);

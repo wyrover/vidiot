@@ -15,20 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperWatcher.h"
+#ifndef HELPER_THREAD_H
+#define HELPER_THREAD_H
 
-#include "HelperThread.h"
-#include "UtilLog.h"
-#include "Watcher.h"
+#include <boost/function.hpp>
 
 namespace test {
 
-void ASSERT_WATCHED_PATHS_COUNT(int n)
-{
-    RunInMainAndWait([n] 
-    { 
-        ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),n); 
-    });
-}
+void RunInMainAndWait(boost::function<void()> method);
 
 } // namespace
+
+#endif // HELPER_THREAD_H

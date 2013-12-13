@@ -24,6 +24,7 @@
 #include "File.h"
 #include "HelperConfig.h"
 #include "HelperProjectView.h"
+#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelinesView.h"
