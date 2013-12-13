@@ -23,6 +23,7 @@
 #include "HelperFileSystem.h"
 #include "HelperProject.h"
 #include "HelperProjectView.h"
+#include "HelperThread.h"
 #include "HelperTransition.h"
 #include "HelperWatcher.h"
 #include "Sequence.h"
@@ -64,16 +65,14 @@ void TestExceptions::testRemovedFileInSequence()
     tempDir.reset(); // Deletes the file (still used in the sequence) from disk
 
     // Open the sequence again (file missing from disk)
-    util::thread::RunInMainAndWait([folder1]
+    RunInMainAndWait([folder1]
     {
         getProjectView().select(boost::assign::list_of(folder1));
     });
-    waitForIdle();
-    util::thread::RunInMainAndWait([]
+    RunInMainAndWait([]
     {
         getProjectView().onOpen();
     });
-    waitForIdle();
 
     Play(10, 500);
 }

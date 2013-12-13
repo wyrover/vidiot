@@ -22,6 +22,7 @@
 #include "HelperApplication.h"
 #include "HelperFileSystem.h"
 #include "HelperProject.h"
+#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineTrim.h"
 #include "HelperTimelinesView.h"
@@ -80,7 +81,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
     {
         StartTest("Add transition (" + t.first + "," + t.second + ") to sequence");
-        util::thread::RunInMainAndWait([t,number]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
+        RunInMainAndWait([t,number]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,number),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
         number += 2; // +2 because the transition was added inbetween
     }
 
@@ -98,7 +99,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     TypeN(4,'='); // Zoom in until factor is 1:1
 
     StartTest("Scroll");
-    util::thread::RunInMainAndWait([]()
+    RunInMainAndWait([]()
     {
         getTimeline().getScrolling().align(getSequence()->getLength() / 2, getTimeline().GetSize().x / 2);
     });
@@ -123,7 +124,7 @@ void TestSavingAndLoading::testSaveAndLoad()
             wxFileName newCurrentFileName(referenceDirName);
             newCurrentFileName.SetFullName(tempDir_fileName.second.GetName() + "_new.vid");
             bool ok = wxCopyFile(tempDir_fileName.second.GetFullPath(), newCurrentFileName.GetFullPath());
-            util::thread::RunInMainAndWait([referenceDirName]()
+            RunInMainAndWait([referenceDirName]()
             {
                 wxString cmd;
                 cmd << "explorer " << referenceDirName.GetFullPath();
@@ -208,7 +209,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
 void TestSavingAndLoading::checkDocument(wxString path)
 {
     StartTest("Load document");
-    util::thread::RunInMainAndWait([path]()
+    RunInMainAndWait([path]()
     {
         gui::Window::get().GetDocumentManager()->CreateDocument(path,wxDOC_SILENT);
     });
@@ -225,7 +226,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
     }
 
     // Actions on loaded document
-    util::thread::RunInMainAndWait([]()
+    RunInMainAndWait([]()
     {
         // First move to the left so that all the move actions succeed
         getTimeline().getScrolling().align(0,0);

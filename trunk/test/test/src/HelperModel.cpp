@@ -17,6 +17,7 @@
 
 #include "HelperModel.h"
 
+#include "HelperThread.h"
 #include "UtilLog.h"
 #include "UnlinkClips.h"
 #include "VideoClip.h"
@@ -55,7 +56,7 @@ void unlink(model::IClipPtr clip)
     model::SequencePtr sequence = getSequence();
     ASSERT_NONZERO(clip->getLink());
     ASSERT_NONZERO(clip->getLink()->getLink());
-    util::thread::RunInMainAndWait([sequence,clip]()
+    RunInMainAndWait([sequence,clip]()
     {
         (new gui::timeline::command::UnlinkClips(getSequence(),boost::assign::list_of(clip)(clip->getLink())))->submit();
     });

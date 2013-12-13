@@ -28,6 +28,7 @@
 #include "HelperPopupMenu.h"
 #include "HelperProject.h"
 #include "HelperSequence.h"
+#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
@@ -191,7 +192,7 @@ void TestBugs::testBugsWithLongTimeline()
     }
     {
         StartTest("Bug: StackOverflow when loading");
-        util::thread::RunInMainAndWait([tempDir_fileName]()
+        RunInMainAndWait([tempDir_fileName]()
         {
             gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(),wxDOC_SILENT);
         });

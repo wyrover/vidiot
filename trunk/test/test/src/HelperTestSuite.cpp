@@ -18,11 +18,11 @@
 #pragma warning(disable:4996)
 
 #include "HelperTestSuite.h"
-#include <cxxtest/TestSuite.h>
+#include "HelperThread.h"
 #include "UtilList.h"
 #include "UtilLog.h"
-#include "UtilThread.h"
 #include "Window.h"
+#include <cxxtest/TestSuite.h>
 
 namespace test {
 
@@ -129,7 +129,7 @@ bool HelperTestSuite::startTestSuite(const char* suite)
     {
         updateTitle();
         waitForIdle();
-        util::thread::RunInMainAndWait([this]
+        RunInMainAndWait([this]
         {
            Config::WriteString( Config::sPathTestRunCurrent, currentCxxTest() ); // Set
         });
@@ -141,7 +141,7 @@ void HelperTestSuite::testSuiteDone()
 {
     if (mSuiteCount == CxxTest::TestTracker::tracker( ).world().numTotalTests())
     {
-        util::thread::RunInMainAndWait([this]
+        RunInMainAndWait([this]
         {
             Config::WriteString( Config::sPathTestRunCurrent, "" ); // Reset
         });
