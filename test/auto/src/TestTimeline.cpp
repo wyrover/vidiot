@@ -262,8 +262,26 @@ void TestTimeline::testDeletion()
         ASSERT_SELECTION_SIZE(2);
     }
     {
-        StartTest("When deleting a clip, an in-only, and a out-only transition must be deleted also.");
-        // todo
+        StartTest("When deleting a clip, an in-only transition must be deleted also.");
+        MakeInTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
+        DeselectAllClips();
+        Click(Center(VideoClip(0,3)));
+        Type(WXK_DELETE);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(     EmptyClip       )(VideoClip);
+        ASSERT_SELECTION_SIZE(0);
+        Undo(1);
+    }
+    {
+        StartTest("When deleting a clip, a out-only transition must be deleted also.");
+        MakeOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        DeselectAllClips();
+        Click(Center(VideoClip(0,1)));
+        Type(WXK_DELETE);
+        ASSERT_VIDEOTRACK0(VideoClip)(     EmptyClip       )(VideoClip);
+        ASSERT_SELECTION_SIZE(0);
+        Undo(1);
     }
 };
 
