@@ -71,6 +71,23 @@ public:
 
     void selectColumnHeader();
 
+    //////////////////////////////////////////////////////////////////////////
+    // POPUP MENU
+    //////////////////////////////////////////////////////////////////////////
+
+    void onCut();
+    void onCopy();
+    void onPaste();
+    void onDelete();
+    void onDeleteUnused();
+    void onNewFolder();
+    void onNewAutoFolder();
+    void onNewSequence();
+    void onNewFile();
+    void onCreateSequence();
+    void onAddToEndOfSequence();
+    void onOpen();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
@@ -78,19 +95,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     void onContextMenu( wxDataViewEvent &event );
-    void onCut(wxCommandEvent& event);
-    void onCopy(wxCommandEvent& event);
-    void onPaste(wxCommandEvent& event);
-    void onDelete(wxCommandEvent& event);
-    void onDeleteUnused(wxCommandEvent& event);
-    void onNewFolder(wxCommandEvent& event);
-    void onNewAutoFolder(wxCommandEvent& event);
-    void onNewSequence(wxCommandEvent& event);
-    void onNewFile(wxCommandEvent& event);
-    void onCreateSequence(wxCommandEvent& event);
-    void onAddToEndOfSequence(wxCommandEvent& event);
-    void onOpen(wxCommandEvent& event);
-    void onStartEditing( wxDataViewEvent &event );
     void onMotion(wxMouseEvent& event);
     void onDragEnd();
     void onDropPossible( wxDataViewEvent &event );
@@ -98,6 +102,7 @@ private:
     void onActivated( wxDataViewEvent &event );
     void onExpanded( wxDataViewEvent &event );
     void onCollapsed( wxDataViewEvent &event );
+    void onStartEditing( wxDataViewEvent &event );
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

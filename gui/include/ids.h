@@ -50,13 +50,6 @@ enum
     // Help menu
     ID_OPENLOGFILE,
     ID_OPENCONFIGFILE,
-    // Project view popup menu
-    meID_NEW_FOLDER,
-    meID_NEW_AUTOFOLDER,
-    meID_NEW_SEQUENCE,
-    meID_NEW_FILE,
-    meID_CREATE_SEQUENCE,
-    meID_DELETE_UNUSED,
     // Should always be the last value!!!
     meID_LAST
 };
