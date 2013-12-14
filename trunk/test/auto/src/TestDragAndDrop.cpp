@@ -93,4 +93,75 @@ void TestDragAndDrop::testSnapping()
 
 }
 
+void TestDragAndDrop::testDropAdjacentToTransition()
+{
+    StartTestSuite();
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
+
+    Zoom level(2);
+    {
+        StartTest("InOutTransition: Drop adjacent to left edge");
+        MakeInOutTransitionAfterClip prepare(2);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10); 
+        Drag(From(Center(VideoClip(0,7))).AlignRight(LeftPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        PositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
+        Undo();
+    }
+    {
+        StartTest("InOutTransition: Drop adjacent to right edge");
+        MakeInOutTransitionAfterClip prepare(2);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10); 
+        Drag(From(Center(VideoClip(0,7))).AlignLeft(RightPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        PositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
+        Undo();
+    }
+    {
+        StartTest("InTransition: Drop adjacent to right edge");
+        MakeInTransitionAfterClip prepare(2);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10); 
+        Drag(From(Center(VideoClip(0,7))).AlignLeft(RightPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        PositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
+        Undo();
+    }
+    {
+        StartTest("OutTransition: Drop adjacent to left edge");
+        MakeOutTransitionAfterClip prepare(2);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10); 
+        Drag(From(Center(VideoClip(0,7))).AlignRight(LeftPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        PositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
+        Undo();
+    }
+    {
+        StartTest("InOutTransition with 0-length clips: Drop adjacent to left edge");
+        MakeInOutTransitionAfterClip prepare(2);
+        TrimLeft(VideoClip(0,2), 300);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10); 
+        Drag(From(Center(VideoClip(0,7))).AlignRight(LeftPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        PositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
+        Undo(2);
+    }
+    {
+        StartTest("InOutTransition with 0-length clips: Drop adjacent to right edge");
+        MakeInOutTransitionAfterClip prepare(2);
+        TrimRight(VideoClip(0,4), -200); 
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10); 
+        Drag(From(Center(VideoClip(0,7))).AlignLeft(RightPixel(VideoClip(0,3))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        PositionCursor(HCenter(VideoClip(0,2))); // try to get one frame from the transition (was not removed when the error occurred)
+        Undo(2);
+    }
+}
+
 } // namespace

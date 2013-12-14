@@ -214,7 +214,6 @@ IClipPtr Track::getClip(pts position) const
         right += length;
         if (position >= left && position < right) // < right: clip->getrightpts == nextclip->getleftpts
         {
-            LOG_DEBUG << "Found";
             return clip;
         }
         left += length;

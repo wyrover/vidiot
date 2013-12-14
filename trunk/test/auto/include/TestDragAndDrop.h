@@ -38,6 +38,13 @@ public:
 
     void testSnapping();
 
+    /// See [#79]: Crash when dropping clip adjacent to a transition 
+    /// When a clipped was dropped such that it touches a transition, the
+    /// clip besides the transition was deleed but the transition was not.
+    /// Any attempt to access a frame of the transition caused a crash, 
+    /// since one of the adjacing clips was missing.
+    void testDropAdjacentToTransition();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

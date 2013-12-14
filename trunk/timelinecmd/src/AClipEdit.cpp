@@ -204,40 +204,97 @@ void AClipEdit::Revert()
 void AClipEdit::split(model::TrackPtr track, pts position)
 {
     model::IClipPtr clip = track->getClip(position);
-    if (clip && clip->getLeftPts() < position)
+
+    // Step 1: Remove any transitions directly adjacent to the split position.
+    //         That includes transitions that have getLeftPts() == position 
+    //         AND transitions that have getRightPts() == position. 
+    // Note: track->getClip(position) returns the first clip that generates frames
+    //       at 'position'. Due to the structuring of transitions it is possible 
+    //       that a transition that should be removed is not returned by this call:
+    //       (1) A transition that touches directly with its right side.
+    //           In this case, the clip after the transition may be returned.
+    //       (2) A transition that touches directly with its right side, but its next
+    //           clip has length 0 - thus, is only used to provide frames for the transition.
+    //           In this case, the clip AFTER the 0-length clip is returned by 'getClip()'
+    if (clip)
     {
-        // If there already is a cut at the given position (leftpts != position) then there's no need to cut again.
-        // Furthermore, doing the check at the beginning makes the handling of transitions (and the possible
+        // If there already is a cut at the given position (leftpts == position) then there's no need to cut again.
+        // One exception: if the cut is the 'edge' of a transition, the transition must be unapplied (particularly
+        // required for drag and drop scenarios).
+        // Doing the check at the beginning makes the handling of transitions (and the possible
         // 'unapplying of them' a bit simpler in the code below (no more checks for 'if already cut' required.
 
-        model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+        model::TransitionPtr transition; 
+        ASSERT_LESS_THAN_EQUALS(clip->getLeftPts(),position);
+        if (clip->getLeftPts() < position)
+        {
+            transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+        }
+        else if (clip->getLeftPts() == position)
+        {
+            transition = boost::dynamic_pointer_cast<model::Transition>(clip);
+            if (transition)
+            {
+                if (transition->getLeft() == 0) // Split is done on the left end of a transition.
+                {
+                    transition.reset();  // In only transition. Ignore.
+                }
+            }
+            else
+            {
+                // This extra code is required because pts intervals are exclusive on the right edge 
+                // (thus "[left,right)"), but we want the transition to be removed here anyway.
+
+                if (clip->getInTransition())    
+                {
+                    // (1) clip is part of transition. The split is at the right edge of this transition. Remove it.
+                    transition = clip->getInTransition(); // May be a 0-ptr
+                }
+                else if (clip->getPrev() && clip->getPrev()->getLength() == 0)
+                {
+                    // (2) Previous clip is of length 0 and (consequently) part of a transition.
+                    // Thus, this transition is adjacent to 'position' also. Remove it.
+                    transition = clip->getPrev()->getInTransition(); // May be 0-ptr
+                }
+
+                if (transition) // Split is done on the right end of a transition.
+                {
+                    if (transition->getRight() == 0) // Out only transition. Ignore.
+                    {
+                        transition.reset();
+                    }
+                }
+            }
+        }
         if (transition)
         {
-            // There is a transition at the given position: Restore the underlying clips.
-            ASSERT_LESS_THAN(transition->getLeftPts(),position);
+            ASSERT_LESS_THAN_EQUALS(transition->getLeftPts(),position);
             unapplyTransition(transition,true);
             clip = track->getClip(position); // Must be done again, since unapplyTransition changes the track.
         }
-        if (clip) // If there is a clip at the given position, it might need to be split
+    }
+
+    // Step 2: split clip at given position.
+    if (clip) // If there is a clip at the given position, it might need to be split
+    {
+        ASSERT(clip->isA<model::IClip>())(clip);
+        position -= clip->getLeftPts();
+        if (position != 0)
         {
-            ASSERT(clip->isA<model::IClip>())(clip);
             ASSERT(!clip->isA<model::Transition>())(clip);
-            position -= clip->getLeftPts();
-            if (position != 0)
-            {
-                // If there is already a cut at the given position, nothing is changed.
-                // Note that unapplying a transition creates a new cut, therefore this
-                // check must be done again AFTER unapplyTransition has been applied.
-                ASSERT_LESS_THAN(position,clip->getLength());
-                model::IClipPtr left = make_cloned<model::IClip>(clip);
-                model::IClipPtr right = make_cloned<model::IClip>(clip);
-                left->adjustEnd(position - clip->getLength());
-                right->adjustBegin(position);
-                model::IClips replacements = boost::assign::list_of(left)(right);
-                replaceClip(clip, replacements);
-            }
+            // If there is already a cut at the given position, nothing is changed.
+            // Note that unapplying a transition creates a new cut, therefore this
+            // check must be done again AFTER unapplyTransition has been applied.
+            ASSERT_LESS_THAN(position,clip->getLength());
+            model::IClipPtr left = make_cloned<model::IClip>(clip);
+            model::IClipPtr right = make_cloned<model::IClip>(clip);
+            left->adjustEnd(position - clip->getLength());
+            right->adjustBegin(position);
+            model::IClips replacements = boost::assign::list_of(left)(right);
+            replaceClip(clip, replacements);
         }
     }
+    // else: no clip: nothing to split
 }
 
 void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements, bool maintainlinks)
