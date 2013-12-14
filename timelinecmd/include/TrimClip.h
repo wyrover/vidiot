@@ -77,8 +77,6 @@ public:
 
     pts getDiff() const;
 
-    pts getShiftStart() const;
-
     struct TrimLimit
     {
         TrimLimit()

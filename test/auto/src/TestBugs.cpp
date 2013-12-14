@@ -322,4 +322,29 @@ void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
     }
 }
 
+void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
+{
+    StartTestSuite();
+    Zoom level(2);
+    triggerMenu(ID_ADDVIDEOTRACK);
+    triggerMenu(ID_ADDAUDIOTRACK);
+    DragToTrack(1,VideoClip(0,2),AudioClip(0,2));
+    ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
+    ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
+    ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip);
+    ASSERT_AUDIOTRACK1(     EmptyClip      )(AudioClip);
+    {
+        StartTest("EndTrim allowed even with adjacent touching clip in other track");
+        TrimRight(VideoClip(0,1), -20);
+        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        Undo();
+    }
+    {
+        StartTest("EndTrim allowed even with adjacent touching clip in other track");
+        TrimLeft(VideoClip(0,1), 20);
+        ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
+        Undo();
+    }
+}
+
 } // namespace

@@ -109,6 +109,12 @@ public:
     /// part of a track).
     void testCrashWhenDroppingPartiallyOverATransition();
 
+
+    /// If a clip in 'another' track touches a clip that is being trimmed, at the right side,
+    /// then trimming is not allowed. If the clip is in the same track as the trimmed clip,
+    /// then trimming IS allowed.
+    void testShiftTrimNotAllowedWithAdjacentClipInOtherTrack();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

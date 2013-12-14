@@ -52,7 +52,6 @@ TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::Tra
     ,   mTrim(0)
     ,   mShift(false)
     ,   mPosition(position)
-    ,   mShiftStart(0)
     ,   mCursorPositionBefore(0)
     ,   mCursorPositionAfter(0)
 {
@@ -202,11 +201,6 @@ pts TrimClip::getDiff() const
     return mTrim;
 }
 
-pts TrimClip::getShiftStart() const
-{
-    return mShiftStart;
-}
-
 // static
 TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift)
 {
@@ -281,17 +275,18 @@ TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, m
         // When shift trimming the contents in other tracks must be able to be shifted accordingly
         pts minShiftOtherTrackContent = (std::numeric_limits<pts>::min)();
         pts maxShiftOtherTrackContent = (std::numeric_limits<pts>::max)();
-        pts shiftFrom = (isBeginTrim(position)) ? clip->getLeftPts() : clip->getRightPts();
+        bool beginTrim = isBeginTrim(position);
+        pts shiftFrom = beginTrim ? clip->getLeftPts() : clip->getRightPts();
         for ( model::TrackPtr track : sequence->getTracks() )
         {
             if (clip->getTrack() == track) continue;
             if (link && link->getTrack() == track) continue;
-            model::IClipPtr clipInOtherTrack = track->getClip(shiftFrom);
+            model::IClipPtr clipInOtherTrack = beginTrim ? track->getClip(clip->getLeftPts()) : track->getClip(clip->getRightPts() - 1);
 
             if (!clipInOtherTrack)
             {
                 // There is no clip at the given position (beyond track length) then the only restriction is the length of the track.
-                if (isBeginTrim(position))
+                if (beginTrim)
                 {
                     // No change to mMaxShiftOtherTrackContent
                 }
@@ -310,7 +305,7 @@ TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, m
                 }
                 else
                 {
-                    if (isBeginTrim(position))
+                    if (beginTrim)
                     {
                         maxShiftOtherTrackContent = std::min<pts>(maxShiftOtherTrackContent, clipInOtherTrack->getRightPts() - shiftFrom);
                     }
@@ -449,17 +444,6 @@ void TrimClip::applyTrim()
     {
         if (mShift)
         {
-            if (isBeginTrim())
-            {
-                mShiftStart = mClip->getLeftPts();
-            }
-            else
-            {
-                mShiftStart = mClip->getRightPts();
-            }
-        }
-        if (mShift)
-        {
             // Move clips in other tracks (that's the 'shift') - and only in other tracks
             // The clips in the same track as mClip and linked are shifted automatically
             // because of the enlargement/reduction of these two clips.
@@ -472,7 +456,7 @@ void TrimClip::applyTrim()
             }
             else
             {
-                shiftAllTracks(mClip->getRightPts(), mTrim,  exclude);
+                shiftAllTracks(mClip->getRightPts() - 1, mTrim,  exclude);
             }
         }
         else // ! mShift
