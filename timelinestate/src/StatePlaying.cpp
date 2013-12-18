@@ -41,6 +41,7 @@ const wxString Playing::sTooltip = _(
 Playing::Playing( my_context ctx ) // entry
 :   TimeLineState( ctx )
 ,   mMakingNewSelection(false)
+,   mKeyCodeTriggeringStop(WXK_NONE)
 {
     LOG_DEBUG;
     getMouse().set(PointerNormal);
@@ -49,6 +50,23 @@ Playing::Playing( my_context ctx ) // entry
 Playing::~Playing() // exit
 {
     LOG_DEBUG;
+    ::command::RootCommand* cmd = 0;
+    switch (mKeyCodeTriggeringStop)
+    {
+    case 'b':
+    case 'B':
+        cmd = new command::SplitAtCursorAndTrim(getSequence(), true);
+        //cmd->add(new command::StartPlayback(getSequence()));
+        model::ProjectModification::submitIfPossible(cmd);
+        getPlayer()->play();
+        break;
+    case 's':
+    case 'S':
+        cmd  = new command::SplitAtCursor(getSequence());
+        model::ProjectModification::submitIfPossible(cmd);
+        getPlayer()->play();
+        break;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,12 +93,25 @@ boost::statechart::result Playing::react( const EvRightDown& evt )
 
 boost::statechart::result Playing::react( const EvKeyDown& evt)
 {
-     VAR_DEBUG(evt);
+    VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SPACE:     getPlayer()->stop();        break;
-    case WXK_SHIFT:     triggerBegin();             break;
-    case WXK_F1:        getTooltip().show(sTooltip);break;
+    case WXK_SHIFT:     
+        triggerBegin();             
+        break;
+    case WXK_F1:        
+        getTooltip().show(sTooltip);
+        break;
+    case 's':
+    case 'S':
+    case 'b':
+    case 'B':
+        mKeyCodeTriggeringStop = evt.getKeyCode();
+        getPlayer()->stop();        
+        return discard_event();
+    case WXK_SPACE:     
+        getPlayer()->stop();        
+        return discard_event();
     }
     return forward_event();
 }

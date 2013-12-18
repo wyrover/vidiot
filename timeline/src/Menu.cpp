@@ -85,7 +85,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.Append(ID_ADDAUDIOTRACK,  _("Add audio track"),  _("Add a new audio track to the sequence."));
     mMenu.Append(ID_REMOVE_EMPTY_TRACKS,  _("Remove empty tracks"), _("Remove all empty audio and video tracks in this sequence."));
     mMenu.AppendSeparator();
-    mMenu.Append(ID_SPLIT_AT_CURSOR,   _("Split at cursor\tS"), _("Split clips at the current cursor position."));
+    mMenu.Append(ID_SPLIT_AT_CURSOR,   _("Split at cursor"), _("Split clips at the current cursor position."));
     mMenu.AppendSeparator();
     mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions"), _("Delete all marked regions from sequence."));
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions"), _("Delete all unmarked regions from sequence."));

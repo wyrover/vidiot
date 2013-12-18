@@ -134,6 +134,7 @@ private:
     int mWidth;
     int mHeight;
     bool mDrawBoundingBox;
+    wxBitmapPtr mBufferBitmap;
 
     boost::scoped_ptr<boost::thread> mVideoBufferThreadPtr;
     void videoBufferThread();

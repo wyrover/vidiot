@@ -57,9 +57,6 @@ public:
     /// transition is removed after dropping that clip.
     void testUndo();
 
-    /// Test the splitting of the sequence at the position of the cursor
-    void testSplitting();
-
     /// The following scenario caused pixel to pts conversion errors; after
     /// one DND operation (with shifting) the timeline positioning did not work anymore.
     /// The error caused LeftPixel() to return not the left most pixel of a clip,

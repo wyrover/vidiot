@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_TRIMMING_H
-#define TEST_TRIMMING_H
+#ifndef TEST_SPLITTING_H
+#define TEST_SPLITTING_H
 
 namespace test
 {
-class TestTrimming : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestTrimming>
+class TestSplitting : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestSplitting>
 {
 public:
 
@@ -36,11 +36,12 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    void testSnapping();
+    /// Test the splitting of the sequence at the position of the cursor
+    void testSplitting();
 
-    void testKeyboardTrimming();
-
-    void testKeyboardTrimmingDuringPlayback();
+    /// Test the splitting of the sequence at the position of the cursor
+    /// while playback is active.
+    void testSplittingDuringPlayback();
 
 private:
 
@@ -53,4 +54,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_TRIMMING_H
+#endif // TEST_SPLITTING_H

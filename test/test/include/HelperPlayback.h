@@ -15,13 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_TRIMMING_H
-#define TEST_TRIMMING_H
+#ifndef HELPER_PLAYBACK_H
+#define HELPER_PLAYBACK_H
 
-namespace test
-{
-class TestTrimming : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestTrimming>
+namespace gui {
+class PlaybackActiveEvent;
+}
+
+namespace test {
+
+class WaitForPlayback 
+    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
 {
 public:
 
@@ -29,28 +33,49 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual void setUp();       ///< Called before each test.
-    virtual void tearDown();    ///< Called after each test.
+    WaitForPlayback(bool waitForStart);
+    ~WaitForPlayback();
 
     //////////////////////////////////////////////////////////////////////////
-    // TEST CASES
+    // WAIT
     //////////////////////////////////////////////////////////////////////////
 
-    void testSnapping();
-
-    void testKeyboardTrimming();
-
-    void testKeyboardTrimmingDuringPlayback();
+    void wait();
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // EVENT FROM PLAYER
+    //////////////////////////////////////////////////////////////////////////
+
+    void onPlaybackActive(gui::PlaybackActiveEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    FixtureProject mProjectFixture;
+    bool mWaitForStart;
+    bool mDone;
+    boost::condition_variable mCondition;
+    boost::mutex mMutex;
 };
-}
-using namespace test;
 
-#endif // TEST_TRIMMING_H
+struct WaitForPlaybackStarted : public WaitForPlayback
+{
+    WaitForPlaybackStarted()
+        :   WaitForPlayback(true)
+    {
+    }
+};
+
+struct WaitForPlaybackStopped : public WaitForPlayback
+{
+    WaitForPlaybackStopped()
+        :   WaitForPlayback(false)
+    {
+    }
+};
+
+} // namespace
+
+#endif // HELPER_PLAYBACK_H
