@@ -28,6 +28,7 @@
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
+#include "HelperPlayback.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
@@ -46,6 +47,7 @@
 #include "Transition.h"
 #include "TrimClip.h"
 #include "VideoClip.h"
+#include "VideoDisplayEvent.h"
 #include "VideoTrack.h"
 #include "Zoom.h"
 
@@ -360,6 +362,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     }
 }
 
+// todo move to test drag and drop
 void TestTimeline::testDnd()
 {
     StartTestSuite();
@@ -537,42 +540,6 @@ void TestTimeline::testUndo()
     Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::CreateTransition>();
     Redo(); ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     Undo();
-}
-
-void TestTimeline::testSplitting()
-{
-    StartTestSuite();
-    MakeInOutTransitionAfterClip preparation(1);
-    {
-        PositionCursor(HCenter(VideoClip(0,2)));
-        Type('s');
-        ASSERT(!VideoClip(0,0)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,4)->isA<model::Transition>());
-        Undo();
-    }
-    {
-        PositionCursor(LeftPixel(VideoClip(0,2)));
-        Type('s');
-        ASSERT(!VideoClip(0,0)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,4)->isA<model::Transition>());
-        Undo();
-    }
-    {
-        PositionCursor(RightPixel(VideoClip(0,2)));
-        Type('s');
-        ASSERT(!VideoClip(0,0)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,1)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,2)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,3)->isA<model::Transition>());
-        ASSERT(!VideoClip(0,4)->isA<model::Transition>());
-        Undo();
-    }
 }
 
 void TestTimeline::testAbortDrag()

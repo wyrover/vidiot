@@ -86,6 +86,8 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
     SetBackgroundColour(Layout::get().BackgroundColour);
     SetBackgroundStyle(wxBG_STYLE_PAINT); // For the buffered DC in onPaint()
 
+    mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
+
     mStateMachine->start();
     init();
 
@@ -330,6 +332,7 @@ void Timeline::onIdle(wxIdleEvent& event)
 void Timeline::onSize(wxSizeEvent& event)
 {
     getSequenceView().canvasResized(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
+    mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
     resize();
 
     event.Skip();
@@ -342,8 +345,19 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
 
 void Timeline::onPaint( wxPaintEvent &event )
 {
-    wxAutoBufferedPaintDC dc( this ); // See: http://trac.wxwidgets.org/ticket/15497
-    DoPrepareDC(dc); // Adjust for logical coordinates, not device coordinates
+    boost::scoped_ptr<wxDC> dc;
+    if (!IsDoubleBuffered())
+    {
+        // A dedicated buffer bitmap is used. Without it I had conflicts between the buffered
+        // bitmap used for VideoDisplay and Timeline: when pressing 'b' (trim begin) during
+        // playback, one of the playback frames ended popping up over the timeline.
+        dc.reset(new wxBufferedPaintDC(this, *mBufferBitmap, wxBUFFER_VIRTUAL_AREA ));  // See: http://trac.wxwidgets.org/ticket/15497
+    }
+    else
+    {
+        dc.reset(new wxPaintDC(this));
+    }
+    DoPrepareDC(*dc); // Adjust for logical coordinates, not device coordinates
 
     if (mTransaction)
     {
@@ -355,13 +369,13 @@ void Timeline::onPaint( wxPaintEvent &event )
     wxMemoryDC dcBmp;
     dcBmp.SelectObjectAsSource(getSequenceView().getBitmap());
 
-    dc.SetLogicalOrigin(-mShift,0);
+    dc->SetLogicalOrigin(-mShift,0);
 
     if (mShift > 0)
     {
-        dc.SetPen(Layout::get().BackgroundPen);
-        dc.SetBrush(Layout::get().BackgroundBrush);
-        dc.DrawRectangle(-mShift,0,mShift,dc.GetSize().GetHeight());
+        dc->SetPen(Layout::get().BackgroundPen);
+        dc->SetBrush(Layout::get().BackgroundBrush);
+        dc->DrawRectangle(-mShift,0,mShift,dc->GetSize().GetHeight());
     }
 
     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
@@ -371,14 +385,14 @@ void Timeline::onPaint( wxPaintEvent &event )
         int y = scroll.y + upd.GetY();
         int w = upd.GetW();
         int h = upd.GetH();
-        dc.Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
+        dc->Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
         upd++;
     }
 
-    getIntervals().getView().draw(dc);
-    getDrag().draw(dc);
-    getTrim().draw(dc);
-    getCursor().draw(dc);
+    getIntervals().getView().draw(*dc);
+    getDrag().draw(*dc);
+    getTrim().draw(*dc);
+    getCursor().draw(*dc);
 }
 
 //////////////////////////////////////////////////////////////////////////

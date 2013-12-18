@@ -23,6 +23,7 @@
 #include "Cursor.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
+#include "HelperPlayback.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
@@ -171,5 +172,38 @@ void TestTrimming::testKeyboardTrimming()
     TestEndTrimSucceeds("With other track with partially left obscuring non-empty clip: End trim (no change)");
     Undo();
 }
+
+void TestTrimming::testKeyboardTrimmingDuringPlayback()
+{
+    StartTestSuite();
+    StartTest("Start playback");
+    PositionCursor(HCenter(VideoClip(0,4)));
+    WaitForPlaybackStarted started;
+    Type(' ');
+    started.wait();
+
+    StartTest("Trigger trim");
+    WaitForPlaybackStopped stopped;
+    WaitForPlaybackStarted startedAgain;
+    pause(200);
+    Type('b');
+    stopped.wait();
+    startedAgain.wait();
+
+    ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
+    ASSERT_LESS_THAN(VideoClip(0,4)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,4));
+    ASSERT_EQUALS(VideoClip(0,5)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,5));
+
+    StartTest("Stop playback");
+    WaitForPlaybackStopped stoppedAgain;
+    Type(' ');
+    stoppedAgain.wait();
+    pause(500);
+
+    //ASSERT(getTimeline().getPlayer()->
+    waitForIdle();
+}
+
+
 
 } // namespace

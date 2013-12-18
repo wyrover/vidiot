@@ -84,6 +84,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     VAR_DEBUG(this);
 
     SetBackgroundStyle(wxBG_STYLE_PAINT); // Required for wxAutoBufferedPaintDC
+    mBufferBitmap.reset(new wxBitmap(GetSize()));
 
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(mWidth)(mHeight);
@@ -487,6 +488,8 @@ void VideoDisplay::OnSize(wxSizeEvent& event)
         mHeight = h;
         VAR_INFO(mWidth)(mHeight);
 
+        mBufferBitmap.reset(new wxBitmap(GetSize()));
+
         if (mCurrentVideoFrame)
         {
             // Note: this is also done when playback of video has started.
@@ -510,15 +513,27 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
         position = mCurrentBitmapPosition;
     }
 
-    // Buffered dc is used, since first the entire area is blanked with drawrectangle, and then overwritten. Without buffering that causes flickering.
-    wxAutoBufferedPaintDC dc(this); // Omit this, and suffer the performance consequences ;-)
+    // Buffered dc is used, since first the entire area is blanked with drawrectangle, 
+    // and then overwritten. Without buffering that causes flickering.
+    boost::scoped_ptr<wxDC> dc;
+    if (!IsDoubleBuffered())
+    {
+        // A dedicated buffer bitmap is used. Without it I had conflicts between the buffered
+        // bitmap used for VideoDisplay and Timeline: when pressing 'b' (trim begin) during
+        // playback, one of the playback frames ended popping up over the timeline.
+        dc.reset(new wxBufferedPaintDC(this, *mBufferBitmap, wxBUFFER_VIRTUAL_AREA ));  // See: http://trac.wxwidgets.org/ticket/15497
+    }
+    else
+    {
+        dc.reset(new wxPaintDC(this));
+    }
 
-    dc.SetPen(*wxBLACK);
-    dc.SetBrush(*wxBLACK_BRUSH);
-    dc.DrawRectangle( 0, 0, mWidth, mHeight); // black bg
+    dc->SetPen(*wxBLACK);
+    dc->SetBrush(*wxBLACK_BRUSH);
+    dc->DrawRectangle(0, 0, mWidth, mHeight); // black bg
     if (bitmap)
     {
-        dc.DrawBitmap(*bitmap,position);
+        dc->DrawBitmap(*bitmap,position);
     }
 }
 

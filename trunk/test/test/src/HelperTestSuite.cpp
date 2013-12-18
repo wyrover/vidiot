@@ -100,7 +100,7 @@ bool HelperTestSuite::currentTestIsEnabled()
     wxString current = currentCxxTest();
     if (!mRunOnly.IsSameAs(""))
     {
-        return current.IsSameAs(mRunOnly);
+        return current.Find(mRunOnly) != wxNOT_FOUND;
     }
 
     if (!mRunFrom.IsSameAs(""))

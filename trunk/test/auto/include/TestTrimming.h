@@ -40,6 +40,8 @@ public:
 
     void testKeyboardTrimming();
 
+    void testKeyboardTrimmingDuringPlayback();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
