@@ -151,35 +151,35 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     //nullPacket.buf = 0; // for new version of avcodec
     //ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
 
-    auto div = [this](boost::rational<int> num, boost::rational<int> divisor) -> int
+    auto div = [this](rational64 num, rational64 divisor) -> int64_t
     {
-        return boost::rational_cast<int>(num / divisor);
+        return boost::rational_cast<int64_t>(num / divisor);
     };
 
-    auto modulo = [this,div](boost::rational<int> num, boost::rational<int> divisor) -> boost::rational<int>
+    auto modulo = [this,div](rational64 num, rational64 divisor) -> rational64
     {
         num -= divisor * div(num,divisor);
         return num;
     };
 
-    auto projectPositionToTimeInS = [this](pts position) -> boost::rational<int>
+    auto projectPositionToTimeInS = [this](pts position) -> rational64
     {
-        return boost::rational<int>(position) / Properties::get().getFrameRate();
+        return rational64(position) / Properties::get().getFrameRate();
     };
 
-    auto timeToNearestInputFramesPts = [this, modulo](boost::rational<int> time) -> std::pair<int,int>
+    auto timeToNearestInputFramesPts = [this, modulo](rational64 time) -> std::pair<pts,pts>
     {
         FrameRate fr = FrameRate(getStream()->r_frame_rate); // 24000/1001
         FrameRate timebase = FrameRate(getStream()->time_base); // 1/240000
-        boost::rational<int> ticksPerFrame = 1 / (fr * timebase);
+        rational64 ticksPerFrame = 1 / (fr * timebase);
 
-        boost::rational<int> firstFrame = time * fr;// * timebase;
-        boost::rational<int> requiredStreamPts = firstFrame * ticksPerFrame;
+        rational64 firstFrame = time * fr;// * timebase;
+        rational64 requiredStreamPts = firstFrame * ticksPerFrame;
 
-        boost::rational<int> first = requiredStreamPts - modulo(requiredStreamPts,ticksPerFrame);
-        boost::rational<int> second = first + ticksPerFrame;
+        rational64 first = requiredStreamPts - modulo(requiredStreamPts,ticksPerFrame);
+        rational64 second = first + ticksPerFrame;
 
-        return std::make_pair(boost::rational_cast<int>(first),boost::rational_cast<int>(second));
+        return std::make_pair(boost::rational_cast<int64_t>(first),boost::rational_cast<int64_t>(second));
     };
 
     // 'Resample' the frame timebase
@@ -187,7 +187,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // if the previously returned frame should be returned again
     // \todo instead of duplicating frames, nicely take the two input frames 'around' the
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
-    std::pair<int,int> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
+    std::pair<pts,pts> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
     pts requiredInputPts = requiredInputFrames.first;
 
     VAR_DEBUG(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);

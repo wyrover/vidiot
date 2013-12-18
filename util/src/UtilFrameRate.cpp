@@ -32,17 +32,17 @@ const std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_lis
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-FrameRate::FrameRate(int num, int den)
-    :   boost::rational<int>(num,den)
+FrameRate::FrameRate(int64_t num, int64_t den)
+    :   rational64(num,den)
     {
 }
 FrameRate::FrameRate(AVRational avr)
-    :   boost::rational<int>(avr.num,avr.den)
+    :   rational64(avr.num,avr.den)
 {
 }
 
 FrameRate::FrameRate(wxString framerate)
-    :   boost::rational<int>(FrameRate::s25p) // Default value. Only used if the given framerate is unknown.
+    :   rational64(FrameRate::s25p) // Default value. Only used if the given framerate is unknown.
 {
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {
@@ -101,7 +101,7 @@ void FrameRate::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & boost::serialization::make_nvp( "rational", boost::serialization::base_object< boost::rational<int> >(*this));
+        ar & boost::serialization::make_nvp( "rational64", boost::serialization::base_object< rational64 >(*this));
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

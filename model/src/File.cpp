@@ -492,7 +492,7 @@ void File::openFile()
             // may result in the outcome '0'.
             return 1;
         }
-        return Convert::rationaltimeToPts(boost::rational<int>(Constants::sSecond,1) * boost::rational<int>(stream->duration,1) * boost::rational<int>(stream->time_base.num,stream->time_base.den));
+        return Convert::rationaltimeToPts(rational64(Constants::sSecond,1) * rational64(stream->duration,1) * rational64(stream->time_base.num,stream->time_base.den));
     };
 
     auto isAudioSupported = [this,path](AVStream* stream) -> bool

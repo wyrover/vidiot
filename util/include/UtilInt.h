@@ -21,6 +21,8 @@
 typedef int pixel;
 typedef int64_t pts;
 typedef int64_t samplecount;
+typedef int64_t milliseconds;
+typedef int64_t microseconds;
 typedef int16_t sample;
 
 samplecount min(samplecount first, samplecount second);
@@ -37,8 +39,10 @@ typedef boost::icl::discrete_interval<pts> PtsInterval;
 typedef boost::icl::discrete_interval<pixel> PixelInterval;
 
 typedef boost::rational<int> rational;
+typedef boost::rational<int64_t> rational64;
 
 int floor(rational r);
+int64_t floor64(rational64);
 
 template <typename TYPE1, typename TYPE2>
 TYPE1 removeRemainder(TYPE2 divisor, TYPE1 value)

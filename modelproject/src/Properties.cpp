@@ -90,12 +90,41 @@ void Properties::setDefaultRender(render::RenderPtr render)
 // SERIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+struct OldFrameRate
+    : public boost::rational<int>
+{
+    OldFrameRate(int num, int den) : boost::rational<int>(num,den) {}
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        try
+        {
+            ar & boost::serialization::make_nvp( "rational", boost::serialization::base_object< boost::rational<int> >(*this));
+        }
+        catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
+        catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }
+        catch (std::exception& e)                    { VAR_ERROR(e.what());                         throw; }
+        catch (...)                                  { LOG_ERROR;                                   throw; }
+    }
+
+};
+
 template<class Archive>
 void Properties::serialize(Archive & ar, const unsigned int version)
 {
     try
     {
-        ar & BOOST_SERIALIZATION_NVP(mFrameRate);
+        if (version == 1 && Archive::is_loading::value)
+        {
+            OldFrameRate tmp(1,1);
+            ar & boost::serialization::make_nvp( "mFrameRate", tmp );
+            mFrameRate.assign(static_cast<int64_t>(tmp.numerator()), static_cast<int64_t>(tmp.denominator()));
+        }
+        else
+        {
+            ar & BOOST_SERIALIZATION_NVP(mFrameRate);
+        }
         ar & BOOST_SERIALIZATION_NVP(mVideoWidth);
         ar & BOOST_SERIALIZATION_NVP(mVideoHeight);
         ar & BOOST_SERIALIZATION_NVP(mAudioChannels);
