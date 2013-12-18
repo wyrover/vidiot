@@ -36,6 +36,12 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
+    void testDnd();
+
+    /// Test drag and drop scenarios specific to having multiple tracks in the
+    /// timeline.
+    void testDndMultipleTracks();
+
     void testSnapping();
 
     /// See [#79]: Crash when dropping clip adjacent to a transition 
