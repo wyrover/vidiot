@@ -26,55 +26,55 @@
 namespace model {
 
 // static
-pts Convert::timeToPts(int time)
+pts Convert::timeToPts(milliseconds time)
 {
-    return rationaltimeToPts(rational(time));
+    return rationaltimeToPts(rational64(time));
 }
 
 // static
-pts Convert::rationaltimeToPts(boost::rational<int> time)
+pts Convert::rationaltimeToPts(rational64 time)
 {
     return rationaltimeToPts(time, Properties::get().getFrameRate());
 }
 
 // static
-pts Convert::timeToPts(int time, FrameRate framerate)
+pts Convert::timeToPts(milliseconds time, FrameRate framerate)
 {
-    return rationaltimeToPts(rational(time), framerate);
+    return rationaltimeToPts(rational64(time), framerate);
 }
 
 // static
-pts Convert::rationaltimeToPts(boost::rational<int> time, FrameRate framerate )
+pts Convert::rationaltimeToPts(rational64 time, FrameRate framerate )
 {
-    return floor(time / rational(Constants::sSecond) * framerate );
+    return floor64(time / rational64(Constants::sSecond) * framerate );
 }
 
 // static
-int Convert::ptsToTime(pts position)
+milliseconds Convert::ptsToTime(pts position)
 {
-    return floor(rational(position) * rational(Constants::sSecond) / Properties::get().getFrameRate());
+    return floor64(rational64(position) * rational64(Constants::sSecond) / Properties::get().getFrameRate());
 }
 
 // static
-int Convert::ptsToMicroseconds(pts position)
+microseconds Convert::ptsToMicroseconds(pts position)
 {
-    return floor(rational(ptsToTime(position)) * rational(Constants::sMicroseconds));
+    return floor64(rational64(ptsToTime(position)) * rational64(Constants::sMicroseconds));
 }
 
 // static
-pts Convert::microsecondsToPts(int us)
+pts Convert::microsecondsToPts(microseconds us)
 {
     return timeToPts(floor(rational(us) / rational(Constants::sMicroseconds)));
 }
 
 // static
-wxString Convert::msToHumanReadibleString(int ms)
+wxString Convert::msToHumanReadibleString(milliseconds ms)
 {
     std::ostringstream o;
 
-    div_t divhours   = div(ms,              Constants::sHour);
-    div_t divminutes = div(divhours.rem,    Constants::sMinute);
-    div_t divseconds = div(divminutes.rem,  Constants::sSecond);
+    lldiv_t divhours   = lldiv(ms,              Constants::sHour);
+    lldiv_t divminutes = lldiv(divhours.rem,    Constants::sMinute);
+    lldiv_t divseconds = lldiv(divminutes.rem,  Constants::sSecond);
 
     if (divhours.quot > 0)
     {
@@ -132,7 +132,7 @@ samplecount Convert::framesToSamples(int nChannels, samplecount nFrames)
 
 pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrate)
 {
-    return floor(rational(inputposition) / inputrate * outputrate );
+    return floor64(rational64(inputposition) / inputrate * outputrate );
 }
 
 //static

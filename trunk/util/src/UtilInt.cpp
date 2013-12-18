@@ -26,3 +26,8 @@ int floor(rational r)
 {
     return static_cast<int>(floor(boost::rational_cast<double>(r)));
 }
+
+int64_t floor64(rational64 r)
+{
+    return static_cast<int64_t>(boost::rational_cast<double>(r));
+}

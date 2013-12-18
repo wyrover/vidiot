@@ -22,7 +22,7 @@
 #include "UtilInt.h"
 
 class FrameRate
-    : public boost::rational<int>
+    : public rational64
 {
 public:
 
@@ -34,7 +34,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit FrameRate(int num, int den);
+    explicit FrameRate(int64_t num, int64_t den);
     FrameRate(AVRational avr);
     FrameRate(wxString framerate);
 
@@ -61,5 +61,10 @@ public:
     void serialize(Archive & ar, const unsigned int version);
 
 };
+
+//#include  <boost/preprocessor/slot/counter.hpp>
+//#include BOOST____PP_UPDATE_COUNTER()
+//#line BOOST_____PP_COUNTER
+BOOST_CLASS_VERSION(FrameRate, 1)
 
 #endif // FRAMERATE_H

@@ -28,13 +28,13 @@ namespace boost { namespace serialization {
 const std::string sNumerator("numerator");
 const std::string sDenominator("denominator");
 
-template<class Archive>
-void serialize(Archive& ar, boost::rational<int>& r, const unsigned int version)
+template<class Archive, class IntType>
+void serialize(Archive& ar, boost::rational<IntType>& r, const unsigned int version)
 {
     try
     {
-        int n = 0;
-        int d = 0;
+        IntType n = 0;
+        IntType d = 0;
 
         if (Archive::is_saving::value)
         {
