@@ -23,6 +23,8 @@
 #include "Properties.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLog.h"
+#include "UtilLogAvcodec.h"
+#include "UtilLogBoost.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
 
@@ -167,7 +169,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         return rational64(position) / Properties::get().getFrameRate();
     };
 
-    auto timeToNearestInputFramesPts = [this, modulo](rational64 time) -> std::pair<pts,pts>
+    auto timeToNearestInputFramesPts = [this, modulo](rational64 time) -> boost::tuple<pts,pts,pts>
     {
         FrameRate fr = FrameRate(getStream()->r_frame_rate); // 24000/1001
         FrameRate timebase = FrameRate(getStream()->time_base); // 1/240000
@@ -179,7 +181,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         rational64 first = requiredStreamPts - modulo(requiredStreamPts,ticksPerFrame);
         rational64 second = first + ticksPerFrame;
 
-        return std::make_pair(boost::rational_cast<int64_t>(first),boost::rational_cast<int64_t>(second));
+        return boost::make_tuple(boost::rational_cast<pts>(first),boost::rational_cast<pts>(requiredStreamPts),boost::rational_cast<pts>(second));
     };
 
     // 'Resample' the frame timebase
@@ -187,14 +189,17 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     // if the previously returned frame should be returned again
     // \todo instead of duplicating frames, nicely take the two input frames 'around' the
     // required output pts time and 'interpolate' given these two frames time offsets with the required pts
-    std::pair<pts,pts> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
-    pts requiredInputPts = requiredInputFrames.first;
-
-    VAR_DEBUG(this)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
-    ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts);
-    ASSERT(!mDeliveredFrameParameters || *mDeliveredFrameParameters == parameters)(*mDeliveredFrameParameters)(parameters); // Ensure that mDeliveredFrame had the same set of VideoCompositionParameters
+    boost::tuple<pts,pts,pts> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
+    pts requiredInputPts = requiredInputFrames.get<1>();
 
     AVCodecContext* codec = getCodec();
+
+    VAR_DEBUG(this)(requiredInputFrames)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
+    // NOT: 
+    //ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts)(codec);
+    // Sometimes the gotten input frame covers two output frames. Subsequently, getting the next video frame triggers the assert.
+    // Typically seen with H264 - MPEG4AVC (part10) (avc1) files with a frame rate of 28 frames/s.
+    ASSERT(!mDeliveredFrameParameters || *mDeliveredFrameParameters == parameters)(*mDeliveredFrameParameters)(parameters)(codec); // Ensure that mDeliveredFrame had the same set of VideoCompositionParameters
 
     if (!mDeliveredFrame || requiredInputPts > mDeliveredFrameInputPts)
     {
@@ -202,7 +207,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         bool firstPacket = true;
         int frameFinished = 0;
         AVFrame* pDecodedFrame = avcodec_alloc_frame(); // for new version of avcodec : av_frame_alloc();
-        ASSERT_NONZERO(pDecodedFrame);
+        ASSERT_NONZERO(pDecodedFrame)(codec);
 
         while (!frameFinished )
         {
@@ -241,12 +246,19 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             if (nextToBeDecodedPacket)
             {
                 int len1 = avcodec_decode_video2(getCodec(), pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
-                ASSERT_MORE_THAN_EQUALS_ZERO(len1);
+                ASSERT_MORE_THAN_EQUALS_ZERO(len1)(codec);
                 
                 if (len1 > 0)
                 {
                     endOfFile = false;
                     mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pDecodedFrame);
+                    if (mDeliveredFrameInputPts == AV_NOPTS_VALUE)
+                    {
+                        AVStream* stream = getStream();
+                        ASSERT(stream)(codec);
+                        mDeliveredFrameInputPts = av_q2d(stream->time_base) * pDecodedFrame->pts;
+                    }
+                    ASSERT_DIFFERS(mDeliveredFrameInputPts, AV_NOPTS_VALUE)(codec);
                     mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
                     VAR_DEBUG(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
                 }
@@ -274,7 +286,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             }
 
         }
-        ASSERT_MORE_THAN_EQUALS_ZERO(pDecodedFrame->repeat_pict);
+        ASSERT_MORE_THAN_EQUALS_ZERO(pDecodedFrame->repeat_pict)(codec);
         if (pDecodedFrame->repeat_pict > 0)
         {
             NIY(_("Input video frame repeating is not supported yet"));
@@ -322,7 +334,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         mDeliveredFrame = make_cloned<VideoFrame>(mDeliveredFrame);
     }
 
-    ASSERT(mDeliveredFrame);
+    ASSERT(mDeliveredFrame)(parameters)(codec);
     mPosition++;
 
     VAR_DEBUG(this)(mPosition)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
@@ -422,7 +434,9 @@ void VideoFile::flush()
 
 std::ostream& operator<<( std::ostream& os, const VideoFile& obj )
 {
-    os << static_cast<const File&>(obj) << '|' << obj.mDecodingVideo << '|' << obj.mPosition << '|';
+    os  << static_cast<const File&>(obj) << '|' 
+        << obj.mDecodingVideo << '|' 
+        << obj.mPosition << '|';
     return os;
 }
 
