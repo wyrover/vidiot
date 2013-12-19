@@ -166,6 +166,7 @@ void TestFileTypes::executeTest(wxString filetypesDir)
         }
         if (file->hasVideo())
         {
+            Play(LeftPixel(VideoClip(0,0)), 1000);
             Play(HCenter(VideoClip(0,0)), 1000);
         }
         else

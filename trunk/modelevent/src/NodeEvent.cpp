@@ -20,7 +20,6 @@
 #include "INode.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
-#include "UtilLogBoost.h"
 
 namespace model {
 

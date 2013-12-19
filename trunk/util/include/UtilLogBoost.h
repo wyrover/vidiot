@@ -18,4 +18,17 @@
 #ifndef UTIL_LOG_BOOST_H
 #define UTIL_LOG_BOOST_H
 
+template <class K, class L, class M>
+std::ostream& operator<< (std::ostream& os, const boost::tuple<K,L,M>& obj)
+{
+    os  << "{"
+        << obj.get<0>() 
+        << ','
+        << obj.get<1>()
+        << ','
+        << obj.get<2>()
+        << "}";
+    return os;
+}
+
 #endif //UTIL_LOG_BOOST_H
