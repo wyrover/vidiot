@@ -139,6 +139,22 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
     }
     VAR_DEBUG(*this)(mProgress)(lengthInSamples);
 
+    if (audioChunk && !audioChunk->isA<EmptyChunk>() && mVolume != Constants::sDefaultVolume)
+    {
+        bool overflow = false;
+        sample* sBegin = audioChunk->getUnreadSamples();
+        sample* sEnd = sBegin + audioChunk->getUnreadSampleCount();
+        sample* s = sBegin;
+        int32_t volume = static_cast<int32_t>(mVolume);
+        int32_t defaultVolume = static_cast<int32_t>(Constants::sDefaultVolume);
+        while (s < sEnd)
+        {
+            //int32_t newSample = static_cast<int32_t>(*s) * volume / defaultVolume;
+            //overflow = overflow || (newSample > std::numeric_limits<sample>::max());
+            *s++ = static_cast<int32_t>(*s) * volume / defaultVolume; // newSample;
+        }
+    }
+
     VAR_AUDIO(audioChunk);
     setGenerationProgress(parameters.samplesToPts(mProgress));
     return audioChunk;
