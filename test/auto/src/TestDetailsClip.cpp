@@ -17,6 +17,10 @@
 
 #include "TestDetailsClip.h"
 
+#include "AudioChunk.h"
+#include "AudioCompositionParameters.h"
+#include "AudioClip.h"
+#include "ChangeAudioClipVolume.h"
 #include "ChangeVideoClipTransform.h"
 #include "Config.h"
 #include "Constants.h"
@@ -27,12 +31,12 @@
 #include "HelperDetails.h"
 #include "HelperModel.h"
 #include "HelperPopupMenu.h"
+#include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
 #include "HelperTimelinesView.h"
 #include "HelperTimelineTrim.h"
-#include "HelperThread.h"
 #include "HelperTransform.h"
 #include "HelperWindow.h"
 #include "ids.h"
@@ -474,5 +478,79 @@ void TestDetailsClip::testTransform_Boundaries()
         Undo();
     }
 }
+
+void TestDetailsClip::testChangeVolume()
+{
+    StartTestSuite();
+
+    model::AudioCompositionParameters p = model::AudioCompositionParameters().setNrChannels(2).setSampleRate(44100);
+
+    model::AudioClipPtr audioclip = getAudioClip(AudioClip(0,3));
+    audioclip->moveTo(10);
+    model::AudioChunkPtr referenceChunk = audioclip->getNextAudio(p);
+
+    auto ASSERT_VOLUME = [referenceChunk,p,audioclip](int volume)
+    {
+        ASSERT_EQUALS(audioclip->getVolume(),volume);
+        audioclip->moveTo(10);
+        model::AudioChunkPtr audiochunk = audioclip->getNextAudio(p);
+
+        sample* cur = audiochunk->getUnreadSamples();
+        sample* ref = referenceChunk->getUnreadSamples();
+        sample* last = cur + 100;
+        while (cur < last)
+        {
+            int32_t c = *cur++ * volume / 100;
+            int32_t r = *ref++;
+            ASSERT_EQUALS(c,r);
+        }
+    };
+
+    Click(Center(AudioClip(0,3)));
+    ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+
+    {
+        StartTest("Volume: Down via slider");
+        ClickTopLeft(DetailsClipView()->getVolumeSlider());
+        Type(WXK_PAGEUP);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
+        ASSERT_VOLUME(90);
+        Undo();
+        ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+    }
+    {
+        StartTest("Volume: Down via spin");
+        ClickTopLeft(DetailsClipView()->getVolumeSpin(),wxPoint(2,2)); // Give focus
+        TypeN(4,WXK_DOWN); // Note: the click above is on the up arrow already triggering an increment of 1
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
+        ASSERT_VOLUME(97);
+        Undo();
+        ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+    }
+    {
+        StartTest("Volume: Up via slider");
+        ClickTopLeft(DetailsClipView()->getVolumeSlider());
+        Type(WXK_PAGEDOWN);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
+        ASSERT_VOLUME(110);
+        Undo();
+        ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+    }
+    {
+        StartTest("Volume: Up via spin");
+        ClickTopLeft(DetailsClipView()->getVolumeSpin(),wxPoint(2,2)); // Give focus
+        TypeN(4,WXK_UP); // Note: the click above is on the up arrow already triggering an increment of 1
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
+        ASSERT_VOLUME(105);
+        Undo();
+        ASSERT_EQUALS(audioclip->getVolume(), model::Constants::sDefaultVolume);
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
+    }
+}
+
+
 
 } // namespace

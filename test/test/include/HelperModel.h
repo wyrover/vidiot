@@ -34,6 +34,9 @@ namespace test {
 /// \return the given clip cast to a video clip
 model::VideoClipPtr getVideoClip(model::IClipPtr clip);
 
+/// \return the given clip cast to an audio clip
+model::AudioClipPtr getAudioClip(model::IClipPtr clip);
+
 /// \return the current scaling factor for the given (video) clip
 /// \pre clip is a video clip
 boost::rational<int> getScalingFactor(model::IClipPtr clip);
