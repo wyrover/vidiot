@@ -60,6 +60,13 @@ public:
 
     virtual AudioChunkPtr getNextAudio(const AudioCompositionParameters& parameters) override;
 
+    //////////////////////////////////////////////////////////////////////////
+    // AUDIOCLIP
+    //////////////////////////////////////////////////////////////////////////
+
+    void setVolume(int volume);
+    int getVolume() const;
+
 protected:
 
     //////////////////////////////////////////////////////////////////////////
@@ -77,6 +84,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     int mProgress; ///< Current render position in samples
+    int mVolume;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -99,7 +107,7 @@ private:
 #include  <boost/preprocessor/slot/counter.hpp>
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::AudioClip, 1)
+BOOST_CLASS_VERSION(model::AudioClip, 2)
 BOOST_CLASS_EXPORT_KEY(model::AudioClip)
 
 #endif // MODEL_AUDIO_CLIP_H

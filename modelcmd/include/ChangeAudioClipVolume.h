@@ -15,47 +15,61 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef CHANGE_AUDIO_CLIP_VOLUME_H
+#define CHANGE_AUDIO_CLIP_VOLUME_H
+
+#include "RootCommand.h"
 
 namespace model {
 
-class Constants
+class ChangeAudioClipVolume
+    :   public ::command::RootCommand
 {
 public:
 
     //////////////////////////////////////////////////////////////////////////
-    // TIME
+    // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    static const int sMicroseconds;             ///<Number of us in one ms (=1000)
-    static const int sMilliSecond;              ///< Basic unit of time (==1)
-    static const int sSecond;                   ///< Number of milliseconds in one second
-    static const int sMinute;                   ///< Number of milliseconds in one minute
-    static const int sHour;                     ///< Number of milliseconds in one hour
+    explicit ChangeAudioClipVolume(model::AudioClipPtr audioclip);
+    virtual ~ChangeAudioClipVolume();
+
+    void setVolume(int volume);
 
     //////////////////////////////////////////////////////////////////////////
-    // LAYOUT CONSTANTS THAT ARE PERSISTED
+    // WXWIDGETS DO/UNDO INTERFACE
     //////////////////////////////////////////////////////////////////////////
 
-    static const int sDefaultTrackHeight;
+    bool Do() override;
+    bool Undo() override;
 
     //////////////////////////////////////////////////////////////////////////
-    // SCALING
+    // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    static const int sMinOpacity;
-    static const int sMaxOpacity;
-    static const int scalingPrecision;       ///< Number of digits to be used maximally
-    static const int scalingPrecisionFactor; ///< 10^scalingPrecision
-    static const int scalingPageSize;        ///< 0.1
-    static const int sMinScaling;
-    static const int sMaxScaling;
-    static const int sMinVolume;
-    static const int sMaxVolume;
-    static const int sDefaultVolume;
+    model::AudioClipPtr getAudioClip() const;
+
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    bool mInitialized;
+
+    model::AudioClipPtr mAudioClip;
+
+    int mOldVolume;
+
+    boost::optional<int> mNewVolume;
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<<( std::ostream& os, const ChangeAudioClipVolume& obj );
 };
 
 } // namespace
 
-#endif // CONSTANTS_H
+#endif // CHANGE_AUDIO_CLIP_VOLUME_H

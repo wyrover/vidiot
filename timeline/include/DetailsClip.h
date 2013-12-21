@@ -25,6 +25,7 @@
 
 namespace model {
     class ChangeVideoClipTransform;
+    class ChangeAudioClipVolume;
     class EventChangeVideoClipOpacity;
     class EventChangeVideoClipScaling;
     class EventChangeVideoClipScalingFactor;
@@ -32,6 +33,7 @@ namespace model {
     class EventChangeVideoClipPosition;
     class EventChangeVideoClipMinPosition;
     class EventChangeVideoClipMaxPosition;
+    class EventChangeAudioClipVolume;
 }
 
 namespace gui { namespace timeline {
@@ -77,6 +79,8 @@ public:
     void onPositionXSpinChanged(wxSpinEvent& event);
     void onPositionYSliderChanged(wxCommandEvent& event);
     void onPositionYSpinChanged(wxSpinEvent& event);
+    void onVolumeSliderChanged(wxCommandEvent& event);
+    void onVolumeSpinChanged(wxSpinEvent& event);
 
     // Separated for testability: receiving the user action and handling it.
     void handleLengthButtonPressed(wxToggleButton* button);
@@ -92,6 +96,8 @@ public:
     void onPositionChanged(model::EventChangeVideoClipPosition& event);
     void onMinPositionChanged(model::EventChangeVideoClipMinPosition& event);
     void onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event);
+
+    void onVolumeChanged(model::EventChangeAudioClipVolume& event);
 
     //////////////////////////////////////////////////////////////////////////
     // SELECTION EVENTS
@@ -114,6 +120,8 @@ public:
     wxSpinCtrl* getPositionXSpin() const;
     wxSlider* getPositionYSlider() const;
     wxSpinCtrl* getPositionYSpin() const;
+    wxSlider* getVolumeSlider() const;
+    wxSpinCtrl* getVolumeSpin() const;
 
 private:
 
@@ -146,17 +154,22 @@ private:
     wxSlider* mPositionYSlider;
 
     model::ChangeVideoClipTransform* mTransformCommand;
+    model::ChangeAudioClipVolume* mVolumeCommand;
 
     pts mMinimumLengthWhenBeginTrimming;
     pts mMaximumLengthWhenBeginTrimming;
     pts mMinimumLengthWhenEndTrimming;
     pts mMaximumLengthWhenEndTrimming;
 
+    wxSpinCtrl* mVolumeSpin;
+    wxSlider* mVolumeSlider;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     void makeTransformCommand();
+    void makeChangeVolumeCommand();
 
     void preview();
 
