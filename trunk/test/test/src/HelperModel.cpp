@@ -31,6 +31,13 @@ model::VideoClipPtr getVideoClip(model::IClipPtr clip)
     return videoclip;
 }
 
+model::AudioClipPtr getAudioClip(model::IClipPtr clip)
+{
+    model::AudioClipPtr audioclip = boost::dynamic_pointer_cast<model::AudioClip>(clip);
+    ASSERT(audioclip);
+    return audioclip;
+}
+
 boost::rational<int> getScalingFactor(model::IClipPtr clip)
 {
     return getVideoClip(clip)->getScalingFactor();

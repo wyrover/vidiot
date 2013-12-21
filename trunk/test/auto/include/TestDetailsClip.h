@@ -53,6 +53,8 @@ public:
 
     void testTransform_Boundaries();
 
+    void testChangeVolume();
+
 private:
 
     FixtureProject mProjectFixture;
