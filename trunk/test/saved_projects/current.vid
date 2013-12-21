@@ -306,7 +306,7 @@
 																<Clip class_id="40" tracking_level="0" version="2">
 																	<mLink class_id="41" tracking_level="0" version="0">
 																		<ptr>
-																			<px class_id="42" class_name="model::AudioClip" tracking_level="1" version="1" object_id="_24">
+																			<px class_id="42" class_name="model::AudioClip" tracking_level="1" version="2" object_id="_24">
 																				<ClipInterval>
 																					<Clip>
 																						<mLink>
@@ -343,6 +343,7 @@
 																					<mLength>181</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -445,6 +446,7 @@
 																					<mLength>262</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -551,6 +553,7 @@
 																					<mLength>250</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -657,6 +660,7 @@
 																					<mLength>771</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -745,6 +749,7 @@
 																					<mLength>333</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -833,6 +838,7 @@
 																					<mLength>385</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -921,6 +927,7 @@
 																					<mLength>181</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1009,6 +1016,7 @@
 																					<mLength>193</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1097,6 +1105,7 @@
 																					<mLength>262</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1185,6 +1194,7 @@
 																					<mLength>250</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1273,6 +1283,7 @@
 																					<mLength>771</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1361,6 +1372,7 @@
 																					<mLength>333</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1449,6 +1461,7 @@
 																					<mLength>385</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1537,6 +1550,7 @@
 																					<mLength>181</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1625,6 +1639,7 @@
 																					<mLength>193</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1713,6 +1728,7 @@
 																					<mLength>262</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1801,6 +1817,7 @@
 																					<mLength>250</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1889,6 +1906,7 @@
 																					<mLength>771</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -1977,6 +1995,7 @@
 																					<mLength>333</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>
@@ -2065,6 +2084,7 @@
 																					<mLength>385</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
+																				<mVolume>100</mVolume>
 																			</px>
 																		</ptr>
 																	</mLink>

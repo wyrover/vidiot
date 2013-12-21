@@ -18,6 +18,8 @@
 #include "DetailsClip.h"
 
 #include "AudioClip.h"
+#include "AudioClipEvent.h"
+#include "ChangeAudioClipVolume.h"
 #include "ChangeVideoClipTransform.h"
 #include "Combiner.h"
 #include "CommandProcessor.h"
@@ -67,6 +69,7 @@ boost::shared_ptr<TARGET> getTypedClip(model::IClipPtr clip)
 const double sScalingIncrement = 0.01;
 const int sPositionPageSize = 10;
 const int sOpacityPageSize = 10;
+const int sVolumePageSize = 10;
 const wxString sVideo(_("Video"));
 const wxString sAudio(_("Audio"));
 const wxString sTransition(_("Transition"));
@@ -89,10 +92,13 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mPositionYSpin(0)
     ,   mPositionYSlider(0)
     ,   mTransformCommand(0)
+    ,   mVolumeCommand(0)
     ,   mMinimumLengthWhenBeginTrimming(0)
     ,   mMaximumLengthWhenBeginTrimming(0)
     ,   mMinimumLengthWhenEndTrimming(0)
     ,   mMaximumLengthWhenEndTrimming(0)
+    ,   mVolumeSlider(0)
+    ,   mVolumeSpin(0)
 {
     VAR_DEBUG(this);
 
@@ -191,6 +197,23 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mPositionYSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
 
+    addBox(sAudio);
+
+    wxPanel* volumepanel = new wxPanel(this);
+    wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
+    mVolumeSlider = new wxSlider(volumepanel, wxID_ANY, model::Constants::sDefaultVolume, model::Constants::sMinVolume, model::Constants::sMaxVolume );
+    mVolumeSlider->SetPageSize(sVolumePageSize);
+    mVolumeSpin = new wxSpinCtrl(volumepanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
+    mVolumeSpin->SetRange(model::Constants::sMinVolume, model::Constants::sMaxVolume);
+    mVolumeSpin->SetValue(model::Constants::sMaxVolume);
+    volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());
+    volumesizer->Add(mVolumeSpin, wxSizerFlags(0).Right());
+    volumepanel->SetSizer(volumesizer);
+    addOption(_("Volume (%)"), volumepanel);
+
+    mVolumeSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
+    mVolumeSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
+
     addBox(sTransition);
 
     Bind(wxEVT_SHOW, &DetailsClip::onShow, this);
@@ -235,6 +258,8 @@ DetailsClip::~DetailsClip()
     mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
     mPositionYSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionYSliderChanged, this);
     mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
+    mVolumeSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
+    mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
 
     Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
 }
@@ -263,6 +288,10 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
+        }
+        if (mAudioClip)
+        {
+            mAudioClip->Unbind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
         }
         mVideoClip.reset();
         mAudioClip.reset();
@@ -336,6 +365,15 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MAXPOSITION, &DetailsClip::onMaxPositionChanged, this);
         }
+        if (mAudioClip)
+        {
+            int volume = mAudioClip->getVolume();
+
+            mVolumeSlider->SetValue(volume);
+            mVolumeSpin->SetValue(volume);
+
+            mAudioClip->Bind(model::EVENT_CHANGE_AUDIOCLIP_VOLUME, &DetailsClip::onVolumeChanged, this);
+        }
     }
 
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
@@ -350,6 +388,8 @@ void DetailsClip::setClip(model::IClipPtr clip)
     mPositionXSpin->Enable(mVideoClip);
     mPositionYSlider->Enable(mVideoClip);
     mPositionYSpin->Enable(mVideoClip);
+    mVolumeSlider->Enable(mAudioClip);
+    mVolumeSpin->Enable(mAudioClip);
     Layout();
 }
 
@@ -458,6 +498,22 @@ void DetailsClip::onPositionYSpinChanged(wxSpinEvent& event)
     event.Skip();
 }
 
+void DetailsClip::onVolumeSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mVolumeSlider->GetValue());
+    makeChangeVolumeCommand();
+    mVolumeCommand->setVolume(mVolumeSlider->GetValue());
+    event.Skip();
+}
+
+void DetailsClip::onVolumeSpinChanged(wxSpinEvent& event)
+{
+    VAR_INFO(event.GetValue());
+    makeChangeVolumeCommand();
+    mVolumeCommand->setVolume(event.GetValue());
+    event.Skip();
+}
+
 void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 {
     ASSERT_NONZERO(button);
@@ -550,6 +606,14 @@ void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& e
     mPositionYSpin->SetRange(mPositionYSpin->GetMax(), event.getValue().y);
     mPositionXSlider->SetRange(mPositionXSlider->GetMin(),event.getValue().x);
     mPositionYSlider->SetRange(mPositionYSlider->GetMax(), event.getValue().y);
+    event.Skip();
+}
+
+void DetailsClip::onVolumeChanged(model::EventChangeAudioClipVolume& event)
+{
+    mVolumeSlider->SetValue(event.getValue());
+    mVolumeSpin->SetValue(event.getValue());
+    preview();
     event.Skip();
 }
 
@@ -647,6 +711,16 @@ wxSpinCtrl* DetailsClip::getPositionYSpin() const
     return mPositionYSpin;
 }
 
+wxSlider* DetailsClip::getVolumeSlider() const
+{
+    return mVolumeSlider;
+}
+
+wxSpinCtrl* DetailsClip::getVolumeSpin() const
+{
+    return mVolumeSpin;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -665,6 +739,21 @@ void DetailsClip::makeTransformCommand()
         mTransformCommand->submit();
     }
     ASSERT_NONZERO(mTransformCommand);
+}
+
+void DetailsClip::makeChangeVolumeCommand()
+{
+    if (!mVolumeCommand || mVolumeCommand != model::CommandProcessor::get().GetCurrentCommand())
+    {
+        // - No volume command has been submitted yet, OR
+        // - A volume command was submitted, but
+        //   * another command was executed afterwards, OR
+        //   * the volume command was undone again.
+        // Insert a new volume command into the Undo chain.
+        ASSERT(mAudioClip);
+        mVolumeCommand = new model::ChangeAudioClipVolume(mAudioClip);
+        mVolumeCommand->submit();
+    }
 }
 
 void DetailsClip::preview()

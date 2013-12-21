@@ -51,6 +51,9 @@ public:
     static const int scalingPageSize;        ///< 0.1
     static const int sMinScaling;
     static const int sMaxScaling;
+    static const int sMinVolume;
+    static const int sMaxVolume;
+    static const int sDefaultVolume;
 };
 
 } // namespace

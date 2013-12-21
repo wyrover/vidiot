@@ -17,6 +17,7 @@
 
 #include "AudioClip.h"
 
+#include "AudioClipEvent.h"
 #include "AudioCompositionParameters.h"
 #include "AudioFile.h"
 #include "Constants.h"
@@ -34,6 +35,7 @@ namespace model {
 AudioClip::AudioClip()
     :	ClipInterval()
     ,   mProgress(0)
+    ,   mVolume(Constants::sDefaultVolume)
 {
     VAR_DEBUG(*this);
 }
@@ -41,6 +43,7 @@ AudioClip::AudioClip()
 AudioClip::AudioClip(AudioFilePtr file)
     :	ClipInterval(file)
     ,   mProgress(0)
+    ,   mVolume(Constants::sDefaultVolume)
 {
     VAR_DEBUG(*this);
 }
@@ -48,6 +51,7 @@ AudioClip::AudioClip(AudioFilePtr file)
 AudioClip::AudioClip(const AudioClip& other)
     :   ClipInterval(other)
     ,   mProgress(0)
+    ,   mVolume(other.mVolume)
 {
     VAR_DEBUG(*this)(other);
 }
@@ -141,12 +145,32 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 }
 
 //////////////////////////////////////////////////////////////////////////
+// AUDIOCLIP
+//////////////////////////////////////////////////////////////////////////
+
+void AudioClip::setVolume(int volume)
+{
+    if (volume != mVolume)
+    {
+        mVolume = volume;
+        ProcessEvent(EventChangeAudioClipVolume(volume));
+    }
+}
+
+int AudioClip::getVolume() const
+{
+    return mVolume;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
 {
-    os << static_cast<const ClipInterval&>(obj) << '|' << std::setw(8) << obj.mProgress;
+    os  << static_cast<const ClipInterval&>(obj) << '|' 
+        << std::setw(8) << obj.mProgress
+        << std::setw(8) << obj.mVolume;
     return os;
 }
 
@@ -161,6 +185,10 @@ void AudioClip::serialize(Archive & ar, const unsigned int version)
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ClipInterval);
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IAudio);
+        if (version > 1)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mVolume);
+        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

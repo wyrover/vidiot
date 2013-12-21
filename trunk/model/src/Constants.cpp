@@ -46,5 +46,8 @@ const int Constants::scalingPrecisionFactor = static_cast<int>(pow(10.0,Constant
 const int Constants::scalingPageSize = Constants::scalingPrecisionFactor / 10; // 0.1
 const int Constants::sMinScaling = 1;
 const int Constants::sMaxScaling = 10 * scalingPrecisionFactor;
+const int Constants::sMinVolume = 1;
+const int Constants::sMaxVolume = 200;
+const int Constants::sDefaultVolume = 100;
 
 } // namespace
