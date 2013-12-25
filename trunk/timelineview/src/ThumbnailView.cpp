@@ -24,7 +24,6 @@
 #include "Properties.h"
 #include "Transition.h"
 #include "UtilClone.h"
-
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
@@ -64,12 +63,13 @@ ThumbnailView::~ThumbnailView()
 
 wxSize ThumbnailView::requiredSize() const
 {
+    static const int sMinimumSize = 10; // To avoid scaling issues with swscale
     wxSize boundingBox = wxSize(
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetWidth()  - 2 * Layout::ClipBorderSize,
         const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetHeight() - Layout::ClipBorderSize - Layout::ClipDescriptionBarHeight);
     wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
-    scaledSize.x = std::max(model::VideoFrame::sMinimumSize, scaledSize.x); // Ensure minimum width of 10 pixels
-    scaledSize.y = std::max(model::VideoFrame::sMinimumSize, scaledSize.y); // Ensure minimum height of 10 pixels
+    scaledSize.x = std::max(sMinimumSize, scaledSize.x); // Ensure minimum width of 10 pixels
+    scaledSize.y = std::max(sMinimumSize, scaledSize.y); // Ensure minimum height of 10 pixels
     return scaledSize;
 }
 
