@@ -59,6 +59,7 @@ class VideoClip;
 class VideoComposition;
 class VideoFile;
 class VideoFrame;
+class VideoFrameLayer;
 class VideoTrack;
 class VideoTransition;
 struct MoveParameter;
@@ -93,6 +94,7 @@ typedef boost::shared_ptr<VideoClip> VideoClipPtr;
 typedef boost::shared_ptr<VideoComposition> VideoCompositionPtr;
 typedef boost::shared_ptr<VideoFile> VideoFilePtr;
 typedef boost::shared_ptr<VideoFrame> VideoFramePtr;
+typedef boost::shared_ptr<VideoFrameLayer> VideoFrameLayerPtr;
 typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
 typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
 typedef boost::weak_ptr<IClip> WeakIClipPtr;
@@ -107,6 +109,7 @@ typedef std::list<MoveParameterPtr> MoveParameters; // std::list because moves m
 typedef std::list<NodePtr> NodePtrs;
 typedef std::list<TrackPtr> Tracks;
 typedef std::list<VideoFramePtr> VideoFrames;
+typedef std::list<VideoFrameLayerPtr> VideoFrameLayers;
 
 namespace render {
 
