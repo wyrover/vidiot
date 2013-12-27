@@ -23,6 +23,7 @@
 #include "UtilLog.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFrame.h"
+#include "VideoFrameLayer.h"
 
 namespace model {
 
@@ -98,11 +99,11 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
         ASSERT(mInputFrame);
     }
 
-    if (!mOutputFrame || parameters.getBoundingBox() != mOutputFrame->getSize())
+    if (!mOutputFrame || parameters.getBoundingBox() != mOutputFrame->getParameters().getBoundingBox())
     {
         wxImagePtr outputImage = boost::make_shared<wxImage>(mInputFrame->getImage()->Copy());
         outputImage->Rescale(parameters.getBoundingBox().x, parameters.getBoundingBox().y, wxIMAGE_QUALITY_HIGH);
-        mOutputFrame = boost::make_shared<VideoFrame>(outputImage);
+        mOutputFrame = boost::make_shared<VideoFrame>(parameters,boost::make_shared<VideoFrameLayer>(outputImage));
     }
     // Frame must be cloned, frame repeating is not supported. If a frame is to be output multiple
     // times, avoid pts calculation problems by making multiple unique frames.

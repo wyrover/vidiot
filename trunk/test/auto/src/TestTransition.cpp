@@ -34,6 +34,7 @@
 #include "HelperWindow.h"
 #include "IClip.h"
 #include "Menu.h"
+#include "ProjectModification.h"
 #include "Timeline.h"
 #include "TrimClip.h"
 #include "VideoClip.h"
@@ -1192,6 +1193,15 @@ void TestTransition::testCreateTransitionAfterLastClip()
 
 void TestTransition::testVideoTransitionTypes()
 {
+    auto setOpacity = [](model::IClipPtr clip, int opacity)
+    {
+        model::VideoClipPtr videoclip = boost::dynamic_pointer_cast<model::VideoClip>(clip);
+        ASSERT(videoclip);
+        model::ChangeVideoClipTransform* cmd = new model::ChangeVideoClipTransform(videoclip);
+        cmd->setOpacity(opacity);
+        RunInMainAndWait([cmd]{ model::ProjectModification::submitIfPossible(cmd); });
+    };
+
     StartTestSuite();
     Zoom level(6);
     for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
@@ -1201,28 +1211,42 @@ void TestTransition::testVideoTransitionTypes()
             RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
             Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
-            Undo();
+            StartTest("FadeIn with opacity: " + t.first);
+            setOpacity(VideoClip(0,2),128);
+            Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
+            Undo(2);
         }
         {
             StartTest("FadeOut: " + t.first);
             RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeOut, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
-            Undo();
+            StartTest("FadeOut with opacity: " + t.first);
+            setOpacity(VideoClip(0,1),128);
+            Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
+            Undo(2);
         }
         {
             StartTest("FadeInOut: " + t.first);
             RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeInOut, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip);
             Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
-            Undo();
+            StartTest("FadeInOut with opacity: " + t.first);
+            setOpacity(VideoClip(0,0),50);
+            setOpacity(VideoClip(0,2),200);
+            Scrub(-2 + LeftPixel(VideoClip(0,1)), RightPixel(VideoClip(0,1)) + 2);
+            Undo(3);
         }
         {
             StartTest("FadeOutIn: " + t.first);
             RunInMainAndWait([t]() { gui::timeline::command::createTransition(getSequence(), VideoClip(0,1),model::TransitionTypeOutIn, model::video::VideoTransitionFactory::get().getTransition(t)); });
             ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
             Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
-            Undo();
+            StartTest("FadeOutIn with opacity: " + t.first);
+            setOpacity(VideoClip(0,1),128);
+            setOpacity(VideoClip(0,3),222);
+            Scrub(-2 + LeftPixel(VideoClip(0,2)), RightPixel(VideoClip(0,2)) + 2);
+            Undo(3);
         }
     }
 }

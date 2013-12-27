@@ -789,7 +789,11 @@ void DetailsClip::preview()
         model::VideoFramePtr compositeFrame = composition->generate();
         if (compositeFrame)
         {
-            dc.DrawBitmap(*(compositeFrame->getBitmap()), wxPoint(0,0));
+            wxBitmapPtr bitmap = compositeFrame->getBitmap();
+            if (bitmap)
+            {
+                dc.DrawBitmap(*bitmap, wxPoint(0,0));
+            }
         }
 
         dc.SelectObject(wxNullBitmap);

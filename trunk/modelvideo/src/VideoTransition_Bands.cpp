@@ -18,6 +18,7 @@
 #include "VideoTransition_Bands.h"
 
 #include "TransitionFactory.h"
+#include "UtilList.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
@@ -31,13 +32,15 @@ namespace model { namespace video { namespace transition {
 //////////////////////////////////////////////////////////////////////////
 
 Bands::Bands()
-    :	VideoTransition()
+    :	VideoTransitionOpacity()
+    ,   mBands(10)
 {
     VAR_DEBUG(this);
 }
 
 Bands::Bands(const Bands& other)
-    :   VideoTransition(other)
+    :   VideoTransitionOpacity(other)
+    ,   mBands(other.mBands)
 {
     VAR_DEBUG(*this);
 }
@@ -53,82 +56,45 @@ Bands::~Bands()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// IVIDEO
+// VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr Bands::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters)
+void Bands::handleFullyOpaqueImage(wxImagePtr image, boost::function<float (int, int)> f) const
 {
-    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(parameters)  : VideoFramePtr();
-    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(parameters) : VideoFramePtr();
-    VAR_DEBUG(position)(parameters)(leftFrame)(rightFrame);
+    applyToFirstLineThenCopy(image,f);
+}
 
-    pts steps = getLength();
+void Bands::handleImageWithAlpha(wxImagePtr image, boost::function<float (int, int)> f) const
+{
+    applyToAllPixels(image,f);
+}
 
-    int nBands = 10;
-
-    float factorLeft = ((float)getLength() - (float)position) / (float)getLength();
-    float factorRight = (float)position / (float)getLength();
-
-    int bandSize = parameters.getBoundingBox().x / nBands;
-    std::vector<float> multiplier(bandSize + 1,0.0); // +1 for rounding diffs
-
-    int lastLeftPixelShown = factorLeft * bandSize;
-    int firstRightPixel = factorRight * bandSize;
-    for (int i = 0; i <= bandSize; ++i)
+boost::function<float (int,int)> Bands::getLeftMethod(wxImagePtr image, float factor) const
+{
+    int bandSize = image->GetWidth() / mBands;
+    boost::function<float (int,int)> f = [bandSize,factor](int x, int y) -> float
     {
-        if (i > firstRightPixel)
+        if (x % bandSize >= factor * bandSize)
         {
-            multiplier[i] = 1.0;
+            return 1.0;
         }
-        else
-        {
-            multiplier[i] = 0.0;
-        }
-    }
+        return 0.0;
+    };
+    return f;
+}
 
-    VideoFramePtr targetFrame = boost::make_shared<VideoFrame>(boost::make_shared<wxImage>(parameters.getBoundingBox(), true));
-
-    unsigned char* leftData   = leftFrame  ? leftFrame  ->getImage()->GetData() : 0;
-    unsigned char* rightData  = rightFrame ? rightFrame ->getImage()->GetData() : 0;
-    unsigned char* targetData =              targetFrame->getImage()->GetData();
-
-    int leftBytesPerLine   = leftFrame  ? leftFrame  ->getImage()->GetSize().GetWidth() * 3 : 0;
-    int rightBytesPerLine  = rightFrame ? rightFrame ->getImage()->GetSize().GetWidth() * 3 : 0;
-    int targetBytesPerLine =              targetFrame->getImage()->GetSize().GetWidth() * 3;
-
-    VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
-
-    int bytesPerPixel = 3;
-    for (int y = 0; y < targetFrame->getSize().GetHeight(); ++y)
+boost::function<float (int,int)> Bands::getRightMethod(wxImagePtr image, float factor) const
+{
+    int bandSize = image->GetWidth() / mBands;
+    boost::function<float (int,int)> f =[bandSize,factor](int x, int y) -> float
     {
-        for (int x = 0; x < targetFrame->getSize().GetWidth(); x += 1)
+        if (x % bandSize <= factor * bandSize)
         {
-            float factorLeftPixel = multiplier[x % bandSize];
-            float factorRightPixel = 1 - factorLeftPixel;
-
-            for (int byte = 0; byte < bytesPerPixel; ++byte)
-            {
-                unsigned char left = 0;
-                if (leftFrame &&
-                    y < leftFrame->getSize().GetHeight() &&
-                    x < leftFrame->getSize().GetWidth())
-                {
-                    left = *(leftData + y * leftBytesPerLine + x * bytesPerPixel + byte);
-                }
-                unsigned char right = 0;
-                if (rightFrame &&
-                    y < rightFrame->getSize().GetHeight() &&
-                    x < rightFrame->getSize().GetWidth())
-                {
-                    right = *(rightData + y * rightBytesPerLine + x * bytesPerPixel + byte);
-                }
-                *(targetData + y * targetBytesPerLine + x * bytesPerPixel + byte) =
-                    (unsigned char)(left * factorLeftPixel + right * factorRightPixel);
-            }
+            return 1.0;
         }
-    }
-
-    return targetFrame;
+        return 0.0;
+    };
+    return f;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -23,8 +23,8 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-EmptyFrame::EmptyFrame(wxSize size)
-:   VideoFrame(size)
+EmptyFrame::EmptyFrame(const VideoCompositionParameters& parameters)
+:   VideoFrame(parameters)
 {
 }
 
@@ -37,13 +37,9 @@ EmptyFrame::~EmptyFrame()
 // DATA ACCESS
 //////////////////////////////////////////////////////////////////////////
 
-wxImagePtr EmptyFrame::getImage() 
+wxImagePtr EmptyFrame::getImage()
 {
-    if (!mImage)
-    {
-        mImage = boost::make_shared<wxImage>(getSize(), true);
-    }
-    return VideoFrame::getImage();
+    return wxImagePtr();
 }
 
 } // namespace

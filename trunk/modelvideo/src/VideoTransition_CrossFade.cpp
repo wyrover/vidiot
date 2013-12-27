@@ -32,13 +32,13 @@ namespace model { namespace video { namespace transition {
 //////////////////////////////////////////////////////////////////////////
 
 CrossFade::CrossFade()
-    :	VideoTransition()
+    :	VideoTransitionOpacity()
 {
     VAR_DEBUG(this);
 }
 
 CrossFade::CrossFade(const CrossFade& other)
-    :   VideoTransition(other)
+    :   VideoTransitionOpacity(other)
 {
     VAR_DEBUG(*this);
 }
@@ -54,70 +54,35 @@ CrossFade::~CrossFade()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// VIDEOTRANSITION
+// VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr CrossFade::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters)
+void CrossFade::handleFullyOpaqueImage(wxImagePtr image, boost::function<float (int, int)> f) const
 {
-    VideoComposition composition(VideoCompositionParameters(parameters).setDrawBoundingBox(false));
+    applyToFirstLineThenCopy(image,f);
+}
 
-    VideoFramePtr leftFrame   = leftClip  ? boost::static_pointer_cast<VideoClip>(leftClip)->getNextVideo(parameters)  : VideoFramePtr();
-    VideoFramePtr rightFrame  = rightClip ? boost::static_pointer_cast<VideoClip>(rightClip)->getNextVideo(parameters) : VideoFramePtr();
-    VAR_DEBUG(position)(parameters)(leftFrame)(rightFrame);
+void CrossFade::handleImageWithAlpha(wxImagePtr image, boost::function<float (int, int)> f) const
+{
+    applyToAllPixels(image,f);
+}
 
-    pts steps = getLength();
-
-    if (leftFrame)
+boost::function<float (int,int)> CrossFade::getLeftMethod(wxImagePtr image, float factor) const
+{
+    boost::function<float (int,int)> f = [factor](int x, int y) -> float
     {
-        float factorLeft = ((float)getLength() - (float)position) / (float)getLength();
-        int opacityLeft = factorLeft * leftFrame->getOpacity();
-        leftFrame->setOpacity(opacityLeft);
-        VAR_DEBUG(factorLeft)(leftFrame->getOpacity())(opacityLeft);
-        composition.add(leftFrame);
-    }
+        return 1.0 - factor;
+    };
+    return f;
+}
 
-    if (rightFrame)
+boost::function<float (int,int)> CrossFade::getRightMethod(wxImagePtr image, float factor) const
+{
+    boost::function<float (int,int)> f =[factor](int x, int y) -> float
     {
-        float factorRight = (float)position / (float)getLength();
-        int opacityRight = factorRight * rightFrame->getOpacity();
-        rightFrame->setOpacity(opacityRight);
-        VAR_DEBUG(factorRight)(rightFrame->getOpacity())(opacityRight);
-        composition.add(rightFrame);
-    }
-
-    return composition.generate();
-
-    // Old code temporarily kept for reference:
-    //VideoFramePtr targetFrame =             boost::make_shared<VideoFrame>(parameters.getBoundingBox(), 1);
-
-    //unsigned char* leftData   = leftFrame  ? leftFrame  ->getData()[0] : 0;
-    //unsigned char* rightData  = rightFrame ? rightFrame ->getData()[0] : 0;
-    //unsigned char* targetData =              targetFrame->getData()[0];
-
-    //int leftBytesPerLine   = leftFrame  ? leftFrame  ->getLineSizes()[0] : 0;
-    //int rightBytesPerLine  = rightFrame ? rightFrame ->getLineSizes()[0] : 0;
-    //int targetBytesPerLine =              targetFrame->getLineSizes()[0];
-
-    //VAR_DEBUG(leftBytesPerLine)(rightBytesPerLine)(targetBytesPerLine);
-
-    //int bytesPerPixel = 3;
-    //for (int y = 0; y < targetFrame->getSize().GetHeight(); ++y)
-    //{
-    //    for (int x = 0; x < targetFrame->getSize().GetWidth() * bytesPerPixel; x += 1)
-    //    {
-    //        unsigned char left = 0;
-    //        if (leftFrame && y < leftFrame->getSize().GetHeight() && x < leftFrame->getSize().GetWidth() * bytesPerPixel)
-    //        {
-    //            left = *(leftData + y * leftBytesPerLine + x);
-    //        }
-    //        unsigned char right = 0;
-    //        if (rightFrame && y < rightFrame->getSize().GetHeight() && x < rightFrame->getSize().GetWidth() * bytesPerPixel)
-    //        {
-    //            right = *(rightData + y * rightBytesPerLine + x);
-    //        }
-    //        *(targetData + y * targetBytesPerLine + x) = (unsigned char)(left * factorLeft + right * factorRight);
-    //    }
-    //}
+        return factor;
+    };
+    return f;
 }
 
 //////////////////////////////////////////////////////////////////////////

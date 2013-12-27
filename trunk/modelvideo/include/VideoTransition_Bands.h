@@ -18,12 +18,12 @@
 #ifndef TRANSITION_BANDS_H
 #define TRANSITION_BANDS_H
 
-#include "VideoTransition.h"
+#include "VideoTransitionOpacity.h"
 
 namespace model { namespace video { namespace transition {
 
 class Bands
-    :   public VideoTransition
+    :   public VideoTransitionOpacity
 {
 public:
 
@@ -38,10 +38,14 @@ public:
     virtual ~Bands();
 
     //////////////////////////////////////////////////////////////////////////
-    // VIDEOTRANSITION
+    // VIDEOTRANSITIONOPACITY
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters);
+    void handleFullyOpaqueImage(wxImagePtr image, boost::function<float (int, int)> f) const override;
+    void handleImageWithAlpha(wxImagePtr image, boost::function<float (int, int)> f) const override;
+
+    boost::function<float (int,int)> getLeftMethod(wxImagePtr image, float factor) const override;
+    boost::function<float (int,int)> getRightMethod(wxImagePtr image, float factor) const override;
 
 protected:
 
@@ -54,6 +58,12 @@ protected:
     Bands(const Bands& other);
 
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    int mBands;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

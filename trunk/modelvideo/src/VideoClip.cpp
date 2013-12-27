@@ -30,6 +30,7 @@
 #include "VideoClipEvent.h"
 #include "VideoCompositionParameters.h"
 #include "VideoFile.h"
+#include "VideoFrameLayer.h"
 
 namespace model {
 
@@ -148,15 +149,15 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
         if (isEmpty)
         {
             VAR_WARNING(isEmpty)(requiredVideoSize);
-            videoFrame = boost::make_shared<EmptyFrame>(requiredVideoSize);
+            videoFrame = boost::make_shared<EmptyFrame>(parameters);
         }
         else
         {
             // IMPORTANT: When getting video frames 'while' playing the timeline, AND resizing the player in parallel, the returned
             //            video frame can have a different size than requested!!! This can happen because the previous frame is returned 'again'.
             //            For this reason, when the videoplayer is resized, playback is stopped.
-            videoFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
-            if (videoFrame)
+            VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
+            if (fileFrame)
             {
                 wxSize inputsize = getInputSize();
                 wxSize outputsize = Properties::get().getVideoSize();
@@ -194,9 +195,11 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                 wxPoint position(mPosition);
                 determineroi(outputsize.x,scaledsize.x,position.x,roi.x,roi.width);
                 determineroi(outputsize.y,scaledsize.y,position.y,roi.y,roi.height);
-                videoFrame->setRegionOfInterest(Convert::scale(roi, scaleToBoundingBox));
-                videoFrame->setPosition(Convert::scale(position, scaleToBoundingBox));
-                videoFrame->setOpacity(mOpacity);
+                ASSERT_EQUALS(fileFrame->getLayers().size(),1);
+                videoFrame = boost::make_shared<VideoFrame>(parameters, fileFrame->getLayers().front());
+                videoFrame->getLayers().front()->setRegionOfInterest(Convert::scale(roi, scaleToBoundingBox));
+                videoFrame->getLayers().front()->setPosition(Convert::scale(position, scaleToBoundingBox));
+                videoFrame->getLayers().front()->setOpacity(mOpacity);
             }
             else
             {
@@ -208,7 +211,7 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
                 // required - thus removing the extra audio, but that's a user decision to be made).
                 LOG_WARNING << *this << ": (" << getDescription() << ") Adding extra video frame to make video length equal to audio length";
 
-                videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox()));
+                videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
             }
         }
 
@@ -434,12 +437,12 @@ void VideoClip::updateAutomatedPositioning()
 
 std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
 {
-    os  << static_cast<const ClipInterval&>(obj) << '|' 
-        << std::setw(4) << obj.mProgress << '|' 
-        << std::setw(2) << std::hex << obj.mOpacity << std::dec << '|' 
-        << obj.mScaling << '|' 
-        << obj.mScalingFactor << '|' 
-        << obj.mAlignment << '|' 
+    os  << static_cast<const ClipInterval&>(obj) << '|'
+        << std::setw(4) << obj.mProgress << '|'
+        << std::setw(2) << std::hex << obj.mOpacity << std::dec << '|'
+        << obj.mScaling << '|'
+        << obj.mScalingFactor << '|'
+        << obj.mAlignment << '|'
         << obj.mPosition;
     return os;
 }

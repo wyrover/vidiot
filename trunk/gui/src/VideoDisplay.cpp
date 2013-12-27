@@ -66,7 +66,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,   mDrawBoundingBox(false)
 ,   mPlaying(false)
 ,	mSequence(sequence)
-,   mVideoFrames(20)
+,   mVideoFrames(200) // todo buffer until full, then start playback?
 ,   mAudioChunks(1000)
 ,   mAbortThreads(false)
 ,   mAudioBufferThreadPtr(0)
@@ -74,7 +74,6 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,   mVideoDisplayThreadPtr(0)
 ,   mCurrentAudioChunk()
 ,   mCurrentBitmap()
-,   mCurrentBitmapPosition(0,0)
 ,   mStartTime(0)
 ,   mStartPts(0)
 ,   mCurrentTime(0)
@@ -247,7 +246,6 @@ void VideoDisplay::moveTo(pts position)
         if (mCurrentVideoFrame)
         {
             mCurrentBitmap = mCurrentVideoFrame->getBitmap();
-            mCurrentBitmapPosition = mCurrentVideoFrame->getPosition();
         }
         else
         {
@@ -387,6 +385,7 @@ void VideoDisplay::videoBufferThread()
     while (!mAbortThreads)
     {
         model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
+        videoFrame->getBitmap(); // put in cache
         mVideoFrames.push(videoFrame);
     }
 }
@@ -445,7 +444,6 @@ void VideoDisplay::videoDisplayThread()
                 ASSERT_DIFFERS(mCurrentVideoFrame->getPts(), position); // Otherwise, all the computations on 'playback time' can behave irratic.
                 mCurrentVideoFrame = videoFrame;
                 mCurrentBitmap = videoBitmap;
-                mCurrentBitmapPosition = videoFrame->getPosition();
             }
             // Note:
             // If there is no displayed video frame, do not change the timeline's cursor
@@ -510,10 +508,9 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
     {
         boost::mutex::scoped_lock lock(mMutexDraw);
         bitmap = mCurrentBitmap;
-        position = mCurrentBitmapPosition;
     }
 
-    // Buffered dc is used, since first the entire area is blanked with drawrectangle, 
+    // Buffered dc is used, since first the entire area is blanked with drawrectangle,
     // and then overwritten. Without buffering that causes flickering.
     boost::scoped_ptr<wxDC> dc;
     if (!IsDoubleBuffered())

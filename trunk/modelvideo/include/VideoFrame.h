@@ -19,25 +19,27 @@
 #define VIDEO_FRAME_H
 
 #include "UtilFifo.h"
-#include "UtilFrameRate.h"
 #include "UtilInt.h"
 #include "UtilRTTI.h"
 
-struct AVFrame;
-
 namespace model {
 
-typedef boost::uint8_t** DataPointer;
-typedef int* LineSizePointer;
+class VideoCompositionParameters;
+
 typedef Fifo<VideoFramePtr> FifoVideo;
 std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
 
+/// Division of functionality between VideoFrame and VideoFrameLayer:
+/// VideoFrame holds
+/// - time related attributes
+/// - layers
+/// - attributes that apply to all layers (parameters)
+/// VideoFrameLayer holds
+/// - data for each layer
 class VideoFrame
     :   public IRTTI
 {
 public:
-
-    static const pixel sMinimumSize;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
@@ -46,11 +48,17 @@ public:
     /// Initialization without allocation is used for empty frames. Then, allocation
     /// is only needed when the data is needed for playback. During 'track combining'
     /// empty frames can be ignored. This avoids needless allocation.
-    explicit VideoFrame(wxSize size);
+    explicit VideoFrame(const VideoCompositionParameters& parameters);
 
     /// Initialization of a frame based on a generated wxImage (for instance, for
     /// compositing).
-    explicit VideoFrame(wxImagePtr image);
+    /// \note ownership of the layer (and its pixel data) is taken over by the frame.
+    explicit VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayerPtr layer);
+
+    /// Initialization of a frame based on multiple layers (for instance, for
+    /// compositing in case of a transition).
+    /// \note ownership of the layers (and their pixel data) is taken over by the frame.
+    explicit VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayers layers);
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
@@ -69,26 +77,26 @@ public:
     pts getPts() const;
     void setPts(pts position);
 
-    wxSize getSize() const;
-    void setPosition(wxPoint position);
-    wxPoint getPosition() const;
-    void setRegionOfInterest(wxRect regionOfInterest);
-    wxRect getRegionOfInterest() const;
-    int getOpacity() const;
-    void setOpacity(int opacity);
     void setForceKeyFrame(bool force);
     bool getForceKeyFrame() const;
 
-    /// Return an image, using the frame's data clipped to the region of interest
-    /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
-    /// \pre !mBitmap
-    /// \return this frame as a wxImage
-    virtual wxImagePtr getImage();
+    VideoCompositionParameters getParameters() const;
+
+    virtual VideoFrameLayers getLayers();
+
+    /// Add a new layer (at the bottom)
+    void addLayer(VideoFrameLayerPtr layer);
+
+    virtual wxImagePtr getImage() ;
 
     /// Return a bitmap, using the frame's data clipped to the region of interest
+    /// and all layers flattened.
+    /// The resulting bitmap is cached and returned upon any subsequent call to getBitmap().
     /// \note This method may return a 0 ptr if the region of interest is empty (basically, if a clip has been moved beyond the visible area)
     /// \return this frame as a wxBitmap
     wxBitmapPtr getBitmap();
+
+    void draw(wxGraphicsContext* gc) const;
 
 protected:
 
@@ -96,16 +104,14 @@ protected:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxImagePtr mImage;
-    double mTimeStamp;
-    wxSize mSize;
-    wxPoint mPosition;
-    wxRect mRegionOfInterest;
+    VideoFrameLayers mLayers;
+    boost::scoped_ptr<VideoCompositionParameters> mParameters;
     pts mPts;
-    int mOpacity;
     bool mForceKeyFrame;
 
 private:
+
+    boost::optional<wxBitmapPtr> mCachedBitmap;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
