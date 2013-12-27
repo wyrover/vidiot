@@ -129,7 +129,6 @@ private:
     model::FifoVideo mVideoFrames;
     model::VideoFramePtr mCurrentVideoFrame;
     boost::shared_ptr<wxBitmap> mCurrentBitmap;
-    wxPoint mCurrentBitmapPosition;
 
     int mWidth;
     int mHeight;

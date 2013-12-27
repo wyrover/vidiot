@@ -21,50 +21,49 @@
 #include "Constants.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
+#include "VideoCompositionParameters.h"
 
 namespace model {
-
-const pixel VideoFrame::sMinimumSize = 10; // To avoid errors in sws_scale all frames are at least 10 pixels in boht directions
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrame::VideoFrame(wxSize size)
-    : mImage()
-    , mSize(size)
-    , mPosition(0,0)
-    , mRegionOfInterest(wxPoint(0,0),size)
+VideoFrame::VideoFrame(const VideoCompositionParameters& parameters)
+    : mLayers()
+    , mParameters(new VideoCompositionParameters(parameters))
     , mPts(0)
-    , mOpacity(Constants::sMaxOpacity)
     , mForceKeyFrame(false)
+    , mCachedBitmap(boost::none)
 {
 }
 
-VideoFrame::VideoFrame(wxImagePtr image)
-    : mImage(image)
-    , mSize(image->GetSize())
-    , mPosition(0,0)
-    , mRegionOfInterest(wxPoint(0,0),image->GetSize())
+VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayerPtr layer)
+    : mLayers()
+    , mParameters(new VideoCompositionParameters(parameters))
     , mPts(0)
-    , mOpacity(Constants::sMaxOpacity)
     , mForceKeyFrame(false)
+    , mCachedBitmap(boost::none)
+{
+    mLayers.push_back(layer);
+}
+
+VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayers layers)
+    : mLayers(layers)
+    , mParameters(new VideoCompositionParameters(parameters))
+    , mPts(0)
+    , mForceKeyFrame(false)
+    , mCachedBitmap(boost::none)
 {
 }
 
 VideoFrame::VideoFrame(const VideoFrame& other)
-    : mImage()
-    , mSize(other.mSize)
-    , mPosition(0,0)
-    , mRegionOfInterest(other.mRegionOfInterest)
+    : mLayers(make_cloned<VideoFrameLayer>(other.mLayers))
+    , mParameters(new VideoCompositionParameters(*other.mParameters))
     , mPts(other.mPts)
-    , mOpacity(other.mOpacity)
     , mForceKeyFrame(false)
+    , mCachedBitmap(boost::none)
 {
-    if (other.mImage)
-    {
-        mImage = boost::make_shared<wxImage>(const_cast<VideoFrame&>(other).mImage->Copy());
-    }
 }
 
 VideoFrame* VideoFrame::clone() const
@@ -84,29 +83,14 @@ VideoFrame::~VideoFrame()
 // META DATA
 //////////////////////////////////////////////////////////////////////////
 
-wxSize VideoFrame::getSize() const
+pts VideoFrame::getPts() const
 {
-    return mSize;
+    return mPts;
 }
 
-void VideoFrame::setPosition(wxPoint position)
+void VideoFrame::setPts(pts position)
 {
-    mPosition = position;
-}
-
-wxPoint VideoFrame::getPosition() const
-{
-    return mPosition;
-}
-
-int VideoFrame::getOpacity() const
-{
-    return mOpacity;
-}
-
-void VideoFrame::setOpacity(int opacity)
-{
-    mOpacity = opacity;
+    mPts = position;
 }
 
 void VideoFrame::setForceKeyFrame(bool force)
@@ -119,55 +103,62 @@ bool VideoFrame::getForceKeyFrame() const
     return mForceKeyFrame;
 }
 
-void VideoFrame::setRegionOfInterest(wxRect regionOfInterest)
+VideoCompositionParameters VideoFrame::getParameters() const
 {
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.x);
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.y);
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.width);
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.height);
-    ASSERT_LESS_THAN_EQUALS(regionOfInterest.x + regionOfInterest.width,  mSize.x);
-    ASSERT_LESS_THAN_EQUALS(regionOfInterest.y + regionOfInterest.height, mSize.y);
-    mRegionOfInterest = regionOfInterest;
+    return *mParameters;
 }
 
-wxRect VideoFrame::getRegionOfInterest() const
+VideoFrameLayers VideoFrame::getLayers()
 {
-    return mRegionOfInterest;
+    return mLayers;
 }
 
-pts VideoFrame::getPts() const
+void VideoFrame::addLayer(VideoFrameLayerPtr layer)
 {
-    return mPts;
-}
-
-void VideoFrame::setPts(pts position)
-{
-    mPts = position;
+    mLayers.push_back(layer);
 }
 
 wxImagePtr VideoFrame::getImage()
 {
-    if (mRegionOfInterest.IsEmpty())
+    if (mLayers.empty())
     {
         return wxImagePtr();
     }
-    ASSERT(mImage);
-    if ((mRegionOfInterest.GetPosition() == wxPoint(0,0) &&
-        (mRegionOfInterest.GetSize() == mImage->GetSize())))
-    {
-        return mImage;
-    }
-    return boost::make_shared<wxImage>(mImage->GetSubImage(mRegionOfInterest));
+    wxImagePtr compositeImage(boost::make_shared<wxImage>(mParameters->getBoundingBox()));
+    wxGraphicsContext* gc = wxGraphicsContext::Create(*compositeImage);
+    draw(gc);
+    delete gc;
+    return compositeImage;
 }
 
 wxBitmapPtr VideoFrame::getBitmap()
 {
-    wxImagePtr image(getImage());
-    if (!image)
+    if (!mCachedBitmap)
     {
-        return wxBitmapPtr();
+        if (mLayers.empty())
+        {
+            mCachedBitmap.reset(wxBitmapPtr());
+        }
+        else
+        {
+            mCachedBitmap.reset(boost::make_shared<wxBitmap>(*getImage(), 32));
+        }
     }
-    return boost::make_shared<wxBitmap>(*image);
+    return *mCachedBitmap;
+}
+
+void VideoFrame::draw(wxGraphicsContext* gc) const
+{
+    for (VideoFrameLayerPtr layer : mLayers )
+    {
+        layer->draw(gc);
+    }
+    if (mParameters->getDrawBoundingBox())
+    {
+        gc->SetPen(wxPen(wxColour(255,255,255), 2));
+        gc->SetBrush(wxBrush(wxColour(255,255,255), wxBRUSHSTYLE_TRANSPARENT));
+        gc->DrawRectangle( 1, 1, mParameters->getBoundingBox().GetWidth() - 1, mParameters->getBoundingBox().GetHeight() - 1);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -178,11 +169,9 @@ std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
 {
     os  << &obj                     << '|'
         << obj.mPts                 << '|'
-        << obj.mSize                << '|'
-        << obj.mPosition            << '|'
-        << obj.mOpacity             << '|'
-        << obj.mRegionOfInterest    << '|'
-        << obj.mForceKeyFrame;
+        << obj.mParameters          << '|'
+        << obj.mForceKeyFrame       << '|'
+        << obj.mLayers;
     return os;
 }
 

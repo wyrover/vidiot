@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyFrame(wxSize size);
+    EmptyFrame(const VideoCompositionParameters& parameters);
 
     virtual ~EmptyFrame();
 
@@ -39,8 +39,6 @@ public:
     // DATA ACCESS
     //////////////////////////////////////////////////////////////////////////
 
-    /// Override from VideoFrame. When this method is called for the first time,
-    /// the image is generated.
     wxImagePtr getImage() override;
 };
 

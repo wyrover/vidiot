@@ -144,7 +144,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         gc->DrawText(error_message1, 20, 20);
         gc->DrawText(error_message2, 20, 20 + h );
         delete gc;
-        return boost::make_shared<VideoFrame>(compositeImage);
+        return boost::make_shared<VideoFrame>(parameters, boost::make_shared<VideoFrameLayer>(compositeImage));
     }
 
     AVPacket nullPacket;
@@ -195,7 +195,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     AVCodecContext* codec = getCodec();
 
     VAR_DEBUG(this)(requiredInputFrames)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
-    // NOT: 
+    // NOT:
     //ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts)(codec);
     // Sometimes the gotten input frame covers two output frames. Subsequently, getting the next video frame triggers the assert.
     // Typically seen with H264 - MPEG4AVC (part10) (avc1) files with a frame rate of 28 frames/s.
@@ -247,7 +247,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             {
                 int len1 = avcodec_decode_video2(getCodec(), pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
                 ASSERT_MORE_THAN_EQUALS_ZERO(len1)(codec);
-                
+
                 if (len1 > 0)
                 {
                     endOfFile = false;
@@ -316,7 +316,10 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         sws_scale(ctx,pDecodedFrame->data,pDecodedFrame->linesize,0,getCodec()->height,pScaledFrame->data,pScaledFrame->linesize);
         sws_freeContext(ctx);
 
-         mDeliveredFrame = boost::make_shared<VideoFrame>(boost::make_shared<wxImage>(wxImage(size, pScaledFrame->data[0], true).Copy()));
+        mDeliveredFrame =
+            boost::make_shared<VideoFrame>(parameters,
+            boost::make_shared<VideoFrameLayer>(
+            boost::make_shared<wxImage>(wxImage(size, pScaledFrame->data[0], true).Copy())));
 
          av_free(buffer);
          av_free(pDecodedFrame);
@@ -434,8 +437,8 @@ void VideoFile::flush()
 
 std::ostream& operator<<( std::ostream& os, const VideoFile& obj )
 {
-    os  << static_cast<const File&>(obj) << '|' 
-        << obj.mDecodingVideo << '|' 
+    os  << static_cast<const File&>(obj) << '|'
+        << obj.mDecodingVideo << '|'
         << obj.mPosition << '|';
     return os;
 }

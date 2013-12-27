@@ -39,8 +39,8 @@ const int Constants::sDefaultTrackHeight = 50;
 // SCALING
 //////////////////////////////////////////////////////////////////////////
 
-const int Constants::sMinOpacity = 0;
-const int Constants::sMaxOpacity = 255;
+const int Constants::sMinOpacity =  wxIMAGE_ALPHA_TRANSPARENT;
+const int Constants::sMaxOpacity =  wxIMAGE_ALPHA_OPAQUE;
 const int Constants::scalingPrecision = 4;
 const int Constants::scalingPrecisionFactor = static_cast<int>(pow(10.0,Constants::scalingPrecision)); ///< 10^scalingPrecision
 const int Constants::scalingPageSize = Constants::scalingPrecisionFactor / 10; // 0.1

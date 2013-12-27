@@ -233,7 +233,7 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
         return VideoFramePtr();
     }
 
-    VideoFramePtr videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters.getBoundingBox()));
+    VideoFramePtr videoFrame = boost::static_pointer_cast<VideoFrame>(boost::make_shared<EmptyFrame>(parameters));
     setGenerationProgress(mProgress);
     mProgress++;
     VAR_VIDEO(videoFrame);

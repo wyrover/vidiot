@@ -492,8 +492,10 @@ void Trim::preview()
         model::VideoFramePtr videoFrame = mPreviewVideoClip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(w, h)));
         ASSERT(videoFrame); // A frame must be possible, due to the 'completelyTrimmedAway' check above.
         wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
-        ASSERT(trimmedBmp);
-        mDc.DrawBitmap(*trimmedBmp, x, (h - trimmedBmp->GetHeight()) / 2);
+        if (trimmedBmp)
+        {
+            mDc.DrawBitmap(*trimmedBmp, x, (h - trimmedBmp->GetHeight()) / 2);
+        }
     }
     mDc.SelectObject(wxNullBitmap);
     getPlayer()->show(bitmap);

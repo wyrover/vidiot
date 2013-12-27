@@ -22,9 +22,8 @@
 
 namespace model {
 
-class VideoCompositionParameters;
-
 class VideoComposition
+    : boost::noncopyable
 {
 public:
 
@@ -32,8 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoComposition(const model::VideoCompositionParameters& parameters);
-    VideoComposition(const VideoComposition& other);
+    VideoComposition(const VideoCompositionParameters& parameters);
     virtual ~VideoComposition();
 
     //////////////////////////////////////////////////////////////////////////
@@ -41,7 +39,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void add(VideoFramePtr frame);
-    void replace(VideoFramePtr oldFrame, VideoFramePtr newFrame);
 
     /// Render the composition
     /// \return composition of all input frames.
@@ -62,7 +59,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     VideoCompositionParameters mParameters;
-    VideoFrames mFrames;
+    std::list<VideoFramePtr> mFrames;
     wxSize mBoundingBox;
 
     //////////////////////////////////////////////////////////////////////////
