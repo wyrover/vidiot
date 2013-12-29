@@ -114,7 +114,7 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     {
         // The if is required to avoid errors during editing operations.
         clone->moveTo(0); // To ensure that the VideoFile object is moved to the beginning of the clip (thus, including offset) and not the (default) beginning of the video file.
-        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(requiredSize()));
+        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(requiredSize()).setDrawBoundingBox(false));
         wxBitmapPtr thumbnail = videoFrame->getBitmap();
         if (thumbnail)
         {
