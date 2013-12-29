@@ -199,7 +199,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     //ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts)(codec);
     // Sometimes the gotten input frame covers two output frames. Subsequently, getting the next video frame triggers the assert.
     // Typically seen with H264 - MPEG4AVC (part10) (avc1) files with a frame rate of 28 frames/s.
-    ASSERT(!mDeliveredFrameParameters || *mDeliveredFrameParameters == parameters)(*mDeliveredFrameParameters)(parameters)(codec); // Ensure that mDeliveredFrame had the same set of VideoCompositionParameters
+    // NOT:
+    //ASSERT(!mDeliveredFrameParameters || *mDeliveredFrameParameters == parameters)(*mDeliveredFrameParameters)(parameters)(codec); // Ensure that mDeliveredFrame had the same set of VideoCompositionParameters
+    // Parameters can be changed during playback by - for instance - changing 'showBoundingBox'
 
     if (!mDeliveredFrame || requiredInputPts > mDeliveredFrameInputPts)
     {
