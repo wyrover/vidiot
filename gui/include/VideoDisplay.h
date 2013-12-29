@@ -132,7 +132,6 @@ private:
 
     int mWidth;
     int mHeight;
-    bool mDrawBoundingBox;
     wxBitmapPtr mBufferBitmap;
 
     boost::scoped_ptr<boost::thread> mVideoBufferThreadPtr;
@@ -151,6 +150,7 @@ private:
     void OnSize(wxSizeEvent& event);
     void OnPaint(wxPaintEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
+
 };
 
 } // namespace

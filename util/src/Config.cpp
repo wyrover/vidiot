@@ -29,9 +29,17 @@ bool Config::sShowDebugInfo(false);
 boost::mutex Config::sMutex;
 bool Config::sHold(false);
 
+DEFINE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
+
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
+
+Config::Config(const wxString& appName, const wxString& vendorName, const wxString& localFilename)
+    : wxEvtHandler()
+    , wxFileConfig(appName,vendorName,localFilename)
+{
+}
 
 template <class T>
 void setDefault(wxString path, T value)
@@ -89,7 +97,7 @@ void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestM
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
     wxString ConfigFile(getFileName());
     VAR_ERROR(ConfigFile);
-    wxConfigBase::Set(new wxFileConfig(applicationName, vendorName, ConfigFile));
+    wxConfigBase::Set(new Config(applicationName, vendorName, ConfigFile));
     wxConfigBase::Get()->Write(Config::sPathTest, inCxxTestMode);
 
     // Check values, delete from config if incorrect
@@ -256,11 +264,7 @@ void Config::WriteBool(const wxString& key, bool value)
     boost::mutex::scoped_lock lock(sMutex);
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
-    if (!sHold)
-    {
-        result = wxConfigBase::Get()->Flush();
-        ASSERT(result);
-    }
+    OnWrite(key);
 }
 
 // static
@@ -269,11 +273,7 @@ void Config::WriteLong(const wxString& key, long value)
     boost::mutex::scoped_lock lock(sMutex);
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
-    if (!sHold)
-    {
-        result = wxConfigBase::Get()->Flush();
-        ASSERT(result);
-    }
+    OnWrite(key);
 }
 
 // static
@@ -282,11 +282,7 @@ void Config::WriteDouble(const wxString& key, double value)
     boost::mutex::scoped_lock lock(sMutex);
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
-    if (!sHold)
-    {
-        result = wxConfigBase::Get()->Flush();
-        ASSERT(result);
-    }
+    OnWrite(key);
 }
 
 // static
@@ -295,9 +291,18 @@ void Config::WriteString(const wxString& key, wxString value)
     boost::mutex::scoped_lock lock(sMutex);
     bool result = wxConfigBase::Get()->Write(key, value);
     ASSERT(result);
+    OnWrite(key);
+}
+
+// static
+void Config::OnWrite(const wxString& key)
+{
+    Config* cfg = dynamic_cast<Config*>(wxConfigBase::Get());
+    ASSERT_NONZERO(cfg);
+    cfg->QueueEvent(new EventConfigUpdated(key));
     if (!sHold)
     {
-        result = wxConfigBase::Get()->Flush();
+        bool result = wxConfigBase::Get()->Flush();
         ASSERT(result);
     }
 }

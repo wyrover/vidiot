@@ -18,7 +18,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "UtilEvent.h"
 #include "UtilLog.h"
+#include "UtilSingleInstance.h"
 
 /// This class holds everything related to the persistence of global settings.
 /// Global settings include the application options but also checked menu items
@@ -29,13 +31,20 @@
 /// is not neccesary, and therefore these methods are provided (which do not require
 // defaults).
 
+DECLARE_EVENT(EVENT_CONFIG_UPDATED, EventConfigUpdated, wxString);
+
 class Config
+    : public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
+    , public wxFileConfig
+    , public SingleInstance<Config>
 {
 public:
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
+
+    Config(const wxString& appName, const wxString& vendorName, const wxString& localFilename);
 
     static void init(wxString applicationName, wxString vendorName, bool inCxxTestMode);
 
@@ -65,6 +74,8 @@ public:
     static void WriteLong(const wxString& key, long value);
     static void WriteDouble(const wxString& key, double value);
     static void WriteString(const wxString& key, wxString value);
+
+    static void OnWrite(const wxString& key);
 
     // Specific getters for dedicated attributes are only cached for performance
     static bool getShowDebugInfo();

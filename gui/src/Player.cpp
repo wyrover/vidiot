@@ -17,10 +17,12 @@
 
 #include "Player.h"
 
+#include "Config.h"
 #include "Constants.h"
 #include "Convert.h"
 #include "Cursor.h"
 #include "EditDisplay.h"
+#include "ids.h"
 #include "preview-end.xpm"
 #include "preview-home.xpm"
 #include "preview-next.xpm"
@@ -32,6 +34,7 @@
 #include "UtilLog.h"
 #include "VideoDisplay.h"
 #include "VideoDisplayEvent.h"
+#include "Window.h"
 #include <wx/minifram.h>
 
 namespace gui {
@@ -60,6 +63,10 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 ,   mSpeedSlider(0)
 {
     VAR_DEBUG(this);
+
+    //////////////////////////////////////////////////////////////////////////
+
+    Config::get().Bind(EVENT_CONFIG_UPDATED, &Player::onConfigUpdated, this);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +140,8 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 Player::~Player()
 {
     VAR_DEBUG(this);
+
+    Config::get().Unbind(EVENT_CONFIG_UPDATED, &Player::onConfigUpdated, this);
 
     mHomeButton     ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
     mPreviousButton ->Unbind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
@@ -224,7 +233,7 @@ void Player::onPlaybackPosition(PlaybackPositionEvent& event) // make playbackst
     mPosition = event.getValue();//getPts();
     int time = model::Convert::ptsToTime(mPosition);
     wxDateTime t(time / model::Constants::sHour, (time % model::Constants::sHour) / model::Constants::sMinute, (time % model::Constants::sMinute) / model::Constants::sSecond, time % model::Constants::sSecond);
-    wxString s = t.Format("%H:%M:%S.%l") + wxString::Format(" [%10d]", mPosition);
+    wxString s = t.Format("%H:%M:%S.%l") + wxString::Format(" [%10" PRId64 "]", mPosition);
     mStatus->ChangeValue(s);
 
     // NOT: event.Skip(); - Only the player handles this event. Forwards it if necessary. This event is only needed to detach from the video display thread.
@@ -370,6 +379,20 @@ void Player::onIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
 void Player::updateSpeedButton()
 {
     mSpeedButton->SetLabel(wxString::Format("%d%%", mDisplay->getSpeed()));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// CONFIG UDPATES
+//////////////////////////////////////////////////////////////////////////
+
+void Player::onConfigUpdated(EventConfigUpdated& event)
+{
+    if (!mDisplay->isPlaying() && event.getValue().IsSameAs(Config::sPathShowBoundingBox))
+    {
+        mDisplay->moveTo(mPosition); // Update the bounding box immediately
+    }
+    // else: During the playback updated frames are already generated
+    event.Skip();
 }
 
 } // namespace
