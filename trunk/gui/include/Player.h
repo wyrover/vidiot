@@ -20,14 +20,15 @@
 
 #include "UtilInt.h"
 
+class EventConfigUpdated;
 class wxMiniFrame;
 
 namespace gui {
 
-class VideoDisplay;
 class EditDisplay;
 class PlaybackActiveEvent;
 class PlaybackPositionEvent;
+class VideoDisplay;
 
 class Player
     :   public wxPanel
@@ -77,7 +78,7 @@ private:
     VideoDisplay* mDisplay;
     EditDisplay* mEdit;
     wxTextCtrl* mStatus;
-    int mPosition;
+    pts mPosition;
 
     //////////////////////////////////////////////////////////////////////////
     // SPEED SLIDER
@@ -102,6 +103,11 @@ private:
 
     void updateSpeedButton();
 
+    //////////////////////////////////////////////////////////////////////////
+    // CONFIG UDPATES
+    //////////////////////////////////////////////////////////////////////////
+
+    void onConfigUpdated(EventConfigUpdated& event);
 };
 
 } // namespace
