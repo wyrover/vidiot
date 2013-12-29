@@ -510,16 +510,19 @@ void Window::onExit(wxCommandEvent &event)
 void Window::onSnapClips(wxCommandEvent& event)
 {
     Config::WriteBool(Config::sPathSnapClips, event.IsChecked());
+    event.Skip();
 }
 
 void Window::onSnapCursor(wxCommandEvent& event)
 {
     Config::WriteBool(Config::sPathSnapCursor, event.IsChecked());
+    event.Skip();
 }
 
 void Window::onShowBoundingBox(wxCommandEvent& event)
 {
     Config::WriteBool(Config::sPathShowBoundingBox, event.IsChecked());
+    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
