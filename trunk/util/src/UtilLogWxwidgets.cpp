@@ -17,6 +17,8 @@
 
 #include "UtilLogWxwidgets.h"
 
+#define LOGENUMVALUE(value) case value: os << #value; break
+
 std::ostream& operator<< (std::ostream& os, const wxFileName& obj)
 {
     os << obj.GetPath() << '|' << obj.GetName() << '|' << obj.GetExt();
@@ -55,136 +57,133 @@ std::ostream& operator<< (std::ostream& os, const wxMouseEvent& obj)
 
 std::ostream& operator<< (std::ostream& os, const wxKeyCode& obj)
 {
-    std::string key;
-#define LOGKEY(code) case code: key = #code; break
     switch (obj)
     {
-        LOGKEY(WXK_BACK);
-        LOGKEY(WXK_TAB);
-        LOGKEY(WXK_RETURN);
-        LOGKEY(WXK_ESCAPE);
-        LOGKEY(WXK_SPACE);
-        LOGKEY(WXK_DELETE);
-        LOGKEY(WXK_START);
-        LOGKEY(WXK_LBUTTON);
-        LOGKEY(WXK_RBUTTON);
-        LOGKEY(WXK_CANCEL);
-        LOGKEY(WXK_MBUTTON);
-        LOGKEY(WXK_CLEAR);
-        LOGKEY(WXK_SHIFT);
-        LOGKEY(WXK_ALT);
-        LOGKEY(WXK_CONTROL);
-        LOGKEY(WXK_MENU);
-        LOGKEY(WXK_PAUSE);
-        LOGKEY(WXK_CAPITAL);
-        LOGKEY(WXK_END);
-        LOGKEY(WXK_HOME);
-        LOGKEY(WXK_LEFT);
-        LOGKEY(WXK_UP);
-        LOGKEY(WXK_RIGHT);
-        LOGKEY(WXK_DOWN);
-        LOGKEY(WXK_SELECT);
-        LOGKEY(WXK_PRINT);
-        LOGKEY(WXK_EXECUTE);
-        LOGKEY(WXK_SNAPSHOT);
-        LOGKEY(WXK_INSERT);
-        LOGKEY(WXK_HELP);
-        LOGKEY(WXK_NUMPAD0);
-        LOGKEY(WXK_NUMPAD1);
-        LOGKEY(WXK_NUMPAD2);
-        LOGKEY(WXK_NUMPAD3);
-        LOGKEY(WXK_NUMPAD4);
-        LOGKEY(WXK_NUMPAD5);
-        LOGKEY(WXK_NUMPAD6);
-        LOGKEY(WXK_NUMPAD7);
-        LOGKEY(WXK_NUMPAD8);
-        LOGKEY(WXK_NUMPAD9);
-        LOGKEY(WXK_MULTIPLY);
-        LOGKEY(WXK_ADD);
-        LOGKEY(WXK_SEPARATOR);
-        LOGKEY(WXK_SUBTRACT);
-        LOGKEY(WXK_DECIMAL);
-        LOGKEY(WXK_DIVIDE);
-        LOGKEY(WXK_F1);
-        LOGKEY(WXK_F2);
-        LOGKEY(WXK_F3);
-        LOGKEY(WXK_F4);
-        LOGKEY(WXK_F5);
-        LOGKEY(WXK_F6);
-        LOGKEY(WXK_F7);
-        LOGKEY(WXK_F8);
-        LOGKEY(WXK_F9);
-        LOGKEY(WXK_F10);
-        LOGKEY(WXK_F11);
-        LOGKEY(WXK_F12);
-        LOGKEY(WXK_F13);
-        LOGKEY(WXK_F14);
-        LOGKEY(WXK_F15);
-        LOGKEY(WXK_F16);
-        LOGKEY(WXK_F17);
-        LOGKEY(WXK_F18);
-        LOGKEY(WXK_F19);
-        LOGKEY(WXK_F20);
-        LOGKEY(WXK_F21);
-        LOGKEY(WXK_F22);
-        LOGKEY(WXK_F23);
-        LOGKEY(WXK_F24);
-        LOGKEY(WXK_NUMLOCK);
-        LOGKEY(WXK_SCROLL);
-        LOGKEY(WXK_PAGEUP);
-        LOGKEY(WXK_PAGEDOWN);
-        LOGKEY(WXK_NUMPAD_SPACE);
-        LOGKEY(WXK_NUMPAD_TAB);
-        LOGKEY(WXK_NUMPAD_ENTER);
-        LOGKEY(WXK_NUMPAD_F1);
-        LOGKEY(WXK_NUMPAD_F2);
-        LOGKEY(WXK_NUMPAD_F3);
-        LOGKEY(WXK_NUMPAD_F4);
-        LOGKEY(WXK_NUMPAD_HOME);
-        LOGKEY(WXK_NUMPAD_LEFT);
-        LOGKEY(WXK_NUMPAD_UP);
-        LOGKEY(WXK_NUMPAD_RIGHT);
-        LOGKEY(WXK_NUMPAD_DOWN);
-        LOGKEY(WXK_NUMPAD_PAGEUP);
-        LOGKEY(WXK_NUMPAD_PAGEDOWN);
-        LOGKEY(WXK_NUMPAD_END);
-        LOGKEY(WXK_NUMPAD_BEGIN);
-        LOGKEY(WXK_NUMPAD_INSERT);
-        LOGKEY(WXK_NUMPAD_DELETE);
-        LOGKEY(WXK_NUMPAD_EQUAL);
-        LOGKEY(WXK_NUMPAD_MULTIPLY);
-        LOGKEY(WXK_NUMPAD_ADD);
-        LOGKEY(WXK_NUMPAD_SEPARATOR);
-        LOGKEY(WXK_NUMPAD_SUBTRACT);
-        LOGKEY(WXK_NUMPAD_DECIMAL);
-        LOGKEY(WXK_NUMPAD_DIVIDE);
-        LOGKEY(WXK_WINDOWS_LEFT);
-        LOGKEY(WXK_WINDOWS_RIGHT);
-        LOGKEY(WXK_WINDOWS_MENU);
-        LOGKEY(WXK_SPECIAL1);
-        LOGKEY(WXK_SPECIAL2);
-        LOGKEY(WXK_SPECIAL3);
-        LOGKEY(WXK_SPECIAL4);
-        LOGKEY(WXK_SPECIAL5);
-        LOGKEY(WXK_SPECIAL6);
-        LOGKEY(WXK_SPECIAL7);
-        LOGKEY(WXK_SPECIAL8);
-        LOGKEY(WXK_SPECIAL9);
-        LOGKEY(WXK_SPECIAL10);
-        LOGKEY(WXK_SPECIAL11);
-        LOGKEY(WXK_SPECIAL12);
-        LOGKEY(WXK_SPECIAL13);
-        LOGKEY(WXK_SPECIAL14);
-        LOGKEY(WXK_SPECIAL15);
-        LOGKEY(WXK_SPECIAL16);
-        LOGKEY(WXK_SPECIAL17);
-        LOGKEY(WXK_SPECIAL18);
-        LOGKEY(WXK_SPECIAL19);
-        LOGKEY(WXK_SPECIAL20);
-        default:
-            key = obj;
+        LOGENUMVALUE(WXK_BACK);
+        LOGENUMVALUE(WXK_TAB);
+        LOGENUMVALUE(WXK_RETURN);
+        LOGENUMVALUE(WXK_ESCAPE);
+        LOGENUMVALUE(WXK_SPACE);
+        LOGENUMVALUE(WXK_DELETE);
+        LOGENUMVALUE(WXK_START);
+        LOGENUMVALUE(WXK_LBUTTON);
+        LOGENUMVALUE(WXK_RBUTTON);
+        LOGENUMVALUE(WXK_CANCEL);
+        LOGENUMVALUE(WXK_MBUTTON);
+        LOGENUMVALUE(WXK_CLEAR);
+        LOGENUMVALUE(WXK_SHIFT);
+        LOGENUMVALUE(WXK_ALT);
+        LOGENUMVALUE(WXK_CONTROL);
+        LOGENUMVALUE(WXK_MENU);
+        LOGENUMVALUE(WXK_PAUSE);
+        LOGENUMVALUE(WXK_CAPITAL);
+        LOGENUMVALUE(WXK_END);
+        LOGENUMVALUE(WXK_HOME);
+        LOGENUMVALUE(WXK_LEFT);
+        LOGENUMVALUE(WXK_UP);
+        LOGENUMVALUE(WXK_RIGHT);
+        LOGENUMVALUE(WXK_DOWN);
+        LOGENUMVALUE(WXK_SELECT);
+        LOGENUMVALUE(WXK_PRINT);
+        LOGENUMVALUE(WXK_EXECUTE);
+        LOGENUMVALUE(WXK_SNAPSHOT);
+        LOGENUMVALUE(WXK_INSERT);
+        LOGENUMVALUE(WXK_HELP);
+        LOGENUMVALUE(WXK_NUMPAD0);
+        LOGENUMVALUE(WXK_NUMPAD1);
+        LOGENUMVALUE(WXK_NUMPAD2);
+        LOGENUMVALUE(WXK_NUMPAD3);
+        LOGENUMVALUE(WXK_NUMPAD4);
+        LOGENUMVALUE(WXK_NUMPAD5);
+        LOGENUMVALUE(WXK_NUMPAD6);
+        LOGENUMVALUE(WXK_NUMPAD7);
+        LOGENUMVALUE(WXK_NUMPAD8);
+        LOGENUMVALUE(WXK_NUMPAD9);
+        LOGENUMVALUE(WXK_MULTIPLY);
+        LOGENUMVALUE(WXK_ADD);
+        LOGENUMVALUE(WXK_SEPARATOR);
+        LOGENUMVALUE(WXK_SUBTRACT);
+        LOGENUMVALUE(WXK_DECIMAL);
+        LOGENUMVALUE(WXK_DIVIDE);
+        LOGENUMVALUE(WXK_F1);
+        LOGENUMVALUE(WXK_F2);
+        LOGENUMVALUE(WXK_F3);
+        LOGENUMVALUE(WXK_F4);
+        LOGENUMVALUE(WXK_F5);
+        LOGENUMVALUE(WXK_F6);
+        LOGENUMVALUE(WXK_F7);
+        LOGENUMVALUE(WXK_F8);
+        LOGENUMVALUE(WXK_F9);
+        LOGENUMVALUE(WXK_F10);
+        LOGENUMVALUE(WXK_F11);
+        LOGENUMVALUE(WXK_F12);
+        LOGENUMVALUE(WXK_F13);
+        LOGENUMVALUE(WXK_F14);
+        LOGENUMVALUE(WXK_F15);
+        LOGENUMVALUE(WXK_F16);
+        LOGENUMVALUE(WXK_F17);
+        LOGENUMVALUE(WXK_F18);
+        LOGENUMVALUE(WXK_F19);
+        LOGENUMVALUE(WXK_F20);
+        LOGENUMVALUE(WXK_F21);
+        LOGENUMVALUE(WXK_F22);
+        LOGENUMVALUE(WXK_F23);
+        LOGENUMVALUE(WXK_F24);
+        LOGENUMVALUE(WXK_NUMLOCK);
+        LOGENUMVALUE(WXK_SCROLL);
+        LOGENUMVALUE(WXK_PAGEUP);
+        LOGENUMVALUE(WXK_PAGEDOWN);
+        LOGENUMVALUE(WXK_NUMPAD_SPACE);
+        LOGENUMVALUE(WXK_NUMPAD_TAB);
+        LOGENUMVALUE(WXK_NUMPAD_ENTER);
+        LOGENUMVALUE(WXK_NUMPAD_F1);
+        LOGENUMVALUE(WXK_NUMPAD_F2);
+        LOGENUMVALUE(WXK_NUMPAD_F3);
+        LOGENUMVALUE(WXK_NUMPAD_F4);
+        LOGENUMVALUE(WXK_NUMPAD_HOME);
+        LOGENUMVALUE(WXK_NUMPAD_LEFT);
+        LOGENUMVALUE(WXK_NUMPAD_UP);
+        LOGENUMVALUE(WXK_NUMPAD_RIGHT);
+        LOGENUMVALUE(WXK_NUMPAD_DOWN);
+        LOGENUMVALUE(WXK_NUMPAD_PAGEUP);
+        LOGENUMVALUE(WXK_NUMPAD_PAGEDOWN);
+        LOGENUMVALUE(WXK_NUMPAD_END);
+        LOGENUMVALUE(WXK_NUMPAD_BEGIN);
+        LOGENUMVALUE(WXK_NUMPAD_INSERT);
+        LOGENUMVALUE(WXK_NUMPAD_DELETE);
+        LOGENUMVALUE(WXK_NUMPAD_EQUAL);
+        LOGENUMVALUE(WXK_NUMPAD_MULTIPLY);
+        LOGENUMVALUE(WXK_NUMPAD_ADD);
+        LOGENUMVALUE(WXK_NUMPAD_SEPARATOR);
+        LOGENUMVALUE(WXK_NUMPAD_SUBTRACT);
+        LOGENUMVALUE(WXK_NUMPAD_DECIMAL);
+        LOGENUMVALUE(WXK_NUMPAD_DIVIDE);
+        LOGENUMVALUE(WXK_WINDOWS_LEFT);
+        LOGENUMVALUE(WXK_WINDOWS_RIGHT);
+        LOGENUMVALUE(WXK_WINDOWS_MENU);
+        LOGENUMVALUE(WXK_SPECIAL1);
+        LOGENUMVALUE(WXK_SPECIAL2);
+        LOGENUMVALUE(WXK_SPECIAL3);
+        LOGENUMVALUE(WXK_SPECIAL4);
+        LOGENUMVALUE(WXK_SPECIAL5);
+        LOGENUMVALUE(WXK_SPECIAL6);
+        LOGENUMVALUE(WXK_SPECIAL7);
+        LOGENUMVALUE(WXK_SPECIAL8);
+        LOGENUMVALUE(WXK_SPECIAL9);
+        LOGENUMVALUE(WXK_SPECIAL10);
+        LOGENUMVALUE(WXK_SPECIAL11);
+        LOGENUMVALUE(WXK_SPECIAL12);
+        LOGENUMVALUE(WXK_SPECIAL13);
+        LOGENUMVALUE(WXK_SPECIAL14);
+        LOGENUMVALUE(WXK_SPECIAL15);
+        LOGENUMVALUE(WXK_SPECIAL16);
+        LOGENUMVALUE(WXK_SPECIAL17);
+        LOGENUMVALUE(WXK_SPECIAL18);
+        LOGENUMVALUE(WXK_SPECIAL19);
+        LOGENUMVALUE(WXK_SPECIAL20);
+    default:
+        os << "Unknown wxKeyCode (" << static_cast<long>(obj) << ")";
     }
-    os  << key;
     return os;
 }
 
@@ -208,5 +207,67 @@ std::ostream& operator<< (std::ostream& os, const wxRegion& obj)
         it++;
     }
     os << '}';
+    return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const wxCompositionMode& obj)
+{
+    switch (obj)
+    {
+        LOGENUMVALUE(wxCOMPOSITION_INVALID);
+        LOGENUMVALUE(wxCOMPOSITION_CLEAR);
+        LOGENUMVALUE(wxCOMPOSITION_SOURCE);
+        LOGENUMVALUE(wxCOMPOSITION_OVER);
+        LOGENUMVALUE(wxCOMPOSITION_IN);
+        LOGENUMVALUE(wxCOMPOSITION_OUT);
+        LOGENUMVALUE(wxCOMPOSITION_ATOP);
+        LOGENUMVALUE(wxCOMPOSITION_DEST);
+        LOGENUMVALUE(wxCOMPOSITION_DEST_OVER);
+        LOGENUMVALUE(wxCOMPOSITION_DEST_IN);
+        LOGENUMVALUE(wxCOMPOSITION_DEST_OUT);
+        LOGENUMVALUE(wxCOMPOSITION_DEST_ATOP);
+        LOGENUMVALUE(wxCOMPOSITION_XOR);
+        LOGENUMVALUE(wxCOMPOSITION_ADD);
+    default:
+        os << "Unknown wxCompositionMode (" << static_cast<long>(obj) << ")";
+
+    }
+    return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const wxInterpolationQuality& obj)
+{
+    switch (obj)
+    {
+        LOGENUMVALUE(wxINTERPOLATION_DEFAULT);
+        LOGENUMVALUE(wxINTERPOLATION_NONE);
+        LOGENUMVALUE(wxINTERPOLATION_FAST);
+        LOGENUMVALUE(wxINTERPOLATION_GOOD);
+        LOGENUMVALUE(wxINTERPOLATION_BEST);
+    default:
+        os << "Unknown wxInterpolationQuality (" << static_cast<long>(obj) << ")";
+
+    }
+    return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const wxAntialiasMode& obj)
+{
+    switch (obj)
+    {
+        LOGENUMVALUE(wxANTIALIAS_NONE);
+        LOGENUMVALUE(wxANTIALIAS_DEFAULT);
+    default:
+        os << "Unknown wxAntialiasMode (" << static_cast<long>(obj) << ")";
+
+    }
+    return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const wxGraphicsContext& obj)
+{
+    os  << obj.GetCompositionMode()         << '|'
+        << obj.GetInterpolationQuality()    << '|'
+        << obj.GetAntialiasMode()           ;
     return os;
 }

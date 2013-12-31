@@ -78,4 +78,6 @@ void TestManual::testManual()
     pause(60000 * 60); // One hour should be enough...
 }
 
+// todo remove.
+
 } // namespace
