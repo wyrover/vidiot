@@ -26,5 +26,9 @@ std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj);
 std::ostream& operator<< (std::ostream& os, const wxMouseEvent& obj);
 std::ostream& operator<< (std::ostream& os, const wxKeyboardState& obj);
 std::ostream& operator<< (std::ostream& os, const wxRegion& obj);
+std::ostream& operator<< (std::ostream& os, const wxCompositionMode& obj);
+std::ostream& operator<< (std::ostream& os, const wxInterpolationQuality& obj);
+std::ostream& operator<< (std::ostream& os, const wxAntialiasMode& obj);
+std::ostream& operator<< (std::ostream& os, const wxGraphicsContext& obj);
 
 #endif //UTIL_LOG_WXWIDGETS_H

@@ -125,11 +125,21 @@ wxImagePtr VideoFrame::getImage()
     {
         return wxImagePtr();
     }
-    // todo  wxGraphicsContext::SetCompositionMode
-    // todo wxGraphicsContext::SetInterpolationQuality
-    // todo wxGraphicsContext::SetAntialiasMode
     wxImagePtr compositeImage(boost::make_shared<wxImage>(mParameters->getBoundingBox()));
     wxGraphicsContext* gc = wxGraphicsContext::Create(*compositeImage);
+    if (mParameters->getOptimizeForQuality())
+    {
+        gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
+        gc->SetCompositionMode(wxCOMPOSITION_OVER);
+        gc->SetInterpolationQuality(wxINTERPOLATION_BEST);
+    }
+    else
+    {
+        gc->SetAntialiasMode(wxANTIALIAS_NONE);
+        gc->SetCompositionMode(wxCOMPOSITION_OVER);
+        gc->SetInterpolationQuality(wxINTERPOLATION_NONE);
+    }
+    VAR_DEBUG(*gc);
     draw(gc);
     delete gc;
     return compositeImage;
