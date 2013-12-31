@@ -121,6 +121,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         int length = *it;
         // Use the integer as id
         wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, length, *itLabel, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        button->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
         button->SetToolTip(_("Change the length of the clip to this length. Hold shift when pressing to avoid introducing a black area."));
         lengthbuttonspanel->GetSizer()->Add(button,wxSizerFlags(1));
         button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
@@ -135,9 +136,10 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
     mOpacitySlider = new wxSlider(opacitypanel, wxID_ANY, model::Constants::sOpacityMax, model::Constants::sOpacityMin, model::Constants::sOpacityMax );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
-    mOpacitySpin = new wxSpinCtrl(opacitypanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
+    mOpacitySpin = new wxSpinCtrl(opacitypanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mOpacitySpin->SetRange(model::Constants::sOpacityMin, model::Constants::sOpacityMax);
     mOpacitySpin->SetValue(model::Constants::sOpacityMax);
+    mOpacitySpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0).Right());
     opacitypanel->SetSizer(opacitysizer);
@@ -145,31 +147,12 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     // todo add Trim option (with left, right top, bottom spins)
 
-    // todo scaling selector on one line with slider/spin
-    mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingNone);
-    addOption(_("Scaling"), mSelectScaling);
-
-    wxPanel* scalingpanel = new wxPanel(this);
-    wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
-    mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, 1 * model::Constants::sScalingPrecisionFactor, model::Constants::sScalingMin, model::Constants::sScalingMax);
-    mScalingSlider->SetPageSize(model::Constants::sScalingPageSize);
-    mScalingSpin = new wxSpinCtrlDouble(scalingpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
-    mScalingSpin->SetDigits(model::Constants::sScalingPrecision);
-    mScalingSpin->SetValue(1); // No scaling
-    mScalingSpin->SetRange(
-        static_cast<double>(model::Constants::sScalingMin) / static_cast<double>(model::Constants::sScalingPrecisionFactor),
-        static_cast<double>(model::Constants::sScalingMax) / static_cast<double>(model::Constants::sScalingPrecisionFactor));
-    mScalingSpin->SetIncrement(sScalingIncrement);
-    scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
-    scalingsizer->Add(mScalingSpin, wxSizerFlags(0).Right());
-    scalingpanel->SetSizer(scalingsizer);
-    addOption(_("Factor"), scalingpanel);
-
     wxPanel* rotationpanel = new wxPanel(this);
     wxBoxSizer* rotationsizer = new wxBoxSizer(wxHORIZONTAL);
     mRotationSlider = new wxSlider(rotationpanel,wxID_ANY, 1 * model::Constants::sRotationPrecisionFactor, model::Constants::sRotationMin, model::Constants::sRotationMax);
     mRotationSlider->SetPageSize(model::Constants::sRotationPageSize);
-    mRotationSpin = new wxSpinCtrlDouble(rotationpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
+    mRotationSpin = new wxSpinCtrlDouble(rotationpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
+    mRotationSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mRotationSpin->SetDigits(model::Constants::sRotationPrecision);
     mRotationSpin->SetValue(0); // No rotation
     mRotationSpin->SetRange(
@@ -181,33 +164,57 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     rotationpanel->SetSizer(rotationsizer);
     addOption(_("Rotation"), rotationpanel);
 
-    // todo combine the three positioning options into one line
-    mSelectAlignment = new EnumSelector<model::VideoAlignment>(this, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentCustom);
-    addOption(_("Alignment"), mSelectAlignment);
+    wxPanel* scalingpanel = new wxPanel(this);
+    wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
+    mSelectScaling = new EnumSelector<model::VideoScaling>(scalingpanel, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingNone);
+    mSelectScaling->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
+    mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, 1 * model::Constants::sScalingPrecisionFactor, model::Constants::sScalingMin, model::Constants::sScalingMax);
+    mScalingSlider->SetPageSize(model::Constants::sScalingPageSize);
+    mScalingSpin = new wxSpinCtrlDouble(scalingpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
+    mScalingSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
+    mScalingSpin->SetDigits(model::Constants::sScalingPrecision);
+    mScalingSpin->SetValue(1); // No scaling
+    mScalingSpin->SetRange(
+        static_cast<double>(model::Constants::sScalingMin) / static_cast<double>(model::Constants::sScalingPrecisionFactor),
+        static_cast<double>(model::Constants::sScalingMax) / static_cast<double>(model::Constants::sScalingPrecisionFactor));
+    mScalingSpin->SetIncrement(sScalingIncrement);
+    scalingsizer->Add(mSelectScaling, wxSizerFlags(0).Left());
+    scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
+    scalingsizer->Add(mScalingSpin, wxSizerFlags(0).Right());
+    scalingpanel->SetSizer(scalingsizer);
+    addOption(_("Scaling"), scalingpanel);
 
-    wxPanel* positionxpanel = new wxPanel(this);
-    wxBoxSizer* positionxsizer = new wxBoxSizer(wxHORIZONTAL);
-    mPositionXSlider = new wxSlider(positionxpanel, wxID_ANY, 0, 0, 1);
+    wxPanel* alignmentpanel = new wxPanel(this);
+    wxBoxSizer* alignmentsizer = new wxBoxSizer(wxHORIZONTAL);
+    mSelectAlignment = new EnumSelector<model::VideoAlignment>(alignmentpanel, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentCustom);
+    mSelectAlignment->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
+    wxStaticText* titleX = new wxStaticText(alignmentpanel, wxID_ANY, _("  X:"), wxDefaultPosition);
+    mPositionXSlider = new wxSlider(alignmentpanel, wxID_ANY, 0, 0, 1);
     mPositionXSlider->SetPageSize(sPositionPageSize);
-    mPositionXSpin = new wxSpinCtrl(positionxpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
+    mPositionXSpin = new wxSpinCtrl(alignmentpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
+    mPositionXSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mPositionXSpin->SetRange(0,1);
     mPositionXSpin->SetValue(0);
-    positionxsizer->Add(mPositionXSlider, wxSizerFlags(1).Expand());
-    positionxsizer->Add(mPositionXSpin, wxSizerFlags(0).Right());
-    positionxpanel->SetSizer(positionxsizer);
-    addOption(_("X position"), positionxpanel);
-
-    wxPanel* positionypanel = new wxPanel(this);
-    wxBoxSizer* positionysizer = new wxBoxSizer(wxHORIZONTAL);
-    mPositionYSlider = new wxSlider(positionypanel, wxID_ANY, 0, 0, 1);
+    wxStaticText* titleY = new wxStaticText(alignmentpanel, wxID_ANY, _("  Y:"), wxDefaultPosition);
+    mPositionYSlider = new wxSlider(alignmentpanel, wxID_ANY, 0, 0, 1);
     mPositionYSlider->SetPageSize(sPositionPageSize);
-    mPositionYSpin = new wxSpinCtrl(positionypanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
+    mPositionYSpin = new wxSpinCtrl(alignmentpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
+    mPositionYSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mPositionYSpin->SetRange(0,1);
     mPositionYSpin->SetValue(0);
-    positionysizer->Add(mPositionYSlider, wxSizerFlags(1).Expand());
-    positionysizer->Add(mPositionYSpin, wxSizerFlags(0).Right());
-    positionypanel->SetSizer(positionysizer);
-    addOption(_("Y position"), positionypanel);
+    alignmentsizer->Add(mSelectAlignment, wxSizerFlags(0).Expand());
+    alignmentsizer->Add(titleX, wxSizerFlags(0).Expand().Right());
+    alignmentsizer->Add(mPositionXSlider, wxSizerFlags(1000).Expand());
+    alignmentsizer->Add(mPositionXSpin, wxSizerFlags(0).Expand().Right());
+    alignmentsizer->Add(titleY, wxSizerFlags(0).Expand().Right());
+    alignmentsizer->Add(mPositionYSlider, wxSizerFlags(1000).Expand());
+    alignmentsizer->Add(mPositionYSpin, wxSizerFlags(0).Expand().Right());
+    alignmentpanel->SetSizer(alignmentsizer);
+    addOption(_("Position"), alignmentpanel);
+
+    // Give these two the same width
+    mSelectAlignment->SetMinSize(wxSize(mSelectScaling->GetSize().x,-1));
+    mSelectScaling->SetMinSize(wxSize(mSelectAlignment->GetSize().x,-1));
 
     mOpacitySlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
@@ -228,7 +235,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     wxBoxSizer* volumesizer = new wxBoxSizer(wxHORIZONTAL);
     mVolumeSlider = new wxSlider(volumepanel, wxID_ANY, model::Constants::sDefaultVolume, model::Constants::sMinVolume, model::Constants::sMaxVolume );
     mVolumeSlider->SetPageSize(sVolumePageSize);
-    mVolumeSpin = new wxSpinCtrl(volumepanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
+    mVolumeSpin = new wxSpinCtrl(volumepanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
+    mVolumeSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
     mVolumeSpin->SetRange(model::Constants::sMinVolume, model::Constants::sMaxVolume);
     mVolumeSpin->SetValue(model::Constants::sMaxVolume);
     volumesizer->Add(mVolumeSlider, wxSizerFlags(1).Expand());

@@ -199,7 +199,6 @@ Window::Window()
     mUiManager.InsertPane(mProjectView,
         wxAuiPaneInfo().
         Name("Project").
-        BestSize(wxSize(100,300)).
         MinSize(wxSize(100,300)).
         Layer(1).
         Top().
@@ -212,10 +211,10 @@ Window::Window()
     mUiManager.InsertPane(mDetailsView,
         wxAuiPaneInfo().
         Name("Details").
+        MinSize(wxSize(100,300)).
         Layer(1).
         Top().
         Position(1).
-        Resizable().
         MaximizeButton().
         MinimizeButton().
         CaptionVisible(true).
@@ -224,8 +223,8 @@ Window::Window()
     mUiManager.InsertPane(mPreview,
         wxAuiPaneInfo().
         Name("Preview").
-        BestSize(wxSize(100,300)).
         MinSize(wxSize(100,300)).
+        BestSize(wxSize(-1,800)).
         Layer(1).
         Top().
         Position(2).
@@ -239,8 +238,8 @@ Window::Window()
     mUiManager.InsertPane(mTimelinesView,
         wxAuiPaneInfo().
         Name("Timelines").
-        BestSize(wxSize(400,100)).
-        MinSize(wxSize(400,100)).
+        MinSize(wxSize(100,100)).
+        Resizable().
         Layer(1).
         Center().
         MaximizeButton().
@@ -249,12 +248,17 @@ Window::Window()
         Caption(_("Timelines")));
     mUiManager.SetFlags(wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_ALLOW_ACTIVE_PANE | wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_LIVE_RESIZE );
     mUiManager.GetPane(mHelp).Hide();
+
+    mUiManager.GetPane("Project").dock_proportion = 100000;
+    mUiManager.GetPane("Details").dock_proportion = 200000;
+    mUiManager.GetPane("Preview").dock_proportion = 200000;
+    mUiManager.GetPane("Timelines").dock_proportion = 200000;
     mUiManager.Update();
 
     mDefaultPerspective = mUiManager.SavePerspective();
 
     wxString previous = Config::ReadString(Config::sPathWorkspacePerspectiveCurrent);
-    if (!previous.IsSameAs(""))
+    if (!Config::ReadBool(Config::sPathTest) && !previous.IsSameAs(""))
     {
         Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, ""); // If this perspective causes problems, a restart will fix it. Upon closing the current perspective is saved again.
         mUiManager.LoadPerspective(previous);

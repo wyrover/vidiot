@@ -301,6 +301,9 @@ void TestDetailsClip::testTransform()
 {
     StartTestSuite();
 
+    gui::Window::get().getUiManager().GetPane("Project").Hide();
+    gui::Window::get().getUiManager().GetPane("Details").MinSize(wxSize(600,-1));
+
     model::VideoClipPtr videoclip = getVideoClip(VideoClip(0,3));
     model::VideoScaling oldScaling = videoclip->getScaling();
     boost::rational<int> oldScalingFactor = videoclip->getScalingFactor();
