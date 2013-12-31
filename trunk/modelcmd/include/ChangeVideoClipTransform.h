@@ -37,6 +37,7 @@ public:
 
     void setOpacity(int opacity);
     void setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor = boost::none);
+    void setRotation(boost::rational< int > rotation);
     void setAlignment(VideoAlignment alignment);
     void setPosition(wxPoint position);
 
@@ -68,12 +69,15 @@ private:
     VideoScaling mOldScaling;
     boost::rational< int > mOldScalingFactor;
 
+    boost::rational< int > mOldRotation;
+
     VideoAlignment mOldAlignment;
     wxPoint mOldPosition;
 
     boost::optional<int> mNewOpacity;
     boost::optional<VideoScaling> mNewScaling;
     boost::optional< boost::rational< int > > mNewScalingFactor;
+    boost::optional< boost::rational< int > > mNewRotation;
     boost::optional<VideoAlignment> mNewAlignment;
     boost::optional<wxPoint> mNewPosition;
 

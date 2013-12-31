@@ -125,6 +125,8 @@ public:
     static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::rational<int>& scaling, bool fill = false);
     static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox);
 
+    static double degreesToRadians(const boost::rational<int>& degrees);
+
     static int doubleToInt(double x);
     static int factorToDigits(boost::rational<int> number, int nDigits);
     static boost::rational<int> digitsToFactor(int number, int nDigits);

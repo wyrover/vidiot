@@ -19,6 +19,7 @@
 
 #include "UtilLog.h"
 #include "Layout.h"
+#include "VideoCompositionParameters.h"
 
 namespace gui {
 

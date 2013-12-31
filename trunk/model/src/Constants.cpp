@@ -39,13 +39,18 @@ const int Constants::sDefaultTrackHeight = 50;
 // SCALING
 //////////////////////////////////////////////////////////////////////////
 
-const int Constants::sMinOpacity =  wxIMAGE_ALPHA_TRANSPARENT;
-const int Constants::sMaxOpacity =  wxIMAGE_ALPHA_OPAQUE;
-const int Constants::scalingPrecision = 4;
-const int Constants::scalingPrecisionFactor = static_cast<int>(pow(10.0,Constants::scalingPrecision)); ///< 10^scalingPrecision
-const int Constants::scalingPageSize = Constants::scalingPrecisionFactor / 10; // 0.1
-const int Constants::sMinScaling = 1;
-const int Constants::sMaxScaling = 10 * scalingPrecisionFactor;
+const int Constants::sOpacityMin =  wxIMAGE_ALPHA_TRANSPARENT;
+const int Constants::sOpacityMax =  wxIMAGE_ALPHA_OPAQUE;
+const int Constants::sScalingPrecision = 4;
+const int Constants::sScalingPrecisionFactor = static_cast<int>(pow(10.0,Constants::sScalingPrecision)); ///< 10^sScalingPrecision
+const int Constants::sScalingPageSize = Constants::sScalingPrecisionFactor / 10; // 0.1
+const int Constants::sScalingMin = 1;
+const int Constants::sScalingMax = 10 * sScalingPrecisionFactor;
+const int Constants::sRotationPrecision = 2;
+const int Constants::sRotationPrecisionFactor = static_cast<int>(pow(10.0,Constants::sRotationPrecision)); ///< 10^sScalingPrecision
+const int Constants::sRotationPageSize = Constants::sRotationPrecisionFactor / 10; // 0.1
+const int Constants::sRotationMin = -180 * sRotationPrecisionFactor;
+const int Constants::sRotationMax = 180 * sRotationPrecisionFactor;
 const int Constants::sMinVolume = 1;
 const int Constants::sMaxVolume = 200;
 const int Constants::sDefaultVolume = 100;

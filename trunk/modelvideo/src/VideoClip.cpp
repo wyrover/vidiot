@@ -41,9 +41,11 @@ namespace model {
 VideoClip::VideoClip()
     : ClipInterval()
     , mProgress(0)
-    , mOpacity(Constants::sMaxOpacity)
+    , mOpacity(Constants::sOpacityMax)
     , mScaling()
     , mScalingFactor(1)
+    , mRotation(0)
+    , mRotationPositionOffset(0,0)
     , mAlignment()
     , mPosition(0,0)
 {
@@ -53,9 +55,11 @@ VideoClip::VideoClip()
 VideoClip::VideoClip(VideoFilePtr file)
     : ClipInterval(file)
     , mProgress(0)
-    , mOpacity(Constants::sMaxOpacity)
+    , mOpacity(Constants::sOpacityMax)
     , mScaling(Config::ReadEnum<VideoScaling>(Config::sPathDefaultVideoScaling))
     , mScalingFactor(1)
+    , mRotation(0)
+    , mRotationPositionOffset(0,0)
     , mAlignment(Config::ReadEnum<VideoAlignment>(Config::sPathDefaultVideoAlignment))
     , mPosition(0,0)
 {
@@ -70,6 +74,8 @@ VideoClip::VideoClip(const VideoClip& other)
     , mOpacity(other.mOpacity)
     , mScaling(other.mScaling)
     , mScalingFactor(other.mScalingFactor)
+    , mRotation(other.mRotation)
+    , mRotationPositionOffset(other.mRotationPositionOffset)
     , mAlignment(other.mAlignment)
     , mPosition(other.mPosition)
 {
@@ -159,47 +165,11 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
             VideoFramePtr fileFrame = generator->getNextVideo(VideoCompositionParameters(parameters).setBoundingBox(requiredVideoSize));
             if (fileFrame)
             {
-                wxSize inputsize = getInputSize();
-                wxSize outputsize = Properties::get().getVideoSize();
-                wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
-                wxRect roi(wxPoint(0,0),scaledsize);
-
-                auto determineroi = [](pixel area, pixel data, pixel& data_pos, pixel& roi_pos, pixel& roi_size)
-                {
-                    roi_pos = 0;
-                    roi_size = data;
-
-                    if (data_pos < 0)
-                    {
-                        // clip to the left/top
-                        ASSERT_MORE_THAN_EQUALS(data_pos, -1 * data);
-                        roi_pos += -1 * data_pos;
-                        roi_size -= -1 * data_pos;
-                        data_pos = 0;
-                    }
-                    else
-                    {
-                        // clip to the right/bottom
-                        ASSERT_LESS_THAN_EQUALS(data_pos,area);
-                        if (data_pos + data > area)
-                        {
-                            roi_size = area - data_pos;
-                        }
-                    }
-                    roi_size = std::min(roi_size,area);
-                    ASSERT_MORE_THAN_EQUALS_ZERO(roi_pos);
-                    ASSERT_MORE_THAN_EQUALS_ZERO(roi_size);
-
-                };
-
-                wxPoint position(mPosition);
-                determineroi(outputsize.x,scaledsize.x,position.x,roi.x,roi.width);
-                determineroi(outputsize.y,scaledsize.y,position.y,roi.y,roi.height);
                 ASSERT_EQUALS(fileFrame->getLayers().size(),1);
                 videoFrame = boost::make_shared<VideoFrame>(parameters, fileFrame->getLayers().front());
-                videoFrame->getLayers().front()->setRegionOfInterest(Convert::scale(roi, scaleToBoundingBox));
-                videoFrame->getLayers().front()->setPosition(Convert::scale(position, scaleToBoundingBox));
+                videoFrame->getLayers().front()->setPosition(Convert::scale(mPosition - mRotationPositionOffset, scaleToBoundingBox));
                 videoFrame->getLayers().front()->setOpacity(mOpacity);
+                videoFrame->getLayers().front()->setRotation(mRotation);
             }
             else
             {
@@ -242,17 +212,6 @@ int VideoClip::getOpacity() const
     return mOpacity;
 }
 
-void VideoClip::setOpacity(int opacity)
-{
-    if (mOpacity != opacity)
-    {
-        ASSERT_MORE_THAN_EQUALS(opacity,Constants::sMinOpacity);
-        ASSERT_LESS_THAN_EQUALS(opacity,Constants::sMaxOpacity);
-        mOpacity = opacity;
-        ProcessEvent(EventChangeVideoClipOpacity(mOpacity));
-    }
-}
-
 VideoScaling VideoClip::getScaling() const
 {
     return mScaling;
@@ -261,6 +220,11 @@ VideoScaling VideoClip::getScaling() const
 boost::rational<int> VideoClip::getScalingFactor() const
 {
     return mScalingFactor;
+}
+
+boost::rational<int> VideoClip::getRotation() const
+{
+    return mRotation;
 }
 
 VideoAlignment VideoClip::getAlignment() const
@@ -275,15 +239,28 @@ wxPoint VideoClip::getPosition() const
 
 wxPoint VideoClip::getMinPosition()
 {
-    wxSize inputsize = getInputSize();
-    wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
-    return wxPoint(-1 * scaledsize.x, -1 * scaledsize.y);
+    wxSize boundingBox = getBoundingBox();
+    return wxPoint(-boundingBox.x,-boundingBox.y);
 }
 
 wxPoint VideoClip::getMaxPosition()
 {
     wxSize outputsize = Properties::get().getVideoSize();
-    return wxPoint(outputsize.x,outputsize.y);
+    wxSize boundingBox = getBoundingBox();
+    int maxX = std::max(boundingBox.x, outputsize.x);
+    int maxY = std::max(boundingBox.y, outputsize.y);
+    return wxPoint(maxX, maxY) + mRotationPositionOffset;
+}
+
+void VideoClip::setOpacity(int opacity)
+{
+    if (mOpacity != opacity)
+    {
+        ASSERT_MORE_THAN_EQUALS(opacity,Constants::sOpacityMin);
+        ASSERT_LESS_THAN_EQUALS(opacity,Constants::sOpacityMax);
+        mOpacity = opacity;
+        ProcessEvent(EventChangeVideoClipOpacity(mOpacity));
+    }
 }
 
 void VideoClip::setScaling(VideoScaling scaling, boost::optional<boost::rational< int > > factor)
@@ -310,6 +287,34 @@ void VideoClip::setScaling(VideoScaling scaling, boost::optional<boost::rational
     if (mScalingFactor != oldScalingFactor)
     {
         ProcessEvent(EventChangeVideoClipScalingFactor(mScalingFactor));
+    }
+    if (getMinPosition() != oldMinPosition)
+    {
+        ProcessEvent(EventChangeVideoClipMinPosition(getMinPosition()));
+    }
+    if (getMaxPosition() != oldMaxPosition)
+    {
+        ProcessEvent(EventChangeVideoClipMaxPosition(getMaxPosition()));
+    }
+    if (mPosition != oldPosition)
+    {
+        ProcessEvent(EventChangeVideoClipPosition(mPosition));
+    }
+}
+
+void VideoClip::setRotation(boost::rational< int > rotation)
+{
+    boost::rational< int > oldRotation = mRotation;
+    wxPoint oldPosition = mPosition;
+    wxPoint oldMinPosition = getMinPosition();
+    wxPoint oldMaxPosition = getMaxPosition();
+
+    mRotation = rotation;
+
+    updateAutomatedPositioning();
+    if (mRotation != oldRotation)
+    {
+        ProcessEvent(EventChangeVideoClipRotation(mRotation));
     }
     if (getMinPosition() != oldMinPosition)
     {
@@ -362,6 +367,19 @@ void VideoClip::setPosition(wxPoint position)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
+wxSize VideoClip::getBoundingBox()
+{
+    wxSize scaledsize = Convert::scale(getInputSize(),getScalingFactor());
+    if (mRotation == boost::rational<int>(0))
+    {
+        return scaledsize;
+    }
+
+    int boundingBoxHeight = abs(scaledsize.x * sin(Convert::degreesToRadians(mRotation))) + abs(scaledsize.y * cos(Convert::degreesToRadians(mRotation)));
+    int boundingBoxWidth  = abs(scaledsize.x * cos(Convert::degreesToRadians(mRotation))) + abs(scaledsize.y * sin(Convert::degreesToRadians(mRotation)));
+    return wxSize(boundingBoxWidth,boundingBoxHeight);
+}
+
 void VideoClip::updateAutomatedScaling()
 {
     wxSize inputsize = getInputSize();
@@ -392,8 +410,8 @@ void VideoClip::updateAutomatedScaling()
         break;
     }
 
-    ASSERT_LESS_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sMaxScaling,model::Constants::scalingPrecisionFactor));
-    ASSERT_MORE_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sMinScaling,model::Constants::scalingPrecisionFactor));
+    ASSERT_LESS_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sScalingMax,model::Constants::sScalingPrecisionFactor));
+    ASSERT_MORE_THAN_EQUALS(mScalingFactor,boost::rational<int>(Constants::sScalingMin,model::Constants::sScalingPrecisionFactor));
 }
 
 void VideoClip::updateAutomatedPositioning()
@@ -401,6 +419,10 @@ void VideoClip::updateAutomatedPositioning()
     wxSize inputsize = getInputSize();
     wxSize scaledsize = Convert::scale(inputsize,getScalingFactor());
     wxSize outputsize = Properties::get().getVideoSize();
+    wxSize boundingBox = getBoundingBox();
+
+    mRotationPositionOffset = wxPoint( (boundingBox.x - scaledsize.x) / 2, (boundingBox.y - scaledsize.y) / 2);
+
     switch (mAlignment)
     {
     case VideoAlignmentCenter:
@@ -442,6 +464,7 @@ std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
         << std::setw(2) << std::hex << obj.mOpacity << std::dec << '|'
         << obj.mScaling << '|'
         << obj.mScalingFactor << '|'
+        << obj.mRotation << '|'
         << obj.mAlignment << '|'
         << obj.mPosition;
     return os;
@@ -461,6 +484,10 @@ void VideoClip::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(mOpacity);
         ar & BOOST_SERIALIZATION_NVP(mScaling);
         ar & BOOST_SERIALIZATION_NVP(mScalingFactor);
+        if (version >= 2)
+        {
+            ar & BOOST_SERIALIZATION_NVP(mRotation);
+        }
         ar & BOOST_SERIALIZATION_NVP(mAlignment);
         ar & BOOST_SERIALIZATION_NVP(mPosition);
     }

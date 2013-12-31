@@ -17,6 +17,7 @@
 
 #include "Convert.h"
 
+#include <boost/math/constants/constants.hpp>
 #include "AudioChunk.h"
 #include "Constants.h"
 #include "Properties.h"
@@ -202,6 +203,12 @@ wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox)
 {
     boost::rational<int> dummy;
     return sizeInBoundingBox(input,boundingbox,dummy);
+}
+
+// static
+double Convert::degreesToRadians(const boost::rational<int>& degrees) // todo more const& throughout code
+{
+    return -1 * boost::rational_cast<double>(degrees) * boost::math::constants::pi<double>() / 180.0;
 }
 
 // static

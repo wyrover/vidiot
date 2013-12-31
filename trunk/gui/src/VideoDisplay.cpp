@@ -63,7 +63,6 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 :   wxControl(parent, wxID_ANY)
 ,	mWidth(200)
 ,	mHeight(100)
-,   mDrawBoundingBox(false)
 ,   mPlaying(false)
 ,	mSequence(sequence)
 ,   mVideoFrames(200) // todo buffer until full, then start playback?
@@ -121,9 +120,6 @@ void VideoDisplay::play()
 
     // Ensure that the to-be-started threads do not immediately stop
     mAbortThreads = false;
-
-    // Re-read every time the playback is restarted
-    mDrawBoundingBox = Config::ReadBool(Config::sPathShowBoundingBox);
 
     // SoundTouch must be initialized before starting the audio buffer thread
     mSoundTouch.setSampleRate(mAudioSampleRate);
@@ -236,13 +232,11 @@ void VideoDisplay::moveTo(pts position)
     // otherwise the Track::moveTo() can interfere with Track::getNext...() when
     // changing the iterator.
     mSequence->moveTo(position);
-
-    // Re-read every time the playback is restarted. The value used when 'playing' must be the same as the value used here.
-    mDrawBoundingBox = Config::ReadBool(Config::sPathShowBoundingBox);
+    GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
 
     { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
         boost::mutex::scoped_lock lock(mMutexDraw);
-        mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
+        mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
         if (mCurrentVideoFrame)
         {
             mCurrentBitmap = mCurrentVideoFrame->getBitmap();
@@ -384,7 +378,9 @@ void VideoDisplay::videoBufferThread()
     LOG_INFO;
     while (!mAbortThreads)
     {
-        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setDrawBoundingBox(mDrawBoundingBox));
+        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+
+        // todo make test case for playback until end (videoFrame == 0)
         videoFrame->getBitmap(); // put in cache
         mVideoFrames.push(videoFrame);
     }
@@ -525,12 +521,15 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
         dc.reset(new wxPaintDC(this));
     }
 
-    dc->SetPen(*wxBLACK);
-    dc->SetBrush(*wxBLACK_BRUSH);
-    dc->DrawRectangle(0, 0, mWidth, mHeight); // black bg
     if (bitmap)
     {
         dc->DrawBitmap(*bitmap,position);
+    }
+    else
+    {
+        dc->SetPen(*wxBLACK);
+        dc->SetBrush(*wxBLACK_BRUSH);
+        dc->DrawRectangle(0, 0, mWidth, mHeight);
     }
 }
 

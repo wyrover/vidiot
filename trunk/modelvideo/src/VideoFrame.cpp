@@ -19,6 +19,7 @@
 
 #include "Config.h"
 #include "Constants.h"
+#include "Layout.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoCompositionParameters.h"
@@ -124,6 +125,9 @@ wxImagePtr VideoFrame::getImage()
     {
         return wxImagePtr();
     }
+    // todo  wxGraphicsContext::SetCompositionMode
+    // todo wxGraphicsContext::SetInterpolationQuality
+    // todo wxGraphicsContext::SetAntialiasMode
     wxImagePtr compositeImage(boost::make_shared<wxImage>(mParameters->getBoundingBox()));
     wxGraphicsContext* gc = wxGraphicsContext::Create(*compositeImage);
     draw(gc);
@@ -151,13 +155,25 @@ void VideoFrame::draw(wxGraphicsContext* gc) const
 {
     for (VideoFrameLayerPtr layer : mLayers )
     {
-        layer->draw(gc);
+        layer->draw(gc, *mParameters);
     }
+
+    wxSize bb(mParameters->getBoundingBox());
+    wxRect r(mParameters->getRequiredRectangle());
+
+    // Areas outside the required rectangle are black
+    gc->SetPen(*wxBLACK_PEN);
+    gc->SetBrush(*wxBLACK_BRUSH);
+    gc->DrawRectangle(0,0,r.x,bb.GetHeight());
+    gc->DrawRectangle(r.GetRight(), 0, bb.GetWidth() - r.GetRight(), bb.GetHeight());
+    gc->DrawRectangle(r.x,0,r.width,r.y);
+    gc->DrawRectangle(r.x,r.GetBottom(),r.width,bb.GetHeight() - r.GetBottom());
+
     if (mParameters->getDrawBoundingBox())
     {
         gc->SetPen(wxPen(wxColour(255,255,255), 2));
         gc->SetBrush(wxBrush(wxColour(255,255,255), wxBRUSHSTYLE_TRANSPARENT));
-        gc->DrawRectangle( 1, 1, mParameters->getBoundingBox().GetWidth() - 1, mParameters->getBoundingBox().GetHeight() - 1);
+        gc->DrawRectangle(r.x,r.y,r.width,r.height);
     }
 }
 

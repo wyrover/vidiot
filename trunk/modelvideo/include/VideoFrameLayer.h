@@ -53,17 +53,16 @@ public:
     void setPosition(wxPoint position);
     wxPoint getPosition() const;
 
-    void setRegionOfInterest(wxRect regionOfInterest);
-
     /// Sets the opacity for ALL the pixels to the given value
     /// \param opacity new opacity for all the pixels
     /// \pre mImage
-    /// \pre opacity >= Constants::sMaxOpacity (0)
-    /// \pre opacity < Constants::sMaxOpacity (255)
+    /// \pre opacity >= Constants::sOpacityMax (0)
+    /// \pre opacity < Constants::sOpacityMax (255)
     /// \note any existing alpha data is removed
     void setOpacity(int opacity);
-
     int getOpacity() const;
+
+    void setRotation(boost::rational<int> rotation);
 
     /// Return an image, using the frame's data clipped to the region of interest.
     /// \note This method may return a 0 ptr if the region of interest is empty
@@ -71,7 +70,7 @@ public:
     /// \return this frame as a wxImage
     virtual wxImagePtr getImage();
 
-    void draw(wxGraphicsContext* gc);
+    void draw(wxGraphicsContext* gc, const VideoCompositionParameters& parameters);
 
 private:
 
@@ -82,8 +81,8 @@ private:
     wxImagePtr mImage;
     boost::optional<wxImagePtr> mResultingImage; ///< Image with the changes (position, etc.) imposed by the layer
     wxPoint mPosition;
-    wxRect mRegionOfInterest;
     int mOpacity;
+    boost::optional< boost::rational<int> > mRotation;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -68,17 +68,18 @@ public:
     wxSize getInputSize(); ///< \return size of input video
 
     int getOpacity() const;
-    void setOpacity(int opacity);
-
     VideoScaling getScaling() const;
     boost::rational<int> getScalingFactor() const;
+    boost::rational<int> getRotation() const;
     VideoAlignment getAlignment() const;
     wxPoint getPosition() const; ///< \return the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
     wxPoint getMinPosition();
     wxPoint getMaxPosition();
 
+    void setOpacity(int opacity);
     void setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor = boost::none);
+    void setRotation(boost::rational< int > rotation);
     void setAlignment(VideoAlignment alignment);
     void setPosition(wxPoint position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
@@ -98,12 +99,27 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mProgress; ///< Current render position in pts units (delivered video frames count)
+    /// Current render position in pts units (delivered video frames count)
+    pts mProgress;
 
     int mOpacity;
 
     VideoScaling mScaling;
-    boost::rational<int> mScalingFactor; ///< Constants::scalingPrecisionFactor as denominator. Avoid rounding errors with doubles (leads to small diffs which cause test asserts to fail).
+
+    /// Uses Constants::sScalingPrecisionFactor as denominator.
+    /// Avoid rounding errors with doubles
+    /// (leads to small diffs which cause test asserts to fail).
+    boost::rational<int> mScalingFactor;
+
+    /// Uses Constants::sRotationPrecisionFactor as denominator.
+    /// Avoid rounding errors with doubles
+    /// (leads to small diffs which cause test asserts to fail).
+    boost::rational<int> mRotation;
+
+    /// Offset added to the position to avoid the image being
+    /// moved when rotating. Furthermore, guarantees that automated
+    /// positioning also works correctly for rotated images.
+    wxPoint mRotationPositionOffset;
 
     VideoAlignment mAlignment;
     wxPoint mPosition;
@@ -111,6 +127,11 @@ private:
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
+
+    /// Determine the bounding box required for holding the clip.
+    /// If mRotation == 0 then this equals the video size.
+    /// If mRotation != 0 then this is larger than the video size.
+    wxSize getBoundingBox();
 
     void updateAutomatedScaling();
     void updateAutomatedPositioning();
@@ -136,7 +157,7 @@ private:
 #include  <boost/preprocessor/slot/counter.hpp>
 #include BOOST_PP_UPDATE_COUNTER()
 #line BOOST_PP_COUNTER
-BOOST_CLASS_VERSION(model::VideoClip, 1)
+BOOST_CLASS_VERSION(model::VideoClip, 2)
 BOOST_CLASS_EXPORT_KEY(model::VideoClip)
 
 #endif // MODEL_VIDEO_CLIP_H

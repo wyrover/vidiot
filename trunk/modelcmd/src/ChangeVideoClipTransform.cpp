@@ -35,14 +35,16 @@ ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip
     ,   mOldOpacity(mVideoClip->getOpacity())
     ,   mOldScaling(mVideoClip->getScaling())
     ,   mOldScalingFactor(mVideoClip->getScalingFactor())
+    ,   mOldRotation(mVideoClip->getRotation())
     ,   mOldAlignment(mVideoClip->getAlignment())
     ,   mOldPosition(mVideoClip->getPosition())
     ,   mNewOpacity(boost::none)
     ,   mNewScaling(boost::none)
     ,   mNewScalingFactor(boost::none)
+    ,   mNewRotation(boost::none)
     ,   mNewPosition(boost::none)
 {
-    mCommandName = _("Adjust properties for ") + videoclip->getDescription();    
+    mCommandName = _("Adjust properties for ") + videoclip->getDescription();
 }
 
 ChangeVideoClipTransform::~ChangeVideoClipTransform()
@@ -60,6 +62,12 @@ void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional<
     mNewScaling = boost::optional<VideoScaling>(scaling);
     mNewScalingFactor = factor;
     mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
+}
+
+void ChangeVideoClipTransform::setRotation(boost::rational< int > rotation)
+{
+    mNewRotation.reset(rotation);
+    mVideoClip->setRotation(rotation);
 }
 
 void ChangeVideoClipTransform::setAlignment(VideoAlignment alignment)
@@ -94,6 +102,10 @@ bool ChangeVideoClipTransform::Do()
         {
             mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
         }
+        if (mNewRotation)
+        {
+            mVideoClip->setRotation(*mNewRotation);
+        }
         if (mNewAlignment)
         {
             mVideoClip->setAlignment(*mNewAlignment);
@@ -117,6 +129,10 @@ bool ChangeVideoClipTransform::Undo()
     if (mNewScaling)
     {
         mVideoClip->setScaling(mOldScaling, boost::optional< boost::rational< int > >(mOldScalingFactor));
+    }
+    if (mNewRotation)
+    {
+        mVideoClip->setRotation(mOldRotation);
     }
     if (mNewAlignment)
     {

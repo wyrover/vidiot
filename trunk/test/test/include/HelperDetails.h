@@ -41,7 +41,13 @@ void ASSERT_DETAILSCLIP(model::IClipPtr clip);
 
 /// Check the properties of the current details view and the given clip
 /// \pre The given clip must be selected and shown in the details view
-void ASSERT_CLIPPROPERTIES(model::IClipPtr clip, model::VideoScaling scaling, boost::rational<int> scalingfactor, model::VideoAlignment alignment, wxPoint position);
+void ASSERT_CLIPPROPERTIES(
+    model::IClipPtr clip,
+    model::VideoScaling scaling,
+    boost::rational<int> scalingfactor,
+    model::VideoAlignment alignment,
+    wxPoint position,
+    boost::rational<int> rotation);
 
 } // namespace
 
