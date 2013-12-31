@@ -379,8 +379,6 @@ void VideoDisplay::videoBufferThread()
     while (!mAbortThreads)
     {
         model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
-
-        // todo make test case for playback until end (videoFrame == 0)
         videoFrame->getBitmap(); // put in cache
         mVideoFrames.push(videoFrame);
     }
