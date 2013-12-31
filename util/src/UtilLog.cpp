@@ -22,7 +22,6 @@
 #include "UtilStackWalker.h"
 #include "UtilThread.h"
 #include <share.h> // _SH_DENYWR
-#include <time.h>
 
 namespace boost
 {

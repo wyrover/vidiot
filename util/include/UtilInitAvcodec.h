@@ -18,7 +18,7 @@
 #ifndef UTIL_INIT_AVCODEC_H
 #define UTIL_INIT_AVCODEC_H
 
-#include <stdarg.h> // va_list
+#include <cstdarg> // va_list
 
 struct AVRational;
 struct AVCodecContext;
