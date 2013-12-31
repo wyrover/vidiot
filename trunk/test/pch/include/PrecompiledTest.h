@@ -27,13 +27,6 @@
 #include <cxxtest/TestTracker.h>
 #include <list>
 #include <ostream>
-//#include <time.h>
-//
-//#include <wx/filefn.h>
-//#include <wx/filename.h>
-//#include <wx/mousestate.h>
-//#include <wx/msgdlg.h>
 #include <wx/uiaction.h>
-//#include <wx/utils.h>
 
 #endif

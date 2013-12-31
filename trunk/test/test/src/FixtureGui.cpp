@@ -24,7 +24,7 @@
 #include "UtilThread.h"
 #include "Window.h"
 #include <cxxtest/TestSuite.h>
-#include <time.h>
+#include <ctime>
 
 namespace test {
 //static
