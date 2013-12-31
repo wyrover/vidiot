@@ -29,6 +29,7 @@ namespace model {
     class EventChangeVideoClipOpacity;
     class EventChangeVideoClipScaling;
     class EventChangeVideoClipScalingFactor;
+    class EventChangeVideoClipRotation;
     class EventChangeVideoClipAlignment;
     class EventChangeVideoClipPosition;
     class EventChangeVideoClipMinPosition;
@@ -72,8 +73,9 @@ public:
     void onOpacitySpinChanged(wxSpinEvent& event);
     void onScalingChoiceChanged(wxCommandEvent& event);
     void onScalingSliderChanged(wxCommandEvent& event);
-    void onScalingSliderChanging(wxCommandEvent& event);
     void onScalingSpinChanged(wxSpinDoubleEvent& event);
+    void onRotationSliderChanged(wxCommandEvent& event);
+    void onRotationSpinChanged(wxSpinDoubleEvent& event);
     void onAlignmentChoiceChanged(wxCommandEvent& event);
     void onPositionXSliderChanged(wxCommandEvent& event);
     void onPositionXSpinChanged(wxSpinEvent& event);
@@ -92,6 +94,7 @@ public:
     void onOpacityChanged(model::EventChangeVideoClipOpacity& event);
     void onScalingChanged(model::EventChangeVideoClipScaling& event);
     void onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event);
+    void onRotationChanged(model::EventChangeVideoClipRotation& event);
     void onAlignmentChanged(model::EventChangeVideoClipAlignment& event);
     void onPositionChanged(model::EventChangeVideoClipPosition& event);
     void onMinPositionChanged(model::EventChangeVideoClipMinPosition& event);
@@ -115,6 +118,8 @@ public:
     EnumSelector<model::VideoScaling>* getScalingSelector() const;
     wxSlider* getScalingSlider() const;
     wxSpinCtrlDouble* getScalingSpin() const;
+    wxSlider* getRotationSlider() const;
+    wxSpinCtrlDouble* getRotationSpin() const;
     EnumSelector<model::VideoAlignment>* getAlignmentSelector() const;
     wxSlider* getPositionXSlider() const;
     wxSpinCtrl* getPositionXSpin() const;
@@ -145,6 +150,9 @@ private:
 
     wxSpinCtrlDouble* mScalingSpin;
     wxSlider* mScalingSlider;
+
+    wxSpinCtrlDouble* mRotationSpin;
+    wxSlider* mRotationSlider;
 
     EnumSelector<model::VideoAlignment>* mSelectAlignment;
 

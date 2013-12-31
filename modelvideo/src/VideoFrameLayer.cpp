@@ -18,6 +18,7 @@
 #include "VideoFrameLayer.h"
 
 #include "Config.h"
+#include "Convert.h"
 #include "Constants.h"
 #include "UtilInitAvcodec.h"
 #include "UtilLogWxwidgets.h"
@@ -32,8 +33,8 @@ VideoFrameLayer::VideoFrameLayer(wxImagePtr image)
     : mImage(image)
     , mResultingImage(boost::none)
     , mPosition(0,0)
-    , mRegionOfInterest(wxPoint(0,0),image->GetSize())
-    , mOpacity(Constants::sMaxOpacity)
+    , mOpacity(Constants::sOpacityMax)
+    , mRotation(boost::none)
 {
 }
 
@@ -41,8 +42,8 @@ VideoFrameLayer::VideoFrameLayer(const VideoFrameLayer& other)
     : mImage()
     , mResultingImage(boost::none)
     , mPosition(other.mPosition)
-    , mRegionOfInterest(other.mRegionOfInterest)
-    , mOpacity(Constants::sMaxOpacity)
+    , mOpacity(Constants::sOpacityMax)
+    , mRotation(other.mRotation)
 {
     mImage = boost::make_shared<wxImage>(const_cast<VideoFrameLayer&>(other).mImage->Copy());
 }
@@ -91,17 +92,13 @@ int VideoFrameLayer::getOpacity() const
     return mOpacity;
 }
 
-void VideoFrameLayer::setRegionOfInterest(wxRect regionOfInterest)
+void VideoFrameLayer::setRotation(boost::rational<int> rotation)
 {
-    ASSERT(mImage);
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.x);
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.y);
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.width);
-    ASSERT_MORE_THAN_EQUALS_ZERO(regionOfInterest.height);
-    ASSERT_LESS_THAN_EQUALS(regionOfInterest.x + regionOfInterest.width,  mImage->GetWidth());
-    ASSERT_LESS_THAN_EQUALS(regionOfInterest.y + regionOfInterest.height, mImage->GetHeight());
-    mRegionOfInterest = regionOfInterest;
-    mResultingImage.reset();
+    if (rotation != boost::rational<int>(0,1))
+    {
+        mRotation.reset(rotation);
+        mResultingImage.reset();
+    }
 }
 
 wxImagePtr VideoFrameLayer::getImage()
@@ -110,40 +107,51 @@ wxImagePtr VideoFrameLayer::getImage()
     {
         return *mResultingImage;
     }
-    if (!mImage || mRegionOfInterest.IsEmpty())
+    if (!mImage || !mImage->IsOk())
     {
         mResultingImage.reset(wxImagePtr());
     }
     else
     {
         ASSERT(mImage);
-        if (!mImage->HasAlpha() &&
-            mOpacity != Constants::sMaxOpacity)
+        if (!mImage->HasAlpha())
         {
             // Init alpha done as late as possible (avoid creating needlessly).
-            mImage->InitAlpha();
-            memset(mImage->GetAlpha(),mOpacity,mImage->GetWidth() * mImage->GetHeight());
+            if (mOpacity != Constants::sOpacityMax)
+            {
+                mImage->InitAlpha();
+                memset(mImage->GetAlpha(),mOpacity,mImage->GetWidth() * mImage->GetHeight());
+            }
+            else if (mRotation)
+            {
+                mImage->InitAlpha(); // To avoid black being drawn besides the rotated image
+            }
         }
         // else: Alpha already initialized, or even modified (by transition) already.
-        if (mRegionOfInterest.GetPosition() == wxPoint(0,0) &&
-            mRegionOfInterest.GetSize() == mImage->GetSize())
+
+        mResultingImage.reset(mImage);
+
+        if (mRotation)
         {
-            mResultingImage.reset(mImage);
-        }
-        else
-        {
-            mResultingImage.reset(boost::make_shared<wxImage>(mImage->GetSubImage(mRegionOfInterest)));
+            wxPoint center((*mResultingImage)->GetWidth() / 2, (*mResultingImage)->GetHeight() / 2);
+            mResultingImage = boost::make_shared<wxImage>((*mResultingImage)->Rotate(Convert::degreesToRadians(*mRotation), center));
         }
     }
     return *mResultingImage;
 }
 
-void VideoFrameLayer::draw(wxGraphicsContext* gc)
+void VideoFrameLayer::draw(wxGraphicsContext* gc, const VideoCompositionParameters& parameters)
 {
     wxImagePtr image = getImage();
     if (image)
     {
-        gc->DrawBitmap(gc->GetRenderer()->CreateBitmapFromImage(*image),mPosition.x,mPosition.y,image->GetWidth(),image->GetHeight());
+        wxRect r(parameters.getRequiredRectangle());
+        gc->DrawBitmap(
+            gc->GetRenderer()->CreateBitmapFromImage(*image),
+            r.x + mPosition.x,
+            r.y + mPosition.y,
+            image->GetWidth(),
+            image->GetHeight());
     }
     // else: No image or region of interest empty
 }
@@ -156,7 +164,8 @@ std::ostream& operator<< (std::ostream& os, const VideoFrameLayer& obj)
 {
     os  << &obj                     << '|'
         << obj.mPosition            << '|'
-        << obj.mRegionOfInterest    << '|'
+        << obj.mOpacity             << '|'
+        << obj.mRotation            << '|'
         << obj.mImage;
     return os;
 }

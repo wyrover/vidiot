@@ -29,6 +29,7 @@
 #include "HelperWorker.h"
 #include "ids.h"
 #include "Render.h"
+#include "VideoClip.h"
 #include "VideoCodecs.h"
 #include "Worker.h"
 
@@ -221,4 +222,42 @@ void TestRender::testRenderingTransition()
     ASSERT(path.Exists());
 }
 
+void TestRender::testRenderingTransformedClip()
+{
+    StartTestSuite();
+    {
+        StartTest("Render");
+        ConfigFixture.SnapToClips(true);
+        triggerMenu(ID_ADDAUDIOTRACK);
+        triggerMenu(ID_ADDVIDEOTRACK);
+        ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
+        ExpectExecutedWork expectation(1);
+        wxFileName path(wxFileName::GetTempDir(), "out", "avi");
+
+        DragToTrack(1, VideoClip(0,1), AudioClip(0,1));
+        Drag(From(Center(VideoClip(1,1))).To(LeftCenter(VideoClip(1,0)) + wxPoint(5,0)));
+
+        model::VideoClipPtr clip = boost::dynamic_pointer_cast<model::VideoClip>(VideoClip(1,0));
+        ASSERT(clip);
+        RunInMainAndWait([clip]{ clip->setOpacity(128); });
+        RunInMainAndWait([clip]{ clip->setScaling(model::VideoScalingCustom, boost::optional<boost::rational< int > >(1,2)); });
+        RunInMainAndWait([clip]{ clip->setPosition(wxPoint(50,50)); });
+
+        model::render::RenderPtr original = getCurrentRenderSettings();
+        triggerMenu(ID_RENDERSETTINGS);
+        gui::Dialog::get().setSaveFile(path.GetFullPath());
+        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+        waitForIdle();
+        ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
+        triggerMenu(ID_CLOSESEQUENCE);
+        expectation.wait();
+        ASSERT(path.Exists());
+
+        model::FolderPtr folder1 = addFolder( "testRenderingTransformedClip" );
+        model::Files files1 = addFiles( boost::assign::list_of(path), folder1 );
+        model::SequencePtr sequence1 = createSequence( folder1 );
+        Zoom level(4);
+        Play(10, 2000);
+    }
+}
 } // namespace

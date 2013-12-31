@@ -47,6 +47,8 @@ public:
     /// generating frames/chunks).
     void testRenderingTransition();
 
+    void testRenderingTransformedClip();
+
 private:
 
     FixtureProject mProjectFixture;

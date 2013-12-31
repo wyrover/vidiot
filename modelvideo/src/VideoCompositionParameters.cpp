@@ -93,6 +93,14 @@ bool VideoCompositionParameters::getOptimizeForQuality() const
     return mOptimizeForQuality;
 }
 
+wxRect VideoCompositionParameters::getRequiredRectangle() const
+{
+    boost::rational<int> scaleToBoundingBox(0);
+    wxSize requiredOutputSize = Convert::sizeInBoundingBox(Properties::get().getVideoSize(), mBoundingBox, scaleToBoundingBox);
+    wxPoint requiredOutputOffset((mBoundingBox.x - requiredOutputSize.x ) / 2, (mBoundingBox.y - requiredOutputSize.y ) / 2);
+    return wxRect(requiredOutputOffset, requiredOutputSize);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

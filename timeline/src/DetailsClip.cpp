@@ -67,6 +67,7 @@ boost::shared_ptr<TARGET> getTypedClip(model::IClipPtr clip)
 //////////////////////////////////////////////////////////////////////////
 
 const double sScalingIncrement = 0.01;
+const double sRotationIncrement = 0.01;
 const int sPositionPageSize = 10;
 const int sOpacityPageSize = 10;
 const int sVolumePageSize = 10;
@@ -86,6 +87,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mSelectScaling(0)
     ,   mScalingSlider(0)
     ,   mScalingSpin(0)
+    ,   mRotationSlider(0)
+    ,   mRotationSpin(0)
     ,   mSelectAlignment(0)
     ,   mPositionXSpin(0)
     ,   mPositionXSlider(0)
@@ -130,35 +133,55 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
 
     wxPanel* opacitypanel = new wxPanel(this);
     wxBoxSizer* opacitysizer = new wxBoxSizer(wxHORIZONTAL);
-    mOpacitySlider = new wxSlider(opacitypanel, wxID_ANY, model::Constants::sMaxOpacity, model::Constants::sMinOpacity, model::Constants::sMaxOpacity );
+    mOpacitySlider = new wxSlider(opacitypanel, wxID_ANY, model::Constants::sOpacityMax, model::Constants::sOpacityMin, model::Constants::sOpacityMax );
     mOpacitySlider->SetPageSize(sOpacityPageSize);
     mOpacitySpin = new wxSpinCtrl(opacitypanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
-    mOpacitySpin->SetRange(model::Constants::sMinOpacity, model::Constants::sMaxOpacity);
-    mOpacitySpin->SetValue(model::Constants::sMaxOpacity);
+    mOpacitySpin->SetRange(model::Constants::sOpacityMin, model::Constants::sOpacityMax);
+    mOpacitySpin->SetValue(model::Constants::sOpacityMax);
     opacitysizer->Add(mOpacitySlider, wxSizerFlags(1).Expand());
     opacitysizer->Add(mOpacitySpin, wxSizerFlags(0).Right());
     opacitypanel->SetSizer(opacitysizer);
     addOption(_("Opacity"), opacitypanel);
 
+    // todo add Trim option (with left, right top, bottom spins)
+
+    // todo scaling selector on one line with slider/spin
     mSelectScaling = new EnumSelector<model::VideoScaling>(this, model::VideoScalingConverter::mapToHumanReadibleString, model::VideoScalingNone);
     addOption(_("Scaling"), mSelectScaling);
 
     wxPanel* scalingpanel = new wxPanel(this);
     wxBoxSizer* scalingsizer = new wxBoxSizer(wxHORIZONTAL);
-    mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, 1 * model::Constants::scalingPrecisionFactor, model::Constants::sMinScaling, model::Constants::sMaxScaling);
-    mScalingSlider->SetPageSize(model::Constants::scalingPageSize);
+    mScalingSlider = new wxSlider(scalingpanel,wxID_ANY, 1 * model::Constants::sScalingPrecisionFactor, model::Constants::sScalingMin, model::Constants::sScalingMax);
+    mScalingSlider->SetPageSize(model::Constants::sScalingPageSize);
     mScalingSpin = new wxSpinCtrlDouble(scalingpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
-    mScalingSpin->SetDigits(model::Constants::scalingPrecision);
+    mScalingSpin->SetDigits(model::Constants::sScalingPrecision);
     mScalingSpin->SetValue(1); // No scaling
     mScalingSpin->SetRange(
-        static_cast<double>(model::Constants::sMinScaling) / static_cast<double>(model::Constants::scalingPrecisionFactor),
-        static_cast<double>(model::Constants::sMaxScaling) / static_cast<double>(model::Constants::scalingPrecisionFactor));
+        static_cast<double>(model::Constants::sScalingMin) / static_cast<double>(model::Constants::sScalingPrecisionFactor),
+        static_cast<double>(model::Constants::sScalingMax) / static_cast<double>(model::Constants::sScalingPrecisionFactor));
     mScalingSpin->SetIncrement(sScalingIncrement);
     scalingsizer->Add(mScalingSlider, wxSizerFlags(1).Expand());
     scalingsizer->Add(mScalingSpin, wxSizerFlags(0).Right());
     scalingpanel->SetSizer(scalingsizer);
     addOption(_("Factor"), scalingpanel);
 
+    wxPanel* rotationpanel = new wxPanel(this);
+    wxBoxSizer* rotationsizer = new wxBoxSizer(wxHORIZONTAL);
+    mRotationSlider = new wxSlider(rotationpanel,wxID_ANY, 1 * model::Constants::sRotationPrecisionFactor, model::Constants::sRotationMin, model::Constants::sRotationMax);
+    mRotationSlider->SetPageSize(model::Constants::sRotationPageSize);
+    mRotationSpin = new wxSpinCtrlDouble(rotationpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(75,-1));
+    mRotationSpin->SetDigits(model::Constants::sRotationPrecision);
+    mRotationSpin->SetValue(0); // No rotation
+    mRotationSpin->SetRange(
+        static_cast<double>(model::Constants::sRotationMin) / static_cast<double>(model::Constants::sRotationPrecisionFactor),
+        static_cast<double>(model::Constants::sRotationMax) / static_cast<double>(model::Constants::sRotationPrecisionFactor));
+    mRotationSpin->SetIncrement(sRotationIncrement);
+    rotationsizer->Add(mRotationSlider, wxSizerFlags(1).Expand());
+    rotationsizer->Add(mRotationSpin, wxSizerFlags(0).Right());
+    rotationpanel->SetSizer(rotationsizer);
+    addOption(_("Rotation"), rotationpanel);
+
+    // todo combine the three positioning options into one line
     mSelectAlignment = new EnumSelector<model::VideoAlignment>(this, model::VideoAlignmentConverter::mapToHumanReadibleString, model::VideoAlignmentCustom);
     addOption(_("Alignment"), mSelectAlignment);
 
@@ -191,6 +214,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mSelectScaling->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
     mScalingSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
     mScalingSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+    mRotationSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onRotationSliderChanged, this);
+    mRotationSpin->Bind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onRotationSpinChanged, this);
     mSelectAlignment->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
     mPositionXSlider->Bind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
     mPositionXSpin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
@@ -246,13 +271,14 @@ DetailsClip::~DetailsClip()
         button->Unbind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
     }
     getSelection().Unbind(EVENT_SELECTION_UPDATE, &DetailsClip::onSelectionChanged, this);
-    setClip(model::IClipPtr()); // Ensures Unbind if needed for clip events
 
     mOpacitySlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onOpacitySliderChanged, this);
     mOpacitySpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onOpacitySpinChanged, this);
     mSelectScaling->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onScalingChoiceChanged, this);
     mScalingSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onScalingSliderChanged, this);
     mScalingSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onScalingSpinChanged, this);
+    mRotationSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onRotationSliderChanged, this);
+    mRotationSpin->Unbind(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, &DetailsClip::onRotationSpinChanged, this);
     mSelectAlignment->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &DetailsClip::onAlignmentChoiceChanged, this);
     mPositionXSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onPositionXSliderChanged, this);
     mPositionXSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionXSpinChanged, this);
@@ -260,6 +286,8 @@ DetailsClip::~DetailsClip()
     mPositionYSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onPositionYSpinChanged, this);
     mVolumeSlider->Unbind(wxEVT_COMMAND_SLIDER_UPDATED, &DetailsClip::onVolumeSliderChanged, this);
     mVolumeSpin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &DetailsClip::onVolumeSpinChanged, this);
+
+    setClip(model::IClipPtr()); // Ensures Unbind if needed for clip events
 
     Unbind(wxEVT_SHOW, &DetailsClip::onShow, this);
 }
@@ -284,6 +312,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+            mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
             mVideoClip->Unbind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
@@ -326,13 +355,16 @@ void DetailsClip::setClip(model::IClipPtr clip)
         }
 
         showBox(sVideo, mVideoClip);
-        showBox(sTransition, mTransition);
+        showBox(sAudio, mAudioClip);
+        // showBox(sTransition, mTransition);
+        showBox(sTransition, false);
 
         if (mVideoClip)
         {
 
             wxSize originalSize = mVideoClip->getInputSize();
             boost::rational< int > factor = mVideoClip->getScalingFactor();
+            boost::rational< int > rotation = mVideoClip->getRotation();
             wxPoint position = mVideoClip->getPosition();
             wxPoint maxpos = mVideoClip->getMaxPosition();
             wxPoint minpos = mVideoClip->getMinPosition();
@@ -344,8 +376,12 @@ void DetailsClip::setClip(model::IClipPtr clip)
 
             mSelectScaling->select(mVideoClip->getScaling());
             double sliderFactor = boost::rational_cast<double>(factor);
-            mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::scalingPrecisionFactor));
+            mScalingSlider->SetValue(boost::rational_cast<int>(factor * model::Constants::sScalingPrecisionFactor));
             mScalingSpin->SetValue(sliderFactor);
+
+            double angle = boost::rational_cast<double>(rotation);
+            mRotationSlider->SetValue(boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor));
+            mRotationSpin->SetValue(angle);
 
             mSelectAlignment->select(mVideoClip->getAlignment());
             mPositionXSlider->SetRange(minpos.x,maxpos.x);
@@ -360,6 +396,7 @@ void DetailsClip::setClip(model::IClipPtr clip)
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_OPACITY, &DetailsClip::onOpacityChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALING, &DetailsClip::onScalingChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_SCALINGFACTOR, &DetailsClip::onScalingFactorChanged, this);
+            mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ROTATION, &DetailsClip::onRotationChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_ALIGNMENT, &DetailsClip::onAlignmentChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_POSITION, &DetailsClip::onPositionChanged, this);
             mVideoClip->Bind(model::EVENT_CHANGE_VIDEOCLIP_MINPOSITION, &DetailsClip::onMinPositionChanged, this);
@@ -383,6 +420,8 @@ void DetailsClip::setClip(model::IClipPtr clip)
     mSelectScaling->Enable(mVideoClip);
     mScalingSlider->Enable(mVideoClip);
     mScalingSpin->Enable(mVideoClip);;
+    mRotationSlider->Enable(mVideoClip);
+    mRotationSpin->Enable(mVideoClip);;
     mSelectAlignment->Enable(mVideoClip);
     mPositionXSlider->Enable(mVideoClip);
     mPositionXSpin->Enable(mVideoClip);
@@ -438,7 +477,7 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 {
     VAR_INFO(mScalingSlider->GetValue());
     makeTransformCommand();
-    boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::scalingPrecisionFactor);
+    boost::rational<int> r(mScalingSlider->GetValue(), model::Constants::sScalingPrecisionFactor);
     mTransformCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
     event.Skip();
 }
@@ -446,10 +485,29 @@ void DetailsClip::onScalingSliderChanged(wxCommandEvent& event)
 void DetailsClip::onScalingSpinChanged(wxSpinDoubleEvent& event)
 {
     VAR_INFO(event.GetValue());
-    int spinFactor = floor(event.GetValue() * model::Constants::scalingPrecisionFactor);
+    int spinFactor = floor(event.GetValue() * model::Constants::sScalingPrecisionFactor);
     makeTransformCommand();
-    boost::rational<int> r(floor(event.GetValue() * model::Constants::scalingPrecisionFactor), model::Constants::scalingPrecisionFactor);
+    boost::rational<int> r(floor(event.GetValue() * model::Constants::sScalingPrecisionFactor), model::Constants::sScalingPrecisionFactor);
     mTransformCommand->setScaling(model::VideoScalingCustom, boost::optional< boost::rational< int > >(r));
+    event.Skip();
+}
+
+void DetailsClip::onRotationSliderChanged(wxCommandEvent& event)
+{
+    VAR_INFO(mRotationSlider->GetValue());
+    makeTransformCommand();
+    boost::rational<int> r(mRotationSlider->GetValue(), model::Constants::sRotationPrecisionFactor);
+    mTransformCommand->setRotation(r);
+    event.Skip();
+}
+
+void DetailsClip::onRotationSpinChanged(wxSpinDoubleEvent& event)
+{
+    VAR_INFO(event.GetValue());
+    int spinFactor = floor(event.GetValue() * model::Constants::sRotationPrecisionFactor);
+    makeTransformCommand();
+    boost::rational<int> r(floor(event.GetValue() * model::Constants::sRotationPrecisionFactor), model::Constants::sRotationPrecisionFactor);
+    mTransformCommand->setRotation(r);
     event.Skip();
 }
 
@@ -569,7 +627,15 @@ void DetailsClip::onScalingChanged(model::EventChangeVideoClipScaling& event)
 void DetailsClip::onScalingFactorChanged(model::EventChangeVideoClipScalingFactor& event)
 {
     mScalingSpin->SetValue(boost::rational_cast<double>(event.getValue()));
-    mScalingSlider->SetValue(floor(event.getValue() * model::Constants::scalingPrecisionFactor));
+    mScalingSlider->SetValue(floor(event.getValue() * model::Constants::sScalingPrecisionFactor));
+    preview();
+    event.Skip();
+}
+
+void DetailsClip::onRotationChanged(model::EventChangeVideoClipRotation& event)
+{
+    mRotationSpin->SetValue(boost::rational_cast<double>(event.getValue()));
+    mRotationSlider->SetValue(floor(event.getValue() * model::Constants::sRotationPrecisionFactor));
     preview();
     event.Skip();
 }
@@ -603,9 +669,9 @@ void DetailsClip::onMinPositionChanged(model::EventChangeVideoClipMinPosition& e
 void DetailsClip::onMaxPositionChanged(model::EventChangeVideoClipMaxPosition& event)
 {
     mPositionXSpin->SetRange(mPositionXSpin->GetMin(),event.getValue().x);
-    mPositionYSpin->SetRange(mPositionYSpin->GetMax(), event.getValue().y);
+    mPositionYSpin->SetRange(mPositionYSpin->GetMin(), event.getValue().y);
     mPositionXSlider->SetRange(mPositionXSlider->GetMin(),event.getValue().x);
-    mPositionYSlider->SetRange(mPositionYSlider->GetMax(), event.getValue().y);
+    mPositionYSlider->SetRange(mPositionYSlider->GetMin(), event.getValue().y);
     event.Skip();
 }
 
@@ -686,6 +752,16 @@ wxSpinCtrlDouble* DetailsClip::getScalingSpin() const
     return mScalingSpin;
 }
 
+wxSlider* DetailsClip::getRotationSlider() const
+{
+    return mRotationSlider;
+}
+
+wxSpinCtrlDouble* DetailsClip::getRotationSpin() const
+{
+    return mRotationSpin;
+}
+
 EnumSelector<model::VideoAlignment>* DetailsClip::getAlignmentSelector() const
 {
     return mSelectAlignment;
@@ -759,7 +835,6 @@ void DetailsClip::makeChangeVolumeCommand()
 void DetailsClip::preview()
 {
     if (!mVideoClip) { return; }
-    model::VideoClipPtr videoclip = make_cloned<model::VideoClip>(mVideoClip);
 
     pts position = getCursor().getLogicalPosition(); // By default, show the frame under the cursor (which is already currently shown, typically)
     if ((position < mVideoClip->getLeftPts()) || (position >= mVideoClip->getRightPts()))
@@ -770,12 +845,11 @@ void DetailsClip::preview()
         getCursor().setLogicalPosition(position); // ...and move the cursor to that position
     }
 
-    if (videoclip->getLength() > 0)
+    if (mVideoClip->getLength() > 0)
     {
         wxSize s = getPlayer()->getVideoSize();
         boost::shared_ptr<wxBitmap> bmp = boost::make_shared<wxBitmap>(s);
         wxMemoryDC dc(*bmp);
-        videoclip->moveTo(0);
 
         // Fill with black
         dc.SetBrush(Layout::get().PreviewBackgroundBrush);

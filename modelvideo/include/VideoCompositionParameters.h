@@ -52,6 +52,8 @@ public:
     VideoCompositionParameters& setOptimizeForQuality();
     bool getOptimizeForQuality() const;
 
+    wxRect getRequiredRectangle() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////
