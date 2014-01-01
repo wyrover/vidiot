@@ -602,6 +602,12 @@ void ProjectView::onDropPossible( wxDataViewEvent &event )
             event.Veto();
             return;
         }
+
+        if (mModel->isAutomaticallyGenerated(node))
+        {
+            event.Veto();
+            return;
+        }
     }
 }
 
