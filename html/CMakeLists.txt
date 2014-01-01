@@ -1,4 +1,4 @@
-# Copyright 2013 Eric Raijmakers.
+# Copyright 2013,2014 Eric Raijmakers.
 #
 # This file is part of Vidiot.
 #
@@ -14,7 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
-
 
 FILE(GLOB_RECURSE HtmlFiles ${PROJECT_SOURCE_DIR}/html/*.*)
 add_custom_target(html COMMENT "Copying HTML files" SOURCES ${HtmlFiles})
