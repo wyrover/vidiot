@@ -17,7 +17,6 @@
 
 #include "TestPlayback.h"
 
-// todo change all copyright notices
 #include "HelperApplication.h"
 #include "HelperPlayback.h"
 
