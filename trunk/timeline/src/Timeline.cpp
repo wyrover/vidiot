@@ -332,7 +332,6 @@ void Timeline::onIdle(wxIdleEvent& event)
 void Timeline::onSize(wxSizeEvent& event)
 {
     getSequenceView().canvasResized(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
-    mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
     resize();
 
     event.Skip();
@@ -464,7 +463,8 @@ pixel Timeline::getShift() const
 void Timeline::resize()
 {
     wxSize oldSize = GetVirtualSize();
-    getSequenceView().invalidateBitmap(); // Otherwise, the call to getSize() below will just return the current size...
+    getSequenceView().invalidateBitmap(); // Otherwise, the calls to getSize() below will just return the current size...
+    mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
     wxSize newSize = getSequenceView().getSize();
     if (oldSize != newSize)
     {
