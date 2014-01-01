@@ -1,4 +1,4 @@
-// Copyright 2013 Eric Raijmakers.
+// Copyright 2013,2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
