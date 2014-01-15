@@ -38,30 +38,33 @@ static const int sAudioBufferSizeInBytes = 192000;
 
 AudioFile::AudioFile()
     :	File()
-    ,   mResampleContext(0)
+    ,   mSoftwareResampleContext (0)
     ,   mDecodingAudio(false)
+    ,   mNeedsResampling(false)
     ,   audioDecodeBuffer(0)
-    ,   audioResampleBuffer(0)
+    ,   mNrPlanes(0)
 {
     VAR_DEBUG(*this);
 }
 
 AudioFile::AudioFile(wxFileName path)
     :	File(path,sMaxBufferSize)
-    ,   mResampleContext(0)
+    ,   mSoftwareResampleContext (0)
     ,   mDecodingAudio(false)
+    ,   mNeedsResampling(false)
     ,   audioDecodeBuffer(0)
-    ,   audioResampleBuffer(0)
+    ,   mNrPlanes(0)
 {
     VAR_DEBUG(*this);
 }
 
 AudioFile::AudioFile(const AudioFile& other)
     :   File(other)
-    ,   mResampleContext(0)
+    ,   mSoftwareResampleContext (0)
     ,   mDecodingAudio(false)
+    ,   mNeedsResampling(false)
     ,   audioDecodeBuffer(0)
-    ,   audioResampleBuffer(0)
+    ,   mNrPlanes(0)
 {
     VAR_DEBUG(*this);
 }
@@ -74,14 +77,7 @@ AudioFile* AudioFile::clone() const
 AudioFile::~AudioFile()
 {
     VAR_DEBUG(this);
-
-    stopDecodingAudio();
-
-    delete[] audioDecodeBuffer;
-    delete[] audioResampleBuffer;
-
-    audioDecodeBuffer = 0;
-    audioResampleBuffer = 0;
+    clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,11 +90,15 @@ void AudioFile::clean()
 
     stopDecodingAudio();
 
-    delete[] audioDecodeBuffer;
-    delete[] audioResampleBuffer;
-
+    if (audioDecodeBuffer)
+    {
+        for (int i = 0; i < mNrPlanes; ++i)
+        {
+            delete[] audioDecodeBuffer[i];
+        }
+        delete[] audioDecodeBuffer;
+    }
     audioDecodeBuffer = 0;
-    audioResampleBuffer = 0;
 
     File::clean();
 }
@@ -118,167 +118,150 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     }
 
     PacketPtr audioPacket = getNextPacket();
-    if (!audioPacket)
-    {
-        // End of file reached. Signal this with null ptr.
-        return AudioChunkPtr();
-    }
-
-    auto determinePts = [this,audioPacket,parameters] (int nSamples) -> pts
-    {
-        double pts = 0;
-        if (audioPacket->getPacket()->pts != AV_NOPTS_VALUE)
-        {
-            pts = av_q2d(getCodec()->time_base) * audioPacket->getPacket()->pts;
-        }
-        else
-        {
-            // To be implemented locally: 'make up' pts.
-            NIY(_("Not supported: Audio data without pts info"));
-        }
-
-        // Note: if the code below is ever included, beware that the pts value for audioChunk is set BEFORE knowing the actual amount of returned samples,
-        //       particularly in case resampling is involved.
-        // pts += static_cast<double>(nSamples) / static_cast<double>(parameters.getNrChannels()) / static_cast<double>(parameters.getSampleRate()); Use the original pts value, which indicates the beginning pts value
-        return Convert::doubleToInt(pts);
-    };
 
     //////////////////////////////////////////////////////////////////////////
     // DECODING
 
-    // All sizes are in bytes below
-    uint8_t* sourceData = audioPacket->getPacket()->data;
-    int16_t* targetData = audioDecodeBuffer;
-    int sourceSize = audioPacket->getPacket()->size;
-    int targetSizeInBytes = 0;
-    ASSERT_MORE_THAN_ZERO(sourceSize);
-
     AVCodecContext* codec = getCodec();
 
-    int nBytesPerSample = av_get_bytes_per_sample(codec->sample_fmt);
-    ASSERT_NONZERO(nBytesPerSample);
+    // All sizes are in bytes below
+    int targetSizeInBytes = 0; // For planar data, size of each plane. For packet data, size of first plane, which contains all channels.
+    int nDecodedSamplesPerChannel = 0;
 
-    while (sourceSize > 0)
+    if (audioPacket)
+    {
+        uint8_t* sourceData = audioPacket->getPacket()->data;
+        int sourceSize = audioPacket->getPacket()->size;
+        ASSERT_MORE_THAN_ZERO(sourceSize);
+
+        while (sourceSize > 0)
+        {
+            AVPacket packet;
+            packet.data = sourceData;
+            packet.size = sourceSize;
+
+            AVFrame frame = { { 0 } };
+            int got_frame = 0;
+            int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet); // todo use request_sample_fmt to get correct sample fmt immediately
+            ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
+
+            if (!got_frame)
+            {
+                LOG_AUDIO;
+                sourceSize = 0;
+                break;
+            }
+
+            int decodedLineSize(0); // Will contain the number of bytes per plane
+            // decodeBuferInBytes contains the entire required buffer size:
+            // - Contains ALL channel data
+            // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
+            int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, frame.nb_samples, codec->sample_fmt, 1);
+            for (int i = 0; i < mNrPlanes; ++i)
+            {
+                memcpy(audioDecodeBuffer[i] + targetSizeInBytes, frame.extended_data[i], decodedLineSize);
+            }
+
+            sourceData += usedSourceBytes;
+            sourceSize -= usedSourceBytes;
+
+            targetSizeInBytes += decodedLineSize;
+            nDecodedSamplesPerChannel += frame.nb_samples;
+
+            // Only after the first packet has been decoded, all of the information
+            // required for initializing resampling is available.
+            if (mNeedsResampling && mSoftwareResampleContext == 0)
+            {
+                // Code taken from ffplay.c
+                int64_t dec_channel_layout =
+                    (frame.channel_layout && av_frame_get_channels(&frame) == av_get_channel_layout_nb_channels(frame.channel_layout)) ?
+                    frame.channel_layout : av_get_default_channel_layout(av_frame_get_channels(&frame));
+
+                mSoftwareResampleContext = swr_alloc_set_opts(0,
+                    av_get_default_channel_layout(parameters.getNrChannels()), AV_SAMPLE_FMT_S16, parameters.getSampleRate(),
+                    dec_channel_layout, codec->sample_fmt, frame.sample_rate, 0, 0);
+                ASSERT_NONZERO(mSoftwareResampleContext);
+
+                int result = swr_init(mSoftwareResampleContext);
+                ASSERT_ZERO(result)(avcodecErrorString(result));
+            }
+        }
+    }
+    else // !audioPacket: flush with 0 packets until no more data returned
     {
         AVPacket packet;
-        packet.data = sourceData;
-        packet.size = sourceSize;
+        packet.data = 0;
+        packet.size = 0;
 
         AVFrame frame = { { 0 } };
         int got_frame = 0;
         int usedSourceBytes = avcodec_decode_audio4(codec, &frame, &got_frame, &packet);
-        ASSERT_MORE_THAN_EQUALS_ZERO(usedSourceBytes);
 
         if (!got_frame)
         {
-            // if error, skip frame
-            LOG_WARNING << "Frame skipped";
-            sourceSize = 0;
-            break;
+            // No samples, end of data
+            static const std::string status("End of file");
+            VAR_DEBUG(status);
+            VAR_VIDEO(this)(status);
+            return AudioChunkPtr();
         }
 
-        int plane_size(0);
-        int decodeSizeInBytes = av_samples_get_buffer_size(&plane_size, codec->channels, frame.nb_samples, codec->sample_fmt, 1);
-        memcpy(targetData, frame.extended_data[0], plane_size);
+        int decodedLineSize(0); // Will contain the number of bytes per plane
+        // decodeBuferInBytes contains the entire required buffer size:
+        // - Contains ALL channel data
+        // - Contains 32 bit alignment for all used data fields (one for packet, multiple for planar)
+        int decodeBufferInBytes = av_samples_get_buffer_size(&decodedLineSize, codec->channels, frame.nb_samples, codec->sample_fmt, 1);
+        for (int i = 0; i < mNrPlanes; ++i)
+        {
+            memcpy(audioDecodeBuffer[i], frame.extended_data[i], decodedLineSize);
+        }
 
-        sourceData += usedSourceBytes;
-        sourceSize -= usedSourceBytes;
+        targetSizeInBytes += decodedLineSize;
+        nDecodedSamplesPerChannel += frame.nb_samples;
 
-        ASSERT_ZERO(decodeSizeInBytes % nBytesPerSample)(decodeSizeInBytes);
-        targetSizeInBytes += decodeSizeInBytes;
-        targetData += decodeSizeInBytes / nBytesPerSample;
+        ASSERT_IMPLIES(mNeedsResampling, mSoftwareResampleContext != 0); // Must have been initialized already
     }
-    ASSERT_ZERO(sourceSize);
+
+    ASSERT_MORE_THAN_ZERO(nDecodedSamplesPerChannel);
 
     //////////////////////////////////////////////////////////////////////////
     // RESAMPLING
 
-    int nDecodedSamples = targetSizeInBytes / nBytesPerSample; // A sample is the data for one speaker
-    ASSERT_MORE_THAN_ZERO(nDecodedSamples);
-
     AudioChunkPtr audioChunk;
 
-    if (mResampleContext == 0)
+    if (mSoftwareResampleContext == 0)
     {
         // Use the plain decoded data without resampling.
-        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nDecodedSamples, true, false, audioDecodeBuffer);
+        ASSERT_EQUALS(mNrPlanes,1); // Resulting data is never planar, in case of planar data resampling should be done
+        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nDecodedSamplesPerChannel * parameters.getNrChannels(), true, false, (sample*)audioDecodeBuffer[0]);
     }
     else
     {
         // Resample
         typedef boost::rational<int> rational;
-        auto convertOutputSampleCountToInputSampleCount = [parameters,codec](int output) -> int
-        {
-            return
-                removeRemainder(codec->channels,
-                floor(rational(output) *
-                rational(codec->channels) / rational(parameters.getNrChannels()) *
-                rational(codec->sample_rate) / rational(parameters.getSampleRate())));
-        };
         auto convertInputSampleCountToOutputSampleCount = [parameters,codec](int input) -> int
         {
-            return
-                removeRemainder(parameters.getNrChannels(),
-                floor(rational(input) *
-                rational(parameters.getNrChannels()) / rational(codec->channels) *
-                rational(parameters.getSampleRate()) / rational(codec->sample_rate)));
+            return floor(rational(input) * rational(parameters.getSampleRate()) / rational(codec->sample_rate));
         };
 
-        int nRemainingInputSamples = nDecodedSamples;
-        // The +16 is to compensate for (rounding?) errors I saw. Note that audio_resample sometimes requires multiple passes (which might explain those differences).
-        // Choosing this number too low can cause
-        // - ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples) to fail.
-        // - Heap corruption errors
-        // The number 16 originates from ffmpeg/libavresample/resample.c, where the output length
-        // of the resampling is determined by
-        //     int lenout= 2 * s->output_channels * nb_samples * s->ratio + 16;
-        int nExpectedOutputSamples = convertInputSampleCountToOutputSampleCount(nDecodedSamples) + 16;
-        ASSERT_ZERO(nExpectedOutputSamples % parameters.getNrChannels());
-        int nRemainingOutputSamples = nExpectedOutputSamples;
-        int nResampledSamples = 0;
+        int nExpectedOutputSamplesPerChannel = convertInputSampleCountToOutputSampleCount(nDecodedSamplesPerChannel);
 
-        // Note: Sometimes audio_resample does not resample the entire buffer in one pass.
-        // Here the extra required passes are done, and the data is copied into the pre-allocated audioChunk.
+        int bufferSize = av_samples_get_buffer_size(0, parameters.getNrChannels(), nExpectedOutputSamplesPerChannel, AV_SAMPLE_FMT_S16, 1);
+
         // The audioChunk is pre-allocated to avoid one extra memcpy (from resampled data into the chunk).
+        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), bufferSize, true, false);
 
-        sample* input = audioDecodeBuffer;
+        uint8_t *out[1]; // Output data always packet into one plane
+        out[0] = reinterpret_cast<uint8_t*>(audioChunk->getBuffer());
+        int nOutputFrames = swr_convert(mSoftwareResampleContext, &out[0], bufferSize, const_cast<const uint8_t**>(audioDecodeBuffer), nDecodedSamplesPerChannel);
+        ASSERT_MORE_THAN_EQUALS_ZERO(nOutputFrames);
+        int nOutputSamples = nOutputFrames * parameters.getNrChannels();
+        // To check that the buffer was large enough to hold everything produced by swr_convert in one pass.
+        ASSERT_LESS_THAN(nOutputSamples, bufferSize);
 
-        audioChunk = boost::make_shared<AudioChunk>(parameters.getNrChannels(), nExpectedOutputSamples, true, false);
-        sample* resampled = audioChunk->getBuffer();
-
-        while (nRemainingInputSamples > 0)
-        {
-            int nInputFrames = nRemainingInputSamples / codec->channels;
-            int nOutputFrames = audio_resample(mResampleContext, resampled, input, nInputFrames);
-            int nNewOutputSamples = nOutputFrames * parameters.getNrChannels();
-            int nUsedInputSamples = convertOutputSampleCountToInputSampleCount(nNewOutputSamples);
-            ASSERT_ZERO(nUsedInputSamples %codec->channels);
-            VAR_DEBUG(nInputFrames)(nOutputFrames)(nRemainingOutputSamples)(nNewOutputSamples)(nUsedInputSamples);
-            if (nUsedInputSamples == 0)
-            {
-                break;
-            }
-
-            if (nNewOutputSamples > nRemainingOutputSamples)
-            {
-                // Sometimes more samples than required are generated. Particularly happens when resampling from
-                // lowframerate-fewchannels to highframerate-lotsofchannels.
-                nNewOutputSamples = nRemainingOutputSamples;
-            }
-            nRemainingOutputSamples -= nNewOutputSamples;
-            ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingOutputSamples);
-            nResampledSamples += nNewOutputSamples;
-            nRemainingInputSamples -= nUsedInputSamples;
-            input += nUsedInputSamples;
-            resampled += nNewOutputSamples;
-            // NOT: ASSERT_MORE_THAN_EQUALS_ZERO(nRemainingInputSamples)(nUsedInputSamples);
-            // WHY: Sometimes audio_resample returns a slightly higher number of output frames then to be expected
-            //      by the given amount of input frames (maybe caused by audio_resample mechanism 'caching' some of them in a previous call?).
-        }
-        // More data was allocated (to compensate for differences between the number of output samples 'calculated' and the number that avcodec actually produced).
-        audioChunk->setAdjustedLength(nResampledSamples);
-
-        VAR_DEBUG(nResampledSamples);
+        // More data was allocated (to compensate for differences between the number
+        // of output samples 'calculated' and the number that avcodec actually produced).
+        audioChunk->setAdjustedLength(nOutputSamples);
     }
 
     VAR_AUDIO(this)(audioChunk);
@@ -299,42 +282,39 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
 
     mDecodingAudio = true;
 
+    AVCodecContext* codec = getCodec();
+
+    mNrPlanes = av_sample_fmt_is_planar(codec->sample_fmt) ? codec->channels : 1;
+
     // Allocated upon first use. See also the remark in the header file
     // on GCC in combination with make_shared.
     if (!audioDecodeBuffer)
     {
-        audioDecodeBuffer   = new sample[sAudioBufferSizeInBytes];
-        audioResampleBuffer = new sample[sAudioBufferSizeInBytes];
+        audioDecodeBuffer = new uint8_t*[mNrPlanes];
+        for (int i = 0; i < mNrPlanes; ++i)
+        {
+            audioDecodeBuffer[i] = new uint8_t[sAudioBufferSizeInBytes];
+        }
     }
-
-    boost::mutex::scoped_lock lock(Avcodec::sMutex);
-
-    AVCodecContext* codec = getCodec();
 
     AVCodec* audioCodec = avcodec_find_decoder(codec->codec_id);
     ASSERT_NONZERO(audioCodec);
+
+    boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     int result = avcodec_open2(codec, audioCodec, 0);
     ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     int nBytesPerSample = av_get_bytes_per_sample(codec->sample_fmt);
-    ASSERT_NONZERO(nBytesPerSample);
-
     if ((parameters.getNrChannels() != codec->channels) ||
         (parameters.getSampleRate() != codec->sample_rate) ||
-        (codec->sample_fmt !=AV_SAMPLE_FMT_S16) ||
+        (codec->sample_fmt != AV_SAMPLE_FMT_S16) ||
         (nBytesPerSample != AudioChunk::sBytesPerSample))
     {
-        VAR_INFO(codec->sample_fmt)(parameters.getNrChannels())(codec->channels)(parameters.getSampleRate())(codec->sample_rate);
-        static const int taps = 16;
-        mResampleContext =
-            av_audio_resample_init(
-            parameters.getNrChannels(), codec->channels,
-            parameters.getSampleRate(), codec->sample_rate,
-            AV_SAMPLE_FMT_S16, codec->sample_fmt,
-            taps, 10, 0, 0.8);
-        ASSERT_NONZERO(mResampleContext);
+        mNeedsResampling = true;
     }
+
+    ASSERT_ZERO(mSoftwareResampleContext);
 
     VAR_DEBUG(this)(getCodec());
 }
@@ -346,11 +326,10 @@ void AudioFile::stopDecodingAudio()
     {
         boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
-        if (mResampleContext != 0)
+        if (mSoftwareResampleContext != 0)
         {
             LOG_INFO << "Resampling ended";
-            audio_resample_close(mResampleContext);
-            mResampleContext = 0;
+            swr_free(&mSoftwareResampleContext);
         }
 
         avcodec_close(getCodec());

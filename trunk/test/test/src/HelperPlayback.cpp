@@ -64,4 +64,20 @@ void WaitForPlayback::onPlaybackActive(gui::PlaybackActiveEvent& event)
     event.Skip();
 }
 
+void Play(pixel from, int ms)
+{
+    PositionCursor(from);
+    WaitForPlayback started(true);
+    WaitForPlayback stopped(false);
+    // NOTE: Don't use waitForIdle() when the video is playing!!!
+    //       When the video is playing, the system does not become Idle (playback events).
+    // NOTE: Starting and stopping the playback is not done via space key presses.
+    //       Space does a 'toggle', which sometimes causes irratic behavior.
+    RunInMainAndWait([] { getTimeline().getPlayer()->play(); });
+    started.wait();
+    pause(ms);
+    RunInMainAndWait([] { getTimeline().getPlayer()->stop(); });
+    stopped.wait();
+}
+
 } // namespace

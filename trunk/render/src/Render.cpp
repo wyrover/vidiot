@@ -344,6 +344,7 @@ void RenderWork::generate()
 
     uint16_t* samples = 0;
     samplecount audioEncodeRequiredInputSize = 0;
+    SwrContext* audioSampleFormatResampleContext = 0;
 
     bool ok = true;
     wxString sErrorMessage;
@@ -412,7 +413,9 @@ void RenderWork::generate()
 
         if (ok)
         {
+            ASSERT_NONZERO(audioCodec->frame_size);
             // ugly hack for PCM codecs (will be removed ASAP with new PCM support to compute the input frame size in samples
+            // See libavformat/output-example.c
             if (audioCodec->frame_size <= 1)
             {
                 audioEncodeRequiredInputSize = 10000;
@@ -433,6 +436,18 @@ void RenderWork::generate()
                 audioEncodeRequiredInputSize = Convert::audioFramesToSamples(audioCodec->frame_size,audioCodec->channels);
             }
             samples = static_cast<uint16_t*>(av_malloc(Convert::audioSamplesToBytes(audioEncodeRequiredInputSize)));
+
+             if (audioCodec->sample_fmt != AV_SAMPLE_FMT_S16)
+             {
+                audioSampleFormatResampleContext = swr_alloc_set_opts(0,
+                    audioCodec->channel_layout, audioCodec->sample_fmt, audioCodec->sample_rate,
+                    audioCodec->channel_layout, AV_SAMPLE_FMT_S16, audioCodec->sample_rate, 0, 0);
+                ASSERT_NONZERO(audioSampleFormatResampleContext);
+
+                int result = swr_init(audioSampleFormatResampleContext);
+                ASSERT_ZERO(result)(avcodecErrorString(result));
+             }
+
             audioOpened = true;
         }
         else
@@ -442,7 +457,7 @@ void RenderWork::generate()
     }
 
     VideoCompositionParameters videoparameters = VideoCompositionParameters().setBoundingBox(wxSize(videoCodec->width,videoCodec->height)).setDrawBoundingBox(false).setOptimizeForQuality();
-    AudioCompositionParameters audioparameters = AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels);
+    AudioCompositionParameters audioparameters = AudioCompositionParameters().setSampleRate(audioCodec->sample_rate).setNrChannels(audioCodec->channels); // todo pass required pixel format also?
 
     if (ok)
     {
@@ -519,20 +534,49 @@ void RenderWork::generate()
                         }
                     }
 
-                    AVFrame frame;
-                    frame.data[0] = (uint8_t*)samples;
-                    frame.linesize[0] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
-                    frame.nb_samples = audioCodec->frame_size;
-                    frame.pts = AV_NOPTS_VALUE; // NOT: numberOfEncodecInputAudioFrames * audioCodec->frame_size; - causes silence...
+                    int nPlanes = av_sample_fmt_is_planar(audioCodec->sample_fmt) ? audioCodec->channels : 1;
+                    AVFrame* encodeFrame = new AVFrame;
+                    encodeFrame->data[0] = (uint8_t*)samples;
+                    encodeFrame->linesize[0] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
+                    if (audioSampleFormatResampleContext != 0)
+                    {
+                        uint8_t** data = new uint8_t*[nPlanes];
+
+                        int result = av_samples_alloc(data,0,audioCodec->channels,audioCodec->frame_size,audioCodec->sample_fmt,0);
+                        int nOutputFrames = swr_convert(
+                            audioSampleFormatResampleContext, data, audioCodec->frame_size,
+                            const_cast<const uint8_t**>(encodeFrame->data), audioCodec->frame_size);
+                        ASSERT_MORE_THAN_ZERO(nOutputFrames);
+                        ASSERT_EQUALS(nOutputFrames,audioCodec->frame_size);
+
+                        delete encodeFrame;
+                        encodeFrame = new AVFrame;
+
+                        for (int i = 0; i < nPlanes; ++i)
+                        {
+                            encodeFrame->data[i] = data[i];
+                            encodeFrame->linesize[i] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
+                        }
+                    }
+
+                    encodeFrame->nb_samples = audioCodec->frame_size;
+                    encodeFrame->pts = AV_NOPTS_VALUE; // NOT: numberOfEncodecInputAudioFrames * audioCodec->frame_size; - causes silence...
+
                     AVPacket* audioPacket = new AVPacket();
                     audioPacket->data = 0;
                     audioPacket->size = 0;
                     int gotPacket = 0;
 
                     // CODEC_CAP_DELAY (see declaration  of avcodec_encode_audio2) is not used: extra silence is added at the end?
-                    int result = avcodec_encode_audio2(audioCodec, audioPacket, &frame, &gotPacket); // if gotPacket == 0, then packet is destructed
+                    int result = avcodec_encode_audio2(audioCodec, audioPacket, encodeFrame, &gotPacket); // if gotPacket == 0, then packet is destructed
                     ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
                     numberOfEncodecInputAudioFrames++;
+
+                    if (audioSampleFormatResampleContext)
+                    {
+                        av_freep(&encodeFrame->data[0]);
+                    }
+                    delete encodeFrame;
 
                     if (gotPacket)
                     {
@@ -580,6 +624,7 @@ void RenderWork::generate()
                             }
                             else
                             {
+                                // todo crash when rendering empty clip (image == 0)
                                 memcpy(colorSpaceConversionPicture->data[0],  image->GetData(), image->GetWidth() * image->GetHeight() * 3);
                                 sws_scale(colorSpaceConversionContext, colorSpaceConversionPicture->data, colorSpaceConversionPicture->linesize, 0, videoCodec->height, outputPicture->data, outputPicture->linesize);
                             }
@@ -637,19 +682,23 @@ void RenderWork::generate()
     if (videoOpened)
     {
         avcodec_close(videoCodec);
-        av_free(outputPicture->data[0]);
-        av_free(outputPicture);
+        av_freep(&outputPicture->data[0]);
+        av_frame_free(&outputPicture);
         if (colorSpaceConversionPicture)
         {
-            av_free(colorSpaceConversionPicture->data[0]);
-            av_free(colorSpaceConversionPicture);
+            av_freep(&colorSpaceConversionPicture->data[0]);
+            av_frame_free(&colorSpaceConversionPicture);
         }
     }
 
     if (audioOpened)
     {
+        if (audioSampleFormatResampleContext != 0)
+        {
+            swr_free(&audioSampleFormatResampleContext);
+        }
         avcodec_close(audioCodec);
-        av_free(samples);
+        av_freep(&samples);
     }
 
     for (unsigned int i = 0; i < context->nb_streams; i++)
@@ -665,12 +714,12 @@ void RenderWork::generate()
         avio_close(context->pb);
     }
 
-    av_free(context);
+    av_freep(&context);
 }
 
 static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
 {
-    AVFrame* picture = avcodec_alloc_frame();
+    AVFrame* picture = av_frame_alloc();
     ASSERT(picture);
 
     int size = avpicture_get_size(pix_fmt, width, height);

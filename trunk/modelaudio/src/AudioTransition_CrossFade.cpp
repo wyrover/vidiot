@@ -61,7 +61,7 @@ struct Cache
         ,   mLeftChunk()
         ,   mRightChunk()
     {}
-    int mLastRenderedFrame;
+    samplecount mLastRenderedFrame;
     AudioChunkPtr mLeftChunk;
     AudioChunkPtr mRightChunk;
 

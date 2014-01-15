@@ -17,6 +17,8 @@
 
 #include "FilePacket.h"
 
+#include "UtilLogAvcodec.h"
+
 namespace model {
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,9 +26,10 @@ namespace model {
 //////////////////////////////////////////////////////////////////////////
 
 Packet::Packet(AVPacket* packet)
-    :	mPacket(0)
+    :	mPacket(new AVPacket())
 {
-    mPacket = new AVPacket(*packet);
+    int retval = av_copy_packet(mPacket,packet);
+    ASSERT_MORE_THAN_EQUALS_ZERO(retval)(avcodecErrorString(retval));;
 }
 
 Packet::~Packet()

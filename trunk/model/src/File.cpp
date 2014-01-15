@@ -225,7 +225,24 @@ void File::moveTo(pts position)
     int64_t timestamp = model::Convert::ptsToMicroseconds(position);
     ASSERT_LESS_THAN_EQUALS(timestamp,mFileContext->duration)(timestamp)(mFileContext)(position);
     VAR_DEBUG(timestamp)(mFileContext->duration);
-    int result = av_seek_frame(mFileContext, -1, timestamp, AVSEEK_FLAG_ANY);
+    if (timestamp < 0)
+    {
+        timestamp = 0;
+    }
+
+    // First, try seeking to a keyframe at the given position.
+    int result = 0;
+    result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, 0);
+    if (result < 0)
+    {
+        // Second, try seeking to a keyframe before the given position.
+        result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD);
+        if (result < 0)
+        {
+            // Last resort, any frame will do.
+            result = avformat_seek_file(mFileContext, -1, 0, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
+        }
+    }
     ASSERT_MORE_THAN_EQUALS_ZERO(result)(avcodecErrorString(result))(*this);
 
     ASSERT_ZERO(mPackets.getSize());
@@ -465,6 +482,7 @@ void File::openFile()
         boost::mutex::scoped_lock lock(Avcodec::sMutex);
         result = avformat_open_input(&mFileContext, path, 0, 0);
     }
+
     if (result != 0)
     {
         // Some error occured when opening the file.
@@ -507,38 +525,21 @@ void File::openFile()
             LOG_WARNING << "Unsupported audio file '" << path << "'. Number of channels is " << stream->codec->channels << ".";
             return false;
         }
-        switch (stream->codec->sample_fmt)
+        if (stream->codec->sample_fmt == AV_SAMPLE_FMT_NONE)
         {
-            // Supported/tested sample formats
-        case AV_SAMPLE_FMT_U8:
-        case AV_SAMPLE_FMT_S16:
-        case AV_SAMPLE_FMT_S32:
-        case AV_SAMPLE_FMT_FLT:
-        case AV_SAMPLE_FMT_DBL:
-            // Unsupported/untested sample formats
-        case AV_SAMPLE_FMT_U8P:
-        case AV_SAMPLE_FMT_S16P:
-        case AV_SAMPLE_FMT_S32P:
-        case AV_SAMPLE_FMT_FLTP:
-        case AV_SAMPLE_FMT_DBLP:
-            break;
-        case AV_SAMPLE_FMT_NONE:
-            LOG_WARNING << "Unsupported audio file '" << path << "'. Sample format is " << stream->codec->sample_fmt << ".";
+            LOG_WARNING << "Unsupported audio file '" << path << "'. Sample format is unknown.";
             return false;
         }
-
         if (av_get_bytes_per_sample(stream->codec->sample_fmt) == 0)
         {
             LOG_WARNING << "Unsupported audio file '" << path << "'. Number of bytes per sample is unknown.";
             return false;
         }
-
         if (stream->codec->sample_rate < 4000 || stream->codec->sample_rate > 256000)
         {
             LOG_WARNING << "Unsupported audio file '" << path << "'. Sample rate (" << stream->codec->sample_rate << ") too big.";
             return false;
         }
-
         return true;
     };
 
@@ -557,6 +558,8 @@ void File::openFile()
     {
         AVStream* stream = mFileContext->streams[i];
         VAR_DEBUG(stream);
+
+        stream->discard = AVDISCARD_NONE;
 
         if (isVideoSupported(stream))
         {
@@ -667,7 +670,7 @@ void File::bufferPacketsThread()
     util::thread::setCurrentThreadName("BufferPackets");
     VAR_DEBUG(this);
 
-    AVPacket pkt1;
+    AVPacket pkt1 = { 0 };
     AVPacket* packet = &pkt1;
 
     while (mReadingPackets)
@@ -681,19 +684,13 @@ void File::bufferPacketsThread()
         }
         ASSERT_MORE_THAN_ZERO(packet->size);
 
-        int retval = av_dup_packet(packet);
-        ASSERT_MORE_THAN_EQUALS_ZERO(retval);
-
         if(packet->stream_index == mStreamIndex)
         {
             PacketPtr p = boost::make_shared<Packet>(packet);
             mPackets.push(p);
             VAR_DETAIL(this)(p);
         }
-        else
-        {
-            av_free_packet(packet);
-        }
+        av_free_packet(packet);
     }
     if (!mReadingPackets)
     {

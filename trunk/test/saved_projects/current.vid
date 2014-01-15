@@ -27,7 +27,7 @@
 								<string>avi</string>
 							</mName>
 							<mLongName>
-								<string>AVI format</string>
+								<string>AVI (Audio Video Interleaved)</string>
 							</mLongName>
 							<mExtensions class_id="11" tracking_level="0" version="0">
 								<count>1</count>

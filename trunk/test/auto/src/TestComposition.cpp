@@ -20,6 +20,7 @@
 #include "DetailsClip.h"
 #include "HelperApplication.h"
 #include "HelperDetails.h"
+#include "HelperPlayback.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineDrag.h"
 #include "HelperWindow.h"

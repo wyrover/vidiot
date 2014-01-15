@@ -241,7 +241,6 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
             << "nb_frames="                     << obj->nb_frames                       << ','
             << "disposition="                   << obj->disposition                     << ','
             << "sample_aspect_ratio="           << obj->sample_aspect_ratio             << ','
-            << "reference_dts="                 << obj->reference_dts                   << ','
             << "avg_frame_rate="                << obj->avg_frame_rate                  << ','
             << "codec_info_nb_frames="          << obj->codec_info_nb_frames
             << '}';
@@ -299,7 +298,7 @@ std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const CodecID& obj)
+std::ostream& operator<< (std::ostream& os, const AVCodecID& obj)
 {
     switch (obj)
     {
@@ -610,7 +609,7 @@ std::ostream& operator<< (std::ostream& os, const CodecID& obj)
     case CODEC_ID_MPEG2TS:            os << "CODEC_ID_MPEG2TS";            break;
     case CODEC_ID_MPEG4SYSTEMS:       os << "CODEC_ID_MPEG4SYSTEMS";       break;
     case CODEC_ID_FFMETADATA:         os << "CODEC_ID_FFMETADATA";         break;
-    default:                          os << "Unknown CodecID (" << static_cast<long>(obj) << ")";
+    default:                          os << "Unknown AVCodecID (" << static_cast<long>(obj) << ")";
     }
     return os;
 }

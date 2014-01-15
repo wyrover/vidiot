@@ -84,7 +84,7 @@ AudioCodecPtr AudioCodecs::getDefault()
 }
 
 // static
-AudioCodecPtr AudioCodecs::find(CodecID id)
+AudioCodecPtr AudioCodecs::find(AVCodecID id)
 {
     AudioCodecMap::const_iterator it = sAudioCodecs.find(id);
     if (it == sAudioCodecs.end())

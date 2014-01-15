@@ -21,6 +21,7 @@
 #include "Folder.h"
 #include "HelperApplication.h"
 #include "HelperFileSystem.h"
+#include "HelperPlayback.h"
 #include "HelperProject.h"
 #include "HelperProjectView.h"
 #include "HelperThread.h"

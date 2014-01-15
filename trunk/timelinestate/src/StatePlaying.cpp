@@ -56,7 +56,6 @@ Playing::~Playing() // exit
     case 'b':
     case 'B':
         cmd = new command::SplitAtCursorAndTrim(getSequence(), true);
-        //cmd->add(new command::StartPlayback(getSequence()));
         model::ProjectModification::submitIfPossible(cmd);
         getPlayer()->play();
         break;
@@ -96,10 +95,10 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SHIFT:     
-        triggerBegin();             
+    case WXK_SHIFT:
+        triggerBegin();
         break;
-    case WXK_F1:        
+    case WXK_F1:
         getTooltip().show(sTooltip);
         break;
     case 's':
@@ -107,10 +106,10 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     case 'b':
     case 'B':
         mKeyCodeTriggeringStop = evt.getKeyCode();
-        getPlayer()->stop();        
+        getPlayer()->stop();
         return discard_event();
-    case WXK_SPACE:     
-        getPlayer()->stop();        
+    case WXK_SPACE:
+        getPlayer()->stop();
         return discard_event();
     }
     return forward_event();

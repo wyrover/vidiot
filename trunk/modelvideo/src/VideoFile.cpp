@@ -92,21 +92,7 @@ void VideoFile::moveTo(pts position)
 
     mPosition = position;
 
-    startReadingPackets(); // To ensure that openFile is called.
-    if (fileOpenFailed()) { return; } // File could not be opened (deleted?)
-
-    AVCodecContext* codec = getCodec();
-    pts positionBefore = position;
-    switch (codec->codec_id)
-    {
-    case CODEC_ID_MPEG4:
-        case CODEC_ID_H264:
-            positionBefore -= 20; // Move back a bit to ensure that the resulting position <= required position, sometimes the stream is positioned on a keyframe AFTER the required frame
-            break;
-    }
-
-    VAR_INFO(mPosition)(positionBefore);
-    File::moveTo(positionBefore); // NOTE: This uses the pts in 'project' timebase units
+    File::moveTo(position); // NOTE: This uses the pts in 'project' timebase units
 }
 
 void VideoFile::clean()
@@ -150,8 +136,10 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     AVPacket nullPacket;
     nullPacket.data = 0;
     nullPacket.size = 0;
-    //nullPacket.buf = 0; // for new version of avcodec
-    //ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
+    nullPacket.buf = 0;
+
+    AVCodecContext* codec = getCodec();
+    ASSERT_ZERO(codec->refcounted_frames); // for new version of avcodec, see avcodec_decode_video2 docs
 
     auto div = [this](rational64 num, rational64 divisor) -> int64_t
     {
@@ -192,8 +180,6 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     boost::tuple<pts,pts,pts> requiredInputFrames = timeToNearestInputFramesPts(projectPositionToTimeInS(mPosition));
     pts requiredInputPts = requiredInputFrames.get<1>();
 
-    AVCodecContext* codec = getCodec();
-
     VAR_DEBUG(this)(requiredInputFrames)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts)(mPosition);
     // NOT:
     //ASSERT(!mDeliveredFrame || requiredInputPts >= mDeliveredFrameInputPts)(requiredInputPts)(mDeliveredFrameInputPts)(codec);
@@ -208,7 +194,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         // Decode new frame
         bool firstPacket = true;
         int frameFinished = 0;
-        AVFrame* pDecodedFrame = avcodec_alloc_frame(); // for new version of avcodec : av_frame_alloc();
+        AVFrame* pDecodedFrame = av_frame_alloc();
         ASSERT_NONZERO(pDecodedFrame)(codec);
 
         while (!frameFinished )
@@ -239,54 +225,61 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
                     VAR_DEBUG(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
                 }
             }
-            else if (getCodec()->codec->capabilities & CODEC_CAP_DELAY)
+            else // No packet. End of file.
             {
-                nextToBeDecodedPacket = &nullPacket; // feed with 0 frames to extract the cached frames
+                // Feed with 0 frames to extract cached frames
+                // Note that it is allowed to call avcodec_decode_video2
+                // with this 0 frame, even if the decoder does not have
+                // caching.
+                //
+                // Paricularly, for decoding a png image adding one extra
+                // 0 frame was required, after migrating to the 2014-jan-05
+                // version of avcodec.
+                nextToBeDecodedPacket = &nullPacket;
             }
+            ASSERT_NONZERO(nextToBeDecodedPacket);
 
-            bool endOfFile = true;
-            if (nextToBeDecodedPacket)
+            int len1 = avcodec_decode_video2(getCodec(), pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
+            ASSERT_MORE_THAN_EQUALS_ZERO(len1)(codec);
+
+            if (frameFinished)
             {
-                int len1 = avcodec_decode_video2(getCodec(), pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
-                ASSERT_MORE_THAN_EQUALS_ZERO(len1)(codec);
-
-                if (len1 > 0)
+                mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pDecodedFrame);
+                if (mDeliveredFrameInputPts == AV_NOPTS_VALUE)
                 {
-                    endOfFile = false;
-                    mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pDecodedFrame);
-                    if (mDeliveredFrameInputPts == AV_NOPTS_VALUE)
-                    {
-                        AVStream* stream = getStream();
-                        ASSERT(stream)(codec);
-                        mDeliveredFrameInputPts = av_q2d(stream->time_base) * pDecodedFrame->pts;
-                    }
-                    ASSERT_DIFFERS(mDeliveredFrameInputPts, AV_NOPTS_VALUE)(codec);
-                    mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
-                    VAR_DEBUG(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
+                    AVStream* stream = getStream();
+                    ASSERT(stream)(codec);
+                    mDeliveredFrameInputPts = av_q2d(stream->time_base) * pDecodedFrame->pts;
                 }
-                // else: For codecs with CODEC_CAP_DELAY, (len1 == 0) indicates end of the decoding
-            }
+                ASSERT_DIFFERS(mDeliveredFrameInputPts, AV_NOPTS_VALUE)(codec);
+                mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
+                VAR_DEBUG(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
 
-            if (endOfFile)
+                // If !mDeliveredFrame: first getNextVideo after object creation, or directly after a move.
+                if (frameFinished && mDeliveredFrameInputPts < requiredInputPts)
+                {
+                    VAR_DEBUG(requiredInputPts)(mDeliveredFrameInputPts);
+                    // A whole frame was decoded, but it does not have the correct pts value. Get another.
+                    frameFinished = 0;
+                }
+            }
+            else
             {
-                // End of file reached. Signal this with null ptr.
-                av_free(pDecodedFrame);
-                mDeliveredFrame.reset();
-                mDeliveredFrameInputPts = 0;
-                static const std::string status("End of file");
-                VAR_DEBUG(status);
-                VAR_VIDEO(this)(status)(mPosition)(requiredInputPts);
-                return mDeliveredFrame;
+                // len1  < 0 - error
+                // len1 == 0 - end of file
+                // len1  > 0 - valid data was decoded. Not the end yet.
+                if (len1 <= 0)
+                {
+                    // End of file reached. Signal this with null ptr.
+                    av_frame_free(&pDecodedFrame);
+                    mDeliveredFrame.reset();
+                    mDeliveredFrameInputPts = 0;
+                    static const std::string status("End of file");
+                    VAR_DEBUG(status);
+                    VAR_VIDEO(this)(status)(mPosition)(requiredInputPts);
+                    return mDeliveredFrame;
+                }
             }
-
-            // If !mDeliveredFrame: first getNextVideo after object creation, or directly after a move.
-            if (frameFinished && mDeliveredFrameInputPts < requiredInputPts)
-            {
-                VAR_DEBUG(requiredInputPts)(mDeliveredFrameInputPts);
-                // A whole frame was decoded, but it does not have the correct pts value. Get another.
-                frameFinished = 0;
-            }
-
         }
         ASSERT_MORE_THAN_EQUALS_ZERO(pDecodedFrame->repeat_pict)(codec);
         if (pDecodedFrame->repeat_pict > 0)
@@ -300,7 +293,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
         size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
 
         // Create temp data holder for the frame conversion
-        AVFrame* pScaledFrame = avcodec_alloc_frame();
+        AVFrame* pScaledFrame = av_frame_alloc();
         int bufferSize = avpicture_get_size(PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
         boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
         // Assign appropriate parts of buffer to image planes in pScaledFrame
@@ -323,9 +316,9 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
             boost::make_shared<VideoFrameLayer>(
             boost::make_shared<wxImage>(wxImage(size, pScaledFrame->data[0], true).Copy())));
 
-         av_free(buffer);
-         av_free(pDecodedFrame);
-         av_free(pScaledFrame);
+         av_freep(&buffer);
+         av_frame_free(&pDecodedFrame);
+         av_frame_free(&pScaledFrame);
     }
     else
     {
@@ -377,14 +370,19 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
-    AVCodec *videoCodec = avcodec_find_decoder(getCodec()->codec_id);
+    AVCodecContext* avctx = getCodec();
+
+    AVCodec *videoCodec = avcodec_find_decoder(avctx->codec_id);
     ASSERT_NONZERO(videoCodec);
 
-    int result = avcodec_open2(getCodec(), videoCodec, 0);
-    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+    avctx->workaround_bugs = 1; // Taken from ffplay.c
+    avctx->error_concealment = 3; // Taken from ffplay.c
 
     if (!parameters.getOptimizeForQuality())
     {
+        avctx->flags |= CODEC_FLAG_EMU_EDGE;
+        avctx->flags2 |= CODEC_FLAG2_FAST;
+
         switch(getCodec()->codec_id)
         {
         case CODEC_ID_H264:
@@ -395,6 +393,11 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
             break;
         }
     }
+
+    avctx->flags &= ~CODEC_FLAG_TRUNCATED; // Do not set this, causes bad frames
+
+    int result = avcodec_open2(avctx, videoCodec, 0);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
 
     FrameRate videoFrameRate = FrameRate(getStream()->r_frame_rate);
     if (videoFrameRate != Properties::get().getFrameRate())

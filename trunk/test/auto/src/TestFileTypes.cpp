@@ -23,6 +23,7 @@
 #include "EmptyClip.h"
 #include "File.h"
 #include "HelperConfig.h"
+#include "HelperPlayback.h"
 #include "HelperProjectView.h"
 #include "HelperThread.h"
 #include "HelperTimeline.h"

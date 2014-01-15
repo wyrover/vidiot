@@ -205,7 +205,6 @@ private:
 void ToggleInterval(pixel from, pixel to);
 
 void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)
-void Play(pixel from, int ms);                                          ///< Play from the given position, with the given time.
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \return logical mouse position of the given (pixel) position.
 
