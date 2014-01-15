@@ -45,7 +45,7 @@ public:
 
     /// Initialize, allocate, and (optionally) fill the data.
     /// \param nChannels number of audio channels
-    /// \param nSamples number of samples
+    /// \param nSamples number of samples (note: in ALL channels)
     /// \param allocate if true then allocate required buffer
     /// \param zero if true, fill allocated buffer 0
     /// \param buffer if non-null data from this buffer is copied into the newly allocated space

@@ -45,7 +45,7 @@ OutputFormat::OutputFormat()
     ASSERT(mFormat); // mFormat initialized by boost serialization
 }
 
-OutputFormat::OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, CodecID defaultaudiocodec, CodecID defaultvideocodec)
+OutputFormat::OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, AVCodecID defaultaudiocodec, AVCodecID defaultvideocodec)
     :   mName(name)
     ,   mLongName(longname)
     ,   mExtensions(extensions)
@@ -132,12 +132,12 @@ std::list<wxString> OutputFormat::getExtensions() const
     return mExtensions;
 }
 
-CodecID OutputFormat::getDefaultAudioCodec() const
+AVCodecID OutputFormat::getDefaultAudioCodec() const
 {
     return mDefaultAudioCodec;
 }
 
-CodecID OutputFormat::getDefaultVideoCodec() const
+AVCodecID OutputFormat::getDefaultVideoCodec() const
 {
     return mDefaultVideoCodec;
 }
@@ -183,7 +183,7 @@ AVFormatContext* OutputFormat::getContext() const
     return context;
 }
 
-int OutputFormat::checkCodec(CodecID id) const
+int OutputFormat::checkCodec(AVCodecID id) const
 {
     if (id == CODEC_ID_NONE) { return 1; }
     ASSERT(mFormat);

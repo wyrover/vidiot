@@ -113,7 +113,7 @@ void TestRender::testChangeRenderSettings()
     }
 }
 
-void TestRender::testRendering()
+void TestRender::testRenderingPlayback()
 {
     StartTestSuite();
     {
@@ -180,7 +180,7 @@ void TestRender::testRenderingCodecs()
     StartTestSuite();
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
 
-    for ( CodecID id : model::render::VideoCodecs::all() )
+    for ( AVCodecID id : model::render::VideoCodecs::all() )
     {
         RandomTempDir tempdir(false);
         ExpectExecutedWork expectation(1);

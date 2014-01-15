@@ -543,8 +543,10 @@ void TestDetailsClip::testChangeVolume()
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::UnlinkClips>();
 
     model::AudioClipPtr audioclip = getAudioClip(AudioClip(0,3));
+    ASSERT_EQUALS(audioclip->getVolume(),100);
     audioclip->moveTo(10);
     model::AudioChunkPtr referenceChunk = audioclip->getNextAudio(p);
+    ASSERT_EQUALS(audioclip->getVolume(),100);
 
     auto ASSERT_VOLUME = [referenceChunk,p,audioclip](int volume)
     {
@@ -557,9 +559,11 @@ void TestDetailsClip::testChangeVolume()
         sample* last = cur + 100;
         while (cur < last)
         {
-            int32_t c = *cur++ * volume / 100;
-            int32_t r = *ref++;
+            int32_t c = *cur;
+            int32_t r = *ref * volume / 100;
             ASSERT_EQUALS(c,r);
+            cur++;
+            ref++;
         }
     };
 

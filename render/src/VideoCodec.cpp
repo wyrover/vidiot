@@ -40,7 +40,7 @@ VideoCodec::VideoCodec()
 {
 }
 
-VideoCodec::VideoCodec(CodecID id)
+VideoCodec::VideoCodec(AVCodecID id)
     :   mId(id)
     ,   mParameters()
 {
@@ -78,7 +78,7 @@ bool VideoCodec::operator== (const VideoCodec& other) const
 // PARAMETERS
 //////////////////////////////////////////////////////////////////////////
 
-CodecID VideoCodec::getId() const
+AVCodecID VideoCodec::getId() const
 {
     return mId;
 }
@@ -106,6 +106,10 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
 
     AVCodecContext* video_codec = stream->codec;
     ASSERT_EQUALS(video_codec->codec_type,AVMEDIA_TYPE_VIDEO);
+
+    int result = avcodec_get_context_defaults3(video_codec, encoder);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+
     video_codec->codec_id = mId;
     for ( ICodecParameterPtr parameter : mParameters )
     {
@@ -113,6 +117,11 @@ AVStream* VideoCodec::addStream(AVFormatContext* context) const
     }
     video_codec->width = Properties::get().getVideoSize().GetWidth(); // resolution must be a multiple of two
     video_codec->height = Properties::get().getVideoSize().GetHeight();
+
+    if(getId() == AV_CODEC_ID_H264)
+    {
+        av_opt_set(video_codec->priv_data, "preset", "slow", 0); // from decoding_encoding.c
+    }
 
     // Fundamental unit of time (in seconds) in terms of which frame timestamps are represented.
     // For fixed-fps content, timebase should be 1/framerate and timestamp increments should be identically 1.
@@ -137,16 +146,25 @@ bool VideoCodec::open(AVCodecContext* context) const
 {
     AVCodec* codec = avcodec_find_encoder(context->codec_id);
     ASSERT(codec);
-    boost::mutex::scoped_lock lock(Avcodec::sMutex);
-    int result = avcodec_open2(context, codec, 0);
-
+    auto showError = [context,codec](wxString msg) -> bool
+    {
+        gui::Dialog::get().getConfirmation( _("Error in video codec"),
+            _("There was an error when opening the video codec.\n") +
+            _("Rendering will be aborted.\n") +
+            msg + "\n");
+        VAR_ERROR(codec)(context);
+        return false;
+    };
+    int result = 0; // To avoid showing error dialog while 'having' the lock
+    {
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
+        result = avcodec_open2(context, codec, 0);
+    }
     if (result < 0)
     {
-        VAR_ERROR(codec)(context);
-        // Now do the checks that ffmpeg does when opening the codec to give proper feedback
-        gui::Dialog::get().getConfirmation( _("Error in video codec"), _("There was an error when opening the video codec.\nRendering will be aborted.\nDetailed information:\n") + Avcodec::getMostRecentLogLine());
+        return showError(_("Detailed information:\n") + Avcodec::getMostRecentLogLine());
     }
-    return result >= 0;
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -370,7 +370,7 @@ wxWindow* DialogRenderSettings::getVideoParam(int index) const
 void DialogRenderSettings::updateAudioCodec()
 {
     model::render::AudioCodecPtr old = mNew->getOutputFormat()->getAudioCodec();
-    CodecID newCodecID = static_cast<CodecID>(mAudioCodec->getValue());
+    AVCodecID newCodecID = static_cast<AVCodecID>(mAudioCodec->getValue());
     bool useNewCodecID = true;
     if (mNew->getOutputFormat()->checkCodec(newCodecID) == 0)
     {
@@ -384,7 +384,7 @@ void DialogRenderSettings::updateAudioCodec()
     }
     if (useNewCodecID)
     {
-        mNew->getOutputFormat()->setAudioCodec(model::render::AudioCodecs::find(static_cast<CodecID>(mAudioCodec->getValue())));
+        mNew->getOutputFormat()->setAudioCodec(model::render::AudioCodecs::find(static_cast<AVCodecID>(mAudioCodec->getValue())));
         changeAudioCodecInfo(old, mNew->getOutputFormat()->getAudioCodec());
         enableSetDefaultButton();
     }
@@ -397,7 +397,7 @@ void DialogRenderSettings::updateAudioCodec()
 void DialogRenderSettings::updateVideoCodec()
 {
     model::render::VideoCodecPtr old = mNew->getOutputFormat()->getVideoCodec();
-    CodecID newCodecID = static_cast<CodecID>(mVideoCodec->getValue());
+    AVCodecID newCodecID = static_cast<AVCodecID>(mVideoCodec->getValue());
     bool useNewCodecID = true;
     if (mNew->getOutputFormat()->checkCodec(newCodecID) == 0)
     {
@@ -411,7 +411,7 @@ void DialogRenderSettings::updateVideoCodec()
     }
     if (useNewCodecID)
     {
-        mNew->getOutputFormat()->setVideoCodec(model::render::VideoCodecs::find(static_cast<CodecID>(mVideoCodec->getValue())));
+        mNew->getOutputFormat()->setVideoCodec(model::render::VideoCodecs::find(static_cast<AVCodecID>(mVideoCodec->getValue())));
         changeVideoCodecInfo(old, mNew->getOutputFormat()->getVideoCodec());
         enableSetDefaultButton();
     }

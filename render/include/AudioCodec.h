@@ -30,7 +30,7 @@ public:
 
     AudioCodec();
 
-    explicit AudioCodec(CodecID id);
+    explicit AudioCodec(AVCodecID id);
 
     AudioCodec(const AudioCodec& other);
 
@@ -50,7 +50,7 @@ public:
     // PARAMETERS
     //////////////////////////////////////////////////////////////////////////
 
-    CodecID getId() const;
+    AVCodecID getId() const;
     AudioCodec& addParameter(ICodecParameter& parameter);
     ICodecParameters getParameters();
     AVStream* addStream(AVFormatContext* context) const; ///< Add a stream to the given libavformat format
@@ -62,7 +62,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    CodecID mId;
+    AVCodecID mId;
     ICodecParameters mParameters;
 
     //////////////////////////////////////////////////////////////////////////

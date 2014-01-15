@@ -68,7 +68,7 @@ Install ActivePerl via installer
 =================== FFMPEG ===================
 * Nothing required: ffmpeg is part of the source tree.
   To upgrade, from http://ffmpeg.zeranoe.com/builds/
-  Download 2-bit Builds (Shared and Dev) into <SRC>/ffmpeg
+  Download 32-bit Builds (Shared and Dev) into <SRC>/ffmpeg
 
 =================== PORTAUDIO ===================
 * Create folder <VIDIOT_DIR>\portaudio_trunk

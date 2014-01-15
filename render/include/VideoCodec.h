@@ -30,7 +30,7 @@ public:
 
     VideoCodec();
 
-    explicit VideoCodec(CodecID id);
+    explicit VideoCodec(AVCodecID id);
 
     VideoCodec(const VideoCodec& other);
 
@@ -50,7 +50,7 @@ public:
     // PARAMETERS
     //////////////////////////////////////////////////////////////////////////
 
-    CodecID getId() const;
+    AVCodecID getId() const;
     VideoCodec& addParameter(ICodecParameter& parameter);
     ICodecParameters getParameters();
     AVStream* addStream(AVFormatContext* context) const; ///< Add a stream to the given libavformat format
@@ -62,7 +62,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    CodecID mId;
+    AVCodecID mId;
     ICodecParameters mParameters;
 
     //////////////////////////////////////////////////////////////////////////

@@ -438,17 +438,6 @@ void Scrub(pixel from, pixel to)
     }
 }
 
-void Play(pixel from, int ms)
-{
-    PositionCursor(from);
-    // NOTE: Don't use waitForIdle() when the video is playing!!!
-    //       When the video is playing, the system does not become Idle (playback events).
-    Type(' ');
-    pause(ms);
-    Type(' ');
-    waitForIdle();
-}
-
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 {
     return getTimeline().getMouse().getInfo(position).logicalclipposition;

@@ -20,7 +20,7 @@
 
 namespace model { namespace render {
 
-typedef std::map<CodecID,AudioCodecPtr> AudioCodecMap;
+typedef std::map<AVCodecID,AudioCodecPtr> AudioCodecMap;
 
 class AudioCodecs
 {
@@ -34,7 +34,7 @@ public:
 
     /// \return 0 if a codec with the given id was not found
     /// This method finds the given codec in the registered list of codecs
-    static AudioCodecPtr find(CodecID id);
+    static AudioCodecPtr find(AVCodecID id);
 private:
     static AudioCodecMap sAudioCodecs;
 };

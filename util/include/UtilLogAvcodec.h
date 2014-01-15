@@ -24,7 +24,7 @@ struct AVFormatContext;
 struct AVStream;
 struct AVPacket;
 struct AVOutputFormat;
-enum CodecID;
+enum AVCodecID;
 
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
@@ -37,7 +37,7 @@ std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj);
 std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj);
 std::ostream& operator<< (std::ostream& os, const AVStream* obj);
 std::ostream& operator<< (std::ostream& os, const AVPacket* obj);
-std::ostream& operator<< (std::ostream& os, const CodecID& obj);
+std::ostream& operator<< (std::ostream& os, const AVCodecID& obj);
 std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj);
 std::ostream& operator<< (std::ostream& os, const AVSampleFormat& obj);
 

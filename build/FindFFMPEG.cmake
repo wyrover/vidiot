@@ -1,20 +1,20 @@
 # - Try to find FFMPEG
 # Once done this will define
 #
-#  FFMPEG_FOUND          - system has FFMPEG
-#  FFMPEG_INCLUDE_DIR    - the include directories
-#  FFMPEG_LIBRARY_DIR    - the directory containing the libraries
-#  FFMPEG_BINARY_DIR     - the directory containing the dlls
-#  FFMPEG_LIBRARIES      - link these to use FFMPEG
-#  FFMPEG_SWSCALE_FOUND  - FFMPEG also has SWSCALE
-#
+#  FFMPEG_FOUND            - system has FFMPEG
+#  FFMPEG_INCLUDE_DIR      - the include directories
+#  FFMPEG_LIBRARY_DIR      - the directory containing the libraries
+#  FFMPEG_BINARY_DIR       - the directory containing the dlls
+#  FFMPEG_LIBRARIES        - link these to use FFMPEG
+#  FFMPEG_SWSCALE_FOUND    - FFMPEG also has SWSCALE
+#  FFMPEG_SWRESAMPLE_FOUND - FFMPEG also has SWRESAMPLE
 
-    SET( FFMPEG_HEADERS avformat.h avcodec.h avutil.h avdevice.h )
-    SET( FFMPEG_PATH_SUFFIXES libavformat libavcodec libavutil libavdevice )
+    SET( FFMPEG_HEADERS avformat.h avcodec.h avutil.h avdevice.h swscale.h swresample.h)
+    SET( FFMPEG_PATH_SUFFIXES libavformat libavcodec libavutil libavdevice libswscale libswresample)
     SET( FFMPEG_SWS_HEADERS swscale.h )
     SET( FFMPEG_SWS_PATH_SUFFIXES libswscale )
     if( WIN32 )
-       SET( FFMPEG_LIBRARIES avformat.lib avcodec.lib avutil.lib avdevice.lib )
+       SET( FFMPEG_LIBRARIES avformat.lib avcodec.lib avutil.lib avdevice.lib swresample.lib swscale.lib)
        SET( FFMPEG_SWS_LIBRARIES swscale.lib )
        SET( FFMPEG_LIBRARY_DIR $ENV{FFMPEGDIR}\\lib )
        SET( FFMPEG_BINARY_DIR $ENV{FFMPEGDIR}\\bin )
@@ -28,7 +28,7 @@
           SET( SWSCALE_FOUND TRUE )
        ENDIF( TMP_ )
     else( WIN32 )
-       SET( FFMPEG_LIBRARIES avformat avcodec avutil avdevice )
+       SET( FFMPEG_LIBRARIES avformat avcodec avutil avdevice swscale swresample)
        SET( FFMPEG_SWS_LIBRARIES swscale )
        INCLUDE(FindPkgConfig)
        if ( PKG_CONFIG_FOUND )
@@ -37,6 +37,7 @@
           pkg_check_modules( AVUTIL libavutil )
           pkg_check_modules( AVDEVICE libavdevice )
           pkg_check_modules( SWSCALE libswscale )
+          pkg_check_modules( SWRESAMPLE libswresample )
        endif ( PKG_CONFIG_FOUND )
 
        SET( FFMPEG_LIBRARY_DIR   ${AVFORMAT_LIBRARY_DIRS}

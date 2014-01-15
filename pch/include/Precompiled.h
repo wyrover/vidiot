@@ -33,6 +33,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavutil/opt.h>
 #include <libavutil/pixfmt.h>
+#include <libswresample/swresample.h>
 #include <libswscale/swscale.h>
 #pragma warning(default:4244)
 };

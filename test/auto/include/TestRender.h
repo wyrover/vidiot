@@ -38,7 +38,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testChangeRenderSettings();
-    void testRendering();
+    void testRenderingPlayback();
     void testRenderingSplit();
     void testRenderingCodecs();
 

@@ -39,7 +39,7 @@ AudioCodec::AudioCodec()
 {
 }
 
-AudioCodec::AudioCodec(CodecID id)
+AudioCodec::AudioCodec(AVCodecID id)
     :   mId(id)
     ,   mParameters()
 {
@@ -77,7 +77,7 @@ bool AudioCodec::operator== (const AudioCodec& other) const
 // PARAMETERS
 //////////////////////////////////////////////////////////////////////////
 
-CodecID AudioCodec::getId() const
+AVCodecID AudioCodec::getId() const
 {
     return mId;
 }
@@ -105,14 +105,28 @@ AVStream* AudioCodec::addStream(AVFormatContext* context) const
 
     AVCodecContext* audio_codec = stream->codec;
     ASSERT_EQUALS(audio_codec->codec_type,AVMEDIA_TYPE_AUDIO);
+
+    int result = avcodec_get_context_defaults3(audio_codec, encoder);
+    ASSERT_MORE_THAN_EQUALS_ZERO(result);
+
     audio_codec->codec_id = mId;
-    audio_codec->sample_fmt = AV_SAMPLE_FMT_S16;
     for ( ICodecParameterPtr parameter : mParameters )
     {
         parameter->set(audio_codec);
     }
     audio_codec->sample_rate = Properties::get().getAudioFrameRate();
+    AVCodec* codec = avcodec_find_encoder(audio_codec->codec_id);
+    if (codec->sample_fmts != 0)
+    {
+        audio_codec->sample_fmt = *(codec->sample_fmts); // Take first allowed sample format
+    }
+    else
+    {
+        audio_codec->sample_fmt = AV_SAMPLE_FMT_NONE; // Will result in error and abort in AudioCodec::open
+    }
+
     audio_codec->channels = Properties::get().getAudioNumberOfChannels();
+    audio_codec->channel_layout = av_get_default_channel_layout(audio_codec->channels);
 
     if (context->oformat->flags & AVFMT_GLOBALHEADER)
     {
@@ -127,14 +141,29 @@ bool AudioCodec::open(AVCodecContext* context) const
 {
     AVCodec* codec = avcodec_find_encoder(context->codec_id);
     ASSERT(codec);
-    boost::mutex::scoped_lock lock(Avcodec::sMutex);
-    int result = avcodec_open2(context, codec, 0);
+    auto showError = [context,codec](wxString msg) -> bool
+    {
+        gui::Dialog::get().getConfirmation( _("Error in audio codec"),
+            _("There was an error when opening the audio codec.\n") +
+            _("Rendering will be aborted.\n") +
+            msg + "\n");
+        VAR_ERROR(codec)(context);
+        return false;
+    };
+    if (context->sample_fmt == AV_SAMPLE_FMT_NONE)
+    {
+        return showError(_("Could not deduce required sample format for audio.\n"));
+    }
+    int result = 0; // To avoid showing error dialog while 'having' the lock
+    {
+        boost::mutex::scoped_lock lock(Avcodec::sMutex);
+        result = avcodec_open2(context, codec, 0);
+    }
     if (result < 0)
     {
-        // Now do the checks that ffmpeg does when opening the codec to give proper feedback
-        gui::Dialog::get().getConfirmation( _("Error in audio codec"), _("There was an error when opening the audio codec.\nRendering will be aborted.\nDetailed information:\n") + Avcodec::getMostRecentLogLine());
+        return showError(_("Detailed information:\n") + Avcodec::getMostRecentLogLine());
     }
-    return result >= 0;
+    return true;
 }
 
 //////////////////////////////////////////////////////////////////////////

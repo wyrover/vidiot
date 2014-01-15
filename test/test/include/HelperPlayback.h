@@ -24,7 +24,7 @@ class PlaybackActiveEvent;
 
 namespace test {
 
-class WaitForPlayback 
+class WaitForPlayback
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
 {
 public:
@@ -75,6 +75,11 @@ struct WaitForPlaybackStopped : public WaitForPlayback
     {
     }
 };
+
+/// 1. Play from the given position (space)
+/// 2. Wait until ms has expired, press space.
+/// 3. wait until playback has stopped.
+void Play(pixel from, int ms);
 
 } // namespace
 

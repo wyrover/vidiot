@@ -21,7 +21,7 @@
 #include "File.h"
 #include "IAudio.h"
 
-struct ReSampleContext;
+struct SwrContext;
 
 namespace model {
 
@@ -72,14 +72,14 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mDecodingAudio;
-    ReSampleContext* mResampleContext;
+    bool mNeedsResampling;
+    SwrContext* mSoftwareResampleContext;
+    int mNrPlanes;
 
     // Do not use the method below for allocating the buffer. That will cause
     // SEGV when compiled with GCC (MingW).
     //int16_t audioDecodeBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    //int16_t audioResampleBuffer[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    sample* audioDecodeBuffer;
-    sample* audioResampleBuffer;
+    uint8_t** audioDecodeBuffer;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

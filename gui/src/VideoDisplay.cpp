@@ -65,7 +65,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,	mHeight(100)
 ,   mPlaying(false)
 ,	mSequence(sequence)
-,   mVideoFrames(200) // todo buffer until full, then start playback?
+,   mVideoFrames(200)
 ,   mAudioChunks(1000)
 ,   mAbortThreads(false)
 ,   mAudioBufferThreadPtr(0)
@@ -111,62 +111,64 @@ VideoDisplay::~VideoDisplay()
 
 void VideoDisplay::play()
 {
-    ASSERT(!mPlaying);
-    ASSERT(wxThread::IsMain());
-    ASSERT(!mVideoBufferThreadPtr);
-    ASSERT(!mAudioBufferThreadPtr);
-    ASSERT(!mVideoDisplayThreadPtr);
-    VAR_DEBUG(this);
-
-    // Ensure that the to-be-started threads do not immediately stop
-    mAbortThreads = false;
-
-    // SoundTouch must be initialized before starting the audio buffer thread
-    mSoundTouch.setSampleRate(mAudioSampleRate);
-    mSoundTouch.setChannels(mNumberOfAudioChannels);
-    mSoundTouch.setTempo(1.0);
-    mSoundTouch.setTempoChange(mSpeed - sDefaultSpeed);
-    mSoundTouch.setRate(1.0);
-    mSoundTouch.setRateChange(0);
-    mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 0);//1
-    mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);    // Optimize for speech
-    mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);  // Optimize for speech
-    mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);      // Optimize for speech
-
-    // Start buffering ASAP
-    try
+    if (!mPlaying)
     {
-        mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::audioBufferThread,this)));
-        mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoBufferThread,this)));
+        ASSERT(wxThread::IsMain());
+        ASSERT(!mVideoBufferThreadPtr);
+        ASSERT(!mAudioBufferThreadPtr);
+        ASSERT(!mVideoDisplayThreadPtr);
+        VAR_DEBUG(this);
+
+        // Ensure that the to-be-started threads do not immediately stop
+        mAbortThreads = false;
+
+        // SoundTouch must be initialized before starting the audio buffer thread
+        mSoundTouch.setSampleRate(mAudioSampleRate);
+        mSoundTouch.setChannels(mNumberOfAudioChannels);
+        mSoundTouch.setTempo(1.0);
+        mSoundTouch.setTempoChange(mSpeed - sDefaultSpeed);
+        mSoundTouch.setRate(1.0);
+        mSoundTouch.setRateChange(0);
+        mSoundTouch.setSetting(SETTING_USE_AA_FILTER, 0);//1
+        mSoundTouch.setSetting(SETTING_SEQUENCE_MS, 40);    // Optimize for speech
+        mSoundTouch.setSetting(SETTING_SEEKWINDOW_MS, 15);  // Optimize for speech
+        mSoundTouch.setSetting(SETTING_OVERLAP_MS, 8);      // Optimize for speech
+
+        // Start buffering ASAP
+        try
+        {
+            mAudioBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::audioBufferThread,this)));
+            mVideoBufferThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoBufferThread,this)));
+        }
+        catch (boost::exception &e)
+        {
+            FATAL(boost::diagnostic_information(e));
+        }
+
+        mStartTime = 0;     // This blocks displaying of video until signaled by the audio thread
+        mCurrentTime = 0;   // Updates the displayed time
+        try
+        {
+            mVideoDisplayThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoDisplayThread,this)));
+        }
+        catch (boost::exception &e)
+        {
+            FATAL(boost::diagnostic_information(e));
+        }
+
+        mCurrentAudioChunk.reset();
+
+        PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get().getAudioFrameRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
+        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+
+        err = Pa_StartStream( mAudioOutputStream );
+        ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+
+        mPlaying = true;
+        GetEventHandler()->QueueEvent(new PlaybackActiveEvent(true));
+
+        LOG_DEBUG;
     }
-    catch (boost::exception &e)
-    {
-        FATAL(boost::diagnostic_information(e));
-    }
-
-    mStartTime = 0;     // This blocks displaying of video until signaled by the audio thread
-    mCurrentTime = 0;   // Updates the displayed time
-    try
-    {
-        mVideoDisplayThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoDisplayThread,this)));
-    }
-    catch (boost::exception &e)
-    {
-        FATAL(boost::diagnostic_information(e));
-    }
-
-    mCurrentAudioChunk.reset();
-
-    PaError err = Pa_OpenDefaultStream( &mAudioOutputStream, 0, mNumberOfAudioChannels, paInt16, model::Properties::get().getAudioFrameRate(), paFramesPerBufferUnspecified, portaudio_callback, this );
-    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
-
-    err = Pa_StartStream( mAudioOutputStream );
-    ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
-
-    mPlaying = true;
-    GetEventHandler()->QueueEvent(new PlaybackActiveEvent(true));
-
-    LOG_DEBUG;
 }
 
 void VideoDisplay::stop()
@@ -306,7 +308,7 @@ void VideoDisplay::audioBufferThread()
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
                 VAR_DEBUG(audioChunk); // todo remove when crash not found
                 ASSERT_EQUALS(nFrames,nFramesAvailable);
-                mAudioChunks.push(audioChunk);
+                mAudioChunks.push(audioChunk); // todo bypass soundtouch if not required
             }
         }
         else
@@ -378,7 +380,7 @@ void VideoDisplay::videoBufferThread()
     LOG_INFO;
     while (!mAbortThreads)
     {
-        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight))); // todo add skipping mechanism if too slow
         videoFrame->getBitmap(); // put in cache
         mVideoFrames.push(videoFrame);
     }

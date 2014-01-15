@@ -20,7 +20,7 @@
 
 namespace model { namespace render {
 
-typedef std::map<CodecID,VideoCodecPtr> VideoCodecMap;
+typedef std::map<AVCodecID,VideoCodecPtr> VideoCodecMap;
 
 class VideoCodecs
 {
@@ -31,11 +31,11 @@ public:
     static boost::bimap<int,wxString> mapToName;
 
     static VideoCodecPtr getDefault();
-    static std::list<CodecID> all();
+    static std::list<AVCodecID> all();
 
     /// \return 0 if a codec with the given id was not found
     /// This method finds the given codec in the registered list of codecs
-    static VideoCodecPtr find(CodecID id);
+    static VideoCodecPtr find(AVCodecID id);
 private:
     static VideoCodecMap sVideoCodecs;
 };

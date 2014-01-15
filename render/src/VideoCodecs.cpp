@@ -93,9 +93,9 @@ VideoCodecPtr VideoCodecs::getDefault()
 }
 
 // static
-std::list<CodecID> VideoCodecs::all()
+std::list<AVCodecID> VideoCodecs::all()
 {
-    std::list<CodecID> result;
+    std::list<AVCodecID> result;
     for ( VideoCodecMap::value_type entry : sVideoCodecs )
     {
         result.push_back(entry.first);
@@ -104,7 +104,7 @@ std::list<CodecID> VideoCodecs::all()
 }
 
 // static
-VideoCodecPtr VideoCodecs::find(CodecID id)
+VideoCodecPtr VideoCodecs::find(AVCodecID id)
 {
     VideoCodecMap::const_iterator it = sVideoCodecs.find(id);
     if (it == sVideoCodecs.end())

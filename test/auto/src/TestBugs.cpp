@@ -25,6 +25,7 @@
 #include "DetailsClip.h"
 #include "EmptyClip.h"
 #include "HelperDetails.h"
+#include "HelperPlayback.h"
 #include "HelperPopupMenu.h"
 #include "HelperProject.h"
 #include "HelperSequence.h"
