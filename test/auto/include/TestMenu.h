@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_PLAYBACK_H
-#define TEST_PLAYBACK_H
+#ifndef TEST_MENU_H
+#define TEST_MENU_H
 
 namespace test
 {
-class TestPlayback : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
-    ,   public SuiteCreator<TestPlayback>
+class TestMenu : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error
+    ,   public SuiteCreator<TestMenu>
 {
 public:
 
@@ -36,17 +36,8 @@ public:
     // TEST CASES
     //////////////////////////////////////////////////////////////////////////
 
-    /// Move the cursor slightly before the end of the timeline.
-    /// Then playback and check that playback stops automatically at the end
-    /// of the timeline.
-    void testPlaybackUntilEndOfSequence();
-
-    /// During playback of a complex sequence frames need to be skipped
-    /// sometimes (if decoding can't keep up with the required frame rate).
-    /// Without skipping, nothing was shown during playback (video stopped,
-    /// audio continued) and crashes could occur when stopping/starting
-    /// playback.
-    void testPlaybackComplexSequence();
+    /// Test showing and hiding of panes via the view menu.
+    void testTogglingPanes();
 
 private:
 
@@ -59,4 +50,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_PLAYBACK_H
+#endif // TEST_MENU_H

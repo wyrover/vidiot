@@ -53,35 +53,42 @@ VideoTransitionOpacity::~VideoTransitionOpacity()
 VideoFramePtr VideoTransitionOpacity::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters)
 {
     VAR_DEBUG(position)(parameters);
-    VideoFramePtr result = boost::make_shared<VideoFrame>(parameters);
+    VideoFramePtr result = parameters.getSkip() ? boost::make_shared<VideoSkipFrame>(parameters) : boost::make_shared<VideoFrame>(parameters);
 
     auto applyStep = [this, result, parameters, position](IClipPtr clip, bool left)
     {
         if (clip)
         {
             VideoFramePtr frame = boost::static_pointer_cast<VideoClip>(clip)->getNextVideo(parameters);
-            if (frame)
+            if (parameters.getSkip())
             {
-                for (auto layer : frame->getLayers() )
+                // Just a getNextVideo is all that's required
+            }
+            else
+            {
+                if (frame)
                 {
-                    if (layer)
+                    for (auto layer : frame->getLayers() )
                     {
-                        wxImagePtr image = layer->getImage();
-                        float factor = (float)position / (float)getLength();
-                        if (image)
+                        if (layer)
                         {
-                            boost::function<float (int,int)> f =
-                                left ? getLeftMethod(image, factor) : getRightMethod(image, factor);
-                            if (image->HasAlpha())
+                            wxImagePtr image = layer->getImage();
+                            float factor = (float)position / (float)getLength();
+                            if (image)
                             {
-                                handleImageWithAlpha(image, f);
+                                boost::function<float (int,int)> f =
+                                    left ? getLeftMethod(image, factor) : getRightMethod(image, factor);
+                                if (image->HasAlpha())
+                                {
+                                    handleImageWithAlpha(image, f);
+                                }
+                                else
+                                {
+                                    image->InitAlpha();
+                                    handleFullyOpaqueImage(image, f);
+                                }
+                                result->addLayer(layer);
                             }
-                            else
-                            {
-                                image->InitAlpha();
-                                handleFullyOpaqueImage(image, f);
-                            }
-                            result->addLayer(layer);
                         }
                     }
                 }

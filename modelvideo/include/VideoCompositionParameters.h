@@ -52,6 +52,9 @@ public:
     VideoCompositionParameters& setOptimizeForQuality();
     bool getOptimizeForQuality() const;
 
+    VideoCompositionParameters& setSkip(bool skip);
+    bool getSkip() const;
+
     wxRect getRequiredRectangle() const;
 
 private:
@@ -63,6 +66,7 @@ private:
     wxSize mBoundingBox;
     bool mDrawBoundingBox;
     bool mOptimizeForQuality;
+    bool mSkip;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

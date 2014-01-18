@@ -21,6 +21,7 @@
 #include <SoundTouch.h>
 #include "VideoFrame.h"
 #include "AudioChunk.h"
+#include <atomic>
 
 namespace gui {
 
@@ -93,16 +94,7 @@ private:
     /// Holds the pts at which the playback was started (thus, the 0-point timewise)
     int mStartPts;
 
-    /// Current time is updated on each new video frame. This time is in milliseconds.
-    int mCurrentTime;
-
-    /// This mutex guards setting mStartTime in the audio playing thread
-    /// and reading it in the video display thread.
-    boost::mutex mMutexPlaybackStarted;
-
-    /// This condition signals the start of the playback. The playback is
-    /// started when the first audio buffer is requested and the start time is set.
-    boost::condition_variable conditionPlaybackStarted;
+    std::atomic<int> mSkipFrames;
 
     //////////////////////////////////////////////////////////////////////////
     // AUDIO
@@ -137,19 +129,18 @@ private:
     boost::scoped_ptr<boost::thread> mVideoBufferThreadPtr;
     void videoBufferThread();
 
-    boost::scoped_ptr<boost::thread> mVideoDisplayThreadPtr;
-    void videoDisplayThread();
+    void showNextFrame();
 
-    /// safeguards access to the currently shown bitmap (mCurrentBitmap).
-    boost::mutex mMutexDraw;
+    wxTimer mVideoTimer;
 
     //////////////////////////////////////////////////////////////////////////
     // GUI METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void OnSize(wxSizeEvent& event);
-    void OnPaint(wxPaintEvent& event);
-    void OnEraseBackground(wxEraseEvent& event);
+    void onSize(wxSizeEvent& event);
+    void onPaint(wxPaintEvent& event);
+    void onEraseBackground(wxEraseEvent& event);
+    void onTimer(wxTimerEvent& event);
 
 };
 
