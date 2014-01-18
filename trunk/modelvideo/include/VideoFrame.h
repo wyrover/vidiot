@@ -120,6 +120,28 @@ private:
     friend std::ostream& operator<< (std::ostream& os, const VideoFrame& obj);
 };
 
+class VideoSkipFrame : public VideoFrame // todo own file
+{
+public:
+    explicit VideoSkipFrame(const VideoCompositionParameters& parameters)
+        :   VideoFrame(parameters)
+    {
+    }
+
+    VideoSkipFrame(const VideoSkipFrame& other) // todo how to log this object (is now logged as plain video frame) or make it a member of videoframe?
+        :   VideoFrame(other)
+    {
+    }
+
+    virtual VideoSkipFrame* clone() const
+    {
+        return new VideoSkipFrame(static_cast<const VideoSkipFrame&>(*this));
+    }
+
+    virtual void onCloned() {};
+
+};
+
 } // namespace
 
 #endif // VIDEO_FRAME_H

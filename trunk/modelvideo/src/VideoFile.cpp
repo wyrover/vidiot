@@ -37,34 +37,34 @@ static int const sMaxBufferSize = 10;
 //////////////////////////////////////////////////////////////////////////
 
 VideoFile::VideoFile()
-:	File()
-,   mDecodingVideo(false)
-,   mPosition(0)
-,   mDeliveredFrame()
-,   mDeliveredFrameInputPts(0)
-,   mDeliveredFrameParameters()
+    :	File()
+    ,   mDecodingVideo(false)
+    ,   mPosition(0)
+    ,   mDeliveredFrame()
+    ,   mDeliveredFrameInputPts(0)
+    ,   mDeliveredFrameParameters()
 {
     VAR_DEBUG(*this);
 }
 
 VideoFile::VideoFile(wxFileName path)
-:	File(path,sMaxBufferSize)
-,   mDecodingVideo(false)
-,   mPosition(0)
-,   mDeliveredFrame()
-,   mDeliveredFrameInputPts(0)
-,   mDeliveredFrameParameters()
+    :	File(path,sMaxBufferSize)
+    ,   mDecodingVideo(false)
+    ,   mPosition(0)
+    ,   mDeliveredFrame()
+    ,   mDeliveredFrameInputPts(0)
+    ,   mDeliveredFrameParameters()
 {
     VAR_DEBUG(*this);
 }
 
 VideoFile::VideoFile(const VideoFile& other)
-:   File(other)
-,   mDecodingVideo(false)
-,   mPosition(0)
-,   mDeliveredFrame()
-,   mDeliveredFrameInputPts(0)
-,   mDeliveredFrameParameters()
+    :   File(other)
+    ,   mDecodingVideo(false)
+    ,   mPosition(0)
+    ,   mDeliveredFrame()
+    ,   mDeliveredFrameInputPts(0)
+    ,   mDeliveredFrameParameters()
 {
     VAR_DEBUG(*this);
 }
@@ -189,150 +189,160 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
     //ASSERT(!mDeliveredFrameParameters || *mDeliveredFrameParameters == parameters)(*mDeliveredFrameParameters)(parameters)(codec); // Ensure that mDeliveredFrame had the same set of VideoCompositionParameters
     // Parameters can be changed during playback by - for instance - changing 'showBoundingBox'
 
-    if (!mDeliveredFrame || requiredInputPts > mDeliveredFrameInputPts)
+    if (parameters.getSkip())
     {
-        // Decode new frame
-        bool firstPacket = true;
-        int frameFinished = 0;
-        AVFrame* pDecodedFrame = av_frame_alloc();
-        ASSERT_NONZERO(pDecodedFrame)(codec);
-
-        while (!frameFinished )
-        {
-            AVPacket* nextToBeDecodedPacket = 0;
-            PacketPtr packet = getNextPacket();
-            if (packet)
-            {
-                nextToBeDecodedPacket = packet->getPacket();
-
-                // From http://dranger.com/ffmpeg/tutorial05.html:
-                // When we get a packet from av_read_frame(), it will contain the PTS and DTS values for the information inside that packet.
-                // But what we really want is the PTS of our newly decoded raw frame, so we know when to display it. However, the frame we
-                // get from avcodec_decode_video() gives us an AVFrame, which doesn't contain a useful PTS value.
-                // (Warning: AVFrame does contain a pts variable, but this will not always contain what we want when we get a frame.)
-                // However, ffmpeg reorders the packets so that the DTS of the packet being processed by avcodec_decode_video() will always
-                // be the same as the PTS of the frame it returns. But, another warning: we won't always get this information, either.
-                //
-                // Not to worry, because there's another way to find out the PTS of a frame, and we can have our program reorder the packets
-                // by itself. We save the PTS of the first packet of a frame: this will be the PTS of the finished frame. So when the stream
-                // doesn't give us a DTS, we just use this saved PTS.
-                // Of course, even then, we might not get a proper pts. We'll deal with that later.
-                if (firstPacket)
-                {
-                    // Store this to at least have one value. If the ->dts value indicates a proper position that will be used instead.
-                    mDeliveredFrameInputPts = nextToBeDecodedPacket->pts; // Note: ->pts is expressed in time_base - of the stream - units
-                    firstPacket = false;
-                    VAR_DEBUG(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
-                }
-            }
-            else // No packet. End of file.
-            {
-                // Feed with 0 frames to extract cached frames
-                // Note that it is allowed to call avcodec_decode_video2
-                // with this 0 frame, even if the decoder does not have
-                // caching.
-                //
-                // Paricularly, for decoding a png image adding one extra
-                // 0 frame was required, after migrating to the 2014-jan-05
-                // version of avcodec.
-                nextToBeDecodedPacket = &nullPacket;
-            }
-            ASSERT_NONZERO(nextToBeDecodedPacket);
-
-            int len1 = avcodec_decode_video2(getCodec(), pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
-            ASSERT_MORE_THAN_EQUALS_ZERO(len1)(codec);
-
-            if (frameFinished)
-            {
-                mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pDecodedFrame);
-                if (mDeliveredFrameInputPts == AV_NOPTS_VALUE)
-                {
-                    AVStream* stream = getStream();
-                    ASSERT(stream)(codec);
-                    mDeliveredFrameInputPts = av_q2d(stream->time_base) * pDecodedFrame->pts;
-                }
-                ASSERT_DIFFERS(mDeliveredFrameInputPts, AV_NOPTS_VALUE)(codec);
-                mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
-                VAR_DEBUG(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
-
-                // If !mDeliveredFrame: first getNextVideo after object creation, or directly after a move.
-                if (frameFinished && mDeliveredFrameInputPts < requiredInputPts)
-                {
-                    VAR_DEBUG(requiredInputPts)(mDeliveredFrameInputPts);
-                    // A whole frame was decoded, but it does not have the correct pts value. Get another.
-                    frameFinished = 0;
-                }
-            }
-            else
-            {
-                // len1  < 0 - error
-                // len1 == 0 - end of file
-                // len1  > 0 - valid data was decoded. Not the end yet.
-                if (len1 <= 0)
-                {
-                    // End of file reached. Signal this with null ptr.
-                    av_frame_free(&pDecodedFrame);
-                    mDeliveredFrame.reset();
-                    mDeliveredFrameInputPts = 0;
-                    static const std::string status("End of file");
-                    VAR_DEBUG(status);
-                    VAR_VIDEO(this)(status)(mPosition)(requiredInputPts);
-                    return mDeliveredFrame;
-                }
-            }
-        }
-        ASSERT_MORE_THAN_EQUALS_ZERO(pDecodedFrame->repeat_pict)(codec);
-        if (pDecodedFrame->repeat_pict > 0)
-        {
-            NIY(_("Input video frame repeating is not supported yet"));
-        }
-
-        static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
-        wxSize size(parameters.getBoundingBox());
-        size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
-        size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
-
-        // Create temp data holder for the frame conversion
-        AVFrame* pScaledFrame = av_frame_alloc();
-        int bufferSize = avpicture_get_size(PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
-        boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
-        // Assign appropriate parts of buffer to image planes in pScaledFrame
-        avpicture_fill(reinterpret_cast<AVPicture*>(pScaledFrame), buffer, PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
-
-        // Resample the frame (includes format conversion)
-        SwsContext* ctx = sws_getContext(
-            getCodec()->width,
-            getCodec()->height,
-            getCodec()->pix_fmt,
-            size.GetWidth(),
-            size.GetHeight(),
-            PIX_FMT_RGB24,
-            SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
-        sws_scale(ctx,pDecodedFrame->data,pDecodedFrame->linesize,0,getCodec()->height,pScaledFrame->data,pScaledFrame->linesize);
-        sws_freeContext(ctx);
-
-        mDeliveredFrame =
-            boost::make_shared<VideoFrame>(parameters,
-            boost::make_shared<VideoFrameLayer>(
-            boost::make_shared<wxImage>(wxImage(size, pScaledFrame->data[0], true).Copy())));
-
-         av_freep(&buffer);
-         av_frame_free(&pDecodedFrame);
-         av_frame_free(&pScaledFrame);
+        // No decoding, just advancement of position in file
+        PacketPtr packet = getNextPacket();
+        mDeliveredFrame.reset();
     }
     else
     {
-        LOG_DEBUG << "Same frame again";
+        if (!mDeliveredFrame || requiredInputPts > mDeliveredFrameInputPts)
+        {
+            // Decode new frame
+            bool firstPacket = true;
+            int frameFinished = 0;
+            AVFrame* pDecodedFrame = av_frame_alloc();
+            ASSERT_NONZERO(pDecodedFrame)(codec);
 
-        // VideoFrame must be cloned, frame repeating is not supported. If a frame is to be output multiple
-        // times, avoid pts calculation problems by making multiple unique frames.
-        //
-        // Furthermore, note that mDeliveredFrame may have already been queued somewhere (VideoDisplay, for example).
-        // Changing mDeliveredFrame and returning that once more might thus change that previous frame also!
-        mDeliveredFrame = make_cloned<VideoFrame>(mDeliveredFrame);
+            while (!frameFinished )
+            {
+                AVPacket* nextToBeDecodedPacket = 0;
+                PacketPtr packet = getNextPacket();
+                if (packet)
+                {
+                    nextToBeDecodedPacket = packet->getPacket();
+
+                    // From http://dranger.com/ffmpeg/tutorial05.html:
+                    // When we get a packet from av_read_frame(), it will contain the PTS and DTS values for the information inside that packet.
+                    // But what we really want is the PTS of our newly decoded raw frame, so we know when to display it. However, the frame we
+                    // get from avcodec_decode_video() gives us an AVFrame, which doesn't contain a useful PTS value.
+                    // (Warning: AVFrame does contain a pts variable, but this will not always contain what we want when we get a frame.)
+                    // However, ffmpeg reorders the packets so that the DTS of the packet being processed by avcodec_decode_video() will always
+                    // be the same as the PTS of the frame it returns. But, another warning: we won't always get this information, either.
+                    //
+                    // Not to worry, because there's another way to find out the PTS of a frame, and we can have our program reorder the packets
+                    // by itself. We save the PTS of the first packet of a frame: this will be the PTS of the finished frame. So when the stream
+                    // doesn't give us a DTS, we just use this saved PTS.
+                    // Of course, even then, we might not get a proper pts. We'll deal with that later.
+                    if (firstPacket)
+                    {
+                        // Store this to at least have one value. If the ->dts value indicates a proper position that will be used instead.
+                        mDeliveredFrameInputPts = nextToBeDecodedPacket->pts; // Note: ->pts is expressed in time_base - of the stream - units
+                        firstPacket = false;
+                        VAR_DEBUG(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);
+                    }
+                }
+                else // No packet. End of file.
+                {
+                    // Feed with 0 frames to extract cached frames
+                    // Note that it is allowed to call avcodec_decode_video2
+                    // with this 0 frame, even if the decoder does not have
+                    // caching.
+                    //
+                    // Paricularly, for decoding a png image adding one extra
+                    // 0 frame was required, after migrating to the 2014-jan-05
+                    // version of avcodec.
+                    nextToBeDecodedPacket = &nullPacket;
+                }
+                ASSERT_NONZERO(nextToBeDecodedPacket);
+
+                int len1 = avcodec_decode_video2(getCodec(), pDecodedFrame, &frameFinished, nextToBeDecodedPacket);
+                ASSERT_MORE_THAN_EQUALS_ZERO(len1)(codec);
+
+                if (frameFinished)
+                {
+                    mDeliveredFrameInputPts = av_frame_get_best_effort_timestamp(pDecodedFrame);
+                    if (mDeliveredFrameInputPts == AV_NOPTS_VALUE)
+                    {
+                        AVStream* stream = getStream();
+                        ASSERT(stream)(codec);
+                        mDeliveredFrameInputPts = av_q2d(stream->time_base) * pDecodedFrame->pts;
+                    }
+                    ASSERT_DIFFERS(mDeliveredFrameInputPts, AV_NOPTS_VALUE)(codec);
+                    mDeliveredFrameParameters.reset(new VideoCompositionParameters(parameters));
+                    VAR_DEBUG(mDeliveredFrameInputPts)(*mDeliveredFrameParameters);
+
+                    // If !mDeliveredFrame: first getNextVideo after object creation, or directly after a move.
+                    if (frameFinished && mDeliveredFrameInputPts < requiredInputPts)
+                    {
+                        VAR_DEBUG(requiredInputPts)(mDeliveredFrameInputPts);
+                        // A whole frame was decoded, but it does not have the correct pts value. Get another.
+                        frameFinished = 0;
+                    }
+                }
+                else
+                {
+                    // len1  < 0 - error
+                    // len1 == 0 - end of file
+                    // len1  > 0 - valid data was decoded. Not the end yet.
+                    if (len1 <= 0)
+                    {
+                        // End of file reached. Signal this with null ptr.
+                        av_frame_free(&pDecodedFrame);
+                        mDeliveredFrame.reset();
+                        mDeliveredFrameInputPts = 0;
+                        static const std::string status("End of file");
+                        VAR_DEBUG(status);
+                        VAR_VIDEO(this)(status)(mPosition)(requiredInputPts);
+                        return mDeliveredFrame;
+                    }
+                }
+            }
+            ASSERT_MORE_THAN_EQUALS_ZERO(pDecodedFrame->repeat_pict)(codec);
+            if (pDecodedFrame->repeat_pict > 0)
+            {
+                NIY(_("Input video frame repeating is not supported yet"));
+            }
+
+            static const int sMinimumFrameSize = 10;        // I had issues when generating smaller bitmaps. To avoid these, always
+            wxSize size(parameters.getBoundingBox());
+            size.x = std::max(size.x,sMinimumFrameSize);    // use a minimum framesize. The region of interest in videoclips will ensure
+            size.y = std::max(size.y,sMinimumFrameSize);    // that any excess data is cut off.
+
+            // Create temp data holder for the frame conversion
+            AVFrame* pScaledFrame = av_frame_alloc();
+            int bufferSize = avpicture_get_size(PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+            boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
+            // Assign appropriate parts of buffer to image planes in pScaledFrame
+            avpicture_fill(reinterpret_cast<AVPicture*>(pScaledFrame), buffer, PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+
+            // Resample the frame (includes format conversion)
+            SwsContext* ctx = sws_getContext(
+                getCodec()->width,
+                getCodec()->height,
+                getCodec()->pix_fmt,
+                size.GetWidth(),
+                size.GetHeight(),
+                PIX_FMT_RGB24,
+                SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
+            sws_scale(ctx,pDecodedFrame->data,pDecodedFrame->linesize,0,getCodec()->height,pScaledFrame->data,pScaledFrame->linesize);
+            sws_freeContext(ctx);
+
+            mDeliveredFrame =
+                boost::make_shared<VideoFrame>(parameters,
+                boost::make_shared<VideoFrameLayer>(
+                boost::make_shared<wxImage>(wxImage(size, pScaledFrame->data[0], true).Copy())));
+
+            av_freep(&buffer);
+            av_frame_free(&pDecodedFrame);
+            av_frame_free(&pScaledFrame);
+        }
+        else
+        {
+            LOG_DEBUG << "Same frame again";
+
+            // VideoFrame must be cloned, frame repeating is not supported. If a frame is to be output multiple
+            // times, avoid pts calculation problems by making multiple unique frames.
+            //
+            // Furthermore, note that mDeliveredFrame may have already been queued somewhere (VideoDisplay, for example).
+            // Changing mDeliveredFrame and returning that once more might thus change that previous frame also!
+            mDeliveredFrame = make_cloned<VideoFrame>(mDeliveredFrame);
+        }
+
+        ASSERT(mDeliveredFrame)(parameters)(codec);
     }
 
-    ASSERT(mDeliveredFrame)(parameters)(codec);
     mPosition++;
 
     VAR_DEBUG(this)(mPosition)(requiredInputPts)(mDeliveredFrame)(mDeliveredFrameInputPts);

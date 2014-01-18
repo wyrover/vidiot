@@ -41,6 +41,13 @@ public:
     /// of the timeline.
     void testPlaybackUntilEndOfSequence();
 
+    /// During playback of a complex sequence frames need to be skipped
+    /// sometimes (if decoding can't keep up with the required frame rate).
+    /// Without skipping, nothing was shown during playback (video stopped,
+    /// audio continued) and crashes could occur when stopping/starting
+    /// playback.
+    void testPlaybackComplexSequence();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

@@ -67,6 +67,12 @@ class Window
 public:
 
     static int sSequenceMenuIndex;
+    static const wxString sPaneNameHelp;
+    static const wxString sPaneNameProject;
+    static const wxString sPaneNameDetails;
+    static const wxString sPaneNamePreview;
+    static const wxString sPaneNameTimelines;
+    static const std::map<int, wxString> sMapMenuIdToPaneName;
 
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
@@ -114,6 +120,10 @@ public:
     void onSnapClips(wxCommandEvent& event);
     void onSnapCursor(wxCommandEvent& event);
     void onShowBoundingBox(wxCommandEvent& event);
+    void onShowProject(wxCommandEvent& event);
+    void onShowDetails(wxCommandEvent& event);
+    void onShowPreview(wxCommandEvent& event);
+    void onShowTimelines(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
     // SEQUENCE MENU - SEE THE TIMELINE IMPLEMENTATION
@@ -218,6 +228,7 @@ private:
 
     void updateWorkspaceMenu();
     void updateTitle();
+    void togglePane(wxString title);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

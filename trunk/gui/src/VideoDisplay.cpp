@@ -70,14 +70,14 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,   mAbortThreads(false)
 ,   mAudioBufferThreadPtr(0)
 ,   mVideoBufferThreadPtr(0)
-,   mVideoDisplayThreadPtr(0)
+,   mVideoTimer()
 ,   mCurrentAudioChunk()
 ,   mCurrentBitmap()
 ,   mStartTime(0)
 ,   mStartPts(0)
-,   mCurrentTime(0)
 ,   mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
 ,   mAudioSampleRate(model::Properties::get().getAudioFrameRate())
+,   mSkipFrames(0)
 {
     VAR_DEBUG(this);
 
@@ -87,9 +87,10 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
     GetClientSize(&mWidth,&mHeight);
     VAR_DEBUG(mWidth)(mHeight);
 
-    Bind(wxEVT_PAINT,               &VideoDisplay::OnPaint,              this);
-    Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::OnEraseBackground,    this);
-    Bind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
+    Bind(wxEVT_PAINT,               &VideoDisplay::onPaint,              this);
+    Bind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::onEraseBackground,    this);
+    Bind(wxEVT_SIZE,                &VideoDisplay::onSize,               this);
+    mVideoTimer.Bind(wxEVT_TIMER,   &VideoDisplay::onTimer,              this);
 
     LOG_INFO;
 }
@@ -98,9 +99,10 @@ VideoDisplay::~VideoDisplay()
 {
     VAR_DEBUG(this);
 
-    Unbind(wxEVT_PAINT,               &VideoDisplay::OnPaint,              this);
-    Unbind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::OnEraseBackground,    this);
-    Unbind(wxEVT_SIZE,                &VideoDisplay::OnSize,               this);
+    Unbind(wxEVT_PAINT,               &VideoDisplay::onPaint,              this);
+    Unbind(wxEVT_ERASE_BACKGROUND,    &VideoDisplay::onEraseBackground,    this);
+    Unbind(wxEVT_SIZE,                &VideoDisplay::onSize,               this);
+    mVideoTimer.Unbind(wxEVT_TIMER,   &VideoDisplay::onTimer,              this);
 
     stop(); // stops playback
 }
@@ -116,7 +118,6 @@ void VideoDisplay::play()
         ASSERT(wxThread::IsMain());
         ASSERT(!mVideoBufferThreadPtr);
         ASSERT(!mAudioBufferThreadPtr);
-        ASSERT(!mVideoDisplayThreadPtr);
         VAR_DEBUG(this);
 
         // Ensure that the to-be-started threads do not immediately stop
@@ -146,15 +147,6 @@ void VideoDisplay::play()
         }
 
         mStartTime = 0;     // This blocks displaying of video until signaled by the audio thread
-        mCurrentTime = 0;   // Updates the displayed time
-        try
-        {
-            mVideoDisplayThreadPtr.reset(new boost::thread(boost::bind(&VideoDisplay::videoDisplayThread,this)));
-        }
-        catch (boost::exception &e)
-        {
-            FATAL(boost::diagnostic_information(e));
-        }
 
         mCurrentAudioChunk.reset();
 
@@ -163,6 +155,11 @@ void VideoDisplay::play()
 
         err = Pa_StartStream( mAudioOutputStream );
         ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
+
+        mStartTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream));
+        mStartPts = (mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0); // Used for determining inter frame sleep time
+
+        showNextFrame();
 
         mPlaying = true;
         GetEventHandler()->QueueEvent(new PlaybackActiveEvent(true));
@@ -181,6 +178,8 @@ void VideoDisplay::stop()
     if (mPlaying)
     {
         LOG_DEBUG << "Playback stopping";
+
+        mVideoTimer.Stop();
 
         // Stop audio
         PaError err = Pa_AbortStream(mAudioOutputStream);
@@ -204,9 +203,6 @@ void VideoDisplay::stop()
         // That shouldn't block the videoDisplayThread (which blocks until audioRequested signals
         // it to proceed).
         mStartTime = -1; // When the videoDisplayThread is unblocked it shouldn't start waiting again (while loop)
-        conditionPlaybackStarted.notify_one(); // Unblock the waiting thread
-
-        mVideoDisplayThreadPtr->join();
 
         // Clear the buffers for a next run
         mVideoFrames.flush();
@@ -214,7 +210,6 @@ void VideoDisplay::stop()
 
         mVideoBufferThreadPtr.reset();
         mAudioBufferThreadPtr.reset();
-        mVideoDisplayThreadPtr.reset();
 
         mPlaying = false;
         GetEventHandler()->QueueEvent(new PlaybackActiveEvent(false));
@@ -236,20 +231,17 @@ void VideoDisplay::moveTo(pts position)
     mSequence->moveTo(position);
     GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
 
-    { // scoping for the lock: Update() below will cause a OnPaint which wants to take the lock.
-        boost::mutex::scoped_lock lock(mMutexDraw);
-        mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
-        if (mCurrentVideoFrame)
-        {
-            mCurrentBitmap = mCurrentVideoFrame->getBitmap();
-        }
-        else
-        {
-            mCurrentBitmap.reset();
-        }
-
-        Refresh(false); // Update the shown bitmap
+    mCurrentVideoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)));
+    if (mCurrentVideoFrame)
+    {
+        mCurrentBitmap = mCurrentVideoFrame->getBitmap();
     }
+    else
+    {
+        mCurrentBitmap.reset();
+    }
+
+    Refresh(false); // Update the shown bitmap
     Update(); // For immediate feedback when moving the cursor quickly over the timeline
 }
 
@@ -258,7 +250,7 @@ void VideoDisplay::setSpeed(int speed)
     ASSERT(wxThread::IsMain());
     bool wasPlaying = mPlaying;
     mSpeed = speed;
-    moveTo(mCurrentVideoFrame?mCurrentVideoFrame->getPts():0);
+    moveTo(mCurrentVideoFrame ? mCurrentVideoFrame->getPts() : 0);
     if (wasPlaying)
     {
         play();
@@ -320,16 +312,6 @@ void VideoDisplay::audioBufferThread()
 
 bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double playtime)
 {
-    if (mStartTime == 0)
-    {
-        {
-            boost::lock_guard<boost::mutex> lock(mMutexPlaybackStarted);
-            mStartTime = convertPortAudioTime(playtime);
-            mStartPts = (mCurrentVideoFrame?mCurrentVideoFrame->getPts():0); // Used for determining inter frame sleep time
-        }
-        conditionPlaybackStarted.notify_one();
-    }
-
     samplecount remainingSamples = frames * mNumberOfAudioChannels;
     uint16_t* out = static_cast<uint16_t*>(buffer);
 
@@ -380,97 +362,102 @@ void VideoDisplay::videoBufferThread()
     LOG_INFO;
     while (!mAbortThreads)
     {
-        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight))); // todo add skipping mechanism if too slow
-        videoFrame->getBitmap(); // put in cache
-        mVideoFrames.push(videoFrame);
-    }
-}
-
-void VideoDisplay::videoDisplayThread()
-{
-    util::thread::setCurrentThreadName("VideoDisplayThread");
-    LOG_INFO;
-    boost::unique_lock<boost::mutex> lock(mMutexPlaybackStarted);
-    while (mStartTime == 0)
-    {
-        conditionPlaybackStarted.wait(lock);
-    }
-    LOG_INFO;
-
-    while (!mAbortThreads)
-    {
-        model::VideoFramePtr videoFrame = mVideoFrames.pop();
-        if (!videoFrame)
+        int nSkip = mSkipFrames.load();
+        bool skip = nSkip > 0;
+        model::VideoFramePtr videoFrame = mSequence->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(mWidth,mHeight)).setSkip(skip));
+        if (!skip)
         {
-            // End of video reached
-            return;
-        }
-
-        //////////////////////////////////////////////////////////////////////////
-        // SCHEDULE NEXT REFRESH
-        //////////////////////////////////////////////////////////////////////////
-
-        int paTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream));
-        mCurrentTime = paTime - mStartTime;
-        int nextFrameTime = model::Convert::ptsToTime(videoFrame->getPts() - mStartPts);
-        int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime);
-        int sleepTime = nextFrameTimeAdaptedForPlaybackSpeed - mCurrentTime;
-
-        //////////////////////////////////////////////////////////////////////////
-        // DISPLAY NEW FRAME
-        //////////////////////////////////////////////////////////////////////////
-
-        if (sleepTime < 0)
-        {
-            // Skip the picture
-            VAR_WARNING(mVideoFrames.getSize())(paTime)(mStartTime)(mCurrentTime)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(mStartPts)(videoFrame->getPts());
-
-            // Originally the if statement read: (sleepTime < 0|| sleepTime > 1000), and the following sleep was done:
-            // boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
-            // However, sleeping with a negative value caused stuttering playback. Hence this statement was removed.
-            // Don't know why the if > 1000 was ever added though (that was probably the reason for adding the sleep).
-            continue;
+            videoFrame->getBitmap(); // put in cache
+            mVideoFrames.push(videoFrame);
         }
         else
         {
-            pts position = videoFrame->getPts();
-            wxBitmapPtr videoBitmap = videoFrame->getBitmap();
-            {
-                boost::mutex::scoped_lock lock(mMutexDraw);
-                ASSERT_DIFFERS(mCurrentVideoFrame->getPts(), position); // Otherwise, all the computations on 'playback time' can behave irratic.
-                mCurrentVideoFrame = videoFrame;
-                mCurrentBitmap = videoBitmap;
-            }
-            // Note:
-            // If there is no displayed video frame, do not change the timeline's cursor
-            // position. An example of this is the case where the cursor is positioned
-            // beyond the end of the sequence.
-            //
-            // Furthermore, when not playing, do not generate events. Otherwise, any cursor
-            // move in the timeline (home/end/prevclip/nextclip) will cause such an event.
-            // In turn, that might cause a change of the scrolling in Cursor::onPlaybackPosition
-            // which is not desired for 'user initiated moves'.
-            GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
-
-            Refresh(false);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(sleepTime));
+            mSkipFrames.store(nSkip - 1);
         }
+    }
+}
 
+void VideoDisplay::showNextFrame()
+{
+    if (mAbortThreads)
+    {
+        return;
     }
 
-    LOG_INFO << "Stopped";
+    model::VideoFramePtr videoFrame = mVideoFrames.pop();
+    if (!videoFrame)
+    {
+        // End of video reached
+        return;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // SCHEDULE NEXT REFRESH
+    //////////////////////////////////////////////////////////////////////////
+
+    int paTime = convertPortAudioTime(Pa_GetStreamTime(mAudioOutputStream));
+    int currentTime = paTime - mStartTime;
+    int nextFrameTime = model::Convert::ptsToTime(videoFrame->getPts() - mStartPts);
+    int nextFrameTimeAdaptedForPlaybackSpeed = (static_cast<float>(sDefaultSpeed) / static_cast<float>(mSpeed)) * static_cast<float>(nextFrameTime);
+    int sleepTime = nextFrameTimeAdaptedForPlaybackSpeed - currentTime;
+
+    //////////////////////////////////////////////////////////////////////////
+    // DISPLAY NEW FRAME
+    //////////////////////////////////////////////////////////////////////////
+
+    if (sleepTime < 0)
+    {
+        // Too late, skip the picture
+        VAR_WARNING(mVideoFrames.getSize())(paTime)(mStartTime)(currentTime)(sleepTime)(nextFrameTime)(nextFrameTimeAdaptedForPlaybackSpeed)(mStartPts)(videoFrame->getPts());
+
+        int skip = mSkipFrames.load();
+        if (skip == 0)
+        {
+            mSkipFrames.store(5);
+        }
+        else
+        {
+            mSkipFrames.store(skip * 2);
+        }
+
+        sleepTime = model::Convert::ptsToTime(1);
+    }
+    else
+    {
+        mSkipFrames.store(0);
+
+        pts position = videoFrame->getPts();
+        wxBitmapPtr videoBitmap = videoFrame->getBitmap();
+        ASSERT_DIFFERS(mCurrentVideoFrame->getPts(), position); // Otherwise, all the computations on 'playback time' can behave irratic.
+        mCurrentVideoFrame = videoFrame;
+        mCurrentBitmap = videoBitmap;
+
+        // Note:
+        // If there is no displayed video frame, do not change the timeline's cursor
+        // position. An example of this is the case where the cursor is positioned
+        // beyond the end of the sequence.
+        //
+        // Furthermore, when not playing, do not generate events. Otherwise, any cursor
+        // move in the timeline (home/end/prevclip/nextclip) will cause such an event.
+        // In turn, that might cause a change of the scrolling in Cursor::onPlaybackPosition
+        // which is not desired for 'user initiated moves'.
+        GetEventHandler()->QueueEvent(new PlaybackPositionEvent(position));
+
+        Refresh(false);
+    }
+    mVideoTimer.StartOnce(sleepTime);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // GUI METHODS
 //////////////////////////////////////////////////////////////////////////
 
-inline void VideoDisplay::OnEraseBackground(wxEraseEvent& event)
+inline void VideoDisplay::onEraseBackground(wxEraseEvent& event)
 {
     // do nothing
 }
 
-void VideoDisplay::OnSize(wxSizeEvent& event)
+void VideoDisplay::onSize(wxSizeEvent& event)
 {
     int w = mWidth;
     int h = mHeight;
@@ -494,18 +481,10 @@ void VideoDisplay::OnSize(wxSizeEvent& event)
             moveTo(mCurrentVideoFrame->getPts());
         }
     }
-
 }
 
-void VideoDisplay::OnPaint(wxPaintEvent& event)
+void VideoDisplay::onPaint(wxPaintEvent& event)
 {
-    wxBitmapPtr bitmap;
-    wxPoint position;
-    {
-        boost::mutex::scoped_lock lock(mMutexDraw);
-        bitmap = mCurrentBitmap;
-    }
-
     // Buffered dc is used, since first the entire area is blanked with drawrectangle,
     // and then overwritten. Without buffering that causes flickering.
     boost::scoped_ptr<wxDC> dc;
@@ -521,9 +500,9 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
         dc.reset(new wxPaintDC(this));
     }
 
-    if (bitmap)
+    if (mCurrentBitmap)
     {
-        dc->DrawBitmap(*bitmap,position);
+        dc->DrawBitmap(*mCurrentBitmap,0,0);
     }
     else
     {
@@ -531,6 +510,11 @@ void VideoDisplay::OnPaint(wxPaintEvent& event)
         dc->SetBrush(*wxBLACK_BRUSH);
         dc->DrawRectangle(0, 0, mWidth, mHeight);
     }
+}
+
+void VideoDisplay::onTimer(wxTimerEvent& event)
+{
+    showNextFrame();
 }
 
 } // namespace

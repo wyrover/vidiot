@@ -41,6 +41,25 @@
 
 namespace gui {
 
+const wxString Window::sPaneNameHelp("Help");
+const wxString Window::sPaneNameProject("Project");
+const wxString Window::sPaneNameDetails("Details");
+const wxString Window::sPaneNamePreview("Preview");
+const wxString Window::sPaneNameTimelines("Timelines");
+
+const std::map<int, wxString> Window::sMapMenuIdToPaneName = boost::assign::map_list_of
+    (static_cast<int>(ID_SHOW_PROJECT),     Window::sPaneNameProject)
+    (static_cast<int>(ID_SHOW_DETAILS),     Window::sPaneNameDetails)
+    (static_cast<int>(ID_SHOW_PREVIEW),     Window::sPaneNamePreview)
+    (static_cast<int>(ID_SHOW_TIMELINES),   Window::sPaneNameTimelines)
+    (static_cast<int>(wxID_HELP),           Window::sPaneNameHelp);
+
+const wxString sPaneCaptionHelp(_("Help"));
+const wxString sPaneCaptionProject(_("Project"));
+const wxString sPaneCaptionDetails(_("Details"));
+const wxString sPaneCaptionPreview(_("Preview"));
+const wxString sPaneCaptionTimelines(_("Timelines"));
+
 //////////////////////////////////////////////////////////////////////////
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
@@ -132,6 +151,12 @@ Window::Window()
     menuview->AppendSeparator();
     menuview->AppendCheckItem(ID_SHOW_BOUNDINGBOX, _("Show bounding box"), _("Show the bounding box of the generated video in the preview window."));
     menuview->Check(ID_SHOW_BOUNDINGBOX, Config::ReadBool(Config::sPathShowBoundingBox));
+    menuview->AppendSeparator();
+    // todo store persistent
+    menuview->AppendCheckItem(ID_SHOW_PROJECT, sPaneCaptionProject, _("Show/hide the project view pane."));
+    menuview->AppendCheckItem(ID_SHOW_DETAILS, sPaneCaptionDetails, _("Show/hide the timeline details pane."));
+    menuview->AppendCheckItem(ID_SHOW_PREVIEW, sPaneCaptionPreview, _("Show/hide the timeline preview pane."));
+    menuview->AppendCheckItem(ID_SHOW_TIMELINES, sPaneCaptionTimelines, _("Show/hide the timelines pane."));
 
     mMenuSequence = new wxMenu();
 
@@ -184,7 +209,7 @@ Window::Window()
     mUiManager.SetManagedWindow(this);
     mUiManager.InsertPane(mHelp,
         wxAuiPaneInfo().
-        Name("Help").
+        Name(sPaneNameHelp).
         BestSize(wxSize(400,600)).
         MinSize(wxSize(100,100)).
         Layer(2).
@@ -193,12 +218,12 @@ Window::Window()
         MaximizeButton().
         MinimizeButton().
         CaptionVisible(true).
-        Caption(_("Help")).
+        Caption(sPaneCaptionHelp).
         Hide()
         ); // Layer 2 to ensure that entire height is covered
     mUiManager.InsertPane(mProjectView,
         wxAuiPaneInfo().
-        Name("Project").
+        Name(sPaneNameProject).
         MinSize(wxSize(100,300)).
         Layer(1).
         Top().
@@ -206,11 +231,11 @@ Window::Window()
         MaximizeButton().
         MinimizeButton().
         CaptionVisible(true).
-        Caption(_("Project"))
+        Caption(sPaneCaptionProject)
         );
     mUiManager.InsertPane(mDetailsView,
         wxAuiPaneInfo().
-        Name("Details").
+        Name(sPaneNameDetails).
         MinSize(wxSize(100,300)).
         Layer(1).
         Top().
@@ -218,11 +243,11 @@ Window::Window()
         MaximizeButton().
         MinimizeButton().
         CaptionVisible(true).
-        Caption(_("Details"))
+        Caption(sPaneCaptionDetails)
         );
     mUiManager.InsertPane(mPreview,
         wxAuiPaneInfo().
-        Name("Preview").
+        Name(sPaneNamePreview).
         MinSize(wxSize(100,300)).
         BestSize(wxSize(-1,800)).
         Layer(1).
@@ -233,11 +258,11 @@ Window::Window()
         MaximizeButton().
         MinimizeButton().
         CaptionVisible(true).
-        Caption(_("Preview"))
+        Caption(sPaneCaptionPreview)
         );
     mUiManager.InsertPane(mTimelinesView,
         wxAuiPaneInfo().
-        Name("Timelines").
+        Name(sPaneNameTimelines).
         MinSize(wxSize(100,100)).
         Resizable().
         Layer(1).
@@ -245,14 +270,14 @@ Window::Window()
         MaximizeButton().
         MinimizeButton().
         CaptionVisible(true).
-        Caption(_("Timelines")));
+        Caption(sPaneCaptionTimelines));
     mUiManager.SetFlags(wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_ALLOW_ACTIVE_PANE | wxAUI_MGR_TRANSPARENT_HINT | wxAUI_MGR_LIVE_RESIZE );
     mUiManager.GetPane(mHelp).Hide();
 
-    mUiManager.GetPane("Project").dock_proportion = 100000;
-    mUiManager.GetPane("Details").dock_proportion = 200000;
-    mUiManager.GetPane("Preview").dock_proportion = 200000;
-    mUiManager.GetPane("Timelines").dock_proportion = 200000;
+    mUiManager.GetPane(sPaneNameProject).dock_proportion = 100000;
+    mUiManager.GetPane(sPaneNameDetails).dock_proportion = 200000;
+    mUiManager.GetPane(sPaneNamePreview).dock_proportion = 200000;
+    mUiManager.GetPane(sPaneNameTimelines).dock_proportion = 200000;
     mUiManager.Update();
 
     mDefaultPerspective = mUiManager.SavePerspective();
@@ -263,6 +288,14 @@ Window::Window()
         Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, ""); // If this perspective causes problems, a restart will fix it. Upon closing the current perspective is saved again.
         mUiManager.LoadPerspective(previous);
         mUiManager.Update();
+    }
+
+    for (auto t : sMapMenuIdToPaneName)
+    {
+        if (t.first == wxID_HELP) { continue; } // Skip help menu
+        wxAuiPaneInfo& pane = mUiManager.GetPane(t.second);
+        ASSERT(pane.IsOk());
+        menuview->Check(t.first, pane.IsShown());
     }
 
     Bind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,     this);
@@ -282,6 +315,10 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowDetails,      this, ID_SHOW_DETAILS);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowPreview,      this, ID_SHOW_PREVIEW);
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowTimelines,    this, ID_SHOW_TIMELINES);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, wxID_PREFERENCES);
 
@@ -375,6 +412,10 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapClips,        this, ID_SNAP_CLIPS);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onSnapCursor,       this, ID_SNAP_CURSOR);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowBoundingBox,  this, ID_SHOW_BOUNDINGBOX);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowProject,      this, ID_SHOW_PROJECT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowDetails,      this, ID_SHOW_DETAILS);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowPreview,      this, ID_SHOW_PREVIEW);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onShowTimelines,    this, ID_SHOW_TIMELINES);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onOptions,          this, wxID_PREFERENCES);
 
@@ -529,6 +570,30 @@ void Window::onShowBoundingBox(wxCommandEvent& event)
     event.Skip();
 }
 
+void Window::onShowProject(wxCommandEvent& event)
+{
+    togglePane(sPaneNameProject);
+    event.Skip();
+}
+
+void Window::onShowDetails(wxCommandEvent& event)
+{
+    togglePane(sPaneNameDetails);
+    event.Skip();
+}
+
+void Window::onShowPreview(wxCommandEvent& event)
+{
+    togglePane(sPaneNamePreview);
+    event.Skip();
+}
+
+void Window::onShowTimelines(wxCommandEvent& event)
+{
+    togglePane(sPaneNameTimelines);
+    event.Skip();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // TOOLS MENU
 //////////////////////////////////////////////////////////////////////////
@@ -635,8 +700,7 @@ void Window::onWorkspaceFullscreen(wxCommandEvent& event)
 
 void Window::onHelp(wxCommandEvent& event)
 {
-    mUiManager.GetPane(mHelp).Show();
-    mUiManager.Update();
+    togglePane(sPaneNameHelp);
     event.Skip();
 }
 
@@ -761,6 +825,14 @@ void Window::updateTitle()
     {
         SetTitle(sTitle);
     }
+}
+
+void Window::togglePane(wxString title)
+{
+    wxAuiPaneInfo& pane = mUiManager.GetPane(title);
+    ASSERT(pane.IsOk()); // Lookup must succeed
+    pane.Show(!pane.IsShown());
+    mUiManager.Update();
 }
 
 //////////////////////////////////////////////////////////////////////////

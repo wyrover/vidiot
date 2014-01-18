@@ -30,6 +30,7 @@ VideoCompositionParameters::VideoCompositionParameters()
     :   mBoundingBox(0,0)
     ,   mDrawBoundingBox(Config::ReadBool(Config::sPathShowBoundingBox))
     ,   mOptimizeForQuality(false)
+    ,   mSkip(false)
 {
 }
 
@@ -37,6 +38,7 @@ VideoCompositionParameters::VideoCompositionParameters(const VideoCompositionPar
     :   mBoundingBox(other.mBoundingBox)
     ,   mDrawBoundingBox(other.mDrawBoundingBox)
     ,   mOptimizeForQuality(other.mOptimizeForQuality)
+    ,   mSkip(other.mSkip)
 {
 }
 
@@ -49,7 +51,8 @@ bool VideoCompositionParameters::operator==( const VideoCompositionParameters& o
     return
         (mBoundingBox == other.mBoundingBox) &&
         (mDrawBoundingBox == other.mDrawBoundingBox) &&
-        (mOptimizeForQuality == other.mOptimizeForQuality);
+        (mOptimizeForQuality == other.mOptimizeForQuality) &&
+        (mSkip == other.mSkip);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,6 +94,17 @@ VideoCompositionParameters& VideoCompositionParameters::setOptimizeForQuality()
 bool VideoCompositionParameters::getOptimizeForQuality() const
 {
     return mOptimizeForQuality;
+}
+
+VideoCompositionParameters& VideoCompositionParameters::setSkip(bool skip)
+{
+    mSkip = skip;
+    return *this;
+}
+
+bool VideoCompositionParameters::getSkip() const
+{
+    return mSkip;
 }
 
 wxRect VideoCompositionParameters::getRequiredRectangle() const
