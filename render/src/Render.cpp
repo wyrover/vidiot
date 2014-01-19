@@ -618,14 +618,18 @@ void RenderWork::generate()
                             showProgress(progress);
                             wxImagePtr image = frame->getImage();
 
-                            if (colorSpaceConversionContext == 0)
+                            int rgbImageSize = avpicture_get_size(PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
+                            AVFrame* toBeFilledPicture = (colorSpaceConversionContext == 0) ? outputPicture : colorSpaceConversionPicture;
+                            if (!image)
                             {
-                                memcpy(outputPicture->data[0],  image->GetData(), image->GetWidth() * image->GetHeight() * 3);
+                                memset(toBeFilledPicture->data[0], 0, rgbImageSize); // Empty. Fill with 0.
                             }
                             else
                             {
-                                // todo crash when rendering empty clip (image == 0)
-                                memcpy(colorSpaceConversionPicture->data[0],  image->GetData(), image->GetWidth() * image->GetHeight() * 3);
+                                memcpy(toBeFilledPicture->data[0], image->GetData(), rgbImageSize);
+                            }
+                            if (colorSpaceConversionContext != 0)
+                            {
                                 sws_scale(colorSpaceConversionContext, colorSpaceConversionPicture->data, colorSpaceConversionPicture->linesize, 0, videoCodec->height, outputPicture->data, outputPicture->linesize);
                             }
                             outputPicture->pts = numberOfReadInputVideoFrames;

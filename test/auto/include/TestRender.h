@@ -38,8 +38,10 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void testChangeRenderSettings();
-    void testRenderingPlayback();
     void testRenderingSplit();
+
+    /// For each video codec, render part of the timeline, and then playback
+    /// the generated file.
     void testRenderingCodecs();
 
     /// This was a bug once. Caused by the clone not having the proper clip
@@ -47,11 +49,29 @@ public:
     /// generating frames/chunks).
     void testRenderingTransition();
 
+    /// This was a bug once. Caused by the empty clip not returning an image.
+    /// The rendering code dereferenced the returned image ptr without
+    /// checking for 0.
+    void testRenderingEmptyClip();
+
     void testRenderingTransformedClip();
 
 private:
 
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     FixtureProject mProjectFixture;
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void RenderTimelineInto(const wxFileName& path, int lengthInS = 1);
+    void PlaybackRenderedTimeline(const wxFileName& path, pixel start = 2, milliseconds t = 600);
+    void RenderAndPlaybackCurrentTimeline(int renderedlengthInS = 1, pixel playbackStart = 2, milliseconds playbackLength = 600);
+
 };
 
 }
