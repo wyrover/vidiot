@@ -114,36 +114,6 @@ void TestRender::testChangeRenderSettings()
     }
 }
 
-void TestRender::testRenderingPlayback()
-{
-    StartTestSuite();
-    {
-        StartTest("Render");
-        ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
-        ExpectExecutedWork expectation(1);
-        wxFileName path(wxFileName::GetTempDir(), "out", "avi");
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        triggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile(path.GetFullPath());
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        waitForIdle();
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
-        triggerMenu(ID_CLOSESEQUENCE);
-        expectation.wait();
-        ASSERT(path.Exists());
-
-        model::FolderPtr folder1 = addFolder( "RenderingPlaybackTest" );
-        model::Files files1 = addFiles( boost::assign::list_of(path), folder1 );
-        model::SequencePtr sequence1 = createSequence( folder1 );
-        Zoom level(4);
-        Play(50, 2000);
-    }
-}
-
 void TestRender::testRenderingSplit()
 {
     StartTestSuite();
@@ -179,86 +149,96 @@ void TestRender::testRenderingSplit()
 void TestRender::testRenderingCodecs()
 {
     StartTestSuite();
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 1); // Only render 1s
-
+    model::SequencePtr sequence(getSequence());
     for ( AVCodecID id : model::render::VideoCodecs::all() )
     {
-        RandomTempDir tempdir(false);
-        ExpectExecutedWork expectation(1);
         std::ostringstream osCodec; osCodec << id;
-        wxFileName path(tempdir.getFileName().GetLongPath(), osCodec.str(), "avi");
-        std::ostringstream os; os << "Render " << osCodec.str() << " into " << path.GetLongPath();
+        std::ostringstream os; os << "Render " << osCodec.str();// << " into " << path.GetLongPath();
         StartTest(os.str().c_str());
-        model::render::RenderPtr original = getCurrentRenderSettings();
         triggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile(path.GetFullPath());
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         gui::DialogRenderSettings::get().getVideoCodecButton()->select(id);
-        ClickTopLeft(gui::DialogRenderSettings::get().getVideoCodecButton()); Type(WXK_RETURN); // Required to trigger an event from the enum selector
-        waitForIdle();
-        ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
-        expectation.wait();
-        ASSERT(path.Exists());
+        ClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
+        RenderAndPlaybackCurrentTimeline();
+        openTimelineForSequence(sequence);
     }
 }
 
 void TestRender::testRenderingTransition()
 {
     StartTestSuite();
-    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 5); // Only render 5s
 
     TrimLeft(VideoClip(0),60);
     MakeInOutTransitionAfterClip preparation(0);
+    preparation.dontUndo();
 
+    RenderAndPlaybackCurrentTimeline(2, 20, 1000);
+}
+
+void TestRender::testRenderingEmptyClip()
+{
+    StartTestSuite();
+
+    Click(Center(VideoClip(0,0)));
+    Type(WXK_DELETE);
+
+    RenderAndPlaybackCurrentTimeline();
+}
+
+void TestRender::testRenderingTransformedClip()
+{
+    StartTestSuite();
+
+    ConfigFixture.SnapToClips(true);
+    triggerMenu(ID_ADDAUDIOTRACK);
+    triggerMenu(ID_ADDVIDEOTRACK);
+    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
+    wxFileName path(wxFileName::GetTempDir(), "out", "avi");
+    DragToTrack(1, VideoClip(0,1), AudioClip(0,1));
+    Drag(From(Center(VideoClip(1,1))).To(LeftCenter(VideoClip(1,0)) + wxPoint(5,0)));
+    model::VideoClipPtr clip = boost::dynamic_pointer_cast<model::VideoClip>(VideoClip(1,0));
+    ASSERT(clip);
+    RunInMainAndWait([clip]{ clip->setOpacity(128); });
+    RunInMainAndWait([clip]{ clip->setScaling(model::VideoScalingCustom, boost::optional<boost::rational< int > >(1,2)); });
+    RunInMainAndWait([clip]{ clip->setPosition(wxPoint(50,50)); });
+
+    RenderAndPlaybackCurrentTimeline();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void TestRender::RenderTimelineInto(const wxFileName& path, int lengthInS)
+{
+    ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, lengthInS);
     triggerMenu(ID_RENDERSETTINGS);
-    RandomTempDir tempdir;
-    wxFileName path(tempdir.getFileName().GetFullPath(), "out", "avi");
     gui::Dialog::get().setSaveFile(path.GetFullPath());
     ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
     waitForIdle();
-
     ExpectExecutedWork expectation(1);
     ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
     expectation.wait();
     ASSERT(path.Exists());
 }
 
-void TestRender::testRenderingTransformedClip()
+void TestRender::PlaybackRenderedTimeline(const wxFileName& path, pixel start, milliseconds t)
 {
-    StartTestSuite();
-    {
-        StartTest("Render");
-        ConfigFixture.SnapToClips(true);
-        triggerMenu(ID_ADDAUDIOTRACK);
-        triggerMenu(ID_ADDVIDEOTRACK);
-        ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
-        ExpectExecutedWork expectation(1);
-        wxFileName path(wxFileName::GetTempDir(), "out", "avi");
-
-        DragToTrack(1, VideoClip(0,1), AudioClip(0,1));
-        Drag(From(Center(VideoClip(1,1))).To(LeftCenter(VideoClip(1,0)) + wxPoint(5,0)));
-
-        model::VideoClipPtr clip = boost::dynamic_pointer_cast<model::VideoClip>(VideoClip(1,0));
-        ASSERT(clip);
-        RunInMainAndWait([clip]{ clip->setOpacity(128); });
-        RunInMainAndWait([clip]{ clip->setScaling(model::VideoScalingCustom, boost::optional<boost::rational< int > >(1,2)); });
-        RunInMainAndWait([clip]{ clip->setPosition(wxPoint(50,50)); });
-
-        model::render::RenderPtr original = getCurrentRenderSettings();
-        triggerMenu(ID_RENDERSETTINGS);
-        gui::Dialog::get().setSaveFile(path.GetFullPath());
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        waitForIdle();
-        ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
-        triggerMenu(ID_CLOSESEQUENCE);
-        expectation.wait();
-        ASSERT(path.Exists());
-
-        model::FolderPtr folder1 = addFolder( "testRenderingTransformedClip" );
-        model::Files files1 = addFiles( boost::assign::list_of(path), folder1 );
-        model::SequencePtr sequence1 = createSequence( folder1 );
-        Zoom level(4);
-        Play(10, 2000);
-    }
+    model::FolderPtr folder1 = addFolder( "PlaybackRenderedTimeline" );
+    model::Files files1 = addFiles( boost::assign::list_of(path), folder1 );
+    model::SequencePtr sequence1 = createSequence( folder1 );
+    Zoom level(4);
+    Play(start, t);
+    remove(sequence1);
+    remove(folder1);
 }
+
+void TestRender::RenderAndPlaybackCurrentTimeline(int renderedlengthInS, pixel playbackStart, milliseconds playbackLength)
+{
+    RandomTempDir tempdir;
+    wxFileName path(tempdir.getFileName().GetFullPath(), "out", "avi");
+    RenderTimelineInto(path, renderedlengthInS);
+    triggerMenu(ID_CLOSESEQUENCE);
+    PlaybackRenderedTimeline(path, playbackStart, playbackLength);
+}
+
 } // namespace
