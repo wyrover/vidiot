@@ -137,6 +137,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
         while (sourceSize > 0)
         {
             AVPacket packet;
+            memset(&packet, 0, sizeof(packet));
             packet.data = sourceData;
             packet.size = sourceSize;
 
@@ -190,8 +191,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
     else // !audioPacket: flush with 0 packets until no more data returned
     {
         AVPacket packet;
-        packet.data = 0;
-        packet.size = 0;
+        memset(&packet, 0, sizeof(packet));
 
         AVFrame frame = { { 0 } };
         int got_frame = 0;
