@@ -17,6 +17,7 @@
 
 #include "ProjectViewDeleteAsset.h"
 
+#include "File.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
@@ -44,21 +45,13 @@ ProjectViewDeleteAsset::~ProjectViewDeleteAsset()
 bool ProjectViewDeleteAsset::Do()
 {
     VAR_INFO(this);
-    for ( ParentAndChildPair p : mPairs )
-    {
-        p.first->removeChild(p.second);
-    }
-    return true;
+    return removeNodes(mPairs);
 }
 
 bool ProjectViewDeleteAsset::Undo()
 {
     VAR_INFO(this);
-    for ( ParentAndChildPair p : mPairs )
-    {
-        p.first->addChild(p.second);
-    }
-    return true;
+    return addNodes(mPairs);
 }
 
 } // namespace

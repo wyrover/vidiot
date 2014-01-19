@@ -23,11 +23,14 @@
 #include "AudioTrack.h"
 #include "Config.h"
 #include "DetailsClip.h"
+#include "Dialog.h"
 #include "EmptyClip.h"
+#include "File.h"
 #include "HelperDetails.h"
 #include "HelperPlayback.h"
 #include "HelperPopupMenu.h"
 #include "HelperProject.h"
+#include "HelperProjectView.h"
 #include "HelperSequence.h"
 #include "HelperThread.h"
 #include "HelperTimeline.h"
@@ -36,6 +39,7 @@
 #include "HelperTimelinesView.h"
 #include "HelperTimelineTrim.h"
 #include "HelperTransition.h"
+#include "HelperWatcher.h"
 #include "HelperWindow.h"
 #include "IClip.h"
 #include "ids.h"
@@ -346,6 +350,80 @@ void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
         ASSERT_LESS_THAN(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
         Undo();
     }
+}
+
+void TestBugs::testAddNonexistentFileViaRedo()
+{
+    StartTestSuite();
+
+    // Create temp dir with temp file
+    RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
+    model::IPaths inputfiles = getListOfInputFiles();
+    wxString aviFileName = inputfiles.front()->getPath().GetLongPath();
+    wxFileName filepath(tempDir->getFileName().GetLongPath(),"file","avi");
+    bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );
+    ASSERT(copyok);
+
+    // Add folder to project view
+    wxString sFolder1( "Folder1" );
+    model::FolderPtr folder1 = addFolder( sFolder1 );
+
+    // Add file to folder
+    model::Files files1 = addFiles( boost::assign::list_of(filepath), folder1 );
+    ASSERT_WATCHED_PATHS_COUNT(2);
+
+    // Remove the file via 'Undo'
+    Undo();
+    ASSERT_WATCHED_PATHS_COUNT(1);
+
+    // Remove the file from disk
+    tempDir.reset();
+
+    // Add the file again (via 'Redo')
+    gui::Dialog::get().setConfirmation(); // Trigger ok when the application informs that the file was deleted.
+    Redo();
+    ASSERT_WATCHED_PATHS_COUNT(1);
+
+    // Now make the sequence (is empty)
+    model::SequencePtr sequence1 = createSequence( folder1 );
+
+}
+
+void TestBugs::testAddNonexistentFileViaUndo()
+{
+    StartTestSuite();
+
+    // Create temp dir with temp file
+    RandomTempDirPtr tempDir = boost::make_shared<RandomTempDir>();
+    model::IPaths inputfiles = getListOfInputFiles();
+    wxString aviFileName = inputfiles.front()->getPath().GetLongPath();
+    wxFileName filepath(tempDir->getFileName().GetLongPath(),"file","avi");
+    bool copyok = wxCopyFile( aviFileName, filepath.GetLongPath(), false );
+    ASSERT(copyok);
+
+    // Add folder to project view
+    wxString sFolder1( "Folder1" );
+    model::FolderPtr folder1 = addFolder( sFolder1 );
+
+    // Add file to folder
+    model::Files files1 = addFiles( boost::assign::list_of(filepath), folder1 );
+    ASSERT_WATCHED_PATHS_COUNT(2);
+
+    // Remove the file via 'Delete'
+    remove(files1.front());
+    ASSERT_WATCHED_PATHS_COUNT(1);
+
+    // Remove the file from disk
+    tempDir.reset();
+
+    // Add the file again (via 'Undo')
+    gui::Dialog::get().setConfirmation(); // Trigger ok when the application informs that the file was deleted.
+    Undo();
+    ASSERT_WATCHED_PATHS_COUNT(1);
+
+    // Now make the sequence (is empty)
+    model::SequencePtr sequence1 = createSequence( folder1 );
+
 }
 
 } // namespace

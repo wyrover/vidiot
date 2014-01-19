@@ -31,8 +31,8 @@ public:
     bool Do() override;
     bool Undo() override;
 private:
-    model::FolderPtr mParent;
-    model::AutoFolderPtr mNewAutoFolder;
+    ParentAndChildPair mPair;
+
     wxFileName mPath;
 };
 

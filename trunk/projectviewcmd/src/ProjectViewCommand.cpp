@@ -17,14 +17,15 @@
 
 #include "ProjectViewCommand.h"
 
+#include "Dialog.h"
+#include "File.h"
 #include "Node.h"
-
 #include "UtilLog.h"
 
 namespace command {
 
 ProjectViewCommand::ProjectViewCommand()
-:   RootCommand()
+    :   RootCommand()
 {
 }
 
@@ -92,6 +93,41 @@ model::NodePtrs ProjectViewCommand::prune(model::NodePtrs children)
         }
     }
     return newlist;
+}
+
+bool ProjectViewCommand::addNodes(const ParentAndChildPairs& pairs)
+{
+    static const wxString sTitle = _("File missing");
+    static const wxString sCant = _("Problem: ");
+    for ( ParentAndChildPair p : pairs )
+    {
+        model::IPathPtr path = boost::dynamic_pointer_cast<model::IPath>(p.second);
+        if (path && !path->getPath().Exists())
+        {
+            gui::Dialog::get().getConfirmation(sTitle, sCant + ": " + path->getPath().GetFullPath() + _(" has been removed from disk."));
+            return false;
+        }
+        model::FilePtr file = boost::dynamic_pointer_cast<model::File>(p.second);
+        if (file && !file->canBeOpened())
+        {
+            gui::Dialog::get().getConfirmation(sTitle,sCant + ": " + file->getName() + _(" can not be opened."));
+            return false;
+        }
+    }
+    for ( ParentAndChildPair p : pairs )
+    {
+        p.first->addChild(p.second);
+    }
+    return true;
+}
+
+bool ProjectViewCommand::removeNodes(const ParentAndChildPairs& pairs)
+{
+    for ( ParentAndChildPair p : pairs )
+    {
+        p.first->removeChild(p.second);
+    }
+    return true;
 }
 
 } // namespace

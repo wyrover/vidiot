@@ -36,7 +36,7 @@ public:
 private:
     std::vector<wxFileName> mPaths;
     model::FolderPtr mParent;
-    std::vector<model::FilePtr> mChildren;
+    ParentAndChildPairs mPairs;
 };
 
 } // namespace
