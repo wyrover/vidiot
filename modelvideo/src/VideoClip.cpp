@@ -31,6 +31,7 @@
 #include "VideoCompositionParameters.h"
 #include "VideoFile.h"
 #include "VideoFrameLayer.h"
+#include "VideoSkipFrame.h"
 
 namespace model {
 
