@@ -26,11 +26,10 @@ namespace command {
 
 ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(model::FolderPtr parent, wxFileName path)
 :   ProjectViewCommand()
-,   mParent(parent)
-,   mNewAutoFolder()
+,   mPair(boost::dynamic_pointer_cast<model::INode>(parent),model::NodePtr())
 ,   mPath(path)
 {
-    VAR_INFO(this)(mParent)(mPath);
+    VAR_INFO(this)(parent)(path);
     mCommandName = _("Add folder")  + _(" \"")   + util::path::toName(mPath)  + _("\"");
 }
 
@@ -40,22 +39,29 @@ ProjectViewCreateAutoFolder::~ProjectViewCreateAutoFolder()
 
 bool ProjectViewCreateAutoFolder::Do()
 {
-    if (!mNewAutoFolder)
+    ASSERT_IMPLIES(mPair.second, mPair.second->isA<model::AutoFolder>());
+    model::AutoFolderPtr autofolder = boost::dynamic_pointer_cast<model::AutoFolder>(mPair.second);
+    if (!autofolder)
     {
-        mNewAutoFolder = boost::make_shared<model::AutoFolder>(mPath);
-        mNewAutoFolder->setParent(mParent);
+        autofolder = boost::make_shared<model::AutoFolder>(mPath);
+        autofolder->setParent(mPair.first);
     }
-    mParent->addChild(mNewAutoFolder);
+    ASSERT_NONZERO(autofolder);
+    mPair.second = autofolder;
+    bool ok = addNodes(boost::assign::list_of(mPair));
+    if (!ok)
+    {
+        return false; // Folder missing on disk. Can happen in case of Redo.
+    }
     // Update must be done AFTER adding the addition of the folder. Otherwise,
     // double entries are made visible in the ProjectView.
-    mNewAutoFolder->check();
+    autofolder->check();
     return true;
 }
 
 bool ProjectViewCreateAutoFolder::Undo()
 {
-    mParent->removeChild(mNewAutoFolder);
-    return true;
+    return removeNodes(boost::assign::list_of(mPair));
 }
 
 } // namespace

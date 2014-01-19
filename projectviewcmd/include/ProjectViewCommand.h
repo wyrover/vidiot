@@ -44,6 +44,17 @@ protected:
     /// only move the actual parent, and keep the parent child relation
     /// intact.
     static model::NodePtrs prune(model::NodePtrs children);
+
+    /// Add nodes to the project view.
+    /// This includes checking for the existence of the to be added
+    /// children. If one of the children is not available (removed
+    /// from disk or replaced with another file that cannot be opened)
+    /// then false is returned, and no changes are made.
+    bool addNodes(const ParentAndChildPairs& pairs);
+
+    /// Remove nodes from the project view
+    bool removeNodes(const ParentAndChildPairs& pairs);
+
 };
 
 } // namespace

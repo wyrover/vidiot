@@ -271,7 +271,7 @@ void Watcher::watch( model::NodePtr node )
         stop();
         start();
     }
-    ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), (int)mWatches.size()); // Note that sometimes both 'folder' and 'folder/' are added.
+    ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), static_cast<int>(mWatches.size())); // Note that sometimes both 'folder' and 'folder/' are added.
     VAR_DEBUG(*this);
 }
 
@@ -313,7 +313,7 @@ void Watcher::unwatch( model::NodePtr node )
             }
             else
             {
-                ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), (int)mWatches.size()); // Note that sometimes both 'folder' and 'folder/' are added.
+                ASSERT_MORE_THAN_EQUALS(mWatcher->GetWatchedPathsCount(), static_cast<int>(mWatches.size())); // Note that sometimes both 'folder' and 'folder/' are added.
                 if (mWatches.empty())
                 {
                     stop();

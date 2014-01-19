@@ -30,7 +30,7 @@ ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vecto
 :   ProjectViewCommand()
 ,   mParent(parent)
 ,   mPaths(paths)
-,   mChildren()
+,   mPairs()
 {
     VAR_INFO(this)(mParent)(mPaths);
     ASSERT_MORE_THAN_ZERO(paths.size());
@@ -44,36 +44,28 @@ ProjectViewCreateFile::~ProjectViewCreateFile()
 bool ProjectViewCreateFile::Do()
 {
     VAR_INFO(this);
-    if (mChildren.size() == 0)
+    if (mPairs.size() == 0)
     {
         for ( wxFileName path : mPaths )
         {
             model::FilePtr file = boost::make_shared<model::File>(path);
-            if (file->canBeOpened())
+            if (file && file->canBeOpened())
             {
-                mChildren.push_back(file);
+                mPairs.push_back(std::make_pair(mParent,file));
             }
         }
-        if (mChildren.size() == 1)
+        if (mPairs.size() == 1)
         {
-            mCommandName = _("Add file")        + _(" \"")   + mChildren.front()->getDescription()  + _("\"");
+            mCommandName = _("Add file") + _(" \"")   + mPairs.front().second->getName()  + _("\"");
         }
     }
-    for (model::FilePtr child : mChildren)
-    {
-        mParent->addChild(boost::static_pointer_cast<model::Node>(child));
-    }
-    return true;
+    return addNodes(mPairs);
 }
 
 bool ProjectViewCreateFile::Undo()
 {
     VAR_INFO(this);
-    for (model::FilePtr child : mChildren)
-    {
-        mParent->removeChild(boost::static_pointer_cast<model::Node>(child));
-    }
-    return true;
+    return removeNodes(mPairs);
 }
 
 } // namespace

@@ -109,11 +109,22 @@ public:
     /// part of a track).
     void testCrashWhenDroppingPartiallyOverATransition();
 
-
     /// If a clip in 'another' track touches a clip that is being trimmed, at the right side,
     /// then trimming is not allowed. If the clip is in the same track as the trimmed clip,
     /// then trimming IS allowed.
     void testShiftTrimNotAllowedWithAdjacentClipInOtherTrack();
+
+    /// Add a clip to a folder, then remove it again (Undo). Then it's removed from disk
+    /// and added again (to the same folder) via Redo. After creating a sequence from
+    /// the mentioned folder, a crash occurred in the clip view, using a maxint size
+    /// for its required bitmap.
+    void testAddNonexistentFileViaRedo();
+
+    /// Add a clip to a folder, then remove it again (Delete). Then it's removed from disk
+    /// and added again (to the same folder) via Undo. After creating a sequence from
+    /// the mentioned folder, a crash occurred in the clip view, using a maxint size
+    /// for its required bitmap.
+    void testAddNonexistentFileViaUndo();
 
 private:
 
