@@ -112,6 +112,7 @@ Optional: C/C++ -> Code Generation -> Floating point model = fast
 * Run <VIDIOT_SRC>/build/RunCMake.bat
 
 =================== MAKE RELEASE ===================
+* Run both Debug and Release tests
 * Update version number
   - In main/install/CMakeLists.txt update version number
     (commit, remember revision number)
