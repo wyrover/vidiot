@@ -30,22 +30,24 @@
 namespace gui { namespace timeline { namespace command {
 
 struct MoveCursor
-    :   public AClipEdit
+    :   public ATimelineCommand
 {
     MoveCursor(model::SequencePtr sequence, pts position)
-        :   AClipEdit(sequence)
+        :   ATimelineCommand(sequence)
         ,   mOldPosition(getTimeline().getCursor().getLogicalPosition())
         ,   mNewPosition(position)
     {}
 
-    void doExtraBefore()
+    bool Do()
     {
         getTimeline().getCursor().setLogicalPosition(mNewPosition);
+        return true;
     }
 
-    void undoExtraAfter()
+    bool Undo()
     {
         getTimeline().getCursor().setLogicalPosition(mOldPosition);
+        return true;
     }
 
 private:
@@ -54,38 +56,42 @@ private:
 };
 
 struct BeginTransaction
-    :   public AClipEdit
+    :   public ATimelineCommand
 {
     BeginTransaction(model::SequencePtr sequence)
-        :   AClipEdit(sequence)
+        :   ATimelineCommand(sequence)
     {}
 
-    void doExtraBefore()
+    bool Do()
     {
         getTimeline().beginTransaction();
+        return true;
     }
 
-    void undoExtraAfter()
+    bool Undo()
     {
         getTimeline().endTransaction();
+        return true;
     }
 };
 
 struct EndTransaction
-    :   public AClipEdit
+    :   public ATimelineCommand
 {
     EndTransaction(model::SequencePtr sequence)
-        :   AClipEdit(sequence)
+        :   ATimelineCommand(sequence)
     {}
 
-    void doExtraBefore()
+    bool Do()
     {
         getTimeline().endTransaction();
+        return true;
     }
 
-    void undoExtraAfter()
+    bool Undo()
     {
         getTimeline().beginTransaction();
+        return true;
     }
 };
 
