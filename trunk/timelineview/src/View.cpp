@@ -102,7 +102,7 @@ const wxBitmap& View::getBitmap() const
         if (mBitmap.GetSize() != required)
         {
             mBitmap.Create(required);
-            ASSERT(mBitmap.IsOk());
+            ASSERT(mBitmap.IsOk())(required)(typeid(*this).name());
         }
         draw(mBitmap);
         mBitmapValid = true;

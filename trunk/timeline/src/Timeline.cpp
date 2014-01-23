@@ -344,6 +344,11 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
 
 void Timeline::onPaint( wxPaintEvent &event )
 {
+    if (mTransaction)
+    {
+        return;
+    }
+
     boost::scoped_ptr<wxDC> dc;
     if (!IsDoubleBuffered())
     {
@@ -357,11 +362,6 @@ void Timeline::onPaint( wxPaintEvent &event )
         dc.reset(new wxPaintDC(this));
     }
     DoPrepareDC(*dc); // Adjust for logical coordinates, not device coordinates
-
-    if (mTransaction)
-    {
-        return;
-    }
 
     wxPoint scroll = getScrolling().getOffset();
 
