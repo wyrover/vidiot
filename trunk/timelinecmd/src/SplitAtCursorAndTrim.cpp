@@ -176,6 +176,10 @@ SplitAtCursorAndTrim::SplitAtCursorAndTrim(model::SequencePtr sequence, bool bac
                 {
                     add(new MoveCursor(sequence, left));
                 }
+                else
+                {
+                    add(new MoveCursor(sequence, mPosition)); // Without this statement, playback immediately after the key press would result in black video.
+                }
                 add(new EndTransaction(sequence)); // Added to avoid temporarily showing the wrong frame between the Trim::update() and the submission of the MoveCursor command.
             }
             else
