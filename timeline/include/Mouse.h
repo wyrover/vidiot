@@ -64,11 +64,20 @@ public:
 
     void set(MousePointerImage image);
 
-    PointerPositionInfo getInfo(wxPoint pointerposition); /// \return info on the given position.
-    wxPoint getPhysicalPosition() const;     ///< \return current physical (unscrolled) positionm of mouse pointer
-    wxPoint getVirtualPosition() const;     ///< \return current virtual (includes scrolling offset) position of mouse pointer
-    wxPoint getLeftDownPosition() const;    ///< \return last (most recent) position at which a 'left down' event was received.
-    wxPoint getRightDownPosition() const;   ///< \return last (most recent) position at which a 'right down' event was received.
+    /// \return info on the given position.
+    PointerPositionInfo getInfo(wxPoint position);
+
+    /// \return current physical (unscrolled) positionm of mouse pointer
+    wxPoint getPhysicalPosition() const;
+
+    /// \return current virtual (includes scrolling offset) position of mouse pointer
+    wxPoint getVirtualPosition() const;
+
+    /// \return last (most recent) position at which a 'left down' event was received.
+    wxPoint getLeftDownPosition() const;
+
+    /// \return last (most recent) position at which a 'right down' event was received.
+    wxPoint getRightDownPosition() const;
 
 private:
 
