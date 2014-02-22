@@ -24,16 +24,11 @@
 
 namespace gui { namespace timeline {
 
-class ZoomChangeEvent;
-
-DECLARE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts); // Holds the new x position
-
 /// Virtual position:  position in the virtual area. That is, the entire area
 ///                    that is accessible when using the scrollbars.
 /// Physical position: position in coordinates of the viewable area.
 class Scrolling
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public Part
+    :   public Part
 {
 public:
 
@@ -43,12 +38,6 @@ public:
 
     Scrolling(Timeline* timeline);
     virtual ~Scrolling();
-
-    //////////////////////////////////////////////////////////////////////////
-    // GUI EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onZoomChanged( ZoomChangeEvent& event );
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

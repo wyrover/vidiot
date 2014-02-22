@@ -80,19 +80,8 @@ boost::statechart::result MoveTrackDivider::react( const EvLeftDown& evt )
 boost::statechart::result MoveTrackDivider::react( const EvLeftUp& evt )
 {
     VAR_DEBUG(evt);
-    for ( model::IClipPtr clip : mTrack->getClips() )
-    {
-        if (clip->isA<model::VideoClip>())
-        {
-            // Invalidating the thumbnail will also invalidate the clip itselves
-            // Hence, this small optimization (do not invalidate the clip also)
-            getViewMap().getThumbnail(clip)->invalidateBitmap();
-        }
-        else
-        {
-            getViewMap().getView(clip)->invalidateBitmap();
-        }
-    }
+    getViewMap().invalidateThumbnails(); // Redraw thumbnails when move is done
+    getTimeline().Refresh(false);
     return transit<Idle>();
 }
 

@@ -85,6 +85,7 @@ struct EndTransaction
     bool Do()
     {
         getTimeline().endTransaction();
+        getTimeline().Refresh(false);
         return true;
     }
 

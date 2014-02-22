@@ -21,29 +21,54 @@
 #include "UtilInt.h"
 
 namespace gui { namespace timeline {
+
+class Timeline;
+
 /// Helper class for administering a shift during the DND operation
-struct ShiftParams
+class ShiftParams
 {
+public:
     //////////////////////////////////////////////////////////////////////////
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ShiftParams(pts position, pts length);
+    ShiftParams(Timeline& timeline, pts position, pts length);
     ShiftParams(const ShiftParams& other);
+
+    //////////////////////////////////////////////////////////////////////////
+    // COMPARISON
+    //////////////////////////////////////////////////////////////////////////
+
+    friend bool operator== ( ShiftParams const& x, ShiftParams const& y );
+    friend bool operator!= ( ShiftParams const& x, ShiftParams const& y );
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET
+    //////////////////////////////////////////////////////////////////////////
+
+    pts getPtsPosition() const;
+    pts getPtsLength() const;
+    pixel getPixelPosition() const;
+    pixel getPixelLength() const;
+
+private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mPosition;  ///< Position at which clips must be shifted to make room for the clips being dragged.
-    pts mLength;    ///< Length of the shift required to make room for the clips being dragged.
+    Timeline& mTimeline;
+    pts mPosition;          ///< Position at which clips must be shifted to make room for the clips being dragged.
+    pts mLength;            ///< Length of the shift required to make room for the clips being dragged.
+
+    //////////////////////////////////////////////////////////////////////////
+    // LOGGING
+    //////////////////////////////////////////////////////////////////////////
+
+    friend std::ostream& operator<< (std::ostream& os, const ShiftParams& obj);
 };
 
-std::ostream& operator<< (std::ostream& os, const ShiftParams& obj);
-bool operator== ( ShiftParams const& x, ShiftParams const& y );
-bool operator!= ( ShiftParams const& x, ShiftParams const& y );
-
-typedef boost::optional<ShiftParams> Shift;
+typedef boost::shared_ptr<ShiftParams> Shift;
 }} // namespace
 
 #endif

@@ -18,20 +18,42 @@
 #ifndef TIMELINE_H
 #define TIMELINE_H
 
-#include "View.h"
+namespace model {
+    class EventLengthChanged;
+}
 
 namespace command {
     class RootCommand;
 }
 
+namespace gui {
+    class Player;
+    namespace timeline {
+        class Cursor;
+        class Details;
+        class Drag;
+        class Intervals;
+        class IntervalsView;
+        class Keyboard;
+        class MenuHandler;
+        class Mouse;
+        class Scrolling;
+        class Selection;
+        class SequenceView;
+        class Tooltip;
+        class Trim;
+        class ViewMap;
+        class Zoom;
+        namespace state {
+            class Machine;
+        }
+    }
+}
+
 namespace gui { namespace timeline {
 
-    class ZoomChangeEvent;
-    class IntervalsView;
-
 class Timeline
-:   public wxScrolledWindow
-,   public View
+    :   public wxScrolledWindow
 {
 public:
 
@@ -92,14 +114,48 @@ public:
     void onIdle(wxIdleEvent& event);
     void onSize(wxSizeEvent& event);
     void onEraseBackground(wxEraseEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // MODEL EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onSequenceLengthChanged(model::EventLengthChanged& event);
+
+    //////////////////////////////////////////////////////////////////////////
+    // DRAWING
+    //////////////////////////////////////////////////////////////////////////
+
     void onPaint( wxPaintEvent &event );
 
-    //////////////////////////////////////////////////////////////////////////
-    // TIMELINE EVENTS
-    //////////////////////////////////////////////////////////////////////////
+    /// Draw a vertical line over the entire timeline
+    /// \param dc device context to be used
+    /// \param region invalidated region of the timeline
+    /// \param offset offset imposed on the drawing actions (caused by scrolling and shift)
+    /// \param position horizontal position where the line is drawn
+    /// \param pen pen to be used for drawing the line
+    void drawLine(wxDC& dc, const wxRegion& region, const wxPoint& offset, pts position, const wxPen& pen) const;
 
-    void onViewUpdated( ViewUpdateEvent& event ); ///< @see View::onChildViewUpdated()
-    void onZoomChanged( ZoomChangeEvent& event ); ///< @see View::onZoomChanged()
+    /// Draw a divider
+    /// \param dc device context to be used
+    /// \param region invalidated region of the timeline
+    /// \param yPosition y position of the divider
+    /// \param height height of the divider
+    void drawDivider(wxDC& dc, pixel yPosition, pixel height) const; // todo why no offset here? what if vertical scrolling is applied?
+
+    /// Fill a region in the timeline with the given overlapping area of this view's rectangle.
+    /// \param dc device context to be used
+    /// \param region invalidated region of the timeline
+    /// \param offset offset imposed on the drawing actions (caused by scrolling and shift)
+    /// \param roi rect of the timeline that must be copied from bitmap to region (in full timeline coordinates)
+    /// \param mask use mask of the bitmap
+    void copyRect(wxDC& dc, wxRegion region, const wxPoint& offset, const wxBitmap& bitmap, const wxRect& roi, bool mask = false) const;
+
+    /// Clear a region in the timeline
+    /// \param dc device context to be used
+    /// \param region invalidated region of the timeline
+    /// \param offset offset imposed on the drawing actions (caused by scrolling and shift)
+    /// \param cleared region that is required to be clear
+    void clearRect(wxDC& dc, wxRegion region, const wxPoint& offset, const wxRect& cleared) const;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -109,16 +165,15 @@ public:
 
     Player* getPlayer() const;
 
-    wxSize requiredSize() const;  ///< \see View::requiredSize()
-
     /// Refresh the rectangle for which
     /// [x,y,w,h] == [position,0,1,height],
     /// using logical coordinates and
     /// taking into account scrolling and zooming
     void refreshPts(pts position);
 
-    /// Refresh several lines in the timeline
-    void refreshLines(pixel from, pixel length);
+    /// Refresh part of the timeline
+    /// \param rect rect to be refreshed, unscrolled position within the sequence view
+    void repaint(wxRect rect);
 
     void setShift(pixel shift);
 
@@ -180,7 +235,7 @@ private:
     Mouse* mMouse;
     Scrolling* mScroll;
     Selection* mSelection;
-    Cursor* mCursor;  // Must be AFTER mPlayer
+    Cursor* mCursor;  // Must be AFTER mPlayer and AFTER mScroll
     Drag* mDrag;
     Tooltip* mTooltip;
     state::Machine* mStateMachine; // Must be AFTER mViewMap due to constructor list.
@@ -193,12 +248,6 @@ private:
 
     SequenceView* mSequenceView;
     IntervalsView* mIntervalsView;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void draw(wxBitmap& bitmap) const; ///< @see View::draw()
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

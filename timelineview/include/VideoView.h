@@ -23,6 +23,7 @@
 namespace model {
     class EventAddVideoTracks;
     class EventRemoveVideoTracks;
+    class EventHeightChanged;
 }
 
 namespace test {
@@ -32,6 +33,7 @@ namespace test {
 namespace gui { namespace timeline {
 
 struct PointerPositionInfo;
+class DividerView;
 
 class VideoView
     :   public View
@@ -39,26 +41,38 @@ class VideoView
 public:
 
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION METHODS
+    // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     VideoView(View* parent);
     virtual ~VideoView();
 
     //////////////////////////////////////////////////////////////////////////
+    // VIEW
+    //////////////////////////////////////////////////////////////////////////
+
+    pixel getX() const override;
+    pixel getY() const override;
+    pixel getW() const override;
+    pixel getH() const override;
+
+    void invalidateRect() override;
+
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
+
+    //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void canvasResized(); ///< Must be called when the widget is resized
-
-    wxSize requiredSize() const override;  ///< @see View::requiredSize()
-
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
-    /// \return y position of the track within this View
-    pixel getPosition(model::TrackPtr track) const;
-
 private:
+
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
+    mutable boost::optional<pixel> mHeight; ///< Can be reset to ensure recalc.
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -66,12 +80,7 @@ private:
 
     void onVideoTracksAdded( model::EventAddVideoTracks& event );
     void onVideoTracksRemoved( model::EventRemoveVideoTracks& event );
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void draw(wxBitmap& bitmap) const override; ///< @see View::draw()
+    void onTrackHeightChanged( model::EventHeightChanged& event );
 };
 
 }} // namespace

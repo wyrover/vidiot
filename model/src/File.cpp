@@ -750,12 +750,6 @@ void File::serialize(Archive & ar, const unsigned int version)
         ar & BOOST_SERIALIZATION_NVP(mPath);
         ar & BOOST_SERIALIZATION_NVP(mLastModified);
         ar & BOOST_SERIALIZATION_NVP(mMaxBufferSize);
-        if (Archive::is_loading::value)
-        {
-            // PERF: Cache each file once
-            openFile();
-            closeFile();
-        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

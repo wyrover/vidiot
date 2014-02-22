@@ -27,6 +27,7 @@
 #include "Selection.h"
 #include "SequenceView.h"
 #include "ThumbnailView.h"
+#include "Drag_Shift.h"
 #include "Track.h"
 #include "Transition.h"
 #include "UtilLog.h"
@@ -42,15 +43,16 @@ namespace gui { namespace timeline {
 //////////////////////////////////////////////////////////////////////////
 
 ClipView::ClipView(model::IClipPtr clip, View* parent)
-:   View(parent)
-,   mClip(clip)
-,   mRect(0,0,0,0)
-,   mBeginAddition(0)
+    :   View(parent)
+    ,   mClip(clip)
+    ,   mBeginAddition(0)
+    ,   mBitmap(boost::none)
 {
     VAR_DEBUG(this)(mClip);
     ASSERT(mClip);
 
     getViewMap().registerView(mClip,this);
+
     if (mClip->isA<model::VideoClip>())
     {
         new ThumbnailView(clip,this);
@@ -59,8 +61,6 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
     mClip->Bind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,          this);
     mClip->Bind(model::DEBUG_EVENT_RENDER_PROGRESS, &ClipView::onGenerationProgress,    this);
 
-    getZoom().Bind(ZOOM_CHANGE_EVENT, &ClipView::onZoomChanged, this);
-
     // IMPORTANT: No drawing/lengthy code here. Due to the nature of adding removing clips as
     //            part of edit operations, that will severely impact performance.
 }
@@ -68,8 +68,6 @@ ClipView::ClipView(model::IClipPtr clip, View* parent)
 ClipView::~ClipView()
 {
     VAR_DEBUG(this);
-
-    getZoom().Unbind(ZOOM_CHANGE_EVENT, &ClipView::onZoomChanged, this);
 
     mClip->Unbind(model::EVENT_DRAG_CLIP,             &ClipView::onClipDragged,         this);
     mClip->Unbind(model::EVENT_SELECT_CLIP,           &ClipView::onClipSelected,        this);
@@ -80,6 +78,61 @@ ClipView::~ClipView()
         delete getViewMap().getThumbnail(mClip);
     }
     getViewMap().unregisterView(mClip);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// VIEW
+//////////////////////////////////////////////////////////////////////////
+
+pixel ClipView::getX() const
+{
+    return getParent().getX() + getLeftPixel() + getShift();
+}
+
+pixel ClipView::getY() const
+{
+    return getParent().getY();
+}
+
+pixel ClipView::getW() const
+{
+    return getRightPixel() - getLeftPixel();
+}
+
+pixel ClipView::getH() const
+{
+    return (mClip->isA<model::Transition>()) ? Layout::TransitionHeight : getParent().getH();
+}
+
+void ClipView::invalidateRect()
+{
+    mBitmap.reset();
+    if (mClip->isA<model::VideoClip>())
+    {
+        getViewMap().getThumbnail(mClip)->invalidateRect();
+    }
+}
+
+void ClipView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    if (mClip->getDragged())
+    {
+        getTimeline().clearRect(dc,region,offset,getRect());
+    }
+    else
+    {
+        wxSize size(getSize());
+        if (!mBitmap || mBitmap->GetSize() != size)
+        {
+            mBitmap.reset(wxBitmap(size));
+            draw(*mBitmap, !getDrag().isActive(), true);
+        }
+        getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
+        if (mClip->isA<model::VideoClip>())
+        {
+            getViewMap().getThumbnail(mClip)->draw(dc,region,offset);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,8 +147,8 @@ model::IClipPtr ClipView::getClip()
 pts ClipView::getLeftPts() const
 {
     pts left = mClip->getLeftPts();
-    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getPrev());
-    if (transition && transition->getRight() > 0)
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getInTransition());
+    if (transition)
     {
         ASSERT(!mClip->isA<model::Transition>());
         left -= transition->getRight();
@@ -106,8 +159,8 @@ pts ClipView::getLeftPts() const
 pts ClipView::getRightPts() const
 {
     pts right = mClip->getRightPts();
-    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getNext());
-    if (transition && transition->getLeft() > 0)
+    model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mClip->getOutTransition());
+    if (transition)
     {
         ASSERT(!mClip->isA<model::Transition>());
         right += transition->getLeft();
@@ -125,20 +178,14 @@ pixel ClipView::getRightPixel() const
     return getZoom().ptsToPixels(getRightPts());
 }
 
-void ClipView::show(wxRect rect)
+pixel ClipView::getShift() const
 {
-    mRect.width = rect.width;
-    mRect.x = rect.x;
-    mRect.y = 4;
-    mRect.height = getSize().GetHeight() - 8;
-    invalidateBitmap();
-}
-
-wxSize ClipView::requiredSize() const
-{
-    int width = getRightPixel() - getLeftPixel();
-    int height = (mClip->isA<model::Transition>()) ? Layout::TransitionHeight : mClip->getTrack()->getHeight();
-    return wxSize(width, height);
+    Shift shift = getDrag().getShift();
+    if (shift && getLeftPts() >= shift->getPtsPosition())
+    {
+        return getZoom().ptsToPixels(shift->getPtsLength());
+    }
+    return 0;
 }
 
 void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
@@ -150,8 +197,8 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
     // (then the cursor won't flip too much).
     pixel dist_begin = position.x - getLeftPixel();
     pixel dist_end = getRightPixel() - position.x;
-    ASSERT_MORE_THAN_EQUALS_ZERO(dist_begin);
-    ASSERT_MORE_THAN_EQUALS_ZERO(dist_end);
+    ASSERT_MORE_THAN_EQUALS_ZERO(dist_begin)(mClip);
+    ASSERT_MORE_THAN_EQUALS_ZERO(dist_end)(mClip);
 
     model::TrackPtr track = mClip->getTrack();
     ASSERT_EQUALS(track,info.track);
@@ -164,9 +211,9 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
         if (dist_top <= Layout::TransitionHeight)
         {
             info.logicalclipposition =
-             (dist_begin < Layout::CursorClipEditDistance)     ? TransitionBegin :
-             (dist_end < Layout::CursorClipEditDistance)       ? TransitionEnd :
-             TransitionInterior; // Default
+                (dist_begin < Layout::CursorClipEditDistance)     ? TransitionBegin :
+                (dist_end < Layout::CursorClipEditDistance)       ? TransitionEnd :
+                TransitionInterior; // Default
         }
         else // below transition
         {
@@ -265,23 +312,8 @@ void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) cons
 }
 
 //////////////////////////////////////////////////////////////////////////
-// EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void ClipView::onZoomChanged( ZoomChangeEvent& event )
-{
-    invalidateBitmap();
-    event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
-
-void ClipView::draw(wxBitmap& bitmap) const
-{
-    draw(bitmap, !getDrag().isActive(), true);
-}
 
 void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDraggedClips) const
 {
@@ -296,8 +328,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
 
     int w = bitmap.GetWidth();
     int h = bitmap.GetHeight();
-    int r = getRightPixel();
-    int l = getLeftPixel();
+    //int r = getRightPixel();
+    //int l = getLeftPixel();
 
     if (mClip->isA<model::EmptyClip>() ||
         (!drawDraggedClips && getDrag().contains(mClip)) ||
@@ -320,10 +352,10 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         {
             dc.SetBrush(Layout::get().TransitionBgUnselected);
         }
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::get().TransitionHeight);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::TransitionHeight);
         dc.SetPen(Layout::get().TransitionPen);
         dc.SetBrush(Layout::get().TransitionBrush);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::get().TransitionHeight);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(),Layout::TransitionHeight);
     }
     else
     {
@@ -346,15 +378,8 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         dc.SetBrush(Layout::get().ClipDescriptionBrush);
         dc.SetPen(Layout::get().ClipDescriptionPen);
         //dc.SetLogicalFunction(wxEQUIV);
-        dc.DrawRectangle(0,0,bitmap.GetWidth(), Layout::get().ClipDescriptionBarHeight);
+        dc.DrawRectangle(0,0,bitmap.GetWidth(), Layout::ClipDescriptionBarHeight);
         dc.DrawText(mClip->getDescription(), wxPoint(1,1));
-    }
-
-    if (mRect.GetHeight() != 0)
-    {
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.SetPen(*wxGREEN_PEN);
-        dc.DrawRectangle(mRect);
     }
 
     if (Config::getShowDebugInfo())
@@ -373,31 +398,19 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
         dc.SetPen(Layout::get().DebugPen);
         dc.DrawLine(wxPoint(pos,0), wxPoint(pos,bitmap.GetHeight()));
     }
-
-    // Thumbnail
-    wxSize thumbnailSize(0,0);
-    if (mClip->isA<model::VideoClip>())
-    {
-        bool drawThumbnail = true;
-        if (drawNotDraggedClips && mClip->getDragged())
-        {
-            // For clips being dragged do not show the thumbnail in the timeline anymore.
-            drawThumbnail = false;
-        }
-        if (drawThumbnail)
-        {
-            dc.DrawBitmap(getViewMap().getThumbnail(mClip)->getBitmap(),wxPoint(Layout::ClipBorderSize, Layout::get().ClipDescriptionBarHeight));
-        }
-    }
 }
 
 void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
 {
     if (getDrag().contains(mClip))
     {
-        wxBitmap b(getSize().x,height);
+        wxBitmap b(getW(),height);
         draw(b, true, false);
         dc.DrawBitmap(b,position);
+        if (mClip->isA<model::VideoClip>())
+        {
+            getViewMap().getThumbnail(mClip)->drawForDragging(position, height, dc);
+        }
         dcMask.DrawRectangle(position,b.GetSize());
     }
 }
@@ -408,23 +421,23 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 
 void ClipView::onClipDragged( model::EventDragClip& event )
 {
-    invalidateBitmap();
+    repaint();
     event.Skip();
 }
 
 void ClipView::onClipSelected( model::EventSelectClip& event )
 {
-    invalidateBitmap();
+    mBitmap.reset();
+    repaint();
     event.Skip();
 }
 
 void ClipView::onGenerationProgress( model::DebugEventRenderProgress& event )
 {
-//    if (Config::getShowDebugInfo())
+    if (Config::getShowDebugInfo())
     {
-        // Without the surrounding 'if', every cursor action in the Timeline causes an update of the entire view!
-        // That's every cursor move, but also every change in frame playback!
-        invalidateBitmap();
+        mBitmap.reset();
+        repaint();
     }
     event.Skip();
 }

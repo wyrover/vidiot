@@ -539,7 +539,7 @@ void TestDetailsClip::testChangeVolume()
 
     model::AudioCompositionParameters p = model::AudioCompositionParameters().setNrChannels(2).setSampleRate(44100);
 
-    unlink(AudioClip(0,3)); // Ensure that the audio controls are visible
+    Unlink(AudioClip(0,3)); // Ensure that the audio controls are visible
     ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::UnlinkClips>();
 
     model::AudioClipPtr audioclip = getAudioClip(AudioClip(0,3));

@@ -145,8 +145,6 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     opacitypanel->SetSizer(opacitysizer);
     addOption(_("Opacity"), opacitypanel);
 
-    // todo add Trim option (with left, right top, bottom spins)
-
     wxPanel* rotationpanel = new wxPanel(this);
     wxBoxSizer* rotationsizer = new wxBoxSizer(wxHORIZONTAL);
     mRotationSlider = new wxSlider(rotationpanel,wxID_ANY, 1 * model::Constants::sRotationPrecisionFactor, model::Constants::sRotationMin, model::Constants::sRotationMax);

@@ -31,7 +31,6 @@ struct EvLeave;
 struct EvDragEnd;
 struct EvKeyDown;
 struct EvKeyUp;
-struct EvZoomChanged;
 
 struct Dragging
     :   public TimeLineState< Dragging, Machine >
@@ -52,8 +51,7 @@ struct Dragging
         boost::statechart::custom_reaction< EvLeave >,
         boost::statechart::custom_reaction< EvDragEnd >,
         boost::statechart::custom_reaction< EvKeyDown >,
-        boost::statechart::custom_reaction< EvKeyUp >,
-        boost::statechart::custom_reaction< EvZoomChanged >
+        boost::statechart::custom_reaction< EvKeyUp >
     > reactions;
 
     //////////////////////////////////////////////////////////////////////////
@@ -68,7 +66,6 @@ struct Dragging
     boost::statechart::result react( const EvDragEnd& evt );
     boost::statechart::result react( const EvKeyDown& evt );
     boost::statechart::result react( const EvKeyUp& evt );
-    boost::statechart::result react( const EvZoomChanged& evt );
 
     static const wxString sTooltip;
 };

@@ -65,12 +65,11 @@ void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
     ASSERT_EQUALS(getTimeline().getScrolling().getOffset().x, from - to);
 
     pts center = getTimeline().getScrolling().getCenterPts();
-
+    RunInMainAndWait([center] { getTimeline().getCursor().setLogicalPosition(center); });
     StartTest("Center pts position is kept aligned when zooming out via the keyboard.");
     Type('-');
     ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
-
     StartTest("Center pts position is kept aligned when zooming in via the keyboard.");
     Type('=');
     ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));

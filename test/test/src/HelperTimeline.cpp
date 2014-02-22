@@ -46,6 +46,7 @@
 #include "State.h"
 #include "Timeline.h"
 #include "Track.h"
+#include "TrackView.h"
 #include "Transition.h"
 #include "UtilLogWxwidgets.h"
 #include "VideoClip.h"
@@ -138,8 +139,12 @@ int getSelectedClipsCount()
 
 pixel VCenter(model::TrackPtr track)
 {
-    pixel top = getTimeline().getSequenceView().getPosition(track);
-    return top + track->getHeight() / 2;
+    return TopPixel(track) + track->getHeight() / 2;
+}
+
+pixel TopPixel(model::TrackPtr track)
+{
+    return getTimeline().getViewMap().getView(track)->getY();
 }
 
 pixel RightPixel(model::TrackPtr track)
@@ -190,7 +195,7 @@ pixel RightPixel(model::IClipPtr clip)
 
 pixel TopPixel(model::IClipPtr clip)
 {
-    return getTimeline().getSequenceView().getPosition(clip->getTrack());
+    return TopPixel(clip->getTrack());
 }
 
 pixel BottomPixel(model::IClipPtr clip)

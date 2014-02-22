@@ -42,24 +42,6 @@ std::ostream& operator<< (std::ostream& os, const EvPart< MostDerived, ORIGINALE
     return os;
 }
 
-struct EvZoomChanged
-    : EvPart<EvZoomChanged, timeline::ZoomChangeEvent>
-{
-    EvZoomChanged(timeline::ZoomChangeEvent& event)
-        : EvPart<EvZoomChanged
-        , timeline::ZoomChangeEvent>(event)
-    {}
-};
-
-struct EvScrollChanged
-    : EvPart<EvScrollChanged, timeline::ScrollChangeEvent>
-{
-    EvScrollChanged(timeline::ScrollChangeEvent& event)
-        : EvPart<EvScrollChanged
-        , timeline::ScrollChangeEvent>(event)
-    {}
-};
-
 struct EvPlaybackChanged
     : boost::statechart::event< EvPlaybackChanged >
 {

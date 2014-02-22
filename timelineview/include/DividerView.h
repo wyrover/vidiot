@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef INTERVALS_VIEW_H
-#define INTERVALS_VIEW_H
+#ifndef DIVIDER_VIEW_H
+#define DIVIDER_VIEW_H
 
 #include "View.h"
 
 namespace gui { namespace timeline {
 
-class IntervalsView
+class DividerView
     :   public View
 {
 public:
@@ -31,8 +31,9 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    IntervalsView(Timeline* timeline);
-    virtual ~IntervalsView();
+    /// \param track the track to which this divider relates. If 0, then divides audio and video.
+    DividerView(View* parent, pixel height, model::TrackPtr track = model::TrackPtr());
+    virtual ~DividerView();
 
     //////////////////////////////////////////////////////////////////////////
     // VIEW
@@ -47,21 +48,18 @@ public:
 
     void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
 
-    //////////////////////////////////////////////////////////////////////////
-    // GET/SET
-    //////////////////////////////////////////////////////////////////////////
-
-    void refreshInterval(PtsInterval interval);
-
 private:
 
     //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
+    // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxRect makeRect(PtsInterval interval) const;
+    pixel mHeight;
+    mutable boost::optional<wxBitmap> mBitmap;
+    mutable boost::optional<pixel> mY;
+    model::TrackPtr mTrack;
 };
 
 }} // namespace
 
-#endif // INTERVALS_VIEW_H
+#endif // DIVIDER_VIEW_H

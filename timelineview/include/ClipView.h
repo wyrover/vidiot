@@ -28,7 +28,6 @@ class DebugEventRenderProgress;
 
 namespace gui { namespace timeline {
     struct PointerPositionInfo;
-    class ZoomChangeEvent;
 
 class ClipView
     :   public View
@@ -43,6 +42,19 @@ public:
     virtual ~ClipView();
 
     //////////////////////////////////////////////////////////////////////////
+    // VIEW
+    //////////////////////////////////////////////////////////////////////////
+
+    pixel getX() const override;
+    pixel getY() const override;
+    pixel getW() const override;
+    pixel getH() const override;
+
+    void invalidateRect() override;
+
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
+
+    //////////////////////////////////////////////////////////////////////////
     //  GET & SET
     //////////////////////////////////////////////////////////////////////////
 
@@ -54,17 +66,11 @@ public:
     pixel getLeftPixel() const;     ///< \return left position in pixels
     pixel getRightPixel() const;    ///< \return right position in pixels
 
-    wxSize requiredSize() const override;    ///< \see View::requiredSize()
+    pixel getShift() const;          ///< \return shift to accommocate repositioning during shift-drag
 
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
 
-    void show(wxRect rect); ///< tmp for showing intersect with selected regions
-
-    //////////////////////////////////////////////////////////////////////////
-    // EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onZoomChanged( ZoomChangeEvent& event );
+    void update();
 
     //////////////////////////////////////////////////////////////////////////
     // DRAW
@@ -84,14 +90,13 @@ private:
 
     model::IClipPtr mClip;
 
-    wxRect mRect;       ///< @see show()
     pts mBeginAddition; ///< if >0 then this area is (temporarily, during editing) added. if <0 then it is removed from the clip.
+
+    mutable boost::optional<wxBitmap> mBitmap;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
-
-    void draw(wxBitmap& bitmap) const override;                      ///< @see View::draw()
 
     /// Actual drawing implementation. Reused for drawing clips when dragging.
     /// \param drawDraggedClips indicates if clips currently being dragged must be drawn or left empty

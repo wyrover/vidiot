@@ -24,9 +24,6 @@ namespace gui { class PlaybackActiveEvent; }
 
 namespace gui { namespace timeline {
 
-class ZoomChangeEvent;
-class ScrollChangeEvent;
-
 namespace state {
 
 //////////////////////////////////////////////////////////////////////////
@@ -109,9 +106,6 @@ private:
     void onKeyUp            (wxKeyEvent&   event);
     void onCaptureLost      (wxMouseCaptureLostEvent& event);
     void onCaptureChanged   (wxMouseCaptureChangedEvent& event);
-
-    void onZoomChanged      (timeline::ZoomChangeEvent& event );
-    void onScrollChanged    (timeline::ScrollChangeEvent& event);
 
     void onPlaybackActive(PlaybackActiveEvent& event);
 

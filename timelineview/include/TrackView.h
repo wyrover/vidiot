@@ -36,7 +36,7 @@ class TrackView
 public:
 
     //////////////////////////////////////////////////////////////////////////
-    // INITIALIZATION METHODS
+    // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
     TrackView(model::TrackPtr track, View* parent);
@@ -51,16 +51,23 @@ public:
     void drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const;
 
     //////////////////////////////////////////////////////////////////////////
+    // VIEW
+    //////////////////////////////////////////////////////////////////////////
+
+    pixel getX() const override;
+    pixel getY() const override;
+    pixel getW() const override;
+    pixel getH() const override;
+
+    void invalidateRect() override;
+
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
+
+    //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void canvasResized(); ///< Must be called when the widget is resized
-
-    wxSize requiredSize() const override;  ///< @see View::requiredSize()
-
     void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
-
-    void onShiftChanged();
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
@@ -68,17 +75,17 @@ public:
 
     void onClipsAdded( model::EventAddClips& event );
     void onClipsRemoved( model::EventRemoveClips& event );
-    void onHeightChanged( model::EventHeightChanged& event );
 
 private:
 
+    //////////////////////////////////////////////////////////////////////////
+    // MEMBERS
+    //////////////////////////////////////////////////////////////////////////
+
     model::TrackPtr mTrack;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void draw(wxBitmap& bitmap) const override; ///< @see View::draw()
+    mutable boost::optional<pixel> mY;
+    typedef std::map<pixel, model::IClipPtr> ClipLookupMap;
+    mutable boost::shared_ptr<ClipLookupMap> mClips;
 };
 
 }} // namespace

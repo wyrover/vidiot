@@ -22,7 +22,10 @@
 
 namespace gui { namespace timeline {
 
+class DividerView;
+
 typedef std::map< model::TrackPtr, TrackView* > TrackMap;
+typedef std::map< model::TrackPtr, DividerView* > DividerMap;
 typedef std::map< model::IClipPtr, ClipView* > ClipMap;
 typedef std::map< model::IClipPtr, ThumbnailView* > ThumbnailMap;
 
@@ -42,24 +45,39 @@ public:
     // REGISTRATION
     //////////////////////////////////////////////////////////////////////////
 
-    void registerView(model::IClipPtr clip, ClipView* view);
     void registerView(model::TrackPtr track, TrackView* view);
+    void registerDivider(model::TrackPtr track, DividerView* view);
+
+    void registerView(model::IClipPtr clip, ClipView* view);
     void registerThumbnail(model::IClipPtr clip, ThumbnailView* view);
-    void unregisterView(model::IClipPtr clip);
+
     void unregisterView(model::TrackPtr track);
+    void unregisterDivider(model::TrackPtr track);
+
+    void unregisterView(model::IClipPtr clip);
     void unregisterThumbnail(model::IClipPtr clip);
 
     //////////////////////////////////////////////////////////////////////////
     // CONVERSION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual ClipView* getView(model::IClipPtr clip) const;
+    virtual DividerView* getDivider(model::TrackPtr track) const;
     virtual TrackView* getView(model::TrackPtr track) const;
+
+    virtual ClipView* getView(model::IClipPtr clip) const;
     virtual ThumbnailView* getThumbnail(model::IClipPtr clip) const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // MASS INVALIDATION
+    //////////////////////////////////////////////////////////////////////////
+
+    void invalidateThumbnails();
 
 private:
 
     TrackMap mTracks;
+    DividerMap mDividers;
+
     ClipMap mClips;
     ThumbnailMap mThumbnails;
 };

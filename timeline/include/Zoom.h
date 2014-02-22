@@ -24,11 +24,8 @@
 
 namespace gui { namespace timeline {
 
-DECLARE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
-
 class Zoom
-    :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
-    ,   public Part
+    :   public Part
 {
 public:
 

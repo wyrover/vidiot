@@ -27,4 +27,4 @@ DECLARE_EVENT(EVENT_LENGTH_CHANGED, EventLengthChanged, pts);
 
 } // namespace
 
-#endif // MODEL_EVENT_H
+#endif

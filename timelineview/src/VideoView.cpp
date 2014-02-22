@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "VideoView.h"
+#include "AudioView.h"
 
 #include "Layout.h"
 #include "Track.h"
@@ -23,7 +23,6 @@
 #include "Sequence.h"
 #include "ViewMap.h"
 #include "PositionInfo.h"
-#include "Timeline.h"
 #include "SequenceView.h"
 #include "SequenceEvent.h"
 
@@ -35,6 +34,7 @@ namespace gui { namespace timeline {
 
 VideoView::VideoView(View* parent)
 :   View(parent)
+,   mHeight(boost::none)
 {
     VAR_DEBUG(this);
 
@@ -45,6 +45,8 @@ VideoView::VideoView(View* parent)
     for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
         new TrackView(track,this);
+        new DividerView(this, Layout::TrackDividerHeight, track);
+        track->Bind(model::EVENT_HEIGHT_CHANGED, &VideoView::onTrackHeightChanged, this);
     }
 
     getSequence()->Bind(model::EVENT_ADD_VIDEO_TRACK,       &VideoView::onVideoTracksAdded,    this);
@@ -61,6 +63,60 @@ VideoView::~VideoView()
     for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
         delete getViewMap().getView(track);
+        delete getViewMap().getDivider(track);
+        track->Unbind(model::EVENT_HEIGHT_CHANGED, &VideoView::onTrackHeightChanged, this);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// VIEW
+//////////////////////////////////////////////////////////////////////////
+
+pixel VideoView::getX() const
+{
+    return getParent().getX();
+}
+
+pixel VideoView::getY() const
+{
+    return getSequence()->getDividerPosition() - getH();
+}
+
+pixel VideoView::getW() const
+{
+    return getParent().getW();
+}
+
+pixel VideoView::getH() const
+{
+    if (!mHeight)
+    {
+        int height = 0;
+        for ( model::TrackPtr track : getSequence()->getVideoTracks() )
+        {
+            height += track->getHeight() + Layout::TrackDividerHeight;
+        }
+        mHeight.reset(height);
+    }
+    return *mHeight;
+}
+
+void VideoView::invalidateRect()
+{
+    mHeight.reset();
+    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
+    {
+        getViewMap().getView(track)->invalidateRect();
+        getViewMap().getDivider(track)->invalidateRect();
+    }
+}
+
+void VideoView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
+    {
+        getViewMap().getView(track)->draw(dc,region,offset);
+        getViewMap().getDivider(track)->draw(dc,region,offset);
     }
 }
 
@@ -68,34 +124,13 @@ VideoView::~VideoView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void VideoView::canvasResized()
-{
-    invalidateBitmap();
-    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
-    {
-        getViewMap().getView(track)->canvasResized();
-    }
-}
-
-wxSize VideoView::requiredSize() const
-{
-    int width = getSequenceView().minimumWidth();
-    int height = 0;
-    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
-    {
-        height += track->getHeight() + Layout::TrackDividerHeight;
-    }
-    return wxSize(width,height);
-}
-
 void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
-    int top = getSequenceView().getVideoPosition();
-    model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
-    for ( model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
+    int y = getSequence()->getDividerPosition();
+    for ( model::TrackPtr track : getSequence()->getVideoTracks() )
     {
-        int bottom = top + track->getHeight() + Layout::TrackDividerHeight;
-        if (position.y >= top && position.y < bottom)
+        int top = y - (track->getHeight()  + Layout::TrackDividerHeight);
+        if (position.y >= top && position.y < y)
         {
             info.track = track;
             info.trackPosition = top;
@@ -103,24 +138,8 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
             getViewMap().getView(track)->getPositionInfo(position, info);
             return;
         }
-        top = bottom;
+        y = top;
     }
-}
-
-pixel VideoView::getPosition(model::TrackPtr track) const
-{
-    int y = 0;
-   model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
-   for (model::TrackPtr _track : boost::adaptors::reverse( videoTracks ) )
-    {
-        y += Layout::TrackDividerHeight;
-        if (track == _track)
-        {
-            break;
-        }
-        y += _track->getHeight();
-    }
-    return y;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -132,12 +151,10 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
     for ( model::TrackPtr track : event.getValue().addedTracks )
     {
         new TrackView(track,this);
+        new DividerView(this, Layout::TrackDividerHeight, track);
+        track->Bind(model::EVENT_HEIGHT_CHANGED, &VideoView::onTrackHeightChanged, this);
     }
-    invalidateBitmap();
-    // Not via an event in sequence view, since the added video track must
-    // first be incorporated in the VideoView (the divider height requires
-    // the correct video height).
-    getSequenceView().resetDividerPosition();
+    getSequenceView().resetDividerPosition(); // Will cause this::invalidateRect() and Timeline::Refresh()
     event.Skip();
 }
 
@@ -146,27 +163,18 @@ void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
     for ( model::TrackPtr track : event.getValue().removedTracks )
     {
         delete getViewMap().getView(track);
+        delete getViewMap().getDivider(track);
+        track->Unbind(model::EVENT_HEIGHT_CHANGED, &VideoView::onTrackHeightChanged, this);
     }
-    invalidateBitmap();
+    getSequenceView().resetDividerPosition(); // Will cause this::invalidateRect() and Timeline::Refresh()
     event.Skip();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void VideoView::draw(wxBitmap& bitmap) const
+void VideoView::onTrackHeightChanged( model::EventHeightChanged& event )
 {
-    wxMemoryDC dc(bitmap);
-    int y = 0;
-   model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
-   for (model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
-    {
-        drawDivider(dc, y, Layout::TrackDividerHeight);
-        y += Layout::TrackDividerHeight;
-        dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
-        y += track->getHeight();
-    }
+    getParent().invalidateRect(); // Will cause this::invalidateRect()
+    getTimeline().Refresh(false);
+    event.Skip();
 }
 
 }} // namespace

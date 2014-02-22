@@ -19,6 +19,7 @@
 
 #include "Calculate.h"
 #include "Clip.h"
+#include "Drag_Shift.h"
 #include "Logging.h"
 #include "EmptyClip.h"
 #include "Sequence.h"
@@ -32,10 +33,28 @@
 namespace gui { namespace timeline { namespace command {
 
 //////////////////////////////////////////////////////////////////////////
-// DROP HELPER CLASS
+// HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ExecuteDrop::Drop& obj )
+Drop::Drop()
+    : track()
+    , position(0)
+    , clips()
+{
+}
+
+Drop::Drop(const Drop& other)
+    : track(other.track)
+    , position(other.position)
+    , clips(other.clips)
+{
+}
+
+Drop::~Drop()
+{
+}
+
+std::ostream& operator<<( std::ostream& os, const Drop& obj )
 {
     os << &obj << '|' << obj.track << '|' << obj.position << '|' << obj.clips;
     return os;
@@ -200,8 +219,8 @@ void ExecuteDrop::initialize()
         LOG_INFO << "STEP 2: Apply shift";
         for ( model::TrackPtr track : getTimeline().getSequence()->getTracks() )
         {
-            model::IClipPtr clip = track->getClip(mShift->mPosition);
-            addClip(boost::make_shared<model::EmptyClip>(mShift->mLength), track, clip );
+            model::IClipPtr clip = track->getClip(mShift->getPtsPosition());
+            addClip(boost::make_shared<model::EmptyClip>(mShift->getPtsLength()), track, clip );
         }
     }
     else
@@ -212,7 +231,7 @@ void ExecuteDrop::initialize()
     LOG_INFO << "STEP 3: Execute the drops";
     for ( Drop drop : mDrops )
     {
-        ASSERT_MORE_THAN_EQUALS_ZERO(drop.position);
+        ASSERT_MORE_THAN_EQUALS_ZERO(drop.position); // todo got -something here after dragging,ctrl wheel during dragging, then dropping (more to the left, at begin of timeline)
         ASSERT(drop.track);
         ASSERT_NONZERO(drop.clips.size());
         VAR_INFO(drop.position)(drop.track)(drop.clips);
@@ -270,7 +289,7 @@ void ExecuteDrop::initialize()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-const ExecuteDrop::Drags& ExecuteDrop::getDrags() const
+const Drags& ExecuteDrop::getDrags() const
 {
     return mDrags;
 }

@@ -335,43 +335,34 @@ void Trim::submit()
             // If scrolling could NOT completely align the pts value with the given pixel (typically happens
             // when trimming at the begin of the timeline), show an animation of the sequence moving to the
             // beginning of the timeline.
+
             if (remaining < 0)
             {
                 static const int SleepTimePerStep = 25;
                 static const int AnimationDurationInMs = 250;
                 static const int NumberOfSteps = AnimationDurationInMs / SleepTimePerStep;
-                for (int step = NumberOfSteps; step >= 0; --step)
+                for (int step = NumberOfSteps; step > 0; --step) // step > 0: otherwise /0 possible
                 {
                     int newShift = -1 * model::Convert::doubleToInt(static_cast<double>(remaining) / static_cast<double>(NumberOfSteps) * static_cast<double>(step));
-                    getTimeline().setShift(newShift);
-                    getTimeline().Refresh(false);
                     pts cursorDiff = getTimeline().getZoom().pixelsToPts(newShift);
+                    getTimeline().setShift(newShift);
                     getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore - diff + cursorDiff);
                     getTimeline().Update();
                     boost::this_thread::sleep(boost::posix_time::milliseconds(SleepTimePerStep));
                 }
             }
             getTimeline().setShift(0);
-            getTimeline().Refresh(false);
             getTimeline().getCursor().setLogicalPosition(mCursorPositionBefore - diff);
             getTimeline().Update();
         }
     }
 }
 
-void Trim::draw(wxDC& dc) const
+void Trim::drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
-    if (!mActive)
+    if (mActive && mSnap)
     {
-        return;
-    }
-    dc.SetPen(Layout::get().SnapPen);
-    dc.SetBrush(Layout::get().SnapBrush);
-
-    if (mSnap)
-    {
-        pixel pos = getZoom().ptsToPixels(*mSnap) - getTimeline().getShift();
-        dc.DrawLine(pos,0,pos,dc.GetSize().GetHeight());
+        getTimeline().drawLine(dc,region,offset,*mSnap,Layout::get().SnapPen);
     }
 }
 

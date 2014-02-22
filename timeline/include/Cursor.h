@@ -64,7 +64,7 @@ public:
     // DRAW
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxDC& dc) const;
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
 
 private:
 

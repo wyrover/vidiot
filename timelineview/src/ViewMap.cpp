@@ -29,6 +29,7 @@ namespace gui { namespace timeline {
 ViewMap::ViewMap(Timeline* timeline)
 :   Part(timeline)
 ,   mTracks()
+,   mDividers()
 ,   mClips()
 ,   mThumbnails()
 {
@@ -39,6 +40,7 @@ ViewMap::~ViewMap()
 {
     VAR_DEBUG(this);
     ASSERT_ZERO(mTracks.size());
+    ASSERT_ZERO(mDividers.size());
     ASSERT_ZERO(mClips.size());
     ASSERT_ZERO(mThumbnails.size());
 }
@@ -46,6 +48,18 @@ ViewMap::~ViewMap()
 //////////////////////////////////////////////////////////////////////////
 // REGISTRATION
 //////////////////////////////////////////////////////////////////////////
+
+void ViewMap::registerView(model::TrackPtr track, TrackView* view)
+{
+    ASSERT_MAP_CONTAINS_NOT(mTracks,track);
+    mTracks.insert(std::make_pair(track, view));
+}
+
+void ViewMap::registerDivider(model::TrackPtr track, DividerView* view)
+{
+    ASSERT_MAP_CONTAINS_NOT(mDividers,track);
+    mDividers.insert(std::make_pair(track, view));
+}
 
 void ViewMap::registerView(model::IClipPtr clip, ClipView* view)
 {
@@ -59,22 +73,22 @@ void ViewMap::registerThumbnail(model::IClipPtr clip, ThumbnailView* view)
     mThumbnails.insert(std::make_pair(clip, view));
 }
 
-void ViewMap::registerView(model::TrackPtr track, TrackView* view)
+void ViewMap::unregisterView(model::TrackPtr track)
 {
-    ASSERT_MAP_CONTAINS_NOT(mTracks,track);
-    mTracks.insert(std::make_pair(track, view));
+    ASSERT_MAP_CONTAINS(mTracks,track);
+    mTracks.erase(track);
+}
+
+void ViewMap::unregisterDivider(model::TrackPtr track)
+{
+    ASSERT_MAP_CONTAINS(mDividers,track);
+    mDividers.erase(track);
 }
 
 void ViewMap::unregisterView(model::IClipPtr clip)
 {
     ASSERT_MAP_CONTAINS(mClips,clip);
     mClips.erase(clip);
-}
-
-void ViewMap::unregisterView(model::TrackPtr track)
-{
-    ASSERT_MAP_CONTAINS(mTracks,track);
-    mTracks.erase(track);
 }
 
 void ViewMap::unregisterThumbnail(model::IClipPtr clip)
@@ -87,17 +101,24 @@ void ViewMap::unregisterThumbnail(model::IClipPtr clip)
 // CONVERSION
 //////////////////////////////////////////////////////////////////////////
 
-ClipView* ViewMap::getView(model::IClipPtr clip) const
-{
-    ClipMap::const_iterator it = mClips.find(clip);
-    ASSERT(it != mClips.end())(clip)(mClips);
-    return it->second;
-}
-
 TrackView* ViewMap::getView(model::TrackPtr track) const
 {
     TrackMap::const_iterator it = mTracks.find(track);
     ASSERT(it != mTracks.end())(track)(mTracks);
+    return it->second;
+}
+
+DividerView* ViewMap::getDivider(model::TrackPtr track) const
+{
+    DividerMap::const_iterator it = mDividers.find(track);
+    ASSERT(it != mDividers.end())(track)(mDividers);
+    return it->second;
+}
+
+ClipView* ViewMap::getView(model::IClipPtr clip) const
+{
+    ClipMap::const_iterator it = mClips.find(clip);
+    ASSERT(it != mClips.end())(clip)(mClips);
     return it->second;
 }
 
@@ -106,6 +127,22 @@ ThumbnailView* ViewMap::getThumbnail(model::IClipPtr clip) const
     ThumbnailMap::const_iterator it = mThumbnails.find(clip);
     ASSERT(it != mThumbnails.end())(clip)(mThumbnails);
     return it->second;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MASS INVALIDATION
+//////////////////////////////////////////////////////////////////////////
+
+void ViewMap::invalidateThumbnails()
+{
+    for (auto v : mTracks )
+    {
+        v.second->invalidateRect();
+    }
+    for (auto v : mThumbnails )
+    {
+        v.second->invalidateRect();
+    }
 }
 
 }} // namespace

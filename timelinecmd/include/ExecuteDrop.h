@@ -19,41 +19,36 @@
 #define EXECUTE_DROPS_H
 
 #include "AClipEdit.h"
-#include "Drag_Shift.h"
+
+namespace gui { namespace timeline {
+class ShiftParams;
+typedef boost::shared_ptr<ShiftParams> Shift;
+}}
 
 namespace gui { namespace timeline { namespace command {
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER CLASSES
+//////////////////////////////////////////////////////////////////////////
+
+typedef std::set<model::IClipPtr> Drags;
+struct Drop
+{
+    model::TrackPtr track;
+    pts position;
+    model::IClips clips;     ///< Must be contiguous
+    friend std::ostream& operator<<( std::ostream& os, const Drop& obj );
+    Drop();
+    Drop(const Drop& other);
+    virtual ~Drop();
+};
+typedef std::list<Drop> Drops;
 
 /// Important: Link information is kept between the clips being dropped by not replacing the dropped clips with other clips, but just by 'moving the originals around'
 class ExecuteDrop
     :   public AClipEdit
 {
 public:
-
-    //////////////////////////////////////////////////////////////////////////
-    // TYPES
-    //////////////////////////////////////////////////////////////////////////
-
-    typedef std::set<model::IClipPtr> Drags;
-
-    struct Drop
-    {
-        model::TrackPtr track;
-        pts position;
-        model::IClips clips;     ///< Must be contiguous
-        friend std::ostream& operator<<( std::ostream& os, const Drop& obj );
-        Drop()
-            : track()
-            , position(0)
-            , clips()
-        {}
-        Drop(const Drop& other)
-            : track(other.track)
-            , position(other.position)
-            , clips(other.clips)
-        {}
-        virtual ~Drop() {}
-    };
-    typedef std::list<Drop> Drops;
 
     typedef std::set<model::TransitionPtr> UnappliedTransitions;
 
@@ -81,7 +76,7 @@ public:
 
     /// Called when the drop operation was finished. After this call, the command will be
     /// executed on the sequence via 'initialize'.
-    void onDrop(const Drops& drops, Shift shift = boost::none);
+    void onDrop(const Drops& drops, Shift shift = Shift());
 
     /// Called when the drag operation is aborted. Any changes made to the timeline must be
     /// undone. The object will be destructed after this call.

@@ -58,7 +58,7 @@ wxPoint getPosition(model::IClipPtr clip)
     return getVideoClip(clip)->getPosition();
 }
 
-void unlink(model::IClipPtr clip)
+void Unlink(model::IClipPtr clip)
 {
     model::SequencePtr sequence = getSequence();
     ASSERT_NONZERO(clip->getLink());

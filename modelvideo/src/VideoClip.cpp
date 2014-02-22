@@ -163,7 +163,6 @@ VideoFramePtr VideoClip::getNextVideo(const VideoCompositionParameters& paramete
 
             if (isEmpty)
             {
-                VAR_WARNING(isEmpty)(requiredVideoSize);
                 videoFrame = boost::make_shared<EmptyFrame>(parameters);
             }
             else
