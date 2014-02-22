@@ -60,8 +60,6 @@ Machine::Machine(Timeline& tl)
     getTimeline().  Bind(wxEVT_KEY_UP,                  &Machine::onKeyUp,          this);
     getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_LOST,      &Machine::onCaptureLost,    this);
     getTimeline().  Bind(wxEVT_MOUSE_CAPTURE_CHANGED,   &Machine::onCaptureChanged, this);
-    getZoom().      Bind(ZOOM_CHANGE_EVENT,             &Machine::onZoomChanged,    this);
-    getScrolling(). Bind(SCROLL_CHANGE_EVENT,           &Machine::onScrollChanged,  this);
 
     getPlayer()->Bind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
 
@@ -89,8 +87,6 @@ Machine::~Machine()
     getTimeline().  Unbind(wxEVT_KEY_UP,                &Machine::onKeyUp,          this);
     getTimeline().  Unbind(wxEVT_MOUSE_CAPTURE_LOST,    &Machine::onCaptureLost,    this);
     getTimeline().  Unbind(wxEVT_MOUSE_CAPTURE_CHANGED, &Machine::onCaptureChanged, this);
-    getZoom().      Unbind(ZOOM_CHANGE_EVENT,           &Machine::onZoomChanged,    this);
-    getScrolling(). Unbind(SCROLL_CHANGE_EVENT,         &Machine::onScrollChanged,  this);
 
     getPlayer()->Unbind(EVENT_PLAYBACK_ACTIVE, &Machine::onPlaybackActive, this);
 }
@@ -107,7 +103,6 @@ void Machine::start()
 {
     process_event(EvStart());
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // BOOST STATECHART OVERRIDES
@@ -306,20 +301,6 @@ void Machine::onCaptureChanged(wxMouseCaptureChangedEvent& event)
 {
     LOG_DEBUG;
 };
-
-void Machine::onZoomChanged( timeline::ZoomChangeEvent& event )
-{
-    LOG_DEBUG;
-    process_event(EvZoomChanged(event));
-    event.Skip();
-}
-
-void Machine::onScrollChanged( timeline::ScrollChangeEvent& event )
-{
-    LOG_DEBUG;
-    process_event(EvScrollChanged(event));
-    event.Skip();
-}
 
 void Machine::onPlaybackActive(PlaybackActiveEvent& event)
 {

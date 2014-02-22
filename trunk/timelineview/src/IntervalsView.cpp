@@ -33,8 +33,8 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-IntervalsView::IntervalsView(View* parent)
-    :   View(parent)
+IntervalsView::IntervalsView(Timeline* timeline)
+    :   View(timeline)
 {
     VAR_DEBUG(this);
     getIntervals().setView(this);
@@ -47,44 +47,60 @@ IntervalsView::~IntervalsView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// GET/SET
+// POSITION/SIZE
 //////////////////////////////////////////////////////////////////////////
 
-wxSize IntervalsView::requiredSize() const
+pixel IntervalsView::getX() const
 {
-    return wxSize(0,0);
+    return getParent().getX();
+}
+
+pixel IntervalsView::getY() const
+{
+    return 0;
+}
+
+pixel IntervalsView::getW() const
+{
+    return getParent().getW();
+}
+
+pixel IntervalsView::getH() const
+{
+    return getParent().getH();
+}
+
+void IntervalsView::invalidateRect()
+{
+}
+
+void IntervalsView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const // todo move this to the intervals class entirely
+{
+    PtsIntervals intervals = getIntervals().getIntervalsForDrawing();
+
+    if (!intervals.empty())
+    {
+        dc.SetPen(Layout::get().IntervalPen);
+        dc.SetBrush(Layout::get().IntervalBrush);
+    }
+    for ( PtsInterval i : intervals )
+    {
+        wxRect r(makeRect(i));
+        r.Offset(-offset);
+        dc.DrawRectangle(r);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-void IntervalsView::draw(wxDC& dc) const
-{
-    PtsIntervals intervals = getIntervals().getIntervalsForDrawing();
-
-    dc.SetPen(*wxGREY_PEN);
-    wxBrush b(*wxLIGHT_GREY,wxBRUSHSTYLE_CROSSDIAG_HATCH);
-    dc.SetBrush(b);
-
-    for ( PtsInterval i : intervals )
-    {
-        dc.DrawRectangle(makeRect(i));
-    }
-}
-
 void IntervalsView::refreshInterval(PtsInterval interval)
 {
     wxRect r(makeRect(interval));
-
-    // Adjust for scrolling
-    r.x -= getScrolling().getOffset().x;
-    r.y -= getScrolling().getOffset().y;
-
-    // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
     r.x -= 1;
-    r.width += 2;
-    getTimeline().RefreshRect(r);
+    r.width += 2; // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
+    getTimeline().repaint(r);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,11 +111,6 @@ wxRect IntervalsView::makeRect(PtsInterval interval) const
 {
     PixelInterval pixels( getZoom().ptsToPixels(interval.lower()), getZoom().ptsToPixels(interval.upper()) );
     return wxRect(pixels.lower(),0,pixels.upper() - pixels.lower() + 1,getSequenceView().getSize().GetHeight());
-}
-
-void IntervalsView::draw(wxBitmap& bitmap) const
-{
-    FATAL("Use the wcDC draw method.");
 }
 
 }} // namespace

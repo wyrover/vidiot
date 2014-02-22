@@ -24,6 +24,7 @@
 #include "Properties.h"
 #include "Transition.h"
 #include "UtilClone.h"
+#include "UtilInt.h"
 #include "UtilLog.h"
 #include "VideoClip.h"
 #include "VideoFrame.h"
@@ -40,6 +41,9 @@ namespace gui { namespace timeline {
 ThumbnailView::ThumbnailView(model::IClipPtr clip, View* parent)
 :   View(parent)
 ,   mVideoClip(boost::dynamic_pointer_cast<model::VideoClip>(clip))
+,   mW(boost::none)
+,   mH(boost::none)
+,   mBitmap(boost::none)
 {
     VAR_DEBUG(this)(mVideoClip);
     ASSERT(mVideoClip);
@@ -58,24 +62,90 @@ ThumbnailView::~ThumbnailView()
 }
 
 //////////////////////////////////////////////////////////////////////////
-//  GET & SET
+// POSITION/SIZE
 //////////////////////////////////////////////////////////////////////////
 
-wxSize ThumbnailView::requiredSize() const
+pixel ThumbnailView::getX() const
 {
-    static const int sMinimumSize = 10; // To avoid scaling issues with swscale
-    wxSize boundingBox = wxSize(
-        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetWidth()  - 2 * Layout::ClipBorderSize,
-        const_cast<const ClipView*>(getViewMap().getView(mVideoClip))->getSize().GetHeight() - Layout::ClipBorderSize - Layout::ClipDescriptionBarHeight);
-    wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
-    scaledSize.x = std::max(sMinimumSize, scaledSize.x); // Ensure minimum width of 10 pixels
-    scaledSize.y = std::max(sMinimumSize, scaledSize.y); // Ensure minimum height of 10 pixels
-    return scaledSize;
+    return getParent().getX() + Layout::ClipBorderSize;
+}
+
+pixel ThumbnailView::getY() const
+{
+    return getParent().getY() +  Layout::get().ClipDescriptionBarHeight;
+}
+
+pixel ThumbnailView::getW() const
+{
+    if (!mW)
+    {
+        determineSize();
+    }
+    return *mW;
+}
+
+pixel ThumbnailView::getH() const
+{
+    if (!mH)
+    {
+        determineSize();
+    }
+    return *mH;
+}
+
+void ThumbnailView::invalidateRect()
+{
+    mW.reset();
+    mH.reset();
+}
+
+void ThumbnailView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    wxSize size(getSize());
+    if (!mBitmap || mBitmap->GetSize() != size)
+    {
+        if (size.GetWidth() >= 10 && size.GetHeight() >= 10) // if too small, then no thumbnail
+        {
+            mBitmap.reset(wxBitmap(size));
+            draw(*mBitmap);
+        }
+    }
+    if (mBitmap)
+    {
+        getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
+    }
+}
+
+void ThumbnailView::drawForDragging(wxPoint position, int height, wxDC& dc) const
+{
+    if (mBitmap)
+    {
+        wxMemoryDC dcBmp;
+        dcBmp.SelectObjectAsSource(*mBitmap);
+        dc.Blit(
+            position.x + Layout::get().ClipBorderSize,
+            position.y + Layout::get().ClipDescriptionBarHeight,
+            getW(),
+            static_cast<int>(std::max(getH(),height - Layout::get().ClipDescriptionBarHeight - Layout::ClipBorderSize )),
+            &dcBmp,
+            0,
+            0,
+            wxCOPY);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
+
+void ThumbnailView::determineSize() const
+{
+    static const int sMinimumSize = 10; // To avoid scaling issues with swscale
+    wxSize boundingBox = wxSize( getParent().getW() - 2 * Layout::ClipBorderSize, getParent().getH() - Layout::ClipBorderSize - Layout::ClipDescriptionBarHeight);
+    wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
+    mW.reset(std::max(sMinimumSize, scaledSize.x)); // Ensure minimum width of 10 pixels
+    mH.reset(std::max(sMinimumSize, scaledSize.y)); // Ensure minimum height of 10 pixels
+}
 
 void ThumbnailView::draw(wxBitmap& bitmap) const
 {
@@ -114,7 +184,7 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     {
         // The if is required to avoid errors during editing operations.
         clone->moveTo(0); // To ensure that the VideoFile object is moved to the beginning of the clip (thus, including offset) and not the (default) beginning of the video file.
-        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(requiredSize()).setDrawBoundingBox(false));
+        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(getSize()).setDrawBoundingBox(false));
         wxBitmapPtr thumbnail = videoFrame->getBitmap();
         if (thumbnail)
         {

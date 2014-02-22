@@ -65,7 +65,7 @@ pts Cursor::getLogicalPosition() const
 void Cursor::setLogicalPosition(pts position)
 {
     VAR_DEBUG(position);
-    if (position >= 0 && position <= getZoom().pixelsToPts(getSequenceView().getSize().x)) // avoid out of bounds
+    if (position >= 0 && position <= getZoom().pixelsToPts(getSequenceView().getW())) // avoid out of bounds
     {
         moveTo(position);
         getPlayer()->moveTo(mCursorPosition);
@@ -130,11 +130,9 @@ void Cursor::end()
 // DRAW
 //////////////////////////////////////////////////////////////////////////
 
-void Cursor::draw(wxDC& dc) const
+void Cursor::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
-    dc.SetPen(Layout::get().CursorPen);
-    pixel pos = getZoom().ptsToPixels(mCursorPosition) - getTimeline().getShift();
-    dc.DrawLine(wxPoint(pos,0),wxPoint(pos,getSequenceView().getSize().GetHeight()));
+    getTimeline().drawLine(dc,region,offset,mCursorPosition,Layout::get().CursorPen);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,14 +174,9 @@ void Cursor::moveTo(pts position)
 
         if (oldPixelPos != newPixelPos)
         {
-            wxPoint scroll = getScrolling().getOffset();
-            wxSize size = getTimeline().GetClientSize();
-
             // Refresh the old and new cursor position areas
-            long cursorOnClientArea = newPixelPos - scroll.x;
-            long oldposOnClientArea = oldPixelPos - scroll.x;
-            getTimeline().RefreshRect(wxRect(cursorOnClientArea,0,1,getSequenceView().getSize().GetHeight()),false);
-            getTimeline().RefreshRect(wxRect(oldposOnClientArea,0,1,getSequenceView().getSize().GetHeight()),true);
+            getTimeline().repaint(wxRect(oldPixelPos,0,1,getSequenceView().getH()));
+            getTimeline().repaint(wxRect(newPixelPos,0,1,getSequenceView().getH()));
             getTimeline().Update(); // Use this for better feedback when dragging cursor..
 
             getIntervals().update(mCursorPosition);

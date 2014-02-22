@@ -56,7 +56,7 @@ wxPoint getPosition(model::IClipPtr clip);
 /// Unlink the clip from it's link (and vice versa)
 /// \pre clip->getLink()
 /// \post !clip->getLink() && !originalLink->getLink()
-void unlink(model::IClipPtr clip);
+void Unlink(model::IClipPtr clip);
 
 } // namespace
 

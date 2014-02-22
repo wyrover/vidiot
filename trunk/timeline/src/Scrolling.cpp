@@ -24,41 +24,23 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(SCROLL_CHANGE_EVENT, ScrollChangeEvent, pts);
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
 Scrolling::Scrolling(Timeline* timeline)
-:   wxEvtHandler()
-,   Part(timeline)
+:   Part(timeline)
 ,   mCenterPts(0)
 {
     VAR_DEBUG(this);
 
     getTimeline().SetScrollRate( 1, 1 );
     getTimeline().EnableScrolling(true,true);
-
-    getZoom().Bind(ZOOM_CHANGE_EVENT, &Scrolling::onZoomChanged, this);
-
 }
 
 Scrolling::~Scrolling()
 {
     VAR_DEBUG(this);
-
-    getZoom().Unbind(ZOOM_CHANGE_EVENT, &Scrolling::onZoomChanged, this);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// GUI EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void Scrolling::onZoomChanged( ZoomChangeEvent& event )
-{
-    alignCenterPts();
-    event.Skip();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,7 +100,7 @@ void Scrolling::storeCenterPts()
 
 pts Scrolling::getCenterPts() const
 {
-    wxPoint position = getTimeline().GetViewStart();
+    wxPoint position = getOffset();
     wxSize size = getTimeline().GetClientSize();
     if (position.x != 0)
     {

@@ -28,8 +28,6 @@
 
 namespace gui { namespace timeline {
 
-DEFINE_EVENT(ZOOM_CHANGE_EVENT, ZoomChangeEvent, rational);
-
 static rational sDefaultZoom(1,5);
 typedef std::list<rational> zoomlist;
 static zoomlist sZooms = boost::assign::list_of // NOTE: Match with map used in TimescaleView!!!
@@ -55,8 +53,7 @@ static zoomlist sZooms = boost::assign::list_of // NOTE: Match with map used in 
 //////////////////////////////////////////////////////////////////////////
 
 Zoom::Zoom(Timeline* timeline)
-:   wxEvtHandler()
-,   Part(timeline)
+:   Part(timeline)
 ,   mZoom(sDefaultZoom)
 {
     VAR_DEBUG(this);
@@ -80,7 +77,6 @@ void Zoom::change(int steps)
 {
     getScrolling().storeCenterPts();
     rational oldzoom = mZoom;
-    pts cursorPosition = getCursor().getLogicalPosition();
     zoomlist::iterator it = find(sZooms.begin(), sZooms.end(), mZoom);
     while (steps > 0)
     {
@@ -99,9 +95,13 @@ void Zoom::change(int steps)
     if (oldzoom != mZoom)
     {
         VAR_INFO(mZoom);
-        QueueEvent(new ZoomChangeEvent(mZoom));
         model::ProjectModification::trigger();
-        getCursor().setLogicalPosition(cursorPosition);
+        getTimeline().beginTransaction();
+        getViewMap().invalidateThumbnails();
+        getTimeline().resize();
+        getScrolling().alignCenterPts();
+        getTimeline().endTransaction();
+        getTimeline().Refresh(false);
     }
 }
 

@@ -30,4 +30,4 @@ DECLARE_EVENT(EVENT_RENAME_PROJECT, EventRenameProject,  model::Project*);
 
 } // namespace
 
-#endif // PROJECT_EVENT_H
+#endif

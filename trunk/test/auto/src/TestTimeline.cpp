@@ -19,6 +19,7 @@
 
 #include "AudioClip.h"
 #include "AudioTrack.h"
+#include "AudioView.h"
 #include "Config.h"
 #include "CreateTransition.h"
 #include "Details.h"
@@ -28,13 +29,14 @@
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "HelperApplication.h"
+#include "HelperModel.h"
 #include "HelperPlayback.h"
 #include "HelperProjectView.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineAssert.h"
 #include "HelperTimelineDrag.h"
-#include "HelperTimelineTrim.h"
 #include "HelperTimelinesView.h"
+#include "HelperTimelineTrim.h"
 #include "HelperTransition.h"
 #include "HelperWindow.h"
 #include "IClip.h"
@@ -45,10 +47,13 @@
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "Transition.h"
+#include "TrackView.h"
 #include "TrimClip.h"
 #include "VideoClip.h"
 #include "VideoDisplayEvent.h"
 #include "VideoTrack.h"
+#include "VideoView.h"
+#include "ViewMap.h"
 #include "Zoom.h"
 
 namespace test {
@@ -293,7 +298,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     {
         StartTest("AudioClip: When deleting with shift, all tracks must be shifted, even if no clips are selected in them.");
         DeselectAllClips();
-        unlink(VideoClip(0,2));
+        Unlink(VideoClip(0,2));
         Click(Center(VideoClip(0,2)));
         Type(WXK_DELETE);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
@@ -310,7 +315,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     {
         StartTest("VideoClip: When deleting with shift, all tracks must be shifted, even if no clips are selected in them.");
         DeselectAllClips();
-        unlink(AudioClip(0,2));
+        Unlink(AudioClip(0,2));
         Click(Center(AudioClip(0,2)));
         Type(WXK_DELETE);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip);
@@ -327,7 +332,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     {
         StartTest("AudioClip: When deleting with shift, and another track has a non selected clip in the to-be-shifted region, do not shift.");
         DeselectAllClips();
-        unlink(VideoClip(0,2));
+        Unlink(VideoClip(0,2));
         Click(Center(VideoClip(0,2)));
         TrimLeft(VideoClip(0,2), 20, false);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
@@ -345,7 +350,7 @@ void TestTimeline::testDeletionWithUnlinkedClips()
     {
         StartTest("VideoClip: When deleting with shift, and another track has a non selected clip in the to-be-shifted region, do not shift.");
         DeselectAllClips();
-        unlink(AudioClip(0,2));
+        Unlink(AudioClip(0,2));
         Click(Center(AudioClip(0,2)));
         TrimLeft(AudioClip(0,2), 20, false);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)(EmptyClip)(AudioClip)(AudioClip);
@@ -463,7 +468,7 @@ void TestTimeline::testDividers()
     {
         StartTest("Move audio track divider up and down again.");
         const pixel originalHeight = AudioTrack(0)->getHeight();
-        const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(AudioTrack(0)) + AudioTrack(0)->getHeight();
+        const pixel originalDividerPosition = getTimeline().getViewMap().getView(AudioTrack(0))->getY() + AudioTrack(0)->getHeight();
         const pixel adjustedDividerPosition = originalDividerPosition - changeY;
         DragDivider(originalDividerPosition, adjustedDividerPosition);
         Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.
@@ -474,7 +479,7 @@ void TestTimeline::testDividers()
     {
         StartTest("Move video track divider down and up again.");
         const pixel originalHeight = VideoTrack(0)->getHeight();
-        const pixel originalDividerPosition = getTimeline().getSequenceView().getPosition(VideoTrack(0)) - gui::Layout::TrackDividerHeight;
+        const pixel originalDividerPosition = getTimeline().getViewMap().getView(VideoTrack(0))->getY() - gui::Layout::TrackDividerHeight;
         const pixel adjustedDividerPosition = originalDividerPosition + changeY;
         DragDivider(originalDividerPosition, adjustedDividerPosition);
         Move(wxPoint(fixedX, 10)); // Was a bug once: the mouse release did not 'release' the move operation, and thus this move back up caused the divider back to its original position.

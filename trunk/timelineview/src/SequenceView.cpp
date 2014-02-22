@@ -26,10 +26,8 @@
 #include "Intervals.h"
 #include "IntervalsView.h"
 #include "Layout.h"
-#include "ModelEvent.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
-#include "SequenceEvent.h"
 #include "Timeline.h"
 #include "TimescaleView.h"
 #include "UtilLog.h"
@@ -43,37 +41,107 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-SequenceView::SequenceView(View* parent)
-:   View(parent)
+SequenceView::SequenceView(Timeline* timeline)
+:   View(timeline)
 ,   mTimescaleView(new TimescaleView(this))
 ,   mVideoView(new VideoView(this))
+,   mDividerView(new DividerView(this, Layout::AudioVideoDividerHeight))
 ,   mAudioView(new AudioView(this))
+,   mWidth(boost::none)
+,   mHeight(boost::none)
 {
     VAR_DEBUG(this);
-
-    getSequence()->Bind(model::EVENT_LENGTH_CHANGED, &SequenceView::onSequenceLengthChanged, this);
 }
 
 SequenceView::~SequenceView()
 {
     VAR_DEBUG(this);
 
-    getSequence()->Unbind(model::EVENT_LENGTH_CHANGED, &SequenceView::onSequenceLengthChanged, this);
-
     delete mAudioView;      mAudioView = 0;
+    delete mDividerView;    mDividerView = 0;
     delete mVideoView;      mVideoView = 0;
     delete mTimescaleView;  mTimescaleView = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
-// MODEL EVENTS
+// VIEW
 //////////////////////////////////////////////////////////////////////////
 
-void SequenceView::onSequenceLengthChanged(model::EventLengthChanged& event)
+pixel SequenceView::getX() const
 {
-    canvasResized();
-    event.Skip();
+    return getTimeline().getShift();
 }
+
+pixel SequenceView::getY() const
+{
+    return 0;
+}
+
+pixel SequenceView::getW() const
+{
+    if (!mWidth)
+    {
+        pts length =
+            getSequence()->getLength() +
+            model::Convert::timeToPts(10 * model::Constants::sSecond); // Add 10 extra seconds
+        mWidth.reset(
+            std::max(
+            getTimeline().GetClientSize().GetWidth(),   // At least the widget size
+            getZoom().ptsToPixels(length)));            // At least enough to hold all clips
+    }
+    return *mWidth;
+}
+
+pixel SequenceView::getH() const
+{
+    if (!mHeight)
+    {
+        int height =
+            std::max(
+            getTimeline().GetClientSize().GetHeight(),        // At least the widget size
+            Layout::TimeScaleHeight +
+            Layout::MinimalGreyAboveVideoTracksHeight +
+            mVideoView->getH() +
+            Layout::AudioVideoDividerHeight +
+            mAudioView->getH() +
+            Layout::MinimalGreyBelowAudioTracksHeight);    // Height of all combined components
+        mHeight.reset(height);
+    }
+    return *mHeight;
+}
+
+void SequenceView::invalidateRect()
+{
+    mWidth.reset();
+    mHeight.reset();
+    mTimescaleView->invalidateRect();
+    mDividerView->invalidateRect();
+    mAudioView->invalidateRect();
+    mVideoView->invalidateRect();
+}
+
+void SequenceView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    if (getX() > 0)
+    {
+        dc.SetPen(Layout::get().BackgroundPen);
+        dc.SetBrush(Layout::get().BackgroundBrush);
+        dc.DrawRectangle(0,0,getX(),getH());
+    }
+
+    mTimescaleView->draw(dc, region, offset);
+
+    getTimeline().clearRect(dc, region, offset, wxRect(0, mTimescaleView->getH(), getW(), mVideoView->getY() - mTimescaleView->getH()));
+
+    mVideoView->draw(dc, region, offset);
+
+    mDividerView->draw(dc,region,offset);
+
+    mAudioView->draw(dc, region, offset);
+
+    pixel bottom = mAudioView->getY() + mAudioView->getH();
+    getTimeline().clearRect(dc, region, offset, wxRect(0, bottom, getW(), getH() - bottom));
+};
 
 //////////////////////////////////////////////////////////////////////////
 // GET/SET
@@ -109,120 +177,38 @@ const AudioView& SequenceView::getAudio() const
     return *mAudioView;
 }
 
-void SequenceView::canvasResized()
-{
-    getTimeline().resize(); // Note that this also triggers enabling/disabling of scrollbars if required
-    invalidateBitmap();
-    mTimescaleView->canvasResized();
-    mAudioView->canvasResized();
-    mVideoView->canvasResized();
-}
-
-pixel SequenceView::minimumWidth() const
-{
-    pts length =
-        getSequence()->getLength() +
-        model::Convert::timeToPts(10 * model::Constants::sSecond); // Add 10 extra seconds
-    return
-        std::max(
-        getTimeline().GetClientSize().GetWidth(),   // At least the widget size
-        getZoom().ptsToPixels(length));             // At least enough to hold all clips
-}
-
-wxSize SequenceView::requiredSize() const
-{
-    int height =
-        std::max(
-        getTimeline().GetClientSize().GetHeight(),        // At least the widget size
-        Layout::TimeScaleHeight +
-        Layout::MinimalGreyAboveVideoTracksHeight +
-        getVideo().getSize().GetHeight() +
-        Layout::AudioVideoDividerHeight +
-        getAudio().getSize().GetHeight() +
-        Layout::MinimalGreyBelowAudioTracksHeight);    // Height of all combined components
-    return wxSize(minimumWidth(),height);
-}
-
 void SequenceView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
-    info.onAudioVideoDivider =
-        position.y >= getSequence()->getDividerPosition() &&
-        position.y <= getAudioPosition();
-
-    if (!info.onAudioVideoDivider)
+    if (position.y < getSequence()->getDividerPosition())
     {
         getVideo().getPositionInfo(position, info);
-        if (!info.track)
-        {
-            getAudio().getPositionInfo(position, info);
-        }
+    }
+    else if (position.y <= mAudioView->getY())
+    {
+        info.onAudioVideoDivider = true;
+    }
+    else
+    {
+        getAudio().getPositionInfo(position, info);
     }
 }
 
 void SequenceView::setDividerPosition(int position)
 {
-    int minimum = Layout::VideoPosition + getVideo().getSize().GetHeight();
+    invalidateRect();
+    int minimum = Layout::VideoPosition + getVideo().getH();
     if (position < minimum)
     {
         position = minimum;
     }
     getSequence()->setDividerPosition(position);
-    invalidateBitmap();
+    getTimeline().Refresh(false);
     getTimeline().Update();
 }
 
 void SequenceView::resetDividerPosition()
 {
     setDividerPosition(getSequence()->getDividerPosition());
-}
-
-int SequenceView::getAudioPosition() const
-{
-    return getSequence()->getDividerPosition() + Layout::AudioVideoDividerHeight;
-}
-
-int SequenceView::getVideoPosition() const
-{
-    return getSequence()->getDividerPosition() - getVideo().getSize().GetHeight();
-}
-
-pixel SequenceView::getPosition(model::TrackPtr track) const
-{
-    if (track->isA<model::VideoTrack>())
-    {
-        return getVideoPosition() + getVideo().getPosition(track);
-    }
-    if (track->isA<model::AudioTrack>())
-    {
-        return getAudioPosition() + getAudio().getPosition(track);
-    }
-    return -1;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void SequenceView::draw(wxBitmap& bitmap) const
-{
-    wxMemoryDC dc(bitmap);
-
-    // Get size of canvas
-    int w = bitmap.GetWidth();
-    int h = bitmap.GetHeight();
-
-    // Set BG
-    dc.SetPen(Layout::get().BackgroundPen);
-    dc.SetBrush(Layout::get().BackgroundBrush);
-    dc.DrawRectangle(0,0,w,h);
-
-    dc.DrawBitmap(getTimescale().getBitmap(), wxPoint(0,0));
-
-    dc.DrawBitmap(getVideo().getBitmap(),   wxPoint(0,getVideoPosition()));
-
-    drawDivider(dc, getSequence()->getDividerPosition(), Layout::AudioVideoDividerHeight);
-
-    dc.DrawBitmap(getAudio().getBitmap(),   wxPoint(0,getAudioPosition()));
 }
 
 }} // namespace

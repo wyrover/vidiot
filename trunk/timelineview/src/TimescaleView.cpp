@@ -36,40 +36,54 @@ namespace gui { namespace timeline {
 
 TimescaleView::TimescaleView(View* parent)
 :   View(parent)
+,   mBitmap(boost::none)
 {
     VAR_DEBUG(this);
-    getZoom().Bind(ZOOM_CHANGE_EVENT, &TimescaleView::onZoomChanged, this);
 
 }
 
 TimescaleView::~TimescaleView()
 {
     VAR_DEBUG(this);
-    getZoom().Unbind(ZOOM_CHANGE_EVENT, &TimescaleView::onZoomChanged, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
-// GET/SET
+// VIEW
 //////////////////////////////////////////////////////////////////////////
 
-void TimescaleView::canvasResized()
+pixel TimescaleView::getX() const
 {
-    invalidateBitmap();
+    return getParent().getX();
 }
 
-wxSize TimescaleView::requiredSize() const
+pixel TimescaleView::getY() const
 {
-    return wxSize(getParent().getSize().GetWidth(), Layout::TimeScaleHeight);
+    return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// EVENTS
-//////////////////////////////////////////////////////////////////////////
-
-void TimescaleView::onZoomChanged( ZoomChangeEvent& event )
+pixel TimescaleView::getW() const
 {
-    invalidateBitmap();
-    event.Skip();
+    return getParent().getW();
+}
+
+pixel TimescaleView::getH() const
+{
+    return Layout::TimeScaleHeight;
+}
+
+void TimescaleView::invalidateRect()
+{
+    mBitmap.reset();
+}
+
+void TimescaleView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    if (!mBitmap)
+    {
+        mBitmap.reset(wxBitmap(getSize()));
+        draw(*mBitmap);
+    }
+    getTimeline().copyRect(dc,region,offset, *mBitmap, getRect());
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef TRACK_EVENT_H
+#define TRACK_EVENT_H
+
 #include "UtilEvent.h"
 
 namespace model {
@@ -74,3 +77,5 @@ DECLARE_EVENT(EVENT_REMOVE_CLIPS,       EventRemoveClips,           MoveParamete
 DECLARE_EVENT(EVENT_HEIGHT_CHANGED,     EventHeightChanged,         int);
 
 } // namespace
+
+#endif // todo remve all the comments after these

@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_VIEW_NODE_EVENT_H
-#define PROJECT_VIEW_NODE_EVENT_H
+#ifndef NODE_EVENT_H
+#define NODE_EVENT_H
 
 #include "UtilEvent.h"
 
@@ -101,4 +101,4 @@ DECLARE_EVENT(EVENT_RENAME_NODE,   EventRenameNode,   NodeWithNewName);
 
 } // namespace
 
-#endif // PROJECT_VIEW_NODE_EVENT_H
+#endif

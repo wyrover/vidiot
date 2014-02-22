@@ -31,23 +31,25 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    IntervalsView(View* parent);
+    IntervalsView(Timeline* timeline);
     virtual ~IntervalsView();
+
+    //////////////////////////////////////////////////////////////////////////
+    // VIEW
+    //////////////////////////////////////////////////////////////////////////
+
+    pixel getX() const override;
+    pixel getY() const override;
+    pixel getW() const override;
+    pixel getH() const override;
+
+    void invalidateRect() override;
+
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
-
-    wxSize requiredSize() const override;  ///< @see View::requiredSize()
-
-    //////////////////////////////////////////////////////////////////////////
-    // DRAWING
-    //////////////////////////////////////////////////////////////////////////
-
-    /// This view draws onto the bitmap of the parent view, and not onto its
-    /// own bitmap. Rationale: the intervals are depicted 'on top' of the sequence,
-    /// and are not drawn onto a separate region in the timeline.
-    void draw(wxDC& dc) const;
 
     void refreshInterval(PtsInterval interval);
 
@@ -58,7 +60,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     wxRect makeRect(PtsInterval interval) const;
-    void draw(wxBitmap& bitmap) const override; ///< @see View::draw()
 };
 
 }} // namespace

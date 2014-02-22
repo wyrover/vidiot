@@ -27,13 +27,13 @@
 #include "Keyboard.h"
 #include "Layout.h"
 #include "Menu.h"
+#include "ModelEvent.h"
 #include "Mouse.h"
 #include "Player.h"
 #include "Preview.h"
 #include "Scrolling.h"
 #include "Selection.h"
 #include "Sequence.h"
-#include "SequenceEvent.h"
 #include "SequenceView.h"
 #include "State.h"
 #include "Tooltip.h"
@@ -43,7 +43,6 @@
 #include "UtilLogWxwidgets.h"
 #include "VideoView.h"
 #include "ViewMap.h"
-#include "ViewUpdateEvent.h"
 #include "Window.h"
 #include "Zoom.h"
 
@@ -55,7 +54,6 @@ namespace gui { namespace timeline {
 
 Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTransacted)
 :   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL)
-,   View(this) // Has itself as parent...
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
 ,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
@@ -89,9 +87,8 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
     mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
 
     mStateMachine->start();
-    init();
 
-    getZoom().Bind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, this);
+    getSequence()->Bind(model::EVENT_LENGTH_CHANGED, &Timeline::onSequenceLengthChanged, this);
 
     Bind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Bind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
@@ -111,9 +108,7 @@ Timeline::~Timeline()
 {
     VAR_DEBUG(this);
 
-    getZoom().Unbind(ZOOM_CHANGE_EVENT, &Timeline::onZoomChanged, this);
-
-    deinit();
+    getSequence()->Unbind(model::EVENT_LENGTH_CHANGED, &Timeline::onSequenceLengthChanged, this);
 
     Unbind(wxEVT_PAINT,               &Timeline::onPaint,              this);
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
@@ -129,7 +124,7 @@ Timeline::~Timeline()
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
     delete mSelection;      mSelection = 0;
-    delete mMouse;   mMouse = 0;
+    delete mMouse;          mMouse = 0;
     delete mIntervals;      mIntervals = 0;
     delete mKeyboard;       mKeyboard = 0;
     delete mViewMap;        mViewMap = 0;
@@ -331,9 +326,8 @@ void Timeline::onIdle(wxIdleEvent& event)
 
 void Timeline::onSize(wxSizeEvent& event)
 {
-    getSequenceView().canvasResized(); // Required to give the sequenceview the correct original height; otherwise it's initially too small (causing white areas below the actual used part)
+    mBufferBitmap.reset(new wxBitmap(GetClientSize()));
     resize();
-
     event.Skip();
 }
 
@@ -341,6 +335,20 @@ void Timeline::onEraseBackground(wxEraseEvent& event)
 {
     // NOT: event.Skip(); // The official way of doing it
 }
+
+//////////////////////////////////////////////////////////////////////////
+// MODEL EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Timeline::onSequenceLengthChanged(model::EventLengthChanged& event)
+{
+    resize();
+    event.Skip();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// DRAWING OPERATIONS
+//////////////////////////////////////////////////////////////////////////
 
 void Timeline::onPaint( wxPaintEvent &event )
 {
@@ -355,62 +363,104 @@ void Timeline::onPaint( wxPaintEvent &event )
         // A dedicated buffer bitmap is used. Without it I had conflicts between the buffered
         // bitmap used for VideoDisplay and Timeline: when pressing 'b' (trim begin) during
         // playback, one of the playback frames ended popping up over the timeline.
-        dc.reset(new wxBufferedPaintDC(this, *mBufferBitmap, wxBUFFER_VIRTUAL_AREA ));  // See: http://trac.wxwidgets.org/ticket/15497
+        dc.reset(new wxBufferedPaintDC(this, *mBufferBitmap, wxBUFFER_CLIENT_AREA/*wxBUFFER_VIRTUAL_AREA*/ ));  // See: http://trac.wxwidgets.org/ticket/15497
     }
     else
     {
         dc.reset(new wxPaintDC(this));
     }
-    DoPrepareDC(*dc); // Adjust for logical coordinates, not device coordinates
+    // NOT: DoPrepareDC(*dc); -- scrolling (and shifting) offsets are calculated manually (using this automated recalculation was too difficult)
+    // NOT: dc->SetLogicalOrigin(-mShift,0);
 
     wxPoint scroll = getScrolling().getOffset();
 
-    wxMemoryDC dcBmp;
-    dcBmp.SelectObjectAsSource(getSequenceView().getBitmap());
+    wxRegion updatedRegion(GetUpdateRegion());
+    getSequenceView().draw(*dc, updatedRegion, scroll);
+    getIntervals().getView().draw(*dc, updatedRegion, scroll);
+    getDrag().drawDraggedClips(*dc, updatedRegion, scroll); // Dragged clips are drawn 'under' the cursor and snaps
+    getCursor().draw(*dc,updatedRegion, scroll);
+    getDrag().drawSnaps(*dc, updatedRegion, scroll); // Snaps are drawn on top of the cursor.
+    getTrim().drawSnaps(*dc, updatedRegion, scroll); // Snaps are drawn on top of the cursor.
+}
 
-    dc->SetLogicalOrigin(-mShift,0);
-
-    if (mShift > 0)
+void Timeline::drawLine(wxDC& dc, const wxRegion& region, const wxPoint& offset, pts position, const wxPen& pen) const
+{
+    pixel pos = getZoom().ptsToPixels(position);
+    wxRect r(pos - offset.x,0,1,getSequenceView().getH());
+    wxRegion overlap(region);
+    overlap.Intersect(r);
+    wxRegionIterator upd(overlap);
+    if (upd)
     {
-        dc->SetPen(Layout::get().BackgroundPen);
-        dc->SetBrush(Layout::get().BackgroundBrush);
-        dc->DrawRectangle(-mShift,0,mShift,dc->GetSize().GetHeight());
+        dc.SetPen(pen);
+        while (upd)
+        {
+            dc.DrawLine(upd.GetX(),0,upd.GetX(),getSequenceView().getH());
+            upd++;
+        }
     }
+}
 
-    wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
-    while (upd)
+void Timeline::drawDivider(wxDC& dc, pixel yPosition, pixel height) const
+{
+    wxRect rect(0, yPosition, dc.GetSize().GetWidth(), height);
+    dc.SetPen(Layout::get().DividerPen);
+    dc.SetBrush(Layout::get().DividerBrush);
+    dc.DrawRectangle(rect);
+}
+
+void Timeline::copyRect(wxDC& dc, wxRegion region, const wxPoint& offset, const wxBitmap& bitmap, const wxRect& roi, bool mask) const
+{
+    ASSERT_IMPLIES(mask, bitmap.GetMask() != 0);
+    // Region is in screen coordinates.
+    // roi is in logical coordinates (entire timeline)
+    wxRect scrolledRoi(roi);
+    scrolledRoi.x -= offset.x;
+    scrolledRoi.y -= offset.y;
+    region.Intersect(scrolledRoi);
+
+   wxRegionIterator upd(region); // get the update rect list
+    if (upd)
     {
-        int x = scroll.x + upd.GetX() - mShift;
-        int y = scroll.y + upd.GetY();
-        int w = upd.GetW();
-        int h = upd.GetH();
-        dc->Blit(x,y,w,h,&dcBmp,x,y,wxCOPY);
-        upd++;
+        wxMemoryDC dcBmp;
+        dcBmp.SelectObjectAsSource(bitmap);
+        while (upd)
+        {
+            int x = upd.GetX();
+            int y = upd.GetY();
+            int w = upd.GetW();
+            int h = upd.GetH();
+            dc.Blit(x, y, w, h, &dcBmp, offset.x + x - roi.x, offset.y + y - roi.y, wxCOPY, mask);
+            upd++;
+        }
     }
+};
 
-    getIntervals().getView().draw(*dc);
-    getDrag().draw(*dc);
-    getTrim().draw(*dc);
-    getCursor().draw(*dc);
+void Timeline::clearRect(wxDC& dc, wxRegion region, const wxPoint& offset, const wxRect& cleared) const
+{
+    // Region is in screen coordinates.
+    // cleared is in logical coordinates (entire timeline)
+    wxRect r(cleared);
+    r.x -= offset.x;
+    r.y -= offset.y;
+    region.Intersect(r);
+
+    wxRegionIterator upd(region);
+    if (upd)
+    {
+        dc.SetBrush(Layout::get().BackgroundBrush);
+        dc.SetPen(Layout::get().BackgroundPen);
+        while (upd)
+        {
+            dc.DrawRectangle(upd.GetRect());
+            upd++;
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 // PROPAGATE UPDATES UPWARD
 //////////////////////////////////////////////////////////////////////////
-
-void Timeline::onViewUpdated( ViewUpdateEvent& event )
-{
-    // NOT: resize(); // Adding this will cause lots of unneeded 'getSize()' calls
-
-    Refresh(false);
-    event.Skip();
-}
-
-void Timeline::onZoomChanged( ZoomChangeEvent& event )
-{
-    resize();
-    event.Skip();
-}
 
 void Timeline::activate(bool active)
 {
@@ -432,27 +482,26 @@ Player* Timeline::getPlayer() const
     return mPlayer;
 }
 
-wxSize Timeline::requiredSize() const
-{
-    FATAL;
-    return wxSize(0,0);
-}
-
 void Timeline::refreshPts(pts position)
 {
-    pixel pixpos = getZoom().ptsToPixels(position) - getScrolling().getOffset().x;
-    RefreshRect(wxRect(pixpos,0,1,getSequenceView().getSize().GetHeight()), false);
+    repaint(wxRect(getZoom().ptsToPixels(position),0,1,getSequenceView().getSize().GetHeight()));
 }
 
-void Timeline::refreshLines(pixel from, pixel length)
+void Timeline::repaint(wxRect rect)
 {
-    RefreshRect(wxRect(0,from,getSequenceView().getSize().GetWidth(),length), false);
+    wxPoint scroll = getScrolling().getOffset();
+    rect.x -= scroll.x;
+    rect.y -= scroll.y;
+    RefreshRect(rect, false);
 }
 
 void Timeline::setShift(pixel shift)
 {
-    mShift = shift;
-    Refresh(false);
+    if (mShift != shift)
+    {
+        mShift = shift;
+        Refresh(false);
+    }
 }
 
 pixel Timeline::getShift() const
@@ -462,26 +511,8 @@ pixel Timeline::getShift() const
 
 void Timeline::resize()
 {
-    wxSize oldSize = GetVirtualSize();
-    getSequenceView().invalidateBitmap(); // Otherwise, the calls to getSize() below will just return the current size...
-    mBufferBitmap.reset( new wxBitmap(getSequenceView().getSize() ) );
-    wxSize newSize = getSequenceView().getSize();
-    if (oldSize != newSize)
-    {
-        SetVirtualSize(newSize);
-    }
-    // NOT: Update(); RATIONALE: This will cause too much updates when
-    //                           adding/removing/changing/replacing clips
-    //                           which causes flickering.
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void Timeline::draw(wxBitmap& bitmap) const
-{
-    FATAL;
+    getSequenceView().invalidateRect();
+    SetVirtualSize(getSequenceView().getSize());
 }
 
 //////////////////////////////////////////////////////////////////////////

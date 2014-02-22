@@ -33,7 +33,25 @@ std::ostream& operator<< (std::ostream& os, const wxPoint& obj)
 
 std::ostream& operator<< (std::ostream& os, const wxSize& obj)
 {
-    os << '(' << obj.GetWidth() << ',' << obj.GetHeight() << ')';
+    os  << '('
+        << obj.GetWidth()
+        << ','
+        << obj.GetHeight()
+        << ')';
+    return os;
+}
+
+std::ostream& operator<< (std::ostream& os, const wxRect& obj)
+{
+    os  << '('
+        << obj.GetX()
+        << ','
+        << obj.GetY()
+        << ','
+        << obj.GetWidth()
+        << ','
+        << obj.GetHeight()
+        << ')';
     return os;
 }
 

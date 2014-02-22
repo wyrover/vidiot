@@ -20,13 +20,17 @@
 #include "AudioClip.h"
 #include "AudioFile.h"
 #include "AudioTrack.h"
+#include "AudioView.h"
 #include "Clip.h"
 #include "ClipView.h"
 #include "Config.h"
 #include "Cursor.h"
 #include "DataObject.h"
+#include "Drag_Shift.h"
 #include "EmptyClip.h"
+#include "ExecuteDrop.h"
 #include "EventDrag.h"
+#include "ExecuteDrop.h"
 #include "File.h"
 #include "Keyboard.h"
 #include "Layout.h"
@@ -52,6 +56,7 @@
 #include "VideoClip.h"
 #include "VideoFile.h"
 #include "VideoTrack.h"
+#include "VideoView.h"
 #include "ViewMap.h"
 #include "Zoom.h"
 
@@ -133,8 +138,12 @@ class DummyView : public View
 public:
     DummyView(Timeline* timeline) : View(timeline) {}
     ~DummyView() {}
-    wxSize requiredSize() const { FATAL; return wxSize(0,0); }
-    void draw(wxBitmap& bitmap) const { FATAL; }
+    pixel getX() const override { return getSequenceView().getX(); }
+    pixel getY() const override { return getSequenceView().getY(); }
+    pixel getW() const override { FATAL; return 0; }
+    pixel getH() const override { FATAL; return 0; }
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override { FATAL; };
+    void invalidateRect() override { FATAL; }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -154,7 +163,7 @@ Drag::Drag(Timeline* timeline)
     ,   mDropTrack()
     ,   mVideo(timeline, true)
     ,   mAudio(timeline, false)
-    ,   mShift(boost::none)
+    ,   mShift()
     ,   mSnappingEnabled(false)
 {
     VAR_DEBUG(this);
@@ -184,14 +193,14 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
     mBitmapOffset = wxPoint(0,0);
     mDropTrack = info.track;
     mCommand = new command::ExecuteDrop(getSequence());
-    command::ExecuteDrop::Drags drags;
+    command::Drags drags;
 
     if (!mIsInsideDrag)
     {
         ::command::TrackCreator c(ProjectViewDropSource::get().getData().getAssets());
         mVideo.setTempTrack(c.getVideoTrack());
         mAudio.setTempTrack(c.getAudioTrack());
-        mDraggedTrack = mVideo.getTempTrack();
+        mDraggedTrack = mVideo.getTempTrack(); // todo never a audio track as temp track? What happens with audio only drops?
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
         mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
 
@@ -307,12 +316,18 @@ void Drag::move(wxPoint position)
 
     // Shift if required
     determineShift();
-
-    wxRegionIterator it(redrawRegion);
-    while (it)
+    if (mShift)
     {
-        getTimeline().RefreshRect(it.GetRect(), false);
-        it++;
+        getTimeline().Refresh(false);
+    }
+    else
+    {
+        wxRegionIterator it(redrawRegion);
+        while (it)
+        {
+            getTimeline().RefreshRect(it.GetRect(), false);
+            it++;
+        }
     }
 
     VAR_DEBUG(*this);
@@ -321,10 +336,10 @@ void Drag::move(wxPoint position)
 void Drag::drop()
 {
     VAR_DEBUG(*this);
-    command::ExecuteDrop::Drops drops;
+    command::Drops drops;
     for ( model::TrackPtr track : getSequence()->getTracks() )
     {
-        command::ExecuteDrop::Drops adddrops = getDrops(track);
+        command::Drops adddrops = getDrops(track);
         VAR_INFO(track)(adddrops);
         drops.splice(drops.end(), adddrops);
     }
@@ -338,11 +353,7 @@ void Drag::stop()
 {
     VAR_DEBUG(*this);
     mActive = false;            // Ensure that moved clips are not blanked out anymore. See ClipView::draw().
-    mShift = boost::none;
-    for ( model::TrackPtr track : getSequence()->getTracks() )
-    {
-        getViewMap().getView(track)->onShiftChanged();
-    }
+    mShift.reset();
     if (mCommand) // Was not reset in 'drop()', therefore the draganddrop was aborted
     {
         mCommand->onAbort();
@@ -350,6 +361,7 @@ void Drag::stop()
         mCommand = 0;
     }
     reset();
+    getSequenceView().invalidateRect();
     getTimeline().Refresh(false);
 }
 
@@ -393,8 +405,10 @@ pts Drag::getSnapOffset() const
 // DRAW
 //////////////////////////////////////////////////////////////////////////
 
-wxBitmap Drag::getDragBitmap() //const
+wxBitmap Drag::getDragBitmap()
 {
+    // todo get new bitmap when zoom changes
+    // todo get new bitmap when moved to another track (update thumbnails)
     VAR_DEBUG(*this);
     wxSize size = getSequenceView().getSize();
 
@@ -416,7 +430,7 @@ wxBitmap Drag::getDragBitmap() //const
     dcMask.SetBrush(*wxWHITE_BRUSH);
 
     // Draw video tracks
-    wxPoint position(0,getSequenceView().getVideoPosition());
+    wxPoint position(0,getSequenceView().getVideo().getY());
     model::Tracks videoTracks = getSequence()->getVideoTracks(); // Can't use reverse on temporary inside for loop
     for ( model::TrackPtr track : boost::adaptors::reverse( videoTracks ) )
     {
@@ -430,7 +444,7 @@ wxBitmap Drag::getDragBitmap() //const
     }
 
     // Draw audio tracks
-    position.y = getSequenceView().getAudioPosition();
+    position.y = getSequenceView().getAudio().getY();
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
         model::TrackPtr draggedTrack = trackOnTopOf(track);
@@ -458,19 +472,22 @@ wxBitmap Drag::getDragBitmap() //const
     return temp.GetSubBitmap(wxRect(mBitmapOffset.x,mBitmapOffset.y,size_x,size_y));
 }
 
-void Drag::draw(wxDC& dc) const
+void Drag::drawDraggedClips(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
-    if (!mActive)
+    if (mActive)
     {
-        return;
+        getTimeline().copyRect(dc,region,offset,mBitmap,wxRect(getBitmapPosition(),mBitmap.GetSize()),true);
     }
-    dc.DrawBitmap(mBitmap, getBitmapPosition(),true);
-    dc.SetPen(Layout::get().SnapPen);
-    dc.SetBrush(Layout::get().SnapBrush);
-    for ( pts snap : mSnaps )
+}
+
+void Drag::drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    if (mActive)
     {
-        pixel pos = getZoom().ptsToPixels(snap) - getTimeline().getShift();
-        dc.DrawLine(pos,0,pos,dc.GetSize().GetHeight());
+        for ( pts snap : mSnaps )
+        {
+            getTimeline().drawLine(dc,region,offset,snap,Layout::get().SnapPen);
+        }
     }
 }
 
@@ -619,7 +636,7 @@ void Drag::reset()
     mAudio.reset();
     mDraggedTrack.reset();
     mDropTrack.reset();
-    mShift = boost::none;
+    mShift.reset();
 }
 
 model::TrackPtr Drag::trackOnTopOf(model::TrackPtr track)
@@ -785,7 +802,7 @@ void Drag::determinePossibleDragPoints()
 
 void Drag::determineShift()
 {
-    Shift shift = boost::none;
+    Shift shift;
     if (getKeyboard().getShiftDown())
     {
         pts origPos = getDragPtsPosition();
@@ -825,29 +842,25 @@ void Drag::determineShift()
                 // Note: do not make the mistake of using 'pos' here (origPos is used, since also the original drag size getDragSize() is used).
             }
         }
-        shift.reset(ShiftParams(pos,len));
+        shift = boost::make_shared<ShiftParams>(getTimeline(),pos,len);
     }
     if (shift != mShift)
     {
         mShift = shift;
-        VAR_DEBUG(shift);
-        for ( model::TrackPtr track : getSequence()->getTracks() )
-        {
-            getViewMap().getView(track)->onShiftChanged();
-        }
+        getSequenceView().invalidateRect();
     }
 }
 
-command::ExecuteDrop::Drops Drag::getDrops(model::TrackPtr track)
+command::Drops Drag::getDrops(model::TrackPtr track)
 {
-    command::ExecuteDrop::Drops drops;
+    command::Drops drops;
     model::TrackPtr draggedTrack = trackOnTopOf(track);
     VAR_DEBUG(track)(draggedTrack);
     if (draggedTrack)
     {
         LOG_DEBUG << DUMP(track) << DUMP(draggedTrack);
         pts position = 0;
-        command::ExecuteDrop::Drop pi;
+        command::Drop pi;
         pi.position = -1;
         pi.track = track;
         bool inregion = false;

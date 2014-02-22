@@ -19,11 +19,18 @@
 #define DRAG_H
 
 #include "Part.h"
-#include "ExecuteDrop.h"
-#include "Drag_Shift.h"
+
+namespace gui { namespace timeline { namespace command {
+    class ExecuteDrop;
+    struct Drop;
+    typedef std::list<Drop> Drops;
+}}}
 
 namespace gui { namespace timeline {
 class DummyView;
+
+class ShiftParams;
+typedef boost::shared_ptr<ShiftParams> Shift;
 
 class Drag
     :   public Part
@@ -89,7 +96,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     wxBitmap getDragBitmap();
-    void draw(wxDC& dc) const;
+    void drawDraggedClips(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
+    void drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
 
 private:
 
@@ -247,7 +255,7 @@ private:
     /// Return the list of 'drops' on the given track
     /// \param track onto which clips are dropped
     /// \return list of drops onto that track
-    command::ExecuteDrop::Drops getDrops(model::TrackPtr track);
+    command::Drops getDrops(model::TrackPtr track);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

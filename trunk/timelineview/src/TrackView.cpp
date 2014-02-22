@@ -31,6 +31,7 @@
 #include "UtilLogWxwidgets.h"
 #include "UtilLog.h"
 #include "UtilLogStl.h"
+#include "VideoTrack.h"
 #include "ViewMap.h"
 #include "Zoom.h"
 
@@ -42,6 +43,8 @@ namespace gui { namespace timeline {
 TrackView::TrackView(model::TrackPtr track, View* parent)
 :   View(parent)
 ,   mTrack(track)
+,   mY(boost::none)
+,   mClips()
 {
     VAR_DEBUG(this);
     ASSERT(mTrack); // Must be initialized
@@ -59,7 +62,6 @@ TrackView::TrackView(model::TrackPtr track, View* parent)
 
     mTrack->Bind(model::EVENT_ADD_CLIPS,        &TrackView::onClipsAdded,       this);
     mTrack->Bind(model::EVENT_REMOVE_CLIPS,     &TrackView::onClipsRemoved,     this);
-    mTrack->Bind(model::EVENT_HEIGHT_CHANGED,   &TrackView::onHeightChanged,    this);
 }
 
 TrackView::~TrackView()
@@ -68,7 +70,6 @@ TrackView::~TrackView()
 
     mTrack->Unbind(model::EVENT_ADD_CLIPS,      &TrackView::onClipsAdded,       this);
     mTrack->Unbind(model::EVENT_REMOVE_CLIPS,   &TrackView::onClipsRemoved,     this);
-    mTrack->Unbind(model::EVENT_HEIGHT_CHANGED, &TrackView::onHeightChanged,    this);
 
     getViewMap().unregisterView(mTrack);
 
@@ -84,6 +85,149 @@ model::TrackPtr TrackView::getTrack() const
 }
 
 //////////////////////////////////////////////////////////////////////////
+// VIEW
+//////////////////////////////////////////////////////////////////////////
+
+pixel TrackView::getX() const
+{
+    return getParent().getX();
+}
+
+pixel TrackView::getY() const
+{
+    if (!mY)
+    {
+        if (mTrack->isA<model::VideoTrack>())
+        {
+            int y = getSequence()->getDividerPosition();
+            for (model::TrackPtr track : getSequence()->getVideoTracks() )
+            {
+                y -= track->getHeight();
+                if (track == mTrack)
+                {
+                    break;
+                }
+                y -= Layout::TrackDividerHeight;
+            }
+            mY.reset(y);
+        }
+        else
+        {
+            int y = getSequenceView().getAudio().getY();
+            for (model::TrackPtr track : getSequence()->getAudioTracks())
+            {
+                if (track == mTrack)
+                {
+                    break;
+                }
+                y += track->getHeight() + Layout::TrackDividerHeight;
+            }
+            mY.reset(y);
+        }
+    }
+    return *mY;
+}
+
+pixel TrackView::getW() const
+{
+    return getParent().getW();
+}
+
+pixel TrackView::getH() const
+{
+    return mTrack->getHeight();
+}
+
+void TrackView::invalidateRect()
+{
+    mY.reset();
+    mClips.reset();
+}
+
+void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    if (!mClips)
+    {
+        mClips = boost::make_shared<ClipLookupMap>();
+        for ( model::IClipPtr clip : mTrack->getClips() )
+        {
+            ClipView* view = getViewMap().getView(clip);
+            mClips->insert( std::make_pair(view->getLeftPixel(), clip) );
+        }
+    }
+
+    // Clear region exposed by shift. Is done before drawing clips.
+    Shift shift = getDrag().getShift();
+    if (shift)
+    {
+        wxRect toBeCleared(shift->getPixelPosition(),getY(),shift->getPixelLength(),getH());
+        getTimeline().clearRect(dc,region,offset,toBeCleared);
+    }
+
+    // Determine which clips are 'in the region'
+    pixel redrawFromPixel = region.GetBox().GetLeft() + offset.x;
+    std::map<pixel, model::IClipPtr>::const_iterator from = mClips->upper_bound(redrawFromPixel);
+    model::IClipPtr fromClip = (from != mClips->end()) ? from->second : model::IClipPtr();
+    while (fromClip &&
+        fromClip->getPrev() &&
+        getViewMap().getView(fromClip)->getRightPixel() >= redrawFromPixel)
+    {
+        // See definition of upper_bound (returns first clip 'after' redrawFromPixel). Hence, we need one clip earlier.
+        // Furthermore, if there's an in-transition at redrawFromPixel, it must be redrawn also.
+        fromClip = fromClip->getPrev();
+    }
+    if (!fromClip && !mTrack->getClips().empty())
+    {
+        // Ensure that the first clip is not '0'. Otherwise, nothing is redrawn.
+        // Required for 1-clip length tracks.
+        fromClip = mTrack->getClips().front();
+    }
+
+    pixel redrawToPixel = region.GetBox().GetRight() + offset.x;
+    std::map<pixel, model::IClipPtr>::const_iterator to = mClips->upper_bound(redrawToPixel);
+    model::IClipPtr toClip = (to != mClips->end()) ? to->second : model::IClipPtr();
+    while (toClip && getViewMap().getView(toClip)->getLeftPixel() <= redrawToPixel)
+    {
+        // If there's an out-transition at the position, it must be redrawn also.
+        toClip = toClip->getNext();
+    }
+
+    // Draw the clips that are 'in the region' - first clips, then transitions on top.
+    model::IClips transitions;
+    model::IClipPtr clip = fromClip;
+    while (clip != toClip)
+    {
+        if (clip->isA<model::Transition>())
+        {
+            transitions.push_back(clip); // Handle later (shown on top of clips)
+        }
+        else
+        {
+            getViewMap().getView(clip)->draw(dc, region, offset);
+        }
+        clip = clip->getNext();
+    }
+
+    for ( model::IClipPtr transition : transitions )
+    {
+        getViewMap().getView(transition)->draw(dc, region, offset);
+    }
+
+    // Clear region to the right of clips
+    model::IClips clips = mTrack->getClips();
+    pixel right = getTimeline().getShift(); // When shift trimming, move the cleared region also
+    if (!clips.empty())
+    {
+        right += getViewMap().getView(clips.back())->getRightPixel();
+    }
+    if (shift)
+    {
+        right += shift->getPixelLength(); // When shift dragging near the end of the timeline, the track can become longer
+    }
+    getTimeline().clearRect(dc,region,offset,wxRect(right, getY(), getTimeline().GetVirtualSize().GetWidth() - right, getH()));
+}
+
+//////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
@@ -93,7 +237,8 @@ void TrackView::onClipsAdded( model::EventAddClips& event )
     {
         new ClipView(clip,this);
     }
-    invalidateBitmap();
+    invalidateRect();
+    getTimeline().Refresh(false);
     event.Skip();
 }
 
@@ -103,13 +248,8 @@ void TrackView::onClipsRemoved( model::EventRemoveClips& event )
     {
         delete getViewMap().getView(clip);
     }
-    invalidateBitmap();
-    event.Skip();
-}
-
-void TrackView::onHeightChanged( model::EventHeightChanged& event )
-{
-    invalidateBitmap();
+    invalidateRect();
+    getTimeline().Refresh(false);
     event.Skip();
 }
 
@@ -117,33 +257,18 @@ void TrackView::onHeightChanged( model::EventHeightChanged& event )
 // DRAWING EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::canvasResized()
-{
-    invalidateBitmap();
-}
-
-wxSize TrackView::requiredSize() const
-{
-    return wxSize(getParent().getSize().GetWidth(),mTrack->getHeight());
-}
-
-void TrackView::onShiftChanged()
-{
-    invalidateBitmap();
-}
-
 void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
 {
     wxPoint adjustedPosition(position);
 
     Shift shift = getDrag().getShift();
-    if (shift && (position.x >= getZoom().ptsToPixels(shift->mPosition)))
+    if (shift && (position.x >= shift->getPixelPosition()))
     {
         // Apply shift if (A) shift is enabled, and (B) current position is after the shift start
-        if (position.x >= getZoom().ptsToPixels(shift->mPosition + shift->mLength))
+        if (position.x >= shift->getPixelPosition() + shift->getPixelLength())
         {
             // Clip is AFTER the shifted area, adjust accordingly
-            adjustedPosition.x -= getZoom().ptsToPixels(shift->mLength);
+            adjustedPosition.x -= shift->getPixelLength();
         }
         else
         {
@@ -158,47 +283,30 @@ void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) con
     }
 }
 
-void TrackView::draw(wxBitmap& bitmap) const
-{
-    wxMemoryDC dc(bitmap);
-    dc.SetBrush(Layout::get().BackgroundBrush);
-    dc.SetPen(Layout::get().BackgroundPen);
-    dc.DrawRectangle(0,0,bitmap.GetWidth(),bitmap.GetHeight());
-    std::list<bool> tf = boost::assign::list_of(false)(true);
-    for ( bool transitionValue : tf ) // First, normal clips, second transitions
-    {
-        for ( model::IClipPtr modelclip : mTrack->getClips() )
-        {
-            if (modelclip->isA<model::Transition>() == transitionValue)
-            {
-                ClipView* view = getViewMap().getView(modelclip);
-                pts left = view->getLeftPts();
-                wxPoint position(getZoom().ptsToPixels(left),0);
-                Shift shift = getDrag().getShift();
-                if (shift && left >= shift->mPosition)
-                {
-                    position.x += getZoom().ptsToPixels(shift->mLength);
-                }
-                dc.DrawBitmap(view->getBitmap(),position);
-            }
-        }
-    }
-}
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
 
 void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
 {
-    std::list<bool> tf = boost::assign::list_of(false)(true);
-    for ( bool transitionValue : tf ) // First, normal clips, second transitions
+    model::IClips transitions;
+    for ( model::IClipPtr clip : mTrack->getClips() )
     {
-        for ( model::IClipPtr modelclip : mTrack->getClips() )
+        if (clip->isA<model::Transition>())
         {
-            if (modelclip->isA<model::Transition>() == transitionValue)
-            {
-                ClipView* view = getViewMap().getView(modelclip);
-                pixel left = view->getLeftPixel();
-                view->drawForDragging(wxPoint(position.x + left,position.y), height, dc, dcMask);
-            }
+            transitions.push_back(clip); // Handle later (are shown on top of clips)
+            continue;
         }
+        ClipView* view = getViewMap().getView(clip);
+        pixel left = view->getLeftPixel();
+        view->drawForDragging(wxPoint(position.x + left,position.y), height, dc, dcMask);
+    }
+    for ( model::IClipPtr transition : transitions )
+    {
+        ClipView* view = getViewMap().getView(transition);
+        pixel left = view->getLeftPixel();
+        view->drawForDragging(wxPoint(position.x + left,position.y), height, dc, dcMask);
     }
 }
+
 }} // namespace

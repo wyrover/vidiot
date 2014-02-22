@@ -22,8 +22,6 @@
 
 namespace gui { namespace timeline {
 
-class ZoomChangeEvent;
-
 class TimescaleView
     :   public View
 {
@@ -37,18 +35,17 @@ public:
     virtual ~TimescaleView();
 
     //////////////////////////////////////////////////////////////////////////
-    // GET/SET
+    // VIEW
     //////////////////////////////////////////////////////////////////////////
 
-    void canvasResized(); ///< Must be called when the widget is resized
+    pixel getX() const override;
+    pixel getY() const override;
+    pixel getW() const override;
+    pixel getH() const override;
 
-    wxSize requiredSize() const override;  ///< @see View::requiredSize()
+    void invalidateRect() override;
 
-    //////////////////////////////////////////////////////////////////////////
-    // EVENTS
-    //////////////////////////////////////////////////////////////////////////
-
-    void onZoomChanged( ZoomChangeEvent& event );
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
 
 private:
 
@@ -56,11 +53,14 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    mutable boost::optional<wxBitmap> mBitmap;
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap) const override; ///< @see View::draw()
+    void draw(wxBitmap& bitmap) const;
+
 };
 
 }} // namespace

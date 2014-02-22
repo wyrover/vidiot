@@ -83,7 +83,8 @@ public:
     const wxPen SelectedClipPen;
     const wxBrush SelectedClipBrush;
     const wxPen SnapPen;
-    const wxBrush SnapBrush;
+    const wxPen IntervalPen;
+    const wxBrush IntervalBrush;
     const wxColour DebugColour;
     const wxPen DebugPen;
     const wxBrush DebugBrush;

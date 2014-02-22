@@ -16,7 +16,10 @@
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Drag_Shift.h"
+
+#include "Timeline.h"
 #include "UtilLog.h"
+#include "Zoom.h"
 
 namespace gui { namespace timeline {
 
@@ -24,15 +27,17 @@ namespace gui { namespace timeline {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ShiftParams::ShiftParams(pts position, pts length)
-    : mPosition(position)
-    , mLength(length) 
+ShiftParams::ShiftParams(Timeline& timeline, pts position, pts length)
+    : mTimeline(timeline)
+    , mPosition(position)
+    , mLength(length)
 {
 }
 
-ShiftParams::ShiftParams(const ShiftParams& other) 
-    : mPosition(other.mPosition)
-    , mLength(other.mLength) 
+ShiftParams::ShiftParams(const ShiftParams& other)
+    : mTimeline(other.mTimeline)
+    , mPosition(other.mPosition)
+    , mLength(other.mLength)
 {
 }
 
@@ -51,6 +56,30 @@ bool operator!= ( ShiftParams const& x, ShiftParams const& y )
 }
 
 //////////////////////////////////////////////////////////////////////////
+// GET
+//////////////////////////////////////////////////////////////////////////
+
+pts ShiftParams::getPtsPosition() const
+{
+    return mPosition;
+}
+
+pts ShiftParams::getPtsLength() const
+{
+    return mLength;
+}
+
+pixel ShiftParams::getPixelPosition() const
+{
+    return mTimeline.getZoom().ptsToPixels(mPosition);
+}
+
+pixel ShiftParams::getPixelLength() const
+{
+    return mTimeline.getZoom().ptsToPixels(mLength);
+}
+
+//////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
@@ -61,4 +90,3 @@ std::ostream& operator<< (std::ostream& os, const ShiftParams& obj)
 }
 
 }} // namespace
-

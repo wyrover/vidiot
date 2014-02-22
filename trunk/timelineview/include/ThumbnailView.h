@@ -35,20 +35,33 @@ public:
     virtual ~ThumbnailView();
 
     //////////////////////////////////////////////////////////////////////////
-    //  GET & SET
+    // VIEW
     //////////////////////////////////////////////////////////////////////////
 
-    wxSize requiredSize() const override;    ///< \see View::requiredSize()
+    pixel getX() const override;
+    pixel getY() const override;
+    pixel getW() const override;
+    pixel getH() const override;
+
+    void invalidateRect() override;
+
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
+    void drawForDragging(wxPoint position, int height, wxDC& dc) const;
 
 private:
 
     model::VideoClipPtr mVideoClip;
+    mutable boost::optional<wxBitmap> mBitmap;
+    mutable boost::optional<pixel> mW;
+    mutable boost::optional<pixel> mH;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void draw(wxBitmap& bitmap) const override;                      ///< @see View::draw()
+    void determineSize() const;
+
+    void draw(wxBitmap& bitmap) const;
 };
 
 }} // namespace

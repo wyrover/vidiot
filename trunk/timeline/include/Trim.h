@@ -74,7 +74,7 @@ public:
     /// Instead, ensure that the operation becomes undoable.
     void submit();
 
-    void draw(wxDC& dc) const;
+    void drawSnaps(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
 
 private:
 

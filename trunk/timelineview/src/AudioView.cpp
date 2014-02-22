@@ -17,14 +17,17 @@
 
 #include "AudioView.h"
 
+#include "DividerView.h"
 #include "Layout.h"
-#include "Track.h"
-#include "TrackView.h"
-#include "Sequence.h"
 #include "PositionInfo.h"
-#include "ViewMap.h"
-#include "SequenceView.h"
+#include "Sequence.h"
 #include "SequenceEvent.h"
+#include "SequenceView.h"
+#include "Timeline.h"
+#include "Track.h"
+#include "TrackEvent.h"
+#include "TrackView.h"
+#include "ViewMap.h"
 
 namespace gui { namespace timeline {
 
@@ -34,6 +37,7 @@ namespace gui { namespace timeline {
 
 AudioView::AudioView(View* parent)
 :   View(parent)
+,   mHeight(boost::none)
 {
     VAR_DEBUG(this);
 
@@ -43,7 +47,10 @@ AudioView::AudioView(View* parent)
     // the invalidateBitmap events for the first added item)
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
-        new TrackView(track,this);
+        new TrackView(track, this);
+        new DividerView(this, Layout::TrackDividerHeight, track);
+        track->Bind(model::EVENT_HEIGHT_CHANGED, &AudioView::onTrackHeightChanged, this);
+
     }
 
     getSequence()->Bind(model::EVENT_ADD_AUDIO_TRACK,       &AudioView::onAudioTracksAdded,   this);
@@ -60,6 +67,60 @@ AudioView::~AudioView()
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
         delete getViewMap().getView(track);
+        delete getViewMap().getDivider(track);
+        track->Unbind(model::EVENT_HEIGHT_CHANGED, &AudioView::onTrackHeightChanged, this);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// VIEW
+//////////////////////////////////////////////////////////////////////////
+
+pixel AudioView::getX() const
+{
+    return getParent().getX();
+}
+
+pixel AudioView::getY() const
+{
+    return getSequence()->getDividerPosition() + Layout::AudioVideoDividerHeight;
+}
+
+pixel AudioView::getW() const
+{
+    return getParent().getW();
+}
+
+pixel AudioView::getH() const
+{
+    if (!mHeight)
+    {
+        int height = 0;
+        for ( model::TrackPtr track : getSequence()->getAudioTracks() )
+        {
+            height += track->getHeight() + Layout::TrackDividerHeight;
+        }
+        mHeight.reset(height);
+    }
+    return *mHeight;
+}
+
+void AudioView::invalidateRect()
+{
+    mHeight.reset();
+    for ( model::TrackPtr track : getSequence()->getAudioTracks() )
+    {
+        getViewMap().getView(track)->invalidateRect();
+        getViewMap().getDivider(track)->invalidateRect();
+    }
+}
+
+void AudioView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
+{
+    for ( model::TrackPtr track : getSequence()->getAudioTracks() )
+    {
+        getViewMap().getView(track)->draw(dc,region,offset);
+        getViewMap().getDivider(track)->draw(dc,region,offset);
     }
 }
 
@@ -67,29 +128,9 @@ AudioView::~AudioView()
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void AudioView::canvasResized()
-{
-    invalidateBitmap();
-    for ( model::TrackPtr track : getSequence()->getAudioTracks() )
-    {
-        getViewMap().getView(track)->canvasResized();
-    }
-}
-
-wxSize AudioView::requiredSize() const
-{
-    int width = getSequenceView().minimumWidth();
-    int height = 0;
-    for ( model::TrackPtr track : getSequence()->getAudioTracks() )
-    {
-        height += track->getHeight() + Layout::TrackDividerHeight;
-    }
-    return wxSize(width,height);
-}
-
 void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
 {
-    int top = getSequenceView().getAudioPosition();
+    int top = getY();
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
     {
         int bottom = top + track->getHeight() + Layout::TrackDividerHeight;
@@ -105,21 +146,6 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
     }
 }
 
-pixel AudioView::getPosition(model::TrackPtr track) const
-{
-    int y = 0;
-    for (model::TrackPtr _track : getSequence()->getAudioTracks())
-    {
-        if (track == _track)
-        {
-            break;
-        }
-        y += _track->getHeight();
-        y += Layout::TrackDividerHeight;
-    }
-    return y;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
@@ -129,12 +155,11 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
     for ( model::TrackPtr track : event.getValue().addedTracks)
     {
         new TrackView(track,this);
+        new DividerView(this, Layout::TrackDividerHeight, track);
+        track->Bind(model::EVENT_HEIGHT_CHANGED, &AudioView::onTrackHeightChanged, this);
     }
-    invalidateBitmap();
-    // Not via an event in sequence view, since the added audio track must
-    // first be incorporated in the AudioView (the divider height requires
-    // the correct audio height).
-    getSequenceView().resetDividerPosition();
+    getParent().invalidateRect(); // Will cause this::invalidateRect()
+    getTimeline().Refresh(false);
     event.Skip();
 }
 
@@ -143,28 +168,19 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
     for ( model::TrackPtr track : event.getValue().removedTracks )
     {
         delete getViewMap().getView(track);
+        delete getViewMap().getDivider(track);
+        track->Unbind(model::EVENT_HEIGHT_CHANGED, &AudioView::onTrackHeightChanged, this);
     }
-    invalidateBitmap();
+    getParent().invalidateRect(); // Will cause this::invalidateRect()
+    getTimeline().Refresh(false);
     event.Skip();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-void AudioView::draw(wxBitmap& bitmap) const
+void AudioView::onTrackHeightChanged( model::EventHeightChanged& event )
 {
-    wxMemoryDC dc(bitmap);
-    int y = 0;
-    for ( model::TrackPtr track : getSequence()->getAudioTracks() )
-    {
-        dc.DrawBitmap(getViewMap().getView(track)->getBitmap(), wxPoint(0,y));
-        y += track->getHeight();
-
-        drawDivider(dc, y, Layout::TrackDividerHeight);
-        y += Layout::TrackDividerHeight;
-
-    }
+    getParent().invalidateRect(); // Will cause this::invalidateRect()
+    getTimeline().Refresh(false);
+    event.Skip();
 }
 
 }} // namespace

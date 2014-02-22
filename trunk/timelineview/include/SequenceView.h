@@ -20,14 +20,11 @@
 
 #include "View.h"
 
-namespace model {
-    class EventLengthChanged;
-}
-
 namespace gui { namespace timeline {
 
-struct PointerPositionInfo;
+class DividerView;
 class TimescaleView;
+struct PointerPositionInfo;
 
 class SequenceView
     :   public View
@@ -38,14 +35,27 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    SequenceView(View* parent);
+    SequenceView(Timeline* timeline);
     virtual ~SequenceView();
+
+    //////////////////////////////////////////////////////////////////////////
+    // VIEW
+    //////////////////////////////////////////////////////////////////////////
+
+    pixel getX() const override;
+    pixel getY() const override;
+    pixel getW() const override;
+    pixel getH() const override;
+
+    void invalidateRect() override;
+
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-     void onSequenceLengthChanged(model::EventLengthChanged& event);
+    void onSequenceLengthChanged(model::EventLengthChanged& event);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -60,21 +70,10 @@ public:
     AudioView& getAudio();
     const AudioView& getAudio() const;
 
-    void canvasResized(); ///< Must be called when the widget is resized
-
-    pixel minimumWidth() const; ///< Required to avoid infinite recursion in SequenceView::requiredSize() and Video/AudioView::getSize()
-    wxSize requiredSize() const override;  ///< @see View::requiredSize()
-
     void setDividerPosition(pixel position);
     void resetDividerPosition();
 
-    pixel getAudioPosition() const;
-    pixel getVideoPosition() const;
-
     void getPositionInfo(wxPoint position, PointerPositionInfo& info ) const;
-
-    /// \return y position (top) of given track (excluding the divider)
-    pixel getPosition(model::TrackPtr track) const;
 
 private:
 
@@ -83,14 +82,11 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     TimescaleView* mTimescaleView;
-    VideoView*  mVideoView;
+    VideoView* mVideoView;
+    DividerView* mDividerView;
     AudioView*  mAudioView;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void draw(wxBitmap& bitmap) const override; ///< @see View::draw()
+    mutable boost::optional<pixel> mWidth; ///< Can be reset to ensure recalc.
+    mutable boost::optional<pixel> mHeight; ///< Can be reset to ensure recalc.
 };
 
 }} // namespace
