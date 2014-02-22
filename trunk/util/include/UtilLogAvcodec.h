@@ -30,7 +30,7 @@ enum AVCodecID;
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const PixelFormat& obj);
+std::ostream& operator<< (std::ostream& os, const AVPixelFormat& obj);
 std::ostream& operator<< (std::ostream& os, const AVRational& obj);
 std::ostream& operator<< (std::ostream& os, const AVCodec* obj);
 std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj);

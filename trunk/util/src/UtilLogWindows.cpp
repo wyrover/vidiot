@@ -19,7 +19,7 @@
 
 std::ostream& operator<< (std::ostream& os, const EXCEPTION_POINTERS& obj)
 {
-#define LOG_EXCEPTION(code) case code: os << #code;  break;
+#define LOG_EXCEPTION(code) case code: os << #code;  break
     switch (obj.ExceptionRecord->ExceptionCode)
     {
         LOG_EXCEPTION(EXCEPTION_ACCESS_VIOLATION);
