@@ -43,6 +43,7 @@ VideoFile::VideoFile()
     ,   mDeliveredFrame()
     ,   mDeliveredFrameInputPts(0)
     ,   mDeliveredFrameParameters()
+    ,   mSwsContext(0)
 {
     VAR_DEBUG(*this);
 }
@@ -54,6 +55,7 @@ VideoFile::VideoFile(wxFileName path)
     ,   mDeliveredFrame()
     ,   mDeliveredFrameInputPts(0)
     ,   mDeliveredFrameParameters()
+    ,   mSwsContext(0)
 {
     VAR_DEBUG(*this);
 }
@@ -65,6 +67,7 @@ VideoFile::VideoFile(const VideoFile& other)
     ,   mDeliveredFrame()
     ,   mDeliveredFrameInputPts(0)
     ,   mDeliveredFrameParameters()
+    ,   mSwsContext(0)
 {
     VAR_DEBUG(*this);
 }
@@ -77,7 +80,7 @@ VideoFile* VideoFile::clone() const
 VideoFile::~VideoFile()
 {
     VAR_DEBUG(this);
-    stopDecodingVideo();
+    clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,6 +107,11 @@ void VideoFile::clean()
     mDeliveredFrame.reset();
     mDeliveredFrameInputPts = 0;
     mPosition = 0;
+    if (mSwsContext != 0)
+    {
+        sws_freeContext(mSwsContext);
+        mSwsContext = 0;
+    }
 
     File::clean();
 }
@@ -300,22 +308,21 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
             // Create temp data holder for the frame conversion
             AVFrame* pScaledFrame = av_frame_alloc();
-            int bufferSize = avpicture_get_size(PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+            int bufferSize = avpicture_get_size(AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
             boost::uint8_t * buffer = static_cast<boost::uint8_t*>(av_malloc(bufferSize * sizeof(uint8_t)));
             // Assign appropriate parts of buffer to image planes in pScaledFrame
-            avpicture_fill(reinterpret_cast<AVPicture*>(pScaledFrame), buffer, PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
+            avpicture_fill(reinterpret_cast<AVPicture*>(pScaledFrame), buffer, AV_PIX_FMT_RGB24, size.GetWidth(), size.GetHeight());
 
             // Resample the frame (includes format conversion)
-            SwsContext* ctx = sws_getContext(
-                getCodec()->width,
+
+            mSwsContext = sws_getCachedContext(mSwsContext,getCodec()->width,
                 getCodec()->height,
                 getCodec()->pix_fmt,
                 size.GetWidth(),
                 size.GetHeight(),
-                PIX_FMT_RGB24,
+                AV_PIX_FMT_RGB24,
                 SWS_FAST_BILINEAR | SWS_CPU_CAPS_MMX | SWS_CPU_CAPS_MMX2, 0, 0, 0);
-            sws_scale(ctx,pDecodedFrame->data,pDecodedFrame->linesize,0,getCodec()->height,pScaledFrame->data,pScaledFrame->linesize);
-            sws_freeContext(ctx);
+            sws_scale(mSwsContext,pDecodedFrame->data,pDecodedFrame->linesize,0,getCodec()->height,pScaledFrame->data,pScaledFrame->linesize);
 
             mDeliveredFrame =
                 boost::make_shared<VideoFrame>(parameters,

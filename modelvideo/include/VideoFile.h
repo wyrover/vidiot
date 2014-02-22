@@ -81,6 +81,7 @@ private:
     VideoFramePtr mDeliveredFrame;  ///< The most recently returned frame in getNext.
     pts mDeliveredFrameInputPts;    ///< The input pts (in the input stream) of the most recently delivered frame.
     boost::shared_ptr<VideoCompositionParameters> mDeliveredFrameParameters; ///< The parameters with which the delivered frame was made
+    SwsContext* mSwsContext;        ///< Software scaling context
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

@@ -390,13 +390,13 @@ void RenderWork::generate()
             ASSERT(outputPicture);
 
             // if the output format is not RGB24P, then a temporary picture is needed too. It is then converted to the required output format
-            if (videoCodec->pix_fmt != PIX_FMT_RGB24)
+            if (videoCodec->pix_fmt != AV_PIX_FMT_RGB24)
             {
-                colorSpaceConversionPicture = alloc_picture(PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
+                colorSpaceConversionPicture = alloc_picture(AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
                 ASSERT(colorSpaceConversionPicture);
 
                 static int sws_flags = SWS_BICUBIC;
-                colorSpaceConversionContext = sws_getContext(videoCodec->width, videoCodec->height, PIX_FMT_RGB24, videoCodec->width, videoCodec->height, videoCodec->pix_fmt, sws_flags, 0, 0, 0);
+                colorSpaceConversionContext = sws_getCachedContext(colorSpaceConversionContext, videoCodec->width, videoCodec->height, AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height, videoCodec->pix_fmt, sws_flags, 0, 0, 0);
                 ASSERT_NONZERO(colorSpaceConversionContext);
             }
             videoOpened = true;
@@ -618,7 +618,7 @@ void RenderWork::generate()
                             showProgress(progress);
                             wxImagePtr image = frame->getImage();
 
-                            int rgbImageSize = avpicture_get_size(PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
+                            int rgbImageSize = avpicture_get_size(AV_PIX_FMT_RGB24, videoCodec->width, videoCodec->height);
                             AVFrame* toBeFilledPicture = (colorSpaceConversionContext == 0) ? outputPicture : colorSpaceConversionPicture;
                             if (!image)
                             {
