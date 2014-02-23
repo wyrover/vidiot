@@ -84,4 +84,4 @@ private:
 
 } // namespace
 
-#endif // DIALOG_OPTIONS_H
+#endif

@@ -114,4 +114,4 @@ struct MakeOutTransitionAfterClip : public MakeTransitionAfterClip
 
 } // namespace
 
-#endif // HELPER_TRANSITION_H
+#endif

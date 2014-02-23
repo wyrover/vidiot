@@ -90,4 +90,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_DROP_SOURCE_H
+#endif

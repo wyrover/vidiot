@@ -100,4 +100,4 @@ private:
 BOOST_CLASS_VERSION(model::ImageFile, 1)
 BOOST_CLASS_EXPORT_KEY(model::ImageFile)
 
-#endif // MODEL_IMAGE_FILE_H
+#endif

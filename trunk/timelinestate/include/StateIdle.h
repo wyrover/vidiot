@@ -87,4 +87,4 @@ private:
 
 }}} // namespace
 
-#endif // STATE_IDLE_H
+#endif

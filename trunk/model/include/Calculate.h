@@ -26,4 +26,4 @@ pts combinedLength(const IClips& clips);
 
 }} // namespace
 
-#endif // MODEL_CALCULATE_H
+#endif

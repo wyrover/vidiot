@@ -33,4 +33,4 @@ public:
 
 }} // namespace
 
-#endif // MODEL_VIDEO_TRANSITION_FACTORY_H
+#endif

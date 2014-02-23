@@ -72,4 +72,4 @@ private:
 
 } // namespace
 
-#endif // VIDEO_FRAME_COMPOSITION_H
+#endif

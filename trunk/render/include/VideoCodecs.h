@@ -42,4 +42,4 @@ private:
 
 }} // namespace
 
-#endif // RENDER_VIDEO_CODECS_H
+#endif

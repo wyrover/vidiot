@@ -37,4 +37,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_MOVE_ASSET_H
+#endif

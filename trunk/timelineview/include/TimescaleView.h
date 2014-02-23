@@ -65,4 +65,4 @@ private:
 
 }} // namespace
 
-#endif // TIMESCALE_VIEW_H
+#endif

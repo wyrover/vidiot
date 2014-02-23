@@ -91,4 +91,4 @@ void setCurrentThreadName(const char* name);
 
 }} // namespace
 
-#endif // UTIL_THREAD_H
+#endif

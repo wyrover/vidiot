@@ -58,4 +58,4 @@ enum
     meID_LAST
 };
 
-#endif // IDS_H
+#endif

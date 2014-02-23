@@ -68,4 +68,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_POPUPMENU_H
+#endif

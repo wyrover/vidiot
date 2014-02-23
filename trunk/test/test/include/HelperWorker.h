@@ -44,4 +44,4 @@ private:
 
 } // namespace
 
-#endif // HELPER_WORKER_H
+#endif

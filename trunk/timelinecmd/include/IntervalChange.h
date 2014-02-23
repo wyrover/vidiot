@@ -64,4 +64,4 @@ private:
 
 }}} // namespace
 
-#endif // INTERVAL_CHANGE_H
+#endif

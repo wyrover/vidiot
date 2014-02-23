@@ -57,4 +57,4 @@ typedef Fifo<PacketPtr> FifoPacket;
 
 } // namespace
 
-#endif // FIFO_PACKET_H
+#endif

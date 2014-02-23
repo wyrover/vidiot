@@ -148,4 +148,4 @@ private:
 BOOST_CLASS_VERSION(model::Transition, 1)
 BOOST_CLASS_EXPORT_KEY(model::Transition)
 
-#endif // MODEL_TRANSITION_H
+#endif

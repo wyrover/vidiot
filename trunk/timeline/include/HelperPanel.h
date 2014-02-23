@@ -121,4 +121,4 @@ private:
 
 }} // namespace
 
-#endif // TIMELINEHELPERPANEL_H
+#endif

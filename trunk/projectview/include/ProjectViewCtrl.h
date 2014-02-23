@@ -41,4 +41,4 @@ public:
 
 } // namespace
 
-#endif // GUI_PROJECT_VIEW_CTRL_H
+#endif

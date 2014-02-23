@@ -46,4 +46,4 @@ private:
 #define LOG_STACKTRACE \
     Log().get("STACK   ") << StackWalker().show();
 
-#endif // UTIL_STACKWALKER_H
+#endif

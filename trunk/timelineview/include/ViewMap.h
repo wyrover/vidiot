@@ -84,4 +84,4 @@ private:
 
 }} // namespace
 
-#endif // VIEW_MAP_H
+#endif

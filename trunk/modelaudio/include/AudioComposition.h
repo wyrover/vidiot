@@ -78,4 +78,4 @@ private:
 
 } // namespace
 
-#endif // AUDIO_CHUNK_COMPOSITION_H
+#endif

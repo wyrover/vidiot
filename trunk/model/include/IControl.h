@@ -44,4 +44,4 @@ public:
 
 } // namespace
 
-#endif // MODEL_I_CONTROL_H
+#endif

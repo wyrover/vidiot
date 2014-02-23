@@ -129,4 +129,4 @@ private:
 BOOST_CLASS_VERSION(model::INode, 1)
 BOOST_CLASS_EXPORT_KEY(model::INode)
 
-#endif // I_NODE_H
+#endif

@@ -84,4 +84,4 @@ struct ClipTypeAsserter
 
 } // namespace
 
-#endif // HELPER_TIMELINE_ASSERT_H
+#endif

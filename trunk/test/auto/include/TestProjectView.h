@@ -50,4 +50,4 @@ private:
 
 using namespace test;
 
-#endif // TEST_PROJECT_VIEW_H
+#endif

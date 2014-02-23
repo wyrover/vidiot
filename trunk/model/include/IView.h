@@ -64,4 +64,4 @@ private:
 BOOST_CLASS_VERSION(model::IView, 1)
 BOOST_CLASS_EXPORT_KEY(model::IView)
 
-#endif // MODEL_I_VIEW_H
+#endif

@@ -121,4 +121,4 @@ private:
 BOOST_CLASS_VERSION(model::VideoFile, 1)
 BOOST_CLASS_EXPORT_KEY(model::VideoFile)
 
-#endif // MODEL_VIDEO_FILE_H
+#endif

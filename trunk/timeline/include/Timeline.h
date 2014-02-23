@@ -266,4 +266,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::Timeline, 1)
 
-#endif // TIMELINE_H
+#endif

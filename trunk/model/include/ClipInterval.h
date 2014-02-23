@@ -131,4 +131,4 @@ private:
 BOOST_CLASS_VERSION(model::ClipInterval, 1)
 BOOST_CLASS_EXPORT_KEY(model::ClipInterval)
 
-#endif // MODEL_CLIP_INTERVAL_H
+#endif

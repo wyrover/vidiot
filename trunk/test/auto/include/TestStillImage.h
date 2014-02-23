@@ -49,4 +49,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_STILL_IMAGE_H
+#endif

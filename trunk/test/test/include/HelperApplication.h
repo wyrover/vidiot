@@ -29,4 +29,4 @@ void pause(int ms = 60000);
 
 } // namespace
 
-#endif // HELPER_APPLICATION_H
+#endif

@@ -107,4 +107,4 @@ private:
 
 }} // namespace
 
-#endif // CLIP_VIEW_H
+#endif

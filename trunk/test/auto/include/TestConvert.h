@@ -37,4 +37,4 @@ public:
 }
 using namespace test;
 
-#endif // TEST_CONVERT_H
+#endif

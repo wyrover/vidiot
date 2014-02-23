@@ -77,4 +77,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::Zoom, 1)
 
-#endif // ZOOM_H
+#endif

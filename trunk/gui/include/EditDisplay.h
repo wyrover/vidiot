@@ -68,4 +68,4 @@ private:
 
 } // namespace
 
-#endif // EDIT_DISPLAY_H
+#endif

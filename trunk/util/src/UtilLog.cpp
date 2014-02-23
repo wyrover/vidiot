@@ -223,7 +223,7 @@ void Log::exit()
 #ifdef _DEBUG
 static int lastline;
 static std::string lastfile;
-#endif // _DEBUG
+#endif
 
 std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
 {
@@ -246,7 +246,7 @@ std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_
     // Where the log line was made can be seen by inspecting these two variables.
     lastline = p_lLine;
     lastfile = p_szFileName;
-#endif // _DEBUG
+#endif
     get(levelstring[level])
         << p_szFileName
         << '(' << std::dec << p_lLine  << ") "

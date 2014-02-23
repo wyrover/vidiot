@@ -72,4 +72,4 @@ private:
 
 }}} // namespace
 
-#endif // STATE_TRIM_H
+#endif

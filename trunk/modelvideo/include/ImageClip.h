@@ -67,4 +67,4 @@ private:
 BOOST_CLASS_VERSION(model::ImageClip, 1)
 BOOST_CLASS_EXPORT_KEY(model::ImageClip)
 
-#endif // MODEL_IMAGE_CLIP_H
+#endif

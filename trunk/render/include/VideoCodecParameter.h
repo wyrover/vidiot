@@ -770,4 +770,4 @@ BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterGopSize)
 BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterBitrateTolerance)
 BOOST_CLASS_EXPORT_KEY(model::render::VideoCodecParameterMacroBlockDecision)
 
-#endif // MODEL_RENDER_VIDEO_CODEC_PARAMETER_H
+#endif

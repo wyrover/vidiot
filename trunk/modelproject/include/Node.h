@@ -99,4 +99,4 @@ private:
 BOOST_CLASS_VERSION(model::Node, 1)
 BOOST_CLASS_EXPORT_KEY(model::Node)
 
-#endif // A_PROJECT_VIEW_NODE
+#endif

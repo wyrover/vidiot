@@ -60,4 +60,4 @@ public:
 BOOST_CLASS_VERSION(model::IVideo, 1)
 BOOST_CLASS_EXPORT_KEY(model::IVideo)
 
-#endif // MODEL_I_VIDEO_H
+#endif

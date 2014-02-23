@@ -77,4 +77,4 @@ private:
 
 }}} // namespace
 
-#endif // STATE_MOVE_TRACK_DIVIDER_H
+#endif

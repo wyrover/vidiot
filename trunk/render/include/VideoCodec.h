@@ -86,4 +86,4 @@ private:
 BOOST_CLASS_VERSION(model::render::VideoCodec, 1)
 BOOST_CLASS_EXPORT_KEY(model::render::VideoCodec)
 
-#endif // RENDER_VIDEO_CODEC_H
+#endif

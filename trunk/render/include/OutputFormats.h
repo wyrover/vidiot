@@ -40,4 +40,4 @@ private:
 
 }} // namespace
 
-#endif // RENDER_OUTPUT_FORMATS_H
+#endif

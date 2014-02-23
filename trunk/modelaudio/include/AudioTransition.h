@@ -102,4 +102,4 @@ private:
 BOOST_CLASS_VERSION(model::AudioTransition, 1);
 BOOST_CLASS_EXPORT_KEY(model::AudioTransition)
 
-#endif // MODEL_AUDIO_TRANSITION_H
+#endif

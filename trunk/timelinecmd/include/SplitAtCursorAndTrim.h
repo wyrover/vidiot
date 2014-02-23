@@ -52,4 +52,4 @@ private:
 
 }}} // namespace
 
-#endif // SPLIT_AT_CURSOR_AND_TRIM_H
+#endif

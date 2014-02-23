@@ -60,4 +60,4 @@ protected:
 
 } // namespace
 
-#endif // ROOT_COMMAND_H
+#endif

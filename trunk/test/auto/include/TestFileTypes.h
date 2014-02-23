@@ -69,4 +69,4 @@ private:
 
 using namespace test;
 
-#endif // TEST_FILE_TYPES_H
+#endif

@@ -80,4 +80,4 @@ public:
 
 } // namespace
 
-#endif // FIXTURE_PROJECT_H
+#endif

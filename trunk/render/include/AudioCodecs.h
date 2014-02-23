@@ -41,4 +41,4 @@ private:
 
 }} // namespace
 
-#endif // RENDER_AUDIO_CODECS_H
+#endif

@@ -64,4 +64,4 @@ std::ostream& operator<< (std::ostream& os, const WorkPtr& obj);
 
 } // namespace
 
-#endif // WORK_H
+#endif

@@ -66,4 +66,4 @@ private:
 
 }} // namespace
 
-#endif // THUMBNAIL_VIEW_H
+#endif

@@ -60,4 +60,4 @@ void Unlink(model::IClipPtr clip);
 
 } // namespace
 
-#endif // HELPER_MODEL_H
+#endif

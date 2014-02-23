@@ -144,4 +144,4 @@ struct AudioCodecParameterBitrate
 BOOST_CLASS_VERSION(model::render::AudioCodecParameterBitrate, 1)
 BOOST_CLASS_EXPORT_KEY(model::render::AudioCodecParameterBitrate)
 
-#endif // MODEL_RENDER_AUDIO_CODEC_PARAMETER_H
+#endif

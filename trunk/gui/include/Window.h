@@ -247,4 +247,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::Window, 1)
 
-#endif // WINDOW_H
+#endif

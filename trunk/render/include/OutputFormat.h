@@ -103,4 +103,4 @@ private:
 
 }} // namespace
 
-#endif // RENDER_OUTPUT_FORMAT_H
+#endif

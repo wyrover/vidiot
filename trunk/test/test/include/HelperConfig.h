@@ -69,4 +69,4 @@ private:
 
 } // namespace
 
-#endif // HELPER_CONFIG_H
+#endif

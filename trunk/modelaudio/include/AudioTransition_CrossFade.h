@@ -88,4 +88,4 @@ private:
 BOOST_CLASS_VERSION(model::audio::transition::CrossFade, 1)
 BOOST_CLASS_EXPORT_KEY(model::audio::transition::CrossFade)
 
-#endif // AUDIO_TRANSITION_CROSSFADE_H
+#endif

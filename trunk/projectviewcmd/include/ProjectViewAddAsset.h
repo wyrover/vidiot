@@ -42,4 +42,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_ADD_ASSET_H
+#endif

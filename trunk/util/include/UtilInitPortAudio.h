@@ -38,5 +38,4 @@ private:
     static void log(const char * log);
 };
 
-#endif // UTIL_LOG_PORTAUDIO_H
-
+#endif

@@ -84,4 +84,4 @@ private:
 BOOST_CLASS_VERSION(model::video::transition::CrossFade, 1)
 BOOST_CLASS_EXPORT_KEY(model::video::transition::CrossFade)
 
-#endif // CROSSFADE_H
+#endif

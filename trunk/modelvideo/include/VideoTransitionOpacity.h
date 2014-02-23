@@ -97,4 +97,4 @@ protected:
 
 } // namespace
 
-#endif // MODEL_VIDEO_TRANSITION_OPACITY_H
+#endif

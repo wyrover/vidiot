@@ -85,4 +85,4 @@ private:
 
 }}} // namespace
 
-#endif // STATE_PLAYING_H
+#endif

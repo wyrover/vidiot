@@ -58,4 +58,4 @@ private:
 
 }} // namespace
 
-#endif // DETAILS_TRIM_H
+#endif

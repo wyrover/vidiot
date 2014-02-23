@@ -43,4 +43,4 @@ public:
 
 }} // namespace
 
-#endif // TOOLTIP_H
+#endif

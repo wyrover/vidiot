@@ -29,4 +29,4 @@ DECLARE_EVENT(DEBUG_EVENT_RENDER_PROGRESS,  DebugEventRenderProgress,   pts);
 
 } // namespace
 
-#endif 
+#endif

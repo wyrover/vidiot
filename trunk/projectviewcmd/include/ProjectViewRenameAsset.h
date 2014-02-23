@@ -38,4 +38,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_RENAME_ASSET_H
+#endif

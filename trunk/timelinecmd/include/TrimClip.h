@@ -156,4 +156,4 @@ private:
 
 }}} // namespace
 
-#endif // TRIM_CLIP_H
+#endif

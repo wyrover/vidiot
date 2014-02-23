@@ -88,4 +88,4 @@ private:
 
 } // namespace
 
-#endif // WORKER_H
+#endif

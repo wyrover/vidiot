@@ -34,4 +34,4 @@ public:
 
 } // namespace
 
-#endif // TEST_SUITE_CREATOR_H
+#endif

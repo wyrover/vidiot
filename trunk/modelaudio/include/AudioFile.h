@@ -119,4 +119,4 @@ private:
 BOOST_CLASS_VERSION(model::AudioFile, 1)
 BOOST_CLASS_EXPORT_KEY(model::AudioFile)
 
-#endif // MODEL_AUDIO_FILE_H
+#endif

@@ -46,4 +46,4 @@ public:
 
 using namespace test;
 
-#endif // TEST_EXCEPTIONS_H
+#endif

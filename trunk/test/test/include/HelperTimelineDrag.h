@@ -103,4 +103,4 @@ void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr a
 
 } // namespace
 
-#endif // HELPER_DRAG_H
+#endif

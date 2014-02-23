@@ -116,4 +116,4 @@ void serialize(Archive &ar, boost::icl::interval_set<TYPE>& set, const unsigned 
 
 }} // namespace
 
-#endif //UTIL_SERIALIZE_BOOST_H
+#endif

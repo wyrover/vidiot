@@ -117,4 +117,4 @@ private:
 
 } // namespace
 
-#endif // WATCHER_H
+#endif

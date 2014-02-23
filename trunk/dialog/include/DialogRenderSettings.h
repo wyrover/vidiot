@@ -121,4 +121,4 @@ private:
 
 } // namespace
 
-#endif // DIALOG_RENDER_SETTINGS_H
+#endif

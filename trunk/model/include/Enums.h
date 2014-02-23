@@ -46,4 +46,4 @@ DECLAREENUM(TransitionType, \
 
 }
 
-#endif // ENUMS_H
+#endif

@@ -48,4 +48,4 @@ struct IAssert
     static void breakIntoDebugger(const std::string& message);
 };
 
-#endif //UTIL_ASSERT_H
+#endif

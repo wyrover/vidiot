@@ -162,4 +162,4 @@ private:
     static bool sHold;
 };
 
-#endif // CONFIG_H
+#endif

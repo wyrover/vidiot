@@ -59,4 +59,4 @@ protected:
 
 } // namespace
 
-#endif // PROJECT_VIEW_COMMAND_H
+#endif

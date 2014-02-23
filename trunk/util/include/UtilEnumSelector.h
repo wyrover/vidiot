@@ -67,4 +67,4 @@ private:
     std::map<ITEMTYPE,int> mItemToSelection;
 };
 
-#endif // UTIL_ENUM_SELECTOR
+#endif

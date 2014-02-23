@@ -74,4 +74,4 @@ std::ostream& operator<< (std::ostream& os, const std::pair<T,U>& obj)
     return os;
 }
 
-#endif //UTIL_LOG_STL_H
+#endif

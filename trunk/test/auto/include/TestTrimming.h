@@ -53,4 +53,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_TRIMMING_H
+#endif

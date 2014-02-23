@@ -72,4 +72,4 @@ struct Dragging
 
 }}} // namespace
 
-#endif // STATE_DRAGGING_H
+#endif

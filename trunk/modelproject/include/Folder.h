@@ -82,4 +82,4 @@ private:
 BOOST_CLASS_VERSION(model::Folder, 1)
 BOOST_CLASS_EXPORT_KEY(model::Folder)
 
-#endif // FOLDER_H
+#endif

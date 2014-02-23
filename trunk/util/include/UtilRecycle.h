@@ -27,4 +27,4 @@ bool recycle(wxString file);
 
 }} // namespace
 
-#endif // UTIL_RECYCLE_H
+#endif

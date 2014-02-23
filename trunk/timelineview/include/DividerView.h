@@ -62,4 +62,4 @@ private:
 
 }} // namespace
 
-#endif // DIVIDER_VIEW_H
+#endif

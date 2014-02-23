@@ -40,4 +40,4 @@ public:
 
 } // namespace
 
-#endif // DIALOG_ABOUT_H
+#endif

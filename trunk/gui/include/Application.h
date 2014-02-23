@@ -120,4 +120,4 @@ private:
 
 } // namespace
 
-#endif // APPLICATION_H
+#endif

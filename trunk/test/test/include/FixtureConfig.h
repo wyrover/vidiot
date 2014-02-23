@@ -43,4 +43,4 @@ public:
 
 } // namespace
 
-#endif // FIXTURE_CONFIG_H
+#endif

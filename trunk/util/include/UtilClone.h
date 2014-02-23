@@ -39,4 +39,4 @@ std::list< boost::shared_ptr<T> > make_cloned(std::list< boost::shared_ptr<T> > 
     return result;
 }
 
-#endif // UTIL_CLONE_H
+#endif

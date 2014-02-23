@@ -95,4 +95,4 @@ private:
 
 } // namespace
 
-#endif // FIXTURE_GUI_H
+#endif

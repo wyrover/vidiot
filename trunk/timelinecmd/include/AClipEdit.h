@@ -350,4 +350,4 @@ private:
 
 }}} // namespace
 
-#endif // CLIP_EDIT_H
+#endif

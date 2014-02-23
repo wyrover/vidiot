@@ -107,4 +107,4 @@ public:
 
 } // namespace
 
-#endif // LAYOUT_H
+#endif

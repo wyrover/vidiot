@@ -78,4 +78,4 @@ DECLARE_EVENT(EVENT_HEIGHT_CHANGED,     EventHeightChanged,         int);
 
 } // namespace
 
-#endif // todo remve all the comments after these
+#endif

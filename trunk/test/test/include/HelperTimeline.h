@@ -245,4 +245,4 @@ private:
 
 } // namespace
 
-#endif // HELPER_TIMELINE_H
+#endif

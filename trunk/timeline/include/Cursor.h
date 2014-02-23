@@ -97,4 +97,4 @@ private:
 
 }} // namespace
 
-#endif // CURSOR_H
+#endif

@@ -80,4 +80,4 @@ private:
 
 }}} // namespace
 
-#endif // STATE_MOVING_CURSOR_H
+#endif

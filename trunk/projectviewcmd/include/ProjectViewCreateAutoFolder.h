@@ -38,4 +38,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_CREATE_AUTOFOLDER_H
+#endif

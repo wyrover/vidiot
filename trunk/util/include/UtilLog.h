@@ -240,4 +240,4 @@ private:
 #define LOGVAR_B(x) LOGVAR_OP(x, A)
 #define LOGVAR_OP(x, next) LOGVAR_A.logVar(x, #x).LOGVAR_ ## next
 
-#endif //LOG_H__
+#endif

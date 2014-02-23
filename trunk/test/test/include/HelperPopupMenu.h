@@ -31,4 +31,4 @@ void ClosePopupMenu();
 
 } // namespace
 
-#endif // HELPER_POPUPMENU_H
+#endif

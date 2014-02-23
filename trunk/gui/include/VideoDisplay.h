@@ -146,4 +146,4 @@ private:
 
 } // namespace
 
-#endif // GUI_VIDEO_DISPLAY_H
+#endif

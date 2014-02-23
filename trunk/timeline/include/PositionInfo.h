@@ -108,4 +108,4 @@ std::ostream& operator<<( std::ostream& os, const PointerPositionInfo& obj );
 
 }} // namespace
 
-#endif // POSITION_INFO_H
+#endif

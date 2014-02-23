@@ -127,4 +127,4 @@ private:
 
 } // namespace
 
-#endif // HELPER_PROJECT_VIEW_H
+#endif

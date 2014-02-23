@@ -48,4 +48,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_BLEND_H
+#endif

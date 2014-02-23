@@ -54,4 +54,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_SPLITTING_H
+#endif
