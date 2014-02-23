@@ -132,4 +132,4 @@ bool equals(const std::list< boost::shared_ptr< OBJECT > >& first, const std::li
     return true;
 }
 
-#endif // UTIL_LIST_H
+#endif

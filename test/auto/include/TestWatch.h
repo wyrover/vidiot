@@ -71,4 +71,4 @@ private:
 
 using namespace test;
 
-#endif // TEST_WATCH_H
+#endif

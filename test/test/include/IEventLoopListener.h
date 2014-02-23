@@ -30,4 +30,4 @@ struct IEventLoopListener
 
 } // namespace
 
-#endif // TEST_I_EVENT_LOOP_LISTENER
+#endif

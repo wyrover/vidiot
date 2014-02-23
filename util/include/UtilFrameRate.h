@@ -67,4 +67,4 @@ public:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(FrameRate, 1)
 
-#endif // FRAMERATE_H
+#endif

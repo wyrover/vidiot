@@ -57,4 +57,4 @@ struct ICodecParameter
 BOOST_CLASS_VERSION(model::render::ICodecParameter, 1)
 BOOST_CLASS_EXPORT_KEY(model::render::ICodecParameter)
 
-#endif // MODEL_RENDER_I_CODEC_PARAMETER_H
+#endif

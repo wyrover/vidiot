@@ -72,4 +72,4 @@ private:
 
 } // namespace
 
-#endif // CHANGE_AUDIO_CLIP_VOLUME_H
+#endif

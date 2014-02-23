@@ -113,4 +113,4 @@ private:
 
 }}} // namespace
 
-#endif // TIMELINE_STATE_H
+#endif

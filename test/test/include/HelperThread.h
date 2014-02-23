@@ -26,4 +26,4 @@ void RunInMainAndWait(boost::function<void()> method);
 
 } // namespace
 
-#endif // HELPER_THREAD_H
+#endif

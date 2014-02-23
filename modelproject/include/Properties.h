@@ -83,4 +83,4 @@ private:
 BOOST_CLASS_VERSION(model::Properties, 2)
 BOOST_CLASS_EXPORT_KEY(model::Properties)
 
-#endif // PROPERTIES_H
+#endif

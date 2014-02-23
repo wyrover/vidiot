@@ -38,4 +38,4 @@ inline void load_construct_data(boost::archive::xml_iarchive &ar,   \
                                                                     \
 }}                                                                  \
 
-#endif //UTIL_SERIALIZE_SHARED_FROM_THIS_H
+#endif

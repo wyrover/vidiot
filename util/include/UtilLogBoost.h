@@ -31,4 +31,4 @@ std::ostream& operator<< (std::ostream& os, const boost::tuple<K,L,M>& obj)
     return os;
 }
 
-#endif //UTIL_LOG_BOOST_H
+#endif

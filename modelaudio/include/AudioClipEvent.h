@@ -26,4 +26,4 @@ DECLARE_EVENT(EVENT_CHANGE_AUDIOCLIP_VOLUME,       EventChangeAudioClipVolume,  
 
 } // namespace
 
-#endif // MODEL_AUDIOCLIP_EVENT_H
+#endif

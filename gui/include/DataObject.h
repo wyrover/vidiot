@@ -63,4 +63,4 @@ private:
 
 } // namespace
 
-#endif // DATA_OBJECT_H
+#endif

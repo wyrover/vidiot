@@ -111,4 +111,4 @@ DECLARE_EVENT(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, EventAutoFolderOpen, mode
 
 } // namespace
 
-#endif // GUI_PROJECT_VIEW_MODEL_H
+#endif

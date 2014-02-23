@@ -160,4 +160,4 @@ private:
 BOOST_CLASS_VERSION(model::VideoClip, 2)
 BOOST_CLASS_EXPORT_KEY(model::VideoClip)
 
-#endif // MODEL_VIDEO_CLIP_H
+#endif

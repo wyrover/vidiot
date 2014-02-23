@@ -112,4 +112,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::timeline::Intervals, 1)
 
-#endif // SELECT_INTERVALS_H
+#endif

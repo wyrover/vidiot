@@ -82,4 +82,4 @@ private:
 
 }} // namespace
 
-#endif // DETAILS_PANEL_H
+#endif

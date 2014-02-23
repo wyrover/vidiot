@@ -35,4 +35,4 @@ public:
 
 } // namespace
 
-#endif // CLIP_CREATOR_H
+#endif

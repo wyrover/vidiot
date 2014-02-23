@@ -90,4 +90,4 @@ private:
 
 } // namespace
 
-#endif // CHANGE_VIDEO_CLIP_TRANSFORM_H
+#endif

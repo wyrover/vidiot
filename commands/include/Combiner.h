@@ -68,4 +68,4 @@ protected:
 
 } // namespace
 
-#endif // COMBINE_COMMAND_H
+#endif

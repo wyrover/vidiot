@@ -27,4 +27,4 @@ DECLARE_EVENT(EVENT_PLAYBACK_ACTIVE, PlaybackActiveEvent, bool);
 
 } // namespace
 
-#endif // VIDEO_DISPLAY_EVENT_H
+#endif

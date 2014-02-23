@@ -85,4 +85,4 @@ private:
 
 }} // namespace
 
-#endif // VIDEO_VIEW_H
+#endif

@@ -97,4 +97,4 @@ private:
 
 }} // namespace
 
-#endif // MOUSE_POINTER_H
+#endif

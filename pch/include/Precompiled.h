@@ -168,4 +168,4 @@ extern "C" {
 
 #include "Pointers.h"
 
-#endif // PRECOMPILED_H
+#endif

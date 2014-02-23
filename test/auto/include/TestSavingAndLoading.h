@@ -58,4 +58,4 @@ private:
 
 using namespace test;
 
-#endif // TEST_SAVING_AND_LOADING_H
+#endif

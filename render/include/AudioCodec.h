@@ -86,4 +86,4 @@ private:
 BOOST_CLASS_VERSION(model::render::AudioCodec, 1)
 BOOST_CLASS_EXPORT_KEY(model::render::AudioCodec)
 
-#endif // RENDER_AUDIO_CODEC_H
+#endif

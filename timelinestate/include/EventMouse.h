@@ -46,4 +46,4 @@ struct EvWheel          : EvMouse< EvWheel >           {};
 
 }}} // namespace
 
-#endif // TIMELINE_EVENT_MOUSE_H
+#endif

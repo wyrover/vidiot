@@ -99,4 +99,4 @@ private:
 BOOST_CLASS_VERSION(model::VideoTransition, 1);
 BOOST_CLASS_EXPORT_KEY(model::VideoTransition)
 
-#endif // MODEL_VIDEO_TRANSITION_H
+#endif

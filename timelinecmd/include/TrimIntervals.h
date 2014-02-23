@@ -68,4 +68,4 @@ private:
 };
 }}} // namespace
 
-#endif // TRIM_INTERVALS_H
+#endif

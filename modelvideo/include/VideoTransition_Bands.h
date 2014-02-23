@@ -89,4 +89,4 @@ private:
 BOOST_CLASS_VERSION(model::video::transition::Bands, 1)
 BOOST_CLASS_EXPORT_KEY(model::video::transition::Bands)
 
-#endif // TRANSITION_BANDS_H
+#endif

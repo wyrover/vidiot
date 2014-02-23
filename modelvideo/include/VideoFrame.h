@@ -122,4 +122,4 @@ private:
 
 } // namespace
 
-#endif // VIDEO_FRAME_H
+#endif

@@ -89,4 +89,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_CREATE_SEQUENCE_H
+#endif

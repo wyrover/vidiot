@@ -31,7 +31,7 @@
 #include <tchar.h>
 
 #else // _MSC_VER
-#endif // _MSC_VER
+#endif
 
 namespace util { namespace path {
 
@@ -59,6 +59,6 @@ bool recycle(wxString file)
 }
 
 #else // _MSC_VER
-#endif // _MSC_VER
+#endif
 
 }} // namespace

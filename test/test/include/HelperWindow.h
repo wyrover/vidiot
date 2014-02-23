@@ -166,4 +166,4 @@ void ClickBottomLeft(wxWindow* window, wxPoint extraoffset = wxPoint(0,0));
 
 } // namespace
 
-#endif // HELPER_WINDOW_H
+#endif

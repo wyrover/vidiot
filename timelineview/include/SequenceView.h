@@ -91,4 +91,4 @@ private:
 
 }} // namespace
 
-#endif // SEQUENCE_VIEW_H
+#endif

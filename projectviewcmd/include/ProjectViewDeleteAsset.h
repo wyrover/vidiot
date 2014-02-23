@@ -36,4 +36,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_DELETE_ASSET_H
+#endif

@@ -46,4 +46,4 @@ private:
 
 template <class INSTANCETYPE> SingleInstance<INSTANCETYPE>* SingleInstance<INSTANCETYPE>::sInstance = 0;
 
-#endif // SINGLE_INSTANCE_H
+#endif

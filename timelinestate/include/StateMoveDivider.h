@@ -74,4 +74,4 @@ private:
 
 }}} // namespace
 
-#endif // STATE_MOVE_DIVIDER_H
+#endif

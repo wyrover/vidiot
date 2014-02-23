@@ -36,4 +36,4 @@ public:
 }
 using namespace test;
 
-#endif // TEST_UTIL_PATH_H
+#endif

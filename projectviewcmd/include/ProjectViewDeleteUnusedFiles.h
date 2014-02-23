@@ -61,4 +61,4 @@ private:
 
 } // namespace
 
-#endif // PROJECT_VIEW_DELETE_UNUSED_FILES_H
+#endif

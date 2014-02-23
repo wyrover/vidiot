@@ -53,4 +53,4 @@ void ShiftTrim(wxPoint from, wxPoint to);
 
 } // namespace
 
-#endif // HELPER_TRIM_H
+#endif

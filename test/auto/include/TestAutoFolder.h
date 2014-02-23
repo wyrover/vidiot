@@ -38,4 +38,4 @@ public:
 }
 using namespace test;
 
-#endif // TEST_AUTO_FOLDER_H
+#endif

@@ -38,4 +38,4 @@ void extendSequenceWithStillImage( model::SequencePtr sequence );
 
 } // namespace
 
-#endif // HELPER_SEQUENCE_H
+#endif

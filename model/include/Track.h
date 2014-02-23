@@ -184,4 +184,4 @@ private:
 BOOST_CLASS_VERSION(model::Track, 2)
 BOOST_CLASS_EXPORT_KEY(model::Track)
 
-#endif // MODEL_TRACK_H
+#endif

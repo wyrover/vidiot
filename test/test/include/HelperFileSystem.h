@@ -69,4 +69,4 @@ wxString getFileContents(wxFileName path);
 
 } // namespace
 
-#endif // HELPER_FILE_SYSTEM_H
+#endif

@@ -51,4 +51,4 @@ TYPE1 removeRemainder(TYPE2 divisor, TYPE1 value)
     return value - remainder;
 }
 
-#endif //UTIL_INT_H
+#endif

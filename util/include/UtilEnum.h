@@ -115,7 +115,7 @@ std::ostream& operator<< (std::ostream& os, const ENUMNAME& obj); \
 std::string ENUMNAME ## _toString( ENUMNAME value ); \
 ENUMNAME ENUMNAME ## _fromString( std::string value )
 
-#endif // _MSC_VER
+#endif
 
 // First line creates the instantation of the conversion object
 // Second line uses this object to provide the stream operator<<

@@ -34,4 +34,4 @@ public:
 
 }} // namespace
 
-#endif // MODEL_AUDIO_TRANSITION_FACTORY_H
+#endif

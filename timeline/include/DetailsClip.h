@@ -192,4 +192,4 @@ private:
 
 }} // namespace
 
-#endif // DETAILS_CLIP_H
+#endif

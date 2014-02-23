@@ -93,4 +93,4 @@ private:
 
 } // namespace
 
-#endif // VIDEO_FRAME_LAYER_H
+#endif

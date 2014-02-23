@@ -110,4 +110,4 @@ private:
 BOOST_CLASS_VERSION(model::AudioClip, 2)
 BOOST_CLASS_EXPORT_KEY(model::AudioClip)
 
-#endif // MODEL_AUDIO_CLIP_H
+#endif

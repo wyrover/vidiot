@@ -142,4 +142,4 @@ typedef boost::shared_ptr<Work> WorkPtr;
 
 }
 
-#endif // POINTERS_H
+#endif

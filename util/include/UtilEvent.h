@@ -66,4 +66,4 @@
     }                                                                                   \
     wxDEFINE_EVENT(enumname, classname);
 
-#endif // UTIL_EVENT_H
+#endif

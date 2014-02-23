@@ -269,4 +269,4 @@ std::ostream& operator<< (std::ostream& os, const Drag& obj);
 std::ostream& operator<< (std::ostream& os, const Drag::DragInfo& obj);
 }} // namespace
 
-#endif // DRAG_H
+#endif

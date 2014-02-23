@@ -144,4 +144,4 @@ private:
 BOOST_CLASS_VERSION(model::EmptyClip, 1)
 BOOST_CLASS_EXPORT_KEY(model::EmptyClip)
 
-#endif // MODEL_EMPTY_CLIP_H
+#endif

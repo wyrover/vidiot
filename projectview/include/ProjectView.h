@@ -134,4 +134,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::ProjectView, 1)
 
-#endif // GUI_PROJECT_VIEW_H
+#endif

@@ -72,4 +72,4 @@ private:
 
 } // namespace
 
-#endif // PREVIEW_H
+#endif

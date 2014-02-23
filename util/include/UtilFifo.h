@@ -109,4 +109,4 @@ private:
     long mSize;
 };
 
-#endif // FIFO_H
+#endif

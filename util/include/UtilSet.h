@@ -70,4 +70,4 @@ private:
 
 };
 
-#endif // UTIL_SET_H
+#endif

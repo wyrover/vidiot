@@ -47,4 +47,4 @@ std::string dump(OBJ o, int depth = 0)
 
 } // namespace
 
-#endif // MODEL_DEBUG_H
+#endif

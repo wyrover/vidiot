@@ -79,4 +79,4 @@ private:
 
 }}} // namespace
 
-#endif // CREATE_TRANSITION_H
+#endif

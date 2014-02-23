@@ -94,4 +94,4 @@ private:
 
 } // namespace
 
-#endif // STATUSBAR_H
+#endif

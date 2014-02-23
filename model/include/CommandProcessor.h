@@ -60,4 +60,4 @@ private:
 
 } // namespace
 
-#endif // COMMAND_PROCESSOR_H
+#endif

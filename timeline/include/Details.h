@@ -76,4 +76,4 @@ private:
 
 }} // namespace
 
-#endif // DETAILS_H
+#endif

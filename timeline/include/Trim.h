@@ -116,4 +116,4 @@ private:
 
 }} // namespace
 
-#endif // TRIM_H
+#endif

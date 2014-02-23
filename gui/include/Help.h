@@ -84,4 +84,4 @@ public:
 
 } // namespace
 
-#endif // HELP_H
+#endif

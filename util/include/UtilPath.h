@@ -47,4 +47,4 @@ bool isParentOf( wxString parent,   wxString child );   ///< \return true if par
 
 }} // namespace
 
-#endif //UTIL_PATH_H
+#endif

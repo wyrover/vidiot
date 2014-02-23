@@ -44,4 +44,4 @@ public:
 
 } // namespace
 
-#endif // EMPTY_FRAME_H
+#endif

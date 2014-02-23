@@ -54,4 +54,4 @@ void ResizeClip(model::IClipPtr clip, wxSize boundingbox);
 
 } // namespace
 
-#endif // HELPER_TRANSFORM_H
+#endif

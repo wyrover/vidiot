@@ -34,4 +34,4 @@ DECLARE_EVENT(EVENT_CHANGE_VIDEOCLIP_MAXPOSITION,   EventChangeVideoClipMaxPosit
 
 } // namespace
 
-#endif // MODEL_VIDEOCLIP_EVENT_H
+#endif

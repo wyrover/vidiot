@@ -60,4 +60,4 @@ private:
 
 }}} // namespace
 
-#endif // DELETE_SELECTED_CLIPS_H
+#endif

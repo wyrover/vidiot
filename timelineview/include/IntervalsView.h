@@ -64,4 +64,4 @@ private:
 
 }} // namespace
 
-#endif // INTERVALS_VIEW_H
+#endif

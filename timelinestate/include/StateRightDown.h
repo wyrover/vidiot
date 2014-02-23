@@ -62,4 +62,4 @@ struct StateRightDown
 
 }}} // namespace
 
-#endif // STATE_RIGHTDOWN_H
+#endif

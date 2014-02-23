@@ -84,4 +84,4 @@ private:
 
 } // namespace
 
-#endif // VIDEO_FRAME_COMPOSITION_PARAMETERS_H
+#endif

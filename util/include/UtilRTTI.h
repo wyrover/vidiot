@@ -42,4 +42,4 @@ public:
     }
 };
 
-#endif // UTIL_RTTI_H
+#endif

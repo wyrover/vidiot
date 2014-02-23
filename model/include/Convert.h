@@ -150,4 +150,4 @@ public:
 };
 } // namespace
 
-#endif // CONVERT_H
+#endif

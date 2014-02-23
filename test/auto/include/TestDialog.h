@@ -43,4 +43,4 @@ public:
 }
 using namespace test;
 
-#endif // TEST_DIALOG_H
+#endif

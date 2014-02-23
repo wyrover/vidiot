@@ -34,4 +34,4 @@ void CloseDocumentAndAvoidSaveDialog();
 
 } // namespace
 
-#endif // HELPER_PROJECT_H
+#endif

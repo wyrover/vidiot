@@ -58,4 +58,4 @@ private:
 
 }}} // namespace
 
-#endif // UNLINK_CLIPS_H
+#endif

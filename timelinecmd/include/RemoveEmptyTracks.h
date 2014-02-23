@@ -63,4 +63,4 @@ private:
 
 }}} // namespace
 
-#endif // REMOVE_EMPTY_TRACKS_H
+#endif

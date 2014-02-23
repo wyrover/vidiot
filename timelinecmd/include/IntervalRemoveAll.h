@@ -62,4 +62,4 @@ private:
 
 }}} // namespace
 
-#endif // INTERVAL_REMOVE_ALL_H
+#endif

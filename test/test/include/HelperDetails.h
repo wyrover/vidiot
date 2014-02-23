@@ -51,4 +51,4 @@ void ASSERT_CLIPPROPERTIES(
 
 } // namespace
 
-#endif // HELPER_DETAILS_H
+#endif

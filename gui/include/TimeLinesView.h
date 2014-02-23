@@ -113,4 +113,4 @@ private:
 //#line BOOST_____PP_COUNTER
 BOOST_CLASS_VERSION(gui::TimelinesView, 1)
 
-#endif // TIMELINES_VIEW_H
+#endif

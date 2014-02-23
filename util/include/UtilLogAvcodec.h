@@ -45,4 +45,4 @@ typedef std::pair<wxString, int> LevelString;
 
 wxString avcodecErrorString(int errorcode);
 
-#endif //UTIL_LOG_AVCODEC_H
+#endif

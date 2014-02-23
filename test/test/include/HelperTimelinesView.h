@@ -43,4 +43,4 @@ gui::timeline::Timeline& getTimeline(model::SequencePtr sequence = model::Sequen
 
 } // namespace
 
-#endif // HELPER_TIMELINESVIEW_H
+#endif

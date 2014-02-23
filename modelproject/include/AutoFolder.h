@@ -106,4 +106,4 @@ private:
 BOOST_CLASS_VERSION(model::AutoFolder, 1)
 BOOST_CLASS_EXPORT_KEY(model::AutoFolder)
 
-#endif // AUTO_FOLDER_H
+#endif

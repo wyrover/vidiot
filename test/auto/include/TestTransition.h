@@ -88,4 +88,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_TRANSITION_H
+#endif

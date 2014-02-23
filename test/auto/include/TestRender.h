@@ -77,4 +77,4 @@ private:
 }
 using namespace test;
 
-#endif // TEST_ONCE_H
+#endif

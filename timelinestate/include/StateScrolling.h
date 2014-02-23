@@ -59,4 +59,4 @@ struct StateScrolling
 
 }}} // namespace
 
-#endif // STATE_SCROLLING_H
+#endif

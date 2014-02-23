@@ -107,4 +107,4 @@ private:
 
 } // namespace
 
-#endif // HELPER_TEST_SUITE_H
+#endif

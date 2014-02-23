@@ -24,4 +24,4 @@ void ASSERT_WATCHED_PATHS_COUNT(int n);
 
 } // namespace
 
-#endif // HELPER_WATCHER_H
+#endif

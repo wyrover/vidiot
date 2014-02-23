@@ -79,4 +79,4 @@ private:
     static void log(void *ptr, int level, const char * msg, va_list ap);
 };
 
-#endif //UTIL_INIT_AVCODEC_H
+#endif

@@ -47,4 +47,4 @@ public:
 
 } // namespace
 
-#endif // COMMANDLINE_H
+#endif

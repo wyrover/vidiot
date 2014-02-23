@@ -170,4 +170,4 @@ private:
 
 } // namespace
 
-#endif // DIALOG_H
+#endif

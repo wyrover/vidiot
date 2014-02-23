@@ -40,4 +40,4 @@ public:
 
 } // namespace
 
-#endif // VIDEO_SKIP_FRAME_H
+#endif

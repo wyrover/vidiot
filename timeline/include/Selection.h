@@ -85,4 +85,4 @@ private:
 
 }} // namespace
 
-#endif // SELECTION_H
+#endif

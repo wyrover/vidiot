@@ -30,4 +30,4 @@ void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::
 
 }}} // namespace
 
-#endif // CREATE_TRANSITION_HELPER_H
+#endif

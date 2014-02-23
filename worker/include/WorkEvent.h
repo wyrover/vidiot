@@ -26,4 +26,4 @@ DECLARE_EVENT(EVENT_WORK_DONE, WorkDoneEvent, WorkPtr);
 
 } // namespace
 
-#endif // WORK_EVENT_H
+#endif

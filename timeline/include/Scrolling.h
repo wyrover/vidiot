@@ -96,4 +96,4 @@ private:
 
 }} // namespace
 
-#endif // SCROLL_H
+#endif

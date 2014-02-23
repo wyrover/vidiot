@@ -22,4 +22,4 @@
 
 std::ostream& operator<< (std::ostream& os, const EXCEPTION_POINTERS& obj);
 
-#endif // UTIL_LOG_WINDOWS_H
+#endif

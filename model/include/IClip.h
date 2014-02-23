@@ -192,4 +192,4 @@ protected:
 
 } // namespace
 
-#endif // MODEL_I_CLIP_H
+#endif

@@ -44,4 +44,4 @@ public:
     }
 };
 
-#endif // UTIL_SELF_H
+#endif

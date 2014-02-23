@@ -72,4 +72,4 @@ private:
 
 } // namespace
 
-#endif // MODEL_TRANSITION_FACTORY_H
+#endif

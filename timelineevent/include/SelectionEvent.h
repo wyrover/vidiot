@@ -26,4 +26,4 @@ DECLARE_EVENT(EVENT_SELECTION_UPDATE, EventSelectionUpdate, int);
 
 }} // namespace
 
-#endif // SELECTION_EVENT_H
+#endif

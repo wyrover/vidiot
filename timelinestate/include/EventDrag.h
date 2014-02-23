@@ -37,4 +37,4 @@ struct EvDragEnd    : EvDrag< EvDragEnd >   {};
 
 }}} // namespace
 
-#endif // TIMELINE_EVENT_DRAG_H
+#endif
