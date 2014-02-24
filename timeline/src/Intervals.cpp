@@ -25,7 +25,6 @@
 #include "IClip.h"
 #include "IntervalChange.h"
 #include "IntervalRemoveAll.h"
-#include "IntervalsView.h"
 #include "Layout.h"
 #include "Menu.h"
 #include "Scrolling.h"
@@ -110,7 +109,7 @@ void Intervals::set(PtsIntervals intervals)
     getMenuHandler().updateItems();
     for ( PtsInterval i : refresh )
     {
-        getView().refreshInterval( i );
+        refreshInterval( i );
     }
 }
 
@@ -120,7 +119,7 @@ void Intervals::removeAll()
     LOG_INFO;
     for ( PtsInterval i : mIntervals )
     {
-        getView().refreshInterval( i );
+        refreshInterval( i );
     }
     set(PtsIntervals());
 }
@@ -170,12 +169,12 @@ void Intervals::update(pts newCursorPosition)
     if (mNewIntervalActive)
     {
         mNewIntervalEnd = cursor +  model::Convert::timeToPts(Config::ReadDouble(Config::sPathMarkerEndAddition) * model::Constants::sSecond);
-        getView().refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
+        refreshInterval(makeInterval(mNewIntervalBegin,mNewIntervalEnd));
     }
     if (mToggleActive)
     {
         mToggleEnd = cursor;
-        getView().refreshInterval(makeInterval(mToggleBegin,mToggleEnd));
+        refreshInterval(makeInterval(mToggleBegin,mToggleEnd));
     }
 }
 
@@ -191,7 +190,7 @@ void Intervals::change(PtsInterval interval, bool add)
     }
     VAR_INFO(mIntervals);
     getMenuHandler().updateItems();
-    getView().refreshInterval(interval);
+    refreshInterval(interval);
     getTimeline().Update();
 }
 
@@ -200,7 +199,11 @@ void Intervals::clear()
     (new command::IntervalRemoveAll(getSequence()))->submit();
 }
 
-PtsIntervals Intervals::getIntervalsForDrawing() const
+//////////////////////////////////////////////////////////////////////////
+// DRAWING
+//////////////////////////////////////////////////////////////////////////
+
+void Intervals::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const // todo move this to the intervals class entirely
 {
     PtsIntervals intervals = mIntervals;
 
@@ -219,7 +222,18 @@ PtsIntervals Intervals::getIntervalsForDrawing() const
             intervals -= makeInterval(mToggleBegin,mToggleEnd);
         }
     }
-    return intervals;
+
+    if (!intervals.empty())
+    {
+        dc.SetPen(Layout::get().IntervalPen);
+        dc.SetBrush(Layout::get().IntervalBrush);
+    }
+    for ( PtsInterval i : intervals )
+    {
+        wxRect r(makeRect(i));
+        r.Offset(-offset);
+        dc.DrawRectangle(r);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -315,6 +329,20 @@ void Intervals::removeRegionUsedByClips(model::SequencePtr sequence, PtsInterval
             }
         }
     }
+}
+
+void Intervals::refreshInterval(PtsInterval interval)
+{
+    wxRect r(makeRect(interval));
+    r.x -= 1;
+    r.width += 2; // enlargement to ensure that the vertical black end line of adjacent rects will be (re)drawn. Typical use: remove in the middle of an interval.
+    getTimeline().repaint(r);
+}
+
+wxRect Intervals::makeRect(PtsInterval interval) const
+{
+    PixelInterval pixels( getZoom().ptsToPixels(interval.lower()), getZoom().ptsToPixels(interval.upper()) );
+    return wxRect(pixels.lower(),0,pixels.upper() - pixels.lower() + 1,getSequenceView().getSize().GetHeight());
 }
 
 //////////////////////////////////////////////////////////////////////////

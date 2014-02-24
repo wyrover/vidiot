@@ -24,7 +24,6 @@
 #include "Cursor.h"
 #include "Drag.h"
 #include "Intervals.h"
-#include "IntervalsView.h"
 #include "Layout.h"
 #include "PositionInfo.h"
 #include "Sequence.h"
