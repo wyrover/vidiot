@@ -62,7 +62,15 @@ public:
     void change(PtsInterval interval, bool add); ///< To be called for the undo/redo mechanism.
     void clear(); ///< Clear all marked intervals.
 
-    PtsIntervals getIntervalsForDrawing() const;
+    //////////////////////////////////////////////////////////////////////////
+    // DRAWING
+    //////////////////////////////////////////////////////////////////////////
+
+    void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const;
+
+    //////////////////////////////////////////////////////////////////////////
+    // GET/SET
+    //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
     // ACTIONS ON THE MARKED AREAS
@@ -94,6 +102,8 @@ private:
 
     pts determineSnap(pts position) const;
     void removeRegionUsedByClips(model::SequencePtr sequence, PtsIntervals& intervals);
+    void refreshInterval(PtsInterval interval);
+    wxRect makeRect(PtsInterval interval) const;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -33,7 +33,6 @@ namespace gui {
         class Details;
         class Drag;
         class Intervals;
-        class IntervalsView;
         class Keyboard;
         class MenuHandler;
         class Mouse;
@@ -247,7 +246,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     SequenceView* mSequenceView;
-    IntervalsView* mIntervalsView;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

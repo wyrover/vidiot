@@ -23,7 +23,6 @@
 #include "Details.h"
 #include "Drag.h"
 #include "Intervals.h"
-#include "IntervalsView.h"
 #include "Keyboard.h"
 #include "Layout.h"
 #include "Menu.h"
@@ -76,7 +75,6 @@ Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTran
 ,   mDetails(Window::get().getDetailsView().openTimeline(this))
 //////////////////////////////////////////////////////////////////////////
 ,   mSequenceView(new SequenceView(this))
-,   mIntervalsView(new IntervalsView(this))
 //////////////////////////////////////////////////////////////////////////
 {
     VAR_DEBUG(this);
@@ -114,7 +112,6 @@ Timeline::~Timeline()
     Unbind(wxEVT_ERASE_BACKGROUND,    &Timeline::onEraseBackground,    this);
     Unbind(wxEVT_SIZE,                &Timeline::onSize,               this);
 
-    delete mIntervalsView;  mIntervalsView = 0;
     delete mSequenceView;   mSequenceView = 0;
     Window::get().getDetailsView().closeTimeline(this);
 
@@ -347,7 +344,7 @@ void Timeline::onSequenceLengthChanged(model::EventLengthChanged& event)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// DRAWING OPERATIONS
+// DRAWING
 //////////////////////////////////////////////////////////////////////////
 
 void Timeline::onPaint( wxPaintEvent &event )
@@ -376,7 +373,7 @@ void Timeline::onPaint( wxPaintEvent &event )
 
     wxRegion updatedRegion(GetUpdateRegion());
     getSequenceView().draw(*dc, updatedRegion, scroll);
-    getIntervals().getView().draw(*dc, updatedRegion, scroll);
+    getIntervals().draw(*dc, updatedRegion, scroll);
     getDrag().drawDraggedClips(*dc, updatedRegion, scroll); // Dragged clips are drawn 'under' the cursor and snaps
     getCursor().draw(*dc,updatedRegion, scroll);
     getDrag().drawSnaps(*dc, updatedRegion, scroll); // Snaps are drawn on top of the cursor.
