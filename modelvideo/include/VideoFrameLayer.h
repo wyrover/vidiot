@@ -34,7 +34,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit VideoFrameLayer(wxImagePtr image);
+    explicit VideoFrameLayer(const wxImagePtr& image);
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
@@ -50,7 +50,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void setPosition(wxPoint position);
+    void setPosition(const wxPoint& position);
     wxPoint getPosition() const;
 
     /// Sets the opacity for ALL the pixels to the given value
@@ -59,10 +59,10 @@ public:
     /// \pre opacity >= Constants::sOpacityMax (0)
     /// \pre opacity < Constants::sOpacityMax (255)
     /// \note any existing alpha data is removed
-    void setOpacity(int opacity);
+    void setOpacity(const int& opacity);
     int getOpacity() const;
 
-    void setRotation(boost::rational<int> rotation);
+    void setRotation(const boost::rational<int>& rotation);
 
     /// Return an image, using the frame's data clipped to the region of interest.
     /// \note This method may return a 0 ptr if the region of interest is empty
@@ -88,7 +88,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<< (std::ostream& os, const VideoFrameLayer& obj);
+    friend std::ostream& operator<<(std::ostream& os, const VideoFrameLayer& obj);
 };
 
 } // namespace

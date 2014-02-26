@@ -106,13 +106,13 @@ void Work::setThreadName(std::string name)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const Work& obj)
+std::ostream& operator<<(std::ostream& os, const Work& obj)
 {
     os << &obj;
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const WorkPtr& obj)
+std::ostream& operator<<(std::ostream& os, const WorkPtr& obj)
 {
     if (obj)
     {

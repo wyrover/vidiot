@@ -44,7 +44,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual void reset();
-    virtual AudioChunkPtr getAudio(samplecount position, IClipPtr leftClip, IClipPtr rightClip, const AudioCompositionParameters& parameters) override;
+    virtual AudioChunkPtr getAudio(const samplecount& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) override;
 
 protected:
 
@@ -68,7 +68,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const CrossFade& obj );
+    friend std::ostream& operator<<(std::ostream& os, const CrossFade& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

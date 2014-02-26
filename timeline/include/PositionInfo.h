@@ -104,7 +104,7 @@ struct PointerPositionInfo
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const PointerPositionInfo& obj );
+std::ostream& operator<<(std::ostream& os, const PointerPositionInfo& obj);
 
 }} // namespace
 

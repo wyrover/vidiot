@@ -32,7 +32,7 @@ boost::bimap<VideoCodecParameterType, wxString> VideoCodecParameterTypeConverter
     (BFrames, _("B Frames"))
     (MacroBlockDecision, _("Macro block decision"));
 
-wxString getHumanReadibleName(VideoCodecParameterType id)
+wxString getHumanReadibleName(const VideoCodecParameterType& id)
 {
     ASSERT(VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id) != VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.end())(id);
     return (VideoCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id))->second;

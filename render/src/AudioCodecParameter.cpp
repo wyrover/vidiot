@@ -26,7 +26,7 @@ IMPLEMENTENUM(AudioCodecParameterType);
 boost::bimap<AudioCodecParameterType, wxString> AudioCodecParameterTypeConverter::mapToHumanReadibleString = boost::assign::list_of<boost::bimap<AudioCodecParameterType, wxString>::relation >
     (AudioBitRate, _("Bit rate"));
 
-wxString getHumanReadibleName(AudioCodecParameterType id)
+wxString getHumanReadibleName(const AudioCodecParameterType& id)
 {
     ASSERT(AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id) != AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.end())(id);
     return (AudioCodecParameterTypeConverter::mapToHumanReadibleString.left.find(id))->second;

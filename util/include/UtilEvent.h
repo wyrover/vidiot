@@ -25,7 +25,7 @@
 /// In case of
 /// warning C4717: 'gui::operator<<' : recursive on all control paths, function will cause runtime stack overflow
 /// ensure that
-/// std::ostream& operator<<( std::ostream& os, const objecttype& obj )
+/// std::ostream& operator<<(std::ostream& os, const objecttype& obj)
 /// is defined.
 
 #define DECLARE_EVENT(enumname, classname, objecttype)                                  \
@@ -37,7 +37,7 @@
         virtual wxEvent* Clone() const;                                                 \
         objecttype getValue() const;                                                    \
     private:                                                                            \
-        friend std::ostream& operator<<( std::ostream& os, const classname& obj );      \
+        friend std::ostream& operator<<(std::ostream& os, const classname& obj);      \
         objecttype mValue;                                                              \
     };                                                                                  \
     wxDECLARE_EVENT(enumname, classname);
@@ -59,7 +59,7 @@
     {                                                                                   \
         return mValue;                                                                  \
     }                                                                                   \
-    std::ostream& operator<<( std::ostream& os, const classname& obj )                  \
+    std::ostream& operator<<(std::ostream& os, const classname& obj)                  \
     {                                                                                   \
         os << &obj << '|' << obj.getValue();                                            \
         return os;                                                                      \

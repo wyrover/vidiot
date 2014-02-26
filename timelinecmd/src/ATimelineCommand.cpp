@@ -53,7 +53,7 @@ gui::timeline::Timeline& ATimelineCommand::getTimeline() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ATimelineCommand& obj )
+std::ostream& operator<<(std::ostream& os, const ATimelineCommand& obj)
 {
     os << &obj << '|' << typeid(obj).name();
     return os;

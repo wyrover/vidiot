@@ -55,7 +55,7 @@ void UnlinkClips::initialize()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const UnlinkClips& obj )
+std::ostream& operator<<(std::ostream& os, const UnlinkClips& obj)
 {
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mClips;
     return os;

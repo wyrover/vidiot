@@ -27,13 +27,13 @@
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const AVRational& obj)
+std::ostream& operator<<(std::ostream& os, const AVRational& obj)
 {
     os << obj.num << "/" << obj.den;
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVPixelFormat& obj)
+std::ostream& operator<<(std::ostream& os, const AVPixelFormat& obj)
 {
     switch (obj)
     {
@@ -200,7 +200,7 @@ std::ostream& operator<< (std::ostream& os, const AVPixelFormat& obj)
     return os;
 };
 
-std::ostream& operator<< (std::ostream& os, const AVCodec* obj)
+std::ostream& operator<<(std::ostream& os, const AVCodec* obj)
 {
     if (obj)
     {
@@ -256,7 +256,7 @@ std::ostream& operator<< (std::ostream& os, const AVCodec* obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
+std::ostream& operator<<(std::ostream& os, const AVCodecContext* obj)
 {
     if (obj)
     {
@@ -289,7 +289,7 @@ std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj)
+std::ostream& operator<<(std::ostream& os, const AVFormatContext* obj)
 {
     if (obj)
     {
@@ -337,7 +337,7 @@ std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVStream* obj)
+std::ostream& operator<<(std::ostream& os, const AVStream* obj)
 {
     if (obj)
     {
@@ -370,7 +370,7 @@ std::ostream& operator<< (std::ostream& os, const AVStream* obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVPacket* obj)
+std::ostream& operator<<(std::ostream& os, const AVPacket* obj)
 {
     if (obj)
     {
@@ -393,7 +393,7 @@ std::ostream& operator<< (std::ostream& os, const AVPacket* obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj)
+std::ostream& operator<<(std::ostream& os, const AVOutputFormat* obj)
 {
     if (obj)
     {
@@ -416,7 +416,7 @@ std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVCodecID& obj)
+std::ostream& operator<<(std::ostream& os, const AVCodecID& obj)
 {
     switch (obj)
     {
@@ -732,7 +732,7 @@ std::ostream& operator<< (std::ostream& os, const AVCodecID& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const AVSampleFormat& obj)
+std::ostream& operator<<(std::ostream& os, const AVSampleFormat& obj)
 {
     switch (obj)
     {

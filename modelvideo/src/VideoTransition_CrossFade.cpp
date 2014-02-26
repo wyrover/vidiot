@@ -57,17 +57,17 @@ CrossFade::~CrossFade()
 // VIDEOTRANSITIONOPACITY
 //////////////////////////////////////////////////////////////////////////
 
-void CrossFade::handleFullyOpaqueImage(wxImagePtr image, boost::function<float (int, int)> f) const
+void CrossFade::handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
 {
     applyToFirstLineThenCopy(image,f);
 }
 
-void CrossFade::handleImageWithAlpha(wxImagePtr image, boost::function<float (int, int)> f) const
+void CrossFade::handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
 {
     applyToAllPixels(image,f);
 }
 
-boost::function<float (int,int)> CrossFade::getLeftMethod(wxImagePtr image, float factor) const
+boost::function<float (int,int)> CrossFade::getLeftMethod(const wxImagePtr& image, const float& factor) const
 {
     boost::function<float (int,int)> f = [factor](int x, int y) -> float
     {
@@ -76,7 +76,7 @@ boost::function<float (int,int)> CrossFade::getLeftMethod(wxImagePtr image, floa
     return f;
 }
 
-boost::function<float (int,int)> CrossFade::getRightMethod(wxImagePtr image, float factor) const
+boost::function<float (int,int)> CrossFade::getRightMethod(const wxImagePtr& image, const float& factor) const
 {
     boost::function<float (int,int)> f =[factor](int x, int y) -> float
     {
@@ -89,7 +89,7 @@ boost::function<float (int,int)> CrossFade::getRightMethod(wxImagePtr image, flo
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const CrossFade& obj )
+std::ostream& operator<<(std::ostream& os, const CrossFade& obj)
 {
     os << static_cast<const VideoTransition&>(obj);
     return os;

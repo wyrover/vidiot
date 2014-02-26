@@ -83,7 +83,7 @@ pixel ShiftParams::getPixelLength() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const ShiftParams& obj)
+std::ostream& operator<<(std::ostream& os, const ShiftParams& obj)
 {
     os << obj.mPosition << '|' << obj.mLength;
     return os;

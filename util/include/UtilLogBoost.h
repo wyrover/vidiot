@@ -19,7 +19,7 @@
 #define UTIL_LOG_BOOST_H
 
 template <class K, class L, class M>
-std::ostream& operator<< (std::ostream& os, const boost::tuple<K,L,M>& obj)
+std::ostream& operator<<(std::ostream& os, const boost::tuple<K,L,M>& obj)
 {
     os  << "{"
         << obj.get<0>() 

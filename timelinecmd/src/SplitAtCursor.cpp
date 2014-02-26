@@ -69,7 +69,7 @@ void SplitAtCursor::splittrack(model::Tracks tracks, pts position)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const SplitAtCursor& obj )
+std::ostream& operator<<(std::ostream& os, const SplitAtCursor& obj)
 {
     os << static_cast<const AClipEdit&>(obj);
     return os;

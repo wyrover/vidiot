@@ -26,7 +26,7 @@ class AudioCodecs
 {
 public:
     static void initialize();
-    static void add(wxString name, AudioCodec codec);
+    static void add(const wxString& name, const AudioCodec& codec);
 
     static boost::bimap<int,wxString> mapToName;
 
@@ -34,7 +34,7 @@ public:
 
     /// \return 0 if a codec with the given id was not found
     /// This method finds the given codec in the registered list of codecs
-    static AudioCodecPtr find(AVCodecID id);
+    static AudioCodecPtr find(const AVCodecID& id);
 private:
     static AudioCodecMap sAudioCodecs;
 };

@@ -50,7 +50,7 @@ VideoComposition::~VideoComposition()
 // COMPOSITION
 //////////////////////////////////////////////////////////////////////////
 
-void VideoComposition::add(VideoFramePtr frame)
+void VideoComposition::add(const VideoFramePtr& frame)
 {
     if (!frame || frame->isA<EmptyFrame>())
     {
@@ -96,7 +96,7 @@ VideoCompositionParameters VideoComposition::getParameters() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoComposition& obj )
+std::ostream& operator<<(std::ostream& os, const VideoComposition& obj)
 {
     os << &obj << '|' << obj.mParameters << '|' << obj.mFrames;
     return os;

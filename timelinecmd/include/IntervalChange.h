@@ -59,7 +59,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const IntervalChange& obj );
+    friend std::ostream& operator<<(std::ostream& os, const IntervalChange& obj);
 };
 
 }}} // namespace

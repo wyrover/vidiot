@@ -198,7 +198,7 @@ void DeleteSelectedClips::undoExtraAfter()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const DeleteSelectedClips& obj )
+std::ostream& operator<<(std::ostream& os, const DeleteSelectedClips& obj)
 {
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mShift;
     return os;

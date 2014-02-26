@@ -556,7 +556,7 @@ void TrimClip::applyTrim()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const TrimClip& obj )
+std::ostream& operator<<(std::ostream& os, const TrimClip& obj)
 {
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mOriginalClip << '|' << obj.mClip << '|' << obj.mTrim << '|' << '|' << obj.mShift << '|' << obj.mPosition;
     return os;

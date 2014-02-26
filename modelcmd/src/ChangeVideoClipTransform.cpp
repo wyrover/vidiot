@@ -28,7 +28,7 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ChangeVideoClipTransform::ChangeVideoClipTransform(model::VideoClipPtr videoclip)
+ChangeVideoClipTransform::ChangeVideoClipTransform(const VideoClipPtr& videoclip)
     :   RootCommand()
     ,   mInitialized(false)
     ,   mVideoClip(videoclip)
@@ -51,32 +51,32 @@ ChangeVideoClipTransform::~ChangeVideoClipTransform()
 {
 }
 
-void ChangeVideoClipTransform::setOpacity(int opacity)
+void ChangeVideoClipTransform::setOpacity(const int& opacity)
 {
     mNewOpacity = boost::optional<int>(opacity);
     mVideoClip->setOpacity(opacity);
 }
 
-void ChangeVideoClipTransform::setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor)
+void ChangeVideoClipTransform::setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor)
 {
     mNewScaling = boost::optional<VideoScaling>(scaling);
     mNewScalingFactor = factor;
     mVideoClip->setScaling(*mNewScaling, mNewScalingFactor);
 }
 
-void ChangeVideoClipTransform::setRotation(boost::rational< int > rotation)
+void ChangeVideoClipTransform::setRotation(const boost::rational< int >& rotation)
 {
     mNewRotation.reset(rotation);
     mVideoClip->setRotation(rotation);
 }
 
-void ChangeVideoClipTransform::setAlignment(VideoAlignment alignment)
+void ChangeVideoClipTransform::setAlignment(const VideoAlignment& alignment)
 {
     mNewAlignment = boost::optional<VideoAlignment>(alignment);
     mVideoClip->setAlignment(*mNewAlignment);
 }
 
-void ChangeVideoClipTransform::setPosition(wxPoint position)
+void ChangeVideoClipTransform::setPosition(const wxPoint& position)
 {
     mNewPosition = boost::optional<wxPoint>(position);
     mVideoClip->setPosition(*mNewPosition);
@@ -158,7 +158,7 @@ model::VideoClipPtr ChangeVideoClipTransform::getVideoClip() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ChangeVideoClipTransform& obj )
+std::ostream& operator<<(std::ostream& os, const ChangeVideoClipTransform& obj)
 {
     os  << &obj << '|'
         << typeid(obj).name()    << '|'

@@ -20,6 +20,6 @@
 
 #include <windows.h>
 
-std::ostream& operator<< (std::ostream& os, const EXCEPTION_POINTERS& obj);
+std::ostream& operator<<(std::ostream& os, const EXCEPTION_POINTERS& obj);
 
 #endif

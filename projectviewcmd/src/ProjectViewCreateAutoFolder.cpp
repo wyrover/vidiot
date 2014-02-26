@@ -24,7 +24,7 @@
 
 namespace command {
 
-ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(model::FolderPtr parent, wxFileName path)
+ProjectViewCreateAutoFolder::ProjectViewCreateAutoFolder(const model::FolderPtr& parent, const wxFileName& path)
 :   ProjectViewCommand()
 ,   mPair(boost::dynamic_pointer_cast<model::INode>(parent),model::NodePtr())
 ,   mPath(path)

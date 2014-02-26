@@ -25,7 +25,7 @@
 //
 // Then the enum values can be used as regular enum values.
 //
-// operator<< is defined for the enum (for logging)
+// operator<<is defined for the enum (for logging)
 //
 // Convert enum value to string:
 // std::string <nameofnewenum>_toString( <nameofnewenum> value )
@@ -75,7 +75,7 @@ public: \
 private: \
     boost::bimap<ENUMNAME,std::string> mMap; \
 }; \
-    std::ostream& operator<< (std::ostream& os, const ENUMNAME& obj); \
+    std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
     std::string ENUMNAME ## _toString( ENUMNAME value ); \
     ENUMNAME ENUMNAME ## _fromString( std::string value ); \
     ENUMNAME Enum_fromConfig(wxString value, ENUMNAME unused);
@@ -111,7 +111,7 @@ public: \
 private: \
     boost::bimap<ENUMNAME,std::string> mMap; \
 }; \
-std::ostream& operator<< (std::ostream& os, const ENUMNAME& obj); \
+std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
 std::string ENUMNAME ## _toString( ENUMNAME value ); \
 ENUMNAME ENUMNAME ## _fromString( std::string value )
 
@@ -121,7 +121,7 @@ ENUMNAME ENUMNAME ## _fromString( std::string value )
 // Second line uses this object to provide the stream operator<<
 #define IMPLEMENTENUM(ENUMNAME) \
 ENUMNAME ## Converter ENUMNAME ## Converter::sConverter; \
-std::ostream& operator<< (std::ostream& os, const ENUMNAME& obj) { os << ENUMNAME ## _toString(obj); return os; }; \
+std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj) { os << ENUMNAME ## _toString(obj); return os; }; \
 std::string ENUMNAME ## _toString( ENUMNAME value ) { return ENUMNAME ## Converter::sConverter.toString(value); }; \
 ENUMNAME ENUMNAME ## _fromString( std::string value ) { return ENUMNAME ## Converter::sConverter.fromString(value); }; \
 ENUMNAME Enum_fromConfig(wxString value, ENUMNAME unused) { return ENUMNAME ## _fromString(std::string(value.mb_str())); }; \

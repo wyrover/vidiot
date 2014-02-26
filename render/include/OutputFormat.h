@@ -30,7 +30,7 @@ public:
 
     OutputFormat();
 
-    explicit OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, AVCodecID defaultaudiocodec, AVCodecID defaultvideocodec);
+    explicit OutputFormat(const wxString& name, const wxString& longname, const std::list<wxString>& extensions, const AVCodecID& defaultaudiocodec, const AVCodecID& defaultvideocodec);
 
     OutputFormat(const OutputFormat& other);
 
@@ -50,7 +50,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    OutputFormat& setName(wxString name);
+    OutputFormat& setName(const wxString& name);
     wxString getName() const;
     wxString getLongName() const;
     std::list<wxString> getExtensions() const;
@@ -61,12 +61,12 @@ public:
     bool storeVideo() const; ///< \return true if video output is requested
 
     VideoCodecPtr getVideoCodec() const;
-    void setVideoCodec(VideoCodecPtr codec);
+    void setVideoCodec(const VideoCodecPtr& codec);
 
     AudioCodecPtr getAudioCodec() const;
-    void setAudioCodec(AudioCodecPtr codec);
+    void setAudioCodec(const AudioCodecPtr& codec);
 
-    int checkCodec(AVCodecID id) const;       ///< \return Result of avformat_query_codec for the current format and given codec
+    int checkCodec(const AVCodecID& id) const;       ///< \return Result of avformat_query_codec for the current format and given codec
     AVFormatContext* getContext() const;    ///< \return AVFormatContext to be used for rendering
 
 private:
@@ -89,7 +89,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const OutputFormat& obj );
+    friend std::ostream& operator<<(std::ostream& os, const OutputFormat& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

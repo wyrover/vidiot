@@ -42,7 +42,7 @@ AudioCompositionParameters::AudioCompositionParameters(const AudioCompositionPar
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-AudioCompositionParameters& AudioCompositionParameters::setSampleRate(int audiorate)
+AudioCompositionParameters& AudioCompositionParameters::setSampleRate(const int& audiorate)
 {
     mSampleRate = audiorate;
     return *this;
@@ -53,7 +53,7 @@ int AudioCompositionParameters::getSampleRate() const
     return mSampleRate;
 }
 
-AudioCompositionParameters& AudioCompositionParameters::setNrChannels(int nChannels)
+AudioCompositionParameters& AudioCompositionParameters::setNrChannels(const int& nChannels)
 {
     mNrChannels = nChannels;
     return *this;
@@ -68,22 +68,22 @@ int AudioCompositionParameters::getNrChannels() const
 // CONVERSION HELPERS
 //////////////////////////////////////////////////////////////////////////
 
-samplecount AudioCompositionParameters::ptsToSamples(pts position) const
+samplecount AudioCompositionParameters::ptsToSamples(const pts& position) const
 {
     return Convert::ptsToSamples(mSampleRate, mNrChannels, position);
 }
 
-pts AudioCompositionParameters::samplesToPts(samplecount nSamples) const
+pts AudioCompositionParameters::samplesToPts(const samplecount& nSamples) const
 {
     return Convert::samplesToPts(mSampleRate, mNrChannels, nSamples);
 }
 
-int AudioCompositionParameters::samplesToFrames(samplecount nSamples) const
+int AudioCompositionParameters::samplesToFrames(const samplecount& nSamples) const
 {
     return Convert::samplesToFrames(mNrChannels, nSamples);
 }
 
-samplecount AudioCompositionParameters::framesToSamples(int nFrames) const
+samplecount AudioCompositionParameters::framesToSamples(const int& nFrames) const
 {
     return Convert::framesToSamples(mNrChannels, nFrames);
 }
@@ -92,7 +92,7 @@ samplecount AudioCompositionParameters::framesToSamples(int nFrames) const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AudioCompositionParameters& obj )
+std::ostream& operator<<(std::ostream& os, const AudioCompositionParameters& obj)
 {
     os << &obj << '|' << obj.mSampleRate << '|' << obj.mNrChannels;
     return os;

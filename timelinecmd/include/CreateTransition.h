@@ -74,7 +74,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const CreateTransition& obj );
+    friend std::ostream& operator<<(std::ostream& os, const CreateTransition& obj);
 };
 
 }}} // namespace

@@ -123,7 +123,7 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
     }
 
     model::NodePtr parent = model::INode::Ptr(static_cast<model::NodeId>(wxItem.GetID()));
-    for ( model::NodePtr child : parent->getChildren() )
+    for (model::NodePtr child : parent->getChildren() )
     {
         wxItemArray.Add(wxDataViewItem(child->id()));
 
@@ -185,7 +185,7 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
     }
 }
 
-bool ProjectViewModel::SetValue( const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col )
+bool ProjectViewModel::SetValue(const wxVariant &variant, const wxDataViewItem &wxItem, unsigned int col)
 {
     ASSERT(wxItem.IsOk());
     ASSERT_LESS_THAN_EQUALS(col,GetColumnCount());
@@ -288,7 +288,7 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
 //
 //////////////////////////////////////////////////////////////////////////
 
-bool ProjectViewModel::isAutomaticallyGenerated(model::NodePtr node) const
+bool ProjectViewModel::isAutomaticallyGenerated(const model::NodePtr& node) const
 {
     if (!node->hasParent())
     {
@@ -308,27 +308,27 @@ bool ProjectViewModel::isAutomaticallyGenerated(model::NodePtr node) const
     }
 }
 
-bool ProjectViewModel::isRoot(model::NodePtr node) const
+bool ProjectViewModel::isRoot(const model::NodePtr& node) const
 {
     return !node->hasParent();
 }
 
-bool ProjectViewModel::isFolder(model::NodePtr node) const
+bool ProjectViewModel::isFolder(const model::NodePtr& node) const
 {
     return boost::dynamic_pointer_cast<model::Folder>(node) != 0;
 }
 
-bool ProjectViewModel::isAutoFolder(model::NodePtr node) const
+bool ProjectViewModel::isAutoFolder(const model::NodePtr& node) const
 {
     return boost::dynamic_pointer_cast<model::AutoFolder>(node) != 0;
 }
 
-bool ProjectViewModel::isSequence(model::NodePtr node) const
+bool ProjectViewModel::isSequence(const model::NodePtr& node) const
 {
     return boost::dynamic_pointer_cast<model::Sequence>(node) != 0;
 }
 
-bool ProjectViewModel::isDescendantOf(model::NodePtr node, model::NodePtr ascendant) const
+bool ProjectViewModel::isDescendantOf(const model::NodePtr& node, const model::NodePtr& ascendant) const
 {
     if (!node->hasParent())
     {
@@ -343,12 +343,12 @@ bool ProjectViewModel::isDescendantOf(model::NodePtr node, model::NodePtr ascend
     return isDescendantOf(parent, ascendant);
 }
 
-bool ProjectViewModel::canBeRenamed(model::NodePtr node) const
+bool ProjectViewModel::canBeRenamed(const model::NodePtr& node) const
 {
     return !isRoot(node) && !isAutomaticallyGenerated(node) && !isAutoFolder(node);
 }
 
-wxIcon ProjectViewModel::getIcon(model::NodePtr node) const
+wxIcon ProjectViewModel::getIcon(const model::NodePtr& node) const
 {
     wxIcon icon = mIconVideo;
     wxDataViewItem wxItem = wxDataViewItem(node->id());
@@ -375,7 +375,7 @@ wxIcon ProjectViewModel::getIcon(model::NodePtr node) const
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectViewModel::onOpenProject( model::EventOpenProject &event )
+void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 {
     mProject = event.getValue();
 
@@ -390,7 +390,7 @@ void ProjectViewModel::onOpenProject( model::EventOpenProject &event )
     event.Skip();
 }
 
-void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
+void ProjectViewModel::onCloseProject(model::EventCloseProject &event)
 {
     mProject = 0;
 
@@ -405,7 +405,7 @@ void ProjectViewModel::onCloseProject( model::EventCloseProject &event )
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetAdded( model::EventAddNode &event )
+void ProjectViewModel::onProjectAssetAdded(model::EventAddNode &event)
 {
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtr child = event.getValue().getChild();
@@ -417,7 +417,7 @@ void ProjectViewModel::onProjectAssetAdded( model::EventAddNode &event )
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
+void ProjectViewModel::onProjectAssetsAdded(model::EventAddNodes &event)
 {
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtrs children = event.getValue().getChildren();
@@ -426,7 +426,7 @@ void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
     mView.Freeze();
 
     wxDataViewItemArray items;
-    for ( model::NodePtr node : children )
+    for (model::NodePtr node : children )
     {
         items.Add(wxDataViewItem(node->id()));
     }
@@ -439,7 +439,7 @@ void ProjectViewModel::onProjectAssetsAdded( model::EventAddNodes &event )
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveNode &event )
+void ProjectViewModel::onProjectAssetRemoved(model::EventRemoveNode &event)
 {
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtr child = event.getValue().getChild();
@@ -449,7 +449,7 @@ void ProjectViewModel::onProjectAssetRemoved( model::EventRemoveNode &event )
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetsRemoved( model::EventRemoveNodes &event )
+void ProjectViewModel::onProjectAssetsRemoved(model::EventRemoveNodes &event)
 {
     model::NodePtr parent = event.getValue().getParent();
     model::NodePtrs children = event.getValue().getChildren();
@@ -458,7 +458,7 @@ void ProjectViewModel::onProjectAssetsRemoved( model::EventRemoveNodes &event )
     mView.Freeze();
 
     wxDataViewItemArray items;
-    for ( model::NodePtr node : children )
+    for (model::NodePtr node : children )
     {
         items.Add(wxDataViewItem(node->id()));
     }
@@ -471,7 +471,7 @@ void ProjectViewModel::onProjectAssetsRemoved( model::EventRemoveNodes &event )
     event.Skip();
 }
 
-void ProjectViewModel::onProjectAssetRenamed( model::EventRenameNode &event )
+void ProjectViewModel::onProjectAssetRenamed(model::EventRenameNode &event)
 {
     VAR_DEBUG(event.getValue().getNode());
     ItemChanged(wxDataViewItem(event.getValue().getNode()->id()));

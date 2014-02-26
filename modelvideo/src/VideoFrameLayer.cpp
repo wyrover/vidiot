@@ -29,7 +29,7 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFrameLayer::VideoFrameLayer(wxImagePtr image)
+VideoFrameLayer::VideoFrameLayer(const wxImagePtr& image)
     : mImage(image)
     , mResultingImage(boost::none)
     , mPosition(0,0)
@@ -65,7 +65,7 @@ VideoFrameLayer::~VideoFrameLayer()
 // META DATA
 //////////////////////////////////////////////////////////////////////////
 
-void VideoFrameLayer::setPosition(wxPoint position)
+void VideoFrameLayer::setPosition(const wxPoint& position)
 {
     mPosition = position;
     mResultingImage.reset();
@@ -76,7 +76,7 @@ wxPoint VideoFrameLayer::getPosition() const
     return mPosition;
 }
 
-void VideoFrameLayer::setOpacity(int opacity)
+void VideoFrameLayer::setOpacity(const int& opacity)
 {
     ASSERT(mImage);
     if (mImage->HasAlpha())
@@ -92,7 +92,7 @@ int VideoFrameLayer::getOpacity() const
     return mOpacity;
 }
 
-void VideoFrameLayer::setRotation(boost::rational<int> rotation)
+void VideoFrameLayer::setRotation(const boost::rational<int>& rotation)
 {
     if (rotation != boost::rational<int>(0,1))
     {
@@ -160,7 +160,7 @@ void VideoFrameLayer::draw(wxGraphicsContext* gc, const VideoCompositionParamete
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const VideoFrameLayer& obj)
+std::ostream& operator<<(std::ostream& os, const VideoFrameLayer& obj)
 {
     os  << &obj                     << '|'
         << obj.mPosition            << '|'
@@ -170,7 +170,7 @@ std::ostream& operator<< (std::ostream& os, const VideoFrameLayer& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const VideoFrameLayerPtr obj)
+std::ostream& operator<<(std::ostream& os, const VideoFrameLayerPtr obj)
 {
     if (obj)
     {

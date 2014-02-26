@@ -26,8 +26,8 @@ namespace command {
 class ProjectViewCreateFolder : public ProjectViewCommand
 {
 public:
-    /** Create a new folder in another folder. */
-    ProjectViewCreateFolder(model::FolderPtr parent, wxString name);
+    /// Create a new folder in another folder.
+    ProjectViewCreateFolder(const model::FolderPtr& parent, const wxString& name);
     virtual ~ProjectViewCreateFolder();
     bool Do() override;
     bool Undo() override;

@@ -34,7 +34,7 @@ ProjectViewCommand::~ProjectViewCommand()
 }
 
 // static
-ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::NodePtrs children)
+ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(const model::NodePtrs& children)
 {
     ASSERT_MORE_THAN_ZERO(children.size());
 
@@ -47,7 +47,7 @@ ParentAndChildPairs ProjectViewCommand::makeParentAndChildPairs(model::NodePtrs 
     return pairs;
 }
 
-bool isDescendantOf(model::NodePtr descendant, model::NodePtr ascendant)
+bool isDescendantOf(const model::NodePtr& descendant, const model::NodePtr& ascendant)
 {
     model::NodePtr directparent = descendant->getParent();
     if (!directparent)
@@ -66,7 +66,7 @@ bool isDescendantOf(model::NodePtr descendant, model::NodePtr ascendant)
 }
 
 // static
-model::NodePtrs ProjectViewCommand::prune(model::NodePtrs children)
+model::NodePtrs ProjectViewCommand::prune(const model::NodePtrs& children)
 {
     ASSERT_MORE_THAN_ZERO(children.size());
 

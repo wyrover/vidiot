@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    EmptyChunk(int nChannels, samplecount nSamples);
+    EmptyChunk(const int& nChannels, const samplecount& nSamples);
 
     virtual ~EmptyChunk();
 

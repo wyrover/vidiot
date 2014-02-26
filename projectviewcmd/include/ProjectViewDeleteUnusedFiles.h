@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ProjectViewDeleteUnusedFiles(model::AutoFolderPtr folder);
+    ProjectViewDeleteUnusedFiles(const model::AutoFolderPtr& folder);
     virtual ~ProjectViewDeleteUnusedFiles();
     bool Do() override;
     bool Undo() override;
@@ -56,7 +56,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    bool findInProject(model::FilePtr file);
+    bool findInProject(const model::FilePtr& file);
 };
 
 } // namespace

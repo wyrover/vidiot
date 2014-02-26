@@ -63,26 +63,26 @@ public:
     //
     //////////////////////////////////////////////////////////////////////////
 
-    bool isRoot( model::NodePtr node ) const;
-    bool isAutomaticallyGenerated( model::NodePtr node ) const;
-    bool isFolder( model::NodePtr node ) const;
-    bool isAutoFolder( model::NodePtr node) const;
-    bool isSequence( model::NodePtr node) const;
-    bool isDescendantOf( model::NodePtr node, model::NodePtr ascendant ) const;
-    bool canBeRenamed( model::NodePtr node ) const;
-    wxIcon getIcon( model::NodePtr node ) const;
+    bool isRoot(const model::NodePtr& node) const;
+    bool isAutomaticallyGenerated(const model::NodePtr& node) const;
+    bool isFolder(const model::NodePtr& node) const;
+    bool isAutoFolder(const model::NodePtr& node) const;
+    bool isSequence(const model::NodePtr& node) const;
+    bool isDescendantOf(const model::NodePtr& node, const model::NodePtr& ascendant ) const;
+    bool canBeRenamed(const model::NodePtr& node) const;
+    wxIcon getIcon(const model::NodePtr& node) const;
 
     //////////////////////////////////////////////////////////////////////////
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onOpenProject( model::EventOpenProject &event );
-    void onCloseProject( model::EventCloseProject &event );
-    void onProjectAssetAdded( model::EventAddNode &event );
-    void onProjectAssetsAdded( model::EventAddNodes &event );
-    void onProjectAssetRemoved( model::EventRemoveNode &event );
-    void onProjectAssetsRemoved( model::EventRemoveNodes &event );
-    void onProjectAssetRenamed( model::EventRenameNode &event );
+    void onOpenProject(model::EventOpenProject &event);
+    void onCloseProject(model::EventCloseProject &event);
+    void onProjectAssetAdded(model::EventAddNode &event);
+    void onProjectAssetsAdded(model::EventAddNodes &event);
+    void onProjectAssetRemoved(model::EventRemoveNode &event);
+    void onProjectAssetsRemoved(model::EventRemoveNodes &event);
+    void onProjectAssetRenamed(model::EventRenameNode &event);
 
 private:
 

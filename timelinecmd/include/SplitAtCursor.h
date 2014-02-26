@@ -53,7 +53,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const SplitAtCursor& obj );
+    friend std::ostream& operator<<(std::ostream& os, const SplitAtCursor& obj);
 };
 
 }}} // namespace

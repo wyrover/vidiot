@@ -21,7 +21,7 @@
 
 namespace command {
 
-ProjectViewRenameAsset::ProjectViewRenameAsset(model::NodePtr node, wxString assetName)
+ProjectViewRenameAsset::ProjectViewRenameAsset(const model::NodePtr& node, const wxString& assetName)
 :   ProjectViewCommand()
 ,   mNode(node)
 ,   mNewName(assetName)

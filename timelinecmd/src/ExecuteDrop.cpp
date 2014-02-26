@@ -54,7 +54,7 @@ Drop::~Drop()
 {
 }
 
-std::ostream& operator<<( std::ostream& os, const Drop& obj )
+std::ostream& operator<<(std::ostream& os, const Drop& obj)
 {
     os << &obj << '|' << obj.track << '|' << obj.position << '|' << obj.clips;
     return os;
@@ -298,7 +298,7 @@ const Drags& ExecuteDrop::getDrags() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ExecuteDrop& obj )
+std::ostream& operator<<(std::ostream& os, const ExecuteDrop& obj)
 {
     os << static_cast<const AClipEdit&>(obj) << '|' << '|' << obj.mDrags << '|' << obj.mShift;
     return os;

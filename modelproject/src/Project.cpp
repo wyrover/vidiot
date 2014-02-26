@@ -181,7 +181,7 @@ std::istream& Project::LoadObject(std::istream& istream)
 }
 
 // static
-wxFileName Project::createBackupFileName(wxFileName input, int count)
+wxFileName Project::createBackupFileName(wxFileName input, const int& count)
 {
     wxString name = input.GetName();
     name.Append(wxString::Format("_%d", count));

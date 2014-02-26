@@ -69,7 +69,7 @@ bool IntervalChange::Undo()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const IntervalChange& obj )
+std::ostream& operator<<(std::ostream& os, const IntervalChange& obj)
 {
     os << static_cast<const ATimelineCommand&>(obj) << '|' << obj.mInterval << '|' << obj.mAdd;
     return os;

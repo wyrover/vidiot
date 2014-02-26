@@ -60,10 +60,10 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     OutputFormatPtr getOutputFormat() const;
-    void setOutputFormat(OutputFormatPtr format);
+    void setOutputFormat(const OutputFormatPtr& format);
 
     wxFileName getFileName() const;
-    void setFileName(wxFileName filename);
+    void setFileName(const wxFileName& filename);
 
     bool getSeparateAtCuts() const;
     void setSeparateAtCuts(bool separate);
@@ -80,7 +80,7 @@ public:
     // SCHEDULING
     //////////////////////////////////////////////////////////////////////////
 
-    static void schedule(SequencePtr sequence);
+    static void schedule(const SequencePtr& sequence);
     static void scheduleAll();
 
 private:
@@ -99,7 +99,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const Render& obj );
+    friend std::ostream& operator<<(std::ostream& os, const Render& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

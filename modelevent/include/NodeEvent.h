@@ -30,8 +30,8 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    ParentAndChildren(NodePtr parent, NodePtrs children);
-    ParentAndChildren(NodePtr parent, NodePtr child);
+    ParentAndChildren(const NodePtr& parent, const NodePtrs& children);
+    ParentAndChildren(const NodePtr& parent, const NodePtr& child);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -54,7 +54,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ParentAndChildren& obj );
+    friend std::ostream& operator<<(std::ostream& os, const ParentAndChildren& obj);
 
 };
 
@@ -71,7 +71,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    NodeWithNewName( NodePtr node, wxString name);
+    NodeWithNewName(const NodePtr& node, const wxString& name);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
@@ -93,7 +93,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const NodeWithNewName& obj );
+    friend std::ostream& operator<<(std::ostream& os, const NodeWithNewName& obj);
 
 };
 

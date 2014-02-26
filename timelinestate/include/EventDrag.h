@@ -23,7 +23,7 @@ namespace gui { namespace timeline { namespace state {
 template< class MostDerived >
 struct EvDrag : boost::statechart::event< MostDerived >
 {
-    friend std::ostream& operator<< (std::ostream& os, const EvDrag& obj)
+    friend std::ostream& operator<<(std::ostream& os, const EvDrag& obj)
     {
         os  << typeid(obj).name(); // This typeid is required to distinguish the various 'react' methods
         return os;

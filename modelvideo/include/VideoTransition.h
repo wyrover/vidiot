@@ -63,7 +63,7 @@ protected:
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters) = 0;
+    virtual VideoFramePtr getVideo(const pts& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters) = 0;
 
 private:
 
@@ -79,7 +79,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoTransition& obj );
+    friend std::ostream& operator<<(std::ostream& os, const VideoTransition& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

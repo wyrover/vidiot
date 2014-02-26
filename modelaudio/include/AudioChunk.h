@@ -25,7 +25,7 @@
 namespace model {
 
 typedef Fifo<AudioChunkPtr> FifoAudio;
-std::ostream& operator<< (std::ostream& os, const AudioChunkPtr obj);
+std::ostream& operator<<(std::ostream& os, const AudioChunkPtr obj);
 
 /// Class holds audio samples
 ///
@@ -51,7 +51,7 @@ public:
     /// \param buffer if non-null data from this buffer is copied into the newly allocated space
     /// \pre zero   ==> allocate && !buffer
     /// \pre buffer ==> allocate && !zero
-    AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool zero, sample* buffer = 0);
+    AudioChunk(const int& nChannels, const samplecount& nSamples, bool allocate, bool zero, sample* buffer = 0);
 
     virtual ~AudioChunk();
 
@@ -70,12 +70,12 @@ public:
     /// \param dst area to hold the samples
     /// \param requested number of samples to be copied
     /// \return actually stored number of samples (is less than requested if there were no more available samples)
-    samplecount extract(uint16_t* dst, samplecount requested);
+    samplecount extract(uint16_t* dst, const samplecount& requested);
 
     /// Indicates that a number of samples has been consumed by the process
     /// that reads chunks.
     /// \param samples number of samples that has been read
-    void read(samplecount samples);
+    void read(const samplecount& samples);
 
     /// Return the data.
     /// Returns the beginning buffer, thus not taking 'read' samples into account.
@@ -91,7 +91,7 @@ public:
 
     /// Call this if not all samples in this chunk are 'for use' (typically
     /// required if the extra samples are beyond a clips length.
-    void setAdjustedLength(samplecount adjustedLength);
+    void setAdjustedLength(const samplecount& adjustedLength);
 
 protected:
 
@@ -107,7 +107,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<< (std::ostream& os, const AudioChunk& obj);
+    friend std::ostream& operator<<(std::ostream& os, const AudioChunk& obj);
 };
 
 } // namespace

@@ -56,11 +56,11 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<< (std::ostream& os, const Work& obj);
+    friend std::ostream& operator<<(std::ostream& os, const Work& obj);
 
 };
 
-std::ostream& operator<< (std::ostream& os, const WorkPtr& obj);
+std::ostream& operator<<(std::ostream& os, const WorkPtr& obj);
 
 } // namespace
 

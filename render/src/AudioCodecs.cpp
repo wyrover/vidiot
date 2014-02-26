@@ -30,7 +30,7 @@ AudioCodecMap AudioCodecs::sAudioCodecs;
 boost::bimap<int,wxString> AudioCodecs::mapToName;
 
 // static
-void AudioCodecs::add(wxString name, AudioCodec codec)
+void AudioCodecs::add(const wxString& name, const AudioCodec& codec)
 {
     sAudioCodecs[codec.getId()] = boost::make_shared<AudioCodec>(codec);
     typedef boost::bimap<int, wxString> bimap;
@@ -84,7 +84,7 @@ AudioCodecPtr AudioCodecs::getDefault()
 }
 
 // static
-AudioCodecPtr AudioCodecs::find(AVCodecID id)
+AudioCodecPtr AudioCodecs::find(const AVCodecID& id)
 {
     AudioCodecMap::const_iterator it = sAudioCodecs.find(id);
     if (it == sAudioCodecs.end())

@@ -42,11 +42,11 @@ public:
     // VIDEOTRANSITIONOPACITY
     //////////////////////////////////////////////////////////////////////////
 
-    void handleFullyOpaqueImage(wxImagePtr image, boost::function<float (int, int)> f) const override;
-    void handleImageWithAlpha(wxImagePtr image, boost::function<float (int, int)> f) const override;
+    void handleFullyOpaqueImage(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
+    void handleImageWithAlpha(const wxImagePtr& image, const boost::function<float (int, int)>& f) const override;
 
-    boost::function<float (int,int)> getLeftMethod(wxImagePtr image, float factor) const override;
-    boost::function<float (int,int)> getRightMethod(wxImagePtr image, float factor) const override;
+    boost::function<float (int,int)> getLeftMethod(const wxImagePtr& image, const float& factor) const override;
+    boost::function<float (int,int)> getRightMethod(const wxImagePtr& image, const float& factor) const override;
 
 protected:
 
@@ -64,7 +64,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const CrossFade& obj );
+    friend std::ostream& operator<<(std::ostream& os, const CrossFade& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

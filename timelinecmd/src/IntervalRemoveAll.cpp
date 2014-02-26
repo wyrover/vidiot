@@ -62,7 +62,7 @@ bool IntervalRemoveAll::Undo()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const IntervalRemoveAll& obj )
+std::ostream& operator<<(std::ostream& os, const IntervalRemoveAll& obj)
 {
     os << static_cast<const ATimelineCommand&>(obj) << '|' << obj.mIntervals;
     return os;

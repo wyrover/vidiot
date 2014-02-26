@@ -48,16 +48,16 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onOpenProject( model::EventOpenProject &event );
-    void onCloseProject( model::EventCloseProject &event );
-    void onAutoOpenFolder( EventAutoFolderOpen& event );
+    void onOpenProject(model::EventOpenProject &event);
+    void onCloseProject(model::EventCloseProject &event);
+    void onAutoOpenFolder(EventAutoFolderOpen& event);
 
     //////////////////////////////////////////////////////////////////////////
     // SELECTION
     //////////////////////////////////////////////////////////////////////////
 
     /// \nodes these nodes are selected after the call, all others are not
-    void select( model::NodePtrs nodes );
+    void select(const model::NodePtrs& nodes);
     void selectAll();
     model::FolderPtr getSelectedContainer() const;
     model::NodePtrs getSelection() const;
@@ -67,7 +67,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \return center position (within the ProjectView) of the given node.
-    wxPoint find( model::NodePtr node );
+    wxPoint find(const model::NodePtr& node);
 
     void selectColumnHeader();
 
@@ -94,15 +94,15 @@ private:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onContextMenu( wxDataViewEvent &event );
+    void onContextMenu(wxDataViewEvent &event);
     void onMotion(wxMouseEvent& event);
     void onDragEnd();
-    void onDropPossible( wxDataViewEvent &event );
-    void onDrop( wxDataViewEvent &event );
-    void onActivated( wxDataViewEvent &event );
-    void onExpanded( wxDataViewEvent &event );
-    void onCollapsed( wxDataViewEvent &event );
-    void onStartEditing( wxDataViewEvent &event );
+    void onDropPossible(wxDataViewEvent &event);
+    void onDrop(wxDataViewEvent &event);
+    void onActivated(wxDataViewEvent &event);
+    void onExpanded(wxDataViewEvent &event);
+    void onCollapsed(wxDataViewEvent &event);
+    void onStartEditing(wxDataViewEvent &event);
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS

@@ -65,7 +65,7 @@ void TrimIntervals::undoExtraAfter()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const TrimIntervals& obj )
+std::ostream& operator<<(std::ostream& os, const TrimIntervals& obj)
 {
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mIntervals << '|' << obj.mRemoved;
     return os;

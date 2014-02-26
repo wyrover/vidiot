@@ -66,7 +66,7 @@ enum NodeType
     NODETYPE_FOLDER,
     NODETYPE_SEQUENCE
 };
-bool findConflictingName(wxWindow* window, model::FolderPtr parent, wxString name, NodeType type );
+bool findConflictingName(wxWindow* window, const model::FolderPtr& parent, const wxString& name, const NodeType& type );
 
     //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -132,7 +132,7 @@ ProjectView::~ProjectView()
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectView::onOpenProject( model::EventOpenProject &event )
+void ProjectView::onOpenProject(model::EventOpenProject &event)
 {
     mProject = event.getValue();
     GetSizer()->Show(&mCtrl);
@@ -156,7 +156,7 @@ void ProjectView::onOpenProject( model::EventOpenProject &event )
     event.Skip();
 }
 
-void ProjectView::onCloseProject( model::EventCloseProject &event )
+void ProjectView::onCloseProject(model::EventCloseProject &event)
 {
     GetSizer()->Hide(&mCtrl);
     GetSizer()->Layout();
@@ -167,7 +167,7 @@ void ProjectView::onCloseProject( model::EventCloseProject &event )
     event.Skip();
 }
 
-void ProjectView::onAutoOpenFolder( EventAutoFolderOpen& event )
+void ProjectView::onAutoOpenFolder(EventAutoFolderOpen& event)
 {
     if (UtilList<model::FolderPtr>(mOpenFolders).hasElement(event.getValue()))
     {
@@ -179,7 +179,7 @@ void ProjectView::onAutoOpenFolder( EventAutoFolderOpen& event )
 // SELECTION
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectView::select( model::NodePtrs nodes)
+void ProjectView::select(const model::NodePtrs& nodes)
 {
     ASSERT(wxThread::IsMain());
     mCtrl.UnselectAll();
@@ -226,7 +226,7 @@ model::NodePtrs ProjectView::getSelection() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-wxPoint ProjectView::find( model::NodePtr node )
+wxPoint ProjectView::find(const model::NodePtr& node )
 {
     wxPoint result;
     wxDataViewItem item =  wxDataViewItem( node->id() );
@@ -402,7 +402,7 @@ void ProjectView::onOpen()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void ProjectView::onContextMenu( wxDataViewEvent &event )
+void ProjectView::onContextMenu(wxDataViewEvent &event)
 {
     wxDataViewItemArray sel;
     int nSelected = mCtrl.GetSelections(sel);
@@ -577,7 +577,7 @@ void ProjectView::onDragEnd()
 {
 }
 
-void ProjectView::onDropPossible( wxDataViewEvent &event )
+void ProjectView::onDropPossible(wxDataViewEvent &event)
 {
     // Can only drop relevant type of info
     if (event.GetDataFormat().GetId() != DataObject::sFormat)
@@ -611,7 +611,7 @@ void ProjectView::onDropPossible( wxDataViewEvent &event )
     }
 }
 
-void ProjectView::onDrop( wxDataViewEvent &event )
+void ProjectView::onDrop(wxDataViewEvent &event)
 {
     LOG_INFO;
 
@@ -648,7 +648,7 @@ void ProjectView::onDrop( wxDataViewEvent &event )
     }
 }
 
-void ProjectView::onActivated( wxDataViewEvent &event )
+void ProjectView::onActivated(wxDataViewEvent &event)
 {
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(p);
@@ -660,7 +660,7 @@ void ProjectView::onActivated( wxDataViewEvent &event )
     Window::get().getTimeLines().Open(sequence);
 }
 
-void ProjectView::onExpanded( wxDataViewEvent &event )
+void ProjectView::onExpanded(wxDataViewEvent &event)
 {
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
@@ -671,7 +671,7 @@ void ProjectView::onExpanded( wxDataViewEvent &event )
     }
 }
 
-void ProjectView::onCollapsed( wxDataViewEvent &event )
+void ProjectView::onCollapsed(wxDataViewEvent &event)
 {
     model::NodePtr p = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     model::FolderPtr folder = boost::dynamic_pointer_cast<model::Folder>(p);
@@ -680,7 +680,7 @@ void ProjectView::onCollapsed( wxDataViewEvent &event )
     UtilList<model::FolderPtr>(mOpenFolders).removeElements(boost::assign::list_of(folder));
 }
 
-void ProjectView::onStartEditing( wxDataViewEvent &event )
+void ProjectView::onStartEditing(wxDataViewEvent &event)
 {
     model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(event.GetItem().GetID()));
     if (!mModel->canBeRenamed(node))
@@ -694,7 +694,7 @@ void ProjectView::onStartEditing( wxDataViewEvent &event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-bool findConflictingName(wxWindow* window, model::FolderPtr parent, wxString name, NodeType type )
+bool findConflictingName(wxWindow* window, const model::FolderPtr& parent, const wxString& name, const NodeType& type )
 {
     for ( model::NodePtr child : parent->getChildren() )
     {

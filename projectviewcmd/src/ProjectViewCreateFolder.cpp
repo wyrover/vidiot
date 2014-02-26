@@ -21,7 +21,7 @@
 
 namespace command {
 
-ProjectViewCreateFolder::ProjectViewCreateFolder(model::FolderPtr parent, wxString name)
+ProjectViewCreateFolder::ProjectViewCreateFolder(const model::FolderPtr& parent, const wxString& name)
 :   ProjectViewCommand()
 ,   mParent(parent)
 ,   mNewFolder()

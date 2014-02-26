@@ -65,7 +65,7 @@ public:
     std::ostream& SaveObject(std::ostream& stream) override;
     std::istream& LoadObject(std::istream& stream) override;
 
-    static wxFileName createBackupFileName(wxFileName input, int count);
+    static wxFileName createBackupFileName(wxFileName input, const int& count);
 
     /// Overridden to change the error dialogs.
     bool DoSaveDocument(const wxString& file) override;

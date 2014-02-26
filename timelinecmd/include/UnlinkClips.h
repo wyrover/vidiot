@@ -45,7 +45,7 @@ public:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const UnlinkClips& obj );
+    friend std::ostream& operator<<(std::ostream& os, const UnlinkClips& obj);
 
 private:
 

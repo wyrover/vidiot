@@ -36,7 +36,7 @@ namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ProjectViewDeleteUnusedFiles::ProjectViewDeleteUnusedFiles(model::AutoFolderPtr folder)
+ProjectViewDeleteUnusedFiles::ProjectViewDeleteUnusedFiles(const model::AutoFolderPtr& folder)
 :   ProjectViewCommand()
 ,   mFolder(folder)
 ,   mTotalSize(wxInvalidSize)
@@ -144,7 +144,7 @@ void ProjectViewDeleteUnusedFiles::recycleFiles()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-bool ProjectViewDeleteUnusedFiles::findInProject(model::FilePtr file)
+bool ProjectViewDeleteUnusedFiles::findInProject(const model::FilePtr& file)
 {
     model::NodePtr root = model::Project::get().getRoot();
     wxString path = util::path::normalize(file->getPath()).GetFullPath();

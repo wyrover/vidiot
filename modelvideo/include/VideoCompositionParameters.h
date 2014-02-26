@@ -43,7 +43,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    VideoCompositionParameters& setBoundingBox(wxSize boundingBox);
+    VideoCompositionParameters& setBoundingBox(const wxSize& boundingBox);
     wxSize getBoundingBox() const;
 
     VideoCompositionParameters& setDrawBoundingBox(bool draw);
@@ -72,7 +72,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoCompositionParameters& obj );
+    friend std::ostream& operator<<(std::ostream& os, const VideoCompositionParameters& obj);
 
 };
 

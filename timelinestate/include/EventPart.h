@@ -35,7 +35,7 @@ struct EvPart : boost::statechart::event< MostDerived >
 };
 
 template< class MostDerived, class ORIGINALEVENT >
-std::ostream& operator<< (std::ostream& os, const EvPart< MostDerived, ORIGINALEVENT >& obj)
+std::ostream& operator<<(std::ostream& os, const EvPart< MostDerived, ORIGINALEVENT >& obj)
 {
     os  << typeid(obj).name() << '|' // This typeid is required to distinguish the various 'react' methods
         << obj.mEvent;
@@ -50,7 +50,7 @@ struct EvPlaybackChanged
     {}
     bool mActive;
 
-    friend std::ostream& operator<< (std::ostream& os, const EvPlaybackChanged& obj)
+    friend std::ostream& operator<<(std::ostream& os, const EvPlaybackChanged& obj)
     {
         os  << typeid(obj).name() << '|' // This typeid is required to distinguish the various 'react' methods
             << obj.mActive;

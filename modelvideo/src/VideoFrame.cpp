@@ -39,7 +39,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters)
 {
 }
 
-VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayerPtr layer)
+VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayerPtr& layer)
     : mLayers()
     , mParameters(new VideoCompositionParameters(parameters))
     , mPts(0)
@@ -49,7 +49,7 @@ VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, VideoFrameL
     mLayers.push_back(layer);
 }
 
-VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayers layers)
+VideoFrame::VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayers& layers)
     : mLayers(layers)
     , mParameters(new VideoCompositionParameters(parameters))
     , mPts(0)
@@ -89,7 +89,7 @@ pts VideoFrame::getPts() const
     return mPts;
 }
 
-void VideoFrame::setPts(pts position)
+void VideoFrame::setPts(const pts& position)
 {
     mPts = position;
 }
@@ -114,7 +114,7 @@ VideoFrameLayers VideoFrame::getLayers()
     return mLayers;
 }
 
-void VideoFrame::addLayer(VideoFrameLayerPtr layer)
+void VideoFrame::addLayer(const VideoFrameLayerPtr& layer)
 {
     mLayers.push_back(layer);
 }
@@ -191,7 +191,7 @@ void VideoFrame::draw(wxGraphicsContext* gc) const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
+std::ostream& operator<<(std::ostream& os, const VideoFrame& obj)
 {
     os  << &obj                     << '|'
         << obj.mPts                 << '|'
@@ -201,7 +201,7 @@ std::ostream& operator<< (std::ostream& os, const VideoFrame& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj)
+std::ostream& operator<<(std::ostream& os, const VideoFramePtr obj)
 {
     if (obj)
     {

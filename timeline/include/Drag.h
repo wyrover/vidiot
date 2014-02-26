@@ -166,7 +166,7 @@ private:
 
     private:
 
-        friend std::ostream& operator<< (std::ostream& os, const DragInfo& obj);
+        friend std::ostream& operator<<(std::ostream& os, const DragInfo& obj);
 
         model::TrackPtr mTempTrack; ///< For 'outside' drags, holds the temporary track that contains the new assets
         bool mIsVideo;              ///< true if this object applies to about video tracks, false if this object applies to audio tracks
@@ -261,12 +261,12 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<< (std::ostream& os, const Drag& obj);
-    friend std::ostream& operator<< (std::ostream& os, const DragInfo& obj);
+    friend std::ostream& operator<<(std::ostream& os, const Drag& obj);
+    friend std::ostream& operator<<(std::ostream& os, const DragInfo& obj);
 };
 
-std::ostream& operator<< (std::ostream& os, const Drag& obj);
-std::ostream& operator<< (std::ostream& os, const Drag::DragInfo& obj);
+std::ostream& operator<<(std::ostream& os, const Drag& obj);
+std::ostream& operator<<(std::ostream& os, const Drag::DragInfo& obj);
 }} // namespace
 
 #endif

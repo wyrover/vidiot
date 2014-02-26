@@ -37,13 +37,13 @@ public:
     /// folder (if a parent is an autofolder, its parent is tried, etc.)
     /// \pre folder must not be the root folder (it must have a parent)
     /// \folder folder to be converted into a sequence
-    ProjectViewCreateSequence(model::FolderPtr folder);
+    ProjectViewCreateSequence(const model::FolderPtr& folder);
 
     /// Create a new sequence in the given folder
     /// \pre folder is not an autofolder
     /// \param folder parent folder to hold the sequence
     /// \name name of new sequence
-    ProjectViewCreateSequence(model::FolderPtr folder, wxString name);
+    ProjectViewCreateSequence(const model::FolderPtr& folder, const wxString& name);
 
     virtual ~ProjectViewCreateSequence();
 
@@ -84,7 +84,7 @@ private:
     /// \pre node has a parent
     /// \param node child node for which such a parent is searched
     /// \return first parent that can be used for adding assets
-    model::FolderPtr findFirstNonAutoFolderParent(model::NodePtr node) const;
+    model::FolderPtr findFirstNonAutoFolderParent(const model::NodePtr& node) const;
 };
 
 } // namespace

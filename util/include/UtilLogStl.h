@@ -19,7 +19,7 @@
 #define UTIL_LOG_STL_H
 
 template <class T>
-std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)
+std::ostream& operator<<(std::ostream& os, const std::list<T>& obj)
 {
     os << "{";
     for ( T child : obj )
@@ -31,7 +31,7 @@ std::ostream& operator<< (std::ostream& os, const std::list<T>& obj)
 }
 
 template <class T>
-std::ostream& operator<< (std::ostream& os, const std::vector<T>& obj)
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& obj)
 {
     os << "{";
     for ( T child : obj )
@@ -43,7 +43,7 @@ std::ostream& operator<< (std::ostream& os, const std::vector<T>& obj)
 }
 
 template <class T>
-std::ostream& operator<< (std::ostream& os, const std::set<T>& obj)
+std::ostream& operator<<(std::ostream& os, const std::set<T>& obj)
 {
     os << "{";
     for ( T child : obj )
@@ -55,7 +55,7 @@ std::ostream& operator<< (std::ostream& os, const std::set<T>& obj)
 }
 
 template <class T, class U>
-std::ostream& operator<< (std::ostream& os, const std::map<T,U>& obj)
+std::ostream& operator<<(std::ostream& os, const std::map<T,U>& obj)
 {
     typedef std::map<T,U> MAPTYPE;
     os << "{";
@@ -68,7 +68,7 @@ std::ostream& operator<< (std::ostream& os, const std::map<T,U>& obj)
 }
 
 template <class T, class U>
-std::ostream& operator<< (std::ostream& os, const std::pair<T,U>& obj)
+std::ostream& operator<<(std::ostream& os, const std::pair<T,U>& obj)
 {
     os << "("<< obj.first << "," << obj.second << ")";
     return os;

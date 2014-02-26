@@ -31,10 +31,10 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit ChangeAudioClipVolume(model::AudioClipPtr audioclip);
+    explicit ChangeAudioClipVolume(const AudioClipPtr& audioclip);
     virtual ~ChangeAudioClipVolume();
 
-    void setVolume(int volume);
+    void setVolume(const int& volume);
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE
@@ -67,7 +67,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ChangeAudioClipVolume& obj );
+    friend std::ostream& operator<<(std::ostream& os, const ChangeAudioClipVolume& obj);
 };
 
 } // namespace

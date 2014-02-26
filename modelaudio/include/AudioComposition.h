@@ -40,7 +40,7 @@ public:
     // COMPOSITION
     //////////////////////////////////////////////////////////////////////////
 
-    void add(AudioChunkPtr chunk);
+    void add(const AudioChunkPtr& chunk);
 
     /// Render the composition
     /// \return composition of all input chunks.
@@ -72,7 +72,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const AudioComposition& obj );
+    friend std::ostream& operator<<(std::ostream& os, const AudioComposition& obj);
 
 };
 

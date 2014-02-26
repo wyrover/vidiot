@@ -38,10 +38,10 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    AudioCompositionParameters& setSampleRate(int audiorate);
+    AudioCompositionParameters& setSampleRate(const int& audiorate);
     int getSampleRate() const;
 
-    AudioCompositionParameters& setNrChannels(int nChannels);
+    AudioCompositionParameters& setNrChannels(const int& nChannels);
     int getNrChannels() const;
 
     //////////////////////////////////////////////////////////////////////////
@@ -50,20 +50,20 @@ public:
 
     /// Convert a pts value to a number of audio samples, given this set of parameters.
     /// \param position pts value to be converted
-    samplecount ptsToSamples(pts position) const;
+    samplecount ptsToSamples(const pts& position) const;
 
     /// Convert a number of samples to an approximate pts value, given this set of parameters.
     /// \return number of samples required for this number of pts
-    pts samplesToPts(samplecount nSamples) const;
+    pts samplesToPts(const samplecount& nSamples) const;
 
     /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
     /// \return number of frames stored in given number of samples
     /// \pre nSamples must contain a discrete number of frames (thus nSamples % nChannels == 0)
-    int samplesToFrames(samplecount nSamples) const;
+    int samplesToFrames(const samplecount& nSamples) const;
 
     /// Convert a number of frames to the required number of samples
     /// \return number of samples stored in given number of frames
-    samplecount framesToSamples(int nFrames) const;
+    samplecount framesToSamples(const int& nFrames) const;
 
 private:
 
@@ -78,7 +78,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const AudioCompositionParameters& obj );
+    friend std::ostream& operator<<(std::ostream& os, const AudioCompositionParameters& obj);
 
 };
 

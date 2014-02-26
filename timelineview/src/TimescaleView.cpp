@@ -100,7 +100,7 @@ struct TicksAndNumbers
     int TickStep;
     int NumberStep;
 
-    friend std::ostream& operator<<( std::ostream& os, const TicksAndNumbers& obj )
+    friend std::ostream& operator<<(std::ostream& os, const TicksAndNumbers& obj)
     {
         os << obj.TickStep << '|' << obj.NumberStep;
         return os;

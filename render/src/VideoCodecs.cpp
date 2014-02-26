@@ -30,7 +30,7 @@ VideoCodecMap VideoCodecs::sVideoCodecs;
 boost::bimap<int,wxString> VideoCodecs::mapToName;
 
 // static
-void VideoCodecs::add(wxString name, VideoCodec codec)
+void VideoCodecs::add(const wxString& name, const VideoCodec& codec)
 {
     sVideoCodecs[codec.getId()] = boost::make_shared<VideoCodec>(codec);
     typedef boost::bimap<int, wxString> bimap;
@@ -104,7 +104,7 @@ std::list<AVCodecID> VideoCodecs::all()
 }
 
 // static
-VideoCodecPtr VideoCodecs::find(AVCodecID id)
+VideoCodecPtr VideoCodecs::find(const AVCodecID& id)
 {
     VideoCodecMap::const_iterator it = sVideoCodecs.find(id);
     if (it == sVideoCodecs.end())

@@ -27,7 +27,7 @@ const int AudioChunk::sBytesPerSample = 2;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AudioChunk::AudioChunk(int nChannels, samplecount nSamples, bool allocate, bool zero, sample* buffer)
+AudioChunk::AudioChunk(const int& nChannels, const samplecount& nSamples, bool allocate, bool zero, sample* buffer)
 :   mBuffer(0)
 ,   mNrChannels(nChannels)
 ,   mNrSamples(nSamples)
@@ -79,7 +79,7 @@ unsigned int AudioChunk::getNumberOfChannels() const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-samplecount AudioChunk::extract(uint16_t* dst, samplecount requested)
+samplecount AudioChunk::extract(uint16_t* dst, const samplecount& requested)
 {
     samplecount actual = min(getUnreadSampleCount(),requested);
     memcpy(dst,getUnreadSamples(), actual * sBytesPerSample);
@@ -87,7 +87,7 @@ samplecount AudioChunk::extract(uint16_t* dst, samplecount requested)
     return actual;
 }
 
-void AudioChunk::read(samplecount samples)
+void AudioChunk::read(const samplecount& samples)
 {
     mNrReadSamples += samples;
     ASSERT_LESS_THAN_EQUALS(mNrReadSamples, mNrSamples);
@@ -112,7 +112,7 @@ samplecount AudioChunk::getUnreadSampleCount() const
     return result;
 }
 
-void AudioChunk::setAdjustedLength(samplecount adjustedLength)
+void AudioChunk::setAdjustedLength(const samplecount& adjustedLength)
 {
     ASSERT_LESS_THAN_EQUALS(adjustedLength,mNrSamples);
     mNrSkippedSamples = mNrSamples - adjustedLength;
@@ -124,7 +124,7 @@ void AudioChunk::setAdjustedLength(samplecount adjustedLength)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const AudioChunk& obj)
+std::ostream& operator<<(std::ostream& os, const AudioChunk& obj)
 {
     os  << &obj                     << "|"
         << obj.mNrChannels          << "|"

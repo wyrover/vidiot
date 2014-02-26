@@ -35,7 +35,7 @@ TrackChange::TrackChange()
 {
 }
 
-TrackChange::TrackChange(Tracks _addedTracks, TrackPtr _addPosition, Tracks _removedTracks, TrackPtr _removePosition)
+TrackChange::TrackChange(const Tracks& _addedTracks, const TrackPtr& _addPosition, const Tracks& _removedTracks, const TrackPtr& _removePosition)
 :   addedTracks(_addedTracks)
 ,   addPosition(_addPosition)
 ,   removedTracks(_removedTracks)
@@ -51,7 +51,7 @@ TrackChange::TrackChange(const TrackChange& other)
 {
 }
 
-std::ostream& operator<<( std::ostream& os, const TrackChange& obj )
+std::ostream& operator<<(std::ostream& os, const TrackChange& obj)
 {
     os << &obj << '|' << obj.addedTracks << '|' << obj.addPosition << '|' << obj.removedTracks << '|' << obj.removePosition;
     return os;

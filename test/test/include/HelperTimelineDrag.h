@@ -78,7 +78,7 @@ struct DragParams
     boost::optional<pixel> mAlignLeft;
     boost::optional<pixel> mAlignRight;
 
-    friend std::ostream& operator<<( std::ostream& os, const DragParams& obj );
+    friend std::ostream& operator<<(std::ostream& os, const DragParams& obj);
 };
 
 DragParams From(wxPoint from);          ///< \see DragParams::From
