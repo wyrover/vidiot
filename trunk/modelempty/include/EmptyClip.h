@@ -41,7 +41,7 @@ public:
 
     /// Create a new empty clip.
     /// \param length size of the clip
-    EmptyClip(pts length);
+    EmptyClip(const pts& length);
 
     virtual EmptyClip* clone() const override;
 
@@ -56,30 +56,30 @@ public:
     /// has (in its Render object) enough space to accommodate any adjacent transitions.
     /// \return empty clip that is a 'replica' of original , with the same offset/length etc, but only for non-transitions. For transitions empty space with the same length as original is returned.
     /// \param original clip to be cloned
-    static EmptyClipPtr replace( IClipPtr original );
+    static EmptyClipPtr replace(const IClipPtr& original );
 
     /// Make an empty clip that has the same length as the original list of clips.
     /// \post resulting clip getMaxAdjustBegin() equals clips.front()->getMaxAdjustBegin()
     /// \post resulting clip getMinAdjustEnd() equals clips.back()->getMinAdjustEnd()
     /// \pre All clips are part of the same track
-    static EmptyClipPtr replace(model::IClips clips);
+    static EmptyClipPtr replace(const model::IClips& clips);
 
     //////////////////////////////////////////////////////////////////////////
     // CLIP
     //////////////////////////////////////////////////////////////////////////
 
     pts getLength() const override;
-    void moveTo(pts position) override;
+    void moveTo(const pts& position) override;
 
-    void setLink(IClipPtr link) override;
+    void setLink(const IClipPtr& link) override;
 
     pts getMinAdjustBegin() const override;
     pts getMaxAdjustBegin() const override;
-    void adjustBegin(pts adjustment) override;
+    void adjustBegin(const pts& adjustment) override;
 
     pts getMinAdjustEnd() const override;
     pts getMaxAdjustEnd() const override;
-    void adjustEnd(pts adjustment) override;
+    void adjustEnd(const pts& adjustment) override;
 
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
@@ -124,7 +124,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const EmptyClip& obj );
+    friend std::ostream& operator<<(std::ostream& os, const EmptyClip& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

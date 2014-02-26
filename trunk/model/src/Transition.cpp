@@ -37,7 +37,7 @@ Transition::Transition()
     VAR_DEBUG(*this);
 }
 
-void Transition::init(pts nFramesLeft, pts nFramesRight)
+void Transition::init(const pts& nFramesLeft, const pts& nFramesRight)
 {
     mFramesLeft = nFramesLeft;
     mFramesRight = nFramesRight;
@@ -71,7 +71,7 @@ pts Transition::getLength() const
     return mFramesLeft + mFramesRight;
 }
 
-void Transition::moveTo(pts position)
+void Transition::moveTo(const pts& position)
 {
     setNewStartPosition(position);
 }
@@ -85,7 +85,7 @@ void Transition::clean()
 // ICLIP
 //////////////////////////////////////////////////////////////////////////
 
-void Transition::setLink(IClipPtr link)
+void Transition::setLink(const IClipPtr& link)
 {
      ASSERT(!link)(link); // Transitions may never be linked to anything
 }
@@ -117,7 +117,7 @@ pts Transition::getMaxAdjustBegin() const
     return getLeft();
 }
 
-void Transition::adjustBegin(pts adjustment)
+void Transition::adjustBegin(const pts& adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
@@ -152,7 +152,7 @@ pts Transition::getMaxAdjustEnd() const
     return result;
 }
 
-void Transition::adjustEnd(pts adjustment)
+void Transition::adjustEnd(const pts& adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
@@ -233,7 +233,7 @@ model::IClipPtr Transition::makeRightClip()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Transition& obj )
+std::ostream& operator<<(std::ostream& os, const Transition& obj)
 {
     // Keep order same as Clip for 'dump' method
     os << static_cast<const Clip&>(obj) << '|'

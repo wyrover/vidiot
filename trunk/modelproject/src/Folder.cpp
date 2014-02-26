@@ -70,7 +70,7 @@ Folder::Folder()
     VAR_DEBUG(this);
 }
 
-Folder::Folder(wxString name)
+Folder::Folder(const wxString& name)
 :   mName(name)
 {
     VAR_DEBUG(this)(mName);
@@ -102,7 +102,7 @@ wxString Folder::getName() const
     return mName;
 }
 
-void Folder::setName(wxString name)
+void Folder::setName(const wxString& name)
 {
     if (name != mName)
     {

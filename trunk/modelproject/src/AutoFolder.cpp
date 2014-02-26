@@ -41,7 +41,7 @@ struct IndexAutoFolderWork
 {
     // Here, all access to folder must be done, not in the worker thread.
     // Rationale: all access to model objects must be done in the main thread!
-    explicit IndexAutoFolderWork(AutoFolderPtr folder)
+    explicit IndexAutoFolderWork(const AutoFolderPtr& folder)
         : worker::Work(boost::bind(&IndexAutoFolderWork::indexFiles,this))
         , mFolder(folder)
         , mPath(folder->getPath())
@@ -148,7 +148,7 @@ AutoFolder::AutoFolder()
     VAR_DEBUG(this);
 }
 
-AutoFolder::AutoFolder(wxFileName path)
+AutoFolder::AutoFolder(const wxFileName& path)
     :   Folder(util::path::toName(path))
     ,   mPath(util::path::normalize(path))
     ,   mLastModified(mPath.GetModificationTime().GetTicks())
@@ -168,7 +168,7 @@ AutoFolder::~AutoFolder()
 // INODE
 //////////////////////////////////////////////////////////////////////////
 
-NodePtrs AutoFolder::findPath(wxString path)
+NodePtrs AutoFolder::findPath(const wxString& path)
 {
     NodePtrs result = Node::findPath(path); // Traverse the tree
     if (util::path::equals(mPath,path))
@@ -178,7 +178,7 @@ NodePtrs AutoFolder::findPath(wxString path)
     return result;
 }
 
-bool AutoFolder::mustBeWatched(wxString path)
+bool AutoFolder::mustBeWatched(const wxString& path)
 {
     if (util::path::isParentOf(path,mPath))
     {

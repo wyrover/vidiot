@@ -41,7 +41,7 @@ NodeId INode::id()
 }
 
 //static
-NodePtr INode::Ptr(NodeId id)
+NodePtr INode::Ptr(const NodeId& id)
 {
     return id->self();
 }
@@ -50,7 +50,7 @@ NodePtr INode::Ptr(NodeId id)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const INode& obj )
+std::ostream& operator<<(std::ostream& os, const INode& obj)
 {
     os << &obj << '|' << obj.getName() << '|' << obj.getParent() << '|' << obj.getChildren().size();
     return os;

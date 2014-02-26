@@ -79,7 +79,7 @@ pts Track::getLength() const
     return calculate::combinedLength(mClips);
 }
 
-void Track::moveTo(pts position)
+void Track::moveTo(const pts& position)
 {
     VAR_DEBUG(this)(position);
 
@@ -150,7 +150,7 @@ bool Track::isEmpty() const
     return true;
 }
 
-void Track::addClips(IClips clips, IClipPtr position)
+void Track::addClips(const IClips& clips, const IClipPtr& position)
 {
     VAR_DEBUG(*this)(position)(clips);
 
@@ -171,7 +171,7 @@ void Track::addClips(IClips clips, IClipPtr position)
     updateLength();
 }
 
-void Track::removeClips(IClips clips)
+void Track::removeClips(const IClips& clips)
 {
     VAR_DEBUG(*this)(clips);
 
@@ -203,7 +203,7 @@ const IClips& Track::getClips()
     return mClips;
 }
 
-IClipPtr Track::getClip(pts position) const
+IClipPtr Track::getClip(const pts& position) const
 {
     pts left = 0;
     pts right = left;
@@ -233,7 +233,7 @@ IClipPtr Track::getClipByIndex(int index)
     return *it;
 }
 
-pts Track::getLeftEmptyArea(IClipPtr clip)
+pts Track::getLeftEmptyArea(const IClipPtr& clip)
 {
     ASSERT_CONTAINS(mClips,clip);
     pts leftmost = clip->getLeftPts();
@@ -251,7 +251,7 @@ pts Track::getLeftEmptyArea(IClipPtr clip)
     return leftmost - clip->getLeftPts();
 }
 
-pts Track::getRightEmptyArea(IClipPtr clip)
+pts Track::getRightEmptyArea(const IClipPtr& clip)
 {
     ASSERT_CONTAINS(mClips,clip);
     pts rightmost = clip->getRightPts();
@@ -278,7 +278,7 @@ int Track::getHeight() const
     return mHeight;
 }
 
-void Track::setHeight(int height)
+void Track::setHeight(const int& height)
 {
     if (mHeight != height)
     {
@@ -293,7 +293,7 @@ int Track::getIndex() const
     return mIndex;
 }
 
-void Track::setIndex(int index)
+void Track::setIndex(const int& index)
 {
     mIndex = index;
 }
@@ -311,7 +311,7 @@ std::set<pts> Track::getCuts(const std::set<IClipPtr>& exclude)
     return result;
 }
 
-bool Track::isEmptyAt( pts position ) const
+bool Track::isEmptyAt(const pts& position ) const
 {
     return getClip(position)->isA<model::EmptyClip>();
 }
@@ -384,7 +384,7 @@ void Track::updateLength()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Track& obj )
+std::ostream& operator<<(std::ostream& os, const Track& obj)
 {
     os << &obj << '|' << obj.mIndex << '|' << obj.mHeight << '|' << obj.mClips;
     return os;

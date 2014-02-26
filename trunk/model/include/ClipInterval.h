@@ -34,7 +34,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     ClipInterval();                   ///< Constructor for recovery from disk
-    ClipInterval(IFilePtr render);    ///< Constructor for creating new clip from other asset
+    ClipInterval(const IFilePtr& render);    ///< Constructor for creating new clip from other asset
     virtual ~ClipInterval();
 
     //////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength() const override;
-    virtual void moveTo(pts position) override;
+    virtual void moveTo(const pts& position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
@@ -52,11 +52,11 @@ public:
 
     virtual pts getMinAdjustBegin() const override;
     virtual pts getMaxAdjustBegin() const override;
-    virtual void adjustBegin(pts adjustment) override;
+    virtual void adjustBegin(const pts& adjustment) override;
 
     virtual pts getMinAdjustEnd() const override;
     virtual pts getMaxAdjustEnd() const override;
-    virtual void adjustEnd(pts adjustment) override;
+    virtual void adjustEnd(const pts& adjustment) override;
 
     //////////////////////////////////////////////////////////////////////////
     // FOR PREVIEWING
@@ -111,7 +111,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ClipInterval& obj );
+    friend std::ostream& operator<<(std::ostream& os, const ClipInterval& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -40,25 +40,25 @@ public:
 
     bool hasParent() const override;
     NodePtr getParent() const override;
-    void setParent(NodePtr parent) override;
+    void setParent(const NodePtr& parent) override;
 
-    NodePtr addChild(NodePtr newChild) override;
-    NodePtrs addChildren(NodePtrs children) override;
+    NodePtr addChild(const NodePtr& newChild) override;
+    NodePtrs addChildren(const NodePtrs& children) override;
 
-    NodePtr removeChild(NodePtr child) override;
-    NodePtrs removeChildren(NodePtrs children) override;
+    NodePtr removeChild(const NodePtr& child) override;
+    NodePtrs removeChildren(const NodePtrs& children) override;
 
     NodePtrs getChildren() const override;
     NodePtrs getAllDescendants() const override;
 
     int count() const override;
 
-    NodePtrs find(wxString name) override;
+    NodePtrs find(const wxString& name) override;
 
-    virtual NodePtrs findPath(wxString path) override;
-    virtual bool mustBeWatched(wxString path) override;
+    virtual NodePtrs findPath(const wxString& path) override;
+    virtual bool mustBeWatched(const wxString& path) override;
 
-    virtual void setName(wxString name) override;
+    virtual void setName(const wxString& name) override;
 
 protected:
 
@@ -79,7 +79,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const Node& obj );
+    friend std::ostream& operator<<(std::ostream& os, const Node& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -93,11 +93,11 @@ void Clip::clean()
 //////////////////////////////////////////////////////////////////////////
 
 void Clip::setTrackInfo(
-    TrackPtr track,
-    IClipPtr prev,
-    IClipPtr next,
-    pts trackPosition,
-    unsigned int index)
+    const TrackPtr& track,
+    const IClipPtr& prev,
+    const IClipPtr& next,
+    const pts& trackPosition,
+    const unsigned int& index)
 {
     mTrack = track;
     mPrev = prev;
@@ -146,7 +146,7 @@ pts Clip::getRightPts() const
     return mLeftPtsInTrack + getLength();
 }
 
-void Clip::setLink(IClipPtr link)
+void Clip::setLink(const IClipPtr& link)
 {
     mLink = WeakIClipPtr(link);
 }
@@ -187,7 +187,7 @@ pts Clip::getGenerationProgress() const
     return mGeneratedPts;
 }
 
-void Clip::setGenerationProgress(pts progress)
+void Clip::setGenerationProgress(const pts& progress)
 {
     // Note: the condition "wxThread::IsMain()" was added to avoid
     //       generating these events in case a sequence is being rendered.
@@ -213,7 +213,7 @@ boost::optional<pts> Clip::getNewStartPosition() const
     return mNewStartPosition;
 }
 
-void Clip::setNewStartPosition(pts position)
+void Clip::setNewStartPosition(const pts& position)
 {
     mNewStartPosition.reset(position);
 }
@@ -254,7 +254,7 @@ TransitionPtr Clip::getOutTransition() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Clip& obj )
+std::ostream& operator<<(std::ostream& os, const Clip& obj)
 {
     // Keep order same as Transition for 'dump' method
     os  << std::setfill(' ') << std::setw(3) << obj.mIndex << '|'
@@ -279,7 +279,7 @@ void Clip::serialize(Archive & ar, const unsigned int version)
         boost::serialization::void_cast_register<Clip, IClip>(static_cast<Clip *>(0), static_cast<IClip *>(0));
         ar & BOOST_SERIALIZATION_NVP(mLink);
 
-        if (version == 1) 
+        if (version == 1)
         {
             ar & BOOST_SERIALIZATION_NVP(mTrack);
             ar & BOOST_SERIALIZATION_NVP(mNext);

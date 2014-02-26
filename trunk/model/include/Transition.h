@@ -43,7 +43,7 @@ public:
     /// Init must be called for new transitions.
     Transition();
 
-    void init(pts nFramesLeft, pts nFramesRight);
+    void init(const pts& nFramesLeft, const pts& nFramesRight);
 
     ///< Used for making deep copies (clones)
     virtual Transition* clone() const override;
@@ -55,22 +55,22 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     pts getLength() const override;
-    void moveTo(pts position) override;
+    void moveTo(const pts& position) override;
     void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICLIP
     //////////////////////////////////////////////////////////////////////////
 
-    void setLink(IClipPtr link) override;
+    void setLink(const IClipPtr& link) override;
 
     pts getMinAdjustBegin() const override;
     pts getMaxAdjustBegin() const override;
-    void adjustBegin(pts adjustment) override;
+    void adjustBegin(const pts& adjustment) override;
 
     pts getMinAdjustEnd() const override;
     pts getMaxAdjustEnd() const override;
-    void adjustEnd(pts adjustment) override;
+    void adjustEnd(const pts& adjustment) override;
 
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
@@ -129,7 +129,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const Transition& obj );
+    friend std::ostream& operator<<(std::ostream& os, const Transition& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

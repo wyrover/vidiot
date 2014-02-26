@@ -36,7 +36,7 @@ public:
 
     VideoClip();
 
-    VideoClip(VideoFilePtr clip);
+    VideoClip(const VideoFilePtr& clip);
 
     virtual VideoClip* clone() const override;
 
@@ -77,11 +77,11 @@ public:
     wxPoint getMinPosition();
     wxPoint getMaxPosition();
 
-    void setOpacity(int opacity);
-    void setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor = boost::none);
-    void setRotation(boost::rational< int > rotation);
-    void setAlignment(VideoAlignment alignment);
-    void setPosition(wxPoint position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
+    void setOpacity(const int& opacity);
+    void setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor = boost::none);
+    void setRotation(const boost::rational< int >& rotation);
+    void setAlignment(const VideoAlignment& alignment);
+    void setPosition(const wxPoint& position); ///< \param position the logical position as observed by the user. That is the combination of the alignment offset and the shift because of the region of interest.
 
 protected:
 
@@ -140,7 +140,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoClip& obj );
+    friend std::ostream& operator<<(std::ostream& os, const VideoClip& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -47,7 +47,7 @@ AudioFile::AudioFile()
     VAR_DEBUG(*this);
 }
 
-AudioFile::AudioFile(wxFileName path)
+AudioFile::AudioFile(const wxFileName& path)
     :	File(path,sMaxBufferSize)
     ,   mSoftwareResampleContext (0)
     ,   mDecodingAudio(false)
@@ -341,7 +341,7 @@ void AudioFile::stopDecodingAudio()
 // FROM FILE
 //////////////////////////////////////////////////////////////////////////
 
-bool AudioFile::useStream(AVMediaType type) const
+bool AudioFile::useStream(const AVMediaType& type) const
 {
     return (type == AVMEDIA_TYPE_AUDIO);
 }
@@ -358,7 +358,7 @@ void AudioFile::flush()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AudioFile& obj )
+std::ostream& operator<<(std::ostream& os, const AudioFile& obj)
 {
     os << static_cast<const File&>(obj) << '|' << obj.mDecodingAudio;
     return os;

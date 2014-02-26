@@ -43,7 +43,7 @@ public:
     AutoFolder();
 
     /// \param path full path to the folder.
-    AutoFolder(wxFileName path);
+    AutoFolder(const wxFileName& path);
 
     virtual ~AutoFolder();
 
@@ -51,8 +51,8 @@ public:
     // INODE
     //////////////////////////////////////////////////////////////////////////
 
-    NodePtrs findPath(wxString path) override;
-    bool mustBeWatched(wxString path) override;
+    NodePtrs findPath(const wxString& path) override;
+    bool mustBeWatched(const wxString& path) override;
     void check() override; ///< Update the autofolder children. The folder is synced with the filesystem.
 
     //////////////////////////////////////////////////////////////////////////

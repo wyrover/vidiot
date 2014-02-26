@@ -34,7 +34,7 @@ ImageClip::ImageClip()
     VAR_DEBUG(*this);
 }
 
-ImageClip::ImageClip(VideoFilePtr file)
+ImageClip::ImageClip(const VideoFilePtr& file)
     : VideoClip(file)
 {
     VAR_DEBUG(*this);
@@ -63,7 +63,7 @@ ImageClip::~ImageClip()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ImageClip& obj )
+std::ostream& operator<<(std::ostream& os, const ImageClip& obj)
 {
     os << static_cast<const VideoClip&>(obj);
     return os;

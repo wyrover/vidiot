@@ -38,11 +38,11 @@ public:
 
     /// Used for submitting project level events. These cannot be submitted by
     /// the project itselves since it involves creation/destruction of that project
-    virtual void ProcessModelEvent( wxEvent& event ) = 0;
+    virtual void ProcessModelEvent(wxEvent& event) = 0;
 
     /// Used for submitting project level events. These cannot be submitted by
     /// the project itselves since it involves creation/destruction of that project
-    virtual void QueueModelEvent( wxEvent* event ) = 0;
+    virtual void QueueModelEvent(wxEvent* event) = 0;
 
 private:
 
