@@ -35,7 +35,7 @@ public:
 
     VideoFile();
 
-    VideoFile(wxFileName path);
+    VideoFile(const wxFileName& path);
 
     virtual VideoFile* clone() const override;
 
@@ -45,7 +45,7 @@ public:
     // ICONTROL
     //////////////////////////////////////////////////////////////////////////
 
-    void moveTo(pts position) override;
+    void moveTo(const pts& position) override;
     virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
@@ -94,14 +94,14 @@ private:
     // FROM FILE
     //////////////////////////////////////////////////////////////////////////
 
-    bool useStream(AVMediaType type) const override;
+    bool useStream(const AVMediaType& type) const override;
     void flush() override;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoFile& obj );
+    friend std::ostream& operator<<(std::ostream& os, const VideoFile& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

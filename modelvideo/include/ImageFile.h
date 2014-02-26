@@ -33,7 +33,7 @@ public:
 
     ImageFile();
 
-    ImageFile(wxFileName path);
+    ImageFile(const wxFileName& path);
 
     virtual ImageFile* clone() const override;
 
@@ -44,7 +44,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     pts getLength() const override;
-    void moveTo(pts position) override;
+    void moveTo(const pts& position) override;
     virtual void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ImageFile& obj );
+    friend std::ostream& operator<<(std::ostream& os, const ImageFile& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

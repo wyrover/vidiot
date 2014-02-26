@@ -46,7 +46,7 @@ public:
 
     Sequence();
 
-    Sequence(wxString name);
+    Sequence(const wxString& name);
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     ///
@@ -77,7 +77,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength() const override;
-    virtual void moveTo(pts position) override;
+    virtual void moveTo(const pts& position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
@@ -97,20 +97,20 @@ public:
     // SEQUENCE SPECIFIC
     //////////////////////////////////////////////////////////////////////////
 
-    void addVideoTracks(Tracks tracks, TrackPtr position = TrackPtr());
-    void addAudioTracks(Tracks tracks, TrackPtr position = TrackPtr());
-    void removeVideoTracks(Tracks tracks);
-    void removeAudioTracks(Tracks tracks);
+    void addVideoTracks(const Tracks& tracks, const TrackPtr& position = TrackPtr());
+    void addAudioTracks(const Tracks& tracks, const TrackPtr& position = TrackPtr());
+    void removeVideoTracks(const Tracks& tracks);
+    void removeAudioTracks(const Tracks& tracks);
 
     Tracks getVideoTracks();
     Tracks getAudioTracks();
     Tracks getTracks();
 
-    TrackPtr getVideoTrack(int index);
-    TrackPtr getAudioTrack(int index);
+    TrackPtr getVideoTrack(const int& index);
+    TrackPtr getAudioTrack(const int& index);
 
     pixel getDividerPosition() const;
-    void setDividerPosition(pixel position);
+    void setDividerPosition(const pixel& position);
 
     std::set<IClipPtr> getSelectedClips();
 
@@ -122,7 +122,7 @@ public:
     /// Each begin and end of a clip is returned as a clip. Note that this includes the begin and end of each transition, but not (yet) the cut 'under' the transition.
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>());
 
-    bool isEmptyAt( pts position ) const; ///< \return true if the sequence holds only emptyness at the given position
+    bool isEmptyAt(const pts& position ) const; ///< \return true if the sequence holds only emptyness at the given position
 
     void onTrackLengthChanged(EventLengthChanged& event);
 
@@ -131,14 +131,14 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     render::RenderPtr getRender();
-    void setRender(render::RenderPtr render);
+    void setRender(const render::RenderPtr& render);
 
     //////////////////////////////////////////////////////////////////////////
     // INODE
     //////////////////////////////////////////////////////////////////////////
 
     wxString    getName() const override;
-    void        setName(wxString name) override;
+    void        setName(const wxString& name) override;
     void        check() override;
 
 private:
@@ -182,7 +182,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const Sequence& obj );
+    friend std::ostream& operator<<(std::ostream& os, const Sequence& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -62,7 +62,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength() const override;
-    virtual void moveTo(pts position) override;
+    virtual void moveTo(const pts& position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
@@ -72,15 +72,15 @@ public:
 
     bool isEmpty() const;
 
-    virtual void removeClips(IClips clips);
-    virtual void addClips(IClips clips, IClipPtr position = IClipPtr());
+    virtual void removeClips(const IClips& clips);
+    virtual void addClips(const IClips& clips, const IClipPtr& position = IClipPtr());
 
     const IClips& getClips();
 
     /// Find the clip which provides the frame at the given pts.
     /// If pts is 'on a cut' then the clip AFTER the cut is returned.
     /// If there is no clip at this pts then an empty Ptr is returned.
-    IClipPtr getClip(pts position) const;
+    IClipPtr getClip(const pts& position) const;
 
     ///// Find the clips which provide the frames for the pts region [start, end).
     ///// Also partially overlapping clips are returned.
@@ -91,24 +91,24 @@ public:
     IClipPtr getClipByIndex(int index);
 
     /// /return size of area to the left of clip that is empty
-    pts getLeftEmptyArea(IClipPtr clip);
+    pts getLeftEmptyArea(const IClipPtr& clip);
 
     /// /return size of area to the right of clip that is empty
-    pts getRightEmptyArea(IClipPtr clip);
+    pts getRightEmptyArea(const IClipPtr& clip);
 
     //////////////////////////////////////////////////////////////////////////
     // GET & SET
     //////////////////////////////////////////////////////////////////////////
 
     int getHeight() const;          ///< \return height of this track in the timeline view
-    void setHeight(int height);     ///< \param new height of this track in the timeline view
+    void setHeight(const int& height);     ///< \param new height of this track in the timeline view
 
     int getIndex() const;           ///< \return index of this track in the list of video/audio tracks
-    void setIndex(int index);       ///< \param index new index of this track
+    void setIndex(const int& index);       ///< \param index new index of this track
 
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()); ///\return list of all cuts in the track
 
-    bool isEmptyAt( pts position ) const; ///< \return true if the track holds only emptyness at the given position
+    bool isEmptyAt(const pts& position ) const; ///< \return true if the track holds only emptyness at the given position
 
 protected:
 
@@ -163,7 +163,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const Track& obj );
+    friend std::ostream& operator<<(std::ostream& os, const Track& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

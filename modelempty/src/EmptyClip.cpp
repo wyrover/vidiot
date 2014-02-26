@@ -44,7 +44,7 @@ EmptyClip::EmptyClip()
     VAR_DEBUG(*this);
 }
 
-EmptyClip::EmptyClip(pts length)
+EmptyClip::EmptyClip(const pts& length)
     :	Clip()
     ,   mLength(length)
     ,   mProgress(0)
@@ -73,7 +73,7 @@ EmptyClip::~EmptyClip()
 }
 
 // static
-EmptyClipPtr EmptyClip::replace( IClipPtr original )
+EmptyClipPtr EmptyClip::replace(const IClipPtr& original )
 {
     EmptyClipPtr clip = boost::make_shared<EmptyClip>(original->getLength());
     ASSERT_EQUALS(clip->getLength(),original->getLength());
@@ -81,7 +81,7 @@ EmptyClipPtr EmptyClip::replace( IClipPtr original )
 }
 
 //static
-EmptyClipPtr EmptyClip::replace(model::IClips clips)
+EmptyClipPtr EmptyClip::replace(const model::IClips& clips)
 {
     ASSERT_MORE_THAN_ZERO(clips.size());
 
@@ -104,7 +104,7 @@ pts EmptyClip::getLength() const
     return mLength;
 }
 
-void EmptyClip::moveTo(pts position)
+void EmptyClip::moveTo(const pts& position)
 {
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
@@ -112,7 +112,7 @@ void EmptyClip::moveTo(pts position)
     mSampleProgress = -1;
 }
 
-void EmptyClip::setLink(IClipPtr link)
+void EmptyClip::setLink(const IClipPtr& link)
 {
     // Empty clips may never be linked to anything
     ASSERT(!link)(link);
@@ -128,7 +128,7 @@ pts EmptyClip::getMaxAdjustBegin() const
     return mLength;
 }
 
-void EmptyClip::adjustBegin(pts adjustment)
+void EmptyClip::adjustBegin(const pts& adjustment)
 {
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength -= adjustment;
@@ -146,7 +146,7 @@ pts EmptyClip::getMaxAdjustEnd() const
     return std::numeric_limits<pts>::max();
 }
 
-void EmptyClip::adjustEnd(pts adjustment)
+void EmptyClip::adjustEnd(const pts& adjustment)
 {
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
@@ -244,7 +244,7 @@ VideoFramePtr EmptyClip::getNextVideo(const VideoCompositionParameters& paramete
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const EmptyClip& obj )
+std::ostream& operator<<(std::ostream& os, const EmptyClip& obj)
 {
     // Keep order same as Transition and ClipInterval for 'dump' method
     os  << static_cast<const Clip&>(obj) << '|'

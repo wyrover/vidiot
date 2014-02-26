@@ -73,7 +73,7 @@ File::File()
     VAR_DEBUG(this);
 }
 
-File::File(wxFileName path, int buffersize)
+File::File(const wxFileName& path, const int& buffersize)
     :	IFile()
     ,   Node()
     // Attributes
@@ -155,7 +155,7 @@ void File::abort()
 // INODE
 //////////////////////////////////////////////////////////////////////////
 
-NodePtrs File::findPath(wxString path)
+NodePtrs File::findPath(const wxString& path)
 {
     NodePtrs result;
     if (util::path::equals(mPath,path))
@@ -165,7 +165,7 @@ NodePtrs File::findPath(wxString path)
     return result;
 }
 
-bool File::mustBeWatched(wxString path)
+bool File::mustBeWatched(const wxString& path)
 {
     if (util::path::isParentOf(path,mPath))
     {
@@ -213,7 +213,7 @@ pts File::getLength() const
     return mNumberOfFrames;
 }
 
-void File::moveTo(pts position)
+void File::moveTo(const pts& position)
 {
     VAR_DEBUG(this)(position);
     openFile(); // Needed for avcodec calls below
@@ -310,7 +310,7 @@ bool File::hasAudio()
 // STREAMS INTERFACE TO SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
 
-bool File::useStream(AVMediaType type) const
+bool File::useStream(const AVMediaType& type) const
 {
     return false;
 }
@@ -714,7 +714,7 @@ void File::bufferPacketsThread()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const File& obj )
+std::ostream& operator<<(std::ostream& os, const File& obj)
 {
     os  << &obj << '|'
         << obj.mPath << '|'

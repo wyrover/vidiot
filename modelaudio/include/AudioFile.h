@@ -37,7 +37,7 @@ public:
 
     AudioFile();
 
-    AudioFile(wxFileName path);
+    AudioFile(const wxFileName& path);
 
     virtual AudioFile* clone() const override;
 
@@ -92,14 +92,14 @@ private:
     // FROM FILE
     //////////////////////////////////////////////////////////////////////////
 
-    bool useStream(AVMediaType type) const override;
+    bool useStream(const AVMediaType& type) const override;
     void flush() override;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const AudioFile& obj );
+    friend std::ostream& operator<<(std::ostream& os, const AudioFile& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

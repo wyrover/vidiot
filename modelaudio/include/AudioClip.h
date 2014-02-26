@@ -35,7 +35,7 @@ public:
 
     AudioClip();
 
-    AudioClip(AudioFilePtr clip);
+    AudioClip(const AudioFilePtr& clip);
 
     virtual AudioClip* clone() const override;
 
@@ -64,7 +64,7 @@ public:
     // AUDIOCLIP
     //////////////////////////////////////////////////////////////////////////
 
-    void setVolume(int volume);
+    void setVolume(const int& volume);
     int getVolume() const;
 
 protected:
@@ -90,7 +90,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const AudioClip& obj );
+    friend std::ostream& operator<<(std::ostream& os, const AudioClip& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

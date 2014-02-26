@@ -39,7 +39,7 @@ ImageFile::ImageFile()
     VAR_DEBUG(*this);
 }
 
-ImageFile::ImageFile(wxFileName path)
+ImageFile::ImageFile(const wxFileName& path)
 :	VideoFile(path)
 ,   mInputFrame()
 ,   mOutputFrame()
@@ -74,7 +74,7 @@ pts ImageFile::getLength() const
     return Convert::timeToPts(Constants::sHour * 8); // 8 Hours...
 }
 
-void ImageFile::moveTo(pts position)
+void ImageFile::moveTo(const pts& position)
 {
     // NOT: VideoFile::moveTo(position) NOR File::moveTo(position); - will cause crash in avcodec
 }
@@ -117,7 +117,7 @@ VideoFramePtr ImageFile::getNextVideo(const VideoCompositionParameters& paramete
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ImageFile& obj )
+std::ostream& operator<<(std::ostream& os, const ImageFile& obj)
 {
     os << static_cast<const VideoFile&>(obj);
     return os;

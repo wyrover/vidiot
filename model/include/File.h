@@ -44,7 +44,7 @@ public:
 
     File();
 
-    File(wxFileName path, int buffersize = 1);
+    File(const wxFileName& path, const int& buffersize = 1);
 
     virtual File* clone() const;
 
@@ -58,8 +58,8 @@ public:
     // INODE
     //////////////////////////////////////////////////////////////////////////
 
-    NodePtrs findPath(wxString path) override;
-    bool mustBeWatched(wxString path) override;
+    NodePtrs findPath(const wxString& path) override;
+    bool mustBeWatched(const wxString& path) override;
     void check() override;
 
     //////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength() const override;
-    virtual void moveTo(pts position) override;
+    virtual void moveTo(const pts& position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
@@ -111,7 +111,7 @@ protected:
 
     /// \return true if the given stream is applicable to this object.
     /// Per default returns false in the base implementation
-    virtual bool useStream(AVMediaType type) const;
+    virtual bool useStream(const AVMediaType& type) const;
 
     /// \return the stream used by this file
     /// \return 0 if file could not be opened (or is empty), or if no matching stream could be found.
@@ -200,7 +200,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const File& obj );
+    friend std::ostream& operator<<(std::ostream& os, const File& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -67,7 +67,7 @@ Sequence::Sequence()
     // and call updateTracks()
 }
 
-Sequence::Sequence(wxString name)
+Sequence::Sequence(const wxString& name)
     :   wxEvtHandler()
     ,	IControl()
     ,   IVideo()
@@ -139,7 +139,7 @@ pts Sequence::getLength() const
     return nFrames;
 }
 
-void Sequence::moveTo(pts position)
+void Sequence::moveTo(const pts& position)
 {
     VAR_DEBUG(position);
     mVideoPosition = position;
@@ -211,7 +211,7 @@ AudioChunkPtr Sequence::getNextAudio(const AudioCompositionParameters& parameter
 // SEQUENCE SPECIFIC
 //////////////////////////////////////////////////////////////////////////
 
-void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
+void Sequence::addVideoTracks(const Tracks& tracks, const TrackPtr& position)
 {
     for ( model::TrackPtr track : tracks )
     {
@@ -236,7 +236,7 @@ void Sequence::addVideoTracks(Tracks tracks, TrackPtr position)
     updateLength();
 }
 
-void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
+void Sequence::addAudioTracks(const Tracks& tracks, const TrackPtr& position)
 {
     for ( model::TrackPtr track : tracks )
     {
@@ -256,7 +256,7 @@ void Sequence::addAudioTracks(Tracks tracks, TrackPtr position)
     updateLength();
 }
 
-void Sequence::removeVideoTracks(Tracks tracks)
+void Sequence::removeVideoTracks(const Tracks& tracks)
 {
     for ( TrackPtr track : tracks )
     {
@@ -275,7 +275,7 @@ void Sequence::removeVideoTracks(Tracks tracks)
     updateLength();
 }
 
-void Sequence::removeAudioTracks(Tracks tracks)
+void Sequence::removeAudioTracks(const Tracks& tracks)
 {
     for ( TrackPtr track : tracks )
     {
@@ -318,12 +318,12 @@ Tracks Sequence::getTracks()
     return tracks;
 }
 
-TrackPtr Sequence::getVideoTrack(int index)
+TrackPtr Sequence::getVideoTrack(const int& index)
 {
     return mVideoTrackMap[index];
 }
 
-TrackPtr Sequence::getAudioTrack(int index)
+TrackPtr Sequence::getAudioTrack(const int& index)
 {
     return mAudioTrackMap[index];
 }
@@ -333,7 +333,7 @@ pixel Sequence::getDividerPosition() const
     return mDividerPosition;
 }
 
-void Sequence::setDividerPosition(pixel position)
+void Sequence::setDividerPosition(const pixel& position)
 {
     if (mDividerPosition != position)
     {
@@ -415,7 +415,7 @@ std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
     return result;
 }
 
-bool Sequence::isEmptyAt( pts position ) const
+bool Sequence::isEmptyAt(const pts& position ) const
 {
     for ( TrackPtr track : mVideoTracks )
     {
@@ -458,7 +458,7 @@ render::RenderPtr Sequence::getRender()
     return mRender;
 }
 
-void Sequence::setRender(render::RenderPtr render)
+void Sequence::setRender(const render::RenderPtr& render)
 {
     mRender = render;
 }
@@ -472,7 +472,7 @@ wxString Sequence::getName() const
     return mName;
 };
 
-void Sequence::setName(wxString name)
+void Sequence::setName(const wxString& name)
 {
     mName = name;
     gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(self(),mName)));
@@ -529,7 +529,7 @@ void Sequence::updateLength()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Sequence& obj )
+std::ostream& operator<<(std::ostream& os, const Sequence& obj)
 {
     os << &obj                           << '|'
         << static_cast<const Node&>(obj) << '|'

@@ -32,7 +32,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    TransitionFactory(std::string type);
+    TransitionFactory(const std::string& type);
 
     virtual ~TransitionFactory();
 
@@ -42,7 +42,7 @@ public:
 
     TransitionDescriptions getAllPossibleTransitions() const;
     TransitionPtr getDefault();
-    TransitionPtr getTransition(TransitionDescription description) const;
+    TransitionPtr getTransition(const TransitionDescription& description) const;
 
 protected:
 
@@ -50,8 +50,8 @@ protected:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    void add(TransitionDescription description, TransitionPtr transition);
-    void setDefault(TransitionPtr transition);
+    void add(const TransitionDescription& description, const TransitionPtr& transition);
+    void setDefault(const TransitionPtr& transition);
 
 private:
 
@@ -67,7 +67,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const TransitionFactory& obj );
+    friend std::ostream& operator<<(std::ostream& os, const TransitionFactory& obj);
 };
 
 } // namespace

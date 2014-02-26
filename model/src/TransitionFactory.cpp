@@ -28,7 +28,7 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TransitionFactory::TransitionFactory(std::string type)
+TransitionFactory::TransitionFactory(const std::string& type)
     :   mType(type)
     ,   mDefault()
 {
@@ -58,7 +58,7 @@ TransitionPtr TransitionFactory::getDefault()
     return make_cloned<Transition>(mDefault);
 }
 
-TransitionPtr TransitionFactory::getTransition(TransitionDescription description) const
+TransitionPtr TransitionFactory::getTransition(const TransitionDescription& description) const
 {
     ASSERT_MAP_CONTAINS(mTransitions,description);
     return make_cloned<Transition>(mTransitions.find(description)->second);
@@ -68,13 +68,13 @@ TransitionPtr TransitionFactory::getTransition(TransitionDescription description
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-void TransitionFactory::add(TransitionDescription description, TransitionPtr transition)
+void TransitionFactory::add(const TransitionDescription& description, const TransitionPtr& transition)
 {
     ASSERT_MAP_CONTAINS_NOT(mTransitions,description);
     mTransitions[description] = transition;
 }
 
-void TransitionFactory::setDefault(TransitionPtr transition)
+void TransitionFactory::setDefault(const TransitionPtr& transition)
 {
     mDefault = transition;
 }
@@ -83,7 +83,7 @@ void TransitionFactory::setDefault(TransitionPtr transition)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const TransitionFactory& obj )
+std::ostream& operator<<(std::ostream& os, const TransitionFactory& obj)
 {
     os << obj.mType << '|' << obj.mDefault << '|' << obj.mTransitions;
     return os;

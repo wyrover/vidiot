@@ -40,7 +40,7 @@ AudioClip::AudioClip()
     VAR_DEBUG(*this);
 }
 
-AudioClip::AudioClip(AudioFilePtr file)
+AudioClip::AudioClip(const AudioFilePtr& file)
     :	ClipInterval(file)
     ,   mProgress(0)
     ,   mVolume(Constants::sDefaultVolume)
@@ -164,7 +164,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 // AUDIOCLIP
 //////////////////////////////////////////////////////////////////////////
 
-void AudioClip::setVolume(int volume)
+void AudioClip::setVolume(const int& volume)
 {
     if (volume != mVolume)
     {
@@ -182,9 +182,9 @@ int AudioClip::getVolume() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AudioClip& obj )
+std::ostream& operator<<(std::ostream& os, const AudioClip& obj)
 {
-    os  << static_cast<const ClipInterval&>(obj) << '|' 
+    os  << static_cast<const ClipInterval&>(obj) << '|'
         << std::setw(8) << obj.mProgress
         << std::setw(8) << obj.mVolume;
     return os;

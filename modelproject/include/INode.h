@@ -46,7 +46,7 @@ public:
 
     NodeId id();
 
-    static NodePtr Ptr(NodeId id);
+    static NodePtr Ptr(const NodeId &id);
 
     //////////////////////////////////////////////////////////////////////////
     // STRUCTURE
@@ -54,13 +54,13 @@ public:
 
     virtual bool hasParent() const = 0;
     virtual NodePtr getParent() const = 0;
-    virtual void setParent(NodePtr parent) = 0;
+    virtual void setParent(const NodePtr& parent) = 0;
 
-    virtual NodePtr addChild(NodePtr newChild) = 0;
-    virtual NodePtrs addChildren(NodePtrs children) = 0;
+    virtual NodePtr addChild(const NodePtr& newChild) = 0;
+    virtual NodePtrs addChildren(const NodePtrs& children) = 0;
 
-    virtual NodePtr removeChild(NodePtr child) = 0;
-    virtual NodePtrs removeChildren(NodePtrs children) = 0;
+    virtual NodePtr removeChild(const NodePtr& child) = 0;
+    virtual NodePtrs removeChildren(const NodePtrs& children) = 0;
 
     virtual NodePtrs getChildren() const = 0;
     virtual NodePtrs getAllDescendants() const = 0;
@@ -72,17 +72,17 @@ public:
 
     /// Find all descendants with the given name, throughout
     /// the hierarchy.
-    virtual NodePtrs find(wxString name) = 0;
+    virtual NodePtrs find(const wxString& name) = 0;
 
     /// Find all descendants with the given path (on disk), throughout
     /// the hierarchy. Only returns nodes that are of type IPath.
     /// \param path fully expanded path
-    virtual NodePtrs findPath(wxString path) = 0;
+    virtual NodePtrs findPath(const wxString& path) = 0;
 
     /// \return true if the given path must be watched
     /// A folder (on disk) must be watched, one or more files in this folder
     /// (on disk) are present in the project tree.
-    virtual bool mustBeWatched(wxString path) = 0;
+    virtual bool mustBeWatched(const wxString& path) = 0;
 
     /// Is called when the object should do a check for consistency.
     /// i.e. Is the file/folder on disk still present?
@@ -93,7 +93,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual wxString getName() const = 0;
-    virtual void setName(wxString name) = 0;
+    virtual void setName(const wxString& name) = 0;
 
 private:
 
@@ -109,7 +109,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const INode& obj );
+    friend std::ostream& operator<<(std::ostream& os, const INode& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

@@ -53,7 +53,7 @@ VideoClip::VideoClip()
     VAR_DEBUG(*this);
 }
 
-VideoClip::VideoClip(VideoFilePtr file)
+VideoClip::VideoClip(const VideoFilePtr& file)
     : ClipInterval(file)
     , mProgress(0)
     , mOpacity(Constants::sOpacityMax)
@@ -261,7 +261,7 @@ wxPoint VideoClip::getMaxPosition()
     return wxPoint(maxX, maxY) + mRotationPositionOffset;
 }
 
-void VideoClip::setOpacity(int opacity)
+void VideoClip::setOpacity(const int& opacity)
 {
     if (mOpacity != opacity)
     {
@@ -272,7 +272,7 @@ void VideoClip::setOpacity(int opacity)
     }
 }
 
-void VideoClip::setScaling(VideoScaling scaling, boost::optional<boost::rational< int > > factor)
+void VideoClip::setScaling(const VideoScaling& scaling, const boost::optional<boost::rational< int > >& factor)
 {
     VideoScaling oldScaling = mScaling;
     boost::rational<int> oldScalingFactor = mScalingFactor;
@@ -311,7 +311,7 @@ void VideoClip::setScaling(VideoScaling scaling, boost::optional<boost::rational
     }
 }
 
-void VideoClip::setRotation(boost::rational< int > rotation)
+void VideoClip::setRotation(const boost::rational< int >& rotation)
 {
     boost::rational< int > oldRotation = mRotation;
     wxPoint oldPosition = mPosition;
@@ -339,7 +339,7 @@ void VideoClip::setRotation(boost::rational< int > rotation)
     }
 }
 
-void VideoClip::setAlignment(VideoAlignment alignment)
+void VideoClip::setAlignment(const VideoAlignment& alignment)
 {
     VideoAlignment oldAlignment = mAlignment;
     wxPoint oldPosition = mPosition;
@@ -358,7 +358,7 @@ void VideoClip::setAlignment(VideoAlignment alignment)
     }
 }
 
-void VideoClip::setPosition(wxPoint position)
+void VideoClip::setPosition(const wxPoint& position)
 {
     VAR_INFO(position);
     wxPoint oldPosition = mPosition;
@@ -466,7 +466,7 @@ void VideoClip::updateAutomatedPositioning()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoClip& obj )
+std::ostream& operator<<(std::ostream& os, const VideoClip& obj)
 {
     os  << static_cast<const ClipInterval&>(obj) << '|'
         << std::setw(4) << obj.mProgress << '|'

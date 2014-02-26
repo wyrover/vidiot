@@ -40,7 +40,7 @@ public:
     /// Recovery constructor
     Folder();
 
-    Folder(wxString name);
+    Folder(const wxString& name);
 
     virtual ~Folder();
 
@@ -55,7 +55,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual wxString getName() const override;
-    void setName(wxString name) override;
+    void setName(const wxString& name) override;
 
     /// Return a name for use when the folder is used to create a sequence.
     virtual wxString getSequenceName() const;

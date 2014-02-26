@@ -48,7 +48,7 @@ VideoFile::VideoFile()
     VAR_DEBUG(*this);
 }
 
-VideoFile::VideoFile(wxFileName path)
+VideoFile::VideoFile(const wxFileName& path)
     :	File(path,sMaxBufferSize)
     ,   mDecodingVideo(false)
     ,   mPosition(0)
@@ -87,7 +87,7 @@ VideoFile::~VideoFile()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-void VideoFile::moveTo(pts position)
+void VideoFile::moveTo(const pts& position)
 {
     mDeliveredFrame.reset();
     mDeliveredFrameInputPts = 0;
@@ -438,7 +438,7 @@ void VideoFile::stopDecodingVideo()
 // FROM FILE
 //////////////////////////////////////////////////////////////////////////
 
-bool VideoFile::useStream(AVMediaType type) const
+bool VideoFile::useStream(const AVMediaType& type) const
 {
     return (type == AVMEDIA_TYPE_VIDEO);
 }
@@ -455,7 +455,7 @@ void VideoFile::flush()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoFile& obj )
+std::ostream& operator<<(std::ostream& os, const VideoFile& obj)
 {
     os  << static_cast<const File&>(obj) << '|'
         << obj.mDecodingVideo << '|'

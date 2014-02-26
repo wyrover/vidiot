@@ -42,7 +42,7 @@ ClipInterval::ClipInterval()
     // NOT: VAR_DEBUG(*this); -- Log in most derived class. Avoids duplicate logging AND avoids pure virtual calls (implemented in most derived class).
 }
 
-ClipInterval::ClipInterval(IFilePtr render)
+ClipInterval::ClipInterval(const IFilePtr& render)
     :	Clip()
     ,   mRender(render)
     ,   mOffset(0)
@@ -77,7 +77,7 @@ pts ClipInterval::getLength() const
     return mLength;
 }
 
-void ClipInterval::moveTo(pts position)
+void ClipInterval::moveTo(const pts& position)
 {
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
@@ -140,7 +140,7 @@ pts ClipInterval::getMaxAdjustBegin() const
     return maxAdjustBegin;
 }
 
-void ClipInterval::adjustBegin(pts adjustment)
+void ClipInterval::adjustBegin(const pts& adjustment)
 {
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mOffset += adjustment;
@@ -168,7 +168,7 @@ pts ClipInterval::getMaxAdjustEnd() const
     return maxAdjustEnd;
 }
 
-void ClipInterval::adjustEnd(pts adjustment)
+void ClipInterval::adjustEnd(const pts& adjustment)
 {
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;
@@ -205,7 +205,7 @@ FilePtr ClipInterval::getFile() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ClipInterval& obj )
+std::ostream& operator<<(std::ostream& os, const ClipInterval& obj)
 {
     // Keep order same as Transition and EmptyClip for 'dump' method
     os  << static_cast<const Clip&>(obj) << '|'

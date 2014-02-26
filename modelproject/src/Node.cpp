@@ -70,12 +70,12 @@ NodePtr Node::getParent() const
     return mParent.lock();
 }
 
-void Node::setParent(NodePtr parent)
+void Node::setParent(const NodePtr& parent)
 {
     mParent = parent;
 }
 
-NodePtr Node::addChild(NodePtr newChild)
+NodePtr Node::addChild(const NodePtr& newChild)
 {
     mChildren.push_back(newChild);
     newChild->setParent(self());
@@ -85,7 +85,7 @@ NodePtr Node::addChild(NodePtr newChild)
     return newChild;
 }
 
-NodePtrs Node::addChildren(NodePtrs children)
+NodePtrs Node::addChildren(const NodePtrs& children)
 {
     UtilList<NodePtr>(mChildren).addElements(children, NodePtr());
     for ( NodePtr child : children )
@@ -97,7 +97,7 @@ NodePtrs Node::addChildren(NodePtrs children)
     return children;
 }
 
-NodePtr Node::removeChild(NodePtr child)
+NodePtr Node::removeChild(const NodePtr& child)
 {
     VAR_DEBUG(this)(child.get());
     NodePtrs::iterator it;
@@ -114,7 +114,7 @@ NodePtr Node::removeChild(NodePtr child)
     return p;
 }
 
-NodePtrs Node::removeChildren(NodePtrs children)
+NodePtrs Node::removeChildren(const NodePtrs& children)
 {
     // Can't use UtilList::removeElements since these children may be 'out of order'
     for ( NodePtr child : children )
@@ -150,7 +150,7 @@ NodePtrs Node::getAllDescendants() const
     return result;
 }
 
-void Node::setName(wxString name)
+void Node::setName(const wxString& name)
 {
 }
 
@@ -164,7 +164,7 @@ int Node::count() const
     return result;
 }
 
-NodePtrs Node::find(wxString name)
+NodePtrs Node::find(const wxString& name)
 {
     NodePtrs result;
     wxString _name = getName();
@@ -179,7 +179,7 @@ NodePtrs Node::find(wxString name)
     return result;
 }
 
-NodePtrs Node::findPath(wxString path)
+NodePtrs Node::findPath(const wxString& path)
 {
     NodePtrs result;
     for ( NodePtr child : mChildren )
@@ -189,7 +189,7 @@ NodePtrs Node::findPath(wxString path)
     return result;
 }
 
-bool Node::mustBeWatched(wxString path)
+bool Node::mustBeWatched(const wxString& path)
 {
     for ( NodePtr child : mChildren )
     {
@@ -205,7 +205,7 @@ bool Node::mustBeWatched(wxString path)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Node& obj )
+std::ostream& operator<<(std::ostream& os, const Node& obj)
 {
     os << &obj << '|' << obj.mParent.lock() << '|' << obj.mChildren.size();
     return os;
