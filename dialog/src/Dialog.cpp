@@ -60,13 +60,13 @@ Dialog::~Dialog()
 // DIALOG METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setDir(wxString dir)
+void Dialog::setDir(const wxString& dir)
 {
     ASSERT(!mDir);
     mDir = boost::optional<wxString>(dir);
 }
 
-wxString Dialog::getDir( const wxString & message, const wxString & default, wxWindow* parent )
+wxString Dialog::getDir(const wxString& message, const wxString& default, wxWindow* parent)
 {
     if (mDir)
     {
@@ -80,13 +80,13 @@ wxString Dialog::getDir( const wxString & message, const wxString & default, wxW
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setSaveFile(wxString file)
+void Dialog::setSaveFile(const wxString& file)
 {
     ASSERT(!mSaveFile);
     mSaveFile = boost::optional<wxString>(file);
 }
 
-wxString Dialog::getSaveFile( const wxString& message, const wxString& filetypes, const wxString& defaultpath, const wxString& defaultfilename, const wxString& defaultextension, wxWindow* parent )
+wxString Dialog::getSaveFile(const wxString& message, const wxString& filetypes, const wxString& defaultpath, const wxString& defaultfilename, const wxString& defaultextension, wxWindow* parent )
 {
     if (mSaveFile)
     {
@@ -100,13 +100,13 @@ wxString Dialog::getSaveFile( const wxString& message, const wxString& filetypes
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setFiles(std::list<wxString> files)
+void Dialog::setFiles(const std::list<wxString>& files)
 {
     ASSERT(!mFiles);
     mFiles = boost::optional<std::list< wxString > >(files);
 }
 
-wxStrings getFilesList( const wxString& message, const wxString& filetypes, wxWindow* parent )
+wxStrings getFilesList(const wxString& message, const wxString& filetypes, wxWindow* parent)
 {
     if (!parent) { parent = &Window::get(); }
     wxStrings result;
@@ -124,7 +124,7 @@ wxStrings getFilesList( const wxString& message, const wxString& filetypes, wxWi
     return result;
 }
 
-wxStrings Dialog::getFiles( const wxString& message, const wxString& filetypes, wxWindow* parent )
+wxStrings Dialog::getFiles(const wxString& message, const wxString& filetypes, wxWindow* parent)
 {
     if (mFiles)
     {
@@ -138,13 +138,13 @@ wxStrings Dialog::getFiles( const wxString& message, const wxString& filetypes, 
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setText(wxString text)
+void Dialog::setText(const wxString& text)
 {
     ASSERT(!mText);
     mText = boost::optional<wxString>(text);
 }
 
-wxString Dialog::getText( wxString title, wxString message, wxString default, wxWindow* parent )
+wxString Dialog::getText(const wxString& title, const wxString& message, const wxString& default, wxWindow* parent )
 {
     if (mText)
     {
@@ -158,13 +158,13 @@ wxString Dialog::getText( wxString title, wxString message, wxString default, wx
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setComboText(wxString text)
+void Dialog::setComboText(const wxString& text)
 {
     ASSERT(!mComboText);
     mComboText = boost::optional<wxString>(text);
 }
 
-wxString Dialog::getComboText( wxString title, wxString message, std::list<wxString> entries, wxString default, wxWindow* parent )
+wxString Dialog::getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& default, wxWindow* parent )
 {
     if (mComboText)
     {
@@ -191,13 +191,13 @@ wxString Dialog::getComboText( wxString title, wxString message, std::list<wxStr
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setConfirmation(int button)
+void Dialog::setConfirmation(const int& button)
 {
     ASSERT(!mButton);
     mButton = boost::optional<int>(button);
 }
 
-int Dialog::getConfirmation( wxString title, wxString message, int buttons, wxWindow* parent )
+int Dialog::getConfirmation(const wxString& title, const wxString& message, const int& buttons, wxWindow* parent )
 {
     if (mButton)
     {
@@ -211,13 +211,13 @@ int Dialog::getConfirmation( wxString title, wxString message, int buttons, wxWi
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setStringsSelection(std::list<wxString> stringsSelection)
+void Dialog::setStringsSelection(const std::list<wxString>& stringsSelection)
 {
     ASSERT(!mStringsSelection);
     mStringsSelection.reset(stringsSelection);
 }
 
-std::list<wxString> Dialog::getStringsSelection( wxString title, wxString message, std::list<wxString> options, wxWindow* parent )
+std::list<wxString> Dialog::getStringsSelection(const wxString& title, const wxString& message, const std::list<wxString>& options, wxWindow* parent )
 {
     if (mStringsSelection)
     {
@@ -256,7 +256,7 @@ std::list<wxString> Dialog::getStringsSelection( wxString title, wxString messag
 
 //////////////////////////////////////////////////////////////////////////
 
-int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect screenRect)
+int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxRect& screenRect)
 {
     VAR_ERROR(doexit);
     if (doexit && wxCANCEL == wxMessageBox("A fatal error was encountered. Press OK to generate debug report. Press Cancel to terminate.", "Error", wxOK | wxCANCEL, &Window::get()))
@@ -285,7 +285,7 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect sc
         memory.SelectObject (screenshot);
         memory.Blit (0, 0, screenRect.width, screenRect.height, &screen, screenRect.x, screenRect.y);
         memory.SelectObject (wxNullBitmap);
-        screenshot.SaveFile (screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG); 
+        screenshot.SaveFile (screenShotFile.GetFullPath(), wxBITMAP_TYPE_PNG);
         report.AddFile(screenShotFile.GetFullPath(), wxT("Screen shot"));
     }
 
@@ -304,7 +304,6 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, wxRect sc
     {
         report.AddFile(Log::getFileName(), wxT("Log file"));
     }
-
 
     if ( wxDebugReportPreviewStd().Show(report) )
     {

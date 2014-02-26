@@ -82,27 +82,27 @@ private:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onOpenProject( model::EventOpenProject &event );
-    void onCloseProject( model::EventCloseProject &event );
-    void onProjectAssetAdded( model::EventAddNode &event );
-    void onProjectAssetsAdded( model::EventAddNodes &event );
-    void onProjectAssetRemoved( model::EventRemoveNode &event );
-    void onProjectAssetsRemoved( model::EventRemoveNodes &event );
-    void onProjectAssetRenamed( model::EventRenameNode &event );
+    void onOpenProject(model::EventOpenProject &event);
+    void onCloseProject(model::EventCloseProject &event);
+    void onProjectAssetAdded(model::EventAddNode &event);
+    void onProjectAssetsAdded(model::EventAddNodes &event);
+    void onProjectAssetRemoved(model::EventRemoveNode &event);
+    void onProjectAssetsRemoved(model::EventRemoveNodes &event);
+    void onProjectAssetRenamed(model::EventRenameNode &event);
 
     //////////////////////////////////////////////////////////////////////////
     // ADD/REMOVE
     //////////////////////////////////////////////////////////////////////////
 
-    void watch( model::NodePtr node );
-    void unwatch( model::NodePtr node );
+    void watch(const model::NodePtr& node );
+    void unwatch(const model::NodePtr& node );
 
     /// \return true if the given path or one of its parents is watched
-    bool isWatched( wxString path ) const;
-    std::vector<wxString> redundantChildWatches( wxString path ) const;
-    bool parentFolderIsWatched( wxString path ) const;
+    bool isWatched(const wxString& path) const;
+    std::vector<wxString> redundantChildWatches(const wxString& path) const;
+    bool parentFolderIsWatched(const wxString& path) const;
 
-    boost::optional<wxString> getPathToBeWatched(model::NodePtr node) const;
+    boost::optional<wxString> getPathToBeWatched(const model::NodePtr& node) const;
 
     void stop();
     void start();
@@ -111,7 +111,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    static wxString GetFSWEventChangeTypeName(int changeType);
+    static wxString GetFSWEventChangeTypeName(const int& changeType);
     friend std::ostream& operator<<( std::ostream& os, const Watcher& obj );
 };
 

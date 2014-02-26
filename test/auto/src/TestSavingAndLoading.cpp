@@ -89,8 +89,6 @@ void TestSavingAndLoading::testSaveAndLoad()
     ToggleInterval(HCenter(VideoClip(0,0)), RightPixel(VideoClip(0,2)) - 10);
     ToggleInterval(HCenter(VideoClip(0,1)), HCenter(VideoClip(0,2)));
 
-    // todo all codecs and parameters
-
     StartTest("Add empty clip to timeline");
     Click(Center(VideoClip(0,1)));
     Type(WXK_DELETE);

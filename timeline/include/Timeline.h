@@ -139,7 +139,7 @@ public:
     /// \param region invalidated region of the timeline
     /// \param yPosition y position of the divider
     /// \param height height of the divider
-    void drawDivider(wxDC& dc, pixel yPosition, pixel height) const; // todo why no offset here? what if vertical scrolling is applied?
+    void drawDivider(wxDC& dc, pixel yPosition, pixel height) const;
 
     /// Fill a region in the timeline with the given overlapping area of this view's rectangle.
     /// \param dc device context to be used

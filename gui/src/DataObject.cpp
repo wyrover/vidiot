@@ -33,7 +33,7 @@ DataObject::DataObject()
     SetFormat(mFormat);
 }
 
-DataObject::DataObject(model::NodePtrs assets, CallbackOnDestruction callback)
+DataObject::DataObject(const model::NodePtrs& assets, CallbackOnDestruction callback)
 :   wxDataObjectSimple()
 ,   mFormat(sFormat)
 ,   mAssets(assets)

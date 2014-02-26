@@ -54,7 +54,7 @@ public:
 
     /// Set the command name.
     /// \note any subsequent call to 'add' will replace this name with the name of that command.
-    void setName(wxString name);
+    void setName(const wxString& name);
 
 protected:
 

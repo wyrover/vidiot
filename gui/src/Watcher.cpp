@@ -128,7 +128,7 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Watcher::onOpenProject( model::EventOpenProject &event )
+void Watcher::onOpenProject(model::EventOpenProject &event)
 {
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
     gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
@@ -138,7 +138,7 @@ void Watcher::onOpenProject( model::EventOpenProject &event )
     event.Skip();
 }
 
-void Watcher::onCloseProject( model::EventCloseProject &event )
+void Watcher::onCloseProject(model::EventCloseProject &event)
 {
     gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
     gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
@@ -151,13 +151,13 @@ void Watcher::onCloseProject( model::EventCloseProject &event )
     event.Skip();
 }
 
-void Watcher::onProjectAssetAdded( model::EventAddNode &event )
+void Watcher::onProjectAssetAdded(model::EventAddNode &event)
 {
     watch( event.getValue().getChild() );
     event.Skip();
 }
 
-void Watcher::onProjectAssetsAdded( model::EventAddNodes &event )
+void Watcher::onProjectAssetsAdded(model::EventAddNodes &event)
 {
     for ( model::NodePtr node : event.getValue().getChildren() )
     {
@@ -166,13 +166,13 @@ void Watcher::onProjectAssetsAdded( model::EventAddNodes &event )
     event.Skip();
 }
 
-void Watcher::onProjectAssetRemoved( model::EventRemoveNode &event )
+void Watcher::onProjectAssetRemoved(model::EventRemoveNode &event)
 {
     unwatch( event.getValue().getChild() );
     event.Skip();
 }
 
-void Watcher::onProjectAssetsRemoved( model::EventRemoveNodes &event )
+void Watcher::onProjectAssetsRemoved(model::EventRemoveNodes &event)
 {
     for ( model::NodePtr node : event.getValue().getChildren() )
     {
@@ -181,7 +181,7 @@ void Watcher::onProjectAssetsRemoved( model::EventRemoveNodes &event )
     event.Skip();
 }
 
-void Watcher::onProjectAssetRenamed( model::EventRenameNode &event )
+void Watcher::onProjectAssetRenamed(model::EventRenameNode &event)
 {
     event.Skip();
 }
@@ -190,7 +190,7 @@ void Watcher::onProjectAssetRenamed( model::EventRenameNode &event )
 // ADD/REMOVE
 //////////////////////////////////////////////////////////////////////////
 
-boost::optional<wxString> requiredWatchPath( model::NodePtr node )
+boost::optional<wxString> requiredWatchPath(const model::NodePtr& node)
 {
     if (node->getParent() && node->getParent()->isA<model::AutoFolder>()) { return boost::none; } // The parent autofolder (in the project view) is already watched
 
@@ -209,7 +209,7 @@ boost::optional<wxString> requiredWatchPath( model::NodePtr node )
     return boost::optional<wxString>(util::path::toPath(path));
 }
 
-void Watcher::watch( model::NodePtr node )
+void Watcher::watch(const model::NodePtr& node)
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
     if (!requiresWatch)
@@ -275,7 +275,7 @@ void Watcher::watch( model::NodePtr node )
     VAR_DEBUG(*this);
 }
 
-void Watcher::unwatch( model::NodePtr node )
+void Watcher::unwatch(const model::NodePtr& node)
 {
     boost::optional<wxString> requiresWatch = requiredWatchPath(node);
     if (!requiresWatch)
@@ -350,14 +350,14 @@ void Watcher::start()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Watcher& obj )
+std::ostream& operator<<(std::ostream& os, const Watcher& obj)
 {
     os << &obj << '|' << obj.mWatches;
     return os;
 }
 
 // static
-wxString Watcher::GetFSWEventChangeTypeName(int changeType)
+wxString Watcher::GetFSWEventChangeTypeName(const int& changeType)
 {
     switch (changeType)
     {

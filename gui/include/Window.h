@@ -88,15 +88,15 @@ public:
 
     /// Used for submitting project level events. These cannot be submitted by
     /// the project itselves since it involves creation/destruction of that project
-    void ProcessModelEvent( wxEvent& event );
+    void ProcessModelEvent(wxEvent& event);
 
     /// Used for submitting project level events. These cannot be submitted by
     /// the project itselves since it involves creation/destruction of that project
-    void QueueModelEvent( wxEvent* event );
+    void QueueModelEvent(wxEvent* event);
 
-    void onOpenProject( model::EventOpenProject &event );
-    void onCloseProject( model::EventCloseProject &event );
-    void onRenameProject( model::EventRenameProject &event );
+    void onOpenProject(model::EventOpenProject &event);
+    void onCloseProject(model::EventCloseProject &event);
+    void onRenameProject(model::EventRenameProject &event);
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -186,7 +186,7 @@ public:
 
     /// Used in tests to easily see which test is being executed
     /// \param title will be added after the original title
-    void setAdditionalTitle(wxString title);
+    void setAdditionalTitle(const wxString& title);
 
 private:
 
@@ -228,7 +228,7 @@ private:
 
     void updateWorkspaceMenu();
     void updateTitle();
-    void togglePane(wxString title);
+    void togglePane(const wxString& title);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

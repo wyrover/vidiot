@@ -49,9 +49,9 @@ public:
     void play();
     void play_pause();
     void stop();
-    void moveTo(pts position);
+    void moveTo(const pts& position);
 
-    void show(boost::shared_ptr<wxBitmap> bitmap);
+    void show(const wxBitmapPtr& bitmap);
 
     wxSize getVideoSize() const;
 

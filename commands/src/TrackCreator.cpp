@@ -34,7 +34,7 @@ namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrackCreator::TrackCreator(model::NodePtrs assets)
+TrackCreator::TrackCreator(const model::NodePtrs& assets)
 :   mAssets(assets)
 ,   mVideo(boost::make_shared<model::VideoTrack>())
 ,   mAudio(boost::make_shared<model::AudioTrack>())
@@ -71,7 +71,6 @@ TrackCreator::TrackCreator(model::NodePtrs assets)
 
 TrackCreator::~TrackCreator()
 {
-
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -55,9 +55,9 @@ public:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onCloseProject( model::EventCloseProject &event );
-    void onProjectAssetRemoved( model::EventRemoveNode &event );
-    void onProjectAssetRenamed( model::EventRenameNode &event );
+    void onCloseProject(model::EventCloseProject &event);
+    void onProjectAssetRemoved(model::EventRemoveNode &event);
+    void onProjectAssetRenamed(model::EventRenameNode &event);
 
     //////////////////////////////////////////////////////////////////////////
     // GUI EVENTS
@@ -71,16 +71,16 @@ public:
 
     /// Open a timeline for the given sequence. If there already is a timeline
     /// for this sequence, it is selected.
-    void Open( model::SequencePtr sequence );
+    void Open(const model::SequencePtr& sequence);
 
     /// Close the timeline for the given sequence.
     /// Close current open sequence by default.
-    void Close( model::SequencePtr sequence = model::SequencePtr() );
+    void Close(const model::SequencePtr& sequence = model::SequencePtr());
 
     /// \return timeline for the given sequence
     /// \param sequence if 0, then the first timeline (the first notebook page) is returned.
     /// \pre sequence must be opened (thus, timeline must exist)
-    timeline::Timeline& getTimeline( model::SequencePtr sequence = model::SequencePtr() );
+    timeline::Timeline& getTimeline(const model::SequencePtr& sequence = model::SequencePtr());
 
 private:
 
@@ -90,7 +90,7 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    std::pair<size_t,timeline::Timeline*> findPage(model::SequencePtr sequence) const; ///< Find the page associated with a sequence. 0 pointer is returned if not found.
+    std::pair<size_t,timeline::Timeline*> findPage(const model::SequencePtr& sequence) const; ///< Find the page associated with a sequence. 0 pointer is returned if not found.
     void updateActivation();
 
     //////////////////////////////////////////////////////////////////////////

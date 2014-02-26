@@ -203,7 +203,7 @@ void Intervals::clear()
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-void Intervals::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const // todo move this to the intervals class entirely
+void Intervals::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
     PtsIntervals intervals = mIntervals;
 

@@ -190,7 +190,7 @@ void Player::stop()
     mDisplay->moveTo(mPosition);
 }
 
-void Player::moveTo(pts position)
+void Player::moveTo(const pts& position)
 {
     VAR_INFO(this)(position);
     if (GetSizer()->IsShown(mEdit))
@@ -200,7 +200,7 @@ void Player::moveTo(pts position)
     mDisplay->moveTo(position);
 }
 
-void Player::show(boost::shared_ptr<wxBitmap> bitmap)
+void Player::show(const boost::shared_ptr<wxBitmap>& bitmap)
 {
     if (!GetSizer()->IsShown(mEdit))
     {
