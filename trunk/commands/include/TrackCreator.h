@@ -29,7 +29,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit TrackCreator(model::NodePtrs assets);
+    explicit TrackCreator(const model::NodePtrs& assets);
 
     virtual ~TrackCreator();
 

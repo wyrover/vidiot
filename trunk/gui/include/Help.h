@@ -36,7 +36,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onLink( wxHtmlLinkEvent& event);
+    void onLink(wxHtmlLinkEvent& event);
     void onBack(wxCommandEvent &event);
     void onHome(wxCommandEvent &event);
     void onForward(wxCommandEvent &event);

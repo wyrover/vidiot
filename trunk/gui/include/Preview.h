@@ -44,7 +44,7 @@ public:
     // TO/FROM OTHER WIDGETS
     //////////////////////////////////////////////////////////////////////////
 
-    Player* openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline);
+    Player* openTimeline(const model::SequencePtr& sequence, timeline::Timeline* timeline);
     void closeTimeline(timeline::Timeline* timeline);
     void selectTimeline(timeline::Timeline* timeline);
 

@@ -106,7 +106,7 @@ int StatusBar::getNumberOfStatusBars() const
     return (Config::getShowDebugInfo() ? 5 : 4);
 }
 
-void StatusBar::setDebugText(wxString text)
+void StatusBar::setDebugText(const wxString& text)
 {
     ASSERT(wxThread::IsMain());
     if (GetFieldsCount() == sDebug + 1)
@@ -115,7 +115,7 @@ void StatusBar::setDebugText(wxString text)
     }
 }
 
-void StatusBar::pushInfoText(wxString text)
+void StatusBar::pushInfoText(const wxString& text)
 {
     ASSERT(wxThread::IsMain());
     ASSERT(!text.IsSameAs(""));
@@ -127,13 +127,13 @@ void StatusBar::popInfoText()
     PopStatusText(sInfo);
 }
 
-void StatusBar::timedInfoText(wxString text)
+void StatusBar::timedInfoText(const wxString& text)
 {
     pushInfoText(text);
     mInfoTimer->StartOnce(5000);
 }
 
-void StatusBar::setQueueText(wxString text)
+void StatusBar::setQueueText(const wxString& text)
 {
     ASSERT(wxThread::IsMain());
     SetStatusText( text, sQueue );
@@ -143,20 +143,20 @@ void StatusBar::setQueueText(wxString text)
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void StatusBar::setProcessingText(wxString text)
+void StatusBar::setProcessingText(const wxString& text)
 {
     ASSERT(wxThread::IsMain());
     SetStatusText( text, sProcessing );
 }
 
-void StatusBar::showProgressBar(int max)
+void StatusBar::showProgressBar(const int& max)
 {
     ASSERT(wxThread::IsMain());
     mProgress->SetRange(max);
     mProgress->Show();
 }
 
-void StatusBar::showProgress(int value)
+void StatusBar::showProgress(const int& value)
 {
     ASSERT(wxThread::IsMain());
     mProgress->SetValue(value);

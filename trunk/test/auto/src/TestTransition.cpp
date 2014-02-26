@@ -131,7 +131,7 @@ void TestTransition::testSelectionAndDeletion()
         ASSERT(VideoClip(0,3)->getSelected());
         DeselectAllClips();
         StartTest("InTransition: Clicking on TransitionRightClipBegin selects the clip right of the transition.");
-        Click(TransitionRightClipBegin(VideoClip(0,2))); // todo use both leftdown AND leftdouble events for these tests when making the events explicit!
+        Click(TransitionRightClipBegin(VideoClip(0,2)));
         ASSERT(!VideoClip(0,1)->getSelected());
         ASSERT(!VideoClip(0,2)->getSelected());
         ASSERT(VideoClip(0,3)->getSelected());

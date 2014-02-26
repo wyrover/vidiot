@@ -36,7 +36,7 @@ const int VideoDisplay::sMaximumSpeed = 200;
 const int VideoDisplay::sDefaultSpeed = 100;
 const int VideoDisplay::sVideoFrameRate = 25;
 
-int convertPortAudioTime(double patime)
+int convertPortAudioTime(const double& patime)
 {
     return static_cast<int>(floor(patime * 1000.0));
 }
@@ -218,7 +218,7 @@ void VideoDisplay::stop()
     }
 }
 
-void VideoDisplay::moveTo(pts position)
+void VideoDisplay::moveTo(const pts& position)
 {
     VAR_DEBUG(this)(position);
     ASSERT(wxThread::IsMain());
@@ -245,7 +245,7 @@ void VideoDisplay::moveTo(pts position)
     Update(); // For immediate feedback when moving the cursor quickly over the timeline
 }
 
-void VideoDisplay::setSpeed(int speed)
+void VideoDisplay::setSpeed(const int& speed)
 {
     ASSERT(wxThread::IsMain());
     bool wasPlaying = mPlaying;
@@ -310,7 +310,7 @@ void VideoDisplay::audioBufferThread()
     }
 }
 
-bool VideoDisplay::audioRequested(void *buffer, unsigned long frames, double playtime)
+bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, const double& playtime)
 {
     samplecount remainingSamples = frames * mNumberOfAudioChannels;
     uint16_t* out = static_cast<uint16_t*>(buffer);

@@ -200,7 +200,7 @@ void Drag::start(wxPoint hotspot, bool isInsideDrag)
         ::command::TrackCreator c(ProjectViewDropSource::get().getData().getAssets());
         mVideo.setTempTrack(c.getVideoTrack());
         mAudio.setTempTrack(c.getAudioTrack());
-        mDraggedTrack = mVideo.getTempTrack(); // todo never a audio track as temp track? What happens with audio only drops?
+        mDraggedTrack = mVideo.getTempTrack();
         mHotspot.x = getZoom().ptsToPixels(mVideo.getTempTrack()->getLength() / 2);
         mHotspotPts = getZoom().pixelsToPts(mHotspot.x);
 

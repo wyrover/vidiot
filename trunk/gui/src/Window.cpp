@@ -797,7 +797,7 @@ void Window::setSequenceMenu(wxMenu* menu, bool enabled)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Window::setAdditionalTitle(wxString title)
+void Window::setAdditionalTitle(const wxString& title)
 {
     SetTitle(sTitle + ": " + title);
 }
@@ -826,7 +826,7 @@ void Window::updateTitle()
     }
 }
 
-void Window::togglePane(wxString title)
+void Window::togglePane(const wxString& title)
 {
     wxAuiPaneInfo& pane = mUiManager.GetPane(title);
     ASSERT(pane.IsOk()); // Lookup must succeed

@@ -57,7 +57,7 @@ TimelinesView::~TimelinesView()
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TimelinesView::onCloseProject( model::EventCloseProject &event )
+void TimelinesView::onCloseProject(model::EventCloseProject &event)
 {
     mNotebook.DeleteAllPages();
     event.Skip();
@@ -67,7 +67,7 @@ void TimelinesView::onCloseProject( model::EventCloseProject &event )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TimelinesView::onProjectAssetRemoved( model::EventRemoveNode &event )
+void TimelinesView::onProjectAssetRemoved(model::EventRemoveNode &event)
 {
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().getChild());
     if (sequence)
@@ -77,7 +77,7 @@ void TimelinesView::onProjectAssetRemoved( model::EventRemoveNode &event )
     event.Skip();
 }
 
-void TimelinesView::onProjectAssetRenamed( model::EventRenameNode &event )
+void TimelinesView::onProjectAssetRenamed(model::EventRenameNode &event)
 {
     model::SequencePtr sequence = boost::dynamic_pointer_cast<model::Sequence>(event.getValue().getNode());
 
@@ -106,7 +106,7 @@ void TimelinesView::onPageChanged(wxNotebookEvent& event)
 // OPEN/CLOSE SEQUENCE
 //////////////////////////////////////////////////////////////////////////
 
-void TimelinesView::Open( model::SequencePtr sequence )
+void TimelinesView::Open(const model::SequencePtr& sequence)
 {
     ASSERT(sequence);
 
@@ -121,7 +121,7 @@ void TimelinesView::Open( model::SequencePtr sequence )
     updateActivation();
 }
 
-void TimelinesView::Close( model::SequencePtr sequence )
+void TimelinesView::Close(const model::SequencePtr& sequence)
 {
     if (sequence)
     {
@@ -139,7 +139,7 @@ void TimelinesView::Close( model::SequencePtr sequence )
     updateActivation();
 }
 
-timeline::Timeline& TimelinesView::getTimeline( model::SequencePtr sequence )
+timeline::Timeline& TimelinesView::getTimeline(const model::SequencePtr& sequence)
 {
     if (sequence)
     {
@@ -155,7 +155,7 @@ timeline::Timeline& TimelinesView::getTimeline( model::SequencePtr sequence )
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-std::pair<size_t,timeline::Timeline*> TimelinesView::findPage(model::SequencePtr sequence) const
+std::pair<size_t,timeline::Timeline*> TimelinesView::findPage(const model::SequencePtr& sequence) const
 {
     size_t page = 0;
     while (page < mNotebook.GetPageCount())

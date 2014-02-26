@@ -69,7 +69,7 @@ void Combiner::add(wxCommand* command)
     mCommandName = command->GetName();
 }
 
-void Combiner::setName(wxString name)
+void Combiner::setName(const wxString& name)
 {
     mCommandName = name;
 }

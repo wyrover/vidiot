@@ -61,13 +61,13 @@ public:
 
     int getNumberOfStatusBars() const;
 
-    void setDebugText(wxString text = "");
+    void setDebugText(const wxString& text = "");
 
-    void pushInfoText(wxString text);
+    void pushInfoText(const wxString& text);
     void popInfoText();
-    void timedInfoText(wxString text);
+    void timedInfoText(const wxString& text);
 
-    void setQueueText(wxString text = "");
+    void setQueueText(const wxString& text = "");
 
 private:
 
@@ -85,9 +85,9 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void setProcessingText(wxString text = "");
-    void showProgressBar(int max);
-    void showProgress(int value);
+    void setProcessingText(const wxString& text = "");
+    void showProgressBar(const int& max);
+    void showProgress(const int& value);
     void hideProgressBar();
 
 };

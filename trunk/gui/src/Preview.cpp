@@ -47,10 +47,10 @@ Preview::~Preview()
 // TO/FROM OTHER WIDGETS
 //////////////////////////////////////////////////////////////////////////
 
-Player* Preview::openTimeline(model::SequencePtr sequence, timeline::Timeline* timeline)
+Player* Preview::openTimeline(const model::SequencePtr& sequence, timeline::Timeline* timeline)
 {
     ASSERT_MAP_CONTAINS_NOT(mPlayers,timeline);
-    Player* newplayer = new Player(this,sequence, timeline);
+    Player* newplayer = new Player(this, sequence, timeline);
     mPlayers[timeline] = newplayer;
     GetSizer()->Add(newplayer,wxSizerFlags(1).Expand());
     selectTimeline(timeline);

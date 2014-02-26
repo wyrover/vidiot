@@ -52,17 +52,17 @@ public:
 
     /// Set a fixed outcome for the next directory selection for testing.
     /// \param dir fixed directory which will be returned for the next getDir() call
-    void setDir(wxString dir);
+    void setDir(const wxString& dir);
 
     /// Open a directory dialog. If before this call setDir() was called, the dir given in setDir() is returned and that directory is reset.
     /// \post !MDir
-    wxString getDir( const wxString & message, const wxString & default, wxWindow* parent = 0 );
+    wxString getDir(const wxString& message, const wxString& default, wxWindow* parent = 0 );
 
     //////////////////////////////////////////////////////////////////////////
 
     /// Set a fixed outcome for the next 'save file' selection for testing.
     /// \param files fixed file to be returned for saving
-    void setSaveFile(wxString file);
+    void setSaveFile(const wxString& file);
 
     /// Open a file selection dialog for saving. If before this call setSaveFile() was called, the file given in
     /// setSaveFile() is returned and the preset file is reset.
@@ -74,44 +74,44 @@ public:
 
     /// Set a fixed outcome for the next files selection for testing.
     /// \param files fixed list of absolute file names which will be returned for the next getFiles() call
-    void setFiles(std::list<wxString> files);
+    void setFiles(const std::list<wxString>& files);
 
     /// Open a files selection dialog. If before this call setFiles() was called, the files given in
     /// setFiles() are returned and that list is reset.
     /// In case the dialog is aborted or no file is selected for another reason, an empty list is returned.
     /// \post !sFiles
-    wxStrings getFiles( const wxString& message, const wxString& filetypes, wxWindow* parent = 0 );
+    wxStrings getFiles(const wxString& message, const wxString& filetypes, wxWindow* parent = 0 );
 
     //////////////////////////////////////////////////////////////////////////
 
     /// Set a fixed outcome for the next text selection for testing.
     /// \param text fixed text which will be returned for the next getText() call
     /// \post sText
-    void setText(wxString dir);
+    void setText(const wxString& dir);
 
     /// Open a text dialog. If before this call setText() was called, the text
     /// given in setText() is returned and that text is reset.
     /// \post !mText
-    wxString getText( wxString title, wxString message, wxString default, wxWindow* parent = 0 );
+    wxString getText(const wxString& title, const wxString& message, const wxString& default, wxWindow* parent = 0 );
 
     //////////////////////////////////////////////////////////////////////////
 
     /// Set a fixed outcome for the next combo box selection for testing.
     /// \param text fixed text which will be returned for the next getComboText() call
     /// \post sComboText
-    void setComboText(wxString text);
+    void setComboText(const wxString& text);
 
     /// Open a text dialog. If before this call setComboText() was called, the text
     /// given in setComboText() is returned and that text is reset.
     /// \post !mComboText
-    wxString getComboText( wxString title, wxString message, std::list<wxString> entries, wxString default = "", wxWindow* parent = 0 );
+    wxString getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& default = "", wxWindow* parent = 0 );
 
     //////////////////////////////////////////////////////////////////////////
 
     /// Set a fixed outcome for the next message dialog.
     /// \param button fixed button value (wxYES, wxNO, wxCANCEL, wxOK or wxHELP) to be returned by next getConfirmation();
     /// \post sButton
-    void setConfirmation(int button = wxOK);
+    void setConfirmation(const int& button = wxOK);
 
     /// Show a message dialog requiring a button press to be dismissed
     /// \post !mButton
@@ -120,19 +120,19 @@ public:
     /// \param caption title text
     /// \param message message text in dialog
     /// \param buttons wxYES | wxNO | wxCANCEL | wxOK | wxHELP (use whichever should apply)
-    int getConfirmation( wxString title, wxString message, int buttons = wxOK, wxWindow* parent = 0);
+    int getConfirmation(const wxString& title, const wxString& message, const int& buttons = wxOK, wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
     /// Set a fixed outcome for the next string selection for testing.
     /// \param selection fixed list of selected strings which will be returned for the next getStringsSelection() call
-    void setStringsSelection(std::list<wxString> stringsSelection);
+    void setStringsSelection(const std::list<wxString>& stringsSelection);
 
     /// Open a files selection dialog. If before this call setFiles() was called, the files given in
     /// setFiles() are returned and that list is reset.
     /// In case the dialog is aborted or no file is selected for another reason, an empty list is returned.
     /// \post !sFiles
-    std::list<wxString> getStringsSelection( wxString title, wxString message, std::list<wxString> options, wxWindow* parent = 0 );
+    std::list<wxString> getStringsSelection(const wxString& title, const wxString& message, const std::list<wxString>& options, wxWindow* parent = 0 );
 
     //////////////////////////////////////////////////////////////////////////
 

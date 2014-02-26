@@ -55,7 +55,7 @@ EditDisplay::~EditDisplay()
 // SHOW AN EDIT ACTION
 //////////////////////////////////////////////////////////////////////////
 
-void EditDisplay::show(wxBitmapPtr bitmap)
+void EditDisplay::show(const wxBitmapPtr& bitmap)
 {
     ASSERT(wxThread::IsMain()); // Access to mCurrentBitmap is not threadsafe.
     mCurrentBitmap = bitmap;

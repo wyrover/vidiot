@@ -27,49 +27,49 @@
 namespace model {
 
 // static
-pts Convert::timeToPts(milliseconds time)
+pts Convert::timeToPts(const milliseconds& time)
 {
     return rationaltimeToPts(rational64(time));
 }
 
 // static
-pts Convert::rationaltimeToPts(rational64 time)
+pts Convert::rationaltimeToPts(const rational64& time)
 {
     return rationaltimeToPts(time, Properties::get().getFrameRate());
 }
 
 // static
-pts Convert::timeToPts(milliseconds time, FrameRate framerate)
+pts Convert::timeToPts(const milliseconds& time, const FrameRate& framerate)
 {
     return rationaltimeToPts(rational64(time), framerate);
 }
 
 // static
-pts Convert::rationaltimeToPts(rational64 time, FrameRate framerate )
+pts Convert::rationaltimeToPts(const rational64& time, const FrameRate& framerate )
 {
     return floor64(time / rational64(Constants::sSecond) * framerate );
 }
 
 // static
-milliseconds Convert::ptsToTime(pts position)
+milliseconds Convert::ptsToTime(const pts& position)
 {
     return floor64(rational64(position) * rational64(Constants::sSecond) / Properties::get().getFrameRate());
 }
 
 // static
-microseconds Convert::ptsToMicroseconds(pts position)
+microseconds Convert::ptsToMicroseconds(const pts& position)
 {
     return floor64(rational64(ptsToTime(position)) * rational64(Constants::sMicroseconds));
 }
 
 // static
-pts Convert::microsecondsToPts(microseconds us)
+pts Convert::microsecondsToPts(const microseconds& us)
 {
     return timeToPts(floor(rational(us) / rational(Constants::sMicroseconds)));
 }
 
 // static
-wxString Convert::msToHumanReadibleString(milliseconds ms)
+wxString Convert::msToHumanReadibleString(const milliseconds& ms)
 {
     std::ostringstream o;
 
@@ -90,13 +90,13 @@ wxString Convert::msToHumanReadibleString(milliseconds ms)
 }
 
 // static
-wxString Convert::ptsToHumanReadibleString(pts duration)
+wxString Convert::ptsToHumanReadibleString(const pts& duration)
 {
     return msToHumanReadibleString(ptsToTime(duration));
 }
 
 // static
-samplecount Convert::ptsToSamples(int audioRate, int nAudioChannels, pts position)
+samplecount Convert::ptsToSamples(const int& audioRate, const int& nAudioChannels, const pts& position)
 {
     int64_t nFrames =
         removeRemainder(nAudioChannels, // Ensure that the returned value is never aligned such that the data for one or more speakers is missing
@@ -108,7 +108,7 @@ samplecount Convert::ptsToSamples(int audioRate, int nAudioChannels, pts positio
 }
 
 // static
-pts Convert::samplesToPts(int audioRate, int nAudioChannels, samplecount nSamples)
+pts Convert::samplesToPts(const int& audioRate, const int& nAudioChannels, const samplecount& nSamples)
 {
     int64_t time =
         static_cast<int64_t>(nSamples) *
@@ -119,61 +119,61 @@ pts Convert::samplesToPts(int audioRate, int nAudioChannels, samplecount nSample
 }
 
 // static
-samplecount Convert::samplesToFrames(int nChannels, samplecount nSamples)
+samplecount Convert::samplesToFrames(const int& nChannels, const samplecount& nSamples)
 {
     ASSERT_ZERO(nSamples % nChannels);
     return nSamples / nChannels;
 }
 
 // static
-samplecount Convert::framesToSamples(int nChannels, samplecount nFrames)
+samplecount Convert::framesToSamples(const int& nChannels, const samplecount& nFrames)
 {
     return nFrames * nChannels;
 }
 
-pts convertFrameRate(pts inputposition, FrameRate inputrate, FrameRate outputrate)
+pts convertFrameRate(const pts& inputposition, const FrameRate& inputrate, const FrameRate& outputrate)
 {
     return floor64(rational64(inputposition) / inputrate * outputrate );
 }
 
 //static
-pts Convert::toProjectFrameRate(pts inputposition, FrameRate inputrate)
+pts Convert::toProjectFrameRate(const pts& inputposition, const FrameRate& inputrate)
 {
     return convertFrameRate(inputposition, inputrate, Properties::get().getFrameRate());
 }
 
 //static
-pts Convert::fromProjectFrameRate(pts outputposition, FrameRate inputrate)
+pts Convert::fromProjectFrameRate(const pts& outputposition, const FrameRate& inputrate)
 {
     return convertFrameRate(outputposition, Properties::get().getFrameRate(), inputrate);
 }
 
 // static
-int Convert::scale(int input, boost::rational<int> factor)
+int Convert::scale(const int& input, const boost::rational<int>& factor)
 {
     return floor(factor * boost::rational<int>(input));
 }
 
 // static
-wxSize Convert::scale(wxSize input, boost::rational<int> factor)
+wxSize Convert::scale(const wxSize& input, const boost::rational<int>& factor)
 {
     return wxSize(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxPoint Convert::scale(wxPoint input, boost::rational<int> factor)
+wxPoint Convert::scale(const wxPoint& input, const boost::rational<int>& factor)
 {
     return wxPoint(scale(input.x,factor),scale(input.y,factor));
 }
 
 // static
-wxRect Convert::scale(wxRect input, boost::rational<int> factor)
+wxRect Convert::scale(const wxRect& input, const boost::rational<int>& factor)
 {
     return wxRect(scale(input.GetPosition(),factor),scale(input.GetSize(),factor));
 }
 
 // static
-wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::rational<int>& scaling, bool fill)
+wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, boost::rational<int>& scaling, bool fill)
 {
     boost::rational<int> bbWidth(boundingbox.GetWidth());
     boost::rational<int> inWidth(input.GetWidth());
@@ -199,7 +199,7 @@ wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::ratio
 }
 
 // static
-wxSize Convert::sizeInBoundingBox(wxSize input, wxSize boundingbox)
+wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox)
 {
     boost::rational<int> dummy;
     return sizeInBoundingBox(input,boundingbox,dummy);
@@ -212,25 +212,25 @@ double Convert::degreesToRadians(const boost::rational<int>& degrees) // todo mo
 }
 
 // static
-int Convert::doubleToInt(double x)
+int Convert::doubleToInt(const double& x)
 {
     return (x >= 0.0) ? static_cast<int>(std::floor(x + 0.5)) : static_cast<int>(std::ceil(x - 0.5));
 }
 
 // static
-samplecount Convert::audioFramesToSamples(samplecount nFrames, int nChannels)
+samplecount Convert::audioFramesToSamples(const samplecount& nFrames, const int& nChannels)
 {
     return nFrames * nChannels;
 }
 
 // static
-samplecount Convert::audioFramesToBytes(samplecount nFrames, int nChannels)
+samplecount Convert::audioFramesToBytes(const samplecount& nFrames, const int& nChannels)
 {
     return audioSamplesToBytes(audioFramesToSamples(nFrames, nChannels));
 }
 
 // static
-samplecount Convert::audioSamplesToBytes(samplecount nSamples)
+samplecount Convert::audioSamplesToBytes(const samplecount& nSamples)
 {
     return nSamples * AudioChunk::sBytesPerSample;
 }

@@ -30,45 +30,45 @@ public:
     /// \return number of frames to be used for the given time span
     /// \param time time duration in milliseconds
     /// Uses current project's frame rate for the conversion
-    static pts timeToPts(milliseconds time);
+    static pts timeToPts(const milliseconds& time);
 
     /// \return number of frames to be used for the given time span
     /// \param time time duration in milliseconds
     /// Uses current project's frame rate for the conversion
-    static pts rationaltimeToPts(rational64 time);
+    static pts rationaltimeToPts(const rational64& time);
 
     /// \return number of frames to be used for the given time span
     /// \param time time duration in milliseconds
     /// \param framerate Frame rate (fps) to be used for the conversion
-    static pts timeToPts(milliseconds time, FrameRate framerate);
+    static pts timeToPts(const milliseconds& time, const FrameRate& framerate);
 
     /// \return number of frames to be used for the given time span
     /// \param time time duration in milliseconds
     /// \param framerate Frame rate (fps) to be used for the conversion
-    static pts rationaltimeToPts(rational64 time, FrameRate framerate);
+    static pts rationaltimeToPts(const rational64& time, const FrameRate& framerate);
 
     /// \return time duration in milliseconds
     /// Uses current project's frame rate for the conversion
-    static milliseconds ptsToTime(pts position);
+    static milliseconds ptsToTime(const pts& position);
 
     /// \return time duration in microseconds.
     /// Uses current project's frame rate for the conversion
-    static microseconds ptsToMicroseconds(pts position);
+    static microseconds ptsToMicroseconds(const pts& position);
 
     /// \return number of frames to be used for the given time span
     /// \param us time duration in microseconds
     /// Uses current project's frame rate for the conversion
-    static pts microsecondsToPts(microseconds us);
+    static pts microsecondsToPts(const microseconds& us);
 
     /// If the time is less than an hour (or less then a minute) then no hours (or minutes)
     /// indicators are shown.
     /// \param ms time interval in milliseconds
-    static wxString msToHumanReadibleString(milliseconds ms);
+    static wxString msToHumanReadibleString(const milliseconds& ms);
 
     /// Convert a pts value to a human readible string in the form HH:MM:SS.ms
     /// If the time is less than an hour (or less then a minute) then no hours (or minutes)
     /// indicators are shown.
-    static wxString ptsToHumanReadibleString(pts duration);
+    static wxString ptsToHumanReadibleString(const pts& duration);
 
     /// Convert a pts value to a number of audio samples. One audio sample is one
     /// element for one speaker.
@@ -77,7 +77,7 @@ public:
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param position pts value to be converted
     /// \return number of samples required for this number of pts
-    static samplecount ptsToSamples(int audioRate, int nAudioChannels, pts position);
+    static samplecount ptsToSamples(const int& audioRate, const int& nAudioChannels, const pts& position);
 
     /// Convert a number of samples to an approximate pts value.
     /// \see ptsToSamples
@@ -85,35 +85,35 @@ public:
     /// \param nAudioChannels Number of audio channels (speakers)
     /// \param nSamples Number of samples to be converted
     /// \return number of samples required for this number of pts
-    static pts samplesToPts(int audioRate, int nAudioChannels, samplecount nSamples);
+    static pts samplesToPts(const int& audioRate, const int& nAudioChannels, const samplecount& nSamples);
 
     /// Convert a number of samples (1 sample == data for one speaker) to a number of frames (1 frame == data for all speakers)
     /// \return number of frames stored in given number of samples
     /// \pre nSamples must contain a discrete number of frames (thus nSamples % nChannels == 0)
-    static samplecount samplesToFrames(int nChannels, samplecount nSamples);
+    static samplecount samplesToFrames(const int& nChannels, const samplecount& nSamples);
 
     /// Convert a number of frames to the required number of samples
     /// \return number of samples stored in given number of frames
-    static samplecount framesToSamples(int nChannels, samplecount nFrames);
+    static samplecount framesToSamples(const int& nChannels, const samplecount& nFrames);
 
     /// Determine which timestamp in the project's timebase relates to
     /// a rendered frame timestamp (given an input frame rate)
     /// \param inputposition number of the rendered frame
     /// \param inputrate frame rate of rendering (thus, the rate that is embedded in a file)
     /// \return the related pts value when using the project's time base
-    static pts toProjectFrameRate(pts inputposition, FrameRate inputrate);
+    static pts toProjectFrameRate(const pts& inputposition, const FrameRate& inputrate);
 
     /// Determine which timestamp in the project's timebase relates to
     /// a rendered frame timestamp (given an input frame rate)
     /// \param outputposition number of the displayed frame (in project's frame rate timebase)
     /// \param inputrate frame rate of rendering (thus, the rate that is embedded in a file)
     /// \return the related to be decoded frame number
-    static pts fromProjectFrameRate(pts outputposition, FrameRate inputrate);
+    static pts fromProjectFrameRate(const pts& outputposition, const FrameRate& inputrate);
 
-    static int      scale(int input,        boost::rational<int> factor);
-    static wxSize   scale(wxSize input,     boost::rational<int> factor);
-    static wxPoint  scale(wxPoint input,    boost::rational<int> factor);
-    static wxRect   scale(wxRect input,     boost::rational<int> factor);
+    static int      scale(const int& input,        const boost::rational<int>& factor);
+    static wxSize   scale(const wxSize& input,     const boost::rational<int>& factor);
+    static wxPoint  scale(const wxPoint& input,    const boost::rational<int>& factor);
+    static wxRect   scale(const wxRect& input,     const boost::rational<int>& factor);
 
     /// Convert an input size to a size fitting entirely in a given bounding
     /// box. Width and height ratio is repected.
@@ -122,31 +122,31 @@ public:
     /// \param fill if true, then tries to fill the bounding box as much as possible (possibly clipping information). If false, then the entire frame is 'fit' inside the bounding box (possibly with black bands).
     /// \param[out] scaling used scaling by the algorithm
     /// \return maximum size fitting in bounding box with given width/height ratio
-    static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox, boost::rational<int>& scaling, bool fill = false);
-    static wxSize sizeInBoundingBox(wxSize input, wxSize boundingbox);
+    static wxSize sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox, boost::rational<int>& scaling, bool fill = false);
+    static wxSize sizeInBoundingBox(const wxSize& input, const wxSize &boundingbox);
 
     static double degreesToRadians(const boost::rational<int>& degrees);
 
-    static int doubleToInt(double x);
-    static int factorToDigits(boost::rational<int> number, int nDigits);
-    static boost::rational<int> digitsToFactor(int number, int nDigits);
+    static int doubleToInt(const double& x);
+    static int factorToDigits(const boost::rational<int>& number, const int& nDigits);
+    static boost::rational<int> digitsToFactor(const int& number, const int& nDigits);
 
     /// Convert a number of audio frames (data for all channels) to a number of samples (data for one channel)
     /// \param nFrames Number of audio frames
     /// \param nChannels Number of audio channels (speakers)
     /// \return number of required samples
-    static samplecount audioFramesToSamples(samplecount nFrames, int nChannels);
+    static samplecount audioFramesToSamples(const samplecount& nFrames, const int& nChannels);
 
     /// Convert a number of audio frames (data for all channels) to a number of bytes required to store this
     /// \param nFrames Number of audio frames
     /// \param nChannels Number of audio channels (speakers)
     /// \return number of required bytes
-    static samplecount audioFramesToBytes(samplecount nFrames, int nChannels);
+    static samplecount audioFramesToBytes(const samplecount& nFrames, const int& nChannels);
 
     /// Convert a number of audio samples (data for one speaker) to a number of bytes required to store this
     /// \param nSamples Number of audio samples
     /// \return number of required bytes
-    static samplecount audioSamplesToBytes(samplecount nSamples);
+    static samplecount audioSamplesToBytes(const samplecount& nSamples);
 };
 } // namespace
 
