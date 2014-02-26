@@ -74,7 +74,7 @@ wxPoint EvKey::getPosition() const
     return mPosition;
 }
 
-std::ostream& operator<< (std::ostream& os, const EvKey& obj)
+std::ostream& operator<<(std::ostream& os, const EvKey& obj)
 {
     os  << typeid(obj).name() << '|' // This typeid is required to distinguish the various 'react' methods
         << obj.mCtrlDown      << '|'

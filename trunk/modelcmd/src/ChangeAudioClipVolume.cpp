@@ -26,21 +26,21 @@ namespace model {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ChangeAudioClipVolume::ChangeAudioClipVolume(model::AudioClipPtr audioclip)
+ChangeAudioClipVolume::ChangeAudioClipVolume(const AudioClipPtr& audioclip)
     :   RootCommand()
     ,   mInitialized(false)
     ,   mAudioClip(audioclip)
     ,   mOldVolume(mAudioClip->getVolume())
     ,   mNewVolume(boost::none)
 {
-    mCommandName = _("Adjust volume for ") + audioclip->getDescription();    
+    mCommandName = _("Adjust volume for ") + audioclip->getDescription();
 }
 
 ChangeAudioClipVolume::~ChangeAudioClipVolume()
 {
 }
 
-void ChangeAudioClipVolume::setVolume(int volume)
+void ChangeAudioClipVolume::setVolume(const int& volume)
 {
     mNewVolume = boost::optional<int>(volume);
     mAudioClip->setVolume(volume);
@@ -90,7 +90,7 @@ model::AudioClipPtr ChangeAudioClipVolume::getAudioClip() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ChangeAudioClipVolume& obj )
+std::ostream& operator<<(std::ostream& os, const ChangeAudioClipVolume& obj)
 {
     os  << &obj << '|'
         << typeid(obj).name()    << '|'

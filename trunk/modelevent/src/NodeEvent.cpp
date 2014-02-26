@@ -33,13 +33,13 @@ DEFINE_EVENT(EVENT_RENAME_NODE,    EventRenameNode,   NodeWithNewName);
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ParentAndChildren::ParentAndChildren( NodePtr parent, NodePtrs children )
+ParentAndChildren::ParentAndChildren(const NodePtr& parent, const NodePtrs& children )
     :  mParent(parent)
     ,  mChildren(children)
 {
 }
 
-ParentAndChildren::ParentAndChildren( NodePtr parent, NodePtr child )
+ParentAndChildren::ParentAndChildren(const NodePtr& parent, const NodePtr& child )
     :  mParent(parent)
     ,  mChildren()
 {
@@ -70,7 +70,7 @@ NodePtr ParentAndChildren::getChild() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const ParentAndChildren& obj )
+std::ostream& operator<<(std::ostream& os, const ParentAndChildren& obj)
 {
     os << &obj << '|' << obj.mParent << '|' << obj.mChildren;
     return os;
@@ -80,7 +80,7 @@ std::ostream& operator<<( std::ostream& os, const ParentAndChildren& obj )
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-NodeWithNewName::NodeWithNewName( NodePtr node, wxString name )
+NodeWithNewName::NodeWithNewName(const NodePtr& node, const wxString& name )
     :   mNode(node)
     ,   mName(name)
 {
@@ -104,7 +104,7 @@ wxString NodeWithNewName::getName() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const NodeWithNewName& obj )
+std::ostream& operator<<(std::ostream& os, const NodeWithNewName& obj)
 {
     os << &obj << '|' << obj.mNode << '|' << obj.mName;
     return os;

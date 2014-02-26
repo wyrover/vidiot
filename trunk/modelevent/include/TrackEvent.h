@@ -60,7 +60,13 @@ struct MoveParameter
     MoveParameter();
 
     /// Helper constructor to initialize all members in one statement.
-    MoveParameter(TrackPtr _addTrack, IClipPtr _addPosition, IClips _addClips, TrackPtr _removeTrack = TrackPtr(), IClipPtr _removePosition = IClipPtr(), IClips _removeClips = IClips());
+    MoveParameter(
+        const TrackPtr& _addTrack,
+        const IClipPtr& _addPosition,
+        const IClips& _addClips,
+        const TrackPtr& _removeTrack = TrackPtr(),
+        const IClipPtr& _removePosition = IClipPtr(),
+        const IClips& _removeClips = IClips());
 
     /// Copy constructor
     MoveParameter(const MoveParameter& other);
@@ -70,7 +76,7 @@ struct MoveParameter
     MoveParameterPtr make_inverted();
 };
 
-std::ostream& operator<<( std::ostream& os, const MoveParameter& obj );
+std::ostream& operator<<(std::ostream& os, const MoveParameter& obj);
 
 DECLARE_EVENT(EVENT_ADD_CLIPS,          EventAddClips,              MoveParameter);
 DECLARE_EVENT(EVENT_REMOVE_CLIPS,       EventRemoveClips,           MoveParameter);

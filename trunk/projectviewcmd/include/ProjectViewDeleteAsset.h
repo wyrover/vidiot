@@ -26,7 +26,7 @@ namespace command {
 class ProjectViewDeleteAsset : public ProjectViewCommand
 {
 public:
-    ProjectViewDeleteAsset(model::NodePtrs nodes);
+    ProjectViewDeleteAsset(const model::NodePtrs& nodes);
     virtual ~ProjectViewDeleteAsset();
     bool Do() override;
     bool Undo() override;

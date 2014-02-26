@@ -30,7 +30,7 @@ namespace model { namespace render {
 OutputFormatList OutputFormats::sOutputFormats;
 
 // static
-void OutputFormats::add(OutputFormat format)
+void OutputFormats::add(const OutputFormat& format)
 {
     sOutputFormats.push_back(boost::make_shared<OutputFormat>(format));
 }
@@ -94,7 +94,7 @@ std::list<wxString> OutputFormats::getNames()
 }
 
 // static
-OutputFormatPtr OutputFormats::getByName(wxString name)
+OutputFormatPtr OutputFormats::getByName(const wxString& name)
 {
     for ( OutputFormatPtr format : sOutputFormats )
     {
@@ -107,7 +107,7 @@ OutputFormatPtr OutputFormats::getByName(wxString name)
 }
 
 // static
-OutputFormatPtr OutputFormats::getByExtension(wxString extension)
+OutputFormatPtr OutputFormats::getByExtension(const wxString& extension)
 {
     for ( OutputFormatPtr format : sOutputFormats )
     {

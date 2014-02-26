@@ -21,7 +21,7 @@
 
 namespace command {
 
-ProjectViewAddAsset::ProjectViewAddAsset(model::NodePtr parent, model::NodePtrs nodes)
+ProjectViewAddAsset::ProjectViewAddAsset(const model::NodePtr& parent, const model::NodePtrs& nodes)
 :   ProjectViewCommand()
 ,   mParent(parent)
 ,   mChildren(ProjectViewCommand::prune(nodes))

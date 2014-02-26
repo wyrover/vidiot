@@ -897,7 +897,7 @@ command::Drops Drag::getDrops(model::TrackPtr track)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const Drag& obj)
+std::ostream& operator<<(std::ostream& os, const Drag& obj)
 {
     os  << &obj                 << '|'
         << obj.mIsInsideDrag    << '|'
@@ -915,7 +915,7 @@ std::ostream& operator<< (std::ostream& os, const Drag& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const Drag::DragInfo& obj)
+std::ostream& operator<<(std::ostream& os, const Drag::DragInfo& obj)
 {
     os  << obj.mIsVideo     << '|'
         << obj.mOffset      << '|'

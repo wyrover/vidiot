@@ -65,7 +65,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<< (std::ostream& os, const ShiftParams& obj);
+    friend std::ostream& operator<<(std::ostream& os, const ShiftParams& obj);
 };
 
 typedef boost::shared_ptr<ShiftParams> Shift;

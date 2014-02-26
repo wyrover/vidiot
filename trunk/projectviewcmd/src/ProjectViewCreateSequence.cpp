@@ -31,7 +31,7 @@ namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder)
+ProjectViewCreateSequence::ProjectViewCreateSequence(const model::FolderPtr& folder)
     :   ProjectViewCommand()
     ,   mName(folder->getName())
     ,   mParent(findFirstNonAutoFolderParent(folder))
@@ -51,7 +51,7 @@ ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder)
     mCommandName = _("Create sequence from folder ") + mName;
 }
 
-ProjectViewCreateSequence::ProjectViewCreateSequence(model::FolderPtr folder, wxString name)
+ProjectViewCreateSequence::ProjectViewCreateSequence(const model::FolderPtr& folder, const wxString& name)
     :   ProjectViewCommand()
     ,   mName(name)
     ,   mParent(folder)
@@ -128,7 +128,7 @@ model::FolderPtr ProjectViewCreateSequence::getParent() const
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-model::FolderPtr ProjectViewCreateSequence::findFirstNonAutoFolderParent(model::NodePtr node) const
+model::FolderPtr ProjectViewCreateSequence::findFirstNonAutoFolderParent(const model::NodePtr& node) const
 {
     model::NodePtr parent = node->getParent();
     ASSERT(parent)(node);

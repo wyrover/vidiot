@@ -55,7 +55,7 @@ AudioComposition::~AudioComposition()
 // COMPOSITION
 //////////////////////////////////////////////////////////////////////////
 
-void AudioComposition::add(AudioChunkPtr chunk)
+void AudioComposition::add(const AudioChunkPtr& chunk)
 {
     if (chunk)
     {
@@ -149,7 +149,7 @@ bool AudioComposition::wasInputChunkReturnedAsOutput() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AudioComposition& obj )
+std::ostream& operator<<(std::ostream& os, const AudioComposition& obj)
 {
     os << &obj << '|' << obj.mChunks << '|' << obj.mInputChunkReturnedAsOutput;
     return os;

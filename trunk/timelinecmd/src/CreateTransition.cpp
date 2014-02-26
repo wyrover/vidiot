@@ -150,7 +150,7 @@ pts CreateTransition::getRightSize() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const CreateTransition& obj )
+std::ostream& operator<<(std::ostream& os, const CreateTransition& obj)
 {
     os << static_cast<const AClipEdit&>(obj) << '|' << obj.mLeft << '|' << obj.mRight << '|' << obj.mLeftSize << '|' << obj.mRightSize;
     return os;

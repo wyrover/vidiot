@@ -64,7 +64,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const TrimIntervals& obj );
+    friend std::ostream& operator<<(std::ostream& os, const TrimIntervals& obj);
 };
 }}} // namespace
 

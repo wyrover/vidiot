@@ -39,7 +39,7 @@ AudioCodec::AudioCodec()
 {
 }
 
-AudioCodec::AudioCodec(AVCodecID id)
+AudioCodec::AudioCodec(const AVCodecID& id)
     :   mId(id)
     ,   mParameters()
 {
@@ -170,7 +170,7 @@ bool AudioCodec::open(AVCodecContext* context) const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AudioCodec& obj )
+std::ostream& operator<<(std::ostream& os, const AudioCodec& obj)
 {
     os  << "AudioCodec:"
         << &obj    << '|'

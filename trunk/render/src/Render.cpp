@@ -47,7 +47,7 @@
 
 namespace model { namespace render {
 
-static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
+static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, const int& width, const int& height);
 
 //////////////////////////////////////////////////////////////////////////
 // RENDERING
@@ -56,7 +56,7 @@ static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height);
 class RenderWork : public worker::Work
 {
 public:
-    RenderWork(model::SequencePtr sequence, pts from, pts to)
+    RenderWork(const SequencePtr& sequence, const pts& from, const pts& to)
     :   worker::Work(boost::bind(&RenderWork::generate,this))
     ,   mSequence(sequence)
     ,   mFrom(from)
@@ -149,7 +149,7 @@ OutputFormatPtr Render::getOutputFormat() const
     return mOutputFormat;
 }
 
-void Render::setOutputFormat(OutputFormatPtr format)
+void Render::setOutputFormat(const OutputFormatPtr& format)
 {
     mOutputFormat = format;
 }
@@ -159,7 +159,7 @@ wxFileName Render::getFileName() const
     return mFileName;
 }
 
-void Render::setFileName(wxFileName filename)
+void Render::setFileName(const wxFileName& filename)
 {
     mFileName = filename;
 }
@@ -199,7 +199,7 @@ RenderPtr Render::withFileNameRemoved() const
 //////////////////////////////////////////////////////////////////////////
 
 // static
-void Render::schedule(SequencePtr sequence)
+void Render::schedule(const SequencePtr& sequence)
 {
     if (!sequence->getRender()->getSeparateAtCuts())
     {
@@ -235,7 +235,7 @@ void Render::schedule(SequencePtr sequence)
 }
 
 typedef std::list<SequencePtr> Sequences;
-void findSequences(FolderPtr node, Sequences& result)
+void findSequences(const FolderPtr& node, Sequences& result)
 {
     for ( NodePtr child : node->getChildren() )
     {
@@ -721,7 +721,7 @@ void RenderWork::generate()
     av_freep(&context);
 }
 
-static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
+static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, const int& width, const int& height)
 {
     AVFrame* picture = av_frame_alloc();
     ASSERT(picture);
@@ -737,7 +737,7 @@ static AVFrame *alloc_picture(enum PixelFormat pix_fmt, int width, int height)
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const Render& obj )
+std::ostream& operator<<(std::ostream& os, const Render& obj)
 {
     os  << &obj               << '|'
         << obj.mFileName      << '|'

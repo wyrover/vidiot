@@ -37,7 +37,7 @@ struct Drop
     model::TrackPtr track;
     pts position;
     model::IClips clips;     ///< Must be contiguous
-    friend std::ostream& operator<<( std::ostream& os, const Drop& obj );
+    friend std::ostream& operator<<(std::ostream& os, const Drop& obj);
     Drop();
     Drop(const Drop& other);
     virtual ~Drop();
@@ -117,7 +117,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ExecuteDrop& obj );
+    friend std::ostream& operator<<(std::ostream& os, const ExecuteDrop& obj);
 };
 
 }}} // namespace

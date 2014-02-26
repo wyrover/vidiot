@@ -151,7 +151,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const TrimClip& obj );
+    friend std::ostream& operator<<(std::ostream& os, const TrimClip& obj);
 };
 
 }}} // namespace

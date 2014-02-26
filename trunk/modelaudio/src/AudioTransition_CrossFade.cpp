@@ -65,7 +65,7 @@ struct Cache
     AudioChunkPtr mLeftChunk;
     AudioChunkPtr mRightChunk;
 
-    friend std::ostream& operator<<( std::ostream& os, const Cache& obj )
+    friend std::ostream& operator<<(std::ostream& os, const Cache& obj)
     {
         os << obj.mLastRenderedFrame << '|';
         if (obj.mLeftChunk)
@@ -97,7 +97,7 @@ void CrossFade::reset()
     mCache.reset();
 }
 
-AudioChunkPtr CrossFade::getAudio(samplecount position, IClipPtr leftClip, IClipPtr rightClip, const AudioCompositionParameters& parameters)
+AudioChunkPtr CrossFade::getAudio(const samplecount& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters)
 {
     if (!mCache)
     {
@@ -135,14 +135,15 @@ AudioChunkPtr CrossFade::getAudio(samplecount position, IClipPtr leftClip, IClip
     sample* dataLeft = mCache->mLeftChunk ? mCache->mLeftChunk->getUnreadSamples() : 0;
     sample* dataRight = mCache->mRightChunk ? mCache->mRightChunk->getUnreadSamples() : 0;
     sample* dataResult = result->getBuffer();
+    samplecount pos = position;
     for (samplecount i = 0; i < nSamples; ++i)
     {
-        float factorLeft = ((float)total - (float)position) / (float)total;
-        float factorRight = (float)position / (float)total;
+        float factorLeft = ((float)total - (float)pos) / (float)total;
+        float factorRight = (float)pos / (float)total;
         sample left = dataLeft ? dataLeft[i] : 0;
         sample right = dataRight ? dataRight[i] : 0;
         dataResult[i] = left * factorLeft + right * factorRight;
-        position++;
+        pos++;
     }
 
     if (mCache->mLeftChunk) { mCache->mLeftChunk->read(nSamples); }
@@ -158,7 +159,7 @@ AudioChunkPtr CrossFade::getAudio(samplecount position, IClipPtr leftClip, IClip
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const CrossFade& obj )
+std::ostream& operator<<(std::ostream& os, const CrossFade& obj)
 {
     os << static_cast<const AudioTransition&>(obj) << '|';
     if (obj.mCache)

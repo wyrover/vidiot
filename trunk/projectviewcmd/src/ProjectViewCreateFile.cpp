@@ -26,7 +26,7 @@
 
 namespace command {
 
-ProjectViewCreateFile::ProjectViewCreateFile(model::FolderPtr parent, std::vector<wxFileName> paths)
+ProjectViewCreateFile::ProjectViewCreateFile(const model::FolderPtr& parent, const std::vector<wxFileName>& paths)
 :   ProjectViewCommand()
 ,   mParent(parent)
 ,   mPaths(paths)

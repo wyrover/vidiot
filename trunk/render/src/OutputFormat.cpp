@@ -45,7 +45,7 @@ OutputFormat::OutputFormat()
     ASSERT(mFormat); // mFormat initialized by boost serialization
 }
 
-OutputFormat::OutputFormat(wxString name, wxString longname, std::list<wxString> extensions, AVCodecID defaultaudiocodec, AVCodecID defaultvideocodec)
+OutputFormat::OutputFormat(const wxString& name, const wxString& longname, const std::list<wxString>& extensions, const AVCodecID& defaultaudiocodec, const AVCodecID& defaultvideocodec)
     :   mName(name)
     ,   mLongName(longname)
     ,   mExtensions(extensions)
@@ -111,7 +111,7 @@ bool OutputFormat::operator== (const OutputFormat& other) const
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-OutputFormat& OutputFormat::setName(wxString name)
+OutputFormat& OutputFormat::setName(const wxString& name)
 {
     mName = name;
     return *this;
@@ -157,7 +157,7 @@ VideoCodecPtr OutputFormat::getVideoCodec() const
     return mVideoCodec;
 }
 
-void OutputFormat::setVideoCodec(VideoCodecPtr codec)
+void OutputFormat::setVideoCodec(const VideoCodecPtr& codec)
 {
     mVideoCodec = codec;
 }
@@ -167,7 +167,7 @@ AudioCodecPtr OutputFormat::getAudioCodec() const
     return mAudioCodec;
 }
 
-void OutputFormat::setAudioCodec(AudioCodecPtr codec)
+void OutputFormat::setAudioCodec(const AudioCodecPtr& codec)
 {
     mAudioCodec = codec;
 }
@@ -183,7 +183,7 @@ AVFormatContext* OutputFormat::getContext() const
     return context;
 }
 
-int OutputFormat::checkCodec(AVCodecID id) const
+int OutputFormat::checkCodec(const AVCodecID& id) const
 {
     if (id == CODEC_ID_NONE) { return 1; }
     ASSERT(mFormat);
@@ -196,7 +196,7 @@ int OutputFormat::checkCodec(AVCodecID id) const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const OutputFormat& obj )
+std::ostream& operator<<(std::ostream& os, const OutputFormat& obj)
 {
     os  << "OutputFormat:"
         << &obj                   << '|'

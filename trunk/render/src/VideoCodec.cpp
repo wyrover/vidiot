@@ -40,7 +40,7 @@ VideoCodec::VideoCodec()
 {
 }
 
-VideoCodec::VideoCodec(AVCodecID id)
+VideoCodec::VideoCodec(const AVCodecID& id)
     :   mId(id)
     ,   mParameters()
 {
@@ -171,7 +171,7 @@ bool VideoCodec::open(AVCodecContext* context) const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoCodec& obj )
+std::ostream& operator<<(std::ostream& os, const VideoCodec& obj)
 {
     os  << "VideoCodec:"
         << &obj    << '|'

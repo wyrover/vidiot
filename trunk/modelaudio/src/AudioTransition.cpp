@@ -125,7 +125,7 @@ samplecount AudioTransition::getTotalSamples(const AudioCompositionParameters& p
  // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AudioTransition& obj )
+std::ostream& operator<<(std::ostream& os, const AudioTransition& obj)
 {
     os << static_cast<const Transition&>(obj) << '|' << obj.mProgress;
     return os;

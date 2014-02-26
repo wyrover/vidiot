@@ -83,7 +83,7 @@ model::IClipPtr PointerPositionInfo::getLogicalClip() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const PointerPositionInfo& obj )
+std::ostream& operator<<(std::ostream& os, const PointerPositionInfo& obj)
 {
     os << &obj << '|' << obj.onAudioVideoDivider << '|' << obj.track << '|' << obj.trackPosition << '|' << obj.onTrackDivider << '|' << obj.clip << '|' << obj.logicalclipposition;
     return os;

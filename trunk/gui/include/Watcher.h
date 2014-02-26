@@ -112,7 +112,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     static wxString GetFSWEventChangeTypeName(const int& changeType);
-    friend std::ostream& operator<<( std::ostream& os, const Watcher& obj );
+    friend std::ostream& operator<<(std::ostream& os, const Watcher& obj);
 };
 
 } // namespace

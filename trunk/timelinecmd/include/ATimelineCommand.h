@@ -58,7 +58,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ATimelineCommand& obj );
+    friend std::ostream& operator<<(std::ostream& os, const ATimelineCommand& obj);
 };
 
 }}} // namespace

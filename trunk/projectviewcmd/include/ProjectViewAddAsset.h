@@ -29,7 +29,7 @@ public:
     /**
     * Add an existing asset which was removed/copied
     */
-    ProjectViewAddAsset(model::NodePtr parent, model::NodePtrs nodes);
+    ProjectViewAddAsset(const model::NodePtr& parent, const model::NodePtrs& nodes);
 
     virtual ~ProjectViewAddAsset();
     bool Do() override;

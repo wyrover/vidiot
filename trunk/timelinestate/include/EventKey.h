@@ -41,7 +41,7 @@ private:
     const wxChar mUnicodeKey;
     const wxPoint mPosition;
 
-    friend std::ostream& operator<< (std::ostream& os, const EvKey& obj);
+    friend std::ostream& operator<<(std::ostream& os, const EvKey& obj);
 };
 
 struct EvKeyDown

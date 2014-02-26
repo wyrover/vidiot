@@ -24,13 +24,13 @@ class OutputFormats
 {
 public:
     static void initialize();
-    static void add(OutputFormat format);
+    static void add(const OutputFormat& format);
 
     static OutputFormatList getList();
 
     static std::list<wxString> getNames();
-    static OutputFormatPtr getByName(wxString name);  ///< \return cloned default output format
-    static OutputFormatPtr getByExtension(wxString extension); ///< \return cloned output format to be used for given extension
+    static OutputFormatPtr getByName(const wxString& name);  ///< \return cloned default output format
+    static OutputFormatPtr getByExtension(const wxString& extension); ///< \return cloned output format to be used for given extension
 
     static OutputFormatPtr getDefault();
 

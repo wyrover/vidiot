@@ -44,12 +44,16 @@ struct TrackChange
     /// Helper constructor to initialize all members in one statement.
     /// Per default, when only supplying a list of tracks to be added, these
     /// are added to the end.
-    TrackChange(Tracks _addedTracks, TrackPtr _addPosition = TrackPtr(), Tracks _removedTracks = Tracks(), TrackPtr _removePosition = TrackPtr());
+    TrackChange(
+        const Tracks& _addedTracks,
+        const TrackPtr& _addPosition = TrackPtr(),
+        const Tracks& _removedTracks = Tracks(),
+        const TrackPtr& _removePosition = TrackPtr());
 
     /// Copy constructor
     TrackChange(const TrackChange& other);
 
-    friend std::ostream& operator<<( std::ostream& os, const TrackChange& obj );
+    friend std::ostream& operator<<(std::ostream& os, const TrackChange& obj);
 
     /// \return new object that is the inverse of this object.
     /// This means that all additions and removals are interchanged.

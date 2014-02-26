@@ -26,7 +26,7 @@ namespace command {
 class ProjectViewMoveAsset : public ProjectViewCommand
 {
 public:
-    ProjectViewMoveAsset(model::NodePtrs nodes, model::NodePtr parent);
+    ProjectViewMoveAsset(const model::NodePtrs& nodes, const model::NodePtr& parent);
     virtual ~ProjectViewMoveAsset();
     bool Do() override;
     bool Undo() override;

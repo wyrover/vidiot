@@ -50,7 +50,7 @@ VideoTransitionOpacity::~VideoTransitionOpacity()
 // IMPLEMENTATION OF TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoTransitionOpacity::getVideo(pts position, IClipPtr leftClip, IClipPtr rightClip, const VideoCompositionParameters& parameters)
+VideoFramePtr VideoTransitionOpacity::getVideo(const pts& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters)
 {
     VAR_DEBUG(position)(parameters);
     VideoFramePtr result = parameters.getSkip() ? boost::make_shared<VideoSkipFrame>(parameters) : boost::make_shared<VideoFrame>(parameters);
@@ -103,7 +103,7 @@ VideoFramePtr VideoTransitionOpacity::getVideo(pts position, IClipPtr leftClip, 
     return result;
 };
 
-void VideoTransitionOpacity::applyToAllPixels(wxImagePtr image, boost::function<float (int, int)> f) const
+void VideoTransitionOpacity::applyToAllPixels(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
 {
     // Each pixel done separately (existing alpha may be != max opacity)
     int opacityLineWidth = image->GetWidth();
@@ -119,7 +119,7 @@ void VideoTransitionOpacity::applyToAllPixels(wxImagePtr image, boost::function<
     }
 }
 
-void VideoTransitionOpacity::applyToFirstLineThenCopy(wxImagePtr image, boost::function<float (int, int)> f) const
+void VideoTransitionOpacity::applyToFirstLineThenCopy(const wxImagePtr& image, const boost::function<float (int, int)>& f) const
 {
     // Optimized for speed. Do one line, then copy that line.
     int opacityLineWidth = image->GetWidth();

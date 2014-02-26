@@ -47,7 +47,7 @@ public:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const DeleteSelectedClips& obj );
+    friend std::ostream& operator<<(std::ostream& os, const DeleteSelectedClips& obj);
 
 private:
 

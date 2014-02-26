@@ -38,7 +38,7 @@ public:
     // COMPOSITION
     //////////////////////////////////////////////////////////////////////////
 
-    void add(VideoFramePtr frame);
+    void add(const VideoFramePtr& frame);
 
     /// Render the composition
     /// \return composition of all input frames.
@@ -66,7 +66,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoComposition& obj );
+    friend std::ostream& operator<<(std::ostream& os, const VideoComposition& obj);
 
 };
 

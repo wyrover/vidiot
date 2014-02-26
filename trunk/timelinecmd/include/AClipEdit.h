@@ -345,7 +345,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const AClipEdit& obj );
+    friend std::ostream& operator<<(std::ostream& os, const AClipEdit& obj);
 };
 
 }}} // namespace

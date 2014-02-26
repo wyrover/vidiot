@@ -111,7 +111,7 @@ VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& pa
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoTransition& obj )
+std::ostream& operator<<(std::ostream& os, const VideoTransition& obj)
 {
     os << static_cast<const Transition&>(obj) << '|' << obj.mProgress;
     return os;

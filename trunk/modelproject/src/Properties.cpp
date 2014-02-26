@@ -36,7 +36,7 @@ Properties::Properties()
     VAR_DEBUG(this);
 }
 
-Properties::Properties(FrameRate fr)
+Properties::Properties(const FrameRate& fr)
 :   mFrameRate(fr)
 ,   mVideoWidth(100)
 ,   mVideoHeight(100)
@@ -81,7 +81,7 @@ render::RenderPtr Properties::getDefaultRender() const
     return make_cloned<render::Render>(mDefaultRender);
 }
 
-void Properties::setDefaultRender(render::RenderPtr render)
+void Properties::setDefaultRender(const render::RenderPtr& render)
 {
     mDefaultRender = make_cloned<render::Render>(render);
 }

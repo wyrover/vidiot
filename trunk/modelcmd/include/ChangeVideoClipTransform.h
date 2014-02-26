@@ -32,14 +32,14 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit ChangeVideoClipTransform(model::VideoClipPtr videoclip);
+    explicit ChangeVideoClipTransform(const VideoClipPtr& videoclip);
     virtual ~ChangeVideoClipTransform();
 
-    void setOpacity(int opacity);
-    void setScaling(VideoScaling scaling, boost::optional< boost::rational< int > > factor = boost::none);
-    void setRotation(boost::rational< int > rotation);
-    void setAlignment(VideoAlignment alignment);
-    void setPosition(wxPoint position);
+    void setOpacity(const int& opacity);
+    void setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor = boost::none);
+    void setRotation(const boost::rational< int >& rotation);
+    void setAlignment(const VideoAlignment& alignment);
+    void setPosition(const wxPoint& position);
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE
@@ -85,7 +85,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const ChangeVideoClipTransform& obj );
+    friend std::ostream& operator<<(std::ostream& os, const ChangeVideoClipTransform& obj);
 };
 
 } // namespace

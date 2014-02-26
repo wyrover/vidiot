@@ -50,7 +50,7 @@ public:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const FrameRate& obj );
+    friend std::ostream& operator<<(std::ostream& os, const FrameRate& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

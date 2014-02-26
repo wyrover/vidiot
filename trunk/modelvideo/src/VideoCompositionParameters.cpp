@@ -59,7 +59,7 @@ bool VideoCompositionParameters::operator==( const VideoCompositionParameters& o
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-VideoCompositionParameters& VideoCompositionParameters::setBoundingBox(wxSize boundingBox)
+VideoCompositionParameters& VideoCompositionParameters::setBoundingBox(const wxSize& boundingBox)
 {
     mBoundingBox = boundingBox;
     ASSERT_MORE_THAN_ZERO(mBoundingBox.GetWidth());
@@ -119,7 +119,7 @@ wxRect VideoCompositionParameters::getRequiredRectangle() const
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const VideoCompositionParameters& obj )
+std::ostream& operator<<(std::ostream& os, const VideoCompositionParameters& obj)
 {
     os << &obj << '|' << obj.mBoundingBox << '|' << obj.mDrawBoundingBox << '|' << obj.mOptimizeForQuality;
     return os;

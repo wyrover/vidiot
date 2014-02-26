@@ -30,7 +30,7 @@ public:
 
     VideoCodec();
 
-    explicit VideoCodec(AVCodecID id);
+    explicit VideoCodec(const AVCodecID& id);
 
     VideoCodec(const VideoCodec& other);
 
@@ -69,7 +69,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<<( std::ostream& os, const VideoCodec& obj );
+    friend std::ostream& operator<<(std::ostream& os, const VideoCodec& obj);
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

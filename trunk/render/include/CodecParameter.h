@@ -35,7 +35,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit CodecParameter(IDTYPE id)
+    explicit CodecParameter(const IDTYPE& id)
         :   mId(id)
         ,   mDefault(0)
         ,   mMinimum(std::numeric_limits<int>::max())
@@ -84,20 +84,20 @@ public:
     // BIT RATE
     //////////////////////////////////////////////////////////////////////////
 
-    inline CodecParameter& setDefault(TYPE value)
+    inline CodecParameter& setDefault(const TYPE& value)
     {
         mDefault = value;
         setValue(value);
         return *this;
     }
 
-    inline CodecParameter& setMinimum(TYPE value)
+    inline CodecParameter& setMinimum(const TYPE& value)
     {
         mMinimum = value;
         return *this;
     }
 
-    inline CodecParameter& setMaximum(TYPE value)
+    inline CodecParameter& setMaximum(const TYPE& value)
     {
         mMaximum = value;
         return *this;
@@ -123,7 +123,7 @@ public:
         return mMaximum;
     }
 
-    void setValue(TYPE value)
+    void setValue(const TYPE& value)
     {
         mValue = value;
         ASSERT_LESS_THAN_EQUALS(mValue,mMaximum);
@@ -160,12 +160,12 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    void log( std::ostream& os ) const override
+    void log(std::ostream& os) const override
     {
         os << *this;
     }
 
-    friend std::ostream& operator<<( std::ostream& os, const CodecParameter& obj )
+    friend std::ostream& operator<<(std::ostream& os, const CodecParameter& obj)
     {
         os << &obj << '|' << obj.mId << '|' << obj.mDefault << '|' << obj.mMinimum << '|' << obj.mMaximum << '|' << obj.mValue;
         return os;

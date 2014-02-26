@@ -23,7 +23,7 @@
 
 namespace command {
 
-ProjectViewDeleteAsset::ProjectViewDeleteAsset(model::NodePtrs nodes)
+ProjectViewDeleteAsset::ProjectViewDeleteAsset(const model::NodePtrs& nodes)
 :   ProjectViewCommand()
 ,   mPairs(ProjectViewCommand::makeParentAndChildPairs(nodes))
 {

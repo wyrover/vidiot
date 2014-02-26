@@ -36,7 +36,7 @@ public:
 
     /// Constructor used for tests.
     /// This constructor allows specifying the values used.
-    Properties(FrameRate fr);
+    Properties(const FrameRate& fr);
 
     virtual ~Properties();
 
@@ -54,7 +54,7 @@ public:
     render::RenderPtr getDefaultRender() const;
 
     /// Sets the default render to be a clone of the given render
-    void setDefaultRender(render::RenderPtr render);
+    void setDefaultRender(const render::RenderPtr& render);
 
 private:
 

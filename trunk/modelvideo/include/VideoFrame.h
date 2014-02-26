@@ -27,7 +27,7 @@ namespace model {
 class VideoCompositionParameters;
 
 typedef Fifo<VideoFramePtr> FifoVideo;
-std::ostream& operator<< (std::ostream& os, const VideoFramePtr obj);
+std::ostream& operator<<(std::ostream& os, const VideoFramePtr obj);
 
 /// Division of functionality between VideoFrame and VideoFrameLayer:
 /// VideoFrame holds
@@ -53,12 +53,12 @@ public:
     /// Initialization of a frame based on a generated wxImage (for instance, for
     /// compositing).
     /// \note ownership of the layer (and its pixel data) is taken over by the frame.
-    explicit VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayerPtr layer);
+    explicit VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayerPtr& layer);
 
     /// Initialization of a frame based on multiple layers (for instance, for
     /// compositing in case of a transition).
     /// \note ownership of the layers (and their pixel data) is taken over by the frame.
-    explicit VideoFrame(const VideoCompositionParameters& parameters, VideoFrameLayers layers);
+    explicit VideoFrame(const VideoCompositionParameters& parameters, const VideoFrameLayers& layers);
 
     /// Copy constructor. Use make_cloned for making deep copies of objects.
     /// \see make_cloned
@@ -75,7 +75,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     pts getPts() const;
-    void setPts(pts position);
+    void setPts(const pts& position);
 
     void setForceKeyFrame(bool force);
     bool getForceKeyFrame() const;
@@ -85,7 +85,7 @@ public:
     virtual VideoFrameLayers getLayers();
 
     /// Add a new layer (at the bottom)
-    void addLayer(VideoFrameLayerPtr layer);
+    void addLayer(const VideoFrameLayerPtr& layer);
 
     virtual wxImagePtr getImage() ;
 
@@ -117,7 +117,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    friend std::ostream& operator<< (std::ostream& os, const VideoFrame& obj);
+    friend std::ostream& operator<<(std::ostream& os, const VideoFrame& obj);
 };
 
 } // namespace

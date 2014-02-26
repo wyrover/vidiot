@@ -26,7 +26,7 @@ namespace command {
 class ProjectViewRenameAsset : public ProjectViewCommand
 {
 public:
-    ProjectViewRenameAsset(model::NodePtr node, wxString assetName);
+    ProjectViewRenameAsset(const model::NodePtr& node, const wxString& assetName);
     virtual ~ProjectViewRenameAsset();
     bool Do() override;
     bool Undo() override;

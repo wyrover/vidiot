@@ -22,7 +22,7 @@
 
 namespace command {
 
-ProjectViewMoveAsset::ProjectViewMoveAsset(model::NodePtrs nodes, model::NodePtr parent)
+ProjectViewMoveAsset::ProjectViewMoveAsset(const model::NodePtrs& nodes, const model::NodePtr& parent)
 :   ProjectViewCommand()
 ,   mNewParent(parent)
 ,   mPairs(ProjectViewCommand::makeParentAndChildPairs(nodes))

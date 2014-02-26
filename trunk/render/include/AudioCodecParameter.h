@@ -29,7 +29,7 @@ DECLAREENUM(AudioCodecParameterType, \
 template < class Archive >
 void registerAudioCodecParameterTypesForSerializaton(Archive& ar);
 
-wxString getHumanReadibleName(AudioCodecParameterType id);
+wxString getHumanReadibleName(const AudioCodecParameterType& id);
 
 // NOTE: If a parameter seems to be 'filled in' on the wrong AVCodecContext struct member, check for typos in the first parameter to the template instantiations below.
 

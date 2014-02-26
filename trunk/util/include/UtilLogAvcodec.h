@@ -30,16 +30,16 @@ enum AVCodecID;
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<< (std::ostream& os, const AVPixelFormat& obj);
-std::ostream& operator<< (std::ostream& os, const AVRational& obj);
-std::ostream& operator<< (std::ostream& os, const AVCodec* obj);
-std::ostream& operator<< (std::ostream& os, const AVCodecContext* obj);
-std::ostream& operator<< (std::ostream& os, const AVFormatContext* obj);
-std::ostream& operator<< (std::ostream& os, const AVStream* obj);
-std::ostream& operator<< (std::ostream& os, const AVPacket* obj);
-std::ostream& operator<< (std::ostream& os, const AVCodecID& obj);
-std::ostream& operator<< (std::ostream& os, const AVOutputFormat* obj);
-std::ostream& operator<< (std::ostream& os, const AVSampleFormat& obj);
+std::ostream& operator<<(std::ostream& os, const AVPixelFormat& obj);
+std::ostream& operator<<(std::ostream& os, const AVRational& obj);
+std::ostream& operator<<(std::ostream& os, const AVCodec* obj);
+std::ostream& operator<<(std::ostream& os, const AVCodecContext* obj);
+std::ostream& operator<<(std::ostream& os, const AVFormatContext* obj);
+std::ostream& operator<<(std::ostream& os, const AVStream* obj);
+std::ostream& operator<<(std::ostream& os, const AVPacket* obj);
+std::ostream& operator<<(std::ostream& os, const AVCodecID& obj);
+std::ostream& operator<<(std::ostream& os, const AVOutputFormat* obj);
+std::ostream& operator<<(std::ostream& os, const AVSampleFormat& obj);
 
 typedef std::pair<wxString, int> LevelString;
 

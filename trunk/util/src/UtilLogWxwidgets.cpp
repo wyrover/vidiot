@@ -19,19 +19,19 @@
 
 #define LOGENUMVALUE(value) case value: os << #value; break
 
-std::ostream& operator<< (std::ostream& os, const wxFileName& obj)
+std::ostream& operator<<(std::ostream& os, const wxFileName& obj)
 {
     os << obj.GetPath() << '|' << obj.GetName() << '|' << obj.GetExt();
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxPoint& obj)
+std::ostream& operator<<(std::ostream& os, const wxPoint& obj)
 {
     os << '(' << std::setfill(' ') << std::setw(6) << obj.x << ',' << std::setw(6) << obj.y << ')';
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxSize& obj)
+std::ostream& operator<<(std::ostream& os, const wxSize& obj)
 {
     os  << '('
         << obj.GetWidth()
@@ -41,7 +41,7 @@ std::ostream& operator<< (std::ostream& os, const wxSize& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxRect& obj)
+std::ostream& operator<<(std::ostream& os, const wxRect& obj)
 {
     os  << '('
         << obj.GetX()
@@ -55,7 +55,7 @@ std::ostream& operator<< (std::ostream& os, const wxRect& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
+std::ostream& operator<<(std::ostream& os, const wxKeyEvent& obj)
 {
     os  << obj.GetX() << '|'
         << obj.GetY() << '|'
@@ -65,7 +65,7 @@ std::ostream& operator<< (std::ostream& os, const wxKeyEvent& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxMouseEvent& obj)
+std::ostream& operator<<(std::ostream& os, const wxMouseEvent& obj)
 {
     os  << obj.GetX() << '|'
         << obj.GetY() << '|'
@@ -73,7 +73,7 @@ std::ostream& operator<< (std::ostream& os, const wxMouseEvent& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxKeyCode& obj)
+std::ostream& operator<<(std::ostream& os, const wxKeyCode& obj)
 {
     switch (obj)
     {
@@ -205,7 +205,7 @@ std::ostream& operator<< (std::ostream& os, const wxKeyCode& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxKeyboardState& obj)
+std::ostream& operator<<(std::ostream& os, const wxKeyboardState& obj)
 {
     os  << (obj.ControlDown()   ? 'C' : '_' )
         << (obj.AltDown()       ? 'A' : '_' )
@@ -215,7 +215,7 @@ std::ostream& operator<< (std::ostream& os, const wxKeyboardState& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxRegion& obj)
+std::ostream& operator<<(std::ostream& os, const wxRegion& obj)
 {
     wxRegionIterator it(obj);
     os << '{';
@@ -228,7 +228,7 @@ std::ostream& operator<< (std::ostream& os, const wxRegion& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxCompositionMode& obj)
+std::ostream& operator<<(std::ostream& os, const wxCompositionMode& obj)
 {
     switch (obj)
     {
@@ -253,7 +253,7 @@ std::ostream& operator<< (std::ostream& os, const wxCompositionMode& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxInterpolationQuality& obj)
+std::ostream& operator<<(std::ostream& os, const wxInterpolationQuality& obj)
 {
     switch (obj)
     {
@@ -269,7 +269,7 @@ std::ostream& operator<< (std::ostream& os, const wxInterpolationQuality& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxAntialiasMode& obj)
+std::ostream& operator<<(std::ostream& os, const wxAntialiasMode& obj)
 {
     switch (obj)
     {
@@ -282,7 +282,7 @@ std::ostream& operator<< (std::ostream& os, const wxAntialiasMode& obj)
     return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const wxGraphicsContext& obj)
+std::ostream& operator<<(std::ostream& os, const wxGraphicsContext& obj)
 {
     os  << obj.GetCompositionMode()         << '|'
         << obj.GetInterpolationQuality()    << '|'

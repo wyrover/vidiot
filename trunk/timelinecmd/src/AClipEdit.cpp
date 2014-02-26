@@ -941,7 +941,7 @@ void AClipEdit::removeEmptyClipsAtEndOfTracks()
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<( std::ostream& os, const AClipEdit& obj )
+std::ostream& operator<<(std::ostream& os, const AClipEdit& obj)
 {
     os << static_cast<const ATimelineCommand&>(obj);
     return os;
