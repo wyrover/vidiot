@@ -30,7 +30,7 @@ namespace model {
 
 const int TAB_WIDTH = 2;
 
-std::ostream& dump(std::ostream& os, const SequencePtr& sequence, const int& depth)
+std::ostream& dump(std::ostream& os, const SequencePtr& sequence, int depth)
 {
     wxString tab(' ', depth * TAB_WIDTH);
     os << std::endl << "Sequence:";
@@ -51,7 +51,7 @@ std::ostream& dump(std::ostream& os, const SequencePtr& sequence, const int& dep
     return os;
 }
 
-std::ostream& dump(std::ostream& os, const TrackPtr& track, const int& depth)
+std::ostream& dump(std::ostream& os, const TrackPtr& track, int depth)
 {
     wxString tab(' ', depth * TAB_WIDTH);
     os << std::endl << tab;
@@ -67,7 +67,7 @@ std::ostream& dump(std::ostream& os, const TrackPtr& track, const int& depth)
     return os;
 }
 
-std::ostream& dump(std::ostream& os, const IClipPtr& clip, const int& depth)
+std::ostream& dump(std::ostream& os, const IClipPtr& clip, int depth)
 {
     wxString tab(' ', depth * TAB_WIDTH);
     os << std::endl << tab;

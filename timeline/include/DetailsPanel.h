@@ -48,7 +48,7 @@ protected:
     // INTERFACE TOWARDS ACTUAL DETAILS VIEWS
     //////////////////////////////////////////////////////////////////////////
 
-    void requestShow(bool show, wxString title = "");
+    void requestShow(bool show, const wxString& title = "");
 
     void addBox(const wxString& name);
 

@@ -77,7 +77,7 @@ public:
     wxPoint getMinPosition();
     wxPoint getMaxPosition();
 
-    void setOpacity(const int& opacity);
+    void setOpacity(int opacity);
     void setScaling(const VideoScaling& scaling, const boost::optional< boost::rational< int > >& factor = boost::none);
     void setRotation(const boost::rational< int >& rotation);
     void setAlignment(const VideoAlignment& alignment);

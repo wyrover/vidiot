@@ -64,7 +64,7 @@ public:
     /// \param parent containing window (timelinesview)
     /// \param sequence sequence to be shown
     /// \param beginTransacted if true, begins in 'transaction' mode (no screen updates generated yet).
-    Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTransacted = false);
+    Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool beginTransacted = false);
     virtual ~Timeline();
 
     //////////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ public:
     // DRAWING
     //////////////////////////////////////////////////////////////////////////
 
-    void onPaint( wxPaintEvent &event );
+    void onPaint(wxPaintEvent &event);
 
     /// Draw a vertical line over the entire timeline
     /// \param dc device context to be used

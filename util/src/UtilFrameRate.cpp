@@ -32,16 +32,16 @@ const std::vector<FrameRateEntry> sPossibleFrameRates = boost::assign::tuple_lis
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-FrameRate::FrameRate(int64_t num, int64_t den)
+FrameRate::FrameRate(const int64_t& num, const int64_t& den)
     :   rational64(num,den)
     {
 }
-FrameRate::FrameRate(AVRational avr)
+FrameRate::FrameRate(const AVRational& avr)
     :   rational64(avr.num,avr.den)
 {
 }
 
-FrameRate::FrameRate(wxString framerate)
+FrameRate::FrameRate(const wxString& framerate)
     :   rational64(FrameRate::s25p) // Default value. Only used if the given framerate is unknown.
 {
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)

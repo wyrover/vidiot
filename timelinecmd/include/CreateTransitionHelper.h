@@ -26,7 +26,7 @@ namespace gui { namespace timeline { namespace command {
 /// \param clip the transition must apply to this clip
 /// \param type the direction of the transition
 /// \param transition the transition effect
-void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionType type, model::TransitionPtr transition);
+void createTransition(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionType& type, const model::TransitionPtr& transition);
 
 }}} // namespace
 

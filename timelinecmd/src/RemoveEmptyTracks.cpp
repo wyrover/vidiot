@@ -29,7 +29,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-RemoveEmptyTracks::RemoveEmptyTracks(model::SequencePtr sequence)
+RemoveEmptyTracks::RemoveEmptyTracks(const model::SequencePtr& sequence)
     :   ATimelineCommand(sequence)
     ,   mInitialized(false)
 {
@@ -45,13 +45,13 @@ RemoveEmptyTracks::~RemoveEmptyTracks()
 // EVENTS FROM SEQUENCE
 //////////////////////////////////////////////////////////////////////////
 
-void RemoveEmptyTracks::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
+void RemoveEmptyTracks::onVideoTracksRemoved(model::EventRemoveVideoTracks& event )
 {
     mVideoUndo.push_back(event.getValue().make_inverted());
     event.Skip();
 }
 
-void RemoveEmptyTracks::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
+void RemoveEmptyTracks::onAudioTracksRemoved(model::EventRemoveAudioTracks& event )
 {
     mAudioUndo.push_back(event.getValue().make_inverted());
     event.Skip();

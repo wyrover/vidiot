@@ -164,7 +164,7 @@ AudioChunkPtr AudioClip::getNextAudio(const AudioCompositionParameters& paramete
 // AUDIOCLIP
 //////////////////////////////////////////////////////////////////////////
 
-void AudioClip::setVolume(const int& volume)
+void AudioClip::setVolume(int volume)
 {
     if (volume != mVolume)
     {

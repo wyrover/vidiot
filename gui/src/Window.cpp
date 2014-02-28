@@ -467,7 +467,7 @@ void Window::QueueModelEvent( wxEvent* event )
     GetEventHandler()->QueueEvent(event);
 }
 
-void Window::onOpenProject( model::EventOpenProject &event )
+void Window::onOpenProject(model::EventOpenProject &event )
 {
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(mMenuEdit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
@@ -479,14 +479,14 @@ void Window::onOpenProject( model::EventOpenProject &event )
     event.Skip();
 }
 
-void Window::onCloseProject( model::EventCloseProject &event )
+void Window::onCloseProject(model::EventCloseProject &event )
 {
     updateTitle();
     mWorker->abort();
     event.Skip();
 }
 
-void Window::onRenameProject( model::EventRenameProject &event )
+void Window::onRenameProject(model::EventRenameProject &event )
 {
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());

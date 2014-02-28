@@ -107,10 +107,10 @@ struct WaitForChildCount
     WaitForChildCount(model::NodePtr, int count);
     virtual ~WaitForChildCount();
 
-    void onNodeAdded( model::EventAddNode &event );
-    void onNodesAdded( model::EventAddNodes &event );
-    void onNodeRemoved( model::EventRemoveNode &event );
-    void onNodesRemoved( model::EventRemoveNodes &event );
+    void onNodeAdded(model::EventAddNode &event );
+    void onNodesAdded(model::EventAddNodes &event );
+    void onNodeRemoved(model::EventRemoveNode &event );
+    void onNodesRemoved(model::EventRemoveNodes &event );
 
 private:
 

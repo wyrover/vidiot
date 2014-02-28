@@ -73,7 +73,7 @@ File::File()
     VAR_DEBUG(this);
 }
 
-File::File(const wxFileName& path, const int& buffersize)
+File::File(const wxFileName& path, int buffersize)
     :	IFile()
     ,   Node()
     // Attributes
@@ -213,7 +213,7 @@ pts File::getLength() const
     return mNumberOfFrames;
 }
 
-void File::moveTo(const pts& position)
+void File::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
     openFile(); // Needed for avcodec calls below

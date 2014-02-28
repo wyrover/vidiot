@@ -51,7 +51,7 @@ ChangeVideoClipTransform::~ChangeVideoClipTransform()
 {
 }
 
-void ChangeVideoClipTransform::setOpacity(const int& opacity)
+void ChangeVideoClipTransform::setOpacity(int opacity)
 {
     mNewOpacity = boost::optional<int>(opacity);
     mVideoClip->setOpacity(opacity);

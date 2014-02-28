@@ -69,7 +69,7 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
     PointerPositionInfo infoUp = getMouse().getInfo(getMouse().getVirtualPosition());
     if (infoDown.clip == infoUp.clip)
     {
-        getMenuHandler().Popup(getMouse().getRightDownPosition());
+        getMenuHandler().popup(getMouse().getRightDownPosition());
     }
     return transit<Idle>();
 }

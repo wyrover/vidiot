@@ -118,56 +118,56 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SPACE:     
-        return start();                                                          
+    case WXK_SPACE:
+        return start();
         break;
-    case WXK_DELETE:    
-        getSelection().deleteClips();                                            
+    case WXK_DELETE:
+        getSelection().deleteClips();
         break;
     case WXK_F1:
-        getTooltip().show(sTooltip);                                                                            
+        getTooltip().show(sTooltip);
         break;
     case 'b':
-    case 'B':           
-        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), true));   
+    case 'B':
+        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), true));
         break;
     case 'e':
-    case 'E':           
-        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), false));  
+    case 'E':
+        model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), false));
         break;
     case 'c':
-    case 'C':           
-        addTransition(model::TransitionTypeInOut);                                                              
+    case 'C':
+        addTransition(model::TransitionTypeInOut);
         break;
     case 'i':
-    case 'I':           
-        addTransition(model::TransitionTypeIn);                                                                 
+    case 'I':
+        addTransition(model::TransitionTypeIn);
         break;
     case 'o':
-    case 'O':           
-        addTransition(model::TransitionTypeOut);                                 
+    case 'O':
+        addTransition(model::TransitionTypeOut);
         break;
     case 's':
-    case 'S':           
-        model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));                
+    case 'S':
+        model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));
         break;
-    case '-':           
-        getZoom().change( evt.getCtrlDown() ? -1000 : -1);                       
+    case '-':
+        getZoom().change( evt.getCtrlDown() ? -1000 : -1);
         break;
-    case '=':           
-        getZoom().change( evt.getCtrlDown() ?  1000 :  1);                       
+    case '=':
+        getZoom().change( evt.getCtrlDown() ?  1000 :  1);
         break;
-    case WXK_LEFT:      
-        evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();     
+    case WXK_LEFT:
+        evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();
         break;
-    case WXK_RIGHT:     
-        evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame();     
+    case WXK_RIGHT:
+        evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame();
         break;
-    case WXK_HOME:      
-        getCursor().home();                                                      
+    case WXK_HOME:
+        getCursor().home();
         break;
-    case WXK_END:       
-        getCursor().end();                                                       
+    case WXK_END:
+        getCursor().end();
         break;
     }
     return forward_event();
@@ -310,7 +310,7 @@ void Idle::addTransition(model::TransitionType type)
         {
             // The parameter value TransitionTypeInOut indicates 'a crossfade'. Use the correct crossfade
             // (which begin and end clips to use) based on the logical clip position.
-            type = type = model::TransitionTypeOutIn;
+            type = model::TransitionTypeOutIn;
         }
 
         ASSERT(info.track);

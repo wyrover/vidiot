@@ -49,7 +49,7 @@ public:
     void play();
     void play_pause();
     void stop();
-    void moveTo(const pts& position);
+    void moveTo(pts position);
 
     void show(const wxBitmapPtr& bitmap);
 
@@ -96,8 +96,8 @@ private:
     void startEdit();
     void endEdit();
 
-    void onSpeedSliderFocusKill(wxFocusEvent& event );
-    void onSpeedSliderUpdate( wxCommandEvent& event );
+    void onSpeedSliderFocusKill(wxFocusEvent& event);
+    void onSpeedSliderUpdate( wxCommandEvent& event);
     void onIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event);
     void onLeftDown(wxMouseEvent& event);
 

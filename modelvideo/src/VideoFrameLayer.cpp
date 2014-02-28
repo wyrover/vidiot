@@ -76,7 +76,7 @@ wxPoint VideoFrameLayer::getPosition() const
     return mPosition;
 }
 
-void VideoFrameLayer::setOpacity(const int& opacity)
+void VideoFrameLayer::setOpacity(int opacity)
 {
     ASSERT(mImage);
     if (mImage->HasAlpha())
@@ -92,7 +92,7 @@ int VideoFrameLayer::getOpacity() const
     return mOpacity;
 }
 
-void VideoFrameLayer::setRotation(const boost::rational<int>& rotation)
+void VideoFrameLayer::setRotation(boost::rational<int> rotation)
 {
     if (rotation != boost::rational<int>(0,1))
     {

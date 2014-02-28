@@ -86,8 +86,8 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     void setProcessingText(const wxString& text = "");
-    void showProgressBar(const int& max);
-    void showProgress(const int& value);
+    void showProgressBar(int max);
+    void showProgress(int value);
     void hideProgressBar();
 
 };

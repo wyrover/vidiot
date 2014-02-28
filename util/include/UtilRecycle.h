@@ -23,7 +23,7 @@ namespace util { namespace path {
 /// Move a file to the recycle bin/trash
 /// \param file file to be deleted
 /// \return true if recycling succeeded
-bool recycle(wxString file);
+bool recycle(const wxString& file);
 
 }} // namespace
 

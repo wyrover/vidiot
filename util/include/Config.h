@@ -46,7 +46,7 @@ public:
 
     Config(const wxString& appName, const wxString& vendorName, const wxString& localFilename);
 
-    static void init(wxString applicationName, wxString vendorName, bool inCxxTestMode);
+    static void init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode);
 
     static wxString getFileName();
 
@@ -71,9 +71,9 @@ public:
     }
 
     static void WriteBool(const wxString& key, bool value);
-    static void WriteLong(const wxString& key, long value);
+    static void WriteLong(const wxString& key, const long& value);
     static void WriteDouble(const wxString& key, double value);
-    static void WriteString(const wxString& key, wxString value);
+    static void WriteString(const wxString& key, const wxString& value);
 
     static void OnWrite(const wxString& key);
 
@@ -90,10 +90,10 @@ public:
     struct WorkspacePerspectives
     {
         static Perspectives get();
-        static void add(wxString name, wxString perspective);
-        static void remove(wxString name);
+        static void add(const wxString& name, const wxString& perspective);
+        static void remove(const wxString& name);
         static void removeAll();
-        static void save(Perspectives perspectives);
+        static void save(const Perspectives& perspectives);
     };
 
     //////////////////////////////////////////////////////////////////////////

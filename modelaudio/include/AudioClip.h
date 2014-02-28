@@ -64,7 +64,7 @@ public:
     // AUDIOCLIP
     //////////////////////////////////////////////////////////////////////////
 
-    void setVolume(const int& volume);
+    void setVolume(int volume);
     int getVolume() const;
 
 protected:

@@ -36,7 +36,7 @@ public:
 
     /// Add elements to the set
     /// \param added elements to be added
-    void addElements(ELEMENTS added)
+    void addElements(const ELEMENTS& added)
     {
         mSet.insert(added.begin(),added.end());
         VAR_DEBUG(added)(mSet);
@@ -44,14 +44,14 @@ public:
 
     /// Add one element to the set
     /// \param add element to be added
-    void addElement(ELEMENT add)
+    void addElement(const ELEMENT& add)
     {
         mSet.insert(add);
         VAR_DEBUG(add)(mSet);
     }
 
     /// \param removed elements to be removed
-    void removeElements(ELEMENTS removed)
+    void removeElements(const ELEMENTS& removed)
     {
         mSet.erase(removed.begin(),removed.end());
         VAR_DEBUG(removed)(mSet);
@@ -59,7 +59,7 @@ public:
 
     /// Add elements from the list to the set
     /// \param set the set of elements to be added
-    void addElements(std::list<ELEMENT> list)
+    void addElements(const std::list<ELEMENT>& list)
     {
         mSet.insert(list.begin(),list.end());
     }

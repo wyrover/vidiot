@@ -82,11 +82,11 @@ public:
     ~DropTarget()
     {
     }
-    wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def)
+    wxDragResult OnData (wxCoord x, wxCoord y, wxDragResult def) override
     {
         return def;
     };
-    wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def)
+    wxDragResult OnEnter (wxCoord x, wxCoord y, wxDragResult def) override
     {
         getMouse().dragMove(wxPoint(x,y));
         model::NodePtrs nodes = ProjectViewDropSource::get().getData().getAssets();
@@ -107,7 +107,7 @@ public:
         }
         return wxDragNone;
     }
-    wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def)
+    wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def) override
     {
         getMouse().dragMove(wxPoint(x,y));
         if (mOk)
@@ -117,13 +117,13 @@ public:
         }
         return wxDragNone;
     }
-    bool OnDrop (wxCoord x, wxCoord y)
+    bool OnDrop (wxCoord x, wxCoord y) override
     {
         getMouse().dragMove(wxPoint(x,y));
         getStateMachine().process_event(state::EvDragDrop());
         return true;
     }
-    void OnLeave()
+    void OnLeave() override
     {
         ProjectViewDropSource::get().setFeedback(true);
         getStateMachine().process_event(state::EvDragEnd());
@@ -179,7 +179,7 @@ Drag::~Drag()
 // START/STOP
 //////////////////////////////////////////////////////////////////////////
 
-void Drag::start(wxPoint hotspot, bool isInsideDrag)
+void Drag::start(const wxPoint& hotspot, bool isInsideDrag)
 {
     PointerPositionInfo info = getMouse().getInfo(hotspot);
 
@@ -374,7 +374,7 @@ bool Drag::isActive() const
     return mActive;
 }
 
-bool Drag::contains(model::IClipPtr clip) const
+bool Drag::contains(const model::IClipPtr& clip) const
 {
     ASSERT(mCommand);
     return mCommand->getDrags().find(clip) != mCommand->getDrags().end();
@@ -564,7 +564,7 @@ model::TrackPtr Drag::DragInfo::getTempTrack()
     return mTempTrack;
 }
 
-void Drag::DragInfo::setTempTrack(model::TrackPtr track)
+void Drag::DragInfo::setTempTrack(const model::TrackPtr& track)
 {
     if (mTempTrack)
     {
@@ -575,7 +575,7 @@ void Drag::DragInfo::setTempTrack(model::TrackPtr track)
     new TrackView(mTempTrack, mView);
 }
 
-model::TrackPtr Drag::DragInfo::trackOnTopOf(model::TrackPtr track)
+model::TrackPtr Drag::DragInfo::trackOnTopOf(const model::TrackPtr& track)
 {
     VAR_DEBUG(track);
     model::TrackPtr draggedTrack;
@@ -596,7 +596,7 @@ model::TrackPtr Drag::DragInfo::trackOnTopOf(model::TrackPtr track)
     return draggedTrack;
 }
 
-model::TrackPtr Drag::DragInfo::trackUnder(model::TrackPtr draggedtrack)
+model::TrackPtr Drag::DragInfo::trackUnder(const model::TrackPtr& draggedtrack)
 {
     VAR_DEBUG(draggedtrack);
     model::TrackPtr track;
@@ -639,27 +639,27 @@ void Drag::reset()
     mShift.reset();
 }
 
-model::TrackPtr Drag::trackOnTopOf(model::TrackPtr track)
+model::TrackPtr Drag::trackOnTopOf(const model::TrackPtr& track)
 {
     return getAssociatedInfo(track).trackOnTopOf(track);
 }
 
-model::TrackPtr Drag::trackUnder(model::TrackPtr draggedtrack)
+model::TrackPtr Drag::trackUnder(const model::TrackPtr& draggedtrack)
 {
     return getAssociatedInfo(draggedtrack).trackUnder(draggedtrack);
 }
 
-Drag::DragInfo& Drag::getAssociatedInfo(model::TrackPtr track)
+Drag::DragInfo& Drag::getAssociatedInfo(const model::TrackPtr& track)
 {
     return track->isA<model::VideoTrack>() ? mVideo : mAudio;
 }
 
-void Drag::updateOffset(model::TrackPtr trackUnderPointer)
+void Drag::updateOffset(const model::TrackPtr& trackUnderPointer)
 {
     getAssociatedInfo(trackUnderPointer).updateOffset(trackUnderPointer->getIndex(), mDraggedTrack->getIndex());
 }
 
-void Drag::updateDraggedTrack(model::TrackPtr track)
+void Drag::updateDraggedTrack(const model::TrackPtr& track)
 {
     if (track)
     {
@@ -851,7 +851,7 @@ void Drag::determineShift()
     }
 }
 
-command::Drops Drag::getDrops(model::TrackPtr track)
+command::Drops Drag::getDrops(const model::TrackPtr& track)
 {
     command::Drops drops;
     model::TrackPtr draggedTrack = trackOnTopOf(track);

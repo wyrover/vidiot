@@ -38,7 +38,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    ClipView(model::IClipPtr clip, View* parent);
+    ClipView(const model::IClipPtr& clip, View* parent);
     virtual ~ClipView();
 
     //////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ public:
 
     pixel getShift() const;          ///< \return shift to accommocate repositioning during shift-drag
 
-    void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
+    void getPositionInfo(const wxPoint& position, PointerPositionInfo& info) const;
 
     void update();
 
@@ -76,15 +76,15 @@ public:
     // DRAW
     //////////////////////////////////////////////////////////////////////////
 
-    void drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const;
+    void drawForDragging(const wxPoint& position, int height, wxDC& dc, wxDC& dcMask) const;
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onClipDragged( model::EventDragClip& event );
-    void onClipSelected( model::EventSelectClip& event );
-    void onGenerationProgress( model::DebugEventRenderProgress& event );
+    void onClipDragged(model::EventDragClip& event);
+    void onClipSelected(model::EventSelectClip& event);
+    void onGenerationProgress( model::DebugEventRenderProgress& event);
 
 private:
 

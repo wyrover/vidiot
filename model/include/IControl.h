@@ -37,7 +37,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength() const = 0;
-    virtual void moveTo(const pts& position) = 0;
+    virtual void moveTo(pts position) = 0;
     virtual wxString getDescription() const = 0; ///< Not called getName() to avoid conflict with Node::getName() for the Sequence class.
     virtual void clean() = 0;                    ///< Will be called to clean up resources. Used for minimizing required resources for the undo history.
 };

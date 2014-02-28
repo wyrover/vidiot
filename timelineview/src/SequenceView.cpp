@@ -176,7 +176,7 @@ const AudioView& SequenceView::getAudio() const
     return *mAudioView;
 }
 
-void SequenceView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
+void SequenceView::getPositionInfo(const wxPoint& position, PointerPositionInfo& info ) const
 {
     if (position.y < getSequence()->getDividerPosition())
     {

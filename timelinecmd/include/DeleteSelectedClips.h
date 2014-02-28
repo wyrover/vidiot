@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit DeleteSelectedClips(model::SequencePtr sequence, bool shift = false);
+    explicit DeleteSelectedClips(const model::SequencePtr& sequence, bool shift = false);
 
     virtual ~DeleteSelectedClips();
 

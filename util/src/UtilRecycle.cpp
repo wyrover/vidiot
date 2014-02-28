@@ -37,7 +37,7 @@ namespace util { namespace path {
 
 #ifdef _MSC_VER
 
-bool recycle(wxString file)
+bool recycle(const wxString& file)
 {
     SHFILEOPSTRUCT params;
     memset(&params,0,sizeof(SHFILEOPSTRUCT));

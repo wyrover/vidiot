@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    SplitAtCursor(model::SequencePtr sequence);
+    SplitAtCursor(const model::SequencePtr& sequence);
 
     virtual ~SplitAtCursor();
 

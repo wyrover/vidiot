@@ -50,7 +50,7 @@ VideoTransitionOpacity::~VideoTransitionOpacity()
 // IMPLEMENTATION OF TRANSITION
 //////////////////////////////////////////////////////////////////////////
 
-VideoFramePtr VideoTransitionOpacity::getVideo(const pts& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters)
+VideoFramePtr VideoTransitionOpacity::getVideo(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters)
 {
     VAR_DEBUG(position)(parameters);
     VideoFramePtr result = parameters.getSkip() ? boost::make_shared<VideoSkipFrame>(parameters) : boost::make_shared<VideoFrame>(parameters);

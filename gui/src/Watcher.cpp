@@ -357,7 +357,7 @@ std::ostream& operator<<(std::ostream& os, const Watcher& obj)
 }
 
 // static
-wxString Watcher::GetFSWEventChangeTypeName(const int& changeType)
+wxString Watcher::GetFSWEventChangeTypeName(int changeType)
 {
     switch (changeType)
     {

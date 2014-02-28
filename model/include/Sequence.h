@@ -77,7 +77,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength() const override;
-    virtual void moveTo(const pts& position) override;
+    virtual void moveTo(pts position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 
@@ -106,11 +106,11 @@ public:
     Tracks getAudioTracks();
     Tracks getTracks();
 
-    TrackPtr getVideoTrack(const int& index);
-    TrackPtr getAudioTrack(const int& index);
+    TrackPtr getVideoTrack(int index);
+    TrackPtr getAudioTrack(int index);
 
     pixel getDividerPosition() const;
-    void setDividerPosition(const pixel& position);
+    void setDividerPosition(pixel position);
 
     std::set<IClipPtr> getSelectedClips();
 
@@ -122,7 +122,7 @@ public:
     /// Each begin and end of a clip is returned as a clip. Note that this includes the begin and end of each transition, but not (yet) the cut 'under' the transition.
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>());
 
-    bool isEmptyAt(const pts& position ) const; ///< \return true if the sequence holds only emptyness at the given position
+    bool isEmptyAt(pts position ) const; ///< \return true if the sequence holds only emptyness at the given position
 
     void onTrackLengthChanged(EventLengthChanged& event);
 

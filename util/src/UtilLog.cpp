@@ -173,7 +173,7 @@ Log::~Log()
     sWriter->write(os.str());
 }
 
-void Log::setReportingLevel(LogLevel level)
+void Log::setReportingLevel(const LogLevel& level)
 {
     ASSERT_LESS_THAN(level,LogLevel_MAX);
     sReportingLevel = level;
@@ -225,7 +225,7 @@ static int lastline;
 static std::string lastfile;
 #endif
 
-std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
+std::ostringstream& Log::get(const LogLevel& level, const char* p_szFileName, const size_t& p_lLine, const char* p_szFunction)
 {
     // NOTE: Ensure the same width for the strings below.
     static const char* levelstring[] =
@@ -255,7 +255,7 @@ std::ostringstream& Log::get(LogLevel level, const char* p_szFileName, size_t p_
     return os;
 }
 
-std::ostringstream& Log::get(std::string category)
+std::ostringstream& Log::get(const std::string& category)
 {
     os << wxDateTime::UNow().Format(wxT("%d-%m-%Y %H:%M:%S.%l "))
         << category

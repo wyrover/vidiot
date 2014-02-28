@@ -24,7 +24,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-CreateVideoTrack::CreateVideoTrack(model::SequencePtr sequence)
+CreateVideoTrack::CreateVideoTrack(const model::SequencePtr& sequence)
 :   ATimelineCommand(sequence)
 ,   mNewTrack()
 {

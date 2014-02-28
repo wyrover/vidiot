@@ -27,7 +27,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimIntervals::TrimIntervals(model::SequencePtr sequence, PtsIntervals remove, wxString name)
+TrimIntervals::TrimIntervals(const model::SequencePtr& sequence, const PtsIntervals& remove, const wxString& name)
     :   AClipEdit(sequence)
     ,   mIntervals(getTimeline().getIntervals().get())
     ,   mRemoved(remove)

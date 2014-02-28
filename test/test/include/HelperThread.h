@@ -22,7 +22,7 @@
 
 namespace test {
 
-void RunInMainAndWait(boost::function<void()> method);
+void RunInMainAndWait(const boost::function<void()>& method);
 
 } // namespace
 

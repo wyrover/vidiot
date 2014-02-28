@@ -74,7 +74,7 @@ pts ImageFile::getLength() const
     return Convert::timeToPts(Constants::sHour * 8); // 8 Hours...
 }
 
-void ImageFile::moveTo(const pts& position)
+void ImageFile::moveTo(pts position)
 {
     // NOT: VideoFile::moveTo(position) NOR File::moveTo(position); - will cause crash in avcodec
 }

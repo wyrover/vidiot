@@ -25,7 +25,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-UnlinkClips::UnlinkClips(model::SequencePtr sequence, model::IClips clips)
+UnlinkClips::UnlinkClips(const model::SequencePtr& sequence, const model::IClips& clips)
     :   AClipEdit(sequence)
     ,   mClips(clips)
 {

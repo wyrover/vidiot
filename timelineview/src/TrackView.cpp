@@ -40,7 +40,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-TrackView::TrackView(model::TrackPtr track, View* parent)
+TrackView::TrackView(const model::TrackPtr& track, View* parent)
 :   View(parent)
 ,   mTrack(track)
 ,   mY(boost::none)
@@ -231,7 +231,7 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::onClipsAdded( model::EventAddClips& event )
+void TrackView::onClipsAdded(model::EventAddClips& event )
 {
     for ( model::IClipPtr clip : event.getValue().addClips )
     {
@@ -242,7 +242,7 @@ void TrackView::onClipsAdded( model::EventAddClips& event )
     event.Skip();
 }
 
-void TrackView::onClipsRemoved( model::EventRemoveClips& event )
+void TrackView::onClipsRemoved(model::EventRemoveClips& event )
 {
     for ( model::IClipPtr clip : event.getValue().removeClips )
     {
@@ -257,7 +257,7 @@ void TrackView::onClipsRemoved( model::EventRemoveClips& event )
 // DRAWING EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
+void TrackView::getPositionInfo(const wxPoint& position, PointerPositionInfo& info) const
 {
     wxPoint adjustedPosition(position);
 
@@ -287,7 +287,7 @@ void TrackView::getPositionInfo(wxPoint position, PointerPositionInfo& info) con
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void TrackView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
+void TrackView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wxDC& dcMask) const
 {
     model::IClips transitions;
     for ( model::IClipPtr clip : mTrack->getClips() )

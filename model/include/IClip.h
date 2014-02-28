@@ -99,7 +99,7 @@ public:
     /// \pre clip is not part of a track
     /// \pre adjustment >= getMinAdjustBegin()
     /// \pre adjustment <= getMaxAdjustBegin()
-    virtual void adjustBegin(const pts& adjustment) = 0;
+    virtual void adjustBegin(pts adjustment) = 0;
 
     /// \return Minimum allowed value for adjustEnd given the available data.
     /// \note This takes into account any spare room that must be kept for adjacent transitions/clips
@@ -116,7 +116,7 @@ public:
     /// \pre clip is not part of a track
     /// \pre adjustment >= getMinAdjustEnd()
     /// \pre adjustment <= getMaxAdjustEnd()
-    virtual void adjustEnd(const pts& adjustment) = 0;
+    virtual void adjustEnd(pts adjustment) = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // ADJACENT TRANSITION HANDLING
@@ -144,7 +144,7 @@ public:
     virtual pts getGenerationProgress() const = 0;
 
     /// \param delivered value of most recently returned audio/video in getNext*.
-    virtual void setGenerationProgress(const pts& progress) = 0;
+    virtual void setGenerationProgress(pts progress) = 0;
 
     /// \return list of all cuts for the clip
     /// \param exclude list of clips for which the cuts should not be added

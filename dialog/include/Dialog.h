@@ -56,7 +56,7 @@ public:
 
     /// Open a directory dialog. If before this call setDir() was called, the dir given in setDir() is returned and that directory is reset.
     /// \post !MDir
-    wxString getDir(const wxString& message, const wxString& default, wxWindow* parent = 0 );
+    wxString getDir(const wxString& message, const wxString& default, wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ public:
     /// setSaveFile() is returned and the preset file is reset.
     /// In case the dialog is aborted or no file is selected for another reason, an empty string is returned.
     /// \post !mSaveFile
-    wxString getSaveFile( const wxString& message, const wxString& filetypes, const wxString& defaultpath, const wxString& defaultfilename, const wxString& defaultextension, wxWindow* parent = 0 );
+    wxString getSaveFile(const wxString& message, const wxString& filetypes, const wxString& defaultpath, const wxString& defaultfilename, const wxString& defaultextension, wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -104,14 +104,14 @@ public:
     /// Open a text dialog. If before this call setComboText() was called, the text
     /// given in setComboText() is returned and that text is reset.
     /// \post !mComboText
-    wxString getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& default = "", wxWindow* parent = 0 );
+    wxString getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& default = "", wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
     /// Set a fixed outcome for the next message dialog.
     /// \param button fixed button value (wxYES, wxNO, wxCANCEL, wxOK or wxHELP) to be returned by next getConfirmation();
     /// \post sButton
-    void setConfirmation(const int& button = wxOK);
+    void setConfirmation(int button = wxOK);
 
     /// Show a message dialog requiring a button press to be dismissed
     /// \post !mButton
@@ -120,7 +120,7 @@ public:
     /// \param caption title text
     /// \param message message text in dialog
     /// \param buttons wxYES | wxNO | wxCANCEL | wxOK | wxHELP (use whichever should apply)
-    int getConfirmation(const wxString& title, const wxString& message, const int& buttons = wxOK, wxWindow* parent = 0);
+    int getConfirmation(const wxString& title, const wxString& message, int buttons = wxOK, wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -132,7 +132,7 @@ public:
     /// setFiles() are returned and that list is reset.
     /// In case the dialog is aborted or no file is selected for another reason, an empty list is returned.
     /// \post !sFiles
-    std::list<wxString> getStringsSelection(const wxString& title, const wxString& message, const std::list<wxString>& options, wxWindow* parent = 0 );
+    std::list<wxString> getStringsSelection(const wxString& title, const wxString& message, const std::list<wxString>& options, wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 

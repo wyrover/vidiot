@@ -24,7 +24,7 @@
 
 namespace worker {
 
-Work::Work(Callable work)
+Work::Work(const Callable& work)
 :   mCallable(work)
 ,   mAbort(false)
 {
@@ -62,7 +62,7 @@ bool Work::isAborted() const
     return mAbort;
 }
 
-void Work::showProgressText(wxString text)
+void Work::showProgressText(const wxString& text)
 {
     if (!mAbort)
     {
@@ -96,7 +96,7 @@ void Work::showProgress(int value)
     }
 }
 
-void Work::setThreadName(std::string name)
+void Work::setThreadName(const std::string& name)
 {
     std::ostringstream s; s << "Worker: " + name;
     util::thread::setCurrentThreadName(s.str().c_str());

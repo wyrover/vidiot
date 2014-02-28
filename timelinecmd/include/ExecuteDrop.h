@@ -56,7 +56,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit ExecuteDrop(model::SequencePtr sequence);
+    explicit ExecuteDrop(const model::SequencePtr& sequence);
 
     virtual ~ExecuteDrop();
 
@@ -76,7 +76,7 @@ public:
 
     /// Called when the drop operation was finished. After this call, the command will be
     /// executed on the sequence via 'initialize'.
-    void onDrop(const Drops& drops, Shift shift = Shift());
+    void onDrop(const Drops& drops, const Shift& shift = Shift());
 
     /// Called when the drag operation is aborted. Any changes made to the timeline must be
     /// undone. The object will be destructed after this call.

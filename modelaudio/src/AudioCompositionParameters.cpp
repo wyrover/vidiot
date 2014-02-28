@@ -42,7 +42,7 @@ AudioCompositionParameters::AudioCompositionParameters(const AudioCompositionPar
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-AudioCompositionParameters& AudioCompositionParameters::setSampleRate(const int& audiorate)
+AudioCompositionParameters& AudioCompositionParameters::setSampleRate(int audiorate)
 {
     mSampleRate = audiorate;
     return *this;
@@ -53,7 +53,7 @@ int AudioCompositionParameters::getSampleRate() const
     return mSampleRate;
 }
 
-AudioCompositionParameters& AudioCompositionParameters::setNrChannels(const int& nChannels)
+AudioCompositionParameters& AudioCompositionParameters::setNrChannels(int nChannels)
 {
     mNrChannels = nChannels;
     return *this;
@@ -68,22 +68,22 @@ int AudioCompositionParameters::getNrChannels() const
 // CONVERSION HELPERS
 //////////////////////////////////////////////////////////////////////////
 
-samplecount AudioCompositionParameters::ptsToSamples(const pts& position) const
+samplecount AudioCompositionParameters::ptsToSamples(pts position) const
 {
     return Convert::ptsToSamples(mSampleRate, mNrChannels, position);
 }
 
-pts AudioCompositionParameters::samplesToPts(const samplecount& nSamples) const
+pts AudioCompositionParameters::samplesToPts(samplecount nSamples) const
 {
     return Convert::samplesToPts(mSampleRate, mNrChannels, nSamples);
 }
 
-int AudioCompositionParameters::samplesToFrames(const samplecount& nSamples) const
+int AudioCompositionParameters::samplesToFrames(samplecount nSamples) const
 {
     return Convert::samplesToFrames(mNrChannels, nSamples);
 }
 
-samplecount AudioCompositionParameters::framesToSamples(const int& nFrames) const
+samplecount AudioCompositionParameters::framesToSamples(int nFrames) const
 {
     return Convert::framesToSamples(mNrChannels, nFrames);
 }

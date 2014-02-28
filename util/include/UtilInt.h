@@ -28,7 +28,7 @@ typedef int16_t sample;
 samplecount min(samplecount first, samplecount second);
 
 template <typename TYPE>
-TYPE min3(TYPE t1, TYPE t2, TYPE t3)
+TYPE min3(const TYPE& t1, const TYPE& t2, const TYPE& t3)
 {
     return std::min(std::min(t1,t2),t3);
 }
@@ -42,10 +42,10 @@ typedef boost::rational<int> rational;
 typedef boost::rational<int64_t> rational64;
 
 int floor(rational r);
-int64_t floor64(rational64);
+int64_t floor64(rational64 r);
 
 template <typename TYPE1, typename TYPE2>
-TYPE1 removeRemainder(TYPE2 divisor, TYPE1 value)
+TYPE1 removeRemainder(const TYPE2& divisor, const TYPE1& value)
 {
     TYPE1 remainder = value % divisor;
     return value - remainder;

@@ -97,7 +97,7 @@ void CrossFade::reset()
     mCache.reset();
 }
 
-AudioChunkPtr CrossFade::getAudio(const samplecount& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters)
+AudioChunkPtr CrossFade::getAudio(samplecount position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters)
 {
     if (!mCache)
     {

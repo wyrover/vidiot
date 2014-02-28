@@ -32,7 +32,7 @@ namespace gui { namespace timeline { namespace command {
 struct MoveCursor
     :   public ATimelineCommand
 {
-    MoveCursor(model::SequencePtr sequence, pts position)
+    MoveCursor(const model::SequencePtr& sequence, pts position)
         :   ATimelineCommand(sequence)
         ,   mOldPosition(getTimeline().getCursor().getLogicalPosition())
         ,   mNewPosition(position)
@@ -58,7 +58,7 @@ private:
 struct BeginTransaction
     :   public ATimelineCommand
 {
-    BeginTransaction(model::SequencePtr sequence)
+    BeginTransaction(const model::SequencePtr& sequence)
         :   ATimelineCommand(sequence)
     {}
 
@@ -78,7 +78,7 @@ struct BeginTransaction
 struct EndTransaction
     :   public ATimelineCommand
 {
-    EndTransaction(model::SequencePtr sequence)
+    EndTransaction(const model::SequencePtr& sequence)
         :   ATimelineCommand(sequence)
     {}
 
@@ -100,7 +100,7 @@ struct EndTransaction
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-SplitAtCursorAndTrim::SplitAtCursorAndTrim(model::SequencePtr sequence, bool backwards)
+SplitAtCursorAndTrim::SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards)
     :   Combiner()
     ,   mSequence(sequence)
     ,   mBackwards(backwards)

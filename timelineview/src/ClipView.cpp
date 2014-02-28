@@ -42,7 +42,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-ClipView::ClipView(model::IClipPtr clip, View* parent)
+ClipView::ClipView(const model::IClipPtr& clip, View* parent)
     :   View(parent)
     ,   mClip(clip)
     ,   mBeginAddition(0)
@@ -188,7 +188,7 @@ pixel ClipView::getShift() const
     return 0;
 }
 
-void ClipView::getPositionInfo(wxPoint position, PointerPositionInfo& info) const
+void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& info) const
 {
     ASSERT(info.track); // If the track is not filled in, then how can this clipview be reached?
 
@@ -400,7 +400,7 @@ void ClipView::draw(wxBitmap& bitmap, bool drawDraggedClips, bool drawNotDragged
     }
 }
 
-void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const
+void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wxDC& dcMask) const
 {
     if (getDrag().contains(mClip))
     {
@@ -419,13 +419,13 @@ void ClipView::drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcM
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void ClipView::onClipDragged( model::EventDragClip& event )
+void ClipView::onClipDragged(model::EventDragClip& event )
 {
     repaint();
     event.Skip();
 }
 
-void ClipView::onClipSelected( model::EventSelectClip& event )
+void ClipView::onClipSelected(model::EventSelectClip& event )
 {
     mBitmap.reset();
     repaint();

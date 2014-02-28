@@ -43,7 +43,7 @@ public:
     /// Init must be called for new transitions.
     Transition();
 
-    void init(const pts& nFramesLeft, const pts& nFramesRight);
+    void init(pts nFramesLeft, pts nFramesRight);
 
     ///< Used for making deep copies (clones)
     virtual Transition* clone() const override;
@@ -55,7 +55,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     pts getLength() const override;
-    void moveTo(const pts& position) override;
+    void moveTo(pts position) override;
     void clean() override;
 
     //////////////////////////////////////////////////////////////////////////
@@ -66,11 +66,11 @@ public:
 
     pts getMinAdjustBegin() const override;
     pts getMaxAdjustBegin() const override;
-    void adjustBegin(const pts& adjustment) override;
+    void adjustBegin(pts adjustment) override;
 
     pts getMinAdjustEnd() const override;
     pts getMaxAdjustEnd() const override;
-    void adjustEnd(const pts& adjustment) override;
+    void adjustEnd(pts adjustment) override;
 
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 

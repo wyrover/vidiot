@@ -64,21 +64,21 @@ public: \
     static ENUMNAME ## Converter sConverter; \
     typedef boost::bimap<ENUMNAME,wxString> ENUMNAME ## Map; \
     static ENUMNAME ## Map mapToHumanReadibleString; \
-    std::string toString( ENUMNAME value ) const { return mMap.left.find(value)->second; }; \
-    ENUMNAME fromString( std::string value ) const \
+    std::string toString( const ENUMNAME& value ) const { return mMap.left.find(value)->second; }; \
+    ENUMNAME fromString( const std::string& value ) const \
     {\
         boost::bimap<ENUMNAME,std::string>::right_const_iterator it = mMap.right.find(value); \
         if (it == mMap.right.end()) { return ENUMNAME ## _MAX; } \
         return mMap.right.find(value)->second; \
     }; \
-    static ENUMNAME readConfigValue(wxString path); \
+    static ENUMNAME readConfigValue(const wxString& path); \
 private: \
     boost::bimap<ENUMNAME,std::string> mMap; \
 }; \
     std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
-    std::string ENUMNAME ## _toString( ENUMNAME value ); \
-    ENUMNAME ENUMNAME ## _fromString( std::string value ); \
-    ENUMNAME Enum_fromConfig(wxString value, ENUMNAME unused);
+    std::string ENUMNAME ## _toString( const ENUMNAME& value ); \
+    ENUMNAME ENUMNAME ## _fromString( const std::string& value ); \
+    ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused);
 
 #else // _MSC_VER
 
@@ -106,14 +106,14 @@ public: \
     }; \
     virtual ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
-    std::string toString( ENUMNAME value ) const { return mMap.left.find(value)->second; }; \
-    ENUMNAME fromString( std::string value ) const { return mMap.right.find(value)->second; }; \
+    std::string toString( const ENUMNAME& value ) const { return mMap.left.find(value)->second; }; \
+    ENUMNAME fromString( const std::string& value ) const { return mMap.right.find(value)->second; }; \
 private: \
     boost::bimap<ENUMNAME,std::string> mMap; \
 }; \
 std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
-std::string ENUMNAME ## _toString( ENUMNAME value ); \
-ENUMNAME ENUMNAME ## _fromString( std::string value )
+std::string ENUMNAME ## _toString( const ENUMNAME& value ); \
+ENUMNAME ENUMNAME ## _fromString( const std::string& value )
 
 #endif
 
@@ -122,7 +122,7 @@ ENUMNAME ENUMNAME ## _fromString( std::string value )
 #define IMPLEMENTENUM(ENUMNAME) \
 ENUMNAME ## Converter ENUMNAME ## Converter::sConverter; \
 std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj) { os << ENUMNAME ## _toString(obj); return os; }; \
-std::string ENUMNAME ## _toString( ENUMNAME value ) { return ENUMNAME ## Converter::sConverter.toString(value); }; \
-ENUMNAME ENUMNAME ## _fromString( std::string value ) { return ENUMNAME ## Converter::sConverter.fromString(value); }; \
-ENUMNAME Enum_fromConfig(wxString value, ENUMNAME unused) { return ENUMNAME ## _fromString(std::string(value.mb_str())); }; \
-ENUMNAME ENUMNAME ## Converter::readConfigValue(wxString path) { return ENUMNAME ## _fromString(std::string(Config::ReadString(path).mb_str())); };
+std::string ENUMNAME ## _toString( const ENUMNAME& value ) { return ENUMNAME ## Converter::sConverter.toString(value); }; \
+ENUMNAME ENUMNAME ## _fromString( const std::string& value ) { return ENUMNAME ## Converter::sConverter.fromString(value); }; \
+ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused) { return ENUMNAME ## _fromString(std::string(value.mb_str())); }; \
+ENUMNAME ENUMNAME ## Converter::readConfigValue(const wxString& path) { return ENUMNAME ## _fromString(std::string(Config::ReadString(path).mb_str())); };

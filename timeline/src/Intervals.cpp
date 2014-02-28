@@ -101,7 +101,7 @@ PtsIntervals Intervals::get()
     return mIntervals;
 }
 
-void Intervals::set(PtsIntervals intervals)
+void Intervals::set(const PtsIntervals& intervals)
 {
     PtsIntervals refresh = intervals + mIntervals; // +: Union
     mIntervals = intervals;
@@ -178,7 +178,7 @@ void Intervals::update(pts newCursorPosition)
     }
 }
 
-void Intervals::change(PtsInterval interval, bool add)
+void Intervals::change(const PtsInterval& interval, bool add)
 {
     if (add)
     {
@@ -264,7 +264,7 @@ void Intervals::deleteEmpty()
     (new command::TrimIntervals(getSequence(), empty, _("Remove empty regions")))->submit();
 }
 
-void Intervals::deleteEmptyClip(model::IClipPtr clip)
+void Intervals::deleteEmptyClip(const model::IClipPtr& clip)
 {
     ASSERT(clip->isA<model::EmptyClip>());
     PtsIntervals empty;
@@ -317,7 +317,7 @@ pts Intervals::determineSnap(pts position) const
     return position;
 }
 
-void Intervals::removeRegionUsedByClips(model::SequencePtr sequence, PtsIntervals& intervals)
+void Intervals::removeRegionUsedByClips(const model::SequencePtr& sequence, PtsIntervals& intervals)
 {
     for ( model::TrackPtr track : sequence->getTracks() )
     {
@@ -331,7 +331,7 @@ void Intervals::removeRegionUsedByClips(model::SequencePtr sequence, PtsInterval
     }
 }
 
-void Intervals::refreshInterval(PtsInterval interval)
+void Intervals::refreshInterval(const PtsInterval& interval)
 {
     wxRect r(makeRect(interval));
     r.x -= 1;
@@ -339,7 +339,7 @@ void Intervals::refreshInterval(PtsInterval interval)
     getTimeline().repaint(r);
 }
 
-wxRect Intervals::makeRect(PtsInterval interval) const
+wxRect Intervals::makeRect(const PtsInterval& interval) const
 {
     PixelInterval pixels( getZoom().ptsToPixels(interval.lower()), getZoom().ptsToPixels(interval.upper()) );
     return wxRect(pixels.lower(),0,pixels.upper() - pixels.lower() + 1,getSequenceView().getSize().GetHeight());

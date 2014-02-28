@@ -110,7 +110,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pts determineTrimDiff(); ///< \return the trim diff to be applied, including (optional) snapping to clips or to the cursor.
-    void determinePossibleSnapPoints(model::IClipPtr originalclip);
+    void determinePossibleSnapPoints(const model::IClipPtr& originalclip);
     void preview();
 };
 

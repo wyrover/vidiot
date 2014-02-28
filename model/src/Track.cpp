@@ -79,7 +79,7 @@ pts Track::getLength() const
     return calculate::combinedLength(mClips);
 }
 
-void Track::moveTo(const pts& position)
+void Track::moveTo(pts position)
 {
     VAR_DEBUG(this)(position);
 
@@ -203,7 +203,7 @@ const IClips& Track::getClips()
     return mClips;
 }
 
-IClipPtr Track::getClip(const pts& position) const
+IClipPtr Track::getClip(pts position) const
 {
     pts left = 0;
     pts right = left;
@@ -278,7 +278,7 @@ int Track::getHeight() const
     return mHeight;
 }
 
-void Track::setHeight(const int& height)
+void Track::setHeight(int height)
 {
     if (mHeight != height)
     {
@@ -293,7 +293,7 @@ int Track::getIndex() const
     return mIndex;
 }
 
-void Track::setIndex(const int& index)
+void Track::setIndex(int index)
 {
     mIndex = index;
 }
@@ -311,7 +311,7 @@ std::set<pts> Track::getCuts(const std::set<IClipPtr>& exclude)
     return result;
 }
 
-bool Track::isEmptyAt(const pts& position ) const
+bool Track::isEmptyAt(pts position ) const
 {
     return getClip(position)->isA<model::EmptyClip>();
 }

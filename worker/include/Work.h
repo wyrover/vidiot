@@ -30,7 +30,7 @@ class Work
     , public Self<Work>
 {
 public:
-    explicit Work(Callable work);
+    explicit Work(const Callable& work);
     virtual ~Work();
 
     void execute();
@@ -41,11 +41,11 @@ protected:
 
     bool isAborted() const;
 
-    void showProgressText(wxString text);
+    void showProgressText(const wxString& text);
     void showProgressBar(int max);
     void showProgress(int value);
 
-    void setThreadName(std::string name);
+    void setThreadName(const std::string& name);
 
 private:
 

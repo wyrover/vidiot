@@ -48,7 +48,7 @@ public:
 
     bool isEmpty(); ///< @return true if there is at least one marked interval
     PtsIntervals get();
-    void set(PtsIntervals region);
+    void set(const PtsIntervals& region);
     void removeAll();
 
     void addBeginMarker();
@@ -59,7 +59,7 @@ public:
     bool toggleIsAddition() const;
 
     void update(pts newCursorPosition); ///< To be called when the cursor is moved.
-    void change(PtsInterval interval, bool add); ///< To be called for the undo/redo mechanism.
+    void change(const PtsInterval& interval, bool add); ///< To be called for the undo/redo mechanism.
     void clear(); ///< Clear all marked intervals.
 
     //////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public:
     void deleteUnmarked();
 
     void deleteEmpty();
-    void deleteEmptyClip(model::IClipPtr empty);
+    void deleteEmptyClip(const model::IClipPtr& empty);
 
 private:
 
@@ -101,9 +101,9 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pts determineSnap(pts position) const;
-    void removeRegionUsedByClips(model::SequencePtr sequence, PtsIntervals& intervals);
-    void refreshInterval(PtsInterval interval);
-    wxRect makeRect(PtsInterval interval) const;
+    void removeRegionUsedByClips(const model::SequencePtr& sequence, PtsIntervals& intervals);
+    void refreshInterval(const PtsInterval& interval);
+    wxRect makeRect(const PtsInterval& interval) const;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

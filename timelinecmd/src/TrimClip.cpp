@@ -37,7 +37,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-TrimClip::TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, MouseOnClipPosition position)
+TrimClip::TrimClip(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionPtr& transition, const MouseOnClipPosition& position)
     :   AClipEdit(sequence)
     ,   mOriginalClip(clip)
     ,   mOriginalLink(mOriginalClip->getLink())
@@ -169,7 +169,7 @@ model::IClipPtr TrimClip::getNewLink() const
 }
 
 // static
-bool TrimClip::isBeginTrim(MouseOnClipPosition position)
+bool TrimClip::isBeginTrim(const MouseOnClipPosition& position)
 {
     switch (position)
     {
@@ -202,7 +202,7 @@ pts TrimClip::getDiff() const
 }
 
 // static
-TrimClip::TrimLimit TrimClip::determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift)
+TrimClip::TrimLimit TrimClip::determineBoundaries(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::IClipPtr& link, const MouseOnClipPosition& position, bool shift)
 {
     ASSERT(clip && clip->getTrack())(clip);
     ASSERT_IMPLIES(link,link->getTrack());
@@ -370,7 +370,7 @@ void TrimClip::removeTransition()
     ASSERT(!mOriginalLink || mLink);
 }
 
-void TrimClip::adjust(model::IClipPtr clip, pts begin, pts end)
+void TrimClip::adjust(const model::IClipPtr& clip, pts begin, pts end)
 {
     ASSERT(clip);
     ASSERT(!clip->isA<model::Transition>());

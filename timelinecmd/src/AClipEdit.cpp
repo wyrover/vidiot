@@ -44,7 +44,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-AClipEdit::AClipEdit(model::SequencePtr sequence)
+AClipEdit::AClipEdit(const model::SequencePtr& sequence)
     :   ATimelineCommand(sequence)
     ,   mParams()
     ,   mParamsUndo()
@@ -201,15 +201,15 @@ void AClipEdit::Revert()
     mInitialized = false;
 }
 
-void AClipEdit::split(model::TrackPtr track, pts position)
+void AClipEdit::split(const model::TrackPtr& track, pts position)
 {
     model::IClipPtr clip = track->getClip(position);
 
     // Step 1: Remove any transitions directly adjacent to the split position.
-    //         That includes transitions that have getLeftPts() == position 
-    //         AND transitions that have getRightPts() == position. 
+    //         That includes transitions that have getLeftPts() == position
+    //         AND transitions that have getRightPts() == position.
     // Note: track->getClip(position) returns the first clip that generates frames
-    //       at 'position'. Due to the structuring of transitions it is possible 
+    //       at 'position'. Due to the structuring of transitions it is possible
     //       that a transition that should be removed is not returned by this call:
     //       (1) A transition that touches directly with its right side.
     //           In this case, the clip after the transition may be returned.
@@ -224,7 +224,7 @@ void AClipEdit::split(model::TrackPtr track, pts position)
         // Doing the check at the beginning makes the handling of transitions (and the possible
         // 'unapplying of them' a bit simpler in the code below (no more checks for 'if already cut' required.
 
-        model::TransitionPtr transition; 
+        model::TransitionPtr transition;
         ASSERT_LESS_THAN_EQUALS(clip->getLeftPts(),position);
         if (clip->getLeftPts() < position)
         {
@@ -242,10 +242,10 @@ void AClipEdit::split(model::TrackPtr track, pts position)
             }
             else
             {
-                // This extra code is required because pts intervals are exclusive on the right edge 
+                // This extra code is required because pts intervals are exclusive on the right edge
                 // (thus "[left,right)"), but we want the transition to be removed here anyway.
 
-                if (clip->getInTransition())    
+                if (clip->getInTransition())
                 {
                     // (1) clip is part of transition. The split is at the right edge of this transition. Remove it.
                     transition = clip->getInTransition(); // May be a 0-ptr
@@ -297,7 +297,7 @@ void AClipEdit::split(model::TrackPtr track, pts position)
     // else: no clip: nothing to split
 }
 
-void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements, bool maintainlinks)
+void AClipEdit::replaceClip(const model::IClipPtr& original, const model::IClips& replacements, bool maintainlinks)
 {
     model::TrackPtr track = original->getTrack();
     ASSERT(track);
@@ -314,23 +314,23 @@ void AClipEdit::replaceClip(model::IClipPtr original, model::IClips replacements
     newMove(track, position, replacements, track, position, originallist);
 }
 
-void AClipEdit::addClip(model::IClipPtr clip, model::TrackPtr track, model::IClipPtr position)
+void AClipEdit::addClip(const model::IClipPtr& clip, const model::TrackPtr& track, const model::IClipPtr& position)
 {
     ASSERT(!clip->getLink())(clip);
     addClips(boost::assign::list_of(clip),track,position);
 }
 
-void AClipEdit::addClips(model::IClips clips, model::TrackPtr track, model::IClipPtr position)
+void AClipEdit::addClips(const model::IClips& clips, const model::TrackPtr& track, const model::IClipPtr& position)
 {
     newMove(track, position, clips );
 }
 
-void AClipEdit::removeClip(model::IClipPtr original)
+void AClipEdit::removeClip(const model::IClipPtr& original)
 {
     replaceClip(original, model::IClips());
 }
 
-void AClipEdit::removeClips(model::IClips originals)
+void AClipEdit::removeClips(const model::IClips& originals)
 {
     model::TrackPtr track = originals.front()->getTrack();
     ASSERT(track);
@@ -346,7 +346,7 @@ void AClipEdit::removeClips(model::IClips originals)
     newMove(track, position, model::IClips(), track, position, originals);
 }
 
-AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts left, pts right)
+AClipEdit::ClipsWithPosition AClipEdit::findClips(const model::TrackPtr& track, pts left, pts right)
 {
     VAR_DEBUG(track)(left)(right);
     model::IClipPtr removePosition = model::IClipPtr();
@@ -377,7 +377,7 @@ AClipEdit::ClipsWithPosition AClipEdit::findClips(model::TrackPtr track, pts lef
     return make_pair(removedClips,to);
 }
 
-void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
+void AClipEdit::shiftAllTracks(pts start, pts amount, const model::Tracks& exclude)
 {
     if (amount == 0) return;
     model::Tracks videoTracks = getTimeline().getSequence()->getVideoTracks();
@@ -393,7 +393,7 @@ void AClipEdit::shiftAllTracks(pts start, pts amount, model::Tracks exclude)
     shiftTracks(audioTracks, start, amount);
 }
 
-void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
+void AClipEdit::shiftTracks(const model::Tracks& tracks, pts start, pts amount)
 {
     ASSERT_NONZERO(amount);
     for ( model::TrackPtr track : tracks )
@@ -426,7 +426,7 @@ void AClipEdit::shiftTracks(model::Tracks tracks, pts start, pts amount)
     }
 }
 
-model::IClipPtr AClipEdit::addTransition( model::IClipPtr leftClip, model::IClipPtr rightClip, model::TransitionPtr transition )
+model::IClipPtr AClipEdit::addTransition(const model::IClipPtr& leftClip, const model::IClipPtr& rightClip, const model::TransitionPtr& transition )
 {
     model::TrackPtr track;
     model::IClipPtr position;
@@ -482,14 +482,14 @@ model::IClipPtr AClipEdit::addTransition( model::IClipPtr leftClip, model::IClip
     return transition;
 }
 
-void AClipEdit::removeTransition( model::TransitionPtr transition )
+void AClipEdit::removeTransition(const model::TransitionPtr& transition)
 {
     // Delete the transition and the underlying clips
     ASSERT_MORE_THAN_ZERO(transition->getLength());
     replaceClip(transition, boost::assign::list_of(boost::make_shared<model::EmptyClip>(transition->getLength())));
 }
 
-model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition, bool replacelinkedclipsalso )
+model::IClips AClipEdit::unapplyTransition(const model::TransitionPtr& transition, bool replacelinkedclipsalso )
 {
     auto cloneLinkIfRequired = [this,replacelinkedclipsalso](model::IClipPtr link)
     {
@@ -553,7 +553,7 @@ model::IClips AClipEdit::unapplyTransition( model::TransitionPtr transition, boo
     return replacements;
 }
 
-model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
+model::IClipPtr AClipEdit::replaceWithEmpty(const model::IClips& clips)
 {
     model::TrackPtr track = clips.front()->getTrack(); // Any clip will do, they're all part of the same track
     model::IClipPtr position = clips.back()->getNext(); // Position equals the clips after the last clip. May be 0.
@@ -569,7 +569,7 @@ model::IClipPtr AClipEdit::replaceWithEmpty(model::IClips clips)
     return empty;
 }
 
-void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
+void AClipEdit::animatedDeleteAndTrim(const model::IClips& clipsToBeRemoved)
 {
     model::MoveParameters undo;
 
@@ -631,7 +631,7 @@ void AClipEdit::animatedDeleteAndTrim(model::IClips clipsToBeRemoved)
     }
 }
 
-model::IClips AClipEdit::splitTracksAndFindClipsToBeRemoved(PtsIntervals removed)
+model::IClips AClipEdit::splitTracksAndFindClipsToBeRemoved(const PtsIntervals& removed)
 {
     model::IClips result;
     for ( PtsInterval interval : removed )
@@ -687,7 +687,13 @@ void AClipEdit::restoreSelection()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, model::IClips addClips, model::TrackPtr removeTrack, model::IClipPtr removePosition, model::IClips removeClips)
+void AClipEdit::newMove(
+    const model::TrackPtr& addTrack,
+    const model::IClipPtr& addPosition,
+    const model::IClips& addClips,
+    const model::TrackPtr& removeTrack,
+    const model::IClipPtr& removePosition,
+    const model::IClips& removeClips)
 {
     if (addClips.size() > 0)
     {
@@ -710,7 +716,7 @@ void AClipEdit::newMove(model::TrackPtr addTrack, model::IClipPtr addPosition, m
     doMove(move);
 }
 
-void AClipEdit::doMove(model::MoveParameterPtr move)
+void AClipEdit::doMove(const model::MoveParameterPtr& move)
 {
     if (move->removeClips.size() > 0)
     {
@@ -761,7 +767,7 @@ void AClipEdit::expandReplacements()
     }
 }
 
-model::IClips AClipEdit::expandReplacements(model::IClips original)
+model::IClips AClipEdit::expandReplacements(const model::IClips& original)
 {
     model::IClips result;
     for ( model::IClipPtr clip : original )
@@ -868,7 +874,7 @@ void AClipEdit::mergeConsecutiveEmptyClips()
     mergeConsecutiveEmptyClips(getTimeline().getSequence()->getAudioTracks());
 }
 
-void AClipEdit::mergeConsecutiveEmptyClips(model::Tracks tracks)
+void AClipEdit::mergeConsecutiveEmptyClips(const model::Tracks& tracks)
 {
     auto replace = [this](model::TrackPtr track, model::IClips& clips, pts length)
     {

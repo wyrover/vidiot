@@ -28,7 +28,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-CreateAudioTrack::CreateAudioTrack(model::SequencePtr sequence)
+CreateAudioTrack::CreateAudioTrack(const model::SequencePtr& sequence)
     :   ATimelineCommand(sequence)
     ,   mNewTrack()
 {

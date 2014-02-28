@@ -66,7 +66,7 @@ protected:
     samplecount getTotalSamples(const AudioCompositionParameters& parameters) const;
 
     virtual void reset() = 0; ///< Reset any data that is cached.
-    virtual AudioChunkPtr getAudio(const samplecount& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) = 0;
+    virtual AudioChunkPtr getAudio(samplecount position, const IClipPtr& leftClip, const IClipPtr& rightClip, const AudioCompositionParameters& parameters) = 0;
 
 private:
 

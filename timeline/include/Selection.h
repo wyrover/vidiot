@@ -59,8 +59,7 @@ public:
     /// Change the selection into the given list of clips.
     /// List may contain 0-ptrs, these are ignored.
     /// Any other selection is cleared.
-    void change(model::IClips selection);
-
+    void change(const model::IClips& selection);
 
     /// Whenever the sequence is changed (by a replacement of clips) then the
     /// list of selected clips must be updated accordingly.
@@ -78,9 +77,9 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    void selectClipAndLink(model::IClipPtr clip, bool selected);
-    void selectClip(model::IClipPtr clip, bool selected);
-    void setPreviouslyClicked(model::IClipPtr clip);
+    void selectClipAndLink(const model::IClipPtr& clip, bool selected);
+    void selectClip(const model::IClipPtr& clip, bool selected);
+    void setPreviouslyClicked(const model::IClipPtr& clip);
 };
 
 }} // namespace

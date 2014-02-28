@@ -64,7 +64,7 @@ boost::statechart::result StateRightDown::react( const EvRightDown& evt )
 boost::statechart::result StateRightDown::react( const EvRightUp& evt )
 {
     VAR_DEBUG(evt);
-    getMenuHandler().Popup(getMouse().getRightDownPosition());
+    getMenuHandler().popup(getMouse().getRightDownPosition());
     return transit<Idle>();
 }
 boost::statechart::result StateRightDown::react( const EvMotion& evt )

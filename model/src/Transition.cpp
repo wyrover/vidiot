@@ -37,7 +37,7 @@ Transition::Transition()
     VAR_DEBUG(*this);
 }
 
-void Transition::init(const pts& nFramesLeft, const pts& nFramesRight)
+void Transition::init(pts nFramesLeft, pts nFramesRight)
 {
     mFramesLeft = nFramesLeft;
     mFramesRight = nFramesRight;
@@ -71,7 +71,7 @@ pts Transition::getLength() const
     return mFramesLeft + mFramesRight;
 }
 
-void Transition::moveTo(const pts& position)
+void Transition::moveTo(pts position)
 {
     setNewStartPosition(position);
 }
@@ -117,7 +117,7 @@ pts Transition::getMaxAdjustBegin() const
     return getLeft();
 }
 
-void Transition::adjustBegin(const pts& adjustment)
+void Transition::adjustBegin(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
@@ -152,7 +152,7 @@ pts Transition::getMaxAdjustEnd() const
     return result;
 }
 
-void Transition::adjustEnd(const pts& adjustment)
+void Transition::adjustEnd(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.

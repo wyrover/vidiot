@@ -75,7 +75,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     pts getPts() const;
-    void setPts(const pts& position);
+    void setPts(pts position);
 
     void setForceKeyFrame(bool force);
     bool getForceKeyFrame() const;

@@ -35,7 +35,7 @@ public:
     /// \param Intervals the object to which the change must be made. Is a shared ptr to avoid exceptions in undo handling when closing the timeline.
     /// \param interval interval to be added/removed
     /// \param add true if interval must be added, false if interval must be removed
-    IntervalChange(model::SequencePtr sequence, PtsInterval interval, bool add);
+    IntervalChange(const model::SequencePtr& sequence, const PtsInterval& interval, bool add);
 
     virtual ~IntervalChange();
 

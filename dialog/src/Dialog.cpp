@@ -191,13 +191,13 @@ wxString Dialog::getComboText(const wxString& title, const wxString& message, co
 
 //////////////////////////////////////////////////////////////////////////
 
-void Dialog::setConfirmation(const int& button)
+void Dialog::setConfirmation(int button)
 {
     ASSERT(!mButton);
     mButton = boost::optional<int>(button);
 }
 
-int Dialog::getConfirmation(const wxString& title, const wxString& message, const int& buttons, wxWindow* parent )
+int Dialog::getConfirmation(const wxString& title, const wxString& message, int buttons, wxWindow* parent )
 {
     if (mButton)
     {

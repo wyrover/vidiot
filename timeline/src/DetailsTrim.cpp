@@ -66,7 +66,7 @@ DetailsTrim::~DetailsTrim()
 // TRIM UPDATES
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsTrim::show( model::IClipPtr src, model::IClipPtr trg, model::IClipPtr srcLink, model::IClipPtr trgLink  )
+void DetailsTrim::show(const model::IClipPtr& src, const model::IClipPtr& trg, const model::IClipPtr& srcLink, const model::IClipPtr& trgLink  )
 {
     ASSERT_NONZERO(src);
     auto showLength = [] (model::IClipPtr clipold, model::IClipPtr clipnew, wxStaticText* textbox)

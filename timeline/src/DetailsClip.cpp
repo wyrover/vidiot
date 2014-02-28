@@ -307,7 +307,7 @@ model::IClipPtr DetailsClip::getClip() const
     return mClip;
 }
 
-void DetailsClip::setClip(model::IClipPtr clip)
+void DetailsClip::setClip(const model::IClipPtr& clip)
 {
     VAR_DEBUG(clip);
     if (mClip == clip) return; // Avoid useless updating
@@ -693,7 +693,7 @@ void DetailsClip::onVolumeChanged(model::EventChangeAudioClipVolume& event)
 // SELECTION EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsClip::onSelectionChanged( timeline::EventSelectionUpdate& event )
+void DetailsClip::onSelectionChanged(timeline::EventSelectionUpdate& event)
 {
     VAR_DEBUG(this);
     std::set<model::IClipPtr> selection = getSequence()->getSelectedClips();

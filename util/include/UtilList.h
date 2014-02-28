@@ -37,7 +37,7 @@ public:
     /// Add elements to the list
     /// \param added elements to be added
     /// \param position elements are added BEFORE the given element. If this equals a null ptr, then the elements are added at the beginning.
-    void addElements(ELEMENTS added, ELEMENT position)
+    void addElements(const ELEMENTS& added, const ELEMENT& position)
     {
         ELEMENTS::iterator itPosition = find(mList.begin(), mList.end(), position);
         // NOT: ASSERT(itPosition != mList.end()) Giving a null pointer results in mList.end() which results in adding at the end
@@ -53,7 +53,7 @@ public:
 
     /// \return the position at which the element are removed.
     /// \param removed list of elements to be removed. These elements should be in the same order in the list, without other objects in between.
-    ELEMENT removeElements(ELEMENTS removed)
+    ELEMENT removeElements(const ELEMENTS& removed)
     {
         ELEMENTS::iterator itBegin = find(mList.begin(), mList.end(), removed.front());
         ASSERT(itBegin != mList.end())(removed.front()); // Ensure that the begin was found
@@ -77,7 +77,7 @@ public:
         return position;
     }
 
-    void replace(ELEMENT oldElement, ELEMENT newElement)
+    void replace(const ELEMENT& oldElement, const ELEMENT& newElement)
     {
         ELEMENTS::iterator itOldElement = find(mList.begin(), mList.end(), oldElement);
         ASSERT(itOldElement != mList.end())(oldElement); // Ensure that the element was found
@@ -89,14 +89,14 @@ public:
 
     /// \return true if the list contains the given element
     /// \param element element which is searched for in the list
-    bool hasElement(ELEMENT element)
+    bool hasElement(const ELEMENT& element)
     {
         return (find(mList.begin(), mList.end(), element) != mList.end());
     }
 
     /// Add elements from the set at the end of the list
     /// \param set the set of elements to be added
-    void addElements(std::set<ELEMENT> set)
+    void addElements(const std::set<ELEMENT>& set)
     {
         for ( ELEMENT element : set )
         {

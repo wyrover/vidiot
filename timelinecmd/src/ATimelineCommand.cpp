@@ -25,7 +25,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ATimelineCommand::ATimelineCommand(model::SequencePtr sequence)
+ATimelineCommand::ATimelineCommand(const model::SequencePtr& sequence)
     :   RootCommand()
     ,   mSequence(sequence)
 {

@@ -34,9 +34,9 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit FrameRate(int64_t num, int64_t den);
-    FrameRate(AVRational avr);
-    FrameRate(wxString framerate);
+    explicit FrameRate(const int64_t& num, const int64_t& den);
+    FrameRate(const AVRational& avr);
+    FrameRate(const wxString& framerate);
 
     //////////////////////////////////////////////////////////////////////////
     //

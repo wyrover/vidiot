@@ -21,13 +21,13 @@
 namespace util { namespace thread {
 
 template <typename RETURNTYPE>
-RETURNTYPE RunInMainReturning(boost::function<RETURNTYPE()> method)
+RETURNTYPE RunInMainReturning(const boost::function<RETURNTYPE()>& method)
 {
     return RunInMainThreadWithResult<RETURNTYPE>(method).getResult();
 }
 
-void RunInMainAndWait(boost::function<void()> method);
-void RunInMainAndDontWait(boost::function<void()> method);
+void RunInMainAndWait(const boost::function<void()> &method);
+void RunInMainAndDontWait(const boost::function<void()>& method);
 
 template <class RETURNTYPE>
 class RunInMainThreadWithResult
@@ -35,7 +35,7 @@ class RunInMainThreadWithResult
 {
 public:
 
-    RunInMainThreadWithResult(boost::function<RETURNTYPE()> method)
+    RunInMainThreadWithResult(const boost::function<RETURNTYPE()>& method)
         :   mMethod(method)
         ,   mDone(false)
     {

@@ -186,7 +186,7 @@ void MenuHandler::updateItems()
     mMenu.Enable( ID_REMOVEMARKERS,  !getIntervals().isEmpty() );
 }
 
-void MenuHandler::Popup(wxPoint position)
+void MenuHandler::popup(const wxPoint& position)
 {
     // This is decoupled via an event, to ensure that this method returns immediately.
     // Otherwise, the state chart handling is blocked for a while (duration of popup) causing crashes in boost statechart.

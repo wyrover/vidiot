@@ -38,7 +38,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-ThumbnailView::ThumbnailView(model::IClipPtr clip, View* parent)
+ThumbnailView::ThumbnailView(const model::IClipPtr& clip, View* parent)
 :   View(parent)
 ,   mVideoClip(boost::dynamic_pointer_cast<model::VideoClip>(clip))
 ,   mW(boost::none)
@@ -116,7 +116,7 @@ void ThumbnailView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
     }
 }
 
-void ThumbnailView::drawForDragging(wxPoint position, int height, wxDC& dc) const
+void ThumbnailView::drawForDragging(const wxPoint& position, int height, wxDC& dc) const
 {
     if (mBitmap)
     {

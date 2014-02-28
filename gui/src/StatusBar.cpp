@@ -149,14 +149,14 @@ void StatusBar::setProcessingText(const wxString& text)
     SetStatusText( text, sProcessing );
 }
 
-void StatusBar::showProgressBar(const int& max)
+void StatusBar::showProgressBar(int max)
 {
     ASSERT(wxThread::IsMain());
     mProgress->SetRange(max);
     mProgress->Show();
 }
 
-void StatusBar::showProgress(const int& value)
+void StatusBar::showProgress(int value)
 {
     ASSERT(wxThread::IsMain());
     mProgress->SetValue(value);

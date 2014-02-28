@@ -36,7 +36,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-CreateTransition::CreateTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, model::TransitionType type)
+CreateTransition::CreateTransition(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionPtr& transition, const model::TransitionType& type)
 :   AClipEdit(sequence)
 ,   mTransition(transition)
 ,   mType(type)
