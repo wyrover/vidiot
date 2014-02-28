@@ -86,7 +86,7 @@ pixel Scrolling::ptsToPixel(pts position) const
     return getTimeline().CalcScrolledPosition(wxPoint(getZoom().ptsToPixels(position),0)).x;
 }
 
-wxPoint Scrolling::getVirtualPosition(wxPoint position) const
+wxPoint Scrolling::getVirtualPosition(const wxPoint& position) const
 {
     wxPoint p;
     getTimeline().CalcUnscrolledPosition(position.x,position.y,&p.x,&p.y);

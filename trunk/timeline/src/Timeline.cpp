@@ -51,7 +51,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-Timeline::Timeline(wxWindow *parent, model::SequencePtr sequence, bool beginTransacted)
+Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool beginTransacted)
 :   wxScrolledWindow(parent,wxID_ANY,wxPoint(0,0),wxDefaultSize,wxHSCROLL|wxVSCROLL)
 //////////////////////////////////////////////////////////////////////////
 ,   mSequence(sequence)
@@ -347,7 +347,7 @@ void Timeline::onSequenceLengthChanged(model::EventLengthChanged& event)
 // DRAWING
 //////////////////////////////////////////////////////////////////////////
 
-void Timeline::onPaint( wxPaintEvent &event )
+void Timeline::onPaint(wxPaintEvent &event)
 {
     if (mTransaction)
     {

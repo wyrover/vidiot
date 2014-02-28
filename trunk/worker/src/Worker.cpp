@@ -87,7 +87,7 @@ Worker::~Worker()
 // NEW WORK
 //////////////////////////////////////////////////////////////////////////
 
-void Worker::schedule(WorkPtr work)
+void Worker::schedule(const WorkPtr& work)
 {
     {
         boost::mutex::scoped_lock lock(mMutex);

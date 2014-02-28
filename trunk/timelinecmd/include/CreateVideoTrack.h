@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit CreateVideoTrack(model::SequencePtr sequence);
+    explicit CreateVideoTrack(const model::SequencePtr& sequence);
     virtual ~CreateVideoTrack();
 
     //////////////////////////////////////////////////////////////////////////

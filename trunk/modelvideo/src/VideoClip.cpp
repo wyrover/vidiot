@@ -261,7 +261,7 @@ wxPoint VideoClip::getMaxPosition()
     return wxPoint(maxX, maxY) + mRotationPositionOffset;
 }
 
-void VideoClip::setOpacity(const int& opacity)
+void VideoClip::setOpacity(int opacity)
 {
     if (mOpacity != opacity)
     {

@@ -39,7 +39,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    TrackView(model::TrackPtr track, View* parent);
+    TrackView(const model::TrackPtr& track, View* parent);
     virtual ~TrackView();
 
     model::TrackPtr getTrack() const;
@@ -48,7 +48,7 @@ public:
     /// This is required for drawing these clips when dragging.
     /// The height parameter is required for the case where this
     /// track is dragged over another track which has another height.
-    void drawForDragging(wxPoint position, int height, wxDC& dc, wxDC& dcMask) const;
+    void drawForDragging(const wxPoint& position, int height, wxDC& dc, wxDC& dcMask) const;
 
     //////////////////////////////////////////////////////////////////////////
     // VIEW
@@ -67,14 +67,14 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
+    void getPositionInfo(const wxPoint& position, PointerPositionInfo& info) const;
 
     //////////////////////////////////////////////////////////////////////////
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onClipsAdded( model::EventAddClips& event );
-    void onClipsRemoved( model::EventRemoveClips& event );
+    void onClipsAdded(model::EventAddClips& event);
+    void onClipsRemoved(model::EventRemoveClips& event);
 
 private:
 

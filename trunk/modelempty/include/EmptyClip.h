@@ -41,7 +41,7 @@ public:
 
     /// Create a new empty clip.
     /// \param length size of the clip
-    EmptyClip(const pts& length);
+    EmptyClip(pts length);
 
     virtual EmptyClip* clone() const override;
 
@@ -69,17 +69,17 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     pts getLength() const override;
-    void moveTo(const pts& position) override;
+    void moveTo(pts position) override;
 
     void setLink(const IClipPtr& link) override;
 
     pts getMinAdjustBegin() const override;
     pts getMaxAdjustBegin() const override;
-    void adjustBegin(const pts& adjustment) override;
+    void adjustBegin(pts adjustment) override;
 
     pts getMinAdjustEnd() const override;
     pts getMaxAdjustEnd() const override;
-    void adjustEnd(const pts& adjustment) override;
+    void adjustEnd(pts adjustment) override;
 
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 

@@ -32,15 +32,15 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit RemoveEmptyTracks (model::SequencePtr sequence);
-    virtual ~RemoveEmptyTracks ();
+    explicit RemoveEmptyTracks(const model::SequencePtr& sequence);
+    virtual ~RemoveEmptyTracks();
 
     //////////////////////////////////////////////////////////////////////////
     // EVENTS FROM SEQUENCE
     //////////////////////////////////////////////////////////////////////////
 
-    void onVideoTracksRemoved( model::EventRemoveVideoTracks& event );
-    void onAudioTracksRemoved( model::EventRemoveAudioTracks& event );
+    void onVideoTracksRemoved(model::EventRemoveVideoTracks& event);
+    void onAudioTracksRemoved(model::EventRemoveAudioTracks& event);
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE

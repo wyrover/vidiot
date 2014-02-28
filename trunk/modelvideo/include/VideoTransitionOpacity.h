@@ -52,7 +52,7 @@ protected:
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    VideoFramePtr getVideo(const pts& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters) override;
+    VideoFramePtr getVideo(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters) override;
 
     /// Apply the given method to all pixels.
     /// \param image on the opacity of this image the given method is applied

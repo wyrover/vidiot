@@ -47,7 +47,7 @@
 
 namespace model { namespace render {
 
-static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, const int& width, const int& height);
+static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, int width, int height);
 
 //////////////////////////////////////////////////////////////////////////
 // RENDERING
@@ -56,7 +56,7 @@ static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, const int& width,
 class RenderWork : public worker::Work
 {
 public:
-    RenderWork(const SequencePtr& sequence, const pts& from, const pts& to)
+    RenderWork(const SequencePtr& sequence, pts from, pts to)
     :   worker::Work(boost::bind(&RenderWork::generate,this))
     ,   mSequence(sequence)
     ,   mFrom(from)
@@ -721,7 +721,7 @@ void RenderWork::generate()
     av_freep(&context);
 }
 
-static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, const int& width, const int& height)
+static AVFrame *alloc_picture(const enum PixelFormat& pix_fmt, int width, int height)
 {
     AVFrame* picture = av_frame_alloc();
     ASSERT(picture);

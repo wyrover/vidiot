@@ -34,7 +34,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    IntervalRemoveAll(model::SequencePtr sequence);
+    IntervalRemoveAll(const model::SequencePtr& sequence);
 
     virtual ~IntervalRemoveAll();
 

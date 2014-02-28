@@ -58,7 +58,7 @@ public:
     void updateItems();
 
     void onTriggerPopupMenu(wxCommandEvent& event);
-    void Popup(wxPoint position);
+    void popup(const wxPoint& position);
 
     void activate(bool active);
 

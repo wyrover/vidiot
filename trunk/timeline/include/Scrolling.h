@@ -60,7 +60,7 @@ public:
 
     /// \return physical position
     /// \param position virtual position
-    wxPoint getVirtualPosition(wxPoint position) const;
+    wxPoint getVirtualPosition(const wxPoint& position) const;
 
     /// Store the current center pts position. This position is used when the
     /// zoom is updated, to ensure that approximately the same area is viewed

@@ -111,7 +111,7 @@ private:
     // LOGGING
     //////////////////////////////////////////////////////////////////////////
 
-    static wxString GetFSWEventChangeTypeName(const int& changeType);
+    static wxString GetFSWEventChangeTypeName(int changeType);
     friend std::ostream& operator<<(std::ostream& os, const Watcher& obj);
 };
 

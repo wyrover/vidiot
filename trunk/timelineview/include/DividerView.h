@@ -32,7 +32,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \param track the track to which this divider relates. If 0, then divides audio and video.
-    DividerView(View* parent, pixel height, model::TrackPtr track = model::TrackPtr());
+    DividerView(View* parent, pixel height, const model::TrackPtr& track = model::TrackPtr());
     virtual ~DividerView();
 
     //////////////////////////////////////////////////////////////////////////

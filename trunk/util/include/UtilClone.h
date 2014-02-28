@@ -21,7 +21,7 @@
 #include "UtilRTTI.h"
 
 template <typename T>
-boost::shared_ptr<T> make_cloned(boost::shared_ptr<T> t)
+boost::shared_ptr<T> make_cloned(const boost::shared_ptr<T>& t)
 {
     boost::shared_ptr<T> clone = boost::shared_ptr<T>(t->clone());
     clone->onCloned();
@@ -29,7 +29,7 @@ boost::shared_ptr<T> make_cloned(boost::shared_ptr<T> t)
 }
 
 template <typename T>
-std::list< boost::shared_ptr<T> > make_cloned(std::list< boost::shared_ptr<T> > elements)
+std::list< boost::shared_ptr<T> > make_cloned(const std::list< boost::shared_ptr<T> >& elements)
 {
     std::list< boost::shared_ptr<T> > result;
     for ( boost::shared_ptr<T> element : elements )

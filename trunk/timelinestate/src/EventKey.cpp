@@ -26,9 +26,9 @@ EvKey::EvKey(
     bool controldown,
     bool shiftdown,
     bool altdown,
-    wxChar unicodekey,
+    const wxChar& unicodekey,
     int keycode,
-    wxPoint position)
+    const wxPoint& position)
     :   mCtrlDown(controldown)
     ,   mShiftDown(shiftdown)
     ,   mAltDown(altdown)
@@ -86,12 +86,12 @@ std::ostream& operator<<(std::ostream& os, const EvKey& obj)
     return os;
 }
 
-EvKeyDown::EvKeyDown(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position)
+EvKeyDown::EvKeyDown(bool controldown, bool shiftdown, bool altdown, const wxChar& unicodekey, int keycode, const wxPoint& position)
     : EvKey(controldown, shiftdown, altdown, unicodekey, keycode, position)
 {
 }
 
-EvKeyUp::EvKeyUp(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position)
+EvKeyUp::EvKeyUp(bool controldown, bool shiftdown, bool altdown, const wxChar& unicodekey, int keycode, const wxPoint& position)
     : EvKey(controldown, shiftdown, altdown, unicodekey, keycode, position)
 {
 }

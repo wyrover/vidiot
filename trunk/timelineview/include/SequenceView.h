@@ -73,7 +73,7 @@ public:
     void setDividerPosition(pixel position);
     void resetDividerPosition();
 
-    void getPositionInfo(wxPoint position, PointerPositionInfo& info ) const;
+    void getPositionInfo(const wxPoint& position, PointerPositionInfo& info ) const;
 
 private:
 

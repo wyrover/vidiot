@@ -190,7 +190,7 @@ void Player::stop()
     mDisplay->moveTo(mPosition);
 }
 
-void Player::moveTo(const pts& position)
+void Player::moveTo(pts position)
 {
     VAR_INFO(this)(position);
     if (GetSizer()->IsShown(mEdit))

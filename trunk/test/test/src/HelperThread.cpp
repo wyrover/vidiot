@@ -21,10 +21,10 @@
 
 namespace test {
 
-void RunInMainAndWait(boost::function<void()> method)
+void RunInMainAndWait(const boost::function<void()>& method)
 {
-    util::thread::RunInMainAndWait([method] 
-    { 
+    util::thread::RunInMainAndWait([method]
+    {
         method();
     });
     waitForIdle();

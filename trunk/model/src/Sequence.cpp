@@ -139,7 +139,7 @@ pts Sequence::getLength() const
     return nFrames;
 }
 
-void Sequence::moveTo(const pts& position)
+void Sequence::moveTo(pts position)
 {
     VAR_DEBUG(position);
     mVideoPosition = position;
@@ -318,12 +318,12 @@ Tracks Sequence::getTracks()
     return tracks;
 }
 
-TrackPtr Sequence::getVideoTrack(const int& index)
+TrackPtr Sequence::getVideoTrack(int index)
 {
     return mVideoTrackMap[index];
 }
 
-TrackPtr Sequence::getAudioTrack(const int& index)
+TrackPtr Sequence::getAudioTrack(int index)
 {
     return mAudioTrackMap[index];
 }
@@ -333,7 +333,7 @@ pixel Sequence::getDividerPosition() const
     return mDividerPosition;
 }
 
-void Sequence::setDividerPosition(const pixel& position)
+void Sequence::setDividerPosition(pixel position)
 {
     if (mDividerPosition != position)
     {
@@ -415,7 +415,7 @@ std::set<pts> Sequence::getCuts(const std::set<IClipPtr>& exclude)
     return result;
 }
 
-bool Sequence::isEmptyAt(const pts& position ) const
+bool Sequence::isEmptyAt(pts position ) const
 {
     for ( TrackPtr track : mVideoTracks )
     {

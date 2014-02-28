@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit UnlinkClips(model::SequencePtr sequence, model::IClips clips);
+    explicit UnlinkClips(const model::SequencePtr& sequence, const model::IClips& clips);
 
     virtual ~UnlinkClips();
 

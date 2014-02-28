@@ -87,7 +87,7 @@ VideoFile::~VideoFile()
 // ICONTROL
 //////////////////////////////////////////////////////////////////////////
 
-void VideoFile::moveTo(const pts& position)
+void VideoFile::moveTo(pts position)
 {
     mDeliveredFrame.reset();
     mDeliveredFrameInputPts = 0;

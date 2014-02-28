@@ -50,7 +50,7 @@ public:
 
     /// Must be called whenever a new drag operation is initiated.
     /// \param isInsideDrag true if this is a drag within the timeline, false if there are new clips being dragged into the timeline (from the project view)
-    void start(wxPoint hotspot, bool isInsideDrag);
+    void start(const wxPoint& hotspot, bool isInsideDrag);
 
     /// Must be called to show the current drag image. Is required when starting
     /// a new drag, but also when the drag needs to be redisplayed (for instance,
@@ -78,7 +78,7 @@ public:
 
     /// \return true if the given clip is currently being dragged
     /// \param clip clip to be checked
-    bool contains(model::IClipPtr clip) const;
+    bool contains(const model::IClipPtr& clip) const;
 
     /// \return size of the current drag bitmap
     wxSize getBitmapSize() const;
@@ -154,13 +154,13 @@ private:
         model::TrackPtr getTrack(int index);
 
         /// \param track temporary track used for 'outside' drags
-        void setTempTrack(model::TrackPtr track);
+        void setTempTrack(const model::TrackPtr& track);
 
         /// \return temporary track used for 'outside' drags
         model::TrackPtr getTempTrack();
 
-        model::TrackPtr trackOnTopOf(model::TrackPtr track);
-        model::TrackPtr trackUnder(model::TrackPtr draggedtrack);
+        model::TrackPtr trackOnTopOf(const model::TrackPtr& track);
+        model::TrackPtr trackUnder(const model::TrackPtr& draggedtrack);
 
         int nTracks(); ///< @return number of tracks of this type currently in the timeline
 
@@ -191,25 +191,25 @@ private:
     /// \param track a track in the timeline
     /// Note that the returned track may be completely unselected, meaning
     /// that actually no clips from that track are visually dragged.
-    model::TrackPtr trackOnTopOf(model::TrackPtr track);
+    model::TrackPtr trackOnTopOf(const model::TrackPtr& track);
 
     /// \return the track that is currently 'under' draggedtrack
-    model::TrackPtr trackUnder(model::TrackPtr draggedtrack);
+    model::TrackPtr trackUnder(const model::TrackPtr& draggedtrack);
 
     /// \return the DragInfo object that corresponds to the given track.
     /// \param track track that indicates audio or video
     /// Given the track, either mVideo or mAudio is returned.
-    DragInfo& getAssociatedInfo(model::TrackPtr track);
+    DragInfo& getAssociatedInfo(const model::TrackPtr& track);
 
     /// Update the offset of tracks of the given track's type.
-    void updateOffset(model::TrackPtr trackUnderPointer);
+    void updateOffset(const model::TrackPtr& trackUnderPointer);
 
     /// Update the currently dragged track. The dragged track can be updated
     /// by holding SHIFT (move grab point) or by moving from audio to video
     /// or vice versa.
     /// May be called with a 0-pointer. In that case, nothing is changed.
     /// \param track track (in the timeline) on top of which the mouse pointer currently is.
-    void updateDraggedTrack(model::TrackPtr track);
+    void updateDraggedTrack(const model::TrackPtr& track);
 
     /// Return the current position of the drag. That is, the difference between
     /// the original hotspot position and the current hotspot position.
@@ -255,7 +255,7 @@ private:
     /// Return the list of 'drops' on the given track
     /// \param track onto which clips are dropped
     /// \return list of drops onto that track
-    command::Drops getDrops(model::TrackPtr track);
+    command::Drops getDrops(const model::TrackPtr& track);
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

@@ -139,7 +139,7 @@ void Mouse::rightDown()
     mRight = mVirtualPosition;
 }
 
-void Mouse::dragMove(wxPoint position)
+void Mouse::dragMove(const wxPoint& position)
 {
     mPhysicalPosition = position;
     mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
@@ -150,7 +150,7 @@ void Mouse::dragMove(wxPoint position)
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void Mouse::set(MousePointerImage image)
+void Mouse::set(const MousePointerImage& image)
 {
     switch (image)
     {
@@ -165,7 +165,7 @@ void Mouse::set(MousePointerImage image)
     }
 }
 
-PointerPositionInfo Mouse::getInfo(wxPoint pointerposition)
+PointerPositionInfo Mouse::getInfo(const wxPoint& pointerposition)
 {
     PointerPositionInfo info;
     getSequenceView().getPositionInfo(pointerposition, info);

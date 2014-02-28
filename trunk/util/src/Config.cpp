@@ -42,7 +42,7 @@ Config::Config(const wxString& appName, const wxString& vendorName, const wxStri
 }
 
 template <class T>
-void setDefault(wxString path, T value)
+void setDefault(const wxString& path, const T& value)
 {
     if (!wxConfigBase::Get()->Exists(path))
     {
@@ -50,7 +50,7 @@ void setDefault(wxString path, T value)
     }
 }
 
-void checkLong(wxString path, long lowerbound, long upperbound)
+void checkLong(const wxString& path, const long& lowerbound, const long& upperbound)
 {
     // Check if it's actually a long
     long value(0);
@@ -69,7 +69,7 @@ void checkLong(wxString path, long lowerbound, long upperbound)
     }
 }
 
-void checkBool(wxString path)
+void checkBool(const wxString& path)
 {
     checkLong(path,0,1);
 }
@@ -82,7 +82,7 @@ void checkBool(wxString path)
     if (e == ENUMNAME ## _MAX) { wxConfigBase::Get()->DeleteEntry(path); } \
 }
 
-void checkEnumFromMap(wxString path, boost::bimap<int, wxString> bimap)
+void checkEnumFromMap(const wxString& path, const boost::bimap<int, wxString>& bimap)
 {
     wxString s = wxConfigBase::Get()->Read(path, "");
     if (bimap.right.find(s) == bimap.right.end())
@@ -92,7 +92,7 @@ void checkEnumFromMap(wxString path, boost::bimap<int, wxString> bimap)
 }
 
 // static
-void Config::init(wxString applicationName, wxString vendorName, bool inCxxTestMode)
+void Config::init(const wxString& applicationName, const wxString& vendorName, bool inCxxTestMode)
 {
     // Initialize config object. Will be destructed by wxWidgets at the end of the application
     wxString ConfigFile(getFileName());
@@ -215,7 +215,7 @@ wxString Config::getExeDir()
 }
 
 template <class T>
-T readWithoutDefault(wxString path)
+T readWithoutDefault(const wxString& path)
 {
     T result = T();
     T dummy = T();
@@ -268,7 +268,7 @@ void Config::WriteBool(const wxString& key, bool value)
 }
 
 // static
-void Config::WriteLong(const wxString& key, long value)
+void Config::WriteLong(const wxString& key, const long& value)
 {
     boost::mutex::scoped_lock lock(sMutex);
     bool result = wxConfigBase::Get()->Write(key, value);
@@ -286,7 +286,7 @@ void Config::WriteDouble(const wxString& key, double value)
 }
 
 // static
-void Config::WriteString(const wxString& key, wxString value)
+void Config::WriteString(const wxString& key, const wxString& value)
 {
     boost::mutex::scoped_lock lock(sMutex);
     bool result = wxConfigBase::Get()->Write(key, value);
@@ -339,14 +339,14 @@ Config::Perspectives Config::WorkspacePerspectives::get()
     return result;
 }
 
-void Config::WorkspacePerspectives::add(wxString name, wxString perspective)
+void Config::WorkspacePerspectives::add(const wxString& name, const wxString& perspective)
 {
     Config::Perspectives perspectives = get();
     perspectives[name] = perspective;
     save(perspectives);
 }
 
-void Config::WorkspacePerspectives::remove(wxString name)
+void Config::WorkspacePerspectives::remove(const wxString& name)
 {
     Config::Perspectives perspectives = get();
     perspectives.erase(name);
@@ -363,7 +363,7 @@ void Config::WorkspacePerspectives::removeAll()
     wxConfigBase::Get()->Flush();
 }
 
-void Config::WorkspacePerspectives::save(Perspectives perspectives)
+void Config::WorkspacePerspectives::save(const Perspectives& perspectives)
 {
     removeAll();
     int i = 1;

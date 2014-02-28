@@ -40,7 +40,7 @@ ChangeAudioClipVolume::~ChangeAudioClipVolume()
 {
 }
 
-void ChangeAudioClipVolume::setVolume(const int& volume)
+void ChangeAudioClipVolume::setVolume(int volume)
 {
     mNewVolume = boost::optional<int>(volume);
     mAudioClip->setVolume(volume);

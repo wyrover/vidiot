@@ -32,7 +32,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    CreateTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, model::TransitionType type);
+    CreateTransition(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionPtr& transition, const model::TransitionType& type);
 
     virtual ~CreateTransition();
 

@@ -36,7 +36,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-void createTransition(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionType type, model::TransitionPtr transition)
+void createTransition(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionType& type, const model::TransitionPtr& transition)
 {
     VAR_INFO(type);
     ASSERT(sequence);

@@ -40,7 +40,7 @@ public:
     // TRIM UPDATES
     //////////////////////////////////////////////////////////////////////////
 
-    void show(model::IClipPtr src, model::IClipPtr trg, model::IClipPtr srcLink, model::IClipPtr trgLink);
+    void show(const model::IClipPtr& src, const model::IClipPtr& trg, const model::IClipPtr& srcLink, const model::IClipPtr& trgLink);
     void hide();
 
 private:

@@ -43,7 +43,7 @@ public:
     /// \param clip clip to be changed
     /// \param transition transition that must be unapplied if this is not a shift trim operation (if 0 then nothing needs to be done)
     /// \parm position position where the trim is done
-    TrimClip(model::SequencePtr sequence, model::IClipPtr clip, model::TransitionPtr transition, MouseOnClipPosition position);
+    TrimClip(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::TransitionPtr& transition, const MouseOnClipPosition& position);
 
     /// To be called when the trim value is changed (for instance, when mouse is moved during trimming, or when a 'length' button is pressed in the 'clip details' view).
     /// \param diff amount to enlarge/reduce the clip's size (<0 move to the left, >0 move to the right)
@@ -71,7 +71,7 @@ public:
     model::IClipPtr getNewClip() const;
     model::IClipPtr getNewLink() const;
 
-    static bool isBeginTrim(MouseOnClipPosition position);
+    static bool isBeginTrim(const MouseOnClipPosition& position);
 
     bool isBeginTrim() const;
 
@@ -98,7 +98,7 @@ public:
     /// \pre clip must be part of a track
     /// \pre link == 0 OR link must be part of a track
     /// \note that link must be specified specifically, since in certain scenario's (trimming via the timeline, in case transition removal is involved) the clip has already been replaced (and is not yet coupled to a link).
-    static TrimLimit determineBoundaries(model::SequencePtr sequence, model::IClipPtr clip, model::IClipPtr link, MouseOnClipPosition position, bool shift);
+    static TrimLimit determineBoundaries(const model::SequencePtr& sequence, const model::IClipPtr& clip, const model::IClipPtr& link, const MouseOnClipPosition& position, bool shift);
 
 private:
 
@@ -141,7 +141,7 @@ private:
     /// \param begin amount to be added (<0) or removed (>0) from beginning of clip
     /// \param end amount to be added (>0) or removed (<0) from end of clip
     /// \pre !clip->isA<Transition>()
-    void adjust(model::IClipPtr clip, pts begin, pts end);
+    void adjust(const model::IClipPtr& clip, pts begin, pts end);
 
     /// Given the mouse movement, determine how far to stretch/reduce the clip
     /// \param diff mouse movement in video frames length

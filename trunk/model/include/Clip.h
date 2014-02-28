@@ -72,11 +72,11 @@ public:
     void setDragged(bool dragged) override;
 
     pts getGenerationProgress() const override;
-    void setGenerationProgress(const pts& progress) override;
+    void setGenerationProgress(pts progress) override;
 
     void invalidateNewStartPosition() override;
     boost::optional<pts> getNewStartPosition() const override;
-    void setNewStartPosition(const pts& position);
+    void setNewStartPosition(pts position);
     virtual std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
 protected:
@@ -113,7 +113,7 @@ private:
         const TrackPtr& track = TrackPtr(),
         const IClipPtr& prev = IClipPtr(),
         const IClipPtr& next = IClipPtr(),
-        const pts& trackPosition = 0,
+        pts trackPosition = 0,
         const unsigned int& index = 0);
 
     //////////////////////////////////////////////////////////////////////////

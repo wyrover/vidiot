@@ -48,8 +48,8 @@ public:
 
     void play();
     void stop();
-    void moveTo(const pts& position);
-    void setSpeed(const int& speed);
+    void moveTo(pts position);
+    void setSpeed(int speed);
     int getSpeed() const;
     bool isPlaying() const;
     model::SequencePtr getSequence() const;
@@ -66,7 +66,7 @@ public:
     /// A frame is a combination of samples, one sample for each output channel.
     /// Thus, a stereo frame contains a left and a right sample.
     /// Method is public since it is called by the C callback.
-    bool audioRequested(void *buffer, const unsigned long& frames, const double& playtime);
+    bool audioRequested(void *buffer, const unsigned long& frames, double playtime);
 
 private:
 

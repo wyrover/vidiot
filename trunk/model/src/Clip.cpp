@@ -96,7 +96,7 @@ void Clip::setTrackInfo(
     const TrackPtr& track,
     const IClipPtr& prev,
     const IClipPtr& next,
-    const pts& trackPosition,
+    pts trackPosition,
     const unsigned int& index)
 {
     mTrack = track;
@@ -187,7 +187,7 @@ pts Clip::getGenerationProgress() const
     return mGeneratedPts;
 }
 
-void Clip::setGenerationProgress(const pts& progress)
+void Clip::setGenerationProgress(pts progress)
 {
     // Note: the condition "wxThread::IsMain()" was added to avoid
     //       generating these events in case a sequence is being rendered.
@@ -213,7 +213,7 @@ boost::optional<pts> Clip::getNewStartPosition() const
     return mNewStartPosition;
 }
 
-void Clip::setNewStartPosition(const pts& position)
+void Clip::setNewStartPosition(pts position)
 {
     mNewStartPosition.reset(position);
 }

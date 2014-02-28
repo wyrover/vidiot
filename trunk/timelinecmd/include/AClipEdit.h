@@ -37,7 +37,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit AClipEdit(model::SequencePtr sequence);
+    explicit AClipEdit(const model::SequencePtr& sequence);
     virtual ~AClipEdit();
 
     //////////////////////////////////////////////////////////////////////////
@@ -130,14 +130,14 @@ protected:
     /// In the ReplacementMap (if != 0) the mapping clip->(first,second) is added.
     /// \param track track in which a cut must be made at the given position
     /// \param position position in the track where the split should occur
-    void split(model::TrackPtr track, pts position);
+    void split(const model::TrackPtr& track, pts position);
 
     /// Replace the given clip (original) with a list of other clips.
     /// In the ReplacementMap (if != 0) the mapping clip->replacements is added.
     /// \param clip original clip to be replaced
     /// \param replacements clips to be inserted in place of 'clip'
     /// \param maintainlinks if true, then the replacements will be linked to the replacement clips of the links of the original clip (ahum...)
-    void replaceClip(model::IClipPtr original, model::IClips replacements, bool maintainlinks = true);
+    void replaceClip(const model::IClipPtr& original, const model::IClips& replacements, bool maintainlinks = true);
 
     /// Add given clip to given track at given position. This method is only allowed
     /// for new clips (clip that are not yet contained in a track). For existing
@@ -146,7 +146,7 @@ protected:
     /// \param track track into which insertion must be done
     /// \param position insertion position
     /// \pre !clip->getLink()
-    void addClip(model::IClipPtr clip, model::TrackPtr track, model::IClipPtr position);
+    void addClip(const model::IClipPtr& clip, const model::TrackPtr& track, const model::IClipPtr& position);
 
     /// Add given clips to given track at given position. This method is only allowed
     /// for new clips (clip that are not yet contained in a track). For existing
@@ -155,16 +155,16 @@ protected:
     /// \param track track into which insertion must be done
     /// \param position insertion position (default: at end of track)
     /// \pre FOREACH clip in clips: !clip->getLink()
-    void addClips(model::IClips clips, model::TrackPtr track, model::IClipPtr position = model::IClipPtr());
+    void addClips(const model::IClips& clips, const model::TrackPtr& track, const model::IClipPtr& position = model::IClipPtr());
 
     /// Remove the given clip
     /// \param clip original clip to be removed
-    void removeClip(model::IClipPtr original);
+    void removeClip(const model::IClipPtr& original);
 
     /// Remove the given list of clips
     /// \param originals list of clips to be removed
     /// \pre originals is a contiguous list of clips in one track
-    void removeClips(model::IClips originals);
+    void removeClips(const model::IClips& originals);
 
     /// Find the list of clips, indicated with the pts'es [left, right). Thus, the left pts is part
     /// of these clips, the right pts is not.
@@ -174,31 +174,31 @@ protected:
     /// \pre a cut exists at both pts positions 'left' and 'right' (use split() to ensure this).
     /// \return list of clips to be removed and their position (that is, the first non-removed clip after these clips, or a null ptr)
     typedef std::pair<model::IClips, model::IClipPtr> ClipsWithPosition;
-    ClipsWithPosition findClips(model::TrackPtr track, pts left, pts right);
+    ClipsWithPosition findClips(const model::TrackPtr& track, pts left, pts right);
 
     /// Move all clips in all tracks a certain amount.
     /// \param start only clips clips that are on or after this position must be moved
     /// \param amount distance that must be shifted
     /// \param exclude list of tracks that are not to be changed
-    void shiftAllTracks(pts start, pts amount, model::Tracks exclude);
+    void shiftAllTracks(pts start, pts amount, const model::Tracks& exclude);
 
     /// Move all clips in the given tracks a certain amount.
     /// \param tracks list of tracks which must be shifted
     /// \param start only clips clips that are on or after this position must be moved
     /// \param amount distance that must be shifted
     /// \param exclude list of tracks that are not to be changed
-    void shiftTracks(model::Tracks tracks, pts start, pts amount);
+    void shiftTracks(const model::Tracks& tracks, pts start, pts amount);
 
     /// Add a new transition replacing the two given clips with two new clips with the transition in between.
     /// The length of the new clips adjacent to the transition is such that they're shortened with the length of the transition.
     /// \param leftClip clip to the left of the transition. May be 0 in case only right clip applies.
     /// \param rightClip clip to the right of the transition. May be 0 in case only left clip applies.
-    model::IClipPtr addTransition( model::IClipPtr leftClip, model::IClipPtr rightClip, model::TransitionPtr transition );
+    model::IClipPtr addTransition(const model::IClipPtr& leftClip, const model::IClipPtr& rightClip, const model::TransitionPtr& transition );
 
     /// Remove transition. That means remove the transition AND any clip (part) it was
     /// covering, leaving white space as a result.
     /// \param transition transition to be removed
-    void removeTransition( model::TransitionPtr transition );
+    void removeTransition(const model::TransitionPtr& transition );
 
     /// Unapply transition. If there are adjacent clips that are part of the transition,
     /// these clips will be extended with the part of that clip that is 'part of the transition'.
@@ -209,13 +209,13 @@ protected:
     /// About replacelinkedclipsalso: This is sometimes required beacuse the clip edit itselves does not
     /// make new clips for all clips (example: drag and drop), but the unapplytransition DOES changes some
     /// clips. In that case, it must be ensured that theres also a replacement clip for the link.
-    model::IClips unapplyTransition( model::TransitionPtr transition, bool replacelinkedclipsalso = false );
+    model::IClips unapplyTransition(const model::TransitionPtr& transition, bool replacelinkedclipsalso = false );
 
     /// Replace the given list of clips with one empty clip of the same length. Note that the given
     /// list of clips must be consecutive clips within one track.
     /// \param clips list of clips to be replaced
     /// \return replacement (empty) clip
-    model::IClipPtr replaceWithEmpty(model::IClips clips);
+    model::IClipPtr replaceWithEmpty(const model::IClips& clips);
 
     /// Make an animation that shows removing the given empty areas (all remaining clips are
     /// shifted over the empty areas). Note that this is used to animate the edit operation, and
@@ -228,11 +228,11 @@ protected:
     /// In general, use this operation to show the animation in the following way:
     /// - animatedTrimEmpty()
     /// - timeline::endTransaction()
-    void animatedDeleteAndTrim(model::IClips clipsToBeRemoved);
+    void animatedDeleteAndTrim(const model::IClips& clipsToBeRemoved);
 
     /// Split all tracks at the interval's begin and end positions.
     /// \return lists of adjacent clips between interval begin and end positions (for all intervals)
-    model::IClips splitTracksAndFindClipsToBeRemoved(PtsIntervals removed);
+    model::IClips splitTracksAndFindClipsToBeRemoved(const PtsIntervals& removed);
 
     /// Store the current selection for restoring later
     /// \see restoreSelection
@@ -275,15 +275,15 @@ private:
     /// The new Move is executed immediately. This method is also used to add new clips,
     /// by using the defaults for the remove* parameters.
     void newMove(
-        model::TrackPtr addTrack,
-        model::IClipPtr addPosition,
-        model::IClips addClips,
-        model::TrackPtr removeTrack = model::TrackPtr(),
-        model::IClipPtr removePosition = model::IClipPtr(),
-        model::IClips removeClips = model::IClips());
+        const model::TrackPtr& addTrack,
+        const model::IClipPtr& addPosition,
+        const model::IClips& addClips,
+        const model::TrackPtr& removeTrack = model::TrackPtr(),
+        const model::IClipPtr& removePosition = model::IClipPtr(),
+        const model::IClips& removeClips = model::IClips());
 
     /// Execute a move.
-    void doMove(model::MoveParameterPtr move);
+    void doMove(const model::MoveParameterPtr& move);
 
     /// For all replaced clips, ensure that the linked clip (if any) is also replaced,
     /// at least with just a plain clone of the original link. This is needed to
@@ -310,7 +310,7 @@ private:
     /// a list of clip replacements.
     /// \param original list of clips to be expanded
     /// \return list containing all fully expanded clips
-    model::IClips expandReplacements(model::IClips original);
+    model::IClips expandReplacements(const model::IClips& original);
 
     /// Repair 'linking of clips' information after replacing several clips.
     /// For each
@@ -333,7 +333,7 @@ private:
     /// Merge any consecutive empty clips into one clip for the contiguous region.
     /// Remove any empty clips of length 0
     /// \param tracks list of track (audio/video) to be updated
-    void mergeConsecutiveEmptyClips(model::Tracks tracks);
+    void mergeConsecutiveEmptyClips(const model::Tracks& tracks);
 
     /// If there's an empty clip at the end of the track it has no purpose other than
     /// enlarging the scrolled area. Thus, remove these last empty clips. That'll

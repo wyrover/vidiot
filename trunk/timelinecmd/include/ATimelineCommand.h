@@ -36,7 +36,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit ATimelineCommand(model::SequencePtr sequence);
+    explicit ATimelineCommand(const model::SequencePtr& sequence);
     virtual ~ATimelineCommand();
 
     //////////////////////////////////////////////////////////////////////////

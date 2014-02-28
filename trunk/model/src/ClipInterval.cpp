@@ -77,7 +77,7 @@ pts ClipInterval::getLength() const
     return mLength;
 }
 
-void ClipInterval::moveTo(const pts& position)
+void ClipInterval::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
@@ -140,7 +140,7 @@ pts ClipInterval::getMaxAdjustBegin() const
     return maxAdjustBegin;
 }
 
-void ClipInterval::adjustBegin(const pts& adjustment)
+void ClipInterval::adjustBegin(pts adjustment)
 {
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mOffset += adjustment;
@@ -168,7 +168,7 @@ pts ClipInterval::getMaxAdjustEnd() const
     return maxAdjustEnd;
 }
 
-void ClipInterval::adjustEnd(const pts& adjustment)
+void ClipInterval::adjustEnd(pts adjustment)
 {
     ASSERT(!hasTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;

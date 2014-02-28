@@ -26,7 +26,7 @@ class EnumSelector
 {
 public:
     typedef boost::bimap<ITEMTYPE,wxString> Mapping;
-    EnumSelector(wxWindow* parent, Mapping mapping, ITEMTYPE default )
+    EnumSelector(wxWindow* parent, const Mapping& mapping, const ITEMTYPE& default )
         :   wxChoice(parent, wxID_ANY)
         ,   mMapping(mapping)
     {
@@ -52,12 +52,12 @@ public:
         ASSERT_MAP_CONTAINS(mSelectionToItem,index);
         return mSelectionToItem[index];
     }
-    int getIndex(ITEMTYPE item)
+    int getIndex(const ITEMTYPE& item)
     {
         ASSERT_MAP_CONTAINS(mItemToSelection,item);
         return mItemToSelection[item];
     }
-    void select(ITEMTYPE value)
+    void select(const ITEMTYPE& value)
     {
         SetSelection(getIndex(value));
     }

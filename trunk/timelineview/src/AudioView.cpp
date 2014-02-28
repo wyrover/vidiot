@@ -128,7 +128,7 @@ void AudioView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
+void AudioView::getPositionInfo(const wxPoint& position, PointerPositionInfo& info ) const
 {
     int top = getY();
     for ( model::TrackPtr track : getSequence()->getAudioTracks() )
@@ -150,7 +150,7 @@ void AudioView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
+void AudioView::onAudioTracksAdded(model::EventAddAudioTracks& event )
 {
     for ( model::TrackPtr track : event.getValue().addedTracks)
     {
@@ -163,7 +163,7 @@ void AudioView::onAudioTracksAdded( model::EventAddAudioTracks& event )
     event.Skip();
 }
 
-void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
+void AudioView::onAudioTracksRemoved(model::EventRemoveAudioTracks& event )
 {
     for ( model::TrackPtr track : event.getValue().removedTracks )
     {
@@ -176,7 +176,7 @@ void AudioView::onAudioTracksRemoved( model::EventRemoveAudioTracks& event )
     event.Skip();
 }
 
-void AudioView::onTrackHeightChanged( model::EventHeightChanged& event )
+void AudioView::onTrackHeightChanged(model::EventHeightChanged& event )
 {
     getParent().invalidateRect(); // Will cause this::invalidateRect()
     getTimeline().Refresh(false);

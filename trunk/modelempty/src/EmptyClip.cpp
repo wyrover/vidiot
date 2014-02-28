@@ -44,7 +44,7 @@ EmptyClip::EmptyClip()
     VAR_DEBUG(*this);
 }
 
-EmptyClip::EmptyClip(const pts& length)
+EmptyClip::EmptyClip(pts length)
     :	Clip()
     ,   mLength(length)
     ,   mProgress(0)
@@ -104,7 +104,7 @@ pts EmptyClip::getLength() const
     return mLength;
 }
 
-void EmptyClip::moveTo(const pts& position)
+void EmptyClip::moveTo(pts position)
 {
     VAR_DEBUG(*this)(position);
     ASSERT_LESS_THAN(position,mLength);
@@ -128,7 +128,7 @@ pts EmptyClip::getMaxAdjustBegin() const
     return mLength;
 }
 
-void EmptyClip::adjustBegin(const pts& adjustment)
+void EmptyClip::adjustBegin(pts adjustment)
 {
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength -= adjustment;
@@ -146,7 +146,7 @@ pts EmptyClip::getMaxAdjustEnd() const
     return std::numeric_limits<pts>::max();
 }
 
-void EmptyClip::adjustEnd(const pts& adjustment)
+void EmptyClip::adjustEnd(pts adjustment)
 {
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
     mLength += adjustment;

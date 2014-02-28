@@ -34,7 +34,7 @@ public:
     explicit ChangeAudioClipVolume(const AudioClipPtr& audioclip);
     virtual ~ChangeAudioClipVolume();
 
-    void setVolume(const int& volume);
+    void setVolume(int volume);
 
     //////////////////////////////////////////////////////////////////////////
     // WXWIDGETS DO/UNDO INTERFACE

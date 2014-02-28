@@ -238,7 +238,7 @@ void Selection::unselectAll()
     QueueEvent(new EventSelectionUpdate(0));
 }
 
-void Selection::change(model::IClips selection)
+void Selection::change(const model::IClips& selection)
 {
     ASSERT(wxThread::IsMain());
     unselectAll();
@@ -261,7 +261,7 @@ void Selection::updateOnEdit()
 // HELPER METHODS
 //////////////////////////////////////////////////////////////////////////
 
-void Selection::selectClipAndLink(model::IClipPtr clip, bool selected)
+void Selection::selectClipAndLink(const model::IClipPtr& clip, bool selected)
 {
     selectClip(clip,selected);
     model::IClipPtr link = clip->getLink();
@@ -271,12 +271,12 @@ void Selection::selectClipAndLink(model::IClipPtr clip, bool selected)
     }
 }
 
-void Selection::selectClip(model::IClipPtr clip, bool selected)
+void Selection::selectClip(const model::IClipPtr& clip, bool selected)
 {
     clip->setSelected(selected);
 }
 
-void Selection::setPreviouslyClicked(model::IClipPtr clip)
+void Selection::setPreviouslyClicked(const model::IClipPtr& clip)
 {
     mPreviouslyClicked = clip;
 }

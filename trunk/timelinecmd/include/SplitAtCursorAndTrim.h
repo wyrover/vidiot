@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    SplitAtCursorAndTrim(model::SequencePtr sequence, bool backwards);
+    SplitAtCursorAndTrim(const model::SequencePtr& sequence, bool backwards);
 
     virtual ~SplitAtCursorAndTrim();
 

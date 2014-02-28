@@ -124,7 +124,7 @@ void VideoView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
 // GET/SET
 //////////////////////////////////////////////////////////////////////////
 
-void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) const
+void VideoView::getPositionInfo(const wxPoint& position, PointerPositionInfo& info ) const
 {
     int y = getSequence()->getDividerPosition();
     for ( model::TrackPtr track : getSequence()->getVideoTracks() )
@@ -146,7 +146,7 @@ void VideoView::getPositionInfo(wxPoint position, PointerPositionInfo& info ) co
 // MODEL EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
+void VideoView::onVideoTracksAdded(model::EventAddVideoTracks& event )
 {
     for ( model::TrackPtr track : event.getValue().addedTracks )
     {
@@ -158,7 +158,7 @@ void VideoView::onVideoTracksAdded( model::EventAddVideoTracks& event )
     event.Skip();
 }
 
-void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
+void VideoView::onVideoTracksRemoved(model::EventRemoveVideoTracks& event )
 {
     for ( model::TrackPtr track : event.getValue().removedTracks )
     {
@@ -170,7 +170,7 @@ void VideoView::onVideoTracksRemoved( model::EventRemoveVideoTracks& event )
     event.Skip();
 }
 
-void VideoView::onTrackHeightChanged( model::EventHeightChanged& event )
+void VideoView::onTrackHeightChanged(model::EventHeightChanged& event )
 {
     getParent().invalidateRect(); // Will cause this::invalidateRect()
     getTimeline().Refresh(false);

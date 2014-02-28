@@ -44,7 +44,7 @@ public:
 
     File();
 
-    File(const wxFileName& path, const int& buffersize = 1);
+    File(const wxFileName& path, int buffersize = 1);
 
     virtual File* clone() const;
 
@@ -67,7 +67,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     virtual pts getLength() const override;
-    virtual void moveTo(const pts& position) override;
+    virtual void moveTo(pts position) override;
     virtual wxString getDescription() const override;
     virtual void clean() override;
 

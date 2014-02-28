@@ -27,7 +27,7 @@ namespace gui { namespace timeline { namespace command {
 // LOGGING
 //////////////////////////////////////////////////////////////////////////
 
-    IntervalChange::IntervalChange(model::SequencePtr sequence, PtsInterval interval, bool add)
+    IntervalChange::IntervalChange(const model::SequencePtr& sequence, const PtsInterval& interval, bool add)
 :   ATimelineCommand(sequence)
 ,   mInterval(interval)
 ,   mAdd(add)

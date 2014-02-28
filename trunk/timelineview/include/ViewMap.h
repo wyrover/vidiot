@@ -45,27 +45,27 @@ public:
     // REGISTRATION
     //////////////////////////////////////////////////////////////////////////
 
-    void registerView(model::TrackPtr track, TrackView* view);
-    void registerDivider(model::TrackPtr track, DividerView* view);
+    void registerView(const model::TrackPtr& track, TrackView* view);
+    void registerDivider(const model::TrackPtr& track, DividerView* view);
 
-    void registerView(model::IClipPtr clip, ClipView* view);
-    void registerThumbnail(model::IClipPtr clip, ThumbnailView* view);
+    void registerView(const model::IClipPtr& clip, ClipView* view);
+    void registerThumbnail(const model::IClipPtr& clip, ThumbnailView* view);
 
-    void unregisterView(model::TrackPtr track);
-    void unregisterDivider(model::TrackPtr track);
+    void unregisterView(const model::TrackPtr &track);
+    void unregisterDivider(const model::TrackPtr& track);
 
-    void unregisterView(model::IClipPtr clip);
-    void unregisterThumbnail(model::IClipPtr clip);
+    void unregisterView(const model::IClipPtr& clip);
+    void unregisterThumbnail(const model::IClipPtr& clip);
 
     //////////////////////////////////////////////////////////////////////////
     // CONVERSION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual DividerView* getDivider(model::TrackPtr track) const;
-    virtual TrackView* getView(model::TrackPtr track) const;
+    virtual DividerView* getDivider(const model::TrackPtr& track) const;
+    virtual TrackView* getView(const model::TrackPtr& track) const;
 
-    virtual ClipView* getView(model::IClipPtr clip) const;
-    virtual ThumbnailView* getThumbnail(model::IClipPtr clip) const;
+    virtual ClipView* getView(const model::IClipPtr& clip) const;
+    virtual ThumbnailView* getThumbnail(const model::IClipPtr& clip) const;
 
     //////////////////////////////////////////////////////////////////////////
     // MASS INVALIDATION

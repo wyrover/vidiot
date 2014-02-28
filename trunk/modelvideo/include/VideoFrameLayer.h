@@ -59,10 +59,10 @@ public:
     /// \pre opacity >= Constants::sOpacityMax (0)
     /// \pre opacity < Constants::sOpacityMax (255)
     /// \note any existing alpha data is removed
-    void setOpacity(const int& opacity);
+    void setOpacity(int opacity);
     int getOpacity() const;
 
-    void setRotation(const boost::rational<int>& rotation);
+    void setRotation(boost::rational<int> rotation);
 
     /// Return an image, using the frame's data clipped to the region of interest.
     /// \note This method may return a 0 ptr if the region of interest is empty

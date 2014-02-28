@@ -59,7 +59,7 @@ public:
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void getPositionInfo(wxPoint position, PointerPositionInfo& info) const;
+    void getPositionInfo(const wxPoint& position, PointerPositionInfo& info) const;
 
 private:
 
@@ -73,9 +73,9 @@ private:
     // MODEL EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onAudioTracksAdded( model::EventAddAudioTracks& event );
-    void onAudioTracksRemoved( model::EventRemoveAudioTracks& event );
-    void onTrackHeightChanged( model::EventHeightChanged& event );
+    void onAudioTracksAdded(model::EventAddAudioTracks& event);
+    void onAudioTracksRemoved(model::EventRemoveAudioTracks& event);
+    void onTrackHeightChanged(model::EventHeightChanged& event);
 };
 
 }} // namespace

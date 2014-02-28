@@ -31,7 +31,7 @@ public:
     // INITIALIZATION METHODS
     //////////////////////////////////////////////////////////////////////////
 
-    ThumbnailView(model::IClipPtr clip, View* parent);
+    ThumbnailView(const model::IClipPtr& clip, View* parent);
     virtual ~ThumbnailView();
 
     //////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
     void invalidateRect() override;
 
     void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
-    void drawForDragging(wxPoint position, int height, wxDC& dc) const;
+    void drawForDragging(const wxPoint& position, int height, wxDC& dc) const;
 
 private:
 

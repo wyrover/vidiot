@@ -63,7 +63,7 @@ protected:
     // IMPLEMENTATION OF TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    virtual VideoFramePtr getVideo(const pts& position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters) = 0;
+    virtual VideoFramePtr getVideo(pts position, const IClipPtr& leftClip, const IClipPtr& rightClip, const VideoCompositionParameters& parameters) = 0;
 
 private:
 

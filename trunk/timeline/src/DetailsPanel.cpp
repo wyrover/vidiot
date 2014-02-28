@@ -61,7 +61,7 @@ wxString DetailsPanel::getTitle() const
 // INTERFACE TOWARDS ACTUAL DETAILS VIEWS
 //////////////////////////////////////////////////////////////////////////
 
-void DetailsPanel::requestShow(bool show, wxString title)
+void DetailsPanel::requestShow(bool show, const wxString& title)
 {
     VAR_DEBUG(this)(show)(title);
     mShow = show;

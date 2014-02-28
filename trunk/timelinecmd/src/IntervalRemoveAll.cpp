@@ -28,7 +28,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-IntervalRemoveAll::IntervalRemoveAll(model::SequencePtr sequence)
+IntervalRemoveAll::IntervalRemoveAll(const model::SequencePtr& sequence)
 :   ATimelineCommand(sequence)
 ,   mIntervals(getTimeline().getIntervals().get())
 {

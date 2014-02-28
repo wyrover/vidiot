@@ -32,7 +32,7 @@ namespace gui { namespace timeline {
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
 
-DividerView::DividerView(View* parent, pixel height, model::TrackPtr track)
+DividerView::DividerView(View* parent, pixel height, const model::TrackPtr& track)
 :   View(parent)
 ,   mHeight(height)
 ,   mTrack(track)

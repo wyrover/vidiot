@@ -22,7 +22,7 @@ namespace gui { namespace timeline { namespace state {
 
 struct EvKey
 {
-    EvKey(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position);
+    EvKey(bool controldown, bool shiftdown, bool altdown, const wxChar& unicodekey, int keycode, const wxPoint& position);
 
     bool getCtrlDown() const;
     bool getShiftDown() const;
@@ -48,14 +48,14 @@ struct EvKeyDown
     : public EvKey
     , public boost::statechart::event< EvKeyDown >
 {
-    EvKeyDown(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position);
+    EvKeyDown(bool controldown, bool shiftdown, bool altdown, const wxChar& unicodekey, int keycode, const wxPoint& position);
 };
 
 struct EvKeyUp
     : public EvKey
     , public boost::statechart::event< EvKeyUp >
 {
-    EvKeyUp(bool controldown, bool shiftdown, bool altdown, wxChar unicodekey, int keycode, wxPoint position);
+    EvKeyUp(bool controldown, bool shiftdown, bool altdown, const wxChar& unicodekey, int keycode, const wxPoint& position);
 };
 
 }}} // namespace

@@ -30,7 +30,7 @@ namespace gui { namespace timeline { namespace command {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-SplitAtCursor::SplitAtCursor(model::SequencePtr sequence)
+SplitAtCursor::SplitAtCursor(const model::SequencePtr& sequence)
     :   AClipEdit(sequence)
 {
     VAR_INFO(this);

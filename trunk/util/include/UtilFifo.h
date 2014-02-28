@@ -26,7 +26,7 @@ template<class ELEMENT>
 class Fifo : boost::noncopyable
 {
 public:
-    explicit Fifo(unsigned int maxSize)
+    explicit Fifo(const unsigned int& maxSize)
         :   mMaxSize(maxSize)
         ,	mSize(0)
     {
@@ -42,7 +42,7 @@ public:
         return mSize;
     }
 
-    void resize(long newMaxSize)
+    void resize(const long& newMaxSize)
     {
         {
             boost::mutex::scoped_lock lock(mMutex);
@@ -82,7 +82,7 @@ public:
 
     /// Inserts an object in the list.
     /// If list is full, blocks until list is no longer full.
-    void push(ELEMENT e)
+    void push(const ELEMENT& e)
     {
         {
             boost::mutex::scoped_lock lock(mMutex);

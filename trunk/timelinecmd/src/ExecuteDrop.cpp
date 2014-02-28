@@ -64,7 +64,7 @@ std::ostream& operator<<(std::ostream& os, const Drop& obj)
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-ExecuteDrop::ExecuteDrop(model::SequencePtr sequence)
+ExecuteDrop::ExecuteDrop(const model::SequencePtr& sequence)
     :   AClipEdit(sequence)
     ,   mDrags()
     ,   mDrops()
@@ -173,7 +173,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
     VAR_INFO(mDrags);
 }
 
-void ExecuteDrop::onDrop(const Drops& drops, Shift shift)
+void ExecuteDrop::onDrop(const Drops& drops, const Shift& shift)
 {
     VAR_INFO(this)(drops)(shift);
     mDrops = drops;

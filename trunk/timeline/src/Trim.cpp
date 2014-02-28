@@ -404,7 +404,7 @@ pts Trim::determineTrimDiff()
     return result;
 }
 
-void Trim::determinePossibleSnapPoints(model::IClipPtr originalclip)
+void Trim::determinePossibleSnapPoints(const model::IClipPtr& originalclip)
 {
     pts min = 0; // Use these to limit the number of snap points (performance)
     pts max = 0;

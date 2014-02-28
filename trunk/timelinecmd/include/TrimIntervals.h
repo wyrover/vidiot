@@ -38,7 +38,7 @@ public:
     /// \param sequence sequence from which regions must be removed
     /// \param remove list of intervals to be removed
     /// \param name name of command (for undo/redo menu entries)
-    TrimIntervals(model::SequencePtr sequence, PtsIntervals remove, wxString name);
+    TrimIntervals(const model::SequencePtr& sequence, const PtsIntervals& remove, const wxString& name);
 
     virtual ~TrimIntervals();
 

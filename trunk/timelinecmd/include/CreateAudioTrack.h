@@ -31,7 +31,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    explicit CreateAudioTrack (model::SequencePtr sequence);
+    explicit CreateAudioTrack(const model::SequencePtr& sequence);
     virtual ~CreateAudioTrack ();
 
     //////////////////////////////////////////////////////////////////////////

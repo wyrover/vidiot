@@ -56,16 +56,16 @@ public:
     void leftDown();
     void rightDown();
 
-    void dragMove(wxPoint position);
+    void dragMove(const wxPoint& position);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
 
-    void set(MousePointerImage image);
+    void set(const MousePointerImage& image);
 
     /// \return info on the given position.
-    PointerPositionInfo getInfo(wxPoint position);
+    PointerPositionInfo getInfo(const wxPoint& position);
 
     /// \return current physical (unscrolled) positionm of mouse pointer
     wxPoint getPhysicalPosition() const;

@@ -31,7 +31,7 @@
 
 namespace gui { namespace timeline { namespace command {
 
-DeleteSelectedClips::DeleteSelectedClips(model::SequencePtr sequence, bool shift)
+DeleteSelectedClips::DeleteSelectedClips(const model::SequencePtr& sequence, bool shift)
     :   AClipEdit(sequence)
     ,   mShift(shift || getTimeline().getKeyboard().getShiftDown())
 {

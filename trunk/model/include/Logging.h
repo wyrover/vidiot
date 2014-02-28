@@ -21,7 +21,7 @@
 namespace model {
 
 template <class OBJ>
-std::ostream& dump(std::ostream& os, const std::list< boost::shared_ptr< OBJ > >& list, const int& depth = 0 )
+std::ostream& dump(std::ostream& os, const std::list< boost::shared_ptr< OBJ > >& list, int depth = 0 )
 {
     typedef boost::shared_ptr< OBJ > OBJPtr;
     for ( OBJPtr obj : list )
@@ -31,12 +31,12 @@ std::ostream& dump(std::ostream& os, const std::list< boost::shared_ptr< OBJ > >
     return os;
 }
 
-std::ostream& dump(std::ostream& os, const SequencePtr& sequence, const int& depth = 0);
-std::ostream& dump(std::ostream& os, const TrackPtr& track, const int& depth = 0);
-std::ostream& dump(std::ostream& os, const IClipPtr& clip, const int& depth = 0);
+std::ostream& dump(std::ostream& os, const SequencePtr& sequence, int depth = 0);
+std::ostream& dump(std::ostream& os, const TrackPtr& track, int depth = 0);
+std::ostream& dump(std::ostream& os, const IClipPtr& clip, int depth = 0);
 
 template <class OBJ>
-std::string dump(const OBJ& o, const int& depth = 0)
+std::string dump(const OBJ& o, int depth = 0)
 {
     std::ostringstream os;
     dump(os,o,depth);

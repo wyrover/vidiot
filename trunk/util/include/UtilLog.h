@@ -157,17 +157,17 @@ public:
     static void exit();
 
     static LogLevel sReportingLevel;
-    static void setReportingLevel(LogLevel level);
+    static void setReportingLevel(const LogLevel& level);
     static std::string getFileName();
     static bool isEnabled(); ///< \return true if log file has been opened
     static void flush(); ///< flush the logging. NOTE: Only use for testing!
 
     /// Log info in a separate line, preceded with meta data.
-    std::ostringstream& get(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction);
+    std::ostringstream& get(const LogLevel& level, const char* p_szFileName, const size_t& p_lLine, const char* p_szFunction);
 
     /// Log info in a separate line, without meta data.
     /// \param category identifier to be used in log file
-    std::ostringstream& get(std::string category);
+    std::ostringstream& get(const std::string& category);
 
 private:
     std::ostringstream os;
@@ -192,7 +192,7 @@ struct LogVar
     /// Constructor for VAR_* macros.
     /// Defined in .h because LOGVARS_ macro trick below redefines
     /// LOGVAR_A and LOGVAR_B which are used in the initializer list.
-    LogVar(LogLevel level, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
+    LogVar(const LogLevel& level, const char* p_szFileName, const size_t& p_lLine, const char* p_szFunction)
         :   LOGVAR_A(*this)
         ,   LOGVAR_B(*this)
         ,   mLevel(level)
@@ -206,7 +206,7 @@ struct LogVar
     /// Constructor for ASSERT and FATAL macros macros.
     /// Defined in .h because LOGVARS_ macro trick below redefines
     /// LOGVAR_A and LOGVAR_B which are used in the initializer list.
-    LogVar(const char * expr, const char* p_szFileName, size_t p_lLine, const char* p_szFunction)
+    LogVar(const char * expr, const char* p_szFileName, const size_t& p_lLine, const char* p_szFunction)
         :   LOGVAR_A(*this)
         ,   LOGVAR_B(*this)
         ,   mLevel(LogAssert)

@@ -19,14 +19,14 @@
 
 namespace util { namespace path {
 
-wxFileName normalize( wxFileName filename )
+wxFileName normalize(wxFileName filename)
 {
     bool normalizeResult = filename.Normalize();
     ASSERT(normalizeResult)(filename);
     return filename;
 }
 
-wxString toName( wxFileName filename )
+wxString toName(const wxFileName& filename)
 {
     wxString result;
     if ( filename.IsDir() )
@@ -48,7 +48,7 @@ wxString toName( wxFileName filename )
     return result;
 }
 
-wxString toPath( wxFileName filename )
+wxString toPath(const wxFileName& filename)
 {
     wxString result = normalize(filename).GetFullPath();
     if ( wxEndsWithPathSeparator(result) )
@@ -58,27 +58,27 @@ wxString toPath( wxFileName filename )
     return result;
 }
 
-bool equals( wxFileName f1, wxFileName f2 )
+bool equals(const wxFileName& f1, const wxFileName& f2)
 {
     return toPath( f1 ).IsSameAs( toPath( f2 ) );
 }
 
-bool equals( wxString f1, wxFileName f2 )
+bool equals(const wxString& f1, const wxFileName& f2)
 {
     return equals( wxFileName(f1), f2 );
 }
 
-bool equals( wxFileName f1, wxString f2 )
+bool equals(const wxFileName& f1, const wxString& f2)
 {
     return equals( f1, wxFileName( f2 ) );
 }
 
-bool equals( wxString f1, wxString f2 )
+bool equals(const wxString& f1, const wxString& f2)
 {
     return equals( wxFileName(f1), wxFileName(f2) );
 }
 
-bool isParentOf( wxFileName parent, wxFileName child )
+bool isParentOf(const wxFileName& parent, const wxFileName& child)
 {
     wxString sChild = toPath( child );
     wxString sParent = toPath( parent );
@@ -86,17 +86,17 @@ bool isParentOf( wxFileName parent, wxFileName child )
     return !(sChild.IsSameAs(sParent)) && sChild.StartsWith( sParent );
 }
 
-bool isParentOf( wxString parent, wxFileName child )
+bool isParentOf(const wxString& parent, const wxFileName& child)
 {
     return isParentOf( wxFileName( parent ), child );
 }
 
-bool isParentOf( wxFileName parent, wxString child )
+bool isParentOf(const wxFileName& parent, const wxString& child)
 {
     return isParentOf( parent, wxFileName( child ) );
 }
 
-bool isParentOf( wxString parent,   wxString child )
+bool isParentOf(const wxString& parent, const wxString& child)
 {
     return isParentOf( wxFileName( parent ),  wxFileName( child ) );
 }

@@ -325,25 +325,25 @@ WaitForChildCount::~WaitForChildCount()
     });
 }
 
-void WaitForChildCount::onNodeAdded( model::EventAddNode &event )
+void WaitForChildCount::onNodeAdded(model::EventAddNode &event )
 {
     event.Skip();
     check();
 }
 
-void  WaitForChildCount::onNodesAdded( model::EventAddNodes &event )
+void  WaitForChildCount::onNodesAdded(model::EventAddNodes &event )
 {
     event.Skip();
     check();
 }
 
-void WaitForChildCount::onNodeRemoved( model::EventRemoveNode &event )
+void WaitForChildCount::onNodeRemoved(model::EventRemoveNode &event )
 {
     event.Skip();
     check();
 }
 
-void  WaitForChildCount::onNodesRemoved( model::EventRemoveNodes &event )
+void  WaitForChildCount::onNodesRemoved(model::EventRemoveNodes &event )
 {
     event.Skip();
     check();

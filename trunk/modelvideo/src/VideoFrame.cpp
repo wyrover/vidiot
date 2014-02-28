@@ -89,7 +89,7 @@ pts VideoFrame::getPts() const
     return mPts;
 }
 
-void VideoFrame::setPts(const pts& position)
+void VideoFrame::setPts(pts position)
 {
     mPts = position;
 }
