@@ -111,7 +111,7 @@ AudioChunkPtr AudioFile::getNextAudio(const AudioCompositionParameters& paramete
 {
     startDecodingAudio(parameters);
 
-    if (fileOpenFailed())
+    if (!canBeOpened())
     {
         // If file could not be read (for whatever reason) return empty audio.
         return boost::static_pointer_cast<AudioChunk>(boost::make_shared<EmptyChunk>(parameters.getNrChannels(), parameters.ptsToSamples(1)));
@@ -278,7 +278,7 @@ void AudioFile::startDecodingAudio(const AudioCompositionParameters& parameters)
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
 
-    if (fileOpenFailed()) { return; } // File could not be opened (deleted?)
+    if (!canBeOpened()) { return; } // File could not be opened (deleted?)
 
     mDecodingAudio = true;
 

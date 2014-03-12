@@ -41,8 +41,9 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
 
     pts length = file->getLength();
 
-    model::IClipPtr videoClip = boost::make_shared<model::EmptyClip>(length);
-    model::IClipPtr audioClip = boost::make_shared<model::EmptyClip>(length);
+    model::IClipPtr videoClip;
+    model::IClipPtr audioClip;
+// todo use vld (Visual Leak Detector) for detecting leaks (maybe the page faults?)
 
     if (file->hasVideo())
     {
@@ -55,9 +56,17 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
             videoClip = boost::make_shared<model::VideoClip>(boost::make_shared<model::VideoFile>(file->getPath()));
         }
     }
+    else
+    {
+        videoClip = boost::make_shared<model::EmptyClip>(length);
+    }
     if (file->hasAudio())
     {
         audioClip = boost::make_shared<model::AudioClip>(boost::make_shared<model::AudioFile>(file->getPath()));
+    }
+    else
+    {
+        audioClip = boost::make_shared<model::EmptyClip>(length);
     }
     if (file->hasVideo() && file->hasAudio())
     {
