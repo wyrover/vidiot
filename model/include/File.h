@@ -89,8 +89,7 @@ public:
     void readMetaData();
 
     /// \return true if this file can be opened properly
-    /// \pre meta data must have been read via an openFile() or readMetaData() call
-    bool canBeOpened() const;
+    bool canBeOpened();
 
     bool hasVideo();
     bool hasAudio();

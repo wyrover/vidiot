@@ -407,8 +407,6 @@ pts Drag::getSnapOffset() const
 
 wxBitmap Drag::getDragBitmap()
 {
-    // todo get new bitmap when zoom changes
-    // todo get new bitmap when moved to another track (update thumbnails)
     VAR_DEBUG(*this);
     wxSize size = getSequenceView().getSize();
 

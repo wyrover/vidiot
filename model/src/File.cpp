@@ -294,9 +294,9 @@ void File::readMetaData()
     closeFile();
 }
 
-bool File::canBeOpened() const
+bool File::canBeOpened()
 {
-    ASSERT(mMetaDataKnown)(this);
+    readMetaData();
     return mFileOpenedOk;
 }
 
