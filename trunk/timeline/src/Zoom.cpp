@@ -100,6 +100,10 @@ void Zoom::change(int steps)
         getViewMap().invalidateThumbnails();
         getTimeline().resize();
         getScrolling().alignCenterPts();
+        if (getDrag().isActive())
+        {
+            getDrag().show(); // Use new bitmap
+        }
         getTimeline().endTransaction();
         getTimeline().Refresh(false);
     }

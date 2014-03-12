@@ -231,7 +231,7 @@ void ExecuteDrop::initialize()
     LOG_INFO << "STEP 3: Execute the drops";
     for ( Drop drop : mDrops )
     {
-        ASSERT_MORE_THAN_EQUALS_ZERO(drop.position); // todo got -something here after dragging,ctrl wheel during dragging, then dropping (more to the left, at begin of timeline)
+        ASSERT_MORE_THAN_EQUALS_ZERO(drop.position);
         ASSERT(drop.track);
         ASSERT_NONZERO(drop.clips.size());
         VAR_INFO(drop.position)(drop.track)(drop.clips);
