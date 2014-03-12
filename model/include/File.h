@@ -52,8 +52,6 @@ public:
 
     virtual ~File();
 
-    void abort();
-
     //////////////////////////////////////////////////////////////////////////
     // INODE
     //////////////////////////////////////////////////////////////////////////
@@ -87,7 +85,12 @@ public:
 
     time_t getLastModified() const;
 
-    bool canBeOpened();         ///< \return true if this file can be opened properly
+    /// Initialize the meta data of the file object
+    void readMetaData();
+
+    /// \return true if this file can be opened properly
+    /// \pre meta data must have been read via an openFile() or readMetaData() call
+    bool canBeOpened() const;
 
     bool hasVideo();
     bool hasAudio();
@@ -121,10 +124,6 @@ protected:
     //////////////////////////////////////////////////////////////////////////
     // PACKETS INTERFACE TO SUBCLASSES
     //////////////////////////////////////////////////////////////////////////
-
-    /// Indicates if the file could not be opened. If so, then the file is
-    /// probably missing or could not be opened for another reason.
-    bool fileOpenFailed() const;
 
     /// File is opened if it was not yet opened
     void startReadingPackets();
@@ -166,8 +165,9 @@ private:
     bool mHasAudio;
 
     // Status of opening
+    bool mMetaDataKnown;    ///< True if the meta data (file path exists, canBeOpened) has been retrieved.
     bool mFileOpened;       ///< True if the file open has been done. Note: The file open may have failed.
-    bool mFileOpenFailed;   ///< True if the file has been opened, but failed.
+    bool mFileOpenedOk;     ///< True if the file has been opened, with success.
     bool mReadingPackets;
     bool mEOF;
 
@@ -185,10 +185,17 @@ private:
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
+    /// If the file is not yet opened, it is opened. Otherwise, this call does nothing.
+    ///
+    /// If the file is not yet opened, and the meta data is not known, that meta data
+    /// (modification time, whether the file can be opened, clip length) is retrieved.
+    /// This can only be done for supported formats, since avcodec
+    /// can only read the lengths from those.
+    ///
+    /// Also sets mFileOpenFailed to the correct value.
     void openFile();
-    void closeFile();
 
-    void testOpeningAndExtractMetaData();
+    void closeFile();
 
     //////////////////////////////////////////////////////////////////////////
     // THREADS

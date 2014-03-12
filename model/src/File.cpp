@@ -57,8 +57,9 @@ File::File()
     ,   mHasVideo(false)
     ,   mHasAudio(false)
     // Status of opening
+    ,   mMetaDataKnown(false)
     ,   mFileOpened(false)
-    ,   mFileOpenFailed(false)
+    ,   mFileOpenedOk(false)
     ,   mReadingPackets(false)
     ,   mEOF(false)
     // AVCodec access
@@ -84,8 +85,9 @@ File::File(const wxFileName& path, int buffersize)
     ,   mHasVideo(false)
     ,   mHasAudio(false)
     // Status of opening
+    ,   mMetaDataKnown(false)
     ,   mFileOpened(false)
-    ,   mFileOpenFailed(false)
+    ,   mFileOpenedOk(false)
     ,   mReadingPackets(false)
     ,   mEOF(false)
     // AVCodec access
@@ -98,7 +100,7 @@ File::File(const wxFileName& path, int buffersize)
     ,   mTwoInARow(0)
 {
     VAR_DEBUG(this);
-    testOpeningAndExtractMetaData();
+    readMetaData();
 }
 
 File::File(const File& other)
@@ -112,8 +114,9 @@ File::File(const File& other)
     ,   mHasVideo(other.mHasVideo)
     ,   mHasAudio(other.mHasAudio)
     // Status of opening
+    ,   mMetaDataKnown(other.mMetaDataKnown)
     ,   mFileOpened(false)
-    ,   mFileOpenFailed(false)
+    ,   mFileOpenedOk(other.mFileOpenedOk)
     ,   mReadingPackets(false)
     ,   mEOF(false)
     // AVCodec access
@@ -140,15 +143,7 @@ void File::onCloned()
 File::~File()
 {
     VAR_DEBUG(this);
-    stopReadingPackets();
-    closeFile();
-}
-
-void File::abort()
-{
-    VAR_DEBUG(this);
-    stopReadingPackets();
-    closeFile();
+    clean();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -187,7 +182,8 @@ void File::check()
         }
         else
         {
-            testOpeningAndExtractMetaData();
+            mMetaDataKnown = false;
+            readMetaData();
             if (!canBeOpened())
             {
                 gui::Dialog::get().getConfirmation(_("File removed"), _("The file ") + util::path::toName(mPath) + _(" has been removed from disk. File is removed from project also."));
@@ -209,7 +205,6 @@ void File::check()
 pts File::getLength() const
 {
     ASSERT_MORE_THAN_ZERO(mNumberOfFrames);
-
     return mNumberOfFrames;
 }
 
@@ -218,7 +213,7 @@ void File::moveTo(pts position)
     VAR_DEBUG(this)(position);
     openFile(); // Needed for avcodec calls below
 
-    if (fileOpenFailed()) { return; } // File probably closed
+    if (!canBeOpened()) { return; } // File probably closed
 
     stopReadingPackets();
 
@@ -279,6 +274,7 @@ wxFileName File::getPath() const
 
 time_t File::getLastModified() const
 {
+    ASSERT(mMetaDataKnown)(this);
     return mLastModified;
 }
 
@@ -291,18 +287,28 @@ wxString File::getName() const
     return mPath.GetLongPath();
 };
 
-bool File::canBeOpened()
+void File::readMetaData()
 {
-    return !mFileOpenFailed;
+    if (mMetaDataKnown) { return; }
+    openFile();
+    closeFile();
+}
+
+bool File::canBeOpened() const
+{
+    ASSERT(mMetaDataKnown)(this);
+    return mFileOpenedOk;
 }
 
 bool File::hasVideo()
 {
+    ASSERT(mMetaDataKnown)(this);
     return mHasVideo;
 }
 
 bool File::hasAudio()
 {
+    ASSERT(mMetaDataKnown)(this);
     return mHasAudio;
 }
 
@@ -318,7 +324,7 @@ bool File::useStream(const AVMediaType& type) const
 AVStream* File::getStream()
 {
     openFile();
-    if (!fileOpenFailed() && mFileContext && mStreamIndex != STREAMINDEX_UNDEFINED)
+    if (canBeOpened() && mFileContext && mStreamIndex != STREAMINDEX_UNDEFINED)
     {
         return mFileContext->streams[mStreamIndex];
     }
@@ -328,11 +334,6 @@ AVStream* File::getStream()
 //////////////////////////////////////////////////////////////////////////
 // PACKETS INTERFACE TO SUBCLASSES
 //////////////////////////////////////////////////////////////////////////
-
-bool File::fileOpenFailed() const
-{
-    return mFileOpenFailed;
-}
 
 void File::startReadingPackets()
 {
@@ -345,7 +346,7 @@ void File::startReadingPackets()
     if (getEOF()) return;
 
     openFile();
-    if (fileOpenFailed()) { return; } // File probably closed
+    if (!canBeOpened()) { return; } // File probably closed
 
     if (mReadingPackets) return;
 
@@ -415,7 +416,7 @@ void File::flush()
 AVCodecContext* File::getCodec()
 {
     openFile();
-    if (fileOpenFailed()) { return 0; } // File probably closed
+    if (!canBeOpened()) { return 0; } // File probably closed
 
     ASSERT(mFileContext->streams[mStreamIndex]);
     return mFileContext->streams[mStreamIndex]->codec;
@@ -473,7 +474,20 @@ void File::openFile()
     mFileOpened = true;
     VAR_DEBUG(this);
 
-    mFileOpenFailed = true; // Is reset after the open succeeds
+    if (!mMetaDataKnown)
+    {
+        if (mPath.Exists())
+        {
+            wxDateTime dt = mPath.GetModificationTime();
+            if (dt.IsValid())
+            {
+                mLastModified = dt.GetTicks();
+            }
+        }
+    }
+
+    mMetaDataKnown = true;
+    mFileOpenedOk = false; // Is reset after the open succeeds
 
     int result = 0;
     wxString path = mPath.GetLongPath();
@@ -486,7 +500,7 @@ void File::openFile()
     if (result != 0)
     {
         // Some error occured when opening the file.
-        VAR_DEBUG(path)(result)(avcodecErrorString(result))(*this);
+        VAR_WARNING(path)(result)(avcodecErrorString(result))(*this);
         return;
     }
     {
@@ -624,41 +638,19 @@ void File::openFile()
         VAR_DEBUG(stream)(codec);
     }
     VAR_DEBUG(mFileContext)(mStreamIndex)(mNumberOfFrames);
-    mFileOpenFailed = false;
+    mFileOpenedOk = true;
 }
 
 void File::closeFile()
 {
     VAR_DEBUG(this);
     if (!mFileOpened) { return; }
-    if (fileOpenFailed()) { return; }
+    if (!canBeOpened()) { return; }
 
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
     avformat_close_input(&mFileContext);
     ASSERT_ZERO(mFileContext);
     mFileOpened = false;
-}
-
-void File::testOpeningAndExtractMetaData()
-{
-    mFileOpenFailed = true;
-    if (mPath.Exists())
-    {
-        wxDateTime dt = mPath.GetModificationTime();
-        if (dt.IsValid())
-        {
-            mLastModified = dt.GetTicks();
-
-            // These two lines are required to correctly read the length
-            // (and/or any other meta data) from the file.
-            // This can only be done for supported formats, since avcodec
-            // can only read the lengths from those.
-            //
-            // Note that the opening of a file sets mFileOpenFailed to the correct value.
-            openFile();
-            closeFile();
-        }
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -724,7 +716,7 @@ std::ostream& operator<<(std::ostream& os, const File& obj)
         << obj.mHasVideo << '|'
         << obj.mHasAudio << '|'
         << obj.mFileOpened << '|'
-        << obj.mFileOpenFailed << '|'
+        << obj.mFileOpenedOk << '|'
         << obj.mReadingPackets << '|'
         << obj.mEOF << '|'
         << obj.mStreamIndex << '|'

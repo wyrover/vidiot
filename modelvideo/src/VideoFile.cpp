@@ -124,7 +124,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 {
     startDecodingVideo(parameters);
 
-    if (fileOpenFailed())
+    if (!canBeOpened())
     {
         // File could not be opened (deleted?)
         wxImagePtr compositeImage(boost::make_shared<wxImage>(parameters.getBoundingBox()));
@@ -379,7 +379,7 @@ void VideoFile::startDecodingVideo(const VideoCompositionParameters& parameters)
 
     startReadingPackets(); // Also causes the file to be opened resulting in initialized avcodec members for File.
 
-    if (fileOpenFailed()) { return; } // File could not be opened (deleted?)
+    if (!canBeOpened()) { return; } // File could not be opened (deleted?)
 
     mDecodingVideo = true;
 
