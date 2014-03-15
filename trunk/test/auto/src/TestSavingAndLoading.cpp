@@ -22,15 +22,19 @@
 #include "HelperApplication.h"
 #include "HelperFileSystem.h"
 #include "HelperProject.h"
+#include "HelperProjectView.h"
 #include "HelperThread.h"
 #include "HelperTimeline.h"
 #include "HelperTimelineTrim.h"
 #include "HelperTimelinesView.h"
 #include "HelperWindow.h"
+#include "Node.h"
 #include "Project.h"
+#include "ProjectView.h"
 #include "Scrolling.h"
 #include "Sequence.h"
 #include "Timeline.h"
+#include "UtilPath.h"
 #include "VideoTransitionFactory.h"
 #include "Window.h"
 #include "Zoom.h"
@@ -38,6 +42,7 @@
 namespace test {
 
 const wxString sCurrent("current.vid");
+const wxString sFolder("folder");
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
@@ -65,7 +70,7 @@ void TestSavingAndLoading::testSaveAndLoad()
     mProjectFixture.init();
 
     StartTest("Add non auto folder to project view");
-    model::FolderPtr folder1 = addFolder( "folder" );
+    model::FolderPtr folder1 = addFolder( sFolder );
 
     StartTest("Add still image to project view");
     addFiles( boost::assign::list_of(getStillImagePath()), folder1 );
@@ -229,6 +234,14 @@ void TestSavingAndLoading::checkDocument(wxString path)
         // First move to the left so that all the move actions succeed
         getTimeline().getScrolling().align(0,0);
     });
+    {
+        // Known bug at some point: mLastModified not known for a recently opened file (in the project view).
+        // The method getLastModified was accessed when the date column comes into view.
+        StartTest("Open folder");
+        wxString s = util::path::toPath(util::path::normalize(getTestFilesPath().GetFullPath()));
+        gui::ProjectView::get().expand(getRoot()->find(s).front());
+        gui::ProjectView::get().scrollToRight();
+    }
     {
         StartTest("Trim clip"); // Known bug at some point: a crash due to improper initialization of File class members upon loading (mNumberOfFrames not initialized)
         TrimLeft(VideoClip(0,1),20);

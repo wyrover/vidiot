@@ -255,6 +255,16 @@ wxPoint ProjectView::find(const model::NodePtr& node )
     //return wxPoint(0,0);
 }
 
+void ProjectView::expand(const model::NodePtr& node)
+{
+    mCtrl.Expand(wxDataViewItem( node->id() ));
+}
+
+void ProjectView::scrollToRight()
+{
+    mCtrl.Scroll(mCtrl.GetSize().GetWidth(), -1);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // POPUP MENU
 //////////////////////////////////////////////////////////////////////////

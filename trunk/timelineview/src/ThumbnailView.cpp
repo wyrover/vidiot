@@ -30,9 +30,55 @@
 #include "VideoFrame.h"
 #include "VideoCompositionParameters.h"
 #include "ViewMap.h"
+#include "Worker.h"
+#include "WorkEvent.h"
 #include "Zoom.h"
 
 namespace gui { namespace timeline {
+
+//////////////////////////////////////////////////////////////////////////
+// WORK OBJECT FOR RENDERING A THUMBNAIL
+//////////////////////////////////////////////////////////////////////////
+
+struct RenderThumbnailWork
+    : public worker::Work
+{
+    // Here, all access to folder must be done, not in the worker thread.
+    // Rationale: all access to model objects must be done in the main thread!
+    explicit RenderThumbnailWork(const model::VideoClipPtr& clip, const wxSize& size)
+        : worker::Work(boost::bind(&RenderThumbnailWork::renderThumbnail,this))
+        , mClip(clip)
+        , mSize(size)
+    {
+        ASSERT(!mClip->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
+    }
+
+    void renderThumbnail()
+    {
+        setThreadName("RenderThumbnail");
+        wxBitmapPtr bitmap(new wxBitmap(mSize));
+        if (mClip->getLength() > 0)
+        {
+            // The if is required to avoid errors during editing operations.
+            mClip->moveTo(0); // To ensure that the VideoFile object is moved to the beginning of the clip (thus, including offset) and not the (default) beginning of the video file.
+            model::VideoFramePtr videoFrame = mClip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(mSize).setDrawBoundingBox(false));
+            mResult = videoFrame->getBitmap();
+        }
+    }
+
+    model::VideoClipPtr mClip;
+    wxSize mSize;
+    wxBitmapPtr mResult;
+};
+
+//////////////////////////////////////////////////////////////////////////
+// COMPARISON OBJECT FOR CACHE
+//////////////////////////////////////////////////////////////////////////
+
+bool ThumbnailView::CompareSize::operator()(const wxSize& s1, const wxSize& s2)
+{
+    return (s1.x == s2.x) ? (s1.y < s2.y) : (s1.x < s2.x);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
@@ -43,7 +89,9 @@ ThumbnailView::ThumbnailView(const model::IClipPtr& clip, View* parent)
 ,   mVideoClip(boost::dynamic_pointer_cast<model::VideoClip>(clip))
 ,   mW(boost::none)
 ,   mH(boost::none)
-,   mBitmap(boost::none)
+,   mTrackHeight(boost::none)
+,   mPendingWork()
+,   mBitmaps()
 {
     VAR_DEBUG(this)(mVideoClip);
     ASSERT(mVideoClip);
@@ -59,6 +107,7 @@ ThumbnailView::~ThumbnailView()
     VAR_DEBUG(this);
 
     getViewMap().unregisterThumbnail(mVideoClip);
+    abortPendingWork();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,7 +126,8 @@ pixel ThumbnailView::getY() const
 
 pixel ThumbnailView::getW() const
 {
-    if (!mW)
+    ASSERT_IMPLIES(mW,mTrackHeight);
+    if (!mW || *mTrackHeight != getParent().getH())
     {
         determineSize();
     }
@@ -86,7 +136,8 @@ pixel ThumbnailView::getW() const
 
 pixel ThumbnailView::getH() const
 {
-    if (!mH)
+    ASSERT_IMPLIES(mH,mTrackHeight);
+    if (!mH || *mTrackHeight != getParent().getH())
     {
         determineSize();
     }
@@ -102,36 +153,78 @@ void ThumbnailView::invalidateRect()
 void ThumbnailView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
     wxSize size(getSize());
-    if (!mBitmap || mBitmap->GetSize() != size)
+
+    if (size.GetWidth() < 10 || size.GetHeight() < 10)
     {
-        if (size.GetWidth() >= 10 && size.GetHeight() >= 10) // if too small, then no thumbnail
+        // if too small, then no thumbnail. Change track length to a very small size to test.
+        // Note: this check also prevents that the thumbnail is drawn 'outside' the clip's region
+        //       when there's just not enough room.
+        return;
+    }
+
+    BitmapCache::const_iterator it = mBitmaps.find(size);
+    if (it == mBitmaps.end())
+    {
+        // Bitmap with correct size not rendered yet.
+
+        if (mPendingWork.find(size) == mPendingWork.end())
         {
-            mBitmap.reset(wxBitmap(size));
-            draw(*mBitmap);
+            // No work pending for this size: schedule new work
+            abortPendingWork();
+
+            boost::shared_ptr<RenderThumbnailWork> work = boost::make_shared<RenderThumbnailWork>(getClip(),size);
+            work->Bind(worker::EVENT_WORK_DONE, &ThumbnailView::onRenderDone, const_cast<ThumbnailView*>(this)); // No unbind: work object is destroyed when done
+            worker::InvisibleWorker::get().schedule(work);
+            mPendingWork[size] = work;
         }
     }
-    if (mBitmap)
+
+    it = mBitmaps.find(size);
+    if (it != mBitmaps.end())
     {
-        getTimeline().copyRect(dc, region, offset, *mBitmap, getRect());
+        getTimeline().copyRect(dc, region, offset, *(it->second), getRect());
     }
 }
 
 void ThumbnailView::drawForDragging(const wxPoint& position, int height, wxDC& dc) const
 {
-    if (mBitmap)
+    wxSize size(0,0);
+    pixel mindiff = std::numeric_limits<pixel>::max();
+    wxBitmapPtr bitmap;
+    for ( auto item : mBitmaps )
+    {
+        pixel diff = abs(height - item.first.GetHeight());
+        if (diff < mindiff)
+        {
+            mindiff = diff;
+            size = item.first;
+            bitmap = item.second;
+        }
+    }
+    if (bitmap)
     {
         wxMemoryDC dcBmp;
-        dcBmp.SelectObjectAsSource(*mBitmap);
+        dcBmp.SelectObjectAsSource(*bitmap);
         dc.Blit(
             position.x + Layout::get().ClipBorderSize,
             position.y + Layout::get().ClipDescriptionBarHeight,
-            getW(),
-            static_cast<int>(std::max(getH(),height - Layout::get().ClipDescriptionBarHeight - Layout::ClipBorderSize )),
+            size.GetWidth(),
+            static_cast<int>(std::max(size.GetHeight(),height - Layout::get().ClipDescriptionBarHeight - Layout::ClipBorderSize )),
             &dcBmp,
             0,
             0,
             wxCOPY);
     }
+}
+
+void ThumbnailView::onRenderDone(worker::WorkDoneEvent& event)
+{
+    boost::shared_ptr<RenderThumbnailWork> work = boost::dynamic_pointer_cast<RenderThumbnailWork>(event.getValue());
+    work->Unbind(worker::EVENT_WORK_DONE, &ThumbnailView::onRenderDone, const_cast<ThumbnailView*>(this));
+    mBitmaps[work->mSize] = work->mResult;
+    mPendingWork.erase(work->mSize);
+    invalidateRect();
+    getTimeline().repaint(getRect());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -145,11 +238,15 @@ void ThumbnailView::determineSize() const
     wxSize scaledSize = model::Convert::sizeInBoundingBox(model::Properties::get().getVideoSize(), boundingBox);
     mW.reset(std::max(sMinimumSize, scaledSize.x)); // Ensure minimum width of 10 pixels
     mH.reset(std::max(sMinimumSize, scaledSize.y)); // Ensure minimum height of 10 pixels
+
+    // Stored to detect changes in the track height. This is done to ensure that a mismatch
+    // is detected. Consider the example where a thumbnail is rendered, and then the track size
+    // is reduced. Thumbnail needs to use the new track size as basis for the computation.
+    mTrackHeight.reset(getParent().getH());
 }
 
-void ThumbnailView::draw(wxBitmap& bitmap) const
+model::VideoClipPtr ThumbnailView::getClip() const
 {
-    wxMemoryDC dc(bitmap);
     model::VideoClipPtr clone;
 
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mVideoClip->getPrev());
@@ -180,16 +277,16 @@ void ThumbnailView::draw(wxBitmap& bitmap) const
     }
     ASSERT(clone);
     ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
-    if (clone->getLength() > 0)
+    return clone;
+}
+
+void ThumbnailView::abortPendingWork() const
+{
+    for ( auto item : mPendingWork )
     {
-        // The if is required to avoid errors during editing operations.
-        clone->moveTo(0); // To ensure that the VideoFile object is moved to the beginning of the clip (thus, including offset) and not the (default) beginning of the video file.
-        model::VideoFramePtr videoFrame = clone->getNextVideo(model::VideoCompositionParameters().setBoundingBox(getSize()).setDrawBoundingBox(false));
-        wxBitmapPtr thumbnail = videoFrame->getBitmap();
-        if (thumbnail)
-        {
-            dc.DrawBitmap(*thumbnail,0,0,false);
-        }
+         boost::shared_ptr<RenderThumbnailWork> work = boost::dynamic_pointer_cast<RenderThumbnailWork>(item.second);
+         work->abort();
+         work->Unbind(worker::EVENT_WORK_DONE, &ThumbnailView::onRenderDone, const_cast<ThumbnailView*>(this));
     }
 }
 

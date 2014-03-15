@@ -25,7 +25,7 @@ ExpectExecutedWork::ExpectExecutedWork(int nWork)
     : mWork(nWork)
     , mWaited(false)
 {
-    worker::Worker::get().setExpectedWork(mWork);
+    worker::VisibleWorker::get().setExpectedWork(mWork);
 }
 
 ExpectExecutedWork::~ExpectExecutedWork()
@@ -37,7 +37,7 @@ void ExpectExecutedWork::wait()
 {
     ASSERT(!mWaited);
     mWaited = true;
-    worker::Worker::get().waitForExecutionCount();
+    worker::VisibleWorker::get().waitForExecutionCount();
     // Any work done generates at least one event (WorkDoneEvent).
     // Wait until those events have been handled by the main thread.
     waitForIdle();

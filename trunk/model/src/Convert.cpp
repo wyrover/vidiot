@@ -206,7 +206,7 @@ wxSize Convert::sizeInBoundingBox(const wxSize& input, const wxSize& boundingbox
 }
 
 // static
-double Convert::degreesToRadians(boost::rational<int> degrees) // todo more const& throughout code
+double Convert::degreesToRadians(boost::rational<int> degrees)
 {
     return -1 * boost::rational_cast<double>(degrees) * boost::math::constants::pi<double>() / 180.0;
 }

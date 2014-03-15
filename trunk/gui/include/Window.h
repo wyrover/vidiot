@@ -39,7 +39,8 @@ namespace model {
 }
 
 namespace worker {
-    class Worker;
+    class VisibleWorker;
+    class InvisibleWorker;
 }
 
 namespace gui {
@@ -194,20 +195,22 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxDocTemplate*      mDocTemplate;
+    wxDocTemplate* mDocTemplate;
 
-    Dialog*             mDialog;
+    Dialog* mDialog;
 
-    Watcher*            mWatcher;
-    worker::Worker*     mWorker;
+    Watcher* mWatcher;
 
-    gui::Layout*        mLayout;
+    worker::VisibleWorker*   mVisibleWorker;
+    worker::InvisibleWorker* mInvisibleWorker;
 
-    Preview*		    mPreview;
-    DetailsView*        mDetailsView;
-    TimelinesView*      mTimelinesView;
-    ProjectView*	    mProjectView;
-    Help*               mHelp;
+    gui::Layout* mLayout;
+
+    Preview*        mPreview;
+    DetailsView*    mDetailsView;
+    TimelinesView*  mTimelinesView;
+    ProjectView*    mProjectView;
+    Help*           mHelp;
 
     wxMenuBar*          mMenuBar;        // For enabling/disabling menus
     wxMenu*             mMenuEdit;       // For associating with do/undo

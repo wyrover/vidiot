@@ -56,13 +56,13 @@ StatusBar::StatusBar(wxWindow *parent)
     mProgress = new wxGauge(this,wxID_ANY,100);
     hideProgressBar();
     Bind(wxEVT_SIZE, &StatusBar::onSize, this);
-    worker::Worker::get().Bind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
+    worker::VisibleWorker::get().Bind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
 }
 
 StatusBar::~StatusBar()
 {
     delete mInfoTimer;
-    worker::Worker::get().Unbind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
+    worker::VisibleWorker::get().Unbind(worker::EVENT_WORKER_QUEUE_SIZE, &StatusBar::onWorkerQueueSize, this);
     Unbind(wxEVT_SIZE, &StatusBar::onSize, this);
 }
 
