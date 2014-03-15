@@ -69,7 +69,9 @@ public:
     /// \return center position (within the ProjectView) of the given node.
     wxPoint find(const model::NodePtr& node);
 
-    void selectColumnHeader();
+    void expand(const model::NodePtr& node);
+
+    void scrollToRight();
 
     //////////////////////////////////////////////////////////////////////////
     // POPUP MENU

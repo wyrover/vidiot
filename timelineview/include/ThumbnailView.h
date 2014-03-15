@@ -20,6 +20,10 @@
 
 #include "View.h"
 
+namespace worker {
+    class WorkDoneEvent;
+}
+
 namespace gui { namespace timeline {
 
 class ThumbnailView
@@ -48,12 +52,23 @@ public:
     void draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const override;
     void drawForDragging(const wxPoint& position, int height, wxDC& dc) const;
 
+    void onRenderDone(worker::WorkDoneEvent& event);
+
 private:
 
+    struct CompareSize
+    {
+         bool operator()(const wxSize& s1, const wxSize& s2);
+    };
+
     model::VideoClipPtr mVideoClip;
-    mutable boost::optional<wxBitmap> mBitmap;
     mutable boost::optional<pixel> mW;
     mutable boost::optional<pixel> mH;
+    mutable boost::optional<pixel> mTrackHeight;
+    typedef std::map<wxSize, worker::WorkPtr, CompareSize> PendingWork;
+    mutable PendingWork mPendingWork;
+    typedef std::map<wxSize, wxBitmapPtr, CompareSize> BitmapCache;
+    mutable BitmapCache mBitmaps;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
@@ -61,7 +76,9 @@ private:
 
     void determineSize() const;
 
-    void draw(wxBitmap& bitmap) const;
+    model::VideoClipPtr getClip() const;
+
+    void abortPendingWork() const;
 };
 
 }} // namespace

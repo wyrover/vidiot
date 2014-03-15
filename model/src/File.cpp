@@ -274,7 +274,6 @@ wxFileName File::getPath() const
 
 time_t File::getLastModified() const
 {
-    ASSERT(mMetaDataKnown)(this);
     return mLastModified;
 }
 

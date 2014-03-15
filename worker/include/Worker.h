@@ -31,7 +31,6 @@ typedef Fifo<WorkPtr> FifoWork;
 class Worker
     :   public wxEvtHandler // MUST BE FIRST INHERITED CLASS FOR WXWIDGETS EVENTS TO BE RECEIVED.
     ,   public boost::noncopyable
-    ,   public SingleInstance<Worker>
 {
 public:
 
@@ -84,6 +83,20 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     void thread();
+};
+
+/// Worker for work objects that show progress in the status bar
+class VisibleWorker
+    : public Worker
+    ,   public SingleInstance<VisibleWorker>
+{
+};
+
+/// Worker for background processing
+class InvisibleWorker
+    : public Worker
+    ,   public SingleInstance<InvisibleWorker>
+{
 };
 
 } // namespace

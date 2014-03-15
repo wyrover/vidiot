@@ -100,7 +100,8 @@ Window::Window()
     ,   mDialog(new Dialog())
     ,   mLayout(new gui::Layout())
     ,   mWatcher(0)
-    ,   mWorker(0)
+    ,   mVisibleWorker(0)
+    ,   mInvisibleWorker(0)
     ,   mPreview(0)
     ,   mDetailsView(0)
     ,   mTimelinesView(0)
@@ -113,13 +114,14 @@ Window::Window()
     ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
 {
     // Construction not done in constructor list due to dependency on sCurrent
-    mWorker         = new worker::Worker();
-    mWatcher        = new Watcher();
-    mPreview        = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
-    mDetailsView    = new DetailsView(this);
-    mTimelinesView  = new TimelinesView(this);
-    mProjectView    = new ProjectView(this);
-    mHelp           = new Help(this);
+    mVisibleWorker   = new worker::VisibleWorker();
+    mInvisibleWorker = new worker::InvisibleWorker();
+    mWatcher         = new Watcher();
+    mPreview         = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
+    mDetailsView     = new DetailsView(this);
+    mTimelinesView   = new TimelinesView(this);
+    mProjectView     = new ProjectView(this);
+    mHelp            = new Help(this);
 
     wxIconBundle icons;
     icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
@@ -447,7 +449,8 @@ Window::~Window()
     delete mPreview;        // the timeline view in turn 'knows/uses' the preview (specifically, the player).
     delete mDetailsView;
     delete mWatcher;
-    delete mWorker;
+    delete mVisibleWorker;
+    delete mInvisibleWorker;
     delete mDialog;
     delete mLayout;
     //NOT: delete mDocTemplate;
@@ -475,14 +478,16 @@ void Window::onOpenProject(model::EventOpenProject &event )
     GetDocumentManager()->FileHistorySave(*wxConfigBase::Get());
     wxConfigBase::Get()->Flush();
     updateTitle();
-    mWorker->start();
+    mVisibleWorker->start();
+    mInvisibleWorker->start();
     event.Skip();
 }
 
 void Window::onCloseProject(model::EventCloseProject &event )
 {
     updateTitle();
-    mWorker->abort();
+    mVisibleWorker->abort();
+    mInvisibleWorker->start();
     event.Skip();
 }
 
@@ -534,7 +539,8 @@ void Window::onMaximize(wxMaximizeEvent& event)
 void Window::onClose(wxCloseEvent& event)
 {
     Config::WriteString(Config::sPathWorkspacePerspectiveCurrent, mUiManager.SavePerspective());
-    mWorker->abort();
+    mVisibleWorker->abort();
+    mInvisibleWorker->abort();
     event.Skip();
 }
 
