@@ -35,6 +35,7 @@
 #include "Sequence.h"
 #include "SequenceView.h"
 #include "State.h"
+#include "ThumbnailView.h"
 #include "Tooltip.h"
 #include "Track.h"
 #include "Trim.h"
@@ -58,6 +59,9 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 ,   mPlayer(Window::get().getPreview().openTimeline(sequence,this))
 ,   mTransaction(false)
 ,   mShift(0)
+,   mBufferBitmap()
+,   mExecuteOnIdle()
+,   mRenderThumbnails(false)
 //////////////////////////////////////////////////////////////////////////
 ,   mTrim(new Trim(this))
 ,   mZoom(new Zoom(this))
@@ -100,6 +104,8 @@ Timeline::Timeline(wxWindow *parent, const model::SequencePtr& sequence, bool be
 
     // Ensure that for newly opened timelines the initial position is ok
     getSequenceView().resetDividerPosition();
+
+    mExecuteOnIdle = boost::bind(&Timeline::alignCenterPtsAfterInitialization, this); // Run this when the whole startup is done.
 }
 
 Timeline::~Timeline()
@@ -314,10 +320,10 @@ const Details& Timeline::getDetails() const
 
 void Timeline::onIdle(wxIdleEvent& event)
 {
-    // First idle after startup indicates 'init done'
-    Unbind(wxEVT_IDLE,                &Timeline::onIdle,               this);
-
-    getScrolling().alignCenterPts();
+    if (mExecuteOnIdle)
+    {
+        mExecuteOnIdle();
+    }
     event.Skip();
 }
 
@@ -512,6 +518,11 @@ void Timeline::resize()
     SetVirtualSize(getSequenceView().getSize());
 }
 
+bool Timeline::renderThumbnails() const
+{
+    return mRenderThumbnails;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // TRANSACTION
 //////////////////////////////////////////////////////////////////////////
@@ -537,6 +548,47 @@ void Timeline::modelChanged()
     // - reset model::Track iterators
     // - start at the last played position (and not start at the "buffered" position)
     getPlayer()->moveTo(getTimeline().getCursor().getLogicalPosition());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION STEPS
+//////////////////////////////////////////////////////////////////////////
+
+void Timeline::alignCenterPtsAfterInitialization()
+{
+    getScrolling().alignCenterPts();
+    mExecuteOnIdle = boost::bind(&Timeline::readFocusedThumbnails, this);
+}
+
+void Timeline::readFocusedThumbnails()
+{
+    // After the scroll bar has been moved to its proper position, the then
+    // focused thumbnails may be shown. If done sooner, then thumbnails
+    // that are not shown initially will first be rendered. That results in
+    // the thumbnails in the visible area to be drawn a bit later (lag).
+    mRenderThumbnails = true;
+
+    // Trigger paint event upon which the focused thumbnails are rendered.
+    Refresh();
+
+    // Upon idle all other thumbnails are rendered
+    mExecuteOnIdle = boost::bind(&Timeline::readInitialThumbnailsAfterInitialization, this);
+}
+
+void Timeline::readInitialThumbnailsAfterInitialization()
+{
+    for (ThumbnailView* t : getViewMap().getThumbnails())
+    {
+        t->scheduleInitialRendering();
+    }
+    mExecuteOnIdle.clear();
+    ignoreIdleEvents();
+}
+
+void Timeline::ignoreIdleEvents()
+{
+    // First idle after startup indicates 'init done'
+    Unbind(wxEVT_IDLE,                &Timeline::onIdle,               this);
 }
 
 //////////////////////////////////////////////////////////////////////////

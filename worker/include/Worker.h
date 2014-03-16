@@ -38,7 +38,7 @@ public:
     // INITIALIZATION
     //////////////////////////////////////////////////////////////////////////
 
-    Worker();
+    Worker(const char* name);
 
     void start();
 
@@ -66,6 +66,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    const char* mName;
     bool mEnabled;
     bool mRunning;
     boost::scoped_ptr<boost::thread> mThread;
@@ -90,6 +91,8 @@ class VisibleWorker
     : public Worker
     ,   public SingleInstance<VisibleWorker>
 {
+public:
+    VisibleWorker() : Worker("VisibleWorker") {}
 };
 
 /// Worker for background processing
@@ -97,6 +100,8 @@ class InvisibleWorker
     : public Worker
     ,   public SingleInstance<InvisibleWorker>
 {
+public:
+    InvisibleWorker() : Worker("InvisibleWorker") {}
 };
 
 } // namespace

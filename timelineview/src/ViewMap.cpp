@@ -17,6 +17,8 @@
 
 #include "ViewMap.h"
 
+#include <boost/range/algorithm/copy.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include "UtilLog.h"
 #include "UtilLogStl.h"
 
@@ -143,6 +145,13 @@ void ViewMap::invalidateThumbnails()
     {
         v.second->invalidateRect();
     }
+}
+
+std::list<ThumbnailView*> ViewMap::getThumbnails() const
+{
+    std::list<ThumbnailView*> result;
+    boost::copy(mThumbnails | boost::adaptors::map_values, std::back_inserter(result));
+    return result;
 }
 
 }} // namespace

@@ -138,10 +138,6 @@ void Scrolling::serialize(Archive & ar, const unsigned int version)
             storeCenterPts();
         }
         ar & BOOST_SERIALIZATION_NVP(mCenterPts);
-        if (Archive::is_loading::value)
-        {
-            alignCenterPts();
-        }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }
     catch (boost::exception &e)                  { VAR_ERROR(boost::diagnostic_information(e)); throw; }

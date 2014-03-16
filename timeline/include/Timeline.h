@@ -182,6 +182,12 @@ public:
     /// size of the scrolled areas and proper enabling/disabling of scrollbars.
     void resize();
 
+    /// \return true if thumbnails must be rendered.
+    /// During initialization this is disabled until the timeline view has moved
+    /// to the correct initial position. In that way, the thumbnails that are
+    /// visible initially are scheduled first.
+    bool renderThumbnails() const;
+
     //////////////////////////////////////////////////////////////////////////
     // TRANSACTION
     //////////////////////////////////////////////////////////////////////////
@@ -222,6 +228,10 @@ private:
 
     wxBitmapPtr mBufferBitmap;
 
+    boost::function<void()> mExecuteOnIdle;
+
+    bool mRenderThumbnails;
+
     //////////////////////////////////////////////////////////////////////////
     // PART -> Must be AFTER MEMBERS
     //////////////////////////////////////////////////////////////////////////
@@ -246,6 +256,15 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     SequenceView* mSequenceView;
+
+    //////////////////////////////////////////////////////////////////////////
+    // INITIALIZATION STEPS
+    //////////////////////////////////////////////////////////////////////////
+
+    void alignCenterPtsAfterInitialization();
+    void readFocusedThumbnails();
+    void readInitialThumbnailsAfterInitialization();
+    void ignoreIdleEvents();
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION
