@@ -110,6 +110,14 @@ ThumbnailView::~ThumbnailView()
     abortPendingWork();
 }
 
+void ThumbnailView::scheduleInitialRendering()
+{
+    if (mPendingWork.empty() && mBitmaps.empty())
+    {
+        scheduleRendering();
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // POSITION/SIZE
 //////////////////////////////////////////////////////////////////////////
@@ -170,12 +178,7 @@ void ThumbnailView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
         if (mPendingWork.find(size) == mPendingWork.end())
         {
             // No work pending for this size: schedule new work
-            abortPendingWork();
-
-            boost::shared_ptr<RenderThumbnailWork> work = boost::make_shared<RenderThumbnailWork>(getClip(),size);
-            work->Bind(worker::EVENT_WORK_DONE, &ThumbnailView::onRenderDone, const_cast<ThumbnailView*>(this)); // No unbind: work object is destroyed when done
-            worker::InvisibleWorker::get().schedule(work);
-            mPendingWork[size] = work;
+            scheduleRendering();
         }
     }
 
@@ -278,6 +281,18 @@ model::VideoClipPtr ThumbnailView::getClip() const
     ASSERT(clone);
     ASSERT(!clone->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
     return clone;
+}
+
+void ThumbnailView::scheduleRendering() const
+{
+    if (!getTimeline().renderThumbnails()) { return; }
+    abortPendingWork();
+
+    wxSize size(getSize());
+    boost::shared_ptr<RenderThumbnailWork> work = boost::make_shared<RenderThumbnailWork>(getClip(),size);
+    work->Bind(worker::EVENT_WORK_DONE, &ThumbnailView::onRenderDone, const_cast<ThumbnailView*>(this)); // No unbind: work object is destroyed when done
+    worker::InvisibleWorker::get().schedule(work);
+    mPendingWork[size] = work;
 }
 
 void ThumbnailView::abortPendingWork() const

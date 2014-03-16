@@ -38,6 +38,8 @@ public:
     ThumbnailView(const model::IClipPtr& clip, View* parent);
     virtual ~ThumbnailView();
 
+    void scheduleInitialRendering();
+
     //////////////////////////////////////////////////////////////////////////
     // VIEW
     //////////////////////////////////////////////////////////////////////////
@@ -78,7 +80,9 @@ private:
 
     model::VideoClipPtr getClip() const;
 
+    void scheduleRendering() const;
     void abortPendingWork() const;
+
 };
 
 }} // namespace

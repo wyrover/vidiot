@@ -29,8 +29,9 @@ static const unsigned int sMaximumBufferedWork = 1000;
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
-Worker::Worker()
+Worker::Worker(const char* name)
 :   wxEvtHandler()
+,   mName(name)
 ,   mEnabled(true)
 ,   mRunning(false)
 ,   mFifo(sMaximumBufferedWork)
@@ -136,7 +137,7 @@ void Worker::thread()
         mRunning = true;
     }
     VAR_INFO(this);
-    util::thread::setCurrentThreadName("Worker");
+    util::thread::setCurrentThreadName(mName);
     while (mEnabled)
     {
         WorkPtr w = mFifo.pop();
@@ -148,7 +149,7 @@ void Worker::thread()
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
             w->execute();
-            util::thread::setCurrentThreadName("Worker");
+            util::thread::setCurrentThreadName(mName);
             {
                 boost::mutex::scoped_lock lock(mMutex);
                 w.reset(); // Clear, so that unfreezing is done if needed
@@ -160,12 +161,6 @@ void Worker::thread()
                 if (mExecuted == mExecutedLimit)
                 {
                     mCondition.notify_all();
-                }
-                if (mFifo.getSize() == 0)
-                {
-                    mThread.reset();
-                    mRunning = false;
-                    return;
                 }
             }
         }

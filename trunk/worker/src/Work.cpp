@@ -24,6 +24,10 @@
 
 namespace worker {
 
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
 Work::Work(const Callable& work)
 :   mCallable(work)
 ,   mAbort(false)
@@ -39,16 +43,19 @@ Work::~Work()
 void Work::execute()
 {
     VAR_DEBUG(this);
-    mCallable();
-    util::thread::RunInMainAndDontWait([]
+    if (!mAbort)
     {
-        // Note that - in the code of mCallable - showProgressText can be called.
-        // That method schedules an event that causes the progress bar update.
-        // Therefore, here another event is scheduled that resets the text afterwards.
-        gui::StatusBar::get().hideProgressBar();
-        gui::StatusBar::get().setProcessingText("");
-    });
-    QueueEvent(new WorkDoneEvent(self()));
+        mCallable();
+        util::thread::RunInMainAndDontWait([]
+        {
+            // Note that - in the code of mCallable - showProgressText can be called.
+            // That method schedules an event that causes the progress bar update.
+            // Therefore, here another event is scheduled that resets the text afterwards.
+            gui::StatusBar::get().hideProgressBar();
+            gui::StatusBar::get().setProcessingText("");
+        });
+        QueueEvent(new WorkDoneEvent(self()));
+    }
     VAR_DEBUG(this);
 }
 
@@ -57,10 +64,18 @@ void Work::abort()
     mAbort = true;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// ABORT
+//////////////////////////////////////////////////////////////////////////
+
 bool Work::isAborted() const
 {
     return mAbort;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// PROGRESS
+//////////////////////////////////////////////////////////////////////////
 
 void Work::showProgressText(const wxString& text)
 {
@@ -96,15 +111,15 @@ void Work::showProgress(int value)
     }
 }
 
+//////////////////////////////////////////////////////////////////////////
+// LOGGING
+//////////////////////////////////////////////////////////////////////////
+
 void Work::setThreadName(const std::string& name)
 {
     std::ostringstream s; s << "Worker: " + name;
     util::thread::setCurrentThreadName(s.str().c_str());
 }
-
-//////////////////////////////////////////////////////////////////////////
-// LOGGING
-//////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const Work& obj)
 {

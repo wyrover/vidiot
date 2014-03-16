@@ -73,6 +73,8 @@ public:
 
     void invalidateThumbnails();
 
+    std::list<ThumbnailView*> getThumbnails() const;
+
 private:
 
     TrackMap mTracks;
