@@ -43,7 +43,6 @@ std::pair<model::IClipPtr, model::IClipPtr> ClipCreator::makeClips(model::FilePt
 
     model::IClipPtr videoClip;
     model::IClipPtr audioClip;
-// todo use vld (Visual Leak Detector) for detecting leaks (maybe the page faults?)
 
     if (file->hasVideo())
     {
