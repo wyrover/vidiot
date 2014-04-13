@@ -454,10 +454,11 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
         else if (isAutoFolder)
         {
             // Must be handled before 'folder' since an autofolder is also a folder
-            enablePaste = false;
-            enableNew = false;
             showCreateSequence = true;
             showDeleteUnused = true;
+
+            enablePaste = false;
+            enableNew = false;
         }
         else if (isFolder)
         {
@@ -467,6 +468,9 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
         else if (isSequence)
         {
             showOpenSequence = true;
+            enablePaste = false;
+            enableNew = false;
+            enableCreateSequence = false;
         }
         else
         {

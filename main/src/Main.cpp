@@ -20,7 +20,7 @@
 #include "UtilLog.h"
 #include "UtilLogWindows.h"
 #include "UtilStackWalker.h"
-#include <vld.h>
+//#include <vld.h>
 
 #include <windows.h>
 
