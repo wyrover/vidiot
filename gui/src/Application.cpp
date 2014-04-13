@@ -187,7 +187,6 @@ bool Application::OnInit()
 	{
 		delete previous; // Avoid memory leak during tests
 	}
-	// todo use SetThreadActiveTarget also
 
     // Done before options initialization since after initializing the options,
     // the avcodec logging is initialized, which requires that avcodec is initialized.
