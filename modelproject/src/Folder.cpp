@@ -31,8 +31,14 @@ namespace model {
 
 struct Root : public Folder
 {
-    Root() : Folder("Root") {};
-    virtual ~Root() {};
+    Root() : Folder("Root") 
+	{
+		VAR_DEBUG(this);
+	};
+    virtual ~Root() 
+	{
+		VAR_DEBUG(this);
+	};
     wxString getName() const override
     {
         return wxFileName(Project::get().getName()).GetName(); // strip extension

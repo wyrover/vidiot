@@ -130,6 +130,8 @@ MenuHandler::~MenuHandler()
 {
     VAR_DEBUG(this);
 
+    Window::get().setSequenceMenu(0, false); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
+
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddVideoTrack,         this, ID_ADDVIDEOTRACK);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onAddAudioTrack,         this, ID_ADDAUDIOTRACK);
     Window::get().Unbind(wxEVT_COMMAND_MENU_SELECTED,    &MenuHandler::onRemoveEmptyTracks,     this, ID_REMOVE_EMPTY_TRACKS);
@@ -152,7 +154,6 @@ MenuHandler::~MenuHandler()
 
     getPlayer()->Unbind(EVENT_PLAYBACK_ACTIVE,           &MenuHandler::onPlaybackActive,        this);
 
-    Window::get().setSequenceMenu(0, false); // If this is NOT the last timeline to be closed, then an 'activate()' will reset the menu to that other timeline
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,10 +205,6 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     // If an item is selected for which a menu option does not make sense, then the option is disabled.
 
     wxMenu menu;
-    wxMenu* menuFadeIn = new wxMenu; // On heap, destroyed when toplevel menu destroyed
-    wxMenu* menuFadeOut = new wxMenu;
-    wxMenu* menuFadeInOut = new wxMenu;
-    wxMenu* menuFadeOutIn = new wxMenu;
 
     auto add = [&menu](wxMenu& menu, int id, wxString text, bool show, bool enable, bool separate)
     {
@@ -310,7 +307,12 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     std::map<int, model::TransitionDescription> mapMenuItemToTransitionDescription;
     if (clickedOnVideoClip) // For audio clips there is only the crossfade
     {
-        int id = ID_POPUP_END;
+		wxMenu* menuFadeIn = new wxMenu; // On heap, destroyed when toplevel menu destroyed
+		wxMenu* menuFadeOut = new wxMenu;
+		wxMenu* menuFadeInOut = new wxMenu;
+		wxMenu* menuFadeOutIn = new wxMenu;
+        
+		int id = ID_POPUP_END;
 
         for ( model::TransitionDescription t : model::video::VideoTransitionFactory::get().getAllPossibleTransitions() )
         {
@@ -509,7 +511,16 @@ void MenuHandler::onRenderSettings(wxCommandEvent& event)
     {
         DialogRenderSettings(getSequence()).ShowModal();
     }
-    event.Skip();
+    // NOT: event.Skip():
+    // In some tests (particularly, TestSavingAndLoading::testLoadOldVersions)
+    // there were crashes where this event could not be handled anymore by
+    // the gui::Window class. What happened:
+    // - event triggered by menu option
+    // - dialog shown modal
+    // - test cases sees 'main window lost focus'
+    // - test case hits 'escape' and triggers 'close document' almost immediately
+    // - document is closed (including close timeline and thus the Menu class)
+    // - the ShowModal returns and the event cannot be handled anymore -> crash
 }
 
 void MenuHandler::onRenderSequence(wxCommandEvent& event)
@@ -525,7 +536,7 @@ void MenuHandler::onRenderSequence(wxCommandEvent& event)
             model::render::Render::schedule(getSequence());
         }
     }
-    event.Skip();
+    // NOT: event.Skip() -- see MenuHandler::onRenderSettings for rationale
 }
 
 void MenuHandler::onRenderAll(wxCommandEvent& event)

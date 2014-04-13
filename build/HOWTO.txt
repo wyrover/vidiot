@@ -28,6 +28,9 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   - disable: gflags /p /disable Vidiot.exe
   - Or: use AppVerifier
 
+=================== VLD ===================
+*  http://www.codeproject.com/tools/visualleakdetector.asp 
+
 =================== CMAKE ===================
 Install cmake into c:\Program Files
 
@@ -46,7 +49,10 @@ Install ActivePerl via installer
 
 =================== BOOST ===================
 * Download Boost into <VIDIOT_DIR>\boost_1_xx_y
-* CMD:
+* Direct boost install: 
+  - Select proper binaries (correct msvc version)
+  - Update paths in CMakeLists
+* Compiled boost:
   - cd <VIDIOT_DIR>\boost_1_xx_y
   - bootstrap
   - (MSVC) .\bjam --toolset=msvc --build-type=complete stage
@@ -61,8 +67,9 @@ Install ActivePerl via installer
 * Apply patch to wxFSWatcher
   (see <VIDIOT_SRC>/build/patches)
   http://trac.wxwidgets.org/ticket/13294
+* Apply patch to src/msw/main.cpp : main.cpp.patch
 * (MSVC) build solution Release & Debug
-* Copy build/__FindwxWidgets.cmake to C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\FindwxWidgets.cmake
+* Copy build/FindwxWidgets.cmake to C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\FindwxWidgets.cmake
   (to provide support for wxwidgets 3.0 version)
 
 =================== FFMPEG ===================

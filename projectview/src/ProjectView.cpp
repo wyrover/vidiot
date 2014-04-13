@@ -389,7 +389,7 @@ void ProjectView::onCreateSequence()
     command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
     if (!findConflictingName(this, cmd->getParent(), cmd->getName(), NODETYPE_SEQUENCE))
     {
-        model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer()));
+        model::ProjectModification::submit(cmd);
     }
     else
     {
@@ -483,13 +483,6 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
     }
 
     wxMenu menu;
-    wxMenu* createMenu = new wxMenu();;
-    createMenu->Append( ID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
-    createMenu->Append( ID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) sequence") );
-
-    wxMenu* addMenu = new wxMenu();
-    addMenu->Append( ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
-    addMenu->Append( ID_NEW_FILE,       _("Fi&le(s) from disk"), _("Select a file on disk to be added to the project.") );
 
     menu.Append( wxID_CUT,   _("Cu&t\tCTRL-x") );
     menu.Enable( wxID_CUT, enableDelete );
@@ -518,15 +511,21 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
         menu.Enable( wxID_OPEN, enableOpen );
     }
 
-    wxMenuItem* pAddMenu = 0;
-    wxMenuItem* pCreateMenu = 0;
-
     if (showNew && enableNew)
     {
         menu.AppendSeparator();
-        pAddMenu = menu.AppendSubMenu(addMenu,_("&Add"));
-        menu.AppendSeparator();
-        pCreateMenu = menu.AppendSubMenu(createMenu,_("&New"));
+
+		wxMenu* addMenu = new wxMenu();
+		addMenu->Append( ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
+		addMenu->Append( ID_NEW_FILE,       _("Fi&le(s) from disk"), _("Select a file on disk to be added to the project.") );
+		menu.AppendSubMenu(addMenu,_("&Add"));
+        
+		menu.AppendSeparator();
+        
+		wxMenu* createMenu = new wxMenu();
+		createMenu->Append( ID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
+		createMenu->Append( ID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) sequence") );
+		menu.AppendSubMenu(createMenu,_("&New"));
     }
 
     int result = GetPopupMenuSelectionFromUser(menu);

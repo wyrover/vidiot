@@ -182,7 +182,12 @@ bool Application::OnInit()
         return false;
     }
 
-    wxLog::SetActiveTarget(new wxLogImpl()); // Instantiated here. This ensures that wxWidgets messages are included in the log file and do not pop up new windows.
+    wxLog* previous = wxLog::SetActiveTarget(new wxLogImpl()); // Instantiated here. This ensures that wxWidgets messages are included in the log file and do not pop up new windows.
+	if (previous)
+	{
+		delete previous; // Avoid memory leak during tests
+	}
+	// todo use SetThreadActiveTarget also
 
     // Done before options initialization since after initializing the options,
     // the avcodec logging is initialized, which requires that avcodec is initialized.

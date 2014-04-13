@@ -127,6 +127,7 @@ Timeline::~Timeline()
     delete mDrag;           mDrag = 0;
     delete mCursor;         mCursor = 0;
     delete mSelection;      mSelection = 0;
+	delete mScroll;			mScroll = 0;
     delete mMouse;          mMouse = 0;
     delete mIntervals;      mIntervals = 0;
     delete mKeyboard;       mKeyboard = 0;
@@ -136,6 +137,8 @@ Timeline::~Timeline()
 
     Window::get().getPreview().closeTimeline(this); // This closes the Player
     mPlayer = 0;
+    mBufferBitmap.reset();
+    mExecuteOnIdle.clear();
 
     mSequence->clean();
 }

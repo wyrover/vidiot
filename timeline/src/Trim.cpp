@@ -246,6 +246,7 @@ void Trim::start()
         mDc.SelectObject(wxNullBitmap);
     }
 
+	ASSERT_ZERO(mCommand);
     mCommand = new command::TrimClip(getSequence(), mOriginalClip, transition, mPosition);
     determinePossibleSnapPoints(mOriginalClip);
     update();
