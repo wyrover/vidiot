@@ -25,6 +25,7 @@
 #include "Window.h"
 #include <cxxtest/TestSuite.h>
 #include <ctime>
+#include <wx/msgout.h>
 
 namespace test {
 //static
@@ -83,6 +84,7 @@ bool FixtureGui::tearDownWorld()
     long runningtime = time(0) - mStartTime;
     std::ostringstream o;
     o << "Total running time: " << runningtime << " seconds (" << (runningtime/60) << "m" << (runningtime%60) << ")";
+    wxMessageOutputDebug().Output(o.str());
     TS_TRACE(o.str().c_str());
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     return true;
@@ -167,6 +169,7 @@ void FixtureGui::mainThread()
     int argc = 1;
     char* argv = _strdup(gui::Application::sTestApplicationName);
     wxEntryStart(argc, &argv);
+	free(argv);
 
     HelperTestSuite::get().readConfig();
     mBarrierConfigRead.wait();

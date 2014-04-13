@@ -37,6 +37,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     IClip() {};
+	virtual ~IClip() {};
 
     virtual IClip* clone() const = 0;
     virtual void onCloned() = 0;

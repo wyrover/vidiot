@@ -49,7 +49,12 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
 {
     if (statusFlags != 0)
     {
-        VAR_WARNING(statusFlags);
+        if      (statusFlags & paInputUnderflow)  { LOG_WARNING << "paInputUnderflow"; } 
+        else if (statusFlags & paInputOverflow)   { LOG_WARNING << "paInputOverflow"; } 
+        else if (statusFlags & paOutputUnderflow) { LOG_WARNING << "paOutputUnderflow"; } 
+        else if (statusFlags & paOutputOverflow)  { LOG_WARNING << "paOutputOverflow"; } 
+        else if (statusFlags & paPrimingOutput)   { LOG_WARNING << "paPrimingOutput"; } 
+        else                                      { LOG_WARNING << "Unknown PaStreamCallbackFlags (" << static_cast<long>(statusFlags) << ")"; } 
     }
     bool cont = static_cast<VideoDisplay*>(userData)->audioRequested(outputBuffer, framesPerBuffer, timeInfo->outputBufferDacTime);
     return cont ? 0 : paComplete;

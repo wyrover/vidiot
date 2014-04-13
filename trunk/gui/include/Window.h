@@ -195,6 +195,7 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
+    wxDocManager* mDocManager;
     wxDocTemplate* mDocTemplate;
 
     Dialog* mDialog;

@@ -19,6 +19,7 @@
 
 #include "UtilLog.h"
 #include <wx/string.h>
+#include <wx/regex.h>
 
 namespace test {
 
@@ -134,6 +135,17 @@ wxString getFileContents(wxFileName path)
     wxString contents;
     file.ReadAll(&contents);
     return contents;
+}
+
+wxString getSavedFileContents(wxFileName path)
+{
+	wxString contents(getFileContents(path));
+	int i = contents.length();
+	wxRegEx reRemoveModifiedDates = "<mLastModified>[[:digit:]]+</mLastModified>";
+	int removed = reRemoveModifiedDates.ReplaceAll(&contents,"<mLastModified>0000000000</mLastModified>");
+	ASSERT_MORE_THAN_ZERO(removed);
+	int j = contents.length();
+	return contents;
 }
 
 } // namespace

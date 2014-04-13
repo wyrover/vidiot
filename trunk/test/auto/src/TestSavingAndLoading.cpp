@@ -122,7 +122,7 @@ void TestSavingAndLoading::testSaveAndLoad()
         referenceDirName.AppendDir("saved_projects");
         wxFileName referenceFileName(referenceDirName);
         referenceFileName.SetFullName(sCurrent);
-        if (!getFileContents(tempDir_fileName.second).IsSameAs(getFileContents(referenceFileName)))
+        if (!getSavedFileContents(tempDir_fileName.second).IsSameAs(getSavedFileContents(referenceFileName)))
         {
             wxFileName newCurrentFileName(referenceDirName);
             newCurrentFileName.SetFullName(tempDir_fileName.second.GetName() + "_new.vid");
@@ -157,6 +157,7 @@ void TestSavingAndLoading::testLoadOldVersions()
     {
         if (!filename.IsSameAs(sCurrent))
         {
+			StartTest(filename.c_str());
             wxFileName vidFileName(referenceDirName);
             vidFileName.SetFullName(filename);
             checkDocument(vidFileName.GetFullPath());
@@ -175,13 +176,13 @@ void TestSavingAndLoading::testBackupBeforeSave()
     RandomTempDirPtr tempDirProject = RandomTempDir::generate();
     wxFileName existingFile = generateSaveFileName(tempDirProject->getFileName());
     DirAndFile tempDir_fileName = SaveProject(tempDirProject);
-    wxString ExpectedContents = getFileContents (existingFile);
+    wxString ExpectedContents = getSavedFileContents(existingFile);
 
     auto ASSERT_FILE_CREATED = [ExpectedContents](wxFileName prefix, int count)
     {
         wxFileName filename = model::Project::createBackupFileName(prefix,count);
         ASSERT(wxFile::Exists(filename.GetFullPath()));
-        ASSERT(getFileContents(filename).IsSameAs(ExpectedContents));
+        ASSERT(getSavedFileContents(filename).IsSameAs(ExpectedContents));
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -264,7 +265,7 @@ void TestSavingAndLoading::checkDocument(wxString path)
         WaitForTimelineToLoseFocus w;
         triggerMenu(ID_RENDERSETTINGS);
         w.wait();
-        wxUIActionSimulator().Char(WXK_ESCAPE);
+        Type(WXK_ESCAPE);
     }
     {
         StartTest("Close");

@@ -95,8 +95,9 @@ int Window::sSequenceMenuIndex = 0;
 static const wxString sTitle(_("Vidiot"));
 
 Window::Window()
-    :   wxDocParentFrame(new wxDocManager(), 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700))
-    ,	mDocTemplate(new wxDocTemplate(GetDocumentManager(), _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
+    :   wxDocParentFrame()
+    ,   mDocManager(new wxDocManager())
+    ,	mDocTemplate(new wxDocTemplate(mDocManager, _("Vidiot files"), "*.vid", "", "vid", _("Vidiot Project"), _("Vidiot Project View"), CLASSINFO(model::Project), CLASSINFO(ViewHelper)))
     ,   mDialog(new Dialog())
     ,   mLayout(new gui::Layout())
     ,   mWatcher(0)
@@ -109,10 +110,12 @@ Window::Window()
     ,   mMenuBar(0)
     ,   mMenuEdit(0)
     ,   mMenuSequence(0)
-    ,   mTestCrash(new util::TestCrash(this))
+    ,   mTestCrash(0)
     ,   mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
     ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
 {
+    Create(mDocManager, 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700));
+
     // Construction not done in constructor list due to dependency on sCurrent
     mVisibleWorker   = new worker::VisibleWorker();
     mInvisibleWorker = new worker::InvisibleWorker();
@@ -196,7 +199,8 @@ Window::Window()
     mMenuBar->Append(mMenuWorkspace,_("&Workspace"));
     if (Config::ReadBool(Config::sPathDebugShowCrashMenu))
     {
-        mMenuBar->Append(mTestCrash->getMenu(),     _("&Crash"));
+        mTestCrash = new util::TestCrash(this);
+        mMenuBar->Append(mTestCrash->getMenu(), _("&Crash"));
     }
 
     mMenuBar->Append(menuhelp,     _("&Help"));
@@ -396,6 +400,8 @@ void Window::init()
 
 Window::~Window()
 {
+    mUiManager.UnInit();
+
     Unbind(model::EVENT_OPEN_PROJECT,     &Window::onOpenProject,   this);
     Unbind(model::EVENT_CLOSE_PROJECT,    &Window::onCloseProject,  this);
     Unbind(model::EVENT_RENAME_PROJECT,   &Window::onRenameProject, this);
@@ -433,8 +439,6 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onConfig,           this, ID_OPENCONFIGFILE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
 
-    mUiManager.UnInit();
-
     wxStatusBar* sb = GetStatusBar();
     SetStatusBar(0);
     sb->wxWindowBase::Destroy();
@@ -454,6 +458,7 @@ Window::~Window()
     delete mDialog;
     delete mLayout;
     //NOT: delete mDocTemplate;
+    delete mDocManager;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -607,6 +612,7 @@ void Window::onOptions(wxCommandEvent& event)
 {
     DialogOptions w(this);
     w.ShowModal();
+    // NOT: event.Skip() -- see MenuHandler::onRenderSettings for rationale
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -746,7 +752,7 @@ void Window::onAbout(wxCommandEvent& event)
 {
     DialogAbout* dialog = new DialogAbout();
     dialog->ShowModal();
-    event.Skip();
+    // NOT: event.Skip() -- see MenuHandler::onRenderSettings for rationale
 }
 
 //////////////////////////////////////////////////////////////////////////

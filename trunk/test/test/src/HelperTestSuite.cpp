@@ -78,7 +78,8 @@ HelperTestSuite::HelperTestSuite()
 
 void HelperTestSuite::readConfig()
 {
-    wxConfigBase::Set(new wxFileConfig(wxEmptyString, wxEmptyString, Config::getFileName()));
+	wxFileConfig config(wxEmptyString, wxEmptyString, Config::getFileName());
+    wxConfigBase::Set(&config);
     wxString current;
     wxConfigBase::Get()->Read(Config::sPathTestRunOnly, &mRunOnly, "");
     wxConfigBase::Get()->Read(Config::sPathTestRunFrom, &mRunFrom, "");

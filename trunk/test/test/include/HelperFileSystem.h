@@ -67,6 +67,13 @@ wxFileName getStillImagePath();
 /// \return contents of given file
 wxString getFileContents(wxFileName path);
 
+/// Get the contents of the save file at the 
+/// given path and remove any parameters that 
+/// should not cause a comparison to fail.
+/// \param path path to file on disk
+/// \return contents of given file
+wxString getSavedFileContents(wxFileName path);
+
 } // namespace
 
 #endif

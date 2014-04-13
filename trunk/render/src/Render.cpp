@@ -557,6 +557,8 @@ void RenderWork::generate()
                             encodeFrame->data[i] = data[i];
                             encodeFrame->linesize[i] = audioEncodeRequiredInputSize * AudioChunk::sBytesPerSample;
                         }
+
+                        delete[] data;
                     }
 
                     encodeFrame->nb_samples = audioCodec->frame_size;
@@ -587,6 +589,7 @@ void RenderWork::generate()
                         numberOfWrittenOutputAudioFrames++;
                     }
                     // else Packet possibly buffered inside codec
+                    delete audioPacket; 
                 }
                 else
                 {
@@ -651,6 +654,7 @@ void RenderWork::generate()
                         int result = av_interleaved_write_frame(context, videoPacket); // av_interleaved_write_frame: transfers ownership of packet
                         ASSERT_ZERO(result)(avcodecErrorString(result))(*this);
                         numberOfWrittenOutputVideoFrames++;
+                        delete videoPacket;
                     }
                     else
                     {
@@ -669,6 +673,7 @@ void RenderWork::generate()
                             numberOfWrittenOutputVideoFrames++;
                         }
                         // else Packet possibly buffered inside codec
+                        delete videoPacket;
                     }
                 }
             }

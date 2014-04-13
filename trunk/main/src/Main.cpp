@@ -20,6 +20,7 @@
 #include "UtilLog.h"
 #include "UtilLogWindows.h"
 #include "UtilStackWalker.h"
+#include <vld.h>
 
 #include <windows.h>
 
@@ -97,10 +98,7 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
     _set_purecall_handler(PureVirtualCallHandler);
     EnableCrashingOnCrashes();
 
-    gui::Application* main;
-
-    main = new gui::Application();
-    wxApp::SetInstance(main);
+    wxApp::SetInstance(new gui::Application());
     wxEntryStart(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
     if (wxTheApp->OnInit())
     {
@@ -110,4 +108,3 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
     wxEntryCleanup();
     return 0;
 }
-

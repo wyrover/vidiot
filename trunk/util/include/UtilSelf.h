@@ -42,6 +42,8 @@ public:
         }
         return result;
     }
+
+	virtual ~Self() {}
 };
 
 #endif

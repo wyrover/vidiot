@@ -41,6 +41,14 @@ MACRO(COPY_MSVC_PROJECT_USER_FILE projectname)
     CONFIGURE_FILE(${MSVC_USER_TEMPLATE_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${projectname}.vcxproj.user @ONLY)
 ENDMACRO(COPY_MSVC_PROJECT_USER_FILE)
 
+#### VLD ####
+IF (MSVC)
+    INCLUDE(build/FindVLD.cmake)
+    IF (NOT VLD_FOUND)
+        message( FATAL_ERROR "VLD NOT FOUND." )
+    ENDIF (NOT VLD_FOUND)
+ENDIF (MSVC)
+
 #### FFMPEG ####
 SET( ENV{FFMPEGDIR} ${PROJECT_SOURCE_DIR}/ffmpeg )
 INCLUDE(build/FindFFMPEG.cmake)
@@ -58,25 +66,36 @@ FIND_PACKAGE(wxWidgets REQUIRED core base aui adv xml html qa)
 #### BOOST ####
 SET(Boost_ADDITIONAL_VERSIONS ENV{FOUND_BOOST_VERSION})
 SET(Boost_DEBUG TRUE)
-#SET(Boost_USE_STATIC_LIBS ON)
+SET(Boost_USE_STATIC_LIBS OFF)
+SET(Boost_USE_STATIC_RUNTIME OFF)
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost 1.54 REQUIRED COMPONENTS date_time thread filesystem serialization system)
+IF(EXISTS "$ENV{BOOST_ROOT}/stage/lib")
+  # Locally compiled boost
+  SET(BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/stage/lib)
+ELSE()
+  # Prebuilt boost
+  SET(BOOST_INCLUDEDIR $ENV{BOOST_ROOT}/boost)
+  SET(BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/lib32-msvc-11.0)
+ENDIF()
+FIND_PACKAGE(Boost 1.55 REQUIRED COMPONENTS date_time thread serialization system)
 # Find all dlls matching 'release' (== not gd) and 'threading-multi' (== mt)
 # Note: For some boost libraries, there is no dependency for building (above), but these dlls 
 #       are still required (due to dependencies) when installing into C:\Program Files.
 foreach(BOOSTLIB chrono date_time thread serialization system)
-    FILE( GLOB_RECURSE BOOST_INSTALL_NEW $ENV{BOOST_ROOT}/stage/lib/*.dll )
+    FILE( GLOB_RECURSE BOOST_INSTALL_NEW ${BOOST_LIBRARYDIR}/*.dll )
     foreach( DLLNAME ${BOOST_INSTALL_NEW} )
-        if((${DLLNAME} MATCHES ${BOOSTLIB}) AND (${DLLNAME} MATCHES "-mt-"))
+        if((${DLLNAME} MATCHES "boost_${BOOSTLIB}-.*") AND (${DLLNAME} MATCHES "-mt-"))
             if( ${DLLNAME} MATCHES "-gd-" ) 
                 SET( BOOST_INSTALL_DEBUG ${BOOST_INSTALL_DEBUG} ${DLLNAME} )
+                message( "Adding DLL for Debug installer: ${DLLNAME}" )
             else()
                 SET( BOOST_INSTALL ${BOOST_INSTALL} ${DLLNAME} )
+                message( "Adding DLL for Release installer: ${DLLNAME}" )
             endif()
         endif()
     endforeach(DLLNAME)
 endforeach(BOOSTLIB)
-ADD_DLL_PATH($ENV{BOOST_ROOT}/stage/lib)
+ADD_DLL_PATH(${BOOST_LIBRARYDIR})
 
 #### PORTAUDIO ####
 SET(PORTAUDIO_INCLUDE_DIR ${VIDIOT_DIR}/portaudio_trunk/include ${VIDIOT_DIR}/portaudio_trunk/src/common)
@@ -163,6 +182,7 @@ INCLUDE_DIRECTORIES(AFTER
     icons
     cursors
     ctypes
+    ${VLD_INCLUDE_DIR}
     ${FFMPEG_INCLUDE_DIR}
     ${Boost_INCLUDE_DIRS}
     ${PORTAUDIO_INCLUDE_DIR}
@@ -177,6 +197,7 @@ LINK_DIRECTORIES(
     ${Boost_LIBRARY_DIRS}
     ${PORTAUDIO_LIBRARY_DIR}
     ${SOUNDTOUCH_LIBRARY_DIR}
+    ${VLD_LIBRARIES_DIR}
 )
 
 INCLUDE(${wxWidgets_USE_FILE})
