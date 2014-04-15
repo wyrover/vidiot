@@ -68,14 +68,12 @@ AudioChunkPtr AudioComposition::generate()
 {
     if (mChunks.empty())
     {
-        LOG_DEBUG; // todo remove when crash not found
         return boost::make_shared<EmptyChunk>(mParameters.getNrChannels(), mParameters.ptsToSamples(1));
     }
 
     if (mChunks.size() == 1)
     {
         AudioChunkPtr front = mChunks.front();
-        VAR_DEBUG(front); // todo remove when crash not found
         if (true)
         {
             // Performance optimization: if only one chunk is rendered, return that chunk, but only if the chunk requires no 'processing'.
@@ -84,7 +82,6 @@ AudioChunkPtr AudioComposition::generate()
         }
     }
 
-    LOG_DEBUG; // todo remove when crash not found
     samplecount chunkSize = std::numeric_limits<samplecount>::max();
     for ( AudioChunkPtr inputChunk : mChunks )
     {
@@ -127,7 +124,6 @@ AudioChunkPtr AudioComposition::generate()
         }
     }
 
-    LOG_DEBUG; // todo remove when crash not found
     return result;
 }
 

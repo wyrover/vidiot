@@ -284,26 +284,29 @@ model::SequencePtr VideoDisplay::getSequence() const
 void VideoDisplay::audioBufferThread()
 {
     util::thread::setCurrentThreadName("AudioBufferThread");
-    LOG_INFO; // todo remove when crash not found
     while (!mAbortThreads)
     {
         model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
 
         if (chunk)
         {
+
             // In SoundTouch context a sample is the data for both speakers.
             // In AudioChunk it's the data for one speaker.
-            VAR_DEBUG(*chunk); // todo remove when crash not found
+            // Soundtouch needs at least 4 * 2 bytes, see RateTransposerInteger::transposeStereo (uses src[3] - which is the fourth sample).
+            //
+            // To avoid access violations, too small chunks are skipped (given their size that should pose no problems for previewing only).
+            static const samplecount sMinimumChunkSizeInSamples = 4;
+            if (chunk->getUnreadSampleCount() < sMinimumChunkSizeInSamples) { continue; } // Skip this chunk
+
+            //if (chunk->getUnreadSampleCount() < 3) continue;
             mSoundTouch.putSamples(reinterpret_cast<const soundtouch::SAMPLETYPE *>(chunk->getUnreadSamples()), chunk->getUnreadSampleCount() / mNumberOfAudioChannels) ;
-            VAR_DEBUG(chunk); // todo remove when crash not found
             while (!mSoundTouch.isEmpty())
             {
                 int nFramesAvailable = mSoundTouch.numSamples();
                 sample* p = 0;
                 model::AudioChunkPtr audioChunk = boost::make_shared<model::AudioChunk>(mNumberOfAudioChannels, nFramesAvailable * mNumberOfAudioChannels, true, false);
-                VAR_DEBUG(*audioChunk); // todo remove when crash not found
                 int nFrames = mSoundTouch.receiveSamples(reinterpret_cast<soundtouch::SAMPLETYPE *>(audioChunk->getBuffer()), nFramesAvailable);
-                VAR_DEBUG(audioChunk); // todo remove when crash not found
                 ASSERT_EQUALS(nFrames,nFramesAvailable);
                 mAudioChunks.push(audioChunk); // todo bypass soundtouch if not required
             }
