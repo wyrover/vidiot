@@ -126,6 +126,9 @@ public:
     /// for its required bitmap.
     void testAddNonexistentFileViaUndo();
 
+    /// Had a crash in the soundtouch handling of small chunk sizes (< 4 samples).
+    void testPlaybackWithMultipleAudioTracks();
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

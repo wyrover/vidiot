@@ -426,4 +426,14 @@ void TestBugs::testAddNonexistentFileViaUndo()
 
 }
 
+void TestBugs::testPlaybackWithMultipleAudioTracks()
+{
+    StartTestSuite();
+
+    triggerMenu(ID_ADDAUDIOTRACK);
+    DragToTrack(1,model::IClipPtr(),AudioClip(0,2));
+    Play(HCenter(AudioClip(0,0)), 1000);
+}
+
+
 } // namespace

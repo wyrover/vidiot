@@ -185,10 +185,8 @@ FilePtr EmptyClip::getFile() const
 
 AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& parameters)
 {
-    VAR_DEBUG(*this); // todo remove when crash not found
     if (mProgress >= getLength())
     {
-        LOG_DEBUG; // todo remove when crash not found
         return AudioChunkPtr();
     }
 
@@ -217,7 +215,6 @@ AudioChunkPtr EmptyClip::getNextAudio(const AudioCompositionParameters& paramete
     mProgress += 1;
     mSampleProgress += returnedSamples;
 
-    VAR_DEBUG(*this); // todo remove when crash not found
     VAR_AUDIO(audioChunk)(mProgress)(mSampleProgress);
     return audioChunk;
 }
