@@ -157,6 +157,10 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
     case '=':
         getZoom().change( evt.getCtrlDown() ?  1000 :  1);
         break;
+    case 'v':
+    case 'V':
+        getCursor().center();
+        break;
     case WXK_LEFT:
         evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();
         break;

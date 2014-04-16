@@ -60,6 +60,10 @@ public:
     void home();
     void end();
 
+    /// Ensure that the scrolling is adjusted such that the cursor is displayed
+    /// in the center of the widget as much as possible.
+    void center();
+
     //////////////////////////////////////////////////////////////////////////
     // DRAW
     //////////////////////////////////////////////////////////////////////////
@@ -84,6 +88,8 @@ private:
     /// \param position new position in sequence where cursor must be positioned
     void moveTo(pts position);
 
+    /// Ensure that the scrolling is adjusted if the cursor is moved outside the visible region by a user action
+    /// \note the mechanism for adjusting the cursor during playback is specifically located elsewhere since a slightly different adjustment mechanism is used then.
     void ensureCursorVisible();
 
     //////////////////////////////////////////////////////////////////////////
