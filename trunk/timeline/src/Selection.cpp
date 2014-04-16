@@ -116,29 +116,41 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
             // just selected, then the whole range is selected. If the last selected
             // clip was deselected, then the whole range is deselected.
 
-            // If no previous clip was selected: select from the start of the track
-            model::IClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : *(track->getClips().begin());
+            // If no previous clip was selected: use the selected clip also
+            // Used to be 'from begin of track'. However, that also applied when shift-trimming
+            // making the trimming look awkward.
+            model::IClipPtr otherend = (mPreviouslyClicked) ? mPreviouslyClicked : clip;
 
-            model::IClipPtr firstclip;
-            for ( model::IClipPtr c : track->getClips() )
+            if (otherend == clip)
             {
-                if (!firstclip)
+                selectClipAndLink(clip, previousClickedClipWasSelected);
+            }
+            else
+            {
+                model::IClipPtr firstclip;
+                for ( model::IClipPtr c : track->getClips() )
                 {
-                    if ((c == clip) || (c == otherend))
+                    if (!firstclip && 
+                        ((c == clip) || (c == otherend)))
                     {
                         firstclip = c;
                     }
-                }
-                if (firstclip)
-                {
-                    selectClipAndLink(c, previousClickedClipWasSelected);
-                    if ((c != firstclip) &&
-                        ((c == clip) || (c == otherend)))
+                    if (firstclip)
                     {
-                        break; // Stop (de)selecting clips
+                        selectClipAndLink(c, previousClickedClipWasSelected);
+                        if ((c != firstclip) &&
+                            ((c == clip) || (c == otherend)))
+                        {
+                            break; // Stop (de)selecting clips
+                        }
                     }
                 }
             }
+            if (!mPreviouslyClicked)
+            {
+                setPreviouslyClicked(clip); // Only the first clip should be selected
+            }
+
         }
         else if (ctrlPressed)
         {

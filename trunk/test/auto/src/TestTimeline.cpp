@@ -81,13 +81,13 @@ void TestTimeline::testSelection()
     StartTestSuite();
     const model::IClips& clips = getSequence()->getVideoTrack(0)->getClips();
     {
-        StartTest("Start application, make sequence, shift click clip five. All first five clips selected!");
+        StartTest("Start application, make sequence, shift click clip five. Only clip five selected!");
         DeselectAllClips();
         ASSERT_SELECTION_SIZE(0);
         ShiftDown();
         Click(Center(VideoClip(0,4)));
         ShiftUp();
-        ASSERT_SELECTION_SIZE(5);
+        ASSERT_SELECTION_SIZE(1);
     }
     {
         StartTest("CTRL clicking all clips one by one");
