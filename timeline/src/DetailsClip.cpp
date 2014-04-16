@@ -122,7 +122,7 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
         // Use the integer as id
         wxToggleButton* button = new wxToggleButton(lengthbuttonspanel, length, *itLabel, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
         button->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-        button->SetToolTip(_("Change the length of the clip to this length. Hold shift when pressing to avoid introducing a black area."));
+        button->SetToolTip(_("Change the length of the clip to this length. Will shift other clips to avoid introducing a black area."));
         lengthbuttonspanel->GetSizer()->Add(button,wxSizerFlags(1));
         button->Bind( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &DetailsClip::onLengthButtonPressed, this);
         mLengthButtons.push_back(button);
