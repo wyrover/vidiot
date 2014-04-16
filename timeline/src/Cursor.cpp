@@ -126,6 +126,15 @@ void Cursor::end()
     ensureCursorVisible();
 }
 
+void Cursor::center()
+{
+    wxPoint scroll = getScrolling().getOffset();
+    wxSize size = getTimeline().GetClientSize();
+
+    getScrolling().align(mCursorPosition, size.x / 2);
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 // DRAW
 //////////////////////////////////////////////////////////////////////////
@@ -186,9 +195,6 @@ void Cursor::moveTo(pts position)
 
 void Cursor::ensureCursorVisible()
 {
-    // Ensure that the scrolling is adjusted if the cursor is moved outside the visible region by a user action
-    // Note: the mechanism for adjusting the cursor during playback is specifically located elsewhere since
-    //       a slightly different adjustment mechanism is used then.
     wxPoint scroll = getScrolling().getOffset();
     wxSize size = getTimeline().GetClientSize();
 
@@ -204,7 +210,6 @@ void Cursor::ensureCursorVisible()
     {
         getScrolling().align(mCursorPosition, size.x - EDGE_OFFSET);
     }
-
 }
 
 //////////////////////////////////////////////////////////////////////////
