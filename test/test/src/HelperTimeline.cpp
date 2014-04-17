@@ -443,6 +443,18 @@ void Scrub(pixel from, pixel to)
     }
 }
 
+void ScrollWithRightMouseButton(pixel distance)
+{
+    VAR_DEBUG(distance);
+    pixel maxW = getTimeline().GetClientSize().GetWidth() - 20;
+    pixel y = gui::Layout::TimeScaleHeight + 2;
+    ASSERT_LESS_THAN(distance,maxW);
+    MoveWithinWidget(TimelinePosition(), wxPoint(maxW - 10, y)); // todo make method
+    RightDown();
+    MoveWithinWidget(TimelinePosition(), wxPoint(maxW - 10 - distance, y));
+    RightUp();
+}
+
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
 {
     return getTimeline().getMouse().getInfo(position).logicalclipposition;

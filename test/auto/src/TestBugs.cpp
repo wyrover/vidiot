@@ -163,7 +163,7 @@ void TestBugs::testBugsWithLongTimeline()
     extendSequenceWithRepeatedClips(sequence, mProjectFixture.InputFiles, 30);
 
     openTimelineForSequence(sequence);
-    Zoom level(6);
+    Zoom level(4);
     Type(WXK_END); // Move scrollbars to end
 
     // Workaround for Windows 7 bug: http://trac.wxwidgets.org/ticket/14329 / http://trac.wxwidgets.org/ticket/14313
@@ -264,7 +264,7 @@ void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
 void TestBugs::testCrashWhenDroppingPartiallyOverATransition()
 {
     StartTestSuite();
-    Zoom level(6);
+    Zoom level(4);
     {
         MakeInOutTransitionAfterClip preparation(1,true);
         {
