@@ -57,7 +57,7 @@ void TestTrimming::tearDown()
 void TestTrimming::testSnapping()
 {
     StartTestSuite();
-    Zoom level(6);
+    Zoom level(4);
     ConfigFixture.SnapToClips(true).SnapToCursor(true);
     PositionCursor(HCenter(VideoClip(0,2)));
     {

@@ -209,6 +209,7 @@ private:
 void ToggleInterval(pixel from, pixel to);
 
 void Scrub(pixel from, pixel to);                                       ///< Scrub the cursor over the timeline (view frames in preview window)
+void ScrollWithRightMouseButton(pixel distance);                        ///< Scroll the timeline using right mouse scrolling
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position);   ///< \return logical mouse position of the given (pixel) position.
 

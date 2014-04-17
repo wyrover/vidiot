@@ -191,7 +191,7 @@ void TestDragAndDrop::testDndMultipleTracks()
 void TestDragAndDrop::testSnapping()
 {
     StartTestSuite();
-    Zoom level(6);
+    Zoom level(4);
     PositionCursor(LeftPixel(VideoClip(0,2)) + 10); // Just a bit to the right of the leftmost point of this clip
     ConfigFixture.SnapToClips(false).SnapToCursor(true);
     {

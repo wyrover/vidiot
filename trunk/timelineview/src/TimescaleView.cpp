@@ -137,7 +137,8 @@ void TimescaleView::draw(wxBitmap& bitmap) const
         (rational(1,4),   TicksAndNumbers(      model::Constants::sSecond, 10 * model::Constants::sSecond ))
         (rational(1,3),   TicksAndNumbers(      model::Constants::sSecond, 10  * model::Constants::sSecond ))
         (rational(1,2),   TicksAndNumbers(      model::Constants::sSecond,  5 * model::Constants::sSecond ))
-        (rational(1,1),   TicksAndNumbers(      model::Constants::sSecond,  5 * model::Constants::sSecond ));
+        (rational(1,1),   TicksAndNumbers(      model::Constants::sSecond,  5 * model::Constants::sSecond ))
+        (rational(2,1),   TicksAndNumbers(      model::Constants::sSecond,  1 * model::Constants::sSecond ));
 
     ASSERT(zoomToSteps.find(zoom) != zoomToSteps.end())(zoom)(zoomToSteps);
     TicksAndNumbers steps = zoomToSteps.find(zoom)->second;

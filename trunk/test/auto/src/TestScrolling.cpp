@@ -51,42 +51,38 @@ void TestScrolling::tearDown()
 void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
 {
     StartTestSuite();
-    Zoom Level(6); // Maximum
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    Zoom Level(5);
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(2,1));
 
     StartTest("Scroll using right down scrolling.");
-    pixel from = LeftPixel(VideoClip(0,4));
-    pixel to = HCenter(VideoClip(0,1));
-    Move(wxPoint(from, gui::Layout::TimeScaleHeight));
-    RightDown();
-    Move(wxPoint(to, gui::Layout::TimeScaleHeight));
-    RightUp();
+    ScrollWithRightMouseButton(900);
+    ScrollWithRightMouseButton(900);
     ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
-    ASSERT_EQUALS(getTimeline().getScrolling().getOffset().x, from - to);
+    ASSERT_EQUALS(getTimeline().getScrolling().getOffset().x, 1800);
 
     pts center = getTimeline().getScrolling().getCenterPts();
     RunInMainAndWait([center] { getTimeline().getCursor().setLogicalPosition(center); });
     StartTest("Center pts position is kept aligned when zooming out via the keyboard.");
     Type('-');
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
     StartTest("Center pts position is kept aligned when zooming in via the keyboard.");
     Type('=');
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(2,1));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
 
     StartTest("Center pts position is kept aligned when zooming in via the wheel.");
     ControlDown();
     TimelineTriggerWheel(-1);
     ControlUp();
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
 
     StartTest("Center pts position is kept aligned when zooming out via the wheel.");
     ControlDown();
     TimelineTriggerWheel(1);
     ControlUp();
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(2,1));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
 }
 
@@ -116,7 +112,7 @@ void TestScrolling::testUpdateScrollingIfCursorIsMovedOutsideVisibleRegion()
         }
     };
     StartTestSuite();
-    Zoom level(6);
+    Zoom level(4);
     StartTest("Move cursor to end of timeline.");
     Type(WXK_END);
     ASSERT_SCROLLING_POSITION(- gui::timeline::Cursor::EDGE_OFFSET, getSequence()->getLength());

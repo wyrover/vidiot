@@ -46,7 +46,8 @@ static zoomlist sZooms = boost::assign::list_of // NOTE: Match with map used in 
 (rational(1,4))
 (rational(1,3))
 (rational(1,2))
-(rational(1,1));
+(rational(1,1))
+(rational(2,1));
 
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS

@@ -1085,7 +1085,6 @@ void TestTransition::testTrimmingTransition()
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
     }
     // Found bugs during development (once a bug with zoom level 3 and once with level 5)
-    Zoom level(3);
     {
         StartTest("InTransition: Try enlarging the transition on the left side (known crash in ClipView for finding the correct position)");
         MakeInTransitionAfterClip preparation(1);
@@ -1110,7 +1109,6 @@ void TestTransition::testTrimmingTransition()
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::DeleteSelectedClips>();
         Undo();
     }
-    Zoom levelplus2(2); // +2
     {
         StartTest("InTransition: Try enlarging the transition on the left side (known crash in Transition::getMinAdjustBegin)");
         MakeInTransitionAfterClip preparation(1);
