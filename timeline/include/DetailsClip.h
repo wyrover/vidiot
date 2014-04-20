@@ -141,7 +141,8 @@ private:
 
     wxStaticText* mCurrentLength;
     std::list<wxToggleButton*> mLengthButtons;
-    std::map<pts, bool> mTrimAtEnd; ///< True indicates at end
+    std::map<pts, pts> mTrimAtBegin;
+    std::map<pts, pts> mTrimAtEnd;
 
     wxSpinCtrl* mOpacitySpin;
     wxSlider* mOpacitySlider;
@@ -168,6 +169,8 @@ private:
     pts mMaximumLengthWhenBeginTrimming;
     pts mMinimumLengthWhenEndTrimming;
     pts mMaximumLengthWhenEndTrimming;
+    pts mMinimumLengthWhenBothTrimming;
+    pts mMaximumLengthWhenBothTrimming;
 
     wxSpinCtrl* mVolumeSpin;
     wxSlider* mVolumeSlider;
