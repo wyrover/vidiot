@@ -100,6 +100,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     ,   mMaximumLengthWhenBeginTrimming(0)
     ,   mMinimumLengthWhenEndTrimming(0)
     ,   mMaximumLengthWhenEndTrimming(0)
+    ,   mMinimumLengthWhenBothTrimming(0)
+    ,   mMaximumLengthWhenBothTrimming(0)
     ,   mVolumeSlider(0)
     ,   mVolumeSpin(0)
 {
@@ -110,8 +112,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mCurrentLength = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT | wxST_NO_AUTORESIZE);
     addOption(_("Current length"), mCurrentLength);
 
-    std::list<int> defaultLengths = boost::assign::list_of(500)  (1000) (1500) (2000) (2500) (3000);
-    std::list<wxString> labels    = boost::assign::list_of("0.5")("1.0")("1.5")("2.0")("2.5")("3.0");
+    std::list<int> defaultLengths = boost::assign::list_of(250)   (500)  (1000) (1500) (2000) (2500) (3000);
+    std::list<wxString> labels    = boost::assign::list_of("0.25")("0.5")("1.0")("1.5")("2.0")("2.5")("3.0");
     wxPanel* lengthbuttonspanel = new wxPanel(this);
     lengthbuttonspanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
     auto it = defaultLengths.begin();
@@ -582,31 +584,41 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 {
     ASSERT_NONZERO(button);
     ASSERT(wxThread::IsMain());
-    pts newLength = model::Convert::timeToPts(button->GetId());
-    VAR_INFO(newLength);
-    ASSERT(mTrimAtEnd.find(newLength) != mTrimAtEnd.end())(mTrimAtEnd)(newLength);
-    pts currentLength = mClip->getLength();
-    pts trim = newLength - currentLength;
-    if (!mTrimAtEnd[newLength])
+    pts length = model::Convert::timeToPts(button->GetId());
+    VAR_INFO(length);
+    ASSERT(mTrimAtEnd.find(length) != mTrimAtEnd.end())(mTrimAtEnd)(length);
+    ASSERT(mTrimAtBegin.find(length) != mTrimAtBegin.end())(mTrimAtBegin)(length);
+
+    ::command::Combiner* command = new ::command::Combiner();
+
+    model::IClipPtr clip = mClip;
+    pts endtrim = mTrimAtEnd[length];
+    pts begintrim = mTrimAtBegin[length];
+    bool transition = clip->isA<model::Transition>();
+    bool shift = !transition;
+    
+    if (endtrim != 0)
     {
-        trim = -1 * trim;
+        ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionEnd : ClipEnd);
+        trimCommand->update(endtrim, shift);
+        clip = trimCommand->getNewClip();
+        command->add(trimCommand);
     }
-    ::gui::timeline::command::TrimClip* command = 0;
-    if (mClip->isA<model::Transition>())
+
+    if (begintrim != 0)
     {
-        command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? TransitionEnd : TransitionBegin);
-        command->update(trim, false);
+        ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionBegin : ClipBegin);
+        trimCommand->update(begintrim, shift);
+        clip = trimCommand->getNewClip();
+        command->add(trimCommand);
     }
-    else
-    {
-        command = new command::TrimClip(getSequence(), mClip, model::TransitionPtr(), mTrimAtEnd[newLength] ? ClipEnd : ClipBegin);
-        command->update(trim, true);
-    }
+
+    command->setName(_("Set length of clip"));
     command->submit();
     // It might be possible that a new length selection button has already been pressed
     // and it's button event is already queued. When that event is handled this new clip
     // must be used.
-    setClip(command->getNewClip());
+    setClip(clip);
     //NOT: updateLengthButtons(); -- this is automatically done after selecting a new clip
     getTimeline().SetFocus();
 
@@ -921,14 +933,47 @@ void DetailsClip::determineClipSizeBounds()
     mMaximumLengthWhenBeginTrimming = mClip->getLength() + -1 * limitsBeginTrim.Min;
     mMinimumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.Min;
     mMaximumLengthWhenEndTrimming   = mClip->getLength() + limitsEndTrim.Max;
-    VAR_DEBUG(mMinimumLengthWhenBeginTrimming)(mMaximumLengthWhenBeginTrimming)(mMinimumLengthWhenEndTrimming)(mMaximumLengthWhenEndTrimming);
+    mMinimumLengthWhenBothTrimming  = mClip->getLength() + -1 * limitsBeginTrim.Max + limitsEndTrim.Min;
+    mMaximumLengthWhenBothTrimming  = mClip->getLength() + -1 * limitsBeginTrim.Min + limitsEndTrim.Max;
+    ASSERT_MORE_THAN_EQUALS(mMaximumLengthWhenBothTrimming, mMaximumLengthWhenEndTrimming);
+    ASSERT_MORE_THAN_EQUALS(mMaximumLengthWhenBothTrimming, mMaximumLengthWhenBeginTrimming);
+    ASSERT_LESS_THAN_EQUALS(mMinimumLengthWhenBothTrimming, mMinimumLengthWhenEndTrimming);
+    ASSERT_LESS_THAN_EQUALS(mMinimumLengthWhenBothTrimming, mMinimumLengthWhenBeginTrimming);
+    VAR_DEBUG(mMinimumLengthWhenBeginTrimming)(mMaximumLengthWhenBeginTrimming)(mMinimumLengthWhenEndTrimming)(mMaximumLengthWhenEndTrimming)(mMinimumLengthWhenBothTrimming)(mMaximumLengthWhenBothTrimming);
 
     // For each possible length, store if it should be achieved by trimming at the beginning or at the end (the default)
     mTrimAtEnd.clear();
     for ( wxToggleButton* button : mLengthButtons )
     {
         pts length = model::Convert::timeToPts(button->GetId());
-        mTrimAtEnd[length] = (length >= mMinimumLengthWhenEndTrimming && length <= mMaximumLengthWhenEndTrimming);
+
+        if (length >= mMinimumLengthWhenEndTrimming && length <= mMaximumLengthWhenEndTrimming)
+        {
+            // Trim at end only - default
+            mTrimAtEnd[length] = length - mClip->getLength();
+            mTrimAtBegin[length] = 0;
+        }
+        else if (length >= mMinimumLengthWhenBeginTrimming && length <= mMaximumLengthWhenBeginTrimming)
+        {
+            // Trim at begin only
+            mTrimAtEnd[length] = 0;
+            mTrimAtBegin[length] = mClip->getLength() - length; // todo -1 here already?
+        }
+        else if (length >= mMinimumLengthWhenBothTrimming && length <= mMaximumLengthWhenBothTrimming)
+        {
+            if (length < mClip->getLength())
+            {
+                // Size reduction
+                mTrimAtEnd[length] = limitsEndTrim.Min;
+                mTrimAtBegin[length] = (mClip->getLength() - length) + limitsEndTrim.Min;
+            }
+            else
+            {
+                // Size enlargement
+                mTrimAtEnd[length] = limitsEndTrim.Max;
+                mTrimAtBegin[length] = (mClip->getLength() - length) - limitsEndTrim.Max; // todo test
+            }
+        }
     }
 }
 
@@ -947,8 +992,8 @@ void DetailsClip::updateLengthButtons()
 
     if (!mClip->isA<model::EmptyClip>())
     {
-        pts minimumClipLength = std::min(mMinimumLengthWhenBeginTrimming, mMinimumLengthWhenEndTrimming);
-        pts maximumClipLength = std::max(mMaximumLengthWhenBeginTrimming, mMaximumLengthWhenEndTrimming);
+        pts minimumClipLength = mMinimumLengthWhenBothTrimming;
+        pts maximumClipLength = mMaximumLengthWhenBothTrimming;
         ASSERT_MORE_THAN_EQUALS(mClip->getLength(), minimumClipLength);
         ASSERT_LESS_THAN_EQUALS(mClip->getLength(), maximumClipLength);
 
@@ -958,7 +1003,9 @@ void DetailsClip::updateLengthButtons()
             button->SetValue(mClip && mClip->getLength() == length);
             button->Disable();
 
-            if (length >= minimumClipLength && length <= maximumClipLength)
+            if (length != mClip->getLength() && 
+                length >= minimumClipLength && 
+                length <= maximumClipLength)
             {
                 button->Enable();
             }

@@ -22,6 +22,7 @@
 #include "AudioClip.h"
 #include "ChangeAudioClipVolume.h"
 #include "ChangeVideoClipTransform.h"
+#include "Combiner.h"
 #include "Config.h"
 #include "Constants.h"
 #include "Convert.h"
@@ -105,7 +106,7 @@ void TestDetailsClip::testChangeLength()
         waitForIdle();
         RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
         ASSERT_SELECTION_SIZE(1); // Clip and link selected
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
+        ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
         ASSERT_IMPLIES( enlarge, VideoClip(0,3)->getLength() >= oldLength)(VideoClip(0,3)->getLength())(oldLength);
         ASSERT_IMPLIES(!enlarge, VideoClip(0,3)->getLength() <= oldLength)(VideoClip(0,3)->getLength())(oldLength);
         ASSERT(VideoClip(0,3)->getSelected());
@@ -152,7 +153,7 @@ void TestDetailsClip::testChangeLength()
              pressLengthButton(button,false,true);
             Undo(2); // Undo: adjust length, dragndrop
         }
-        TrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 5)); // Smaller length than the 'smallest' button
+        TrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 2)); // Smaller length than the 'smallest' button
         Click(Center(VideoClip(0,3))); // Exclusively select clip 4, since the shift trim above selects multiple clips
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
@@ -175,18 +176,21 @@ void TestDetailsClip::testChangeLengthOfTransition()
     StartTestSuite();
     Zoom level(6);
     auto getLength = [](wxToggleButton* button) -> pts { return model::Convert::timeToPts(button->GetId()); };
-    auto pressLengthButton = [this,getLength] (wxToggleButton* button)
+    auto pressLengthButtons = [this,getLength] ()
     {
-        pts oldLength = VideoClip(0,2)->getLength();
-        std::ostringstream o;
-        o << "LengthButton: Enlarge transition to " << getLength(button);
-        StartTest(o.str().c_str());
-        waitForIdle();
-        RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
-        ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-        ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::TrimClip>();
-        ASSERT_EQUALS(VideoClip(0,2)->getLength(),getLength(button));
-        ASSERT(VideoClip(0,2)->getSelected());
+        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
+        {
+            pts oldLength = VideoClip(0,2)->getLength();
+            std::ostringstream o;
+            o << "LengthButton: Change transition length to " << getLength(button);
+            StartTest(o.str().c_str());
+            RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+            ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
+            ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
+            ASSERT_EQUALS(VideoClip(0,2)->getLength(),getLength(button));
+            ASSERT(VideoClip(0,2)->getSelected());
+            Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
+        }
     };
 
     {
@@ -199,12 +203,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
             ASSERT_DETAILSCLIP(VideoClip(0,2));
             ASSERT(VideoClip(0,2)->isA<model::Transition>());
             ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-            for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
-            {
-                ASSERT(button->IsEnabled());
-                pressLengthButton(button);
-                Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
-            }
+            pressLengthButtons();
         }
         Undo(2);
     }
@@ -215,12 +214,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
-        {
-            ASSERT(button->IsEnabled());
-            pressLengthButton(button);
-            Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
-        }
+        pressLengthButtons();
     }
     {
         StartTest("OutTransition: Change length via details view.");
@@ -229,12 +223,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
-        for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
-        {
-            ASSERT(button->IsEnabled());
-            pressLengthButton(button);
-            Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
-        }
+        pressLengthButtons();
     }
 }
 
