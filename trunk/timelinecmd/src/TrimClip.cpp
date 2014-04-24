@@ -334,7 +334,10 @@ void TrimClip::removeTransition()
     {
         model::IClipPtr result = clip;
         // Do not use mTrim here. That is initialized AFTER this method!
-        if (!mShift && transition && transition->getLeft() > 0 && transition->getRight() > 0)
+        if (!mShift && 
+            transition && 
+            transition->getLeft()  && *(transition->getLeft()) > 0 && 
+            transition->getRight() && *(transition->getRight()) > 0)
         {
             // Only in case
             // - No shift trim is applied
@@ -474,7 +477,7 @@ void TrimClip::applyTrim()
                         model::TransitionPtr intransition = clip->getInTransition(); // An in-only-transition in front of the clip must be 'moved along'
                         if (intransition)
                         {
-                            ASSERT_ZERO(intransition->getLeft())(intransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            ASSERT(!intransition->getLeft())(intransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
                             removeClip(intransition);                           // Remove from the timeline...
                             replacement.push_front(make_cloned(intransition));  // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
                         }
@@ -491,7 +494,7 @@ void TrimClip::applyTrim()
                         model::IClipPtr emptyspace = clip->getPrev();
                         if (intransition)
                         {
-                            ASSERT_ZERO(intransition->getLeft())(intransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            ASSERT(!intransition->getLeft())(intransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
                             emptyspace = intransition->getPrev();
                         }
                         ASSERT(emptyspace); // There had to be room for enlarging
@@ -511,7 +514,7 @@ void TrimClip::applyTrim()
                         model::TransitionPtr outtransition = clip->getOutTransition(); // An out-only-transition after the clip must be 'moved along'
                         if (outtransition)
                         {
-                            ASSERT_ZERO(outtransition->getRight())(outtransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            ASSERT(!outtransition->getRight())(outtransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
                             removeClip(outtransition);                             // Remove from the timeline...
                             replacement.push_back(make_cloned(outtransition));     // ...and add again in the correct position (clone is added to avoid issues when expanding the link replacements)
                         }
@@ -528,7 +531,7 @@ void TrimClip::applyTrim()
                         model::IClipPtr emptyspace = clip->getNext();
                         if (outtransition)
                         {
-                            ASSERT_ZERO(outtransition->getRight())(outtransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
+                            ASSERT(!outtransition->getRight())(outtransition); // If the transition was in-out then it should have been removed at the beginning of the trim operation
                             emptyspace = outtransition->getNext();
                         }
                         if (emptyspace)

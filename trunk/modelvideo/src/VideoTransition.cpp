@@ -81,13 +81,13 @@ VideoFramePtr VideoTransition::getNextVideo(const VideoCompositionParameters& pa
         // accomodate for the addition of the transition. Therefore, the computations below take these
         // shortened clips as input.
 
-        if (getLeft() > 0)
+        if (getLeft())
         {
             ASSERT(getPrev());
             mLeftClip = makeLeftClip();
             mLeftClip->moveTo(mProgress);
         }
-        if (getRight() > 0)
+        if (getRight())
         {
             ASSERT(getNext());
             mRightClip = makeRightClip();

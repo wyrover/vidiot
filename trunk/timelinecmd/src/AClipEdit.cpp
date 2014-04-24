@@ -235,7 +235,7 @@ void AClipEdit::split(const model::TrackPtr& track, pts position)
             transition = boost::dynamic_pointer_cast<model::Transition>(clip);
             if (transition)
             {
-                if (transition->getLeft() == 0) // Split is done on the left end of a transition.
+                if (!transition->getLeft()) // Split is done on the left end of a transition.
                 {
                     transition.reset();  // In only transition. Ignore.
                 }
@@ -259,7 +259,7 @@ void AClipEdit::split(const model::TrackPtr& track, pts position)
 
                 if (transition) // Split is done on the right end of a transition.
                 {
-                    if (transition->getRight() == 0) // Out only transition. Ignore.
+                    if (!transition->getRight()) // Out only transition. Ignore.
                     {
                         transition.reset();
                     }
@@ -437,10 +437,10 @@ model::IClipPtr AClipEdit::addTransition(const model::IClipPtr& leftClip, const 
     ASSERT( !rightClip || !rightClip->isA<model::EmptyClip>() );
     ASSERT( !rightClip || !leftClip || ((leftClip->getNext() == rightClip) && (rightClip->getPrev() ==  leftClip)) );
 
-    pts leftLength = transition->getLeft();
-    pts rightLength = transition->getRight();
+    boost::optional<pts> left = transition->getLeft();
+    boost::optional<pts> right = transition->getRight();
 
-    if (leftLength > 0)
+    if (left)
     {
         ASSERT(leftClip);
 
@@ -449,7 +449,7 @@ model::IClipPtr AClipEdit::addTransition(const model::IClipPtr& leftClip, const 
         position = leftClip->getNext();
 
         // Determine adjustment and adjust left clip
-        pts adjustment = -leftLength;
+        pts adjustment = -1 * *left;
         ASSERT_MORE_THAN_EQUALS( adjustment, leftClip->getMinAdjustEnd() );
         ASSERT_LESS_THAN_EQUALS( adjustment, leftClip->getMaxAdjustEnd() );
         model::IClipPtr updatedLeft = make_cloned<model::IClip>(leftClip);
@@ -457,7 +457,7 @@ model::IClipPtr AClipEdit::addTransition(const model::IClipPtr& leftClip, const 
         replaceClip(leftClip,boost::assign::list_of(updatedLeft));
         VAR_DEBUG(updatedLeft);
     }
-    if (rightLength > 0)
+    if (right)
     {
         ASSERT(rightClip);
 
@@ -465,7 +465,7 @@ model::IClipPtr AClipEdit::addTransition(const model::IClipPtr& leftClip, const 
         track = rightClip->getTrack();
 
         // Determine adjustment and adjust right clip
-        pts adjustment = rightLength;
+        pts adjustment = *right;
         ASSERT_MORE_THAN_EQUALS( adjustment, rightClip->getMinAdjustBegin() );
         ASSERT_LESS_THAN_EQUALS( adjustment, rightClip->getMaxAdjustBegin() );
         model::IClipPtr updatedRight = make_cloned<model::IClip>(rightClip);
@@ -507,7 +507,8 @@ model::IClips AClipEdit::unapplyTransition(const model::TransitionPtr& transitio
         }
     };
     model::IClips replacements;
-    if (transition->getLeft() > 0)
+    boost::optional<pts> left = transition->getLeft();
+    if (left)
     {
         model::IClipPtr prev = transition->getPrev();
         ASSERT(prev);
@@ -515,20 +516,21 @@ model::IClips AClipEdit::unapplyTransition(const model::TransitionPtr& transitio
         if (prev->isA<model::EmptyClip>())
         {
             // Extend empty clip
-            replacement = boost::make_shared<model::EmptyClip>(prev->getLength() + transition->getLeft());
+            replacement = boost::make_shared<model::EmptyClip>(prev->getLength() + *left);
         }
         else
         {
             // Extend the left clip
             replacement = make_cloned<model::IClip>(prev);
-            replacement->adjustEnd(transition->getLeft());
+            replacement->adjustEnd(*left);
         }
         replaceClip(prev,boost::assign::list_of(replacement));
         replacements.push_back(replacement);
 
         cloneLinkIfRequired(prev->getLink());
     }
-    if (transition->getRight() > 0)
+    boost::optional<pts> right = transition->getRight();
+    if (right)
     {
         model::IClipPtr next = transition->getNext();
         ASSERT(next);
@@ -536,13 +538,13 @@ model::IClips AClipEdit::unapplyTransition(const model::TransitionPtr& transitio
         if (next->isA<model::EmptyClip>())
         {
             // Extend empty clip
-            replacement = boost::make_shared<model::EmptyClip>(next->getLength() + transition->getRight());
+            replacement = boost::make_shared<model::EmptyClip>(next->getLength() + *right);
         }
         else
         {
             // Extend next clip with right length of the transition
             replacement = make_cloned<model::IClip>(next);
-            replacement->adjustBegin(-transition->getRight());
+            replacement->adjustBegin(-1 * *right);
         }
         replaceClip(next,boost::assign::list_of(replacement));
         replacements.push_back(replacement);

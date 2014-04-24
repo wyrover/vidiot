@@ -82,13 +82,14 @@ void AudioTransition::clean()
         // accomodate for the addition of the transition. Therefore, the computations below take these
         // shortened clips as input.
 
-        if (getLeft() > 0)
+        // todo to base class (reuse for both audio and video):
+        if (getLeft())
         {
             ASSERT(getPrev());
             mLeftClip = makeLeftClip();
             mLeftClip->moveTo(ptsProgress);
         }
-        if (getRight() > 0)
+        if (getRight()) 
         {
             ASSERT(getNext());
             mRightClip = makeRightClip();

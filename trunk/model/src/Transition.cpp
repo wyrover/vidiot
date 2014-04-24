@@ -31,16 +31,18 @@ namespace model {
 
 Transition::Transition()
     :   Clip()
-    ,   mFramesLeft(-1)
-    ,   mFramesRight(-1)
+    ,   mFramesLeft(boost::none)
+    ,   mFramesRight(boost::none)
 {
     VAR_DEBUG(*this);
 }
 
-void Transition::init(pts nFramesLeft, pts nFramesRight)
+void Transition::init(boost::optional<pts> nFramesLeft, boost::optional<pts> nFramesRight)
 {
     mFramesLeft = nFramesLeft;
     mFramesRight = nFramesRight;
+    ASSERT_MORE_THAN_ZERO(getLength());
+
     VAR_DEBUG(this)(nFramesLeft)(nFramesRight);
 }
 
@@ -68,7 +70,8 @@ Transition::~Transition()
 
 pts Transition::getLength() const
 {
-    return mFramesLeft + mFramesRight;
+    ASSERT(mFramesLeft || mFramesRight);
+    return (mFramesLeft ? *mFramesLeft : 0) + (mFramesRight ? *mFramesRight : 0);
 }
 
 void Transition::moveTo(pts position)
@@ -94,11 +97,11 @@ pts Transition::getMinAdjustBegin() const
 {
     ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     pts result = std::numeric_limits<pts>().min();
-    if (getLeft() > 0)
+    if (getLeft())
     {
         ASSERT(getPrev()); // Avoid bugs where this method is called before a transition has been made part of a track
         result = -1 *  getPrev()->getLength();
-        if (getRight() > 0)
+        if (getRight())
         {
             ASSERT(getNext());
             result = std::max(result, getNext()->getMinAdjustBegin());
@@ -114,40 +117,40 @@ pts Transition::getMinAdjustBegin() const
 pts Transition::getMaxAdjustBegin() const
 {
     ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
-    return getLeft();
+    return (mFramesLeft ? *mFramesLeft : 0);
 }
 
 void Transition::adjustBegin(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
-    mFramesLeft -= adjustment;
+    ASSERT(mFramesLeft);
+    mFramesLeft.reset(*mFramesLeft - adjustment);
 }
 
 pts Transition::getMinAdjustEnd() const
 {
     ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
-    return -getRight();
+    return (mFramesRight ? -1 * *mFramesRight : 0);
 }
 
 pts Transition::getMaxAdjustEnd() const
 {
     ASSERT(hasTrack()); // Do not call when the transition is not part of a track: the algorithm doesn't work then (for instance, with clones)
     pts result = std::numeric_limits<pts>().max();
-    if (getRight() > 0)
+    if (getRight())
     {
         ASSERT(getNext()); // Avoid bugs where this method is called before a transition has been made part of a track
         result = getNext()->getLength();
-        if (getLeft() > 0)
+        if (getLeft())
         {
             ASSERT(getPrev());
             result = std::min(result, getPrev()->getMaxAdjustEnd());
         }
     }
-    else
+    else // OutOnlyTransition: Cannot enlarge to the right
     {
         result = 0;
-        // OutOnlyTransition: Cannot enlarge to the right
     }
     return result;
 }
@@ -156,7 +159,8 @@ void Transition::adjustEnd(pts adjustment)
 {
     VAR_DEBUG(*this)(adjustment);
     ASSERT(!getTrack())(getTrack()); // Otherwise, this action needs an event indicating the change to the track(view). Instead, tracks are updated by replacing clips.
-    mFramesRight += adjustment;
+    ASSERT(mFramesRight);
+    mFramesRight.reset(*mFramesRight + adjustment);
 }
 
 std::set<pts> Transition::getCuts(const std::set<IClipPtr>& exclude) const
@@ -190,15 +194,15 @@ FilePtr Transition::getFile() const
 
 pts Transition::getTouchPosition() const
 {
-    return getLeftPts() + getLeft();
+    return getLeftPts() + (mFramesLeft ? *mFramesLeft : 0);
 }
 
-pts Transition::getLeft() const
+boost::optional<pts> Transition::getLeft() const
 {
     return mFramesLeft;
 }
 
-pts Transition::getRight() const
+boost::optional<pts> Transition::getRight() const
 {
     return mFramesRight;
 }
@@ -206,7 +210,7 @@ pts Transition::getRight() const
 model::IClipPtr Transition::makeLeftClip()
 {
     model::IClipPtr result;
-    if (getLeft() > 0)
+    if (getLeft())
     {
         ASSERT(getPrev());
         result = make_cloned<model::IClip>(getPrev());
@@ -219,7 +223,7 @@ model::IClipPtr Transition::makeLeftClip()
 model::IClipPtr Transition::makeRightClip()
 {
     model::IClipPtr result;
-    if (getRight() > 0)
+    if (getRight())
     {
         ASSERT(getNext());
         result = make_cloned<model::IClip>(getNext());
@@ -252,8 +256,35 @@ void Transition::serialize(Archive & ar, const unsigned int version)
     try
     {
         ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Clip);
-        ar & BOOST_SERIALIZATION_NVP(mFramesLeft);
-        ar & BOOST_SERIALIZATION_NVP(mFramesRight);
+        if (version == 1)
+        {
+            pts left = 0;
+            pts right = 0;
+            ar & boost::serialization::make_nvp("mFramesLeft",left);
+            ar & boost::serialization::make_nvp("mFramesRight",right);
+            if (left == 0) // Out-only transition
+            {
+                mFramesLeft.reset();
+            }
+            else
+            {
+                mFramesLeft.reset(left);
+            }
+            if (right == 0) // In-only 
+            {
+                mFramesRight.reset(); // In-only transition
+            }
+            else
+            {
+                mFramesRight.reset(right);
+            }
+        }
+        else
+        {
+            ar & BOOST_SERIALIZATION_NVP(mFramesLeft);
+            ar & BOOST_SERIALIZATION_NVP(mFramesRight);
+        }
+        ASSERT_MORE_THAN_ZERO(getLength());
         // NOT: mSelected. After loading, nothing is selected.
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }

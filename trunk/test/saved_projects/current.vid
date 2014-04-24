@@ -270,7 +270,7 @@
 										<string>C:\Vidiot\vidiot_trunk\test\input\</string>
 									</filename>
 								</mPath>
-								<mLastModified>1371231235</mLastModified>
+								<mLastModified>1396730832</mLastModified>
 							</px>
 						</item>
 						<item>
@@ -503,7 +503,7 @@
 													<item>
 														<px class_id="50" class_name="model::video::transition::Bands" tracking_level="1" version="1" object_id="_36">
 															<VideoTransition class_id="51" tracking_level="0" version="1">
-																<Transition class_id="52" tracking_level="1" version="1" object_id="_37">
+																<Transition class_id="52" tracking_level="1" version="2" object_id="_37">
 																	<Clip>
 																		<mLink>
 																			<ptr>
@@ -511,8 +511,14 @@
 																			</ptr>
 																		</mLink>
 																	</Clip>
-																	<mFramesLeft>0</mFramesLeft>
-																	<mFramesRight>12</mFramesRight>
+																	<mFramesLeft class_id="53" tracking_level="0" version="0">
+																		<initialized>0</initialized>
+																	</mFramesLeft>
+																	<mFramesRight>
+																		<initialized>1</initialized>
+																		<item_version>0</item_version>
+																		<value>12</value>
+																	</mFramesRight>
 																</Transition>
 																<IVideo></IVideo>
 															</VideoTransition>
@@ -612,7 +618,7 @@
 														</px>
 													</item>
 													<item>
-														<px class_id="53" class_name="model::video::transition::CrossFade" tracking_level="1" version="1" object_id="_44">
+														<px class_id="54" class_name="model::video::transition::CrossFade" tracking_level="1" version="1" object_id="_44">
 															<VideoTransition>
 																<Transition object_id="_45">
 																	<Clip>
@@ -622,8 +628,14 @@
 																			</ptr>
 																		</mLink>
 																	</Clip>
-																	<mFramesLeft>0</mFramesLeft>
-																	<mFramesRight>12</mFramesRight>
+																	<mFramesLeft>
+																		<initialized>0</initialized>
+																	</mFramesLeft>
+																	<mFramesRight>
+																		<initialized>1</initialized>
+																		<item_version>0</item_version>
+																		<value>12</value>
+																	</mFramesRight>
 																</Transition>
 																<IVideo></IVideo>
 															</VideoTransition>
@@ -2211,7 +2223,7 @@
 														</px>
 													</item>
 													<item>
-														<px class_id="54" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_148">
+														<px class_id="55" class_name="model::ImageClip" tracking_level="1" version="1" object_id="_148">
 															<VideoClip object_id="_149">
 																<ClipInterval>
 																	<Clip>
@@ -2222,7 +2234,7 @@
 																		</mLink>
 																	</Clip>
 																	<mRender>
-																		<px class_id="55" class_name="model::ImageFile" tracking_level="1" version="1" object_id="_150">
+																		<px class_id="56" class_name="model::ImageFile" tracking_level="1" version="1" object_id="_150">
 																			<VideoFile object_id="_151">
 																				<File object_id="_152">
 																					<Node>
@@ -2280,7 +2292,7 @@
 									<count>1</count>
 									<item_version>1</item_version>
 									<item>
-										<px class_id="56" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_153">
+										<px class_id="57" class_name="model::AudioTrack" tracking_level="1" version="1" object_id="_153">
 											<Track object_id="_154">
 												<mIndex>0</mIndex>
 												<mClips>
@@ -2419,10 +2431,10 @@
 		</px>
 	</mRoot>
 </project>
-<view class_id="57" tracking_level="0" version="1">
-	<window class_id="58" tracking_level="0" version="1">
-		<projectview class_id="59" tracking_level="0" version="1">
-			<mOpenFolders class_id="60" tracking_level="0" version="0">
+<view class_id="58" tracking_level="0" version="1">
+	<window class_id="59" tracking_level="0" version="1">
+		<projectview class_id="60" tracking_level="0" version="1">
+			<mOpenFolders class_id="61" tracking_level="0" version="0">
 				<count>2</count>
 				<item_version>1</item_version>
 				<item>
@@ -2433,25 +2445,25 @@
 				</item>
 			</mOpenFolders>
 		</projectview>
-		<timelinesview class_id="61" tracking_level="0" version="1">
+		<timelinesview class_id="62" tracking_level="0" version="1">
 			<notebookCount>1</notebookCount>
 			<selectedPage>0</selectedPage>
-			<sequence class_id="62" tracking_level="0" version="1">
+			<sequence class_id="63" tracking_level="0" version="1">
 				<px class_id_reference="30" object_id_reference="_20"></px>
 			</sequence>
-			<timeline class_id="63" tracking_level="0" version="1">
-				<zoom class_id="64" tracking_level="0" version="1">
+			<timeline class_id="64" tracking_level="0" version="1">
+				<zoom class_id="65" tracking_level="0" version="1">
 					<mZoom>
 						<numerator>1</numerator>
 						<denominator>1</denominator>
 					</mZoom>
 				</zoom>
-				<intervals class_id="65" tracking_level="0" version="1">
-					<mIntervals class_id="66" tracking_level="0" version="0">
-						<listofpairs class_id="67" tracking_level="0" version="0">
+				<intervals class_id="66" tracking_level="0" version="1">
+					<mIntervals class_id="67" tracking_level="0" version="0">
+						<listofpairs class_id="68" tracking_level="0" version="0">
 							<count>2</count>
 							<item_version>0</item_version>
-							<item class_id="68" tracking_level="0" version="0">
+							<item class_id="69" tracking_level="0" version="0">
 								<first>90</first>
 								<second>275</second>
 							</item>
@@ -2462,10 +2474,10 @@
 						</listofpairs>
 					</mIntervals>
 				</intervals>
-				<scrolling class_id="69" tracking_level="0" version="0">
+				<scrolling class_id="70" tracking_level="0" version="0">
 					<mCenterPts>3637</mCenterPts>
 				</scrolling>
-				<cursor class_id="70" tracking_level="0" version="0">
+				<cursor class_id="71" tracking_level="0" version="0">
 					<mCursorPosition>3637</mCursorPosition>
 				</cursor>
 			</timeline>

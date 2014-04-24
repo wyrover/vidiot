@@ -253,18 +253,23 @@ model::VideoClipPtr ThumbnailView::getClip() const
     model::VideoClipPtr clone;
 
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mVideoClip->getPrev());
-    if (transition && transition->getRight() > 0)
+    if (transition && 
+        transition->getRight() && 
+        *(transition->getRight()) > 0)
     {
         // This clip
         // - is part of a transition
-        // - is the 'in' clip (the right one) of the transition
+        // - is the 'out' clip (the right one) of the transition
         // The thumbnail is the first frame after the 'logical cut' under the transitionm.
         clone = boost::dynamic_pointer_cast<model::VideoClip>(transition->makeRightClip());
     }
     else
     {
         model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mVideoClip->getNext());
-        if (transition && transition->getLeft() > 0 && mVideoClip->getLength() == 0)
+        if (transition && 
+            transition->getLeft() &&
+            *(transition->getLeft()) > 0 && 
+            mVideoClip->getLength() == 0)
         {
             // This clip
             // - is part of a transition

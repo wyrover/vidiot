@@ -51,8 +51,8 @@ public:
     model::IClipPtr getLeftClip() const;
     model::IClipPtr getRightClip() const;
 
-    pts getLeftSize() const;
-    pts getRightSize() const;
+    boost::optional<pts> getLeftSize() const;
+    boost::optional<pts> getRightSize() const;
 
 private:
 
@@ -67,8 +67,8 @@ private:
     model::IClipPtr mLeft;
     model::IClipPtr mRight;
 
-    pts mLeftSize;
-    pts mRightSize;
+    boost::optional<pts> mLeftSize;
+    boost::optional<pts> mRightSize;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

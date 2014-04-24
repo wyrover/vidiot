@@ -247,13 +247,13 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
     {
         // Check if there's already a transition, disabling the transition menu options
         model::TransitionPtr prevTransition = boost::dynamic_pointer_cast<model::Transition>(clickedClip->getPrev());
-        if (prevTransition && prevTransition->getRight() > 0)
+        if (prevTransition && prevTransition->getRight())
         {
             canFadeIn = false;
             canFadeFromPrevious = false;
         }
         model::TransitionPtr nextTransition = boost::dynamic_pointer_cast<model::Transition>(clickedClip->getNext());
-        if (nextTransition && nextTransition->getLeft() > 0)
+        if (nextTransition && nextTransition->getLeft())
         {
             canFadeOut = false;
             canFadeToNext = false;

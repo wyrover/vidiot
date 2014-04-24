@@ -449,7 +449,7 @@ void ScrollWithRightMouseButton(pixel distance)
     pixel maxW = getTimeline().GetClientSize().GetWidth() - 20;
     pixel y = gui::Layout::TimeScaleHeight + 2;
     ASSERT_LESS_THAN(distance,maxW);
-    MoveWithinWidget(TimelinePosition(), wxPoint(maxW - 10, y)); // todo make method
+    MoveWithinWidget(TimelinePosition(), wxPoint(maxW - 10, y));
     RightDown();
     MoveWithinWidget(TimelinePosition(), wxPoint(maxW - 10 - distance, y));
     RightUp();

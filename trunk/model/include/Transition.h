@@ -43,7 +43,7 @@ public:
     /// Init must be called for new transitions.
     Transition();
 
-    void init(pts nFramesLeft, pts nFramesRight);
+    void init(boost::optional<pts> nFramesLeft, boost::optional<pts> nFramesRight);
 
     ///< Used for making deep copies (clones)
     virtual Transition* clone() const override;
@@ -83,9 +83,14 @@ public:
     // TRANSITION
     //////////////////////////////////////////////////////////////////////////
 
-    pts getTouchPosition() const;   ///< \return position where the two transitioned clips are 'touching'
-    pts getLeft() const;    ///< \return number of frames to the left of the cut between the two clips
-    pts getRight() const;   ///< \return number of frames to the right of the cut between the two clips
+    /// \return position where the two transitioned clips are 'touching'
+    pts getTouchPosition() const;   
+
+    /// \see mFramesLeft
+    boost::optional<pts> getLeft() const;    
+    
+    /// \see mFramesRight
+    boost::optional<pts> getRight() const;   
 
     /// Make the 'in' clip that is to be used for rendering data
     /// This takes the previous clip in the track, clones it, and adjust the
@@ -122,8 +127,29 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    pts mFramesLeft;    ///< Number of frames to the left of the cut between the two clips
-    pts mFramesRight;   ///< Number of frames to the right of the cut between the two clips
+    /// Out-only transition:
+    ///     Unset optional in case this is an out-only transition.
+    ///
+    /// Crossfading transition:
+    ///     Number of frames visible (from user point of view) 
+    ////    to the left of the cut between the two clips.
+    ///  
+    /// Can be a 'set' optional with value '0':
+    ///     Left clip IS part of the transition but from a user point
+    ///     of view the transition only overlaps with the clip to the right.
+    boost::optional<pts> mFramesLeft;    
+    
+    /// In-only transition:
+    ///     Unset optional in case this is an out-only transition.
+    ///
+    /// Crossfading transition:
+    ///     Number of frames visible (from user point of view) 
+    ////    to the right of the cut between the two clips.
+    ///  
+    /// Can be a 'set' optional with value '0':
+    ///     Right clip IS part of the transition but from a user point
+    ///     of view the transition only overlaps with the clip to the left.
+    boost::optional<pts> mFramesRight;   
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING
@@ -145,7 +171,7 @@ private:
 //#include  <boost/preprocessor/slot/counter.hpp>
 //#include BOOST____PP_UPDATE_COUNTER()
 //#line BOOST_____PP_COUNTER
-BOOST_CLASS_VERSION(model::Transition, 1)
+BOOST_CLASS_VERSION(model::Transition, 2)
 BOOST_CLASS_EXPORT_KEY(model::Transition)
 
 #endif

@@ -142,31 +142,33 @@ void Trim::start()
         break;
     case TransitionRightClipBegin:
         ASSERT(transition);
-        ASSERT_MORE_THAN_ZERO(transition->getRight());
+        ASSERT(transition->getRight());
+        ASSERT_MORE_THAN_ZERO(*(transition->getRight()));
         mOriginalClip = info.getLogicalClip();
         mFixedPts = mOriginalClip->getRightPts(); // Do not optimize away (using ->getRightPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         mStartPts = mOriginalClip->getLeftPts();
-        if (transition->getLeft() > 0)
+        if (transition->getLeft())
         {
             adjacentClip = make_cloned<model::IClip>(transition->getPrev());
             ASSERT(adjacentClip);
             adjacentClip->adjustBegin(adjacentClip->getLength());
-            adjacentClip->adjustEnd(transition->getLeft());
+            adjacentClip->adjustEnd(*(transition->getLeft()));
             adjacentClip->moveTo(adjacentClip->getLength() - 1);
         }
         break;
     case TransitionLeftClipEnd:
         ASSERT(transition);
-        ASSERT_MORE_THAN_ZERO(transition->getLeft());
+        ASSERT(transition->getLeft());
+        ASSERT_MORE_THAN_ZERO(*(transition->getLeft()));
         mOriginalClip = info.getLogicalClip();
         mFixedPts = mOriginalClip->getLeftPts(); // Do not optimize away (using ->getLeftPts() in the calculation. Since the scrolling is changed and clips are added/removed, that's very volatile information).
         mStartPts = mOriginalClip->getRightPts();
-        if (transition->getRight() > 0)
+        if (transition->getRight())
         {
             adjacentClip = make_cloned<model::IClip>(transition->getNext());
             ASSERT(adjacentClip);
             adjacentClip->adjustEnd(- adjacentClip->getLength());
-            adjacentClip->adjustBegin(-transition->getRight());
+            adjacentClip->adjustBegin(-1 * *(transition->getRight()));
             adjacentClip->moveTo(0);
         }
         isBeginTrim = false;
@@ -216,17 +218,17 @@ void Trim::start()
         if (isBeginTrim)
         {
             mStartPositionPreview = originalOffset; // Left begin point
-            if (inTransition)
+            if (inTransition && inTransition->getRight())
             {
-                mStartPositionPreview -= inTransition->getRight(); // Since the trim starts on the position where the two transitioned clips 'touched'
+                mStartPositionPreview -= *(inTransition->getRight()); // Since the trim starts on the position where the two transitioned clips 'touched'
             }
         }
         else
         {
             mStartPositionPreview = originalOffset + originalLength - 1; // -1 required since end is 'one too far
-            if (outTransition)
+            if (outTransition && outTransition->getLeft())
             {
-                mStartPositionPreview += outTransition->getLeft(); // Since the trim starts on the position where the two transitioned clips 'touched'
+                mStartPositionPreview += *(outTransition->getLeft()); // Since the trim starts on the position where the two transitioned clips 'touched'
             }
         }
         mPreviewVideoClip->maximize();

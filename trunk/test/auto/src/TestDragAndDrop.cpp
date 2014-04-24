@@ -300,4 +300,41 @@ void TestDragAndDrop::testDropAdjacentToTransition()
     }
 }
 
+void TestDragAndDrop::testDropAdjacentToZeroLengthSideOfInOutTransition()
+{
+    StartTestSuite();
+    ConfigOverruleBool overruleSnapToCursor(Config::sPathSnapClips,false);
+    ConfigOverruleBool overruleSnapToClips(Config::sPathSnapCursor,true);
+    Zoom level(2);
+    MakeInOutTransitionAfterClip preparation(2);
+    {
+        StartTest("Left size is 0, drag left clip");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
+
+        // Reduce left part of transition to 0
+        wxPoint from = VTopQuarterLeft(VideoClip(0,3));
+        Trim(from,from + wxPoint(100,0));
+        
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10);
+        Drag(From(Center(VideoClip(0,2))).AlignLeft(LeftPixel(VideoClip(0,5))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip);
+        Undo(2);
+    }
+    {
+        StartTest("Right size is 0, drag right clip");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition);
+
+        // Reduce right part of transition to 0
+        wxPoint from = VTopQuarterRight(VideoClip(0,3));
+        Trim(from,from + wxPoint(-100,0));
+
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
+        PositionCursor(10);
+        Drag(From(Center(VideoClip(0,4))).AlignRight(RightPixel(VideoClip(0,5))));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(EmptyClip)(VideoClip);
+        Undo(2);
+    }
+}
+
 } // namespace

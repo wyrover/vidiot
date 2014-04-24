@@ -231,58 +231,92 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
 {
     StartTestSuite();
     Zoom level(2);
-
-    auto ASSERT_LENGTH_BUTTONS_DISABLED = []
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    auto getLength = [](wxToggleButton* button) -> pts { return model::Convert::timeToPts(button->GetId()); };
+    auto pressLengthButtons = [this,getLength] (std::string name, pts minimumsize)
     {
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
-            ASSERT(!button->IsEnabled());
+            pts oldLength = VideoClip(0,2)->getPerceivedLength();
+            pts buttonLength = getLength(button);
+            bool buttonEnabled = button->IsEnabled();
+            std::ostringstream o;
+            o << name << ": length = " << buttonLength;
+            StartTest(o.str().c_str());
+            ASSERT_EQUALS(buttonEnabled, buttonLength >= minimumsize);
+            RunInMainAndWait(boost::bind(&gui::timeline::DetailsClip::handleLengthButtonPressed,DetailsClipView(),button));
+            ASSERT_EQUALS(getSelectedClipsCount(),2);
+            ASSERT(VideoClip(0,2)->getSelected());
+            if (buttonEnabled)
+            {
+                ASSERT_CURRENT_COMMAND_TYPE<::command::Combiner>();
+                ASSERT_EQUALS(VideoClip(0,2)->getPerceivedLength(), getLength(button));
+                Undo(); // Undo: adjust length. Note: Undoing here also revealed a bug here, when the 'TrimClip::doExtraAfter -> change selection' caused 'no selection changed update'
+            }
+            else
+            {
+                ASSERT_EQUALS(VideoClip(0,2)->getPerceivedLength(), oldLength);
+            }
         }
+        Undo(); // Undo create transition
     };
-
     {
-        StartTest("Select clip, then create InTransition: Length buttons disabled.");
-        Click(Center(VideoClip(0,1)));
-        ASSERT(VideoClip(0,1)->getSelected());
+        StartTest("InTransition");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
         Type('i');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        ASSERT_LENGTH_BUTTONS_DISABLED();
-        Undo();
-        ASSERT(VideoClip(0,1)->getSelected());
+        pressLengthButtons("InTransition", defaultTransitionLength / 2);
+        Undo(); // Remove transition
     }
     {
-        StartTest("Select clip, then create InTransition: Length buttons disabled.");
-        Click(Center(VideoClip(0,1)));
-        ASSERT(VideoClip(0,1)->getSelected());
-        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        StartTest("OutTransition");
+        OpenPopupMenuAt(Center(VideoClip(0,2)));
         Type('o');
-        ASSERT_DETAILSCLIP(VideoClip(0,1));
-        ASSERT_LENGTH_BUTTONS_DISABLED();
-        Undo();
-        ASSERT(VideoClip(0,1)->getSelected());
+        ASSERT_DETAILSCLIP(VideoClip(0,2));
+        pressLengthButtons("OutTransition", defaultTransitionLength / 2);
+        Undo(); // Remove transition
     }
     {
-        StartTest("Select clip, then create InTransition: Length buttons disabled.");
-        Click(Center(VideoClip(0,1)));
-        ASSERT(VideoClip(0,1)->getSelected());
+        StartTest("InOutTransition");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
         Type('p');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
-        ASSERT_LENGTH_BUTTONS_DISABLED();
-        Undo();
-        ASSERT(VideoClip(0,1)->getSelected());
+        pressLengthButtons("InOutTransition", defaultTransitionLength / 2);
+        Undo(); // Remove transition
     }
     {
-        StartTest("Select clip, then create InTransition: Length buttons disabled.");
-        Click(Center(VideoClip(0,1)));
-        ASSERT(VideoClip(0,1)->getSelected());
+        StartTest("OutInTransition");
+        //Click(Center(VideoClip(0,2)));
+        //ASSERT(VideoClip(0,2)->getSelected());
+        OpenPopupMenuAt(Center(VideoClip(0,2)));
+        Type('n');
+        ASSERT_DETAILSCLIP(VideoClip(0,2));
+        pressLengthButtons("OutInTransition", defaultTransitionLength / 2);
+        Undo(); // Remove transition
+    }
+    {
+        StartTest("In+Out Transitions");
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('o');
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('i');
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+        ASSERT_DETAILSCLIP(VideoClip(0,2));
+        pressLengthButtons("In+Out Transitions", defaultTransitionLength);
+        Undo(); // Remove transition
+
+
+    }
+    {
+        StartTest("InOut+OutIn Transitions");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
         Type('n');
-        ASSERT_DETAILSCLIP(VideoClip(0,1));
-        ASSERT_LENGTH_BUTTONS_DISABLED();
-        Undo();
-        ASSERT(VideoClip(0,1)->getSelected());
+        OpenPopupMenuAt(Center(VideoClip(0,1)));
+        Type('p');
+        ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
+        ASSERT_DETAILSCLIP(VideoClip(0,2));
+        pressLengthButtons("InOut+OutIn Transitions", defaultTransitionLength);
+        Undo(); // Remove transition
     }
 }
 

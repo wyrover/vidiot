@@ -42,8 +42,8 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
 ,   mType(type)
 ,   mLeft()
 ,   mRight()
-,   mLeftSize(0)
-,   mRightSize(0)
+,   mLeftSize(boost::none)
+,   mRightSize(boost::none)
 {
     VAR_INFO(this)(clip)(*transition);
     mCommandName = _("Create transition");
@@ -70,25 +70,30 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
     }
 
     ASSERT(mLeft || mRight);
+    pts leftSize = 0;
+    pts rightSize = 0;
     if (mLeft)
     {
-        mLeftSize = defaultSize / 2; // Default length
-        mLeftSize = std::min( mLeftSize, -1 * mLeft->getMinAdjustEnd() ); // -1 * : getMinAdjustEnd() <= 0
+        leftSize = defaultSize / 2; // Default length
+        leftSize = std::min( leftSize, -1 * mLeft->getMinAdjustEnd() ); // -1 * : getMinAdjustEnd() <= 0
         if (mRight)
         {
-            mLeftSize = std::min( mLeftSize, -1 * mRight->getMinAdjustBegin() ); // -1 * : getMinAdjustBegin() <= 0
+            leftSize = std::min( leftSize, -1 * mRight->getMinAdjustBegin() ); // -1 * : getMinAdjustBegin() <= 0
         }
+        mLeftSize.reset(leftSize);
     }
     if (mRight)
     {
-        mRightSize = defaultSize / 2; // Default length
-        mRightSize = std::min( mRightSize, mRight->getMaxAdjustBegin() );
+        rightSize = defaultSize / 2; // Default length
+        rightSize = std::min( rightSize, mRight->getMaxAdjustBegin() );
         if (mLeft)
         {
-            mRightSize = std::min( mRightSize, mLeft->getMaxAdjustEnd() );
+            rightSize = std::min( rightSize, mLeft->getMaxAdjustEnd() );
         }
+        mRightSize.reset(rightSize);
     }
-    ASSERT_LESS_THAN_EQUALS(mLeftSize + mRightSize,defaultSize);
+    ASSERT_LESS_THAN_EQUALS(leftSize + rightSize,defaultSize);
+// todo for an inout transition that has < defaultsize because one of the sides has not enough room, try taking extra room on the other side
 }
 
 CreateTransition::~CreateTransition()
@@ -116,10 +121,12 @@ bool CreateTransition::isPossible()
 {
     switch (mType)
     {
-    case model::TransitionTypeIn:    return mRightSize != 0;
-    case model::TransitionTypeOut:   return mLeftSize != 0;
+    case model::TransitionTypeIn:    return mRightSize && *mRightSize > 0;
+    case model::TransitionTypeOut:   return mLeftSize && *mLeftSize > 0;
     case model::TransitionTypeInOut: // FALLTHROUGH
-    case model::TransitionTypeOutIn: return mLeftSize != 0 && mRightSize != 0;
+    case model::TransitionTypeOutIn: 
+        // todo (in case only one side has room for transition, do not trim but use only half the transition) return mLeftSize && mRightSize && ((mLeftSize ? *mLeftSize : 0) + (mRightSize ? *mRightSize : 0) > 0);
+        return mLeftSize && mRightSize && *mLeftSize > 0 && *mRightSize > 0;
     default:
         FATAL("Unexpected transition type.");
     }
@@ -136,12 +143,12 @@ model::IClipPtr CreateTransition::getRightClip() const
     return mRight;
 }
 
-pts CreateTransition::getLeftSize() const
+boost::optional<pts> CreateTransition::getLeftSize() const
 {
     return mLeftSize;
 }
 
-pts CreateTransition::getRightSize() const
+boost::optional<pts> CreateTransition::getRightSize() const
 {
     return mRightSize;
 }
