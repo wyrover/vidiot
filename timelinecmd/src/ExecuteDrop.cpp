@@ -122,7 +122,7 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
         std::set<model::TransitionPtr> unapplied;
         for ( model::TransitionPtr transition : allTransitions )
         {
-            if (transition->getLeft() > 0 && transition->getRight() > 0)
+            if (transition->getLeft() && transition->getRight())
             {
                 ASSERT(transition->getPrev() && transition->getNext())(transition);
                 if (!transition->getPrev()->getSelected() || !transition->getNext()->getSelected())
@@ -159,8 +159,8 @@ void ExecuteDrop::onDragStart(const Drags& drags, bool mIsInsideDrag)
             // and thus the transition must be dragged also.
             if (unapplied.find(transition) != unapplied.end()) continue;
 
-            ASSERT((transition->getRight() > 0) || (transition->getPrev() && transition->getPrev()->getSelected()));
-            ASSERT((transition->getLeft()  > 0) || (transition->getNext() && transition->getNext()->getSelected()));
+            ASSERT_IMPLIES(transition->getLeft() && *(transition->getLeft()) > 0, transition->getPrev() && transition->getPrev()->getSelected());
+            ASSERT_IMPLIES(transition->getRight() && *(transition->getRight())  > 0, transition->getNext() && transition->getNext()->getSelected());
 
             UtilSet<model::IClipPtr>(mDrags).addElement(transition); // This insertion is not 'in order'. If the transition already was part, then the use of std::set ensures that it's only present once.
         }

@@ -233,7 +233,7 @@ std::set<pts> Clip::getCuts(const std::set<IClipPtr>& exclude) const
 TransitionPtr Clip::getInTransition() const
 {
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(boost::const_pointer_cast<IClip>(getPrev()));
-    if (transition && transition->getRight() > 0)
+    if (transition && transition->getRight())
     {
         return transition;
     }
@@ -243,11 +243,29 @@ TransitionPtr Clip::getInTransition() const
 TransitionPtr Clip::getOutTransition() const
 {
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(boost::const_pointer_cast<IClip>(getNext()));
-    if (transition && transition->getLeft() > 0)
+    if (transition && transition->getLeft())
     {
         return transition;
     }
     return model::TransitionPtr();
+}
+
+pts Clip::getPerceivedLength() const 
+{
+    pts left = 0;
+    model::TransitionPtr inTransition = getInTransition();
+    if (inTransition)
+    {
+        left = *(inTransition->getRight()); // See getInTransition: check for getRight() not needed
+    }
+    pts right = 0;
+    model::TransitionPtr outTransition = getOutTransition();
+    if (outTransition)
+    {
+        right = *(outTransition->getLeft()); // See getInTransition: check for getLeft() not needed
+    }
+
+    return left + getLength() + right;
 }
 
 //////////////////////////////////////////////////////////////////////////

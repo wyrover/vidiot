@@ -32,7 +32,7 @@ Combiner::~Combiner()
 {
     while (!mCommands.empty())
     {
-        delete mCommands.front();
+        delete mCommands.front(); // todo shouldn't this be done backwards (for undo'ing)?
         mCommands.pop_front();
     }
 }

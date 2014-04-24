@@ -71,6 +71,12 @@ public:
     /// Test the trimming of the transition itselves
     void testTrimmingTransition();
 
+    void testCompletelyTrimmingAwayTransition();
+
+    /// An in-out transition can have left size 0 or right size 0.
+    /// Test what happens when a split is made exactly along that side.
+    void testSplitNearZeroLengthEdgeOfTransition();
+
     void testAudioTransitions();
 
     void testCreateTransitionAfterLastClip();

@@ -151,7 +151,11 @@ pts ClipView::getLeftPts() const
     if (transition)
     {
         ASSERT(!mClip->isA<model::Transition>());
-        left -= transition->getRight();
+        boost::optional<pts> right = transition->getRight();
+        if (right)
+        {
+            left -= *right;
+        }
     }
     return left;
 }
@@ -163,7 +167,11 @@ pts ClipView::getRightPts() const
     if (transition)
     {
         ASSERT(!mClip->isA<model::Transition>());
-        right += transition->getLeft();
+        boost::optional<pts> left = transition->getLeft();
+        if (left)
+        {
+            right += *left;
+        }
     }
     return right;
 }
@@ -223,7 +231,8 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
 
             if (dist_cut < 0)
             {
-                ASSERT_MORE_THAN_ZERO(transition->getLeft());
+                ASSERT(transition->getLeft());
+                ASSERT_MORE_THAN_ZERO(*(transition->getLeft()));
                 if (dist_cut > -Layout::CursorClipEditDistance)
                 {
                     info.logicalclipposition = TransitionLeftClipEnd;
@@ -251,7 +260,8 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
             }
             else if (dist_cut > 0)
             {
-                ASSERT_MORE_THAN_ZERO(transition->getRight());
+                ASSERT(transition->getRight());
+                ASSERT_MORE_THAN_ZERO(*(transition->getRight()));
                 if (dist_cut < Layout::CursorClipEditDistance)
                 {
                     info.logicalclipposition = TransitionRightClipBegin;
@@ -279,13 +289,15 @@ void ClipView::getPositionInfo(const wxPoint& position, PointerPositionInfo& inf
             }
             else // dist_cut == 0
             {
-                if (transition->getRight() > 0)
+                if (transition->getRight() &&
+                    *(transition->getRight()) > 0)
                 {
                     info.logicalclipposition = TransitionRightClipBegin;
                 }
                 else
                 {
-                    ASSERT_MORE_THAN_ZERO(transition->getLeft());
+                    ASSERT(transition->getLeft());
+                    ASSERT_MORE_THAN_ZERO(*(transition->getLeft()));
                     info.logicalclipposition = TransitionLeftClipEnd;
                 }
             }

@@ -131,6 +131,13 @@ public:
     /// \return 'out' transition for this clip, 0 if there is no transition snooping away frames from this clip
     virtual TransitionPtr getOutTransition() const = 0;
 
+    /// Return the length of the clip as viewed by the user.
+    /// The difference between the actual length of the clip (getLength()) and
+    /// this perceived length is the area of the clip that is part of one of
+    /// its adjacent transitions; basically, the part of the clip that is shown
+    /// 'under' a transition in the timeline.
+    virtual pts getPerceivedLength() const = 0;
+
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////

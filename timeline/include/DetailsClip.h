@@ -138,6 +138,7 @@ private:
     model::VideoClipPtr  mVideoClip;
     model::AudioClipPtr  mAudioClip;
     model::TransitionPtr mTransition;
+    model::EmptyClipPtr  mEmptyClip;
 
     wxStaticText* mCurrentLength;
     std::list<wxToggleButton*> mLengthButtons;

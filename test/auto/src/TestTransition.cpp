@@ -510,8 +510,10 @@ void TestTransition::testPlaybackAndScrubbing()
         Drag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))).HoldCtrlBeforeDragStarts());
         //CtrlDrag(Center(VideoClip(0,3)), Center(VideoClip(0,5)));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
-        ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getRight());
-        ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getLeft());
+        ASSERT(VideoTransition(0,5)->getRight());
+        ASSERT_MORE_THAN_ZERO(*(VideoTransition(0,5)->getRight()));
+        ASSERT(VideoTransition(0,5)->getLeft());
+        ASSERT_MORE_THAN_ZERO(*(VideoTransition(0,5)->getLeft()));
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,9)->getRightPts(),AudioClip(0,8)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
@@ -533,8 +535,9 @@ void TestTransition::testPlaybackAndScrubbing()
         DeselectAllClips();
         Drag(From(Center(VideoClip(0,3))).To(Center(VideoClip(0,5))));
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition);
-        ASSERT_MORE_THAN_ZERO(VideoTransition(0,5)->getRight());
-        ASSERT_ZERO(VideoTransition(0,5)->getLeft());
+        ASSERT(VideoTransition(0,5)->getRight());
+        ASSERT_MORE_THAN_ZERO(*(VideoTransition(0,5)->getRight()));
+        ASSERT(!VideoTransition(0,5)->getLeft());
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,5)) - 5, RightPixel(VideoTransition(0,5)) + 5);
@@ -556,8 +559,9 @@ void TestTransition::testPlaybackAndScrubbing()
         DeselectAllClips();
         Drag(From(Center(VideoClip(0,1))).To(Center(VideoClip(0,5))));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(VideoClip)(VideoClip)(Transition);
-        ASSERT_ZERO(VideoTransition(0,6)->getRight());
-        ASSERT_MORE_THAN_ZERO(VideoTransition(0,6)->getLeft());
+        ASSERT(!VideoTransition(0,6)->getRight());
+        ASSERT(VideoTransition(0,6)->getLeft());
+        ASSERT_MORE_THAN_ZERO(*(VideoTransition(0,6)->getLeft()));
         ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
         ASSERT_EQUALS(VideoClip(0,8)->getRightPts(),AudioClip(0,7)->getRightPts());
         Scrub(LeftPixel(VideoTransition(0,6)) - 5, RightPixel(VideoTransition(0,6)) + 5);
@@ -915,7 +919,8 @@ void TestTransition::testTrimmingTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionBeforeTransitionApplied);
-        ASSERT_ZERO(VideoTransition(0,2)->getLeft());
+        ASSERT(VideoTransition(0,2)->getLeft());
+        ASSERT_ZERO(*(VideoTransition(0,2)->getLeft()));
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionAfterTransitionApplied);
         Undo();
         StartTest("InOutTransition: Trim left: Enlarge size and verify lower resize bound (bound imposed by the available extra data in the clip right of the transition).");
@@ -958,7 +963,8 @@ void TestTransition::testTrimmingTransition()
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
-        ASSERT_ZERO(VideoTransition(0,2)->getRight());
+        ASSERT(VideoTransition(0,2)->getRight());
+        ASSERT_ZERO(*(VideoTransition(0,2)->getRight()));
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipAfterTransitionBeforeTransitionApplied);
         Undo();
         StartTest("InOutTransition: Trim right: Enlarge size and verify upper resize bound (bound imposed by the available extra data in the clip left of the transition).");
@@ -1130,6 +1136,100 @@ void TestTransition::testTrimmingTransition()
         Undo(2);
     }
 }
+
+void TestTransition::testCompletelyTrimmingAwayTransition()
+{
+    StartTestSuite();
+    Zoom Level(4);
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    {
+        MakeInOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        pts lengthleft = VideoClip(0,1)->getLength();
+        pts lengthright = VideoClip(0,3)->getLength();
+        wxPoint from = VTopQuarterLeft(VideoClip(0,2));
+        Trim(from,from + wxPoint(100,0));
+        from = VTopQuarterRight(VideoClip(0,2));
+        Trim(from,from + wxPoint(-100,0));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft + defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright + defaultTransitionLength / 2);
+        Undo(2);
+    }
+    {
+        MakeInTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        pts lengthleft = VideoClip(0,1)->getLength();
+        pts lengthright = VideoClip(0,3)->getLength();
+        wxPoint from = VTopQuarterRight(VideoClip(0,2));
+        Trim(from,from + wxPoint(-100,0));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright + defaultTransitionLength / 2);
+        Undo();
+    }
+    {
+        MakeOutTransitionAfterClip preparation(1);
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        pts lengthleft = VideoClip(0,1)->getLength();
+        pts lengthright = VideoClip(0,3)->getLength();
+        wxPoint from = VTopQuarterLeft(VideoClip(0,2));
+        Trim(from,from + wxPoint(100,0));
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(VideoClip);
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), lengthleft + defaultTransitionLength / 2);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), lengthright);
+        Undo();
+    }
+}
+
+void TestTransition::testSplitNearZeroLengthEdgeOfTransition()
+{
+    StartTestSuite();
+    Zoom level(5);
+    MakeInOutTransitionAfterClip preparation(1);
+    pts defaultTransitionLength = Config::ReadLong(Config::sPathDefaultTransitionLength);
+    {
+        StartTest("Left size is 0");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+
+        // Reduce left part of transition to 0
+        wxPoint from = VTopQuarterLeft(VideoClip(0,2));
+        Trim(from,from + wxPoint(100,0));
+        
+        pts length1 = VideoClip(0,1)->getLength();
+        pts length2 = VideoClip(0,3)->getLength();
+        
+        PositionCursor(10); // Was required to get the next position properly
+        PositionCursor(LeftPixel(VideoClip(0,2))); // Ensure that the split is done exactly at the left edge of the transition
+        Type('s');
+        
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1);
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), length2 + defaultTransitionLength / 2); // The clip part under the transition is 'added to the adjacent clip'
+        Undo(2);
+    }
+    {
+        StartTest("Right size is 0");
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip);
+        
+        // Reduce right part of transition to 0
+        wxPoint from = VTopQuarterRight(VideoClip(0,2));
+        Trim(from,from + wxPoint(-100,0));
+
+        pts length1 = VideoClip(0,1)->getLength();
+        pts length2 = VideoClip(0,3)->getLength();
+        
+        PositionCursor(10); // Was required to get the next position properly
+        PositionCursor(LeftPixel(VideoClip(0,3))); // Ensure that the split is done exactly at the right edge of the transition
+        Type('s');
+        
+        ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip); // Transition removed
+        ASSERT_EQUALS(VideoClip(0,1)->getLength(), length1 + defaultTransitionLength / 2); // The clip part under the transition is 'added to the adjacent clip'
+        ASSERT_EQUALS(VideoClip(0,2)->getLength(), length2);
+        Undo(2);
+    }
+}
+
 
 void TestTransition::testAudioTransitions()
 {

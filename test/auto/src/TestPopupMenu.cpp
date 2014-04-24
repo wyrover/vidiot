@@ -144,7 +144,7 @@ void TestPopupMenu::testAddTransitions()
         OpenPopupMenuAt(Center(VideoClip(0,0)));
         Type('n'); // Cross-fade to &next
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(VideoClip);
-        ASSERT_AUDIOTRACK0(AudioClip      )(      AudioClip)(AudioClip);
+        ASSERT_AUDIOTRACK0(      AudioClip      )(AudioClip)(AudioClip);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), AudioClip(0,1)->getRightPts());
         ASSERT_EQUALS(VideoClip(0,0)->getLength(), OriginalLengthOfLeftClip - defaultTransitionLength / 2);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), defaultTransitionLength);
