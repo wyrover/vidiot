@@ -38,6 +38,10 @@ public:
 
     void testSelectionAndDeletion();
 
+    /// Test the positioning of crossfades, with respect to the available space
+    /// for the transition.
+    void testMakeRoomForCrossfade();
+
     void testDragAndDropOfOtherClips();
 
     void testDragAndDropOfClipsUnderTransition();

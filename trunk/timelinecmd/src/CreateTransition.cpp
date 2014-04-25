@@ -68,32 +68,60 @@ CreateTransition::CreateTransition(const model::SequencePtr& sequence, const mod
     {
         mRight.reset();
     }
-
     ASSERT(mLeft || mRight);
-    pts leftSize = 0;
-    pts rightSize = 0;
-    if (mLeft)
+
+    auto makeLeftPartFit = [this](pts leftSize) -> pts
     {
-        leftSize = defaultSize / 2; // Default length
         leftSize = std::min( leftSize, -1 * mLeft->getMinAdjustEnd() ); // -1 * : getMinAdjustEnd() <= 0
         if (mRight)
         {
             leftSize = std::min( leftSize, -1 * mRight->getMinAdjustBegin() ); // -1 * : getMinAdjustBegin() <= 0
         }
-        mLeftSize.reset(leftSize);
-    }
-    if (mRight)
+        return leftSize;
+    };
+
+    auto makeRightPartFit = [this](pts rightSize) -> pts
     {
-        rightSize = defaultSize / 2; // Default length
         rightSize = std::min( rightSize, mRight->getMaxAdjustBegin() );
         if (mLeft)
         {
             rightSize = std::min( rightSize, mLeft->getMaxAdjustEnd() );
         }
-        mRightSize.reset(rightSize);
+        return rightSize;
+    };
+
+    if (mLeft)
+    {
+        mLeftSize.reset(makeLeftPartFit(defaultSize / 2)); // Default length
     }
-    ASSERT_LESS_THAN_EQUALS(leftSize + rightSize,defaultSize);
-// todo for an inout transition that has < defaultsize because one of the sides has not enough room, try taking extra room on the other side
+    if (mRight)
+    {
+        mRightSize.reset(makeRightPartFit(defaultSize / 2)); // Default length
+    }
+    if (mLeft && mRight && getLength() < defaultSize)
+    {
+        // For in-out transitions that 'do not fit', try to position the 
+        // transition asymmetrically to make it have the default length.
+        ASSERT(mLeftSize);
+        ASSERT(mRightSize);
+        if (*mRightSize == defaultSize / 2)
+        {
+            // This size has the maximum requested size. 
+            // Maybe the transition can be extended on this side.
+            mRightSize.reset(makeRightPartFit(defaultSize - *mLeftSize));
+        }
+        else if (*mLeftSize == defaultSize / 2)
+        {
+            // This size has the maximum requested size. 
+            // Maybe the transition can be extended on this side.
+            mLeftSize.reset(makeLeftPartFit(defaultSize - *mRightSize));
+        }
+        // else: 
+        //  both sides: no more room. 
+        //  No need to try anything else.
+        //  Keep the current lengths.
+    }
+    ASSERT_LESS_THAN_EQUALS(getLength(),defaultSize);
 }
 
 CreateTransition::~CreateTransition()
@@ -121,12 +149,10 @@ bool CreateTransition::isPossible()
 {
     switch (mType)
     {
-    case model::TransitionTypeIn:    return mRightSize && *mRightSize > 0;
-    case model::TransitionTypeOut:   return mLeftSize && *mLeftSize > 0;
+    case model::TransitionTypeIn:    return !mLeftSize &&  mRightSize && getLength() > 0;
+    case model::TransitionTypeOut:   return  mLeftSize && !mRightSize && getLength() > 0;
     case model::TransitionTypeInOut: // FALLTHROUGH
-    case model::TransitionTypeOutIn: 
-        // todo (in case only one side has room for transition, do not trim but use only half the transition) return mLeftSize && mRightSize && ((mLeftSize ? *mLeftSize : 0) + (mRightSize ? *mRightSize : 0) > 0);
-        return mLeftSize && mRightSize && *mLeftSize > 0 && *mRightSize > 0;
+    case model::TransitionTypeOutIn: return  mLeftSize &&  mRightSize && getLength() > 0;
     default:
         FATAL("Unexpected transition type.");
     }
@@ -151,6 +177,12 @@ boost::optional<pts> CreateTransition::getLeftSize() const
 boost::optional<pts> CreateTransition::getRightSize() const
 {
     return mRightSize;
+}
+
+pts CreateTransition::getLength() const
+{
+    pts result = (mLeftSize ? *mLeftSize : 0) + (mRightSize ? *mRightSize : 0);
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
