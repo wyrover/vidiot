@@ -54,6 +54,8 @@ public:
     boost::optional<pts> getLeftSize() const;
     boost::optional<pts> getRightSize() const;
 
+    pts getLength() const;
+
 private:
 
     //////////////////////////////////////////////////////////////////////////

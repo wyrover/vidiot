@@ -82,7 +82,6 @@ void AudioTransition::clean()
         // accomodate for the addition of the transition. Therefore, the computations below take these
         // shortened clips as input.
 
-        // todo to base class (reuse for both audio and video):
         if (getLeft())
         {
             ASSERT(getPrev());
