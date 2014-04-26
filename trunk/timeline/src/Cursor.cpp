@@ -157,10 +157,15 @@ void Cursor::onPlaybackPosition(PlaybackPositionEvent& event)
     wxPoint scroll = getScrolling().getOffset();
     wxSize size = getTimeline().GetClientSize();
 
-    // Right side
     pts lastVisibleFrame = getZoom().pixelsToPts(scroll.x + size.x - EDGE_OFFSET);
-    if (lastVisibleFrame < mCursorPosition)
+    if (mCursorPosition > lastVisibleFrame  &&                           
+        mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2) ) 
     {
+        // mCursorPosition > lastVisibleFrame: 
+        //    ensures automated scrolling starts when the cursor moves 'too far'
+        // mCursorPosition <= lastVisibleFrame + getZoom().pixelsToPts(2): 
+        //    avoids automated scrolling to mess up manual scrolling during playback. 
+        //    pixelsToPts(TWO) is used for the maximum zoom level.
         getScrolling().align(mCursorPosition, size.x - EDGE_OFFSET);
     }
 
