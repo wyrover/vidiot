@@ -46,6 +46,8 @@ struct Playing
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvLeftDown >,
         boost::statechart::custom_reaction< EvRightDown >,
+        boost::statechart::custom_reaction< EvRightUp >,
+        boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvKeyDown >,
         boost::statechart::custom_reaction< EvKeyUp >,
         boost::statechart::custom_reaction< EvPlaybackChanged >
@@ -57,6 +59,8 @@ struct Playing
 
     boost::statechart::result react( const EvLeftDown& evt );
     boost::statechart::result react( const EvRightDown& evt );
+    boost::statechart::result react( const EvRightUp& evt );
+    boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvKeyDown& evt);
     boost::statechart::result react( const EvKeyUp& evt);
     boost::statechart::result react( const EvPlaybackChanged& evt);
@@ -68,6 +72,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     bool mMakingNewSelection;
+    bool mScrolling;
     boost::shared_ptr<EvKeyDown> mSubmitKeyEventOnStop;
 
     int mKeyCodeTriggeringStop; ///< The key code that triggered the stop of playback 
