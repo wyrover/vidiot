@@ -41,7 +41,6 @@ const wxString Playing::sTooltip = _(
 Playing::Playing( my_context ctx ) // entry
 :   TimeLineState( ctx )
 ,   mMakingNewSelection(false)
-,   mScrolling(false)
 ,   mKeyCodeTriggeringStop(WXK_NONE)
 {
     LOG_DEBUG;
@@ -80,29 +79,6 @@ boost::statechart::result Playing::react( const EvLeftDown& evt )
     getPlayer()->stop();
     triggerEnd();
     return transit< Idle >();
-}
-
-boost::statechart::result Playing::react( const EvRightDown& evt )
-{
-    VAR_DEBUG(evt);
-    mScrolling = true;
-    return discard_event();
-}
-
-boost::statechart::result Playing::react( const EvRightUp& evt )
-{
-    mScrolling = false;
-    return discard_event();
-}
-
-boost::statechart::result Playing::react( const EvMotion& evt )
-{
-    VAR_DEBUG(evt);
-    if (mScrolling)
-    {
-        getScrolling().align(getZoom().pixelsToPts(getMouse().getRightDownPosition().x), getMouse().getPhysicalPosition().x);
-    }
-    return discard_event();
 }
 
 boost::statechart::result Playing::react( const EvKeyDown& evt)

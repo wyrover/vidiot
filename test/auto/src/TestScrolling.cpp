@@ -51,38 +51,37 @@ void TestScrolling::tearDown()
 void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
 {
     StartTestSuite();
-    Zoom Level(5);
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(2,1));
+    Zoom Level(4);
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
 
     StartTest("Scroll using right down scrolling.");
-    ScrollWithRightMouseButton(900);
-    ScrollWithRightMouseButton(900);
+    ScrollWithRightMouseButton(200);
     ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
-    ASSERT_EQUALS(getTimeline().getScrolling().getOffset().x, 1800);
+    ASSERT_MORE_THAN(getTimeline().getScrolling().getOffset().x, 200);
 
     pts center = getTimeline().getScrolling().getCenterPts();
     RunInMainAndWait([center] { getTimeline().getCursor().setLogicalPosition(center); });
     StartTest("Center pts position is kept aligned when zooming out via the keyboard.");
     Type('-');
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
     StartTest("Center pts position is kept aligned when zooming in via the keyboard.");
     Type('=');
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(2,1));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
 
     StartTest("Center pts position is kept aligned when zooming in via the wheel.");
     ControlDown();
     TimelineTriggerWheel(-1);
     ControlUp();
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
 
     StartTest("Center pts position is kept aligned when zooming out via the wheel.");
     ControlDown();
     TimelineTriggerWheel(1);
     ControlUp();
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(2,1));
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
     ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
 }
 

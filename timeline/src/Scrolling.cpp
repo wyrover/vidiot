@@ -31,6 +31,7 @@ namespace gui { namespace timeline {
 Scrolling::Scrolling(Timeline* timeline)
 :   Part(timeline)
 ,   mCenterPts(0)
+,   mRightScrollOrigin(0,0)
 {
     VAR_DEBUG(this);
 
@@ -41,6 +42,35 @@ Scrolling::Scrolling(Timeline* timeline)
 Scrolling::~Scrolling()
 {
     VAR_DEBUG(this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GUI EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Scrolling::rightDown()
+{
+    mRightScrollOrigin = getMouse().getPhysicalPosition();
+}
+
+void Scrolling::update(const wxMouseState& state)
+{
+    wxPoint current = getMouse().getPhysicalPosition();
+
+    int distance = mRightScrollOrigin.x - current.x;
+
+    if (state.RightIsDown() && distance != 0)
+    {
+        rational factor = rational(getTimeline().GetVirtualSize().x, getTimeline().GetClientSize().x);
+        factor = std::max(factor,rational(1)); // Factor >= 1
+
+        int x ,y;
+        getTimeline().GetViewStart(&x,&y);
+        x += floor(rational(distance) * factor);
+        x = std::max(x,0); // x >= 0
+        getTimeline().Scroll(x, -1);
+    }
+    mRightScrollOrigin = current;
 }
 
 //////////////////////////////////////////////////////////////////////////

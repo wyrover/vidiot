@@ -39,6 +39,13 @@ public:
     Scrolling(Timeline* timeline);
     virtual ~Scrolling();
 
+   //////////////////////////////////////////////////////////////////////////
+    // GUI EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void rightDown();
+    void update(const wxMouseState& state);
+
     //////////////////////////////////////////////////////////////////////////
     // GET/SET
     //////////////////////////////////////////////////////////////////////////
@@ -52,6 +59,10 @@ public:
     /// \param unscrolledPixel physical position to align to
     /// \return if the scroll was moved to the beginning, and that still wasn't enough for the alignment, the difference (the amount that remains to be scrolled) is returned
     pixel align(pts position, pixel physicalPosition);
+
+    /// Initiate a scroll operation done by the right mouse button.
+    /// \param distance amount of pixel the mouse pointer has moved
+    void rightMouseScroll(pixel distance);
 
     /// \param position position in the sequence
     /// \return physical position on the scroll window canvas
@@ -84,6 +95,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pts mCenterPts;
+    wxPoint mRightScrollOrigin;
 
     //////////////////////////////////////////////////////////////////////////
     // SERIALIZATION

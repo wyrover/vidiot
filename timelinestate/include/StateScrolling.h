@@ -40,7 +40,6 @@ struct StateScrolling
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction< EvRightUp >,
-        boost::statechart::custom_reaction< EvMotion >,
         boost::statechart::custom_reaction< EvLeave >,
         boost::statechart::custom_reaction< EvKeyDown >
     > reactions;
@@ -50,7 +49,6 @@ struct StateScrolling
     //////////////////////////////////////////////////////////////////////////
 
     boost::statechart::result react( const EvRightUp& evt );
-    boost::statechart::result react( const EvMotion& evt );
     boost::statechart::result react( const EvLeave& evt );
     boost::statechart::result react( const EvKeyDown& evt );
 
