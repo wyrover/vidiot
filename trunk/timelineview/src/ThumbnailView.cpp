@@ -181,9 +181,7 @@ void ThumbnailView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset
             scheduleRendering();
         }
     }
-
-    it = mBitmaps.find(size);
-    if (it != mBitmaps.end())
+    else
     {
         getTimeline().copyRect(dc, region, offset, *(it->second), getRect());
     }
@@ -308,6 +306,7 @@ void ThumbnailView::abortPendingWork() const
          work->abort();
          work->Unbind(worker::EVENT_WORK_DONE, &ThumbnailView::onRenderDone, const_cast<ThumbnailView*>(this));
     }
+    mPendingWork.clear();
 }
 
 }} // namespace
