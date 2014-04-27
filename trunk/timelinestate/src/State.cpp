@@ -152,6 +152,7 @@ void Machine::onMotion(wxMouseEvent& event)
     VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
+    getScrolling().update(event); // For right-mouse scrolling
     process_event(EvMotion());
     event.Skip();
 }
@@ -219,6 +220,7 @@ void Machine::onRightDown(wxMouseEvent& event)
     getKeyboard().update(event);
     getMouse().update(event);
     getMouse().rightDown();
+    getScrolling().rightDown(); // For right-mouse scrolling
     getTimeline().SetFocus();
     process_event(EvRightDown());
     event.Skip();
@@ -248,6 +250,7 @@ void Machine::onEnter(wxMouseEvent& event)
     VAR_DEBUG(event);
     getKeyboard().update(event);
     getMouse().update(event);
+    getScrolling().rightDown(); // Avoid 'flipping' (due to a wrongly initialized right mouse down position) when entering the widget with the right mouse button pressed.
     process_event(EvEnter());
     event.Skip();
 }

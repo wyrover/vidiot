@@ -225,35 +225,22 @@ void TestPopupMenu::testOpenPopupMenuTwice()
 void TestPopupMenu::testRightClickScrollingAfterOpeningPopupMenu()
 {
     StartTestSuite();
-    Zoom level(2);
-    ConfigFixture.SnapToClips(false);
-    triggerMenu(ID_ADDVIDEOTRACK);
-    triggerMenu(ID_ADDAUDIOTRACK);
-    {
-        StartTest("Open popup menu then start a scrolling via right mouse down");
-        pixel length = getTimeline().getSequenceView().getSize().GetWidth();
-        Drag(From(Center(VideoClip(0,4))).To(wxPoint(getTimeline().GetRect().GetRight() - 10, VCenter(VideoTrack(0))))); // extend the track to enable scrolling
-        ASSERT_MORE_THAN(getTimeline().getSequenceView().getSize().GetWidth(),length);
-        ASSERT_MORE_THAN(getTimeline().getSequenceView().getVideo().getSize().GetWidth(),length);
-        ASSERT_MORE_THAN(getTimeline().getSequenceView().getAudio().getSize().GetWidth(),length);
-        ASSERT_MORE_THAN(getTimeline().getSequenceView().getTimescale().getSize().GetWidth(),length);
-        OpenPopupMenuAt(Center(VideoClip(0,4)));
-        ASSERT(getTimeline().getMenuHandler().isPopupShown());
-        ASSERT_ZERO(getTimeline().getScrolling().getOffset().x);
-        ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
-        wxUIActionSimulator().MouseMove(wxGetMouseState().GetPosition() - wxPoint(50,0));
-        RightDown();
-        waitForIdle();
-        ASSERT(!getTimeline().getMenuHandler().isPopupShown());
-        wxUIActionSimulator().MouseMove(wxGetMouseState().GetPosition() - wxPoint(150,0));
-        waitForIdle();
-        ASSERT_EQUALS(getTimeline().getScrolling().getOffset().x, 150);
-        ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
-        RightUp(false);
-        pause(100);
-        ASSERT(getTimeline().getMenuHandler().isPopupShown());
-        ClosePopupMenu();
-    }
+    Zoom level(4);
+    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
+    StartTest("Open popup menu then start a scrolling via right mouse down");
+    ASSERT_MORE_THAN(getTimeline().GetVirtualSize().x,getTimeline().GetClientSize().x);
+    OpenPopupMenuAt(Center(VideoClip(0,3)));
+    ASSERT(getTimeline().getMenuHandler().isPopupShown());
+    ASSERT_EQUALS(getTimeline().getScrolling().getOffset(),wxPoint(0,0));
+    wxUIActionSimulator().MouseMove(wxGetMouseState().GetPosition() - wxPoint(150,0));
+    RightDown();
+    waitForIdle();
+    ASSERT(!getTimeline().getMenuHandler().isPopupShown());
+    wxUIActionSimulator().MouseMove(wxGetMouseState().GetPosition() - wxPoint(150,0));
+    waitForIdle();
+    ASSERT_MORE_THAN_EQUALS(getTimeline().getScrolling().getOffset().x, 150);
+    RightUp(false);
+    ASSERT(!getTimeline().getMenuHandler().isPopupShown());
 }
 
 void TestPopupMenu::testOpenPopupMenuWhenClickingOnTransition()

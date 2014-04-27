@@ -17,20 +17,14 @@
 
 #include "StateScrolling.h"
 
-#include "Drag.h"
-#include "EventDrag.h"
 #include "EventKey.h"
 #include "EventMouse.h"
-#include "EventPart.h"
 #include "Menu.h"
 #include "Mouse.h"
 #include "PositionInfo.h"
-#include "Scrolling.h"
 #include "StateIdle.h"
-#include "Timeline.h"
 #include "Tooltip.h"
 #include "UtilLog.h"
-#include "Zoom.h"
 
 namespace gui { namespace timeline { namespace state {
 
@@ -74,13 +68,6 @@ boost::statechart::result StateScrolling::react( const EvRightUp& evt )
     return transit<Idle>();
 }
 
-boost::statechart::result StateScrolling::react( const EvMotion& evt )
-{
-    VAR_DEBUG(evt);
-    getScrolling().align(getZoom().pixelsToPts(getMouse().getRightDownPosition().x), getMouse().getPhysicalPosition().x);
-    return forward_event();
-}
-
 boost::statechart::result StateScrolling::react( const EvLeave& evt )
 {
     VAR_DEBUG(evt);
@@ -94,7 +81,6 @@ boost::statechart::result StateScrolling::react( const EvKeyDown& evt )
     switch (evt.getKeyCode())
     {
     case WXK_F1:        getTooltip().show(sTooltip); break;
-    case WXK_ESCAPE:    return transit<Idle>();
     }
     return forward_event();
 }
