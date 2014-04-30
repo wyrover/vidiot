@@ -47,7 +47,7 @@ boost::bimap<LogLevel, wxString> LogLevelConverter::mapToHumanReadibleString = b
     (LogDetail,    _("All"));
 
 static std::string sFilename("");
-static const unsigned int sMaximumBufferedLoglines = 1000;
+static const unsigned int sMaximumBufferedLoglines = 10000;
 
 LogLevel Log::sReportingLevel = LogWarning;
 
@@ -126,16 +126,10 @@ private:
     {
         util::thread::setCurrentThreadName("Log");
         std::string s;
-        time_t previous = time(0);
         while (mEnabled)
         {
             s = mFifo.pop();
             fwrite(s.c_str(), 1, s.length(), mFile);
-            //if (time(0) - previous > 1) // 1s
-            {
-                previous = time(0);
-                fflush(mFile);
-            }
         }
         // Log the remaining lines. This is useful for the
         // case of a failed assertion. breakIntoDebugger()
