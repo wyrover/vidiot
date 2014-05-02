@@ -139,7 +139,7 @@ void Config::init(const wxString& applicationName, const wxString& vendorName, b
     setDefault(Config::sPathDefaultAudioSampleRate, 44100);
     setDefault(Config::sPathDefaultExtension, "avi");
     setDefault(Config::sPathDefaultStillImageLength, 150);
-    setDefault(Config::sPathDefaultTransitionLength, 24);
+    setDefault(Config::sPathDefaultTransitionLength, 20); // Divisible by 4 for automated tests
     setDefault(Config::sPathDefaultVideoAlignment, model::VideoAlignment_toString(model::VideoAlignmentCenter).c_str());
     setDefault(Config::sPathDefaultVideoHeight, 720);
     setDefault(Config::sPathDefaultVideoScaling, model::VideoScaling_toString(model::VideoScalingFitToFill).c_str());

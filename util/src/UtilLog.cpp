@@ -130,6 +130,7 @@ private:
         {
             s = mFifo.pop();
             fwrite(s.c_str(), 1, s.length(), mFile);
+            fflush(mFile);
         }
         // Log the remaining lines. This is useful for the
         // case of a failed assertion. breakIntoDebugger()
