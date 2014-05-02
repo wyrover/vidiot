@@ -58,31 +58,35 @@ void TestScrolling::testScrollbarRepositioningAfterChangingZoom()
     ScrollWithRightMouseButton(200);
     ASSERT_ZERO(getTimeline().getScrolling().getOffset().y);
     ASSERT_MORE_THAN(getTimeline().getScrolling().getOffset().x, 200);
-
     pts center = getTimeline().getScrolling().getCenterPts();
     RunInMainAndWait([center] { getTimeline().getCursor().setLogicalPosition(center); });
+
+    auto ASSERT_CURSOR_CENTERED = [this,center](boost::rational<int> zoom)
+    {
+        ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), zoom);
+        ASSERT_MORE_THAN_EQUALS(getTimeline().getScrolling().getCenterPts(), center - 1); // Adjust for rounding diffs
+        ASSERT_LESS_THAN_EQUALS(getTimeline().getScrolling().getCenterPts(), center + 1); // Adjust for rounding diffs
+    };
+
     StartTest("Center pts position is kept aligned when zooming out via the keyboard.");
     Type('-');
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
-    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
+    ASSERT_CURSOR_CENTERED(rational(1,2));
     StartTest("Center pts position is kept aligned when zooming in via the keyboard.");
     Type('=');
+    ASSERT_CURSOR_CENTERED(rational(1,1));
     ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
-    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
 
     StartTest("Center pts position is kept aligned when zooming in via the wheel.");
     ControlDown();
     TimelineTriggerWheel(-1);
     ControlUp();
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,2));
-    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
+    ASSERT_CURSOR_CENTERED(rational(1,2));
 
     StartTest("Center pts position is kept aligned when zooming out via the wheel.");
     ControlDown();
     TimelineTriggerWheel(1);
     ControlUp();
-    ASSERT_EQUALS(getTimeline().getZoom().getCurrent(), rational(1,1));
-    ASSERT_EQUALS(getTimeline().getScrolling().getCenterPts(), center);
+    ASSERT_CURSOR_CENTERED(rational(1,1));
 }
 
 void TestScrolling::testShowScrollbarWhenAddingClipAtEnd()

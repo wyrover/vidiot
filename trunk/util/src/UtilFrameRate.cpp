@@ -42,7 +42,7 @@ FrameRate::FrameRate(const AVRational& avr)
 }
 
 FrameRate::FrameRate(const wxString& framerate)
-    :   rational64(FrameRate::s25p) // Default value. Only used if the given framerate is unknown.
+    :   rational64(FrameRate::s24p) // Default value. Only used if the given framerate is unknown.
 {
     for (unsigned int i = 0; i < sPossibleFrameRates.size(); ++i)
     {

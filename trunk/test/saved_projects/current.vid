@@ -6,8 +6,8 @@
 		<px class_id="2" tracking_level="1" version="2" object_id="_1">
 			<mFrameRate class_id="3" tracking_level="0" version="1">
 				<rational64 class_id="4" tracking_level="0" version="0">
-					<numerator>25</numerator>
-					<denominator>1</denominator>
+					<numerator>24000</numerator>
+					<denominator>1001</denominator>
 				</rational64>
 			</mFrameRate>
 			<mVideoWidth>1280</mVideoWidth>
@@ -340,7 +340,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>181</mLength>
+																					<mLength>173</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -373,7 +373,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>181</mLength>
+																<mLength>173</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -404,7 +404,7 @@
 															</Clip>
 															<IAudio></IAudio>
 															<IVideo></IVideo>
-															<mLength>193</mLength>
+															<mLength>185</mLength>
 														</px>
 													</item>
 													<item>
@@ -447,7 +447,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>262</mLength>
+																					<mLength>251</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -480,7 +480,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>262</mLength>
+																<mLength>251</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -517,7 +517,7 @@
 																	<mFramesRight>
 																		<initialized>1</initialized>
 																		<item_version>0</item_version>
-																		<value>12</value>
+																		<value>10</value>
 																	</mFramesRight>
 																</Transition>
 																<IVideo></IVideo>
@@ -564,7 +564,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>250</mLength>
+																					<mLength>239</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -596,8 +596,8 @@
 																		<IVideo></IVideo>
 																	</px>
 																</mRender>
-																<mOffset>12</mOffset>
-																<mLength>238</mLength>
+																<mOffset>10</mOffset>
+																<mLength>229</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -634,7 +634,7 @@
 																	<mFramesRight>
 																		<initialized>1</initialized>
 																		<item_version>0</item_version>
-																		<value>12</value>
+																		<value>10</value>
 																	</mFramesRight>
 																</Transition>
 																<IVideo></IVideo>
@@ -681,7 +681,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>771</mLength>
+																					<mLength>739</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -713,8 +713,8 @@
 																		<IVideo></IVideo>
 																	</px>
 																</mRender>
-																<mOffset>12</mOffset>
-																<mLength>759</mLength>
+																<mOffset>10</mOffset>
+																<mLength>729</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -774,7 +774,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>333</mLength>
+																					<mLength>319</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -807,7 +807,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>333</mLength>
+																<mLength>319</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -867,7 +867,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>385</mLength>
+																					<mLength>369</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -900,7 +900,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>385</mLength>
+																<mLength>369</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -960,7 +960,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>181</mLength>
+																					<mLength>173</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -993,7 +993,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>181</mLength>
+																<mLength>173</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1053,7 +1053,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>193</mLength>
+																					<mLength>185</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1086,7 +1086,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>193</mLength>
+																<mLength>185</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1146,7 +1146,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>262</mLength>
+																					<mLength>251</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1179,7 +1179,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>262</mLength>
+																<mLength>251</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1239,7 +1239,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>250</mLength>
+																					<mLength>239</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1272,7 +1272,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>250</mLength>
+																<mLength>239</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1332,7 +1332,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>771</mLength>
+																					<mLength>739</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1365,7 +1365,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>771</mLength>
+																<mLength>739</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1425,7 +1425,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>333</mLength>
+																					<mLength>319</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1458,7 +1458,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>333</mLength>
+																<mLength>319</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1518,7 +1518,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>385</mLength>
+																					<mLength>369</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1551,7 +1551,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>385</mLength>
+																<mLength>369</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1611,7 +1611,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>181</mLength>
+																					<mLength>173</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1644,7 +1644,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>181</mLength>
+																<mLength>173</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1704,7 +1704,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>193</mLength>
+																					<mLength>185</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1737,7 +1737,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>193</mLength>
+																<mLength>185</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1797,7 +1797,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>262</mLength>
+																					<mLength>251</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1830,7 +1830,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>262</mLength>
+																<mLength>251</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1890,7 +1890,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>250</mLength>
+																					<mLength>239</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -1923,7 +1923,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>250</mLength>
+																<mLength>239</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -1983,7 +1983,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>771</mLength>
+																					<mLength>739</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -2016,7 +2016,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>771</mLength>
+																<mLength>739</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -2076,7 +2076,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>333</mLength>
+																					<mLength>319</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -2109,7 +2109,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>333</mLength>
+																<mLength>319</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -2169,7 +2169,7 @@
 																						</px>
 																					</mRender>
 																					<mOffset>0</mOffset>
-																					<mLength>385</mLength>
+																					<mLength>369</mLength>
 																				</ClipInterval>
 																				<IAudio></IAudio>
 																				<mVolume>100</mVolume>
@@ -2202,7 +2202,7 @@
 																	</px>
 																</mRender>
 																<mOffset>0</mOffset>
-																<mLength>385</mLength>
+																<mLength>369</mLength>
 															</ClipInterval>
 															<IVideo></IVideo>
 															<mOpacity>255</mOpacity>
@@ -2259,7 +2259,7 @@
 																			</VideoFile>
 																		</px>
 																	</mRender>
-																	<mOffset>359850</mOffset>
+																	<mOffset>345105</mOffset>
 																	<mLength>150</mLength>
 																</ClipInterval>
 																<IVideo></IVideo>
@@ -2312,7 +2312,7 @@
 															</Clip>
 															<IAudio></IAudio>
 															<IVideo></IVideo>
-															<mLength>193</mLength>
+															<mLength>185</mLength>
 														</px>
 													</item>
 													<item>
@@ -2464,21 +2464,21 @@
 							<count>2</count>
 							<item_version>0</item_version>
 							<item class_id="69" tracking_level="0" version="0">
-								<first>90</first>
-								<second>275</second>
+								<first>85</first>
+								<second>265</second>
 							</item>
 							<item>
-								<first>505</first>
-								<second>585</second>
+								<first>480</first>
+								<second>555</second>
 							</item>
 						</listofpairs>
 					</mIntervals>
 				</intervals>
 				<scrolling class_id="70" tracking_level="0" version="0">
-					<mCenterPts>3637</mCenterPts>
+					<mCenterPts>3487</mCenterPts>
 				</scrolling>
 				<cursor class_id="71" tracking_level="0" version="0">
-					<mCursorPosition>3637</mCursorPosition>
+					<mCursorPosition>3487</mCursorPosition>
 				</cursor>
 			</timeline>
 		</timelinesview>

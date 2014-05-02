@@ -435,15 +435,15 @@ void TestTransition::testDragAndDropOfOtherClips()
         // position of the clip left of the transitions. At that point, a difference of a couple of pixels can already change to which
         // cuts the snapping is done.
         pts lengthOfDraggedClip = VideoClip(0,6)->getLength();
-        StartTest("Snap to right edge of 02.avi (unwanted, probably, since it creates a tiny empty space between the first two clips)");
-        Drag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(preparation.leftPositionOfClipBeforeTransitionAfterTransitionApplied));
+        StartTest("Snap almost to right edge of 00.avi");
+        Drag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+26));
         ASSERT_VIDEOTRACK0(VideoClip)(EmptyClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,2)->getLength(),lengthOfDraggedClip);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(),preparation.lengthOfClipBeforeTransitionAfterTransitionApplied);
         Undo();
-        StartTest("Snap to right edge of 00.avi == left edge of 01.avi");
-        Drag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(preparation.leftPositionOfClipBeforeTransitionAfterTransitionApplied - 4)); // Mouse must be moved a bit further to snap to the left edge
+        StartTest("Snap to right edge of 00.avi");
+        Drag(From(Center(VideoClip(0,6))).HoldShiftWhileDragging().AlignLeft(RightPixel(VideoClip(0,0))+25)); // Mouse must be moved a bit further to snap to the left edge
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(VideoClip)(Transition)(VideoClip);
         ASSERT_EQUALS(VideoClip(0,0)->getLength(),preparation.lengthOfFirstClip);
         ASSERT_EQUALS(VideoClip(0,1)->getLength(),lengthOfDraggedClip);
@@ -1090,6 +1090,7 @@ void TestTransition::testTrimmingTransition()
 {
     StartTestSuite();
     Zoom Level(4);
+    ConfigFixture.SnapToClips(false).SnapToCursor(false);
     {
         MakeInOutTransitionAfterClip preparation(1);
         pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
@@ -1207,7 +1208,7 @@ void TestTransition::testTrimmingTransition()
         ASSERT_EQUALS(AudioClip(0,1)->getLength(), originalLengthOfAudioClip1);
         ASSERT_EQUALS(AudioClip(0,2)->getLength(), originalLengthOfAudioClip2);
         StartTest("InTransition: Trim right: Reduce size.");
-        wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(10,0);
+        wxPoint aBitToTheLeft = VTopQuarterRight(VideoClip(0,2)) - wxPoint(5,0);
         Trim(VTopQuarterRight(VideoClip(0,2)),aBitToTheLeft);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
@@ -1239,7 +1240,7 @@ void TestTransition::testTrimmingTransition()
         pts originalLengthOfAudioClip1 = AudioClip(0,1)->getLength();
         pts originalLengthOfAudioClip2 = AudioClip(0,2)->getLength();
         StartTest("OutTransition: Trim left: Reduce size.");
-        wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(10,0);
+        wxPoint aBitToTheRight = VTopQuarterLeft(VideoClip(0,2)) + wxPoint(5,0);
         Trim(VTopQuarterLeft(VideoClip(0,2)),aBitToTheRight);
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition)(VideoClip)(VideoClip);
         ASSERT_AUDIOTRACK0(AudioClip)(AudioClip)            (AudioClip)(AudioClip);
