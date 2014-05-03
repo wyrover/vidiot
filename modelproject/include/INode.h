@@ -88,6 +88,10 @@ public:
     /// i.e. Is the file/folder on disk still present?
     virtual void check() = 0;
 
+    /// Used to determine if the project contains one or more sequences
+    /// \return true if there are one or more sequences in the project
+    virtual bool hasSequences() const = 0;
+
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES
     //////////////////////////////////////////////////////////////////////////

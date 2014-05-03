@@ -61,9 +61,20 @@ FrameRate Properties::getFrameRate() const
     return mFrameRate;
 }
 
+void Properties::setFrameRate(FrameRate frameRate)
+{
+    mFrameRate = frameRate;
+}
+
 wxSize Properties::getVideoSize() const
 {
     return wxSize(mVideoWidth,mVideoHeight);
+}
+
+void Properties::setVideoSize(wxSize size)
+{
+    mVideoWidth = size.GetWidth();
+    mVideoHeight = size.GetHeight();
 }
 
 int Properties::getAudioNumberOfChannels() const
@@ -71,9 +82,19 @@ int Properties::getAudioNumberOfChannels() const
     return mAudioChannels;
 }
 
+void Properties::setAudioNumberOfChannels(int channels)
+{
+    mAudioChannels = channels;
+}
+
 int Properties::getAudioFrameRate() const
 {
     return mAudioFrameRate;
+}
+
+void Properties::setAudioFrameRate(int audioFrameRate)
+{
+    mAudioFrameRate = audioFrameRate;
 }
 
 render::RenderPtr Properties::getDefaultRender() const

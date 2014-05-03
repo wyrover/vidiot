@@ -19,6 +19,8 @@
 
 #include "Window.h"
 #include "HelperApplication.h"
+#include "HelperProjectView.h"
+#include "HelperTimeline.h"
 #include "HelperWindow.h"
 #include "Dialog.h"
 
@@ -123,6 +125,12 @@ void TestDialog::testEscape()
         Escape e;
         triggerMenu(wxID_ABOUT);
         waitForIdle();
+    }
+    {
+        Escape e;
+        model::FolderPtr root = createProject();
+        addSequence("sequence", root);
+        triggerMenu(wxID_PROPERTIES);
     }
 }
 } // namespace

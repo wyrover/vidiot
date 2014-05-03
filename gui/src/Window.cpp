@@ -23,6 +23,7 @@
 #include "Dialog.h"
 #include "DialogAbout.h"
 #include "DialogOptions.h"
+#include "DialogProjectProperties.h"
 #include "Help.h"
 #include "ids.h"
 #include "Layout.h"
@@ -130,15 +131,18 @@ Window::Window()
     icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
     SetIcons(icons);
 
-    wxMenu* menufile = new wxMenu();
-    menufile->Append(wxID_NEW);
-    menufile->Append(wxID_OPEN);
-    menufile->Append(wxID_CLOSE);
-    //	menufile->Append(wxID_REVERT);
-    menufile->Append(wxID_SAVE);
-    menufile->Append(wxID_SAVEAS);
-    menufile->AppendSeparator();
-    menufile->Append(wxID_EXIT, _("E&xit"), _("Select exit to end the application."));
+    mMenuFile = new wxMenu();
+    mMenuFile->Append(wxID_NEW);
+    mMenuFile->Append(wxID_OPEN);
+    mMenuFile->Append(wxID_CLOSE);
+    //	mMenuFile->Append(wxID_REVERT);
+    mMenuFile->Append(wxID_SAVE);
+    mMenuFile->Append(wxID_SAVEAS);
+    mMenuFile->AppendSeparator();
+    mMenuFile->Append(wxID_PROPERTIES);
+    mMenuFile->AppendSeparator();
+    mMenuFile->Append(wxID_EXIT, _("E&xit"), _("Select exit to end the application."));
+    mMenuFile->Enable(wxID_PROPERTIES,false);
 
     mMenuEdit = new wxMenu();
     mMenuEdit->Append(wxID_UNDO);
@@ -190,7 +194,7 @@ Window::Window()
     menuhelp->Append(wxID_ABOUT, _("&About..."), _("Show the about dialog."));
 
     mMenuBar = new wxMenuBar();
-    mMenuBar->Append(menufile,     _("&File"));
+    mMenuBar->Append(mMenuFile,     _("&Project"));
     mMenuBar->Append(mMenuEdit,     _("&Edit"));
     mMenuBar->Append(menuview,     _("&View"));
     mMenuBar->Append(mMenuSequence, _("&Sequence"));
@@ -312,6 +316,7 @@ Window::Window()
     Bind(wxEVT_MAXIMIZE,                &Window::onMaximize,            this);
     Bind(wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
 
+    Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onProperties,          this, wxID_PROPERTIES);
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
@@ -342,7 +347,7 @@ Window::Window()
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
 
     GetDocumentManager()->SetMaxDocsOpen(1);
-    GetDocumentManager()->FileHistoryUseMenu(menufile);
+    GetDocumentManager()->FileHistoryUseMenu(mMenuFile);
     GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
 
     if (Config::ReadBool(Config::sPathTest))
@@ -412,6 +417,7 @@ Window::~Window()
     Unbind(wxEVT_CLOSE_WINDOW,            &Window::onClose,               this);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onExit,                this, wxID_EXIT);
+    Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onProperties,          this, wxID_PROPERTIES);
 
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnUndo,          GetDocumentManager(), wxID_UNDO);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &wxDocManager::OnRedo,          GetDocumentManager(), wxID_REDO);
@@ -477,6 +483,7 @@ void Window::QueueModelEvent( wxEvent* event )
 
 void Window::onOpenProject(model::EventOpenProject &event )
 {
+    mMenuFile->Enable(wxID_PROPERTIES,true);
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(mMenuEdit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
     GetDocumentManager()->AddFileToHistory(model::Project::get().GetFilename());
@@ -490,6 +497,7 @@ void Window::onOpenProject(model::EventOpenProject &event )
 
 void Window::onCloseProject(model::EventCloseProject &event )
 {
+    mMenuFile->Enable(wxID_PROPERTIES,false);
     updateTitle();
     mVisibleWorker->abort();
     mInvisibleWorker->start();
@@ -552,6 +560,13 @@ void Window::onClose(wxCloseEvent& event)
 //////////////////////////////////////////////////////////////////////////
 // FILE MENU
 //////////////////////////////////////////////////////////////////////////
+
+void Window::onProperties(wxCommandEvent &event)
+{
+    DialogProjectProperties w(this);
+    w.ShowModal();
+    // NOT: event.Skip() -- see MenuHandler::onRenderSettings for rationale
+}
 
 void Window::onExit(wxCommandEvent &event)
 {

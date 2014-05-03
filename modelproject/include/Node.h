@@ -58,6 +58,8 @@ public:
     virtual NodePtrs findPath(const wxString& path) override;
     virtual bool mustBeWatched(const wxString& path) override;
 
+    virtual bool hasSequences() const override;
+
     virtual void setName(const wxString& name) override;
 
 protected:

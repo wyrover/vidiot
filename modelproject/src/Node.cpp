@@ -201,6 +201,18 @@ bool Node::mustBeWatched(const wxString& path)
     return false;
 }
 
+bool Node::hasSequences() const
+{
+    for ( NodePtr child : mChildren )
+    {
+        if (child->hasSequences())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // LOGGING
 //////////////////////////////////////////////////////////////////////////

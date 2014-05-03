@@ -140,6 +140,7 @@ public:
     wxString    getName() const override;
     void        setName(const wxString& name) override;
     void        check() override;
+    bool        hasSequences() const override;
 
 private:
 

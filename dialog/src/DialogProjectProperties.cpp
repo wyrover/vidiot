@@ -1,0 +1,172 @@
+// Copyright 2014 Eric Raijmakers.
+//
+// This file is part of Vidiot.
+//
+// Vidiot is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Vidiot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
+
+#include "DialogProjectProperties.h"
+
+#include "Folder.h"
+#include "Project.h"
+#include "ProjectModification.h"
+#include "Properties.h"
+#include "UtilLog.h"
+
+namespace gui {
+
+//////////////////////////////////////////////////////////////////////////
+// INITIALIZATION
+//////////////////////////////////////////////////////////////////////////
+
+DialogProjectProperties::DialogProjectProperties(wxWindow* win)
+    :   wxPropertySheetDialog(win, wxID_ANY, _("Project Properties"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    ,   mPanel(0)
+    ,   mTopSizer(0)
+    ,   mBoxSizer(0)
+{
+    wxIconBundle icons;
+    icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
+    SetIcons(icons);
+
+    bool hasSequences = model::Project::get().getRoot()->hasSequences();
+
+    {
+        addtab(_("Properties"));
+
+        addbox(_("Video"));
+
+        wxArrayString choices;
+        unsigned int selection = 0;
+        wxString currentFrameRate = model::Properties::get().getFrameRate().toString();
+        for ( FrameRate fr : FrameRate::getSupported() )
+        {
+            wxString frs = fr.toString();
+            choices.Add(frs);
+            if (currentFrameRate.IsSameAs(frs))
+            {
+                selection = choices.GetCount() - 1;
+            }
+        }
+        mVideoFrameRate = new wxRadioBox(mPanel, wxID_ANY, wxT(""),wxPoint(10,10), wxDefaultSize, choices, 1, wxRA_SPECIFY_COLS );
+        mVideoFrameRate->SetSelection(selection);
+        mVideoFrameRate->Enable(!hasSequences);
+        addoption(_("Framerate"), mVideoFrameRate);
+
+        long initial = model::Properties::get().getVideoSize().GetWidth();
+        mVideoWidth = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+        addoption(_("Video width"), mVideoWidth);
+
+        initial = model::Properties::get().getVideoSize().GetHeight();
+        mVideoHeight = new wxSpinCtrl(mPanel, wxID_ANY, wxString::Format("%d", initial), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxALIGN_RIGHT, 20, 10000, initial);
+        addoption(_("Video height"), mVideoHeight);
+    
+        addbox(_("Audio"));
+
+         wxArrayString sampleRateChoices;
+         sampleRateChoices.Add("22050");
+         sampleRateChoices.Add("44100");
+         sampleRateChoices.Add("48000");
+         wxIntegerValidator<int> sampleRateValidator;
+         sampleRateValidator.SetMin(1000);
+         sampleRateValidator.SetMax(1000);
+         initial = model::Properties::get().getAudioFrameRate();
+         mAudioSampleRate = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, sampleRateChoices, 0, sampleRateValidator);
+         mAudioSampleRate->Enable(!hasSequences);
+         addoption(_("Audio sample rate"), mAudioSampleRate);
+
+         wxIntegerValidator<int> channelValidator;
+         channelValidator.SetMin(1);
+         channelValidator.SetMax(2);
+         wxArrayString channelChoices;
+         channelChoices.Add("1");
+         channelChoices.Add("2");
+         initial = Config::ReadLong(Config::sPathDefaultAudioChannels);
+         mAudioNumberOfChannels = new wxComboBox(mPanel, wxID_ANY, wxString::Format("%d", initial),  wxDefaultPosition, wxDefaultSize, channelChoices, 0, channelValidator);
+         addoption(_("Audio channels"), mAudioNumberOfChannels);
+
+         if (hasSequences)
+         {
+             mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(mPanel, wxID_ANY, _("Note:")), wxVERTICAL );
+             mTopSizer->Add(mBoxSizer, 0, wxALIGN_CENTRE|wxALL, 5 );
+             wxStaticText* note = new wxStaticText(mPanel, wxID_ANY, "Some options cannot be changed because the project already contains sequences.", wxDefaultPosition,wxDefaultSize, wxST_NO_AUTORESIZE|wxALIGN_LEFT);
+             note->SetFont(note->GetFont().MakeItalic());
+             note->Wrap(300);
+             wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
+             mBoxSizer->Add(hSizer, 0, wxGROW|wxLEFT|wxALL, 5);
+             hSizer->Add(note, 0, wxRIGHT|wxALIGN_TOP, 5);
+         }
+    }
+
+    SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
+    CreateButtons(wxOK | wxCANCEL);
+
+    LayoutDialog();
+
+}
+
+DialogProjectProperties::~DialogProjectProperties()
+{
+    auto toLong = [](wxString comboBoxValue) -> long
+    {
+        long value(0);
+        bool ok(false);
+        ok = comboBoxValue.ToLong(&value);
+        ASSERT(ok);
+        return value;
+    };
+
+    if (GetReturnCode() == GetAffirmativeId())
+    {
+        // Disable 'undoing/redoing' of the creation of a sequence with the wrong (original) parameters - particularly frame rates
+        model::Project::get().GetCommandProcessor()->ClearCommands();
+        model::Properties::get().setFrameRate(FrameRate::getSupported()[mVideoFrameRate->GetSelection()]);
+        model::Properties::get().setVideoSize(wxSize(mVideoWidth->GetValue(),mVideoHeight->GetValue()));
+        model::Properties::get().setAudioFrameRate(toLong(mAudioSampleRate->GetValue()));
+        model::Properties::get().setAudioNumberOfChannels(toLong(mAudioNumberOfChannels->GetValue()));
+        model::ProjectModification::trigger();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void DialogProjectProperties::addtab(const wxString& name)
+{
+    mPanel = new wxPanel(GetBookCtrl(), wxID_ANY);
+    GetBookCtrl()->AddPage(mPanel, name, true);
+    mTopSizer = new wxBoxSizer( wxVERTICAL );
+    mPanel->SetSizerAndFit(mTopSizer);
+    mBoxSizer = 0;
+}
+
+void DialogProjectProperties::addbox(const wxString& name)
+{
+    ASSERT(mPanel);
+    ASSERT(mTopSizer);
+    mBoxSizer = new wxStaticBoxSizer(new wxStaticBox(mPanel, wxID_ANY, name), wxVERTICAL );
+    mTopSizer->Add(mBoxSizer, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
+}
+
+void DialogProjectProperties::addoption(const wxString& name, wxWindow* widget)
+{
+    ASSERT(mBoxSizer);
+    wxBoxSizer* hSizer = new wxBoxSizer( wxHORIZONTAL );
+    mBoxSizer->Add(hSizer, 0, wxGROW|wxLEFT|wxALL, 5);
+    hSizer->Add(new wxStaticText(mPanel, wxID_ANY, name), 0, wxALL|wxALIGN_TOP, 5);
+    hSizer->Add(5, 5, 1, wxALL, 0);
+    hSizer->Add(widget, 0, wxRIGHT|wxALIGN_TOP, 5);
+}
+
+} // namespace
