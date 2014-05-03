@@ -35,7 +35,7 @@ void ProjectModification::trigger()
 // static
 void ProjectModification::submit(command::RootCommand* c)
 {
-    trigger();
+    trigger();// todo why save not enabled when deleting sequence??
     Project::get().GetCommandProcessor()->Submit(c);
 }
 

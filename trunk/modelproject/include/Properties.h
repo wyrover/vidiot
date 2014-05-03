@@ -45,10 +45,20 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     FrameRate getFrameRate() const;
-    wxSize getVideoSize() const;
+    void setFrameRate(FrameRate frameRate);
 
-    int getAudioNumberOfChannels() const; ///< \return number of audio channels, thus the number of independent speakers
-    int getAudioFrameRate() const; ///< \return frame rate used for audio
+    wxSize getVideoSize() const;
+    void setVideoSize(wxSize size);
+
+    /// \return number of audio channels, thus the number of independent speakers
+    int getAudioNumberOfChannels() const; 
+    
+    void setAudioNumberOfChannels(int channels);
+
+    /// \return frame rate used for audio
+    int getAudioFrameRate() const; 
+    
+    void setAudioFrameRate(int audioFrameRate); // todo rename to audiosamplerate
 
     /// \return clone of the currently set default render
     render::RenderPtr getDefaultRender() const;

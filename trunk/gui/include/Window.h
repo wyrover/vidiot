@@ -112,6 +112,7 @@ public:
     // FILE MENU
     //////////////////////////////////////////////////////////////////////////
 
+    void onProperties(wxCommandEvent& event);
     void onExit(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
@@ -214,6 +215,7 @@ private:
     Help*           mHelp;
 
     wxMenuBar*          mMenuBar;        // For enabling/disabling menus
+    wxMenu*             mMenuFile;       // For enabling/disabling menus
     wxMenu*             mMenuEdit;       // For associating with do/undo
     wxMenu*             mMenuSequence;   // For determining cleanup of the sequence menu's
     wxMenu*             mMenuWorkspace;
