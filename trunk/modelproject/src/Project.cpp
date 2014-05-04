@@ -80,6 +80,11 @@ bool Project::OnNewDocument()
     {
         mProperties = boost::make_shared<Properties>();
         IView::getView().ProcessModelEvent(EventOpenProject(this));
+        if (!Config::ReadBool(Config::sPathTest))
+        {
+            // Open properties dialog immediately after creation.
+            IView::getView().QueueModelEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_PROPERTIES)); 
+        }
     }
     return opened;
 }
