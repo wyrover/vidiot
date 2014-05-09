@@ -42,8 +42,9 @@ public:
     /// Create a new sequence in the given folder
     /// \pre folder is not an autofolder
     /// \param folder parent folder to hold the sequence
-    /// \name name of new sequence
-    ProjectViewCreateSequence(const model::FolderPtr& folder, const wxString& name);
+    /// \param name name of new sequence
+    /// \param nodes list of media files for sequence
+    ProjectViewCreateSequence(const model::FolderPtr& folder, const wxString& name, const model::NodePtrs& nodes = model::NodePtrs());
 
     virtual ~ProjectViewCreateSequence();
 
@@ -72,8 +73,8 @@ private:
 
     wxString mName;
     model::FolderPtr mParent;
-    model::FolderPtr mInputFolder;
     model::SequencePtr mSequence;
+    model::NodePtrs mNodes;
 
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS

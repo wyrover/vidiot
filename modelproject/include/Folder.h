@@ -48,7 +48,7 @@ public:
     // INODE
     //////////////////////////////////////////////////////////////////////////
 
-    void check() override; ///< Update the autofolder children. The folder is synced with the filesystem.
+    void check(bool immediately = false) override; ///< Update the autofolder children. The folder is synced with the filesystem.
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES

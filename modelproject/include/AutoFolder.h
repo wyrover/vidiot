@@ -53,7 +53,7 @@ public:
 
     NodePtrs findPath(const wxString& path) override;
     bool mustBeWatched(const wxString& path) override;
-    void check() override; ///< Update the autofolder children. The folder is synced with the filesystem.
+    void check(bool immediately = false) override; ///< Update the autofolder children. The folder is synced with the filesystem.
 
     //////////////////////////////////////////////////////////////////////////
     // IPATH
@@ -63,6 +63,8 @@ public:
 
     /// Called when the updating is done
     void onWorkDone(worker::WorkDoneEvent& event);
+
+    void handleWorkDone(boost::shared_ptr<IndexAutoFolderWork> work, bool immediately);
 
     //////////////////////////////////////////////////////////////////////////
     // ATTRIBUTES

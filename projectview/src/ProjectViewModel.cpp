@@ -48,7 +48,6 @@ const int sNumberOfColumns = 2;
 ProjectViewModel::ProjectViewModel(wxDataViewCtrl& view)
 :   wxDataViewModel()
 ,   mView(view)
-,   mProject(0)
 ,   mIconAutoFolder(folder_horizontal_plus_xpm)
 ,   mIconAutoFolderOpen(folder_horizontal_plus_open_xpm)
 ,   mIconFolder(folder_horizontal_xpm)
@@ -109,10 +108,10 @@ unsigned int ProjectViewModel::GetChildren( const wxDataViewItem &wxItem, wxData
 {
     if (!wxItem.IsOk())
     {
-        if (mProject != 0)
+        if (Window::get().isProjectOpened())
         {
-            wxItemArray.Add(wxDataViewItem(mProject->getRoot()->id()));
-            gui::Window::get().QueueModelEvent(new EventAutoFolderOpen(mProject->getRoot()));
+            wxItemArray.Add(wxDataViewItem(model::Project::get().getRoot()->id()));
+            gui::Window::get().QueueModelEvent(new EventAutoFolderOpen(model::Project::get().getRoot()));
             return 1;
         }
         else
@@ -377,8 +376,6 @@ wxIcon ProjectViewModel::getIcon(const model::NodePtr& node) const
 
 void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 {
-    mProject = event.getValue();
-
     Cleared();
 
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
@@ -392,8 +389,6 @@ void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 
 void ProjectViewModel::onCloseProject(model::EventCloseProject &event)
 {
-    mProject = 0;
-
     Cleared();
 
     gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &ProjectViewModel::onProjectAssetAdded,      this);

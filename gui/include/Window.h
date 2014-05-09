@@ -159,6 +159,12 @@ public:
     void onAbout(wxCommandEvent& event);
 
     //////////////////////////////////////////////////////////////////////////
+    // DROP FILES EVENTS
+    //////////////////////////////////////////////////////////////////////////
+
+    void onDropFiles(wxDropFilesEvent& event);
+
+    //////////////////////////////////////////////////////////////////////////
     // WIDGETS HANDLING
     //////////////////////////////////////////////////////////////////////////
 
@@ -189,6 +195,10 @@ public:
     /// Used in tests to easily see which test is being executed
     /// \param title will be added after the original title
     void setAdditionalTitle(const wxString& title);
+
+    bool isProjectOpened() const;
+
+    void openPropertiesUponProjectCreation(bool open);
 
 private:
 
@@ -228,11 +238,16 @@ private:
 
     wxString            mDefaultPerspective;
 
+    /// true iff the properties dialog must be opened directly after a new
+    /// project is created.
+    bool mOpenPropertiesUponProjectCreation; 
+
     //////////////////////////////////////////////////////////////////////////
     // HELPER METHODS
     //////////////////////////////////////////////////////////////////////////
 
     void updateWorkspaceMenu();
+    friend struct ViewHelper;
     void updateTitle();
     void togglePane(const wxString& title);
 

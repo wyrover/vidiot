@@ -24,6 +24,7 @@
 #include "DialogAbout.h"
 #include "DialogOptions.h"
 #include "DialogProjectProperties.h"
+#include "DropFilesFromFileSystem.h"
 #include "Help.h"
 #include "ids.h"
 #include "Layout.h"
@@ -31,7 +32,9 @@
 #include "Preview.h"
 #include "Project.h"
 #include "ProjectEvent.h"
+#include "ProjectModification.h"
 #include "ProjectView.h"
+#include "ProjectViewAddAsset.h"
 #include "StatusBar.h"
 #include "TimelinesView.h"
 #include "UtilLog.h"
@@ -65,10 +68,8 @@ const wxString sPaneCaptionTimelines(_("Timelines"));
 // HELPER CLASSES
 //////////////////////////////////////////////////////////////////////////
 
-class ViewHelper
-    :   public wxView
+struct ViewHelper :   public wxView
 {
-public:
     ViewHelper() : wxView() {};
     virtual ~ViewHelper() {};
     void OnDraw(wxDC *dc) override {}
@@ -114,8 +115,11 @@ Window::Window()
     ,   mTestCrash(0)
     ,   mAudioTransitionFactory(new model::audio::AudioTransitionFactory())
     ,   mVideoTransitionFactory(new model::video::VideoTransitionFactory())
+    ,   mOpenPropertiesUponProjectCreation(!Config::ReadBool(Config::sPathTest)) // Do not open dialog automatically during tests
 {
     Create(mDocManager, 0, wxID_ANY, sTitle, wxDefaultPosition, wxSize(1000,700));
+
+    DragAcceptFiles(true);
 
     // Construction not done in constructor list due to dependency on sCurrent
     mVisibleWorker   = new worker::VisibleWorker();
@@ -346,6 +350,8 @@ Window::Window()
 
     Bind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
 
+    Bind(wxEVT_DROP_FILES,              &Window::onDropFiles,        this);
+
     GetDocumentManager()->SetMaxDocsOpen(1);
     GetDocumentManager()->FileHistoryUseMenu(mMenuFile);
     GetDocumentManager()->FileHistoryLoad(*wxConfigBase::Get());
@@ -445,6 +451,8 @@ Window::~Window()
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onConfig,           this, ID_OPENCONFIGFILE);
     Unbind(wxEVT_COMMAND_MENU_SELECTED,   &Window::onAbout,            this, wxID_ABOUT);
 
+    Unbind(wxEVT_DROP_FILES,              &Window::onDropFiles,        this);
+
     wxStatusBar* sb = GetStatusBar();
     SetStatusBar(0);
     sb->wxWindowBase::Destroy();
@@ -492,6 +500,13 @@ void Window::onOpenProject(model::EventOpenProject &event )
     updateTitle();
     mVisibleWorker->start();
     mInvisibleWorker->start();
+
+    if (event.getValue() &&                  // Project is 'new'
+        mOpenPropertiesUponProjectCreation)  // Show dialog is enabled
+    {
+        GetEventHandler()->ProcessEvent(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_PROPERTIES)); // Open properties dialog immediately after creation. 
+    }
+
     event.Skip();
 }
 
@@ -771,6 +786,22 @@ void Window::onAbout(wxCommandEvent& event)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// DROP FILES EVENTS
+//////////////////////////////////////////////////////////////////////////
+
+void Window::onDropFiles(wxDropFilesEvent& event)
+{
+    std::list<wxString> filenames;
+    for (int i = 0; i < event.GetNumberOfFiles(); ++i)
+    {
+        filenames.push_back(event.GetFiles()[i]);
+    }
+    command::DropFilesFromFileSystem(filenames);
+    // NOT: event.Skip() -- only handled here.
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 // WIDGET HANDLING
 //////////////////////////////////////////////////////////////////////////
 
@@ -827,6 +858,16 @@ void Window::setSequenceMenu(wxMenu* menu, bool enabled)
 void Window::setAdditionalTitle(const wxString& title)
 {
     SetTitle(sTitle + ": " + title);
+}
+
+bool Window::isProjectOpened() const
+{
+    return GetDocumentManager()->GetCurrentDocument() != 0;
+}
+
+void Window::openPropertiesUponProjectCreation(bool open)
+{
+    mOpenPropertiesUponProjectCreation = open;
 }
 
 //////////////////////////////////////////////////////////////////////////

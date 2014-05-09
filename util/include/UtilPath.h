@@ -35,6 +35,12 @@ wxString toName(const wxFileName& filename );
 /// Convert a wxFileName to a full path. This ends without a trailing slash.
 wxString toPath(const wxFileName& filename );
 
+/// Convert a path to a wxFileName.
+/// This includes proper handling for files vs. directories.
+/// \param path full path to file/folder
+/// \return wxFileName representing this file/folder
+wxFileName toFileName(const wxString& path);
+
 bool equals(const wxFileName& f1, const wxFileName& f2 ); ///< \return true if the two paths indicate the same file/folder on disk
 bool equals(const wxString& f1,   const wxFileName& f2 ); ///< \return true if the two paths indicate the same file/folder on disk
 bool equals(const wxFileName& f1, const wxString& f2 );   ///< \return true if the two paths indicate the same file/folder on disk
@@ -44,6 +50,10 @@ bool isParentOf(const wxFileName& parent, const wxFileName& child ); ///< \retur
 bool isParentOf(const wxString& parent,   const wxFileName& child ); ///< \return true if parent is a parent path (folder) of child. Note: returns false if both point to the same dir.
 bool isParentOf(const wxFileName& parent, const wxString& child );   ///< \return true if parent is a parent path (folder) of child. Note: returns false if both point to the same dir.
 bool isParentOf(const wxString& parent,   const wxString& child );   ///< \return true if parent is a parent path (folder) of child. Note: returns false if both point to the same dir.
+
+/// \return true if the given directory contains one or more subdirectories.
+/// \pre directory must be a directory, not a file.
+bool hasSubDirectories(wxFileName directory); 
 
 }} // namespace
 

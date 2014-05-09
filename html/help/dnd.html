@@ -1,0 +1,27 @@
+<html>
+<body style="font-family: arial; font-size:8pt">
+
+<h1>Drag and drop from file system</h1>
+
+<h2>Automatically create projects</h2>
+
+If no project is open, dropping files/folders from the filesystem results in
+creation of a project. All dropped files/folders are included in this project.
+<p>
+If exactly one folder is dropped the initial name of the project equals the folder name.
+<p>
+If exactly one folder is dropped, and that folder contains no subfolders, a sequence 
+is created containing all the files in the folder.
+<p>
+If a list of files is dropped, a sequence containing these files is created.
+<p>
+Note that if there are multiple video frame rates and/or audio sample rates in the
+files added to the project, then the sequence is not created (because it is then 
+unclear which frame/sample rate to use for the resulting video).
+
+<h2>Drag and drop into an existing project</h2>
+
+If a project is open, dropped files and/or folders are included into the project view.
+
+</body>
+</html>

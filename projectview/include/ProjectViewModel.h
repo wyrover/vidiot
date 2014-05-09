@@ -90,8 +90,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::Project* mProject;
-
     wxDataViewCtrl& mView;
 
     wxIcon mIconAutoFolder;

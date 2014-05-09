@@ -35,10 +35,10 @@ ProjectViewCreateSequence::ProjectViewCreateSequence(const model::FolderPtr& fol
     :   ProjectViewCommand()
     ,   mName(folder->getName())
     ,   mParent(findFirstNonAutoFolderParent(folder))
-    ,   mInputFolder(folder)
     ,   mSequence()
+    ,   mNodes(folder->getChildren())
 {
-    VAR_INFO(this)(mParent)(mInputFolder);
+    VAR_INFO(this)(mParent)(folder);
     ASSERT(mParent); // Parent folder must exist
 
     if (folder->isA<model::AutoFolder>())
@@ -51,12 +51,12 @@ ProjectViewCreateSequence::ProjectViewCreateSequence(const model::FolderPtr& fol
     mCommandName = _("Create sequence from folder ") + mName;
 }
 
-ProjectViewCreateSequence::ProjectViewCreateSequence(const model::FolderPtr& folder, const wxString& name)
+ProjectViewCreateSequence::ProjectViewCreateSequence(const model::FolderPtr& folder, const wxString& name, const model::NodePtrs& nodes)
     :   ProjectViewCommand()
     ,   mName(name)
     ,   mParent(folder)
-    ,   mInputFolder()
     ,   mSequence()
+    ,   mNodes(nodes)
 {
     VAR_INFO(mParent)(name);
     ASSERT(mParent); // Parent folder must exist
@@ -79,16 +79,13 @@ bool ProjectViewCreateSequence::Do()
     {
         mSequence = boost::make_shared<model::Sequence>(mName);
 
-        if (mInputFolder)
-        {
-            TrackCreator c(mInputFolder->getChildren());
-            model::Tracks vt = mSequence->getVideoTracks();
-            model::Tracks at = mSequence->getAudioTracks();
-            mSequence->addVideoTracks(boost::assign::list_of(c.getVideoTrack()));
-            mSequence->addAudioTracks(boost::assign::list_of(c.getAudioTrack()));
-            mSequence->removeVideoTracks(vt);
-            mSequence->removeAudioTracks(at);
-        }
+        TrackCreator c(mNodes);
+        model::Tracks vt = mSequence->getVideoTracks();
+        model::Tracks at = mSequence->getAudioTracks();
+        mSequence->addVideoTracks(boost::assign::list_of(c.getVideoTrack()));
+        mSequence->addAudioTracks(boost::assign::list_of(c.getAudioTrack()));
+        mSequence->removeVideoTracks(vt);
+        mSequence->removeAudioTracks(at);
     }
 
     mParent->addChild(mSequence);

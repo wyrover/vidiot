@@ -31,6 +31,14 @@ namespace gui {
 
 class TimelinesView;
 
+enum NodeType
+{
+    NODETYPE_ANY,
+    NODETYPE_FILE,
+    NODETYPE_FOLDER,
+    NODETYPE_SEQUENCE
+};
+
 class ProjectView
 :   public wxPanel
 ,   public SingleInstance<ProjectView>
@@ -73,6 +81,8 @@ public:
 
     void scrollToRight();
 
+    bool findConflictingName(const model::FolderPtr& parent, const wxString& name, const NodeType& type);
+    
     //////////////////////////////////////////////////////////////////////////
     // POPUP MENU
     //////////////////////////////////////////////////////////////////////////
@@ -110,7 +120,6 @@ private:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    model::Project* mProject;
     ProjectViewCtrl mCtrl;
     ProjectViewModel* mModel;
     ProjectViewDropSource mDropSource;

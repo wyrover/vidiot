@@ -139,10 +139,6 @@ void StatusBar::setQueueText(const wxString& text)
     SetStatusText( text, sQueue );
 }
 
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
 void StatusBar::setProcessingText(const wxString& text)
 {
     ASSERT(wxThread::IsMain());

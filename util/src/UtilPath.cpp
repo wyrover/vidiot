@@ -17,6 +17,8 @@
 
 #include "UtilPath.h"
 
+#include "UtilLogWxwidgets.h"
+
 namespace util { namespace path {
 
 wxFileName normalize(wxFileName filename)
@@ -56,6 +58,18 @@ wxString toPath(const wxFileName& filename)
         result.erase(result.length() - 1);
     }
     return result;
+}
+
+wxFileName toFileName(const wxString& path)
+{
+    if (wxDirExists(path))
+    {
+        return wxFileName(wxFileName(path,""));
+    }
+    else
+    {
+        return wxFileName(path);
+    }
 }
 
 bool equals(const wxFileName& f1, const wxFileName& f2)
@@ -99,6 +113,13 @@ bool isParentOf(const wxFileName& parent, const wxString& child)
 bool isParentOf(const wxString& parent, const wxString& child)
 {
     return isParentOf( wxFileName( parent ),  wxFileName( child ) );
+}
+
+bool hasSubDirectories(wxFileName directory)
+{
+    ASSERT(directory.IsDir())(directory);
+    wxArrayString allfiles;
+    return wxDir::GetAllFiles(directory.GetLongPath(), &allfiles, wxEmptyString, wxDIR_DIRS) > 0;
 }
 
 }} // namespace

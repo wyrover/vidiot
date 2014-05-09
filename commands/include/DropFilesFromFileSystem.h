@@ -1,4 +1,4 @@
-// Copyright 2013,2014 Eric Raijmakers.
+// Copyright 2014 Eric Raijmakers.
 //
 // This file is part of Vidiot.
 //
@@ -15,18 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PROJECT_EVENT_H
-#define PROJECT_EVENT_H
+#ifndef DROP_FILES_FROM_FILESYSTEM_H
+#define DROP_FILES_FROM_FILESYSTEM_H
 
-#include "UtilEvent.h"
+namespace command {
 
-namespace model {
-
-class Project;
-
-DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,    bool); // true: new document, false: read from disk
-DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,   model::Project*);
-DECLARE_EVENT(EVENT_RENAME_PROJECT, EventRenameProject,  model::Project*);
+void DropFilesFromFileSystem(std::list<wxString> filenames);
 
 } // namespace
 

@@ -478,7 +478,7 @@ void Sequence::setName(const wxString& name)
     gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(self(),mName)));
 }
 
-void Sequence::check()
+void Sequence::check(bool immediately)
 {
     // Nothing is checked: If files are missing, they'll return 'error' frames/chunks.
 }
