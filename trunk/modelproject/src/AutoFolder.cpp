@@ -188,7 +188,7 @@ bool AutoFolder::mustBeWatched(const wxString& path)
     return Node::mustBeWatched(path); // Maybe for any of the children?
 }
 
-void AutoFolder::check()
+void AutoFolder::check(bool immediately)
 {
     ASSERT(wxThread::IsMain());
 
@@ -196,19 +196,28 @@ void AutoFolder::check()
     {
         // Update parent also. Required for scenarios in which entire folder structures are removed. By updating
         // 'from the top' nothing is missed.
-        boost::dynamic_pointer_cast<AutoFolder>(getParent())->check();
+        boost::dynamic_pointer_cast<AutoFolder>(getParent())->check(immediately); // todo inefficient, if parent is checked, then the child is checked, then the parent again
     }
-    if (mCurrentUpdate)
+    if (immediately)
     {
-        mUpdateAgain = true; // When mCurrentUpdate is finished, another will be scheduled.
-        VAR_DEBUG(mPath)(mUpdateAgain);
+        boost::shared_ptr<IndexAutoFolderWork>  work = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(self()));
+        work->indexFiles();
+        handleWorkDone(work,true);
     }
     else
     {
-        VAR_DEBUG(mPath);
-        mCurrentUpdate = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(self()));
-        mCurrentUpdate->Bind(worker::EVENT_WORK_DONE, &AutoFolder::onWorkDone, this); // No unbind: work object is destroyed when done
-        worker::VisibleWorker::get().schedule(mCurrentUpdate);
+        if (mCurrentUpdate)
+        {
+            mUpdateAgain = true; // When mCurrentUpdate is finished, another will be scheduled.
+            VAR_DEBUG(mPath)(mUpdateAgain);
+        }
+        else
+        {
+            VAR_DEBUG(mPath);
+            mCurrentUpdate = boost::make_shared<IndexAutoFolderWork>(boost::dynamic_pointer_cast<AutoFolder>(self()));
+            mCurrentUpdate->Bind(worker::EVENT_WORK_DONE, &AutoFolder::onWorkDone, this); // No unbind: work object is destroyed when done
+            worker::VisibleWorker::get().schedule(mCurrentUpdate);
+        }
     }
     return;
 }
@@ -229,6 +238,11 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
     ASSERT_EQUALS(mCurrentUpdate,work)(mCurrentUpdate)(work);
     ASSERT(work);
     mCurrentUpdate.reset();
+    handleWorkDone(work,false);
+}
+
+void AutoFolder::handleWorkDone(boost::shared_ptr<IndexAutoFolderWork> work, bool immediately)
+{
     if (!work->mAdd.empty())
     {
         addChildren(work->mAdd); // Add all at once, for better performance (less UI updates)
@@ -237,7 +251,7 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
             AutoFolderPtr autoFolder = boost::dynamic_pointer_cast<AutoFolder>(node);
             if (autoFolder)
             {
-                autoFolder->check();
+                autoFolder->check(immediately);
             }
         }
     }
@@ -290,7 +304,8 @@ void AutoFolder::onWorkDone(worker::WorkDoneEvent& event)
 
 wxString AutoFolder::getName() const
 {
-    if (getParent()->isA<AutoFolder>())
+    if (getParent() &&                  
+        getParent()->isA<AutoFolder>())
     {
         return util::path::toName(mPath);
     }

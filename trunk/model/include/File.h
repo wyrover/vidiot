@@ -58,7 +58,7 @@ public:
 
     NodePtrs findPath(const wxString& path) override;
     bool mustBeWatched(const wxString& path) override;
-    void check() override;
+    void check(bool immediately = false) override;
 
     //////////////////////////////////////////////////////////////////////////
     // ICONTROL

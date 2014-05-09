@@ -91,7 +91,7 @@ Folder::~Folder()
 // INODE
 //////////////////////////////////////////////////////////////////////////
 
-void Folder::check()
+void Folder::check(bool immediately)
 {
     for ( model::NodePtr node : getChildren() )
     {

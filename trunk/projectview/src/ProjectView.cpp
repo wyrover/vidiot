@@ -58,23 +58,13 @@ enum
     ID_DELETE_UNUSED,
 };
 
-// This method only to be used here. Enum too.
-enum NodeType
-{
-    NODETYPE_ANY,
-    NODETYPE_FILE,
-    NODETYPE_FOLDER,
-    NODETYPE_SEQUENCE
-};
-bool findConflictingName(wxWindow* window, const model::FolderPtr& parent, const wxString& name, const NodeType& type );
 
-    //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
 ProjectView::ProjectView(wxWindow* parent)
     :   wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxBORDER_STATIC)
-    ,   mProject(0)
     ,   mCtrl(this)
     ,   mModel(new ProjectViewModel(mCtrl))
     ,   mDropSource(mCtrl, *mModel)
@@ -134,7 +124,6 @@ ProjectView::~ProjectView()
 
 void ProjectView::onOpenProject(model::EventOpenProject &event)
 {
-    mProject = event.getValue();
     GetSizer()->Show(&mCtrl);
     GetSizer()->Layout();
     gui::Window::get().Bind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::onAutoOpenFolder, this);
@@ -162,7 +151,6 @@ void ProjectView::onCloseProject(model::EventCloseProject &event)
     GetSizer()->Layout();
     gui::Window::get().Unbind(GUI_EVENT_PROJECT_VIEW_AUTO_OPEN_FOLDER, &ProjectView::onAutoOpenFolder, this);
     mCtrl.UnselectAll(); // To avoid crashes when directly loading a new project.
-    mProject = 0;
     mOpenFolders.clear(); // Release shared_ptrs
     event.Skip();
 }
@@ -265,6 +253,42 @@ void ProjectView::scrollToRight()
     mCtrl.Scroll(mCtrl.GetSize().GetWidth(), -1);
 }
 
+bool ProjectView::findConflictingName(const model::FolderPtr& parent, const wxString& name, const NodeType& type)
+{
+    for ( model::NodePtr child : parent->getChildren() )
+    {
+        if (child->getName().IsSameAs(name))
+        {
+            bool isSameType = true;
+            wxString prefix = _("Name");
+            switch (type)
+            {
+            case NODETYPE_FILE:
+                isSameType = (child->isA<model::File>());
+                prefix = _("A file with name");
+                break;
+            case NODETYPE_FOLDER:
+                isSameType = (child->isA<model::Folder>());
+                prefix = _("A folder with name");
+                break;
+            case NODETYPE_SEQUENCE:
+                isSameType = (child->isA<model::Sequence>());
+                prefix = _("A sequence with name");
+                break;
+            default:
+                break;
+            }
+            if (isSameType)
+            {
+                gui::Dialog::get().getConfirmation(_("Duplicate exists"), prefix + _(" '") + name + _("' already exists"));
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // POPUP MENU
 //////////////////////////////////////////////////////////////////////////
@@ -302,7 +326,7 @@ void ProjectView::onPaste()
             {
                 for ( model::NodePtr node : data.getAssets() )
                 {
-                    if (findConflictingName( this, getSelectedContainer(), node->getName(), NODETYPE_ANY ))
+                    if (findConflictingName(getSelectedContainer(), node->getName(), NODETYPE_ANY ))
                     {
                         return;
                     }
@@ -331,7 +355,7 @@ void ProjectView::onNewFolder()
 {
     wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
+        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))// todo shouldn't this use getSelectedContainer->getparent??
     {
         model::ProjectModification::submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
     }
@@ -341,7 +365,7 @@ void ProjectView::onNewAutoFolder()
 {
     wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_FOLDER)))
+        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))// todo shouldn't this use getSelectedContainer->getparent??
     {
         wxFileName path(s,"");
         path.Normalize();
@@ -353,7 +377,7 @@ void ProjectView::onNewSequence()
 {
     wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(this, getSelectedContainer(), s, NODETYPE_SEQUENCE)))
+        (!findConflictingName(getSelectedContainer(), s, NODETYPE_SEQUENCE))) // todo shouldn't this use getSelectedContainer->getparent??
     {
         model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
     }
@@ -366,7 +390,7 @@ void ProjectView::onNewFile()
     std::vector<wxFileName> list;
     for ( wxString path : files )
     {
-        if (findConflictingName(this, getSelectedContainer(),path, NODETYPE_FILE))
+        if (findConflictingName(getSelectedContainer(),path, NODETYPE_FILE))// todo shouldn't this use getSelectedContainer->getparent??
         {
             return;
         }
@@ -387,7 +411,7 @@ void ProjectView::onNewFile()
 void ProjectView::onCreateSequence()
 {
     command::ProjectViewCreateSequence* cmd = new command::ProjectViewCreateSequence(getSelectedContainer());
-    if (!findConflictingName(this, cmd->getParent(), cmd->getName(), NODETYPE_SEQUENCE))
+    if (!findConflictingName(cmd->getParent(), cmd->getName(), NODETYPE_SEQUENCE))
     {
         model::ProjectModification::submit(cmd);
     }
@@ -649,7 +673,7 @@ void ProjectView::onDrop(wxDataViewEvent &event)
     bool conflictingChildExists = false;
     for ( model::NodePtr node : o.getAssets())
     {
-        if (findConflictingName(this, folder, node->getName(), NODETYPE_ANY))
+        if (findConflictingName(folder, node->getName(), NODETYPE_ANY))
         {
             event.Veto();
             return;
@@ -701,45 +725,6 @@ void ProjectView::onStartEditing(wxDataViewEvent &event)
         event.Veto();
     }
     event.Skip();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// HELPER METHODS
-//////////////////////////////////////////////////////////////////////////
-
-bool findConflictingName(wxWindow* window, const model::FolderPtr& parent, const wxString& name, const NodeType& type )
-{
-    for ( model::NodePtr child : parent->getChildren() )
-    {
-        if (child->getName().IsSameAs(name))
-        {
-            bool isSameType = true;
-            wxString prefix = _("Name");
-            switch (type)
-            {
-            case NODETYPE_FILE:
-                isSameType = (child->isA<model::File>());
-                prefix = _("A file with name");
-                break;
-            case NODETYPE_FOLDER:
-                isSameType = (child->isA<model::Folder>());
-                prefix = _("A folder with name");
-                break;
-            case NODETYPE_SEQUENCE:
-                isSameType = (child->isA<model::Sequence>());
-                prefix = _("A sequence with name");
-                break;
-            default:
-                break;
-            }
-            if (isSameType)
-            {
-                gui::Dialog::get().getConfirmation(_("Duplicate exists"), prefix + _(" '") + name + _("' already exists"));
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

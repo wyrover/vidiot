@@ -170,7 +170,7 @@ bool File::mustBeWatched(const wxString& path)
     return false;
 }
 
-void File::check()
+void File::check(bool immediately)
 {
     model::NodePtr parent = getParent();
     if (parent)

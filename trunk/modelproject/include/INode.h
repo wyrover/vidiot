@@ -86,7 +86,8 @@ public:
 
     /// Is called when the object should do a check for consistency.
     /// i.e. Is the file/folder on disk still present?
-    virtual void check() = 0;
+    /// \param immediately if true, then don't schedule work but execute immediately.
+    virtual void check(bool immediately = false) = 0;
 
     /// Used to determine if the project contains one or more sequences
     /// \return true if there are one or more sequences in the project

@@ -24,7 +24,7 @@ namespace model {
 
 class Project;
 
-DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,    model::Project*);
+DECLARE_EVENT(EVENT_OPEN_PROJECT,   EventOpenProject,    bool); // true: new document, false: read from disk
 DECLARE_EVENT(EVENT_CLOSE_PROJECT,  EventCloseProject,   model::Project*);
 DECLARE_EVENT(EVENT_RENAME_PROJECT, EventRenameProject,  model::Project*);
 

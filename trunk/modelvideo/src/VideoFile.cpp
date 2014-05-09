@@ -165,7 +165,7 @@ VideoFramePtr VideoFile::getNextVideo(const VideoCompositionParameters& paramete
 
     auto timeToNearestInputFramesPts = [this, modulo](rational64 time) -> boost::tuple<pts,pts,pts>
     {
-        FrameRate fr = FrameRate(getStream()->r_frame_rate); // 24000/1001
+        FrameRate fr = FrameRate(av_stream_get_r_frame_rate(getStream())); // 24000/1001
         FrameRate timebase = FrameRate(getStream()->time_base); // 1/240000
         rational64 ticksPerFrame = 1 / (fr * timebase);
 
@@ -366,6 +366,11 @@ wxSize VideoFile::getSize()
         return  Properties::get().getVideoSize();
     }
     return wxSize(codec->width, codec->height);
+}
+
+FrameRate VideoFile::getFrameRate()
+{
+    return FrameRate(getStream()->r_frame_rate);
 }
 
 //////////////////////////////////////////////////////////////////////////

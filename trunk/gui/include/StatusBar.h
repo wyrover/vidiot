@@ -69,10 +69,12 @@ public:
 
     void setQueueText(const wxString& text = "");
 
-private:
+    void setProcessingText(const wxString& text = "");
+    void showProgressBar(int max);
+    void showProgress(int value);
+    void hideProgressBar();
 
-    friend class worker::Work; // Done to avoid calling gui objects from the worker thread
-    friend class worker::Worker;
+private:
 
     //////////////////////////////////////////////////////////////////////////
     // MEMBERS
@@ -80,15 +82,6 @@ private:
 
     wxGauge* mProgress;
     Timer* mInfoTimer;
-
-    //////////////////////////////////////////////////////////////////////////
-    // HELPER METHODS
-    //////////////////////////////////////////////////////////////////////////
-
-    void setProcessingText(const wxString& text = "");
-    void showProgressBar(int max);
-    void showProgress(int value);
-    void hideProgressBar();
 
 };
 
