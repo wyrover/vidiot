@@ -102,6 +102,7 @@ public:
         if (mOk)
         {
             ProjectViewDropSource::get().setFeedback(false);
+            getKeyboard().update(); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
             getStateMachine().process_event(state::EvDragEnter());
             return wxDragMove;
         }
@@ -109,9 +110,11 @@ public:
     }
     wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def) override
     {
+        getKeyboard().update(); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
         getMouse().dragMove(wxPoint(x,y));
         if (mOk)
         {
+            // Accepted: key events not sent during dragging. Therefore the keyboard shortcuts for disabling snapping don't work when dragging from the project view.
             getStateMachine().process_event(state::EvDragMove());
             return wxDragMove;
         }
@@ -315,8 +318,9 @@ void Drag::move(wxPoint position)
     }
 
     // Shift if required
+    bool shift = mShift;
     determineShift();
-    if (mShift)
+    if (mShift || shift)
     {
         getTimeline().Refresh(false);
     }
@@ -829,8 +833,9 @@ void Drag::determineShift()
                 ASSERT(clip);
                 ASSERT(!clip->isA<model::Transition>())(clip);
             }
-            if ((clip) &&                               // Maybe no clip at given position
-                (!clip->isA<model::EmptyClip>()) &&     // See remark above
+            if (clip &&                                 // Maybe no clip at given position
+                !clip->isA<model::EmptyClip>() &&       // See remark above
+                !clip->getDragged() &&                  // Currently dragged clips are 'empty' during the drag
                 (clip->getLeftPts() < pos))             // Start of this clip is to the left of the currently calculated shift start position
             {
                 pos = clip->getLeftPts();               // New shift start position: shift this clip entirely
