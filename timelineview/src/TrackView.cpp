@@ -157,10 +157,13 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
     }
 
     // Clear region exposed by shift. Is done before drawing clips.
+    // Note that everything to the right of the shift is cleared.
+    // This was done since sometimes part of the region to the right
+    // of the shift position was not cleared properly.
     Shift shift = getDrag().getShift();
     if (shift)
     {
-        wxRect toBeCleared(shift->getPixelPosition(),getY(),shift->getPixelLength(),getH());
+        wxRect toBeCleared(shift->getPixelPosition(),getY(),getTimeline().GetVirtualSize().GetWidth() - shift->getPixelPosition(),getH());
         getTimeline().clearRect(dc,region,offset,toBeCleared);
     }
 
@@ -220,9 +223,9 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
     {
         right += getViewMap().getView(clips.back())->getRightPixel();
     }
-    if (shift)
+    if (shift && shift->getPixelPosition() <= right) // if shift is beyond the timeline length, still the length of the shift != 0
     {
-        right += shift->getPixelLength(); // When shift dragging near the end of the timeline, the track can become longer
+       right += shift->getPixelLength(); // When shift dragging near the end of the timeline, the track can become longer
     }
     getTimeline().clearRect(dc,region,offset,wxRect(right, getY(), getTimeline().GetVirtualSize().GetWidth() - right, getH()));
 }
