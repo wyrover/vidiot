@@ -1,0 +1,99 @@
+NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done. ($HOME/Vidiot)
+      <VIDIOT_SRC> is the subdir of that dir in which the sources are.
+NOTE 2: Virtualbox hdd needs large HDD (used 20 GBytes)
+
+================ ENVIRONMENT VARIABLE ================
+
+================ TOOLS ================
+* sudo apt-get update
+* Install:
+  sudo apt-get install cmake cmake-qt-gui g++ \
+  libboost1.54-dev libboost-serialization1.54-dev \
+  libboost-system1.54-dev libboost-chrono1.54-dev \
+  libboost-date-time1.54-dev libboost-thread1.54-dev \
+  subversion rapidsvn
+* sudo apt-get install --no-install-recommends gnome-panel
+  (for easily creating shortcuts to batch files, via
+  gnome-desktop-item-edit ~/Desktop/ --create-new
+  CReate shofrtcut with command: gnome-terminal --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh
+  and place shortcut on the bar...
+* cd $HOME ; mkdir Vidiot
+
+=================== VIDIOT ===================
+cd $HOME/Vidiot
+mkdir vidiot_trunk
+cd vidiot_trunk
+svn co https://svn.code.sf.net/p/vidiot/code/trunk . 
+
+cmake -G "CodeBlocks - Unix Makefiles" -Wdev --debug-output $HOME/Vidiot/vidiot_trunk 
+#-DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
+
+================ WXWIDGETS ================
+* TODO rapidsvn checkout
+  http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk
+  <VIDIOT_DIR>/wxwidgets_trunk 
+
+================ FFMPEG ================
+http://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
+
+TODO check license warning at end of ffmpeg configure step...
+TODO use svn version   
+
+sudo apt-get update
+sudo apt-get -y install autoconf automake build-essential libass-dev libfreetype6-dev libgpac-dev \
+  libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libx11-dev \
+  libxext-dev libxfixes-dev pkg-config texi2html zlib1g-dev
+sudo apt-get install yasm libmp3lame-dev libopus-dev
+cd $HOME/Vidiot
+mkdir ffmpeg
+cd ffmpeg
+mkdir ffmpeg_sources
+mkdir ffmpeg_build
+
+libx64:
+    cd $HOME/Vidiot/ffmpeg/ffmpeg_sources
+    wget http://download.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
+    tar xjvf last_x264.tar.bz2
+    cd x264-snapshot*
+    ./configure --prefix="$HOME/Vidiot/ffmpeg/ffmpeg_build" --bindir="$HOME/bin" --enable-static
+    make && make install && make distclean  
+libfdk-aac:
+    cd $HOME/Vidiot/ffmpeg/ffmpeg_sources
+    wget -O fdk-aac.zip https://github.com/mstorsjo/fdk-aac/zipball/master
+    unzip fdk-aac.zip
+    cd mstorsjo-fdk-aac*
+    autoreconf -fiv
+    ./configure --prefix="$HOME/Vidiot/ffmpeg/ffmpeg_build" --disable-shared
+    make && make install && make distclean
+libvpx:
+    cd $HOME/Vidiot/ffmpeg/ffmpeg_sources
+    wget http://webm.googlecode.com/files/libvpx-v1.3.0.tar.bz2
+    tar xjvf libvpx-v1.3.0.tar.bz2
+    cd libvpx-v1.3.0
+    ./configure --prefix="$HOME/Vidiot/ffmpeg/ffmpeg_build" --disable-examples
+    make && make install && make clean
+ffmpeg:
+    cd $HOME/Vidiot/ffmpeg/ffmpeg_sources
+    wget http://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+    tar xjvf ffmpeg-snapshot.tar.bz2
+    cd ffmpeg
+    PKG_CONFIG_PATH="~/Vidiot/ffmpeg/ffmpeg_build/lib/pkgconfig"
+    export PKG_CONFIG_PATH
+    ./configure --prefix="$HOME/Vidiot/ffmpeg/ffmpeg_build" --extra-cflags="-I$HOME/Vidiot/ffmpeg/ffmpeg_build/include" \
+       --extra-ldflags="-L$HOME/Vidiot/ffmpeg/ffmpeg_build/lib" --bindir="$HOME/bin" --extra-libs="-ldl" --enable-gpl \
+       --enable-libass --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus \
+       --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-nonfree --enable-x11grab
+    make && make install && make distclean && hash -r
+
+=================== PORTAUDIO ===================
+
+=================== SOUNDTOUCH ===================
+
+=================== SAXON ==================
+
+=================== INSTALLER ===================
+
+=================== BUILD ===================
+
+=================== MAKE RELEASE ===================
+
