@@ -99,11 +99,21 @@ void triggerStdException()
 //////////////////////////////////////////////////////////////////////////
 // INVALID PARAMETER
 //////////////////////////////////////////////////////////////////////////
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wformat-security"
+#endif
+// Apparently GCC detects this bug with a warning ;-)
+// BUt here, it's the bug that must be triggered...
 void triggerInvalidParameter()
 {
    char *formatString = 0;
    printf(formatString);
 }
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
 
 //////////////////////////////////////////////////////////////////////////
 // PURE VIRTUAL CALL
