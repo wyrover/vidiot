@@ -2,42 +2,59 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done. ($HOME/Vidiot)
       <VIDIOT_SRC> is the subdir of that dir in which the sources are.
 NOTE 2: Virtualbox hdd needs large HDD (used 20 GBytes)
 
-================ ENVIRONMENT VARIABLE ================
+================ MAP SOURCES ================
+* Virtualbox: shared folder: C:\Vidiot\vidiot_trunk -> vidiot_trunk
+* Terminal:
+  - sudo usermod -a -G vboxsf <user> -- for access to shared folder, need to log out and in again and/or reinstall guest additions
+  - ln -s  /media/sf_vidiot_trunk <VIDIOT_DIR>/vidiot_trunk
 
 ================ TOOLS ================
+* gsettings set com.canonical.desktop.interface scrollbar-mode normal -- fix nasty ubuntu scrollbars
 * sudo apt-get update
-* Install:
-  sudo apt-get install cmake cmake-qt-gui g++ \
-  libboost1.54-dev libboost-serialization1.54-dev \
-  libboost-system1.54-dev libboost-chrono1.54-dev \
-  libboost-date-time1.54-dev libboost-thread1.54-dev \
-  subversion rapidsvn
+* sudo apt-get install cmake cmake-qt-gui g++ \
+  libboost1.55-dev libboost-serialization1.55-dev \
+  libboost-system1.55-dev libboost-chrono1.55-dev \
+  libboost-date-time1.55-dev libboost-thread1.55-dev
 * sudo apt-get install --no-install-recommends gnome-panel
   (for easily creating shortcuts to batch files, via
   gnome-desktop-item-edit ~/Desktop/ --create-new
-  CReate shofrtcut with command: gnome-terminal --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh
+  CReate shortcut with command: gnome-terminal --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh
   and place shortcut on the bar...
+* install codeblocks codeblocks-contrib
 * cd $HOME ; mkdir Vidiot
+* In CodeBlocks set line endings to CR LF (Settings -> Editor -> Line Ending)
 
 =================== VIDIOT ===================
 cd $HOME/Vidiot
 mkdir vidiot_trunk
 cd vidiot_trunk
-svn co https://svn.code.sf.net/p/vidiot/code/trunk . 
+svn co https://svn.code.sf.net/p/vidiot/code/trunk .
 
-cmake -G "CodeBlocks - Unix Makefiles" -Wdev --debug-output $HOME/Vidiot/vidiot_trunk 
+cmake -G "CodeBlocks - Unix Makefiles" -Wdev --debug-output $HOME/Vidiot/vidiot_trunk
 #-DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
 ================ WXWIDGETS ================
 * TODO rapidsvn checkout
   http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk
-  <VIDIOT_DIR>/wxwidgets_trunk 
+  <VIDIOT_DIR>/wxwidgets_trunk
+ * sudo apt-get install wxgtk3.0
+ *
+ *
+ COMPILE:
+* See: http://wiki.wxwidgets.org/Compiling_and_getting_started
+* Download wx srcs into <VIDIOT_DIR/wxWidgets/src/
+* cd ~/Vidiot/wxWidgets/build
+* ../src/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=$HOME/Vidiot/wxWidgets/install --enable-unicode --disable-shared --disable-compat28 --enable-dataviewctrl
+* make
+* make install
+
+
 
 ================ FFMPEG ================
 http://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
 
 TODO check license warning at end of ffmpeg configure step...
-TODO use svn version   
+TODO use svn version
 
 sudo apt-get update
 sudo apt-get -y install autoconf automake build-essential libass-dev libfreetype6-dev libgpac-dev \
@@ -56,7 +73,7 @@ libx64:
     tar xjvf last_x264.tar.bz2
     cd x264-snapshot*
     ./configure --prefix="$HOME/Vidiot/ffmpeg/ffmpeg_build" --bindir="$HOME/bin" --enable-static
-    make && make install && make distclean  
+    make && make install && make distclean
 libfdk-aac:
     cd $HOME/Vidiot/ffmpeg/ffmpeg_sources
     wget -O fdk-aac.zip https://github.com/mstorsjo/fdk-aac/zipball/master
@@ -87,7 +104,10 @@ ffmpeg:
 
 =================== PORTAUDIO ===================
 
+sudo apt-get install portaudio19-dev
+
 =================== SOUNDTOUCH ===================
+sudo apt-get install libsoundtouch-dev
 
 =================== SAXON ==================
 
