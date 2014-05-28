@@ -38,8 +38,8 @@ class TimeLineState
     ,   protected Part
 {
 public:
-    TimeLineState( my_context ctx )
-        :   my_base( ctx )
+    TimeLineState( typename boost::statechart::state<STATE, CONTEXT >::my_context ctx )
+        :   boost::statechart::state<STATE, CONTEXT >::my_base( ctx )
         ,   Part()
     {
     };
@@ -49,7 +49,7 @@ public:
 protected:
     Timeline& getTimeline() override
     {
-        return outermost_context().getTimeline();
+        return this->outermost_context().getTimeline();
     };
 };
 
