@@ -129,7 +129,7 @@ extern "C" {
 #include <wx/filename.h>
 #include <wx/font.h>
 #include <wx/frame.h>
-#include <wx/FSWatcher.h>
+#include <wx/fswatcher.h>
 #include <wx/gauge.h>
 #include <wx/gbsizer.h>
 #include <wx/gdicmn.h>
@@ -164,7 +164,11 @@ extern "C" {
 #include <wx/valnum.h>
 #include <wx/window.h>
 
+#ifdef _MSC_VER
 #include "inttypes.h"
+#else
+#include <inttypes.h>
+#endif
 
 #include "Pointers.h"
 
