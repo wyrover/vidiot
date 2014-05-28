@@ -66,7 +66,7 @@ void Dialog::setDir(const wxString& dir)
     mDir = boost::optional<wxString>(dir);
 }
 
-wxString Dialog::getDir(const wxString& message, const wxString& default, wxWindow* parent)
+wxString Dialog::getDir(const wxString& message, const wxString& defaultValue, wxWindow* parent)
 {
     if (mDir)
     {
@@ -75,7 +75,7 @@ wxString Dialog::getDir(const wxString& message, const wxString& default, wxWind
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxDirSelector, message, default, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent));
+    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxDirSelector, message, defaultValue, wxDD_DEFAULT_STYLE, wxDefaultPosition, parent));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ void Dialog::setText(const wxString& text)
     mText = boost::optional<wxString>(text);
 }
 
-wxString Dialog::getText(const wxString& title, const wxString& message, const wxString& default, wxWindow* parent )
+wxString Dialog::getText(const wxString& title, const wxString& message, const wxString& defaultValue, wxWindow* parent )
 {
     if (mText)
     {
@@ -153,7 +153,7 @@ wxString Dialog::getText(const wxString& title, const wxString& message, const w
         return result;
     }
     if (!parent) { parent = &Window::get(); }
-    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxGetTextFromUser, message, title, default, parent, wxDefaultCoord, wxDefaultCoord, true));
+    return util::thread::RunInMainReturning<wxString>(boost::bind(&wxGetTextFromUser, message, title, defaultValue, parent, wxDefaultCoord, wxDefaultCoord, true));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,7 +164,7 @@ void Dialog::setComboText(const wxString& text)
     mComboText = boost::optional<wxString>(text);
 }
 
-wxString Dialog::getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& default, wxWindow* parent )
+wxString Dialog::getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& defaultValue, wxWindow* parent )
 {
     if (mComboText)
     {
@@ -180,7 +180,7 @@ wxString Dialog::getComboText(const wxString& title, const wxString& message, co
     {
         ASSERT(!entry.IsEmpty()); // Empty string is returned upon Cancel
         choices.Add(entry);
-        if (entry.IsSameAs(default))
+        if (entry.IsSameAs(defaultValue))
         {
             initial = i;
         }
@@ -292,7 +292,9 @@ int generateDebugReport(bool doexit, bool addcontext, bool screenShot, const wxR
     if (addcontext)
     {
         report.AddCurrentContext();
+#ifdef _MSC_VER
         report.AddCurrentDump();
+#endif
     }
 
     if (wxFileName(Config::getFileName()).FileExists())

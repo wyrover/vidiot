@@ -56,7 +56,7 @@ public:
 
     /// Open a directory dialog. If before this call setDir() was called, the dir given in setDir() is returned and that directory is reset.
     /// \post !MDir
-    wxString getDir(const wxString& message, const wxString& default, wxWindow* parent = 0);
+    wxString getDir(const wxString& message, const wxString& defaultValue, wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -92,7 +92,7 @@ public:
     /// Open a text dialog. If before this call setText() was called, the text
     /// given in setText() is returned and that text is reset.
     /// \post !mText
-    wxString getText(const wxString& title, const wxString& message, const wxString& default, wxWindow* parent = 0 );
+    wxString getText(const wxString& title, const wxString& message, const wxString& defaultValue, wxWindow* parent = 0 );
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +104,7 @@ public:
     /// Open a text dialog. If before this call setComboText() was called, the text
     /// given in setComboText() is returned and that text is reset.
     /// \post !mComboText
-    wxString getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& default = "", wxWindow* parent = 0);
+    wxString getComboText(const wxString& title, const wxString& message, const std::list<wxString>& entries, const wxString& defaultValue = "", wxWindow* parent = 0);
 
     //////////////////////////////////////////////////////////////////////////
 
