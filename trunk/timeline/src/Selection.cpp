@@ -130,7 +130,7 @@ void Selection::updateOnLeftClick(const PointerPositionInfo& info)
                 model::IClipPtr firstclip;
                 for ( model::IClipPtr c : track->getClips() )
                 {
-                    if (!firstclip && 
+                    if (!firstclip &&
                         ((c == clip) || (c == otherend)))
                     {
                         firstclip = c;
@@ -266,7 +266,8 @@ void Selection::change(const model::IClips& selection)
 
 void Selection::updateOnEdit()
 {
-    ProcessEvent(EventSelectionUpdate(0));
+    EventSelectionUpdate event(0);
+    ProcessEvent(event);
 }
 
 //////////////////////////////////////////////////////////////////////////
