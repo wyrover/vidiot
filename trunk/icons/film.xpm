@@ -1,3 +1,6 @@
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 /* XPM */
 static const char * film_xpm[] = {
 "16 16 99 2",
@@ -116,3 +119,6 @@ static const char * film_xpm[] = {
 "  q ` q  ...+.@.@.#.$.%.q ` q   ",
 "  q q q q q q q q q q q q q q   ",
 "                                "};
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif

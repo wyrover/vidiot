@@ -1,3 +1,6 @@
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 /* XPM */
 static const char * preview_next_xpm[] = {
 "16 16 50 1",
@@ -67,3 +70,6 @@ static const char * preview_next_xpm[] = {
 "   j      jkj   ",
 "                ",
 "                "};
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
