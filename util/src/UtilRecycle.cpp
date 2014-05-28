@@ -59,6 +59,12 @@ bool recycle(const wxString& file)
 }
 
 #else // _MSC_VER
+
+bool recycle(const wxString& file)
+{
+    // todo implement (move to /tmp???_
+}
+
 #endif
 
 }} // namespace
