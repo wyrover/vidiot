@@ -1,3 +1,6 @@
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 /* XPM */
 static const char * cursor_normal_xpm[] = {
 /* width height num_colors chars_per_pixel */
@@ -62,3 +65,6 @@ static const char * cursor_normal_xpm[] = {
 "                                ",
 "                                "
 };
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
