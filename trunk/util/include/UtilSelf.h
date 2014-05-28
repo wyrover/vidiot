@@ -34,7 +34,7 @@ public:
         boost::shared_ptr<CLASS> result;
         try
         {
-            result = shared_from_this();
+            result = this->shared_from_this();
         }
         catch (boost::exception &e)
         {
