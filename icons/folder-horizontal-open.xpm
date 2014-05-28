@@ -1,3 +1,6 @@
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 /* XPM */
 static const char * folder_horizontal_open_xpm[] = {
 "16 16 84 1",
@@ -101,3 +104,6 @@ static const char * folder_horizontal_open_xpm[] = {
 "RSSSSSSSSSSSSR  ",
 "                ",
 "                "};
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
