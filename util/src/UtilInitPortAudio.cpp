@@ -17,7 +17,9 @@
 
 #include "UtilInitPortAudio.h"
 
+#ifdef _MSC_VER
 #include <pa_debugprint.h>
+#endif
 #include <portaudio.h>
 
 #include "UtilLog.h"
@@ -28,7 +30,10 @@
 
 void PortAudio::init()
 {
+#ifdef _MSC_VER
     PaUtil_SetDebugPrintFunction(log);
+    // todo for GCC also
+#endif
     PaError err = Pa_Initialize();
     ASSERT_EQUALS(err,paNoError)(Pa_GetErrorText(err));
 }
