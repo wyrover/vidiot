@@ -376,7 +376,7 @@ wxIcon ProjectViewModel::getIcon(const model::NodePtr& node) const
 
 void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 {
-    Cleared();
+    ItemAdded(wxDataViewItem(0), wxDataViewItem(model::Project::get().getRoot()->id()));
 
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
     gui::Window::get().Bind(model::EVENT_ADD_NODES,    &ProjectViewModel::onProjectAssetsAdded,    this);
@@ -389,7 +389,7 @@ void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 
 void ProjectViewModel::onCloseProject(model::EventCloseProject &event)
 {
-    Cleared();
+    ItemDeleted(wxDataViewItem(0), wxDataViewItem(model::Project::get().getRoot()->id()));
 
     gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &ProjectViewModel::onProjectAssetAdded,      this);
     gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &ProjectViewModel::onProjectAssetsAdded,     this);

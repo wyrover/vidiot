@@ -31,6 +31,10 @@ Clean()
 
 RunCMake()
 {
+    # Avoid problems with windows line endings
+    cd ${VIDIOT_DIR}/wxWidgets/install/lib/wx/
+    find . -type f | xargs dos2unix
+
     cd ${VIDIOT_DIR}
     if [ ! -d Build ]; then 
         mkdir Build
@@ -41,14 +45,14 @@ RunCMake()
     fi
     cd Debug
     echo "\n----------------------------------------\nRunCMake DEBUG...\n"
-    cmake -G "CodeBlocks - Unix Makefiles" -Wdev ${SOURCE} -DCMAKE_BUILD_TYPE:STRING="DEBUG" #--debug-output ${SOURCE}
+    cmake -G "CodeBlocks - Unix Makefiles" -Wdev ${SOURCE} -DCMAKE_BUILD_TYPE:STRING="DEBUG" #--debug-output
     cd ${VIDIOT_DIR}/Build
     if [ ! -d Release ]; then 
         mkdir Release
     fi
     cd Release
     echo "\n----------------------------------------\nRunCMake RELEASE...\n"
-    cmake -G "CodeBlocks - Unix Makefiles" -Wdev ${SOURCE} -DCMAKE_BUILD_TYPE:STRING="RELEASE" #--debug-output ${SOURCE}
+    cmake -G "CodeBlocks - Unix Makefiles" -Wdev ${SOURCE} -DCMAKE_BUILD_TYPE:STRING="RELEASE"
 }
 
 case $1 in

@@ -34,20 +34,16 @@ cmake -G "CodeBlocks - Unix Makefiles" -Wdev --debug-output $HOME/Vidiot/vidiot_
 #-DCMAKE_BUILD_TYPE:STRING="DEBUG" -Wdev --debug-output %SOURCE%
 
 ================ WXWIDGETS ================
-* TODO rapidsvn checkout
-  http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk
-  <VIDIOT_DIR>/wxwidgets_trunk
- * sudo apt-get install wxgtk3.0
- *
- *
- COMPILE:
+* VirtualBox: shared folder C:\Vidiot\wxwidgets_trunk -> wxwidgets_trunk
 * See: http://wiki.wxwidgets.org/Compiling_and_getting_started
-* Download wx srcs into <VIDIOT_DIR/wxWidgets/src/
-* cd ~/Vidiot/wxWidgets/build
-* ../src/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=$HOME/Vidiot/wxWidgets/install --enable-unicode --disable-shared --disable-compat28 --enable-dataviewctrl
+* sudo apt-get install dos2unix (required since the windows checkout of wxwidgets gives the wx-config utility dos line endings, making it fail to run)
+* cd ~/Vidiot
+* mkdir build
+* mkdir install
+* cd ~/Vidiot/wxWidgets/build 
+* /media/sf_wxwidgets_trunk/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=$HOME/Vidiot/wxWidgets/install --enable-unicode --disable-shared --disable-compat28 --enable-dataviewctrl
 * make
 * make install
-
 
 
 ================ FFMPEG ================
