@@ -144,7 +144,7 @@ void TimescaleView::draw(wxBitmap& bitmap) const
     TicksAndNumbers steps = zoomToSteps.find(zoom)->second;
 
     // Draw timescale
-    dc.SetBrush(wxNullBrush);
+    dc.SetBrush(Layout::get().TimeScaleBackgroundBrush);
     dc.SetPen(Layout::get().TimeScaleDividerPen);
     dc.DrawRectangle(0,0,w,h);
 

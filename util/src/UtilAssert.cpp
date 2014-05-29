@@ -38,22 +38,23 @@ IAssert::~IAssert()
 // static
 void IAssert::breakIntoDebugger()
 {
-    bool isDebuggerRunning = false;
-#if (defined _MSC_VER) || (defined __BORLANDC__)
-    isDebuggerRunning = wxIsDebuggerRunning();
-#endif
-
-    if (isDebuggerRunning)
+#ifdef _MSC_VER
+    if (wxIsDebuggerRunning())
     {
         Log::exit(); // Ensures that remaining log lines are flushed
-#if (defined _MSC_VER) || (defined __BORLANDC__)
-            __asm { int 3 };
-#elif (defined __GNUC__) && (defined _DEBUG)
-        __asm ("int $0x3");
-#endif
+        __asm { int 3 };
     }
     else
     {
         sInstance->onAssert();
     }
+#endif
+#ifdef __GNUC__
+#ifndef NDEBUG
+    Log::exit(); // Ensures that remaining log lines are flushed
+  __asm ("int $0x3");
+#else
+    sInstance->onAssert();
+#endif
+#endif
 }

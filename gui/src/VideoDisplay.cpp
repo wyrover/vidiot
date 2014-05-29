@@ -49,12 +49,12 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
 {
     if (statusFlags != 0)
     {
-        if      (statusFlags & paInputUnderflow)  { LOG_WARNING << "paInputUnderflow"; } 
-        else if (statusFlags & paInputOverflow)   { LOG_WARNING << "paInputOverflow"; } 
-        else if (statusFlags & paOutputUnderflow) { LOG_WARNING << "paOutputUnderflow"; } 
-        else if (statusFlags & paOutputOverflow)  { LOG_WARNING << "paOutputOverflow"; } 
-        else if (statusFlags & paPrimingOutput)   { LOG_WARNING << "paPrimingOutput"; } 
-        else                                      { LOG_WARNING << "Unknown PaStreamCallbackFlags (" << static_cast<long>(statusFlags) << ")"; } 
+        if      (statusFlags & paInputUnderflow)  { LOG_WARNING << "paInputUnderflow"; }
+        else if (statusFlags & paInputOverflow)   { LOG_WARNING << "paInputOverflow"; }
+        else if (statusFlags & paOutputUnderflow) { LOG_WARNING << "paOutputUnderflow"; }
+        else if (statusFlags & paOutputOverflow)  { LOG_WARNING << "paOutputOverflow"; }
+        else if (statusFlags & paPrimingOutput)   { LOG_WARNING << "paPrimingOutput"; }
+        else                                      { LOG_WARNING << "Unknown PaStreamCallbackFlags (" << static_cast<long>(statusFlags) << ")"; }
     }
     bool cont = static_cast<VideoDisplay*>(userData)->audioRequested(outputBuffer, framesPerBuffer, timeInfo->outputBufferDacTime);
     return cont ? 0 : paComplete;
@@ -471,24 +471,28 @@ void VideoDisplay::onSize(wxSizeEvent& event)
     int h = mHeight;
     GetClientSize(&w,&h);
 
-    if (mWidth != w || mHeight != h)
+    if (w > 0 && h > 0) // With wxGTK sometimes w > 0 and h == 0 (during creation)
     {
-        mWidth = w;
-        mHeight = h;
-        VAR_INFO(mWidth)(mHeight);
-
-        mBufferBitmap.reset(new wxBitmap(GetSize()));
-
-        if (mCurrentVideoFrame)
+        if (mWidth != w || mHeight != h)
         {
-            // Note: this is also done when playback of video has started.
-            // This is done to avoid problems when resizing while playing
-            // (problem: videocomposition parameters change between frames,
-            // but the caching mechanisms inside the video classes cause a
-            // previous frame to be used again - wrong size).
-            moveTo(mCurrentVideoFrame->getPts());
+            mWidth = w;
+            mHeight = h;
+            VAR_INFO(mWidth)(mHeight);
+
+            mBufferBitmap.reset(new wxBitmap(GetSize()));
+
+            if (mCurrentVideoFrame)
+            {
+                // Note: this is also done when playback of video has started.
+                // This is done to avoid problems when resizing while playing
+                // (problem: videocomposition parameters change between frames,
+                // but the caching mechanisms inside the video classes cause a
+                // previous frame to be used again - wrong size).
+                moveTo(mCurrentVideoFrame->getPts());
+            }
         }
     }
+
 }
 
 void VideoDisplay::onPaint(wxPaintEvent& event)

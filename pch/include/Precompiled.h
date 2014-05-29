@@ -82,6 +82,7 @@ extern "C" {
 #include <boost/thread/mutex.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/units/detail/utility.hpp>
 #include <boost/utility.hpp>
 #include <climits>
 #include <cmath>
