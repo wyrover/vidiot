@@ -76,7 +76,7 @@ ProjectView::ProjectView(wxWindow* parent)
     LOG_INFO;
 
     mCtrl.AssociateModel( mModel );
-    mModel->DecRef();
+   mModel->DecRef();
 
     mCtrl.EnableDropTarget( DataObject::sFormat );
     wxDataViewColumn* nameColumn = mCtrl.AppendIconTextColumn("Name",       0, wxDATAVIEW_CELL_EDITABLE,    200, wxALIGN_LEFT,   wxDATAVIEW_COL_SORTABLE | wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_REORDERABLE );
