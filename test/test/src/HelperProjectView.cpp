@@ -75,7 +75,7 @@ model::FolderPtr addFolder( wxString name, model::FolderPtr parent )
     {
         getProjectView().select(boost::assign::list_of(parent));
     });
-    RunInMainAndWait([] 
+    RunInMainAndWait([]
     {
         getProjectView().onNewFolder();
     });
@@ -241,8 +241,7 @@ wxPoint CenterInProjectView( model::NodePtr node )
 void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
 {
     wxPoint position = CenterInProjectView(node);
-
-    ASSERT(!wxGetMouseState().LeftDown());
+    ASSERT(!wxGetMouseState().LeftIsDown());
     MoveOnScreen(position);
     LeftDown();
 

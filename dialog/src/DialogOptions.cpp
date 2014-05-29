@@ -39,7 +39,10 @@ DialogOptions::DialogOptions(wxWindow* win)
     ,   mBoxSizer(0)
 {
     wxIconBundle icons;
-    icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
+    // todo add path joining via wxfilename
+    wxFileName iconfile(Config::getExeDir(),"movie_all.ico"); // todo extend utilpath to make filenames directly (with multiple path parts)
+    iconfile.AppendDir("icons");
+    icons.AddIcon(iconfile.GetFullPath()); // Icon in title bar of window
     SetIcons(icons);
 
     {

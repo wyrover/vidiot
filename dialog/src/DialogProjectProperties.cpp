@@ -33,8 +33,10 @@ DialogProjectProperties::DialogProjectProperties(wxWindow* win)
     :   wxDialog(win, wxID_ANY, model::Project::get().getName() + " " + _("Properties"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
     ,   mBoxSizer(0)
 {
-    wxIconBundle icons;
-    icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
+    wxIconBundle icons; // todo make helper for geticonbundle
+    wxFileName iconfile(Config::getExeDir(),"movie_all.ico"); // todo extend utilpath to make filenames directly (with multiple path parts)
+    iconfile.AppendDir("icons");
+    icons.AddIcon(iconfile.GetFullPath()); // Icon in title bar of window
     SetIcons(icons);
 
     bool hasSequences = model::Project::get().getRoot()->hasSequences();

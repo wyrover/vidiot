@@ -374,8 +374,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
                 }
             }
 
-            showBox(sVideo, mVideoClip);
-            showBox(sAudio, mAudioClip);
+            showBox(sVideo, static_cast<bool>(mVideoClip)); // todo make template IsNonZero for shared_ptr that does this
+            showBox(sAudio, static_cast<bool>(mAudioClip));
             // showBox(sTransition, mTransition);
             showBox(sTransition, false);
 
@@ -436,20 +436,20 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
-    mOpacitySlider->Enable(mVideoClip);
-    mOpacitySpin->Enable(mVideoClip);
-    mSelectScaling->Enable(mVideoClip);
-    mScalingSlider->Enable(mVideoClip);
-    mScalingSpin->Enable(mVideoClip);;
-    mRotationSlider->Enable(mVideoClip);
-    mRotationSpin->Enable(mVideoClip);;
-    mSelectAlignment->Enable(mVideoClip);
-    mPositionXSlider->Enable(mVideoClip);
-    mPositionXSpin->Enable(mVideoClip);
-    mPositionYSlider->Enable(mVideoClip);
-    mPositionYSpin->Enable(mVideoClip);
-    mVolumeSlider->Enable(mAudioClip);
-    mVolumeSpin->Enable(mAudioClip);
+    mOpacitySlider->Enable(static_cast<bool>(mVideoClip));
+    mOpacitySpin->Enable(static_cast<bool>(mVideoClip));
+    mSelectScaling->Enable(static_cast<bool>(mVideoClip));
+    mScalingSlider->Enable(static_cast<bool>(mVideoClip));
+    mScalingSpin->Enable(static_cast<bool>(mVideoClip));
+    mRotationSlider->Enable(static_cast<bool>(mVideoClip));
+    mRotationSpin->Enable(static_cast<bool>(mVideoClip));
+    mSelectAlignment->Enable(static_cast<bool>(mVideoClip));
+    mPositionXSlider->Enable(static_cast<bool>(mVideoClip));
+    mPositionXSpin->Enable(static_cast<bool>(mVideoClip));
+    mPositionYSlider->Enable(static_cast<bool>(mVideoClip));
+    mPositionYSpin->Enable(static_cast<bool>(mVideoClip));
+    mVolumeSlider->Enable(static_cast<bool>(mAudioClip));
+    mVolumeSpin->Enable(static_cast<bool>(mAudioClip));
     Layout();
 }
 
@@ -610,7 +610,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
     bool transition = clip->isA<model::Transition>();
     bool shift = !transition;
     bool error = false;
-    
+
     if (endtrim != 0)
     {
         ::gui::timeline::command::TrimClip* trimCommand = new command::TrimClip(getSequence(), clip, model::TransitionPtr(), transition ? TransitionEnd : ClipEnd);
@@ -979,14 +979,14 @@ void DetailsClip::determineClipSizeBounds()
     mMinimumLengthWhenBothTrimming  = currentLength  + -1 * limitsBeginTrim.Max + limitsEndTrim.Min;
     mMaximumLengthWhenBothTrimming  = currentLength  + -1 * limitsBeginTrim.Min + limitsEndTrim.Max;
 
-    // The 'both trimming' values are not 100% correct (the determined boundaries don't take 
+    // The 'both trimming' values are not 100% correct (the determined boundaries don't take
     // 'trimming on both sides simultaneously' into acount, only separate single trimming.
     // This can cause the smallest buttons to be enabled sometimes, although trimming to that
     // size is not possible (particularly applies for clips that have transitions on both edges).
     // To fix these cases, the minimum required clip size is taken as a lower bound also.
     //
     // the '-' here results in the 'area required for adjacent transitions'.
-    mMinimumLengthWhenBothTrimming = std::max(mMinimumLengthWhenBothTrimming, mClip->getPerceivedLength() - mClip->getLength()); 
+    mMinimumLengthWhenBothTrimming = std::max(mMinimumLengthWhenBothTrimming, mClip->getPerceivedLength() - mClip->getLength());
 
     ASSERT_MORE_THAN_EQUALS(mMaximumLengthWhenBothTrimming, mMaximumLengthWhenEndTrimming);
     ASSERT_MORE_THAN_EQUALS(mMaximumLengthWhenBothTrimming, mMaximumLengthWhenBeginTrimming);

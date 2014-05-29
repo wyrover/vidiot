@@ -242,7 +242,8 @@ void Node::serialize(Archive & ar, const unsigned int version)
         }
         else
         {
-            ar & boost::serialization::make_nvp(sParent.c_str(),mParent.lock());
+            NodePtr parent = mParent.lock();
+            ar & boost::serialization::make_nvp(sParent.c_str(),parent);
         }
         ar & BOOST_SERIALIZATION_NVP(mChildren);
     }

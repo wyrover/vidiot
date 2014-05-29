@@ -27,7 +27,6 @@ namespace model {
 class VideoCompositionParameters;
 
 typedef Fifo<VideoFramePtr> FifoVideo;
-std::ostream& operator<<(std::ostream& os, const VideoFramePtr obj);
 
 /// Division of functionality between VideoFrame and VideoFrameLayer:
 /// VideoFrame holds

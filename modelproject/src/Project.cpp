@@ -79,7 +79,8 @@ bool Project::OnNewDocument()
     if (opened)
     {
         mProperties = boost::make_shared<Properties>();
-        IView::getView().ProcessModelEvent(EventOpenProject(true));
+        EventOpenProject event(true);
+        IView::getView().ProcessModelEvent(event);
     }
     return opened;
 }
@@ -102,7 +103,8 @@ wxCommandProcessor* Project::OnCreateCommandProcessor()
 void Project::OnChangeFilename(bool notifyViews)
 {
     wxDocument::OnChangeFilename(notifyViews);
-    IView::getView().ProcessModelEvent(EventRenameProject(this));
+    EventRenameProject event(this);
+    IView::getView().ProcessModelEvent(event);
     gui::Window::get().QueueModelEvent(new EventRenameNode(NodeWithNewName(mRoot,mRoot->getName())));
 }
 
@@ -153,7 +155,8 @@ std::istream& Project::LoadObject(std::istream& istream)
         boost::archive::xml_iarchive ar(istream);
         ar & boost::serialization::make_nvp(sProject.c_str(),*this);
         ar & boost::serialization::make_nvp(sView.c_str(),IView::getView());
-        IView::getView().ProcessModelEvent(EventOpenProject(false));
+        EventOpenProject event(false);
+        IView::getView().ProcessModelEvent(event);
         mRoot->check();
     }
     catch (boost::archive::archive_exception& e)

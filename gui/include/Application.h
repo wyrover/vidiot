@@ -21,8 +21,19 @@
 #include "UtilAssert.h"
 #include "UtilEvent.h"
 
+#include <boost/thread/condition_variable.hpp>
+#include <wx/app.h>
+#include <wx/cmdline.h>
+#include <wx/evtloop.h>
+
 namespace test {
-struct IEventLoopListener;
+/// Helper interface. Used to signal in the tests that the event loop
+/// has been activated, thus the application is properly started
+/// for running tests.
+struct IEventLoopListener
+{
+    virtual void onEventLoopEnter() = 0;
+};
 }
 
 namespace gui {

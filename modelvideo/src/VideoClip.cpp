@@ -114,7 +114,7 @@ std::ostream& VideoClip::dump(std::ostream& os) const
     return os;
 }
 
-char* VideoClip::getType() const
+const char* VideoClip::getType() const
 {
     return "Video";
 }
@@ -268,7 +268,8 @@ void VideoClip::setOpacity(int opacity)
         ASSERT_MORE_THAN_EQUALS(opacity,Constants::sOpacityMin);
         ASSERT_LESS_THAN_EQUALS(opacity,Constants::sOpacityMax);
         mOpacity = opacity;
-        ProcessEvent(EventChangeVideoClipOpacity(mOpacity));
+        EventChangeVideoClipOpacity event(mOpacity);
+        ProcessEvent(event);
     }
 }
 
@@ -291,23 +292,28 @@ void VideoClip::setScaling(const VideoScaling& scaling, const boost::optional<bo
 
     if (mScaling != oldScaling)
     {
-        ProcessEvent(EventChangeVideoClipScaling(mScaling));
+    EventChangeVideoClipScaling event(mScaling);
+        ProcessEvent(event);
     }
     if (mScalingFactor != oldScalingFactor)
     {
-        ProcessEvent(EventChangeVideoClipScalingFactor(mScalingFactor));
+        EventChangeVideoClipScalingFactor event(mScalingFactor);
+        ProcessEvent(event);
     }
     if (getMinPosition() != oldMinPosition)
     {
-        ProcessEvent(EventChangeVideoClipMinPosition(getMinPosition()));
+        EventChangeVideoClipMinPosition event(getMinPosition());
+        ProcessEvent(event);
     }
     if (getMaxPosition() != oldMaxPosition)
     {
-        ProcessEvent(EventChangeVideoClipMaxPosition(getMaxPosition()));
+        EventChangeVideoClipMaxPosition event(getMaxPosition());
+        ProcessEvent(event);
     }
     if (mPosition != oldPosition)
     {
-        ProcessEvent(EventChangeVideoClipPosition(mPosition));
+        EventChangeVideoClipPosition event(mPosition);
+        ProcessEvent(event);
     }
 }
 
@@ -323,19 +329,23 @@ void VideoClip::setRotation(const boost::rational< int >& rotation)
     updateAutomatedPositioning();
     if (mRotation != oldRotation)
     {
-        ProcessEvent(EventChangeVideoClipRotation(mRotation));
+        EventChangeVideoClipRotation event(mRotation);
+        ProcessEvent(event);
     }
     if (getMinPosition() != oldMinPosition)
     {
-        ProcessEvent(EventChangeVideoClipMinPosition(getMinPosition()));
+        EventChangeVideoClipMinPosition event(getMinPosition());
+        ProcessEvent(event);
     }
     if (getMaxPosition() != oldMaxPosition)
     {
-        ProcessEvent(EventChangeVideoClipMaxPosition(getMaxPosition()));
+        EventChangeVideoClipMaxPosition event(getMaxPosition());
+        ProcessEvent(event);
     }
     if (mPosition != oldPosition)
     {
-        ProcessEvent(EventChangeVideoClipPosition(mPosition));
+        EventChangeVideoClipPosition event(mPosition);
+        ProcessEvent(event);
     }
 }
 
@@ -350,11 +360,13 @@ void VideoClip::setAlignment(const VideoAlignment& alignment)
 
     if (mAlignment != oldAlignment)
     {
-        ProcessEvent(EventChangeVideoClipAlignment(mAlignment));
+        EventChangeVideoClipAlignment event(mAlignment);
+        ProcessEvent(event);
     }
     if (mPosition != oldPosition)
     {
-        ProcessEvent(EventChangeVideoClipPosition(mPosition));
+        EventChangeVideoClipPosition event(mPosition);
+        ProcessEvent(event);
     }
 }
 
@@ -368,7 +380,8 @@ void VideoClip::setPosition(const wxPoint& position)
 
     if (mPosition != oldPosition)
     {
-        ProcessEvent(EventChangeVideoClipPosition(mPosition));
+        EventChangeVideoClipPosition event(mPosition);
+        ProcessEvent(event);
     }
 }
 

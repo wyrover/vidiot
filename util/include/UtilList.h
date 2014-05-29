@@ -39,7 +39,7 @@ public:
     /// \param position elements are added BEFORE the given element. If this equals a null ptr, then the elements are added at the beginning.
     void addElements(const ELEMENTS& added, const ELEMENT& position)
     {
-        ELEMENTS::iterator itPosition = find(mList.begin(), mList.end(), position);
+        typename ELEMENTS::iterator itPosition = find(mList.begin(), mList.end(), position);
         // NOT: ASSERT(itPosition != mList.end()) Giving a null pointer results in mList.end() which results in adding at the end
 
         // See http://www.cplusplus.com/reference/stl/list/splice:
@@ -55,10 +55,10 @@ public:
     /// \param removed list of elements to be removed. These elements should be in the same order in the list, without other objects in between.
     ELEMENT removeElements(const ELEMENTS& removed)
     {
-        ELEMENTS::iterator itBegin = find(mList.begin(), mList.end(), removed.front());
+        typename ELEMENTS::iterator itBegin = find(mList.begin(), mList.end(), removed.front());
         ASSERT(itBegin != mList.end())(removed.front()); // Ensure that the begin was found
 
-        ELEMENTS::iterator itLast = find(itBegin, mList.end(), removed.back());
+        typename ELEMENTS::iterator itLast = find(itBegin, mList.end(), removed.back());
         ASSERT(itLast != mList.end())(removed.back()); // Ensure that the end was found
 
         ++itLast; // See http://www.cplusplus.com/reference/stl/list/erase: one but last is removed
@@ -79,10 +79,10 @@ public:
 
     void replace(const ELEMENT& oldElement, const ELEMENT& newElement)
     {
-        ELEMENTS::iterator itOldElement = find(mList.begin(), mList.end(), oldElement);
+        typename ELEMENTS::iterator itOldElement = find(mList.begin(), mList.end(), oldElement);
         ASSERT(itOldElement != mList.end())(oldElement); // Ensure that the element was found
 
-        ELEMENTS::iterator itNewElement = mList.erase(itOldElement);
+        typename ELEMENTS::iterator itNewElement = mList.erase(itOldElement);
         mList.insert(itNewElement,newElement);
         VAR_DEBUG(oldElement)(newElement)(mList);
     }
@@ -114,8 +114,8 @@ template <typename OBJECT>
 bool equals(const std::list< boost::shared_ptr< OBJECT > >& first, const std::list< boost::shared_ptr< OBJECT > >& second)
 {
     if (first.size() != second.size()) { return false; }
-    std::list< boost::shared_ptr< OBJECT > >::const_iterator it = first.begin();
-    std::list< boost::shared_ptr< OBJECT > >::const_iterator itOther = second.begin();
+    typename std::list< boost::shared_ptr< OBJECT > >::const_iterator it = first.begin();
+    typename std::list< boost::shared_ptr< OBJECT > >::const_iterator itOther = second.begin();
     while ((it != first.end()) && (itOther != second.end()))
     {
         if (**it == **itOther)

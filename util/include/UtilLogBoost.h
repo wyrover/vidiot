@@ -22,11 +22,11 @@ template <class K, class L, class M>
 std::ostream& operator<<(std::ostream& os, const boost::tuple<K,L,M>& obj)
 {
     os  << "{"
-        << obj.get<0>() 
+        << obj.template get<0>()
         << ','
-        << obj.get<1>()
+        << obj.template get<1>()
         << ','
-        << obj.get<2>()
+        << obj.template get<2>()
         << "}";
     return os;
 }

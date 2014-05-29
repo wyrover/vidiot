@@ -20,12 +20,6 @@
 
 namespace util { namespace thread {
 
-template <typename RETURNTYPE>
-RETURNTYPE RunInMainReturning(const boost::function<RETURNTYPE()>& method)
-{
-    return RunInMainThreadWithResult<RETURNTYPE>(method).getResult();
-}
-
 void RunInMainAndWait(const boost::function<void()> &method);
 void RunInMainAndDontWait(const boost::function<void()>& method);
 
@@ -86,6 +80,12 @@ private:
     boost::mutex mMutex;
     bool mDone;
 };
+
+template <typename RETURNTYPE>
+RETURNTYPE RunInMainReturning(const boost::function<RETURNTYPE()>& method)
+{
+    return RunInMainThreadWithResult<RETURNTYPE>(method).getResult();
+}
 
 void setCurrentThreadName(const char* name);
 

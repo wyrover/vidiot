@@ -16,6 +16,10 @@
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Application.h"
+
+// todo use wxDISABLE_DEBUG_SUPPORT()
+
+#ifdef _MSC_VER
 #include "Dialog.h"
 #include "UtilLog.h"
 #include "UtilLogWindows.h"
@@ -23,11 +27,12 @@
 //#include <vld.h>
 
 #include <windows.h>
+// todo investigate zthread lib
 
-        /// Only show first exception. When the exception occurs in a separate thread,
-        /// the delay in showing the dialog (via the main thread, not directly in the
-        /// crashing thread, since wxWidets only allows new windows in the main thread)
-        /// causes repeated exceptions.
+/// Only show first exception. When the exception occurs in a separate thread,
+/// the delay in showing the dialog (via the main thread, not directly in the
+/// crashing thread, since wxWidets only allows new windows in the main thread)
+/// causes repeated exceptions.
 bool exceptionShown = false;
 
 LONG __stdcall ExceptionFilter( EXCEPTION_POINTERS* exception )
@@ -108,3 +113,25 @@ extern "C" int WINAPI WinMain(HINSTANCE hInstance,
     wxEntryCleanup();
     return 0;
 }
+
+#else
+
+int main(int argc, char *argv[])
+{
+    //wxDISABLE_DEBUG_SUPPORT();
+    //wxDISABLE_ASSERTS_IN_RELEASE_BUILD();
+    wxDISABLE_DEBUG_LOGGING_IN_RELEASE_BUILD();
+
+    wxApp::SetInstance(new gui::Application());
+    wxEntryStart(argc,argv);
+    if (wxTheApp->OnInit())
+    {
+        wxTheApp->OnRun();
+        wxTheApp->OnExit();
+    }
+    wxEntryCleanup();
+    return 0;
+}
+
+
+#endif

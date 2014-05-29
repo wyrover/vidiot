@@ -24,7 +24,8 @@
 namespace model { namespace render {
 
 DECLAREENUM(AudioCodecParameterType, \
-    AudioBitRate);
+    AudioBitRate,
+    AudioUnused); // GCC macro requires more than 1 enum value
 
 template < class Archive >
 void registerAudioCodecParameterTypesForSerializaton(Archive& ar);

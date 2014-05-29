@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
+#include "wx/event.h"
+#include <ostream>
+
 #ifndef UTIL_EVENT_H
 #define UTIL_EVENT_H
 

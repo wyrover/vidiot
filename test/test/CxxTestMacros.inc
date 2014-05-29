@@ -18,6 +18,7 @@
 set( CxxTestDir "${PROJECT_SOURCE_DIR}/build/cxxtest-3.10.1" )
 set( CxxTestGen "${CxxTestDir}/cxxtestgen.pl" )
 
+# todo rename to .cmake
 INCLUDE_DIRECTORIES(AFTER
     ${CxxTestDir}
 )
@@ -31,7 +32,7 @@ macro(AddCxxTest TestProjectName)
         COMMAND ${CxxTestGen} --runner=ParenPrinter -o ${TestRunner} ${ARGN}
         DEPENDS ${ARGN}
         WORKING_DIRECTORY ${TESTDIR})
-        # --error-printer --runner=ParenPrinter --gui=Win32Gui 
+        # --error-printer --runner=ParenPrinter --gui=Win32Gui
     add_executable(${TestProjectName} ${TestRunner} ${ARGN})
 
 endmacro(AddCxxTest)

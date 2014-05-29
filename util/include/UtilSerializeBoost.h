@@ -70,7 +70,8 @@ void serialize(Archive &ar, boost::weak_ptr<TYPE>& p, const unsigned int version
         }
         else
         {
-            ar & boost::serialization::make_nvp(sPointer.c_str(), p.lock());
+            boost::shared_ptr<TYPE> shared = p.lock();
+            ar & boost::serialization::make_nvp(sPointer.c_str(), shared);
         }
     }
     catch (boost::archive::archive_exception& e) { VAR_ERROR(e.what());                         throw; }

@@ -209,7 +209,8 @@ void TimelinesView::save(Archive & ar, const unsigned int version) const
     for (unsigned int page = 0; page < notebookCount; ++page)
     {
         timeline::Timeline* timeline = static_cast<timeline::Timeline*>(mNotebook.GetPage(page));
-        ar & boost::serialization::make_nvp(sSequence.c_str(),timeline->getSequence());
+        model::SequencePtr sequence = timeline->getSequence();
+        ar & boost::serialization::make_nvp(sSequence.c_str(),sequence);
         ar & boost::serialization::make_nvp(sTimeline.c_str(),*timeline);
     }
 }

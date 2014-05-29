@@ -75,15 +75,19 @@ public: \
 private: \
     boost::bimap<ENUMNAME,std::string> mMap; \
 }; \
-    std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
-    std::string ENUMNAME ## _toString( const ENUMNAME& value ); \
-    ENUMNAME ENUMNAME ## _fromString( const std::string& value ); \
-    ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused);
+std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
+std::string ENUMNAME ## _toString( const ENUMNAME& value ); \
+ENUMNAME ENUMNAME ## _fromString( const std::string& value ); \
+ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused);
 
 #else // _MSC_VER
 
+// Avoid 'redefined' warning in GCC
+#undef DECLAREENUM
+#undef IMPLEMENTENUM
+
 #define DECLAREENUM(ENUMNAME,VALUE1,OTHERVALUES...) \
-    enum ENUMNAME { VALUE1 = 0, OTHERVALUES , ENUMNAME ## _MAX }; \
+    enum ENUMNAME : int { VALUE1 = 0, OTHERVALUES , ENUMNAME ## _MAX }; \
 class ENUMNAME ## Converter \
 { \
 public: \
@@ -106,14 +110,23 @@ public: \
     }; \
     virtual ~ENUMNAME ## Converter() {}; \
     static ENUMNAME ## Converter sConverter; \
+    typedef boost::bimap<ENUMNAME,wxString> ENUMNAME ## Map; \
+    static ENUMNAME ## Map mapToHumanReadibleString; \
     std::string toString( const ENUMNAME& value ) const { return mMap.left.find(value)->second; }; \
-    ENUMNAME fromString( const std::string& value ) const { return mMap.right.find(value)->second; }; \
+    ENUMNAME fromString( const std::string& value ) const \
+    {\
+        boost::bimap<ENUMNAME,std::string>::right_const_iterator it = mMap.right.find(value); \
+        if (it == mMap.right.end()) { return ENUMNAME ## _MAX; } \
+        return mMap.right.find(value)->second; \
+    }; \
+    static ENUMNAME readConfigValue(const wxString& path); \
 private: \
     boost::bimap<ENUMNAME,std::string> mMap; \
 }; \
 std::ostream& operator<<(std::ostream& os, const ENUMNAME& obj); \
 std::string ENUMNAME ## _toString( const ENUMNAME& value ); \
-ENUMNAME ENUMNAME ## _fromString( const std::string& value )
+ENUMNAME ENUMNAME ## _fromString( const std::string& value ); \
+ENUMNAME Enum_fromConfig(const wxString& value, const ENUMNAME& unused);
 
 #endif
 

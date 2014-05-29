@@ -21,7 +21,9 @@
 #include "UtilFifo.h"
 #include "UtilStackWalker.h"
 #include "UtilThread.h"
+#ifdef _MSC_VER
 #include <share.h> // _SH_DENYWR
+#endif
 
 namespace boost
 {
@@ -68,7 +70,11 @@ public:
         ,   mFifo(sMaximumBufferedLoglines)
         ,   mFile(0)
     {
+        #ifdef _MSC_VER
         mFile = _fsopen(sFilename.c_str(),"w",_SH_DENYWR);
+        #else
+        mFile = fopen(sFilename.c_str(),"w");
+        #endif
         if (!mFile)
         {
             // If file open fails, mFile == 0. Then, nothing will be logged.
@@ -272,7 +278,7 @@ LogVar::~LogVar()
         std::cout << std::endl << std::endl << *mAssert << std::endl << std::endl << osVars.str();
         Log().get(mLevel, mFileName, mLine, mFunction) << *mAssert << osVars.str();
         LOG_STACKTRACE;
-        IAssert::breakIntoDebugger(*mAssert);
+        IAssert::breakIntoDebugger();
     }
     else
     {

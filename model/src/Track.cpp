@@ -164,7 +164,8 @@ void Track::addClips(const IClips& clips, const IClipPtr& position)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    ProcessEvent(EventAddClips(MoveParameter(self(), position, clips, TrackPtr(), IClipPtr(), IClips()))); // Must be handled immediately
+    EventAddClips event(MoveParameter(self(), position, clips, TrackPtr(), IClipPtr(), IClips()));
+    ProcessEvent(event); // Must be handled immediately
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of clips.
@@ -191,7 +192,8 @@ void Track::removeClips(const IClips& clips)
     // 1. Add clip
     // 2. Remove clip again
     // 3. Event of addition is received a bit later. Here the added clip is no longer part of the track. ERROR.
-    ProcessEvent(EventRemoveClips(MoveParameter(TrackPtr(), IClipPtr(), IClips(), self(), position, clips))); // Must be handled immediately
+    EventRemoveClips event(MoveParameter(TrackPtr(), IClipPtr(), IClips(), self(), position, clips));
+    ProcessEvent(event); // Must be handled immediately
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of clips.
@@ -284,7 +286,8 @@ void Track::setHeight(int height)
     {
         mHeight = height;
         model::ProjectModification::trigger();
-        ProcessEvent(model::EventHeightChanged(height));
+        model::EventHeightChanged event(height);
+        ProcessEvent(event);
     }
 }
 
@@ -375,7 +378,8 @@ void Track::updateLength()
     pts length = calculate::combinedLength(mClips);
     if (mCache.length != length)
     {
-        ProcessEvent(EventLengthChanged(length)); // Handled immediately
+        EventLengthChanged event(length);
+        ProcessEvent(event); // Handled immediately
         mCache.length = length;
     }
 }

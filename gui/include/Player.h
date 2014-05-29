@@ -81,8 +81,14 @@ private:
     pts mPosition;
 
     //////////////////////////////////////////////////////////////////////////
-    // SPEED SLIDER
+    // BUTTONS & BITMAPS
     //////////////////////////////////////////////////////////////////////////
+
+    wxBitmap mBmpHome;
+    wxBitmap mBmpEnd;
+    wxBitmap mBmpNext;
+    wxBitmap mBmpPrevious;
+    wxBitmap mBmpPausePlay;
 
     wxButton* mHomeButton;
     wxButton* mPreviousButton;
@@ -90,11 +96,14 @@ private:
     wxButton* mNextButton;
     wxButton* mEndButton;
     wxToggleButton* mSpeedButton;
+
+    //////////////////////////////////////////////////////////////////////////
+    // SPEED SLIDER
+    //////////////////////////////////////////////////////////////////////////
+
+
     wxMiniFrame* mSpeedSliderFrame;
     wxSlider* mSpeedSlider;
-
-    void startEdit();
-    void endEdit();
 
     void onSpeedSliderFocusKill(wxFocusEvent& event);
     void onSpeedSliderUpdate( wxCommandEvent& event);
@@ -102,6 +111,13 @@ private:
     void onLeftDown(wxMouseEvent& event);
 
     void updateSpeedButton();
+
+    //////////////////////////////////////////////////////////////////////////
+    // HELPER METHODS
+    //////////////////////////////////////////////////////////////////////////
+
+    void startEdit();
+    void endEdit();
 
     //////////////////////////////////////////////////////////////////////////
     // CONFIG UDPATES

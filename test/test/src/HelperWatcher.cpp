@@ -25,10 +25,12 @@ namespace test {
 
 void ASSERT_WATCHED_PATHS_COUNT(int n)
 {
-    RunInMainAndWait([n] 
+    int currentWatchedPathsCount = -1; // Just: different from n
+    RunInMainAndWait([&currentWatchedPathsCount] 
     { 
-        ASSERT_EQUALS(gui::Watcher::get().getWatchedPathsCount(),n); 
+        currentWatchedPathsCount = gui::Watcher::get().getWatchedPathsCount();
     });
+    ASSERT_EQUALS(currentWatchedPathsCount,n); // todo use this pattern everywhere: the assert must be in the test code. Then the break is on a more logical place on the call stack (easier analysis).
 }
 
 } // namespace

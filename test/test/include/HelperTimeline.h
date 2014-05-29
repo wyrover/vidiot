@@ -38,7 +38,7 @@ typedef boost::shared_ptr<Track> TrackPtr;
 }
 
 namespace gui { namespace timeline {
-    enum MouseOnClipPosition;
+    enum MouseOnClipPosition : int;
 }}
 
 namespace test {

@@ -65,7 +65,7 @@ struct ClipTypeAsserter
         return *this;
     }
 
-    void ClipTypeMismatch(const type_info& expectedtype);
+    void ClipTypeMismatch(const std::type_info& expectedtype);
 
     int mTrackNumber;
     int mClipNumber;

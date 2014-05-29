@@ -26,19 +26,19 @@ class EnumSelector
 {
 public:
     typedef boost::bimap<ITEMTYPE,wxString> Mapping;
-    EnumSelector(wxWindow* parent, const Mapping& mapping, const ITEMTYPE& default )
+    EnumSelector(wxWindow* parent, const Mapping& mapping, const ITEMTYPE& defaultValue )
         :   wxChoice(parent, wxID_ANY)
         ,   mMapping(mapping)
     {
         int index = 0;
-        for ( Mapping::left_reference entry : mMapping.left )
+        for ( typename Mapping::left_reference entry : mMapping.left )
         {
             Append(entry.second);
             mSelectionToItem[index] = entry.first;
             mItemToSelection[entry.first] = index;
             index++;
         }
-        select(default);
+        select(defaultValue);
     }
     virtual ~EnumSelector()
     {

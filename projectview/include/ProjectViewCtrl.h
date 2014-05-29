@@ -18,6 +18,10 @@
 #ifndef GUI_PROJECT_VIEW_CTRL_H
 #define GUI_PROJECT_VIEW_CTRL_H
 
+#if wxUSE_DATAVIEWCTRL == 0
+#error wxDataViewCtrl not enabled in wxWidgets installation
+#endif
+
 namespace gui {
 
 class ProjectViewCtrl

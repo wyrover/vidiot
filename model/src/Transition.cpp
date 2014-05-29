@@ -178,7 +178,7 @@ std::ostream& Transition::dump(std::ostream& os) const
     return os;
 }
 
-char* Transition::getType() const
+const char* Transition::getType() const
 {
     return "Trans";
 }
@@ -270,7 +270,7 @@ void Transition::serialize(Archive & ar, const unsigned int version)
             {
                 mFramesLeft.reset(left);
             }
-            if (right == 0) // In-only 
+            if (right == 0) // In-only
             {
                 mFramesRight.reset(); // In-only transition
             }

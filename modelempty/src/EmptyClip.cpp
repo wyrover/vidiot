@@ -169,7 +169,7 @@ std::ostream& EmptyClip::dump(std::ostream& os) const
     return os;
 }
 
-char* EmptyClip::getType() const
+const char* EmptyClip::getType() const
 {
     return "Empty";
 }

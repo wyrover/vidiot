@@ -250,7 +250,7 @@ void ProjectView::expand(const model::NodePtr& node)
 
 void ProjectView::scrollToRight()
 {
-    mCtrl.Scroll(mCtrl.GetSize().GetWidth(), -1);
+    mCtrl.ScrollWindow(mCtrl.GetSize().GetWidth(), -1);
 }
 
 bool ProjectView::findConflictingName(const model::FolderPtr& parent, const wxString& name, const NodeType& type)
@@ -465,9 +465,9 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
         model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(item.GetID()));
 
         bool isRoot = (!node->hasParent());
-        bool isFolder = (boost::dynamic_pointer_cast<model::Folder>(node));
-        bool isAutoFolder = (boost::dynamic_pointer_cast<model::AutoFolder>(node));
-        bool isSequence = (boost::dynamic_pointer_cast<model::Sequence>(node));
+        bool isFolder = static_cast<bool>(boost::dynamic_pointer_cast<model::Folder>(node));
+        bool isAutoFolder = static_cast<bool>(boost::dynamic_pointer_cast<model::AutoFolder>(node));
+        bool isSequence = static_cast<bool>(boost::dynamic_pointer_cast<model::Sequence>(node));
 
         if (isRoot)
         {
@@ -547,9 +547,9 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
 		addMenu->Append( ID_NEW_AUTOFOLDER, _("&Folder from disk"), _("Add disk folder and its contents to the project and then monitor for changes.") );
 		addMenu->Append( ID_NEW_FILE,       _("Fi&le(s) from disk"), _("Select a file on disk to be added to the project.") );
 		menu.AppendSubMenu(addMenu,_("&Add"));
-        
+
 		menu.AppendSeparator();
-        
+
 		wxMenu* createMenu = new wxMenu();
 		createMenu->Append( ID_NEW_FOLDER,     _("&Folder"), _("Add a new folder in the project") );
 		createMenu->Append( ID_NEW_SEQUENCE,   _("&Sequence"), _("Create a new (empty) sequence") );

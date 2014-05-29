@@ -124,15 +124,16 @@ Window::Window()
     // Construction not done in constructor list due to dependency on sCurrent
     mVisibleWorker   = new worker::VisibleWorker();
     mInvisibleWorker = new worker::InvisibleWorker();
-    mWatcher         = new Watcher();
     mPreview         = new Preview(this); // Must be opened before timelinesview for the case of autoloading with open sequences/timelines
     mDetailsView     = new DetailsView(this);
     mTimelinesView   = new TimelinesView(this);
     mProjectView     = new ProjectView(this);
     mHelp            = new Help(this);
 
-    wxIconBundle icons;
-    icons.AddIcon(Config::getExeDir() + "\\icons\\movie_all.ico"); // Icon in title bar of window
+    wxIconBundle icons; // todo make helper for geticonbundle
+    wxFileName iconfile(Config::getExeDir(),"movie_all.ico"); // todo extend utilpath to make filenames directly (with multiple path parts)
+    iconfile.AppendDir("icons");
+    icons.AddIcon(iconfile.GetFullPath()); // Icon in title bar of window
     SetIcons(icons);
 
     mMenuFile = new wxMenu();
@@ -466,7 +467,6 @@ Window::~Window()
     delete mTimelinesView;  // Fixed deletion order is required. ProjectView 'knows/uses' the timeline view,
     delete mPreview;        // the timeline view in turn 'knows/uses' the preview (specifically, the player).
     delete mDetailsView;
-    delete mWatcher;
     delete mVisibleWorker;
     delete mInvisibleWorker;
     delete mDialog;
@@ -491,6 +491,11 @@ void Window::QueueModelEvent( wxEvent* event )
 
 void Window::onOpenProject(model::EventOpenProject &event )
 {
+    ASSERT_ZERO(mWatcher);
+    // todo make watcher a member of project (see also todo in watcher about moving watcher to modelproject), and make the Project handle the lifetime
+    // Needs an event loop (under wxGTK)
+    // Therefore, creation is delayed until this moment.
+    mWatcher = new Watcher(); 
     mMenuFile->Enable(wxID_PROPERTIES,true);
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->SetEditMenu(mMenuEdit); // Set menu for do/undo
     GetDocumentManager()->GetCurrentDocument()->GetCommandProcessor()->Initialize();
@@ -504,7 +509,8 @@ void Window::onOpenProject(model::EventOpenProject &event )
     if (event.getValue() &&                  // Project is 'new'
         mOpenPropertiesUponProjectCreation)  // Show dialog is enabled
     {
-        GetEventHandler()->ProcessEvent(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,wxID_PROPERTIES)); // Open properties dialog immediately after creation. 
+        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED,wxID_PROPERTIES);
+        GetEventHandler()->ProcessEvent(event); // Open properties dialog immediately after creation.
     }
 
     event.Skip();
@@ -512,6 +518,8 @@ void Window::onOpenProject(model::EventOpenProject &event )
 
 void Window::onCloseProject(model::EventCloseProject &event )
 {
+    delete mWatcher;
+    mWatcher = 0;
     mMenuFile->Enable(wxID_PROPERTIES,false);
     updateTitle();
     mVisibleWorker->abort();

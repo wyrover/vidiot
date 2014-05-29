@@ -45,7 +45,7 @@ struct IAssert
 
     /// Break into debugger for debug builds
     /// Trigger onAssert for other builds, to generate debug report
-    static void breakIntoDebugger(const std::string& message);
+    static void breakIntoDebugger();
 };
 
 #endif

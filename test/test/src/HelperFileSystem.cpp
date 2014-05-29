@@ -95,10 +95,18 @@ wxFileName RandomTempDir::getFileName() const
     return mFileName;
 }
 
+// see https://gcc.gnu.org/onlinedocs/cpp/Stringification.html
+#define stringify(x) dostringify(x)
+#define dostringify(x) #x
+
 wxFileName getTestPath()
 {
-    wxFileName result = wxFileName(SOURCE_ROOT,"");
+#ifndef SOURCE_ROOT
+#error "SOURCE_ROOT is not defined!"
+#endif
+    wxFileName result = wxFileName(stringify(SOURCE_ROOT),"");
     result.AppendDir("test");
+    ASSERT(result.IsDir())(result.GetFullPath());
     return result;
 }
 
@@ -106,8 +114,8 @@ wxFileName getTestFilesPath()
 {
     wxFileName result(getTestPath());
     result.AppendDir("input");
-    ASSERT(result.IsDir());
-    ASSERT(result.DirExists());
+    ASSERT(result.IsDir())(result.GetFullPath());
+    ASSERT(result.DirExists())(result.GetFullPath());
     return result;
 }
 
@@ -118,11 +126,10 @@ model::IPaths getListOfInputFiles()
 
 wxFileName getStillImagePath()
 {
-    wxFileName result = wxFileName(SOURCE_ROOT,"");
-    result.AppendDir("test");
+    wxFileName result = getTestPath();
     result.AppendDir("filetypes_image");
-    ASSERT(result.IsDir());
-    ASSERT(result.DirExists());
+    ASSERT(result.IsDir())(result.GetFullPath());
+    ASSERT(result.DirExists())(result.GetFullPath());
     result.SetFullName("Laney -6th best amp.jpg");
     return result;
 }
@@ -141,7 +148,7 @@ wxString getSavedFileContents(wxFileName path)
 {
 	wxString contents(getFileContents(path));
 	int i = contents.length();
-	wxRegEx reRemoveModifiedDates = "<mLastModified>[[:digit:]]+</mLastModified>";
+	wxRegEx reRemoveModifiedDates("<mLastModified>[[:digit:]]+</mLastModified>");
 	int removed = reRemoveModifiedDates.ReplaceAll(&contents,"<mLastModified>0000000000</mLastModified>");
 	ASSERT_MORE_THAN_ZERO(removed);
 	int j = contents.length();

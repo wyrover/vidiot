@@ -17,6 +17,7 @@
 
 #include "Sequence.h"
 
+#include "AudioChunk.h"
 #include "AudioComposition.h"
 #include "AudioCompositionParameters.h"
 #include "AudioTrack.h"
@@ -229,7 +230,8 @@ void Sequence::addVideoTracks(const Tracks& tracks, const TrackPtr& position)
     // 2. Tracks are added (and if queue events were used these are queued here)
     // 3. Sequence is opened and initial tracks are 'added' as views
     // 4. At some later point, the queued events result in 'double' views for the added tracks.
-    ProcessEvent(model::EventAddVideoTracks(TrackChange(tracks, position)));
+    model::EventAddVideoTracks event(TrackChange(tracks, position));
+    ProcessEvent(event);
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
@@ -249,7 +251,8 @@ void Sequence::addAudioTracks(const Tracks& tracks, const TrackPtr& position)
 
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
-    ProcessEvent(model::EventAddAudioTracks(TrackChange(tracks, position)));
+    model::EventAddAudioTracks event(TrackChange(tracks, position));
+    ProcessEvent(event);
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
@@ -268,7 +271,8 @@ void Sequence::removeVideoTracks(const Tracks& tracks)
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
-    ProcessEvent(model::EventRemoveVideoTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
+    model::EventRemoveVideoTracks event(TrackChange(Tracks(),TrackPtr(),tracks, position));
+    ProcessEvent(event);
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
@@ -287,7 +291,8 @@ void Sequence::removeAudioTracks(const Tracks& tracks)
     updateTracks();
     // ProcessEvent is used. Model events must be processed synchronously to avoid inconsistent states in
     // the receivers of these events (typically, the view classes in the timeline). Example: See addVideoTracks.
-    ProcessEvent(model::EventRemoveAudioTracks(TrackChange(Tracks(),TrackPtr(),tracks, position)));
+    model::EventRemoveAudioTracks event(TrackChange(Tracks(),TrackPtr(),tracks, position));
+    ProcessEvent(event);
 
     // This may NOT be called before the add/remove event is sent: updateLength() may cause view updates,
     // which cause accesses to the model. By that time, all views must know the proper list of tracks.
@@ -475,7 +480,8 @@ wxString Sequence::getName() const
 void Sequence::setName(const wxString& name)
 {
     mName = name;
-    gui::Window::get().ProcessModelEvent(model::EventRenameNode(NodeWithNewName(self(),mName)));
+    model::EventRenameNode event(NodeWithNewName(self(),mName));
+    gui::Window::get().ProcessModelEvent(event);
 }
 
 void Sequence::check(bool immediately)
@@ -483,7 +489,7 @@ void Sequence::check(bool immediately)
     // Nothing is checked: If files are missing, they'll return 'error' frames/chunks.
 }
 
-bool Sequence::hasSequences() const 
+bool Sequence::hasSequences() const
 {
     return true;
 }
@@ -525,7 +531,8 @@ void Sequence::updateLength()
 
     if (maxlength != mCache.length)
     {
-        ProcessEvent(EventLengthChanged(maxlength)); // Handled immediately
+        EventLengthChanged event(maxlength);
+        ProcessEvent(event); // Handled immediately
         mCache.length = maxlength;
     }
 }

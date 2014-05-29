@@ -36,7 +36,7 @@ IAssert::~IAssert()
 }
 
 // static
-void IAssert::breakIntoDebugger(const std::string& message)
+void IAssert::breakIntoDebugger()
 {
     bool isDebuggerRunning = false;
 #if (defined _MSC_VER) || (defined __BORLANDC__)

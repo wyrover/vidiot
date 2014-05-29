@@ -15,19 +15,32 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
-INCLUDE(../test/CxxTestMacros.inc)
+include (../test/CxxTestMacros.inc)
 
-SOURCE_GROUP("src"      REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/src/.*)
-SOURCE_GROUP("include"  REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/include/.*)
+source_group ("src"      REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/src/.*)
+source_group ("include"  REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/include/.*)
 
-INCLUDE_DIRECTORIES(AFTER
-    include
+# CMAKE_CURRENT_BINARY_DIR is put in the front to ensure that a gcc PCH is found before the associated .h file.
+include_directories (AFTER
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${INCLUDE_LIST}
+  ${VLD_INCLUDE_DIR}
+  ${Boost_INCLUDE_DIRS}
+  ${wxWidgets_INCLUDE_DIRS}
+  include
 )
 
-file(GLOB GenericTestFilesH ${CMAKE_CURRENT_SOURCE_DIR}/*/*.h)
-file(GLOB GenericTestFilesCpp ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp)
+file (GLOB GenericTestFilesH ${CMAKE_CURRENT_SOURCE_DIR}/*/*.h)
+file (GLOB GenericTestFilesCpp ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp)
 
-ENABLE_UNITY_BUILD(test GenericTestFilesCpp TEST_UNITY_CPP_FILES)
+file (GLOB PchTestTiles ${CMAKE_CURRENT_SOURCE_DIR}/../pch/*/*.*)
+source_group ("pch" FILES  ${PchTestTiles})
 
-# Macros are added here to have them include in solution file
-ADD_LIBRARY(test ${TEST_UNITY_CPP_FILES} ${GenericTestFilesH} ${GenericTestFilesCpp} CxxTestMacros.inc TestMacros.inc)
+enable_unity_build (test GenericTestFilesCpp TEST_UNITY_CPP_FILES)
+
+# Macros are added here to have them include in MSVC solution
+# Same for PrecompiledTest.*
+add_library (test ${TEST_UNITY_CPP_FILES} ${GenericTestFilesH} ${GenericTestFilesCpp} ../pch/include/PrecompiledTest.h ../pch/src/PrecompiledTest.cpp CxxTestMacros.inc TestMacros.inc)
+
+create_precompiled_header ("test" "../pch" "PrecompiledTest")
+
