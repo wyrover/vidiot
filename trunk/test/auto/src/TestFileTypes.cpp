@@ -125,8 +125,7 @@ void TestFileTypes::executeTest(wxString filetypesDir)
     model::FolderPtr folder1 = addFolder( sFolder1 );
 
     // Find input files in dir (must be done after creating a project, due to dependencies on project properties for opening/closing files)
-    wxFileName TestFilesPath = wxFileName(SOURCE_ROOT,"");
-    TestFilesPath.AppendDir("test");
+    wxFileName TestFilesPath = getTestPath();
     TestFilesPath.AppendDir(filetypesDir);
     ASSERT(TestFilesPath.IsDir());
     ASSERT(TestFilesPath.DirExists());

@@ -269,7 +269,6 @@ std::ostream& operator<<(std::ostream& os, const AVCodecContext* obj)
             << "sample_rate="               << obj->sample_rate             << ','
             << "channels="                  << obj->channels                << ','
             << "sample_fmt="                << obj->sample_fmt              << ','
-            << "codec_name="                << obj->codec_name              << ','
             << "has_b_frames="              << obj->has_b_frames            << ','
             << "sample_aspect_ratio="       << obj->sample_aspect_ratio     << ','
             << "debug="                     << obj->debug                   << ','

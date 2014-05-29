@@ -87,7 +87,7 @@ std::ostream& AudioClip::dump(std::ostream& os) const
     return os;
 }
 
-char* AudioClip::getType() const
+const char* AudioClip::getType() const
 {
     return "Audio";
 }
@@ -169,7 +169,8 @@ void AudioClip::setVolume(int volume)
     if (volume != mVolume)
     {
         mVolume = volume;
-        ProcessEvent(EventChangeAudioClipVolume(volume));
+        EventChangeAudioClipVolume event(volume);
+        ProcessEvent(event);
     }
 }
 

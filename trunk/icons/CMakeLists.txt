@@ -15,16 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
-FILE(GLOB IconFiles ${PROJECT_SOURCE_DIR}/icons/*?.???)
-add_custom_target(icons COMMENT "Copying ICONS" SOURCES ${IconFiles})
-SOURCE_GROUP("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
+file (GLOB IconFiles ${PROJECT_SOURCE_DIR}/icons/*?.???)
+add_custom_target (icons COMMENT "Copying ICONS" SOURCES ${IconFiles})
+source_group ("icons"  REGULAR_EXPRESSION ${PROJECT_SOURCE_DIR}/icons/*.*)
 
-MACRO(COPYICONSTOTARGET target)
-    get_target_property(TargetLocation ${target} LOCATION)
-    get_filename_component(TargetDir ${TargetLocation} PATH)
-    add_custom_command(TARGET icons DEPENDS ${IconFiles} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${TargetDir}/icons)
-    add_custom_command(TARGET icons PRE_BUILD COMMAND echo "Icons copied to '${target}'" )
-    add_dependencies(${target} icons)
-ENDMACRO(COPYICONSTOTARGET)
-COPYICONSTOTARGET(main)
-COPYICONSTOTARGET(testauto)
+macro (copy_icons_to_target target)
+    get_target_property (TargetLocation ${target} LOCATION)
+    get_filename_component (TargetDir ${TargetLocation} PATH)
+    add_custom_command (TARGET icons DEPENDS ${IconFiles} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${TargetDir}/icons)
+    add_custom_command (TARGET icons PRE_BUILD COMMAND echo "Icons copied to '${target}'")
+    add_dependencies (${target} icons)
+endmacro ()
+
+copy_icons_to_target(main)
+copy_icons_to_target(testauto)

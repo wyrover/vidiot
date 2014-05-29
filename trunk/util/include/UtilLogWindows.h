@@ -18,8 +18,12 @@
 #ifndef UTIL_LOG_WINDOWS_H
 #define UTIL_LOG_WINDOWS_H
 
+#ifdef _MSC_VER
+
 #include <windows.h>
 
 std::ostream& operator<<(std::ostream& os, const EXCEPTION_POINTERS& obj);
+
+#endif
 
 #endif

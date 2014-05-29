@@ -57,9 +57,9 @@ std::ostream& operator<<(std::ostream& os, const std::set<T>& obj)
 template <class T, class U>
 std::ostream& operator<<(std::ostream& os, const std::map<T,U>& obj)
 {
-    typedef std::map<T,U> MAPTYPE;
+    typedef typename std::map<T,U> MAPTYPE;
     os << "{";
-    for ( MAPTYPE::value_type val : obj )
+    for ( typename MAPTYPE::value_type val : obj )
     {
         os << '(' << val.first << ',' << val.second << ")";
     }

@@ -15,29 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-// Copyright 2013,2014 Eric Raijmakers.
-//
-// This file is part of Vidiot.
-//
-// Vidiot is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Vidiot is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
-
 #include "Application.h"
 
 #include "CommandLine.h"
 #include "Config.h"
 #include "Dialog.h"
-#include "IEventLoopListener.h"
 #include "Render.h"
 #include "SubversionRevision.h"
 #include "UtilInitAvcodec.h"
@@ -57,7 +39,8 @@ DEFINE_EVENT(EVENT_IDLE_TRIGGER,  EventIdleTrigger, bool);
 
 struct wxLogImpl : public wxLog
 {
-    virtual void DoLog(wxLogLevel level, const wxChar *msg, time_t timestamp) override
+// todo this only used for MSDEV?
+    virtual void DoLog(wxLogLevel level, const wxChar *msg, time_t timestamp)
     {
         wxString wxMsg(msg);
         wxString wxLvl("wxLOG_LvlUnknown");
@@ -74,6 +57,35 @@ struct wxLogImpl : public wxLog
         }
 
         Log().get("WX      ") << wxLvl << ' ' << wxMsg;
+    }
+
+    virtual void DoLogRecord(wxLogLevel level, const wxString &msg, const wxLogRecordInfo &info) override
+    {
+        DoLogTextAtLevel(level,msg);
+    }
+
+    virtual void DoLogTextAtLevel(wxLogLevel level, const wxString &msg)
+    {
+        wxString wxMsg(msg);
+        wxString wxLvl("wxLOG_LvlUnknown");
+        switch (level)
+        {
+        case wxLOG_FatalError:    wxLvl = "wxLOG_FatalError"; break;
+        case wxLOG_Error:         wxLvl = "wxLOG_Error"; break;
+        case wxLOG_Warning:       wxLvl = "wxLOG_Warning"; break;
+        case wxLOG_Message:       wxLvl = "wxLOG_Message"; break;
+        case wxLOG_Status:        wxLvl = "wxLOG_Status"; break;
+        case wxLOG_Info:          wxLvl = "wxLOG_Info"; break;
+        case wxLOG_Debug:         wxLvl = "wxLOG_Debug"; break;
+        case wxLOG_Trace:         wxLvl = "wxLOG_Trace"; break;
+        }
+
+        Log().get("WX      ") << wxLvl << ' ' << msg;
+    }
+
+    virtual void DoLogText (const wxString &msg)
+    {
+        Log().get("WX      ") << "wxLOG_Text"<< ' ' << msg;
     }
 };
 

@@ -84,7 +84,7 @@ public:
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
     std::ostream& dump(std::ostream& os) const override;
-    char* getType() const override;
+    const char* getType() const override;
 
     FilePtr getFile() const override;
 

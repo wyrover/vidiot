@@ -35,13 +35,20 @@ namespace gui {
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
 
+    // todo move watcher class to modelproject and remove use of window class here (do that first)
 Watcher::Watcher()
     :   mWatcher(0)
     ,   mWatches()
 {
     VAR_DEBUG(this);
-    gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &Watcher::onOpenProject,           this);
-    gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &Watcher::onCloseProject,          this);
+    //todo remove gui::Window::get().Bind(model::EVENT_OPEN_PROJECT,     &Watcher::onOpenProject,           this);
+    //gui::Window::get().Bind(model::EVENT_CLOSE_PROJECT,    &Watcher::onCloseProject,          this);
+
+    // todo move watcher class to modelproject and remove use of window class here (do that first)
+    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
+    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &Watcher::onProjectAssetRenamed,  this);
 
     start();
 }
@@ -50,10 +57,17 @@ Watcher::~Watcher()
 {
     VAR_DEBUG(this);
 
-    gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,   &Watcher::onOpenProject,            this);
-    gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,  &Watcher::onCloseProject,           this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
+    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
+    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
+    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
 
+    mWatches.clear();
     stop();
+    //gui::Window::get().Unbind(model::EVENT_OPEN_PROJECT,   &Watcher::onOpenProject,            this);
+    //gui::Window::get().Unbind(model::EVENT_CLOSE_PROJECT,  &Watcher::onCloseProject,           this);
+
+    //todo remove stop();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -128,28 +142,29 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Watcher::onOpenProject(model::EventOpenProject &event)
-{
-    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
-    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
-    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
-    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &Watcher::onProjectAssetRenamed,  this);
-
-    event.Skip();
-}
-
-void Watcher::onCloseProject(model::EventCloseProject &event)
-{
-    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
-    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
-    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
-    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
-
-    mWatches.clear();
-    stop();
-
-    event.Skip();
-}
+//void Watcher::onOpenProject(model::EventOpenProject &event)
+//{
+//    // todo move watcher class to modelproject and remove use of window class here (do that first)
+//    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
+//    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
+//    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
+//    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &Watcher::onProjectAssetRenamed,  this);
+//
+//    event.Skip();
+//}
+//
+//void Watcher::onCloseProject(model::EventCloseProject &event)
+//{
+//    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
+//    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
+//    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
+//    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
+//
+//    mWatches.clear();
+//    stop();
+//
+//    event.Skip();
+//}
 
 void Watcher::onProjectAssetAdded(model::EventAddNode &event)
 {
@@ -250,8 +265,19 @@ void Watcher::watch(const model::NodePtr& node)
             nodesToBeTransferred.insert(kv.second.begin(),kv.second.end());
         }
     }
-    mWatches[toBeWatched] = boost::assign::list_of(node);
-    mWatches[toBeWatched].insert(nodesToBeTransferred.begin(),nodesToBeTransferred.end());
+    //mWatches[toBeWatched] = boost::assign::list_of(node);
+    //mWatches[toBeWatched].insert(nodesToBeTransferred.begin(),nodesToBeTransferred.end());
+
+
+
+//    //todo mWatches[toBeWatched] = boost::assign::list_of< std::set < model::NodePtr > >(node);
+//    mWatches[toBeWatched] = NodeSet(); // boost::assign::list_of< std::set < model::NodePtr > >(node);
+//    mWatches[toBeWatched].insert(node);
+//    mWatches[toBeWatched].insert(nodesToBeTransferred.begin(),nodesToBeTransferred.end());
+    NodeSet newset;
+    newset.insert(node);
+    newset.insert(nodesToBeTransferred.begin(),nodesToBeTransferred.end());
+    mWatches[toBeWatched] = newset;
     for ( wxString obsoleteWatch : watchesToBeRemoved )
     {
         mWatches.erase(obsoleteWatch);

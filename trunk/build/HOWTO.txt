@@ -1,6 +1,6 @@
 NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
       <VIDIOT_SRC> is the subdir of that dir in which the sources are.
-      
+
 ================ ENVIRONMENT VARIABLE ================
 * set VIDIOT_DIR=C:\Vidiot (example) system level variable to the absolute
   path containing all sources/builds/included libraries for building
@@ -22,14 +22,14 @@ NOTE: <VIDIOT_DIR> is the dir in which all 'vidiot' work is done.
   - Add <VIDIOT_SRC>\build\VisualStudioAddin\bin\Release to AddIn paths
     via Tools->Options->Addin/macro security
 * Access violations check:
-  - gflags is part of WinDDK or available from 
+  - gflags is part of WinDDK or available from
     http://rxwen.blogspot.ca/2010/04/standalone-windbg-v6120002633.html
   - enable: gflags /p /enable Vidiot.exe /full
   - disable: gflags /p /disable Vidiot.exe
   - Or: use AppVerifier
 
 =================== VLD ===================
-*  http://www.codeproject.com/tools/visualleakdetector.asp 
+*  http://www.codeproject.com/tools/visualleakdetector.asp
 
 =================== CMAKE ===================
 Install cmake into c:\Program Files
@@ -49,19 +49,19 @@ Install ActivePerl via installer
 
 =================== BOOST ===================
 * Download Boost into <VIDIOT_DIR>\boost_1_xx_y
-* Direct boost install: 
+* Direct boost install:
   - Select proper binaries (correct msvc version)
   - Update paths in CMakeLists
 * Compiled boost:
   - cd <VIDIOT_DIR>\boost_1_xx_y
   - bootstrap
   - (MSVC) .\bjam --toolset=msvc --build-type=complete stage
- 
+
 =================== WXWIDGETS ===================
 * Checkout http://svn.wxwidgets.org/svn/wx/wxWidgets/trunk into <VIDIOT_DIR>\wxwidgets_trunk
 * Copy include/wx/msw/setup0.h to setup.h
 * Clean <VIDIOT_DIR>\wxwidgets_trunk\lib\vc_lib (particularly, remove all setup.h files)
-* Apply dcbufcmn.cpp.patch patch to wxBufferedPaintDC 
+* Apply dcbufcmn.cpp.patch patch to wxBufferedPaintDC
   http://trac.wxwidgets.org/ticket/15497
   (without this patch, the 'shift' handling in Timeline::onPaint becomes awkward - use shift begin trim 'to the right' to see the effect of omitting it.)
 * Apply patch to wxFSWatcher
@@ -69,8 +69,6 @@ Install ActivePerl via installer
   http://trac.wxwidgets.org/ticket/13294
 * Apply patch to src/msw/main.cpp : main.cpp.patch
 * (MSVC) build solution Release & Debug
-* Copy build/FindwxWidgets.cmake to C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\FindwxWidgets.cmake
-  (to provide support for wxwidgets 3.0 version)
 
 =================== FFMPEG ===================
 * Nothing required: ffmpeg is part of the source tree.
@@ -86,16 +84,16 @@ Install ActivePerl via installer
 * Configure
 * Unselect all options except
   - link with static runtime
-  - unicode 
+  - unicode
   - use_ds
 * Generate
 * Open solution
 * In preprocessor options: add PA_WDMKS_NO_KSGUID_LIB (both for debug and release)
-* Build  
+* Build
 
 /C++ -> Optimization -> Omit frame pointers = Yes
 C/C++ -> Code Generation -> Runtime library = /MT
-Optional: C/C++ -> Code Generation -> Floating point model = fast 
+Optional: C/C++ -> Code Generation -> Floating point model = fast
 
 =================== SOUNDTOUCH ===================
 * Create folder  <VIDIOT_DIR>\soundtouch_trunk

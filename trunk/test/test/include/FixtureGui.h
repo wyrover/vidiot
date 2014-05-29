@@ -21,7 +21,7 @@
 #include <cxxtest/GlobalFixture.h>
 #include <boost/thread.hpp>
 #include <boost/thread/barrier.hpp>
-#include "IEventLoopListener.h"
+#include "Application.h"
 
 namespace test {
 

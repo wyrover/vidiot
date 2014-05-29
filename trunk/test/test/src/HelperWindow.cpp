@@ -99,7 +99,11 @@ wxCommand* getCurrentCommand()
 
 void BREAK()
 {
-    __asm { int 3 };
+#if (defined _MSC_VER) || (defined __BORLANDC__)
+            __asm { int 3 };
+#elif (defined __GNUC__) && (defined _DEBUG)
+        __asm ("int $0x3");
+#endif
     gui::Window::get().Raise();
 }
 

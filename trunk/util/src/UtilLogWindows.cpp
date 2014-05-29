@@ -17,6 +17,8 @@
 
 #include "UtilLogWindows.h"
 
+#ifdef _MSC_VER
+
 std::ostream& operator<<(std::ostream& os, const EXCEPTION_POINTERS& obj)
 {
 #define LOG_EXCEPTION(code) case code: os << #code;  break
@@ -76,3 +78,5 @@ std::ostream& operator<<(std::ostream& os, const EXCEPTION_POINTERS& obj)
     }
     return os;
 }
+
+#endif

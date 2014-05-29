@@ -39,12 +39,6 @@
 
 namespace gui {
 
-wxBitmap bmpHome      (preview_home_xpm);
-wxBitmap bmpEnd       (preview_end_xpm);
-wxBitmap bmpNext      (preview_next_xpm);
-wxBitmap bmpPrevious  (preview_previous_xpm);
-wxBitmap bmpPausePlay (preview_pauseplay_xpm);
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION METHODS
 //////////////////////////////////////////////////////////////////////////
@@ -61,6 +55,12 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
 ,   mSpeedButton(0)
 ,   mSpeedSliderFrame(0)
 ,   mSpeedSlider(0)
+,   mBmpHome(preview_home_xpm)
+,   mBmpEnd(preview_end_xpm)
+,   mBmpNext(preview_next_xpm)
+,   mBmpPrevious(preview_previous_xpm)
+,   mBmpPausePlay(preview_pauseplay_xpm)
+
 {
     VAR_DEBUG(this);
 
@@ -104,11 +104,11 @@ Player::Player(wxWindow *parent, model::SequencePtr sequence, wxWindow* focus)
     mSpeedButton    = new wxToggleButton(mButtonsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     updateSpeedButton();
 
-    mHomeButton    ->SetBitmap(bmpHome,        wxTOP);
-    mPreviousButton->SetBitmap(bmpPrevious,    wxTOP);
-    mPlayButton    ->SetBitmap(bmpPausePlay,   wxTOP);
-    mNextButton    ->SetBitmap(bmpNext,        wxTOP);
-    mEndButton     ->SetBitmap(bmpEnd,         wxTOP);
+    mHomeButton    ->SetBitmap(mBmpHome,        wxTOP);
+    mPreviousButton->SetBitmap(mBmpPrevious,    wxTOP);
+    mPlayButton    ->SetBitmap(mBmpPausePlay,   wxTOP);
+    mNextButton    ->SetBitmap(mBmpNext,        wxTOP);
+    mEndButton     ->SetBitmap(mBmpEnd,         wxTOP);
 
     mHomeButton     ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onHome,     this);
     mPreviousButton ->Bind(wxEVT_COMMAND_BUTTON_CLICKED,        &Player::onPrevious, this);
@@ -316,20 +316,6 @@ void Player::onSpeed(wxCommandEvent& event)
     mSpeedButton->Bind(wxEVT_LEFT_DOWN,                 &Player::onLeftDown,                 this);
 }
 
-void Player::startEdit()
-{
-    GetSizer()->Hide(mDisplay);
-    GetSizer()->Show(mEdit);
-    GetSizer()->Layout();
-}
-
-void Player::endEdit()
-{
-    GetSizer()->Hide(mEdit);
-    GetSizer()->Show(mDisplay);
-    GetSizer()->Layout();
-    mEdit->show(boost::shared_ptr<wxBitmap>());
-}
 
 void Player::onSpeedSliderUpdate( wxCommandEvent& event )
 {
@@ -379,6 +365,25 @@ void Player::onIdleAfterCloseSpeedSliderFrame(wxIdleEvent& event)
 void Player::updateSpeedButton()
 {
     mSpeedButton->SetLabel(wxString::Format("%d%%", mDisplay->getSpeed()));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// HELPER METHODS
+//////////////////////////////////////////////////////////////////////////
+
+void Player::startEdit()
+{
+    GetSizer()->Hide(mDisplay);
+    GetSizer()->Show(mEdit);
+    GetSizer()->Layout();
+}
+
+void Player::endEdit()
+{
+    GetSizer()->Hide(mEdit);
+    GetSizer()->Show(mDisplay);
+    GetSizer()->Layout();
+    mEdit->show(boost::shared_ptr<wxBitmap>());
 }
 
 //////////////////////////////////////////////////////////////////////////

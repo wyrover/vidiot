@@ -113,7 +113,7 @@ TrackPtr Clip::getTrack()
 
 bool Clip::hasTrack() const
 {
-    return const_cast<Clip*>(this)->getTrack();
+    return  static_cast<bool>(const_cast<Clip*>(this)->getTrack());
 }
 
 IClipPtr Clip::getNext()
@@ -167,7 +167,8 @@ void Clip::setSelected(bool selected)
     {
         mSelected = selected;
         ASSERT(wxThread::IsMain()); // ProcessEvent in another thread (for instance, the rendering thread) causes threading issues: View classes in timeline may only be updated from the GUI thread.
-        ProcessEvent(EventSelectClip(selected));
+        EventSelectClip event(selected);
+        ProcessEvent(event);
     }
 }
 
@@ -179,7 +180,8 @@ bool Clip::getDragged() const
 void Clip::setDragged(bool dragged)
 {
     mDragged = dragged;
-    ProcessEvent(EventDragClip(dragged));
+    EventDragClip event(dragged);
+    ProcessEvent(event);
 }
 
 pts Clip::getGenerationProgress() const
@@ -199,7 +201,8 @@ void Clip::setGenerationProgress(pts progress)
     if (wxThread::IsMain() && mGeneratedPts != progress)
     {
         mGeneratedPts = progress;
-        ProcessEvent(DebugEventRenderProgress(mGeneratedPts));
+        DebugEventRenderProgress event(mGeneratedPts);
+        ProcessEvent(event);
     }
 }
 
@@ -250,7 +253,7 @@ TransitionPtr Clip::getOutTransition() const
     return model::TransitionPtr();
 }
 
-pts Clip::getPerceivedLength() const 
+pts Clip::getPerceivedLength() const
 {
     pts left = 0;
     model::TransitionPtr inTransition = getInTransition();

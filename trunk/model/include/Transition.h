@@ -75,7 +75,7 @@ public:
     std::set<pts> getCuts(const std::set<IClipPtr>& exclude = std::set<IClipPtr>()) const override;
 
     virtual std::ostream& dump(std::ostream& os) const override;
-    virtual char* getType() const override;
+    virtual const char* getType() const override;
 
     FilePtr getFile() const override;
 
@@ -84,13 +84,13 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     /// \return position where the two transitioned clips are 'touching'
-    pts getTouchPosition() const;   
+    pts getTouchPosition() const;
 
     /// \see mFramesLeft
-    boost::optional<pts> getLeft() const;    
-    
+    boost::optional<pts> getLeft() const;
+
     /// \see mFramesRight
-    boost::optional<pts> getRight() const;   
+    boost::optional<pts> getRight() const;
 
     /// Make the 'in' clip that is to be used for rendering data
     /// This takes the previous clip in the track, clones it, and adjust the
@@ -131,25 +131,25 @@ private:
     ///     Unset optional in case this is an out-only transition.
     ///
     /// Crossfading transition:
-    ///     Number of frames visible (from user point of view) 
+    ///     Number of frames visible (from user point of view)
     ////    to the left of the cut between the two clips.
-    ///  
+    ///
     /// Can be a 'set' optional with value '0':
     ///     Left clip IS part of the transition but from a user point
     ///     of view the transition only overlaps with the clip to the right.
-    boost::optional<pts> mFramesLeft;    
-    
+    boost::optional<pts> mFramesLeft;
+
     /// In-only transition:
     ///     Unset optional in case this is an out-only transition.
     ///
     /// Crossfading transition:
-    ///     Number of frames visible (from user point of view) 
+    ///     Number of frames visible (from user point of view)
     ////    to the right of the cut between the two clips.
-    ///  
+    ///
     /// Can be a 'set' optional with value '0':
     ///     Right clip IS part of the transition but from a user point
     ///     of view the transition only overlaps with the clip to the left.
-    boost::optional<pts> mFramesRight;   
+    boost::optional<pts> mFramesRight;
 
     //////////////////////////////////////////////////////////////////////////
     // LOGGING

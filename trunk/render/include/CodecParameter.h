@@ -205,7 +205,7 @@ struct CodecParameterInt
     :   public CodecParameter<MOSTDERIVED,IDTYPE,int>
 {
     CodecParameterInt()
-        :   CodecParameter(ID)
+        :   CodecParameter<MOSTDERIVED,IDTYPE,int>(ID)
     {
     }
 
@@ -217,29 +217,29 @@ struct CodecParameterInt
     {
         mChangeListener = listener;
         wxSpinCtrl* spin = new wxSpinCtrl(parent);
-        spin->SetRange(getMinimum(),getMaximum());
-        spin->SetValue(getValue());
-        mWindow = spin;
-        mWindow->Enable(true);
+        spin->SetRange(this->getMinimum(),this->getMaximum());
+        spin->SetValue(this->getValue());
+        this->mWindow = spin;
+        this->mWindow->Enable(true);
         spin->Bind(wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
-        return mWindow;
+        return this->mWindow;
     }
     void destroyWidget() override
     {
         mChangeListener = 0;
-        ASSERT(mWindow);
-        wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(mWindow);
+        ASSERT(this->mWindow);
+        wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(this->mWindow);
         spin->Unbind(wxEVT_COMMAND_SPINCTRL_UPDATED, &CodecParameterInt::onSpinChanged, this);
-        mWindow->Destroy();
-        mWindow = 0;
+        this->mWindow->Destroy();
+        this->mWindow = 0;
     }
 
     void onSpinChanged(wxSpinEvent& event)
     {
-        wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(mWindow);
+        wxSpinCtrl* spin = static_cast<wxSpinCtrl*>(this->mWindow);
         int value = spin->GetValue(); // Do not use event.GetPosition(), gives strange results
-        setValue(value);
-        mChangeListener->onParameterChange();
+        this->setValue(value);
+        this->mChangeListener->onParameterChange();
         event.Skip();
     }
 
@@ -258,12 +258,12 @@ struct CodecParameterEnum
     :   public CodecParameter<MOSTDERIVED,IDTYPE,int>
 {
     CodecParameterEnum()
-        :   CodecParameter(ID)
+        :   CodecParameter<MOSTDERIVED,IDTYPE,int>(ID)
     {
         for ( MappingType::left_reference item : NAMEMAPPING.left )
         {
-            if (item.first < getMinimum()) { setMinimum(item.first); }
-            if (item.first > getMaximum()) { setMaximum(item.first); }
+            if (item.first < this->getMinimum()) { this->setMinimum(item.first); }
+            if (item.first > this->getMaximum()) { this->setMaximum(item.first); }
         }
     }
 
@@ -273,27 +273,27 @@ struct CodecParameterEnum
 
     wxWindow* makeWidget(wxWindow *parent, ICodecParameterChangeListener* listener) override
     {
-        mChangeListener = listener;
-        EnumSelector<int>* selector = new EnumSelector<int>(parent, NAMEMAPPING, getDefault());
+        this->mChangeListener = listener;
+        EnumSelector<int>* selector = new EnumSelector<int>(parent, NAMEMAPPING, this->getDefault());
         selector->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
-        mWindow = selector;
-        mWindow->Enable(true);
-        return mWindow;
+        this->mWindow = selector;
+        this->mWindow->Enable(true);
+        return this->mWindow;
     }
     void destroyWidget() override
     {
-        mChangeListener = 0;
-        EnumSelector<int>* selector = static_cast<EnumSelector<int>*>(mWindow);
+        this->mChangeListener = 0;
+        EnumSelector<int>* selector = static_cast<EnumSelector<int>*>(this->mWindow);
         selector->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &CodecParameterEnum::onChoiceChanged, this);
-        mWindow->Destroy();
-        mWindow = 0;
+        this->mWindow->Destroy();
+        this->mWindow = 0;
     }
 
     void onChoiceChanged(wxCommandEvent& event)
     {
-        EnumSelector<int>* selector = static_cast< EnumSelector<int>* >(mWindow);
-        setValue(selector->getValue());
-        mChangeListener->onParameterChange();
+        EnumSelector<int>* selector = static_cast< EnumSelector<int>* >(this->mWindow);
+        this->setValue(selector->getValue());
+        this->mChangeListener->onParameterChange();
         event.Skip();
     }
 

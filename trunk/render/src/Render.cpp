@@ -318,7 +318,11 @@ void RenderWork::generate()
     ASSERT_NONZERO(context);
     wxString filename = mRender->getFileName().GetFullPath();
     ASSERT_LESS_THAN_EQUALS(sizeof(filename.c_str()),sizeof(context->filename));
+    #ifdef _MSC_VER
     _snprintf(context->filename, sizeof(context->filename), "%s", filename.c_str());
+    #else
+    strncpy(context->filename, filename.c_str().AsChar(), sizeof(context->filename));
+    #endif
 
     bool storeAudio = outputformat->storeAudio();
     bool storeVideo = outputformat->storeVideo();
@@ -589,7 +593,7 @@ void RenderWork::generate()
                         numberOfWrittenOutputAudioFrames++;
                     }
                     // else Packet possibly buffered inside codec
-                    delete audioPacket; 
+                    delete audioPacket;
                 }
                 else
                 {

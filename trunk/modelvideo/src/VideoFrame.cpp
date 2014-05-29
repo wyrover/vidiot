@@ -193,24 +193,11 @@ void VideoFrame::draw(wxGraphicsContext* gc) const
 
 std::ostream& operator<<(std::ostream& os, const VideoFrame& obj)
 {
-    os  << &obj                     << '|'
-        << obj.mPts                 << '|'
-        << obj.mParameters          << '|'
-        << obj.mForceKeyFrame       << '|'
-        << obj.mLayers;
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const VideoFramePtr obj)
-{
-    if (obj)
-    {
-        os << *obj;
-    }
-    else
-    {
-        os << "0";
-    }
+//    os  // todo << &obj                     << '|'
+//        << obj.mPts                 << '|'
+//        << obj.mParameters          << '|'
+//        << obj.mForceKeyFrame       << '|'
+//        << obj.mLayers;
     return os;
 }
 

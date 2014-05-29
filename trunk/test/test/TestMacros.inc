@@ -15,38 +15,40 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
+# todo rename to .cmake file (and place in 'build?')
 set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 INCLUDE(../test/CxxTestMacros.inc)
 
 INCLUDE_DIRECTORIES(AFTER
-    ../pch/include
-    include
+#    ${CMAKE_CURRENT_SOURCE_DIR}/../pch/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../test/include
+    include
 )
 
 macro(AddTests TestProjectName)
     file(GLOB TestHeaders ${TESTDIR}/*/*.h)
     file(GLOB TestSources ${TESTDIR}/*/*.cpp)
 
-    if (${TestProjectName} STREQUAL "testauto")
-        FILE(GLOB pch_include ${TESTDIR}/../pch/include/*.h)
-        FILE(GLOB pch_src ${TESTDIR}/../pch//src/*.cpp)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FIPrecompiledTest.h ")
-    endif (${TestProjectName} STREQUAL "testauto")
+    enable_unity_build(${TestProjectName} TestSources TEST_AUTO_UNITY_CPP_FILES)
 
-    ENABLE_UNITY_BUILD(${TestProjectName} TestSources TEST_AUTO_UNITY_CPP_FILES)
+    AddCxxTest(${TestProjectName} ${TEST_AUTO_UNITY_CPP_FILES} ${TestHeaders} ${TestSources})
 
-    AddCxxTest(${TestProjectName} ${pch_include} ${TEST_AUTO_UNITY_CPP_FILES} ${pch_src} ${TestHeaders} ${TestSources})
+    reuse_precompiled_header (${TestProjectName} "${CMAKE_CURRENT_SOURCE_DIR}/../pch" "PrecompiledTest")
 
-    if (${TestProjectName} STREQUAL "testauto")
-        if (MSVC)
-            set_target_properties(${TestProjectName} PROPERTIES COMPILE_FLAGS "/YuPrecompiledTest.h -Zm176")
-            set_source_files_properties(${TESTDIR}/../pch/src/PrecompiledTest.cpp PROPERTIES COMPILE_FLAGS "/YcPrecompiledTest.h")
-        endif(MSVC)
-        SOURCE_GROUP("pch\\include" REGULAR_EXPRESSION ../pch/include/.*)
-        SOURCE_GROUP("pch\\src" REGULAR_EXPRESSION ../pch/src/.*)
-    endif (${TestProjectName} STREQUAL "testauto")
+    if (MSVC)
+  #          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FI${pch_file} ")
+  #          #set_target_properties(${TestProjectName} PROPERTIES COMPILE_FLAGS "/Yu${pch_file} -Zm176")
+        else ()
+  #          set_target_properties(${TestProjectName} PROPERTIES COMPILE_FLAGS "-include ${pch_file}")
+           
+            #todo also for MSVC??? Avoid if?
+            SET_TARGET_PROPERTIES(${TestProjectName} PROPERTIES OUTPUT_NAME ${TestProjectName}.run) #rename to avoid having the same name as the folder
+        endif ()
+
+        # todo include pch files in generic test project:
+#        SOURCE_GROUP("pch\\include" REGULAR_EXPRESSION ../pch/include/.*)
+#        SOURCE_GROUP("pch\\src" REGULAR_EXPRESSION ../pch/src/.*)
 
     SOURCE_GROUP("generated" REGULAR_EXPRESSION ${TestRunnerDirectory}/.*)
     SOURCE_GROUP("src" REGULAR_EXPRESSION ${TESTDIR}/src/.*)
@@ -54,7 +56,7 @@ macro(AddTests TestProjectName)
 
     TARGET_LINK_LIBRARIES(${TestProjectName} test vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
 
-    COPY_MSVC_PROJECT_USER_FILE(${TestProjectName})
+    copy_msvc_project_user_file(${TestProjectName})
 
     # Copy icons to output folder
     add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Debug/icons)

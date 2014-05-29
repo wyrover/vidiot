@@ -48,12 +48,12 @@ ClipTypeAsserter::~ClipTypeAsserter()
 {
 };
 
-void ClipTypeAsserter::ClipTypeMismatch(const type_info& expectedtype)
+void ClipTypeAsserter::ClipTypeMismatch(const std::type_info& expectedtype)
 {
     int TrackNumber = mTrackNumber;
     int ClipNumber = mClipNumber;
     std::string TrackType = mVideo ? "VIDEO" : "AUDIO";
-    auto convert = [](const type_info& info) -> std::string
+    auto convert = [](const std::type_info& info) -> std::string
     {
         std::string theName = info.name();
         return theName.substr(theName.find_last_of(':') + 1);

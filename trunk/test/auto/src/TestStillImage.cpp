@@ -75,8 +75,7 @@ void TestStillImage::testUndo()
 
     wxString sFolder1( "Folder1" );
     model::FolderPtr folder1 = addFolder( sFolder1 );
-    wxFileName TestFilesPath = wxFileName(SOURCE_ROOT,"");
-    TestFilesPath.AppendDir("test");
+    wxFileName TestFilesPath = getTestPath();
     TestFilesPath.AppendDir("filetypes_image");
     ASSERT(TestFilesPath.IsDir());
     ASSERT(TestFilesPath.DirExists());

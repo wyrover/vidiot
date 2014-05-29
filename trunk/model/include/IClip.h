@@ -163,7 +163,7 @@ public:
     virtual std::ostream& dump(std::ostream& os) const = 0;
 
     /// \return a five character long string representation of the clip type, for logging.
-    virtual char* getType() const = 0;
+    virtual const char* getType() const = 0;
 
     //////////////////////////////////////////////////////////////////////////
     // ACCESS DATA GENERATOR

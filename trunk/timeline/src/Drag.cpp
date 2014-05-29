@@ -318,7 +318,7 @@ void Drag::move(wxPoint position)
     }
 
     // Shift if required
-    bool shift = mShift;
+    bool shift = static_cast<bool>(mShift);
     determineShift();
     if (mShift || shift)
     {

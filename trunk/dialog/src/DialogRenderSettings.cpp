@@ -75,6 +75,12 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 {
     VAR_DEBUG(this);
 
+    wxIconBundle icons; // todo make helper for geticonbundle
+    wxFileName iconfile(Config::getExeDir(),"movie_all.ico"); // todo extend utilpath to make filenames directly (with multiple path parts)
+    iconfile.AppendDir("icons");
+    icons.AddIcon(iconfile.GetFullPath()); // Icon in title bar of window
+    SetIcons(icons);
+
     mLength = mSequence->getLength();
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -220,8 +226,8 @@ void DialogRenderSettings::onFileButtonPressed(wxCommandEvent& event)
         filetypes << format->getLongName() << " (" << extensionlist << ")|" << extensionlist;
     }
 
-    wxString defaultpath = mNew->getFileName().IsOk() ? mNew->getFileName().GetPath() : wxEmptyString;
-    wxString defaultfile = mNew->getFileName().IsOk() ? mNew->getFileName().GetFullName() : wxEmptyString;
+    wxString defaultpath = mNew->getFileName().IsOk() ? mNew->getFileName().GetPath() : "";
+    wxString defaultfile = mNew->getFileName().IsOk() ? mNew->getFileName().GetFullName() : "";
     wxString defaultextension = mNew->getFileName().IsOk() ? mNew->getFileName().GetExt() : Config::ReadString(Config::sPathDefaultExtension);
     wxString selected = gui::Dialog::get().getSaveFile(_("Select output file"),filetypes,defaultpath,defaultfile,defaultextension);
 

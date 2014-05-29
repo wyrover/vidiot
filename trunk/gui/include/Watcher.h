@@ -21,11 +21,12 @@
 inline bool operator<(wxFileName l, const wxFileName& r) { return l.GetFullPath() < r.GetFullPath(); }
 
 namespace model {
-    class EventOpenProject;
-    class EventCloseProject;
+    //todo remove class EventOpenProject;
+    //class EventCloseProject;
     class EventAddNode;
     class EventAddNodes;
     class EventRemoveNode;
+    class EventRemoveNodes;
     class EventRenameNode;
 }
 
@@ -82,8 +83,8 @@ private:
     // PROJECT EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void onOpenProject(model::EventOpenProject &event);
-    void onCloseProject(model::EventCloseProject &event);
+    //void onOpenProject(model::EventOpenProject &event);
+    //void onCloseProject(model::EventCloseProject &event);
     void onProjectAssetAdded(model::EventAddNode &event);
     void onProjectAssetsAdded(model::EventAddNodes &event);
     void onProjectAssetRemoved(model::EventRemoveNode &event);

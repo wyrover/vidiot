@@ -167,7 +167,11 @@ void FixtureGui::mainThread()
     util::thread::setCurrentThreadName("Main");
     wxApp::SetInstance(new gui::Application(this));
     int argc = 1;
+#ifdef _MSC_VER
     char* argv = _strdup(gui::Application::sTestApplicationName);
+#else
+    char* argv = strdup(gui::Application::sTestApplicationName);
+#endif
     wxEntryStart(argc, &argv);
 	free(argv);
 

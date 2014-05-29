@@ -18,15 +18,17 @@
 #ifndef PRECOMPILED_TEST_H
 #define PRECOMPILED_TEST_H
 
-#include "FixtureProject.h"
-#include "HelperTestSuite.h"
-#include "SuiteCreator.h"
-#include "UtilLog.h"
-#include <boost/shared_ptr.hpp>
+#include "Precompiled.h"
+
 #include <cxxtest/TestSuite.h>
 #include <cxxtest/TestTracker.h>
-#include <list>
-#include <ostream>
+//#include <list> // todo why not in precompiled?
+#include <typeinfo>
 #include <wx/uiaction.h>
+
+#include "FixtureProject.h" // todo these in precompiled testauto only?
+#include "HelperTestSuite.h" // todo cleanup includes in cpp files in testaudo and test as a result of including Precompiled.h
+#include "SuiteCreator.h"
+#include "UtilLog.h"
 
 #endif
