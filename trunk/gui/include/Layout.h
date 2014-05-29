@@ -66,6 +66,7 @@ public:
     const wxPen PreviewBackgroundPen;
     const wxBrush PreviewBackgroundBrush;
     const wxColour TimelineRenderInProgressColour;
+    const wxBrush TimeScaleBackgroundBrush;
     const wxPen TimeScaleDividerPen;
     const wxColour TimeScaleFontColour;
     const wxPen CursorPen;

@@ -108,17 +108,26 @@ void Machine::start()
 // BOOST STATECHART OVERRIDES
 //////////////////////////////////////////////////////////////////////////
 
+#ifdef _MSC_VER
+    static int __state_prefix_length = std::string("struct gui::timeline::state::").size();
+#else
+    static int __state_prefix_length = std::string("gui::timeline::state::").size();
+#endif
+
 void Machine::unconsumed_event( const boost::statechart::event_base & evt )
 {
-    LOG_DEBUG << "[state=" << typeid( *state_begin() ).name() << "][event=" << typeid( evt ).name() << "]";
+    LOG_DEBUG << "[state="  <<  boost::units::detail::demangle(typeid( *state_begin() ).name()).substr(__state_prefix_length)
+              << "][event=" <<  boost::units::detail::demangle(typeid( evt ).name()).substr(__state_prefix_length)
+              << "]";
     boost::statechart::state_machine< Machine, Starting >::unconsumed_event(evt);
 }
 
 void  Machine::process_event(const boost::statechart::event_base & evt )
 {
-    static int pos = std::string("struct gui::timeline::state::").size();
     boost::statechart::state_machine< Machine, Starting >::process_event(evt);
-    LOG_INFO <<  "[event=" << std::string(typeid( evt ).name()).substr(pos) << "][newstate=" << (state_begin() == state_end() ? "???" : std::string(typeid( *state_begin() ).name()).substr(pos)) << "]";
+    LOG_INFO <<  "[event="    <<  boost::units::detail::demangle(typeid( evt ).name()).substr(__state_prefix_length)
+             << "][newstate=" << (state_begin() == state_end() ? std::string("???") :  boost::units::detail::demangle(typeid( *state_begin() ).name()).substr(__state_prefix_length))
+             << "]";
 }
 
 //////////////////////////////////////////////////////////////////////////
