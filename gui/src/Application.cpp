@@ -99,6 +99,7 @@ Application::Application(test::IEventLoopListener* eventLoopListener)
     :   wxApp()
     ,   IAssert()
     ,   mEventLoopListener(eventLoopListener)
+    ,   mEventLoopStarted(false)
     ,   mCommandLine(boost::make_shared<CommandLine>())
 {
     // NOT: wxHandleFatalExceptions(); These are handled via the windows exception filter in Main.cpp
@@ -217,8 +218,8 @@ bool Application::OnInit()
 
     LOG_INFO;
 
+    mEventLoopStarted = false;
     SetTopWindow(new Window());
-    dynamic_cast<Window*>(GetTopWindow())->init();
 
     return true;
 }
@@ -235,6 +236,12 @@ int Application::OnRun()
 void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 {
     LOG_INFO;
+
+    if (!mEventLoopStarted && loop->IsMain())
+    {
+        mEventLoopStarted = true;
+        dynamic_cast<Window*>(GetTopWindow())->init();
+    }
 
     if (mEventLoopListener)
     {

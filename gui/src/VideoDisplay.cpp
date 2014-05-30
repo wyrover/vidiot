@@ -288,9 +288,13 @@ void VideoDisplay::audioBufferThread()
     {
         model::AudioChunkPtr chunk = mSequence->getNextAudio(model::AudioCompositionParameters().setSampleRate(mAudioSampleRate).setNrChannels(mNumberOfAudioChannels));
 
+#ifdef __GNUC__
+        // todo make SoundTouch work under linux (probably caused by wrong sample format, which I fixed to 2 bytes i.s.o. default float)
+        mAudioChunks.push(chunk);
+#else
         if (chunk)
         {
-
+            mAudioChunks.push(chunk);
             // In SoundTouch context a sample is the data for both speakers.
             // In AudioChunk it's the data for one speaker.
             // Soundtouch needs at least 4 * 2 bytes, see RateTransposerInteger::transposeStereo (uses src[3] - which is the fourth sample).
@@ -315,6 +319,7 @@ void VideoDisplay::audioBufferThread()
         {
             mAudioChunks.push(chunk); // Signal end
         }
+#endif
     }
 }
 
@@ -471,14 +476,14 @@ void VideoDisplay::onSize(wxSizeEvent& event)
     int h = mHeight;
     GetClientSize(&w,&h);
 
-    if (w > 0 && h > 0) // With wxGTK sometimes w > 0 and h == 0 (during creation)
+    if (mWidth != w || mHeight != h)
     {
-        if (mWidth != w || mHeight != h)
-        {
-            mWidth = w;
-            mHeight = h;
-            VAR_INFO(mWidth)(mHeight);
+        mWidth = w;
+        mHeight = h;
+        VAR_INFO(mWidth)(mHeight);
 
+        if (mWidth > 0 && mHeight > 0) // With wxGTK sometimes w > 0 and h == 0 (during creation)
+        {
             mBufferBitmap.reset(new wxBitmap(GetSize()));
 
             if (mCurrentVideoFrame)
@@ -492,7 +497,6 @@ void VideoDisplay::onSize(wxSizeEvent& event)
             }
         }
     }
-
 }
 
 void VideoDisplay::onPaint(wxPaintEvent& event)
@@ -514,7 +518,10 @@ void VideoDisplay::onPaint(wxPaintEvent& event)
 
     if (mCurrentBitmap)
     {
-        dc->DrawBitmap(*mCurrentBitmap,0,0);
+        // Don't use DrawBitmap since this gives wrong output when using wxGTK.
+        wxMemoryDC dcBmp;
+        dcBmp.SelectObject(*mCurrentBitmap);
+        dc->Blit(0, 0, mCurrentBitmap->GetWidth(), mCurrentBitmap->GetHeight(), &dcBmp, 0, 0);
     }
     else
     {

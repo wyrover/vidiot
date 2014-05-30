@@ -24,6 +24,11 @@ NOTE 2: Virtualbox hdd needs large HDD (used 20 GBytes)
 * cd $HOME ; mkdir Vidiot
 * In CodeBlocks set line endings to CR LF (Settings -> Editor -> Line Ending)
 
+* Sublime-text
+  sudo add-apt-repository ppa:webupd8team/sublime-text-3
+  sudo apt-get update
+  sudo apt-get install sublime-text-installer
+
 =================== VIDIOT ===================
 cd $HOME/Vidiot
 mkdir vidiot_trunk

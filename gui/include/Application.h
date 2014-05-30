@@ -124,6 +124,7 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     test::IEventLoopListener* mEventLoopListener;
+    bool mEventLoopStarted;
     boost::condition_variable mConditionIdle;
     boost::mutex mMutexIdle;
     boost::shared_ptr<CommandLine> mCommandLine;
