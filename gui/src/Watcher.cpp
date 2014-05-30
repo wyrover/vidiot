@@ -142,30 +142,6 @@ void Watcher::onChange(wxFileSystemWatcherEvent& event)
 // PROJECT EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-//void Watcher::onOpenProject(model::EventOpenProject &event)
-//{
-//    // todo move watcher class to modelproject and remove use of window class here (do that first)
-//    gui::Window::get().Bind(model::EVENT_ADD_NODE,     &Watcher::onProjectAssetAdded,    this);
-//    gui::Window::get().Bind(model::EVENT_ADD_NODES,    &Watcher::onProjectAssetsAdded,   this);
-//    gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &Watcher::onProjectAssetRemoved,  this);
-//    gui::Window::get().Bind(model::EVENT_RENAME_NODE,  &Watcher::onProjectAssetRenamed,  this);
-//
-//    event.Skip();
-//}
-//
-//void Watcher::onCloseProject(model::EventCloseProject &event)
-//{
-//    gui::Window::get().Unbind(model::EVENT_ADD_NODE,       &Watcher::onProjectAssetAdded,    this);
-//    gui::Window::get().Unbind(model::EVENT_ADD_NODES,      &Watcher::onProjectAssetsAdded,   this);
-//    gui::Window::get().Unbind(model::EVENT_REMOVE_NODE,    &Watcher::onProjectAssetRemoved,  this);
-//    gui::Window::get().Unbind(model::EVENT_RENAME_NODE,    &Watcher::onProjectAssetRenamed,  this);
-//
-//    mWatches.clear();
-//    stop();
-//
-//    event.Skip();
-//}
-
 void Watcher::onProjectAssetAdded(model::EventAddNode &event)
 {
     watch( event.getValue().getChild() );

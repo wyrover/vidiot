@@ -378,6 +378,11 @@ void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 {
     ItemAdded(wxDataViewItem(0), wxDataViewItem(model::Project::get().getRoot()->id()));
 
+
+    // Without the following statement, upon auto-loading a document, the wxGTK version
+    // does not show any initial nodes under the project node (the topmost visible node).
+    onProjectAssetsAdded(model::EventAddNodes(model::ParentAndChildren(model::Project::get().getRoot(), model::Project::get().getRoot()->getChildren())));
+
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
     gui::Window::get().Bind(model::EVENT_ADD_NODES,    &ProjectViewModel::onProjectAssetsAdded,    this);
     gui::Window::get().Bind(model::EVENT_REMOVE_NODE,  &ProjectViewModel::onProjectAssetRemoved,   this);
