@@ -27,6 +27,7 @@
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
 #include "UtilStackWalker.h"
+#include "UtilThread.h"
 #include "VidiotVersion.h"
 #include "Window.h"
 #include <wx/cmdline.h>
@@ -239,6 +240,7 @@ void Application::OnEventLoopEnter(wxEventLoopBase* loop)
 
     if (!mEventLoopStarted && loop->IsMain())
     {
+        util::thread::setCurrentThreadName("Main");
         mEventLoopStarted = true;
         dynamic_cast<Window*>(GetTopWindow())->init();
     }
@@ -270,10 +272,7 @@ void Application::OnAssertFailure(const wxChar *file, int Line, const wxChar *fu
     wxString Message(message);
     VAR_ERROR(File)(Line)(Function)(Condition)(Message);
 
-    if (wxIsDebuggerRunning())
-    {
-        FATAL(Message);
-    }
+    breakIntoDebugger();
     Dialog::get().getDebugReport(true, wxThread::IsMain());
 }
 
@@ -297,6 +296,7 @@ bool Application::OnExceptionInMainLoop()
     {
         LOG_ERROR << "unknown exception type";
     }
+    breakIntoDebugger();
     Dialog::get().getDebugReport();
     return true; // Continue the main loop, in order to be able to show the crash dialog
 }
@@ -324,6 +324,7 @@ void Application::OnUnhandledException()
         LOG_ERROR << "unknown exception type";
         Dialog::get().getDebugReport();
     }
+    breakIntoDebugger();
     Dialog::get().getDebugReport();
 }
 
@@ -331,6 +332,7 @@ void Application::OnFatalException()
 {
     LOG_ERROR;
     LOG_STACKTRACE;
+    breakIntoDebugger();
     Dialog::get().getDebugReport();
 }
 

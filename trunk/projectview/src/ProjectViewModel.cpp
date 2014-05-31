@@ -172,12 +172,12 @@ void ProjectViewModel::GetValue( wxVariant &variant, const wxDataViewItem &wxIte
             model::FilePtr file = boost::dynamic_pointer_cast<model::File>(node);
             if (file)
             {
-                variant = wxDateTime(file->getLastModified());
+                variant = wxDateTime(file->getLastModified()).Format();
                 return;
             }
             else
             {
-                variant = wxString("");
+                variant = wxEmptyString;
                 return;
             }
         }
@@ -255,20 +255,31 @@ int ProjectViewModel::Compare(const wxDataViewItem& item1, const wxDataViewItem&
             }
         case sModifiedColumn:
             {
-                wxDateTime dt1 = value1.GetDateTime();
-                wxDateTime dt2 = value2.GetDateTime();
-                if (dt1.IsEarlierThan(dt2))
-                {
-                    result = -1;
-                }
-                else if (dt1.IsLaterThan(dt2))
-                {
-                    result = 1;
-                }
+                wxString v1 = value1.GetString();
+                wxString v2 = value2.GetString();
+                bool v1empty = v1.IsSameAs(wxEmptyString);
+                bool v2empty = v2.IsSameAs(wxEmptyString);
+                if      (v1empty && v2empty) { result =  0; }
+                else if (v1empty)            { result =  1; }
+                else if (v2empty)            { result = -1; }
                 else
                 {
-                    result = 0;
+                    wxDateTime dt1;
+                    wxDateTime dt2;
+                    bool ok1 = dt1.ParseFormat(v1,wxDefaultDateTimeFormat);
+                    bool ok2 = dt2.ParseFormat(v2,wxDefaultDateTimeFormat);
+                    if      (!ok1 && !ok2)   { result =  0; }
+                    else if (!ok1)           { result =  1; }
+                    else if (!ok2)           { result = -1; }
+                    else
+                    {
+                        // Both contain date
+                        if      (dt1.IsEarlierThan(dt2)){ result = -1; }
+                        else if (dt1.IsLaterThan(dt2))  { result =  1; }
+                        else                            { result =  0; }
+                    }
                 }
+
                 break;
             }
         default:
@@ -381,7 +392,8 @@ void ProjectViewModel::onOpenProject(model::EventOpenProject &event)
 
     // Without the following statement, upon auto-loading a document, the wxGTK version
     // does not show any initial nodes under the project node (the topmost visible node).
-    onProjectAssetsAdded(model::EventAddNodes(model::ParentAndChildren(model::Project::get().getRoot(), model::Project::get().getRoot()->getChildren())));
+    model::EventAddNodes nodesEvent(model::ParentAndChildren(model::Project::get().getRoot(), model::Project::get().getRoot()->getChildren()));
+    onProjectAssetsAdded(nodesEvent);
 
     gui::Window::get().Bind(model::EVENT_ADD_NODE,     &ProjectViewModel::onProjectAssetAdded,     this);
     gui::Window::get().Bind(model::EVENT_ADD_NODES,    &ProjectViewModel::onProjectAssetsAdded,    this);

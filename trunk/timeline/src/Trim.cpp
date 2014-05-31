@@ -233,10 +233,10 @@ void Trim::start()
         }
         mPreviewVideoClip->maximize();
 
-        mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
-        mDc.SetPen(Layout::get().PreviewBackgroundPen);
         mBitmapSingle = boost::make_shared<wxBitmap>(playerSize);
         mDc.SelectObject(*mBitmapSingle);
+        mDc.SetBrush(Layout::get().PreviewBackgroundBrush);
+        mDc.SetPen(Layout::get().PreviewBackgroundPen);
         mDc.DrawRectangle(wxPoint(0,0),mDc.GetSize());
         if (mAdjacentBitmap)
         {
@@ -276,6 +276,7 @@ void Trim::update()
     }
 
     getTimeline().endTransaction();
+    getTimeline().Refresh();
     getTimeline().Update();
 }
 

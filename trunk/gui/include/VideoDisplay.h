@@ -81,7 +81,7 @@ private:
     int mSpeed;
 
     /// If set, indicates that video and audio buffers must end.
-    bool mAbortThreads;
+    std::atomic<bool> mAbortThreads;
 
     /// true if there is currently a sequence being played.
     bool mPlaying;
