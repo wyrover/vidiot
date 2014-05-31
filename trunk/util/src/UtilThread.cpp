@@ -20,6 +20,10 @@
 #include "UtilEvent.h"
 #include "UtilSelf.h"
 
+#ifdef __GNUC__
+#include <sys/prctl.h>
+#endif
+
 namespace util { namespace thread {
 
 class RunInMainThread;
@@ -136,6 +140,8 @@ void setCurrentThreadName(const char* name)
         {
         }
     }
+#else
+    prctl(PR_SET_NAME,name,0,0,0);
 #endif
 }
 
