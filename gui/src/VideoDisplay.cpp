@@ -57,7 +57,7 @@ static int portaudio_callback( const void *inputBuffer, void *outputBuffer,
         else                                      { LOG_WARNING << "Unknown PaStreamCallbackFlags (" << static_cast<long>(statusFlags) << ")"; }
     }
     bool cont = static_cast<VideoDisplay*>(userData)->audioRequested(outputBuffer, framesPerBuffer, timeInfo->outputBufferDacTime);
-    return cont ? 0 : paComplete;
+    return cont ? paContinue : paAbort;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ VideoDisplay::VideoDisplay(wxWindow *parent, model::SequencePtr sequence)
 ,   mStartPts(0)
 ,   mNumberOfAudioChannels(model::Properties::get().getAudioNumberOfChannels())
 ,   mAudioSampleRate(model::Properties::get().getAudioFrameRate())
-,   mSkipFrames(0)
+,   mSkipFrames(0) // todo use std::atomic for all thread sync booleans/ints
 {
     VAR_DEBUG(this);
 
@@ -179,6 +179,11 @@ void VideoDisplay::stop()
     ASSERT(wxThread::IsMain());
 
     mAbortThreads = true; // Stop getting new video/audio data
+
+#ifdef __GNUC__
+    //todo get hangup if I do abortstream and closestream immediately after timer.stop....
+    boost::this_thread::sleep(boost::posix_time::milliseconds(250));
+#endif
 
     if (mPlaying)
     {
@@ -362,7 +367,7 @@ bool VideoDisplay::audioRequested(void *buffer, const unsigned long& frames, dou
         remainingSamples -= nSamples;
         out += nSamples;
     }
-    return true;
+    return !mAbortThreads;
 }
 
 //////////////////////////////////////////////////////////////////////////

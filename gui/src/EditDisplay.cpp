@@ -112,7 +112,9 @@ void EditDisplay::OnPaint(wxPaintEvent& event)
         {
             dc.DrawRectangle( 0, mCurrentBitmap->GetHeight(), mWidth, mHeight - mCurrentBitmap->GetHeight());
         }
-        dc.DrawBitmap(*mCurrentBitmap,wxPoint(0,0));
+        wxMemoryDC dcBmp;
+        dcBmp.SelectObject(*mCurrentBitmap);
+        dc.Blit(wxPoint(0,0),mCurrentBitmap->GetSize(),&dcBmp,wxPoint(0,0));
     }
     else
     {
