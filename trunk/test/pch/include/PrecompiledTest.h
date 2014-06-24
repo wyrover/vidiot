@@ -22,12 +22,11 @@
 
 #include <cxxtest/TestSuite.h>
 #include <cxxtest/TestTracker.h>
-//#include <list> // todo why not in precompiled?
 #include <typeinfo>
 #include <wx/uiaction.h>
 
 #include "FixtureProject.h" // todo these in precompiled testauto only?
-#include "HelperTestSuite.h" // todo cleanup includes in cpp files in testaudo and test as a result of including Precompiled.h
+#include "HelperTestSuite.h" // todo cleanup includes in cpp files in testauto and test as a result of including Precompiled.h
 #include "SuiteCreator.h"
 #include "UtilLog.h"
 
