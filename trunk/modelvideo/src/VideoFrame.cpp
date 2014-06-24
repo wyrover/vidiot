@@ -149,13 +149,14 @@ wxBitmapPtr VideoFrame::getBitmap()
 {
     if (!mCachedBitmap)
     {
-        if (mLayers.empty())
+        wxImagePtr image = getImage();
+        if (static_cast<bool>(image))
         {
-            mCachedBitmap.reset(wxBitmapPtr());
+            mCachedBitmap.reset(boost::make_shared<wxBitmap>(*getImage(), 32));
         }
         else
         {
-            mCachedBitmap.reset(boost::make_shared<wxBitmap>(*getImage(), 32));
+            mCachedBitmap.reset(wxBitmapPtr());
         }
     }
     return *mCachedBitmap;
