@@ -153,6 +153,10 @@ void TrackView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) co
         {
             ClipView* view = getViewMap().getView(clip);
             mClips->insert( std::make_pair(view->getLeftPixel(), clip) );
+            // Not called during invalidateRect (simply does list reset), therefore must be done here.
+            // Furthermore, if the track rect was invalidated by moving clips (i.s.o. adding/removing clips)
+            // the moved clips must have their rect invalidated. Typical use case: drag clip to end of track.
+            view->invalidateRect();
         }
     }
 
