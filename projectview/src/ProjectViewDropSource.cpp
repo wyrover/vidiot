@@ -41,7 +41,9 @@ struct wxBitmapCanvas
     void onPaint( wxPaintEvent &event )
     {
         wxPaintDC dc(this);
-        dc.DrawBitmap( mBitmap, 0, 0);
+        // Don't use DrawBitmap since this gives wrong output when using wxGTK.
+        wxMemoryDC dcBmp(mBitmap);
+        dc.Blit(wxPoint(0,0), mBitmap.GetSize(), &dcBmp, wxPoint(0,0));
     }
     wxBitmap mBitmap;
 };
