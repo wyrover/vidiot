@@ -418,7 +418,10 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
     {
         wxBitmap b(getW(),height);
         draw(b, true, false);
-        dc.DrawBitmap(b,position);
+// todo move include atomic to precompiled
+        // Don't use DrawBitmap since this gives wrong output when using wxGTK.
+        wxMemoryDC dcBmp(b);
+        dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0,0));
         if (mClip->isA<model::VideoClip>())
         {
             getViewMap().getThumbnail(mClip)->drawForDragging(position, height, dc);
