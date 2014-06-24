@@ -524,8 +524,7 @@ void VideoDisplay::onPaint(wxPaintEvent& event)
     if (mCurrentBitmap)
     {
         // Don't use DrawBitmap since this gives wrong output when using wxGTK.
-        wxMemoryDC dcBmp;
-        dcBmp.SelectObject(*mCurrentBitmap);
+        wxMemoryDC dcBmp(*mCurrentBitmap);
         dc->Blit(0, 0, mCurrentBitmap->GetWidth(), mCurrentBitmap->GetHeight(), &dcBmp, 0, 0);
     }
     else
