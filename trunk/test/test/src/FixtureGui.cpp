@@ -27,6 +27,10 @@
 #include <ctime>
 #include <wx/msgout.h>
 
+#ifdef __GNUC__
+#include <X11/Xlib.h>
+#endif
+
 namespace test {
 //static
 FixtureGui sInstance;
@@ -171,6 +175,11 @@ void FixtureGui::mainThread()
     char* argv = _strdup(gui::Application::sTestApplicationName);
 #else
     char* argv = strdup(gui::Application::sTestApplicationName);
+    char *display = '\0';
+    Display *mydisplay = XOpenDisplay(display);
+    int myscreen = DefaultScreen(mydisplay);
+    XSynchronize(mydisplay, 1);
+    XInitThreads();
 #endif
     wxEntryStart(argc, &argv);
 	free(argv);
