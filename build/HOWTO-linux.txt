@@ -21,6 +21,7 @@ NOTE 2: Virtualbox hdd needs large HDD (used 20 GBytes)
   CReate shortcut with command: gnome-terminal --execute /home/epra/Vidiot/vidiot_trunk/build/RunCMake.sh
   and place shortcut on the bar...
 * install codeblocks codeblocks-contrib
+  - In codeblocks: settings->environment, change "Terminal to launch console programs" to 'xfce4-terminal -T $TITLE -H -x'
 * cd $HOME ; mkdir Vidiot
 * In CodeBlocks set line endings to CR LF (Settings -> Editor -> Line Ending)
 
@@ -45,7 +46,7 @@ cmake -G "CodeBlocks - Unix Makefiles" -Wdev --debug-output $HOME/Vidiot/vidiot_
 * cd ~/Vidiot
 * mkdir build
 * mkdir install
-* cd ~/Vidiot/wxWidgets/build 
+* cd ~/Vidiot/wxWidgets/build
 * /media/sf_wxwidgets_trunk/configure --enable-debug --enable-debug_info --enable-debug_gdb --prefix=$HOME/Vidiot/wxWidgets/install --enable-unicode --disable-shared --disable-compat28 --enable-dataviewctrl
 * make
 * make install
@@ -118,3 +119,12 @@ sudo apt-get install libsoundtouch-dev
 
 =================== MAKE RELEASE ===================
 
+
+
+
+Debugging x errors:
+- enable the sync options (see fixturegui)
+- gdb testauto.run
+- "break _XError"
+- run
+- backtrace
