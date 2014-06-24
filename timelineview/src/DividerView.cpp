@@ -37,7 +37,6 @@ DividerView::DividerView(View* parent, pixel height, const model::TrackPtr& trac
 ,   mHeight(height)
 ,   mTrack(track)
 ,   mY(boost::none)
-,   mBitmap(boost::none)
 {
     VAR_DEBUG(this)(height);
     getViewMap().registerDivider(mTrack,this);
@@ -91,19 +90,11 @@ pixel DividerView::getH() const
 void DividerView::invalidateRect()
 {
     mY.reset();
-    mBitmap.reset();
-
 }
 
 void DividerView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset) const
 {
-    if (!mBitmap)
-    {
-        mBitmap.reset(wxBitmap(getSize()));
-        wxMemoryDC dc(*mBitmap);
-        getTimeline().drawDivider(dc, 0, mHeight);
-    }
-    getTimeline().copyRect(dc,region,offset, *mBitmap, getRect());
+    getTimeline().drawDivider(dc,region,offset,getPosition(),mHeight);
 }
 
 }} // namespace

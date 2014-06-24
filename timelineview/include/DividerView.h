@@ -55,7 +55,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     pixel mHeight;
-    mutable boost::optional<wxBitmap> mBitmap;
     mutable boost::optional<pixel> mY;
     model::TrackPtr mTrack;
 };
