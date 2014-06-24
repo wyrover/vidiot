@@ -166,8 +166,11 @@ void TestBugs::testBugsWithLongTimeline()
     Zoom level(4);
     Type(WXK_END); // Move scrollbars to end
 
-    // Workaround for Windows 7 bug: http://trac.wxwidgets.org/ticket/14329 / http://trac.wxwidgets.org/ticket/14313
-    gui::Window::get().SetSize(gui::Window::get().GetSize());
+    RunInMainAndWait([]
+    {
+        // Workaround for Windows 7 bug: http://trac.wxwidgets.org/ticket/14329 / http://trac.wxwidgets.org/ticket/14313
+        gui::Window::get().SetSize(gui::Window::get().GetSize());
+    });
 
     {
         StartTest("Bug: Audio playback continued, video playback stopped");
