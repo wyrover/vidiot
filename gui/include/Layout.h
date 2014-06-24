@@ -72,6 +72,7 @@ public:
     const wxPen CursorPen;
     const wxPen DropAreaPen;
     const wxBrush DropAreaBrush;
+    const wxColour DividerBackgroundColour;
     const wxPen DividerPen;
     const wxBrush DividerBrush;
     const wxColour ClipBorderColour;
