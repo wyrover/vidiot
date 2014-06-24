@@ -67,14 +67,14 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
     const char* mName;
-    bool mEnabled;
-    bool mRunning;
+    std::atomic<bool> mEnabled;
+    std::atomic<bool> mRunning;
     boost::scoped_ptr<boost::thread> mThread;
     FifoWork mFifo;
     WorkPtr mCurrent;
 
-    int mExecuted;
-    int mExecutedLimit;
+    std::atomic<int> mExecuted;
+    std::atomic<int> mExecutedLimit;
 
     boost::mutex mMutex;
     boost::condition_variable mCondition;

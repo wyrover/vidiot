@@ -90,9 +90,13 @@ Worker::~Worker()
 
 void Worker::schedule(const WorkPtr& work)
 {
+   // if (wxString(mName).IsSameAs("InvisibleWorker"))
+  //  {
+  //      return;
+  //  } todo comments here and in .h
     {
         boost::mutex::scoped_lock lock(mMutex);
-        if (!mEnabled)
+        if (!mEnabled) // todo convert to atomicint
         {
             return;
         }
@@ -100,7 +104,7 @@ void Worker::schedule(const WorkPtr& work)
     mFifo.push(work);
     QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
     boost::mutex::scoped_lock lock(mMutex);
-    if (!mThread)
+    if (!static_cast<bool>(mThread))
     {
         mThread.reset(new boost::thread(boost::bind(&Worker::thread,this))); // Only start this extra thread if there's actual work. Easier debugging.
     }
@@ -112,8 +116,7 @@ void Worker::schedule(const WorkPtr& work)
 
 void Worker::setExpectedWork(int expected)
 {
-    boost::mutex::scoped_lock lock(mMutex);
-    mExecutedLimit = mExecuted + expected;
+    mExecutedLimit = mExecuted + expected;// todo atomic int
 }
 
 void Worker::waitForExecutionCount()
@@ -125,17 +128,14 @@ void Worker::waitForExecutionCount()
         mCondition.wait(lock);
     }
 }
-
+// todo all comments in this file and .h
 //////////////////////////////////////////////////////////////////////////
 // THE THREAD
 //////////////////////////////////////////////////////////////////////////
 
 void Worker::thread()
 {
-    {
-        boost::mutex::scoped_lock lock(mMutex);
-        mRunning = true;
-    }
+    mRunning = true;
     VAR_INFO(this);
     util::thread::setCurrentThreadName(mName);
     while (mEnabled)
@@ -148,15 +148,17 @@ void Worker::thread()
         QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
-            w->execute();
+            //if (wxString(mName).IsSameAs("VisibleWorker"))
+            //{
+                w->execute();
+            //}
             util::thread::setCurrentThreadName(mName);
+            w.reset(); // Clear, so that unfreezing is done if needed
             {
                 boost::mutex::scoped_lock lock(mMutex);
-                w.reset(); // Clear, so that unfreezing is done if needed
                 mCurrent.reset();
             }
             {
-                boost::mutex::scoped_lock lock(mMutex);
                 mExecuted++;
                 if (mExecuted == mExecutedLimit)
                 {
@@ -165,10 +167,7 @@ void Worker::thread()
             }
         }
     }
-    {
-        boost::mutex::scoped_lock lock(mMutex);
-        mRunning = false;
-    }
+    mRunning = false;
 }
 
 } //namespace
