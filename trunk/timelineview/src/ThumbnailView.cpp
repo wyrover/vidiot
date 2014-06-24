@@ -47,22 +47,30 @@ struct RenderThumbnailWork
     // Rationale: all access to model objects must be done in the main thread!
     explicit RenderThumbnailWork(const model::VideoClipPtr& clip, const wxSize& size)
         : worker::Work(boost::bind(&RenderThumbnailWork::renderThumbnail,this))
-        , mClip(clip)
+        , mClip(make_cloned(clip))
         , mSize(size)
     {
         ASSERT(!mClip->getTrack()); // NOTE: This is a check to ensure that a clone is used, and not the original is 'moved'
     }
 
+    virtual ~RenderThumbnailWork()
+    {
+
+    }
+
     void renderThumbnail()
     {
         setThreadName("RenderThumbnail");
-        wxBitmapPtr bitmap(new wxBitmap(mSize));
         if (mClip->getLength() > 0)
         {
             // The if is required to avoid errors during editing operations.
             mClip->moveTo(0); // To ensure that the VideoFile object is moved to the beginning of the clip (thus, including offset) and not the (default) beginning of the video file.
             model::VideoFramePtr videoFrame = mClip->getNextVideo(model::VideoCompositionParameters().setBoundingBox(mSize).setDrawBoundingBox(false));
             mResult = videoFrame->getBitmap();
+
+            // Ensure that any opened threads are closed again.
+            // Avoid opening too much threads in parallel.
+            mClip->clean();
         }
     }
 
@@ -204,8 +212,7 @@ void ThumbnailView::drawForDragging(const wxPoint& position, int height, wxDC& d
     }
     if (bitmap)
     {
-        wxMemoryDC dcBmp;
-        dcBmp.SelectObjectAsSource(*bitmap);
+        wxMemoryDC dcBmp(*bitmap);
         dc.Blit(
             position.x + Layout::get().ClipBorderSize,
             position.y + Layout::get().ClipDescriptionBarHeight,
@@ -222,7 +229,10 @@ void ThumbnailView::onRenderDone(worker::WorkDoneEvent& event)
 {
     boost::shared_ptr<RenderThumbnailWork> work = boost::dynamic_pointer_cast<RenderThumbnailWork>(event.getValue());
     work->Unbind(worker::EVENT_WORK_DONE, &ThumbnailView::onRenderDone, const_cast<ThumbnailView*>(this));
-    mBitmaps[work->mSize] = work->mResult;
+    if (work->mResult)
+    {
+        mBitmaps[work->mSize] = work->mResult;
+    }
     mPendingWork.erase(work->mSize);
     invalidateRect();
     getTimeline().repaint(getRect());
@@ -251,8 +261,8 @@ model::VideoClipPtr ThumbnailView::getClip() const
     model::VideoClipPtr clone;
 
     model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mVideoClip->getPrev());
-    if (transition && 
-        transition->getRight() && 
+    if (transition &&
+        transition->getRight() &&
         *(transition->getRight()) > 0)
     {
         // This clip
@@ -264,9 +274,9 @@ model::VideoClipPtr ThumbnailView::getClip() const
     else
     {
         model::TransitionPtr transition = boost::dynamic_pointer_cast<model::Transition>(mVideoClip->getNext());
-        if (transition && 
+        if (transition &&
             transition->getLeft() &&
-            *(transition->getLeft()) > 0 && 
+            *(transition->getLeft()) > 0 &&
             mVideoClip->getLength() == 0)
         {
             // This clip
