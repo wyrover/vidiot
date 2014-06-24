@@ -929,7 +929,9 @@ void DetailsClip::preview()
             wxBitmapPtr bitmap = compositeFrame->getBitmap();
             if (bitmap)
             {
-                dc.DrawBitmap(*bitmap, wxPoint(0,0));
+                // Don't use DrawBitmap since this gives wrong output when using wxGTK.
+                wxMemoryDC dcBmp(*bitmap);
+                dc.Blit(wxPoint(0,0), bitmap->GetSize(), &dcBmp, wxPoint(0,0));
             }
         }
 
