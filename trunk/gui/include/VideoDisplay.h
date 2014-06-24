@@ -21,7 +21,6 @@
 #include <SoundTouch.h>
 #include "VideoFrame.h"
 #include "AudioChunk.h"
-#include <atomic>
 
 namespace gui {
 

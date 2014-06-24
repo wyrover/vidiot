@@ -299,7 +299,6 @@ void VideoDisplay::audioBufferThread()
 #else
         if (chunk)
         {
-            mAudioChunks.push(chunk);
             // In SoundTouch context a sample is the data for both speakers.
             // In AudioChunk it's the data for one speaker.
             // Soundtouch needs at least 4 * 2 bytes, see RateTransposerInteger::transposeStereo (uses src[3] - which is the fourth sample).
