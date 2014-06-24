@@ -387,6 +387,32 @@ void Timeline::onPaint(wxPaintEvent &event)
     getCursor().draw(*dc,updatedRegion, scroll);
     getDrag().drawSnaps(*dc, updatedRegion, scroll); // Snaps are drawn on top of the cursor.
     getTrim().drawSnaps(*dc, updatedRegion, scroll); // Snaps are drawn on top of the cursor.
+
+    //dc->SetPen(wxPen(*wxRED, 4));
+    //dc->SetBrush(*wxTRANSPARENT_BRUSH);
+    //wxRegionIterator upd(updatedRegion); // get the update rect list
+    //if (upd)
+    //{
+    //    while (upd)
+    //    {
+    //        dc->DrawRectangle(upd.GetRect());
+    //        upd++;
+    //    }
+    //}
+    //dc->SetPen(wxPen(*wxBLUE,4));
+    //dc->SetBrush(*wxTRANSPARENT_BRUSH);
+    //wxRegionIterator upd2(updatedRegion); // get the update rect list
+    //if (upd2)
+    //{
+    //    while (upd2)
+    //    {
+    //        wxRect r(upd2.GetRect().GetPosition(), upd2.GetRect().GetSize());
+    //        r.SetPosition(r.GetPosition() - scroll);
+    //        dc->DrawRectangle(r);
+    //        upd2++;
+    //    }
+    //}
+
 }
 
 void Timeline::drawLine(wxDC& dc, const wxRegion& region, const wxPoint& offset, pts position, const wxPen& pen) const
@@ -407,12 +433,16 @@ void Timeline::drawLine(wxDC& dc, const wxRegion& region, const wxPoint& offset,
     }
 }
 
-void Timeline::drawDivider(wxDC& dc, pixel yPosition, pixel height) const
+void Timeline::drawDivider(wxDC& dc, wxRegion region, const wxPoint& offset, wxPoint position, pixel height) const
 {
-    wxRect rect(0, yPosition, dc.GetSize().GetWidth(), height);
+    // Region is in screen coordinates.
+    // yPosition and height are in logical coordinates (entire timeline)
+    wxRect dividerRect(position - offset, wxSize(GetVirtualSize().GetWidth(), height));
+    region.Intersect(dividerRect); // todo remove
+
     dc.SetPen(Layout::get().DividerPen);
     dc.SetBrush(Layout::get().DividerBrush);
-    dc.DrawRectangle(rect);
+    dc.DrawRectangle(dividerRect);
 }
 
 void Timeline::copyRect(wxDC& dc, wxRegion region, const wxPoint& offset, const wxBitmap& bitmap, const wxRect& roi, bool mask) const
