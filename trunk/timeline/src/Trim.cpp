@@ -243,7 +243,9 @@ void Trim::start()
             mBitmapSideBySide = boost::make_shared<wxBitmap>(playerSize);
             mDc.SelectObject(*mBitmapSideBySide);
             int xAdjacent = (isBeginTrim ? 0 : playerSize.GetWidth() / 2);
-            mDc.DrawBitmap(*mAdjacentBitmap, xAdjacent, (playerSize.GetHeight() - mAdjacentBitmap->GetHeight()) / 2);
+
+            wxMemoryDC dcBmp(*mAdjacentBitmap);
+            mDc.Blit(wxPoint(xAdjacent, (playerSize.GetHeight() - mAdjacentBitmap->GetHeight()) / 2),mAdjacentBitmap->GetSize(),&dcBmp,wxPoint(0,0));
         }
         mDc.SelectObject(wxNullBitmap);
     }
@@ -489,7 +491,9 @@ void Trim::preview()
         wxBitmapPtr trimmedBmp = videoFrame->getBitmap();
         if (trimmedBmp)
         {
-            mDc.DrawBitmap(*trimmedBmp, x, (h - trimmedBmp->GetHeight()) / 2);
+            // todo first edit operation, the editdisplay does not show bitmap until first 'idle' moment?
+            wxMemoryDC dcBmp(*trimmedBmp);
+            mDc.Blit(wxPoint(x, (h - trimmedBmp->GetHeight()) / 2), trimmedBmp->GetSize(), &dcBmp, wxPoint(0,0));
         }
     }
     mDc.SelectObject(wxNullBitmap);
