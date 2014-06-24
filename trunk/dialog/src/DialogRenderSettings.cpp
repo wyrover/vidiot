@@ -32,6 +32,7 @@
 #include "UtilFifo.h"
 #include "UtilLog.h"
 #include "UtilLogWxwidgets.h"
+#include "UtilWindow.h"
 #include "VideoCodec.h"
 #include "VideoCodecs.h"
 #include "Window.h"
@@ -75,11 +76,7 @@ DialogRenderSettings::DialogRenderSettings(model::SequencePtr sequence)
 {
     VAR_DEBUG(this);
 
-    wxIconBundle icons; // todo make helper for geticonbundle
-    wxFileName iconfile(Config::getExeDir(),"movie_all.ico"); // todo extend utilpath to make filenames directly (with multiple path parts)
-    iconfile.AppendDir("icons");
-    icons.AddIcon(iconfile.GetFullPath()); // Icon in title bar of window
-    SetIcons(icons);
+    util::window::setIcons(this);
 
     mLength = mSequence->getLength();
     SetSizer(new wxBoxSizer(wxVERTICAL));
