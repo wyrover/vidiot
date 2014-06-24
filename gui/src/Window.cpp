@@ -39,6 +39,7 @@
 #include "TimelinesView.h"
 #include "UtilLog.h"
 #include "UtilTestCrash.h"
+#include "UtilWindow.h"
 #include "VideoTransitionFactory.h"
 #include "Watcher.h"
 #include "Worker.h"
@@ -130,11 +131,7 @@ Window::Window()
     mProjectView     = new ProjectView(this);
     mHelp            = new Help(this);
 
-    wxIconBundle icons; // todo make helper for geticonbundle
-    wxFileName iconfile(Config::getExeDir(),"movie_all.ico"); // todo extend utilpath to make filenames directly (with multiple path parts)
-    iconfile.AppendDir("icons");
-    icons.AddIcon(iconfile.GetFullPath()); // Icon in title bar of window
-    SetIcons(icons);
+    util::window::setIcons(this);
 
     mMenuFile = new wxMenu();
     mMenuFile->Append(wxID_NEW);
