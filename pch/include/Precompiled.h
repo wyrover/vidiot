@@ -39,6 +39,22 @@ extern "C" {
 };
 
 #include <algorithm>
+#include <atomic>
+#include <climits>
+#include <cmath>
+#include <cstdio>
+#include <ctime>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <istream>
+#include <map>
+#include <ostream>
+#include <set>
+#include <sstream>
+#include <string>
+#include <utility>
+
 #include <boost/archive/archive_exception.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
@@ -84,20 +100,7 @@ extern "C" {
 #include <boost/tuple/tuple.hpp>
 #include <boost/units/detail/utility.hpp>
 #include <boost/utility.hpp>
-#include <climits>
-#include <cmath>
-#include <cstdio>
-#include <ctime>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <istream>
-#include <map>
-#include <ostream>
-#include <set>
-#include <sstream>
-#include <string>
-#include <utility>
+
 #include <wx/app.h>
 #include <wx/aui/aui.h>
 #include <wx/bookctrl.h>
