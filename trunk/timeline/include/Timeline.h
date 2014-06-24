@@ -137,9 +137,10 @@ public:
     /// Draw a divider
     /// \param dc device context to be used
     /// \param region invalidated region of the timeline
-    /// \param yPosition y position of the divider
+    /// \param offset offset imposed on the drawing actions (caused by scrolling and shift)
+    /// \param postion position of the divider
     /// \param height height of the divider
-    void drawDivider(wxDC& dc, pixel yPosition, pixel height) const;
+    void drawDivider(wxDC& dc, wxRegion region, const wxPoint& offset, wxPoint position, pixel height) const;
 
     /// Fill a region in the timeline with the given overlapping area of this view's rectangle.
     /// \param dc device context to be used

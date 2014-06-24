@@ -133,9 +133,7 @@ void SequenceView::draw(wxDC& dc, const wxRegion& region, const wxPoint& offset)
     getTimeline().clearRect(dc, region, offset, wxRect(0, mTimescaleView->getH(), getW(), mVideoView->getY() - mTimescaleView->getH()));
 
     mVideoView->draw(dc, region, offset);
-
     mDividerView->draw(dc,region,offset);
-
     mAudioView->draw(dc, region, offset);
 
     pixel bottom = mAudioView->getY() + mAudioView->getH();
