@@ -32,6 +32,8 @@ list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/build/cmake")
 include (build/cmake/AddDebuggingPath.cmake)
 include (build/cmake/EnableUnityBuild.cmake)
 include (build/cmake/GeneratePrecompiledHeader.cmake)
+include (build/cmake/CxxTestMacros.cmake)
+include (build/cmake/TestMacros.cmake)
 
 #### VLD ####
 if (MSVC)

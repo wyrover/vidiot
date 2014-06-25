@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
-include (../test/CxxTestMacros.inc)
-
 source_group ("src"      REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/src/.*)
 source_group ("include"  REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/include/.*)
 
@@ -24,6 +22,7 @@ source_group ("include"  REGULAR_EXPRESSION ${CMAKE_CURRENT_SOURCE_DIR}/include/
 include_directories (AFTER
   ${CMAKE_CURRENT_BINARY_DIR}
   ${INCLUDE_LIST}
+  ${CxxTestDir}
   ${VLD_INCLUDE_DIR}
   ${Boost_INCLUDE_DIRS}
   ${wxWidgets_INCLUDE_DIRS}
@@ -38,9 +37,8 @@ source_group ("pch" FILES  ${PchTestTiles})
 
 enable_unity_build (test GenericTestFilesCpp TEST_UNITY_CPP_FILES)
 
-# Macros are added here to have them include in MSVC solution
-# Same for PrecompiledTest.*
-add_library (test ${TEST_UNITY_CPP_FILES} ${GenericTestFilesH} ${GenericTestFilesCpp} ../pch/include/PrecompiledTest.h ../pch/src/PrecompiledTest.cpp CxxTestMacros.inc TestMacros.inc)
+# PrecompiledTest.* added here to have them include in MSVC solution
+add_library (test ${TEST_UNITY_CPP_FILES} ${GenericTestFilesH} ${GenericTestFilesCpp} ../pch/include/PrecompiledTest.h ../pch/src/PrecompiledTest.cpp)
 
 create_precompiled_header ("test" "../pch" "PrecompiledTest")
 

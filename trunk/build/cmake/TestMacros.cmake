@@ -15,43 +15,39 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
-# todo rename to .cmake file (and place in 'build?')
-set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR})
-
-INCLUDE(../test/CxxTestMacros.inc)
-
-INCLUDE_DIRECTORIES(AFTER
+macro (AddTests TestProjectName)
+  include_directories (AFTER
     ${CMAKE_CURRENT_SOURCE_DIR}/../test/include
     include
-)
+  )
 
-macro(AddTests TestProjectName)
-    file(GLOB TestHeaders ${TESTDIR}/*/*.h)
-    file(GLOB TestSources ${TESTDIR}/*/*.cpp)
+  set (TESTDIR ${CMAKE_CURRENT_SOURCE_DIR})
+  file (GLOB TestHeaders ${TESTDIR}/*/*.h)
+  file (GLOB TestSources ${TESTDIR}/*/*.cpp)
 
-    enable_unity_build(${TestProjectName} TestSources TEST_AUTO_UNITY_CPP_FILES)
+  enable_unity_build (${TestProjectName} TestSources TEST_AUTO_UNITY_CPP_FILES)
 
-    AddCxxTest(${TestProjectName} ${TEST_AUTO_UNITY_CPP_FILES} ${TestHeaders} ${TestSources})
+  AddCxxTest (${TestProjectName} ${TEST_AUTO_UNITY_CPP_FILES} ${TestHeaders} ${TestSources})
 
-    reuse_precompiled_header (${TestProjectName} "${CMAKE_CURRENT_SOURCE_DIR}/../pch" "PrecompiledTest")
+  reuse_precompiled_header (${TestProjectName} "${CMAKE_CURRENT_SOURCE_DIR}/../pch" "PrecompiledTest")
 
-    if (UNIX)
-      SET_TARGET_PROPERTIES(${TestProjectName} PROPERTIES OUTPUT_NAME ${TestProjectName}.run) # Rename to avoid having the same name as the folder
-    endif ()
+  if (UNIX)
+    set_target_properties (${TestProjectName} PROPERTIES OUTPUT_NAME ${TestProjectName}.run) # Rename to avoid having the same name as the folder
+  endif ()
 
-    SOURCE_GROUP("generated" REGULAR_EXPRESSION ${TestRunnerDirectory}/.*)
-    SOURCE_GROUP("src" REGULAR_EXPRESSION ${TESTDIR}/src/.*)
-    SOURCE_GROUP("include" REGULAR_EXPRESSION ${TESTDIR}/include/.*)
+  source_group ("generated" REGULAR_EXPRESSION ${TestRunnerDirectory}/.*)
+  source_group ("src" REGULAR_EXPRESSION ${TESTDIR}/src/.*)
+  source_group ("include" REGULAR_EXPRESSION ${TESTDIR}/include/.*)
 
-    TARGET_LINK_LIBRARIES(${TestProjectName} test vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
+  target_link_libraries (${TestProjectName} test vidiot ${Boost_LIBRARIES} ${wxWidgets_LIBRARIES} ${FFMPEG_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${SOUNDTOUCH_LIBRARIES})
 
-    copy_msvc_project_user_file(${TestProjectName})
+  copy_msvc_project_user_file (${TestProjectName})
 
-    # Copy icons to output folder
-    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Debug/icons)
-    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/MinSizeRel/icons)
-    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Release/icons)
-    add_custom_command(TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/icons)
+  # Copy icons to output folder
+  add_custom_command (TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Debug/icons)
+  add_custom_command (TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/MinSizeRel/icons)
+  add_custom_command (TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/Release/icons)
+  add_custom_command (TARGET ${TestProjectName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/icons ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/icons)
 
-endmacro(AddTests)
+endmacro ()
 
