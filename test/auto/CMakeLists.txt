@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
-INCLUDE(../test/TestMacros.inc)
-AddTests(testauto )
+AddTests(testauto)
 
 
 
