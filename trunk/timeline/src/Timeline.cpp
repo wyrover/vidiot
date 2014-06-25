@@ -438,8 +438,6 @@ void Timeline::drawDivider(wxDC& dc, wxRegion region, const wxPoint& offset, wxP
     // Region is in screen coordinates.
     // yPosition and height are in logical coordinates (entire timeline)
     wxRect dividerRect(position - offset, wxSize(GetVirtualSize().GetWidth(), height));
-    region.Intersect(dividerRect); // todo remove
-
     dc.SetPen(Layout::get().DividerPen);
     dc.SetBrush(Layout::get().DividerBrush);
     dc.DrawRectangle(dividerRect);
