@@ -21,7 +21,6 @@ set(TESTDIR ${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE(../test/CxxTestMacros.inc)
 
 INCLUDE_DIRECTORIES(AFTER
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../pch/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../test/include
     include
 )
@@ -36,19 +35,9 @@ macro(AddTests TestProjectName)
 
     reuse_precompiled_header (${TestProjectName} "${CMAKE_CURRENT_SOURCE_DIR}/../pch" "PrecompiledTest")
 
-    if (MSVC)
-  #          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FI${pch_file} ")
-  #          #set_target_properties(${TestProjectName} PROPERTIES COMPILE_FLAGS "/Yu${pch_file} -Zm176")
-        else ()
-  #          set_target_properties(${TestProjectName} PROPERTIES COMPILE_FLAGS "-include ${pch_file}")
-           
-            #todo also for MSVC??? Avoid if?
-            SET_TARGET_PROPERTIES(${TestProjectName} PROPERTIES OUTPUT_NAME ${TestProjectName}.run) #rename to avoid having the same name as the folder
-        endif ()
-
-        # todo include pch files in generic test project:
-#        SOURCE_GROUP("pch\\include" REGULAR_EXPRESSION ../pch/include/.*)
-#        SOURCE_GROUP("pch\\src" REGULAR_EXPRESSION ../pch/src/.*)
+    if (UNIX)
+      SET_TARGET_PROPERTIES(${TestProjectName} PROPERTIES OUTPUT_NAME ${TestProjectName}.run) # Rename to avoid having the same name as the folder
+    endif ()
 
     SOURCE_GROUP("generated" REGULAR_EXPRESSION ${TestRunnerDirectory}/.*)
     SOURCE_GROUP("src" REGULAR_EXPRESSION ${TESTDIR}/src/.*)
