@@ -15,26 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperTransition.h"
-
-#include "HelperApplication.h"
-
-#include "Config.h"
 #include "CreateTransition.h"
-#include "HelperConfig.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "ids.h"
-#include "Layout.h"
 #include "Mouse.h"
 #include "PositionInfo.h"
-#include "PositionInfo.h"
-#include "Sequence.h"
-#include "Timeline.h"
-#include "Transition.h"
 #include "TrimClip.h"
-#include "VideoClip.h"
 #include "Zoom.h"
 
 namespace test {

@@ -18,15 +18,6 @@
 #ifndef HELPER_TRANSITION_H
 #define HELPER_TRANSITION_H
 
-#include <wx/gdicmn.h>
-#include <boost/shared_ptr.hpp>
-#include "UtilInt.h"
-
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-}
-
 namespace test {
 
 wxPoint TransitionLeftClipInterior(model::IClipPtr clip);

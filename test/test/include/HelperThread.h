@@ -18,8 +18,6 @@
 #ifndef HELPER_THREAD_H
 #define HELPER_THREAD_H
 
-#include <boost/function.hpp>
-
 namespace test {
 
 void RunInMainAndWait(const boost::function<void()>& method);

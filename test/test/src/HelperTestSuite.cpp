@@ -17,13 +17,6 @@
 
 #pragma warning(disable:4996)
 
-#include "HelperTestSuite.h"
-#include "HelperThread.h"
-#include "UtilList.h"
-#include "UtilLog.h"
-#include "Window.h"
-#include <cxxtest/TestSuite.h>
-
 namespace test {
 
 std::list<std::string> SuitesWithoutGui = boost::assign::list_of

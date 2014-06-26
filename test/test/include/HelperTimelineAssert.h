@@ -18,8 +18,6 @@
 #ifndef HELPER_TIMELINE_ASSERT_H
 #define HELPER_TIMELINE_ASSERT_H
 
-#include "HelperTimeline.h"
-
 namespace test {
 
 /// Assert that there are no more transitions in the given track

@@ -15,13 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperThread.h"
-
-#include "UtilThread.h"
-
 namespace test {
 
-void RunInMainAndWait(const boost::function<void()>& method)
+void RunInMainAndWait(const boost::function<void()>& method) // todo completely obsolete? only adds the waitforidle?
 {
     util::thread::RunInMainAndWait([method]
     {

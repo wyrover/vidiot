@@ -18,11 +18,7 @@
 #include "TestPlayback.h"
 
 #include "Details.h"
-#include "HelperApplication.h"
-#include "HelperPlayback.h"
-#include "HelperTimelinesView.h"
 #include "Player.h"
-#include "Timeline.h"
 
 namespace test {
 

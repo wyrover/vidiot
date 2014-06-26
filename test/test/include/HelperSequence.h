@@ -18,18 +18,6 @@
 #ifndef HELPER_SEQUENCE_H
 #define HELPER_SEQUENCE_H
 
-#include <boost/shared_ptr.hpp>
-
-namespace model {
-class File;
-typedef boost::shared_ptr<File> FilePtr;
-typedef std::list< FilePtr > Files;
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-}
-
 namespace test {
 
 void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat );

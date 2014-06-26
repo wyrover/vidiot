@@ -15,16 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperTransform.h"
-
 #include "Details.h"
 #include "DetailsClip.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "Timeline.h"
-
-#include "UtilLog.h"
 
 namespace test {
 

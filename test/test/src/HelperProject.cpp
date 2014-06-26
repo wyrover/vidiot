@@ -15,12 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperProject.h"
-
-#include "Application.h"
-#include "HelperThread.h"
-
 namespace test {
+
+model::FolderPtr getRoot()
+{
+    model::FolderPtr root = model::Project::get().getRoot();
+    return boost::static_pointer_cast<model::Folder>(root);
+}
 
 DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir)
 {

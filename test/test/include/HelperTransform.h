@@ -18,21 +18,7 @@
 #ifndef HELPER_TRANSFORM_H
 #define HELPER_TRANSFORM_H
 
-#include <boost/shared_ptr.hpp>
 #include "UtilEnumSelector.h"
-
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-class VideoTrack;
-typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
-class VideoTransition;
-typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
-class AudioTrack;
-typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-}
 
 namespace test {
 

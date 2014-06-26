@@ -15,12 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperFileSystem.h"
-
-#include "UtilLog.h"
-#include <wx/string.h>
-#include <wx/regex.h>
-
 namespace test {
 
 int RandomTempDir::sDirCount = 0;

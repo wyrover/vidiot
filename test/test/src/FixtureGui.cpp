@@ -15,16 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "FixtureGui.h"
-
-#include "Application.h"
-#include "Config.h"
-#include "HelperTestSuite.h"
-#include "UtilLog.h"
-#include "UtilThread.h"
-#include "Window.h"
-#include <cxxtest/TestSuite.h>
-#include <ctime>
 #include <wx/msgout.h>
 
 #ifdef __GNUC__

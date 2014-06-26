@@ -18,23 +18,9 @@
 #ifndef HELPER_PROJECT_VIEW_H
 #define HELPER_PROJECT_VIEW_H
 
-#include <list>
-#include <wx/filename.h>
-#include <boost/shared_ptr.hpp>
-#include "HelperWindow.h"
 #include "ProjectView.h"
 
 namespace model {
-class INode;
-typedef boost::shared_ptr<INode> NodePtr;
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-class File;
-typedef boost::shared_ptr<File> FilePtr;
-typedef std::list<FilePtr> Files;
-
 class EventAddNode;
 class EventAddNodes;
 class EventRemoveNode;

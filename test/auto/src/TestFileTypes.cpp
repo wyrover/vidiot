@@ -17,27 +17,7 @@
 
 #include "TestFileTypes.h"
 
-#include "AudioClip.h"
-#include "AudioTrack.h"
-#include "Config.h"
-#include "EmptyClip.h"
-#include "File.h"
-#include "HelperConfig.h"
-#include "HelperPlayback.h"
-#include "HelperProjectView.h"
-#include "HelperThread.h"
-#include "HelperTimeline.h"
-#include "HelperTimelineAssert.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "IClip.h"
-#include "IPath.h"
 #include "Scrolling.h"
-#include "Timeline.h"
-#include "UtilFrameRate.h"
-#include "VideoClip.h"
-#include "VideoTrack.h"
-#include <boost/assign/list_of.hpp>
 
 namespace test {
 

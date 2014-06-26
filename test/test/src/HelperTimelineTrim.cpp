@@ -15,13 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperTimelineTrim.h"
-
-#include "HelperTimeline.h"
-#include "HelperWindow.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-
 namespace test {
 
 void TrimLeft(model::IClipPtr clip, pixel length, bool shift, bool endtrim)

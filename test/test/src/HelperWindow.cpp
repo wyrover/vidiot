@@ -15,15 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperWindow.h"
-
-#include <wx/uiaction.h>
-#include "HelperApplication.h"
-#include "Project.h"
-
-#include "UtilLogWxwidgets.h"
-#include "Window.h"
-
 namespace test {
 void triggerMenu(int id)
 {
@@ -57,12 +48,6 @@ model::FolderPtr createProject()
     triggerMenu(wxID_NEW);
     waitForIdle();
     return getRoot();
-}
-
-model::FolderPtr getRoot()
-{
-    model::FolderPtr root = model::Project::get().getRoot();
-    return boost::static_pointer_cast<model::Folder>(root);
 }
 
 wxMenu* getSequenceMenu()

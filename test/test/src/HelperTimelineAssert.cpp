@@ -17,14 +17,6 @@
 
 #pragma warning(disable:4996)
 
-#include "HelperTimeline.h"
-
-#include "HelperTimelineAssert.h"
-#include "Transition.h"
-
-#include "UtilLog.h"
-#include "VideoClip.h"
-
 namespace test {
 
 void ASSERT_NO_TRANSITIONS_IN_VIDEO_TRACK(int trackindex)

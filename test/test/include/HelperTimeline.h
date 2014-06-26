@@ -18,24 +18,7 @@
 #ifndef HELPER_TIMELINE_H
 #define HELPER_TIMELINE_H
 
-#include "UtilInt.h"
-#include <boost/shared_ptr.hpp>
-#include <set>
-#include <wx/gdicmn.h>
 #include "Timeline.h"
-
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-class VideoTrack;
-typedef boost::shared_ptr<VideoTrack> VideoTrackPtr;
-class VideoTransition;
-typedef boost::shared_ptr<VideoTransition> VideoTransitionPtr;
-class AudioTrack;
-typedef boost::shared_ptr<AudioTrack> AudioTrackPtr;
-class Track;
-typedef boost::shared_ptr<Track> TrackPtr;
-}
 
 namespace gui { namespace timeline {
     enum MouseOnClipPosition : int;

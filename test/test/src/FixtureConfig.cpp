@@ -15,13 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "FixtureConfig.h"
-
-#include "HelperApplication.h"
-#include "HelperWindow.h"
-#include "HelperTimeline.h"
-#include "ids.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

@@ -15,43 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperTimeline.h"
-
-#include <boost/foreach.hpp>
-#include <ostream>
-#include <wx/mousestate.h>
-#include <wx/uiaction.h>
-#include <wx/utils.h>
-#include "AudioClip.h"
-#include "AudioTrack.h"
 #include "AudioView.h"
 #include "ClipView.h"
 #include "Cursor.h"
 #include "Drag.h"
-#include "EmptyClip.h"
-#include "HelperApplication.h"
-#include "HelperThread.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "IClip.h"
-#include "ids.h"
-#include "Layout.h"
 #include "Logging.h"
 #include "Mouse.h"
 #include "PositionInfo.h"
 #include "Scrolling.h"
 #include "Selection.h"
-#include "Sequence.h"
 #include "SequenceView.h"
 #include "State.h"
-#include "Timeline.h"
-#include "Track.h"
 #include "TrackView.h"
-#include "Transition.h"
-#include "UtilLogWxwidgets.h"
-#include "VideoClip.h"
-#include "VideoTrack.h"
-#include "VideoTransition.h"
 #include "VideoView.h"
 #include "ViewMap.h"
 #include "Zoom.h"

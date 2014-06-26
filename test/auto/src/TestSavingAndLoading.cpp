@@ -18,26 +18,8 @@
 #include "TestSavingAndLoading.h"
 
 #include "CreateTransitionHelper.h"
-#include "FixtureProject.h"
-#include "HelperApplication.h"
-#include "HelperFileSystem.h"
-#include "HelperProject.h"
-#include "HelperProjectView.h"
-#include "HelperThread.h"
-#include "HelperTimeline.h"
-#include "HelperTimelineTrim.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "Node.h"
-#include "Project.h"
 #include "ProjectView.h"
 #include "Scrolling.h"
-#include "Sequence.h"
-#include "Timeline.h"
-#include "UtilPath.h"
-#include "VideoTransitionFactory.h"
-#include "Window.h"
-#include "Zoom.h"
 
 namespace test {
 

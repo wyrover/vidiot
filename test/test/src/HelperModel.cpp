@@ -15,12 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperModel.h"
-
-#include "HelperThread.h"
-#include "UtilLog.h"
 #include "UnlinkClips.h"
-#include "VideoClip.h"
 
 namespace test {
 

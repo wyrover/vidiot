@@ -15,16 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperSequence.h"
-
-#include "ClipCreator.h"
-#include "File.h"
-#include "HelperFileSystem.h"
-#include "HelperThread.h"
-#include "Sequence.h"
-#include "Track.h"
-#include <boost/foreach.hpp>
-
 namespace test {
 
 void extendSequenceWithRepeatedClips( model::SequencePtr sequence, model::IPaths files, int nRepeat )
