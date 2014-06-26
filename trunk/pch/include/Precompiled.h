@@ -144,11 +144,13 @@ extern "C" {
 #include <wx/iconbndl.h>
 #include <wx/intl.h>
 #include <wx/menu.h>
+#include <wx/mousestate.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/pen.h>
 #include <wx/propdlg.h>
 #include <wx/radiobox.h>
+#include <wx/regex.h>
 #include <wx/region.h>
 #include <wx/scrolwin.h>
 #include <wx/sizer.h>

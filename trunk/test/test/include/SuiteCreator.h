@@ -18,9 +18,6 @@
 #ifndef TEST_SUITE_CREATOR_H
 #define TEST_SUITE_CREATOR_H
 
-#include <cxxtest/TestSuite.h>
-#include "FixtureGui.h"
-
 namespace test {
 template <typename TESTS>
 class SuiteCreator

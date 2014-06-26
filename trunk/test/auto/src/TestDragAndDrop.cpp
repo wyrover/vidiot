@@ -20,17 +20,6 @@
 #include "CreateTransition.h"
 #include "Cursor.h"
 #include "Drag.h"
-#include "HelperApplication.h"
-#include "HelperProjectView.h"
-#include "HelperTimeline.h"
-#include "HelperTimelineAssert.h"
-#include "HelperTimelineDrag.h"
-#include "HelperTimelinesView.h"
-#include "HelperTimelineTrim.h"
-#include "HelperTransition.h"
-#include "HelperWindow.h"
-#include "Layout.h"
-#include "Timeline.h"
 
 namespace test {
 

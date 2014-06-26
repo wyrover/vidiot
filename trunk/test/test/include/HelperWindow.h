@@ -18,19 +18,6 @@
 #ifndef HELPER_WINDOW_H
 #define HELPER_WINDOW_H
 
-#include <wx/cmdproc.h>
-#include <wx/frame.h>
-#include <wx/menu.h>
-#include <wx/window.h>
-#include <boost/shared_ptr.hpp>
-#include "UtilInt.h"
-#include "UtilLog.h"
-
-namespace model {
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-}
-
 namespace test {
 
 /// Trigger the menu given. That menu should be in the main menu bar.
@@ -60,9 +47,6 @@ void checkMenu(wxFrame& window, int id, bool checked = true);
 /// Create a new project in a blank application by triggering File->New
 /// \return root node of the project
 model::FolderPtr createProject();
-
-/// \return root node of the project
-model::FolderPtr getRoot();
 
 /// Return the currently active sequence menu
 wxMenu* getSequenceMenu();

@@ -18,10 +18,6 @@
 #ifndef HELPER_TEST_SUITE_H
 #define HELPER_TEST_SUITE_H
 
-#include <list>
-#include <string>
-#include <boost/optional.hpp>
-#include "FixtureConfig.h"
 #include "UtilSingleInstance.h"
 
 namespace test {

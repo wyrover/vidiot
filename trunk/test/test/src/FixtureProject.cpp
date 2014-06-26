@@ -15,19 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "FixtureProject.h"
-
-#include "AutoFolder.h"
-#include "HelperApplication.h"
-#include "HelperFileSystem.h"
-#include "HelperProjectView.h"
-#include "HelperTestSuite.h"
-#include "HelperTimeline.h"
-#include "IClip.h"
-#include "Sequence.h"
-#include "Track.h"
-#include "UtilLog.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

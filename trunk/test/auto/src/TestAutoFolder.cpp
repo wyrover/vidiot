@@ -18,12 +18,6 @@
 #include "TestAutoFolder.h"
 
 #include <wx/ffile.h>
-#include "FixtureProject.h"
-#include "Folder.h"
-#include "HelperApplication.h"
-#include "HelperProjectView.h"
-#include "HelperFileSystem.h"
-#include "IPath.h"
 
 namespace test {
 

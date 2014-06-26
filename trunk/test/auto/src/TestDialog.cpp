@@ -17,11 +17,6 @@
 
 #include "TestDialog.h"
 
-#include "Window.h"
-#include "HelperApplication.h"
-#include "HelperProjectView.h"
-#include "HelperTimeline.h"
-#include "HelperWindow.h"
 #include "Dialog.h"
 
 namespace test {

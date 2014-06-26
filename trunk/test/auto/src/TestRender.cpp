@@ -17,20 +17,10 @@
 
 #include "TestRender.h"
 
-#include "Config.h"
 #include "Dialog.h"
 #include "DialogRenderSettings.h"
-#include "HelperApplication.h"
-#include "HelperConfig.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "HelperTransition.h"
-#include "HelperWindow.h"
-#include "HelperWorker.h"
-#include "ids.h"
 #include "Render.h"
 #include "UtilLogAvcodec.h" // For logging codec ids. Still compiles without this include but then the title bar shows ints, not text for the codec name.
-#include "VideoClip.h"
 #include "VideoCodecs.h"
 #include "Worker.h"
 

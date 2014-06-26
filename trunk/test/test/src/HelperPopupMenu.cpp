@@ -15,13 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperPopupMenu.h"
-
-#include <boost/thread.hpp>
-#include <wx/uiaction.h>
-#include "HelperTimeline.h"
-#include "HelperWindow.h"
-
 namespace test {
 
 void OpenPopupMenuAt(wxPoint position)

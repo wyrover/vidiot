@@ -17,11 +17,6 @@
 
 #include "TestProjectView.h"
 
-#include "File.h"
-#include "Folder.h"
-#include "HelperProjectView.h"
-#include "Sequence.h"
-
 namespace test {
 
     //////////////////////////////////////////////////////////////////////////

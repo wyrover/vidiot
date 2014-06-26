@@ -18,15 +18,6 @@
 #ifndef HELPER_TRIM_H
 #define HELPER_TRIM_H
 
-#include <boost/shared_ptr.hpp>
-#include <wx/gdicmn.h>
-#include "UtilInt.h"
-
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-}
-
 namespace test {
 
 /// Trim the given clip on the left side

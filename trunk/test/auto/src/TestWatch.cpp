@@ -17,14 +17,6 @@
 
 #include "TestWatch.h"
 
-#include <wx/filefn.h>
-#include "File.h"
-#include "Folder.h"
-#include "HelperApplication.h"
-#include "HelperProjectView.h"
-#include "HelperWatcher.h"
-#include "Sequence.h"
-#include "UtilPath.h"
 #include "Watcher.h"
 
 namespace test {

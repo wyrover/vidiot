@@ -18,16 +18,6 @@
 #ifndef HELPER_DRAG_H
 #define HELPER_DRAG_H
 
-#include <boost/shared_ptr.hpp>
-#include <wx/gdicmn.h>
-#include "UtilInt.h"
-#include <ostream>
-
-namespace model {
-class IClip;
-typedef boost::shared_ptr<IClip> IClipPtr;
-}
-
 namespace test {
 
 struct DragParams

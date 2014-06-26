@@ -18,9 +18,6 @@
 #ifndef FIXTURE_GUI_H
 #define FIXTURE_GUI_H
 
-#include <cxxtest/GlobalFixture.h>
-#include <boost/thread.hpp>
-#include <boost/thread/barrier.hpp>
 #include "Application.h"
 
 namespace test {

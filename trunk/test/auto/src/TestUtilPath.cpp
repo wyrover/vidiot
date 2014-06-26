@@ -17,10 +17,6 @@
 
 #include "TestUtilPath.h"
 
-#include "UtilPath.h"
-#include "HelperFileSystem.h"
-#include "UtilLog.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

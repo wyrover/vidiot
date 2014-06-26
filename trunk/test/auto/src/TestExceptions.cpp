@@ -17,20 +17,7 @@
 
 #include "TestExceptions.h"
 
-#include "File.h"
-#include "Folder.h"
-#include "HelperApplication.h"
-#include "HelperFileSystem.h"
-#include "HelperPlayback.h"
-#include "HelperProject.h"
-#include "HelperProjectView.h"
-#include "HelperThread.h"
-#include "HelperTransition.h"
-#include "HelperWatcher.h"
-#include "Sequence.h"
-#include "UtilPath.h"
 #include "Watcher.h"
-#include <wx/filefn.h>
 
 namespace test {
 

@@ -18,9 +18,10 @@
 #ifndef HELPER_PROJECT_H
 #define HELPER_PROJECT_H
 
-#include "HelperFileSystem.h"
-
 namespace test {
+
+/// \return root node of the project
+model::FolderPtr getRoot();
 
 typedef std::pair<RandomTempDirPtr, wxFileName> DirAndFile;
 

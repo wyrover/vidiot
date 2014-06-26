@@ -18,8 +18,6 @@
 #ifndef HELPER_POPUPMENU_H
 #define HELPER_POPUPMENU_H
 
-#include <wx/gdicmn.h>
-
 namespace test {
 
 /// Open the popup menu by right clicking on the given position

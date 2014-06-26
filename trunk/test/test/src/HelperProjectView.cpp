@@ -15,27 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperProjectView.h"
-
-#include "AutoFolder.h"
 #include "Dialog.h"
-#include "File.h"
-#include "HelperApplication.h"
-#include "HelperThread.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "ids.h"
-#include "NodeEvent.h"
 #include "ProjectView.h"
-#include "Sequence.h"
-#include "Timeline.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-#include "UtilPath.h"
-#include "UtilThread.h"
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <wx/uiaction.h>
 
 namespace test {
 

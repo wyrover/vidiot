@@ -15,18 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "HelperTimelineDrag.h"
-
-#include "AudioTrack.h"
 #include "Drag.h"
-#include "HelperTimeline.h"
-#include "HelperTimelinesView.h"
-#include "HelperWindow.h"
-#include "Layout.h"
-#include "Timeline.h"
-#include "UtilLog.h"
-#include "UtilLogWxwidgets.h"
-#include "VideoTrack.h"
 
 namespace test {
 

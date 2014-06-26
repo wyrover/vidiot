@@ -18,13 +18,6 @@
 #ifndef HELPER_TIMELINESVIEW_H
 #define HELPER_TIMELINESVIEW_H
 
-#include <boost/shared_ptr.hpp>
-
-namespace model {
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-}
-
 namespace gui { namespace timeline {
 class Timeline;
 }}
