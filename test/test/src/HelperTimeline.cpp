@@ -469,12 +469,20 @@ void DumpSequenceAndWait()
 WaitForTimelineToLoseFocus::WaitForTimelineToLoseFocus()
     :   mFound(false)
 {
+#ifdef _MSC_VER
     getTimeline().Bind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
+#else
+    getTimeline().Bind(wxEVT_KILL_FOCUS,   &WaitForTimelineToLoseFocus::onFocus, this);
+#endif
 }
 
 WaitForTimelineToLoseFocus::~WaitForTimelineToLoseFocus()
 {
+#ifdef _MSC_VER
     getTimeline().Unbind(wxEVT_LEAVE_WINDOW, &WaitForTimelineToLoseFocus::onLeave, this);
+#else
+    getTimeline().Unbind(wxEVT_KILL_FOCUS,   &WaitForTimelineToLoseFocus::onFocus, this);
+#endif
 }
 
 void WaitForTimelineToLoseFocus::wait()
@@ -486,12 +494,24 @@ void WaitForTimelineToLoseFocus::wait()
     }
 }
 
+// todo remove all test .h files from precompiledtest since the pch is not recompiled on header change?
 void WaitForTimelineToLoseFocus::onLeave(wxMouseEvent& event)
+{
+    endWait();
+    event.Skip();
+}
+
+void WaitForTimelineToLoseFocus::onFocus(wxFocusEvent& event)
+{
+    endWait();
+    event.Skip();
+}
+
+void WaitForTimelineToLoseFocus::endWait()
 {
     boost::mutex::scoped_lock lock(mMutex);
     mFound = true;
     mCondition.notify_all();
-    event.Skip();
 }
 
 } // namespace

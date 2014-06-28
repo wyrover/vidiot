@@ -222,6 +222,8 @@ public:
     void wait();
 private:
     void onLeave(wxMouseEvent& event);
+    void onFocus(wxFocusEvent& event);
+    void endWait();
     bool mFound;
     boost::condition_variable mCondition;
     boost::mutex mMutex;
