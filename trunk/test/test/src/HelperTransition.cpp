@@ -94,12 +94,13 @@ void MakeTransitionAfterClip::makeTransition()
 
 model::IClipPtr MakeTransitionAfterClip::GetClip(int track, int clip) const
 {
-    if (mAudio)
-    {
-        return AudioClip(track,clip);
-    }
-    return VideoClip(track,clip);
-
+    model::IClipPtr result;
+    RunInMainAndWait([&result, this, track, clip]
+                     {
+                        result = mAudio ? AudioClip(track,clip) : VideoClip(track,clip);
+                     });
+    ASSERT(static_cast<bool>(result))(track)(clip);
+    return result;
 }
 
 void MakeTransitionAfterClip::storeVariablesBeforeTrimming()

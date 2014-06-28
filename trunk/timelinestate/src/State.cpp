@@ -159,7 +159,6 @@ bool Machine::processWheelEvent(int nSteps)
 void Machine::onMotion(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     getScrolling().update(event); // For right-mouse scrolling
     process_event(EvMotion());
@@ -169,7 +168,6 @@ void Machine::onMotion(wxMouseEvent& event)
 void Machine::onLeftDown(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     getMouse().leftDown();
     getTimeline().SetFocus();
@@ -180,7 +178,6 @@ void Machine::onLeftDown(wxMouseEvent& event)
 void Machine::onLeftUp(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvLeftUp());
     event.Skip();
@@ -189,7 +186,6 @@ void Machine::onLeftUp(wxMouseEvent& event)
 void Machine::onLeftDouble(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     getMouse().leftDown();
     process_event(EvLeftDouble());
@@ -199,7 +195,6 @@ void Machine::onLeftDouble(wxMouseEvent& event)
 void Machine::onMiddleDown(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvMiddleDown());
     event.Skip();
@@ -208,7 +203,6 @@ void Machine::onMiddleDown(wxMouseEvent& event)
 void Machine::onMiddleUp(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvMiddleUp());
     event.Skip();
@@ -217,7 +211,6 @@ void Machine::onMiddleUp(wxMouseEvent& event)
 void Machine::onMiddleDouble(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvMiddleDouble());
     event.Skip();
@@ -226,7 +219,6 @@ void Machine::onMiddleDouble(wxMouseEvent& event)
 void Machine::onRightDown(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     getMouse().rightDown();
     getScrolling().rightDown(); // For right-mouse scrolling
@@ -238,7 +230,6 @@ void Machine::onRightDown(wxMouseEvent& event)
 void Machine::onRightUp(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvRightUp());
     event.Skip();
@@ -247,7 +238,6 @@ void Machine::onRightUp(wxMouseEvent& event)
 void Machine::onRightDouble(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     getMouse().rightDown();
     process_event(EvRightDouble());
@@ -257,7 +247,6 @@ void Machine::onRightDouble(wxMouseEvent& event)
 void Machine::onEnter(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     getScrolling().rightDown(); // Avoid 'flipping' (due to a wrongly initialized right mouse down position) when entering the widget with the right mouse button pressed.
     process_event(EvEnter());
@@ -267,7 +256,6 @@ void Machine::onEnter(wxMouseEvent& event)
 void Machine::onLeave(wxMouseEvent& event)
 {
     VAR_DEBUG(event);
-    getKeyboard().update(event);
     getMouse().update(event);
     process_event(EvLeave());
     event.Skip();

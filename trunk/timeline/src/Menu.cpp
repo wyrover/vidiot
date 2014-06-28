@@ -215,7 +215,7 @@ void MenuHandler::onTriggerPopupMenu(wxCommandEvent& event)
 
         wxMenu menu;
 
-        auto add = [&menu](wxMenu& menu, int id, wxString text, bool show, bool enable, bool separate)
+        auto add = [](wxMenu& menu, int id, wxString text, bool show, bool enable, bool separate)
         {
             if (show)
             {
