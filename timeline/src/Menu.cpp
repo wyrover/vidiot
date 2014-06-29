@@ -89,7 +89,7 @@ MenuHandler::MenuHandler(Timeline* timeline)
     mMenu.AppendSeparator();
     mMenu.Append(ID_DELETEMARKED,   _("Delete marked regions"), _("Delete all marked regions from sequence."));
     mMenu.Append(ID_DELETEUNMARKED, _("Delete unmarked regions"), _("Delete all unmarked regions from sequence."));
-    mMenu.Append(ID_REMOVEMARKERS,  _("Remove markers"), _("Rmove all markers from the sequence."));
+    mMenu.Append(ID_REMOVEMARKERS,  _("Remove markers"), _("Remove all markers from the sequence."));
     mMenu.AppendSeparator();
     mMenu.Append(ID_DELETEEMPTY,  _("Remove empty"), _("Remove all empty areas from the sequence."));
     mMenu.AppendSeparator();
