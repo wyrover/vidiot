@@ -163,6 +163,10 @@ void FixtureGui::mainThread()
     int argc = 1;
 #ifdef _MSC_VER
     char* argv = _strdup(gui::Application::sTestApplicationName);
+    if (GetSystemMetrics( SM_REMOTESESSION ) != 0)
+    {
+        FATAL("Do not run in a remote desktop session (causes the generation of unwanted additional mouse events). Use VNC.");
+    }
 #else
     char* argv = strdup(gui::Application::sTestApplicationName);
     char *display = '\0';
