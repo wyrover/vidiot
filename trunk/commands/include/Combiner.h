@@ -62,7 +62,6 @@ protected:
     // MEMBERS
     //////////////////////////////////////////////////////////////////////////
 
-    wxString mCommandName;
     std::list< wxCommand* > mCommands;
 };
 

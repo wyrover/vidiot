@@ -597,6 +597,7 @@ void DetailsClip::handleLengthButtonPressed(wxToggleButton* button)
 {
     ASSERT_NONZERO(button);
     ASSERT(wxThread::IsMain());
+    if (!button->IsEnabled()) { return; }
     pts length = model::Convert::timeToPts(button->GetId());
     VAR_INFO(length);
     ASSERT(mTrimAtEnd.find(length) != mTrimAtEnd.end())(mTrimAtEnd)(length);

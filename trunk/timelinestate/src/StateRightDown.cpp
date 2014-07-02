@@ -88,8 +88,12 @@ boost::statechart::result StateRightDown::react( const EvKeyDown& evt )
 
     switch (evt.getKeyCode())
     {
-    case WXK_F1:        getTooltip().show(sTooltip); break;
-    case WXK_ESCAPE:    return transit<Idle>();
+    case WXK_F1:        
+        getTooltip().show(sTooltip); 
+        break;
+    case WXK_ESCAPE:    
+        evt.getWxEvent().Skip(false);
+        return transit<Idle>();
     }
     return forward_event();
 }
