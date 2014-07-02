@@ -117,11 +117,22 @@ boost::statechart::result Dragging::react( const EvKeyDown& evt )
     switch (evt.getKeyCode())
     {
     case WXK_CONTROL:
-    case WXK_SHIFT:     getDrag().move(getMouse().getVirtualPosition()); break;
-    case WXK_F1:        getTooltip().show(sTooltip);                     break;
-    case WXK_ESCAPE:    getDrag().stop(); return transit<Idle>();        break;
+    case WXK_SHIFT:     
+        evt.getWxEvent().Skip(false);
+        getDrag().move(getMouse().getVirtualPosition()); 
+        break;
+    case WXK_F1:        
+        getTooltip().show(sTooltip);                     
+        break;
+    case WXK_ESCAPE:    
+        evt.getWxEvent().Skip(false);
+        getDrag().stop(); return transit<Idle>();        
+        break;
     case 'd':
-    case 'D':           getDrag().toggleSnapping();                      break;
+    case 'D':           
+        evt.getWxEvent().Skip(false);
+        getDrag().toggleSnapping();                      
+        break;
     }
     return forward_event();
 }
@@ -133,7 +144,10 @@ boost::statechart::result Dragging::react( const EvKeyUp& evt )
     switch (evt.getKeyCode())
     {
     case WXK_CONTROL:
-    case WXK_SHIFT:     getDrag().move(getMouse().getVirtualPosition()); break;
+    case WXK_SHIFT:     
+        evt.getWxEvent().Skip(false);
+        getDrag().move(getMouse().getVirtualPosition()); 
+        break;
     }
     return forward_event();
 }

@@ -80,7 +80,8 @@ boost::statechart::result StateScrolling::react( const EvKeyDown& evt )
 
     switch (evt.getKeyCode())
     {
-    case WXK_F1:        getTooltip().show(sTooltip); break;
+    case WXK_F1:        
+        getTooltip().show(sTooltip); break;
     }
     return forward_event();
 }

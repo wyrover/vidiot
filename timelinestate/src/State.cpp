@@ -280,16 +280,24 @@ void Machine::onKeyDown(wxKeyEvent& event)
 {
     VAR_DEBUG(event);
     getKeyboard().update(event);
-    process_event(EvKeyDown(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
-    // NOT: event.Skip(); -- Don't want the left/down keys to propagate further, since that causes scrolling by wxScrolledWindow
+    // By default, the event may propagate upwards. 
+    // If handled by the state machine, Skip(false) will be called.
+    // For instance, Don't want the left/down keys to propagate further, 
+    // since that causes scrolling by wxScrolledWindow
+    event.Skip(); 
+    process_event(EvKeyDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
 }
 
 void Machine::onKeyUp(wxKeyEvent& event)
 {
     VAR_DEBUG(event);
     getKeyboard().update(event);
-    process_event(EvKeyUp(event.ControlDown(), event.ShiftDown(), event.AltDown(), event.GetUnicodeKey(), event.GetKeyCode(), getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
-    // NOT: event.Skip(); -- Don't want the left/down keys to propagate further, since that causes scrolling by wxScrolledWindow
+    // By default, the event may propagate upwards. 
+    // If handled by the state machine, Skip(false) will be called.
+    // For instance, Don't want the left/down keys to propagate further, 
+    // since that causes scrolling by wxScrolledWindow
+    event.Skip(); 
+    process_event(EvKeyUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
 }
 
 void Machine::onCaptureLost(wxMouseCaptureLostEvent& event)

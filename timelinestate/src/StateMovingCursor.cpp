@@ -115,7 +115,10 @@ boost::statechart::result MovingCursor::react( const EvKeyUp& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SHIFT:     triggerToggleEnd(); break;
+    case WXK_SHIFT:     
+        evt.getWxEvent().Skip(false);
+        triggerToggleEnd(); 
+        break;
     }
     return forward_event();
 }

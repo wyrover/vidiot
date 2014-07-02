@@ -87,6 +87,7 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     switch (evt.getKeyCode())
     {
     case WXK_SHIFT:
+        evt.getWxEvent().Skip(false);
         triggerBegin();
         break;
     case WXK_F1:
@@ -96,10 +97,12 @@ boost::statechart::result Playing::react( const EvKeyDown& evt)
     case 'S':
     case 'b':
     case 'B':
+        evt.getWxEvent().Skip(false);
         mKeyCodeTriggeringStop = evt.getKeyCode();
         getPlayer()->stop();
         return discard_event();
     case WXK_SPACE:
+        evt.getWxEvent().Skip(false);
         getPlayer()->stop();
         return discard_event();
     }
@@ -111,7 +114,19 @@ boost::statechart::result Playing::react( const EvKeyUp& evt)
     VAR_DEBUG(evt);
     switch (evt.getKeyCode())
     {
-    case WXK_SHIFT:     triggerEnd(); break;
+    case WXK_SHIFT:     
+        evt.getWxEvent().Skip(false);
+        triggerEnd(); 
+        break;
+    case 's':
+    case 'S':
+    case 'b':
+    case 'B':
+        evt.getWxEvent().Skip(false);
+        break;
+    case WXK_SPACE:
+        evt.getWxEvent().Skip(false);
+        break;
     }
     return forward_event();
 }

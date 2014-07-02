@@ -61,6 +61,9 @@ std::ostream& operator<<(std::ostream& os, const wxKeyEvent& obj)
         << obj.GetY() << '|'
         << obj.GetKeyCode() << '|'
         << obj.GetUnicodeKey() << '|'
+        << obj.ControlDown() << '|'
+        << obj.ShiftDown() << '|'
+        << obj.AltDown() << '|'
         << static_cast<const wxKeyboardState&>(obj);
     return os;
 }

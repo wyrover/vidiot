@@ -98,11 +98,11 @@ bool FixtureGui::setUp()
 bool FixtureGui::tearDown()
 {
     if (!HelperTestSuite::get().currentTestRequiresWindow()) { return true; } // Test was disabled or does not require window
-    wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
-    if (doc)
+    RunInMainAndWait([]
     {
-        doc->Modify(false); // Avoid "Save yes/no/Cancel" dialog
-    }
+        wxDocument* doc = gui::Window::get().GetDocumentManager()->GetCurrentDocument();
+        if (doc) { doc->Modify(false); } // Avoid "Save yes/no/Cancel" dialog
+    });
     mHelperTestSuite->testSuiteDone();
 
      // Ensure that onEventLoopEnter blocks on mBarrierStarted. This blocking should

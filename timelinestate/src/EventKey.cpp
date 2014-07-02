@@ -22,77 +22,68 @@
 
 namespace gui { namespace timeline { namespace state {
 
-EvKey::EvKey(
-    bool controldown,
-    bool shiftdown,
-    bool altdown,
-    const wxChar& unicodekey,
-    int keycode,
-    const wxPoint& position)
-    :   mCtrlDown(controldown)
-    ,   mShiftDown(shiftdown)
-    ,   mAltDown(altdown)
-    ,   mUnicodeKey(unicodekey)
-    ,   mKeyCode(keycode)
-    ,   mPosition(position)
+EvKey::EvKey(wxKeyEvent& wxEvent, const wxPoint& virtualPosition)
+    :   mEvent(wxEvent)
+    ,   mVirtualPosition(virtualPosition)
 {
 };
 
+wxKeyEvent& EvKey::getWxEvent() const
+{
+    return mEvent;
+}
+
 bool EvKey::getCtrlDown() const
 {
-    return mCtrlDown;
+    return mEvent.ControlDown();
 }
 
 bool EvKey::getShiftDown() const
 {
-    return mShiftDown;
+    return mEvent.ShiftDown();
 }
 
 bool EvKey::getAltDown() const
 {
-    return mAltDown;
+    return mEvent.AltDown();
 }
 
 bool EvKey::hasUnicodeKey() const
 {
-    return mUnicodeKey != WXK_NONE;
+    return mEvent.GetUnicodeKey() != WXK_NONE;
 }
 
 wxChar EvKey::getUnicodeKey() const
 {
     ASSERT(hasUnicodeKey());
-    return mUnicodeKey;
+    return mEvent.GetUnicodeKey();
 }
 
 int EvKey::getKeyCode() const
 {
-    return mKeyCode;
+    return mEvent.GetKeyCode();
 }
 
 wxPoint EvKey::getPosition() const
 {
-    return mPosition;
+    return mVirtualPosition;
 }
 
 std::ostream& operator<<(std::ostream& os, const EvKey& obj)
 {
-    os  << typeid(obj).name() << '|' // This typeid is required to distinguish the various 'react' methods
-        << obj.mCtrlDown      << '|'
-        << obj.mShiftDown     << '|'
-        << obj.mAltDown       << '|'
-        << obj.mKeyCode       << '|'
-        << obj.mUnicodeKey    << '|'
-        << obj.mPosition;
+    os  << typeid(obj).name()   << '|' // This typeid is required to distinguish the various 'react' methods
+        << obj.mEvent           << '|'
+        << obj.mVirtualPosition;
     return os;
 }
 
-EvKeyDown::EvKeyDown(bool controldown, bool shiftdown, bool altdown, const wxChar& unicodekey, int keycode, const wxPoint& position)
-    : EvKey(controldown, shiftdown, altdown, unicodekey, keycode, position)
+EvKeyDown::EvKeyDown(wxKeyEvent& event, const wxPoint& virtualPosition)
+    : EvKey(event, virtualPosition)
 {
 }
 
-EvKeyUp::EvKeyUp(bool controldown, bool shiftdown, bool altdown, const wxChar& unicodekey, int keycode, const wxPoint& position)
-    : EvKey(controldown, shiftdown, altdown, unicodekey, keycode, position)
+EvKeyUp::EvKeyUp(wxKeyEvent& event, const wxPoint& virtualPosition)
+    : EvKey(event, virtualPosition)
 {
 }
 
