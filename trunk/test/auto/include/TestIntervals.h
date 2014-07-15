@@ -18,19 +18,7 @@
 #ifndef TEST_INTERVALS_H
 #define TEST_INTERVALS_H
 
-#include <list>
-#include <wx/filename.h>
-#include <boost/shared_ptr.hpp>
-#include "FixtureProject.h"
-#include "SuiteCreator.h"
-
-namespace model {
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-class IPath;
-typedef boost::shared_ptr<IPath> IPathPtr;
-typedef std::list<IPathPtr> IPaths;
-}
+#include "TestAuto.h"
 
 namespace gui { namespace timeline {
 class Timeline;

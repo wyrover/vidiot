@@ -18,7 +18,7 @@
 #ifndef TEST_WATCH_H
 #define TEST_WATCH_H
 
-#include "HelperFileSystem.h"
+#include "TestAuto.h"
 
 namespace test {
 

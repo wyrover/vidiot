@@ -18,6 +18,8 @@
 #ifndef TEST_SUITE_CREATOR_H
 #define TEST_SUITE_CREATOR_H
 
+#include "Test.h"
+
 namespace test {
 template <typename TESTS>
 class SuiteCreator

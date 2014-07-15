@@ -17,21 +17,6 @@
 
 #include "TestTimeline.h"
 
-#include "AudioView.h"
-#include "Details.h"
-#include "DetailsClip.h"
-#include "DetailsTrim.h"
-#include "Drag.h"
-#include "ExecuteDrop.h"
-#include "ProjectViewCreateAutoFolder.h"
-#include "ProjectViewCreateSequence.h"
-#include "SequenceView.h"
-#include "TrackView.h"
-#include "TrimClip.h"
-#include "VideoDisplayEvent.h"
-#include "VideoView.h"
-#include "ViewMap.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

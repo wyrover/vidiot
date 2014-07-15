@@ -18,6 +18,8 @@
 #ifndef TEST_UTIL_PATH_H
 #define TEST_UTIL_PATH_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

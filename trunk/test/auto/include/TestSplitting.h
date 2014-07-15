@@ -18,6 +18,8 @@
 #ifndef TEST_SPLITTING_H
 #define TEST_SPLITTING_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 class TestSplitting : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

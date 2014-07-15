@@ -15,13 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include <wx/msgout.h>
-
-#ifdef __GNUC__
-#include <X11/Xlib.h>
-#endif
+#include "Test.h"
 
 namespace test {
+
 //static
 FixtureGui sInstance;
 
@@ -165,7 +162,7 @@ void FixtureGui::mainThread()
     char* argv = _strdup(gui::Application::sTestApplicationName);
     if (GetSystemMetrics( SM_REMOTESESSION ) != 0)
     {
-        FATAL("Do not run in a remote desktop session (causes the generation of unwanted additional mouse events). Use VNC.");
+    //    FATAL("Do not run in a remote desktop session (causes the generation of unwanted additional mouse events). Use VNC.");
     }
 #else
     char* argv = strdup(gui::Application::sTestApplicationName);

@@ -18,6 +18,8 @@
 #ifndef TEST_TIMELINES_VIEW_H
 #define TEST_TIMELINES_VIEW_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

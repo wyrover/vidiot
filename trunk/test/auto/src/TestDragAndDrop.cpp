@@ -17,10 +17,6 @@
 
 #include "TestDragAndDrop.h"
 
-#include "CreateTransition.h"
-#include "Cursor.h"
-#include "Drag.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

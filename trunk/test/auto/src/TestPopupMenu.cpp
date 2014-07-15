@@ -17,13 +17,6 @@
 
 #include "TestPopupMenu.h"
 
-#include "AudioView.h"
-#include "Menu.h"
-#include "Scrolling.h"
-#include "SequenceView.h"
-#include "TimescaleView.h"
-#include "VideoView.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

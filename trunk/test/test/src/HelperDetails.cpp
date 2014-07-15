@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Details.h"
-#include "DetailsClip.h"
+#include "Test.h"
 
 namespace test {
 
@@ -41,25 +40,44 @@ void ASSERT_CLIPPROPERTIES(
     wxPoint position,
     boost::rational<int> rotation)
 {
-    RunInMainAndWait([clip,scaling,scalingfactor,alignment,position,rotation]
+    waitForIdle();
+
+    int widget_scalingdigits = 0;
+    double widget_scalingspin = 0.0;
+    int widget_xslider = 0;
+    int widget_xspin = 0;
+    int widget_yslider = 0;
+    int widget_yspin = 0;
+    int widget_rotationdigits = 0;
+
+    RunInMainAndWait([&]
     {
-        model::VideoClipPtr videoclip = getVideoClip(clip);
         ASSERT_DETAILSCLIP(clip);
-        int scalingdigits = boost::rational_cast<int>(scalingfactor * model::Constants::sScalingPrecisionFactor);
-        int rotationdigits = boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor);
-        ASSERT_EQUALS(DetailsClipView()->getScalingSlider()->GetValue(), scalingdigits );
-        ASSERT_EQUALS(floor(DetailsClipView()->getScalingSpin()->GetValue() * model::Constants::sScalingPrecisionFactor), scalingdigits);
-        ASSERT_EQUALS(DetailsClipView()->getPositionXSlider()->GetValue(),position.x)(DetailsClipView()->getPositionYSlider()->GetValue());
-        ASSERT_EQUALS(DetailsClipView()->getPositionXSpin()->GetValue(),position.x);
-        ASSERT_EQUALS(DetailsClipView()->getPositionYSlider()->GetValue(),position.y);
-        ASSERT_EQUALS(DetailsClipView()->getPositionYSpin()->GetValue(),position.y);
-        ASSERT_EQUALS(DetailsClipView()->getRotationSlider()->GetValue(), rotationdigits);
-        ASSERT_EQUALS(videoclip->getScaling(),scaling);
-        ASSERT_EQUALS(videoclip->getScalingFactor(),scalingfactor);
-        ASSERT_EQUALS(videoclip->getAlignment(),alignment);
-        ASSERT_EQUALS(videoclip->getPosition(),position);
-        ASSERT_EQUALS(videoclip->getRotation(),rotation);
+        widget_scalingdigits = DetailsClipView()->getScalingSlider()->GetValue();
+        widget_scalingspin = DetailsClipView()->getScalingSpin()->GetValue();
+        widget_xslider = DetailsClipView()->getPositionXSlider()->GetValue();
+        widget_xspin = DetailsClipView()->getPositionXSpin()->GetValue();
+        widget_yslider = DetailsClipView()->getPositionYSlider()->GetValue();
+        widget_yspin = DetailsClipView()->getPositionYSpin()->GetValue();
+        widget_rotationdigits = DetailsClipView()->getRotationSlider()->GetValue();
     });
+
+    int scalingdigits = boost::rational_cast<int>(scalingfactor * model::Constants::sScalingPrecisionFactor);
+    ASSERT_EQUALS(widget_scalingdigits, scalingdigits );
+    ASSERT_EQUALS(floor(widget_scalingspin * model::Constants::sScalingPrecisionFactor), scalingdigits);
+    ASSERT_EQUALS(widget_xslider,position.x)(widget_yslider);
+    ASSERT_EQUALS(widget_xspin,position.x);
+    ASSERT_EQUALS(widget_yslider,position.y)(widget_xslider);
+    ASSERT_EQUALS(widget_yspin,position.y);
+    int rotationdigits = boost::rational_cast<int>(rotation * model::Constants::sRotationPrecisionFactor);
+    ASSERT_EQUALS(widget_rotationdigits, rotationdigits);
+
+    model::VideoClipPtr videoclip = getVideoClip(clip);
+    ASSERT_EQUALS(videoclip->getScaling(),scaling);
+    ASSERT_EQUALS(videoclip->getScalingFactor(),scalingfactor);
+    ASSERT_EQUALS(videoclip->getAlignment(),alignment);
+    ASSERT_EQUALS(videoclip->getPosition(),position);
+    ASSERT_EQUALS(videoclip->getRotation(),rotation);
 };
 
 } // namespace

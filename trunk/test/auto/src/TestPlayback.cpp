@@ -17,9 +17,6 @@
 
 #include "TestPlayback.h"
 
-#include "Details.h"
-#include "Player.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

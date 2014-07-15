@@ -18,7 +18,7 @@
 #ifndef TEST_EXCEPTIONS_H
 #define TEST_EXCEPTIONS_H
 
-#include "HelperFileSystem.h"
+#include "TestAuto.h"
 
 namespace test {
 

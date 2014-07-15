@@ -17,9 +17,6 @@
 
 #include "TestTrimming.h"
 
-#include "Cursor.h"
-#include "ExecuteDrop.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

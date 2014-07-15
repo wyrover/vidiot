@@ -18,6 +18,8 @@
 #ifndef TEST_SCROLLING_H
 #define TEST_SCROLLING_H
 
+#include "TestAuto.h"
+
 namespace test {
 
 class TestScrolling : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

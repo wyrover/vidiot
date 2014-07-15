@@ -18,6 +18,8 @@
 #ifndef TEST_PLAYBACK_H
 #define TEST_PLAYBACK_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 class TestPlayback : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

@@ -17,10 +17,6 @@
 
 #include "TestSavingAndLoading.h"
 
-#include "CreateTransitionHelper.h"
-#include "ProjectView.h"
-#include "Scrolling.h"
-
 namespace test {
 
 const wxString sCurrent("current.vid");

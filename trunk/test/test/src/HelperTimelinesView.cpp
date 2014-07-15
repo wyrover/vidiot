@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Render.h"
-#include "TimeLinesView.h"
+#include "Test.h"
 
 namespace test {
 

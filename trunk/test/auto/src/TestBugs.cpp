@@ -17,10 +17,6 @@
 
 #include "TestBugs.h"
 
-#include "DetailsClip.h"
-#include "Dialog.h"
-#include "ProjectViewCreateSequence.h"
-
 namespace test {
 
 void TestBugs::setUp()

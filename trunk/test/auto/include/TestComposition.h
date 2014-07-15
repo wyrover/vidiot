@@ -18,6 +18,8 @@
 #ifndef TEST_BLEND_H
 #define TEST_BLEND_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

@@ -17,13 +17,6 @@
 
 #include "TestRender.h"
 
-#include "Dialog.h"
-#include "DialogRenderSettings.h"
-#include "Render.h"
-#include "UtilLogAvcodec.h" // For logging codec ids. Still compiles without this include but then the title bar shows ints, not text for the codec name.
-#include "VideoCodecs.h"
-#include "Worker.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

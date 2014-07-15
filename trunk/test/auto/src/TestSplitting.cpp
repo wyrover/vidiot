@@ -17,18 +17,6 @@
 
 #include "TestSplitting.h"
 
-#include "CreateTransition.h"
-#include "Details.h"
-#include "DetailsClip.h"
-#include "DetailsTrim.h"
-#include "Drag.h"
-#include "ExecuteDrop.h"
-#include "ProjectViewCreateAutoFolder.h"
-#include "ProjectViewCreateSequence.h"
-#include "SequenceView.h"
-#include "TrimClip.h"
-#include "VideoDisplayEvent.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

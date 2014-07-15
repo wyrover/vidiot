@@ -15,21 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AudioView.h"
-#include "ClipView.h"
-#include "Cursor.h"
-#include "Drag.h"
-#include "Logging.h"
-#include "Mouse.h"
-#include "PositionInfo.h"
-#include "Scrolling.h"
-#include "Selection.h"
-#include "SequenceView.h"
-#include "State.h"
-#include "TrackView.h"
-#include "VideoView.h"
-#include "ViewMap.h"
-#include "Zoom.h"
+#include "Test.h"
 
 namespace test {
 
@@ -494,7 +480,6 @@ void WaitForTimelineToLoseFocus::wait()
     }
 }
 
-// todo remove all test .h files from precompiledtest since the pch is not recompiled on header change?
 void WaitForTimelineToLoseFocus::onLeave(wxMouseEvent& event)
 {
     endWait();
