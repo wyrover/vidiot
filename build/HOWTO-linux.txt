@@ -6,7 +6,9 @@ NOTE 2: Virtualbox hdd needs large HDD (used 20 GBytes)
 * Virtualbox: shared folder: C:\Vidiot\vidiot_trunk -> vidiot_trunk
 * Terminal:
   - sudo usermod -a -G vboxsf <user> -- for access to shared folder, need to log out and in again and/or reinstall guest additions
-  - ln -s  /media/sf_vidiot_trunk <VIDIOT_DIR>/vidiot_trunk
+  - sudo joe /etc/rc.local
+    ADD: mount -t vboxsf -o rw vidiot_trunk /home/epra/Vidiot/vidiot_trunk
+NOT  - ln -s  /media/sf_vidiot_trunk <VIDIOT_DIR>/vidiot_trunk
 
 ================ TOOLS ================
 * gsettings set com.canonical.desktop.interface scrollbar-mode normal -- fix nasty ubuntu scrollbars
