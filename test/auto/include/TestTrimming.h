@@ -18,6 +18,8 @@
 #ifndef TEST_TRIMMING_H
 #define TEST_TRIMMING_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 class TestTrimming : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

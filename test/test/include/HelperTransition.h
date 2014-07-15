@@ -18,6 +18,8 @@
 #ifndef HELPER_TRANSITION_H
 #define HELPER_TRANSITION_H
 
+#include "Test.h"
+
 namespace test {
 
 wxPoint TransitionLeftClipInterior(model::IClipPtr clip);

@@ -18,6 +18,8 @@
 #ifndef TEST_STILL_IMAGE_H
 #define TEST_STILL_IMAGE_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 class TestStillImage : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

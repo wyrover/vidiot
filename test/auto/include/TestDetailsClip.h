@@ -18,6 +18,8 @@
 #ifndef TEST_TRANSFORM_H
 #define TEST_TRANSFORM_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

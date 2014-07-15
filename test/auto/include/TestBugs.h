@@ -18,6 +18,8 @@
 #ifndef TEST_BUGS_H
 #define TEST_BUGS_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

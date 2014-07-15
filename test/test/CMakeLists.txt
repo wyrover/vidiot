@@ -32,13 +32,7 @@ include_directories (AFTER
 file (GLOB GenericTestFilesH ${CMAKE_CURRENT_SOURCE_DIR}/*/*.h)
 file (GLOB GenericTestFilesCpp ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp)
 
-file (GLOB PchTestTiles ${CMAKE_CURRENT_SOURCE_DIR}/../pch/*/*.*)
-source_group ("pch" FILES  ${PchTestTiles})
-
 enable_unity_build (test GenericTestFilesCpp TEST_UNITY_CPP_FILES)
 
-# PrecompiledTest.* added here to have them include in MSVC solution
-add_library (test ${TEST_UNITY_CPP_FILES} ${GenericTestFilesH} ${GenericTestFilesCpp} ../pch/include/PrecompiledTest.h ../pch/src/PrecompiledTest.cpp)
-
-create_precompiled_header ("test" "../pch" "PrecompiledTest")
+add_library (test ${TEST_UNITY_CPP_FILES} ${GenericTestFilesH} ${GenericTestFilesCpp})
 

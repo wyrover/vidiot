@@ -18,6 +18,8 @@
 #ifndef HELPER_WINDOW_H
 #define HELPER_WINDOW_H
 
+#include "Test.h"
+
 namespace test {
 
 /// Trigger the menu given. That menu should be in the main menu bar.
@@ -68,7 +70,11 @@ wxCommand* getCurrentCommand();
 template <class COMMAND>
 void ASSERT_CURRENT_COMMAND_TYPE()
 {
-    wxCommand* cmd = getCurrentCommand(); // Split to make debugging easier (inspect cmd to see what the current command is in case of failure)
+    wxCommand* cmd = 0;
+    RunInMainAndWait([&]
+    {
+        cmd = getCurrentCommand(); // Split to make debugging easier (inspect cmd to see what the current command is in case of failure)
+    });
     ASSERT(cmd);
     COMMAND* command = dynamic_cast<COMMAND*>(cmd);
     if (!command)

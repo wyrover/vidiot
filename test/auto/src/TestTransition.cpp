@@ -17,14 +17,6 @@
 
 #include "TestTransition.h"
 
-#include "CreateTransitionHelper.h"
-#include "DeleteSelectedClips.h"
-#include "ExecuteDrop.h"
-#include "Menu.h"
-#include "ProjectModification.h"
-#include "TrimClip.h"
-#include "VideoTransitionFactory.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

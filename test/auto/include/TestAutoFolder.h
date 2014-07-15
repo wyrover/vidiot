@@ -18,6 +18,8 @@
 #ifndef TEST_AUTO_FOLDER_H
 #define TEST_AUTO_FOLDER_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

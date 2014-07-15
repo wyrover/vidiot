@@ -18,6 +18,8 @@
 #ifndef TEST_PROJECT_VIEW_H
 #define TEST_PROJECT_VIEW_H
 
+#include "TestAuto.h"
+
 namespace test {
 
 class TestProjectView: public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

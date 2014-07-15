@@ -18,6 +18,8 @@
 #ifndef TEST_MENU_H
 #define TEST_MENU_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 class TestMenu : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

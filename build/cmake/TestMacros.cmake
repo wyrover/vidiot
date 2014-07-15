@@ -29,7 +29,6 @@ macro (AddTests TestProjectName)
 
   AddCxxTest (${TestProjectName} ${TEST_AUTO_UNITY_CPP_FILES} ${TestHeaders} ${TestSources})
 
-  reuse_precompiled_header (${TestProjectName} "${CMAKE_CURRENT_SOURCE_DIR}/../pch" "PrecompiledTest")
 
   if (UNIX)
     set_target_properties (${TestProjectName} PROPERTIES OUTPUT_NAME ${TestProjectName}.run) # Rename to avoid having the same name as the folder

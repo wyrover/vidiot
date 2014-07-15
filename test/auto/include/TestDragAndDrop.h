@@ -18,6 +18,8 @@
 #ifndef TEST_DRAGANDDROP_H
 #define TEST_DRAGANDDROP_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 class TestDragAndDrop : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

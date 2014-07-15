@@ -15,7 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
+#include "Test.h"
+
 namespace test {
+
 void triggerMenu(int id)
 {
     triggerMenu(gui::Window::get(), id);

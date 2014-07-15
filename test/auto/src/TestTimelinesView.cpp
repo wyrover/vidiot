@@ -17,8 +17,6 @@
 
 #include "TestTimelinesView.h"
 
-#include "Menu.h"
-
 namespace test {
 
 void TestTimelinesView::testSequenceMenu()

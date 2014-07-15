@@ -18,6 +18,8 @@
 #ifndef TEST_DIALOG_H
 #define TEST_DIALOG_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

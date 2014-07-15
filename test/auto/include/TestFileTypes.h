@@ -18,15 +18,7 @@
 #ifndef TEST_FILE_TYPES_H
 #define TEST_FILE_TYPES_H
 
-namespace model {
-class IPath;
-typedef boost::shared_ptr<IPath> IPathPtr;
-typedef std::list<IPathPtr> IPaths;
-class Folder;
-typedef boost::shared_ptr<Folder> FolderPtr;
-class Sequence;
-typedef boost::shared_ptr<Sequence> SequencePtr;
-}
+#include "TestAuto.h"
 
 namespace test {
 

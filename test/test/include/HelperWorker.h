@@ -18,6 +18,8 @@
 #ifndef HELPER_WORKER_H
 #define HELPER_WORKER_H
 
+#include "Test.h"
+
 namespace test {
 
 /// Construct this object before triggering an action that causes

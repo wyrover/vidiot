@@ -18,6 +18,8 @@
 #ifndef TEST_TIMELINE_H
 #define TEST_TIMELINE_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 class TestTimeline : public CxxTest::TestSuite // Must be on same line as class definition. Otherwise 'No tests defined error

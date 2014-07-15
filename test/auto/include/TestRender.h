@@ -18,6 +18,8 @@
 #ifndef TEST_ONCE_H
 #define TEST_ONCE_H
 
+#include "TestAuto.h"
+
 namespace test
 {
 

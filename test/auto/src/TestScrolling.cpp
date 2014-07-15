@@ -17,10 +17,6 @@
 
 #include "TestScrolling.h"
 
-#include "Cursor.h"
-#include "Scrolling.h"
-#include "SequenceView.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////

@@ -15,11 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Vidiot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "CreateTransition.h"
-#include "Mouse.h"
-#include "PositionInfo.h"
-#include "TrimClip.h"
-#include "Zoom.h"
+#include "Test.h"
 
 namespace test {
 

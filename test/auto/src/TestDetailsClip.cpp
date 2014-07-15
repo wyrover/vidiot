@@ -17,14 +17,6 @@
 
 #include "TestDetailsClip.h"
 
-#include "ChangeAudioClipVolume.h"
-#include "ChangeVideoClipTransform.h"
-#include "Combiner.h"
-#include "DetailsClip.h"
-#include "ProjectViewCreateSequence.h"
-#include "TrimClip.h"
-#include "UnlinkClips.h"
-
 namespace test {
 
 //////////////////////////////////////////////////////////////////////////
@@ -308,6 +300,10 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     }
 }
 
+
+// todo make all 'auto' tests use 'generated' events and not 'mouse/key motion/generation'.
+// todo make dedicated tests project for handling 'mouse/key motion/generation'
+
 void TestDetailsClip::testTransform()
 {
     StartTestSuite();
@@ -330,7 +326,10 @@ void TestDetailsClip::testTransform()
             boost::rational<int>(8000,model::Constants::sScalingPrecisionFactor),
             model::VideoAlignmentCenter,
             wxPoint(-152,0),
-            boost::rational<int>(0)); };
+            boost::rational<int>(0)); 
+        // verify only one command is added to the history when doing multiple edits.
+        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); 
+    };
 
     StartTest("If one clip is selected the details view changes accordingly.");
     Click(Center(VideoClip(0,3)));
@@ -340,133 +339,127 @@ void TestDetailsClip::testTransform()
 
     {
         StartTest("Scaling: Slider: If moved to the right, the scaling is increased. Scaling enum is changed to custom.");
-        ClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-        Type(WXK_PAGEUP);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getScalingSlider(), 7000); // Same as presing WXK_PAGEUP
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingCustom,boost::rational<int>(7000,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-88,36),oldRotation);
-        Undo();
-        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); // Verify that only one command object was added to the undo history
-        ASSERT_ORIGINAL_CLIPPROPERTIES();
-        StartTest("Scaling: Slider: If moved to the left, the scaling is decreased. Scaling enum is changed to custom.");
-        ClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-        Type(WXK_PAGEDOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingCustom,boost::rational<int>(9000,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-216,-36),oldRotation);
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
+        StartTest("Scaling: Slider: If moved to the left, the scaling is decreased. Scaling enum is changed to custom.");
+        SetValue(DetailsClipView()->getScalingSlider(), 9000); // Same as presing WXK_PAGEDOWN
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
+        ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingCustom,boost::rational<int>(9000,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-216,-36),oldRotation);
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+//#ifdef __GNUC__
+//    {
+//        // Without this workaround, the first 'up' after giving the control focus increments with the wrong amount.
+//        // Instead of incrementing the scaling with 0.0100, the scaling was increased with 1.0000.
+//        StartTest("Workaround for GTK issue: First change of the scaling spin via the kbd changes with 1.0 i.s.o. 0.1");
+//        GiveKeyboardFocus(DetailsClipView()->getScalingSpin());
+//        Type(WXK_UP);
+//        Undo();
+//        ASSERT_ORIGINAL_CLIPPROPERTIES();
+//    }
+//#endif
+    {
         StartTest("Scaling: Spin: If moved up, the scaling is increased. Scaling enum is changed to custom.");
-        ClickTopLeft(DetailsClipView()->getScalingSpin(),wxPoint(2,2)); // Give focus
-        Type(WXK_UP);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getScalingSpin(), DetailsClipView()->getScalingSpin()->GetValue() + 0.01); // Same as pressing WXK_UP
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingCustom,oldScalingFactor + boost::rational<int>(100,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-158,-3),oldRotation); // The scaling spin buttons increment with 0.01, not 0.0001
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
         StartTest("Scaling: Spin: If moved down, the scaling is decreased. Scaling enum is changed to custom.");
-        Type(WXK_DOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getScalingSpin(), DetailsClipView()->getScalingSpin()->GetValue() - 0.01); // Same as pressing WXK_DOWN
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingCustom,oldScalingFactor - boost::rational<int>(100,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-145,4),oldRotation);// The scaling spin buttons increment with 0.01, not 0.0001
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Scaling: Choice: 'Fit all'");
-        ClickOnEnumSelector(DetailsClipView()->getScalingSelector(),model::VideoScalingFitAll);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getScalingSelector(),model::VideoScalingFitAll);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitAll,boost::rational<int>(5625,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(0,85),oldRotation);
         Undo();
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Scaling: Choice: 'Fit to fill'");
-        ClickTopLeft(DetailsClipView()->getScalingSlider()); // First, set a different value than the defaults (which are already fit to fill)
-        Type(WXK_PAGEDOWN);
-        ClickOnEnumSelector(DetailsClipView()->getScalingSelector(),model::VideoScalingFitToFill);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getScalingSlider(), 9000); // Same as presing WXK_PAGEDOWN. First change the position a bit.
+        SetValue(DetailsClipView()->getScalingSelector(),model::VideoScalingFitToFill);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,boost::rational<int>(8000,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-152,0),oldRotation);
         Undo();
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Scaling: Choice: 'Original size'");
-        ClickOnEnumSelector(DetailsClipView()->getScalingSelector(),model::VideoScalingNone);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getScalingSelector(),model::VideoScalingNone);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingNone,boost::rational<int>(10000,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-280,-72),oldRotation);
         Undo();
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Scaling: Choice: 'Custom'");
-        ClickOnEnumSelector(DetailsClipView()->getScalingSelector(),model::VideoScalingCustom);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getScalingSelector(),model::VideoScalingCustom);
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingCustom,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
         Undo();
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Alignment: Choice: 'Center'");
-        ClickTopLeft(DetailsClipView()->getPositionXSlider()); // First, set different values
-        Type(WXK_PAGEDOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
-        ClickTopLeft(DetailsClipView()->getPositionYSlider()); // First, set different values
-        Type(WXK_PAGEDOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        // First, set different values
+        SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
+        SetValue(DetailsClipView()->getPositionYSlider(), 10); // Same as WXK_PAGEDOWN
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCustom,wxPoint(-142,10),oldRotation);
-        ClickOnEnumSelector(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenter);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenter);
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenter,wxPoint(-152,0),oldRotation);
         Undo();
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Alignment: Choice: 'Center Horizontal'");
-        ClickTopLeft(DetailsClipView()->getPositionYSlider()); // First, set different values
-        Type(WXK_PAGEDOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenterHorizontal,wxPoint(-152,10),oldRotation); // Test that the alignment is changed from center to centerhorizontal automatically
-        ClickTopLeft(DetailsClipView()->getPositionXSlider()); // First, set different values
-        Type(WXK_PAGEDOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        // First, set different values
+        SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
+        SetValue(DetailsClipView()->getPositionYSlider(), 10); // Same as WXK_PAGEDOWN
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCustom,wxPoint(-142,10),oldRotation);
-        ClickOnEnumSelector(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenterHorizontal);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenterHorizontal);
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenterHorizontal,wxPoint(-152,10),oldRotation);
         Undo();
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Alignment: Choice: 'Center Vertical'");
-        ClickTopLeft(DetailsClipView()->getPositionXSlider()); // First, set different values
-        Type(WXK_PAGEDOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenterVertical,wxPoint(-142,0),oldRotation); // Test that the alignment is changed from center to centervertical automatically
-        ClickTopLeft(DetailsClipView()->getPositionYSlider()); // First, set different values
-        Type(WXK_PAGEDOWN);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        // First, set different values
+        SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
+        SetValue(DetailsClipView()->getPositionYSlider(), 10); // Same as WXK_PAGEDOWN
+        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>();
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCustom,wxPoint(-142,10),oldRotation);
-        ClickOnEnumSelector(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenterVertical);
-        ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
+        SetValue(DetailsClipView()->getAlignmentSelector(),model::VideoAlignmentCenterVertical);
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),model::VideoScalingFitToFill,oldScalingFactor,model::VideoAlignmentCenterVertical,wxPoint(-142,0),oldRotation);
-        wxCommand* command = getCurrentCommand();
         Undo();
-        ASSERT_DIFFERS(command,getCurrentCommand());
-        ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,oldRotation);
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Rotation: Slider: moved to the right.");
-        ClickTopLeft(DetailsClipView()->getRotationSlider()); // Give focus
-        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-        Type(WXK_PAGEUP);
+        SetValue(DetailsClipView()->getRotationSlider(), -10); // Same as WXK_PAGEUP
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(-1,10));
         Undo();
-        ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>(); // Verify that only one command object was added to the undo history
         ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
         StartTest("Scaling: Slider: moved to the left.");
-        ClickTopLeft(DetailsClipView()->getRotationSlider()); // Give focus
-        Type(WXK_PAGEDOWN);
+        SetValue(DetailsClipView()->getRotationSlider(), 10); // Same as WXK_PAGEDOWN
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(1,10));
         Undo();
@@ -474,14 +467,15 @@ void TestDetailsClip::testTransform()
     }
     {
         StartTest("Rotation: Spin: moved up.");
-        ClickTopLeft(DetailsClipView()->getRotationSpin(),wxPoint(2,2)); // Give focus
-        Type(WXK_UP);
+        SetValue(DetailsClipView()->getRotationSlider(), 1); // Same as WXK_UP
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(1,100));
         Undo();
         ASSERT_ORIGINAL_CLIPPROPERTIES();
+    }
+    {
         StartTest("Scaling: Spin: moved down.");
-        Type(WXK_DOWN);
+        SetValue(DetailsClipView()->getRotationSlider(), -1); // Same as WXK_DOWN
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
         ASSERT_CLIPPROPERTIES(VideoClip(0,3),oldScaling,oldScalingFactor,oldAlignment,oldPosition,boost::rational<int>(-1,100));
         Undo();
@@ -492,25 +486,28 @@ void TestDetailsClip::testTransform()
         PositionCursor(HCenter(VideoClip(0,1)));
         Click(Center(VideoClip(0,1)));
         ASSERT_DETAILSCLIP(VideoClip(0,1));
-        Click(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
-        ClickTopLeft(DetailsClipView()->getPositionYSlider()); // Change the clip
-        Type(WXK_PAGEDOWN);
+        Click(Center(VideoClip(0,3)));
+        ASSERT_DETAILSCLIP(VideoClip(0,3));
+        SetValue(DetailsClipView()->getPositionYSlider(),10); // Same as WXK_PAGEDOWN
+        SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
-        ASSERT_EQUALS(CursorPosition(),HCenter(VideoClip(0,4))); // Now the cursor is moved to the center of the adjusted clip (for the preview)
+        ASSERT_EQUALS(CursorPosition(),HCenter(VideoClip(0,3))); // Now the cursor is moved to the center of the adjusted clip (for the preview)
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
     {
         StartTest("Keep cursor position, if the cursor was inside the clip's timeline region");
-        pixel pos = HCenter(VideoClip(0,4)) - 40;
+        pixel pos = HCenter(VideoClip(0,3)) - 20;
         PositionCursor(pos);
         Click(Center(VideoClip(0,1)));
         ASSERT_DETAILSCLIP(VideoClip(0,1));
-        Click(Center(VideoClip(0,4)));
-        ASSERT_DETAILSCLIP(VideoClip(0,4));
-        ClickTopLeft(DetailsClipView()->getPositionXSlider()); // Change the clip
-        Type(WXK_PAGEDOWN);
+        Click(Center(VideoClip(0,3)));
+        ASSERT_DETAILSCLIP(VideoClip(0,3));
+        SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
         ASSERT_EQUALS(CursorPosition(),pos); // Now the cursor is not moved: same frame is previewed
+        Undo();
+        ASSERT_ORIGINAL_CLIPPROPERTIES();
     }
 }
 
@@ -522,7 +519,7 @@ void TestDetailsClip::testTransform_Boundaries()
         StartTest("Scaling: Minimum scaling factor.");
         Click(Center(VideoClip(0,5)));
         ASSERT_DETAILSCLIP(VideoClip(0,5));
-        ClickTopLeft(DetailsClipView()->getScalingSpin(),wxPoint(2,2)); // Give focus
+        GiveKeyboardFocus(DetailsClipView()->getScalingSpin());
         TypeN(7,WXK_DELETE); // Remove all characters
         Type('0'); // 0 will be replaced with 'min' value
         Type(WXK_TAB);
@@ -534,7 +531,7 @@ void TestDetailsClip::testTransform_Boundaries()
         StartTest("Scaling: Maximum scaling factor.");
         Click(Center(VideoClip(0,5)));
         ASSERT_DETAILSCLIP(VideoClip(0,5));
-        ClickTopLeft(DetailsClipView()->getScalingSpin(),wxPoint(2,2)); // Give focus
+        GiveKeyboardFocus(DetailsClipView()->getScalingSpin());
         TypeN(7,WXK_DELETE); // Remove all characters
         TypeN(10,'9'); // 999999999 will be replaced with 'max' value
         Type(WXK_TAB);
@@ -582,7 +579,7 @@ void TestDetailsClip::testChangeVolume()
 
     {
         StartTest("Volume: Down via slider");
-        ClickTopLeft(DetailsClipView()->getVolumeSlider());
+        GiveKeyboardFocus(DetailsClipView()->getVolumeSlider());
         Type(WXK_PAGEUP);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(90);
@@ -592,7 +589,7 @@ void TestDetailsClip::testChangeVolume()
     }
     {
         StartTest("Volume: Down via spin");
-        ClickTopLeft(DetailsClipView()->getVolumeSpin(),wxPoint(2,2)); // Give focus
+        GiveKeyboardFocus(DetailsClipView()->getVolumeSpin());
         TypeN(4,WXK_DOWN); // Note: the click above is on the up arrow already triggering an increment of 1
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(97);
@@ -602,7 +599,7 @@ void TestDetailsClip::testChangeVolume()
     }
     {
         StartTest("Volume: Up via slider");
-        ClickTopLeft(DetailsClipView()->getVolumeSlider());
+        GiveKeyboardFocus(DetailsClipView()->getVolumeSlider());
         Type(WXK_PAGEDOWN);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(110);
@@ -612,7 +609,7 @@ void TestDetailsClip::testChangeVolume()
     }
     {
         StartTest("Volume: Up via spin");
-        ClickTopLeft(DetailsClipView()->getVolumeSpin(),wxPoint(2,2)); // Give focus
+        GiveKeyboardFocus(DetailsClipView()->getVolumeSpin());
         TypeN(4,WXK_UP); // Note: the click above is on the up arrow already triggering an increment of 1
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(105);
