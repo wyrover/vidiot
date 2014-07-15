@@ -173,8 +173,8 @@ DetailsClip::DetailsClip(wxWindow* parent, Timeline& timeline)
     mScalingSlider->SetPageSize(model::Constants::sScalingPageSize);
     mScalingSpin = new wxSpinCtrlDouble(scalingpanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(55,-1));
     mScalingSpin->SetWindowVariant( wxWINDOW_VARIANT_SMALL );
-    mScalingSpin->SetDigits(model::Constants::sScalingPrecision);
     mScalingSpin->SetValue(1); // No scaling
+    mScalingSpin->SetDigits(model::Constants::sScalingPrecision);
     mScalingSpin->SetRange(
         static_cast<double>(model::Constants::sScalingMin) / static_cast<double>(model::Constants::sScalingPrecisionFactor),
         static_cast<double>(model::Constants::sScalingMax) / static_cast<double>(model::Constants::sScalingPrecisionFactor));
