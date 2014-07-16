@@ -175,9 +175,14 @@ void TimelineTriggerWheel(int nSteps);
 
 pixel CursorPosition();                              ///< \return cursor position
 
-void PositionCursor(pixel position);                                    ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
-void Move(wxPoint position);                                            ///< Move the mouse to the given position within the timeline
-void Click(wxPoint position);                                           ///< Move the mouse to the given position and (left) click there
+void PositionCursor(pixel position);                 ///< Move the mouse and then click the left button, in order to move the cursor line to the given position
+void Move(wxPoint position);                         ///< Move the mouse to the given position within the timeline
+void Click(wxPoint position);                        ///< Move the mouse to the given position and (left) click there
+
+void TimelineKeyDown(int key);                       ///< Trigger a key down event in the timeline for the given key.
+void TimelineKeyUp(int key);                         ///< Trigger a key up event in the timeline for the given key.
+void TimelineKeyPress(int key);                      ///< Trigger a key down then up event in the timeline for the given key.
+
 
 /// Zoom in the given amount of times by zooming in the given amount of times.
 /// When going out of scope, will reset to the default zoom level by zooming out an equal amount of times.

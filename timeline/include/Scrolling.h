@@ -18,6 +18,7 @@
 #ifndef SCROLL_H
 #define SCROLL_H
 
+#include "EventMouse.h"
 #include "Part.h"
 #include "UtilEvent.h"
 #include "UtilInt.h"
@@ -44,7 +45,8 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void rightDown();
-    void update(const wxMouseState& state);
+    void update(state::MouseState& state);
+
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

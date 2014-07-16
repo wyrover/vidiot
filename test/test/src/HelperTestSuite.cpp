@@ -73,6 +73,7 @@ HelperTestSuite::HelperTestSuite()
 
 void HelperTestSuite::readConfig()
 {
+
 	wxFileConfig config(wxEmptyString, wxEmptyString, Config::getFileName());
     wxConfigBase::Set(&config);
     wxString current;

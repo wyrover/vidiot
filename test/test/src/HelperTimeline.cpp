@@ -351,6 +351,23 @@ void Click(wxPoint position)
     ASSERT_EQUALS(getTimeline().getMouse().getLeftDownPosition(), position);
 }
 
+void TimelineKeyDown(int key)
+{
+    wxKeyEvent* e = new wxKeyEvent(wxEVT_KEY_DOWN);
+    // todo make timeline::Statemachine::handleKeyevent methods and call those from here as well as from the ui events.
+    getTimeline().GetEventHandler()->QueueEvent(new wxKeyEvent(wxEVT_SLIDER));
+    waitForIdle();
+
+}
+
+void TimelineKeyUp(int key)
+{
+}
+
+void TimelineKeyPress(int key)
+{
+}
+
 Zoom::Zoom(int level)
     : mLevel(level)
 {
