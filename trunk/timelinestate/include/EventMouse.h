@@ -20,29 +20,49 @@
 
 namespace gui { namespace timeline { namespace state {
 
-template< class MostDerived >
-struct EvMouse : boost::statechart::event< MostDerived >
+struct MouseState
 {
+    explicit MouseState(const wxMouseState& wx);
+
+    const wxPoint Position;
+    const bool LeftIsDown;
+    const bool RightIsDown;
+
+private:
+    MouseState();
+
+    friend std::ostream& operator<<(std::ostream& os, const MouseState& obj);
+};
+
+template< class MostDerived >
+struct EvMouse 
+    : boost::statechart::event< MostDerived >
+    , public MouseState
+{
+    explicit EvMouse(const wxMouseState& wx)
+        : MouseState(wx)
+    {
+    }
     friend std::ostream& operator<<(std::ostream& os, const EvMouse& obj)
     {
-        os  << typeid(obj).name(); // This typeid is required to distinguish the various 'react' methods
+        // This typeid is required to distinguish the various 'react' methods
+        os  << typeid(obj).name() << static_cast<const MouseState&>(obj); 
         return os;
     }
 };
 
-struct EvMotion         : EvMouse< EvMotion >          {};
-struct EvLeftDown       : EvMouse< EvLeftDown >        {};
-struct EvLeftUp         : EvMouse< EvLeftUp >          {};
-struct EvLeftDouble     : EvMouse< EvLeftDouble >      {};
-struct EvMiddleDown     : EvMouse< EvMiddleDown >      {};
-struct EvMiddleUp       : EvMouse< EvMiddleUp >        {};
-struct EvMiddleDouble   : EvMouse< EvMiddleDouble >    {};
-struct EvRightDown      : EvMouse< EvRightDown >       {};
-struct EvRightUp        : EvMouse< EvRightUp >         {};
-struct EvRightDouble    : EvMouse< EvRightDouble >     {};
-struct EvEnter          : EvMouse< EvEnter >           {};
-struct EvLeave          : EvMouse< EvLeave >           {};
-struct EvWheel          : EvMouse< EvWheel >           {};
+struct EvMotion         : EvMouse< EvMotion >          { explicit EvMotion(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvLeftDown       : EvMouse< EvLeftDown >        { explicit EvLeftDown(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvLeftUp         : EvMouse< EvLeftUp >          { explicit EvLeftUp(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvLeftDouble     : EvMouse< EvLeftDouble >      { explicit EvLeftDouble(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvMiddleDown     : EvMouse< EvMiddleDown >      { explicit EvMiddleDown(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvMiddleUp       : EvMouse< EvMiddleUp >        { explicit EvMiddleUp(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvMiddleDouble   : EvMouse< EvMiddleDouble >    { explicit EvMiddleDouble(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvRightDown      : EvMouse< EvRightDown >       { explicit EvRightDown(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvRightUp        : EvMouse< EvRightUp >         { explicit EvRightUp(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvRightDouble    : EvMouse< EvRightDouble >     { explicit EvRightDouble(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvEnter          : EvMouse< EvEnter >           { explicit EvEnter(const wxMouseState& wx) : EvMouse(wx) {} };
+struct EvLeave          : EvMouse< EvLeave >           { explicit EvLeave(const wxMouseState& wx) : EvMouse(wx) {} }; 
 
 }}} // namespace
 

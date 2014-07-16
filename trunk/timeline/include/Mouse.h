@@ -18,6 +18,7 @@
 #ifndef MOUSE_POINTER_H
 #define MOUSE_POINTER_H
 
+#include "EventMouse.h"
 #include "UtilEnum.h"
 #include "Part.h"
 #include "UtilInt.h"
@@ -52,7 +53,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void update(const wxMouseState& state);
+    void update(state::MouseState& state);
     void leftDown();
     void rightDown();
 

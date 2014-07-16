@@ -158,107 +158,168 @@ bool Machine::processWheelEvent(int nSteps)
 
 void Machine::onMotion(wxMouseEvent& event)
 {
-    VAR_DEBUG(event);
-    getMouse().update(event);
-    getScrolling().update(event); // For right-mouse scrolling
-    process_event(EvMotion());
+    handleMotion(EvMotion(event));
     event.Skip();
 }
 
+void Machine::handleMotion(EvMotion& event)
+{
+    VAR_DEBUG(event);
+    getMouse().update(event);
+    getScrolling().update(event); // For right-mouse scrolling
+    process_event(event);
+}
+
 void Machine::onLeftDown(wxMouseEvent& event)
+{
+    handleLeftDown(EvLeftDown(event));
+    event.Skip();
+}
+
+void Machine::handleLeftDown(EvLeftDown& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
     getMouse().leftDown();
     getTimeline().SetFocus();
-    process_event(EvLeftDown());
-    event.Skip();
+    process_event(event);
 }
 
 void Machine::onLeftUp(wxMouseEvent& event)
 {
+    handleLeftUp(EvLeftUp(event));
+    event.Skip();
+}
+
+void Machine::handleLeftUp(EvLeftUp& event)
+{
     VAR_DEBUG(event);
     getMouse().update(event);
-    process_event(EvLeftUp());
-    event.Skip();
+    process_event(event);
 }
 
 void Machine::onLeftDouble(wxMouseEvent& event)
 {
+    handleLeftDouble(EvLeftDouble(event));
+    event.Skip();
+}
+
+void Machine::handleLeftDouble(EvLeftDouble& event)
+{
     VAR_DEBUG(event);
     getMouse().update(event);
     getMouse().leftDown();
-    process_event(EvLeftDouble());
-    event.Skip();
+    process_event(event);
 }
 
 void Machine::onMiddleDown(wxMouseEvent& event)
 {
-    VAR_DEBUG(event);
-    getMouse().update(event);
-    process_event(EvMiddleDown());
+    handleMiddleDown(EvMiddleDown(event));
     event.Skip();
 }
 
-void Machine::onMiddleUp(wxMouseEvent& event)
+void Machine::handleMiddleDown(EvMiddleDown& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
-    process_event(EvMiddleUp());
+    process_event(event);
+}
+
+
+void Machine::onMiddleUp(wxMouseEvent& event)
+{
+    handleMiddleUp(EvMiddleUp(event));
     event.Skip();
+}
+
+void Machine::handleMiddleUp(EvMiddleUp& event)
+{
+    VAR_DEBUG(event);
+    getMouse().update(event);
+    process_event(event);
 }
 
 void Machine::onMiddleDouble(wxMouseEvent& event)
 {
-    VAR_DEBUG(event);
-    getMouse().update(event);
-    process_event(EvMiddleDouble());
+    handleMiddleDouble(EvMiddleDouble(event));
     event.Skip();
 }
 
+void Machine::handleMiddleDouble(EvMiddleDouble& event)
+{
+    VAR_DEBUG(event);
+    getMouse().update(event);
+    process_event(event);
+}
+
 void Machine::onRightDown(wxMouseEvent& event)
+{
+    handleRightDown(EvRightDown(event));
+    event.Skip();
+}
+
+void Machine::handleRightDown(EvRightDown& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
     getMouse().rightDown();
     getScrolling().rightDown(); // For right-mouse scrolling
     getTimeline().SetFocus();
-    process_event(EvRightDown());
-    event.Skip();
+    process_event(event);
 }
 
 void Machine::onRightUp(wxMouseEvent& event)
 {
+    handleRightUp(EvRightUp(event));
+    event.Skip();
+}
+
+void Machine::handleRightUp(EvRightUp& event)
+{
     VAR_DEBUG(event);
     getMouse().update(event);
-    process_event(EvRightUp());
-    event.Skip();
+    process_event(event);
 }
 
 void Machine::onRightDouble(wxMouseEvent& event)
 {
-    VAR_DEBUG(event);
-    getMouse().update(event);
-    getMouse().rightDown();
-    process_event(EvRightDouble());
+    handleRightDouble(EvRightDouble(event));
     event.Skip();
 }
 
+void Machine::handleRightDouble(EvRightDouble& event)
+{
+    VAR_DEBUG(event);
+    getMouse().update(event);
+    getMouse().rightDown();
+    process_event(event);
+ }
+
 void Machine::onEnter(wxMouseEvent& event)
+{
+    handleEnter(EvEnter(event));
+    event.Skip();
+}
+
+void Machine::handleEnter(EvEnter& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
     getScrolling().rightDown(); // Avoid 'flipping' (due to a wrongly initialized right mouse down position) when entering the widget with the right mouse button pressed.
-    process_event(EvEnter());
-    event.Skip();
+    process_event(event);
 }
 
 void Machine::onLeave(wxMouseEvent& event)
 {
+    handleLeave(EvLeave(event));
+    event.Skip();
+}
+
+void Machine::handleLeave(EvLeave& event)
+{
     VAR_DEBUG(event);
     getMouse().update(event);
-    process_event(EvLeave());
-    event.Skip();
+    process_event(event);
 }
 
 void Machine::onWheel(wxMouseEvent& event)
@@ -273,7 +334,7 @@ void Machine::onWheel(wxMouseEvent& event)
         // behaviour should be done.
         event.Skip();
     }
-    process_event(EvWheel());
+    // NOT: process_event(EvWheel()); -- Unused
 }
 
 void Machine::onKeyDown(wxKeyEvent& event)

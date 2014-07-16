@@ -107,9 +107,9 @@ Mouse::~Mouse()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Mouse::update(const wxMouseState& state)
+void Mouse::update(state::MouseState& state)
 {
-    mPhysicalPosition = state.GetPosition();
+    mPhysicalPosition = state.Position;
     mVirtualPosition =  getScrolling().getVirtualPosition(mPhysicalPosition);
     VAR_DEBUG(mPhysicalPosition)(mVirtualPosition);
 

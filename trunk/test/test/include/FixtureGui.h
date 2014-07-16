@@ -55,11 +55,17 @@ public:
     /// compilation (linking?) due to not being referenced anywhere.
     static void start();
 
+    /// If true, actual mouse move/keyboard presses are used in the tests.
+    /// If false, the events resulting from the mouse move/keyboard presses
+    /// are 'generated'.
+    static bool UseRealUiEvents;
+
     //////////////////////////////////////////////////////////////////////////
     // IEventLoopListener
     //////////////////////////////////////////////////////////////////////////
 
     void onEventLoopEnter();    ///< Receive notification that the OnRun thread is running the wxWidgets event loop for the (re)started Window
+
 
 private:
 

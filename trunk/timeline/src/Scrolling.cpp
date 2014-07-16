@@ -53,13 +53,13 @@ void Scrolling::rightDown()
     mRightScrollOrigin = getMouse().getPhysicalPosition();
 }
 
-void Scrolling::update(const wxMouseState& state)
+void Scrolling::update(state::MouseState& state)
 {
-    wxPoint current = getMouse().getPhysicalPosition();
+    wxPoint current = state.Position;
 
     int distance = mRightScrollOrigin.x - current.x;
 
-    if (state.RightIsDown() && distance != 0)
+    if (state.RightIsDown && distance != 0)
     {
         rational factor = rational(getTimeline().GetVirtualSize().x, getTimeline().GetClientSize().x);
         factor = std::max(factor,rational(1)); // Factor >= 1

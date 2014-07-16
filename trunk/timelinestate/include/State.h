@@ -19,6 +19,7 @@
 #define TIMELINE_STATE_H
 
 #include "Part.h"
+#include "EventMouse.h"
 
 namespace gui { class PlaybackActiveEvent; }
 
@@ -87,24 +88,58 @@ public:
 
     bool processWheelEvent(int nSteps);
 
+public:
+
+
+
 private:
 
     void onMotion           (wxMouseEvent& event);
+    void handleMotion       (EvMotion& event);
+
     void onLeftDown         (wxMouseEvent& event);
+    void handleLeftDown     (EvLeftDown& event);
+    
     void onLeftUp           (wxMouseEvent& event);
+    void handleLeftUp       (EvLeftUp& event);
+
     void onLeftDouble       (wxMouseEvent& event);
+    void handleLeftDouble   (EvLeftDouble& event);
+
     void onMiddleDown       (wxMouseEvent& event);
+    void handleMiddleDown   (EvMiddleDown& event);
+
     void onMiddleUp         (wxMouseEvent& event);
+    void handleMiddleUp     (EvMiddleUp& event);
+
     void onMiddleDouble     (wxMouseEvent& event);
+    void handleMiddleDouble (EvMiddleDouble& event);
+
     void onRightDown        (wxMouseEvent& event);
+    void handleRightDown    (EvRightDown& event);
+
     void onRightUp          (wxMouseEvent& event);
+    void handleRightUp      (EvRightUp& event);
+
     void onRightDouble      (wxMouseEvent& event);
+    void handleRightDouble  (EvRightDouble& event);
+
     void onEnter            (wxMouseEvent& event);
+    void handleEnter        (EvEnter& event);
+
     void onLeave            (wxMouseEvent& event);
+    void handleLeave        (EvLeave& event);
+
     void onWheel            (wxMouseEvent& event);
+
     void onKeyDown          (wxKeyEvent&   event);
+    void handleKeyDown      (wxKeyEvent&   event);
+    
     void onKeyUp            (wxKeyEvent&   event);
+    void handleKeyUp            (wxKeyEvent&   event);
+
     void onCaptureLost      (wxMouseCaptureLostEvent& event);
+
     void onCaptureChanged   (wxMouseCaptureChangedEvent& event);
 
     void onPlaybackActive(PlaybackActiveEvent& event);
