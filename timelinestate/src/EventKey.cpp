@@ -22,68 +22,50 @@
 
 namespace gui { namespace timeline { namespace state {
 
-EvKey::EvKey(wxKeyEvent& wxEvent, const wxPoint& virtualPosition)
-    :   mEvent(wxEvent)
-    ,   mVirtualPosition(virtualPosition)
+EvKey::EvKey(wxKeyEvent& wxEvent)
+    : mEvent(wxEvent)
+    , CtrlDown(wxEvent.ControlDown())
+    , ShiftDown(wxEvent.ShiftDown())
+    , AltDown(wxEvent.AltDown())
+    , KeyCode(wxEvent.GetKeyCode())
 {
 };
 
-wxKeyEvent& EvKey::getWxEvent() const
+EvKey::EvKey(wxMouseState& state)
+    : mEvent(boost::none)
+    , CtrlDown(state.ControlDown())
+    , ShiftDown(state.ShiftDown())
+    , AltDown(state.AltDown())
+    , KeyCode(-1)
 {
-    return mEvent;
 }
 
-bool EvKey::getCtrlDown() const
+void EvKey::consumed() const
 {
-    return mEvent.ControlDown();
-}
-
-bool EvKey::getShiftDown() const
-{
-    return mEvent.ShiftDown();
-}
-
-bool EvKey::getAltDown() const
-{
-    return mEvent.AltDown();
-}
-
-bool EvKey::hasUnicodeKey() const
-{
-    return mEvent.GetUnicodeKey() != WXK_NONE;
-}
-
-wxChar EvKey::getUnicodeKey() const
-{
-    ASSERT(hasUnicodeKey());
-    return mEvent.GetUnicodeKey();
-}
-
-int EvKey::getKeyCode() const
-{
-    return mEvent.GetKeyCode();
-}
-
-wxPoint EvKey::getPosition() const
-{
-    return mVirtualPosition;
+    if (mEvent)
+    {
+        mEvent->Skip(false);
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const EvKey& obj)
 {
     os  << typeid(obj).name()   << '|' // This typeid is required to distinguish the various 'react' methods
-        << obj.mEvent           << '|'
-        << obj.mVirtualPosition;
+        << obj.CtrlDown         << '|'
+        << obj.ShiftDown        << '|'
+        << obj.AltDown          << '|'
+        << obj.KeyCode          << '|'
+        << obj.mEvent;
     return os;
 }
 
-EvKeyDown::EvKeyDown(wxKeyEvent& event, const wxPoint& virtualPosition)
-    : EvKey(event, virtualPosition)
+EvKeyDown::EvKeyDown(wxKeyEvent& event)
+    : EvKey(event)
 {
 }
 
-EvKeyUp::EvKeyUp(wxKeyEvent& event, const wxPoint& virtualPosition)
-    : EvKey(event, virtualPosition)
+EvKeyUp::EvKeyUp(wxKeyEvent& event)
+    : EvKey(event)
 {
 }
 

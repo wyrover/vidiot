@@ -116,14 +116,14 @@ boost::statechart::result Idle::react( const EvMotion& evt )
 boost::statechart::result Idle::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
-    switch (evt.getKeyCode())
+    switch (evt.KeyCode)
     {
     case WXK_SPACE:
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         return start();
         break;
     case WXK_DELETE:
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         getSelection().deleteClips();
         break;
     case WXK_F1:
@@ -131,61 +131,61 @@ boost::statechart::result Idle::react( const EvKeyDown& evt)
         break;
     case 'b':
     case 'B':
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), true));
         break;
     case 'e':
     case 'E':
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         model::ProjectModification::submitIfPossible(new command::SplitAtCursorAndTrim(getSequence(), false));
         break;
     case 'c':
     case 'C':
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         addTransition(model::TransitionTypeInOut);
         break;
     case 'i':
     case 'I':
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         addTransition(model::TransitionTypeIn);
         break;
     case 'o':
     case 'O':
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         addTransition(model::TransitionTypeOut);
         break;
     case 's':
     case 'S':
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         model::ProjectModification::submitIfPossible(new command::SplitAtCursor(getSequence()));
         break;
     case '-':
-        evt.getWxEvent().Skip(false);
-        getZoom().change( evt.getCtrlDown() ? -1000 : -1);
+        evt.consumed();
+        getZoom().change( evt.CtrlDown ? -1000 : -1);
         break;
     case '=':
-        evt.getWxEvent().Skip(false);
-        getZoom().change( evt.getCtrlDown() ?  1000 :  1);
+        evt.consumed();
+        getZoom().change( evt.CtrlDown ?  1000 :  1);
         break;
     case 'v':
     case 'V':
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         getCursor().center();
         break;
     case WXK_LEFT:
-        evt.getWxEvent().Skip(false);
-        evt.getCtrlDown() ? getCursor().prevCut() : getCursor().prevFrame();
+        evt.consumed();
+        evt.CtrlDown ? getCursor().prevCut() : getCursor().prevFrame();
         break;
     case WXK_RIGHT:
-        evt.getWxEvent().Skip(false);
-        evt.getCtrlDown() ? getCursor().nextCut() : getCursor().nextFrame();
+        evt.consumed();
+        evt.CtrlDown ? getCursor().nextCut() : getCursor().nextFrame();
         break;
     case WXK_HOME:
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         getCursor().home();
         break;
     case WXK_END:
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         getCursor().end();
         break;
     }

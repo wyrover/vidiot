@@ -76,10 +76,10 @@ boost::statechart::result MoveDivider::react( const EvLeave& evt)
 boost::statechart::result MoveDivider::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
-    switch (evt.getKeyCode())
+    switch (evt.KeyCode)
     {
     case WXK_ESCAPE:    
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         return abort();
     case WXK_F1:        
         getTooltip().show(sTooltip); 

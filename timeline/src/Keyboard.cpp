@@ -43,11 +43,11 @@ Keyboard::~Keyboard()
 // GUI EVENTS
 //////////////////////////////////////////////////////////////////////////
 
-void Keyboard::update(const wxKeyboardState& state)
+void Keyboard::update(const state::EvKey& event)
 {
-    bool CtrlDown(state.ControlDown());
-    bool ShiftDown(state.ShiftDown());
-    bool AltDown(state.AltDown());
+    bool CtrlDown(event.CtrlDown);
+    bool ShiftDown(event.ShiftDown);
+    bool AltDown(event.AltDown);
     VAR_DEBUG(CtrlDown)(ShiftDown)(AltDown);
     setCtrlDown(CtrlDown);
     setShiftDown(ShiftDown);

@@ -22,23 +22,23 @@ namespace gui { namespace timeline { namespace state {
 
 struct EvKey
 {
-    EvKey(wxKeyEvent& event, const wxPoint& virtualPosition);
+    explicit EvKey(wxKeyEvent& event);
 
-    wxKeyEvent& getWxEvent() const;
+    explicit EvKey(wxMouseState& state);
+    
 
-    bool getCtrlDown() const;
-    bool getShiftDown() const;
-    bool getAltDown() const;
-    bool hasUnicodeKey() const;
-    wxChar getUnicodeKey() const;
-    int getKeyCode() const;
-    wxPoint getPosition() const;
+    /// Indicates that the event has been handled by the state machine and
+    /// should not propagate further upwards the event handling chain.
+    void consumed() const;
+
+    const bool CtrlDown;
+    const bool ShiftDown;
+    const bool AltDown;
+    const int KeyCode;
 
 private:
 
-    wxKeyEvent& mEvent;
-
-    wxPoint mVirtualPosition;
+    boost::optional<wxKeyEvent&> mEvent;
 
     friend std::ostream& operator<<(std::ostream& os, const EvKey& obj);
 };
@@ -47,14 +47,14 @@ struct EvKeyDown
     : public EvKey
     , public boost::statechart::event< EvKeyDown >
 {
-    EvKeyDown(wxKeyEvent& event, const wxPoint& virtualPosition);
+    explicit EvKeyDown(wxKeyEvent& event);
 };
 
 struct EvKeyUp
     : public EvKey
     , public boost::statechart::event< EvKeyUp >
 {
-    EvKeyUp(wxKeyEvent& event, const wxPoint& virtualPosition);
+    explicit EvKeyUp(wxKeyEvent& event);
 };
 
 }}} // namespace

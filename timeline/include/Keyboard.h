@@ -18,6 +18,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include "EventKey.h"
 #include "Part.h"
 
 namespace gui { namespace timeline {
@@ -38,7 +39,7 @@ public:
     // GUI EVENTS
     //////////////////////////////////////////////////////////////////////////
 
-    void update(const wxKeyboardState& state);
+    void update(const state::EvKey& event);
 
     //////////////////////////////////////////////////////////////////////////
     // GET/SET

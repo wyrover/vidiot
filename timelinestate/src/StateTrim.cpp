@@ -77,16 +77,16 @@ boost::statechart::result StateTrim::react( const EvLeave& evt )
 boost::statechart::result StateTrim::react( const EvKeyDown& evt)
 {
     VAR_DEBUG(evt);
-    switch (evt.getKeyCode())
+    switch (evt.KeyCode)
     {
     case WXK_F1:        
         getTooltip().show(sTooltip); 
         break;
     case WXK_ESCAPE:    
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         return transit<Idle>();
     case WXK_SHIFT:
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         if (!mShiftDown) // Avoid quirky feedback: when shift dragging, every motion event is followed by a key event. Updating on those key events causes flickering.
         {
             mShiftDown = true;
@@ -95,7 +95,7 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
         break;
     case 'd':
     case 'D':           
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         getTrim().toggleSnapping();  
         break;
     }
@@ -105,12 +105,12 @@ boost::statechart::result StateTrim::react( const EvKeyDown& evt)
 boost::statechart::result StateTrim::react( const EvKeyUp& evt)
 {
     VAR_DEBUG(evt);
-    switch (evt.getKeyCode())
+    switch (evt.KeyCode)
     {
     case WXK_ESCAPE:    
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
     case WXK_SHIFT:
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         if (mShiftDown) // Avoid quirky feedback: when shift dragging, every motion event is followed by a key event. Updating on those key events causes flickering.
         {
             mShiftDown = false;
@@ -119,7 +119,7 @@ boost::statechart::result StateTrim::react( const EvKeyUp& evt)
         break;
     case 'd':
     case 'D':           
-        evt.getWxEvent().Skip(false);
+        evt.consumed();
         break;
     }
     return forward_event();

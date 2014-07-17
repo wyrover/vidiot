@@ -339,26 +339,36 @@ void Machine::onWheel(wxMouseEvent& event)
 
 void Machine::onKeyDown(wxKeyEvent& event)
 {
-    VAR_DEBUG(event);
-    getKeyboard().update(event);
     // By default, the event may propagate upwards. 
     // If handled by the state machine, Skip(false) will be called.
     // For instance, Don't want the left/down keys to propagate further, 
     // since that causes scrolling by wxScrolledWindow
     event.Skip(); 
-    process_event(EvKeyDown(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    handleKeyDown(EvKeyDown(event));
+}
+
+void Machine::handleKeyDown(EvKeyDown& event)
+{
+    VAR_DEBUG(event);
+    getKeyboard().update(event);
+    process_event(EvKeyDown(event));
 }
 
 void Machine::onKeyUp(wxKeyEvent& event)
 {
-    VAR_DEBUG(event);
-    getKeyboard().update(event);
     // By default, the event may propagate upwards. 
     // If handled by the state machine, Skip(false) will be called.
     // For instance, Don't want the left/down keys to propagate further, 
     // since that causes scrolling by wxScrolledWindow
     event.Skip(); 
-    process_event(EvKeyUp(event, getTimeline().getScrolling().getVirtualPosition(event.GetPosition())));
+    handleKeyUp(EvKeyUp(event));
+}
+
+void Machine::handleKeyUp(EvKeyUp& event)
+{
+    VAR_DEBUG(event);
+    getKeyboard().update(event);
+    process_event(EvKeyUp(event));
 }
 
 void Machine::onCaptureLost(wxMouseCaptureLostEvent& event)
