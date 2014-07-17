@@ -34,7 +34,7 @@ private:
     friend std::ostream& operator<<(std::ostream& os, const MouseState& obj);
 };
 
-template< class MostDerived >
+template< class MostDerived > // todo remove this template, similar to keyevent
 struct EvMouse 
     : boost::statechart::event< MostDerived >
     , public MouseState

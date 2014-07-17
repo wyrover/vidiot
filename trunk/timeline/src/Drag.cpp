@@ -30,6 +30,7 @@
 #include "EmptyClip.h"
 #include "ExecuteDrop.h"
 #include "EventDrag.h"
+#include "EventKey.h"
 #include "ExecuteDrop.h"
 #include "File.h"
 #include "Keyboard.h"
@@ -102,7 +103,7 @@ public:
         if (mOk)
         {
             ProjectViewDropSource::get().setFeedback(false);
-            getKeyboard().update(wxGetMouseState()); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
+            getKeyboard().update(state::EvKey(wxGetMouseState())); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
             getStateMachine().process_event(state::EvDragEnter());
             return wxDragMove;
         }
@@ -110,7 +111,7 @@ public:
     }
     wxDragResult OnDragOver (wxCoord x, wxCoord y, wxDragResult def) override
     {
-        getKeyboard().update(wxGetMouseState()); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
+        getKeyboard().update(state::EvKey(wxGetMouseState())); // To ensure that key events are 'seen' during the drag (timeline itself does not receive keyboard/mouse events)
         getMouse().dragMove(wxPoint(x,y));
         if (mOk)
         {

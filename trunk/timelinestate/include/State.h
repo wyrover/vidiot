@@ -18,8 +18,9 @@
 #ifndef TIMELINE_STATE_H
 #define TIMELINE_STATE_H
 
-#include "Part.h"
+#include "EventKey.h"
 #include "EventMouse.h"
+#include "Part.h"
 
 namespace gui { class PlaybackActiveEvent; }
 
@@ -88,10 +89,6 @@ public:
 
     bool processWheelEvent(int nSteps);
 
-public:
-
-
-
 private:
 
     void onMotion           (wxMouseEvent& event);
@@ -132,11 +129,11 @@ private:
 
     void onWheel            (wxMouseEvent& event);
 
-    void onKeyDown          (wxKeyEvent&   event);
-    void handleKeyDown      (wxKeyEvent&   event);
+    void onKeyDown          (wxKeyEvent& event);
+    void handleKeyDown      (EvKeyDown& event);
     
     void onKeyUp            (wxKeyEvent&   event);
-    void handleKeyUp            (wxKeyEvent&   event);
+    void handleKeyUp        (EvKeyUp& event);
 
     void onCaptureLost      (wxMouseCaptureLostEvent& event);
 

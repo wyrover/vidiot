@@ -78,7 +78,7 @@ boost::statechart::result StateScrolling::react( const EvKeyDown& evt )
 {
     VAR_DEBUG(evt);
 
-    switch (evt.getKeyCode())
+    switch (evt.KeyCode)
     {
     case WXK_F1:        
         getTooltip().show(sTooltip); break;
