@@ -150,7 +150,7 @@ wxBitmapPtr VideoFrame::getBitmap()
     if (!mCachedBitmap)
     {
         wxImagePtr image = getImage();
-        if (static_cast<bool>(image))
+        if (image != nullptr)
         {
             mCachedBitmap.reset(boost::make_shared<wxBitmap>(*getImage(), 32));
         }

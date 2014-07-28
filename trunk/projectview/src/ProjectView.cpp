@@ -355,7 +355,7 @@ void ProjectView::onNewFolder()
 {
     wxString s = gui::Dialog::get().getText(_("Create new folder"), _("Enter folder name"), _("New Folder default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))// todo shouldn't this use getSelectedContainer->getparent??
+        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))
     {
         model::ProjectModification::submit(new command::ProjectViewCreateFolder(getSelectedContainer(), s));
     }
@@ -365,7 +365,7 @@ void ProjectView::onNewAutoFolder()
 {
     wxString s = gui::Dialog::get().getDir( _("Add folder from disk"),wxStandardPaths::Get().GetDocumentsDir() );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))// todo shouldn't this use getSelectedContainer->getparent??
+        (!findConflictingName(getSelectedContainer(), s, NODETYPE_FOLDER)))
     {
         wxFileName path(s,"");
         path.Normalize();
@@ -377,7 +377,7 @@ void ProjectView::onNewSequence()
 {
     wxString s = gui::Dialog::get().getText(_("Create new sequence"), _("Enter sequence name"), _("New sequence default value") );
     if ((s.CompareTo(_T("")) != 0) &&
-        (!findConflictingName(getSelectedContainer(), s, NODETYPE_SEQUENCE))) // todo shouldn't this use getSelectedContainer->getparent??
+        (!findConflictingName(getSelectedContainer(), s, NODETYPE_SEQUENCE)))
     {
         model::ProjectModification::submit(new command::ProjectViewCreateSequence(getSelectedContainer(), s));
     }
@@ -390,7 +390,7 @@ void ProjectView::onNewFile()
     std::vector<wxFileName> list;
     for ( wxString path : files )
     {
-        if (findConflictingName(getSelectedContainer(),path, NODETYPE_FILE))// todo shouldn't this use getSelectedContainer->getparent??
+        if (findConflictingName(getSelectedContainer(),path, NODETYPE_FILE))
         {
             return;
         }
@@ -465,9 +465,9 @@ void ProjectView::onContextMenu(wxDataViewEvent &event)
         model::NodePtr node = model::INode::Ptr(static_cast<model::NodeId>(item.GetID()));
 
         bool isRoot = (!node->hasParent());
-        bool isFolder = static_cast<bool>(boost::dynamic_pointer_cast<model::Folder>(node));
-        bool isAutoFolder = static_cast<bool>(boost::dynamic_pointer_cast<model::AutoFolder>(node));
-        bool isSequence = static_cast<bool>(boost::dynamic_pointer_cast<model::Sequence>(node));
+        bool isFolder = boost::dynamic_pointer_cast<model::Folder>(node) != nullptr;
+        bool isAutoFolder = boost::dynamic_pointer_cast<model::AutoFolder>(node) != nullptr;
+        bool isSequence = boost::dynamic_pointer_cast<model::Sequence>(node) != nullptr;
 
         if (isRoot)
         {

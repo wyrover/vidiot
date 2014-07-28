@@ -113,7 +113,7 @@ TrackPtr Clip::getTrack()
 
 bool Clip::hasTrack() const
 {
-    return  static_cast<bool>(const_cast<Clip*>(this)->getTrack());
+    return const_cast<Clip*>(this)->getTrack() != nullptr;
 }
 
 IClipPtr Clip::getNext()

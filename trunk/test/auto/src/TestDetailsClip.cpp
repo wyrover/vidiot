@@ -300,10 +300,6 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     }
 }
 
-
-// todo make all 'auto' tests use 'generated' events and not 'mouse/key motion/generation'.
-// todo make dedicated tests project for handling 'mouse/key motion/generation'
-
 void TestDetailsClip::testTransform()
 {
     StartTestSuite();
