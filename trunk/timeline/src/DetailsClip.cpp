@@ -374,7 +374,7 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
                 }
             }
 
-            showBox(sVideo, static_cast<bool>(mVideoClip)); // todo make template IsNonZero for shared_ptr that does this
+            showBox(sVideo, mVideoClip != nullptr); // todo make template IsNonZero for shared_ptr that does this
             showBox(sAudio, static_cast<bool>(mAudioClip));
             // showBox(sTransition, mTransition);
             showBox(sTransition, false);

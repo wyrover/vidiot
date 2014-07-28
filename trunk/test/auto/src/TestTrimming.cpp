@@ -59,9 +59,9 @@ void TestTrimming::testSnapping()
         StartTest("Temporarily disable snapping");
         Trim(LeftCenter(VideoClip(0,2)),Center(VideoClip(0,2)) + wxPoint(gui::Layout::SnapDistance - 1,0),false,false);
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition()); // due to snapping
-        Type('d'); // disable snapping
+        TimelineKeyPress('d'); // disable snapping
         ASSERT_MORE_THAN(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition());
-        Type('d'); // enable snapping
+        TimelineKeyPress('d'); // enable snapping
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition()); // due to snapping
         EndTrim(false);
         Undo();
@@ -79,7 +79,7 @@ void TestTrimming::testKeyboardTrimming()
         StartTest(title);
         PositionCursor(HCenter(VideoClip(0,2)));
         pts newlength = VideoClip(0,2)->getRightPts() - getTimeline().getCursor().getLogicalPosition();
-        Type('b');
+        TimelineKeyPress('b');
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), newlength);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -92,7 +92,7 @@ void TestTrimming::testKeyboardTrimming()
         StartTest(title);
         PositionCursor(HCenter(VideoClip(0,2)));
         pts newlength = getTimeline().getCursor().getLogicalPosition() - VideoClip(0,2)->getLeftPts();
-        Type('e');
+        TimelineKeyPress('e');
         ASSERT_EQUALS(VideoClip(0,1)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,1));
         ASSERT_EQUALS(VideoClip(0,2)->getLength(), newlength);
         ASSERT_EQUALS(VideoClip(0,3)->getLength(), mProjectFixture.OriginalLengthOfVideoClip(0,3));
@@ -105,7 +105,7 @@ void TestTrimming::testKeyboardTrimming()
         StartTest(title);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
         PositionCursor(HCenter(VideoClip(0,2)));
-        Type('b');
+        TimelineKeyPress('b');
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     };
 
@@ -114,7 +114,7 @@ void TestTrimming::testKeyboardTrimming()
         StartTest(title);
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
         PositionCursor(HCenter(VideoClip(0,2)));
-        Type('e');
+        TimelineKeyPress('e');
         ASSERT_CURRENT_COMMAND_TYPE<gui::timeline::command::ExecuteDrop>();
     };
 
@@ -124,13 +124,13 @@ void TestTrimming::testKeyboardTrimming()
         StartTest("No change when cursor is on cut");
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
         PositionCursor(LeftPixel(VideoClip(0,2)));
-        Type('b');
-        Type('e');
+        TimelineKeyPress('b');
+        TimelineKeyPress('e');
         ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
     }
     
-    triggerMenu(ID_ADDVIDEOTRACK);
-    triggerMenu(ID_ADDAUDIOTRACK);
+    TriggerMenu(ID_ADDVIDEOTRACK);
+    TriggerMenu(ID_ADDAUDIOTRACK);
     TrimRight(VideoClip(0,4), - 250); // Make smaller for easier positioning
     
     TestBeginTrimSucceeds("With other track without clips: Begin trim");
@@ -162,14 +162,14 @@ void TestTrimming::testKeyboardTrimmingDuringPlayback()
     StartTest("Start playback");
     PositionCursor(HCenter(VideoClip(0,4)));
     WaitForPlaybackStarted started;
-    Type(' ');
+    TimelineKeyPress(' ');
     started.wait();
 
     StartTest("Trigger trim");
     WaitForPlaybackStopped stopped;
     WaitForPlaybackStarted startedAgain;
     pause(200);
-    Type('b');
+    TimelineKeyPress('b');
     stopped.wait();
     startedAgain.wait();
 
@@ -179,7 +179,7 @@ void TestTrimming::testKeyboardTrimmingDuringPlayback()
 
     StartTest("Stop playback");
     WaitForPlaybackStopped stoppedAgain;
-    Type(' ');
+    TimelineKeyPress(' ');
     stoppedAgain.wait();
     pause(500);
 

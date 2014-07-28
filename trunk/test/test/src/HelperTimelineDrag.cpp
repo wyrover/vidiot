@@ -83,8 +83,8 @@ void Drag(const DragParams& params)
     VAR_DEBUG(params);
     ASSERT(!params.mHoldShiftWhileDragging || !params.mHoldCtrlBeforeDragStarts); // Can't handle both in one action (at least, never tested this)
     ASSERT(!params.mAlignLeft || !params.mAlignRight); // Can't align both sides
-    ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts,!wxGetMouseState().LeftIsDown()); // Holding CTRL can only be done for the first (mouse down) action in a sequence of drag related actions
-    ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts,!wxGetMouseState().ControlDown());
+    ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts,!getTimeline().getMouse().getLeftDown()); // Holding CTRL can only be done for the first (mouse down) action in a sequence of drag related actions
+    ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts,!getTimeline().getKeyboard().getCtrlDown());
     ASSERT_IMPLIES(params.mHoldCtrlBeforeDragStarts, !getTimeline().getDrag().isActive());
     ASSERT(params.mFrom);
     ASSERT_IMPLIES(params.mTo, !params.mAlignLeft && !params.mAlignRight);
@@ -92,10 +92,10 @@ void Drag(const DragParams& params)
 
     // Press down mouse button. Is done when the mouse is not yet pressed.
     wxPoint from = *params.mFrom;
-    if (params.mHoldCtrlBeforeDragStarts) { ControlDown(); }
-    Move(from);
-    if (!wxGetMouseState().LeftIsDown()) { LeftDown(); }
-    if (params.mHoldCtrlBeforeDragStarts) { ControlUp(); }
+    if (params.mHoldCtrlBeforeDragStarts) { TimelineKeyDown(wxMOD_CONTROL); }
+    TimelineMove(from);
+    if (!getTimeline().getMouse().getLeftDown()) { TimelineLeftDown(); }
+    if (params.mHoldCtrlBeforeDragStarts) { TimelineKeyUp(wxMOD_CONTROL); }
 
     wxPoint between(from);
     if (!getTimeline().getDrag().isActive())
@@ -122,7 +122,7 @@ void Drag(const DragParams& params)
             //  (params.mAlignLeft || params.mAlignRight)
             between.x += gui::Layout::DragThreshold + 1; // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
         }
-        Move(between);
+        TimelineMove(between);
     }
     ASSERT(getTimeline().getDrag().isActive());
 
@@ -142,16 +142,16 @@ void Drag(const DragParams& params)
     }
 
     // Press shift while moving
-    if (params.mHoldShiftWhileDragging) { ShiftDown(); }
+    if (params.mHoldShiftWhileDragging) { TimelineKeyDown(wxMOD_SHIFT); }
 
     // Drop onto target point
-    Move(to);
+    TimelineMove(to);
     if (params.mMouseUp)
     {
-        LeftUp();
+        TimelineLeftUp();
         ASSERT(!getTimeline().getDrag().isActive());
     }
-    if (params.mHoldShiftWhileDragging) { ShiftUp(); }
+    if (params.mHoldShiftWhileDragging) { TimelineKeyUp(wxMOD_SHIFT); }
 }
 
 void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr audioclip)
@@ -167,9 +167,9 @@ void DragToTrack(int newtrackindex, model::IClipPtr videoclip, model::IClipPtr a
     }
     if (videoclip && audioclip)
     {
-        ControlDown();
-        Move(Center(audioclip));
-        ControlUp();
+        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineMove(Center(audioclip));
+        TimelineKeyUp(wxMOD_CONTROL);
     }
     if (audioclip)
     {

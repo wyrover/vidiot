@@ -24,11 +24,11 @@ namespace test {
 
 /// Trigger the menu given. That menu should be in the main menu bar.
 /// \param id menu identifier
-void triggerMenu(int id);
+void TriggerMenu(int id);
 
 /// Trigger the menu given on the window given.
 /// \param id menu identifier
-void triggerMenu(wxWindow& window, int id);
+void TriggerMenu(wxWindow& window, int id);
 
 /// Check the menu given. That menu should be in the main menu bar.
 /// Note that the corresponding event will always be triggered, even
@@ -53,11 +53,11 @@ model::FolderPtr createProject();
 /// Return the currently active sequence menu
 wxMenu* getSequenceMenu();
 
-/// Trigger an undo via pressing CTRL-z
+/// Trigger an undo via the menu
 /// \param steps number of times an Undo is triggered
 void Undo(int steps = 1);
 
-/// Trigger a redo via pressing CTRL-y
+/// Trigger a redo via the menu
 /// \param steps number of times an Undo is triggered
 void Redo(int steps = 1);
 
@@ -93,66 +93,6 @@ void BREAK();
 
 /// Log the command history
 void logHistory();
-
-/// Press down left mouse button
-/// \param wait if true then a wait for idle is done
-void LeftDown(bool wait = true);
-
-/// Release left mouse button
-/// \param wait if true then a wait for idle is done
-void LeftUp(bool wait = true);
-
-/// Press down left mouse button
-/// \param wait if true then a wait for idle is done
-void RightDown(bool wait = true);
-
-/// Release left mouse button
-/// \param wait if true then a wait for idle is done
-void RightUp(bool wait = true);
-
-/// Press and release left mouse button
-/// \param wait if true then a wait for idle is done
-void ClickLeft(bool wait = true);
-
-/// Press and release right mouse button
-/// \param wait if true then a wait for idle is done
-void ClickRight(bool wait = true);
-
-void ControlDown();     ///< Press down CTRL
-void ControlUp();       ///< Release CTRL
-
-void ShiftDown();       ///< Press down Shift
-void ShiftUp();         ///< Release Shift
-
-void Type(int keycode, int modifiers = wxMOD_NONE);
-void TypeN(int count, int keycode, int modifiers = wxMOD_NONE);
-
-/// Move the mouse to the right, the given number of pixels
-/// \param length number of pixels the mouse is moved to the right
-void MoveRight(pixel length);
-
-/// Move the mouse to the left, the given number of pixels
-/// \param length number of pixels the mouse is moved to the left
-void MoveLeft(pixel length);
-
-/// Move the mouse to the given position
-/// \param origin Use the origin to specify within which widget the position is offset (default: within the timeline)
-/// \param position Origin of the widget above which the mouse must be moved
-void MoveWithinWidget(wxPoint position, wxPoint origin);
-
-/// Move the mouse to an absolute position on screen
-/// \param position position wrt top-left corner of screen
-void MoveOnScreen(wxPoint position);
-
-/// Click on the top left pixel of a widget to give it the focus.
-/// \param window window that must receive the focus after clicking
-/// \param extraoffset extra offset (some widgets require this)
-void ClickTopLeft(wxWindow* window, wxPoint extraoffset = wxPoint(0,0));
-
-/// Click on the bottom left pixel of a widget to give it the focus.
-/// \param window window that must receive the focus after clicking
-/// \param extraoffset extra offset (some widgets require this)
-void ClickBottomLeft(wxWindow* window, wxPoint extraoffset = wxPoint(0,0));
 
 } // namespace
 

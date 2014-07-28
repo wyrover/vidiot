@@ -28,7 +28,7 @@ model::FolderPtr getRoot()
 DirAndFile SaveProjectAndClose(boost::optional<RandomTempDirPtr> tempDir)
 {
     DirAndFile tempDir_fileName = SaveProject(tempDir);
-    triggerMenu(wxID_CLOSE);
+    TriggerMenu(wxID_CLOSE);
     waitForIdle();
     return tempDir_fileName;
 }
@@ -61,7 +61,7 @@ void CloseDocumentAndAvoidSaveDialog()
     {
         doc->Modify(false); // Avoid "Save yes/no/Cancel" dialog
     }
-    triggerMenu(wxID_CLOSE);
+    TriggerMenu(wxID_CLOSE);
 }
 
 } // namespace

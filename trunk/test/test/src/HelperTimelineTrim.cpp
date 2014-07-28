@@ -37,24 +37,24 @@ void TrimRight(model::IClipPtr clip, pixel length, bool shift, bool endtrim)
 
 void BeginTrim(wxPoint from, bool shift)
 {
-    Move(from);
+    TimelineMove(from);
     waitForIdle();
     if (shift)
     {
-        ShiftDown();
+        TimelineKeyDown(wxMOD_SHIFT);
         waitForIdle();
     }
-    LeftDown();
+    TimelineLeftDown();
     waitForIdle();
 }
 
 void EndTrim(bool shift)
 {
-    LeftUp();
+    TimelineLeftUp();
     waitForIdle();
     if (shift)
     {
-        ShiftUp();
+        TimelineKeyUp(wxMOD_SHIFT);
         waitForIdle();
     }
 }
@@ -62,7 +62,7 @@ void EndTrim(bool shift)
 void Trim(wxPoint from, wxPoint to, bool shift, bool endtrim)
 {
     BeginTrim(from,shift);
-    Move(to);
+    TimelineMove(to);
     waitForIdle();
     if (endtrim)
     {

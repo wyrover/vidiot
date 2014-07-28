@@ -60,13 +60,13 @@ void FixtureProject::init()
     }
 
     waitForIdle();
-    if (mFocusTimeline)
+    if (mFocusTimeline && FixtureGui::UseRealUiEvents)
     {
 
         // Click in the timeline to give it the focus. A lot of test cases start
         // with zooming in via keyboard commands. For that purpose, timeline must
         // have the current focus.
-        Click(wxPoint(2,2));
+        TimelineLeftClick(wxPoint(2,2));
     }
 }
 

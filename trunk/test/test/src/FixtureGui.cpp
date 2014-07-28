@@ -25,8 +25,6 @@ FixtureGui sInstance;
 // static 
 bool FixtureGui::UseRealUiEvents = false;;
 
-// todo check result of findall 'mousestate'
-
 //////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 //////////////////////////////////////////////////////////////////////////
@@ -163,7 +161,9 @@ void FixtureGui::mainThread()
     util::thread::setCurrentThreadName("Main");
     wxApp::SetInstance(new gui::Application(this));
 
-    FixtureGui::UseRealUiEvents = wxStandardPaths::Get().GetExecutablePath().Contains("testui");
+    FixtureGui::UseRealUiEvents = 
+        wxStandardPaths::Get().GetExecutablePath().Contains("testui") ||
+        wxStandardPaths::Get().GetExecutablePath().Contains("testauto"); // todo remove this one!!!
 
     int argc = 1;
 #ifdef _MSC_VER

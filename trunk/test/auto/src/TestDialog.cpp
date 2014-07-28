@@ -111,19 +111,19 @@ void TestDialog::testEscape()
     }
     {
         Escape e;
-        triggerMenu(wxID_PREFERENCES);
+        TriggerMenu(wxID_PREFERENCES);
         waitForIdle();
     }
     {
         Escape e;
-        triggerMenu(wxID_ABOUT);
+        TriggerMenu(wxID_ABOUT);
         waitForIdle();
     }
     {
         Escape e;
         model::FolderPtr root = createProject();
         addSequence("sequence", root);
-        triggerMenu(wxID_PROPERTIES);
+        TriggerMenu(wxID_PROPERTIES);
     }
 }
 } // namespace

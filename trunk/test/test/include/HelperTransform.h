@@ -25,13 +25,13 @@ namespace test {
 template <class ITEMTYPE>
 void ClickOnEnumSelector(EnumSelector<ITEMTYPE>* widget, ITEMTYPE value)
 {
-    ClickTopLeft(widget);
-    Type(WXK_HOME);
+    MouseClickTopLeft(widget);
+    KeyboardKeyPress(WXK_HOME);
     for (int step = 0; step < widget->getIndex(value); ++step)
     {
-        Type(WXK_DOWN);
+        KeyboardKeyPress(WXK_DOWN);
     }
-    Type(WXK_RETURN);
+    KeyboardKeyPress(WXK_RETURN);
     ASSERT_EQUALS(widget->getValue(),value);
     waitForIdle();
 }

@@ -21,15 +21,17 @@ namespace test {
 
 void OpenPopupMenuAt(wxPoint position)
 {
-    Move(position);
+    TimelineMove(position);
     WaitForTimelineToLoseFocus w;
-    wxUIActionSimulator().MouseClick(wxMOUSE_BTN_RIGHT);
+    SetWaitAfterEachInputAction(false);
+    TimelineRightClick(position);
     w.wait();
+    SetWaitAfterEachInputAction(true);
 }
 
 void ClosePopupMenu()
 {
-    Type(WXK_ESCAPE);
+    TimelineKeyPress(WXK_ESCAPE);
 }
 
 } // namespace

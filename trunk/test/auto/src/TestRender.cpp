@@ -43,55 +43,55 @@ void TestRender::testChangeRenderSettings()
     {
         StartTest("If cancel is pressed, nothing is changed.");
         model::render::RenderPtr original = getCurrentRenderSettings();
-        triggerMenu(ID_RENDERSETTINGS);
+        TriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
         model::render::RenderPtr current = getCurrentRenderSettings();
         ASSERT_EQUALS(*original,*current);
     }
     {
         StartTest("If apply is pressed, the sequence is changed (with a different video codec setting).");
-        triggerMenu(ID_RENDERSETTINGS);
+        TriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         model::render::RenderPtr original = getCurrentRenderSettings();
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickTopLeft(gui::DialogRenderSettings::get().getApplyButton());
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getApplyButton());
         model::render::RenderPtr current = getCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
-        ClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
     }
     {
         StartTest("If apply is pressed, the sequence is changed (with a different audio codec setting).");
-        triggerMenu(ID_RENDERSETTINGS);
+        TriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         model::render::RenderPtr original = getCurrentRenderSettings();
-        ClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickTopLeft(gui::DialogRenderSettings::get().getApplyButton());
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getAudioParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getApplyButton());
         model::render::RenderPtr current = getCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
-        ClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getCancelButton());
     }
     {
         StartTest("If OK is pressed, the sequence is changed and the dialog is closed.");
-        triggerMenu(ID_RENDERSETTINGS);
+        TriggerMenu(ID_RENDERSETTINGS);
         gui::Dialog::get().setSaveFile("D:/out.avi");
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
         model::render::RenderPtr original = getCurrentRenderSettings();
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
-        ClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickBottomLeft(gui::DialogRenderSettings::get().getVideoParam(0),wxPoint(4,-4));  // Click on the down symbol. Note that the position returned by getscreenposition is the top left pixel of the spin button. The text field is 'ignored'.
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
         model::render::RenderPtr current = getCurrentRenderSettings();
         ASSERT_DIFFERS(*original,*current);
     }
@@ -104,21 +104,21 @@ void TestRender::testRenderingSplit()
     {
         StartTest("Render each part of the sequence separately.");
         ExpectExecutedWork expectation(3);
-        Click(Center(VideoClip(0,2)));
-        ControlDown();
-        Click(Center(VideoClip(0,4))); // Exclude clip 3 deliberately: include empty clips in the list of intervals
-        Click(Center(VideoClip(0,5)));
-        Click(Center(VideoClip(0,6)));
-        ControlUp();
-        Type(WXK_DELETE);
+        TimelineLeftClick(Center(VideoClip(0,2)));
+        TimelineKeyDown(wxMOD_CONTROL);
+        TimelineLeftClick(Center(VideoClip(0,4))); // Exclude clip 3 deliberately: include empty clips in the list of intervals
+        TimelineLeftClick(Center(VideoClip(0,5)));
+        TimelineLeftClick(Center(VideoClip(0,6)));
+        TimelineKeyUp(wxMOD_CONTROL);
+        TimelineKeyPress(WXK_DELETE);
         RandomTempDir tempdir;
         model::render::RenderPtr original = getCurrentRenderSettings();
-        triggerMenu(ID_RENDERSETTINGS);
+        TriggerMenu(ID_RENDERSETTINGS);
         wxFileName fn(tempdir.getFileName().GetLongPath(), "out" ,"avi");
         gui::Dialog::get().setSaveFile(fn.GetLongPath());
-        ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
-        ClickTopLeft(gui::DialogRenderSettings::get().getRenderSeparationCheckBox(),wxPoint(4,4));
-        ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getRenderSeparationCheckBox(),wxPoint(4,4));
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
         expectation.wait();
         for (int i = 1; i <= 4; ++i)
         {
@@ -138,9 +138,9 @@ void TestRender::testRenderingCodecs()
         std::ostringstream osCodec; osCodec << id;
         std::ostringstream os; os << "Render " << osCodec.str();// << " into " << path.GetLongPath();
         StartTest(os.str().c_str());
-        triggerMenu(ID_RENDERSETTINGS);
+        TriggerMenu(ID_RENDERSETTINGS);
         gui::DialogRenderSettings::get().getVideoCodecButton()->select(id);
-        ClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
+        MouseClickTopLeft(gui::DialogRenderSettings::get().getOkButton());
         RenderAndPlaybackCurrentTimeline();
         openTimelineForSequence(sequence);
     }
@@ -161,8 +161,8 @@ void TestRender::testRenderingEmptyClip()
 {
     StartTestSuite();
 
-    Click(Center(VideoClip(0,0)));
-    Type(WXK_DELETE);
+    TimelineLeftClick(Center(VideoClip(0,0)));
+    TimelineKeyPress(WXK_DELETE);
 
     RenderAndPlaybackCurrentTimeline();
 }
@@ -172,8 +172,8 @@ void TestRender::testRenderingTransformedClip()
     StartTestSuite();
 
     ConfigFixture.SnapToClips(true);
-    triggerMenu(ID_ADDAUDIOTRACK);
-    triggerMenu(ID_ADDVIDEOTRACK);
+    TriggerMenu(ID_ADDAUDIOTRACK);
+    TriggerMenu(ID_ADDVIDEOTRACK);
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, 3); // Only render 3s
     wxFileName path(wxFileName::GetTempDir(), "out", "avi");
     DragToTrack(1, VideoClip(0,1), AudioClip(0,1));
@@ -194,12 +194,12 @@ void TestRender::testRenderingTransformedClip()
 void TestRender::RenderTimelineInto(const wxFileName& path, int lengthInS)
 {
     ConfigOverruleLong overrule(Config::sPathDebugMaxRenderLength, lengthInS);
-    triggerMenu(ID_RENDERSETTINGS);
+    TriggerMenu(ID_RENDERSETTINGS);
     gui::Dialog::get().setSaveFile(path.GetFullPath());
-    ClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
+    MouseClickTopLeft(gui::DialogRenderSettings::get().getFileButton());
     waitForIdle();
     ExpectExecutedWork expectation(1);
-    ClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
+    MouseClickTopLeft(gui::DialogRenderSettings::get().getRenderButton());
     expectation.wait();
     ASSERT(path.Exists());
 }
@@ -220,7 +220,7 @@ void TestRender::RenderAndPlaybackCurrentTimeline(int renderedlengthInS, pixel p
     RandomTempDir tempdir;
     wxFileName path(tempdir.getFileName().GetFullPath(), "out", "avi");
     RenderTimelineInto(path, renderedlengthInS);
-    triggerMenu(ID_CLOSESEQUENCE);
+    TriggerMenu(ID_CLOSESEQUENCE);
     PlaybackRenderedTimeline(path, playbackStart, playbackLength);
 }
 

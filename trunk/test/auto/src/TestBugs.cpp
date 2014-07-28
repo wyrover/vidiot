@@ -45,23 +45,23 @@ void TestBugs::testVideoDecodingError()
 void TestBugs::testHangupAfterResettingDetailsView()
 {
     StartTestSuite();
-    Click(VTopQuarterHCenter(VideoClip(0,2)));
+    TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2)));
     DeselectAllClips();
 }
 
 void TestBugs::testDetailsNotShownAfterMovingTimelineCursor()
 {
     StartTestSuite();
-    Click(Center(VideoClip(0,3)));
+    TimelineLeftClick(Center(VideoClip(0,3)));
     PositionCursor(HCenter(VideoClip(0,3)));
-    Click(Center(VideoClip(0,3)));
+    TimelineLeftClick(Center(VideoClip(0,3)));
     ASSERT_DETAILSCLIP(VideoClip(0,3));
 }
 
 void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
 {
     StartTestSuite();
-    triggerMenu(ID_ADDVIDEOTRACK);
+    TriggerMenu(ID_ADDVIDEOTRACK);
     TrimLeft(VideoClip(0,4),40,false);
     Drag(From(Center(VideoClip(0,6))).To(wxPoint(RightPixel(VideoClip(0,4)),VCenter(getSequence()->getVideoTrack(1)))));
     ASSERT_EQUALS(VideoClip(0,5)->getLink(),AudioClip(0,6));
@@ -71,8 +71,8 @@ void TestBugs::testLinkingErrorWhenDroppingOverBeginOfLinkedClip()
 void TestBugs::testErrorInGetNextHandlingForEmptyClips()
 {
     StartTestSuite();
-    triggerMenu(ID_ADDVIDEOTRACK);
-    triggerMenu(ID_ADDVIDEOTRACK);
+    TriggerMenu(ID_ADDVIDEOTRACK);
+    TriggerMenu(ID_ADDVIDEOTRACK);
 
     DragToTrack(1,VideoClip(0,5),model::IClipPtr());
     Drag(From(Center(VideoClip(1,1))).To(wxPoint(HCenter(VideoClip(0,4)),VCenter(VideoClip(1,1)))));
@@ -80,21 +80,21 @@ void TestBugs::testErrorInGetNextHandlingForEmptyClips()
     DragToTrack(2,VideoClip(0,6),model::IClipPtr());
     Drag(From(Center(VideoClip(2,1))).AlignLeft(LeftPixel(VideoClip(1,1))));
 
-    Click(Center(VideoClip(1,1)));
-    ClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-    TypeN(6,WXK_PAGEUP);
-    ClickTopLeft(DetailsClipView()->getPositionXSlider()); // Give focus
-    TypeN(4,WXK_PAGEDOWN);
-    ClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
-    TypeN(4,WXK_PAGEDOWN);
+    TimelineLeftClick(Center(VideoClip(1,1)));
+    MouseClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
+    KeyboardKeyPressN(6,WXK_PAGEUP);
+    MouseClickTopLeft(DetailsClipView()->getPositionXSlider()); // Give focus
+    KeyboardKeyPressN(4,WXK_PAGEDOWN);
+    MouseClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
+    KeyboardKeyPressN(4,WXK_PAGEDOWN);
 
-    Click(Center(VideoClip(2,1)));
-    ClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
-    TypeN(6,WXK_PAGEUP);
-    ClickTopLeft(DetailsClipView()->getPositionXSlider()); // Give focus
-    TypeN(4,WXK_PAGEUP);
-    ClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
-    TypeN(4,WXK_PAGEUP);
+    TimelineLeftClick(Center(VideoClip(2,1)));
+    MouseClickTopLeft(DetailsClipView()->getScalingSlider()); // Give focus
+    KeyboardKeyPressN(6,WXK_PAGEUP);
+    MouseClickTopLeft(DetailsClipView()->getPositionXSlider()); // Give focus
+    KeyboardKeyPressN(4,WXK_PAGEUP);
+    MouseClickTopLeft(DetailsClipView()->getPositionYSlider()); // Give focus
+    KeyboardKeyPressN(4,WXK_PAGEUP);
 
     PositionCursor(LeftPixel(VideoClip(2,1)) - 5);
 
@@ -107,15 +107,13 @@ void TestBugs::testDraggingWithoutSelection()
 {
     StartTestSuite();
 
-    Click(Center(VideoClip(0,1))); // Select the clip
-    ControlDown();
-    LeftDown(); // Deselects the clip already
-    Move(Center(VideoClip(0,3))); // Starts the drag without anything being selected: ASSERT at the time of the bug. Now the drag should be simply omitted.
-
+    TimelineLeftClick(Center(VideoClip(0,1))); // Select the clip
+    TimelineKeyDown(wxMOD_CONTROL);
+    TimelineLeftDown(); // Deselects the clip already
+    TimelineMove(Center(VideoClip(0,3))); // Starts the drag without anything being selected: ASSERT at the time of the bug. Now the drag should be simply omitted.
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
-
-    ControlUp();
-    LeftUp();
+    TimelineKeyUp(wxMOD_CONTROL);
+    TimelineLeftUp();
 }
 
 void TestBugs::testBugsWithLongTimeline()
@@ -123,13 +121,13 @@ void TestBugs::testBugsWithLongTimeline()
     StartTestSuite();
     model::SequencePtr sequence = getSequence();
     Config::setShowDebugInfo(true);
-    triggerMenu(ID_CLOSESEQUENCE);
+    TriggerMenu(ID_CLOSESEQUENCE);
 
     extendSequenceWithRepeatedClips(sequence, mProjectFixture.InputFiles, 30);
 
     openTimelineForSequence(sequence);
     Zoom level(4);
-    Type(WXK_END); // Move scrollbars to end
+    TimelineKeyPress(WXK_END); // Move scrollbars to end
 
     RunInMainAndWait([]
     {
@@ -146,16 +144,18 @@ void TestBugs::testBugsWithLongTimeline()
         PositionCursor(HCenter(VideoClip(0,-2)));
         // NOTE: Don't use waitForIdle() when the video is playing!!!
         //       When the video is playing, the system does not become Idle (playback events).
-        Type(' ');
+        TimelineKeyPress(' ');
+        SetWaitAfterEachInputAction(false); // Avoid waitForIdle during playback
         pause(1000);
-        wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
+        TimelineKeyDown(wxMOD_SHIFT);
         pause(1000);
-        wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
+        TimelineKeyUp(wxMOD_SHIFT);
         pause(1000);
-        Type(' ');
+        TimelineKeyPress(' ');
         waitForIdle();
-        Click(Center(VideoClip(0,-2)));
-        Type(WXK_DELETE);
+        SetWaitAfterEachInputAction(true);
+        TimelineLeftClick(Center(VideoClip(0,-2)));
+        TimelineKeyPress(WXK_DELETE);
         ASSERT(VideoClip(0,-2)->isA<model::EmptyClip>());
     }
     std::pair<RandomTempDirPtr, wxFileName> tempDir_fileName;
@@ -170,7 +170,7 @@ void TestBugs::testBugsWithLongTimeline()
             gui::Window::get().GetDocumentManager()->CreateDocument(tempDir_fileName.second.GetFullPath(),wxDOC_SILENT);
         });
     }
-    triggerMenu(wxID_CLOSE);
+    TriggerMenu(wxID_CLOSE);
     Config::setShowDebugInfo(false);
 }
 
@@ -178,8 +178,8 @@ void TestBugs::testPlaybackEmptyClip()
 {
     StartTestSuite();
 
-    Click(Center(VideoClip(0,3)));
-    Type(WXK_DELETE);
+    TimelineLeftClick(Center(VideoClip(0,3)));
+    TimelineKeyPress(WXK_DELETE);
     PositionCursor(HCenter(VideoClip(0,3)));
     model::VideoFramePtr frame = boost::dynamic_pointer_cast<model::EmptyClip>(VideoClip(0,3))->getNextVideo(model::VideoCompositionParameters().setBoundingBox(wxSize(100,100)));
     ASSERT_NONZERO(frame);
@@ -196,7 +196,7 @@ void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
     {
         StartTest("Clip to the right of the trim has length 0.");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
-        Type('o'); // fade &out
+        TimelineKeyPress('o'); // fade &out
         ShiftTrim(LeftCenter(VideoClip(0,1)), RightCenter(VideoClip(0,1))  + wxPoint(10,0)); // Create a clip with length 0
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(Transition);
@@ -206,7 +206,7 @@ void TestBugs::testTrimmingClipAdjacentToZeroLengthClipUsedForTransition()
     {
         StartTest("Clip to the left of the trim has length 0.");
         OpenPopupMenuAt(Center(VideoClip(0,0)));
-        Type('i'); // fade &in
+        TimelineKeyPress('i'); // fade &in
         ShiftTrim(RightCenter(VideoClip(0,1)), LeftCenter(VideoClip(0,1)) + wxPoint(-10,0)); // Create a clip with length 0
         ASSERT_ZERO(VideoClip(0,1)->getLength());
         ASSERT_VIDEOTRACK0(Transition)(VideoClip)(VideoClip);
@@ -222,7 +222,7 @@ void TestBugs::testDeleteClipInbetweenTransitionsCausesTimelineMessUp()
     MakeInOutTransitionAfterClip t1(1);
     MakeInOutTransitionAfterClip t2(0);
     OpenPopupMenuAt(Center(VideoClip(0,2)));
-    Type('t');
+    TimelineKeyPress('t');
     ASSERT_EQUALS(VideoClip(0,1)->getLeftPts(), AudioClip(0,1)->getLeftPts());
     ASSERT_EQUALS(VideoTrack(0)->getLength(),AudioTrack(0)->getLength());
     ASSERT_EQUALS(VideoClip(0,4)->getRightPts(), AudioClip(0,4)->getRightPts());
@@ -299,8 +299,8 @@ void TestBugs::testShiftTrimNotAllowedWithAdjacentClipInOtherTrack()
 {
     StartTestSuite();
     Zoom level(2);
-    triggerMenu(ID_ADDVIDEOTRACK);
-    triggerMenu(ID_ADDAUDIOTRACK);
+    TriggerMenu(ID_ADDVIDEOTRACK);
+    TriggerMenu(ID_ADDAUDIOTRACK);
     DragToTrack(1,VideoClip(0,2),AudioClip(0,2));
     ASSERT_VIDEOTRACK1(     EmptyClip      )(VideoClip);
     ASSERT_VIDEOTRACK0(VideoClip)(VideoClip)(EmptyClip);
@@ -398,7 +398,7 @@ void TestBugs::testPlaybackWithMultipleAudioTracks()
 {
     StartTestSuite();
 
-    triggerMenu(ID_ADDAUDIOTRACK);
+    TriggerMenu(ID_ADDAUDIOTRACK);
     DragToTrack(1,model::IClipPtr(),AudioClip(0,2));
     Play(HCenter(AudioClip(0,0)), 1000);
 }

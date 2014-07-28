@@ -331,41 +331,7 @@ pixel CursorPosition()
 void PositionCursor(pixel position)
 {
     VAR_DEBUG(position);
-    Move(wxPoint(position, gui::Layout::VideoPosition - 4));
-    wxUIActionSimulator().MouseClick();
-    waitForIdle();
-}
-
-void Move(wxPoint position)
-{
-    MoveWithinWidget(position,TimelinePosition() - getTimeline().getScrolling().getOffset());
-    ASSERT_EQUALS(getTimeline().getMouse().getVirtualPosition(), position);
-}
-
-void Click(wxPoint position)
-{
-    Move(position);
-    VAR_DEBUG(position);
-    wxUIActionSimulator().MouseClick();
-    waitForIdle();
-    ASSERT_EQUALS(getTimeline().getMouse().getLeftDownPosition(), position);
-}
-
-void TimelineKeyDown(int key)
-{
-    wxKeyEvent* e = new wxKeyEvent(wxEVT_KEY_DOWN);
-    // todo make timeline::Statemachine::handleKeyevent methods and call those from here as well as from the ui events.
-    getTimeline().GetEventHandler()->QueueEvent(new wxKeyEvent(wxEVT_SLIDER));
-    waitForIdle();
-
-}
-
-void TimelineKeyUp(int key)
-{
-}
-
-void TimelineKeyPress(int key)
-{
+    TimelineLeftClick(wxPoint(position, gui::Layout::VideoPosition - 4));
 }
 
 Zoom::Zoom(int level)
@@ -373,7 +339,7 @@ Zoom::Zoom(int level)
 {
     for (int i = 0; i < mLevel; ++i)
     {
-        Type('=');
+        TimelineKeyPress('=');
     }
 }
 
@@ -381,7 +347,7 @@ Zoom::~Zoom()
 {
     for (int i = 0; i < mLevel; ++i)
     {
-        Type('-');
+        TimelineKeyPress('-');
     }
 }
 
@@ -403,13 +369,13 @@ void ToggleInterval(pixel from, pixel to)
     wxPoint toPoint(to,y);
     wxPoint betweenPoint(fromPoint);
     betweenPoint.x += (fromPoint.x > toPoint.x) ? -(gui::Layout::DragThreshold+1) : (gui::Layout::DragThreshold+1); // Should be greater than the tolerance in StateLeftDown (otherwise, the Drag won't be started)
-    Move(fromPoint);
-    LeftDown();
-    Move(betweenPoint);
-    ShiftDown();
-    Move(toPoint);
-    LeftUp();
-    ShiftUp();
+    TimelineMove(fromPoint);
+    TimelineLeftDown();
+    TimelineMove(betweenPoint);
+    TimelineKeyDown(wxMOD_SHIFT);
+    TimelineMove(toPoint);
+    TimelineLeftUp();
+    TimelineKeyUp(wxMOD_SHIFT);
 }
 
 void Scrub(pixel from, pixel to)
@@ -427,10 +393,10 @@ void ScrollWithRightMouseButton(pixel distance)
     pixel maxW = getTimeline().GetClientSize().GetWidth() - 20;
     pixel y = gui::Layout::TimeScaleHeight + 2;
     ASSERT_LESS_THAN(distance,maxW);
-    MoveWithinWidget(TimelinePosition(), wxPoint(maxW - 10, y));
-    RightDown();
-    MoveWithinWidget(TimelinePosition(), wxPoint(maxW - 10 - distance, y));
-    RightUp();
+    TimelineMove(wxPoint(maxW - 10, y));
+    TimelineRightDown();
+    TimelineMove(wxPoint(maxW - 10 - distance, y));
+    TimelineRightUp();
 }
 
 gui::timeline::MouseOnClipPosition LogicalPosition(wxPoint position)
@@ -449,8 +415,8 @@ void DeselectAllClips()
 
 void DeleteClip(model::IClipPtr clip)
 {
-    Click(Center(clip));
-    Type(WXK_DELETE);
+    TimelineLeftClick(Center(clip));
+    TimelineKeyPress(WXK_DELETE);
 }
 
 void DumpSequence()

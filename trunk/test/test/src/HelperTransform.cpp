@@ -21,7 +21,7 @@ namespace test {
 
 void ResizeClip(model::IClipPtr clip, wxSize boundingbox)
 {
-    Click(Center(clip));
+    TimelineLeftClick(Center(clip));
     wxWindow* current = getTimeline().getDetails().getCurrent();
     gui::timeline::DetailsClip* detailsclip = dynamic_cast<gui::timeline::DetailsClip*>(current);
     ASSERT_NONZERO(detailsclip);

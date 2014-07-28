@@ -56,7 +56,7 @@ void TestDetailsClip::testChangeLength()
             0); };
 
     StartTest("If one clip is selected the details view changes accordingly.");
-    Click(Center(VideoClip(0,3)));
+    TimelineLeftClick(Center(VideoClip(0,3)));
     ASSERT_DETAILSCLIP(VideoClip(0,3));
     ASSERT_ORIGINAL_CLIPPROPERTIES();
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
@@ -113,14 +113,14 @@ void TestDetailsClip::testChangeLength()
 
     {
         // Test reducing the length on the left side (can be triggered by overlapping the right side with a clip in another track)
-        triggerMenu(ID_ADDAUDIOTRACK);
-        triggerMenu(ID_ADDVIDEOTRACK);
+        TriggerMenu(ID_ADDAUDIOTRACK);
+        TriggerMenu(ID_ADDVIDEOTRACK);
         DragToTrack(1,VideoClip(0,5),AudioClip(0,5));
 
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             Drag(From(Center(VideoClip(1,1))).AlignLeft(RightPixel(VideoClip(0,3)) - getTimeline().getZoom().ptsToPixels(getLength(button) -1)));
-            Click(Center(VideoClip(0,3)));
+            TimelineLeftClick(Center(VideoClip(0,3)));
             for ( wxToggleButton* otherButton : DetailsClipView()->getLengthButtons() )
             {
                 ASSERT_IMPLIES(getLength(otherButton) >= getLength(button), otherButton->IsEnabled())(getLength(otherButton))(getLength(button));
@@ -130,7 +130,7 @@ void TestDetailsClip::testChangeLength()
             Undo(2); // Undo: adjust length, dragndrop
         }
         TrimLeft(VideoClip(0,3),getTimeline().getZoom().ptsToPixels(VideoClip(0,3)->getLength() - 2)); // Smaller length than the 'smallest' button
-        Click(Center(VideoClip(0,3))); // Exclusively select clip 4, since the shift trim above selects multiple clips
+        TimelineLeftClick(Center(VideoClip(0,3))); // Exclusively select clip 4, since the shift trim above selects multiple clips
         for ( wxToggleButton* button : DetailsClipView()->getLengthButtons() )
         {
             ASSERT(button->IsEnabled());
@@ -172,7 +172,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
         TrimLeft(VideoClip(0,2),100); // Make all lengths available
         {
             MakeInOutTransitionAfterClip preparation(1);
-            Click(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
+            TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
             ASSERT_DETAILSCLIP(VideoClip(0,2));
             ASSERT(VideoClip(0,2)->isA<model::Transition>());
             ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
@@ -183,7 +183,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
     {
         StartTest("InTransition: Change length via details view.");
         MakeInTransitionAfterClip preparation(1);
-        Click(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
+        TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
@@ -192,7 +192,7 @@ void TestDetailsClip::testChangeLengthOfTransition()
     {
         StartTest("OutTransition: Change length via details view.");
         MakeOutTransitionAfterClip preparation(1);
-        Click(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
+        TimelineLeftClick(VTopQuarterHCenter(VideoClip(0,2))); // Select transition
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         ASSERT(VideoClip(0,2)->isA<model::Transition>());
         ASSERT_EQUALS(getSelectedClipsCount(),1); // Transition
@@ -235,7 +235,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("InTransition");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
-        Type('i');
+        TimelineKeyPress('i');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -245,7 +245,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("OutTransition");
         OpenPopupMenuAt(Center(VideoClip(0,2)));
-        Type('o');
+        TimelineKeyPress('o');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("OutTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -255,7 +255,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("InOutTransition");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
-        Type('p');
+        TimelineKeyPress('p');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InOutTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -265,7 +265,7 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("OutInTransition");
         OpenPopupMenuAt(Center(VideoClip(0,2)));
-        Type('n');
+        TimelineKeyPress('n');
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("OutInTransition", defaultTransitionLength / 2);
         Undo(); // Remove transition
@@ -275,9 +275,9 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("In+Out Transitions");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
-        Type('o');
+        TimelineKeyPress('o');
         OpenPopupMenuAt(Center(VideoClip(0,1)));
-        Type('i');
+        TimelineKeyPress('i');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("In+Out Transitions", defaultTransitionLength);
@@ -288,9 +288,9 @@ void TestDetailsClip::testChangeLengthAfterCreatingTransition()
     {
         StartTest("InOut+OutIn Transitions");
         OpenPopupMenuAt(Center(VideoClip(0,1)));
-        Type('n');
+        TimelineKeyPress('n');
         OpenPopupMenuAt(Center(VideoClip(0,1)));
-        Type('p');
+        TimelineKeyPress('p');
         ASSERT_VIDEOTRACK0(VideoClip)(Transition)(VideoClip)(Transition);
         ASSERT_DETAILSCLIP(VideoClip(0,2));
         pressLengthButtons("InOut+OutIn Transitions", defaultTransitionLength);
@@ -332,7 +332,7 @@ void TestDetailsClip::testTransform()
     };
 
     StartTest("If one clip is selected the details view changes accordingly.");
-    Click(Center(VideoClip(0,3)));
+    TimelineLeftClick(Center(VideoClip(0,3)));
     ASSERT_DETAILSCLIP(VideoClip(0,3));
     ASSERT_ORIGINAL_CLIPPROPERTIES();
     ASSERT_CURRENT_COMMAND_TYPE<command::ProjectViewCreateSequence>();
@@ -484,9 +484,9 @@ void TestDetailsClip::testTransform()
     {
         StartTest("Position cursor on center of clip, if the cursor was outside the clip's timeline region");
         PositionCursor(HCenter(VideoClip(0,1)));
-        Click(Center(VideoClip(0,1)));
+        TimelineLeftClick(Center(VideoClip(0,1)));
         ASSERT_DETAILSCLIP(VideoClip(0,1));
-        Click(Center(VideoClip(0,3)));
+        TimelineLeftClick(Center(VideoClip(0,3)));
         ASSERT_DETAILSCLIP(VideoClip(0,3));
         SetValue(DetailsClipView()->getPositionYSlider(),10); // Same as WXK_PAGEDOWN
         SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
@@ -499,9 +499,9 @@ void TestDetailsClip::testTransform()
         StartTest("Keep cursor position, if the cursor was inside the clip's timeline region");
         pixel pos = HCenter(VideoClip(0,3)) - 20;
         PositionCursor(pos);
-        Click(Center(VideoClip(0,1)));
+        TimelineLeftClick(Center(VideoClip(0,1)));
         ASSERT_DETAILSCLIP(VideoClip(0,1));
-        Click(Center(VideoClip(0,3)));
+        TimelineLeftClick(Center(VideoClip(0,3)));
         ASSERT_DETAILSCLIP(VideoClip(0,3));
         SetValue(DetailsClipView()->getPositionXSlider(), -142); // Same as WXK_PAGEDOWN
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
@@ -511,30 +511,30 @@ void TestDetailsClip::testTransform()
     }
 }
 
-void TestDetailsClip::testTransform_Boundaries()
+void TestDetailsClip::testTransform_Boundaries() // todo make the transform tests also work without physical gui events
 {
     StartTestSuite();
 
     {
         StartTest("Scaling: Minimum scaling factor.");
-        Click(Center(VideoClip(0,5)));
+        TimelineLeftClick(Center(VideoClip(0,5)));
         ASSERT_DETAILSCLIP(VideoClip(0,5));
         GiveKeyboardFocus(DetailsClipView()->getScalingSpin());
-        TypeN(7,WXK_DELETE); // Remove all characters
-        Type('0'); // 0 will be replaced with 'min' value
-        Type(WXK_TAB);
+        KeyboardKeyPressN(7,WXK_DELETE); // Remove all characters
+        KeyboardKeyPress('0'); // 0 will be replaced with 'min' value
+        KeyboardKeyPress(WXK_TAB);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
         ASSERT_CLIPPROPERTIES(VideoClip(0,5),model::VideoScalingCustom,boost::rational<int>(model::Constants::sScalingMin,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(360,288),0); // The scaling spin buttons increment with 0.01, not 0.0001
         Undo();
     }
     {
         StartTest("Scaling: Maximum scaling factor.");
-        Click(Center(VideoClip(0,5)));
+        TimelineLeftClick(Center(VideoClip(0,5)));
         ASSERT_DETAILSCLIP(VideoClip(0,5));
         GiveKeyboardFocus(DetailsClipView()->getScalingSpin());
-        TypeN(7,WXK_DELETE); // Remove all characters
-        TypeN(10,'9'); // 999999999 will be replaced with 'max' value
-        Type(WXK_TAB);
+        KeyboardKeyPressN(7,WXK_DELETE); // Remove all characters
+        KeyboardKeyPressN(10,'9'); // 999999999 will be replaced with 'max' value
+        KeyboardKeyPress(WXK_TAB);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeVideoClipTransform>(); // Verify that only one command object was added to the undo history
         ASSERT_CLIPPROPERTIES(VideoClip(0,5),model::VideoScalingCustom,boost::rational<int>(model::Constants::sScalingMax,model::Constants::sScalingPrecisionFactor),model::VideoAlignmentCenter,wxPoint(-6040,-3312),0); // The scaling spin buttons increment with 0.01, not 0.0001
         Undo();
@@ -575,12 +575,12 @@ void TestDetailsClip::testChangeVolume()
         }
     };
 
-    Click(Center(AudioClip(0,3)));
+    TimelineLeftClick(Center(AudioClip(0,3)));
 
     {
         StartTest("Volume: Down via slider");
         GiveKeyboardFocus(DetailsClipView()->getVolumeSlider());
-        Type(WXK_PAGEUP);
+        KeyboardKeyPress(WXK_PAGEUP);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(90);
         Undo();
@@ -590,7 +590,7 @@ void TestDetailsClip::testChangeVolume()
     {
         StartTest("Volume: Down via spin");
         GiveKeyboardFocus(DetailsClipView()->getVolumeSpin());
-        TypeN(4,WXK_DOWN); // Note: the click above is on the up arrow already triggering an increment of 1
+        KeyboardKeyPressN(4,WXK_DOWN); // Note: the click above is on the up arrow already triggering an increment of 1
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(97);
         Undo();
@@ -600,7 +600,7 @@ void TestDetailsClip::testChangeVolume()
     {
         StartTest("Volume: Up via slider");
         GiveKeyboardFocus(DetailsClipView()->getVolumeSlider());
-        Type(WXK_PAGEDOWN);
+        KeyboardKeyPress(WXK_PAGEDOWN);
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(110);
         Undo();
@@ -610,7 +610,7 @@ void TestDetailsClip::testChangeVolume()
     {
         StartTest("Volume: Up via spin");
         GiveKeyboardFocus(DetailsClipView()->getVolumeSpin());
-        TypeN(4,WXK_UP); // Note: the click above is on the up arrow already triggering an increment of 1
+        KeyboardKeyPressN(4,WXK_UP); // Note: the click above is on the up arrow already triggering an increment of 1
         ASSERT_CURRENT_COMMAND_TYPE<model::ChangeAudioClipVolume>(); // Verify that only one command object was added to the undo history
         ASSERT_VOLUME(105);
         Undo();

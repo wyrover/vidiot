@@ -43,7 +43,7 @@ void TestSplitting::testSplitting()
     MakeInOutTransitionAfterClip preparation(1);
     {
         PositionCursor(HCenter(VideoClip(0,2)));
-        Type('s');
+        TimelineKeyPress('s');
         ASSERT(!VideoClip(0,0)->isA<model::Transition>());
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
         ASSERT(!VideoClip(0,2)->isA<model::Transition>());
@@ -53,7 +53,7 @@ void TestSplitting::testSplitting()
     }
     {
         PositionCursor(LeftPixel(VideoClip(0,2)));
-        Type('s');
+        TimelineKeyPress('s');
         ASSERT(!VideoClip(0,0)->isA<model::Transition>());
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
         ASSERT(!VideoClip(0,2)->isA<model::Transition>());
@@ -63,7 +63,7 @@ void TestSplitting::testSplitting()
     }
     {
         PositionCursor(RightPixel(VideoClip(0,2)));
-        Type('s');
+        TimelineKeyPress('s');
         ASSERT(!VideoClip(0,0)->isA<model::Transition>());
         ASSERT(!VideoClip(0,1)->isA<model::Transition>());
         ASSERT(!VideoClip(0,2)->isA<model::Transition>());
@@ -79,14 +79,14 @@ void TestSplitting::testSplittingDuringPlayback()
     StartTest("Start playback");
     PositionCursor(HCenter(VideoClip(0,4)));
     WaitForPlaybackStarted started;
-    Type(' ');
+    TimelineKeyPress(' ');
     started.wait();
 
     StartTest("Trigger trim");
     WaitForPlaybackStopped stopped;
     WaitForPlaybackStarted startedAgain;
     pause(200);
-    Type('s');
+    TimelineKeyPress('s');
     stopped.wait();
     startedAgain.wait();
 
@@ -96,7 +96,7 @@ void TestSplitting::testSplittingDuringPlayback()
 
     StartTest("Stop playback");
     WaitForPlaybackStopped stoppedAgain;
-    Type(' ');
+    TimelineKeyPress(' ');
     stoppedAgain.wait();
     waitForIdle();
 }

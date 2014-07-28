@@ -164,8 +164,8 @@ MakeInOutTransitionAfterClip::~MakeInOutTransitionAfterClip()
 
 void MakeInOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
 {
-    Move(LeftCenter(GetClip(0,clipNumber)));
-    Type('c');
+    TimelineMove(LeftCenter(GetClip(0,clipNumber)));
+    TimelineKeyPress('c');
 }
 
 MakeInTransitionAfterClip::MakeInTransitionAfterClip(int afterclip, bool audio)
@@ -200,8 +200,8 @@ MakeInTransitionAfterClip::~MakeInTransitionAfterClip()
 
 void MakeInTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
 {
-    Move(LeftCenter(GetClip(0,clipNumberAfterTransition)));
-    Type('i');
+    TimelineMove(LeftCenter(GetClip(0,clipNumberAfterTransition)));
+    TimelineKeyPress('i');
 }
 
 MakeOutTransitionAfterClip::MakeOutTransitionAfterClip(int afterclip, bool audio)
@@ -236,8 +236,8 @@ MakeOutTransitionAfterClip::~MakeOutTransitionAfterClip()
 
 void MakeOutTransitionAfterClip::moveMouseAndCreateTransition(int clipNumber)
 {
-    Move(LeftCenter(GetClip(0,clipNumber - 1)));
-    Type('o');
+    TimelineMove(LeftCenter(GetClip(0,clipNumber - 1)));
+    TimelineKeyPress('o');
 }
 
 } // namespace

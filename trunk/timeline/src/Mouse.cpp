@@ -50,11 +50,13 @@ IMPLEMENTENUM(MousePointerImage);
 //////////////////////////////////////////////////////////////////////////
 
 Mouse::Mouse(Timeline* timeline)
-:   Part(timeline)
-,   mPhysicalPosition(-1,-1)
-,   mVirtualPosition(-1,-1)
-,   mLeft(-1,-1)
-,   mRight(-1,-1)
+    :   Part(timeline)
+    ,   mPhysicalPosition(-1,-1)
+    ,   mVirtualPosition(-1,-1)
+    ,   mLeft(-1,-1)
+    ,   mRight(-1,-1)
+    ,   mLeftDown(false)
+    ,   mRightDown(false)
 {
     VAR_DEBUG(this);
 
@@ -127,18 +129,6 @@ void Mouse::update(state::MouseState& state)
     }
 }
 
-void Mouse::leftDown()
-{
-    LOG_DEBUG;
-    mLeft = mVirtualPosition;
-}
-
-void Mouse::rightDown()
-{
-    LOG_DEBUG;
-    mRight = mVirtualPosition;
-}
-
 void Mouse::dragMove(const wxPoint& position)
 {
     mPhysicalPosition = position;
@@ -191,5 +181,36 @@ wxPoint Mouse::getRightDownPosition() const
 {
     return mRight;
 }
+
+void Mouse::setLeftDown(bool down)
+{
+    LOG_DEBUG;
+    if (down)
+    {
+        mLeft = mVirtualPosition;
+    }
+    mLeftDown = down;
+}
+
+void Mouse::setRightDown(bool down)
+{
+    LOG_DEBUG;
+    if (down)
+    {
+        mRight = mVirtualPosition;
+    }
+    mRightDown = down;
+}
+
+bool Mouse::getLeftDown() const
+{
+    return mLeftDown;
+}
+
+bool Mouse::getRightDown() const
+{
+    return mRightDown;
+}
+
 
 }} // namespace
