@@ -354,7 +354,7 @@ void File::startReadingPackets()
     boost::mutex::scoped_lock lock(Avcodec::sMutex);
 
     mReadingPackets = true;
-    ASSERT(!static_cast<bool>(mBufferPacketsThreadPtr)); // To avoid leaking threads
+    ASSERT(mBufferPacketsThreadPtr == nullptr); // To avoid leaking threads
     try
     {
         mBufferPacketsThreadPtr.reset(new boost::thread(boost::bind(&File::bufferPacketsThread,this)));

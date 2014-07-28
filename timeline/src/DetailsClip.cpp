@@ -374,8 +374,8 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
                 }
             }
 
-            showBox(sVideo, mVideoClip != nullptr); // todo make template IsNonZero for shared_ptr that does this
-            showBox(sAudio, static_cast<bool>(mAudioClip));
+            showBox(sVideo, mVideoClip != nullptr);
+            showBox(sAudio, mAudioClip != nullptr);
             // showBox(sTransition, mTransition);
             showBox(sTransition, false);
 
@@ -436,20 +436,20 @@ void DetailsClip::setClip(const model::IClipPtr& clip)
 
     // Note: disabling a control and then enabling it again can cause extra events (value changed).
     // Therefore this has been placed here, to only dis/enable in the minimal number of cases.
-    mOpacitySlider->Enable(static_cast<bool>(mVideoClip));
-    mOpacitySpin->Enable(static_cast<bool>(mVideoClip));
-    mSelectScaling->Enable(static_cast<bool>(mVideoClip));
-    mScalingSlider->Enable(static_cast<bool>(mVideoClip));
-    mScalingSpin->Enable(static_cast<bool>(mVideoClip));
-    mRotationSlider->Enable(static_cast<bool>(mVideoClip));
-    mRotationSpin->Enable(static_cast<bool>(mVideoClip));
-    mSelectAlignment->Enable(static_cast<bool>(mVideoClip));
-    mPositionXSlider->Enable(static_cast<bool>(mVideoClip));
-    mPositionXSpin->Enable(static_cast<bool>(mVideoClip));
-    mPositionYSlider->Enable(static_cast<bool>(mVideoClip));
-    mPositionYSpin->Enable(static_cast<bool>(mVideoClip));
-    mVolumeSlider->Enable(static_cast<bool>(mAudioClip));
-    mVolumeSpin->Enable(static_cast<bool>(mAudioClip));
+    mOpacitySlider->Enable(mVideoClip != nullptr);
+    mOpacitySpin->Enable(mVideoClip != nullptr);
+    mSelectScaling->Enable(mVideoClip != nullptr);
+    mScalingSlider->Enable(mVideoClip != nullptr);
+    mScalingSpin->Enable(mVideoClip != nullptr);
+    mRotationSlider->Enable(mVideoClip != nullptr);
+    mRotationSpin->Enable(mVideoClip != nullptr);
+    mSelectAlignment->Enable(mVideoClip != nullptr);
+    mPositionXSlider->Enable(mVideoClip != nullptr);
+    mPositionXSpin->Enable(mVideoClip != nullptr);
+    mPositionYSlider->Enable(mVideoClip != nullptr);
+    mPositionYSpin->Enable(mVideoClip != nullptr);
+    mVolumeSlider->Enable(mAudioClip != nullptr);
+    mVolumeSpin->Enable(mAudioClip != nullptr);
     Layout();
 }
 

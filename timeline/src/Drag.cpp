@@ -319,9 +319,10 @@ void Drag::move(wxPoint position)
     }
 
     // Shift if required
-    bool shift = static_cast<bool>(mShift);
+    bool hadShift = mShift != nullptr;
     determineShift();
-    if (mShift || shift)
+    bool hasShift = mShift != nullptr;
+    if (hasShift || hadShift)
     {
         getTimeline().Refresh(false);
     }

@@ -95,7 +95,7 @@ model::IClipPtr MakeTransitionAfterClip::GetClip(int track, int clip) const
                      {
                         result = mAudio ? AudioClip(track,clip) : VideoClip(track,clip);
                      });
-    ASSERT(static_cast<bool>(result))(track)(clip);
+    ASSERT(result != nullptr)(track)(clip);
     return result;
 }
 
