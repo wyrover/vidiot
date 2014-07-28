@@ -73,11 +73,11 @@ void TestSavingAndLoading::testSaveAndLoad()
     ToggleInterval(HCenter(VideoClip(0,1)), HCenter(VideoClip(0,2)));
 
     StartTest("Add empty clip to timeline");
-    Click(Center(VideoClip(0,1)));
-    Type(WXK_DELETE);
+    TimelineLeftClick(Center(VideoClip(0,1)));
+    TimelineKeyPress(WXK_DELETE);
 
     StartTest("Zoom");
-    TypeN(4,'='); // Zoom in until factor is 1:1
+    TimelineKeyPressN(4,'='); // Zoom in until factor is 1:1
 
     StartTest("Scroll");
     RunInMainAndWait([]()
@@ -179,7 +179,7 @@ void TestSavingAndLoading::testBackupBeforeSave()
             ASSERT(!model::Project::createBackupFileName(existingFile,j).Exists());
         }
     }
-    triggerMenu(wxID_CLOSE);
+    TriggerMenu(wxID_CLOSE);
     waitForIdle();
     mProjectFixture.destroy();
 }
@@ -241,14 +241,14 @@ void TestSavingAndLoading::checkDocument(wxString path)
     {
         StartTest("Open render settings"); // Known bug at some point: loading the project went ok, but when opening the render dialog a crash occurred.
         WaitForTimelineToLoseFocus w;
-        triggerMenu(ID_RENDERSETTINGS);
+        TriggerMenu(ID_RENDERSETTINGS);
         w.wait();
-        Type(WXK_ESCAPE);
+        TimelineKeyPress(WXK_ESCAPE);
     }
     {
         StartTest("Close");
         model::Project::get().Modify(false); // Avoid 'save?' dialog
-        triggerMenu(wxID_CLOSE);
+        TriggerMenu(wxID_CLOSE);
     }
 }
 

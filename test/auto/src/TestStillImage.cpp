@@ -55,8 +55,8 @@ void TestStillImage::testUndo()
 
     Scrub(HCenter(VideoClip(0,5)),HCenter(VideoClip(0,5)) + 10);
 
-    Click(Center(VideoClip(0,5)));
-    Type(WXK_DELETE);
+    TimelineLeftClick(Center(VideoClip(0,5)));
+    TimelineKeyPress(WXK_DELETE);
 
     Undo();
 

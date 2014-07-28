@@ -24,15 +24,15 @@ void GiveKeyboardFocus(wxWindow* widget)
 #ifdef _MSC_VER
     if (dynamic_cast<wxSpinCtrlDouble*>(widget) != 0)
     {
-        ClickTopLeft(widget,wxPoint(2,2));
+        MouseClickTopLeft(widget,wxPoint(2,2));
     }
     else if (dynamic_cast<wxSpinCtrl*>(widget) != 0)
     {
-        ClickTopLeft(widget,wxPoint(2,2));
+        MouseClickTopLeft(widget,wxPoint(2,2));
     }
     else if (dynamic_cast<wxSlider*>(widget) != 0)
     {
-        ClickTopLeft(widget);
+        MouseClickTopLeft(widget);
     }
     else
     {
@@ -43,7 +43,7 @@ void GiveKeyboardFocus(wxWindow* widget)
     waitForIdle();
     if (dynamic_cast<wxSpinCtrlDouble*>(widget) != 0)
     {
-        ClickTopLeft(widget, wxPoint(8,8));
+        MouseClickTopLeft(widget, wxPoint(8,8));
     }
     waitForIdle();
 #endif

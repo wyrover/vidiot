@@ -45,7 +45,7 @@ void TestDragAndDrop::testDnd()
     ASSERT_EQUALS(VideoClip(0,2)->getLink(),AudioClip(0,2));
     ASSERT_EQUALS(VideoClip(0,3)->getLink(),AudioClip(0,3));
     ASSERT_EQUALS(VideoClip(0,4)->getLink(),AudioClip(0,4));
-    Type('=');  // Zoom in
+    TimelineKeyPress('=');  // Zoom in
     {
         StartTest("Dragging: Move one clip around.");
         ConfigFixture.SnapToCursor(true);
@@ -134,8 +134,8 @@ void TestDragAndDrop::testDndMultipleTracks()
 {
     StartTestSuite();
     Zoom level(2);
-    triggerMenu(ID_ADDVIDEOTRACK);
-    triggerMenu(ID_ADDAUDIOTRACK);
+    TriggerMenu(ID_ADDVIDEOTRACK);
+    TriggerMenu(ID_ADDAUDIOTRACK);
     {
         StartTest("Known bug at one point: Clip removed when using CTRL to change drag point.");
         DragToTrack(1,VideoClip(0,3),AudioClip(0,3));
@@ -145,10 +145,10 @@ void TestDragAndDrop::testDndMultipleTracks()
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(VideoClip(0,4)),VCenter(VideoTrack(1)));
         Drag(From(Center(VideoClip(1,1))).To(inbetween).DontReleaseMouse());
-        ControlDown();
+        TimelineKeyDown(wxMOD_CONTROL);
         Drag(From(Center(VideoClip(0,4))).To(Center(VideoClip(0,5))).DontReleaseMouse());
         ASSERT(getTimeline().getDrag().isActive());
-        ControlUp();
+        TimelineKeyUp(wxMOD_CONTROL);
         Drag(From(Center(VideoClip(0,5))).To(inbetween));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip); // Bug occurred here: VideoClip was moved to track2 (which did not exist)
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
@@ -163,9 +163,9 @@ void TestDragAndDrop::testDndMultipleTracks()
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip);
         wxPoint inbetween(HCenter(AudioClip(0,4)),VCenter(AudioTrack(1)));
         Drag(From(Center(AudioClip(1,1))).To(inbetween).DontReleaseMouse());
-        ControlDown();
+        TimelineKeyDown(wxMOD_CONTROL);
         Drag(From(Center(AudioClip(0,4))).To(Center(AudioClip(0,5))).DontReleaseMouse());
-        ControlUp();
+        TimelineKeyUp(wxMOD_CONTROL);
         Drag(From(Center(AudioClip(0,5))).To(inbetween));
         ASSERT_VIDEOTRACK1(EmptyClip)                      (VideoClip);
         ASSERT_AUDIOTRACK1(EmptyClip)                      (AudioClip); // Bug occurred here: AudioClip was moved to track2 (which did not exist)
@@ -183,7 +183,7 @@ void TestDragAndDrop::testSnapping()
         StartTest("No snapping when dragged beyond snap distance");
         Drag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::Layout::SnapDistance + 1).DontReleaseMouse());
         ASSERT_ZERO(getTimeline().getDrag().getSnapOffset());
-        LeftUp();
+        TimelineLeftUp();
         ASSERT_MORE_THAN(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition());
         ASSERT_ZERO(getTimeline().getDrag().getSnapOffset());
         Undo();
@@ -192,7 +192,7 @@ void TestDragAndDrop::testSnapping()
         StartTest("Snap to cursor when inside snap distance");
         Drag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::Layout::SnapDistance - 1).DontReleaseMouse());
         ASSERT_NONZERO(getTimeline().getDrag().getSnapOffset());
-        LeftUp();
+        TimelineLeftUp();
         ASSERT_EQUALS(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition()); // due to snapping
         ASSERT_ZERO(getTimeline().getDrag().getSnapOffset()); // reset
         Undo();
@@ -201,12 +201,12 @@ void TestDragAndDrop::testSnapping()
         StartTest("Temporarily disable snapping");
         Drag(From(Center(VideoClip(0,0))).AlignLeft(CursorPosition() + gui::Layout::SnapDistance - 1).DontReleaseMouse());
         ASSERT_NONZERO(getTimeline().getDrag().getSnapOffset());
-        Type('d'); // disable snapping
+        TimelineKeyPress('d'); // disable snapping
         ASSERT_ZERO(getTimeline().getDrag().getSnapOffset());
-        Type('d'); // enable snapping
+        TimelineKeyPress('d'); // enable snapping
         ASSERT_NONZERO(getTimeline().getDrag().getSnapOffset());
-        Type('d'); // disable snapping
-        LeftUp();
+        TimelineKeyPress('d'); // disable snapping
+        TimelineLeftUp();
         ASSERT_MORE_THAN(VideoClip(0,2)->getRightPts(), getTimeline().getCursor().getLogicalPosition());
         ASSERT_ZERO(getTimeline().getDrag().getSnapOffset());
         Undo();

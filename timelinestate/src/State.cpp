@@ -180,7 +180,7 @@ void Machine::handleLeftDown(EvLeftDown& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
-    getMouse().leftDown();
+    getMouse().setLeftDown(true);
     getTimeline().SetFocus();
     process_event(event);
 }
@@ -195,6 +195,7 @@ void Machine::handleLeftUp(EvLeftUp& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
+    getMouse().setLeftDown(false);
     process_event(event);
 }
 
@@ -208,7 +209,7 @@ void Machine::handleLeftDouble(EvLeftDouble& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
-    getMouse().leftDown();
+    getMouse().setLeftDown(true);
     process_event(event);
 }
 
@@ -262,7 +263,7 @@ void Machine::handleRightDown(EvRightDown& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
-    getMouse().rightDown();
+    getMouse().setRightDown(true);
     getScrolling().rightDown(); // For right-mouse scrolling
     getTimeline().SetFocus();
     process_event(event);
@@ -277,6 +278,7 @@ void Machine::onRightUp(wxMouseEvent& event)
 void Machine::handleRightUp(EvRightUp& event)
 {
     VAR_DEBUG(event);
+    getMouse().setRightDown(false);
     getMouse().update(event);
     process_event(event);
 }
@@ -291,7 +293,7 @@ void Machine::handleRightDouble(EvRightDouble& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
-    getMouse().rightDown();
+    getMouse().setRightDown(true);
     process_event(event);
  }
 
@@ -319,6 +321,8 @@ void Machine::handleLeave(EvLeave& event)
 {
     VAR_DEBUG(event);
     getMouse().update(event);
+    getMouse().setLeftDown(false);
+    getMouse().setRightDown(false);
     process_event(event);
 }
 

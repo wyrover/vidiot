@@ -210,7 +210,7 @@ wxPoint findNode( model::NodePtr node )
 
 void MoveProjectView(wxPoint position)
 {
-    MoveWithinWidget(position, getProjectView().GetScreenPosition());
+    MouseMoveWithinWidget(position, getProjectView().GetScreenPosition());
 }
 
 wxPoint CenterInProjectView( model::NodePtr node )
@@ -220,18 +220,20 @@ wxPoint CenterInProjectView( model::NodePtr node )
 
 void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
 {
+    ASSERT(FixtureGui::UseRealUiEvents);
     wxPoint position = CenterInProjectView(node);
     ASSERT(!wxGetMouseState().LeftIsDown());
-    MoveOnScreen(position);
-    LeftDown();
+    MouseMoveOnScreen(position);
+    MouseLeftDown();
 
     // Note 1: Need at least three consecutive drag events before the ProjectView decides that we're actually dragging. See ProjectView::onMotion.
     // Note 2: When DND is active (DoDragStart has been called) event handling is blocked. Therefore, waitForIdle does not work below, until the drop is done (or the drag is aborted).
     int count = 0;
+    SetWaitAfterEachInputAction(false);
     while (!gui::ProjectViewDropSource::get().isDragActive() && count++ < 100)
     {
         position.x += 1;
-        wxUIActionSimulator().MouseMove(position);
+        MouseMoveOnScreen(position);
         pause(10);
     }
     ASSERT_LESS_THAN(count,100);
@@ -242,7 +244,7 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     {
         // Loop is required since sometimes the move fails the first time.
         // Particularly seen when working through remote desktop/using touchpad.
-        wxUIActionSimulator().MouseMove(to);
+        MouseMoveOnScreen(to);
         pause(100); // Do not use waitforidle: does not work during drag and drop
     }
     ASSERT_LESS_THAN(count,3);
@@ -252,6 +254,7 @@ void DragFromProjectViewToTimeline( model::NodePtr node, wxPoint to )
     {
         pause(50); // Can't use waitForIdle: event handling is blocked during DnD
     }
+    SetWaitAfterEachInputAction(true);
     waitForIdle(); // Can be used again when the DND is done.
 }
 

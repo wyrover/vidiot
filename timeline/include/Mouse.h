@@ -54,9 +54,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     void update(state::MouseState& state);
-    void leftDown();
-    void rightDown();
-
+    
     void dragMove(const wxPoint& position);
 
     //////////////////////////////////////////////////////////////////////////
@@ -80,6 +78,11 @@ public:
     /// \return last (most recent) position at which a 'right down' event was received.
     wxPoint getRightDownPosition() const;
 
+    void setLeftDown(bool down);
+    void setRightDown(bool down);
+    bool getLeftDown() const;
+    bool getRightDown() const;
+
 private:
 
     wxCursor mCursorNormal;
@@ -94,6 +97,8 @@ private:
     wxPoint mVirtualPosition;
     wxPoint mLeft; ///< Holds the most recent position at which the left button was pressed.
     wxPoint mRight; ///< Holds the most recent position at which the left button was pressed.
+    bool    mLeftDown; 
+    bool    mRightDown;
 };
 
 }} // namespace

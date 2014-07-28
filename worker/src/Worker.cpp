@@ -90,10 +90,6 @@ Worker::~Worker()
 
 void Worker::schedule(const WorkPtr& work)
 {
-   // if (wxString(mName).IsSameAs("InvisibleWorker"))
-  //  {
-  //      return;
-  //  } todo comments here and in .h
     {
         boost::mutex::scoped_lock lock(mMutex);
         if (!mEnabled) // todo convert to atomicint
@@ -128,7 +124,7 @@ void Worker::waitForExecutionCount()
         mCondition.wait(lock);
     }
 }
-// todo all comments in this file and .h
+
 //////////////////////////////////////////////////////////////////////////
 // THE THREAD
 //////////////////////////////////////////////////////////////////////////
@@ -148,10 +144,7 @@ void Worker::thread()
         QueueEvent(new WorkerQueueSizeEvent(mFifo.getSize()));
         if (w) // Check needed for the case that the fifo is aborted (and thus returns a 0 shared ptr)
         {
-            //if (wxString(mName).IsSameAs("VisibleWorker"))
-            //{
-                w->execute();
-            //}
+            w->execute();
             util::thread::setCurrentThreadName(mName);
             w.reset(); // Clear, so that unfreezing is done if needed
             {

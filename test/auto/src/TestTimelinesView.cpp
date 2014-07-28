@@ -34,10 +34,10 @@ void TestTimelinesView::testSequenceMenu()
     model::SequencePtr sequence2 = addSequence( sSequence2 );
     ASSERT_EQUALS(getSequenceMenu(),getTimeline(sequence2).getMenuHandler().getMenu());
 
-    triggerMenu(ID_CLOSESEQUENCE);
+    TriggerMenu(ID_CLOSESEQUENCE);
     ASSERT_EQUALS(getSequenceMenu(),getTimeline(sequence1).getMenuHandler().getMenu());
 
-    triggerMenu(ID_CLOSESEQUENCE);
+    TriggerMenu(ID_CLOSESEQUENCE);
     ASSERT_ZERO(getSequenceMenu()->GetMenuItemCount()); // When all sequences are closed, the default menu (member of Window) is shown, which is empty
 }
 } // namespace

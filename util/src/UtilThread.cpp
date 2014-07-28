@@ -106,7 +106,6 @@ void RunInMainAndDontWait(const boost::function<void()>& method)
 
 void setCurrentThreadName(const char* name)
 {
-    // todo see if linux thread can be named
     bool isDebuggerRunning = false;
 #if (defined _MSC_VER)
     isDebuggerRunning = wxIsDebuggerRunning();

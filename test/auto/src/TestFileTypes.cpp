@@ -96,7 +96,7 @@ void TestFileTypes::executeTest(wxString filetypesDir)
     wxString sSequence( "Sequence" );
     model::SequencePtr mSequence = addSequence( sSequence, mRoot );
 
-    Click(wxPoint(2,2)); // Click in the timeline to give it the focus.
+    TimelineLeftClick(wxPoint(2,2)); // Click in the timeline to give it the focus.
     Zoom level(4);
 
     wxString sFolder1( "Folder1" );

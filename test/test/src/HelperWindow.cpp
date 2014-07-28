@@ -19,12 +19,12 @@
 
 namespace test {
 
-void triggerMenu(int id)
+void TriggerMenu(int id)
 {
-    triggerMenu(gui::Window::get(), id);
+    TriggerMenu(gui::Window::get(), id);
 }
 
-void triggerMenu(wxWindow& window, int id)
+void TriggerMenu(wxWindow& window, int id)
 {
     window.GetEventHandler()->QueueEvent(new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
     waitForIdle();
@@ -48,7 +48,7 @@ void checkMenu(wxFrame& window, int id, bool checked)
 model::FolderPtr createProject()
 {
     waitForIdle();
-    triggerMenu(wxID_NEW);
+    TriggerMenu(wxID_NEW);
     waitForIdle();
     return getRoot();
 }
@@ -63,7 +63,7 @@ void Undo(int steps)
     LOG_DEBUG;
     while (steps > 0)
     {
-        triggerMenu(wxID_UNDO);
+        TriggerMenu(wxID_UNDO);
         logHistory();
         steps--;
     }
@@ -74,7 +74,7 @@ void Redo(int steps)
     LOG_DEBUG;
     while (steps > 0)
     {
-        triggerMenu(wxID_REDO);
+        TriggerMenu(wxID_REDO);
         logHistory();
         steps--;
     }
@@ -111,135 +111,5 @@ void logHistory()
     wxCommand* current = proc->GetCurrentCommand();
     VAR_DEBUG(current);
 };
-
-void LeftDown(bool wait)
-{
-    wxUIActionSimulator().MouseDown();
-    if (wait) { waitForIdle(); }
-}
-
-void LeftUp(bool wait)
-{
-    wxUIActionSimulator().MouseUp();
-    if (wait) { waitForIdle(); }
-}
-
-void RightDown(bool wait)
-{
-    wxUIActionSimulator().MouseDown(wxMOUSE_BTN_RIGHT);
-    if (wait) { waitForIdle(); }
-}
-
-void RightUp(bool wait)
-{
-    wxUIActionSimulator().MouseUp(wxMOUSE_BTN_RIGHT);
-    if (wait) { waitForIdle(); }
-}
-
-void ClickLeft(bool wait)
-{
-    wxUIActionSimulator().MouseClick(wxMOUSE_BTN_LEFT);
-    if (wait) { waitForIdle(); }
-}
-
-void ClickRight(bool wait)
-{
-    wxUIActionSimulator().MouseClick(wxMOUSE_BTN_RIGHT);
-    if (wait) { waitForIdle(); }
-}
-
-void ControlDown()
-{
-    wxUIActionSimulator().KeyDown(0, wxMOD_CONTROL);
-    waitForIdle();
-}
-
-void ControlUp()
-{
-    wxUIActionSimulator().KeyUp(0, wxMOD_CONTROL);
-    waitForIdle();
-}
-
-void ShiftDown()
-{
-    wxUIActionSimulator().KeyDown(0, wxMOD_SHIFT);
-    waitForIdle();
-}
-
-void ShiftUp()
-{
-    wxUIActionSimulator().KeyUp(0, wxMOD_SHIFT);
-    waitForIdle();
-}
-
-void Type(int keycode, int modifiers)
-{
-    wxUIActionSimulator().Char(keycode,modifiers);
-    waitForIdle();
-}
-
-void TypeN(int count, int keycode, int modifiers)
-{
-    for (int i = 0; i < count; ++i) { Type(keycode,modifiers); }
-}
-
-void MoveRight(pixel length)
-{
-    MoveOnScreen(wxGetMouseState().GetPosition() + wxPoint(length,0));
-}
-
-void MoveLeft(pixel length)
-{
-    MoveOnScreen(wxGetMouseState().GetPosition() + wxPoint(-length,0));
-}
-
-void MoveWithinWidget(wxPoint position, wxPoint origin)
-{
-    VAR_DEBUG(position)(origin);
-    wxPoint absoluteposition = origin + position;
-    MoveOnScreen(absoluteposition);
-}
-
-void MoveOnScreen(wxPoint position)
-{
-    VAR_DEBUG(position);
-    int count = 0;
-    while (wxGetMouseState().GetPosition() != position)
-    {
-        // Loop is required since sometimes the move fails the first time.
-        // Particularly seen when working through remote desktop/using touchpad.
-        wxUIActionSimulator().MouseMove(position);
-        waitForIdle();
-        if (++count > 3) break;
-    }
-    waitForIdle();
-    if (wxGetMouseState().GetPosition() != position)
-    {
-        // When connecting via RDP (Windows remote desktop) the assert below sometimes fails,
-        // even if the loop above was exited with a correct mouse position. Try to move to the
-        // correct position at least once.
-        wxUIActionSimulator().MouseMove(position);
-        waitForIdle();
-    }
-    ASSERT_EQUALS(wxGetMouseState().GetPosition(), position);
-}
-
-void ClickTopLeft(wxWindow* window, wxPoint extraoffset)
-{
-    MoveOnScreen(window->GetScreenPosition() + extraoffset);
-    wxUIActionSimulator().MouseClick();
-    waitForIdle();
-}
-
-void ClickBottomLeft(wxWindow* window, wxPoint extraoffset)
-{
-    wxRect r = window->GetRect();
-    wxPoint p = window->GetScreenPosition();
-    p.y += r.height;
-    MoveOnScreen(p + extraoffset);
-    wxUIActionSimulator().MouseClick();
-    waitForIdle();
-
-}
 
 } // namespace

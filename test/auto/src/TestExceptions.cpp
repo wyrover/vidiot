@@ -46,7 +46,7 @@ void TestExceptions::testRemovedFileInSequence()
     WaitForChildCount(root, 4);
     remove(folder1);
     ASSERT_WATCHED_PATHS_COUNT(0);
-    triggerMenu(ID_CLOSESEQUENCE);
+    TriggerMenu(ID_CLOSESEQUENCE);
 
     tempDir.reset(); // Deletes the file (still used in the sequence) from disk
 
@@ -92,7 +92,7 @@ void TestExceptions::testRemovedFileInSequenceBeforeOpening()
     tempDir.reset(); // Deletes the file (still used in the sequence) from disk
 
     StartTest("Load document");
-    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();
 
     Play(10, 500);
@@ -136,7 +136,7 @@ void TestExceptions::testRemovedFileUsedForTransitionsBeforeOpening()
     fileNames.erase(it);
 
     StartTest("Load document");
-    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();
 
     Scrub(HCenter(VideoClip(0,1)),RightPixel(VideoClip(0,1)) + 5);
@@ -171,7 +171,7 @@ void TestExceptions::testRemovedFileInProjectViewBeforeOpening()
 
     StartTest("Load document");
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
-    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();
 }
 
@@ -193,7 +193,7 @@ void TestExceptions::testRemovedFolderInProjectViewBeforeOpening()
 
     StartTest("Load document");
     gui::Dialog::get().setConfirmation(); // A confirmation for the dialog showing that the removed file is deleted from project
-    triggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
+    TriggerMenu(wxID_FILE1); // Load document 1 from the file history, this is the file that was saved before. This mechanism avoids the open dialog.
     waitForIdle();
 }
 

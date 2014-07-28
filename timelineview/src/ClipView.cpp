@@ -418,7 +418,6 @@ void ClipView::drawForDragging(const wxPoint& position, int height, wxDC& dc, wx
     {
         wxBitmap b(getW(),height);
         draw(b, true, false);
-// todo move include atomic to precompiled
         // Don't use DrawBitmap since this gives wrong output when using wxGTK.
         wxMemoryDC dcBmp(b);
         dc.Blit(position, b.GetSize(), &dcBmp, wxPoint(0,0));
