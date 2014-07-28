@@ -16,4 +16,4 @@
 # along with Vidiot. If not, see <http:#www.gnu.org/licenses/>.
 
 ADD_SUBDIRECTORY(test)
-ADD_SUBDIRECTORY(auto)
+ADD_SUBDIRECTORY(testauto)
